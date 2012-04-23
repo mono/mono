@@ -175,7 +175,8 @@ TEST_RESOURCE_FILES = \
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll \
+	$(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll -r:System.Xml.dll
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 TEST_MCS_FLAGS += -r:System.Web.ApplicationServices.dll

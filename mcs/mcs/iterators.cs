@@ -11,10 +11,6 @@
 // Copyright 2011 Xamarin Inc.
 //
 
-// TODO:
-//    Flow analysis for Yield.
-//
-
 using System;
 using System.Collections.Generic;
 using Mono.CompilerServices.SymbolWriter;
@@ -162,7 +158,7 @@ namespace Mono.CSharp
 		StateMachineMethod method;
 		int local_name_idx;
 
-		protected StateMachine (Block block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
+		protected StateMachine (ParametersBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (block, parent, host, tparams, name, kind)
 		{
 		}
@@ -566,7 +562,7 @@ namespace Mono.CSharp
 			reset.Block.AddStatement (new Throw (new New (new TypeExpression (ex_type, Location), null, Location), Location));
 		}
 
-		protected override void EmitHoistedParameters (EmitContext ec, IList<HoistedParameter> hoisted)
+		protected override void EmitHoistedParameters (EmitContext ec, List<HoistedParameter> hoisted)
 		{
 			base.EmitHoistedParameters (ec, hoisted);
 			base.EmitHoistedParameters (ec, hoisted_params_copy);
@@ -903,13 +899,43 @@ namespace Mono.CSharp
 	}
 
 	//
-	// Iterators are implemented as hidden anonymous block
+	// Iterators are implemented as state machine blocks
 	//
 	public class Iterator : StateMachineInitializer
 	{
+		sealed class TryFinallyBlockProxyStatement : Statement
+		{
+			TryFinallyBlock block;
+			Iterator iterator;
+
+			public TryFinallyBlockProxyStatement (Iterator iterator, TryFinallyBlock block)
+			{
+				this.iterator = iterator;
+				this.block = block;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotSupportedException ();
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				//
+				// Restore redirection for any captured variables
+				//
+				ec.CurrentAnonymousMethod = iterator;
+
+				using (ec.With (BuilderContext.Options.OmitDebugInfo, !ec.HasMethodSymbolBuilder)) {
+					block.EmitFinallyBody (ec);
+				}
+			}
+		}
+
 		public readonly IMethodData OriginalMethod;
 		public readonly bool IsEnumerable;
 		public readonly TypeSpec OriginalIteratorType;
+		int finally_hosts_counter;
 
 		public Iterator (ParametersBlock block, IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
 			: base (block, host, host.Compiler.BuiltinTypes.Bool)
@@ -919,6 +945,8 @@ namespace Mono.CSharp
 			this.IsEnumerable = is_enumerable;
 			this.type = method.ReturnType;
 		}
+
+		#region Properties
 
 		public ToplevelBlock Container {
 			get { return OriginalMethod.Block; }
@@ -930,6 +958,22 @@ namespace Mono.CSharp
 
 		public override bool IsIterator {
 			get { return true; }
+		}
+
+		#endregion
+
+		public Method CreateFinallyHost (TryFinallyBlock block)
+		{
+			var method = new Method (storey, new TypeExpression (storey.Compiler.BuiltinTypes.Void, loc),
+				Modifiers.COMPILER_GENERATED, new MemberName (CompilerGeneratedContainer.MakeName (null, null, "Finally", finally_hosts_counter++), loc),
+				ParametersCompiled.EmptyReadOnlyParameters, null);
+
+			method.Block = new ToplevelBlock (method.Compiler, method.ParameterInfo, loc);
+			method.Block.IsCompilerGenerated = true;
+			method.Block.AddStatement (new TryFinallyBlockProxyStatement (this, block));
+
+			storey.AddMember (method);
+			return method;
 		}
 
 		public void EmitYieldBreak (EmitContext ec, bool unwind_protect)
@@ -967,11 +1011,13 @@ namespace Mono.CSharp
 
 		public void EmitDispose (EmitContext ec)
 		{
+			if (resume_points == null)
+				return;
+
 			Label end = ec.DefineLabel ();
 
 			Label[] labels = null;
-			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
-			for (int i = 0; i < n_resume_points; ++i) {
+			for (int i = 0; i < resume_points.Count; ++i) {
 				ResumableStatement s = resume_points[i];
 				Label ret = s.PrepareForDispose (ec, end);
 				if (ret.Equals (end) && labels == null)

@@ -96,7 +96,7 @@ namespace MonoTests.System.Net.Http
 
 			var dest = new MemoryStream ();
 			var task = sc.CopyToAsync (dest);
-			task.Wait ();
+			Assert.IsTrue (task.Wait (500));
 			Assert.AreEqual (2, dest.Length, "#1");
 		}
 
@@ -107,7 +107,7 @@ namespace MonoTests.System.Net.Http
 
 			var sc = new ByteArrayContent (b);
 			var t = sc.LoadIntoBufferAsync (400);
-			t.Wait ();
+			Assert.IsTrue (t.Wait (500));
 		}
 
 		[Test]

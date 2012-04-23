@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 Jeroen Frijters
+  Copyright (C) 2010-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -34,6 +34,7 @@ namespace IKVM.Reflection.Writer
 		private const int RT_ICON = 3;
 		private const int RT_GROUP_ICON = 14;
 		private const int RT_VERSION = 16;
+		private const int RT_MANIFEST = 24;
 		private ResourceDirectoryEntry root = new ResourceDirectoryEntry(new OrdinalOrName("root"));
 		private ByteBuffer bb;
 		private List<int> linkOffsets;
@@ -85,6 +86,11 @@ namespace IKVM.Reflection.Writer
 				root[new OrdinalOrName(RT_ICON)][new OrdinalOrName(id)][new OrdinalOrName(0)].Data = ByteBuffer.Wrap(icon);
 			}
 			root[new OrdinalOrName(RT_GROUP_ICON)][new OrdinalOrName(32512)][new OrdinalOrName(0)].Data = group;
+		}
+
+		internal void AddManifest(byte[] manifest, ushort resourceID)
+		{
+			root[new OrdinalOrName(RT_MANIFEST)][new OrdinalOrName(resourceID)][new OrdinalOrName(0)].Data = ByteBuffer.Wrap(manifest);
 		}
 
 		internal void ExtractResources(byte[] buf)
@@ -147,21 +153,40 @@ namespace IKVM.Reflection.Writer
 			{
 				foreach (ResourceDirectoryEntry entry in entries)
 				{
-					if (entry.OrdinalOrName.Ordinal == id.Ordinal && entry.OrdinalOrName.Name == id.Name)
+					if (entry.OrdinalOrName.IsEqual(id))
 					{
 						return entry;
 					}
 				}
+				// the entries must be sorted
 				ResourceDirectoryEntry newEntry = new ResourceDirectoryEntry(id);
 				if (id.Name == null)
 				{
+					for (int i = namedEntries; i < entries.Count; i++)
+					{
+						if (entries[i].OrdinalOrName.IsGreaterThan(id))
+						{
+							entries.Insert(i, newEntry);
+							return newEntry;
+						}
+					}
 					entries.Add(newEntry);
+					return newEntry;
 				}
 				else
 				{
+					for (int i = 0; i < namedEntries; i++)
+					{
+						if (entries[i].OrdinalOrName.IsGreaterThan(id))
+						{
+							entries.Insert(i, newEntry);
+							namedEntries++;
+							return newEntry;
+						}
+					}
 					entries.Insert(namedEntries++, newEntry);
+					return newEntry;
 				}
-				return newEntry;
 			}
 		}
 
@@ -321,6 +346,20 @@ namespace IKVM.Reflection.Writer
 		{
 			Ordinal = 0xFFFF;
 			Name = value;
+		}
+
+		internal bool IsGreaterThan(OrdinalOrName other)
+		{
+			return this.Name == null
+				? this.Ordinal > other.Ordinal
+				: String.Compare(this.Name, other.Name, StringComparison.OrdinalIgnoreCase) > 0;
+		}
+
+		internal bool IsEqual(OrdinalOrName other)
+		{
+			return this.Name == null
+				? this.Ordinal == other.Ordinal
+				: String.Compare(this.Name, other.Name, StringComparison.OrdinalIgnoreCase) == 0;
 		}
 	}
 

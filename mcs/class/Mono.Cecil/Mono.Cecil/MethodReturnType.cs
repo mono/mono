@@ -46,8 +46,7 @@ namespace Mono.Cecil {
 		}
 
 		internal ParameterDefinition Parameter {
-			get { return parameter ?? (parameter = new ParameterDefinition (return_type)); }
-			set { parameter = value; }
+			get { return parameter ?? (parameter = new ParameterDefinition (return_type, method)); }
 		}
 
 		public MetadataToken MetadataToken {

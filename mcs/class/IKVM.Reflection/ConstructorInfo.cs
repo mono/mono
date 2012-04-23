@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,6 +23,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace IKVM.Reflection
 {
@@ -58,7 +59,7 @@ namespace IKVM.Reflection
 			get { return GetMethodInfo().__MethodRVA; }
 		}
 
-		public override bool ContainsGenericParameters
+		public sealed override bool ContainsGenericParameters
 		{
 			get { return GetMethodInfo().ContainsGenericParameters; }
 		}
@@ -78,66 +79,9 @@ namespace IKVM.Reflection
 			return parameters;
 		}
 
-		private sealed class ParameterInfoWrapper : ParameterInfo
+		internal sealed override MemberInfo SetReflectedType(Type type)
 		{
-			private readonly ConstructorInfo ctor;
-			private readonly ParameterInfo forward;
-
-			internal ParameterInfoWrapper(ConstructorInfo ctor, ParameterInfo forward)
-			{
-				this.ctor = ctor;
-				this.forward = forward;
-			}
-
-			public override string Name
-			{
-				get { return forward.Name; }
-			}
-
-			public override Type ParameterType
-			{
-				get { return forward.ParameterType; }
-			}
-
-			public override ParameterAttributes Attributes
-			{
-				get { return forward.Attributes; }
-			}
-
-			public override int Position
-			{
-				get { return forward.Position; }
-			}
-
-			public override object RawDefaultValue
-			{
-				get { return forward.RawDefaultValue; }
-			}
-
-			public override CustomModifiers __GetCustomModifiers()
-			{
-				return forward.__GetCustomModifiers();
-			}
-
-			public override MemberInfo Member
-			{
-				get { return ctor; }
-			}
-
-			public override int MetadataToken
-			{
-				get { return forward.MetadataToken; }
-			}
-
-			internal override Module Module
-			{
-				get { return ctor.Module; }
-			}
-
-			internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-			{
-				return forward.GetCustomAttributesData(attributeType);
-			}
+			return new ConstructorInfoWithReflectedType(type, this);
 		}
 	}
 
@@ -239,6 +183,117 @@ namespace IKVM.Reflection
 		internal override int ImportTo(Emit.ModuleBuilder module)
 		{
 			return method.ImportTo(module);
+		}
+	}
+
+	sealed class ConstructorInfoWithReflectedType : ConstructorInfo
+	{
+		private readonly Type reflectedType;
+		private readonly ConstructorInfo ctor;
+
+		internal ConstructorInfoWithReflectedType(Type reflectedType, ConstructorInfo ctor)
+		{
+			Debug.Assert(reflectedType != ctor.DeclaringType);
+			this.reflectedType = reflectedType;
+			this.ctor = ctor;
+		}
+
+		public override bool Equals(object obj)
+		{
+			ConstructorInfoWithReflectedType other = obj as ConstructorInfoWithReflectedType;
+			return other != null
+				&& other.reflectedType == reflectedType
+				&& other.ctor == ctor;
+		}
+
+		public override int GetHashCode()
+		{
+			return reflectedType.GetHashCode() ^ ctor.GetHashCode();
+		}
+
+		public override MethodBody GetMethodBody()
+		{
+			return ctor.GetMethodBody();
+		}
+
+		public override CallingConventions CallingConvention
+		{
+			get { return ctor.CallingConvention; }
+		}
+
+		public override MethodAttributes Attributes
+		{
+			get { return ctor.Attributes; }
+		}
+
+		public override MethodImplAttributes GetMethodImplementationFlags()
+		{
+			return ctor.GetMethodImplementationFlags();
+		}
+
+		internal override int ParameterCount
+		{
+			get { return ctor.ParameterCount; }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return ctor.DeclaringType; }
+		}
+
+		public override Type ReflectedType
+		{
+			get { return reflectedType; }
+		}
+
+		public override string Name
+		{
+			get { return ctor.Name; }
+		}
+
+		public override string ToString()
+		{
+			return ctor.ToString();
+		}
+
+		public override Module Module
+		{
+			get { return ctor.Module; }
+		}
+
+		public override int MetadataToken
+		{
+			get { return ctor.MetadataToken; }
+		}
+
+		public override bool __IsMissing
+		{
+			get { return ctor.__IsMissing; }
+		}
+
+		internal override MethodInfo GetMethodInfo()
+		{
+			return ctor.GetMethodInfo();
+		}
+
+		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
+		{
+			return ctor.GetCustomAttributesData(attributeType);
+		}
+
+		internal override MethodInfo GetMethodOnTypeDefinition()
+		{
+			return ctor.GetMethodOnTypeDefinition();
+		}
+
+		internal override MethodSignature MethodSignature
+		{
+			get { return ctor.MethodSignature; }
+		}
+
+		internal override int ImportTo(Emit.ModuleBuilder module)
+		{
+			return ctor.ImportTo(module);
 		}
 	}
 }

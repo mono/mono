@@ -3039,6 +3039,21 @@
       </method>
     </type>
   </test>
+  <test name="dtest-error-04.cs">
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>153</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-etree-01.cs">
     <type name="C">
       <method name="Void Conv1(System.Linq.Expressions.Expression`1[System.Func`2[System.Object,System.Object]])" attrs="145">
@@ -3117,7 +3132,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -3143,7 +3158,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -5189,7 +5204,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -7501,7 +7516,7 @@
         <size>80</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8307,7 +8322,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8333,7 +8348,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8359,7 +8374,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8385,7 +8400,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8533,7 +8548,7 @@
         <size>49</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8559,7 +8574,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8625,7 +8640,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -8645,7 +8660,7 @@
         <size>49</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -9916,7 +9931,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -9936,7 +9951,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -10011,7 +10026,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -10603,7 +10618,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -10623,7 +10638,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -11367,7 +11382,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -13361,7 +13376,7 @@
         <size>26</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>117</size>
+        <size>115</size>
       </method>
       <method name="Void Dispose()" attrs="486">
         <size>53</size>
@@ -13397,6 +13412,11 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="TestGoto+&lt;setX&gt;c__Iterator0">
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>9</size>
       </method>
     </type>
   </test>
@@ -14025,6 +14045,17 @@
     <type name="ConditionalParsing+Const">
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="ConditionalParsing">
+      <method name="Int32 Test_12(Boolean)" attrs="145">
+        <size>55</size>
+      </method>
+      <method name="Int32 Foo(System.Func`1[System.Int32])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 &lt;Test_12&gt;m__0()" attrs="145">
+        <size>10</size>
       </method>
     </type>
   </test>
@@ -17535,6 +17566,42 @@
       </method>
     </type>
   </test>
+  <test name="gtest-567.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G`1[T]">
+      <method name="Void Foo()" attrs="150">
+        <size>61</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G2`1[T]">
+      <method name="Void Foo()" attrs="150">
+        <size>31</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-568.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="145">
+        <size>111</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">
@@ -19556,6 +19623,11 @@
       </method>
       <method name="Void .ctor(&lt;A&gt;__T, &lt;Value&gt;__T)" attrs="6278">
         <size>21</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void LessThanTest_9()" attrs="129">
+        <size>199</size>
       </method>
     </type>
   </test>
@@ -21617,7 +21689,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -21735,7 +21807,7 @@
         <size>38</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -22457,7 +22529,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -22597,6 +22669,98 @@
       </method>
       <method name="Void Dispose()" attrs="486">
         <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-iter-21.cs">
+    <type name="C">
+      <method name="IEnumerable`1 Test()" attrs="129">
+        <size>23</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>72</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>23</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>150</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>57</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-iter-22.cs">
+    <type name="D">
+      <method name="Void Dispose()" attrs="486">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="IEnumerable`1 Test()" attrs="129">
+        <size>23</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>78</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>74</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -27767,7 +27931,7 @@
   <test name="test-129.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="145">
-        <size>37</size>
+        <size>156</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -44245,7 +44409,7 @@
   <test name="test-792.cs">
     <type name="Program">
       <method name="Void Test()" attrs="129">
-        <size>25</size>
+        <size>36</size>
       </method>
       <method name="Void Test2(IMemberDelayed)" attrs="129">
         <size>20</size>
@@ -45231,6 +45395,28 @@
       </method>
     </type>
   </test>
+  <test name="test-844.cs">
+    <type name="C">
+      <method name="Int32 get_Prop()" attrs="2177">
+        <size>10</size>
+      </method>
+      <method name="Int32 get_Item(Char)" attrs="2177">
+        <size>10</size>
+      </method>
+      <method name="Void Foo(Int32 ByRef)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Method(Int32)" attrs="134">
+        <size>33</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-85.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="145">
@@ -45857,7 +46043,7 @@
   <test name="test-anon-10.cs">
     <type name="S">
       <method name="Void Test()" attrs="134">
-        <size>108</size>
+        <size>101</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>79</size>
@@ -45887,7 +46073,7 @@
     </type>
     <type name="S+&lt;Test&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>77</size>
+        <size>87</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -46225,16 +46411,19 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>197</size>
+        <size>181</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>73</size>
+        <size>57</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>23</size>
       </method>
     </type>
   </test>
@@ -48717,7 +48906,7 @@
     </type>
     <type name="T+&lt;GetD&gt;c__AnonStorey2`1[T]">
       <method name="Void &lt;&gt;m__0(System.Object)" attrs="131">
-        <size>82</size>
+        <size>75</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -49023,6 +49212,69 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-170.cs">
+    <type name="MyClass">
+      <method name="Int32 Test(Int32)" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Void Run()" attrs="134">
+        <size>42</size>
+      </method>
+      <method name="Void Run2()" attrs="134">
+        <size>42</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;Run&gt;m__0(Int32)" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void &lt;Run&gt;m__1(Int32)" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void &lt;Run2&gt;m__2(Int32)" attrs="129">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;Run2&gt;m__3(Int32)" attrs="129">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run&gt;c__AnonStorey0">
+      <method name="Int32 &lt;&gt;m__4()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run&gt;c__AnonStorey1">
+      <method name="Int32 &lt;&gt;m__5()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run2&gt;c__AnonStorey2">
+      <method name="Int32 &lt;&gt;m__6()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+&lt;Run2&gt;c__AnonStorey3">
+      <method name="Int32 &lt;&gt;m__7()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
@@ -50325,7 +50577,7 @@
         <size>2</size>
       </method>
       <method name="Void Test(Int32)" attrs="134">
-        <size>156</size>
+        <size>142</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50351,7 +50603,7 @@
     </type>
     <type name="World+&lt;Test&gt;c__AnonStorey2">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>46</size>
+        <size>51</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50378,7 +50630,7 @@
         <size>2</size>
       </method>
       <method name="Void Test(Int32)" attrs="134">
-        <size>204</size>
+        <size>190</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50404,7 +50656,7 @@
     </type>
     <type name="World+&lt;Test&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>64</size>
+        <size>79</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -50926,7 +51178,7 @@
   <test name="test-anon-61.cs">
     <type name="X">
       <method name="Int32 Test()" attrs="134">
-        <size>381</size>
+        <size>374</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>67</size>
@@ -50956,7 +51208,7 @@
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>158</size>
+        <size>173</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -51523,7 +51775,7 @@
         <size>2</size>
       </method>
       <method name="Void TestMe()" attrs="129">
-        <size>159</size>
+        <size>152</size>
       </method>
       <method name="Boolean &lt;TestMe&gt;m__0()" attrs="145">
         <size>10</size>
@@ -51539,7 +51791,7 @@
     </type>
     <type name="Test+&lt;TestMe&gt;c__AnonStorey0">
       <method name="Boolean &lt;&gt;m__1()" attrs="131">
-        <size>62</size>
+        <size>67</size>
       </method>
       <method name="Boolean &lt;&gt;m__2()" attrs="131">
         <size>22</size>
@@ -52568,7 +52820,7 @@
   <test name="test-anon-97.cs">
     <type name="Space">
       <method name="Void Leak(Boolean, Int32)" attrs="134">
-        <size>88</size>
+        <size>81</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>14</size>
@@ -52603,7 +52855,7 @@
     </type>
     <type name="Space+&lt;Leak&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>19</size>
+        <size>24</size>
       </method>
       <method name="Void &lt;&gt;m__1()" attrs="131">
         <size>70</size>
@@ -52677,7 +52929,7 @@
         <size>131</size>
       </method>
       <method name="Void TestAsync()" attrs="145">
-        <size>31</size>
+        <size>27</size>
       </method>
       <method name="System.Threading.Tasks.Task RunAsync()" attrs="145">
         <size>48</size>
@@ -52694,10 +52946,7 @@
     </type>
     <type name="Program+&lt;TestAsync&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>215</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>212</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -52707,16 +52956,16 @@
   <test name="test-async-02.cs">
     <type name="C">
       <method name="System.Threading.Tasks.Task TestTask()" attrs="134">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task TestTask2()" attrs="134">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task Call()" attrs="129">
         <size>31</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestTaskGeneric()" attrs="134">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] CallGeneric()" attrs="129">
         <size>31</size>
@@ -52736,26 +52985,17 @@
     </type>
     <type name="C+&lt;TestTask&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>165</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>162</size>
       </method>
     </type>
     <type name="C+&lt;TestTask2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>165</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>162</size>
       </method>
     </type>
     <type name="C+&lt;TestTaskGeneric&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>172</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>169</size>
       </method>
     </type>
     <type name="C+&lt;TestTask&gt;c__async0">
@@ -52788,13 +53028,13 @@
         <size>10</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Test1()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Test2()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task Test3()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>88</size>
@@ -52805,26 +53045,17 @@
     </type>
     <type name="A+&lt;Test1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>239</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>233</size>
       </method>
     </type>
     <type name="A+&lt;Test2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>164</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>161</size>
       </method>
     </type>
     <type name="A+&lt;Test3&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>156</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>153</size>
       </method>
     </type>
     <type name="A">
@@ -52851,7 +53082,7 @@
   <test name="test-async-04.cs">
     <type name="C">
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestTaskGeneric()" attrs="134">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>141</size>
@@ -52862,16 +53093,15 @@
     </type>
     <type name="C+&lt;TestTaskGeneric&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>185</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__0()" attrs="131">
-        <size>49</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>187</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 &lt;TestTaskGeneric&gt;m__0()" attrs="129">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -52884,7 +53114,7 @@
         <size>7</size>
       </method>
       <method name="System.Threading.Tasks.Task SynchronousCall(Int32)" attrs="134">
-        <size>51</size>
+        <size>49</size>
       </method>
       <method name="System.Threading.Tasks.Task AnotherTask(Int32)" attrs="129">
         <size>15</size>
@@ -52893,9 +53123,6 @@
     <type name="C+&lt;SynchronousCall&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
         <size>49</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -52908,7 +53135,7 @@
         <size>482</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;Main&gt;m__4(Decimal)" attrs="145">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52916,16 +53143,16 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()" attrs="131">
-        <size>38</size>
+        <size>35</size>
       </method>
       <method name="Void &lt;&gt;m__1()" attrs="131">
-        <size>38</size>
+        <size>35</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.String] &lt;&gt;m__2(System.String)" attrs="131">
-        <size>51</size>
+        <size>49</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Decimal] &lt;&gt;m__3(Decimal)" attrs="131">
-        <size>51</size>
+        <size>49</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -52933,30 +53160,51 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>215</size>
-      </method>
-      <method name="Void &lt;&gt;m__5()" attrs="131">
-        <size>39</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>217</size>
       </method>
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>215</size>
-      </method>
-      <method name="Void &lt;&gt;m__6()" attrs="131">
-        <size>39</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>217</size>
       </method>
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>195</size>
+        <size>242</size>
       </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async3">
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__5()" attrs="131">
+        <size>34</size>
+      </method>
+      <method name="Void &lt;&gt;m__6()" attrs="131">
+        <size>34</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async5">
+      <method name="Void MoveNext()" attrs="486">
+        <size>242</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async3+&lt;Main&gt;c__AnonStorey4">
       <method name="System.String &lt;&gt;m__7()" attrs="131">
         <size>52</size>
       </method>
@@ -52964,10 +53212,7 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async4">
-      <method name="Void MoveNext()" attrs="486">
-        <size>195</size>
-      </method>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async5+&lt;Main&gt;c__AnonStorey6">
       <method name="Decimal &lt;&gt;m__8()" attrs="131">
         <size>52</size>
       </method>
@@ -52975,35 +53220,10 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Program+&lt;Main&gt;c__async5">
+    <type name="Program+&lt;Main&gt;c__async7">
       <method name="Void MoveNext()" attrs="486">
         <size>44</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async3">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async4">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__async5">
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
@@ -53015,7 +53235,7 @@
         <size>358</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__2(Int16)" attrs="145">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -53023,13 +53243,13 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1">
       <method name="System.Threading.Tasks.Task`1[System.String] &lt;&gt;m__0(System.String)" attrs="131">
-        <size>51</size>
+        <size>49</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;&gt;m__1()" attrs="131">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="Void &lt;&gt;m__3()" attrs="131">
-        <size>38</size>
+        <size>35</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -53037,8 +53257,37 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
+        <size>229</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__5()" attrs="131">
+        <size>34</size>
+      </method>
+      <method name="Void &lt;&gt;m__6()" attrs="131">
+        <size>46</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>177</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async5">
+      <method name="Void MoveNext()" attrs="486">
         <size>182</size>
       </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0+&lt;Main&gt;c__AnonStorey2">
       <method name="System.String &lt;&gt;m__4()" attrs="131">
         <size>52</size>
       </method>
@@ -53046,52 +53295,10 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
-      <method name="Void MoveNext()" attrs="486">
-        <size>175</size>
-      </method>
-      <method name="Void &lt;&gt;m__5()" attrs="131">
-        <size>39</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async4">
-      <method name="Void MoveNext()" attrs="486">
-        <size>180</size>
-      </method>
-      <method name="Void &lt;&gt;m__6()" attrs="131">
-        <size>56</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__async3">
+    <type name="Program+&lt;Main&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
         <size>43</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async0">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async2">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async4">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Program+&lt;Main&gt;c__async3">
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
@@ -53112,16 +53319,16 @@
         <size>10</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__1(Int32)" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;Main&gt;m__2(Int32)" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;Main&gt;m__3(Int32)" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 &lt;TT&gt;m__4()" attrs="145">
         <size>9</size>
@@ -53132,40 +53339,28 @@
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>199</size>
+        <size>196</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async5">
       <method name="Void MoveNext()" attrs="486">
-        <size>200</size>
+        <size>197</size>
       </method>
       <method name="Int32 &lt;&gt;m__6()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async8">
       <method name="Void MoveNext()" attrs="486">
-        <size>160</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>157</size>
       </method>
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__asyncB">
       <method name="Void MoveNext()" attrs="486">
         <size>38</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="AsyncTypeInference+&lt;Main&gt;c__async2">
@@ -53201,7 +53396,7 @@
         <size>57</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int16] &lt;Main&gt;m__0(System.String)" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -53211,9 +53406,6 @@
       <method name="Void MoveNext()" attrs="486">
         <size>38</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
@@ -53222,25 +53414,25 @@
   <test name="test-async-10.cs">
     <type name="C">
       <method name="System.Threading.Tasks.Task`1[System.String] TestCompositionCall_1()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.String] TestCompositionCall_2()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionCall_3()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_1()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_2()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_3()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestCompositionPair_4()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Byte] M(Byte)" attrs="145">
         <size>44</size>
@@ -53254,7 +53446,7 @@
     </type>
     <type name="C+&lt;TestCompositionCall_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>324</size>
+        <size>318</size>
       </method>
       <method name="System.String &lt;&gt;m__1()" attrs="145">
         <size>21</size>
@@ -53262,46 +53454,34 @@
       <method name="System.String &lt;&gt;m__2()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestCompositionCall_2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>251</size>
+        <size>246</size>
       </method>
       <method name="System.String &lt;&gt;m__3()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestCompositionCall_3&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>296</size>
+        <size>288</size>
       </method>
       <method name="Byte &lt;&gt;m__4()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestCompositionPair_1&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>202</size>
+        <size>199</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestCompositionPair_2&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>315</size>
+        <size>309</size>
       </method>
       <method name="Int32 &lt;&gt;m__6()" attrs="145">
         <size>17</size>
@@ -53309,24 +53489,18 @@
       <method name="Int32 &lt;&gt;m__7()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestCompositionPair_3&gt;c__async5">
       <method name="Void MoveNext()" attrs="486">
-        <size>203</size>
+        <size>200</size>
       </method>
       <method name="Int32 &lt;&gt;m__8()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestCompositionPair_4&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>446</size>
+        <size>435</size>
       </method>
       <method name="Int32 &lt;&gt;m__9()" attrs="145">
         <size>9</size>
@@ -53336,9 +53510,6 @@
       </method>
       <method name="Int32 &lt;&gt;m__B()" attrs="145">
         <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="C+&lt;M&gt;c__AnonStorey7">
@@ -53388,7 +53559,7 @@
   <test name="test-async-11.cs">
     <type name="G`1[T]">
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_1(T)" attrs="134">
-        <size>51</size>
+        <size>49</size>
       </method>
       <method name="Int32 Call(T, T, T ByRef, Int32)" attrs="129">
         <size>17</size>
@@ -53408,28 +53579,28 @@
         <size>90</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_1()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 TestCall2[T1,T2,T3,T4,T5,T6,T7](T1, T2, T3, T4, T5, T6, T7)" attrs="129">
         <size>10</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_2(UInt64)" attrs="145">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_3()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 TestCall3(S ByRef, S ByRef, Int32, Int32)" attrs="145">
         <size>26</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_4()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 TestCall4(E, S, C, Int32)" attrs="145">
         <size>61</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestStack_5()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>370</size>
@@ -53440,68 +53611,47 @@
     </type>
     <type name="G`1+&lt;TestStack_1&gt;c__async0[T]">
       <method name="Void MoveNext()" attrs="486">
-        <size>260</size>
+        <size>257</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestStack_1&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>321</size>
+        <size>316</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestStack_2&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>296</size>
+        <size>291</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestStack_3&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>461</size>
+        <size>457</size>
       </method>
       <method name="Int32 &lt;&gt;m__3()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestStack_4&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>317</size>
+        <size>312</size>
       </method>
       <method name="Int32 &lt;&gt;m__4()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;TestStack_5&gt;c__async5">
       <method name="Void MoveNext()" attrs="486">
-        <size>295</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__5()" attrs="131">
-        <size>48</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>336</size>
       </method>
     </type>
     <type name="G`1+&lt;TestStack_1&gt;c__async0[T]">
@@ -53534,11 +53684,19 @@
         <size>13</size>
       </method>
     </type>
+    <type name="C+&lt;TestStack_5&gt;c__async5+&lt;TestStack_5&gt;c__AnonStorey6">
+      <method name="Int32 &lt;&gt;m__5()" attrs="131">
+        <size>48</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="test-async-12.cs">
     <type name="C">
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestNested_1()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Call(Int32, Int32, Int32)" attrs="145">
         <size>53</size>
@@ -53552,7 +53710,7 @@
     </type>
     <type name="C+&lt;TestNested_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>433</size>
+        <size>424</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>17</size>
@@ -53562,9 +53720,6 @@
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -53656,190 +53811,190 @@
     </type>
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[System.Boolean] ArrayAccessTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ArrayAccessTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ArrayAccessTest_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] ArrayAccessTest_4()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] ArrayAccessTest_5()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ArrayAccessTest_6()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] ArrayAccessTest_7()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ArrayAccessTest_8()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ArrayAccessTest_9()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] AssignTest_1()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] AssignTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] AssignTest_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] BinaryTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] BinaryTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] BinaryTest_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] BinaryTest_4()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] CallTest_1()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] CallTest_2()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] CallTest_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] CallTest_4()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] CallTest_5()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] CastTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] CastTest_2()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] CoalescingTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] CoalescingTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ConditionalTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ConditionalTest_2()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ConditionalTest_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] ConditionalTest_4()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] DelegateInvoke_4()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] EventInvoke_1()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] FieldTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] IndexerTest_1()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] IndexerTest_2()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] IndexerTest_3()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] IndexerTest_4()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] IndexerTest_5()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] IndexerTest_6()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] IndexerTest_7()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] IsTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] IsTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] LogicalUserOperator_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] LogicalUserOperator_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] LogicalUserOperator_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] NewTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] NewTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] NewInitTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] NewInitTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] NewArrayInitTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] NewArrayInitTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] NewArrayInitTest_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] NewArrayInitTest_4()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] NewArrayInitTest_5()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] NewArrayInitTest_6()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] PropertyTest_1()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] PropertyTest_2()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] PropertyTest_3()" attrs="129">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] StringConcatTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] UnaryTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] UnaryTest_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] UnaryTest_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] VariableInitializer_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)" attrs="145">
         <size>247</size>
@@ -53865,7 +54020,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>341</size>
+        <size>335</size>
       </method>
       <method name="Boolean &lt;&gt;m__4()" attrs="145">
         <size>9</size>
@@ -53873,13 +54028,10 @@
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>754</size>
+        <size>740</size>
       </method>
       <method name="Int32 &lt;&gt;m__6()" attrs="145">
         <size>9</size>
@@ -53893,13 +54045,10 @@
       <method name="Double &lt;&gt;m__9()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_3&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>1117</size>
+        <size>1090</size>
       </method>
       <method name="Int32 &lt;&gt;m__A()" attrs="145">
         <size>9</size>
@@ -53916,13 +54065,10 @@
       <method name="Decimal &lt;&gt;m__E()" attrs="145">
         <size>19</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_4&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>429</size>
+        <size>421</size>
       </method>
       <method name="Int32 &lt;&gt;m__F()" attrs="145">
         <size>9</size>
@@ -53930,49 +54076,34 @@
       <method name="System.String &lt;&gt;m__10()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_5&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>413</size>
+        <size>428</size>
       </method>
       <method name="Int32 &lt;&gt;m__11()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Int32 &lt;&gt;m__12()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_6&gt;c__async5">
       <method name="Void MoveNext()" attrs="486">
-        <size>262</size>
+        <size>257</size>
       </method>
       <method name="Int64 &lt;&gt;m__13()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_7&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>392</size>
+        <size>385</size>
       </method>
       <method name="Int32 &lt;&gt;m__14()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_8&gt;c__async7">
       <method name="Void MoveNext()" attrs="486">
-        <size>678</size>
+        <size>670</size>
       </method>
       <method name="Int32 &lt;&gt;m__15()" attrs="145">
         <size>9</size>
@@ -53980,13 +54111,10 @@
       <method name="Byte &lt;&gt;m__16()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_9&gt;c__async8">
       <method name="Void MoveNext()" attrs="486">
-        <size>1233</size>
+        <size>1209</size>
       </method>
       <method name="Int32 &lt;&gt;m__17()" attrs="145">
         <size>9</size>
@@ -54009,35 +54137,26 @@
       <method name="S &lt;&gt;m__1D()" attrs="145">
         <size>25</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;AssignTest_1&gt;c__async9">
       <method name="Void MoveNext()" attrs="486">
-        <size>226</size>
+        <size>223</size>
       </method>
       <method name="Int32 &lt;&gt;m__1E()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;AssignTest_2&gt;c__asyncA">
       <method name="Void MoveNext()" attrs="486">
-        <size>278</size>
+        <size>273</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__1F()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;AssignTest_3&gt;c__asyncB">
       <method name="Void MoveNext()" attrs="486">
-        <size>370</size>
+        <size>364</size>
       </method>
       <method name="Int32 &lt;&gt;m__20()" attrs="145">
         <size>9</size>
@@ -54045,13 +54164,10 @@
       <method name="Int32 &lt;&gt;m__21()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;BinaryTest_1&gt;c__asyncC">
       <method name="Void MoveNext()" attrs="486">
-        <size>446</size>
+        <size>435</size>
       </method>
       <method name="Int32 &lt;&gt;m__22()" attrs="145">
         <size>17</size>
@@ -54062,30 +54178,15 @@
       <method name="Int32 &lt;&gt;m__24()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;BinaryTest_2&gt;c__asyncD">
       <method name="Void MoveNext()" attrs="486">
-        <size>477</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__25()" attrs="131">
-        <size>24</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__26()" attrs="131">
-        <size>24</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__27()" attrs="131">
-        <size>24</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>507</size>
       </method>
     </type>
     <type name="Tester+&lt;BinaryTest_3&gt;c__asyncE">
       <method name="Void MoveNext()" attrs="486">
-        <size>1104</size>
+        <size>1082</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__28()" attrs="145">
         <size>14</size>
@@ -54105,13 +54206,10 @@
       <method name="Nullable`1 &lt;&gt;m__2D()" attrs="145">
         <size>14</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;BinaryTest_4&gt;c__asyncF">
       <method name="Void MoveNext()" attrs="486">
-        <size>825</size>
+        <size>809</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2E()" attrs="145">
         <size>14</size>
@@ -54124,9 +54222,6 @@
       </method>
       <method name="Nullable`1 &lt;&gt;m__31()" attrs="145">
         <size>17</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;ArrayAccessTest_1&gt;c__async0">
@@ -54211,23 +54306,20 @@
     </type>
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[System.Int32] BinaryTest_5()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
     </type>
     <type name="Tester+&lt;BinaryTest_5&gt;c__async10">
       <method name="Void MoveNext()" attrs="486">
-        <size>304</size>
+        <size>298</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CallTest_1&gt;c__async11">
       <method name="Void MoveNext()" attrs="486">
-        <size>439</size>
+        <size>430</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54241,13 +54333,10 @@
       <method name="Int32 &lt;&gt;m__34()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CallTest_2&gt;c__async12">
       <method name="Void MoveNext()" attrs="486">
-        <size>272</size>
+        <size>267</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54255,13 +54344,10 @@
       <method name="Int32 &lt;&gt;m__35()" attrs="145">
         <size>17</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CallTest_3&gt;c__async13">
       <method name="Void MoveNext()" attrs="486">
-        <size>242</size>
+        <size>237</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54269,13 +54355,10 @@
       <method name="Int32 &lt;&gt;m__36()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CallTest_4&gt;c__async14">
       <method name="Void MoveNext()" attrs="486">
-        <size>239</size>
+        <size>234</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54283,36 +54366,24 @@
       <method name="E &lt;&gt;m__37()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CallTest_5&gt;c__async15">
       <method name="Void MoveNext()" attrs="486">
-        <size>210</size>
+        <size>250</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__38()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CastTest_1&gt;c__async16">
       <method name="Void MoveNext()" attrs="486">
-        <size>251</size>
+        <size>246</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
       <method name="Decimal &lt;&gt;m__39()" attrs="145">
         <size>15</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;CastTest_2&gt;c__async17">
@@ -54322,16 +54393,10 @@
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Tester &lt;&gt;m__3A()" attrs="131">
-        <size>14</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CoalescingTest_1&gt;c__async18">
       <method name="Void MoveNext()" attrs="486">
-        <size>366</size>
+        <size>358</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54342,13 +54407,10 @@
       <method name="System.String &lt;&gt;m__3C()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;CoalescingTest_2&gt;c__async19">
       <method name="Void MoveNext()" attrs="486">
-        <size>372</size>
+        <size>364</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54359,13 +54421,10 @@
       <method name="Byte &lt;&gt;m__3E()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_1&gt;c__async1A">
       <method name="Void MoveNext()" attrs="486">
-        <size>200</size>
+        <size>197</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54373,13 +54432,10 @@
       <method name="Int32 &lt;&gt;m__3F()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_2&gt;c__async1B">
       <method name="Void MoveNext()" attrs="486">
-        <size>335</size>
+        <size>329</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54390,13 +54446,10 @@
       <method name="Int32 &lt;&gt;m__41()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_3&gt;c__async1C">
       <method name="Void MoveNext()" attrs="486">
-        <size>355</size>
+        <size>347</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54407,13 +54460,10 @@
       <method name="Int32 &lt;&gt;m__43()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;ConditionalTest_4&gt;c__async1D">
       <method name="Void MoveNext()" attrs="486">
-        <size>248</size>
+        <size>243</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54421,13 +54471,10 @@
       <method name="Int32 &lt;&gt;m__44()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;DelegateInvoke_4&gt;c__async1E">
       <method name="Void MoveNext()" attrs="486">
-        <size>276</size>
+        <size>271</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54438,30 +54485,18 @@
       <method name="Int32 &lt;&gt;m__46()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;EventInvoke_1&gt;c__async1F">
       <method name="Void MoveNext()" attrs="486">
-        <size>220</size>
+        <size>260</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="System.Action &lt;&gt;m__47()" attrs="131">
-        <size>23</size>
-      </method>
-      <method name="Void &lt;&gt;m__48()" attrs="131">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;FieldTest_1&gt;c__async20">
       <method name="Void MoveNext()" attrs="486">
-        <size>543</size>
+        <size>535</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54472,13 +54507,10 @@
       <method name="Int32 &lt;&gt;m__4A()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IndexerTest_1&gt;c__async21">
       <method name="Void MoveNext()" attrs="486">
-        <size>228</size>
+        <size>225</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54486,13 +54518,10 @@
       <method name="Int32 &lt;&gt;m__4B()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IndexerTest_2&gt;c__async22">
       <method name="Void MoveNext()" attrs="486">
-        <size>341</size>
+        <size>335</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54503,64 +54532,43 @@
       <method name="Int32 &lt;&gt;m__4D()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IndexerTest_3&gt;c__async23">
       <method name="Void MoveNext()" attrs="486">
-        <size>372</size>
+        <size>402</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__4E()" attrs="131">
-        <size>25</size>
       </method>
       <method name="Int32 &lt;&gt;m__4F()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IndexerTest_4&gt;c__async24">
       <method name="Void MoveNext()" attrs="486">
-        <size>407</size>
+        <size>442</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__50()" attrs="131">
-        <size>25</size>
       </method>
       <method name="Int32 &lt;&gt;m__51()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IndexerTest_5&gt;c__async25">
       <method name="Void MoveNext()" attrs="486">
-        <size>520</size>
+        <size>548</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__52()" attrs="131">
-        <size>25</size>
-      </method>
       <method name="Int32 &lt;&gt;m__53()" attrs="145">
         <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;IndexerTest_6&gt;c__async26">
       <method name="Void MoveNext()" attrs="486">
-        <size>555</size>
+        <size>544</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54574,27 +54582,18 @@
       <method name="Int32 &lt;&gt;m__56()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IndexerTest_7&gt;c__async27">
       <method name="Void MoveNext()" attrs="486">
-        <size>262</size>
+        <size>295</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Int32 &lt;&gt;m__57()" attrs="131">
-        <size>25</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IsTest_1&gt;c__async28">
       <method name="Void MoveNext()" attrs="486">
-        <size>236</size>
+        <size>233</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54602,13 +54601,10 @@
       <method name="Tester &lt;&gt;m__58()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;IsTest_2&gt;c__async29">
       <method name="Void MoveNext()" attrs="486">
-        <size>238</size>
+        <size>233</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54616,13 +54612,10 @@
       <method name="Nullable`1 &lt;&gt;m__59()" attrs="145">
         <size>14</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;LogicalUserOperator_1&gt;c__async2A">
       <method name="Void MoveNext()" attrs="486">
-        <size>399</size>
+        <size>391</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54633,13 +54626,10 @@
       <method name="Base &lt;&gt;m__5B()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;LogicalUserOperator_2&gt;c__async2B">
       <method name="Void MoveNext()" attrs="486">
-        <size>304</size>
+        <size>299</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54647,13 +54637,10 @@
       <method name="Base &lt;&gt;m__5C()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;LogicalUserOperator_3&gt;c__async2C">
       <method name="Void MoveNext()" attrs="486">
-        <size>398</size>
+        <size>390</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54664,13 +54651,10 @@
       <method name="Base &lt;&gt;m__5E()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewTest_1&gt;c__async2D">
       <method name="Void MoveNext()" attrs="486">
-        <size>265</size>
+        <size>260</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54678,13 +54662,10 @@
       <method name="Int32 &lt;&gt;m__5F()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewTest_2&gt;c__async2E">
       <method name="Void MoveNext()" attrs="486">
-        <size>356</size>
+        <size>348</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54695,13 +54676,10 @@
       <method name="System.String &lt;&gt;m__61()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewInitTest_1&gt;c__async2F">
       <method name="Void MoveNext()" attrs="486">
-        <size>1046</size>
+        <size>1026</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54724,13 +54702,10 @@
       <method name="Int32 &lt;&gt;m__67()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewInitTest_2&gt;c__async30">
       <method name="Void MoveNext()" attrs="486">
-        <size>753</size>
+        <size>739</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54747,13 +54722,10 @@
       <method name="Int32 &lt;&gt;m__6B()" attrs="145">
         <size>10</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_1&gt;c__async31">
       <method name="Void MoveNext()" attrs="486">
-        <size>245</size>
+        <size>240</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54761,13 +54733,10 @@
       <method name="Int32 &lt;&gt;m__6C()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_2&gt;c__async32">
       <method name="Void MoveNext()" attrs="486">
-        <size>363</size>
+        <size>355</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54778,13 +54747,10 @@
       <method name="Int32 &lt;&gt;m__6E()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_3&gt;c__async33">
       <method name="Void MoveNext()" attrs="486">
-        <size>249</size>
+        <size>246</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54792,13 +54758,10 @@
       <method name="Byte &lt;&gt;m__6F()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_4&gt;c__async34">
       <method name="Void MoveNext()" attrs="486">
-        <size>433</size>
+        <size>427</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54809,13 +54772,10 @@
       <method name="UInt16 &lt;&gt;m__71()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_5&gt;c__async35">
       <method name="Void MoveNext()" attrs="486">
-        <size>267</size>
+        <size>264</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54823,13 +54783,10 @@
       <method name="S &lt;&gt;m__72()" attrs="145">
         <size>25</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;NewArrayInitTest_6&gt;c__async36">
       <method name="Void MoveNext()" attrs="486">
-        <size>269</size>
+        <size>266</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54837,13 +54794,10 @@
       <method name="Int32 &lt;&gt;m__73()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;PropertyTest_1&gt;c__async37">
       <method name="Void MoveNext()" attrs="486">
-        <size>225</size>
+        <size>222</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54851,13 +54805,10 @@
       <method name="Int32 &lt;&gt;m__74()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;PropertyTest_2&gt;c__async38">
       <method name="Void MoveNext()" attrs="486">
-        <size>300</size>
+        <size>295</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54865,13 +54816,10 @@
       <method name="Int32 &lt;&gt;m__75()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;PropertyTest_3&gt;c__async39">
       <method name="Void MoveNext()" attrs="486">
-        <size>656</size>
+        <size>645</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54885,13 +54833,10 @@
       <method name="Int32 &lt;&gt;m__78()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;StringConcatTest_1&gt;c__async3A">
       <method name="Void MoveNext()" attrs="486">
-        <size>466</size>
+        <size>455</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54905,13 +54850,10 @@
       <method name="System.String &lt;&gt;m__7B()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;UnaryTest_1&gt;c__async3B">
       <method name="Void MoveNext()" attrs="486">
-        <size>238</size>
+        <size>233</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54919,27 +54861,18 @@
       <method name="Int32 &lt;&gt;m__7C()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;UnaryTest_2&gt;c__async3C">
       <method name="Void MoveNext()" attrs="486">
-        <size>338</size>
+        <size>354</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
-      <method name="Nullable`1 &lt;&gt;m__7D()" attrs="131">
-        <size>14</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;UnaryTest_3&gt;c__async3D">
       <method name="Void MoveNext()" attrs="486">
-        <size>378</size>
+        <size>369</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54947,13 +54880,10 @@
       <method name="Int32 &lt;&gt;m__7E()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;VariableInitializer_1&gt;c__async3E">
       <method name="Void MoveNext()" attrs="486">
-        <size>354</size>
+        <size>348</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -54964,6 +54894,89 @@
       <method name="Int32 &lt;&gt;m__80()" attrs="145">
         <size>9</size>
       </method>
+    </type>
+    <type name="Tester">
+      <method name="Tester &lt;CastTest_2&gt;m__3A()" attrs="129">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;ArrayAccessTest_5&gt;c__async4+&lt;ArrayAccessTest_5&gt;c__AnonStorey3F">
+      <method name="Int32 &lt;&gt;m__12()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;BinaryTest_2&gt;c__asyncD+&lt;BinaryTest_2&gt;c__AnonStorey40">
+      <method name="Boolean &lt;&gt;m__25()" attrs="131">
+        <size>24</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__26()" attrs="131">
+        <size>24</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__27()" attrs="131">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;CallTest_5&gt;c__async15+&lt;CallTest_5&gt;c__AnonStorey41">
+      <method name="Int32 &lt;&gt;m__38()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;EventInvoke_1&gt;c__async1F+&lt;EventInvoke_1&gt;c__AnonStorey42">
+      <method name="System.Action &lt;&gt;m__47()" attrs="131">
+        <size>23</size>
+      </method>
+      <method name="Void &lt;&gt;m__48()" attrs="131">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;IndexerTest_3&gt;c__async23+&lt;IndexerTest_3&gt;c__AnonStorey43">
+      <method name="Int32 &lt;&gt;m__4E()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;IndexerTest_4&gt;c__async24+&lt;IndexerTest_4&gt;c__AnonStorey44">
+      <method name="Int32 &lt;&gt;m__50()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;IndexerTest_5&gt;c__async25+&lt;IndexerTest_5&gt;c__AnonStorey45">
+      <method name="Int32 &lt;&gt;m__52()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;IndexerTest_7&gt;c__async27+&lt;IndexerTest_7&gt;c__AnonStorey46">
+      <method name="Int32 &lt;&gt;m__57()" attrs="131">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;UnaryTest_2&gt;c__async3C+&lt;UnaryTest_2&gt;c__AnonStorey47">
+      <method name="Nullable`1 &lt;&gt;m__7D()" attrs="131">
+        <size>14</size>
+      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
@@ -54972,13 +54985,13 @@
   <test name="test-async-14.cs">
     <type name="C">
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestResult()" attrs="134">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>214</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -54986,24 +54999,18 @@
     </type>
     <type name="C+&lt;TestResult&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>216</size>
+        <size>213</size>
       </method>
       <method name="Int32 &lt;&gt;m__1()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="C+&lt;Main&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>226</size>
+        <size>223</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="C+&lt;TestResult&gt;c__async0">
@@ -55034,7 +55041,7 @@
     </type>
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[T] NewInitTestGen[T]()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>82</size>
@@ -55045,13 +55052,10 @@
     </type>
     <type name="Tester+&lt;NewInitTestGen&gt;c__async0`1[T]">
       <method name="Void MoveNext()" attrs="486">
-        <size>300</size>
+        <size>294</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55069,13 +55073,13 @@
     </type>
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[System.Int32] SwitchTest_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Using_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Foreach_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)" attrs="145">
         <size>247</size>
@@ -55101,7 +55105,7 @@
     </type>
     <type name="Tester+&lt;SwitchTest_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>368</size>
+        <size>335</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55109,13 +55113,10 @@
       <method name="System.String &lt;&gt;m__4()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;Using_1&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>780</size>
+        <size>766</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55132,13 +55133,10 @@
       <method name="Base &lt;&gt;m__8()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;Foreach_1&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>325</size>
+        <size>320</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55146,30 +55144,27 @@
       <method name="System.Collections.Generic.List`1[System.Int32] &lt;&gt;m__9()" attrs="145">
         <size>36</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
   </test>
   <test name="test-async-17.cs">
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task TestException_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task TestException_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_4()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_5()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_6()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)" attrs="145">
         <size>223</size>
@@ -55195,78 +55190,57 @@
     </type>
     <type name="Tester+&lt;TestException_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>201</size>
+        <size>198</size>
       </method>
       <method name="Void &lt;&gt;m__4()" attrs="145">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>193</size>
+        <size>190</size>
       </method>
       <method name="Void &lt;&gt;m__5()" attrs="145">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>200</size>
+        <size>197</size>
       </method>
       <method name="System.Threading.Tasks.Task &lt;&gt;m__6()" attrs="145">
-        <size>37</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>33</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_4&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>234</size>
+        <size>229</size>
       </method>
       <method name="Int32 &lt;&gt;m__8()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;TestException_5&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>283</size>
+        <size>278</size>
       </method>
       <method name="Void &lt;&gt;m__9()" attrs="145">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_6&gt;c__async5">
       <method name="Void MoveNext()" attrs="486">
-        <size>237</size>
+        <size>232</size>
       </method>
       <method name="Void &lt;&gt;m__A()" attrs="145">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>192</size>
+        <size>189</size>
       </method>
       <method name="Void &lt;&gt;m__7()" attrs="145">
-        <size>7</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
@@ -55309,13 +55283,13 @@
   <test name="test-async-18.cs">
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[System.Int32] Lambda_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Lambda_2()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Lambda_3[T]()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>203</size>
@@ -55326,26 +55300,17 @@
     </type>
     <type name="Tester+&lt;Lambda_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>250</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>285</size>
       </method>
     </type>
     <type name="Tester+&lt;Lambda_2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>250</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>321</size>
       </method>
     </type>
     <type name="Tester+&lt;Lambda_3&gt;c__async2`1[T]">
       <method name="Void MoveNext()" attrs="486">
-        <size>250</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>285</size>
       </method>
     </type>
     <type name="Tester+&lt;Lambda_1&gt;c__async0">
@@ -55363,26 +55328,40 @@
         <size>13</size>
       </method>
     </type>
-    <type name="Tester+&lt;Lambda_1&gt;c__async0">
+    <type name="Tester+&lt;Lambda_1&gt;c__async0+&lt;Lambda_1&gt;c__AnonStorey3">
       <method name="Int32 &lt;&gt;m__0()" attrs="131">
         <size>14</size>
       </method>
-    </type>
-    <type name="Tester+&lt;Lambda_2&gt;c__async1">
-      <method name="Int32 &lt;&gt;m__1()" attrs="131">
-        <size>21</size>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
-    <type name="Tester+&lt;Lambda_3&gt;c__async2`1[T]">
+    <type name="Tester+&lt;Lambda_2&gt;c__async1+&lt;Lambda_2&gt;c__AnonStorey5">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_2&gt;c__async1+&lt;Lambda_2&gt;c__AnonStorey4">
+      <method name="Int32 &lt;&gt;m__1()" attrs="131">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;Lambda_3&gt;c__async2`1+&lt;Lambda_3&gt;c__AnonStorey6`1[T]">
       <method name="Int32 &lt;&gt;m__2()" attrs="131">
         <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
   <test name="test-async-19.cs">
     <type name="C">
       <method name="Void Test(System.Threading.ManualResetEvent)" attrs="145">
-        <size>38</size>
+        <size>35</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>96</size>
@@ -55399,16 +55378,18 @@
     </type>
     <type name="C+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>188</size>
+        <size>218</size>
       </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__async0+&lt;Test&gt;c__AnonStorey1">
       <method name="Void &lt;&gt;m__0()" attrs="131">
         <size>29</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-      </method>
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
       </method>
     </type>
   </test>
@@ -55420,16 +55401,16 @@
     </type>
     <type name="Tester">
       <method name="System.Threading.Tasks.Task`1[System.Boolean] Add_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] AssignCompound_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] Convert_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] Invocation_1()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Boolean RunTest(System.Reflection.MethodInfo)" attrs="145">
         <size>183</size>
@@ -55455,46 +55436,34 @@
     </type>
     <type name="Tester+&lt;Add_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>497</size>
+        <size>492</size>
       </method>
       <method name="Int32 &lt;&gt;m__4()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;AssignCompound_1&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>1237</size>
+        <size>1229</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>9</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;Convert_1&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>349</size>
+        <size>344</size>
       </method>
       <method name="System.Object &lt;&gt;m__6()" attrs="145">
         <size>13</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="Tester+&lt;Invocation_1&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>601</size>
+        <size>596</size>
       </method>
       <method name="System.Object &lt;&gt;m__7()" attrs="145">
         <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="Tester+&lt;Add_1&gt;c__async0">
@@ -55538,7 +55507,7 @@
         <size>10</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Test1()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>58</size>
@@ -55549,23 +55518,20 @@
     </type>
     <type name="A+&lt;Test1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>612</size>
+        <size>604</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
   </test>
   <test name="test-async-22.cs">
     <type name="A">
       <method name="System.Threading.Tasks.Task`1[System.Int32] async()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task async(Int32)" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>10</size>
@@ -55617,29 +55583,20 @@
       <method name="Void MoveNext()" attrs="486">
         <size>38</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="A+&lt;async&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
         <size>37</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="A">
       <method name="Void CastTest()" attrs="129">
-        <size>38</size>
+        <size>35</size>
       </method>
     </type>
     <type name="A+&lt;CastTest&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>291</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>285</size>
       </method>
     </type>
     <type name="A+&lt;async&gt;c__async0">
@@ -55667,21 +55624,18 @@
         <size>22</size>
       </method>
       <method name="Void Post(System.Threading.SendOrPostCallback, System.Object)" attrs="198">
-        <size>24</size>
+        <size>36</size>
       </method>
       <method name="Void Send(System.Threading.SendOrPostCallback, System.Object)" attrs="198">
         <size>24</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
     </type>
     <type name="TestPostContext">
       <method name="System.Threading.Tasks.Task`1[System.Int32] Test()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>136</size>
+        <size>170</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -55689,23 +55643,25 @@
     </type>
     <type name="TestPostContext+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>200</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__0()" attrs="145">
-        <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>197</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
+        <size>21</size>
+      </method>
+    </type>
+    <type name="MyContext">
+      <method name="Void .ctor(ManualResetEvent)" attrs="6278">
+        <size>15</size>
       </method>
     </type>
   </test>
   <test name="test-async-24.cs">
     <type name="Struct">
       <method name="System.Threading.Tasks.Task`1[System.Boolean] AsyncMethod()" attrs="134">
-        <size>49</size>
+        <size>46</size>
       </method>
       <method name="Void .ctor(Object)" attrs="6278">
         <size>9</size>
@@ -55721,13 +55677,10 @@
     </type>
     <type name="Struct+&lt;AsyncMethod&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>278</size>
+        <size>275</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55764,7 +55717,7 @@
         <size>27</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[TResult] GetTaskResult[TResult](System.Threading.Tasks.Task`1[System.Threading.Tasks.Task`1[TResult]])" attrs="145">
-        <size>44</size>
+        <size>41</size>
       </method>
       <method name="Int32 Main()" attrs="145">
         <size>95</size>
@@ -55781,10 +55734,7 @@
     </type>
     <type name="ConsoleApplication1.Program+&lt;GetTaskResult&gt;c__async0`1[TResult]">
       <method name="Void MoveNext()" attrs="486">
-        <size>172</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>169</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55794,7 +55744,7 @@
   <test name="test-async-27.cs">
     <type name="MainClass">
       <method name="System.Threading.Tasks.Task AsyncTest()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Void Main(System.String[])" attrs="150">
         <size>31</size>
@@ -55805,13 +55755,10 @@
     </type>
     <type name="MainClass+&lt;AsyncTest&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>199</size>
+        <size>196</size>
       </method>
       <method name="Int32 &lt;&gt;m__0()" attrs="145">
         <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55821,7 +55768,7 @@
   <test name="test-async-28.cs">
     <type name="C">
       <method name="System.Threading.Tasks.Task Test()" attrs="150">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>12</size>
@@ -55832,13 +55779,10 @@
     </type>
     <type name="C+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>285</size>
+        <size>282</size>
       </method>
       <method name="Int32 &lt;&gt;m__0(Int32)" attrs="145">
         <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55848,7 +55792,7 @@
   <test name="test-async-29.cs">
     <type name="C">
       <method name="System.Threading.Tasks.Task`1[System.Int32] Test()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>20</size>
@@ -55859,13 +55803,279 @@
     </type>
     <type name="C+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>341</size>
+        <size>331</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
+    </type>
+  </test>
+  <test name="test-async-30.cs">
+    <type name="C">
+      <method name="IEnumerable`1 Test(System.String)" attrs="129">
+        <size>37</size>
+      </method>
+      <method name="IEnumerable`1 Test2()" attrs="129">
+        <size>23</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>214</size>
+      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__Iterator0">
+      <method name="System.String System.Collections.Generic.IEnumerator&lt;string&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;string&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>105</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.String] &lt;&gt;m__0()" attrs="131">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test2&gt;c__Iterator1">
+      <method name="System.String System.Collections.Generic.IEnumerator&lt;string&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;string&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>116</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.String] &lt;&gt;m__1()" attrs="131">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__Iterator0+&lt;Test&gt;c__async2">
+      <method name="Void MoveNext()" attrs="486">
+        <size>183</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test2&gt;c__Iterator1+&lt;Test2&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>183</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-31.cs">
+    <type name="C">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] M(Int32)" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] M2(Int32, Int32)" attrs="129">
+        <size>49</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>68</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;M&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>354</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;M2&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>469</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;M&gt;c__async0+&lt;M&gt;c__AnonStorey3">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;M&gt;c__async0+&lt;M&gt;c__AnonStorey2">
+      <method name="Int32 &lt;&gt;m__0()" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1()" attrs="131">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;M2&gt;c__async1+&lt;M2&gt;c__AnonStorey4">
+      <method name="Void &lt;&gt;m__2()" attrs="131">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-32.cs">
+    <type name="Program">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestCanceled()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="System.Threading.Tasks.Task TestCanceled_2()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestException()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>248</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;TestCanceled&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>160</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;TestCanceled_2&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>159</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;TestException&gt;c__async2">
+      <method name="Void MoveNext()" attrs="486">
+        <size>160</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Main&gt;c__AnonStorey3">
+      <method name="Void &lt;&gt;m__0(System.Threading.Tasks.Task`1[System.Int32])" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void &lt;&gt;m__1(System.Threading.Tasks.Task)" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void &lt;&gt;m__2(System.Threading.Tasks.Task`1[System.Int32])" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-33.cs">
+    <type name="A">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo(Int32)" attrs="454">
+        <size>15</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] get_Prop()" attrs="2502">
+        <size>14</size>
+      </method>
+      <method name="Void set_Prop(System.Threading.Tasks.Task`1[System.Int32])" attrs="2502">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] get_Prop()" attrs="2246">
+        <size>7</size>
+      </method>
+      <method name="Void set_Prop(System.Threading.Tasks.Task`1[System.Int32])" attrs="2246">
+        <size>7</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo(Int32)" attrs="198">
+        <size>49</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo2(Int32)" attrs="134">
+        <size>49</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Foo&gt;__BaseCallProxy0(Int32)" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Void &lt;set_Prop&gt;__BaseCallProxy1(System.Threading.Tasks.Task`1[System.Int32])" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;get_Prop&gt;__BaseCallProxy2()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()" attrs="145">
+        <size>76</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>177</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="B+&lt;Foo2&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>191</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -56804,7 +57014,7 @@
         <size>26</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -56946,19 +57156,19 @@
         <size>2</size>
       </method>
       <method name="Void Test_1()" attrs="145">
-        <size>31</size>
+        <size>27</size>
       </method>
       <method name="System.Threading.Tasks.Task RunAsync()" attrs="145">
         <size>48</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] Test_2()" attrs="145">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Int32] RunAsync_2()" attrs="145">
         <size>48</size>
       </method>
       <method name="System.Threading.Tasks.Task`1[System.Boolean] Test_3()" attrs="129">
-        <size>37</size>
+        <size>33</size>
       </method>
       <method name="Void &lt;RunAsync&gt;m__0()" attrs="145">
         <size>2</size>
@@ -56972,29 +57182,20 @@
     </type>
     <type name="C+&lt;Test_1&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>159</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>156</size>
       </method>
     </type>
     <type name="C+&lt;Test_2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>166</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
+        <size>163</size>
       </method>
     </type>
     <type name="C+&lt;Test_3&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>1237</size>
+        <size>1229</size>
       </method>
       <method name="Int32 &lt;&gt;m__2()" attrs="145">
         <size>9</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
     <type name="C+&lt;Test_1&gt;c__async0">
@@ -57022,6 +57223,101 @@
     <type name="C">
       <method name="Void Main()" attrs="150">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-21.cs">
+    <type name="C">
+      <method name="IEnumerable`1 Test()" attrs="129">
+        <size>23</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>13</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>150</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>57</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-22.cs">
+    <type name="A">
+      <method name="Int32 Foo()" attrs="454">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="IEnumerable`1 GetIter()" attrs="134">
+        <size>30</size>
+      </method>
+      <method name="Int32 Foo()" attrs="198">
+        <size>7</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Foo&gt;__BaseCallProxy0()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;GetIter&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>82</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -57574,16 +57870,25 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>282</size>
+        <size>264</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>119</size>
+        <size>107</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally1()" attrs="129">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally2()" attrs="129">
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -57621,16 +57926,19 @@
         <size>52</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>393</size>
+        <size>377</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>109</size>
+        <size>93</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>23</size>
       </method>
     </type>
   </test>
@@ -57808,16 +58116,19 @@
         <size>40</size>
       </method>
       <method name="Boolean MoveNext()" attrs="486">
-        <size>203</size>
+        <size>190</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>70</size>
+        <size>57</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>20</size>
       </method>
     </type>
   </test>
@@ -57861,7 +58172,7 @@
         <size>27</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -57978,7 +58289,7 @@
         <size>38</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -58324,7 +58635,7 @@
         <size>54</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -58953,7 +59264,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -58979,7 +59290,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
@@ -59005,7 +59316,7 @@
         <size>37</size>
       </method>
       <method name="Void Dispose()" attrs="486">
-        <size>15</size>
+        <size>1</size>
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>

@@ -3,9 +3,11 @@
 //
 // Authors:
 // 	Erik LeBel (eriklebel@yahoo.ca)
+// 	Ilker Cetinkaya (mail@ilker.de)
 //
 // (c) 2003 Erik LeBel
 //
+
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -174,6 +176,29 @@ namespace MonoTests.Microsoft.CSharp
 			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
 			writer.Close ();
 			Assert.AreEqual ("public class Test1 {}" + writer.NewLine, writer.ToString ());
+		}
+
+		[Test]
+		public void AttributeAndGlobalNamespaceWithImportTest ()
+		{
+			var import = new CodeNamespaceImport ("Z");
+			AddGlobalNamespaceWithImport (codeUnit, import);
+			AddAssemblyAttribute (codeUnit, "A");
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"using Z;{0}{0}[assembly: A()]{0}{0}", NewLine), Generate ());
+		}
+
+		private static void AddGlobalNamespaceWithImport (CodeCompileUnit codeUnit, CodeNamespaceImport import) {
+			CodeNamespace ns = new CodeNamespace ();
+			ns.Imports.Add (import);
+			codeUnit.Namespaces.Add (ns);
+		}
+
+		private static void AddAssemblyAttribute (CodeCompileUnit codeUnit, string attributeName) {
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = attributeName;
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 		}
 	}
 }

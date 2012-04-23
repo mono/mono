@@ -150,8 +150,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 			Type value_type = (info.Flags & CSharpArgumentInfoFlags.UseCompileTimeType) != 0 ? value.Expression.Type : value.LimitType;
 			var type = ImportType (value_type);
 
-			if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0)
-				return Compiler.Constant.CreateConstantFromValue (type, value.Value, Compiler.Location.Null);
+			if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0) {
+				var c = Compiler.Constant.CreateConstantFromValue (type, value.Value, Compiler.Location.Null);
+				//
+				// It can be null for misused Constant flag
+				//
+				if (c != null)
+					return c;
+			}
 
 			return new Compiler.RuntimeValueExpression (value, type);
 		}

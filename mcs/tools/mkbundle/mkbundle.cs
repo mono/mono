@@ -293,7 +293,7 @@ class MakeBundle {
 					return;
 				}
 				Console.WriteLine ("System config from: " + config_file);
-				tc.WriteLine ("extern const unsigned char system_config;");
+				tc.WriteLine ("extern const char system_config;");
 				WriteSymbol (ts, "system_config", config_file.Length);
 
 				int n;
@@ -316,7 +316,7 @@ class MakeBundle {
 					return;
 				}
 				Console.WriteLine ("Machine config from: " + machine_config_file);
-				tc.WriteLine ("extern const unsigned char machine_config;");
+				tc.WriteLine ("extern const char machine_config;");
 				WriteSymbol (ts, "machine_config", machine_config_file.Length);
 
 				int n;

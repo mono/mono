@@ -80,10 +80,10 @@ namespace System.Windows {
 			return null;
 		}
 
-		public PropertyMetadata GetMetadata(DependencyObject d)
+		public PropertyMetadata GetMetadata(DependencyObject dependencyObject)
 		{
-			if (metadataByType.ContainsKey (d.GetType()))
-				return metadataByType[d.GetType()];
+			if (metadataByType.ContainsKey (dependencyObject.GetType()))
+				return metadataByType[dependencyObject.GetType()];
 			return null;
 		}
 

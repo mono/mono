@@ -117,25 +117,12 @@ namespace System.Xml
 		}
 
 		public override string InnerText {
-#if !(NET_2_0)
-			get {
-				return base.InnerText;
-			}
-#endif
-
 			set {
 				Value = value;
 			}
 		}
 
 		public override string InnerXml {
-#if !(NET_2_0)
-			get {
-				// Not sure why this is an override.  Passing through for now.
-				return base.InnerXml;
-			}
-#endif
-
 			set {
 				RemoveAll ();
 				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
@@ -266,9 +253,9 @@ namespace System.Xml
 		#region Methods
 
 #if NET_2_0
-		public override XmlNode AppendChild (XmlNode child)
+		public override XmlNode AppendChild (XmlNode newChild)
 		{
-			return base.AppendChild (child);
+			return base.AppendChild (newChild);
 		}
 
 		public override XmlNode InsertBefore (XmlNode newChild, XmlNode refChild)
@@ -281,14 +268,14 @@ namespace System.Xml
 			return base.InsertAfter (newChild, refChild);
 		}
 
-		public override XmlNode PrependChild (XmlNode node)
+		public override XmlNode PrependChild (XmlNode newChild)
 		{
-			return base.PrependChild (node);
+			return base.PrependChild (newChild);
 		}
 
-		public override XmlNode RemoveChild (XmlNode node)
+		public override XmlNode RemoveChild (XmlNode oldChild)
 		{
-			return base.RemoveChild (node);
+			return base.RemoveChild (oldChild);
 		}
 
 		public override XmlNode ReplaceChild (XmlNode newChild, XmlNode oldChild)

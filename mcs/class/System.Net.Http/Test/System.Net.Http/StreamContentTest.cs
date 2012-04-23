@@ -299,7 +299,7 @@ namespace MonoTests.System.Net.Http
 			ms.Seek (0, SeekOrigin.Begin);
 
 			var sc = new StreamContent (ms);
-			sc.LoadIntoBufferAsync (400).Wait ();
+			Assert.IsTrue (sc.LoadIntoBufferAsync (400).Wait (200));
 		}
 
 		[Test]
@@ -331,6 +331,19 @@ namespace MonoTests.System.Net.Http
 			var sc = new StreamContent (ms);
 			var res = sc.ReadAsStringAsync ().Result;
 			Assert.AreEqual ("M7", res, "#1");
+		}
+
+		[Test]
+		public void ReadAsStream ()
+		{
+			var ms = new MemoryStream ();
+			ms.WriteByte (77);
+			ms.WriteByte (55);
+			ms.Seek (0, SeekOrigin.Begin);
+
+			var sc = new StreamContent (ms);
+			var res = sc.ReadAsStreamAsync ().Result;
+			Assert.AreEqual (77, res.ReadByte (), "#1");
 		}
 	}
 }

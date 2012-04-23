@@ -28,6 +28,7 @@
 
 #if NET_4_0 || MOBILE
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace System.Threading
 {
@@ -37,15 +38,12 @@ namespace System.Threading
 	public class CancellationTokenSource : IDisposable
 	{
 		bool canceled;
-		bool processed;
 		bool disposed;
 		
 		int currId = int.MinValue;
+		ConcurrentDictionary<CancellationTokenRegistration, Action> callbacks;
 
-		Dictionary<CancellationTokenRegistration, Action> callbacks;
-		
 		ManualResetEvent handle;
-		readonly object syncRoot = new object ();
 		
 		internal static readonly CancellationTokenSource NoneSource = new CancellationTokenSource ();
 		internal static readonly CancellationTokenSource CanceledSource = new CancellationTokenSource ();
@@ -57,7 +55,6 @@ namespace System.Threading
 
 		static CancellationTokenSource ()
 		{
-			CanceledSource.processed = true;
 			CanceledSource.canceled = true;
 
 #if NET_4_5
@@ -70,7 +67,7 @@ namespace System.Threading
 
 		public CancellationTokenSource ()
 		{
-			callbacks = new Dictionary<CancellationTokenRegistration, Action> ();
+			callbacks = new ConcurrentDictionary<CancellationTokenRegistration, Action> ();
 			handle = new ManualResetEvent (false);
 		}
 
@@ -126,30 +123,31 @@ namespace System.Threading
 			
 			List<Exception> exceptions = null;
 			
-			lock (syncRoot) {
-				try {
-					foreach (var item in callbacks) {
-						if (throwOnFirstException) {
-							item.Value ();
-						} else {
-							try {
-								item.Value ();
-							} catch (Exception e) {
-								if (exceptions == null)
-									exceptions = new List<Exception> ();
+			try {
+				Action cb;
+				for (int id = int.MinValue + 1; id <= currId; id++) {
+					if (!callbacks.TryRemove (new CancellationTokenRegistration (id, this), out cb))
+						continue;
+					if (cb == null)
+						continue;
 
-								exceptions.Add (e);
-							}
+					if (throwOnFirstException) {
+						cb ();
+					} else {
+						try {
+							cb ();
+						} catch (Exception e) {
+							if (exceptions == null)
+								exceptions = new List<Exception> ();
+
+							exceptions.Add (e);
 						}
 					}
-				} finally {
-					callbacks.Clear ();
 				}
+			} finally {
+				callbacks.Clear ();
 			}
-			
-			Thread.MemoryBarrier ();
-			processed = true;
-			
+
 			if (exceptions != null)
 				throw new AggregateException (exceptions);
 		}
@@ -248,36 +246,25 @@ namespace System.Threading
 
 			var tokenReg = new CancellationTokenRegistration (Interlocked.Increment (ref currId), this);
 
-			if (canceled) {
+			/* If the source is already canceled we execute the callback immediately
+			 * if not, we try to add it to the queue and if it is currently being processed
+			 * we try to execute it back ourselves to be sure the callback is ran
+			 */
+			if (canceled)
 				callback ();
-			} else {
-				bool temp = false;
-				lock (syncRoot) {
-					if (!(temp = canceled))
-						callbacks.Add (tokenReg, callback);
-				}
-				if (temp)
+			else {
+				callbacks.TryAdd (tokenReg, callback);
+				if (canceled && callbacks.TryRemove (tokenReg, out callback))
 					callback ();
 			}
 			
 			return tokenReg;
 		}
-		
-		internal void RemoveCallback (CancellationTokenRegistration tokenReg)
+
+		internal void RemoveCallback (CancellationTokenRegistration reg)
 		{
-			if (!canceled) {
-				lock (syncRoot) {
-					if (!canceled) {
-						callbacks.Remove (tokenReg);
-						return;
-					}
-				}
-			}
-			
-			SpinWait sw = new SpinWait ();
-			while (!processed)
-				sw.SpinOnce ();
-			
+			Action dummy;
+			callbacks.TryRemove (reg, out dummy);
 		}
 	}
 }

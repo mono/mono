@@ -45,6 +45,26 @@ namespace System.Net.Http.Headers
 			return Enumerable.SequenceEqual (first, second);
 		}
 
+		public static void SetValue (this List<NameValueHeaderValue> parameters, string key, string value)
+		{
+			for (int i = 0; i < parameters.Count; ++i) {
+				var entry = parameters[i];
+				if (!string.Equals (entry.Name, key, StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				if (value == null) {
+					parameters.RemoveAt (i);
+				} else {
+					parameters[i].Value = value;
+				}
+
+				return;
+			}
+
+			if (!string.IsNullOrEmpty (value))
+				parameters.Add (new NameValueHeaderValue (key, value));
+		}
+
 		public static string ToString<T> (this List<T> list)
 		{
 			if (list == null || list.Count == 0)

@@ -46,6 +46,7 @@ namespace System.Net.Http
 		bool useCookies;
 		bool useDefaultCredentials;
 		bool useProxy;
+		ClientCertificateOption certificate;
 
 		public HttpClientHandler ()
 		{
@@ -71,6 +72,15 @@ namespace System.Net.Http
 			}
 			set {
 				automaticDecompression = value;
+			}
+		}
+
+		public ClientCertificateOption ClientCertificateOptions {
+			get {
+				return certificate;
+			}
+			set {
+				certificate = value;
 			}
 		}
 
@@ -130,6 +140,9 @@ namespace System.Net.Http
 				return proxy;
 			}
 			set {
+				if (!UseProxy)
+					throw new InvalidOperationException ();
+
 				proxy = value;
 			}
 		}

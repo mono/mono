@@ -88,12 +88,12 @@ namespace System.Windows {
 			height = size.Height;
 		}
 
-		public bool Equals (Rect rect)
+		public bool Equals (Rect value)
 		{
-			return (x == rect.X &&
-				y == rect.Y &&
-				width == rect.Width &&
-				height == rect.Height);
+			return (x == value.X &&
+				y == value.Y &&
+				width == value.Width &&
+				height == value.Height);
 		}
 
 		public static bool operator != (Rect rect1, Rect rect2)
@@ -147,9 +147,9 @@ namespace System.Windows {
 			return true;
 		}
 
-		public bool Contains (Point p)
+		public bool Contains (Point point)
 		{
-			return Contains (p.X, p.Y);
+			return Contains (point.X, point.Y);
 		}
 
 		public static Rect Inflate (Rect rect, double width, double height)

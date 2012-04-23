@@ -207,7 +207,9 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 
 		private static string Find (string assemblyVersion, string path)
 		{
-			//Console.WriteLine ("Looking in " + path);
+			return  Path.Combine (Path.Combine (path, assemblyVersion), assemblyFileName);
+/*			
+			Console.WriteLine ("Looking in " + path);
 			string test;
 
 			if (!path.Contains(assemblyVersion))
@@ -257,6 +259,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 						"The tree is not predictible according to the philosophy of the test. (Stuck in {0})",
 						path));
 			}
+*/
 		}
 
 		private void SerializeToFile (string filename)

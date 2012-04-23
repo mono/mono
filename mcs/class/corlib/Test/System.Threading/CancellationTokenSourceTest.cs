@@ -3,6 +3,7 @@
 //
 // Authors:
 //       Marek Safar (marek.safar@gmail.com)
+//       Jeremie Laval (jeremie.laval@gmail.com)
 //
 // Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
@@ -319,6 +320,25 @@ namespace MonoTests.System.Threading
 			mre.Set ();
 			Assert.IsTrue (t.Wait (1000), "#3");
 			Assert.AreEqual (12, called, "#4");
+		}
+
+		[Test]
+		public void ReEntrantRegistrationTest ()
+		{
+			bool unregister = false;
+			bool register = false;
+			var source = new CancellationTokenSource ();
+			var token = source.Token;
+
+			var reg = new CancellationTokenRegistration ();
+			Console.WriteLine ("Test1");
+			token.Register (() => reg.Dispose ());
+			reg = token.Register (() => unregister = true);
+			token.Register (() => { Console.WriteLine ("Gnyah"); token.Register (() => register = true); });
+			source.Cancel ();
+
+			Assert.IsFalse (unregister);
+			Assert.IsTrue (register);
 		}
 	}
 }

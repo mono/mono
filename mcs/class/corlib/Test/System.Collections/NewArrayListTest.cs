@@ -873,8 +873,6 @@ namespace MonoTests.System.Collections
 					int y;
 
 					y = arrayList.BinarySearch(i);
-
-					Assertion.Equals(y, i);
 				}
 			}
 

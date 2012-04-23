@@ -343,7 +343,7 @@ namespace Mono.CSharp {
 			type = target_type;
 
 			if (!(target is IAssignMethod)) {
-				Error_ValueAssignment (ec, source);
+				target.Error_ValueAssignment (ec, source);
 				return null;
 			}
 
@@ -567,10 +567,10 @@ namespace Mono.CSharp {
 
 			//
 			// Emit sequence symbol info even if we are in compiler generated
-			// block to allow debugging filed initializers when constructor is
+			// block to allow debugging field initializers when constructor is
 			// compiler generated
 			//
-			if (ec.HasSet (BuilderContext.Options.OmitDebugInfo)) {
+			if (ec.HasSet (BuilderContext.Options.OmitDebugInfo) && ec.HasMethodSymbolBuilder) {
 				using (ec.With (BuilderContext.Options.OmitDebugInfo, false)) {
 					ec.Mark (loc);
 				}
@@ -815,7 +815,7 @@ namespace Mono.CSharp {
 				return new SimpleAssign (target, new DynamicConversion (target_type, CSharpBinderFlags.ConvertExplicit, arg, loc), loc).Resolve (ec);
 			}
 
-			right.Error_ValueCannotBeConverted (ec, loc, target_type, false);
+			right.Error_ValueCannotBeConverted (ec, target_type, false);
 			return null;
 		}
 

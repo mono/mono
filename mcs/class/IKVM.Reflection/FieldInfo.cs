@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,6 +22,8 @@
   
 */
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace IKVM.Reflection
 {
@@ -133,6 +135,130 @@ namespace IKVM.Reflection
 		internal virtual FieldInfo BindTypeParameters(Type type)
 		{
 			return new GenericFieldInstance(this.DeclaringType.BindTypeParameters(type), this);
+		}
+
+		internal sealed override bool BindingFlagsMatch(BindingFlags flags)
+		{
+			return BindingFlagsMatch(IsPublic, flags, BindingFlags.Public, BindingFlags.NonPublic)
+				&& BindingFlagsMatch(IsStatic, flags, BindingFlags.Static, BindingFlags.Instance);
+		}
+
+		internal sealed override bool BindingFlagsMatchInherited(BindingFlags flags)
+		{
+			return (Attributes & FieldAttributes.FieldAccessMask) > FieldAttributes.Private
+				&& BindingFlagsMatch(IsPublic, flags, BindingFlags.Public, BindingFlags.NonPublic)
+				&& BindingFlagsMatch(IsStatic, flags, BindingFlags.Static | BindingFlags.FlattenHierarchy, BindingFlags.Instance);
+		}
+
+		internal sealed override MemberInfo SetReflectedType(Type type)
+		{
+			return new FieldInfoWithReflectedType(type, this);
+		}
+	}
+
+	sealed class FieldInfoWithReflectedType : FieldInfo
+	{
+		private readonly Type reflectedType;
+		private readonly FieldInfo field;
+
+		internal FieldInfoWithReflectedType(Type reflectedType, FieldInfo field)
+		{
+			Debug.Assert(reflectedType != field.DeclaringType);
+			this.reflectedType = reflectedType;
+			this.field = field;
+		}
+
+		public override FieldAttributes Attributes
+		{
+			get { return field.Attributes; }
+		}
+
+		public override void __GetDataFromRVA(byte[] data, int offset, int length)
+		{
+			field.__GetDataFromRVA(data, offset, length);
+		}
+
+		public override int __FieldRVA
+		{
+			get { return field.__FieldRVA; }
+		}
+
+		public override Object GetRawConstantValue()
+		{
+			return field.GetRawConstantValue();
+		}
+
+		internal override FieldSignature FieldSignature
+		{
+			get { return field.FieldSignature; }
+		}
+
+		public override FieldInfo __GetFieldOnTypeDefinition()
+		{
+			return field.__GetFieldOnTypeDefinition();
+		}
+
+		internal override int ImportTo(Emit.ModuleBuilder module)
+		{
+			return field.ImportTo(module);
+		}
+
+		internal override FieldInfo BindTypeParameters(Type type)
+		{
+			return field.BindTypeParameters(type);
+		}
+
+		public override bool __IsMissing
+		{
+			get { return field.__IsMissing; }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return field.DeclaringType; }
+		}
+
+		public override Type ReflectedType
+		{
+			get { return reflectedType; }
+		}
+
+		public override bool Equals(object obj)
+		{
+			FieldInfoWithReflectedType other = obj as FieldInfoWithReflectedType;
+			return other != null
+				&& other.reflectedType == reflectedType
+				&& other.field == field;
+		}
+
+		public override int GetHashCode()
+		{
+			return reflectedType.GetHashCode() ^ field.GetHashCode();
+		}
+
+		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
+		{
+			return field.GetCustomAttributesData(attributeType);
+		}
+
+		public override int MetadataToken
+		{
+			get { return field.MetadataToken; }
+		}
+
+		public override Module Module
+		{
+			get { return field.Module; }
+		}
+
+		public override string Name
+		{
+			get { return field.Name; }
+		}
+
+		public override string ToString()
+		{
+			return field.ToString();
 		}
 	}
 }

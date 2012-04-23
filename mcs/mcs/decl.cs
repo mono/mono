@@ -939,6 +939,15 @@ namespace Mono.CSharp {
 			GenericTask = 1 << 22
 		}
 
+		//
+		// Some flags can be copied directly from other member
+		//
+		protected const StateFlags SharedStateFlags =
+			StateFlags.CLSCompliant | StateFlags.CLSCompliant_Undetected |
+			StateFlags.Obsolete | StateFlags.Obsolete_Undetected |
+			StateFlags.MissingDependency | StateFlags.MissingDependency_Undetected |
+			StateFlags.HasDynamicElement;
+
 		protected Modifiers modifiers;
 		public StateFlags state;
 		protected IMemberDefinition definition;

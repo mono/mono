@@ -1898,14 +1898,16 @@ namespace IKVM.Reflection.Metadata
 			return methods.ToArray();
 		}
 
-		internal void ComputeFlags(Module module, int token, out bool isPublic, out bool isStatic)
+		internal void ComputeFlags(Module module, int token, out bool isPublic, out bool isNonPrivate, out bool isStatic)
 		{
 			isPublic = false;
+			isNonPrivate = false;
 			isStatic = false;
 			foreach (int i in Filter(token))
 			{
 				MethodBase method = module.ResolveMethod((MethodDefTable.Index << 24) + records[i].Method);
 				isPublic |= method.IsPublic;
+				isNonPrivate |= (method.Attributes & MethodAttributes.MemberAccessMask) > MethodAttributes.Private;
 				isStatic |= method.IsStatic;
 			}
 		}

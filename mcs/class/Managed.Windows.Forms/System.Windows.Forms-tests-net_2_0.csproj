@@ -239,7 +239,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
@@ -258,6 +258,14 @@
     <Reference Include="Accessibility.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Accessibility.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Xml.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

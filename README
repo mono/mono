@@ -4,6 +4,7 @@ This is Mono.
 	1. Installation
 	2. Using Mono
 	3. Directory Roadmap
+	4. git submodules maintenance
 
 1. Compilation and Installation
 ===============================
@@ -586,3 +587,7 @@ This is Mono.
 		same prefix than this module gets.
 
 
+4. Git submodules maintenance
+=============================
+
+Read documentation at http://mono-project.com/Git_Submodule_Maintenance

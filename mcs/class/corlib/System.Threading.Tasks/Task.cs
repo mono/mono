@@ -45,12 +45,12 @@ namespace System.Threading.Tasks
 		// With this attribute each thread has its own value so that it's correct for our Schedule code
 		// and for Parent property.
 		[System.ThreadStatic]
-		static Task         current;
+		static Task current;
 		[System.ThreadStatic]
 		static Action<Task> childWorkAdder;
 		
 		// parent is the outer task in which this task is created
-		protected readonly Task parent;
+		readonly Task parent;
 		// contAncestor is the Task on which this continuation was setup
 		readonly Task contAncestor;
 		
@@ -137,15 +137,15 @@ namespace System.Threading.Tasks
 		}
 
 		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken,
-		               TaskCreationOptions creationOptions, Task parent, Task contAncestor = null)
+		               TaskCreationOptions creationOptions, Task parent = null, Task contAncestor = null)
 		{
-			this.invoker = invoker;
+			this.invoker             = invoker;
 			this.taskCreationOptions = creationOptions;
 			this.state               = state;
 			this.taskId              = Interlocked.Increment (ref id);
 			this.status              = cancellationToken.IsCancellationRequested ? TaskStatus.Canceled : TaskStatus.Created;
 			this.token               = cancellationToken;
-			this.parent              = parent;
+			this.parent              = parent = parent == null ? current : parent;
 			this.contAncestor        = contAncestor;
 
 			// Process taskCreationOptions
@@ -251,7 +251,7 @@ namespace System.Threading.Tasks
 
 		internal Task ContinueWith (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this);
+			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), null, this);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -377,6 +377,11 @@ namespace System.Threading.Tasks
 				cancellationRegistration.Value.Dispose ();
 				cancellationRegistration = null;
 			}
+
+			// If Task are ran inline on the same thread we might trash these values
+			var saveCurrent = current;
+			var saveScheduler = TaskScheduler.Current;
+
 			current = this;
 			TaskScheduler.Current = scheduler;
 			
@@ -397,6 +402,11 @@ namespace System.Threading.Tasks
 			} else {
 				CancelReal ();
 			}
+
+			if (saveCurrent != null)
+				current = saveCurrent;
+			if (saveScheduler != null)
+				TaskScheduler.Current = saveScheduler;
 			Finish ();
 		}
 
@@ -433,13 +443,7 @@ namespace System.Threading.Tasks
 			HandleGenericException (aggregate);
 			return true;
 		}
-/*
-		internal void Execute (Action<Task> childAdder)
-		{
-			childWorkAdder = childAdder;
-			Execute ();
-		}
-*/		
+
 		internal void Execute ()
 		{
 			ThreadStart ();
@@ -461,8 +465,8 @@ namespace System.Threading.Tasks
 			}
 
 			if (childTasks.Signal () && status == TaskStatus.WaitingForChildrenToComplete) {
-				Status = TaskStatus.RanToCompletion;
 				ProcessChildExceptions ();
+				Status = exSlot == null ? TaskStatus.RanToCompletion : TaskStatus.Faulted;
 				ProcessCompleteDelegates ();
 				if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
 					parent.ChildCompleted (this.Exception);
@@ -481,8 +485,10 @@ namespace System.Threading.Tasks
 		internal void Finish ()
 		{
 			// If there was children created and they all finished, we set the countdown
-			if (childTasks != null)
-				childTasks.Signal ();
+			if (childTasks != null) {
+				if (childTasks.Signal ())
+					ProcessChildExceptions (true);
+			}
 			
 			// Don't override Canceled or Faulted
 			if (status == TaskStatus.Running) {
@@ -497,8 +503,10 @@ namespace System.Threading.Tasks
 				ProcessCompleteDelegates ();
 
 			// Reset the current thingies
-			current = null;
-			TaskScheduler.Current = null;
+			if (current == this)
+				current = null;
+			if (TaskScheduler.Current == scheduler)
+				TaskScheduler.Current = null;
 
 			if (cancellationRegistration.HasValue)
 				cancellationRegistration.Value.Dispose ();
@@ -518,7 +526,7 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		void ProcessChildExceptions ()
+		void ProcessChildExceptions (bool isParent = false)
 		{
 			if (exSlot == null || exSlot.ChildExceptions == null)
 				return;
@@ -529,6 +537,11 @@ namespace System.Threading.Tasks
 			AggregateException childEx;
 			while (exSlot.ChildExceptions.TryDequeue (out childEx))
 				exSlot.Exception.AddChildException (childEx);
+
+			if (isParent) {
+				Status = TaskStatus.Faulted;
+				ProcessCompleteDelegates ();			
+			}
 		}
 		#endregion
 		
@@ -553,10 +566,13 @@ namespace System.Threading.Tasks
 			ProcessCompleteDelegates ();
 		}
 
-		internal void WaitOnChildren ()
+		internal bool WaitOnChildren ()
 		{
-			if (Status == TaskStatus.WaitingForChildrenToComplete && childTasks != null)
+			if (Status == TaskStatus.WaitingForChildrenToComplete && childTasks != null) {
 				childTasks.Wait ();
+				return true;
+			}
+			return false;
 		}
 		
 		public void Wait ()
@@ -587,20 +603,19 @@ namespace System.Threading.Tasks
 			bool result = true;
 
 			if (!IsCompleted) {
-				// If the task is ready to be run and we were supposed to wait on it indefinitely, just run it
-				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == -1 && scheduler != null)
+				// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
+				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
 					Execute ();
 
 				if (!IsCompleted) {
-					var evt = new ManualResetEventSlim ();
-					var slot = new ManualEventSlot (evt);
+					var continuation = new ManualResetContinuation ();
 					try {
-						ContinueWith (slot);
-						result = evt.Wait (millisecondsTimeout, cancellationToken);
+						ContinueWith (continuation);
+						result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
 					} finally {
 						if (!result)
-							RemoveContinuation (slot);
-						evt.Dispose ();
+							RemoveContinuation (continuation);
+						continuation.Dispose ();
 					}
 				}
 			}
@@ -646,19 +661,18 @@ namespace System.Threading.Tasks
 			bool result = true;
 			foreach (var t in tasks) {
 				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
 
 				result &= t.Status == TaskStatus.RanToCompletion;
 			}
 
 			if (!result) {
-				var evt = new CountdownEvent (tasks.Length);
-				var slot = new CountdownEventSlot (evt);
+				var continuation = new CountdownContinuation (tasks.Length);
 				try {
 					foreach (var t in tasks)
-						t.ContinueWith (slot);
+						t.ContinueWith (continuation);
 
-					result = evt.Wait (millisecondsTimeout, cancellationToken);
+					result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
 				} finally {
 					List<Exception> exceptions = null;
 
@@ -673,11 +687,11 @@ namespace System.Threading.Tasks
 							else
 								exceptions.Add (new TaskCanceledException (t));
 						} else {
-							t.RemoveContinuation (slot);
+							t.RemoveContinuation (continuation);
 						}
 					}
 
-					evt.Dispose ();
+					continuation.Dispose ();
 
 					if (exceptions != null)
 						throw new AggregateException (exceptions);
@@ -716,24 +730,23 @@ namespace System.Threading.Tasks
 			CheckForNullTasks (tasks);
 
 			if (tasks.Length > 0) {
-				var evt = new ManualResetEventSlim ();
-				var slot = new ManualEventSlot (evt);
+				var continuation = new ManualResetContinuation ();
 				bool result = false;
 				try {
 					for (int i = 0; i < tasks.Length; i++) {
 						var t = tasks[i];
 						if (t.IsCompleted)
 							return i;
-						t.ContinueWith (slot);
+						t.ContinueWith (continuation);
 					}
 
-					if (!(result = evt.Wait (millisecondsTimeout, cancellationToken)))
+					if (!(result = continuation.Event.Wait (millisecondsTimeout, cancellationToken)))
 						return -1;
 				} finally {
 					if (!result)
 						foreach (var t in tasks)
-							t.RemoveContinuation (slot);
-					evt.Dispose ();
+							t.RemoveContinuation (continuation);
+					continuation.Dispose ();
 				}
 			}
 
@@ -762,7 +775,7 @@ namespace System.Threading.Tasks
 		{
 			foreach (var t in tasks)
 				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
 		}
 		#endregion
 		
@@ -873,6 +886,33 @@ namespace System.Threading.Tasks
 			return t;
 		}
 
+		public static Task Delay (int millisecondsDelay)
+		{
+			return Delay (millisecondsDelay, CancellationToken.None);
+		}
+
+		public static Task Delay (TimeSpan delay)
+		{
+			return Delay (CheckTimeout (delay), CancellationToken.None);
+		}
+
+		public static Task Delay (TimeSpan delay, CancellationToken cancellationToken)
+		{
+			return Delay (CheckTimeout (delay), cancellationToken);
+		}
+
+		public static Task Delay (int millisecondsDelay, CancellationToken cancellationToken)
+		{
+			if (millisecondsDelay < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsDelay");
+
+			var task = new Task (TaskActionInvoker.Delay, millisecondsDelay, cancellationToken, TaskCreationOptions.None, null, TaskConstants.Finished);
+			task.SetupScheduler (TaskScheduler.Current);
+			// TODO: Does not guarantee the task will run
+			task.scheduler.QueueTask (task);
+			return task;
+		}
+
 		public static Task<TResult> FromResult<TResult> (TResult result)
 		{
 			var tcs = new TaskCompletionSource<TResult> ();
@@ -949,14 +989,190 @@ namespace System.Threading.Tasks
 			var r = await task.ConfigureAwait (false);
 			return r.Result;
 		}
-		
+
+		public static Task WhenAll (params Task[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAllCore (tasks);
+		}
+
+		public static Task WhenAll (IEnumerable<Task> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			// Call ToList on input enumeration or we end up
+			// enumerating it more than once
+			return WhenAllCore (new List<Task> (tasks));
+		}
+
+		public static Task<TResult[]> WhenAll<TResult> (params Task<TResult>[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAllCore<TResult> (tasks);
+		}
+
+		public static Task<TResult[]> WhenAll<TResult> (IEnumerable<Task<TResult>> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			// Call ToList on input enumeration or we end up
+			// enumerating it more than once
+			return WhenAllCore<TResult> (new List<Task<TResult>> (tasks));
+		}
+
+		internal static Task<TResult[]> WhenAllCore<TResult> (IList<Task<TResult>> tasks)
+		{
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+			}
+
+			var task = new Task<TResult[]> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAllContinuation<TResult> (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
+
+		public static Task<Task> WhenAny (params Task[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore (tasks);
+		}
+
+		public static Task<Task> WhenAny (IEnumerable<Task> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore (new List<Task> (tasks));
+		}
+
+		public static Task<Task<TResult>> WhenAny<TResult> (params Task<TResult>[] tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore<TResult> (tasks);
+		}
+
+		public static Task<Task<TResult>> WhenAny<TResult> (IEnumerable<Task<TResult>> tasks)
+		{
+			if (tasks == null)
+				throw new ArgumentNullException ("tasks");
+
+			return WhenAnyCore<TResult> (new List<Task<TResult>> (tasks));
+		}
+
+		static Task<Task<TResult>> WhenAnyCore<TResult> (IList<Task<TResult>> tasks)
+		{
+			if (tasks.Count == 0)
+				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+
+			int completed_index = -1;
+			for (int i = 0; i < tasks.Count; ++i) {
+				var t = tasks[i];
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				if (t.IsCompleted && completed_index < 0)
+					completed_index = i;
+			}
+
+			var task = new Task<Task<TResult>> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+
+			if (completed_index > 0) {
+				task.TrySetResult (tasks[completed_index]);
+				return task;
+			}
+
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAnyContinuation<Task<TResult>> (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
+
 		public static YieldAwaitable Yield ()
 		{
 			return new YieldAwaitable ();
 		}
 #endif
 
+		internal static Task WhenAllCore (IList<Task> tasks)
+		{
+			bool all_completed = true;
+			foreach (var t in tasks) {
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				all_completed &= t.Status == TaskStatus.RanToCompletion;
+			}
+
+			if (all_completed)
+				return TaskConstants.Finished;
+
+			var task = new Task (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAllContinuation (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
+
+		internal static Task<Task> WhenAnyCore (IList<Task> tasks)
+		{
+			if (tasks.Count == 0)
+				throw new ArgumentException ("The tasks argument contains no tasks", "tasks");
+
+			int completed_index = -1;
+			for (int i = 0; i < tasks.Count; ++i) {
+				var t = tasks [i];
+				if (t == null)
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
+
+				if (t.IsCompleted && completed_index < 0)
+					completed_index = i;
+			}
+
+			var task = new Task<Task> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null, TaskConstants.Finished);
+
+			if (completed_index > 0) {
+				task.TrySetResult (tasks[completed_index]);
+				return task;
+			}
+
+			task.SetupScheduler (TaskScheduler.Current);
+
+			var continuation = new WhenAnyContinuation<Task> (task, tasks);
+			foreach (var t in tasks)
+				t.ContinueWith (continuation);
+
+			return task;
+		}
 		#region Properties
+
+		internal CancellationToken CancellationToken {
+			get {
+				return token;
+			}
+		}
+
 		public static TaskFactory Factory {
 			get {
 				return defaultFactory;

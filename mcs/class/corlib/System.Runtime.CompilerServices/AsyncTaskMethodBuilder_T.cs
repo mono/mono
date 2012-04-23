@@ -76,8 +76,15 @@ namespace System.Runtime.CompilerServices
 
 		public void SetException (Exception exception)
 		{
-			if (!task.TrySetException (new AggregateException (exception)))
-				throw new InvalidOperationException ("The task has already completed");
+			if (exception is OperationCanceledException) {
+				if (Task.TrySetCanceled ())
+					return;
+			} else {
+				if (Task.TrySetException (new AggregateException (exception)))
+					return;
+			}
+
+			throw new InvalidOperationException ("The task has already completed");
 		}
 
 		public void SetStateMachine (IAsyncStateMachine stateMachine)

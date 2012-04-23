@@ -162,13 +162,6 @@ namespace IKVM.Reflection.Writer
 		public const WORD IMAGE_SUBSYSTEM_WINDOWS_GUI = 2;
 		public const WORD IMAGE_SUBSYSTEM_WINDOWS_CUI = 3;
 
-		public const WORD IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA = 0x0020;
-		public const WORD IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE = 0x0040;
-		public const WORD IMAGE_DLLCHARACTERISTICS_NX_COMPAT = 0x0100;
-		public const WORD IMAGE_DLLCHARACTERISTICS_NO_SEH = 0x0400;
-		public const WORD IMAGE_DLLCHARACTERISTICS_APPCONTAINER = 0x1000;
-		public const WORD IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE = 0x8000;
-
 		public WORD Magic = IMAGE_NT_OPTIONAL_HDR32_MAGIC;
 		public BYTE MajorLinkerVersion = 8;
 		public BYTE MinorLinkerVersion = 0;
@@ -180,7 +173,7 @@ namespace IKVM.Reflection.Writer
 		public DWORD BaseOfData;
 		public ULONGLONG ImageBase;
 		public DWORD SectionAlignment = 0x2000;
-		public DWORD FileAlignment = 0x200;
+		public DWORD FileAlignment;
 		public WORD MajorOperatingSystemVersion = 4;
 		public WORD MinorOperatingSystemVersion = 0;
 		public WORD MajorImageVersion = 0;

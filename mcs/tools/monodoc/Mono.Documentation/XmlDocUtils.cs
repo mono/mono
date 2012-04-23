@@ -193,7 +193,7 @@ namespace Mono.Documentation {
 		public static string GetCachedFileName (string cacheDir, string url)
 		{
 			return Path.Combine (cacheDir,
-					HttpUtility.UrlEncode (url).Replace ('/', '+').Replace ("*", "%2a"));
+			                     Uri.EscapeUriString (url).Replace ('/', '+').Replace ("*", "%2a"));
 		}
 	}
 }

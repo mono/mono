@@ -41,7 +41,7 @@ using System.IO;
 namespace MonoTests.System.Net.Http
 {
 	[TestFixture]
-//	[Ignore]
+	[Ignore]
 	public class HttpClientTest
 	{
 		class HttpMessageHandlerMock : HttpMessageHandler
@@ -182,7 +182,6 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		[Ignore]
 		public void Send ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -222,7 +221,6 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		[Ignore]
 		public void Send_Complete_Default ()
 		{
 			var listener = CreateListener (l => {
@@ -301,7 +299,6 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		[Ignore]
 		public void Send_Complete_ClientHandlerSettings ()
 		{
 			var listener = CreateListener (l => {
@@ -356,7 +353,6 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		[Ignore]
 		public void Send_Complete_CustomHeaders ()
 		{
 			var listener = CreateListener (l => {
@@ -512,7 +508,6 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		[Ignore]
 		public void Send_InvalidHandler ()
 		{
 			var mh = new HttpMessageHandlerMock ();

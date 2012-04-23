@@ -29,6 +29,7 @@
 using System.Threading;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace System.Net.Http
 {
@@ -274,6 +275,42 @@ namespace System.Net.Http
 				cancellation_token.Dispose ();
 				cancellation_token = null;
 			}
+		}
+
+		public async Task<byte[]> GetByteArrayAsync (string requestUri)
+		{
+			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			return await resp.Content.ReadAsByteArrayAsync ();
+		}
+
+		public async Task<byte[]> GetByteArrayAsync (Uri requestUri)
+		{
+			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			return await resp.Content.ReadAsByteArrayAsync ();
+		}
+
+		public async Task<Stream> GetStreamAsync (string requestUri)
+		{
+			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			return await resp.Content.ReadAsStreamAsync ();
+		}
+
+		public async Task<Stream> GetStreamAsync (Uri requestUri)
+		{
+			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			return await resp.Content.ReadAsStreamAsync ();
+		}
+
+		public async Task<string> GetStringAsync (string requestUri)
+		{
+			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			return await resp.Content.ReadAsStringAsync ();
+		}
+
+		public async Task<string> GetStringAsync (Uri requestUri)
+		{
+			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			return await resp.Content.ReadAsStringAsync ();
 		}
 	}
 }

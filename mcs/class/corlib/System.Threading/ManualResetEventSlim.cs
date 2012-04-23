@@ -37,8 +37,8 @@ namespace System.Threading
 
 		ManualResetEvent handle;
 		internal AtomicBooleanValue disposed;
-		bool used;
-		bool set;
+		int used;
+		long state;
 
 		public ManualResetEventSlim ()
 			: this (false, 10)
@@ -55,13 +55,13 @@ namespace System.Threading
 			if (spinCount < 0 || spinCount > 2047)
 				throw new ArgumentOutOfRangeException ("spinCount");
 
-			this.set = initialState;
+			this.state = initialState ? 1 : 0;
 			this.spinCount = spinCount;
 		}
 
 		public bool IsSet {
 			get {
-				return set;
+				return (state & 1) == 1;
 			}
 		}
 
@@ -75,32 +75,62 @@ namespace System.Threading
 		{
 			ThrowIfDisposed ();
 
-			set = false;
-			Thread.MemoryBarrier ();
-			if (handle != null) {
-				used = true;
-				Thread.MemoryBarrier ();
-				var tmpHandle = handle;
-				if (tmpHandle != null)
-					tmpHandle.Reset ();
-				Thread.MemoryBarrier ();
-				used = false;
-			}
+			var stamp = UpdateStateWithOp (false);
+			if (handle != null)
+				CommitChangeToHandle (stamp);
 		}
 
 		public void Set ()
 		{
-			set = true;
-			Thread.MemoryBarrier ();
-			if (handle != null) {
-				used = true;
-				Thread.MemoryBarrier ();
-				var tmpHandle = handle;
-				if (tmpHandle != null)
+			var stamp = UpdateStateWithOp (true);
+			if (handle != null)
+				CommitChangeToHandle (stamp);
+		}
+
+		long UpdateStateWithOp (bool set)
+		{
+			long oldValue, newValue;
+			do {
+				oldValue = state;
+				newValue = (long)(((oldValue >> 1) + 1) << 1) | (set ? 1u : 0u);
+			} while (Interlocked.CompareExchange (ref state, newValue, oldValue) != oldValue);
+			return newValue;
+		}
+
+		void CommitChangeToHandle (long stamp)
+		{
+			Interlocked.Increment (ref used);
+			var tmpHandle = handle;
+			if (tmpHandle != null) {
+				// First in all case we carry the operation we were called for
+ 				if ((stamp & 1) == 1)
 					tmpHandle.Set ();
-				Thread.MemoryBarrier ();
-				used = false;
+				else
+					tmpHandle.Reset ();
+
+				/* Then what may happen is that the two suboperations (state change and handle change)
+				 * overlapped with others. In our case it doesn't matter if the two suboperations aren't
+				 * executed together at the same time, the only thing we have to make sure of is that both
+				 * state and handle are synchronized on the last visible state change.
+				 *
+				 * For instance if S is state change and H is handle change, for 3 concurrent operations
+				 * we may have the following serialized timeline: S1 S2 H2 S3 H3 H1
+				 * Which is perfectly fine (all S were converted to H at some stage) but in that case
+				 * we have a mismatch between S and H at the end because the last operations done were
+				 * S3/H1. We thus need to repeat H3 to get to the desired final state.
+				 */
+				long currentState;
+				do {
+					currentState = state;
+					if (currentState != stamp && (stamp & 1) != (currentState & 1)) {
+						if ((currentState & 1) == 1)
+							tmpHandle.Set ();
+						else
+							tmpHandle.Reset ();
+					}
+				} while (currentState != state);
 			}
+			Interlocked.Decrement (ref used);
 		}
 
 		public void Wait ()
@@ -130,10 +160,10 @@ namespace System.Threading
 
 			ThrowIfDisposed ();
 
-			if (!set) {
+			if (!IsSet) {
 				SpinWait wait = new SpinWait ();
 
-				while (!set) {
+				while (!IsSet) {
 					cancellationToken.ThrowIfCancellationRequested ();
 
 					if (wait.Count < spinCount) {
@@ -144,7 +174,7 @@ namespace System.Threading
 					break;
 				}
 
-				if (set)
+				if (IsSet)
 					return true;
 
 				WaitHandle handle = WaitHandle;
@@ -175,14 +205,14 @@ namespace System.Threading
 				if (handle != null)
 					return handle;
 
-				var isSet = set;
-				var mre = new ManualResetEvent (isSet);
+				var isSet = IsSet;
+				var mre = new ManualResetEvent (IsSet);
 				if (Interlocked.CompareExchange (ref handle, mre, null) == null) {
 					//
 					// Ensure the Set has not ran meantime
 					//
-					if (isSet != set) {
-						if (set) {
+					if (isSet != IsSet) {
+						if (IsSet) {
 							mre.Set ();
 						} else {
 							mre.Reset ();
@@ -211,10 +241,10 @@ namespace System.Threading
 
 			if (handle != null) {
 				var tmpHandle = Interlocked.Exchange (ref handle, null);
-				if (used) {
+				if (used > 0) {
 					// A tiny wait (just a few cycles normally) before releasing
 					SpinWait wait = new SpinWait ();
-					while (used)
+					while (used > 0)
 						wait.SpinOnce ();
 				}
 				tmpHandle.Dispose ();

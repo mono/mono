@@ -29,7 +29,7 @@ using System.Threading;
 
 namespace System.Windows.Threading {
 
-	public class DispatcherSynchronizationContext : SynchronizationContext
+	public sealed class DispatcherSynchronizationContext : SynchronizationContext
 	{
 		public DispatcherSynchronizationContext ()
 		{

@@ -106,7 +106,7 @@ endif
 ifdef HAVE_CS_TESTS
 
 $(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
-	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 $(test_response): $(test_sourcefile)
 #	@echo Creating $@ ...

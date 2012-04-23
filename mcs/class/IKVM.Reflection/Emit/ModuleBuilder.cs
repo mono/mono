@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2011 Jeroen Frijters
+  Copyright (C) 2008-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -41,6 +41,8 @@ namespace IKVM.Reflection.Emit
 		private Guid mvid = Guid.NewGuid();
 		private long imageBaseAddress = 0x00400000;
 		private long stackReserve = -1;
+		private int fileAlignment = 0x200;
+		private DllCharacteristics dllCharacteristics = DllCharacteristics.DynamicBase | DllCharacteristics.NoSEH | DllCharacteristics.NXCompat | DllCharacteristics.TerminalServerAware;
 		private readonly AssemblyBuilder asm;
 		internal readonly string moduleName;
 		internal readonly string fileName;
@@ -334,17 +336,16 @@ namespace IKVM.Reflection.Emit
 			ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
 			rec.TypeDefId = type.MetadataToken;
 			rec.TypeName = this.Strings.Add(type.__Name);
+			string ns = type.__Namespace;
+			rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(ns);
 			if (type.IsNested)
 			{
 				rec.Flags = 0;
-				rec.TypeNamespace = 0;
 				rec.Implementation = ExportType(type.DeclaringType);
 			}
 			else
 			{
 				rec.Flags = 0x00200000;	// CorTypeAttr.tdForwarder
-				string ns = type.__Namespace;
-				rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(ns);
 				rec.Implementation = ImportAssemblyRef(type.Assembly);
 			}
 			return 0x27000000 | this.ExportedType.FindOrAddRecord(rec);
@@ -463,6 +464,18 @@ namespace IKVM.Reflection.Emit
 			foreach (Type type in types)
 			{
 				if (type.__Namespace == name.Namespace && type.__Name == name.Name)
+				{
+					return type;
+				}
+			}
+			return null;
+		}
+
+		internal override Type FindTypeIgnoreCase(TypeName lowerCaseName)
+		{
+			foreach (Type type in types)
+			{
+				if (new TypeName(type.__Namespace, type.__Name).ToLowerInvariant() == lowerCaseName)
 				{
 					return type;
 				}
@@ -640,7 +653,7 @@ namespace IKVM.Reflection.Emit
 			int token;
 			if (!typeTokens.TryGetValue(type, out token))
 			{
-				if (type.HasElementType || type.IsGenericTypeInstance)
+				if (type.HasElementType || type.IsGenericTypeInstance || type.__IsFunctionPointer)
 				{
 					ByteBuffer spec = new ByteBuffer(5);
 					Signature.WriteTypeSpec(this, spec, type);
@@ -979,7 +992,8 @@ namespace IKVM.Reflection.Emit
 				{
 					ExportedTypeTable.Record rec = new ExportedTypeTable.Record();
 					rec.Flags = (int)type.Attributes;
-					rec.TypeDefId = type.MetadataToken & 0xFFFFFF;
+					// LAMESPEC ECMA says that TypeDefId is a row index, but it should be a token
+					rec.TypeDefId = type.MetadataToken;
 					rec.TypeName = this.Strings.Add(type.__Name);
 					string ns = type.__Namespace;
 					rec.TypeNamespace = ns == null ? 0 : this.Strings.Add(ns);
@@ -1271,19 +1285,48 @@ namespace IKVM.Reflection.Emit
 			return imageBaseAddress;
 		}
 
-		public override long __StackReserve
+		public new long __StackReserve
 		{
 			get { return stackReserve; }
+			set { stackReserve = value; }
 		}
 
+		protected override long GetStackReserveImpl()
+		{
+			return stackReserve;
+		}
+
+		[Obsolete("Use __StackReserve property.")]
 		public void __SetStackReserve(long stackReserve)
 		{
-			this.stackReserve = stackReserve;
+			__StackReserve = stackReserve;
 		}
 
 		internal ulong GetStackReserve(ulong defaultValue)
 		{
 			return stackReserve == -1 ? defaultValue : (ulong)stackReserve;
+		}
+
+		public new int __FileAlignment
+		{
+			get { return fileAlignment; }
+			set { fileAlignment = value; }
+		}
+
+		protected override int GetFileAlignmentImpl()
+		{
+			return fileAlignment;
+		}
+
+		public new DllCharacteristics __DllCharacteristics
+		{
+			get { return dllCharacteristics; }
+			set { dllCharacteristics = value; }
+		}
+
+		protected override DllCharacteristics GetDllCharacteristicsImpl()
+		{
+			return dllCharacteristics;
 		}
 
 		public override int MDStreamVersion

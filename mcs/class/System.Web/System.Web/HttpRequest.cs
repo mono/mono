@@ -10,6 +10,7 @@
 
 //
 // Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011-2012 Xamarin, Inc (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1057,7 +1058,7 @@ namespace System.Web
 		public string Path {
 			get {
 				if (unescaped_path == null) {
-					unescaped_path = Uri.UnescapeDataString (PathNoValidation);
+					unescaped_path = PathNoValidation;
 #if NET_4_0
 					if (validateRequestNewMode) {
 						RequestValidator validator = RequestValidator.Current;

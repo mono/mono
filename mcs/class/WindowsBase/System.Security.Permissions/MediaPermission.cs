@@ -28,7 +28,7 @@ using System.Security;
 
 namespace System.Security.Permissions {
 
-	public class MediaPermission : CodeAccessPermission, IUnrestrictedPermission
+	public sealed class MediaPermission : CodeAccessPermission, IUnrestrictedPermission
 	{
 		public MediaPermission ()
 		{

@@ -228,10 +228,12 @@ namespace System.Runtime.Serialization.Json
 			int exp = 0;
 			if (PeekChar () < 0)
 				throw new ArgumentException ("Invalid JSON numeric literal; incomplete exponent");
-
+			
+			bool negexp = false;
 			c = PeekChar ();
 			if (c == '-') {
 				ReadChar ();
+				negexp = true;
 			}
 			else if (c == '+')
 				ReadChar ();
@@ -246,6 +248,8 @@ namespace System.Runtime.Serialization.Json
 				ReadChar ();
 			}
 			// it is messy to handle exponent, so I just use Decimal.Parse() with assured JSON format.
+			if (negexp)
+				return new Decimal ((double) (val + frac) / Math.Pow (10, exp));
 			int [] bits = Decimal.GetBits (val + frac);
 			return new Decimal (bits [0], bits [1], bits [2], negative, (byte) exp);
 		}

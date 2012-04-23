@@ -1,6 +1,13 @@
+//
 // TpScheduler.cs
 //
+// Authors:
+//    Jérémie Laval <jeremie dot laval at xamarin dot com>
+//    Marek Safar  <marek.safar@gmail.com>
+//
 // Copyright (c) 2011 Jérémie "Garuma" Laval
+// Copyright 2012 Xamarin Inc (http://www.xamarin.com).
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +30,24 @@
 //
 
 #if NET_4_0 || MOBILE
-using System;
-using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal class TpScheduler: TaskScheduler
+	sealed class TpScheduler: TaskScheduler
 	{
 		static readonly WaitCallback callback = TaskExecuterCallback;
 
 		protected internal override void QueueTask (Task task)
 		{
+			if ((task.CreationOptions & TaskCreationOptions.LongRunning) != 0) {
+				var thread = new Thread (l => ((Task)l).Execute ()) {
+					IsBackground = true
+				};
+
+				thread.Start (task);
+				return;
+			}
+
 			ThreadPool.UnsafeQueueUserWorkItem (callback, task);
 		}
 
@@ -56,12 +70,6 @@ namespace System.Threading.Tasks
 		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 		{
 		    return TryExecuteTask(task);
-		}
-
-		public override int MaximumConcurrencyLevel {
-			get {
-				return base.MaximumConcurrencyLevel;
-			}
 		}
 	}
 }

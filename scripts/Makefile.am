@@ -148,6 +148,7 @@ EXTRA_DIST =			\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
 	peverify.in			\
+	update_submodules		\
 	mcs.in				\
 	gmcs.in				\
 	dmcs.in				\

@@ -835,6 +835,13 @@ namespace Mono.CSharp
 
 			import_cache.Add (type, spec);
 
+			if (kind == MemberKind.TypeParameter) {
+				if (canImportBaseType)
+					ImportTypeParameterTypeConstraints ((TypeParameterSpec) spec, type);
+
+				return spec;
+			}
+
 			//
 			// Two stage setup as the base type can be inflated declaring type or
 			// another nested type inside same declaring type which has not been
@@ -992,7 +999,6 @@ namespace Mono.CSharp
 					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
 				}
 			}
-
 		}
 
 		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)
@@ -1796,7 +1802,15 @@ namespace Mono.CSharp
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
-			foreach (var t in types) {
+			for (int i = 0; i < types.Count; ++i) {
+				var t = types [i];
+
+				//
+				// Report missing types only once per type
+				//
+				if (i > 0 && types.IndexOf (t) < i)
+					continue;
+
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {

@@ -309,6 +309,7 @@ namespace IKVM.Reflection
 		internal abstract void GetTypesImpl(List<Type> list);
 
 		internal abstract Type FindType(TypeName name);
+		internal abstract Type FindTypeIgnoreCase(TypeName lowerCaseName);
 
 		[Obsolete("Please use __ResolveOptionalParameterTypes(int, Type[], Type[], out CustomModifiers[]) instead.")]
 		public Type[] __ResolveOptionalParameterTypes(int metadataToken)
@@ -329,10 +330,6 @@ namespace IKVM.Reflection
 
 		public Type GetType(string className, bool throwOnError, bool ignoreCase)
 		{
-			if (ignoreCase)
-			{
-				throw new NotImplementedException();
-			}
 			TypeNameParser parser = TypeNameParser.Parse(className, throwOnError);
 			if (parser.Error)
 			{
@@ -349,12 +346,15 @@ namespace IKVM.Reflection
 					return null;
 				}
 			}
-			Type type = FindType(TypeName.Split(TypeNameParser.Unescape(parser.FirstNamePart)));
+			TypeName typeName = TypeName.Split(TypeNameParser.Unescape(parser.FirstNamePart));
+			Type type = ignoreCase
+				? FindTypeIgnoreCase(typeName.ToLowerInvariant())
+				: FindType(typeName);
 			if (type == null && __IsMissing)
 			{
 				throw new MissingModuleException((MissingModule)this);
 			}
-			return parser.Expand(type, this.Assembly, throwOnError, className, false);
+			return parser.Expand(type, this.Assembly, throwOnError, className, false, ignoreCase);
 		}
 
 		public Type[] GetTypes()
@@ -442,15 +442,26 @@ namespace IKVM.Reflection
 
 		protected abstract long GetImageBaseImpl();
 
-		public virtual long __StackReserve
+		public long __StackReserve
 		{
-			get { throw new NotSupportedException(); }
+			get { return GetStackReserveImpl(); }
 		}
 
-		public virtual int __FileAlignment
+		protected abstract long GetStackReserveImpl();
+
+		public int __FileAlignment
 		{
-			get { throw new NotSupportedException(); }
+			get { return GetFileAlignmentImpl(); }
 		}
+
+		protected abstract int GetFileAlignmentImpl();
+
+		public DllCharacteristics __DllCharacteristics
+		{
+			get { return GetDllCharacteristicsImpl(); }
+		}
+
+		protected abstract DllCharacteristics GetDllCharacteristicsImpl();
 
 		public virtual byte[] __ModuleHash
 		{
@@ -590,6 +601,21 @@ namespace IKVM.Reflection
 		}
 
 		protected sealed override long GetImageBaseImpl()
+		{
+			throw NotSupportedException();
+		}
+
+		protected sealed override long GetStackReserveImpl()
+		{
+			throw NotSupportedException();
+		}
+
+		protected sealed override int GetFileAlignmentImpl()
+		{
+			throw NotSupportedException();
+		}
+
+		protected override DllCharacteristics GetDllCharacteristicsImpl()
 		{
 			throw NotSupportedException();
 		}

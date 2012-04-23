@@ -87,6 +87,7 @@ System.CodeDom/CodeVariableDeclarationStatementTest.cs
 System.CodeDom/CodeVariableReferenceExpressionTest.cs
 System.CodeDom.Compiler/CodeGeneratorFromTypeTestBase.cs
 System.CodeDom.Compiler/CodeGeneratorOptionsTest.cs
+System.CodeDom.Compiler/CodeGeneratorGenerateFromCompileUnitTest.cs
 System.CodeDom.Compiler/CodeGeneratorTest.cs
 System.CodeDom.Compiler/CodeGeneratorTestBase.cs
 System.CodeDom.Compiler/ExecutorTest.cs
@@ -175,6 +176,7 @@ System.Configuration/SettingsPropertyCollectionTest.cs
 System.Configuration/SettingsPropertyTest.cs
 System.Configuration/SettingsPropertyValueCollectionTest.cs
 System.Configuration/SettingsPropertyValueTest.cs
+System.Diagnostics/DebugTest.cs
 System.Diagnostics/DelimitedListTraceListenerTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
@@ -286,6 +288,7 @@ System.Security.Cryptography.X509Certificates/Pkits_4_16_PrivateCertificateExten
 System.Security.Cryptography.X509Certificates/PublicKeyTest.cs
 System.Security.Cryptography.X509Certificates/X500DistinguishedNameTest.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
+System.Security.Cryptography.X509Certificates/X509Cert20Test.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Test.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollectionTest.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2CollectionTest.cs

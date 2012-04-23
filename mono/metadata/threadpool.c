@@ -1374,7 +1374,7 @@ async_invoke_thread (gpointer data)
 
 	mono_profiler_thread_start (thread->tid);
 	name = (tp->is_io) ? "IO Threadpool worker" : "Threadpool worker";
-	ves_icall_System_Threading_Thread_SetName_internal (thread, mono_string_new (mono_domain_get (), name));
+	mono_thread_set_name_internal (thread, mono_string_new (mono_domain_get (), name), FALSE);
 
 	if (tp_start_func)
 		tp_start_func (tp_hooks_user_data);
@@ -1485,9 +1485,18 @@ async_invoke_thread (gpointer data)
 		while (!must_die && !data && n_naps < 4) {
 			gboolean res;
 
+			InterlockedIncrement (&tp->waiting);
+
+			// Another thread may have added a job into its wsq since the last call to dequeue_or_steal
+			// Check all the queues again before entering the wait loop
+			dequeue_or_steal (tp, &data, wsq);
+			if (data) {
+				InterlockedDecrement (&tp->waiting);
+				break;
+			}
+
 			mono_gc_set_skip_thread (TRUE);
 
-			InterlockedIncrement (&tp->waiting);
 #if defined(__OpenBSD__)
 			while (mono_cq_count (tp->queue) == 0 && (res = mono_sem_wait (&tp->new_job, TRUE)) == -1) {// && errno == EINTR) {
 #else

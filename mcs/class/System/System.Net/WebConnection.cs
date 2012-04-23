@@ -91,7 +91,7 @@ namespace System.Net
                 {
                         Type type = Type.GetType ("MonoTouch.ObjCRuntime.Runtime, monotouch");
 			if (type != null)
-	                        start_wwan = type.GetMethod ("StartWWAN");
+	                        start_wwan = type.GetMethod ("StartWWAN", new Type [] { typeof (System.Uri) });
                 }
 #endif
 

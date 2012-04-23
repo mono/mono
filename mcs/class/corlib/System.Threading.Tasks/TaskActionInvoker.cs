@@ -28,11 +28,14 @@
 
 #if NET_4_0 || MOBILE
 
+using System.Threading;
+
 namespace System.Threading.Tasks
 {
 	abstract class TaskActionInvoker
 	{
 		public static readonly TaskActionInvoker Empty = new EmptyTaskActionInvoker ();
+		public static readonly TaskActionInvoker Delay = new DelayTaskInvoker ();
 		
 		sealed class EmptyTaskActionInvoker : TaskActionInvoker
 		{
@@ -199,12 +202,10 @@ namespace System.Threading.Tasks
 		sealed class ActionTaskSelected : TaskActionInvoker
 		{
 			readonly Action<Task> action;
-			readonly Task[] tasks;
 
-			public ActionTaskSelected (Action<Task> action, Task[] tasks)
+			public ActionTaskSelected (Action<Task> action)
 			{
 				this.action = action;
-				this.tasks = tasks;
 			}
 
 			public override Delegate Action {
@@ -215,8 +216,7 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
-				var result = ((Task<int>) owner).Result;
-				action (tasks [result]);
+				action (((Task<Task>)owner).Result);
 			}
 		}
 
@@ -393,6 +393,22 @@ namespace System.Threading.Tasks
 			}
 		}
 
+		sealed class DelayTaskInvoker : TaskActionInvoker
+		{
+			public override Delegate Action {
+				get {
+					return null;
+				}
+			}
+
+			public override void Invoke (Task owner, object state, Task context)
+			{
+				var mre = new ManualResetEventSlim ();
+				int timeout = (int) state;
+				mre.Wait (timeout, owner.CancellationToken);
+			}
+		}
+
 		public static TaskActionInvoker Create (Action action)
 		{
 			return new ActionInvoke (action);
@@ -465,9 +481,9 @@ namespace System.Threading.Tasks
 
 		#region Used by WhenAny
 
-		public static TaskActionInvoker Create (Action<Task> action, Task[] tasks)
+		public static TaskActionInvoker CreateSelected (Action<Task> action)
 		{
-			return new ActionTaskSelected (action, tasks);
+			return new ActionTaskSelected (action);
 		}
 
 		public static TaskActionInvoker Create<TResult> (Func<Task, TResult> action, Task[] tasks)

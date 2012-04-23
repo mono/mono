@@ -22,8 +22,8 @@ namespace Monodoc {
 		
 		public static string FormatEditUri (string document_identifier, string xpath)
 		{
-			return String.Format ("edit:{0}@{1}", HttpUtility.UrlEncode (document_identifier),
-				HttpUtility.UrlEncode (xpath));
+			return String.Format ("edit:{0}@{1}", Uri.EscapeUriString (document_identifier),
+				Uri.EscapeUriString (xpath));
 		}
 		
 		public static string GetXPath (XPathNavigator n)
@@ -157,8 +157,8 @@ namespace Monodoc {
 			if (parts.Length != 2)
 				throw new Exception (String.Format ("invalid editing url {0}", parts.Length));
 			
-			string xp = HttpUtility.UrlDecode (parts [1]);
-			parts = HttpUtility.UrlDecode (parts [0]).Substring ("edit:".Length).Split ('@');
+			string xp = Uri.UnescapeDataString (parts [1]);
+			parts = Uri.UnescapeDataString (parts [0]).Substring ("edit:".Length).Split ('@');
 			if (parts.Length == 1) {
 				string p = parts[0];
 				parts = new string[2];

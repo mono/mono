@@ -496,6 +496,20 @@ namespace Mono.CSharp {
 				missing.AddRange (m);
 			}
 
+			if (Arity > 0) {
+				foreach (var tp in GenericDefinition.TypeParameters) {
+					var m = tp.GetMissingDependencies ();
+
+					if (m == null)
+						continue;
+
+					if (missing == null)
+						missing = new List<TypeSpec> ();
+
+					missing.AddRange (m);
+				}
+			}
+
 			return missing;			
 		}
 
@@ -1196,7 +1210,7 @@ namespace Mono.CSharp {
 						Report.Error (1983, Location, "The return type of an async method must be void, Task, or Task<T>");
 					}
 
-					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType);
+					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, Location);
 					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 				}
 			}

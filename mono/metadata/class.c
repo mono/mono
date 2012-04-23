@@ -1388,7 +1388,11 @@ mono_class_setup_fields (MonoClass *class)
 	explicit_size = mono_metadata_packing_from_typedef (class->image, class->type_token, &packing_size, &real_size);
 
 	if (explicit_size) {
-		g_assert ((packing_size & 0xfffffff0) == 0);
+		if ((packing_size & 0xfffffff0) != 0) {
+			char *err_msg = g_strdup_printf ("Could not load struct '%s' with packing size %d >= 16", class->name, packing_size);
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, err_msg);
+			return;
+		}
 		class->packing_size = packing_size;
 		real_size += class->instance_size;
 	}
@@ -2407,7 +2411,7 @@ mono_unload_interface_ids (MonoBitSet *bitset)
 void
 mono_unload_interface_id (MonoClass *class)
 {
-	if (class->interface_id) {
+	if (global_interface_bitset && class->interface_id) {
 		mono_loader_lock ();
 		mono_bitset_clear (global_interface_bitset, class->interface_id);
 		mono_loader_unlock ();
@@ -9021,6 +9025,7 @@ mono_classes_cleanup (void)
 {
 	if (global_interface_bitset)
 		mono_bitset_free (global_interface_bitset);
+	global_interface_bitset = NULL;
 }
 
 /**

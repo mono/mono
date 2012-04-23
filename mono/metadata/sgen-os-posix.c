@@ -51,6 +51,7 @@ static MonoSemType suspend_ack_semaphore;
 static MonoSemType *suspend_ack_semaphore_ptr;
 
 static sigset_t suspend_signal_mask;
+static sigset_t suspend_ack_signal_mask;
 
 static void
 suspend_thread (SgenThreadInfo *info, void *context)
@@ -67,12 +68,12 @@ suspend_thread (SgenThreadInfo *info, void *context)
 
 	info->stopped_domain = mono_domain_get ();
 	info->stopped_ip = context ? (gpointer) ARCH_SIGCTX_IP (context) : NULL;
-	stop_count = mono_sgen_global_stop_count;
+	stop_count = sgen_global_stop_count;
 	/* duplicate signal */
 	if (0 && info->stop_count == stop_count)
 		return;
 
-	mono_sgen_fill_thread_info_for_suspend (info);
+	sgen_fill_thread_info_for_suspend (info);
 
 	stack_start = context ? (char*) ARCH_SIGCTX_SP (context) - REDZONE_SIZE : NULL;
 	/* If stack_start is not within the limits, then don't set it
@@ -104,6 +105,14 @@ suspend_thread (SgenThreadInfo *info, void *context)
 		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, context);
 
 	DEBUG (4, fprintf (gc_debug_file, "Posting suspend_ack_semaphore for suspend from %p %p\n", info, (gpointer)mono_native_thread_id_get ()));
+
+	/*
+	Block the restart signal. 
+	We need to block the restart signal while posting to the suspend_ack semaphore or we race to sigsuspend,
+	which might miss the signal and get stuck.
+	*/
+	pthread_sigmask (SIG_BLOCK, &suspend_ack_signal_mask, NULL);
+
 	/* notify the waiting thread */
 	MONO_SEM_POST (suspend_ack_semaphore_ptr);
 	info->stop_count = stop_count;
@@ -113,6 +122,9 @@ suspend_thread (SgenThreadInfo *info, void *context)
 		info->signal = 0;
 		sigsuspend (&suspend_signal_mask);
 	} while (info->signal != restart_signal_num && info->doing_handshake);
+
+	/* Unblock the restart signal. */
+	pthread_sigmask (SIG_UNBLOCK, &suspend_ack_signal_mask, NULL);
 
 	DEBUG (4, fprintf (gc_debug_file, "Posting suspend_ack_semaphore for resume from %p %p\n", info, (gpointer)mono_native_thread_id_get ()));
 	/* notify the waiting thread */
@@ -145,6 +157,15 @@ restart_handler (int sig)
 	int old_errno = errno;
 
 	info = mono_thread_info_current ();
+	/*
+	If the thread info is null is means we're currently in the process of cleaning up,
+	the pthread destructor has already kicked in and it has explicitly invoked the suspend handler.
+	
+	This means this thread has been suspended, TLS is dead, so the only option we have is to
+	rely on pthread_self () and seatch over the thread list.
+	*/
+	if (!info)
+		info = mono_thread_info_lookup (pthread_self ());
 
 	/*
 	 * If a thread is dying there might be no thread info.  In
@@ -154,24 +175,23 @@ restart_handler (int sig)
 		info->signal = restart_signal_num;
 		DEBUG (4, fprintf (gc_debug_file, "Restart handler in %p %p\n", info, (gpointer)mono_native_thread_id_get ()));
 	}
-
 	errno = old_errno;
 }
 
 gboolean
-mono_sgen_resume_thread (SgenThreadInfo *info)
+sgen_resume_thread (SgenThreadInfo *info)
 {
 	return mono_threads_pthread_kill (info, restart_signal_num) == 0;
 }
 
 gboolean
-mono_sgen_suspend_thread (SgenThreadInfo *info)
+sgen_suspend_thread (SgenThreadInfo *info)
 {
 	return mono_threads_pthread_kill (info, suspend_signal_num) == 0;
 }
 
 void
-mono_sgen_wait_for_suspend_ack (int count)
+sgen_wait_for_suspend_ack (int count)
 {
 	int i, result;
 
@@ -185,7 +205,7 @@ mono_sgen_wait_for_suspend_ack (int count)
 }
 
 gboolean
-mono_sgen_park_current_thread_if_doing_handshake (SgenThreadInfo *p)
+sgen_park_current_thread_if_doing_handshake (SgenThreadInfo *p)
 {
     if (!p->doing_handshake)
 	    return FALSE;
@@ -195,7 +215,7 @@ mono_sgen_park_current_thread_if_doing_handshake (SgenThreadInfo *p)
 }
 
 int
-mono_sgen_thread_handshake (BOOL suspend)
+sgen_thread_handshake (BOOL suspend)
 {
 	int count, result;
 	SgenThreadInfo *info;
@@ -227,13 +247,13 @@ mono_sgen_thread_handshake (BOOL suspend)
 		}
 	} END_FOREACH_THREAD_SAFE
 
-	mono_sgen_wait_for_suspend_ack (count);
+	sgen_wait_for_suspend_ack (count);
 
 	return count;
 }
 
 void
-mono_sgen_os_init (void)
+sgen_os_init (void)
 {
 	struct sigaction sinfo;
 
@@ -254,6 +274,10 @@ mono_sgen_os_init (void)
 
 	sigfillset (&suspend_signal_mask);
 	sigdelset (&suspend_signal_mask, restart_signal_num);
+
+	sigemptyset (&suspend_ack_signal_mask);
+	sigaddset (&suspend_ack_signal_mask, restart_signal_num);
+	
 }
 
 int

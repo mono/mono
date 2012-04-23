@@ -589,6 +589,26 @@ namespace IKVM.Reflection.Reader
 			return type;
 		}
 
+		internal override Type FindTypeIgnoreCase(TypeName lowerCaseName)
+		{
+			PopulateTypeDef();
+			foreach (Type type in types.Values)
+			{
+				if (new TypeName(type.__Namespace, type.__Name).ToLowerInvariant() == lowerCaseName)
+				{
+					return type;
+				}
+			}
+			foreach (TypeName name in forwardedTypes.Keys)
+			{
+				if (name.ToLowerInvariant() == lowerCaseName)
+				{
+					return forwardedTypes[name].GetType(this, name);
+				}
+			}
+			return null;
+		}
+
 		private Exception TokenOutOfRangeException(int metadataToken)
 		{
 			return new ArgumentOutOfRangeException("metadataToken", String.Format("Token 0x{0:x8} is not valid in the scope of module {1}.", metadataToken, this.Name));
@@ -1220,14 +1240,19 @@ namespace IKVM.Reflection.Reader
 			return (long)peFile.OptionalHeader.ImageBase;
 		}
 
-		public override long __StackReserve
+		protected override long GetStackReserveImpl()
 		{
-			get { return (long)peFile.OptionalHeader.SizeOfStackReserve; }
+			return (long)peFile.OptionalHeader.SizeOfStackReserve;
 		}
 
-		public override int __FileAlignment
+		protected override int GetFileAlignmentImpl()
 		{
-			get { return (int)peFile.OptionalHeader.FileAlignment; }
+			return (int)peFile.OptionalHeader.FileAlignment;
+		}
+
+		protected override DllCharacteristics GetDllCharacteristicsImpl()
+		{
+			return (DllCharacteristics)peFile.OptionalHeader.DllCharacteristics;
 		}
 
 		public override int __EntryPointRVA

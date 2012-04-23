@@ -1573,7 +1573,6 @@ System.Threading.Tasks/TaskCanceledException.cs
 System.Threading.Tasks/Task_T.cs
 System.Threading.Tasks/Task.cs
 System.Threading.Tasks/TaskCompletionQueue.cs
-System.Threading.Tasks/EventSlots.cs
 System.Threading.Tasks/TaskExceptionSlot.cs
 System.Threading.Tasks/TaskActionInvoker.cs
 System.Threading.Tasks/TaskDebuggerView.cs

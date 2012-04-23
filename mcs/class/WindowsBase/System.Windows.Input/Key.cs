@@ -233,6 +233,7 @@ namespace System.Windows.Input {
 		DbeDetermineString = NoName,
 		Pa1,
 		DbeEnterDialogConversionMode = Pa1,
-		OemClear
+		OemClear,
+		DeadCharProcessed
 	}
 }

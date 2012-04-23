@@ -96,7 +96,6 @@
    <Compile Include="Test\System\DecimalTest2.cs" />
    <Compile Include="Test\System\DecimalTest.cs" />
    <Compile Include="Test\System.Diagnostics\DebuggerDisplayAttributeTest.cs" />
-   <Compile Include="Test\System.Diagnostics\DebugTest.cs" />
    <Compile Include="Test\System.Diagnostics\StackFrameTest.cs" />
    <Compile Include="Test\System.Diagnostics\StackTraceTest.cs" />
    <Compile Include="Test\System.Diagnostics.Contracts\ContractAssertTest.cs" />
@@ -308,7 +307,6 @@
    <Compile Include="Test\System.Security.Cryptography\TripleDESTest.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509CapiTest.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509CertificateTest.cs" />
-   <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509Cert20Test.cs" />
    <Compile Include="Test\System.Security.Cryptography.X509Certificates\X509SpcTest.cs" />
    <Compile Include="Test\System.Security\HostSecurityManagerTest.cs" />
    <Compile Include="Test\System.Security\NamedPermissionSetTest.cs" />
@@ -521,13 +519,17 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="./../../class/lib/net_4_0/mscorlib.dll">
+    <Reference Include="./../../class/lib/net_4_0/mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_4_0/mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="./../../class/lib/net_4_0/Mono.Posix.dll">
+    <Reference Include="Mono.Posix.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/Mono.Posix.dll</HintPath>
+      <HintPath>Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

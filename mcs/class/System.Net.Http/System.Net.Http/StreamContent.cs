@@ -53,6 +53,11 @@ namespace System.Net.Http
 			this.bufferSize = bufferSize;
 		}
 
+		protected override Task<Stream> CreateContentReadStreamAsync ()
+		{
+			return Task.FromResult (content);
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {

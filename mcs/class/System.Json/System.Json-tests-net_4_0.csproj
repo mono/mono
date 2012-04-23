@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;ASPNETMVC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
@@ -31,7 +31,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;ASPNETMVC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
@@ -52,7 +52,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
@@ -72,9 +72,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Core.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Runtime.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceModel.Web.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.ServiceModel.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 
@@ -82,6 +90,11 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
+    <ItemGroup>
+    <EmbeddedResource Include="System.Json.Properties.Resources.resources">
+       <LogicalName>System.Json.Properties.Resources.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
 

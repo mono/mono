@@ -1,4 +1,5 @@
 System.Net.Http/ByteArrayContentTest.cs
+System.Net.Http/FormUrlEncodedContentTest.cs
 System.Net.Http/HttpClientHandlerTest.cs
 System.Net.Http/HttpClientTest.cs
 System.Net.Http/HttpMethodTest.cs
@@ -8,6 +9,7 @@ System.Net.Http/StreamContentTest.cs
 System.Net.Http/StringContentTest.cs
 System.Net.Http.Headers/AuthenticationHeaderValueTest.cs
 System.Net.Http.Headers/CacheControlHeaderValueTest.cs
+System.Net.Http.Headers/ContentDispositionHeaderValueTest.cs
 System.Net.Http.Headers/ContentRangeHeaderValueTest.cs
 System.Net.Http.Headers/EntityTagHeaderValueTest.cs
 System.Net.Http.Headers/HttpHeadersTest.cs

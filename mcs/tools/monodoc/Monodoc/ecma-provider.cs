@@ -26,7 +26,9 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Text;
+using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using Mono.Lucene.Net.Index;
 using Mono.Lucene.Net.Documents;
 
@@ -135,6 +137,73 @@ public static class EcmaDoc {
 		return type;
 	}
 
+	// Lala
+	static bool IsItReallyAGenericType (string type)
+	{
+		switch (type) {
+		case "Type":
+		case "TimeZone":
+		case "TimeZoneInfo":
+		case "TimeSpan":
+		case "TypeReference":
+		case "TypeCode":
+		case "TimeZoneInfo+AdjustmentRule":
+		case "TimeZoneInfo+TransitionTime":
+			return false;
+		}
+		if (type.StartsWith ("Tuple"))
+			return false;
+		return true;
+	}
+
+	public static string ConvertFromCTSName (string ctsType)
+	{
+		if (string.IsNullOrEmpty (ctsType))
+			return string.Empty;
+
+		// Most normal type should have a namespace part and thus a point in their name
+		if (ctsType.IndexOf ('.') != -1)
+			return ctsType;
+
+		if (ctsType.EndsWith ("*"))
+			return ConvertFromCTSName(ctsType.Substring(0, ctsType.Length - 1)) + "*";
+		if (ctsType.EndsWith ("&"))
+			return ConvertFromCTSName(ctsType.Substring(0, ctsType.Length - 1)) + "&";
+		if (ctsType.EndsWith ("]")) { // Array may be multidimensional
+			var idx = ctsType.LastIndexOf ('[');
+			return ConvertFromCTSName (ctsType.Substring (0, idx)) + ctsType.Substring (idx);
+		}
+
+		// Big hack here, we tentatively try to say if a type is a generic when it starts with a upper case T
+		if ((char.IsUpper (ctsType, 0) && ctsType.Length == 1) || (ctsType[0] == 'T' && IsItReallyAGenericType (ctsType)))
+			return ctsType;
+
+		switch (ctsType) {
+		case "byte": return "System.Byte";
+		case "sbyte": return "System.SByte";
+		case "short": return "System.Int16";
+		case "int": return "System.Int32";
+		case "long": return "System.Int64";
+			
+		case "ushort": return "System.UInt16";
+		case "uint": return "System.UInt32";
+		case "ulong": return "System.UInt64";
+			
+		case "float":  return "System.Single";
+		case "double":  return "System.Double";
+		case "decimal": return "System.Decimal";
+		case "bool": return "System.Boolean";
+		case "char":    return "System.Char";
+		case "string":  return "System.String";
+			
+		case "object":  return "System.Object";
+		case "void":  return "System.Void";
+		}
+
+		// If we arrive here, the type was probably stripped of its 'System.'
+		return "System." + ctsType;
+	}
+
 	internal static string GetNamespaceFile (string dir, string ns)
 	{
 		string nsxml = Path.Combine (dir, "ns-" + ns + ".xml");
@@ -179,7 +248,7 @@ public static class EcmaDoc {
 	{
 		XmlNodeList parameters = member.SelectNodes ("Parameters/Parameter");
 		if (parameters.Count == 0)
-			return "";
+			return member.SelectSingleNode ("MemberType").InnerText != "Property" ? "()" : "";
 		StringBuilder args = new StringBuilder ();
 		args.Append ("(");
 		args.Append (XmlDocUtils.ToTypeName (parameters [0].Attributes ["Type"].Value, member));
@@ -1125,7 +1194,7 @@ public class EcmaHelpSource : HelpSource {
 
 	static string ToEscapedMemberName (string membername)
 	{
-		return ToEscapedName (membername, "``");
+		return ToEscapedName (membername, "`");
 	}
 	
 	public override string GetNodeXPath (XPathNavigator n)
@@ -1998,6 +2067,63 @@ public class EcmaHelpSource : HelpSource {
 			}
 		}
 	}
+
+	IEnumerable<string> ExtractArguments (string rawArgList)
+	{
+		var sb = new System.Text.StringBuilder ();
+		int genericDepth = 0;
+		int arrayDepth = 0;
+
+		for (int i = 0; i < rawArgList.Length; i++) {
+			char c = rawArgList[i];
+
+			switch (c) {
+			case ',':
+				if (genericDepth == 0 && arrayDepth == 0) {
+					yield return sb.ToString ();
+					sb.Clear ();
+					continue;
+				}
+				break;
+			case '<':
+				genericDepth++;
+				break;
+			case '>':
+				genericDepth--;
+				break;
+			case '[':
+				arrayDepth++;
+				break;
+			case ']':
+				arrayDepth--;
+				break;
+			}
+			sb.Append (c);
+		}
+		if (sb.Length > 0)
+			yield return sb.ToString ();
+	}
+
+	// Caption is what you see on a tree node, either SomeName or SomeName(ArgList)
+	void TryCreateXPathPredicateFragment (string caption, out string name, out string argListPredicate)
+	{
+		name = argListPredicate = null;
+		int parenIdx = caption.IndexOf ('(');
+		// In case of simple name, there is no need for processing
+		if (parenIdx == -1) {
+			name = caption;
+			return;
+		}
+		name = caption.Substring (0, parenIdx);
+		// Now we create a xpath predicate which will check for all the args in the argsList
+		var rawArgList = caption.Substring (parenIdx + 1, caption.Length - parenIdx - 2); // Only take what's inside the parens
+		if (string.IsNullOrEmpty (rawArgList))
+			return;
+
+		var argList = ExtractArguments (rawArgList).Select (arg => arg.Trim ()).Select (type => EcmaDoc.ConvertFromCTSName (type));
+		argListPredicate = "and " + argList.Select (type => string.Format ("Parameters/Parameter[@Type='{0}']", type)).Aggregate ((e1, e2) => e1 + " and " + e2);
+	}
+
 	//
 	// Create list of documents for searching
 	//
@@ -2046,22 +2172,50 @@ public class EcmaHelpSource : HelpSource {
 						
 						if (c.Element == "*")
 							continue;
-						int i = 1;
 						const float innerTypeBoost = 0.2f;
 
-						foreach (Node nc in c.Nodes) {
-							// Disable constructors indexing as it's often "polluting" search queries
-							// because it has the same hottext than standard types
-							if (c.Caption == "Constructors")
-								continue;
+						var ncnodes = c.Nodes.Cast<Node> ();
+						// The rationale is that we need to properly handle method overloads
+						// so for those method node which have children, flatten them
+						if (c.Caption == "Methods") {
+							ncnodes = ncnodes
+								.Where (n => n.Nodes == null || n.Nodes.Count == 0)
+								.Concat (ncnodes.Where (n => n.Nodes.Count > 0).SelectMany (n => n.Nodes.Cast<Node> ()));
+						} else if (c.Caption == "Operators") {
+							ncnodes = ncnodes
+								.Where (n => n.Caption != "Conversion")
+								.Concat (ncnodes.Where (n => n.Caption == "Conversion").SelectMany (n => n.Nodes.Cast<Node> ()));
+						}
+						foreach (Node nc in ncnodes) {
 							//xpath to the docs xml node
 							string xpath;
-							if (c.Caption == "Constructors")
-								xpath = String.Format ("/Type/Members/Member[{0}]/Docs", i++);
-							else if (c.Caption == "Operators")
-								xpath = String.Format ("/Type/Members/Member[@MemberName='op_{0}']/Docs", nc.Caption);
-							else
+							string name, argListPredicate;
+
+							switch (c.Caption) {
+							case "Constructors":
+								TryCreateXPathPredicateFragment (nc.Caption, out name, out argListPredicate);
+								xpath = String.Format ("/Type/Members/Member[@MemberName='.ctor'{0}]/Docs", argListPredicate ?? string.Empty);
+								break;
+							case "Operators":
+								// The first case are explicit and implicit conversion operators which are grouped specifically
+								if (nc.Caption.IndexOf (" to ") != -1) {
+									var convArgs = nc.Caption.Split (new[] { " to " }, StringSplitOptions.None);
+									xpath = String.Format ("/Type/Members/Member[(@MemberName='op_Explicit' or @MemberName='op_Implicit')" +
+									                       " and ReturnValue/ReturnType='{0}'" +
+									                       " and Parameters/Parameter[@Type='{1}']]/Docs",
+									                       EcmaDoc.ConvertFromCTSName (convArgs[1]), EcmaDoc.ConvertFromCTSName (convArgs[0]));
+								} else {
+									xpath = String.Format ("/Type/Members/Member[@MemberName='op_{0}']/Docs", nc.Caption);
+								}
+								break;
+							case "Methods":
+								TryCreateXPathPredicateFragment (nc.Caption, out name, out argListPredicate);
+								xpath = String.Format ("/Type/Members/Member[@MemberName='{0}'{1}]/Docs", name, argListPredicate ?? string.Empty);
+								break;
+							default:
 								xpath = String.Format ("/Type/Members/Member[@MemberName='{0}']/Docs", nc.Caption);
+								break;
+							}
 							//construct url of the form M:Array.Sort
 							string urlnc;
 							if (c.Caption == "Constructors")
@@ -2085,16 +2239,25 @@ public class EcmaHelpSource : HelpSource {
 							case 'O':
 								doc_nod.title += " Operator";
 								break;
+							case 'C':
+								doc_nod.title += " Constructor";
+								break;
 							default:
 								break;
 							}
 							doc_nod.fulltitle = string.Format ("{0}.{1}::{2}", ns_node.Caption, typename, nc.Caption);
-							//dont add the parameters to the hottext
-							int ppos = nc.Caption.IndexOf ('(');
-							if (ppos != -1)
-								doc_nod.hottext =  nc.Caption.Substring (0, ppos);
-							else
-								doc_nod.hottext = nc.Caption;
+							// Disable constructors hottext indexing as it's often "polluting" search queries
+							// because it has the same hottext than standard types
+							if (c.Caption != "Constructors") {
+								//dont add the parameters to the hottext
+								int ppos = nc.Caption.IndexOf ('(');
+								if (ppos != -1)
+									doc_nod.hottext =  nc.Caption.Substring (0, ppos);
+								else
+									doc_nod.hottext = nc.Caption;
+							} else {
+								doc_nod.hottext = string.Empty;
+							}
 
 							doc_nod.url = urlnc;
 
@@ -2108,7 +2271,7 @@ public class EcmaHelpSource : HelpSource {
 							GetTextFromNode (xmln, text);
 							doc_nod.text = text.ToString ();
 
-							text = new StringBuilder ();
+							text.Clear ();
 							GetExamples (xmln, text);
 							doc_nod.examples = text.ToString ();
 

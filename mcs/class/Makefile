@@ -179,7 +179,6 @@ net_4_0_dirs := \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
 	System.Runtime.DurableInstancing \
-	Mono.CodeContracts \
 	Mono.Parallel \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data \
@@ -193,7 +192,15 @@ net_4_0_only_dirs := \
 net_4_5_dirs := \
 	System.Threading.Tasks.Dataflow \
 	System.ComponentModel.Composition.4.5 \
-	System.Net.Http
+	System.Net.Http	\
+	System.Web.Razor \
+	System.Web.WebPages.Deployment \
+	System.Web.WebPages \
+	System.Web.WebPages.Razor \
+	System.Web.Mvc3 \
+	System.Net.Http.Formatting \
+	System.Web.Http \
+	Mono.CodeContracts
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)

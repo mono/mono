@@ -2,8 +2,9 @@
 // X509CertificateCollection2Test.cs 
 //	- NUnit tests for X509CertificateCollection2
 //
-// Author:
+// Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	David Ferguson  <davecferguson@gmail.com>
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
@@ -894,6 +895,48 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			foreach (object o in c) {
 				Assert.IsTrue ((o is X509Certificate), "X509Certificate");
 			}
+		}
+
+		[Test]
+		public void X509Certificate2CollectionFindBySubjectName_Test ()
+		{
+			// Created with mono makecert
+			// makecert -n "O=Root, CN=MyCNName, T=SomeElse" -r <filename>
+			const string Cert = "MIIB6zCCAVSgAwIBAgIQEshQw4bf1kSsYsUoLCjlpTANBgkqhkiG9w0BAQUFADA1MQ0wCwYDVQQKEwRSb290MREwDwYDVQQDEwhNeUNOTmFtZTERMA8GA1UEDBMIU29tZUVsc2UwHhcNMTIwMzE1MTUzNjE0WhcNMzkxMjMxMjM1OTU5WjA1MQ0wCwYDVQQKEwRSb290MREwDwYDVQQDEwhNeUNOTmFtZTERMA8GA1UEDBMIU29tZUVsc2UwgZ0wDQYJKoZIhvcNAQEBBQADgYsAMIGHAoGBAI8A3ay+oRKRBAD4oojA2s4feHBHn5OafJ+Vxap7wsd3IF/qBrXdnFLxfvLltCSZDarajwTjxX2rhT7Q0hm3Yyy6DnyaMoL8u//c6HCv47SFNJ4JEgu2WP9M/xNU2m+JiABX+K/nwoWfE1VIYueJWL9ftCBOG099QBCsCrpdFUcbAgERMA0GCSqGSIb3DQEBBQUAA4GBAHV+uMPliZPhfLdcMGIbYQnWY2m4YrU/IvqZK4HTKyzG/heAp7+OvkGiC0YJHtvWehgZUV9ukVEbl93rCKmXlb6BuPgN60U1iLYJQ9nAVHm7fRoAjvjDj3CGFtmYb81sYu8sc5GHqsCbvTKHwW/x2O3uLJBM5ApDlcczmgdm8xqQ";
+
+			var cerBytes = Convert.FromBase64String (Cert);
+			var cert = new X509Certificate2 (cerBytes);
+			var collection = new X509Certificate2Collection ();
+
+			var found = collection.Find (X509FindType.FindBySubjectName, "SomeElse", false);
+			Assert.IsEmpty (found, "empty");
+			
+			collection.Add (cert);
+
+			collection.Find (X509FindType.FindBySubjectName, "T=SomeElse", false);
+			Assert.IsEmpty (found, "with prefix");
+			
+			found = collection.Find (X509FindType.FindBySubjectName, "SomeElse", false);
+			Assert.That (found.Count == 1, "full");
+			
+			found = collection.Find (X509FindType.FindBySubjectName, "Else", false);
+			Assert.That (found.Count == 1, "partial");
+			
+			Assert.That (found [0].SubjectName.Name.Contains ("O=Root"));
+			Assert.That (found [0].SubjectName.Name.Contains ("T=SomeElse"));
+			Assert.That (found [0].SubjectName.Name.Contains ("CN=MyCNName"));
+			found = collection.Find (X509FindType.FindBySubjectName, "MyCNName", false);
+			Assert.IsTrue (found.Count == 1);
+			Assert.That (found [0].SubjectName.Name.Contains ("O=Root"));
+			Assert.That (found [0].SubjectName.Name.Contains ("T=SomeElse"));
+			Assert.That (found [0].SubjectName.Name.Contains ("CN=MyCNName"));
+			found = collection.Find (X509FindType.FindBySubjectName, "Root", false);
+			Assert.IsTrue (found.Count == 1);
+			Assert.That (found [0].SubjectName.Name.Contains ("O=Root"));
+			Assert.That (found [0].SubjectName.Name.Contains ("T=SomeElse"));
+			Assert.That (found [0].SubjectName.Name.Contains ("CN=MyCNName"));
+			found = collection.Find (X509FindType.FindBySubjectName, "SomeRandomStringThatDoesn'tExist", false);
+			Assert.IsEmpty (found);
 		}
 	}
 }

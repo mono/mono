@@ -72,17 +72,7 @@ namespace System.Net.Http.Headers
 				if (parameters == null)
 					parameters = new List<NameValueHeaderValue> ();
 
-				var found = parameters.Find (l => string.Equals (l.Name, "charset", StringComparison.OrdinalIgnoreCase));
-				if (string.IsNullOrEmpty (value)) {
-					if (found != null)
-						parameters.Remove (found);
-				} else {
-					if (found != null) {
-						found.Value = value;
-					} else {
-						parameters.Add (new NameValueHeaderValue ("charset", value));
-					}
-				}
+				parameters.SetValue ("charset", value);
 			}
 		}
 

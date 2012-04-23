@@ -694,10 +694,46 @@ namespace Mono.Debugger.Soft
 					m [i] = vm.GetMethod (ids [i]);
 				return m;
 			} else {
-				if (flags != (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.NonPublic))
+				if ((flags & BindingFlags.IgnoreCase) != 0) {
+					flags &= ~BindingFlags.IgnoreCase;
+					ignoreCase = true;
+				}
+				
+				if (flags == BindingFlags.Default)
+					flags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.Static;
+				
+				MethodAttributes access = (MethodAttributes) 0;
+				bool matchInstance = false;
+				bool matchStatic = false;
+				
+				if ((flags & BindingFlags.NonPublic) != 0) {
+					access |= MethodAttributes.Private;
+					flags &= ~BindingFlags.NonPublic;
+				}
+				if ((flags & BindingFlags.Public) != 0) {
+					access |= MethodAttributes.Public;
+					flags &= ~BindingFlags.Public;
+				}
+				if ((flags & BindingFlags.Instance) != 0) {
+					flags &= ~BindingFlags.Instance;
+					matchInstance = true;
+				}
+				if ((flags & BindingFlags.Static) != 0) {
+					flags &= ~BindingFlags.Static;
+					matchStatic = true;
+				}
+				
+				if ((int) flags != 0)
 					throw new NotImplementedException ();
+				
 				var res = new List<MethodMirror> ();
 				foreach (MethodMirror m in GetMethods ()) {
+					if ((m.Attributes & access) == (MethodAttributes) 0)
+						continue;
+					
+					if (!((matchStatic && m.IsStatic) || (matchInstance && !m.IsStatic)))
+						continue;
+					
 					if ((!ignoreCase && m.Name == name) || (ignoreCase && m.Name.Equals (name, StringComparison.CurrentCultureIgnoreCase)))
 						res.Add (m);
 				}

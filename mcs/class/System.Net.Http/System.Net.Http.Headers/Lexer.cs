@@ -78,19 +78,31 @@ namespace System.Net.Http.Headers
 
 	class Lexer
 	{
+		// any CHAR except CTLs or separators
 		static readonly bool[] token_chars = {
-				false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-				false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-				false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
-				true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
-				false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
-				true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-				false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
-				true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-				false, true, false
+			/*0*/	false, false, false, false, false, false, false, false, false, false,
+			/*10*/	false, false, false, false, false, false, false, false, false, false,
+			/*20*/	false, false, false, false, false, false, false, false, false, false,
+			/*30*/	false, false, false, true, false, true, true, true, true, true,
+			/*40*/	false, false, true, true, false, true, true, false, true, true,
+			/*50*/	true, true, true, true, true, true, true, true, false, false,
+			/*60*/	false, false, false, false, false, true, true, true, true, true,
+			/*70*/	true, true, true, true, true, true, true, true, true, true,
+			/*80*/	true, true, true, true, true, true, true, true, true, true,
+			/*90*/	true, false, false, false, true, true, true, true, true, true,
+			/*100*/	true, true, true, true, true, true, true, true, true, true,
+			/*110*/	true, true, true, true, true, true, true, true, true, true,
+			/*120*/	true, true, true, false, true, false
 			};
 
 		static readonly int last_token_char = token_chars.Length;
+		static readonly string[] dt_formats = new[] {
+				"r",
+				"dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'",
+				"ddd MMM d HH:mm:ss yyyy",
+				"d MMM yy H:m:s",
+				"ddd, d MMM yyyy H:m:s zzz"
+		};
 
 		readonly string s;
 		int pos;
@@ -153,10 +165,7 @@ namespace System.Net.Http.Headers
 		{
 			const DateTimeStyles DefaultStyles = DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces;
 
-		    return
-				DateTimeOffset.TryParseExact (text, "r", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value) ||
-				DateTimeOffset.TryParseExact (text, "dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value) ||
-				DateTimeOffset.TryParseExact (text, "ddd MMM d HH:mm:ss yyyy", DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value);
+			return DateTimeOffset.TryParseExact (text, dt_formats, DateTimeFormatInfo.InvariantInfo, DefaultStyles, out value);
 		}
 
 		public bool TryGetDoubleValue (Token token, out double value)

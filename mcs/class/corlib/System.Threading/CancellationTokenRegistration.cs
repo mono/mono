@@ -40,14 +40,12 @@ namespace System.Threading
 			this.id = id;
 			this.source = source;
 		}
-		
+
 		#region IDisposable implementation
 		public void Dispose ()
 		{
-			// Remove the corresponding callback from source
 			source.RemoveCallback (this);
 		}
-
 		#endregion
 
 		#region IEquatable<CancellationTokenRegistration> implementation
@@ -76,7 +74,6 @@ namespace System.Threading
 		{
 			return (obj is CancellationTokenRegistration) ? Equals ((CancellationTokenRegistration)obj) : false;
 		}
-
 	}
 }
 #endif

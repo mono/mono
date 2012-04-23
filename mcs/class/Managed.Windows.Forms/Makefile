@@ -8,12 +8,9 @@ LIB_MCS_FLAGS = /unsafe \
 	/r:System.Drawing.dll /r:Accessibility.dll \
 	/r:System.Data.dll /r:Mono.Posix.dll \
 	/r:Mono.WebBrowser \
+	/r:System.Configuration.dll \
 	@System.Windows.Forms.dll.resources \
 	-nowarn:618,612,809
-
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += /r:System.Configuration.dll
-endif
 
 ifeq (true, $(GENERATE_RESOURCES))
 LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
@@ -103,7 +100,7 @@ EXTRA_DISTFILES = \
 	$(IMAGES_RESOURCES) \
 	$(TEST_DISTFILES)
 
-TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll \
+TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll -r:System.dll -r:System.Xml.dll \
 	-resource:Test/resources/a.cur,a.cur \
 	-resource:Test/resources/32x32.ico,32x32.ico \
 	-nowarn:618,612

@@ -44,7 +44,7 @@ LIB_MCS_FLAGS += \
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Core.dll -nowarn:618,169,612,219,168
 
 TEST_MONO_PATH = .
 

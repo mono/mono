@@ -35,5 +35,21 @@ namespace Mono.Debugger.Soft
 		public override string ToString () {
 			return "PrimitiveValue<" + Value + ">";
 		}
+
+		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
+			return ObjectMirror.InvokeMethod (vm, thread, method, this, arguments, InvokeOptions.None);
+		}
+
+		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
+			return ObjectMirror.InvokeMethod (vm, thread, method, this, arguments, options);
+		}
+
+		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			return ObjectMirror.BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
+		}
+
+		public Value EndInvokeMethod (IAsyncResult asyncResult) {
+			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
+		}
 	}
 }

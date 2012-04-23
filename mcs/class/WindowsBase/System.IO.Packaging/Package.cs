@@ -94,15 +94,15 @@ namespace System.IO.Packaging {
 		}
 		
 		
-		protected Package (FileAccess fileOpenAccess)
-			: this (fileOpenAccess, false)
+		protected Package (FileAccess openFileAccess)
+			: this (openFileAccess, false)
 		{
 			
 		}
 
-		protected Package (FileAccess fileOpenAccess, bool streaming)
+		protected Package (FileAccess openFileAccess, bool streaming)
 		{
-			FileOpenAccess = fileOpenAccess;
+			FileOpenAccess = openFileAccess;
 			Streaming = streaming;
 		}
 
@@ -138,7 +138,7 @@ namespace System.IO.Packaging {
 			return part;
 		}
 		
-		protected abstract PackagePart CreatePartCore (Uri parentUri, string contentType, CompressionOption compressionOption);
+		protected abstract PackagePart CreatePartCore (Uri partUri, string contentType, CompressionOption compressionOption);
 
 		public PackageRelationship CreateRelationship (Uri targetUri, TargetMode targetMode, string relationshipType)
 		{

@@ -44,6 +44,7 @@
    <Compile Include="MonoSymbolWriter.cs" />
    <Compile Include="MonoSymbolTable.cs" />
    <Compile Include="MonoSymbolFile.cs" />
+   <Compile Include="SourceMethodBuilder.cs" />
    <Compile Include="SymbolWriterImpl.cs" />
 
   </ItemGroup>
@@ -58,7 +59,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>

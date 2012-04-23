@@ -704,12 +704,7 @@ namespace System {
 			}
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		bool IsAbsoluteUri {
+		public bool IsAbsoluteUri {
 			get { return isAbsoluteUri; }
 		}
 
@@ -2051,11 +2046,19 @@ namespace System {
 		//
 		static bool NeedToEscapeDataChar (char b)
 		{
+#if NET_4_0
+			// .NET 4.0 follows RFC 3986 Unreserved Characters
+			return !((b >= 'A' && b <= 'Z') ||
+				 (b >= 'a' && b <= 'z') ||
+				 (b >= '0' && b <= '9') ||
+				 b == '-' || b == '.' || b == '_' || b == '~');
+#else
 			return !((b >= 'A' && b <= 'Z') ||
 				 (b >= 'a' && b <= 'z') ||
 				 (b >= '0' && b <= '9') ||
 				 b == '_' || b == '~' || b == '!' || b == '\'' ||
 				 b == '(' || b == ')' || b == '*' || b == '-' || b == '.');
+#endif
 		}
 		
 		public static string EscapeDataString (string stringToEscape)
@@ -2064,9 +2067,9 @@ namespace System {
 				throw new ArgumentNullException ("stringToEscape");
 
 			if (stringToEscape.Length > MaxUriLength) {
-				string msg = Locale.GetText ("Uri is longer than the maximum {0} characters.");
-				throw new UriFormatException (msg);
+				throw new UriFormatException (string.Format ("Uri is longer than the maximum {0} characters.", MaxUriLength));
 			}
+
 			bool escape = false;
 			foreach (char c in stringToEscape){
 				if (NeedToEscapeDataChar (c)){
@@ -2094,11 +2097,27 @@ namespace System {
 		//
 		static bool NeedToEscapeUriChar (char b)
 		{
-			return !((b >= 'A' && b <= 'Z') ||
-				 (b >= 'a' && b <= 'z') ||
-				 (b >= '&' && b <= ';') ||
-				 b == '!' || b == '#' || b == '$' || b == '=' ||
-				 b == '?' || b == '@' || b == '_' || b == '~');
+			if ((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '&' && b <= ';'))
+				return false;
+
+			switch (b) {
+			case '!':
+			case '#':
+			case '$':
+			case '=':
+			case '?':
+			case '@':
+			case '_':
+			case '~':
+#if NET_4_0
+			// .NET 4.0 follows RFC 3986
+			case '[':
+			case ']':
+#endif
+				return false;
+			default:
+				return true;
+			}
 		}
 		
 		public static string EscapeUriString (string stringToEscape)
@@ -2107,8 +2126,7 @@ namespace System {
 				throw new ArgumentNullException ("stringToEscape");
 
 			if (stringToEscape.Length > MaxUriLength) {
-				string msg = Locale.GetText ("Uri is longer than the maximum {0} characters.");
-				throw new UriFormatException (msg);
+				throw new UriFormatException (string.Format ("Uri is longer than the maximum {0} characters.", MaxUriLength));
 			}
 
 			bool escape = false;

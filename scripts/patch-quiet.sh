@@ -25,16 +25,16 @@ if [ $? -ne 0 ] ; then
 fi
 
 # compile
-${SED} -e 's/^\t\(if \)\?$(COMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(COMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
-${SED} -e 's/^\t\(if \)\?$(LTCOMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(LTCOMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
-${SED} -e 's/^\t\(if \)\?$(LTCXXCOMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(LTCXXCOMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
-${SED} -e 's/^\t\(if \)\?$(LIBTOOL)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(LIBTOOL)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+${SED} -e 's/^\t\(if \)\?$(COMPILE)/\t$(if $(V),,@echo "CC      $@";) \1$(COMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+${SED} -e 's/^\t\(if \)\?$(LTCOMPILE)/\t$(if $(V),,@echo "CC      $@";) \1$(LTCOMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+${SED} -e 's/^\t\(if \)\?$(LTCXXCOMPILE)/\t$(if $(V),,@echo "CC      $@";) \1$(LTCXXCOMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+${SED} -e 's/^\t\(if \)\?$(LIBTOOL)/\t$(if $(V),,@echo "CC      $@";) \1$(LIBTOOL)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # link
 # automake defines multiple symbols ending with LINK
-${SED} -e 's/^\t$(\(.*LINK\))/\t$(if $(V),,@echo -e "LD\\t$@";) $(\1)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
-#sed -e 's/LINK = $(LIBTOOL)/LINK = $(if $(V),,@echo -e "LD\\t$@";) $(LIBTOOL)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+${SED} -e 's/^\t$(\(.*LINK\))/\t$(if $(V),,@echo "LD      $@";) $(\1)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+#sed -e 's/LINK = $(LIBTOOL)/LINK = $(if $(V),,@echo "LD      $@";) $(LIBTOOL)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # CC
-${SED} -e 's/^\t\(if \)\?$(CC)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(CC)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+${SED} -e 's/^\t\(if \)\?$(CC)/\t$(if $(V),,@echo "CC      $@";) \1$(CC)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # mv
 ${SED} -e 's/^\tmv -f/\t$(if $(V),,@)mv -f/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 ${SED} -e 's/^am__mv = /&$(if $(V),,@)/' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp

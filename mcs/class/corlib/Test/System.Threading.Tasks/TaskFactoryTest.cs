@@ -174,6 +174,69 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void ContinueWhenAll_WithMixedCompletionState ()
+		{
+			var mre = new ManualResetEventSlim ();
+			var task = Task.Factory.StartNew (() => mre.Wait (200));
+			var contFailed = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnFaulted);
+			var contCanceled = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnCanceled);
+			var contSuccess = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnRanToCompletion);
+			bool ran = false;
+
+			var cont = Task.Factory.ContinueWhenAll (new Task[] { contFailed, contCanceled, contSuccess }, _ => ran = true);
+
+			mre.Set ();
+			cont.Wait (200);
+
+			Assert.IsTrue (ran);
+			Assert.AreEqual (TaskStatus.RanToCompletion, cont.Status);
+		}
+
+		[Test]
+		public void ContinueWhenAll_InvalidArguments ()
+		{
+			try {
+				factory.ContinueWhenAll (null, delegate { });
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (new Task[0], delegate { });
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (new Task[] { null }, delegate { });
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+
+			var tasks = new Task [] {
+				factory.StartNew (delegate {})
+			};
+
+			try {
+				factory.ContinueWhenAll (tasks, null);
+				Assert.Fail ("#4");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.None, null);
+				Assert.Fail ("#5");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
+				Assert.Fail ("#6");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
 		public void ContinueWhenAny_Simple ()
 		{
 			var t1 = new ManualResetEvent (false);
@@ -237,6 +300,12 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.Fail ("#5");
 			} catch (ArgumentException) {
 			}
+
+			try {
+				factory.ContinueWhenAny (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
+				Assert.Fail ("#6");
+			} catch (ArgumentException) {
+			}
 		}
 
 		[Test]
@@ -280,7 +349,7 @@ namespace MonoTests.System.Threading.Tasks
 			bool result = false;
 			bool continuationTest = false;
 
-			Func<int, int> func = (i) => { result = true; throw new ApplicationException ("bleh"); return i + 3; };
+			Func<int, int> func = (i) => { result = true; throw new ApplicationException ("bleh"); };
 			Task<int> task = factory.FromAsync<int, int> (func.BeginInvoke, func.EndInvoke, 1, null);
 			var cont = task.ContinueWith (_ => continuationTest = true, TaskContinuationOptions.ExecuteSynchronously);
 			try {

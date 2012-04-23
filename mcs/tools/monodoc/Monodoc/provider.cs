@@ -557,7 +557,7 @@ public class HelpSource {
 	{
 		if (nozip) {
 			Stream s = File.OpenRead (XmlDocUtils.GetCachedFileName (base_dir, id));
-			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
+			string url = "monodoc:///" + SourceID + "@" + Uri.EscapeUriString (id) + "@";
 			return new XmlTextReader (url, s);
 		}
 
@@ -567,7 +567,7 @@ public class HelpSource {
 		ZipEntry entry = zip_file.GetEntry (id);
 		if (entry != null) {
 			Stream s = zip_file.GetInputStream (entry);
-			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
+			string url = "monodoc:///" + SourceID + "@" + Uri.EscapeUriString (id) + "@";
 			return new XmlTextReader (url, s);
 		}
 		return null;
@@ -577,7 +577,7 @@ public class HelpSource {
 	{
 		if (nozip) {
 			Stream s = File.OpenRead (XmlDocUtils.GetCachedFileName (base_dir, id));
-			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
+			string url = "monodoc:///" + SourceID + "@" + Uri.EscapeUriString (id) + "@";
 			XmlReader r = new XmlTextReader (url, s);
 			XmlDocument ret = new XmlDocument ();
 			ret.Load (r);
@@ -590,7 +590,7 @@ public class HelpSource {
 		ZipEntry entry = zip_file.GetEntry (id);
 		if (entry != null) {
 			Stream s = zip_file.GetInputStream (entry);
-			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
+			string url = "monodoc:///" + SourceID + "@" + Uri.EscapeUriString (id) + "@";
 			XmlReader r = new XmlTextReader (url, s);
 			XmlDocument ret = new XmlDocument ();
 			ret.Load (r);

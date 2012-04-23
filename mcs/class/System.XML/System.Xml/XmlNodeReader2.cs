@@ -271,13 +271,13 @@ namespace System.Xml
 		}
 #endif
 
-		public override void MoveToAttribute (int i)
+		public override void MoveToAttribute (int attributeIndex)
 		{
 			if (entity != null && entityInsideAttribute) {
 				entity.Close ();
 				entity = null;
 			}
-			Current.MoveToAttribute (i);
+			Current.MoveToAttribute (attributeIndex);
 			insideAttribute = true;
 		}
 
@@ -295,11 +295,11 @@ namespace System.Xml
 			return true;
 		}
 
-		public override bool MoveToAttribute (string localName, string namespaceURI)
+		public override bool MoveToAttribute (string name, string namespaceURI)
 		{
 			if (entity != null && !entityInsideAttribute)
-				return entity.MoveToAttribute (localName, namespaceURI);
-			if (!source.MoveToAttribute (localName, namespaceURI))
+				return entity.MoveToAttribute (name, namespaceURI);
+			if (!source.MoveToAttribute (name, namespaceURI))
 				return false;
 			if (entity != null && entityInsideAttribute) {
 				entity.Close ();
@@ -374,60 +374,57 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		public override int ReadContentAsBase64 (
-			byte [] buffer, int offset, int length)
+		public override int ReadContentAsBase64 (byte [] buffer, int index, int count)
 		{
 //			return base.ReadContentAsBase64 (
 //				buffer, offset, length);
 			// FIXME: This is problematic wrt end of entity.
 			if (entity != null)
 				return entity.ReadContentAsBase64 (
-					buffer, offset, length);
+					buffer, index, count);
 			else
 				return source.ReadContentAsBase64 (
-					buffer, offset, length);
+					buffer, index, count);
 		}
 
-		public override int ReadContentAsBinHex (
-			byte [] buffer, int offset, int length)
+		public override int ReadContentAsBinHex (byte [] buffer, int index, int count)
 		{
 //			return base.ReadContentAsBinHex (
 //				buffer, offset, length);
 			// FIXME: This is problematic wrt end of entity.
 			if (entity != null)
 				return entity.ReadContentAsBinHex (
-					buffer, offset, length);
+					buffer, index, count);
 			else
 				return source.ReadContentAsBinHex (
-					buffer, offset, length);
+					buffer, index, count);
 		}
 
-		public override int ReadElementContentAsBase64 (
-			byte [] buffer, int offset, int length)
+		public override int ReadElementContentAsBase64 (byte [] buffer, int index, int count)
 		{
 //			return base.ReadElementContentAsBase64 (
-//				buffer, offset, length);
+//				buffer, index, count);
 			// FIXME: This is problematic wrt end of entity.
 			if (entity != null)
 				return entity.ReadElementContentAsBase64 (
-					buffer, offset, length);
+					buffer, index, count);
 			else
 				return source.ReadElementContentAsBase64 (
-					buffer, offset, length);
+					buffer, index, count);
 		}
 
 		public override int ReadElementContentAsBinHex (
-			byte [] buffer, int offset, int length)
+			byte [] buffer, int index, int count)
 		{
 //			return base.ReadElementContentAsBinHex (
-//				buffer, offset, length);
+//				buffer, index, count);
 			// FIXME: This is problematic wrt end of entity.
 			if (entity != null)
 				return entity.ReadElementContentAsBinHex (
-					buffer, offset, length);
+					buffer, index, count);
 			else
 				return source.ReadElementContentAsBinHex (
-					buffer, offset, length);
+					buffer, index, count);
 		}
 #endif
 

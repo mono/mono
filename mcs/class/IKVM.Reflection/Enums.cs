@@ -39,6 +39,7 @@ namespace IKVM.Reflection
 	public enum BindingFlags
 	{
 		Default = 0,
+		IgnoreCase = 1,
 		DeclaredOnly = 2,
 		Instance = 4,
 		Static = 8,
@@ -276,5 +277,17 @@ namespace IKVM.Reflection
 		ReservedMask = 264192,
 		BeforeFieldInit = 1048576,
 		CustomFormatMask = 12582912,
+	}
+
+	// IKVM.Reflection specific type
+	[Flags]
+	public enum DllCharacteristics
+	{
+		HighEntropyVA = 0x0020,			// IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA
+		DynamicBase = 0x0040,			// IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
+		NoSEH = 0x0400,					// IMAGE_DLLCHARACTERISTICS_NO_SEH
+		NXCompat = 0x0100,				// IMAGE_DLLCHARACTERISTICS_NX_COMPAT
+		AppContainer = 0x1000,			// IMAGE_DLLCHARACTERISTICS_APPCONTAINER
+		TerminalServerAware = 0x8000,	// IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE
 	}
 }

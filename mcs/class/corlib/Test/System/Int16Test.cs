@@ -178,6 +178,7 @@ public class Int16Test
 		Assert.AreEqual (20, Int16.Parse ("2E1", NumberStyles.AllowExponent), "A#2");
 		Assert.AreEqual (200, Int16.Parse ("2E2", NumberStyles.AllowExponent), "A#3");
 		Assert.AreEqual (200, Int16.Parse ("2E+2", NumberStyles.AllowExponent), "A#4");
+		Assert.AreEqual (2, Int16.Parse ("2", NumberStyles.AllowExponent), "A#5");
 
 		try {
 			Int16.Parse ("2E");
@@ -220,6 +221,12 @@ public class Int16Test
 			Int16.Parse ("2E-1", NumberStyles.AllowExponent); // negative exponent
 			Assert.Fail ("B#7");
 		} catch (OverflowException) {
+		}
+		
+		try {
+			Int16.Parse ("2 math e1", NumberStyles.AllowExponent);
+			Assert.Fail ("B#8");
+		} catch (FormatException) {
 		}
 	}
 

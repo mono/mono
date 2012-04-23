@@ -8,7 +8,11 @@ using System.Reflection;
 using System.Xml.Serialization;
 using System.Collections;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
 
+#if MONOTOUCH
+#else
 #if TARGET_JVM
 using awt = java.awt;
 using javax.imageio;
@@ -17,8 +21,7 @@ using java.security;
 using java.awt.image;
 #else
 using System.Windows.Forms;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
+#endif
 #endif
 
 using NUnit.Framework;
@@ -333,7 +336,7 @@ namespace DrawingTestHelper
 		private static void AssertAlmostEqual (float expected, float actual, float tolerance, string message)
 		{
 			float error = System.Math.Abs ((expected - actual) / (expected + actual + float.Epsilon));
-			Assert.IsTrue (error < tolerance, message);
+			Assert.That (error < tolerance, Is.True, message);
 		}
 
 		public static void AssertAlmostEqual (PointF expected, PointF actual)
@@ -407,12 +410,12 @@ namespace DrawingTestHelper
 
 		public void AssertCompare () {
 			CheckCounter ();
-			Assert.IsTrue ((CompareToExpectedInternal () * 100) < DEFAULT_IMAGE_TOLERANCE);
+			Assert.That ((CompareToExpectedInternal () * 100) < DEFAULT_IMAGE_TOLERANCE, Is.True);
 		}
 
 		public void AssertCompare (double tolerance) {
 			CheckCounter ();
-			Assert.IsTrue ((CompareToExpectedInternal () * 100) < tolerance);
+			Assert.That ((CompareToExpectedInternal () * 100) < tolerance, Is.True);
 		}
 		
 		public double CompareToExpected () {
@@ -616,7 +619,19 @@ namespace DrawingTestHelper
 				throw new System.Exception("Error creating .Net reference image");
 			}
 		}
-
+		
+#if MONOTOUCH
+		private class NetForm:MonoTouch.UIKit.UIViewController,IMyForm {
+			Image image;
+			public NetForm(string title, Image anImage):base() {
+				base.Text = title;		
+				image = anImage;
+			}
+			void IMyForm.Show () {
+				this.image.Save("test.net.png");
+			}
+		}
+#else
 		private class NetForm:Form,IMyForm {
 			Image image;
 			public NetForm(string title, Image anImage):base() {
@@ -632,6 +647,7 @@ namespace DrawingTestHelper
 				this.image.Save("test.net.png");
 			}
 		}
+#endif
 		protected override IMyForm CreateForm(string title) {
 			return new NetForm (title, _bitmap);
 		}

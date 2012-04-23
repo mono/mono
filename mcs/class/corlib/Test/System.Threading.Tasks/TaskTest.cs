@@ -187,7 +187,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 		
 		[Test]
-		public void WaitAllTest()
+		public void WaitAllTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
 				int achieved = 0;
@@ -244,8 +244,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } })
 			};
 
-			Assert.IsTrue (cde.Wait (100), "#1");
-			Assert.IsFalse (Task.WaitAll (tasks, 100), "#2");
+			Assert.IsTrue (cde.Wait (1000), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
 
 			mre.Set ();
 
@@ -268,8 +268,8 @@ namespace MonoTests.System.Threading.Tasks
 				Task.Factory.StartNew (delegate { mre.WaitOne (); })
 			};
 
-			Assert.IsTrue (cde.Wait (100), "#1");
-			Assert.IsFalse (Task.WaitAll (tasks, 100), "#2");
+			Assert.IsTrue (cde.Wait (1000), "#1");
+			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
 
 			mre.Set ();
 
@@ -535,6 +535,26 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void ContinueWithDifferentOptionsAreCanceledTest ()
+		{
+			var mre = new ManualResetEventSlim ();
+			var task = Task.Factory.StartNew (() => mre.Wait (200));
+			var contFailed = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnFaulted);
+			var contCanceled = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnCanceled);
+			var contSuccess = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnRanToCompletion);
+
+			mre.Set ();
+			contSuccess.Wait (100);
+
+			Assert.IsTrue (contSuccess.IsCompleted);
+			Assert.IsTrue (contFailed.IsCompleted);
+			Assert.IsTrue (contCanceled.IsCompleted);
+			Assert.IsFalse (contSuccess.IsCanceled);
+			Assert.IsTrue (contFailed.IsCanceled);
+			Assert.IsTrue (contCanceled.IsCanceled);
+		}
+
+		[Test]
 		public void MultipleTasks()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -565,26 +585,27 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			ParallelTestHelper.Repeat (delegate {
 				bool r1 = false, r2 = false, r3 = false;
-				var mre = new ManualResetEvent (false);
+				var mre = new ManualResetEventSlim (false);
+				var mreStart = new ManualResetEventSlim (false);
 				
 				Task t = Task.Factory.StartNew(delegate {
 					Task.Factory.StartNew(delegate {
+						mre.Wait (300);
 						r1 = true;
-						mre.Set ();
 					}, TaskCreationOptions.AttachedToParent);
 					Task.Factory.StartNew(delegate {
-						Assert.IsTrue (mre.WaitOne (1000), "#0");
-						
 						r2 = true;
 					}, TaskCreationOptions.AttachedToParent);
 					Task.Factory.StartNew(delegate {
-						Assert.IsTrue (mre.WaitOne (1000), "#0");
-						
 						r3 = true;
 					}, TaskCreationOptions.AttachedToParent);
+					mreStart.Set ();
 				});
 				
-				Assert.IsTrue (t.Wait(2000), "#0");
+				mreStart.Wait (300);
+				Assert.IsFalse (t.Wait (10), "#0a");
+				mre.Set ();
+				Assert.IsTrue (t.Wait (500), "#0b");
 				Assert.IsTrue(r2, "#1");
 				Assert.IsTrue(r3, "#2");
 				Assert.IsTrue(r1, "#3");
@@ -768,7 +789,195 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsFalse (t.IsCanceled);
 		}
 
+		[Test]
+		public void CanceledContinuationExecuteSynchronouslyTest ()
+		{
+			var source = new CancellationTokenSource();
+			var token = source.Token;
+			var evt = new ManualResetEventSlim ();
+			bool result = false;
+			bool thrown = false;
+
+			var task = Task.Factory.StartNew (() => evt.Wait (100));
+			var cont = task.ContinueWith (t => result = true, token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
+
+			source.Cancel();
+			evt.Set ();
+			task.Wait (100);
+			try {
+				cont.Wait (100);
+			} catch (Exception ex) {
+				thrown = true;
+			}
+
+			Assert.IsTrue (task.IsCompleted);
+			Assert.IsTrue (cont.IsCanceled);
+			Assert.IsFalse (result);
+			Assert.IsTrue (thrown);
+		}
+
+		[Test]
+		public void WhenChildTaskErrorIsThrownParentTaskShouldBeFaulted ()
+		{
+			Task innerTask = null;
+			var testTask = new Task (() =>
+			{
+				innerTask = new Task (() => 
+				{
+					throw new InvalidOperationException ();
+				}, TaskCreationOptions.AttachedToParent);
+				innerTask.RunSynchronously ();
+			});
+			testTask.RunSynchronously ();
+
+			Assert.AreNotEqual (TaskStatus.Running, testTask.Status);
+			Assert.IsNotNull (innerTask);
+			Assert.IsTrue (innerTask.IsFaulted);
+			Assert.IsNotNull (testTask.Exception);
+			Assert.IsTrue (testTask.IsFaulted);
+			Assert.IsNotNull (innerTask.Exception);
+		}
+		
+		[Test]
+		public void WhenChildTaskErrorIsThrownOnlyOnFaultedContinuationShouldExecute ()
+		{
+			var continuationRan = false;
+			var testTask = new Task (() =>
+			{
+				var task = new Task (() => 
+				{
+					throw new InvalidOperationException();
+				}, TaskCreationOptions.AttachedToParent);
+				task.RunSynchronously ();
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
+			testTask.RunSynchronously ();
+			onErrorTask.Wait (100);
+			Assert.IsTrue (continuationRan);
+		}
+		
+		[Test]
+		public void WhenChildTaskErrorIsThrownNotOnFaultedContinuationShouldNotBeExecuted ()
+		{
+			var continuationRan = false;
+			var testTask = new Task (() =>
+			{
+				var task = new Task (() => 
+				{
+					throw new InvalidOperationException();
+				}, TaskCreationOptions.AttachedToParent);
+				task.RunSynchronously();
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.NotOnFaulted);
+			testTask.RunSynchronously ();
+			Assert.IsTrue (onErrorTask.IsCompleted);
+			Assert.IsFalse (onErrorTask.IsFaulted);
+			Assert.IsFalse (continuationRan);
+		}	
+		
+		[Test]
+		public void WhenChildTaskSeveralLevelsDeepHandlesAggregateExceptionErrorStillBubblesToParent ()
+		{
+			var continuationRan = false;
+			AggregateException e = null;
+			var testTask = new Task (() =>
+			{
+				var child1 = new Task (() =>
+				{
+					var child2 = new Task (() => 
+					{
+						throw new InvalidOperationException();
+					}, TaskCreationOptions.AttachedToParent);
+					child2.RunSynchronously ();
+				}, TaskCreationOptions.AttachedToParent);
+				
+				child1.RunSynchronously();
+				e = child1.Exception;
+				child1.Exception.Handle (ex => true);
+			});
+			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
+			testTask.RunSynchronously ();
+			onErrorTask.Wait (100);
+			Assert.IsNotNull (e);
+			Assert.IsTrue (continuationRan);
+		}
+		
+		[Test]
+		public void AlreadyCompletedChildTaskShouldRunContinuationImmediately ()
+		{
+			string result = "Failed";
+			var testTask = new Task (() => 
+			{
+				var child = new Task<string> (() =>
+				{
+					return "Success";
+				}, TaskCreationOptions.AttachedToParent);
+				child.RunSynchronously ();
+				child.ContinueWith (x => { Thread.Sleep (50); result = x.Result; }, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.NotOnFaulted);
+			});
+			testTask.RunSynchronously ();
+
+			Assert.AreEqual ("Success", result);
+		}
+
+		[Test]
+		public void InlineNotTrashingParentRelationship ()
+		{
+			bool r1 = false, r2 = false;
+			var t = new Task (() => {
+				new Task (() => { r1 = true; }, TaskCreationOptions.AttachedToParent).RunSynchronously ();
+				Task.Factory.StartNew (() => { Thread.Sleep (100); r2 = true; }, TaskCreationOptions.AttachedToParent);
+		    });
+			t.RunSynchronously ();
+
+			Assert.IsTrue (r1);
+			Assert.IsTrue (r2);
+		}
+
 #if NET_4_5
+		[Test]
+		public void Delay_Invalid ()
+		{
+			try {
+				Task.Delay (-100);
+			} catch (ArgumentOutOfRangeException) {
+			}
+		}
+
+		[Test]
+		public void Delay_Start ()
+		{
+			var t = Task.Delay (5000);
+			try {
+				t.Start ();
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
+		public void Delay_Simple ()
+		{
+			var t = Task.Delay (300);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			Assert.IsTrue (t.Wait (400), "#2");
+		}
+
+		[Test]
+		public void Delay_Cancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+
+			var t = Task.Delay (5000, cancelation.Token);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			cancelation.Cancel ();
+			try {
+				t.Wait (100);
+				Assert.Fail ("#2");
+			} catch (AggregateException) {
+				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#3");
+			}
+		}
+
 		[Test]
 		public void WaitAny_WithNull ()
 		{
@@ -782,6 +991,468 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.Fail ();
 			} catch (ArgumentException) {
 			}
+		}
+
+		[Test]
+		public void WhenAll_WithNull ()
+		{
+			var tasks = new[] {
+				Task.FromResult (2),
+				null
+			};
+
+			try {
+				Task.WhenAll (tasks);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			tasks = null;
+			try {
+				Task.WhenAll (tasks);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void WhenAll_Start ()
+		{
+			Task[] tasks = new[] {
+				Task.FromResult (2),
+			};
+
+			var t = Task.WhenAll (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+
+			try {
+				t.Start ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			tasks = new [] {
+				new Task (delegate { }),
+			};
+
+			t = Task.WhenAll (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#11");
+
+			try {
+				t.Start ();
+				Assert.Fail ("#12");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
+		public void WhenAll_Cancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { }),
+				new Task (delegate { }, cancelation.Token)
+			};
+
+			cancelation.Cancel ();
+
+			var t = Task.WhenAll (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			tasks[0].Start ();
+
+			try {
+				Assert.IsTrue (t.Wait (1000), "#2");
+				Assert.Fail ("#2a");
+			} catch (AggregateException e) {
+				Assert.IsInstanceOfType (typeof (TaskCanceledException), e.InnerException, "#3");
+			}
+		}
+
+		[Test]
+		public void WhenAll_Faulted ()
+		{
+			var tcs = new TaskCompletionSource<object> ();
+			tcs.SetException (new ApplicationException ());
+
+			var tcs2 = new TaskCompletionSource<object> ();
+			tcs2.SetException (new InvalidTimeZoneException ());
+
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { }),
+				new Task (delegate { }, cancelation.Token),
+				tcs.Task,
+				tcs2.Task
+			};
+
+			cancelation.Cancel ();
+
+			var t = Task.WhenAll (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			tasks[0].Start ();
+
+			try {
+				Assert.IsTrue (t.Wait (1000), "#2");
+				Assert.Fail ("#2a");
+			} catch (AggregateException e) {
+				Assert.IsInstanceOfType (typeof (ApplicationException), e.InnerException, "#3");
+				Assert.IsInstanceOfType (typeof (InvalidTimeZoneException), e.InnerExceptions[1], "#4");
+			}
+		}
+
+		[Test]
+		public void WhenAll ()
+		{
+			var t1 = new Task (delegate { });
+			var t2 = new Task (delegate { t1.Start (); });
+
+			var tasks = new Task[] {
+				t1,
+				t2,
+			};
+
+			var t = Task.WhenAll (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			t2.Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+		}
+
+		[Test]
+		public void WhenAllResult_WithNull ()
+		{
+			var tasks = new[] {
+				Task.FromResult (2),
+				null
+			};
+
+			try {
+				Task.WhenAll<int> (tasks);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			tasks = null;
+			try {
+				Task.WhenAll<int> (tasks);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void WhenAllResult_Cancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new [] {
+				new Task<int> (delegate { return 9; }),
+				new Task<int> (delegate { return 1; }, cancelation.Token)
+			};
+
+			cancelation.Cancel ();
+
+			var t = Task.WhenAll (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			tasks[0].Start ();
+
+			try {
+				Assert.IsTrue (t.Wait (1000), "#2");
+				Assert.Fail ("#2a");
+			} catch (AggregateException e) {
+				Assert.IsInstanceOfType (typeof (TaskCanceledException), e.InnerException, "#3");
+			}
+
+			try {
+				var r = t.Result;
+				Assert.Fail ("#4");
+			} catch (AggregateException) {
+			}
+		}
+
+		[Test]
+		public void WhenAllResult ()
+		{
+			var t1 = new Task<string> (delegate { return "a"; });
+			var t2 = new Task<string> (delegate { t1.Start (); return "b"; });
+
+			var tasks = new [] {
+				t1,
+				t2,
+			};
+
+			var t = Task.WhenAll<string> (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			t2.Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+			Assert.AreEqual (2, t.Result.Length, "#3");
+			Assert.AreEqual ("a", t.Result[0], "#3a");
+			Assert.AreEqual ("b", t.Result[1], "#3b");
+		}
+
+		[Test]
+		public void WhenAllResult_Completed ()
+		{
+			var tasks = new[] {
+				Task.FromResult (1),
+				Task.FromResult (2)
+			};
+
+			var t = Task.WhenAll<int> (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+			Assert.AreEqual (2, t.Result.Length, "#2");
+			Assert.AreEqual (1, t.Result[0], "#2a");
+			Assert.AreEqual (2, t.Result[1], "#2b");
+		}
+
+		[Test]
+		public void WhenAny_WithNull ()
+		{
+			var tasks = new Task[] {
+				Task.FromResult (2),
+				null
+			};
+
+			try {
+				Task.WhenAny (tasks);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			tasks = null;
+			try {
+				Task.WhenAny (tasks);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Task.WhenAny (new Task[0]);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void WhenAny_Start ()
+		{
+			Task[] tasks = new[] {
+				Task.FromResult (2),
+			};
+
+			var t = Task.WhenAny (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+
+			try {
+				t.Start ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			tasks = new[] {
+				new Task (delegate { }),
+			};
+
+			t = Task.WhenAny (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#11");
+
+			try {
+				t.Start ();
+				Assert.Fail ("#12");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
+		public void WhenAny_Cancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { }),
+				new Task (delegate { }, cancelation.Token)
+			};
+
+			cancelation.Cancel ();
+
+			var t = Task.WhenAny (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+			tasks[0].Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+			Assert.AreEqual (TaskStatus.Canceled, t.Result.Status, "#3");
+		}
+
+		[Test]
+		public void WhenAny_Faulted ()
+		{
+			var tcs = new TaskCompletionSource<object> ();
+			tcs.SetException (new ApplicationException ());
+
+			var tcs2 = new TaskCompletionSource<object> ();
+			tcs2.SetException (new InvalidTimeZoneException ());
+
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task[] {
+				new Task (delegate { }),
+				tcs.Task,
+				new Task (delegate { }, cancelation.Token),
+				tcs2.Task
+			};
+
+			cancelation.Cancel ();
+
+			var t = Task.WhenAny (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+			tasks[0].Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+			Assert.IsNull (t.Exception, "#3");
+
+			Assert.IsInstanceOfType (typeof (ApplicationException), t.Result.Exception.InnerException, "#4");
+		}
+
+		[Test]
+		public void WhenAny ()
+		{
+			var t1 = new Task (delegate { });
+			var t2 = new Task (delegate { t1.Start (); });
+
+			var tasks = new Task[] {
+				t1,
+				t2,
+			};
+
+			var t = Task.WhenAny (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			t2.Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+			Assert.IsNotNull (t.Result, "#3");
+		}
+
+		[Test]
+		public void WhenAnyResult_WithNull ()
+		{
+			var tasks = new [] {
+				Task.FromResult (2),
+				null
+			};
+
+			try {
+				Task.WhenAny<int> (tasks);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			tasks = null;
+			try {
+				Task.WhenAny<int> (tasks);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Task.WhenAny<short> (new Task<short>[0]);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void WhenAnyResult_Start ()
+		{
+			var tasks = new[] {
+				Task.FromResult (2),
+			};
+
+			var t = Task.WhenAny<int> (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+
+			try {
+				t.Start ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			tasks = new[] {
+				new Task<int> (delegate { return 55; }),
+			};
+
+			t = Task.WhenAny<int> (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#11");
+
+			try {
+				t.Start ();
+				Assert.Fail ("#12");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
+		public void WhenAnyResult_Cancelled ()
+		{
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new [] {
+				new Task<double> (delegate { return 1.1; }),
+				new Task<double> (delegate { return -4.4; }, cancelation.Token)
+			};
+
+			cancelation.Cancel ();
+
+			var t = Task.WhenAny<double> (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+			tasks[0].Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+			Assert.AreEqual (TaskStatus.Canceled, t.Result.Status, "#3");
+		}
+
+		[Test]
+		public void WhenAnyResult_Faulted ()
+		{
+			var tcs = new TaskCompletionSource<object> ();
+			tcs.SetException (new ApplicationException ());
+
+			var tcs2 = new TaskCompletionSource<object> ();
+			tcs2.SetException (new InvalidTimeZoneException ());
+
+			var cancelation = new CancellationTokenSource ();
+			var tasks = new Task<object>[] {
+				new Task<object> (delegate { return null; }),
+				tcs.Task,
+				new Task<object> (delegate { return ""; }, cancelation.Token),
+				tcs2.Task
+			};
+
+			cancelation.Cancel ();
+
+			var t = Task.WhenAny<object> (tasks);
+			Assert.AreEqual (TaskStatus.RanToCompletion, t.Status, "#1");
+			tasks[0].Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+			Assert.IsNull (t.Exception, "#3");
+
+			Assert.IsInstanceOfType (typeof (ApplicationException), t.Result.Exception.InnerException, "#4");
+		}
+
+		[Test]
+		public void WhenAnyResult ()
+		{
+			var t1 = new Task<byte> (delegate { return 3; });
+			var t2 = new Task<byte> (delegate { t1.Start (); return 2; });
+
+			var tasks = new [] {
+				t1,
+				t2,
+			};
+
+			var t = Task.WhenAny<byte> (tasks);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			t2.Start ();
+
+			Assert.IsTrue (t.Wait (1000), "#2");
+			Assert.IsTrue (t.Result.Result > 1, "#3");
 		}
 
 		[Test]
@@ -847,6 +1518,27 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (null, t.Result, "#2");
 			t.Dispose ();
 			t.Dispose ();
+		}
+
+		[Test]
+		public void LongRunning ()
+		{
+			bool? is_tp = null;
+			bool? is_bg = null;
+			var t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; });
+			t.Start ();
+			Assert.IsTrue (t.Wait (100));
+			Assert.IsTrue ((bool)is_tp, "#1");
+			Assert.IsTrue ((bool)is_bg, "#2");
+
+			is_tp = null;
+			is_bg = null;
+			t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; }, TaskCreationOptions.LongRunning);
+			t.Start ();
+
+			Assert.IsTrue (t.Wait (100));
+			Assert.IsFalse ((bool) is_tp, "#11");
+			Assert.IsTrue ((bool) is_bg, "#12");
 		}
 
 		[Test]

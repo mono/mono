@@ -301,14 +301,12 @@ namespace IKVM.Reflection.Emit
 
 		public ParameterBuilder DefineParameter(int position, ParameterAttributes attributes, string strParamName)
 		{
-			// the parameter is named "position", but it is actually a sequence number (i.e. 0 = return parameter, 1 = first parameter)
-			int sequence = position--;
 			if (parameters == null)
 			{
 				parameters = new List<ParameterBuilder>();
 			}
 			this.ModuleBuilder.Param.AddVirtualRecord();
-			ParameterBuilder pb = new ParameterBuilder(this.ModuleBuilder, sequence, attributes, strParamName);
+			ParameterBuilder pb = new ParameterBuilder(this.ModuleBuilder, position, attributes, strParamName);
 			if (parameters.Count == 0 || position > parameters[parameters.Count - 1].Position)
 			{
 				parameters.Add(pb);
@@ -443,7 +441,8 @@ namespace IKVM.Reflection.Emit
 					{
 						foreach (ParameterBuilder pb in method.parameters)
 						{
-							if (pb.Position == parameter)
+							// ParameterBuilder.Position is 1-based
+							if (pb.Position - 1 == parameter)
 							{
 								return pb;
 							}

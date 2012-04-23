@@ -1480,5 +1480,70 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (DateTime.MinValue, o.FancyDateTime, "#1");
 			Assert.AreEqual (0, o.Numeric, "#2");
 		}
+		
+		[Test] // bug bxc 4367
+		public void SpecifiedXmlIgnoreTest ()
+		{
+			XmlReflectionMember [] out_members = new XmlReflectionMember [2];
+			XmlReflectionMember m;
+			
+			m = new XmlReflectionMember ();
+			m.IsReturnValue = false;
+			m.MemberName = "HasPermissionsForUserResult";
+			m.MemberType = typeof (bool);
+			m.SoapAttributes = new SoapAttributes ();
+			m.XmlAttributes = new XmlAttributes ();
+			out_members [0] = m;
+			
+			m = new XmlReflectionMember ();
+			m.IsReturnValue = false;
+			m.MemberName = "HasPermissionsForUserResultSpecified";
+			m.MemberType = typeof (bool);
+			m.SoapAttributes = new SoapAttributes ();
+			m.XmlAttributes = new XmlAttributes ();
+			m.XmlAttributes.XmlIgnore = true;
+			out_members [1] = m;
+			
+			XmlReflectionImporter xmlImporter = new XmlReflectionImporter ();
+			XmlMembersMapping OutputMembersMapping = xmlImporter.ImportMembersMapping ("HasPermissionsForUserResponse", "http://tempuri.org", out_members, true);
+			XmlSerializer xmlSerializer = XmlSerializer.FromMappings (new XmlMapping [] { OutputMembersMapping }) [0];
+			
+			Assert.AreEqual (2, OutputMembersMapping.Count, "#count");
+			
+			string msg = @"
+			<HasPermissionsForUserResponse xmlns=""http://tempuri.org/"">
+				<HasPermissionsForUserResult>true</HasPermissionsForUserResult>
+			</HasPermissionsForUserResponse>
+			";
+			
+			object res = xmlSerializer.Deserialize (new StringReader (msg));
+			Assert.AreEqual (typeof (object[]), res.GetType (), "type");
+			Assert.AreEqual (2, ((object[]) res).Length, "length");
+		}
+		
+		[Test]
+		public void InvalidNullableTypeTest ()
+		{
+			XmlReflectionMember [] out_members = new XmlReflectionMember [1];
+			XmlReflectionMember m;
+			
+			m = new XmlReflectionMember ();
+			m.IsReturnValue = false;
+			m.MemberName = "HasPermissionsForUserResultSpecified";
+			m.MemberType = typeof (bool);
+			m.SoapAttributes = new SoapAttributes ();
+			m.XmlAttributes = new XmlAttributes ();
+			m.XmlAttributes.XmlIgnore = true;
+			m.XmlAttributes.XmlElements.Add (new XmlElementAttribute () { IsNullable = true });
+			out_members [0] = m;
+			
+			XmlReflectionImporter xmlImporter = new XmlReflectionImporter ();
+			
+			try {
+				xmlImporter.ImportMembersMapping ("HasPermissionsForUserResponse", "http://tempuri.org", out_members, true);
+				Assert.Fail ("Expected InvalidOperationException");
+			} catch (InvalidOperationException) {
+			}
+		}
 	}
 }

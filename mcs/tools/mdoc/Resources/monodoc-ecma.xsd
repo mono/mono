@@ -275,10 +275,12 @@ add masterdoc support?
       <enumeration value="sample"/>
       <!-- e.g. ECMA, OPC, OData, ... specs -->
       <enumeration value="specification"/>
-      <!-- e.g. Apple documentation -->
+      <!-- e.g. Apple/Android documentation -->
       <enumeration value="externalDocumentation" />
       <!-- e.g. a more in-depth article at docs.xamarin.com -->
       <enumeration value="article" />
+	  <!-- e.g. a small article describing succintly a feature -->
+	  <enumeration value="recipe" />
     </restriction>
   </xs:simpleType>
 

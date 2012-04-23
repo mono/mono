@@ -70,6 +70,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public Dictionary<string, MemberCore> DefinedNames {
+			get {
+				return defined_names;
+			}
+		}
+
 		public TypeDefinition PartialContainer {
 			get {
 				return main_container;

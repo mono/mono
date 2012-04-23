@@ -69,7 +69,7 @@
       <sequencepoints>
         <entry il="0x21" row="11" file_ref="1" hidden="false" />
         <entry il="0x22" row="12" file_ref="1" hidden="false" />
-        <entry il="0x8c" row="13" file_ref="1" hidden="false" />
+        <entry il="0x89" row="13" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -80,21 +80,28 @@
       <scopes />
     </method>
     <method token="0x600000c">
-      <sequencepoints />
-      <locals />
-      <scopes />
-    </method>
-    <method token="0x600000d">
       <sequencepoints>
         <entry il="0x21" row="24" file_ref="1" hidden="false" />
         <entry il="0x22" row="25" file_ref="1" hidden="false" />
-        <entry il="0x92" row="26" file_ref="1" hidden="false" />
+        <entry il="0x8f" row="26" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
     </method>
-    <method token="0x600000e">
+    <method token="0x600000d">
       <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x600000e">
+      <sequencepoints>
+        <entry il="0x21" row="34" file_ref="1" hidden="false" />
+        <entry il="0x22" row="35" file_ref="1" hidden="false" />
+        <entry il="0x2d" row="36" file_ref="1" hidden="false" />
+        <entry il="0x8b" row="37" file_ref="1" hidden="false" />
+        <entry il="0x3ab" row="38" file_ref="1" hidden="false" />
+        <entry il="0x4b9" row="39" file_ref="1" hidden="false" />
+      </sequencepoints>
       <locals />
       <scopes />
     </method>
@@ -104,28 +111,6 @@
       <scopes />
     </method>
     <method token="0x6000010">
-      <sequencepoints>
-        <entry il="0x21" row="34" file_ref="1" hidden="false" />
-        <entry il="0x22" row="35" file_ref="1" hidden="false" />
-        <entry il="0x2d" row="36" file_ref="1" hidden="false" />
-        <entry il="0x8b" row="37" file_ref="1" hidden="false" />
-        <entry il="0x3b1" row="38" file_ref="1" hidden="false" />
-        <entry il="0x4c1" row="39" file_ref="1" hidden="false" />
-      </sequencepoints>
-      <locals />
-      <scopes />
-    </method>
-    <method token="0x6000011">
-      <sequencepoints />
-      <locals />
-      <scopes />
-    </method>
-    <method token="0x6000012">
-      <sequencepoints />
-      <locals />
-      <scopes />
-    </method>
-    <method token="0x6000013">
       <sequencepoints>
         <entry il="0x0" row="37" file_ref="1" hidden="false" />
       </sequencepoints>

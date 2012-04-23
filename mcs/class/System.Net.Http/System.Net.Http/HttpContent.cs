@@ -36,6 +36,7 @@ namespace System.Net.Http
 	public abstract class HttpContent : IDisposable
 	{
 		MemoryStream buffer;
+		Stream stream;
 		bool disposed;
 		HttpContentHeaders headers;
 
@@ -56,6 +57,12 @@ namespace System.Net.Http
 				throw new ArgumentNullException ("stream");
 
 			return SerializeToStreamAsync (stream, context);
+		}
+
+		protected async virtual Task<Stream> CreateContentReadStreamAsync ()
+		{
+			await LoadIntoBufferAsync ();
+			return buffer;
 		}
 
 		public void Dispose ()
@@ -89,6 +96,17 @@ namespace System.Net.Http
 			buffer = new MemoryStream ();
 			await SerializeToStreamAsync (buffer, null).ConfigureAwait (false);
 			buffer.Seek (0, SeekOrigin.Begin);
+		}
+		
+		public async Task<Stream> ReadAsStreamAsync ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (stream == null)
+				stream = await CreateContentReadStreamAsync ().ConfigureAwait (false);
+
+			return stream;
 		}
 
 		public async Task<byte[]> ReadAsByteArrayAsync ()

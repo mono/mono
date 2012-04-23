@@ -147,6 +147,11 @@ namespace IKVM.Reflection
 			get { return callingConvention; }
 		}
 
+		internal bool MatchParameterTypes(Type[] types)
+		{
+			return Util.ArrayEquals(types, parameterTypes);
+		}
+
 		internal static PropertySignature ReadSig(ModuleReader module, ByteReader br, IGenericContext context)
 		{
 			byte flags = br.ReadByte();

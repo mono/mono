@@ -44,6 +44,7 @@
    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
    <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
+   <Compile Include="..\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -57,7 +58,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>

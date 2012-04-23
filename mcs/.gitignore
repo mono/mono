@@ -6,6 +6,7 @@
 *_test_*.dll.config
 *_test_*.xml
 *.o
+*.resources
 TestResult-*.log
 TestResult-*.xml
 TestResult*.xml

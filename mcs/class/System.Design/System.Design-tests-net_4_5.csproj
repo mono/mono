@@ -56,13 +56,17 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="./../../class/lib/net_4_5/System.Design.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_4_5/System.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

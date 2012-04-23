@@ -1,5 +1,5 @@
 MCS=mcs
-sources=AssemblyInfo.cs DrawingTest.cs
+sources=AssemblyInfo.cs DrawingTest.cs PDComparer.cs
 EXOCORTEX=Exocortex.DSP.dll
 
 DrawingTestHelper.dll: $(sources) $(EXOCORTEX)

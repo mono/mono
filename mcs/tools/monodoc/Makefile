@@ -114,10 +114,9 @@ LIB_MCS_FLAGS = \
 	/r:$(corlib)                                                      \
 	/r:System.dll                                                     \
 	/r:System.Core.dll                                                \
-	/r:System.Web                                                     \
-	/r:System.Web.Services                                            \
-	/r:System.Xml.dll                                                 \
-	/r:System.Configuration.dll
+	/r:System.Configuration.dll                                       \
+	/r:System.Web.Services.dll                                        \
+	/r:System.Xml.dll
 
 include ../../build/library.make
 

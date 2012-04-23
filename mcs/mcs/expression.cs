@@ -103,7 +103,12 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			return expr.Resolve (ec);
+			var res = expr.Resolve (ec);
+			var constant = res as Constant;
+			if (constant != null && constant.IsLiteral)
+				return Constant.CreateConstantFromValue (res.Type, constant.GetValue (), expr.Location);
+
+			return res;
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -142,10 +147,12 @@ namespace Mono.CSharp
 		//   This routine will attempt to simplify the unary expression when the
 		//   argument is a constant.
 		// </summary>
-		Constant TryReduceConstant (ResolveContext ec, Constant e)
+		Constant TryReduceConstant (ResolveContext ec, Constant constant)
 		{
-			if (e is EmptyConstantCast)
-				return TryReduceConstant (ec, ((EmptyConstantCast) e).child);
+			var e = constant;
+
+			while (e is EmptyConstantCast)
+				e = ((EmptyConstantCast) e).child;
 			
 			if (e is SideEffectConstant) {
 				Constant r = TryReduceConstant (ec, ((SideEffectConstant) e).value);
@@ -220,7 +227,7 @@ namespace Mono.CSharp
 					return new LongConstant (ec.BuiltinTypes, -lvalue, e.Location);
 
 				case BuiltinTypeSpec.Type.UInt:
-					UIntLiteral uil = e as UIntLiteral;
+					UIntLiteral uil = constant as UIntLiteral;
 					if (uil != null) {
 						if (uil.Value == int.MaxValue + (uint) 1)
 							return new IntLiteral (ec.BuiltinTypes, int.MinValue, e.Location);
@@ -230,13 +237,13 @@ namespace Mono.CSharp
 
 
 				case BuiltinTypeSpec.Type.ULong:
-					ULongLiteral ull = e as ULongLiteral;
+					ULongLiteral ull = constant as ULongLiteral;
 					if (ull != null && ull.Value == 9223372036854775808)
 						return new LongLiteral (ec.BuiltinTypes, long.MinValue, e.Location);
 					return null;
 
 				case BuiltinTypeSpec.Type.Float:
-					FloatLiteral fl = e as FloatLiteral;
+					FloatLiteral fl = constant as FloatLiteral;
 					// For better error reporting
 					if (fl != null)
 						return new FloatLiteral (ec.BuiltinTypes, -fl.Value, e.Location);
@@ -244,7 +251,7 @@ namespace Mono.CSharp
 					return new FloatConstant (ec.BuiltinTypes, -((FloatConstant) e).Value, e.Location);
 
 				case BuiltinTypeSpec.Type.Double:
-					DoubleLiteral dl = e as DoubleLiteral;
+					DoubleLiteral dl = constant as DoubleLiteral;
 					// For better error reporting
 					if (dl != null)
 						return new DoubleLiteral (ec.BuiltinTypes, -dl.Value, e.Location);
@@ -1687,17 +1694,17 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			eclass = ExprClass.Value;
-
-			Constant c = expr as Constant;
-			if (c != null) {
-				c = c.TryReduce (ec, type, loc);
-				if (c != null)
-					return c;
-			}
-
 			if (type.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (ec, loc);
+			}
+
+			eclass = ExprClass.Value;
+			
+			Constant c = expr as Constant;
+			if (c != null) {
+				c = c.TryReduce (ec, type);
+				if (c != null)
+					return c;
 			}
 
 			var res = Convert.ExplicitConversion (ec, expr, type, loc);
@@ -2654,7 +2661,7 @@ namespace Mono.CSharp
 					return left;
 				
 				if (left.IsZeroInteger)
-					return left.TryReduce (ec, right.Type, loc);
+					return left.TryReduce (ec, right.Type);
 				
 				break;
 				
@@ -4497,7 +4504,7 @@ namespace Mono.CSharp
 			//
 			converted = GetOperatorTrue (ec, expr, loc);
 			if (converted == null) {
-				expr.Error_ValueCannotBeConverted (ec, loc, type, false);
+				expr.Error_ValueCannotBeConverted (ec, type, false);
 				return null;
 			}
 
@@ -4977,22 +4984,25 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		public override Expression DoResolveLValue (ResolveContext ec, Expression rhs)
 		{
-			// is out param
-			if (right_side == EmptyExpression.OutAccess)
+			//
+			// Don't be too pedantic when variable is used as out param or for some broken code
+			// which uses property/indexer access to run some initialization
+			//
+			if (rhs == EmptyExpression.OutAccess || rhs.eclass == ExprClass.PropertyAccess || rhs.eclass == ExprClass.IndexerAccess)
 				local_info.SetIsUsed ();
 
 			if (local_info.IsReadonly && !ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.UsingInitializerScope)) {
 				int code;
 				string msg;
-				if (right_side == EmptyExpression.OutAccess) {
+				if (rhs == EmptyExpression.OutAccess) {
 					code = 1657; msg = "Cannot pass `{0}' as a ref or out argument because it is a `{1}'";
-				} else if (right_side == EmptyExpression.LValueMemberAccess) {
+				} else if (rhs == EmptyExpression.LValueMemberAccess) {
 					code = 1654; msg = "Cannot assign to members of `{0}' because it is a `{1}'";
-				} else if (right_side == EmptyExpression.LValueMemberOutAccess) {
+				} else if (rhs == EmptyExpression.LValueMemberOutAccess) {
 					code = 1655; msg = "Cannot pass members of `{0}' as ref or out arguments because it is a `{1}'";
-				} else if (right_side == EmptyExpression.UnaryAddress) {
+				} else if (rhs == EmptyExpression.UnaryAddress) {
 					code = 459; msg = "Cannot take the address of {1} `{0}'";
 				} else {
 					code = 1656; msg = "Cannot assign to `{0}' because it is a `{1}'";
@@ -5005,7 +5015,7 @@ namespace Mono.CSharp
 			if (eclass == ExprClass.Unresolved)
 				DoResolveBase (ec);
 
-			return base.DoResolveLValue (ec, right_side);
+			return base.DoResolveLValue (ec, rhs);
 		}
 
 		public override int GetHashCode ()
@@ -5149,7 +5159,7 @@ namespace Mono.CSharp
 
 				if (ec.IsVariableCapturingRequired && !pi.Block.ParametersBlock.IsExpressionTree) {
 					AnonymousMethodStorey storey = pi.Block.Explicit.CreateAnonymousMethodStorey (ec);
-					storey.CaptureParameter (ec, this);
+					storey.CaptureParameter (ec, pi, this);
 				}
 			}
 
@@ -6982,15 +6992,7 @@ namespace Mono.CSharp
 				return null;
 
 			AnonymousMethodStorey storey = ae.Storey;
-			while (storey != null) {
-				AnonymousMethodStorey temp = storey.Parent as AnonymousMethodStorey;
-				if (temp == null)
-					return storey.HoistedThis;
-
-				storey = temp;
-			}
-
-			return null;
+			return storey != null ? storey.HoistedThis : null;
 		}
 
 		public static bool IsThisAvailable (ResolveContext ec, bool ignoreAnonymous)
@@ -7019,11 +7021,20 @@ namespace Mono.CSharp
 
 			var block = ec.CurrentBlock;
 			if (block != null) {
-				if (block.ParametersBlock.TopBlock.ThisVariable != null)
-					variable_info = block.ParametersBlock.TopBlock.ThisVariable.VariableInfo;
+				var top = block.ParametersBlock.TopBlock;
+				if (top.ThisVariable != null)
+					variable_info = top.ThisVariable.VariableInfo;
 
 				AnonymousExpression am = ec.CurrentAnonymousMethod;
-				if (am != null && ec.IsVariableCapturingRequired) {
+				if (am != null && ec.IsVariableCapturingRequired && !block.Explicit.HasCapturedThis) {
+					//
+					// Hoisted this is almost like hoisted variable but not exactly. When
+					// there is no variable hoisted we can simply emit an instance method
+					// without lifting this into a storey. Unfotunatelly this complicates
+					// this in other cases because we don't know where this will be hoisted
+					// until top-level block is fully resolved
+					//
+					top.AddThisReferenceFromChildrenBlock (block.Explicit);
 					am.SetHasThisAccess ();
 				}
 			}
@@ -9228,11 +9239,15 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		public override void Error_ValueAssignment (ResolveContext rc, Expression rhs)
+		{
+		}
+
 		public override void Error_UnexpectedKind (ResolveContext ec, ResolveFlags flags, Location loc)
 		{
 		}
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
 		}
 

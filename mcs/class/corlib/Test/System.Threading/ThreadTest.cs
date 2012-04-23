@@ -1125,6 +1125,15 @@ namespace MonoTests.System.Threading
 			Thread.VolatileWrite (ref v4, float.MaxValue);
 			Assert.AreEqual (v4, float.MaxValue);
 		}
+
+		[Test]
+		public void SetNameTpThread () {
+			ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadProc));
+		}
+
+		static void ThreadProc(Object stateInfo) {
+			Thread.CurrentThread.Name = "My Worker";
+		}
 	}
 
 	public class TestUtil

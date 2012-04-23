@@ -55,7 +55,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
@@ -66,6 +66,10 @@
     <Reference Include="Microsoft.Build.Framework.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

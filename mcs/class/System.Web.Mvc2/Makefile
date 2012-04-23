@@ -10,7 +10,6 @@ RESX_DIST =  System.Web.Mvc/Resources/MvcResources.resx
 
 LIB_MCS_FLAGS = \
 		/warn:1 \
-		/noconfig \
 		/keyfile:../winfx.pub \
 	        /r:System.dll \
 	        /r:System.Core.dll \

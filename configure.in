@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [2.11],
+AC_INIT(mono, [2.11.1],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README])
@@ -419,7 +419,7 @@ AM_ICONV()
 AM_CONDITIONAL(NO_VERSION_SCRIPT, test x$no_version_script = xyes)
 
 AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h)
-AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h)
+AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h)
 AC_CHECK_HEADERS([linux/netlink.h linux/rtnetlink.h],
                   [], [], [#include <stddef.h>
 		  #include <sys/socket.h>
@@ -858,6 +858,9 @@ if test "x$mono_feature_disable_shared_perfcounters" = "xyes"; then
 	AC_DEFINE(DISABLE_SHARED_PERFCOUNTERS, 1, [Disable shared perfcounters.])
 	AC_MSG_NOTICE([Disabled Shared perfcounters.])
 fi
+
+AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
+AM_CONDITIONAL(DISABLE_EXECUTABLES, test x$enable_executables = xno)
 
 AC_MSG_CHECKING(for visibility __attribute__)
 AC_COMPILE_IFELSE([
@@ -3144,6 +3147,9 @@ msvc/Makefile
 po/Makefile
 ])
 
+# Update all submodules recursively to ensure everything is checked out
+$srcdir/scripts/update_submodules
+
 if test x$host_win32 = xyes; then
    # Get rid of 'cyg' prefixes in library names
    sed -e "s/\/cyg\//\/\//" libtool > libtool.new; mv libtool.new libtool; chmod 755 libtool
@@ -3259,7 +3265,6 @@ echo "
 	oprofile:      $OPROFILE
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
-	Parallel Mark: $enable_parallel_mark
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
 
     Libraries:

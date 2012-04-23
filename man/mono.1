@@ -1089,6 +1089,20 @@ and leave them untouched. Precise marking reduces floating garbage
 and can speed up nursery collection and allocation rate, it has
 the downside of requiring a significant extra memory per compiled
 method. The right option, unfortunately, requires experimentation.
+.TP
+\fBminor=\fIminor-collector\fR
+Specifies which minor collector to use. Options are 'simple' which
+promotes all objects from the nursery directly to the old generation
+and 'split' which lets object stay longer on the nursery before promoting.
+.TP
+\fBalloc-ratio=\fIratio\fR
+Specifies the ratio of memory from the nursery to be use by the alloc space.
+This only can only be used with the split minor collector.
+.TP
+\fBpromotion-age=\fIage\fR
+Specifies the required age of an object must reach inside the nursery before
+been promoted to the old generation. This only can only be used with the
+split minor collector.
 .ne
 .RE
 .TP

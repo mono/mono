@@ -42,6 +42,13 @@ namespace IKVM.Reflection
 		public abstract Type DeclaringType { get; }
 		public abstract MemberTypes MemberType { get; }
 
+		public virtual Type ReflectedType
+		{
+			get { return DeclaringType; }
+		}
+
+		internal abstract MemberInfo SetReflectedType(Type type);
+
 		public virtual int MetadataToken
 		{
 			get { throw new NotSupportedException(); }
@@ -82,10 +89,36 @@ namespace IKVM.Reflection
 			return this.Module.GetCustomAttributes(this.MetadataToken, attributeType);
 		}
 
-		internal static bool BindingFlagsMatch(bool state, BindingFlags flags, BindingFlags trueFlag, BindingFlags falseFlag)
+		internal virtual bool BindingFlagsMatch(BindingFlags flags)
+		{
+			throw new InvalidOperationException();
+		}
+
+		internal virtual bool BindingFlagsMatchInherited(BindingFlags flags)
+		{
+			throw new InvalidOperationException();
+		}
+
+		protected static bool BindingFlagsMatch(bool state, BindingFlags flags, BindingFlags trueFlag, BindingFlags falseFlag)
 		{
 			return (state && (flags & trueFlag) == trueFlag)
 				|| (!state && (flags & falseFlag) == falseFlag);
+		}
+
+		protected static T SetReflectedType<T>(T member, Type type)
+			where T : MemberInfo
+		{
+			return member == null ? null : (T)member.SetReflectedType(type);
+		}
+
+		protected static T[] SetReflectedType<T>(T[] members, Type type)
+			where T : MemberInfo
+		{
+			for (int i = 0; i < members.Length; i++)
+			{
+				members[i] = SetReflectedType(members[i], type);
+			}
+			return members;
 		}
 	}
 }

@@ -862,6 +862,8 @@ mono_debugger_agent_parse_options (char *options)
 		}
 	}
 
+	//agent_config.log_level = 0;
+
 	if (agent_config.transport == NULL) {
 		fprintf (stderr, "debugger-agent: The 'transport' option is mandatory.\n");
 		exit (1);
@@ -1183,7 +1185,7 @@ socket_transport_connect (const char *address)
 
 			addrlen = sizeof (addr);
 			memset (&addr, 0, sizeof (addr));
-			res = getsockname (sfd, &addr, &addrlen);
+			res = getsockname (sfd, (struct sockaddr*)&addr, &addrlen);
 			g_assert (res == 0);
 
 			host = (char*)"127.0.0.1";
@@ -2340,7 +2342,7 @@ thread_interrupt (DebuggerTlsData *tls, MonoThreadInfo *info, void *sigctx, Mono
 	if (info)
 		tid = mono_thread_info_get_tid (info);
 	else
-		tid = GetCurrentThreadId ();
+		tid = (MonoNativeThreadId)GetCurrentThreadId ();
 
 	// FIXME: Races when the thread leaves managed code before hitting a single step
 	// event.
@@ -2616,7 +2618,7 @@ resume_vm (void)
 	g_assert (suspend_count > 0);
 	suspend_count --;
 
-	DEBUG(1, fprintf (log_file, "[%p] Resuming vm...\n", (gpointer)GetCurrentThreadId ()));
+	DEBUG(1, fprintf (log_file, "[%p] Resuming vm, suspend count=%d...\n", (gpointer)GetCurrentThreadId (), suspend_count));
 
 	if (suspend_count == 0) {
 		// FIXME: Is it safe to call this inside the lock ?
@@ -3621,13 +3623,15 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 	mono_loader_lock ();
 	thread = mono_g_hash_table_lookup (tid_to_thread, (gpointer)tid);
 	if (thread) {
-		tls = mono_g_hash_table_lookup (thread_to_tls, thread);
-		/* FIXME: Maybe we need to free this instead, but some code can't handle that */
-		tls->terminated = TRUE;
 		mono_g_hash_table_remove (tid_to_thread_obj, (gpointer)tid);
-		/* Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
-		MONO_GC_UNREGISTER_ROOT (tls->thread);
-		tls->thread = NULL;
+		tls = mono_g_hash_table_lookup (thread_to_tls, thread);
+		if (tls) {
+			/* FIXME: Maybe we need to free this instead, but some code can't handle that */
+			tls->terminated = TRUE;
+			/* Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
+			MONO_GC_UNREGISTER_ROOT (tls->thread);
+			tls->thread = NULL;
+		}
 	}
 	mono_loader_unlock ();
 
@@ -4275,7 +4279,7 @@ process_breakpoint_inner (DebuggerTlsData *tls)
 	ss_reqs = g_ptr_array_new ();
 	ss_reqs_orig = g_ptr_array_new ();
 
-	DEBUG(1, fprintf (log_file, "[%p] Breakpoint hit, method=%s, offset=0x%x.\n", (gpointer)GetCurrentThreadId (), ji->method->name, native_offset));
+	DEBUG(1, fprintf (log_file, "[%p] Breakpoint hit, method=%s, ip=%p, offset=0x%x.\n", (gpointer)GetCurrentThreadId (), ji->method->name, ip, native_offset));
 
 	mono_loader_lock ();
 
@@ -5525,6 +5529,9 @@ set_var (MonoType *t, MonoDebugVarInfo *var, MonoContext *ctx, MonoDomain *domai
 			g_assert_not_reached ();
 		}
 
+		if (t->byref)
+			NOT_IMPLEMENTED;
+
 		/* Set value on the stack or in the return ctx */
 		if (reg_locations [reg]) {
 			/* Saved on the stack */
@@ -5550,8 +5557,15 @@ set_var (MonoType *t, MonoDebugVarInfo *var, MonoContext *ctx, MonoDomain *domai
 
 		//printf ("[R%d+%d] = %p\n", reg, var->offset, addr);
 
+		if (t->byref) {
+			addr = *(guint8**)addr;
+
+			if (!addr)
+				break;
+		}
+			
 		// FIXME: Write barriers
-		memcpy (addr, val, size);
+		mono_gc_memmove (addr, val, size);
 		break;
 	case MONO_DEBUG_VAR_ADDRESS_MODE_DEAD:
 		NOT_IMPLEMENTED;
@@ -5854,7 +5868,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 				buffer_add_value (buf, &mono_defaults.void_class->byval_arg, NULL, domain);
 		} else if (MONO_TYPE_IS_REFERENCE (sig->ret)) {
 			buffer_add_value (buf, sig->ret, &res, domain);
-		} else if (mono_class_from_mono_type (sig->ret)->valuetype) {
+		} else if (mono_class_from_mono_type (sig->ret)->valuetype || sig->ret->type == MONO_TYPE_PTR || sig->ret->type == MONO_TYPE_FNPTR) {
 			if (mono_class_is_nullable (mono_class_from_mono_type (sig->ret))) {
 				if (!res)
 					buffer_add_value (buf, &mono_defaults.object_class->byval_arg, &res, domain);
@@ -5892,7 +5906,7 @@ invoke_method (void)
 	DebuggerTlsData *tls;
 	InvokeData *invoke;
 	int id;
-	int err;
+	int i, err;
 	Buffer buf;
 	static void (*restore_context) (void *);
 	MonoContext restore_ctx;
@@ -5928,8 +5942,10 @@ invoke_method (void)
 	err = do_invoke_method (tls, &buf, invoke);
 
 	/* Start suspending before sending the reply */
-	if (!(invoke->flags & INVOKE_FLAG_SINGLE_THREADED))
-		suspend_vm ();
+	if (!(invoke->flags & INVOKE_FLAG_SINGLE_THREADED)) {
+		for (i = 0; i < invoke->suspend_count; ++i)
+			suspend_vm ();
+	}
 
 	send_reply_packet (id, err, &buf);
 	
@@ -6160,7 +6176,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		int objid = decode_objid (p, &p, end);
 		MonoThread *thread;
 		DebuggerTlsData *tls;
-		int err, flags;
+		int i, count, err, flags;
 
 		err = get_object (objid, (MonoObject**)&thread);
 		if (err)
@@ -6188,7 +6204,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		 * resumed.
 		 */
 		if (tls->pending_invoke)
-			NOT_IMPLEMENTED;
+			return ERR_NOT_SUSPENDED;
 		tls->pending_invoke = g_new0 (InvokeData, 1);
 		tls->pending_invoke->id = id;
 		tls->pending_invoke->flags = flags;
@@ -6197,10 +6213,14 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		tls->pending_invoke->endp = tls->pending_invoke->p + (end - p);
 		tls->pending_invoke->suspend_count = suspend_count;
 
-		if (flags & INVOKE_FLAG_SINGLE_THREADED)
+		if (flags & INVOKE_FLAG_SINGLE_THREADED) {
 			resume_thread (THREAD_TO_INTERNAL (thread));
-		else
-			resume_vm ();
+		}
+		else {
+			count = suspend_count;
+			for (i = 0; i < count; ++i)
+				resume_vm ();
+		}
 		break;
 	}
 	case CMD_VM_ABORT_INVOKE: {
@@ -6770,7 +6790,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;
 	}
 	case CMD_ASSEMBLY_GET_OBJECT: {
-		MonoObject *o = (MonoObject*)mono_assembly_get_object (mono_domain_get (), ass);
+		MonoObject *o = (MonoObject*)mono_assembly_get_object (domain, ass);
 		buffer_add_objid (buf, o);
 		break;
 	}
@@ -7254,7 +7274,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	case CMD_TYPE_GET_OBJECT: {
-		MonoObject *o = (MonoObject*)mono_type_get_object (mono_domain_get (), &klass->byval_arg);
+		MonoObject *o = (MonoObject*)mono_type_get_object (domain, &klass->byval_arg);
 		buffer_add_objid (buf, o);
 		break;
 	}

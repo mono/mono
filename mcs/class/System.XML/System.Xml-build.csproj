@@ -322,6 +322,7 @@
    <Compile Include="System.Xml.Schema\XmlSchemaReader.cs" />
    <Compile Include="System.Xml.Schema\XmlSchemaValidationFlags.cs" />
    <Compile Include="System.Xml.Schema\XmlTypeCode.cs" />
+   <Compile Include="System.Xml.Schema\XmlValueConverter.cs" />
    <Compile Include="System.Xml.Schema\XmlValueGetter.cs" />
    <Compile Include="System.Xml.Serialization\IXmlTextParser.cs" />
    <Compile Include="System.Xml.Serialization\CodeExporter.cs" />
@@ -447,7 +448,7 @@ type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\P
 </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-        <Reference Include="mscorlib.dll">
+    <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>

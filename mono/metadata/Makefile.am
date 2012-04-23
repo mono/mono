@@ -60,7 +60,11 @@ moon-do-clean:
 	-test -z "libmonoruntimemoon.la" || rm -f libmonoruntimemoon.la
 endif
 
+if DISABLE_EXECUTABLES
+noinst_LTLIBRARIES = $(shared_sgen_libraries) $(shared_boehm_libraries)
+else
 noinst_LTLIBRARIES = $(boehm_libraries) $(sgen_libraries) $(moonlight_libraries)
+endif
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\"
 
@@ -216,7 +220,10 @@ libmonoruntime_la_SOURCES = \
 	sgen-gray.c	\
 	sgen-gray.h	\
 	sgen-major-copy-object.h \
+	sgen-minor-copy-object.h \
+	sgen-copy-object.h \
 	sgen-major-scan-object.h \
+	sgen-minor-scan-object.h \
 	sgen-protocol.h		\
 	sgen-scan-object.h	\
 	sgen-nursery-allocator.c	\
@@ -225,6 +232,8 @@ libmonoruntime_la_SOURCES = \
 	sgen-descriptor.h		\
 	sgen-alloc.c		\
 	sgen-debug.c		\
+	sgen-simple-nursery.c	\
+	sgen-split-nursery.c	\
 	string-icalls.c 	\
 	string-icalls.h 	\
 	sysmath.h		\

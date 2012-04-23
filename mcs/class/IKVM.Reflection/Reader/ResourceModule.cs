@@ -90,6 +90,11 @@ namespace IKVM.Reflection.Reader
 			return null;
 		}
 
+		internal override Type FindTypeIgnoreCase(TypeName lowerCaseName)
+		{
+			return null;
+		}
+
 		internal override void GetTypesImpl(List<Type> list)
 		{
 		}

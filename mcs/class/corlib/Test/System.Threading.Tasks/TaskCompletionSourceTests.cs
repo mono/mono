@@ -200,22 +200,21 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void SetExceptionAndUnobservedEvent ()
 		{
-			bool wasCalled = false;
 			bool notFromMainThread = false;
+			var mre = new ManualResetEvent (false);
 			int mainThreadId = Thread.CurrentThread.ManagedThreadId;
 			TaskScheduler.UnobservedTaskException += (o, args) => {
-				wasCalled = true;
 				notFromMainThread = Thread.CurrentThread.ManagedThreadId != mainThreadId;
 				args.SetObserved ();
+				mre.Set ();
 			};
 			var inner = new ApplicationException ();
 			CreateFaultedTaskCompletionSource (inner);
-			Thread.Sleep (1000);
 			GC.Collect ();
 			GC.WaitForPendingFinalizers ();
 
-			Assert.IsTrue (wasCalled);
-			Assert.IsTrue (notFromMainThread);
+			Assert.IsTrue (mre.WaitOne (5000), "#1");
+			Assert.IsTrue (notFromMainThread, "#2");
 		}
 
 		void CreateFaultedTaskCompletionSource (Exception inner)

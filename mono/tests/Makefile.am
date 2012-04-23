@@ -379,6 +379,7 @@ BASE_TEST_CS_SRC=		\
 	bug-696593.cs	\
 	bug-705140.cs	\
 	bug-1147.cs	\
+	mono-path.cs	\
 	bug-bxc-795.cs
 
 TEST_CS_SRC_DIST=	\
@@ -607,7 +608,7 @@ if ARM
 test-sgen : sgen-tests
 else
 if S390x
-test-sgen : sgen-tests
+test-sgen : sgen-regular-tests
 endif
 endif
 endif
@@ -747,14 +748,18 @@ sgen-regular-tests: $(SGEN_TESTS)
 		echo "Testing $$fn ...";	\
 		MONO_GC_PARAMS=major=marksweep-par MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 		MONO_ENV_OPTIONS="--gc=sgen"                                    $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
+		MONO_GC_PARAMS=major=marksweep-par,minor=split MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
+		MONO_GC_PARAMS=minor=split MONO_ENV_OPTIONS="--gc=sgen"                     $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 	done
 
 
 sgen-tests: sgen-regular-tests sgen-bridge.exe sgen-bridge-major-fragmentation.exe
 	@echo "Testing sgen-bridge.exe ...";	\
 	MONO_GC_PARAMS=bridge=Bridge MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) sgen-bridge.exe > sgen-bridge.exe.stdout 2> sgen-bridge.exe.stderr
+	MONO_GC_PARAMS=bridge=Bridge,minor=split MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) sgen-bridge.exe > sgen-bridge.exe.stdout 2> sgen-bridge.exe.stderr
 	@echo "Testing sgen-bridge-major-fragmentation.exe ...";	\
 	MONO_GC_PARAMS=bridge=Bridge MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) sgen-bridge-major-fragmentation.exe > sgen-bridge-major-fragmentation.exe.stdout 2> sgen-bridge-major-fragmentation.exe.stderr
+	MONO_GC_PARAMS=bridge=Bridge,minor=split MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) sgen-bridge-major-fragmentation.exe > sgen-bridge-major-fragmentation.exe.stdout 2> sgen-bridge-major-fragmentation.exe.stderr
 
 
 # Generated tests for runtime invoke

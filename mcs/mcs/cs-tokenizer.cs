@@ -139,6 +139,11 @@ namespace Mono.CSharp
 				pos = 0;
 			}
 
+			public override string ToString ()
+			{
+				return string.Format ("Token '{0}' at {1},{2}", Value, row, column);
+			}
+			
 			public Location Location {
 				get { return new Location (row, column); }
 			}
@@ -1265,10 +1270,24 @@ namespace Mono.CSharp
 					int ntoken;
 					int interrs = 1;
 					int colons = 0;
+					int braces = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
 					while ((ntoken = xtoken ()) != Token.EOF) {
+						if (ntoken == Token.OPEN_BRACE) {
+							++braces;
+							continue;
+						}
+
+						if (ntoken == Token.CLOSE_BRACE) {
+							--braces;
+							continue;
+						}
+
+						if (braces != 0)
+							continue;
+
 						if (ntoken == Token.SEMICOLON)
 							break;
 						
@@ -1284,7 +1303,7 @@ namespace Mono.CSharp
 						}
 					}
 					
-					next_token = colons != interrs ? Token.INTERR_NULLABLE : Token.INTERR;
+					next_token = colons != interrs && braces == 0 ? Token.INTERR_NULLABLE : Token.INTERR;
 					break;
 				}
 			}
