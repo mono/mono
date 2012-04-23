@@ -181,9 +181,7 @@ namespace System.Threading
 
 				if (cancellationToken.CanBeCanceled) {
 					if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, millisecondsTimeout, false) == 1)
-						return false;
-
-					cancellationToken.ThrowIfCancellationRequested ();
+						throw new OperationCanceledException (cancellationToken);
 				} else {
 					if (!handle.WaitOne (millisecondsTimeout, false))
 						return false;
