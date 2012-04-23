@@ -244,8 +244,21 @@ namespace MonoTests.System.Threading
 		{
 			var mres = new ManualResetEventSlim ();
 			var cts = new CancellationTokenSource ();
-			ThreadPool.QueueUserWorkItem(x => { Thread.Sleep(1000); mres.Set(); });
-			Assert.IsTrue(mres.Wait(TimeSpan.FromSeconds(10), cts.Token), "Wait returned false despite event was set.");
+			ThreadPool.QueueUserWorkItem(x => { Thread.Sleep (1000); mres.Set (); });
+			Assert.IsTrue (mres.Wait (TimeSpan.FromSeconds (10), cts.Token), "Wait returned false despite event was set.");
+		}
+
+		[Test]
+		public void WaitWithCancellationTokenAndCancel ()
+		{
+			var mres = new ManualResetEventSlim ();
+			var cts = new CancellationTokenSource ();
+			ThreadPool.QueueUserWorkItem(x => { Thread.Sleep (1000); cts.Cancel (); });
+			try {
+				mres.Wait (TimeSpan.FromSeconds (10), cts.Token);
+				Assert.Fail ("Wait did not throw an exception despite cancellation token was cancelled.");
+			} catch (OperationCanceledException) {
+			}
 		}
 
 		[Test]
