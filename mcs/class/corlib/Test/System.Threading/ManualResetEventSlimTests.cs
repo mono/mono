@@ -233,6 +233,14 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void WaitWithCancellationTokenAndTimeout ()
+		{
+			var mres = new ManualResetEventSlim ();
+			var cts = new CancellationTokenSource ();
+			Assert.IsFalse (mres.Wait (TimeSpan.FromSeconds (1), cts.Token), "Wait returned true despite timeout.");
+		}
+
+		[Test]
 		public void Dispose ()
 		{
 			var mre = new ManualResetEventSlim (false);
