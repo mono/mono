@@ -611,8 +611,8 @@ namespace DrawingTestHelper
 		protected override Bitmap GetReferenceImage(string testName) {
 			string fileName = testName.Replace(":", "_") + ".png";
 			try{
-				if (Type.GetType ("MonoTouch.UIKit.UIImage") != null){
-					return new Bitmap("/Developer/MonoTouch/Source/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/" + fileName);
+				if (true){
+					return new Bitmap("/Developer/MonoTouch/Source/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/PNGs/" + fileName);
 				} else {
 					_bitmap.Save( fileName );
 					GC.Collect();

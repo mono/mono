@@ -25,9 +25,13 @@ namespace DrawingTestHelper
 		public PDComparer()
 		{
 		}
-
+		
+		static int j;
 		public static double Compare(Bitmap b1, Bitmap b2)
 		{
+			b1.Save ("/tmp/fo" + j + ".jpg");
+			b2.Save ("/tmp/so" + j + ".jpg");
+			j++;
 			Point [] shapePoints = GetPointFromImage(b1);
 			double [] pointsDistance = new double[ shapePoints.Length ];
 
