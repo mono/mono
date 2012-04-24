@@ -374,7 +374,8 @@ BASE_TEST_CS_SRC=		\
 	monitor.cs	\
 	bug-1147.cs	\
 	mono-path.cs	\
-	bug-bxc-795.cs
+	bug-bxc-795.cs	\
+	bug-3903.cs
 
 TEST_CS_SRC_DIST=	\
 	$(BASE_TEST_CS_SRC)	\
@@ -385,6 +386,7 @@ TEST_CS_SRC_DIST=	\
 TEST_CS_SRC_GEN = \
 	runtime-invoke.gen.cs \
 	imt_big_iface_test.cs
+	
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs
@@ -818,6 +820,9 @@ generic-delegate2-lib.2.dll : generic-delegate2-lib.2.il
 	$(ILASM) /dll /output:$@ $(srcdir)/generic-delegate2-lib.2.il
 generic-delegate2.2.exe : generic-delegate2.2.cs generic-delegate2-lib.2.dll
 	$(MCS) -r:generic-delegate2-lib.2.dll -out:$@ $(srcdir)/generic-delegate2.2.cs
+
+bug-3903.exe: bug-3903.cs
+	$(MCS) -sdk:2 bug-3903.cs -out:bug-3903.exe
 
 gshared: test-generic-sharing
 
