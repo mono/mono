@@ -558,6 +558,10 @@ namespace System.Net
 		public ServicePoint ServicePoint {
 			get { return GetServicePoint (); }
 		}
+
+		internal ServicePoint ServicePointNoLock {
+			get { return servicePoint; }
+		}
 		
 		public override int Timeout { 
 			get { return timeout; }

@@ -525,7 +525,7 @@ namespace System.Net
 					ServicePoint sp = null;
 					HttpWebRequest req = sender as HttpWebRequest;
 					if (req != null)
-						sp = req.ServicePoint;
+						sp = req.ServicePointNoLock;
 					if (status11 == 0 && errors != 0)
 						status11 = GetStatusFromChain (chain);
 
