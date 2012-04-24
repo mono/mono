@@ -78,7 +78,9 @@ namespace System.IO.Ports
 				bool dtr_enable, bool rts_enable, Handshake hs, int read_timeout, int write_timeout,
 				int read_buffer_size, int write_buffer_size)
 		{
-			handle = CreateFile (port_name, GenericRead | GenericWrite, 0, 0, OpenExisting,
+			handle = CreateFile (port_name != null && !port_name.StartsWith(@"\\.\")
+					? @"\\.\" + port_name : port_name,
+					GenericRead | GenericWrite, 0, 0, OpenExisting,
 					FileFlagOverlapped, 0);
 
 			if (handle == -1)
