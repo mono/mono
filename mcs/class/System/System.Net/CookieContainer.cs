@@ -5,10 +5,12 @@
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//  Marek Safar (marek.safar@gmail.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // (c) Copyright 2004 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -245,7 +247,7 @@ namespace System.Net
 			}
 
 			if (cookie.Port.Length == 0 && uri != null && !uri.IsDefaultPort) {
-				cookie.Port = "\"" + uri.Port.ToString () + "\"";
+				cookie.Ports = new [] { uri.Port };
 			}
 		}
 

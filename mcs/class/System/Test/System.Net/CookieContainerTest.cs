@@ -5,8 +5,10 @@
 // 	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //      Daniel Nauck    (dna(at)mono-project(dot)de)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2004,2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -390,6 +392,29 @@ namespace MonoTests.System.Net {
 				Assert.IsNotNull (ex.Message, "#C4");
 				Assert.AreEqual ("value", ex.ParamName, "#C5");
 			}
+		}
+
+		[Test]
+		public void Add_LocalWithPort ()
+		{
+			CookieContainer cc = new CookieContainer ();
+			var orig = new Cookie ("mycookie", "vv");
+			cc.Add (new Uri ("http://localhost:8810/"), orig);
+			var c = cc.GetCookies (new Uri ("http://localhost:8810/"))[0];
+			Assert.AreEqual ("", c.Comment, "#1");
+			Assert.IsNull (c.CommentUri, "#2");
+			Assert.IsFalse (c.Discard, "#3");
+			Assert.AreEqual ("localhost", c.Domain, "#4");
+			Assert.IsFalse (c.Expired, "#5");
+			Assert.AreEqual (DateTime.MinValue, c.Expires, "#6");
+			Assert.IsFalse (c.HttpOnly, "#7");
+			Assert.AreEqual ("mycookie", c.Name, "#8");
+			Assert.AreEqual ("/", c.Path, "#9");
+			Assert.AreEqual ("", c.Port, "#10");
+			Assert.IsFalse (c.Secure, "#11");
+			Assert.AreEqual ("vv", c.Value, "#13");
+			Assert.AreEqual (0, c.Version, "#14");
+			Assert.AreEqual ("mycookie=vv", c.ToString (), "#15");
 		}
 
 		[Test] // Add (Cookie)
