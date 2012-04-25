@@ -2603,8 +2603,13 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 			mono_sgen_bridge_processing_register_objects (finalized_array_entries, finalized_array);
 			finalized_array_entries = 0;
 		}
-		drain_gray_stack (queue);
 	}
+
+	/*
+	Make sure we drain the gray stack before processing disappearing links and finalizers.
+	If we don't make sure it is empty we might wrongly see a live object as dead.
+	*/
+	drain_gray_stack (queue);
 
 	/*
 	We must clear weak links that don't track resurrection before processing object ready for
