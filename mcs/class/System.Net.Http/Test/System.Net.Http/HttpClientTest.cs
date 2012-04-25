@@ -556,7 +556,7 @@ namespace MonoTests.System.Net.Http
 				// Broken by design
 				client.SendAsync (request).Wait ();
 				Assert.Fail ("#2");
-			} catch (InvalidOperationException) {
+			} catch (Exception) {
 			}
 		}
 

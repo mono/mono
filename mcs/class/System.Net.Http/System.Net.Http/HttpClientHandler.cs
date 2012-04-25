@@ -204,6 +204,7 @@ namespace System.Net.Http
 			//var wr = (HttpWebRequest) factory.Create (request.RequestUri);
 
 			var wr = new HttpWebRequest (request.RequestUri);
+			wr.ThrowOnError = false;
 
 			wr.ConnectionGroupName = "HttpClientHandler";
 			wr.Method = request.Method.Method;
@@ -278,6 +279,8 @@ namespace System.Net.Http
 
 			if (request.Content != null) {
 				throw new NotImplementedException ();
+				//var stream = await wrequest.GetRequestStreamAsync ();
+				//await request.Content.CopyToAsync (stream);
 			}
 
 			// FIXME: Why GetResponseAsync does not accept cancellationToken

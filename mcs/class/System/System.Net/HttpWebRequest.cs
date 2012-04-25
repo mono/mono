@@ -140,7 +140,8 @@ namespace System.Net
 			this.actualUri = uri;
 			this.proxy = GlobalProxySelection.Select;
 			this.webHeaders = new WebHeaderCollection (WebHeaderCollection.HeaderInfo.Request);
-		}		
+			ThrowOnError = true;
+		}
 		
 		[Obsolete ("Serialization is obsoleted for this type", false)]
 		protected HttpWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
@@ -271,6 +272,8 @@ namespace System.Net
 		internal long InternalContentLength {
 			set { contentLength = value; }
 		}
+			
+		internal bool ThrowOnError { get; set; }
 		
 		public override string ContentType { 
 			get { return webHeaders ["Content-Type"]; }
@@ -1491,13 +1494,16 @@ namespace System.Net
 							bodyBuffer = null;
 							return true;
 						}
-						
+
+						if (!ThrowOnError)
+							return false;
+							
 						writeStream.InternalClose ();
 						writeStream = null;
 						webResponse.Close ();
 						webResponse = null;
 						bodyBuffer = null;
-
+							
 						throw new WebException ("This request requires buffering " +
 									"of data for authentication or " +
 									"redirection to be sucessful.");
@@ -1540,6 +1546,9 @@ namespace System.Net
 
 				return b;
 			}
+				
+			if (!ThrowOnError)
+				return false;
 
 			if (writeStream != null) {
 				writeStream.InternalClose ();
