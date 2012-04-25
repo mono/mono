@@ -117,6 +117,7 @@ public class Tests : TestsBase
 	double field_double;
 	Thread field_class;
 	IntPtr field_intptr;
+	int? field_nullable;
 	static int static_i = 55;
 	static string static_s = "A";
 	public const int literal_i = 56;

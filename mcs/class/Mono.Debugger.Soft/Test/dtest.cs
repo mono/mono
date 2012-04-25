@@ -845,7 +845,6 @@ public class DebuggerTests
 		AssertValue (Int32.MaxValue - 5, (f as StructMirror).Fields [0]);
 
 		// enums
-
 		FieldInfoMirror field = o.Type.GetField ("field_enum");
 		f = o.GetValue (field);
 		(f as EnumMirror).Value = 5;
@@ -862,6 +861,20 @@ public class DebuggerTests
 		field = o.Type.GetField ("generic_field_struct");
 		f = o.GetValue (field);
 		o.SetValue (field, f);
+
+		// nullables
+		field = o.Type.GetField ("field_nullable");
+		f = o.GetValue (field);
+		AssertValue (0, (f as StructMirror).Fields [0]);
+		AssertValue (false, (f as StructMirror).Fields [1]);
+		o.SetValue (field, vm.CreateValue (6));
+		f = o.GetValue (field);
+		AssertValue (6, (f as StructMirror).Fields [0]);
+		AssertValue (true, (f as StructMirror).Fields [1]);
+		o.SetValue (field, vm.CreateValue (null));
+		f = o.GetValue (field);
+		AssertValue (0, (f as StructMirror).Fields [0]);
+		AssertValue (false, (f as StructMirror).Fields [1]);
 
 		// Argument checking
 		AssertThrows<ArgumentNullException> (delegate () {
