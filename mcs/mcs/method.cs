@@ -1432,8 +1432,7 @@ namespace Mono.CSharp {
 				base_ctor = ConstructorLookup (ec, type, ref argument_list, loc);
 			}
 	
-			// TODO MemberCache: Does it work for inflated types ?
-			if (base_ctor == caller_builder.Spec){
+			if (base_ctor.MemberDefinition == caller_builder.Spec.MemberDefinition) {
 				ec.Report.Error (516, loc, "Constructor `{0}' cannot call itself",
 					caller_builder.GetSignatureForError ());
 			}
