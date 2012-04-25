@@ -35,7 +35,7 @@ namespace System.Linq.Parallel.QueryNodes
 	internal class QueryConcatNode<TSource> : QueryMuxNode<TSource, TSource, TSource>
 	{
 		public QueryConcatNode (QueryBaseNode<TSource> first, QueryBaseNode<TSource> second)
-			: this (first, second)
+			: base (first, second)
 		{
 		}
 
