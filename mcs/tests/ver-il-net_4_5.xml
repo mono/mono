@@ -53130,7 +53130,7 @@
     </type>
     <type name="C+&lt;TestTask2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>162</size>
+        <size>167</size>
       </method>
     </type>
     <type name="C+&lt;TestTaskGeneric&gt;c__async2">
@@ -53413,7 +53413,7 @@
     </type>
     <type name="Program+&lt;Main&gt;c__AnonStorey1+&lt;Main&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>177</size>
+        <size>182</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -55378,7 +55378,7 @@
     </type>
     <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>189</size>
+        <size>194</size>
       </method>
       <method name="Void &lt;&gt;m__7()" attrs="145">
         <size>7</size>
@@ -56223,6 +56223,38 @@
     <type name="B+&lt;Foo2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
         <size>191</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-34.cs">
+    <type name="C">
+      <method name="System.Threading.Tasks.Task Test(Boolean)" attrs="150">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Test2(Boolean)" attrs="150">
+        <size>41</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>66</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>186</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test2&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>59</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>

@@ -950,10 +950,9 @@ namespace Mono.CSharp {
 						async_return.EmitAssign (ec);
 
 						ec.EmitEpilogue ();
-
-						ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
 					}
 
+					ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
 					return;
 				}
 
