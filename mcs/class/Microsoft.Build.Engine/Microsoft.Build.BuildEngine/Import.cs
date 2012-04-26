@@ -162,6 +162,8 @@ namespace Microsoft.Build.BuildEngine {
 				base_dir_info = new DirectoryInfo (Directory.GetCurrentDirectory ());
 
 			IEnumerable<string> extn_paths = has_extn_ref ? GetExtensionPaths (project) : new string [] {null};
+			bool import_needed = false;
+			
 			try {
 				foreach (string path in extn_paths) {
 					string extn_msg = null;
@@ -174,6 +176,8 @@ namespace Microsoft.Build.BuildEngine {
 					// reference it
 					if (!ConditionParser.ParseAndEvaluate (condition_attribute, project))
 						continue;
+
+					import_needed = true;
 
 					// We stop if atleast one file got imported.
 					// Remaining extension paths are *not* tried
@@ -196,6 +200,9 @@ namespace Microsoft.Build.BuildEngine {
 				if (has_extn_ref)
 					project.SetExtensionsPathProperties (Project.DefaultExtensionsPath);
 			}
+
+			if (import_needed)
+				throw new InvalidProjectFileException (String.Format ("{0} could not import \"{1}\"", importingFile, project_attribute));
 		}
 
 		// Parses the Project attribute from an Import,
