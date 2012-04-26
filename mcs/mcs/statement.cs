@@ -2462,15 +2462,6 @@ namespace Mono.CSharp {
 			if (ec.CurrentAnonymousMethod is StateMachineInitializer && ParametersBlock.Original == ec.CurrentAnonymousMethod.Block.Original)
 				return ec.CurrentAnonymousMethod.Storey;
 
-			//
-			// When referencing a variable inside iterator where all
-			// variables will be captured anyway we don't need to create
-			// another storey context
-			//
-			if (ParametersBlock.StateMachine is IteratorStorey) {
-				return ParametersBlock.StateMachine;
-			}
-
 			if (am_storey == null) {
 				MemberBase mc = ec.MemberContext as MemberBase;
 

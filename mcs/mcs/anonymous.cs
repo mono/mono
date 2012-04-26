@@ -314,7 +314,7 @@ namespace Mono.CSharp {
 			}
 
 			var hoisted = localVariable.HoistedVariant;
-			if (hoisted != null && hoisted.Storey != this && hoisted.Storey.Kind == MemberKind.Struct) {
+			if (hoisted != null && hoisted.Storey != this && hoisted.Storey is StateMachine) {
 				// TODO: It's too late the field is defined in HoistedLocalVariable ctor
 				hoisted.Storey.hoisted_locals.Remove (hoisted);
 				hoisted = null;
@@ -330,7 +330,7 @@ namespace Mono.CSharp {
 				hoisted_locals.Add (hoisted);
 			}
 
-			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit)
+			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine))
 				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 		}
 
@@ -342,7 +342,7 @@ namespace Mono.CSharp {
 
 			var hoisted = parameterInfo.Parameter.HoistedVariant;
 
-			if (parameterInfo.Block.StateMachine is AsyncTaskStorey) {
+			if (parameterInfo.Block.StateMachine != null) {
 				//
 				// Another storey in same block exists but state machine does not
 				// have parameter captured. We need to add it there as well to
@@ -364,7 +364,7 @@ namespace Mono.CSharp {
 				// Lift captured parameter from value type storey to reference type one. Otherwise
 				// any side effects would be done on a copy
 				//
-				if (hoisted != null && hoisted.Storey != this && hoisted.Storey.Kind == MemberKind.Struct) {
+				if (hoisted != null && hoisted.Storey != this && hoisted.Storey is StateMachine) {
 					if (hoisted_local_params == null)
 						hoisted_local_params = new List<HoistedParameter> ();
 
@@ -487,7 +487,7 @@ namespace Mono.CSharp {
 			// When the current context is async (or iterator) lift local storey
 			// instantiation to the currect storey
 			//
-			if (ec.CurrentAnonymousMethod is StateMachineInitializer) {
+			if (ec.CurrentAnonymousMethod is StateMachineInitializer && (block.HasYield || block.HasAwait)) {
 				//
 				// Unfortunately, normal capture mechanism could not be used because we are
 				// too late in the pipeline and standart assign cannot be used either due to
@@ -701,7 +701,7 @@ namespace Mono.CSharp {
 			public override void Emit (EmitContext ec)
 			{
 				ResolveContext rc = new ResolveContext (ec.MemberContext);
-				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (rc);
+				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (rc, false);
 				// This should never fail
 				e = e.Resolve (rc);
 				if (e != null)

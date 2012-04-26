@@ -2401,7 +2401,7 @@ namespace Mono.CSharp {
 							} else {
 								break;
 							}
-						} else if (me is MethodGroupExpr) {
+						} else if (me is MethodGroupExpr || me is PropertyExpr || me is IndexerExpr) {
 							// Leave it to overload resolution to report correct error
 						} else {
 							// TODO: rc.Report.SymbolRelatedToPreviousError ()
@@ -5233,14 +5233,25 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
+			return CreateExpressionTree (ec, true);
+		}
+
+		public Expression CreateExpressionTree (ResolveContext ec, bool convertInstance)
+		{
+			Arguments args;
 			Expression instance;
+
 			if (InstanceExpression == null) {
 				instance = new NullLiteral (loc);
-			} else {
+			} else if (convertInstance) {
 				instance = InstanceExpression.CreateExpressionTree (ec);
+			} else {
+				args = new Arguments (1);
+				args.Add (new Argument (InstanceExpression));
+				instance = CreateExpressionFactoryCall (ec, "Constant", args);
 			}
 
-			Arguments args = Arguments.CreateForExpressionTree (ec, null,
+			args = Arguments.CreateForExpressionTree (ec, null,
 				instance,
 				CreateTypeOfExpression ());
 
@@ -6062,7 +6073,7 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 				} else {
 					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
-					ErrorIsInaccesible (rc, best_candidate.Set.GetSignatureForError (), loc);
+					ErrorIsInaccesible (rc, best_candidate.GetSignatureForError (), loc);
 				}
 			}
 
