@@ -253,10 +253,10 @@ namespace System.Net.Http
 				request.Headers.AddHeaders (headers);
 			}
 
-			return SendAsyncWorker (request, cancellationToken);
+			return SendAsyncWorker (request, completionOption, cancellationToken);
 		}
 
-		async Task<HttpResponseMessage> SendAsyncWorker (HttpRequestMessage request, CancellationToken cancellationToken)
+		async Task<HttpResponseMessage> SendAsyncWorker (HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
 		{
 			try {
 				if (cancellation_token == null)
@@ -273,6 +273,13 @@ namespace System.Net.Http
 					if (response == null)
 						throw new InvalidOperationException ("Handler failed to return a response");
 
+					//
+					// Read the content when default HttpCompletionOption.ResponseContentRead is set
+					//
+					if (response.Content != null && (completionOption & HttpCompletionOption.ResponseHeadersRead) == 0) {
+						await response.Content.LoadIntoBufferAsync (MaxResponseContentBufferSize).ConfigureAwait (false);
+					}
+					
 					return response;
 				}
 			} finally {

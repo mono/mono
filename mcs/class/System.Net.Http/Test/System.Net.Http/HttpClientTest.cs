@@ -439,6 +439,81 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_Complete_Content ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				l.Response.OutputStream.WriteByte (55);
+				l.Response.OutputStream.WriteByte (75);
+			});
+
+			try {
+				var client = new HttpClient ();
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				request.Headers.AddWithoutValidation ("aa", "vv");
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+				Assert.AreEqual ("7K", response.Content.ReadAsStringAsync ().Result, "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+
+				IEnumerable<string> values;
+				Assert.IsTrue (response.Headers.TryGetValues ("Transfer-Encoding", out values), "#102");
+				Assert.AreEqual ("chunked", values.First (), "#102a");
+				Assert.AreEqual (true, response.Headers.TransferEncodingChunked, "#102b");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Complete_Content_MaxResponseContentBufferSize ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				var b = new byte[4000];
+				l.Response.OutputStream.Write (b, 0, b.Length);
+			});
+
+			try {
+				var client = new HttpClient ();
+				client.MaxResponseContentBufferSize = 1000;
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+				Assert.AreEqual (4000, response.Content.ReadAsStringAsync ().Result.Length, "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Complete_Content_MaxResponseContentBufferSize_Error ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				var b = new byte[4000];
+				l.Response.OutputStream.Write (b, 0, b.Length);
+			});
+
+			try {
+				var client = new HttpClient ();
+				client.MaxResponseContentBufferSize = 1000;
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+
+				try {
+					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait ();
+					Assert.Fail ("#2");
+				} catch (AggregateException e) {
+					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#3");
+				}
+
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
 		public void Send_Complete_Error ()
 		{
 			var listener = CreateListener (l => {

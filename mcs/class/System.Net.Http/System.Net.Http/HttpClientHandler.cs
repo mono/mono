@@ -200,9 +200,6 @@ namespace System.Net.Http
 
 		HttpWebRequest CreateWebRequest (HttpRequestMessage request)
 		{
-			//var factory = Activator.CreateInstance (typeof (IWebRequestCreate).Assembly.GetType ("System.Net.HttpRequestCreator"), true) as IWebRequestCreate;
-			//var wr = (HttpWebRequest) factory.Create (request.RequestUri);
-
 			var wr = new HttpWebRequest (request.RequestUri);
 			wr.ThrowOnError = false;
 

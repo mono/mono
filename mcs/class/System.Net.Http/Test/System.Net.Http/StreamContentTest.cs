@@ -303,6 +303,22 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void LoadIntoBuffer_BufferOverflow ()
+		{
+			var ms = new MemoryStream ();
+			ms.Write (new byte[10000], 0, 10000);
+			ms.Seek (0, SeekOrigin.Begin);
+
+			var sc = new StreamContent (ms);
+			try {
+				Assert.IsTrue (sc.LoadIntoBufferAsync (50).Wait (200));
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+			}
+		}
+
+		[Test]
 		public void ReadAsByteArrayAsync ()
 		{
 			var ms = new MemoryStream ();

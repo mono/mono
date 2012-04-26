@@ -34,7 +34,6 @@ namespace System.Net.Http
 {
 	public class HttpRequestMessage : IDisposable
 	{
-		HttpContent content;
 		HttpRequestHeaders headers;
 		HttpMethod method;
 		Version version;
@@ -59,14 +58,7 @@ namespace System.Net.Http
 			RequestUri = requestUri;
 		}
 
-		public HttpContent Content {
-			get {
-				return content;
-			}
-			set {
-				content = value;
-			}
-		}
+		public HttpContent Content { get; set; }
 
 		public HttpRequestHeaders Headers {
 			get {
@@ -148,6 +140,8 @@ namespace System.Net.Http
 			sb.Append ("', Version: ").Append (Version);
 			sb.Append (", Content: ").Append (Content != null ? Content.ToString () : "<null>");
 			sb.Append (", Headers:\r\n{\r\n").Append (Headers);
+			if (Content != null)
+				sb.Append (Content.Headers);
 			sb.Append ("}");
 			
 			return sb.ToString ();
