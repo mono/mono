@@ -2423,6 +2423,83 @@ is_suspended (void)
 	return count_threads_to_wait_for () == 0;
 }
 
+static MonoSeqPointInfo*
+get_seq_points (MonoDomain *domain, MonoMethod *method)
+{
+	MonoSeqPointInfo *seq_points;
+
+	mono_domain_lock (domain);
+	seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, method);
+	if (!seq_points && method->is_inflated) {
+		/* generic sharing + aot */
+		seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, mono_method_get_declaring_generic_method (method));
+		// UNITY: Generic sharing not implemented/enabled yet
+		// if (!seq_points)
+		// 	seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, mini_get_shared_method (method));
+	}
+	mono_domain_unlock (domain);
+
+	return seq_points;
+}
+
+static MonoSeqPointInfo*
+find_seq_points (MonoDomain *domain, MonoMethod *method)
+{
+	MonoSeqPointInfo *seq_points = get_seq_points (domain, method);
+
+	if (!seq_points)
+		printf ("Unable to find seq points for method '%s'.\n", mono_method_full_name (method, TRUE));
+	g_assert (seq_points);
+
+	return seq_points;
+}
+
+/*
+* find_next_seq_point_for_native_offset:
+*
+* Find the first sequence point after NATIVE_OFFSET.
+*/
+static SeqPoint*
+find_next_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info)
+{
+	MonoSeqPointInfo *seq_points;
+	int i;
+
+	seq_points = find_seq_points (domain, method);
+	if (info)
+		*info = seq_points;
+
+	for (i = 0; i < seq_points->len; ++i) {
+		if (seq_points->seq_points [i].native_offset >= native_offset)
+			return &seq_points->seq_points [i];
+	}
+
+	return NULL;
+}
+
+/*
+* find_prev_seq_point_for_native_offset:
+*
+* Find the first sequence point before NATIVE_OFFSET.
+*/
+static SeqPoint*
+find_prev_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info)
+{
+	MonoSeqPointInfo *seq_points;
+	int i;
+
+	seq_points = find_seq_points (domain, method);
+	if (info)
+		*info = seq_points;
+
+	for (i = seq_points->len - 1; i >= 0; --i) {
+		if (seq_points->seq_points [i].native_offset <= native_offset)
+			return &seq_points->seq_points [i];
+	}
+
+	return NULL;
+}
+
 /*
  * find_seq_point_for_native_offset:
  *
@@ -3641,6 +3718,8 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	GPtrArray *bp_reqs, *ss_reqs_orig, *ss_reqs;
 	GSList *bp_events = NULL, *ss_events = NULL, *enter_leave_events = NULL;
 	EventKind kind = EVENT_KIND_BREAKPOINT;
+	MonoSeqPointInfo *info;
+	SeqPoint *sp;
 
 	// FIXME: Speed this up
 
@@ -3669,9 +3748,15 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	ss_reqs = g_ptr_array_new ();
 	ss_reqs_orig = g_ptr_array_new ();
 
-	DEBUG(1, fprintf (log_file, "[%p] Breakpoint hit, method=%s, offset=0x%x.\n", (gpointer)GetCurrentThreadId (), ji->method->name, native_offset));
-
 	mono_loader_lock ();
+
+	/*
+	 * The ip points to the instruction causing the breakpoint event, which is after
+	 * the offset recorded in the seq point map, so find the prev seq point before ip.
+	 */
+	sp = find_prev_seq_point_for_native_offset (mono_domain_get (), ji->method, native_offset, &info);
+
+	DEBUG(1, fprintf (log_file, "[%p] Breakpoint hit, method=%s, ip=%p, offset=0x%x, sp il offset=0x%x.\n", (gpointer)GetCurrentThreadId (), ji->method->name, ip, native_offset, sp ? sp->il_offset : -1));
 
 	bp = NULL;
 	for (i = 0; i < breakpoints->len; ++i) {
@@ -3726,8 +3811,6 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 		EventRequest *req = g_ptr_array_index (ss_reqs_orig, i);
 		SingleStepReq *ss_req = bp->req->info;
 		gboolean hit = TRUE;
-		MonoSeqPointInfo *info;
-		SeqPoint *sp;
 
 		sp = find_seq_point_for_native_offset (mono_domain_get (), ji->method, native_offset, &info);
 		g_assert (sp);
@@ -3742,9 +3825,11 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 			if (minfo)
 				loc = mono_debug_symfile_lookup_location (minfo, sp->il_offset);
 
-			if (!loc || (loc && ji->method == ss_req->last_method && loc->row == ss_req->last_line))
+			if (!loc || (loc && ji->method == ss_req->last_method && loc->row == ss_req->last_line)) {
 				/* Have to continue single stepping */
+				DEBUG(1, fprintf (log_file, "[%p] Same source line, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
 				hit = FALSE;
+			}
 				
 			if (loc) {
 				ss_req->last_method = ji->method;

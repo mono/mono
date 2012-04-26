@@ -2766,6 +2766,18 @@ emit_generic_class_init (MonoCompile *cfg, MonoClass *klass)
 #endif
 }
 
+static void
+emit_seq_point (MonoCompile *cfg, MonoMethod *method, guint8* ip, gboolean intr_loc)
+{
+	MonoInst *ins;
+	MonoMethodHeader *header = mono_method_get_header (method);
+
+	if (cfg->gen_seq_points && cfg->method == method) {
+		NEW_SEQ_POINT (cfg, ins, ip - header->code, intr_loc);
+		MONO_ADD_INS (cfg->cbb, ins);
+	}
+}
+
 /*
  * On return the caller must check @array_class for load errors
  */
@@ -6277,6 +6289,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoInst *vtable_arg = NULL;
 			gboolean check_this = FALSE;
 			gboolean supported_tail_call = FALSE;
+			gboolean need_seq_point = FALSE;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -6332,7 +6345,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					cil_method = cmethod;
 				}
 
-				if (!cmethod)
+				if (!cmethod || mono_loader_get_last_error ())
 					goto load_error;
 				if (!dont_verify && !cfg->skip_visibility) {
 					MonoMethod *target_method = cil_method;
@@ -6389,6 +6402,21 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				mono_save_token_info (cfg, image, token, cil_method);
+
+				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
+					/*
+					 * Need to emit an implicit seq point after every non-void call so single stepping through nested calls like
+					 * foo (bar (), baz ())
+					 * works correctly. MS does this also:
+					 * http://stackoverflow.com/questions/6937198/making-your-net-language-step-correctly-in-the-debugger
+					 * The problem with this approach is that the debugger will stop after all calls returning a value,
+					 * even for simple cases, like:
+					 * int i = foo ();
+					 */
+					/* Special case a few common successor opcodes */
+					if (!(ip + 5 < end && ip [5] == CEE_POP))
+						need_seq_point = TRUE;
+				}
 
 				n = fsig->param_count + fsig->hasthis;
 
@@ -6627,6 +6655,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				ip += 5;
 				ins_flag = 0;
+				if (need_seq_point)
+					emit_seq_point (cfg, method, ip, FALSE);
 				break;
 			}
 
@@ -6692,6 +6722,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				ip += 5;
 				ins_flag = 0;
+				if (need_seq_point)
+					emit_seq_point (cfg, method, ip, FALSE);
 				break;
 			}
 
@@ -6716,12 +6748,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					cfg->real_offset += 5;
 					bblock = cfg->cbb;
 
- 					if (!MONO_TYPE_IS_VOID (fsig->ret))
+ 					if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 						/* *sp is already set by inline_method */
  						sp++;
+					}
 
 					inline_costs += costs;
 					ins_flag = 0;
+					if (need_seq_point)
+						emit_seq_point (cfg, method, ip, FALSE);
 					break;
 				}
 			}
@@ -6838,6 +6873,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				ip += 5;
 				ins_flag = 0;
+				if (need_seq_point)
+					emit_seq_point (cfg, method, ip, FALSE);
 				break;
 			}
 	      				
@@ -6879,6 +6916,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				ip += 5;
 				ins_flag = 0;
+				emit_seq_point (cfg, method, ip, FALSE);
 				break;
 			}
 
@@ -6891,6 +6929,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				ip += 5;
 				ins_flag = 0;
+				if (need_seq_point)
+					emit_seq_point (cfg, method, ip, FALSE);
 				break;
 			}
 
@@ -6912,6 +6952,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			ip += 5;
 			ins_flag = 0;
+			if (need_seq_point)
+				emit_seq_point (cfg, method, ip, FALSE);
 			break;
 		}
 		case CEE_RET:
