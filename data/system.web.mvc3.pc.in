@@ -1,0 +1,4 @@
+Name: System.Web.Mvc3
+Description: System.Web.Mvc - ASP.NET MVC v3
+Version: 3.0.0.0
+Libs: -r:@prefix@/lib/mono/gac/System.Web.Mvc/3.0.0.0__31bf3856ad364e35/System.Web.Mvc.dll
