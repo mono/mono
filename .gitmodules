@@ -4,3 +4,6 @@
 [submodule "external/Newtonsoft.Json"]
 	path = external/Newtonsoft.Json
 	url = git://github.com/mono/Newtonsoft.Json.git
+[submodule "external/cecil"]
+	path = external/cecil
+	url = git://github.com/mono/cecil.git
