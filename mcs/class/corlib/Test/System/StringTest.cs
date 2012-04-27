@@ -4133,6 +4133,10 @@ public class StringTest
 		Assert.AreEqual (2, res.Length, "#11-09-3");
 
 		Assert.AreEqual (0, "    ".Split ((char[]) null, 2, StringSplitOptions.RemoveEmptyEntries).Length, "#12-00-0");
+		
+		res = "not found".Split (new char[2]);
+		Assert.AreEqual ("not found", res[0], "#12-04-27");
+		Assert.AreEqual (1, res.Length, "#12-04-27-A");
 	}
 	
 	[Test]

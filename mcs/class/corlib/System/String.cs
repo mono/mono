@@ -337,7 +337,7 @@ namespace System
 					char* src_ptr = src;
 					int len = Length;
 
-					do {
+					while (len > 0) {
 						if (char.IsWhiteSpace (*src_ptr++)) {
 							if (split_points == null) {
 								split_points = new int[8];
@@ -349,7 +349,8 @@ namespace System
 							if (total_points == count && !removeEmpty)
 								break;
 						}
-					} while (len-- != 0);
+						--len;
+					}
 				}
 			} else {
 				fixed (char* src = this) {
@@ -357,7 +358,7 @@ namespace System
 						char* src_ptr = src;
 						char* sep_ptr_end = sep_src + sep.Length;
 						int len = Length;
-						do {
+						while (len > 0) {
 							char* sep_ptr = sep_src;
 							do {
 								if (*sep_ptr++ == *src_ptr) {
@@ -376,7 +377,8 @@ namespace System
 							} while (sep_ptr != sep_ptr_end);
 
 							++src_ptr;
-						} while (len-- != 0);
+							--len;
+						}
 					}
 				}
 			}
