@@ -78,12 +78,6 @@ namespace Microsoft.CSharp.RuntimeBinder
 					IsRuntimeBinder = true
 				};
 
-				//IList<Compiler.PredefinedTypeSpec> core_types = null;
-				//// HACK: To avoid re-initializing static TypeManager types, like string_type
-				//if (!Compiler.RootContext.EvalMode) {
-				//    core_types = Compiler.TypeManager.InitCoreTypes ();
-				//}
-
 				//
 				// Any later loaded assemblies are handled internally by GetAssemblyDefinition
 				// domain.AssemblyLoad cannot be used as that would be too destructive as we
@@ -93,17 +87,19 @@ namespace Microsoft.CSharp.RuntimeBinder
 				//
 				var module = new Compiler.ModuleContainer (cc);
 				module.HasTypesFullyDefined = true;
+				
+				// Setup fake assembly, it's used mostly to simplify checks like friend-access
 				var temp = new Compiler.AssemblyDefinitionDynamic (module, "dynamic");
 				module.SetDeclaringAssembly (temp);
 
-				// Import all currently loaded assemblies
-				var domain = AppDomain.CurrentDomain;
-
-				temp.Create (domain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
 				var importer = new Compiler.ReflectionImporter (module, cc.BuiltinTypes) {
 					IgnorePrivateMembers = false
 				};
 
+				// Import all currently loaded assemblies
+				// TODO: Rewrite this to populate type cache on-demand, that should greatly
+				// reduce our start-up cost
+				var domain = AppDomain.CurrentDomain;
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
 					importer.ImportAssembly (a, module.GlobalRootNamespace);
 				}
