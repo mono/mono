@@ -54,6 +54,7 @@
    <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
    <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\PrimitiveValue.cs" />
+   <Compile Include="Mono.Debugger.Soft\PointerValue.cs" />
    <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
    <Compile Include="Mono.Debugger.Soft\Mirror.cs" />
    <Compile Include="Mono.Debugger.Soft\EnumMirror.cs" />

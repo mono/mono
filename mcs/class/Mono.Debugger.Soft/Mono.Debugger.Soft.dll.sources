@@ -14,6 +14,7 @@ Mono.Debugger.Soft/ThreadStartEvent.cs
 Mono.Debugger.Soft/ILInstruction.cs
 Mono.Debugger.Soft/InterfaceMappingMirror.cs
 Mono.Debugger.Soft/PrimitiveValue.cs
+Mono.Debugger.Soft/PointerValue.cs
 Mono.Debugger.Soft/VMDisconnectedException.cs
 Mono.Debugger.Soft/Mirror.cs
 Mono.Debugger.Soft/EnumMirror.cs
