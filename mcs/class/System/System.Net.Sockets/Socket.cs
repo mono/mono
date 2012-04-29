@@ -748,13 +748,19 @@ namespace System.Net.Sockets
 			return(req);
 		}
 
-		void CheckRange(byte[] buffer, int offset, int size)
+		void CheckRange (byte[] buffer, int offset, int size)
 		{
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
+				
+			if (offset > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
 
-			if (size < 0 || size > buffer.Length - offset)
-				throw new ArgumentOutOfRangeException ("size");
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size", "size must be >= 0")
+				
+			if (size > buffer.Length - offset)
+				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
 		}
 		
 		public IAsyncResult BeginReceive(byte[] buffer, int offset,
@@ -769,7 +775,7 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			CheckRange(buffer, offset, size);
+			CheckRange (buffer, offset, size);
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Receive);
 			req.Buffer = buffer;
@@ -890,7 +896,7 @@ namespace System.Net.Sockets
 			if (remoteEP == null)
 				throw new ArgumentNullException ("remoteEP");
 
-			CheckRange (bufer, offset, size);
+			CheckRange (buffer, offset, size);
 
 			throw new NotImplementedException ();
 		}
