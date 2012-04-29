@@ -747,6 +747,15 @@ namespace System.Net.Sockets
 			socket_pool_queue (Worker.Dispatcher, req);
 			return(req);
 		}
+
+		void CheckRange(byte[] buffer, int offset, int size)
+		{
+			if (offset < 0 || offset > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (size < 0 || size > buffer.Length - offset)
+				throw new ArgumentOutOfRangeException ("size");
+		}
 		
 		public IAsyncResult BeginReceive(byte[] buffer, int offset,
 						 int size,
@@ -760,11 +769,7 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange(buffer, offset, size);
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Receive);
 			req.Buffer = buffer;
