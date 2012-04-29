@@ -857,14 +857,7 @@ namespace System.Net.Sockets
 			if (remote_end == null)
 				throw new ArgumentNullException ("remote_end");
 
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
-
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
-
-			if (offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset, size", "offset + size exceeds the buffer length");
+			CheckRange (buffer, offset, size);
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveFrom);
 			req.Buffer = buffer;
@@ -897,11 +890,7 @@ namespace System.Net.Sockets
 			if (remoteEP == null)
 				throw new ArgumentNullException ("remoteEP");
 
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (bufer, offset, size);
 
 			throw new NotImplementedException ();
 		}
@@ -915,14 +904,7 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
-
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
-
-			if (offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset, size", "offset + size exceeds the buffer length");
+			CheckRange (buffer, offset, size);
 
 			if (!connected)
 				throw new SocketException ((int)SocketError.NotConnected);
@@ -1088,14 +1070,7 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
-
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
-
-			if (offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset, size", "offset + size exceeds the buffer length");
+			CheckRange (buffer, offset, size);
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.SendTo);
 			req.Buffer = buffer;
@@ -1568,8 +1543,7 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (size < 0 || size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buffer, 0, size);
 
 			SocketError error;
 
@@ -1592,11 +1566,7 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buffer, offset, size);
 			
 			SocketError error;
 
@@ -1619,11 +1589,7 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buffer, offset, size);
 			
 			return Receive_nochecks (buffer, offset, size, flags, out error);
 		}
@@ -1727,11 +1693,7 @@ namespace System.Net.Sockets
 			if (remoteEP == null)
 				throw new ArgumentNullException ("remoteEP");
 
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buffer, offset, size);
 
 			return ReceiveFrom_nochecks (buffer, offset, size, flags, ref remoteEP);
 		}
@@ -1809,11 +1771,7 @@ namespace System.Net.Sockets
 			if (remoteEP == null)
 				throw new ArgumentNullException ("remoteEP");
 
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buffer, offset, size);
 
 			/* FIXME: figure out how we get hold of the
 			 * IPPacketInformation
@@ -1876,8 +1834,7 @@ namespace System.Net.Sockets
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
-			if (size < 0 || size > buf.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buf, 0, size);
 
 			SocketError error;
 
@@ -1897,11 +1854,7 @@ namespace System.Net.Sockets
 			if (buf == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0 || offset > buf.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buf.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buf, offset, size);
 
 			SocketError error;
 
@@ -1921,11 +1874,7 @@ namespace System.Net.Sockets
 			if (buf == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0 || offset > buf.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buf.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buf, offset, size);
 
 			return Send_nochecks (buf, offset, size, flags, out error);
 		}
@@ -2037,8 +1986,7 @@ namespace System.Net.Sockets
 			if (remote_end == null)
 				throw new ArgumentNullException ("remote_end");
 
-			if (size < 0 || size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buffer, 0, size);
 
 			return SendTo_nochecks (buffer, 0, size, flags, remote_end);
 		}
@@ -2064,11 +2012,7 @@ namespace System.Net.Sockets
 			if (remote_end == null)
 				throw new ArgumentNullException("remote_end");
 
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (size < 0 || offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
+			CheckRange (buffer, offset, size);
 
 			return SendTo_nochecks (buffer, offset, size, flags, remote_end);
 		}
