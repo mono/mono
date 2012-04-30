@@ -32,9 +32,11 @@ namespace Mono.Debugger.Soft
 	 * Represents a value of a pointer type in the debuggee
 	 */
 	public class PointerValue : Value {
+		TypeMirror type;
 		long addr;
 
-		public PointerValue (VirtualMachine vm, long addr) : base (vm, 0) {
+		public PointerValue (VirtualMachine vm, TypeMirror type, long addr) : base (vm, 0) {
+			this.type = type;
 			this.addr = addr;
 		}
 
@@ -42,8 +44,8 @@ namespace Mono.Debugger.Soft
 			get { return addr; }
 		}
 
-		public object Value {
-			get { return addr; }
+		public TypeMirror Type {
+			get { return type; }
 		}
 
 		public override bool Equals (object obj) {
@@ -57,7 +59,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		public override string ToString () {
-			return string.Format ("PointerValue<0x{0:x}>", addr);
+			return string.Format ("PointerValue<({0}) 0x{1:x}>", type.CSharpName, addr);
 		}
 	}
 }
