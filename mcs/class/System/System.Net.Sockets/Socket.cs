@@ -756,8 +756,8 @@ namespace System.Net.Sockets
 			if (offset > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
 
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("size", "size must be >= 0")
+			if (size < 0)                          
+				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
 				
 			if (size > buffer.Length - offset)
 				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
