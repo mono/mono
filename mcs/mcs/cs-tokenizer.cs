@@ -1815,13 +1815,10 @@ namespace Mono.CSharp
 		
 		public void putback (int c)
 		{
-			if (putback_char != -1){
-				Console.WriteLine ("Col: " + col);
-				Console.WriteLine ("Row: " + line);
-				Console.WriteLine ("Name: " + current_source.Name);
-				Console.WriteLine ("Current [{0}] putting back [{1}]  ", putback_char, c);
-				throw new Exception ("This should not happen putback on putback");
+			if (putback_char != -1) {
+				throw new InternalErrorException (string.Format ("Secondary putback [{0}] putting back [{1}] is not allowed", (char)putback_char, (char) c), Location);
 			}
+
 			if (c == '\n' || col == 0) {
 				// It won't happen though.
 				line--;
