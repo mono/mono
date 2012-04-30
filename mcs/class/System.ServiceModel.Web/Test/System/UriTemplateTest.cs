@@ -502,5 +502,19 @@ namespace MonoTests.System
 			Assert.IsNotNull (match, "#1");
 			Assert.AreEqual ("something", match.BoundVariables ["path"], "#2");
 		}
+
+        [Test]
+        public void EscapedUriCandidate ()
+        {
+            var candidateUri = new Uri (@"https://somehost:12345/path1/path2/path3/endprefix/tpath1/guid1/tpath2/~|~~|~%3F~|~Path{guid2}~|~/tpath3");
+            var matchUri = new Uri (candidateUri.Scheme + "://" + candidateUri.Host + ":" + candidateUri.Port + @"/path1/path2/path3/endprefix");
+            
+            var template = new UriTemplate (@"tpath1/{guid}/tpath2/{encodedGuidString}/tpath3");
+            var match = template.Match (matchUri, candidateUri);
+
+            Assert.IsNotNull (match);
+            Assert.That (match.BoundVariables ["GUID"] == "guid1");
+            Assert.That (match.BoundVariables ["ENCODEDGUIDSTRING"] == "~|~~|~?~|~Path{guid2}~|~");
+        }
 	}
 }
