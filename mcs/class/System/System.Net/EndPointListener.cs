@@ -2,9 +2,10 @@
 // System.Net.EndPointListener
 //
 // Author:
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
 //
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2012 Xamarin, Inc. (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -76,7 +77,11 @@ namespace System.Net {
 				string path = Path.Combine (dirname, ".mono");
 				path = Path.Combine (path, "httplistener");
 				string cert_file = Path.Combine (path, String.Format ("{0}.cer", port));
+				if (!File.Exists (cert_file))
+					return;
 				string pvk_file = Path.Combine (path, String.Format ("{0}.pvk", port));
+				if (!File.Exists (pvk_file))
+					return;
 				cert = new X509Certificate2 (cert_file);
 				key = PrivateKey.CreateFromFile (pvk_file).RSA;
 			} catch {
