@@ -95,7 +95,7 @@ namespace System {
 				get { return _cur >= _length; }
 			}
 
-			static bool HasHyphen (Format format)
+			public static bool HasHyphen (Format format)
 			{
 				switch (format) {
 				case Format.D:
@@ -570,48 +570,95 @@ namespace System {
 			builder.Append (ToHex (value & 0xf));
 		}
 
-		private string BaseToString (bool h, bool p, bool b)
+		string ToString (Format format)
 		{
-			StringBuilder res = new StringBuilder (40);
+			int length;
+			switch (format) {
+			case Format.B:
+			case Format.P:
+				length = 38;
+				break;
+			case Format.D:
+				length = 36;
+				break;
+			case Format.N:
+				length = 32;
+				break;
+			case Format.X:
+				length = 68;
+				break;		
+			default:
+				throw new NotImplementedException (format.ToString ());
+			}
 			
-			if (p) {
+			StringBuilder res = new StringBuilder (length);
+			bool has_hyphen = GuidParser.HasHyphen (format);
+			
+			if (format == Format.P) {
 				res.Append ('(');
-			} else if (b) {
+			} else if (format == Format.B) {
 				res.Append ('{');
+			} else if (format == Format.X) {
+				res.Append ('{').Append ('0').Append ('x');
 			}
 		
 			AppendInt (res, _a);
-			if (h) {
+			if (has_hyphen) {
 				res.Append ('-');
+			} else if (format == Format.X) {
+				res.Append (',').Append ('0').Append ('x');
 			}
+			
 			AppendShort (res, _b);
-			if (h) {
+			if (has_hyphen) {
 				res.Append ('-');
+			} else if (format == Format.X) {
+				res.Append (',').Append ('0').Append ('x');
 			}
+
 			AppendShort (res, _c);
-			if (h) {
+			if (has_hyphen) {
 				res.Append ('-');
 			}
 	
-			AppendByte (res, _d);
-			AppendByte (res, _e);
-
-			if (h) {
-				res.Append ('-');
-			}
-
-			AppendByte (res, _f);
-			AppendByte (res, _g);
-			AppendByte (res, _h);
-			AppendByte (res, _i);
-			AppendByte (res, _j);
-			AppendByte (res, _k);
-
+			if (format == Format.X) {
+				res.Append (',').Append ('{').Append ('0').Append ('x');
+				AppendByte (res, _d);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _e);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _f);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _g);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _h);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _i);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _j);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _k);
+				res.Append ('}').Append ('}');;
+			} else {
+				AppendByte (res, _d);
+				AppendByte (res, _e);
 	
-			if (p) {
-				res.Append (')');
-			} else if (b) {
-				res.Append ('}');
+				if (has_hyphen) {
+					res.Append ('-');
+				}
+	
+				AppendByte (res, _f);
+				AppendByte (res, _g);
+				AppendByte (res, _h);
+				AppendByte (res, _i);
+				AppendByte (res, _j);
+				AppendByte (res, _k);
+	
+				if (format == Format.P) {
+					res.Append (')');
+				} else if (format == Format.B) {
+					res.Append ('}');
+				}
 			}
 		
 			return res.ToString ();
@@ -619,36 +666,15 @@ namespace System {
 	
 		public override string ToString ()
 		{
-			return BaseToString (true, false, false);
+			return ToString (Format.D);
 		}
 	
 		public string ToString (string format)
 		{
-			bool h = true;
-			bool p = false;
-			bool b = false;
-	
-			if (format != null) {
-				string f = format.ToLowerInvariant();
-	
-				if (f == "b") {
-					b = true;
-				}
-				else if (f == "p") {
-					p = true;
-				}
-				else if (f == "n") {
-					h = false;
-				}
-				else if (f != "d" && f != String.Empty) {
-					throw new FormatException (Locale.GetText (
-						"Argument to Guid.ToString(string format) should be \"b\", \"B\", \"d\", \"D\", \"n\", \"N\", \"p\" or \"P\""));
-				}
-			}
-
-			return BaseToString (h, p, b);
+			return ToString (ParseFormat (format));
 		}
 
+		// provider value is never used
 		public string ToString (string format, IFormatProvider provider)
 		{
 			return ToString (format);
@@ -702,27 +728,40 @@ namespace System {
 			var parser = new GuidParser (input);
 			return parser.Parse (ParseFormat (format), out result);
 		}
+#endif
 
 		static Format ParseFormat (string format)
 		{
-			if (format.Length != 1)
-				throw new ArgumentException ("Wrong format");
-
+			if (string.IsNullOrEmpty (format))
+				return Format.D;
+			
 			switch (format [0]) {
 			case 'N':
+			case 'n':
 				return Format.N;
 			case 'D':
+			case 'd':
 				return Format.D;
 			case 'B':
+			case 'b':
 				return Format.B;
 			case 'P':
+			case 'p':
 				return Format.P;
+#if NET_4_0 || MOONLIGHT || MOBILE
 			case 'X':
+			case 'x':
 				return Format.X;
+#endif
 			}
 
-			throw new ArgumentException ("Wrong format");
-		}
+			throw new FormatException (
+#if NET_4_0 || MOONLIGHT || MOBILE
+				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\", \"b\", \"X\" or \"x\""
+#else
+				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\" or \"b\""
 #endif
+				);
+		}
 	}
 }
