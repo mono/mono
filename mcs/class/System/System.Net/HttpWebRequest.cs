@@ -822,8 +822,18 @@ namespace System.Net
 
 		void CheckIfForceWrite ()
 		{
-			if (writeStream == null || writeStream.RequestWritten || (contentLength < 0 && writeStream.CanWrite == true) || !InternalAllowBuffering)
+			if (writeStream == null || writeStream.RequestWritten || !InternalAllowBuffering)
 				return;
+#if NET_4_0
+			if (contentLength < 0 && writeStream.CanWrite == true && writeStream.WriteBufferLength <= 0)
+				return;
+
+			if (contentLength < 0 && writeStream.WriteBufferLength > 0)
+				InternalContentLength = writeStream.WriteBufferLength;
+#else
+			if (contentLength < 0 && writeStream.CanWrite == true)
+				return;
+#endif
 
 			// This will write the POST/PUT if the write stream already has the expected
 			// amount of bytes in it (ContentLength) (bug #77753) or if the write stream
