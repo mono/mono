@@ -5,9 +5,11 @@
 //	Duco Fijma (duco@lorentz.xs4all.nl)
 //	Sebastien Pouliot (sebastien@ximian.com)
 //	Jb Evain (jbevain@novell.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2002 Duco Fijma
 // Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
+// Copyright 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // References
 // 1.	UUIDs and GUIDs (DRAFT), Section 3.4
@@ -372,12 +374,7 @@ namespace System {
 
 		private static int Compare (int x, int y)
 		{
-			if (x < y) {
-				return -1;
-			}
-			else {
-				return 1;
-			}
+			return ((uint)x < (uint)y) ? -1 : 1;
 		}
 
 		public int CompareTo (object value)
@@ -405,34 +402,34 @@ namespace System {
 			if (_a != value._a) {
 				return Compare (_a, value._a);
 			}
-			else if (_b != value._b) {
+			if (_b != value._b) {
 				return Compare (_b, value._b);
 			}
-			else if (_c != value._c) {
+			if (_c != value._c) {
 				return Compare (_c, value._c);
 			}
-			else if (_d != value._d) {
+			if (_d != value._d) {
 				return Compare (_d, value._d);
 			}
-			else if (_e != value._e) {
+			if (_e != value._e) {
 				return Compare (_e, value._e);
 			}
-			else if (_f != value._f) {
+			if (_f != value._f) {
 				return Compare (_f, value._f);
 			}
-			else if (_g != value._g) {
+			if (_g != value._g) {
 				return Compare (_g, value._g);
 			}
-			else if (_h != value._h) {
+			if (_h != value._h) {
 				return Compare (_h, value._h);
 			}
-			else if (_i != value._i) {
+			if (_i != value._i) {
 				return Compare (_i, value._i);
 			}
-			else if (_j != value._j) {
+			if (_j != value._j) {
 				return Compare (_j, value._j);
 			}
-			else if (_k != value._k) {
+			if (_k != value._k) {
 				return Compare (_k, value._k);
 			}
 			return 0;
