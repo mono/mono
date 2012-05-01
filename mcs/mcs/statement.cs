@@ -4529,6 +4529,12 @@ namespace Mono.CSharp {
 			ec.MarkLabel (start_finally);
 
 			if (finally_host != null) {
+				finally_host.Define ();
+				finally_host.Emit ();
+
+				// Now it's safe to add, to close it properly and emit sequence points
+				finally_host.Parent.AddMember (finally_host);
+
 				var ce = new CallEmitter ();
 				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
