@@ -72,6 +72,9 @@
     <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs">
       <Link>MonoSymbolWriter.cs</Link>
     </Compile>
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs">
+      <Link>SourceMethodBuilder.cs</Link>
+    </Compile>
     <Compile Include="..\..\mcs\anonymous.cs">
       <Link>anonymous.cs</Link>
     </Compile>
