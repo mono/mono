@@ -187,7 +187,7 @@ namespace System.Windows.Forms
 	internal abstract class Theme
 	{
 		protected Array syscolors;
-		private readonly Font default_font;
+		Font default_font;
 		protected Font window_border_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;
@@ -196,8 +196,6 @@ namespace System.Windows.Forms
 
 		protected Theme ()
 		{
-			default_font = SystemFonts.DefaultFont;
-			syscolors = null;
 		}
 
 		private void SetSystemColors (KnownColor kc, Color value)
@@ -358,7 +356,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual Font DefaultFont {
-			get { return default_font; }
+			get { return default_font ?? (default_font = SystemFonts.DefaultFont); }
 		}
 
 		public virtual Color DefaultWindowBackColor {
@@ -504,7 +502,7 @@ namespace System.Windows.Forms
 
 		public virtual Font MenuFont {
 			get {
-				return default_font;
+				return default_font ?? (default_font = SystemFonts.DefaultFont);
 			}
 		}
 
