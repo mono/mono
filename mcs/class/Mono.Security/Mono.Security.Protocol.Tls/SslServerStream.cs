@@ -263,15 +263,6 @@ namespace Mono.Security.Protocol.Tls
 				}
 			}
 
-			if (certRequested) {
-				X509Certificate client_cert = this.context.ClientSettings.ClientCertificate;
-				if (client_cert == null && ((ServerContext)this.context).ClientCertificateRequired)
-					throw new TlsException (AlertDescription.BadCertificate, "No certificate received from client.");
-
-				if (!RaiseClientCertificateValidation (client_cert, new int[0]))
-					throw new TlsException (AlertDescription.BadCertificate, "Client certificate not accepted.");
-			}
-
 			// Send ChangeCipherSpec and ServerFinished messages
 			this.protocol.SendChangeCipherSpec();
 			this.protocol.SendRecord (HandshakeType.Finished);
