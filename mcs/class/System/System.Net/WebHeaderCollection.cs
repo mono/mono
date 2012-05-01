@@ -181,6 +181,12 @@ namespace System.Net
 				headerValue = headerValue.Trim ();
 			if (!IsHeaderValue (headerValue))
 				throw new ArgumentException ("invalid header value: " + headerValue, "headerValue");
+			
+			AddValue (headerName, headerValue);
+		}
+			
+		internal void AddValue (string headerName, string headerValue)
+		{
 			base.Add (headerName, headerValue);			
 		}
 

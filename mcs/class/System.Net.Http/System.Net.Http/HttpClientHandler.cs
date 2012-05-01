@@ -241,11 +241,10 @@ namespace System.Net.Http
 			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
 				foreach (var value in header.Value) {
-					// TODO: Have to call simpler Add
-					headers.Add (header.Key, value);
+					headers.AddValue (header.Key, value);
 				}
 			}
-
+			
 			return wr;
 		}
 
@@ -275,12 +274,18 @@ namespace System.Net.Http
 			var wrequest = CreateWebRequest (request);
 
 			if (request.Content != null) {
-				throw new NotImplementedException ();
-				//var stream = await wrequest.GetRequestStreamAsync ();
-				//await request.Content.CopyToAsync (stream);
+				var headers = wrequest.Headers;
+				foreach (var header in request.Content.Headers) {
+					foreach (var value in header.Value) {
+						headers.AddValue (header.Key, value);
+					}
+				}
+				
+				var stream = wrequest.GetRequestStream ();
+				await request.Content.CopyToAsync (stream);
 			}
 
-			// FIXME: Why GetResponseAsync does not accept cancellationToken
+			// FIXME: GetResponseAsync does not accept cancellationToken
 			var wresponse = (HttpWebResponse) await wrequest.GetResponseAsync ().ConfigureAwait (false);
 			return CreateResponseMessage (wresponse, request);
 		}
