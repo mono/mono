@@ -1220,7 +1220,7 @@ mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean r
 	
 #ifdef HOST_WIN32
 	/* Load modules using LoadLibrary. */
-	if (!refonly && coree_module_handle) {
+	if (!refonly) {
 		HMODULE module_handle;
 		guint16 *fname_utf16;
 		DWORD last_error;
