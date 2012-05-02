@@ -651,6 +651,8 @@ static void stop_debugger_thread (void);
 
 static void finish_agent_init (gboolean on_startup);
 
+static void invalidate_frames (DebuggerTlsData *tls);
+
 static int
 parse_address (char *address, char **host, int *port)
 {
@@ -1947,7 +1949,6 @@ get_last_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 		/* Store the context/lmf for the frame above the last frame */
 		memcpy (&data->ctx, ctx, sizeof (MonoContext));
 		data->lmf = info->lmf;
-
 		return TRUE;
 	}
 }
@@ -2067,15 +2068,23 @@ static void CALLBACK notify_thread_apc (ULONG_PTR param)
 /*
  * reset_native_thread_suspend_state:
  * 
- *   Reset the suspended flag on native threads
+ *   Reset the suspended flag and state on native threads
  */
 static void
 reset_native_thread_suspend_state (gpointer key, gpointer value, gpointer user_data)
 {
 	DebuggerTlsData *tls = value;
 
-	if (!tls->really_suspended && tls->suspended)
+	if (!tls->really_suspended && tls->suspended) {
 		tls->suspended = FALSE;
+		/*
+		 * The thread might still be running if it was executing native code, so the state won't be invalided by
+		 * suspend_current ().
+		 */
+		tls->has_context = FALSE;
+		tls->has_async_ctx = FALSE;
+		invalidate_frames (tls);
+	}
 }
 
 /*
@@ -2356,7 +2365,7 @@ suspend_current (void)
 	/* The frame info becomes invalid after a resume */
 	tls->has_context = FALSE;
 	tls->has_async_ctx = FALSE;
-	invalidate_frames (NULL);
+	invalidate_frames (tls);
 }
 
 static void
