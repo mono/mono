@@ -64,10 +64,6 @@ namespace System.Windows.Forms
 		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
 		#region	Principal Theme Methods
-		static ThemeWin32Classic ()
-		{
-		}
-		
 		public ThemeWin32Classic ()
 		{			
 			ResetDefaults ();
