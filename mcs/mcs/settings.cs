@@ -565,36 +565,22 @@ namespace Mono.CSharp {
 			source_file_index.Add (path, unit.Index);
 		}
 
-		void AddWarningAsError (string warningId, CompilerSettings settings)
+		public bool ProcessWarningsList (string text, Action<int> action)
 		{
-			int id;
-			try {
-				id = int.Parse (warningId);
-			} catch {
-				report.CheckWarningCode (warningId, Location.Null);
-				return;
+			bool valid = true;
+			foreach (string wid in text.Split (numeric_value_separator)) {
+				int id;
+				if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
+					report.Error (1904, "`{0}' is not a valid warning number", wid);
+					valid = false;
+					continue;
+				}
+
+				if (report.CheckWarningCode (id, Location.Null))
+					action (id);
 			}
 
-			if (!report.CheckWarningCode (id, Location.Null))
-				return;
-
-			settings.AddWarningAsError (id);
-		}
-
-		void RemoveWarningAsError (string warningId, CompilerSettings settings)
-		{
-			int id;
-			try {
-				id = int.Parse (warningId);
-			} catch {
-				report.CheckWarningCode (warningId, Location.Null);
-				return;
-			}
-
-			if (!report.CheckWarningCode (id, Location.Null))
-				return;
-
-			settings.AddWarningOnly (id);
+			return valid;
 		}
 
 		void Error_RequiresArgument (string option)
@@ -997,8 +983,8 @@ namespace Mono.CSharp {
 					settings.WarningsAreErrors = true;
 					parser_settings.WarningsAreErrors = true;
 				} else {
-					foreach (string wid in value.Split (numeric_value_separator))
-						AddWarningAsError (wid, settings);
+					if (!ProcessWarningsList (value, v => settings.AddWarningAsError (v)))
+						return ParseResult.Error;
 				}
 				return ParseResult.Success;
 
@@ -1006,8 +992,8 @@ namespace Mono.CSharp {
 				if (value.Length == 0) {
 					settings.WarningsAreErrors = false;
 				} else {
-					foreach (string wid in value.Split (numeric_value_separator))
-						RemoveWarningAsError (wid, settings);
+					if (!ProcessWarningsList (value, v => settings.AddWarningOnly (v)))
+						return ParseResult.Error;
 				}
 				return ParseResult.Success;
 
@@ -1021,28 +1007,15 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/nowarn":
-					if (value.Length == 0) {
-						Error_RequiresArgument (option);
-						return ParseResult.Error;
-					}
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					return ParseResult.Error;
+				}
 
-					var warns = value.Split (numeric_value_separator);
-					foreach (string wc in warns) {
-						try {
-							if (wc.Trim ().Length == 0)
-								continue;
+				if (!ProcessWarningsList (value, v => settings.SetIgnoreWarning (v)))
+					return ParseResult.Error;
 
-							int warn = Int32.Parse (wc);
-							if (warn < 1) {
-								throw new ArgumentOutOfRangeException ("warn");
-							}
-							settings.SetIgnoreWarning (warn);
-						} catch {
-							report.Error (1904, "`{0}' is not a valid warning number", wc);
-							return ParseResult.Error;
-						}
-					}
-					return ParseResult.Success;
+				return ParseResult.Success;
 
 			case "/noconfig":
 				settings.LoadDefaultReferences = false;

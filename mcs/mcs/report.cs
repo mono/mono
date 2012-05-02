@@ -170,12 +170,6 @@ namespace Mono.CSharp {
 			extra_information.Add (msg);
 		}
 
-		public bool CheckWarningCode (string code, Location loc)
-		{
-			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
-			return false;
-		}
-
 		public bool CheckWarningCode (int code, Location loc)
 		{
 			if (AllWarningsHashSet == null)
@@ -184,7 +178,8 @@ namespace Mono.CSharp {
 			if (AllWarningsHashSet.Contains (code))
 				return true;
 
-			return CheckWarningCode (code.ToString (), loc);
+			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
+			return false;
 		}
 
 		public void ExtraInformation (Location loc, string msg)
