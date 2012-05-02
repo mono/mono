@@ -188,7 +188,6 @@ namespace System.Windows.Forms
 	{
 		protected Array syscolors;
 		Font default_font;
-		protected Font window_border_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;
 		internal SystemResPool ResPool = new SystemResPool ();
@@ -556,10 +555,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public virtual Font WindowBorderFont {
-			get {
-				return window_border_font;
-			}
+		public abstract Font WindowBorderFont {
+			get;
 		}
 
 		public int Clamp (int value, int lower, int upper)

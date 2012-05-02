@@ -54,7 +54,8 @@ namespace System.Windows.Forms
 		protected static StringFormat string_format_menu_text;
 		protected static StringFormat string_format_menu_shortcut;
 		protected static StringFormat string_format_menu_menubar_text;
-		static ImageAttributes imagedisabled_attributes = null;
+		static ImageAttributes imagedisabled_attributes;
+		Font window_border_font;
 		const int SEPARATOR_HEIGHT = 6;
 		const int SEPARATOR_MIN_WIDTH = 20;
 		const int SM_CXBORDER = 1;
@@ -63,6 +64,10 @@ namespace System.Windows.Forms
 		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
 
 		#region	Principal Theme Methods
+		static ThemeWin32Classic ()
+		{
+		}
+		
 		public ThemeWin32Classic ()
 		{			
 			ResetDefaults ();
@@ -71,7 +76,7 @@ namespace System.Windows.Forms
 		public override void ResetDefaults() {
 			defaultWindowBackColor = this.ColorWindow;
 			defaultWindowForeColor = this.ColorControlText;
-			window_border_font = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Bold);
+			window_border_font = null;
 			
 			/* Menu string formats */
 			string_format_menu_text = new StringFormat ();
@@ -104,6 +109,12 @@ namespace System.Windows.Forms
 		public override int VerticalScrollBarWidth {
 			get {
 				return XplatUI.VerticalScrollBarWidth;
+			}
+		}
+		
+		public override Font WindowBorderFont {
+			get {
+				return window_border_font ?? (window_border_font = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Bold));
 			}
 		}
 
