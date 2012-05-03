@@ -40,7 +40,6 @@ namespace bug4786test
   [TestFixture]
   public class TdsConnectionPoolTest
   {
-    //const string SERVER="robwilkenssql.db.6210828.hostedresource.com";
     const string SERVER="localhost";
     [Test]
     public void CheckNullException() 
