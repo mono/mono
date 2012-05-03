@@ -303,6 +303,79 @@ namespace MonoTests.System.Xml
 <root />";
 			Assert.AreEqual (xml, sw.ToString ().Replace ("\r\n", "\n"), "#1");
 		}
+
+		[Test]
+		public void NewlineHandlingNone ()
+		{
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw, new XmlWriterSettings () { NewLineHandling = NewLineHandling.None });
+			xw.WriteStartElement("root");
+			xw.WriteElementString("element", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteStartElement("element");
+			xw.WriteAttributeString("attr", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteEndElement();
+			xw.WriteEndElement();
+			xw.Close();
+			string xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><root><element>lf\ncr\rcrlf\r\nht\t</element><element attr=\"lf\ncr\rcrlf\r\nht\t\" /></root>";
+			Assert.AreEqual (xml, sw.ToString ());
+		}
+
+		[Test]
+		public void NewlineHandlingReplace ()
+		{
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw, new XmlWriterSettings () { 
+					NewLineHandling = NewLineHandling.Replace,
+					NewLineChars = "\n"
+			});
+			xw.WriteStartElement("root");
+			xw.WriteElementString("element", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteStartElement("element");
+			xw.WriteAttributeString("attr", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteEndElement();
+			xw.WriteEndElement();
+			xw.Close();
+			string xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><root><element>lf\ncr\ncrlf\nht\t</element><element attr=\"lf&#xA;cr&#xD;crlf&#xD;&#xA;ht&#x9;\" /></root>";
+			Assert.AreEqual (xml, sw.ToString ());
+		}
+
+		[Test]
+		public void NewlineHandlingReplaceCRLF ()
+		{
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw, new XmlWriterSettings () { 
+					NewLineHandling = NewLineHandling.Replace,
+					NewLineChars = "\r\n"
+			});
+			xw.WriteStartElement("root");
+			xw.WriteElementString("element", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteStartElement("element");
+			xw.WriteAttributeString("attr", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteEndElement();
+			xw.WriteEndElement();
+			xw.Close();
+			string xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><root><element>lf\r\ncr\r\ncrlf\r\nht\t</element><element attr=\"lf&#xA;cr&#xD;crlf&#xD;&#xA;ht&#x9;\" /></root>";
+			Assert.AreEqual (xml, sw.ToString ());
+		}
+
+		[Test]
+		public void NewlineHandlingEntitize ()
+		{
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw, new XmlWriterSettings () { 
+					NewLineHandling = NewLineHandling.Entitize,
+					NewLineChars = "\n"
+			});
+			xw.WriteStartElement("root");
+			xw.WriteElementString("element", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteStartElement("element");
+			xw.WriteAttributeString("attr", "lf\ncr\rcrlf\r\nht\t");
+			xw.WriteEndElement();
+			xw.WriteEndElement();
+			xw.Close();
+			string xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><root><element>lf\ncr&#xD;crlf&#xD;\nht\t</element><element attr=\"lf&#xA;cr&#xD;crlf&#xD;&#xA;ht&#x9;\" /></root>";
+			Assert.AreEqual (xml, sw.ToString ());
+		}
 	}
 }
 #endif

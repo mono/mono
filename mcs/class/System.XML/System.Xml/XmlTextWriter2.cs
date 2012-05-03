@@ -277,6 +277,7 @@ namespace Mono.Xml
 			if (settings == null)
 				settings = new XmlWriterSettings ();
 
+			newline_handling = settings.NewLineHandling;
 			Initialize (writer);
 
 			close_output_stream = closeOutput;
@@ -309,7 +310,6 @@ namespace Mono.Xml
 			indent_attributes = settings.NewLineOnAttributes;
 
 			check_character_validity = settings.CheckCharacters;
-			newline_handling = settings.NewLineHandling;
 			namespace_handling = settings.NamespaceHandling;
 		}
 #endif
@@ -331,7 +331,9 @@ namespace Mono.Xml
 				new char [] {'&', '<', '>', '\r', '\n'} :
 				new char [] {'&', '<', '>'};
 			escaped_attr_chars =
-				new char [] {'"', '&', '<', '>', '\r', '\n'};
+				newline_handling != NewLineHandling.None ?
+				new char [] {'"', '&', '<', '>', '\r', '\n', '\t'} :
+				new char [] {'"', '&', '<', '>' };
 		}
 
 #if NET_2_0
@@ -1454,30 +1456,43 @@ namespace Mono.Xml
 					if (isAttribute && text [i] == quote_char)
 						goto case '&';
 					continue;
+				case '\t':
+					if(isAttribute
+					   && newline_handling != NewLineHandling.None) {
+						if (start < i)
+							WriteCheckedBuffer (text, start, i - start);
+						writer.Write ("&#x9;");
+					} else
+						continue;
+					break;
 				case '\r':
-					if (i + 1 < end && text [i] == '\n')
-						i++; // CRLF
-					goto case '\n';
 				case '\n':
+					// If no translation was requested, don't change
+					// anything.
+					if(newline_handling == NewLineHandling.None)
+						continue;
+					// \n is left alone in text if entitizing.
+					if(!isAttribute
+					   && newline_handling == NewLineHandling.Entitize
+					   && text [i] == '\n')
+						continue;
 					if (start < i)
 						WriteCheckedBuffer (text, start, i - start);
-					if (isAttribute) {
+					// Both newline characters in attributes are fully
+					// entitized for both Entitize and Replace.
+					if(isAttribute
+					   || newline_handling == NewLineHandling.Entitize) {
 						writer.Write (text [i] == '\r' ?
 							"&#xD;" : "&#xA;");
 						break;
 					}
-					switch (newline_handling) {
-					case NewLineHandling.Entitize:
-						writer.Write (text [i] == '\r' ?
-							"&#xD;" : "&#xA;");
-						break;
-					case NewLineHandling.Replace:
-						writer.Write (newline);
-						break;
-					default:
-						writer.Write (text [i]);
-						break;
-					}
+					// By this point the requested behavior must be
+					// Replace, and the text must not be an attribute
+					// value.  CR, LF and CRLF all get converted to
+					// the configured newline sequence.
+					if (text [i] == '\r' && i + 1 < end && text [i + 1] == '\n')
+						i++; // CRLF
+					writer.Write (newline);
 					break;
 				}
 				start = i + 1;
