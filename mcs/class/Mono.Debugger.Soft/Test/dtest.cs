@@ -1764,11 +1764,29 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_return_nullable");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		Assert.IsInstanceOfType (typeof (StructMirror), v);
+		var s = v as StructMirror;
+		AssertValue (42, s.Fields [0]);
+		AssertValue (true, s.Fields [1]);
+
+		// pass nullable as this
+		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
+		m = s.Type.GetMethod ("ToString");
+		v = s.InvokeMethod (e.Thread, m, null);
+		Console.WriteLine ("X: " + (v as StringMirror).Value);
 
 		// return nullable null
 		m = t.GetMethod ("invoke_return_nullable_null");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
-		AssertValue (null, v);
+		Assert.IsInstanceOfType (typeof (StructMirror), v);
+		s = v as StructMirror;
+		AssertValue (0, s.Fields [0]);
+		AssertValue (false, s.Fields [1]);
+
+		// pass nullable as this
+		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
+		m = s.Type.GetMethod ("ToString");
+		v = s.InvokeMethod (e.Thread, m, null);
+		Console.WriteLine ("X: " + (v as StringMirror).Value);
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
