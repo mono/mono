@@ -684,8 +684,8 @@ compute_class_bitmap (MonoClass *class, gsize *bitmap, int size, int offset, int
 			if (field->type->byref)
 				break;
 
-			if (static_fields && field->offset == -1)
-				/* special static */
+			if (static_fields && (field->offset == -1 || field->offset == -2))
+				/* special static or RVA */
 				continue;
 
 			pos = field->offset / sizeof (gpointer);
@@ -1989,6 +1989,19 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			continue;
 		if (mono_field_is_deleted (field))
 			continue;
+#ifdef HOST_WIN32
+		if ((field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && field->parent->image->is_module_handle) {
+			const char *data = mono_field_get_data (field);
+
+			g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT));
+			/* some fields don't really have rva, they are just zeroed (bss? bug #343083) */
+			if (data)
+			{
+			    field->offset = -2;
+			    continue;
+			}
+		}
+#endif
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL)) {
 			gint32 special_static = class->no_special_static_fields ? SPECIAL_STATIC_NONE : field_is_special_static (class, field);
 			if (special_static != SPECIAL_STATIC_NONE) {
@@ -3014,6 +3027,8 @@ mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 		addr = g_hash_table_lookup (vt->domain->special_static_fields, field);
 		mono_domain_unlock (vt->domain);
 		dest = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
+    } else if (field->offset == -2) {
+        dest = mono_field_get_data (field);
 	} else {
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
@@ -3049,6 +3064,8 @@ mono_field_get_addr (MonoObject *obj, MonoVTable *vt, MonoClassField *field)
 			addr = g_hash_table_lookup (vt->domain->special_static_fields, field);
 			mono_domain_unlock (vt->domain);
 			src = mono_get_special_static_data (GPOINTER_TO_UINT (addr));
+		} else if (field->offset == -2) {
+		    src = mono_field_get_data (field);
 		} else {
 			src = (guint8*)mono_vtable_get_static_field_data (vt) + field->offset;
 		}
@@ -3305,6 +3322,8 @@ mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *
 		/* Special static */
 		gpointer addr = g_hash_table_lookup (vt->domain->special_static_fields, field);
 		src = mono_get_special_static_data_for_thread (thread, GPOINTER_TO_UINT (addr));
+	} else if (field->offset == -2) {
+	    src = mono_field_get_data (field);
 	} else {
 		src = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}

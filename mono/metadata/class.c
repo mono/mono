@@ -1455,7 +1455,7 @@ mono_class_setup_fields (MonoClass *class)
 					mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Missing field layout info for %s", field->name));
 					break;
 				}
-				if (field->offset < -1) { /*-1 is used to encode special static fields */
+				if (field->offset < -2) { /*-1 is used to encode special static fields, -2 for RVA fields */
 					mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Invalid negative field offset %d for %s", field->offset, field->name));
 					break;
 				}
@@ -1818,6 +1818,12 @@ mono_class_layout_fields (MonoClass *class)
 			
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC) || field->type->attrs & FIELD_ATTRIBUTE_LITERAL)
 			continue;
+#ifdef HOST_WIN32
+		if ((field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) &&
+		    field->parent->image->is_module_handle &&
+		    mono_field_get_data(field))
+		    continue;
+#endif
 		if (mono_field_is_deleted (field))
 			continue;
 
