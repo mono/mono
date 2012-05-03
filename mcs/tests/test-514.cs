@@ -1,4 +1,4 @@
-// Compiler options: -warnaserror -warn:2
+// Compiler options: -warnaserror -w:2
 
 using System;
 class X {

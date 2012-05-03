@@ -998,6 +998,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/warn":
+			case "/w":
 				if (value.Length == 0) {
 					Error_RequiresArgument (option);
 					return ParseResult.Error;
