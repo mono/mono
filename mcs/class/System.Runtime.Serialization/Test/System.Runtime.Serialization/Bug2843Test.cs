@@ -224,7 +224,7 @@ namespace Client2843.EvalServiceReference {
 namespace MonoTests.System.Runtime.Serialization
 {
 	[TestFixture]
-	class Bug2843Test
+	public class Bug2843Test
 	{
 		[Test]
 		public void TestNullableEnum()
