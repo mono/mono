@@ -387,10 +387,10 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("<foo foo='bar' bar='' baz=''", StringWriterText);
 
 			xtw.WriteAttributeString ("hoge", "a\nb");
-			Assert.AreEqual ("<foo foo='bar' bar='' baz='' hoge='a&#xA;b'", StringWriterText);
+			Assert.AreEqual ("<foo foo='bar' bar='' baz='' hoge='a\nb'", StringWriterText);
 
 			xtw.WriteAttributeString ("fuga", " a\t\r\nb\t");
-			Assert.AreEqual ("<foo foo='bar' bar='' baz='' hoge='a&#xA;b' fuga=' a\t&#xD;&#xA;b\t'", StringWriterText);
+			Assert.AreEqual ("<foo foo='bar' bar='' baz='' hoge='a\nb' fuga=' a\t\r\nb\t'", StringWriterText);
 		}
 
 		[Test]

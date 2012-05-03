@@ -331,7 +331,7 @@ namespace MonoTests.System.XmlSerialization
 			WriteStartElement("x");
 			WriteAttribute("a", "b\nc");
 			WriteEndElement();
-			Assert.AreEqual ("<x a='b&#xA;c' />", Content);
+			Assert.AreEqual ("<x a='b\nc' />", Content);
 
 			Reset();
 			WriteStartElement("x");
