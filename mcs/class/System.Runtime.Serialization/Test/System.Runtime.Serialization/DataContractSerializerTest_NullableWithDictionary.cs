@@ -253,7 +253,7 @@ namespace Client.EvalServiceReference {
 namespace MonoTests.System.Runtime.Serialization
 {
 	[TestFixture]
-	class SerializeNullableWithDictionaryTest
+	public class SerializeNullableWithDictionaryTest
 	{
 
 		[Test]
