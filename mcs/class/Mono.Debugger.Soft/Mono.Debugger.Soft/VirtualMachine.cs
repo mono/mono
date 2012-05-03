@@ -134,11 +134,15 @@ namespace Mono.Debugger.Soft
 			conn.VM_Exit (exitCode);
 		}
 
-		public void Dispose () {
+		public void Detach () {
 			conn.VM_Dispose ();
 			conn.Close ();
-			conn.Dispose ();
 			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
+		}
+
+		public void ForceDisconnect ()
+		{
+			conn.ForceDisconnect ();
 		}
 
 		public IList<ThreadMirror> GetThreads () {
