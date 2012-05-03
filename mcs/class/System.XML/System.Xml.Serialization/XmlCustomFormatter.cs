@@ -272,11 +272,11 @@ namespace System.Xml.Serialization {
 				case "char": return (char)XmlConvert.ToInt32 (value);
 #if NET_2_0
 				case "dateTime": return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.RoundtripKind);
-				case "date": return DateTime.ParseExact (value, "yyyy-MM-dd", null);
+				case "date": return DateTime.Parse (value).Date;
 				case "time": return DateTime.ParseExact (value, "HH:mm:ss.FFFFFFF", null);
 #else
 				case "dateTime": return XmlConvert.ToDateTime (value);
-				case "date": return DateTime.ParseExact (value, "yyyy-MM-dd", null);
+				case "date": return DateTime.Parse (value).Date;
 				case "time": return DateTime.ParseExact (value, "HH:mm:ss.fffffffzzz", null);
 #endif
 				case "decimal": return XmlConvert.ToDecimal (value);
