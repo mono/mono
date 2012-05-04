@@ -79,6 +79,24 @@ namespace Mono.Debugger.Soft
 
 	class MethodBodyInfo {
 		public byte[] il;
+		public ExceptionClauseInfo[] clauses;
+	}
+
+	struct ExceptionClauseInfo {
+		public ExceptionClauseFlags flags;
+		public int try_offset;
+		public int try_length;
+		public int handler_offset;
+		public int handler_length;
+		public int filter_offset;
+		public long catch_type_id;
+	}
+
+	enum ExceptionClauseFlags {
+		None = 0x0,
+		Filter = 0x1,
+		Finally = 0x2,
+		Fault = 0x4,
 	}
 
 	struct ParamInfo {
@@ -376,7 +394,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 17;
+		internal const int MINOR_VERSION = 18;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1756,6 +1774,28 @@ namespace Mono.Debugger.Soft
 			info.il = new byte [res.ReadInt ()];
 			for (int i = 0; i < info.il.Length; ++i)
 				info.il [i] = (byte)res.ReadByte ();
+
+			if (Version.AtLeast (2, 18)) {
+				info.clauses = new ExceptionClauseInfo [res.ReadInt ()];
+
+				for (int i = 0; i < info.clauses.Length; ++i) {
+					var clause = new ExceptionClauseInfo {
+						flags = (ExceptionClauseFlags) res.ReadInt (),
+						try_offset = res.ReadInt (),
+						try_length = res.ReadInt (),
+						handler_offset = res.ReadInt (),
+						handler_length = res.ReadInt (),
+					};
+
+					if (clause.flags == ExceptionClauseFlags.None)
+						clause.catch_type_id = res.ReadId ();
+					else if (clause.flags == ExceptionClauseFlags.Filter)
+						clause.filter_offset = res.ReadInt ();
+
+					info.clauses [i] = clause;
+				}
+			} else
+				info.clauses = new ExceptionClauseInfo [0];
 
 			return info;
 		}

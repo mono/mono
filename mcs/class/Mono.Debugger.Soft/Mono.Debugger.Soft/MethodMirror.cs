@@ -249,7 +249,7 @@ namespace Mono.Debugger.Soft
 			if (body == null) {
 				MethodBodyInfo info = vm.conn.Method_GetBody (id);
 
-				body = new MethodBodyMirror (vm, this, info.il);
+				body = new MethodBodyMirror (vm, this, info);
 			}
 			return body;
 		}
