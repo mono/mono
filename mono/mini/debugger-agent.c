@@ -275,7 +275,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 17
+#define MINOR_VERSION 18
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -400,7 +400,8 @@ typedef enum {
 	CMD_VM_ABORT_INVOKE = 9,
 	CMD_VM_SET_KEEPALIVE = 10,
 	CMD_VM_GET_TYPES_FOR_SOURCE_FILE = 11,
-	CMD_VM_GET_TYPES = 12
+	CMD_VM_GET_TYPES = 12,
+	CMD_VM_IS_SUSPENDED = 13,
 } CmdVM;
 
 typedef enum {
@@ -6489,6 +6490,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		g_ptr_array_free (res_domains, TRUE);
 		break;
 	}
+	case CMD_VM_IS_SUSPENDED: {
+		buffer_add_byte (buf, suspend_count > 0 ? 1 : 0);
+		break;
+	}
 
 	default:
 		return ERR_NOT_IMPLEMENTED;
@@ -8353,6 +8358,8 @@ cmd_to_string (CommandSet set, int command)
 			return "SET_PROTOCOL_VERSION";
 		case CMD_VM_ABORT_INVOKE:
 			return "ABORT_INVOKE";
+		case CMD_VM_IS_SUSPENDED:
+			return "IS_SUSPENDED";
 		default:
 			break;
 		}
