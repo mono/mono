@@ -881,6 +881,7 @@ static void finalize_in_range (CopyOrMarkObjectFunc copy_func, char *start, char
 static void add_or_remove_disappearing_link (MonoObject *obj, void **link, gboolean track, int generation);
 static void null_link_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int generation, gboolean before_finalization, GrayQueue *queue);
 static void null_links_for_domain (MonoDomain *domain, int generation);
+static void remove_finalizers_for_domain (MonoDomain *domain, int generation);
 static gboolean search_fragment_for_size (size_t size);
 static int search_fragment_for_size_range (size_t desired_size, size_t minimum_size);
 static void clear_nursery_fragments (char *next);
@@ -1597,15 +1598,18 @@ mono_gc_clear_domain (MonoDomain * domain)
 		check_for_xdomain_refs ();
 	}
 
-	mono_sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data,
-			(IterateObjectCallbackFunc)clear_domain_process_minor_object_callback, domain, FALSE);
-
 	/*Ephemerons and dislinks must be processed before LOS since they might end up pointing
 	to memory returned to the OS.*/
 	null_ephemerons_for_domain (domain);
 
 	for (i = GENERATION_NURSERY; i < GENERATION_MAX; ++i)
 		null_links_for_domain (domain, i);
+
+	for (i = GENERATION_NURSERY; i < GENERATION_MAX; ++i)
+		remove_finalizers_for_domain (domain, i);
+
+	mono_sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data,
+			(IterateObjectCallbackFunc)clear_domain_process_minor_object_callback, domain, FALSE);
 
 	/* We need two passes over major and large objects because
 	   freeing such objects might give their memory back to the OS
@@ -4718,6 +4722,40 @@ null_links_for_domain (MonoDomain *domain, int generation)
 		}
 	}
 }
+
+static void
+remove_finalizers_for_domain (MonoDomain *domain, int generation)
+{
+	int i;
+	FinalizeEntryHashTable *hash_table = get_finalize_entry_hash_table (generation);
+	mword finalizable_hash_size = hash_table->size;
+	FinalizeEntry **table = hash_table->table;
+
+	for (i = 0; i < finalizable_hash_size; ++i) {
+		FinalizeEntry *entry, *prev = NULL;
+
+		for (entry = table [i]; entry;) {
+			MonoObject *object = finalize_entry_get_object (entry);
+			if (mono_object_domain (object) == domain) {
+				FinalizeEntry *next = entry->next;
+
+				if (prev)
+					prev->next = next;
+				else
+					table [i] = next;
+				hash_table->num_registered--;
+
+				DEBUG (5, fprintf (gc_debug_file, "Collecting object for finalization: %p (%s) (%d/%d)\n", object, safe_name (object), num_ready_finalizers, hash_table->num_registered));
+				mono_sgen_free_internal (entry, INTERNAL_MEM_FINALIZE_ENTRY);
+				entry = next;
+				continue;
+			}
+			prev = entry;
+			entry = entry->next;
+		}
+	}
+}
+
 
 /* LOCKING: requires that the GC lock is held */
 static int
