@@ -8719,6 +8719,12 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		case MONO_TYPE_SZARRAY:
 			emit_marshal (m, 0, sig->ret, mspecs [0], 0, NULL, MARSHAL_ACTION_MANAGED_CONV_RESULT);
 			break;
+		case MONO_TYPE_FNPTR:
+	    {
+	        char *msg = g_strdup_printf("don't know how to convert FNPTR return value\n");
+	        mono_mb_emit_exception_marshal_directive (mb, msg);
+		    break;
+	    }
 		default:
 			g_warning ("return type 0x%02x unknown", sig->ret->type);	
 			g_assert_not_reached ();
