@@ -6814,7 +6814,7 @@ find_in_remset_loc (mword *p, char *addr, gboolean *found)
 		return p + 1;
 	case REMSET_VTYPE:
 		ptr = (void**)(*p & ~REMSET_TYPE_MASK);
-		desc = ((MonoClass*)p [1])->gc_descr;
+		desc = (mword)((MonoClass*)p [1])->gc_descr;
 		count = p [2];
 
 		switch (desc & 0x7) {
