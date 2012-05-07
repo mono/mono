@@ -1984,6 +1984,15 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		default: {
 			int src_var, dst_var;
 
+            if (to_object && conv == MONO_MARSHAL_CONV_OBJECT_STRUCT &&
+                mono_class_from_mono_type (ftype) == klass)
+            {
+                char *msg = g_strdup_printf("Cannot generate recursive code to marshal type %s\n", mono_type_full_name (&klass->byval_arg));
+                /* Generating the code for this would infinitely recurse. */
+                mono_mb_emit_exception_marshal_directive (mb, msg);
+                return;
+            }
+
 			src_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 			dst_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
