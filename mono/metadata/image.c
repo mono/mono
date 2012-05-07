@@ -1379,6 +1379,8 @@ mono_image_fixup_vtable (MonoImage *image)
 	guint16 slot_type;
 	int slot_count;
 
+    return; /* We don't need help with this in Wine thank you. */
+
 	g_assert (image->is_module_handle);
 
 	iinfo = image->image_info;
