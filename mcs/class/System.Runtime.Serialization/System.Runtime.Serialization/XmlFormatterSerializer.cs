@@ -151,10 +151,6 @@ namespace System.Runtime.Serialization
 			if (label != null)
 				Writer.WriteAttributeString ("z", "Id", KnownTypeCollection.MSSimpleNamespace, label);
 
-//			writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
-//			writer.WriteQualifiedName (qname.Name, qname.Namespace);
-//			writer.WriteEndAttribute ();
-
 			// It is the only exceptional type that does not serialize to string but serializes into complex element.
 			if (type == typeof (DateTimeOffset)) {
 				var v = (DateTimeOffset) graph;
