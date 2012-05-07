@@ -1579,7 +1579,7 @@ public class DebuggerTests
 	public void Dispose () {
 		run_until ("Main");
 
-		vm.Dispose ();
+		vm.Detach ();
 
 		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDisconnectEvent), e);
@@ -1681,7 +1681,7 @@ public class DebuggerTests
 
 	[Test]
 	public void Suspend () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "suspend-test" });
 
@@ -2062,7 +2062,7 @@ public class DebuggerTests
 
 	[Test]
 	public void InvokeSingleThreaded () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "invoke-single-threaded" });
 
@@ -2389,7 +2389,7 @@ public class DebuggerTests
 
 	[Test]
 	public void ExceptionFilter2 () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-excfilter.exe" });
 
@@ -2489,7 +2489,7 @@ public class DebuggerTests
 
 	[Test]
 	public void Domains () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "domain-test" });
 
@@ -2584,7 +2584,7 @@ public class DebuggerTests
 
 	[Test]
 	public void RefEmit () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "ref-emit-test" });
 
@@ -2620,7 +2620,7 @@ public class DebuggerTests
 	[Test]
 	public void StackTraceInNative () {
 		// Check that stack traces can be produced for threads in native code
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "frames-in-native" });
 
