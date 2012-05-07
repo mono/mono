@@ -2531,13 +2531,26 @@ namespace System.Windows.Forms
 			public int Add (object item)
 			{
 				int idx;
+				object[] selectedItems = null;
+
+				// we need to remember the original selected items so that we can update the indices
+				if (owner.sorted) {
+					selectedItems = new object[owner.SelectedItems.Count];
+					owner.SelectedItems.CopyTo (selectedItems, 0);
+				}
 
 				idx = AddItem (item);
 				owner.CollectionChanged ();
 				
 				// If we are sorted, the item probably moved indexes, get the real one
-				if (owner.sorted)
+				if (owner.sorted) {
+					// update indices of selected items
+					owner.SelectedIndices.Clear ();
+					for (int i = 0; i < selectedItems.Length; i++) {
+						owner.SelectedIndex = this.IndexOf (selectedItems [i]);
+					}
 					return this.IndexOf (item);
+				}
 					
 				return idx;
 			}
