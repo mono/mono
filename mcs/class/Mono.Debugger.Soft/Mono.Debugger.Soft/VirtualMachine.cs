@@ -140,7 +140,7 @@ namespace Mono.Debugger.Soft
 			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
 		}
 
-		[Obsolete ("This method was poorly named; use The Detach() method instead")]
+		[Obsolete ("This method was poorly named; use the Detach() method instead")]
 		public void Dispose ()
 		{
 			Detach ();
