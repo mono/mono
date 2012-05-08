@@ -235,9 +235,14 @@ namespace System.Net
 			
 			ProxyElement pe = sec.Proxy;
 			
-			if ((pe.UseSystemDefault != ProxyElement.UseSystemDefaultValues.False) && (pe.ProxyAddress == null))
-				p = (WebProxy) GetSystemWebProxy ();
-			else
+			if ((pe.UseSystemDefault != ProxyElement.UseSystemDefaultValues.False) && (pe.ProxyAddress == null)) {
+				IWebProxy proxy = GetSystemWebProxy ();
+				
+				if (!(proxy is WebProxy))
+					return proxy;
+				
+				p = (WebProxy) proxy;
+			} else
 				p = new WebProxy ();
 			
 			if (pe.ProxyAddress != null)
