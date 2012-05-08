@@ -1539,7 +1539,23 @@ namespace MonoTests.System.Runtime.Serialization
 			var ds = new DataContractSerializer (typeof (DateTimeOffset));
 			var sw = new StringWriter ();
 			string xml = "<DateTimeOffset xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/System'><DateTime>2011-03-01T02:05:06.078Z</DateTime><OffsetMinutes>120</OffsetMinutes></DateTimeOffset>".Replace ('\'', '"');
+						
 			var v = new DateTimeOffset (new DateTime (2011, 3, 1, 4, 5, 6, 78), TimeSpan.FromMinutes (120));
+			using (var xw = XmlWriter.Create (sw, settings)) {
+				ds.WriteObject (xw, v);
+			}
+			Assert.AreEqual (xml, sw.ToString (), "#1");
+			Assert.AreEqual (v, ds.ReadObject (XmlReader.Create (new StringReader (sw.ToString ()))), "#2");
+		}
+		
+		[Test]
+		public void DateTimeOffsetNullableSerialization ()
+		{
+			var ds = new DataContractSerializer (typeof (DateTimeOffset?));
+			var sw = new StringWriter ();
+			string xml = "<DateTimeOffset xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.datacontract.org/2004/07/System\"><DateTime>2012-05-04T00:34:00Z</DateTime><OffsetMinutes>120</OffsetMinutes></DateTimeOffset>";
+			
+			var v = new DateTimeOffset (new DateTime (2012, 05, 04, 02, 34, 0), TimeSpan.FromMinutes (120));
 			using (var xw = XmlWriter.Create (sw, settings)) {
 				ds.WriteObject (xw, v);
 			}
