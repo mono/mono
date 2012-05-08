@@ -213,8 +213,6 @@ namespace System.Runtime.Serialization
 				return name;
 			if (type == typeof (DBNull))
 				return dbnull_type;
-			if (type == typeof (DateTimeOffset))
-				return date_time_offset_type;
 			return QName.Empty;
 		}
 
@@ -241,6 +239,8 @@ namespace System.Runtime.Serialization
 					return base64_type;
 				if (type == typeof (Uri))
 					return any_uri_type;
+				if (type == typeof (DateTimeOffset))
+					return date_time_offset_type;
 				return QName.Empty;
 			case TypeCode.Boolean:
 				return bool_type;
@@ -699,7 +699,7 @@ namespace System.Runtime.Serialization
 				return false;
 			if (Type.GetTypeCode (type) != TypeCode.Object) // explicitly primitive
 				return true;
-			if (type == typeof (Guid) || type == typeof (object) || type == typeof(TimeSpan) || type == typeof(byte[]) || type==typeof(Uri)) // special primitives
+			if (type == typeof (Guid) || type == typeof (object) || type == typeof(TimeSpan) || type == typeof(byte[]) || type == typeof(Uri) || type == typeof(DateTimeOffset)) // special primitives
 				return true;
 #if !MOONLIGHT
 			// DOM nodes
