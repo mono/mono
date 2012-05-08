@@ -1,7 +1,7 @@
 #!/bin/sh
-SDK_VERSION=4.3
-ASPEN_ROOT=/Developer/Platforms/iPhoneOS.platform/Developer
-SIMULATOR_ASPEN_ROOT=/Developer/Platforms/iPhoneSimulator.platform/Developer
+SDK_VERSION=5.1
+ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
+SIMULATOR_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer
 ASPEN_SDK=$ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk/
 SIMULATOR_ASPEN_SDK=$SIMULATOR_ASPEN_ROOT/SDKs/iPhoneSimulator${SDK_VERSION}.sdk
 
@@ -22,8 +22,8 @@ setenv () {
 	#export CFLAGS="-DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -g -O0"
 	export CFLAGS="-DHAVE_ARMV6=1 -DZ_PREFIX -DPLATFORM_IPHONE -DARM_FPU_VFP=1 -miphoneos-version-min=3.0 -mno-thumb -fvisibility=hidden -Os"
 	export CXXFLAGS="$CFLAGS"
-	export CC="gcc-4.2 -arch $1"
-	export CXX="g++-4.2 -arch $1"
+	export CC="gcc -arch $1"
+	export CXX="g++ -arch $1"
 	export CPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
 	export CXXPP="cpp -nostdinc -U__powerpc__ -U__i386__ -D__arm__"
 	export LD=$CC
@@ -94,6 +94,9 @@ build_iphone_crosscompiler ()
 {
 	echo "Building iPhone cross compiler";
 	export CFLAGS="-DARM_FPU_VFP=1 -DUSE_MUNMAP -DPLATFORM_IPHONE_XCOMP"	
+	export CC="gcc -arch i386"
+	export CXX="g++ -arch i386"
+	export LD=$CC
 
 	export PLATFORM_IPHONE_XCOMP=1	
 
@@ -102,7 +105,8 @@ build_iphone_crosscompiler ()
 	make clean
 	popd
 	
-	./autogen.sh --prefix=$PRF --with-macversion=10.5 --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
+	./autogen.sh --prefix=$PRF --with-macversion=10.6 --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
+	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
 	make clean || exit 1
 	make || exit 1
 	mkdir -p builds/crosscompiler/iphone
@@ -116,8 +120,8 @@ build_iphone_simulator ()
 	echo "Building iPhone simulator static lib";
 	export MACSYSROOT="-isysroot $SIMULATOR_ASPEN_SDK"
 	export MACSDKOPTIONS="-miphoneos-version-min=3.0 $MACSYSROOT"
-	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc-4.2"
-	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++-4.2"
+	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
+	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	perl build_runtime_osx.pl -iphone_simulator=1 || exit 1
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone

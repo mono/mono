@@ -89,9 +89,9 @@ if (not $skipbuild)
 
 	if ($iphone_simulator)
 	{
-		$ENV{CFLAGS} = "-DTARGET_IPHONE_SIMULATOR -g -O0";
-		$macversion = "10.5";
-		$sdkversion = "10.5";
+		$ENV{CFLAGS} = "-D_XOPEN_SOURCE=1 -DTARGET_IPHONE_SIMULATOR -g -O0";
+		$macversion = "10.6";
+		$sdkversion = "10.6";
 	}
 	
 	#this will fail on a fresh working copy, so don't die on it.
