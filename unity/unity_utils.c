@@ -62,6 +62,19 @@ FILE* unity_fopen( const char *name, const char *mode )
 	return _wfopen( wideName, wideMode );
 }
 
+LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
+LONG mono_unity_seh_handler(EXCEPTION_POINTERS* ep)
+{
+	return seh_handler(ep);
+}
+
+int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*) = NULL;
+
+void mono_unity_set_unhandled_exception_handler(void* handler)
+{
+	gUnhandledExceptionHandler = handler;
+}
+
 #endif //Win32
 
 GString* gEmbeddingHostName = 0;
