@@ -300,7 +300,7 @@ namespace System.Configuration {
 			sec.RawXml = xml;
 			sec.Reset (parentSection);
 
-			if (xml != null && xml == data) {
+			if (xml != null) {
 				XmlTextReader r = new ConfigXmlTextReader (new StringReader (xml), FilePath);
 				sec.DeserializeSection (r);
 				r.Close ();
