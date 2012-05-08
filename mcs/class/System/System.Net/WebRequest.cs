@@ -63,22 +63,11 @@ namespace System.Net
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
 		static RequestCachePolicy defaultCachePolicy;
-		static MethodInfo cfGetDefaultProxy;
 		
 		// Constructors
 		
 		static WebRequest ()
 		{
-			if (Platform.IsMacOS) {
-#if MONOTOUCH
-				Type type = Type.GetType ("MonoTouch.CoreFoundation.CFNetwork, monotouch");
-#else
-				Type type = Type.GetType ("MonoMac.CoreFoundation.CFNetwork, monomac");
-#endif
-				if (type != null)
-					cfGetDefaultProxy = type.GetMethod ("GetDefaultProxy");
-			}
-			
 #if NET_2_1
 			IWebRequestCreate http = new HttpRequestCreator ();
 			RegisterPrefix ("http", http);
@@ -362,6 +351,9 @@ namespace System.Net
 				}
 			} else {
 #endif
+				if (Platform.IsMacOS)
+					return CFNetwork.GetDefaultProxy ();
+				
 				string address = Environment.GetEnvironmentVariable ("http_proxy");
 
 				if (address == null)
@@ -412,9 +404,6 @@ namespace System.Net
 #if !NET_2_1
 			}
 #endif
-			
-			if (cfGetDefaultProxy != null)
-				return (IWebProxy) cfGetDefaultProxy.Invoke (null, null);
 			
 			return new WebProxy ();
 		}

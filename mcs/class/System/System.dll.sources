@@ -763,6 +763,7 @@ System.Net.Mime/ContentType.cs
 System.Net.Mime/DispositionTypeNames.cs
 System.Net.Mime/MediaTypeNames.cs
 System.Net.Mime/TransferEncoding.cs
+System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs

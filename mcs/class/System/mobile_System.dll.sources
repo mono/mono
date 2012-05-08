@@ -403,6 +403,7 @@ System.Net/IWebProxyScript.cs
 System.Net/IWebRequestCreate.cs
 System.Net/ListenerAsyncResult.cs
 System.Net/ListenerPrefix.cs
+System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs
