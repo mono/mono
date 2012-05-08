@@ -62,23 +62,12 @@ namespace System.Net
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
 		static RequestCachePolicy defaultCachePolicy;
-		static MethodInfo cfGetDefaultProxy;
 #endif
 		
 		// Constructors
 		
 		static WebRequest ()
 		{
-			if (Platform.IsMacOS) {
-#if MONOTOUCH
-				Type type = Type.GetType ("MonoTouch.CoreFoundation.CFNetwork, monotouch");
-#else
-				Type type = Type.GetType ("MonoMac.CoreFoundation.CFNetwork, monomac");
-#endif
-				if (type != null)
-					cfGetDefaultProxy = type.GetMethod ("GetDefaultProxy");
-			}
-			
 #if NET_2_1
 			AddPrefix ("http", typeof (HttpRequestCreator));
 			AddPrefix ("https", typeof (HttpRequestCreator));
@@ -338,6 +327,9 @@ namespace System.Net
 		[MonoTODO("Look in other places for proxy config info")]
 		public static IWebProxy GetSystemWebProxy ()
 		{
+			if (Platform.IsMacOS)
+				return CFNetwork.GetDefaultProxy ();
+			
 			string address = Environment.GetEnvironmentVariable ("http_proxy");
 			if (address == null)
 				address = Environment.GetEnvironmentVariable ("HTTP_PROXY");
@@ -374,9 +366,6 @@ namespace System.Net
 				        return new WebProxy (uri, false, bypassList);
 				} catch (UriFormatException) { }
 			}
-			
-			if (cfGetDefaultProxy != null)
-				return (IWebProxy) cfGetDefaultProxy.Invoke (null, null);
 			
 			return new WebProxy ();
 		}

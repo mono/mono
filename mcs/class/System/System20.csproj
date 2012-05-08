@@ -882,6 +882,7 @@
     <Compile Include="System.Net\IWebRequestCreate.cs" />
     <Compile Include="System.Net\ListenerAsyncResult.cs" />
     <Compile Include="System.Net\ListenerPrefix.cs" />
+    <Compile Include="System.Net\MacProxy.cs" />
     <Compile Include="System.Net\MonoHttpDate.cs" />
     <Compile Include="System.Net\NetConfig.cs" />
     <Compile Include="System.Net\NetworkAccess.cs" />
