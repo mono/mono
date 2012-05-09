@@ -305,6 +305,7 @@ public class Tests : TestsBase
 			ss6 (b);
 		} catch {
 		}
+		ss7 ();
 		ss_regress_654694 ();
 	}
 
@@ -351,13 +352,32 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss6 (bool b) {
 		if (b) {
-			ss7 ();
+			ss6_2 ();
 			throw new Exception ();
 		}
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss6_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss7 () {
+		try {
+			ss7_2 ();
+			ss7_3 ();
+		} catch {
+		}
+		ss7_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss7_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss7_3 () {
+		throw new Exception ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

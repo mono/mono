@@ -502,7 +502,25 @@ public class DebuggerTests
 		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss6", (e as StepEvent).Method.Name);
+		req.Disable ();
 
+		// Check that a step over stops at an EH clause
+		e = run_until ("ss7_2");
+		req = vm.CreateStepRequest (e.Thread);
+		req.Depth = StepDepth.Out;
+		req.Enable ();
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+		Assert.AreEqual ("ss7", (e as StepEvent).Method.Name);
+		req.Disable ();
+		req = vm.CreateStepRequest (e.Thread);
+		req.Depth = StepDepth.Over;
+		req.Enable ();
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+		Assert.AreEqual ("ss7", (e as StepEvent).Method.Name);
 		req.Disable ();
 	}
 
@@ -1831,7 +1849,6 @@ public class DebuggerTests
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
-		Console.WriteLine ("X: " + (v as StringMirror).Value);
 
 		// return nullable null
 		m = t.GetMethod ("invoke_return_nullable_null");
@@ -1845,7 +1862,6 @@ public class DebuggerTests
 		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
 		m = s.Type.GetMethod ("ToString");
 		v = s.InvokeMethod (e.Thread, m, null);
-		Console.WriteLine ("X: " + (v as StringMirror).Value);
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
