@@ -2441,7 +2441,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	if (thread_handle == NULL) {
 		return;
 	}
-	mono_resume_thread(thread_handle);
+	ResumeThread (thread_handle);
 #endif
 
 	/* Wait for the thread */	
