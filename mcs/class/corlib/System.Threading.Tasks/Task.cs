@@ -153,7 +153,7 @@ namespace System.Threading.Tasks
 				cancellationRegistration = token.Register (l => ((Task) l).CancelReal (), this);
 		}
 
-		bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
+		static bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
 		{
 			return (opt & member) == member;
 		}
@@ -440,13 +440,7 @@ namespace System.Threading.Tasks
 			HandleGenericException (aggregate);
 			return true;
 		}
-/*
-		internal void Execute (Action<Task> childAdder)
-		{
-			childWorkAdder = childAdder;
-			Execute ();
-		}
-*/		
+
 		internal void Execute ()
 		{
 			ThreadStart ();
@@ -606,20 +600,19 @@ namespace System.Threading.Tasks
 			bool result = true;
 
 			if (!IsCompleted) {
-				// If the task is ready to be run and we were supposed to wait on it indefinitely, just run it
-				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == -1 && scheduler != null)
+				// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
+				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
 					Execute ();
 
 				if (!IsCompleted) {
-					var evt = new ManualResetEventSlim ();
-					var slot = new ManualEventSlot (evt);
+					var continuation = new ManualResetContinuation ();
 					try {
-						ContinueWith (slot);
-						result = evt.Wait (millisecondsTimeout, cancellationToken);
+						ContinueWith (continuation);
+						result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
 					} finally {
 						if (!result)
-							RemoveContinuation (slot);
-						evt.Dispose ();
+							RemoveContinuation (continuation);
+						continuation.Dispose ();
 					}
 				}
 			}
@@ -665,19 +658,18 @@ namespace System.Threading.Tasks
 			bool result = true;
 			foreach (var t in tasks) {
 				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
 
 				result &= t.Status == TaskStatus.RanToCompletion;
 			}
 
 			if (!result) {
-				var evt = new CountdownEvent (tasks.Length);
-				var slot = new CountdownEventSlot (evt);
+				var continuation = new CountdownContinuation (tasks.Length);
 				try {
 					foreach (var t in tasks)
-						t.ContinueWith (slot);
+						t.ContinueWith (continuation);
 
-					result = evt.Wait (millisecondsTimeout, cancellationToken);
+					result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
 				} finally {
 					List<Exception> exceptions = null;
 
@@ -692,11 +684,11 @@ namespace System.Threading.Tasks
 							else
 								exceptions.Add (new TaskCanceledException (t));
 						} else {
-							t.RemoveContinuation (slot);
+							t.RemoveContinuation (continuation);
 						}
 					}
 
-					evt.Dispose ();
+					continuation.Dispose ();
 
 					if (exceptions != null)
 						throw new AggregateException (exceptions);
@@ -735,24 +727,23 @@ namespace System.Threading.Tasks
 			CheckForNullTasks (tasks);
 
 			if (tasks.Length > 0) {
-				var evt = new ManualResetEventSlim ();
-				var slot = new ManualEventSlot (evt);
+				var continuation = new ManualResetContinuation ();
 				bool result = false;
 				try {
 					for (int i = 0; i < tasks.Length; i++) {
 						var t = tasks[i];
 						if (t.IsCompleted)
 							return i;
-						t.ContinueWith (slot);
+						t.ContinueWith (continuation);
 					}
 
-					if (!(result = evt.Wait (millisecondsTimeout, cancellationToken)))
+					if (!(result = continuation.Event.Wait (millisecondsTimeout, cancellationToken)))
 						return -1;
 				} finally {
 					if (!result)
 						foreach (var t in tasks)
-							t.RemoveContinuation (slot);
-					evt.Dispose ();
+							t.RemoveContinuation (continuation);
+					continuation.Dispose ();
 				}
 			}
 
@@ -781,7 +772,7 @@ namespace System.Threading.Tasks
 		{
 			foreach (var t in tasks)
 				if (t == null)
-					throw new ArgumentNullException ("tasks", "the tasks argument contains a null element");
+					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
 		}
 		#endregion
 		
@@ -806,7 +797,7 @@ namespace System.Threading.Tasks
 			}
 		}
 		#endregion
-		
+
 		internal static Task WhenAllCore (IList<Task> tasks)
 		{
 			bool all_completed = true;
@@ -860,8 +851,14 @@ namespace System.Threading.Tasks
 
 			return task;
 		}
-
 		#region Properties
+
+		internal CancellationToken CancellationToken {
+			get {
+				return token;
+			}
+		}
+
 		public static TaskFactory Factory {
 			get {
 				return defaultFactory;
@@ -881,9 +878,6 @@ namespace System.Threading.Tasks
 					return null;
 				exSlot.Observed = true;
 				return exSlot.Exception;
-			}
-			internal set {
-				ExceptionSlot.Exception = value;
 			}
 		}
 		
