@@ -72,7 +72,7 @@ namespace System.Net
 
 		public IntPtr Handle { get; private set; }
 
-		[DllImport (CoreFoundationLibrary, CharSet=CharSet.Unicode)]
+		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFRetain (IntPtr handle);
 
 		void Retain ()
@@ -80,7 +80,7 @@ namespace System.Net
 			CFRetain (Handle);
 		}
 
-		[DllImport (CoreFoundationLibrary, CharSet=CharSet.Unicode)]
+		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFRelease (IntPtr handle);
 
 		void Release ()
@@ -256,10 +256,10 @@ namespace System.Net
 			}
 		}
 
-		[DllImport (CoreFoundationLibrary, CharSet=CharSet.Unicode)]
+		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFStringGetCharactersPtr (IntPtr handle);
 
-		[DllImport (CoreFoundationLibrary, CharSet=CharSet.Unicode)]
+		[DllImport (CoreFoundationLibrary)]
 		extern static IntPtr CFStringGetCharacters (IntPtr handle, CFRange range, IntPtr buffer);
 
 		public static string AsString (IntPtr handle)
@@ -268,12 +268,16 @@ namespace System.Net
 				return null;
 			
 			int len = CFStringGetLength (handle);
+			
+			if (len == 0)
+				return string.Empty;
+			
 			IntPtr chars = CFStringGetCharactersPtr (handle);
 			IntPtr buffer = IntPtr.Zero;
-
+			
 			if (chars == IntPtr.Zero) {
 				CFRange range = new CFRange (0, len);
-				buffer = Marshal.AllocCoTaskMem (len * 2);
+				buffer = Marshal.AllocHGlobal (len * 2);
 				CFStringGetCharacters (handle, range, buffer);
 				chars = buffer;
 			}
@@ -285,7 +289,7 @@ namespace System.Net
 			}
 			
 			if (buffer != IntPtr.Zero)
-				Marshal.FreeCoTaskMem (buffer);
+				Marshal.FreeHGlobal (buffer);
 
 			return str;
 		}
@@ -630,7 +634,7 @@ namespace System.Net
 			
 			CFProxy[] proxies = new CFProxy [array.Count];
 			for (int i = 0; i < proxies.Length; i++) {
-				CFDictionary dict = new CFDictionary (array[i], true);
+				CFDictionary dict = new CFDictionary (array[i], false);
 				proxies[i] = new CFProxy (dict);
 			}
 
@@ -683,7 +687,7 @@ namespace System.Net
 
 			CFProxy[] proxies = new CFProxy [array.Count];
 			for (int i = 0; i < proxies.Length; i++) {
-				CFDictionary dict = new CFDictionary (array[i], true);
+				CFDictionary dict = new CFDictionary (array[i], false);
 				proxies[i] = new CFProxy (dict);
 			}
 
