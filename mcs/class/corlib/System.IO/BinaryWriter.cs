@@ -100,7 +100,7 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || NET_2_1
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 
