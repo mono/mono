@@ -184,7 +184,11 @@ namespace System.Xml
 			Close ();
 		}
 
-		void IDisposable.Dispose ()
+#if NET_4_0 || MOBILE
+		public void Dispose ()
+#else
+		void IDisposable.Dispose() 
+#endif
 		{
 			Dispose (false);
 		}
