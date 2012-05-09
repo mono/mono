@@ -88,7 +88,7 @@ namespace System.Net
 			CFRelease (Handle);
 		}
 
-		void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			if (Handle != IntPtr.Zero) {
 				Release ();
@@ -99,6 +99,7 @@ namespace System.Net
 		public void Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 	}
 
