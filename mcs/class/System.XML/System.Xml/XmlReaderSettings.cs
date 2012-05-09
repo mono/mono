@@ -60,7 +60,7 @@ namespace System.Xml
 		private ValidationType validationType;
 #endif
 		private XmlResolver xmlResolver;
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		private DtdProcessing dtdProcessing;
 #endif
 		private long maxCharactersFromEntities;
@@ -118,7 +118,7 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {
