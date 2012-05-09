@@ -928,5 +928,21 @@ namespace System.Xml {
 		}
 
 #endif
+#if NET_4_0 || NET_2_1
+		public static string VerifyPublicId (string publicId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static string VerifyWhitespace (string content)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static string VerifyXmlChars (string content)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

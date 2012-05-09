@@ -72,5 +72,10 @@ namespace System.ServiceModel.Channels
 
 			return null;
 		}
+
+		public AddressHeader[] FindAll (string name, string ns)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
