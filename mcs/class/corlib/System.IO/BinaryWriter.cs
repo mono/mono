@@ -77,7 +77,7 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 
