@@ -307,7 +307,19 @@ namespace System.Net
 				throw new ArgumentNullException ("requestUri");
 			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
-
+#if NET_4_5 || MOBILE	
+		[MonoTODO ("for portable library support")]
+		public static HttpWebRequest CreateHttp (string requestUriString)
+		{
+			throw new NotImplementedException ();
+		}
+			
+		[MonoTODO ("for portable library support")]
+		public static HttpWebRequest CreateHttp (Uri requestUri)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
 			throw GetMustImplement ();

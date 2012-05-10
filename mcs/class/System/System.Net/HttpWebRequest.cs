@@ -562,7 +562,14 @@ namespace System.Net
 		internal ServicePoint ServicePointNoLock {
 			get { return servicePoint; }
 		}
-		
+#if NET_4_5 || MOBILE
+		[MonoTODO ("for portable library support")]
+		public bool SupportsCookieContainer { 
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		public override int Timeout { 
 			get { return timeout; }
 			set {
