@@ -1,7 +1,9 @@
 #!/bin/sh
 SDK_VERSION=5.0
+MAC_SDK_VERSION=10.6
 ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
 SIMULATOR_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer
+XCOMP_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MAC_SDK_VERSION}.sdk
 
 if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
 	SDK_VERSION=5.1
@@ -103,7 +105,9 @@ build_iphone_crosscompiler ()
 	export CFLAGS="-DARM_FPU_VFP=1 -DUSE_MUNMAP -DPLATFORM_IPHONE_XCOMP"	
 	export CC="gcc -arch i386"
 	export CXX="g++ -arch i386"
+	export CPP="$CC -E"
 	export LD=$CC
+	export MACSDKOPTIONS="-mmacosx-version-min=$MAC_SDK_VERSION -isysroot $XCOMP_ASPEN_ROOT"
 
 	export PLATFORM_IPHONE_XCOMP=1	
 
@@ -112,7 +116,7 @@ build_iphone_crosscompiler ()
 	make clean
 	popd
 	
-	./autogen.sh --prefix=$PRF --with-macversion=10.6 --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
+	./autogen.sh --prefix=$PRFX --with-macversion=$MAC_SDK_VERSION --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
 	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
 	make clean || exit 1
 	make || exit 1
