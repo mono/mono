@@ -200,8 +200,14 @@ namespace System.Runtime.Serialization
 
 		object DeserializePrimitive (Type type, XmlReader reader, QName qname)
 		{
+			bool isDateTimeOffset = false;
+			// Handle DateTimeOffset type and DateTimeOffset?.
+			if (type == typeof (DateTimeOffset))
+				isDateTimeOffset = true;
+			else if(type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) 
+				isDateTimeOffset = type.GetGenericArguments () [0] == typeof (DateTimeOffset);	
 			// It is the only exceptional type that does not serialize to string but serializes into complex element.
-			if (type == typeof (DateTimeOffset)) {
+			if (isDateTimeOffset) {
 				if (reader.IsEmptyElement) {
 					reader.Read ();
 					return default (DateTimeOffset);
