@@ -1283,7 +1283,7 @@ ms_sweep_thread_func (void *dummy)
 
 		while ((result = MONO_SEM_WAIT (&ms_sweep_cmd_semaphore)) != 0) {
 			if (errno != EINTR)
-				g_error ("MONO_SEM_WAIT");
+				g_error ("MONO_SEM_WAIT FAILED with %d errno %d (%s)", result, errno, strerror (errno));
 		}
 
 		ms_sweep ();

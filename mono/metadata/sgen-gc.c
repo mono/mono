@@ -5282,7 +5282,7 @@ mono_sgen_wait_for_suspend_ack (int count)
 	for (i = 0; i < count; ++i) {
 		while ((result = MONO_SEM_WAIT (suspend_ack_semaphore_ptr)) != 0) {
 			if (errno != EINTR) {
-				g_error ("sem_wait ()");
+				g_error ("MONO_SEM_WAIT FAILED with %d errno %d (%s)", result, errno, strerror (errno));
 			}
 		}
 	}
@@ -5471,7 +5471,7 @@ static unsigned long max_pause_usec = 0;
 static int
 stop_world (int generation)
 {
-	int count;
+	int count, dead;
 
 	/*XXX this is the right stop, thought might not be the nicest place to put it*/
 	mono_sgen_process_togglerefs ();
@@ -5485,8 +5485,11 @@ stop_world (int generation)
 	DEBUG (3, fprintf (gc_debug_file, "stopping world n %d from %p %p\n", global_stop_count, mono_sgen_thread_info_lookup (ARCH_GET_THREAD ()), (gpointer)ARCH_GET_THREAD ()));
 	TV_GETTIME (stop_world_time);
 	count = mono_sgen_thread_handshake (suspend_signal_num);
-	count -= restart_threads_until_none_in_managed_allocator ();
-	g_assert (count >= 0);
+	dead = restart_threads_until_none_in_managed_allocator ();
+	if (count < dead)
+		g_error ("More threads have died (%d) that been initialy suspended %d", dead, count);
+	count -= dead;
+
 	DEBUG (3, fprintf (gc_debug_file, "world stopped %d thread(s)\n", count));
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_STOP_WORLD, generation);
 
