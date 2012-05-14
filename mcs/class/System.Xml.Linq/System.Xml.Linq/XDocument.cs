@@ -235,12 +235,10 @@ namespace System.Xml.Linq
 
 		public override void WriteTo (XmlWriter w)
 		{
-			if (xmldecl != null) {
-				if (xmldecl.Standalone != null)
-					w.WriteStartDocument (xmldecl.Standalone == "yes");
-				else
-					w.WriteStartDocument ();
-			}
+			if (xmldecl != null && xmldecl.Standalone != null)
+				w.WriteStartDocument (xmldecl.Standalone == "yes");
+			else
+				w.WriteStartDocument ();
 			foreach (XNode node in Nodes ())
 				node.WriteTo (w);
 		}
