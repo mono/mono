@@ -74,5 +74,16 @@ namespace MonoTests.System.Xml.Linq
 			XElement xeOldRef = xeOldOwner.XPathSelectElement(xpathOld);
 			Assert.AreEqual ("<objsur t='o' guid='06974d9a-ff86-4e1c-a3e5-7ce8c961dcb9' />".Replace ('\'', '"'), xeOldRef.ToString (), "#1");
 		}
+
+		[Test]
+		public void Bug4739 ()
+		{
+			string data = "<root><parent>A<child>B</child>C</parent></root>";
+			XElement doc = XElement.Parse (data);
+			var iterator = doc.CreateNavigator ().Select ("//parent/child");
+			iterator.MoveNext ();
+			var element = iterator.Current;
+			Assert.AreEqual ("B", element.InnerXml);
+		}
 	}
 }

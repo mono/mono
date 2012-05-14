@@ -336,7 +336,7 @@ namespace System.Xml.Linq
 		public override bool MoveToNext ()
 		{
 			XNode xn = node.NextNode;
-			if (node is XText)
+			if (xn is XText)
 				for (; xn != null; xn = xn.NextNode)
 					if (!(xn.NextNode is XText))
 						break;
