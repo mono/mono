@@ -112,5 +112,19 @@ namespace MonoTests.System.Xml.Linq
 			var doc = new XDocument ();
 			doc.Add (new XAttribute ("foo", " "));
 		}
+		
+		[Test] // bug #4850
+		public void AddXmlDeclarationEvenForDecllessDoc ()
+		{
+			var doc = new XDocument (
+				new XElement ("resources",
+					new XElement ("string",
+						new XAttribute ("name", "whatever"),
+						"This is sparta")));
+			var sw = new StringWriter ();
+			using (var writer = new XmlTextWriter (sw))
+				doc.WriteTo (writer);
+			Assert.IsTrue (sw.ToString ().StartsWith ("<?xml"), "#1");
+		}
 	}
 }
