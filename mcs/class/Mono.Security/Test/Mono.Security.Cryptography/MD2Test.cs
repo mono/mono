@@ -24,7 +24,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 
 	// MD2 is a abstract class - so ALL of the test included here wont be tested
 	// on the abstract class but should be tested in ALL its descendants.
-	public class MD2Test : Assertion {
+	public abstract class MD2Test : Assertion {
 
 		protected MD2 hash;
 

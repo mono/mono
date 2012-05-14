@@ -4274,7 +4274,7 @@ namespace MonoTests.System.Security.Cryptography {
 	// Note: they are to be called from specifics implementations -
 	//   not for the abstract DES. Thats why they are in a separate class
 	//   which doesn't have a [TestFixture] attribute
-	public class DESFIPS81Test {
+	public abstract class DESFIPS81Test {
 		protected DES des;
 
 		// Table B1 - ECB Mode
