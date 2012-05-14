@@ -655,7 +655,7 @@ namespace System.Xml.Linq
 
 		string LookupPrefix (string ns, XmlWriter w)
 		{
-			string prefix = ns.Length > 0 ? w.LookupPrefix (ns) : String.Empty;
+			string prefix = ns.Length > 0 ? GetPrefixOfNamespace (ns) ?? w.LookupPrefix (ns) : String.Empty;
 			foreach (XAttribute a in Attributes ()) {
 				if (a.IsNamespaceDeclaration && a.Value == ns) {
 					if (a.Name.Namespace == XNamespace.Xmlns)
@@ -666,25 +666,27 @@ namespace System.Xml.Linq
 			}
 			return prefix;
 		}
+		
+		static string CreateDummyNamespace (ref int createdNS, IEnumerable<XAttribute> atts)
+		{
+			string p = null;
+			do {
+				p = "p" + (++createdNS);
+				// check conflict
+				if (atts.All (a => a.Name.LocalName != p))
+					break;
+			} while (true);
+			return p;
+		}
 
 		public override void WriteTo (XmlWriter w)
 		{
 			// some people expect the same prefix output as in input,
 			// in the loss of performance... see bug #466423.
-			int createdNS = 0;
 			string prefix = LookupPrefix (name.NamespaceName, w);
-			Func<string> nsCreator = () => {
-				string p = null;
-				do {
-					p = "p" + (++createdNS);
-					// check conflict
-					if (Attributes ().All (a => a.Name.LocalName != p))
-						break;
-				} while (true);
-				return p;
-				};
+			int createdNS = 0;
 			if (prefix == null)
-				prefix = nsCreator ();
+				prefix = CreateDummyNamespace (ref createdNS, Attributes ());
 
 			w.WriteStartElement (prefix, name.LocalName, name.Namespace.NamespaceName);
 
@@ -697,7 +699,7 @@ namespace System.Xml.Linq
 				} else {
 					string apfix = LookupPrefix (a.Name.NamespaceName, w);
 					if (apfix == null)
-						apfix = nsCreator ();
+						apfix = CreateDummyNamespace (ref createdNS, Attributes ());
 					w.WriteAttributeString (apfix, a.Name.LocalName, a.Name.Namespace.NamespaceName, a.Value);
 				}
 			}
