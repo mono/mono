@@ -46,7 +46,7 @@ namespace MonoTests.System
 		};
 
 		[SetUp]
-		public void GetReady ()
+		public void Setup ()
 		{
 			string sep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
 			string_values = new string [15];
@@ -224,11 +224,12 @@ namespace MonoTests.System
 		[Test]
 		public void ParseAllowWhitespaces ()
 		{
+			var nf = CultureInfo.CurrentCulture.NumberFormat;
 			NumberStyles style = NumberStyles.Float;
 			double.Parse (" 32 ");
-			double.Parse ("  Infinity  ");
-			double.Parse ("  -Infinity  ");
-			double.Parse ("  NaN  ");
+			double.Parse (string.Format ("  {0}  ", nf.PositiveInfinitySymbol));
+			double.Parse (string.Format ("  {0}  ", nf.NegativeInfinitySymbol));
+			double.Parse (string.Format ("  {0}  ", nf.NaNSymbol));
 		}
 
 		[Test] // bug #81630

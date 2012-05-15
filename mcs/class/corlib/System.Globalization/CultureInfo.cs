@@ -1,14 +1,14 @@
 //
 // System.Globalization.CultureInfo.cs
 //
+// Authors:
 // Miguel de Icaza (miguel@ximian.com)
 // Dick Porter (dick@ximian.com)
+// Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc. (http://www.ximian.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -46,21 +46,17 @@ namespace System.Globalization
 		static object shared_table_lock = new object ();
 		internal static int BootstrapCultureID;
 
-		const int NumOptionalCalendars = 5;
-		const int GregorianTypeMask = 0x00FFFFFF;
-		const int CalendarTypeBits = 24;
-
 #pragma warning disable 169, 649
 		bool m_isReadOnly;
 		int  cultureID;
 		[NonSerialized]
 		int parent_lcid;
 		[NonSerialized]
-		int specific_lcid;
-		[NonSerialized]
 		int datetime_index;
 		[NonSerialized]
 		int number_index;
+		[NonSerialized]
+		int default_calendar_type;
 		bool m_useUserOverride;
 		[NonSerialized]
 		volatile NumberFormatInfo numInfo;
@@ -68,8 +64,6 @@ namespace System.Globalization
 		volatile TextInfo textInfo;
 		private string m_name;
 		
-		[NonSerialized]
-		private string displayname;
 		[NonSerialized]
 		private string englishname;
 		[NonSerialized]
@@ -79,24 +73,23 @@ namespace System.Globalization
 		[NonSerialized]
 		private string iso2lang;
 		[NonSerialized]
-		private string icu_name;
-		[NonSerialized]
 		private string win3lang;
 		[NonSerialized]
 		private string territory;
+		[NonSerialized]
+		string[] native_calendar_names;
+
 		volatile CompareInfo compareInfo;
 		[NonSerialized]
-		private unsafe readonly int *calendar_data;
-		[NonSerialized]
 		private unsafe readonly void *textinfo_data;
-		[NonSerialized]
-		private Calendar [] optional_calendars;
-		[NonSerialized]
-		CultureInfo parent_culture;
 
 		int m_dataItem;		// MS.NET serializes this.
-		Calendar calendar;	// MS.NET serializes this.
 #pragma warning restore 169, 649
+
+		Calendar calendar;
+
+		[NonSerialized]
+		CultureInfo parent_culture;
 
 		// Deserialized instances will set this to false
 		[NonSerialized]
@@ -107,10 +100,11 @@ namespace System.Globalization
 		internal byte[] cached_serialized_form;
 		
 		const int InvariantCultureId = 0x7F;
+		const int CalendarTypeBits = 8;
 
-		private static readonly string MSG_READONLY = "This instance is read only";
+		const string MSG_READONLY = "This instance is read only";
 		
-		static public CultureInfo InvariantCulture {
+		public static CultureInfo InvariantCulture {
 			get {
 				return invariant_culture_info;
 			}
@@ -126,7 +120,7 @@ namespace System.Globalization
 				return InvariantCulture;
 
 			CultureInfo ci = new CultureInfo ();
-			if (!ConstructInternalLocaleFromSpecificName (ci, name.ToLowerInvariant ()))
+			if (!construct_internal_locale_from_specific_name (ci, name.ToLowerInvariant ()))
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", name);
 
@@ -272,29 +266,35 @@ namespace System.Globalization
 			}
 		}
 
-		public virtual string NativeName
-		{
+		public virtual string NativeName {
 			get {
 				if (!constructed) Construct ();
-				return(nativename);
+				return nativename;
+			}
+		}
+
+		internal string NativeCalendarName {
+			get {
+				if (!constructed) Construct ();
+				return native_calendar_names[(default_calendar_type >> CalendarTypeBits) - 1];
 			}
 		}
 		
-		public virtual Calendar Calendar
-		{
-			get { return DateTimeFormat.Calendar; }
+		public virtual Calendar Calendar {
+			get {
+				if (calendar == null) {
+					if (!constructed) Construct ();
+					calendar = CreateCalendar (default_calendar_type);
+				}
+
+				return calendar;
+			}
 		}
 
-		public virtual Calendar[] OptionalCalendars
-		{
+		[MonoLimitation ("Optional calendars are not supported only default calendar is returned")]
+		public virtual Calendar[] OptionalCalendars {
 			get {
-				if (optional_calendars == null) {
-					lock (this) {
-						if (optional_calendars == null)
-							ConstructCalendars ();
-					}
-				}
-				return optional_calendars;
+				return new[] { Calendar };
 			}
 		}
 
@@ -334,11 +334,10 @@ namespace System.Globalization
 			}
 		}
 
-		public virtual string ThreeLetterISOLanguageName
-		{
+		public virtual string ThreeLetterISOLanguageName {
 			get {
 				if (!constructed) Construct ();
-				return(iso3lang);
+				return iso3lang;
 			}
 		}
 
@@ -350,8 +349,7 @@ namespace System.Globalization
 			}
 		}
 
-		public virtual string TwoLetterISOLanguageName
-		{
+		public virtual string TwoLetterISOLanguageName {
 			get {
 				if (!constructed) Construct ();
 				return(iso2lang);
@@ -362,13 +360,6 @@ namespace System.Globalization
 		{
 			get {
 				return m_useUserOverride;
-			}
-		}
-
-		internal string IcuName {
-			get {
-				if (!constructed) Construct ();
-				return icu_name;
 			}
 		}
 
@@ -419,9 +410,9 @@ namespace System.Globalization
 		}
 #endif
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			return cultureID;
+			return cultureID.GetHashCode ();
 		}
 
 		public static CultureInfo ReadOnly(CultureInfo ci)
@@ -439,7 +430,6 @@ namespace System.Globalization
 					new_ci.numInfo = NumberFormatInfo.ReadOnly (new_ci.numInfo);
 				if (new_ci.dateTimeInfo != null)
 					new_ci.dateTimeInfo = DateTimeFormatInfo.ReadOnly (new_ci.dateTimeInfo);
-				// TextInfo doesn't have a ReadOnly method in 1.1...
 				if (new_ci.textInfo != null)
 					new_ci.textInfo = TextInfo.ReadOnly (new_ci.textInfo);
 				return(new_ci);
@@ -469,22 +459,13 @@ namespace System.Globalization
 			}
 		}
 
-		internal static bool IsIDNeutralCulture (int lcid)
-		{
-			bool ret;
-			if (!internal_is_lcid_neutral (lcid, out ret))
-				throw new ArgumentException (String.Format ("Culture id 0x{:x4} is not supported.", lcid));
-				
-			return ret;
-		}
-
 		public virtual bool IsNeutralCulture {
 			get {
-				if (!constructed) Construct ();
 				if (cultureID == InvariantCultureId)
 					return false;
 
-				return ((cultureID & 0xff00) == 0 || specific_lcid == 0);
+				if (!constructed) Construct ();
+				return territory == null;
 			}
 		}
 
@@ -527,30 +508,29 @@ namespace System.Globalization
 			}
 		}
 
-		public virtual DateTimeFormatInfo DateTimeFormat
-		{
-			get 
-			{
+		public virtual DateTimeFormatInfo DateTimeFormat {
+			get {
+				if (dateTimeInfo != null)
+					return dateTimeInfo;
+
 				if (!constructed) Construct ();
 				CheckNeutral ();
-				if (dateTimeInfo == null)
-				{
-					lock (this)
-					{
-						if (dateTimeInfo == null) {
-							dateTimeInfo = new DateTimeFormatInfo(m_isReadOnly);
+
+				// TODO: Have to lock because construct_datetime_format is not atomic
+				lock (this) {
+					if (cultureID == InvariantCultureId && m_isReadOnly)
+						dateTimeInfo = DateTimeFormatInfo.InvariantInfo;
+					else if (dateTimeInfo == null) {
+						dateTimeInfo = new DateTimeFormatInfo (this, m_isReadOnly);
+						if (cultureID != InvariantCultureId)
 							construct_datetime_format ();
-							if (optional_calendars != null)
-								dateTimeInfo.Calendar = optional_calendars [0];
-						}
 					}
 				}
 
 				return dateTimeInfo;
 			}
 
-			set 
-			{
+			set {
 				if (!constructed) Construct ();
 				if (m_isReadOnly) throw new InvalidOperationException(MSG_READONLY);
 
@@ -561,19 +541,17 @@ namespace System.Globalization
 			}
 		}
 
-		public virtual string DisplayName
-		{
+		public virtual string DisplayName {
 			get {
-				if (!constructed) Construct ();
-				return(displayname);
+				// Mono is not localized and will always return english name regardless of OS locale
+				return EnglishName;
 			}
 		}
 
-		public virtual string EnglishName
-		{
+		public virtual string EnglishName {
 			get {
 				if (!constructed) Construct ();
-				return(englishname);
+				return englishname;
 			}
 		}
 
@@ -581,10 +559,10 @@ namespace System.Globalization
 		{
 			get { return GetCultureInfo (BootstrapCultureID); }
 		}
-		public bool IsReadOnly 
-		{
+
+		public bool IsReadOnly {
 			get {
-				return(m_isReadOnly);
+				return m_isReadOnly;
 			}
 		}
 		
@@ -608,43 +586,6 @@ namespace System.Globalization
 		{
 			construct_internal_locale_from_lcid (cultureID);
 			constructed = true;
-		}
-
-		bool ConstructInternalLocaleFromName (string locale)
-		{
-			// It is sort of hack to get those new pseudo-alias
-			// culture names that are not supported in good old
-			// Windows.
-#if MOONLIGHT
-			if (locale == "zh-chs" || locale == "zh-cht")
-				return false;
-#endif
-			switch (locale) {
-			case "zh-hans":
-				locale = "zh-chs";
-				break;
-			case "zh-hant":
-				locale = "zh-cht";
-				break;
-			}
-
-			if (!construct_internal_locale_from_name (locale))
-				return false;
-			return true;
-		}
-
-		bool ConstructInternalLocaleFromLcid (int lcid)
-		{
-			if (!construct_internal_locale_from_lcid (lcid))
-				return false;
-			return true;
-		}
-
-		static bool ConstructInternalLocaleFromSpecificName (CultureInfo ci, string name)
-		{
-			if (!construct_internal_locale_from_specific_name (ci, name))
-				return false;
-			return true;
 		}
 
 		static bool ConstructInternalLocaleFromCurrentLocale (CultureInfo ci)
@@ -676,34 +617,26 @@ namespace System.Globalization
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void construct_number_format ();
 
-		// Returns false if the culture can not be found, sets is_neutral if it is
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static bool internal_is_lcid_neutral (int lcid, out bool is_neutral);
-
 		private void ConstructInvariant (bool read_only)
 		{
 			cultureID = InvariantCultureId;
 
 			/* NumberFormatInfo defaults to the invariant data */
 			numInfo=NumberFormatInfo.InvariantInfo;
-			/* DateTimeFormatInfo defaults to the invariant data */
-			dateTimeInfo=DateTimeFormatInfo.InvariantInfo;
 
 			if (!read_only) {
 				numInfo = (NumberFormatInfo) numInfo.Clone ();
-				dateTimeInfo = (DateTimeFormatInfo) dateTimeInfo.Clone ();
 			}
 
 			textInfo = CreateTextInfo (read_only);
 
 			m_name=String.Empty;
-			displayname=
 			englishname=
 			nativename="Invariant Language (Invariant Country)";
 			iso3lang="IVL";
 			iso2lang="iv";
-			icu_name="en_US_POSIX";
 			win3lang="IVL";
+			default_calendar_type = 1 << CalendarTypeBits;
 		}
 
 		private unsafe TextInfo CreateTextInfo (bool readOnly)
@@ -732,7 +665,7 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!ConstructInternalLocaleFromLcid (culture)) {
+			if (!construct_internal_locale_from_lcid (culture)) {
 #if NET_4_0
 				throw new CultureNotFoundException ("culture", 
 					String.Format ("Culture ID {0} (0x{0:X4}) is not a " +
@@ -765,7 +698,7 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!ConstructInternalLocaleFromName (name.ToLowerInvariant ())) {
+			if (!construct_internal_locale_from_name (name.ToLowerInvariant ())) {
 #if NET_4_0
 				throw new CultureNotFoundException ("name",
 						"Culture name " + name + " is not supported.");
@@ -871,35 +804,21 @@ namespace System.Globalization
 			return new CultureInfo (name, use_user_override, read_only);
 		}
 
-		unsafe internal void ConstructCalendars ()
+		static Calendar CreateCalendar (int calendarType)
 		{
-			if (calendar_data == null) {
-				optional_calendars = new Calendar [] {new GregorianCalendar (GregorianCalendarTypes.Localized)};
-				return;
-			}
-
-			optional_calendars = new Calendar [NumOptionalCalendars];
-
-			for (int i=0; i<NumOptionalCalendars; i++) {
-				Calendar cal = null;
-				int caldata = *(calendar_data + i);
-				int caltype = (caldata >> CalendarTypeBits);
-				switch (caltype) {
-				case 0:
-					GregorianCalendarTypes greg_type;
-					greg_type = (GregorianCalendarTypes) (caldata & GregorianTypeMask);
-					cal = new GregorianCalendar (greg_type);
-					break;
-				case 1:
-					cal = new HijriCalendar ();
-					break;
-				case 2:
-					cal = new ThaiBuddhistCalendar ();
-					break;
-				default:
-					throw new Exception ("invalid calendar type:  " + caldata);
-				}
-				optional_calendars [i] = cal;
+			switch (calendarType >> CalendarTypeBits) {
+			case 1:
+				GregorianCalendarTypes greg_type;
+				greg_type = (GregorianCalendarTypes) (calendarType & 0xFF);
+				return new GregorianCalendar (greg_type);
+			case 2:
+				return new ThaiBuddhistCalendar ();
+			case 3:
+				return new UmAlQuraCalendar ();
+			case 4:
+				return new HijriCalendar ();
+			default:
+				throw new NotImplementedException ("Unknown calendar type: " + calendarType);
 			}
 		}
 	}

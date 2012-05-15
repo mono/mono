@@ -86,13 +86,11 @@ public class TextInfoTest {
 		Assert.AreEqual (t1.ListSeparator, t2.ListSeparator, "ListSeparator");
 		Assert.AreEqual (t1.MacCodePage, t2.MacCodePage, "MacCodePage");
 		Assert.AreEqual (t1.OEMCodePage, t2.OEMCodePage, "OEMCodePage");
-#if NET_2_0
 		Assert.AreEqual (t1.CultureName, t2.CultureName, "CultureName");
 		if (compareReadOnly)
 			Assert.AreEqual (t1.IsReadOnly, t2.IsReadOnly, "IsReadOnly");
 //FIXME		Assert.AreEqual (t1.IsRightToLeft, t2.IsRightToLeft, "IsRightToLeft");
 		Assert.AreEqual (t1.LCID, t2.LCID, "LCID");
-#endif
 	}
 
 	[Test]
@@ -109,7 +107,6 @@ public class TextInfoTest {
 		CompareProperties (enus, clone, true);
 	}
 
-#if NET_2_0
 	[Test]
 	public void Clone ()
 	{
@@ -148,6 +145,7 @@ public class TextInfoTest {
 			case 13:	// he
 			case 32:	// ur
 			case 41:	// fa
+			case 0x63:	// ps
 			case 90:	// syr
 			case 101:	// div
 			case 1025:	// ar-SA
@@ -171,6 +169,7 @@ public class TextInfoTest {
 			case 14337:	// ar-AE
 			case 15361:	// ar-BH
 			case 16385:	// ar-QA
+			case 0x463: // ps-AF
 				Assert.IsTrue (ci.TextInfo.IsRightToLeft, ci.Name);
 				break;
 			default:
@@ -179,7 +178,6 @@ public class TextInfoTest {
 			}
 		}
 	}
-#endif
 
 	[Test]
 	public void Deserialization ()

@@ -205,6 +205,18 @@ namespace MonoTests.System.Globalization
 			Assert.IsTrue (culture.Equals (cultureClone));
 		}
 
+		[Test]
+		public void IsNeutral ()
+		{
+			var ci = new CultureInfo (0x6C1A);
+			Assert.IsTrue (ci.IsNeutralCulture, "#1");
+			Assert.AreEqual ("srp", ci.ThreeLetterISOLanguageName, "#2");
+
+			ci = new CultureInfo ("en-US");
+			Assert.IsFalse (ci.IsNeutralCulture, "#1a");
+			Assert.AreEqual ("eng", ci.ThreeLetterISOLanguageName, "#2a");
+		}
+
 		[Test] // bug #81930
 		public void IsReadOnly ()
 		{
@@ -340,7 +352,6 @@ namespace MonoTests.System.Globalization
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NotDotNet")] // On MS, the NumberFormatInfo of the CultureInfo matching the current locale is not read-only
 		public void GetCultureInfo_Identifier ()
@@ -438,7 +449,6 @@ namespace MonoTests.System.Globalization
 				Assert.AreEqual ("name", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test]
 		public void UseUserOverride_CurrentCulture ()
@@ -462,7 +472,6 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual (expected, ci.UseUserOverride, "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void UseUserOverride_GetCultureInfo ()
 		{
@@ -476,21 +485,16 @@ namespace MonoTests.System.Globalization
 				Assert.IsFalse (culture.UseUserOverride, "#2: " + cultureMsg);
 			}
 		}
-#endif
 
 		[Test]
 		public void UseUserOverride_GetCultures ()
 		{
 			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.AllCultures)) {
 				string cultureMsg = String.Format ("{0} {1}", ci.LCID, ci.Name);
-#if NET_2_0
 				if (ci.LCID == CultureInfo.InvariantCulture.LCID)
 					Assert.IsFalse (ci.UseUserOverride, cultureMsg);
 				else
 					Assert.IsTrue (ci.UseUserOverride, cultureMsg);
-#else
-				Assert.IsTrue (ci.UseUserOverride, cultureMsg);
-#endif
 			}
 		}
 
@@ -519,9 +523,7 @@ namespace MonoTests.System.Globalization
 		public void ZhHant ()
 		{
 			Assert.AreEqual (31748, new CultureInfo ("zh-Hant").LCID);
-#if NET_2_0
 			Assert.AreEqual (31748, CultureInfo.GetCultureInfo ("zh-Hant").LCID);
-#endif
 		}
 	}
 }

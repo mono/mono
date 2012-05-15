@@ -116,6 +116,13 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual ("Jan", DateTimeFormatInfo.InvariantInfo.AbbreviatedMonthGenitiveNames[0], "#3");
 		}
 
+		[Test]
+		public void MonthGenitiveNames ()
+		{
+			var dfi = new CultureInfo ("cs-CZ").DateTimeFormat;
+			Assert.AreEqual ("ledna", dfi.MonthGenitiveNames[0], "#1");
+		}
+
 #if !TARGET_JVM
 		[Test]
 		public void Bug78569 ()
