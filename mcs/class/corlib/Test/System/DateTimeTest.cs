@@ -356,6 +356,18 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void TestToStringGenitive ()
+		{
+			DateTime dt = new DateTime (2010, 1, 2, 3, 4, 5);
+			var dtf = new CultureInfo ("cs-cz").DateTimeFormat;
+
+			Assert.AreEqual ("2 ledna", dt.ToString ("d MMMM", dtf), "#A1");
+			Assert.AreEqual ("2. ledna", dt.ToString ("d. MMMM", dtf), "#A2");
+			Assert.AreEqual ("leden", dt.ToString ("MMMM", dtf), "#A4");
+			Assert.AreEqual ("leden", dt.ToString ("MMMMMMM", dtf), "#A5");
+		}
+
+		[Test]
 		public void ParseExact_Format_Empty ()
 		{
 			try {

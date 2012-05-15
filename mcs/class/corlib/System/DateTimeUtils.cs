@@ -190,6 +190,7 @@ namespace System {
 				dfi = inv;
 
 			int i = 0;
+			bool saw_day_specifier = false;
 
 			while (i < format.Length) {
 				int tokLen;
@@ -320,6 +321,7 @@ namespace System {
 					else
 						result.Append (dfi.GetDayName (dfi.Calendar.GetDayOfWeek (dt)));
 
+					saw_day_specifier = true;
 					break;
 				case 'M':
 					// Month.m(m?) = month # (with leading 0 if two mm)
@@ -331,8 +333,11 @@ namespace System {
 						DateTimeUtils.ZeroPad (result, month, tokLen);
 					else if (tokLen == 3)
 						result.Append (dfi.GetAbbreviatedMonthName (month));
-					else
-						result.Append (dfi.GetMonthName (month));
+					else {
+						// NOTE: .NET ignores quoted 'd' and reads it as day specifier but I think 
+						// that's wrong
+						result.Append (saw_day_specifier ? dfi.GetMonthGenitiveName (month) : dfi.GetMonthName (month));
+					}
 
 					break;
 				case 'y':

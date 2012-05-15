@@ -237,6 +237,11 @@ namespace System.Globalization
 			if (month < 1 || month > 13) throw new ArgumentOutOfRangeException();
 			return monthNames[month-1];
 		}
+		
+		internal string GetMonthGenitiveName (int month)
+		{
+			return genitiveMonthNames [month - 1];
+		}
 
 		public string[] AbbreviatedDayNames
 		{
@@ -274,17 +279,9 @@ namespace System.Globalization
 			}
 		}
 
-		public string[] DayNames
-		{
-			get { return (string[]) RawDayNames.Clone (); }
-			set { RawDayNames = value; }
-		}
-
-		internal string[] RawDayNames
-		{
-			get
-			{
-				return dayNames;
+		public string[] DayNames {
+			get {
+				return (string[]) dayNames.Clone ();
 			}
 			set {
 				CheckDaysValue (value);
@@ -292,21 +289,25 @@ namespace System.Globalization
 			}
 		}
 
-		public string[] MonthNames
-		{
-			get { return (string[]) RawMonthNames.Clone (); }
-			set { RawMonthNames = value; }
+		internal string[] RawDayNames  {
+			get {
+				return dayNames;
+			}
 		}
 
-		internal string[] RawMonthNames
-		{
-			get
-			{
-				return monthNames;
+		public string[] MonthNames {
+			get {
+				return (string[]) monthNames.Clone ();
 			}
 			set {
 				CheckMonthsValue (value);
 				monthNames = (string[]) value.Clone();
+			}
+		}
+
+		internal string[] RawMonthNames {
+			get {
+				return monthNames;
 			}
 		}
 		
@@ -331,8 +332,8 @@ namespace System.Globalization
 				genitiveMonthNames = value;
 			}
 		}
-
-		[MonoLimitation ("Oly default calendar is supported")]
+		
+		[MonoLimitation ("Only default calendar is supported")]
 		[ComVisible (false)]
 		public string NativeCalendarName {
 			get {
