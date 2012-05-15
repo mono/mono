@@ -852,7 +852,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Ignore ("need to fix tests that run on different timezones")]
+		//[Ignore ("need to fix tests that run on different timezones")]
 		public void TestParse2 ()
 		{
 			DateTime t1 = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
@@ -1236,80 +1236,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if NET_4_0
-		[Ignore ("Current-culture dependent test, which is not valid in 4.0 anymore")]
-#else
-		// FIXME: This test doesn't work on cultures like es-DO which have patterns
-		// for both dd/MM/yyyy & MM/dd/yyyy
-		[Category ("NotWorking")]
-#endif
-		public void Parse_Bug53023a ()
-		{
-			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
-				FormatException e = null;
-				try {
-					// this fails for MOST culture under MS 1.1 SP1
-					DateTime.Parse ("8/16/2005", ci);
-				}
-				catch (FormatException fe) {
-					e = fe;
-				}
-				string c = ci.ToString ();
-				switch (c) {
-				case "af-ZA":
-				case "en-CB":
-				case "en-PH":
-				case "en-US":
-				case "en-ZA":
-				case "en-ZW":
-				case "es-PA":
-				case "eu-ES":
-				case "fa-IR":
-				case "fr-CA":
-				case "hu-HU":
-				case "ja-JP":
-				case "ko-KR":
-				case "lv-LV":
-				case "lt-LT":
-				case "mn-MN":
-				case "pl-PL":
-				case "sq-AL":
-				case "sv-SE":
-				case "sw-KE":
-				case "zh-CN":
-				case "zh-TW":
-
-				case "bo-CN": // new in 3.5?
-				case "en-029": // new in 3.5...WTF is it?
-				case "es-US": // new in 3.5?
-				case "fil-PH": // new in 3.5?
-				case "ii-CN": // new in 3.5?
-				case "km-KH": // new in 3.5?
-				case "mn-Mong-CN": // new in 3.5?
-				case "moh-CA": // new in 3.5?
-				case "ne-NP": // new in 3.5?
-				case "ns-ZA":
-				case "nso-ZA":
-				case "rw-RW": // new in 3.5?
-				case "sah-RU": // new in 3.5?
-				case "se-SE":
-				case "si-LK": // new in 3.5?
-				case "sma-SE":
-				case "smj-SE":
-				case "tn-ZA":
-				case "ug-CN": // new in 3.5?
-				case "xh-ZA":
-				case "zu-ZA":
-					Assert.IsNull (e, c);
-					break;
-				default:
-					Assert.IsNotNull (e, c);
-					break;
-				}
-			}
-		}
-
-		[Test]
 		public void Parse_Bug53023b ()
 		{
 			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
@@ -1656,12 +1582,12 @@ namespace MonoTests.System
 					// X509Certificate pattern is _always_ accepted.
 					stage = "1";
 					dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
-#if NET_1_1
+
 					stage = "2";
 					// fails with many cultures on .NET.
 	//				if (i != 127)
 	//					dt = DateTime.Parse ("19960312183847Z");
-#endif
+
 					stage = "3";
 					dt = DateTime.Parse ("2004-05-26T03:29:01.1234567");
 					stage = "4";
@@ -1716,7 +1642,7 @@ namespace MonoTests.System
 						break;
 					}
 
-#if NET_1_1
+
 					// ka-GE rejects these formats under MS.NET. 
 					// I wonder why. Also, those tests fail under .NET 1.0.
 					if (ci.LCID != 1079) {
@@ -1732,24 +1658,10 @@ namespace MonoTests.System
 						case 1078: // MS does not pass this culture. Dunno why.
 							break;
 						default:
-#if ONLY_1_1
-							// bug #58938
-							stage = "12";
-							dt = DateTime.Parse ("2002#02#25 19:20:00");
-							// this stage fails under MS 2.0
-							stage = "13";
-							Assert.AreEqual (19, dt.Hour, String.Format ("bug #58938 on culture {0} {1}", ci.LCID, ci));
-#endif
 							break;
 						}
 						stage = "14";
 						dt = DateTime.Parse ("2002-02-25 12:01:03");
-#if ONLY_1_1
-						stage = "15";
-						dt = DateTime.Parse ("2002#02#25 12:01:03");
-						stage = "16";
-						dt = DateTime.Parse ("2002%02%25 12:01:03");
-#endif
 						stage = "17";
 						if (ci.DateTimeFormat.TimeSeparator != ".")
 							dt = DateTime.Parse ("2002.02.25 12:01:03");
@@ -1768,7 +1680,6 @@ namespace MonoTests.System
 						if (i != 1078)
 							Assert.AreEqual (12, dt.Hour, String.Format ("stage 18.1 RFC1123 UTC {0} {1}", i, ci));
 					}
-#endif
 				} catch (FormatException ex) {
 					Assert.Fail (String.Format ("stage {3}: Culture {0} {1} failed: {2}", i, ci, ex.Message, stage));
 				}
@@ -2299,8 +2210,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		[Category ("NotWorking")] // wrt bug #352210
 		public void KindPattern ()
 		{
 			// no matter how the format string contains 'K' and the
@@ -2315,7 +2224,7 @@ namespace MonoTests.System
 			DateTime d1 = DateTime.ParseExact (s, format, ci); // d1 is parsed as a local time.
 			Assert.AreEqual (dt.Ticks, d1.ToUniversalTime ().Ticks, "#1");
 			// .NET expects Local here, while s ends with 'Z' and should be parsed as UTC.
-			Assert.AreEqual (DateTimeKind.Utc, d1.Kind, "#2");
+			Assert.AreEqual (DateTimeKind.Local, d1.Kind, "#2");
 
 			format = "yyyy-MM-dd'T'HH:mm:ssK";
 			ci = CultureInfo.CurrentCulture;
@@ -2459,10 +2368,10 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Ignore ("This test is not international ready, probably only succeeds in the U.S.")]
 		public void Parse_InvalidShortDate ()
 		{
-			DateTime expected = new DateTime (2011, 03, 22, 08, 32, 00);
+			DateTime expected = new DateTime (2011, 03, 22, 07, 32, 00, DateTimeKind.Utc);
+			DateTime expected2 = new DateTime (2011, 03, 22, 08, 32, 00, DateTimeKind.Utc);
 
 			string [] cultures = new string [] {"es-ES", "en-US", "en-GB", "de-DE", "fr-FR"
 #if NET_4_0
@@ -2476,18 +2385,18 @@ namespace MonoTests.System
 
 				Assert.AreEqual (DateTime.Parse ("2011-03-22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#a01 - " + culture);
 				Assert.AreEqual (DateTime.Parse ("2011/03/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#a02 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#a03 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#a04 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#a05 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#a06 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a03 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a04 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a05 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a06 - " + culture);
 				Assert.AreEqual (DateTime.Parse ("03/2011/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#a07 - " + culture);
 				ci.DateTimeFormat.DateSeparator = "%";
 				Assert.AreEqual (DateTime.Parse ("2011-03-22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#b01 - " + culture);
 				Assert.AreEqual (DateTime.Parse ("2011/03/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#b02 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#b03 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#b04 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#b05 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected, "#b06 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b03 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b04 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b05 - " + culture);
+				Assert.AreEqual (DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b06 - " + culture);
 				Assert.AreEqual (DateTime.Parse ("03/2011/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#b07 - " + culture);
 			}
 		}
