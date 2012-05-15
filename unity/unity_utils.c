@@ -7,7 +7,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/tabledefs.h>
-#include "mono/metadata/class-internals.h"
+#include <mono/metadata/class-internals.h>
 
 #include <glib.h>
 
