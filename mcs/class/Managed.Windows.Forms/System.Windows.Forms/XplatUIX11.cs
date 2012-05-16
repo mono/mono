@@ -1270,9 +1270,20 @@ namespace System.Windows.Forms {
 
 			if ((long)nitems > 0) {
 				if (property == (IntPtr)Atom.XA_STRING) {
+					// Xamarin-5116: PtrToStringAnsi expects to get UTF-8, but we might have
+					// Latin-1 instead.
+					var s = Marshal.PtrToStringAnsi (prop);
+					if (string.IsNullOrEmpty (s)) {
+						var sb = new StringBuilder ();
+						for (int i = 0; i < (int)nitems; i++) {
+							var b = Marshal.ReadByte (prop, i);
+							sb.Append ((char)b);
+						}
+						s = sb.ToString ();
+					}
 					// Some X managers/apps pass unicode chars as escaped strings, so
 					// we may need to unescape them.
-					Clipboard.Item = UnescapeUnicodeFromAnsi (Marshal.PtrToStringAnsi(prop));
+					Clipboard.Item = UnescapeUnicodeFromAnsi (s);
 				} else if (property == (IntPtr)Atom.XA_BITMAP) {
 					// FIXME - convert bitmap to image
 				} else if (property == (IntPtr)Atom.XA_PIXMAP) {
@@ -1325,7 +1336,7 @@ namespace System.Windows.Forms {
 
 				int length = 0;
 				while (pos < value.Length) {
-					if (!Char.IsLetterOrDigit (value [pos]))
+					if (!ValidHexDigit (value [pos]))
 						break;
 					length++;
 					pos++;
@@ -1345,6 +1356,11 @@ namespace System.Windows.Forms {
 				sb.Append (value, start, value.Length - start);
 
 			return sb.ToString ();
+		}
+
+		private static bool ValidHexDigit (char e)
+		{
+			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
 
 		void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
