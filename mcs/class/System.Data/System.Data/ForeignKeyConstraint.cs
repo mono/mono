@@ -509,7 +509,10 @@ namespace System.Data {
 			
 			bool hasErrors = false;
 			foreach (DataRow row in Table.Rows) {
-				// first we check if all values in _childColumns place are nulls.
+				if (row.RowState == DataRowState.Deleted)
+					continue;
+				
+				// we check if all values in _childColumns place are nulls.
 				// if yes we return.
 				if (row.IsNullColumns(_childColumns))
 					continue;

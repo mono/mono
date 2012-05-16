@@ -526,5 +526,29 @@ namespace MonoTests.System.Data
 			t1.Rows [0][0]=20;
 			Assert("#1", (int)t2.Rows [0][0] == 20);
 		}
+
+		[Test]
+		// https://bugzilla.novell.com/show_bug.cgi?id=650402
+		public void ForeignKey_650402 ()
+		{
+			DataSet data = new DataSet ();
+			DataTable parent = new DataTable ("parent");
+			DataColumn pk = parent.Columns.Add ("PK");
+			DataTable child = new DataTable ("child");
+			DataColumn fk = child.Columns.Add ("FK");
+			
+			data.Tables.Add (parent);
+			data.Tables.Add (child);
+			data.Relations.Add (pk, fk);
+			
+			parent.Rows.Add ("value");
+			child.Rows.Add ("value");
+			data.AcceptChanges ();
+			child.Rows[0].Delete ();
+			parent.Rows[0][0] = "value2";
+			
+			data.EnforceConstraints = false;
+			data.EnforceConstraints = true;
+		}
 	}
 }
