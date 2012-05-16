@@ -230,6 +230,7 @@ namespace System.Threading
 		{
 			if (disposing && !disposed) {
 				disposed = true;
+				Thread.MemoryBarrier ();
 
 				callbacks = null;
 #if NET_4_5
@@ -263,8 +264,13 @@ namespace System.Threading
 
 		internal void RemoveCallback (CancellationTokenRegistration reg)
 		{
+			// Ignore call if the source has been disposed
+			if (disposed)
+				return;
 			Action dummy;
-			callbacks.TryRemove (reg, out dummy);
+			var cbs = callbacks;
+			if (cbs != null)
+				cbs.TryRemove (reg, out dummy);
 		}
 	}
 }

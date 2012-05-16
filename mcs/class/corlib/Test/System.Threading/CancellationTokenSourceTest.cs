@@ -340,6 +340,17 @@ namespace MonoTests.System.Threading
 			Assert.IsFalse (unregister);
 			Assert.IsTrue (register);
 		}
+
+		[Test]
+		public void DisposeAfterRegistrationTest ()
+		{
+			var source = new CancellationTokenSource ();
+			bool ran = false;
+			var req = source.Token.Register (() => ran = true);
+			source.Dispose ();
+			req.Dispose ();
+			Assert.IsFalse (ran);
+		}
 	}
 }
 
