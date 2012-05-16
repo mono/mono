@@ -21,6 +21,11 @@ LIB_MCS_FLAGS = \
 	
 TEST_MCS_FLAGS = /r:System.Core.dll
 
+EXTRA_DISTFILES = \
+	Test/FunctionalTestReferenceProject.csproj	\
+	Test/FunctionalTestReferenceProject3.csproj	\
+	Test/Microsoft.Build.Test.csproj
+
 include ../../build/library.make
 
 export TESTING_MONO=a
