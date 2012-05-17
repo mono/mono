@@ -45603,6 +45603,37 @@
       </method>
     </type>
   </test>
+  <test name="test-845.cs">
+    <type name="C1">
+      <method name="Int32 Foo()" attrs="486">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C2">
+      <method name="Int32 Foo()" attrs="486">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>54</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C1">
+      <method name="Int32 Foo2()" attrs="486">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="C2">
+      <method name="Int32 Foo2()" attrs="486">
+        <size>10</size>
+      </method>
+    </type>
+  </test>
   <test name="test-85.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="145">

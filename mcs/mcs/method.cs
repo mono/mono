@@ -1964,7 +1964,7 @@ namespace Mono.CSharp {
 						//
 						if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public) {
 							implementing = null;
-						} else if (optional && (container.Interfaces == null || Array.IndexOf (container.Interfaces, implementing.DeclaringType) < 0)) {
+						} else if (optional && (container.Interfaces == null || !container.Definition.Interfaces.Contains (implementing.DeclaringType))) {
 							//
 							// We are not implementing interface when base class already implemented it
 							//
