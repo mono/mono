@@ -22956,6 +22956,45 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-25.cs">
+    <type name="Test.Program">
+      <method name="Void Main()" attrs="150">
+        <size>61</size>
+      </method>
+      <method name="IEnumerable`1 Test()" attrs="150">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="Test.Program+&lt;Test&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>143</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>53</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="Void &lt;&gt;__Finally0()" attrs="129">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-lambda-01.cs">
     <type name="IntFunc">
       <method name="Int32 Invoke(Int32)" attrs="454">

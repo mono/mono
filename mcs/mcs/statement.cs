@@ -4749,21 +4749,9 @@ namespace Mono.CSharp {
 				locked = false;
 			}
 
-			using (ec.Set (ResolveContext.Options.LockScope)) {
-				ec.StartFlowBranching (this);
-				Statement.Resolve (ec);
-				ec.EndFlowBranching ();
-			}
-
-			if (lv != null) {
-				lv.IsLockedByStatement = locked;
-			}
-
-			base.Resolve (ec);
-
 			//
 			// Have to keep original lock value around to unlock same location
-			// in the case the original has changed or is null
+			// in the case of original value has changed or is null
 			//
 			expr_copy = TemporaryVariableReference.Create (ec.BuiltinTypes.Object, ec.CurrentBlock, loc);
 			expr_copy.Resolve (ec);
@@ -4775,6 +4763,18 @@ namespace Mono.CSharp {
 				lock_taken = TemporaryVariableReference.Create (ec.BuiltinTypes.Bool, ec.CurrentBlock, loc);
 				lock_taken.Resolve (ec);
 			}
+
+			using (ec.Set (ResolveContext.Options.LockScope)) {
+				ec.StartFlowBranching (this);
+				Statement.Resolve (ec);
+				ec.EndFlowBranching ();
+			}
+
+			if (lv != null) {
+				lv.IsLockedByStatement = locked;
+			}
+
+			base.Resolve (ec);
 
 			return true;
 		}
