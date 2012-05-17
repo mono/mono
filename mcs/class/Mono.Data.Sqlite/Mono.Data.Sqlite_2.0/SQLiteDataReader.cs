@@ -125,8 +125,14 @@ namespace Mono.Data.Sqlite
             finally
             {
               // If the datareader's behavior includes closing the connection, then do so here.
-              if ((_commandBehavior & CommandBehavior.CloseConnection) != 0 && _command.Connection != null)
-                _command.Connection.Close();
+              if ((_commandBehavior & CommandBehavior.CloseConnection) != 0 && _command.Connection != null) {
+                // We need to call Dispose on the command before we call Dispose on the Connection,
+                // otherwise we'll get a SQLITE_LOCKED exception.
+                var conn = _command.Connection;
+                _command.Dispose ();
+                conn.Close();
+                _disposeCommand = false;
+              }
             }
           }
           finally

@@ -141,5 +141,39 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 			}
 		}
+		
+		[Test]
+		public void CloseConnectionTest ()
+		{
+			// When this test fails it may confuse nunit a bit, causing it to show strange
+			// exceptions, since it leaks file handles (and nunit tries to open files,
+			// which it doesn't expect to fail).
+			
+			// For the same reason a lot of other tests will fail when this one fails.
+			
+			_conn.ConnectionString = _connectionString;
+			using (_conn) {
+				_conn.Open ();
+				using (var cmd = (SqliteCommand) _conn.CreateCommand ()) {
+					cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
+					cmd.ExecuteNonQuery ();
+				}
+			}
+
+			for (int i = 0; i < 1000; i++) {
+				_conn.ConnectionString = _connectionString;
+				using (_conn) {
+					_conn.Open ();
+					using (var cmd = (SqliteCommand) _conn.CreateCommand ()) {
+						cmd.CommandText = "SELECT * FROM TestNullableDateTime;";
+						cmd.CommandType = CommandType.Text;
+					
+						using (var reader = cmd.ExecuteReader (CommandBehavior.CloseConnection)) {
+							reader.Read ();
+						}
+					}
+				}
+			}
+		}
         }
 }
