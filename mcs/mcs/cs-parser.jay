@@ -10,12 +10,7 @@
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 // (C) 2004-2011 Novell, Inc
-// Copyright 2011 Xamarin Inc.
-//
-// TODO:
-//   (1) Figure out why error productions dont work.  `type-declaration' is a
-//       great spot to put an `error' because you can reproduce it with this input:
-//	 "public X { }"
+// Copyright 2011-2012 Xamarin Inc.
 //
 
 using System.Text;
@@ -3090,6 +3085,14 @@ invocation_expression
 		$$ = new Invocation ((Expression) $1, (Arguments) $3);
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| primary_expression open_parens_any argument_list error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Invocation ((Expression) $1, (Arguments) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	
 	;
 
 opt_object_or_collection_initializer
