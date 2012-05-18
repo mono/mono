@@ -2572,6 +2572,7 @@ enum_member_declaration
 
 		$$ = em;
 	  }
+	| attributes_without_members
 	;
 
 delegate_declaration
