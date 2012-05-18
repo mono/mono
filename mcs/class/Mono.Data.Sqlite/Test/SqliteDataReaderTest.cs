@@ -175,5 +175,34 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 			}
 		}
+
+		[Test]
+		public void TestDateTimeType ()
+		{
+			_conn.ConnectionString = _connectionString;
+			using (_conn) {
+				_conn.Open();
+				
+				using (var cm = _conn.CreateCommand ()) {
+					cm.CommandText = "DROP TABLE TEST; CREATE TABLE TEST (F2 DATETIME); INSERT INTO TEST (F2) VALUES (:F2)";
+
+					var dp2 = cm.CreateParameter ();
+					dp2.ParameterName = ":F2";
+					dp2.Value = DateTime.Now;
+					cm.Parameters.Add (dp2);
+					
+					cm.ExecuteNonQuer y();
+				}
+				
+				using (var cm = _conn.CreateCommand ()) {
+					cm.CommandText = "SELECT F2 FROM TEST";
+					using (var dr = cm.ExecuteReader ()) {
+						dr.Read ();
+						
+						Assert.AreEqual ("System.DateTime", dr.GetFieldType (dr.GetOrdinal ("F2")).ToString ());
+					}
+				}
+			}
+		}
         }
 }

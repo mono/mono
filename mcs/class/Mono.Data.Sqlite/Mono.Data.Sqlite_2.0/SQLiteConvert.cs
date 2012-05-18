@@ -695,6 +695,7 @@ namespace Mono.Data.Sqlite
       new SQLiteTypeNames("SMALLINT", DbType.Int16),
       new SQLiteTypeNames("BIGINT", DbType.Int64),
       new SQLiteTypeNames("TIMESTAMP", DbType.DateTime),
+      new SQLiteTypeNames("DATETIME", DbType.DateTime),
     };
   }
 
