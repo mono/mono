@@ -651,6 +651,8 @@ static void stop_debugger_thread (void);
 
 static void finish_agent_init (gboolean on_startup);
 
+static void invalidate_frames (DebuggerTlsData *tls);
+
 static int
 parse_address (char *address, char **host, int *port)
 {
@@ -1947,7 +1949,6 @@ get_last_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 		/* Store the context/lmf for the frame above the last frame */
 		memcpy (&data->ctx, ctx, sizeof (MonoContext));
 		data->lmf = info->lmf;
-
 		return TRUE;
 	}
 }
@@ -2067,15 +2068,23 @@ static void CALLBACK notify_thread_apc (ULONG_PTR param)
 /*
  * reset_native_thread_suspend_state:
  * 
- *   Reset the suspended flag on native threads
+ *   Reset the suspended flag and state on native threads
  */
 static void
 reset_native_thread_suspend_state (gpointer key, gpointer value, gpointer user_data)
 {
 	DebuggerTlsData *tls = value;
 
-	if (!tls->really_suspended && tls->suspended)
+	if (!tls->really_suspended && tls->suspended) {
 		tls->suspended = FALSE;
+		/*
+		 * The thread might still be running if it was executing native code, so the state won't be invalided by
+		 * suspend_current ().
+		 */
+		tls->has_context = FALSE;
+		tls->has_async_ctx = FALSE;
+		invalidate_frames (tls);
+	}
 }
 
 /*
@@ -2356,7 +2365,7 @@ suspend_current (void)
 	/* The frame info becomes invalid after a resume */
 	tls->has_context = FALSE;
 	tls->has_async_ctx = FALSE;
-	invalidate_frames (NULL);
+	invalidate_frames (tls);
 }
 
 static void
@@ -2421,6 +2430,83 @@ static gboolean
 is_suspended (void)
 {
 	return count_threads_to_wait_for () == 0;
+}
+
+static MonoSeqPointInfo*
+get_seq_points (MonoDomain *domain, MonoMethod *method)
+{
+	MonoSeqPointInfo *seq_points;
+
+	mono_domain_lock (domain);
+	seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, method);
+	if (!seq_points && method->is_inflated) {
+		/* generic sharing + aot */
+		seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, mono_method_get_declaring_generic_method (method));
+		// UNITY: Generic sharing not implemented/enabled yet
+		// if (!seq_points)
+		// 	seq_points = g_hash_table_lookup (domain_jit_info (domain)->seq_points, mini_get_shared_method (method));
+	}
+	mono_domain_unlock (domain);
+
+	return seq_points;
+}
+
+static MonoSeqPointInfo*
+find_seq_points (MonoDomain *domain, MonoMethod *method)
+{
+	MonoSeqPointInfo *seq_points = get_seq_points (domain, method);
+
+	if (!seq_points)
+		printf ("Unable to find seq points for method '%s'.\n", mono_method_full_name (method, TRUE));
+	g_assert (seq_points);
+
+	return seq_points;
+}
+
+/*
+* find_next_seq_point_for_native_offset:
+*
+* Find the first sequence point after NATIVE_OFFSET.
+*/
+static SeqPoint*
+find_next_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info)
+{
+	MonoSeqPointInfo *seq_points;
+	int i;
+
+	seq_points = find_seq_points (domain, method);
+	if (info)
+		*info = seq_points;
+
+	for (i = 0; i < seq_points->len; ++i) {
+		if (seq_points->seq_points [i].native_offset >= native_offset)
+			return &seq_points->seq_points [i];
+	}
+
+	return NULL;
+}
+
+/*
+* find_prev_seq_point_for_native_offset:
+*
+* Find the first sequence point before NATIVE_OFFSET.
+*/
+static SeqPoint*
+find_prev_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info)
+{
+	MonoSeqPointInfo *seq_points;
+	int i;
+
+	seq_points = find_seq_points (domain, method);
+	if (info)
+		*info = seq_points;
+
+	for (i = seq_points->len - 1; i >= 0; --i) {
+		if (seq_points->seq_points [i].native_offset <= native_offset)
+			return &seq_points->seq_points [i];
+	}
+
+	return NULL;
 }
 
 /*
@@ -3641,6 +3727,8 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	GPtrArray *bp_reqs, *ss_reqs_orig, *ss_reqs;
 	GSList *bp_events = NULL, *ss_events = NULL, *enter_leave_events = NULL;
 	EventKind kind = EVENT_KIND_BREAKPOINT;
+	MonoSeqPointInfo *info;
+	SeqPoint *sp;
 
 	// FIXME: Speed this up
 
@@ -3669,9 +3757,15 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	ss_reqs = g_ptr_array_new ();
 	ss_reqs_orig = g_ptr_array_new ();
 
-	DEBUG(1, fprintf (log_file, "[%p] Breakpoint hit, method=%s, offset=0x%x.\n", (gpointer)GetCurrentThreadId (), ji->method->name, native_offset));
-
 	mono_loader_lock ();
+
+	/*
+	 * The ip points to the instruction causing the breakpoint event, which is after
+	 * the offset recorded in the seq point map, so find the prev seq point before ip.
+	 */
+	sp = find_prev_seq_point_for_native_offset (mono_domain_get (), ji->method, native_offset, &info);
+
+	DEBUG(1, fprintf (log_file, "[%p] Breakpoint hit, method=%s, ip=%p, offset=0x%x, sp il offset=0x%x.\n", (gpointer)GetCurrentThreadId (), ji->method->name, ip, native_offset, sp ? sp->il_offset : -1));
 
 	bp = NULL;
 	for (i = 0; i < breakpoints->len; ++i) {
@@ -3726,8 +3820,6 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 		EventRequest *req = g_ptr_array_index (ss_reqs_orig, i);
 		SingleStepReq *ss_req = bp->req->info;
 		gboolean hit = TRUE;
-		MonoSeqPointInfo *info;
-		SeqPoint *sp;
 
 		sp = find_seq_point_for_native_offset (mono_domain_get (), ji->method, native_offset, &info);
 		g_assert (sp);
@@ -3742,9 +3834,11 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 			if (minfo)
 				loc = mono_debug_symfile_lookup_location (minfo, sp->il_offset);
 
-			if (!loc || (loc && ji->method == ss_req->last_method && loc->row == ss_req->last_line))
+			if (!loc || (loc && ji->method == ss_req->last_method && loc->row == ss_req->last_line)) {
 				/* Have to continue single stepping */
+				DEBUG(1, fprintf (log_file, "[%p] Same source line, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
 				hit = FALSE;
+			}
 				
 			if (loc) {
 				ss_req->last_method = ji->method;
@@ -4532,10 +4626,12 @@ buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
 }
 
 static ErrorCode
-decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
+decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit);
+
+static ErrorCode
+decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	int err;
-	int type = decode_byte (buf, &buf, limit);
 
 	if (type != t->type && !MONO_TYPE_IS_REFERENCE (t) &&
 		!(t->type == MONO_TYPE_I && type == MONO_TYPE_VALUETYPE) &&
@@ -4668,6 +4764,47 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 	*endbuf = buf;
 
 	return 0;
+}
+
+static ErrorCode
+decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
+{
+	int err;
+	int type = decode_byte (buf, &buf, limit);
+
+	if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
+		MonoType *targ = t->data.generic_class->context.class_inst->type_argv [0];
+		guint8 *nullable_buf;
+
+		/*
+		 * First try decoding it as a Nullable`1
+		 */
+		err = decode_value_internal (t, type, domain, addr, buf, endbuf, limit);
+		if (!err)
+			return err;
+
+		/*
+		 * Then try decoding as a primitive value or null.
+		 */
+		if (targ->type == type) {
+			nullable_buf = g_malloc (mono_class_instance_size (mono_class_from_mono_type (targ)));
+			err = decode_value_internal (targ, type, domain, nullable_buf, buf, endbuf, limit);
+			if (err) {
+				g_free (nullable_buf);
+				return err;
+			}
+			mono_nullable_init (addr, mono_value_box (domain, mono_class_from_mono_type (targ), nullable_buf), mono_class_from_mono_type (t));
+			g_free (nullable_buf);
+			*endbuf = buf;
+			return ERR_NONE;
+		} else if (type == VALUE_TYPE_ID_NULL) {
+			mono_nullable_init (addr, NULL, mono_class_from_mono_type (t));
+			*endbuf = buf;
+			return ERR_NONE;
+		}
+	}
+
+	return decode_value_internal (t, type, domain, addr, buf, endbuf, limit);
 }
 
 static void
@@ -4993,10 +5130,12 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 			buffer_add_value (buf, sig->ret, &res, domain);
 		} else if (mono_class_from_mono_type (sig->ret)->valuetype) {
 			if (mono_class_is_nullable (mono_class_from_mono_type (sig->ret))) {
-				if (!res)
-					buffer_add_value (buf, &mono_defaults.object_class->byval_arg, &res, domain);
-				else
-					buffer_add_value (buf, sig->ret, mono_object_unbox (res), domain);
+				MonoClass *k = mono_class_from_mono_type (sig->ret);
+				guint8 *nullable_buf = g_alloca (mono_class_value_size (k, NULL));
+
+				g_assert (nullable_buf);
+				mono_nullable_init (nullable_buf, res, k);
+				buffer_add_value (buf, sig->ret, nullable_buf, domain);
 			} else {
 				g_assert (res);
 				buffer_add_value (buf, sig->ret, mono_object_unbox (res), domain);
@@ -5667,7 +5806,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		break;
 	}
 	case CMD_ASSEMBLY_GET_OBJECT: {
-		MonoObject *o = (MonoObject*)mono_assembly_get_object (mono_domain_get (), ass);
+		MonoObject *o = (MonoObject*)mono_assembly_get_object (domain, ass);
 		buffer_add_objid (buf, o);
 		break;
 	}
@@ -6063,7 +6202,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	case CMD_TYPE_GET_OBJECT: {
-		MonoObject *o = (MonoObject*)mono_type_get_object (mono_domain_get (), &klass->byval_arg);
+		MonoObject *o = (MonoObject*)mono_type_get_object (domain, &klass->byval_arg);
 		buffer_add_objid (buf, o);
 		break;
 	}

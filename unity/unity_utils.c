@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef WIN32
-#include <windows.h>
-#include <io.h>
 #include <fcntl.h>
 #endif
 #include <mono/metadata/object.h>
+#include <mono/metadata/metadata.h>
+#include <mono/metadata/tabledefs.h>
+#include <mono/metadata/class-internals.h>
+
 #include <glib.h>
 
 #ifdef WIN32
@@ -118,4 +120,10 @@ mono_unity_socket_security_enabled_set (gboolean enabled)
 void mono_unity_set_vprintf_func (vprintf_func func)
 {
 	set_vprintf_func (func);
+}
+
+gboolean
+mono_unity_class_is_interface (MonoClass* klass)
+{
+	return MONO_CLASS_IS_INTERFACE(klass);
 }
