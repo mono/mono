@@ -2527,10 +2527,10 @@ public class DebuggerTests
 		e = run_until ("domains_2");
 		var frame = e.Thread.GetFrames ()[0];
 		var o = frame.GetArgument (0) as ObjectMirror;
-		Assert.AreEqual ("TransparentProxy", o.Type.Name);
+		Assert.AreEqual ("CrossDomain", o.Type.Name);
 
 		// Do a remoting invoke
-		var cross_domain_type = (e.Thread.GetFrames ()[0].GetArgument (1) as ObjectMirror).Type;
+		var cross_domain_type = o.Type;
 		var v = o.InvokeMethod (e.Thread, cross_domain_type.GetMethod ("invoke_3"), null);
 		AssertValue (42, v);
 
