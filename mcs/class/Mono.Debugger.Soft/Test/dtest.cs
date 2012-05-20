@@ -15,6 +15,9 @@ using NUnit.Framework;
 
 #pragma warning disable 0219
 
+namespace MonoTests
+{
+
 [TestFixture]
 public class DebuggerTests
 {
@@ -2520,6 +2523,17 @@ public class DebuggerTests
 
 		var domain = (e as AppDomainCreateEvent).Domain;
 
+		// Check the object type
+		e = run_until ("domains_2");
+		var frame = e.Thread.GetFrames ()[0];
+		var o = frame.GetArgument (0) as ObjectMirror;
+		Assert.AreEqual ("TransparentProxy", o.Type.Name);
+
+		// Do a remoting invoke
+		var cross_domain_type = (e.Thread.GetFrames ()[0].GetArgument (1) as ObjectMirror).Type;
+		var v = o.InvokeMethod (e.Thread, cross_domain_type.GetMethod ("invoke_3"), null);
+		AssertValue (42, v);
+
 		// Run until the callback in the domain
 		MethodMirror m = entry_point.DeclaringType.GetMethod ("invoke_in_domain");
 		Assert.IsNotNull (m);
@@ -2574,7 +2588,7 @@ public class DebuggerTests
 		Assert.AreEqual (domain, (e as AppDomainUnloadEvent).Domain);
 
 		// Run past the unload
-		e = run_until ("domains_2");
+		e = run_until ("domains_3");
 
 		// Test access to unloaded types
 		// FIXME: Add an exception type for this
@@ -2981,4 +2995,6 @@ public class DebuggerTests
 		Assert.AreEqual (1, args.Length);
 		Assert.AreEqual ("T", args [0].Name);
 	}
+}
+
 }
