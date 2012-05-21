@@ -165,6 +165,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void ConvertToString ()
 		{
 			CultureInfo ciUS = new CultureInfo("en-US");
