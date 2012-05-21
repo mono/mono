@@ -191,7 +191,7 @@ namespace MonoTests.Mono.Data.Sqlite
 					dp2.Value = DateTime.Now;
 					cm.Parameters.Add (dp2);
 					
-					cm.ExecuteNonQuer y();
+					cm.ExecuteNonQuery ();
 				}
 				
 				using (var cm = _conn.CreateCommand ()) {
