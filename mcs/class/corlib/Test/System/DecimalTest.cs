@@ -629,6 +629,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void TestConstructDouble ()
 		{
 			Decimal d;
@@ -1067,6 +1068,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void ToString_Defaults ()
 		{
 			Decimal d = 254.9m;
@@ -1375,6 +1377,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #59425
+		[SetCulture("en-US")]
 		public void ParseAndKeepPrecision ()
 		{
 			string value = "5";
@@ -1395,6 +1398,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void ToString_G ()
 		{
 			Assert.AreEqual ("1.0", (1.0m).ToString (), "00");
