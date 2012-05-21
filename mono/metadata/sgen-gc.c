@@ -5373,7 +5373,7 @@ restart_threads_until_none_in_managed_allocator (void)
 #else
 		/* wait for the threads to signal their suspension
 		   again */
-		mono_sgen_wait_for_suspend_ack (restart_count);
+		mono_sgen_wait_for_suspend_ack (restarted_count);
 #endif
 	}
 
