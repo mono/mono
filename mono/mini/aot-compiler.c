@@ -2696,7 +2696,8 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 						MonoCompile *callee_cfg = g_hash_table_lookup (acfg->method_to_cfg, patch_info->data.method);
 						//printf ("DIRECT: %s %s\n", method ? mono_method_full_name (method, TRUE) : "", mono_method_full_name (callee_cfg->method, TRUE));
 						direct_call = TRUE;
-						sprintf (direct_call_target, "%sm_%x", acfg->temp_prefix, get_method_index (acfg, callee_cfg->orig_method));
+						sprintf (direct_call_target, "%sm_%x", "_", get_method_index (acfg, callee_cfg->orig_method));
+						callee_cfg->asm_symbol = g_strdup(direct_call_target);
 						patch_info->type = MONO_PATCH_INFO_NONE;
 						acfg->stats.direct_calls ++;
 					}
@@ -2865,6 +2866,10 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		emit_local_symbol (acfg, debug_sym, symbol, TRUE);
 		emit_label (acfg, debug_sym);
 	}
+
+	sprintf (symbol, "%sm_%x", "_", method_index);
+	cfg->asm_symbol = g_strdup(symbol);
+	emit_label (acfg, symbol);
 
 	if (cfg->verbose_level > 0)
 		g_print ("Method %s emitted as %s\n", mono_method_full_name (method, TRUE), symbol);
@@ -4327,6 +4332,24 @@ emit_code (MonoAotCompile *acfg)
 
 		if (acfg->cfgs [i])
 			emit_method_code (acfg, acfg->cfgs [i]);
+	}
+
+	sprintf (symbol, "method_addresses");
+	emit_section_change (acfg, ".text", 1);
+	emit_alignment (acfg, 8);
+	emit_label (acfg, symbol);
+
+	for (i = 0; i < acfg->nmethods; ++i) {	
+		if (acfg->cfgs [i]) {
+			if (acfg->cfgs [i]->asm_symbol)
+				emit_pointer (acfg, acfg->cfgs [i]->asm_symbol);
+			else {
+				sprintf (symbol, "%sm_%x", acfg->temp_prefix, i);
+				emit_pointer (acfg, symbol);
+			}
+		} else {
+			emit_pointer (acfg, NULL);
+		}
 	}
 
 	sprintf (symbol, "methods_end");

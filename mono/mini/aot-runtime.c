@@ -94,6 +94,7 @@ typedef struct MonoAotModule {
 	guint8 *plt;
 	guint8 *plt_end;
 	guint32 *code_offsets;
+	gpointer *method_addresses;
 	guint8 *method_info;
 	guint32 *method_info_offsets;
 	guint8 *got_info;
@@ -1075,6 +1076,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 
 	/* Read method and method_info tables */
 	find_symbol (sofile, globals, "method_offsets", (gpointer*)&amodule->code_offsets);
+	find_symbol (sofile, globals, "method_addresses", (gpointer*)&amodule->method_addresses);
 	find_symbol (sofile, globals, "methods", (gpointer*)&amodule->code);
 	find_symbol (sofile, globals, "methods_end", (gpointer*)&amodule->code_end);
 	find_symbol (sofile, globals, "method_info_offsets", (gpointer*)&amodule->method_info_offsets);
@@ -1101,6 +1103,15 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 
 	find_symbol (sofile, globals, "plt", (gpointer*)&amodule->plt);
 	find_symbol (sofile, globals, "plt_end", (gpointer*)&amodule->plt_end);
+
+	/* Compute code_offsets from the method addresses */
+	amodule->code_offsets = g_malloc0 (amodule->info.nmethods * sizeof (gint32));
+	for (i = 0; i < amodule->info.nmethods; ++i) {
+		if (!amodule->method_addresses [i])
+			amodule->code_offsets [i] = 0xffffffff;
+		else
+			amodule->code_offsets [i] = (char*)amodule->method_addresses [i] - (char*)amodule->code;
+	}
 
 	if (make_unreadable) {
 #ifndef PLATFORM_WIN32
