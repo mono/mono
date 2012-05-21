@@ -2381,7 +2381,7 @@ namespace MonoTests.System
 		[Test]
 		public void Parse_InvalidShortDate ()
 		{
-			DateTime expected = new DateTime (2011, 03, 22, 07, 32, 00, DateTimeKind.Utc);
+			DateTime expected = new DateTime (2011, 03, 22, 07, 32, 00, DateTimeKind.Utc).ToLocalTime();
 			DateTime expected2 = new DateTime (2011, 03, 22, 08, 32, 00, DateTimeKind.Utc);
 
 			string [] cultures = new string [] {"es-ES", "en-US", "en-GB", "de-DE", "fr-FR"
@@ -2394,21 +2394,21 @@ namespace MonoTests.System
 				CultureInfo ci = new CultureInfo (culture);
 				ci.DateTimeFormat.ShortDatePattern = "d";
 
-				Assert.AreEqual (DateTime.Parse ("2011-03-22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#a01 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011/03/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#a02 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a03 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a04 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a05 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#a06 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03/2011/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#a07 - " + culture);
+				Assert.AreEqual (expected,  DateTime.Parse ("2011-03-22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), "#a01 - " + culture);
+				Assert.AreEqual (expected,  DateTime.Parse ("2011/03/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), "#a02 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#a03 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#a04 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#a05 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#a06 - " + culture);
+				Assert.AreEqual (expected,  DateTime.Parse ("03/2011/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), "#a07 - " + culture);
 				ci.DateTimeFormat.DateSeparator = "%";
-				Assert.AreEqual (DateTime.Parse ("2011-03-22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#b01 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011/03/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#b02 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b03 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b04 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b05 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), expected2, "#b06 - " + culture);
-				Assert.AreEqual (DateTime.Parse ("03/2011/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), expected, "#b07 - " + culture);
+				Assert.AreEqual (expected,  DateTime.Parse ("2011-03-22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), "#b01 - " + culture);
+				Assert.AreEqual (expected,  DateTime.Parse ("2011/03/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), "#b02 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("2011-03-22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#b03 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("2011/03/22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#b04 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("03/2011/22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#b05 - " + culture);
+				Assert.AreEqual (expected2, DateTime.Parse ("03-2011-22T08:32:00", ci, DateTimeStyles.RoundtripKind), "#b06 - " + culture);
+				Assert.AreEqual (expected,  DateTime.Parse ("03/2011/22 08:32:00+01:00", ci, DateTimeStyles.RoundtripKind), "#b07 - " + culture);
 			}
 		}
 
