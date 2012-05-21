@@ -864,12 +864,11 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		//[Ignore ("need to fix tests that run on different timezones")]
 		public void TestParse2 ()
 		{
 			DateTime t1 = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
 			t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
-			Assert.AreEqual (04 - TimeZone.CurrentTimeZone.GetUtcOffset (t1).Hours, t1.Hour);
+			Assert.AreEqual (4, t1.Hour);
 		}
 
 		[Test]
