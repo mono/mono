@@ -3447,6 +3447,15 @@ namespace Mono.CSharp {
 
 		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
+			var fe = left as FieldExpr;
+			if (fe != null) {
+				//
+				// Using method-group on struct fields makes the struct assigned. I am not sure
+				// why but that's what .net does
+				//
+				fe.Spec.MemberDefinition.SetIsAssigned ();
+			}
+
 			simple_name = original;
 			return base.ResolveMemberAccess (ec, left, original);
 		}

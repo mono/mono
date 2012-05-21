@@ -44700,6 +44700,14 @@
         <size>8</size>
       </method>
     </type>
+    <type name="C2">
+      <method name="Void Foo()" attrs="129">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="test-797.cs">
     <type name="C">
