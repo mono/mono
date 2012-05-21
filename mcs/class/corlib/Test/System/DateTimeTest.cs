@@ -872,6 +872,18 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void TestUtcOffset_Novell710512 ()
+		{
+			// test for bug Novell #710512
+			if (TimeZoneInfo.Local.BaseUtcOffset == TimeSpan.Zero)
+				Assert.Ignore("Test doesn't apply with current time zone");
+
+			var localTime = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
+			var utcTime = TimeZone.CurrentTimeZone.ToUniversalTime(localTime);
+			Assert.AreEqual (TimeSpan.Zero, TimeZone.CurrentTimeZone.GetUtcOffset (utcTime));
+		}
+
+		[Test]
 		public void TestParseDateFirst ()
 		{
 			// Standard patterns
