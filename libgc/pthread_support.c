@@ -215,6 +215,10 @@ static int GC_setspecific (GC_key_t key, void *value) {
 
 static GC_bool keys_initialized;
 
+static pthread_t main_pthread_self;
+static void *main_stack, *main_altstack;
+static int main_stack_size, main_altstack_size;
+
 #ifdef MONO_DEBUGGER_SUPPORTED
 #include "include/libgc-mono-debugger.h"
 #endif
@@ -848,6 +852,30 @@ int GC_thread_is_registered (void)
 	return ptr ? 1 : 0;
 }
 
+void GC_register_altstack (void *stack, int stack_size, void *altstack, int altstack_size)
+{
+	GC_thread thread;
+
+	LOCK();
+	thread = (void *)GC_lookup_thread(pthread_self());
+	if (thread) {
+		thread->stack = stack;
+		thread->stack_size = stack_size;
+		thread->altstack = altstack;
+		thread->altstack_size = altstack_size;
+	} else {
+		/*
+		 * This happens if we are called before GC_thr_init ().
+		 */
+		main_pthread_self = pthread_self ();
+		main_stack = stack;
+		main_stack_size = stack_size;
+		main_altstack = altstack;
+		main_altstack_size = altstack_size;
+	}
+	UNLOCK();
+}
+
 #ifdef HANDLE_FORK
 /* Remove all entries from the GC_threads table, except the	*/
 /* one for the current thread.  We need to do this in the child	*/
@@ -1083,6 +1111,12 @@ void GC_thr_init()
          gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
 #     endif
 #endif
+		 if (pthread_self () == main_pthread_self) {
+			 t->stack = main_stack;
+			 t->stack_size = main_stack_size;
+			 t->altstack = main_altstack;
+			 t->altstack_size = main_altstack_size;
+		 }
 
     GC_stop_init();
 
