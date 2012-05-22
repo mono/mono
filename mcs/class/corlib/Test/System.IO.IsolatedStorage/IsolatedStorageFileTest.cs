@@ -1119,5 +1119,25 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			}
 		}
 #endif
+		[Test]
+		public void RootedDirectory ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			try {
+				isf.CreateDirectory ("test/nested/directory/structure/without/root");
+				isf.CreateDirectory ("/test/nested/directory/structure/with/root");
+			}
+			finally {
+				isf.DeleteDirectory ("test/nested/directory/structure/without/root");
+				isf.DeleteDirectory ("test/nested/directory/structure/without");
+
+				isf.DeleteDirectory ("/test/nested/directory/structure/with/root");
+				isf.DeleteDirectory ("/test/nested/directory/structure/with");
+				isf.DeleteDirectory ("/test/nested/directory/structure");
+				isf.DeleteDirectory ("/test/nested/directory");
+				isf.DeleteDirectory ("/test/nested");
+				isf.DeleteDirectory ("/test");
+			}
+		}
 	}
 }
