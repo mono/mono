@@ -2995,6 +2995,25 @@ public class DebuggerTests
 		Assert.AreEqual (1, args.Length);
 		Assert.AreEqual ("T", args [0].Name);
 	}
+
+	[Test]
+	public void UnhandledException () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "unhandled-exception" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Console.WriteLine (e2);
+
+		vm.Exit (0);
+		vm = null;
+	}
 }
 
 }
