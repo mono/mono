@@ -1498,3 +1498,112 @@ mono_gc_reference_queue_free (MonoReferenceQueue *queue)
 	queue->should_be_deleted = TRUE;
 }
 
+#define ptr_mask ((sizeof (void*) - 1))
+#define _toi(ptr) ((size_t)ptr)
+#define unaligned_bytes(ptr) (_toi(ptr) & ptr_mask)
+#define align_down(ptr) ((void*)(_toi(ptr) & ~ptr_mask))
+#define align_up(ptr) ((void*) ((_toi(ptr) + ptr_mask) & ~ptr_mask))
+
+/**
+ * mono_gc_bzero:
+ * @dest: address to start to clear
+ * @size: size of the region to clear
+ *
+ * Zero @size bytes starting at @dest.
+ *
+ * Use this to zero memory that can hold managed pointers.
+ *
+ * FIXME borrow faster code from some BSD libc or bionic
+ */
+void
+mono_gc_bzero (void *dest, size_t size)
+{
+	char *p = (char*)dest;
+	char *end = p + size;
+	char *align_end = align_up (p);
+	char *word_end;
+
+	while (p < align_end)
+		*p++ = 0;
+
+	word_end = align_down (end);
+	while (p < word_end) {
+		*((void**)p) = NULL;
+		p += sizeof (void*);
+	}
+
+	while (p < end)
+		*p++ = 0;
+}
+
+
+/**
+ * mono_gc_memmove:
+ * @dest: destination of the move
+ * @src: source
+ * @size: size of the block to move
+ *
+ * Move @size bytes from @src to @dest.
+ * size MUST be a multiple of sizeof (gpointer)
+ *
+ * FIXME borrow faster code from some BSD libc or bionic
+ */
+void
+mono_gc_memmove (void *dest, const void *src, size_t size)
+{
+	/*
+	 * If dest and src are differently aligned with respect to
+	 * pointer size then it makes no sense to do aligned copying.
+	 * In fact, we would end up with unaligned loads which is
+	 * incorrect on some architectures.
+	 */
+	if ((char*)dest - (char*)align_down (dest) != (char*)src - (char*)align_down (src)) {
+		memmove (dest, src, size);
+		return;
+	}
+
+	/*
+	 * A bit of explanation on why we align only dest before doing word copies.
+	 * Pointers to managed objects must always be stored in word aligned addresses, so
+	 * even if dest is misaligned, src will be by the same amount - this ensure proper atomicity of reads.
+	 */
+	if (dest > src && ((size_t)((char*)dest - (char*)src) < size)) {
+		char *p = (char*)dest + size;
+		char *s = (char*)src + size;
+		char *start = (char*)dest;
+		char *align_end = MAX((char*)dest, (char*)align_down (p));
+		char *word_start;
+
+		while (p > align_end)
+			*--p = *--s;
+
+		word_start = align_up (start);
+		while (p > word_start) {
+			p -= sizeof (void*);
+			s -= sizeof (void*);
+			*((void**)p) = *((void**)s);
+		}
+
+		while (p > start)
+			*--p = *--s;
+	} else {
+		char *p = (char*)dest;
+		char *s = (char*)src;
+		char *end = p + size;
+		char *align_end = MIN ((char*)end, (char*)align_up (p));
+		char *word_end;
+
+		while (p < align_end)
+			*p++ = *s++;
+
+		word_end = align_down (end);
+		while (p < word_end) {
+			*((void**)p) = *((void**)s);
+			p += sizeof (void*);
+			s += sizeof (void*);
+		}
+
+		while (p < end)
+			*p++ = *s++;
+	}
+}

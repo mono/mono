@@ -363,6 +363,8 @@ MonoReferenceQueue* mono_gc_reference_queue_new (mono_reference_queue_callback c
 void mono_gc_reference_queue_free (MonoReferenceQueue *queue) MONO_INTERNAL;
 gboolean mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data) MONO_INTERNAL;
 
+void mono_gc_bzero (void *dest, size_t size) MONO_INTERNAL;
+void mono_gc_memmove (void *dest, const void *src, size_t size) MONO_INTERNAL;
 
 guint mono_gc_get_vtable_bits (MonoClass *class) MONO_INTERNAL;
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
