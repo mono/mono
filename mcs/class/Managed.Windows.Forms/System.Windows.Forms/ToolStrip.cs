@@ -727,19 +727,21 @@ namespace System.Windows.Forms
 		{
 			if (!IsDisposed) {
 
-				// Event Handler must be stopped before disposing Items.
-				Events.Dispose();
+				if(disposing) {
+					// Event Handler must be stopped before disposing Items.
+					Events.Dispose();
 
-				CloseToolTip (null);
-				// ToolStripItem.Dispose modifes the collection,
-				// so we iterate it in reverse order
-				for (int i = Items.Count - 1; i >= 0; i--)
-					Items [i].Dispose ();
-					
-				if (this.overflow_button != null && this.overflow_button.drop_down != null)
-					this.overflow_button.drop_down.Dispose ();
+					CloseToolTip (null);
+					// ToolStripItem.Dispose modifes the collection,
+					// so we iterate it in reverse order
+					for (int i = Items.Count - 1; i >= 0; i--)
+						Items [i].Dispose ();
 
-				ToolStripManager.RemoveToolStrip (this);
+					if (this.overflow_button != null && this.overflow_button.drop_down != null)
+						this.overflow_button.drop_down.Dispose ();
+
+					ToolStripManager.RemoveToolStrip (this);
+				}
 				base.Dispose (disposing);
 			}
 		}
