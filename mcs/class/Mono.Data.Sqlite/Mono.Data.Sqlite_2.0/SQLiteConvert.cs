@@ -402,7 +402,7 @@ namespace Mono.Data.Sqlite
       DbType.Binary,
       DbType.Object,
       DbType.Boolean,
-      DbType.SByte,
+      DbType.String,
       DbType.SByte,
       DbType.Byte,
       DbType.Int16, // 7
