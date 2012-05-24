@@ -549,10 +549,10 @@ namespace System.Windows.Forms {
 			return driver.ClipboardOpen (primary_selection);
 		}
 
-		internal static void ClipboardStore (IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter)
+		internal static void ClipboardStore (IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy)
 		{
-			DriverDebug ("ClipboardStore ({0:X}, {1}, {2}): Called", handle.ToInt32 (), obj, type, converter);
-			driver.ClipboardStore (handle, obj, type, converter);
+			DriverDebug ("ClipboardStore ({0:X}, {1}, {2}, {3}, {4}): Called", handle.ToInt32 (), obj, type, converter, copy);
+			driver.ClipboardStore (handle, obj, type, converter, copy);
 		}
 
 		internal static object ClipboardRetrieve (IntPtr handle, int type, XplatUI.ClipboardToObject converter)

@@ -2788,17 +2788,36 @@ namespace System.Windows.Forms {
 			return Clipboard.Item;
 		}
 
-		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter)
+		internal override void ClipboardStore (IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy)
 		{
 			Clipboard.Converter = converter;
 
 			if (obj != null) {
 				Clipboard.AddSource (type, obj);
-				XSetSelectionOwner(DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
+				XSetSelectionOwner (DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
+
+				if (copy) {
+					try {
+						var clipboardAtom = gdk_atom_intern ("CLIPBOARD", true);
+						var clipboard = gtk_clipboard_get (clipboardAtom);
+						if (clipboard != null) {
+							// for now we only store text
+							var text = Clipboard.GetRtfText ();
+							if (string.IsNullOrEmpty (text))
+								text = Clipboard.GetPlainText ();
+							if (!string.IsNullOrEmpty (text)) {
+								gtk_clipboard_set_text (clipboard, text, text.Length);
+								gtk_clipboard_store (clipboard);
+							}
+						}
+					} catch {
+						// ignore any errors - most likely because gtk isn't installed?
+					}
+				}
 			} else {
 				// Clearing the selection
 				Clipboard.ClearSources ();
-				XSetSelectionOwner(DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
+				XSetSelectionOwner (DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
@@ -7550,6 +7569,20 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XGetInputFocus")]
 		internal extern static void XGetInputFocus (IntPtr display, out IntPtr focus, out IntPtr revert_to);
 		#endregion
+#region Gtk/Gdk imports
+		[DllImport("libgdk-x11-2.0")]
+		internal extern static IntPtr gdk_atom_intern (string atomName, bool onlyIfExists);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static IntPtr gtk_clipboard_get (IntPtr atom);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_store (IntPtr clipboard);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
+#endregion
+
 #endif
 	}
 }

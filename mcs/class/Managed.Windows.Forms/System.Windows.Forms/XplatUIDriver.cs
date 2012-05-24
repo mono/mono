@@ -399,7 +399,7 @@ namespace System.Windows.Forms {
 		internal abstract void ClipboardClose(IntPtr handle);
 		internal abstract IntPtr ClipboardOpen (bool primary_selection);
 		internal abstract int ClipboardGetID(IntPtr handle, string format);
-		internal abstract void ClipboardStore(IntPtr handle, object obj, int id, XplatUI.ObjectToClipboard converter);
+		internal abstract void ClipboardStore(IntPtr handle, object obj, int id, XplatUI.ObjectToClipboard converter, bool copy);
 		internal abstract int[] ClipboardAvailableFormats(IntPtr handle);
 		internal abstract object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter);
 
