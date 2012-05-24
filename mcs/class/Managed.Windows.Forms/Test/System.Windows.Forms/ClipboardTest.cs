@@ -24,6 +24,9 @@
 //
 
 using System;
+using System.CodeDom.Compiler;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -98,6 +101,82 @@ namespace MonoTests.System.Windows.Forms
 		{
 			public string Name;
 			public int Id;
+		}
+
+		[Test]
+		public void DataRemainsOnClipboard_Xamarin4959 ()
+		{
+			// Compile an app that puts something on the clipboard
+			var source = @"
+using System;
+using System.Windows.Forms;
+public static class MainClass
+{
+	public static void Main ()
+	{
+		Clipboard.SetDataObject (""testing bug 4959"", true, 10, 100);
+	}
+}
+";
+			var exeName = Path.GetTempFileName ();
+			try {
+				var parameters = new CompilerParameters ();
+				parameters.GenerateExecutable = true;
+				parameters.ReferencedAssemblies.Add ("System.Windows.Forms.dll");
+				parameters.OutputAssembly = exeName;
+				var compiler = CodeDomProvider.CreateProvider ("CSharp");
+				var compilerResults = compiler.CompileAssemblyFromSource (parameters, source);
+				Assert.AreEqual (0, compilerResults.Errors.Count);
+
+				// Execute the app
+				using (var app = Process.Start (exeName)) {
+					app.WaitForExit ();
+				}
+
+				// Text should still be on the clipboard
+				Assert.AreEqual ("testing bug 4959", Clipboard.GetText ());
+			} finally {
+				File.Delete (exeName);
+			}
+		}
+
+		[Test]
+		public void DataGetsCleared_Xamarin4959 ()
+		{
+			// This is the reverse of the previous test
+
+			// Compile an app that puts something on the clipboard
+			var source = @"
+using System;
+using System.Windows.Forms;
+public static class MainClass
+{
+	public static void Main ()
+	{
+		Clipboard.SetDataObject (""testing bug 4959"", false, 10, 100);
+	}
+}
+";
+			var exeName = Path.GetTempFileName ();
+			try {
+				var parameters = new CompilerParameters ();
+				parameters.GenerateExecutable = true;
+				parameters.ReferencedAssemblies.Add ("System.Windows.Forms.dll");
+				parameters.OutputAssembly = exeName;
+				var compiler = CodeDomProvider.CreateProvider ("CSharp");
+				var compilerResults = compiler.CompileAssemblyFromSource (parameters, source);
+				Assert.AreEqual (0, compilerResults.Errors.Count);
+
+				// Execute the app
+				using (var app = Process.Start (exeName)) {
+					app.WaitForExit ();
+				}
+
+				// Text should no longer be on the clipboard
+				Assert.IsTrue (string.IsNullOrEmpty (Clipboard.GetText ()));
+			} finally {
+				File.Delete (exeName);
+			}
 		}
 #endif
 	}
