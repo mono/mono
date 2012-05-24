@@ -218,7 +218,7 @@ namespace System.Web
 
 		static CapabilitiesLoader ()
 		{
-			defaultCaps = new Hashtable ();
+			defaultCaps = new Hashtable (StringComparer.OrdinalIgnoreCase);
 			defaultCaps.Add ("activexcontrols", "False");
 			defaultCaps.Add ("alpha", "False");
 			defaultCaps.Add ("aol", "False");
@@ -355,7 +355,7 @@ namespace System.Web
 				foreach (BrowserData bd in alldata) {
 					if (bd.IsMatch (userAgent)) {
 						Hashtable tbl;
-						tbl = new Hashtable (defaultCaps);
+						tbl = new Hashtable (defaultCaps, StringComparer.OrdinalIgnoreCase);
 						userBrowserCaps = bd.GetProperties (tbl);
 						break;
 					}
@@ -442,7 +442,7 @@ namespace System.Web
 #endif
 			using (input) {
 			string str;
-			Hashtable allhash = new Hashtable ();
+			Hashtable allhash = new Hashtable (StringComparer.OrdinalIgnoreCase);
 			int aux = 0;
 			ArrayList browserData = new ArrayList ();
 			while ((str = input.ReadLine ()) != null) {

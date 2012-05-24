@@ -355,7 +355,12 @@ namespace System.Web.Configuration
 		public int MajorVersion {
 			get {
 				if (!Get (HaveMajorVersion)) {
-					majorVersion = ReadInt32 ("majorver");
+					// Try with MS.NET's property name.
+					// See: https://bugzilla.xamarin.com/show_bug.cgi?id=4108
+					if (this["majorversion"] != null)
+						majorVersion = ReadInt32 ("majorversion");
+					else 
+						majorVersion = ReadInt32 ("majorver");
 					Set (HaveMajorVersion);
 				}
 
@@ -366,7 +371,12 @@ namespace System.Web.Configuration
 		public double MinorVersion {
 			get {
 				if (!Get (HaveMinorVersion)) {
-					minorVersion = ReadDouble ("minorver");
+					// Try with MS.NET's property name.
+					// See: https://bugzilla.xamarin.com/show_bug.cgi?id=4108
+					if (this["minorversion"] != null)
+						minorVersion = ReadDouble ("minorversion");
+					else
+						minorVersion = ReadDouble ("minorver");
 					Set (HaveMinorVersion);
 				}
 
