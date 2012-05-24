@@ -139,11 +139,22 @@ namespace System.Collections.Concurrent
 
 		public int TryPopRange (T[] items)
 		{
+			if (items == null)
+				throw new ArgumentNullException ("items");
 			return TryPopRange (items, 0, items.Length);
 		}
 
 		public int TryPopRange (T[] items, int startIndex, int count)
 		{
+			if (items == null)
+				throw new ArgumentNullException ("items");
+			if (startIndex < 0 || startIndex >= items.Length)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			if (startIndex + count > items.Length)
+				throw new ArgumentException ("startIndex + count is greater than the length of items.");
+
 			Node temp;
 			Node end;
 			
@@ -152,7 +163,7 @@ namespace System.Collections.Concurrent
 				if (temp == null)
 					return -1;
 				end = temp;
-				for (int j = 0; j < count - 1; j++) {
+				for (int j = 0; j < count; j++) {
 					end = end.Next;
 					if (end == null)
 						break;
@@ -160,14 +171,15 @@ namespace System.Collections.Concurrent
 			} while (Interlocked.CompareExchange (ref head, end, temp) != temp);
 			
 			int i;
-			for (i = startIndex; i < count && temp != null; i++) {
+			for (i = startIndex; i < startIndex + count && temp != null; i++) {
 				items[i] = temp.Value;
 				end = temp;
 				temp = temp.Next;
 				pool.Release (ZeroOut (end));
 			}
+			this.count -= (i - startIndex);
 			
-			return i - 1;
+			return i - startIndex;
 		}
 		
 		public bool TryPeek (out T result)
