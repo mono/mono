@@ -224,6 +224,7 @@ retry:
 				retries--;
 				if (retries == 0)
 					throw exc;
+				result = null;
 				goto retry;
 			}
 			return result;
