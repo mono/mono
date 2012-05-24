@@ -43,15 +43,16 @@ namespace MonoTests.Mono.Data.Sqlite
 			{
 				throw e;
 			}
-			
-			SqliteCommand createCommand = new SqliteCommand("CREATE TABLE t1(t  TEXT,  f FLOAT, i INTEGER, b TEXT);",_conn);
-			SqliteCommand insertCommand = new SqliteCommand("INSERT INTO t1  (t, f, i, b ) VALUES('" + stringvalue + "',123,123,'123')",_conn);
 
 			try
 			{
-				_conn.Open();
-				createCommand.ExecuteNonQuery();
-				insertCommand.ExecuteNonQuery();
+				using (SqliteCommand createCommand = new SqliteCommand("CREATE TABLE t1(t  TEXT,  f FLOAT, i INTEGER, b TEXT);", _conn))
+				using (SqliteCommand insertCommand = new SqliteCommand("INSERT INTO t1  (t, f, i, b ) VALUES('" + stringvalue + "',123,123,'123')", _conn))
+				{
+					_conn.Open();
+					createCommand.ExecuteNonQuery();
+					insertCommand.ExecuteNonQuery();
+				}
 			}
 			catch(Exception e)
 			{
@@ -67,29 +68,31 @@ namespace MonoTests.Mono.Data.Sqlite
 		[Test]	
 		public void Select()
 		{
-			SqliteCommand simpleSelect = new SqliteCommand("SELECT * FROM t1;  ", _conn); // check trailing spaces
-			using(_conn)
+			using (_conn)
+			using (SqliteCommand simpleSelect = new SqliteCommand("SELECT * FROM t1;  ", _conn)) // check trailing spaces
 			{
 				_conn.Open();
-				SqliteDataReader dr = simpleSelect.ExecuteReader();
-				while(dr.Read())
+				using (SqliteDataReader dr = simpleSelect.ExecuteReader())
 				{
-					string test = dr[0].ToString();
-					Assert.AreEqual(dr["T"], stringvalue); // also checks case-insensitive column
-					Assert.AreEqual(dr["F"], 123);
-					Assert.AreEqual(dr["I"], 123);
-					Assert.AreEqual(dr["B"], "123");
+					while (dr.Read())
+					{
+						string test = dr[0].ToString();
+						Assert.AreEqual(dr["T"], stringvalue); // also checks case-insensitive column
+						Assert.AreEqual(dr["F"], 123);
+						Assert.AreEqual(dr["I"], 123);
+						Assert.AreEqual(dr["B"], "123");
+					}
+					Assert.IsTrue(dr.FieldCount>0);
 				}
-				Assert.IsTrue(dr.FieldCount>0);
 			}
 		}
-		
+
 		[Test]
 		public void Delete()
 		{
-			SqliteCommand insCmd = new SqliteCommand("INSERT INTO t1 VALUES ('todelete',0.1,0,'')",_conn);
-			SqliteCommand delCmd = new SqliteCommand("DELETE FROM t1 WHERE t = 'todelete'",_conn);
-			using(_conn)
+			using (_conn)
+			using (SqliteCommand insCmd = new SqliteCommand("INSERT INTO t1 VALUES ('todelete',0.1,0,'')", _conn))
+			using (SqliteCommand delCmd = new SqliteCommand("DELETE FROM t1 WHERE t = 'todelete'", _conn))
 			{
 				_conn.Open();
 				int insReturn = insCmd.ExecuteNonQuery();
@@ -102,8 +105,8 @@ namespace MonoTests.Mono.Data.Sqlite
 		[Test]
 		public void Insert()
 		{
-			SqliteCommand insCmd = new SqliteCommand("INSERT INTO t1 VALUES ('inserted',0.1,0,'')",_conn);
-			using(_conn)
+			using (_conn)
+			using (SqliteCommand insCmd = new SqliteCommand("INSERT INTO t1 VALUES ('inserted',0.1,0,'')", _conn))
 			{
 				_conn.Open();
 				int insReturn = insCmd.ExecuteNonQuery();
@@ -114,9 +117,9 @@ namespace MonoTests.Mono.Data.Sqlite
 		[Test]
 		public void Update()
 		{
-			SqliteCommand insCmd = new SqliteCommand("INSERT INTO t1 VALUES ('toupdate',0.1,0,'')",_conn);
-			SqliteCommand updCmd = new SqliteCommand("UPDATE t1 SET t = 'updated' ,f = 2.0, i = 2, b = '' WHERE t = 'toupdate'",_conn);
-			using(_conn)
+			using (_conn)
+			using (SqliteCommand insCmd = new SqliteCommand("INSERT INTO t1 VALUES ('toupdate',0.1,0,'')", _conn))
+			using (SqliteCommand updCmd = new SqliteCommand("UPDATE t1 SET t = 'updated' ,f = 2.0, i = 2, b = '' WHERE t = 'toupdate'", _conn))
 			{
 				_conn.Open();
 				insCmd.ExecuteNonQuery();
@@ -129,8 +132,8 @@ namespace MonoTests.Mono.Data.Sqlite
 		public void ScalarReturn()
 		{
 			// This should return the 1 line that got inserted in CreateTable() Test
-			SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM t1 WHERE  t LIKE '%äöüß'",_conn);
-			using(_conn)
+			using (_conn)
+			using (SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM t1 WHERE  t LIKE '%äöüß'", _conn))
 			{
 				_conn.Open();
 				Assert.AreEqual(1, Convert.ToInt32(cmd.ExecuteScalar()));
@@ -141,12 +144,12 @@ namespace MonoTests.Mono.Data.Sqlite
 		public void InsertWithTransaction()
 		{
 			_conn.Open();
-			SqliteTransaction t = _conn.BeginTransaction() as SqliteTransaction;
-			SqliteCommand  c1 = new SqliteCommand("INSERT INTO t1 VALUES ('a',0.1,0,'0')",_conn,t);
-			SqliteCommand  c2 = new SqliteCommand("INSERT INTO t1 VALUES ('b',1.2,0,'0')",_conn,t);
-			SqliteCommand  c3 = new SqliteCommand("INSERT INTO t1 VALUES ('c',0.3,1,'0')",_conn,t);
-			SqliteCommand  c4 = new SqliteCommand("INSERT INTO t1 VALUES ('d',0.4,0,'1')",_conn,t);
-			using(_conn)
+			using (_conn)
+			using (SqliteTransaction t = _conn.BeginTransaction() as SqliteTransaction)
+			using (SqliteCommand c1 = new SqliteCommand("INSERT INTO t1 VALUES ('a',0.1,0,'0')", _conn, t))
+			using (SqliteCommand c2 = new SqliteCommand("INSERT INTO t1 VALUES ('b',1.2,0,'0')", _conn, t))
+			using (SqliteCommand c3 = new SqliteCommand("INSERT INTO t1 VALUES ('c',0.3,1,'0')", _conn, t))
+			using (SqliteCommand c4 = new SqliteCommand("INSERT INTO t1 VALUES ('d',0.4,0,'1')", _conn, t))
 			{
 				try
 				{
@@ -173,12 +176,12 @@ namespace MonoTests.Mono.Data.Sqlite
 		public void InsertWithFailingTransaction()
 		{
 			_conn.Open();
-			SqliteTransaction t = _conn.BeginTransaction() as SqliteTransaction;
-			SqliteCommand  c1 = new SqliteCommand("INSERT INTO t1 VALUES ('1','0','0','0')",_conn,t);
-			SqliteCommand  c2 = new SqliteCommand("INSERT INTO t1 VALUES ('0','1','0','0')",_conn,t);
-			SqliteCommand  c3 = new SqliteCommand("INSERT INTO t1 VALUES ('x',?,'x',?,'x',?,'x')",_conn,t);
-			SqliteCommand  c4 = new SqliteCommand("INSERT INTO t1 VALUES ('0','0','0','1')",_conn,t);
-			using(_conn)
+			using (_conn)
+			using (SqliteTransaction t = _conn.BeginTransaction() as SqliteTransaction)
+			using (SqliteCommand c1 = new SqliteCommand("INSERT INTO t1 VALUES ('1','0','0','0')", _conn, t))
+			using (SqliteCommand c2 = new SqliteCommand("INSERT INTO t1 VALUES ('0','1','0','0')", _conn, t))
+			using (SqliteCommand c3 = new SqliteCommand("INSERT INTO t1 VALUES ('x',?,'x',?,'x',?,'x')", _conn, t))
+			using (SqliteCommand c4 = new SqliteCommand("INSERT INTO t1 VALUES ('0','0','0','1')", _conn, t))
 			{
 				try
 				{
