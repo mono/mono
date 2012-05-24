@@ -60,14 +60,14 @@ namespace System
 			return b [2] == 0xf0;
 		}
 
-		public static long DoubleToInt64Bits (double value)
+		public unsafe static long DoubleToInt64Bits (double value)
 		{
-			return ToInt64 (GetBytes (value), 0);
+			return *(long *) &value;
 		}
 
-		public static double Int64BitsToDouble (long value)
+		public unsafe static double Int64BitsToDouble (long value)
 		{
-			return ToDouble (GetBytes (value), 0);
+			return *(double *) &value;
 		}
 
 		internal static double InternalInt64BitsToDouble (long value)
