@@ -142,7 +142,7 @@ namespace System.ServiceModel
 
 		static void Log (TraceEventType eventType, string message, params object [] args)
 		{
-			if (log_writer){
+			if (log_writer != null) {
 				lock (log_writer){
 					event_id++;
 #if NET_2_1
@@ -168,7 +168,7 @@ namespace System.ServiceModel
 		
 		public static void LogMessage (MessageLogSourceKind sourceKind, ref Message msg, long maxMessageSize)
 		{
-			if (log_writer){
+			if (log_writer != null) {
 				if (maxMessageSize > int.MaxValue)
 					throw new ArgumentOutOfRangeException ("maxMessageSize");
 				var mb = msg.CreateBufferedCopy ((int) maxMessageSize);
@@ -179,7 +179,7 @@ namespace System.ServiceModel
 		
 		public static void LogMessage (MessageLogTraceRecord log)
 		{
-			if (log_writer){
+			if (log_writer != null) {
 				var sw = new StringWriter ();
 #if NET_2_1
 				var xw = XmlWriter.Create (sw, xws);
