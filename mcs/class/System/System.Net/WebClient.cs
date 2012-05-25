@@ -68,6 +68,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Net.Cache;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net 
 {
@@ -1474,6 +1477,198 @@ namespace System.Net
 			responseHeaders = response.Headers;
 			return response;
 		}
+		
+#if NET_4_5
+		
+		public Task<byte[]> DownloadDataTaskAsync (string address)
+		{
+			return DownloadDataTaskAsync (CreateUri (address));
+		}
+
+		public Task<byte[]> DownloadDataTaskAsync (Uri address)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<WebClient, Uri>)l;
+				return t.Item1.DownloadData (t.Item2);
+			}, Tuple.Create (this, address));
+		}
+		
+		async Task<byte[]> DownloadDataCoreAsync (Uri address, object userToken)
+		{
+			WebRequest request = null;
+			
+			try {
+				request = SetupRequest (address);
+				return await ReadAllAsync (request, userToken);
+			} catch (ThreadInterruptedException){
+				if (request != null)
+					request.Abort ();
+				throw new WebException ("User canceled the request", WebExceptionStatus.RequestCanceled);
+			} catch (WebException) {
+				throw;
+			} catch (Exception ex) {
+				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			}
+		}
+		
+		async Task<WebResponse> GetWebResponseAsync (WebRequest request)
+		{
+			WebResponse response = await request.GetResponseAsync ();
+			responseHeaders = response.Headers;
+			return response;
+		}
+		
+		async Task<byte[]> ReadAllAsync (WebRequest request, object userToken)
+		{
+			WebResponse response = await GetWebResponseAsync (request);
+			Stream stream = response.GetResponseStream ();
+			int length = (int) response.ContentLength;
+			HttpWebRequest wreq = request as HttpWebRequest;
+
+			if (length > -1 && wreq != null && (int) wreq.AutomaticDecompression != 0) {
+				string content_encoding = ((HttpWebResponse) response).ContentEncoding;
+				if (((content_encoding == "gzip" && (wreq.AutomaticDecompression & DecompressionMethods.GZip) != 0)) ||
+					((content_encoding == "deflate" && (wreq.AutomaticDecompression & DecompressionMethods.Deflate) != 0)))
+					length = -1;
+			}
+
+			MemoryStream ms = null;
+			bool nolength = (length == -1);
+			int size = ((nolength) ? 8192 : length);
+			if (nolength)
+				ms = new MemoryStream ();
+
+			long total = 0;
+			int nread = 0;
+			int offset = 0;
+			byte [] buffer = new byte [size];
+			while ((nread = await stream.ReadAsync (buffer, offset, size)) != 0) {
+				if (nolength) {
+					ms.Write (buffer, 0, nread);
+				} else {
+					offset += nread;
+					size -= nread;
+				}
+				if (async){
+					total += nread;
+					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (total, length, userToken));
+				}
+			}
+
+			if (nolength)
+				return ms.ToArray ();
+
+			return buffer;
+		}
+		
+		public Task DownloadFileTaskAsync (string address, string fileName)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return DownloadFileTaskAsync (CreateUri (address), fileName);
+		}
+
+		public async Task DownloadFileTaskAsync (Uri address, string fileName)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+
+			try {
+				SetBusy ();
+				async = false;
+				await DownloadFileCoreAsync (address, fileName, null);
+			} catch (WebException) {
+				throw;
+			} catch (Exception ex) {
+				throw new WebException ("An error occurred " +
+					"performing a WebClient request.", ex);
+			} finally {
+				is_busy = false;
+			}
+		}
+
+		async Task DownloadFileCoreAsync (Uri address, string fileName, object userToken)
+		{
+			WebRequest request = null;
+			
+			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
+				try {
+					request = SetupRequest (address);
+					WebResponse response = await GetWebResponseAsync (request);
+					Stream st = response.GetResponseStream ();
+					
+					int cLength = (int) response.ContentLength;
+					int length = (cLength <= -1 || cLength > 32*1024) ? 32*1024 : cLength;
+					byte [] buffer = new byte [length];
+					
+					int nread = 0;
+					long notify_total = 0;
+					while ((nread = await st.ReadAsync (buffer, 0, length)) != 0){
+						if (async){
+							notify_total += nread;
+							OnDownloadProgressChanged (
+								new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, userToken));
+												      
+						}
+						await f.WriteAsync (buffer, 0, nread);
+					}
+				} catch (ThreadInterruptedException){
+					if (request != null)
+						request.Abort ();
+					throw;
+				}
+			}
+		}
+		
+		public Task<Stream> OpenReadTaskAsync (string address)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			return OpenReadTaskAsync (CreateUri (address));
+		}
+
+		public async Task<Stream> OpenReadTaskAsync (Uri address)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			WebRequest request = null;
+			try {
+				SetBusy ();
+				async = false;
+				request = SetupRequest (address);
+				WebResponse response = await GetWebResponseAsync (request);
+				return response.GetResponseStream ();
+			} catch (WebException) {
+				throw;
+			} catch (Exception ex) {
+				throw new WebException ("An error occurred " +
+					"performing a WebClient request.", ex);
+			} finally {
+				is_busy = false;
+			}
+		}
+		
+		public async Task<string> DownloadStringTaskAsync (string address)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return encoding.GetString (await DownloadDataTaskAsync (CreateUri (address)));
+		}
+
+		public async Task<string> DownloadStringTaskAsync (Uri address)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return encoding.GetString (await DownloadDataTaskAsync (CreateUri (address)));
+		}
+		
+#endif
 
 	}
 }
