@@ -120,6 +120,7 @@ System.ComponentModel/IDataErrorInfo.cs
 System.ComponentModel/IEditableObject.cs
 System.ComponentModel/IListSource.cs
 System.ComponentModel/INotifyPropertyChanged.cs
+System.ComponentModel/INotifyPropertyChanging.cs
 System.ComponentModel/IRevertibleChangeTracking.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ISupportInitialize.cs
@@ -152,6 +153,8 @@ System.ComponentModel/ProgressChangedEventArgs.cs
 System.ComponentModel/ProgressChangedEventHandler.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
 System.ComponentModel/PropertyChangedEventHandler.cs
+System.ComponentModel/PropertyChangingEventArgs.cs
+System.ComponentModel/PropertyChangingEventHandler.cs
 System.ComponentModel/PropertyDescriptor.cs
 System.ComponentModel/PropertyDescriptor.cs
 System.ComponentModel/PropertyDescriptorCollection.cs
