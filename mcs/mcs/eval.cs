@@ -979,7 +979,9 @@ namespace Mono.CSharp
 		static public string help {
 			get {
 				return "Static methods:\n" +
+#if !NET_2_1
 					"  Describe (object);       - Describes the object's type\n" +
+#endif
 					"  LoadPackage (package);   - Loads the given Package (like -pkg:FILE)\n" +
 					"  LoadAssembly (assembly); - Loads the given assembly (like -r:ASSEMBLY)\n" +
 					"  ShowVars ();             - Shows defined local variables.\n" +
