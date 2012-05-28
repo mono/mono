@@ -24,7 +24,6 @@ using System.Collections;
 using System.Diagnostics;
 using System.Configuration;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.XPath;
 using ICSharpCode.SharpZipLib.Zip;
@@ -133,6 +132,7 @@ public class Node : IComparable {
 	Node parent;
 	protected ArrayList nodes;
 	protected internal int position;
+	string compare_key;
 
 	static ArrayList empty = ArrayList.ReadOnly(new ArrayList(0));
 
@@ -394,14 +394,19 @@ public class Node : IComparable {
 			LoadNode ();
 		if (other.position < 0)
 			other.LoadNode ();
-
-		Regex digits = new Regex (@"([\d]+)|([^\d]+)");
-		MatchEvaluator eval = delegate (Match m) {
-			return (m.Value.Length > 0 && char.IsDigit (m.Value [0])) 
+		if (compare_key == null || other.compare_key == null) {
+			Regex digits = new Regex (@"([\d]+)|([^\d]+)");
+			MatchEvaluator eval = delegate (Match m) {
+				return (m.Value.Length > 0 && char.IsDigit (m.Value [0]))
 				? m.Value.PadLeft (System.Math.Max (caption.Length, other.caption.Length)) 
 				: m.Value;
-		};
-		return digits.Replace (caption, eval).CompareTo (digits.Replace (other.caption, eval));
+			};
+			if (compare_key == null)
+				compare_key = digits.Replace (caption, eval);
+			if (other.compare_key == null)
+				other.compare_key = digits.Replace (other.caption, eval);
+		}
+		return compare_key.CompareTo (other.compare_key);
 	}
 }
 
