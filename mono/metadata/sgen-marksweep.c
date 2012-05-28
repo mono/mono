@@ -805,6 +805,29 @@ major_iterate_objects (gboolean non_pinned, gboolean pinned, IterateObjectCallba
 	} END_FOREACH_BLOCK;
 }
 
+static gboolean
+major_is_valid_object (char *object)
+{
+	MSBlockInfo *block;
+
+	ms_wait_for_sweep_done ();
+	FOREACH_BLOCK (block) {
+		int idx;
+		char *obj;
+
+		if ((block->block > object) || ((block->block + MS_BLOCK_SIZE) <= object))
+			continue;
+
+		idx = MS_BLOCK_OBJ_INDEX (object, block);
+		obj = (char*)MS_BLOCK_OBJ (block, idx);
+		if (obj != object)
+			return FALSE;
+		return MS_OBJ_ALLOCED (obj, block);
+	} END_FOREACH_BLOCK;
+
+	return FALSE;
+}
+
 static void
 major_check_scan_starts (void)
 {
@@ -1817,6 +1840,7 @@ mono_sgen_marksweep_init
 	collector->handle_gc_param = major_handle_gc_param;
 	collector->print_gc_param_usage = major_print_gc_param_usage;
 	collector->is_worker_thread = major_is_worker_thread;
+	collector->is_valid_object = major_is_valid_object;
 
 	FILL_COLLECTOR_COPY_OBJECT (collector);
 	FILL_COLLECTOR_SCAN_OBJECT (collector);
