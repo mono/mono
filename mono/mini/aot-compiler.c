@@ -4336,6 +4336,7 @@ emit_code (MonoAotCompile *acfg)
 
 	sprintf (symbol, "method_addresses");
 	emit_section_change (acfg, ".text", 1);
+	emit_global (acfg, symbol, FALSE);
 	emit_alignment (acfg, 8);
 	emit_label (acfg, symbol);
 
