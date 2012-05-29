@@ -1114,6 +1114,7 @@ typedef struct {
 
 	/* Used by AOT */
 	guint32 got_offset;
+	char *asm_symbol;
 } MonoCompile;
 
 typedef enum {

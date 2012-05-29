@@ -9,13 +9,17 @@ my $skipbuild=0;
 my $debug = 0;
 my $minimal = 0;
 my $build64 = 0;
+my $build_armel = 0;
 
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
    "debug=i"=>\$debug,
    "minimal=i"=>\$minimal,
    "build64=i"=>\$build64,
+   "build-armel=i"=>\$build_armel,
 ) or die ("illegal cmdline options");
+
+die ("illegal cmdline options") if ($build64 and $build_armel);
 
 my $teamcity=0;
 if ($ENV{UNITY_THISISABUILDMACHINE})
@@ -31,7 +35,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	}
 }
 
-my $platform = $build64 ? 'linux64' : 'linux32' ;
+my $platform = $build64 ? 'linux64' : $buildarm ? 'linux-armel' : 'linux32' ;
 my $bintarget = "$root/builds/monodistribution/bin-$platform";
 my $libtarget = "$root/builds/embedruntimes/$platform";
 
@@ -52,9 +56,13 @@ if (not $skipbuild)
 
 	my $archflags = '';
 
-	if (not $build64)
+	if (not $build64 and not $build_armel)
 	{
 		$archflags = '-m32';
+	}
+	if ($build_armel)
+	{
+		$archflags = '-marm -DARM_FPU_NONE';
 	}
 	if ($debug)
 	{
@@ -86,7 +94,7 @@ if (not $skipbuild)
 	unshift(@autogenparams, "--with-glib=embedded");
 	unshift(@autogenparams, "--disable-nls");  #this removes the dependency on gettext package
 	unshift(@autogenparams, "--disable-parallel-mark");  #this causes crashes
-	if(not $build64)
+	if(not $build64 and not $build_armel)
 	{
 		unshift(@autogenparams, "--build=i686-pc-linux-gnu");  #Force x86 build
 	}

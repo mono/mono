@@ -133,6 +133,7 @@ build_iphone_simulator ()
 	export MACSDKOPTIONS="-miphoneos-version-min=3.0 $MACSYSROOT"
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
+	export LIBTOOLIZE=`which glibtoolize`
 	perl build_runtime_osx.pl -iphone_simulator=1 || exit 1
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone
