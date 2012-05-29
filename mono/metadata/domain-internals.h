@@ -185,7 +185,6 @@ struct _MonoDomain {
 	MonoException      *out_of_memory_ex;
 	MonoException      *null_reference_ex;
 	MonoException      *stack_overflow_ex;
-	MonoException      *divide_by_zero_ex;
 	/* typeof (void) */
 	MonoObject         *typeof_void;
 	/* 
