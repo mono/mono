@@ -852,22 +852,21 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void VerifyNoExceptions2234()
 		{
-			Form form = new Form ();
-			ComboBox cmb = new ComboBox();
-			form.Controls.Add (cmb);
-			form.Show ();
-			eventFired=false;  //for sanity
+			using (Form form = new Form ()){
+				ComboBox cmb = new ComboBox();
+				form.Controls.Add (cmb);
+				form.Show ();
+				eventFired=false;  //for sanity
                         
-			//Primary failure: if exception is raised when
-			//   DataSource changes.  We should "eat" the exception
-			//   under this circumstance before it gets here.
-			cmb.SelectedIndexChanged += new EventHandler(GenericHandlerWithException);
-			cmb.DataSource=new string[]{"One","Two","Three"};
-			if (!eventFired){
-				//secondary failure: The event was never fired
-				throw new Exception("Secondary Test Failure (2234:1)");
+				//Primary failure: if exception is raised when
+				//   DataSource changes.  We should "eat" the 
+				//   exception under this circumstance before 
+				//   it gets here.
+				cmb.SelectedIndexChanged += 
+					new EventHandler(GenericHandlerWithException);
+				cmb.DataSource=new string[]{"One","Two","Three"};
+				Assert.IsTrue(eventFired);
 			}
-			form.Dispose();
 		}
 		
 		//Bug 2234 (Xamarin) : Test 2
@@ -875,18 +874,18 @@ namespace MonoTests.System.Windows.Forms
 		[ExpectedException (typeof (Exception))]
 		public void VerifyException2234()
 		{
-			Form form = new Form ();
-			ComboBox cmb = new ComboBox();
-			form.Controls.Add (cmb);
-			form.Show ();
-			eventFired=false;  //for sanity
-			cmb.SelectedIndexChanged += new EventHandler(GenericHandlerWithException);
-			cmb.DataSource=new string[]{"One","Two","Three"};
+			using (Form form = new Form ())
+			{
+				ComboBox cmb = new ComboBox();
+				form.Controls.Add (cmb);
+				form.Show ();
+				cmb.SelectedIndexChanged += 	
+					new EventHandler(GenericHandlerWithException);
+				cmb.DataSource=new string[]{"One","Two","Three"};
                         
-			//Here's where Exception Should raise, see Expected
-			cmb.SelectedIndex=2;
-                        
-			form.Dispose();
+				//Here's where Exception Should raise normally
+				cmb.SelectedIndex=2;
+                 	}       
 		}
 
 
