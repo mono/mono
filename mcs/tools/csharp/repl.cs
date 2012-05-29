@@ -686,8 +686,11 @@ namespace Mono {
 				AppDomain.CurrentDomain.AssemblyLoad += AssemblyLoaded;
 	
 				// Add all currently loaded assemblies
-				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) 
-					evaluator.ReferenceAssembly (a);
+				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
+					// Some assemblies seem to be already loaded, and loading them again causes 'defined multiple times' errors
+					if (a.GetName ().Name != "mscorlib" && a.GetName ().Name != "System.Core" && a.GetName ().Name != "System")
+						evaluator.ReferenceAssembly (a);
+				}
 	
 				RunRepl (s);
 			} finally {
