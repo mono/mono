@@ -1,5 +1,5 @@
 //
-// Task.cs
+// TaskExceptionSlot.cs
 //
 // Authors:
 //    Marek Safar  <marek.safar@gmail.com>
@@ -51,8 +51,14 @@ namespace System.Threading.Tasks
 		~TaskExceptionSlot ()
 		{
 			if (Exception != null && !Observed && !TaskScheduler.FireUnobservedEvent (parent, Exception).Observed) {
-				parent = null;
+				// NET 4.5 changed the default exception behavior for unobserved exceptions. Unobserved exceptions still cause
+				// the UnobservedTaskException event to be raised but the process will not crash by default
+				//
+				// .NET allows to configure this using config element ThrowUnobservedTaskExceptions
+				//
+#if !NET_4_5
 				throw Exception;
+#endif
 			}
 		}
 	}
