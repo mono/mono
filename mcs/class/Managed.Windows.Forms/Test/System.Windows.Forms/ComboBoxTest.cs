@@ -885,7 +885,7 @@ namespace MonoTests.System.Windows.Forms
                         
 				//Here's where Exception Should raise normally
 				cmb.SelectedIndex=2;
-                 	}       
+			}       
 		}
 
 
