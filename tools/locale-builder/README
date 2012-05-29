@@ -12,7 +12,9 @@
 
 	All content has to me extracted into CLDR folder. The latest version used is 21.
 
-	There is an extra mono resource included in this directory lcids.xml for LCIDs.
+	There is an extra mono resource included in this directory called lcids.xml for LCIDs. It's
+	extracted from National Language Support (NLS) API Reference.
+	http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx
 
 * generated file
 
