@@ -1,7 +1,11 @@
 //
 // TaskTest.cs
 //
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
+//
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -302,6 +306,15 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.IsTrue (tasks[0].IsCompleted, "#3");
 			Assert.IsTrue (tasks[1].IsCanceled, "#4");
+		}
+		
+		[Test]
+		public void WaitAll_CancelledAndTimeout ()
+		{
+			var ct = new CancellationToken (true);
+			var t1 = new Task (() => {}, ct);
+			var t2 = Task.Delay (3000);
+			Assert.IsFalse (Task.WaitAll (new[] { t1, t2 }, 10));
 		}
 
 		[Test]
