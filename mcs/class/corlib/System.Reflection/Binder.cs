@@ -527,17 +527,18 @@ namespace System.Reflection
 						result = m;
 				}
 
-				if (result != null || parameters == null)
+				if (result != null || parameters == null || types.Length != parameters.Length)
 					return result;
 
 				// Xamarin-5278: try with parameters that are COM objects
+				// REVIEW: do we also need to implement best method match?
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
-					ParameterInfo[] args = m.GetParameters ();
-					if (args.Length != types.Length || args.Length != parameters.Length)
+					ParameterInfo[] methodArgs = m.GetParameters ();
+					if (methodArgs.Length != types.Length)
 						continue;
 					for (j = 0; j < types.Length; ++j) {
-						var requiredType = args [j].ParameterType;
+						var requiredType = methodArgs [j].ParameterType;
 						if (types [j] == requiredType)
 							continue;
 						if (types [j] == typeof (__ComObject) && requiredType.IsInterface) {
