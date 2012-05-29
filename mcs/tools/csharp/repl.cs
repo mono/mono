@@ -50,7 +50,16 @@ namespace Mono {
 				startup_files [i++] = source.FullPathName;
 			settings.SourceFiles.Clear ();
 
-			var eval = new Evaluator (new CompilerContext (settings, new ConsoleReportPrinter ()));
+			TextWriter agent_stderr = null;
+			ReportPrinter printer;
+			if (agent != null) {
+				agent_stderr = new StringWriter ();
+				printer = new StreamReportPrinter (agent_stderr);
+			} else {
+				printer = new ConsoleReportPrinter ();
+			}
+
+			var eval = new Evaluator (new CompilerContext (settings, printer));
 
 			eval.InteractiveBaseClass = typeof (InteractiveBaseShell);
 			eval.DescribeTypeExpressions = true;
@@ -60,7 +69,7 @@ namespace Mono {
 			if (attach.HasValue) {
 				shell = new ClientCSharpShell (eval, attach.Value);
 			} else if (agent != null) {
-				new CSharpAgent (eval, agent).Run (startup_files);
+				new CSharpAgent (eval, agent, agent_stderr).Run (startup_files);
 				return 0;
 			} else
 #endif
@@ -85,9 +94,13 @@ namespace Mono {
 					return pos + 1;
 				}
 				break;
-			case "--agent:":
-				agent = args[pos];
-				return pos + 1;
+			default:
+				if (args [pos].StartsWith ("--agent:")) {
+					agent = args[pos];
+					return pos + 1;
+				} else {
+					return -1;
+				}
 			}
 			return -1;
 		}
@@ -126,7 +139,7 @@ namespace Mono {
 	
 	public class CSharpShell {
 		static bool isatty = true, is_unix = false;
-		string [] startup_files;
+		protected string [] startup_files;
 		
 		Mono.Terminal.LineEditor editor;
 		bool dumb;
@@ -313,7 +326,7 @@ namespace Mono {
 
 			LoadStartupFiles ();
 
-			if (startup_files.Length != 0)
+			if (startup_files != null && startup_files.Length != 0)
 				ExecuteSources (startup_files, false);
 			else if (Driver.StartupEvalExpression != null){
 				ReadEvalPrintLoopWith (p => {
@@ -555,6 +568,7 @@ namespace Mono {
 		public override int Run (string [] startup_files)
 		{
 			// The difference is that we do not call Evaluator.Init, that is done on the target
+			this.startup_files = startup_files;
 			return ReadEvalPrintLoop ();
 		}
 	
@@ -629,10 +643,12 @@ namespace Mono {
 	{
 		NetworkStream interrupt_stream;
 		readonly Evaluator evaluator;
+		TextWriter stderr;
 		
-		public CSharpAgent (Evaluator evaluator, String arg)
+		public CSharpAgent (Evaluator evaluator, String arg, TextWriter stderr)
 		{
 			this.evaluator = evaluator;
+			this.stderr = stderr;
 			new Thread (new ParameterizedThreadStart (Run)).Start (arg);
 		}
 
@@ -670,7 +686,7 @@ namespace Mono {
 				AppDomain.CurrentDomain.AssemblyLoad += AssemblyLoaded;
 	
 				// Add all currently loaded assemblies
-				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
+				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) 
 					evaluator.ReferenceAssembly (a);
 	
 				RunRepl (s);
@@ -694,9 +710,8 @@ namespace Mono {
 			while (!InteractiveBase.QuitRequested) {
 				try {
 					string error_string;
-					StringWriter error_output = new StringWriter ();
-//					Report.Stderr = error_output;
-					
+					StringWriter error_output = (StringWriter)stderr;
+
 					string line = s.GetString ();
 	
 					bool result_set;
@@ -726,6 +741,7 @@ namespace Mono {
 					if (error_string.Length != 0){
 						s.WriteByte ((byte) AgentStatus.ERROR);
 						s.WriteString (error_output.ToString ());
+						error_output.GetStringBuilder ().Clear ();
 					}
 	
 					if (result_set){
