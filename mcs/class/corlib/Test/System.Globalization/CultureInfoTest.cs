@@ -147,6 +147,46 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		public void CreateSpecificCulture ()
+		{
+			var ci = CultureInfo.CreateSpecificCulture ("en");
+			Assert.AreEqual ("en-US", ci.Name, "#1");
+
+			ci = CultureInfo.CreateSpecificCulture ("en-GB");
+			Assert.AreEqual ("en-GB", ci.Name, "#2");
+
+			ci = CultureInfo.CreateSpecificCulture ("en-----");
+			Assert.AreEqual ("en-US", ci.Name, "#3");
+
+			ci = CultureInfo.CreateSpecificCulture ("en-GB-");
+			Assert.AreEqual ("en-US", ci.Name, "#4");
+
+			ci = CultureInfo.CreateSpecificCulture ("");
+			Assert.AreEqual (CultureInfo.InvariantCulture, ci, "#5");
+		}
+
+		[Test]
+		public void CreateSpecificCulture_Invalid ()
+		{
+			try {
+				CultureInfo.CreateSpecificCulture ("uy32");
+				Assert.Fail ("#1");
+#if NET_4_0
+			} catch (CultureNotFoundException) {
+#else
+			} catch (ArgumentException) {
+#endif
+			}
+
+			try {
+				CultureInfo.CreateSpecificCulture (null);
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException) {
+				// .NET throws NRE which is lame
+			}
+		}
+
+		[Test]
 		public void DateTimeFormat_Neutral_Culture ()
 		{
 			CultureInfo ci = new CultureInfo ("nl");

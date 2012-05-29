@@ -110,32 +110,13 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureInfo CreateSpecificCulture (string name)
-		{
-			if (name == null) {
-				throw new ArgumentNullException ("name");
-			}
-
-			if (name == String.Empty)
-				return InvariantCulture;
-
-			CultureInfo ci = new CultureInfo ();
-			if (!construct_internal_locale_from_specific_name (ci, name.ToLowerInvariant ()))
-				throw new ArgumentException ("Culture name " + name +
-						" is not supported.", name);
-
-			return ci;
-		}
-
-		public static CultureInfo CurrentCulture 
-		{
+		public static CultureInfo CurrentCulture {
 			get {
 				return Thread.CurrentThread.CurrentCulture;
 			}
 		}
 
-		public static CultureInfo CurrentUICulture 
-		{
+		public static CultureInfo CurrentUICulture { 
 			get {
 				return Thread.CurrentThread.CurrentUICulture;
 			}
@@ -601,9 +582,8 @@ namespace System.Globalization
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_name (string name);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static bool construct_internal_locale_from_specific_name (CultureInfo ci,
-				string name);
+//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+//		private extern static bool construct_internal_locale_from_specific_name (CultureInfo ci, string name);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static bool construct_internal_locale_from_current_locale (CultureInfo ci);
@@ -802,6 +782,206 @@ namespace System.Globalization
 			}
 
 			return new CultureInfo (name, use_user_override, read_only);
+		}
+
+		public static CultureInfo CreateSpecificCulture (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (name.Length == 0)
+				return InvariantCulture;
+
+			CultureInfo ci = null;
+			try {
+				ci = new CultureInfo (name);
+			} catch (Exception) {
+				// TODO: Use construct_internal_locale_from_name when it's not bound to constructor instead
+				// of try-catch
+				int idx = name.IndexOf ('-');
+				if (idx > 0) {
+					try {
+						ci = new CultureInfo (name.Substring (0, idx));
+					} catch {
+					}
+				}
+				
+				if (ci == null)
+					throw;
+			}
+
+			if (!ci.IsNeutralCulture)
+				return ci;
+
+			return CreateSpecificCultureFromNeutral (ci.Name);
+		}
+
+		//
+		// Creates specific culture from neutral culture. Used by CreateSpecificCulture
+		// only but using separate method we can delay switch underlying Dictionary
+		// initialization
+		//
+		static CultureInfo CreateSpecificCultureFromNeutral (string name)
+		{
+			int id;
+
+			//
+			// For neutral cultures find predefined default specific culture
+			//
+			// Use managed switch because we need this for only some cultures
+			// and the method is not used frequently
+			//
+			// TODO: We could optimize for cultures with single specific culture 
+			//
+			switch (name.ToLowerInvariant ()) {
+			case "af": id = 1078; break;
+			case "am": id = 1118; break;
+			case "ar": id = 1025; break;
+			case "arn": id = 1146; break;
+			case "as": id = 1101; break;
+			case "az": id = 1068; break;
+			case "az-Cyrl": id = 2092; break;
+			case "az-Latn": id = 1068; break;
+			case "ba": id = 1133; break;
+			case "be": id = 1059; break;
+			case "bg": id = 1026; break;
+			case "bn": id = 1093; break;
+			case "bo": id = 1105; break;
+			case "br": id = 1150; break;
+			case "bs": id = 5146; break;
+			case "bs-Cyrl": id = 8218; break;
+			case "bs-Latn": id = 5146; break;
+			case "ca": id = 1027; break;
+			case "co": id = 1155; break;
+			case "cs": id = 1029; break;
+			case "cy": id = 1106; break;
+			case "da": id = 1030; break;
+			case "de": id = 1031; break;
+			case "dsb": id = 2094; break;
+			case "dv": id = 1125; break;
+			case "el": id = 1032; break;
+			case "en": id = 1033; break;
+			case "es": id = 3082; break;
+			case "et": id = 1061; break;
+			case "eu": id = 1069; break;
+			case "fa": id = 1065; break;
+			case "fi": id = 1035; break;
+			case "fil": id = 1124; break;
+			case "fo": id = 1080; break;
+			case "fr": id = 1036; break;
+			case "fy": id = 1122; break;
+			case "ga": id = 2108; break;
+			case "gd": id = 1169; break;
+			case "gl": id = 1110; break;
+			case "gsw": id = 1156; break;
+			case "gu": id = 1095; break;
+			case "ha": id = 1128; break;
+			case "ha-Latn": id = 1128; break;
+			case "he": id = 1037; break;
+			case "hi": id = 1081; break;
+			case "hr": id = 1050; break;
+			case "hsb": id = 1070; break;
+			case "hu": id = 1038; break;
+			case "hy": id = 1067; break;
+			case "id": id = 1057; break;
+			case "ig": id = 1136; break;
+			case "ii": id = 1144; break;
+			case "is": id = 1039; break;
+			case "it": id = 1040; break;
+			case "iu": id = 2141; break;
+			case "iu-Cans": id = 1117; break;
+			case "iu-Latn": id = 2141; break;
+			case "ja": id = 1041; break;
+			case "ka": id = 1079; break;
+			case "kk": id = 1087; break;
+			case "kl": id = 1135; break;
+			case "km": id = 1107; break;
+			case "kn": id = 1099; break;
+			case "ko": id = 1042; break;
+			case "kok": id = 1111; break;
+			case "ky": id = 1088; break;
+			case "lb": id = 1134; break;
+			case "lo": id = 1108; break;
+			case "lt": id = 1063; break;
+			case "lv": id = 1062; break;
+			case "mi": id = 1153; break;
+			case "mk": id = 1071; break;
+			case "ml": id = 1100; break;
+			case "mn": id = 1104; break;
+			case "mn-Cyrl": id = 1104; break;
+			case "mn-Mong": id = 2128; break;
+			case "moh": id = 1148; break;
+			case "mr": id = 1102; break;
+			case "ms": id = 1086; break;
+			case "mt": id = 1082; break;
+			case "nb": id = 1044; break;
+			case "ne": id = 1121; break;
+			case "nl": id = 1043; break;
+			case "nn": id = 2068; break;
+			case "no": id = 1044; break;
+			case "nso": id = 1132; break;
+			case "oc": id = 1154; break;
+			case "or": id = 1096; break;
+			case "pa": id = 1094; break;
+			case "pl": id = 1045; break;
+			case "prs": id = 1164; break;
+			case "ps": id = 1123; break;
+			case "pt": id = 1046; break;
+			case "qut": id = 1158; break;
+			case "quz": id = 1131; break;
+			case "rm": id = 1047; break;
+			case "ro": id = 1048; break;
+			case "ru": id = 1049; break;
+			case "rw": id = 1159; break;
+			case "sa": id = 1103; break;
+			case "sah": id = 1157; break;
+			case "se": id = 1083; break;
+			case "si": id = 1115; break;
+			case "sk": id = 1051; break;
+			case "sl": id = 1060; break;
+			case "sma": id = 7227; break;
+			case "smj": id = 5179; break;
+			case "smn": id = 9275; break;
+			case "sms": id = 8251; break;
+			case "sq": id = 1052; break;
+			case "sr": id = 9242; break;
+			case "sr-Cyrl": id = 10266; break;
+			case "sr-Latn": id = 9242; break;
+			case "sv": id = 1053; break;
+			case "sw": id = 1089; break;
+			case "syr": id = 1114; break;
+			case "ta": id = 1097; break;
+			case "te": id = 1098; break;
+			case "tg": id = 1064; break;
+			case "tg-Cyrl": id = 1064; break;
+			case "th": id = 1054; break;
+			case "tk": id = 1090; break;
+			case "tn": id = 1074; break;
+			case "tr": id = 1055; break;
+			case "tt": id = 1092; break;
+			case "tzm": id = 2143; break;
+			case "tzm-Latn": id = 2143; break;
+			case "ug": id = 1152; break;
+			case "uk": id = 1058; break;
+			case "ur": id = 1056; break;
+			case "uz": id = 1091; break;
+			case "uz-Cyrl": id = 2115; break;
+			case "uz-Latn": id = 1091; break;
+			case "vi": id = 1066; break;
+			case "wo": id = 1160; break;
+			case "xh": id = 1076; break;
+			case "yo": id = 1130; break;
+			case "zh": id = 2052; break;
+			case "zh-CHS": case "zh-Hans":
+				id = 2052; break;
+			case "zh-CHT": case "zh-Hant":
+				id = 3076; break;
+			case "zu": id = 1077; break;
+			default:
+				throw new NotImplementedException ("Mapping for neutral culture " + name);
+			}
+
+			return new CultureInfo (id);
 		}
 
 		static Calendar CreateCalendar (int calendarType)
