@@ -41,6 +41,8 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public sealed class RSACryptoServiceProvider : RSA, ICspAsymmetricAlgorithm {
 		private const int PROV_RSA_FULL = 1;	// from WinCrypt.h
+		private const int AT_KEYEXCHANGE = 1;
+		private const int AT_SIGNATURE = 2;
 
 		private KeyPairPersistence store;
 		private bool persistKey;
@@ -377,7 +379,7 @@ namespace System.Security.Cryptography {
 			// ALGID (bytes 4-7) - default is KEYX
 			// 00 24 00 00 (for CALG_RSA_SIGN)
 			// 00 A4 00 00 (for CALG_RSA_KEYX)
-			blob [5] = 0xA4;
+			blob [5] = (byte) (((store != null) && (store.Parameters.KeyNumber == AT_SIGNATURE)) ? 0x24 : 0xA4);
 			return blob;
 		}
 
@@ -405,6 +407,14 @@ namespace System.Security.Cryptography {
 					ImportParameters (rsap);
 				}
 			}
+
+			var p = new CspParameters (PROV_RSA_FULL);
+			p.KeyNumber = keyBlob [5] == 0x24 ? AT_SIGNATURE : AT_KEYEXCHANGE;
+#if NET_1_1
+			if (useMachineKeyStore)
+				p.Flags |= CspProviderFlags.UseMachineKeyStore;
+#endif
+			store = new KeyPairPersistence (p);
 		}
 	}
 }
