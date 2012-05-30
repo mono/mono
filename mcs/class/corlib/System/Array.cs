@@ -2723,11 +2723,12 @@ namespace System
 				while (iMin <= iMax) {
 					// Be careful with overflows
 					int iMid = iMin + ((iMax - iMin) / 2);
-					iCmp = comparer.Compare (value, array [iMid]);
+					iCmp = comparer.Compare (array [iMid], value);
 
 					if (iCmp == 0)
 						return iMid;
-					else if (iCmp < 0)
+
+					if (iCmp > 0)
 						iMax = iMid - 1;
 					else
 						iMin = iMid + 1; // compensate for the rounding down
