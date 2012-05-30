@@ -351,7 +351,8 @@ namespace Mono.CSharp
 			if (containers != null)
 				containers.Remove (cont);
 
-			defined_names.Remove (cont.Basename);
+			var tc = Parent == Module ? Module : this;
+			tc.defined_names.Remove (cont.Basename);
 		}
 
 		public virtual void VerifyMembers ()
