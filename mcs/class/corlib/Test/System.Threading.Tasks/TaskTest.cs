@@ -32,7 +32,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace MonoTests.System.Threading.Tasks
@@ -40,6 +40,30 @@ namespace MonoTests.System.Threading.Tasks
 	[TestFixture]
 	public class TaskTests
 	{
+		class MockScheduler : TaskScheduler
+		{
+			public event Action<Task, bool> TryExecuteTaskInlineHandler;
+
+			protected override IEnumerable<Task> GetScheduledTasks ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			protected override void QueueTask (Task task)
+			{
+				return;
+			}
+
+			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
+			{
+				if (TryExecuteTaskInlineHandler != null)
+					TryExecuteTaskInlineHandler (task, taskWasPreviouslyQueued);
+
+				return base.TryExecuteTask (task);
+			}
+		}
+
+
 		Task[] tasks;
 		const int max = 6;
 		
@@ -397,6 +421,23 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
+		[Test]
+		public void Wait_Inlined ()
+		{
+			bool? previouslyQueued = null;
+
+			var scheduler = new MockScheduler ();
+			scheduler.TryExecuteTaskInlineHandler += (task, b) => {
+				previouslyQueued = b;
+			};
+
+			var tf = new TaskFactory (scheduler);
+			var t = tf.StartNew (() => { });
+			t.Wait ();
+
+			Assert.AreEqual (true, previouslyQueued);
+		}
+
 		[Test, ExpectedException (typeof (InvalidOperationException))]
 		public void CreationWhileInitiallyCanceled ()
 		{
@@ -714,13 +755,27 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		public void ExecuteSynchronouslyTest ()
+		public void RunSynchronously ()
 		{
 			var val = 0;
 			Task t = new Task (() => { Thread.Sleep (100); val = 1; });
 			t.RunSynchronously ();
 
-			Assert.AreEqual (1, val);
+			Assert.AreEqual (1, val, "#1");
+
+			t = new Task (() => { Thread.Sleep (0); val = 2; });
+
+			bool? previouslyQueued = null;
+
+			var scheduler = new MockScheduler ();
+			scheduler.TryExecuteTaskInlineHandler += (task, b) => {
+				previouslyQueued = b;
+			};
+
+			t.RunSynchronously (scheduler);
+
+			Assert.AreEqual (2, val, "#2");
+			Assert.AreEqual (false, previouslyQueued, "#2a");
 		}
 
 		[Test]
