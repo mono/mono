@@ -347,11 +347,12 @@ namespace System.Configuration
 					throw new ConfigurationErrorsException (msg, reader);
 				}
 				readProps [prop] = prop.Name;
-				
+			
 				ConfigXmlTextReader _reader = reader as ConfigXmlTextReader;
-				
-				prop.Source = _reader.Filename;
-				prop.LineNumber = _reader.LineNumber;
+				if (_reader != null){
+					prop.Source = _reader.Filename;
+					prop.LineNumber = _reader.LineNumber;
+				}
 			}
 			
 			reader.MoveToElement ();
