@@ -38,8 +38,9 @@ namespace Mono {
 		{
 #if !ON_DOTNET
 			if (args.Length > 0 && args [0] == "--attach") {
-				new ClientCSharpShell (Int32.Parse (args [1])).Run (null);
-				return 0;
+				string[] new_args = new string [args.Length - 2];
+				Array.Copy (args, 2, new_args, 0, args.Length - 2);
+				return StartupAttach (Int32.Parse (args [1]), new_args);
 			}
 
 			if (args.Length > 0 && args [0].StartsWith ("--agent:")) {
@@ -48,6 +49,18 @@ namespace Mono {
 			}
 #endif
 			return Startup(args);
+		}
+
+		static int StartupAttach (int port, string[] args) {
+			string[] startup_files;
+			try {
+				startup_files = Evaluator.InitAndGetStartupFiles (args, HandleExtraArguments);
+				Evaluator.DescribeTypeExpressions = true;
+				Evaluator.SetInteractiveBaseClass (typeof (InteractiveBaseShell));
+			} catch {
+				return 1;
+			}
+			return new ClientCSharpShell (port).Run (startup_files);
 		}
 
 		static int Startup (string[] args)
@@ -106,7 +119,7 @@ namespace Mono {
 	
 	public class CSharpShell {
 		static bool isatty = true, is_unix = false;
-		string [] startup_files;
+		protected string [] startup_files;
 		
 		Mono.Terminal.LineEditor editor;
 		bool dumb;
@@ -518,6 +531,7 @@ namespace Mono {
 		public override int Run (string [] startup_files)
 		{
 			// The difference is that we do not call Evaluator.Init, that is done on the target
+			this.startup_files = startup_files;
 			return ReadEvalPrintLoop ();
 		}
 	
@@ -627,7 +641,9 @@ namespace Mono {
 			new Thread (InterruptListener).Start ();
 
 			try {
-				Evaluator.Init (new string [0]);
+				Evaluator.InitAndGetStartupFiles (new string[0], HandleExtraArguments);
+				Evaluator.DescribeTypeExpressions = true;
+				Evaluator.SetInteractiveBaseClass (typeof (InteractiveBaseShell));
 			} catch {
 				// TODO: send a result back.
 				Console.WriteLine ("csharp-agent: initialization failed");
@@ -639,9 +655,11 @@ namespace Mono {
 				AppDomain.CurrentDomain.AssemblyLoad += AssemblyLoaded;
 	
 				// Add all currently loaded assemblies
-				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
-					Evaluator.ReferenceAssembly (a);
-	
+				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
+					// Some assemblies seem to be already loaded, and loading them again causes 'defined multiple times' errors
+					if (a.GetName ().Name != "mscorlib" && a.GetName ().Name != "System.Core" && a.GetName ().Name != "System")
+						Evaluator.ReferenceAssembly (a);
+				}
 				RunRepl (s);
 			} finally {
 				AppDomain.CurrentDomain.AssemblyLoad -= AssemblyLoaded;
@@ -650,7 +668,11 @@ namespace Mono {
 				Console.WriteLine ("csharp-agent: disconnected.");			
 			}
 		}
-	
+
+		static int HandleExtraArguments (string [] args, int pos) {
+			return -1;
+		}
+
 		static void AssemblyLoaded (object sender, AssemblyLoadEventArgs e)
 		{
 			Evaluator.ReferenceAssembly (e.LoadedAssembly);
