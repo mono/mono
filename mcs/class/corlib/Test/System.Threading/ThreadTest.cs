@@ -477,7 +477,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // on MS, ThreadState is immediately Stopped after Abort
 		public void TestIsBackground2 ()
 		{
 			C2Test test1 = new C2Test();
@@ -488,7 +487,9 @@ namespace MonoTests.System.Threading
 			} finally {
 				TestThread.Abort();
 			}
-			Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
+			
+			if (TestThread.IsAlive)
+				Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
 		}
 
 		[Test]
