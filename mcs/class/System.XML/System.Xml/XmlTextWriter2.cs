@@ -219,7 +219,7 @@ namespace Mono.Xml
 		XmlDeclState xmldecl_state = XmlDeclState.Allow;
 
 		bool check_character_validity;
-		NewLineHandling newline_handling = NewLineHandling.None;
+		NewLineHandling newline_handling = NewLineHandling.Replace;
 
 		bool is_document_entity;
 		WriteState state = WriteState.Start;
@@ -332,7 +332,7 @@ namespace Mono.Xml
 				new char [] {'&', '<', '>'};
 			escaped_attr_chars =
 				newline_handling != NewLineHandling.None ?
-				new char [] {'"', '&', '<', '>', '\r', '\n', '\t'} :
+				v2 ? new char [] {'"', '&', '<', '>', '\r', '\n', '\t'} : new char [] {'"', '&', '<', '>', '\r', '\n' } :
 				new char [] {'"', '&', '<', '>' };
 		}
 
@@ -1457,7 +1457,7 @@ namespace Mono.Xml
 						goto case '&';
 					continue;
 				case '\t':
-					if(isAttribute
+					if(isAttribute && v2
 					   && newline_handling != NewLineHandling.None) {
 						if (start < i)
 							WriteCheckedBuffer (text, start, i - start);

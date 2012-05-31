@@ -608,8 +608,8 @@ namespace MonoTests.System.Xml
 			XPathNavigator nav = doc.CreateNavigator ();
 			XPathNodeIterator iter = nav.Select ("/Abc/Foo");
 			iter.MoveNext ();
-			Assert.AreEqual ("Hello&lt;\r\nInnerXml", iter.Current.InnerXml, "#1");
-			Assert.AreEqual ("<Foo>Hello&lt;\r\nInnerXml</Foo>", iter.Current.OuterXml, "#2");
+			Assert.AreEqual ("Hello&lt;" + Environment.NewLine + "InnerXml", iter.Current.InnerXml, "#1");
+			Assert.AreEqual ("<Foo>Hello&lt;" + Environment.NewLine + "InnerXml</Foo>", iter.Current.OuterXml, "#2");
 			iter = nav.Select ("/Abc/Foo/text()");
 			iter.MoveNext ();
 			Assert.AreEqual (String.Empty, iter.Current.InnerXml, "#3");

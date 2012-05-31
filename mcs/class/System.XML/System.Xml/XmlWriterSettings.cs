@@ -81,7 +81,7 @@ namespace System.Xml
 			// LAMESPEC: MS.NET says it is "\r\n", but it is silly decision.
 			newLineChars = Environment.NewLine;
 			newLineOnAttributes = false;
-			newLineHandling = NewLineHandling.None;
+			newLineHandling = NewLineHandling.Replace;
 			omitXmlDeclaration = false;
 			outputMethod = XmlOutputMethod.AutoDetect;
 		}
