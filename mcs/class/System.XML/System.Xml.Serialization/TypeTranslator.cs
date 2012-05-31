@@ -167,8 +167,11 @@ namespace System.Xml.Serialization
 			return GetTypeData (type, null);
 		}
 
-		public static TypeData GetTypeData (Type runtimeType, string xmlDataType)
+		public static TypeData GetTypeData (Type runtimeType, string xmlDataType, bool underlyingEnumType = false)
 		{
+			if (underlyingEnumType && runtimeType.IsEnum)
+				runtimeType = Enum.GetUnderlyingType (runtimeType);
+
 			Type type = runtimeType;
 			bool nullableOverride = false;
 #if NET_2_0

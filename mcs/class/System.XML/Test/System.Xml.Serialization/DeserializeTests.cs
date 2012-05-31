@@ -1158,7 +1158,7 @@ namespace MonoTests.System.XmlSerialization
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e2 | FlagEnum.e4, e, "#A6");
 
-			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two\tone\u2002four\u200btwo one</FlagEnum>");
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two\tone\u2002four\rtwo one</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, e, "#A7");
 
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum></FlagEnum>");
