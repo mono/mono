@@ -237,7 +237,12 @@ namespace System.Runtime.Serialization
 
 		object DeserializeByMap (QName name, Type type, XmlReader reader)
 		{
-			SerializationMap map = resolved_qnames.ContainsKey (name) ? types.FindUserMap (type) : types.FindUserMap (name); // use type when the name is "resolved" one. Otherwise use name (there are cases that type cannot be resolved by type).
+			SerializationMap map = null;
+			// List<T> and T[] have the same QName, use type to find map work better.
+			if(name.Name.StartsWith ("ArrayOf", StringComparison.Ordinal) || resolved_qnames.ContainsKey (name))
+				map = types.FindUserMap (type);
+			else
+				map = types.FindUserMap (name); // use type when the name is "resolved" one. Otherwise use name (there are cases that type cannot be resolved by type).
 			if (map == null && (name.Name.StartsWith ("ArrayOf", StringComparison.Ordinal) ||
 			    name.Namespace == KnownTypeCollection.MSArraysNamespace ||
 			    name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal))) {
