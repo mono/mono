@@ -33,6 +33,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
@@ -949,11 +950,35 @@ namespace System.Windows.Forms
 			base.OnDataSourceChanged (e);
 			BindDataItems ();
 			
-			if (DataSource == null || DataManager == null) {
-				SelectedIndex = -1;
-			} 
-			else {
-				SelectedIndex = DataManager.Position;
+			/** 
+			 ** This 'Debugger.IsAttached' hack is here because of
+			 ** Xamarin Bug #2234, which noted that when changing
+			 ** the DataSource, in Windows exceptions are eaten
+			 ** when SelectedIndexChanged is fired.  However, when
+			 ** the debugger is running (i.e. in MonoDevelop), we
+			 ** want to be alerted of exceptions.  If you change
+			 ** one path below be sure to change the other.
+			 **/
+
+			if (Debugger.IsAttached){
+				if (DataSource == null || DataManager == null) {
+					SelectedIndex = -1;
+				} 
+				else {
+					SelectedIndex = DataManager.Position;
+				}
+			} else {
+				try{
+					if (DataSource == null || DataManager == null) {
+						SelectedIndex = -1;
+					} 
+					else {
+						SelectedIndex = DataManager.Position;
+					}
+				} catch {
+					//ignore exceptions here per 
+					//bug 2234
+				}
 			}
 		}
 
