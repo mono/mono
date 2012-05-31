@@ -768,6 +768,7 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void GetCookieHeader4 ()
 		{
+			Console.WriteLine ("CookieHeader4");
 			CookieContainer cc = new CookieContainer ();
 			Cookie cookie = new Cookie ("Height", "178", "/Whatever", "mono.com");
 			cc.Add (cookie);
@@ -1386,6 +1387,7 @@ namespace MonoTests.System.Net {
 		{
 			CookieContainer cc;
 			CookieCollection cookies;
+			string hostname = Dns.GetHostName ();
 
 			cc = new CookieContainer ();
 			cc.SetCookies (new Uri ("http://localhost/Whatever/Do"),
@@ -1396,9 +1398,9 @@ namespace MonoTests.System.Net {
 			cookies = cc.GetCookies (new Uri ("http://127.0.0.1/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#A3");
 			Assert.AreEqual (0, cookies.Count, "#A4");
-			cookies = cc.GetCookies (new Uri ("http://" + Dns.GetHostName () + "/Whatever/Do"));
+			cookies = cc.GetCookies (new Uri ("http://" + hostname + "/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#A5");
-			Assert.AreEqual (0, cookies.Count, "#A6");
+			Assert.AreEqual (hostname.EndsWith (".local") ? 1 : 0, cookies.Count, "#A6");
 
 			cc = new CookieContainer ();
 			cc.SetCookies (new Uri ("http://127.0.0.1/Whatever/Do"),
@@ -1409,12 +1411,12 @@ namespace MonoTests.System.Net {
 			cookies = cc.GetCookies (new Uri ("http://127.0.0.1/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#B3");
 			Assert.AreEqual (0, cookies.Count, "#B4");
-			cookies = cc.GetCookies (new Uri ("http://" + Dns.GetHostName () + "/Whatever/Do"));
+			cookies = cc.GetCookies (new Uri ("http://" + hostname + "/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#B5");
-			Assert.AreEqual (0, cookies.Count, "#B6");
+			Assert.AreEqual (hostname.EndsWith (".local") ? 1 : 0, cookies.Count, "#B6");
 
 			cc = new CookieContainer ();
-			cc.SetCookies (new Uri ("http://" + Dns.GetHostName () + "/Whatever/Do"),
+			cc.SetCookies (new Uri ("http://" + hostname + "/Whatever/Do"),
 				"Age=26; path=/Whatever; domain=.local");
 			cookies = cc.GetCookies (new Uri ("http://localhost/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#C1");
@@ -1422,9 +1424,9 @@ namespace MonoTests.System.Net {
 			cookies = cc.GetCookies (new Uri ("http://127.0.0.1/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#C3");
 			Assert.AreEqual (0, cookies.Count, "#C4");
-			cookies = cc.GetCookies (new Uri ("http://" + Dns.GetHostName () + "/Whatever/Do"));
+			cookies = cc.GetCookies (new Uri ("http://" + hostname + "/Whatever/Do"));
 			Assert.IsNotNull (cookies, "#C5");
-			Assert.AreEqual (0, cookies.Count, "#C6");
+			Assert.AreEqual (hostname.EndsWith (".local") ? 1 : 0, cookies.Count, "#C6");
 		}
 
 		[Test]
