@@ -758,6 +758,7 @@ struct _SgenMajorCollector {
 	void (*print_gc_param_usage) (void);
 	gboolean (*is_worker_thread) (pthread_t thread);
 	gboolean (*is_valid_object) (char *object);
+	gboolean (*describe_pointer) (char *pointer);
 };
 
 void mono_sgen_marksweep_init (SgenMajorCollector *collector) MONO_INTERNAL;
@@ -866,6 +867,7 @@ void mono_sgen_los_iterate_live_block_ranges (sgen_cardtable_block_callback call
 void mono_sgen_los_scan_card_table (SgenGrayQueue *queue) MONO_INTERNAL;
 FILE *mono_sgen_get_logfile (void) MONO_INTERNAL;
 gboolean mono_sgen_los_is_valid_object (char *object) MONO_INTERNAL;
+gboolean mono_sgen_los_describe_pointer (char *ptr) MONO_INTERNAL;
 
 #endif /* HAVE_SGEN_GC */
 
