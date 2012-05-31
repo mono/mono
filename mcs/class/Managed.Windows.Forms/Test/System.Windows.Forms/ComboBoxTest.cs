@@ -847,6 +847,47 @@ namespace MonoTests.System.Windows.Forms
 			ComboBox cmbbox = new ComboBox ();
 			cmbbox.SelectedIndex = -2;
 		}
+		
+		//Bug 2234 (Xamarin) : Test 1
+		[Test]
+		public void VerifyNoExceptions2234()
+		{
+			using (Form form = new Form ()){
+				ComboBox cmb = new ComboBox();
+				form.Controls.Add (cmb);
+				form.Show ();
+				eventFired=false;  //for sanity
+                        
+				//Primary failure: if exception is raised when
+				//   DataSource changes.  We should "eat" the 
+				//   exception under this circumstance before 
+				//   it gets here.
+				cmb.SelectedIndexChanged += 
+					new EventHandler(GenericHandlerWithException);
+				cmb.DataSource=new string[]{"One","Two","Three"};
+				Assert.IsTrue(eventFired);
+			}
+		}
+		
+		//Bug 2234 (Xamarin) : Test 2
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void VerifyException2234()
+		{
+			using (Form form = new Form ())
+			{
+				ComboBox cmb = new ComboBox();
+				form.Controls.Add (cmb);
+				form.Show ();
+				cmb.SelectedIndexChanged += 	
+					new EventHandler(GenericHandlerWithException);
+				cmb.DataSource=new string[]{"One","Two","Three"};
+                        
+				//Here's where Exception Should raise normally
+				cmb.SelectedIndex=2;
+			}       
+		}
+
 
 		//
 		// Events
@@ -863,6 +904,13 @@ namespace MonoTests.System.Windows.Forms
 		{
 			eventFired = true;
 		}
+
+		private void GenericHandlerWithException (object sender,  EventArgs e)
+		{
+			eventFired = true;
+			throw new Exception("Crash!");
+		}
+
 
 		[Ignore ("Bugs in X11 prevent this test to run properly")]
 		public void DrawItemEventTest ()
