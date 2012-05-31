@@ -165,7 +165,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-#if NET_3_5 || NET_4_0
+#if NET_3_5 
 		public bool OverwriteReadOnlyFiles {
 			get {
 				return overwriteReadOnlyFiles;
