@@ -385,7 +385,7 @@ namespace IKVM.Reflection.Writer
 				stream.Seek(strongNameSignatureLength, SeekOrigin.Current);
 				HashChunk(stream, cs, buf, (int)(stream.Length - (strongNameSignatureFileOffset + strongNameSignatureLength)));
 			}
-			using (RSA rsa = CryptoHack.CreateRSA(keyPair))
+			using (RSA rsa = keyPair.CreateRSA())
 			{
 				RSAPKCS1SignatureFormatter sign = new RSAPKCS1SignatureFormatter(rsa);
 				byte[] signature = sign.CreateSignature(hash);

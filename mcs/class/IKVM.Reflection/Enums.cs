@@ -235,6 +235,7 @@ namespace IKVM.Reflection
 		Private = 2,
 	}
 
+	[Flags]
 	public enum ResourceLocation
 	{
 		Embedded = 1,

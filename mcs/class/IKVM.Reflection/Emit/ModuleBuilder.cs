@@ -499,6 +499,11 @@ namespace IKVM.Reflection.Emit
 			return symbolWriter.DefineDocument(url, language, languageVendor, documentType);
 		}
 
+		public int __GetAssemblyToken(Assembly assembly)
+		{
+			return ImportAssemblyRef(assembly);
+		}
+
 		public TypeToken GetTypeToken(string name)
 		{
 			return new TypeToken(GetType(name, true, false).MetadataToken);
@@ -687,9 +692,7 @@ namespace IKVM.Reflection.Emit
 			{
 				// We can't write the AssemblyRef record here yet, because the identity of the assembly can still change
 				// (if it's an AssemblyBuilder).
-				// We set the high bit of rid in the token to make sure we emit obviously broken metadata,
-				// if we forget to patch up the token somewhere.
-				token = 0x23800001 + referencedAssemblies.Count;
+				token = AllocPseudoToken();
 				referencedAssemblies.Add(asm, token);
 			}
 			return token;
@@ -697,30 +700,11 @@ namespace IKVM.Reflection.Emit
 
 		internal void FillAssemblyRefTable()
 		{
-			int[] realtokens = new int[referencedAssemblies.Count];
 			foreach (KeyValuePair<Assembly, int> kv in referencedAssemblies)
 			{
-				if ((kv.Value & 0x7F800000) == 0x23800000)
+				if (IsPseudoToken(kv.Value))
 				{
-					realtokens[(kv.Value & 0x7FFFFF) - 1] = FindOrAddAssemblyRef(kv.Key.GetName(), false);
-				}
-			}
-			// now fixup the resolution scopes in TypeRef
-			for (int i = 0; i < this.TypeRef.records.Length; i++)
-			{
-				int resolutionScope = this.TypeRef.records[i].ResolutionScope;
-				if ((resolutionScope & 0x7F800000) == 0x23800000)
-				{
-					this.TypeRef.records[i].ResolutionScope = realtokens[(resolutionScope & 0x7FFFFF) - 1];
-				}
-			}
-			// and implementation in ExportedType
-			for (int i = 0; i < this.ExportedType.records.Length; i++)
-			{
-				int implementation = this.ExportedType.records[i].Implementation;
-				if ((implementation & 0x7F800000) == 0x23800000)
-				{
-					this.ExportedType.records[i].Implementation = realtokens[(implementation & 0x7FFFFF) - 1];
+					RegisterTokenFixup(kv.Value, FindOrAddAssemblyRef(kv.Key.GetName(), false));
 				}
 			}
 		}
@@ -1580,6 +1564,14 @@ namespace IKVM.Reflection.Emit
 						}
 					}
 				}
+			}
+		}
+
+		internal void FixupPseudoToken(ref int token)
+		{
+			if (IsPseudoToken(token))
+			{
+				token = ResolvePseudoToken(token);
 			}
 		}
 	}

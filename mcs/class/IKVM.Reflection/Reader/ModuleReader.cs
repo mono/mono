@@ -502,7 +502,7 @@ namespace IKVM.Reflection.Reader
 			return new TypeName(GetString(typeNamespace), GetString(typeName));
 		}
 
-		private Assembly ResolveAssemblyRef(int index)
+		internal Assembly ResolveAssemblyRef(int index)
 		{
 			if (assemblyRefs == null)
 			{
@@ -974,7 +974,13 @@ namespace IKVM.Reflection.Reader
 			{
 				if (resourceName == GetString(ManifestResource.records[i].Name))
 				{
-					return new ManifestResourceInfo(this, i);
+					ManifestResourceInfo info = new ManifestResourceInfo(this, i);
+					Assembly asm = info.ReferencedAssembly;
+					if (asm != null && !asm.__IsMissing && asm.GetManifestResourceInfo(resourceName) == null)
+					{
+						return null;
+					}
+					return info;
 				}
 			}
 			return null;
@@ -988,7 +994,34 @@ namespace IKVM.Reflection.Reader
 				{
 					if (ManifestResource.records[i].Implementation != 0x26000000)
 					{
-						throw new NotImplementedException();
+						ManifestResourceInfo info = new ManifestResourceInfo(this, i);
+						switch (ManifestResource.records[i].Implementation >> 24)
+						{
+							case FileTable.Index:
+								string fileName = Path.Combine(Path.GetDirectoryName(location), info.FileName);
+								if (System.IO.File.Exists(fileName))
+								{
+									// note that, like System.Reflection, we return null for zero length files and
+									// ManifestResource.Offset is ignored
+									FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
+									if (fs.Length == 0)
+									{
+										fs.Close();
+										return null;
+									}
+									return fs;
+								}
+								return null;
+							case AssemblyRefTable.Index:
+								Assembly asm = info.ReferencedAssembly;
+								if (asm.__IsMissing)
+								{
+									return null;
+								}
+								return asm.GetManifestResourceStream(resourceName);
+							default:
+								throw new BadImageFormatException();
+						}
 					}
 					SeekRVA((int)cliHeader.Resources.VirtualAddress + ManifestResource.records[i].Offset);
 					BinaryReader br = new BinaryReader(stream);
@@ -996,7 +1029,7 @@ namespace IKVM.Reflection.Reader
 					return new MemoryStream(br.ReadBytes(length));
 				}
 			}
-			throw new FileNotFoundException();
+			return null;
 		}
 
 		public override AssemblyName[] __GetReferencedAssemblies()

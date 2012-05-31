@@ -299,6 +299,7 @@ namespace IKVM.Reflection.Writer
 		internal void Write(MetadataWriter mw, uint sdataRVA)
 		{
 			// Now that we're ready to start writing, we need to do some fix ups
+			moduleBuilder.TypeRef.Fixup(moduleBuilder);
 			moduleBuilder.MethodDef.Fixup(this);
 			moduleBuilder.MethodImpl.Fixup(moduleBuilder);
 			moduleBuilder.MethodSemantics.Fixup(moduleBuilder);
@@ -313,6 +314,8 @@ namespace IKVM.Reflection.Writer
 			moduleBuilder.FieldLayout.Fixup(moduleBuilder);
 			moduleBuilder.FieldRVA.Fixup(moduleBuilder, (int)sdataRVA, (int)this.MethodBodiesRVA);
 			moduleBuilder.ImplMap.Fixup(moduleBuilder);
+			moduleBuilder.ExportedType.Fixup(moduleBuilder);
+			moduleBuilder.ManifestResource.Fixup(moduleBuilder);
 			moduleBuilder.MethodSpec.Fixup(moduleBuilder);
 			moduleBuilder.GenericParamConstraint.Fixup(moduleBuilder);
 

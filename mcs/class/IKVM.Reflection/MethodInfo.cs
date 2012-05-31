@@ -243,12 +243,12 @@ namespace IKVM.Reflection
 
 		public override MethodInfo MakeGenericMethod(params Type[] typeArguments)
 		{
-			return (MethodInfo)method.MakeGenericMethod(typeArguments).SetReflectedType(reflectedType);
+			return SetReflectedType(method.MakeGenericMethod(typeArguments), reflectedType);
 		}
 
 		public override MethodInfo GetGenericMethodDefinition()
 		{
-			return (MethodInfo)method.GetGenericMethodDefinition().SetReflectedType(reflectedType);
+			return method.GetGenericMethodDefinition();
 		}
 
 		public override string ToString()
