@@ -166,7 +166,7 @@ namespace MonoTests.System.Data.Xml
 		[Test]
 		public void EditingDataSet ()
 		{
-			string xml = "<Root><Region><RegionID>1</RegionID><RegionDescription>Eastern\r\n   </RegionDescription></Region><Region><RegionID>2</RegionID><RegionDescription>Western\r\n   </RegionDescription></Region><Region><RegionID>3</RegionID><RegionDescription>Northern\r\n   </RegionDescription></Region><Region><RegionID>4</RegionID><RegionDescription>Southern\r\n   </RegionDescription></Region><MoreData><Column1>12</Column1><Column2>Hi There</Column2></MoreData><MoreData><Column1>12</Column1><Column2>Hi There</Column2></MoreData></Root>";
+			string xml = "<Root><Region><RegionID>1</RegionID><RegionDescription>Eastern" + Environment.NewLine + "   </RegionDescription></Region><Region><RegionID>2</RegionID><RegionDescription>Western" + Environment.NewLine + "   </RegionDescription></Region><Region><RegionID>3</RegionID><RegionDescription>Northern" + Environment.NewLine + "   </RegionDescription></Region><Region><RegionID>4</RegionID><RegionDescription>Southern" + Environment.NewLine + "   </RegionDescription></Region><MoreData><Column1>12</Column1><Column2>Hi There</Column2></MoreData><MoreData><Column1>12</Column1><Column2>Hi There</Column2></MoreData></Root>";
 
 			XmlReader Reader = new XmlTextReader ("Test/System.Xml/region.xml");
 			XmlDataDocument Doc = new XmlDataDocument ();
