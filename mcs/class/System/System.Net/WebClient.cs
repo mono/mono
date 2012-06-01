@@ -92,6 +92,9 @@ namespace System.Net
 		Encoding encoding = Encoding.Default;
 		IWebProxy proxy;
 //		RequestCachePolicy cache_policy;
+#if NET_4_5
+		CancellationTokenSource cts;
+#endif
 
 		// Constructors
 		static WebClient ()
@@ -208,7 +211,13 @@ namespace System.Net
 		}
 
 		public bool IsBusy {
-			get { return is_busy; } 
+			get {
+#if NET_4_5
+				return is_busy || (cts != null);
+#else
+				return is_busy;
+#endif
+			}
 		}
 		// Methods
 
@@ -1003,6 +1012,13 @@ namespace System.Net
 		public void CancelAsync ()
 		{
 			lock (this){
+#if NET_4_5
+				if (cts != null) {
+					cts.Cancel ();
+					return;
+				}
+#endif
+
 				if (async_thread == null)
 					return;
 
@@ -1020,9 +1036,14 @@ namespace System.Net
 
 		void CompleteAsync ()
 		{
-			lock (this){
+			lock (this) {
 				is_busy = false;
 				async_thread = null;
+#if NET_4_5
+				if (cts != null)
+					cts.Dispose ();
+				cts = null;
+#endif
 			}
 		}
 
@@ -1485,48 +1506,49 @@ namespace System.Net
 			return DownloadDataTaskAsync (CreateUri (address));
 		}
 
-		public Task<byte[]> DownloadDataTaskAsync (Uri address)
-		{
-			return Task.Factory.StartNew (l => {
-				var t = (Tuple<WebClient, Uri>)l;
-				return t.Item1.DownloadData (t.Item2);
-			}, Tuple.Create (this, address));
-		}
-		
-		async Task<byte[]> DownloadDataCoreAsync (Uri address, object userToken)
+		public async Task<byte[]> DownloadDataTaskAsync (Uri address)
 		{
 			WebRequest request = null;
-			
+
 			try {
+				SetBusy ();
+				cts = new CancellationTokenSource ();
 				request = SetupRequest (address);
-				return await ReadAllAsync (request, userToken);
-			} catch (ThreadInterruptedException){
+				var result = await ReadAllTaskAsync (request, cts.Token);
+				OnDownloadDataCompleted (new DownloadDataCompletedEventArgs (result, null, false, null));
+				return result;
+			} catch (WebException ex) {
+				OnDownloadDataCompleted (new DownloadDataCompletedEventArgs (null, ex, false, null));
+				throw;
+			} catch (OperationCanceledException) {
 				if (request != null)
 					request.Abort ();
-				throw new WebException ("User canceled the request", WebExceptionStatus.RequestCanceled);
-			} catch (WebException) {
+				OnDownloadDataCompleted (new DownloadDataCompletedEventArgs (null, null, true, null));
 				throw;
 			} catch (Exception ex) {
+				OnDownloadDataCompleted (new DownloadDataCompletedEventArgs (null, ex, true, null));
 				throw new WebException ("An error occurred performing a WebClient request.", ex);
 			}
 		}
 		
-		async Task<WebResponse> GetWebResponseAsync (WebRequest request)
+		async Task<WebResponse> GetWebResponseTaskAsync (WebRequest request)
 		{
 			WebResponse response = await request.GetResponseAsync ();
 			responseHeaders = response.Headers;
 			return response;
 		}
 		
-		async Task<byte[]> ReadAllAsync (WebRequest request, object userToken)
+		async Task<byte[]> ReadAllTaskAsync (WebRequest request, CancellationToken token)
 		{
-			WebResponse response = await GetWebResponseAsync (request);
+			WebResponse response = await GetWebResponseTaskAsync (request);
+			token.ThrowIfCancellationRequested ();
+
 			Stream stream = response.GetResponseStream ();
-			int length = (int) response.ContentLength;
+			int length = (int)response.ContentLength;
 			HttpWebRequest wreq = request as HttpWebRequest;
 
-			if (length > -1 && wreq != null && (int) wreq.AutomaticDecompression != 0) {
-				string content_encoding = ((HttpWebResponse) response).ContentEncoding;
+			if (length > -1 && wreq != null && (int)wreq.AutomaticDecompression != 0) {
+				string content_encoding = ((HttpWebResponse)response).ContentEncoding;
 				if (((content_encoding == "gzip" && (wreq.AutomaticDecompression & DecompressionMethods.GZip) != 0)) ||
 					((content_encoding == "deflate" && (wreq.AutomaticDecompression & DecompressionMethods.Deflate) != 0)))
 					length = -1;
@@ -1542,6 +1564,7 @@ namespace System.Net
 			int nread = 0;
 			int offset = 0;
 			byte [] buffer = new byte [size];
+			token.ThrowIfCancellationRequested ();
 			while ((nread = await stream.ReadAsync (buffer, offset, size)) != 0) {
 				if (nolength) {
 					ms.Write (buffer, 0, nread);
@@ -1549,16 +1572,12 @@ namespace System.Net
 					offset += nread;
 					size -= nread;
 				}
-				if (async){
-					total += nread;
-					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (total, length, userToken));
-				}
+				total += nread;
+				OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (total, length, null));
+				token.ThrowIfCancellationRequested ();
 			}
-
-			if (nolength)
-				return ms.ToArray ();
-
-			return buffer;
+			
+			return nolength ? ms.ToArray () : buffer;
 		}
 		
 		public Task DownloadFileTaskAsync (string address, string fileName)
@@ -1575,50 +1594,50 @@ namespace System.Net
 				throw new ArgumentNullException ("address");
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
+			
+			WebRequest request = null;
 
 			try {
 				SetBusy ();
-				async = false;
-				await DownloadFileCoreAsync (address, fileName, null);
-			} catch (WebException) {
+				request = SetupRequest (address);
+				cts = new CancellationTokenSource ();
+				await DownloadFileTaskAsyncCore (request, fileName, cts.Token);
+				OnDownloadFileCompleted (new AsyncCompletedEventArgs (null, false, null));
+			} catch (WebException ex) {
+				OnDownloadFileCompleted (new AsyncCompletedEventArgs (ex, false, null));
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
+				OnDownloadFileCompleted (new AsyncCompletedEventArgs (null, true, null));
 				throw;
 			} catch (Exception ex) {
+				OnDownloadFileCompleted (new AsyncCompletedEventArgs (ex, false, null));
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
-			} finally {
-				is_busy = false;
 			}
 		}
 
-		async Task DownloadFileCoreAsync (Uri address, string fileName, object userToken)
+		async Task DownloadFileTaskAsyncCore (WebRequest request, string fileName, CancellationToken token)
 		{
-			WebRequest request = null;
-			
 			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
-				try {
-					request = SetupRequest (address);
-					WebResponse response = await GetWebResponseAsync (request);
-					Stream st = response.GetResponseStream ();
+				WebResponse response = await GetWebResponseTaskAsync (request);
+				Stream st = response.GetResponseStream ();
 					
-					int cLength = (int) response.ContentLength;
-					int length = (cLength <= -1 || cLength > 32*1024) ? 32*1024 : cLength;
-					byte [] buffer = new byte [length];
+				int cLength = (int)response.ContentLength;
+				int length = (cLength <= -1 || cLength > 32 * 1024) ? 32 * 1024 : cLength;
+				byte [] buffer = new byte [length];
 					
-					int nread = 0;
-					long notify_total = 0;
-					while ((nread = await st.ReadAsync (buffer, 0, length)) != 0){
-						if (async){
-							notify_total += nread;
-							OnDownloadProgressChanged (
-								new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, userToken));
-												      
-						}
-						await f.WriteAsync (buffer, 0, nread);
-					}
-				} catch (ThreadInterruptedException){
-					if (request != null)
-						request.Abort ();
-					throw;
+				int nread = 0;
+				long notify_total = 0;
+				token.ThrowIfCancellationRequested ();
+				while ((nread = await st.ReadAsync (buffer, 0, length)) != 0) {
+					notify_total += nread;
+					OnDownloadProgressChanged (
+						new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, null));
+					token.ThrowIfCancellationRequested ();
+					await f.WriteAsync (buffer, 0, nread);
+					token.ThrowIfCancellationRequested ();
 				}
 			}
 		}
@@ -1638,26 +1657,31 @@ namespace System.Net
 			WebRequest request = null;
 			try {
 				SetBusy ();
-				async = false;
+				cts = new CancellationTokenSource ();
 				request = SetupRequest (address);
-				WebResponse response = await GetWebResponseAsync (request);
+				WebResponse response = await GetWebResponseTaskAsync (request);
+				cts.Token.ThrowIfCancellationRequested ();
 				return response.GetResponseStream ();
 			} catch (WebException) {
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
 				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
 			} finally {
-				is_busy = false;
+				CompleteAsync ();
 			}
 		}
 		
-		public async Task<string> DownloadStringTaskAsync (string address)
+		public Task<string> DownloadStringTaskAsync (string address)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
-			return encoding.GetString (await DownloadDataTaskAsync (CreateUri (address)));
+			return DownloadStringTaskAsync (CreateUri (address));
 		}
 
 		public async Task<string> DownloadStringTaskAsync (Uri address)
@@ -1665,9 +1689,30 @@ namespace System.Net
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
-			return encoding.GetString (await DownloadDataTaskAsync (CreateUri (address)));
+			WebRequest request = null;
+
+			try {
+				SetBusy ();
+				cts = new CancellationTokenSource ();
+				request = SetupRequest (address);
+				var data = await ReadAllTaskAsync (request, cts.Token);
+				cts.Token.ThrowIfCancellationRequested ();
+				var text = encoding.GetString (data);
+				OnDownloadStringCompleted (new DownloadStringCompletedEventArgs (text, null, false, null));
+				return text;
+			} catch (WebException ex) {
+				OnDownloadStringCompleted (new DownloadStringCompletedEventArgs (null, ex, false, null));
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
+				OnDownloadStringCompleted (new DownloadStringCompletedEventArgs (null, null, true, null));
+				throw;
+			} catch (Exception ex) {
+				OnDownloadStringCompleted (new DownloadStringCompletedEventArgs (null, ex, true, null));
+				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			}
 		}
-		
 #endif
 
 	}

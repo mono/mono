@@ -234,6 +234,7 @@ System.Net/WebPermissionTest.cs
 System.Net/WebProxyTest.cs
 System.Net/WebRequestTest.cs
 System.Net/WebClientTest.cs
+System.Net/WebClientTestAsync.cs
 System.Net/WebUtilityTest.cs
 System.Net.Configuration/ConnectionManagementSectionTest.cs
 System.Net.Configuration/HttpWebRequestElementTest.cs
