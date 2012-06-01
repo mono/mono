@@ -175,6 +175,36 @@ extern void *mono_aot_module_hello_info;
 mono_aot_register_module (mono_aot_module_hello_info);
 .fi
 .ne
+.TP
+.I mtriple=<TRIPLE>
+Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.
+--mtriple=armv7-linux-gnueabi will generate code that targets ARMv7. This is currently
+only supported by the ARM backend. In LLVM mode, this triple is passed on to the LLVM
+llc compiler.
+.TP
+.I tool-prefix=<PREFIX>
+Prepends <PREFIX> to the name of tools ran by the AOT compiler, i.e. 'as'/'ld'. For
+example, --tool=prefix=arm-linux-gnueabi- will make the AOT compiler run
+'arm-linux-gnueabi-as' instead of 'as'.
+.TP
+.I llvm-path=<PREFIX>
+Same for the llvm tools 'opt' and 'llc'.
+.TP
+.I stats
+Print various stats collected during AOT compilation.
+.TP
+.I readonly-value=namespace.typename.fieldname=type/value
+Override the value of a static readonly field. Usually, during JIT
+compilation, the static constructor is ran eagerly, so the value of
+a static readonly field is known at compilation time and the compiler
+can do a number of optimizations based on it. During AOT, instead, the static
+constructor can't be ran, so this option can be used to set the value of such
+a field and enable the same set of optimizations.
+Type can be any of i1, i2, i4 for integers of the respective sizes (in bytes).
+Note that signed/unsigned numbers do not matter here, just the storage size.
+This option can be specified multiple times and it doesn't prevent the static
+constructor for the type defining the field to execute with the usual rules
+at runtime (hence possibly computing a different value for the field).
 
 .PP
 For more information about AOT, see: http://www.mono-project.com/AOT
