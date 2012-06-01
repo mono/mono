@@ -1,10 +1,10 @@
 //
-// IReadOnlyDictionary.cs
+// IReadOnlyCollection.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
+// Copyright (C) 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,14 +30,9 @@
 
 namespace System.Collections.Generic
 {
-	public interface IReadOnlyDictionary<TKey, TValue> : IReadOnlyCollection<KeyValuePair<TKey, TValue>>
+	public interface IReadOnlyCollection<out T> : IEnumerable<T>
 	{
-		TValue this [TKey key] { get; }
-		IEnumerable<TKey> Keys { get; }
-		IEnumerable<TValue> Values { get; }
-
-		bool ContainsKey (TKey key);
-		bool TryGetValue (TKey key, out TValue value);
+		int Count { get; }
 	}
 }
 

@@ -30,9 +30,8 @@
 
 namespace System.Collections.Generic
 {
-	public interface IReadOnlyList<out T> : IEnumerable<T>
+	public interface IReadOnlyList<out T> : IReadOnlyCollection<T>
 	{
-		int Count { get; }
 		T this [int index] { get; }
 	}
 }
