@@ -102,12 +102,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if NET_1_0 || ONLY_1_1
-		override
-#else
-		new
-#endif
-		public string Message {
+		new public string Message {
 			get {
 				GdaList glist;
 				IntPtr errors;
@@ -129,12 +124,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if NET_1_0 || ONLY_1_1
-		override
-#else
-		new
-#endif
-		public string Source {
+		new public string Source {
 			get {
 				GdaList glist;
 				IntPtr errors;

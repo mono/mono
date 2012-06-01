@@ -135,18 +135,11 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-#if NET_1_0 || ONLY_1_1
-		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
-#endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]
 		[RefreshProperties (RefreshProperties.All)]
-		public
-#if NET_2_0
-		override
-#endif // NET_2_0
-		string ConnectionString {
+		public override string ConnectionString {
 			get {
 				if (connectionString == null)
 					return string.Empty;
@@ -1737,9 +1730,6 @@ namespace System.Data.SqlClient
 
 		#region Properties Net 2
 
-#if NET_1_0
-		[DataSysDescription ("Enable Asynchronous processing, 'Asynchrouse Processing=true/false' in the ConnectionString.")]	
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		internal bool AsyncProcessing  {
 			get { return async; }
