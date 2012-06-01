@@ -8879,17 +8879,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			} else {
 				gboolean is_const = FALSE;
 				MonoVTable *vtable = NULL;
-				gpointer addr = NULL;
 
 				if (!context_used) {
 					vtable = mono_class_vtable (cfg->domain, klass);
 					CHECK_TYPELOAD (klass);
 				}
-				if ((ftype->attrs & FIELD_ATTRIBUTE_INIT_ONLY) && (((addr = mono_aot_readonly_field_override (field)) != NULL) ||
-						(!context_used && !((cfg->opt & MONO_OPT_SHARED) || cfg->compile_aot) && vtable->initialized))) {
+				if (!context_used && !((cfg->opt & MONO_OPT_SHARED) || cfg->compile_aot) && 
+				    vtable->initialized && (ftype->attrs & FIELD_ATTRIBUTE_INIT_ONLY)) {
+					gpointer addr = (char*)vtable->data + field->offset;
 					int ro_type = ftype->type;
-					if (!addr)
-						addr = (char*)mono_vtable_get_static_field_data (vtable) + field->offset;
 					if (ro_type == MONO_TYPE_VALUETYPE && ftype->data.klass->enumtype) {
 						ro_type = mono_class_enum_basetype (ftype->data.klass)->type;
 					}
