@@ -23,9 +23,7 @@
 //    behind its back (P/Invoke puts for example).
 //    System.Console needs to get the DELETE character, and report accordingly.
 //
-#if NET_2_0 || NET_1_1
 #define IN_MCS_BUILD
-#endif
 
 // Only compile this code in the 2.0 profile, but not in the Moonlight one
 #if (IN_MCS_BUILD && NET_2_0 && !SMCS_SOURCE) || !IN_MCS_BUILD

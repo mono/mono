@@ -61,14 +61,8 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyKeyFile ("../msfinal.pub")]
 #endif
 
-#if NET_2_0
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: ComVisible (true)]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-#elif NET_1_1
-	[assembly: TypeLibVersion (1, 10)]
-#elif NET_1_0
-	[assembly: TypeLibVersion (1, 10)]
-#endif
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: ComVisible (true)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]

@@ -172,7 +172,7 @@ namespace System.Net
 			get { return HttpVersion.Version11.Equals (protocolVersion); }
 		}
 
-#if NET_1_1
+
 		public bool Expect100Continue {
 			get { return SendContinue; }
 			set { SendContinue = value; }
@@ -182,7 +182,6 @@ namespace System.Net
 			get { return useNagle; }
 			set { useNagle = value; }
 		}
-#endif
 
 		internal bool SendContinue {
 			get { return sendContinue &&
