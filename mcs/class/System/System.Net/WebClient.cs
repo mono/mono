@@ -1500,6 +1500,8 @@ namespace System.Net
 		}
 		
 #if NET_4_5
+
+		// DownloadDataTaskAsync
 		
 		public Task<byte[]> DownloadDataTaskAsync (string address)
 		{
@@ -1509,12 +1511,13 @@ namespace System.Net
 		public async Task<byte[]> DownloadDataTaskAsync (Uri address)
 		{
 			WebRequest request = null;
-
+			WebResponse response = null;
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = SetupRequest (address);
-				var result = await ReadAllTaskAsync (request, cts.Token);
+				request = await SetupRequestAsync (address);
+				response = await GetWebResponseTaskAsync (request, cts.Token);
+				var result = await ReadAllTaskAsync (request, response, cts.Token);
 				OnDownloadDataCompleted (new DownloadDataCompletedEventArgs (result, null, false, null));
 				return result;
 			} catch (WebException ex) {
@@ -1528,21 +1531,35 @@ namespace System.Net
 			} catch (Exception ex) {
 				OnDownloadDataCompleted (new DownloadDataCompletedEventArgs (null, ex, true, null));
 				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			} finally {
+				if (response != null)
+					response.Close ();
 			}
 		}
-		
-		async Task<WebResponse> GetWebResponseTaskAsync (WebRequest request)
+
+		Task<WebRequest> SetupRequestAsync (Uri address)
 		{
+			return Task.Factory.StartNew (() => SetupRequest (address));
+		}
+
+		async Task<WebRequest> SetupRequestAsync (Uri address, string method, bool is_upload)
+		{
+			WebRequest request = await SetupRequestAsync (address);
+			request.Method = DetermineMethod (address, method, is_upload);
+			return request;
+		}
+		
+		async Task<WebResponse> GetWebResponseTaskAsync (WebRequest request, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested ();
 			WebResponse response = await request.GetResponseAsync ();
+			token.ThrowIfCancellationRequested ();
 			responseHeaders = response.Headers;
 			return response;
 		}
 		
-		async Task<byte[]> ReadAllTaskAsync (WebRequest request, CancellationToken token)
+		async Task<byte[]> ReadAllTaskAsync (WebRequest request, WebResponse response, CancellationToken token)
 		{
-			WebResponse response = await GetWebResponseTaskAsync (request);
-			token.ThrowIfCancellationRequested ();
-
 			Stream stream = response.GetResponseStream ();
 			int length = (int)response.ContentLength;
 			HttpWebRequest wreq = request as HttpWebRequest;
@@ -1565,7 +1582,7 @@ namespace System.Net
 			int offset = 0;
 			byte [] buffer = new byte [size];
 			token.ThrowIfCancellationRequested ();
-			while ((nread = await stream.ReadAsync (buffer, offset, size)) != 0) {
+			while ((nread = await stream.ReadAsync (buffer, offset, size, token)) != 0) {
 				if (nolength) {
 					ms.Write (buffer, 0, nread);
 				} else {
@@ -1579,6 +1596,8 @@ namespace System.Net
 			
 			return nolength ? ms.ToArray () : buffer;
 		}
+		
+		// DownloadFileTaskAsync
 		
 		public Task DownloadFileTaskAsync (string address, string fileName)
 		{
@@ -1596,12 +1615,14 @@ namespace System.Net
 				throw new ArgumentNullException ("fileName");
 			
 			WebRequest request = null;
+			WebResponse response = null;
 
 			try {
 				SetBusy ();
-				request = SetupRequest (address);
 				cts = new CancellationTokenSource ();
-				await DownloadFileTaskAsyncCore (request, fileName, cts.Token);
+				request = await SetupRequestAsync (address);
+				response = await GetWebResponseTaskAsync (request, cts.Token);
+				await DownloadFileTaskAsyncCore (request, response, fileName, cts.Token);
 				OnDownloadFileCompleted (new AsyncCompletedEventArgs (null, false, null));
 			} catch (WebException ex) {
 				OnDownloadFileCompleted (new AsyncCompletedEventArgs (ex, false, null));
@@ -1615,13 +1636,16 @@ namespace System.Net
 				OnDownloadFileCompleted (new AsyncCompletedEventArgs (ex, false, null));
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
+			} finally {
+				if (response != null)
+					response.Close ();
 			}
 		}
 
-		async Task DownloadFileTaskAsyncCore (WebRequest request, string fileName, CancellationToken token)
+		async Task DownloadFileTaskAsyncCore (WebRequest request, WebResponse response,
+		                                      string fileName, CancellationToken token)
 		{
 			using (FileStream f = new FileStream (fileName, FileMode.Create)) {
-				WebResponse response = await GetWebResponseTaskAsync (request);
 				Stream st = response.GetResponseStream ();
 					
 				int cLength = (int)response.ContentLength;
@@ -1631,16 +1655,18 @@ namespace System.Net
 				int nread = 0;
 				long notify_total = 0;
 				token.ThrowIfCancellationRequested ();
-				while ((nread = await st.ReadAsync (buffer, 0, length)) != 0) {
+				while ((nread = await st.ReadAsync (buffer, 0, length, token)) != 0) {
 					notify_total += nread;
 					OnDownloadProgressChanged (
 						new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, null));
 					token.ThrowIfCancellationRequested ();
-					await f.WriteAsync (buffer, 0, nread);
+					await f.WriteAsync (buffer, 0, nread, token);
 					token.ThrowIfCancellationRequested ();
 				}
 			}
 		}
+		
+		// OpenReadTaskAsync
 		
 		public Task<Stream> OpenReadTaskAsync (string address)
 		{
@@ -1658,23 +1684,28 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = SetupRequest (address);
-				WebResponse response = await GetWebResponseTaskAsync (request);
+				request = await SetupRequestAsync (address);
+				WebResponse response = await GetWebResponseTaskAsync (request, cts.Token);
+				var result = response.GetResponseStream ();
 				cts.Token.ThrowIfCancellationRequested ();
-				return response.GetResponseStream ();
-			} catch (WebException) {
+				OnOpenReadCompleted (new OpenReadCompletedEventArgs (result, null, false, null));
+				return result;
+			} catch (WebException ex) {
+				OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, ex, false, null));
 				throw;
 			} catch (OperationCanceledException) {
 				if (request != null)
 					request.Abort ();
+				OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, null, true, null));
 				throw;
 			} catch (Exception ex) {
+				OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, ex, false, null));
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
-			} finally {
-				CompleteAsync ();
 			}
 		}
+		
+		// DownloadStringTaskAsync
 		
 		public Task<string> DownloadStringTaskAsync (string address)
 		{
@@ -1690,12 +1721,14 @@ namespace System.Net
 				throw new ArgumentNullException ("address");
 
 			WebRequest request = null;
+			WebResponse response = null;
 
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = SetupRequest (address);
-				var data = await ReadAllTaskAsync (request, cts.Token);
+				request = await SetupRequestAsync (address);
+				response = await GetWebResponseTaskAsync (request, cts.Token);
+				var data = await ReadAllTaskAsync (request, response, cts.Token);
 				cts.Token.ThrowIfCancellationRequested ();
 				var text = encoding.GetString (data);
 				OnDownloadStringCompleted (new DownloadStringCompletedEventArgs (text, null, false, null));
@@ -1711,8 +1744,452 @@ namespace System.Net
 			} catch (Exception ex) {
 				OnDownloadStringCompleted (new DownloadStringCompletedEventArgs (null, ex, true, null));
 				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			} finally {
+				if (response != null)
+					response.Close ();
 			}
 		}
+
+		// OpenWriteTaskAsync
+		
+		public Task<Stream> OpenWriteTaskAsync (string address)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return OpenWriteTaskAsync (CreateUri (address));
+		}
+		
+		public Task<Stream> OpenWriteTaskAsync (string address, string method)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return OpenWriteTaskAsync (CreateUri (address), method);
+		}
+
+		public Task<Stream> OpenWriteTaskAsync (Uri address)
+		{
+			return OpenWriteTaskAsync (address, (string) null);
+		}
+
+		public async Task<Stream> OpenWriteTaskAsync (Uri address, string method)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			WebRequest request = null;
+			try {
+				SetBusy ();
+				cts = new CancellationTokenSource ();
+				request = SetupRequest (address);
+				return await request.GetRequestStreamAsync ();
+			} catch (WebException) {
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
+				throw;
+			} catch (Exception ex) {
+				throw new WebException ("An error occurred " +
+					"performing a WebClient request.", ex);
+			} finally {
+				CompleteAsync ();
+			}
+		}
+
+		// UploadDataTaskAsync
+		
+		public Task<byte[]> UploadDataTaskAsync (string address, byte [] data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return UploadDataTaskAsync (CreateUri (address), data);
+		}
+		
+		public Task<byte[]> UploadDataTaskAsync (string address, string method, byte [] data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return UploadDataTaskAsync (CreateUri (address), method, data);
+		}
+
+		public Task<byte[]> UploadDataTaskAsync (Uri address, byte [] data)
+		{
+			return UploadDataTaskAsync (address, (string) null, data);
+		}
+
+		public async Task<byte[]> UploadDataTaskAsync (Uri address, string method, byte [] data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			WebRequest request = null;
+			try {
+				SetBusy ();
+				cts = new CancellationTokenSource ();
+				request = await SetupRequestAsync (address, method, true);
+				var result = await UploadDataTaskAsyncCore (request, data, cts.Token);
+				OnUploadDataCompleted (new UploadDataCompletedEventArgs (result, null, false, null));
+				return result;
+			} catch (WebException ex) {
+				OnUploadDataCompleted (new UploadDataCompletedEventArgs (null, ex, false, null));
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
+				OnUploadDataCompleted (new UploadDataCompletedEventArgs (null, null, true, null));
+				throw;
+			} catch (Exception ex) {
+				OnUploadDataCompleted (new UploadDataCompletedEventArgs (null, ex, true, null));
+				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			}
+		}
+
+		async Task<byte[]> UploadDataTaskAsyncCore (WebRequest request, byte[] data, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested ();
+
+			int contentLength = data.Length;
+			request.ContentLength = contentLength;
+			using (Stream stream = await request.GetRequestStreamAsync ()) {
+				token.ThrowIfCancellationRequested ();
+				await stream.WriteAsync (data, 0, contentLength, token);
+				token.ThrowIfCancellationRequested ();
+			}
+
+			WebResponse response = null;
+
+			try {
+				response = await GetWebResponseTaskAsync (request, token);
+				return await ReadAllTaskAsync (request, response, token);
+			} finally {
+				if (response != null)
+					response.Close ();
+			}
+		}
+
+		// UploadFileTaskAsync
+
+		public Task<byte[]> UploadFileTaskAsync (string address, string fileName)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return UploadFileTaskAsync (CreateUri (address), fileName);
+		}
+
+		public Task<byte[]> UploadFileTaskAsync (Uri address, string fileName)
+		{
+			return UploadFileTaskAsync (address, (string) null, fileName);
+		}
+		
+		public Task<byte[]> UploadFileTaskAsync (string address, string method, string fileName)
+		{
+			return UploadFileTaskAsync (CreateUri (address), method, fileName);
+		}
+
+		public async Task<byte[]> UploadFileTaskAsync (Uri address, string method, string fileName)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+
+			WebRequest request = null;
+			try {
+				SetBusy ();
+				cts = new CancellationTokenSource ();
+				request = await SetupRequestAsync (address, method, true);
+				var result = await UploadFileTaskAsyncCore (request, method, fileName, cts.Token);
+				OnUploadFileCompleted (new UploadFileCompletedEventArgs (result, null, false, null));
+				return result;
+			} catch (WebException ex) {
+				OnUploadFileCompleted (new UploadFileCompletedEventArgs (null, ex, false, null));
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
+				OnUploadFileCompleted (new UploadFileCompletedEventArgs (null, null, true, null));
+				throw;
+			} catch (Exception ex) {
+				OnUploadFileCompleted (new UploadFileCompletedEventArgs (null, ex, true, null));
+				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			}
+		}
+
+		async Task<byte[]> UploadFileTaskAsyncCore (WebRequest request, string method,
+		                                            string fileName, CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested ();
+
+			string fileCType = Headers ["Content-Type"];
+			if (fileCType != null) {
+				string lower = fileCType.ToLower ();
+				if (lower.StartsWith ("multipart/"))
+					throw new WebException ("Content-Type cannot be set to a multipart" +
+								" type for this request.");
+			} else {
+				fileCType = "application/octet-stream";
+			}
+
+			bool needs_boundary = (method != "PUT"); // only verified case so far
+			string boundary = null;
+			if (needs_boundary) {
+				boundary = "------------" + DateTime.Now.Ticks.ToString ("x");
+				Headers ["Content-Type"] = String.Format ("multipart/form-data; boundary={0}", boundary);
+			}
+			Stream reqStream = null;
+			Stream fStream = null;
+			WebResponse response = null;
+
+			fileName = Path.GetFullPath (fileName);
+
+			try {
+				fStream = File.OpenRead (fileName);
+				token.ThrowIfCancellationRequested ();
+				reqStream = await request.GetRequestStreamAsync ();
+				token.ThrowIfCancellationRequested ();
+				byte [] bytes_boundary = null;
+				if (needs_boundary) {
+					bytes_boundary = Encoding.ASCII.GetBytes (boundary);
+					using (MemoryStream ms = new MemoryStream ()) {
+						ms.WriteByte ((byte) '-');
+						ms.WriteByte ((byte) '-');
+						ms.Write (bytes_boundary, 0, bytes_boundary.Length);
+						ms.WriteByte ((byte) '\r');
+						ms.WriteByte ((byte) '\n');
+						string partHeaders = String.Format (
+							"Content-Disposition: form-data; " +
+							"name=\"file\"; filename=\"{0}\"\r\n" +
+							"Content-Type: {1}\r\n\r\n",
+							Path.GetFileName (fileName), fileCType);
+						byte [] partHeadersBytes = Encoding.UTF8.GetBytes (partHeaders);
+						ms.Write (partHeadersBytes, 0, partHeadersBytes.Length);
+						await ms.CopyToAsync (reqStream, (int)ms.Position, token);
+					}
+				}
+				int nread;
+				long bytes_sent = 0;
+				long file_size = -1;
+				long step = 16384; // every 16kB
+				if (fStream.CanSeek) {
+					file_size = fStream.Length;
+					step = file_size / 100;
+				}
+				var upload_args = new UploadProgressChangedEventArgs (0, 0, bytes_sent, file_size, 0, null);
+				OnUploadProgressChanged (upload_args);
+				byte [] buffer = new byte [4096];
+				long sum = 0;
+				token.ThrowIfCancellationRequested ();
+				while ((nread = await fStream.ReadAsync (buffer, 0, 4096, token)) > 0) {
+					token.ThrowIfCancellationRequested ();
+					await reqStream.WriteAsync (buffer, 0, nread, token);
+					bytes_sent += nread;
+					sum += nread;
+					if (sum >= step || nread < 4096) {
+						int percent = 0;
+						if (file_size > 0)
+							percent = (int) (bytes_sent * 100 / file_size);
+						upload_args = new UploadProgressChangedEventArgs (0, 0, bytes_sent, file_size, percent, null);
+						OnUploadProgressChanged (upload_args);
+						sum = 0;
+					}
+				}
+
+				if (needs_boundary) {
+					using (MemoryStream ms = new MemoryStream ()) {
+						ms.WriteByte ((byte) '\r');
+						ms.WriteByte ((byte) '\n');
+						ms.WriteByte ((byte) '-');
+						ms.WriteByte ((byte) '-');
+						ms.Write (bytes_boundary, 0, bytes_boundary.Length);
+						ms.WriteByte ((byte) '-');
+						ms.WriteByte ((byte) '-');
+						ms.WriteByte ((byte) '\r');
+						ms.WriteByte ((byte) '\n');
+						await ms.CopyToAsync (reqStream, (int)ms.Position, token);
+					}
+				}
+				reqStream.Close ();
+				reqStream = null;
+
+				response = await GetWebResponseTaskAsync (request, token);
+				return await ReadAllTaskAsync (request, response, token);
+			} finally {
+				if (fStream != null)
+					fStream.Close ();
+
+				if (reqStream != null)
+					reqStream.Close ();
+
+				if (response != null)
+					response.Close ();
+			}
+		}
+
+		// UploadStringTaskAsync
+
+		public Task<string> UploadStringTaskAsync (string address, string data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			return UploadStringTaskAsync (CreateUri (address), null, data);
+		}
+
+		public Task<string> UploadStringTaskAsync (string address, string method, string data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			return UploadStringTaskAsync (CreateUri (address), method, data);
+		}
+
+		public Task<string> UploadStringTaskAsync (Uri address, string data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			return UploadStringTaskAsync (address, null, data);
+		}
+
+		public async Task<string> UploadStringTaskAsync (Uri address, string method, string data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			WebRequest request = null;
+			try {
+				SetBusy ();
+				cts = new CancellationTokenSource ();
+				request = await SetupRequestAsync (address, method, true);
+				var result = await UploadDataTaskAsyncCore (request, encoding.GetBytes (data), cts.Token);
+				var result_str = encoding.GetString (result);
+				OnUploadStringCompleted (new UploadStringCompletedEventArgs (result_str, null, false, null));
+				return result_str;
+			} catch (WebException ex) {
+				OnUploadStringCompleted (new UploadStringCompletedEventArgs (null, ex, false, null));
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
+				OnUploadStringCompleted (new UploadStringCompletedEventArgs (null, null, true, null));
+				throw;
+			} catch (Exception ex) {
+				OnUploadStringCompleted (new UploadStringCompletedEventArgs (null, ex, true, null));
+				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			}
+		}
+
+		// UploadValuesTaskAsync
+
+		public Task<byte[]> UploadValuesTaskAsync (string address, NameValueCollection data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return UploadValuesTaskAsync (CreateUri (address), data);
+		}
+		
+		public Task<byte[]> UploadValuesTaskAsync (string address, string method, NameValueCollection data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return UploadValuesTaskAsync (CreateUri (address), method, data);
+		}
+
+		public Task<byte[]> UploadValuesTaskAsync (Uri address, NameValueCollection data)
+		{
+			return UploadValuesTaskAsync (address, (string) null, data);
+		}
+
+		public async Task<byte[]> UploadValuesTaskAsync (Uri address, string method, NameValueCollection data)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			WebRequest request = null;
+			try {
+				SetBusy ();
+				cts = new CancellationTokenSource ();
+				request = await SetupRequestAsync (address, method, true);
+				var result = await UploadValuesTaskAsyncCore (request, data, cts.Token);
+				OnUploadValuesCompleted (new UploadValuesCompletedEventArgs (result, null, false, null));
+				return result;
+			} catch (WebException ex) {
+				OnUploadValuesCompleted (new UploadValuesCompletedEventArgs (null, ex, false, null));
+				throw;
+			} catch (OperationCanceledException) {
+				if (request != null)
+					request.Abort ();
+				OnUploadValuesCompleted (new UploadValuesCompletedEventArgs (null, null, true, null));
+				throw;
+			} catch (Exception ex) {
+				OnUploadValuesCompleted (new UploadValuesCompletedEventArgs (null, ex, true, null));
+				throw new WebException ("An error occurred performing a WebClient request.", ex);
+			}
+		}
+
+		async Task<byte[]> UploadValuesTaskAsyncCore (WebRequest request, NameValueCollection data,
+		                                              CancellationToken token)
+		{
+			token.ThrowIfCancellationRequested ();
+			string cType = Headers ["Content-Type"];
+			if (cType != null && String.Compare (cType, urlEncodedCType, true) != 0)
+				throw new WebException ("Content-Type header cannot be changed from its default " +
+							"value for this request.");
+
+			WebResponse response = null;
+
+			Headers ["Content-Type"] = urlEncodedCType;
+			try {
+				MemoryStream tmpStream = new MemoryStream ();
+				foreach (string key in data) {
+					byte [] bytes = Encoding.UTF8.GetBytes (key);
+					UrlEncodeAndWrite (tmpStream, bytes);
+					tmpStream.WriteByte ((byte) '=');
+					bytes = Encoding.UTF8.GetBytes (data [key]);
+					UrlEncodeAndWrite (tmpStream, bytes);
+					tmpStream.WriteByte ((byte) '&');
+				}
+
+				token.ThrowIfCancellationRequested ();
+				
+				int length = (int) tmpStream.Length;
+				if (length > 0)
+					tmpStream.SetLength (--length); // remove trailing '&'
+				
+				byte [] buf = tmpStream.GetBuffer ();
+				request.ContentLength = length;
+				using (Stream rqStream = await request.GetRequestStreamAsync ()) {
+					await rqStream.WriteAsync (buf, 0, length, token);
+				}
+				tmpStream.Close ();
+
+				response = await GetWebResponseTaskAsync (request, token);
+				return await ReadAllTaskAsync (request, response, token);
+			} finally {
+				if (response != null)
+					response.Close ();
+			}
+		}
+
 #endif
 
 	}
