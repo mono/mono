@@ -57,7 +57,7 @@ namespace Mono.Tools.LocaleBuilder
 		public string PercentPositivePattern;
 		public string PercentSymbol = "%";
 		public string PerMilleSymbol = "‰";
-		public string InfinitySymbol = "∞";
+		public string InfinitySymbol = "Infinity";
 		public string PositiveSign = "+";
 		public DigitShapes DigitSubstitution = DigitShapes.None;
 		public string[] NativeDigits = new string[10] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -76,7 +76,7 @@ namespace Mono.Tools.LocaleBuilder
 		{
 			get
 			{
-				return PositiveSign + InfinitySymbol;
+				return InfinitySymbol == "Infinity" ? InfinitySymbol : PositiveSign + InfinitySymbol;
 			}
 		}
 

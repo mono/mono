@@ -1066,7 +1066,11 @@ namespace Mono.Tools.LocaleBuilder
 					ni.NegativeSign = el.InnerText;
 
 				el = node.SelectSingleNode ("infinity");
-				if (el != null) {
+
+				// We cannot use the value from CLDR because many broken
+				// .NET serializers (e.g. JSON) use text value of NegativeInfinity
+				// and different value would break interoperability with .NET
+				if (el != null && el.InnerText != "∞") {
 					ni.InfinitySymbol = el.InnerText;
 				}
 
