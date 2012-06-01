@@ -9,6 +9,11 @@
 
 #define _XOPEN_SOURCE 600
 
+#ifdef PLATFORM_MACOSX
+/* For mincore () */
+#define _DARWIN_C_SOURCE
+#endif
+
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <errno.h>
@@ -106,7 +111,7 @@ Mono_Posix_Syscall_mincore (void *start, mph_size_t length, unsigned char *vec)
 {
 	mph_return_if_size_t_overflow (length);
 
-	return mincore (start, (size_t) length, vec);
+	return mincore (start, (size_t) length, (void*)vec);
 }
 
 #ifdef HAVE_POSIX_MADVISE
