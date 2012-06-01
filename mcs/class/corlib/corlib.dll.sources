@@ -614,6 +614,7 @@ System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
 System.Runtime/TargetedPatchingOptOutAttribute.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs
+System.Runtime.CompilerServices/AsyncStateMachineAttribute.cs
 System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs
 System.Runtime.CompilerServices/AsyncTaskMethodBuilder.cs
 System.Runtime.CompilerServices/AsyncTaskMethodBuilder_T.cs
@@ -663,6 +664,7 @@ System.Runtime.CompilerServices/IsPinned.cs
 System.Runtime.CompilerServices/IsSignUnspecifiedByte.cs
 System.Runtime.CompilerServices/IsUdtReturn.cs
 System.Runtime.CompilerServices/IsVolatile.cs
+System.Runtime.CompilerServices/IteratorStateMachineAttribute.cs
 System.Runtime.CompilerServices/LoadHint.cs
 System.Runtime.CompilerServices/MethodCodeType.cs
 System.Runtime.CompilerServices/MethodImplAttribute.cs
@@ -675,6 +677,7 @@ System.Runtime.CompilerServices/RuntimeWrappedException.cs
 System.Runtime.CompilerServices/SpecialNameAttribute.cs 
 System.Runtime.CompilerServices/ScopelessEnumAttribute.cs
 System.Runtime.CompilerServices/SuppressIldasmAttribute.cs
+System.Runtime.CompilerServices/StateMachineAttribute.cs
 System.Runtime.CompilerServices/StringFreezingAttribute.cs 
 System.Runtime.CompilerServices/UnsafeValueTypeAttribute.cs
 System.Runtime.CompilerServices/TaskAwaiter.cs
