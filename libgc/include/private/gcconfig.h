@@ -326,7 +326,9 @@
 #    define DATASTART ((ptr_t) get_etext())
 #    define DATAEND	((ptr_t) get_end())
 #    define STACKBOTTOM ((ptr_t) pthread_get_stackaddr_np(pthread_self()))
+#ifndef USE_MMAP
 #    define USE_MMAP
+#endif
 #    define USE_MMAP_ANON
 #    define USE_ASM_PUSH_REGS
      /* This is potentially buggy. It needs more testing. See the comments in

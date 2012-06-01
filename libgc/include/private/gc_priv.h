@@ -403,9 +403,9 @@ void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
 #     define ENABLE_SIGNALS()
 #   else
 #     define DISABLE_SIGNALS() GC_disable_signals()
-	void GC_disable_signals();
+	void GC_disable_signals(void);
 #     define ENABLE_SIGNALS() GC_enable_signals()
-	void GC_enable_signals();
+	void GC_enable_signals(void);
 #   endif
 # endif
 
