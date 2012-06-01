@@ -488,6 +488,7 @@ System.Reflection/BindingFlags.cs
 System.Reflection/CallingConventions.cs
 System.Reflection/ConstructorInfo.cs
 System.Reflection/CustomAttributeData.cs
+System.Reflection/CustomAttributeExtensions.cs
 System.Reflection/CustomAttributeFormatException.cs
 System.Reflection/CustomAttributeNamedArgument.cs
 System.Reflection/CustomAttributeTypedArgument.cs
