@@ -956,29 +956,28 @@ namespace System.Windows.Forms
 			 ** the DataSource, in Windows exceptions are eaten
 			 ** when SelectedIndexChanged is fired.  However, when
 			 ** the debugger is running (i.e. in MonoDevelop), we
-			 ** want to be alerted of exceptions.  If you change
-			 ** one path below be sure to change the other.
+			 ** want to be alerted of exceptions.
 			 **/
 
-			if (Debugger.IsAttached){
-				if (DataSource == null || DataManager == null) {
-					SelectedIndex = -1;
-				} 
-				else {
-					SelectedIndex = DataManager.Position;
-				}
+			if (Debugger.IsAttached) {
+				SetSelectedIndex ();
 			} else {
-				try{
-					if (DataSource == null || DataManager == null) {
-						SelectedIndex = -1;
-					} 
-					else {
-						SelectedIndex = DataManager.Position;
-					}
+				try {
+					SetSelectedIndex ();
 				} catch {
 					//ignore exceptions here per 
 					//bug 2234
 				}
+			}
+		}
+
+		private void SetSelectedIndex ()
+		{
+			if (DataSource == null || DataManager == null) {
+				SelectedIndex = -1;
+			} 
+			else {
+				SelectedIndex = DataManager.Position;
 			}
 		}
 
