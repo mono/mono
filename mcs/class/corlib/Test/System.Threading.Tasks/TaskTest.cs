@@ -720,22 +720,22 @@ namespace MonoTests.System.Threading.Tasks
 		public void DoubleWaitTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
-				Console.WriteLine ("run");
 				var evt = new ManualResetEventSlim ();
 				var t = Task.Factory.StartNew (() => evt.Wait (2000));
 				var cntd = new CountdownEvent (2);
+				var cntd2 = new CountdownEvent (2);
 
 				bool r1 = false, r2 = false;
-				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r1 = t.Wait (1000); Console.WriteLine ("out 1 {0}", r1); cntd.Signal (); });
-				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r2 = t.Wait (1000); Console.WriteLine ("out 2 {0}", r2); cntd.Signal (); });
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r1 = t.Wait (1000); cntd2.Signal (); });
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r2 = t.Wait (1000); cntd2.Signal (); });
 
 				cntd.Wait (2000);
-				cntd.Reset ();
+				Thread.Sleep (0);
 				evt.Set ();
-				cntd.Wait (2000);
+				cntd2.Wait (2000);
 				Assert.IsTrue (r1);
 				Assert.IsTrue (r2);
-			}, 5);
+			}, 10);
 		}
 
 		[Test]
