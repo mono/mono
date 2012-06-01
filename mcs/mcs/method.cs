@@ -1213,6 +1213,9 @@ namespace Mono.CSharp {
 					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, Location);
 					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 				}
+
+				if (Compiler.Settings.WriteMetadataOnly)
+					block = null;
 			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0)
@@ -1617,10 +1620,15 @@ namespace Mono.CSharp {
 			
 			Parent.MemberCache.AddMember (spec);
 			
-			// It's here only to report an error
-			if (block != null && block.IsIterator) {
-				member_type = Compiler.BuiltinTypes.Void;
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+			if (block != null) {
+				// It's here only to report an error
+				if (block.IsIterator) {
+					member_type = Compiler.BuiltinTypes.Void;
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+				}
+
+				if (Compiler.Settings.WriteMetadataOnly)
+					block = null;
 			}
 
 			return true;
@@ -1656,14 +1664,14 @@ namespace Mono.CSharp {
 			BlockContext bc = new BlockContext (this, block, Compiler.BuiltinTypes.Void);
 			bc.Set (ResolveContext.Options.ConstructorScope);
 
-			//
-			// If we use a "this (...)" constructor initializer, then
-			// do not emit field initializers, they are initialized in the other constructor
-			//
-			if (!(Initializer is ConstructorThisInitializer))
-				Parent.PartialContainer.ResolveFieldInitializers (bc);
-
 			if (block != null) {
+				//
+				// If we use a "this (...)" constructor initializer, then
+				// do not emit field initializers, they are initialized in the other constructor
+				//
+				if (!(Initializer is ConstructorThisInitializer))
+					Parent.PartialContainer.ResolveFieldInitializers (bc);
+
 				if (!IsStatic) {
 					if (Initializer == null) {
 						if (Parent.PartialContainer.Kind == MemberKind.Struct) {
@@ -2150,6 +2158,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override bool Define ()
+		{
+			base.Define ();
+
+			if (Compiler.Settings.WriteMetadataOnly)
+				block = null;
+
+			return true;
+		}
+
 		public override void Emit()
 		{
 			var base_type = Parent.PartialContainer.BaseType;
@@ -2513,13 +2531,18 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (block != null && block.IsIterator) {
-				//
-				// Current method is turned into automatically generated
-				// wrapper which creates an instance of iterator
-				//
-				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
-				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			if (block != null) {
+				if (block.IsIterator) {
+					//
+					// Current method is turned into automatically generated
+					// wrapper which creates an instance of iterator
+					//
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+				}
+
+				if (Compiler.Settings.WriteMetadataOnly)
+					block = null;
 			}
 
 			// imlicit and explicit operator of same types are not allowed

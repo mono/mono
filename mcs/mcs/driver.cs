@@ -344,7 +344,8 @@ namespace Mono.CSharp
 			tr.Stop (TimeReporter.TimerType.CloseTypes);
 
 			tr.Start (TimeReporter.TimerType.Resouces);
-			assembly.EmbedResources ();
+			if (!settings.WriteMetadataOnly)
+				assembly.EmbedResources ();
 			tr.Stop (TimeReporter.TimerType.Resouces);
 
 			if (Report.Errors > 0)

@@ -362,8 +362,13 @@ namespace Mono.CSharp
 				CheckAbstractAndExtern (block != null);
 				CheckProtectedModifier ();
 
-				if (block != null && block.IsIterator)
-					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+				if (block != null) {
+					if (block.IsIterator)
+						Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+
+					if (Compiler.Settings.WriteMetadataOnly)
+						block = null;
+				}
 
 				return null;
 			}
@@ -906,7 +911,7 @@ namespace Mono.CSharp
 
 			public override void Emit (TypeDefinition parent)
 			{
-				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
+				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 && !Compiler.Settings.WriteMetadataOnly) {
 					block = new ToplevelBlock (Compiler, ParameterInfo, Location) {
 						IsCompilerGenerated = true
 					};
@@ -1193,6 +1198,9 @@ namespace Mono.CSharp
 
 				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
 					return null;
+
+				if (Compiler.Settings.WriteMetadataOnly)
+					block = null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
 

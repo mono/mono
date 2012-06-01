@@ -159,6 +159,8 @@ namespace Mono.CSharp {
 
 		public RuntimeVersion StdLibRuntimeVersion;
 
+		public bool WriteMetadataOnly;
+
 		readonly List<string> conditional_symbols;
 
 		readonly List<SourceFile> source_files;
@@ -670,8 +672,9 @@ namespace Mono.CSharp {
 		{
 			output.WriteLine (
 				"Other flags in the compiler\n" +
-				"   --fatal[=COUNT]    Makes errors after COUNT fatal\n" +
+				"   --fatal[=COUNT]    Makes error after COUNT fatal\n" +
 				"   --lint             Enhanced warnings\n" +
+				"   --metadata-only    Produced assembly will contain metadata only\n" +
 				"   --parse            Only parses the source file\n" +
 				"   --runtime:VERSION  Sets mscorlib.dll metadata version: v1, v2, v4\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
@@ -1423,6 +1426,10 @@ namespace Mono.CSharp {
 			case "--noconfig":
 				report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
 				settings.LoadDefaultReferences = false;
+				return ParseResult.Success;
+
+			case "--metadata-only":
+				settings.WriteMetadataOnly = true;
 				return ParseResult.Success;
 
 			default:
