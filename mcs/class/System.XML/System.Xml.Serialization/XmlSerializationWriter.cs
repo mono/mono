@@ -587,11 +587,7 @@ namespace System.Xml.Serialization
 		protected void WriteNullTagEncoded (string name, string ns)
 		{
 			Writer.WriteStartElement (name, ns);
-#if NET_1_1
 			Writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
-#else
-			Writer.WriteAttributeString ("null", XmlSchema.InstanceNamespace, "1");
-#endif
 			Writer.WriteEndElement ();
 		}
 

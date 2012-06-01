@@ -918,7 +918,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if NET_1_1
 		public static bool SupportsIPv4 
 		{
 			get 
@@ -936,23 +935,6 @@ namespace System.Net.Sockets
 				return ipv6Supported == 1;
 			}
 		}
-#else
-		internal static bool SupportsIPv4 
-		{
-			get 
-			{
-				return true;
-			}
-		}
-
-		internal static bool SupportsIPv6 
-		{
-			get 
-			{
-				return false;
-			}
-		}
-#endif
 
 		internal static void CheckProtocolSupport()
 		{
@@ -973,7 +955,7 @@ namespace System.Net.Sockets
 
 			if(ipv6Supported == -1) 
 			{
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 				SettingsSection config;
 				config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
 				if (config != null)

@@ -150,7 +150,6 @@ public class IPAddressTest
 		Assert.AreEqual ("255.255.255.255", IPAddress.None.ToString (), "#5");
 	}
 
-#if NET_1_1
 	[Test]
 	public void ToStringV6 ()
 	{
@@ -162,7 +161,6 @@ public class IPAddressTest
 			Assert.AreEqual (ipv6AddressList[i*2].ToLower(), addr, "ToStringIPv6 #" + i);
 		}
 	}
-#endif
 
 	[Test]
 	public void IsLoopbackV4 ()
@@ -179,7 +177,6 @@ public class IPAddressTest
 		Assert.IsFalse (IPAddress.IsLoopback (ip), "#4");
 	}
 
-#if NET_1_1
 	[Test]
 	public void IsLoopbackV6 ()
 	{
@@ -218,7 +215,6 @@ public class IPAddressTest
 		for (int i = 0; i < dataIn.Length; i++)
 			Assert.AreEqual (dataOut [i], dataIn [i], "GetAddressBytesV6 #2");
 	}
-#endif
 
 	[Test]
 	public void Address ()
@@ -257,7 +253,6 @@ public class IPAddressTest
 		}
 	}
 
-#if NET_1_1
 	[Test]
 	public void ParseOkV6 ()
 	{
@@ -278,7 +273,6 @@ public class IPAddressTest
 					ip.ToString ().ToLower (), source));
 		}
 	}
-#endif
 
 	[Test]
 	public void ParseWrongV4 ()
@@ -363,22 +357,9 @@ public class IPAddressTest
 	public void Constructor0_Address_4Byte ()
 	{
 		byte[] bytes = new byte[4] { 192, 202, 112, 37 };
-#if NET_2_0
 		IPAddress i = new IPAddress (bytes);
 		Assert.AreEqual (bytes, i.GetAddressBytes (), "#1");
 		Assert.AreEqual ("192.202.112.37", i.ToString (), "#2");
-#else
-		try {
-			new IPAddress (bytes);
-			Assert.Fail ("#1");
-		} catch (ArgumentException ex) {
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-			Assert.IsNotNull (ex.Message, "#3");
-			Assert.AreEqual ("address", ex.Message, "#4");
-			Assert.IsNull (ex.ParamName, "#5");
-			Assert.IsNull (ex.InnerException, "#6");
-		}
-#endif
 	}
 
 	[Test]
@@ -394,14 +375,9 @@ public class IPAddressTest
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 			Assert.IsFalse (ex.Message == "address", ex.Message, "#A5");
 			Assert.IsNotNull (ex.ParamName, "#A6");
 			Assert.AreEqual ("address", ex.ParamName, "#A7");
-#else
-			Assert.AreEqual ("address", ex.Message, "#A5");
-			Assert.IsNull (ex.ParamName, "#A6");
-#endif
 		}
 
 		try {
@@ -411,14 +387,9 @@ public class IPAddressTest
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
-#if NET_2_0
 			Assert.IsFalse (ex.Message == "address", ex.Message, "#B5");
 			Assert.IsNotNull (ex.ParamName, "#B6");
 			Assert.AreEqual ("address", ex.ParamName, "#B7");
-#else
-			Assert.AreEqual ("address", ex.Message, "#B5");
-			Assert.IsNull (ex.ParamName, "#B6");
-#endif
 		}
 
 		try {
@@ -428,14 +399,9 @@ public class IPAddressTest
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
 			Assert.IsNull (ex.InnerException, "#C3");
 			Assert.IsNotNull (ex.Message, "#C4");
-#if NET_2_0
 			Assert.IsFalse (ex.Message == "address", "#C5");
 			Assert.IsNotNull (ex.ParamName, "#C6");
 			Assert.AreEqual ("address", ex.ParamName, "#C7");
-#else
-			Assert.AreEqual ("address", ex.Message, "#C5");
-			Assert.IsNull (ex.ParamName, "#C6");
-#endif
 		}
 	}
 
@@ -467,14 +433,9 @@ public class IPAddressTest
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 			Assert.IsNull (ex.InnerException, "#3");
 			Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 			Assert.IsFalse (ex.Message == "address", "#5");
 			Assert.IsNotNull (ex.ParamName, "#6");
 			Assert.AreEqual ("address", ex.ParamName, "#7");
-#else
-			Assert.AreEqual ("address", ex.Message, "#5");
-			Assert.IsNull (ex.ParamName, "#6");
-#endif
 		}
 	}
 
@@ -492,7 +453,6 @@ public class IPAddressTest
 		}
 	}
 
-#if NET_2_0
 	[Test]
 	public void FromBytes1 ()
 	{
@@ -605,7 +565,6 @@ public class IPAddressTest
 		Assert.IsTrue (IPAddress.Parse ("FF01::1").IsIPv6Multicast, "#2");
 		Assert.IsFalse (IPAddress.Parse ("FE00::1").IsIPv6Multicast, "#3");
 	}
-#endif
 }
 }
 

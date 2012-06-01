@@ -86,15 +86,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
 			// no exception is thrown
 			uri1.LoadXml (doc.DocumentElement);
-#if NET_2_0
 			AssertCrypto.AssertXmlEquals ("invalid", "<RetrievalMethod xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml));
-#elif NET_1_1
-			// note that URI="" is present (unlike a empty Uri)
-			Assert.AreEqual ("<RetrievalMethod URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "invalid");
-#else
-			// Fx 1.0 misnamed the tag name
-			Assert.AreEqual ("<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "invalid");
-#endif
 		}
 	}
 }

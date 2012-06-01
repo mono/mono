@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[Serializable]
 	[Guid("36dcda30-dc3b-4d93-be42-90b2d74c64e7")]
 	public class RegistrationConfig {
@@ -110,5 +109,4 @@ namespace System.EnterpriseServices {
 
 		#endregion
 	}
-#endif
 }

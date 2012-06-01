@@ -31,30 +31,20 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("ecabafd2-7f19-11d2-978e-0000f8757e2a")]
 	public interface IClrObjectFactory
 	{
 		[DispId(1)]
-#if NET_2_0
 		[return:MarshalAs (UnmanagedType.IDispatch)]
-#endif
 		object CreateFromAssembly (string assembly, string type, string mode);
 		[DispId(4)]
-#if NET_2_0
 		[return:MarshalAs (UnmanagedType.IDispatch)]
-#endif
 		object CreateFromMailbox (string Mailbox, string Mode);
 		[DispId(2)]
-#if NET_2_0
 		[return:MarshalAs (UnmanagedType.IDispatch)]
-#endif
 		object CreateFromVroot (string VrootUrl, string Mode);
 		[DispId(3)]
-#if NET_2_0
 		[return:MarshalAs (UnmanagedType.IDispatch)]
-#endif
 		object CreateFromWsdl (string WsdlUrl, string Mode);
 	}
-#endif
 }

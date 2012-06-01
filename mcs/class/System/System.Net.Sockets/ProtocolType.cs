@@ -70,11 +70,9 @@ namespace System.Net.Sockets {
 		/// </summary>
 		Idp = 22,
 
-#if NET_1_1
 		/// <summary>
 		/// </summary>
 		IPv6 = 41,
-#endif
 
 		/// <summary>
 		/// </summary>

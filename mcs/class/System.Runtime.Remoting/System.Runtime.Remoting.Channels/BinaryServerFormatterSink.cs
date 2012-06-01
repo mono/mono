@@ -80,7 +80,6 @@ namespace System.Runtime.Remoting.Channels {
 			}
 		}
 
-#if NET_1_1
 		[ComVisible(false)]
 		public TypeFilterLevel TypeFilterLevel
 		{
@@ -92,7 +91,6 @@ namespace System.Runtime.Remoting.Channels {
 				_binaryCore = new BinaryCore (this, props, BinaryServerFormatterSinkProvider.AllowedProperties);
 			}
 		}
-#endif
 
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
 						  IMessage msg, ITransportHeaders headers, Stream stream)

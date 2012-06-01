@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	public class ComSoapPublishError {
 
 		[MonoTODO]
@@ -46,5 +45,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

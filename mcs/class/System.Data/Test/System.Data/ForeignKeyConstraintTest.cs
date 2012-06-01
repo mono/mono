@@ -209,15 +209,11 @@ namespace MonoTests.System.Data
 			// Create a ForeingKeyConstraint Object using the constructor
                         // ForeignKeyConstraint (string, string, string[], string[], AcceptRejectRule, Rule, Rule);
 			 ForeignKeyConstraint fkc = new ForeignKeyConstraint ("hello world", parentTableName, parentColumnNames, childColumnNames, AcceptRejectRule.Cascade, Rule.Cascade, Rule.Cascade);                                                                                                                            // Assert that the Constraint object does not belong to any table yet
-#if NET_1_1
 			try {
 				DataTable tmp = fkc.Table;
 				Fail ("When table is null, get_Table causes an InvalidOperationException.");
 			} catch (InvalidOperationException) {
 			}
-#else
-                        Assertion.AssertEquals ("#A01 Table should not be set", fkc.Table, null);
-#endif
                                                                                                     
                         Constraint []constraints = new Constraint[3];
                         constraints [0] = new UniqueConstraint (column1);
@@ -302,11 +298,7 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint((DataColumn)null,(DataColumn)null);
 				Fail("Failed to throw ArgumentNullException.");
 			}
-#if NET_1_1
 			catch (NullReferenceException) {}
-#else
-			catch (ArgumentNullException) {}
-#endif
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
@@ -344,13 +336,8 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[1]);
 				Fail("Failed to throw InvalidConstraintException.");
 			}
-#if NET_1_1
 			// tables in different datasets
 			catch (InvalidOperationException) {}
-#else
-			//different dataTypes
-			catch (InvalidConstraintException) {}
-#endif
 
 			// Cannot create a Key from Columns that belong to
 			// different tables.

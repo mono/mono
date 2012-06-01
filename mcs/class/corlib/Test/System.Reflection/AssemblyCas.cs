@@ -104,10 +104,6 @@ namespace MonoCasTests.System.Reflection {
 		public void PartialTrust_PermitOnly_ControlEvidenceFileIOPermission ()
 		{
 			at.Corlib_test ();
-#if NET_2_0
-#elif NET_1_1
-			at.Corlib ();
-#endif
 		}
 
 		[Test]

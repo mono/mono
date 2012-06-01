@@ -62,17 +62,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ImportedFromTypeLib ("Accessibility")]
 
-#if NET_2_0
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: TypeLibVersion (1, 1)]
-	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-#elif NET_1_1
-	[assembly: AssemblyTrademark ("")]
-	[assembly: AssemblyConfiguration ("")]
-	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-	[assembly: TypeLibVersion (1, 10)]
-#elif NET_1_0
-	[assembly: AssemblyTrademark ("")]
-	[assembly: AssemblyConfiguration ("")]
-#endif
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: TypeLibVersion (1, 1)]
+[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

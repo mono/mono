@@ -682,10 +682,8 @@ namespace System.Threading {
 		}
 #endif
 
-#if NET_1_1
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void MemoryBarrier ();
-#endif
 
 #if !MOONLIGHT
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -820,8 +818,6 @@ namespace System.Threading {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern private static ThreadState GetState (InternalThread thread);
 
-#if NET_1_1
-		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern public static byte VolatileRead (ref byte address);
 		
@@ -910,7 +906,6 @@ namespace System.Threading {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern public static void VolatileWrite (ref UIntPtr address, UIntPtr value);
 		
-#endif
 
 		static int CheckStackSize (int maxStackSize)
 		{
@@ -1049,11 +1044,7 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		[Obsolete ("see CompressedStack class")]
-#if NET_1_1
 		public
-#else
-		internal
-#endif
 		CompressedStack GetCompressedStack ()
 		{
 			// Note: returns null if no CompressedStack has been set.
@@ -1069,11 +1060,7 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		[Obsolete ("see CompressedStack class")]
-#if NET_1_1
 		public
-#else
-		internal
-#endif
 		void SetCompressedStack (CompressedStack stack)
 		{
 			ExecutionContext.SecurityContext.CompressedStack = stack;
@@ -1081,7 +1068,6 @@ namespace System.Threading {
 
 #endif
 
-#if NET_1_1
 		void _Thread.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1102,6 +1088,5 @@ namespace System.Threading {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

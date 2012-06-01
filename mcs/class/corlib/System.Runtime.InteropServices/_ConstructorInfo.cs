@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_1_1
-
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -96,4 +94,3 @@ namespace System.Runtime.InteropServices
 		Type ReflectedType {get;}
 	}
 }
-#endif

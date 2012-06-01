@@ -71,18 +71,20 @@ public class StrongNamePublicKeyBlobTest {
 
 		// non standard get hash code - why ???
 		Assert.AreEqual (snpkb2.GetHashCode (), snpkb.GetHashCode (), "GetHashCode-0");
-#if NET_2_0
+
 		// the first 4 bytes has code has been fixed in 2.0 beta 1
-#elif NET_1_1
-		// It seems to be the first four bytes of the public key data
-		// which seems like non sense as all valid public key will have the same header ?
-		Assert.AreEqual (2359296, snpkb.GetHashCode (), "GetHashCode-1");
-		Assert.AreEqual (2359296, snpkb2.GetHashCode (), "GetHashCode-2");
-		Assert.AreEqual (2989, snpkb3.GetHashCode (), "GetHashCode-3");
-		byte[] header = { 0x00, 0x24, 0x00, 0x00 };
-		StrongNamePublicKeyBlob snpkb4 = new StrongNamePublicKeyBlob (header);
-		Assert.AreEqual (2359296, snpkb4.GetHashCode (), "GetHashCode-4");
-#endif
+
+// Historical data:
+// #elif NET_1_1
+// 		// It seems to be the first four bytes of the public key data
+// 		// which seems like non sense as all valid public key will have the same header ?
+// 		Assert.AreEqual (2359296, snpkb.GetHashCode (), "GetHashCode-1");
+// 		Assert.AreEqual (2359296, snpkb2.GetHashCode (), "GetHashCode-2");
+// 		Assert.AreEqual (2989, snpkb3.GetHashCode (), "GetHashCode-3");
+// 		byte[] header = { 0x00, 0x24, 0x00, 0x00 };
+// 		StrongNamePublicKeyBlob snpkb4 = new StrongNamePublicKeyBlob (header);
+// 		Assert.AreEqual (2359296, snpkb4.GetHashCode (), "GetHashCode-4");
+// #endif
 	}
 }
 

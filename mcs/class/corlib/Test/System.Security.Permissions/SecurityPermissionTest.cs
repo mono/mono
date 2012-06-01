@@ -42,9 +42,7 @@ namespace MonoTests.System.Security.Permissions {
 		static SecurityPermissionFlag [] AllFlags = {
 			SecurityPermissionFlag.AllFlags,
 			SecurityPermissionFlag.Assertion,
-#if NET_1_1
 			SecurityPermissionFlag.BindingRedirects,
-#endif
 			SecurityPermissionFlag.ControlAppDomain,
 			SecurityPermissionFlag.ControlDomainPolicy,
 			SecurityPermissionFlag.ControlEvidence,
@@ -62,9 +60,7 @@ namespace MonoTests.System.Security.Permissions {
 		static SecurityPermissionFlag [] AllFlagsExceptNoFlags = {
 			SecurityPermissionFlag.AllFlags,
 			SecurityPermissionFlag.Assertion,
-#if NET_1_1
 			SecurityPermissionFlag.BindingRedirects,
-#endif
 			SecurityPermissionFlag.ControlAppDomain,
 			SecurityPermissionFlag.ControlDomainPolicy,
 			SecurityPermissionFlag.ControlEvidence,
@@ -80,9 +76,7 @@ namespace MonoTests.System.Security.Permissions {
 
 		static SecurityPermissionFlag [] AllFlagsExceptAllFlags = {
 			SecurityPermissionFlag.Assertion,
-#if NET_1_1
 			SecurityPermissionFlag.BindingRedirects,
-#endif
 			SecurityPermissionFlag.ControlAppDomain,
 			SecurityPermissionFlag.ControlDomainPolicy,
 			SecurityPermissionFlag.ControlEvidence,

@@ -34,7 +34,6 @@ using System.Transactions;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[MonoTODO]
 	[ComVisible(false)]
 	public sealed class ServiceConfig {
@@ -265,5 +264,4 @@ namespace System.EnterpriseServices {
 
 		#endregion
 	}
-#endif
 }

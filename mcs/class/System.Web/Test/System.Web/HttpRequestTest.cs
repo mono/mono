@@ -45,7 +45,6 @@ namespace MonoTests.System.Web {
 	[TestFixture]
 	public class HttpRequestTest {
 
-#if NET_1_1
 		[Test]
 		[ExpectedException (typeof (HttpRequestValidationException))]
 		public void ValidateInput_XSS ()
@@ -95,7 +94,6 @@ namespace MonoTests.System.Web {
 			// the next statement throws
 			Assert.AreEqual ("<SCRIPT>alert(document.cookie)</SCRIPT>", request.QueryString ["test"], "QueryString");
 		}
-#endif
 		//
 		// Tests the properties from the simple constructor.
 		[Test]

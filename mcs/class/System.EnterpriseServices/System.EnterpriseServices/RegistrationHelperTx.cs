@@ -70,13 +70,11 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
-#if NET_1_1
 		[MonoTODO]
 		public void InstallAssemblyFromConfig ([MarshalAs(UnmanagedType.IUnknown)] ref RegistrationConfig regConfig, object sync)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public bool IsInTransaction ()
@@ -95,13 +93,11 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
-#if NET_1_1
 		[MonoTODO]
 		public void UninstallAssemblyFromConfig ([MarshalAs(UnmanagedType.IUnknown)] ref RegistrationConfig regConfig, object sync)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		#endregion // Methods
 	}

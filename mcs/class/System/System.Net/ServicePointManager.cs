@@ -114,14 +114,12 @@ namespace System.Net
 		private static bool _checkCRL = false;
 		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
-#if NET_1_1
 #if TARGET_JVM
 		static bool expectContinue = false;
 #else
 		static bool expectContinue = true;
 #endif
 		static bool useNagle;
-#endif
 		static RemoteCertificateValidationCallback server_cert_cb;
 		static bool tcp_keepalive;
 		static int tcp_keepalive_time;
@@ -270,7 +268,6 @@ namespace System.Net
 			}
 		}
 
-#if NET_1_1
 		public static bool Expect100Continue {
 			get { return expectContinue; }
 			set { expectContinue = value; }
@@ -280,7 +277,7 @@ namespace System.Net
 			get { return useNagle; }
 			set { useNagle = value; }
 		}
-#endif
+
 		// Methods
 		public static void SetTcpKeepAlive (bool enabled, int keepAliveTime, int keepAliveInterval)
 		{

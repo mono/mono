@@ -87,37 +87,24 @@ namespace System.Security.Cryptography.Xml
 
 		public override object GetOutput () 
 		{
-#if NET_2_0
 			if (xnl == null)
 				throw new ArgumentNullException ("LoadInnerXml before transformation.");
-#endif
+
 			XmlResolver resolver = GetResolver ();
 
 			XslTransform xsl = new XslTransform ();
 			XmlDocument doc = new XmlDocument ();
-#if NET_1_1
 			doc.XmlResolver = resolver;
-#endif
 			foreach (XmlNode n in xnl)
 				doc.AppendChild (doc.ImportNode (n, true));
-#if NET_1_1
 			xsl.Load (doc, resolver);
-#else
-			xsl.Load (doc);
-#endif
 
 			if (inputDoc == null)
-#if NET_2_0
 				throw new ArgumentNullException ("LoadInput before transformation.");
-#else
-				throw new NullReferenceException ("LoadInput before transformation.");
-#endif
 
 			MemoryStream stream = new MemoryStream ();
 			// only possible output: Stream
-#if NET_1_1
 			xsl.XmlResolver = resolver;
-#endif
 			xsl.Transform (inputDoc, null, stream);
 
 			stream.Seek (0, SeekOrigin.Begin);
@@ -144,9 +131,7 @@ namespace System.Security.Cryptography.Xml
 			Stream s = (obj as Stream);
 			if (s != null) {
 				inputDoc = new XmlDocument ();
-#if NET_1_1
 				inputDoc.XmlResolver = GetResolver ();
-#endif
 //				inputDoc.Load (obj as Stream);
 				inputDoc.Load (new XmlSignatureStreamReader (new StreamReader (s)));
 				return;
@@ -161,9 +146,7 @@ namespace System.Security.Cryptography.Xml
 			XmlNodeList nl = (obj as XmlNodeList);
 			if (nl != null) {
 				inputDoc = new XmlDocument ();
-#if NET_1_1
 				inputDoc.XmlResolver = GetResolver ();
-#endif
 				for (int i = 0; i < nl.Count; i++)
 					inputDoc.AppendChild (inputDoc.ImportNode (nl [i], true));
 			}

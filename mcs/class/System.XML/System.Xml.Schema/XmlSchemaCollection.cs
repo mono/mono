@@ -99,11 +99,7 @@ namespace System.Xml.Schema
 			return Add (ns, reader, new XmlUrlResolver ());
 		}
 
-#if NET_1_1
 		public XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
-#else
-		internal XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
-#endif
 		{
 			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
 			if (schema.TargetNamespace == null)

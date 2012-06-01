@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal {
 
-#if NET_1_1
 	[Guid("1E7BA9F7-21DB-4482-929E-21BDE2DFE51C")]
 	public interface ISoapServerTlb {
 		[DispId(1)]
@@ -63,5 +62,4 @@ namespace System.EnterpriseServices.Internal {
 			[MarshalAs(UnmanagedType.BStr)] string assemblyName,
 			[MarshalAs(UnmanagedType.BStr)] string typeName);
 	}
-#endif
 }

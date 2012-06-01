@@ -29,7 +29,6 @@ using System;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	public class ClientRemotingConfig {
 
 		[MonoTODO]
@@ -45,5 +44,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

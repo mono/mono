@@ -186,11 +186,7 @@ namespace MonoTests.System.Collections
 			SortedList list = new SortedList (1000);
 			list.Capacity = new_capacity;
 
-#if NET_1_1
 			Assert.AreEqual (new_capacity, list.Capacity);
-#else
-			Assert.AreEqual (16, list.Capacity);
-#endif
 		}
 
 		[Test]
@@ -199,9 +195,6 @@ namespace MonoTests.System.Collections
 			SortedList list = new SortedList (42);
 			Assert.AreEqual (42, list.Capacity, "#1");
 			list.Capacity = 0;
-#if !NET_2_0 // no such expectation as it is broken in .NET 2.0
-			Assert.AreEqual (16, list.Capacity, "#2");
-#endif
 		}
 
 		[Test]

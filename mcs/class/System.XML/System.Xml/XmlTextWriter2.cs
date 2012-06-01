@@ -139,13 +139,7 @@ Here are some implementation notes (mostly common to previous module):
 	closing '>' is written).
 
 */
-
-
-#if NET_1_1
 namespace System.Xml
-#else
-namespace Mono.Xml
-#endif
 {
 	public class XmlTextWriter : XmlWriter
 	{
@@ -268,7 +262,6 @@ namespace Mono.Xml
 			allow_doc_fragment = true;
 		}
 
-#if NET_2_0
 		internal XmlTextWriter (
 			TextWriter writer, XmlWriterSettings settings, bool closeOutput)
 		{
@@ -312,7 +305,6 @@ namespace Mono.Xml
 			check_character_validity = settings.CheckCharacters;
 			namespace_handling = settings.NamespaceHandling;
 		}
-#endif
 
 		void Initialize (TextWriter writer)
 		{
@@ -336,7 +328,6 @@ namespace Mono.Xml
 				new char [] {'"', '&', '<', '>' };
 		}
 
-#if NET_2_0
 		// 2.0 XmlWriterSettings support
 
 		// As for ConformanceLevel, MS.NET is inconsistent with
@@ -344,8 +335,6 @@ namespace Mono.Xml
 		// is set as .Auto, multiple WriteStartDocument() calls
 		// result in an error.
 		// ms-help://MS.NETFramework.v20.en/wd_xml/html/7db8802b-53d8-4735-a637-4d2d2158d643.htm
-
-#endif
 
 		// Literal Output Control
 
@@ -432,17 +421,12 @@ namespace Mono.Xml
 
 		public override void Close ()
 		{
-#if NET_2_0
 			if (state != WriteState.Error) {
-#endif
 				if (state == WriteState.Attribute)
 					WriteEndAttribute ();
 				while (open_count > 0)
 					WriteEndElement ();
-#if NET_2_0
 			}
-#endif
-
 			if (close_output_stream)
 				writer.Close ();
 			else
@@ -517,9 +501,7 @@ namespace Mono.Xml
 		public override void WriteEndDocument ()
 		{
 			switch (state) {
-#if NET_2_0
 			case WriteState.Error:
-#endif
 			case WriteState.Closed:
 			case WriteState.Start:
 				throw StateError ("EndDocument");
@@ -589,11 +571,7 @@ namespace Mono.Xml
 		public override void WriteStartElement (
 			string prefix, string localName, string namespaceUri)
 		{
-#if NET_2_0
 			if (state == WriteState.Error || state == WriteState.Closed)
-#else
-			if (state == WriteState.Closed)
-#endif
 				throw StateError ("StartTag");
 			node_state = XmlNodeType.Element;
 
@@ -765,11 +743,7 @@ namespace Mono.Xml
 
 		void WriteEndElementCore (bool full)
 		{
-#if NET_2_0
 			if (state == WriteState.Error || state == WriteState.Closed)
-#else
-			if (state == WriteState.Closed)
-#endif
 				throw StateError ("EndElement");
 			if (open_count == 0)
 				throw InvalidOperation ("There is no more open element.");
@@ -1309,9 +1283,7 @@ namespace Mono.Xml
 		void ShiftStateTopLevel (string occured, bool allowAttribute, bool dontCheckXmlDecl, bool isCharacter)
 		{
 			switch (state) {
-#if NET_2_0
 			case WriteState.Error:
-#endif
 			case WriteState.Closed:
 				throw StateError (occured);
 			case WriteState.Start:
@@ -1350,9 +1322,7 @@ namespace Mono.Xml
 		void ShiftStateContent (string occured, bool allowAttribute)
 		{
 			switch (state) {
-#if NET_2_0
 			case WriteState.Error:
-#endif
 			case WriteState.Closed:
 					throw StateError (occured);
 			case WriteState.Prolog:
@@ -1505,25 +1475,19 @@ namespace Mono.Xml
 
 		Exception ArgumentOutOfRangeError (string name)
 		{
-#if NET_2_0
 			state = WriteState.Error;
-#endif
 			return new ArgumentOutOfRangeException (name);
 		}
 
 		Exception ArgumentError (string msg)
 		{
-#if NET_2_0
 			state = WriteState.Error;
-#endif
 			return new ArgumentException (msg);
 		}
 
 		Exception InvalidOperation (string msg)
 		{
-#if NET_2_0
 			state = WriteState.Error;
-#endif
 			return new InvalidOperationException (msg);
 		}
 

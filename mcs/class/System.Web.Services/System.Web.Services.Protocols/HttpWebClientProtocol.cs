@@ -50,9 +50,7 @@ namespace System.Web.Services.Protocols {
 		IWebProxy proxy;
 		string userAgent;
 		
-#if NET_1_1
 		bool _unsafeAuthenticated;
-#endif
 		#endregion
 
 		#region Constructors
@@ -111,26 +109,20 @@ namespace System.Web.Services.Protocols {
 		}
 
 		[WebServicesDescription ("Sets the user agent http header for the request.")]
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public string UserAgent {
 			get { return userAgent; }
 			set { userAgent = value; }
 		}
 		
-#if NET_1_1
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public bool UnsafeAuthenticatedConnectionSharing
 		{
 			get { return _unsafeAuthenticated; }
 			set { _unsafeAuthenticated = value; }
 		}
-#endif
 
 		#endregion // Properties
 
@@ -162,10 +154,8 @@ namespace System.Web.Services.Protocols {
 			HttpWebRequest request = req as HttpWebRequest;
 			if (request == null)
 				return req;
-#if NET_2_0
 			if (enableDecompression)
 				request.AutomaticDecompression = DecompressionMethods.GZip;
-#endif
 
 			request.AllowAutoRedirect = allowAutoRedirect;
 			if (clientCertificates != null)
@@ -176,10 +166,6 @@ namespace System.Web.Services.Protocols {
 				request.Proxy = proxy;
 
 			request.UserAgent = userAgent;
-
-#if NET_1_1
-		//	request.UnsafeAuthenticatedConnectionSharing = _unsafeAuthenticated;
-#endif
 
 			return request;
 		}

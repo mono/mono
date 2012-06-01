@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("5F9A955F-AA55-4127-A32B-33496AA8A44E")]
 	public sealed class SoapUtility : ISoapUtility {
 
@@ -60,5 +59,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

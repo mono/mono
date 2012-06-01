@@ -43,9 +43,7 @@ namespace System.Runtime.Remoting.Channels
 		bool _strictBinding = false;
 		IDictionary _properties;
 		
-#if NET_1_1
 		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
-#endif
 		
 		public static BinaryCore DefaultInstance = new BinaryCore ();
 		
@@ -74,7 +72,6 @@ namespace System.Runtime.Remoting.Channels
 						_strictBinding = Convert.ToBoolean (property.Value);
 						break;
 						
-#if NET_1_1
 					case "typeFilterLevel":
 						if (property.Value is TypeFilterLevel)
 							_filterLevel = (TypeFilterLevel) property.Value;
@@ -83,7 +80,6 @@ namespace System.Runtime.Remoting.Channels
 							_filterLevel = (TypeFilterLevel) Enum.Parse (typeof(TypeFilterLevel), s);
 						}
 						break;
-#endif
 						
 				}
 			}
@@ -110,10 +106,8 @@ namespace System.Runtime.Remoting.Channels
 			_deserializationFormatter = (BinaryFormatter) vmw.@internal.remoting.BinaryFormatterUtils.CreateBinaryFormatter (null, context, false);
 #endif
 			
-#if NET_1_1
 			_serializationFormatter.FilterLevel = _filterLevel;
 			_deserializationFormatter.FilterLevel = _filterLevel;
-#endif
 			
 			if (!_includeVersions)
 			{
@@ -143,12 +137,10 @@ namespace System.Runtime.Remoting.Channels
 			get { return _properties; }
 		}
 		
-#if NET_1_1
 		public TypeFilterLevel TypeFilterLevel
 		{
 			get { return _filterLevel; }
 		}
-#endif
 	}
 }
 

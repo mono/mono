@@ -1049,7 +1049,6 @@ public class RSACryptoServiceProviderTest {
 		Assert.IsTrue ((original != newKeyPair), "Key Pair Deleted");
 	}
 
-#if NET_1_1
 	[Test]
 	public void UseMachineKeyStore_Default ()
 	{
@@ -1086,7 +1085,6 @@ public class RSACryptoServiceProviderTest {
 		catch (UnauthorizedAccessException) {
 		}
 	}
-#endif
 
 	[Test]
 	public void PKCS1 () 

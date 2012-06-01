@@ -49,9 +49,7 @@ namespace System.Web.Services.Protocols {
 		object[] inParameters;
 		object[] outParameters;
 		
-#if NET_2_0
 		SoapProtocolVersion soapVersion;
-#endif
 
 		#endregion // Fields
 
@@ -97,9 +95,7 @@ namespace System.Web.Services.Protocols {
 
 		public SoapException Exception {
 			get { return exception; }
-#if NET_2_0
 			set { exception = value; }
-#endif
 		}
 
 		public SoapHeaderCollection Headers {
@@ -133,37 +129,23 @@ namespace System.Web.Services.Protocols {
 			get;
 		}
 		
-#if NET_1_1
 		public string ContentEncoding
 		{
 			get { return content_encoding; }
 			set { content_encoding = value; }
 		}
-#else
-		internal string ContentEncoding
-		{
-			get { return content_encoding; }
-			set { content_encoding = value; }
-		}
-#endif
 
 		internal bool IsSoap12 {
 			get {
-#if NET_2_0
 				return SoapVersion == SoapProtocolVersion.Soap12;
-#else
-				return false;
-#endif
 			}
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		[DefaultValue (SoapProtocolVersion.Default)]
 		public virtual SoapProtocolVersion SoapVersion {
 			get { return soapVersion; }
 		}
-#endif
  
 		internal Stream InternalStream 
 		{ 

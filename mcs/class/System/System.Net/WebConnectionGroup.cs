@@ -115,13 +115,12 @@ namespace System.Net
 				cnc_cred.Password != req_cred.Password) {
 				needs_reset = true;
 			}
-#if NET_1_1
+
 			if (!needs_reset) {
 				bool req_sharing = request.UnsafeAuthenticatedConnectionSharing;
 				bool cnc_sharing = cnc.UnsafeAuthenticatedConnectionSharing;
 				needs_reset = (req_sharing == false || req_sharing != cnc_sharing);
 			}
-#endif
 			if (needs_reset) {
 				cnc.Close (false); // closes the authenticated connection
 				cnc.ResetNtlm ();

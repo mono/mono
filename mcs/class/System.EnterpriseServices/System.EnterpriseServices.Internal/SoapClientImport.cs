@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("346D5B9F-45E1-45c0-AADF-1B7D221E9063")]
 	public sealed class SoapClientImport : ISoapClientImport {
 
@@ -49,5 +48,4 @@ namespace System.EnterpriseServices.Internal
 
 
 	}
-#endif
 }

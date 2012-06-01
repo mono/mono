@@ -68,7 +68,6 @@ namespace System.Runtime.Remoting.Channels
 			}
 		}
 
-#if NET_1_1
 		[ComVisible(false)]
 		public TypeFilterLevel TypeFilterLevel
 		{
@@ -80,7 +79,6 @@ namespace System.Runtime.Remoting.Channels
 				_binaryCore = new BinaryCore (this, props, AllowedProperties);
 			}
 		}
-#endif
 
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{

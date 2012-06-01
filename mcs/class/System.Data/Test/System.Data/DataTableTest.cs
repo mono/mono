@@ -899,7 +899,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Error#1", (table.GetErrors ())[0].RowError, "#A02");
 		}
 
-#if NET_2_0
 		[Test]
 		public void NewRowAddedTest ()
 		{
@@ -924,7 +923,6 @@ namespace MonoTests.System.Data
 
 			Assert.IsTrue (_tableNewRowAddedEventFired, "#NewRowAdded Event #01");
 		}
-#endif
 
 		[Test]
 		public void CloneCopyTest ()
@@ -983,11 +981,6 @@ namespace MonoTests.System.Data
 			DataColumn[] colArray = {table.Columns[0]};
 			table.PrimaryKey = colArray;
 			table.ExtendedProperties.Add ("TimeStamp", DateTime.Now);
-#if NET_1_1 // This prevents further tests after .NET 1.1.
-#else
-			CultureInfo cultureInfo = new CultureInfo ("en-gb");
-			table.Locale = cultureInfo;
-#endif
 
 			row = table1.NewRow ();
 			row ["Name"] = "Abc";
@@ -1012,10 +1005,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Id / Name + (Id * Id)", cloneTable.DisplayExpression, "#A06");
 			Assert.AreEqual (1, cloneTable.ExtendedProperties.Count, "#A07");
 			Assert.IsFalse (cloneTable.HasErrors, "#A08");
-#if NET_1_1
-#else
-			Assert.AreEqual (2057, cloneTable.Locale.LCID, "#A09");
-#endif
 			Assert.AreEqual (100, cloneTable.MinimumCapacity, "#A10");
 			Assert.AreEqual ("Namespace#1", cloneTable.Namespace, "#A11");
 			Assert.AreEqual ("PrefixNo:1", cloneTable.Prefix, "#A12");
@@ -1033,10 +1022,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Id / Name + (Id * Id)", copyTable.DisplayExpression, "#A21");
 			Assert.AreEqual (1, copyTable.ExtendedProperties.Count, "#A22");
 			Assert.IsTrue (copyTable.HasErrors, "#A23");
-#if NET_1_1
-#else
-			Assert.AreEqual (2057, copyTable.Locale.LCID, "#A24");
-#endif
 			Assert.AreEqual (100, copyTable.MinimumCapacity, "#A25");
 			Assert.AreEqual ("Namespace#1", copyTable.Namespace, "#A26");
 			Assert.AreEqual ("PrefixNo:1", copyTable.Prefix, "#A27");
@@ -1446,11 +1431,7 @@ namespace MonoTests.System.Data
 			// clear test
 			table.Clear ();
 			Assert.AreEqual (0, table.Rows.Count, "#A08");
-#if NET_1_1
 			Assert.AreEqual (0, table.Constraints.Count, "#A09");
-#else
-			Assert.AreEqual (1, table.Constraints.Count, "#A09");
-#endif
 			Assert.AreEqual (0, table.ChildRelations.Count, "#A10");
 		}
 
@@ -1469,18 +1450,14 @@ namespace MonoTests.System.Data
 			table.Rows.Add (new object [] { 4, "mono 4" });
 
 			table.AcceptChanges ();
-#if NET_2_0
 			_tableClearedEventFired = false;
 			table.TableCleared += new DataTableClearEventHandler (OnTableCleared);
 			_tableClearingEventFired = false;
 			table.TableClearing += new DataTableClearEventHandler (OnTableClearing);
-#endif // NET_2_0
 
 			table.Clear ();
-#if NET_2_0
 			Assert.IsTrue (_tableClearingEventFired, "#3 should have fired cleared event");
 			Assert.IsTrue (_tableClearedEventFired, "#0 should have fired cleared event");
-#endif // NET_2_0
 
 			DataRow r = table.Rows.Find (1);
 			Assert.IsTrue (r == null, "#1 should have cleared");
@@ -1490,7 +1467,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, table.Rows.Count, "#2 should add row");
 		}
 
-#if NET_2_0
 		private bool _tableClearedEventFired;
 		private void OnTableCleared (object src, DataTableClearEventArgs args)
 		{
@@ -1508,9 +1484,7 @@ namespace MonoTests.System.Data
 		{
 			_tableNewRowAddedEventFired = true;
 		}
-#endif // NET_2_0
 
-#if NET_2_0
 		[Test]
 		public void TestWriteXmlSchema1 ()
 		{
@@ -1852,7 +1826,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("  </xs:element>", substring, "test#32");
 			Assert.AreEqual ("</xs:schema>", TextString, "test#33");
 		}
-#endif
 
 		[Test]
 		public void Serialize ()
@@ -2032,7 +2005,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, dt.Rows.Count);
 		}
 
-#if NET_2_0
 		private bool tableInitialized;
 		[Test]
 		public void TableInitializedEventTest1 ()
@@ -2093,7 +2065,6 @@ namespace MonoTests.System.Data
 		{
 			tableInitialized = true;
 		}
-#endif
 
 		public void OnRowChanging (object src, DataRowChangeEventArgs args)
 		{
@@ -2105,7 +2076,6 @@ namespace MonoTests.System.Data
 			rowActionChanged = args.Action;
 		}
 
-#if NET_2_0
 		private DataTable dt;
 		private void localSetup () {
 			dt = new DataTable ("test");
@@ -4160,7 +4130,6 @@ namespace MonoTests.System.Data
 
 		#endregion // Read/Write XML Tests
 
-#endif // NET_2_0
 	}
 
 	public  class MyDataTable : DataTable

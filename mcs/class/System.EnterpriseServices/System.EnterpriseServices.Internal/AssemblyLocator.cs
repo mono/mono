@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("458aa3b5-265a-4b75-bc05-9bea4630cf18")]
 	public class AssemblyLocator : MarshalByRefObject {
 
@@ -41,5 +40,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

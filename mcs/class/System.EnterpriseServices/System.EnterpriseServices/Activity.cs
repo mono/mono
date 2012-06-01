@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[ComVisible(false)]
 	public sealed class Activity {
 
@@ -73,5 +72,4 @@ namespace System.EnterpriseServices {
 
 		#endregion
 	}
-#endif
 }
