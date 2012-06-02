@@ -36,6 +36,10 @@ using System.Net.Sockets;
 using System.Security.Principal;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net.NetworkInformation {
 	[MonoTODO ("IPv6 support is missing")]
@@ -76,6 +80,9 @@ namespace System.Net.NetworkInformation {
 
 		BackgroundWorker worker;
 		object user_async_state;
+#if NET_4_5
+		CancellationTokenSource cts;
+#endif
 		
 		public event PingCompletedEventHandler PingCompleted;
 		
@@ -147,6 +154,9 @@ namespace System.Net.NetworkInformation {
 				PingCompleted (this, e);
 			user_async_state = null;
 			worker = null;
+#if NET_4_5
+			cts = null;
+#endif
 		}
 
 		// Sync
@@ -360,8 +370,13 @@ namespace System.Net.NetworkInformation {
 
 		public void SendAsync (IPAddress address, int timeout, byte [] buffer, PingOptions options, object userToken)
 		{
+#if NET_4_5
+			if ((worker != null) || (cts != null))
+				throw new InvalidOperationException ("Another SendAsync operation is in progress");
+#else
 			if (worker != null)
 				throw new InvalidOperationException ("Another SendAsync operation is in progress");
+#endif
 
 			worker = new BackgroundWorker ();
 			worker.DoWork += delegate (object o, DoWorkEventArgs ea) {
@@ -384,6 +399,13 @@ namespace System.Net.NetworkInformation {
 
 		public void SendAsyncCancel ()
 		{
+#if NET_4_5
+			if (cts != null) {
+				cts.Cancel ();
+				return;
+			}
+#endif
+
 			if (worker == null)
 				throw new InvalidOperationException ("SendAsync operation is not in progress");
 			worker.CancelAsync ();
@@ -523,6 +545,63 @@ namespace System.Net.NetworkInformation {
 			return args.ToString ();
 		}
 
+#if NET_4_5
+		public Task<PingReply> SendPingAsync (IPAddress address, int timeout, byte [] buffer)
+		{
+			return SendPingAsync (address, default_timeout, default_buffer, new PingOptions ());
+		}
+
+		public Task<PingReply> SendPingAsync (IPAddress address, int timeout)
+		{
+			return SendPingAsync (address, default_timeout, default_buffer);
+		}
+
+		public Task<PingReply> SendPingAsync (IPAddress address)
+		{
+			return SendPingAsync (address, default_timeout);
+		}
+
+		public Task<PingReply> SendPingAsync (string hostNameOrAddress, int timeout, byte [] buffer)
+		{
+			return SendPingAsync (hostNameOrAddress, timeout, buffer, new PingOptions ());
+		}
+
+		public Task<PingReply> SendPingAsync (string hostNameOrAddress, int timeout, byte [] buffer, PingOptions options)
+		{
+			IPAddress address = Dns.GetHostEntry (hostNameOrAddress).AddressList [0];
+			return SendPingAsync (address, timeout, buffer, options);
+		}
+
+		public Task<PingReply> SendPingAsync (string hostNameOrAddress, int timeout)
+		{
+			return SendPingAsync (hostNameOrAddress, timeout, default_buffer);
+		}
+
+		public Task<PingReply> SendPingAsync (string hostNameOrAddress)
+		{
+			return SendPingAsync (hostNameOrAddress, default_timeout);
+		}
+
+		public Task<PingReply> SendPingAsync (IPAddress address, int timeout, byte [] buffer, PingOptions options)
+		{
+			if ((worker != null) || (cts != null))
+				throw new InvalidOperationException ("Another SendAsync operation is in progress");
+
+			var task = Task<PingReply>.Factory.StartNew (
+				() => Send (address, timeout, buffer, options), cts.Token);
+
+			task.ContinueWith ((t) => {
+				if (t.IsCanceled)
+					OnPingCompleted (new PingCompletedEventArgs (null, true, null, null));
+				else if (t.IsFaulted)
+					OnPingCompleted (new PingCompletedEventArgs (t.Exception, false, null, null));
+				else
+					OnPingCompleted (new PingCompletedEventArgs (null, false, null, t.Result));
+			});
+
+			return task;
+		}
+#endif
 	}
 }
 
