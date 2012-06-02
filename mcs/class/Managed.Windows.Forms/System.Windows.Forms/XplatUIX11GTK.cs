@@ -1200,9 +1200,9 @@ namespace System.Windows.Forms {
 			
 			if (pending == 0) {
 				int id=Thread.CurrentThread.ManagedThreadId;
-				if (Idle_Threads!=null && Idle_Threads.ContainsKey(id) && !(Idle_Threads[id] as IdleThreadHandler).IsNull()){
+				if (Idle_Threads!=null && Idle_Threads.ContainsKey(id) && Idle_Threads[id]!=null){
 				{
-					(Idle_Threads[id] as IdleThreadHandler).CallIdle(this,EventArgs.Empty);
+					Idle_Threads[id](this,EventArgs.Empty);
 				}
 				
 				lock (XlibLock) {

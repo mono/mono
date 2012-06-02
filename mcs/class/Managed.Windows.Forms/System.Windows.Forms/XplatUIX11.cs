@@ -1698,9 +1698,9 @@ namespace System.Windows.Forms {
 
 			if (pending == 0 && allowIdle) {
 				int id=Thread.CurrentThread.ManagedThreadId;
-				if ((queue == null || queue.DispatchIdle) && Idle_Threads!=null && Idle_Threads.ContainsKey(id) && !(Idle_Threads[id] as IdleThreadHandler).IsNull()) 
+				if ((queue == null || queue.DispatchIdle) && Idle_Threads!=null && Idle_Threads.ContainsKey(id) && Idle_Threads[id]!=null) 
 				{
-					(Idle_Threads[id] as IdleThreadHandler).CallIdle(this,EventArgs.Empty);
+					Idle_Threads[id](this,EventArgs.Empty);
 	
 				}
 
@@ -2598,9 +2598,9 @@ namespace System.Windows.Forms {
 		internal override void RaiseIdle (EventArgs e)
 		{
 			int id=Thread.CurrentThread.ManagedThreadId;
-			if (Idle_Threads!=null && Idle_Threads.ContainsKey(id) && !(Idle_Threads[id] as IdleThreadHandler).IsNull()) 
+			if (Idle_Threads!=null && Idle_Threads.ContainsKey(id) && Idle_Threads[id]!=null) 
 			{
-				(Idle_Threads[id] as IdleThreadHandler).CallIdle(this,e);
+				Idle_Threads[id](this,e);
 			}
 		}
 		
