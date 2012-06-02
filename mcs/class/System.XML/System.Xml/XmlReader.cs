@@ -240,7 +240,15 @@ namespace System.Xml
 
 		#region Methods
 
+#if NET_4_5
+		public virtual void Close ()
+		{
+			if (asyncRunning)
+				throw new InvalidOperationException ("An asynchronous operation is already in progress.");
+		}
+#else
 		public abstract void Close ();
+#endif
 
 #if NET_2_0
 		private static XmlNameTable PopulateNameTable (
@@ -987,6 +995,13 @@ namespace System.Xml
 		{
 			return ReadContentAs (ValueType, null);
 		}
+
+#if NET_4_5
+		public virtual DateTimeOffset ReadContentAsDateTimeOffset ()
+		{
+			return XmlConvert.ToDateTimeOffset (ReadContentString ());
+		}
+#endif
 
 		public virtual object ReadElementContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver)
 		{

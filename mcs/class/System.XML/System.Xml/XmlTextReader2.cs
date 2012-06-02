@@ -254,9 +254,11 @@ namespace System.Xml
 			get { return entity != null ? ReadState.Interactive : source.ReadState; }
 		}
 
+#if !NET_4_5
 		public override XmlReaderSettings Settings {
 			get { return base.Settings; }
 		}
+#endif
 
 		public override string Value {
 			get { return Current.Value; }
