@@ -1697,8 +1697,11 @@ namespace System.Windows.Forms {
 			}
 
 			if (pending == 0 && allowIdle) {
-				if ((queue == null || queue.DispatchIdle) && Idle != null) {
-					Idle (this, EventArgs.Empty);
+				int id=Thread.CurrentThread.ManagedThreadId;
+				if ((queue == null || queue.DispatchIdle) && Idle_Threads!=null && Idle_Threads.ContainsKey(id) && !(Idle_Threads[id] as IdleThreadHandler).IsNull()) 
+				{
+					(Idle_Threads[id] as IdleThreadHandler).CallIdle(this,EventArgs.Empty);
+	
 				}
 
 				lock (XlibLock) {
@@ -2594,8 +2597,11 @@ namespace System.Windows.Forms {
 		#region Public Static Methods
 		internal override void RaiseIdle (EventArgs e)
 		{
-			if (Idle != null)
-				Idle (this, e);
+			int id=Thread.CurrentThread.ManagedThreadId;
+			if (Idle_Threads!=null && Idle_Threads.ContainsKey(id) && !(Idle_Threads[id] as IdleThreadHandler).IsNull()) 
+			{
+				(Idle_Threads[id] as IdleThreadHandler).CallIdle(this,e);
+			}
 		}
 		
 		internal override IntPtr InitializeDriver()
@@ -6350,7 +6356,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 
 		#region Events
-		internal override event EventHandler Idle;
 		#endregion	// Events
 
 		
