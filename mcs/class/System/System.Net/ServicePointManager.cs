@@ -138,7 +138,7 @@ namespace System.Net
 		static ServicePointManager ()
 		{
 #if !NET_2_1
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection (configKey);
 			ConnectionManagementSection s = cfg as ConnectionManagementSection;
 			if (s != null) {
@@ -164,9 +164,7 @@ namespace System.Net
 		
 		// Properties
 		
-#if NET_2_0
 		[Obsolete ("Use ServerCertificateValidationCallback instead", false)]
-#endif
 		public static ICertificatePolicy CertificatePolicy {
 			get { return policy; }
 			set { policy = value; }
@@ -194,7 +192,6 @@ namespace System.Net
 			}
 		}
 
-#if NET_2_0
 		static Exception GetMustImplement ()
 		{
 			return new NotImplementedException ();
@@ -221,7 +218,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 		
 		public static int MaxServicePointIdleTime {
 			get { 
@@ -407,7 +403,7 @@ namespace System.Net
 				return new ValidationResult (true, false, 0);
 			}
 		}
-#elif NET_2_0 && SECURITY_DEP
+#elif SECURITY_DEP
 		internal class ChainValidationHelper {
 			object sender;
 			string host;

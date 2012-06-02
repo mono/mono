@@ -760,7 +760,6 @@ namespace System.Diagnostics
 			}
 		}
 
-#if NET_2_0
 		public override OverflowAction OverflowAction {
 			get { throw new NotImplementedException (); }
 		}
@@ -783,7 +782,6 @@ namespace System.Diagnostics
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		private class PInvoke
 		{

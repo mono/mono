@@ -38,9 +38,7 @@ namespace System.Diagnostics
 	{
 		private string categoryName;
 		private string machineName;
-#if NET_2_0
 		private PerformanceCounterCategoryType type = PerformanceCounterCategoryType.Unknown;
-#endif		
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool CategoryDelete (string name);
@@ -131,13 +129,11 @@ namespace System.Diagnostics
 			}
 		}
 
-#if NET_2_0
 		public PerformanceCounterCategoryType CategoryType {
 			get {
 				return type;
 			}
 		}
-#endif
 
 		public bool CounterExists (string counterName)
 		{
@@ -161,9 +157,7 @@ namespace System.Diagnostics
 			return CounterCategoryExists (counterName, categoryName, machineName);
 		}
 
-#if NET_2_0
 		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
-#endif
 		public static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
@@ -173,9 +167,7 @@ namespace System.Diagnostics
 				PerformanceCounterCategoryType.Unknown, counterData);
 		}
 
-#if NET_2_0
 		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
-#endif
 		public static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
@@ -186,10 +178,7 @@ namespace System.Diagnostics
 				PerformanceCounterCategoryType.Unknown, counterName, counterHelp);
 		}
 
-#if NET_2_0
-		public
-#endif
-		static PerformanceCounterCategory Create (
+		public static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
 			PerformanceCounterCategoryType categoryType,
@@ -207,10 +196,7 @@ namespace System.Diagnostics
 			return new PerformanceCounterCategory (categoryName, categoryHelp);
 		}
 
-#if NET_2_0
-		public
-#endif
-		static PerformanceCounterCategory Create (
+		public static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
 			PerformanceCounterCategoryType categoryType,

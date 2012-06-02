@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 // SP1
-
 namespace System.ComponentModel
 {
 	public class PropertyChangingEventArgs : EventArgs
@@ -47,4 +45,3 @@ namespace System.ComponentModel
 	}
 }
 
-#endif

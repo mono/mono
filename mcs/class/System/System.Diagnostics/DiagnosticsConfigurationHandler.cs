@@ -82,9 +82,7 @@ namespace System.Diagnostics
 		}
 	}
 #if (XML_DEP)
-#if NET_2_0
 	[Obsolete ("This class is obsoleted")]
-#endif
 	public class DiagnosticsConfigurationHandler : IConfigurationSectionHandler
 	{
 		TraceImplSettings configValues;
@@ -98,9 +96,7 @@ namespace System.Diagnostics
 			elementHandlers ["assert"] = new ElementHandler (AddAssertNode);
 			elementHandlers ["switches"] = new ElementHandler (AddSwitchesNode);
 			elementHandlers ["trace"] = new ElementHandler (AddTraceNode);
-#if NET_2_0
 			elementHandlers ["sources"] = new ElementHandler (AddSourcesNode);
-#endif
 		}
 
 		public virtual object Create (object parent, object configContext, XmlNode section)
@@ -116,7 +112,6 @@ namespace System.Diagnostics
 			else
 				d.Add (TraceImplSettings.Key, configValues = new TraceImplSettings ());
 
-#if NET_2_0
 			// process <sharedListeners> first
 			foreach (XmlNode child in section.ChildNodes) {
 				switch (child.NodeType) {
@@ -127,7 +122,6 @@ namespace System.Diagnostics
 					break;
 				}
 			}
-#endif
 
 			foreach (XmlNode child in section.ChildNodes) {
 				XmlNodeType type = child.NodeType;
@@ -138,10 +132,8 @@ namespace System.Diagnostics
 				case XmlNodeType.Comment:
 					continue;
 				case XmlNodeType.Element:
-#if NET_2_0
 					if (child.LocalName == "sharedListeners")
 						continue;
-#endif
 					ElementHandler eh = (ElementHandler) elementHandlers [child.Name];
 					if (eh != null)
 						eh (d, child);
@@ -237,18 +229,7 @@ namespace System.Diagnostics
 
 		private static object GetSwitchValue (string name, string value)
 		{
-#if NET_2_0
 			return value;
-#else
-			try {
-				return int.Parse (value);
-			} catch {
-				throw new ConfigurationException (string.Format (
-					"Error in trace switch '{0}': " + 
-					"The value of a switch must be integral",
-					name));
-			}
-#endif
 		}
 
 		private void AddTraceNode (IDictionary d, XmlNode node)
@@ -302,7 +283,6 @@ namespace System.Diagnostics
 			}
 		}
 
-#if NET_2_0
 		private TraceListenerCollection GetSharedListeners (IDictionary d)
 		{
 			TraceListenerCollection shared_listeners = d ["sharedListeners"] as TraceListenerCollection;
@@ -382,7 +362,6 @@ namespace System.Diagnostics
 					ThrowUnrecognizedNode (child);
 			}
 		}
-#endif
 
 		// only defines "add" and "remove", but "clear" also works
 		// for add, "name" is required; initializeData is optional; "type" is required in 1.x, optional in 2.0.
@@ -427,7 +406,7 @@ namespace System.Diagnostics
 			string name = GetAttribute (attributes, "name", true, child);
 			string type = null;
 
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 			type = GetAttribute (attributes, "type", false, child);
 			if (type == null) {
 				// indicated by name.
@@ -473,7 +452,7 @@ namespace System.Diagnostics
 			TraceListener l = (TraceListener) ctor.Invoke (args);
 			l.Name = name;
 
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 			string trace = GetAttribute (attributes, "traceOutputOptions", false, child);
 			if (trace != null) {
 				if (trace != trace.Trim ())

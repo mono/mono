@@ -36,9 +36,7 @@ namespace System.Diagnostics
 {
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("73386977-D6FD-11D2-BED5-00C04F79E3AE")]
-#if NET_2_0
 	[ComImport]
-#endif
 	public interface ICollectData {
 		void CloseData ();
 		[return: MarshalAs(UnmanagedType.I4)]

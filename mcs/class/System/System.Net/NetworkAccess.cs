@@ -32,9 +32,7 @@
 
 
 namespace System.Net {
-#if NET_2_0
 	[Flags]
-#endif
 	public enum NetworkAccess {
 		Accept = 128,
 

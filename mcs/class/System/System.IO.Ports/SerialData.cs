@@ -7,8 +7,6 @@
 // (c) Copyright 2006 Novell, Inc. (http://www.novell.com)
 //
 
-#if NET_2_0
-
 namespace System.IO.Ports 
 {
 	public enum SerialData 
@@ -17,6 +15,4 @@ namespace System.IO.Ports
 		Eof
 	} 
 }
-
-#endif
 

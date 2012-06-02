@@ -12,8 +12,6 @@ using System.IO;
 using System.Threading;
 using System.Net;
 
-#if NET_2_0
-
 namespace System.Net 
 {
 	class FtpAsyncResult : IAsyncResult
@@ -161,5 +159,4 @@ namespace System.Net
 	}
 }
 
-#endif
 

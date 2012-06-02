@@ -52,12 +52,7 @@ namespace System.ComponentModel
 			this.properties.AddRange (properties);
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		PropertyDescriptorCollection (PropertyDescriptor[] properties, bool readOnly) : this (properties)
+		public PropertyDescriptorCollection (PropertyDescriptor[] properties, bool readOnly) : this (properties)
 		{
 			this.readOnly = readOnly;
 		}
@@ -144,7 +139,6 @@ namespace System.ComponentModel
 
 			for (int i = 0; i < properties.Count; ++i) {
 				PropertyDescriptor p = (PropertyDescriptor)properties [i];
-#if NET_2_0
 				if (ignoreCase) {
 					if (0 == String.Compare (name, p.Name, StringComparison.OrdinalIgnoreCase))
 						return p;
@@ -153,17 +147,6 @@ namespace System.ComponentModel
 					if (0 == String.Compare (name, p.Name, StringComparison.Ordinal))
 						return p;
 				}
-#else
-				if (ignoreCase) {
-					if (0 == String.CompareOrdinal (name.ToLower (System.Globalization.CultureInfo.InvariantCulture),
-						p.Name.ToLower (System.Globalization.CultureInfo.InvariantCulture)))
-						return p;
-				}
-				else {
-					if (0 == String.CompareOrdinal (name, p.Name))
-						return p;
-				}
-#endif
 			}
 			return null;
 		}
@@ -351,11 +334,7 @@ namespace System.ComponentModel
 		{
 			get 
 			{
-#if NET_2_0
 				return readOnly;
-#else
-				return !readOnly;
-#endif
 			}
 		}
 #if TARGET_JVM //DUAL_IFACE_CONFLICT

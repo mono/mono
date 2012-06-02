@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.IO;
 using System.Net.Mime;
 using System.Text;
@@ -146,12 +144,7 @@ namespace System.Net.Mail {
 			static Hashtable mimeTypes;
 
 			static MimeTypes () {
-#if NET_2_0
 				mimeTypes = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-			    mimeTypes = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						   CaseInsensitiveComparer.DefaultInvariant);
-#endif
 
 				mimeTypes.Add ("3dm", "x-world/x-3dmf");
 				mimeTypes.Add ("3dmf", "x-world/x-3dmf");
@@ -603,4 +596,3 @@ namespace System.Net.Mail {
 	}
 }
 
-#endif // NET_2_0

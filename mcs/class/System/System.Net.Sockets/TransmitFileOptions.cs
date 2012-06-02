@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 
 namespace System.Net.Sockets
@@ -44,5 +42,3 @@ namespace System.Net.Sockets
 		UseKernelApc		= 0x00000020,
 	}
 }
-
-#endif

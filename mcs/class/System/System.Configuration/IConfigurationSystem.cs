@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Configuration
 {
-#if NET_2_0
 	[ComVisible (false)]
-#endif
 	public interface IConfigurationSystem
 	{
 		object GetConfig (string configKey);

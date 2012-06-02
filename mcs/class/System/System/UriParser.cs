@@ -33,10 +33,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace System {
-#if NET_2_0
-	public
-#endif
-	abstract class UriParser {
+	public abstract class UriParser {
 
 		static object lock_object = new object ();
 		static Hashtable table;
@@ -174,7 +171,6 @@ namespace System {
 				parsingError = null;
 		}
 
-#if NET_2_0
 		protected internal virtual bool IsBaseOf (Uri baseUri, Uri relativeUri)
 		{
 			// compare, not case sensitive, the scheme, host and port (+ user informations)
@@ -194,7 +190,6 @@ namespace System {
 			// Though this class does not seem to do anything. Even null arguments aren't checked :/
 			return uri.IsWellFormedOriginalString ();
 		}
-#endif
 		protected internal virtual UriParser OnNewUri ()
 		{
 			// nice time for init

@@ -1410,13 +1410,11 @@ namespace System.Net.Sockets
 			req.CheckIfThrowDelayedException();
 		}
 
-#if NET_2_0
 		[MonoNotSupported ("")]
 		public void EndDisconnect (IAsyncResult asyncResult)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public int EndReceive(IAsyncResult result) {
             		EnsureStillUsable();
@@ -1601,13 +1599,11 @@ namespace System.Net.Sockets
 			return result;
 		}
 
-#if NET_2_0
 		[MonoNotSupported ("")]
 		public int IOControl (IOControlCode ioControlCode, byte [] optionInValue, byte [] optionOutValue)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1905,7 +1901,6 @@ namespace System.Net.Sockets
 			return Send_nochecks (buf, 0, size, flags);
 		}
 
-#if NET_2_0
 		[MonoNotSupported ("")]
 		public int Send (byte [] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
 		{
@@ -1974,7 +1969,6 @@ namespace System.Net.Sockets
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -2197,14 +2191,10 @@ namespace System.Net.Sockets
 			 */
 
 			if (opt_value is System.Boolean) {
-#if NET_2_0
 				bool bool_val = (bool) opt_value;
 				int int_val = (bool_val) ? 1 : 0;
 
 				SetSocketOption_internal (socket, level, name, null, null, int_val, out error);
-#else
-				throw new ArgumentException ("Use an integer 1 (true) or 0 (false) instead of a boolean.", "opt_value");
-#endif
 			} else {
 				SetSocketOption_internal (socket, level, name, opt_value, null, 0, out error);
 			}
@@ -2213,7 +2203,6 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 		}
 
-#if NET_2_0
 		public void SetSocketOption (SocketOptionLevel level, SocketOptionName name, bool optionValue) {
 			EnsureStillUsable();
 
@@ -2223,7 +2212,7 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 		}
-#endif
+
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Shutdown_internal(IntPtr socket, SocketShutdown how, out int error);
@@ -2315,7 +2304,6 @@ namespace System.Net.Sockets
 #endif
 
         #region .Net 2.0 properties and methods
-#if NET_2_0
 
             #region Properties
         [MonoTODO]
@@ -2582,7 +2570,6 @@ namespace System.Net.Sockets
 		}
 			#endregion //Methods
 
-#endif
         #endregion
 
         void IDisposable.Dispose ()

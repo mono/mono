@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 #if (XML_DEP)
 using System.Xml;
@@ -119,4 +118,3 @@ namespace System.Configuration
 
 }
 
-#endif

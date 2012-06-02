@@ -140,14 +140,9 @@ namespace System.Net {
 
 			int len = address.Length;
 
-#if NET_2_0
 			if (len != 16 && len != 4)
 				throw new ArgumentException ("An invalid IP address was specified.",
 					"address");
-#else
-			if (len != 16)
-				throw new ArgumentException ("address");
-#endif
 
 			if (len == 16) {
 				m_Numbers = new ushort [8];
@@ -167,12 +162,8 @@ namespace System.Net {
 				throw new ArgumentNullException ("address");
 
 			if (address.Length != 16)
-#if NET_2_0
 				throw new ArgumentException ("An invalid IP address was specified.",
 					"address");
-#else
-				throw new ArgumentException("address");
-#endif
 
 			m_Numbers = new ushort [8];
 			Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
@@ -199,12 +190,7 @@ namespace System.Net {
 			throw new FormatException ("An invalid IP address was specified.");
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static bool TryParse (string ipString, out IPAddress address)
+		public static bool TryParse (string ipString, out IPAddress address)
 		{
 			if (ipString == null)
 				throw new ArgumentNullException ("ipString");
@@ -217,14 +203,9 @@ namespace System.Net {
 
 		private static IPAddress ParseIPV4 (string ip)
 		{
-#if ONLY_1_1
-			if (ip.Length == 0 || ip == " ")
-				return new IPAddress (0);
-#endif
 
 			int pos = ip.IndexOf (' ');
 			if (pos != -1) {
-#if NET_2_0
 				string [] nets = ip.Substring (pos + 1).Split (new char [] {'.'});
 				if (nets.Length > 0) {
 					string lastNet = nets [nets.Length - 1];
@@ -238,7 +219,6 @@ namespace System.Net {
 						if (!Uri.IsHexDigit (c))
 							return null;
 				}
-#endif
 				ip = ip.Substring (0, pos);
 			}
 
@@ -274,12 +254,8 @@ namespace System.Net {
 						}
 					}
 					else {
-#if NET_2_0
 						if (!Int64.TryParse (subnet, NumberStyles.None, null, out val))
 							return null;
-#else
-						val = long.Parse (subnet, NumberStyles.None);
-#endif
 					}
 
 					if (i == (ips.Length - 1)) {
@@ -336,7 +312,6 @@ namespace System.Net {
 			get { return m_Address; }
 		}
 
-#if NET_2_0
 		public bool IsIPv6LinkLocal {
 			get {
 				if (m_Family == AddressFamily.InterNetwork)
@@ -361,7 +336,6 @@ namespace System.Net {
 					((ushort) NetworkToHostOrder ((short) m_Numbers [0]) & 0xFF00) == 0xFF00;
 			}
 		}
-#endif
 
 		public long ScopeId {
 			get {

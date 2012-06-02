@@ -26,7 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.IO;
 using System.Text;
@@ -509,21 +508,15 @@ namespace System.Net.NetworkInformation {
 			CultureInfo culture = CultureInfo.InvariantCulture;
 			StringBuilder args = new StringBuilder ();
 			uint t = Convert.ToUInt32 (Math.Floor ((timeout + 1000) / 1000.0));
-#if NET_2_0
 			bool is_mac = ((int) Environment.OSVersion.Platform == 6);
 			if (!is_mac)
-#endif
 				args.AppendFormat (culture, "-q -n -c {0} -w {1} -t {2} -M ", DefaultCount, t, options.Ttl);
-#if NET_2_0
 			else
 				args.AppendFormat (culture, "-q -n -c {0} -t {1} -o -m {2} ", DefaultCount, t, options.Ttl);
 			if (!is_mac)
-#endif
 				args.Append (options.DontFragment ? "do " : "dont ");
-#if NET_2_0
 			else if (options.DontFragment)
 				args.Append ("-D ");
-#endif
 
 			args.Append (address.ToString ());
 
@@ -532,5 +525,4 @@ namespace System.Net.NetworkInformation {
 
 	}
 }
-#endif
 

@@ -64,9 +64,7 @@ namespace System.Net
  			this.webHeaders = new WebHeaderCollection ();
 		}
 		
-#if NET_2_0
 		[Obsolete ("Serialization is obsoleted for this type", false)]
-#endif
 		protected FileWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
 			SerializationInfo info = serializationInfo;
@@ -93,11 +91,7 @@ namespace System.Net
 			get { return contentLength; }
 			set {
 				if (value < 0)
-#if NET_2_0
 					throw new ArgumentException ("The Content-Length value must be greater than or equal to zero.", "value");
-#else
-					throw new ArgumentException ("value");
-#endif
 				contentLength =  value;
 			}
 		}
@@ -121,13 +115,8 @@ namespace System.Net
 			get { return this.method; }
 			set {
 				if (value == null || value.Length == 0)
-#if NET_2_0
 					throw new ArgumentException ("Cannot set null or blank "
 						+ "methods on request.", "value");
-#else
-					throw new ArgumentException ("Cannot set null or blank "
-						+ "methods on request.");
-#endif
 				this.method = value;
 			}
 		}
@@ -152,18 +141,13 @@ namespace System.Net
 			get { return timeout; }
 			set { 
 				if (value < -1)
-#if NET_2_0
 					throw new ArgumentOutOfRangeException ("Timeout can be "
 						+ "only set to 'System.Threading.Timeout.Infinite' "
 						+ "or a value >= 0.");
-#else
-					throw new ArgumentOutOfRangeException ("value");
-#endif
 				timeout = value;
 			}
 		}
 
-#if NET_2_0
 		public override bool UseDefaultCredentials
 		{
 			get {
@@ -173,14 +157,11 @@ namespace System.Net
 				throw new NotSupportedException ();
 			}
 		}
-#endif
-		
 		// Methods
 		
 		private delegate Stream GetRequestStreamCallback ();
 		private delegate WebResponse GetResponseCallback ();
 
-#if NET_2_0
 		static Exception GetMustImplement ()
 		{
 			return new NotImplementedException ();
@@ -194,7 +175,6 @@ namespace System.Net
 		{
 			throw GetMustImplement ();
 		}
-#endif
 
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
@@ -305,10 +285,7 @@ namespace System.Net
 			GetObjectData (serializationInfo, streamingContext);
 		}
 
-#if NET_2_0
-		protected override
-#endif
-		void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		protected override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			SerializationInfo info = serializationInfo;
 			info.AddValue ("headers", webHeaders, typeof (WebHeaderCollection));
@@ -319,11 +296,7 @@ namespace System.Net
 			info.AddValue ("contentLength", contentLength);
 			info.AddValue ("timeout", timeout);
 			info.AddValue ("fileAccess", fileAccess);
-#if NET_2_0
 			info.AddValue ("preauthenticate", false);
-#else
-			info.AddValue ("preauthenticate", preAuthenticate);
-#endif
 		}
 		
 		internal void Close ()

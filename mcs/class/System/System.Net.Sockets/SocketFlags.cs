@@ -39,12 +39,10 @@ namespace System.Net.Sockets {
 		Peek			= 0x00000002,
 		DontRoute		= 0x00000004,
 		MaxIOVectorLength	= 0x00000010,
-#if NET_2_0
 		Truncated		= 0x00000100,
 		ControlDataTruncated	= 0x00000200,
 		Broadcast		= 0x00000400,
 		Multicast		= 0x00000800,
-#endif
 		Partial			= 0x00008000,
 	} // SocketFlags
 

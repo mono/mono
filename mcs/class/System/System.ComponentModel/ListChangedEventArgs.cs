@@ -36,9 +36,7 @@ namespace System.ComponentModel {
 		ListChangedType changedType;
 		int oldIndex;
 		int newIndex;
-#if NET_2_0
 		PropertyDescriptor propDesc;
-#endif
 
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex)
@@ -50,9 +48,7 @@ namespace System.ComponentModel {
 					     PropertyDescriptor propDesc)
 		{
 			this.changedType = listChangedType;
-#if NET_2_0
 			this.propDesc = propDesc;
-#endif			
 		}
 		
 		public ListChangedEventArgs (ListChangedType listChangedType,
@@ -63,7 +59,6 @@ namespace System.ComponentModel {
 			this.oldIndex = oldIndex;
 		}
 
-#if NET_2_0
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex,
 					     PropertyDescriptor propDesc)
@@ -73,7 +68,6 @@ namespace System.ComponentModel {
 			this.oldIndex = newIndex;
 			this.propDesc = propDesc;
 		}
-#endif
 
 		public ListChangedType ListChangedType {
 			get { return changedType; }
@@ -87,10 +81,8 @@ namespace System.ComponentModel {
 			get { return newIndex; }
 		}
 
-#if NET_2_0
 		public PropertyDescriptor PropertyDescriptor {
 			get { return propDesc; }
 		}
-#endif		
 	}
 }

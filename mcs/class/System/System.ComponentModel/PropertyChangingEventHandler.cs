@@ -26,13 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 // SP1
-
 using System;
 
 namespace System.ComponentModel
 {
 	public delegate void PropertyChangingEventHandler (object sender, PropertyChangingEventArgs e);
 }
-
-#endif

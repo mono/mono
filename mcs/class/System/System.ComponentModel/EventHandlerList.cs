@@ -31,10 +31,7 @@
 
 using System;
 using System.Collections;
-
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.ComponentModel {
 
@@ -96,7 +93,6 @@ namespace System.ComponentModel {
 			entry.value = Delegate.Combine (entry.value, value);
 		}
 
-#if NET_2_0
 		public void AddHandlers (EventHandlerList listToAddFrom)
 		{
 			if (listToAddFrom == null)
@@ -108,7 +104,6 @@ namespace System.ComponentModel {
 				entry = entry.next;
 			}
 		}
-#endif
 
 		public void RemoveHandler (object key, Delegate value)
 		{

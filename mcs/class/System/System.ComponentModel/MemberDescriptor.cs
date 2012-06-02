@@ -134,11 +134,9 @@ namespace System.ComponentModel
 
 		public virtual string DisplayName {
 			get {
-#if NET_2_0
 				foreach (Attribute attr in AttributeArray)
 					if (attr is DisplayNameAttribute)
 						return ((DisplayNameAttribute) attr).DisplayName;
-#endif
 				return name;
 			}
 		}
@@ -185,9 +183,7 @@ namespace System.ComponentModel
 				return null;
 		}
 
-#if NET_2_0
 		[Obsolete ("Use GetInvocationTarget")]
-#endif
 		protected static object GetInvokee (Type componentClass, object component)
 		{
 			if (component is IComponent) {
@@ -205,7 +201,6 @@ namespace System.ComponentModel
 			return component;
 		}
 
-#if NET_2_0
 		protected virtual object GetInvocationTarget (Type type, object instance)
 		{
 			if (type == null)
@@ -215,7 +210,6 @@ namespace System.ComponentModel
 
 			return GetInvokee (type, instance);
 		}
-#endif
 
 		protected static MethodInfo FindMethod(Type componentClass, string name, Type[] args, Type returnType)
 		{

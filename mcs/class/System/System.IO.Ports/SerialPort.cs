@@ -17,8 +17,6 @@
 //     reads 
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -807,4 +805,3 @@ namespace System.IO.Ports
 
 }
 
-#endif

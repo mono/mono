@@ -331,10 +331,9 @@ namespace System.ComponentModel
 
 				return !attrib.Value.Equals (current);
 			} else {
-#if NET_2_0
 				if (!_member.CanWrite)
 					return false;
-#endif
+
 				MethodInfo mi = FindPropertyMethod (component, "ShouldPersist");
 				if (mi != null)
 					return (bool) mi.Invoke (component, null);

@@ -1,5 +1,4 @@
 
-#if NET_2_0
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -139,5 +138,4 @@ namespace Mono.Audio {
 	}
 
 }
-#endif
 

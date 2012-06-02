@@ -177,7 +177,6 @@ namespace System.Text.RegularExpressions {
 			return re.Split (input);
 		}
 
-#if NET_2_0
 		static FactoryCache cache = new FactoryCache (15);
 		public static int CacheSize {
 			get { return cache.Capacity; }
@@ -188,9 +187,6 @@ namespace System.Text.RegularExpressions {
 				cache.Capacity = value;	
 			}
 		}
-#else
-		static FactoryCache cache = new FactoryCache (200);
-#endif
 
 		// private
 
@@ -311,23 +307,12 @@ namespace System.Text.RegularExpressions {
 			return machineFactory;
 		}
 
-#if NET_2_0
-		protected
-#else
-		private
-#endif
-		Regex (SerializationInfo info, StreamingContext context) :
+		protected Regex (SerializationInfo info, StreamingContext context) :
 			this (info.GetString ("pattern"), 
 			      (RegexOptions) info.GetValue ("options", typeof (RegexOptions)))
 		{
 		}
 
-#if ONLY_1_1 && !TARGET_JVM
-		// fixes public API signature
-		~Regex ()
-		{
-		}
-#endif
 		// public instance properties
 		
 		public RegexOptions Options {

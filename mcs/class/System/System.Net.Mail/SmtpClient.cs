@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 #if SECURITY_DEP
 extern alias PrebuiltSystem;
 #endif
@@ -1298,4 +1296,3 @@ try {
 	}
 }
 
-#endif // NET_2_0

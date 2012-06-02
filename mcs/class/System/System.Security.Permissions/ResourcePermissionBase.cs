@@ -50,12 +50,7 @@ namespace System.Security.Permissions {
 
 		protected ResourcePermissionBase (PermissionState state) : this ()
 		{
-#if NET_2_0
 			PermissionHelper.CheckPermissionState (state, true);
-#else
-			// there are no validation of the permission state
-			// but any invalid value results in a restricted set
-#endif
 			_unrestricted = (state == PermissionState.Unrestricted);
 		}
 
@@ -114,13 +109,8 @@ namespace System.Security.Permissions {
 		[MonoTODO ("incomplete - need more test")]
 		public override void FromXml (SecurityElement securityElement)
 		{
-#if NET_2_0
 			if (securityElement == null)
 				throw new ArgumentNullException ("securityElement");
-#else
-			if (securityElement == null)
-				throw new NullReferenceException ("securityElement");
-#endif
 			CheckSecurityElement (securityElement, "securityElement", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
@@ -178,12 +168,8 @@ namespace System.Security.Permissions {
 		public override bool IsSubsetOf (IPermission target)
 		{
 			if (target == null) {
-#if NET_2_0
 				// do not use Cast - different permissions (and earlier Fx) return false :-/
 				return true;
-#else
-				return false;
-#endif
 			}
 
 			ResourcePermissionBase rpb = (target as ResourcePermissionBase);
@@ -333,13 +319,11 @@ namespace System.Security.Permissions {
 		{
 			if (se == null)
 				throw new ArgumentNullException (parameterName);
-#if NET_2_0
 			// Tag is case-sensitive
 			if (se.Tag != "IPermission") {
 				string msg = String.Format (Locale.GetText ("Invalid tag {0}"), se.Tag);
 				throw new ArgumentException (msg, parameterName);
 			}
-#endif
 			// Note: we do not care about the class attribute at 
 			// this stage (in fact we don't even if the class 
 			// attribute is present or not). Anyway the object has
@@ -358,13 +342,11 @@ namespace System.Security.Permissions {
 					throw new ArgumentException (msg, parameterName, e);
 				}
 			}
-#if NET_2_0
 			if ((version < minimumVersion) || (version > maximumVersion)) {
 				string msg = Locale.GetText ("Unknown version '{0}', expected versions between ['{1}','{2}'].");
 				msg = String.Format (msg, version, minimumVersion, maximumVersion);
 				throw new ArgumentException (msg, parameterName);
 			}
-#endif
 			return version;
 		}
 

@@ -50,7 +50,6 @@ $	Currency symbol. The actual character displayed will be the currency symbol ap
 
  * */
  
-#if NET_2_0
 using System.Globalization;
 using System.Collections;
 using System.Diagnostics;
@@ -2016,4 +2015,3 @@ namespace System.ComponentModel {
 
 	}
 }
-#endif

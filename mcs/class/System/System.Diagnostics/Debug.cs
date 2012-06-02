@@ -231,7 +231,6 @@ namespace System.Diagnostics {
 			TraceImpl.WriteLineIf (condition, message, category);
 		}
 
-#if NET_2_0 || MOBILE
 		[Conditional("DEBUG")]
 		public static void Print (string message)
 		{
@@ -243,7 +242,6 @@ namespace System.Diagnostics {
 		{
 			TraceImpl.WriteLine (String.Format (format, args));
 		}
-#endif
 	}
 }
 

@@ -28,10 +28,7 @@
 
 namespace System.Diagnostics 
 {
-#if NET_2_0
-	public
-#endif
-	enum PerformanceCounterCategoryType
+	public enum PerformanceCounterCategoryType
 	{
 		SingleInstance,
 		MultiInstance,

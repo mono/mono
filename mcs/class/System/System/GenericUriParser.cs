@@ -27,10 +27,7 @@
 //
 
 namespace System {
-#if NET_2_0
-	public
-#endif
-	class GenericUriParser : UriParser {
+	public class GenericUriParser : UriParser {
 
 		public GenericUriParser (GenericUriParserOptions options)
 		{

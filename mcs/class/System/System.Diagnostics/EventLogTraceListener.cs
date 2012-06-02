@@ -84,12 +84,8 @@ namespace System.Diagnostics
 
 		public override void Write (string message)
 		{
-#if NET_2_0
 			TraceData (new TraceEventCache (), event_log.Source,
 				   TraceEventType.Information, 0, message);
-#else
-			event_log.WriteEntry (message);
-#endif
 		}
 
 		public override void WriteLine (string message)
@@ -97,7 +93,6 @@ namespace System.Diagnostics
 			Write (message);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public override void TraceData (TraceEventCache eventCache,
 						string source, TraceEventType eventType,
@@ -149,7 +144,6 @@ namespace System.Diagnostics
 		{
 			TraceEvent (eventCache, source, eventType, id, format != null ? String.Format (format, args) : null);
 		}
-#endif
 	}
 }
 

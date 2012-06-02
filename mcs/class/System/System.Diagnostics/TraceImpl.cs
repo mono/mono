@@ -162,7 +162,7 @@ namespace System.Diagnostics {
 		}
 
 		static bool use_global_lock;
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static CorrelationManager CorrelationManager {
