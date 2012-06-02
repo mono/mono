@@ -6,6 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
 //	Miguel de Icaza (miguel@ximian.com)
+//      Martin Baulig (martin.baulig@googlemail.com)
 //
 // Copyright 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright 2006, 2010 Novell, Inc. (http://www.novell.com)
