@@ -192,9 +192,10 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderItemBackground (ToolStripItemRenderEventArgs e)
 		{
+			Rectangle item_bounds = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (e.Item.BackColor), item_bounds);
+
 			if (e.Item.BackgroundImage != null) {
-				Rectangle item_bounds = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (e.Item.BackColor), item_bounds);
 				DrawBackground (e.Graphics, item_bounds, e.Item.BackgroundImage, e.Item.BackgroundImageLayout);
 			}
 				
