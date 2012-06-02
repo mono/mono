@@ -29,7 +29,7 @@
 using System.Drawing;
 using System.Threading;
 using System.Runtime.InteropServices;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms {
 	internal abstract class XplatUIDriver {
@@ -283,11 +283,11 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-		internal Hashtable Idle_Threads;
+		internal Dictionary<int,IdleThreadHandler> Idle_Threads;
 		internal virtual event EventHandler Idle {
 			add {
 				if (Idle_Threads==null){
-					Idle_Threads=new Hashtable();
+					Idle_Threads=new Dictionary<int,IdleThreadHandler>();
 				}
 				int id=Thread.CurrentThread.ManagedThreadId;
 				if (!Idle_Threads.ContainsKey(id)){
