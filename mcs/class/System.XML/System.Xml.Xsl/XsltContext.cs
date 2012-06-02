@@ -58,14 +58,14 @@ namespace System.Xml.Xsl
 		#region Properties
 
 		public abstract bool Whitespace { get; }
-		public abstract bool PreserveWhitespace (XPathNavigator nav);
+		public abstract bool PreserveWhitespace (XPathNavigator node);
 
 		#endregion
 
 		#region Methods
 
 		public abstract int CompareDocument (string baseUri, string nextbaseUri);
-		public abstract IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] argTypes);
+		public abstract IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] ArgTypes);
 		public abstract IXsltContextVariable ResolveVariable (string prefix, string name);
 
 		#endregion

@@ -244,8 +244,8 @@ namespace System.Xml
 		{
 		}
 
-		public XmlTextWriter (Stream stream, Encoding encoding)
-			: this (new StreamWriter (stream,
+		public XmlTextWriter (Stream w, Encoding encoding)
+			: this (new StreamWriter (w,
 				encoding == null ? unmarked_utf8encoding : encoding))
 		{
 			ignore_encoding = (encoding == null);
@@ -253,12 +253,12 @@ namespace System.Xml
 			allow_doc_fragment = true;
 		}
 
-		public XmlTextWriter (TextWriter writer)
+		public XmlTextWriter (TextWriter w)
 		{
-			if (writer == null)
+			if (w == null)
 				throw new ArgumentNullException ("writer");
-			ignore_encoding = (writer.Encoding == null);
-			Initialize (writer);
+			ignore_encoding = (w.Encoding == null);
+			Initialize (w);
 			allow_doc_fragment = true;
 		}
 
@@ -396,16 +396,16 @@ namespace System.Xml
 			get { return state; }
 		}
 
-		public override string LookupPrefix (string namespaceUri)
+		public override string LookupPrefix (string ns)
 		{
-			if (namespaceUri == null || namespaceUri == String.Empty)
+			if (ns == null || ns == String.Empty)
 				throw ArgumentError ("The Namespace cannot be empty.");
 
-			if (namespaceUri == nsmanager.DefaultNamespace)
+			if (ns == nsmanager.DefaultNamespace)
 				return String.Empty;
 
 			string prefix = nsmanager.LookupPrefixExclusive (
-				namespaceUri, false);
+				ns, false);
 
 			// XmlNamespaceManager has changed to return null
 			// when NSURI not found.
@@ -569,7 +569,7 @@ namespace System.Xml
 		// StartElement
 
 		public override void WriteStartElement (
-			string prefix, string localName, string namespaceUri)
+			string prefix, string localName, string ns)
 		{
 			if (state == WriteState.Error || state == WriteState.Closed)
 				throw StateError ("StartTag");
@@ -590,7 +590,7 @@ namespace System.Xml
 			//    not considered.
 			// 4. prefix must not be equivalent to "XML" in
 			//    case-insensitive comparison.
-			if (!namespaces && namespaceUri != null && namespaceUri.Length > 0)
+			if (!namespaces && ns != null && ns.Length > 0)
 				throw ArgumentError ("Namespace is disabled in this XmlTextWriter.");
 			if (!namespaces && prefix.Length > 0)
 				throw ArgumentError ("Namespace prefix is disabled in this XmlTextWriter.");
@@ -598,9 +598,9 @@ namespace System.Xml
 			// If namespace URI is empty, then either prefix
 			// must be empty as well, or there is an
 			// existing namespace mapping for the prefix.
-			if (prefix.Length > 0 && namespaceUri == null) {
-				namespaceUri = nsmanager.LookupNamespace (prefix, false);
-				if (namespaceUri == null || namespaceUri.Length == 0)
+			if (prefix.Length > 0 && ns == null) {
+				ns = nsmanager.LookupNamespace (prefix, false);
+				if (ns == null || ns.Length == 0)
 					throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
 			}
 			// Considering the fact that WriteStartAttribute()
@@ -608,7 +608,7 @@ namespace System.Xml
 			// is kind of silly implementation. See bug #77094.
 			if (namespaces &&
 			    prefix != null && prefix.Length == 3 &&
-			    namespaceUri != XmlNamespace &&
+			    ns != XmlNamespace &&
 			    (prefix [0] == 'x' || prefix [0] == 'X') &&
 			    (prefix [1] == 'm' || prefix [1] == 'M') &&
 			    (prefix [2] == 'l' || prefix [2] == 'L'))
@@ -624,12 +624,12 @@ namespace System.Xml
 
 			nsmanager.PushScope ();
 
-			if (namespaces && namespaceUri != null) {
+			if (namespaces && ns != null) {
 				// If namespace URI is empty, then prefix must 
 				// be empty as well.
-				if (anonPrefix && namespaceUri.Length > 0)
-					prefix = LookupPrefix (namespaceUri);
-				if (prefix == null || namespaceUri.Length == 0)
+				if (anonPrefix && ns.Length > 0)
+					prefix = LookupPrefix (ns);
+				if (prefix == null || ns.Length == 0)
 					prefix = String.Empty;
 			}
 
@@ -654,17 +654,17 @@ namespace System.Xml
 			XmlNodeInfo info = elements [open_count];
 			info.Prefix = prefix;
 			info.LocalName = localName;
-			info.NS = namespaceUri;
+			info.NS = ns;
 			info.HasSimple = false;
 			info.HasElements = false;
 			info.XmlLang = XmlLang;
 			info.XmlSpace = XmlSpace;
 			open_count++;
 
-			if (namespaces && namespaceUri != null) {
+			if (namespaces && ns != null) {
 				string oldns = nsmanager.LookupNamespace (prefix, false);
-				if (oldns != namespaceUri) {
-					nsmanager.AddNamespace (prefix, namespaceUri);
+				if (oldns != ns) {
+					nsmanager.AddNamespace (prefix, ns);
 					new_local_namespaces.Push (prefix);
 				}
 			}
@@ -784,7 +784,7 @@ namespace System.Xml
 		// Attribute
 
 		public override void WriteStartAttribute (
-			string prefix, string localName, string namespaceUri)
+			string prefix, string localName, string ns)
 		{
 			// LAMESPEC: this violates the expected behavior of
 			// this method, as it incorrectly allows unbalanced
@@ -802,7 +802,7 @@ namespace System.Xml
 
 			// For xmlns URI, prefix is forced to be "xmlns"
 			bool isNSDecl = false;
-			if (namespaceUri == XmlnsNamespace) {
+			if (ns == XmlnsNamespace) {
 				isNSDecl = true;
 				if (prefix.Length == 0 && localName != "xmlns")
 					prefix = "xmlns";
@@ -816,13 +816,13 @@ namespace System.Xml
 				// Regardless of namespace URI it is regarded
 				// as NS URI for "xml".
 				if (prefix == "xml")
-					namespaceUri = XmlNamespace;
+					ns = XmlNamespace;
 				// infer namespace URI.
-				else if ((object) namespaceUri == null || (v2 && namespaceUri.Length == 0)) {
+				else if ((object) ns == null || (v2 && ns.Length == 0)) {
 					if (isNSDecl)
-						namespaceUri = XmlnsNamespace;
+						ns = XmlnsNamespace;
 					else
-						namespaceUri = String.Empty;
+						ns = String.Empty;
 				}
 
 				// It is silly design - null namespace with
@@ -830,22 +830,22 @@ namespace System.Xml
 				// output; while there is Namespaces property)
 				// On the other hand, namespace "" is not 
 				// allowed.
-				if (isNSDecl && namespaceUri != XmlnsNamespace)
+				if (isNSDecl && ns != XmlnsNamespace)
 					throw ArgumentError (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
 				// If namespace URI is empty, then either prefix
 				// must be empty as well, or there is an
 				// existing namespace mapping for the prefix.
-				if (prefix.Length > 0 && namespaceUri.Length == 0) {
-					namespaceUri = nsmanager.LookupNamespace (prefix, false);
-					if (namespaceUri == null || namespaceUri.Length == 0)
+				if (prefix.Length > 0 && ns.Length == 0) {
+					ns = nsmanager.LookupNamespace (prefix, false);
+					if (ns == null || ns.Length == 0)
 						throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
 				}
 
 				// Dive into extremely complex procedure.
-				if (!isNSDecl && namespaceUri.Length > 0)
+				if (!isNSDecl && ns.Length > 0)
 					prefix = DetermineAttributePrefix (
-						prefix, localName, namespaceUri);
+						prefix, localName, ns);
 			}
 
 			if (indent_attributes)
@@ -1049,20 +1049,20 @@ namespace System.Xml
 
 		// Text Content
 
-		public override void WriteWhitespace (string text)
+		public override void WriteWhitespace (string ws)
 		{
-			if (text == null)
+			if (ws == null)
 				throw ArgumentError ("text");
 
 			// huh? Shouldn't it accept an empty string???
-			if (text.Length == 0 ||
-			    XmlChar.IndexOfNonWhitespace (text) >= 0)
+			if (ws.Length == 0 ||
+			    XmlChar.IndexOfNonWhitespace (ws) >= 0)
 				throw ArgumentError ("WriteWhitespace method accepts only whitespaces.");
 
 			bool pastTopLevelWSIgnored = top_level_space_ignored;
 			ShiftStateTopLevel ("Whitespace", true, false, true);
 			if (!indent || WriteState != WriteState.Prolog || pastTopLevelWSIgnored)
-				writer.Write (text);
+				writer.Write (ws);
 			top_level_space_ignored = true;
 		}
 
@@ -1088,9 +1088,9 @@ namespace System.Xml
 			WriteEscapedString (text, state == WriteState.Attribute);
 		}
 
-		public override void WriteRaw (string raw)
+		public override void WriteRaw (string data)
 		{
-			if (raw == null)
+			if (data == null)
 				return; // do nothing, including state transition.
 
 			//WriteIndent ();
@@ -1099,7 +1099,7 @@ namespace System.Xml
 			// DocType which could consist of non well-formed XML.
 			ShiftStateTopLevel ("Raw string", true, true, true);
 
-			writer.Write (raw);
+			writer.Write (data);
 		}
 
 		public override void WriteCharEntity (char ch)
@@ -1107,9 +1107,9 @@ namespace System.Xml
 			WriteCharacterEntity (ch, '\0', false);
 		}
 
-		public override void WriteSurrogateCharEntity (char low, char high)
+		public override void WriteSurrogateCharEntity (char lowChar, char highChar)
 		{
-			WriteCharacterEntity (low, high, true);
+			WriteCharacterEntity (lowChar, highChar, true);
 		}
 
 		void WriteCharacterEntity (char ch, char high, bool surrogate)
@@ -1154,13 +1154,13 @@ namespace System.Xml
 			WriteString (name);
 		}
 
-		public override void WriteNmToken (string nmtoken)
+		public override void WriteNmToken (string name)
 		{
-			if (nmtoken == null)
+			if (name == null)
 				throw ArgumentError ("nmtoken");
-			if (!XmlChar.IsNmToken (nmtoken))
+			if (!XmlChar.IsNmToken (name))
 				throw ArgumentError ("Not a valid NMTOKEN string.");
-			WriteString (nmtoken);
+			WriteString (name);
 		}
 
 		public override void WriteQualifiedName (

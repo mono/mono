@@ -53,8 +53,8 @@ namespace System.Xml.Schema
 		{
 		}
 
-		public XmlSchemaCollection (XmlNameTable nameTable)
-			: this (new XmlSchemaSet (nameTable))
+		public XmlSchemaCollection (XmlNameTable nametable)
+			: this (new XmlSchemaSet (nametable))
 		{
 			schemaSet.ValidationEventHandler += new ValidationEventHandler (OnValidationError);
 		}

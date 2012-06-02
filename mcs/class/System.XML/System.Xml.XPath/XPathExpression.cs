@@ -86,18 +86,18 @@ namespace System.Xml.XPath
 
 #if NET_2_0
 		public static XPathExpression Compile (
-			string xpath, NSResolver nsmgr)
+			string xpath, NSResolver nsResolver)
 		{
-			return Compile (xpath, nsmgr, null);
+			return Compile (xpath, nsResolver, null);
 		}
 #endif
 
 		internal static XPathExpression Compile (string xpath,
-			NSResolver nsmgr, IStaticXsltContext ctx)
+			NSResolver nsResolver, IStaticXsltContext ctx)
 		{
 			XPathParser parser = new XPathParser (ctx);
 			CompiledExpression x = new CompiledExpression (xpath, parser.Compile (xpath));
-			x.SetContext (nsmgr);
+			x.SetContext (nsResolver);
 			return x;
 		}
 

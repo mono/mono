@@ -79,7 +79,7 @@ namespace System.Xml.Schema
 		}
 
 		[MonoTODO]
-		public virtual object ChangeType (object value, Type targetType, IXmlNamespaceResolver nsResolver)
+		public virtual object ChangeType (object value, Type targetType, IXmlNamespaceResolver namespaceResolver)
 		{
 			throw new NotImplementedException ();
 		}

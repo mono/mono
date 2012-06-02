@@ -50,8 +50,8 @@ namespace System.Xml.Serialization.Advanced
 			bool mixed, 
 			XmlSchemas schemas, 
 			XmlSchemaImporter importer, 
-			CodeCompileUnit codeCompileUnit, 
-			CodeNamespace codeNamespace, 
+			CodeCompileUnit compileUnit, 
+			CodeNamespace mainNamespace, 
 			CodeGenerationOptions options, 
 			CodeDomProvider codeProvider
 		)
@@ -69,8 +69,8 @@ namespace System.Xml.Serialization.Advanced
 			XmlSchemaObject context, 
 			XmlSchemas schemas, 
 			XmlSchemaImporter importer, 
-			CodeCompileUnit codeCompileUnit, 
-			CodeNamespace codeNamespace, 
+			CodeCompileUnit compileUnit, 
+			CodeNamespace mainNamespace, 
 			CodeGenerationOptions options, 
 			CodeDomProvider codeProvider
 		)
@@ -84,8 +84,8 @@ namespace System.Xml.Serialization.Advanced
 			XmlSchemaObject context, 
 			XmlSchemas schemas, 
 			XmlSchemaImporter importer, 
-			CodeCompileUnit codeCompileUnit, 
-			CodeNamespace codeNamespace, 
+			CodeCompileUnit compileUnit, 
+			CodeNamespace mainNamespace, 
 			CodeGenerationOptions options, 
 			CodeDomProvider codeProvider
 		)

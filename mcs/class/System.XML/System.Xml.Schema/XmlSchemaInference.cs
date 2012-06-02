@@ -97,15 +97,15 @@ namespace System.Xml.Schema
 			set { typeInference = value; }
 		}
 
-		public XmlSchemaSet InferSchema (XmlReader xmlReader)
+		public XmlSchemaSet InferSchema (XmlReader instanceDocument)
 		{
-			return InferSchema (xmlReader, new XmlSchemaSet ());
+			return InferSchema (instanceDocument, new XmlSchemaSet ());
 		}
 
-		public XmlSchemaSet InferSchema (XmlReader xmlReader,
+		public XmlSchemaSet InferSchema (XmlReader instanceDocument,
 			XmlSchemaSet schemas)
 		{
-			return XsdInference.Process (xmlReader, schemas,
+			return XsdInference.Process (instanceDocument, schemas,
 				occurrence == InferenceOption.Relaxed,
 				typeInference == InferenceOption.Relaxed);
 		}

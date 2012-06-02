@@ -85,67 +85,67 @@ namespace System.Xml
 		public abstract void Close ();
 
 #if NET_2_0
-		public static XmlWriter Create (Stream stream)
+		public static XmlWriter Create (Stream output)
 		{
-			return Create (stream, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (string file)
+		public static XmlWriter Create (string outputFileName)
 		{
-			return Create (file, null);
+			return Create (outputFileName, null);
 		}
 
-		public static XmlWriter Create (TextWriter writer)
+		public static XmlWriter Create (TextWriter output)
 		{
-			return Create (writer, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (XmlWriter writer)
+		public static XmlWriter Create (XmlWriter output)
 		{
-			return Create (writer, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (StringBuilder builder)
+		public static XmlWriter Create (StringBuilder output)
 		{
-			return Create (builder, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (Stream stream, XmlWriterSettings settings)
-		{
-			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
-			return Create (new StreamWriter (stream, enc), settings);
-		}
-
-		public static XmlWriter Create (string file, XmlWriterSettings settings)
+		public static XmlWriter Create (Stream output, XmlWriterSettings settings)
 		{
 			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
-			return CreateTextWriter (new StreamWriter (file, false, enc), settings, true);
+			return Create (new StreamWriter (output, enc), settings);
 		}
 
-		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
+		public static XmlWriter Create (string outputFileName, XmlWriterSettings settings)
 		{
-			return Create (new StringWriter (builder), settings);
+			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
+			return CreateTextWriter (new StreamWriter (outputFileName, false, enc), settings, true);
 		}
 
-		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
+		public static XmlWriter Create (StringBuilder output, XmlWriterSettings settings)
+		{
+			return Create (new StringWriter (output), settings);
+		}
+
+		public static XmlWriter Create (TextWriter output, XmlWriterSettings settings)
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
-			return CreateTextWriter (writer, settings, settings.CloseOutput);
+			return CreateTextWriter (output, settings, settings.CloseOutput);
 		}
 
-		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
+		public static XmlWriter Create (XmlWriter output, XmlWriterSettings settings)
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
 			else
 				settings = settings.Clone ();
 
-			var src = writer.Settings;
+			var src = output.Settings;
 			if (src == null) {
 				settings.ConformanceLevel = ConformanceLevel.Document; // Huh? Why??
-				writer = new DefaultXmlWriter (writer);
-				writer.settings = settings;
+				output = new DefaultXmlWriter (output);
+				output.settings = settings;
 			} else {
 				ConformanceLevel dst = src.ConformanceLevel;
 				switch (src.ConformanceLevel) {
@@ -163,12 +163,12 @@ namespace System.Xml
 
 				// It returns a new XmlWriter instance if 1) Settings is null, or 2) Settings ConformanceLevel (or might be other members as well) give significant difference.
 				if (src.ConformanceLevel != dst) {
-					writer = new DefaultXmlWriter (writer, false);
-					writer.settings = settings;
+					output = new DefaultXmlWriter (output, false);
+					output.settings = settings;
 				}
 			}
 
-			return writer;
+			return output;
 		}
 
 		private static XmlWriter CreateTextWriter (TextWriter writer, XmlWriterSettings settings, bool closeOutput)

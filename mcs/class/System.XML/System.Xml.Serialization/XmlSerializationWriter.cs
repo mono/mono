@@ -500,14 +500,14 @@ namespace System.Xml.Serialization
 			WriteAttribute ("id", GetId (o, true));
 		}
 
-		protected void WriteNamespaceDeclarations (XmlSerializerNamespaces ns)
+		protected void WriteNamespaceDeclarations (XmlSerializerNamespaces xmlns)
 		{
-			if (ns == null)
+			if (xmlns == null)
 				return;
 #if MOONLIGHT
 			IEnumerable<XmlQualifiedName> namespaces = ns.GetNamespaces ();
 #else
-			ICollection namespaces = ns.Namespaces.Values;
+			ICollection namespaces = xmlns.Namespaces.Values;
 #endif
 			foreach (XmlQualifiedName qn in namespaces) {
 				if (qn.Namespace != String.Empty && Writer.LookupPrefix (qn.Namespace) != qn.Name)
@@ -977,9 +977,9 @@ namespace System.Xml.Serialization
 				return CreateInvalidAnyTypeException (o.GetType ());
 		}
 		
-		protected Exception CreateInvalidAnyTypeException (Type t)
+		protected Exception CreateInvalidAnyTypeException (Type type)
 		{
-			return new InvalidOperationException (String.Format ("An object of type '{0}' is invalid as anyType in XmlSerializer", t));
+			return new InvalidOperationException (String.Format ("An object of type '{0}' is invalid as anyType in XmlSerializer", type));
 		}
 
 		protected Exception CreateInvalidEnumValueException (object value, string typeName)
