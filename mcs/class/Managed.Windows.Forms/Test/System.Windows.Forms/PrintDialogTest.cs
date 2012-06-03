@@ -101,24 +101,6 @@ namespace MonoTests.System.Windows.Forms
 			if (pd.PrinterSettings == ps1)
 				Assert.Fail ("#5");
 		}
-
-#if ONLY_1_1
-		[Test] // bug #80764
-		public void ShowDialog_PrinterSettings_Null ()
-		{
-			PrintDialog pd = new PrintDialog ();
-			try {
-				pd.ShowDialog ();
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// PrintDialog needs a PrinterSettings object to display
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-		}
-#endif
 	}
 }
 

@@ -70,11 +70,7 @@ namespace MonoTests.System.Windows.Forms
 			// [MonoTODO ("Assert.AreEqual (false, rTBox.Rtf, "#R3");") ]
 
 			// S
-#if ONLY_1_1	
-			Assert.AreEqual (null, rTBox.SelectedText, "#S3");
-#else
 			Assert.AreEqual ("", rTBox.SelectedText, "#S3");
-#endif
 			rTBox.Text = "sample TextBox";
 			Assert.AreEqual (HorizontalAlignment.Left, rTBox.SelectionAlignment, "#S5");
 			Assert.AreEqual (false, rTBox.SelectionBullet, "#S6");
