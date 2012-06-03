@@ -197,13 +197,6 @@ namespace System.Collections.Generic
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
 				}
-#if NET_1_0
-				else if (current > defaultCapacity && value < current) {
-                                        KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [defaultCapacity];
-                                        Array.Copy (table, newTable, inUse);
-                                        this.table = newTable;
-                                }
-#endif
 				else if (value > inUse) {
                                         KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [value];
                                         Array.Copy (table, newTable, inUse);

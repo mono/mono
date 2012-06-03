@@ -59,12 +59,10 @@ namespace System.Web.Security {
 			return AuthUrl (null, -1, -1, null, -1, null, -1, -1);
 		}
 
-#if (!NET_1_0)
 		public string AuthUrl (String strReturnUrl)
 		{
 			return AuthUrl (strReturnUrl, -1, -1, null, -1, null, -1, -1);
 		}
-#endif
 
 		public string AuthUrl (string strReturnUrl,
 				       int iTimeWindow,

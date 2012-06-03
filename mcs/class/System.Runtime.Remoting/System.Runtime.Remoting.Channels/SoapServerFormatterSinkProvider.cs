@@ -40,11 +40,7 @@ namespace System.Runtime.Remoting.Channels
 		private IServerChannelSinkProvider _next;
 		SoapCore _soapCore;
 
-#if NET_1_0
-		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding" };
-#else
 		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
-#endif
 
 		public SoapServerFormatterSinkProvider ()
 		{

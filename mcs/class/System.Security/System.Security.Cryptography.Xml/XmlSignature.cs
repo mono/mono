@@ -47,9 +47,7 @@ namespace System.Security.Cryptography.Xml {
 			public const string DigestMethod = "DigestMethod";
 			public const string DigestValue = "DigestValue";
 			public const string DSAKeyValue = "DSAKeyValue";
-#if NET_2_0
 			public const string EncryptedKey = "EncryptedKey";
-#endif
 			public const string HMACOutputLength = "HMACOutputLength";
 			public const string KeyInfo = "KeyInfo";
 			public const string KeyName = "KeyName";
@@ -57,12 +55,7 @@ namespace System.Security.Cryptography.Xml {
 			public const string Manifest = "Manifest";
 			public const string Object = "Object";
 			public const string Reference = "Reference";
-#if NET_1_0
-			// RetrievalMethod vs RetrievalElement -> BUG in MS Framework 1.0
-			public const string RetrievalMethod = "RetrievalElement";
-#else
 			public const string RetrievalMethod = "RetrievalMethod";
-#endif
 			public const string RSAKeyValue = "RSAKeyValue";
 			public const string Signature = "Signature";
 			public const string SignatureMethod = "SignatureMethod";

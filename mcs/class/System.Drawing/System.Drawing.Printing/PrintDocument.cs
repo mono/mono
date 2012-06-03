@@ -45,9 +45,7 @@ namespace System.Drawing.Printing
 		private PrinterSettings printersettings;
 		private PrintController printcontroller;
 		private string documentname;
-#if !(NET_1_0)
 		private bool originAtMargins = false; // .NET V1.1 Beta
-#endif
 
 		public PrintDocument() {
 			documentname = "document"; //offical default.
@@ -105,7 +103,6 @@ namespace System.Drawing.Printing
 			}
 		}
 
-#if !(NET_1_0)
 		[DefaultValue (false)]
 		[SRDescription ("Determines if the origin is set at the specified margins.")]
 		public bool OriginAtMargins{
@@ -116,7 +113,6 @@ namespace System.Drawing.Printing
 				originAtMargins = value;
 			}
 		}
-#endif
 
 		// methods
 		public void Print(){
