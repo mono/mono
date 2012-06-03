@@ -376,6 +376,36 @@ namespace MonoTests.System.Xml
 			string xml = "<?xml version=\"1.0\" encoding=\"utf-16\"?><root><element>lf\ncr&#xD;crlf&#xD;\nht\t</element><element attr=\"lf&#xA;cr&#xD;crlf&#xD;&#xA;ht&#x9;\" /></root>";
 			Assert.AreEqual (xml, sw.ToString ());
 		}
+
+#if NET_4_5
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadonlyAsync ()
+		{
+			var sw = new StringWriter ();
+			var s = new XmlWriterSettings ();
+			var w = XmlWriter.Create (sw, s);
+			w.Settings.Async = true;
+		}
+
+		[Test]
+		public void AsyncPropagation ()
+		{
+			var sw = new StringWriter ();
+			var s = new XmlWriterSettings ();
+			s.Async = true;
+			var w = XmlWriter.Create (sw, s);
+
+			var c = s.Clone ();
+			Assert.IsTrue (c.Async);
+			c.Reset ();
+			Assert.IsFalse (c.Async);
+
+			var w2 = XmlWriter.Create (w, c);
+			Assert.IsTrue (w2.Settings.Async);
+		}
+#endif
+
 	}
 }
 #endif

@@ -105,6 +105,9 @@ namespace System.Xml
 			validationType = ValidationType.None;
 			xmlResolver = new XmlUrlResolver ();
 #endif
+#if NET_4_5
+			isAsync = false;
+#endif
 		}
 
 		public bool CheckCharacters {

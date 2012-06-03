@@ -329,6 +329,21 @@ namespace System.Xml
 			return copy;
 		}
 
+		static XmlReaderSettings PopulateSettings (XmlReader reader, XmlReaderSettings src)
+		{
+			XmlReaderSettings copy;
+			if (src == null)
+				copy = new XmlReaderSettings ();
+			else
+				copy = src.Clone ();
+#if NET_4_5
+			if (reader.Settings != null)
+				copy.Async = reader.Settings.Async;
+			copy.SetReadOnly ();
+#endif
+			return copy;
+		}
+
 		public static XmlReader Create (Stream input, XmlReaderSettings settings, string baseUri)
 		{
 			settings = PopulateSettings (settings);
@@ -345,7 +360,7 @@ namespace System.Xml
 
 		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
 		{
-			settings = PopulateSettings (settings);
+			settings = PopulateSettings (reader, settings);
 			XmlReader r = CreateFilteredXmlReader (reader, settings);
 			r.settings = settings;
 			return r;
@@ -1387,6 +1402,8 @@ namespace System.Xml
 		#endregion
 
 #if NET_4_5
+		#region .NET 4.5 Async Methods
+
 		bool asyncRunning;
 
 		void StartAsync ()
@@ -1604,6 +1621,7 @@ namespace System.Xml
 			});
 		}
 
+		#endregion
 #endif
 	}
 }
