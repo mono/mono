@@ -53,6 +53,7 @@ namespace MonoTests.System.IO.Ports
 			Assert.AreEqual (false, sp.DiscardNull, "#C1");
 		}
 
+		[Category ("NotWorking")]
 		[Test]
 		public void NonstandardBaudRate ()
 		{
