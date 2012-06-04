@@ -262,6 +262,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
+		[Category ("NotOnMac")]
 		public void Constructor5 ()
 		{
 			MyUdpClient client;
@@ -383,6 +384,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
+		[Category ("NotOnMac")]
 		public void Constructor6 ()
 		{
 			MyUdpClient client;
@@ -477,6 +479,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void UdpClientBroadcastTest () 
 		{
 			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234));
@@ -500,6 +503,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress)
+		[Category ("NotOnMac")]
 		public void JoinMulticastGroup1_IPv6 ()
 		{
 #if NET_2_0
@@ -609,6 +613,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (In32, IPAddress)
+		[Category ("NotOnMac")]
 		public void JoinMulticastGroup2_IPv6 ()
 		{
 #if NET_2_0
@@ -700,6 +705,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, Int32)
+		[Category ("NotOnMac")]
 		public void JoinMulticastGroup3_IPv6 ()
 		{
 #if NET_2_0
@@ -956,6 +962,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
+		[Category ("NotOnMac")]
 		public void BeginSend ()
 		{
 			UdpClient client = new UdpClient ();
@@ -1010,6 +1017,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
+		[Category ("NotOnMac")]
 		public void BeginReceive ()
 		{
 			UdpClient client = new UdpClient (1237);
@@ -1035,6 +1043,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
+		[Category ("NotOnMac")]
 		public void Available ()
 		{
 			UdpClient client = new UdpClient (1238);
