@@ -751,23 +751,97 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		// For testing row/column selection.
+		List<List<int>> selections;
+		void DataGridView_RowSelectionChanged (object sender, EventArgs e)
+		{
+			// Make a list of selected rows.
+			DataGridView dgv = sender as DataGridView;
+			List<int> selection = new List<int> ();
+			foreach (DataGridViewRow row in dgv.SelectedRows)
+				selection.Add (row.Index);
+			selections.Add (selection);
+		}
+		void DataGridView_ColumnSelectionChanged (object sender, EventArgs e)
+		{
+			// Make a list of selected columns.
+			DataGridView dgv = sender as DataGridView;
+			List<int> selection = new List<int> ();
+			foreach (DataGridViewColumn column in dgv.SelectedColumns)
+				selection.Add (column.Index);
+			selections.Add (selection);
+		}
+
+		// Used to generate printable representation of selections.
+		string ListListIntToString (List<List<int>> selections)
+		{
+			List<string> selectionsList = new List<string> ();
+			foreach (List<int> selection in selections)
+			{
+				List<string> selectionList = new List<string> ();
+				foreach (int selectionNo in selection)
+					selectionList.Add (selectionNo.ToString ("D"));
+				selectionsList.Add ("<" + string.Join (",", selectionList.ToArray()) + ">");
+			}
+			return string.Join (",", selectionsList.ToArray());
+
+			// (Here is the disallowed Linq version.)
+			/* return string.Join (",", (selections.Select ((List<int> x)
+				=> "<" + string.Join (",", (x.Select ((int y)
+					=> (y.ToString("D")))).ToArray()) + ">").ToArray())); */
+		}
+
 		[Test]
 		public void SelectedRowsTest ()
 		{
 			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
 				dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+				// Prepare to test the SelectionChanged event.
+				selections = new List<List<int>> ();
+				List<List<int>> expectedSelections = new List<List<int>> ();
+				dgv.SelectionChanged += new EventHandler (DataGridView_RowSelectionChanged);
+
+				// Make sure there's no selection to begin with.
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "1-10");
+
+				// Select a row.
 				dgv.Rows [1].Selected = true;
 				Assert.AreEqual (1, dgv.SelectedRows.Count, "1-1");
 				Assert.AreEqual (1, dgv.SelectedRows [0].Index, "1-2");
+				expectedSelections.Add (new List<int> { 1 });
+
+				// Select another row.
 				dgv.Rows [3].Selected = true;
 				Assert.AreEqual (2, dgv.SelectedRows.Count, "1-3");
 				Assert.AreEqual (3, dgv.SelectedRows [0].Index, "1-4");
 				Assert.AreEqual (1, dgv.SelectedRows [1].Index, "1-5");
+				expectedSelections.Add (new List<int> { 3, 1 });
+
+				// Select another row.
 				dgv.Rows [2].Selected = true;
 				Assert.AreEqual (3, dgv.SelectedRows.Count, "1-6");
 				Assert.AreEqual (2, dgv.SelectedRows [0].Index, "1-7");
 				Assert.AreEqual (3, dgv.SelectedRows [1].Index, "1-8");
 				Assert.AreEqual (1, dgv.SelectedRows [2].Index, "1-9");
+				expectedSelections.Add (new List<int> { 2, 3, 1 });
+
+				// Unselect a row.
+				dgv.Rows [2].Selected = false;
+				Assert.AreEqual (2, dgv.SelectedRows.Count, "1-11");
+				Assert.AreEqual (3, dgv.SelectedRows [0].Index, "1-12");
+				Assert.AreEqual (1, dgv.SelectedRows [1].Index, "1-13");
+				expectedSelections.Add (new List<int> { 3, 1 });
+
+				// Delete a row.  This clears the selection.
+				dgv.Rows.RemoveAt (2);
+				Assert.AreEqual (0, dgv.SelectedRows.Count, "1-14");
+				expectedSelections.Add (new List<int> { });
+
+				// Make sure the SelectionChanged event was called when expected.
+				string selectionsText = ListListIntToString (selections);
+				string expectedSelectionsText = ListListIntToString (expectedSelections);
+				Assert.AreEqual (expectedSelectionsText, selectionsText, "1-15");
 			}
 
 			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
@@ -859,36 +933,101 @@ namespace MonoTests.System.Windows.Forms
 				foreach (DataGridViewColumn col in dgv.Columns)
 					col.SortMode = DataGridViewColumnSortMode.NotSortable;
 				dgv.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;
+
+				// Prepare to test the SelectionChanged event.
+				selections = new List<List<int>> ();
+				List<List<int>> expectedSelections = new List<List<int>> ();
+				dgv.SelectionChanged += new EventHandler (DataGridView_ColumnSelectionChanged);
+
+				// Make sure there's no selection to begin with.
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "1-13");
+
+				// Select a column.
 				dgv.Columns [1].Selected = true;
 				Assert.AreEqual (1, dgv.SelectedColumns.Count, "1-1");
 				Assert.AreEqual (1, dgv.SelectedColumns [0].Index, "1-2");
+				expectedSelections.Add (new List<int> { 1 });
+
+				// Select another column.
 				dgv.Columns [3].Selected = true;
 				Assert.AreEqual (2, dgv.SelectedColumns.Count, "1-3");
 				Assert.AreEqual (3, dgv.SelectedColumns [0].Index, "1-4");
 				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "1-5");
+				expectedSelections.Add (new List<int> { 3, 1 });
+
+				// Select another column.
 				dgv.Columns [2].Selected = true;
 				Assert.AreEqual (3, dgv.SelectedColumns.Count, "1-6");
 				Assert.AreEqual (2, dgv.SelectedColumns [0].Index, "1-7");
 				Assert.AreEqual (3, dgv.SelectedColumns [1].Index, "1-8");
 				Assert.AreEqual (1, dgv.SelectedColumns [2].Index, "1-9");
+				expectedSelections.Add (new List<int> { 2, 3, 1 });
+
+				// Unselect a column.
+				dgv.Columns [2].Selected = false;
+				Assert.AreEqual (2, dgv.SelectedColumns.Count, "1-10");
+				Assert.AreEqual (3, dgv.SelectedColumns [0].Index, "1-11");
+				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "1-12");
+				expectedSelections.Add (new List<int> { 3, 1 });
+
+				// Delete a column.  This clears the selection.
+				// The event handler gets called twice.
+				dgv.Columns.RemoveAt (2);
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "1-14");
+				expectedSelections.Add (new List<int> { });
+				expectedSelections.Add (new List<int> { });
+
+				// Make sure the SelectionChanged event was called when expected.
+				string selectionsText = ListListIntToString (selections);
+				string expectedSelectionsText = ListListIntToString (expectedSelections);
+				Assert.AreEqual (expectedSelectionsText, selectionsText, "1-15");
 			}
 
 			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {
 				foreach (DataGridViewColumn col in dgv.Columns)
 					col.SortMode = DataGridViewColumnSortMode.NotSortable;
 				dgv.SelectionMode = DataGridViewSelectionMode.ColumnHeaderSelect;
+
+				// Prepare to test the SelectionChanged event.
+				selections = new List<List<int>> ();
+				List<List<int>> expectedSelections = new List<List<int>> ();
+				dgv.SelectionChanged += new EventHandler (DataGridView_ColumnSelectionChanged);
+
+				// Make sure there's no selection to begin with.
+				Assert.AreEqual (0, dgv.SelectedColumns.Count, "2-10");
+
+				// Select a column.
 				dgv.Columns [1].Selected = true;
 				Assert.AreEqual (1, dgv.SelectedColumns.Count, "2-1");
 				Assert.AreEqual (1, dgv.SelectedColumns [0].Index, "2-2");
+				expectedSelections.Add (new List<int> { 1 });
+
+				// Select another column.
 				dgv.Columns [3].Selected = true;
 				Assert.AreEqual (2, dgv.SelectedColumns.Count, "2-3");
 				Assert.AreEqual (3, dgv.SelectedColumns [0].Index, "2-4");
 				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "2-5");
+				expectedSelections.Add (new List<int> { 3, 1 });
+
+				// Select another column.
 				dgv.Columns [2].Selected = true;
 				Assert.AreEqual (3, dgv.SelectedColumns.Count, "2-6");
 				Assert.AreEqual (2, dgv.SelectedColumns [0].Index, "2-7");
 				Assert.AreEqual (3, dgv.SelectedColumns [1].Index, "2-8");
 				Assert.AreEqual (1, dgv.SelectedColumns [2].Index, "2-9");
+				expectedSelections.Add (new List<int> { 2, 3, 1 });
+
+				// Unselect another column.
+				dgv.Columns [2].Selected = false;
+				Assert.AreEqual (2, dgv.SelectedColumns.Count, "2-11");
+				Assert.AreEqual (3, dgv.SelectedColumns [0].Index, "2-12");
+				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "2-13");
+				expectedSelections.Add (new List<int> { 3, 1 });
+
+				// Make sure the SelectionChanged event was called when expected.
+				string selectionsText = ListListIntToString (selections);
+				string expectedSelectionsText = ListListIntToString (expectedSelections);
+				Assert.AreEqual (expectedSelectionsText, selectionsText, "2-14");
 			}
 
 			using (DataGridView dgv = DataGridViewCommon.CreateAndFillBig ()) {

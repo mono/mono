@@ -4009,6 +4009,7 @@ namespace System.Windows.Forms {
 			AutoResizeColumnsInternal ();
 			PrepareEditingRow (false, true);
 
+			OnSelectionChanged (EventArgs.Empty);
 			OnColumnRemoved (e);
 		}
 
@@ -5116,6 +5117,7 @@ namespace System.Windows.Forms {
 		internal void OnRowsPostRemovedInternal (DataGridViewRowsRemovedEventArgs e)
 		{
 			Invalidate ();
+			OnSelectionChanged (EventArgs.Empty);
 			OnRowsRemoved (e);
 		}
 
@@ -5737,6 +5739,8 @@ namespace System.Windows.Forms {
 				selected_columns.InternalAdd (col);
 			}
 
+			OnSelectionChanged (EventArgs.Empty);
+
 			Invalidate();
 		}
 
@@ -5758,6 +5762,8 @@ namespace System.Windows.Forms {
 			} else if (selected && !selected_rows.Contains (row)) {
 				selected_rows.InternalAdd (row);
 			}
+
+			OnSelectionChanged (EventArgs.Empty);
 
 			Invalidate();
 		}
