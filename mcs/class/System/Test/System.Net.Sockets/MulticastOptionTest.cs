@@ -211,6 +211,7 @@ namespace MonoTests.System.Net.Sockets
 #endif
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void Group ()
 		{
 			IPAddress group;
@@ -251,6 +252,7 @@ namespace MonoTests.System.Net.Sockets
 
 #if NET_2_0
 		[Test]
+		[Category ("NotOnMac")]
 		public void InterfaceIndex ()
 		{
 			IPAddress group;
@@ -314,6 +316,7 @@ namespace MonoTests.System.Net.Sockets
 #endif
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void LocalAddress ()
 		{
 			IPAddress group;
