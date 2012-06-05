@@ -1545,5 +1545,13 @@ namespace MonoTests.System.XmlSerialization
 			} catch (InvalidOperationException) {
 			}
 		}
+
+		[Test]
+		public void NotExactDateParse ()
+		{
+			XmlSerializer xs = new XmlSerializer (typeof (NotExactDateParseClass));
+			NotExactDateParseClass o = (NotExactDateParseClass) xs.Deserialize (new StringReader ("<NotExactDateParseClass xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SomeDate xsi:type=\"xsd:date\">2012-02-05-09:00</SomeDate></NotExactDateParseClass>"));
+			Assert.AreEqual (new DateTime (2012,2,5), o.SomeDate);
+		}
 	}
 }

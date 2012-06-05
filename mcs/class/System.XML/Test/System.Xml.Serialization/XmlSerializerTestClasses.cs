@@ -1047,5 +1047,11 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlElementAttribute ("MyDateNullable", DataType = "date", IsNullable = true)]
 		public DateTime? MyDateNullable;
 	}
+
+	public class NotExactDateParseClass
+	{
+		[XmlElementAttribute (DataType = "date")]
+		public DateTime SomeDate;
+	}
 }
 
