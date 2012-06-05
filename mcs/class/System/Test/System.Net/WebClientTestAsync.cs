@@ -45,7 +45,37 @@ namespace MonoTests.System.Net
 		[Category("Async")]
 		public void DownloadData ()
 		{
-			SyncContextTest.Run ();
+			WebClient wc;
+			bool progress_changed = false;
+			bool completed = false;
+			bool progress_changed_error = false;
+			bool completed_error = false;
+
+			int thread_id = Thread.CurrentThread.ManagedThreadId;
+
+			wc = new WebClient ();
+
+			wc.DownloadProgressChanged += delegate {
+				progress_changed = true;
+				if (Thread.CurrentThread.ManagedThreadId != thread_id)
+					progress_changed_error = true;
+			};
+			wc.DownloadDataCompleted += delegate {
+				completed = true;
+				if (Thread.CurrentThread.ManagedThreadId != thread_id)
+					completed_error = true;
+			};
+
+			MessagePumpSyncContext.Run (async () => {
+				var url = Assembly.GetExecutingAssembly ().CodeBase;
+				await wc.DownloadDataTaskAsync (url);
+				Assert.AreEqual (Thread.CurrentThread.ManagedThreadId, thread_id);
+			}, () => progress_changed && completed, 10000);
+
+			Assert.IsTrue (progress_changed, "#1");
+			Assert.IsFalse (progress_changed_error, "#2");
+			Assert.IsTrue (completed, "#3");
+			Assert.IsFalse (completed_error, "#4");
 		}
 
 		[Test]
@@ -56,8 +86,7 @@ namespace MonoTests.System.Net
 			string filename = Path.GetTempFileName ();
 
 			var task = wc.DownloadFileTaskAsync ("http://www.mono-project.com/", filename);
-			task.Wait ();
-			
+			Assert.IsTrue (task.Wait (15000));
 			Assert.IsTrue (task.IsCompleted);
 			
 			File.Delete (filename);
@@ -65,7 +94,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category("Async")]
-		public void Cancelation ()
+		public void Cancellation ()
 		{
 			WebClient wc = new WebClient ();
 			var progress = new ManualResetEvent (false);
@@ -76,7 +105,7 @@ namespace MonoTests.System.Net
 			// Try downloading some large file, so we don't finish early.
 			var url = "http://download.mono-project.com/archive/2.10.9/macos-10-x86/11/MonoFramework-MDK-2.10.9_11.macos10.xamarin.x86.dmg";
 			var task = wc.DownloadDataTaskAsync (url);
-			Assert.IsTrue (progress.WaitOne (10000), "#1");
+			Assert.IsTrue (progress.WaitOne (15000), "#1");
 			wc.CancelAsync ();
 
 			try {
@@ -85,8 +114,8 @@ namespace MonoTests.System.Net
 			} catch (Exception ex) {
 				if (ex is AggregateException)
 					ex = ((AggregateException)ex).InnerException;
-				Assert.IsInstanceOfType (typeof (OperationCanceledException), ex, "#3");
-				Assert.IsTrue (task.IsCanceled, "#4");
+				Assert.That (ex is WebException || ex is OperationCanceledException, "#4");
+				Assert.IsTrue (task.IsCanceled || task.IsFaulted, "#5");
 			}
 		}
 
@@ -96,125 +125,76 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			var t1 = wc.OpenReadTaskAsync ("http://www.google.com/");
-			t1.Wait ();
+			Assert.That (t1.Wait (15000));
 			Assert.IsTrue (t1.IsCompleted, "#1");
 
 			var t2 = wc.OpenReadTaskAsync ("http://www.mono-project.com/");
-			t2.Wait ();
+			Assert.That (t2.Wait (15000));
 			Assert.IsTrue (t2.IsCompleted, "#2");
 
 			var t3 = wc.DownloadStringTaskAsync ("http://www.google.com/");
-			t3.Wait ();
+			Assert.That (t3.Wait (15000));
 			Assert.IsTrue (t3.IsCompleted, "#3");
 		}
 
-		private class SyncContextTest
+		[Test]
+		[Category("Async")]
+		public void DownloadMultiple2 ()
 		{
-			SyncContext ctx;
-			WebClient wc;
-			bool progress_changed;
-			bool completed;
-			bool progress_changed_error;
-			bool completed_error;
-			bool done;
-			bool done_error;
-			int thread_id;
+			WebClient wc = new WebClient ();
 
-			SyncContextTest ()
-			{
-				ctx = new SyncContext ();
-				wc = new WebClient ();
-
-				wc.DownloadProgressChanged += HandleDownloadProgressChanged;
-				wc.DownloadDataCompleted += HandleDownloadDataCompleted;
-			}
-
-			void HandleDownloadDataCompleted (object sender, DownloadDataCompletedEventArgs e)
-			{
-				completed = true;
-				if (Thread.CurrentThread.ManagedThreadId != thread_id)
-					completed_error = true;
-				CheckCompleted ();
-			}
-
-			void HandleDownloadProgressChanged (object sender, DownloadProgressChangedEventArgs e)
-			{
-				progress_changed = true;
-				if (Thread.CurrentThread.ManagedThreadId != thread_id)
-					progress_changed_error = true;
-				CheckCompleted ();
-			}
-
-			void CheckCompleted ()
-			{
-				if (!progress_changed || !completed || !done)
-					return;
-				ThreadPool.QueueUserWorkItem (state => {
-					Thread.Sleep (250);
-					ctx.Cancel ();
-				});
-			}
-
-			void SetupTimeoutHandler ()
-			{
-				ThreadPool.QueueUserWorkItem (state => {
-					Thread.Sleep (30000);
-					wc.CancelAsync ();
-					ctx.Cancel ();
-				});
-			}
-
-			public static void Run ()
-			{
-				SyncContextTest test = new SyncContextTest ();
-				test.DoRun ();
-			}
-
-			void DoRun ()
-			{
-				SetupTimeoutHandler ();
-
-				var old_ctx = SynchronizationContext.Current;
-				try {
-					SynchronizationContext.SetSynchronizationContext (ctx);
-
-					thread_id = Thread.CurrentThread.ManagedThreadId;
-
-					ctx.Post (obj => DownloadDataAsync (), null);
-
-					ctx.RunMessagePump ();
-				} catch (Exception ex) {
-					Assert.Fail ("Unknown exception: {0}", ex);
-				} finally {
-					SynchronizationContext.SetSynchronizationContext (old_ctx);
-				}
-
-				Assert.IsTrue (progress_changed, "#1");
-				Assert.IsFalse (progress_changed_error, "#2");
-				Assert.IsTrue (completed, "#3");
-				Assert.IsFalse (completed_error, "#4");
-				Assert.IsTrue (done, "#5");
-				Assert.IsFalse (done_error, "#6");
-			}
-
-			async void DownloadDataAsync ()
-			{
-				var url = Assembly.GetExecutingAssembly ().CodeBase;
-				await wc.DownloadDataTaskAsync (url);
-				done = true;
-				if (Thread.CurrentThread.ManagedThreadId != thread_id)
-					done_error = true;
-				CheckCompleted ();
-			}
+			MessagePumpSyncContext.Run (async () => {
+				await wc.DownloadStringTaskAsync ("http://www.google.com/");
+				await wc.DownloadDataTaskAsync ("http://www.mono-project.com/");
+			}, null, 15000);
 		}
 
-		public class SyncContext : SynchronizationContext
+		[Test]
+		[Category("Async")]
+		public void DownloadMultiple3 ()
+		{
+			WebClient wc = new WebClient ();
+			int thread_id = Thread.CurrentThread.ManagedThreadId;
+			bool data_completed = false;
+			bool string_completed = false;
+			bool error = false;
+
+			wc.DownloadDataCompleted += delegate {
+				if (data_completed || (Thread.CurrentThread.ManagedThreadId != thread_id))
+					error = true;
+				data_completed = true;
+			};
+			wc.DownloadStringCompleted += delegate {
+				if (string_completed || (Thread.CurrentThread.ManagedThreadId != thread_id))
+					error = true;
+				string_completed = true;
+			};
+
+			MessagePumpSyncContext.Run (async () => {
+				await wc.DownloadStringTaskAsync ("http://www.google.com/");
+				await wc.DownloadDataTaskAsync ("http://www.mono-project.com/");
+			}, () => data_completed && string_completed, 15000);
+
+			Assert.IsTrue (data_completed, "#1");
+			Assert.IsTrue (string_completed, "#2");
+			Assert.IsFalse (error, "#3");
+		}
+
+		public sealed class MessagePumpSyncContext : SynchronizationContext
 		{
 			private delegate void MyAction ();
 
 			private readonly Queue<MyAction> queue = new Queue<MyAction> ();
 			private readonly object sync = new object ();
+			private readonly Func<bool> completed;
+			private readonly int timeout;
 			private bool running = true;
+
+			MessagePumpSyncContext (Func<bool> completed, int timeout)
+			{
+				this.completed = completed;
+				this.timeout = timeout;
+			}
 
 			public override void Send (SendOrPostCallback d, object state)
 			{
@@ -229,15 +209,26 @@ namespace MonoTests.System.Net
 				}
 			}
 
-			public void RunMessagePump ()
+			bool IsCompleted {
+				get {
+					if (running)
+						return false;
+					if (completed != null)
+						return completed ();
+					return true;
+				}
+			}
+
+			void RunMessagePump ()
 			{
 				while (running) {
 					MyAction action;
 					lock (sync) {
 						while (queue.Count == 0) {
-							if (!running)
+							if (IsCompleted)
 								return;
-							Monitor.Wait (sync);
+							if (!Monitor.Wait (sync, timeout))
+								throw new TimeoutException ();
 						}
 						action = queue.Dequeue ();
 					}
@@ -252,6 +243,31 @@ namespace MonoTests.System.Net
 					Monitor.Pulse (sync);
 				}
 			}
+
+			public static void Run (Func<Task> action, Func<bool> completed, int timeout)
+			{
+				var old_ctx = SynchronizationContext.Current;
+
+				var ctx = new MessagePumpSyncContext (completed, timeout);
+				try {
+					SynchronizationContext.SetSynchronizationContext (ctx);
+
+					var thread_id = Thread.CurrentThread.ManagedThreadId;
+
+					var task = action ();
+					task.ContinueWith ((t) => {
+						ctx.running = false;
+					}, TaskScheduler.FromCurrentSynchronizationContext ());
+
+					ctx.RunMessagePump ();
+
+					if (task.IsFaulted)
+						throw task.Exception;
+				} finally {
+					SynchronizationContext.SetSynchronizationContext (old_ctx);
+				}
+			}
+
 		}
 	}
 }
