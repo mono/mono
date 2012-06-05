@@ -112,7 +112,7 @@ namespace Mono.XBuild.Utilities {
 						sb.Append ('"');
 						break;
 					default:
-						throw new FormatException ("Unrecogised XML entity '&" + entity + ";'.");
+						throw new FormatException ("Unrecognized XML entity '&" + entity + ";'.");
 					}
 					i = end;
 				} else
