@@ -144,7 +144,7 @@ namespace System.Xml
 				req.Proxy = proxy;
 			if (credential != null)
 				req.Credentials = credential;
-			var res = await req.GetResponseAsync ();
+			var res = await req.GetResponseAsync ().ConfigureAwait (false);
 			return res.GetResponseStream ();
 		}
 #endif

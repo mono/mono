@@ -10,6 +10,9 @@ using System;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
+#if NET_4_5
+using System.Reflection;
+#endif
 
 namespace MonoTests.System.Xml
 {
@@ -98,5 +101,37 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("Standard.xslt", uri.AbsolutePath, "#2");
 			Assert.AreEqual ("view:Standard.xslt", uri.AbsoluteUri, "#2");
 		}
+
+#if NET_4_5
+		[Test]
+		[Category("Async")]
+		public void TestAsync ()
+		{
+			var loc = Assembly.GetExecutingAssembly ().Location;
+			Uri resolved = resolver.ResolveUri (null, loc);
+			Assert.AreEqual ("file", resolved.Scheme);
+			var task = resolver.GetEntityAsync (resolved, null, typeof (Stream));
+			Assert.That (task.Wait (3000));
+			Assert.IsInstanceOfType (typeof (Stream), task.Result);
+		}
+
+		[Test]
+		[Category("Async")]
+		public void TestAsyncError ()
+		{
+			var loc = Assembly.GetExecutingAssembly ().Location;
+			Uri resolved = resolver.ResolveUri (null, loc);
+			Assert.AreEqual ("file", resolved.Scheme);
+			var task = resolver.GetEntityAsync (resolved, null, typeof (File));
+			try {
+				task.Wait (3000);
+				Assert.Fail ("#1");
+			} catch (Exception ex) {
+				if (ex is AggregateException)
+					ex = ((AggregateException) ex).InnerException;
+				Assert.IsInstanceOfType (typeof (XmlException), ex);
+			}
+		}
+#endif
 	}
 }

@@ -136,7 +136,7 @@ namespace System.Xml
 		}
 
 #if NET_4_5
-		public override async Task<object> GetEntityAsync (
+		public override Task<object> GetEntityAsync (
 			Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
 			if (SecurityManager.SecurityEnabled) {
@@ -147,7 +147,7 @@ namespace System.Xml
 				}
 				permissionSet.PermitOnly ();
 			}
-			return await resolver.GetEntityAsync (absoluteUri, role, ofObjectToReturn);
+			return resolver.GetEntityAsync (absoluteUri, role, ofObjectToReturn);
 		}
 #endif
 #endregion

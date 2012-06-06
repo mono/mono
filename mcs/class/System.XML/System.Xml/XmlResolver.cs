@@ -98,7 +98,7 @@ namespace System.Xml
 #if NET_4_5
 		public virtual Task<object> GetEntityAsync (Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
-			return Task.Run (() => GetEntity (absoluteUri, role, ofObjectToReturn));
+			throw new NotImplementedException ();
 		}
 #endif
 	}
