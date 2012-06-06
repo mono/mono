@@ -185,6 +185,8 @@ create_exceptions (MonoDomain *domain)
 	domain->null_reference_ex = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL);
 	arg = mono_string_new (domain, "The requested operation caused a stack overflow.");
 	domain->stack_overflow_ex = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL);
+	arg = mono_string_new (domain, "Division by zero");
+	domain->divide_by_zero_ex = mono_exception_from_name_two_strings (mono_defaults.corlib, "System", "DivideByZeroException", arg, NULL);
 
 	if (domain != old_domain) {
 		mono_thread_pop_appdomain_ref ();
