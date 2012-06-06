@@ -352,6 +352,13 @@ namespace System
 			return new TimeZoneInfo (id, baseUtcOffset, displayName, standardDisplayName, daylightDisplayName, adjustmentRules, disableDaylightSavingTime);
 		}
 
+#if NET_4_5
+		public override bool Equals (object obj)
+		{
+			return Equals (obj as TimeZoneInfo);
+		}
+#endif
+
 		public bool Equals (TimeZoneInfo other)
 		{
 			if (other == null)

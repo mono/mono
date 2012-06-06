@@ -114,11 +114,17 @@ namespace System
 			set { help_link = value; }
 		}
 
+#if NET_4_5
+		public int HResult {
+			get { return hresult; }
+			protected set { hresult = value; }
+		}
+#else
 		protected int HResult {
 			get { return hresult; }
 			set { hresult = value; }
 		}
-
+#endif
 		internal void SetMessage (string s)
 		{
 			message = s;
