@@ -3,8 +3,10 @@
 // Ankit Jain  <jankit@novell.com>
 // Raja R Harinath  <rharinath@novell.com>
 // Jensen Somers <jensen.somers@gmail.com>
+// Marek Safar (marek.safar@gmail.com)
 // 
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin, Inc (http://www.xamarin.com)
 // 
 
 using NUnit.Framework;
@@ -153,5 +155,111 @@ namespace MonoTests.System
 			// Should return true.
 			Assert.AreEqual (myArrSeg_1 != myArrSeg_2, true);
 		}
+
+#if NET_4_5
+		[Test]
+		public void IList_NotSupported ()
+		{
+			var array = new long[] { 1, 2, 3, 4, 5, 6, -10 };
+
+			IList<long> s = new ArraySegment<long> (array, 2, 3);
+
+			try {
+				s.Add (1);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {
+			}
+
+			try {
+				s.Clear ();
+				Assert.Fail ("#2");
+			} catch (NotSupportedException) {
+			}
+
+			try {
+				s.Remove (3);
+				Assert.Fail ("#3");
+			} catch (NotSupportedException) {
+			}
+
+			try {
+				s.RemoveAt (3);
+				Assert.Fail ("#4");
+			} catch (NotSupportedException) {
+			}
+
+			try {
+				s.Insert (2, 3);
+				Assert.Fail ("#5");
+			} catch (NotSupportedException) {
+			}
+		}
+
+		[Test]
+		public void IList_GetEnumerator ()
+		{
+			var array = new long[] { 1, 2, 3, 4, 5, 6, -10 };
+
+			IList<long> s = new ArraySegment<long> (array, 2, 3);
+
+			long total = 0;
+			int count = 0;
+			foreach (var i in s) {
+				count++;
+				total += i;
+			}
+
+			Assert.AreEqual (3, count, "#1");
+			Assert.AreEqual (12, total, "#2");
+		}
+
+		[Test]
+		public void IList_IndexOf ()
+		{
+			var array = new long[] { 1, 2, 3, 4, 5, 6, -10 };
+
+			IList<long> s = new ArraySegment<long> (array, 2, 3);
+			Assert.AreEqual (-1, s.IndexOf (2), "#1");
+			Assert.AreEqual (1, s.IndexOf (4), "#2");
+		}
+
+		[Test]
+		public void IList_Contains ()
+		{
+			var array = new long[] { 1, 2, 3, 4, 5, 6, -10 };
+
+			IList<long> s = new ArraySegment<long> (array, 2, 3);
+			Assert.IsFalse (s.Contains (2), "#1");
+			Assert.IsTrue (s.Contains (4), "#2");
+		}
+
+		[Test]
+		public void IList_CopyTo ()
+		{
+			var array = new long[] { 1, 2, 3, 4, 5, 6, -10 };
+
+			IList<long> s = new ArraySegment<long> (array, 2, 3);
+			long[] target = new long[s.Count];
+			s.CopyTo (target, 0);
+
+			Assert.AreEqual (3, target[0], "#1");
+			Assert.AreEqual (4, target[1], "#2");
+		}
+
+		[Test]
+		public void IList_Indexer ()
+		{
+			var array = new long[] { 1, 2, 3, 4, 5, 6, -10 };
+
+			IList<long> s = new ArraySegment<long> (array, 2, 3);
+			Assert.AreEqual (3, s[0], "#1");
+			Assert.AreEqual (4, s[1], "#2");
+
+			// LAMESPEC: I have not idea why is this allowed on ReadOnly array
+			Assert.IsTrue (s.IsReadOnly, "#3");
+			s[1] = -3;
+			Assert.AreEqual (-3, s[1], "#2a");
+		}
+#endif
 	}
 }
