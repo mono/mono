@@ -878,7 +878,6 @@ namespace Mono.CSharp {
 							return true;
 						}
 
-						// TODO: Better error message
 						if (async_type.Kind == MemberKind.Void) {
 							ec.Report.Error (127, loc,
 								"`{0}': A return keyword must not be followed by any expression when method returns void",
@@ -909,6 +908,15 @@ namespace Mono.CSharp {
 						}
 					}
 				} else {
+					// Same error code as .NET but better error message
+					if (block_return_type.Kind == MemberKind.Void) {
+						ec.Report.Error (127, loc,
+							"`{0}': A return keyword must not be followed by any expression when delegate returns void",
+							am.GetSignatureForError ());
+
+						return false;
+					}
+
 					var l = am as AnonymousMethodBody;
 					if (l != null && l.ReturnTypeInference != null && expr != null) {
 						l.ReturnTypeInference.AddCommonTypeBound (expr.Type);
