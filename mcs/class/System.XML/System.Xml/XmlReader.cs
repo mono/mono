@@ -1614,7 +1614,7 @@ namespace System.Xml
 			StartAsync ();
 			return Task.Run (() => {
 				try {
-					return Skip ();
+					Skip ();
 				} finally {
 					asyncRunning = false;
 				}
