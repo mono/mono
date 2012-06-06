@@ -154,6 +154,8 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			p.StartInfo.FileName = Path.Combine (executionDir, binName);
 			p.StartInfo.Arguments = OopOperation.Serialize.ToString () + " \"" + filename + "\"";
 			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.EnvironmentVariables["PATH"] = Environment.GetEnvironmentVariable ("PATH");
+			p.StartInfo.EnvironmentVariables["MONO_PATH"] = Environment.GetEnvironmentVariable ("MONO_PATH");
 			p.Start();
 			p.WaitForExit();
 			if (p.ExitCode != 0)
