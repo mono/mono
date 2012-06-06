@@ -416,7 +416,6 @@ namespace MonoTests.System.Xml
 			Assert.IsTrue (i.MoveNext (), "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ValueAsBoolean ()
 		{
@@ -687,6 +686,5 @@ namespace MonoTests.System.Xml
 				return;
 			Assert.Fail ("no selection");
 		}
-#endif
 	}
 }
