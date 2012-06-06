@@ -80,7 +80,11 @@ namespace System.Xml
 
 		public XmlReaderSettings Clone ()
 		{
-			return (XmlReaderSettings) MemberwiseClone ();
+			var clone = (XmlReaderSettings) MemberwiseClone ();
+#if NET_4_5
+			clone.isReadOnly = false;
+#endif
+			return clone;
 		}
 
 		public void Reset ()
