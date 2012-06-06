@@ -1304,10 +1304,18 @@ namespace Mono.CSharp {
 					}
 				}
 
-				base.Emit ();
-				
+				if (block != null && block.StateMachine != null) {
+					var psm = block.StateMachine is IteratorStorey ?
+						Module.PredefinedAttributes.IteratorStateMachine :
+						Module.PredefinedAttributes.AsyncStateMachine;
+					
+					psm.EmitAttribute (MethodBuilder, block.StateMachine);
+				}
+
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 					Module.PredefinedAttributes.Extension.EmitAttribute (MethodBuilder);
+
+				base.Emit ();
 			} catch {
 				Console.WriteLine ("Internal compiler error at {0}: exception caught while emitting {1}",
 						   Location, MethodBuilder);

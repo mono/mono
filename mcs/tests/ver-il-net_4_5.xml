@@ -22995,6 +22995,42 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-26.cs">
+    <type name="Test.Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>75</size>
+      </method>
+      <method name="IEnumerable`1 Test()" attrs="150">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="Test.Program+&lt;Test&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>72</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-lambda-01.cs">
     <type name="IntFunc">
       <method name="Int32 Invoke(Int32)" attrs="454">
@@ -56394,6 +56430,41 @@
     <type name="C+&lt;Test2&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
         <size>59</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-35.cs">
+    <type name="C">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] AsyncMethod()" attrs="150">
+        <size>33</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>178</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__1(System.Reflection.MethodInfo)" attrs="145">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;AsyncMethod&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>165</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>162</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>

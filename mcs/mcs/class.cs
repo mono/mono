@@ -346,6 +346,24 @@ namespace Mono.CSharp
 			return MemberName.GetSignatureForError ();
 		}
 
+		public string GetSignatureForMetadata ()
+		{
+#if STATIC
+			var name = TypeNameParser.Escape (MemberName.Basename);
+
+			if (Parent is TypeDefinition) {
+				return Parent.GetSignatureForMetadata () + "+" + name;
+			}
+
+			if (Parent != null && Parent.MemberName != null)
+				return Parent.GetSignatureForMetadata () + "." + name;
+
+			return name;
+#else
+			throw new NotImplementedException ();
+#endif
+		}
+
 		public virtual void RemoveContainer (TypeContainer cont)
 		{
 			if (containers != null)

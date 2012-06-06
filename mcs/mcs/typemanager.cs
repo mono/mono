@@ -340,6 +340,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetStateMachine;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderOnCompleted;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderOnCompletedUnsafe;
+		public readonly PredefinedMember<MethodSpec> AsyncStateMachineAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> DebuggerBrowsableAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorInt;
@@ -357,6 +358,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> IEnumerableGetEnumerator;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange_T;
+		public readonly PredefinedMember<MethodSpec> IteratorStateMachineAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> FixedBufferAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle2;
@@ -549,6 +551,10 @@ namespace Mono.CSharp
 							}, false),
 					btypes.Void));
 
+			AsyncStateMachineAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.AsyncStateMachine,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					btypes.Type)));
+
 			DebuggerBrowsableAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DebuggerBrowsable,
 				MemberFilter.Constructor (null));
 
@@ -624,6 +630,10 @@ namespace Mono.CSharp
 								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
 							}, false),
 					null));
+
+			IteratorStateMachineAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.IteratorStateMachine,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					btypes.Type)));
 
 			MethodInfoGetMethodFromHandle = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle);
@@ -843,7 +853,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	class PredefinedMember<T> where T : MemberSpec
+	public class PredefinedMember<T> where T : MemberSpec
 	{
 		readonly ModuleContainer module;
 		T member;
