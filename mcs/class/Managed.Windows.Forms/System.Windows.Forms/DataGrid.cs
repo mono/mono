@@ -2539,7 +2539,11 @@ namespace System.Windows.Forms
 			if (e.Index == -1) {
 				ResetSelection ();
 				if (rows == null || RowsCount != rows.Length - (ShowEditRow ? 1 : 0))
+				{
+					if (is_editing)
+						CancelEditing ();
 					RecreateDataGridRows (true);
+				}
 			} else {
 				InvalidateRow (e.Index);
 			}
