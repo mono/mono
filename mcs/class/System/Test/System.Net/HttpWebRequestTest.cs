@@ -2289,7 +2289,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
+		[Category ("NotWorking")] // #5490
 		public void InvalidNamesThatWork ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
