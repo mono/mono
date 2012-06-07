@@ -501,7 +501,7 @@ namespace System.Net
 #endif
 					// Attempt to use OSX certificates
 					// Ideally we should return the SecTrustResult
-					MSX.OSX509Certificates.SecTrustResult trustResult;
+					MSX.OSX509Certificates.SecTrustResult trustResult = MSX.OSX509Certificates.SecTrustResult.Deny;
 					try {
 						trustResult = MSX.OSX509Certificates.TrustEvaluateSsl (certs);
 						// We could use the other values of trustResult to pass this extra information
@@ -516,6 +516,10 @@ namespace System.Net
 					if (result) {
 						status11 = 0;
 						errors = 0;
+					} else {
+						// callback and DefaultCertificatePolicy needs this since 'result' is not specified
+						status11 = (int) trustResult;
+						errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 					}
 #if !MONOTOUCH
 				}
