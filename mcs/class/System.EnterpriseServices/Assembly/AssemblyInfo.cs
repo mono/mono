@@ -65,5 +65,4 @@ using System.EnterpriseServices;
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: ComVisible (true)]

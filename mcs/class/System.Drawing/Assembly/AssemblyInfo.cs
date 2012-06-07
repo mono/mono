@@ -63,4 +63,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Dependency ("System,", LoadHint.Always)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]

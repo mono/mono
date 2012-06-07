@@ -58,6 +58,5 @@ using System.Runtime.InteropServices;
 [assembly: SatelliteContractVersion (Consts.VsVersion)]
 [assembly: AssemblyInformationalVersion (Consts.VsFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: ReliabilityContract (Consistency.MayCorruptProcess, Cer.None)]

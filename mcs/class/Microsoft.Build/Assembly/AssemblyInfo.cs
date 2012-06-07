@@ -59,6 +59,4 @@ using System.Runtime.Versioning;
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 

@@ -64,6 +64,3 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-// Extension attribute should be added by compiler

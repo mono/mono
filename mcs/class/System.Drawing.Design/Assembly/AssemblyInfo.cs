@@ -57,5 +57,4 @@ using System.Diagnostics;
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

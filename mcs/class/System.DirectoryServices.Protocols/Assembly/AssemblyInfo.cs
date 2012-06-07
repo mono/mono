@@ -49,6 +49,4 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: AllowPartiallyTrustedCallers]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]

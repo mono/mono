@@ -65,6 +65,4 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (false)]
 [assembly: ComVisible (false)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 [assembly: TypeLibVersion (2, 0)]
