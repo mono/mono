@@ -59,12 +59,12 @@ namespace System.Xml.Linq
 			}
 		}
 
-		public override void WriteTo (XmlWriter w)
+		public override void WriteTo (XmlWriter writer)
 		{
 			if (Value.Length > 0 && Value.All (c => c == ' ' || c == '\t' || c == '\r' || c == '\n'))
-				w.WriteWhitespace (value);
+				writer.WriteWhitespace (value);
 			else
-				w.WriteString (value);
+				writer.WriteString (value);
 		}
 	}
 }

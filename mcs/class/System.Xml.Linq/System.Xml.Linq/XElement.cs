@@ -50,17 +50,17 @@ namespace System.Xml.Linq
 		XAttribute attr_first, attr_last;
 		bool explicit_is_empty = true;
 
-		public XElement (XName name, object value)
+		public XElement (XName name, object content)
 		{
 			this.name = name;
-			Add (value);
+			Add (content);
 		}
 
-		public XElement (XElement source)
+		public XElement (XElement other)
 		{
-			name = source.name;
-			Add (source.Attributes ());
-			Add (source.Nodes ());
+			name = other.name;
+			Add (other.Attributes ());
+			Add (other.Nodes ());
 		}
 
 		public XElement (XName name)
@@ -68,16 +68,16 @@ namespace System.Xml.Linq
 			this.name = name;
 		}
 
-		public XElement (XName name, params object [] contents)
+		public XElement (XName name, params object [] content)
 		{
 			this.name = name;
-			Add (contents);
+			Add (content);
 		}
 
-		public XElement (XStreamingElement source)
+		public XElement (XStreamingElement other)
 		{
-			this.name = source.Name;
-			Add (source.Contents);
+			this.name = other.Name;
+			Add (other.Contents);
 		}
 
 		[CLSCompliant (false)]
@@ -426,16 +426,16 @@ namespace System.Xml.Linq
 			}
 		}
 
-		public static XElement Load (TextReader tr)
+		public static XElement Load (TextReader textReader)
 		{
-			return Load (tr, LoadOptions.None);
+			return Load (textReader, LoadOptions.None);
 		}
 
-		public static XElement Load (TextReader tr, LoadOptions options)
+		public static XElement Load (TextReader textReader, LoadOptions options)
 		{
 			XmlReaderSettings s = CreateDefaultSettings (options);
 
-			using (XmlReader r = XmlReader.Create (tr, s)) {
+			using (XmlReader r = XmlReader.Create (textReader, s)) {
 				return LoadCore (r, options);
 			}
 		}
@@ -504,14 +504,14 @@ namespace System.Xml.Linq
 			return e;
 		}
 
-		public static XElement Parse (string s)
+		public static XElement Parse (string text)
 		{
-			return Parse (s, LoadOptions.None);
+			return Parse (text, LoadOptions.None);
 		}
 
-		public static XElement Parse (string s, LoadOptions options)
+		public static XElement Parse (string text, LoadOptions options)
 		{
-			return Load (new StringReader (s), options);
+			return Load (new StringReader (text), options);
 		}
 
 		public void RemoveAll ()
@@ -526,12 +526,12 @@ namespace System.Xml.Linq
 				attr_last.Remove ();
 		}
 
-		public void Save (string filename)
+		public void Save (string fileName)
 		{
-			Save (filename, SaveOptions.None);
+			Save (fileName, SaveOptions.None);
 		}
 
-		public void Save (string filename, SaveOptions options)
+		public void Save (string fileName, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
 
@@ -541,17 +541,17 @@ namespace System.Xml.Linq
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
-			using (XmlWriter w = XmlWriter.Create (filename, s)) {
+			using (XmlWriter w = XmlWriter.Create (fileName, s)) {
 				Save (w);
 			}
 		}
 
-		public void Save (TextWriter tw)
+		public void Save (TextWriter textWriter)
 		{
-			Save (tw, SaveOptions.None);
+			Save (textWriter, SaveOptions.None);
 		}
 
-		public void Save (TextWriter tw, SaveOptions options)
+		public void Save (TextWriter textWriter, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
 			
@@ -561,14 +561,14 @@ namespace System.Xml.Linq
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
-			using (XmlWriter w = XmlWriter.Create (tw, s)) {
+			using (XmlWriter w = XmlWriter.Create (textWriter, s)) {
 				Save (w);
 			}
 		}
 
-		public void Save (XmlWriter w)
+		public void Save (XmlWriter writer)
 		{
-			WriteTo (w);
+			WriteTo (writer);
 		}
 
 #if NET_4_0 || MOONLIGHT || MOBILE
@@ -681,38 +681,38 @@ namespace System.Xml.Linq
 			return p;
 		}
 
-		public override void WriteTo (XmlWriter w)
+		public override void WriteTo (XmlWriter writer)
 		{
 			// some people expect the same prefix output as in input,
 			// in the loss of performance... see bug #466423.
-			string prefix = LookupPrefix (name.NamespaceName, w);
+			string prefix = LookupPrefix (name.NamespaceName, writer);
 			int createdNS = 0;
 			if (prefix == null)
 				prefix = CreateDummyNamespace (ref createdNS, Attributes (), false);
 
-			w.WriteStartElement (prefix, name.LocalName, name.Namespace.NamespaceName);
+			writer.WriteStartElement (prefix, name.LocalName, name.Namespace.NamespaceName);
 
 			foreach (XAttribute a in Attributes ()) {
 				if (a.IsNamespaceDeclaration) {
 					if (a.Name.Namespace == XNamespace.Xmlns)
-						w.WriteAttributeString ("xmlns", a.Name.LocalName, XNamespace.Xmlns.NamespaceName, a.Value);
+						writer.WriteAttributeString ("xmlns", a.Name.LocalName, XNamespace.Xmlns.NamespaceName, a.Value);
 					else
-						w.WriteAttributeString ("xmlns", a.Value);
+						writer.WriteAttributeString ("xmlns", a.Value);
 				} else {
-					string apfix = LookupPrefix (a.Name.NamespaceName, w);
+					string apfix = LookupPrefix (a.Name.NamespaceName, writer);
 					if (apfix == null)
 						apfix = CreateDummyNamespace (ref createdNS, Attributes (), true);
-					w.WriteAttributeString (apfix, a.Name.LocalName, a.Name.Namespace.NamespaceName, a.Value);
+					writer.WriteAttributeString (apfix, a.Name.LocalName, a.Name.Namespace.NamespaceName, a.Value);
 				}
 			}
 
 			foreach (XNode node in Nodes ())
-				node.WriteTo (w);
+				node.WriteTo (writer);
 
 			if (explicit_is_empty)
-				w.WriteEndElement ();
+				writer.WriteEndElement ();
 			else
-				w.WriteFullEndElement ();
+				writer.WriteFullEndElement ();
 		}
 
 		public XNamespace GetDefaultNamespace ()
@@ -749,28 +749,28 @@ namespace System.Xml.Linq
 						yield return a.Name.Namespace == XNamespace.None ? String.Empty : a.Name.LocalName;
 		}
 
-		public void ReplaceAll (object item)
+		public void ReplaceAll (object content)
 		{
 			RemoveNodes ();
-			Add (item);
+			Add (content);
 		}
 
-		public void ReplaceAll (params object [] items)
+		public void ReplaceAll (params object [] content)
 		{
 			RemoveNodes ();
-			Add (items);
+			Add (content);
 		}
 
-		public void ReplaceAttributes (object item)
+		public void ReplaceAttributes (object content)
 		{
 			RemoveAttributes ();
-			Add (item);
+			Add (content);
 		}
 
-		public void ReplaceAttributes (params object [] items)
+		public void ReplaceAttributes (params object [] content)
 		{
 			RemoveAttributes ();
-			Add (items);
+			Add (content);
 		}
 
 		public void SetElementValue (XName name, object value)
