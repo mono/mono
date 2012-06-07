@@ -57,7 +57,16 @@ namespace System.Security.Cryptography {
 
 		public abstract void GetBytes (byte[] data);
 
+#if NET_4_5
+		public virtual void GetNonZeroBytes (byte[] data)
+		{
+			throw new NotImplementedException ();
+		}
+#else
 		public abstract void GetNonZeroBytes (byte[] data);
+#endif
+		
+		
 #if NET_4_0 || MOONLIGHT
 		public void Dispose ()
 		{
