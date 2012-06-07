@@ -334,7 +334,14 @@ namespace IKVM.Reflection
 			// HACK use the real AssemblyName to convert PublicKey to PublicKeyToken
 			StringBuilder sb = new StringBuilder("Foo, PublicKey=", 20 + publicKey.Length * 2);
 			AppendPublicKey(sb, publicKey);
-			return new System.Reflection.AssemblyName(sb.ToString()).GetPublicKeyToken();
+			string str = sb.ToString();
+			if (str == "Foo, PublicKey=00000000000000000400000000000000")
+			{
+				// MONOBUG workaround Mono 2.10 bug (fixed in 2.11)
+				// it does not return the correct public key token for the ECMA key
+				return new byte[] { 0xB7, 0x7A, 0x5C, 0x56, 0x19, 0x34, 0xE0, 0x89 };
+			}
+			return new System.Reflection.AssemblyName(str).GetPublicKeyToken();
 		}
 
 		private static void AppendPublicKey(StringBuilder sb, byte[] publicKey)

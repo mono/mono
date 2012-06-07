@@ -62,6 +62,26 @@ namespace IKVM.Reflection.Writer
 			get { return Math.Max(pos, __length); }
 		}
 
+		// insert count bytes at the current position (without advancing the current position)
+		internal void Insert(int count)
+		{
+			if (count > 0)
+			{
+				int len = this.Length;
+				int free = buffer.Length - len;
+				if (free < count)
+				{
+					Grow(count - free);
+				}
+				Buffer.BlockCopy(buffer, pos, buffer, pos + count, len - pos);
+				__length = Math.Max(__length, pos) + count;
+			}
+			else if (count < 0)
+			{
+				throw new ArgumentOutOfRangeException("count");
+			}
+		}
+
 		private void Grow(int minGrow)
 		{
 			byte[] newbuf = new byte[Math.Max(buffer.Length + minGrow, buffer.Length * 2)];
@@ -82,6 +102,20 @@ namespace IKVM.Reflection.Writer
 		internal byte GetByteAtCurrentPosition()
 		{
 			return buffer[pos];
+		}
+
+		// return the number of bytes that the compressed int at the current position takes
+		internal int GetCompressedIntLength()
+		{
+			switch (buffer[pos] & 0xC0)
+			{
+				default:
+					return 1;
+				case 0x80:
+					return 2;
+				case 0xC0:
+					return 4;
+			}
 		}
 
 		internal void Write(byte[] value)
@@ -259,8 +293,9 @@ namespace IKVM.Reflection.Writer
 
 		internal byte[] ToArray()
 		{
-			byte[] buf = new byte[pos];
-			Buffer.BlockCopy(buffer, 0, buf, 0, pos);
+			int len = this.Length;
+			byte[] buf = new byte[len];
+			Buffer.BlockCopy(buffer, 0, buf, 0, len);
 			return buf;
 		}
 

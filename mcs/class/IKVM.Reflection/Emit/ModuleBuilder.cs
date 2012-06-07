@@ -584,6 +584,30 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
+		// new in .NET 4.5
+		public MethodToken GetMethodToken(MethodInfo method, IEnumerable<Type> optionalParameterTypes)
+		{
+			return __GetMethodToken(method, Util.ToArray(optionalParameterTypes), null);
+		}
+
+		public MethodToken __GetMethodToken(MethodInfo method, Type[] optionalParameterTypes, CustomModifiers[] customModifiers)
+		{
+			ByteBuffer sig = new ByteBuffer(16);
+			method.MethodSignature.WriteMethodRefSig(this, sig, optionalParameterTypes, customModifiers);
+			MemberRefTable.Record record = new MemberRefTable.Record();
+			if (method.Module == this)
+			{
+				record.Class = method.MetadataToken;
+			}
+			else
+			{
+				record.Class = GetTypeTokenForMemberRef(method.DeclaringType ?? method.Module.GetModuleType());
+			}
+			record.Name = Strings.Add(method.Name);
+			record.Signature = Blobs.Add(sig);
+			return new MethodToken(0x0A000000 | MemberRef.FindOrAddRecord(record));
+		}
+
 		// when we refer to a method on a generic type definition in the IL stream,
 		// we need to use a MemberRef (even if the method is in the same module)
 		internal MethodToken GetMethodTokenForIL(MethodInfo method)
@@ -612,6 +636,17 @@ namespace IKVM.Reflection.Emit
 			{
 				return new MethodToken(ImportMember(constructor));
 			}
+		}
+
+		// new in .NET 4.5
+		public MethodToken GetConstructorToken(ConstructorInfo constructor, IEnumerable<Type> optionalParameterTypes)
+		{
+			return GetMethodToken(constructor.GetMethodInfo(), optionalParameterTypes);
+		}
+
+		public MethodToken __GetConstructorToken(ConstructorInfo constructor, Type[] optionalParameterTypes, CustomModifiers[] customModifiers)
+		{
+			return __GetMethodToken(constructor.GetMethodInfo(), optionalParameterTypes, customModifiers);
 		}
 
 		internal int ImportMember(MethodBase member)

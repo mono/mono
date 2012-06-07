@@ -2837,4 +2837,45 @@ namespace IKVM.Reflection
 			return "<FunctionPtr>";
 		}
 	}
+
+	sealed class MarkerType : Type
+	{
+		// used by ILGenerator
+		internal static readonly Type Fault = new MarkerType();
+		internal static readonly Type Finally = new MarkerType();
+		internal static readonly Type Filter = new MarkerType();
+		// used by CustomModifiers and SignatureHelper
+		internal static readonly Type ModOpt = new MarkerType();
+		internal static readonly Type ModReq = new MarkerType();
+		// used by SignatureHelper
+		internal static readonly Type Sentinel = new MarkerType();
+		internal static readonly Type Pinned = new MarkerType();
+
+		private MarkerType() { }
+
+		public override Type BaseType
+		{
+			get { throw new InvalidOperationException(); }
+		}
+
+		public override TypeAttributes Attributes
+		{
+			get { throw new InvalidOperationException(); }
+		}
+
+		public override string Name
+		{
+			get { throw new InvalidOperationException(); }
+		}
+
+		public override string FullName
+		{
+			get { throw new InvalidOperationException(); }
+		}
+
+		public override Module Module
+		{
+			get { throw new InvalidOperationException(); }
+		}
+	}
 }

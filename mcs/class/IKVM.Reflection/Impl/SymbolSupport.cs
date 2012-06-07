@@ -51,16 +51,12 @@ namespace IKVM.Reflection.Impl
 
 	static class SymbolSupport
 	{
-#if !NO_SYMBOL_WRITER
-		private static readonly bool runningOnMono = System.Type.GetType("Mono.Runtime") != null;
-#endif
-
 		internal static ISymbolWriterImpl CreateSymbolWriterFor(ModuleBuilder moduleBuilder)
 		{
 #if NO_SYMBOL_WRITER
 			throw new NotSupportedException("IKVM.Reflection compiled with NO_SYMBOL_WRITER does not support writing debugging symbols.");
 #else
-			if (runningOnMono)
+			if (Universe.MonoRuntime)
 			{
 #if MONO
 				return new MdbWriter(moduleBuilder);

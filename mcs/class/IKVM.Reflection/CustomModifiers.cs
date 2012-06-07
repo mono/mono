@@ -32,14 +32,13 @@ namespace IKVM.Reflection
 {
 	public struct CustomModifiers : IEquatable<CustomModifiers>, IEnumerable<CustomModifiers.Entry>
 	{
-		private static readonly Type ModOpt = new MarkerType();
-		private static readonly Type ModReq = new MarkerType();
-		private static readonly Type Initial = ModOpt;
+		// note that FromReqOpt assumes that Initial == ModOpt
+		private static Type Initial { get { return MarkerType.ModOpt; } }
 		private readonly Type[] types;
 
 		internal CustomModifiers(List<CustomModifiersBuilder.Item> list)
 		{
-			bool required = Initial == ModReq;
+			bool required = Initial == MarkerType.ModReq;
 			int count = list.Count;
 			foreach (CustomModifiersBuilder.Item item in list)
 			{
@@ -50,14 +49,14 @@ namespace IKVM.Reflection
 				}
 			}
 			types = new Type[count];
-			required = Initial == ModReq;
+			required = Initial == MarkerType.ModReq;
 			int index = 0;
 			foreach (CustomModifiersBuilder.Item item in list)
 			{
 				if (item.required != required)
 				{
 					required = item.required;
-					types[index++] = required ? ModReq : ModOpt;
+					types[index++] = required ? MarkerType.ModReq : MarkerType.ModOpt;
 				}
 				types[index++] = item.type;
 			}
@@ -79,13 +78,13 @@ namespace IKVM.Reflection
 			{
 				this.types = types;
 				this.index = -1;
-				this.required = Initial == ModReq;
+				this.required = Initial == MarkerType.ModReq;
 			}
 
 			void System.Collections.IEnumerator.Reset()
 			{
 				this.index = -1;
-				this.required = Initial == ModReq;
+				this.required = Initial == MarkerType.ModReq;
 			}
 
 			public Entry Current
@@ -104,12 +103,12 @@ namespace IKVM.Reflection
 				{
 					return false;
 				}
-				else if (types[index] == ModOpt)
+				else if (types[index] == MarkerType.ModOpt)
 				{
 					required = false;
 					index++;
 				}
-				else if (types[index] == ModReq)
+				else if (types[index] == MarkerType.ModReq)
 				{
 					required = true;
 					index++;
@@ -247,7 +246,7 @@ namespace IKVM.Reflection
 			Type[] result = types;
 			for (int i = 0; i < types.Length; i++)
 			{
-				if (types[i] == ModOpt || types[i] == ModReq)
+				if (types[i] == MarkerType.ModOpt || types[i] == MarkerType.ModReq)
 				{
 					continue;
 				}
@@ -275,7 +274,7 @@ namespace IKVM.Reflection
 			Type mode = Initial;
 			do
 			{
-				Type cmod = br.ReadByte() == Signature.ELEMENT_TYPE_CMOD_REQD ? ModReq : ModOpt;
+				Type cmod = br.ReadByte() == Signature.ELEMENT_TYPE_CMOD_REQD ? MarkerType.ModReq : MarkerType.ModOpt;
 				if (mode != cmod)
 				{
 					mode = cmod;
@@ -304,6 +303,7 @@ namespace IKVM.Reflection
 			List<Type> list = null;
 			if (opt != null && opt.Length != 0)
 			{
+				Debug.Assert(Initial == MarkerType.ModOpt);
 				list = new List<Type>(opt);
 			}
 			if (req != null && req.Length != 0)
@@ -312,7 +312,7 @@ namespace IKVM.Reflection
 				{
 					list = new List<Type>();
 				}
-				list.Add(ModReq);
+				list.Add(MarkerType.ModReq);
 				list.AddRange(req);
 			}
 			if (list == null)

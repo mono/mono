@@ -38,6 +38,10 @@ namespace IKVM.Reflection
 			{
 				throw new ArgumentNullException("keyPairContainer");
 			}
+			if (Universe.MonoRuntime && Environment.OSVersion.Platform == PlatformID.Win32NT)
+			{
+				throw new NotSupportedException("IKVM.Reflection does not support key containers when running on Mono");
+			}
 			this.keyPairContainer = keyPairContainer;
 		}
 
@@ -70,6 +74,11 @@ namespace IKVM.Reflection
 		{
 			get
 			{
+				if (Universe.MonoRuntime)
+				{
+					// MONOBUG workaround for https://bugzilla.xamarin.com/show_bug.cgi?id=5299
+					return MonoGetPublicKey();
+				}
 				using (RSACryptoServiceProvider rsa = CreateRSA())
 				{
 					byte[] cspBlob = rsa.ExportCspBlob(false);
@@ -100,9 +109,13 @@ namespace IKVM.Reflection
 				else
 				{
 					CspParameters parm = new CspParameters();
-					parm.Flags = CspProviderFlags.UseMachineKeyStore | CspProviderFlags.UseExistingKey;
 					parm.KeyContainerName = keyPairContainer;
-					parm.KeyNumber = 2;	// Signature
+					// MONOBUG Mono doesn't like it when Flags or KeyNumber are set
+					if (!Universe.MonoRuntime)
+					{
+						parm.Flags = CspProviderFlags.UseMachineKeyStore | CspProviderFlags.UseExistingKey;
+						parm.KeyNumber = 2;	// Signature
+					}
 					return new RSACryptoServiceProvider(parm);
 				}
 			}
@@ -110,6 +123,14 @@ namespace IKVM.Reflection
 			{
 				throw new ArgumentException("Unable to obtain public key for StrongNameKeyPair.");
 			}
+		}
+
+		[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+		private byte[] MonoGetPublicKey()
+		{
+			return keyPairArray != null
+				? new System.Reflection.StrongNameKeyPair(keyPairArray).PublicKey
+				: new System.Reflection.StrongNameKeyPair(keyPairContainer).PublicKey;
 		}
 	}
 }

@@ -77,8 +77,6 @@
                 <include name="Emit\SignatureHelper.cs" />
                 <include name="Emit\Tokens.cs" />
                 <include name="Emit\TypeBuilder.cs" />
-                <include name="Impl\CryptoConvert.cs" />
-                <include name="Impl\CryptoHack.cs" />
                 <include name="Impl\ITypeOwner.cs" />
                 <include name="Impl\MdbWriter.cs" />
                 <include name="Impl\PdbWriter.cs" />
