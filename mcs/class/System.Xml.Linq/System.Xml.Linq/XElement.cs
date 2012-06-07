@@ -667,13 +667,15 @@ namespace System.Xml.Linq
 			return prefix;
 		}
 		
-		static string CreateDummyNamespace (ref int createdNS, IEnumerable<XAttribute> atts)
+		static string CreateDummyNamespace (ref int createdNS, IEnumerable<XAttribute> atts, bool isAttr)
 		{
+			if (!isAttr && atts.All (a => a.Name.LocalName != "xmlns" || a.Name.NamespaceName == XNamespace.Xmlns.NamespaceName))
+				return String.Empty;
 			string p = null;
 			do {
 				p = "p" + (++createdNS);
 				// check conflict
-				if (atts.All (a => a.Name.LocalName != p))
+				if (atts.All (a => a.Name.LocalName != p || a.Name.NamespaceName == XNamespace.Xmlns.NamespaceName))
 					break;
 			} while (true);
 			return p;
@@ -686,7 +688,7 @@ namespace System.Xml.Linq
 			string prefix = LookupPrefix (name.NamespaceName, w);
 			int createdNS = 0;
 			if (prefix == null)
-				prefix = CreateDummyNamespace (ref createdNS, Attributes ());
+				prefix = CreateDummyNamespace (ref createdNS, Attributes (), false);
 
 			w.WriteStartElement (prefix, name.LocalName, name.Namespace.NamespaceName);
 
@@ -699,7 +701,7 @@ namespace System.Xml.Linq
 				} else {
 					string apfix = LookupPrefix (a.Name.NamespaceName, w);
 					if (apfix == null)
-						apfix = CreateDummyNamespace (ref createdNS, Attributes ());
+						apfix = CreateDummyNamespace (ref createdNS, Attributes (), true);
 					w.WriteAttributeString (apfix, a.Name.LocalName, a.Name.Namespace.NamespaceName, a.Value);
 				}
 			}
