@@ -1722,5 +1722,13 @@ namespace MonoTests.System.Xml.Linq
 			string expected = @"<xsi:eventData xsi1:type='xsi:CallSubscriptionEvent' xmlns:xsi1='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsi='http://relevo.se/xsi' />".Replace ('\'', '"');
 			Assert.AreEqual (expected, e.Nodes ().First ().ToString (), "#1");
 		}
+		
+		[Test] // bug #5519
+		public void DoUseEmptyNamespacePrefixWhenApplicable ()
+		{
+			XNamespace ns = "http://jabber.org/protocol/geoloc";
+			XElement newElement = new XElement(ns + "geoloc");
+			Assert.AreEqual ("<geoloc xmlns=\"http://jabber.org/protocol/geoloc\" />", newElement.ToString (), "#1");
+		}
 	}
 }
