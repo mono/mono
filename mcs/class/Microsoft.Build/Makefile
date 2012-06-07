@@ -24,7 +24,8 @@ TEST_MCS_FLAGS = /r:System.Core.dll
 EXTRA_DISTFILES = \
 	Test/FunctionalTestReferenceProject.csproj	\
 	Test/FunctionalTestReferenceProject3.csproj	\
-	Test/Microsoft.Build.Test.csproj
+	Test/Microsoft.Build.Test.csproj	\
+	Test/Microsoft.Build.csproj
 
 include ../../build/library.make
 

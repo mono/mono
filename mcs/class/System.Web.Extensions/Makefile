@@ -78,7 +78,8 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,159
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_DIST) $(NUNIT_RESOURCE_FILES) \
 	System.Web.Extensions_standalone_test.dll.sources \
-	Test/standalone-tests/Consts.cs.in
+	Test/standalone-tests/Consts.cs.in \
+	Test/standalone-tests/DataPager_NumericPagerField_Bug615315.cs
 
 build-standalone-runner-support:
 	$(MAKE) -C ../System.Web/ standalone-runner-support

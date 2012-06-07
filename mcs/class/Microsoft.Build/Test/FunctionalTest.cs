@@ -63,14 +63,14 @@ namespace MonoTests.Microsoft.Build
                 [Test]
                 public void TestLoadAndSave ()
                 {
-                        var project = ProjectRootElement.Open ("Microsoft.Build.csproj");
+                        var project = ProjectRootElement.Open (Path.Combine ("Test", "Microsoft.Build.csproj"));
                         var projectFileName = String.Format ("Test{0}FunctionalTestProject2.csproj",
                                 Path.DirectorySeparatorChar);
                         project.Save (projectFileName);
                         
                         Assert.AreEqual (new Guid ("{B2012E7F-8F8D-4908-8045-413F2BD1022D}"), GetProjectId (project),
                                 "#03");
-                        FileAssert.AreEqual ("Microsoft.Build.csproj", projectFileName, "#04");
+                        FileAssert.AreEqual (Path.Combine ("Test", "Microsoft.Build.csproj"), projectFileName, "#04");
                 }
 
                 [Test]
