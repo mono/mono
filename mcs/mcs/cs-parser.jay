@@ -5424,6 +5424,11 @@ return_statement
 		$$ = new Return ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
 	  }
+	| RETURN expression error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Return ((Expression) $2, GetLocation ($1));
+	  }
 	| RETURN error
 	  {
 		Error_SyntaxError (yyToken);
