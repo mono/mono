@@ -396,9 +396,6 @@ namespace System.Net
 
 		static bool CheckValidHost (string scheme, string val)
 		{
-			if (val == null)
-				throw new ArgumentNullException ("value");
-
 			if (val.Length == 0)
 				return false;
 
