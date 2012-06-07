@@ -234,6 +234,17 @@ namespace System.Xml.Linq
 			return new XNodeReader (this);
 		}
 
+#if NET_4_0
+		public XmlReader CreateReader (ReaderOptions readerOptions)
+		{
+			var r = new XNodeReader (this);
+			if ((readerOptions & ReaderOptions.OmitDuplicateNamespaces) != 0)
+				r.OmitDuplicateNamespaces = true;
+			
+			return r;
+		}
+#endif
+
 		public IEnumerable<XElement> ElementsAfterSelf ()
 		{
 			foreach (XNode n in NodesAfterSelf ())
