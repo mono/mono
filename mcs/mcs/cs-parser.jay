@@ -5481,6 +5481,24 @@ yield_statement
 		$$ = new Yield ((Expression) $3, lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| identifier_inside_body RETURN expression error
+	  {
+		Error_SyntaxError (yyToken);
+
+		var lt = (Tokenizer.LocatedToken) $1;
+		string s = lt.Value;
+		if (s != "yield"){
+			report.Error (1003, lt.Location, "; expected");
+		} else if ($3 == null) {
+			report.Error (1627, GetLocation ($4), "Expression expected after yield return");
+		} else if (lang_version == LanguageVersion.ISO_1){
+			FeatureIsNotAvailable (lt.Location, "iterators");
+		}
+		
+		current_block.Explicit.RegisterIteratorYield ();
+		$$ = new Yield ((Expression) $3, lt.Location);
+		lbag.AddStatement ($$, GetLocation ($2));
+	  }
 	| identifier_inside_body BREAK SEMICOLON
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
