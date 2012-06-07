@@ -2572,6 +2572,21 @@ enum_member_declaration
 
 		$$ = em;
 	  }
+	| opt_attributes IDENTIFIER error
+	  {
+		Error_SyntaxError (yyToken);
+	  
+		var lt = (Tokenizer.LocatedToken) $2;
+	  	var em = new EnumMember ((Enum) current_type, new MemberName (lt.Value, lt.Location), (Attributes) $1);
+	  	((Enum) current_type).AddEnumMember (em);
+
+		if (doc_support) {
+			em.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+
+		$$ = em;
+	  }
 	| attributes_without_members
 	;
 
