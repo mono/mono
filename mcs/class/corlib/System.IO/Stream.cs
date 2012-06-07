@@ -50,8 +50,11 @@ namespace System.IO
 	{
 		public static readonly Stream Null = new NullStream ();
 
+		[NonSerialized]
 		Func<byte[], int, int, int> async_read;
+		[NonSerialized]
 		Action<byte[], int, int> async_write;
+		[NonSerialized]
 		AutoResetEvent async_event;
 
 		protected Stream ()
