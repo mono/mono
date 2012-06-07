@@ -1,5 +1,5 @@
 //
-// Extension.cs
+// HttpMessageInvoker.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -26,22 +26,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
-//
-// Workaround for not up-to-date aspnetwebstack, once it support .net 4.5 this could be deleted
-//
-static class Extensions
+namespace System.Net.Http
 {
-	public static void TryAddWithoutValidation (this HttpHeaders headers, string key, string value)
+	public class HttpMessageInvoker : IDisposable
 	{
-		headers.AddWithoutValidation (key, value);
-	}
-	
-	public static bool TryAddWithoutValidation (this HttpHeaders headers, string key, IEnumerable<string> values)
-	{
-		headers.AddWithoutValidation (key, values);
-		return true;
+		HttpMessageHandler handler;
+		readonly bool disposeHandler;
+		
+		public HttpMessageInvoker (HttpMessageHandler handler)
+			: this (handler, true)
+		{
+		}
+
+		public HttpMessageInvoker (HttpMessageHandler handler, bool disposeHandler)
+		{
+			if (handler == null)
+				throw new ArgumentNullException ("handler");
+
+			this.handler = handler;
+			this.disposeHandler = disposeHandler;
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing && disposeHandler && handler != null) {
+				handler.Dispose ();
+				handler = null;
+			}
+		}
+
+		public virtual Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+		{
+			return handler.SendAsync (request, cancellationToken);
+		}
 	}
 }

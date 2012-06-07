@@ -70,7 +70,7 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (4096, h.CookieContainer.MaxCookieSize, "#3b");
 			Assert.AreEqual (null, h.Credentials, "#4");
 			Assert.AreEqual (50, h.MaxAutomaticRedirections, "#5");
-			Assert.AreEqual (0x10000, h.MaxRequestContentBufferSize, "#6");
+			Assert.AreEqual (int.MaxValue, h.MaxRequestContentBufferSize, "#6");
 			Assert.IsFalse (h.PreAuthenticate, "#7");
 			Assert.IsNull (h.Proxy, "#8");
 			Assert.IsTrue (h.SupportsAutomaticDecompression, "#9");

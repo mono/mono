@@ -37,9 +37,9 @@ namespace System.Net.Http
 	{
 		sealed class FixedMemoryStream : MemoryStream
 		{
-			readonly int maxSize;
+			readonly long maxSize;
 			
-			public FixedMemoryStream (int maxSize)
+			public FixedMemoryStream (long maxSize)
 				: base ()
 			{
 				this.maxSize = maxSize;
@@ -94,7 +94,7 @@ namespace System.Net.Http
 			return buffer;
 		}
 		
-		static FixedMemoryStream CreateFixedMemoryStream (int maxBufferSize)
+		static FixedMemoryStream CreateFixedMemoryStream (long maxBufferSize)
 		{
 			return new FixedMemoryStream (maxBufferSize);
 		}
@@ -119,7 +119,7 @@ namespace System.Net.Http
 			return LoadIntoBufferAsync (0x2000);
 		}
 
-		public async Task LoadIntoBufferAsync (int maxBufferSize)
+		public async Task LoadIntoBufferAsync (long maxBufferSize)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());

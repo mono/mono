@@ -33,27 +33,31 @@ using System.IO;
 
 namespace System.Net.Http
 {
-	public class HttpClient : IDisposable
+	public class HttpClient : HttpMessageInvoker
 	{
 		static readonly TimeSpan TimeoutDefault = TimeSpan.FromSeconds (100);
 
 		Uri base_address;
 		CancellationTokenSource cancellation_token;
 		bool disposed;
-		readonly HttpMessageHandler handler;
 		HttpRequestHeaders headers;
-		int buffer_size;
+		long buffer_size;
 		TimeSpan timeout;
 
 		public HttpClient ()
-			: this (null)
+			: this (new HttpClientHandler (), true)
+		{
+		}
+		
+		public HttpClient (HttpMessageHandler handler)
+			: this (handler, true)
 		{
 		}
 
-		public HttpClient (HttpMessageHandler handler)
+		public HttpClient (HttpMessageHandler handler, bool disposeHandler)
+			: base (handler, disposeHandler)
 		{
-			this.handler = handler ?? new HttpClientHandler ();
-			buffer_size = 0x10000;
+			buffer_size = int.MaxValue;
 			timeout = TimeoutDefault;
 		}
 
@@ -72,7 +76,7 @@ namespace System.Net.Http
 			}
 		}
 
-		public int MaxResponseContentBufferSize {
+		public long MaxResponseContentBufferSize {
 			get {
 				return buffer_size;
 			}
@@ -103,13 +107,8 @@ namespace System.Net.Http
 
 			cancellation_token = new CancellationTokenSource ();
 		}
- 
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
-		
-		protected virtual void Dispose (bool disposing)
+
+		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
 				disposed = true;
@@ -117,6 +116,8 @@ namespace System.Net.Http
 				if (cancellation_token != null)
 					cancellation_token.Dispose ();
 			}
+			
+			base.Dispose (disposing);
 		}
 
 		public Task<HttpResponseMessage> DeleteAsync (string requestUri)
@@ -229,7 +230,7 @@ namespace System.Net.Http
 			return SendAsync (request, completionOption, CancellationToken.None);
 		}
 
-		public Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+		public override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			return SendAsync (request, HttpCompletionOption.ResponseContentRead, cancellationToken);
 		}
@@ -265,7 +266,7 @@ namespace System.Net.Http
 				using (var cts = CancellationTokenSource.CreateLinkedTokenSource (cancellation_token.Token, cancellationToken)) {
 					cts.CancelAfter (timeout);
 
-					var task = handler.SendAsync (request, cts.Token);
+					var task = base.SendAsync (request, cts.Token);
 					if (task == null)
 						throw new InvalidOperationException ("Handler failed to return a value");
 					

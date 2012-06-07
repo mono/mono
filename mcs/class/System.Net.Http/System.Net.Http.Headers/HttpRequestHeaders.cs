@@ -315,7 +315,7 @@ namespace System.Net.Http.Headers
 		internal void AddHeaders (HttpRequestHeaders headers)
 		{
 			foreach (var header in headers) {
-				AddWithoutValidation (header.Key, header.Value);
+				TryAddWithoutValidation (header.Key, header.Value);
 			}
 		}
 	}

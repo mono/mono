@@ -86,7 +86,7 @@ namespace MonoTests.System.Net.Http
 			var client = new HttpClient ();
 			Assert.IsNull (client.BaseAddress, "#1");
 			Assert.IsNotNull (client.DefaultRequestHeaders, "#2");	// TODO: full check
-			Assert.AreEqual (0x10000, client.MaxResponseContentBufferSize, "#3");
+			Assert.AreEqual (int.MaxValue, client.MaxResponseContentBufferSize, "#3");
 			Assert.AreEqual (TimeSpan.FromSeconds (100), client.Timeout, "#4");
 		}
 
@@ -404,7 +404,7 @@ namespace MonoTests.System.Net.Http
 			try {
 				var client = new HttpClient ();
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
-				request.Headers.AddWithoutValidation ("aa", "vv");
+				Assert.IsTrue (request.Headers.TryAddWithoutValidation ("aa", "vv"), "#0");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
 				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
@@ -450,7 +450,7 @@ namespace MonoTests.System.Net.Http
 			try {
 				var client = new HttpClient ();
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
-				request.Headers.AddWithoutValidation ("aa", "vv");
+				Assert.IsTrue (request.Headers.TryAddWithoutValidation ("aa", "vv"), "#0");
 				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
 
 				Assert.AreEqual ("7K", response.Content.ReadAsStringAsync ().Result, "#100");

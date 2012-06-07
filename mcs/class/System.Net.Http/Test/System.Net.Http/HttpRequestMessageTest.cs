@@ -336,7 +336,7 @@ namespace MonoTests.System.Net.Http
 			headers.Add ("c", null as string);
 			headers.Add ("d", new string[0]);
 
-			headers.AddWithoutValidation ("accept", "audio");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("accept", "audio"), "#0");
 
 			Assert.IsFalse (headers.Contains ("nn"), "#1a");
 			Assert.IsTrue (headers.Contains ("b"), "#1b");
@@ -364,7 +364,7 @@ namespace MonoTests.System.Net.Http
 			headers.Clear ();
 
 			headers.Accept.Add (new MediaTypeWithQualityHeaderValue ("audio/x"));
-			headers.AddWithoutValidation ("accept", "audio");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("accept", "audio"), "#55");
 
 			values = headers.GetValues ("accept").ToList ();
 			Assert.AreEqual (2, values.Count, "#6");
@@ -374,7 +374,7 @@ namespace MonoTests.System.Net.Http
 
 			headers.Clear ();
 
-			headers.AddWithoutValidation ("from", new[] { "a@a.com", "ssss@oo.com" });
+			Assert.IsTrue (headers.TryAddWithoutValidation ("from", new[] { "a@a.com", "ssss@oo.com" }), "#70");
 			values = headers.GetValues ("from").ToList ();
 
 			Assert.AreEqual (2, values.Count, "#7");
@@ -384,7 +384,7 @@ namespace MonoTests.System.Net.Http
 
 			headers.Clear ();
 
-			headers.AddWithoutValidation ("Date", "wrong date");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("Date", "wrong date"), "#8-0");
 			var value = headers.Date;
 			Assert.IsNull (headers.Date, "#8");
 		}
@@ -419,17 +419,9 @@ namespace MonoTests.System.Net.Http
 			} catch (FormatException) {
 			}
 
-			try {
-				headers.AddWithoutValidation ("Allow", "");
-				Assert.Fail ("#3");
-			} catch (InvalidOperationException) {
-			}
+			Assert.IsFalse (headers.TryAddWithoutValidation ("Allow", ""), "#3"); ;
 
-			try {
-				headers.AddWithoutValidation (null, "");
-				Assert.Fail ("#4");
-			} catch (ArgumentException) {
-			}
+			Assert.IsFalse (headers.TryAddWithoutValidation (null, ""), "#4");
 
 			try {
 				headers.Contains (null);
@@ -455,7 +447,7 @@ namespace MonoTests.System.Net.Http
 			} catch (FormatException) {
 			}
 
-			headers.AddWithoutValidation ("from", "a@a.com");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("from", "a@a.com"), "#7-0");
 			try {
 				headers.Add ("from", "valid@w3.org");
 				Assert.Fail ("#7b");
@@ -473,7 +465,7 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual ("vv", headers.GetValues ("Age").First (), "#1");
 
 			headers.Clear ();
-			headers.AddWithoutValidation ("Age", "vv");
+			headers.TryAddWithoutValidation ("Age", "vv");
 			Assert.AreEqual ("vv", headers.GetValues ("Age").First (), "#2");
 
 			Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\nAge: vv\r\n}", message.ToString (), "#3");

@@ -9,6 +9,7 @@ System.Net.Http/HttpClientHandler.cs
 System.Net.Http/HttpCompletionOption.cs
 System.Net.Http/HttpContent.cs
 System.Net.Http/HttpMessageHandler.cs
+System.Net.Http/HttpMessageInvoker.cs
 System.Net.Http/HttpMethod.cs
 System.Net.Http/HttpRequestException.cs
 System.Net.Http/HttpRequestMessage.cs

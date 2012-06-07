@@ -59,6 +59,21 @@ namespace System.Net.Http.Headers
 				}
 			}
 
+			public static bool TryCheck (string s)
+			{
+				if (s == null)
+					return false;
+
+				if (!Lexer.IsValidToken (s)) {
+					if (s.Length == 0)
+						return false;
+
+					return false;
+				}
+
+				return true;
+			}
+
 			public static void CheckQuotedString (string s)
 			{
 				if (s == null)

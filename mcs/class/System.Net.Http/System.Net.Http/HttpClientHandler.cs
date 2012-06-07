@@ -40,7 +40,7 @@ namespace System.Net.Http
 		CookieContainer cookieContainer;
 		ICredentials credentials;
 		int maxAutomaticRedirections;
-		int maxRequestContentBufferSize;
+		long maxRequestContentBufferSize;
 		bool preAuthenticate;
 		IWebProxy proxy;
 		bool useCookies;
@@ -52,7 +52,7 @@ namespace System.Net.Http
 		{
 			allowAutoRedirect = true;
 			maxAutomaticRedirections = 50;
-			maxRequestContentBufferSize = 0x10000;
+			maxRequestContentBufferSize = int.MaxValue;
 			useCookies = true;
 			useProxy = true;
 		}
@@ -114,7 +114,7 @@ namespace System.Net.Http
 			}
 		}
 
-		public int MaxRequestContentBufferSize {
+		public long MaxRequestContentBufferSize {
 			get {
 				return maxRequestContentBufferSize;
 			}
@@ -260,10 +260,13 @@ namespace System.Net.Http
 				var key = headers.GetKey(i);
 				var value = headers.GetValues (i);
 
+				HttpHeaders item_headers;
 				if (HttpHeaders.GetKnownHeaderKind (key) == Headers.HttpHeaderKind.Content)
-					response.Content.Headers.AddWithoutValidation (key, value);
+					item_headers = response.Content.Headers;
 				else
-					response.Headers.AddWithoutValidation (key, value);
+					item_headers = response.Headers;
+					
+				item_headers.TryAddWithoutValidation (key, value);
 			}
 
 			return response;
