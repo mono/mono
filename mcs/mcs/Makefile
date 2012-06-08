@@ -10,10 +10,7 @@ EXTRA_DISTFILES = \
 	mcs.csproj		\
 	mcs.sln		\
 	cs-parser.jay		\
-	mcs.exe.sources		\
-	NOTES			\
-	TODO			\
-	ikvm.cs
+	mcs.exe.sources
 
 ifeq (basic, $(PROFILE))
 PROGRAM = basic.exe
