@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -504,26 +504,6 @@ namespace System.Runtime.Serialization
 				base.InsertItem (index - 1, type);
 		}
 
-		internal SerializationMap FindUserMap (QName qname)
-		{
-			lock (this)
-				return contracts.FirstOrDefault (c => c.XmlName == qname);
-		}
-
-		internal Type GetSerializedType (Type type)
-		{
-			if (IsPrimitiveNotEnum (type))
-				return type;
-			Type element = GetCollectionElementType (type);
-			if (element == null)
-				return type;
-			QName name = GetQName (type);
-			var map = FindUserMap (name);
-			if (map != null)
-				return map.RuntimeType;
-			return type;
-		}
-
 		internal SerializationMap FindUserMap (Type type)
 		{
 			lock (this) {
@@ -534,12 +514,38 @@ namespace System.Runtime.Serialization
 			}
 		}
 
+		internal SerializationMap FindUserMap (QName qname)
+		{
+			lock (this)
+				return contracts.FirstOrDefault (c => c.XmlName == qname);
+		}
+
+		internal SerializationMap FindUserMap (QName qname, Type type)
+		{
+			lock (this)
+				return contracts.FirstOrDefault (c => c.XmlName == qname && c.RuntimeType == type);
+		}
+
+		internal Type GetSerializedType (Type type)
+		{
+			if (IsPrimitiveNotEnum (type))
+				return type;
+			Type element = GetCollectionElementType (type);
+			if (element == null)
+				return type;
+			QName name = GetQName (type);
+			var map = FindUserMap (name, type);
+			if (map != null)
+				return map.RuntimeType;
+			return type;
+		}
+
 		internal QName GetQName (Type type)
 		{
 			SerializationMap map = FindUserMap (type);
 			if (map != null)
 				// already mapped.
-				return map.XmlName; 
+				return map.XmlName;
 			return GetStaticQName (type);
 		}
 
@@ -556,7 +562,7 @@ namespace System.Runtime.Serialization
 				return qname;
 
 			if (type.GetInterface ("System.Xml.Serialization.IXmlSerializable") != null)
-				//FIXME: Reusing GetSerializableQName here, since we just 
+				//FIXME: Reusing GetSerializableQName here, since we just
 				//need name of the type..
 				return GetSerializableQName (type);
 
@@ -596,7 +602,7 @@ namespace System.Runtime.Serialization
 				for (int i = 0; i < args.Length; i++)
 					name = name.Replace ("{" + i + "}", GetStaticQName (args [i]).Name);
 			}
-			
+
 			if (ns == null)
 				ns = GetDefaultNamespace (type);
 			return new QName (name, ns);
@@ -627,7 +633,7 @@ namespace System.Runtime.Serialization
 
 		internal static string GetDefaultName (Type type)
 		{
-			// FIXME: there could be decent ways to get 
+			// FIXME: there could be decent ways to get
 			// the same result...
 			string name = type.Namespace == null || type.Namespace.Length == 0 ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
 			if (type.IsGenericType) {
@@ -649,7 +655,7 @@ namespace System.Runtime.Serialization
 		static QName GetCollectionQName (Type element)
 		{
 			QName eqname = GetStaticQName (element);
-			
+
 			string ns = eqname.Namespace;
 			if (eqname.Namespace == MSSimpleNamespace)
 				//Arrays of Primitive types
@@ -794,7 +800,7 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetCollectionContractQName (type);
 			CheckStandardQName (qname);
-			var map = FindUserMap (qname);
+			var map = FindUserMap (qname, type);
 			if (map != null) {
 				var cmap = map as CollectionContractTypeMap;
 				if (cmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
@@ -816,7 +822,7 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetCollectionQName (element);
 
-			var map = FindUserMap (qname);
+			var map = FindUserMap (qname, element);
 			if (map != null) {
 				var cmap = map as CollectionTypeMap;
 				if (cmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
@@ -853,7 +859,7 @@ namespace System.Runtime.Serialization
 			TryRegister (ret.KeyType);
 			TryRegister (ret.ValueType);
 
-			var map = FindUserMap (ret.XmlName);
+			var map = FindUserMap (ret.XmlName, type);
 			if (map != null) {
 				var dmap = map as DictionaryTypeMap;
 				if (dmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
@@ -868,7 +874,7 @@ namespace System.Runtime.Serialization
 		{
 			QName qname = GetSerializableQName (type);
 
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			SharedTypeMap ret = new SharedTypeMap (type, qname, this);
@@ -884,7 +890,7 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetSerializableQName (type);
 
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			XmlSerializableMap ret = new XmlSerializableMap (type, qname, this);
@@ -911,7 +917,7 @@ namespace System.Runtime.Serialization
 			if (qname == null)
 				return null;
 			CheckStandardQName (qname);
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			SharedContractMap ret = new SharedContractMap (type, qname, this);
@@ -948,7 +954,7 @@ namespace System.Runtime.Serialization
 			if (qname == null)
 				return null;
 
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			EnumMap ret =
