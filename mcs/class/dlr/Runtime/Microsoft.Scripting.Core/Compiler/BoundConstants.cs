@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -20,11 +20,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Dynamic.Utils;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast.Compiler {
 #else
 namespace System.Linq.Expressions.Compiler {
@@ -52,11 +48,13 @@ namespace System.Linq.Expressions.Compiler {
             }
 
             public override int GetHashCode() {
-                return RuntimeHelpers.GetHashCode(Value) ^ Type.GetHashCode();
+                return ReferenceEqualityComparer<object>.Instance.GetHashCode(Value) ^ Type.GetHashCode();
             }
+
             public bool Equals(TypedConstant other) {
                 return object.ReferenceEquals(Value, other.Value) && Type.Equals(other.Type);
             }
+
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2231:OverloadOperatorEqualsOnOverridingValueTypeEquals")]
             public override bool Equals(object obj) {
                 return (obj is TypedConstant) && Equals((TypedConstant)obj);

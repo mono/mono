@@ -23,11 +23,7 @@ using System.Reflection.Emit;
 using System.Threading;
 using System.Runtime.CompilerServices;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -41,9 +37,7 @@ namespace System.Linq.Expressions {
     /// <remarks>
     /// Lambda expressions take input through parameters and are expected to be fully bound. 
     /// </remarks>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.LambdaExpressionProxy))]
-#endif
     public abstract class LambdaExpression : Expression {
         private readonly string _name;
         private readonly Expression _body;
@@ -67,6 +61,8 @@ namespace System.Linq.Expressions {
             _delegateType = delegateType;
             _tailCall = tailCall;
         }
+
+        internal abstract LambdaExpression Accept(StackSpiller spiller);
 
         /// <summary>
         /// Gets the static type of the expression that this <see cref="Expression" /> represents. (Inherited from <see cref="Expression"/>.)
@@ -139,6 +135,7 @@ namespace System.Linq.Expressions {
             return LambdaCompiler.Compile(this, debugInfoGenerator);
         }
 
+#if FEATURE_REFEMIT
         /// <summary>
         /// Compiles the lambda into a method definition.
         /// </summary>
@@ -165,8 +162,7 @@ namespace System.Linq.Expressions {
 
             LambdaCompiler.Compile(this, method, debugInfoGenerator);
         }
-
-        internal abstract LambdaExpression Accept(StackSpiller spiller);
+#endif
     }
 
     /// <summary>

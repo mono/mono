@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -13,7 +13,7 @@
  *
  * ***************************************************************************/
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 using Microsoft.Scripting.Ast;
 using Microsoft.Scripting.Ast.Compiler;
 #else
@@ -21,9 +21,7 @@ using System.Linq.Expressions;
 using System.Linq.Expressions.Compiler;
 #endif
 
-#if SILVERLIGHT
-using System.Core;
-#else
+#if FEATURE_REMOTING
 using System.Runtime.Remoting;
 #endif
 
@@ -166,8 +164,7 @@ namespace System.Dynamic {
         }
 
         private static BindingRestrictions AddRemoteObjectRestrictions(BindingRestrictions restrictions, object[] args, ReadOnlyCollection<ParameterExpression> parameters) {
-#if !SILVERLIGHT
-
+#if FEATURE_REMOTING
             for (int i = 0; i < parameters.Count; i++) {
                 var expr = parameters[i];
                 var value = args[i] as MarshalByRefObject;
@@ -203,7 +200,6 @@ namespace System.Dynamic {
                     restrictions = restrictions.Merge(remotedRestriction);
                 }
             }
-
 #endif
             return restrictions;
         }
@@ -279,7 +275,7 @@ namespace System.Dynamic {
             }
         }
 
-#if !SILVERLIGHT
+#if FEATURE_COM
         private static readonly Type ComObjectType = typeof(object).Assembly.GetType("System.__ComObject");
         private static bool IsComObject(object obj) {
             // we can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust

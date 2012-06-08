@@ -199,6 +199,7 @@ System.IO/HandleInheritability.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Compiler/StackSpiller.Generated.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Compiler/StackSpiller.Temps.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Compiler/SymbolDocumentGenerator.cs
+../dlr/Runtime/Microsoft.Scripting.Core/Compiler/SymbolGuids.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Compiler/VariableBinder.cs
 
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/CacheDict.cs
@@ -210,6 +211,7 @@ System.IO/HandleInheritability.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/ReadOnlyCollectionBuilder.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/ReadOnlyDictionary.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/ReferenceEqualityComparer.cs
+../dlr/Runtime/Microsoft.Scripting.Core/Utils/ReflectionUtils.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/TrueReadOnlyCollection.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/TypeExtensions.cs
 System.Linq.Parallel/ParallelQueryEnumerator.cs

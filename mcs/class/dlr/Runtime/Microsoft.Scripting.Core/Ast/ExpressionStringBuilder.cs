@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -22,8 +22,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Scripting.Utils;
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -237,22 +238,13 @@ namespace System.Linq.Expressions {
                     // "&&" and "||". Oops.
                     case ExpressionType.AndAlso:
                         op = "AndAlso";
-#if SILVERLIGHT
-                        if (Expression.SilverlightQuirks) op = "&&";
-#endif
                         break;
                     case ExpressionType.OrElse:
                         op = "OrElse";
-#if SILVERLIGHT
-                        if (Expression.SilverlightQuirks) op = "||";
-#endif
                         break;
                     case ExpressionType.Assign: op = "="; break;
                     case ExpressionType.Equal:
 						op = "==";
-#if SILVERLIGHT
-                        if (Expression.SilverlightQuirks) op = "=";
-#endif
 						break;
                     case ExpressionType.NotEqual: op = "!="; break;
                     case ExpressionType.GreaterThan: op = ">"; break;
@@ -331,12 +323,6 @@ namespace System.Linq.Expressions {
             }
             string name = node.Name;
             if (String.IsNullOrEmpty(name)) {
-#if SILVERLIGHT
-                if (Expression.SilverlightQuirks) {
-                    Out(name ?? "<param>");
-                    return node;
-                }
-#endif
                 Out("Param_" + GetParamId(node));
             } else {
                 Out(name);
@@ -492,9 +478,6 @@ namespace System.Linq.Expressions {
         protected override ElementInit VisitElementInit(ElementInit initializer) {
             Out(initializer.AddMethod.ToString());
             string sep = ", ";
-#if SILVERLIGHT
-            if (Expression.SilverlightQuirks) sep = ",";
-#endif
             VisitExpressions('(', initializer.Arguments, ')', sep);
             return initializer;
         }
@@ -503,9 +486,6 @@ namespace System.Linq.Expressions {
             Out("Invoke(");
             Visit(node.Expression);
             string sep = ", ";
-#if SILVERLIGHT
-            if (Expression.SilverlightQuirks) sep = ",";
-#endif
             for (int i = 0, n = node.Arguments.Count; i < n; i++) {
                 Out(sep);
                 Visit(node.Arguments[i]);
@@ -554,26 +534,6 @@ namespace System.Linq.Expressions {
             return node;
         }
 
-#if SILVERLIGHT
-        private static PropertyInfo GetPropertyNoThrow(MethodInfo method) {
-            if (method == null)
-                return null;
-            Type type = method.DeclaringType;
-            BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic;
-            flags |= (method.IsStatic) ? BindingFlags.Static : BindingFlags.Instance;
-            PropertyInfo[] props = type.GetProperties(flags);
-            foreach (PropertyInfo pi in props) {
-                if (pi.CanRead && method == pi.GetGetMethod(true)) {
-                    return pi;
-                }
-                if (pi.CanWrite && method == pi.GetSetMethod(true)) {
-                    return pi;
-                }
-            }
-            return null;
-        }
-#endif
-
         protected internal override Expression VisitNew(NewExpression node) {
             Out("new " + node.Type.Name);
             Out("(");
@@ -584,15 +544,6 @@ namespace System.Linq.Expressions {
                 }
                 if (members != null) {
                     string name = members[i].Name;                    
-#if SILVERLIGHT
-                    // Members can be the get/set methods rather than the fields/properties
-                    PropertyInfo pi = null;
-                    if (Expression.SilverlightQuirks &&
-                        members[i].MemberType == MemberTypes.Method &&
-                        (pi = GetPropertyNoThrow((MethodInfo)members[i])) != null) {
-                        name = pi.Name;
-                    }
-#endif
                     Out(name);
                     Out(" = ");
                 }
@@ -777,7 +728,7 @@ namespace System.Linq.Expressions {
         protected internal override Expression VisitExtension(Expression node) {
             // Prefer an overriden ToString, if available.
             var flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.ExactBinding;
-            var toString = node.GetType().GetMethod("ToString", flags, null, Type.EmptyTypes, null);
+            var toString = node.GetType().GetMethod("ToString", flags, null, ReflectionUtils.EmptyTypes, null);
             if (toString.DeclaringType != typeof(Expression)) {
                 Out(node.ToString());
                 return node;

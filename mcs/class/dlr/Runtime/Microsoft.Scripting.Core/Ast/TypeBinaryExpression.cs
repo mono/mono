@@ -17,11 +17,7 @@ using System;
 using System.Diagnostics;
 using System.Dynamic.Utils;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -29,9 +25,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents an operation between an expression and a type. 
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.TypeBinaryExpressionProxy))]
-#endif
     public sealed class TypeBinaryExpression : Expression {
         private readonly Expression _expression;
         private readonly Type _typeOperand;

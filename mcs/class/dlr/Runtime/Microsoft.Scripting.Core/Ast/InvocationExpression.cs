@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -20,11 +20,7 @@ using System.Diagnostics;
 using System.Dynamic.Utils;
 using System.Reflection;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -32,9 +28,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents an expression that applies a delegate or lambda expression to a list of argument expressions.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.InvocationExpressionProxy))]
-#endif
     public sealed class InvocationExpression : Expression, IArgumentProvider {
         private IList<Expression> _arguments;
         private readonly Expression _lambda;

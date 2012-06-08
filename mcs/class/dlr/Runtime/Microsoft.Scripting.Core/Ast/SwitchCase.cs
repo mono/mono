@@ -19,7 +19,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Dynamic.Utils;
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -27,9 +27,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents one case of a <see cref="SwitchExpression"/>.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.SwitchCaseProxy))]
-#endif
     public sealed class SwitchCase {
         private readonly ReadOnlyCollection<Expression> _testValues;
         private readonly Expression _body;

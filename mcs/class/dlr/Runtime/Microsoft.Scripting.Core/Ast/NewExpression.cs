@@ -20,23 +20,17 @@ using System.Diagnostics;
 using System.Dynamic.Utils;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.Scripting.Utils;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
 #endif
-
     /// <summary>
     /// Represents a constructor call.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.NewExpressionProxy))]
-#endif
     public class NewExpression : Expression, IArgumentProvider {
         private readonly ConstructorInfo _constructor;
         private IList<Expression> _arguments;
@@ -213,7 +207,7 @@ namespace System.Linq.Expressions {
             }
             ConstructorInfo ci = null;
             if (!type.IsValueType) {
-                ci = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, System.Type.EmptyTypes, null);
+                ci = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, ReflectionUtils.EmptyTypes, null);
                 if (ci == null) {
                     throw Error.TypeMissingDefaultConstructor(type);
                 }
@@ -319,13 +313,6 @@ namespace System.Linq.Expressions {
                     if (method.IsStatic) {
                         throw Error.ArgumentMustBeInstanceMember();
                     }
-#if SILVERLIGHT
-                    if (SilverlightQuirks) {
-                        // we used to just store the MethodInfo
-                        memberType = method.ReturnType;
-                        return;
-                    }
-#endif
                     PropertyInfo prop = GetProperty(method);
                     member = prop;
                     memberType = prop.PropertyType;
