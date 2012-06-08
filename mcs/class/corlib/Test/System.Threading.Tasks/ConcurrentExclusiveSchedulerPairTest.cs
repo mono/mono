@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_5
 
 using System;
 using System.Threading;
@@ -34,6 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
+	[Ignore ("Not implemented yet")]
 	public class ConcurrentExclusiveSchedulerPairTest
 	{
 		ConcurrentExclusiveSchedulerPair schedPair;
@@ -175,3 +177,4 @@ namespace MonoTests.System.Threading.Tasks
 	}
 }
 
+#endif

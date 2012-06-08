@@ -1,6 +1,12 @@
+// 
 // ConcurrentExclusiveSchedulerPair.cs
 //
-// Copyright (c) 2011 Jérémie "garuma" Laval
+// Authors:
+//       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar <marek.safar@gmail.com>
+// 
+// Copyright (c) 2011 Jérémie "Garuma" Laval
+// Copyright 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +28,49 @@
 //
 //
 
+#if NET_4_5
+
 using System;
 using System.Threading;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace System.Threading.Tasks
 {
-	public class ConcurrentExclusiveSchedulerPair : IDisposable
+	[DebuggerDisplay ("Concurrent={ConcurrentTaskCount}, Exclusive={ExclusiveTaskCount}")]
+	[DebuggerTypeProxy (typeof (SchedulerDebuggerView))]
+	public class ConcurrentExclusiveSchedulerPair
 	{
+		sealed class SchedulerDebuggerView
+		{
+			readonly ConcurrentExclusiveSchedulerPair owner;
+			
+			public SchedulerDebuggerView (ConcurrentExclusiveSchedulerPair owner)
+			{
+				this.owner = owner;
+			}
+			
+			public IEnumerable<Task> ScheduledConcurrent {
+				get {
+					return owner.concurrentTasks;
+				}
+			}
+			
+			public IEnumerable<Task> ScheduledExclusive {
+				get {
+					return owner.exclusiveTasks;
+				}
+			}
+			
+			public TaskScheduler TargetScheduler {
+				get {
+					return owner.target;
+				}
+			}
+
+		}
+		
 		readonly int maxConcurrencyLevel;
 		readonly int maxItemsPerTask;
 
@@ -41,7 +81,7 @@ namespace System.Threading.Tasks
 		readonly ConcurrentQueue<Task> concurrentTasks = new ConcurrentQueue<Task> ();
 		readonly ConcurrentQueue<Task> exclusiveTasks = new ConcurrentQueue<Task> ();
 
-		readonly ReaderWriterLockSlim rwl = new ReaderWriterLockSlim ();
+		//readonly ReaderWriterLockSlim rwl = new ReaderWriterLockSlim ();
 		readonly TaskCompletionSource<object> completion = new TaskCompletionSource<object> ();
 		readonly InnerTaskScheduler concurrent;
 		readonly InnerTaskScheduler exclusive;
@@ -59,6 +99,12 @@ namespace System.Threading.Tasks
 				this.scheduler = scheduler;
 				this.queue = queue;
 			}
+			
+			public int TaskCount {
+				get {
+					return queue.Count;
+				}
+			}
 
 			public override int MaximumConcurrencyLevel {
 				get {
@@ -66,7 +112,7 @@ namespace System.Threading.Tasks
 				}
 			}
 
-			protected override void QueueTask (Task t)
+			protected internal override void QueueTask (Task t)
 			{
 				scheduler.DoQueue (t, queue);
 			}
@@ -126,6 +172,12 @@ namespace System.Threading.Tasks
 				return concurrent;
 			}
 		}
+		
+		private int ConcurrentTaskCount {
+			get {
+				return concurrent.TaskCount;
+			}
+		}
 
 		public TaskScheduler ExclusiveScheduler {
 			get {
@@ -133,20 +185,16 @@ namespace System.Threading.Tasks
 			}
 		}
 
+		private int ExclusiveTaskCount {
+			get {
+				return exclusive.TaskCount;
+			}
+		}
+
 		public Task Completion {
 			get {
 				return completion.Task;
 			}
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
-
-		[MonoTODO]
-		protected virtual void Dispose (bool disposing)
-		{
 		}
 
 		void DoQueue (Task task, ConcurrentQueue<Task> queue)
@@ -157,7 +205,6 @@ namespace System.Threading.Tasks
 
 		void InternalTaskProcesser ()
 		{
-			Task task;
 			int times = 0;
 			const int lockWaitTime = 2;
 
@@ -165,11 +212,14 @@ namespace System.Threading.Tasks
 				if (maxItemsPerTask != -1 && ++times == maxItemsPerTask)
 					break;
 
+				throw new NotImplementedException ();
+/*
 				bool locked = false;
 
 				try {
 					if (!concurrentTasks.IsEmpty && rwl.TryEnterReadLock (lockWaitTime)) {
 						locked = true;
+						Task task;
 						while (concurrentTasks.TryDequeue (out task)) {
 							RunTask (task);
 						}
@@ -184,6 +234,7 @@ namespace System.Threading.Tasks
 				try {
 					if (!exclusiveTasks.IsEmpty && rwl.TryEnterWriteLock (lockWaitTime)) {
 						locked = true;
+						Task task;
 						while (exclusiveTasks.TryDequeue (out task)) {
 							RunTask (task);
 						}
@@ -193,7 +244,9 @@ namespace System.Threading.Tasks
 						rwl.ExitWriteLock ();
 					}
 				}
+*/
 			}
+
 			// TODO: there's a race here, task adding + spinup check may be done while here
 			Interlocked.Decrement (ref numTask);
 		}
@@ -216,3 +269,5 @@ namespace System.Threading.Tasks
 		}
 	}
 }
+
+#endif

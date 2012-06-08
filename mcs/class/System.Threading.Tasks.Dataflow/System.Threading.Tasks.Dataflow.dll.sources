@@ -2,7 +2,6 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
-System.Threading.Tasks/ConcurrentExclusiveSchedulerPair.cs
 System.Threading.Tasks.Dataflow/ExecutingMessageBox.cs
 System.Threading.Tasks.Dataflow/DataflowBlockOptions.cs
 System.Threading.Tasks.Dataflow/DataflowMessageHeader.cs

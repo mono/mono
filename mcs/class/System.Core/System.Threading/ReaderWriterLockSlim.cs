@@ -128,7 +128,7 @@ namespace System.Threading {
 			return TryEnterReadLock (millisecondsTimeout, ref dummy);
 		}
 
-		public bool TryEnterReadLock (int millisecondsTimeout, ref bool success)
+		bool TryEnterReadLock (int millisecondsTimeout, ref bool success)
 		{
 			ThreadLockState ctstate = CurrentThreadState;
 

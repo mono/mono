@@ -64,6 +64,9 @@ namespace System.Xml.Xsl {
 		}
 	}
 
+#if NET_2_0
+	[Obsolete]
+#endif
 	public sealed class XslTransform {
 
 		internal static readonly bool TemplateStackFrameError;
