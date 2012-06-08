@@ -16,6 +16,7 @@
       <sequencepoints>
         <entry il="0x0" row="12" file_ref="1" hidden="false" />
         <entry il="0x1" row="13" file_ref="1" hidden="false" />
+        <entry il="0x6" row="13" file_ref="1" hidden="false" />
         <entry il="0x16" row="14" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />

@@ -21,6 +21,7 @@
       <sequencepoints>
         <entry il="0x0" row="16" file_ref="1" hidden="false" />
         <entry il="0x1" row="17" file_ref="1" hidden="false" />
+        <entry il="0x23" row="17" file_ref="1" hidden="false" />
         <entry il="0x2e" row="21" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
@@ -35,6 +36,7 @@
       <sequencepoints>
         <entry il="0x0" row="29" file_ref="1" hidden="false" />
         <entry il="0x1" row="30" file_ref="1" hidden="false" />
+        <entry il="0x23" row="30" file_ref="1" hidden="false" />
         <entry il="0x2e" row="31" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
@@ -69,6 +71,7 @@
       <sequencepoints>
         <entry il="0x21" row="11" file_ref="1" hidden="false" />
         <entry il="0x22" row="12" file_ref="1" hidden="false" />
+        <entry il="0x28" row="12" file_ref="1" hidden="false" />
         <entry il="0x89" row="13" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
@@ -83,6 +86,7 @@
       <sequencepoints>
         <entry il="0x21" row="24" file_ref="1" hidden="false" />
         <entry il="0x22" row="25" file_ref="1" hidden="false" />
+        <entry il="0x28" row="25" file_ref="1" hidden="false" />
         <entry il="0x8f" row="26" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />

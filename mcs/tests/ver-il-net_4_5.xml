@@ -57716,6 +57716,40 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-23.cs">
+    <type name="Program">
+      <method name="Void Test_1()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void Test_2()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void Test_3()" attrs="129">
+        <size>13</size>
+      </method>
+      <method name="Void Test_4()" attrs="129">
+        <size>44</size>
+      </method>
+      <method name="Int32 BindCore()" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Program Prog()" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Program get_Prop()" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Program &lt;Test_4&gt;m__0()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">
