@@ -594,10 +594,12 @@ namespace MonoTests.System.Windows {
 			// crosses bottom side
 			r = new Rect (0, 0, 50, 50);
 			r.Intersect (new Rect (5, 5, 10, 50));
+			Assert.AreEqual(new Rect(5, 5, 10, 45), r);
 
 			// crosses left side
 			r = new Rect (0, 0, 50, 50);
 			r.Intersect (new Rect (-5, 5, 10, 10));
+			Assert.AreEqual(new Rect(0, 5, 5, 10), r);
 
 			// completely outside (top)
 			r = new Rect (0, 0, 50, 50);
@@ -620,6 +622,56 @@ namespace MonoTests.System.Windows {
 			Assert.AreEqual (Rect.Empty, r);
 		}
 
+		[Test]
+		public void Union()
+		{
+			Rect r;
+			
+			// fully contained
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(10, 10, 10, 10));
+			Assert.AreEqual(new Rect(0, 0, 50, 50), r);
+
+			// crosses top side
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(5, -5, 10, 10));
+			Assert.AreEqual(new Rect(0, -5, 50, 55), r);
+
+			// crosses right side
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(5, 5, 50, 10));
+			Assert.AreEqual(new Rect(0, 0, 55, 50), r);
+
+			// crosses bottom side
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(5, 5, 10, 50));
+			Assert.AreEqual(new Rect(0, 0, 50, 55), r);
+
+			// crosses left side
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(-5, 5, 10, 10));
+			Assert.AreEqual(new Rect(-5, 0, 55, 50), r);
+
+			// completely outside (top)
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(5, -5, 1, 1));
+			Assert.AreEqual(new Rect(0, -5, 50, 55), r);
+
+			// completely outside (right)
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(75, 5, 1, 1));
+			Assert.AreEqual(new Rect(0, 0, 76, 50), r);
+
+			// completely outside (bottom)
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(5, 75, 1, 1));
+			Assert.AreEqual(new Rect(0,0, 50, 76), r);
+
+			// completely outside (left)
+			r = new Rect(0, 0, 50, 50);
+			r.Union(new Rect(-25, 5, 1, 1));
+			Assert.AreEqual(new Rect(-25, 0, 75, 50), r);
+		}
 
 		[Test]
 		public void Equals_Operator ()
