@@ -278,10 +278,15 @@ namespace System.Windows {
 		
 		public void Union(Rect rect)
 		{
-			x = Math.Min (x, rect.x);
-			y = Math.Min (y, rect.y);
-			width = Math.Max (Right, rect.Right) - x;
-			height = Math.Max (Bottom, rect.Bottom) - y;
+			var left = Math.Min (Left, rect.Left);
+			var top = Math.Min (Top, rect.Top);
+			var right = Math.Max (Right, rect.Right);
+			var bottom = Math.Max (Bottom, rect.Bottom);
+			
+			x = left;
+			y = top;
+			width = right - left;
+			height = bottom - top;
 		}
 
 		public void Union(Point point)
