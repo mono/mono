@@ -22,10 +22,10 @@
 .  public void yyerror (string message) {
 .    yyerror(message, null);
 .  }
-.
+.#pragma warning disable 649
 .  /* An EOF token */
 .  public int eof_token;
-.
+.#pragma warning restore 649
 .  /** (syntax) error message.
 .      Can be overwritten to control message format.
 .      @param message text to be displayed.
@@ -59,7 +59,9 @@ t    if ((name = yyNames[token]) != null) return name;
 t    return "[unknown]";
 t  }
 .
+.#pragma warning disable 414
 .  int yyExpectingState;
+.#pragma warning restore 414
 .  /** computes list of expected tokens on error by tracing the tables.
 .      @param state for which to compute the list.
 .      @return list of token names.
@@ -125,7 +127,9 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .
 .	static int[] global_yyStates;
 .	static object[] global_yyVals;
+.#pragma warning disable 649
 .	protected bool use_global_stacks;
+.#pragma warning restore 649
 .	object[] yyVals;					// value stack
 .	object yyVal;						// value stack ptr
 .	int yyToken;						// current input

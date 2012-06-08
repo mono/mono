@@ -102,7 +102,7 @@ namespace Mono.Xml.Schema
 
 		// Extra for XmlSchemaValidtingReader
 		// (not in XsdValidatingReader)
-		XsElement element; // ... xsinfo.Element?
+		//XsElement element; // ... xsinfo.Element?
 
 		#endregion
 
@@ -158,9 +158,10 @@ namespace Mono.Xml.Schema
 			remove { v.ValidationEventHandler -= value; }
 		}
 
+		[MonoTODO]
 		public XmlSchemaType ElementSchemaType {
 			get {
-				return element != null ? element.ElementSchemaType : null;
+				return null; // element != null ? element.ElementSchemaType : null;
 			}
 		}
 

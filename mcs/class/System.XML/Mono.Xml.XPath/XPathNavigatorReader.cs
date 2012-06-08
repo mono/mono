@@ -51,17 +51,13 @@ namespace Mono.Xml.XPath
 		bool endElement;
 		bool attributeValueConsumed;
 		StringBuilder readStringBuffer = new StringBuilder ();
-#if NET_2_0
-		StringBuilder innerXmlBuilder = new StringBuilder ();
-#endif
 
-		int depth = 0;
-		int attributeCount = 0;
+		int depth;
+		int attributeCount;
 		bool eof;
 
 		#region Properties
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return true; }
 		}
@@ -69,7 +65,6 @@ namespace Mono.Xml.XPath
 		public override bool CanReadValueChunk {
 			get { return true; }
 		}
-#endif
 
 		public override XmlNodeType NodeType {
 			get {

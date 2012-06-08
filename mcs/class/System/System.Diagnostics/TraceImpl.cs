@@ -42,7 +42,8 @@ namespace System.Diagnostics {
 		public const string Key = ".__TraceInfoSettingsKey__.";
 
 		public bool AutoFlush;
-		public int IndentLevel, IndentSize = 4;
+		//public int IndentLevel;
+		public int IndentSize = 4;
 		public TraceListenerCollection Listeners = new TraceListenerCollection (false);
 
 		public TraceImplSettings ()
@@ -214,7 +215,7 @@ namespace System.Diagnostics {
 						d.Remove (TraceImplSettings.Key);
 
 						autoFlush   = s.AutoFlush;
-						indentLevel = s.IndentLevel;
+//						indentLevel = s.IndentLevel;
 						indentSize  = s.IndentSize;
 						listeners   = s.Listeners;
 					}

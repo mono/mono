@@ -80,7 +80,9 @@ namespace System.Configuration
 		// MachineConfigFilename will be used to set the ExeConfigFilename.
 		//
 		// This is necessary to fix bug #491531
+#pragma warning disable 649
 		private static Type webConfigurationFileMapType;
+#pragma warning restore 649
 		
 		private static string userRoamingPath = "";
 		private static string userLocalPath = "";

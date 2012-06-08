@@ -234,8 +234,6 @@ namespace Mono.Security.Protocol.Tls
 				this.protocol.SendRecord(HandshakeType.ServerKeyExchange);
 			}
 
-			bool certRequested = false;
-
 			// If the negotiated cipher is a KeyEx cipher or
 			// the client certificate is required send the CertificateRequest message
 			if (this.context.Negotiating.Cipher.IsExportable ||
@@ -243,7 +241,6 @@ namespace Mono.Security.Protocol.Tls
 				((ServerContext)this.context).RequestClientCertificate)
 			{
 				this.protocol.SendRecord(HandshakeType.CertificateRequest);
-				certRequested = true;
 			}
 
 			// Send ServerHelloDone message

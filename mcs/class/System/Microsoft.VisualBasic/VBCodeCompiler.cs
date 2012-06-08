@@ -295,7 +295,7 @@ namespace Microsoft.VisualBasic
 					using (FileStream fs = File.OpenRead (options.OutputAssembly)) {
 						byte[] buffer = new byte[fs.Length];
 						fs.Read (buffer, 0, buffer.Length);
-						results.CompiledAssembly = Assembly.Load (buffer, null, options.Evidence);
+						results.CompiledAssembly = Assembly.Load (buffer, null);
 						fs.Close ();
 					}
 				} else {

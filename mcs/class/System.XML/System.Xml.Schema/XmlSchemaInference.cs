@@ -169,9 +169,6 @@ namespace System.Xml.Schema
 		static readonly QName QNameDecimal = new QName (
 			"decimal", XmlSchema.Namespace);
 
-		static readonly QName QNameUDecimal = new QName (
-			"unsignedDecimal", XmlSchema.Namespace);
-
 		static readonly QName QNameDouble = new QName (
 			"double", XmlSchema.Namespace);
 

@@ -51,8 +51,6 @@ namespace System.Xml
 		{
 		}
 
-		static XmlException invalidDataException = new XmlException ("invalid data.");
-
 		public override void Close ()
 		{
 			this.input.Close ();

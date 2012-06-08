@@ -98,13 +98,13 @@ namespace Mono.Xml.Xsl
 	// represents part of dynamic context that holds index table for a key
 	internal class KeyIndexTable
 	{
-		XsltCompiledContext ctx;
+//		XsltCompiledContext ctx;
 		ArrayList keys;
 		Hashtable mappedDocuments;
 
 		public KeyIndexTable (XsltCompiledContext ctx, ArrayList keys)
 		{
-			this.ctx = ctx;
+//			this.ctx = ctx;
 			this.keys = keys;
 		}
 

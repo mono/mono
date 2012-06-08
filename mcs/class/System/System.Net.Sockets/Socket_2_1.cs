@@ -1647,6 +1647,8 @@ namespace System.Net.Sockets {
 #if MOONLIGHT || NET_4_0
 			IPAddress [] addresses = null;
 			use_remoteep = !GetCheckedIPs (e, out addresses);
+#endif
+#if MOONLIGHT
 			bool policy_failed = (e.SocketError == SocketError.AccessDenied);
 #endif
 			e.curSocket = this;
