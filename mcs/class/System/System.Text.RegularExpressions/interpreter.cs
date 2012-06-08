@@ -931,10 +931,11 @@ namespace System.Text.RegularExpressions {
 							Match = false;
 							break;
 						}
-						if (Match == true) {
-							//must shortcircuit
-							return Match;	
-						}
+					}
+					if (Match == true) {
+						//must shortcircuit
+						return Match;	
+					
 					}
 				} else {
 					Match = true;
