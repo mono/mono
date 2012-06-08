@@ -81,20 +81,20 @@ namespace System.Data.Common
 #endif 
 		}
 
-		protected DataAdapter (DataAdapter adapter)
+		protected DataAdapter (DataAdapter from)
 		{
-			AcceptChangesDuringFill = adapter.AcceptChangesDuringFill;
-			ContinueUpdateOnError = adapter.ContinueUpdateOnError;
-			MissingMappingAction = adapter.MissingMappingAction;
-			MissingSchemaAction = adapter.MissingSchemaAction;
+			AcceptChangesDuringFill = from.AcceptChangesDuringFill;
+			ContinueUpdateOnError = from.ContinueUpdateOnError;
+			MissingMappingAction = from.MissingMappingAction;
+			MissingSchemaAction = from.MissingSchemaAction;
 
-			if (adapter.tableMappings != null)
-				foreach (ICloneable cloneable in adapter.TableMappings)
+			if (from.tableMappings != null)
+				foreach (ICloneable cloneable in from.TableMappings)
 					TableMappings.Add (cloneable.Clone ());
 #if NET_2_0
-			acceptChangesDuringUpdate = adapter.AcceptChangesDuringUpdate;
-			fillLoadOption = adapter.FillLoadOption;
-			returnProviderSpecificTypes = adapter.ReturnProviderSpecificTypes;
+			acceptChangesDuringUpdate = from.AcceptChangesDuringUpdate;
+			fillLoadOption = from.FillLoadOption;
+			returnProviderSpecificTypes = from.ReturnProviderSpecificTypes;
 #endif 
 		}
 

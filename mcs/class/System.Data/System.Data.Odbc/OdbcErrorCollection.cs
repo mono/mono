@@ -110,14 +110,14 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		public void CopyTo (OdbcError [] array, int index)
+		public void CopyTo (OdbcError [] array, int i)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			if ((index < array.GetLowerBound (0)) || (index > array.GetUpperBound (0)))
+			if ((i < array.GetLowerBound (0)) || (i > array.GetUpperBound (0)))
 				throw new ArgumentOutOfRangeException ("index");
-			((OdbcError[]) (_items.ToArray ())).CopyTo (array, index);
+			((OdbcError[]) (_items.ToArray ())).CopyTo (array, i);
 		}
 #endif
 

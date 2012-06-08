@@ -372,16 +372,16 @@ namespace System.Data
 
 #if NET_2_0
 	sealed partial class DataTableCollection {
-		public DataTable this [string name, string tbNamespace] {
+		public DataTable this [string name, string tableNamespace] {
 			get {
-				int index = IndexOf (name, tbNamespace, true);
+				int index = IndexOf (name, tableNamespace, true);
 				return index < 0 ? null : (DataTable) List [index];
 			}
 		}
 
-		public DataTable Add (string name, string tbNamespace)
+		public DataTable Add (string name, string tableNamespace)
 		{
-			DataTable table = new DataTable (name, tbNamespace);
+			DataTable table = new DataTable (name, tableNamespace);
 			this.Add (table);
 			return table;
 		}

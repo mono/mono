@@ -743,10 +743,10 @@ namespace System.Data.Common {
 		
 		public abstract void Open ();
 
-		protected virtual void OnStateChange (StateChangeEventArgs stateChanged)
+		protected virtual void OnStateChange (StateChangeEventArgs stateChange)
 		{
 			if (StateChange != null)
-				StateChange (this, stateChanged);
+				StateChange (this, stateChange);
 		}
 
 		#endregion // Methods

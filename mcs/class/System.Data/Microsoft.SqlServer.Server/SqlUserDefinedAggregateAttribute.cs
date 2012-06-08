@@ -54,9 +54,9 @@ namespace Microsoft.SqlServer.Server {
 
 		#region Constructors
 
-		public SqlUserDefinedAggregateAttribute (Format f)
+		public SqlUserDefinedAggregateAttribute (Format format)
 		{
-			format = f;
+			this.format = format;
 			IsInvariantToDuplicates = false;
 			IsInvariantToNulls = false;
 			IsInvariantToOrder = false;

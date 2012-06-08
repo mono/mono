@@ -565,11 +565,11 @@ namespace System.Data.Common {
 			return GetDeleteCommand (false);
 		}
 
-		public DbCommand GetDeleteCommand (bool option)
+		public DbCommand GetDeleteCommand (bool useColumnsForParameterNames)
 		{
 			BuildCache (true);
-			if (_deleteCommand == null || option)
-				return CreateDeleteCommand (option);
+			if (_deleteCommand == null || useColumnsForParameterNames)
+				return CreateDeleteCommand (useColumnsForParameterNames);
 			return _deleteCommand;
 		}
 
@@ -578,16 +578,16 @@ namespace System.Data.Common {
 			return GetInsertCommand (false, null);
 		}
 
-		public DbCommand GetInsertCommand (bool option)
+		public DbCommand GetInsertCommand (bool useColumnsForParameterNames)
 		{
-			return GetInsertCommand (option, null);
+			return GetInsertCommand (useColumnsForParameterNames, null);
 		}
 
-		internal DbCommand GetInsertCommand (bool option, DataRow row)
+		internal DbCommand GetInsertCommand (bool useColumnsForParameterNames, DataRow row)
 		{
 			BuildCache (true);
-			if (_insertCommand == null || option)
-				return CreateInsertCommand (option, row);
+			if (_insertCommand == null || useColumnsForParameterNames)
+				return CreateInsertCommand (useColumnsForParameterNames, row);
 			return _insertCommand;
 		}
 
@@ -596,11 +596,11 @@ namespace System.Data.Common {
 			return GetUpdateCommand (false);
 		}
 
-		public DbCommand GetUpdateCommand (bool option)
+		public DbCommand GetUpdateCommand (bool useColumnsForParameterNames)
 		{
 			BuildCache (true);
-			if (_updateCommand == null || option)
-				return CreateUpdateCommand (option);
+			if (_updateCommand == null || useColumnsForParameterNames)
+				return CreateUpdateCommand (useColumnsForParameterNames);
 			return _updateCommand;
 		}
 
@@ -647,25 +647,25 @@ namespace System.Data.Common {
 			_insertCommand = null;
 		}
 
-		protected void RowUpdatingHandler (RowUpdatingEventArgs args)
+		protected void RowUpdatingHandler (RowUpdatingEventArgs rowUpdatingEvent)
 		{
-			if (args.Command != null)
+			if (rowUpdatingEvent.Command != null)
 				return;
 			try {
-				switch (args.StatementType) {
+				switch (rowUpdatingEvent.StatementType) {
 				case StatementType.Insert:
-					args.Command = GetInsertCommand (false, args.Row);
+					rowUpdatingEvent.Command = GetInsertCommand (false, rowUpdatingEvent.Row);
 					break;
 				case StatementType.Update:
-					args.Command = GetUpdateCommand ();
+					rowUpdatingEvent.Command = GetUpdateCommand ();
 					break;
 				case StatementType.Delete:
-					args.Command = GetDeleteCommand ();
+					rowUpdatingEvent.Command = GetDeleteCommand ();
 					break;
 				}
 			} catch (Exception e) {
-				args.Errors = e;
-				args.Status = UpdateStatus.ErrorsOccurred;
+				rowUpdatingEvent.Errors = e;
+				rowUpdatingEvent.Status = UpdateStatus.ErrorsOccurred;
 			}
 		}
 
@@ -675,9 +675,9 @@ namespace System.Data.Common {
 
 		protected abstract void SetRowUpdatingHandler (DbDataAdapter adapter);
 
-		protected virtual DataTable GetSchemaTable (DbCommand cmd)
+		protected virtual DataTable GetSchemaTable (DbCommand sourceCommand)
 		{
-			using (DbDataReader rdr = cmd.ExecuteReader ())
+			using (DbDataReader rdr = sourceCommand.ExecuteReader ())
 				return rdr.GetSchemaTable ();
 		}
 

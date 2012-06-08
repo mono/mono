@@ -195,9 +195,9 @@ namespace System.Data.Common
 		}
 
 #if NET_2_0
-		public void CopyTo (DataColumnMapping [] arr, int index)
+		public void CopyTo (DataColumnMapping [] array, int index)
 		{
-			list.CopyTo (arr, index);
+			list.CopyTo (array, index);
 		}
 #endif
 
@@ -291,11 +291,11 @@ namespace System.Data.Common
 		}
 
 #if NET_2_0
-		public void Insert (int index, DataColumnMapping mapping)
+		public void Insert (int index, DataColumnMapping value)
 		{
-			list.Insert (index, mapping);
-			sourceColumns [mapping.SourceColumn] = mapping;
-			dataSetColumns [mapping.DataSetColumn] = mapping;
+			list.Insert (index, value);
+			sourceColumns [value.SourceColumn] = value;
+			dataSetColumns [value.DataSetColumn] = value;
 		}
 #endif
 
