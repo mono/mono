@@ -8,7 +8,6 @@ include ../build/rules.make
 
 EXTRA_DISTFILES = \
 	mcs.csproj		\
-	compiler.doc		\
 	mcs.sln		\
 	cs-parser.jay		\
 	mcs.exe.sources		\
