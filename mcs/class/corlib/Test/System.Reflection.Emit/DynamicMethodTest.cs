@@ -125,21 +125,21 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void OwnerCantBeArray ()
 		{
-			try {
-				new DynamicMethod ( "Name", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard,
-				                    typeof(void), new Type[] { }, typeof(int[]), true);
-				Assert.Fail ("Created dynamic method with owner being array.");
-			}catch(ArgumentException) {
-			}
+			TestOwner (typeof (int[]));
 		}
 
 		[Test]
 		public void OwnerCantBeInterface ()
 		{
+			TestOwner (typeof (global::System.Collections.IEnumerable));
+		}
+
+		private void TestOwner (Type owner)
+		{
 			try {
-				new DynamicMethod ( "Name", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard,
-				                    typeof(void), new Type[] { }, typeof(global::System.Collections.IEnumerable), true);
-				Assert.Fail ("Created dynamic method with owner being interface.");
+				new DynamicMethod ("Name", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard,
+				                   typeof(void), new Type[] { }, owner, true);
+				Assert.Fail (string.Format ("Created dynamic method with owner being {0}.", owner));
 			}catch(ArgumentException) {
 			}
 		}
