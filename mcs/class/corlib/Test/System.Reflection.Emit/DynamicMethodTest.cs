@@ -140,7 +140,7 @@ namespace MonoTests.System.Reflection.Emit
 				new DynamicMethod ("Name", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard,
 				                   typeof(void), new Type[] { }, owner, true);
 				Assert.Fail (string.Format ("Created dynamic method with owner being {0}.", owner));
-			}catch(ArgumentException) {
+			} catch (ArgumentException) {
 			}
 		}
 
