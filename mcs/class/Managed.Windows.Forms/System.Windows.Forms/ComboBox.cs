@@ -2115,10 +2115,6 @@ namespace System.Windows.Forms
 			{
 				if (value == null)
 					return;
-
-				if (IndexOf (value) == owner.SelectedIndex)
-					owner.SelectedIndex = -1;
-				
 				int index = IndexOf (value);
 				if (index >= 0)
 					RemoveAt (index);
@@ -2129,7 +2125,9 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 					
-				if (index == owner.SelectedIndex)
+				if (index < owner.SelectedIndex)
+					--owner.SelectedIndex;
+				else if (index == owner.SelectedIndex)
 					owner.SelectedIndex = -1;
 
 				object removed = object_items [index];

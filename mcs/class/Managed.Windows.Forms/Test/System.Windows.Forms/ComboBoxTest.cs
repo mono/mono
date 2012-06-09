@@ -999,6 +999,69 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		// Xamarin bug 5595
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=5595
+		public void SelectionWithDeletion()
+		{
+			Form form = null;
+
+			try
+			{
+				// Create a form with a combo box.
+				form = new Form ();
+				form.ShowInTaskbar = false;
+				ComboBox cb = new ComboBox ();
+				cb.DropDownStyle = ComboBoxStyle.DropDownList;
+				cb.Parent = form;
+				form.Show ();
+
+				// Add some items to the combo box.
+				cb.Items.Add ("Item 0");
+				cb.Items.Add ("Item 1");
+				cb.Items.Add ("Item 2");
+
+				// Select the last item.
+				cb.SelectedIndex = 2;
+				Assert.AreEqual(2, cb.SelectedIndex, "SWD1");
+
+				// Show the combo box's dropdown.
+				cb.DroppedDown = true;
+
+				// Display the results.
+				Application.DoEvents();
+
+				// Hide the combo box's dropdown.
+				cb.DroppedDown = false;
+
+				// Display the results.
+				Application.DoEvents();
+
+				// Delete an item before the selection.
+				// That should move the selection down.
+				// Before the bug fix, it would remain 2.
+				cb.Items.RemoveAt (1);
+				Assert.AreEqual(1, cb.SelectedIndex, "SWD2");
+
+				// Show the combo box's dropdown.
+				// Before the bug fix, this would throw an
+				// ArgumentOutOfRangeException, because the
+				// selected index was still 2, and hence
+				// invalid.)
+				cb.DroppedDown = true;
+				Assert.AreEqual(1, cb.SelectedIndex, "SWD3");
+
+				// Display the results.
+				Application.DoEvents();
+			}
+			finally
+			{
+				// Get rid of the form.
+				if (form != null)
+					form.Dispose ();
+			}
+		}
+
+		[Test]
 		public void SelectionWithClear()
 		{
 			ComboBox cb = new ComboBox();
