@@ -1593,6 +1593,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, col.Count, "#1");
 			col.Remove (null);
 			Assert.AreEqual (1, col.Count, "#2");
+			col.Remove ("Item3");
+			Assert.AreEqual (1, col.Count, "#3");
 		}
 
 		[Test]

@@ -2119,7 +2119,9 @@ namespace System.Windows.Forms
 				if (IndexOf (value) == owner.SelectedIndex)
 					owner.SelectedIndex = -1;
 				
-				RemoveAt (IndexOf (value));
+				int index = IndexOf (value);
+				if (index >= 0)
+					RemoveAt (index);
 			}
 
 			public void RemoveAt (int index)
