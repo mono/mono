@@ -2,6 +2,7 @@
 // DynamicMethodTest.cs - NUnit Test Cases for the DynamicMethod class
 //
 // Gert Driesen (drieseng@users.sourceforge.net)
+// Konrad Kruczynski
 //
 // (C) 2006 Novell
 
@@ -118,6 +119,28 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.AreEqual ("name", ex.ParamName, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
+			}
+		}
+
+		[Test]
+		public void OwnerCantBeArray ()
+		{
+			TestOwner (typeof (int[]));
+		}
+
+		[Test]
+		public void OwnerCantBeInterface ()
+		{
+			TestOwner (typeof (global::System.Collections.IEnumerable));
+		}
+
+		private void TestOwner (Type owner)
+		{
+			try {
+				new DynamicMethod ("Name", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard,
+				                   typeof(void), new Type[] { }, owner, true);
+				Assert.Fail (string.Format ("Created dynamic method with owner being {0}.", owner));
+			} catch (ArgumentException) {
 			}
 		}
 
