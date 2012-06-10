@@ -623,7 +623,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			_form.MinimumSize = new Size(100, 100);
 			Assert.AreEqual (true, eventhandled, "#A10");
-		}	
+		}
 
 		/**
 		 ** This next test is in response to a bug report
@@ -633,54 +633,62 @@ namespace MonoTests.System.Windows.Forms
 		 **
 		 ** Report: https://bugzilla.novell.com/show_bug.cgi?id=321541
 		 **/
-		private static Form _form1_OneIdlePerThread=null;
-		private static Form _form2_OneIdlePerThread=null;
-		private static int count1_OIPT=0;
-		private static int count2_OIPT=0; 
+		private static Form form1_OneIdlePerThread = null;
+		private static Form form2_OneIdlePerThread = null;
+		private static int count1_OIPT = 0;
+		private static int count2_OIPT = 0; 
 		private static ThreadStart OIPT_ThreadStart2;
 		private static Thread OIPT_Thread2;
-		private static int oipt_t1=0;
-		private static int oipt_t2=0;
+		private static int oipt_t1 = 0;
+		private static int oipt_t2 = 0;
 		[Test]
-		public void OneIdlePerThread(){
-			Thread t=Thread.CurrentThread;
-			oipt_t1=t.ManagedThreadId;
-			count1_OIPT=0;count2_OIPT=0;
-			_form1_OneIdlePerThread=new Form();
+		public void OneIdlePerThread () {
+			Thread t = Thread.CurrentThread;
+			oipt_t1 = t.ManagedThreadId;
+			count1_OIPT = 0;
+			count2_OIPT = 0;
+			form1_OneIdlePerThread = new Form ();
 	
-			OIPT_ThreadStart2=new ThreadStart(TIPT_Two);
-			OIPT_Thread2=new Thread(OIPT_ThreadStart2);
-			OIPT_Thread2.IsBackground=true;
-			OIPT_Thread2.ApartmentState=ApartmentState.STA;
-			OIPT_Thread2.Start();
-			Application.Idle+=new EventHandler(TestIdlePerThread);
-			Application.Run(_form1_OneIdlePerThread);
-			Thread.Sleep(1000);//allow other thread to finish
-			Assert.AreEqual (true, count1_OIPT==1, "#Idle: idle #1 hit too many times");
-			Assert.AreEqual (true, count2_OIPT==1, "#Idle: idle #2 hit too many times");
+			OIPT_ThreadStart2 = new ThreadStart (TIPT_Two);
+			OIPT_Thread2=new Thread (OIPT_ThreadStart2);
+			OIPT_Thread2.IsBackground = true;
+			OIPT_Thread2.ApartmentState = ApartmentState.STA;
+			OIPT_Thread2.Start ();
+			Application.Idle += new EventHandler(TestIdlePerThread);
+			Application.Run (form1_OneIdlePerThread);
+			Thread.Sleep (1000);//allow other thread to finish
+			Assert.AreEqual (true, count1_OIPT == 1, 
+				"#Idle: idle #1 hit too many times");
+			Assert.AreEqual (true, count2_OIPT == 1, 	
+				"#Idle: idle #2 hit too many times");
 		}
-		public static void TIPT_Two(){
-			Thread t=Thread.CurrentThread;
-			oipt_t2=t.ManagedThreadId;
-			_form2_OneIdlePerThread=new Form();
-			Application.Idle+=new EventHandler(TestIdlePerThread2);
-			Application.Run(_form2_OneIdlePerThread);
+		public static void TIPT_Two (){
+			Thread t = Thread.CurrentThread;
+			oipt_t2 = t.ManagedThreadId;
+			form2_OneIdlePerThread = new Form ();
+			Application.Idle += 	
+				new EventHandler (TestIdlePerThread2);
+			Application.Run (form2_OneIdlePerThread);
 		}
-		public static void TestIdlePerThread(object o, EventArgs e){	
-			Thread t=Thread.CurrentThread;
+		public static void TestIdlePerThread (object o, EventArgs e) {
+			Thread t = Thread.CurrentThread;
 			count1_OIPT++;
-			Application.Idle-=new EventHandler(TestIdlePerThread);
-			if (_form1_OneIdlePerThread!=null)
-				_form1_OneIdlePerThread.Close();
-			Assert.AreEqual (true, oipt_t1==t.ManagedThreadId, "#Idle:Wrong Thread-t1");
+			Application.Idle -= 
+				new EventHandler (TestIdlePerThread);
+			if (form1_OneIdlePerThread != null)
+				form1_OneIdlePerThread.Close ();
+			Assert.AreEqual (true, oipt_t1 == t.ManagedThreadId, 
+				"#Idle:Wrong Thread-t1");
 		}
-		public static void TestIdlePerThread2(object o, EventArgs e){	
-			Thread t=Thread.CurrentThread;
+		public static void TestIdlePerThread2 (object o, EventArgs e) {
+			Thread t = Thread.CurrentThread;
 			count2_OIPT++;
-			Application.Idle-=new EventHandler(TestIdlePerThread2);
-			if (_form2_OneIdlePerThread!=null)
-				_form2_OneIdlePerThread.Close();
-			Assert.AreEqual (true, oipt_t2==t.ManagedThreadId, "#Idle:Wrong Thread-t2");
+			Application.Idle -= 
+				new EventHandler(TestIdlePerThread2);
+			if (form2_OneIdlePerThread != null)
+				form2_OneIdlePerThread.Close ();
+			Assert.AreEqual (true, oipt_t2 == t.ManagedThreadId, 
+				"#Idle:Wrong Thread-t2");
 		}
 		
 	}

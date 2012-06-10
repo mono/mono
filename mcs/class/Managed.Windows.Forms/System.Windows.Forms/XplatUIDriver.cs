@@ -270,27 +270,28 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// XplatUI Driver Properties
 
-		internal Dictionary<int,EventHandler> Idle_Threads;
+		internal Dictionary<int, EventHandler> Idle_Threads;
 		internal virtual event EventHandler Idle {
 			add {
-				if (Idle_Threads==null){
-					Idle_Threads=new Dictionary<int,EventHandler>();
+				if (Idle_Threads == null){
+					Idle_Threads = 
+					  new Dictionary<int, EventHandler> ();
 				}
-				int id=Thread.CurrentThread.ManagedThreadId;
-				if (!Idle_Threads.ContainsKey(id)){
+				int id = Thread.CurrentThread.ManagedThreadId;
+				if (!Idle_Threads.ContainsKey (id)) {
 					EventHandler hnd=null;
-					Idle_Threads.Add(id,hnd);
+					Idle_Threads.Add (id, hnd);
 				}
-				Idle_Threads[id]+=value;
+				Idle_Threads[id] += value;
 			}
 			remove {
-				if (Idle_Threads!=null){
-					int id=Thread.CurrentThread.ManagedThreadId;
-					if (Idle_Threads.ContainsKey(id)){
-						Idle_Threads[id]-=value;
-						if (Idle_Threads[id]==null)
-						{
-							Idle_Threads.Remove(id);
+				if (Idle_Threads != null){
+					int id = 
+					  Thread.CurrentThread.ManagedThreadId;
+					if (Idle_Threads.ContainsKey (id)) {
+						Idle_Threads[id] -= value;
+						if (Idle_Threads[id] == null) {
+							Idle_Threads.Remove (id);
 						}
 					}
 				}
