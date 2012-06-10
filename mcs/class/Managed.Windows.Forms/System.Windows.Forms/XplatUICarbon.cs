@@ -769,7 +769,8 @@ namespace System.Windows.Forms {
 		internal override void RaiseIdle (EventArgs e)
 		{
 			int id = Thread.CurrentThread.ManagedThreadId;
-			if (Idle_Threads!=null && Idle_Threads.ContainsKey (id) 
+			if (Idle_Threads != null && 
+				Idle_Threads.ContainsKey (id) 
 				&& Idle_Threads[id] != null){
                                Idle_Threads[id] (this, e);
 			}

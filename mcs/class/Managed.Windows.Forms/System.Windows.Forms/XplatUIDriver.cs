@@ -279,7 +279,7 @@ namespace System.Windows.Forms {
 				}
 				int id = Thread.CurrentThread.ManagedThreadId;
 				if (!Idle_Threads.ContainsKey (id)) {
-					EventHandler hnd=null;
+					EventHandler hnd = null;
 					Idle_Threads.Add (id, hnd);
 				}
 				Idle_Threads[id] += value;
