@@ -3984,6 +3984,10 @@ namespace System.Windows.Forms {
 
 		internal void OnColumnPreRemovedInternal (DataGridViewColumnEventArgs e)
 		{
+			// The removed column should be removed from the selection too.
+			if (selected_columns != null)
+				SetSelectedColumnCore (e.Column.Index, false);
+
 			if (Columns.Count - 1 == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				rows.ClearInternal ();
@@ -4009,7 +4013,6 @@ namespace System.Windows.Forms {
 			AutoResizeColumnsInternal ();
 			PrepareEditingRow (false, true);
 
-			OnSelectionChanged (EventArgs.Empty);
 			OnColumnRemoved (e);
 		}
 
@@ -5092,10 +5095,13 @@ namespace System.Windows.Forms {
 
 		internal void OnRowsPreRemovedInternal (DataGridViewRowsRemovedEventArgs e)
 		{
+			// All removed rows should be removed from the selection too.
 			if (selected_rows != null)
-				selected_rows.InternalClear ();
-			if (selected_columns != null)
-				selected_columns.InternalClear ();
+			{
+				int lastRowIndex = e.RowIndex + e.RowCount;
+				for (int rowIndex = e.RowIndex; rowIndex < lastRowIndex; ++rowIndex)
+					SetSelectedRowCore (rowIndex, false);
+			}
 
 			if (Rows.Count - e.RowCount <= 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
@@ -5117,7 +5123,6 @@ namespace System.Windows.Forms {
 		internal void OnRowsPostRemovedInternal (DataGridViewRowsRemovedEventArgs e)
 		{
 			Invalidate ();
-			OnSelectionChanged (EventArgs.Empty);
 			OnRowsRemoved (e);
 		}
 
@@ -5732,14 +5737,18 @@ namespace System.Windows.Forms {
 			
 			if (selected_columns == null)
 				selected_columns = new DataGridViewSelectedColumnCollection ();
-			
+
+			bool selectionChanged = false;
 			if (!selected && selected_columns.Contains (col)) {
 				selected_columns.InternalRemove (col);
+				selectionChanged = true;
 			} else if (selected && !selected_columns.Contains (col)) {
 				selected_columns.InternalAdd (col);
+				selectionChanged = true;
 			}
 
-			OnSelectionChanged (EventArgs.Empty);
+			if (selectionChanged)
+				OnSelectionChanged (EventArgs.Empty);
 
 			Invalidate();
 		}
@@ -5756,14 +5765,18 @@ namespace System.Windows.Forms {
 			
 			if (selected_rows == null)
 				selected_rows = new DataGridViewSelectedRowCollection (this);
-				
+
+			bool selectionChanged = false;
 			if (!selected && selected_rows.Contains (row)) {
 				selected_rows.InternalRemove (row);
+				selectionChanged = true;
 			} else if (selected && !selected_rows.Contains (row)) {
 				selected_rows.InternalAdd (row);
+				selectionChanged = true;
 			}
 
-			OnSelectionChanged (EventArgs.Empty);
+			if (selectionChanged)
+				OnSelectionChanged (EventArgs.Empty);
 
 			Invalidate();
 		}

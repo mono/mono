@@ -833,10 +833,19 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (1, dgv.SelectedRows [1].Index, "1-13");
 				expectedSelections.Add (new List<int> { 3, 1 });
 
-				// Delete a row.  This clears the selection.
+				// Delete a row.
+				// Since the row wasn't selected, it doesn't fire a
+				// SelectionChanged event.
 				dgv.Rows.RemoveAt (2);
-				Assert.AreEqual (0, dgv.SelectedRows.Count, "1-14");
-				expectedSelections.Add (new List<int> { });
+				Assert.AreEqual (2, dgv.SelectedRows.Count, "1-14");
+				Assert.AreEqual (2, dgv.SelectedRows [0].Index, "1-16");
+				Assert.AreEqual (1, dgv.SelectedRows [1].Index, "1-17");
+
+				// Delete a selected row.
+				dgv.Rows.RemoveAt (2);
+				Assert.AreEqual (1, dgv.SelectedRows.Count, "1-18");
+				Assert.AreEqual (1, dgv.SelectedRows [0].Index, "1-19");
+				expectedSelections.Add (new List<int> { 1 });
 
 				// Make sure the SelectionChanged event was called when expected.
 				string selectionsText = ListListIntToString (selections);
@@ -970,12 +979,19 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "1-12");
 				expectedSelections.Add (new List<int> { 3, 1 });
 
-				// Delete a column.  This clears the selection.
-				// The event handler gets called twice.
+				// Delete a column.
+				// Since the column wasn't selected, it doesn't fire a
+				// SelectionChanged event.
 				dgv.Columns.RemoveAt (2);
-				Assert.AreEqual (0, dgv.SelectedColumns.Count, "1-14");
-				expectedSelections.Add (new List<int> { });
-				expectedSelections.Add (new List<int> { });
+				Assert.AreEqual (2, dgv.SelectedColumns.Count, "1-14");
+				Assert.AreEqual (2, dgv.SelectedColumns [0].Index, "1-16");
+				Assert.AreEqual (1, dgv.SelectedColumns [1].Index, "1-17");
+
+				// Delete a selected column.
+				dgv.Columns.RemoveAt (2);
+				Assert.AreEqual (1, dgv.SelectedColumns.Count, "1-18");
+				Assert.AreEqual (1, dgv.SelectedColumns [0].Index, "1-19");
+				expectedSelections.Add (new List<int> { 1 });
 
 				// Make sure the SelectionChanged event was called when expected.
 				string selectionsText = ListListIntToString (selections);
