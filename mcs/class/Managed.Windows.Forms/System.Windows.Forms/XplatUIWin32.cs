@@ -1245,7 +1245,7 @@ namespace System.Windows.Forms {
 				Idle_Threads.ContainsKey (id) && 
 				Idle_Threads[id] != null)
 			{
-				Idle_Threads[id] (this,e);
+				Idle_Threads[id] (this, e);
 			}
 		}
 
