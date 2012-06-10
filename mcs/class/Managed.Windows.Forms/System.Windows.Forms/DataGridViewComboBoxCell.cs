@@ -220,8 +220,8 @@ namespace System.Windows.Forms {
 				editingControl.DisplayMember = DisplayMember;
 			} else {
 				editingControl.Items.AddRange (this.Items);
-				if (FormattedValue != null && editingControl.Items.IndexOf (FormattedValue) != -1)
-					editingControl.SelectedItem = FormattedValue;
+				if (initialFormattedValue != null && editingControl.Items.IndexOf (initialFormattedValue) != -1)
+					editingControl.SelectedItem = initialFormattedValue;
 			}
 		}
 

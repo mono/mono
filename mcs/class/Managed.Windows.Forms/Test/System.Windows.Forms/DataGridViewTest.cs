@@ -737,6 +737,272 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		// For testing the editing-control-showing event.
+		int editingControlShowingTest_FoundColumns;
+		private void DataGridView_EditingControlShowingTest (object sender,
+			DataGridViewEditingControlShowingEventArgs e)
+		{
+			DataGridView dgv = sender as DataGridView;
+			if (dgv.CurrentCellAddress.X == 0)
+			{
+				// This is the name combo-box column.
+				// Remember that the event-handler was called for
+				// this column.
+				editingControlShowingTest_FoundColumns |= 1;
+
+				// Get the combo-box and the column.
+				ComboBox cb = e.Control as ComboBox;
+				DataGridViewComboBoxColumn col
+					= dgv.Columns[0] as DataGridViewComboBoxColumn;
+
+				// Since ObjectCollection doesn't support ToArray(), make
+				// a list of the items in the combo-box and in the column.
+				List<string> itemList = new List<string> ();
+				foreach (string item in cb.Items)
+					itemList.Add (item);
+				List<string> expectedItemList = new List<string> ();
+				foreach (string item in col.Items)
+					expectedItemList.Add (item);
+
+				// Make sure the combo-box has the list of allowed
+				// items from the column.
+				string items = string.Join (",", itemList);
+				string expectedItems = string.Join (",", expectedItemList);
+				Assert.AreEqual (expectedItems, items, "1-1");
+
+				// Make sure the combo-box has the right selected item.
+				Assert.AreEqual ("Boswell", cb.Text, "1-2");
+			}
+			else if (dgv.CurrentCellAddress.X == 1)
+			{
+				// This is the first-name text-box column.
+				// Remember that the event-handler was called for
+				// this column.
+				editingControlShowingTest_FoundColumns |= 2;
+
+				// Get the text-box.
+				TextBox tb = e.Control as TextBox;
+
+				// Make sure the text-box has the right contents.
+				Assert.AreEqual ("Miguel", tb.Text, "1-3");
+			}
+			else if (dgv.CurrentCellAddress.X == 2)
+			{
+				// This is the chosen check-box column.
+				// Remember that the event-handler was called for
+				// this column.
+				editingControlShowingTest_FoundColumns |= 4;
+
+				// Get the check-box.
+				CheckBox tb = e.Control as CheckBox;
+
+				// Make sure the check-box has the right contents.
+				Assert.AreEqual (CheckState.Checked, tb.CheckState, "1-4");
+			}
+			else
+				Assert.AreEqual (0, 1, "1-5");
+		}
+
+		[Test] // Xamarin bug 5419
+		public void EditingControlShowingTest_Unbound ()
+		{
+			using (DataGridView _dataGridView = new DataGridView ()) {
+				DataGridViewComboBoxColumn _nameComboBoxColumn;
+				DataGridViewTextBoxColumn _firstNameTextBoxColumn;
+				DataGridViewCheckBoxColumn _chosenCheckBoxColumn;
+
+				// Add the event-handler.
+				_dataGridView.EditingControlShowing
+					+= new DataGridViewEditingControlShowingEventHandler
+						(DataGridView_EditingControlShowingTest);
+				
+				// No columns have been found in the event-handler yet.
+				editingControlShowingTest_FoundColumns = 0;
+
+				// _nameComboBoxColumn
+				_nameComboBoxColumn = new DataGridViewComboBoxColumn ();
+				_nameComboBoxColumn.HeaderText = "Name";
+				_dataGridView.Columns.Add (_nameComboBoxColumn);
+
+				// _firstNameTextBoxColumn
+				_firstNameTextBoxColumn = new DataGridViewTextBoxColumn ();
+				_firstNameTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+				_firstNameTextBoxColumn.HeaderText = "First Name";
+				_dataGridView.Columns.Add (_firstNameTextBoxColumn);
+
+				// _chosenCheckBoxColumn
+				_chosenCheckBoxColumn = new DataGridViewCheckBoxColumn ();
+				_chosenCheckBoxColumn.HeaderText = "Chosen";
+				_dataGridView.Columns.Add (_chosenCheckBoxColumn);
+
+				// .NET requires that all possible values for combo-boxes in a column
+				// are added to the column.
+				_nameComboBoxColumn.Items.Add ("de Icaza");
+				_nameComboBoxColumn.Items.Add ("Toshok");
+				_nameComboBoxColumn.Items.Add ("Harper");
+				_nameComboBoxColumn.Items.Add ("Boswell");
+
+				// Set up the contents of the data-grid.
+				_dataGridView.Rows.Add ("de Icaza", "Miguel", true);
+				_dataGridView.Rows.Add ("Toshok", "Chris", false);
+				_dataGridView.Rows.Add ("Harper", "Jackson", false);
+				_dataGridView.Rows.Add ("Boswell", "Steven", true);
+				
+				// Edit a combo-box cell.
+				_dataGridView.CurrentCell = _dataGridView.Rows[3].Cells[0];
+				Assert.AreEqual (true, _dataGridView.Rows[3].Cells[0].Selected, "1-6");
+				Assert.AreEqual (true, _dataGridView.BeginEdit (false), "1-7");
+				_dataGridView.CancelEdit();
+
+				// Edit a text-box cell.
+				_dataGridView.CurrentCell = _dataGridView.Rows[0].Cells[1];
+				Assert.AreEqual (false, _dataGridView.Rows[3].Cells[0].Selected, "1-8");
+				Assert.AreEqual (true, _dataGridView.Rows[0].Cells[1].Selected, "1-9");
+				Assert.AreEqual (true, _dataGridView.BeginEdit (false), "1-10");
+				_dataGridView.CancelEdit();
+
+				// Edit a check-box cell.
+				_dataGridView.CurrentCell = _dataGridView.Rows[3].Cells[2];
+				Assert.AreEqual (false, _dataGridView.Rows[0].Cells[1].Selected, "1-11");
+				Assert.AreEqual (true, _dataGridView.Rows[3].Cells[2].Selected, "1-12");
+				Assert.AreEqual (true, _dataGridView.BeginEdit (false), "1-13");
+				_dataGridView.CancelEdit();
+
+				// Make sure the event-handler was called each time.
+				// (DataGridViewCheckBoxCell isn't derived from Control, so the
+				// EditingControlShowing event doesn't get called for it.)
+				Assert.AreEqual (3, editingControlShowingTest_FoundColumns, "1-14");
+
+				_dataGridView.Dispose();
+			}
+		}
+
+		// A simple class, for testing the data-binding variant of the
+		// editing-control-showing event.
+		private class EcstRecord
+		{
+			string name;
+			string firstName;
+			bool chosen;
+
+			public EcstRecord (string newName, string newFirstName, bool newChosen)
+			{
+				name = newName;
+				firstName = newFirstName;
+				chosen = newChosen;
+			}
+			public string Name
+			{
+				get { return name; }
+				set { name = value; }
+			}
+			public string FirstName
+			{
+				get { return firstName; }
+				set { firstName = value; }
+			}
+			public bool Chosen
+			{
+				get { return chosen; }
+				set { chosen = value; }
+			}
+		};
+
+		[Test] // Xamarin bug 5419
+		public void EditingControlShowingTest_Bound ()
+		{
+			using (DataGridView _dataGridView = new DataGridView ()) {
+				DataGridViewComboBoxColumn _nameComboBoxColumn;
+				DataGridViewTextBoxColumn _firstNameTextBoxColumn;
+				DataGridViewCheckBoxColumn _chosenCheckBoxColumn;
+
+				_dataGridView.AutoGenerateColumns = false;
+
+				// Add the event-handler.
+				_dataGridView.EditingControlShowing
+					+= new DataGridViewEditingControlShowingEventHandler
+						(DataGridView_EditingControlShowingTest);
+
+				// No columns have been found in the event-handler yet.
+				editingControlShowingTest_FoundColumns = 0;
+
+				// _nameComboBoxColumn
+				_nameComboBoxColumn = new DataGridViewComboBoxColumn ();
+				_nameComboBoxColumn.HeaderText = "Name";
+				_nameComboBoxColumn.DataPropertyName = "Name";
+				_dataGridView.Columns.Add (_nameComboBoxColumn);
+
+				// _firstNameTextBoxColumn
+				_firstNameTextBoxColumn = new DataGridViewTextBoxColumn ();
+				_firstNameTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+				_firstNameTextBoxColumn.HeaderText = "First Name";
+				_firstNameTextBoxColumn.DataPropertyName = "FirstName";
+				_dataGridView.Columns.Add (_firstNameTextBoxColumn);
+
+				// _chosenCheckBoxColumn
+				_chosenCheckBoxColumn = new DataGridViewCheckBoxColumn ();
+				_chosenCheckBoxColumn.HeaderText = "Chosen";
+				_chosenCheckBoxColumn.DataPropertyName = "Chosen";
+				_chosenCheckBoxColumn.FalseValue = "false";
+				_chosenCheckBoxColumn.TrueValue = "true";
+				_dataGridView.Columns.Add (_chosenCheckBoxColumn);
+
+				// .NET requires that all possible values for combo-boxes in a column
+				// are added to the column.
+				_nameComboBoxColumn.Items.Add ("de Icaza");
+				_nameComboBoxColumn.Items.Add ("Toshok");
+				_nameComboBoxColumn.Items.Add ("Harper");
+				_nameComboBoxColumn.Items.Add ("Boswell");
+
+				// Set up the contents of the data-grid.
+				BindingList<EcstRecord> boundData = new BindingList<EcstRecord> ();
+				boundData.Add (new EcstRecord ("de Icaza", "Miguel", true));
+				boundData.Add (new EcstRecord ("Toshok", "Chris", false));
+				boundData.Add (new EcstRecord ("Harper", "Jackson", false));
+				boundData.Add (new EcstRecord ("Boswell", "Steven", true));
+				_dataGridView.DataSource = boundData;
+
+				// For data binding to work, there needs to be a Form, apparently.
+				Form form = new Form ();
+				form.ShowInTaskbar = false;
+				form.Controls.Add (_dataGridView);
+				form.Show ();
+
+				// Make sure the data-source took.
+				// (Without the Form, instead of having four rows, the data grid
+				// only has one row, and all its cell values are null.)
+				Assert.AreEqual (boundData.Count, _dataGridView.Rows.Count, "1-6");
+				
+				// Edit a combo-box cell.
+				_dataGridView.CurrentCell = _dataGridView.Rows[3].Cells[0];
+				Assert.AreEqual (true, _dataGridView.Rows[3].Cells[0].Selected, "1-7");
+				Assert.AreEqual (true, _dataGridView.BeginEdit (false), "1-8");
+				_dataGridView.CancelEdit();
+
+				// Edit a text-box cell.
+				_dataGridView.CurrentCell = _dataGridView.Rows[0].Cells[1];
+				Assert.AreEqual (false, _dataGridView.Rows[3].Cells[0].Selected, "1-9");
+				Assert.AreEqual (true, _dataGridView.Rows[0].Cells[1].Selected, "1-10");
+				Assert.AreEqual (true, _dataGridView.BeginEdit (false), "1-11");
+				_dataGridView.CancelEdit();
+
+				// Edit a check-box cell.
+				_dataGridView.CurrentCell = _dataGridView.Rows[3].Cells[2];
+				Assert.AreEqual (false, _dataGridView.Rows[0].Cells[1].Selected, "1-12");
+				Assert.AreEqual (true, _dataGridView.Rows[3].Cells[2].Selected, "1-13");
+				Assert.AreEqual (true, _dataGridView.BeginEdit (false), "1-14");
+				_dataGridView.CancelEdit();
+
+				// Make sure the event-handler was called each time.
+				// (DataGridViewCheckBoxCell isn't derived from Control, so the
+				// EditingControlShowing event doesn't get called for it.)
+				Assert.AreEqual (3, editingControlShowingTest_FoundColumns, "1-14");
+
+				// Get rid of the form.
+				form.Close();
+			}
+		}
+
 		[Test]
 		public void bug_81918 ()
 		{

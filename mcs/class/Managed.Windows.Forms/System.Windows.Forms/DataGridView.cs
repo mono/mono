@@ -740,7 +740,7 @@ namespace System.Windows.Forms {
 					ClearBinding ();
 	
 	
-					// Do not set dataSource prior to te BindingContext check because there is some lazy initialization 
+					// Do not set dataSource prior to the BindingContext check because there is some lazy initialization 
 					// code which might result in double call to ReBind here and in OnBindingContextChanged
 					if (BindingContext != null) {
 						dataSource = value;
@@ -2320,8 +2320,8 @@ namespace System.Windows.Forms {
 				
 				// Call some functions that allows the editing control to get setup
 				DataGridViewCellStyle style = cell.RowIndex == -1 ? DefaultCellStyle : cell.InheritedStyle;
-				
 				cell.InitializeEditingControl (cell.RowIndex, cell.FormattedValue, style);
+				OnEditingControlShowing (new DataGridViewEditingControlShowingEventArgs (EditingControlInternal, style));
 				cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
 
 				// Show the editing control
