@@ -118,7 +118,12 @@ namespace System.Threading
 		{
 			CheckDisposed ();
 
+			if (canceled)
+				return;
+
+			Thread.MemoryBarrier ();
 			canceled = true;
+			
 			handle.Set ();
 			
 			List<Exception> exceptions = null;
@@ -229,10 +234,13 @@ namespace System.Threading
 		void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
-				disposed = true;
 				Thread.MemoryBarrier ();
+				disposed = true;
 
-				callbacks = null;
+				if (!canceled) {
+					Thread.MemoryBarrier ();
+					callbacks = null;
+				}
 #if NET_4_5
 				if (timer != null)
 					timer.Dispose ();

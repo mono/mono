@@ -129,6 +129,25 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (12, called, "#2");
 		}
 
+
+		[Test]
+		public void CancelWithDispose ()
+		{
+			CancellationTokenSource cts = new CancellationTokenSource ();
+			CancellationToken c = cts.Token;
+			c.Register (() => {
+				cts.Dispose ();
+			});
+
+			int called = 0;
+			c.Register (() => {
+				called++;
+			});
+
+			cts.Cancel ();
+			Assert.AreEqual (1, called, "#1");
+		}
+
 		[Test]
 		public void Cancel_SingleException ()
 		{
@@ -170,6 +189,31 @@ namespace MonoTests.System.Threading
 			}
 
 			cts.Cancel ();
+		}
+
+		[Test]
+		public void Cancel_MultipleException_Recursive ()
+		{
+			CancellationTokenSource cts = new CancellationTokenSource ();
+			CancellationToken c = cts.Token;
+			c.Register (() => {
+				cts.Cancel ();
+			});
+
+			c.Register (() => {
+				throw new ApplicationException ();
+			});
+
+			c.Register (() => {
+				throw new NotSupportedException ();
+			});
+
+			try {
+				cts.Cancel (false);
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.AreEqual (2, e.InnerExceptions.Count, "#2");
+			}
 		}
 
 		[Test]
