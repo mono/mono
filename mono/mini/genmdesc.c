@@ -159,7 +159,7 @@ output_char (FILE *f, char c) {
 	if (isalnum (c))
 		fprintf (f, "%c", c);
 	else
-		fprintf (f, "\\x%x\" \"", c);
+		fprintf (f, "\\x%x\" \"", (unsigned)(unsigned char)c);
 }
 
 static void

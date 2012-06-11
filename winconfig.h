@@ -1,6 +1,10 @@
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+#if defined(TARGET_ARM)
+#include "config.xarm-windows.h"
+#else
+
 /* The architecture this is running on */
 #if defined(_M_IA64)
 #define ARCHITECTURE "ia64"
@@ -601,3 +605,5 @@
 
 /* Version number of package */
 #define VERSION "2.0"
+
+#endif

@@ -5,6 +5,7 @@ cd ..\mono\mini
 set PATH=%PATH%;%MONO_DEPENDENCIES_PREFIX%\bin
 if "%2" == "Win32" goto x86
 if "%2" == "x64" goto x64
+if "%2" == "arm" goto arm
 goto error
 :x86
 echo Platform detected is x86...
@@ -13,6 +14,10 @@ goto end
 :x64
 echo Platform detected is x64...
 %1 cpu-amd64.h amd64_desc cpu-amd64.md
+goto end
+:arm
+echo Platform detected is arm...
+%1 cpu-arm.h arm_cpu_desc cpu-arm.md
 goto end
 :error
 echo Error: unsupported platform
