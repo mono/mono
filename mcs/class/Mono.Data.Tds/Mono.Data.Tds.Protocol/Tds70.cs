@@ -779,7 +779,15 @@ namespace Mono.Data.Tds.Protocol
 			Parameters = parameters;
 
 			TdsMetaParameterCollection parms = new TdsMetaParameterCollection ();
+#if NET_4_5
+			// FIXME: Passing null or DBNull fails with:
+			// The incoming tabular data stream (TDS) remote procedure call (RPC) protocol
+			// stream is incorrect. Parameter 1 ("@Handle"): Data type 0x26 has an invalid
+			// data length or metadata length.
+			TdsMetaParameter parm = new TdsMetaParameter ("@Handle", "int", -1);
+#else
 			TdsMetaParameter parm = new TdsMetaParameter ("@Handle", "int", null);
+#endif
 			parm.Direction = TdsParameterDirection.Output;
 			parms.Add (parm);
 
