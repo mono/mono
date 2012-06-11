@@ -726,15 +726,14 @@ namespace MonoTests.System.Threading.Tasks
 				var cntd2 = new CountdownEvent (2);
 
 				bool r1 = false, r2 = false;
-				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r1 = t.Wait (1000); cntd2.Signal (); });
-				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r2 = t.Wait (1000); cntd2.Signal (); });
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r1 = t.Wait (1000) && t.Result; cntd2.Signal (); });
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r2 = t.Wait (1000) && t.Result; cntd2.Signal (); });
 
-				cntd.Wait (2000);
-				Thread.Sleep (0);
+				Assert.IsTrue (cntd.Wait (2000), "#1");
 				evt.Set ();
-				cntd2.Wait (2000);
-				Assert.IsTrue (r1);
-				Assert.IsTrue (r2);
+				Assert.IsTrue (cntd2.Wait (2000), "#2");
+				Assert.IsTrue (r1, "r1");
+				Assert.IsTrue (r2, "r2");
 			}, 10);
 		}
 
