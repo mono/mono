@@ -278,14 +278,8 @@ namespace Mono.CSharp
 
 			awaiter.IsAvailableForReuse = true;
 
-			if (ResultType.Kind != MemberKind.Void) {
-				var storey = (AsyncTaskStorey) machine_initializer.Storey;
-
-			    if (storey.HoistedReturn != null)
-			        storey.HoistedReturn.EmitAssign (ec);
-				else
-					ec.Emit (OpCodes.Pop);
-			}
+			if (ResultType.Kind != MemberKind.Void)
+				ec.Emit (OpCodes.Pop);
 		}
 
 		void Error_WrongAwaiterPattern (ResolveContext rc, TypeSpec awaiter)
