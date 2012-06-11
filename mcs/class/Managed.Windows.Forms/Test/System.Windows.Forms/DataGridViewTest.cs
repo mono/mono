@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -45,6 +46,29 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class DataGridViewTest : TestHelper
 	{
+		// Send a mouse event in Win32.
+		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		private static extern void mouse_event(long dwFlags, long dx, long dy, long dwData, long dwExtraInfo);
+		private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+		private const int MOUSEEVENTF_LEFTUP = 0x04;
+		private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+		private const int MOUSEEVENTF_RIGHTUP = 0x10;
+		private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
+
+		// Set the mouse-pointer position in Win32.
+		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		private static extern long SetCursorPos (int x, int y);
+
+		// Convert from window coordinates to screen coordinates in Win32.
+		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		private static extern bool ClientToScreen (IntPtr hWnd, ref Win32Point point);
+		[StructLayout (LayoutKind.Sequential)]
+		private struct Win32Point
+		{
+			public int x;
+			public int y;
+		};
+
 		private DataGridView grid = null;
 
 		[SetUp]
@@ -1014,6 +1038,136 @@ namespace MonoTests.System.Windows.Forms
 				dgv.Rows.Add ("a");
 				
 				DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell) dgv [0, 0];
+			}
+		}
+
+		// A custom data-grid-view, created solely so that
+		// mouse clicks can be faked on it.
+		private class ClickableDataGridView : DataGridView
+		{
+			public ClickableDataGridView()
+			: base()
+			{
+			}
+
+			internal void OnMouseDownInternal (MouseEventArgs e)
+			{
+				OnMouseDown (e);
+			}
+
+			internal void OnMouseUpInternal (MouseEventArgs e)
+			{
+				OnMouseUp (e);
+			}
+		};
+
+		[Test]
+		public void OneClickComboBoxCell ()
+		{
+			Form form = null;
+
+			try
+			{
+				form = new Form();
+				ClickableDataGridView dgv = new ClickableDataGridView ();
+				dgv.Parent = form;
+
+				// Create a combo-box column.
+				DataGridViewComboBoxColumn cbCol = new DataGridViewComboBoxColumn ();
+				cbCol.HeaderText = "Name";
+				dgv.Columns.Add (cbCol);
+
+				// .NET requires that all possible values for combo-boxes
+				// in a column are added to the column.
+				cbCol.Items.Add ("Item1");
+				cbCol.Items.Add ("Item2");
+				cbCol.Items.Add ("Item3");
+				cbCol.Items.Add ("Item4");
+
+				// Set up the contents of the data-grid.
+				dgv.Rows.Add ("Item1");
+				dgv.Rows.Add ("Item2");
+
+				// Select the cell.
+				dgv.CurrentCell = dgv.Rows[0].Cells[0];
+
+				// Show the form, let it draw.
+				form.Show();
+				Application.DoEvents();
+
+				// Locate the drop-down button.  (This code is taken from mono-winforms,
+				// from the private method DataGridViewComboBoxCell.CalculateButtonArea(),
+				// and was then hacked mercilessly.)
+				Rectangle button_area = Rectangle.Empty;
+				{
+					int border = 3 /* ThemeEngine.Current.Border3DSize.Width */;
+					const int button_width = 16;
+					Rectangle text_area = dgv.GetCellDisplayRectangle (0, 0, false);
+					button_area.X = text_area.Right - button_width - border;
+					button_area.Y = text_area.Y + border;
+					button_area.Width = button_width;
+					button_area.Height = text_area.Height - 2 * border;
+				}
+
+				// Click on the drop-down button.
+				int x = button_area.X + (button_area.Width / 2);
+				int y = button_area.Y + (button_area.Height / 2);
+				if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				{
+					// Calling OnMouseDownInternal() in Win32 doesn't work.
+					// My best guess as to why is that the WinForms ComboBox
+					// is a wrapper around the ComCtl control, e.g. similar
+					// to the reason that Paint event-handlers don't work on
+					// TreeView.  So we go through all this rigamarole to
+					// simulate a mouse click.
+
+					// First, get the location of the desired mouse-click, in
+					// data-grid-view coordinates.
+					Win32Point ptGlobal = new Win32Point();
+					ptGlobal.x = x + dgv.Location.X;
+					ptGlobal.y = y + dgv.Location.Y;
+
+					// Convert that to screen coordinates.
+					ClientToScreen (form.Handle, ref ptGlobal);
+
+					// Move the mouse-pointer there.  (Yes, this really appears
+					// to be necessary.)
+					SetCursorPos (ptGlobal.x, ptGlobal.y);
+
+					// Convert screen coordinates to mouse coordinates.
+					ptGlobal.x *= (65535 / SystemInformation.VirtualScreen.Width);
+					ptGlobal.y *= (65535 / SystemInformation.VirtualScreen.Height);
+
+					// Finally, fire a mouse-down and mouse-up event.
+					mouse_event (MOUSEEVENTF_LEFTDOWN|MOUSEEVENTF_ABSOLUTE,
+						ptGlobal.x, ptGlobal.y, 0, 0);
+					mouse_event (MOUSEEVENTF_LEFTUP|MOUSEEVENTF_ABSOLUTE,
+						ptGlobal.x, ptGlobal.y, 0, 0);
+
+					// Let the system process these events.
+					Application.DoEvents();
+				}
+				else
+				{
+					// And this is how the same code is done under Linux.
+					// (No one should wonder why I prefer Mono to MS Windows .NET ;-)
+					MouseEventArgs me = new MouseEventArgs (MouseButtons.Left, 1, x, y, 0);
+					DataGridViewCellMouseEventArgs cme = new DataGridViewCellMouseEventArgs (0, 0, x, y, me);
+					dgv.OnMouseDownInternal (cme);
+					dgv.OnMouseUpInternal (cme);
+				}
+
+				// Make sure that created an editing control.
+				ComboBox cb = dgv.EditingControl as ComboBox;
+				Assert.AreNotEqual (null, cb, "1-1");
+
+				// Make sure that dropped down the menu.
+				Assert.AreEqual (true, cb.DroppedDown, "1-2");
+			}
+			finally
+			{
+				if (form != null)
+					form.Close();
 			}
 		}
 

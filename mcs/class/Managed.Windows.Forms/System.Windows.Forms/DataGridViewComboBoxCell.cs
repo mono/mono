@@ -333,6 +333,24 @@ namespace System.Windows.Forms {
 			base.OnLeave (rowIndex, throughMouseClick);
 		}
 
+		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e) {
+			base.OnMouseDown (e);
+
+			if (!ReadOnly)
+			{
+				// Any mouse-click on the cell should be passed along to any
+				// combo-box control.
+				if (IsInEditMode)
+				{
+					DataGridViewComboBoxEditingControl cb
+						= (DataGridView.EditingControl
+							as DataGridViewComboBoxEditingControl);
+					if (cb != null)
+						cb.OnMouseDownInternal (e);
+				}
+			}
+		}
+
 		protected override void OnMouseClick (DataGridViewCellMouseEventArgs e) {
 			base.OnMouseClick (e);
 		}
