@@ -1239,9 +1239,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void RaiseIdle (EventArgs e)
-		{
-			if (Idle != null)
-				Idle (this, e);
+		{	
+			int id = Thread.CurrentThread.ManagedThreadId;
+			if (Idle_Threads != null && 
+				Idle_Threads.ContainsKey (id) && 
+				Idle_Threads[id] != null)
+			{
+				Idle_Threads[id] (this, e);
+			}
 		}
 
 		internal override Keys ModifierKeys {
@@ -3323,7 +3328,6 @@ namespace System.Windows.Forms {
 			Win32SetForegroundWindow(handle);
 		}
 
-		internal override event EventHandler Idle;
 		#endregion	// Public Static Methods
 
 		#region Win32 Imports
