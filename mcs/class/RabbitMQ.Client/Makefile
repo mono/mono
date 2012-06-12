@@ -4,9 +4,9 @@ SUBDIRS = src/apigen docs/specs src/client
 include ../../build/rules.make
 
 DISTFILES = \
-	src/apigen/RabbitMQ.Client.Apigen_net_2_0.exe.sources \
-	src/apigen/RabbitMQ.Client.Apigen_net_4_0.exe.sources \
-	src/apigen/RabbitMQ.Client.Apigen_net_4_5.exe.sources \
+	RabbitMQ.Client.Apigen_net_2_0.exe.sources \
+	RabbitMQ.Client.Apigen_net_4_0.exe.sources \
+	RabbitMQ.Client.Apigen_net_4_5.exe.sources \
 	src/util/BlockingCell.cs \
 	src/util/DebugUtil.cs \
 	src/util/Either.cs \
