@@ -1697,11 +1697,13 @@ namespace System.Windows.Forms {
 			}
 
 			if (pending == 0 && allowIdle) {
-				int id=Thread.CurrentThread.ManagedThreadId;
-				if ((queue == null || queue.DispatchIdle) && Idle_Threads!=null && Idle_Threads.ContainsKey(id) && Idle_Threads[id]!=null) 
+				int id = Thread.CurrentThread.ManagedThreadId;
+				if ((queue == null || queue.DispatchIdle) && 
+					Idle_Threads != null && 	
+					Idle_Threads.ContainsKey (id) && 
+					Idle_Threads[id] != null) 
 				{
-					Idle_Threads[id](this,EventArgs.Empty);
-	
+					Idle_Threads[id] (this, EventArgs.Empty);
 				}
 
 				lock (XlibLock) {
@@ -2597,10 +2599,12 @@ namespace System.Windows.Forms {
 		#region Public Static Methods
 		internal override void RaiseIdle (EventArgs e)
 		{
-			int id=Thread.CurrentThread.ManagedThreadId;
-			if (Idle_Threads!=null && Idle_Threads.ContainsKey(id) && Idle_Threads[id]!=null) 
+			int id = Thread.CurrentThread.ManagedThreadId;
+			if (Idle_Threads != null && 
+			    Idle_Threads.ContainsKey (id) && 
+			    Idle_Threads[id] != null) 
 			{
-				Idle_Threads[id](this,e);
+				Idle_Threads[id] (this, e);
 			}
 		}
 		

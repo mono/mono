@@ -1311,8 +1311,10 @@ namespace System.Windows.Forms
 		
 			EndEdit ();
 
-			DataGridDataSource source = (DataGridDataSource)data_source_stack.Pop ();
-			CurrentTableStyle= (DataGridTableStyle)data_grid_table_style_stack.Pop ();
+			DataGridDataSource source = 
+				(DataGridDataSource) data_source_stack.Pop ();
+			CurrentTableStyle = 
+				(DataGridTableStyle) data_grid_table_style_stack.Pop ();
 			grid_style = (DataGridTableStyle) grid_style_stack.Pop ();
 
 			list_manager = source.list_manager;
