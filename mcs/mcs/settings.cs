@@ -936,7 +936,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/debug":
-				if (value == "full" || value == "pdbonly" || idx < 0) {
+				if (value.Equals ("full", StringComparison.OrdinalIgnoreCase) || value.Equals ("pdbonly", StringComparison.OrdinalIgnoreCase) || idx < 0) {
 					settings.GenerateDebugInfo = true;
 					return ParseResult.Success;
 				}
