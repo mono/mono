@@ -648,15 +648,21 @@ namespace MonoTests.System.Windows.Forms
 			count1_OIPT = 0;
 			count2_OIPT = 0;
 			form1_OneIdlePerThread = new Form ();
-	
+			form2_OneIdlePerThread = new Form ();
+			form1_OneIdlePerThread.Show(); 
+			//form2_OneIdlePerThread.Show();
+
 			OIPT_ThreadStart2 = new ThreadStart (TIPT_Two);
 			OIPT_Thread2=new Thread (OIPT_ThreadStart2);
 			OIPT_Thread2.IsBackground = true;
-			OIPT_Thread2.ApartmentState = ApartmentState.STA;
+			OIPT_Thread2.SetApartmentState(ApartmentState.STA);
 			OIPT_Thread2.Start ();
 			Application.Idle += new EventHandler(TestIdlePerThread);
 			Application.Run (form1_OneIdlePerThread);
-			Thread.Sleep (1000);//allow other thread to finish
+			if (!OIPT_Thread2.Join(1000)){
+				OIPT_Thread2.Abort();
+			}
+
 			Assert.AreEqual (true, count1_OIPT == 1, 
 				"#Idle: idle #1 hit too many times");
 			Assert.AreEqual (true, count2_OIPT == 1, 	
@@ -665,7 +671,6 @@ namespace MonoTests.System.Windows.Forms
 		public static void TIPT_Two (){
 			Thread t = Thread.CurrentThread;
 			oipt_t2 = t.ManagedThreadId;
-			form2_OneIdlePerThread = new Form ();
 			Application.Idle += 	
 				new EventHandler (TestIdlePerThread2);
 			Application.Run (form2_OneIdlePerThread);
@@ -675,6 +680,8 @@ namespace MonoTests.System.Windows.Forms
 			count1_OIPT++;
 			Application.Idle -= 
 				new EventHandler (TestIdlePerThread);
+			/* Give thread2 time to finish before we close */
+			Thread.Sleep(100);
 			if (form1_OneIdlePerThread != null)
 				form1_OneIdlePerThread.Close ();
 			Assert.AreEqual (true, oipt_t1 == t.ManagedThreadId, 
@@ -686,7 +693,8 @@ namespace MonoTests.System.Windows.Forms
 			Application.Idle -= 
 				new EventHandler(TestIdlePerThread2);
 			if (form2_OneIdlePerThread != null)
-				form2_OneIdlePerThread.Close ();
+				form2_OneIdlePerThread.Invoke 	
+				  (new MethodInvoker(form2_OneIdlePerThread.Close));
 			Assert.AreEqual (true, oipt_t2 == t.ManagedThreadId, 
 				"#Idle:Wrong Thread-t2");
 		}
