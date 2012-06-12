@@ -2024,18 +2024,30 @@ namespace System.Windows.Forms {
 
 		private bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, bool blocking) {
 			bool		result;
+			bool		CheckIdle = false;
+
+			if (blocking) {
+				CheckIdle = true;
+			}
+			ProcessNextMessage:
 
 			msg.refobject = 0;
 			if (RetrieveMessage(ref msg)) {
 				return true;
 			}
 
-			if (blocking) {
+			if (blocking && !CheckIdle) {
 				result = Win32GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
 			} else {
 				result = Win32PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, (uint)PeekMessageFlags.PM_REMOVE);
 				if (!result) {
-					return false;
+					if (CheckIdle) {
+						RaiseIdle (null);
+						CheckIdle = false;
+						goto ProcessNextMessage;
+					} else {
+						return false;
+					}
 				}
 			}
 
