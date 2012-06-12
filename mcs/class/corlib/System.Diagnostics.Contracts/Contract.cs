@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || NET_2_1
 
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,12 @@ namespace System.Diagnostics.Contracts
 {
 	public static class Contract
 	{
-		public static event EventHandler<ContractFailedEventArgs> ContractFailed;
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		static event EventHandler<ContractFailedEventArgs> ContractFailed;
 
 		// Used in test
 		internal static EventHandler<ContractFailedEventArgs> InternalContractFailedEvent {
