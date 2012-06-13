@@ -1469,6 +1469,7 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_eglib_xarm|Win32"
+					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1479,6 +1480,7 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_eglib_xarm|x64"
+					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
