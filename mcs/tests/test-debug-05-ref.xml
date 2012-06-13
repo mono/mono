@@ -7,10 +7,10 @@
   <methods>
     <method token="0x6000001">
       <sequencepoints>
-        <entry il="0x0" row="4" file_ref="1" hidden="false" />
-        <entry il="0x1" row="5" file_ref="1" hidden="false" />
-        <entry il="0x3" row="100" file_ref="2" hidden="false" />
-        <entry il="0x5" row="9" file_ref="1" hidden="false" />
+        <entry il="0x0" row="4" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="5" col="3" file_ref="1" hidden="false" />
+        <entry il="0x3" row="100" col="3" file_ref="2" hidden="false" />
+        <entry il="0x5" row="9" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
         <entry name="a" il_index="0" scope_ref="0" />
@@ -20,9 +20,9 @@
     </method>
     <method token="0x6000002">
       <sequencepoints>
-        <entry il="0x0" row="12" file_ref="1" hidden="false" />
-        <entry il="0x9" row="55" file_ref="1" hidden="false" />
-        <entry il="0xb" row="56" file_ref="1" hidden="false" />
+        <entry il="0x0" row="12" col="2" file_ref="1" hidden="false" />
+        <entry il="0x9" row="55" col="3" file_ref="1" hidden="false" />
+        <entry il="0xb" row="56" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
         <entry name="x" il_index="0" scope_ref="0" />
@@ -33,10 +33,10 @@
     </method>
     <method token="0x6000003">
       <sequencepoints>
-        <entry il="0x0" row="59" file_ref="1" hidden="false" />
-        <entry il="0x1" row="60" file_ref="1" hidden="false" />
-        <entry il="0xd" row="29" file_ref="1" hidden="false" />
-        <entry il="0x12" row="30" file_ref="1" hidden="false" />
+        <entry il="0x0" row="59" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="60" col="3" file_ref="1" hidden="false" />
+        <entry il="0xd" row="29" col="3" file_ref="1" hidden="false" />
+        <entry il="0x12" row="30" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
         <entry name="s1" il_index="0" scope_ref="0" />

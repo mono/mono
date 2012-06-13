@@ -947,7 +947,7 @@ namespace Mono.CSharp
 					Location));
 
 				var body = new ExplicitBlock (block, Location, Location);
-				block.AddStatement (new Do (body, cond, Location));
+				block.AddStatement (new Do (body, cond, Location, Location));
 
 				body.AddStatement (new StatementExpression (
 					new SimpleAssign (new LocalVariableReference (obj2, Location), new LocalVariableReference (obj1, Location))));

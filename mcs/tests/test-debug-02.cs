@@ -12,7 +12,7 @@ class C1
 
 class C2
 {
-	int a = 55;
+	int a = 55, b = 33;
 	
 	public C2 ()
 	{

@@ -5250,8 +5250,10 @@ namespace Mono.CSharp
 		{
 			this.expr = expr;		
 			this.arguments = arguments;
-			if (expr != null)
-				loc = expr.Location;
+			if (expr != null) {
+				var ma = expr as MemberAccess;
+				loc = ma != null ? ma.GetLeftExpressionLocation () : expr.Location;
+			}
 		}
 
 		#region Properties
@@ -7896,6 +7898,18 @@ namespace Mono.CSharp
 				expr.Error_OperatorCannotBeApplied (rc, loc, ".", type);
 		}
 
+		public Location GetLeftExpressionLocation ()
+		{
+			Expression expr = LeftExpression;
+			MemberAccess ma = expr as MemberAccess;
+			while (ma != null && ma.LeftExpression != null) {
+				expr = ma.LeftExpression;
+				ma = expr as MemberAccess;
+			}
+
+			return expr == null ? Location : expr.Location;
+		}
+
 		public static bool IsValidDotExpression (TypeSpec type)
 		{
 			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
@@ -9400,7 +9414,7 @@ namespace Mono.CSharp
 
 			this.left = left;
 			this.spec = spec;
-			this.loc = spec.Location;
+			this.loc = left.Location;
 		}
 
 		public override TypeSpec ResolveAsType (IMemberContext ec)

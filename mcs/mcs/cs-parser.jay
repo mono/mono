@@ -4006,57 +4006,58 @@ conditional_expression
 assignment_expression
 	: prefixed_unary_expression ASSIGN expression
 	  {
-		$$ = new SimpleAssign ((Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new SimpleAssign ((Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Multiply, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Multiply, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_DIV_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Division, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_MOD_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Modulus, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Modulus, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_ADD_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Addition, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SUB_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.LeftShift, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.RightShift, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.RightShift, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_AND_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_OR_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_XOR_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -5177,19 +5178,19 @@ while_statement
 do_statement
 	: DO embedded_statement WHILE open_parens_any boolean_expression CLOSE_PARENS SEMICOLON
 	  {
-		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1), GetLocation ($3));
 		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4), GetLocation ($6), GetLocation ($7));
 	  }
 	| DO embedded_statement error
 	  {
 		Error_SyntaxError (yyToken);
-		$$ = new Do ((Statement) $2, null, GetLocation ($1));
+		$$ = new Do ((Statement) $2, null, GetLocation ($1), Location.Null);
 	  }
 	| DO embedded_statement WHILE open_parens_any boolean_expression error
 	  {
 		Error_SyntaxError (yyToken);
 	  
-		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1), GetLocation ($3));
 		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4));
 	  }
 	;
