@@ -1482,8 +1482,10 @@ namespace MonoTests.System
 			try {
 				Decimal.Parse ("+15", nf);
 			} catch (FormatException) {
-				// ok
+				return;
 			}
+
+			Assert.Fail ("Expected FormatException");
 		}
 
 		[Test] // bug #4814
@@ -1495,8 +1497,10 @@ namespace MonoTests.System
 			try {
 				Decimal.Parse ("-15", nf);
 			} catch (FormatException) {
-				// ok
+				return;
 			}
+
+			Assert.Fail ("Expected FormatException");
 		}
 
 		[Test] // bug #4814
@@ -1508,8 +1512,10 @@ namespace MonoTests.System
 			try {
 				Decimal.Parse ("15+", nf);
 			} catch (FormatException) {
-				// ok
+				return;
 			}
+
+			Assert.Fail ("Expected FormatException");
 		}
 
 		[Test] // bug #4814
@@ -1521,8 +1527,10 @@ namespace MonoTests.System
 			try {
 				Decimal.Parse ("15-", nf);
 			} catch (FormatException) {
-				// ok
+				return;
 			}
+
+			Assert.Fail ("Expected FormatException");
 		}
 	}
 }
