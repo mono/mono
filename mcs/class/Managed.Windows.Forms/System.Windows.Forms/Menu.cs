@@ -188,11 +188,17 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{		
-			if (disposing) {
-				if (menu_handle != IntPtr.Zero) {
-					menu_handle = IntPtr.Zero;
+ 			if (disposing) {
+				if (menu_items != null) {
+					// MenuItem.Dispose removes the item from the list
+					while (menu_items.Count > 0) {
+						menu_items [0].Dispose ();
+					}
 				}
-			}
+ 				if (menu_handle != IntPtr.Zero) {
+ 					menu_handle = IntPtr.Zero;
+ 				}
+ 			}
 		}
 
 		// From Microsoft documentation is impossible to guess that 
