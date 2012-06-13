@@ -19,8 +19,13 @@
 
 #ifdef TARGET_WIN32
 #define SOPREFIX ""
-static const char suffixes [][5] = {
+static const char suffixes [][12] = {
 	".dll"
+#ifdef __i386__
+    ,"-x86.dll"
+#elif defined(__x86_64__)
+    ,"-x86_64.dll"
+#endif
 };
 #elif defined(__APPLE__)
 #define SOPREFIX "lib"
