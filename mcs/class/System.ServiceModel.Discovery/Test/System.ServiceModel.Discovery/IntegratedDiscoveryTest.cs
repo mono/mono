@@ -52,6 +52,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void UseCase1 ()
 		{
 			RunCodeUnderDiscoveryHost1 (new Uri ("http://localhost:37564"), new Uri ("http://localhost:4949"), new Uri ("http://localhost:4989"), UseCase1Core);
@@ -113,6 +114,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		}
 
 		[Test] // Announcement: UDP, Discovery: HTTP
+		[Category ("NotWorking")]
 		public void UseCase2 ()
 		{
 			RunCodeUnderDiscoveryHost2 (new Uri ("http://localhost:37564"), new Uri ("http://localhost:4949"), UseCase2Core);
@@ -170,6 +172,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void UseCase3 ()
 		{
 			RunCodeUnderDiscoveryHost3 (new Uri ("http://localhost:37564"), new Uri ("http://localhost:4989"), UseCase3Core);
