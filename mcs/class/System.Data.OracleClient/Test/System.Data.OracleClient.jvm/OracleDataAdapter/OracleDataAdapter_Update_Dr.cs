@@ -34,6 +34,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
+	[Category ("NotWorking")]
 	public class OracleDataAdapter_Update_Dr : ADONetTesterClass
 	{
 		public static void Main()

@@ -33,6 +33,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 [TestFixture]
+[Category ("NotWorking")]
 public class OracleParameter_ctor_SOtype_IS : GHTBase
 {
 	public static void Main()
