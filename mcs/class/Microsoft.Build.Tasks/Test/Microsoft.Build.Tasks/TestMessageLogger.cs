@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using System.Text;
 
 namespace MonoTests.Microsoft.Build.Tasks
 {
@@ -188,6 +189,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 		{
 			foreach (BuildEventArgs arg in all_messages)
 				Console.WriteLine ("Msg: {0}", arg.Message);
+		}
+
+		public void DumpMessages (StringBuilder sb)
+		{
+			foreach (BuildEventArgs arg in all_messages)
+				sb.AppendLine (string.Format ("Msg: {0}", arg.Message));
 		}
 
 		public void CheckLoggedMessageHead (string expected, string id)
