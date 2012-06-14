@@ -811,7 +811,8 @@ namespace System.Windows.Forms
 			info.AddValue ("BackColor", BackColor);
 			info.AddValue ("ForeColor", ForeColor);
 			info.AddValue ("ImageKey", image_key);
-			info.AddValue ("Group", group);
+			if (group != null)
+				info.AddValue ("Group", group);
 			if (sub_items.Count > 1) {
 				info.AddValue ("SubItemCount", sub_items.Count);
 				for (int i = 1; i < sub_items.Count; i++) {
