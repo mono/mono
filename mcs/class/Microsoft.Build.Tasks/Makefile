@@ -53,6 +53,10 @@ clean-test-dll:
 
 test-local: copy-config
 
+ifeq (net_4_5, $(PROFILE))
+copy-config:
+	cp Test/test-config-file-net-4.0 $(test_lib).config
+else
 ifeq (net_4_0, $(PROFILE))
 copy-config:
 	cp Test/test-config-file-net-4.0 $(test_lib).config
@@ -62,6 +66,7 @@ copy-config:
 	cp Test/test-config-file-net-3.5 $(test_lib).config
 else
 copy-config:
+endif
 endif
 endif
 
