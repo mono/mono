@@ -384,6 +384,7 @@ namespace MonoTests.System.Net
 				HttpWebRequest req;
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "POST";
 				req.SendChunked = false;
 				req.KeepAlive = false;
@@ -392,6 +393,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "POST";
 				req.SendChunked = true;
 				req.KeepAlive = false;
@@ -401,6 +403,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "POST";
 				req.ContentLength = 5;
 				req.SendChunked = false;
@@ -411,6 +414,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "POST";
 				req.SendChunked = false;
 				req.KeepAlive = true;
@@ -420,6 +424,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "POST";
 				req.SendChunked = false;
 				req.KeepAlive = false;
@@ -429,6 +434,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "POST";
 				req.SendChunked = false;
 				req.KeepAlive = true;
@@ -438,6 +444,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "GET";
 				req.SendChunked = true;
 
@@ -445,6 +452,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "GET";
 				req.ContentLength = 5;
 
@@ -452,6 +460,7 @@ namespace MonoTests.System.Net
 				req.Abort ();
 
 				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Timeout = 5000;
 				req.Method = "GET";
 				req.ContentLength = 0;
 
