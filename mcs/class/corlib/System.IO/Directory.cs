@@ -547,6 +547,12 @@ namespace System.IO
 				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
 
 			try {
+				//
+				// Convert any file specific flag to FileAttributes.Normal which is used as include files flag
+				//
+				if (((rattr & FileAttributes.Directory) == 0) && rattr != 0)
+					rattr |= FileAttributes.Normal;
+
 				bool first = true;
 				if (((rattr & FileAttributes.ReparsePoint) == 0) && ((rattr & kind) != 0))
 					yield return s;
