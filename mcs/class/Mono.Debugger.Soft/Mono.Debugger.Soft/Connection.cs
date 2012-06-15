@@ -43,6 +43,7 @@ namespace Mono.Debugger.Soft
 		public int max_il_offset;
 		public int[] il_offsets;
 		public int[] line_numbers;
+		public int[] column_numbers;
 		public SourceInfo[] source_files;
 	}
 
@@ -394,7 +395,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 18;
+		internal const int MINOR_VERSION = 19;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1690,6 +1691,7 @@ namespace Mono.Debugger.Soft
 			info.il_offsets = new int [n_il_offsets];
 			info.line_numbers = new int [n_il_offsets];
 			info.source_files = new SourceInfo [n_il_offsets];
+			info.column_numbers = new int [n_il_offsets];
 			for (int i = 0; i < n_il_offsets; ++i) {
 				info.il_offsets [i] = res.ReadInt ();
 				info.line_numbers [i] = res.ReadInt ();
@@ -1699,6 +1701,10 @@ namespace Mono.Debugger.Soft
 				} else {
 					info.source_files [i] = sources [0];
 				}
+				if (Version.AtLeast (2, 19))
+					info.column_numbers [i] = res.ReadInt ();
+				else
+					info.column_numbers [i] = 0;
 			}
 
 			return info;

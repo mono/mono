@@ -303,24 +303,26 @@ namespace Mono.Debugger.Soft
 					var line_numbers = LineNumbers;
 					IList<Location> res = new Location [ILOffsets.Count];
 					for (int i = 0; i < il_offsets.Count; ++i)
-						res [i] = new Location (vm, this, -1, il_offsets [i], debug_info.source_files [i].source_file, line_numbers [i], 0, debug_info.source_files [i].hash);
+						res [i] = new Location (vm, this, -1, il_offsets [i], debug_info.source_files [i].source_file, line_numbers [i], debug_info.column_numbers [i], debug_info.source_files [i].hash);
 					locations = res;
 				}
 				return locations;
 			}
 		}				
 
-		internal int il_offset_to_line_number (int il_offset, out string src_file, out byte[] src_hash) {
+		internal int il_offset_to_line_number (int il_offset, out string src_file, out byte[] src_hash, out int column_number) {
 			if (debug_info == null)
 				debug_info = vm.conn.Method_GetDebugInfo (id);
 
 			// FIXME: Optimize this
 			src_file = null;
 			src_hash = null;
+			column_number = 0;
 			for (int i = debug_info.il_offsets.Length - 1; i >= 0; --i) {
 				if (debug_info.il_offsets [i] <= il_offset) {
 					src_file = debug_info.source_files [i].source_file;
 					src_hash = debug_info.source_files [i].hash;
+					column_number = debug_info.column_numbers [i];
 					return debug_info.line_numbers [i];
 				}
 			}
