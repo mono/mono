@@ -1633,8 +1633,10 @@ namespace Mono.CSharp {
 			if (declarators != null) {
 				foreach (var d in declarators) {
 					d.Variable.CreateBuilder (ec);
-					if (d.Initializer != null)
+					if (d.Initializer != null) {
+						ec.Mark (d.Variable.Location);
 						((ExpressionStatement) d.Initializer).EmitStatement (ec);
+					}
 				}
 			}
 		}
@@ -4249,10 +4251,10 @@ namespace Mono.CSharp {
 
 				Expression cond = null;
 				for (int ci = 0; ci < s.Labels.Count; ++ci) {
-					var e = new Binary (Binary.Operator.Equality, value, s.Labels[ci].Converted, loc);
+					var e = new Binary (Binary.Operator.Equality, value, s.Labels[ci].Converted);
 
 					if (ci > 0) {
-						cond = new Binary (Binary.Operator.LogicalOr, cond, e, loc);
+						cond = new Binary (Binary.Operator.LogicalOr, cond, e);
 					} else {
 						cond = e;
 					}
@@ -5142,8 +5144,8 @@ namespace Mono.CSharp {
 					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
-						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc), loc),
-						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc), loc), loc)),
+						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc)),
+						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc)))),
 							new NullLiteral (loc),
 							converted, loc);
 
@@ -5701,7 +5703,7 @@ namespace Mono.CSharp {
 
 				// Add conditional call when disposing possible null variable
 				if (!type.IsStruct || type.IsNullableType)
-					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, dispose.loc);
+					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc)), dispose, dispose.loc);
 
 				return dispose;
 			}
@@ -6047,7 +6049,7 @@ namespace Mono.CSharp {
 					var idisaposable_test = new Binary (Binary.Operator.Inequality, new CompilerAssign (
 						dispose_variable.CreateReferenceExpression (bc, loc),
 						new As (lv.CreateReferenceExpression (bc, loc), new TypeExpression (dispose_variable.Type, loc), loc),
-						loc), new NullLiteral (loc), loc);
+						loc), new NullLiteral (loc));
 
 					var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
 

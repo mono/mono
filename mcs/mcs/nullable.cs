@@ -539,8 +539,8 @@ namespace Mono.CSharp.Nullable
 		Expression user_operator;
 		MethodSpec wrap_ctor;
 
-		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right, Location loc)
-			: base (op, left, right, loc)
+		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right)
+			: base (op, left, right)
 		{
 		}
 
@@ -1001,11 +1001,11 @@ namespace Mono.CSharp.Nullable
 		Expression left, right;
 		Unwrap unwrap;
 
-		public NullCoalescingOperator (Expression left, Expression right, Location loc)
+		public NullCoalescingOperator (Expression left, Expression right)
 		{
 			this.left = left;
 			this.right = right;
-			this.loc = loc;
+			this.loc = left.Location;
 		}
 
 		public Expression LeftExpression {

@@ -720,7 +720,7 @@ namespace Mono.CSharp {
 			if (left == null)
 				left = new TargetExpression (target);
 
-			source = new Binary (op, left, right, true, loc);
+			source = new Binary (op, left, right, true);
 
 			if (target is DynamicMemberAssignable) {
 				Arguments targs = ((DynamicMemberAssignable) target).Arguments;
