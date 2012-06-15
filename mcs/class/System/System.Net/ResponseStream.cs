@@ -101,11 +101,14 @@ namespace System.Net {
 
 		MemoryStream GetHeaders (bool closing)
 		{
-			if (response.HeadersSent)
-				return null;
-			MemoryStream ms = new MemoryStream ();
-			response.SendHeaders (closing, ms);
-			return ms;
+			// SendHeaders works on shared headers
+			lock (response.headers_lock) {
+				if (response.HeadersSent)
+					return null;
+				MemoryStream ms = new MemoryStream ();
+				response.SendHeaders (closing, ms);
+				return ms;
+			}
 		}
 
 		public override void Flush ()

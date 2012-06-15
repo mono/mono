@@ -439,7 +439,9 @@ namespace System.Net {
 		{
 			if (sock != null) {
 				Stream st = GetResponseStream ();
-				st.Close ();
+				if (st != null)
+					st.Close ();
+
 				o_stream = null;
 			}
 
