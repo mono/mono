@@ -59,7 +59,8 @@ EXTRA_DISTFILES = \
 	Mono.Data.SqlExpressions/Parser.jay	\
 	app_test_net_2_0.config			\
 	app_test_net_4_5.config			\
-	Test/System.Data/binserialize/*.bin
+	Test/System.Data/binserialize/*.bin	\
+	SqliteTest.db
 
 BUILT_SOURCES = Mono.Data.SqlExpressions/Parser.cs
 
