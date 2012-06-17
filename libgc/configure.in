@@ -122,6 +122,7 @@ case "$THREADS" in
 	else
 		THREADDLLIBS="$PTHREAD_LIBS"
 	fi
+	AC_DEFINE(THREAD_LOCAL_ALLOC)
 	;;
      *-*-solaris*)
 	AC_DEFINE(GC_SOLARIS_THREADS)
