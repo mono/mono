@@ -47,8 +47,8 @@ namespace MonoTests.System.Windows.Forms
 	public class DataGridViewTest : TestHelper
 	{
 		// Send a mouse event in Win32.
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-		private static extern void mouse_event(long dwFlags, long dx, long dy, long dwData, long dwExtraInfo);
+		[DllImport ("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		private static extern void mouse_event (long dwFlags, long dx, long dy, long dwData, long dwExtraInfo);
 		private const int MOUSEEVENTF_LEFTDOWN = 0x02;
 		private const int MOUSEEVENTF_LEFTUP = 0x04;
 		private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
@@ -56,11 +56,11 @@ namespace MonoTests.System.Windows.Forms
 		private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
 
 		// Set the mouse-pointer position in Win32.
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		[DllImport ("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
 		private static extern long SetCursorPos (int x, int y);
 
 		// Convert from window coordinates to screen coordinates in Win32.
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		[DllImport ("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
 		private static extern bool ClientToScreen (IntPtr hWnd, ref Win32Point point);
 		[StructLayout (LayoutKind.Sequential)]
 		private struct Win32Point
@@ -1045,8 +1045,8 @@ namespace MonoTests.System.Windows.Forms
 		// mouse clicks can be faked on it.
 		private class ClickableDataGridView : DataGridView
 		{
-			public ClickableDataGridView()
-			: base()
+			public ClickableDataGridView ()
+			: base ()
 			{
 			}
 
@@ -1069,8 +1069,8 @@ namespace MonoTests.System.Windows.Forms
 			try
 			{
 				// Create a form, a text label, and a data-grid-view.
-				form = new Form();
-				Label label = new Label();
+				form = new Form ();
+				Label label = new Label ();
 				label.Text = "Label";
 				label.Parent = form;
 				ClickableDataGridView dgv = new ClickableDataGridView ();
@@ -1098,11 +1098,11 @@ namespace MonoTests.System.Windows.Forms
 				// Focus the data-grid-view.  (Without this, its Leave
 				// event won't get called when something outside of the
 				// data-grid-view gets focused.)
-				dgv.Focus();
+				dgv.Focus ();
 
 				// Show the form, let it draw.
-				form.Show();
-				Application.DoEvents();
+				form.Show ();
+				Application.DoEvents ();
 
 				// Locate the drop-down button.  (This code is taken from mono-winforms,
 				// from the private method DataGridViewComboBoxCell.CalculateButtonArea(),
@@ -1123,7 +1123,7 @@ namespace MonoTests.System.Windows.Forms
 				int y = button_area.Y + (button_area.Height / 2);
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT)
 				{
-					// Calling OnMouseDownInternal() in Win32 doesn't work.
+					// Calling OnMouseDownInternal () in Win32 doesn't work.
 					// My best guess as to why is that the WinForms ComboBox
 					// is a wrapper around the ComCtl control, e.g. similar
 					// to the reason that Paint event-handlers don't work on
@@ -1132,7 +1132,7 @@ namespace MonoTests.System.Windows.Forms
 
 					// First, get the location of the desired mouse-click, in
 					// data-grid-view coordinates.
-					Win32Point ptGlobal = new Win32Point();
+					Win32Point ptGlobal = new Win32Point ();
 					ptGlobal.x = x + dgv.Location.X;
 					ptGlobal.y = y + dgv.Location.Y;
 
@@ -1154,7 +1154,7 @@ namespace MonoTests.System.Windows.Forms
 						ptGlobal.x, ptGlobal.y, 0, 0);
 
 					// Let the system process these events.
-					Application.DoEvents();
+					Application.DoEvents ();
 				}
 				else
 				{
@@ -1180,7 +1180,7 @@ namespace MonoTests.System.Windows.Forms
 				cb.SelectedIndex = 2 /* "Item3" */;
 
 				// Leave the data-grid-view.
-				label.Focus();
+				label.Focus ();
 
 				// That should have ended editing and saved the value.
 				string cellValue = (string)(dgv.Rows[0].Cells[0].FormattedValue);
@@ -1189,7 +1189,7 @@ namespace MonoTests.System.Windows.Forms
 			finally
 			{
 				if (form != null)
-					form.Close();
+					form.Close ();
 			}
 		}
 
