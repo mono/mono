@@ -2491,7 +2491,8 @@ namespace System.Windows.Forms {
 			currentCell.SetIsInEditMode (false);
 			currentCell.DetachEditingControl ();
 			OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
-			Focus ();
+			if (context != DataGridViewDataErrorContexts.LeaveControl)
+				Focus ();
 			if (currentCell.RowIndex == NewRowIndex) {
 				new_row_editing = false;
 				editing_row = null; // editing row becomes a real row
@@ -4218,6 +4219,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnLeave (EventArgs e)
 		{
+			EndEdit (DataGridViewDataErrorContexts.LeaveControl);
 			base.OnLeave(e);
 		}
 

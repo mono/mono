@@ -1068,7 +1068,11 @@ namespace MonoTests.System.Windows.Forms
 
 			try
 			{
+				// Create a form, a text label, and a data-grid-view.
 				form = new Form();
+				Label label = new Label();
+				label.Text = "Label";
+				label.Parent = form;
 				ClickableDataGridView dgv = new ClickableDataGridView ();
 				dgv.Parent = form;
 
@@ -1090,6 +1094,11 @@ namespace MonoTests.System.Windows.Forms
 
 				// Select the cell.
 				dgv.CurrentCell = dgv.Rows[0].Cells[0];
+
+				// Focus the data-grid-view.  (Without this, its Leave
+				// event won't get called when something outside of the
+				// data-grid-view gets focused.)
+				dgv.Focus();
 
 				// Show the form, let it draw.
 				form.Show();
@@ -1163,6 +1172,19 @@ namespace MonoTests.System.Windows.Forms
 
 				// Make sure that dropped down the menu.
 				Assert.AreEqual (true, cb.DroppedDown, "1-2");
+
+				// Close the menu.
+				cb.DroppedDown = false;
+
+				// Change the selection on the menu.
+				cb.SelectedIndex = 2 /* "Item3" */;
+
+				// Leave the data-grid-view.
+				label.Focus();
+
+				// That should have ended editing and saved the value.
+				string cellValue = (string)(dgv.Rows[0].Cells[0].FormattedValue);
+				Assert.AreEqual ("Item3", cellValue, "1-3");
 			}
 			finally
 			{
