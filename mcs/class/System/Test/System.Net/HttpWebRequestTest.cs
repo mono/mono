@@ -373,6 +373,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #508027
+		[Category ("NotWorking")] // bug #5710
 		public void BeginGetResponse ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8001);
