@@ -45717,6 +45717,16 @@
       </method>
     </type>
   </test>
+  <test name="test-846.cs">
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-85.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="145">
@@ -55753,6 +55763,9 @@
       <method name="Void MoveNext()" attrs="486">
         <size>492</size>
       </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
       <method name="Int32 &lt;&gt;m__4()" attrs="145">
         <size>9</size>
       </method>
@@ -55760,6 +55773,9 @@
     <type name="Tester+&lt;AssignCompound_1&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
         <size>1229</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
       </method>
       <method name="Int32 &lt;&gt;m__5()" attrs="145">
         <size>9</size>
@@ -55769,6 +55785,9 @@
       <method name="Void MoveNext()" attrs="486">
         <size>344</size>
       </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
       <method name="System.Object &lt;&gt;m__6()" attrs="145">
         <size>13</size>
       </method>
@@ -55777,27 +55796,10 @@
       <method name="Void MoveNext()" attrs="486">
         <size>596</size>
       </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
       <method name="System.Object &lt;&gt;m__7()" attrs="145">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;Add_1&gt;c__async0">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;AssignCompound_1&gt;c__async1">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;Convert_1&gt;c__async2">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;Invocation_1&gt;c__async3">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
     </type>
@@ -57073,7 +57075,7 @@
     </type>
     <type name="C2">
       <method name="Void .ctor()" attrs="6278">
-        <size>16</size>
+        <size>24</size>
       </method>
     </type>
     <type name="C3">
@@ -57768,6 +57770,22 @@
       </method>
       <method name="Program &lt;Test_4&gt;m__0()" attrs="145">
         <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-24.cs">
+    <type name="C">
+      <method name="Void Test_1()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void Test_2()" attrs="129">
+        <size>23</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

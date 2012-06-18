@@ -281,11 +281,16 @@ namespace Mono.CSharp {
 		public Expression expr;
 		public Statement  EmbeddedStatement;
 
-		public Do (Statement statement, BooleanExpression bool_expr, Location l)
+		public Do (Statement statement, BooleanExpression bool_expr, Location doLocation, Location whileLocation)
 		{
 			expr = bool_expr;
 			EmbeddedStatement = statement;
-			loc = l;
+			loc = doLocation;
+			WhileLocation = whileLocation;
+		}
+
+		public Location WhileLocation {
+			get; private set;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -332,7 +337,7 @@ namespace Mono.CSharp {
 			ec.MarkLabel (ec.LoopBegin);
 
 			// Mark start of while condition
-			ec.Mark (expr.Location);
+			ec.Mark (WhileLocation);
 
 			//
 			// Dead code elimination
@@ -461,7 +466,7 @@ namespace Mono.CSharp {
 			
 				ec.MarkLabel (ec.LoopBegin);
 
-				ec.Mark (expr.Location);
+				ec.Mark (loc);
 				expr.EmitBranchable (ec, while_loop, true);
 				
 				ec.MarkLabel (ec.LoopEnd);
@@ -1628,8 +1633,10 @@ namespace Mono.CSharp {
 			if (declarators != null) {
 				foreach (var d in declarators) {
 					d.Variable.CreateBuilder (ec);
-					if (d.Initializer != null)
+					if (d.Initializer != null) {
+						ec.Mark (d.Variable.Location);
 						((ExpressionStatement) d.Initializer).EmitStatement (ec);
+					}
 				}
 			}
 		}
@@ -4244,10 +4251,10 @@ namespace Mono.CSharp {
 
 				Expression cond = null;
 				for (int ci = 0; ci < s.Labels.Count; ++ci) {
-					var e = new Binary (Binary.Operator.Equality, value, s.Labels[ci].Converted, loc);
+					var e = new Binary (Binary.Operator.Equality, value, s.Labels[ci].Converted);
 
 					if (ci > 0) {
-						cond = new Binary (Binary.Operator.LogicalOr, cond, e, loc);
+						cond = new Binary (Binary.Operator.LogicalOr, cond, e);
 					} else {
 						cond = e;
 					}
@@ -5137,8 +5144,8 @@ namespace Mono.CSharp {
 					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
-						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc), loc),
-						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc), loc), loc)),
+						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc)),
+						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc)))),
 							new NullLiteral (loc),
 							converted, loc);
 
@@ -5696,7 +5703,7 @@ namespace Mono.CSharp {
 
 				// Add conditional call when disposing possible null variable
 				if (!type.IsStruct || type.IsNullableType)
-					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, dispose.loc);
+					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc)), dispose, dispose.loc);
 
 				return dispose;
 			}
@@ -5710,7 +5717,7 @@ namespace Mono.CSharp {
 			{
 				for (int i = declarators.Count - 1; i >= 0; --i) {
 					var d = declarators [i];
-					var vd = new VariableDeclaration (d.Variable, type_expr.Location);
+					var vd = new VariableDeclaration (d.Variable, d.Variable.Location);
 					vd.Initializer = d.Initializer;
 					vd.IsNested = true;
 					vd.dispose_call = CreateDisposeCall (bc, d.Variable);
@@ -5946,7 +5953,7 @@ namespace Mono.CSharp {
 				if (variable_ref == null)
 					return false;
 
-				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, access, Location.Null), for_each.variable.Location));
+				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, access, Location.Null), for_each.type.Location));
 
 				bool ok = true;
 
@@ -6042,7 +6049,7 @@ namespace Mono.CSharp {
 					var idisaposable_test = new Binary (Binary.Operator.Inequality, new CompilerAssign (
 						dispose_variable.CreateReferenceExpression (bc, loc),
 						new As (lv.CreateReferenceExpression (bc, loc), new TypeExpression (dispose_variable.Type, loc), loc),
-						loc), new NullLiteral (loc), loc);
+						loc), new NullLiteral (loc));
 
 					var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
 
@@ -6257,7 +6264,7 @@ namespace Mono.CSharp {
 				if (variable_ref == null)
 					return false;
 
-				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, current_pe, Location.Null), variable.Location));
+				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, current_pe, Location.Null), for_each.type.Location));
 
 				var init = new Invocation (get_enumerator_mg, null);
 

@@ -30,9 +30,6 @@ using System.Xml.XPath;
 
 namespace System.Xml.Xsl
 {
-#if !NET_2_0
-	sealed
-#endif
 	public class XsltArgumentList
 	{
 		#region Fields

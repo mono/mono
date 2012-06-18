@@ -52,8 +52,8 @@ namespace System.Data {
 
 		#region Constructors
 
-		public DataTableReader (DataTable dt)
-			: this (new DataTable[] {dt})
+		public DataTableReader (DataTable dataTable)
+			: this (new DataTable[] {dataTable})
 		{
 		}
 
@@ -96,15 +96,15 @@ namespace System.Data {
 			get { return _closed; }
 		}
 
-		public override object this [int index] {
+		public override object this [int ordinal] {
 			get {
 				Validate ();
-				if (index < 0 || index >= FieldCount)
-					throw new ArgumentOutOfRangeException ("index " + index + " is not in the range");
+				if (ordinal < 0 || ordinal >= FieldCount)
+					throw new ArgumentOutOfRangeException ("index " + ordinal + " is not in the range");
 				DataRow row = CurrentRow;
 				if (row.RowState == DataRowState.Deleted)
 					throw new InvalidOperationException ("Deleted Row's information cannot be accessed!");
-				return row [index];
+				return row [ordinal];
 			}
 		}
 
@@ -170,21 +170,21 @@ namespace System.Data {
 			_closed = true;
 		}
 
-		public override bool GetBoolean (int i)
+		public override bool GetBoolean (int ordinal)
 		{
-			return (bool) GetValue (i);
+			return (bool) GetValue (ordinal);
 		}
 
-		public override byte GetByte (int i)
+		public override byte GetByte (int ordinal)
 		{
-			return (byte) GetValue (i);
+			return (byte) GetValue (ordinal);
 		}
 
-		public override long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
+		public override long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
-			byte[] value = this [i] as byte[];
+			byte[] value = this [ordinal] as byte[];
 			if (value == null)
-				ThrowInvalidCastException (this [i].GetType (), typeof (byte[]));
+				ThrowInvalidCastException (this [ordinal].GetType (), typeof (byte[]));
 			if (buffer == null)
 				return value.Length;
 			int copylen = length > value.Length ? value.Length : length;
@@ -192,16 +192,16 @@ namespace System.Data {
 			return copylen;
 		}
 
-		public override char GetChar (int i)
+		public override char GetChar (int ordinal)
 		{
-			return (char) GetValue (i);
+			return (char) GetValue (ordinal);
 		}
 
-		public override long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
+		public override long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
-			char[] value = this [i] as char[];
+			char[] value = this [ordinal] as char[];
 			if (value == null)
-				ThrowInvalidCastException (this [i].GetType (), typeof (char[]));
+				ThrowInvalidCastException (this [ordinal].GetType (), typeof (char[]));
 			if (buffer == null)
 				return value.Length;
 			int copylen = length > value.Length ? value.Length : length;
@@ -209,24 +209,24 @@ namespace System.Data {
 			return copylen;
 		}
 
-		public override string GetDataTypeName (int i)
+		public override string GetDataTypeName (int ordinal)
 		{
-			return GetFieldType (i).ToString ();
+			return GetFieldType (ordinal).ToString ();
 		}
 
-		public override DateTime GetDateTime (int i)
+		public override DateTime GetDateTime (int ordinal)
 		{
-			return (DateTime) GetValue (i);
+			return (DateTime) GetValue (ordinal);
 		}
 
-		public override decimal GetDecimal (int i)
+		public override decimal GetDecimal (int ordinal)
 		{
-			return (decimal) GetValue (i);
+			return (decimal) GetValue (ordinal);
 		}
 
-		public override double GetDouble (int i)
+		public override double GetDouble (int ordinal)
 		{
-			return (double) GetValue (i);
+			return (double) GetValue (ordinal);
 		}
 
 		public override IEnumerator GetEnumerator ()
@@ -234,46 +234,46 @@ namespace System.Data {
 			return new DbEnumerator (this);
 		}
 
-		public override Type GetProviderSpecificFieldType (int i)
+		public override Type GetProviderSpecificFieldType (int ordinal)
 		{
-			return GetFieldType (i);
+			return GetFieldType (ordinal);
 		}
 
-		public override Type GetFieldType (int i)
+		public override Type GetFieldType (int ordinal)
 		{
 			ValidateClosed ();
-			return CurrentTable.Columns [i].DataType;
+			return CurrentTable.Columns [ordinal].DataType;
 		}
 
-		public override float GetFloat (int i)
+		public override float GetFloat (int ordinal)
 		{
-			return (float) GetValue (i);
+			return (float) GetValue (ordinal);
 		}
 
-		public override Guid GetGuid (int i)
+		public override Guid GetGuid (int ordinal)
 		{
-			return (Guid) GetValue (i);
+			return (Guid) GetValue (ordinal);
 		}
 
-		public override short GetInt16 (int i)
+		public override short GetInt16 (int ordinal)
 		{
-			return (short) GetValue (i);
+			return (short) GetValue (ordinal);
 		}
 
-		public override int GetInt32 (int i)
+		public override int GetInt32 (int ordinal)
 		{
-			return (int) GetValue (i);
+			return (int) GetValue (ordinal);
 		}
 
-		public override long GetInt64 (int i)
+		public override long GetInt64 (int ordinal)
 		{
-			return (long) GetValue (i);
+			return (long) GetValue (ordinal);
 		}
 
-		public override string GetName (int i)
+		public override string GetName (int ordinal)
 		{
 			ValidateClosed ();
-			return CurrentTable.Columns [i].ColumnName;
+			return CurrentTable.Columns [ordinal].ColumnName;
 		}
 
 		public override int GetOrdinal (string name)
@@ -285,9 +285,9 @@ namespace System.Data {
 			return index;
 		}
 
-		public override object GetProviderSpecificValue (int i)
+		public override object GetProviderSpecificValue (int ordinal)
 		{
-			return GetValue (i);
+			return GetValue (ordinal);
 		}
 
 		public override int GetProviderSpecificValues (object[] values)
@@ -295,14 +295,14 @@ namespace System.Data {
 			return GetValues (values);
 		}
 
-		public override string GetString (int i)
+		public override string GetString (int ordinal)
 		{
-			return (string) GetValue (i);
+			return (string) GetValue (ordinal);
 		}
 
-		public override object GetValue (int i)
+		public override object GetValue (int ordinal)
 		{
-			return this [i];
+			return this [ordinal];
 		}
 
 		public override int GetValues (object[] values)
@@ -317,9 +317,9 @@ namespace System.Data {
 			return count;
 		}
 
-		public override bool IsDBNull (int i)
+		public override bool IsDBNull (int ordinal)
 		{
-			return GetValue (i) is DBNull;
+			return GetValue (ordinal) is DBNull;
 		}
 
 		public override DataTable GetSchemaTable ()

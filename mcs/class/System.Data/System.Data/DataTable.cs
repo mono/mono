@@ -2368,10 +2368,10 @@ namespace System.Data {
 	}
 
 	partial class DataTable {
-		public DataTable (string tableName, string tbNamespace)
+		public DataTable (string tableName, string tableNamespace)
 			: this (tableName)
 		{
-			_nameSpace = tbNamespace;
+			_nameSpace = tableNamespace;
 		}
 
 		SerializationFormat remotingFormat = SerializationFormat.Xml;

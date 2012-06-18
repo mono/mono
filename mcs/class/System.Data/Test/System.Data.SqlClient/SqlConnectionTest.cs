@@ -804,7 +804,7 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ConnectionString_MinPoolSize_Invalid ()
 		{
-			SqlConnection cn = cn = new SqlConnection ();
+			SqlConnection cn = new SqlConnection ();
 
 			// negative number
 			try {

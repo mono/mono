@@ -1069,6 +1069,7 @@ public class LineNumbers
 {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ln1 () {
+		// Column 3
 		ln2 ();
 		ln3 ();
 	}

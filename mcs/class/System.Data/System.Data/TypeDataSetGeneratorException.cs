@@ -64,12 +64,12 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		public TypedDataSetGeneratorException (String error) : base (error)
+		public TypedDataSetGeneratorException (String message) : base (message)
 		{
 		}
 		
-		public TypedDataSetGeneratorException (String error, Exception inner) 
-			: base (error, inner)
+		public TypedDataSetGeneratorException (String message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 #endif

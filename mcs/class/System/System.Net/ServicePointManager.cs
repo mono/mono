@@ -170,14 +170,8 @@ namespace System.Net
 			set { policy = value; }
 		}
 
-#if NET_1_0
-		// we need it for SslClientStream
-		internal
-#else
 		[MonoTODO("CRL checks not implemented")]
-		public
-#endif
-		static bool CheckCertificateRevocationList {
+		public static bool CheckCertificateRevocationList {
 			get { return _checkCRL; }
 			set { _checkCRL = false; }	// TODO - don't yet accept true
 		}

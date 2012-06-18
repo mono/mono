@@ -182,10 +182,8 @@ namespace Mono.CSharp {
 			StdLibRuntimeVersion = RuntimeVersion.v4;
 			WarningLevel = 4;
 
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-				TabSize = 4;
-			else
-				TabSize = 8;
+			// Default to 1 or mdb files would be platform speficic
+			TabSize = 1;
 
 			AssemblyReferences = new List<string> ();
 			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
@@ -936,7 +934,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/debug":
-				if (value == "full" || value == "pdbonly" || idx < 0) {
+				if (value.Equals ("full", StringComparison.OrdinalIgnoreCase) || value.Equals ("pdbonly", StringComparison.OrdinalIgnoreCase) || idx < 0) {
 					settings.GenerateDebugInfo = true;
 					return ParseResult.Success;
 				}

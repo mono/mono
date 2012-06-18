@@ -6,9 +6,9 @@
   <methods>
     <method token="0x6000001">
       <sequencepoints>
-        <entry il="0x0" row="6" file_ref="1" hidden="false" />
-        <entry il="0x1" row="7" file_ref="1" hidden="false" />
-        <entry il="0x1c" row="8" file_ref="1" hidden="false" />
+        <entry il="0x0" row="6" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="7" col="3" file_ref="1" hidden="false" />
+        <entry il="0x1c" row="8" col="5" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes>
@@ -18,9 +18,9 @@
     </method>
     <method token="0x6000002">
       <sequencepoints>
-        <entry il="0x0" row="11" file_ref="1" hidden="false" />
-        <entry il="0x1" row="12" file_ref="1" hidden="false" />
-        <entry il="0x7" row="13" file_ref="1" hidden="false" />
+        <entry il="0x0" row="11" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="12" col="3" file_ref="1" hidden="false" />
+        <entry il="0x7" row="13" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />

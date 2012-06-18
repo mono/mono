@@ -115,6 +115,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Column_1 ()
 		{
 			var test = new WebTest ("ListView_DynamicControl_04.aspx");
@@ -173,6 +174,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ColumnName_1 ()
 		{
 			var test = new WebTest ("ListView_DynamicControl_04.aspx");
@@ -264,6 +266,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ControlPropertiesValid_2 ()
 		{
 			var test = new WebTest ("ListView_DynamicControl_04.aspx");
@@ -329,6 +332,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void EvaluateIsValid_1 ()
 		{
 			var test = new WebTest ("DynamicValidator_02.aspx");
@@ -452,6 +456,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ValidateException ()
 		{
 			var dv = new PokerDynamicValidator ();

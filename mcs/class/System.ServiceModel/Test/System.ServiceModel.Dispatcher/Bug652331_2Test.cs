@@ -43,6 +43,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 	public class Bug652331_2Test
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void Bug652331_3 ()
 		{
 			// Init service

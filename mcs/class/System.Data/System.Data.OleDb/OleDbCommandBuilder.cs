@@ -128,20 +128,20 @@ namespace System.Data.OleDb
 		#region Methods
 
 #if NET_2_0
-		protected override void ApplyParameterInfo (DbParameter dbParameter,
-				                                    DataRow row,
+		protected override void ApplyParameterInfo (DbParameter parameter,
+				                                    DataRow datarow,
 				                                    StatementType statementType,
 				                                    bool whereClause)
 		{
-			OleDbParameter parameter = (OleDbParameter) dbParameter;
-			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
-			if (row ["NumericPrecision"] != DBNull.Value) {
-				parameter.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
+			OleDbParameter p = (OleDbParameter) parameter;
+			p.Size = int.Parse (datarow ["ColumnSize"].ToString ());
+			if (datarow ["NumericPrecision"] != DBNull.Value) {
+				p.Precision = byte.Parse (datarow ["NumericPrecision"].ToString ());
 			}
-			if (row ["NumericScale"] != DBNull.Value) {
-				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
+			if (datarow ["NumericScale"] != DBNull.Value) {
+				p.Scale = byte.Parse (datarow ["NumericScale"].ToString ());
 			}
-			parameter.DbType = (DbType) row ["ProviderType"];
+			p.DbType = (DbType) datarow ["ProviderType"];
 		}
 #endif
 
@@ -205,9 +205,9 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		protected override string GetParameterName (int position)
+		protected override string GetParameterName (int parameterOrdinal)
 		{
-			return String.Format("@p{0}", position);
+			return String.Format("@p{0}", parameterOrdinal);
 		}
 
 		protected override string GetParameterName (string parameterName)
@@ -215,9 +215,9 @@ namespace System.Data.OleDb
 			return String.Format("@{0}", parameterName);                       
 		}
                 
-		protected override string GetParameterPlaceholder (int position)
+		protected override string GetParameterPlaceholder (int parameterOrdinal)
 		{
-			return GetParameterName (position);
+			return GetParameterName (parameterOrdinal);
 		}
                 
 #endif

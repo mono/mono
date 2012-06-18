@@ -29,6 +29,7 @@ using System;
 using System.IO;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
+using System.Text;
 
 namespace MonoTests.Microsoft.Build.Tasks {
 
@@ -88,8 +89,9 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			project.LoadXml (documentString);
 
 			if (!project.Build ("1")) {
-				testLogger.DumpMessages ();
-				Assert.Fail ("Build failed");
+				var sb = new StringBuilder ();
+				testLogger.DumpMessages (sb);
+				Assert.Fail ("Build failed " + sb.ToString ());
 			}
 			Assert.IsTrue (File.Exists (target_file), "A2");
 
@@ -327,8 +329,9 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			project.LoadXml (documentString);
 
 			if (!project.Build ("1")) {
-				testLogger.DumpMessages ();
-				Assert.Fail ("Build failed");
+				var sb = new StringBuilder ();
+				testLogger.DumpMessages (sb);
+				Assert.Fail ("Build failed " + sb.ToString ());
 			}
 			Assert.IsTrue (File.Exists (target_file), "A2");
 			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					

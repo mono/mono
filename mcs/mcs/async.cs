@@ -221,7 +221,9 @@ namespace Mono.CSharp
 			//
 			// awaiter = expr.GetAwaiter ();
 			//
-			fe_awaiter.EmitAssign (ec, expr, false, false);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				fe_awaiter.EmitAssign (ec, expr, false, false);
+			}
 
 			Label skip_continuation = ec.DefineLabel ();
 

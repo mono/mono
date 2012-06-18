@@ -578,17 +578,17 @@ namespace System.Data.Odbc
 
 #if NET_2_0
 		protected override void ApplyParameterInfo (DbParameter parameter,
-		                                            DataRow row,
+		                                            DataRow datarow,
 		                                            StatementType statementType,
 		                                            bool whereClause)
 		{
 			OdbcParameter odbcParam = (OdbcParameter) parameter;
-			odbcParam.Size = int.Parse (row ["ColumnSize"].ToString ());
-			if (row ["NumericPrecision"] != DBNull.Value)
-				odbcParam.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
-			if (row ["NumericScale"] != DBNull.Value)
-				odbcParam.Scale = byte.Parse (row ["NumericScale"].ToString ());
-			odbcParam.DbType = (DbType) row ["ProviderType"];
+			odbcParam.Size = int.Parse (datarow ["ColumnSize"].ToString ());
+			if (datarow ["NumericPrecision"] != DBNull.Value)
+				odbcParam.Precision = byte.Parse (datarow ["NumericPrecision"].ToString ());
+			if (datarow ["NumericScale"] != DBNull.Value)
+				odbcParam.Scale = byte.Parse (datarow ["NumericScale"].ToString ());
+			odbcParam.DbType = (DbType) datarow ["ProviderType"];
 		}
 
 		protected override string GetParameterName (string parameterName)

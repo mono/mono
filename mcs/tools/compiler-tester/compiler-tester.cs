@@ -935,6 +935,7 @@ namespace TestRunner {
 						writer.WriteStartElement ("entry");
 						writer.WriteAttributeString ("il", IntToHex (entry.Offset));
 						writer.WriteAttributeString ("row", entry.Row.ToString ());
+						writer.WriteAttributeString ("col", entry.Column.ToString ());
 						writer.WriteAttributeString ("file_ref", entry.File.ToString ());
 						writer.WriteAttributeString ("hidden", BoolToString (entry.IsHidden));
 						writer.WriteEndElement ();
@@ -1418,18 +1419,13 @@ namespace TestRunner {
 			try {
 				Console.WriteLine ("Loading " + compiler + " ...");
 				tester = new ReflectionTester (Assembly.LoadFile (compiler));
-			}
-			catch (Exception) {
-#if NET_2_1
-				throw;
-#else
+			} catch (Exception) {
 				Console.Error.WriteLine ("Switching to command line mode (compiler entry point was not found)");
 				if (!File.Exists (compiler)) {
 					Console.Error.WriteLine ("ERROR: Tested compiler was not found");
 					return 1;
 				}
 				tester = new ProcessTester (compiler);
-#endif
 			}
 
 			string mode;

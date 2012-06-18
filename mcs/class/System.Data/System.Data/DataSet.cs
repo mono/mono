@@ -1552,7 +1552,7 @@ namespace System.Data
 		private bool dataSetInitialized = true;
 		public event EventHandler Initialized;
 
-		protected DataSet (SerializationInfo info, StreamingContext context, bool constructSchema)
+		protected DataSet (SerializationInfo info, StreamingContext context, bool ConstructSchema)
 			: this ()
 		{
 			if (DetermineSchemaSerializationMode (info, context) == SchemaSerializationMode.ExcludeSchema) {
@@ -1564,7 +1564,7 @@ namespace System.Data
 				return;
 			}
 			
-			if (constructSchema) {
+			if (ConstructSchema) {
 				string s = info.GetValue ("XmlSchema", typeof (String)) as String;
 				XmlTextReader reader = new XmlTextReader (new StringReader (s));
 				ReadXmlSchema (reader);

@@ -55,7 +55,7 @@ namespace System.Data.Common {
 		{
 		}
 
-		protected DbException (string message, int errorcode) : base(message,errorcode) 
+		protected DbException (string message, int errorCode) : base(message,errorCode) 
 		{
 		}
 	}

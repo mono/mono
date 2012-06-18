@@ -216,6 +216,7 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_Repeater_Test2()
 		{
 			var ddm = new DynamicDataManager();
@@ -256,6 +257,7 @@ namespace MonoTests.System.Web.DynamicData
 
 		[Test]
 		[ExpectedException (typeof (Exception))]
+		[Category ("NotWorking")]
 		public void DynamicManagerRegisterControl_System_Web_UI_Page_Test ()
 		{
 			var ddm = new DynamicDataManager ();

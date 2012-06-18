@@ -11,8 +11,8 @@
     </method>
     <method token="0x6000002">
       <sequencepoints>
-        <entry il="0x0" row="22" file_ref="1" hidden="false" />
-        <entry il="0x1" row="23" file_ref="1" hidden="false" />
+        <entry il="0x0" row="22" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="23" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -44,14 +44,14 @@
     </method>
     <method token="0x6000008">
       <sequencepoints>
-        <entry il="0x27" row="7" file_ref="1" hidden="false" />
-        <entry il="0x28" row="8" file_ref="1" hidden="false" />
-        <entry il="0x32" row="9" file_ref="1" hidden="false" />
-        <entry il="0x41" row="10" file_ref="1" hidden="false" />
-        <entry il="0x42" row="11" file_ref="1" hidden="false" />
-        <entry il="0x5f" row="12" file_ref="1" hidden="false" />
-        <entry il="0x70" row="18" file_ref="1" hidden="false" />
-        <entry il="0x8b" row="19" file_ref="1" hidden="false" />
+        <entry il="0x27" row="7" col="2" file_ref="1" hidden="false" />
+        <entry il="0x28" row="8" col="3" file_ref="1" hidden="false" />
+        <entry il="0x32" row="9" col="3" file_ref="1" hidden="false" />
+        <entry il="0x41" row="10" col="3" file_ref="1" hidden="false" />
+        <entry il="0x42" row="11" col="4" file_ref="1" hidden="false" />
+        <entry il="0x5f" row="12" col="3" file_ref="1" hidden="false" />
+        <entry il="0x70" row="18" col="3" file_ref="1" hidden="false" />
+        <entry il="0x8b" row="19" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes>
@@ -75,9 +75,9 @@
     </method>
     <method token="0x600000c">
       <sequencepoints>
-        <entry il="0x0" row="14" file_ref="1" hidden="false" />
-        <entry il="0x1" row="15" file_ref="1" hidden="false" />
-        <entry il="0xb" row="16" file_ref="1" hidden="false" />
+        <entry il="0x0" row="14" col="3" file_ref="1" hidden="false" />
+        <entry il="0x1" row="15" col="4" file_ref="1" hidden="false" />
+        <entry il="0xb" row="16" col="3" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes>
