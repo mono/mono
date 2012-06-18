@@ -2298,10 +2298,12 @@ public class StringTest
 
 		string s3 = new DateTime (2000, 3, 7).ToString ();
 		Assert.IsNull (String.IsInterned (s3), "#C1");
-		Assert.AreSame (s3, String.Intern (s3), "#C2");
-		Assert.AreSame (s3, String.IsInterned (s3), "#C3");
-		Assert.AreSame (s3, String.IsInterned (new DateTime (2000, 3, 7).ToString ()), "#C4");
-		Assert.AreSame (s3, String.Intern (new DateTime (2000, 3, 7).ToString ()), "#C5");
+
+		string s4 = String.Intern (s3);
+		Assert.AreEqual (s3, s4, "#C2");
+		Assert.AreSame (s4, String.IsInterned (s4), "#C3");
+		Assert.AreSame (s4, String.IsInterned (new DateTime (2000, 3, 7).ToString ()), "#C4");
+		Assert.AreSame (s4, String.Intern (new DateTime (2000, 3, 7).ToString ()), "#C5");
 	}
 
 	[Test]
