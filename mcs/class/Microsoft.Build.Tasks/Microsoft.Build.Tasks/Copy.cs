@@ -163,7 +163,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-#if NET_3_5  || true
+#if NET_3_5
 		public bool OverwriteReadOnlyFiles {
 			get {
 				return overwriteReadOnlyFiles;
