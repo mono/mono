@@ -1002,6 +1002,8 @@ System/UriKind.cs
 System/UriParser.cs
 System/UriPartial.cs
 System/UriTypeConverter.cs
+System/UriElements.cs
+System/UriParseComponents.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionLevel.cs
