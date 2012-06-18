@@ -77,6 +77,7 @@ namespace System.Text.RegularExpressions {
 		void EmitSub (LinkRef tail);
 		void EmitTest (LinkRef yes, LinkRef tail);
 		void EmitBranch (LinkRef next);
+		void EmitJumpTest (LinkRef target, LinkRef ElseTarget);
 		void EmitJump (LinkRef target);
 		void EmitRepeat (int min, int max, bool lazy, LinkRef until);
 		void EmitUntil (LinkRef repeat);
@@ -337,6 +338,15 @@ namespace System.Text.RegularExpressions {
 			TraceRegexp ("branch next {0}", next);
 		}
 
+		public void EmitJumpTest (LinkRef target, LinkRef ElseTarget) {
+			BeginLink (target);
+			BeginLink (ElseTarget);
+			Emit (OpCode.JumpTest, 0);
+			EmitLink (target);
+			EmitLink (ElseTarget);
+
+			TraceRegexp ("jmp test target {0} if not already tried else {1} ", target,ElseTarget);
+		}	
 		public void EmitJump (LinkRef target) {
 			BeginLink (target);
 			Emit (OpCode.Jump, 0);
