@@ -553,4 +553,6 @@ System/UriKind.cs
 System/UriParser.cs
 System/UriPartial.cs
 System/UriTypeConverter.cs
+System/UriElements.cs
+System/UriParseComponents.cs
 System.Windows.Input/ICommand.cs
