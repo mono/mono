@@ -1121,7 +1121,8 @@ namespace MonoTests.System.Windows.Forms
 				// Click on the drop-down button.
 				int x = button_area.X + (button_area.Width / 2);
 				int y = button_area.Y + (button_area.Height / 2);
-				if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				if (Environment.OSVersion.Platform == PlatformID.Win32NT
+				&& Type.GetType ("Mono.Runtime") == null)
 				{
 					// Calling OnMouseDownInternal () in Win32 doesn't work.
 					// My best guess as to why is that the WinForms ComboBox
