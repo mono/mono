@@ -247,6 +247,7 @@ System.Net.Sockets/TcpListenerTest.cs
 System.Net.Sockets/SocketTest.cs
 System.Net.Sockets/SocketAsyncEventArgsTest.cs
 System.Net.Sockets/UdpClientTest.cs
+System.Net.Sockets/SocketAsyncTest.cs
 System.Net.Mail/LinkedResourceTest.cs
 System.Net.Mail/AttachmentCollectionTest.cs
 System.Net.Mail/MailAddressCollectionTest.cs

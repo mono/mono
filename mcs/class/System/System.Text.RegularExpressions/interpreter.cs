@@ -471,7 +471,6 @@ namespace System.Text.RegularExpressions {
 						JumpTestEntry jte = new JumpTestEntry();
 						jte.ptr = ptr;
 						jte.pc = pc;
-						bool Found = false;
 						bool Match = false;	
 						Match = CheckComboMatch (TriedCombos, JumpTestList, pc, ptr);
 						if (!Match) {

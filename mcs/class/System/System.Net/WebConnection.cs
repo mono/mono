@@ -1092,7 +1092,7 @@ namespace System.Net
 			lock (this) {
 				lock (queue) {
 					HttpWebRequest req = (HttpWebRequest) sender;
-					if (Data.request == req) {
+					if (Data.request == req || Data.request == null) {
 						if (!req.FinishedReading) {
 							status = WebExceptionStatus.RequestCanceled;
 							Close (false);

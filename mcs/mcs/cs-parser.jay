@@ -3867,12 +3867,6 @@ additive_expression
 		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-  	| parenthesized_expression MINUS multiplicative_expression
-	  {
-	  	// Shift/Reduce conflict
-		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
-		lbag.AddLocation ($$, GetLocation ($2));
-  	  }
 	| additive_expression AS type
 	  {
 		$$ = new As ((Expression) $1, (Expression) $3, GetLocation ($2));

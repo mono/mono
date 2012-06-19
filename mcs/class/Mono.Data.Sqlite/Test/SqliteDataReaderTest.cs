@@ -177,29 +177,35 @@ namespace MonoTests.Mono.Data.Sqlite
 		}
 
 		[Test]
-		public void TestDateTimeType ()
+		public void TestDataTypes ()
 		{
 			_conn.ConnectionString = _connectionString;
 			using (_conn) {
 				_conn.Open();
 				
 				using (var cm = _conn.CreateCommand ()) {
-					cm.CommandText = "DROP TABLE TEST; CREATE TABLE TEST (F2 DATETIME); INSERT INTO TEST (F2) VALUES (:F2)";
+					cm.CommandText = "DROP TABLE TEST; CREATE TABLE TEST (F2 DATETIME, F3 guidblob NOT NULL); INSERT INTO TEST (F2, F3) VALUES (:F2, :F3)";
 
 					var dp2 = cm.CreateParameter ();
 					dp2.ParameterName = ":F2";
 					dp2.Value = DateTime.Now;
 					cm.Parameters.Add (dp2);
+					var dp3 = cm.CreateParameter ();
+					dp3.ParameterName = ":F3";
+					dp3.Value = new byte [] { 3, 14, 15 };
+					cm.Parameters.Add (dp3);
 					
 					cm.ExecuteNonQuery ();
 				}
 				
 				using (var cm = _conn.CreateCommand ()) {
-					cm.CommandText = "SELECT F2 FROM TEST";
+					cm.CommandText = "SELECT * FROM TEST";
 					using (var dr = cm.ExecuteReader ()) {
 						dr.Read ();
 						
-						Assert.AreEqual ("System.DateTime", dr.GetFieldType (dr.GetOrdinal ("F2")).ToString ());
+						Assert.AreEqual ("System.DateTime", dr.GetFieldType (dr.GetOrdinal ("F2")).ToString (), "F2");
+						Assert.AreEqual ("guidblob", dr.GetDataTypeName (dr.GetOrdinal ("F3")), "F3");
+						Assert.AreEqual ("System.Guid", dr.GetFieldType (dr.GetOrdinal ("F3")).ToString (), "F3-#2");
 					}
 				}
 			}

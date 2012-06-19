@@ -2654,7 +2654,12 @@ namespace System.Windows.Forms
 			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
 
 			int pixel_offset = GetColumnStartingPixel (CurrentColumn);
-			int next_pixel_offset = pixel_offset + CurrentTableStyle.GridColumnStyles[CurrentColumn].Width;
+			int next_pixel_offset = pixel_offset;
+
+			if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count)
+			{
+				next_pixel_offset += CurrentTableStyle.GridColumnStyles[CurrentColumn].Width;
+			}
 
 			if (pixel_offset >= horiz_pixeloffset
 			    && next_pixel_offset < horiz_pixeloffset + cells_area.Width)
