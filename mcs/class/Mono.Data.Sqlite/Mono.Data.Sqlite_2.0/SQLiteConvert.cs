@@ -689,6 +689,7 @@ namespace Mono.Data.Sqlite
       new SQLiteTypeNames("GENERAL", DbType.Binary),
       new SQLiteTypeNames("OLEOBJECT", DbType.Binary),
       new SQLiteTypeNames("GUID", DbType.Guid),
+      new SQLiteTypeNames("GUIDBLOB", DbType.Guid),
       new SQLiteTypeNames("UNIQUEIDENTIFIER", DbType.Guid),
       new SQLiteTypeNames("MEMO", DbType.String),
       new SQLiteTypeNames("NOTE", DbType.String),
