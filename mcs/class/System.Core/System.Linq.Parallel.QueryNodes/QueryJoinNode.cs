@@ -82,7 +82,7 @@ namespace System.Linq.Parallel.QueryNodes
 			if (first.Count != second.Count)
 				throw new InvalidOperationException ("Internal size mismatch");
 
-			var store = new ConcurrentDictionary<TKey, Tuple<VSlot<TFirst>, VSlot<TSecond>>> (comparer);
+			var store = new TemporaryArea<TKey, Tuple<VSlot<TFirst>, VSlot<TSecond>>> (comparer);
 
 			return first
 				.Select ((f, i) => GetEnumerable (f, second[i], store, firstKeySelector, secondKeySelector, resultSelector))
@@ -98,7 +98,7 @@ namespace System.Linq.Parallel.QueryNodes
 			if (first.Count != second.Count)
 				throw new InvalidOperationException ("Internal size mismatch");
 
-			var store = new ConcurrentDictionary<TKey, Tuple<VSlot<KeyValuePair<long, TFirst>>, VSlot<KeyValuePair<long, TSecond>>>> (comparer);
+			var store = new TemporaryArea<TKey, Tuple<VSlot<KeyValuePair<long, TFirst>>, VSlot<KeyValuePair<long, TSecond>>>> (comparer);
 			
 			return first
 				.Select ((f, i) => GetEnumerable<KeyValuePair<long, TFirst>, KeyValuePair<long, TSecond>, KeyValuePair<long, TResult>> (f, 
@@ -112,7 +112,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		IEnumerable<T> GetEnumerable<U, V, T> (IEnumerable<U> first, 
 		                                       IEnumerable<V> second,
-		                                       ConcurrentDictionary<TKey, Tuple<VSlot<U>, VSlot<V>>> store,
+		                                       TemporaryArea<TKey, Tuple<VSlot<U>, VSlot<V>>> store,
 		                                       Func<U, TKey> fKeySelect,
 		                                       Func<V, TKey> sKeySelect,
 		                                       Func<U, V, T> resultor)
