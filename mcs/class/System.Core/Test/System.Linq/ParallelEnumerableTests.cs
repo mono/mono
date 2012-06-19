@@ -53,7 +53,7 @@ namespace MonoTests.System.Linq
 		[SetUpAttribute]
 		public void Setup ()
 		{
-			baseEnumerable = Enumerable.Range(1, 10000);
+			baseEnumerable = Enumerable.Range(1, 1000);
 		}
 		
 		void AreEquivalent (IEnumerable<int> syncEnumerable, IEnumerable<int> async_resEnumerable, int count)
@@ -390,7 +390,6 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Fails randomly
 		public void SelectManyOrderedTest ()
 		{
 			IEnumerable<int> initial = Enumerable.Range (1, 50);
@@ -445,7 +444,6 @@ namespace MonoTests.System.Linq
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // Fails randomly
 		public void TestOrderBy ()
 		{
 			ParallelTestHelper.Repeat (() => {
@@ -595,7 +593,6 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Deadlocks randomly
 		public void TestJoin ()
 		{
 			int num = 100;
@@ -605,81 +602,80 @@ namespace MonoTests.System.Linq
 			IEnumerable<int> expected = outer.Join (inner, (e) => e.Item1, (e) => e.Item1, (e1, e2) => e1.Item2 + e2.Item2, EqualityComparer<int>.Default);
 
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<int> actual = outer.AsReallyParallel ().Join (inner.AsParallel (), (e) => e.Item1, (e) => e.Item1, (e1, e2) => e1.Item2 + e2.Item2, EqualityComparer<int>.Default);
-
-					AreEquivalent (expected, actual, 1);
-				});
+				ParallelQuery<int> actual = outer.AsReallyParallel ().Join (inner.AsParallel (),
+				                                                            (e) => e.Item1,
+				                                                            (e) => e.Item1,
+				                                                            (e1, e2) => e1.Item2 + e2.Item2,
+				                                                            EqualityComparer<int>.Default);
+				AreEquivalent (expected, actual, 1);
+			});
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Deadlocks randomly
 		public void TestGroupBy ()
 		{
 			int num = 100;
 			Tuple<int, int>[] source = Enumerable.Range (0, num).Select ((i) => Tuple.Create (i / 10, i)).ToArray ();
 
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<IGrouping<int, int>> actual = source.AsReallyParallel ().GroupBy ((e) => e.Item1, (e) => e.Item2, EqualityComparer<int>.Default);
+				ParallelQuery<IGrouping<int, int>> actual = source.AsReallyParallel ().GroupBy ((e) => e.Item1, (e) => e.Item2, EqualityComparer<int>.Default);
+				foreach (var group in actual) {
+					Assert.GreaterOrEqual (group.Key, 0);
+					Assert.Less (group.Key, num / 10);
 
-					foreach (var group in actual) {
-						Assert.GreaterOrEqual (group.Key, 0);
-						Assert.Less (group.Key, num / 10);
-
-						int count = 0;
-						foreach (var e in group) {
-							count++;
-							Assert.GreaterOrEqual (e, group.Key * 10);
-							Assert.Less (e, (group.Key + 1) * 10);
-						}
-
-						Assert.AreEqual (10, count, "count");
+					int count = 0;
+					foreach (var e in group) {
+						count++;
+						Assert.GreaterOrEqual (e, group.Key * 10);
+						Assert.Less (e, (group.Key + 1) * 10);
 					}
-				});
+
+					Assert.AreEqual (10, count, "count");
+				}
+			});
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // Fails randomly
 		public void TakeTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<int> async_res = baseEnumerable.AsReallyParallel ().AsOrdered ().Take(2000);
-					IEnumerable<int> sync = baseEnumerable.Take(2000);
+				ParallelQuery<int> async_res = baseEnumerable.AsReallyParallel ().AsOrdered ().Take(800);
+				IEnumerable<int> sync = baseEnumerable.Take(800);
 
-					AreEquivalent(sync, async_res, 1);
+				AreEquivalent(sync, async_res, 1);
 
-					async_res = baseEnumerable.AsReallyParallel ().AsOrdered ().Take(100);
-					sync = baseEnumerable.Take(100);
+				async_res = baseEnumerable.AsReallyParallel ().AsOrdered ().Take(100);
+				sync = baseEnumerable.Take(100);
 
-					AreEquivalent(sync, async_res, 2);
-				}, 20);
+				AreEquivalent(sync, async_res, 2);
+			});
 		}
 
 		[TestAttribute]
 		public void UnorderedTakeTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-					ParallelQuery<int> async_res = baseEnumerable.AsReallyParallel ().Take(2000);
-					IEnumerable<int> sync = baseEnumerable.Take (2000);
+				ParallelQuery<int> async_res = baseEnumerable.AsReallyParallel ().Take(800);
+				IEnumerable<int> sync = baseEnumerable.Take (800);
 
-					Assert.AreEqual (sync.Count (), async_res.Count (), "#1");
+				Assert.AreEqual (sync.Count (), async_res.Count (), "#1");
 
-					async_res = baseEnumerable.AsReallyParallel ().Take(100);
-					sync = baseEnumerable.Take(100);
+				async_res = baseEnumerable.AsReallyParallel ().Take(100);
+				sync = baseEnumerable.Take(100);
 
-					Assert.AreEqual (sync.Count (), async_res.Count (), "#2");
-				}, 20);
+				Assert.AreEqual (sync.Count (), async_res.Count (), "#2");
+			});
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // Fails randomly
 		public void SkipTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
-				ParallelQuery<int> async_res = baseEnumerable.AsReallyParallel ().AsOrdered().Skip(2000);
-				IEnumerable<int> sync = baseEnumerable.Skip(2000);
+				ParallelQuery<int> async_res = baseEnumerable.AsReallyParallel ().AsOrdered().Skip (800);
+				IEnumerable<int> sync = baseEnumerable.Skip (800);
 				
-				AreEquivalent(sync, async_res, 1);
-			}, 20);
+				AreEquivalent (sync, async_res, 1);
+			});
 		}
 
 		[Test]
