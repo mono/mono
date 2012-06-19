@@ -2697,6 +2697,13 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void TestInvalidBase64_TooManyPaddings ()
+		{
+			Convert.FromBase64String ("dGVzd===");
+		}
+
+		[Test]
 		public void TestBeginWithSpaces ()
 		{
 			byte[] bb = new byte[] { 1, 2, 3};
