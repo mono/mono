@@ -32,17 +32,21 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	public sealed class SystemAcl : CommonAcl
 	{
-//		RawAcl raw_acl;
-		
 		public SystemAcl (bool isContainer, bool isDS, int capacity)
-			: this (isContainer, isDS, 0, capacity)
+			: this (isContainer, isDS, AclRevision, capacity)
 		{
 		}
 		
 		public SystemAcl (bool isContainer, bool isDS, RawAcl rawAcl)
-			: this (isContainer, isDS, 0)
+			: base (isContainer, isDS,
+			        (rawAcl == null) ? AclRevision : rawAcl.Revision,
+			        0)
 		{
-//			this.raw_acl = rawAcl;
+			if (rawAcl != null)
+			{
+				foreach (var ace in rawAcl)
+					RawAcl.InsertAce(RawAcl.Count, ace);
+			}
 		}
 		
 		public SystemAcl (bool isContainer, bool isDS, byte revision,

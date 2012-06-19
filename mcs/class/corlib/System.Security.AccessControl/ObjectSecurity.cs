@@ -34,6 +34,23 @@ namespace System.Security.AccessControl
 {
 	public abstract class ObjectSecurity
 	{
+		const ControlFlags DaclControlFlags
+		  = ControlFlags.DiscretionaryAclPresent
+		  | ControlFlags.DiscretionaryAclDefaulted
+		  | ControlFlags.DiscretionaryAclUntrusted
+		  | ControlFlags.DiscretionaryAclAutoInheritRequired
+		  | ControlFlags.DiscretionaryAclAutoInherited
+		  | ControlFlags.DiscretionaryAclProtected;
+
+		const ControlFlags SaclControlFlags
+		  = ControlFlags.SystemAclPresent
+		  | ControlFlags.SystemAclDefaulted
+		  | ControlFlags.SystemAclAutoInheritRequired
+		  | ControlFlags.SystemAclAutoInherited
+		  | ControlFlags.SystemAclProtected;
+
+		const string DefaultSd = "";
+
 		internal ObjectSecurity ()
 		{
 			/* Give it a 0-param constructor */
@@ -43,11 +60,13 @@ namespace System.Security.AccessControl
 		{
 			is_container = isContainer;
 			is_ds = isDS;
+			sd = new CommonSecurityDescriptor(isContainer, isDS, DefaultSd);
 		}
 
 		bool is_container, is_ds;
 		bool access_rules_modified, audit_rules_modified;
 		bool group_modified, owner_modified;
+		CommonSecurityDescriptor sd;
 
 		public abstract Type AccessRightType { get; }
 		
@@ -119,46 +138,49 @@ namespace System.Security.AccessControl
 		
 		public abstract AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
 		
-		[MonoTODO]
 		public IdentityReference GetGroup (Type targetType)
 		{
-			throw new NotImplementedException ();
+			if (targetType == typeof(SecurityIdentifier)) {
+				return sd.Group;
+			} else {
+				return sd.Group.Translate (targetType);
+			}
 		}
 		
-		[MonoTODO]
 		public IdentityReference GetOwner (Type targetType)
 		{
-			throw new NotImplementedException ();
+			if (targetType == typeof(SecurityIdentifier)) {
+				return sd.Owner;
+			} else {
+				return sd.Owner.Translate (targetType);
+			}
 		}
 		
-		[MonoTODO]
 		public byte[] GetSecurityDescriptorBinaryForm ()
 		{
-			throw new NotImplementedException ();
+			byte[] binForm = new byte[sd.BinaryLength];
+			sd.GetBinaryForm (binForm, 0);
+			return binForm;
 		}
 		
-		[MonoTODO]
 		public string GetSecurityDescriptorSddlForm (AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			return sd.GetSddlForm (includeSections);
 		}
 		
-		[MonoTODO]
 		public static bool IsSddlConversionSupported ()
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 		
-		[MonoTODO]
 		public virtual bool ModifyAccessRule (AccessControlModification modification, AccessRule rule, out bool modified)
 		{
-			throw new NotImplementedException ();
+			return ModifyAccess(modification, rule, out modified);
 		}
 		
-		[MonoTODO]
 		public virtual bool ModifyAuditRule (AccessControlModification modification, AuditRule rule, out bool modified)
 		{
-			throw new NotImplementedException ();
+			return ModifyAudit(modification, rule, out modified);
 		}
 		
 		[MonoTODO]
@@ -187,40 +209,84 @@ namespace System.Security.AccessControl
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public void SetGroup (IdentityReference identity)
 		{
-			throw new NotImplementedException ();
+			group_modified = true;
+			sd.Group = (SecurityIdentifier)identity.Translate (typeof(SecurityIdentifier));
 		}
 		
-		[MonoTODO]
 		public void SetOwner (IdentityReference identity)
 		{
-			throw new NotImplementedException ();
+			owner_modified = true;
+			sd.Owner = (SecurityIdentifier)identity.Translate (typeof(SecurityIdentifier));
 		}
 		
-		[MonoTODO]
 		public void SetSecurityDescriptorBinaryForm (byte[] binaryForm)
 		{
-			throw new NotImplementedException ();
+			SetSecurityDescriptorBinaryForm (binaryForm, AccessControlSections.All);
 		}
 		
-		[MonoTODO]
 		public void SetSecurityDescriptorBinaryForm (byte[] binaryForm, AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			RawSecurityDescriptor raw_sd = new RawSecurityDescriptor (binaryForm, 0);
+
+			if ((includeSections & AccessControlSections.Owner) != 0) {
+				owner_modified = true;
+				sd.Owner = raw_sd.Owner;
+				SetFlags(raw_sd.ControlFlags, ControlFlags.OwnerDefaulted);
+			}
+
+			if ((includeSections & AccessControlSections.Group) != 0) {
+				group_modified = true;
+				sd.Group = raw_sd.Group;
+				SetFlags(raw_sd.ControlFlags, ControlFlags.GroupDefaulted);
+			}
+			
+			if ((includeSections & AccessControlSections.Audit) != 0) {
+				audit_rules_modified = true;
+				sd.SystemAcl = new SystemAcl(IsContainer, IsDS, raw_sd.SystemAcl);
+				SetFlags(raw_sd.ControlFlags, SaclControlFlags);
+			}
+			
+			if ((includeSections & AccessControlSections.Access) != 0) {
+				access_rules_modified = true;
+				sd.DiscretionaryAcl = new DiscretionaryAcl(IsContainer, IsDS, raw_sd.DiscretionaryAcl);
+				SetFlags(raw_sd.ControlFlags, DaclControlFlags);
+			}
 		}
 		
-		[MonoTODO]
 		public void SetSecurityDescriptorSddlForm (string sddlForm)
 		{
-			throw new NotImplementedException ();
+			SetSecurityDescriptorSddlForm (sddlForm, AccessControlSections.All);
 		}
 
-		[MonoTODO]
 		public void SetSecurityDescriptorSddlForm (string sddlForm, AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			RawSecurityDescriptor raw_sd = new RawSecurityDescriptor (sddlForm);
+
+			if ((includeSections & AccessControlSections.Owner) != 0) {
+				owner_modified = true;
+				sd.Owner = raw_sd.Owner;
+				SetFlags(raw_sd.ControlFlags, ControlFlags.OwnerDefaulted);
+			}
+
+			if ((includeSections & AccessControlSections.Group) != 0) {
+				group_modified = true;
+				sd.Group = raw_sd.Group;
+				SetFlags(raw_sd.ControlFlags, ControlFlags.GroupDefaulted);
+			}
+			
+			if ((includeSections & AccessControlSections.Audit) != 0) {
+				audit_rules_modified = true;
+				sd.SystemAcl = new SystemAcl(IsContainer, IsDS, raw_sd.SystemAcl);
+				SetFlags(raw_sd.ControlFlags, SaclControlFlags);
+			}
+			
+			if ((includeSections & AccessControlSections.Access) != 0) {
+				access_rules_modified = true;
+				sd.DiscretionaryAcl = new DiscretionaryAcl(IsContainer, IsDS, raw_sd.DiscretionaryAcl);
+				SetFlags(raw_sd.ControlFlags, DaclControlFlags);
+			}
 		}
 		
 		protected abstract bool ModifyAccess (AccessControlModification modification, AccessRule rule, out bool modified);
@@ -268,6 +334,15 @@ namespace System.Security.AccessControl
 		{
 			throw new NotImplementedException ();
 		}
+
+		protected CommonSecurityDescriptor SecurityDescriptor
+	  	{
+			get { return sd; }
+		}
+
+		private void SetFlags(ControlFlags flags, ControlFlags which)
+		{
+			sd.SetControlFlags((flags & which) | (sd.ControlFlags & ~which));
+		}
 	}
 }
-

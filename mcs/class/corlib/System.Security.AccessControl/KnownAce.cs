@@ -61,6 +61,9 @@ namespace System.Security.AccessControl
 		
 		internal static string GetSddlAccessRights (int accessMask)
 		{
+			if (accessMask == 0)
+				return "";
+
 			string ret = GetSddlAliasRights(accessMask);
 			if (!string.IsNullOrEmpty(ret))
 				return ret;

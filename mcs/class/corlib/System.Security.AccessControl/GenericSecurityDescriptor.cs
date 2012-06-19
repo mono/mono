@@ -140,7 +140,8 @@ namespace System.Security.AccessControl {
 			}
 			
 			if ((includeSections & AccessControlSections.Access) != 0
-			    && InternalDacl != null) {
+			    && InternalDacl != null
+			    && (ControlFlags & ControlFlags.DiscretionaryAclPresent) != 0) {
 				result.AppendFormat (
 					CultureInfo.InvariantCulture,
 					"D:{0}",
@@ -149,7 +150,8 @@ namespace System.Security.AccessControl {
 			}
 			
 			if ((includeSections & AccessControlSections.Audit) != 0
-			    && InternalSacl != null) {
+			    && InternalSacl != null
+			    && (ControlFlags & ControlFlags.SystemAclPresent) != 0) {
 				result.AppendFormat (
 					CultureInfo.InvariantCulture,
 					"S:{0}",

@@ -28,6 +28,7 @@
 //
 
 using System.Collections.Generic;
+using System.Security.Principal;
 
 namespace System.Security.AccessControl {
 
@@ -38,9 +39,6 @@ namespace System.Security.AccessControl {
 			: base (isContainer, false)
 		{
 		}
-		
-		List<AccessRule> access_rules = new List<AccessRule> ();
-		List<AuditRule> audit_rules = new List<AuditRule> ();
 		
 		public AuthorizationRuleCollection GetAccessRules (bool includeExplicit, bool includeInherited, Type targetType)
 		{
@@ -56,126 +54,108 @@ namespace System.Security.AccessControl {
 		
 		protected void AddAccessRule (AccessRule rule)
 		{
-			access_rules.Add (rule);
-			AccessRulesModified = true;
+			bool modified;
+			ModifyAccessRule(AccessControlModification.Add, rule, out modified);
 		}
 		
 		protected bool RemoveAccessRule (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			return ModifyAccessRule(AccessControlModification.Remove, rule, out modified);
 		}
 		
 		protected void RemoveAccessRuleAll (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAccessRule(AccessControlModification.RemoveAll, rule, out modified);
 		}
 		
 		protected void RemoveAccessRuleSpecific (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAccessRule(AccessControlModification.RemoveSpecific, rule, out modified);
 		}
 		
 		protected void ResetAccessRule (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAccessRule(AccessControlModification.Reset, rule, out modified);
 		}
 		
 		protected void SetAccessRule (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAccessRule(AccessControlModification.Set, rule, out modified);
 		}
 		
 		protected override bool ModifyAccess (AccessControlModification modification, AccessRule rule, out bool modified)
 		{
-			foreach (AccessRule r in access_rules) {
-				if (rule != r)
-					continue;
-				switch (modification) {
-				case AccessControlModification.Add:
-					AddAccessRule (rule);
-					break;
-				case AccessControlModification.Set:
-					SetAccessRule (rule);
-					break;
-				case AccessControlModification.Reset:
-					ResetAccessRule (rule);
-					break;
-				case AccessControlModification.Remove:
-					RemoveAccessRule (rule);
-					break;
-				case AccessControlModification.RemoveAll:
-					RemoveAccessRuleAll (rule);
-					break;
-				case AccessControlModification.RemoveSpecific:
-					RemoveAccessRuleSpecific (rule);
-					break;
-				}
-				modified = true;
-				return true;
+			if (rule == null)
+				throw new ArgumentNullException("rule");
+
+			SecurityIdentifier sid = rule.IdentityReference.Translate(typeof(SecurityIdentifier)) as SecurityIdentifier;
+
+			switch (modification)
+			{
+			case AccessControlModification.Add:
+				SecurityDescriptor.DiscretionaryAcl.AddAccess(rule.AccessControlType, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags);
+				break;
+			default:
+				throw new NotImplementedException();
 			}
-			modified = false;
-			return false;
+
+			modified = true;
+			return true;
 		}
-		
-		// Audit
 		
 		protected void AddAuditRule (AuditRule rule)
 		{
-			audit_rules.Add (rule);
-			AuditRulesModified = true;
+			bool modified;
+			ModifyAuditRule(AccessControlModification.Add, rule, out modified);
 		}
 		
 		protected bool RemoveAuditRule (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			return ModifyAuditRule(AccessControlModification.Remove, rule, out modified);
 		}
 		
 		protected void RemoveAuditRuleAll (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAuditRule(AccessControlModification.RemoveAll, rule, out modified);
 		}
 		
 		protected void RemoveAuditRuleSpecific (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAuditRule(AccessControlModification.RemoveSpecific, rule, out modified);
 		}
 		
 		protected void SetAuditRule (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAuditRule(AccessControlModification.Set, rule, out modified);
 		}
 		
 		protected override bool ModifyAudit (AccessControlModification modification, AuditRule rule, out bool modified)
 		{
-			foreach (AuditRule r in audit_rules) {
-				if (rule != r)
-					continue;
-				switch (modification) {
-				case AccessControlModification.Add:
-					AddAuditRule (rule);
-					break;
-				case AccessControlModification.Set:
-					SetAuditRule (rule);
-					break;
-				//case AccessControlModification.Reset:
-				//	ResetAuditRule (rule);
-				//	break;
-				case AccessControlModification.Remove:
-					RemoveAuditRule (rule);
-					break;
-				case AccessControlModification.RemoveAll:
-					RemoveAuditRuleAll (rule);
-					break;
-				case AccessControlModification.RemoveSpecific:
-					RemoveAuditRuleSpecific (rule);
-					break;
-				}
-				AuditRulesModified = true;
-				modified = true;
-				return true;
+			if (rule == null)
+				throw new ArgumentNullException("rule");
+
+			SecurityIdentifier sid = rule.IdentityReference.Translate(typeof(SecurityIdentifier)) as SecurityIdentifier;
+
+			switch (modification)
+			{
+			case AccessControlModification.Add:
+				SecurityDescriptor.SystemAcl.AddAudit(rule.AuditFlags, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags);
+				break;
+			default:
+				throw new NotImplementedException();
 			}
-			modified = false;
-			return false;
+
+			modified = true;
+			return true;
 		}
 	}
 }

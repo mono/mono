@@ -32,20 +32,23 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	public sealed class DiscretionaryAcl : CommonAcl
 	{
-//		RawAcl raw_acl;
-		
 		public DiscretionaryAcl (bool isContainer, bool isDS,
 					 int capacity)
-			: this (isContainer, isDS, 0, capacity)
+			: this (isContainer, isDS, AclRevision, capacity)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		public DiscretionaryAcl (bool isContainer, bool isDS,
 					 RawAcl rawAcl)
-			: base (isContainer, isDS, 0)
+			: base (isContainer, isDS,
+			        (rawAcl == null) ? AclRevision : rawAcl.Revision,
+			        0)
 		{
-//			this.raw_acl = rawAcl;
+			if (rawAcl != null)
+			{
+				foreach (var ace in rawAcl)
+					RawAcl.InsertAce(RawAcl.Count, ace);
+			}
 		}
 		
 		public DiscretionaryAcl (bool isContainer, bool isDS,
