@@ -2423,6 +2423,23 @@ namespace MonoTests.System.Windows.Forms
 			DataGridView gdv = new DataGridView ();
 			Assert.IsNull (gdv.RowTemplate.DataGridView, "#1");
 		}
+
+		[Test] // Xamarin bug 2392
+		public void RowHeightInVirtualMode ()
+		{
+			using (var dgv = new DataGridView ()) {
+				dgv.RowHeightInfoNeeded += (sender, e) => {
+					e.Height = 50;
+					e.MinimumHeight = 30;
+				};
+				dgv.VirtualMode = true;
+				dgv.RowCount = 2;
+				Assert.AreEqual (50, dgv.Rows [0].Height);
+				Assert.AreEqual (30, dgv.Rows [0].MinimumHeight);
+				Assert.AreEqual (50, dgv.Rows [1].Height);
+				Assert.AreEqual (30, dgv.Rows [1].MinimumHeight);
+			}
+		}
 	}
 	
 	[TestFixture]

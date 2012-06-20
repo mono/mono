@@ -1036,8 +1036,14 @@ namespace System.Windows.Forms {
 				} else if (value > rows.Count) {
 					// If we need to add rows and don't have any columns,
 					// we create one column
-					if (ColumnCount == 0)
-						ColumnCount = 1;
+					if (ColumnCount == 0) {
+						System.Diagnostics.Debug.Assert (rows.Count == 0);
+						ColumnCount = 1; // this creates the edit row
+						if (VirtualMode) {
+							// update edit row height
+							UpdateRowHeightInfo (0, false);
+						}
+					}
 
 					List<DataGridViewRow> newRows = new List<DataGridViewRow> (value - rows.Count);
 					for (int i = rows.Count; i < value; i++)
@@ -5079,6 +5085,11 @@ namespace System.Windows.Forms {
 				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, true);
 
 			AutoResizeColumnsInternal ();
+			if (VirtualMode) {
+				for (int i = 0; i < e.RowCount; i++)
+					UpdateRowHeightInfo (e.RowIndex + i, false);
+			}
+
 			Invalidate ();
 			OnRowsAdded (e);
 		}
