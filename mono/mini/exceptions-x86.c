@@ -171,7 +171,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 	mono_jit_walk_stack_from_ctx_in_thread (win32_stack_overflow_walk, domain, &ctx, FALSE, mono_thread_current (), lmf, &stack_overflow_data);
 
 	/* convert into sigcontext to be used in mono_arch_handle_exception */
-	mono_arch_monoctx_to_sigctx (&ctx, sctx);
+	mono_arch_monoctx_to_sigctx (&(stack_overflow_data.ctx), sctx);
 
 	/* the new stack-guard page is installed in mono_handle_exception_internal using _resetstkoflw */
 
