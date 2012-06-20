@@ -29,6 +29,7 @@
 using System.Drawing;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms {
 	internal abstract class XplatUIDriver {
@@ -269,7 +270,37 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// XplatUI Driver Properties
 
-		internal abstract event EventHandler Idle;
+		internal Dictionary<int, EventHandler> Idle_Threads = null;
+		internal virtual event EventHandler Idle {
+			add {
+				lock (this) {
+					if (Idle_Threads == null) {
+						Idle_Threads = 
+						  new Dictionary<int, EventHandler> ();
+					}
+				}
+				int id = Thread.CurrentThread.ManagedThreadId;
+				if (!Idle_Threads.ContainsKey (id)) {
+					EventHandler hnd = null;
+					hnd += value;
+					Idle_Threads.Add (id, hnd);
+				} else {
+					Idle_Threads[id] += value;
+				}
+			}
+			remove {
+				if (Idle_Threads != null){
+					int id = 
+					  Thread.CurrentThread.ManagedThreadId;
+					if (Idle_Threads.ContainsKey (id)) {
+						Idle_Threads [id] -= value;
+						if (Idle_Threads [id] == null) {
+							Idle_Threads.Remove (id);
+						}
+					}
+				}
+			}
+		}
 
 		#region XplatUI Driver Methods
 		internal abstract void AudibleAlert(AlertType alert);
