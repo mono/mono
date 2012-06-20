@@ -599,7 +599,6 @@ namespace System.IO.Ports
 			return stream.Read (buffer, offset, count);
 		}
 
-		[MonoTODO("Read of char buffers is currently broken")]
 		public int Read (char[] buffer, int offset, int count)
 		{
 			CheckOpen ();
@@ -612,10 +611,11 @@ namespace System.IO.Ports
 				throw new ArgumentException ("offset+count",
 							      "The size of the buffer is less than offset + count.");
 
-			// The following code does not work, we nee to reintroduce a buffer stream somewhere
-			// for this to work;  In addition the code is broken.
-			byte [] bytes = encoding.GetBytes (buffer, offset, count);
-			return stream.Read (bytes, 0, bytes.Length);
+			int c, i;
+			for (i = 0; i < count && (c = ReadChar ()) != -1; i++)
+				buffer[offset + i] = (char) c;
+
+			return i;
 		}
 
 		internal int read_byte ()
