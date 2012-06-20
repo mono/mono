@@ -463,6 +463,46 @@ namespace MonoTests.System.Collections.Generic
 			Assert.IsTrue(sl.Keys[1] == 2, "NCIC #D2");
 			Assert.IsTrue(sl.Keys[2] == 3, "NCIC #D3");
 		}
+
+		class Uncomparable : IComparer<double>
+		{
+			public int Compare (double x, double y)
+			{
+				throw new DivideByZeroException ();
+			}
+		}
+
+		[Test]
+		// Bug #4327
+		public void UncomparableList ()
+		{
+			var list = new SortedList<double, int> (new Uncomparable ());
+
+			list.Add (Math.PI, 1);
+
+			try {
+				list.Add (Math.E, 2);
+				Assert.Fail ("UC #1");
+			} catch (Exception ex) {
+				Assert.IsInstanceOfType (
+					typeof (InvalidOperationException), ex, "UC #2");
+				Assert.That (ex.InnerException != null, "UC #3");
+				Assert.IsInstanceOfType (
+					typeof (DivideByZeroException), ex.InnerException, "UC #4");
+			}
+
+			try {
+				int a;
+				list.TryGetValue (Math.E, out a);
+				Assert.Fail ("UC #5");
+			} catch (Exception ex) {
+				Assert.IsInstanceOfType (
+					typeof (InvalidOperationException), ex, "UC #5");
+				Assert.That (ex.InnerException != null, "UC #6");
+				Assert.IsInstanceOfType (
+					typeof (DivideByZeroException), ex.InnerException, "UC #7");
+			}
+		}
 	}
 }
 
