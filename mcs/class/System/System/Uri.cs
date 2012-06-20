@@ -773,6 +773,7 @@ namespace System {
 					if (i + 1 < len && name [i + 1] == '.')
 						return false;
 					count = 0;
+					continue;
 				} else if (!Char.IsLetterOrDigit (c) && c != '-' && c != '_') {
 					return false;
 				}
