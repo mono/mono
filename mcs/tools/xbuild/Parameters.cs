@@ -104,7 +104,7 @@ namespace Mono.XBuild.CommandLine {
 			foreach (string s in flatArguments) {
 				if (s [0] != '/')
 					remainingArguments.Add (s);
-				if (!ParseFlatArgument (s))
+				else if (!ParseFlatArgument (s))
 					ReportError (1, "Unknown switch: " + s);
 			}
 			if (remainingArguments.Count == 0) {
