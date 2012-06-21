@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace Mono.CSharp
 {
@@ -29,6 +30,7 @@ namespace Mono.CSharp
 	class Driver
 	{
 		readonly CompilerContext ctx;
+		MD5 md5;
 
 		public Driver (CompilerContext ctx)
 		{
@@ -109,6 +111,15 @@ namespace Mono.CSharp
 			SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
 
 			Parse (reader, file, module);
+
+			if (ctx.Settings.GenerateDebugInfo && ctx.Report.Errors == 0 && !file.HasChecksum) {
+				input.Position = 0;
+				if (md5 == null)
+					md5 = MD5.Create ();
+
+				file.SetChecksum (md5.ComputeHash (input));
+			}
+
 			reader.Dispose ();
 			input.Close ();
 		}

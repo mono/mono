@@ -683,8 +683,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			creating = true;
 		}
 
-		public SourceFileEntry (MonoSymbolFile file, string file_name,
-					byte[] guid, byte[] checksum)
+		public SourceFileEntry (MonoSymbolFile file, string file_name, byte[] guid, byte[] checksum)
 			: this (file, file_name)
 		{
 			this.guid = guid;
@@ -702,13 +701,15 @@ namespace Mono.CompilerServices.SymbolWriter
 			DataOffset = (int) bw.BaseStream.Position;
 			bw.Write (file_name);
 
-			if (guid == null) {
-				guid = Guid.NewGuid ().ToByteArray ();
+			if (guid == null)
+				guid = new byte[16];
+
+			if (hash == null) {
 				try {
-					using (FileStream fs = new FileStream (file_name, FileMode.Open, FileAccess.Read)) {
-						MD5 md5 = MD5.Create ();
-						hash = md5.ComputeHash (fs);
-					}
+				    using (FileStream fs = new FileStream (file_name, FileMode.Open, FileAccess.Read)) {
+				        MD5 md5 = MD5.Create ();
+				        hash = md5.ComputeHash (fs);
+				    }
 				} catch {
 					hash = new byte [16];
 				}
