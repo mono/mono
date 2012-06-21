@@ -73,7 +73,7 @@ namespace System {
 				return elements.host;
 			case UriComponents.Port: {
 				string p = elements.port;
-				if (p != null && p != String.Empty && p != dp.ToString ())
+				if (p != null && p.Length != 0 && p != dp.ToString ())
 					return p;
 				return String.Empty;
 			}
@@ -84,7 +84,7 @@ namespace System {
 			case UriComponents.Fragment:
 				return Format (elements.fragment, format);
 			case UriComponents.StrongPort: {
-				return elements.port != String.Empty ? elements.port : dp.ToString ();
+				return elements.port.Length != 0 ? elements.port : dp.ToString ();
 			}
 			case UriComponents.SerializationInfoString:
 				components = UriComponents.AbsoluteUri;
@@ -115,7 +115,7 @@ namespace System {
 			// otherwise only display if ut's not the default port
 			if ((components & UriComponents.StrongPort) != 0) {
 				sb.Append (":");
-				if (elements.port != String.Empty) {
+				if (elements.port.Length != 0) {
 					sb.Append (elements.port);
 				} else {
 					sb.Append (dp);
@@ -124,7 +124,7 @@ namespace System {
 
 			if ((components & UriComponents.Port) != 0) {
 				string p = elements.port;
-				if (p != null && p != String.Empty && p != dp.ToString ()) {
+				if (p != null && p.Length != 0 && p != dp.ToString ()) {
 					sb.Append (":");
 					sb.Append (elements.port);
 				}
@@ -132,7 +132,7 @@ namespace System {
 
 			if ((components & UriComponents.Path) != 0) {
 				if ((components & UriComponents.PathAndQuery) != 0 &&
-					(elements.path == String.Empty || !elements.path.StartsWith ("/")))
+					(elements.path.Length == 0 || !elements.path.StartsWith ("/")))
 					sb.Append ("/");
 				sb.Append (elements.path);
 			}
