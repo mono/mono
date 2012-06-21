@@ -1232,6 +1232,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("BAD", cmbbox.Text, "#J2");
 			Assert.AreEqual (4, cmbbox.SelectedIndex, "#J3");
 
+			cmbbox.Text = "Something";
+			Assert.IsNotNull (cmbbox.Text, "#T1");
+			Assert.AreEqual ("Something", cmbbox.Text, "#T2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#T3");
+
+			cmbbox.Text = "BAD";
+			Assert.IsNotNull (cmbbox.Text, "#U1");
+			Assert.AreEqual ("BAD", cmbbox.Text, "#U2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#U3");
+
 			cmbbox.Text = "baD";
 			Assert.IsNotNull (cmbbox.Text, "#K1");
 			Assert.AreEqual ("Bad", cmbbox.Text, "#K2");

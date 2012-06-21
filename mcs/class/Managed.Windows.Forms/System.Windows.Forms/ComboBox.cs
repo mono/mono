@@ -747,22 +747,22 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				// do nothing if value exactly matches text of selected item
-				if (SelectedItem != null && string.Compare (value, GetItemText (SelectedItem), false, CultureInfo.CurrentCulture) == 0)
-					return;
-
-				// find exact match using case-sensitive comparison, and if does
-				// not result in any match then use case-insensitive comparison
-				int index = FindStringExact (value, -1, false);
-				if (index == -1) {
-					index = FindStringExact (value, -1, true);
+				// don't set the index if value exactly matches text of selected item
+				if (SelectedItem == null || string.Compare (value, GetItemText (SelectedItem), false, CultureInfo.CurrentCulture) != 0)
+				{
+					// find exact match using case-sensitive comparison, and if does
+					// not result in any match then use case-insensitive comparison
+					int index = FindStringExact (value, -1, false);
+					if (index == -1) {
+						index = FindStringExact (value, -1, true);
+					}
+					if (index != -1) {
+						SelectedIndex = index;
+						return;
+					}
 				}
-				if (index != -1) {
-					SelectedIndex = index;
-					return;
-				}
 
-				// set directly the passed value, since we already know it's not matching any item
+				// set directly the passed value
 				if (dropdown_style != ComboBoxStyle.DropDownList)
 					textbox_ctrl.Text = value;
 			}
