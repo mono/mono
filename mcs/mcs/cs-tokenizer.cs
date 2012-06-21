@@ -2162,7 +2162,7 @@ namespace Mono.CSharp
 			//
 			// The syntax is ` "foo.txt" "{guid}" "hash"'
 			//
-			// guid is predefined hash algorith guid {406ea660-64cf-4c82-b6f0-42d48172a799} for md5
+			// guid is predefined hash algorithm guid {406ea660-64cf-4c82-b6f0-42d48172a799} for md5
 			//
 			int c = get_char ();
 
