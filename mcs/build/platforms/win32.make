@@ -4,7 +4,7 @@
 #
 
 PLATFORM_DEBUG_FLAGS = /debug+ /debug:full
-PLATFORM_MCS_FLAGS = /nologo /optimize
+PLATFORM_MCS_FLAGS = /nologo
 PLATFORM_RUNTIME = 
 PLATFORM_CORLIB = mscorlib.dll
 PLATFORM_TEST_HARNESS_EXCLUDES =
