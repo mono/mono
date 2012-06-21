@@ -476,6 +476,7 @@ namespace System.Threading {
 		}
 		
 		// part of ".NETPortable,Version=v4.0,Profile=Profile3" i.e. FX4 and SL4
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		~Thread ()
 		{
 		}
