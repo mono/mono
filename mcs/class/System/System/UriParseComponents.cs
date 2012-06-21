@@ -102,7 +102,7 @@ namespace System {
 		{
 			string part = state.remaining;
 			
-			if(part[0] != '/' && part[1] != '/')
+			if (part.Length < 2 || part [0] != '/' || part [1] != '/')
 				return part.Length > 0;
 			
 			state.remaining = part.Substring (2);
