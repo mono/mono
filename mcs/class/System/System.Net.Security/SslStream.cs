@@ -453,7 +453,7 @@ namespace System.Net.Security
 
 			ssl_stream = s;
 
-			return BeginRead (new byte[0], 0, 0, asyncCallback, asyncState);
+			return BeginWrite (new byte[0], 0, 0, asyncCallback, asyncState);
 		}
 #endif
 		MonoSecurityProtocolType GetMonoSslProtocol (SslProtocols ms)
