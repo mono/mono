@@ -879,7 +879,7 @@ fail_no_space:
 		if (emitIdentifier)
 			return new byte [] { 0xEF, 0xBB, 0xBF };
 
-		return new byte [0];
+		return empty;
 	}
 
 	// Determine if this object is equal to another.
