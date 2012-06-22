@@ -1,0 +1,3 @@
+2012-06-21  Maciej Paszta <maciej.paszta@gmail.com>
+
+	* SslStreamTest.cs: Added tests for SslStream.
