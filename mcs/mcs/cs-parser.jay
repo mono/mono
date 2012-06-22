@@ -76,7 +76,7 @@ namespace Mono.CSharp
 		///
 		/// An out-of-band stack.
 		///
-		static Stack<object> oob_stack;
+		Stack<object> oob_stack;
 
 		///
 		/// Controls the verbosity of the errors produced by the parser
@@ -132,7 +132,7 @@ namespace Mono.CSharp
 		// share the bucket for very common constructs which can never
 		// be recursive
 		//
-		static List<Parameter> parameters_bucket = new List<Parameter> (6);
+		List<Parameter> parameters_bucket;
 		
 		//
 		// Full AST support members
@@ -4822,7 +4822,7 @@ identifier_inside_body
 	  {
 		if (async_block) {
 			report.Error (4003, GetLocation ($1), "`await' cannot be used as an identifier within an async method or lambda expression");
-			$$ = Tokenizer.LocatedToken.Create ("await", GetLocation ($1));
+			$$ = new Tokenizer.LocatedToken ("await", GetLocation ($1));
 		}
 	  }
 	;
@@ -6574,17 +6574,12 @@ public Tokenizer Lexer {
 	}
 }		   
 
-static CSharpParser ()
-{
-	oob_stack = new Stack<object> ();
-}
-
-public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file)
-	: this (reader, file, file.Compiler.Report)
+public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, ParserSession session)
+	: this (reader, file, file.Compiler.Report, session)
 {
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Report report)
+public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Report report, ParserSession session)
 {
 	this.file = file;
 	current_container = current_namespace = file;
@@ -6597,22 +6592,16 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Re
 	lang_version = settings.Version;
 	yacc_verbose_flag = settings.VerboseParserFlag;
 	doc_support = settings.DocumentationFile != null;
-	oob_stack.Clear ();
-	lexer = new Tokenizer (reader, file);
-
-#if FULL_AST
-	lbag = new LocationsBag ();
-#else
-	lbag = null;
-#endif
-	
-	use_global_stacks = true;
+	lexer = new Tokenizer (reader, file, session);
+	oob_stack = new Stack<object> ();
+	lbag = session.LocationsBag;
+	use_global_stacks = session.UseJayGlobalArrays;
+	parameters_bucket = session.ParametersStack;
 }
 
 public void parse ()
 {
 	eof_token = Token.EOF;
-	Tokenizer.LocatedToken.Initialize ();
 	
 	try {
 		if (yacc_verbose_flag > 1)
@@ -6677,12 +6666,6 @@ Location GetLocation (object obj)
 		return expr.Location;
 
 	return lexer.Location;
-}
-
-public LocationsBag LocationsBag {
-	get {
-		return lbag;
-	}
 }
 
 void start_block (Location loc)

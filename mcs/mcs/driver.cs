@@ -20,7 +20,6 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Diagnostics;
-using System.Security.Cryptography;
 
 namespace Mono.CSharp
 {
@@ -30,7 +29,6 @@ namespace Mono.CSharp
 	class Driver
 	{
 		readonly CompilerContext ctx;
-		MD5 md5;
 
 		public Driver (CompilerContext ctx)
 		{
@@ -43,7 +41,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		void tokenize_file (SourceFile sourceFile, ModuleContainer module)
+		void tokenize_file (SourceFile sourceFile, ModuleContainer module, ParserSession session)
 		{
 			Stream input;
 
@@ -58,7 +56,7 @@ namespace Mono.CSharp
 				SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
 				var file = new CompilationSourceFile (module, sourceFile);
 
-				Tokenizer lexer = new Tokenizer (reader, file);
+				Tokenizer lexer = new Tokenizer (reader, file, session);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -79,16 +77,21 @@ namespace Mono.CSharp
 
 			Location.Initialize (sources);
 
+			var session = new ParserSession () {
+				UseJayGlobalArrays = true,
+				LocatedTokens = new Tokenizer.LocatedToken[15000]
+			};
+
 			for (int i = 0; i < sources.Count; ++i) {
 				if (tokenize_only) {
-					tokenize_file (sources[i], module);
+					tokenize_file (sources[i], module, session);
 				} else {
-					Parse (sources[i], module);
+					Parse (sources[i], module, session);
 				}
 			}
 		}
 
-		public void Parse (SourceFile file, ModuleContainer module)
+		public void Parse (SourceFile file, ModuleContainer module, ParserSession session)
 		{
 			Stream input;
 
@@ -108,28 +111,26 @@ namespace Mono.CSharp
 			}
 
 			input.Position = 0;
-			SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
+			SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding, session.StreamReaderBuffer);
 
-			Parse (reader, file, module);
+			Parse (reader, file, module, session);
 
 			if (ctx.Settings.GenerateDebugInfo && ctx.Report.Errors == 0 && !file.HasChecksum) {
 				input.Position = 0;
-				if (md5 == null)
-					md5 = MD5.Create ();
-
-				file.SetChecksum (md5.ComputeHash (input));
+				var checksum = session.GetChecksumAlgorithm ();
+				file.SetChecksum (checksum.ComputeHash (input));
 			}
 
 			reader.Dispose ();
 			input.Close ();
 		}
 
-		public static void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module)
+		public static void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module, ParserSession session)
 		{
 			var file = new CompilationSourceFile (module, sourceFile);
 			module.AddTypeContainer (file);
 
-			CSharpParser parser = new CSharpParser (reader, file);
+			CSharpParser parser = new CSharpParser (reader, file, session);
 			parser.parse ();
 		}
 		

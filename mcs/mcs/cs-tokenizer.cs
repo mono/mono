@@ -74,27 +74,60 @@ namespace Mono.CSharp
 		//
 		public class LocatedToken
 		{
-			int row, column;
-			string value;
+			public int row, column;
+			public string value;
 
-			static LocatedToken[] buffer = new LocatedToken[0];
-			static int pos;
-
-			private LocatedToken ()
+			public LocatedToken ()
 			{
 			}
 
-			public static LocatedToken Create (int row, int column)
+			public LocatedToken (string value, Location loc)
+			{
+				this.value = value;
+				row = loc.Row;
+				column = loc.Column;
+			}
+
+			public override string ToString ()
+			{
+				return string.Format ("Token '{0}' at {1},{2}", Value, row, column);
+			}
+			
+			public Location Location {
+				get { return new Location (row, column); }
+			}
+
+			public string Value {
+				get { return value; }
+			}
+		}
+
+		public class LocatedTokenBuffer
+		{
+			readonly LocatedToken[] buffer;
+			public int pos;
+
+			public LocatedTokenBuffer ()
+			{
+				buffer = new LocatedToken[0];
+			}
+
+			public LocatedTokenBuffer (LocatedToken[] buffer)
+			{
+				this.buffer = buffer ?? new LocatedToken[0];
+			}
+
+			public LocatedToken Create (int row, int column)
 			{
 				return Create (null, row, column);
 			}
 
-			public static LocatedToken Create (string value, Location loc)
+			public LocatedToken Create (string value, Location loc)
 			{
 				return Create (value, loc.Row, loc.Column);
 			}
-			
-			public static LocatedToken Create (string value, int row, int column)
+
+			public LocatedToken Create (string value, int row, int column)
 			{
 				//
 				// TODO: I am not very happy about the logic but it's the best
@@ -108,10 +141,10 @@ namespace Mono.CSharp
 				if (pos >= buffer.Length) {
 					entry = new LocatedToken ();
 				} else {
-					entry = buffer [pos];
+					entry = buffer[pos];
 					if (entry == null) {
 						entry = new LocatedToken ();
-						buffer [pos] = entry;
+						buffer[pos] = entry;
 					}
 
 					++pos;
@@ -126,31 +159,9 @@ namespace Mono.CSharp
 			// Used for token not required by expression evaluator
 			//
 			[Conditional ("FULL_AST")]
-			public static void CreateOptional (int row, int col, ref object token)
+			public void CreateOptional (int row, int col, ref object token)
 			{
 				token = Create (row, col);
-			}
-			
-			public static void Initialize ()
-			{
-#if !FULL_AST
-				if (buffer.Length == 0)
-					buffer = new LocatedToken [15000];
-#endif
-				pos = 0;
-			}
-
-			public override string ToString ()
-			{
-				return string.Format ("Token '{0}' at {1},{2}", Value, row, column);
-			}
-			
-			public Location Location {
-				get { return new Location (row, column); }
-			}
-
-			public string Value {
-				get { return value; }
 			}
 		}
 
@@ -195,6 +206,7 @@ namespace Mono.CSharp
 		List<Location> escaped_identifiers;
 		int parsing_generic_less_than;
 		readonly bool doc_processing;
+		readonly LocatedTokenBuffer ltb;
 		
 		//
 		// Used mainly for parser optimizations. Some expressions for instance
@@ -357,28 +369,15 @@ namespace Mono.CSharp
 		//
 		Stack<int> ifstack;
 
-		const int max_id_size = 512;
-		const int max_number_size = 512;
+		public const int MaxIdentifierLength = 512;
+		public const int MaxNumberLength = 512;
 
-#if FULL_AST
-		readonly char [] id_builder = new char [max_id_size];
-
-		Dictionary<char[], string>[] identifiers = new Dictionary<char[], string>[max_id_size + 1];
-
-		char [] number_builder = new char [max_number_size];
+		readonly char[] id_builder;
+		readonly Dictionary<char[], string>[] identifiers;
+		readonly char[] number_builder;
 		int number_pos;
 
-		char[] value_builder = new char[256];
-#else
-		static readonly char [] id_builder = new char [max_id_size];
-
-		static Dictionary<char[], string>[] identifiers = new Dictionary<char[], string>[max_id_size + 1];
-
-		static char [] number_builder = new char [max_number_size];
-		static int number_pos;
-
-		static char[] value_builder = new char[256];
-#endif
+		char[] value_builder = new char[64];
 
 		public int Line {
 			get {
@@ -429,11 +428,15 @@ namespace Mono.CSharp
 			}
 		}
 
-		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file)
+		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, ParserSession session)
 		{
 			this.source_file = file;
 			this.context = file.Compiler;
 			this.current_source = file.SourceFile;
+			this.identifiers = session.Identifiers;
+			this.id_builder = session.IDBuilder;
+			this.number_builder = session.NumberBuilder;
+			this.ltb = new LocatedTokenBuffer (session.LocatedTokens);
 
 			reader = input;
 
@@ -1319,7 +1322,7 @@ namespace Mono.CSharp
 			bool seen_digits = false;
 			
 			if (c != -1){
-				if (number_pos == max_number_size)
+				if (number_pos == MaxNumberLength)
 					Error_NumericConstantTooLong ();
 				number_builder [number_pos++] = (char) c;
 			}
@@ -1330,7 +1333,7 @@ namespace Mono.CSharp
 			//
 			while ((d = peek_char2 ()) != -1){
 				if (d >= '0' && d <= '9'){
-					if (number_pos == max_number_size)
+					if (number_pos == MaxNumberLength)
 						Error_NumericConstantTooLong ();
 					number_builder [number_pos++] = (char) d;
 					get_char ();
@@ -1595,23 +1598,23 @@ namespace Mono.CSharp
 			
 			if (c == 'e' || c == 'E'){
 				is_real = true;
-				if (number_pos == max_number_size)
+				if (number_pos == MaxNumberLength)
 					Error_NumericConstantTooLong ();
 				number_builder [number_pos++] = (char) c;
 				c = get_char ();
 				
 				if (c == '+'){
-					if (number_pos == max_number_size)
+					if (number_pos == MaxNumberLength)
 						Error_NumericConstantTooLong ();
 					number_builder [number_pos++] = '+';
 					c = -1;
 				} else if (c == '-') {
-					if (number_pos == max_number_size)
+					if (number_pos == MaxNumberLength)
 						Error_NumericConstantTooLong ();
 					number_builder [number_pos++] = '-';
 					c = -1;
 				} else {
-					if (number_pos == max_number_size)
+					if (number_pos == MaxNumberLength)
 						Error_NumericConstantTooLong ();
 					number_builder [number_pos++] = '+';
 				}
@@ -1944,7 +1947,7 @@ namespace Mono.CSharp
 			}
 
 			if (pos != 0) {
-				if (pos > max_id_size)
+				if (pos > MaxIdentifierLength)
 					arg = new string (value_builder, 0, pos);
 				else
 					arg = InternIdentifier (value_builder, pos);
@@ -2259,9 +2262,6 @@ namespace Mono.CSharp
 			return true;
 		}
 
-#if !FULL_AST
-		static
-#endif
 		bool IsTokenIdentifierEqual (char[] identifier)
 		{
 			for (int i = 0; i < identifier.Length; ++i) {
@@ -2995,22 +2995,19 @@ namespace Mono.CSharp
 			if (id_builder [0] >= '_' && !quoted) {
 				int keyword = GetKeyword (id_builder, pos);
 				if (keyword != -1) {
-					val = LocatedToken.Create (keyword == Token.AWAIT ? "await" : null, ref_line, column);
+					val = ltb.Create (keyword == Token.AWAIT ? "await" : null, ref_line, column);
 					return keyword;
 				}
 			}
 
 			string s = InternIdentifier (id_builder, pos);
-			val = LocatedToken.Create (s, ref_line, column);
+			val = ltb.Create (s, ref_line, column);
 			if (quoted && parsing_attribute_section)
 				AddEscapedIdentifier (((LocatedToken) val).Location);
 
 			return Token.IDENTIFIER;
 		}
 
-#if !FULL_AST
-		static
-#endif
 		string InternIdentifier (char[] charBuffer, int length)
 		{
 			//
@@ -3075,17 +3072,17 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 
 				case '{':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					return Token.OPEN_BRACE;
 				case '}':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					return Token.CLOSE_BRACE;
 				case '[':
 					// To block doccomment inside attribute declaration.
 					if (doc_state == XmlCommentState.Allowed)
 						doc_state = XmlCommentState.NotAllowed;
 
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 
 					if (parsing_block == 0 || lambda_arguments_parsing)
 						return Token.OPEN_BRACKET;
@@ -3111,10 +3108,10 @@ namespace Mono.CSharp
 						return Token.OPEN_BRACKET_EXPR;
 					}
 				case ']':
-					LocatedToken.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (ref_line, col, ref val);
 					return Token.CLOSE_BRACKET;
 				case '(':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					//
 					// An expression versions of parens can appear in block context only
 					//
@@ -3159,29 +3156,29 @@ namespace Mono.CSharp
 
 					return Token.OPEN_PARENS;
 				case ')':
-					LocatedToken.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (ref_line, col, ref val);
 					return Token.CLOSE_PARENS;
 				case ',':
-					LocatedToken.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (ref_line, col, ref val);
 					return Token.COMMA;
 				case ';':
-					LocatedToken.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (ref_line, col, ref val);
 					return Token.SEMICOLON;
 				case '~':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					return Token.TILDE;
 				case '?':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					return TokenizePossibleNullableType ();
 				case '<':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					if (parsing_generic_less_than++ > 0)
 						return Token.OP_GENERICS_LT;
 
 					return TokenizeLessThan ();
 
 				case '>':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					d = peek_char ();
 
 					if (d == '='){
@@ -3208,7 +3205,7 @@ namespace Mono.CSharp
 					return Token.OP_GT;
 
 				case '+':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '+') {
 						d = Token.OP_INC;
@@ -3221,7 +3218,7 @@ namespace Mono.CSharp
 					return d;
 
 				case '-':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '-') {
 						d = Token.OP_DEC;
@@ -3236,7 +3233,7 @@ namespace Mono.CSharp
 					return d;
 
 				case '!':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_NE;
@@ -3244,7 +3241,7 @@ namespace Mono.CSharp
 					return Token.BANG;
 
 				case '=':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '='){
 						get_char ();
@@ -3258,7 +3255,7 @@ namespace Mono.CSharp
 					return Token.ASSIGN;
 
 				case '&':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '&'){
 						get_char ();
@@ -3271,7 +3268,7 @@ namespace Mono.CSharp
 					return Token.BITWISE_AND;
 
 				case '|':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '|'){
 						get_char ();
@@ -3284,7 +3281,7 @@ namespace Mono.CSharp
 					return Token.BITWISE_OR;
 
 				case '*':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_MULT_ASSIGN;
@@ -3294,7 +3291,7 @@ namespace Mono.CSharp
 				case '/':
 					d = peek_char ();
 					if (d == '='){
-						val = LocatedToken.Create (ref_line, col);
+						val = ltb.Create (ref_line, col);
 						get_char ();
 						return Token.OP_DIV_ASSIGN;
 					}
@@ -3373,11 +3370,11 @@ namespace Mono.CSharp
 							update_formatted_doc_comment (current_comment_start);
 						continue;
 					}
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					return Token.DIV;
 
 				case '%':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_MOD_ASSIGN;
@@ -3385,7 +3382,7 @@ namespace Mono.CSharp
 					return Token.PERCENT;
 
 				case '^':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_XOR_ASSIGN;
@@ -3393,7 +3390,7 @@ namespace Mono.CSharp
 					return Token.CARRET;
 
 				case ':':
-					val = LocatedToken.Create (ref_line, col);
+					val = ltb.Create (ref_line, col);
 					if (peek_char () == ':') {
 						get_char ();
 						return Token.DOUBLE_COLON;
@@ -3417,7 +3414,7 @@ namespace Mono.CSharp
 					if (d >= '0' && d <= '9')
 						return is_number (c);
 
-					LocatedToken.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (ref_line, col, ref val);
 					return Token.DOT;
 				
 				case '#':
