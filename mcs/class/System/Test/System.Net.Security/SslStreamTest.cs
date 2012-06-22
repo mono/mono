@@ -5,7 +5,7 @@
 // Author:
 //      Maciej Paszta (maciej.paszta@gmail.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) Maciej Paszta, 2012
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

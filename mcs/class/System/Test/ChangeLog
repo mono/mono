@@ -1,7 +1,3 @@
-2012-06-21  Maciej Paszta <maciej.paszta@gmail.com>
-
-	* System.Net.Security: New test directory.
-
 2010-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* System.IO.Ports: New test directory.
