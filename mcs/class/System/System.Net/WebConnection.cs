@@ -433,7 +433,12 @@ namespace System.Net
 			int nread = -1;
 			try {
 				nread = ns.EndRead (result);
+			} catch (ObjectDisposedException) {
+				return;
 			} catch (Exception e) {
+				if (e.InnerException is ObjectDisposedException)
+					return;
+
 				cnc.HandleError (WebExceptionStatus.ReceiveFailure, e, "ReadDone1");
 				return;
 			}
@@ -655,8 +660,7 @@ namespace System.Net
 				return;
 
 			keepAlive = request.KeepAlive;
-			Data = new WebConnectionData ();
-			Data.request = request;
+			Data = new WebConnectionData (request);
 		retry:
 			Connect (request);
 			if (request.Aborted)
@@ -713,7 +717,8 @@ namespace System.Net
 		{
 			lock (queue) {
 				if (queue.Count > 0) {
-					SendRequest ((HttpWebRequest) queue.Dequeue ());
+					Data.request = (HttpWebRequest) queue.Dequeue ();
+					SendRequest (Data.request);
 				}
 			}
 		}
