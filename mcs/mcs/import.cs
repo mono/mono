@@ -90,7 +90,7 @@ namespace Mono.CSharp
 				if (cad.Count > 0) {
 					foreach (var ca in cad) {
 						var dt = ca.Constructor.DeclaringType;
-						if (dt.Name != "DynamicAttribute" && dt.Namespace != CompilerServicesNamespace)
+						if (dt.Name != "DynamicAttribute" || dt.Namespace != CompilerServicesNamespace)
 							continue;
 
 						if (ca.ConstructorArguments.Count == 0) {
