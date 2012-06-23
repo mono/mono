@@ -4941,12 +4941,33 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 	GError *error = NULL;
 	MonoString *o = NULL;
 	guint16 *ut;
+	guint16 *frag;
+	glong items_read;
 	glong items_written;
+	glong total_read;
+	glong total_written;
 
-	ut = g_utf8_to_utf16 (text, length, NULL, &items_written, &error);
+	ut = g_utf8_to_utf16 (text, length, &items_read, &total_written, &error);
+
+	if (!error && items_read < length) {
+		total_read = items_read + 1;
+		while (total_read < length) {
+			frag = g_utf8_to_utf16 (text + total_read, length - total_read, &items_read, &items_written, &error);
+			if (error) {
+				g_error_free (error);
+				g_free (ut);
+				return NULL;
+			}
+			ut = g_realloc (ut, 2 * (total_written + items_written + 2));
+			memcpy (ut + total_written + 1, frag, 2 * (items_written + 1));
+			g_free (frag);
+			total_read += items_read + 1;
+			total_written += items_written + 1;
+		}
+	}
 
 	if (!error)
-		o = mono_string_new_utf16 (domain, ut, items_written);
+		o = mono_string_new_utf16 (domain, ut, total_written);
 	else 
 		g_error_free (error);
 
