@@ -28,8 +28,14 @@ using System.Threading.Tasks;
 
 namespace System.Threading.Tasks.Dataflow
 {
-	public class GroupingDataflowBlockOptions : DataflowBlockOptions
-	{
+	public class GroupingDataflowBlockOptions : DataflowBlockOptions {
+		static readonly GroupingDataflowBlockOptions DefaultOptions =
+			new GroupingDataflowBlockOptions ();
+
+		internal static GroupingDataflowBlockOptions Default {
+			get { return DefaultOptions; }
+		}
+
 		public GroupingDataflowBlockOptions ()
 		{
 			MaxNumberOfGroups = -1;

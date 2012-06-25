@@ -44,6 +44,7 @@ namespace System.Threading.Tasks.Dataflow
 		MessageOutgoingQueue<T[]> outgoing;
 		TargetBuffer<T[]> targets = new TargetBuffer<T[]> ();
 		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
+		SpinLock batchLock;
 
 		public BatchBlock (int batchSize) : this (batchSize, defaultOptions)
 		{
@@ -112,30 +113,45 @@ namespace System.Threading.Tasks.Dataflow
 					return;
 			} while (Interlocked.CompareExchange (ref batchCount, 0, earlyBatchSize) != earlyBatchSize);
 
-			MakeBatch (targets.Current, earlyBatchSize);
+			MakeBatch (earlyBatchSize);
 		}
 
-		// TODO: there can be out-of-order processing of message elements if two collections
-		// are triggered and work side by side. See if it's a problem or not.
 		void BatchProcess ()
 		{
-			ITargetBlock<T[]> target = targets.Current;
-			int current = Interlocked.Increment (ref batchCount);
+			// has to deal correctly with concurrent TriggerBatch
 
-			if (current % batchSize != 0)
-				return;
+			int current;
+			int previousCount;
+			do {
+				previousCount = batchCount;
+				current = previousCount + 1;
 
-			Interlocked.Add (ref batchCount, -current);
+				if (current == batchSize)
+					current = 0;
+			} while (Interlocked.CompareExchange (ref batchCount, current, previousCount)
+			         != previousCount);
 
-			MakeBatch (target, batchSize);
+			if (current == 0)
+				MakeBatch (batchSize);
 		}
 
-		void MakeBatch (ITargetBlock<T[]> target, int size)
+		void MakeBatch (int size)
 		{
 			T[] batch = new T[size];
-			for (int i = 0; i < size; ++i)
-				messageQueue.TryTake (out batch[i]);
 
+			// lock is necessary here to make sure items are in the correct order
+			bool taken = false;
+			try {
+				batchLock.Enter (ref taken);
+
+				for (int i = 0; i < size; ++i)
+					messageQueue.TryTake (out batch[i]);
+			} finally {
+				if (taken)
+					batchLock.Exit();
+			}
+
+			var target = targets.Current;
 			if (target == null)
 				outgoing.AddData (batch);
 			else

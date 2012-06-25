@@ -12,7 +12,7 @@
     <NoStdLib>true</NoStdLib>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>MonoTests</RootNamespace>
     <AssemblyName>System.Threading.Tasks.Dataflow_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -42,6 +42,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\DataflowMessageHeaderTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\CompletionHelperTest.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\CompletionHelper.cs" />
@@ -89,4 +90,3 @@
   </ItemGroup>
   
 </Project>
-
