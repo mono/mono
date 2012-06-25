@@ -477,10 +477,12 @@ System.Reflection/AssemblyFlagsAttribute.cs
 System.Reflection/AssemblyInformationalVersionAttribute.cs
 System.Reflection/AssemblyKeyFileAttribute.cs
 System.Reflection/AssemblyKeyNameAttribute.cs
+System.Reflection/AssemblyMetadataAttribute.cs
 System.Reflection/AssemblyName.cs
 System.Reflection/AssemblyNameFlags.cs
 System.Reflection/AssemblyNameProxy.cs
 System.Reflection/AssemblyProductAttribute.cs
+System.Reflection/AssemblySignatureKeyAttribute.cs
 System.Reflection/AssemblyTitleAttribute.cs
 System.Reflection/AssemblyTradeMarkAttribute.cs
 System.Reflection/AssemblyVersionAttribute.cs
