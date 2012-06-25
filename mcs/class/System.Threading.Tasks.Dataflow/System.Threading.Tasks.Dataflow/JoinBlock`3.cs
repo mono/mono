@@ -59,14 +59,9 @@ namespace System.Threading.Tasks.Dataflow
 
 			this.dataflowBlockOptions = dataflowBlockOptions;
 
-			Func<bool> checker1 = () => target2.Buffer.Count == 0 || target3.Buffer.Count == 0;
-			Func<bool> checker2 = () => target1.Buffer.Count == 0 || target3.Buffer.Count == 0;
-			Func<bool> checker3 = () => target1.Buffer.Count == 0 || target2.Buffer.Count == 0;
-
-			Func<bool> joinTargetCompleteTester = () => outgoing.IsCompleted;
-			target1 = new JoinTarget<T1> (this, () => SignalArrivalTargetImpl (checker1), compHelper, joinTargetCompleteTester);
-			target2 = new JoinTarget<T2> (this, () => SignalArrivalTargetImpl (checker2), compHelper, joinTargetCompleteTester);
-			target3 = new JoinTarget<T3> (this, () => SignalArrivalTargetImpl (checker3), compHelper, joinTargetCompleteTester);
+			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
+			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
+			target3 = new JoinTarget<T3> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
 			outgoing =
 				new MessageOutgoingQueue<Tuple<T1, T2, T3>> (compHelper,
 				                                             () => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted || target3.Buffer.IsCompleted);
@@ -121,7 +116,7 @@ namespace System.Threading.Tasks.Dataflow
 		}
 
 		// TODO : see if we can find a lockless implementation
-		void SignalArrivalTargetImpl (Func<bool> check)
+		void SignalArrivalTargetImpl ()
 		{
 			bool taken = false;
 			T1 value1;
@@ -130,7 +125,8 @@ namespace System.Threading.Tasks.Dataflow
 
 			try {
 				targetLock.Enter (ref taken);
-				if (check ())
+
+				if (target1.Buffer.Count == 0 || target2.Buffer.Count == 0 || target3.Buffer.Count == 0)
 					return;
 
 				value1 = target1.Buffer.Take ();
