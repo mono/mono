@@ -209,10 +209,16 @@ namespace Mono.CSharp {
 				ns_parent = this;
 			}
 
+			return ns_parent.TryAddNamespace (name.Basename);
+		}
+
+		Namespace TryAddNamespace (string name)
+		{
 			Namespace ns;
-			if (!ns_parent.namespaces.TryGetValue (name.Basename, out ns)) {
-				ns = new Namespace (ns_parent, name.Basename);
-				ns_parent.namespaces.Add (name.Basename, ns);
+
+			if (!namespaces.TryGetValue (name, out ns)) {
+				ns = new Namespace (this, name);
+				namespaces.Add (name, ns);
 			}
 
 			return ns;
