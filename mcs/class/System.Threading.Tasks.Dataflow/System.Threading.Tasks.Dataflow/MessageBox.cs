@@ -22,10 +22,6 @@
 //
 //
 
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow
@@ -36,13 +32,14 @@ namespace System.Threading.Tasks.Dataflow
 	internal class MessageBox<TInput>
 	{
 		readonly CompletionHelper compHelper;
-		readonly BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
 		readonly Func<bool> externalCompleteTester;
+
+		protected BlockingCollection<TInput> MessageQueue { get; private set; }
 
 		public MessageBox (BlockingCollection<TInput> messageQueue, CompletionHelper compHelper, Func<bool> externalCompleteTester)
 		{
 			this.compHelper = compHelper;
-			this.messageQueue = messageQueue;
+			this.MessageQueue = messageQueue;
 			this.externalCompleteTester = externalCompleteTester;
 		}
 
@@ -54,7 +51,7 @@ namespace System.Threading.Tasks.Dataflow
 		{
 			if (!messageHeader.IsValid)
 				return DataflowMessageStatus.Declined;
-			if (messageQueue.IsAddingCompleted)
+			if (MessageQueue.IsAddingCompleted)
 				return DataflowMessageStatus.DecliningPermanently;
 
 			if (consumeToAccept) {
@@ -67,7 +64,7 @@ namespace System.Threading.Tasks.Dataflow
 			}
 
 			try {
-				messageQueue.Add (messageValue);
+				MessageQueue.Add (messageValue);
 			} catch (InvalidOperationException) {
 				// This is triggered either if the underlying collection didn't accept the item
 				// or if the messageQueue has been marked complete, either way it corresponds to a false
@@ -82,19 +79,18 @@ namespace System.Threading.Tasks.Dataflow
 
 		protected virtual void EnsureProcessing ()
 		{
-
 		}
 
 		public void Complete ()
 		{
 			// Make message queue complete
-			messageQueue.CompleteAdding ();
+			MessageQueue.CompleteAdding ();
 			VerifyCompleteness ();
 		}
 
 		void VerifyCompleteness ()
 		{
-			if (messageQueue.IsCompleted && externalCompleteTester ())
+			if (MessageQueue.IsCompleted && externalCompleteTester ())
 				compHelper.Complete ();
 		}
 	}

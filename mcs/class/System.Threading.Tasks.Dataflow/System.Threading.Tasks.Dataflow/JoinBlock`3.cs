@@ -26,7 +26,6 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow
 {
@@ -40,9 +39,9 @@ namespace System.Threading.Tasks.Dataflow
 		MessageVault<Tuple<T1, T2, T3>> vault = new MessageVault<Tuple<T1, T2, T3>> ();
 		MessageOutgoingQueue<Tuple<T1, T2, T3>> outgoing;
 
-		JoinTarget<T1> target1;
-		JoinTarget<T2> target2;
-		JoinTarget<T3> target3;
+		readonly JoinTarget<T1> target1;
+		readonly JoinTarget<T2> target2;
+		readonly JoinTarget<T3> target3;
 
 		SpinLock targetLock = new SpinLock (false);
 
@@ -64,10 +63,11 @@ namespace System.Threading.Tasks.Dataflow
 			Func<bool> checker2 = () => target1.Buffer.Count == 0 || target3.Buffer.Count == 0;
 			Func<bool> checker3 = () => target1.Buffer.Count == 0 || target2.Buffer.Count == 0;
 
-			this.target1 = new JoinTarget<T1> (this, () => SignalArrivalTargetImpl (checker1), new BlockingCollection<T1> (), compHelper);
-			this.target2 = new JoinTarget<T2> (this, () => SignalArrivalTargetImpl (checker2), new BlockingCollection<T2> (), compHelper);
-			this.target3 = new JoinTarget<T3> (this, () => SignalArrivalTargetImpl (checker3), new BlockingCollection<T3> (), compHelper);
-			this.outgoing =
+			Func<bool> joinTargetCompleteTester = () => outgoing.IsCompleted;
+			target1 = new JoinTarget<T1> (this, () => SignalArrivalTargetImpl (checker1), compHelper, joinTargetCompleteTester);
+			target2 = new JoinTarget<T2> (this, () => SignalArrivalTargetImpl (checker2), compHelper, joinTargetCompleteTester);
+			target3 = new JoinTarget<T3> (this, () => SignalArrivalTargetImpl (checker3), compHelper, joinTargetCompleteTester);
+			outgoing =
 				new MessageOutgoingQueue<Tuple<T1, T2, T3>> (compHelper,
 				                                             () => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted || target3.Buffer.IsCompleted);
 		}
@@ -159,56 +159,6 @@ namespace System.Threading.Tasks.Dataflow
 
 			if (!outgoing.IsEmpty && (target = targets.Current) != null)
 				outgoing.ProcessForTarget (target, this, false, ref headers);
-		}
-
-		class JoinTarget<TTarget> : MessageBox<TTarget>, ITargetBlock<TTarget>
-		{
-			JoinBlock<T1, T2, T3> joinBlock;
-			BlockingCollection<TTarget> buffer;
-			Action signal;
-
-			public JoinTarget (JoinBlock<T1, T2, T3> joinBlock, Action signal, BlockingCollection<TTarget> buffer, CompletionHelper helper)
-			: base (buffer, helper, () => joinBlock.outgoing.IsCompleted)
-			{
-				this.joinBlock = joinBlock;
-				this.buffer = buffer;
-				this.signal = signal;
-			}
-
-			protected override void EnsureProcessing ()
-			{
-				signal ();
-			}
-
-			public BlockingCollection<TTarget> Buffer {
-				get {
-					return buffer;
-				}
-			}
-
-			DataflowMessageStatus ITargetBlock<TTarget>.OfferMessage (DataflowMessageHeader messageHeader,
-			                                                          TTarget messageValue,
-			                                                          ISourceBlock<TTarget> source,
-			                                                          bool consumeToAccept)
-			{
-				return OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
-			}
-
-			void IDataflowBlock.Complete ()
-			{
-				Complete ();
-			}
-
-			Task IDataflowBlock.Completion {
-				get {
-					return joinBlock.Completion;
-				}
-			}
-
-			void IDataflowBlock.Fault (Exception e)
-			{
-				joinBlock.Fault (e);
-			}
 		}
 
 		public ITargetBlock<T1> Target1 {
