@@ -95,7 +95,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		public bool TryReceive (Predicate<T[]> filter, out T[] item)
 		{
-			return TryReceive (filter, out item);
+			return outgoing.TryReceive (filter, out item);
 		}
 
 		public bool TryReceiveAll (out IList<T[]> items)
