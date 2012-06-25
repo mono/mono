@@ -692,6 +692,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #510661
+		[Category ("NotWorking")] // #5842
 		public void GetRequestStream_Close_NotAllBytesWritten ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 10002);
@@ -759,6 +760,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #510642
+		[Category ("NotWorking")] // #5842
 		public void GetRequestStream_Write_Overflow ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8010);
