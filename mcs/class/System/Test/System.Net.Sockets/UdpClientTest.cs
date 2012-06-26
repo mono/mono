@@ -262,7 +262,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
-		[Category ("NotOnMac")]
 		public void Constructor5 ()
 		{
 			MyUdpClient client;
