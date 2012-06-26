@@ -306,13 +306,13 @@ namespace System.Net
 				string date = webHeaders ["Date"];
 				if (date == null)
 					return DateTime.MinValue;
-				DateTime parsed = DateTime.ParseExact (date, "r", CultureInfo.InvariantCulture);
-				if (parsed.Equals (DateTime.MinValue))
-					return parsed;
-				return parsed.ToLocalTime ();
+				return DateTime.ParseExact (date, "r", CultureInfo.InvariantCulture).ToLocalTime ();
 			}
 			set {
-				webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
+				if (value.Equals (DateTime.MinValue))
+					webHeaders.RemoveInternal ("Date");
+				else
+					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
 			}
 		}
 #endif

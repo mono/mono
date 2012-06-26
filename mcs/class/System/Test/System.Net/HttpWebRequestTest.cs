@@ -2356,6 +2356,8 @@ namespace MonoTests.System.Net
 			Assert.AreEqual (DateTimeKind.Unspecified, DateTime.MinValue.Kind);
 			Assert.AreEqual (DateTimeKind.Unspecified, req.Date.Kind);
 			Assert.AreEqual (0, req.Date.Ticks);
+
+			Assert.AreEqual (null, req.Headers.Get ("Date"));
 		}
 #endif
 		class ListenerScope : IDisposable {
