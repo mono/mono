@@ -39,6 +39,7 @@ using System.Linq.Expressions;
 namespace MonoTests.Mono.CodeContracts {
 
 	[TestFixture]
+    [Ignore("Due to testing only static checker")]
 	public class TestCCRewrite {
 
 		private RewriteAndLoad ral = null;

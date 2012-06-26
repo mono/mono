@@ -41,16 +41,18 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription ("Mono.CodeContracts.dll")]
 [assembly: AssemblyDefaultAlias ("Mono.CodeContracts.dll")]
 
-[assembly: AssemblyCompany (Consts.MonoCompany)]
-[assembly: AssemblyProduct (Consts.MonoProduct)]
-[assembly: AssemblyCopyright (Consts.MonoCopyright)]
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+// HACK: DON'T EVER COMMIT THIS
+[assembly: AssemblyCompany ("MONO_DEV")]
+[assembly: AssemblyProduct("MONO_DEV")]
+[assembly: AssemblyCopyright("MONO_DEV")]
+[assembly: AssemblyVersion("0.1")]
+[assembly: SatelliteContractVersion ("0.1")]
+[assembly: AssemblyInformationalVersion ("0.1")]
+[assembly: AssemblyFileVersion ("0.1")]
+
 
 [assembly: NeutralResourcesLanguage ("en-US")]
-[assembly: CLSCompliant (true)]
-[assembly: AssemblyDelaySign (true)]
+//[assembly: CLSCompliant (true)]
+//[assembly: AssemblyDelaySign (true)]
 
-[assembly: AssemblyKeyFile ("../mono.pub")]
+//[assembly: AssemblyKeyFile ("../mono.pub")]

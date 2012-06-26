@@ -108,7 +108,7 @@ namespace Mono.CodeContracts.Static.DataStructures {
 
 		public static IImmutableMap<K, V> Empty (Func<K, int> keyConverter)
 		{
-			return new ImmutableIntKeyMap<K, V> (ImmutableIntMap<Pair<K, V>>.Empty (), keyConverter);
+			return new ImmutableIntKeyMap<K, V> (ImmutableIntMap<Pair<K, V>>.Empty, keyConverter);
 		}
 	}
 }
