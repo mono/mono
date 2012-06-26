@@ -13,8 +13,8 @@
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace></RootNamespace>
-    <AssemblyName>WebMatrix.Data_test_net_4_0</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyName>Mono.Data.Tds_test_net_4_5</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -22,26 +22,23 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\WebMatrix.Data\ConnectionEventArgsTests.cs" />
-   <Compile Include="Test\WebMatrix.Data\DynamicRecordTests.cs" />
-   <Compile Include="WebMatrix.Data\DynamicRecord.cs" />
-   <Compile Include="Test\WebMatrix.Data\DatabaseTests.cs" />
+   <Compile Include="Test\bug-4786.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -59,29 +56,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="./../../class/lib/net_4_0/WebMatrix.Data.dll">
+    <Reference Include="./../../class/lib/net_4_5/Mono.Data.Tds.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/WebMatrix.Data.dll</HintPath>
+      <HintPath>./../../class/lib/net_4_5/Mono.Data.Tds.dll</HintPath>
     </Reference>
     <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.dll</HintPath>
     </Reference>
-    <Reference Include="System.Core.dll">
+    <Reference Include="System.Net.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.Sqlite.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.CSharp.dll</HintPath>
+      <HintPath>System.Net.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

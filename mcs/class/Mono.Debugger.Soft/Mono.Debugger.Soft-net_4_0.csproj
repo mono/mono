@@ -52,6 +52,7 @@
    <Compile Include="Mono.Debugger.Soft\CustomAttributeDataMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\ThreadStartEvent.cs" />
    <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
+   <Compile Include="Mono.Debugger.Soft\ILExceptionHandler.cs" />
    <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\PrimitiveValue.cs" />
    <Compile Include="Mono.Debugger.Soft\PointerValue.cs" />

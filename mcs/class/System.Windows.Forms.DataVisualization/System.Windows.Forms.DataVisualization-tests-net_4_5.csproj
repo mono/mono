@@ -13,8 +13,8 @@
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace></RootNamespace>
-    <AssemblyName>WebMatrix.Data_test_net_4_0</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyName>System.Windows.Forms.DataVisualization_test_net_4_5</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -22,26 +22,28 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\WebMatrix.Data\ConnectionEventArgsTests.cs" />
-   <Compile Include="Test\WebMatrix.Data\DynamicRecordTests.cs" />
-   <Compile Include="WebMatrix.Data\DynamicRecord.cs" />
-   <Compile Include="Test\WebMatrix.Data\DatabaseTests.cs" />
+   <Compile Include="Test\System.Windows.Forms.DataVisualization.Charting\AnnotationPathPointTest.cs" />
+   <Compile Include="Test\System.Windows.Forms.DataVisualization.Charting\AnovaResultTest.cs" />
+   <Compile Include="Test\System.Windows.Forms.DataVisualization.Charting\ArrowAnnotationTest.cs" />
+   <Compile Include="Test\System.Windows.Forms.DataVisualization.Charting\AxisScaleBreakStyleTest.cs" />
+   <Compile Include="Test\System.Windows.Forms.DataVisualization.Charting\ChartElementTest.cs" />
+   <Compile Include="Test\System.Windows.Forms.DataVisualization.Charting\ChartElementTest.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -59,29 +61,25 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="./../../class/lib/net_4_0/WebMatrix.Data.dll">
+    <Reference Include="./../../class/lib/net_4_5/System.Windows.Forms.DataVisualization.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/WebMatrix.Data.dll</HintPath>
+      <HintPath>./../../class/lib/net_4_5/System.Windows.Forms.DataVisualization.dll</HintPath>
     </Reference>
-    <Reference Include="System.dll">
+    <Reference Include="System">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
+      <HintPath>System</HintPath>
     </Reference>
-    <Reference Include="System.Core.dll">
+    <Reference Include="System.Drawing">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
+      <HintPath>System.Drawing</HintPath>
     </Reference>
-    <Reference Include="System.Data.dll">
+    <Reference Include="System.Windows.Forms">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
+      <HintPath>System.Windows.Forms</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite.dll">
+    <Reference Include="System.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.CSharp.dll</HintPath>
+      <HintPath>System.Core</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

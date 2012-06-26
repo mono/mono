@@ -42,7 +42,6 @@
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
    <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.Threading.Tasks\ConcurrentExclusiveSchedulerPair.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\ExecutingMessageBox.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\DataflowBlockOptions.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\DataflowMessageHeader.cs" />

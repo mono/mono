@@ -119,7 +119,6 @@
    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Net.Http.Formatting\Properties\AssemblyInfo.cs" />
    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Net.Http.Formatting\Properties\Resources.Designer.cs" />
    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Net.Http.Formatting\UriExtensions.cs" />
-   <Compile Include="Extensions.cs" />
    <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
    <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
    <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonReader.cs" />

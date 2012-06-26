@@ -1042,6 +1042,8 @@
    <Compile Include="System\UriParser.cs" />
    <Compile Include="System\UriPartial.cs" />
    <Compile Include="System\UriTypeConverter.cs" />
+   <Compile Include="System\UriElements.cs" />
+   <Compile Include="System\UriParseComponents.cs" />
    <Compile Include="System.Web\AspNetHostingPermissionAttribute.cs" />
    <Compile Include="System.Web\AspNetHostingPermission.cs" />
    <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
@@ -1115,6 +1117,7 @@
    <Compile Include="Mono.Net.Dns\ResolverError.cs" />
    <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
    <Compile Include="System.Net\DnsAsyncResult.cs" />
+   <Compile Include="System.Windows.Input\ICommand.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
@@ -31,7 +31,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>

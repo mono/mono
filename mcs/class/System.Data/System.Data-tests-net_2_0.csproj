@@ -217,6 +217,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Data.Sqlite.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework" />
 
   </ItemGroup>

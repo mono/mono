@@ -682,6 +682,9 @@
     <EmbeddedResource Include="Test/WebPages/web.config.4.0">
        <LogicalName>MonoTests.WebPages.web.config.4.0</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Test/WebPages/web.config.4.5">
+       <LogicalName>MonoTests.WebPages.web.config.4.5</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

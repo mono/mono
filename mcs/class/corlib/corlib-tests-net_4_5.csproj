@@ -484,6 +484,7 @@
    <Compile Include="Test\System.Threading\MutexCas.cs" />
    <Compile Include="Test\System.Threading\ThreadCas.cs" />
    <Compile Include="Test\System.Threading\WaitHandleCas.cs" />
+   <Compile Include="Test\System.Threading.Tasks\ConcurrentExclusiveSchedulerPairTest.cs" />
    <Compile Include="Test\System.Threading.Tasks\TaskTest.cs" />
    <Compile Include="Test\System.Threading.Tasks\Task_T_Test.cs" />
    <Compile Include="Test\System.Threading.Tasks\TaskSchedulerTest.cs" />
