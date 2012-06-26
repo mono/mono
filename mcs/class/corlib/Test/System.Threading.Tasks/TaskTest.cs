@@ -721,7 +721,7 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			ParallelTestHelper.Repeat (delegate {
 				var evt = new ManualResetEventSlim ();
-				var t = Task.Factory.StartNew (() => evt.Wait (2000));
+				var t = Task.Factory.StartNew (() => evt.Wait (5000));
 				var cntd = new CountdownEvent (2);
 				var cntd2 = new CountdownEvent (2);
 
