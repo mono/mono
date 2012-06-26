@@ -205,12 +205,12 @@ namespace System.Net {
 			int begin;
 			if (header [k] == '"'){
 				int j;
-				begin = ++k;
+				begin = k++;
 
 				while (k < length && header [k] != '"')
 					k++;
 
-				for (j = k; j < length && header [j] != ';' && header [j] != ','; j++)
+				for (j = ++k; j < length && header [j] != ';' && header [j] != ','; j++)
 					;
 				pos = j;
 			} else {

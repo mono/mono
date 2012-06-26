@@ -18,6 +18,7 @@ namespace MonoTests.System.Net
 		// Only comma serves as separation character.
 		public const string D = "A=B, C=D; E=F, G=H";
 		public const string E = "A; C; expires=Tue, 25-Jun-19 00:51:34 GMT, E=F";
+		public const string F = "Foo = \" A, B\"C D, E=F";
 
 		CookieCollection DoRequest (string header)
 		{
@@ -119,6 +120,15 @@ namespace MonoTests.System.Net
 			var cookies = DoRequest (E);
 			Assert.AreEqual (2, cookies.Count);
 			AssertCookie (cookies [0], "A", string.Empty, 636970206940000000);
+			AssertCookie (cookies [1], "E", "F");
+		}
+
+		[Test]
+		public void TestQuotation ()
+		{
+			var cookies = DoRequest (F);
+			Assert.AreEqual (2, cookies.Count);
+			AssertCookie (cookies [0], "Foo", "\" A, B\"");
 			AssertCookie (cookies [1], "E", "F");
 		}
 
