@@ -2330,10 +2330,32 @@ namespace MonoTests.System.Net
 		[Test]
 		public void AddAndRemoveDate ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
-			req.Date = DateTime.UtcNow;
+			// Neil Armstrong set his foot on Moon
+			var landing = new DateTime (1969, 7, 21, 2, 56, 0, DateTimeKind.Utc);
+			Assert.AreEqual (621214377600000000, landing.Ticks);
+			var unspecified = new DateTime (1969, 7, 21, 2, 56, 0);
+			var local = landing.ToLocalTime ();
+
+			var req = (HttpWebRequest)WebRequest.Create ("http://www.mono-project.com/");
+			req.Date = landing;
+			Assert.AreEqual (DateTimeKind.Local, req.Date.Kind);
+			Assert.AreEqual (local.Ticks, req.Date.Ticks);
+			Assert.AreEqual (local, req.Date);
+
+			req.Date = unspecified;
+			Assert.AreEqual (DateTimeKind.Local, req.Date.Kind);
+			Assert.AreEqual (unspecified.Ticks, req.Date.Ticks);
+			Assert.AreEqual (unspecified, req.Date);
+
+			req.Date = local;
+			Assert.AreEqual (DateTimeKind.Local, req.Date.Kind);
+			Assert.AreEqual (local.Ticks, req.Date.Ticks);
+			Assert.AreEqual (local, req.Date);
+
 			req.Date = DateTime.MinValue;
-			Assert.AreEqual (DateTime.MinValue, req.Date);
+			Assert.AreEqual (DateTimeKind.Unspecified, DateTime.MinValue.Kind);
+			Assert.AreEqual (DateTimeKind.Unspecified, req.Date.Kind);
+			Assert.AreEqual (0, req.Date.Ticks);
 		}
 #endif
 		class ListenerScope : IDisposable {
