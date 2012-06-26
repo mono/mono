@@ -69,13 +69,14 @@ namespace Mono.CSharp
 		}
 
 		//
-		// This class has to be used in the parser only, it reuses token
-		// details after each parse
+		// This class has to be used by parser only, it reuses token
+		// details after each file parse completion
 		//
 		public class LocatedToken
 		{
 			public int row, column;
 			public string value;
+			public SourceFile file;
 
 			public LocatedToken ()
 			{
@@ -84,6 +85,7 @@ namespace Mono.CSharp
 			public LocatedToken (string value, Location loc)
 			{
 				this.value = value;
+				file = loc.SourceFile;
 				row = loc.Row;
 				column = loc.Column;
 			}
@@ -94,7 +96,7 @@ namespace Mono.CSharp
 			}
 			
 			public Location Location {
-				get { return new Location (row, column); }
+				get { return new Location (file, row, column); }
 			}
 
 			public string Value {
@@ -117,17 +119,12 @@ namespace Mono.CSharp
 				this.buffer = buffer ?? new LocatedToken[0];
 			}
 
-			public LocatedToken Create (int row, int column)
+			public LocatedToken Create (SourceFile file, int row, int column)
 			{
-				return Create (null, row, column);
+				return Create (null, file, row, column);
 			}
 
-			public LocatedToken Create (string value, Location loc)
-			{
-				return Create (value, loc.Row, loc.Column);
-			}
-
-			public LocatedToken Create (string value, int row, int column)
+			public LocatedToken Create (string value, SourceFile file, int row, int column)
 			{
 				//
 				// TODO: I am not very happy about the logic but it's the best
@@ -150,6 +147,7 @@ namespace Mono.CSharp
 					++pos;
 				}
 				entry.value = value;
+				entry.file = file;
 				entry.row = row;
 				entry.column = column;
 				return entry;
@@ -159,9 +157,9 @@ namespace Mono.CSharp
 			// Used for token not required by expression evaluator
 			//
 			[Conditional ("FULL_AST")]
-			public void CreateOptional (int row, int col, ref object token)
+			public void CreateOptional (SourceFile file, int row, int col, ref object token)
 			{
-				token = Create (row, col);
+				token = Create (file, row, col);
 			}
 		}
 
@@ -446,8 +444,6 @@ namespace Mono.CSharp
 			doc_processing = context.Settings.DocumentationFile != null;
 
 			tab_size = context.Settings.TabSize;
-
-			Mono.CSharp.Location.Push (current_source);
 		}
 		
 		public void PushPosition ()
@@ -894,7 +890,7 @@ namespace Mono.CSharp
 
 		public Location Location {
 			get {
-				return new Location (ref_line, col);
+				return new Location (current_source, ref_line, col);
 			}
 		}
 
@@ -1980,7 +1976,6 @@ namespace Mono.CSharp
 				}
 
 				ref_line = line;
-				Location.Push (current_source);
 				return true;
 			}
 
@@ -2067,7 +2062,6 @@ namespace Mono.CSharp
 			if (new_file_name != null) {
 				current_source = context.LookupFile (source_file, new_file_name);
 				source_file.AddIncludeFile (current_source);
-				Location.Push (current_source);
 			}
 
 			if (!hidden_block_start.IsNull) {
@@ -2995,13 +2989,13 @@ namespace Mono.CSharp
 			if (id_builder [0] >= '_' && !quoted) {
 				int keyword = GetKeyword (id_builder, pos);
 				if (keyword != -1) {
-					val = ltb.Create (keyword == Token.AWAIT ? "await" : null, ref_line, column);
+					val = ltb.Create (keyword == Token.AWAIT ? "await" : null, current_source, ref_line, column);
 					return keyword;
 				}
 			}
 
 			string s = InternIdentifier (id_builder, pos);
-			val = ltb.Create (s, ref_line, column);
+			val = ltb.Create (s, current_source, ref_line, column);
 			if (quoted && parsing_attribute_section)
 				AddEscapedIdentifier (((LocatedToken) val).Location);
 
@@ -3072,17 +3066,17 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 
 				case '{':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					return Token.OPEN_BRACE;
 				case '}':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					return Token.CLOSE_BRACE;
 				case '[':
 					// To block doccomment inside attribute declaration.
 					if (doc_state == XmlCommentState.Allowed)
 						doc_state = XmlCommentState.NotAllowed;
 
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 
 					if (parsing_block == 0 || lambda_arguments_parsing)
 						return Token.OPEN_BRACKET;
@@ -3108,10 +3102,10 @@ namespace Mono.CSharp
 						return Token.OPEN_BRACKET_EXPR;
 					}
 				case ']':
-					ltb.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (current_source, ref_line, col, ref val);
 					return Token.CLOSE_BRACKET;
 				case '(':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					//
 					// An expression versions of parens can appear in block context only
 					//
@@ -3156,29 +3150,29 @@ namespace Mono.CSharp
 
 					return Token.OPEN_PARENS;
 				case ')':
-					ltb.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (current_source, ref_line, col, ref val);
 					return Token.CLOSE_PARENS;
 				case ',':
-					ltb.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (current_source, ref_line, col, ref val);
 					return Token.COMMA;
 				case ';':
-					ltb.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (current_source, ref_line, col, ref val);
 					return Token.SEMICOLON;
 				case '~':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					return Token.TILDE;
 				case '?':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					return TokenizePossibleNullableType ();
 				case '<':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					if (parsing_generic_less_than++ > 0)
 						return Token.OP_GENERICS_LT;
 
 					return TokenizeLessThan ();
 
 				case '>':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					d = peek_char ();
 
 					if (d == '='){
@@ -3205,7 +3199,7 @@ namespace Mono.CSharp
 					return Token.OP_GT;
 
 				case '+':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					d = peek_char ();
 					if (d == '+') {
 						d = Token.OP_INC;
@@ -3218,7 +3212,7 @@ namespace Mono.CSharp
 					return d;
 
 				case '-':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					d = peek_char ();
 					if (d == '-') {
 						d = Token.OP_DEC;
@@ -3233,7 +3227,7 @@ namespace Mono.CSharp
 					return d;
 
 				case '!':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_NE;
@@ -3241,7 +3235,7 @@ namespace Mono.CSharp
 					return Token.BANG;
 
 				case '=':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					d = peek_char ();
 					if (d == '='){
 						get_char ();
@@ -3255,7 +3249,7 @@ namespace Mono.CSharp
 					return Token.ASSIGN;
 
 				case '&':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					d = peek_char ();
 					if (d == '&'){
 						get_char ();
@@ -3268,7 +3262,7 @@ namespace Mono.CSharp
 					return Token.BITWISE_AND;
 
 				case '|':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					d = peek_char ();
 					if (d == '|'){
 						get_char ();
@@ -3281,7 +3275,7 @@ namespace Mono.CSharp
 					return Token.BITWISE_OR;
 
 				case '*':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_MULT_ASSIGN;
@@ -3291,7 +3285,7 @@ namespace Mono.CSharp
 				case '/':
 					d = peek_char ();
 					if (d == '='){
-						val = ltb.Create (ref_line, col);
+						val = ltb.Create (current_source, ref_line, col);
 						get_char ();
 						return Token.OP_DIV_ASSIGN;
 					}
@@ -3370,11 +3364,11 @@ namespace Mono.CSharp
 							update_formatted_doc_comment (current_comment_start);
 						continue;
 					}
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					return Token.DIV;
 
 				case '%':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_MOD_ASSIGN;
@@ -3382,7 +3376,7 @@ namespace Mono.CSharp
 					return Token.PERCENT;
 
 				case '^':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_XOR_ASSIGN;
@@ -3390,7 +3384,7 @@ namespace Mono.CSharp
 					return Token.CARRET;
 
 				case ':':
-					val = ltb.Create (ref_line, col);
+					val = ltb.Create (current_source, ref_line, col);
 					if (peek_char () == ':') {
 						get_char ();
 						return Token.DOUBLE_COLON;
@@ -3414,7 +3408,7 @@ namespace Mono.CSharp
 					if (d >= '0' && d <= '9')
 						return is_number (c);
 
-					ltb.CreateOptional (ref_line, col, ref val);
+					ltb.CreateOptional (current_source, ref_line, col, ref val);
 					return Token.DOT;
 				
 				case '#':

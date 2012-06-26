@@ -327,7 +327,7 @@ namespace Mono.CSharp
 			var encoding = module.Compiler.Settings.Encoding;
 			var s = new MemoryStream (encoding.GetBytes (cref));
 
-			var source_file = new CompilationSourceFile (doc_module);
+			var source_file = new CompilationSourceFile (doc_module, mc.Location.SourceFile);
 			var report = new Report (doc_module.Compiler, new NullReportPrinter ());
 
 			if (session == null)

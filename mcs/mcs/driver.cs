@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Mono.CSharp
 {
@@ -86,26 +87,61 @@ namespace Mono.CSharp
 				if (tokenize_only) {
 					tokenize_file (sources[i], module, session);
 				} else {
-					Parse (sources[i], module, session);
+					Parse (sources[i], module, session, Report);
 				}
 			}
 		}
 
-		public void Parse (SourceFile file, ModuleContainer module, ParserSession session)
+#if false
+		void ParseParallel (ModuleContainer module)
+		{
+			var sources = module.Compiler.SourceFiles;
+
+			Location.Initialize (sources);
+
+			var pcount = Environment.ProcessorCount;
+			var threads = new Thread[System.Math.Max (2, pcount - 1)];
+
+			for (int i = 0; i < threads.Length; ++i) {
+				var t = new Thread (l => {
+					var session = new ParserSession () {
+						//UseJayGlobalArrays = true,
+					};
+
+					var report = new Report (ctx, Report.Printer); // TODO: Implement flush at once printer
+
+					for (int ii = (int) l; ii < sources.Count; ii += threads.Length) {
+						Parse (sources[ii], module, session, report);
+					}
+
+					// TODO: Merge warning regions
+				});
+
+				t.Start (i);
+				threads[i] = t;
+			}
+
+			for (int t = 0; t < threads.Length; ++t) {
+				threads[t].Join ();
+			}
+		}
+#endif
+
+		public void Parse (SourceFile file, ModuleContainer module, ParserSession session, Report report)
 		{
 			Stream input;
 
 			try {
 				input = File.OpenRead (file.Name);
 			} catch {
-				Report.Error (2001, "Source file `{0}' could not be found", file.Name);
+				report.Error (2001, "Source file `{0}' could not be found", file.Name);
 				return;
 			}
 
 			// Check 'MZ' header
 			if (input.ReadByte () == 77 && input.ReadByte () == 90) {
 
-				Report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
+				report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
 				input.Close ();
 				return;
 			}
@@ -113,9 +149,9 @@ namespace Mono.CSharp
 			input.Position = 0;
 			SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding, session.StreamReaderBuffer);
 
-			Parse (reader, file, module, session);
+			Parse (reader, file, module, session, report);
 
-			if (ctx.Settings.GenerateDebugInfo && ctx.Report.Errors == 0 && !file.HasChecksum) {
+			if (ctx.Settings.GenerateDebugInfo && report.Errors == 0 && !file.HasChecksum) {
 				input.Position = 0;
 				var checksum = session.GetChecksumAlgorithm ();
 				file.SetChecksum (checksum.ComputeHash (input));
@@ -125,12 +161,12 @@ namespace Mono.CSharp
 			input.Close ();
 		}
 
-		public static void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module, ParserSession session)
+		public static void Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module, ParserSession session, Report report)
 		{
 			var file = new CompilationSourceFile (module, sourceFile);
 			module.AddTypeContainer (file);
 
-			CSharpParser parser = new CSharpParser (reader, file, session);
+			CSharpParser parser = new CSharpParser (reader, file, report, session);
 			parser.parse ();
 		}
 		
