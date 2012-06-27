@@ -279,10 +279,34 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
-		public void ChangeType_NullArgumentTest()
+		public void ChangeType_NullValueArgumentInFromStringTest()
 		{
-			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype;
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
 			datatype.ChangeType(null, typeof(string));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullValueArgumentInToStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType(null, typeof(int));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullTargetArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType("100", null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullNamespaceResolverArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType("100", typeof(string), null);
 		}
 
 		[Test]
