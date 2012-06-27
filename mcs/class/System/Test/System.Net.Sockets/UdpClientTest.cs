@@ -383,7 +383,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
-		[Category ("NotOnMac")]
 		public void Constructor6 ()
 		{
 			MyUdpClient client;
@@ -480,10 +479,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void UdpClientBroadcastTest () 
 		{
-			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234));
+			UdpClient client = new UdpClient ();
 			byte[] bytes = new byte[] {10, 11, 12, 13};
 
 			try {
