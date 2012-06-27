@@ -1141,6 +1141,8 @@ namespace System.Net.Sockets {
 					return; */
 			}
 		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void cancel_blocking_socket_operation (Thread thread);
 
 		protected virtual void Dispose (bool explicitDisposing)
 		{
@@ -1156,10 +1158,9 @@ namespace System.Net.Sockets {
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
 				Thread th = blocking_thread;
-				if (th != null) {
-					th.Abort ();
-					blocking_thread = null;
-				}
+				blocking_thread = null;
+				if (th != null)
+					cancel_blocking_socket_operation (th);
 
 				if (was_connected)
 					Linger (x);
@@ -1233,14 +1234,9 @@ namespace System.Net.Sockets {
 
 			int error = 0;
 
-			blocking_thread = Thread.CurrentThread;
 			try {
+				blocking_thread = Thread.CurrentThread;
 				Connect_internal (socket, serial, out error);
-			} catch (ThreadAbortException) {
-				if (disposed) {
-					Thread.ResetAbort ();
-					error = (int) SocketError.Interrupted;
-				}
 			} finally {
 				blocking_thread = null;
 			}
@@ -1248,8 +1244,11 @@ namespace System.Net.Sockets {
 			if (error == 0 || error == 10035)
 				seed_endpoint = remoteEP; // Keep the ep around for non-blocking sockets
 
-			if (error != 0)
+			if (error != 0) {
+				if (closed)
+					error = SOCKET_CLOSED;
 				throw new SocketException (error);
+			}
 
 #if !MOONLIGHT
 			if (socket_type == SocketType.Dgram && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)))
@@ -1750,8 +1749,13 @@ namespace System.Net.Sockets {
 
 			// FIXME: this is canceling a synchronous connect, not an async one
 			Socket s = e.ConnectSocket;
-			if ((s != null) && (s.blocking_thread != null))
-				s.blocking_thread.Abort ();
+			if (s != null) {
+				Thread th = s.blocking_thread;
+				blocking_thread = null;
+				if (th != null)
+					cancel_blocking_socket_operation (th);
+				}
+			}
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
