@@ -72,6 +72,12 @@ namespace System.Xml.Schema
 
 		public virtual object ChangeType (object value, Type targetType)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (targetType == null)
+				throw new ArgumentNullException ("targetType");
+
 			if (targetType == typeof (string))
 				return ConvertType (value, targetType);
 			else
@@ -80,9 +86,6 @@ namespace System.Xml.Schema
 
 		private object ConvertType (object value, Type targetType)
 		{
-			if (value == null)
-				throw new ArgumentNullException ("value");
-
 			if (targetType.IsAssignableFrom (value.GetType ()))
 				return value;
 
@@ -106,9 +109,12 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[MonoTODO ("namespaceResolver not checked")]
+		[MonoTODO ("namespaceResolver not used yet")]
 		public virtual object ChangeType (object value, Type targetType, IXmlNamespaceResolver namespaceResolver)
 		{
+			if (namespaceResolver == null)
+				throw new ArgumentNullException ("namespaceResolver");
+
 			return ChangeType (value, targetType);
 		}
 
