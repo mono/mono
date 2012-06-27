@@ -866,7 +866,7 @@ namespace System.Net.Sockets {
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
 		internal bool blocking=true;
-		Thread blocking_thread;
+		List<Thread> blocking_threads;
 		private bool isbound;
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
@@ -885,6 +885,44 @@ namespace System.Net.Sockets {
 		 * Connect, etc.
  		 */
 		internal EndPoint seed_endpoint = null;
+
+		void RegisterForBlockingSyscall ()
+		{
+			while (blocking_threads == null) {
+				//In the rare event this CAS fail, there's a good chance other thread won, so we're kosher.
+				//In the VERY rare event of all CAS fail together, we pay the full price of of failure.
+				Interlocked.CompareExchange (ref blocking_threads, new List<Thread> (), null);
+			}
+
+			try {
+				
+			} finally {
+				/* We must use a finally block here to make this atomic. */
+				lock (blocking_threads) {
+					blocking_threads.Add (Thread.CurrentThread);
+				}
+			}
+		}
+
+		/* This must be called from a finally block! */
+		void UnRegisterForBlockingSyscall ()
+		{
+			//If this NRE, we're in deep problems because Register Must have
+			lock (blocking_threads) {
+				blocking_threads.Remove (Thread.CurrentThread);
+			}
+		}
+
+		void AbortRegisteredThreads () {
+			if (blocking_threads == null)
+				return;
+
+			lock (blocking_threads) {
+				foreach (var t in blocking_threads)
+					cancel_blocking_socket_operation (t);
+				blocking_threads.Clear ();
+			}
+		}
 
 #if !TARGET_JVM
 		// Creates a new system socket, returning the handle
@@ -1161,10 +1199,8 @@ namespace System.Net.Sockets {
 				closed = true;
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
-				Thread th = blocking_thread;
-				blocking_thread = null;
-				if (th != null)
-					cancel_blocking_socket_operation (th);
+				
+				AbortRegisteredThreads ();
 
 				if (was_connected)
 					Linger (x);
@@ -1239,10 +1275,10 @@ namespace System.Net.Sockets {
 			int error = 0;
 
 			try {
-				blocking_thread = Thread.CurrentThread;
+				RegisterForBlockingSyscall ();
 				Connect_internal (socket, serial, out error);
 			} finally {
-				blocking_thread = null;
+				UnRegisterForBlockingSyscall ();
 			}
 
 			if (error == 0 || error == 10035)
@@ -1753,13 +1789,8 @@ namespace System.Net.Sockets {
 
 			// FIXME: this is canceling a synchronous connect, not an async one
 			Socket s = e.ConnectSocket;
-			if (s != null) {
-				Thread th = s.blocking_thread;
-				blocking_thread = null;
-				if (th != null)
-					cancel_blocking_socket_operation (th);
-				}
-			}
+			if (s != null)
+				s.AbortRegisteredThreads ();
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

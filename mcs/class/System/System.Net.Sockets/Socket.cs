@@ -545,10 +545,10 @@ namespace System.Net.Sockets
 			int error = 0;
 			IntPtr sock = (IntPtr) (-1);
 			try {
-				blocking_thread = Thread.CurrentThread;
+				RegisterForBlockingSyscall ();
 				sock = Accept_internal(socket, out error, blocking);
 			} finally {
-				blocking_thread = null;
+				UnRegisterForBlockingSyscall ();
 			}
 
 			if (error != 0) {
@@ -574,10 +574,10 @@ namespace System.Net.Sockets
 			IntPtr sock = (IntPtr)(-1);
 			
 			try {
-				blocking_thread = Thread.CurrentThread;
+				RegisterForBlockingSyscall ();
 				sock = Accept_internal (socket, out error, blocking);
 			} finally {
-				blocking_thread = null;
+				UnRegisterForBlockingSyscall ();
 			}
 			
 			if (error != 0) {
