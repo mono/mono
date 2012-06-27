@@ -501,6 +501,12 @@ namespace MonoTests.System.Net
 			Assert.IsTrue (h.AddressList.Length > 0, "AddressList.Length");
 		}
 
+		[Test]
+		public void GetHostEntry_StringEmpty ()
+		{
+			Dns.GetHostEntry (string.Empty);
+		}
+
 		/* This isn't used anymore, but could be useful for debugging
 		static void printIPHostEntry(IPHostEntry h)
 		{

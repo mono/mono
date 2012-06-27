@@ -961,7 +961,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
-		[Category ("NotOnMac")]
 		public void BeginSend ()
 		{
 			UdpClient client = new UdpClient ();
@@ -1016,7 +1015,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
-		[Category ("NotOnMac")]
 		public void BeginReceive ()
 		{
 			UdpClient client = new UdpClient (1237);
@@ -1042,7 +1040,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
-		[Category ("NotOnMac")]
 		public void Available ()
 		{
 			UdpClient client = new UdpClient (1238);
