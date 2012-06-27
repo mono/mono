@@ -3157,5 +3157,15 @@ void mono_network_cleanup(void)
 	WSACleanup();
 }
 
+void
+icall_cancel_blocking_socket_operation (MonoThread *thread)
+{
+#if !defined(HOST_WIN32) && !defined(__MACH__)
+	MonoInternalThread *internal = thread->internal_thread;
+
+	internal->ignore_next_signal = TRUE;
+	mono_thread_kill (internal, mono_thread_get_abort_signal ());		
+#endif
+}
 
 #endif /* #ifndef DISABLE_SOCKETS */
