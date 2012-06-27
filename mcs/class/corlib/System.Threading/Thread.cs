@@ -103,6 +103,7 @@ namespace System.Threading {
 		private IntPtr unused4;
 		private IntPtr unused5;
 		internal int managed_id;
+		int ignore_next_signal;
 		#endregion
 #pragma warning restore 169, 414, 649
 
