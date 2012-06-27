@@ -11,9 +11,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using NUnit.Framework;
 
 using QName = System.Xml.XmlQualifiedName;
@@ -121,7 +119,6 @@ namespace MonoTests.System.Xml
 			vr.Read ();
 		}
 
-#if NET_2_0
 		string [] allTypes = new string [] {
 			"string", "boolean", "float", "double", "decimal", 
 			"duration", "dateTime", "time", "date", "gYearMonth", 
@@ -195,6 +192,5 @@ namespace MonoTests.System.Xml
 
 			AssertType.IsFalse (GetDatatype ("string").IsDerivedFrom (null), "null arg");
 		}
-#endif
 	}
 }
