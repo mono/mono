@@ -390,7 +390,9 @@ namespace MonoTests.System.Net.Sockets {
 			Socket s;
 			IPEndPoint localEP;
 
-			client = new MyUdpClient ("localhost", IPEndPoint.MinPort);
+			// Bug #5503
+			// UDP port 0 doesn't seem to be valid.
+			client = new MyUdpClient ("127.0.0.1", 53);
 			s = client.Client;
 			Assert.IsNotNull (s, "#A:Client");
 			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
@@ -413,7 +415,7 @@ namespace MonoTests.System.Net.Sockets {
 			Assert.AreEqual (IPAddress.Loopback, localEP.Address, "#A:Client:LocalEndPoint/Address");
 			Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
 
-			client = new MyUdpClient ("localhost", IPEndPoint.MaxPort);
+			client = new MyUdpClient ("127.0.0.1", IPEndPoint.MaxPort);
 			s = client.Client;
 			Assert.IsNotNull (s, "#B:Client");
 			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#B:Client:AddressFamily");
