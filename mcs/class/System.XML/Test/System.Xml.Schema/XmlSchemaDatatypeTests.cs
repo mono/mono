@@ -237,7 +237,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.DateTime);
 			Assert.AreEqual (datatype.ValueType, typeof(DateTime));
 
-			DateTime date = DateTime.UtcNow.Date;
+			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
 			Assert.AreEqual (datatype.ChangeType(date, typeof(string)), "2012-06-27T00:00:00Z");
 		}
 
@@ -261,7 +261,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.DateTime);
 			Assert.AreEqual (datatype.ValueType, typeof(DateTime));
 
-			DateTime date = DateTime.UtcNow.Date;
+			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
 			Assert.AreEqual (datatype.ChangeType("2012-06-27T00:00:00Z", typeof(DateTime)), date);
 		}
 
