@@ -4,6 +4,8 @@
 // Authors:
 //	Dwivedi, Ajay kumar <Adwiv@Yahoo.com>
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//	Wojciech Kotlarski <wojciech.kotlarski@7digital.com>
+//	Andres G. Aragoneses <andres.aragoneses@7digital.com>
 //
 
 //
@@ -68,17 +70,46 @@ namespace System.Xml.Schema
 		public abstract XmlTokenizedType TokenizedType {  get; }
 		public abstract Type ValueType {  get; }
 
-		// Methods
-		[MonoTODO]
 		public virtual object ChangeType (object value, Type targetType)
 		{
-			return ChangeType (value, targetType, null);
+			if (targetType == typeof (string))
+				return ConvertType (value, targetType);
+			else
+				return ConvertType (value.ToString (), targetType);
 		}
 
-		[MonoTODO]
+		private object ConvertType (object value, Type targetType)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (targetType.IsAssignableFrom (value.GetType ()))
+				return value;
+
+			object[] args = null;
+
+			args = (targetType == typeof (DateTime) || (value.GetType () == typeof (DateTime)))
+				? new object [] { value, XmlDateTimeSerializationMode.RoundtripKind }
+				: new object [] { value };
+
+			try
+			{
+				return typeof (XmlConvert).InvokeMember("To" + targetType.Name,
+					System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static,
+					null, null, args);
+			}
+			catch(MissingMethodException e)
+			{
+				throw new InvalidCastException (string.Format ("Cast from {0}.{1} to {2}.{3} is not supported.",
+					value.GetType ().Namespace, value.GetType ().Name,
+					targetType.Namespace, targetType.Name), e);
+			}
+		}
+
+		[MonoTODO ("namespaceResolver not checked")]
 		public virtual object ChangeType (object value, Type targetType, IXmlNamespaceResolver namespaceResolver)
 		{
-			throw new NotImplementedException ();
+			return ChangeType (value, targetType);
 		}
 
 		public virtual bool IsDerivedFrom (XmlSchemaDatatype datatype)
