@@ -201,10 +201,10 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.String);
-			Assert.AreEqual (datatype.ValueType, typeof(string));
+			Assert.AreEqual (XmlTypeCode.String, datatype.TypeCode);
+			Assert.AreEqual (typeof(string), datatype.ValueType);
 
-			Assert.AreEqual (datatype.ChangeType("test", typeof(string)), "test");
+			Assert.AreEqual ("test", datatype.ChangeType("test", typeof(string)));
 		}
 
 		[Test]
@@ -212,10 +212,10 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.String);
-			Assert.AreEqual (datatype.ValueType, typeof(string));
+			Assert.AreEqual (XmlTypeCode.String, datatype.TypeCode);
+			Assert.AreEqual (typeof(string), datatype.ValueType);
 
-			Assert.AreEqual (datatype.ChangeType("test", typeof(object)), "test");
+			Assert.AreEqual ("test", datatype.ChangeType("test", typeof(object)));
 		}
 
 		[Test]
@@ -223,10 +223,10 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.Integer);
-			Assert.AreEqual (datatype.ValueType, typeof(decimal));
+			Assert.AreEqual (XmlTypeCode.Integer, datatype.TypeCode);
+			Assert.AreEqual (typeof(decimal), datatype.ValueType);
 
-			Assert.AreEqual (datatype.ChangeType("300", typeof(int)), 300);
+			Assert.AreEqual (300, datatype.ChangeType("300", typeof(int)));
 		}
 
 		[Test]
@@ -234,11 +234,11 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.DateTime);
-			Assert.AreEqual (datatype.ValueType, typeof(DateTime));
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
 
 			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
-			Assert.AreEqual (datatype.ChangeType(date, typeof(string)), "2012-06-27T00:00:00Z");
+			Assert.AreEqual ("2012-06-27T00:00:00Z", datatype.ChangeType(date, typeof(string)));
 		}
 
 		[Test]
@@ -246,11 +246,11 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DayTimeDuration).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.DayTimeDuration);
-			Assert.AreEqual (datatype.ValueType, typeof(TimeSpan));
+			Assert.AreEqual (XmlTypeCode.DayTimeDuration, datatype.TypeCode);
+			Assert.AreEqual (typeof(TimeSpan), datatype.ValueType);
 
 			TimeSpan span = new TimeSpan(1, 2, 3);
-			Assert.AreEqual (datatype.ChangeType(span, typeof(string)), "PT1H2M3S");
+			Assert.AreEqual ("PT1H2M3S", datatype.ChangeType(span, typeof(string)));
 		}
 
 		[Test]
@@ -258,11 +258,11 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.DateTime);
-			Assert.AreEqual (datatype.ValueType, typeof(DateTime));
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
 
 			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
-			Assert.AreEqual (datatype.ChangeType("2012-06-27T00:00:00Z", typeof(DateTime)), date);
+			Assert.AreEqual (date, datatype.ChangeType("2012-06-27T00:00:00Z", typeof(DateTime)));
 		}
 
 		[Test]
@@ -270,11 +270,11 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DayTimeDuration).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.DayTimeDuration);
-			Assert.AreEqual (datatype.ValueType, typeof(TimeSpan));
+			Assert.AreEqual (XmlTypeCode.DayTimeDuration, datatype.TypeCode);
+			Assert.AreEqual (typeof(TimeSpan), datatype.ValueType);
 
 			TimeSpan span = new TimeSpan(1, 2, 3);
-			Assert.AreEqual (datatype.ChangeType("PT1H2M3S", typeof(TimeSpan)), span);
+			Assert.AreEqual (span, datatype.ChangeType("PT1H2M3S", typeof(TimeSpan)));
 		}
 
 		[Test]
@@ -316,8 +316,8 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
 			Assert.IsTrue (datatype != null);
-			Assert.AreEqual (datatype.TypeCode, XmlTypeCode.DateTime);
-			Assert.AreEqual (datatype.ValueType, typeof(DateTime));
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
 
 			datatype.ChangeType(300, typeof (int));
 		}
