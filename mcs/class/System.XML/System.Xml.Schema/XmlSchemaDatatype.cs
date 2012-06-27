@@ -48,7 +48,6 @@ namespace System.Xml.Schema
 			get { return WhitespaceValue; }
 		}
 
-#if NET_2_0
 		public virtual XmlTypeCode TypeCode {
 			// Actually no way to verify default value, since
 			// in .NET 2.0 it cannot be derived externally anymore.
@@ -65,13 +64,11 @@ namespace System.Xml.Schema
 				return XmlSchemaDatatypeVariety.Atomic;
 			}
 		}
-#endif
 
 		public abstract XmlTokenizedType TokenizedType {  get; }
 		public abstract Type ValueType {  get; }
 
 		// Methods
-#if NET_2_0
 		[MonoTODO]
 		public virtual object ChangeType (object value, Type targetType)
 		{
@@ -91,9 +88,7 @@ namespace System.Xml.Schema
 			// the same type (and it does not check null argument).
 			return this == datatype;
 		}
-#endif
 
-#if NET_2_0
 		public abstract object ParseValue (string s, 
 			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr);
 
@@ -102,16 +97,7 @@ namespace System.Xml.Schema
 		{
 			return null;
 		}
-#else
-		public abstract object ParseValue (string s, 
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
 
-		internal virtual ValueType ParseValueType (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
-		{
-			return null;
-		}
-#endif
 
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
@@ -168,7 +154,6 @@ namespace System.Xml.Schema
 			switch (ns) {
 			case XmlSchema.Namespace:
 				break;
-#if NET_2_0
 			case XmlSchema.XdtNamespace:
 				switch (localName) {
 				case "anyAtomicType":
@@ -181,7 +166,6 @@ namespace System.Xml.Schema
 					return datatypeYearMonthDuration;
 				}
 				return null;
-#endif
 			default:
 				// Maybe invalid name was specified. In such cases, let processors handle them.
 				return null;
@@ -329,7 +313,6 @@ namespace System.Xml.Schema
 		static readonly XsdGYear datatypeGYear = new XsdGYear ();
 		static readonly XsdGMonth datatypeGMonth = new XsdGMonth ();
 		static readonly XsdGDay datatypeGDay = new XsdGDay ();
-#if NET_2_0
 		static readonly XdtAnyAtomicType datatypeAnyAtomicType
 			= new XdtAnyAtomicType ();
 		static readonly XdtUntypedAtomic datatypeUntypedAtomic
@@ -338,7 +321,6 @@ namespace System.Xml.Schema
 			= new XdtDayTimeDuration ();
 		static readonly XdtYearMonthDuration datatypeYearMonthDuration
 			= new XdtYearMonthDuration ();
-#endif
 
 	}
 }
