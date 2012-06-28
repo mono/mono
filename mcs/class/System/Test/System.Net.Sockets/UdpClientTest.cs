@@ -502,7 +502,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress)
-		[Category ("NotOnMac")]
 		public void JoinMulticastGroup1_IPv6 ()
 		{
 #if NET_2_0
@@ -612,7 +611,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (In32, IPAddress)
-		[Category ("NotOnMac")]
 		public void JoinMulticastGroup2_IPv6 ()
 		{
 #if NET_2_0
@@ -704,7 +702,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, Int32)
-		[Category ("NotOnMac")]
 		public void JoinMulticastGroup3_IPv6 ()
 		{
 #if NET_2_0
