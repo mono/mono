@@ -35,6 +35,7 @@ using System.Threading;
 using System.Transactions;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Net.Sockets;
 
 namespace System.ServiceModel.Dispatcher
 {
@@ -597,8 +598,9 @@ namespace System.ServiceModel.Dispatcher
 					Message res;
 					if (ProcessErrorWithHandlers (reply, ex, out res))
 						return;
-
-					rc.Reply (res);
+					if (!(ex is SocketException))
+						rc.Reply (res);
+					
 					
 					reply.Close (owner.DefaultCloseTimeout); // close the channel
 				} finally {

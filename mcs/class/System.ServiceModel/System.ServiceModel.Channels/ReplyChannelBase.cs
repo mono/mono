@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
@@ -124,12 +125,19 @@ namespace System.ServiceModel.Channels
 					}
 					try {
 						return TryReceiveRequest (tout, out ctx);
+					} catch (SocketException) {
+						//on dropped connection, 
+						//whatever you do don't crash
+						//the whole app.  Ignore for now
 					} finally {
 						lock (async_result_lock) {
 							CurrentAsyncResult = null;
 							CurrentAsyncThread = null;
 						}
 					}
+					//post finally if exception:
+					ctx=null;//must assign out var
+					return false;
 					});
 			RequestContext dummy;
 			IAsyncResult result;
