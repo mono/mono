@@ -131,3 +131,9 @@ mono_unity_class_is_interface (MonoClass* klass)
 {
 	return MONO_CLASS_IS_INTERFACE(klass);
 }
+
+gboolean
+mono_unity_class_is_abstract (MonoClass* klass)
+{
+	return (klass->flags & TYPE_ATTRIBUTE_ABSTRACT);
+}
