@@ -3618,7 +3618,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
-		[Category ("NotOnMac")]
 		public void SetSocketOption3_AddMembershipIPv6_IPv6MulticastOption ()
 		{
 #if NET_2_0
@@ -3899,7 +3898,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
-		[Category ("NotOnMac")]
 		public void SetSocketOption3_DropMembershipIPv6_IPv6MulticastOption ()
 		{
 #if NET_2_0
@@ -3922,7 +3920,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
-		[Category ("NotOnMac")]
 		public void SetSocketOption3_DropMembershipIPv6_MulticastOption ()
 		{
 #if NET_2_0
