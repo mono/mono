@@ -37,6 +37,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Xml
 {
@@ -461,6 +462,13 @@ namespace MonoTests.System.Xml
 			XDocument d = XDocument.Parse (xml);
 			IEnumerable att = (IEnumerable) d.XPathEvaluate ("/root/@a");
 			att.Cast<XAttribute> ().FirstOrDefault ();
+		}
+
+		[Test] // bug #5902
+		public void EvaluateNodeSetAsEnumerableOfObject ()
+		{
+			var root = XDocument.Parse("<config><item name=\"A\" /></config>");
+			Assert.IsTrue (root.XPathSelectElements ("config/*").First ().XPathEvaluate (".") is IEnumerable<object>);
 		}
 
 		[Test] // bug #2146
