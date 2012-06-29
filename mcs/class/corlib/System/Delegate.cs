@@ -164,16 +164,13 @@ namespace System
 			return returnMatch;
 		}
 
-		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure)
+		public static Delegate CreateDelegate (Type type, object target, MethodInfo method, bool throwOnBindFailure)
 		{
-			return CreateDelegate (type, firstArgument, method, throwOnBindFailure, true);
+			return CreateDelegate (type, target, method, throwOnBindFailure, true);
 		}
 
-		static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure, bool allowClosed)
+		static Delegate CreateDelegate (Type type, object target, MethodInfo method, bool throwOnBindFailure, bool allowClosed)
 		{
-			// The name of the parameter changed in 2.0
-			object target = firstArgument;
-
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
@@ -279,9 +276,9 @@ namespace System
 			return d;
 		}
 
-		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method)
+		public static Delegate CreateDelegate (Type type, object target, MethodInfo method)
 		{
-			return CreateDelegate (type, firstArgument, method, true, true);
+			return CreateDelegate (type, target, method, true, true);
 		}
 
 		public static Delegate CreateDelegate (Type type, MethodInfo method, bool throwOnBindFailure)
