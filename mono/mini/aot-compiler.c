@@ -2860,7 +2860,12 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 *   yet supported.
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
-		debug_sym = get_debug_sym (method, "", acfg->method_label_hash);
+#ifdef __APPLE__
+#define C_METHOD_PREFIX "m_"
+#else
+#define C_METHOD_PREFIX ""
+#endif
+		debug_sym = get_debug_sym (method, C_METHOD_PREFIX, acfg->method_label_hash);
 
 		sprintf (symbol, "%sme_%x", acfg->temp_prefix, method_index);
 		emit_local_symbol (acfg, debug_sym, symbol, TRUE);
