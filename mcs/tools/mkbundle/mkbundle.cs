@@ -184,7 +184,6 @@ class MakeBundle {
 		case "osx":
 			sw.WriteLine (
 				"\t.section __TEXT,__text,regular,pure_instructions\n" + 
-				"\t.section __TEXT,__picsymbolstub1,symbol_stubs,pure_instructions,32\n" + 
 				"\t.globl _{0}\n" +
 				"\t.data\n" +
 				"\t.align 4\n" +
