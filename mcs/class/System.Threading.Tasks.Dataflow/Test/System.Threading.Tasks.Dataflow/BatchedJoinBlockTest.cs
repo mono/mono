@@ -51,6 +51,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			// both targets once
 			Assert.IsTrue (block.Target1.Post (1));
 
+			Assert.IsFalse(evt.Wait(100));
 			Assert.IsNull (result);
 
 			Assert.IsTrue (block.Target2.Post (2));
@@ -67,6 +68,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			// target 1 twice
 			Assert.IsTrue (block.Target1.Post (3));
 
+			Assert.IsFalse(evt.Wait(100));
 			Assert.IsNull (result);
 
 			Assert.IsTrue (block.Target1.Post (4));
@@ -82,6 +84,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			// target 2 twice
 			Assert.IsTrue (block.Target2.Post (5));
 
+			Assert.IsFalse(evt.Wait(100));
 			Assert.IsNull (result);
 
 			Assert.IsTrue (block.Target2.Post (6));

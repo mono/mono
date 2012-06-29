@@ -25,19 +25,25 @@
 using System.Collections.Generic;
 
 namespace System.Threading.Tasks.Dataflow {
-	public sealed class BatchedJoinBlock<T1, T2> :
-		IReceivableSourceBlock<Tuple<IList<T1>, IList<T2>>> {
+	public sealed class BatchedJoinBlock<T1, T2, T3> :
+		IReceivableSourceBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>> {
 		GroupingDataflowBlockOptions options;
 
-		CompletionHelper completionHelper = CompletionHelper.GetNew();
-		readonly MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>>> outgoing;
-		readonly MessageVault<Tuple<IList<T1>, IList<T2>>> vault = new MessageVault<Tuple<IList<T1>, IList<T2>>>();
-		readonly TargetBuffer<Tuple<IList<T1>, IList<T2>>> targets = new TargetBuffer<Tuple<IList<T1>, IList<T2>>>();
+		CompletionHelper completionHelper = CompletionHelper.GetNew ();
+		readonly MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> outgoing;
+
+		readonly MessageVault<Tuple<IList<T1>, IList<T2>, IList<T3>>> vault =
+			new MessageVault<Tuple<IList<T1>, IList<T2>, IList<T3>>> ();
+
+		readonly TargetBuffer<Tuple<IList<T1>, IList<T2>, IList<T3>>> targets =
+			new TargetBuffer<Tuple<IList<T1>, IList<T2>, IList<T3>>> ();
+
 		DataflowMessageHeader headers;
 		SpinLock batchLock;
 
 		readonly JoinTarget<T1> target1;
 		readonly JoinTarget<T2> target2;
+		readonly JoinTarget<T3> target3;
 
 		int batchCount;
 
@@ -62,10 +68,12 @@ namespace System.Threading.Tasks.Dataflow {
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
 			target2 = new JoinTarget<T2> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
+			target3 = new JoinTarget<T3>(
+				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
 
-			outgoing = new MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>>> (
+			outgoing = new MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> (
 				completionHelper,
-				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted);
+				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted || target3.Buffer.IsCompleted);
 		}
 
 		public int BatchSize { get; private set; }
@@ -78,7 +86,11 @@ namespace System.Threading.Tasks.Dataflow {
 			get { return target2; }
 		}
 
-		private void SignalTarget()
+		public ITargetBlock<T3> Target3 {
+			get { return target3; }
+		}
+
+		void SignalTarget ()
 		{
 			int current = Interlocked.Increment (ref batchCount);
 
@@ -94,7 +106,8 @@ namespace System.Threading.Tasks.Dataflow {
 		{
 			var list1 = new List<T1> ();
 			var list2 = new List<T2> ();
-			
+			var list3 = new List<T3> ();
+
 			// lock is necessary here to make sure items are in the correct order
 			bool taken = false;
 			try {
@@ -114,18 +127,25 @@ namespace System.Threading.Tasks.Dataflow {
 					i++;
 				}
 
+				T3 item3;
+				while (i < batchSize && target3.Buffer.TryTake (out item3)) {
+					list3.Add (item3);
+					i++;
+				}
+
 				if (i < batchSize)
-					throw new InvalidOperationException("Unexpected count of items.");
+					throw new InvalidOperationException ("Unexpected count of items.");
 			} finally {
 				if (taken)
 					batchLock.Exit ();
 			}
 
-			var batch = Tuple.Create<IList<T1>, IList<T2>> (list1, list2);
+			var batch = Tuple.Create<IList<T1>, IList<T2>, IList<T3>> (list1, list2,
+				list3);
 
 			var target = targets.Current;
 			if (target == null)
-				outgoing.AddData(batch);
+				outgoing.AddData (batch);
 			else
 				target.OfferMessage (headers.Increment (), batch, this, false);
 
@@ -133,7 +153,8 @@ namespace System.Threading.Tasks.Dataflow {
 				outgoing.ProcessForTarget (targets.Current, this, false, ref headers);
 		}
 
-		public Task Completion {
+		public Task Completion
+		{
 			get { return completionHelper.Completion; }
 		}
 
@@ -147,43 +168,47 @@ namespace System.Threading.Tasks.Dataflow {
 			completionHelper.Fault (exception);
 		}
 
-		Tuple<IList<T1>, IList<T2>> ISourceBlock<Tuple<IList<T1>, IList<T2>>>.ConsumeMessage (
+		Tuple<IList<T1>, IList<T2>, IList<T3>>
+			ISourceBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>>.ConsumeMessage (
 			DataflowMessageHeader messageHeader,
-			ITargetBlock<Tuple<IList<T1>, IList<T2>>> target,
+			ITargetBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>> target,
 			out bool messageConsumed)
 		{
 			return vault.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<Tuple<IList<T1>, IList<T2>>> target,
-		                           bool unlinkAfterOne)
+		public IDisposable LinkTo (
+			ITargetBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>> target,
+			bool unlinkAfterOne)
 		{
-			var result = targets.AddTarget(target, unlinkAfterOne);
-			outgoing.ProcessForTarget(target, this, false, ref headers);
+			var result = targets.AddTarget (target, unlinkAfterOne);
+			outgoing.ProcessForTarget (target, this, false, ref headers);
 			return result;
 		}
 
-		void ISourceBlock<Tuple<IList<T1>, IList<T2>>>.ReleaseReservation (
+		void ISourceBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>>.ReleaseReservation (
 			DataflowMessageHeader messageHeader,
-			ITargetBlock<Tuple<IList<T1>, IList<T2>>> target)
+			ITargetBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>> target)
 		{
 			vault.ReleaseReservation (messageHeader, target);
 		}
 
-		bool ISourceBlock<Tuple<IList<T1>, IList<T2>>>.ReserveMessage (
+		bool ISourceBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>>.ReserveMessage (
 			DataflowMessageHeader messageHeader,
-			ITargetBlock<Tuple<IList<T1>, IList<T2>>> target)
+			ITargetBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>> target)
 		{
 			return vault.ReserveMessage (messageHeader, target);
 		}
 
-		public bool TryReceive (Predicate<Tuple<IList<T1>, IList<T2>>> filter,
-		                        out Tuple<IList<T1>, IList<T2>> item)
+		public bool TryReceive (
+			Predicate<Tuple<IList<T1>, IList<T2>, IList<T3>>> filter,
+			out Tuple<IList<T1>, IList<T2>, IList<T3>> item)
 		{
 			return outgoing.TryReceive (filter, out item);
 		}
 
-		public bool TryReceiveAll (out IList<Tuple<IList<T1>, IList<T2>>> items)
+		public bool TryReceiveAll (
+			out IList<Tuple<IList<T1>, IList<T2>, IList<T3>>> items)
 		{
 			return outgoing.TryReceiveAll (out items);
 		}
