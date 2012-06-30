@@ -47,9 +47,9 @@ namespace Microsoft.Build.BuildEngine {
 		public TaskDatabase ()
 		{
 			assemblyInformation = new Dictionary <string, AssemblyLoadInfo> ();
-			typesByFullName = new Dictionary <string, Type> (StringComparer.InvariantCultureIgnoreCase);
-			typesByShortName = new Dictionary <string, Type> (StringComparer.InvariantCultureIgnoreCase);
-			usingTasksByFullName = new Dictionary <string, UsingTaskInfo> (StringComparer.InvariantCultureIgnoreCase);
+			typesByFullName = new Dictionary <string, Type> (StringComparer.OrdinalIgnoreCase);
+			typesByShortName = new Dictionary <string, Type> (StringComparer.OrdinalIgnoreCase);
+			usingTasksByFullName = new Dictionary <string, UsingTaskInfo> (StringComparer.OrdinalIgnoreCase);
 		}
 		
 		public void RegisterTask (string classname, AssemblyLoadInfo assemblyLoadInfo)
