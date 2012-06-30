@@ -33,30 +33,30 @@ namespace System.Security.AccessControl
 	{
 		public override Type AccessRightType {
 			get {
-				return null;
+				return typeof(T);
 			}
 		}
 		
 		public override Type AccessRuleType {
 			get {
-				return null;
+				return typeof (AccessRule<T>);
 			}
 		}
 		
 		public override Type AuditRuleType {
 			get {
-				return null;
+				return typeof (AuditRule<T>);
 			}
 		}
 		
 		public override AccessRule AccessRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
 		{
-			return null;
+			return new AccessRule<T> (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, type);
 		}
 		
 		public override AuditRule AuditRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
 		{
-			return null;
+			return new AuditRule<T> (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, flags);
 		}
 	}
 }
