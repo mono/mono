@@ -27,9 +27,9 @@ using System.Collections.Generic;
 namespace System.Threading.Tasks.Dataflow {
 	public sealed class BatchedJoinBlock<T1, T2, T3> :
 		IReceivableSourceBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>> {
-		GroupingDataflowBlockOptions options;
+		readonly GroupingDataflowBlockOptions options;
 
-		CompletionHelper completionHelper = CompletionHelper.GetNew ();
+		CompletionHelper completionHelper;
 		readonly MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> outgoing;
 
 		readonly MessageVault<Tuple<IList<T1>, IList<T2>, IList<T3>>> vault =
@@ -63,6 +63,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 			BatchSize = batchSize;
 			options = dataflowBlockOptions;
+			completionHelper = CompletionHelper.GetNew (options);
 
 			target1 = new JoinTarget<T1> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);

@@ -1,6 +1,7 @@
 // ActionBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +23,26 @@
 //
 //
 
-
-using System;
-using System.Threading.Tasks;
-
 namespace System.Threading.Tasks.Dataflow
 {
-	/* This is used to implement a default behavior for Dataflow completion tracking
-	 * that is the Completion property and Complete/Fault method combo
-	 */
+	/// <summary>
+	/// This is used to implement a default behavior for Dataflow completion tracking
+	/// that is the Completion property and Complete/Fault method combo 
+	/// </summary>
 	internal struct CompletionHelper
 	{
 		TaskCompletionSource<object> source;
 
-		public static CompletionHelper GetNew ()
+		public static CompletionHelper GetNew (DataflowBlockOptions options)
 		{
-			CompletionHelper temp = new CompletionHelper ();
-			temp.source = new TaskCompletionSource<object> ();
-			return temp;
+			var completionHelper = new CompletionHelper { source = new TaskCompletionSource<object> () };
+			if (options != null)
+				completionHelper.SetOptions (options);
+			return completionHelper;
 		}
 
 		public Task Completion {
-			get {
-				return source.Task;
-			}
+			get { return source.Task; }
 		}
 
 		public void Complete ()
@@ -55,7 +52,16 @@ namespace System.Threading.Tasks.Dataflow
 
 		public void Fault (Exception ex)
 		{
-			source.SetException (ex);
+			source.TrySetException (ex);
+		}
+
+		void SetOptions (DataflowBlockOptions options)
+		{
+			// source can't be used in a lambda directly
+			var sourceTmp = source;
+			if (options.CancellationToken != CancellationToken.None)
+				options.CancellationToken.Register (
+					() => sourceTmp.TrySetCanceled ());
 		}
 	}
 }

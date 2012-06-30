@@ -33,7 +33,7 @@ namespace System.Threading.Tasks.Dataflow
 	{
 		static readonly GroupingDataflowBlockOptions defaultOptions = new GroupingDataflowBlockOptions ();
 
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
+		CompletionHelper compHelper;
 		GroupingDataflowBlockOptions dataflowBlockOptions;
 		TargetBuffer<Tuple<T1, T2>> targets = new TargetBuffer<Tuple<T1, T2>> ();
 		MessageVault<Tuple<T1, T2>> vault = new MessageVault<Tuple<T1, T2>> ();
@@ -57,6 +57,7 @@ namespace System.Threading.Tasks.Dataflow
 				throw new ArgumentNullException ("dataflowBlockOptions");
 
 			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
 			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
 			outgoing = new MessageOutgoingQueue<Tuple<T1, T2>> (compHelper, () => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted);

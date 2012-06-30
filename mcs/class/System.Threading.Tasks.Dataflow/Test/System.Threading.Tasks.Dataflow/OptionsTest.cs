@@ -20,19 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using NUnit.Framework;
 
 namespace MonoTests.System.Threading.Tasks.Dataflow {
 	[TestFixture]
 	public class OptionsTest {
-		private static IEnumerable<IDataflowBlock> CreateBlocksWithNameFormat(string nameFormat)
+		static IEnumerable<IDataflowBlock> CreateBlocksWithOptions (
+			DataflowBlockOptions dataflowBlockOptions,
+			ExecutionDataflowBlockOptions executionDataflowBlockOptions,
+			GroupingDataflowBlockOptions groupingDataflowBlockOptions)
 		{
-			var dataflowBlockOptions = new DataflowBlockOptions { NameFormat = nameFormat };
-			var executionDataflowBlockOptions = new ExecutionDataflowBlockOptions { NameFormat = nameFormat };
-			var groupingDataflowBlockOptions = new GroupingDataflowBlockOptions { NameFormat = nameFormat };
-
 			yield return new ActionBlock<int> (i => { }, executionDataflowBlockOptions);
 			yield return new BatchBlock<double> (10, dataflowBlockOptions);
 			yield return new BatchedJoinBlock<dynamic, object> (
@@ -51,6 +54,26 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			yield return new WriteOnceBlock<object> (x => x, dataflowBlockOptions);
 		}
 
+		static IEnumerable<IDataflowBlock> CreateBlocksWithNameFormat(string nameFormat)
+		{
+			var dataflowBlockOptions = new DataflowBlockOptions { NameFormat = nameFormat };
+			var executionDataflowBlockOptions = new ExecutionDataflowBlockOptions { NameFormat = nameFormat };
+			var groupingDataflowBlockOptions = new GroupingDataflowBlockOptions { NameFormat = nameFormat };
+
+			return CreateBlocksWithOptions (dataflowBlockOptions,
+				executionDataflowBlockOptions, groupingDataflowBlockOptions);
+		}
+
+		static IEnumerable<IDataflowBlock> CreateBlocksWithCancellationToken(CancellationToken cancellationToken)
+		{
+			var dataflowBlockOptions = new DataflowBlockOptions { CancellationToken = cancellationToken};
+			var executionDataflowBlockOptions = new ExecutionDataflowBlockOptions { CancellationToken = cancellationToken};
+			var groupingDataflowBlockOptions = new GroupingDataflowBlockOptions { CancellationToken = cancellationToken};
+
+			return CreateBlocksWithOptions (dataflowBlockOptions,
+				executionDataflowBlockOptions, groupingDataflowBlockOptions);
+		}
+
 		[Test]
 		public void NameFormatTest ()
 		{
@@ -63,6 +86,26 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			foreach (var block in CreateBlocksWithNameFormat ("{1}"))
 				Assert.AreEqual (block.Completion.Id.ToString (), block.ToString ());
+		}
+
+		[Test]
+		public void CancellationTest()
+		{
+			var source = new CancellationTokenSource ();
+			var blocks = CreateBlocksWithCancellationToken (source.Token).ToArray ();
+
+			foreach (var block in blocks)
+				Assert.IsFalse (block.Completion.Wait (100));
+
+			source.Cancel ();
+
+			foreach (var block in blocks) {
+				var ae =
+					Assert.Throws<AggregateException> (() => block.Completion.Wait (100));
+				Assert.AreEqual (1, ae.InnerExceptions.Count);
+				Assert.IsInstanceOf<TaskCanceledException> (ae.InnerExceptions [0]);
+				Assert.IsTrue (block.Completion.IsCanceled);
+			}
 		}
 	}
 }

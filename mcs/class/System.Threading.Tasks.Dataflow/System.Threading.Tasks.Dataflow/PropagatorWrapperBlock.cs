@@ -34,7 +34,7 @@ namespace System.Threading.Tasks.Dataflow
 	{
 		ITargetBlock<TInput> target;
 		ISourceBlock<TOutput> source;
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
+		CompletionHelper compHelper = CompletionHelper.GetNew (null);
 
 		public PropagatorWrapperBlock (ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
 		{

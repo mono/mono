@@ -35,7 +35,7 @@ namespace System.Threading.Tasks.Dataflow
 		static readonly DataflowBlockOptions defaultOptions = new DataflowBlockOptions ();
 
 		DataflowBlockOptions dataflowBlockOptions;
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
+		CompletionHelper compHelper;
 		MessageBox<T> messageBox;
 		MessageVault<T> vault;
 		MessageOutgoingQueue<T> outgoing;
@@ -54,6 +54,7 @@ namespace System.Threading.Tasks.Dataflow
 				throw new ArgumentNullException ("dataflowBlockOptions");
 
 			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper, () => outgoing.IsCompleted, ProcessQueue, dataflowBlockOptions);
 			this.outgoing = new MessageOutgoingQueue<T> (compHelper, () => messageQueue.IsCompleted);
 			this.vault = new MessageVault<T> ();

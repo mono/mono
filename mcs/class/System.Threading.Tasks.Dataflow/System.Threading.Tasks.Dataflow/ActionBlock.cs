@@ -34,7 +34,7 @@ namespace System.Threading.Tasks.Dataflow
 	{
 		static readonly ExecutionDataflowBlockOptions defaultOptions = new ExecutionDataflowBlockOptions ();
 
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
+		CompletionHelper compHelper;
 		BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
 		ExecutingMessageBox<TInput> messageBox;
 		Action<TInput> action;
@@ -55,6 +55,7 @@ namespace System.Threading.Tasks.Dataflow
 
 			this.action = action;
 			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue, compHelper, () => true, ProcessQueue, dataflowBlockOptions);
 		}
 

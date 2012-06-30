@@ -36,7 +36,7 @@ namespace System.Threading.Tasks.Dataflow
 		static readonly ExecutionDataflowBlockOptions defaultOptions = new ExecutionDataflowBlockOptions ();
 
 		ExecutionDataflowBlockOptions dataflowBlockOptions;
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
+		CompletionHelper compHelper;
 		BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
 		MessageBox<TInput> messageBox;
 		MessageVault<TOutput> vault;
@@ -57,6 +57,7 @@ namespace System.Threading.Tasks.Dataflow
 
 			this.transformer = transformer;
 			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue,
 			                                                   compHelper,
 			                                                   () => outgoing.IsCompleted,

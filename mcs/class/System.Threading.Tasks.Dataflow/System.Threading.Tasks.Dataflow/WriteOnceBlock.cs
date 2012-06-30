@@ -34,7 +34,7 @@ namespace System.Threading.Tasks.Dataflow
 	{
 		static readonly DataflowBlockOptions defaultOptions = new DataflowBlockOptions ();
 
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
+		CompletionHelper compHelper;
 		BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
 		MessageBox<T> messageBox;
 		MessageVault<T> vault;
@@ -59,6 +59,7 @@ namespace System.Threading.Tasks.Dataflow
 
 			this.cloner = cloner;
 			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper, () => true, BroadcastProcess, dataflowBlockOptions);
 			this.vault = new MessageVault<T> ();
 		}

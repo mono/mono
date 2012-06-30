@@ -29,7 +29,7 @@ namespace System.Threading.Tasks.Dataflow {
 		IReceivableSourceBlock<Tuple<IList<T1>, IList<T2>>> {
 		GroupingDataflowBlockOptions options;
 
-		CompletionHelper completionHelper = CompletionHelper.GetNew();
+		CompletionHelper completionHelper;
 		readonly MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>>> outgoing;
 		readonly MessageVault<Tuple<IList<T1>, IList<T2>>> vault = new MessageVault<Tuple<IList<T1>, IList<T2>>>();
 		readonly TargetBuffer<Tuple<IList<T1>, IList<T2>>> targets = new TargetBuffer<Tuple<IList<T1>, IList<T2>>>();
@@ -57,6 +57,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 			BatchSize = batchSize;
 			options = dataflowBlockOptions;
+			completionHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 
 			target1 = new JoinTarget<T1> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
