@@ -107,12 +107,14 @@ namespace System.Threading.Tasks.Dataflow
 			return outgoing.TryReceiveAll (out items);
 		}
 
-		void TransformProcess ()
+		void TransformProcess (int maxMessages)
 		{
+			int i = 0;
 			ITargetBlock<TOutput> target;
 			TInput input;
 
-			while (messageQueue.TryTake (out input)) {
+			while ((maxMessages == DataflowBlockOptions.Unbounded || i++ < maxMessages)
+				&& messageQueue.TryTake (out input)) {
 				foreach (var item in transformer (input)) {
 					if ((target = targets.Current) != null)
 						target.OfferMessage (headers.Increment (), item, this, false);

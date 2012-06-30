@@ -19,55 +19,68 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow
 {
 	internal class ExecutingMessageBox<TInput> : MessageBox<TInput>
 	{
-		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
-		readonly BlockingCollection<TInput> messageQueue;
-		readonly Action processQueue;
-		readonly CompletionHelper compHelper;
+		readonly ExecutionDataflowBlockOptions options;
+		readonly Action<int> processQueue;
+		CompletionHelper compHelper;
 
-		AtomicBoolean started = new AtomicBoolean ();
-		
-		public ExecutingMessageBox (BlockingCollection<TInput> messageQueue,
-		                            CompletionHelper compHelper,
-		                            Func<bool> externalCompleteTester,
-		                            Action processQueue,
-		                            ExecutionDataflowBlockOptions dataflowBlockOptions) : base (messageQueue, compHelper, externalCompleteTester)
+		readonly AtomicBoolean waitingTask = new AtomicBoolean ();
+		int degreeOfParallelism;
+
+		public ExecutingMessageBox (
+			BlockingCollection<TInput> messageQueue, CompletionHelper compHelper,
+			Func<bool> externalCompleteTester, Action<int> processQueue,
+			ExecutionDataflowBlockOptions options)
+			: base (messageQueue, compHelper, externalCompleteTester)
 		{
-			this.messageQueue = messageQueue;
-			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.options = options;
 			this.processQueue = processQueue;
 			this.compHelper = compHelper;
 		}
 
 		protected override void EnsureProcessing ()
 		{
-			if (!started.TryRelaxedSet ())
+			if ((options.MaxDegreeOfParallelism != DataflowBlockOptions.Unbounded
+			     && Thread.VolatileRead (ref degreeOfParallelism) >= options.MaxDegreeOfParallelism) ||
+			    !waitingTask.TrySet ())
 				return;
 
-			Task[] tasks = new Task[dataflowBlockOptions.MaxDegreeOfParallelism];
-			for (int i = 0; i < tasks.Length; ++i)
-				tasks[i] = Task.Factory.StartNew (processQueue);
-			Task.Factory.ContinueWhenAll (tasks, (_) => {
-				started.Value = false;
-				// Re-run ourselves in case of a race when data is available in the end
-				if (messageQueue.Count > 0)
-					EnsureProcessing ();
-				else if (messageQueue.IsCompleted)
+			StartProcessing ();
+		}
+
+		void StartProcessing ()
+		{
+			Task.Factory.StartNew (ProcessQueue, TaskCreationOptions.PreferFairness);
+		}
+
+		void ProcessQueue ()
+		{
+			int incrementedDegreeOfParallelism =
+				Interlocked.Increment (ref degreeOfParallelism);
+			if ((options.MaxDegreeOfParallelism == DataflowBlockOptions.Unbounded
+			     || incrementedDegreeOfParallelism < options.MaxDegreeOfParallelism)
+			    && (MessageQueue.Count > 0))
+				StartProcessing();
+			else
+				waitingTask.Value = false;
+
+			processQueue (options.MaxMessagesPerTask);
+
+			int decrementedDegreeOfParallelism =
+				Interlocked.Decrement (ref degreeOfParallelism);
+
+			if (!waitingTask.Value) {
+				if (decrementedDegreeOfParallelism == 0 && MessageQueue.IsCompleted)
 					compHelper.Complete ();
-			});
+				else if (MessageQueue.Count > 0)
+					EnsureProcessing ();
+			}
 		}
 	}
 }
-

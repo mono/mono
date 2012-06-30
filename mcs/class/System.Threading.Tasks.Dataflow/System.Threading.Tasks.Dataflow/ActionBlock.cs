@@ -79,10 +79,12 @@ namespace System.Threading.Tasks.Dataflow
 			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		void ProcessQueue ()
+		void ProcessQueue (int maxMessages)
 		{
+			int i = 0;
 			TInput data;
-			while (messageQueue.TryTake (out data))
+			while ((maxMessages == DataflowBlockOptions.Unbounded || i++ < maxMessages)
+			       && messageQueue.TryTake (out data))
 				action (data);
 		}
 

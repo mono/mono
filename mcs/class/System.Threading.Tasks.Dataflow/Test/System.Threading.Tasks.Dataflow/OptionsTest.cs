@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -106,6 +107,132 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				Assert.IsInstanceOf<TaskCanceledException> (ae.InnerExceptions [0]);
 				Assert.IsTrue (block.Completion.IsCanceled);
 			}
+		}
+
+		static IEnumerable<int[]> GetTaskIdsForExecutionsOptions (
+			ExecutionDataflowBlockOptions options)
+		{
+			var blockFactories =
+				new Func<ConcurrentQueue<Tuple<int, int>>, ITargetBlock<int>>[]
+				{
+					q => new ActionBlock<int> (
+						     i => q.Enqueue (Tuple.Create (i, Task.CurrentId.Value)), options),
+					q => new TransformBlock<int, int> (i =>
+					{
+						q.Enqueue (Tuple.Create (i, Task.CurrentId.Value));
+						return i;
+					}, options),
+					q => new TransformManyBlock<int, int> (i =>
+					{
+						q.Enqueue (Tuple.Create (i, Task.CurrentId.Value));
+						return new int[0];
+					}, options)
+				};
+
+			foreach (var factory in blockFactories) {
+				var queue = new ConcurrentQueue<Tuple<int, int>> ();
+				var block = factory (queue);
+
+				Assert.IsEmpty (queue);
+
+				for (int i = 0; i < 100; i++)
+					block.Post (i);
+
+				block.Complete ();
+				Assert.IsTrue (block.Completion.Wait (500), queue.Count.ToString());
+
+				CollectionAssert.AreEquivalent (
+					Enumerable.Range (0, 100), queue.Select (t => t.Item1));
+
+				yield return queue.Select (t => t.Item2).ToArray ();
+			}
+		}
+
+		static int CalculateDegreeOfParallelism(IEnumerable<int> taskIds)
+		{
+			var firsts = new Dictionary<int, int> ();
+			var lasts = new Dictionary<int, int> ();
+
+			int i = 0;
+			foreach (var taskId in taskIds) {
+				if (!firsts.ContainsKey (taskId))
+					firsts.Add (taskId, i);
+
+				lasts [taskId] = i;
+
+				i++;
+			}
+
+			int maxTime = i;
+
+			var times =
+				Enumerable.Repeat (Tuple.Create<int?, int?> (null, null), maxTime).ToArray ();
+
+			foreach (var first in firsts)
+				times [first.Value] = Tuple.Create<int?, int?> (
+					first.Key, times [first.Value].Item2);
+
+			foreach (var last in lasts)
+				times [last.Value] = Tuple.Create<int?, int?> (
+					times [last.Value].Item2, last.Key);
+
+			int maxDop = 0;
+			int dop = 0;
+
+			foreach (var time in times) {
+				if (time.Item1 != null)
+					dop++;
+				if (time.Item2 != null)
+					dop--;
+
+				if (dop > maxDop)
+					maxDop = dop;
+			}
+
+			return maxDop;
+		}
+
+		[Test]
+		public void MaxDegreeOfParallelismTest()
+		{
+			for (int i = 0; i < 10;i++)
+			{
+				var options = new ExecutionDataflowBlockOptions();
+				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+					Assert.AreEqual(1, CalculateDegreeOfParallelism (taskIds));
+
+				options = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 2 };
+				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+					Assert.LessOrEqual (CalculateDegreeOfParallelism (taskIds), 2);
+
+				options = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 4 };
+				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+					Assert.LessOrEqual(CalculateDegreeOfParallelism (taskIds), 4);
+
+				options = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = -1 };
+				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+					Assert.LessOrEqual(CalculateDegreeOfParallelism (taskIds), taskIds.Length);
+			}
+		}
+
+		[Test]
+		public void MaxMessagesPerTaskTest()
+		{
+			var options = new ExecutionDataflowBlockOptions ();
+			foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
+				Assert.AreEqual (1, taskIds.Distinct ().Count ());
+
+			options = new ExecutionDataflowBlockOptions { MaxMessagesPerTask = 1 };
+			foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+				Assert.AreEqual (100, taskIds.Distinct ().Count ());
+
+			options = new ExecutionDataflowBlockOptions { MaxMessagesPerTask = 2 };
+			foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+				Assert.GreaterOrEqual (taskIds.Distinct ().Count (), taskIds.Length / 2);
+
+			options = new ExecutionDataflowBlockOptions { MaxMessagesPerTask = 4 };
+			foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+				Assert.LessOrEqual (taskIds.Distinct ().Count (), taskIds.Length / 4);
 		}
 	}
 }
