@@ -106,6 +106,10 @@ namespace System.Threading.Tasks.Dataflow
 				return messageQueue.Count;
 			}
 		}
+
+		public override string ToString ()
+		{
+			return NameHelper.GetName (this, dataflowBlockOptions);
+		}
 	}
 }
-

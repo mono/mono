@@ -138,6 +138,11 @@ namespace System.Threading.Tasks.Dataflow
 				return outgoing.Count;
 			}
 		}
+
+		public override string ToString ()
+		{
+			return NameHelper.GetName (this, dataflowBlockOptions);
+		}
 	}
 }
 

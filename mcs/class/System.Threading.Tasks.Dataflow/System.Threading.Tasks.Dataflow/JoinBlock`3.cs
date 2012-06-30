@@ -174,6 +174,10 @@ namespace System.Threading.Tasks.Dataflow
 				return target3;
 			}
 		}
+
+		public override string ToString ()
+		{
+			return NameHelper.GetName (this, dataflowBlockOptions);
+		}
 	}
 }
-

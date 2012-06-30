@@ -22,9 +22,6 @@
 //
 //
 
-
-using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
@@ -181,6 +178,11 @@ namespace System.Threading.Tasks.Dataflow
 			get {
 				return outgoing.Count;
 			}
+		}
+
+		public override string ToString ()
+		{
+			return NameHelper.GetName (this, dataflowBlockOptions);
 		}
 	}
 }

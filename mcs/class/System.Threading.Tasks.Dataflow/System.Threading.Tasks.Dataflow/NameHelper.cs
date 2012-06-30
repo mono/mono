@@ -1,6 +1,6 @@
-// DataflowBlockOptions.cs
+﻿// NameHelper.cs
 //
-// Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,32 +19,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-namespace System.Threading.Tasks.Dataflow
-{
-	public class DataflowBlockOptions
-	{
-		public readonly static int Unbounded = -1;
-
-		public DataflowBlockOptions ()
+namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Helper class for figuring out the name of a block.
+	/// </summary>
+	static class NameHelper {
+		/// <summary>
+		/// Returns the name of the block, based on <see cref="DataflowBlockOptions.NameFormat"/>.
+		/// </summary>
+		public static string GetName(IDataflowBlock block, DataflowBlockOptions options)
 		{
-			BoundedCapacity = -1;
-			CancellationToken = CancellationToken.None;
-			MaxMessagesPerTask = -1;
-			TaskScheduler = TaskScheduler.Default;
-			NameFormat = "{0} Id={1}";
+			return string.Format (
+				options.NameFormat, block.GetType (), block.Completion.Id);
 		}
-
-		public int BoundedCapacity { get; set; }
-
-		public CancellationToken CancellationToken { get; set; }
-
-		public int MaxMessagesPerTask { get; set; }
-
-		public TaskScheduler TaskScheduler { get; set; }
-
-		public string NameFormat { get; set; }
 	}
 }

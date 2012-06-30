@@ -55,6 +55,7 @@
    <Compile Include="Test\System.Threading.Tasks.Dataflow\DataflowBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\JoinBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\JoinBlock`3Test.cs" />
+    <Compile Include="Test\System.Threading.Tasks.Dataflow\OptionsTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\TransformBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\TransformManyBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\WriteOnceBlockTest.cs" />

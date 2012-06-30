@@ -64,6 +64,7 @@
    <Compile Include="System.Threading.Tasks.Dataflow\MessageBox.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\MessageOutgoingQueue.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\MessageVault.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\NameHelper.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\PassingMessageBox.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\TargetBuffer.cs" />
    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
