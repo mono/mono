@@ -46,7 +46,7 @@ namespace Microsoft.Build.BuildEngine {
 			Type t = typeof (ConditionFunctionExpression);
 			string [] names = new string [] { "Exists", "HasTrailingSlash" };
 		
-			functions = new Dictionary <string, MethodInfo> (StringComparer.InvariantCultureIgnoreCase);
+			functions = new Dictionary <string, MethodInfo> (StringComparer.OrdinalIgnoreCase);
 			foreach (string name in names)
 				functions.Add (name, t.GetMethod (name, BindingFlags.NonPublic | BindingFlags.Static));
 		}
