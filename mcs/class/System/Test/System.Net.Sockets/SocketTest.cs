@@ -84,7 +84,7 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category ("InetAccess")]
-		public void EndConnect ()
+		public void BogusEndConnect ()
 		{
 			IPAddress ipOne = IPAddress.Parse (BogusAddress);
 			IPEndPoint ipEP = new IPEndPoint (ipOne, BogusPort);
@@ -96,7 +96,12 @@ namespace MonoTests.System.Net.Sockets
 				sock.EndConnect (ar);
 				Assert.Fail ("#1");
 			} catch (SocketException ex) {
-				Assert.AreEqual (10060, ex.ErrorCode, "#2");
+				// Actual error code depends on network configuration.
+				var error = (SocketError) ex.ErrorCode;
+				Assert.That (error == SocketError.TimedOut ||
+				             error == SocketError.ConnectionRefused ||
+				             error == SocketError.NetworkUnreachable ||
+				             error == SocketError.HostUnreachable, "#2");
 			}
 		}
 
