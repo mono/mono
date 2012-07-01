@@ -1197,12 +1197,14 @@ System.Security.AccessControl/AccessControlModification.cs
 System.Security.AccessControl/AccessControlSections.cs
 System.Security.AccessControl/AccessControlType.cs
 System.Security.AccessControl/AccessRule.cs
+System.Security.AccessControl/AccessRule_T.cs
 System.Security.AccessControl/AceEnumerator.cs
 System.Security.AccessControl/AceFlags.cs
 System.Security.AccessControl/AceQualifier.cs
 System.Security.AccessControl/AceType.cs
 System.Security.AccessControl/AuditFlags.cs
 System.Security.AccessControl/AuditRule.cs
+System.Security.AccessControl/AuditRule_T.cs
 System.Security.AccessControl/AuthorizationRule.cs
 System.Security.AccessControl/AuthorizationRuleCollection.cs
 System.Security.AccessControl/CommonAce.cs
