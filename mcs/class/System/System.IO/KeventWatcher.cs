@@ -268,6 +268,7 @@ namespace System.IO {
 									requests [ev.ident] = data;
 									ProcessEvent(ev);
 								}
+								changedFsi=fsi;
 								PostEvent(filename, fsw, fa, changedFsi);
 							}
 						}
@@ -283,6 +284,7 @@ namespace System.IO {
 								filename = entry.fsi.Name;
 								fa = FileAction.Removed;
 								data.DirEntries.Remove (entry.fsi.FullName);
+								changedFsi=entry.fsi;
 								PostEvent(filename, fsw, fa, changedFsi);
 								break;
 							}
