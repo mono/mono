@@ -445,7 +445,7 @@ namespace Microsoft.Build.Tasks {
 		{
 			this.Path = path;
 			NameToAssemblyNameCache = new Dictionary<string, KeyValuePair<AssemblyName, string>> (
-					StringComparer.InvariantCultureIgnoreCase);
+					StringComparer.OrdinalIgnoreCase);
 		}
 	}
 

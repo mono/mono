@@ -16,8 +16,11 @@
     <AssemblyName>System.Net.Http.Formatting</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -119,7 +123,6 @@
    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Net.Http.Formatting\Properties\AssemblyInfo.cs" />
    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Net.Http.Formatting\Properties\Resources.Designer.cs" />
    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Net.Http.Formatting\UriExtensions.cs" />
-   <Compile Include="Extensions.cs" />
    <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
    <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
    <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonReader.cs" />

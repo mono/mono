@@ -192,7 +192,6 @@ namespace Mono.CSharp
 		const int max_column = column_mask;
 
 		static List<SourceFile> source_list;
-		static int current_source;
 		static Checkpoint [] checkpoints;
 		static int checkpoint_index;
 		
@@ -207,7 +206,6 @@ namespace Mono.CSharp
 		public static void Reset ()
 		{
 			source_list = new List<SourceFile> ();
-			current_source = 0;
 			checkpoint_index = 0;
 		}
 
@@ -235,13 +233,7 @@ namespace Mono.CSharp
 				checkpoints [0] = new Checkpoint (0, 0);
 		}
 
-		static public void Push (SourceFile file)
-		{
-			current_source = file != null ? file.Index : -1;
-			// File is always pushed before being changed.
-		}
-		
-		public Location (int row, int column)
+		public Location (SourceFile file, int row, int column)
 		{
 			if (row <= 0)
 				token = 0;
@@ -252,6 +244,9 @@ namespace Mono.CSharp
 				long target = -1;
 				long delta = 0;
 
+				// TODO: For eval only, need better handling of empty
+				int file_index = file == null ? 0 : file.Index;
+
 				// FIXME: This value is certainly wrong but what was the intension
 				int max = checkpoint_index < 10 ?
 					checkpoint_index : 10;
@@ -260,13 +255,13 @@ namespace Mono.CSharp
 					delta = row - offset;
 					if (delta >= 0 &&
 						delta < (1 << line_delta_bits) &&
-						checkpoints [checkpoint_index - i].File == current_source) {
+						checkpoints[checkpoint_index - i].File == file_index) {
 						target = checkpoint_index - i;
 						break;
 					}
 				}
 				if (target == -1) {
-					AddCheckpoint (current_source, row);
+					AddCheckpoint (file_index, row);
 					target = checkpoint_index;
 					delta = row % (1 << line_delta_bits);
 				}
@@ -284,7 +279,7 @@ namespace Mono.CSharp
 
 		public static Location operator - (Location loc, int columns)
 		{
-			return new Location (loc.Row, loc.Column - columns);
+			return new Location (loc.SourceFile, loc.Row, loc.Column - columns);
 		}
 
 		static void AddCheckpoint (int file, int row)

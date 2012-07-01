@@ -309,7 +309,10 @@ namespace System.Net
 				return DateTime.ParseExact (date, "r", CultureInfo.InvariantCulture).ToLocalTime ();
 			}
 			set {
-				webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
+				if (value.Equals (DateTime.MinValue))
+					webHeaders.RemoveInternal ("Date");
+				else
+					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
 			}
 		}
 #endif

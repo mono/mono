@@ -205,6 +205,7 @@ System.IO.Ports/SerialPortTest.cs
 System.Net/CookieCollectionTest.cs
 System.Net/CookieContainerTest.cs
 System.Net/CookieTest.cs
+System.Net/CookieParserTest.cs
 System.Net/CredentialCacheTest.cs
 System.Net/DnsPermissionAttributeTest.cs
 System.Net/DnsPermissionTest.cs

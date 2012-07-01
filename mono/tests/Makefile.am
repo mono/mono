@@ -394,7 +394,6 @@ TEST_CS_SRC_DIST=	\
 TEST_CS_SRC_GEN = \
 	runtime-invoke.gen.cs \
 	imt_big_iface_test.cs
-	
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) $(TEST_CS_SRC_GEN) async-exc-compilation.cs finally_guard.cs
@@ -607,9 +606,9 @@ test-eglib-remap:
 # Tests that the internals in mono/io-layer/messages.c are ok by triggering the 
 # code that checks that the table is properly sorted
 #
-test_messages: w32message.exe
+test-messages: w32message.exe
 	> test_messages.zero
-	$(JITTEST_PROG_RUN) w32message.exe >& w32message.allout && cmp test_messages.zero w32message.allout
+	$(with_mono_path) $(JITTEST_PROG_RUN) w32message.exe >& w32message.allout && cmp test_messages.zero w32message.allout
 
 if MOONLIGHT
 test_2_1 : test-coreclr-security
@@ -633,9 +632,13 @@ endif
 endif
 endif
 
-test: assemblyresolve/test/asm.dll testjit test-type-load test-generic-sharing test_platform test_2_1 test_messages
-#test_messages fails on the buildbots
-test-wrench: assemblyresolve/test/asm.dll testjit-wrench test-generic-sharing test-type-load test_platform test_2_1 test-process-exit test-sgen
+test: assemblyresolve/test/asm.dll testjit test-type-load test-generic-sharing test_platform test_2_1 test-messages
+test-wrench: assemblyresolve/test/asm.dll testjit-wrench test-generic-sharing test-type-load test_platform test_2_1 test-process-exit test-sgen test-messages rm-empty-logs
+
+# Remove empty .stdout and .stderr files for wrench
+rm-empty-logs:
+	@echo "Removing empty logs..."
+	@find . '(' -name "*.stdout" -o -name "*.stderr" ')' -empty -exec rm {} \;
 
 assemblyresolve/test/asm.dll:
 	$(MAKE) -C assemblyresolve prereq
@@ -791,14 +794,14 @@ SGEN_TESTS =	\
 sgen-regular-tests: $(SGEN_TESTS)
 	@for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
-		MONO_GC_PARAMS=major=marksweep-par MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
-		MONO_ENV_OPTIONS="--gc=sgen"                                    $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
-		MONO_GC_PARAMS=major=marksweep-par,minor=split MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
-		MONO_GC_PARAMS=minor=split MONO_ENV_OPTIONS="--gc=sgen"                     $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
-		MONO_GC_PARAMS=major=marksweep,concurrent-sweep MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
-		MONO_GC_PARAMS=minor=split,major=marksweep,concurrent-sweep MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
-		MONO_GC_PARAMS=major=marksweep-par,minor=split,alloc-ratio=95 MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
-		MONO_GC_PARAMS=minor=split,alloc-ratio=95 MONO_ENV_OPTIONS="--gc=sgen"                     $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
+		MONO_GC_PARAMS=major=marksweep-par MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
+		MONO_ENV_OPTIONS="--gc=sgen"                                    $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
+		MONO_GC_PARAMS=major=marksweep-par,minor=split MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
+		MONO_GC_PARAMS=minor=split MONO_ENV_OPTIONS="--gc=sgen"                     $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
+		MONO_GC_PARAMS=major=marksweep,concurrent-sweep MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
+		MONO_GC_PARAMS=minor=split,major=marksweep,concurrent-sweep MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
+		MONO_GC_PARAMS=major=marksweep-par,minor=split,alloc-ratio=95 MONO_ENV_OPTIONS="--gc=sgen" $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
+		MONO_GC_PARAMS=minor=split,alloc-ratio=95 MONO_ENV_OPTIONS="--gc=sgen"                     $(RUNTIME) $$fn > $$fn.stdout 2> $$fn.stderr || exit 1;	\
 	done
 
 

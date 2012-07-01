@@ -52,8 +52,10 @@ namespace System.Threading
 		//
 		// And you'll get a nice 36. So probably those fields are out there but are not public.
 		// So I'm adding some internal fields that are used in the runtime
+#pragma warning disable 649
 		internal int Handle1;
 		internal int Handle2;
+#pragma warning restore 649
 	}
 }
 

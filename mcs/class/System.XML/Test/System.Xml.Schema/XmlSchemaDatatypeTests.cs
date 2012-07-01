@@ -3,17 +3,18 @@
 //
 // Author:
 //   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//   Wojciech Kotlarski <wojciech.kotlarski@7digital.com>
+//   Andres G. Aragoneses <andres.aragoneses@7digital.com>
 //
 // (C) 2002 Atsushi Enomoto
+// (C) 2012 7digital Media Ltd.
 //
 
 using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using NUnit.Framework;
 
 using QName = System.Xml.XmlQualifiedName;
@@ -121,7 +122,6 @@ namespace MonoTests.System.Xml
 			vr.Read ();
 		}
 
-#if NET_2_0
 		string [] allTypes = new string [] {
 			"string", "boolean", "float", "double", "decimal", 
 			"duration", "dateTime", "time", "date", "gYearMonth", 
@@ -195,6 +195,131 @@ namespace MonoTests.System.Xml
 
 			AssertType.IsFalse (GetDatatype ("string").IsDerivedFrom (null), "null arg");
 		}
-#endif
+
+		[Test]
+		public void ChangeType_StringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.String, datatype.TypeCode);
+			Assert.AreEqual (typeof(string), datatype.ValueType);
+
+			Assert.AreEqual ("test", datatype.ChangeType("test", typeof(string)));
+		}
+
+		[Test]
+		public void ChangeType_StringToObjectTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.String, datatype.TypeCode);
+			Assert.AreEqual (typeof(string), datatype.ValueType);
+
+			Assert.AreEqual ("test", datatype.ChangeType("test", typeof(object)));
+		}
+
+		[Test]
+		public void ChangeType_IntegerTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.Integer, datatype.TypeCode);
+			Assert.AreEqual (typeof(decimal), datatype.ValueType);
+
+			Assert.AreEqual (300, datatype.ChangeType("300", typeof(int)));
+		}
+
+		[Test]
+		public void ChangeType_FromDateTimeTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
+
+			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
+			Assert.AreEqual ("2012-06-27T00:00:00Z", datatype.ChangeType(date, typeof(string)));
+		}
+
+		[Test]
+		public void ChangeType_FromTimeSpanTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DayTimeDuration).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DayTimeDuration, datatype.TypeCode);
+			Assert.AreEqual (typeof(TimeSpan), datatype.ValueType);
+
+			TimeSpan span = new TimeSpan(1, 2, 3);
+			Assert.AreEqual ("PT1H2M3S", datatype.ChangeType(span, typeof(string)));
+		}
+
+		[Test]
+		public void ChangeType_ToDateTimeTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
+
+			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
+			Assert.AreEqual (date, datatype.ChangeType("2012-06-27T00:00:00Z", typeof(DateTime)));
+		}
+
+		[Test]
+		public void ChangeType_ToTimeSpanTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DayTimeDuration).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DayTimeDuration, datatype.TypeCode);
+			Assert.AreEqual (typeof(TimeSpan), datatype.ValueType);
+
+			TimeSpan span = new TimeSpan(1, 2, 3);
+			Assert.AreEqual (span, datatype.ChangeType("PT1H2M3S", typeof(TimeSpan)));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullValueArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType(null, typeof(string));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullValueArgumentInToStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType(null, typeof(int));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullTargetArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType("100", null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullNamespaceResolverArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType("100", typeof(string), null);
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		[ExpectedException (typeof(InvalidCastException))]
+		public void InvalidCastExceptionTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
+
+			datatype.ChangeType(300, typeof (int));
+		}
 	}
 }

@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,1595,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,219,67,169,612</NoWarn>
     <OutputPath>.\</OutputPath>
     <NoStdLib>true</NoStdLib>
     
@@ -16,11 +16,14 @@
     <AssemblyName>System_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,1595,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,219,67,169,612</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -28,8 +31,9 @@
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,1595,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,219,67,169,612</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -274,6 +278,7 @@
    <Compile Include="Test\System.Net\WebProxyTest.cs" />
    <Compile Include="Test\System.Net\WebRequestTest.cs" />
    <Compile Include="Test\System.Net\WebClientTest.cs" />
+   <Compile Include="Test\System.Net\WebClientTestAsync.cs" />
    <Compile Include="Test\System.Net\WebUtilityTest.cs" />
    <Compile Include="Test\System.Net.Configuration\ConnectionManagementSectionTest.cs" />
    <Compile Include="Test\System.Net.Configuration\HttpWebRequestElementTest.cs" />
@@ -286,6 +291,7 @@
    <Compile Include="Test\System.Net.Sockets\SocketTest.cs" />
    <Compile Include="Test\System.Net.Sockets\SocketAsyncEventArgsTest.cs" />
    <Compile Include="Test\System.Net.Sockets\UdpClientTest.cs" />
+   <Compile Include="Test\System.Net.Sockets\SocketAsyncTest.cs" />
    <Compile Include="Test\System.Net.Mail\LinkedResourceTest.cs" />
    <Compile Include="Test\System.Net.Mail\AttachmentCollectionTest.cs" />
    <Compile Include="Test\System.Net.Mail\MailAddressCollectionTest.cs" />
@@ -303,6 +309,7 @@
    <Compile Include="Test\System.Net.Mime\ContentDispositionTest.cs" />
    <Compile Include="Test\System.Net.Mime\ContentTypeTest.cs" />
    <Compile Include="Test\System.Net.NetworkInformation\PhysicalAddressTest.cs" />
+   <Compile Include="Test\System.Net.Security\SslStreamTest.cs" />
    <Compile Include="Test\System.Runtime.Versioning\FrameworkNameTest.cs" />
    <Compile Include="Test\System.Security.Cryptography\AsnEncodedDataTest.cs" />
    <Compile Include="Test\System.Security.Cryptography\OidCollectionTest.cs" />

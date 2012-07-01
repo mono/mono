@@ -69,12 +69,14 @@ namespace System.Reflection.Emit
 	}
 
 	internal struct MonoResource {
+#pragma warning disable 649
 		public byte[] data;
 		public string name;
 		public string filename;
 		public ResourceAttributes attrs;
 		public int offset;
 		public Stream stream;
+#pragma warning restore 649
 	}
 
 	internal struct MonoWin32Resource {

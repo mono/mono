@@ -79,7 +79,7 @@ namespace Mono.CSharp
 			module = new ModuleContainer (ctx);
 			module.Evaluator = this;
 
-			source_file = new CompilationSourceFile (module);
+			source_file = new CompilationSourceFile (module, null);
 			module.AddTypeContainer (source_file);
 
 			startup_files = ctx.SourceFiles.Count;
@@ -119,7 +119,7 @@ namespace Mono.CSharp
 			var parser_session = new ParserSession ();
 			for (int i = 0; i < startup_files; ++i) {
 				var sf = ctx.SourceFiles [i];
-				d.Parse (sf, module, parser_session);
+				d.Parse (sf, module, parser_session, ctx.Report);
 			}
 		}
 

@@ -726,7 +726,8 @@ namespace System.Net
 		internal void NextRead ()
 		{
 			lock (this) {
-				Data.request.FinishedReading = true;
+				if (Data.request != null)
+					Data.request.FinishedReading = true;
 				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
 				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
 				bool keepAlive = (Data.Version == HttpVersion.Version11 && this.keepAlive);
