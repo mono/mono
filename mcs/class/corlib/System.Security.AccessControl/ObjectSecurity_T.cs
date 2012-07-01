@@ -25,12 +25,67 @@
 
 #if NET_4_0
 
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 
 namespace System.Security.AccessControl
 {
 	public abstract class ObjectSecurity<T> : NativeObjectSecurity where T : struct
 	{
+		internal ObjectSecurity ()
+		{
+
+		}
+		
+		protected ObjectSecurity (bool isContainer,
+					  ResourceType resourceType)
+			: base (isContainer, resourceType)
+		{
+
+		}
+		
+		protected ObjectSecurity (bool isContainer,
+					  ResourceType resourceType,
+					  SafeHandle safeHandle,
+					  AccessControlSections includeSections)
+			: base (isContainer, resourceType, safeHandle, includeSections)
+		{
+
+		}
+		
+		protected ObjectSecurity (bool isContainer,
+					  ResourceType resourceType,
+					  string name,
+					  AccessControlSections includeSections)
+			: base (isContainer, resourceType, name, includeSections)
+		{
+
+		}
+		
+		protected ObjectSecurity (bool isContainer,
+					  ResourceType resourceType,
+					  SafeHandle safeHandle,
+					  AccessControlSections includeSections,
+					  ExceptionFromErrorCode exceptionFromErrorCode,
+					  object exceptionContext)
+			: base (isContainer, resourceType, safeHandle, includeSections,
+				exceptionFromErrorCode, exceptionContext)
+		{
+
+		}
+		
+		protected ObjectSecurity (bool isContainer,
+					  ResourceType resourceType,
+					  string name,
+					  AccessControlSections includeSections,
+					  ExceptionFromErrorCode exceptionFromErrorCode,
+					  object exceptionContext)
+			: base (isContainer, resourceType, name, includeSections,
+				exceptionFromErrorCode, exceptionContext)
+		{
+
+		}
+
 		public override Type AccessRightType {
 			get {
 				return typeof(T);
@@ -62,3 +117,4 @@ namespace System.Security.AccessControl
 }
 	
 #endif
+
