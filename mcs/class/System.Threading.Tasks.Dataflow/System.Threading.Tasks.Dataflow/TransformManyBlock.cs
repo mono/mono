@@ -115,7 +115,12 @@ namespace System.Threading.Tasks.Dataflow
 
 			while ((maxMessages == DataflowBlockOptions.Unbounded || i++ < maxMessages)
 				&& messageQueue.TryTake (out input)) {
-				foreach (var item in transformer (input)) {
+				var result = transformer (input);
+
+				if (result == null)
+					continue;
+
+				foreach (var item in result) {
 					if ((target = targets.Current) != null)
 						target.OfferMessage (headers.Increment (), item, this, false);
 					else
