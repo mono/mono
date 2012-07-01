@@ -1,10 +1,12 @@
 // 
 // TransformManyBlockTest.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "garuma" Laval <jeremie.laval@gmail.com>
+//       Petr Onderka <gsvick@gmail.com>
 // 
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +26,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
 using NUnit.Framework;
@@ -73,6 +74,23 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			evt.Wait ();
 
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 0, 1, 2 }, array);
+		}
+
+		[Test]
+		public void NullResultTest ()
+		{
+			bool received = false;
+
+			var transformMany =
+				new TransformManyBlock<int, int> (i => (IEnumerable<int>)null);
+			var action = new ActionBlock<int> (i => received = true);
+			transformMany.LinkTo (action);
+
+			Assert.IsTrue (transformMany.Post (1));
+
+			transformMany.Complete ();
+			Assert.IsTrue (transformMany.Completion.Wait (100));
+			Assert.IsFalse (received);
 		}
 	}
 }

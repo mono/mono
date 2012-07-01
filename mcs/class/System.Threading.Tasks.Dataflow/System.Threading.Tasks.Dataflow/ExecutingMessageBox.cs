@@ -70,7 +70,11 @@ namespace System.Threading.Tasks.Dataflow
 			else
 				waitingTask.Value = false;
 
-			processQueue (options.MaxMessagesPerTask);
+			try {
+				processQueue (options.MaxMessagesPerTask);
+			} catch (Exception e) {
+				compHelper.Fault (e);
+			}
 
 			int decrementedDegreeOfParallelism =
 				Interlocked.Decrement (ref degreeOfParallelism);
