@@ -194,7 +194,21 @@ namespace MonoTests.System.Net
 			SubTestGetHostByName (site1Name, site1Dot);
 			SubTestGetHostByName (site2Name, site2Dot);
 			try {
-				Dns.GetHostByName (noneExistingSite);
+				var entry = Dns.GetHostByName (noneExistingSite);
+				/*
+				 * Work around broken t-online.de DNS Server.
+				 * 
+				 * T-Online's DNS Server for DSL Customers resolves
+				 * non-exisitng domain names to
+				 * http://navigationshilfe1.t-online.de/dnserror?url=....
+				 * instead of reporting an error.
+				 */
+				var navigationshilfe1 = IPAddress.Parse ("80.156.86.78");
+				var navigationshilfe2 = IPAddress.Parse ("62.157.140.133");
+				foreach (var addr in entry.AddressList) {
+					if (addr.Equals (navigationshilfe1) || addr.Equals (navigationshilfe2))
+						return;
+				}
 				Assert.Fail ("Should raise a SocketException (assuming that '" + noneExistingSite + "' does not exist)");
 			} catch (SocketException) {
 			}
