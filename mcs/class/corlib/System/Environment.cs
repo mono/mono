@@ -366,6 +366,7 @@ namespace System {
 				// If value not found, add %FOO to stream,
 				//  and use the closing % for the next iteration.
 				// If value found, expand it in place of %FOO%
+				int realOldOff2 = off2;
 				if (value == null) {
 					result.Append ('%');
 					result.Append (var);
@@ -389,7 +390,7 @@ namespace System {
 				// If value not found in current iteration, but a % was found for next iteration,
 				//  use text from current closing % to the next %.
 				else
-					textLen = off1 - oldOff2;
+					textLen = off1 - realOldOff2;
 				if(off1 >= oldOff2 || off1 == -1)
 					result.Append (name, oldOff2+1, textLen);
 			} while (off2 > -1 && off2 < len);
