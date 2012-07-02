@@ -2306,8 +2306,8 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 		readr4 (ptr, &r);
 
 		/* Crazy solaris systems doesn't have isnormal */
-#ifdef HAVE_FINITE
-		normal = finite (r);
+#ifdef HAVE_ISFINITE
+		normal = isfinite (r);
 #else
 		normal = isnormal (r);
 #endif
@@ -2326,8 +2326,8 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 		readr8 (ptr, &r);
 
 		/* Crazy solaris systems doesn't have isnormal */
-#ifdef HAVE_FINITE
-		normal = finite (r);
+#ifdef HAVE_ISFINITE
+		normal = isfinite (r);
 #else
 		normal = isnormal (r);
 #endif
