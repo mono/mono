@@ -553,7 +553,10 @@ namespace System {
 		// information to initialize themselves before permissions can be checked
 		internal static string UnixGetFolderPath (SpecialFolder folder, SpecialFolderOption option)
 		{
-			string home = internalGetHome ();
+			string home = internalGetEnvironmentVariable ("HOME");
+			if ((home == null) || (home == String.Empty)) {
+				home = internalGetHome();
+			}
 
 			// http://freedesktop.org/Standards/basedir-spec/basedir-spec-0.6.html
 
