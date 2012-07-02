@@ -11,7 +11,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using NUnit.Framework;
 
-namespace AccessControl
+namespace MonoTests.System.Security.AccessControl
 {
 	[TestFixture]
 	public class CommonAclTest

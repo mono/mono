@@ -132,9 +132,10 @@ namespace System.Security.AccessControl
 			throw new NotImplementedException ();
 		}
 		
-		protected override void ApplyCanonicalSortToExplicitAces ()
+		internal override void ApplyCanonicalSortToExplicitAces ()
 		{
-		
+			int explicitCount = GetCanonicalExplicitAceCount ();
+			ApplyCanonicalSortToExplicitAces (0, explicitCount);
 		}
 		
 		internal override bool IsAceMeaningless (GenericAce ace)

@@ -302,5 +302,28 @@ namespace MonoTests.System.Security.Principal {
 			Assert.AreEqual (8, SecurityIdentifier.MinBinaryLength);
 			Assert.AreEqual (68, SecurityIdentifier.MaxBinaryLength);
 		}
+		
+		[Test]
+		public void CompareOrdering ()
+		{
+			SecurityIdentifier[] sids = new SecurityIdentifier[] {
+				new SecurityIdentifier ("S-1-5-32-544"),
+				new SecurityIdentifier ("S-1-5-40"),
+				new SecurityIdentifier ("S-1-5-32-5432"),
+				new SecurityIdentifier ("S-1-6-0"),
+				new SecurityIdentifier ("S-1-5-32-99"),
+				new SecurityIdentifier ("S-1-0-2")
+			};
+
+			SecurityIdentifier[] sortedSids = (SecurityIdentifier[])sids.Clone ();
+			Array.Sort (sortedSids);
+
+			Assert.AreSame (sids [5], sortedSids [0]);
+			Assert.AreSame (sids [1], sortedSids [1]);
+			Assert.AreSame (sids [4], sortedSids [2]);
+			Assert.AreSame (sids [0], sortedSids [3]);
+			Assert.AreSame (sids [2], sortedSids [4]);
+			Assert.AreSame (sids [3], sortedSids [5]);
+		}
 	}
 }

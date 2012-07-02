@@ -137,7 +137,7 @@ namespace System.Security.AccessControl
 			
 			if (IsCanonical) {
 				MergeExplicitAces ();
-			//	ApplyCanonicalSortToExplicitAces ();
+				ApplyCanonicalSortToExplicitAces ();
 			}
 		}
 		
@@ -186,16 +186,29 @@ namespace System.Security.AccessControl
 			return true;
 		}
 
-		int GetIndexOfFirstInheritedAce ()
+		internal int GetCanonicalExplicitDenyAceCount ()
 		{
 			int i;
-			for (i = 0; i < Count && !this [i].IsInherited; i ++) ;
+			for (i = 0; i < Count; i ++) {
+				if (this [i].IsInherited) break;
+
+				QualifiedAce ace = this [i] as QualifiedAce;
+				if (ace == null || ace.AceQualifier != AceQualifier.AccessDenied) break;
+			}
+			return i;
+		}
+		
+		internal int GetCanonicalExplicitAceCount ()
+		{
+			int i;
+			for (i = 0; i < Count; i ++)
+				if (this [i].IsInherited) break;
 			return i;
 		}
 		
 		void MergeExplicitAces ()
 		{
-			int explicitCount = GetIndexOfFirstInheritedAce ();
+			int explicitCount = GetCanonicalExplicitAceCount ();
 			
 			for (int i = 0; i < explicitCount - 1; ) {
 				GenericAce mergedAce = MergeExplicitAcePair (raw_acl [i], raw_acl [i + 1]);
@@ -251,9 +264,9 @@ namespace System.Security.AccessControl
 				type = ace.InheritedObjectAceType;
 		}
 
-		protected abstract void ApplyCanonicalSortToExplicitAces ();
+		internal abstract void ApplyCanonicalSortToExplicitAces ();
 		
-		protected void ApplyCanonicalSortToExplicitAces (int start, int count)
+		internal void ApplyCanonicalSortToExplicitAces (int start, int count)
 		{
 			int i, j;
 			for (i = start + 1; i < start + count; i ++)
