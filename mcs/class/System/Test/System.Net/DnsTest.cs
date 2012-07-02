@@ -29,7 +29,7 @@ namespace MonoTests.System.Net
 	public class DnsTest
 	{
 		private String site1Name = "go-mono.com",
-			site1Dot = "74.208.222.19",
+			site1Dot = "50.21.183.68",
 			site2Name = "info.diku.dk",
 			site2Dot = "130.225.96.4",
 			noneExistingSite = "www.unlikely.novell.com";
