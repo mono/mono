@@ -43,21 +43,18 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void FileExtension ()
 		{
 			Assert.AreEqual ("cs", _codeProvider.FileExtension);
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void LanguageOptionsTest ()
 		{
 			Assert.AreEqual (LanguageOptions.None, _codeProvider.LanguageOptions);
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void GeneratorSupports ()
 		{
 			ICodeGenerator codeGenerator = _codeProvider.CreateGenerator ();
@@ -93,7 +90,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromFile_InMemory ()
 		{
 			// create source file
@@ -149,7 +145,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromFileBatch_Executable_InMemory ()
 		{
 			// create source file
@@ -242,7 +237,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromFileBatch_Library_InMemory ()
 		{
 			// create source file
@@ -334,7 +328,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromSource_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -367,7 +360,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromSourceBatch_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -409,7 +401,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromDom_NotInMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -439,7 +430,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromDomBatch_NotInMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -468,7 +458,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromDom_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
@@ -499,7 +488,6 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void CompileFromDomBatch_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing
