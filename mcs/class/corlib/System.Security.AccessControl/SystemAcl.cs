@@ -29,24 +29,21 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class SystemAcl : CommonAcl
 	{
-//		RawAcl raw_acl;
-		
 		public SystemAcl (bool isContainer, bool isDS, int capacity)
-			: this (isContainer, isDS, 0, capacity)
+			: base (isContainer, isDS, capacity)
 		{
 		}
 		
 		public SystemAcl (bool isContainer, bool isDS, RawAcl rawAcl)
-			: this (isContainer, isDS, 0)
+			: base (isContainer, isDS, rawAcl)
 		{
-//			this.raw_acl = rawAcl;
 		}
 		
-		public SystemAcl (bool isContainer, bool isDS, byte revision,
-				  int capacity)
+		public SystemAcl (bool isContainer, bool isDS, byte revision, int capacity)
 			: base (isContainer, isDS, revision, capacity)
 		{
 		}
@@ -134,10 +131,23 @@ namespace System.Security.AccessControl {
 		{
 			throw new NotImplementedException ();
 		}
-
-		internal override string GetSddlForm(ControlFlags sdFlags, bool isDacl)
+		
+		protected override void ApplyCanonicalSortToExplicitAces ()
 		{
-			throw new NotImplementedException();
+		
+		}
+		
+		internal override bool IsAceMeaningless (GenericAce ace)
+		{
+			if (base.IsAceMeaningless (ace)) return true;
+			
+			QualifiedAce qace = ace as QualifiedAce;
+			if (null != qace) {
+				return !(AceQualifier.SystemAudit == qace.AceQualifier ||
+				         AceQualifier.SystemAlarm == qace.AceQualifier);
+			}
+			
+			return false;
 		}
 	}
 }
