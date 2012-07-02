@@ -204,7 +204,10 @@ System.Runtime.Versioning/TargetFrameworkAttributeTest.cs
 System.Runtime.Versioning/VersioningHelperTest.cs
 System/SByteTest.cs
 System.Security/CodeAccessPermissionTest.cs
+System.Security.AccessControl/AuthorizationRuleTest.cs
 System.Security.AccessControl/CommonAceTest.cs
+System.Security.AccessControl/MutexAccessRuleTest.cs
+System.Security.AccessControl/ObjectSecurity_TTest.cs
 System.Security.AccessControl/RawAclTest.cs
 System.Security.AccessControl/RawSecurityDescriptorTest.cs
 System.Security.Cryptography/AllTests2.cs

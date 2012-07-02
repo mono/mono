@@ -48,7 +48,7 @@ namespace Microsoft.Build.BuildEngine {
 			string[] trueValuesArray = new string[] {"true", "on", "yes"};
 			string[] falseValuesArray = new string[] {"false", "off", "no"};
 
-			boolValues = new Dictionary<string, bool> (StringComparer.InvariantCultureIgnoreCase);
+			boolValues = new Dictionary<string, bool> (StringComparer.OrdinalIgnoreCase);
 			foreach (string s in trueValuesArray)
 				boolValues.Add (s, true);
 			foreach (string s in falseValuesArray)

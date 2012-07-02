@@ -49,7 +49,7 @@ namespace Microsoft.Build.BuildEngine {
 //		bool	ignoreWhiteSpace = true;
 		
 		static TokenType[] charIndexToTokenType = new TokenType[128];
-		static Dictionary <string, TokenType> keywords = new Dictionary <string, TokenType> (StringComparer.InvariantCultureIgnoreCase);
+		static Dictionary <string, TokenType> keywords = new Dictionary <string, TokenType> (StringComparer.OrdinalIgnoreCase);
 
 		static ConditionTokenizer ()
 		{

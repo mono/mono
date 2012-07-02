@@ -70,14 +70,10 @@ namespace System.ComponentModel.DataAnnotations
 			set { _autoGenerateFilter = value; }
 		}
 
-		int? _order;
-		public int? Order {
+		int _order;
+		public int Order {
 			get {
-				if (_order == null) {
-					throw new InvalidOperationException (string.Format (property_not_set_message, "Order"));
-				}
-				
-				return _order.Value;
+				return _order;
 			}
 			set { _order = value; }
 		}

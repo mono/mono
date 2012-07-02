@@ -901,7 +901,19 @@ namespace MonoTests.System.Net.Sockets {
 		[Test]
 		public void CloseInReceive ()
 		{
-			UdpClient client = new UdpClient (50000);
+			UdpClient client = null;
+			var rnd = new Random ();
+			for (int i = 0; i < 5; i++) {
+				int port = rnd.Next (1025, 65534);
+				try {
+					client = new UdpClient (port);
+					break;
+				} catch (Exception ex) {
+					if (i == 5)
+						throw;
+				}
+			}
+
 			new Thread(delegate() {
 				Thread.Sleep(2000);
 				client.Close();
