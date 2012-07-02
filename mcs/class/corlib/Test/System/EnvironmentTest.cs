@@ -153,6 +153,26 @@ namespace MonoTests.System
 #endif
 
 		[Test]
+		public void GetFolderPath_SpecialFolder_Personal_Override ()
+		{
+			// do not run this test on windows machines
+			if ((int)Environment.OSVersion.Platform < 4) return;
+
+			// we don't want to persist any changes we do to test this issue... (always cleanup)
+			string originalHomeValue = Environment.GetEnvironmentVariable ("HOME");
+			try
+			{
+				Environment.SetEnvironmentVariable ("HOME", "/home/random-home/");
+				string actual = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+				Assert.AreEqual("/home/random-home/", actual);
+			}
+			finally
+ 			{
+				Environment.SetEnvironmentVariable ("HOME", originalHomeValue);
+			}
+		}
+
+		[Test]
 		public void GetCommandLineArgs ()
 		{
 			string[] args = Environment.GetCommandLineArgs ();
