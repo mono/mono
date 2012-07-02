@@ -24,10 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
 using NUnit.Framework;
@@ -41,13 +39,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void BasicUsageTest ()
 		{
 			bool[] array = new bool[3];
-			CountdownEvent evt = new CountdownEvent (array.Length);
-			ActionBlock<int> block = new ActionBlock<int> ((i) => { array[i] = true; evt.Signal (); });
+			var evt = new CountdownEvent (array.Length);
+			var block = new ActionBlock<int> (i => { array[i] = true; evt.Signal (); });
 
 			for (int i = 0; i < array.Length; ++i)
 				Assert.IsTrue (block.Post (i), "Not accepted");
 
-			evt.Wait ();
+			Assert.IsTrue (evt.Wait (500));
 			
 			Assert.IsTrue (array.All (b => b), "Some false");
 		}

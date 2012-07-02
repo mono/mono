@@ -56,7 +56,8 @@ namespace System.Threading.Tasks.Dataflow
 			this.action = action;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue, compHelper, () => true, ProcessQueue, dataflowBlockOptions);
+			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue, compHelper,
+				() => true, ProcessItem, () => { }, dataflowBlockOptions);
 		}
 
 		[MonoTODO]
@@ -79,13 +80,13 @@ namespace System.Threading.Tasks.Dataflow
 			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		void ProcessQueue (int maxMessages)
+		bool ProcessItem ()
 		{
-			int i = 0;
 			TInput data;
-			while ((maxMessages == DataflowBlockOptions.Unbounded || i++ < maxMessages)
-			       && messageQueue.TryTake (out data))
+			bool dequeued = messageQueue.TryTake (out data);
+			if (dequeued)
 				action (data);
+			return dequeued;
 		}
 
 		public void Complete ()
@@ -95,7 +96,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		public void Fault (Exception ex)
 		{
-			compHelper.Fault (ex);
+			compHelper.RequestFault (ex);
 		}
 
 		public Task Completion {

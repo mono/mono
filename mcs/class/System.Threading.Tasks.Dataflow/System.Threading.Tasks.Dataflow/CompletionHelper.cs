@@ -27,11 +27,19 @@ namespace System.Threading.Tasks.Dataflow
 {
 	/// <summary>
 	/// This is used to implement a default behavior for Dataflow completion tracking
-	/// that is the Completion property and Complete/Fault method combo 
+	/// that is the Completion property, Complete/Fault method combo
+	/// and the CancellationToken option.
 	/// </summary>
-	internal struct CompletionHelper
+	internal class CompletionHelper
 	{
 		TaskCompletionSource<object> source;
+
+		private readonly AtomicBoolean canFaultOrCancelImmediatelly =
+			new AtomicBoolean { Value = true };
+		private readonly AtomicBoolean requestedFaultOrCancel =
+			new AtomicBoolean { Value = false };
+
+		Exception requestedException;
 
 		public static CompletionHelper GetNew (DataflowBlockOptions options)
 		{
@@ -45,23 +53,65 @@ namespace System.Threading.Tasks.Dataflow
 			get { return source.Task; }
 		}
 
+		public bool CanFaultOrCancelImmediatelly {
+			get { return canFaultOrCancelImmediatelly.Value; }
+			set {
+				if (value) {
+					if (canFaultOrCancelImmediatelly.TrySet () && requestedFaultOrCancel.Value) {
+						if (requestedException == null)
+							Cancel ();
+						else
+							Fault (requestedException);
+					}
+				} else
+					canFaultOrCancelImmediatelly.Value = false;
+			}
+		}
+
+		public bool CanRun {
+			get {
+				return source.Task.Status == TaskStatus.WaitingForActivation
+				       && !requestedFaultOrCancel.Value;
+			}
+		}
+
 		public void Complete ()
 		{
 			source.TrySetResult (null);
 		}
 
-		public void Fault (Exception ex)
+		public void RequestFault (Exception ex)
+		{
+			if (CanFaultOrCancelImmediatelly)
+				Fault (ex);
+			else {
+				Interlocked.CompareExchange (ref requestedException, ex, null);
+				requestedFaultOrCancel.Value = true;
+			}
+		}
+
+		void Fault (Exception ex)
 		{
 			source.TrySetException (ex);
 		}
 
+		void RequestCancel ()
+		{
+			if (CanFaultOrCancelImmediatelly)
+				Cancel();
+			else
+				requestedFaultOrCancel.Value = true;
+		}
+
+		void Cancel ()
+		{
+			source.TrySetCanceled ();
+		}
+
 		void SetOptions (DataflowBlockOptions options)
 		{
-			// source can't be used in a lambda directly
-			var sourceTmp = source;
 			if (options.CancellationToken != CancellationToken.None)
-				options.CancellationToken.Register (
-					() => sourceTmp.TrySetCanceled ());
+				options.CancellationToken.Register (RequestCancel);
 		}
 	}
 }

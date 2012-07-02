@@ -57,7 +57,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void FaultedTest ()
 		{
 			Exception ex = new ApplicationException ("Foobar");
-			helper.Fault (ex);
+			helper.RequestFault (ex);
 			Task completed = helper.Completion;
 
 			Assert.IsNotNull (completed);

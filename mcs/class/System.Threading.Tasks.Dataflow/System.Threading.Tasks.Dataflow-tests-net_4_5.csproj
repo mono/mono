@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -42,11 +42,11 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="Test\System.Threading.Tasks.Dataflow\ExecutionBlocksTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlockTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlock`3Test.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\DataflowMessageHeaderTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\CompletionHelperTest.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\CompletionHelper.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\ActionBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\BroadcastBlockTest.cs" />

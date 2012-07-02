@@ -85,14 +85,18 @@ namespace System.Threading.Tasks.Dataflow
 		{
 			// Make message queue complete
 			MessageQueue.CompleteAdding ();
+			OutgoingQueueComplete ();
 			VerifyCompleteness ();
 		}
 
-		void VerifyCompleteness ()
+		protected virtual void OutgoingQueueComplete ()
+		{
+		}
+
+		protected  virtual void VerifyCompleteness ()
 		{
 			if (MessageQueue.IsCompleted && externalCompleteTester ())
 				compHelper.Complete ();
 		}
 	}
 }
-

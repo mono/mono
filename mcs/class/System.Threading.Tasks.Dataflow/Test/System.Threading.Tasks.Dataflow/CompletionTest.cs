@@ -38,40 +38,37 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 	public class CompletionTest
 	{
 		[Test]
-		public void WithNoElements ()
-		{
-			var block = new BufferBlock<int> ();
-			block.Post (42);
-			block.Complete ();
-			Console.WriteLine (block.Completion.IsCompleted);
-			Console.WriteLine (block.Completion.Status);
-			block.Receive ();
-			Console.WriteLine (block.Completion.IsCompleted);
-			Console.WriteLine (block.Completion.Status);
-		}
-
-		[Test]
 		public void WithElementsStillLingering ()
 		{
 			var block = new BufferBlock<int> ();
-			block.Post (42);
+			Assert.IsTrue (block.Post (42));
 			block.Complete ();
-			Console.WriteLine (block.Completion.IsCompleted);
-			Console.WriteLine (block.Completion.Status);
-			block.Receive ();
-			Console.WriteLine (block.Completion.IsCompleted);
-			Console.WriteLine (block.Completion.Status);
+
+			Assert.IsFalse (block.Completion.Wait (100));
+			Assert.IsFalse (block.Completion.IsCompleted);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, block.Completion.Status);
+
+			Assert.AreEqual (42, block.Receive ());
+
+			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.IsCompleted);
+			Assert.AreEqual (TaskStatus.RanToCompletion, block.Completion.Status);
 		}
 
 		[Test]
 		public void EmptyAfterReceive ()
 		{
 			var block = new BufferBlock<int> ();
-			block.Post (42);
+			Assert.IsTrue (block.Post (42));
 			block.Complete ();
+
+			Assert.IsFalse (block.Completion.Wait (100));
 			Assert.IsFalse (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.WaitingForActivation, block.Completion.Status);
+
 			block.Receive ();
+
+			Assert.IsTrue (block.Completion.Wait (100));
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.RanToCompletion, block.Completion.Status);
 		}
@@ -80,10 +77,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void WithElementsStillLingeringButFaulted ()
 		{
 			var block = new BufferBlock<int> ();
-			block.Post (42);
+			Assert.IsTrue (block.Post (42));
 			((IDataflowBlock)block).Fault (new Exception ());
+
+			Assert.Throws<AggregateException> (() => block.Completion.Wait (100));
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.Faulted, block.Completion.Status);
+			Assert.IsFalse (block.Post (43));
 		}
 	}
 }

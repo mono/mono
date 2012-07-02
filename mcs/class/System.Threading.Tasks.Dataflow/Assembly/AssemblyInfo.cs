@@ -57,3 +57,4 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
+[assembly: InternalsVisibleTo("System.Threading.Tasks.Dataflow_test_net_4_5")]

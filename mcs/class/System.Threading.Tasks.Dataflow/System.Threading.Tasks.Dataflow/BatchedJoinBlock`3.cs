@@ -166,7 +166,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		void IDataflowBlock.Fault (Exception exception)
 		{
-			completionHelper.Fault (exception);
+			completionHelper.RequestFault (exception);
 		}
 
 		Tuple<IList<T1>, IList<T2>, IList<T3>>

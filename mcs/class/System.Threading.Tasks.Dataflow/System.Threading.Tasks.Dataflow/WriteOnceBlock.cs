@@ -156,7 +156,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		public void Fault (Exception ex)
 		{
-			compHelper.Fault (ex);
+			compHelper.RequestFault (ex);
 		}
 
 		public Task Completion {

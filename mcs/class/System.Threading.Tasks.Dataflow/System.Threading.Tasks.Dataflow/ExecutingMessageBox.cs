@@ -27,64 +27,101 @@ namespace System.Threading.Tasks.Dataflow
 	internal class ExecutingMessageBox<TInput> : MessageBox<TInput>
 	{
 		readonly ExecutionDataflowBlockOptions options;
-		readonly Action<int> processQueue;
-		CompletionHelper compHelper;
+		readonly Func<bool> processItem;
+		readonly Action outgoingQueueComplete;
+		readonly CompletionHelper compHelper;
 
-		readonly AtomicBoolean waitingTask = new AtomicBoolean ();
-		int degreeOfParallelism;
+		// even number: Task is waiting to run
+		// odd number: Task is not waiting to run
+		// invariant: dop / 2 Tasks are running or waiting
+		int degreeOfParallelism = 1;
 
 		public ExecutingMessageBox (
 			BlockingCollection<TInput> messageQueue, CompletionHelper compHelper,
-			Func<bool> externalCompleteTester, Action<int> processQueue,
+			Func<bool> externalCompleteTester, Func<bool> processItem, Action outgoingQueueComplete,
 			ExecutionDataflowBlockOptions options)
 			: base (messageQueue, compHelper, externalCompleteTester)
 		{
 			this.options = options;
-			this.processQueue = processQueue;
+			this.processItem = processItem;
+			this.outgoingQueueComplete = outgoingQueueComplete;
 			this.compHelper = compHelper;
 		}
 
 		protected override void EnsureProcessing ()
 		{
-			if ((options.MaxDegreeOfParallelism != DataflowBlockOptions.Unbounded
-			     && Thread.VolatileRead (ref degreeOfParallelism) >= options.MaxDegreeOfParallelism) ||
-			    !waitingTask.TrySet ())
-				return;
-
 			StartProcessing ();
 		}
 
 		void StartProcessing ()
 		{
+			// atomically increase degreeOfParallelism by 1 only if it's odd
+			// and low enough
+			int startDegreeOfParallelism;
+			int currentDegreeOfParallelism = degreeOfParallelism;
+			do {
+				startDegreeOfParallelism = currentDegreeOfParallelism;
+				if (startDegreeOfParallelism % 2 == 0
+				    || (options.MaxDegreeOfParallelism != DataflowBlockOptions.Unbounded
+				        && startDegreeOfParallelism / 2 >= options.MaxDegreeOfParallelism))
+					return;
+				currentDegreeOfParallelism =
+					Interlocked.CompareExchange (ref degreeOfParallelism,
+						startDegreeOfParallelism + 1, startDegreeOfParallelism);
+			} while (startDegreeOfParallelism != currentDegreeOfParallelism);
+
 			Task.Factory.StartNew (ProcessQueue, TaskCreationOptions.PreferFairness);
 		}
 
 		void ProcessQueue ()
 		{
+			compHelper.CanFaultOrCancelImmediatelly = false;
+
 			int incrementedDegreeOfParallelism =
 				Interlocked.Increment (ref degreeOfParallelism);
 			if ((options.MaxDegreeOfParallelism == DataflowBlockOptions.Unbounded
-			     || incrementedDegreeOfParallelism < options.MaxDegreeOfParallelism)
-			    && (MessageQueue.Count > 0))
-				StartProcessing();
-			else
-				waitingTask.Value = false;
+			     || incrementedDegreeOfParallelism / 2 < options.MaxDegreeOfParallelism)
+			    && MessageQueue.Count > 0 && compHelper.CanRun)
+				StartProcessing ();
 
 			try {
-				processQueue (options.MaxMessagesPerTask);
+				int i = 0;
+				while (compHelper.CanRun
+				       && (options.MaxMessagesPerTask == DataflowBlockOptions.Unbounded
+				           || i++ < options.MaxMessagesPerTask)) {
+					if (!processItem ())
+						break;
+				}
 			} catch (Exception e) {
-				compHelper.Fault (e);
+				compHelper.RequestFault (e);
 			}
 
 			int decrementedDegreeOfParallelism =
-				Interlocked.Decrement (ref degreeOfParallelism);
+				Interlocked.Add (ref degreeOfParallelism, -2);
 
-			if (!waitingTask.Value) {
-				if (decrementedDegreeOfParallelism == 0 && MessageQueue.IsCompleted)
-					compHelper.Complete ();
-				else if (MessageQueue.Count > 0)
+			if (decrementedDegreeOfParallelism % 2 == 1) {
+				if (decrementedDegreeOfParallelism == 1) {
+					compHelper.CanFaultOrCancelImmediatelly = true;
+					base.VerifyCompleteness ();
+					if (MessageQueue.IsCompleted)
+						outgoingQueueComplete ();
+				}
+				if (MessageQueue.Count > 0)
 					EnsureProcessing ();
 			}
+		}
+
+		protected override void OutgoingQueueComplete ()
+		{
+			if (MessageQueue.IsCompleted
+			    && Thread.VolatileRead (ref degreeOfParallelism) == 1)
+				outgoingQueueComplete ();
+		}
+
+		protected override void VerifyCompleteness ()
+		{
+			if (Thread.VolatileRead (ref degreeOfParallelism) == 1)
+				base.VerifyCompleteness ();
 		}
 	}
 }

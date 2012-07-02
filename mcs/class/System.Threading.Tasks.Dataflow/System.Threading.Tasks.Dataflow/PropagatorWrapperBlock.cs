@@ -79,7 +79,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		public void Fault (Exception ex)
 		{
-			compHelper.Fault (ex);
+			compHelper.RequestFault (ex);
 			source.Fault (ex);
 			target.Fault (ex);
 		}

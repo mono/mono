@@ -125,7 +125,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 					q => new TransformManyBlock<int, int> (i =>
 					{
 						q.Enqueue (Tuple.Create (i, Task.CurrentId.Value));
-						return new int[0];
+						return new[] { i };
 					}, options)
 				};
 
@@ -139,7 +139,14 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 					block.Post (i);
 
 				block.Complete ();
-				Assert.IsTrue (block.Completion.Wait (500), queue.Count.ToString());
+
+				var source = block as ISourceBlock<int>;
+				if (source != null) {
+					Assert.IsFalse (block.Completion.Wait (100));
+
+					source.LinkTo (new BufferBlock<int> ());
+				}
+				Assert.IsTrue (block.Completion.Wait (500));
 
 				CollectionAssert.AreEquivalent (
 					Enumerable.Range (0, 100), queue.Select (t => t.Item1));
@@ -174,7 +181,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			foreach (var last in lasts)
 				times [last.Value] = Tuple.Create<int?, int?> (
-					times [last.Value].Item2, last.Key);
+					times [last.Value].Item1, last.Key);
 
 			int maxDop = 0;
 			int dop = 0;
@@ -195,23 +202,25 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		[Test]
 		public void MaxDegreeOfParallelismTest()
 		{
-			for (int i = 0; i < 10;i++)
+			// loop to better test for race conditions
+			// some that showed in this test were quite rare
+			for (int i = 0; i < 10; i++)
 			{
-				var options = new ExecutionDataflowBlockOptions();
+				var options = new ExecutionDataflowBlockOptions ();
 				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
-					Assert.AreEqual(1, CalculateDegreeOfParallelism (taskIds));
+					Assert.AreEqual (1, CalculateDegreeOfParallelism (taskIds));
 
 				options = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 2 };
-				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+				foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
 					Assert.LessOrEqual (CalculateDegreeOfParallelism (taskIds), 2);
 
 				options = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = 4 };
-				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
-					Assert.LessOrEqual(CalculateDegreeOfParallelism (taskIds), 4);
+				foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
+					Assert.LessOrEqual (CalculateDegreeOfParallelism (taskIds), 4);
 
 				options = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = -1 };
-				foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
-					Assert.LessOrEqual(CalculateDegreeOfParallelism (taskIds), taskIds.Length);
+				foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
+					Assert.LessOrEqual (CalculateDegreeOfParallelism (taskIds), taskIds.Length);
 			}
 		}
 

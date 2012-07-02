@@ -58,11 +58,10 @@ namespace System.Threading.Tasks.Dataflow
 			this.transformer = transformer;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue,
-			                                                   compHelper,
-			                                                   () => outgoing.IsCompleted,
-			                                                   TransformProcess,
-			                                                   dataflowBlockOptions);
+			this.messageBox = new ExecutingMessageBox<TInput> (
+				messageQueue, compHelper,
+				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
+				dataflowBlockOptions);
 			this.outgoing = new MessageOutgoingQueue<TOutput> (compHelper, () => messageQueue.IsCompleted);
 			this.vault = new MessageVault<TOutput> ();
 		}
@@ -107,14 +106,13 @@ namespace System.Threading.Tasks.Dataflow
 			return outgoing.TryReceiveAll (out items);
 		}
 
-		void TransformProcess (int maxMessages)
+		bool TransformProcess ()
 		{
-			int i = 0;
 			ITargetBlock<TOutput> target;
 			TInput input;
 
-			while ((maxMessages == DataflowBlockOptions.Unbounded || i++ < maxMessages)
-				&& messageQueue.TryTake (out input)) {
+			var dequeued = messageQueue.TryTake (out input);
+			if (dequeued) {
 				TOutput output = transformer (input);
 
 				if ((target = targets.Current) != null)
@@ -125,6 +123,8 @@ namespace System.Threading.Tasks.Dataflow
 
 			if (!outgoing.IsEmpty && (target = targets.Current) != null)
 				outgoing.ProcessForTarget (target, this, false, ref headers);
+
+			return dequeued;
 		}
 
 		public void Complete ()
@@ -134,7 +134,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		public void Fault (Exception ex)
 		{
-			compHelper.Fault (ex);
+			compHelper.RequestFault (ex);
 		}
 
 		public Task Completion {
