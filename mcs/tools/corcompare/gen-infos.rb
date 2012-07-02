@@ -110,6 +110,7 @@ $net_3_5 = [
 	"System",
 	"System.AddIn",
 	"System.AddIn.Contract",
+	"System.ComponentModel.DataAnnotations",
 	"System.Configuration",
 	"System.Core",
 	"System.Configuration.Install",
