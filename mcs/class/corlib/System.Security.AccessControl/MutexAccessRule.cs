@@ -34,15 +34,12 @@ namespace System.Security.AccessControl
 {
 	public sealed class MutexAccessRule : AccessRule
 	{
-		MutexRights rights;
-		
 		public MutexAccessRule (IdentityReference identity,
 					MutexRights eventRights,
 					AccessControlType type)
-			// FIXME: accessMask=0 likely causes an error
-			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, type)
+			: base (identity, (int)eventRights, false, InheritanceFlags.None, PropagationFlags.None, type)
 		{
-			this.rights = eventRights;
+
 		}
 
 		public MutexAccessRule (string identity,
@@ -53,7 +50,7 @@ namespace System.Security.AccessControl
 		}
 		
 		public MutexRights MutexRights {
-			get { return rights; }
+			get { return (MutexRights)AccessMask; }
 		}
 	}
 }
