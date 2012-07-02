@@ -5,6 +5,8 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using System.Text;
+using System.IO;
+using System.Xml;
 
 namespace System.ServiceModel.Dispatcher
 {
@@ -24,8 +26,25 @@ namespace System.ServiceModel.Dispatcher
 			using (new OperationContextScope (mrc.OperationContext)) {
 				try {
 					process_handlers_chain.ProcessRequestChain (mrc);
-				}
-				catch (Exception e) {
+				} catch (IOException e) {
+					// FIXME?: On dropped connection do not
+					// dump a stacktrace, but should be safe
+					// to dump a console message as in
+					// default exception handler and 
+					// call error_handlers_chain
+					Console.WriteLine ("I/O Error (Connection Dropped?): " + e.Message);
+					mrc.ProcessingException = e;
+					error_handlers_chain.ProcessRequestChain (mrc);
+				} catch (XmlException e) {
+					// FIXME?: On dropped connection do not
+					// dump a stacktrace, but should be safe
+					// to dump a console message as in
+					// default exception handler and 
+					// call error_handlers_chain
+					Console.WriteLine ("XmlException (Dropped Connection?): " + e.Message);
+					mrc.ProcessingException = e;
+					error_handlers_chain.ProcessRequestChain (mrc);
+				} catch (Exception e) {
 					// FIXME: this is not really expected use of ChannelDispatcher.ErrorHandlers.
 					// They are now correctly used in process_handler_chain (namely OperationInvokerHandler).
 					// For this kind of "outsider" exceptions are actually left thrown

@@ -97,7 +97,12 @@ namespace System.ServiceModel.Channels.Http
 				var q = ce.ContextQueue;
 				if (q.Count == 0) {
 					bool ret = ce.WaitHandle.WaitOne (timeout);
-					return ret && TryDequeueRequest (channel, timeout - (DateTime.Now - start), out context); // recurse, am lazy :/
+					TimeSpan TimeOutRevised = timeout - (DateTime.Now - start);
+					if (TimeOutRevised.Ticks > 0) {
+						return ret && TryDequeueRequest (channel, TimeOutRevised, out context); // recurse, am lazy :/
+					} else {
+						return ret;
+					}
 				}
 				context = q.Dequeue ();
 				return true;

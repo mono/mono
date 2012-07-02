@@ -35,6 +35,7 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.Threading;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
@@ -125,7 +126,13 @@ namespace System.ServiceModel.Channels
 					}
 					try {
 						return TryReceiveRequest (tout, out ctx);
-					} catch (SocketException) {
+					} catch (XmlException ex) {
+						Console.WriteLine ("Xml Exception (Connection dropped?):" + ex.Message);
+						//on dropped connection, 
+						//whatever you do don't crash
+						//the whole app.  Ignore for now
+					} catch (SocketException ex) {
+						Console.WriteLine ("Socket Exception (Connection dropped?):" + ex.Message);
 						//on dropped connection, 
 						//whatever you do don't crash
 						//the whole app.  Ignore for now
@@ -135,8 +142,8 @@ namespace System.ServiceModel.Channels
 							CurrentAsyncThread = null;
 						}
 					}
-					//post finally if exception:
-					ctx=null;//must assign out var
+					//post finally if caught exception:
+					ctx = null;//must assign out var
 					return false;
 					});
 			RequestContext dummy;
