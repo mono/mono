@@ -1,9 +1,9 @@
-// CommonAclTest.cs - NUnit Test Cases for ObjectSecurity<T>
+// CommonAclTest.cs - NUnit Test Cases for CommonAcl
 //
 // Authors:
-//	James Bellinger (jfb@zer7.com)
+//	James Bellinger  <jfb@zer7.com>
 //
-// Copyright 2012 James Bellinger
+// Copyright (C) 2012 James Bellinger
 
 using System;
 using System.Collections.Generic;
@@ -87,7 +87,7 @@ namespace MonoTests.System.Security.AccessControl
 		public void GuidEmptyMergesRegardlessOfFlagsAndOpaqueDataIsNotConsidered ()
 		{
 			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
-
+			
 			RawAcl acl = MakeRawAcl (new GenericAce[] {
 				new CommonAce (AceFlags.None, AceQualifier.AccessAllowed, 1, sid, true, new byte[12]),
 				new CommonAce (AceFlags.None, AceQualifier.AccessAllowed, 4, sid, false, new byte[8]), // gets merged
@@ -98,6 +98,7 @@ namespace MonoTests.System.Security.AccessControl
 				new ObjectAce (AceFlags.None, AceQualifier.AccessAllowed, 4, sid,
 				               ObjectAceFlags.InheritedObjectAceTypePresent, Guid.Empty, Guid.NewGuid (), true, new byte[4])
 			});
+			Assert.AreEqual (236, acl.BinaryLength);
 
 			DiscretionaryAcl dacl = new DiscretionaryAcl (false, false, acl);
 			Assert.IsTrue (dacl.IsCanonical);
@@ -212,6 +213,8 @@ namespace MonoTests.System.Security.AccessControl
 			Assert.IsTrue (throws2);
 		}
 
+		// FIXME: Uncomment this once CompoundAce is implemented on Mono.
+		/*
 		[Test]
 		public void CompoundAcesAreNotCanonical ()
 		{
@@ -224,6 +227,7 @@ namespace MonoTests.System.Security.AccessControl
 			DiscretionaryAcl dacl = new DiscretionaryAcl (false, false, acl);
 			Assert.IsFalse (dacl.IsCanonical);
 		}
+		*/
 
 		[Test]
 		public void RemovesMeaninglessAces ()

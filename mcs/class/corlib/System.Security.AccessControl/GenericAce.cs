@@ -274,7 +274,7 @@ namespace System.Security.AccessControl {
 				|| type == AceType.SystemAuditObject;
 		}
 
-		protected static string GetSddlAceType (AceType type)
+		internal static string GetSddlAceType (AceType type)
 		{
 			switch (type) {
 			case AceType.AccessAllowed:
@@ -330,7 +330,7 @@ namespace System.Security.AccessControl {
 			}
 		}
 
-		protected static string GetSddlAceFlags (AceFlags flags)
+		internal static string GetSddlAceFlags (AceFlags flags)
 		{
 			StringBuilder result = new StringBuilder ();
 			if ((flags & AceFlags.ObjectInherit) != 0)

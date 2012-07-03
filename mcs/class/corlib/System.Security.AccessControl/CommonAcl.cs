@@ -261,7 +261,7 @@ namespace System.Security.AccessControl
 			if (0 != (ace.ObjectAceFlags & ObjectAceFlags.ObjectAceTypePresent))
 				type = ace.ObjectAceType;
 			if (0 != (ace.ObjectAceFlags & ObjectAceFlags.InheritedObjectAceTypePresent))
-				type = ace.InheritedObjectAceType;
+				inheritedType = ace.InheritedObjectAceType;
 		}
 
 		internal abstract void ApplyCanonicalSortToExplicitAces ();

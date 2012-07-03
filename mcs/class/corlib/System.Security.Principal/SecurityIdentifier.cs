@@ -152,7 +152,7 @@ namespace System.Security.Principal {
 		// The CompareTo ordering was determined by unit test applied to MS.NET implementation,
 		// necessary because the CompareTo has no details in its documentation.
 		// (See MonoTests.System.Security.AccessControl.DiscretionaryAclTest.)
-		// The comparison was determined to be: authority, then element count, then values.
+		// The comparison was determined to be: authority, then subauthority count, then subauthority.
 		public int CompareTo (SecurityIdentifier sid)
 		{
 			int result;
