@@ -12,7 +12,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 	                                                                 IILVisitor<APC, SymbolicValue, SymbolicValue, ExprDomain<SymbolicValue>, ExprDomain<SymbolicValue>>, EdgeData>
 			where SymbolicValue : IEquatable<SymbolicValue> 
 			where Context : IValueContextProvider<SymbolicValue> 
-			where EdgeData : IImmutableMap<SymbolicValue, LispList<SymbolicValue>> {
+			where EdgeData : IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> {
 		private readonly ExpressionAnalysisFacade<SymbolicValue, Context, EdgeData> parent;
 
 		public ValueAnalysis (ExpressionAnalysisFacade<SymbolicValue, Context, EdgeData> parent)
@@ -94,7 +94,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			pair.Key.Dump (pair.Value);
 		}
 
-		private void DumpMap (IImmutableMap<SymbolicValue, LispList<SymbolicValue>> sourceTargetMap)
+		private void DumpMap (IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> sourceTargetMap)
 		{
 			Console.WriteLine ("Source-Target assignment");
 			foreach (SymbolicValue key in sourceTargetMap.Keys) {

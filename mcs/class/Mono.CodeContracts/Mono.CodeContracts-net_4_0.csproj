@@ -323,8 +323,8 @@
     <Compile Include="Mono.CodeContracts.Static.DataStructures\ITypedProperties.cs" />
     <Compile Include="Mono.CodeContracts.Static.DataStructures\IWorkList.cs" />
     <Compile Include="Mono.CodeContracts.Static.DataStructures\LeafNode.cs" />
-    <Compile Include="Mono.CodeContracts.Static.DataStructures\LispList.cs" />
-    <Compile Include="Mono.CodeContracts.Static.DataStructures\LispListExtensions.cs" />
+    <Compile Include="Mono.CodeContracts.Static.DataStructures\Sequence.cs" />
+    <Compile Include="Mono.CodeContracts.Static.DataStructures\SequenceExtensions.cs" />
     <Compile Include="Mono.CodeContracts.Static.DataStructures\Optional.cs" />
     <Compile Include="Mono.CodeContracts.Static.DataStructures\Pair.cs" />
     <Compile Include="Mono.CodeContracts.Static.DataStructures\PatriciaTrieNode.cs" />
@@ -363,6 +363,7 @@
     <Compile Include="Mono.CodeContracts.Static\ProofOutcomeExtensions.cs" />
     <Compile Include="Test\PatriciaTrieTests.cs" />
     <Compile Include="Test\RewriteAndLoad.cs" />
+    <Compile Include="Test\SequenceTests.cs" />
     <Compile Include="Test\TestCCRewrite.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

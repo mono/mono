@@ -72,12 +72,12 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			this.begin_old_block = beginOldBlock;
 		}
 
-		public APC BeginOldAPC (LispList<Edge<CFGBlock, EdgeTag>> context)
+		public APC BeginOldAPC (Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			return new APC (this.begin_old_block, 0, context);
 		}
 
-		public APC EndOldAPC (LispList<Edge<CFGBlock, EdgeTag>> context)
+		public APC EndOldAPC (Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			return new APC (this.end_old_block, this.end_old_block.Count - 1, context);
 		}

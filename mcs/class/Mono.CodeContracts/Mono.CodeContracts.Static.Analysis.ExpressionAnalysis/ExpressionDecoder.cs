@@ -43,7 +43,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 		IExpressionContext<LabeledSymbol<APC, TSymbolicValue>, TSymbolicValue>
 		where TSymbolicValue : IEquatable<TSymbolicValue>
 		where TContext : IValueContextProvider<TSymbolicValue>
-		where TEdgeData : IImmutableMap<TSymbolicValue, LispList<TSymbolicValue>> {
+		where TEdgeData : IImmutableMap<TSymbolicValue, Sequence<TSymbolicValue>> {
 		private readonly IILDecoder<APC, TSymbolicValue, TSymbolicValue, IValueContextProvider<TSymbolicValue>, TEdgeData> value_decoder;
 		private readonly ExpressionAnalysisFacade<TSymbolicValue, TContext, TEdgeData> parent;
 		private readonly IValueContextProvider<TSymbolicValue> underlying;

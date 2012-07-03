@@ -158,8 +158,8 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		public abstract bool IsCatchFilterHeader (CFGBlock block);
 
 		public abstract APC ComputeTargetFinallyContext (APC pc, CFGBlock succ);
-		public abstract LispList<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock current, CFGBlock succ, out bool isExceptionHandlerEdge, LispList<Edge<CFGBlock, EdgeTag>> context);
-		public abstract LispList<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutines (CFGBlock current, CFGBlock succ, LispList<Edge<CFGBlock, EdgeTag>> context);
+		public abstract Sequence<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock current, CFGBlock succ, out bool isExceptionHandlerEdge, Sequence<Edge<CFGBlock, EdgeTag>> context);
+		public abstract Sequence<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutines (CFGBlock current, CFGBlock succ, Sequence<Edge<CFGBlock, EdgeTag>> context);
 		public abstract void Initialize ();
 		public abstract IEnumerable<Subroutine> UsedSubroutines (HashSet<int> alreadySeen);
 
@@ -172,9 +172,9 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		                                                                     Data data, IHandlerFilter<Data> handlerPredicate);
 
 		public abstract void Print (TextWriter tw, ILPrinter<APC> printer,
-		                            Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                            LispList<Edge<CFGBlock, EdgeTag>> context,
-		                            HashSet<Pair<Subroutine, LispList<Edge<CFGBlock, EdgeTag>>>> set);
+		                            Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		                            Sequence<Edge<CFGBlock, EdgeTag>> context,
+		                            HashSet<Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>>> set);
 
 		#region Implementation of IEquatable<Subroutine>
 		public bool Equals (Subroutine other)

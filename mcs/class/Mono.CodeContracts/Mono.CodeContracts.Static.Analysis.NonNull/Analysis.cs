@@ -42,7 +42,7 @@ using Mono.CodeContracts.Static.Proving;
 namespace Mono.CodeContracts.Static.Analysis.NonNull {
 	class Analysis<E, V> :
 		ILVisitorBase<APC, V, V, Domain<E, V>, Domain<E, V>>,
-		IAnalysis<APC, Domain<E, V>, IILVisitor<APC, V, V, Domain<E, V>, Domain<E, V>>, IImmutableMap<V, LispList<V>>>,
+		IAnalysis<APC, Domain<E, V>, IILVisitor<APC, V, V, Domain<E, V>, Domain<E, V>>, IImmutableMap<V, Sequence<V>>>,
 		IMethodResult<V>, IFactBase<V> where E : IEquatable<E> where V : IEquatable<V> {
 		private readonly Dictionary<APC, Domain<E, V>> callSiteCache = new Dictionary<APC, Domain<E, V>> ();
 		private readonly IMethodDriver<E, V> method_driver;
@@ -63,7 +63,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			get { return this.method_driver.MetaDataProvider; }
 		}
 
-		#region IAnalysis<APC,Domain<E,V>,IILVisitor<APC,V,V,Domain<E,V>,Domain<E,V>>,IImmutableMap<V,LispList<V>>> Members
+		#region IAnalysis<APC,Domain<E,V>,IILVisitor<APC,V,V,Domain<E,V>,Domain<E,V>>,IImmutableMap<V,Sequence<V>>> Members
 		public IILVisitor<APC, V, V, Domain<E, V>, Domain<E, V>> GetVisitor ()
 		{
 			return this;
@@ -90,7 +90,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return state;
 		}
 
-		public Domain<E, V> EdgeConversion (APC from, APC to, bool isJoinPoint, IImmutableMap<V, LispList<V>> data, Domain<E, V> state)
+		public Domain<E, V> EdgeConversion (APC from, APC to, bool isJoinPoint, IImmutableMap<V, Sequence<V>> data, Domain<E, V> state)
 		{
 			if (data == null)
 				return state;
@@ -373,7 +373,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 
 		private bool TryFindOldState (APC pc, out Domain<E, V> old)
 		{
-			for (LispList<Edge<CFGBlock, EdgeTag>> flist = pc.SubroutineContext; flist != null; flist = flist.Tail) {
+			for (Sequence<Edge<CFGBlock, EdgeTag>> flist = pc.SubroutineContext; flist != null; flist = flist.Tail) {
 				Edge<CFGBlock, EdgeTag> head = flist.Head;
 				if (head.Tag.Is (EdgeTag.AfterMask))
 					return this.callSiteCache.TryGetValue (pc, out old);

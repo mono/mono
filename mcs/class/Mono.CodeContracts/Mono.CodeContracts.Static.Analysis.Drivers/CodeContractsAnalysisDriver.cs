@@ -60,15 +60,15 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 			#region IMethodDriver<LabeledSymbol<APC,SymbolicValue>,SymbolicValue> Members
 			public ICodeLayer<SymbolicValue, SymbolicValue,
 				IValueContextProvider<SymbolicValue>,
-				IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> ValueLayer { get; private set; }
+				IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> ValueLayer { get; private set; }
 
 			public ICodeLayer<LabeledSymbol<APC, SymbolicValue>, SymbolicValue,
 				IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue>,
-				IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> ExpressionLayer { get; private set; }
+				IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> ExpressionLayer { get; private set; }
 
 			public ICodeLayer<SymbolicValue, SymbolicValue,
 				IValueContextProvider<SymbolicValue>,
-				IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> HybridLayer { get; private set; }
+				IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> HybridLayer { get; private set; }
 
 			public IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue> ContextProvider
 			{
@@ -107,7 +107,7 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 				ValueLayer = CodeLayerFactory.Create (
 				                                      this.heap_analysis.GetDecoder (StackLayer.ILDecoder), StackLayer.MetaDataProvider, StackLayer.ContractProvider,
 				                                      source => source.ToString (), dest => dest.ToString ());
-				var expressionAnalysis = new ExpressionAnalysisFacade<SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>>
+				var expressionAnalysis = new ExpressionAnalysisFacade<SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>>
 					(ValueLayer, this.heap_analysis.IsUnreachable);
 				ValueLayer.CreateForward (expressionAnalysis.CreateExpressionAnalysis ()) (expressionAnalysis.InitialValue (SymbolicValue.GetUniqueKey));
 
@@ -118,7 +118,7 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 				}
 
 				IILDecoder
-					<APC, LabeledSymbol<APC, SymbolicValue>, SymbolicValue, IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>>
+					<APC, LabeledSymbol<APC, SymbolicValue>, SymbolicValue, IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>>
 					decoder = expressionAnalysis.GetDecoder (ValueLayer.ILDecoder);
 				this.expr2String = ExpressionPrinterFactory.Printer (decoder.ContextProvider, this);
 				ExpressionLayer = CodeLayerFactory.Create (decoder, ValueLayer.MetaDataProvider, ValueLayer.ContractProvider,

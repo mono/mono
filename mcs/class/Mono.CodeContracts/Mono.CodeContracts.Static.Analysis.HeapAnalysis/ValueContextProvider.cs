@@ -118,7 +118,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return arrayLength;
 		}
 
-		public LispList<PathElement> AccessPathList (APC at, SymbolicValue sv, bool allowLocal, bool preferLocal)
+		public Sequence<PathElement> AccessPathList (APC at, SymbolicValue sv, bool allowLocal, bool preferLocal)
 		{
 			Domain domain;
 			if (!this.parent.PreStateLookup (at, out domain))
@@ -161,7 +161,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return domain.GetAccessPath (sv.Symbol);
 		}
 
-		public IEnumerable<LispList<PathElement>> AccessPaths (APC at, SymValue value, AccessPathFilter<Method> filter)
+		public IEnumerable<Sequence<PathElement>> AccessPaths (APC at, SymValue value, AccessPathFilter<Method> filter)
 		{
 			Domain domain;
 			if (!this.parent.PreStateLookup (at, out domain))
@@ -170,7 +170,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return domain.GetAccessPathsFiltered (value, filter, true).Select (path => path.Coerce<PathElementBase, PathElement> ());
 		}
 
-		public LispList<PathElement> VisibleAccessPathList (APC at, SymbolicValue value)
+		public Sequence<PathElement> VisibleAccessPathList (APC at, SymbolicValue value)
 		{
 			Domain domain;
 			if (!this.parent.PreStateLookup (at, out domain))

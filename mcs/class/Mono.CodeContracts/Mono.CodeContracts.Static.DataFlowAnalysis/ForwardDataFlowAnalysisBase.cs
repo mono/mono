@@ -54,7 +54,7 @@ namespace Mono.CodeContracts.Static.DataFlowAnalysis {
 
 		private AState GetPreState (APC apc, AState ifMissing, out bool noInfo)
 		{
-			LispList<APC> rest = null;
+			Sequence<APC> rest = null;
 			APC tmp = apc;
 			APC singlePredecessor;
 			AState state;

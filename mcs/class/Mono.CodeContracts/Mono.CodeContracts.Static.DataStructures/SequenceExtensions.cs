@@ -1,5 +1,5 @@
 // 
-// LispListExtensions.cs
+// SequenceExtensions.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)
@@ -30,13 +30,13 @@ using System;
 using System.Collections.Generic;
 
 namespace Mono.CodeContracts.Static.DataStructures {
-	static class LispListExtensions {
-		public static LispList<T> Cons<T> (this LispList<T> rest, T elem)
+	static class SequenceExtensions {
+		public static Sequence<T> Cons<T> (this Sequence<T> rest, T elem)
 		{
-			return LispList<T>.Cons (elem, rest);
+			return Sequence<T>.Cons (elem, rest);
 		}
 
-		public static LispList<T> Append<T> (this LispList<T> list, LispList<T> append)
+		public static Sequence<T> Append<T> (this Sequence<T> list, Sequence<T> append)
 		{
 			if (list == null)
 				return append;
@@ -46,11 +46,11 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			return Cons (list.Tail.Append (append), list.Head);
 		}
 
-		public static LispList<T> Where<T> (this LispList<T> list, Predicate<T> keep)
+		public static Sequence<T> Where<T> (this Sequence<T> list, Predicate<T> keep)
 		{
 			if (list == null)
 				return null;
-			LispList<T> rest = list.Tail.Where (keep);
+			Sequence<T> rest = list.Tail.Where (keep);
 			if (!keep (list.Head))
 				return rest;
 
@@ -60,17 +60,17 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			return Cons (rest, list.Head);
 		}
 
-		public static void Apply<T> (this LispList<T> list, Action<T> action)
+		public static void Apply<T> (this Sequence<T> list, Action<T> action)
 		{
-			LispList<T>.Apply (list, action);
+			Sequence<T>.Apply (list, action);
 		}
 
-		public static IEnumerable<T> AsEnumerable<T> (this LispList<T> list)
+		public static IEnumerable<T> AsEnumerable<T> (this Sequence<T> list)
 		{
-			return LispList<T>.PrivateGetEnumerable (list);
+			return Sequence<T>.PrivateGetEnumerable (list);
 		}
 
-		public static bool Any<T> (this LispList<T> list, Predicate<T> predicate)
+		public static bool Any<T> (this Sequence<T> list, Predicate<T> predicate)
 		{
 			if (list == null)
 				return false;
@@ -81,33 +81,33 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			return list.Tail.Any (predicate);
 		}
 
-		public static int Length<T> (this LispList<T> list)
+		public static int Length<T> (this Sequence<T> list)
 		{
-			return LispList<T>.LengthOf (list);
+			return Sequence<T>.LengthOf (list);
 		}
 
-		public static bool IsEmpty<T> (this LispList<T> list)
+		public static bool IsEmpty<T> (this Sequence<T> list)
 		{
 			return list == null;
 		}
 
-		public static LispList<S> Select<T, S> (this LispList<T> list, Func<T, S> selector)
+		public static Sequence<S> Select<T, S> (this Sequence<T> list, Func<T, S> selector)
 		{
-			return LispList<T>.Select (list, selector);
+			return Sequence<T>.Select (list, selector);
 		}
 
-		public static T Last<T> (this LispList<T> list)
+		public static T Last<T> (this Sequence<T> list)
 		{
 			if (list == null)
 				return default(T);
 
-			while (LispList<T>.LengthOf (list) > 1)
+			while (Sequence<T>.LengthOf (list) > 1)
 				list = list.Tail;
 
 			return list.Head;
 		}
 
-		public static LispList<T> Coerce<S, T> (this LispList<S> list)
+		public static Sequence<T> Coerce<S, T> (this Sequence<S> list)
 			where S : T
 		{
 			return list.Select (l => (T) l);

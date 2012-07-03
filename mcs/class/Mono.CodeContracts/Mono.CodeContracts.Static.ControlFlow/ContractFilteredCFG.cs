@@ -139,8 +139,8 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		}
 
 		public void Print (TextWriter tw, ILPrinter<APC> printer,
-		                   Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                   LispList<Edge<CFGBlock, EdgeTag>> context)
+		                   Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		                   Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			DecoratorHelper.Push<IEdgeSubroutineAdaptor> (this);
 			try {
@@ -152,8 +152,8 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		#endregion
 
 		#region Implementation of IEdgeSubroutineAdaptor
-		LispList<Pair<EdgeTag, Subroutine>> IEdgeSubroutineAdaptor.GetOrdinaryEdgeSubroutinesInternal (CFGBlock @from, CFGBlock to,
-		                                                                                               LispList<Edge<CFGBlock, EdgeTag>> context)
+		Sequence<Pair<EdgeTag, Subroutine>> IEdgeSubroutineAdaptor.GetOrdinaryEdgeSubroutinesInternal (CFGBlock @from, CFGBlock to,
+		                                                                                               Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			return DecoratorHelper.Inner<IEdgeSubroutineAdaptor> (this)
 				.GetOrdinaryEdgeSubroutinesInternal (from, to, context).Where ((pair) => !pair.Value.IsContract && !pair.Value.IsOldValue);

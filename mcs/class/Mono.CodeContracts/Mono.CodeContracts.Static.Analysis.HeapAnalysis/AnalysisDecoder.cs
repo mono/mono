@@ -1251,7 +1251,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		public static Domain FindOldState (APC pc, Domain data)
 		{
-			for (LispList<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
+			for (Sequence<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
 				Edge<CFGBlock, EdgeTag> pair = list.Head;
 				if (pair.Tag == EdgeTag.Exit || pair.Tag.Is (EdgeTag.AfterMask))
 					return data.GetStateAt (new APC (pair.From.Subroutine.EntryAfterRequires, 0, list.Tail));

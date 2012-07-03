@@ -38,8 +38,8 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 		public abstract void Replay (MergeInfo<TFunc, TAbstractDomain> merge);
 		public abstract void ReplayElimination (MergeInfo<TFunc, TAbstractDomain> merge);
 
-		public static Update<TFunc, TAbstractDomain> Reverse (LispList<Update<TFunc, TAbstractDomain>> updates,
-		                                                      LispList<Update<TFunc, TAbstractDomain>> common)
+		public static Update<TFunc, TAbstractDomain> Reverse (Sequence<Update<TFunc, TAbstractDomain>> updates,
+		                                                      Sequence<Update<TFunc, TAbstractDomain>> common)
 		{
 			Update<TFunc, TAbstractDomain> last = null;
 			for (; updates != common; updates = updates.Tail) {

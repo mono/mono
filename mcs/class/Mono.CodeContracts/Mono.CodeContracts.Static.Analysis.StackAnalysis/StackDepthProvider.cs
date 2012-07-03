@@ -295,8 +295,8 @@ namespace Mono.CodeContracts.Static.Analysis.StackAnalysis {
 			return UnderlyingCFG.GetDecoder (metaDataProvider);
 		}
 
-		void ICFG.Print (TextWriter tw, ILPrinter<APC> printer, Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                 LispList<Edge<CFGBlock, EdgeTag>> context)
+		void ICFG.Print (TextWriter tw, ILPrinter<APC> printer, Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		                 Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			DecoratorHelper.Push (this);
 			try {

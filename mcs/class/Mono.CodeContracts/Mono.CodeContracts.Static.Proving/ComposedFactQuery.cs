@@ -160,7 +160,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return false;
 		}
 
-		public ProofOutcome IsTrueImply(APC pc, LispList<BoxedExpression> positiveAssumptions, LispList<BoxedExpression> negativeAssumptions, BoxedExpression goal)
+		public ProofOutcome IsTrueImply(APC pc, Sequence<BoxedExpression> positiveAssumptions, Sequence<BoxedExpression> negativeAssumptions, BoxedExpression goal)
 		{
 			return elements.Select(fact => fact.IsTrueImply(pc, positiveAssumptions, negativeAssumptions, goal)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
 		}

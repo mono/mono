@@ -154,7 +154,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		}
 		#endregion
 
-		public static bool IsRootedInParameter (LispList<PathElement> path)
+		public static bool IsRootedInParameter (Sequence<PathElement> path)
 		{
 			return path.Head is PathElement<Parameter>;
 		}
@@ -499,13 +499,13 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			}
 		}
 
-		private IEnumerable<LispList<PathElementBase>> GetAccessPathsRaw (SymValue sv, AccessPathFilter<Method> filter, bool compress)
+		private IEnumerable<Sequence<PathElementBase>> GetAccessPathsRaw (SymValue sv, AccessPathFilter<Method> filter, bool compress)
 		{
 			var visited = new HashSet<SymValue> ();
 			return GetAccessPathsRaw (sv, null, visited, filter, compress);
 		}
 
-		private IEnumerable<LispList<PathElementBase>> GetAccessPathsRaw (SymValue sv, LispList<PathElementBase> path, HashSet<SymValue> visited, AccessPathFilter<Method> filter, bool compress)
+		private IEnumerable<Sequence<PathElementBase>> GetAccessPathsRaw (SymValue sv, Sequence<PathElementBase> path, HashSet<SymValue> visited, AccessPathFilter<Method> filter, bool compress)
 		{
 			if (sv == this.egraph.ConstRoot)
 				yield return path;
@@ -515,7 +515,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 					if (!(term.Function is Wrapper<object>) && !(term.Function is Wrapper<int>)) {
 						PathElementBase next = term.Function.ToPathElement (compress);
 						if (next != null && !filter.FilterOutPathElement (term.Function)) {
-							LispList<PathElementBase> newPath;
+							Sequence<PathElementBase> newPath;
 
 							if (path == null || !compress || (!(next is PathElement<Method>)))
 								newPath = path.Cons (next);
@@ -530,11 +530,11 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			}
 		}
 
-		private LispList<PathElementBase> GetBestAccessPath (SymValue sv, AccessPathFilter<Method> filter, bool compress, bool allowLocal, bool preferLocal)
+		private Sequence<PathElementBase> GetBestAccessPath (SymValue sv, AccessPathFilter<Method> filter, bool compress, bool allowLocal, bool preferLocal)
 		{
-			LispList<PathElementBase> bestParameterPath = null;
-			LispList<PathElementBase> bestLocalPath = null;
-			LispList<PathElementBase> bestFieldMethodPath = null;
+			Sequence<PathElementBase> bestParameterPath = null;
+			Sequence<PathElementBase> bestLocalPath = null;
+			Sequence<PathElementBase> bestFieldMethodPath = null;
 
 			foreach (var path in GetAccessPathsFiltered (sv, filter, compress)) {
 				if (path != null) {
@@ -563,12 +563,12 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return bestFieldMethodPath;
 		}
 
-		public IEnumerable<LispList<PathElementBase>> GetAccessPathsFiltered (SymValue sv, AccessPathFilter<Method> filter, bool compress)
+		public IEnumerable<Sequence<PathElementBase>> GetAccessPathsFiltered (SymValue sv, AccessPathFilter<Method> filter, bool compress)
 		{
 			return GetAccessPathsTyped (sv, filter, compress).Where (path => PathIsVisibleAccordingToFilter (path, filter));
 		}
 
-		private bool PathIsVisibleAccordingToFilter (LispList<PathElementBase> path, AccessPathFilter<Method> filter)
+		private bool PathIsVisibleAccordingToFilter (Sequence<PathElementBase> path, AccessPathFilter<Method> filter)
 		{
 			if (path.Length () == 0 || !filter.HasVisibilityMember)
 				return true;
@@ -614,7 +614,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return true;
 		}
 
-		private bool TryPropagateTypeInfo (LispList<PathElementBase> path, out LispList<PathElementBase> result)
+		private bool TryPropagateTypeInfo (Sequence<PathElementBase> path, out Sequence<PathElementBase> result)
 		{
 			if (path == null) {
 				result = null;
@@ -627,7 +627,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 				return false;
 			}
 
-			LispList<PathElementBase> result1;
+			Sequence<PathElementBase> result1;
 			if (!TryPropagateTypeInfoRecurse (path.Tail, prevType, out result1)) {
 				result = null;
 				return false;
@@ -642,7 +642,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return true;
 		}
 
-		private bool TryPropagateTypeInfoRecurse (LispList<PathElementBase> path, TypeNode prevType, out LispList<PathElementBase> result)
+		private bool TryPropagateTypeInfoRecurse (Sequence<PathElementBase> path, TypeNode prevType, out Sequence<PathElementBase> result)
 		{
 			if (path == null) {
 				result = null;
@@ -650,7 +650,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			}
 			PathElementBase head = path.Head;
 			if (head.TrySetType (prevType, MetaDataProvider, out prevType)) {
-				LispList<PathElementBase> updatedPath;
+				Sequence<PathElementBase> updatedPath;
 				if (TryPropagateTypeInfoRecurse (path.Tail, prevType, out updatedPath)) {
 					result = updatedPath.Cons (head);
 					return true;
@@ -661,11 +661,11 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return false;
 		}
 
-		private IEnumerable<LispList<PathElementBase>> GetAccessPathsTyped (SymValue sv, AccessPathFilter<Method> filter, bool compress)
+		private IEnumerable<Sequence<PathElementBase>> GetAccessPathsTyped (SymValue sv, AccessPathFilter<Method> filter, bool compress)
 		{
 			var visited = new HashSet<SymValue> ();
 			foreach (var path in GetAccessPathsRaw (sv, null, visited, filter, compress)) {
-				LispList<PathElementBase> result;
+				Sequence<PathElementBase> result;
 				if (TryPropagateTypeInfo (path, out result))
 					yield return result;
 			}
@@ -1458,19 +1458,19 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		public string GetAccessPath (SymValue sv)
 		{
-			LispList<PathElementBase> bestAccessPath = GetBestAccessPath (sv, AccessPathFilter<Method>.NoFilter, true, true, false);
+			Sequence<PathElementBase> bestAccessPath = GetBestAccessPath (sv, AccessPathFilter<Method>.NoFilter, true, true, false);
 			if (bestAccessPath == null)
 				return null;
 
 			return bestAccessPath.Select (i => (PathElement) i).ToCodeString ();
 		}
 
-		public LispList<PathElement> GetAccessPathList (SymValue symbol, AccessPathFilter<Method> filter, bool allowLocal, bool preferLocal)
+		public Sequence<PathElement> GetAccessPathList (SymValue symbol, AccessPathFilter<Method> filter, bool allowLocal, bool preferLocal)
 		{
 			return GetBestAccessPath (symbol, filter, true, allowLocal, preferLocal).Coerce<PathElementBase, PathElement> ();
 		}
 
-		public bool LessEqual (Domain that, out IImmutableMap<SymValue, LispList<SymValue>> forward, out IImmutableMap<SymValue, SymValue> backward)
+		public bool LessEqual (Domain that, out IImmutableMap<SymValue, Sequence<SymValue>> forward, out IImmutableMap<SymValue, SymValue> backward)
 		{
 			return this.egraph.LessEqual (that.egraph, out forward, out backward);
 		}
@@ -1490,7 +1490,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return mi.IsGraph2 (this.egraph);
 		}
 
-		public IImmutableMap<SymValue, LispList<SymValue>> GetForwardIdentityMap ()
+		public IImmutableMap<SymValue, Sequence<SymValue>> GetForwardIdentityMap ()
 		{
 			return this.egraph.GetForwardIdentityMap ();
 		}

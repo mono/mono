@@ -99,7 +99,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 			VisitorForVariablesIn<V, E>.AddFreeVariables (expr, set, this);
 		}
 
-		public LispList<PathElement> GetVariableAccessPath (E expr)
+		public Sequence<PathElement> GetVariableAccessPath (E expr)
 		{
 			return ContextProvider.ValueContext.AccessPathList (ContextProvider.ExpressionContext.GetPC (expr), ContextProvider.ExpressionContext.Unrefine (expr), true, false);
 		}

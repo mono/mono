@@ -210,7 +210,7 @@ namespace Mono.CodeContracts.Static.Proving {
 
 			object variable;
 			if (decoder.IsVariable (expr, out variable)) {
-				LispList<PathElement> variableAccessPath = decoder.GetVariableAccessPath (expr);
+				Sequence<PathElement> variableAccessPath = decoder.GetVariableAccessPath (expr);
 				return new VariableExpression (variable, variableAccessPath);
 			}
 
@@ -1586,17 +1586,17 @@ namespace Mono.CodeContracts.Static.Proving {
 			public readonly object VarType;
 
 			public VariableExpression (object var)
-				: this (var, (LispList<PathElement>) null)
+				: this (var, (Sequence<PathElement>) null)
 			{
 			}
 
-			public VariableExpression (object var, LispList<PathElement> path)
+			public VariableExpression (object var, Sequence<PathElement> path)
 			{
 				this.UnderlyingVar = var;
 				this.Path = path != null ? path.AsEnumerable ().ToArray () : null;
 			}
 
-			public VariableExpression (object var, LispList<PathElement> path, object type)
+			public VariableExpression (object var, Sequence<PathElement> path, object type)
 				: this (var, path)
 			{
 				this.VarType = type;

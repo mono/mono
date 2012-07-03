@@ -161,10 +161,10 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		}
 
 		public void Print (TextWriter tw, ILPrinter<APC> printer,
-		                   Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                   LispList<Edge<CFGBlock, EdgeTag>> context)
+		                   Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		                   Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
-			var set = new HashSet<Pair<Subroutine, LispList<Edge<CFGBlock, EdgeTag>>>> ();
+			var set = new HashSet<Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>>> ();
 			this.method_subroutine.Print (tw, printer, contextLookup, context, set);
 		}
 		#endregion

@@ -40,7 +40,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders {
 		private readonly Dictionary<Label, Queue<Handler>> subroutine_handler_end_list = new Dictionary<Label, Queue<Handler>> ();
 		private readonly Dictionary<Label, Queue<Handler>> try_end_list = new Dictionary<Label, Queue<Handler>> ();
 		private readonly Dictionary<Label, Stack<Handler>> try_start_list = new Dictionary<Label, Stack<Handler>> ();
-		private LispList<SubroutineWithHandlers<Label, Handler>> subroutine_stack;
+		private Sequence<SubroutineWithHandlers<Label, Handler>> subroutine_stack;
 
 		public SubroutineWithHandlersBuilder (IMethodCodeProvider<Label, Handler> codeProvider,
 		                                      SubroutineFacade subroutineFacade,
@@ -63,7 +63,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders {
 			get { return this.subroutine_stack.Head; }
 		}
 
-		private LispList<Handler> CurrentProtectingHanlders
+		private Sequence<Handler> CurrentProtectingHanlders
 		{
 			get { return CurrentSubroutineWithHandlers.CurrentProtectingHandlers; }
 			set { CurrentSubroutineWithHandlers.CurrentProtectingHandlers = value; }
@@ -132,13 +132,13 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders {
 
 		public CFGBlock BuildBlocks (Label entry, SubroutineWithHandlers<Label, Handler> subroutine)
 		{
-			this.subroutine_stack = LispList<SubroutineWithHandlers<Label, Handler>>.Cons (subroutine, null);
+			this.subroutine_stack = Sequence<SubroutineWithHandlers<Label, Handler>>.Cons (subroutine, null);
 			return base.BuildBlocks (entry);
 		}
 
 		public override void RecordInformationSameAsOtherBlock (BlockWithLabels<Label> newBlock, BlockWithLabels<Label> currentBlock)
 		{
-			LispList<Handler> list;
+			Sequence<Handler> list;
 			if (!CurrentSubroutineWithHandlers.ProtectingHandlers.TryGetValue (currentBlock, out list))
 				return;
 			CurrentSubroutineWithHandlers.ProtectingHandlers.Add (newBlock, list);

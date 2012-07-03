@@ -81,7 +81,7 @@ namespace Mono.CodeContracts.Static.Proving
 		}
 
 
-		public ProofOutcome IsTrueImply(APC pc, LispList<BoxedExpression> positiveAssumptions, LispList<BoxedExpression> negativeAssumptions, BoxedExpression goal)
+		public ProofOutcome IsTrueImply(APC pc, Sequence<BoxedExpression> positiveAssumptions, Sequence<BoxedExpression> negativeAssumptions, BoxedExpression goal)
 		{
 			UnaryOperator op;
 			BoxedExpression arg;

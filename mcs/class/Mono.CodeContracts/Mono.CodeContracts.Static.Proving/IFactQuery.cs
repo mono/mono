@@ -34,7 +34,7 @@ namespace Mono.CodeContracts.Static.Proving {
 		ProofOutcome IsNull (APC pc, Expression expr);
 		ProofOutcome IsNonNull (APC pc, Expression expr);
 		ProofOutcome IsTrue (APC pc, Expression expr);
-		ProofOutcome IsTrueImply (APC pc, LispList<Expression> positiveAssumptions, LispList<Expression> negativeAssumptions, Expression goal);
+		ProofOutcome IsTrueImply (APC pc, Sequence<Expression> positiveAssumptions, Sequence<Expression> negativeAssumptions, Expression goal);
 		ProofOutcome IsGreaterEqualToZero (APC pc, Expression expr);
 		ProofOutcome IsLessThan (APC pc, Expression expr, Expression right);
 		ProofOutcome IsNonZero (APC pc, Expression expr);
