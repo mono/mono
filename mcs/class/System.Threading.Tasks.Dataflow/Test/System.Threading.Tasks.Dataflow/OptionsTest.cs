@@ -243,5 +243,51 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
 				Assert.LessOrEqual (taskIds.Distinct ().Count (), taskIds.Length / 4);
 		}
+
+		[Test]
+		public void TaskSchedulerTest ()
+		{
+			var scheduler = new TestScheduler ();
+
+			int n = 0;
+
+			var action = new ActionBlock<int> (
+				i => Interlocked.Increment (ref n),
+				new ExecutionDataflowBlockOptions { TaskScheduler = scheduler });
+
+			Assert.IsTrue (action.Post (1));
+
+			Assert.AreEqual (0, Thread.VolatileRead (ref n));
+
+			Assert.AreEqual (1, scheduler.ExecuteAll ());
+			Assert.AreEqual (1, Thread.VolatileRead (ref n));
+		}
+
+		[Test]
+		public void DefaultSchedulerIsDefaultTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var factory = new TaskFactory (scheduler);
+
+			ActionBlock<int> action = null;
+
+			var task = factory.StartNew (() =>
+			{
+				Assert.AreEqual (scheduler, TaskScheduler.Current);
+
+				action = new ActionBlock<int> (
+					i => Assert.AreNotEqual (scheduler, TaskScheduler.Current));
+				Assert.IsTrue (action.Post (1));
+				action.Complete ();
+			});
+
+			Assert.AreEqual (1, scheduler.ExecuteAll ());
+
+			Assert.NotNull (action);
+
+			Assert.IsTrue (action.Completion.Wait (100));
+			Assert.IsTrue (task.Wait (0));
+		}
+
 	}
 }

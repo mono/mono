@@ -70,7 +70,8 @@ namespace System.Threading.Tasks.Dataflow
 						startDegreeOfParallelism + 1, startDegreeOfParallelism);
 			} while (startDegreeOfParallelism != currentDegreeOfParallelism);
 
-			Task.Factory.StartNew (ProcessQueue, TaskCreationOptions.PreferFairness);
+			Task.Factory.StartNew (ProcessQueue, options.CancellationToken,
+				TaskCreationOptions.PreferFairness, options.TaskScheduler);
 		}
 
 		void ProcessQueue ()

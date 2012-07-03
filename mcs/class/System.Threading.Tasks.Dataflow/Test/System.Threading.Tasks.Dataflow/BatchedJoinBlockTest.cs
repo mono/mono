@@ -1,9 +1,5 @@
-﻿// 
-// BatchedJoinBlockTest.cs
+﻿// BatchedJoinBlockTest.cs
 //  
-// Author:
-//       Petr Onderka <gsvick@gmail.com>
-// 
 // Copyright (c) 2012 Petr Onderka
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy

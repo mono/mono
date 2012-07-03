@@ -42,6 +42,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="Test\TestScheduler.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\ExecutionBlocksTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlockTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlock`3Test.cs" />
@@ -80,6 +81,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_4_5/System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Core.dll</HintPath>
