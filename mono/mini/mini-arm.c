@@ -691,6 +691,10 @@ mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
 void
 mono_arch_flush_icache (guint8 *code, gint size)
 {
+#ifdef MONO_CROSS_COMPILE
+	// nothing to do when we're cross compiling as we are not going to execute
+	// the generated code, thus no cache flush is required.
+#else
 #if __APPLE__
 	sys_icache_invalidate (code, size);
 #elif __GNUC_PREREQ(4, 1)
@@ -715,6 +719,7 @@ mono_arch_flush_icache (guint8 *code, gint size)
 			: /* no outputs */
 			: "r" (code), "r" (code + size), "r" (0)
 			: "r0", "r1", "r3" );
+#endif
 #endif
 }
 
@@ -5359,6 +5364,10 @@ mono_arch_stop_single_stepping (void)
 gboolean
 mono_arch_is_single_step_event (void *info, void *sigctx)
 {
+#if defined(MONO_CROSS_COMPILE)
+	g_assert_not_reached();
+	return FALSE;
+#else
 	siginfo_t *sinfo = info;
 
 	/* Sometimes the address is off by 4 */
@@ -5366,6 +5375,7 @@ mono_arch_is_single_step_event (void *info, void *sigctx)
 		return TRUE;
 	else
 		return FALSE;
+#endif
 }
 
 /*
@@ -5376,6 +5386,10 @@ mono_arch_is_single_step_event (void *info, void *sigctx)
 gboolean
 mono_arch_is_breakpoint_event (void *info, void *sigctx)
 {
+#if defined(MONO_CROSS_COMPILE)
+	g_assert_not_reached ();
+	return FALSE;
+#else
 	siginfo_t *sinfo = info;
 
 	if (sinfo->si_signo == DBG_SIGNAL) {
@@ -5387,6 +5401,7 @@ mono_arch_is_breakpoint_event (void *info, void *sigctx)
 	} else {
 		return FALSE;
 	}
+#endif
 }
 
 guint8*

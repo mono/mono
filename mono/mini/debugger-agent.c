@@ -86,6 +86,10 @@ int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
 #define DISABLE_DEBUGGER_AGENT 1
 #endif
 
+#ifdef MONO_CROSS_COMPILE
+#define DISABLE_DEBUGGER_AGENT 1
+#endif
+
 #ifndef DISABLE_DEBUGGER_AGENT
 #include <mono/io-layer/mono-mutex.h>
 

@@ -85,6 +85,7 @@ typedef struct ucontext {
  * We define our own version here and use it instead.
  */
 
+#if !defined(MONO_CROSS_COMPILE)
 #if __APPLE__
 #define my_ucontext ucontext_t
 #else
@@ -101,6 +102,7 @@ typedef struct my_ucontext {
 	 * we don't use them for now...
 	 */
 } my_ucontext;
+#endif
 #endif
 
 /*
@@ -523,6 +525,7 @@ mono_arch_ip_from_context (void *sigctx)
 {
 #if BROKEN_LINUX || defined(MONO_CROSS_COMPILE)
 	g_assert_not_reached ();
+	return NULL;
 #else
 	my_ucontext *my_uc = sigctx;
 	return (void*) UCONTEXT_REG_PC (my_uc);

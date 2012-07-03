@@ -67,7 +67,11 @@ FILE* unity_fopen( const char *name, const char *mode )
 LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 LONG mono_unity_seh_handler(EXCEPTION_POINTERS* ep)
 {
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 	return seh_handler(ep);
+#else
+	g_assert_not_reached();
+#endif
 }
 
 int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*) = NULL;
@@ -126,4 +130,10 @@ gboolean
 mono_unity_class_is_interface (MonoClass* klass)
 {
 	return MONO_CLASS_IS_INTERFACE(klass);
+}
+
+gboolean
+mono_unity_class_is_abstract (MonoClass* klass)
+{
+	return (klass->flags & TYPE_ATTRIBUTE_ABSTRACT);
 }

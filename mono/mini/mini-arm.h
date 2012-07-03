@@ -142,7 +142,10 @@ typedef struct MonoCompileArch {
 #define ARM_FIRST_ARG_REG 0
 #define ARM_LAST_ARG_REG 3
 
+#if defined(PLATFORM_WIN32) && !(defined(TARGET_ARM) && defined(MONO_CROSS_COMPILE))
 #define MONO_ARCH_USE_SIGACTION 1
+#endif
+
 #define MONO_ARCH_NEED_DIV_CHECK 1
 
 #define MONO_ARCH_HAVE_THROW_CORLIB_EXCEPTION 1
@@ -180,11 +183,15 @@ typedef struct MonoCompileArch {
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->ebp))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->esp))
 
+#if !defined(MONO_CROSS_COMPILE)
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,func) do {	\
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_IP ((ctx), (func));	\
 	} while (0)
+#else
+#define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) g_assert_not_reached ()
+#endif
 
 #if __APPLE__
 	#define UCONTEXT_REG_PC(ctx) ((ctx)->uc_mcontext->__ss.__pc)

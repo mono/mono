@@ -105,7 +105,7 @@ $File::Copy::Recursive::CopyLink = 0;  #make sure we copy files as files and not
 
 mkpath("$libmono/2.0");
 dircopy("$monoprefix/lib/mono/2.0","$libmono/2.0");
-system("rm $libmono/2.0/*.mdb");
+# system("rm $libmono/2.0/*.mdb");
 mkpath("$libmono/micro");
 system("cp $root/mcs/class/lib/monotouch/mscorlib.dll $libmono/micro") eq 0 or die("Failed to copy micro corlib");
 system("cp $monoprefix/lib/mono/gac/Mono.Cecil/*/Mono.Cecil.dll $libmono/2.0") eq 0 or die("failed to copy Mono.Cecil.dll");

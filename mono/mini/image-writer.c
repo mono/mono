@@ -106,7 +106,8 @@
 #define USE_ELF_WRITER 1
 #endif
 
-#if defined(TARGET_ARM) && !defined(__MACH__)
+/* Use assembly output when crosscompiling on windows to ARM */
+#if defined(TARGET_ARM) && !defined(__MACH__) && (defined(PLATFORM_WIN32) && !defined(MONO_CROSS_COMPILE))
 #define USE_ELF_WRITER 1
 #endif
 

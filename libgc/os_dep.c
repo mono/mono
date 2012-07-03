@@ -127,10 +127,12 @@
 # endif
 #endif
 #if defined(USE_MMAP) || defined(USE_MUNMAP) || defined(FALLBACK_TO_MMAP)
+#if !defined(MSWIN32) && !defined(MSWINCE)
 # include <sys/types.h>
 # include <sys/mman.h>
 # include <sys/stat.h>
 # include <errno.h>
+#endif
 #endif
 
 #ifdef UNIX_LIKE
