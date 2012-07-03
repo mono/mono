@@ -206,7 +206,9 @@ System/SByteTest.cs
 System.Security/CodeAccessPermissionTest.cs
 System.Security.AccessControl/AuthorizationRuleTest.cs
 System.Security.AccessControl/CommonAceTest.cs
+System.Security.AccessControl/CommonAclTest.cs
 System.Security.AccessControl/MutexAccessRuleTest.cs
+System.Security.AccessControl/ObjectAceTest.cs
 System.Security.AccessControl/ObjectSecurity_TTest.cs
 System.Security.AccessControl/RawAclTest.cs
 System.Security.AccessControl/RawSecurityDescriptorTest.cs
