@@ -136,8 +136,8 @@ namespace System.Security.AccessControl
 			is_canonical = TestCanonicity ();
 			
 			if (IsCanonical) {
-				MergeExplicitAces ();
 				ApplyCanonicalSortToExplicitAces ();
+				MergeExplicitAces ();
 			}
 		}
 		

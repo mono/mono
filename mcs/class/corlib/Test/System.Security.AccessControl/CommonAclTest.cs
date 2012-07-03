@@ -155,6 +155,35 @@ namespace MonoTests.System.Security.AccessControl
 		}
 
 		[Test]
+		public void MergesAfterSortingForMultipleSids ()
+		{
+			SecurityIdentifier adminSid = new SecurityIdentifier
+				(WellKnownSidType.BuiltinAdministratorsSid, null); // S-1-5-32-544
+
+			SecurityIdentifier userSid = new SecurityIdentifier
+				(WellKnownSidType.BuiltinUsersSid, null); // S-1-5-32-545
+
+			RawAcl acl = MakeRawAcl(new GenericAce[] {
+				new CommonAce (AceFlags.None, AceQualifier.AccessDenied, 1, userSid, false, null),
+				new CommonAce (AceFlags.None, AceQualifier.AccessDenied, 2, adminSid, false, null),
+				new CommonAce (AceFlags.None, AceQualifier.AccessDenied, 4, userSid, false, null),
+				new CommonAce (AceFlags.None, AceQualifier.AccessDenied, 8, adminSid, false, null),
+			});
+
+			DiscretionaryAcl dacl = new DiscretionaryAcl (false, false, acl);
+			Assert.IsTrue (dacl.IsCanonical);
+			Assert.AreEqual (2, dacl.Count);
+
+			CommonAce adminAce = (CommonAce)dacl [0];
+			Assert.AreEqual (adminSid, adminAce.SecurityIdentifier);
+			Assert.AreEqual (10, adminAce.AccessMask);
+
+			CommonAce userAce = (CommonAce)dacl [1];
+			Assert.AreEqual (userSid, userAce.SecurityIdentifier);
+			Assert.AreEqual (5, userAce.AccessMask);
+		}
+
+		[Test]
 		public void DetectsNonCanonicalAndDoesNotMerge ()
 		{
 			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
