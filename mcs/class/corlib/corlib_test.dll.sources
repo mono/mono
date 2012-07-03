@@ -207,6 +207,7 @@ System.Security/CodeAccessPermissionTest.cs
 System.Security.AccessControl/AuthorizationRuleTest.cs
 System.Security.AccessControl/CommonAceTest.cs
 System.Security.AccessControl/CommonAclTest.cs
+System.Security.AccessControl/CommonSecurityDescriptorTest.cs
 System.Security.AccessControl/DiscretionaryAclTest.cs
 System.Security.AccessControl/MutexAccessRuleTest.cs
 System.Security.AccessControl/ObjectAceTest.cs
