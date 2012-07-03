@@ -63,7 +63,7 @@ namespace System.Security.AccessControl {
 		
 		public abstract byte Revision { get; }
 		
-		public object SyncRoot {
+		public virtual object SyncRoot {
 			get { return this; }
 		}
 		

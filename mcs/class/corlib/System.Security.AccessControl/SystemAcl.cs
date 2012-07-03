@@ -4,8 +4,10 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -53,8 +55,8 @@ namespace System.Security.AccessControl
 				      InheritanceFlags inheritanceFlags,
 				      PropagationFlags propagationFlags)
 		{
-			// CommonAce?
-			throw new NotImplementedException ();
+			AddAce (AceQualifier.SystemAudit, sid, accessMask,
+				inheritanceFlags, propagationFlags, auditFlags);
 		}
 		
 		public void AddAudit (AuditFlags auditFlags,
@@ -65,8 +67,9 @@ namespace System.Security.AccessControl
 				      Guid objectType,
 				      Guid inheritedObjectType)
 		{
-			// ObjectAce?
-			throw new NotImplementedException ();
+			AddAce (AceQualifier.SystemAudit, sid, accessMask,
+				inheritanceFlags, propagationFlags, auditFlags,
+				objectFlags, objectType, inheritedObjectType);
 		}
 		
 		public bool RemoveAudit (AuditFlags auditFlags,
@@ -96,7 +99,9 @@ namespace System.Security.AccessControl
 						 InheritanceFlags inheritanceFlags,
 						 PropagationFlags propagationFlags)
 		{
-			throw new NotImplementedException ();
+			RemoveAceSpecific (AceQualifier.SystemAudit, sid, accessMask,
+					   inheritanceFlags, propagationFlags, auditFlags);
+
 		}
 		
 		public void RemoveAuditSpecific (AuditFlags auditFlags,
@@ -108,7 +113,10 @@ namespace System.Security.AccessControl
 						 Guid objectType,
 						 Guid inheritedObjectType)
 		{
-			throw new NotImplementedException ();
+			RemoveAceSpecific (AceQualifier.SystemAudit, sid, accessMask,
+					   inheritanceFlags, propagationFlags, auditFlags,
+					   objectFlags, objectType, inheritedObjectType);
+
 		}
 		
 		public void SetAudit (AuditFlags auditFlags,
@@ -117,7 +125,8 @@ namespace System.Security.AccessControl
 				      InheritanceFlags inheritanceFlags,
 				      PropagationFlags propagationFlags)
 		{
-			throw new NotImplementedException ();
+			SetAce (AceQualifier.SystemAudit, sid, accessMask,
+				inheritanceFlags, propagationFlags, auditFlags);
 		}
 		
 		public void SetAudit (AuditFlags auditFlags,
@@ -129,7 +138,9 @@ namespace System.Security.AccessControl
 				      Guid objectType,
 				      Guid inheritedObjectType)
 		{
-			throw new NotImplementedException ();
+			SetAce (AceQualifier.SystemAudit, sid, accessMask,
+				inheritanceFlags, propagationFlags, auditFlags,
+				objectFlags, objectType, inheritedObjectType);
 		}
 		
 		internal override void ApplyCanonicalSortToExplicitAces ()
@@ -138,17 +149,29 @@ namespace System.Security.AccessControl
 			ApplyCanonicalSortToExplicitAces (0, explicitCount);
 		}
 		
+		internal override int GetAceInsertPosition (AceQualifier aceQualifier)
+		{
+			return 0;
+		}
+		
 		internal override bool IsAceMeaningless (GenericAce ace)
 		{
 			if (base.IsAceMeaningless (ace)) return true;
+			if (!IsValidAuditFlags (ace.AuditFlags)) return true;
 			
 			QualifiedAce qace = ace as QualifiedAce;
 			if (null != qace) {
-				return !(AceQualifier.SystemAudit == qace.AceQualifier ||
-				         AceQualifier.SystemAlarm == qace.AceQualifier);
+				if (!(AceQualifier.SystemAudit == qace.AceQualifier ||
+				      AceQualifier.SystemAlarm == qace.AceQualifier)) return true;
 			}
 			
 			return false;
+		}
+		
+		static bool IsValidAuditFlags (AuditFlags auditFlags)
+		{
+			return auditFlags != AuditFlags.None &&
+			       auditFlags == ((AuditFlags.Success|AuditFlags.Failure) & auditFlags);
 		}
 	}
 }
