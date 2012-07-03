@@ -29,27 +29,21 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class DiscretionaryAcl : CommonAcl
 	{
-//		RawAcl raw_acl;
-		
-		public DiscretionaryAcl (bool isContainer, bool isDS,
-					 int capacity)
-			: this (isContainer, isDS, 0, capacity)
+		public DiscretionaryAcl (bool isContainer, bool isDS, int capacity)
+			: base (isContainer, isDS, capacity)
 		{
-			throw new NotImplementedException ();
 		}
 		
-		public DiscretionaryAcl (bool isContainer, bool isDS,
-					 RawAcl rawAcl)
-			: base (isContainer, isDS, 0)
+		public DiscretionaryAcl (bool isContainer, bool isDS, RawAcl rawAcl)
+			: base (isContainer, isDS, rawAcl)
 		{
-//			this.raw_acl = rawAcl;
 		}
 		
-		public DiscretionaryAcl (bool isContainer, bool isDS,
-					 byte revision, int capacity)
+		public DiscretionaryAcl (bool isContainer, bool isDS, byte revision, int capacity)
 			: base (isContainer, isDS, revision, capacity)
 		{
 		}
@@ -136,6 +130,28 @@ namespace System.Security.AccessControl {
 				       Guid inheritedObjectType)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal override void ApplyCanonicalSortToExplicitAces ()
+		{
+			int explicitCount = GetCanonicalExplicitAceCount ();
+			int explicitDenys = GetCanonicalExplicitDenyAceCount ();
+
+			ApplyCanonicalSortToExplicitAces (0, explicitDenys);
+			ApplyCanonicalSortToExplicitAces (explicitDenys, explicitCount - explicitDenys);
+		}
+		
+		internal override bool IsAceMeaningless (GenericAce ace)
+		{
+			if (base.IsAceMeaningless (ace)) return true;
+			
+			QualifiedAce qace = ace as QualifiedAce;
+			if (null != qace) {
+				return !(AceQualifier.AccessAllowed == qace.AceQualifier ||
+				         AceQualifier.AccessDenied  == qace.AceQualifier);
+			}
+
+			return false;
 		}
 	}
 }

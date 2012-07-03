@@ -114,32 +114,53 @@ namespace System.Security.Principal {
 			get {
 				StringBuilder s = new StringBuilder ();
 				
-				ulong authority = (((ulong)buffer[2]) << 40) | (((ulong)buffer[3]) << 32)
-					| (((ulong)buffer[4]) << 24) | (((ulong)buffer[5]) << 16)
-					| (((ulong)buffer[6]) << 8) | (((ulong)buffer[7]) << 0);
+				ulong authority = GetSidAuthority ();
 				s.AppendFormat (CultureInfo.InvariantCulture, "S-1-{0}", authority);
 				
-				for (int i = 0; i < buffer[1]; ++i) {
-					// Note sub authorities little-endian, authority (above) is big-endian!
-					int offset = 8 + (i * 4);
-					
-					uint subAuthority =
-						(((uint)buffer[offset + 0]) << 0)
-						| (((uint)buffer[offset + 1]) << 8)
-						| (((uint)buffer[offset + 2]) << 16)
-						| (((uint)buffer[offset + 3]) << 24);
+				for (byte i = 0; i < GetSidSubAuthorityCount (); ++i)
 					s.AppendFormat (
 						CultureInfo.InvariantCulture,
-					        "-{0}", subAuthority);
-				}
+					        "-{0}", GetSidSubAuthority (i));
 				
 				return s.ToString ();
 			}
 		}
 
+		ulong GetSidAuthority ()
+		{
+			return (((ulong)buffer [2]) << 40) | (((ulong)buffer [3]) << 32)
+			     | (((ulong)buffer [4]) << 24) | (((ulong)buffer [5]) << 16)
+			     | (((ulong)buffer [6]) <<  8) | (((ulong)buffer [7]) <<  0);
+		}
+		
+		byte GetSidSubAuthorityCount ()
+		{
+			return buffer [1];
+		}
+		
+		uint GetSidSubAuthority (byte index)
+		{
+			// Note sub authorities little-endian, authority (above) is big-endian!
+			int offset = 8 + (index * 4);
+			
+			return (((uint)buffer [offset + 0]) <<  0)
+			     | (((uint)buffer [offset + 1]) <<  8)
+			     | (((uint)buffer [offset + 2]) << 16)
+			     | (((uint)buffer [offset + 3]) << 24);
+		}
+		
+		// The CompareTo ordering was determined by unit test applied to MS.NET implementation,
+		// necessary because the CompareTo has no details in its documentation.
+		// (See MonoTests.System.Security.AccessControl.DiscretionaryAclTest.)
+		// The comparison was determined to be: authority, then subauthority count, then subauthority.
 		public int CompareTo (SecurityIdentifier sid)
 		{
-			return Value.CompareTo (sid.Value);
+			int result;
+			if (0 != (result = GetSidAuthority ().CompareTo (sid.GetSidAuthority ()))) return result;
+			if (0 != (result = GetSidSubAuthorityCount ().CompareTo (sid.GetSidSubAuthorityCount ()))) return result;
+			for (byte i = 0; i < GetSidSubAuthorityCount (); ++i)
+				if (0 != (result = GetSidSubAuthority (i).CompareTo (sid.GetSidSubAuthority (i)))) return result;
+			return 0;
 		}
 
 		public override bool Equals (object o)
