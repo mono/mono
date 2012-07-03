@@ -41,7 +41,7 @@ namespace System.Security.AccessControl
 	{
 		const int default_capacity = 10; // FIXME: not verified
 
-		delegate bool RemoveAcesCallback (GenericAce ace);
+		internal delegate bool RemoveAcesCallback<T> (T ace);
 
 		internal CommonAcl (bool isContainer, bool isDS, RawAcl rawAcl)
 		{
@@ -114,24 +114,25 @@ namespace System.Security.AccessControl
 		
 		public void Purge (SecurityIdentifier sid)
 		{
-			if (!IsCanonical)
-				throw new InvalidOperationException ();
-
-			// Custom ACEs are not canonical.
-			RemoveAces (ace => ((KnownAce)ace).SecurityIdentifier == sid);
+			RequireCanonicity ();
+			RemoveAces<KnownAce> (ace => ace.SecurityIdentifier == sid);
 		}
 
 		public void RemoveInheritedAces ()
 		{
-			if (!IsCanonical)
-				throw new InvalidOperationException();
-
-			RemoveAces (ace => ace.IsInherited);
+			RequireCanonicity ();
+			RemoveAces<GenericAce> (ace => ace.IsInherited);
 		}
 
+		internal void RequireCanonicity ()
+		{
+			if (!IsCanonical)
+				throw new InvalidOperationException("ACL is not canonical.");
+		}
+		
 		internal void CleanAndRetestCanonicity ()
 		{
-			RemoveAces (IsAceMeaningless);
+			RemoveAces<GenericAce> (IsAceMeaningless);
 
 			is_canonical = TestCanonicity ();
 			
@@ -227,13 +228,32 @@ namespace System.Security.AccessControl
 			QualifiedAce qace1 = ace1 as QualifiedAce;
 			QualifiedAce qace2 = ace2 as QualifiedAce;
 			if (!(null != qace1 && null != qace2)) return null;
-			if (!(qace1.AceFlags == qace2.AceFlags && qace1.AceQualifier == qace2.AceQualifier)) return null;
+			if (!(qace1.AceQualifier == qace2.AceQualifier)) return null;
 			if (!(qace1.SecurityIdentifier == qace2.SecurityIdentifier)) return null;
+			
+			AceFlags aceFlags1 = qace1.AceFlags, aceFlags2 = qace2.AceFlags, aceFlagsNew;
+			int accessMask1 = qace1.AccessMask, accessMask2 = qace2.AccessMask, accessMaskNew;
+			
+			if (!IsContainer) {
+				aceFlags1 &= ~AceFlags.InheritanceFlags;
+				aceFlags2 &= ~AceFlags.InheritanceFlags;
+			}
+			
+			if (aceFlags1 != aceFlags2) {
+				if (accessMask1 != accessMask2) return null;
+				if ((aceFlags1 & ~(AceFlags.ContainerInherit|AceFlags.ObjectInherit)) !=
+				    (aceFlags2 & ~(AceFlags.ContainerInherit|AceFlags.ObjectInherit))) return null;
+				aceFlagsNew = aceFlags1|aceFlags2;
+				accessMaskNew = accessMask1;
+			} else {
+				aceFlagsNew = aceFlags1;
+				accessMaskNew = accessMask1|accessMask2;
+			}
 			
 			CommonAce cace1 = ace1 as CommonAce;
 			CommonAce cace2 = ace2 as CommonAce;
 			if (null != cace1 && null != cace2) {
-				return new CommonAce (cace1.AceFlags, cace1.AceQualifier, cace1.AccessMask|cace2.AccessMask,
+				return new CommonAce (aceFlagsNew, cace1.AceQualifier, accessMaskNew,
 					cace1.SecurityIdentifier, cace1.IsCallback, cace1.GetOpaque());
 			}
 			
@@ -245,7 +265,7 @@ namespace System.Security.AccessControl
 				Guid type2, inheritedType2; GetObjectAceTypeGuids(oace2, out type2, out inheritedType2);
 				
 				if (type1 == type2 && inheritedType1 == inheritedType2) {
-					return new ObjectAce (oace1.AceFlags, oace1.AceQualifier, oace1.AccessMask|oace2.AccessMask,
+					return new ObjectAce (aceFlagsNew, oace1.AceQualifier, accessMaskNew,
 						oace1.SecurityIdentifier,
 						oace1.ObjectAceFlags, oace1.ObjectAceType, oace1.InheritedObjectAceType,
 						oace1.IsCallback, oace1.GetOpaque());
@@ -284,10 +304,11 @@ namespace System.Security.AccessControl
 			return raw_acl.GetSddlForm (sdFlags, isDacl);
 		}
 
-		void RemoveAces (RemoveAcesCallback callback)
+		internal void RemoveAces<T> (RemoveAcesCallback<T> callback)
+			where T : GenericAce
 		{
 			for (int i = 0; i < raw_acl.Count; ) {
-				if (callback (raw_acl [i])) {
+				if (raw_acl [i] is T && callback ((T)raw_acl [i])) {
 					raw_acl.RemoveAce (i);
 				} else {
 					i ++;
