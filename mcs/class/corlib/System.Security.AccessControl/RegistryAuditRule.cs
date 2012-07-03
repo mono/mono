@@ -33,16 +33,13 @@ namespace System.Security.AccessControl
 {
 	public sealed class RegistryAuditRule : AuditRule
 	{
-		RegistryRights rights;
-		
 		public RegistryAuditRule (IdentityReference identity,
 					  RegistryRights registryRights,
 					  InheritanceFlags inheritanceFlags,
 					  PropagationFlags propagationFlags,
 					  AuditFlags flags)
-			: base (identity, 0, false, inheritanceFlags, propagationFlags, flags)
+			: base (identity, (int)registryRights, false, inheritanceFlags, propagationFlags, flags)
 		{
-			this.rights = registryRights;
 		}
 		
 		public RegistryAuditRule (string identity,
@@ -50,12 +47,12 @@ namespace System.Security.AccessControl
 					  InheritanceFlags inheritanceFlags,
 					  PropagationFlags propagationFlags,
 					  AuditFlags flags)
-			: this (new SecurityIdentifier (identity), registryRights, inheritanceFlags, propagationFlags, flags)
+			: this (new NTAccount (identity), registryRights, inheritanceFlags, propagationFlags, flags)
 		{
 		}
 		
 		public RegistryRights RegistryRights {
-			get { return rights; }
+			get { return (RegistryRights)AccessMask; }
 		}
 	}
 }

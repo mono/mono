@@ -207,10 +207,16 @@ System.Security/CodeAccessPermissionTest.cs
 System.Security.AccessControl/AuthorizationRuleTest.cs
 System.Security.AccessControl/CommonAceTest.cs
 System.Security.AccessControl/CommonAclTest.cs
+System.Security.AccessControl/CommonObjectSecurityTest.cs
 System.Security.AccessControl/CommonSecurityDescriptorTest.cs
+System.Security.AccessControl/CryptoKeyAccessRuleTest.cs
+System.Security.AccessControl/DirectoryObjectSecurityTest.cs
+System.Security.AccessControl/DirectorySecurityTest.cs
 System.Security.AccessControl/DiscretionaryAclTest.cs
+System.Security.AccessControl/FileSecurityTest.cs
 System.Security.AccessControl/MutexAccessRuleTest.cs
 System.Security.AccessControl/ObjectAceTest.cs
+System.Security.AccessControl/ObjectSecurityTest.cs
 System.Security.AccessControl/ObjectSecurity_TTest.cs
 System.Security.AccessControl/RawAclTest.cs
 System.Security.AccessControl/RawSecurityDescriptorTest.cs

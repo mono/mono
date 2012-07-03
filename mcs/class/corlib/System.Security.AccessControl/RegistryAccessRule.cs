@@ -33,8 +33,6 @@ namespace System.Security.AccessControl
 {
 	public sealed class RegistryAccessRule : AccessRule
 	{
-		RegistryRights rights;
-		
 		public RegistryAccessRule (IdentityReference identity,
 					   RegistryRights registryRights,
 					   AccessControlType type)
@@ -56,7 +54,6 @@ namespace System.Security.AccessControl
 					   AccessControlType type)
 			: base (identity, (int)registryRights, false, inheritanceFlags, propagationFlags, type)
 		{
-			this.rights = registryRights;
 		}
 		
 		public RegistryAccessRule (string identity,
@@ -69,7 +66,7 @@ namespace System.Security.AccessControl
 		}
 		
 		public RegistryRights RegistryRights {
-			get { return rights; }
+			get { return (RegistryRights)AccessMask; }
 		}
 	}
 }

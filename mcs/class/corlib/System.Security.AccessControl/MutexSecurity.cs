@@ -4,8 +4,10 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,11 +36,13 @@ namespace System.Security.AccessControl
 	public sealed class MutexSecurity : NativeObjectSecurity
 	{
 		public MutexSecurity ()
+			: base (false, ResourceType.KernelObject)
 		{
 		}
 
 		public MutexSecurity (string name,
 				      AccessControlSections includeSections)
+			: base (false, ResourceType.KernelObject, name, includeSections)
 		{
 		}
 		
@@ -54,84 +58,73 @@ namespace System.Security.AccessControl
 			get { return typeof (MutexAuditRule); }
 		}
 		
-		// AccessRule
-		
-		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask,
+							      bool isInherited, InheritanceFlags inheritanceFlags,
+							      PropagationFlags propagationFlags, AccessControlType type)
 		{
 			return new MutexAccessRule (identityReference, (MutexRights) accessMask, type);
 		}
 		
-		[MonoTODO]
 		public void AddAccessRule (MutexAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAccessRule ((AccessRule)rule);
 		}
-
-		[MonoTODO]
+		
 		public bool RemoveAccessRule (MutexAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleAll (MutexAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleAll ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleSpecific (MutexAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleSpecific ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void ResetAccessRule (MutexAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			ResetAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAccessRule (MutexAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAccessRule ((AccessRule)rule);
 		}
-		
-		// AuditRule
-		
-		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+
+		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask,
+							    bool isInherited, InheritanceFlags inheritanceFlags,
+							    PropagationFlags propagationFlags, AuditFlags flags)
 		{
 			return new MutexAuditRule (identityReference, (MutexRights) accessMask, flags);
 		}
 		
-		[MonoTODO]
 		public void AddAuditRule (MutexAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAuditRule ((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public bool RemoveAuditRule (MutexAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAuditRule((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleAll (MutexAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleAll((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleSpecific (MutexAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleSpecific((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAuditRule (MutexAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAuditRule((AuditRule)rule);
 		}
 	}
 }

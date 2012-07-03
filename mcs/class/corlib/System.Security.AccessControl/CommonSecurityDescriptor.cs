@@ -35,13 +35,13 @@ namespace System.Security.AccessControl
 {
 	public sealed class CommonSecurityDescriptor : GenericSecurityDescriptor
 	{
-		bool isContainer;
-		bool isDS;
+		bool is_container;
+		bool is_ds;
 		ControlFlags flags;
 		SecurityIdentifier owner;
 		SecurityIdentifier group;
-		SystemAcl systemAcl;
-		DiscretionaryAcl discretionaryAcl;
+		SystemAcl system_acl;
+		DiscretionaryAcl discretionary_acl;
 		
 		public CommonSecurityDescriptor (bool isContainer, bool isDS, RawSecurityDescriptor rawSecurityDescriptor)
 		{
@@ -95,14 +95,14 @@ namespace System.Security.AccessControl
 			   SystemAcl systemAcl,
 			   DiscretionaryAcl discretionaryAcl)
 		{
-			IsContainer = isContainer;
-			IsDS = isDS;
+			this.flags = flags & ~ControlFlags.SystemAclPresent;
+			this.is_container = isContainer;
+			this.is_ds = isDS;
+			
 			Owner = owner;
 			Group = group;
 			SystemAcl = systemAcl;
 			DiscretionaryAcl = discretionaryAcl;
-			
-			this.flags = flags & ~ControlFlags.SystemAclPresent;
 		}
 		
 		public override ControlFlags ControlFlags {
@@ -119,26 +119,32 @@ namespace System.Security.AccessControl
 		}
 		
 		public DiscretionaryAcl DiscretionaryAcl {
-			get { return discretionaryAcl; }
+			get { return discretionary_acl; }
 			set {
 				if (value == null) {
 					value = new DiscretionaryAcl (IsContainer, IsDS, 1);
 					value.AddAccess (AccessControlType.Allow, new SecurityIdentifier ("WD"), -1,
-							InheritanceFlags.None, PropagationFlags.None);
+							IsContainer ? InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit
+								    : InheritanceFlags.None, PropagationFlags.None);
+					value.IsAefa = true;
 				}
 				
 				CheckAclConsistency (value);
-				discretionaryAcl = value;
+				discretionary_acl = value;
 			}
 		}
 		
+		internal override GenericAcl InternalDacl {
+			get { return DiscretionaryAcl; }
+		}
+		
 		public override SecurityIdentifier Group {
-			get { return group;  }
+			get { return  group; }
 			set { group = value; }
 		}
 
 		public bool IsContainer {
-			get { return isContainer; }
+			get { return is_container; }
 		}
 		
 		public bool IsDiscretionaryAclCanonical {
@@ -146,7 +152,7 @@ namespace System.Security.AccessControl
 		}
 		
 		public bool IsDS {
-			get { return isDS; }
+			get { return is_ds; }
 		}
 		
 		public bool IsSystemAclCanonical {
@@ -154,20 +160,24 @@ namespace System.Security.AccessControl
 		}
 		
 		public override SecurityIdentifier Owner {
-			get { return owner;  }
+			get { return  owner; }
 			set { owner = value; }
 		}
 		
 		public SystemAcl SystemAcl {
-			get { return systemAcl;  }
+			get { return system_acl;  }
 			set {
 				if (value != null)
 					CheckAclConsistency (value);
 					
-				systemAcl = value;
+				system_acl = value;
 			}
 		}
 		
+		internal override GenericAcl InternalSacl {
+			get { return SystemAcl; }
+		}
+
 		public void PurgeAccessControl (SecurityIdentifier sid)
 		{
 			DiscretionaryAcl.Purge (sid);
@@ -182,6 +192,8 @@ namespace System.Security.AccessControl
 		public void SetDiscretionaryAclProtection (bool isProtected,
 							   bool preserveInheritance)
 		{
+			DiscretionaryAcl.IsAefa = false;
+			
 			if (!isProtected) {
 				flags &= ~ControlFlags.DiscretionaryAclProtected;
 				return;
@@ -201,17 +213,21 @@ namespace System.Security.AccessControl
 			}
 			
 			flags |= ControlFlags.SystemAclProtected;
-			if (!preserveInheritance)
+			if (!preserveInheritance && SystemAcl != null)
 				SystemAcl.RemoveInheritedAces ();
 		}
 		
 		void CheckAclConsistency (CommonAcl acl)
 		{
 			if (IsContainer != acl.IsContainer)
-				throw new ArgumentExcetion ("IsContainer must match between descriptor and ACL.");
+				throw new ArgumentException ("IsContainer must match between descriptor and ACL.");
 			
 			if (IsDS != acl.IsDS)
 				throw new ArgumentException ("IsDS must match between descriptor and ACL.");
+		}
+
+		internal override bool DaclIsUnmodifiedAefa {
+			get { return DiscretionaryAcl.IsAefa; }
 		}
 	}
 }

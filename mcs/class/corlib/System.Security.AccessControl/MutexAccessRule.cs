@@ -45,7 +45,7 @@ namespace System.Security.AccessControl
 		public MutexAccessRule (string identity,
 					MutexRights eventRights,
 					AccessControlType type)
-			: this (new SecurityIdentifier (identity), eventRights, type)
+			: this (new NTAccount (identity), eventRights, type)
 		{
 		}
 		

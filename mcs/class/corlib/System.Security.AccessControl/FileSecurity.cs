@@ -26,19 +26,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Security.AccessControl {
-	public sealed class FileSecurity : FileSystemSecurity {
+using System.Runtime.InteropServices;
+
+namespace System.Security.AccessControl
+{
+	public sealed class FileSecurity : FileSystemSecurity
+{
 		public FileSecurity ()
 			: base (false)
 		{
-			throw new PlatformNotSupportedException ();
 		}
 
 		public FileSecurity (string fileName,
 				     AccessControlSections includeSections)
 			: base (false, fileName, includeSections)
 		{
-			throw new PlatformNotSupportedException ();
+		}
+		
+		internal FileSecurity (SafeHandle handle,
+				       AccessControlSections includeSections)
+			: base (false, handle, includeSections)
+		{
 		}
 	}
 }

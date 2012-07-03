@@ -10,16 +10,17 @@ using System.Security.Principal;
 using System.Text;
 using NUnit.Framework;
 
-namespace MonoTests.System.Security.Principal {
+namespace MonoTests.System.Security.Principal
+{
 	[TestFixture]
-	public class SecurityIdentifierTest : Assert {
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
+	public class SecurityIdentifierTest : Assert
+	{
+		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorNull ()
 		{
 			new SecurityIdentifier (null);
 		}
-
+		
 		private void CheckStringCtor (string strValue, byte[] expectedBinary)
 		{
 			SecurityIdentifier sid = new SecurityIdentifier (strValue);
@@ -333,11 +334,31 @@ namespace MonoTests.System.Security.Principal {
 			sid.CompareTo ((SecurityIdentifier)null);
 		}
 
+		[Test]
 		public void EqualsNull ()
 		{
 			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
 			Assert.IsFalse (sid.Equals ((object)null));
 			Assert.IsFalse (sid.Equals ((SecurityIdentifier)null));
+		}
+		
+		[Test]
+		public unsafe void IntPtrRoundtrip ()
+		{
+			SecurityIdentifier sidIn, sidOut;
+			byte[] binaryFormIn, binaryFormOut;
+
+			sidIn = new SecurityIdentifier ("WD");
+			binaryFormIn = new byte[sidIn.BinaryLength];
+			sidIn.GetBinaryForm (binaryFormIn, 0);
+
+			fixed (byte* pointerForm = binaryFormIn)
+				sidOut = new SecurityIdentifier ((IntPtr)pointerForm);
+			binaryFormOut = new byte[sidOut.BinaryLength];
+			sidOut.GetBinaryForm (binaryFormOut, 0);
+
+			Assert.AreEqual (sidIn, sidOut);
+			Assert.AreEqual (binaryFormIn, binaryFormOut);
 		}
 	}
 }
