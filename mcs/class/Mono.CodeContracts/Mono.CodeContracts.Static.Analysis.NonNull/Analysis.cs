@@ -40,13 +40,15 @@ using Mono.CodeContracts.Static.Providers;
 using Mono.CodeContracts.Static.Proving;
 
 namespace Mono.CodeContracts.Static.Analysis.NonNull {
-	class Analysis<E, V> :
-		ILVisitorBase<APC, V, V, Domain<E, V>, Domain<E, V>>,
-		IAnalysis<APC, Domain<E, V>, IILVisitor<APC, V, V, Domain<E, V>, Domain<E, V>>, IImmutableMap<V, Sequence<V>>>,
-		IMethodResult<V>, IFactBase<V> where E : IEquatable<E> where V : IEquatable<V> {
-		private readonly Dictionary<APC, Domain<E, V>> callSiteCache = new Dictionary<APC, Domain<E, V>> ();
+	class Analysis<E, V> : ILVisitorBase<APC, V, V, Domain<V>, Domain<V>>,
+		                   IAnalysis<APC, Domain<V>, IILVisitor<APC, V, V, Domain<V>, Domain<V>>, IImmutableMap<V, Sequence<V>>>,
+		                   IMethodResult<V>, IFactBase<V> 
+            where E : IEquatable<E> 
+            where V : IEquatable<V> 
+    {
+		private readonly Dictionary<APC, Domain<V>> callSiteCache = new Dictionary<APC, Domain<V>> ();
 		private readonly IMethodDriver<E, V> method_driver;
-		private IFixPointInfo<APC, Domain<E, V>> fix_point_info;
+		private IFixPointInfo<APC, Domain<V>> fix_point_info;
 
 		public Analysis (IMethodDriver<E, V> mdriver)
 		{
@@ -63,13 +65,13 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			get { return this.method_driver.MetaDataProvider; }
 		}
 
-		#region IAnalysis<APC,Domain<E,V>,IILVisitor<APC,V,V,Domain<E,V>,Domain<E,V>>,IImmutableMap<V,Sequence<V>>> Members
-		public IILVisitor<APC, V, V, Domain<E, V>, Domain<E, V>> GetVisitor ()
+		#region IAnalysis<APC,Domain<V>,IILVisitor<APC,V,V,Domain<V>,Domain<V>>,IImmutableMap<V,Sequence<V>>> Members
+		public IILVisitor<APC, V, V, Domain<V>, Domain<V>> GetVisitor ()
 		{
 			return this;
 		}
 
-		public Domain<E, V> Join (Pair<APC, APC> edge, Domain<E, V> newstate, Domain<E, V> prevstate, out bool weaker, bool widen)
+		public Domain<V> Join (Pair<APC, APC> edge, Domain<V> newstate, Domain<V> prevstate, out bool weaker, bool widen)
 		{
 			bool nonNullWeaker;
 			SetDomain<V> nonNulls = prevstate.NonNulls.Join (newstate.NonNulls, widen, out nonNullWeaker);
@@ -77,20 +79,20 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			SetDomain<V> nulls = prevstate.Nulls.Join (newstate.Nulls, widen, out nullWeaker);
 
 			weaker = nonNullWeaker || nullWeaker;
-			return new Domain<E, V> (nonNulls, nulls);
+			return new Domain<V> (nonNulls, nulls);
 		}
 
-		public Domain<E, V> ImmutableVersion (Domain<E, V> state)
+		public Domain<V> ImmutableVersion (Domain<V> state)
 		{
 			return state;
 		}
 
-		public Domain<E, V> MutableVersion (Domain<E, V> state)
+		public Domain<V> MutableVersion (Domain<V> state)
 		{
 			return state;
 		}
 
-		public Domain<E, V> EdgeConversion (APC from, APC to, bool isJoinPoint, IImmutableMap<V, Sequence<V>> data, Domain<E, V> state)
+		public Domain<V> EdgeConversion (APC from, APC to, bool isJoinPoint, IImmutableMap<V, Sequence<V>> data, Domain<V> state)
 		{
 			if (data == null)
 				return state;
@@ -113,15 +115,15 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 				}
 			}
 
-			return new Domain<E, V> (nonNulls, nulls);
+			return new Domain<V> (nonNulls, nulls);
 		}
 
-		public bool IsBottom (APC pc, Domain<E, V> state)
+		public bool IsBottom (APC pc, Domain<V> state)
 		{
 			return state.NonNulls.IsBottom;
 		}
 
-		public Predicate<APC> SaveFixPointInfo (IFixPointInfo<APC, Domain<E, V>> fixPointInfo)
+		public Predicate<APC> SaveFixPointInfo (IFixPointInfo<APC, Domain<V>> fixPointInfo)
 		{
 			this.fix_point_info = fixPointInfo;
 
@@ -129,7 +131,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return pc => true;
 		}
 
-		public void Dump (Pair<Domain<E, V>, TextWriter> pair)
+		public void Dump (Pair<Domain<V>, TextWriter> pair)
 		{
 			TextWriter tw = pair.Value;
 			tw.Write ("NonNulls: ");
@@ -145,7 +147,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			if (ContextProvider.ValueContext.IsZero (pc, variable))
 				return ProofOutcome.True;
 
-			Domain<E, V> domain;
+			Domain<V> domain;
 			if (!PreStateLookup (pc, out domain) || domain.NonNulls.IsBottom)
 				return ProofOutcome.Bottom;
 			if (domain.IsNonNull (variable))
@@ -158,7 +160,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 
 		public ProofOutcome IsNonNull (APC pc, V variable)
 		{
-			Domain<E, V> domain;
+			Domain<V> domain;
 			if (!PreStateLookup (pc, out domain) || domain.NonNulls.IsBottom)
 				return ProofOutcome.Bottom;
 			if (domain.IsNonNull (variable))
@@ -175,7 +177,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 
 		public bool IsUnreachable (APC pc)
 		{
-			Domain<E, V> domain;
+			Domain<V> domain;
 			if (!PreStateLookup (pc, out domain) || domain.NonNulls.IsBottom)
 				return true;
 
@@ -183,46 +185,47 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 		}
 		#endregion
 
-		public override Domain<E, V> DefaultVisit (APC pc, Domain<E, V> data)
+		public override Domain<V> DefaultVisit (APC pc, Domain<V> data)
 		{
 			return data;
 		}
 
-		public static Domain<E, V> AssumeNonNull (V dest, Domain<E, V> before)
+		public static Domain<V> AssumeNonNull (V dest, Domain<V> domain)
 		{
-			if (!before.NonNulls.Contains (dest))
-				return new Domain<E, V> (before.NonNulls.Add (dest), before.Nulls);
-			return before;
+			if (!domain.NonNulls.Contains (dest))
+				return new Domain<V> (domain.NonNulls.Add (dest), domain.Nulls);
+
+			return domain;
 		}
 
-		public static Domain<E, V> AssumeNull (V dest, Domain<E, V> before)
+		public static Domain<V> AssumeNull (V dest, Domain<V> before)
 		{
 			if (!before.Nulls.Contains (dest))
-				return new Domain<E, V> (before.NonNulls, before.Nulls.Add (dest));
+				return new Domain<V> (before.NonNulls, before.Nulls.Add (dest));
 			return before;
 		}
 
-		public override Domain<E, V> Assert (APC pc, EdgeTag tag, V condition, Domain<E, V> data)
+		public override Domain<V> Assert (APC pc, EdgeTag tag, V condition, Domain<V> data)
 		{
 			return ContextProvider.ExpressionContext.
-				Decode<Pair<bool, Domain<E, V>>, Domain<E, V>, ExpressionAssumeDecoder<E, V>>
+				Decode<Pair<bool, Domain<V>>, Domain<V>, ExpressionAssumeDecoder<E, V>>
 				(
 				 ContextProvider.ExpressionContext.Refine (pc, condition),
 				 new ExpressionAssumeDecoder<E, V> (ContextProvider),
-				 new Pair<bool, Domain<E, V>> (true, data));
+				 new Pair<bool, Domain<V>> (true, data));
 		}
 
-		public override Domain<E, V> Assume (APC pc, EdgeTag tag, V condition, Domain<E, V> data)
+		public override Domain<V> Assume (APC pc, EdgeTag tag, V condition, Domain<V> data)
 		{
 			IExpressionContext<E, V> exprCtx = ContextProvider.ExpressionContext;
 			E expr = exprCtx.Refine (pc, condition);
 
-			return exprCtx.Decode<Pair<bool, Domain<E, V>>, Domain<E, V>, ExpressionAssumeDecoder<E, V>>
+			return exprCtx.Decode<Pair<bool, Domain<V>>, Domain<V>, ExpressionAssumeDecoder<E, V>>
 				(expr, new ExpressionAssumeDecoder<E, V> (ContextProvider),
-				 new Pair<bool, Domain<E, V>> (tag != EdgeTag.False, data));
+				 new Pair<bool, Domain<V>> (tag != EdgeTag.False, data));
 		}
 
-		public override Domain<E, V> Unary (APC pc, UnaryOperator op, bool unsigned, V dest, V source, Domain<E, V> data)
+		public override Domain<V> Unary (APC pc, UnaryOperator op, bool unsigned, V dest, V source, Domain<V> data)
 		{
 			switch (op) {
 			case UnaryOperator.Conv_i:
@@ -234,7 +237,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return data;
 		}
 
-		public override Domain<E, V> Call<TypeList, ArgList> (APC pc, Method method, bool virt, TypeList extraVarargs, V dest, ArgList args, Domain<E, V> data)
+		public override Domain<V> Call<TypeList, ArgList> (APC pc, Method method, bool virt, TypeList extraVarargs, V dest, ArgList args, Domain<V> data)
 		{
 			this.callSiteCache [pc] = data;
 			if (!MetaDataProvider.IsStatic (method))
@@ -243,7 +246,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return data;
 		}
 
-		public override Domain<E, V> CastClass (APC pc, TypeNode type, V dest, V obj, Domain<E, V> data)
+		public override Domain<V> CastClass (APC pc, TypeNode type, V dest, V obj, Domain<V> data)
 		{
 			if (data.NonNulls.Contains (obj))
 				return AssumeNonNull (dest, data);
@@ -251,10 +254,10 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return data;
 		}
 
-		public override Domain<E, V> Entry (APC pc, Method method, Domain<E, V> data)
+		public override Domain<V> Entry (APC pc, Method method, Domain<V> data)
 		{
 			APC at = ContextProvider.MethodContext.CFG.Next (pc);
-			Domain<E, V> domain = data;
+			Domain<V> domain = data;
 			IIndexable<Parameter> parameters = MetaDataProvider.Parameters (method);
 			TypeNode eventArgsType;
 			bool systemType = MetaDataProvider.TryGetSystemType ("System.EventArgs", out eventArgsType);
@@ -284,9 +287,9 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return domain;
 		}
 
-		public override Domain<E, V> LoadStack (APC pc, int offset, V dest, V source, bool isOld, Domain<E, V> data)
+		public override Domain<V> LoadStack (APC pc, int offset, V dest, V source, bool isOld, Domain<V> data)
 		{
-			Domain<E, V> old;
+			Domain<V> old;
 			if (isOld && TryFindOldState (pc, out old)) {
 				if (old.IsNonNull (source))
 					return AssumeNonNull (dest, data);
@@ -297,7 +300,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return data;
 		}
 
-		public override Domain<E, V> Isinst (APC pc, TypeNode type, V dest, V obj, Domain<E, V> data)
+		public override Domain<V> Isinst (APC pc, TypeNode type, V dest, V obj, Domain<V> data)
 		{
 			if (data.IsNonNull (obj)) {
 				FlatDomain<TypeNode> aType = ContextProvider.ValueContext.GetType (pc, obj);
@@ -307,12 +310,12 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return data;
 		}
 
-		public override Domain<E, V> LoadArgAddress (APC pc, Parameter argument, bool isOld, V dest, Domain<E, V> data)
+		public override Domain<V> LoadArgAddress (APC pc, Parameter argument, bool isOld, V dest, Domain<V> data)
 		{
 			return AssumeNonNull (dest, data);
 		}
 
-		public override Domain<E, V> LoadConst (APC pc, TypeNode type, object constant, V dest, Domain<E, V> data)
+		public override Domain<V> LoadConst (APC pc, TypeNode type, object constant, V dest, Domain<V> data)
 		{
 			if (constant is string)
 				return AssumeNonNull (dest, data);
@@ -320,14 +323,14 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return data;
 		}
 
-		public override Domain<E, V> LoadElement (APC pc, TypeNode type, V dest, V array, V index, Domain<E, V> data)
+		public override Domain<V> LoadElement (APC pc, TypeNode type, V dest, V array, V index, Domain<V> data)
 		{
 			return AssumeNonNull (array, data);
 		}
 
-		public override Domain<E, V> LoadField (APC pc, Field field, V dest, V obj, Domain<E, V> data)
+		public override Domain<V> LoadField (APC pc, Field field, V dest, V obj, Domain<V> data)
 		{
-			Domain<E, V> domain = AssumeNonNull (obj, data);
+			Domain<V> domain = AssumeNonNull (obj, data);
 			FlatDomain<TypeNode> aType = ContextProvider.ValueContext.GetType (ContextProvider.MethodContext.CFG.Next (pc), dest);
 			if (aType.IsNormal && MetaDataProvider.IsManagedPointer (aType.Concrete))
 				domain = AssumeNonNull (dest, domain);
@@ -335,56 +338,56 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return domain;
 		}
 
-		public override Domain<E, V> LoadFieldAddress (APC pc, Field field, V dest, V obj, Domain<E, V> data)
+		public override Domain<V> LoadFieldAddress (APC pc, Field field, V dest, V obj, Domain<V> data)
 		{
-			Domain<E, V> domain = AssumeNonNull (obj, data);
+			Domain<V> domain = AssumeNonNull (obj, data);
 			return AssumeNonNull (dest, domain);
 		}
 
-		public override Domain<E, V> LoadStaticFieldAddress (APC pc, Field field, V dest, Domain<E, V> data)
+		public override Domain<V> LoadStaticFieldAddress (APC pc, Field field, V dest, Domain<V> data)
 		{
 			return AssumeNonNull (dest, data);
 		}
 
-		public override Domain<E, V> LoadLength (APC pc, V dest, V array, Domain<E, V> data)
+		public override Domain<V> LoadLength (APC pc, V dest, V array, Domain<V> data)
 		{
 			return AssumeNonNull (array, data);
 		}
 
-		public override Domain<E, V> NewArray<ArgList> (APC pc, TypeNode type, V dest, ArgList lengths, Domain<E, V> data)
+		public override Domain<V> NewArray<ArgList> (APC pc, TypeNode type, V dest, ArgList lengths, Domain<V> data)
 		{
 			return AssumeNonNull (dest, data);
 		}
 
-		public override Domain<E, V> NewObj<ArgList> (APC pc, Method ctor, V dest, ArgList args, Domain<E, V> data)
+		public override Domain<V> NewObj<ArgList> (APC pc, Method ctor, V dest, ArgList args, Domain<V> data)
 		{
 			return AssumeNonNull (dest, data);
 		}
 
-		public override Domain<E, V> StoreElement (APC pc, TypeNode type, V array, V index, V value, Domain<E, V> data)
+		public override Domain<V> StoreElement (APC pc, TypeNode type, V array, V index, V value, Domain<V> data)
 		{
 			return AssumeNonNull (array, data);
 		}
 
-		public override Domain<E, V> StoreField (APC pc, Field field, V obj, V value, Domain<E, V> data)
+		public override Domain<V> StoreField (APC pc, Field field, V obj, V value, Domain<V> data)
 		{
 			return AssumeNonNull (obj, data);
 		}
 
-		private bool TryFindOldState (APC pc, out Domain<E, V> old)
+		private bool TryFindOldState (APC pc, out Domain<V> old)
 		{
 			for (Sequence<Edge<CFGBlock, EdgeTag>> flist = pc.SubroutineContext; flist != null; flist = flist.Tail) {
 				Edge<CFGBlock, EdgeTag> head = flist.Head;
 				if (head.Tag.Is (EdgeTag.AfterMask))
 					return this.callSiteCache.TryGetValue (pc, out old);
 			}
-			old = new Domain<E, V> ();
+			old = new Domain<V> ();
 			return false;
 		}
 
-		public Domain<E, V> InitialValue (Func<V, int> keyConverter)
+		public Domain<V> InitialValue (Func<V, int> keyConverter)
 		{
-			return new Domain<E, V> (new SetDomain<V> (keyConverter), new SetDomain<V> (keyConverter));
+			return new Domain<V> (new SetDomain<V> (keyConverter), new SetDomain<V> (keyConverter));
 		}
 
 		#region Implementation of IMethodResult<Variable>
@@ -401,7 +404,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 
 		public ProofOutcome ValidateExplicitAssertion (APC pc, V value)
 		{
-			Domain<E, V> domain;
+			Domain<V> domain;
 			if (PreStateLookup (pc, out domain) && !domain.NonNulls.IsBottom) {
 				IExpressionContext<E, V> exprCtx = ContextProvider.ExpressionContext;
 				return exprCtx.Decode<bool, ProofOutcome, ExpressionAssertDischarger<E, V>> (exprCtx.Refine (pc, value), new ExpressionAssertDischarger<E, V> (this, pc), true);
@@ -409,7 +412,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return ProofOutcome.Bottom;
 		}
 
-		private bool PreStateLookup (APC pc, out Domain<E, V> domain)
+		private bool PreStateLookup (APC pc, out Domain<V> domain)
 		{
 			return this.fix_point_info.PreStateLookup (pc, out domain);
 		}

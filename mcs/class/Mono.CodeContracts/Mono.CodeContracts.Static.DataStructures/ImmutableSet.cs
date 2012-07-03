@@ -35,7 +35,7 @@ namespace Mono.CodeContracts.Static.DataStructures {
 		where T : IEquatable<T> {
 		private readonly IImmutableMap<T, Dummy> underlying;
 
-		public ImmutableSet (IImmutableMap<T, Dummy> immutableMap)
+	    private ImmutableSet (IImmutableMap<T, Dummy> immutableMap)
 		{
 			this.underlying = immutableMap;
 		}

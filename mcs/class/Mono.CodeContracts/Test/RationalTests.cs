@@ -1,10 +1,10 @@
-// 
-// IIndexable.cs
+﻿// 
+// RationalTests.cs.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)
 // 
-// Copyright (C) 2011 Alexander Chebaturkin
+// Copyright (C) 2012 Alexander Chebaturkin
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,9 +26,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-namespace Mono.CodeContracts.Static.DataStructures {
-	interface IIndexable<out T> {
-		int Count { get; }
-		T this [int index] { get; }
-	}
+using Mono.CodeContracts.Static.Analysis.Numerical;
+
+using NUnit.Framework;
+
+namespace Test
+{
+    [TestFixture]
+    public class RationalTests
+    {
+        [Test]
+        public void ShouldHaveInfinitiesAndNormalValuesWhichArentEqual()
+        {
+            Rational infPlus = Rational.PlusInfinity;
+            Rational infMinus = Rational.MinusInfinity;
+            Rational zero = Rational.For (0L);
+            Rational zero1 = Rational.For (0L);
+            Rational one = Rational.For (1L);
+
+            Assert.IsFalse (infPlus == infMinus);
+            Assert.IsFalse (infPlus == zero);
+            Assert.IsFalse (infMinus == zero);
+            Assert.IsTrue (zero == zero1);
+            Assert.IsFalse (one == zero);
+        }
+
+        [Test]
+        public void ShouldBeEqualByModuloOfDenominator ()
+        {
+            Rational threeFourth = Rational.For (3,4);
+            Rational sixEighth = Rational.For(6, 8);
+
+            Assert.IsTrue (threeFourth == sixEighth);
+        }
+    }
 }

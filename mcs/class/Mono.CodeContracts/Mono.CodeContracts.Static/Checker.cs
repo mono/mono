@@ -60,7 +60,7 @@ namespace Mono.CodeContracts.Static {
 
 			DebugOptions.Debug = this.options.ShowDebug;
 
-			this.analyzers = new Dictionary<string, IMethodAnalysis> {{"non-null", new NonNullAnalysisFacade ()}};
+			this.analyzers = new Dictionary<string, IMethodAnalysis> {{ "non-null", new NonNullAnalysisFacade () }};
 			this.analysis_driver = new CodeContractsAnalysisDriver<IMethodResult<SymbolicValue>> (
 				new BasicAnalysisDriver (MetaDataProvider.Instance, CodeContractDecoder.Instance));
 

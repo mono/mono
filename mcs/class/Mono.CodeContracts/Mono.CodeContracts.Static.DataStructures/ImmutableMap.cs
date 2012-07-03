@@ -33,7 +33,8 @@ using System.Linq;
 namespace Mono.CodeContracts.Static.DataStructures {
 	class ImmutableMap<K, V> : IImmutableMap<K, V>
 		where K : IEquatable<K> {
-		public static ImmutableMap<K, V> Empty = new ImmutableMap<K, V> (ImmutableIntMap<Sequence<Pair<K, V>>>.Empty, 0, null);
+		public static readonly ImmutableMap<K, V> Empty = new ImmutableMap<K, V> (ImmutableIntMap<Sequence<Pair<K, V>>>.Empty, 0, null);
+
 		private readonly int count;
 		private readonly IImmutableIntMap<Sequence<Pair<K, V>>> immutable_int_map;
 		private readonly Sequence<K> keys;

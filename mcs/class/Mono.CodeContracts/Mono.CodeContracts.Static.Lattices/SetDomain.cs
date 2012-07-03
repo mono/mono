@@ -60,13 +60,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 
 		public bool IsTop
 		{
-			get
-			{
-				if (this.set != null)
-					return this.set.Count == 0;
-
-				return false;
-			}
+			get { return this.set != null && this.set.Count == 0; }
 		}
 
 		public bool IsBottom

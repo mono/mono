@@ -27,14 +27,13 @@
 // 
 
 using System;
+using System.IO;
+
 using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.NonNull {
-	struct Domain<E, V> 
-		where E : IEquatable<E> 
-		where V : IEquatable<V> {
-		public static readonly Domain<E, V> BottomValue 
-			= new Domain<E, V> (SetDomain<V>.BottomValue, SetDomain<V>.BottomValue);
+	struct Domain<V> where V : IEquatable<V> {
+		public static readonly Domain<V> BottomValue = new Domain<V> (SetDomain<V>.BottomValue, SetDomain<V>.BottomValue);
 
 		public SetDomain<V> NonNulls;
 		public SetDomain<V> Nulls;
@@ -54,5 +53,22 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 		{
 			return this.Nulls.Contains (v);
 		}
+
+        public override string ToString()
+        {
+            var sw = new StringWriter();
+
+            sw.WriteLine("Nulls:");
+                sw.WriteLine("<");
+                this.Nulls.Dump (sw);
+                sw.WriteLine(">");
+
+            sw.WriteLine("Non-Nulls:");
+                sw.WriteLine("<");
+                this.NonNulls.Dump(sw);
+                sw.WriteLine(">");
+
+            return sw.ToString ();
+        }
 	}
 }
