@@ -568,7 +568,11 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public new event EventHandler PaddingChanged;
+		public new event EventHandler PaddingChanged {
+			add { throw new NotSupportedException (); }
+			remove {}
+		}
+
 		#endregion
 
 		#region Internal

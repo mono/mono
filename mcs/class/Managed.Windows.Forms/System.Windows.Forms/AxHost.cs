@@ -184,20 +184,22 @@ namespace System.Windows.Forms {
 		#endregion	// AxHost.StateConverter Class
 		#endregion	// AxHost Subclasses
 
-		private int flags;
-		private Guid clsid;
+		//private int flags;
+		//private Guid clsid;
 
 		#region Protected Constructors
 
+		[MonoTODO]
 		protected AxHost (string clsid) : this(clsid, 0)
 		{
 
 		}
 
+		[MonoTODO]
 		protected AxHost (string clsid, int flags)
 		{
-			this.clsid = new Guid(clsid);
-			this.flags = flags;
+			//this.clsid = new Guid(clsid);
+			//this.flags = flags;
 		}
 		#endregion	// Public Instance Properties
 

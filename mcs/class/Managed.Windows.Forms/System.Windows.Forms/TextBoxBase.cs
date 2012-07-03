@@ -1667,7 +1667,11 @@ namespace System.Windows.Forms
 		// XXX should this not manipulate base.Paint?
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event PaintEventHandler Paint;
+		public new event PaintEventHandler Paint {
+			add { throw new NotSupportedException (); }
+			remove {}
+		}
+
 		#endregion	// Events
 
 		#region Private Methods

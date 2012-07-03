@@ -1017,10 +1017,16 @@ namespace System.Windows.Forms
 		internal static event EventHandler PreRun;
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static event EventHandler EnterThreadModal;
+		public static event EventHandler EnterThreadModal {
+			add { throw new NotSupportedException (); }
+			remove {}
+		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static event EventHandler LeaveThreadModal;
+		public static event EventHandler LeaveThreadModal {
+			add { throw new NotSupportedException (); }
+			remove {}
+		}
 
 		#endregion	// Events
 
