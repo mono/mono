@@ -51,7 +51,7 @@ namespace System.Threading.Tasks.Dataflow
 		{
 			if (!messageHeader.IsValid)
 				return DataflowMessageStatus.Declined;
-			if (MessageQueue.IsAddingCompleted)
+			if (MessageQueue.IsAddingCompleted || !compHelper.CanRun)
 				return DataflowMessageStatus.DecliningPermanently;
 
 			if (consumeToAccept) {
