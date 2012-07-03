@@ -6133,7 +6133,7 @@ namespace Mono.CSharp
 		{
 			if (initializers != null && bounds == null) {
 				//
-				// We use this to store all the date values in the order in which we
+				// We use this to store all the data values in the order in which we
 				// will need to store them in the byte blob later
 				//
 				array_data = new List<Expression> ();
@@ -6191,7 +6191,16 @@ namespace Mono.CSharp
 						ec.Report.Error (623, loc, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
 						return false;
 					}
-					
+
+					// When we don't have explicitly specified dimensions, record whatever dimension we first encounter at each level
+					if (!bounds.ContainsKey(idx + 1))
+						bounds[idx + 1] = sub_probe.Count;
+
+					if (bounds[idx + 1] != sub_probe.Count) {
+						ec.Report.Error(847, sub_probe.Location, "An array initializer of length `{0}' was expected", bounds[idx + 1].ToString());
+						return false;
+					}
+
 					bool ret = CheckIndices (ec, sub_probe, idx + 1, specified_dims, child_bounds - 1);
 					if (!ret)
 						return false;
