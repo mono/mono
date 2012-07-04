@@ -497,7 +497,9 @@ namespace Microsoft.Build.Tasks {
 			assembly_resolver.LogSearchMessage ("Choosing '{0}' as it is a primary reference.",
 					found_ref.AssemblyName.FullName);
 
-			LogConflictWarning (found_ref.AssemblyName.FullName, key_aname.FullName);
+			// If we can successfully use the primary reference, don't log a warning. It's too
+			// verbose.
+			//LogConflictWarning (found_ref.AssemblyName.FullName, key_aname.FullName);
 
 			return true;
 		}
