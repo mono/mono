@@ -565,13 +565,13 @@ namespace System.Windows.Forms
 		[BrowsableAttribute(false)]
 		public event EventHandler StatusTextChanged;
 
+#pragma warning disable 0067
+		[MonoTODO]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public new event EventHandler PaddingChanged {
-			add { throw new NotSupportedException (); }
-			remove {}
-		}
+		public new event EventHandler PaddingChanged;
+#pragma warning restore 0067
 
 		#endregion
 
