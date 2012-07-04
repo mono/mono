@@ -19,25 +19,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace System.Threading.Tasks.Dataflow
 {
-	public sealed class JoinBlock<T1, T2, T3> : IReceivableSourceBlock<Tuple<T1, T2, T3>>, ISourceBlock<Tuple<T1, T2, T3>>, IDataflowBlock
+	public sealed class JoinBlock<T1, T2, T3> : IReceivableSourceBlock<Tuple<T1, T2, T3>>
 	{
 		static readonly GroupingDataflowBlockOptions defaultOptions = new GroupingDataflowBlockOptions ();
 
-		CompletionHelper compHelper;
-		GroupingDataflowBlockOptions dataflowBlockOptions;
-		TargetBuffer<Tuple<T1, T2, T3>> targets = new TargetBuffer<Tuple<T1, T2, T3>> ();
-		MessageVault<Tuple<T1, T2, T3>> vault = new MessageVault<Tuple<T1, T2, T3>> ();
-		MessageOutgoingQueue<Tuple<T1, T2, T3>> outgoing;
+		readonly CompletionHelper compHelper;
+		readonly GroupingDataflowBlockOptions dataflowBlockOptions;
+		readonly MessageOutgoingQueue<Tuple<T1, T2, T3>> outgoing;
 
 		readonly JoinTarget<T1> target1;
 		readonly JoinTarget<T2> target2;
@@ -63,16 +56,16 @@ namespace System.Threading.Tasks.Dataflow
 			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
 			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
 			target3 = new JoinTarget<T3> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
-			outgoing =
-				new MessageOutgoingQueue<Tuple<T1, T2, T3>> (compHelper,
-				                                             () => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted || target3.Buffer.IsCompleted);
+			outgoing = new MessageOutgoingQueue<Tuple<T1, T2, T3>> (
+				this, compHelper,
+				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
+				      || target3.Buffer.IsCompleted,
+				dataflowBlockOptions);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<Tuple<T1, T2, T3>> target, bool unlinkAfterOne)
+		public IDisposable LinkTo (ITargetBlock<Tuple<T1, T2, T3>> target, DataflowLinkOptions linkOptions)
 		{
-			var result = targets.AddTarget (target, unlinkAfterOne);
-			outgoing.ProcessForTarget (target, this, false, ref headers);
-			return result;
+			return outgoing.AddTarget (target, linkOptions);
 		}
 
 		public bool TryReceive (Predicate<Tuple<T1, T2, T3>> filter, out Tuple<T1, T2, T3> item)
@@ -87,17 +80,17 @@ namespace System.Threading.Tasks.Dataflow
 
 		public Tuple<T1, T2, T3> ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2, T3>> target, out bool messageConsumed)
 		{
-			return vault.ConsumeMessage (messageHeader, target, out messageConsumed);
+			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
 		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2, T3>> target)
 		{
-			vault.ReleaseReservation (messageHeader, target);
+			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
 		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2, T3>> target)
 		{
-			return vault.ReserveMessage (messageHeader, target);
+			return outgoing.ReserveMessage (messageHeader, target);
 		}
 
 		public void Complete ()
@@ -143,19 +136,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		void TriggerMessage (T1 val1, T2 val2, T3 val3)
 		{
-			Tuple<T1, T2, T3> tuple = Tuple.Create (val1, val2, val3);
-			ITargetBlock<Tuple<T1, T2, T3>> target = targets.Current;
-			if (target == null) {
-				outgoing.AddData (tuple);
-			} else {
-				target.OfferMessage (headers.Increment (),
-				                     tuple,
-				                     this,
-				                     false);
-			}
-
-			if (!outgoing.IsEmpty && (target = targets.Current) != null)
-				outgoing.ProcessForTarget (target, this, false, ref headers);
+			outgoing.AddData (Tuple.Create (val1, val2, val3));
 		}
 
 		public ITargetBlock<T1> Target1 {

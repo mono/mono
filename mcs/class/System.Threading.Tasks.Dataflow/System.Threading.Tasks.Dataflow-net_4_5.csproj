@@ -48,6 +48,7 @@
    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock`3.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\DataflowLinkOptions.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\ExecutingMessageBox.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\DataflowBlockOptions.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\DataflowMessageHeader.cs" />
@@ -80,6 +81,7 @@
    <Compile Include="System.Threading.Tasks.Dataflow\ObserverDataflowBlock.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\PropagatorWrapperBlock.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\ReceiveBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\TargetCollection.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\TransformBlock.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\TransformManyBlock.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\WriteOnceBlock.cs" />

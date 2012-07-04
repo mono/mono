@@ -25,20 +25,18 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	public sealed class BroadcastBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
-	{
+namespace System.Threading.Tasks.Dataflow {
+	public sealed class BroadcastBlock<T> : IPropagatorBlock<T, T>, IReceivableSourceBlock<T> {
 		static readonly DataflowBlockOptions defaultOptions = new DataflowBlockOptions ();
 
-		CompletionHelper compHelper;
-		BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
-		MessageBox<T> messageBox;
-		MessageVault<T> vault;
-		DataflowBlockOptions dataflowBlockOptions;
+		readonly CompletionHelper compHelper;
+		readonly BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
+		readonly MessageBox<T> messageBox;
+		readonly MessageVault<T> vault;
+		readonly DataflowBlockOptions dataflowBlockOptions;
 		readonly Func<T, T> cloner;
-		MessageOutgoingQueue<T> outgoing;
-		TargetBuffer<T> targets = new TargetBuffer<T> ();
+		readonly MessageOutgoingQueue<T> outgoing;
+		readonly TargetBuffer<T> targets = new TargetBuffer<T> ();
 		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
 
 		public BroadcastBlock (Func<T, T> cloner) : this (cloner, defaultOptions)
@@ -55,7 +53,7 @@ namespace System.Threading.Tasks.Dataflow
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper, () => outgoing.IsCompleted, BroadcastProcess, dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<T> (compHelper, () => messageQueue.IsCompleted);
+			this.outgoing = new MessageOutgoingQueue<T> (this, compHelper, () => messageQueue.IsCompleted, dataflowBlockOptions);
 			this.vault = new MessageVault<T> ();
 		}
 
@@ -67,9 +65,9 @@ namespace System.Threading.Tasks.Dataflow
 			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<T> target, bool unlinkAfterOne)
+		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)
 		{
-			return targets.AddTarget (target, unlinkAfterOne);
+			return targets.AddTarget (target, false); // TODO
 		}
 
 		public T ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed)

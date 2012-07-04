@@ -36,18 +36,18 @@ namespace System.Threading.Tasks.Dataflow
 
 		protected BlockingCollection<TInput> MessageQueue { get; private set; }
 
-		public MessageBox (BlockingCollection<TInput> messageQueue, CompletionHelper compHelper, Func<bool> externalCompleteTester)
+		public MessageBox (
+			BlockingCollection<TInput> messageQueue, CompletionHelper compHelper,
+			Func<bool> externalCompleteTester)
 		{
 			this.compHelper = compHelper;
 			this.MessageQueue = messageQueue;
 			this.externalCompleteTester = externalCompleteTester;
 		}
 
-		public DataflowMessageStatus OfferMessage (ITargetBlock<TInput> target,
-		                                           DataflowMessageHeader messageHeader,
-		                                           TInput messageValue,
-		                                           ISourceBlock<TInput> source,
-		                                           bool consumeToAccept)
+		public DataflowMessageStatus OfferMessage (
+			ITargetBlock<TInput> target, DataflowMessageHeader messageHeader,
+			TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept)
 		{
 			if (!messageHeader.IsValid)
 				return DataflowMessageStatus.Declined;
@@ -70,6 +70,7 @@ namespace System.Threading.Tasks.Dataflow
 				// or if the messageQueue has been marked complete, either way it corresponds to a false
 				return DataflowMessageStatus.DecliningPermanently;
 			}
+
 			EnsureProcessing ();
 
 			VerifyCompleteness ();

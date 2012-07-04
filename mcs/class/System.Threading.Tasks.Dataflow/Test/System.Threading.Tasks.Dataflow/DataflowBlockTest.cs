@@ -108,8 +108,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 
 			var block = new WriteOnceBlock<int> (null);
 			block.ReceiveAsync ().ContinueWith (i => { result = i.Result; mre.Set (); });
-			Task.Factory.StartNew (() => { Thread.Sleep (600); block.Post (42); });
-			mre.Wait ();
+			Task.Factory.StartNew (() => { Thread.Sleep (100); block.Post (42); });
+			Assert.IsTrue (mre.Wait (300));
 
 			Assert.AreEqual (42, result);
 		}

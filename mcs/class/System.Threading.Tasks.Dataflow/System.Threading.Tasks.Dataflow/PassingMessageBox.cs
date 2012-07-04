@@ -19,13 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow
@@ -34,12 +28,12 @@ namespace System.Threading.Tasks.Dataflow
 	{
 		readonly DataflowBlockOptions dataflowBlockOptions;
 		readonly Action processQueue;
-		
-		public PassingMessageBox (BlockingCollection<TInput> messageQueue,
-		                          CompletionHelper compHelper,
-		                          Func<bool> externalCompleteTester,
-		                          Action processQueue,
-		                          DataflowBlockOptions dataflowBlockOptions) : base (messageQueue, compHelper, externalCompleteTester)
+
+		public PassingMessageBox (
+			BlockingCollection<TInput> messageQueue, CompletionHelper compHelper,
+			Func<bool> externalCompleteTester, Action processQueue,
+			DataflowBlockOptions dataflowBlockOptions)
+			: base (messageQueue, compHelper, externalCompleteTester)
 		{
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.processQueue = processQueue;
@@ -51,4 +45,3 @@ namespace System.Threading.Tasks.Dataflow
 		}
 	}
 }
-

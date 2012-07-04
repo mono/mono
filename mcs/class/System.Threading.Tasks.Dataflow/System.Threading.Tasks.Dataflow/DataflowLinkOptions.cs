@@ -1,6 +1,5 @@
-// DataflowBlockOptions.cs
+// DataflowLinkOptions.cs
 //
-// Copyright (c) 2011 Jérémie "garuma" Laval
 // Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,33 +21,25 @@
 // THE SOFTWARE.
 
 namespace System.Threading.Tasks.Dataflow {
-	public class DataflowBlockOptions {
-		static readonly DataflowBlockOptions DefaultOptions =
-			new DataflowBlockOptions ();
+	public class DataflowLinkOptions {
+		static readonly DataflowLinkOptions DefaultOptions =
+			new DataflowLinkOptions ();
 
-		internal static DataflowBlockOptions Default {
+		internal static DataflowLinkOptions Default {
 			get { return DefaultOptions; }
 		}
 
-		public readonly static int Unbounded = -1;
-
-		public DataflowBlockOptions ()
+		public DataflowLinkOptions()
 		{
-			BoundedCapacity = -1;
-			CancellationToken = CancellationToken.None;
-			MaxMessagesPerTask = -1;
-			TaskScheduler = TaskScheduler.Default;
-			NameFormat = "{0} Id={1}";
+			PropagateCompletion = false;
+			MaxMessages = DataflowBlockOptions.Unbounded;
+			Append = true;
 		}
 
-		public int BoundedCapacity { get; set; }
+		public bool PropagateCompletion { get; set; }
 
-		public CancellationToken CancellationToken { get; set; }
+		public int MaxMessages { get; set; }
 
-		public int MaxMessagesPerTask { get; set; }
-
-		public TaskScheduler TaskScheduler { get; set; }
-
-		public string NameFormat { get; set; }
+		public bool Append { get; set; }
 	}
 }

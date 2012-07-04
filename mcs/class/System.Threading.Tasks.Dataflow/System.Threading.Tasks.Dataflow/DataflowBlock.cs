@@ -112,20 +112,21 @@ namespace System.Threading.Tasks.Dataflow
 
 		public static IDisposable LinkTo<TOutput> (this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target)
 		{
-			return source.LinkTo (target, (_) => true);
+			return source.LinkTo (target, (Predicate<TOutput>)null);
 		}
 
-		public static IDisposable LinkTo<TOutput> (this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target, Predicate<TOutput> predicate)
+		public static IDisposable LinkTo<TOutput> (
+			this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target,
+			Predicate<TOutput> predicate)
 		{
-			return source.LinkTo (target, predicate, true);
+			return source.LinkTo (target, DataflowLinkOptions.Default, predicate);
 		}
 
-		public static IDisposable LinkTo<TOutput> (this ISourceBlock<TOutput> source,
-		                                           ITargetBlock<TOutput> target,
-		                                           Predicate<TOutput> predicate,
-		                                           bool discardsMessages)
+		public static IDisposable LinkTo<TOutput> (
+			this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target,
+			DataflowLinkOptions linkOptions, Predicate<TOutput> predicate)
 		{
-			return source.LinkTo (target, false);
+			return source.LinkTo (target, linkOptions);
 		}
 
 		[MonoTODO]
@@ -165,6 +166,11 @@ namespace System.Threading.Tasks.Dataflow
 				throw new ArgumentOutOfRangeException ("timeout");
 
 			cancellationToken.ThrowIfCancellationRequested ();
+
+			TOutput item;
+			var receivableSource = source as IReceivableSourceBlock<TOutput>;
+			if (receivableSource != null && receivableSource.TryReceive (null, out item))
+				return item;
 
 			long tm = (long)timeout.TotalMilliseconds;
 			ReceiveBlock<TOutput> block = new ReceiveBlock<TOutput> ();

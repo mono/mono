@@ -19,22 +19,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
-
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow
 {
 	internal class PropagatorWrapperBlock<TInput, TOutput> : IPropagatorBlock<TInput, TOutput>
 	{
-		ITargetBlock<TInput> target;
-		ISourceBlock<TOutput> source;
-		CompletionHelper compHelper = CompletionHelper.GetNew (null);
+		readonly ITargetBlock<TInput> target;
+		readonly ISourceBlock<TOutput> source;
+		readonly CompletionHelper compHelper = CompletionHelper.GetNew (null);
 
 		public PropagatorWrapperBlock (ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
 		{
@@ -55,9 +47,9 @@ namespace System.Threading.Tasks.Dataflow
 			return source.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<TOutput> target, bool unlinkAfterOne)
+		public IDisposable LinkTo (ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions)
 		{
-			return source.LinkTo (target, unlinkAfterOne);
+			return source.LinkTo (target, linkOptions);
 		}
 
 		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
@@ -91,4 +83,3 @@ namespace System.Threading.Tasks.Dataflow
 		}
 	}
 }
-

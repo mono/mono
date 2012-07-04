@@ -31,8 +31,6 @@ namespace System.Threading.Tasks.Dataflow {
 
 		CompletionHelper completionHelper;
 		readonly MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>>> outgoing;
-		readonly MessageVault<Tuple<IList<T1>, IList<T2>>> vault = new MessageVault<Tuple<IList<T1>, IList<T2>>>();
-		readonly TargetBuffer<Tuple<IList<T1>, IList<T2>>> targets = new TargetBuffer<Tuple<IList<T1>, IList<T2>>>();
 		DataflowMessageHeader headers;
 		SpinLock batchLock;
 
@@ -65,8 +63,8 @@ namespace System.Threading.Tasks.Dataflow {
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
 
 			outgoing = new MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>>> (
-				completionHelper,
-				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted);
+				this, completionHelper,
+				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted, options);
 		}
 
 		public int BatchSize { get; private set; }
@@ -124,14 +122,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 			var batch = Tuple.Create<IList<T1>, IList<T2>> (list1, list2);
 
-			var target = targets.Current;
-			if (target == null)
-				outgoing.AddData(batch);
-			else
-				target.OfferMessage (headers.Increment (), batch, this, false);
-
-			if (!outgoing.IsEmpty && targets.Current != null)
-				outgoing.ProcessForTarget (targets.Current, this, false, ref headers);
+			outgoing.AddData (batch);
 		}
 
 		public Task Completion {
@@ -153,29 +144,27 @@ namespace System.Threading.Tasks.Dataflow {
 			ITargetBlock<Tuple<IList<T1>, IList<T2>>> target,
 			out bool messageConsumed)
 		{
-			return vault.ConsumeMessage (messageHeader, target, out messageConsumed);
+			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
 		public IDisposable LinkTo (ITargetBlock<Tuple<IList<T1>, IList<T2>>> target,
-		                           bool unlinkAfterOne)
+		                           DataflowLinkOptions linkOptions)
 		{
-			var result = targets.AddTarget(target, unlinkAfterOne);
-			outgoing.ProcessForTarget(target, this, false, ref headers);
-			return result;
+			return outgoing.AddTarget(target, linkOptions);
 		}
 
 		void ISourceBlock<Tuple<IList<T1>, IList<T2>>>.ReleaseReservation (
 			DataflowMessageHeader messageHeader,
 			ITargetBlock<Tuple<IList<T1>, IList<T2>>> target)
 		{
-			vault.ReleaseReservation (messageHeader, target);
+			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
 		bool ISourceBlock<Tuple<IList<T1>, IList<T2>>>.ReserveMessage (
 			DataflowMessageHeader messageHeader,
 			ITargetBlock<Tuple<IList<T1>, IList<T2>>> target)
 		{
-			return vault.ReserveMessage (messageHeader, target);
+			return outgoing.ReserveMessage (messageHeader, target);
 		}
 
 		public bool TryReceive (Predicate<Tuple<IList<T1>, IList<T2>>> filter,

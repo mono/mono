@@ -19,12 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
@@ -34,11 +29,11 @@ namespace System.Threading.Tasks.Dataflow
 	{
 		static readonly DataflowBlockOptions defaultOptions = new DataflowBlockOptions ();
 
-		CompletionHelper compHelper;
-		BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
-		MessageBox<T> messageBox;
-		MessageVault<T> vault;
-		DataflowBlockOptions dataflowBlockOptions;
+		readonly CompletionHelper compHelper;
+		readonly BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
+		readonly MessageBox<T> messageBox;
+		readonly MessageVault<T> vault;
+		readonly DataflowBlockOptions dataflowBlockOptions;
 		readonly Func<T, T> cloner;
 		TargetBuffer<T> targets = new TargetBuffer<T> ();
 		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
@@ -80,9 +75,9 @@ namespace System.Threading.Tasks.Dataflow
 			}
 		}
 
-		public IDisposable LinkTo (ITargetBlock<T> target, bool unlinkAfterOne)
+		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)
 		{
-			return targets.AddTarget (target, unlinkAfterOne);
+			return targets.AddTarget (target, true);
 		}
 
 		public T ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed)
@@ -138,7 +133,7 @@ namespace System.Threading.Tasks.Dataflow
 		{
 			T input;
 
-			if (!messageQueue.TryTake (out input) || targets.Current == null)
+			if (!messageQueue.TryTake (out input))
 				return;
 
 			foreach (var target in targets) {

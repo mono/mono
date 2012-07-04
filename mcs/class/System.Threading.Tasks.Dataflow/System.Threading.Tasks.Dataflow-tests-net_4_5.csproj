@@ -42,6 +42,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="Test\System.Threading.Tasks.Dataflow\ReceivingTest.cs" />
     <Compile Include="Test\TestScheduler.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\ExecutionBlocksTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlockTest.cs" />

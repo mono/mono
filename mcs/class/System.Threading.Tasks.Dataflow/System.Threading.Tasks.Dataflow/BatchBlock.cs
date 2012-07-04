@@ -34,12 +34,10 @@ namespace System.Threading.Tasks.Dataflow
 		CompletionHelper compHelper;
 		BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
 		MessageBox<T> messageBox;
-		MessageVault<T[]> vault;
 		DataflowBlockOptions dataflowBlockOptions;
 		readonly int batchSize;
 		int batchCount;
 		MessageOutgoingQueue<T[]> outgoing;
-		TargetBuffer<T[]> targets = new TargetBuffer<T[]> ();
 		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
 		SpinLock batchLock;
 
@@ -56,40 +54,40 @@ namespace System.Threading.Tasks.Dataflow
 			this.batchSize = batchSize;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper, () => outgoing.IsCompleted, BatchProcess, dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<T[]> (compHelper, () => messageQueue.IsCompleted);
-			this.vault = new MessageVault<T[]> ();
+			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper,
+				() => outgoing.IsCompleted, BatchProcess, dataflowBlockOptions);
+			this.outgoing = new MessageOutgoingQueue<T[]> (this, compHelper,
+				() => messageQueue.IsCompleted, dataflowBlockOptions);
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           T messageValue,
-		                                           ISourceBlock<T> source,
-		                                           bool consumeToAccept)
+		public DataflowMessageStatus OfferMessage (
+			DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source,
+			bool consumeToAccept)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return messageBox.OfferMessage (
+				this, messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<T[]> target, bool unlinkAfterOne)
+		public IDisposable LinkTo (ITargetBlock<T[]> target, DataflowLinkOptions linkOptions)
 		{
-			var result = targets.AddTarget (target, unlinkAfterOne);
-			outgoing.ProcessForTarget (target, this, false, ref headers);
-
-			return result;
+			return outgoing.AddTarget (target, linkOptions);
 		}
 
-		public T[] ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<T[]> target, out bool messageConsumed)
+		public T[] ConsumeMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<T[]> target,
+			out bool messageConsumed)
 		{
-			return vault.ConsumeMessage (messageHeader, target, out messageConsumed);
+			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
 		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<T[]> target)
 		{
-			vault.ReleaseReservation (messageHeader, target);
+			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
 		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<T[]> target)
 		{
-			return vault.ReserveMessage (messageHeader, target);
+			return outgoing.ReserveMessage (messageHeader, target);
 		}
 
 		public bool TryReceive (Predicate<T[]> filter, out T[] item)
@@ -149,14 +147,7 @@ namespace System.Threading.Tasks.Dataflow
 					batchLock.Exit();
 			}
 
-			var target = targets.Current;
-			if (target == null)
-				outgoing.AddData (batch);
-			else
-				target.OfferMessage (headers.Increment (), batch, this, false);
-
-			if (!outgoing.IsEmpty && targets.Current != null)
-				outgoing.ProcessForTarget (targets.Current, this, false, ref headers);
+			outgoing.AddData (batch);
 		}
 
 		public void Complete ()
