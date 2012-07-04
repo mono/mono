@@ -232,16 +232,16 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				Assert.AreEqual (1, taskIds.Distinct ().Count ());
 
 			options = new ExecutionDataflowBlockOptions { MaxMessagesPerTask = 1 };
-			foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+			foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
 				Assert.AreEqual (100, taskIds.Distinct ().Count ());
 
 			options = new ExecutionDataflowBlockOptions { MaxMessagesPerTask = 2 };
-			foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
+			foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
 				Assert.GreaterOrEqual (taskIds.Distinct ().Count (), taskIds.Length / 2);
 
 			options = new ExecutionDataflowBlockOptions { MaxMessagesPerTask = 4 };
-			foreach (var taskIds in GetTaskIdsForExecutionsOptions(options))
-				Assert.LessOrEqual (taskIds.Distinct ().Count (), taskIds.Length / 4);
+			foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
+				Assert.GreaterOrEqual (taskIds.Distinct ().Count (), taskIds.Length / 4);
 		}
 
 		[Test]
