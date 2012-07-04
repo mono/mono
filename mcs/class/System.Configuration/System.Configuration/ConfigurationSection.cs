@@ -186,7 +186,14 @@ namespace System.Configuration
 		[MonoInternalNote ("find the proper location for the decryption stuff")]
 		protected internal virtual void DeserializeSection (XmlReader reader)
 		{
-			DoDeserializeSection (reader);
+			try
+			{
+				DoDeserializeSection (reader);
+			}
+			catch (ConfigurationErrorsException ex)
+			{
+				throw new ConfigurationErrorsException(String.Format("Error deserializing configuration section {0}: {1}", this.SectionInformation.Name, ex.Message));
+			}
 		}
 
 		internal void DeserializeConfigSource (string basePath)
