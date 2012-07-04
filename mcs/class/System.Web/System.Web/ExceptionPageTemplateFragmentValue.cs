@@ -51,6 +51,7 @@ namespace System.Web
 
 		public ExceptionPageTemplateFragmentValue (string name, string value)
 		{
+			this.name = name;
 			this.value = value;
 		}
 	}
