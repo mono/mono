@@ -4,8 +4,10 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -53,8 +55,8 @@ namespace System.Security.AccessControl
 				       InheritanceFlags inheritanceFlags,
 				       PropagationFlags propagationFlags)
 		{
-			throw new NotImplementedException ();
-			// CommonAce?
+			AddAce (GetAceQualifier (accessType), sid, accessMask,
+				inheritanceFlags, propagationFlags, AuditFlags.None);
 		}
 		
 		public void AddAccess (AccessControlType accessType,
@@ -65,8 +67,9 @@ namespace System.Security.AccessControl
 				       Guid objectType,
 				       Guid inheritedObjectType)
 		{
-			// ObjectAce?
-			throw new NotImplementedException ();
+			AddAce (GetAceQualifier (accessType), sid, accessMask,
+				inheritanceFlags, propagationFlags, AuditFlags.None,
+				objectFlags, objectType, inheritedObjectType);
 		}
 		
 		public bool RemoveAccess (AccessControlType accessType,
@@ -96,7 +99,8 @@ namespace System.Security.AccessControl
 						  InheritanceFlags inheritanceFlags,
 						  PropagationFlags propagationFlags)
 		{
-			throw new NotImplementedException ();
+			RemoveAceSpecific (GetAceQualifier (accessType), sid, accessMask,
+					   inheritanceFlags, propagationFlags, AuditFlags.None);
 		}
 		
 		public void RemoveAccessSpecific (AccessControlType accessType,
@@ -108,7 +112,9 @@ namespace System.Security.AccessControl
 						  Guid objectType,
 						  Guid inheritedObjectType)
 		{
-			throw new NotImplementedException ();
+			RemoveAceSpecific (GetAceQualifier (accessType), sid, accessMask,
+					   inheritanceFlags, propagationFlags, AuditFlags.None,
+					   objectFlags, objectType, inheritedObjectType);
 		}
 		
 		public void SetAccess (AccessControlType accessType,
@@ -117,7 +123,8 @@ namespace System.Security.AccessControl
 				       InheritanceFlags inheritanceFlags,
 				       PropagationFlags propagationFlags)
 		{
-			throw new NotImplementedException ();
+			SetAce (GetAceQualifier (accessType), sid, accessMask,
+				inheritanceFlags, propagationFlags, AuditFlags.None);
 		}
 		
 		public void SetAccess (AccessControlType accessType,
@@ -129,9 +136,11 @@ namespace System.Security.AccessControl
 				       Guid objectType,
 				       Guid inheritedObjectType)
 		{
-			throw new NotImplementedException ();
+			SetAce (GetAceQualifier (accessType), sid, accessMask,
+				inheritanceFlags, propagationFlags, AuditFlags.None,
+				objectFlags, objectType, inheritedObjectType);
 		}
-
+		
 		internal override void ApplyCanonicalSortToExplicitAces ()
 		{
 			int explicitCount = GetCanonicalExplicitAceCount ();
@@ -141,14 +150,34 @@ namespace System.Security.AccessControl
 			ApplyCanonicalSortToExplicitAces (explicitDenys, explicitCount - explicitDenys);
 		}
 		
+		internal override int GetAceInsertPosition (AceQualifier aceQualifier)
+		{
+			// Canonical order for DACLs is explicit deny, explicit allow, inherited.
+			if (AceQualifier.AccessAllowed == aceQualifier)
+				return GetCanonicalExplicitDenyAceCount ();
+			else
+				return 0;
+		}
+		
+		static AceQualifier GetAceQualifier (AccessControlType accessType)
+		{
+			if (AccessControlType.Allow == accessType)
+				return AceQualifier.AccessAllowed;
+			else if (AccessControlType.Deny == accessType)
+				return AceQualifier.AccessDenied;
+			else
+				throw new ArgumentOutOfRangeException ("accessType");
+		}
+		
 		internal override bool IsAceMeaningless (GenericAce ace)
 		{
 			if (base.IsAceMeaningless (ace)) return true;
+			if (AuditFlags.None != ace.AuditFlags) return true;
 			
 			QualifiedAce qace = ace as QualifiedAce;
 			if (null != qace) {
-				return !(AceQualifier.AccessAllowed == qace.AceQualifier ||
-				         AceQualifier.AccessDenied  == qace.AceQualifier);
+				if (!(AceQualifier.AccessAllowed == qace.AceQualifier ||
+				      AceQualifier.AccessDenied  == qace.AceQualifier)) return true;
 			}
 
 			return false;

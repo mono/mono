@@ -325,5 +325,19 @@ namespace MonoTests.System.Security.Principal {
 			Assert.AreSame (sids [2], sortedSids [4]);
 			Assert.AreSame (sids [3], sortedSids [5]);
 		}
+		
+		[Test, ExpectedExceptionAttribute (typeof (ArgumentNullException))]
+		public void CompareToNull ()
+		{
+			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
+			sid.CompareTo ((SecurityIdentifier)null);
+		}
+
+		public void EqualsNull ()
+		{
+			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
+			Assert.IsFalse (sid.Equals ((object)null));
+			Assert.IsFalse (sid.Equals ((SecurityIdentifier)null));
+		}
 	}
 }

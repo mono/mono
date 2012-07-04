@@ -41,7 +41,7 @@ namespace System.Security.AccessControl
 	{
 		const int default_capacity = 10; // FIXME: not verified
 
-		delegate bool RemoveAcesCallback (GenericAce ace);
+		internal delegate bool RemoveAcesCallback<T> (T ace);
 
 		internal CommonAcl (bool isContainer, bool isDS, RawAcl rawAcl)
 		{
@@ -114,24 +114,25 @@ namespace System.Security.AccessControl
 		
 		public void Purge (SecurityIdentifier sid)
 		{
-			if (!IsCanonical)
-				throw new InvalidOperationException ();
-
-			// Custom ACEs are not canonical.
-			RemoveAces (ace => ((KnownAce)ace).SecurityIdentifier == sid);
+			RequireCanonicity ();
+			RemoveAces<KnownAce> (ace => ace.SecurityIdentifier == sid);
 		}
 
 		public void RemoveInheritedAces ()
 		{
-			if (!IsCanonical)
-				throw new InvalidOperationException();
-
-			RemoveAces (ace => ace.IsInherited);
+			RequireCanonicity ();
+			RemoveAces<GenericAce> (ace => ace.IsInherited);
 		}
 
+		internal void RequireCanonicity ()
+		{
+			if (!IsCanonical)
+				throw new InvalidOperationException("ACL is not canonical.");
+		}
+		
 		internal void CleanAndRetestCanonicity ()
 		{
-			RemoveAces (IsAceMeaningless);
+			RemoveAces<GenericAce> (IsAceMeaningless);
 
 			is_canonical = TestCanonicity ();
 			
@@ -227,13 +228,39 @@ namespace System.Security.AccessControl
 			QualifiedAce qace1 = ace1 as QualifiedAce;
 			QualifiedAce qace2 = ace2 as QualifiedAce;
 			if (!(null != qace1 && null != qace2)) return null;
-			if (!(qace1.AceFlags == qace2.AceFlags && qace1.AceQualifier == qace2.AceQualifier)) return null;
+			if (!(qace1.AceQualifier == qace2.AceQualifier)) return null;
 			if (!(qace1.SecurityIdentifier == qace2.SecurityIdentifier)) return null;
+			
+			AceFlags aceFlags1 = qace1.AceFlags, aceFlags2 = qace2.AceFlags, aceFlagsNew;
+			int accessMask1 = qace1.AccessMask, accessMask2 = qace2.AccessMask, accessMaskNew;
+			
+			if (!IsContainer) {
+				aceFlags1 &= ~AceFlags.InheritanceFlags;
+				aceFlags2 &= ~AceFlags.InheritanceFlags;
+			}
+			
+			if (aceFlags1 != aceFlags2) {
+				if (accessMask1 != accessMask2) return null;
+				if ((aceFlags1 & ~(AceFlags.ContainerInherit|AceFlags.ObjectInherit)) ==
+				    (aceFlags2 & ~(AceFlags.ContainerInherit|AceFlags.ObjectInherit))) {
+					aceFlagsNew = aceFlags1|aceFlags2; // merge InheritanceFlags
+					accessMaskNew = accessMask1;
+				} else if ((aceFlags1 & ~(AceFlags.SuccessfulAccess|AceFlags.FailedAccess)) ==
+					   (aceFlags2 & ~(AceFlags.SuccessfulAccess|AceFlags.FailedAccess))) {
+					aceFlagsNew = aceFlags1|aceFlags2; // merge AuditFlags
+					accessMaskNew = accessMask1;
+				} else {
+					return null;
+				}
+			} else {
+				aceFlagsNew = aceFlags1;
+				accessMaskNew = accessMask1|accessMask2;
+			}
 			
 			CommonAce cace1 = ace1 as CommonAce;
 			CommonAce cace2 = ace2 as CommonAce;
 			if (null != cace1 && null != cace2) {
-				return new CommonAce (cace1.AceFlags, cace1.AceQualifier, cace1.AccessMask|cace2.AccessMask,
+				return new CommonAce (aceFlagsNew, cace1.AceQualifier, accessMaskNew,
 					cace1.SecurityIdentifier, cace1.IsCallback, cace1.GetOpaque());
 			}
 			
@@ -245,7 +272,7 @@ namespace System.Security.AccessControl
 				Guid type2, inheritedType2; GetObjectAceTypeGuids(oace2, out type2, out inheritedType2);
 				
 				if (type1 == type2 && inheritedType1 == inheritedType2) {
-					return new ObjectAce (oace1.AceFlags, oace1.AceQualifier, oace1.AccessMask|oace2.AccessMask,
+					return new ObjectAce (aceFlagsNew, oace1.AceQualifier, accessMaskNew,
 						oace1.SecurityIdentifier,
 						oace1.ObjectAceFlags, oace1.ObjectAceType, oace1.InheritedObjectAceType,
 						oace1.IsCallback, oace1.GetOpaque());
@@ -284,15 +311,211 @@ namespace System.Security.AccessControl
 			return raw_acl.GetSddlForm (sdFlags, isDacl);
 		}
 
-		void RemoveAces (RemoveAcesCallback callback)
+		internal void RemoveAces<T> (RemoveAcesCallback<T> callback)
+			where T : GenericAce
 		{
 			for (int i = 0; i < raw_acl.Count; ) {
-				if (callback (raw_acl [i])) {
+				if (raw_acl [i] is T && callback ((T)raw_acl [i])) {
 					raw_acl.RemoveAce (i);
 				} else {
 					i ++;
 				}
 			}
+		}
+		
+		// DiscretionaryAcl/SystemAcl shared implementation below...
+		internal void AddAce (AceQualifier aceQualifier,
+				      SecurityIdentifier sid, int accessMask,
+				      InheritanceFlags inheritanceFlags,
+				      PropagationFlags propagationFlags,
+				      AuditFlags auditFlags)
+		{
+			QualifiedAce ace = AddAceGetQualifiedAce (aceQualifier, sid, accessMask,
+								  inheritanceFlags, propagationFlags, auditFlags);
+			AddAce (ace);
+		}
+		
+		internal void AddAce (AceQualifier aceQualifier,
+				      SecurityIdentifier sid, int accessMask,
+				      InheritanceFlags inheritanceFlags,
+				      PropagationFlags propagationFlags,
+				      AuditFlags auditFlags,
+				      ObjectAceFlags objectFlags,
+				      Guid objectType,
+				      Guid inheritedObjectType)
+		{
+			QualifiedAce ace = AddAceGetQualifiedAce (aceQualifier, sid, accessMask,
+								  inheritanceFlags, propagationFlags, auditFlags,
+								  objectFlags, objectType, inheritedObjectType);
+			AddAce (ace);
+		}
+		
+		QualifiedAce AddAceGetQualifiedAce (AceQualifier aceQualifier,
+						    SecurityIdentifier sid, int accessMask,
+						    InheritanceFlags inheritanceFlags,
+						    PropagationFlags propagationFlags,
+						    AuditFlags auditFlags,
+						    ObjectAceFlags objectFlags,
+						    Guid objectType,
+						    Guid inheritedObjectType)
+		{
+			if (!IsDS)
+				throw new InvalidOperationException ("For this overload, IsDS must be true.");
+				
+			if (ObjectAceFlags.None == objectFlags)
+				return AddAceGetQualifiedAce (aceQualifier, sid, accessMask,
+							      inheritanceFlags, propagationFlags, auditFlags);
+			
+			AceFlags flags = GetAceFlags (inheritanceFlags, propagationFlags, auditFlags);
+			return new ObjectAce (flags, aceQualifier, accessMask, sid,
+					      objectFlags, objectType, inheritedObjectType, false, null);
+		}
+		
+		QualifiedAce AddAceGetQualifiedAce (AceQualifier aceQualifier,
+						    SecurityIdentifier sid, int accessMask,
+						    InheritanceFlags inheritanceFlags,
+						    PropagationFlags propagationFlags,
+						    AuditFlags auditFlags)
+		{
+			AceFlags flags = GetAceFlags (inheritanceFlags, propagationFlags, auditFlags);
+			return new CommonAce (flags, aceQualifier, accessMask, sid, false, null);
+		}
+		
+		void AddAce (QualifiedAce newAce)
+		{
+			RequireCanonicity ();
+				
+			int pos = GetAceInsertPosition (newAce.AceQualifier);
+			raw_acl.InsertAce (pos, newAce);
+			CleanAndRetestCanonicity ();
+		}
+		
+		internal abstract int GetAceInsertPosition (AceQualifier aceQualifier);
+		
+		AceFlags GetAceFlags (InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags auditFlags)
+		{
+			if (InheritanceFlags.None != inheritanceFlags && !IsContainer)
+				throw new ArgumentException ("Flags only work with containers.", "inheritanceFlags");
+			
+			if (InheritanceFlags.None == inheritanceFlags && PropagationFlags.None != propagationFlags)
+				throw new ArgumentException ("Propagation flags need inheritance flags.", "propagationFlags");
+			
+			AceFlags flags = AceFlags.None;
+			if (0 != (InheritanceFlags.ContainerInherit & inheritanceFlags))
+				flags |= AceFlags.ContainerInherit;
+			if (0 != (InheritanceFlags.ObjectInherit & inheritanceFlags))
+				flags |= AceFlags.ObjectInherit;
+			if (0 != (PropagationFlags.InheritOnly & propagationFlags))
+				flags |= AceFlags.InheritOnly;
+			if (0 != (PropagationFlags.NoPropagateInherit & propagationFlags))
+				flags |= AceFlags.NoPropagateInherit;
+			if (0 != (AuditFlags.Success & auditFlags))
+				flags |= AceFlags.SuccessfulAccess;
+			if (0 != (AuditFlags.Failure & auditFlags))
+				flags |= AceFlags.FailedAccess;
+			return flags;
+		}
+		
+		internal void RemoveAceSpecific (AceQualifier aceQualifier,
+						 SecurityIdentifier sid,
+						 int accessMask,
+						 InheritanceFlags inheritanceFlags,
+						 PropagationFlags propagationFlags,
+						 AuditFlags auditFlags)
+		{
+			RequireCanonicity ();
+			RemoveAces<CommonAce> (ace =>
+			{
+				if (ace.AccessMask != accessMask) return false;
+				if (ace.AceQualifier != aceQualifier) return false;
+				if (ace.SecurityIdentifier != sid) return false;
+				if (ace.InheritanceFlags != inheritanceFlags) return false;
+				if (InheritanceFlags.None != inheritanceFlags)
+					if (ace.PropagationFlags != propagationFlags) return false;
+				if (ace.AuditFlags != auditFlags) return false;
+				return true;
+			});
+			CleanAndRetestCanonicity ();
+		}
+		
+		internal void RemoveAceSpecific (AceQualifier aceQualifier,
+						 SecurityIdentifier sid,
+						 int accessMask,
+						 InheritanceFlags inheritanceFlags,
+						 PropagationFlags propagationFlags,
+						 AuditFlags auditFlags,
+						 ObjectAceFlags objectFlags,
+						 Guid objectType,
+						 Guid inheritedObjectType)
+		{
+			if (!IsDS)
+				throw new InvalidOperationException ("For this overload, IsDS must be true.");
+				
+			if (ObjectAceFlags.None == objectFlags) {
+				RemoveAceSpecific (aceQualifier, sid, accessMask, inheritanceFlags, propagationFlags, auditFlags);
+				return;
+			}
+
+			RequireCanonicity ();
+			RemoveAces<ObjectAce> (ace =>
+			{
+				if (ace.AccessMask != accessMask) return false;
+				if (ace.AceQualifier != aceQualifier) return false;
+				if (ace.SecurityIdentifier != sid) return false;
+				if (ace.InheritanceFlags != inheritanceFlags) return false;
+				if (InheritanceFlags.None != inheritanceFlags)
+					if (ace.PropagationFlags != propagationFlags) return false;
+				if (ace.AuditFlags != auditFlags) return false;
+				if (ace.ObjectAceFlags != objectFlags) return false;
+				if (0 != (objectFlags & ObjectAceFlags.ObjectAceTypePresent))
+					if (ace.ObjectAceType != objectType) return false;
+				if (0 != (objectFlags & ObjectAceFlags.InheritedObjectAceTypePresent))
+					if (ace.InheritedObjectAceType != objectType) return false;
+				return true;
+			});
+			CleanAndRetestCanonicity ();
+		}
+		
+		internal void SetAce (AceQualifier aceQualifier,
+				      SecurityIdentifier sid,
+				      int accessMask,
+				      InheritanceFlags inheritanceFlags,
+				      PropagationFlags propagationFlags,
+				      AuditFlags auditFlags)
+		{
+			QualifiedAce ace = AddAceGetQualifiedAce (aceQualifier, sid, accessMask,
+								  inheritanceFlags, propagationFlags, auditFlags);
+			SetAce (ace);
+		}
+		
+		internal void SetAce (AceQualifier aceQualifier,
+				      SecurityIdentifier sid,
+				      int accessMask,
+				      InheritanceFlags inheritanceFlags,
+				      PropagationFlags propagationFlags,
+				      AuditFlags auditFlags,
+				      ObjectAceFlags objectFlags,
+				      Guid objectType,
+				      Guid inheritedObjectType)
+		{
+			QualifiedAce ace = AddAceGetQualifiedAce (aceQualifier, sid, accessMask,
+								  inheritanceFlags, propagationFlags, auditFlags,
+								  objectFlags, objectType, inheritedObjectType);
+			SetAce (ace);
+		}
+		
+		void SetAce (QualifiedAce newAce)
+		{
+			RequireCanonicity ();
+			
+			RemoveAces<QualifiedAce> (oldAce =>
+			{
+				return oldAce.AceQualifier == newAce.AceQualifier &&
+				       oldAce.SecurityIdentifier == newAce.SecurityIdentifier;
+			});
+			CleanAndRetestCanonicity ();
+						
+			AddAce (newAce);
 		}
 	}
 }

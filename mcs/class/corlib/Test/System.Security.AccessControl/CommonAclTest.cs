@@ -363,11 +363,59 @@ namespace MonoTests.System.Security.AccessControl
 			return acl;
 		}
 
-		static ushort ToUInt16(byte[] buffer, int offset)
+		static ushort ToUInt16 (byte[] buffer, int offset)
 		{
 			return (ushort)(buffer [offset] | buffer [offset + 1]);
 		}
+
+		[Test]
+		public void InheritanceFlagsMergeForAccessMasksThatMatch ()
+		{
+			SecurityIdentifier sid = new SecurityIdentifier ("BU");
+
+			RawAcl acl = MakeRawAcl (new GenericAce[] {
+				new CommonAce (AceFlags.ContainerInherit, AceQualifier.AccessAllowed, 1, sid, false, null),
+				new CommonAce (AceFlags.ObjectInherit, AceQualifier.AccessAllowed, 1, sid, false, null)
+			});
+
+			DiscretionaryAcl dacl = new DiscretionaryAcl (true, false, acl);
+			Assert.AreEqual (1, dacl.Count);
+
+			CommonAce ace = (CommonAce) dacl [0];
+			Assert.AreEqual (InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, ace.InheritanceFlags);
+		}
+
+		[Test]
+		public void InheritanceFlagsDoNotMergeForAccessMasksThatAND ()
+		{
+			SecurityIdentifier sid = new SecurityIdentifier ("BU");
+
+			RawAcl acl = MakeRawAcl (new GenericAce[] {
+				new CommonAce (AceFlags.ContainerInherit, AceQualifier.AccessAllowed, 1, sid, false, null),
+				new CommonAce (AceFlags.ObjectInherit, AceQualifier.AccessAllowed, 3, sid, false, null)
+			});
+
+			DiscretionaryAcl dacl = new DiscretionaryAcl (true, false, acl);
+			Assert.AreEqual (2, dacl.Count);
+		}
+
+		[Test]
+		public void InheritanceFlagsAreClearedBeforeMergeCheckingWhenNotContainer ()
+		{
+			SecurityIdentifier sid = new SecurityIdentifier ("BU");
+
+			RawAcl acl = MakeRawAcl (new GenericAce[] {
+				new CommonAce (AceFlags.ContainerInherit, AceQualifier.AccessAllowed, 1, sid, false, null),
+				new CommonAce (AceFlags.ObjectInherit, AceQualifier.AccessAllowed, 2, sid, false, null)
+			});
+
+			DiscretionaryAcl dacl = new DiscretionaryAcl (false, false, acl);
+			Assert.AreEqual (1, dacl.Count);
+
+			CommonAce ace = (CommonAce) dacl [0];
+			Assert.AreEqual (3, ace.AccessMask);
+			Assert.AreEqual (InheritanceFlags.None, ace.InheritanceFlags);
+		}
 	}
 }
-
 

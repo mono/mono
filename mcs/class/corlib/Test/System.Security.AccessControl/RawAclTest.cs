@@ -5,6 +5,7 @@
 //	Kenneth Bell
 //
 
+using System;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using NUnit.Framework;
@@ -36,6 +37,12 @@ namespace MonoTests.System.Security.AccessControl {
 				0x00, 0x00, 0x00, 0x05, 0x20, 0x00, 0x00, 0x00, 0x20, 0x02,
 				0x00, 0x00 };
 			Assert.AreEqual (sdBinary, buffer);
+		}
+		
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void NonNegativeCapacity ()
+		{
+			new RawAcl (GenericAcl.AclRevision, -1);
 		}
 	}
 }

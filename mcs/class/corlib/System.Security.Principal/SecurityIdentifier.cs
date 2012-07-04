@@ -41,7 +41,6 @@ namespace System.Security.Principal {
 		public static readonly int MaxBinaryLength = 68;
 		public static readonly int MinBinaryLength = 8;
 
-
 		public SecurityIdentifier (string sddlForm)
 		{
 			if (sddlForm == null)
@@ -155,6 +154,9 @@ namespace System.Security.Principal {
 		// The comparison was determined to be: authority, then subauthority count, then subauthority.
 		public int CompareTo (SecurityIdentifier sid)
 		{
+			if (sid == null)
+				throw new ArgumentNullException ("sid");
+				
 			int result;
 			if (0 != (result = GetSidAuthority ().CompareTo (sid.GetSidAuthority ()))) return result;
 			if (0 != (result = GetSidSubAuthorityCount ().CompareTo (sid.GetSidSubAuthorityCount ()))) return result;
