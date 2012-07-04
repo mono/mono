@@ -30,7 +30,6 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly MessageBox<T> messageBox;
 		readonly MessageOutgoingQueue<T> outgoing;
 		readonly BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
-		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
 
 		public BufferBlock () : this (DataflowBlockOptions.Default)
 		{
@@ -43,18 +42,18 @@ namespace System.Threading.Tasks.Dataflow {
 
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper,
+			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, ProcessQueue, dataflowBlockOptions);
 			this.outgoing = new MessageOutgoingQueue<T> (this, compHelper,
-				() => messageQueue.IsCompleted, dataflowBlockOptions);
+				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
+				dataflowBlockOptions);
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           T messageValue,
-		                                           ISourceBlock<T> source,
-		                                           bool consumeToAccept)
+		DataflowMessageStatus ITargetBlock<T>.OfferMessage (
+			DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source,
+			bool consumeToAccept)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return messageBox.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
 
 		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)

@@ -56,7 +56,7 @@ namespace System.Threading.Tasks.Dataflow
 			this.action = action;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue, compHelper,
+			this.messageBox = new ExecutingMessageBox<TInput> (this, messageQueue, compHelper,
 				() => true, ProcessItem, () => { }, dataflowBlockOptions);
 		}
 
@@ -72,12 +72,12 @@ namespace System.Threading.Tasks.Dataflow
 			throw new NotImplementedException ();
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           TInput messageValue,
-		                                           ISourceBlock<TInput> source,
-		                                           bool consumeToAccept)
+		public DataflowMessageStatus OfferMessage (
+			DataflowMessageHeader messageHeader, TInput messageValue,
+			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return messageBox.OfferMessage (
+				messageHeader, messageValue, source, consumeToAccept);
 		}
 
 		bool ProcessItem ()

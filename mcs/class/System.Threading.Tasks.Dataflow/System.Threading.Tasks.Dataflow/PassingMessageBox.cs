@@ -30,10 +30,11 @@ namespace System.Threading.Tasks.Dataflow
 		readonly Action processQueue;
 
 		public PassingMessageBox (
-			BlockingCollection<TInput> messageQueue, CompletionHelper compHelper,
-			Func<bool> externalCompleteTester, Action processQueue,
-			DataflowBlockOptions dataflowBlockOptions)
-			: base (messageQueue, compHelper, externalCompleteTester)
+			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
+			CompletionHelper compHelper, Func<bool> externalCompleteTester,
+			Action processQueue, DataflowBlockOptions dataflowBlockOptions)
+			: base (target, messageQueue, compHelper, externalCompleteTester,
+				dataflowBlockOptions)
 		{
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.processQueue = processQueue;

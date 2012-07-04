@@ -37,10 +37,11 @@ namespace System.Threading.Tasks.Dataflow
 		int degreeOfParallelism = 1;
 
 		public ExecutingMessageBox (
-			BlockingCollection<TInput> messageQueue, CompletionHelper compHelper,
-			Func<bool> externalCompleteTester, Func<bool> processItem, Action outgoingQueueComplete,
+			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
+			CompletionHelper compHelper, Func<bool> externalCompleteTester,
+			Func<bool> processItem, Action outgoingQueueComplete,
 			ExecutionDataflowBlockOptions options)
-			: base (messageQueue, compHelper, externalCompleteTester)
+			: base (target, messageQueue, compHelper, externalCompleteTester, options)
 		{
 			this.options = options;
 			this.processItem = processItem;

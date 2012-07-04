@@ -1,6 +1,7 @@
 // MessageBox.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,46 +20,64 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
 using System.Collections.Concurrent;
+using System.Linq;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	/* In MessageBox we store message that have been offered to us so that they can be
-	 * later processed
-	 */
-	internal class MessageBox<TInput>
-	{
+namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// In MessageBox we store message that have been offered to us so that they can be
+	/// later processed 
+	/// </summary>
+	internal class MessageBox<TInput> {
+		protected ITargetBlock<TInput> Target;
 		readonly CompletionHelper compHelper;
 		readonly Func<bool> externalCompleteTester;
+		readonly DataflowBlockOptions options;
+		readonly ConcurrentDictionary<ISourceBlock<TInput>, DataflowMessageHeader>
+			postponedMessages =
+				new ConcurrentDictionary<ISourceBlock<TInput>, DataflowMessageHeader> ();
+		int itemCount;
+		readonly AtomicBoolean postponedProcessing = new AtomicBoolean ();
 
 		protected BlockingCollection<TInput> MessageQueue { get; private set; }
 
 		public MessageBox (
-			BlockingCollection<TInput> messageQueue, CompletionHelper compHelper,
-			Func<bool> externalCompleteTester)
+			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
+			CompletionHelper compHelper, Func<bool> externalCompleteTester,
+			DataflowBlockOptions options)
 		{
+			this.Target = target;
 			this.compHelper = compHelper;
 			this.MessageQueue = messageQueue;
 			this.externalCompleteTester = externalCompleteTester;
+			this.options = options;
 		}
 
 		public DataflowMessageStatus OfferMessage (
-			ITargetBlock<TInput> target, DataflowMessageHeader messageHeader,
-			TInput messageValue, ISourceBlock<TInput> source, bool consumeToAccept)
+			DataflowMessageHeader messageHeader, TInput messageValue,
+			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
 			if (!messageHeader.IsValid)
 				return DataflowMessageStatus.Declined;
 			if (MessageQueue.IsAddingCompleted || !compHelper.CanRun)
 				return DataflowMessageStatus.DecliningPermanently;
 
+			if (options.BoundedCapacity != -1
+			    && Thread.VolatileRead (ref itemCount) >= options.BoundedCapacity) {
+				if (source == null)
+					return DataflowMessageStatus.Declined;
+
+				postponedMessages [source] = messageHeader;
+				
+				return DataflowMessageStatus.Postponed;
+			}
+
 			if (consumeToAccept) {
 				bool consummed;
-				if (!source.ReserveMessage (messageHeader, target))
+				if (!source.ReserveMessage (messageHeader, Target))
 					return DataflowMessageStatus.NotAvailable;
-				messageValue = source.ConsumeMessage (messageHeader, target, out consummed);
+				messageValue = source.ConsumeMessage (messageHeader, Target, out consummed);
 				if (!consummed)
 					return DataflowMessageStatus.NotAvailable;
 			}
@@ -71,11 +90,62 @@ namespace System.Threading.Tasks.Dataflow
 				return DataflowMessageStatus.DecliningPermanently;
 			}
 
+			IncreaseCount ();
+
 			EnsureProcessing ();
 
 			VerifyCompleteness ();
 
 			return DataflowMessageStatus.Accepted;
+		}
+
+		public void IncreaseCount ()
+		{
+			Interlocked.Increment (ref itemCount);
+		}
+
+		public void DecreaseCount()
+		{
+			int decreased = Interlocked.Decrement (ref itemCount);
+
+			if (decreased < options.BoundedCapacity && !postponedMessages.IsEmpty)
+				EnsurePostponedProcessing ();
+		}
+
+		void EnsurePostponedProcessing ()
+		{
+			if (postponedProcessing.TrySet())
+				Task.Factory.StartNew (RetrievePostponed, options.CancellationToken,
+					TaskCreationOptions.PreferFairness, options.TaskScheduler);
+		}
+
+		void RetrievePostponed ()
+		{
+			while (Volatile.Read (ref itemCount) < options.BoundedCapacity
+			       && !postponedMessages.IsEmpty) {
+				var block = postponedMessages.First ().Key;
+				DataflowMessageHeader header;
+				postponedMessages.TryRemove (block, out header);
+
+				bool consumed;
+				var item = block.ConsumeMessage (header, Target, out consumed);
+				if (consumed) {
+					try {
+						MessageQueue.Add (item);
+						IncreaseCount ();
+						EnsureProcessing ();
+					} catch (InvalidOperationException) {
+						break;
+					}
+				}
+			}
+
+			postponedProcessing.Value = false;
+
+			// because of race
+			if (Volatile.Read (ref itemCount) < options.BoundedCapacity
+			    && !postponedMessages.IsEmpty)
+				EnsurePostponedProcessing ();
 		}
 
 		protected virtual void EnsureProcessing ()

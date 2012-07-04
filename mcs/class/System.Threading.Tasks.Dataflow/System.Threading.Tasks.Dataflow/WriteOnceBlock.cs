@@ -55,7 +55,7 @@ namespace System.Threading.Tasks.Dataflow
 			this.cloner = cloner;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper, () => true, BroadcastProcess, dataflowBlockOptions);
+			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper, () => true, BroadcastProcess, dataflowBlockOptions);
 			this.vault = new MessageVault<T> ();
 		}
 
@@ -69,7 +69,7 @@ namespace System.Threading.Tasks.Dataflow
 				finalValue = messageValue;
 				Thread.MemoryBarrier ();
 				ready = true;
-				return messageBox.OfferMessage (this, messageHeader, finalValue, source, consumeToAccept);
+				return messageBox.OfferMessage (messageHeader, finalValue, source, consumeToAccept);
 			} else {
 				return DataflowMessageStatus.DecliningPermanently;
 			}

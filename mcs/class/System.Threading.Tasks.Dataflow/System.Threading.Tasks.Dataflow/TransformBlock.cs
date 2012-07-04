@@ -51,11 +51,12 @@ namespace System.Threading.Tasks.Dataflow
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new ExecutingMessageBox<TInput> (
-				messageQueue, compHelper,
+				this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
 				dataflowBlockOptions);
 			this.outgoing = new MessageOutgoingQueue<TOutput> (this, compHelper,
-				() => messageQueue.IsCompleted, dataflowBlockOptions);
+				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
+				dataflowBlockOptions);
 		}
 
 		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
@@ -63,7 +64,7 @@ namespace System.Threading.Tasks.Dataflow
 		                                           ISourceBlock<TInput> source,
 		                                           bool consumeToAccept)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return messageBox.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
 
 		public IDisposable LinkTo (ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions)

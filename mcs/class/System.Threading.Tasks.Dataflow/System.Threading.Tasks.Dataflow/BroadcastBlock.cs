@@ -52,8 +52,11 @@ namespace System.Threading.Tasks.Dataflow {
 			this.cloner = cloner;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper, () => outgoing.IsCompleted, BroadcastProcess, dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<T> (this, compHelper, () => messageQueue.IsCompleted, dataflowBlockOptions);
+			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
+				() => outgoing.IsCompleted, BroadcastProcess, dataflowBlockOptions);
+			this.outgoing = new MessageOutgoingQueue<T> (this, compHelper,
+				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
+				dataflowBlockOptions);
 			this.vault = new MessageVault<T> ();
 		}
 
@@ -62,7 +65,7 @@ namespace System.Threading.Tasks.Dataflow {
 		                                           ISourceBlock<T> source,
 		                                           bool consumeToAccept)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return messageBox.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
 
 		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)

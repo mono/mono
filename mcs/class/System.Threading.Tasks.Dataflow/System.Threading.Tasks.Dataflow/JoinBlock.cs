@@ -48,11 +48,17 @@ namespace System.Threading.Tasks.Dataflow
 
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
-			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper, () => outgoing.IsCompleted);
+			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper,
+				() => outgoing.IsCompleted, dataflowBlockOptions);
+			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper,
+				() => outgoing.IsCompleted, dataflowBlockOptions);
 			outgoing = new MessageOutgoingQueue<Tuple<T1, T2>> (this, compHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted,
-				dataflowBlockOptions);
+				() =>
+				{
+					target1.DecreaseCount ();
+					target2.DecreaseCount ();
+				}, dataflowBlockOptions);
 		}
 
 		public IDisposable LinkTo (ITargetBlock<Tuple<T1, T2>> target, DataflowLinkOptions linkOptions)

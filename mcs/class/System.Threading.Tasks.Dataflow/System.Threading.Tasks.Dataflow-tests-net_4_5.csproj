@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Test\System.Threading.Tasks.Dataflow\ReceivingTest.cs" />
     <Compile Include="Test\TestScheduler.cs" />
+    <Compile Include="Test\System.Threading.Tasks.Dataflow\BoundedCapacityTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\ExecutionBlocksTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlockTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\BatchedJoinBlock`3Test.cs" />

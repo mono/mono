@@ -19,8 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
 using System.Collections.Concurrent;
 
@@ -31,11 +29,13 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly Action signal;
 
 		public JoinTarget (IDataflowBlock joinBlock, Action signal, CompletionHelper helper,
-		                   Func<bool> externalCompleteTester)
-			: base (new BlockingCollection<TTarget> (), helper, externalCompleteTester)
+		                   Func<bool> externalCompleteTester, DataflowBlockOptions options)
+			: base (null, new BlockingCollection<TTarget> (), helper, externalCompleteTester,
+				options)
 		{
 			this.joinBlock = joinBlock;
 			this.signal = signal;
+			Target = this;
 		}
 
 		protected override void EnsureProcessing ()
@@ -54,7 +54,7 @@ namespace System.Threading.Tasks.Dataflow {
 		                                                          ISourceBlock<TTarget> source,
 		                                                          bool consumeToAccept)
 		{
-			return OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
 
 		void IDataflowBlock.Complete ()

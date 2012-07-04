@@ -35,6 +35,7 @@ namespace System.Threading.Tasks.Dataflow {
 		int outgoingCount;
 		readonly CompletionHelper compHelper;
 		readonly Func<bool> externalCompleteTester;
+		readonly Action decreaseItemsCount;
 		readonly DataflowBlockOptions options;
 		readonly AtomicBoolean isProcessing = new AtomicBoolean ();
 		readonly TargetCollection<T> targets;
@@ -43,12 +44,13 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public MessageOutgoingQueue (
 			ISourceBlock<T> block, CompletionHelper compHelper,
-			Func<bool> externalCompleteTester, DataflowBlockOptions options)
+			Func<bool> externalCompleteTester, Action decreaseItemsCount, DataflowBlockOptions options)
 		{
 			this.outgoing = new BlockingCollection<T> (store);
 			this.targets = new TargetCollection<T> (block);
 			this.compHelper = compHelper;
 			this.externalCompleteTester = externalCompleteTester;
+			this.decreaseItemsCount = decreaseItemsCount;
 			this.options = options;
 		}
 
@@ -92,6 +94,7 @@ namespace System.Threading.Tasks.Dataflow {
 					if (processed) {
 						outgoing.TryTake (out item);
 						Interlocked.Decrement (ref outgoingCount);
+						decreaseItemsCount ();
 						FirstItemChanged ();
 					}
 				} finally {
@@ -131,6 +134,7 @@ namespace System.Threading.Tasks.Dataflow {
 					outgoing.TryTake (out result);
 					messageConsumed = true;
 					Interlocked.Decrement (ref outgoingCount);
+					decreaseItemsCount ();
 					reservedForTargetBlock = null;
 					FirstItemChanged ();
 				}
@@ -211,6 +215,7 @@ namespace System.Threading.Tasks.Dataflow {
 					outgoing.TryTake (out item);
 					success = true;
 					Interlocked.Decrement (ref outgoingCount);
+					decreaseItemsCount ();
 					FirstItemChanged ();
 				}
 			} finally {
@@ -243,6 +248,7 @@ namespace System.Threading.Tasks.Dataflow {
 				T item;
 				while (outgoing.TryTake (out item)) {
 					Interlocked.Decrement (ref outgoingCount);
+					decreaseItemsCount ();
 					list.Add (item);
 				}
 

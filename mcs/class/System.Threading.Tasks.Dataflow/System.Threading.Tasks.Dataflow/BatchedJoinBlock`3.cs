@@ -60,17 +60,25 @@ namespace System.Threading.Tasks.Dataflow {
 			completionHelper = CompletionHelper.GetNew (options);
 
 			target1 = new JoinTarget<T1> (
-				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
+				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
+				dataflowBlockOptions);
 			target2 = new JoinTarget<T2> (
-				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
+				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
+				dataflowBlockOptions);
 			target3 = new JoinTarget<T3>(
-				this, SignalTarget, completionHelper, () => outgoing.IsCompleted);
+				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
+				dataflowBlockOptions);
 
 			outgoing = new MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> (
 				this, completionHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
 				      || target3.Buffer.IsCompleted,
-				options);
+				() =>
+				{
+					target1.DecreaseCount ();
+					target2.DecreaseCount ();
+					target3.DecreaseCount ();
+				}, options);
 		}
 
 		public int BatchSize { get; private set; }

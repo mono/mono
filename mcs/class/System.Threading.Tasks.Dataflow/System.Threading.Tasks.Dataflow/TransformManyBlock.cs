@@ -51,12 +51,12 @@ namespace System.Threading.Tasks.Dataflow
 			this.transformer = transformer;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new ExecutingMessageBox<TInput> (
-				messageQueue, compHelper,
+			this.messageBox = new ExecutingMessageBox<TInput> (this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
 				dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<TOutput> (
-				this, compHelper, () => messageQueue.IsCompleted, dataflowBlockOptions);
+			this.outgoing = new MessageOutgoingQueue<TOutput> (this, compHelper,
+				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
+				dataflowBlockOptions);
 		}
 
 		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
@@ -64,7 +64,7 @@ namespace System.Threading.Tasks.Dataflow
 		                                           ISourceBlock<TInput> source,
 		                                           bool consumeToAccept)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return messageBox.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
 
 		public IDisposable LinkTo (ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions)
@@ -105,9 +105,18 @@ namespace System.Threading.Tasks.Dataflow
 			if (dequeued) {
 				var result = transformer (input);
 
-				if (result != null)
-					foreach (var item in result)
+				bool first = true;
+				if (result != null) {
+					foreach (var item in result) {
+						if (first)
+							first = false;
+						else
+							messageBox.IncreaseCount ();
 						outgoing.AddData (item);
+					}
+				}
+				if (first)
+					messageBox.DecreaseCount ();
 			}
 
 			return dequeued;

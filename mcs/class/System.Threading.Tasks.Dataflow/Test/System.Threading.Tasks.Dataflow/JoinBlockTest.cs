@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -81,6 +80,22 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsNotNull (tuple);
 			Assert.AreEqual (42, tuple.Item1);
 			Assert.AreEqual (24, tuple.Item2);
+		}
+
+		[Test]
+		public void BoundedCapacityTest ()
+		{
+			var block = new JoinBlock<int, int> (
+				new GroupingDataflowBlockOptions { BoundedCapacity = 1 });
+			Assert.IsTrue (block.Target1.Post (1));
+			Assert.IsFalse (block.Target1.Post (2));
+
+			Assert.IsTrue (block.Target2.Post (10));
+			Assert.IsFalse (block.Target2.Post (11));
+			Assert.IsFalse (block.Target1.Post (3));
+
+			Assert.AreEqual (Tuple.Create (1, 10), block.Receive ());
+			Assert.IsTrue (block.Target1.Post (4));
 		}
 	}
 }
