@@ -158,6 +158,10 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\ExpressionAssertDischarger.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\ExpressionAssumeDecoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\NonNullAnalysisFacade.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BooleanExtensions.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Interval.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalBase.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Rational.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\APCMap.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\SequenceGenerator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\StackDecoder.cs" />
@@ -361,7 +365,10 @@
     <Compile Include="Mono.CodeContracts.Static\DebugOptions.cs" />
     <Compile Include="Mono.CodeContracts.Static\ProofOutcome.cs" />
     <Compile Include="Mono.CodeContracts.Static\ProofOutcomeExtensions.cs" />
+    <Compile Include="Test\AbstractDomainExtensionsTests.cs" />
+    <Compile Include="Test\IntervalTests.cs" />
     <Compile Include="Test\PatriciaTrieTests.cs" />
+    <Compile Include="Test\RationalTests.cs" />
     <Compile Include="Test\RewriteAndLoad.cs" />
     <Compile Include="Test\SequenceTests.cs" />
     <Compile Include="Test\TestCCRewrite.cs" />

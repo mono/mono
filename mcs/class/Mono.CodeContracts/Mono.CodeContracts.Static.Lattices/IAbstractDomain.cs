@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.IO;
 
 namespace Mono.CodeContracts.Static.Lattices {
@@ -77,4 +78,29 @@ namespace Mono.CodeContracts.Static.Lattices {
 
 		void Dump (TextWriter tw);
 	}
+
+    internal static class AbstractDomainExtensions
+    {
+        public static bool IsNormal<T>(this IAbstractDomain<T> domain )
+        {
+            return !domain.IsTop && domain.IsBottom;
+        }
+
+        public static string BottomSymbolIfAny<T>(this IAbstractDomain<T> domain)
+        {
+            return domain.IsBottom ? "_|_" : string.Empty;
+        }
+
+        public static bool TryTrivialJoin<T>(this IAbstractDomain<T> @this, IAbstractDomain<T> that, out T result )
+            where T : IAbstractDomain<T>
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool TryTrivialMeet<T>(this IAbstractDomain<T> @this, IAbstractDomain<T> that, out T result )
+            where T : IAbstractDomain<T>
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
