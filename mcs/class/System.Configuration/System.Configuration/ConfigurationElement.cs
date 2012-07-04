@@ -175,7 +175,7 @@ namespace System.Configuration
 				 * to correctly set the value). */
 			}
 			catch (Exception e) {
-				throw new ConfigurationErrorsException (String.Format ("The value for the property '{0}' is not valid. The error is: {1}", prop.Name, e.Message), e);
+				throw new ConfigurationErrorsException (String.Format ("The value for the property '{0}' on type {1} is not valid.", prop.Name, this.ElementInformation.Type), e);
 			}
 		}
 
