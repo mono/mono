@@ -338,6 +338,7 @@
     <Compile Include="Mono.CodeContracts.Static.DataStructures\VisitStatus.cs" />
     <Compile Include="Mono.CodeContracts.Static.DataStructures\WorkList.cs" />
     <Compile Include="Mono.CodeContracts.Static.Extensions\Extensions.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Lattices\AbstractDomainExtensions.cs" />
     <Compile Include="Mono.CodeContracts.Static.Lattices\EnvironmentDomain.cs" />
     <Compile Include="Mono.CodeContracts.Static.Lattices\FlatDomain.cs" />
     <Compile Include="Mono.CodeContracts.Static.Lattices\IAbstractDomain.cs" />
