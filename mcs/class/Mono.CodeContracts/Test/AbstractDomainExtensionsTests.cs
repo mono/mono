@@ -44,6 +44,14 @@ namespace Test
         private const bool dummy = false;
 
         [Test]
+        public void TestCasesIsNormal ()
+        {
+            Assert.That (top.IsNormal(), Is.False);
+            Assert.That (bottom.IsNormal(), Is.False);
+            Assert.That (normal.IsNormal(), Is.True);
+        }
+
+        [Test]
         public void TestCasesTrivialMeet()
         {
             AssertMeetResultFor (top, top, true, (r) => r.IsTop);

@@ -4,9 +4,9 @@ namespace Mono.CodeContracts.Static.Lattices
 {
     internal static class AbstractDomainExtensions
     {
-        public static bool IsNormal<T>(this IAbstractDomain<T> domain )
+        public static bool IsNormal<T>(this IAbstractDomain<T> domain)
         {
-            return !domain.IsTop && domain.IsBottom;
+            return !domain.IsTop && !domain.IsBottom;
         }
 
         public static string BottomSymbolIfAny<T>(this IAbstractDomain<T> domain)

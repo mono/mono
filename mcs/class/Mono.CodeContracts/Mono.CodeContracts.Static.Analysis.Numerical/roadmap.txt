@@ -1,0 +1,14 @@
+﻿roadmap:
+
+v operators on Interval:
+v + 
+v -
+v /
+v *
+v -unary
+ 
+ for ints: 
+  &
+  ^
+  %
+  | 

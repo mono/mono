@@ -35,21 +35,21 @@ namespace Test
     [TestFixture]
     public class RationalTests
     {
-        private readonly Rational infPlus = Rational.PlusInfinity;
-        private readonly Rational infMinus = Rational.MinusInfinity;
-        private readonly Rational zero = Rational.For(0L);
-        private readonly Rational zero1 = Rational.For(0L);
-        private readonly Rational one = Rational.For(1L);
-
-        private readonly Rational threeFourth = Rational.For(3L, 4L);
-        private readonly Rational sixEighth = Rational.For(6, 8);
+        private static readonly Rational zero = Rational.For(0L);
+        private static readonly Rational zero1 = Rational.For(0L);
+        private static readonly Rational one = Rational.For(1L);
+        private static readonly Rational threeFourth = Rational.For(3L, 4L);
+        private static readonly Rational sixEighth = Rational.For(6, 8);
+        
+        private static readonly Rational plusInf = Rational.PlusInfinity;
+        private static readonly Rational minusInf = Rational.MinusInfinity;
 
         [Test]
         public void ShouldHaveInfinitiesAndNormalValuesWhichArentEqual()
         {
-            Assert.IsFalse (infPlus == infMinus);
-            Assert.IsFalse (infPlus == zero);
-            Assert.IsFalse (infMinus == zero);
+            Assert.IsFalse (plusInf == minusInf);
+            Assert.IsFalse (plusInf == zero);
+            Assert.IsFalse (minusInf == zero);
             Assert.IsTrue (zero == zero1);
             Assert.IsFalse (one == zero);
         }
@@ -110,6 +110,21 @@ namespace Test
             Rational eleven21 = Rational.For(21, 11);
 
             Assert.That(seven22 / eleven21, Is.EqualTo(Rational.For(1, 6)));
+            
+            Rational result;
+            Assert.That(Rational.TryDiv(one, zero, out result), Is.False, "shouldn't div by zero");
+            Assert.That(Rational.TryDiv(seven22, zero, out result), Is.False, "shouldn't div by zero");
+        }
+
+        [Test]
+        public void LessThanOperatorWithInfinities()
+        {
+            Assert.IsTrue  (minusInf < plusInf);
+            Assert.IsFalse (minusInf < minusInf);
+            Assert.IsFalse (plusInf  < minusInf);
+            Assert.IsFalse (plusInf  < plusInf);
+            Assert.IsTrue  (minusInf < one);
+            Assert.IsFalse (plusInf  < one);
         }
     }
 }

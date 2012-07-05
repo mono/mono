@@ -413,4 +413,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mono.CodeContracts.Static.Analysis.Numerical\roadmap.txt" />
+  </ItemGroup>
 </Project>

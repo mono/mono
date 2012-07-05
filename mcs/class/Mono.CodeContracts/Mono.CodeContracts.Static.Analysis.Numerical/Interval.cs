@@ -40,16 +40,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         private static Interval cachedBottomValue;
         private static Interval cachedTopValue;
 
-        public static Interval BottomValue
-        {
-            get
-            {
-                if (ReferenceEquals (cachedBottomValue, null))
-                    cachedBottomValue = new Interval (Rational.PlusInfinity, Rational.MinusInfinity);
-                return cachedBottomValue;
-            }
-        }
-
         public static Interval TopValue
         {
             get
@@ -57,6 +47,15 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 if (ReferenceEquals(cachedTopValue, null))
                     cachedTopValue = new Interval(Rational.MinusInfinity, Rational.PlusInfinity);
                 return cachedTopValue;
+            }
+        }
+        public static Interval BottomValue
+        {
+            get
+            {
+                if (ReferenceEquals (cachedBottomValue, null))
+                    cachedBottomValue = new Interval (Rational.PlusInfinity, Rational.MinusInfinity);
+                return cachedBottomValue;
             }
         }
 
@@ -78,9 +77,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             isBottom = LowerBound > UpperBound;
         }
 
-        public override Interval Top { get { throw new System.NotImplementedException (); } }
+        public override Interval Top { get { return TopValue; } }
 
-        public override Interval Bottom { get { throw new System.NotImplementedException (); } }
+        public override Interval Bottom { get { return BottomValue; } }
 
         public override bool IsTop { get { return isTop; } }
 
@@ -97,7 +96,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             if (this.TryTrivialMeet(that, out result))
                 return result;
 
-            return For (Rational.Max (LowerBound, that.LowerBound), Rational.Min (UpperBound, that.UpperBound));
+            return For (Rational.Max (LowerBound, that.LowerBound), 
+                        Rational.Min (UpperBound, that.UpperBound));
         }
 
         public override Interval ImmutableVersion ()
@@ -163,7 +163,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public static Interval operator + (Interval l, Interval r)
         {
-            if (l.IsBottom && r.IsBottom)
+            if (l.IsBottom || r.IsBottom)
                 return BottomValue;
 
             Rational lower, upper;
@@ -175,6 +175,56 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return For (lower, upper);
         }
 
+        public static Interval operator - (Interval l, Interval r)
+        {
+            if (l.IsBottom || r.IsBottom)
+                return BottomValue;
+
+            Rational lower, upper;
+            if (l.IsTop || r.IsTop
+                || !Rational.TrySub(l.LowerBound, r.UpperBound, out lower)
+                || !Rational.TrySub(l.UpperBound, r.LowerBound, out upper))
+                return TopValue;
+
+            return For (lower, upper);
+        }
+
+        public static Interval operator / (Interval l, Interval r)
+        {
+            if (l.IsBottom || r.IsBottom)
+                return BottomValue;
+
+            Rational lower, upper;
+            if (l.IsTop || r.IsTop
+                || !Rational.TryDiv(l.LowerBound, r.UpperBound, out lower)
+                || !Rational.TryDiv(l.UpperBound, r.LowerBound, out upper))
+                return TopValue;
+
+            return For (lower, upper);
+        }
+
+        public static Interval operator * (Interval l, Interval r)
+        {
+            if (l.IsBottom || r.IsBottom)
+                return BottomValue;
+
+            Rational lower, upper;
+            if (l.IsTop || r.IsTop 
+                || !Rational.TryMul (l.LowerBound, r.LowerBound, out lower)
+                || !Rational.TryMul (l.UpperBound, r.UpperBound, out upper) )
+                return TopValue;
+
+            return For (lower, upper);
+        }
+
+        public static Interval operator - (Interval l)
+        {
+            if (!l.IsNormal())
+                return l;
+
+            return For (-l.UpperBound, -l.LowerBound);
+        }
+        
         public bool Includes(int x)
         {
             return this.IsNormal () && LowerBound <= x && x <= UpperBound;

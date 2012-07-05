@@ -199,9 +199,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         public static bool operator <(Rational l, Rational r)
         {
             if (ReferenceEquals(l, r))
-                return true;
+                return false;
             if (l.IsMinusInfinity && !r.IsMinusInfinity
-             || l.IsPlusInfinity  && !r.IsPlusInfinity)
+             || r.IsPlusInfinity  && !l.IsPlusInfinity)
                 return true;
             if (l.IsPlusInfinity || r.IsMinusInfinity)
                 return false;
@@ -519,8 +519,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         {
             if (r == One)
                 return true.With(l, out result);
-            if (l == One)
-                return true.With(r, out result);
 
             if (r.IsZero)
                 return false.Without(out result);
@@ -759,7 +757,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
             return true.With(For(nom, denom), out result);
         }
-
 
         private enum Kind
         {
