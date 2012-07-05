@@ -79,18 +79,18 @@ namespace Test
         [Test]
         public void ShouldHaveLessEqualOperator()
         {
-            Assert.That (minusInf <= minusInf, Is.True);
-            Assert.That (minusInf <= plusInf, Is.True);
-            Assert.That (minusInf <= one, Is.True);
+            minusInf.ShouldBeLessEqualThan (minusInf);
+            minusInf.ShouldBeLessEqualThan (plusInf);
+            minusInf.ShouldBeLessEqualThan (one);
 
-            Assert.That (one <= minusInf, Is.False);
-            Assert.That (one <= one, Is.True);
-            Assert.That (one <= plusInf, Is.True);
-            Assert.That (one <= zero, Is.False);
+            one.ShouldNotBeLessEqualThan (minusInf);
+            one.ShouldNotBeLessEqualThan (zero);
+            one.ShouldBeLessEqualThan (one);
+            one.ShouldBeLessEqualThan (plusInf);
 
-            Assert.That(plusInf <= minusInf, Is.False);
-            Assert.That(plusInf <= plusInf, Is.True);
-            Assert.That(plusInf <= one, Is.False);
+            plusInf.ShouldNotBeLessEqualThan (minusInf);
+            plusInf.ShouldBeLessEqualThan (plusInf);
+            plusInf.ShouldNotBeLessEqualThan (one);
         }
 
         [Test]
@@ -134,16 +134,42 @@ namespace Test
         }
 
         [Test]
-        public void LessThanOperatorWithInfinities()
+        public void LessThanOperator()
         {
-            Assert.IsTrue  (minusInf < plusInf);
-            Assert.IsFalse (minusInf < minusInf);
-            Assert.IsFalse (plusInf  < minusInf);
-            Assert.IsFalse (plusInf  < plusInf);
-            Assert.IsTrue  (minusInf < one);
-            Assert.IsFalse (plusInf  < one);
+            minusInf.ShouldNotBeLessThan (minusInf);
+            minusInf.ShouldBeLessThan (plusInf);
+            minusInf.ShouldBeLessThan (one);
+
+            zero.ShouldNotBeLessThan(minusInf);
+            zero.ShouldBeLessThan(plusInf);
+            zero.ShouldBeLessThan(one);
+         
+            plusInf.ShouldNotBeLessThan (minusInf);
+            plusInf.ShouldNotBeLessThan (plusInf);
+            plusInf.ShouldNotBeLessThan (one);
+        }
+    }
+
+    static class RationalTestExtensions
+    {
+        public static void ShouldBeLessEqualThan(this Rational l, Rational r)
+        {
+            Assert.IsTrue(l <= r);
         }
 
-       
+        public static void ShouldNotBeLessEqualThan(this Rational l, Rational r)
+        {
+            Assert.IsFalse(l <= r);
+        }
+
+        public static void ShouldBeLessThan(this Rational l, Rational r)
+        {
+            Assert.IsTrue (l < r);
+        }
+
+        public static void ShouldNotBeLessThan(this Rational l, Rational r)
+        {
+            Assert.IsFalse(l < r);
+        }
     }
 }

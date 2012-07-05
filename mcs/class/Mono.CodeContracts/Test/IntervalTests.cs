@@ -26,13 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
+
 using Mono.CodeContracts.Static.Analysis.Numerical;
 
 using NUnit.Framework;
 
 namespace Test
 {
-    [TestFixture]
+    [TestFixture(typeof(Interval))]
     internal class IntervalTests : DomainTestBase<Interval>
     {
         private readonly Interval _1__2 = Interval.For (1, 2);

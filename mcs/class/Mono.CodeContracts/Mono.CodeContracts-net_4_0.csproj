@@ -367,6 +367,7 @@
     <Compile Include="Mono.CodeContracts.Static\ProofOutcome.cs" />
     <Compile Include="Mono.CodeContracts.Static\ProofOutcomeExtensions.cs" />
     <Compile Include="Test\AbstractDomainExtensionsTests.cs" />
+    <Compile Include="Test\DomainTestBase.cs" />
     <Compile Include="Test\IntervalTests.cs" />
     <Compile Include="Test\PatriciaTrieTests.cs" />
     <Compile Include="Test\RationalTests.cs" />
