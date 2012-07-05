@@ -28,12 +28,12 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class DnsTest
 	{
-		private String site1Name = "go-mono.com",
-			site1Dot = "50.21.183.68",
+		private String site1Name = "mono-project.com",
+			site1Dot = "96.126.105.110",
 			site2Name = "info.diku.dk",
 			site2Dot = "130.225.96.4",
 			noneExistingSite = "www.unlikely.novell.com";
-		private uint site1IP = 1255202323, site2IP = 2195808260; // Big-Endian
+		private uint site1IP = 1852407392, site2IP = 2195808260; // Big-Endian
 
 		[Test]
 		public void AsyncGetHostByName ()
@@ -44,7 +44,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.AreEqual ("go-mono.com", entry.HostName);
+			Assert.AreEqual ("www.mono-project.com", entry.HostName);
 		}
 
 		void GetHostByNameCallback (IAsyncResult ar)
@@ -191,7 +191,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void GetHostByName ()
 		{
-			SubTestGetHostByName (site1Name, site1Dot);
+			SubTestGetHostByName ("www.mono-project.com", site1Dot);
 			SubTestGetHostByName (site2Name, site2Dot);
 			try {
 				var entry = Dns.GetHostByName (noneExistingSite);
@@ -274,11 +274,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-/*** Current go-mono.com IP works fine here***
-#if ONLY_1_1
-		[ExpectedException (typeof (SocketException))]
-#endif
-********/
 		public void GetHostByAddressString5 ()
 		{
 			Dns.GetHostByAddress (site1Dot);
@@ -361,7 +356,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test] // BeginGetHostEntry (IPAddress, AsyncCallback, Object)
 		public void BeginGetHostEntry1_Address_Null ()
 		{
@@ -506,7 +500,6 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("hostNameOrAddress", ex.ParamName, "#B5");
 			}
 		}
-#endif
 
 		void SubTestValidIPHostEntry (IPHostEntry h)
 		{
