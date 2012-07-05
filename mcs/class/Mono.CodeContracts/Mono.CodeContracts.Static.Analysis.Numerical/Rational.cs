@@ -221,6 +221,33 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 return (decimal)l.up / l.down < (decimal)r.up / r.down;
             }
         }
+        
+        public static bool operator <=(Rational l, Rational r)
+        {
+            if (ReferenceEquals(l, r))
+                return true;
+            if (l.IsMinusInfinity || r.IsPlusInfinity)
+                return true;
+            if (l.IsPlusInfinity || r.IsMinusInfinity)
+                return false;
+
+            if (l.down == r.down)
+                return l.up <= r.up;
+            
+            try
+            {
+                return checked(l.up * r.down) <= checked(r.up * l.down);
+            }
+            catch (ArithmeticException)
+            {
+                return (decimal)l.up / l.down <= (decimal)r.up / r.down;
+            }
+        }
+
+        public static bool operator >= (Rational l, Rational r)
+        {
+            return r <= l;
+        }
 
         public static bool operator <=(Rational l, long r)
         {

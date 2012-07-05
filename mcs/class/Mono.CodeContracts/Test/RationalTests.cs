@@ -77,6 +77,23 @@ namespace Test
         }
 
         [Test]
+        public void ShouldHaveLessEqualOperator()
+        {
+            Assert.That (minusInf <= minusInf, Is.True);
+            Assert.That (minusInf <= plusInf, Is.True);
+            Assert.That (minusInf <= one, Is.True);
+
+            Assert.That (one <= minusInf, Is.False);
+            Assert.That (one <= one, Is.True);
+            Assert.That (one <= plusInf, Is.True);
+            Assert.That (one <= zero, Is.False);
+
+            Assert.That(plusInf <= minusInf, Is.False);
+            Assert.That(plusInf <= plusInf, Is.True);
+            Assert.That(plusInf <= one, Is.False);
+        }
+
+        [Test]
         public void ShouldHaveAddOperation ()
         {
             Rational seven20 = Rational.For (7, 20);
@@ -126,5 +143,7 @@ namespace Test
             Assert.IsTrue  (minusInf < one);
             Assert.IsFalse (plusInf  < one);
         }
+
+       
     }
 }

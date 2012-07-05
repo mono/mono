@@ -12,3 +12,10 @@ v -unary
   ^
   %
   | 
+
+---
+Interval:
+
+v join 
+v meet
+v lessequal

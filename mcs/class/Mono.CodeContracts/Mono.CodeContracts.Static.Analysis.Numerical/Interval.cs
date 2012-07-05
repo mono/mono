@@ -90,45 +90,58 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             throw new System.NotImplementedException ();
         }
 
-        public override Interval Meet (Interval that)
-        {
-            Interval result;
-            if (this.TryTrivialMeet(that, out result))
-                return result;
-
-            return For (Rational.Max (LowerBound, that.LowerBound), 
-                        Rational.Min (UpperBound, that.UpperBound));
-        }
-
         public override Interval ImmutableVersion ()
         {
-            throw new System.NotImplementedException ();
+            return this;
         }
 
         public override Interval Clone ()
         {
-            throw new System.NotImplementedException ();
+            return this;
         }
 
         public override void Dump (TextWriter tw)
         {
-            throw new System.NotImplementedException ();
+            tw.WriteLine(ToString ());
         }
 
         public override bool LessEqual (Interval that)
         {
-            throw new System.NotImplementedException ();
+            bool result;
+            if (this.TryTrivialLessEqual(that, out result))
+                return result;
+
+            //less equal <==> is included in
+
+            return LowerBound >= that.LowerBound && UpperBound <= that.UpperBound;
+        }
+
+        public Interval Join(Interval that)
+        {
+            Interval result;
+            if (this.TryTrivialJoin(that, out result))
+                return result;
+
+            return For (Rational.Min (LowerBound, that.LowerBound),
+                        Rational.Max (UpperBound, that.UpperBound));
         }
 
         public override Interval Join (Interval that, bool widening, out bool weaker)
         {
             weaker = false; //TODO: make something with that
 
+            return Join (that);
+        }
+
+        public override Interval Meet(Interval that)
+        {
             Interval result;
-            if (this.TryTrivialJoin(that, out result))
+            if (this.TryTrivialMeet (that, out result))
                 return result;
 
-            return Interval.For(Rational.Min(LowerBound, that.LowerBound), Rational.Max(UpperBound, that.UpperBound));
+            return For (
+                Rational.Max (LowerBound, that.LowerBound),
+                Rational.Min (UpperBound, that.UpperBound));
         }
 
         public static Interval For(Rational lower, Rational upper)
