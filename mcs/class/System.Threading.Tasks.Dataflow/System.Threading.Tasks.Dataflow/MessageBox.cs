@@ -34,6 +34,8 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly CompletionHelper compHelper;
 		readonly Func<bool> externalCompleteTester;
 		readonly DataflowBlockOptions options;
+		readonly bool greedy;
+
 		readonly ConcurrentDictionary<ISourceBlock<TInput>, DataflowMessageHeader>
 			postponedMessages =
 				new ConcurrentDictionary<ISourceBlock<TInput>, DataflowMessageHeader> ();
@@ -45,13 +47,14 @@ namespace System.Threading.Tasks.Dataflow {
 		public MessageBox (
 			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
 			CompletionHelper compHelper, Func<bool> externalCompleteTester,
-			DataflowBlockOptions options)
+			DataflowBlockOptions options, bool greedy = true)
 		{
 			this.Target = target;
 			this.compHelper = compHelper;
 			this.MessageQueue = messageQueue;
 			this.externalCompleteTester = externalCompleteTester;
 			this.options = options;
+			this.greedy = greedy;
 		}
 
 		public DataflowMessageStatus OfferMessage (
@@ -63,12 +66,16 @@ namespace System.Threading.Tasks.Dataflow {
 			if (MessageQueue.IsAddingCompleted || !compHelper.CanRun)
 				return DataflowMessageStatus.DecliningPermanently;
 
-			if (options.BoundedCapacity != -1
-			    && Thread.VolatileRead (ref itemCount) >= options.BoundedCapacity) {
+			if (!greedy ||
+			    (options.BoundedCapacity != -1
+			     && Thread.VolatileRead (ref itemCount) >= options.BoundedCapacity)) {
 				if (source == null)
 					return DataflowMessageStatus.Declined;
 
 				postponedMessages [source] = messageHeader;
+
+				if (!greedy)
+					EnsureProcessing ();
 				
 				return DataflowMessageStatus.Postponed;
 			}
@@ -108,8 +115,49 @@ namespace System.Threading.Tasks.Dataflow {
 		{
 			int decreased = Interlocked.Decrement (ref itemCount);
 
-			if (decreased < options.BoundedCapacity && !postponedMessages.IsEmpty)
+			if (greedy && decreased < options.BoundedCapacity && !postponedMessages.IsEmpty)
 				EnsurePostponedProcessing ();
+		}
+
+		public int PostponedMessagesCount {
+			get { return postponedMessages.Count; }
+		}
+
+		public Tuple<ISourceBlock<TInput>, DataflowMessageHeader> ReserveMessage()
+		{
+			while (!postponedMessages.IsEmpty) {
+				var block = postponedMessages.FirstOrDefault () .Key;
+
+				// collection is empty
+				if (block == null)
+					break;
+
+				DataflowMessageHeader header;
+				bool removed = postponedMessages.TryRemove (block, out header);
+
+				// another thread was faster, try again
+				if (!removed)
+					continue;
+
+				bool reserved = block.ReserveMessage (header, Target);
+				if (reserved)
+					return Tuple.Create (block, header);
+			}
+
+			return null;
+		}
+
+		public void RelaseReservation(Tuple<ISourceBlock<TInput>, DataflowMessageHeader> reservation)
+		{
+			reservation.Item1.ReleaseReservation (reservation.Item2, Target);
+			postponedMessages [reservation.Item1] = reservation.Item2;
+		}
+
+		public TInput ConsumeReserved(Tuple<ISourceBlock<TInput>, DataflowMessageHeader> reservation)
+		{
+			bool consumed;
+			return reservation.Item1.ConsumeMessage (
+				reservation.Item2, Target, out consumed);
 		}
 
 		void EnsurePostponedProcessing ()

@@ -1,6 +1,7 @@
 // PassingMessageBox.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +27,16 @@ namespace System.Threading.Tasks.Dataflow
 {
 	internal class PassingMessageBox<TInput> : MessageBox<TInput>
 	{
-		readonly DataflowBlockOptions dataflowBlockOptions;
 		readonly Action processQueue;
 
 		public PassingMessageBox (
 			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
 			CompletionHelper compHelper, Func<bool> externalCompleteTester,
-			Action processQueue, DataflowBlockOptions dataflowBlockOptions)
+			Action processQueue, DataflowBlockOptions dataflowBlockOptions,
+			bool greedy = true)
 			: base (target, messageQueue, compHelper, externalCompleteTester,
-				dataflowBlockOptions)
+				dataflowBlockOptions, greedy)
 		{
-			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.processQueue = processQueue;
 		}
 

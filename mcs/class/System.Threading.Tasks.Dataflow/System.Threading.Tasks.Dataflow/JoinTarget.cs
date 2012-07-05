@@ -28,10 +28,12 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly IDataflowBlock joinBlock;
 		readonly Action signal;
 
-		public JoinTarget (IDataflowBlock joinBlock, Action signal, CompletionHelper helper,
-		                   Func<bool> externalCompleteTester, DataflowBlockOptions options)
+		public JoinTarget (
+			IDataflowBlock joinBlock, Action signal, CompletionHelper helper,
+			Func<bool> externalCompleteTester, DataflowBlockOptions options,
+			bool greedy)
 			: base (null, new BlockingCollection<TTarget> (), helper, externalCompleteTester,
-				options)
+				options, greedy)
 		{
 			this.joinBlock = joinBlock;
 			this.signal = signal;

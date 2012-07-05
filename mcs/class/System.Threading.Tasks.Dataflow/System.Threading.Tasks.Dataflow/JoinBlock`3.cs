@@ -1,6 +1,7 @@
 // JoinBlock`3.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +38,10 @@ namespace System.Threading.Tasks.Dataflow
 		readonly JoinTarget<T3> target3;
 
 		SpinLock targetLock = new SpinLock (false);
-
-		DataflowMessageHeader headers;
+		readonly AtomicBoolean nonGreedyProcessing = new AtomicBoolean ();
 
 		public JoinBlock () : this (defaultOptions)
 		{
-
 		}
 
 		public JoinBlock (GroupingDataflowBlockOptions dataflowBlockOptions)
@@ -54,11 +53,14 @@ namespace System.Threading.Tasks.Dataflow
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 
 			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper,
-				() => outgoing.IsCompleted, dataflowBlockOptions);
+				() => outgoing.IsCompleted, dataflowBlockOptions,
+				dataflowBlockOptions.Greedy);
 			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper,
-				() => outgoing.IsCompleted, dataflowBlockOptions);
+				() => outgoing.IsCompleted, dataflowBlockOptions,
+				dataflowBlockOptions.Greedy);
 			target3 = new JoinTarget<T3> (this, SignalArrivalTargetImpl, compHelper,
-				() => outgoing.IsCompleted, dataflowBlockOptions);
+				() => outgoing.IsCompleted, dataflowBlockOptions,
+				dataflowBlockOptions.Greedy);
 			outgoing = new MessageOutgoingQueue<Tuple<T1, T2, T3>> (
 				this, compHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
@@ -117,29 +119,83 @@ namespace System.Threading.Tasks.Dataflow
 			}
 		}
 
-		// TODO : see if we can find a lockless implementation
 		void SignalArrivalTargetImpl ()
 		{
-			bool taken = false;
-			T1 value1;
-			T2 value2;
-			T3 value3;
+			if (dataflowBlockOptions.Greedy) {
+				bool taken = false;
+				T1 value1;
+				T2 value2;
+				T3 value3;
 
-			try {
-				targetLock.Enter (ref taken);
+				try {
+					targetLock.Enter (ref taken);
 
-				if (target1.Buffer.Count == 0 || target2.Buffer.Count == 0 || target3.Buffer.Count == 0)
-					return;
+					if (target1.Buffer.Count == 0 || target2.Buffer.Count == 0
+					    || target3.Buffer.Count == 0)
+						return;
 
-				value1 = target1.Buffer.Take ();
-				value2 = target2.Buffer.Take ();
-				value3 = target3.Buffer.Take ();
-			} finally {
-				if (taken)
-					targetLock.Exit ();
+					value1 = target1.Buffer.Take ();
+					value2 = target2.Buffer.Take ();
+					value3 = target3.Buffer.Take ();
+				} finally {
+					if (taken)
+						targetLock.Exit ();
+				}
+
+				TriggerMessage (value1, value2, value3);
+			} else {
+				if (target1.PostponedMessagesCount >= 1
+				    && target2.PostponedMessagesCount >= 1
+				    && target3.PostponedMessagesCount >= 1)
+					EnsureNonGreedyProcessing ();
+			}
+		}
+
+		void EnsureNonGreedyProcessing ()
+		{
+			if (nonGreedyProcessing.TrySet())
+				Task.Factory.StartNew (NonGreedyProcess,
+					dataflowBlockOptions.CancellationToken,
+					TaskCreationOptions.PreferFairness,
+					dataflowBlockOptions.TaskScheduler);
+		}
+
+		void NonGreedyProcess ()
+		{
+			while (target1.PostponedMessagesCount >= 1
+			       && target2.PostponedMessagesCount >= 1
+			       && target3.PostponedMessagesCount >= 1) {
+				var reservation1 = target1.ReserveMessage ();
+
+				if (reservation1 == null)
+					break;
+
+				var reservation2 = target2.ReserveMessage ();
+				if (reservation2 == null) {
+					target1.RelaseReservation (reservation1);
+					break;
+				}
+
+				var reservation3 = target3.ReserveMessage ();
+				if (reservation3 == null) {
+					target1.RelaseReservation (reservation1);
+					target2.RelaseReservation (reservation2);
+					break;
+				}
+
+				var value1 = target1.ConsumeReserved (reservation1);
+				var value2 = target2.ConsumeReserved (reservation2);
+				var value3 = target3.ConsumeReserved (reservation3);
+
+				TriggerMessage (value1, value2, value3);
 			}
 
-			TriggerMessage (value1, value2, value3);
+			nonGreedyProcessing.Value = false;
+
+			if (target1.PostponedMessagesCount >= 1
+			    && target2.PostponedMessagesCount >= 1
+			    && target3.PostponedMessagesCount >= 1)
+				EnsureNonGreedyProcessing ();
 		}
 
 		void TriggerMessage (T1 val1, T2 val2, T3 val3)

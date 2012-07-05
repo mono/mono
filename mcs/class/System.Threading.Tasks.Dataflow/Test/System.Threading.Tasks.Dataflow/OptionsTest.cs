@@ -38,7 +38,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			GroupingDataflowBlockOptions groupingDataflowBlockOptions)
 		{
 			yield return new ActionBlock<int> (i => { }, executionDataflowBlockOptions);
-			yield return new BatchBlock<double> (10, dataflowBlockOptions);
+			yield return new BatchBlock<double> (10, groupingDataflowBlockOptions);
 			yield return new BatchedJoinBlock<dynamic, object> (
 				10, groupingDataflowBlockOptions);
 			yield return new BatchedJoinBlock<dynamic, object, char> (
@@ -229,7 +229,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		{
 			var options = new ExecutionDataflowBlockOptions ();
 			foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))
-				Assert.AreEqual (1, taskIds.Distinct ().Count ());
+				Assert.GreaterOrEqual (taskIds.Distinct ().Count (), 1);
 
 			options = new ExecutionDataflowBlockOptions { MaxMessagesPerTask = 1 };
 			foreach (var taskIds in GetTaskIdsForExecutionsOptions (options))

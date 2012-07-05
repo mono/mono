@@ -19,8 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
 using System.Collections.Generic;
 
@@ -29,10 +27,8 @@ namespace System.Threading.Tasks.Dataflow {
 		IReceivableSourceBlock<Tuple<IList<T1>, IList<T2>, IList<T3>>> {
 		readonly GroupingDataflowBlockOptions options;
 
-		CompletionHelper completionHelper;
+		readonly CompletionHelper completionHelper;
 		readonly MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> outgoing;
-
-		DataflowMessageHeader headers;
 		SpinLock batchLock;
 
 		readonly JoinTarget<T1> target1;
@@ -54,6 +50,10 @@ namespace System.Threading.Tasks.Dataflow {
 					"batchSize", batchSize, "The batchSize must be positive.");
 			if (dataflowBlockOptions == null)
 				throw new ArgumentNullException ("dataflowBlockOptions");
+			if (!dataflowBlockOptions.Greedy)
+				throw new ArgumentException (
+					"Greedy must be true for this dataflow block.", "dataflowBlockOptions");
+
 
 			BatchSize = batchSize;
 			options = dataflowBlockOptions;
@@ -61,13 +61,13 @@ namespace System.Threading.Tasks.Dataflow {
 
 			target1 = new JoinTarget<T1> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
-				dataflowBlockOptions);
+				dataflowBlockOptions, true);
 			target2 = new JoinTarget<T2> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
-				dataflowBlockOptions);
+				dataflowBlockOptions, true);
 			target3 = new JoinTarget<T3>(
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
-				dataflowBlockOptions);
+				dataflowBlockOptions, true);
 
 			outgoing = new MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> (
 				this, completionHelper,

@@ -161,6 +161,9 @@ namespace System.Threading.Tasks.Dataflow {
 					return true;
 				}
 
+				targets.UnpostponeTarget (target, false);
+				VerifyProcessing ();
+
 				return false;
 			} finally {
 				if (lockTaken)

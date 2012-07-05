@@ -1,6 +1,7 @@
 // BatchBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,34 +20,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	public sealed class BatchBlock<T> : IPropagatorBlock<T, T[]>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T[]>, IReceivableSourceBlock<T[]>
-	{
-		static readonly DataflowBlockOptions defaultOptions = new DataflowBlockOptions ();
-
-		CompletionHelper compHelper;
-		BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
-		MessageBox<T> messageBox;
-		DataflowBlockOptions dataflowBlockOptions;
+namespace System.Threading.Tasks.Dataflow {
+	public sealed class BatchBlock<T> : IPropagatorBlock<T, T[]>, IReceivableSourceBlock<T[]> {
+		readonly CompletionHelper compHelper;
+		readonly BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
+		readonly MessageBox<T> messageBox;
+		readonly GroupingDataflowBlockOptions dataflowBlockOptions;
 		readonly int batchSize;
 		int batchCount;
-		MessageOutgoingQueue<T[]> outgoing;
-		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
+		readonly MessageOutgoingQueue<T[]> outgoing;
 		SpinLock batchLock;
+		readonly AtomicBoolean nonGreedyProcessing = new AtomicBoolean ();
 
-		public BatchBlock (int batchSize) : this (batchSize, defaultOptions)
+		public BatchBlock (int batchSize) : this (batchSize, GroupingDataflowBlockOptions.Default)
 		{
-
 		}
 
-		public BatchBlock (int batchSize, DataflowBlockOptions dataflowBlockOptions)
+		public BatchBlock (int batchSize, GroupingDataflowBlockOptions dataflowBlockOptions)
 		{
 			if (dataflowBlockOptions == null)
 				throw new ArgumentNullException ("dataflowBlockOptions");
@@ -55,7 +49,8 @@ namespace System.Threading.Tasks.Dataflow
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
-				() => outgoing.IsCompleted, BatchProcess, dataflowBlockOptions);
+				() => outgoing.IsCompleted, () => BatchProcess (), dataflowBlockOptions,
+				dataflowBlockOptions.Greedy);
 			this.outgoing = new MessageOutgoingQueue<T[]> (this, compHelper,
 				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
 				dataflowBlockOptions);
@@ -108,47 +103,121 @@ namespace System.Threading.Tasks.Dataflow
 				earlyBatchSize = batchCount;
 				if (earlyBatchSize == 0)
 					return;
-			} while (Interlocked.CompareExchange (ref batchCount, 0, earlyBatchSize) != earlyBatchSize);
+			} while (Interlocked.CompareExchange (ref batchCount, 0, earlyBatchSize)
+			         != earlyBatchSize);
 
-			MakeBatch (earlyBatchSize);
+			MakeBatch (earlyBatchSize, true);
 		}
 
-		void BatchProcess ()
+		void BatchProcess (int addedItems = 1)
 		{
-			// has to deal correctly with concurrent TriggerBatch
+			// the Interlocked pattern is necessary, because this method
+			// has to deal correctly with concurrent TriggerBatch ()
 
 			int current;
 			int previousCount;
+			bool makeBatch;
 			do {
+				makeBatch = false;
 				previousCount = batchCount;
-				current = previousCount + 1;
+				current = previousCount + addedItems;
 
-				if (current == batchSize)
-					current = 0;
+				if (current >= batchSize) {
+					current -= batchSize;
+					makeBatch = true;
+				}
 			} while (Interlocked.CompareExchange (ref batchCount, current, previousCount)
 			         != previousCount);
 
-			if (current == 0)
-				MakeBatch (batchSize);
+			if (makeBatch)
+				MakeBatch (batchSize, false);
 		}
 
-		void MakeBatch (int size)
+		void MakeBatch (int size, bool manuallyTriggered)
 		{
-			T[] batch = new T[size];
+			if (dataflowBlockOptions.Greedy) {
+				T[] batch = new T[size];
 
-			// lock is necessary here to make sure items are in the correct order
-			bool taken = false;
-			try {
-				batchLock.Enter (ref taken);
+				// lock is necessary here to make sure items are in the correct order
+				bool taken = false;
+				try {
+					batchLock.Enter (ref taken);
 
-				for (int i = 0; i < size; ++i)
-					messageQueue.TryTake (out batch[i]);
-			} finally {
-				if (taken)
-					batchLock.Exit();
+					for (int i = 0; i < size; ++i)
+						messageQueue.TryTake (out batch [i]);
+				} finally {
+					if (taken)
+						batchLock.Exit ();
+				}
+
+				outgoing.AddData (batch);
+			} else
+				EnsureNonGreedyProcessing (manuallyTriggered);
+		}
+
+		void EnsureNonGreedyProcessing (bool manuallyTriggered)
+		{
+			if (nonGreedyProcessing.TrySet ())
+				Task.Factory.StartNew (() => NonGreedyProcess (manuallyTriggered),
+					dataflowBlockOptions.CancellationToken,
+					TaskCreationOptions.PreferFairness,
+					dataflowBlockOptions.TaskScheduler);
+		}
+
+		void NonGreedyProcess (bool manuallyTriggered)
+		{
+			bool first = true;
+
+			while ((manuallyTriggered && first)
+			       || messageBox.PostponedMessagesCount >= batchSize) {
+				var reservations =
+					new List<Tuple<ISourceBlock<T>, DataflowMessageHeader>> ();
+
+				int expectedReservationsCount = messageBox.PostponedMessagesCount;
+
+				bool gotReservation;
+				do {
+					var reservation = messageBox.ReserveMessage ();
+					gotReservation = reservation != null;
+					if (gotReservation)
+						reservations.Add (reservation);
+				} while (gotReservation && reservations.Count < batchSize);
+
+				int expectedSize = manuallyTriggered && first
+					                   ? expectedReservationsCount
+					                   : batchSize;
+
+				if (reservations.Count < expectedSize) {
+					foreach (var reservation in reservations)
+						messageBox.RelaseReservation (reservation);
+					BatchProcess (reservations.Count);
+
+					// some reservations failed, which most likely means the message
+					// was consumed by someone else and a new one will be offered soon;
+					// so postpone the batch, so that the other block has time to do that
+					// (MS .Net does something like this too)
+					if (manuallyTriggered && first) {
+						Task.Factory.StartNew (() => NonGreedyProcess (true),
+							dataflowBlockOptions.CancellationToken,
+							TaskCreationOptions.PreferFairness,
+							dataflowBlockOptions.TaskScheduler);
+						return;
+					}
+				} else {
+					T[] batch = new T[reservations.Count];
+
+					for (int i = 0; i < reservations.Count; i++)
+						batch [i] = messageBox.ConsumeReserved (reservations [i]);
+
+					outgoing.AddData (batch);
+				}
+
+				first = false;
 			}
 
-			outgoing.AddData (batch);
+			nonGreedyProcessing.Value = false;
+			if (messageBox.PostponedMessagesCount >= batchSize)
+				EnsureNonGreedyProcessing (false);
 		}
 
 		public void Complete ()
