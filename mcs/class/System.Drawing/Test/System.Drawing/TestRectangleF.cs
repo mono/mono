@@ -69,6 +69,16 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+		public void ContainsF ()
+		{
+			// from bug #5985
+			RectangleF outer = new RectangleF (100, 150, 300, 300);
+			RectangleF inner = new RectangleF (139.3323f, 188.4053f, 140.2086f, 210.3129f);
+			
+			Assert.IsTrue (outer.Contains (inner), "a");
+		}
+
+		[Test]
 		public void Empty ()
 		{
 			Assert.AreEqual (rect_2.X, 0, "X");
