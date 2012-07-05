@@ -289,5 +289,100 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (task.Wait (0));
 		}
 
+		[Test]
+		public void MaxMessagesDirectTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var source =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			Assert.NotNull (
+				source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 1 }));
+
+			Assert.IsTrue (source.Post (42));
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (target.TryReceive (null, out item));
+			Assert.AreEqual (42, item);
+
+			Assert.IsTrue (source.Post (43));
+			scheduler.ExecuteAll ();
+			Assert.IsFalse (target.TryReceive (null, out item));
+			Assert.IsTrue (source.TryReceive (null, out item));
+			Assert.AreEqual (43, item);
+		}
+
+		[Test]
+		public void MaxMessagesPostponedTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var source =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new BufferBlock<int> (
+				new DataflowBlockOptions { TaskScheduler = scheduler, BoundedCapacity = 1 });
+			Assert.NotNull (
+				source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 2 }));
+
+			Assert.IsTrue (source.Post (42));
+			Assert.IsTrue (source.Post (43));
+			Assert.IsTrue (source.Post (44));
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (target.TryReceive (null, out item));
+			Assert.AreEqual (42, item);
+			Assert.IsFalse (target.TryReceive (null, out item));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (target.TryReceive (null, out item));
+			Assert.AreEqual (43, item);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsFalse (target.TryReceive (null, out item));
+			Assert.IsTrue (source.TryReceive (null, out item));
+			Assert.AreEqual (44, item);
+		}
+
+		[Test]
+		public void MaxMessagesPostponedUnconsumedTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var source =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target =
+				new BufferBlock<int> (
+					new DataflowBlockOptions { TaskScheduler = scheduler, BoundedCapacity = 1 });
+			Assert.NotNull (
+				source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 2 }));
+
+			Assert.IsTrue (source.Post (42));
+			Assert.IsTrue (source.Post (43));
+			Assert.IsTrue (source.Post (44));
+			Assert.IsTrue (source.Post (45));
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (source.TryReceive (null, out item));
+			Assert.AreEqual (43, item);
+
+			Assert.IsTrue (target.TryReceive (null, out item));
+			Assert.AreEqual (42, item);
+			Assert.IsFalse (target.TryReceive (null, out item));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (target.TryReceive (null, out item));
+			Assert.AreEqual (44, item);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsFalse (target.TryReceive (null, out item));
+			Assert.IsTrue (source.TryReceive (null, out item));
+			Assert.AreEqual (45, item);
+		}
 	}
 }

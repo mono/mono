@@ -143,7 +143,7 @@ namespace System.Threading.Tasks.Dataflow {
 					firstItemLock.Exit ();
 			}
 
-			targets.UnpostponeTarget (targetBlock);
+			targets.UnpostponeTarget (targetBlock, messageConsumed);
 			VerifyProcessing ();
 			VerifyCompleteness ();
 

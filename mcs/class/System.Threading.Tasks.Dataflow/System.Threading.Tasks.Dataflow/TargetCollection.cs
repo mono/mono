@@ -36,12 +36,20 @@ namespace System.Threading.Tasks.Dataflow {
 			public Target (ITargetBlock<T> targetBlock, int maxMessages)
 			{
 				TargetBlock = targetBlock;
-				RemainingMessages = maxMessages;
+				remainingMessages = maxMessages;
 			}
 
 			public ITargetBlock<T> TargetBlock { get; private set; }
 
-			public int RemainingMessages { get; set; }
+			volatile int remainingMessages;
+
+			public void MessageSent()
+			{
+				if (remainingMessages != -1)
+					remainingMessages--;
+				if (remainingMessages == 0)
+					Dispose ();
+			}
 
 			readonly AtomicBoolean disabled = new AtomicBoolean ();
 			public bool Disabled
@@ -63,10 +71,10 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly ConcurrentQueue<Target> prependQueue = new ConcurrentQueue<Target> ();
 		readonly ConcurrentQueue<Target> appendQueue = new ConcurrentQueue<Target> ();
 		readonly LinkedList<Target> targets = new LinkedList<Target> ();
-		readonly ConcurrentDictionary<ITargetBlock<T>, bool> postponedTargetBlocks =
-			new ConcurrentDictionary<ITargetBlock<T>, bool> ();
-		readonly ConcurrentQueue<ITargetBlock<T>> unpostponedTargetBlocks =
-			new ConcurrentQueue<ITargetBlock<T>> ();
+		readonly ConcurrentDictionary<ITargetBlock<T>, Target> postponedTargetBlocks =
+			new ConcurrentDictionary<ITargetBlock<T>, Target> ();
+		readonly ConcurrentQueue<Target> unpostponedTargets =
+			new ConcurrentQueue<Target> ();
 
 		int messageHeaderId;
 
@@ -96,8 +104,8 @@ namespace System.Threading.Tasks.Dataflow {
 			currentHeader = new DataflowMessageHeader(++messageHeaderId);
 
 			// clear unpostponed
-			ITargetBlock<T> ignored;
-			while (unpostponedTargetBlocks.TryDequeue (out ignored)) {
+			Target ignored;
+			while (unpostponedTargets.TryDequeue (out ignored)) {
 			}
 		}
 
@@ -147,7 +155,7 @@ namespace System.Threading.Tasks.Dataflow {
 		public bool NeedsProcessing {
 			get {
 				return !appendQueue.IsEmpty || !prependQueue.IsEmpty
-				       || !unpostponedTargetBlocks.IsEmpty;
+				       || !unpostponedTargets.IsEmpty;
 			}
 		}
 
@@ -204,31 +212,10 @@ namespace System.Threading.Tasks.Dataflow {
 
 		bool OfferItemToUnpostponed ()
 		{
-			if (unpostponedTargetBlocks.IsEmpty)
-				return false;
-
-			var unpostponed = new HashSet<ITargetBlock<T>> ();
-			ITargetBlock<T> targetBlock;
-			while (unpostponedTargetBlocks.TryDequeue (out targetBlock))
-				unpostponed.Add (targetBlock);
-
-			// I don't like the linear walk here, but I think it's
-			// better than adding ITargetBlock -> Target dictionary
-			var node = targets.First;
-			while (node != targets.Last.Next) {
-				if (node.Value.Disabled) {
-					var nodeToRemove = node;
-					node = node.Next;
-					targets.Remove (nodeToRemove);
-					continue;
-				}
-
-				if (unpostponed.Remove (node.Value.TargetBlock)) {
-					if (OfferItem (node.Value))
-						return true;
-				}
-
-				node = node.Next;
+			Target target;
+			while (unpostponedTargets.TryDequeue (out target)) {
+				if (!target.Disabled && OfferItem(target))
+					return true;
 			}
 
 			return false;
@@ -244,9 +231,10 @@ namespace System.Threading.Tasks.Dataflow {
 
 			switch (result) {
 			case DataflowMessageStatus.Accepted:
+				target.MessageSent ();
 				return true;
 			case DataflowMessageStatus.Postponed:
-				postponedTargetBlocks.TryAdd (target.TargetBlock, true);
+				postponedTargetBlocks.TryAdd (target.TargetBlock, target);
 				return false;
 			case DataflowMessageStatus.DecliningPermanently:
 				target.Dispose ();
@@ -256,11 +244,13 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
-		public void UnpostponeTarget (ITargetBlock<T> targetBlock)
+		public void UnpostponeTarget (ITargetBlock<T> targetBlock, bool messageConsumed)
 		{
-			bool ignored;
-			postponedTargetBlocks.TryRemove (targetBlock, out ignored);
-			unpostponedTargetBlocks.Enqueue (targetBlock);
+			Target target;
+			postponedTargetBlocks.TryRemove (targetBlock, out target);
+			if (messageConsumed)
+				target.MessageSent ();
+			unpostponedTargets.Enqueue (target);
 		}
 
 		public bool VerifyHeader (DataflowMessageHeader header, ITargetBlock<T> targetBlock)
