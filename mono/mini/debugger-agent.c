@@ -966,7 +966,11 @@ transport_handshake (void)
 	do {
 		res = send (conn_fd, handshake_msg, strlen (handshake_msg), 0);
 	} while (res == -1 && errno == EINTR);
-	g_assert (res != -1);
+	/* g_assert (res != -1); */
+	if (-1 == res) {
+		fprintf (stderr, "debugger-agent: DWP handshake failed.\n");
+		return FALSE;
+	}
 
 	/* Read answer */
 	res = recv_length (conn_fd, buf, strlen (handshake_msg), 0);
@@ -994,7 +998,11 @@ transport_handshake (void)
                                  TCP_NODELAY,
                                  (char *) &flag,
                                  sizeof(int));
-		g_assert (result >= 0);
+		/* g_assert (result >= 0); */
+		if (0 > result) {
+			fprintf (stderr, "debugger-agent: Error setting TCP_NODELAY.\n");
+			return FALSE;
+		}
 	}
 	
 	return TRUE;
