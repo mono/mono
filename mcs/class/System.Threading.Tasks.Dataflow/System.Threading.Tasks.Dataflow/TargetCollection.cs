@@ -33,15 +33,18 @@ namespace System.Threading.Tasks.Dataflow {
 		/// Represents a target block with its options.
 		/// </summary>
 		class Target : IDisposable {
-			public Target (ITargetBlock<T> targetBlock, int maxMessages)
-			{
-				TargetBlock = targetBlock;
-				remainingMessages = maxMessages;
-			}
+			volatile int remainingMessages;
+			readonly CancellationTokenSource cancellationTokenSource;
 
 			public ITargetBlock<T> TargetBlock { get; private set; }
 
-			volatile int remainingMessages;
+			public Target (ITargetBlock<T> targetBlock, int maxMessages,
+			               CancellationTokenSource cancellationTokenSource)
+			{
+				TargetBlock = targetBlock;
+				remainingMessages = maxMessages;
+				this.cancellationTokenSource = cancellationTokenSource;
+			}
 
 			public void MessageSent()
 			{
@@ -60,6 +63,10 @@ namespace System.Threading.Tasks.Dataflow {
 			public void Dispose ()
 			{
 				disabled.Value = true;
+
+				if (cancellationTokenSource != null)
+					cancellationTokenSource.Cancel ();
+
 				// to avoid memory leak; it could take a long time
 				// before this object is actually removed from the collection
 				TargetBlock = null;
@@ -89,7 +96,20 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public IDisposable AddTarget(ITargetBlock<T> targetBlock, DataflowLinkOptions options)
 		{
-			var target = new Target (targetBlock, options.MaxMessages);
+			CancellationTokenSource cancellationTokenSource = null;
+			if (options.PropagateCompletion) {
+				cancellationTokenSource = new CancellationTokenSource();
+				block.Completion.ContinueWith (t =>
+				{
+					if (t.IsFaulted)
+						targetBlock.Fault (t.Exception);
+					else
+						targetBlock.Complete ();
+				}, cancellationTokenSource.Token);
+			}
+
+
+			var target = new Target (targetBlock, options.MaxMessages, cancellationTokenSource);
 			if (options.Append)
 				appendQueue.Enqueue (target);
 			else
