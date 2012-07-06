@@ -3,8 +3,10 @@
 //  
 // Author:
 //       Jérémie "garuma" Laval <jeremie.laval@gmail.com>
+//       Petr Onderka <gsvick@gmail.com>
 // 
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
 using NUnit.Framework;
@@ -124,6 +123,21 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 
 			Assert.IsNotNull (array);
 			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, array);			
+		}
+
+		[Test]
+		public void TriggerBatchWhenEmpty ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchBlock<int> (5,
+				new GroupingDataflowBlockOptions { TaskScheduler = scheduler });
+			block.TriggerBatch ();
+
+			scheduler.ExecuteAll ();
+
+			int[] batch;
+			Assert.IsFalse (block.TryReceive (out batch));
+			Assert.IsNull (batch);
 		}
 	}
 }
