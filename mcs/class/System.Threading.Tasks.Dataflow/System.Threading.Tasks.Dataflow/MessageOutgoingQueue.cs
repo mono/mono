@@ -40,7 +40,7 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly AtomicBoolean isProcessing = new AtomicBoolean ();
 		readonly TargetCollection<T> targets;
 		SpinLock firstItemLock = new SpinLock();
-		ITargetBlock<T> reservedForTargetBlock;
+		volatile ITargetBlock<T> reservedForTargetBlock;
 
 		public MessageOutgoingQueue (
 			ISourceBlock<T> block, CompletionHelper compHelper,
@@ -183,7 +183,7 @@ namespace System.Threading.Tasks.Dataflow {
 					throw new InvalidOperationException(
 						"The target did not have the message reserved.");
 
-				Volatile.Write(ref reservedForTargetBlock, null);
+				reservedForTargetBlock = null;
 			} finally {
 				if (lockTaken)
 					firstItemLock.Exit ();
