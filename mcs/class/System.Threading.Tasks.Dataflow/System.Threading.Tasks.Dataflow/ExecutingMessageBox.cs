@@ -49,7 +49,7 @@ namespace System.Threading.Tasks.Dataflow
 			this.compHelper = compHelper;
 		}
 
-		protected override void EnsureProcessing ()
+		protected override void EnsureProcessing (bool newItem)
 		{
 			StartProcessing ();
 		}
@@ -109,7 +109,7 @@ namespace System.Threading.Tasks.Dataflow
 						outgoingQueueComplete ();
 				}
 				if (MessageQueue.Count > 0)
-					EnsureProcessing ();
+					EnsureProcessing (false);
 			}
 		}
 

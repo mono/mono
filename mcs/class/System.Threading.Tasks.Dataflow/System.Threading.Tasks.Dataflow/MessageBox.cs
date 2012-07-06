@@ -66,16 +66,16 @@ namespace System.Threading.Tasks.Dataflow {
 			if (MessageQueue.IsAddingCompleted || !compHelper.CanRun)
 				return DataflowMessageStatus.DecliningPermanently;
 
-			if (!greedy ||
-			    (options.BoundedCapacity != -1
-			     && Thread.VolatileRead (ref itemCount) >= options.BoundedCapacity)) {
+			var full = options.BoundedCapacity != -1
+			           && Thread.VolatileRead (ref itemCount) >= options.BoundedCapacity;
+			if (!greedy || full) {
 				if (source == null)
 					return DataflowMessageStatus.Declined;
 
 				postponedMessages [source] = messageHeader;
 
-				if (!greedy)
-					EnsureProcessing ();
+				if (!greedy && !full)
+					EnsureProcessing (true);
 				
 				return DataflowMessageStatus.Postponed;
 			}
@@ -99,7 +99,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 			IncreaseCount ();
 
-			EnsureProcessing ();
+			EnsureProcessing (true);
 
 			VerifyCompleteness ();
 
@@ -111,12 +111,17 @@ namespace System.Threading.Tasks.Dataflow {
 			Interlocked.Increment (ref itemCount);
 		}
 
-		public void DecreaseCount()
+		public void DecreaseCount (int count = 1)
 		{
-			int decreased = Interlocked.Decrement (ref itemCount);
+			int decreased = Interlocked.Add (ref itemCount, -count);
 
-			if (greedy && decreased < options.BoundedCapacity && !postponedMessages.IsEmpty)
-				EnsurePostponedProcessing ();
+			// if BoundedCapacity is -1, there is no need to do this
+			if (decreased < options.BoundedCapacity && !postponedMessages.IsEmpty) {
+				if (greedy)
+					EnsurePostponedProcessing ();
+				else
+					EnsureProcessing (false);
+			}
 		}
 
 		public int PostponedMessagesCount {
@@ -169,6 +174,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		void RetrievePostponed ()
 		{
+			// BoundedCapacity can't be -1 here, because in that case there would be no postponing
 			while (Volatile.Read (ref itemCount) < options.BoundedCapacity
 			       && !postponedMessages.IsEmpty) {
 				var block = postponedMessages.First ().Key;
@@ -181,7 +187,7 @@ namespace System.Threading.Tasks.Dataflow {
 					try {
 						MessageQueue.Add (item);
 						IncreaseCount ();
-						EnsureProcessing ();
+						EnsureProcessing (false);
 					} catch (InvalidOperationException) {
 						break;
 					}
@@ -196,7 +202,7 @@ namespace System.Threading.Tasks.Dataflow {
 				EnsurePostponedProcessing ();
 		}
 
-		protected virtual void EnsureProcessing ()
+		protected virtual void EnsureProcessing (bool newItem)
 		{
 		}
 

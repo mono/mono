@@ -40,7 +40,7 @@ namespace System.Threading.Tasks.Dataflow {
 			Target = this;
 		}
 
-		protected override void EnsureProcessing ()
+		protected override void EnsureProcessing (bool newItem)
 		{
 			signal ();
 		}

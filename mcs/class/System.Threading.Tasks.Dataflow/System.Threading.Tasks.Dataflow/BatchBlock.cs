@@ -49,11 +49,11 @@ namespace System.Threading.Tasks.Dataflow {
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
-				() => outgoing.IsCompleted, () => BatchProcess (), dataflowBlockOptions,
-				dataflowBlockOptions.Greedy);
+				() => outgoing.IsCompleted, newItem => BatchProcess (newItem ? 1 : 0),
+				dataflowBlockOptions, dataflowBlockOptions.Greedy);
 			this.outgoing = new MessageOutgoingQueue<T[]> (this, compHelper,
-				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
-				dataflowBlockOptions);
+				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
+				dataflowBlockOptions, batch => batch.Length);
 		}
 
 		public DataflowMessageStatus OfferMessage (
@@ -98,61 +98,76 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public void TriggerBatch ()
 		{
-			int earlyBatchSize;
-			do {
-				earlyBatchSize = batchCount;
-				if (earlyBatchSize == 0)
-					return;
-			} while (Interlocked.CompareExchange (ref batchCount, 0, earlyBatchSize)
-			         != earlyBatchSize);
+			if (dataflowBlockOptions.Greedy) {
+				int earlyBatchSize;
+				do {
+					earlyBatchSize = batchCount;
+					if (earlyBatchSize == 0)
+						return;
+				} while (Interlocked.CompareExchange (ref batchCount, 0, earlyBatchSize)
+				         != earlyBatchSize);
 
-			MakeBatch (earlyBatchSize, true);
+				MakeBatch (earlyBatchSize);
+			} else {
+				if (dataflowBlockOptions.BoundedCapacity == -1
+				    || outgoing.Count <= dataflowBlockOptions.BoundedCapacity)
+					EnsureNonGreedyProcessing (true);
+			}
 		}
 
 		void BatchProcess (int addedItems = 1)
 		{
-			// the Interlocked pattern is necessary, because this method
-			// has to deal correctly with concurrent TriggerBatch ()
+			if (dataflowBlockOptions.Greedy) {
+				// the Interlocked pattern is necessary, because this method
+				// has to deal correctly with concurrent TriggerBatch ()
+				int current;
+				int previousCount;
+				bool makeBatch;
+				do {
+					makeBatch = false;
+					previousCount = batchCount;
+					current = previousCount + addedItems;
 
-			int current;
-			int previousCount;
-			bool makeBatch;
-			do {
-				makeBatch = false;
-				previousCount = batchCount;
-				current = previousCount + addedItems;
+					if (current >= batchSize) {
+						current -= batchSize;
+						makeBatch = true;
+					}
+				} while (Interlocked.CompareExchange (ref batchCount, current, previousCount)
+				         != previousCount);
 
-				if (current >= batchSize) {
-					current -= batchSize;
-					makeBatch = true;
-				}
-			} while (Interlocked.CompareExchange (ref batchCount, current, previousCount)
-			         != previousCount);
-
-			if (makeBatch)
-				MakeBatch (batchSize, false);
+				if (makeBatch)
+					MakeBatch (batchSize);
+			} else {
+				if (ShouldProcessNonGreedy ())
+					EnsureNonGreedyProcessing (false);
+			}
 		}
 
-		void MakeBatch (int size, bool manuallyTriggered)
+		bool ShouldProcessNonGreedy ()
 		{
-			if (dataflowBlockOptions.Greedy) {
-				T[] batch = new T[size];
+			// do we have enough items waiting and would the new batch fit?
+			return messageBox.PostponedMessagesCount >= batchSize
+			       && (dataflowBlockOptions.BoundedCapacity == -1
+			           || outgoing.Count + batchSize <= dataflowBlockOptions.BoundedCapacity);
+		}
 
-				// lock is necessary here to make sure items are in the correct order
-				bool taken = false;
-				try {
-					batchLock.Enter (ref taken);
+		void MakeBatch (int size)
+		{
+			T[] batch = new T[size];
 
-					for (int i = 0; i < size; ++i)
-						messageQueue.TryTake (out batch [i]);
-				} finally {
-					if (taken)
-						batchLock.Exit ();
-				}
+			// lock is necessary here to make sure items are in the correct order
+			bool taken = false;
+			try {
+				batchLock.Enter (ref taken);
 
-				outgoing.AddData (batch);
-			} else
-				EnsureNonGreedyProcessing (manuallyTriggered);
+				for (int i = 0; i < size; ++i)
+					messageQueue.TryTake (out batch [i]);
+			} finally {
+				if (taken)
+					batchLock.Exit ();
+			}
+
+			outgoing.AddData (batch);
 		}
 
 		void EnsureNonGreedyProcessing (bool manuallyTriggered)
@@ -168,12 +183,14 @@ namespace System.Threading.Tasks.Dataflow {
 		{
 			bool first = true;
 
-			while ((manuallyTriggered && first)
-			       || messageBox.PostponedMessagesCount >= batchSize) {
+			do {
 				var reservations =
 					new List<Tuple<ISourceBlock<T>, DataflowMessageHeader>> ();
 
 				int expectedReservationsCount = messageBox.PostponedMessagesCount;
+
+				if (expectedReservationsCount == 0)
+					break;
 
 				bool gotReservation;
 				do {
@@ -184,7 +201,7 @@ namespace System.Threading.Tasks.Dataflow {
 				} while (gotReservation && reservations.Count < batchSize);
 
 				int expectedSize = manuallyTriggered && first
-					                   ? expectedReservationsCount
+					                   ? Math.Min (expectedReservationsCount, batchSize)
 					                   : batchSize;
 
 				if (reservations.Count < expectedSize) {
@@ -213,10 +230,10 @@ namespace System.Threading.Tasks.Dataflow {
 				}
 
 				first = false;
-			}
+			} while (ShouldProcessNonGreedy ());
 
 			nonGreedyProcessing.Value = false;
-			if (messageBox.PostponedMessagesCount >= batchSize)
+			if (ShouldProcessNonGreedy ())
 				EnsureNonGreedyProcessing (false);
 		}
 
@@ -248,4 +265,3 @@ namespace System.Threading.Tasks.Dataflow {
 		}
 	}
 }
-

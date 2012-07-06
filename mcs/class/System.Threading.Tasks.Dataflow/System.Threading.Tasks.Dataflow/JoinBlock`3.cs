@@ -65,7 +65,7 @@ namespace System.Threading.Tasks.Dataflow
 				this, compHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
 				      || target3.Buffer.IsCompleted,
-				() =>
+				_ =>
 				{
 					target1.DecreaseCount ();
 					target2.DecreaseCount ();
@@ -144,11 +144,18 @@ namespace System.Threading.Tasks.Dataflow
 
 				TriggerMessage (value1, value2, value3);
 			} else {
-				if (target1.PostponedMessagesCount >= 1
-				    && target2.PostponedMessagesCount >= 1
-				    && target3.PostponedMessagesCount >= 1)
+				if (ShouldProcesNonGreedy ())
 					EnsureNonGreedyProcessing ();
 			}
+		}
+
+		bool ShouldProcesNonGreedy ()
+		{
+			return target1.PostponedMessagesCount >= 1
+			       && target2.PostponedMessagesCount >= 1
+			       && target3.PostponedMessagesCount >= 1
+			       && (dataflowBlockOptions.BoundedCapacity == -1
+			           || outgoing.Count < dataflowBlockOptions.BoundedCapacity);
 		}
 
 		void EnsureNonGreedyProcessing ()
@@ -162,9 +169,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		void NonGreedyProcess ()
 		{
-			while (target1.PostponedMessagesCount >= 1
-			       && target2.PostponedMessagesCount >= 1
-			       && target3.PostponedMessagesCount >= 1) {
+			while (ShouldProcesNonGreedy ()) {
 				var reservation1 = target1.ReserveMessage ();
 
 				if (reservation1 == null)
@@ -192,9 +197,7 @@ namespace System.Threading.Tasks.Dataflow
 
 			nonGreedyProcessing.Value = false;
 
-			if (target1.PostponedMessagesCount >= 1
-			    && target2.PostponedMessagesCount >= 1
-			    && target3.PostponedMessagesCount >= 1)
+			if (ShouldProcesNonGreedy ())
 				EnsureNonGreedyProcessing ();
 		}
 

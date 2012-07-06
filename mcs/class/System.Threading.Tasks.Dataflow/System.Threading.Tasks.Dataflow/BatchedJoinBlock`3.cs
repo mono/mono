@@ -53,7 +53,10 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!dataflowBlockOptions.Greedy)
 				throw new ArgumentException (
 					"Greedy must be true for this dataflow block.", "dataflowBlockOptions");
-
+			if (dataflowBlockOptions.BoundedCapacity != DataflowBlockOptions.Unbounded)
+				throw new ArgumentException (
+					"BoundedCapacity must be Unbounded or -1 for this dataflow block.",
+					"dataflowBlockOptions");
 
 			BatchSize = batchSize;
 			options = dataflowBlockOptions;
@@ -73,7 +76,7 @@ namespace System.Threading.Tasks.Dataflow {
 				this, completionHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
 				      || target3.Buffer.IsCompleted,
-				() =>
+				_ =>
 				{
 					target1.DecreaseCount ();
 					target2.DecreaseCount ();

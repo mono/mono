@@ -55,7 +55,7 @@ namespace System.Threading.Tasks.Dataflow
 				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
 				dataflowBlockOptions);
 			this.outgoing = new MessageOutgoingQueue<TOutput> (this, compHelper,
-				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
+				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions);
 		}
 

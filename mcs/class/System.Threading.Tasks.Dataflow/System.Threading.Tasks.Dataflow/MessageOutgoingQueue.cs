@@ -35,16 +35,19 @@ namespace System.Threading.Tasks.Dataflow {
 		int outgoingCount;
 		readonly CompletionHelper compHelper;
 		readonly Func<bool> externalCompleteTester;
-		readonly Action decreaseItemsCount;
+		readonly Action<int> decreaseItemsCount;
 		readonly DataflowBlockOptions options;
+		readonly Func<T, int> countSelector;
 		readonly AtomicBoolean isProcessing = new AtomicBoolean ();
 		readonly TargetCollection<T> targets;
 		SpinLock firstItemLock = new SpinLock();
 		volatile ITargetBlock<T> reservedForTargetBlock;
+		int totalModifiedCount;
 
 		public MessageOutgoingQueue (
 			ISourceBlock<T> block, CompletionHelper compHelper,
-			Func<bool> externalCompleteTester, Action decreaseItemsCount, DataflowBlockOptions options)
+			Func<bool> externalCompleteTester, Action<int> decreaseItemsCount, DataflowBlockOptions options,
+			Func<T, int> countSelector = null)
 		{
 			this.outgoing = new BlockingCollection<T> (store);
 			this.targets = new TargetCollection<T> (block);
@@ -52,12 +55,22 @@ namespace System.Threading.Tasks.Dataflow {
 			this.externalCompleteTester = externalCompleteTester;
 			this.decreaseItemsCount = decreaseItemsCount;
 			this.options = options;
+			this.countSelector = countSelector;
+		}
+
+		public int GetModifiedCount(T data)
+		{
+			if (countSelector == null)
+				return 1;
+
+			return countSelector (data);
 		}
 
 		public void AddData (T data)
 		{
 			try {
 				outgoing.Add (data);
+				Interlocked.Add (ref totalModifiedCount, GetModifiedCount (data));
 				if (Interlocked.Increment (ref outgoingCount) == 1)
 					VerifyProcessing ();
 			} catch (InvalidOperationException) {
@@ -93,8 +106,7 @@ namespace System.Threading.Tasks.Dataflow {
 					processed = targets.OfferItemToTargets ();
 					if (processed) {
 						outgoing.TryTake (out item);
-						Interlocked.Decrement (ref outgoingCount);
-						decreaseItemsCount ();
+						DecreaseCounts (item);
 						FirstItemChanged ();
 					}
 				} finally {
@@ -110,6 +122,14 @@ namespace System.Threading.Tasks.Dataflow {
 				VerifyProcessing ();
 
 			VerifyCompleteness ();
+		}
+
+		void DecreaseCounts (T data)
+		{
+			var modifiedCount = GetModifiedCount (data);
+			Interlocked.Add (ref totalModifiedCount, -modifiedCount);
+			Interlocked.Decrement (ref outgoingCount);
+			decreaseItemsCount (modifiedCount);
 		}
 
 		public IDisposable AddTarget(ITargetBlock<T> targetBlock, DataflowLinkOptions linkOptions)
@@ -133,8 +153,7 @@ namespace System.Threading.Tasks.Dataflow {
 				        || reservedForTargetBlock == targetBlock)) {
 					outgoing.TryTake (out result);
 					messageConsumed = true;
-					Interlocked.Decrement (ref outgoingCount);
-					decreaseItemsCount ();
+					DecreaseCounts (result);
 					reservedForTargetBlock = null;
 					FirstItemChanged ();
 				}
@@ -217,8 +236,7 @@ namespace System.Threading.Tasks.Dataflow {
 				if (store.TryPeek (out result) && (filter == null || filter (result))) {
 					outgoing.TryTake (out item);
 					success = true;
-					Interlocked.Decrement (ref outgoingCount);
-					decreaseItemsCount ();
+					DecreaseCounts (item);
 					FirstItemChanged ();
 				}
 			} finally {
@@ -250,8 +268,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 				T item;
 				while (outgoing.TryTake (out item)) {
-					Interlocked.Decrement (ref outgoingCount);
-					decreaseItemsCount ();
+					DecreaseCounts (item);
 					list.Add (item);
 				}
 
@@ -282,21 +299,15 @@ namespace System.Threading.Tasks.Dataflow {
 		}
 
 		public bool IsEmpty {
-			get {
-				return store.IsEmpty;
-			}
+			get { return store.IsEmpty; }
 		}
 
 		public int Count {
-			get {
-				return store.Count;
-			}
+			get { return totalModifiedCount; }
 		}
 
 		public bool IsCompleted {
-			get {
-				return outgoing.IsCompleted;
-			}
+			get { return outgoing.IsCompleted; }
 		}
 	}
 }

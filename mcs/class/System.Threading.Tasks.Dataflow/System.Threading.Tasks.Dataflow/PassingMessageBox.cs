@@ -27,12 +27,12 @@ namespace System.Threading.Tasks.Dataflow
 {
 	internal class PassingMessageBox<TInput> : MessageBox<TInput>
 	{
-		readonly Action processQueue;
+		readonly Action<bool> processQueue;
 
 		public PassingMessageBox (
 			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
 			CompletionHelper compHelper, Func<bool> externalCompleteTester,
-			Action processQueue, DataflowBlockOptions dataflowBlockOptions,
+			Action<bool> processQueue, DataflowBlockOptions dataflowBlockOptions,
 			bool greedy = true)
 			: base (target, messageQueue, compHelper, externalCompleteTester,
 				dataflowBlockOptions, greedy)
@@ -40,9 +40,9 @@ namespace System.Threading.Tasks.Dataflow
 			this.processQueue = processQueue;
 		}
 
-		protected override void EnsureProcessing ()
+		protected override void EnsureProcessing (bool newItem)
 		{
-			processQueue ();
+			processQueue (newItem);
 		}
 	}
 }

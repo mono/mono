@@ -53,9 +53,9 @@ namespace System.Threading.Tasks.Dataflow {
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
-				() => outgoing.IsCompleted, BroadcastProcess, dataflowBlockOptions);
+				() => outgoing.IsCompleted, _ => BroadcastProcess (), dataflowBlockOptions);
 			this.outgoing = new MessageOutgoingQueue<T> (this, compHelper,
-				() => messageQueue.IsCompleted, () => messageBox.DecreaseCount (),
+				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions);
 			this.vault = new MessageVault<T> ();
 		}

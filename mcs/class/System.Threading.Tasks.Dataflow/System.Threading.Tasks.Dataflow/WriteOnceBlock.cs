@@ -55,7 +55,8 @@ namespace System.Threading.Tasks.Dataflow
 			this.cloner = cloner;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper, () => true, BroadcastProcess, dataflowBlockOptions);
+			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
+				() => true, _ => BroadcastProcess (), dataflowBlockOptions);
 			this.vault = new MessageVault<T> ();
 		}
 

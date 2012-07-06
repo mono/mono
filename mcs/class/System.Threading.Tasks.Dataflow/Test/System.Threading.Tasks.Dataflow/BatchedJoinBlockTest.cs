@@ -90,5 +90,14 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			CollectionAssert.IsEmpty (result.Item1);
 			CollectionAssert.AreEqual (new[] { 5, 6 }, result.Item2);
 		}
+
+		[Test]
+		public void BoundedCapacityTest ()
+		{
+			Assert.Throws<ArgumentException> (
+				() =>
+				new BatchedJoinBlock<int, int> (2,
+					new GroupingDataflowBlockOptions { BoundedCapacity = 3 }));
+		}
 	}
 }

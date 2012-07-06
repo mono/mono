@@ -139,5 +139,160 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsFalse (block.TryReceive (out batch));
 			Assert.IsNull (batch);
 		}
+
+		[Test]
+		public void NonGreedyBatchWithBoundedCapacityTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchBlock<int> (2,
+				new GroupingDataflowBlockOptions
+				{ Greedy = false, BoundedCapacity = 2, TaskScheduler = scheduler });
+			var source1 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var source2 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			Assert.NotNull (source1.LinkTo (block));
+			Assert.NotNull (source2.LinkTo (block));
+
+			Assert.IsTrue (source1.Post (11));
+			Assert.IsTrue (source2.Post (21));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (source1.Post (12));
+			Assert.IsTrue (source2.Post (22));
+
+			scheduler.ExecuteAll ();
+
+			int i;
+			Assert.IsTrue (source1.TryReceive (out i));
+			Assert.AreEqual (12, i);
+
+			Assert.IsTrue (source1.Post (13));
+
+			int[] batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEquivalent (new[] { 11, 21 }, batch);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEquivalent (new[] { 13, 22 }, batch);
+		}
+
+		[Test]
+		public void GreedyBatchWithBoundedCapacityTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchBlock<int> (3,
+				new GroupingDataflowBlockOptions
+				{ Greedy = true, BoundedCapacity = 3, TaskScheduler = scheduler });
+
+			Assert.IsTrue (block.Post (1));
+			Assert.IsTrue (block.Post (2));
+
+			block.TriggerBatch ();
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (block.Post (3));
+			Assert.IsFalse (block.Post (4));
+
+			int[] batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEqual (new[] { 1, 2 }, batch);
+
+			Assert.IsTrue (block.Post (5));
+			Assert.IsTrue (block.Post (6));
+		}
+
+		[Test]
+		public void NonGreedyBatchWithBoundedCapacityTriggerTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchBlock<int> (3,
+				new GroupingDataflowBlockOptions
+				{ Greedy = false, BoundedCapacity = 3, TaskScheduler = scheduler });
+			var source1 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var source2 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			Assert.NotNull (source1.LinkTo (block));
+			Assert.NotNull (source2.LinkTo (block));
+
+			// trigger 2 and then trigger 1 with capacity of 3
+
+			Assert.IsTrue (source1.Post (11));
+			Assert.IsTrue (source2.Post (21));
+			block.TriggerBatch ();
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (source1.Post (12));
+			block.TriggerBatch ();
+
+			scheduler.ExecuteAll ();
+
+			int i;
+			Assert.IsFalse (source1.TryReceive (out i));
+
+			int[] batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEquivalent (new[] { 11, 21 }, batch);
+
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEquivalent (new[] { 12 }, batch);
+		}
+
+		[Test]
+		public void NonGreedyBatchWithBoundedCapacityTriggerTest2 ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchBlock<int> (3,
+				new GroupingDataflowBlockOptions
+				{ Greedy = false, BoundedCapacity = 3, TaskScheduler = scheduler });
+			var source1 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var source2 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			Assert.NotNull (source1.LinkTo (block));
+			Assert.NotNull (source2.LinkTo (block));
+
+			// trigger 2, then trigger another 2 and then trigger 2 once more
+			// while havaing capacity of 3
+
+			Assert.IsTrue (source1.Post (11));
+			Assert.IsTrue (source2.Post (21));
+			block.TriggerBatch ();
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (source1.Post (12));
+			Assert.IsTrue (source2.Post (22));
+			block.TriggerBatch ();
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (source1.Post (13));
+			Assert.IsTrue (source2.Post (23));
+			block.TriggerBatch ();
+
+			scheduler.ExecuteAll ();
+
+			int i;
+			Assert.IsTrue (source1.TryReceive (out i));
+			Assert.AreEqual (13, i);
+			Assert.IsTrue (source2.TryReceive (out i));
+			Assert.AreEqual (23, i);
+
+			int[] batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEquivalent (new[] { 11, 21 }, batch);
+
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEquivalent (new[] { 12, 22 }, batch);
+
+			Assert.IsFalse (block.TryReceive (out batch));
+		}
 	}
 }

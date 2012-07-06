@@ -261,5 +261,89 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 					      new GroupingDataflowBlockOptions { Greedy = false }));
 		}
 
+		[Test]
+		public void NonGreedyJoinWithBoundedCapacityTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new JoinBlock<int, int> (
+				new GroupingDataflowBlockOptions
+				{ Greedy = false, BoundedCapacity = 1, TaskScheduler = scheduler });
+			var source1 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var source2 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			Assert.NotNull (source1.LinkTo (block.Target1));
+			Assert.NotNull (source2.LinkTo (block.Target2));
+
+			Assert.IsTrue (source1.Post (11));
+			Assert.IsTrue (source2.Post (21));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (source1.Post (12));
+			Assert.IsTrue (source2.Post (22));
+
+			scheduler.ExecuteAll ();
+
+			int i;
+			Assert.IsTrue (source1.TryReceive (out i));
+			Assert.AreEqual (12, i);
+
+			Assert.IsTrue (source1.Post (13));
+
+			Tuple<int, int> tuple;
+			Assert.IsTrue (block.TryReceive (out tuple));
+			Assert.AreEqual (Tuple.Create (11, 21), tuple);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (block.TryReceive (out tuple));
+			Assert.AreEqual (Tuple.Create (13, 22), tuple);
+		}
+
+		[Test]
+		public void NonGreedyJoin3WithBoundedCapacityTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new JoinBlock<int, int, int> (
+				new GroupingDataflowBlockOptions
+				{ Greedy = false, BoundedCapacity = 1, TaskScheduler = scheduler });
+			var source1 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var source2 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var source3 =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			Assert.NotNull (source1.LinkTo (block.Target1));
+			Assert.NotNull (source2.LinkTo (block.Target2));
+			Assert.NotNull (source3.LinkTo (block.Target3));
+
+			Assert.IsTrue (source1.Post (11));
+			Assert.IsTrue (source2.Post (21));
+			Assert.IsTrue (source3.Post (31));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (source1.Post (12));
+			Assert.IsTrue (source2.Post (22));
+			Assert.IsTrue (source3.Post (32));
+
+			scheduler.ExecuteAll ();
+
+			int i;
+			Assert.IsTrue (source1.TryReceive (out i));
+			Assert.AreEqual (12, i);
+
+			Assert.IsTrue (source1.Post (13));
+
+			Tuple<int, int, int> tuple;
+			Assert.IsTrue (block.TryReceive (out tuple));
+			Assert.AreEqual (Tuple.Create (11, 21, 31), tuple);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (block.TryReceive (out tuple));
+			Assert.AreEqual (Tuple.Create (13, 22, 32), tuple);
+		}
 	}
 }
