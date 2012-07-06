@@ -10,7 +10,6 @@
     <NoWarn>1699</NoWarn>
     <OutputPath>.\</OutputPath>
     <NoStdLib>true</NoStdLib>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MonoTests</RootNamespace>
     <AssemblyName>System.Threading.Tasks.Dataflow_test_net_4_5</AssemblyName>
@@ -42,6 +41,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs">
+      <Link>AtomicBoolean.cs</Link>
+    </Compile>
+    <Compile Include="System.Threading.Tasks.Dataflow\CompletionHelper.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\GreedyTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\PropagateCompletionTest.cs" />
     <Compile Include="Test\System.Threading.Tasks.Dataflow\ReceivingTest.cs" />
@@ -64,7 +67,6 @@
    <Compile Include="Test\System.Threading.Tasks.Dataflow\TransformBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\TransformManyBlockTest.cs" />
    <Compile Include="Test\System.Threading.Tasks.Dataflow\WriteOnceBlockTest.cs" />
-
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -74,7 +76,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib.dll">
@@ -91,10 +94,8 @@
       <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
-
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
