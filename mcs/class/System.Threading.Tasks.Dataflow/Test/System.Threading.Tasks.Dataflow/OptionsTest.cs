@@ -189,11 +189,12 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			foreach (var time in times) {
 				if (time.Item1 != null)
 					dop++;
-				if (time.Item2 != null)
-					dop--;
 
 				if (dop > maxDop)
 					maxDop = dop;
+
+				if (time.Item2 != null)
+					dop--;
 			}
 
 			return maxDop;
