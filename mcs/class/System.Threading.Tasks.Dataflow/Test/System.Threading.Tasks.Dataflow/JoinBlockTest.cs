@@ -73,8 +73,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			var block = new JoinBlock<int, int> ();
 			block.LinkTo (ablock);
 
-			Task.Run (() => block.Target1.Post (42));
-			Task.Run (() => block.Target2.Post (24));
+			Task.Factory.StartNew (() => block.Target1.Post (42));
+			Task.Factory.StartNew (() => block.Target2.Post (24));
 
 			Assert.IsTrue (evt.Wait (500));
 			Assert.IsNotNull (tuple);
