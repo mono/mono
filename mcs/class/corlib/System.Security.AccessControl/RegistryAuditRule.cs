@@ -38,7 +38,17 @@ namespace System.Security.AccessControl
 					  InheritanceFlags inheritanceFlags,
 					  PropagationFlags propagationFlags,
 					  AuditFlags flags)
-			: base (identity, (int)registryRights, false, inheritanceFlags, propagationFlags, flags)
+			: this (identity, registryRights, false, inheritanceFlags, propagationFlags, flags)
+		{
+		}
+		
+		internal RegistryAuditRule (IdentityReference identity,
+					    RegistryRights registryRights,
+					    bool isInherited,
+					    InheritanceFlags inheritanceFlags,
+					    PropagationFlags propagationFlags,
+					    AuditFlags flags)
+			: base (identity, (int)registryRights, isInherited, inheritanceFlags, propagationFlags, flags)
 		{
 		}
 		

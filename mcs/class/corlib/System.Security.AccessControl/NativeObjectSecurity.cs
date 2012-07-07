@@ -206,9 +206,9 @@ namespace System.Security.AccessControl
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 				throw new PlatformNotSupportedException ();
 
-			return InternalGetHelper (delegate (SecurityInfos securityInfos,
-							    out IntPtr owner, out IntPtr group,
-							    out IntPtr dacl, out IntPtr sacl, out IntPtr descriptor)
+			return Win32GetHelper (delegate (SecurityInfos securityInfos,
+							 out IntPtr owner, out IntPtr group,
+							 out IntPtr dacl, out IntPtr sacl, out IntPtr descriptor)
 				{
 					return GetSecurityInfo (handle, ResourceType, securityInfos,
 								out owner, out group,
@@ -222,11 +222,11 @@ namespace System.Security.AccessControl
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 				throw new PlatformNotSupportedException ();
 
-			return InternalGetHelper (delegate (SecurityInfos securityInfos,
-							    out IntPtr owner, out IntPtr group,
-							    out IntPtr dacl, out IntPtr sacl, out IntPtr descriptor)
+			return Win32GetHelper (delegate (SecurityInfos securityInfos,
+							 out IntPtr owner, out IntPtr group,
+							 out IntPtr dacl, out IntPtr sacl, out IntPtr descriptor)
 				{
-					return GetNamedSecurityInfo (name, ResourceType, securityInfos,
+					return GetNamedSecurityInfo (Win32FixName (name), ResourceType, securityInfos,
 								     out owner, out group,
 								     out dacl, out sacl, out descriptor);
 				}, includeSections);
@@ -238,7 +238,7 @@ namespace System.Security.AccessControl
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 				throw new PlatformNotSupportedException ();
 
-			return InternalSetHelper ((securityInfos, owner, group, dacl, sacl) =>
+			return Win32SetHelper ((securityInfos, owner, group, dacl, sacl) =>
 				SetSecurityInfo (handle, ResourceType, securityInfos, owner, group, dacl, sacl),
 				includeSections);
 		}
@@ -249,8 +249,8 @@ namespace System.Security.AccessControl
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
 				throw new PlatformNotSupportedException ();
 		
-			return InternalSetHelper ((securityInfos, owner, group, dacl, sacl) =>
-				SetNamedSecurityInfo (name, ResourceType, securityInfos, owner, group, dacl, sacl),
+			return Win32SetHelper ((securityInfos, owner, group, dacl, sacl) =>
+				SetNamedSecurityInfo (Win32FixName (name), ResourceType, securityInfos, owner, group, dacl, sacl),
 				includeSections);
 		}
 		
@@ -258,9 +258,9 @@ namespace System.Security.AccessControl
 			get { return resource_type; }
 		}
 		
-		#region Win32 Details
-		int InternalGetHelper (GetSecurityInfoNativeCall nativeCall,
-				       AccessControlSections includeSections)
+		#region Win32 Details		
+		int Win32GetHelper (GetSecurityInfoNativeCall nativeCall,
+				    AccessControlSections includeSections)
 		{
 			bool getOwner = 0 != (includeSections & AccessControlSections.Owner);
 			bool getGroup = 0 != (includeSections & AccessControlSections.Group);
@@ -292,9 +292,12 @@ namespace System.Security.AccessControl
 			return 0;
 		}
 		
-		int InternalSetHelper (SetSecurityInfoNativeCall nativeCall,
-				       AccessControlSections includeSections)
+		int Win32SetHelper (SetSecurityInfoNativeCall nativeCall,
+				    AccessControlSections includeSections)
 		{
+			// SE_REGISTRY_KEY will fail UnauthorizedAccessException without this check.
+			if (AccessControlSections.None == includeSections) return 0;
+			
 			SecurityInfos securityInfos = 0;
 			byte[] owner = null, group = null, dacl = null, sacl = null;
 			
@@ -339,6 +342,17 @@ namespace System.Security.AccessControl
 			}
 			
 			return nativeCall (securityInfos, owner, group, dacl, sacl);
+		}
+		
+		string Win32FixName (string name)
+		{
+			if (ResourceType == ResourceType.RegistryKey) {
+				// For (Get|Set)NamedSecurityInfo, registry paths lack the HKEY_ prefix.
+				if (!name.StartsWith ("HKEY_")) throw new InvalidOperationException ();
+				name = name.Substring ("HKEY_".Length);
+			}
+			
+			return name;
 		}
 		#endregion
 		

@@ -36,7 +36,12 @@ namespace System.Security.AccessControl
 	public sealed class RegistrySecurity : NativeObjectSecurity
 	{
 		public RegistrySecurity ()
-			: base (false, ResourceType.RegistryKey)
+			: base (true, ResourceType.RegistryKey)
+		{
+		}
+		
+		internal RegistrySecurity (string name, AccessControlSections includeSections)
+			: base (true, ResourceType.RegistryKey, name, includeSections)
 		{
 		}
 		
@@ -56,7 +61,7 @@ namespace System.Security.AccessControl
 							      bool isInherited, InheritanceFlags inheritanceFlags,
 							      PropagationFlags propagationFlags, AccessControlType type)
 		{
-			return new RegistryAccessRule (identityReference, (RegistryRights) accessMask,
+			return new RegistryAccessRule (identityReference, (RegistryRights) accessMask, isInherited,
 						       inheritanceFlags, propagationFlags, type);
 		}
 		
@@ -94,7 +99,7 @@ namespace System.Security.AccessControl
 							    bool isInherited, InheritanceFlags inheritanceFlags,
 							    PropagationFlags propagationFlags, AuditFlags flags)
 		{
-			return new RegistryAuditRule (identityReference, (RegistryRights) accessMask,
+			return new RegistryAuditRule (identityReference, (RegistryRights) accessMask, isInherited,
 						      inheritanceFlags, propagationFlags, flags);
 		}
 		

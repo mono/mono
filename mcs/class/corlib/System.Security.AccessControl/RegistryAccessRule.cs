@@ -52,10 +52,20 @@ namespace System.Security.AccessControl
 					   InheritanceFlags inheritanceFlags,
 					   PropagationFlags propagationFlags,
 					   AccessControlType type)
-			: base (identity, (int)registryRights, false, inheritanceFlags, propagationFlags, type)
+			: this (identity, registryRights, false, inheritanceFlags, propagationFlags, type)
 		{
 		}
 		
+		internal RegistryAccessRule (IdentityReference identity,
+					     RegistryRights registryRights,
+					     bool isInherited,
+					     InheritanceFlags inheritanceFlags,
+					     PropagationFlags propagationFlags,
+					     AccessControlType type)
+			: base (identity, (int)registryRights, isInherited, inheritanceFlags, propagationFlags, type)
+		{
+		}
+
 		public RegistryAccessRule (string identity,
 					   RegistryRights registryRights,
 					   InheritanceFlags inheritanceFlags,
@@ -64,7 +74,7 @@ namespace System.Security.AccessControl
 			: this (new NTAccount (identity), registryRights, inheritanceFlags, propagationFlags, type)
 		{
 		}
-		
+				
 		public RegistryRights RegistryRights {
 			get { return (RegistryRights)AccessMask; }
 		}
