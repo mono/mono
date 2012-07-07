@@ -31,7 +31,7 @@ namespace System.Threading.Tasks.Dataflow {
 		public static string GetName(IDataflowBlock block, DataflowBlockOptions options)
 		{
 			return string.Format (
-				options.NameFormat, block.GetType (), block.Completion.Id);
+				options.NameFormat, block.GetType ().Name, block.Completion.Id);
 		}
 	}
 }

@@ -124,7 +124,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsTrue (block.TryReceive (null, out foo));
 			Assert.IsFalse (block.TryReceive (i => i == 0, out foo));
 			IList<int> bar;
-			Assert.IsTrue (block.TryReceiveAll (out bar));
+			Assert.IsTrue (((IReceivableSourceBlock<int>)block).TryReceiveAll (out bar));
 			Assert.IsNotNull (bar);
 			Assert.AreEqual (1, bar.Count);
 			Assert.AreEqual (42, bar[0]);

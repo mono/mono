@@ -50,8 +50,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				groupingDataflowBlockOptions);
 			yield return new TransformBlock<int, int> (
 				i => i, executionDataflowBlockOptions);
-			yield return new TransformManyBlock<double, dynamic> (
-				x => null, executionDataflowBlockOptions);
+			yield return new TransformManyBlock<double, dynamic>(
+				x => new dynamic[0], executionDataflowBlockOptions);
 			yield return new WriteOnceBlock<object> (x => x, dataflowBlockOptions);
 		}
 
@@ -83,7 +83,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				Assert.AreEqual (constant, block.ToString ());
 
 			foreach (var block in CreateBlocksWithNameFormat ("{0}"))
-				Assert.AreEqual (block.GetType ().ToString (), block.ToString ());
+				Assert.AreEqual (block.GetType ().Name, block.ToString ());
 
 			foreach (var block in CreateBlocksWithNameFormat ("{1}"))
 				Assert.AreEqual (block.Completion.Id.ToString (), block.ToString ());
