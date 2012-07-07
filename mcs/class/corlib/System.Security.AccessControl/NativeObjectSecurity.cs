@@ -152,7 +152,7 @@ namespace System.Security.AccessControl
 				WriteUnlock ();
 			}
 		}
-		
+
 		internal void PersistModifications (string name)
 		{
 			WriteLock();
@@ -179,12 +179,11 @@ namespace System.Security.AccessControl
 			}
 		}
 		
-		static Exception DefaultExceptionFromErrorCode (int errorCode,
-								string name, SafeHandle handle,
-								object context)
+		internal static Exception DefaultExceptionFromErrorCode (int errorCode,
+									 string name, SafeHandle handle,
+									 object context)
 		{
-			switch (errorCode)
-			{
+			switch (errorCode) {
 				case 2: return new FileNotFoundException ();
 				case 3: return new DirectoryNotFoundException ();
 				case 5: return new UnauthorizedAccessException ();
@@ -263,9 +262,6 @@ namespace System.Security.AccessControl
 		int InternalGetHelper (GetSecurityInfoNativeCall nativeCall,
 				       AccessControlSections includeSections)
 		{
-			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-				throw new PlatformNotSupportedException ();
-				
 			bool getOwner = 0 != (includeSections & AccessControlSections.Owner);
 			bool getGroup = 0 != (includeSections & AccessControlSections.Group);
 			bool getDacl = 0 != (includeSections & AccessControlSections.Access);

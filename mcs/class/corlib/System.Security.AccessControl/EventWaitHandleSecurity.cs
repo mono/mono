@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 
 namespace System.Security.AccessControl
@@ -40,6 +41,12 @@ namespace System.Security.AccessControl
 		{
 		}
 
+		internal EventWaitHandleSecurity (SafeHandle handle,
+						  AccessControlSections includeSections)
+			: base (false, ResourceType.KernelObject, handle, includeSections)
+		{
+		}
+		
 		public override Type AccessRightType {
 			get { return typeof (EventWaitHandleRights); }
 		}

@@ -29,7 +29,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Threading;
 
 namespace System.Security.AccessControl
 {
@@ -42,10 +44,18 @@ namespace System.Security.AccessControl
 
 		public MutexSecurity (string name,
 				      AccessControlSections includeSections)
-			: base (false, ResourceType.KernelObject, name, includeSections)
+			: base (false, ResourceType.KernelObject, name, includeSections,
+				MutexExceptionFromErrorCode, null)
 		{
 		}
 		
+		internal MutexSecurity (SafeHandle handle,
+					AccessControlSections includeSections)
+			: base (false, ResourceType.KernelObject, handle, includeSections,
+				MutexExceptionFromErrorCode, null)
+		{
+		}
+
 		public override Type AccessRightType {
 			get { return typeof (MutexRights); }
 		}
@@ -125,6 +135,16 @@ namespace System.Security.AccessControl
 		public void SetAuditRule (MutexAuditRule rule)
 		{
 			SetAuditRule((AuditRule)rule);
+		}
+		
+		static Exception MutexExceptionFromErrorCode (int errorCode,
+							      string name, SafeHandle handle,
+							      object context)
+		{
+			switch (errorCode) {
+				case 2: return new WaitHandleCannotBeOpenedException ();
+				default: return DefaultExceptionFromErrorCode (errorCode, name, handle, context);
+			}
 		}
 	}
 }

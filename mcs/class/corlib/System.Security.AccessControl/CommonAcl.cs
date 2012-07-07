@@ -398,7 +398,7 @@ namespace System.Security.AccessControl
 			CanonicalizeAndClearAefa ();
 		}
 		
-		GenericAce CopyAce (GenericAce ace)
+		static GenericAce CopyAce (GenericAce ace)
 		{
 			byte[] binaryForm = new byte[ace.BinaryLength];
 			ace.GetBinaryForm (binaryForm, 0);
