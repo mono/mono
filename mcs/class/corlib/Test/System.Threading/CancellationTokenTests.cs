@@ -79,6 +79,27 @@ namespace MonoTests.System.Threading
 			Assert.IsFalse (tk.CanBeCanceled);
 			Assert.IsFalse (tk.IsCancellationRequested);
 		}
+
+		[Test]
+		public void NoneProperty ()
+		{
+			var n = CancellationToken.None;
+			Assert.IsFalse (n.CanBeCanceled, "#1");
+			Assert.IsFalse (n.IsCancellationRequested, "#2");
+			Assert.AreEqual (n, CancellationToken.None, "#3");
+
+			n.ThrowIfCancellationRequested ();
+			n.GetHashCode ();
+		}
+
+		[Test]
+		public void DefaultCancellationTokenRegistration ()
+		{
+			var registration = new CancellationTokenRegistration ();
+
+			// shouldn't throw
+			registration.Dispose ();
+		}
 	}
 }
 #endif

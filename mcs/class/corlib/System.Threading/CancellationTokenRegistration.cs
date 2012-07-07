@@ -44,7 +44,8 @@ namespace System.Threading
 		#region IDisposable implementation
 		public void Dispose ()
 		{
-			source.RemoveCallback (this);
+			if (source != null)
+				source.RemoveCallback (this);
 		}
 		#endregion
 
