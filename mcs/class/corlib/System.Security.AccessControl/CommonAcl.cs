@@ -72,10 +72,10 @@ namespace System.Security.AccessControl
 			is_container = isContainer;
 			is_ds = isDS;
 			raw_acl = rawAcl;
-			CleanAndRetestCanonicity ();
+			CanonicalizeAndClearAefa ();
 		}
 
-		bool is_canonical, is_container, is_ds;
+		bool is_aefa, is_canonical, is_container, is_ds;
 		internal RawAcl raw_acl;
 
 		public override sealed int BinaryLength {
@@ -98,12 +98,18 @@ namespace System.Security.AccessControl
 			get { return is_ds; }
 		}
 
+		// See CommonSecurityDescriptorTest's AefaModifiedFlagIsStoredOnDiscretionaryAcl unit test.
+		internal bool IsAefa {
+			get { return is_aefa; }
+			set { is_aefa = value; }
+		}
+		
 		public override sealed byte Revision {
 			get { return raw_acl.Revision; }
 		}
 		
 		public override sealed GenericAce this[int index] {
-			get { return raw_acl [index]; }
+			get { return CopyAce (raw_acl [index]); }
 			set { throw new NotSupportedException (); }
 		}
 		
@@ -130,7 +136,7 @@ namespace System.Security.AccessControl
 				throw new InvalidOperationException("ACL is not canonical.");
 		}
 		
-		internal void CleanAndRetestCanonicity ()
+		internal void CanonicalizeAndClearAefa ()
 		{
 			RemoveAces<GenericAce> (IsAceMeaningless);
 
@@ -140,6 +146,8 @@ namespace System.Security.AccessControl
 				ApplyCanonicalSortToExplicitAces ();
 				MergeExplicitAces ();
 			}
+			
+			IsAefa = false;
 		}
 		
 		internal virtual bool IsAceMeaningless (GenericAce ace)
@@ -191,9 +199,9 @@ namespace System.Security.AccessControl
 		{
 			int i;
 			for (i = 0; i < Count; i ++) {
-				if (this [i].IsInherited) break;
+				if (raw_acl [i].IsInherited) break;
 
-				QualifiedAce ace = this [i] as QualifiedAce;
+				QualifiedAce ace = raw_acl [i] as QualifiedAce;
 				if (ace == null || ace.AceQualifier != AceQualifier.AccessDenied) break;
 			}
 			return i;
@@ -203,7 +211,7 @@ namespace System.Security.AccessControl
 		{
 			int i;
 			for (i = 0; i < Count; i ++)
-				if (this [i].IsInherited) break;
+				if (raw_acl [i].IsInherited) break;
 			return i;
 		}
 		
@@ -386,8 +394,15 @@ namespace System.Security.AccessControl
 			RequireCanonicity ();
 				
 			int pos = GetAceInsertPosition (newAce.AceQualifier);
-			raw_acl.InsertAce (pos, newAce);
-			CleanAndRetestCanonicity ();
+			raw_acl.InsertAce (pos, CopyAce (newAce));
+			CanonicalizeAndClearAefa ();
+		}
+		
+		static GenericAce CopyAce (GenericAce ace)
+		{
+			byte[] binaryForm = new byte[ace.BinaryLength];
+			ace.GetBinaryForm (binaryForm, 0);
+			return GenericAce.CreateFromBinaryForm (binaryForm, 0);
 		}
 		
 		internal abstract int GetAceInsertPosition (AceQualifier aceQualifier);
@@ -435,7 +450,7 @@ namespace System.Security.AccessControl
 				if (ace.AuditFlags != auditFlags) return false;
 				return true;
 			});
-			CleanAndRetestCanonicity ();
+			CanonicalizeAndClearAefa ();
 		}
 		
 		internal void RemoveAceSpecific (AceQualifier aceQualifier,
@@ -473,7 +488,7 @@ namespace System.Security.AccessControl
 					if (ace.InheritedObjectAceType != objectType) return false;
 				return true;
 			});
-			CleanAndRetestCanonicity ();
+			CanonicalizeAndClearAefa ();
 		}
 		
 		internal void SetAce (AceQualifier aceQualifier,
@@ -513,7 +528,7 @@ namespace System.Security.AccessControl
 				return oldAce.AceQualifier == newAce.AceQualifier &&
 				       oldAce.SecurityIdentifier == newAce.SecurityIdentifier;
 			});
-			CleanAndRetestCanonicity ();
+			CanonicalizeAndClearAefa ();
 						
 			AddAce (newAce);
 		}

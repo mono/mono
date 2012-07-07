@@ -37,21 +37,19 @@ namespace System.IO.Pipes
 	[HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	public sealed class PipeAccessRule : AccessRule
 	{
-		[MonoNotSupported ("ACL is not supported in Mono")]
 		public PipeAccessRule (IdentityReference identity, PipeAccessRights rights, AccessControlType type)
-			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, type)
+			: base (identity, (int)rights, false, InheritanceFlags.None, PropagationFlags.None, type)
 		{
-			throw new NotImplementedException ("ACL is not supported in Mono");
 		}
 
-		[MonoNotSupported ("ACL is not supported in Mono")]
 		public PipeAccessRule (string identity, PipeAccessRights rights, AccessControlType type)
-			: this ((IdentityReference) null, rights, type)
+			: this (new NTAccount (identity), rights, type)
 		{
-			throw new NotImplementedException ("ACL is not supported in Mono");
 		}
 
-		[MonoNotSupported ("ACL is not supported in Mono")]
-		public PipeAccessRights PipeAccessRights { get; private set; }
+		public PipeAccessRights PipeAccessRights {
+			get { return (PipeAccessRights)AccessMask; }
+		}
 	}
 }
+

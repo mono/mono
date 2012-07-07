@@ -393,7 +393,10 @@ namespace System.IO
 #if !MOONLIGHT
 		public static void SetAccessControl (string path, DirectorySecurity directorySecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == directorySecurity)
+				throw new ArgumentNullException ("directorySecurity");
+				
+			directorySecurity.PersistModifications (path);
 		}
 #endif
 
@@ -639,16 +642,18 @@ namespace System.IO
 #endif
 
 #if !MOONLIGHT
-		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{
-			throw new PlatformNotSupportedException ();
+			return new DirectorySecurity (path, includeSections);
 		}
 
-		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path)
 		{
-			throw new PlatformNotSupportedException ();
+			// AccessControlSections.Audit requires special permissions.
+			return GetAccessControl (path,
+						 AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 		}
 #endif
 	}

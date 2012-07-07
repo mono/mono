@@ -42,17 +42,8 @@ namespace System.Security.AccessControl {
 			: base (identity, accessMask, isInherited,
 				inheritanceFlags, propagationFlags)
 		{
-			if (!(identity is SecurityIdentifier)) {
-				/* FIXME: check auditFlags too */
-				throw new ArgumentException ("identity");
-			}
-			
-			if (accessMask == 0) {
-				/* FIXME: check inheritance and
-				 * propagation flags too
-				 */
-				throw new ArgumentOutOfRangeException ();
-			}
+			if (auditFlags != ((AuditFlags.Success | AuditFlags.Failure) & auditFlags))
+				throw new ArgumentException ("Invalid audit flags.", "auditFlags");
 
 			this.auditFlags = auditFlags;
 		}

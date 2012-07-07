@@ -4,8 +4,10 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,12 +29,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
-
-	public abstract class FileSystemSecurity : NativeObjectSecurity {
-
+namespace System.Security.AccessControl
+{
+	public abstract class FileSystemSecurity : NativeObjectSecurity
+	{
 		internal FileSystemSecurity (bool isContainer)
 			: base (isContainer, ResourceType.FileObject)
 		{
@@ -43,6 +46,11 @@ namespace System.Security.AccessControl {
 		{
 		}
 
+		internal FileSystemSecurity (bool isContainer, SafeHandle handle, AccessControlSections includeSections)
+			: base (isContainer, ResourceType.FileObject, handle, includeSections)
+		{
+		}
+		
 		public override Type AccessRightType {
 			get { return typeof (FileSystemRights); }
 		}
@@ -54,89 +62,76 @@ namespace System.Security.AccessControl {
 		public override Type AuditRuleType {
 			get { return typeof (FileSystemAuditRule); }
 		}
-		
-		// AccessRule
-		
-		[MonoTODO]
-		public override sealed AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+
+		public override sealed AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask,
+								     bool isInherited, InheritanceFlags inheritanceFlags,
+								     PropagationFlags propagationFlags, AccessControlType type)
 		{
-			// FIXME: isInherited is unused
-			return new FileSystemAccessRule (identityReference, (FileSystemRights) accessMask, inheritanceFlags, propagationFlags, type);
+			return new FileSystemAccessRule (identityReference, (FileSystemRights) accessMask, isInherited,
+							 inheritanceFlags, propagationFlags, type);
 		}
 		
-		[MonoTODO]
 		public void AddAccessRule (FileSystemAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public bool RemoveAccessRule (FileSystemAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleAll (FileSystemAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleAll ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleSpecific (FileSystemAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleSpecific ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void ResetAccessRule (FileSystemAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			ResetAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAccessRule (FileSystemAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAccessRule ((AccessRule)rule);
 		}
 		
-		// AuditRule
-		
-		[MonoTODO]
-		public override sealed AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		public override sealed AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask,
+								   bool isInherited, InheritanceFlags inheritanceFlags,
+								   PropagationFlags propagationFlags, AuditFlags flags)
 		{
-			// FIXME: isInherited is unused
-			return new FileSystemAuditRule (identityReference, (FileSystemRights) accessMask, inheritanceFlags, propagationFlags, flags);
+			return new FileSystemAuditRule (identityReference, (FileSystemRights) accessMask, isInherited,
+							inheritanceFlags, propagationFlags, flags);
 		}
 		
-		[MonoTODO]
 		public void AddAuditRule (FileSystemAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAuditRule ((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public bool RemoveAuditRule (FileSystemAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAuditRule((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleAll (FileSystemAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleAll((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleSpecific (FileSystemAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleSpecific((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAuditRule (FileSystemAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAuditRule((AuditRule)rule);
 		}
 	}
 }

@@ -5,8 +5,10 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //	Dick Porter <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,17 +36,15 @@ namespace System.Security.AccessControl
 {
 	public sealed class CryptoKeySecurity : NativeObjectSecurity
 	{
-//		CommonSecurityDescriptor securityDescriptor;
-		
-		[MonoTODO]
 		public CryptoKeySecurity ()
+			: base (false, ResourceType.Unknown)
 		{
 		}
 
-		[MonoTODO]
 		public CryptoKeySecurity (CommonSecurityDescriptor securityDescriptor)
+			: base (securityDescriptor, ResourceType.Unknown)
 		{
-//			this.securityDescriptor = securityDescriptor;
+
 		}
 		
 		public override Type AccessRightType {
@@ -59,84 +59,73 @@ namespace System.Security.AccessControl
 			get { return typeof (CryptoKeyAuditRule); }
 		}
 		
-		// AccessRule
-		
-		public override sealed AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		public override sealed AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask,
+								     bool isInherited, InheritanceFlags inheritanceFlags,
+								     PropagationFlags propagationFlags, AccessControlType type)
 		{
 			return new CryptoKeyAccessRule (identityReference, (CryptoKeyRights) accessMask, type);
 		}
 		
-		[MonoTODO]
 		public void AddAccessRule (CryptoKeyAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public bool RemoveAccessRule (CryptoKeyAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleAll (CryptoKeyAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleAll ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleSpecific (CryptoKeyAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleSpecific ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void ResetAccessRule (CryptoKeyAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			ResetAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAccessRule (CryptoKeyAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAccessRule ((AccessRule)rule);
 		}
 		
-		// AuditRule
-		
-		public override sealed AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		public override sealed AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask,
+								   bool isInherited, InheritanceFlags inheritanceFlags,
+								   PropagationFlags propagationFlags, AuditFlags flags)
 		{
 			return new CryptoKeyAuditRule (identityReference, (CryptoKeyRights) accessMask, flags);
 		}
 		
-		[MonoTODO]
 		public void AddAuditRule (CryptoKeyAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAuditRule ((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public bool RemoveAuditRule (CryptoKeyAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAuditRule((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleAll (CryptoKeyAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleAll((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleSpecific (CryptoKeyAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleSpecific((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAuditRule (CryptoKeyAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAuditRule((AuditRule)rule);
 		}
 	}
 }
