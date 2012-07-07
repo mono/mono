@@ -108,8 +108,8 @@ namespace System.Threading.Tasks.Dataflow
 					if (MessageQueue.IsCompleted)
 						outgoingQueueComplete ();
 				}
-				if (MessageQueue.Count > 0)
-					EnsureProcessing (false);
+				if (MessageQueue.Count > 0 && compHelper.CanRun)
+					StartProcessing ();
 			}
 		}
 
