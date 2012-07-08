@@ -3,8 +3,10 @@
 //  
 // Author:
 //       Jérémie "garuma" Laval <jeremie.laval@gmail.com>
+//       Petr Onderka <gsvick@gmail.com>
 // 
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +27,7 @@
 // THE SOFTWARE.
 
 using System;
-using System.Linq;
-using System.Threading;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
@@ -84,6 +85,40 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.Faulted, block.Completion.Status);
 			Assert.IsFalse (block.Post (43));
+		}
+
+		static IEnumerable<Tuple<IDataflowBlock, ITargetBlock<T>>>
+			GetJoinBlocksWithTargets<T> ()
+		{
+			Func<IDataflowBlock, ITargetBlock<T>, Tuple<IDataflowBlock, ITargetBlock<T>>>
+				createTuple = Tuple.Create;
+
+			var joinBlock = new JoinBlock<T, T> ();
+			yield return createTuple (joinBlock, joinBlock.Target1);
+			var joinBlock3 = new JoinBlock<T, T, T> ();
+			yield return createTuple (joinBlock3, joinBlock3.Target1);
+			var batchedJoinBlock = new BatchedJoinBlock<T, T> (2);
+			yield return createTuple (batchedJoinBlock, batchedJoinBlock.Target1);
+			var batchedJoinBlock3 = new BatchedJoinBlock<T, T, T> (2);
+			yield return createTuple (batchedJoinBlock3, batchedJoinBlock3.Target1);
+		}
+
+		[Test]
+		public void JoinTargetCompletitionTest ()
+		{
+			foreach (var tuple in GetJoinBlocksWithTargets<int> ()) {
+				Assert.Throws<NotSupportedException> (
+					() => { var x = tuple.Item2.Completion; });
+				Assert.IsTrue (tuple.Item2.Post (1));
+				tuple.Item2.Complete ();
+				Assert.IsFalse (tuple.Item2.Post (2));
+			}
+
+			foreach (var tuple in GetJoinBlocksWithTargets<int> ()) {
+				Assert.IsTrue (tuple.Item2.Post (1));
+				tuple.Item1.Complete ();
+				Assert.IsFalse (tuple.Item2.Post (2));
+			}
 		}
 	}
 }

@@ -105,6 +105,9 @@ namespace System.Threading.Tasks.Dataflow
 
 		public void Complete ()
 		{
+			target1.Complete ();
+			target2.Complete ();
+			target3.Complete ();
 			outgoing.Complete ();
 		}
 

@@ -142,6 +142,8 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public void Complete ()
 		{
+			target1.Complete ();
+			target2.Complete ();
 			outgoing.Complete ();
 		}
 

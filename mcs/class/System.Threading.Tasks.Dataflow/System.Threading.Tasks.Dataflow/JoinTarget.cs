@@ -66,7 +66,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		Task IDataflowBlock.Completion {
 			get {
-				return joinBlock.Completion;
+				throw new NotSupportedException();
 			}
 		}
 
