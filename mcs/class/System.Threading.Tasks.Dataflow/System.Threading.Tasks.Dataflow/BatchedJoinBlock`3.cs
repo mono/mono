@@ -36,6 +36,8 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly JoinTarget<T3> target3;
 
 		int batchCount;
+		long numberOfGroups;
+		SpinLock batchCountLock;
 
 		public BatchedJoinBlock (int batchSize)
 			: this (batchSize, GroupingDataflowBlockOptions.Default)
@@ -64,13 +66,13 @@ namespace System.Threading.Tasks.Dataflow {
 
 			target1 = new JoinTarget<T1> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
-				dataflowBlockOptions, true);
+				dataflowBlockOptions, true, TryAdd);
 			target2 = new JoinTarget<T2> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
-				dataflowBlockOptions, true);
-			target3 = new JoinTarget<T3>(
+				dataflowBlockOptions, true, TryAdd);
+			target3 = new JoinTarget<T3> (
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
-				dataflowBlockOptions, true);
+				dataflowBlockOptions, true, TryAdd);
 
 			outgoing = new MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> (
 				this, completionHelper,
@@ -98,20 +100,48 @@ namespace System.Threading.Tasks.Dataflow {
 			get { return target3; }
 		}
 
+		bool TryAdd ()
+		{
+			bool lockTaken = false;
+			try {
+				batchCountLock.Enter (ref lockTaken);
+
+				if (options.MaxNumberOfGroups != -1
+				    && numberOfGroups + batchCount / BatchSize >= options.MaxNumberOfGroups)
+					return false;
+
+				batchCount++;
+				return true;
+			} finally {
+				if (lockTaken)
+					batchCountLock.Exit ();
+			}
+		}
+
 		void SignalTarget ()
 		{
-			int current = Interlocked.Increment (ref batchCount);
+			bool lockTaken = false;
+			try {
+				batchCountLock.Enter (ref lockTaken);
 
-			if (current % BatchSize != 0)
-				return;
+				if (batchCount < BatchSize)
+					return;
 
-			Interlocked.Add (ref batchCount, -current);
+				batchCount -= BatchSize;
+				numberOfGroups++;
+			} finally {
+				if (lockTaken)
+					batchCountLock.Exit ();
+			}
 
 			MakeBatch (BatchSize);
 		}
 
 		void MakeBatch (int batchSize)
 		{
+			if (batchSize == 0)
+				return;
+
 			var list1 = new List<T1> ();
 			var list2 = new List<T2> ();
 			var list3 = new List<T3> ();
@@ -152,6 +182,29 @@ namespace System.Threading.Tasks.Dataflow {
 				list3);
 
 			outgoing.AddData (batch);
+
+			VerifyMaxNumberOfGroups ();
+		}
+
+		void VerifyMaxNumberOfGroups ()
+		{
+			if (options.MaxNumberOfGroups == -1)
+				return;
+
+			bool shouldComplete;
+
+			bool lockTaken = false;
+			try {
+				batchCountLock.Enter (ref lockTaken);
+
+				shouldComplete = numberOfGroups >= options.MaxNumberOfGroups;
+			} finally {
+				if (lockTaken)
+					batchCountLock.Exit ();
+			}
+
+			if (shouldComplete)
+				Complete ();
 		}
 
 		public Task Completion
@@ -164,6 +217,7 @@ namespace System.Threading.Tasks.Dataflow {
 			target1.Complete ();
 			target2.Complete ();
 			target3.Complete ();
+			MakeBatch (batchCount);
 			outgoing.Complete ();
 		}
 

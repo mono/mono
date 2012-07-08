@@ -99,5 +99,51 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BatchedJoinBlock<int, int> (2,
 					new GroupingDataflowBlockOptions { BoundedCapacity = 3 }));
 		}
+
+		[Test]
+		public void CompletionTest ()
+		{
+			var block = new BatchedJoinBlock<int, int> (2);
+
+			Assert.IsTrue (block.Target1.Post (1));
+
+			block.Complete ();
+
+			Tuple<IList<int>, IList<int>> batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEqual (new[] { 1 }, batch.Item1);
+			CollectionAssert.IsEmpty (batch.Item2);
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
+
+		[Test]
+		public void MaxNumberOfGroupsTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchedJoinBlock<int, int> (1,
+				new GroupingDataflowBlockOptions
+				{ MaxNumberOfGroups = 2, TaskScheduler = scheduler });
+
+			Assert.IsTrue (block.Target1.Post (1));
+
+			Assert.IsTrue (block.Target2.Post (2));
+
+			Assert.IsFalse (block.Target2.Post (3));
+			Assert.IsFalse (block.Target1.Post (4));
+
+			Tuple<IList<int>, IList<int>> batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEqual (new[] { 1 }, batch.Item1);
+			CollectionAssert.IsEmpty (batch.Item2);
+
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.IsEmpty (batch.Item1);
+			CollectionAssert.AreEqual (new[] { 2 }, batch.Item2);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
 	}
 }

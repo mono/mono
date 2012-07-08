@@ -32,6 +32,8 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly GroupingDataflowBlockOptions dataflowBlockOptions;
 		readonly int batchSize;
 		int batchCount;
+		long numberOfGroups;
+		SpinLock batchCountLock;
 		readonly MessageOutgoingQueue<T[]> outgoing;
 		SpinLock batchLock;
 		readonly AtomicBoolean nonGreedyProcessing = new AtomicBoolean ();
@@ -48,9 +50,20 @@ namespace System.Threading.Tasks.Dataflow {
 			this.batchSize = batchSize;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
+
+			Action<bool> processQueue;
+			Func<bool> canAccept;
+			if (dataflowBlockOptions.MaxNumberOfGroups == -1) {
+				processQueue = newItem => BatchProcess (newItem ? 1 : 0);
+				canAccept = null;
+			} else {
+				processQueue = _ => BatchProcess ();
+				canAccept = TryAdd;
+			}
+
 			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
-				() => outgoing.IsCompleted, newItem => BatchProcess (newItem ? 1 : 0),
-				dataflowBlockOptions, dataflowBlockOptions.Greedy);
+				() => outgoing.IsCompleted, processQueue, dataflowBlockOptions,
+				dataflowBlockOptions.Greedy, canAccept);
 			this.outgoing = new MessageOutgoingQueue<T[]> (this, compHelper,
 				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions, batch => batch.Length);
@@ -96,16 +109,64 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.TryReceiveAll (out items);
 		}
 
+		void VerifyMaxNumberOfGroups ()
+		{
+			if (dataflowBlockOptions.MaxNumberOfGroups == -1)
+				return;
+
+			bool shouldComplete;
+
+			bool lockTaken = false;
+			try {
+				batchCountLock.Enter (ref lockTaken);
+
+				shouldComplete = numberOfGroups >= dataflowBlockOptions.MaxNumberOfGroups;
+			} finally {
+				if (lockTaken)
+					batchCountLock.Exit ();
+			}
+
+			if (shouldComplete)
+				Complete ();
+		}
+
+		bool TryAdd ()
+		{
+			bool lockTaken = false;
+			try {
+				batchCountLock.Enter (ref lockTaken);
+
+				if (numberOfGroups + batchCount / batchSize
+				    >= dataflowBlockOptions.MaxNumberOfGroups)
+					return false;
+
+				batchCount++;
+				return true;
+			} finally {
+				if (lockTaken)
+					batchCountLock.Exit ();
+			}
+		}
+
 		public void TriggerBatch ()
 		{
 			if (dataflowBlockOptions.Greedy) {
 				int earlyBatchSize;
-				do {
-					earlyBatchSize = batchCount;
-					if (earlyBatchSize == 0)
+
+				bool lockTaken = false;
+				try {
+					batchCountLock.Enter (ref lockTaken);
+					
+					if (batchCount == 0)
 						return;
-				} while (Interlocked.CompareExchange (ref batchCount, 0, earlyBatchSize)
-				         != earlyBatchSize);
+
+					earlyBatchSize = batchCount;
+					batchCount = 0;
+					numberOfGroups++;
+				} finally {
+					if (lockTaken)
+						batchCountLock.Exit ();
+				}
 
 				MakeBatch (earlyBatchSize);
 			} else {
@@ -115,25 +176,26 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
-		void BatchProcess (int addedItems = 1)
+		void BatchProcess (int addedItems = 0)
 		{
 			if (dataflowBlockOptions.Greedy) {
-				// the Interlocked pattern is necessary, because this method
-				// has to deal correctly with concurrent TriggerBatch ()
-				int current;
-				int previousCount;
-				bool makeBatch;
-				do {
-					makeBatch = false;
-					previousCount = batchCount;
-					current = previousCount + addedItems;
+				bool makeBatch = false;
 
-					if (current >= batchSize) {
-						current -= batchSize;
+				bool lockTaken = false;
+				try {
+					batchCountLock.Enter (ref lockTaken);
+
+					batchCount += addedItems;
+
+					if (batchCount >= batchSize) {
+						batchCount -= batchSize;
+						numberOfGroups++;
 						makeBatch = true;
 					}
-				} while (Interlocked.CompareExchange (ref batchCount, current, previousCount)
-				         != previousCount);
+				} finally {
+					if (lockTaken)
+						batchCountLock.Exit ();
+				}
 
 				if (makeBatch)
 					MakeBatch (batchSize);
@@ -168,6 +230,8 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 
 			outgoing.AddData (batch);
+
+			VerifyMaxNumberOfGroups ();
 		}
 
 		void EnsureNonGreedyProcessing (bool manuallyTriggered)
@@ -227,6 +291,11 @@ namespace System.Threading.Tasks.Dataflow {
 						batch [i] = messageBox.ConsumeReserved (reservations [i]);
 
 					outgoing.AddData (batch);
+
+					// non-greedy doesn't need lock
+					numberOfGroups++;
+
+					VerifyMaxNumberOfGroups ();
 				}
 
 				first = false;
@@ -240,6 +309,8 @@ namespace System.Threading.Tasks.Dataflow {
 		public void Complete ()
 		{
 			messageBox.Complete ();
+			TriggerBatch ();
+			outgoing.Complete ();
 		}
 
 		public void Fault (Exception ex)

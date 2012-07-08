@@ -40,6 +40,11 @@ namespace System.Threading.Tasks.Dataflow
 		SpinLock targetLock = new SpinLock (false);
 		readonly AtomicBoolean nonGreedyProcessing = new AtomicBoolean ();
 
+		long target1Count;
+		long target2Count;
+		long target3Count;
+		long numberOfGroups;
+
 		public JoinBlock () : this (defaultOptions)
 		{
 		}
@@ -54,13 +59,13 @@ namespace System.Threading.Tasks.Dataflow
 
 			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper,
 				() => outgoing.IsCompleted, dataflowBlockOptions,
-				dataflowBlockOptions.Greedy);
+				dataflowBlockOptions.Greedy, TryAdd1);
 			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper,
 				() => outgoing.IsCompleted, dataflowBlockOptions,
-				dataflowBlockOptions.Greedy);
+				dataflowBlockOptions.Greedy, TryAdd2);
 			target3 = new JoinTarget<T3> (this, SignalArrivalTargetImpl, compHelper,
 				() => outgoing.IsCompleted, dataflowBlockOptions,
-				dataflowBlockOptions.Greedy);
+				dataflowBlockOptions.Greedy, TryAdd3);
 			outgoing = new MessageOutgoingQueue<Tuple<T1, T2, T3>> (
 				this, compHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
@@ -122,6 +127,26 @@ namespace System.Threading.Tasks.Dataflow
 			}
 		}
 
+		bool TryAdd1 ()
+		{
+			return dataflowBlockOptions.MaxNumberOfGroups == -1
+			       || Interlocked.Increment (ref target1Count)
+			       <= dataflowBlockOptions.MaxNumberOfGroups;
+		}
+
+		bool TryAdd2 ()
+		{
+			return dataflowBlockOptions.MaxNumberOfGroups == -1
+			       || Interlocked.Increment (ref target2Count)
+			       <= dataflowBlockOptions.MaxNumberOfGroups;
+		}
+
+		bool TryAdd3 ()
+		{
+			return dataflowBlockOptions.MaxNumberOfGroups == -1
+			       || Interlocked.Increment (ref target3Count)
+			       <= dataflowBlockOptions.MaxNumberOfGroups;
+		}
 		void SignalArrivalTargetImpl ()
 		{
 			if (dataflowBlockOptions.Greedy) {
@@ -207,6 +232,11 @@ namespace System.Threading.Tasks.Dataflow
 		void TriggerMessage (T1 val1, T2 val2, T3 val3)
 		{
 			outgoing.AddData (Tuple.Create (val1, val2, val3));
+
+			if (dataflowBlockOptions.MaxNumberOfGroups != -1
+			    && Interlocked.Increment (ref numberOfGroups)
+			    >= dataflowBlockOptions.MaxNumberOfGroups)
+				Complete ();
 		}
 
 		public ITargetBlock<T1> Target1 {

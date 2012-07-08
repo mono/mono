@@ -33,9 +33,9 @@ namespace System.Threading.Tasks.Dataflow
 			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
 			CompletionHelper compHelper, Func<bool> externalCompleteTester,
 			Action<bool> processQueue, DataflowBlockOptions dataflowBlockOptions,
-			bool greedy = true)
+			bool greedy = true, Func<bool> canAccept = null)
 			: base (target, messageQueue, compHelper, externalCompleteTester,
-				dataflowBlockOptions, greedy)
+				dataflowBlockOptions, greedy, canAccept)
 		{
 			this.processQueue = processQueue;
 		}

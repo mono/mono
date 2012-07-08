@@ -26,16 +26,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks.Dataflow;
-
 using NUnit.Framework;
 
-namespace MonoTests.System.Threading.Tasks.Dataflow
-{
+namespace MonoTests.System.Threading.Tasks.Dataflow {
 	[TestFixture]
-	public class BatchBlockTest
-	{
+	public class BatchBlockTest {
 		[Test]
 		public void BasicUsageTest ()
 		{
@@ -43,9 +41,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (10);
-			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
-			buffer.LinkTo<int[]>(block);
-			
+			var block = new ActionBlock<int[]> (i =>
+			{
+				array = i;
+				evt.Set ();
+			});
+			buffer.LinkTo<int[]> (block);
+
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 
@@ -67,9 +69,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (10);
-			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
-			buffer.LinkTo(block);
-			
+			var block = new ActionBlock<int[]> (i =>
+			{
+				array = i;
+				evt.Set ();
+			});
+			buffer.LinkTo (block);
+
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 
@@ -80,7 +86,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsTrue (buffer.Post (42));
 			evt.Wait (1600);
 
-			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, array);
+			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 },
+				array);
 		}
 
 		[Test]
@@ -90,8 +97,12 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (10);
-			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
-			
+			var block = new ActionBlock<int[]> (i =>
+			{
+				array = i;
+				evt.Set ();
+			});
+
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 
@@ -101,7 +112,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			evt.Wait ();
 			Assert.IsNotNull (array);
 
-			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, array);
+			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 },
+				array);
 		}
 
 		[Test]
@@ -111,8 +123,12 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			var evt = new ManualResetEventSlim (false);
 
 			var buffer = new BatchBlock<int> (15);
-			var block = new ActionBlock<int[]> (i => { array = i; evt.Set (); });
-			
+			var block = new ActionBlock<int[]> (i =>
+			{
+				array = i;
+				evt.Set ();
+			});
+
 			for (int i = 0; i < 9; i++)
 				Assert.IsTrue (buffer.Post (i));
 			buffer.TriggerBatch ();
@@ -122,7 +138,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			evt.Wait ();
 
 			Assert.IsNotNull (array);
-			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, array);			
+			CollectionAssert.AreEquivalent (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 },
+				array);
 		}
 
 		[Test]
@@ -293,6 +310,143 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			CollectionAssert.AreEquivalent (new[] { 12, 22 }, batch);
 
 			Assert.IsFalse (block.TryReceive (out batch));
+		}
+
+		[Test]
+		public void MaxNumberOfGroupsTest ()
+		{
+			var scheduler = new TestScheduler ();
+
+			var block = new BatchBlock<int> (2,
+				new GroupingDataflowBlockOptions
+				{ MaxNumberOfGroups = 2, TaskScheduler = scheduler });
+
+			Assert.IsTrue (block.Post (1));
+			Assert.IsTrue (block.Post (2));
+
+			Assert.IsTrue (block.Post (3));
+			Assert.IsTrue (block.Post (4));
+
+			Assert.IsFalse (block.Post (5));
+
+			scheduler.ExecuteAll ();
+
+			int[] batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEqual (new[] { 1, 2 }, batch);
+
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEqual (new[] { 3, 4 }, batch);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
+
+		[Test]
+		public void CompletionWithTriggerTest ()
+		{
+			var block = new BatchBlock<int> (2);
+
+			Assert.IsTrue (block.Post (1));
+
+			block.TriggerBatch ();
+
+			block.Complete ();
+
+			CollectionAssert.AreEqual (new[] { 1 },
+				block.Receive (TimeSpan.FromMilliseconds (200)));
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
+
+		[Test]
+		public void CompletionWithoutTriggerTest ()
+		{
+			var block = new BatchBlock<int> (2);
+
+			Assert.IsTrue (block.Post (1));
+			Assert.IsTrue (block.Post (2));
+
+			block.Complete ();
+
+			CollectionAssert.AreEqual (new[] { 1, 2 },
+				block.Receive (TimeSpan.FromMilliseconds (200)));
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
+
+		[Test]
+		public void CompleteTriggersBatchTest ()
+		{
+			var block = new BatchBlock<int> (2);
+
+			Assert.IsTrue (block.Post (1));
+
+			block.Complete ();
+
+			CollectionAssert.AreEqual (new[] { 1 },
+				block.Receive (TimeSpan.FromMilliseconds (200)));
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
+
+		[Test]
+		public void NonGreedyCompleteDoesnTriggerBatchTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchBlock<int> (2,
+				new GroupingDataflowBlockOptions
+				{ Greedy = false, TaskScheduler = scheduler });
+			var source =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+
+			Assert.NotNull (source.LinkTo (block));
+
+			Assert.IsTrue (source.Post (1));
+
+			block.Complete ();
+
+			int[] batch;
+			Assert.IsFalse (block.TryReceive (out batch));
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
+
+		[Test]
+		public void NonGreedyMaxNumberOfGroupsTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BatchBlock<int> (2,
+				new GroupingDataflowBlockOptions
+				{ MaxNumberOfGroups = 1, Greedy = false, TaskScheduler = scheduler });
+			ITargetBlock<int> target = block;
+			var source1 = new TestSourceBlock<int> ();
+			var source2 = new TestSourceBlock<int> ();
+
+			var header1 = new DataflowMessageHeader (1);
+			source1.AddMessage (header1, 11);
+			source2.AddMessage (header1, 21);
+
+			Assert.AreEqual (DataflowMessageStatus.Postponed,
+				target.OfferMessage (header1, 11, source1, false));
+			Assert.AreEqual (DataflowMessageStatus.Postponed,
+				target.OfferMessage (header1, 21, source2, false));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (source1.WasConsumed (header1));
+			Assert.IsTrue (source2.WasConsumed (header1));
+
+			var header2 = new DataflowMessageHeader (2);
+			Assert.AreEqual (DataflowMessageStatus.DecliningPermanently,
+				target.OfferMessage (header2, 21, source1, false));
+
+			int[] batch;
+			Assert.IsTrue (block.TryReceive (out batch));
+			CollectionAssert.AreEquivalent (new[] { 11, 21 }, batch);
+
+			Assert.IsTrue (block.Completion.Wait (100));
 		}
 	}
 }

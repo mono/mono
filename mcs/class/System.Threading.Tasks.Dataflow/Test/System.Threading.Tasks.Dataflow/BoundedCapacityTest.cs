@@ -118,73 +118,76 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		}
 
 		[Test]
-		public void TransformFullTest()
+		public void TransformFullTest ()
 		{
-			var scheduler = new TestScheduler();
+			var scheduler = new TestScheduler ();
 
 			int n = 0;
-			var transform = new TransformBlock<int, int>(
-				i => Interlocked.Increment(ref n),
-				new ExecutionDataflowBlockOptions { BoundedCapacity = 2, TaskScheduler = scheduler });
+			var transform = new TransformBlock<int, int> (
+				i => Interlocked.Increment (ref n),
+				new ExecutionDataflowBlockOptions
+				{ BoundedCapacity = 2, TaskScheduler = scheduler });
 
-			Assert.IsTrue(transform.Post(1));
-			Assert.IsTrue(transform.Post(2));
+			Assert.IsTrue (transform.Post (1));
+			Assert.IsTrue (transform.Post (2));
 
-			Assert.GreaterOrEqual(scheduler.ExecuteAll(), 1);
+			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
-			Assert.AreEqual(2, Thread.VolatileRead(ref n));
+			Assert.AreEqual (2, Thread.VolatileRead (ref n));
 		}
 
 		[Test]
-		public void TransformManyOverfullTest()
+		public void TransformManyOverfullTest ()
 		{
-			var scheduler = new TestScheduler();
+			var scheduler = new TestScheduler ();
 
 			int n = 0;
-			var transform = new TransformManyBlock<int, int>(
+			var transform = new TransformManyBlock<int, int> (
 				i =>
 				{
-					Interlocked.Increment(ref n);
+					Interlocked.Increment (ref n);
 					return new[] { -i, i };
 				},
-				new ExecutionDataflowBlockOptions { BoundedCapacity = 2, TaskScheduler = scheduler });
+				new ExecutionDataflowBlockOptions
+				{ BoundedCapacity = 2, TaskScheduler = scheduler });
 
-			Assert.IsTrue(transform.Post(1));
-			Assert.IsTrue(transform.Post(2));
+			Assert.IsTrue (transform.Post (1));
+			Assert.IsTrue (transform.Post (2));
 
-			Assert.GreaterOrEqual(scheduler.ExecuteAll(), 1);
+			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
-			Assert.AreEqual(2, Thread.VolatileRead(ref n));
+			Assert.AreEqual (2, Thread.VolatileRead (ref n));
 		}
 
-		private int n;
+		int n;
 
 		[Test]
-		public void TransformManyOverfullTest2()
+		public void TransformManyOverfullTest2 ()
 		{
-			var scheduler = new TestScheduler();
+			var scheduler = new TestScheduler ();
 
 			n = 0;
-			var transform = new TransformManyBlock<int, int>(
-				i => ComputeResults(),
-				new ExecutionDataflowBlockOptions { BoundedCapacity = 100, TaskScheduler = scheduler });
+			var transform = new TransformManyBlock<int, int> (
+				i => ComputeResults (),
+				new ExecutionDataflowBlockOptions
+				{ BoundedCapacity = 100, TaskScheduler = scheduler });
 
 			for (int i = 0; i < 100; i++)
-				Assert.IsTrue(transform.Post(i));
+				Assert.IsTrue (transform.Post (i));
 
-			Assert.IsFalse(transform.Post(101));
+			Assert.IsFalse (transform.Post (101));
 
-			Assert.GreaterOrEqual(scheduler.ExecuteAll(), 1);
+			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
-			Assert.IsFalse(transform.Post(102));
+			Assert.IsFalse (transform.Post (102));
 
-			Assert.AreEqual(10000, Thread.VolatileRead(ref n));
+			Assert.AreEqual (10000, Thread.VolatileRead (ref n));
 		}
 
-		private IEnumerable<int> ComputeResults()
+		IEnumerable<int> ComputeResults ()
 		{
 			for (int j = 0; j < 100; j++)
-				yield return Interlocked.Increment(ref n);
+				yield return Interlocked.Increment (ref n);
 		}
 
 		[Test]
@@ -260,7 +263,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			return default(T);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)
+		public IDisposable LinkTo (ITargetBlock<T> target,
+		                           DataflowLinkOptions linkOptions)
 		{
 			throw new NotImplementedException ();
 		}
@@ -268,7 +272,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		public bool ReserveMessage (DataflowMessageHeader messageHeader,
 		                            ITargetBlock<T> target)
 		{
-			throw new NotImplementedException ();
+			return messages.ContainsKey (messageHeader);
 		}
 
 		public void ReleaseReservation (DataflowMessageHeader messageHeader,

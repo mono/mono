@@ -31,9 +31,9 @@ namespace System.Threading.Tasks.Dataflow {
 		public JoinTarget (
 			IDataflowBlock joinBlock, Action signal, CompletionHelper helper,
 			Func<bool> externalCompleteTester, DataflowBlockOptions options,
-			bool greedy)
+			bool greedy, Func<bool> canAccept)
 			: base (null, new BlockingCollection<TTarget> (), helper, externalCompleteTester,
-				options, greedy)
+				options, greedy, canAccept)
 		{
 			this.joinBlock = joinBlock;
 			this.signal = signal;

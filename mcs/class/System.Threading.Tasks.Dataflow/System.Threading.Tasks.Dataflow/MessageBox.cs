@@ -35,6 +35,7 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly Func<bool> externalCompleteTester;
 		readonly DataflowBlockOptions options;
 		readonly bool greedy;
+		readonly Func<bool> canAccept;
 
 		readonly ConcurrentDictionary<ISourceBlock<TInput>, DataflowMessageHeader>
 			postponedMessages =
@@ -47,7 +48,7 @@ namespace System.Threading.Tasks.Dataflow {
 		public MessageBox (
 			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
 			CompletionHelper compHelper, Func<bool> externalCompleteTester,
-			DataflowBlockOptions options, bool greedy = true)
+			DataflowBlockOptions options, bool greedy = true, Func<bool> canAccept = null)
 		{
 			this.Target = target;
 			this.compHelper = compHelper;
@@ -55,6 +56,7 @@ namespace System.Threading.Tasks.Dataflow {
 			this.externalCompleteTester = externalCompleteTester;
 			this.options = options;
 			this.greedy = greedy;
+			this.canAccept = canAccept;
 		}
 
 		public DataflowMessageStatus OfferMessage (
@@ -88,6 +90,9 @@ namespace System.Threading.Tasks.Dataflow {
 				if (!consummed)
 					return DataflowMessageStatus.NotAvailable;
 			}
+
+			if (canAccept != null && !canAccept ())
+				return DataflowMessageStatus.DecliningPermanently;
 
 			try {
 				MessageQueue.Add (messageValue);
