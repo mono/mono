@@ -47,6 +47,11 @@ namespace System.Security.AccessControl
 		{
 		}
 		
+		internal SemaphoreSecurity (SafeHandle handle, AccessControlSections includeSections)
+			: base (false, ResourceType.KernelObject, handle, includeSections)
+		{
+		}
+		
 		public override Type AccessRightType {
 			get { return typeof (SemaphoreRights); }
 		}
@@ -126,6 +131,19 @@ namespace System.Security.AccessControl
 		public void SetAuditRule (SemaphoreAuditRule rule)
 		{
 			SetAuditRule((AuditRule)rule);
+		}
+		
+		internal void PersistModifications (SafeHandle handle)
+		{
+			WriteLock();
+			try {
+				Persist (handle, (AccessRulesModified ? AccessControlSections.Access : 0) |
+						 (AuditRulesModified  ? AccessControlSections.Audit  : 0) |
+						 (OwnerModified       ? AccessControlSections.Owner  : 0) |
+						 (GroupModified       ? AccessControlSections.Group  : 0), null);
+			} finally {
+				WriteUnlock ();
+			}
 		}
 	}
 }

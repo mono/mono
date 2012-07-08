@@ -66,16 +66,13 @@ namespace System.IO.Pipes
 		public AnonymousPipeServerStream (PipeDirection direction, HandleInheritability inheritability, int bufferSize, PipeSecurity pipeSecurity)
 			: base (direction, bufferSize)
 		{
-			if (pipeSecurity != null)
-				throw ThrowACLException ();
-
 			if (direction == PipeDirection.InOut)
 				throw new NotSupportedException ("Anonymous pipe direction can only be either in or out.");
 
 			if (IsWindows)
-				impl = new Win32AnonymousPipeServer (this,direction, inheritability, bufferSize);
+				impl = new Win32AnonymousPipeServer (this, direction, inheritability, bufferSize, pipeSecurity);
 			else
-				impl = new UnixAnonymousPipeServer (this,direction, inheritability, bufferSize);
+				impl = new UnixAnonymousPipeServer (this, direction, inheritability, bufferSize);
 
 			InitializeHandle (impl.Handle, false, false);
 			IsConnected = true;

@@ -43,9 +43,13 @@ namespace System.IO.Pipes
 		public PipeSecurity ()
 			: base (false, ResourceType.FileObject)
 		{
-
 		}
-
+		
+		internal PipeSecurity (SafeHandle handle, AccessControlSections includeSections)
+			: base (false, ResourceType.FileObject, handle, includeSections)
+		{
+		}
+		
 		public override Type AccessRightType {
 			get { return typeof (PipeAccessRights); }
 		}
@@ -87,15 +91,34 @@ namespace System.IO.Pipes
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		protected internal void Persist (SafeHandle handle)
 		{
-			throw new NotImplementedException ();
+			WriteLock();
+			try {
+				Persist (handle, AccessControlSectionsModified, null);
+			} finally {
+				WriteUnlock ();
+			}
 		}
 
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		protected internal void Persist (string name)
 		{
-			throw new NotImplementedException ();
+			WriteLock();
+			try {
+				Persist (name, AccessControlSectionsModified, null);
+			} finally {
+				WriteUnlock ();
+			}
 		}
-
+		
+		AccessControlSections AccessControlSectionsModified {
+			get {
+				return (AccessRulesModified ? AccessControlSections.Access : 0) |
+				       (AuditRulesModified  ? AccessControlSections.Audit  : 0) |
+				       (OwnerModified       ? AccessControlSections.Owner  : 0) |
+				       (GroupModified       ? AccessControlSections.Group  : 0);
+			}
+		}
+		
 		public bool RemoveAccessRule (PipeAccessRule rule)
 		{
 			return RemoveAccessRule ((AccessRule)rule);
