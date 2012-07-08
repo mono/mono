@@ -147,7 +147,7 @@ namespace MonoTests.System.Security.AccessControl
 			SecurityIdentifier everyoneSid = new SecurityIdentifier ("WD");
 			TestSecurity security = new TestSecurity ();
 
-			AccessRule<TestRights> rule = new AccessRule<TestRights>
+			TestAccessRule rule = new TestAccessRule
 				(everyoneSid, TestRights.One, AccessControlType.Allow);
 
 			modifiedRet = security.ModifyAccessRule (AccessControlModification.Reset, rule, out modifiedOut);
@@ -180,10 +180,39 @@ namespace MonoTests.System.Security.AccessControl
 			One = 1
 		}
 
-		class DerivedAccessRule : AccessRule<TestRights>
+		class DerivedAccessRule : TestAccessRule
 		{
 			public DerivedAccessRule (IdentityReference identity, TestRights rights, AccessControlType type)
 				: base (identity, rights, type)
+			{
+			}
+		}
+
+		class TestAccessRule : AccessRule
+		{
+			public TestAccessRule (IdentityReference identity, TestRights rights, AccessControlType type)
+				: this (identity, rights, false, InheritanceFlags.None, PropagationFlags.None, type)
+			{
+			}
+
+			public TestAccessRule (IdentityReference identity,
+			                       TestRights rights, bool isInherited,
+			                       InheritanceFlags inheritanceFlags,
+			                       PropagationFlags propagationFlags,
+			                       AccessControlType type)
+				: base (identity, (int)rights, isInherited, inheritanceFlags, propagationFlags, type)
+			{
+			}
+		}
+
+		class TestAuditRule : AuditRule
+		{
+			public TestAuditRule (IdentityReference identity,
+				              TestRights rights, bool isInherited,
+				              InheritanceFlags inheritanceFlags,
+			                      PropagationFlags propagationFlags,
+			                      AuditFlags flags)
+				: base (identity, (int)rights, isInherited, inheritanceFlags, propagationFlags, flags)
 			{
 			}
 		}
@@ -202,8 +231,8 @@ namespace MonoTests.System.Security.AccessControl
 			                                              PropagationFlags propagationFlags,
 			                                              AccessControlType type)
 			{
-				return new AccessRule<TestRights> (identityReference, (TestRights)accessMask,
-				                                   inheritanceFlags, propagationFlags, type);
+				return new TestAccessRule (identityReference, (TestRights)accessMask, isInherited,
+				                           inheritanceFlags, propagationFlags, type);
 			}
 
 			public override AuditRule AuditRuleFactory (IdentityReference identityReference,
@@ -212,8 +241,8 @@ namespace MonoTests.System.Security.AccessControl
 			                                            PropagationFlags propagationFlags,
 			                                            AuditFlags flags)
 			{
-				return new AuditRule<TestRights> (identityReference, (TestRights)accessMask,
-				                                  inheritanceFlags, propagationFlags, flags);
+				return new TestAuditRule (identityReference, (TestRights)accessMask, isInherited,
+				                          inheritanceFlags, propagationFlags, flags);
 			}
 
 			protected override bool ModifyAccess (AccessControlModification modification, 
@@ -234,11 +263,11 @@ namespace MonoTests.System.Security.AccessControl
 			}
 
 			public override Type AccessRuleType {
-				get { return typeof (AccessRule<TestRights>); }
+				get { return typeof (TestAccessRule); }
 			}
 
 			public override Type AuditRuleType {
-				get { return typeof (AuditRule<TestRights>); }
+				get { return typeof (TestAuditRule); }
 			}
 		}
 	}
