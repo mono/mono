@@ -511,11 +511,19 @@ namespace System {
 
 			var fields = GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
-			string [] result = new string [fields.Length];
-			for (int i = 0; i < fields.Length; ++i)
-				result [i] = fields [i].Name;
+			string [] names = new string [fields.Length];
+			if (0 != names.Length) {
+				for (int i = 0; i < fields.Length; ++i)
+					names [i] = fields [i].Name;
+					
+				var et = GetEnumUnderlyingType ();
+				var values = Array.CreateInstance (et, names.Length);
+				for (int i = 0; i < fields.Length; ++i)
+					values.SetValue (fields [i].GetValue (null), i);
+				MonoEnumInfo.SortEnums (et, values, names);
+			}
 
-			return result;
+			return names;
 		}
 
 		static NotImplementedException CreateNIE () {
