@@ -53,6 +53,28 @@ namespace MonoTests.System.Security.AccessControl
 		}
 
 		[Test]
+		public void IndexerMakesCopies ()
+		{
+			// This behavior is mentioned in the DiscretionaryAcl RawAcl constructor overload.
+			// Turns out it applies to more than just the constructor.
+			SecurityIdentifier worldSid = new SecurityIdentifier ("WD");
+
+			// RawAcl does not make copies.
+			RawAcl acl = new RawAcl (RawAcl.AclRevision, 1);
+			CommonAce ace = new CommonAce (AceFlags.SuccessfulAccess, AceQualifier.SystemAudit, 1, worldSid, false, null);
+			acl.InsertAce (0, ace);
+			Assert.AreSame (acl [0], acl [0]);
+
+			// CommonAcl does.
+			SystemAcl sacl = new SystemAcl (false, false, acl);
+			Assert.AreNotSame (sacl [0], sacl [0]);
+
+			// Make sure the copying occurs in the constructor as well as the indexer.
+			ace.AceFlags = AceFlags.FailedAccess;
+			Assert.AreEqual (AceFlags.SuccessfulAccess, sacl [0].AceFlags);
+		}
+
+		[Test]
 		public void EmptyBinaryLengthOK()
 		{
 			DiscretionaryAcl dacl = new DiscretionaryAcl (false, false, 0);

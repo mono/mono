@@ -4,8 +4,10 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //	Kenneth Bell
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012       James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,10 +34,11 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Security.Principal {
-
+namespace System.Security.Principal
+{
 	[ComVisible (false)]
-	public sealed class SecurityIdentifier : IdentityReference, IComparable<SecurityIdentifier> {
+	public sealed class SecurityIdentifier : IdentityReference, IComparable<SecurityIdentifier>
+	{
 		private byte[] buffer;
 
 		public static readonly int MaxBinaryLength = 68;
@@ -49,29 +52,35 @@ namespace System.Security.Principal {
 			buffer = ParseSddlForm (sddlForm);
 		}
 
-		public SecurityIdentifier (byte[] binaryForm, int offset)
+		unsafe public SecurityIdentifier (byte[] binaryForm, int offset)
 		{
 			if (binaryForm == null)
 				throw new ArgumentNullException ("binaryForm");
 			if ((offset < 0) || (offset > binaryForm.Length - 2))
 				throw new ArgumentException ("offset");
 			
-			int revision = binaryForm[offset];
-			int numSubAuthorities = binaryForm[offset + 1];
-			if (revision != 1 || numSubAuthorities > 15)
-				throw new ArgumentException ("Value was invalid.");
-			if (offset > binaryForm.Length - (8 + (numSubAuthorities * 4)))
-				throw new ArgumentException ("offset");
-			
-			buffer = new byte[8 + (numSubAuthorities * 4)];
-			Array.Copy (binaryForm, offset, buffer, 0, buffer.Length);
+			fixed (byte* binaryFormPtr = binaryForm)
+				CreateFromBinaryForm ((IntPtr)(binaryFormPtr + offset), binaryForm.Length - offset);
 		}
 
 		public SecurityIdentifier (IntPtr binaryForm)
-		{
-			throw new NotImplementedException ();
+		{				
+			CreateFromBinaryForm (binaryForm, int.MaxValue);
 		}
-
+		
+		void CreateFromBinaryForm (IntPtr binaryForm, int length)
+		{			
+			int revision = Marshal.ReadByte (binaryForm, 0);
+			int numSubAuthorities = Marshal.ReadByte (binaryForm, 1);
+			if (revision != 1 || numSubAuthorities > 15)
+				throw new ArgumentException ("Value was invalid.");
+			if (length < (8 + (numSubAuthorities * 4)))
+				throw new ArgumentException ("offset");
+			
+			buffer = new byte[8 + (numSubAuthorities * 4)];
+			Marshal.Copy (binaryForm, buffer, 0, buffer.Length);
+		}
+		
 		public SecurityIdentifier (WellKnownSidType sidType,
 		                           SecurityIdentifier domainSid)
 		{

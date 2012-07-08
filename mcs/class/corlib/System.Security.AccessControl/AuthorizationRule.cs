@@ -48,6 +48,9 @@ namespace System.Security.AccessControl {
 						      InheritanceFlags inheritanceFlags,
 						      PropagationFlags propagationFlags)
 		{
+			if (null == identity)
+				throw new ArgumentNullException ("identity");
+				
 			if (!(identity is SecurityIdentifier) && !(identity is NTAccount))
 				throw new ArgumentException ("identity");
 

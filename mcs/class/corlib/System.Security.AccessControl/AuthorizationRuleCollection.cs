@@ -33,7 +33,7 @@ namespace System.Security.AccessControl
 {
 	public sealed class AuthorizationRuleCollection : ReadOnlyCollectionBase
 	{
-		private AuthorizationRuleCollection (AuthorizationRule [] rules)
+		internal AuthorizationRuleCollection (AuthorizationRule [] rules)
 		{
 			InnerList.AddRange (rules);
 		}

@@ -72,6 +72,7 @@ namespace System.Security.AccessControl
 				objectFlags, objectType, inheritedObjectType);
 		}
 		
+		[MonoTODO]
 		public bool RemoveAccess (AccessControlType accessType,
 					  SecurityIdentifier sid,
 					  int accessMask,
@@ -81,6 +82,7 @@ namespace System.Security.AccessControl
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public bool RemoveAccess (AccessControlType accessType,
 					  SecurityIdentifier sid,
 					  int accessMask,
