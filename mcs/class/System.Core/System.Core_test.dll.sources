@@ -3,6 +3,7 @@ System/TimeZoneInfo.AdjustmentRuleTest.cs
 System/TimeZoneInfo.TransitionTimeTest.cs
 System.Collections.Generic/HashSetTest.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileTest.cs
+System.IO.Pipes/PipeSecurityTest.cs
 System.Linq/EnumerableFixture.cs
 System.Linq/EnumerableTest.cs
 System.Linq/EnumerableMoreTest.cs
