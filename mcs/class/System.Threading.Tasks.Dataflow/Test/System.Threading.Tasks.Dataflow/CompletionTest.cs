@@ -81,7 +81,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsTrue (block.Post (42));
 			((IDataflowBlock)block).Fault (new Exception ());
 
-			Assert.Throws<AggregateException> (() => block.Completion.Wait (100));
+			AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.Faulted, block.Completion.Status);
 			Assert.IsFalse (block.Post (43));
@@ -107,7 +107,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void JoinTargetCompletitionTest ()
 		{
 			foreach (var tuple in GetJoinBlocksWithTargets<int> ()) {
-				Assert.Throws<NotSupportedException> (
+				AssertEx.Throws<NotSupportedException> (
 					() => { var x = tuple.Item2.Completion; });
 				Assert.IsTrue (tuple.Item2.Post (1));
 				tuple.Item2.Complete ();

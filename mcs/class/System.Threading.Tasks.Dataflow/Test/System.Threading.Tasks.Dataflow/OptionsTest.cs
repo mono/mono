@@ -102,9 +102,9 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			foreach (var block in blocks) {
 				var ae =
-					Assert.Throws<AggregateException> (() => block.Completion.Wait (100));
+					AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 				Assert.AreEqual (1, ae.InnerExceptions.Count);
-				Assert.IsInstanceOf<TaskCanceledException> (ae.InnerExceptions [0]);
+				Assert.IsInstanceOfType (typeof(TaskCanceledException), ae.InnerExceptions [0]);
 				Assert.IsTrue (block.Completion.IsCanceled);
 			}
 		}
@@ -284,7 +284,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.AreEqual (1, scheduler.ExecuteAll ());
 
-			Assert.NotNull (action);
+			Assert.IsNotNull (action);
 
 			Assert.IsTrue (action.Completion.Wait (100));
 			Assert.IsTrue (task.Wait (0));
@@ -298,7 +298,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (
+			Assert.IsNotNull (
 				source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 1 }));
 
 			Assert.IsTrue (source.Post (42));
@@ -323,7 +323,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target = new BufferBlock<int> (
 				new DataflowBlockOptions { TaskScheduler = scheduler, BoundedCapacity = 1 });
-			Assert.NotNull (
+			Assert.IsNotNull (
 				source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 2 }));
 
 			Assert.IsTrue (source.Post (42));
@@ -357,7 +357,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var target =
 				new BufferBlock<int> (
 					new DataflowBlockOptions { TaskScheduler = scheduler, BoundedCapacity = 1 });
-			Assert.NotNull (
+			Assert.IsNotNull (
 				source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 2 }));
 
 			Assert.IsTrue (source.Post (42));

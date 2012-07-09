@@ -36,7 +36,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var source =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target = new TestTargetBlock<int> { Postpone = true };
-			Assert.NotNull (source.LinkTo (target));
+			Assert.IsNotNull (source.LinkTo (target));
 			Assert.IsFalse (target.HasPostponed);
 
 			Assert.IsTrue (source.Post (42));
@@ -56,8 +56,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target1 = new TestTargetBlock<int> { Postpone = true };
 			var target2 = new TestTargetBlock<int> { Postpone = true };
-			Assert.NotNull (source.LinkTo (target1));
-			Assert.NotNull (source.LinkTo (target2));
+			Assert.IsNotNull (source.LinkTo (target1));
+			Assert.IsNotNull (source.LinkTo (target2));
 			Assert.IsFalse (target1.HasPostponed);
 			Assert.IsFalse (target2.HasPostponed);
 
@@ -82,8 +82,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target1 = new TestTargetBlock<int> { Decline = true };
 			var target2 = new TestTargetBlock<int> ();
-			Assert.NotNull (source.LinkTo (target1));
-			Assert.NotNull (source.LinkTo (target2));
+			Assert.IsNotNull (source.LinkTo (target1));
+			Assert.IsNotNull (source.LinkTo (target2));
 			Assert.AreEqual (default(int), target1.DirectlyAccepted);
 			Assert.AreEqual (default(int), target2.DirectlyAccepted);
 
@@ -100,7 +100,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var source =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target = new TestTargetBlock<int> { Decline = true };
-			Assert.NotNull (source.LinkTo (target));
+			Assert.IsNotNull (source.LinkTo (target));
 			Assert.AreEqual (default(int), target.DirectlyAccepted);
 
 			Assert.IsTrue (source.Post (42));
@@ -141,7 +141,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var source =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target = new TestTargetBlock<int> { Postpone = true };
-			Assert.NotNull (source.LinkTo (target));
+			Assert.IsNotNull (source.LinkTo (target));
 			Assert.IsFalse (target.HasPostponed);
 
 			Assert.IsTrue (source.Post (42));
@@ -171,7 +171,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var source =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target = new TestTargetBlock<int> { Postpone = true };
-			Assert.NotNull (source.LinkTo (target));
+			Assert.IsNotNull (source.LinkTo (target));
 			Assert.IsFalse (target.HasPostponed);
 
 			Assert.IsTrue (source.Post (42));

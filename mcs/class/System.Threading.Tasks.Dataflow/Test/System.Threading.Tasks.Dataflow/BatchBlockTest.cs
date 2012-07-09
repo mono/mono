@@ -168,8 +168,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block));
-			Assert.NotNull (source2.LinkTo (block));
+			Assert.IsNotNull (source1.LinkTo (block));
+			Assert.IsNotNull (source2.LinkTo (block));
 
 			Assert.IsTrue (source1.Post (11));
 			Assert.IsTrue (source2.Post (21));
@@ -234,8 +234,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block));
-			Assert.NotNull (source2.LinkTo (block));
+			Assert.IsNotNull (source1.LinkTo (block));
+			Assert.IsNotNull (source2.LinkTo (block));
 
 			// trigger 2 and then trigger 1 with capacity of 3
 
@@ -272,8 +272,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block));
-			Assert.NotNull (source2.LinkTo (block));
+			Assert.IsNotNull (source1.LinkTo (block));
+			Assert.IsNotNull (source2.LinkTo (block));
 
 			// trigger 2, then trigger another 2 and then trigger 2 once more
 			// while havaing capacity of 3
@@ -401,7 +401,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var source =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 
-			Assert.NotNull (source.LinkTo (block));
+			Assert.IsNotNull (source.LinkTo (block));
 
 			Assert.IsTrue (source.Post (1));
 

@@ -34,7 +34,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		{
 			var source = new BufferBlock<int> ();
 			var target = new BufferBlock<int> ();
-			Assert.NotNull (source.LinkTo (target,
+			Assert.IsNotNull (source.LinkTo (target,
 				new DataflowLinkOptions { PropagateCompletion = true }));
 
 			Assert.IsFalse (target.Completion.Wait (100));
@@ -47,7 +47,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		{
 			ISourceBlock<int> source = new BufferBlock<int> ();
 			var target = new BufferBlock<int> ();
-			Assert.NotNull (source.LinkTo (target,
+			Assert.IsNotNull (source.LinkTo (target,
 				new DataflowLinkOptions { PropagateCompletion = true }));
 
 			Assert.IsFalse (target.Completion.Wait (100));
@@ -55,10 +55,10 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			source.Fault (exception);
 
 			var ae =
-				Assert.Throws<AggregateException> (() => source.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => source.Completion.Wait (100));
 			Assert.AreEqual (exception, ae.Flatten ().InnerException);
 
-			ae = Assert.Throws<AggregateException> (() => target.Completion.Wait (100));
+			ae = AssertEx.Throws<AggregateException> (() => target.Completion.Wait (100));
 			Assert.AreEqual (exception, ae.Flatten ().InnerException);
 		}
 
@@ -69,15 +69,16 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var source = new BufferBlock<int> (
 				new DataflowBlockOptions { CancellationToken = tokenSource.Token });
 			var target = new BufferBlock<int> ();
-			Assert.NotNull (source.LinkTo (target,
+			Assert.IsNotNull (source.LinkTo (target,
 				new DataflowLinkOptions { PropagateCompletion = true }));
 
 			Assert.IsFalse (target.Completion.Wait (100));
 			tokenSource.Cancel ();
 
 			var ae =
-				Assert.Throws<AggregateException> (() => source.Completion.Wait (100));
-			Assert.IsInstanceOf<TaskCanceledException> (ae.Flatten ().InnerException);
+				AssertEx.Throws<AggregateException> (() => source.Completion.Wait (100));
+			Assert.IsInstanceOfType (
+				typeof(TaskCanceledException), ae.Flatten ().InnerException);
 
 			Assert.IsTrue (target.Completion.Wait (100));
 		}
@@ -94,7 +95,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 					return i;
 				});
 			var target = new BufferBlock<int> ();
-			Assert.NotNull (source.LinkTo (target,
+			Assert.IsNotNull (source.LinkTo (target,
 				new DataflowLinkOptions { PropagateCompletion = true }));
 
 			Assert.IsTrue (source.Post (42));

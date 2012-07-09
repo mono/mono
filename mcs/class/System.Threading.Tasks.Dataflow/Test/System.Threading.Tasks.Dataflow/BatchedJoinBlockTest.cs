@@ -94,7 +94,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		[Test]
 		public void BoundedCapacityTest ()
 		{
-			Assert.Throws<ArgumentException> (
+			AssertEx.Throws<ArgumentException> (
 				() =>
 				new BatchedJoinBlock<int, int> (2,
 					new GroupingDataflowBlockOptions { BoundedCapacity = 3 }));

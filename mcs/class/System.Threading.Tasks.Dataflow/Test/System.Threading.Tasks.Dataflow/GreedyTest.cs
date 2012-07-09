@@ -38,8 +38,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block.Target1));
-			Assert.NotNull (source2.LinkTo (block.Target2));
+			Assert.IsNotNull (source1.LinkTo (block.Target1));
+			Assert.IsNotNull (source2.LinkTo (block.Target2));
 
 			Assert.IsTrue (source1.Post (1));
 			scheduler.ExecuteAll ();
@@ -70,9 +70,9 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source3 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block.Target1));
-			Assert.NotNull (source2.LinkTo (block.Target2));
-			Assert.NotNull (source3.LinkTo (block.Target3));
+			Assert.IsNotNull (source1.LinkTo (block.Target1));
+			Assert.IsNotNull (source2.LinkTo (block.Target2));
+			Assert.IsNotNull (source3.LinkTo (block.Target3));
 
 			Assert.IsTrue (source1.Post (1));
 			scheduler.ExecuteAll ();
@@ -103,8 +103,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block.Target1));
-			Assert.NotNull (source2.LinkTo (block.Target2));
+			Assert.IsNotNull (source1.LinkTo (block.Target1));
+			Assert.IsNotNull (source2.LinkTo (block.Target2));
 
 			Assert.IsTrue (source1.Post (1));
 			scheduler.ExecuteAll ();
@@ -137,9 +137,9 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source3 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block.Target1));
-			Assert.NotNull (source2.LinkTo (block.Target2));
-			Assert.NotNull (source3.LinkTo (block.Target3));
+			Assert.IsNotNull (source1.LinkTo (block.Target1));
+			Assert.IsNotNull (source2.LinkTo (block.Target2));
+			Assert.IsNotNull (source3.LinkTo (block.Target3));
 
 			Assert.IsTrue (source1.Post (1));
 			scheduler.ExecuteAll ();
@@ -181,7 +181,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			var source =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source.LinkTo (block));
+			Assert.IsNotNull (source.LinkTo (block));
 
 			Assert.IsTrue (source.Post (43));
 
@@ -196,7 +196,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source2.LinkTo (block));
+			Assert.IsNotNull (source2.LinkTo (block));
 
 			Assert.IsTrue (source2.Post (142));
 
@@ -224,8 +224,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block));
-			Assert.NotNull (source2.LinkTo (block));
+			Assert.IsNotNull (source1.LinkTo (block));
+			Assert.IsNotNull (source2.LinkTo (block));
 
 			Assert.IsTrue (source1.Post (43));
 
@@ -248,7 +248,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		[Test]
 		public void NonGreedyBatchedJoinTest ()
 		{
-			Assert.Throws<ArgumentException> (
+			AssertEx.Throws<ArgumentException> (
 				() => new BatchedJoinBlock<int, int> (2,
 					      new GroupingDataflowBlockOptions { Greedy = false }));
 		}
@@ -256,7 +256,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		[Test]
 		public void NonGreedyBatchedJoin3Test ()
 		{
-			Assert.Throws<ArgumentException> (
+			AssertEx.Throws<ArgumentException> (
 				() => new BatchedJoinBlock<int, int, int> (2,
 					      new GroupingDataflowBlockOptions { Greedy = false }));
 		}
@@ -272,8 +272,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source2 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block.Target1));
-			Assert.NotNull (source2.LinkTo (block.Target2));
+			Assert.IsNotNull (source1.LinkTo (block.Target1));
+			Assert.IsNotNull (source2.LinkTo (block.Target2));
 
 			Assert.IsTrue (source1.Post (11));
 			Assert.IsTrue (source2.Post (21));
@@ -314,9 +314,9 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 			var source3 =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
-			Assert.NotNull (source1.LinkTo (block.Target1));
-			Assert.NotNull (source2.LinkTo (block.Target2));
-			Assert.NotNull (source3.LinkTo (block.Target3));
+			Assert.IsNotNull (source1.LinkTo (block.Target1));
+			Assert.IsNotNull (source2.LinkTo (block.Target2));
+			Assert.IsNotNull (source3.LinkTo (block.Target3));
 
 			Assert.IsTrue (source1.Post (11));
 			Assert.IsTrue (source2.Post (21));

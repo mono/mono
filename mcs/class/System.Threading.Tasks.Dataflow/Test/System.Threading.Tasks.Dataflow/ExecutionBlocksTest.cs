@@ -54,7 +54,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				block.Post (1);
 
 				var ae =
-					Assert.Throws<AggregateException> (() => block.Completion.Wait (100));
+					AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 				Assert.AreEqual (1, ae.InnerExceptions.Count);
 				Assert.AreEqual (typeof(Exception), ae.InnerException.GetType ());
 			}
@@ -95,7 +95,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				shouldRun = 0;
 				evt.Set ();
 
-				Assert.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
 				Thread.Sleep (100);
 
