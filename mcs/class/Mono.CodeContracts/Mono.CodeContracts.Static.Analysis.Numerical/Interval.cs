@@ -87,7 +87,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         protected override bool IsFiniteBound (Rational n)
         {
-            throw new System.NotImplementedException ();
+            return n.IsInteger;
         }
 
         public override Interval ImmutableVersion ()
@@ -265,6 +265,28 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         public override int GetHashCode ()
         {
             return (LowerBound.GetHashCode () * 397) ^ UpperBound.GetHashCode ();
+        }
+
+        public static bool AreConsecutiveIntegers (Interval prev, Interval next)
+        {
+            if (!prev.IsNormal() || !next.IsNormal()
+              || !prev.UpperBound.IsInteger || !next.LowerBound.IsInteger)
+                return false;
+
+            return prev.UpperBound + Rational.One == next.LowerBound;
+        }
+
+        public bool OverlapsWith(Interval that)
+        {
+            return !Meet (that).IsBottom;
+        }
+
+        public bool OnTheLeftOf (Interval that)
+        {
+            if (!that.IsNormal() || !that.IsNormal())
+                return false;
+
+            return UpperBound <= that.LowerBound;
         }
     }
 }

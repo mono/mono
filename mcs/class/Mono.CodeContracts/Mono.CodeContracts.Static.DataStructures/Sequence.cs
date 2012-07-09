@@ -30,6 +30,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Mono.CodeContracts.Static.Analysis.Numerical;
+
 namespace Mono.CodeContracts.Static.DataStructures {
 	class Sequence<T> {
 		public static readonly Sequence<T> Empty = null;
@@ -118,6 +120,15 @@ namespace Mono.CodeContracts.Static.DataStructures {
                 result = result.Cons (elem);
 
             return result.Reverse ();
+        }
+
+        public static Sequence<T> From(IEnumerable<T> elems)
+        {
+            Sequence<T> result = null;
+            foreach (var elem in elems)
+                result = result.Cons(elem);
+
+            return result.Reverse();
         } 
 
 		public override string ToString ()
@@ -136,5 +147,10 @@ namespace Mono.CodeContracts.Static.DataStructures {
 				this.tail.BuildString (sb);
 			}
 		}
+
+	    public static Sequence<T> Singleton (T value)
+	    {
+	        return new Sequence<T> (value, null);
+	    }
 	}
 }

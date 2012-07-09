@@ -32,7 +32,7 @@ using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    public abstract class IntervalBase<TInterval, TNumeric> : IAbstractDomain<TInterval>
+    abstract class IntervalBase<TInterval, TNumeric> : IAbstractDomain<TInterval>
         where TInterval : IntervalBase<TInterval, TNumeric>
     {
         public TNumeric UpperBound { get; protected set; }

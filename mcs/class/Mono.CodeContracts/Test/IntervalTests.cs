@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System;
-
 using Mono.CodeContracts.Static.Analysis.Numerical;
 
 using NUnit.Framework;
@@ -143,6 +141,15 @@ namespace Test
 
             Assert.That(_1__4.LessEqual(_1__2), Is.False);
             Assert.That(_1__4.LessEqual(_3__4), Is.False);
+        }
+
+        [Test]
+        public void ConsecutiveIntegers()
+        {
+            Assert.That (Interval.AreConsecutiveIntegers(_1__2, _3__4), Is.True);
+            Assert.That (Interval.AreConsecutiveIntegers(_1__2, _1__2), Is.False);
+            Assert.That (Interval.AreConsecutiveIntegers(_3__4, _1__2), Is.False);
+            Assert.That (Interval.AreConsecutiveIntegers(Interval.For (Rational.For (1,3)), _1__2), Is.False);
         }
 
         protected override Interval top { get { return Interval.TopValue; } }

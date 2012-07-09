@@ -38,12 +38,12 @@ namespace Mono.CodeContracts.Static.Lattices {
 		/// <summary>
 		/// Represents universe set (which holds every value)
 		/// </summary>
-		T Top { get; }
+		new T Top { get; }
 
 		/// <summary>
 		/// Represents empty set (which holds nothing)
 		/// </summary>
-		T Bottom { get; }
+		new T Bottom { get; }
 
 		/// <summary>
 		/// Is this value a universe set
@@ -59,12 +59,12 @@ namespace Mono.CodeContracts.Static.Lattices {
 		/// Returns a union of this and that
 		/// </summary>
 		/// <param name="that"></param>
-		/// <param name="widening">Specifies that widening-join operator must be used</param>
-		/// <param name="weaker">Returns that result domain is weaker than this</param>
 		/// <returns></returns>
-		T Join (T that, bool widening, out bool weaker);
+		T Join (T that);
 
-		/// <summary>
+	    T Widen (T that);
+		
+        /// <summary>
 		/// Returns an intersection of this and that
 		/// </summary>
 		/// <param name="that"></param>

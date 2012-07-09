@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis.Paths;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Lattices;
 using Mono.CodeContracts.Static.Providers;
@@ -121,7 +122,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 			return TrySizeOf (expr, out sizeAsConstant);
 		}
 
-		private bool TrySizeOf (E expr, out int sizeAsConstant)
+	    private bool TrySizeOf (E expr, out int sizeAsConstant)
 		{
 			TypeNode type;
 			if (VisitorForSizeOf<V, E>.IsSizeOf (expr, out type, this)) {
