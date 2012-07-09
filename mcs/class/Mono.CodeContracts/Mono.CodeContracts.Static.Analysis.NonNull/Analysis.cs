@@ -169,7 +169,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 				return ProofOutcome.False;
 
 			FlatDomain<TypeNode> aType = ContextProvider.ValueContext.GetType (pc, variable);
-			if (aType.IsNormal && MetaDataProvider.IsManagedPointer (aType.Concrete))
+			if (aType.IsNormal() && MetaDataProvider.IsManagedPointer (aType.Concrete))
 				return ProofOutcome.True;
 
 			return ProofOutcome.Top;
@@ -304,7 +304,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 		{
 			if (data.IsNonNull (obj)) {
 				FlatDomain<TypeNode> aType = ContextProvider.ValueContext.GetType (pc, obj);
-				if (aType.IsNormal && MetaDataProvider.DerivesFrom (aType.Concrete, type))
+				if (aType.IsNormal() && MetaDataProvider.DerivesFrom (aType.Concrete, type))
 					return AssumeNonNull (dest, data);
 			}
 			return data;
@@ -332,7 +332,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 		{
 			Domain<V> domain = AssumeNonNull (obj, data);
 			FlatDomain<TypeNode> aType = ContextProvider.ValueContext.GetType (ContextProvider.MethodContext.CFG.Next (pc), dest);
-			if (aType.IsNormal && MetaDataProvider.IsManagedPointer (aType.Concrete))
+			if (aType.IsNormal() && MetaDataProvider.IsManagedPointer (aType.Concrete))
 				domain = AssumeNonNull (dest, domain);
 
 			return domain;

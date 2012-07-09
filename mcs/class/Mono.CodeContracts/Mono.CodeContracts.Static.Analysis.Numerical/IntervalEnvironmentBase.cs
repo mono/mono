@@ -88,13 +88,13 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public void Assign(Expr x, Expr y)
         {
-            this.State = AbstractState.Normal;
+            this.State = DomainKind.Normal;
 
             TInterval intv = this.Eval (y);
             Var var = this.decoder.UnderlyingVariable (x);
             if (intv.IsBottom)
             {
-                this.State = AbstractState.Bottom;
+                this.State = DomainKind.Bottom;
                 this.ClearElements();
             }
             else

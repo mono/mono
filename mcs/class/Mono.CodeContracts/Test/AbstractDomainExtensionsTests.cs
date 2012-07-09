@@ -56,13 +56,13 @@ namespace Test
         {
             AssertMeetResultFor (top, top, true, (r) => r.IsTop);
             AssertMeetResultFor (top, bottom, true, (r) => r.IsBottom);
-            AssertMeetResultFor (top, normal, true, (r) => r.IsNormal);
+            AssertMeetResultFor (top, normal, true, (r) => r.IsNormal());
             
             AssertMeetResultFor (bottom, top, true, (r) => r.IsBottom);
             AssertMeetResultFor (bottom, bottom, true, (r) => r.IsBottom);
             AssertMeetResultFor (bottom, normal, true, (r) => r.IsBottom);
 
-            AssertMeetResultFor (normal, top, true, (r) => r.IsNormal);
+            AssertMeetResultFor (normal, top, true, (r) => r.IsNormal());
             AssertMeetResultFor (normal, bottom, true, (r) => r.IsBottom);
             AssertMeetResultFor (normal, normal, false, (r) => dummy);
         }
@@ -76,10 +76,10 @@ namespace Test
 
             AssertJoinResultFor(bottom, top, true, (r) => r.IsTop);
             AssertJoinResultFor(bottom, bottom, true, (r) => r.IsBottom);
-            AssertJoinResultFor(bottom, normal, true, (r) => r.IsNormal);
+            AssertJoinResultFor(bottom, normal, true, (r) => r.IsNormal());
 
             AssertJoinResultFor(normal, top, true, (r) => r.IsTop);
-            AssertJoinResultFor(normal, bottom, true, (r) => r.IsNormal);
+            AssertJoinResultFor(normal, bottom, true, (r) => r.IsNormal());
             AssertJoinResultFor(normal, normal, false, (r) => dummy);
         }
 

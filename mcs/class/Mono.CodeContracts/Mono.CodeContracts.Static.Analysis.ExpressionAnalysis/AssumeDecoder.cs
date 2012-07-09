@@ -49,22 +49,22 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			if (this.truth && op.IsEqualityOperator ()) {
 				if (!data.HasRefinement (s1)) {
 					FlatDomain<Expr<SymbolicValue>> expression2 = data [s2];
-					if (expression2.IsNormal && !data.IsReachableFrom (s2, s1))
+					if (expression2.IsNormal() && !data.IsReachableFrom (s2, s1))
 						return data.Add (s1, expression2.Concrete);
 				} else if (!data.HasRefinement (s2)) {
 					FlatDomain<Expr<SymbolicValue>> expression1 = data [s1];
-					if (expression1.IsNormal && !data.IsReachableFrom (s1, s2))
+					if (expression1.IsNormal() && !data.IsReachableFrom (s1, s2))
 						return data.Add (s2, expression1.Concrete);
 				}
 			}
 			if (!this.truth && op == BinaryOperator.Cne_Un) {
 				if (!data.HasRefinement (s1)) {
 					FlatDomain<Expr<SymbolicValue>> expression2 = data [s2];
-					if (expression2.IsNormal && !data.IsReachableFrom (s2, s1))
+					if (expression2.IsNormal() && !data.IsReachableFrom (s2, s1))
 						return data.Add (s1, expression2.Concrete);
 				} else if (!data.HasRefinement (s2)) {
 					FlatDomain<Expr<SymbolicValue>> expression1 = data [s1];
-					if (expression1.IsNormal && !data.IsReachableFrom (s1, s2))
+					if (expression1.IsNormal() && !data.IsReachableFrom (s1, s2))
 						return data.Add (s2, expression1.Concrete);
 				}
 			}

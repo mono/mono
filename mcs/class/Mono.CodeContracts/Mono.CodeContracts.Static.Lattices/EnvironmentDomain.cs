@@ -76,7 +76,12 @@ namespace Mono.CodeContracts.Static.Lattices {
 			get { return this.map == null; }
 		}
 
-		public EnvironmentDomain<K, V> Join (EnvironmentDomain<K, V> that, bool widening, out bool weaker)
+	    public EnvironmentDomain<K, V> Join(EnvironmentDomain<K, V> that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public EnvironmentDomain<K, V> Join (EnvironmentDomain<K, V> that, bool widening, out bool weaker)
 		{
 			weaker = false;
 			if (this.map == that.map || IsTop)
@@ -114,7 +119,12 @@ namespace Mono.CodeContracts.Static.Lattices {
 			return new EnvironmentDomain<K, V> (intersect);
 		}
 
-		public EnvironmentDomain<K, V> Meet (EnvironmentDomain<K, V> that)
+	    public EnvironmentDomain<K, V> Widen(EnvironmentDomain<K, V> that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public EnvironmentDomain<K, V> Meet (EnvironmentDomain<K, V> that)
 		{
 			if (this.map == that.map)
 				return this;

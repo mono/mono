@@ -28,16 +28,17 @@
 // 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    internal struct Monomial<Variable>
+    struct Monomial<Variable>
     {
-        private static readonly IComparer<Variable> comparer; // todo:
+        private static readonly IComparer<Variable> comparer = new ExpressionViaStringComparer<Variable>(); // todo:
 
         private readonly Rational coefficient;
 
@@ -82,28 +83,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             this.Degree = variables.Length ();
         }
 
-        public Monomial (Rational k, IEnumerable<Variable> vars)
+        public Monomial (Rational k, Sequence<Variable> vars)
             : this ()
         {
             this.coefficient = k;
-            if (k == Rational.Zero)
-                this.variables = Sequence<Variable>.Empty;
-            else
-            {
-                var list = vars.ToList ();
-                list.Sort (comparer);
-
-                this.variables = Sequence<Variable>.From (list);
-            }
+            this.variables = k == Rational.Zero ? Sequence<Variable>.Empty : vars;
             this.Degree = variables.Length ();
-        }
-
-        public Monomial(Rational k, Sequence<Variable> vars)
-            : this ()
-        {
-            this.coefficient = k;
-            this.variables = vars;
-            this.Degree = vars.Length ();
         }
 
         public bool Contains(Variable var)
@@ -121,12 +106,93 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public Monomial<Variable> Rename(Variable x, Variable rename)
         {
-            if (!this.Contains ())
-        } 
+            if (!this.Contains(x))
+                return this;
+
+            Func<Variable, Variable> renamer = v => v.Equals(x) ? rename : v;
+
+            return From(Coeff, this.variables.Select(renamer));
+        }
 
         public static Monomial<Variable> operator -(Monomial<Variable> m)
         {
-            return new Monomial<Variable> (-m.Coeff, m.variables);
+            return new Monomial<Variable>(-m.Coeff, m.variables);
+        }
+
+        public static Monomial<Variable> From(Rational coeff, Sequence<Variable> vars)
+        {
+            return From(coeff, vars, seq => seq.AsEnumerable());
+        }
+
+        public static Monomial<Variable> From(Rational coeff, IEnumerable<Variable> vars)
+        {
+            return From(coeff, vars, seq => seq);
+        }
+
+        private static Monomial<Variable> From<T>(Rational coeff, T vars, Func<T, IEnumerable<Variable>> toEnumerable )
+        {
+            if (coeff == Rational.Zero)
+                return new Monomial<Variable>(coeff);
+
+            var list = toEnumerable(vars).ToList();
+            list.Sort(comparer);
+
+            return new Monomial<Variable>(coeff, Sequence<Variable>.From(list));
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} * {1} ", coefficient, VarsToString(variables));
+        }
+
+        private static string VarsToString(Sequence<Variable> seq)
+        {
+            int len = seq.Length();
+            var sb = new StringBuilder();
+            if (len == 0)
+                sb.Append("1");
+            else
+            {
+                sb.Append(seq.Head);
+                seq.Tail.ForEach(v => sb.Append(" * {0}" + v));
+            }
+
+            return sb.ToString();
+        }
+
+        public bool IsEquivalentTo(Monomial<Variable> that)
+        {
+            if (this.coefficient != that.coefficient || this.Degree != that.Degree)
+                return false;
+
+            if (this.Degree == 1)
+                return this.variables.Head.Equals(that.variables.Head);
+
+            foreach (var var in this.variables.AsEnumerable())
+            {
+                if (!that.Contains(var))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(obj, null))
+                return false;
+            if (ReferenceEquals(obj, this))
+                return true;
+
+            var that = obj is Monomial<Variable> ? (Monomial<Variable>) obj : default(Monomial<Variable>);
+            return this.IsEquivalentTo(that);
+        }
+
+        public override int GetHashCode()
+        {
+            int res = 0;
+            this.variables.ForEach(v => res += v.GetHashCode());
+            return res + this.coefficient.GetHashCode();
         }
     }
 }

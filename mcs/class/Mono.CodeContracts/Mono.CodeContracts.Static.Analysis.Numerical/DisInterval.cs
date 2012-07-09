@@ -312,6 +312,53 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return hasNoNormals ? BottomValue : For (intervals);
         }
 
+        public override DisInterval Widen(DisInterval that)
+        {
+            if (this.IsTop || that.IsTop)
+                return TopValue;
+
+            return new DisInterval(Widen(this.intervals, that.intervals));
+        }
+
+        private static IList<Interval> Widen(IList<Interval> left, IList<Interval> right)
+        {
+            if (left.Count == 0 || right.Count == 0)
+                return EmptyReadOnlyList;
+            if (left.Count == 1 && right.Count == 1)
+                return new List<Interval> {left[0].Widen(right[0])};
+
+            if (left.Count == 1)
+            {
+                if (left[0].LessEqual(right))
+                    return right;
+                return new List<Interval> {left[0].Widen(right[0].Join(right[right.Count - 1]))};
+            }
+            if (right.Count == 1)
+                return new List<Interval> {left[0].Join(left[left.Count - 1].Widen(right[0]))};
+
+            Interval l = left[0].Widen(right[0]);
+            Interval r = left[left.Count - 1].Widen(right[right.Count - 1]);
+
+            var list = new List<Interval>();
+            
+            list.Add(l);
+            for (int j = 1; j < right.Count - 1; j++)
+            {
+                for (int i = 1; i < left.Count - 1; i++)
+                {
+                    Interval intv = left[i];
+                    if (intv.LessEqual(right[j]))
+                    {
+                        list.Add(right[j]);
+                        break;
+                    }
+                }
+            }
+            list.Add(r);
+
+            return list;
+        }
+
         public override DisInterval Meet (DisInterval that)
         {
             DisInterval result;
@@ -387,7 +434,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return Join (that);
         }
 
-        public DisInterval Join (DisInterval that)
+        public override DisInterval Join (DisInterval that)
         {
             DisInterval result;
             if (this.TryTrivialJoin(that, out result))

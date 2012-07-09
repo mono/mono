@@ -161,6 +161,7 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AbstractState.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BooleanExtensions.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisInterval.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionViaStringComparer.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\FunctionalAbstractDomain.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericExpressionVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericNormalizingExpressionVisistor.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalEnvironmentBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Monomial.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Polynomial.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Rational.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\TestFalseVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\TestTrueVisitor.cs" />
@@ -421,9 +423,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mono.CodeContracts.Static.Analysis.Numerical\roadmap.txt" />

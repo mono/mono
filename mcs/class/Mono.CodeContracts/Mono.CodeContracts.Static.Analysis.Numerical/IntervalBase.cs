@@ -63,6 +63,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public abstract TInterval Join (TInterval that, bool widening, out bool weaker);
 
+        public abstract TInterval Join (TInterval that);
+
+        public abstract TInterval Widen(TInterval that);
+
         public abstract TInterval Meet (TInterval that);
 
         public abstract TInterval ImmutableVersion ();

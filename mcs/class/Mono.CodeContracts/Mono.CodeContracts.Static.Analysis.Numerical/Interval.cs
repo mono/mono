@@ -28,8 +28,9 @@
 // 
 #endregion
 
+using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Lattices;
 
@@ -116,7 +117,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return LowerBound >= that.LowerBound && UpperBound <= that.UpperBound;
         }
 
-        public Interval Join(Interval that)
+        public override Interval Join(Interval that)
         {
             Interval result;
             if (this.TryTrivialJoin(that, out result))
@@ -131,6 +132,13 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             weaker = false; //TODO: make something with that
 
             return Join (that);
+        }
+
+        public override Interval Widen(Interval that)
+        {
+            //todo: widen here is very needed - infinite lattice
+
+            return Join(that);
         }
 
         public override Interval Meet(Interval that)
@@ -287,6 +295,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 return false;
 
             return UpperBound <= that.LowerBound;
+        }
+
+        public bool LessEqual(IEnumerable<Interval> right)
+        {
+            return right.Any(i => this.LessEqual(i));
         }
     }
 }

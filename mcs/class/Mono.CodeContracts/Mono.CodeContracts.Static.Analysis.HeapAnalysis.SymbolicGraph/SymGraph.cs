@@ -376,7 +376,12 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			return new SymGraph<TFunc, TADomain> (this);
 		}
 
-		public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, bool widening, out bool weaker)
+	    public SymGraph<TFunc, TADomain> Join(SymGraph<TFunc, TADomain> that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, bool widening, out bool weaker)
 		{
 			IMergeInfo info;
 			SymGraph<TFunc, TADomain> join = Join (that, out info, widening);
@@ -384,16 +389,19 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			return join;
 		}
 
-		public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, out IMergeInfo mergeInfo, bool widen)
+	    public SymGraph<TFunc, TADomain> Widen(SymGraph<TFunc, TADomain> that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, out IMergeInfo mergeInfo, bool widen)
 		{
 			SymGraph<TFunc, TADomain> egraph = this;
 			int updateSize;
 			SymGraph<TFunc, TADomain> commonTail = ComputeCommonTail (egraph, that, out updateSize);
-			bool hasCommonTail = true;
-			if (commonTail == null)
-				hasCommonTail = false;
+	        bool hasCommonTail = commonTail != null;
 
-			bool doingIncrementalJoin = hasCommonTail & commonTail != egraph.root_graph & !widen & DoIncrementalJoin;
+	        bool doingIncrementalJoin = hasCommonTail & commonTail != egraph.root_graph & !widen & DoIncrementalJoin;
 
 			//debug
 

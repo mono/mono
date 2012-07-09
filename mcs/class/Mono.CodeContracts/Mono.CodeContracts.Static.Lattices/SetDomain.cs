@@ -68,7 +68,16 @@ namespace Mono.CodeContracts.Static.Lattices {
 			get { return this.set == null; }
 		}
 
-		public SetDomain<T> Join (SetDomain<T> that, bool widening, out bool weaker)
+	    public SetDomain<T> Join(SetDomain<T> that)
+	    {
+	        SetDomain<T> result;
+            if (this.TryTrivialJoin(that, out result))
+                return result;
+
+	        return new SetDomain<T>(set.Intersect(that.set));
+	    }
+
+	    public SetDomain<T> Join (SetDomain<T> that, bool widening, out bool weaker)
 		{
 			if (this.set == that.set) {
 				weaker = false;
@@ -93,7 +102,14 @@ namespace Mono.CodeContracts.Static.Lattices {
 			return new SetDomain<T> (join);
 		}
 
-		public SetDomain<T> Meet (SetDomain<T> that)
+	    public SetDomain<T> Widen(SetDomain<T> that)
+	    {
+            //no widening - finite lattice
+
+	        return Join(that);
+	    }
+
+	    public SetDomain<T> Meet (SetDomain<T> that)
 		{
 			if (this.set == that.set || IsBottom || that.IsTop)
 				return this;
@@ -145,7 +161,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 			else if (IsTop)
 				tw.WriteLine ("Top");
 			else
-				this.set.Dump (tw);
+				set.Dump (tw);
 		}
 	}
 }

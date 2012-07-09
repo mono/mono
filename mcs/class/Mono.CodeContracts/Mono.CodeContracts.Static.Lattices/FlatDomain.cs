@@ -28,6 +28,7 @@
 
 using System;
 using System.IO;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 
 namespace Mono.CodeContracts.Static.Lattices {
 	/// <summary>
@@ -43,21 +44,21 @@ namespace Mono.CodeContracts.Static.Lattices {
 	/// <typeparam name="T"></typeparam>
 	struct FlatDomain<T> : IAbstractDomain<FlatDomain<T>>, IEquatable<FlatDomain<T>>
 		where T : IEquatable<T> {
-		public static readonly FlatDomain<T> BottomValue = new FlatDomain<T> (Kind.Bottom);
-		public static readonly FlatDomain<T> TopValue = new FlatDomain<T> (Kind.Top);
+		public static readonly FlatDomain<T> BottomValue = new FlatDomain<T> (DomainKind.Bottom);
+		public static readonly FlatDomain<T> TopValue = new FlatDomain<T> (DomainKind.Top);
 
 		public readonly T Concrete;
-		private readonly Kind _kind;
+		private readonly DomainKind state;
 
-		private FlatDomain (Kind kind)
+		private FlatDomain (DomainKind state)
 		{
-			this._kind = kind;
+			this.state = state;
 			this.Concrete = default(T);
 		}
 
 		public FlatDomain (T value)
 		{
-			this._kind = Kind.Concrete;
+			this.state = DomainKind.Normal;
 			this.Concrete = value;
 		}
 
@@ -67,11 +68,6 @@ namespace Mono.CodeContracts.Static.Lattices {
 		}
 
 		#region Implementation of IAbstractDomain<FlatDomain<T>>
-		public bool IsNormal
-		{
-			get { return this._kind == Kind.Concrete; }
-		}
-
 		public FlatDomain<T> Top
 		{
 			get { return TopValue; }
@@ -84,12 +80,12 @@ namespace Mono.CodeContracts.Static.Lattices {
 
 		public bool IsTop
 		{
-			get { return this._kind == Kind.Top; }
+			get { return this.state == DomainKind.Top; }
 		}
 
 		public bool IsBottom
 		{
-			get { return this._kind == Kind.Bottom; }
+			get { return this.state == DomainKind.Bottom; }
 		}
 
 		public FlatDomain<T> Join (FlatDomain<T> that, bool widening, out bool weaker)
@@ -115,27 +111,39 @@ namespace Mono.CodeContracts.Static.Lattices {
 			return TopValue;
 		}
 
+	    public FlatDomain<T> Widen(FlatDomain<T> that)
+	    {
+            // no widening - it's finite lattice
+
+	        return Join(that);
+	    }
+
+	    public FlatDomain<T> Join (FlatDomain<T> that)
+        {
+            FlatDomain<T> result;
+            if (this.TryTrivialJoin(that, out result))
+                return result;
+
+            // this and that must be normal here
+            return this.Concrete.Equals(that.Concrete) ? this : TopValue;
+        }
+
 		public FlatDomain<T> Meet (FlatDomain<T> that)
 		{
-			if (IsTop || that.IsBottom)
-				return that;
-			if (that.IsTop || IsBottom)
-				return this;
-			if (this.Concrete.Equals (that.Concrete))
-				return that;
+		    FlatDomain<T> result;
+            if (this.TryTrivialMeet(that, out result))
+                return result;
 
-			return BottomValue;
+		    return this.Concrete.Equals(that.Concrete) ? this : BottomValue;
 		}
 
 		public bool LessEqual (FlatDomain<T> that)
 		{
-			if (that.IsTop || IsBottom)
-				return true;
-			if (IsTop || that.IsBottom)
-				return false;
+		    bool result;
+            if (this.TryTrivialLessEqual(that, out result))
+                return result;
 
-			//less equal means equality of values
-			return this.Concrete.Equals (that.Concrete);
+		    return this.Concrete.Equals(that.Concrete);
 		}
 
 		public FlatDomain<T> ImmutableVersion ()
@@ -153,7 +161,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 			if (IsTop)
 				tw.WriteLine ("Top");
 			else if (IsBottom)
-				tw.WriteLine ("Bot");
+				tw.WriteLine (this.BottomSymbolIfAny());
 			else
 				tw.WriteLine ("<{0}>", this.Concrete);
 		}
@@ -163,34 +171,25 @@ namespace Mono.CodeContracts.Static.Lattices {
 			if (IsTop)
 				return "Top";
 			if (IsBottom)
-				return "Bot";
+				return this.BottomSymbolIfAny();
 
 			return string.Format ("<{0}>", this.Concrete);
 		}
 		#endregion
 
-		#region Implementation of IEquatable<FlatDomain<T>>
 		public bool Equals (FlatDomain<T> that)
 		{
-			if (!this.IsNormal)
-				return this._kind == that._kind;
+			if (!this.IsNormal())
+				return this.state == that.state;
 
-			if (!that.IsNormal)
-				return false;
-
-			if (this.Concrete.Equals (that.Concrete))
-				return true;
-
-			return false;
+			return that.IsNormal() && this.Concrete.Equals (that.Concrete);
 		}
-		#endregion
-
-		#region Nested type: Kind
-		private enum Kind : byte {
-			Top = 0,
-			Bottom,
-			Concrete
-		}
-		#endregion
 	}
+    
+    enum DomainKind
+    {
+        Normal = 0,
+        Top,
+        Bottom
+    }
 }

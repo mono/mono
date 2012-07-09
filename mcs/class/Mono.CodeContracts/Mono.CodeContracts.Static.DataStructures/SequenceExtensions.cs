@@ -112,5 +112,14 @@ namespace Mono.CodeContracts.Static.DataStructures {
 		{
 			return list.Select (l => (T) l);
 		}
+
+        public static void ForEach<T>(this Sequence<T> seq, Action<T> action)
+        {
+            if (seq == null)
+                return;
+
+            action(seq.Head);
+            seq.Tail.ForEach(action);
+        }
 	}
 }

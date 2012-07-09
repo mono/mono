@@ -17,9 +17,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         public IEnumerable<KeyValuePair<TDomain, TCodomain>> Elements { get { return this.elements; } }
         public IEnumerable<TDomain> Keys { get { return this.elements.Keys; } }
 
-        protected AbstractState State { get; set; }
+        protected DomainKind State { get; set; }
 
-        public bool IsBottom { get { return this.State == AbstractState.Bottom; } }
+        public bool IsBottom { get { return this.State == DomainKind.Bottom; } }
 
         public bool IsTop
         {
@@ -28,7 +28,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 if (this.elements.Any(pair => !pair.Value.IsTop))
                     return false;
 
-                this.State = AbstractState.Top;
+                this.State = DomainKind.Top;
                 return true;
             }
         }
@@ -39,7 +39,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             set
             {
                 if (value.IsBottom)
-                    this.State = AbstractState.Bottom;
+                    this.State = DomainKind.Bottom;
                 this.elements[key] = value;
             }
         }
@@ -53,6 +53,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 return (TThis)this;
 
             return FindIntersection (that, (l, r) => l.Join (r), (c) => !c.IsTop, (c) => c.IsBottom, (c, t) => t.Bottom);
+        }
+
+        public TThis Join(TThis that, bool widen, out bool weaker)
+        {
+            weaker = false;
+            return Join(that);
         }
 
         public TThis Widen (TThis that)
@@ -151,7 +157,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         protected FunctionalAbstractDomain ()
         {
             this.elements = new Dictionary<TDomain, TCodomain> ();
-            this.State = AbstractState.Normal;
+            this.State = DomainKind.Normal;
         }
 
         protected FunctionalAbstractDomain (FunctionalAbstractDomain<TThis,TDomain,TCodomain> that)
@@ -165,7 +171,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             get
             {
                 var @this = this.NewInstance ();
-                @this.State = AbstractState.Top;
+                @this.State = DomainKind.Top;
                 return @this;
             }
         }
@@ -175,7 +181,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             get
             {
                 var @this = this.NewInstance ();
-                @this.State = AbstractState.Bottom;
+                @this.State = DomainKind.Bottom;
                 return @this;
             }
         }

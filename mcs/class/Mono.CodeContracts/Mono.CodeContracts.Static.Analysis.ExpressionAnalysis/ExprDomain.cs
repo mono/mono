@@ -63,7 +63,9 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 		public IEnumerable<Pair<Dummy, TSymValue>> Successors(TSymValue node)
 		{
 			FlatDomain<Expr<TSymValue>> expr = this.expressions[node];
-			if (expr.IsNormal) foreach (TSymValue sv in expr.Concrete.Variables) yield return new Pair<Dummy, TSymValue> (Dummy.Value, sv);
+			if (expr.IsNormal()) 
+                foreach (TSymValue sv in expr.Concrete.Variables) 
+                    yield return new Pair<Dummy, TSymValue> (Dummy.Value, sv);
 		}
 		#endregion
 

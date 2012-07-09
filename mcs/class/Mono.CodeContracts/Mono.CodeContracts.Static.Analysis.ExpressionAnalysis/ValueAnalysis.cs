@@ -44,7 +44,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 
 			foreach (SymbolicValue sv in sourceTargetMap.Keys) {
 				FlatDomain<Expr<SymbolicValue>> expressionDomain = domain [sv];
-				if (expressionDomain.IsNormal) {
+				if (expressionDomain.IsNormal()) {
 					Expr<SymbolicValue> expression = expressionDomain.Concrete;
 					foreach (SymbolicValue sub in sourceTargetMap [sv].AsEnumerable ())
 						result = result.Add (sub, expression);
@@ -109,7 +109,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			Console.WriteLine ("--- {0} ---", header);
 			foreach (SymbolicValue index in state.Keys) {
 				FlatDomain<Expr<SymbolicValue>> domain = state [index];
-				if (domain.IsNormal)
+				if (domain.IsNormal())
 					Console.WriteLine ("{0} -> {1}", index, domain.Concrete);
 				else if (domain.IsTop)
 					Console.WriteLine ("{0} -> (Top)", index);

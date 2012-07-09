@@ -61,7 +61,16 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			return new ImmutableSet<T> (this.underlying.Add (item, Dummy.Value));
 		}
 
-		public IImmutableSet<T> Remove (T item)
+	    public IImmutableSet<T> AddRange(IEnumerable<T> seq)
+	    {
+	        var map = this.underlying;
+	        foreach (var item in seq)
+	            map = map.Add(item, Dummy.Value);
+
+            return new ImmutableSet<T>(map);
+	    }
+
+	    public IImmutableSet<T> Remove (T item)
 		{
 			return new ImmutableSet<T> (this.underlying.Remove (item));
 		}

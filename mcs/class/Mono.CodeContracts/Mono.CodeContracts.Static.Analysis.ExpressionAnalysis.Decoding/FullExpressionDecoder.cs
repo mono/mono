@@ -108,7 +108,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		public bool TryGetType (E expr, out TypeNode type)
 		{
 			FlatDomain<TypeNode> aType = ContextProvider.ExpressionContext.GetType (expr);
-			if (aType.IsNormal) {
+			if (aType.IsNormal()) {
 				type = aType.Concrete;
 				return true;
 			}
