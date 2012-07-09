@@ -1011,7 +1011,7 @@ namespace Mono.CSharp {
 								if (pos_args.Count == 1 && pos_args[0].Expr is Constant) {
 									var value = ((Constant) pos_args[0].Expr).GetValue () as string;
 									if (string.IsNullOrEmpty (value))
-										Error_AttributeEmitError ("DllName cannot be empty");
+										Error_AttributeEmitError ("DllName cannot be empty or null");
 								}
 							} else if (Type == predefined.MethodImpl && pt.BuiltinType == BuiltinTypeSpec.Type.Short &&
 								!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
