@@ -602,7 +602,7 @@ namespace Mono.CSharp {
 						if (al == Modifiers.PRIVATE) {
 							var decl = mc.Parent;
 							do {
-								same_access_restrictions = decl.CurrentType == p_parent;
+								same_access_restrictions = decl.CurrentType.MemberDefinition == p_parent.MemberDefinition;
 							} while (!same_access_restrictions && !decl.PartialContainer.IsTopLevel && (decl = decl.Parent) != null);
 						}
 						
