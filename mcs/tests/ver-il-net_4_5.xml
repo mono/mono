@@ -55961,6 +55961,17 @@
         <size>13</size>
       </method>
     </type>
+    <type name="C">
+      <method name="Void Test(Boolean)" attrs="145">
+        <size>20</size>
+      </method>
+      <method name="Int32 get_Prop()" attrs="2193">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="test-async-23.cs">
     <type name="MyContext">

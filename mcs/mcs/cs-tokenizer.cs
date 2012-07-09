@@ -827,11 +827,13 @@ namespace Mono.CSharp
 						PushPosition ();
 						xtoken ();
 						if (xtoken () != Token.ARROW)
-							res = -1;
+							goto default;
 
 						PopPosition ();
 						break;
 					default:
+						// peek_token could overwrite id_buffer
+						id_builder [0] = 'a'; id_builder [1] = 's'; id_builder [2] = 'y'; id_builder [3] = 'n'; id_builder [4] = 'c';
 						res = -1;
 						break;
 					}
