@@ -41,6 +41,26 @@ namespace Mono.CSharp {
 			report.Error (1681, loc, "The global extern alias cannot be redefined");
 		}
 
+		//
+		// For better error reporting where we try to guess missing using directive
+		//
+		public List<string> FindTypeNamespaces (IMemberContext ctx, string name, int arity)
+		{
+			List<string> res = null;
+
+			foreach (var ns in all_namespaces) {
+				var type = ns.Value.LookupType (ctx, name, arity, LookupMode.Normal, Location.Null);
+				if (type != null) {
+					if (res == null)
+						res = new List<string> ();
+
+					res.Add (ns.Key);
+				}
+			}
+
+			return res;
+		}
+
 		public void RegisterNamespace (Namespace child)
 		{
 			if (child != this)
@@ -181,14 +201,51 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			string assembly = null;
+			string possible_name = fullname + "." + name;
+
+			// Only assembly unique name should be added
+			switch (possible_name) {
+			case "System.Drawing":
+			case "System.Web.Services":
+			case "System.Web":
+			case "System.Data":
+			case "System.Configuration":
+			case "System.Data.Services":
+			case "System.DirectoryServices":
+			case "System.Json":
+			case "System.Net.Http":
+			case "System.Numerics":
+			case "System.Runtime.Caching":
+			case "System.ServiceModel":
+			case "System.Transactions":
+			case "System.Web.Routing":
+			case "System.Xml.Linq":
+			case "System.Xml":
+				assembly = possible_name;
+				break;
+
+			case "System.Linq":
+			case "System.Linq.Expressions":
+				assembly = "System.Core";
+				break;
+
+			case "System.Windows.Forms":
+			case "System.Windows.Forms.Layout":
+				assembly = "System.Windows.Name";
+				break;
+			}
+
+			assembly = assembly == null ? "an" : "`" + assembly + "'";
+
 			if (this is GlobalRootNamespace) {
 				ctx.Module.Compiler.Report.Error (400, loc,
-					"The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
-					name);
+					"The type or namespace name `{0}' could not be found in the global namespace. Are you missing {1} assembly reference?",
+					name, assembly);
 			} else {
 				ctx.Module.Compiler.Report.Error (234, loc,
-					"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
-					name, GetSignatureForError ());
+					"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing {2} assembly reference?",
+					name, GetSignatureForError (), assembly);
 			}
 		}
 
@@ -1104,44 +1161,6 @@ namespace Mono.CSharp {
 			}
 
 			return match;
-		}
-
-		static void MsgtryRef (string s)
-		{
-			Console.WriteLine ("    Try using -r:" + s);
-		}
-
-		static void MsgtryPkg (string s)
-		{
-			Console.WriteLine ("    Try using -pkg:" + s);
-		}
-
-		public static void Error_NamespaceNotFound (Location loc, string name, Report Report)
-		{
-			Report.Error (246, loc, "The type or namespace name `{0}' could not be found. Are you missing a using directive or an assembly reference?",
-				name);
-
-			switch (name) {
-			case "Gtk": case "GtkSharp":
-				MsgtryPkg ("gtk-sharp-2.0");
-				break;
-
-			case "Gdk": case "GdkSharp":
-				MsgtryPkg ("gdk-sharp-2.0");
-				break;
-
-			case "Glade": case "GladeSharp":
-				MsgtryPkg ("glade-sharp-2.0");
-				break;
-
-			case "System.Drawing":
-			case "System.Web.Services":
-			case "System.Web":
-			case "System.Data":
-			case "System.Windows.Forms":
-				MsgtryRef (name);
-				break;
-			}
 		}
 
 		protected override void DefineNamespace ()

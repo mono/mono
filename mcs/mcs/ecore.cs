@@ -2277,9 +2277,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			var report = ctx.Module.Compiler.Report;
+
 			var retval = ctx.LookupNamespaceOrType (Name, Arity, LookupMode.IgnoreAccessibility, loc);
 			if (retval != null) {
-				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (retval.Type);
+				report.SymbolRelatedToPreviousError (retval.Type);
 				ErrorIsInaccesible (ctx, retval.GetSignatureForError (), loc);
 				return;
 			}
@@ -2290,7 +2292,17 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			NamespaceContainer.Error_NamespaceNotFound (loc, Name, ctx.Module.Compiler.Report);
+			var ns_candidates = ctx.Module.GlobalRootNamespace.FindTypeNamespaces (ctx, Name, Arity);
+			if (ns_candidates != null) {
+				string usings = string.Join ("' or `", ns_candidates);
+				report.Error (246, loc,
+					"The type or namespace name `{0}' could not be found. Are you missing `{1}' using directive?",
+					Name, usings);
+			} else {
+				report.Error (246, loc,
+					"The type or namespace name `{0}' could not be found. Are you missing an assembly reference?",
+					Name);
+			}
 		}
 
 		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
