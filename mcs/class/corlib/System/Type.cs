@@ -1673,15 +1673,12 @@ namespace System {
 		/* 
 		 * Return whenever this object is an instance of a user defined subclass
 		 * of System.Type or an instance of TypeDelegator.
+		 * A user defined type is not simply the opposite of a system type.
+		 * It's any class that's neither a SRE or runtime baked type.
 		 */
-		internal bool IsUserType {
+		internal virtual bool IsUserType {
 			get {
-				/* 
-				 * subclasses cannot modify _impl so if it is zero, it means the
-				 * type is not created by the runtime.
-				 */
-				return _impl.Value == IntPtr.Zero &&
-					(GetType ().Assembly != typeof (Type).Assembly || GetType () == typeof (TypeDelegator));
+				return true;
 			}
 		}
 

@@ -736,5 +736,10 @@ namespace System
 		}
 #endif
 
+		internal override bool IsUserType {
+			get {
+				return false;
+			}
+		}
 	}
 }

@@ -316,6 +316,12 @@ namespace System.Reflection.Emit
 		{
 			throw new NotSupportedException ();
 		}
+
+		internal override bool IsUserType {
+			get {
+				return elementType.IsUserType;
+			}
+		}
 	}
 
 	[StructLayout (LayoutKind.Sequential)]

@@ -880,6 +880,17 @@ namespace System.Reflection
 		{
 			throw new NotSupportedException ();
 		}
+
+		internal virtual bool IsUserType {
+			get {
+				foreach (var t in type_arguments) {
+					if (t.IsUserType)
+						return true;
+				}
+				return false;
+			}
+		}
+
 	}
 }
 
