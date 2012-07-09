@@ -1105,9 +1105,14 @@ namespace Mono.CSharp
 		start:
 			int the_token = token ();
 			if (the_token == Token.OPEN_BRACKET) {
-				do {
+				while (true) {
 					the_token = token ();
-				} while (the_token != Token.CLOSE_BRACKET);
+					if (the_token == Token.EOF)
+						return true;
+
+					if (the_token == Token.CLOSE_BRACKET)
+						break;
+				}
 				the_token = token ();
 			} else if (the_token == Token.IN || the_token == Token.OUT) {
 				the_token = token ();
