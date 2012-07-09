@@ -41,9 +41,9 @@ namespace MonoTests.System.Security.AccessControl
 			Assert.IsFalse (security.modify_access_called);
 
 			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.WorldSid, null);
-			security.AddAccessRuleTest (new AccessRule<int> (sid, 2, AccessControlType.Allow));
-			security.AddAccessRuleTest (new AccessRule<TestRights> (sid, TestRights.One, AccessControlType.Allow));
-			security.AddAccessRuleTest (new AccessRule<int> (sid, 4, AccessControlType.Allow));
+			security.AddAccessRuleTest (new TestAccessRule<int> (sid, 2, AccessControlType.Allow));
+			security.AddAccessRuleTest (new TestAccessRule<TestRights> (sid, TestRights.One, AccessControlType.Allow));
+			security.AddAccessRuleTest (new TestAccessRule<int> (sid, 4, AccessControlType.Allow));
 
 			Assert.IsTrue (security.modify_access_called);
 			Assert.IsFalse (security.modify_access_rule_called);
@@ -59,8 +59,8 @@ namespace MonoTests.System.Security.AccessControl
 			Assert.IsTrue (security.access_rule_factory_called);
 			Assert.AreEqual (1, rules2.Count);
 
-			Assert.IsInstanceOfType (typeof (AccessRule<TestRights>), rules2[0]);
-			AccessRule<TestRights> rule = (AccessRule<TestRights>)rules2[0];
+			Assert.IsInstanceOfType (typeof (TestAccessRule<TestRights>), rules2[0]);
+			TestAccessRule<TestRights> rule = (TestAccessRule<TestRights>)rules2[0];
 			Assert.AreEqual ((TestRights)7, rule.Rights);
 		}
 
@@ -71,8 +71,10 @@ namespace MonoTests.System.Security.AccessControl
  
 			NTAccount nta1 = new NTAccount(@"BUILTIN\Users");
 			NTAccount nta2 = new NTAccount(@"BUILTIN\Administrators");
-			security.AddAccessRuleTest (new AccessRule<TestRights> (nta1, TestRights.One, AccessControlType.Allow));
-			security.AddAccessRuleTest (new AccessRule<TestRights> (nta2, TestRights.One, AccessControlType.Allow));
+			security.AddAccessRuleTest (new TestAccessRule<TestRights> (nta1, TestRights.One,
+			                                                            AccessControlType.Allow));
+			security.AddAccessRuleTest (new TestAccessRule<TestRights> (nta2, TestRights.One,
+			                                                            AccessControlType.Allow));
 
 			AuthorizationRuleCollection rules1 = security.GetAccessRules (true, true, typeof (NTAccount));
 			Assert.AreEqual (2, rules1.Count);
@@ -80,8 +82,8 @@ namespace MonoTests.System.Security.AccessControl
 			security.PurgeAccessRules (nta1);
 			AuthorizationRuleCollection rules2 = security.GetAccessRules (true, true, typeof (NTAccount));
 			Assert.AreEqual (1, rules2.Count);
-			Assert.IsInstanceOfType (typeof (AccessRule<TestRights>), rules2[0]);
-			AccessRule<TestRights> rule = (AccessRule<TestRights>)rules2[0];
+			Assert.IsInstanceOfType (typeof (TestAccessRule<TestRights>), rules2[0]);
+			TestAccessRule<TestRights> rule = (TestAccessRule<TestRights>)rules2[0];
 			Assert.AreEqual (nta2, rule.IdentityReference);
 		}
 
@@ -90,8 +92,39 @@ namespace MonoTests.System.Security.AccessControl
 		{
 			TestSecurity security = new TestSecurity (false);
 			SecurityIdentifier sid = new SecurityIdentifier ("WD");
-			security.ResetAccessRuleTest (new AccessRule<TestRights> (sid, TestRights.One, AccessControlType.Allow));
+			security.ResetAccessRuleTest (new TestAccessRule<TestRights> (sid, TestRights.One,
+			                                                              AccessControlType.Allow));
 			Assert.AreEqual (1, security.modify_access_called_count);
+		}
+
+		class TestAccessRule<T> : AccessRule
+		{
+			public TestAccessRule (IdentityReference identity, T rules,
+			                       AccessControlType type)
+				: this (identity, rules, InheritanceFlags.None, PropagationFlags.None, type)
+			{
+			}
+
+			public TestAccessRule (IdentityReference identity, T rules,
+			                       InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags,
+			                       AccessControlType type)
+				: base (identity, (int)(object)rules, false, inheritanceFlags, propagationFlags, type)
+			{
+			}
+
+			public T Rights {
+				get { return (T)(object)AccessMask; }
+			}
+		}
+
+		class TestAuditRule<T> : AuditRule
+		{
+			public TestAuditRule (IdentityReference identity, T rules,
+			                      InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags,
+			                      AuditFlags auditFlags)
+				: base (identity, (int)(object)rules, false, inheritanceFlags, propagationFlags, auditFlags)
+			{
+			}
 		}
 
 		enum TestRights
@@ -159,8 +192,8 @@ namespace MonoTests.System.Security.AccessControl
 			                                              AccessControlType type)
 			{
 				access_rule_factory_called = true;
-				return new AccessRule<TestRights> (identityReference, (TestRights)accessMask,
-				                                   inheritanceFlags, propagationFlags, type);
+				return new TestAccessRule<TestRights> (identityReference, (TestRights)accessMask,
+								       inheritanceFlags, propagationFlags, type);
 			}
 
 			public override AuditRule AuditRuleFactory (IdentityReference identityReference,
@@ -170,8 +203,8 @@ namespace MonoTests.System.Security.AccessControl
 			                                            AuditFlags flags)
 			{
 				audit_rule_factory_called = true;
-				return new AuditRule<TestRights> (identityReference, (TestRights)accessMask,
-				                                  inheritanceFlags, propagationFlags, flags);
+				return new TestAuditRule<TestRights> (identityReference, (TestRights)accessMask,
+				                                      inheritanceFlags, propagationFlags, flags);
 			}
 
 			public override bool ModifyAccessRule (AccessControlModification modification,
@@ -208,11 +241,11 @@ namespace MonoTests.System.Security.AccessControl
 			}
 
 			public override Type AccessRuleType {
-				get { return typeof (AccessRule<TestRights>); }
+				get { return typeof (TestAccessRule<TestRights>); }
 			}
 
 			public override Type AuditRuleType {
-				get { return typeof (AuditRule<TestRights>); }
+				get { return typeof (TestAuditRule<TestRights>); }
 			}
 		}
 	}
