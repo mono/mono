@@ -23,7 +23,6 @@ using System.Runtime.CompilerServices;
 
 namespace MonoTests.System.Reflection.Emit
 {
-#if NET_2_0
 	[TestFixture]
 	public class MonoGenericClassTest
 	{
@@ -90,47 +89,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		// CompilerContext no longer supported
-		[Category ("NotWorking")]
-		public void GetMethodsWorkWithFunkyInstantiations ()
-		{
-			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
-			TypeBuilder tb = module.DefineType ("Base", TypeAttributes.Public, typeof (object));
-
-			var a = typeof (IList<>).GetGenericArguments () [0];
-			var b = tb.DefineGenericParameters ("T") [0];
-
-			CheckInst ("#A", typeof (Collection<>).MakeGenericType (new Type [] {a}), 12, 16);
-			CheckInst ("#B", typeof (Collection<>).MakeGenericType (new Type[] { b }), 12, 16);
-
-			var tb2 = module.DefineType ("Child", TypeAttributes.Public, typeof (Collection<>).MakeGenericType (tb.MakeGenericType (typeof (int))));
-			tb2.DefineGenericParameters ("K");
-
-			CheckInst ("#C", tb2.MakeGenericType (typeof (double)), 0, 16);
-			
-		}
-
-		[Test]
-		[Category ("NotDotNet")]
-		// CompilerContext no longer supported
-		[Category ("NotWorking")]
-		public void GetEventMustWorkUnderCompilerContext ()
-		{
-			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
-			var tb = module.DefineType ("foo.type");
-			tb.DefineGenericParameters ("T");
-
-			var ginst = tb.MakeGenericType (typeof (double));
-			
-			try {
-				ginst.GetEvent ("foo", BindingFlags.Public | BindingFlags.Instance);
-			} catch (NotSupportedException) {
-				Assert.Fail ("#1");
-			}
-		}
-
-		[Test]
 		public void MethodsThatRaiseNotSupported ()
 		{
 			var tb = module.DefineType ("foo.type");
@@ -138,10 +96,10 @@ namespace MonoTests.System.Reflection.Emit
 
 			var ginst = tb.MakeGenericType (typeof (double));
 
-			/*try { //FIXME this doesn't work yet
+			try {
 				ginst.GetElementType ();
 				Assert.Fail ("#1");
-			} catch (NotSupportedException) {  }*/
+			} catch (NotSupportedException) {  }
 			try {
 				ginst.GetInterface ("foo", true);
 				Assert.Fail ("#2");
@@ -209,6 +167,4 @@ namespace MonoTests.System.Reflection.Emit
 			rtInst.IsDefined (typeof (int), true);
 		}
 	}
-
-#endif
 }
