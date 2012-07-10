@@ -198,11 +198,6 @@ namespace System.Web.UI.WebControls
 
 			string val = postCollection [postDataKey];
 			bool ischecked = val == "on";
-#if NET_4_0
-	if(!RenderingCompatibilityLessThan40 && val != null){
-		ischecked = val == Items[checkbox].Value;
-	}
-#endif
 			ListItem item = Items [checkbox];
 			if (item.Enabled) {
 				if (ischecked && !item.Selected) {
