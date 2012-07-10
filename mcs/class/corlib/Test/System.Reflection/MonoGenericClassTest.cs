@@ -148,6 +148,14 @@ namespace MonoTests.System.Reflection.Emit
 				ginst.GetCustomAttributes (typeof (int), true);
 				Assert.Fail ("#13");
 			} catch (NotSupportedException) {  }
+			try {
+				ginst.IsAssignableFrom (ginst);
+				Assert.Fail ("#14");
+			} catch (NotSupportedException) {  }
+			try {
+				ginst.GetNestedTypes (BindingFlags.Public);
+				Assert.Fail ("#14");
+			} catch (NotSupportedException) {  }
 		}
 
 		[Test]
@@ -165,6 +173,34 @@ namespace MonoTests.System.Reflection.Emit
 
 			/*This must not throw*/
 			rtInst.IsDefined (typeof (int), true);
+		}
+
+		public class Bar<T> {
+			public class Foo<T> {}
+		}
+
+		[Test]
+		public void DeclaringTypeMustReturnNonInflatedType ()
+		{
+			var ut = new TypeDelegator (typeof (int));
+			var ut2 = typeof(Bar<>.Foo<>);
+			var t = ut2.MakeGenericType (ut, ut);
+			Assert.AreSame (typeof (Bar<>), t.DeclaringType, "#1");
+		}
+
+		public class Base<T> {}
+		public class SubClass<K> : Base<K> {}
+
+		[Test]
+		public void BaseTypeMustReturnNonInflatedType ()
+		{
+			var ut = new TypeDelegator (typeof (int));
+			var ut2 = typeof(SubClass<>);
+			var t = ut2.MakeGenericType (ut);
+			//This is Base<K> where K is SubClass::K
+			var expected = typeof (Base<>).MakeGenericType (typeof (SubClass<>).GetGenericArguments ()[0]);
+			Assert.AreSame (expected, t.BaseType, "#1");
+			
 		}
 	}
 }
