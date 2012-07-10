@@ -691,7 +691,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="mono.lib version.lib libgc.lib eglib.lib ws2_32.lib Psapi.lib winmm.lib"
+				AdditionalDependencies="libmono.lib Mswsock.lib version.lib libgc.lib eglib.lib ws2_32.lib Psapi.lib winmm.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(PlatformName)-$(ConfigurationName)&quot;"
 				GenerateDebugInformation="true"

@@ -727,7 +727,7 @@
 			Name="Release_eglib_xarm|Win32"
 			OutputDirectory="$(PlatformName)-$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)-$(ConfigurationName)\obj\$(ProjectName)"
-			ConfigurationType="2"
+			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
@@ -777,18 +777,7 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
-				AdditionalDependencies="version.lib libgc.lib eglib.lib ws2_32.lib Psapi.lib winmm.lib  mswsock.lib"
-				OutputFile="$(OutDir)\mono.dll"
-				AdditionalLibraryDirectories="&quot;$(PlatformName)-$(ConfigurationName)&quot;"
-				ModuleDefinitionFile="mono.def"
-				GenerateDebugInformation="true"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(PlatformName)-$(ConfigurationName)\$(TargetName).lib"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
