@@ -2,3 +2,4 @@
 ../../build/common/Locale.cs
 Assembly/AssemblyInfo.cs
 Mono.Tasklets/Continuation.cs
+Mono.Tasklets/MMRUThread.cs

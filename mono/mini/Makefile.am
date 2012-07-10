@@ -376,6 +376,8 @@ common_sources = \
 	mini-generic-sharing.c	\
 	regalloc2.c		\
 	simd-methods.h		\
+	mmruthread.c		\
+	mmruthread.h		\
 	tasklets.c		\
 	tasklets.h		\
 	simd-intrinsics.c	\
