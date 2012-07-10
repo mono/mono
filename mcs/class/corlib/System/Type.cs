@@ -1412,25 +1412,6 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
-		static AssemblyBuilder PeelAssemblyBuilder (Type type)
-		{
-			if (type.Assembly is AssemblyBuilder)
-				return (AssemblyBuilder)type.Assembly;
-
-			if (type.HasElementType)
-				return PeelAssemblyBuilder (type.GetElementType ());
-
-			if (!type.IsGenericType || type.IsGenericParameter || type.IsGenericTypeDefinition)
-				return null;
-
-			foreach (Type arg in type.GetGenericArguments ()) {
-				AssemblyBuilder ab = PeelAssemblyBuilder (arg);
-				if (ab != null)
-					return ab;
-			}
-			return null;
-		}
-
 		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
 			if (IsUserType)
