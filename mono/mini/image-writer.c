@@ -49,11 +49,11 @@
 
 /* 
  * The used assembler dialect
- * TARGET_ASM_APPLE == apple assembler on OSX
+ * TARGET_ASM_APPLE == apple assembler on OSX (or cross compiling on windows to ARM)
  * TARGET_ASM_GAS == GNU assembler
  */
 #if !defined(TARGET_ASM_APPLE) && !defined(TARGET_ASM_GAS)
-#ifdef __MACH__
+#if defined(__MACH__) || defined(PLATFORM_IPHONE_XCOMP)
 #define TARGET_ASM_APPLE
 #else
 #define TARGET_ASM_GAS
@@ -63,7 +63,7 @@
 /*
  * Defines for the directives used by different assemblers
  */
-#if defined(__ppc__) || defined(__powerpc__) || defined(__MACH__)
+#if defined(__ppc__) || defined(__powerpc__) || defined(__MACH__) || defined(PLATFORM_IPHONE_XCOMP)
 #define AS_STRING_DIRECTIVE ".asciz"
 #else
 #define AS_STRING_DIRECTIVE ".string"
@@ -1462,7 +1462,7 @@ static void
 asm_writer_emit_section_change (MonoImageWriter *acfg, const char *section_name, int subsection_index)
 {
 	asm_writer_emit_unset_mode (acfg);
-#if defined(PLATFORM_WIN32)
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 	fprintf (acfg->fp, ".section %s\n", section_name);
 #elif defined(TARGET_ASM_APPLE)
 	if (strcmp(section_name, ".bss") == 0)
@@ -1527,7 +1527,8 @@ static void
 asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
 {
 	asm_writer_emit_unset_mode (acfg);
-#if  (defined(__ppc__) && defined(TARGET_ASM_APPLE)) || defined(PLATFORM_WIN32)
+	// Do not prefix '_' on Windows when cross-compiling for iPhone.
+#if  (defined(__ppc__) && defined(TARGET_ASM_APPLE)) || (defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP))
     // mach-o always uses a '_' prefix.
 	fprintf (acfg->fp, "\t.globl _%s\n", name);
 #else
@@ -1563,13 +1564,13 @@ static void
 asm_writer_emit_label (MonoImageWriter *acfg, const char *name)
 {
 	asm_writer_emit_unset_mode (acfg);
-#if defined(PLATFORM_WIN32)
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 	fprintf (acfg->fp, "_%s:\n", name);
 #else
 	fprintf (acfg->fp, "%s:\n", get_label (name));
 #endif
 
-#if defined(PLATFORM_WIN32)
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 	/* Emit a normal label too */
 	fprintf (acfg->fp, "%s:\n", name);
 #endif
