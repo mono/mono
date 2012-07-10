@@ -142,7 +142,7 @@ typedef struct MonoCompileArch {
 #define ARM_FIRST_ARG_REG 0
 #define ARM_LAST_ARG_REG 3
 
-#if defined(PLATFORM_WIN32) && !(defined(TARGET_ARM) && defined(MONO_CROSS_COMPILE))
+#if !defined(PLATFORM_WIN32) || (defined(PLATFORM_WIN32) && !(defined(TARGET_ARM) && defined(MONO_CROSS_COMPILE)))
 #define MONO_ARCH_USE_SIGACTION 1
 #endif
 
