@@ -2294,7 +2294,7 @@ namespace Mono.CSharp {
 
 			var ns_candidates = ctx.Module.GlobalRootNamespace.FindTypeNamespaces (ctx, Name, Arity);
 			if (ns_candidates != null) {
-				string usings = string.Join ("' or `", ns_candidates);
+				string usings = string.Join ("' or `", ns_candidates.ToArray ());
 				report.Error (246, loc,
 					"The type or namespace name `{0}' could not be found. Are you missing `{1}' using directive?",
 					Name, usings);
