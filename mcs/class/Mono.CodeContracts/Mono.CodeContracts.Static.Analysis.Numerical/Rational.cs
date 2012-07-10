@@ -176,6 +176,18 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             }
         }
 
+        public Rational NextInt64
+        {
+            get
+            {
+                if (IsInfinity)
+                    return this;
+                double next = Math.Ceiling((double)this);
+
+                return For (next >= (double)long.MaxValue ? long.MaxValue : (long)Math.Truncate (next));
+            }
+        }
+
         public static bool operator == (Rational l, Rational r)
         {
             if (ReferenceEquals(l, null) || ReferenceEquals(r, null))

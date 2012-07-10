@@ -158,13 +158,17 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\ExpressionAssertDischarger.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\ExpressionAssumeDecoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\NonNullAnalysisFacade.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AbstractInterpretationException.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AbstractState.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BooleanExtensions.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisInterval.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionOperator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionViaStringComparer.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\FunctionalAbstractDomain.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericConstantEvalVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericExpressionVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericNormalizingExpressionVisistor.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericTypeExpressionVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IAbstractDomainForEnvironments.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Interval.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalBase.cs" />
@@ -383,6 +387,7 @@
     <Compile Include="Test\DomainTestBase.cs" />
     <Compile Include="Test\IntervalTests.cs" />
     <Compile Include="Test\PatriciaTrieTests.cs" />
+    <Compile Include="Test\PolynomialTests.cs" />
     <Compile Include="Test\RationalTests.cs" />
     <Compile Include="Test\RewriteAndLoad.cs" />
     <Compile Include="Test\SequenceTests.cs" />

@@ -38,7 +38,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     struct Monomial<Variable>
     {
-        private static readonly IComparer<Variable> comparer = new ExpressionViaStringComparer<Variable>(); // todo:
+        private static readonly IComparer<Variable> comparer = new ExpressionViaStringComparer<Variable>();
 
         private readonly Rational coefficient;
 
@@ -114,9 +114,24 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return From(Coeff, this.variables.Select(renamer));
         }
 
+        public Monomial<Variable> With(Rational coeff)
+        {
+            return new Monomial<Variable> (coeff, variables);
+        }
+
+        public Monomial<Variable> With(Func<Rational, Rational> func)
+        {
+            return new Monomial<Variable>(func(this.coefficient), variables);
+        } 
+
         public static Monomial<Variable> operator -(Monomial<Variable> m)
         {
-            return new Monomial<Variable>(-m.Coeff, m.variables);
+            return m.With (-m.coefficient);
+        }
+        
+        public static Monomial<Variable> From(Rational coeff)
+        {
+            return new Monomial<Variable> (coeff);
         }
 
         public static Monomial<Variable> From(Rational coeff, Sequence<Variable> vars)
@@ -142,7 +157,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public override string ToString()
         {
-            return string.Format("{0} * {1} ", coefficient, VarsToString(variables));
+            return string.Format("{0} * {1}", coefficient, VarsToString(variables));
         }
 
         private static string VarsToString(Sequence<Variable> seq)
@@ -154,7 +169,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             else
             {
                 sb.Append(seq.Head);
-                seq.Tail.ForEach(v => sb.Append(" * {0}" + v));
+                seq.Tail.ForEach(v => sb.AppendFormat(" * {0}", v));
             }
 
             return sb.ToString();
@@ -193,6 +208,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             int res = 0;
             this.variables.ForEach(v => res += v.GetHashCode());
             return res + this.coefficient.GetHashCode();
+        }
+
+        public bool IsIntConstant (out long constant)
+        {
+            if (IsConstant && this.coefficient.IsInteger)
+                return true.With ((long) coefficient.NextInt64, out constant);
+
+            return false.Without (out constant);
         }
     }
 }
