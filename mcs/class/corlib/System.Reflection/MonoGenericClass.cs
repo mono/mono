@@ -99,56 +99,6 @@ namespace System.Reflection
  		[MethodImplAttribute(MethodImplOptions.InternalCall)]
  		internal static extern void register_with_runtime (Type type);
 
-		EventInfo[] GetEventsFromGTD (BindingFlags flags) {
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetEvents (flags);
-
-			return tb.GetEvents_internal (flags);
-		}
-
-		ConstructorInfo[] GetConstructorsFromGTD (BindingFlags flags)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetConstructors (flags);
-
-			return tb.GetConstructorsInternal (flags);
-		}
-
-		/*@hint might not be honored so it required aditional filtering
-		TODO move filtering into here for the TypeBuilder case and remove the hint ugliness 
-		*/
-		MethodInfo[] GetMethodsFromGTDWithHint (BindingFlags hint)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetMethods (hint);
-
-			if (tb.num_methods == 0)
-				return new MethodInfo [0];
-			MethodInfo[] res = new MethodInfo [tb.num_methods];
-			Array.Copy (tb.methods, 0, res, 0, tb.num_methods);
-			return res;
-		}
-
-		/*@hint might not be honored so it required aditional filtering
-		TODO move filtering into here for the TypeBuilder case and remove the hint ugliness 
-		*/
-		ConstructorInfo[] GetConstructorsFromGTDWithHint (BindingFlags hint)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetConstructors (hint);
-
-			if (tb.ctors == null)
-				return new ConstructorInfo [0];
-			ConstructorInfo[] res = new ConstructorInfo [tb.ctors.Length];
-			tb.ctors.CopyTo (res, 0);
-			return res;
-		}
-
-
 		internal bool IsCreated {
 			get {
 				TypeBuilder tb = generic_type as TypeBuilder;
@@ -274,50 +224,6 @@ namespace System.Reflection
 		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
 			throw new NotSupportedException ();
-		}
-
-		ConstructorInfo[] GetConstructorsInternal (BindingFlags bf, MonoGenericClass reftype)
-		{
-			ConstructorInfo[] ctors = GetConstructorsFromGTDWithHint (bf);
-			if (ctors == null || ctors.Length == 0)
-				return new ConstructorInfo [0];
-
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-
-			initialize ();
-
-			for (int i = 0; i < ctors.Length; i++) {
-				ConstructorInfo c = ctors [i];
-
-				match = false;
-				mattrs = c.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bf & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bf & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (TypeBuilder.GetConstructor (this, c));
-			}
-
-			ConstructorInfo[] result = new ConstructorInfo [l.Count];
-			l.CopyTo (result);
-			return result;
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bf)
