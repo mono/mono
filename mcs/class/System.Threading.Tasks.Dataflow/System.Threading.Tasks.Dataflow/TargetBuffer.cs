@@ -69,9 +69,12 @@ namespace System.Threading.Tasks.Dataflow
 			}
 		}
 
-		public IDisposable AddTarget (ITargetBlock<T> block, bool unlinkAfterOne)
+		public IDisposable AddTarget (ITargetBlock<T> target, bool unlinkAfterOne)
 		{
-			TargetWaiter w = new TargetWaiter (block, unlinkAfterOne, targetWaiters);
+			if (target == null)
+				throw new ArgumentNullException("target");
+
+			TargetWaiter w = new TargetWaiter (target, unlinkAfterOne, targetWaiters);
 			targetWaiters.Enqueue (w);
 
 			return w;

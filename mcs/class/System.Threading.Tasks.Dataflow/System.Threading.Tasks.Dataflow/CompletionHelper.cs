@@ -80,12 +80,15 @@ namespace System.Threading.Tasks.Dataflow
 			source.TrySetResult (null);
 		}
 
-		public void RequestFault (Exception ex)
+		public void RequestFault (Exception exception)
 		{
+			if (exception == null)
+				throw new ArgumentNullException("exception");
+
 			if (CanFaultOrCancelImmediatelly)
-				Fault (ex);
+				Fault (exception);
 			else {
-				Interlocked.CompareExchange (ref requestedException, ex, null);
+				Interlocked.CompareExchange (ref requestedException, exception, null);
 				requestedFaultOrCancel.Value = true;
 			}
 		}

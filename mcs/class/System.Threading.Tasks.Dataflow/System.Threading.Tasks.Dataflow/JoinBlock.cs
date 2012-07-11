@@ -106,9 +106,9 @@ namespace System.Threading.Tasks.Dataflow
 			outgoing.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
-			compHelper.RequestFault (ex);
+			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {

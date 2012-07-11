@@ -64,7 +64,13 @@ namespace System.Threading.Tasks.Dataflow {
 			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
 			if (!messageHeader.IsValid)
-				return DataflowMessageStatus.Declined;
+				throw new ArgumentException ("The messageHeader is not valid.",
+					"messageHeader");
+			if (consumeToAccept && source == null)
+				throw new ArgumentException (
+					"consumeToAccept may only be true if provided with a non-null source.",
+					"consumeToAccept");
+
 			if (MessageQueue.IsAddingCompleted || !compHelper.CanRun)
 				return DataflowMessageStatus.DecliningPermanently;
 

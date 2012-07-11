@@ -275,7 +275,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public bool VerifyHeader (DataflowMessageHeader header, ITargetBlock<T> targetBlock)
 		{
-			return header.IsValid && header == currentHeader
+			return header == currentHeader
 			       && postponedTargetBlocks.ContainsKey (targetBlock);
 		}
 	}

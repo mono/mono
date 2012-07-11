@@ -46,9 +46,9 @@ namespace System.Threading.Tasks.Dataflow
 				observer.OnCompleted ();
 			}
 
-			public void Fault (Exception ex)
+			public void Fault (Exception exception)
 			{
-				observer.OnError (ex);
+				observer.OnError (exception);
 			}
 
 			public Task Completion {

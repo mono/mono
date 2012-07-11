@@ -70,6 +70,9 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)
 		{
+			if (linkOptions == null)
+				throw new ArgumentNullException("linkOptions");
+
 			return targets.AddTarget (target, false); // TODO
 		}
 
@@ -122,9 +125,9 @@ namespace System.Threading.Tasks.Dataflow {
 			messageBox.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
-			compHelper.RequestFault (ex);
+			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {

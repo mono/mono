@@ -25,6 +25,8 @@ namespace System.Threading.Tasks.Dataflow {
 		static readonly DataflowLinkOptions DefaultOptions =
 			new DataflowLinkOptions ();
 
+		int maxMessages;
+
 		internal static DataflowLinkOptions Default {
 			get { return DefaultOptions; }
 		}
@@ -38,7 +40,15 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public bool PropagateCompletion { get; set; }
 
-		public int MaxMessages { get; set; }
+		public int MaxMessages {
+			get { return maxMessages; }
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException("value");
+				
+				maxMessages = value;
+			}
+		}
 
 		public bool Append { get; set; }
 	}

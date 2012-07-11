@@ -107,7 +107,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
 			
 		}

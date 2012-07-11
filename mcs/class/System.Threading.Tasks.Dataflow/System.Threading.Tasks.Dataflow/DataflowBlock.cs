@@ -49,21 +49,29 @@ namespace System.Threading.Tasks.Dataflow
 			return new ObserverDataflowBlock<TInput> (target);
 		}
 
-		public static Task<int> Choose<T1, T2> (ISourceBlock<T1> source1, Action<T1> action1, ISourceBlock<T2> source2, Action<T2> action2)
+		public static Task<int> Choose<T1, T2> (
+			ISourceBlock<T1> source1, Action<T1> action1,
+			ISourceBlock<T2> source2, Action<T2> action2)
 		{
-			return Choose<T1, T2> (source1, action1, source2, action2, new DataflowBlockOptions ());
+			return Choose (source1, action1, source2, action2,
+				DataflowBlockOptions.Default);
 		}
 
-		public static Task<int> Choose<T1, T2> (ISourceBlock<T1> source1,
-		                                        Action<T1> action1,
-		                                        ISourceBlock<T2> source2,
-		                                        Action<T2> action2,
-		                                        DataflowBlockOptions dataflowBlockOptions)
+		public static Task<int> Choose<T1, T2> (
+			ISourceBlock<T1> source1, Action<T1> action1,
+			ISourceBlock<T2> source2, Action<T2> action2,
+			DataflowBlockOptions dataflowBlockOptions)
 		{
 			if (source1 == null)
 				throw new ArgumentNullException ("source1");
 			if (source2 == null)
 				throw new ArgumentNullException ("source2");
+			if (action1 == null)
+				throw new ArgumentNullException("action1");
+			if (action2 == null)
+				throw new ArgumentNullException("action2");
+			if (dataflowBlockOptions == null)
+				throw new ArgumentNullException("dataflowBlockOptions");
 
 			var chooser = new ChooserBlock<T1, T2, object> (action1, action2, null, dataflowBlockOptions);
 			source1.LinkTo (chooser.Target1);
@@ -72,23 +80,20 @@ namespace System.Threading.Tasks.Dataflow
 			return chooser.Completion;
 		}
 
-		public static Task<int> Choose<T1, T2, T3> (ISourceBlock<T1> source1,
-		                                            Action<T1> action1,
-		                                            ISourceBlock<T2> source2,
-		                                            Action<T2> action2,
-		                                            ISourceBlock<T3> source3,
-		                                            Action<T3> action3)
+		public static Task<int> Choose<T1, T2, T3> (
+			ISourceBlock<T1> source1, Action<T1> action1,
+			ISourceBlock<T2> source2, Action<T2> action2,
+			ISourceBlock<T3> source3, Action<T3> action3)
 		{
-			return Choose (source1, action1, source2, action2, source3, action3, new DataflowBlockOptions ());
+			return Choose (source1, action1, source2, action2, source3, action3,
+				DataflowBlockOptions.Default);
 		}
 
-		public static Task<int> Choose<T1, T2, T3> (ISourceBlock<T1> source1,
-		                                            Action<T1> action1,
-		                                            ISourceBlock<T2> source2,
-		                                            Action<T2> action2,
-		                                            ISourceBlock<T3> source3,
-		                                            Action<T3> action3,
-		                                            DataflowBlockOptions dataflowBlockOptions)
+		public static Task<int> Choose<T1, T2, T3> (
+			ISourceBlock<T1> source1, Action<T1> action1,
+			ISourceBlock<T2> source2, Action<T2> action2,
+			ISourceBlock<T3> source3, Action<T3> action3,
+			DataflowBlockOptions dataflowBlockOptions)
 		{
 			if (source1 == null)
 				throw new ArgumentNullException ("source1");
@@ -96,6 +101,14 @@ namespace System.Threading.Tasks.Dataflow
 				throw new ArgumentNullException ("source2");
 			if (source3 == null)
 				throw new ArgumentNullException ("source3");
+			if (action1 == null)
+				throw new ArgumentNullException("action1");
+			if (action2 == null)
+				throw new ArgumentNullException("action2");
+			if (action3 == null)
+				throw new ArgumentNullException("action3");
+			if (dataflowBlockOptions == null)
+				throw new ArgumentNullException("dataflowBlockOptions");
 
 			var chooser = new ChooserBlock<T1, T2, T3> (action1, action2, action3, dataflowBlockOptions);
 			source1.LinkTo (chooser.Target1);
@@ -105,27 +118,40 @@ namespace System.Threading.Tasks.Dataflow
 			return chooser.Completion;
 		}
 
-		public static IPropagatorBlock<TInput, TOutput> Encapsulate<TInput, TOutput> (ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
+		public static IPropagatorBlock<TInput, TOutput> Encapsulate<TInput, TOutput> (
+			ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
 		{
 			return new PropagatorWrapperBlock<TInput, TOutput> (target, source);
 		}
 
 		public static IDisposable LinkTo<TOutput> (this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target)
 		{
-			return source.LinkTo (target, (Predicate<TOutput>)null);
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			return source.LinkTo (target, DataflowLinkOptions.Default);
 		}
 
 		public static IDisposable LinkTo<TOutput> (
 			this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target,
 			Predicate<TOutput> predicate)
 		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
 			return source.LinkTo (target, DataflowLinkOptions.Default, predicate);
 		}
 
+		[MonoTODO("Use predicate")]
 		public static IDisposable LinkTo<TOutput> (
 			this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target,
 			DataflowLinkOptions linkOptions, Predicate<TOutput> predicate)
 		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+			if (predicate == null)
+				throw new ArgumentNullException("predicate");
+
 			return source.LinkTo (target, linkOptions);
 		}
 
@@ -164,6 +190,8 @@ namespace System.Threading.Tasks.Dataflow
 				throw new ArgumentNullException ("source");
 			if (timeout.TotalMilliseconds < -1)
 				throw new ArgumentOutOfRangeException ("timeout");
+			if (timeout.TotalMilliseconds > int.MaxValue)
+				throw new ArgumentOutOfRangeException ("timeout");
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -198,6 +226,8 @@ namespace System.Threading.Tasks.Dataflow
 			if (source == null)
 				throw new ArgumentNullException ("source");
 			if (timeout.TotalMilliseconds < -1)
+				throw new ArgumentOutOfRangeException ("timeout");
+			if (timeout.TotalMilliseconds > int.MaxValue)
 				throw new ArgumentOutOfRangeException ("timeout");
 
 			cancellationToken.ThrowIfCancellationRequested ();

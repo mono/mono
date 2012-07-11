@@ -70,9 +70,9 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
-		void IDataflowBlock.Fault (Exception e)
+		void IDataflowBlock.Fault (Exception exception)
 		{
-			joinBlock.Fault (e);
+			joinBlock.Fault (exception);
 		}
 	}
 }

@@ -134,6 +134,11 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public IDisposable AddTarget(ITargetBlock<T> targetBlock, DataflowLinkOptions linkOptions)
 		{
+			if (targetBlock == null)
+				throw new ArgumentNullException ("targetBlock");
+			if (linkOptions == null)
+				throw new ArgumentNullException ("linkOptions");
+
 			var result = targets.AddTarget (targetBlock, linkOptions);
 			VerifyProcessing ();
 			return result;
@@ -141,6 +146,10 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public T ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> targetBlock, out bool messageConsumed)
 		{
+			if (!messageHeader.IsValid)
+				throw new ArgumentException ("The messageHeader is not valid.",
+					"messageHeader");
+
 			T result = default(T);
 			messageConsumed = false;
 
@@ -171,6 +180,10 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> target)
 		{
+			if (!messageHeader.IsValid)
+				throw new ArgumentException ("The messageHeader is not valid.",
+					"messageHeader");
+
 			bool lockTaken = false;
 			try {
 				firstItemLock.Enter (ref lockTaken);
@@ -192,6 +205,10 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<T> target)
 		{
+			if (!messageHeader.IsValid)
+				throw new ArgumentException ("The messageHeader is not valid.",
+					"messageHeader");
+
 			bool lockTaken = false;
 			try
 			{

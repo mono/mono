@@ -44,8 +44,15 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public BatchBlock (int batchSize, GroupingDataflowBlockOptions dataflowBlockOptions)
 		{
+			if (batchSize <= 0)
+				throw new ArgumentOutOfRangeException ("batchSize", batchSize,
+					"The batchSize must be positive.");
 			if (dataflowBlockOptions == null)
 				throw new ArgumentNullException ("dataflowBlockOptions");
+			if (dataflowBlockOptions.BoundedCapacity != -1
+			    && batchSize > dataflowBlockOptions.BoundedCapacity)
+				throw new ArgumentOutOfRangeException ("batchSize",
+					"The batchSize must be smaller than the value of BoundedCapacity.");
 
 			this.batchSize = batchSize;
 			this.dataflowBlockOptions = dataflowBlockOptions;
@@ -313,9 +320,9 @@ namespace System.Threading.Tasks.Dataflow {
 			outgoing.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
-			compHelper.RequestFault (ex);
+			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {

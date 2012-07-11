@@ -32,60 +32,17 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading.Tasks.Dataflow {
 	[TestFixture]
 	public class OptionsTest {
-		static IEnumerable<IDataflowBlock> CreateBlocksWithOptions (
-			DataflowBlockOptions dataflowBlockOptions,
-			ExecutionDataflowBlockOptions executionDataflowBlockOptions,
-			GroupingDataflowBlockOptions groupingDataflowBlockOptions)
-		{
-			yield return new ActionBlock<int> (i => { }, executionDataflowBlockOptions);
-			yield return new BatchBlock<double> (10, groupingDataflowBlockOptions);
-			yield return new BatchedJoinBlock<dynamic, object> (
-				10, groupingDataflowBlockOptions);
-			yield return new BatchedJoinBlock<dynamic, object, char> (
-				10, groupingDataflowBlockOptions);
-			yield return new BroadcastBlock<byte> (x => x, dataflowBlockOptions);
-			yield return new BufferBlock<int> (dataflowBlockOptions);
-			yield return new JoinBlock<double, dynamic> (groupingDataflowBlockOptions);
-			yield return new JoinBlock<object, char, byte> (
-				groupingDataflowBlockOptions);
-			yield return new TransformBlock<int, int> (
-				i => i, executionDataflowBlockOptions);
-			yield return new TransformManyBlock<double, dynamic>(
-				x => new dynamic[0], executionDataflowBlockOptions);
-			yield return new WriteOnceBlock<object> (x => x, dataflowBlockOptions);
-		}
-
-		static IEnumerable<IDataflowBlock> CreateBlocksWithNameFormat(string nameFormat)
-		{
-			var dataflowBlockOptions = new DataflowBlockOptions { NameFormat = nameFormat };
-			var executionDataflowBlockOptions = new ExecutionDataflowBlockOptions { NameFormat = nameFormat };
-			var groupingDataflowBlockOptions = new GroupingDataflowBlockOptions { NameFormat = nameFormat };
-
-			return CreateBlocksWithOptions (dataflowBlockOptions,
-				executionDataflowBlockOptions, groupingDataflowBlockOptions);
-		}
-
-		static IEnumerable<IDataflowBlock> CreateBlocksWithCancellationToken(CancellationToken cancellationToken)
-		{
-			var dataflowBlockOptions = new DataflowBlockOptions { CancellationToken = cancellationToken};
-			var executionDataflowBlockOptions = new ExecutionDataflowBlockOptions { CancellationToken = cancellationToken};
-			var groupingDataflowBlockOptions = new GroupingDataflowBlockOptions { CancellationToken = cancellationToken};
-
-			return CreateBlocksWithOptions (dataflowBlockOptions,
-				executionDataflowBlockOptions, groupingDataflowBlockOptions);
-		}
-
 		[Test]
 		public void NameFormatTest ()
 		{
 			var constant = "constant";
-			foreach (var block in CreateBlocksWithNameFormat (constant))
+			foreach (var block in Blocks.CreateBlocksWithNameFormat (constant))
 				Assert.AreEqual (constant, block.ToString ());
 
-			foreach (var block in CreateBlocksWithNameFormat ("{0}"))
+			foreach (var block in Blocks.CreateBlocksWithNameFormat ("{0}"))
 				Assert.AreEqual (block.GetType ().Name, block.ToString ());
 
-			foreach (var block in CreateBlocksWithNameFormat ("{1}"))
+			foreach (var block in Blocks.CreateBlocksWithNameFormat ("{1}"))
 				Assert.AreEqual (block.Completion.Id.ToString (), block.ToString ());
 		}
 
@@ -93,7 +50,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		public void CancellationTest()
 		{
 			var source = new CancellationTokenSource ();
-			var blocks = CreateBlocksWithCancellationToken (source.Token).ToArray ();
+			var blocks = Blocks.CreateBlocksWithCancellationToken (source.Token).ToArray ();
 
 			foreach (var block in blocks)
 				Assert.IsFalse (block.Completion.Wait (100));

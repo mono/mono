@@ -27,6 +27,8 @@ namespace System.Threading.Tasks.Dataflow
 		static readonly GroupingDataflowBlockOptions DefaultOptions =
 			new GroupingDataflowBlockOptions ();
 
+		long maxNumberOfGroups;
+
 		internal static GroupingDataflowBlockOptions Default {
 			get { return DefaultOptions; }
 		}
@@ -39,6 +41,14 @@ namespace System.Threading.Tasks.Dataflow
 
 		public bool Greedy { get; set; }
 
-		public long MaxNumberOfGroups { get; set; }
+		public long MaxNumberOfGroups {
+			get { return maxNumberOfGroups; }
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException("value");
+				
+				maxNumberOfGroups = value;
+			}
+		}
 	}
 }

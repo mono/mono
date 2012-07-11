@@ -32,6 +32,11 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public readonly static int Unbounded = -1;
 
+		int boundedCapacity;
+		int maxMessagesPerTask;
+		TaskScheduler taskScheduler;
+		string nameFormat;
+
 		public DataflowBlockOptions ()
 		{
 			BoundedCapacity = -1;
@@ -41,14 +46,46 @@ namespace System.Threading.Tasks.Dataflow {
 			NameFormat = "{0} Id={1}";
 		}
 
-		public int BoundedCapacity { get; set; }
+		public int BoundedCapacity {
+			get { return boundedCapacity; }
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException("value");
+
+				boundedCapacity = value;
+			}
+		}
 
 		public CancellationToken CancellationToken { get; set; }
 
-		public int MaxMessagesPerTask { get; set; }
+		public int MaxMessagesPerTask {
+			get { return maxMessagesPerTask; }
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException("value");
 
-		public TaskScheduler TaskScheduler { get; set; }
+				maxMessagesPerTask = value;
+			}
+		}
 
-		public string NameFormat { get; set; }
+		public TaskScheduler TaskScheduler {
+			get { return taskScheduler; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
+
+				taskScheduler = value;
+			}
+		}
+
+		public string NameFormat {
+			get { return nameFormat; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
+
+				nameFormat = value;
+			}
+		}
 	}
 }

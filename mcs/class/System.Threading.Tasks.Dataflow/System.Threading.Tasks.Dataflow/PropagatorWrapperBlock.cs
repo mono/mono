@@ -30,6 +30,11 @@ namespace System.Threading.Tasks.Dataflow
 
 		public PropagatorWrapperBlock (ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
 		{
+			if (target == null)
+				throw new ArgumentNullException("target");
+			if (source == null)
+				throw new ArgumentNullException("source");
+
 			this.target = target;
 			this.source = source;
 		}
@@ -69,11 +74,11 @@ namespace System.Threading.Tasks.Dataflow
 			target.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
-			compHelper.RequestFault (ex);
-			source.Fault (ex);
-			target.Fault (ex);
+			compHelper.RequestFault (exception);
+			source.Fault (exception);
+			target.Fault (exception);
 		}
 
 		public Task Completion {

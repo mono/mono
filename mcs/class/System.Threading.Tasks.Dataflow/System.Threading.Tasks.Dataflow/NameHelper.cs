@@ -28,10 +28,17 @@ namespace System.Threading.Tasks.Dataflow {
 		/// <summary>
 		/// Returns the name of the block, based on <see cref="DataflowBlockOptions.NameFormat"/>.
 		/// </summary>
+		/// <remarks>
+		/// If the NameFormat is invalid, returns the exception message.
+		/// </remarks>
 		public static string GetName(IDataflowBlock block, DataflowBlockOptions options)
 		{
-			return string.Format (
-				options.NameFormat, block.GetType ().Name, block.Completion.Id);
+			try {
+				return string.Format (
+					options.NameFormat, block.GetType ().Name, block.Completion.Id);
+			} catch (FormatException e) {
+				return e.Message;
+			}
 		}
 	}
 }

@@ -45,6 +45,8 @@ namespace System.Threading.Tasks.Dataflow
 		public TransformManyBlock (Func<TInput, IEnumerable<TOutput>> transformer,
 		                           ExecutionDataflowBlockOptions dataflowBlockOptions)
 		{
+			if (transformer == null)
+				throw new ArgumentNullException ("transformer");
 			if (dataflowBlockOptions == null)
 				throw new ArgumentNullException ("dataflowBlockOptions");
 
@@ -127,9 +129,9 @@ namespace System.Threading.Tasks.Dataflow
 			messageBox.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
-			compHelper.RequestFault (ex);
+			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {

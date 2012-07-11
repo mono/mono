@@ -60,11 +60,18 @@ namespace System.Threading.Tasks.Dataflow
 			this.vault = new MessageVault<T> ();
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           T messageValue,
-		                                           ISourceBlock<T> source,
-		                                           bool consumeToAccept)
+		public DataflowMessageStatus OfferMessage (
+			DataflowMessageHeader messageHeader, T messageValue,
+			ISourceBlock<T> source, bool consumeToAccept)
 		{
+			if (!messageHeader.IsValid)
+				throw new ArgumentException ("The messageHeader is not valid.",
+					"messageHeader");
+			if (consumeToAccept && source == null)
+				throw new ArgumentException (
+					"consumeToAccept may only be true if provided with a non-null source.",
+					"consumeToAccept");
+
 			if (written.TryRelaxedSet ()) {
 				Thread.MemoryBarrier ();
 				finalValue = messageValue;
@@ -78,6 +85,9 @@ namespace System.Threading.Tasks.Dataflow
 
 		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)
 		{
+			if (linkOptions == null)
+				throw new ArgumentNullException("linkOptions");
+
 			return targets.AddTarget (target, true);
 		}
 
@@ -150,9 +160,9 @@ namespace System.Threading.Tasks.Dataflow
 			messageBox.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
-			compHelper.RequestFault (ex);
+			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {
