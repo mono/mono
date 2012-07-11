@@ -7,6 +7,7 @@ using System.ServiceModel.Security.Tokens;
 using System.Text;
 using System.IO;
 using System.Xml;
+using System.Net.Sockets;
 
 namespace System.ServiceModel.Dispatcher
 {
@@ -33,6 +34,15 @@ namespace System.ServiceModel.Dispatcher
 					// default exception handler and 
 					// call error_handlers_chain
 					Console.WriteLine ("I/O Error (Dropped Connection?): " + e.Message);
+					mrc.ProcessingException = e;
+					error_handlers_chain.ProcessRequestChain (mrc);
+				} catch (SocketException e) {
+					// FIXME?: On dropped connection do not
+					// dump a stacktrace, but should be safe
+					// to dump a console message as in
+					// default exception handler and 
+					// call error_handlers_chain
+					Console.WriteLine ("SocketExcpetion (Dropped Connection?): " + e.Message);
 					mrc.ProcessingException = e;
 					error_handlers_chain.ProcessRequestChain (mrc);
 				} catch (XmlException e) {

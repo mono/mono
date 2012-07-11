@@ -136,6 +136,11 @@ namespace System.ServiceModel.Channels
 						//on dropped connection, 
 						//whatever you do don't crash
 						//the whole app.  Ignore for now
+					} catch (IOException ex) {
+						Console.WriteLine ("I/O Exception (Dropped Connection?):" + ex.Message);
+						//on dropped connection, 
+						//whatever you do don't crash
+						//the whole app.  Ignore for now
 					} finally {
 						lock (async_result_lock) {
 							CurrentAsyncResult = null;
