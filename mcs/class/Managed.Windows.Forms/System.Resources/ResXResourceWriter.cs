@@ -23,9 +23,8 @@
 //	Duncan Mak		duncan@ximian.com
 //	Gonzalo Paniagua Javier	gonzalo@ximian.com
 //	Peter Bartok		pbartok@novell.com
+//	Gary Barnett
 //
-
-// COMPLETE
 
 using System.ComponentModel;
 using System.IO;

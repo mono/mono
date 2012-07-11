@@ -21,8 +21,8 @@
 //
 // Authors:
 //	Andreia Gaita	(avidigal@novell.com)
-//  Olivier Dufour  olivier.duff@gmail.com
-//
+//  	Olivier Dufour  olivier.duff@gmail.com
+//	Gary Barnett
 
 using System;
 using System.Runtime.Serialization;

@@ -224,7 +224,16 @@
     <Compile Include="Test\System.Windows.Forms.Layout\ArrangedElementCollectionTest.cs" />
     <Compile Include="Test\System.Resources\CompatTest.cs" />
     <Compile Include="Test\System.Resources\CultureTest.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeAliasTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeAssemblyNameTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeByteArrayTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeFileRefBitmapTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeFileRefTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeSerialisedGetValueTypeNameTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeSerializedGetValueTests.cs" />
     <Compile Include="Test\System.Resources\ResXDataNodeTest.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeTypeConverterGetValueTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeTypeConverterGetValueTypeNameTests.cs" />
     <Compile Include="Test\System.Resources\ResXFileRefTest.cs" />
     <Compile Include="Test\System.Resources\ResXResourceReaderTest.cs" />
     <Compile Include="Test\System.Resources\WriterTest.cs" />
@@ -260,6 +269,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Test\System.Resources\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Test\resources\a.cur">

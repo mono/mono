@@ -26,6 +26,7 @@
 //	Peter Bartok	pbartok@novell.com
 //	Gert Driesen	drieseng@users.sourceforge.net
 //	Olivier Dufour	olivier.duff@gmail.com
+//	Gary Barnett	
 
 using System;
 using System.Collections;
