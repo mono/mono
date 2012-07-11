@@ -88,9 +88,11 @@ namespace System.ServiceModel.Channels.Http
 			// HTTP channel could be accepted while there is no incoming request yet. The reply channel waits for the actual request.
 			// HTTP channel listeners do not accept more than one channel at a time.
 			DateTime start = DateTime.Now;
-			TimeSpan waitTimeout = timeout - (DateTime.Now - start);
-			if (waitTimeout.TotalMilliseconds > int.MaxValue)
-				waitTimeout = TimeSpan.FromMilliseconds (int.MaxValue);
+			TimeSpan waitTimeout;
+			if (timeout == TimeSpan.MaxValue)
+				waitTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
+			else
+				waitTimeout = timeout - (DateTime.Now - start);
 			accept_channel_handle.WaitOne (waitTimeout);
 			accept_channel_handle.Reset (); 
 			TChannel ch = CreateChannel (timeout - (DateTime.Now - start));
