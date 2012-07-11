@@ -94,7 +94,7 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
+		extern void initialize (FieldInfo[] fields);
 
  		[MethodImplAttribute(MethodImplOptions.InternalCall)]
  		internal static extern void register_with_runtime (Type type);
@@ -168,11 +168,7 @@ namespace System.Reflection
 			if (parent != null)
 				parent.initialize ();
 				
-			initialize (generic_type.GetMethods (flags),
-						GetConstructorsFromGTD (flags),
-						generic_type.GetFields (flags),
-						generic_type.GetProperties (flags),
-						GetEventsFromGTD (flags));
+			initialize (generic_type.GetFields (flags));
 
 			initialized = true;
 		}
