@@ -315,7 +315,7 @@ namespace System.Resources
 		
 		public void AddResource (ResXDataNode node)
 		{
-			AddResource (node.Name, node.Value, node.Comment);
+			AddResource (node.Name, node.GetValueForResX (), node.Comment);
 		}
 		
 		public void AddMetadata (string name, string value)
