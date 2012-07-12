@@ -282,7 +282,16 @@ namespace System.Runtime.Serialization
 					types = rtle.Types;
 				}
 #else
-				types = ass.GetTypes ();
+				try
+				{
+					types = ass.GetTypes ();
+				}
+				catch (ReflectionTypeLoadException rtle)
+				{
+					Console.Error.WriteLine(rtle);
+					Console.Error.WriteLine("Assembly: " + ass);
+					continue;
+				}
 #endif
 				if (types == null)
 					continue;
