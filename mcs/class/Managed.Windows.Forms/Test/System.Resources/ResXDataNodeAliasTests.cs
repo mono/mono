@@ -26,181 +26,53 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Drawing;
 using System.Resources;
-using System.Runtime.Serialization;
-using System.Collections.Generic;
 using System.Collections;
-
 using NUnit.Framework;
-using System.ComponentModel.Design;
-using System.Runtime.Serialization.Formatters.Binary;
 
-namespace MonoTests.System.Resources
-{
+namespace MonoTests.System.Resources {
 	[TestFixture]
-	public class ResXDataNodeAliasTests : MonoTests.System.Windows.Forms.TestHelper {
-		string _tempDirectory;
-		string _otherTempDirectory;
+	public class ResXDataNodeAliasTests : ResourcesTestHelper {
 		
 		[Test, ExpectedException (typeof (TypeLoadException))]
 		public void CantAccessValueWereOnlyFullNameInResXForEmbedded () // same as validity check in assemblynames tests
 		{
-			
-			string filePath = GetFileFromString ("convertableResX.resx", convertableResX);
-
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue ((AssemblyName[]) null);
-			}
+			ResXDataNode node = GetNodeFromResXReader (convertableResX);
+            Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue ((AssemblyName[]) null);
 		}
 
 		[Test, ExpectedException (typeof (TypeLoadException))]
 		public void CantAccessValueWereOnlyFullNameAndAliasInResXForEmbedded ()
 		{
-			
-			string filePath = GetFileFromString ("convertableResXAlias.resx", convertableResXAlias);
-
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue ((AssemblyName []) null);
-			}
+            ResXDataNode node = GetNodeFromResXReader (convertableResXAlias);
+            Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue ((AssemblyName []) null);
 		}
 
 		[Test]
 		public void CanAccessValueWereOnlyFullNameAndAssemblyInResXForEmbedded ()
 		{
+            ResXDataNode node = GetNodeFromResXReader (convertableResXAssembly);
 
-			string filePath = GetFileFromString ("convertableResXAssembly.resx", convertableResXAssembly);
+            Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue ((AssemblyName []) null);
+			// this is the qualified name of the assembly found in dir
+			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue ((AssemblyName []) null);
-				// this is the qualified name of the assembly found in dir
-				string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A1");
-			}
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A2");
 		}
 
 		[Test]
 		public void CanAccessValueWereOnlyFullNameAndQualifiedAssemblyInResXForEmbedded ()
 		{
+            ResXDataNode node = GetNodeFromResXReader (convertableResXQualifiedAssemblyName);
+            Assert.IsNotNull (node, "#A1");
 
-			string filePath = GetFileFromString ("convertableResXQAN.resx", convertableResXQualifiedAssemblyName);
-
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue ((AssemblyName []) null);
-				
-				string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A1");
-			}
-		}
-
-		/*
-		[Test]
-		public void GetValueAssemblyNameUsedWhereOnlyFullNameInResXForEmbedded ()
-		{
-			// DummyAssembly must be in the same directory as current assembly to work correctly
-
+			object obj = node.GetValue ((AssemblyName []) null);
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
-
-			string filePath = GetFileFromString ("convertableResX.resx", convertableResX);
-
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue (assemblyNames);
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName);
-			}
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A2");
 		}
-
-		[Test]
-		public void GetValueTypeNameReturnsFullNameWereOnlyFullNameInResXForEmbedded ()
-		{
-			// just a check, if this passes other tests will give false results
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResX);
-
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				string returnedType = node.GetValueTypeName ((AssemblyName []) null);
-
-				Assert.AreEqual ("DummyAssembly.Convertable", returnedType);
-			}
-		}
-		
-		[Test]
-		public void GetValueTypeNameAssemblyNameUsedWhereOnlyFullNameInResXForEmbedded ()
-		{
-			// DummyAssembly must be in the same directory as current assembly to work correctly
-
-			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
-
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResX);
-
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				string returnedType = node.GetValueTypeName (assemblyNames);
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedType);
-			}
-		}
-		*/
-		
-
 
 		static string convertableResX =
 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -707,35 +579,6 @@ namespace MonoTests.System.Resources
 	<value>im a name	im a value</value>
   </data>
 </root>";
-
-
-		[TearDown]
-		protected override void TearDown ()
-		{
-			//teardown
-			if (Directory.Exists (_tempDirectory))
-				Directory.Delete (_tempDirectory, true);
-
-			base.TearDown ();
-		}
-		
-		private string GetFileFromString (string filename, string filecontents)
-		{
-			_tempDirectory = Path.Combine (Path.GetTempPath (), "ResXDataNodeTest");
-			_otherTempDirectory = Path.Combine (_tempDirectory, "in");
-			if (!Directory.Exists (_otherTempDirectory)) {
-				Directory.CreateDirectory (_otherTempDirectory);
-			}
-
-			string filepath = Path.Combine (_tempDirectory, filename);
-			
-			StreamWriter writer = new StreamWriter(filepath,false);
-
-			writer.Write (filecontents);
-			writer.Close ();
-
-			return filepath;
-		}
 
 	}
 

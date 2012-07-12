@@ -25,75 +25,43 @@
 #if NET_2_0
 using System;
 using System.IO;
-using System.Reflection;
-using System.Drawing;
 using System.Resources;
-using System.Runtime.Serialization;
-using System.Collections.Generic;
 using System.Collections;
-
 using NUnit.Framework;
 using System.ComponentModel.Design;
-using System.Runtime.Serialization.Formatters.Binary;
 
-namespace MonoTests.System.Resources
-{
+namespace MonoTests.System.Resources {
 	[TestFixture]
-	public class ResXDataNodeSerializedGetValueTests : MonoTests.System.Windows.Forms.TestHelper {
-		string _tempDirectory;
-		string _otherTempDirectory;
-		
+	public class ResXDataNodeSerializedGetValueTests : ResourcesTestHelper {
 		[Test]
 		public void ITRSOnlyUsedFirstTimeWithNodeFromReader ()
 		{
-			
 			ResXDataNode originalNode, returnedNode;
-
 			originalNode = GetNodeEmdeddedSerializable ();
+            returnedNode = GetNodeFromResXReader (originalNode);
 
-			string fileName = GetResXFileWithNode (originalNode, "test.resx");
+			Assert.IsNotNull (returnedNode, "#A1");
 
-			using (ResXResourceReader reader = new ResXResourceReader (fileName)) {
-				reader.UseResXDataNodes = true;
+			object defaultVal = returnedNode.GetValue ((ITypeResolutionService) null);
+			Assert.IsInstanceOfType (typeof (serializable), defaultVal, "#A2");
+			Assert.IsNotInstanceOfType (typeof (serializableSubClass), defaultVal, "#A3");
 
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-				Assert.IsNotNull (returnedNode, "#A1");
-
-				object defaultVal = returnedNode.GetValue ((ITypeResolutionService) null);
-				Assert.IsInstanceOfType (typeof (serializable), defaultVal, "#A2");
-				Assert.IsNotInstanceOfType (typeof (serializableSubClass), defaultVal, "#A3");
-
-				object newVal = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
-				Assert.IsNotInstanceOfType (typeof (serializableSubClass), newVal, "#A4");
-				Assert.IsInstanceOfType (typeof (serializable), newVal, "#A5");
-			}
+			object newVal = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			Assert.IsNotInstanceOfType (typeof (serializableSubClass), newVal, "#A4");
+			Assert.IsInstanceOfType (typeof (serializable), newVal, "#A5");
 		}
 
 		[Test]
 		public void ITRSUsedWhenNodeReturnedFromReader ()
 		{
-			
 			ResXDataNode originalNode, returnedNode;
-
 			originalNode = GetNodeEmdeddedSerializable ();
+            returnedNode = GetNodeFromResXReader (originalNode);
 
-			string fileName = GetResXFileWithNode (originalNode, "test.resx");
+			Assert.IsNotNull (returnedNode, "#A1");
 
-			using (ResXResourceReader reader = new ResXResourceReader (fileName)) {
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-				Assert.IsNotNull (returnedNode, "#A1");
-
-				object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
-				Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
-			}
+			object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
 		}
 
 		[Test]
@@ -102,41 +70,21 @@ namespace MonoTests.System.Resources
 			// check although calls subsequent to an ITRS being supplied to GetValue return that resolved type
 			// when the node is written back using ResXResourceWriter it uses the original type
 
-			ResXDataNode originalNode, returnedNode, return2;
+			ResXDataNode originalNode, returnedNode, finalNode;
 
 			originalNode = GetNodeEmdeddedSerializable ();
+			returnedNode = GetNodeFromResXReader (originalNode);
+            
+			Assert.IsNotNull (returnedNode, "#A1");
+			object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
 
-			string fileName = GetResXFileWithNode (originalNode, "test.resx");
+			finalNode = GetNodeFromResXReader (returnedNode);
+			Assert.IsNotNull (finalNode, "#A3");
 
-			using (ResXResourceReader reader = new ResXResourceReader (fileName)) {
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-				Assert.IsNotNull (returnedNode, "#A1");
-
-				object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
-				Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
-
-				string newResXFile = GetResXFileWithNode (returnedNode, "second.resx");
-
-				using (ResXResourceReader read2 = new ResXResourceReader (newResXFile)) {
-					read2.UseResXDataNodes = true;
-
-					IDictionaryEnumerator enum2 = read2.GetEnumerator ();
-					enum2.MoveNext ();
-					return2 = (ResXDataNode) ((DictionaryEntry) enum2.Current).Value;
-
-					Assert.IsNotNull (return2, "#A3");
-
-					object value2 = return2.GetValue ((ITypeResolutionService) null);
-
-					Assert.IsNotInstanceOfType (typeof (serializableSubClass), value2, "#A4");
-					Assert.IsInstanceOfType (typeof (serializable), value2, "#A5");
-				}
-			}
+			object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
+			Assert.IsNotInstanceOfType (typeof (serializableSubClass), finalVal, "#A4");
+			Assert.IsInstanceOfType (typeof (serializable), finalVal, "#A5");
 		}
 
 		[Test]
@@ -147,28 +95,18 @@ namespace MonoTests.System.Resources
 			ResXDataNode originalNode, returnedNode;
 
 			originalNode = GetNodeEmdeddedSerializable ();
+            returnedNode = GetNodeFromResXReader (originalNode);
+			Assert.IsNotNull (returnedNode, "#A1");
 
-			string fileName = GetResXFileWithNode (originalNode, "test.resx");
+			//get value type passing params
+			string newType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			Assert.AreEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, newType, "#A2");
+			Assert.AreNotEqual ((typeof (serializable)).AssemblyQualifiedName, newType, "#A3");
 
-			using (ResXResourceReader reader = new ResXResourceReader (fileName)) {
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-				Assert.IsNotNull (returnedNode, "#A1");
-
-				//get value type passing params
-				string newType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
-				Assert.AreEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, newType, "#A2");
-				Assert.AreNotEqual ((typeof (serializable)).AssemblyQualifiedName, newType, "#A3");
-
-				// get value passing null params
-				object val = returnedNode.GetValue ((ITypeResolutionService) null);
-				// Assert.IsNotInstanceOfType (typeof (serializable), val, "#A5"); this would fail as subclasses are id-ed as instances of parents
-				Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A4");
-			}
+			// get value passing null params
+			object val = returnedNode.GetValue ((ITypeResolutionService) null);
+			// Assert.IsNotInstanceOfType (typeof (serializable), val, "#A5"); this would fail as subclasses are id-ed as instances of parents
+			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A4");
 		}
 
 		[Test]
@@ -176,10 +114,7 @@ namespace MonoTests.System.Resources
 		{
 			// check supplied params to GetValue are not touched
 			// for an instance created manually
-
-			ResXDataNode node;
-
-			node = GetNodeEmdeddedSerializable ();
+			ResXDataNode node = GetNodeEmdeddedSerializable ();
 
 			//would raise exception if param used
 			Object obj = node.GetValue (new ExceptionalTypeResolutionService ());
@@ -189,94 +124,30 @@ namespace MonoTests.System.Resources
 		[Test]
         public void ChangesToReturnedObjectNotLaterWrittenBack ()
         {
+            ResXDataNode originalNode, returnedNode, finalNode;
 
-            ResXDataNode originalNode = GetNodeEmdeddedSerializable ();
+            originalNode = GetNodeEmdeddedSerializable ();
+            returnedNode = GetNodeFromResXReader (originalNode);
 
-            string fileName = GetResXFileWithNode (originalNode, "test.resx");
+            Assert.IsNotNull (returnedNode, "#A1");
+            object val = returnedNode.GetValue ((ITypeResolutionService) null);
+            Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
 
-            string newFileName;
+            serializable ser = (serializable) val;
 
-            using (ResXResourceReader reader = new ResXResourceReader (fileName)) {
-                reader.UseResXDataNodes = true;
+            Assert.AreEqual ("testName", ser.name, "A3");
+            ser.name = "changed";
+            finalNode = GetNodeFromResXReader (returnedNode);
+            
+            Assert.IsNotNull (finalNode, "#A4");
+            object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
+            Assert.IsInstanceOfType (typeof (serializable), finalVal, "#A5");
 
-                ResXDataNode returnedNode;
-
-                IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-                enumerator.MoveNext ();
-                returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-                Assert.IsNotNull (returnedNode, "#A1");
-
-                object val = returnedNode.GetValue ((ITypeResolutionService) null);
-                Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
-
-                serializable ser = (serializable) val;
-
-                Assert.AreEqual ("testName", ser.name, "A3");
-
-                ser.name = "changed";
-                newFileName = GetResXFileWithNode (returnedNode, "another.resx");
-            }
-
-            using (ResXResourceReader reader = new ResXResourceReader (newFileName)) {
-                reader.UseResXDataNodes = true;
-
-                ResXDataNode returnedNode;
-
-                IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-                enumerator.MoveNext ();
-                returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-                Assert.IsNotNull (returnedNode, "#A4");
-
-                object val = returnedNode.GetValue ((ITypeResolutionService) null);
-                Assert.IsInstanceOfType (typeof (serializable), val, "#A5");
-
-                serializable ser = (serializable) val;
-                // would be "changed" if written back
-                Assert.AreEqual ("testName", ser.name, "A6");
-            }
+            serializable finalSer = (serializable) finalVal;
+            // would be "changed" if written back
+            Assert.AreEqual ("testName", finalSer.name, "A6");
         }
-
-		[TearDown]
-		protected override void TearDown ()
-		{
-			//teardown
-			if (Directory.Exists (_tempDirectory))
-				Directory.Delete (_tempDirectory, true);
-
-			base.TearDown ();
-		}
-
-		string GetResXFileWithNode (ResXDataNode node, string filename)
-		{
-			string fullfileName;
-
-			_tempDirectory = Path.Combine (Path.GetTempPath (), "ResXDataNodeTest");
-			_otherTempDirectory = Path.Combine (_tempDirectory, "in");
-			if (!Directory.Exists (_otherTempDirectory)) {
-				Directory.CreateDirectory (_otherTempDirectory);
-			}
-
-			fullfileName = Path.Combine (_tempDirectory, filename);
-
-			using (ResXResourceWriter writer = new ResXResourceWriter (fullfileName)) {
-				writer.AddResource (node);
-			}
-
-			return fullfileName;
-		}
-
-		ResXDataNode GetNodeEmdeddedSerializable ()
-		{
-			serializable ser = new serializable ("testName", "testValue");
-			ResXDataNode node = new ResXDataNode ("test", ser);
-			return node;
-		}
-
 	}
-
-	
 }
 #endif
 

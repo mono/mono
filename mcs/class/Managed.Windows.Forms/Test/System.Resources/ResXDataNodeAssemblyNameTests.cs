@@ -26,24 +26,16 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Drawing;
 using System.Resources;
 using System.Runtime.Serialization;
-using System.Collections.Generic;
 using System.Collections;
-
 using NUnit.Framework;
-using System.ComponentModel.Design;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.ComponentModel;
 using System.Globalization;
 
 namespace MonoTests.System.Resources {
 	[TestFixture]
-	public class ResXDataNodeAssemblyNameTests : MonoTests.System.Windows.Forms.TestHelper {
-		string _tempDirectory;
-		string _otherTempDirectory;
-
+    public class ResXDataNodeAssemblyNameTests : ResourcesTestHelper {
 		/*
 		[Test]
 		public void CanPassAssemblyNameToGetValueToReturnSpecificVersionOfObjectClassInstance ()
@@ -132,189 +124,104 @@ namespace MonoTests.System.Resources {
 		public void GetValueAssemblyNameUsedWereOnlyFullNameInResXForEmbedded_TestValidityCheck ()
 		{
 			// just a check, if this passes other tests will give false results
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResXWithoutAssemblyName);
+		    ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue ((AssemblyName []) null);
-			}
+            Assert.IsNotNull (node, "#A1");
+		    object obj = node.GetValue ((AssemblyName []) null);
 		}
 
 		[Test]
 		public void GetValueAssemblyNameUsedWhereOnlyFullNameInResXForEmbedded ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
-
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResXWithoutAssemblyName);
+            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue (assemblyNames);
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName);
-			}
+            Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue (assemblyNames);
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName);
 		}
 
 		[Test, ExpectedException (typeof (TypeLoadException))]
 		public void GetValueAssemblyNameRequiredEachTimeWhereOnlyFullNameInResXForEmbedded ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
-
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResXWithoutAssemblyName);
+            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue (assemblyNames);
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A1");
-
-				object obj2 = node.GetValue ((AssemblyName []) null); //should cause exception here
-			}
+            Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue (assemblyNames);
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A2");
+			object obj2 = node.GetValue ((AssemblyName []) null); //should cause exception here
+			
 		}
 		//FIXME: does the way this test is run by NUnit affect the validity of the results showing that you need assembly name to pull type from current assembly?
 		[Test, ExpectedException (typeof (TypeLoadException))]
 		public void CantLoadTypeFromThisAssemblyWithOnlyFullName ()
 		{
-			string filePath = GetFileFromString ("thisAssemblyconvertableWithOutAssembly.resx", thisAssemblyConvertableResXWithoutAssemblyName);
-
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				object obj = node.GetValue ((AssemblyName []) null);
-			}
+            ResXDataNode node = GetNodeFromResXReader (thisAssemblyConvertableResXWithoutAssemblyName);
+            Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue ((AssemblyName []) null);
 		}
 
 		[Test]
 		public void CanLoadTypeFromThisAssemblyWithOnlyFullNamePassingAssemblyNames ()
 		{
-			string filePath = GetFileFromString ("thisAssemblyConvertableWithOutAssembly.resx", thisAssemblyConvertableResXWithoutAssemblyName);
-
 			string aName = "System.Windows.Forms_test_net_2_0, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
+            ResXDataNode node = GetNodeFromResXReader (thisAssemblyConvertableResXWithoutAssemblyName);
 
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-				// would cause exception if couldnt find type
-				object obj = node.GetValue (assemblyNames);
-
-				Assert.IsInstanceOfType (typeof (ThisAssemblyConvertable), obj, "#A1");
-			}
+            Assert.IsNotNull (node, "#A1");
+			// would cause exception if couldnt find type
+			object obj = node.GetValue (assemblyNames);
+			Assert.IsInstanceOfType (typeof (ThisAssemblyConvertable), obj, "#A2");
 		}
 
 		[Test]
 		public void GetValueTypeNameReturnsFullNameWereOnlyFullNameInResXForEmbedded ()
 		{
 			// just a check, if this passes other tests will give false results
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResXWithoutAssemblyName);
+            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				string returnedType = node.GetValueTypeName ((AssemblyName []) null);
-
-				Assert.AreEqual ("DummyAssembly.Convertable", returnedType);
-			}
+            Assert.IsNotNull (node, "#A1");
+			string returnedType = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("DummyAssembly.Convertable", returnedType, "#A2");
 		}
 
 		[Test]
 		public void GetValueTypeNameAssemblyNameUsedWhereOnlyFullNameInResXForEmbedded ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
-
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResXWithoutAssemblyName);
+            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				string returnedType = node.GetValueTypeName (assemblyNames);
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedType);
-			}
+            Assert.IsNotNull (node, "#A1");
+			string returnedType = node.GetValueTypeName (assemblyNames);
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedType, "#A2");
 		}
 
 		[Test]
 		public void GetValueTypeNameAssemblyNameUsedEachTimeWhereOnlyFullNameInResXForEmbedded ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
-
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-			string filePath = GetFileFromString ("convertableWithOutAssembly.resx", convertableResXWithoutAssemblyName);
+            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-			using (ResXResourceReader reader = new ResXResourceReader (filePath)) {
-
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				DictionaryEntry current = (DictionaryEntry) enumerator.Current;
-				ResXDataNode node = (ResXDataNode) current.Value;
-
-				string returnedName = node.GetValueTypeName (assemblyNames);
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedName, "#A1");
-
-				string nameWithNullParam = node.GetValueTypeName ((AssemblyName []) null);
-
-				Assert.AreEqual ("DummyAssembly.Convertable", nameWithNullParam, "#A2");
-			}
+            Assert.IsNotNull (node, "#A1");
+			string returnedName = node.GetValueTypeName (assemblyNames);
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedName, "#A2");
+			string nameWithNullParam = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("DummyAssembly.Convertable", nameWithNullParam, "#A3");
 		}
-
 
 		static string convertableResXWithoutAssemblyName =
 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -567,113 +474,7 @@ namespace MonoTests.System.Resources {
 	<value>im a name	im a value</value>
   </data>
 </root>";
-
-		[TearDown]
-		protected override void TearDown ()
-		{
-			//teardown
-			if (Directory.Exists (_tempDirectory))
-				Directory.Delete (_tempDirectory, true);
-
-			base.TearDown ();
-		}
-
-		private string GetFileFromString (string filename, string filecontents)
-		{
-			_tempDirectory = Path.Combine (Path.GetTempPath (), "ResXDataNodeTest");
-			_otherTempDirectory = Path.Combine (_tempDirectory, "in");
-			if (!Directory.Exists (_otherTempDirectory)) {
-				Directory.CreateDirectory (_otherTempDirectory);
-			}
-
-			string filepath = Path.Combine (_tempDirectory, filename);
-
-			StreamWriter writer = new StreamWriter (filepath, false);
-
-			writer.Write (filecontents);
-			writer.Close ();
-
-			return filepath;
-		}
-
-	}
-
-
-	[SerializableAttribute]
-	[TypeConverter (typeof (ThisAssemblyConvertableConverter))]
-	public class ThisAssemblyConvertable {
-		protected string name;
-		protected string value;
-
-		public ThisAssemblyConvertable ()
-		{
-		}
-
-		public ThisAssemblyConvertable (string name, string value)
-		{
-			this.name = name;
-			this.value = value;
-		}
-
-		public void GetObjectData (SerializationInfo info, StreamingContext ctxt)
-		{
-			info.AddValue ("sername", name);
-			info.AddValue ("servalue", value);
-		}
-
-		public override string ToString ()
-		{
-			return String.Format ("{0}\t{1}", name, value);
-		}
-
-		public override bool Equals (object obj)
-		{
-			ThisAssemblyConvertable o = obj as ThisAssemblyConvertable;
-			if (o == null)
-				return false;
-			return this.name.Equals (o.name) && this.value.Equals (o.value);
-		}
-	}
-
-	class ThisAssemblyConvertableConverter : TypeConverter {
-		public ThisAssemblyConvertableConverter ()
-		{
-		}
-
-		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
-		{
-			return sourceType == typeof (string);
-		}
-
-		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
-		{
-			return destinationType == typeof (string);
-		}
-
-		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
-		{
-			if (value.GetType () != typeof (string))
-				throw new Exception ("value not string");
-
-			string serialised = (string) value;
-
-			string [] parts = serialised.Split ('\t');
-
-			if (parts.Length != 2)
-				throw new Exception ("string in incorrect format");
-
-			ThisAssemblyConvertable convertable = new ThisAssemblyConvertable (parts [0], parts [1]);
-			return convertable;
-		}
-
-		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-		{
-			if (destinationType != typeof (String)) {
-				return base.ConvertTo (context, culture, value, destinationType);
-			}
-
-			return ((ThisAssemblyConvertable) value).ToString ();
-		}
+        
 	}
 
 }

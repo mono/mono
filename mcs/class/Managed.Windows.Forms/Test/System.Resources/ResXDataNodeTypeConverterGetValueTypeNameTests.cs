@@ -25,126 +25,103 @@
 #if NET_2_0
 using System;
 using System.IO;
-using System.Reflection;
-using System.Drawing;
 using System.Resources;
-using System.Runtime.Serialization;
-using System.Collections.Generic;
 using System.Collections;
-
 using NUnit.Framework;
 using System.ComponentModel.Design;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
+using System.Reflection;
 
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
-	public class ResXDataNodeTypeConverterGetValueTypeNameTests : MonoTests.System.Windows.Forms.TestHelper {
-		string _tempDirectory;
-		string _otherTempDirectory;
-		
+	public class ResXDataNodeTypeConverterGetValueTypeNameTests : ResourcesTestHelper {
 		[Test]
-		public void ITRSUsedWithNodeFromReader ()
+        public void ITRSUsedWithNodeFromReader ()
 		{
 			// for node returned from ResXResourceReader for an object stored by means of a typeconverter, 
 			// check supplying ITRS changes output of method
-
 			ResXDataNode returnedNode, originalNode;
-
 			originalNode = new ResXDataNode ("aNumber", 23L);
+            returnedNode = GetNodeFromResXReader (originalNode);
 
-			string fileName = GetResXFileWithNode (originalNode, "long.resx");
-
-			// should load assembly referenced in file
-			using (ResXResourceReader reader = new ResXResourceReader (fileName)) {
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-				Assert.IsNotNull (returnedNode, "#A1");
-
-				string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
-
-				Assert.AreEqual ((typeof (Int32)).AssemblyQualifiedName, returnedType, "#A2");
-			}
+			Assert.IsNotNull (returnedNode, "#A1");
+			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			Assert.AreEqual ((typeof (Int32)).AssemblyQualifiedName, returnedType, "#A2");
 		}
 
 		[Test]
-		public void ITRSUsedEachTimeWhenNodeFromReader ()
+        public void ITRSUsedEachTimeWhenNodeFromReader ()
 		{
 			// for node returned from ResXResourceReader for an object stored by means of a typeconverter, 
 			// check supplied ITRS changes output each time
-
 			ResXDataNode returnedNode, originalNode;
-
 			originalNode = new ResXDataNode ("aNumber", 23L);
+            returnedNode = GetNodeFromResXReader (originalNode);
 
-			string fileName = GetResXFileWithNode (originalNode, "long.resx");
-
-			// should load assembly referenced in file
-			using (ResXResourceReader reader = new ResXResourceReader (fileName)) {
-				reader.UseResXDataNodes = true;
-
-				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
-				enumerator.MoveNext ();
-				returnedNode = (ResXDataNode) ((DictionaryEntry) enumerator.Current).Value;
-
-				Assert.IsNotNull (returnedNode, "#A1");
-
-				string newType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
-
-				Assert.AreEqual (typeof (int).AssemblyQualifiedName, newType, "#A2");
-
-				string origType = returnedNode.GetValueTypeName ((ITypeResolutionService) null);
-
-				Assert.AreEqual (typeof (long).AssemblyQualifiedName, origType, "#A3");				
-			}
+			Assert.IsNotNull (returnedNode, "#A1");
+			string newType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			Assert.AreEqual (typeof (int).AssemblyQualifiedName, newType, "#A2");
+			string origType = returnedNode.GetValueTypeName ((ITypeResolutionService) null);
+			Assert.AreEqual (typeof (long).AssemblyQualifiedName, origType, "#A3");				
+			
 		}
 
 		[Test]
-		public void ITRSNotUsedWhenNodeCreatedNew ()
+        public void ITRSNotUsedWhenNodeCreatedNew ()
 		{
 			// check supplying params to GetValueTypeName of the UseResXDataNode does not change the output
 			// of the method for an instance created manually
-
 			ResXDataNode node;
 			node = new ResXDataNode ("along", 34L);
+
 			string returnedType = node.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
 			Assert.AreEqual ((typeof (long)).AssemblyQualifiedName, returnedType, "#A1");
 		}
 
-		[TearDown]
-		protected override void TearDown ()
-		{
-			//teardown
-			if (Directory.Exists (_tempDirectory))
-				Directory.Delete (_tempDirectory, true);
+        #region initial
 
-			base.TearDown ();
-		}
+        [Test]
+        public void EmbeddedNullITypeResolutionServiceOK ()
+        {
+            ResXDataNode node = GetNodeEmdeddedIcon ();
 
-		string GetResXFileWithNode (ResXDataNode node, string filename)
-		{
-			string fullfileName;
+            string name = node.GetValueTypeName ((ITypeResolutionService) null);
+            Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+        }
 
-			_tempDirectory = Path.Combine (Path.GetTempPath (), "ResXDataNodeTest");
-			_otherTempDirectory = Path.Combine (_tempDirectory, "in");
-			if (!Directory.Exists (_otherTempDirectory)) {
-				Directory.CreateDirectory (_otherTempDirectory);
-			}
+        [Test]
+        public void EmbeddedWrongITypeResolutionServiceOK ()
+        {
+            ResXDataNode node = GetNodeEmdeddedIcon ();
 
-			fullfileName = Path.Combine (_tempDirectory, filename);
+            string name = node.GetValueTypeName (new DummyTypeResolutionService ());
+            Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+        }
 
-			using (ResXResourceWriter writer = new ResXResourceWriter (fullfileName)) {
-				writer.AddResource (node);
-			}
+        [Test]
+        public void EmbeddedWrongAssemblyNamesOK ()
+        {
+            ResXDataNode node = GetNodeEmdeddedIcon ();
+            AssemblyName [] ass = new AssemblyName [1];
 
-			return fullfileName;
-		}
+            ass [0] = new AssemblyName ("System.Design");
 
-	}
+            string name = node.GetValueTypeName (ass);
+            Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+        }
+
+        [Test]
+        public void EmbeddedNullAssemblyNamesOK ()
+        {
+            ResXDataNode node = GetNodeEmdeddedIcon ();
+
+            string name = node.GetValueTypeName ((AssemblyName []) null);
+            Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+        }
+
+        #endregion
+    }
 
 
 }
