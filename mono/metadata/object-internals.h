@@ -406,7 +406,6 @@ struct _MonoInternalThread {
 	gpointer interrupt_on_stop;
 	gsize    flags;
 	gpointer android_tid;
-	gint32 ignore_next_signal;
 
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
@@ -414,6 +413,7 @@ struct _MonoInternalThread {
 	 */
 	gpointer unused5;
 	gint32 managed_id;
+	gint32 ignore_next_signal;
 };
 
 struct _MonoThread {
