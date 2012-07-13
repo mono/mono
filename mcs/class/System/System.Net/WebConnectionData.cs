@@ -42,6 +42,15 @@ namespace System.Net
 		public Stream stream;
 		public string Challenge;
 
+		public WebConnectionData ()
+		{
+		}
+
+		public WebConnectionData (HttpWebRequest request)
+		{
+			this.request = request;
+		}
+
 		public void Init ()
 		{
 			request = null;
