@@ -448,5 +448,11 @@ namespace System.Reflection.Emit
 		{
 			return new PointerType (this);
 		}
+
+		internal override bool IsUserType {
+			get {
+				return false;
+			}
+		}
 	}
 }

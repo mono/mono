@@ -128,7 +128,11 @@ namespace System.Net
 		// Fields
 		
 		public const int DefaultNonPersistentConnectionLimit = 4;
+#if MONOTOUCH
+		public const int DefaultPersistentConnectionLimit = 10;
+#else
 		public const int DefaultPersistentConnectionLimit = 2;
+#endif
 
 #if !NET_2_1
 		const string configKey = "system.net/connectionManagement";

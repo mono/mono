@@ -23,7 +23,6 @@ using System.Runtime.CompilerServices;
 
 namespace MonoTests.System.Reflection.Emit
 {
-#if NET_2_0
 	[TestFixture]
 	public class MonoGenericClassTest
 	{
@@ -90,47 +89,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		// CompilerContext no longer supported
-		[Category ("NotWorking")]
-		public void GetMethodsWorkWithFunkyInstantiations ()
-		{
-			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
-			TypeBuilder tb = module.DefineType ("Base", TypeAttributes.Public, typeof (object));
-
-			var a = typeof (IList<>).GetGenericArguments () [0];
-			var b = tb.DefineGenericParameters ("T") [0];
-
-			CheckInst ("#A", typeof (Collection<>).MakeGenericType (new Type [] {a}), 12, 16);
-			CheckInst ("#B", typeof (Collection<>).MakeGenericType (new Type[] { b }), 12, 16);
-
-			var tb2 = module.DefineType ("Child", TypeAttributes.Public, typeof (Collection<>).MakeGenericType (tb.MakeGenericType (typeof (int))));
-			tb2.DefineGenericParameters ("K");
-
-			CheckInst ("#C", tb2.MakeGenericType (typeof (double)), 0, 16);
-			
-		}
-
-		[Test]
-		[Category ("NotDotNet")]
-		// CompilerContext no longer supported
-		[Category ("NotWorking")]
-		public void GetEventMustWorkUnderCompilerContext ()
-		{
-			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
-			var tb = module.DefineType ("foo.type");
-			tb.DefineGenericParameters ("T");
-
-			var ginst = tb.MakeGenericType (typeof (double));
-			
-			try {
-				ginst.GetEvent ("foo", BindingFlags.Public | BindingFlags.Instance);
-			} catch (NotSupportedException) {
-				Assert.Fail ("#1");
-			}
-		}
-
-		[Test]
 		public void MethodsThatRaiseNotSupported ()
 		{
 			var tb = module.DefineType ("foo.type");
@@ -138,10 +96,10 @@ namespace MonoTests.System.Reflection.Emit
 
 			var ginst = tb.MakeGenericType (typeof (double));
 
-			/*try { //FIXME this doesn't work yet
+			try {
 				ginst.GetElementType ();
 				Assert.Fail ("#1");
-			} catch (NotSupportedException) {  }*/
+			} catch (NotSupportedException) {  }
 			try {
 				ginst.GetInterface ("foo", true);
 				Assert.Fail ("#2");
@@ -190,6 +148,14 @@ namespace MonoTests.System.Reflection.Emit
 				ginst.GetCustomAttributes (typeof (int), true);
 				Assert.Fail ("#13");
 			} catch (NotSupportedException) {  }
+			try {
+				ginst.IsAssignableFrom (ginst);
+				Assert.Fail ("#14");
+			} catch (NotSupportedException) {  }
+			try {
+				ginst.GetNestedTypes (BindingFlags.Public);
+				Assert.Fail ("#14");
+			} catch (NotSupportedException) {  }
 		}
 
 		[Test]
@@ -208,7 +174,33 @@ namespace MonoTests.System.Reflection.Emit
 			/*This must not throw*/
 			rtInst.IsDefined (typeof (int), true);
 		}
-	}
 
-#endif
+		public class Bar<T> {
+			public class Foo<T> {}
+		}
+
+		[Test]
+		public void DeclaringTypeMustReturnNonInflatedType ()
+		{
+			var ut = new TypeDelegator (typeof (int));
+			var ut2 = typeof(Bar<>.Foo<>);
+			var t = ut2.MakeGenericType (ut, ut);
+			Assert.AreSame (typeof (Bar<>), t.DeclaringType, "#1");
+		}
+
+		public class Base<T> {}
+		public class SubClass<K> : Base<K> {}
+
+		[Test]
+		public void BaseTypeMustReturnNonInflatedType ()
+		{
+			var ut = new TypeDelegator (typeof (int));
+			var ut2 = typeof(SubClass<>);
+			var t = ut2.MakeGenericType (ut);
+			//This is Base<K> where K is SubClass::K
+			var expected = typeof (Base<>).MakeGenericType (typeof (SubClass<>).GetGenericArguments ()[0]);
+			Assert.AreSame (expected, t.BaseType, "#1");
+			
+		}
+	}
 }
