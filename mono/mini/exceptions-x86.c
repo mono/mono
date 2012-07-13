@@ -231,23 +231,28 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 		break;
 	}
 
-	/* Copy context back */
-	ctx->Eax = sctx->eax;
-	ctx->Ebx = sctx->ebx;
-	ctx->Ecx = sctx->ecx;
-	ctx->Edx = sctx->edx;
-	ctx->Ebp = sctx->ebp;
-	ctx->Esp = sctx->esp;
-	ctx->Esi = sctx->esi;
-	ctx->Edi = sctx->edi;
-	ctx->Eip = sctx->eip;
+	if (win32_chained_exception_filter_didrun) {
+		/* Don't copy context back if we chained exception
+		 * as the handler may have modfied the EXCEPTION_POINTERS
+		 * directly. We don't pass sigcontext to chained handlers. */
+		res = win32_chained_exception_filter_result;
+	} else {
+		/* Copy context back */
+		ctx->Eax = sctx->eax;
+		ctx->Ebx = sctx->ebx;
+		ctx->Ecx = sctx->ecx;
+		ctx->Edx = sctx->edx;
+		ctx->Ebp = sctx->ebp;
+		ctx->Esp = sctx->esp;
+		ctx->Esi = sctx->esi;
+		ctx->Edi = sctx->edi;
+		ctx->Eip = sctx->eip;
+	}
 
 	/* TODO: Find right place to free this in stack overflow case */
 	if (er->ExceptionCode != EXCEPTION_STACK_OVERFLOW)
 		g_free (sctx);
 
-	if (win32_chained_exception_filter_didrun)
-		res = win32_chained_exception_filter_result;
 
 	return res;
 }
