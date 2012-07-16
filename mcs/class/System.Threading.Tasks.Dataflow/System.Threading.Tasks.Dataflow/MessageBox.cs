@@ -186,7 +186,7 @@ namespace System.Threading.Tasks.Dataflow {
 		{
 			// BoundedCapacity can't be -1 here, because in that case there would be no postponing
 			while (Thread.VolatileRead (ref itemCount) < options.BoundedCapacity
-			       && !postponedMessages.IsEmpty) {
+			       && !postponedMessages.IsEmpty && !MessageQueue.IsAddingCompleted) {
 				var block = postponedMessages.First ().Key;
 				DataflowMessageHeader header;
 				postponedMessages.TryRemove (block, out header);
@@ -204,10 +204,23 @@ namespace System.Threading.Tasks.Dataflow {
 				}
 			}
 
+			// release all postponed messages
+			if (MessageQueue.IsAddingCompleted) {
+				while (!postponedMessages.IsEmpty) {
+					var block = postponedMessages.First ().Key;
+					DataflowMessageHeader header;
+					postponedMessages.TryRemove (block, out header);
+
+					if (block.ReserveMessage (header, Target))
+						block.ReleaseReservation (header, Target);
+				}
+			}
+
 			postponedProcessing.Value = false;
 
 			// because of race
-			if (Thread.VolatileRead (ref itemCount) < options.BoundedCapacity
+			if ((Thread.VolatileRead (ref itemCount) < options.BoundedCapacity
+			     || MessageQueue.IsAddingCompleted)
 			    && !postponedMessages.IsEmpty)
 				EnsurePostponedProcessing ();
 		}
@@ -222,6 +235,9 @@ namespace System.Threading.Tasks.Dataflow {
 			MessageQueue.CompleteAdding ();
 			OutgoingQueueComplete ();
 			VerifyCompleteness ();
+
+			if (!postponedMessages.IsEmpty)
+				EnsurePostponedProcessing ();
 		}
 
 		protected virtual void OutgoingQueueComplete ()

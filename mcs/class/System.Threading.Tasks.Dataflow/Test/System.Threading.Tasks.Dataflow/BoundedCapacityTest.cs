@@ -218,6 +218,31 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (source.WasConsumed (header3));
 			Assert.IsFalse (source.WasConsumed (header2));
 		}
+
+		[Test]
+		public void DontConsumePostponedAfterCompleteTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new BufferBlock<int> (
+				new DataflowBlockOptions { BoundedCapacity = 1, TaskScheduler = scheduler });
+			var target = (ITargetBlock<int>)block;
+			var source = new TestSourceBlock<int> ();
+
+			Assert.IsTrue (block.Post (11));
+
+			var header = new DataflowMessageHeader (1);
+			source.AddMessage (header, 12);
+			Assert.AreEqual (DataflowMessageStatus.Postponed,
+				target.OfferMessage (header, 12, source, false));
+
+			block.Complete ();
+
+			Assert.AreEqual (11, block.Receive ());
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsFalse (source.WasConsumed (header));
+		}
 	}
 
 	class TestSourceBlock<T> : ISourceBlock<T> {
