@@ -61,6 +61,26 @@ namespace Mono.CSharp {
 			return res;
 		}
 
+		//
+		// For better error reporting where compiler tries to guess missing using directive
+		//
+		public List<string> FindExtensionMethodNamespaces (IMemberContext ctx, TypeSpec extensionType, string name, int arity)
+		{
+			List<string> res = null;
+
+			foreach (var ns in all_namespaces) {
+				var methods = ns.Value.LookupExtensionMethod (ctx, extensionType, name, arity);
+				if (methods != null) {
+					if (res == null)
+						res = new List<string> ();
+
+					res.Add (ns.Key);
+				}
+			}
+
+			return res;
+		}
+
 		public void RegisterNamespace (Namespace child)
 		{
 			if (child != this)
