@@ -46,6 +46,7 @@
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\SendBlock.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock`3.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\DataflowLinkOptions.cs" />

@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using NUnit.Framework;
@@ -192,6 +193,52 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			scheduler.ExecuteAll ();
 
 			Assert.AreEqual (43, target.DirectlyAccepted);
+		}
+
+		[Test]
+		public void FaultConsume()
+		{
+			var scheduler = new TestScheduler ();
+			var source =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new TestTargetBlock<int> { Postpone = true };
+			Assert.IsNotNull (source.LinkTo (target));
+
+			Assert.IsTrue (source.Post (42));
+			scheduler.ExecuteAll ();
+			Assert.IsTrue (target.HasPostponed);
+
+			((IDataflowBlock)source).Fault (new Exception ());
+
+			scheduler.ExecuteAll ();
+			Thread.Sleep (100);
+
+			int value;
+			Assert.IsFalse (target.RetryPostponed (out value));
+		}
+
+		[Test]
+		public void ReserveFaultConsume()
+		{
+			var scheduler = new TestScheduler ();
+			var source =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new TestTargetBlock<int> { Postpone = true };
+			Assert.IsNotNull (source.LinkTo (target));
+
+			Assert.IsTrue (source.Post (42));
+			scheduler.ExecuteAll ();
+			Assert.IsTrue (target.HasPostponed);
+
+			Assert.IsTrue (target.ReservePostponed ());
+
+			((IDataflowBlock)source).Fault (new Exception ());
+
+			scheduler.ExecuteAll ();
+			Thread.Sleep (100);
+
+			int value;
+			Assert.IsTrue (target.RetryPostponed (out value));
 		}
 	}
 

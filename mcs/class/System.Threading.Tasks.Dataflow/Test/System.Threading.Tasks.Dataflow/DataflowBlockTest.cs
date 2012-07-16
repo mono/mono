@@ -3,8 +3,10 @@
 //  
 // Author:
 //       Jérémie "garuma" Laval <jeremie.laval@gmail.com>
+//       Petr Onderka <gsvick@gmail.com>
 // 
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +27,6 @@
 // THE SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -178,6 +179,63 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 				ex.InnerException);
 			Assert.IsTrue (task.IsCompleted);
 			Assert.AreEqual (TaskStatus.Canceled, task.Status);
+		}
+
+		[Test]
+		public void SendAsyncAcceptedTest ()
+		{
+			var target = new BufferBlock<int> ();
+			var task = target.SendAsync (1);
+
+			Assert.IsTrue (task.Wait (0));
+			Assert.IsTrue (task.Result);
+		}
+
+		[Test]
+		public void SendAsyncDeclinedTest ()
+		{
+			var target = new BufferBlock<int> ();
+			target.Complete ();
+			var task = target.SendAsync (1);
+
+			Assert.IsTrue (task.Wait (0));
+			Assert.IsFalse (task.Result);
+		}
+
+		[Test]
+		public void SendAsyncPostponedAcceptedTest ()
+		{
+			var target =
+				new BufferBlock<int> (new DataflowBlockOptions { BoundedCapacity = 1 });
+
+			Assert.IsTrue (target.Post (1));
+
+			var task = target.SendAsync (1);
+
+			Assert.IsFalse (task.Wait (100));
+
+			Assert.AreEqual (1, target.Receive ());
+
+			Assert.IsTrue (task.Wait (100));
+			Assert.IsTrue (task.Result);
+		}
+
+		[Test]
+		public void SendAsyncPostponedDeclinedTest ()
+		{
+			var target =
+				new BufferBlock<int> (new DataflowBlockOptions { BoundedCapacity = 1 });
+
+			Assert.IsTrue (target.Post (1));
+
+			var task = target.SendAsync (1);
+
+			Assert.IsFalse (task.Wait (100));
+
+			target.Complete ();
+
+			Assert.IsTrue (task.Wait (100));
+			Assert.IsFalse (task.Result);
 		}
 	}
 }

@@ -23,8 +23,6 @@
 
 namespace System.Threading.Tasks.Dataflow {
 	public static class DataflowBlock {
-		static DataflowMessageHeader GlobalHeader = new DataflowMessageHeader ();
-
 		public static IObservable<TOutput> AsObservable<TOutput> (this ISourceBlock<TOutput> source)
 		{
 			if (source == null)
@@ -158,7 +156,8 @@ namespace System.Threading.Tasks.Dataflow {
 			if (target == null)
 				throw new ArgumentNullException ("target");
 
-			return target.OfferMessage (GlobalHeader.Increment (), item, null, false) == DataflowMessageStatus.Accepted;
+			return target.OfferMessage (new DataflowMessageHeader(1), item, null, false)
+			       == DataflowMessageStatus.Accepted;
 		}
 
 		public static TOutput Receive<TOutput> (this ISourceBlock<TOutput> source)
@@ -247,11 +246,32 @@ namespace System.Threading.Tasks.Dataflow {
 			return source.TryReceive (null, out item);
 		}
 
-		[MonoTODO]
-		public static Task<bool> SendAsync<TInput> (this ITargetBlock<TInput> target, TInput item)
+		public static Task<bool> SendAsync<TInput> (
+			this ITargetBlock<TInput> target, TInput item)
 		{
-			throw new NotImplementedException ();
+			return SendAsync (target, item, CancellationToken.None);
+		}
+
+		public static Task<bool> SendAsync<TInput> (
+			this ITargetBlock<TInput> target, TInput item,
+			CancellationToken cancellationToken)
+		{
+			if (target == null)
+				throw new ArgumentNullException ("target");
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			var status = target.OfferMessage (
+				new DataflowMessageHeader (1), item, null, false);
+
+			if (status == DataflowMessageStatus.Accepted)
+				return Task.FromResult (true);
+			if (status != DataflowMessageStatus.Declined
+			    && status != DataflowMessageStatus.Postponed)
+				return Task.FromResult (false);
+
+			var block = new SendBlock<TInput> (target, item, cancellationToken);
+			return block.Send ();
 		}
 	}
 }
-
