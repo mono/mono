@@ -554,7 +554,7 @@ namespace System.Net
 				if (readState == ReadState.None) {
 					lineok = ReadLine (buffer, ref pos, max, ref line);
 					if (!lineok)
-						return -1;
+						return 0;
 
 					if (line == null) {
 						emptyFirstLine = true;
@@ -615,7 +615,7 @@ namespace System.Net
 					}
 
 					if (!finished)
-						return -1;
+						return 0;
 
 					foreach (string s in headers)
 						Data.Headers.SetInternal (s);
