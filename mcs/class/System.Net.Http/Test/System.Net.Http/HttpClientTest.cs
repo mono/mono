@@ -653,6 +653,17 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
+		[Test]
+		public void GetString_RelativeUri ()
+		{
+			var client = new HttpClient ();
+			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
+			var uri = new Uri ("Computer", UriKind.Relative);
+
+			Assert.That (client.GetStringAsync (uri).Result != null);
+			Assert.That (client.GetStringAsync ("Computer").Result != null);
+		}
+
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
 		{
 			var l = new HttpListener ();

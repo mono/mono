@@ -248,6 +248,11 @@ namespace System.Net.Http
 					throw new InvalidOperationException ("The request URI must either be an absolute URI or BaseAddress must be set");
 
 				request.RequestUri = base_address;
+			} else if (!request.RequestUri.IsAbsoluteUri) {
+				if (base_address == null)
+					throw new InvalidOperationException ("The request URI must either be an absolute URI or BaseAddress must be set");
+
+				request.RequestUri = new Uri (base_address, request.RequestUri);
 			}
 
 			if (headers != null) {
