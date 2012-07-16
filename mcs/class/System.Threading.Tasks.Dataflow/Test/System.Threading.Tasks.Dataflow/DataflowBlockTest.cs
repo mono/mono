@@ -96,8 +96,35 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void ReceiveTest ()
 		{
 			var block = new BufferBlock<int> ();
-			Task.Factory.StartNew (() => { Thread.Sleep (1400); block.Post (42); });
+			Task.Factory.StartNew (() => { Thread.Sleep (300); block.Post (42); });
 			Assert.AreEqual (42, block.Receive ());
+		}
+
+		[Test]
+		public void ReceiveCompletedTest ()
+		{
+			var block = new BufferBlock<int> ();
+			block.Complete ();
+			AssertEx.Throws<InvalidOperationException> (
+				() => block.Receive (TimeSpan.FromMilliseconds (100)));
+		}
+
+		[Test]
+		public void ReceiveTimeoutTest ()
+		{
+			var block = new BufferBlock<int> ();
+			AssertEx.Throws<TimeoutException> (
+				() => block.Receive (TimeSpan.FromMilliseconds (100)));
+		}
+
+		[Test]
+		public void ReceiveCancelledTest ()
+		{
+			var block = new BufferBlock<int> ();
+			var tokenSource = new CancellationTokenSource (200);
+
+			AssertEx.Throws<OperationCanceledException> (
+				() => block.Receive (tokenSource.Token));
 		}
 
 		[Test]
@@ -107,8 +134,16 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			var mre = new ManualResetEventSlim (false);
 
 			var block = new WriteOnceBlock<int> (null);
-			block.ReceiveAsync ().ContinueWith (i => { result = i.Result; mre.Set (); });
-			Task.Factory.StartNew (() => { Thread.Sleep (100); block.Post (42); });
+			block.ReceiveAsync ().ContinueWith (i =>
+			{
+				result = i.Result;
+				mre.Set ();
+			});
+			Task.Factory.StartNew (() =>
+			{
+				Thread.Sleep (100);
+				block.Post (42);
+			});
 			Assert.IsTrue (mre.Wait (300));
 
 			Assert.AreEqual (42, result);
@@ -121,7 +156,11 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 
 			var block = new WriteOnceBlock<int> (null);
 			var task = block.ReceiveAsync (src.Token);
-			Task.Factory.StartNew (() => { Thread.Sleep (800); block.Post (42); });
+			Task.Factory.StartNew (() =>
+			{
+				Thread.Sleep (800);
+				block.Post (42);
+			});
 			Thread.Sleep (50);
 			src.Cancel ();
 
@@ -135,7 +174,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 
 			Assert.IsNotNull (ex);
 			Assert.IsNotNull (ex.InnerException);
-			Assert.IsInstanceOfType (typeof (OperationCanceledException), ex.InnerException);
+			Assert.IsInstanceOfType (typeof(OperationCanceledException),
+				ex.InnerException);
 			Assert.IsTrue (task.IsCompleted);
 			Assert.AreEqual (TaskStatus.Canceled, task.Status);
 		}

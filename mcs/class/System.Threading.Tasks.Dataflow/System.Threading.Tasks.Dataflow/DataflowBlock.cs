@@ -1,6 +1,7 @@
 // DataflowBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,19 +20,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-namespace System.Threading.Tasks.Dataflow
-{
-	public static class DataflowBlock
-	{
-		static DataflowMessageHeader globalHeader = new DataflowMessageHeader ();
+namespace System.Threading.Tasks.Dataflow {
+	public static class DataflowBlock {
+		static DataflowMessageHeader GlobalHeader = new DataflowMessageHeader ();
 
 		public static IObservable<TOutput> AsObservable<TOutput> (this ISourceBlock<TOutput> source)
 		{
@@ -166,25 +158,27 @@ namespace System.Threading.Tasks.Dataflow
 			if (target == null)
 				throw new ArgumentNullException ("target");
 
-			return target.OfferMessage (globalHeader.Increment (), item, null, false) == DataflowMessageStatus.Accepted;
+			return target.OfferMessage (GlobalHeader.Increment (), item, null, false) == DataflowMessageStatus.Accepted;
 		}
 
 		public static TOutput Receive<TOutput> (this ISourceBlock<TOutput> source)
 		{
-			return Receive<TOutput> (source, TimeSpan.FromMilliseconds (-1), CancellationToken.None);
+			return Receive (source, TimeSpan.FromMilliseconds (-1), CancellationToken.None);
 		}
 
 		public static TOutput Receive<TOutput> (this ISourceBlock<TOutput> source, CancellationToken cancellationToken)
 		{
-			return Receive<TOutput> (source, TimeSpan.FromMilliseconds (-1), cancellationToken);
+			return Receive (source, TimeSpan.FromMilliseconds (-1), cancellationToken);
 		}
 
 		public static TOutput Receive<TOutput> (this ISourceBlock<TOutput> source, TimeSpan timeout)
 		{
-			return Receive<TOutput> (source, timeout, CancellationToken.None);
+			return Receive (source, timeout, CancellationToken.None);
 		}
 
-		public static TOutput Receive<TOutput> (this ISourceBlock<TOutput> source, TimeSpan timeout, CancellationToken cancellationToken)
+		public static TOutput Receive<TOutput> (
+			this ISourceBlock<TOutput> source, TimeSpan timeout,
+			CancellationToken cancellationToken)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -200,15 +194,21 @@ namespace System.Threading.Tasks.Dataflow
 			if (receivableSource != null && receivableSource.TryReceive (null, out item))
 				return item;
 
-			long tm = (long)timeout.TotalMilliseconds;
-			ReceiveBlock<TOutput> block = new ReceiveBlock<TOutput> ();
-			var bridge = source.LinkTo (block);
-			return block.WaitAndGet (bridge, cancellationToken, tm);
+			if (source.Completion.IsCompleted || source.Completion.IsCanceled
+			    || source.Completion.IsFaulted)
+				throw new InvalidOperationException (
+					"No item could be received from the source.");
+
+			int timeoutMilliseconds = (int)timeout.TotalMilliseconds;
+			var block = new ReceiveBlock<TOutput> ();
+			var bridge = source.LinkTo (block,
+				new DataflowLinkOptions { PropagateCompletion = true });
+			return block.WaitAndGet (bridge, cancellationToken, timeoutMilliseconds);
 		}
 
 		public static Task<TOutput> ReceiveAsync<TOutput> (this ISourceBlock<TOutput> source)
 		{
-			return ReceiveAsync<TOutput> (source, TimeSpan.FromMilliseconds (-1), CancellationToken.None);
+			return ReceiveAsync (source, TimeSpan.FromMilliseconds (-1), CancellationToken.None);
 		}
 
 		public static Task<TOutput> ReceiveAsync<TOutput> (this ISourceBlock<TOutput> source, CancellationToken cancellationToken)
@@ -218,7 +218,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		public static Task<TOutput> ReceiveAsync<TOutput> (this ISourceBlock<TOutput> source, TimeSpan timeout)
 		{
-			return ReceiveAsync<TOutput> (source, timeout, CancellationToken.None);
+			return ReceiveAsync (source, timeout, CancellationToken.None);
 		}
 
 		public static Task<TOutput> ReceiveAsync<TOutput> (this ISourceBlock<TOutput> source, TimeSpan timeout, CancellationToken cancellationToken)

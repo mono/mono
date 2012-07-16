@@ -1,6 +1,7 @@
 // ReceiveBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +20,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-
-namespace System.Threading.Tasks.Dataflow
-{
-	/* This internal block is used by the Receive methods in DataflowBlock static class
-	 * to retrieve elements in a blocking way
-	 */
-	internal class ReceiveBlock<TOutput> : ITargetBlock<TOutput>
-	{
-		ManualResetEventSlim waitHandle = new ManualResetEventSlim (false);
-		TaskCompletionSource<TOutput> completion = new TaskCompletionSource<TOutput> ();
+namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// This internal block is used by the Receive methods in DataflowBlock static class
+	/// to retrieve elements in a blocking way
+	/// </summary>
+	internal class ReceiveBlock<TOutput> : ITargetBlock<TOutput> {
+		readonly ManualResetEventSlim waitHandle =
+			new ManualResetEventSlim (false);
+		readonly TaskCompletionSource<TOutput> completion =
+			new TaskCompletionSource<TOutput> ();
 		IDisposable linkBridge;
+		volatile bool completed;
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           TOutput messageValue,
-		                                           ISourceBlock<TOutput> source,
-		                                           bool consumeToAccept)
+		public DataflowMessageStatus OfferMessage (
+			DataflowMessageHeader messageHeader, TOutput messageValue,
+			ISourceBlock<TOutput> source, bool consumeToAccept)
 		{
 			if (!messageHeader.IsValid)
 				return DataflowMessageStatus.Declined;
@@ -61,8 +55,7 @@ namespace System.Threading.Tasks.Dataflow
 			Thread.MemoryBarrier ();
 			waitHandle.Set ();
 
-			/* We do the unlinking here so that we don't get called twice
-			 */
+			// We do the unlinking here so that we don't get called twice
 			if (linkBridge != null) {
 				linkBridge.Dispose ();
 				linkBridge = null;
@@ -71,7 +64,7 @@ namespace System.Threading.Tasks.Dataflow
 			return DataflowMessageStatus.Accepted;
 		}
 
-		public TOutput WaitAndGet (IDisposable bridge, CancellationToken token, long timeout)
+		public TOutput WaitAndGet (IDisposable bridge, CancellationToken token, int timeout)
 		{
 			this.linkBridge = bridge;
 			Wait (token, timeout);
@@ -86,9 +79,15 @@ namespace System.Threading.Tasks.Dataflow
 			return completion.Task;
 		}
 
-		public void Wait (CancellationToken token, long timeout)
+		public void Wait (CancellationToken token, int timeout)
 		{
-			waitHandle.Wait (timeout >= int.MaxValue ? int.MaxValue : (int)timeout, token);
+			// Wait() throws correct cancellation exception by itself
+			if (!waitHandle.Wait (timeout, token))
+				throw new TimeoutException ();
+
+			if (completed)
+				throw new InvalidOperationException (
+					"No item could be received from the source.");
 		}
 
 		public TOutput ReceivedValue {
@@ -104,13 +103,13 @@ namespace System.Threading.Tasks.Dataflow
 
 		public void Complete ()
 		{
-
+			completed = true;
+			waitHandle.Set ();
 		}
 
 		public void Fault (Exception exception)
 		{
-			
+			Complete ();
 		}
 	}
 }
-
