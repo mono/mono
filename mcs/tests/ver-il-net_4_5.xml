@@ -20254,6 +20254,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-28.cs">
+    <type name="Repro">
+      <method name="Void UseField()" attrs="129">
+        <size>70</size>
+      </method>
+      <method name="Void TakeExpression(System.Linq.Expressions.Expression`1[System.Action])" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)" attrs="150">
