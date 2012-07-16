@@ -7,3 +7,6 @@
 [submodule "external/cecil"]
 	path = external/cecil
 	url = git://github.com/mono/cecil.git
+[submodule "external/debian-snapshot"]
+	path = external/debian-snapshot
+	url = git://github.com/directhex/mono-snapshot.git
