@@ -166,7 +166,6 @@ namespace System.Threading.Tasks.Dataflow {
 		public void RelaseReservation(Tuple<ISourceBlock<TInput>, DataflowMessageHeader> reservation)
 		{
 			reservation.Item1.ReleaseReservation (reservation.Item2, Target);
-			postponedMessages [reservation.Item1] = reservation.Item2;
 		}
 
 		public TInput ConsumeReserved(Tuple<ISourceBlock<TInput>, DataflowMessageHeader> reservation)

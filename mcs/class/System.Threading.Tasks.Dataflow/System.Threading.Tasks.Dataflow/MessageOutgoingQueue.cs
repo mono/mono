@@ -72,13 +72,13 @@ namespace System.Threading.Tasks.Dataflow {
 				outgoing.Add (data);
 				Interlocked.Add (ref totalModifiedCount, GetModifiedCount (data));
 				if (Interlocked.Increment (ref outgoingCount) == 1)
-					VerifyProcessing ();
+					EnsureProcessing ();
 			} catch (InvalidOperationException) {
 				VerifyCompleteness ();
 			}
 		}
 
-		void VerifyProcessing ()
+		void EnsureProcessing ()
 		{
 			if (isProcessing.TrySet())
 				Task.Factory.StartNew (Process, CancellationToken.None,
@@ -119,7 +119,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 			// to guard against race condition
 			if (!store.IsEmpty && reservedForTargetBlock == null && targets.NeedsProcessing)
-				VerifyProcessing ();
+				EnsureProcessing ();
 
 			VerifyCompleteness ();
 		}
@@ -140,7 +140,7 @@ namespace System.Threading.Tasks.Dataflow {
 				throw new ArgumentNullException ("linkOptions");
 
 			var result = targets.AddTarget (targetBlock, linkOptions);
-			VerifyProcessing ();
+			EnsureProcessing ();
 			return result;
 		}
 
@@ -172,7 +172,7 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 
 			targets.UnpostponeTarget (targetBlock, messageConsumed);
-			VerifyProcessing ();
+			EnsureProcessing ();
 			VerifyCompleteness ();
 
 			return result;
@@ -194,7 +194,7 @@ namespace System.Threading.Tasks.Dataflow {
 				}
 
 				targets.UnpostponeTarget (target, false);
-				VerifyProcessing ();
+				EnsureProcessing ();
 
 				return false;
 			} finally {
@@ -225,7 +225,8 @@ namespace System.Threading.Tasks.Dataflow {
 					firstItemLock.Exit ();
 			}
 
-			VerifyProcessing ();
+			targets.UnpostponeTarget (target, false);
+			EnsureProcessing ();
 		}
 
 		void FirstItemChanged ()
@@ -261,7 +262,7 @@ namespace System.Threading.Tasks.Dataflow {
 					firstItemLock.Exit ();
 			}
 
-			VerifyProcessing ();
+			EnsureProcessing ();
 			VerifyCompleteness ();
 
 			return success;
@@ -297,7 +298,7 @@ namespace System.Threading.Tasks.Dataflow {
 					firstItemLock.Exit ();
 			}
 
-			VerifyProcessing ();
+			EnsureProcessing ();
 			VerifyCompleteness ();
 
 			return items.Count > 0;
