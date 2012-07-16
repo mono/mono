@@ -664,6 +664,56 @@ namespace MonoTests.System.Net.Http
 			Assert.That (client.GetStringAsync ("Computer").Result != null);
 		}
 
+		[Test]
+		public void GetByteArray_ServerError ()
+		{
+			var listener = CreateListener (l => {
+				var response = l.Response;
+				response.StatusCode = 500;
+				l.Response.OutputStream.WriteByte (72);
+			});
+
+			try {
+				var client = new HttpClient ();
+				try {
+					client.GetByteArrayAsync (LocalServer).Wait ();
+					Assert.Fail ("#1");
+				} catch (AggregateException e) {
+					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+				}
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void DisallowAutoRedirect ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				var response = l.Response;
+				
+				response.StatusCode = (int)HttpStatusCode.Moved;
+				response.RedirectLocation = "http://xamarin.com/";
+			});
+
+			try {
+				var chandler = new HttpClientHandler ();
+				chandler.AllowAutoRedirect = false;
+				var client = new HttpClient (chandler);
+
+				try {
+					client.GetStringAsync (LocalServer).Wait ();
+					Assert.Fail ("#1");
+				} catch (AggregateException e) {
+					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+				}
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
 		{
 			var l = new HttpListener ();

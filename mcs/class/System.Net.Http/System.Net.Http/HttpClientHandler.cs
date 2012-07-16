@@ -218,6 +218,8 @@ namespace System.Net.Http
 			if (allowAutoRedirect) {
 				wr.AllowAutoRedirect = true;
 				wr.MaximumAutomaticRedirections = maxAutomaticRedirections;
+			} else {
+				wr.AllowAutoRedirect = false;
 			}
 
 			wr.AutomaticDecompression = automaticDecompression;
