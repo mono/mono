@@ -30,20 +30,19 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Text;
+using System.Runtime.Serialization.Formatters.Soap;
 
 namespace System.Resources {
-	internal class SerializedFromResXHandler : ResXDataNodeHandler {
+	internal class SerializedFromResXHandler : ResXDataNodeHandler, IWritableHandler {
 
 		string dataString;
 		string mime_type;
-		string typeString;
 		object retrievedObject;
 
-		public SerializedFromResXHandler (string data, string _mime_type, string _typeString)
+		public SerializedFromResXHandler (string data, string _mime_type)
 		{
 			dataString = data;
 			mime_type = _mime_type;
-			typeString = _typeString;
 		}
 
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
@@ -80,31 +79,35 @@ namespace System.Resources {
 		}
 		#endregion
 
-		public override object GetValueForResX ()
-		{
-			return DeserializeObject ((ITypeResolutionService) null);
+		#region IWritableHandler implementation
+		public string DataString {
+			get {
+				return dataString;
+			}
 		}
+		#endregion
 
 		object DeserializeObject (ITypeResolutionService typeResolver)
 		{
-			object obj;
 			if (mime_type == ResXResourceWriter.SoapSerializedObjectMimeType) {
-				// FIXME: implement support and test
-				throw new NotImplementedException();
+				//FIXME: theres a test in the suite to check that a type converter converts from invariant string
+				//do i need to take the string culture into consideration here?
+				SoapFormatter soapF = new SoapFormatter ();
+				soapF.Binder = new CustomBinder (typeResolver);
+				byte [] data = Convert.FromBase64String (dataString);
+				using (MemoryStream s = new MemoryStream (data)) {
+					return soapF.Deserialize (s);
+				}
 			} else if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
-
-				BinaryFormatter formatter = new BinaryFormatter();
-				formatter.Binder = new CustomBinder (typeResolver);
+				BinaryFormatter binF = new BinaryFormatter();
+				binF.Binder = new CustomBinder (typeResolver);
 
 				byte [] data = Convert.FromBase64String (dataString);
 				using (MemoryStream s = new MemoryStream (data)) {
-					obj = formatter.Deserialize (s);
+					return binF.Deserialize (s);
 				}
-
-				return obj;
-
 			} else
-				throw new Exception("shouldnt get here"); //FIXME:
+				throw new Exception ("shouldnt see me, invalid mime type found after handler created"); 
 		}
 
 		sealed class CustomBinder : SerializationBinder 

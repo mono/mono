@@ -57,7 +57,7 @@ namespace MonoTests.System.Resources {
 			// check ITRS supplied to GetValue method not actually used
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb",true);
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
@@ -70,7 +70,7 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb", false);
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			object obj = returnedNode.GetValue ((AssemblyName[]) null);
@@ -85,7 +85,7 @@ namespace MonoTests.System.Resources {
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb", false);
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			object obj = returnedNode.GetValue (assemblyNames);
@@ -147,7 +147,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (ico, "#A1");
 			Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
 		}
-        
+		
 		[Test]
 		public void ResXFileRefWrongAssemblyNamesOK ()
 		{
@@ -161,7 +161,7 @@ namespace MonoTests.System.Resources {
 		}
 
 		#endregion
-        
+		
 	}
 
 }

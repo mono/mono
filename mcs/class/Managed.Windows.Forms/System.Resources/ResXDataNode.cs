@@ -53,7 +53,9 @@ namespace System.Resources
 
 
 		public string Comment {
-			get { return this.comment; }
+			get { 
+				return (comment == null) ? "" : comment; 
+			}
 			set { this.comment = value; }
 		}
 		
@@ -62,10 +64,37 @@ namespace System.Resources
 		}
 
 		public string Name {
-			get { return this.name; }
-			set { this.name = value; }
+			get { 
+				return name == null ? "" : this.name;
+			}
+			set { 
+				if (value == null)
+					throw new ArgumentNullException ("name");
+				if (value == String.Empty)
+					throw new ArgumentException ("name");
+
+				this.name = value; 
+			}
 		}
-		
+
+		internal bool IsWritable {
+			get {
+				return (handler is IWritableHandler);
+			}
+		}
+
+		internal string mime_type { get; set; }
+		internal string type { get;set;}
+
+		internal string dataString {
+			get {
+				if (IsWritable)
+					return ((IWritableHandler) handler).DataString;
+				else
+					throw new NotSupportedException ("Node Not Writable");
+			}
+		}
+
 		public ResXDataNode (string name, object value) : this (name, value, Point.Empty)
 		{
 		}
@@ -97,7 +126,9 @@ namespace System.Resources
 
 			Type type = (value == null) ? typeof (object) : value.GetType ();
 			if ((value != null) && !type.IsSerializable) {
-				throw new InvalidOperationException (String.Format ("'{0}' of type '{1}' cannot be added because it is not serializable", name, type));
+				throw new InvalidOperationException (String.Format ("'{0}' of type '{1}' cannot be added" 
+				                                                    + " because it is not serializable", 
+				                                                    name, type));
 			}
 
 			this.name = name;
@@ -105,50 +136,50 @@ namespace System.Resources
 			handler = new InMemoryHandler (value);
 		}
 
-		internal ResXDataNode (string _name, string mime_type, string type_name, string dataString, string _comment, Point position, string basePath, bool IsMeta)
+		internal ResXDataNode (string nameAtt, string mime_typeAtt, string typeAtt, 
+		                       string dataString, string commentString, Point position, 
+		                       string basePath, bool IsMeta) // not using IsMeta
 		{
-			// get the type at this stage so we can handle ResXDataNode, byte[] and ResXNullRef types
 
-			//FIXME: pass in assemblyname[] and / or ITRS from resource reader in case these type names refer to something else? unlikely?
-			//Type type = ((type_name == null ) ? null : Type.GetType (type_name));
-
-			if (_name == null)
-				throw new ArgumentNullException ("name");
-
-			name = _name;
-			comment = _comment;
+			name = nameAtt;
+			comment = commentString;
 			pos = position;
+			mime_type = mime_typeAtt;
+			type = typeAtt;
 
 			// handle ResXNullRef
-			if (!String.IsNullOrEmpty (type_name) && type_name.StartsWith("System.Resources.ResXNullRef, System.Windows.Forms")) {
+			if (!String.IsNullOrEmpty (typeAtt) 
+			    && typeAtt.StartsWith ("System.Resources.ResXNullRef, System.Windows.Forms")) {
 				handler = new InMemoryHandler (null);
 				return;
 			}
 
-			if (!String.IsNullOrEmpty (mime_type)) {
-				if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType || mime_type == ResXResourceWriter.SoapSerializedObjectMimeType) {
-					handler = new SerializedFromResXHandler (dataString, mime_type, type_name);
-				} else if (mime_type == ResXResourceWriter.ByteArraySerializedObjectMimeType) {
-					handler = new TypeConverterFromResXHandler (dataString, mime_type, type_name);
+			if (!String.IsNullOrEmpty (mime_typeAtt)) {
+				if (mime_typeAtt == ResXResourceWriter.BinSerializedObjectMimeType 
+				    || mime_typeAtt == ResXResourceWriter.SoapSerializedObjectMimeType) {
+					handler = new SerializedFromResXHandler (dataString, mime_typeAtt);
+				} else if (mime_typeAtt == ResXResourceWriter.ByteArraySerializedObjectMimeType) {
+					// FIXME: need test to see if with this mimetype and no type attrib gets written back without being loaded
+					handler = new TypeConverterFromResXHandler (dataString, mime_typeAtt, typeAtt);
 				} else {
-					//invalid mime types should be converted to null (but should they be written back as null??)
+					//FIXME: invalid mime types should be converted to null, but should they be written back as null?
 					handler = new InMemoryHandler (null);
 				}
-			} else if (!String.IsNullOrEmpty (type_name)) {
-				if (type_name.StartsWith("System.Byte[], mscorlib")) {
+			} else if (!String.IsNullOrEmpty (typeAtt)) { //FIXME: OK to use hard coded type here?
+				if (typeAtt.StartsWith("System.Byte[], mscorlib")) { 
 					handler = new ByteArrayFromResXHandler (dataString);
-				} else if (type_name.StartsWith("System.Resources.ResXFileRef, System.Windows.Forms")) {
+				} else if (typeAtt.StartsWith("System.Resources.ResXFileRef, System.Windows.Forms")) {
 					ResXFileRef newFileRef = BuildFileRef (dataString);
 					handler = new FileRefHandler (newFileRef, basePath);
 					this.fileRef = newFileRef;
 				} else {
-					handler = new TypeConverterFromResXHandler (dataString, mime_type, type_name);
+					handler = new TypeConverterFromResXHandler (dataString, mime_typeAtt, typeAtt);
 				}
 			} else {
 				handler = new InMemoryHandler (dataString);
 			}
 
-			//FIXME: what exception show i throw?
+			//FIXME: what exception should i throw?
 			if (handler == null)
 				throw new Exception("handler is null");
 		}
@@ -177,12 +208,7 @@ namespace System.Resources
 		{
 			return handler.GetValue (typeResolver);
 		}
-
-		internal object GetValueForResX ()
-		{
-			return handler.GetValueForResX();
-		}
-
+		//FIXME: .net doesnt instantiate encoding at this stage
 		private ResXFileRef BuildFileRef (string dataString)
 		{
 			ResXFileRef fr;

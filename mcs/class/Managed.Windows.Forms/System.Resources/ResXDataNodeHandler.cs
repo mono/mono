@@ -27,6 +27,10 @@ using System.ComponentModel.Design;
 using System.Reflection;
 
 namespace System.Resources {
+	internal interface IWritableHandler {
+		string DataString { get;}
+	}
+
 	internal abstract class ResXDataNodeHandler {
 		protected ResXDataNodeHandler ()
 		{
@@ -46,7 +50,7 @@ namespace System.Resources {
 			return GetValue ((AssemblyName[]) null);
 		}
 
-		public Type ResolveType (string typeString) 
+		protected Type ResolveType (string typeString) 
 		{
 			// FIXME: check the test that shows you cant load a type with just a fullname from current assembly is valid
 			return Type.GetType (typeString);

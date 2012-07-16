@@ -314,9 +314,41 @@ namespace System.Resources
 		
 		public void AddResource (ResXDataNode node)
 		{
-			AddResource (node.Name, node.GetValueForResX (), node.Comment);
+			if (node == null)
+				throw new ArgumentNullException ("node");
+
+			if (writer == null)
+				InitWriter ();
+
+			if (node.IsWritable)
+				WriteWritableNode (node);
+			else if (node.FileRef != null) 
+				AddResource (node.Name, node.FileRef, node.Comment);
+			else 
+				AddResource (node.Name, node.GetValue ((AssemblyName []) null), node.Comment);
 		}
-		
+
+		// avoids instantiating objects
+		void WriteWritableNode (ResXDataNode node)
+		{
+			writer.WriteStartElement ("data");
+			writer.WriteAttributeString ("name", node.Name);
+			if (!(node.type == null || node.type.Equals (String.Empty)))
+				writer.WriteAttributeString ("type", node.type);
+			if (!(node.mime_type == null || node.mime_type.Equals (String.Empty)))
+				writer.WriteAttributeString ("mimetype", node.mime_type);
+			writer.WriteStartElement ("value");
+			writer.WriteString (node.dataString);
+			writer.WriteEndElement ();
+			if (!(node.Comment == null || node.Comment.Equals (String.Empty))) {
+				writer.WriteStartElement ("comment");
+				writer.WriteString (node.Comment);
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+			writer.WriteWhitespace ("\n  ");
+		}		
+
 		public void AddMetadata (string name, string value)
 		{
 			if (name == null)

@@ -290,6 +290,11 @@ namespace System.Resources
 				return;
 			}
 
+			if (name == null)
+				throw new ArgumentException (string.Format (CultureInfo.CurrentCulture,
+							"Could not find a name for a resource. The resource value was '{0}'.",
+				                        node.GetValue ((AssemblyName []) null).ToString()));
+
 			// useResXDataNodes is false, add to dictionary of values
 			if (assemblyNames != null)
 				hashtable [name] = node.GetValue (assemblyNames);

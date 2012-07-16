@@ -34,7 +34,6 @@
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
     <OutputPath>..\lib\net_2_0</OutputPath>
     <AssemblyName>System.Windows.Forms</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -946,6 +945,7 @@
     <Compile Include="System.Resources\ByteArrayFromResXHandler.cs" />
     <Compile Include="System.Resources\TypeConverterFromResXHandler.cs" />
     <Compile Include="System.Resources\SerializedFromResXHandler.cs" />
+    <Compile Include="System.Resources\NoLoadNodeHandler.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -29,6 +29,10 @@ using System.Resources;
 using System.Collections;
 using NUnit.Framework;
 using System.ComponentModel.Design;
+using System.Runtime.Serialization.Formatters.Soap;
+using System.Reflection;
+using System.Text;
+using System.Runtime.Serialization;
 
 namespace MonoTests.System.Resources {
 	[TestFixture]
@@ -38,7 +42,7 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeEmdeddedSerializable ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 
@@ -56,7 +60,7 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeEmdeddedSerializable ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 
@@ -74,7 +78,7 @@ namespace MonoTests.System.Resources {
 
 			originalNode = GetNodeEmdeddedSerializable ();
 			returnedNode = GetNodeFromResXReader (originalNode);
-            
+			
 			Assert.IsNotNull (returnedNode, "#A1");
 			object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
 			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
@@ -95,7 +99,7 @@ namespace MonoTests.System.Resources {
 			ResXDataNode originalNode, returnedNode;
 
 			originalNode = GetNodeEmdeddedSerializable ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 			Assert.IsNotNull (returnedNode, "#A1");
 
 			//get value type passing params
@@ -121,32 +125,95 @@ namespace MonoTests.System.Resources {
 			Assert.IsInstanceOfType (typeof (serializable), obj, "#A1");
 		}
 
+		[Test, ExpectedException (typeof (SerializationException))]
+		public void DeserializationError ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (serializedResXCorruped);
+			Assert.IsNotNull (node, "#A1");
+			object val = node.GetValue ((AssemblyName []) null);
+		}
+
+		static string serializedResXCorruped =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+	<value>
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+</value>
+  </data>
+</root>";
+
+		static string soapSerializedSerializable =
+@"<SOAP-ENV:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:SOAP-ENC=""http://schemas.xmlsoap.org/soap/encoding/"" xmlns:SOAP-ENV=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:clr=""http://schemas.microsoft.com/soap/encoding/clr/1.0"" SOAP-ENV:encodingStyle=""http://schemas.xmlsoap.org/soap/encoding/"">
+<SOAP-ENV:Body>
+<a1:serializable id=""ref-1"" xmlns:a1=""http://schemas.microsoft.com/clr/nsassem/MonoTests.System.Resources/System.Windows.Forms_test_net_2_0%2C%20Version%3D0.0.0.0%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull"">
+<sername id=""ref-3"">aname</sername>
+<servalue id=""ref-4"">avalue</servalue>
+</a1:serializable>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>";
+
+		static string serializedResXSOAP =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root> 
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" mimetype=""application/x-microsoft.net.object.soap.base64"">
+	<value>
+		PFNPQVAtRU5WOkVudmVsb3BlIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2Ui
+		IHhtbG5zOnhzZD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOlNPQVAtRU5DPSJodHRwOi8vc2No
+		ZW1hcy54bWxzb2FwLm9yZy9zb2FwL2VuY29kaW5nLyIgeG1sbnM6U09BUC1FTlY9Imh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAu
+		b3JnL3NvYXAvZW52ZWxvcGUvIiB4bWxuczpjbHI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vc29hcC9lbmNvZGlu
+		Zy9jbHIvMS4wIiBTT0FQLUVOVjplbmNvZGluZ1N0eWxlPSJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy9zb2FwL2VuY29k
+		aW5nLyI+DQo8U09BUC1FTlY6Qm9keT4NCjxhMTpzZXJpYWxpemFibGUgaWQ9InJlZi0xIiB4bWxuczphMT0iaHR0cDovL3Nj
+		aGVtYXMubWljcm9zb2Z0LmNvbS9jbHIvbnNhc3NlbS9Nb25vVGVzdHMuU3lzdGVtLlJlc291cmNlcy9TeXN0ZW0uV2luZG93
+		cy5Gb3Jtc190ZXN0X25ldF8yXzAlMkMlMjBWZXJzaW9uJTNEMC4wLjAuMCUyQyUyMEN1bHR1cmUlM0RuZXV0cmFsJTJDJTIw
+		UHVibGljS2V5VG9rZW4lM0RudWxsIj4NCjxzZXJuYW1lIGlkPSJyZWYtMyI+YW5hbWU8L3Nlcm5hbWU+DQo8c2VydmFsdWUg
+		aWQ9InJlZi00Ij5hdmFsdWU8L3NlcnZhbHVlPg0KPC9hMTpzZXJpYWxpemFibGU+DQo8L1NPQVAtRU5WOkJvZHk+DQo8L1NP
+		QVAtRU5WOkVudmVsb3BlPg==
+	</value>
+  </data>
+</root>";
+
 		[Test]
-        public void ChangesToReturnedObjectNotLaterWrittenBack ()
-        {
-            ResXDataNode originalNode, returnedNode, finalNode;
+		public void SoapFormattedObject ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (serializedResXSOAP);
 
-            originalNode = GetNodeEmdeddedSerializable ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			Assert.IsNotNull (node, "#A1");
+			object val = node.GetValue ((AssemblyName []) null);
+			Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
+			serializable ser = (serializable) val;
+			Assert.AreEqual ("aname", ser.name, "#A3");
+			Assert.AreEqual ("avalue", ser.value, "#A4");
+		}
 
-            Assert.IsNotNull (returnedNode, "#A1");
-            object val = returnedNode.GetValue ((ITypeResolutionService) null);
-            Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
-
-            serializable ser = (serializable) val;
-
-            Assert.AreEqual ("testName", ser.name, "A3");
-            ser.name = "changed";
-            finalNode = GetNodeFromResXReader (returnedNode);
-            
-            Assert.IsNotNull (finalNode, "#A4");
-            object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
-            Assert.IsInstanceOfType (typeof (serializable), finalVal, "#A5");
-
-            serializable finalSer = (serializable) finalVal;
-            // would be "changed" if written back
-            Assert.AreEqual ("testName", finalSer.name, "A6");
-        }
 	}
 }
 #endif

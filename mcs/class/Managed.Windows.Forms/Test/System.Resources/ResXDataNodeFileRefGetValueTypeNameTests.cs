@@ -45,7 +45,7 @@ namespace MonoTests.System.Resources {
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb", false);
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			string typeName = returnedNode.GetValueTypeName (assemblyNames);
@@ -57,7 +57,7 @@ namespace MonoTests.System.Resources {
 			ResXDataNode originalNode, returnedNode;
 
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb", false);
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			string typeName = returnedNode.GetValueTypeName ((AssemblyName []) null);
@@ -71,7 +71,7 @@ namespace MonoTests.System.Resources {
 			// GetValueTypeName changes the output of the method
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb",true);
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
@@ -91,10 +91,30 @@ namespace MonoTests.System.Resources {
 			Assert.AreEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, returnedType, "#A1");
 		}
 
+		[Test]
+		public void IfTypeResolutionFailsReturnsOrigString()
+		{
+			ResXFileRef fileRef = new ResXFileRef ("afile.name", "a.type.name");
+			ResXDataNode node = new ResXDataNode ("aname", fileRef);
+
+			string returnedType = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("a.type.name", returnedType);
+		}
+
+		[Test]
+		public void AttemptsTypeResolution ()
+		{
+			ResXFileRef fileRef = new ResXFileRef ("afile.name", "System.String");
+			ResXDataNode node = new ResXDataNode ("aname", fileRef);
+
+			string returnedType = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual (typeof (string).AssemblyQualifiedName, returnedType);
+		}
+
 		#region Initial Exploratory Tests
 
 		[Test]
-		public void ResXFileRefNullAssemblyNamesOK ()
+		public void NullAssemblyNamesOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
@@ -103,7 +123,7 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void ResXFileRefNullITypeResolutionServiceOK ()
+		public void NullITypeResolutionServiceOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
@@ -112,7 +132,7 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void ResXFileRefWrongITypeResolutionServiceOK ()
+		public void WrongITypeResolutionServiceOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
@@ -121,18 +141,17 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void ResXFileRefWrongAssemblyNamesOK ()
+		public void WrongAssemblyNamesOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 			AssemblyName [] ass = new AssemblyName [1];
-			ass [0] = new AssemblyName ("System.Design");
+			ass [0] = new AssemblyName ("DummyAssembly");
 
 			string name = node.GetValueTypeName (ass);
 			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
 		}
 
 		#endregion
-        
 	}
 
 }

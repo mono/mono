@@ -35,7 +35,7 @@ using System.Globalization;
 
 namespace MonoTests.System.Resources {
 	[TestFixture]
-    public class ResXDataNodeAssemblyNameTests : ResourcesTestHelper {
+	public class ResXDataNodeAssemblyNameTests : ResourcesTestHelper {
 		/*
 		[Test]
 		public void CanPassAssemblyNameToGetValueToReturnSpecificVersionOfObjectClassInstance ()
@@ -120,40 +120,30 @@ namespace MonoTests.System.Resources {
 		
 		*/
 
-		[Test, ExpectedException (typeof (TypeLoadException))]
-		public void GetValueAssemblyNameUsedWereOnlyFullNameInResXForEmbedded_TestValidityCheck ()
-		{
-			// just a check, if this passes other tests will give false results
-		    ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
-
-            Assert.IsNotNull (node, "#A1");
-		    object obj = node.GetValue ((AssemblyName []) null);
-		}
-
 		[Test]
-		public void GetValueAssemblyNameUsedWhereOnlyFullNameInResXForEmbedded ()
+		public void GetValueAssemblyNameUsedWhereOnlyFullNameInResX_TypeConverter ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-            Assert.IsNotNull (node, "#A1");
+			Assert.IsNotNull (node, "#A1");
 			object obj = node.GetValue (assemblyNames);
 			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName);
 		}
 
 		[Test, ExpectedException (typeof (TypeLoadException))]
-		public void GetValueAssemblyNameRequiredEachTimeWhereOnlyFullNameInResXForEmbedded ()
+		public void GetValueAssemblyNameRequiredEachTimeWhereOnlyFullNameInResX_TypeConverter ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-            Assert.IsNotNull (node, "#A1");
+			Assert.IsNotNull (node, "#A1");
 			object obj = node.GetValue (assemblyNames);
 			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A2");
 			object obj2 = node.GetValue ((AssemblyName []) null); //should cause exception here
@@ -161,176 +151,158 @@ namespace MonoTests.System.Resources {
 		}
 		//FIXME: does the way this test is run by NUnit affect the validity of the results showing that you need assembly name to pull type from current assembly?
 		[Test, ExpectedException (typeof (TypeLoadException))]
-		public void CantLoadTypeFromThisAssemblyWithOnlyFullName ()
+		public void CantLoadTypeFromThisAssemblyWithOnlyFullName_TypeConverter ()
 		{
-            ResXDataNode node = GetNodeFromResXReader (thisAssemblyConvertableResXWithoutAssemblyName);
-            Assert.IsNotNull (node, "#A1");
+			ResXDataNode node = GetNodeFromResXReader (thisAssemblyConvertableResXWithoutAssemblyName);
+			Assert.IsNotNull (node, "#A1");
 			object obj = node.GetValue ((AssemblyName []) null);
 		}
 
 		[Test]
-		public void CanLoadTypeFromThisAssemblyWithOnlyFullNamePassingAssemblyNames ()
+		public void CanLoadTypeFromThisAssemblyWithOnlyFullNamePassingAssemblyNames_TypeConverter ()
 		{
 			string aName = "System.Windows.Forms_test_net_2_0, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-            ResXDataNode node = GetNodeFromResXReader (thisAssemblyConvertableResXWithoutAssemblyName);
+			ResXDataNode node = GetNodeFromResXReader (thisAssemblyConvertableResXWithoutAssemblyName);
 
-            Assert.IsNotNull (node, "#A1");
+			Assert.IsNotNull (node, "#A1");
 			// would cause exception if couldnt find type
 			object obj = node.GetValue (assemblyNames);
 			Assert.IsInstanceOfType (typeof (ThisAssemblyConvertable), obj, "#A2");
 		}
 
 		[Test]
-		public void GetValueTypeNameReturnsFullNameWereOnlyFullNameInResXForEmbedded ()
+		public void GetValueTypeNameReturnsFullNameWereOnlyFullNameInResX_TypeConverter ()
 		{
 			// just a check, if this passes other tests will give false results
-            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-            Assert.IsNotNull (node, "#A1");
+			Assert.IsNotNull (node, "#A1");
 			string returnedType = node.GetValueTypeName ((AssemblyName []) null);
 			Assert.AreEqual ("DummyAssembly.Convertable", returnedType, "#A2");
 		}
 
 		[Test]
-		public void GetValueTypeNameAssemblyNameUsedWhereOnlyFullNameInResXForEmbedded ()
+		public void GetValueTypeNameAssemblyNameUsedWhereOnlyFullNameInResX_TypeConverter ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-            Assert.IsNotNull (node, "#A1");
+			Assert.IsNotNull (node, "#A1");
 			string returnedType = node.GetValueTypeName (assemblyNames);
 			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedType, "#A2");
 		}
 
 		[Test]
-		public void GetValueTypeNameAssemblyNameUsedEachTimeWhereOnlyFullNameInResXForEmbedded ()
+		public void GetValueTypeNameAssemblyNameUsedEachTimeWhereOnlyFullNameInResX_TypeConverter ()
 		{
 			// DummyAssembly must be in the same directory as current assembly to work correctly
 			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
-            ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 
-            Assert.IsNotNull (node, "#A1");
+			Assert.IsNotNull (node, "#A1");
 			string returnedName = node.GetValueTypeName (assemblyNames);
 			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedName, "#A2");
 			string nameWithNullParam = node.GetValueTypeName ((AssemblyName []) null);
 			Assert.AreEqual ("DummyAssembly.Convertable", nameWithNullParam, "#A3");
 		}
 
+		[Test]
+		public void AssemblyAutomaticallyLoaded_Serialized_GetValue ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (anotherSerializableFromDummyAssembly);
+			Assert.IsNotNull (node, "#A1");
+			object value = node.GetValue ((AssemblyName[]) null);
+			Assert.AreEqual ("DummyAssembly.AnotherSerializable, DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", value.GetType ().AssemblyQualifiedName, "#A2");
+		}
+
+		[Test]
+		public void AssemblyAutomaticallyLoaded_Serialized_GetValueTypeName ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (anotherSerializableFromDummyAssembly);
+			Assert.IsNotNull (node, "#A1");
+			string type = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("DummyAssembly.AnotherSerializable, DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", type, "#A2");
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ErrorWhenAssemblyMissing_Serialized_GetValue ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (missingSerializableFromMissingAssembly);
+			Assert.IsNotNull (node, "#A1");
+			object val = node.GetValue ((AssemblyName[]) null);
+		}
+
+		[Test]
+		public void ReturnsObjectAssemblyMissing_Serialized_GetValueTypeName ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (missingSerializableFromMissingAssembly);
+			Assert.IsNotNull (node, "#A1");
+			string type = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual (typeof (object).AssemblyQualifiedName, type, "#A2");
+		}
+
+		static string missingSerializableFromMissingAssembly =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  <resheader name=""resmimetype"">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+    <value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""aname"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEZNaXNzaW5nQXNzZW1ibHksIFZlcnNpb249MS4wLjAuMCwgQ3Vs
+        dHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1udWxsBQEAAAAhRHVtbXlBc3NlbWJseS5NaXNzaW5n
+        U2VyaWFsaXphYmxlAgAAAAdzZXJuYW1lCHNlcnZhbHVlAQECAAAABgMAAAAFYW5hbWUGBAAAAAZhdmFs
+        dWUL
+</value>
+  </data>
+</root>";
+
+		static string anotherSerializableFromDummyAssembly =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+ 
+  <resheader name=""resmimetype"">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+    <value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""aname"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEREdW1teUFzc2VtYmx5LCBWZXJzaW9uPTEuMC4wLjAsIEN1bHR1
+        cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAIUR1bW15QXNzZW1ibHkuQW5vdGhlclNl
+        cmlhbGl6YWJsZQIAAAAHc2VybmFtZQhzZXJ2YWx1ZQEBAgAAAAYDAAAABWFuYW1lBgQAAAAGYXZhbHVl
+        Cw==
+</value>
+  </data>
+</root>";
+
 		static string convertableResXWithoutAssemblyName =
 @"<?xml version=""1.0"" encoding=""utf-8""?>
 <root>
-  <!-- 
-	Microsoft ResX Schema 
-	
-	Version 2.0
-	
-	The primary goals of this format is to allow a simple XML format 
-	that is mostly human readable. The generation and parsing of the 
-	various data types are done through the TypeConverter classes 
-	associated with the data types.
-	
-	Example:
-	
-	... ado.net/XML headers & schema ...
-	<resheader name=""resmimetype"">text/microsoft-resx</resheader>
-	<resheader name=""version"">2.0</resheader>
-	<resheader name=""reader"">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-	<resheader name=""writer"">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-	<data name=""Name1""><value>this is my long string</value><comment>this is a comment</comment></data>
-	<data name=""Color1"" type=""System.Drawing.Color, System.Drawing"">Blue</data>
-	<data name=""Bitmap1"" mimetype=""application/x-microsoft.net.object.binary.base64"">
-		<value>[base64 mime encoded serialized .NET Framework object]</value>
-	</data>
-	<data name=""Icon1"" type=""System.Drawing.Icon, System.Drawing"" mimetype=""application/x-microsoft.net.object.bytearray.base64"">
-		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-		<comment>This is a comment</comment>
-	</data>
-				
-	There are any number of ""resheader"" rows that contain simple 
-	name/value pairs.
-	
-	Each data row contains a name, and value. The row also contains a 
-	type or mimetype. Type corresponds to a .NET class that support 
-	text/value conversion through the TypeConverter architecture. 
-	Classes that don't support this are serialized and stored with the 
-	mimetype set.
-	
-	The mimetype is used for serialized objects, and tells the 
-	ResXResourceReader how to depersist the object. This is currently not 
-	extensible. For a given mimetype the value must be set accordingly:
-	
-	Note - application/x-microsoft.net.object.binary.base64 is the format 
-	that the ResXResourceWriter will generate, however the reader can 
-	read any of the formats listed below.
-	
-	mimetype: application/x-microsoft.net.object.binary.base64
-	value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-	
-	mimetype: application/x-microsoft.net.object.soap.base64
-	value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.bytearray.base64
-	value   : The object must be serialized into a byte array 
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
-  <xsd:schema id=""root"" xmlns="""" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-	<xsd:import namespace=""http://www.w3.org/XML/1998/namespace"" />
-	<xsd:element name=""root"" msdata:IsDataSet=""true"">
-	  <xsd:complexType>
-		<xsd:choice maxOccurs=""unbounded"">
-		  <xsd:element name=""metadata"">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name=""value"" type=""xsd:string"" minOccurs=""0"" />
-			  </xsd:sequence>
-			  <xsd:attribute name=""name"" use=""required"" type=""xsd:string"" />
-			  <xsd:attribute name=""type"" type=""xsd:string"" />
-			  <xsd:attribute name=""mimetype"" type=""xsd:string"" />
-			  <xsd:attribute ref=""xml:space"" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name=""assembly"">
-			<xsd:complexType>
-			  <xsd:attribute name=""alias"" type=""xsd:string"" />
-			  <xsd:attribute name=""name"" type=""xsd:string"" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name=""data"">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name=""value"" type=""xsd:string"" minOccurs=""0"" msdata:Ordinal=""1"" />
-				<xsd:element name=""comment"" type=""xsd:string"" minOccurs=""0"" msdata:Ordinal=""2"" />
-			  </xsd:sequence>
-			  <xsd:attribute name=""name"" type=""xsd:string"" use=""required"" msdata:Ordinal=""1"" />
-			  <xsd:attribute name=""type"" type=""xsd:string"" msdata:Ordinal=""3"" />
-			  <xsd:attribute name=""mimetype"" type=""xsd:string"" msdata:Ordinal=""4"" />
-			  <xsd:attribute ref=""xml:space"" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name=""resheader"">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name=""value"" type=""xsd:string"" minOccurs=""0"" msdata:Ordinal=""1"" />
-			  </xsd:sequence>
-			  <xsd:attribute name=""name"" type=""xsd:string"" use=""required"" />
-			</xsd:complexType>
-		  </xsd:element>
-		</xsd:choice>
-	  </xsd:complexType>
-	</xsd:element>
-  </xsd:schema>
+  
   <resheader name=""resmimetype"">
 	<value>text/microsoft-resx</value>
   </resheader>
@@ -352,111 +324,7 @@ namespace MonoTests.System.Resources {
 		static string thisAssemblyConvertableResXWithoutAssemblyName =
 	@"<?xml version=""1.0"" encoding=""utf-8""?>
 <root>
-  <!-- 
-	Microsoft ResX Schema 
-	
-	Version 2.0
-	
-	The primary goals of this format is to allow a simple XML format 
-	that is mostly human readable. The generation and parsing of the 
-	various data types are done through the TypeConverter classes 
-	associated with the data types.
-	
-	Example:
-	
-	... ado.net/XML headers & schema ...
-	<resheader name=""resmimetype"">text/microsoft-resx</resheader>
-	<resheader name=""version"">2.0</resheader>
-	<resheader name=""reader"">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-	<resheader name=""writer"">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-	<data name=""Name1""><value>this is my long string</value><comment>this is a comment</comment></data>
-	<data name=""Color1"" type=""System.Drawing.Color, System.Drawing"">Blue</data>
-	<data name=""Bitmap1"" mimetype=""application/x-microsoft.net.object.binary.base64"">
-		<value>[base64 mime encoded serialized .NET Framework object]</value>
-	</data>
-	<data name=""Icon1"" type=""System.Drawing.Icon, System.Drawing"" mimetype=""application/x-microsoft.net.object.bytearray.base64"">
-		<value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-		<comment>This is a comment</comment>
-	</data>
-				
-	There are any number of ""resheader"" rows that contain simple 
-	name/value pairs.
-	
-	Each data row contains a name, and value. The row also contains a 
-	type or mimetype. Type corresponds to a .NET class that support 
-	text/value conversion through the TypeConverter architecture. 
-	Classes that don't support this are serialized and stored with the 
-	mimetype set.
-	
-	The mimetype is used for serialized objects, and tells the 
-	ResXResourceReader how to depersist the object. This is currently not 
-	extensible. For a given mimetype the value must be set accordingly:
-	
-	Note - application/x-microsoft.net.object.binary.base64 is the format 
-	that the ResXResourceWriter will generate, however the reader can 
-	read any of the formats listed below.
-	
-	mimetype: application/x-microsoft.net.object.binary.base64
-	value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-	
-	mimetype: application/x-microsoft.net.object.soap.base64
-	value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-	mimetype: application/x-microsoft.net.object.bytearray.base64
-	value   : The object must be serialized into a byte array 
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
-  <xsd:schema id=""root"" xmlns="""" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-	<xsd:import namespace=""http://www.w3.org/XML/1998/namespace"" />
-	<xsd:element name=""root"" msdata:IsDataSet=""true"">
-	  <xsd:complexType>
-		<xsd:choice maxOccurs=""unbounded"">
-		  <xsd:element name=""metadata"">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name=""value"" type=""xsd:string"" minOccurs=""0"" />
-			  </xsd:sequence>
-			  <xsd:attribute name=""name"" use=""required"" type=""xsd:string"" />
-			  <xsd:attribute name=""type"" type=""xsd:string"" />
-			  <xsd:attribute name=""mimetype"" type=""xsd:string"" />
-			  <xsd:attribute ref=""xml:space"" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name=""assembly"">
-			<xsd:complexType>
-			  <xsd:attribute name=""alias"" type=""xsd:string"" />
-			  <xsd:attribute name=""name"" type=""xsd:string"" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name=""data"">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name=""value"" type=""xsd:string"" minOccurs=""0"" msdata:Ordinal=""1"" />
-				<xsd:element name=""comment"" type=""xsd:string"" minOccurs=""0"" msdata:Ordinal=""2"" />
-			  </xsd:sequence>
-			  <xsd:attribute name=""name"" type=""xsd:string"" use=""required"" msdata:Ordinal=""1"" />
-			  <xsd:attribute name=""type"" type=""xsd:string"" msdata:Ordinal=""3"" />
-			  <xsd:attribute name=""mimetype"" type=""xsd:string"" msdata:Ordinal=""4"" />
-			  <xsd:attribute ref=""xml:space"" />
-			</xsd:complexType>
-		  </xsd:element>
-		  <xsd:element name=""resheader"">
-			<xsd:complexType>
-			  <xsd:sequence>
-				<xsd:element name=""value"" type=""xsd:string"" minOccurs=""0"" msdata:Ordinal=""1"" />
-			  </xsd:sequence>
-			  <xsd:attribute name=""name"" type=""xsd:string"" use=""required"" />
-			</xsd:complexType>
-		  </xsd:element>
-		</xsd:choice>
-	  </xsd:complexType>
-	</xsd:element>
-  </xsd:schema>
+  
   <resheader name=""resmimetype"">
 	<value>text/microsoft-resx</value>
   </resheader>
@@ -474,7 +342,7 @@ namespace MonoTests.System.Resources {
 	<value>im a name	im a value</value>
   </data>
 </root>";
-        
+		
 	}
 
 }

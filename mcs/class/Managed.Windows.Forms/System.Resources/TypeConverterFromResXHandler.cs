@@ -28,7 +28,7 @@ using System.ComponentModel.Design;
 using System.ComponentModel;
 
 namespace System.Resources {
-	internal class TypeConverterFromResXHandler : ResXDataNodeHandler {
+	internal class TypeConverterFromResXHandler : ResXDataNodeHandler, IWritableHandler {
 
 		string dataString;
 		string mime_type;
@@ -44,30 +44,70 @@ namespace System.Resources {
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
 		public override object GetValue (ITypeResolutionService typeResolver)
 		{
+			if (typeString == String.Empty || typeString == null)
+				return null;
+
 			Type type = ResolveType (typeString, typeResolver);
+			if (type == null)
+				throw new TypeLoadException();
 
 			TypeConverter c = TypeDescriptor.GetConverter (type);
+			if (c == null)
+				throw new TypeLoadException();
+
 			return ConvertData (c);
 		}
 
 		public override object GetValue (AssemblyName[] assemblyNames)
 		{
+			if (typeString == String.Empty || typeString == null)
+				return null;
+
 			Type type = ResolveType (typeString, assemblyNames);
+			if (type == null)
+				throw new TypeLoadException();
 
 			TypeConverter c = TypeDescriptor.GetConverter (type);
+			if (c == null)
+				throw new TypeLoadException();
+
 			return ConvertData (c);
 		}
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
+			//FIXME: need test to see what is returned if typeString empty
+			if (typeString == String.Empty || typeString == null)
+				return String.Empty;
+
 			Type type = ResolveType (typeString, typeResolver);
-			return type.AssemblyQualifiedName;
+
+			if (type == null)
+				return typeString;
+			else
+				return type.AssemblyQualifiedName;
 		}
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
+			//FIXME: need test to see what is returned if typeString empty
+			if (typeString == String.Empty || typeString == null)
+				return String.Empty;
+
 			Type type = ResolveType (typeString, assemblyNames);
-			return type.AssemblyQualifiedName;
+
+			if (type == null)
+				return typeString;
+			else
+				return type.AssemblyQualifiedName;
+		}
+		#endregion
+
+		#region IWritableHandler implementation
+		public string DataString {
+			get {
+				return dataString;
+			}
 		}
 		#endregion
 
@@ -81,8 +121,8 @@ namespace System.Resources {
 				if (c.CanConvertFrom (typeof (string)))
 					return c.ConvertFromInvariantString (dataString);
 			}
-			//else
-			return null;
+			// shouldnt get here
+			throw new Exception ("shouldnt see me -> mimetype invalid, this handler shouldnt have been used");
 		}
 
 	}

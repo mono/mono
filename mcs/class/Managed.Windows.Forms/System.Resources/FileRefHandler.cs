@@ -29,54 +29,72 @@ using System.ComponentModel;
 using System.IO;
 
 namespace System.Resources {
+	// FIXME: .net doesnt instantiate FileRef / encoding until fileref is accessed / written out
 	internal class FileRefHandler : ResXDataNodeHandler {
-
 		ResXFileRef resXFileRef; // may not be the same as that referenced in ResXDataNode
-		ResXFileRef originalResXFileRef; // will be same
 
 		public FileRefHandler (ResXFileRef fileRef, string basePath)
 		{
-
-			originalResXFileRef = fileRef;
 			// recreate object to apply basePath if present
 			if (basePath == null) {
 				resXFileRef = fileRef;
 			} else {
 				string pathToUse = Path.Combine (basePath, fileRef.FileName);
-				resXFileRef = new ResXFileRef (pathToUse,fileRef.TypeName);
+
+				if (fileRef.TextFileEncoding == null)
+					resXFileRef = new ResXFileRef (pathToUse, fileRef.TypeName);
+				else
+					resXFileRef = new ResXFileRef (pathToUse, fileRef.TypeName, 
+					                               fileRef.TextFileEncoding);
 			}
 		}
 
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
 		public override object GetValue (ITypeResolutionService typeResolver)
 		{
-			TypeConverter c = TypeDescriptor.GetConverter (typeof (ResXFileRef));
-			return c.ConvertFromInvariantString (resXFileRef.ToString ());				
+			return GetValue ();		
 		}
 
 		public override object GetValue (AssemblyName[] assemblyNames)
 		{
-			TypeConverter c = TypeDescriptor.GetConverter (typeof (ResXFileRef));
-			return c.ConvertFromInvariantString (resXFileRef.ToString ());	
+			return GetValue ();
 		}
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
 			// although params ignored by GetValue. .NET resolves the type for GetValueTypeName
-			return ResolveType (resXFileRef.TypeName, typeResolver).AssemblyQualifiedName;
+			// FIXME: create test to check the resXFileRef.TypeName is returned if type not resolved
+			Type type = ResolveType (resXFileRef.TypeName, typeResolver);
+
+			if (type == null)
+				return resXFileRef.TypeName;
+			else
+				return type.AssemblyQualifiedName;
 		}
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
 			// although params ignored by GetValue. .NET resolves the type for GetValueTypeName
-			return ResolveType (resXFileRef.TypeName, assemblyNames).AssemblyQualifiedName;
+			// FIXME: create test to check the resXFileRef.TypeName is returned if type not resolved
+			Type type = ResolveType (resXFileRef.TypeName, assemblyNames);
+
+			if (type == null)
+				return resXFileRef.TypeName;
+			else
+				return type.AssemblyQualifiedName;
 		}
 		#endregion
 
-		public override object GetValueForResX ()
+		private object GetValue ()
 		{
-			return originalResXFileRef;
+			TypeConverter c = TypeDescriptor.GetConverter (typeof (ResXFileRef));
+			try {
+				return c.ConvertFromInvariantString (resXFileRef.ToString ());
+			} catch (Exception ex) {
+				throw new TypeLoadException ("Could not load object",ex); //FIXME: error message?
+			}
 		}
+
 	}
 }
 

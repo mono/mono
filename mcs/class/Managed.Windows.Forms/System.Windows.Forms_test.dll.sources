@@ -191,7 +191,6 @@ System.Resources/ResXDataNodeByteArrayTests.cs
 System.Resources/ResXDataNodeFileRefBitmapTests.cs
 System.Resources/ResXDataNodeFileRefGetValueTests.cs
 System.Resources/ResXDataNodeFileRefGetValueTypeNameTests.cs
-System.Resources/ResXDataNodeFileRefTests.cs
 System.Resources/ResXDataNodeSerialisedGetValueTypeNameTests.cs
 System.Resources/ResXDataNodeSerializedGetValueTests.cs
 System.Resources/ResXDataNodeTest.cs

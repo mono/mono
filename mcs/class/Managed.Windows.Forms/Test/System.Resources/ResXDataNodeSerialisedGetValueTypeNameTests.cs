@@ -41,7 +41,7 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeEmdeddedSerializable ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
@@ -55,7 +55,7 @@ namespace MonoTests.System.Resources {
 			// retrieving the value first time and returns this same value ignoring any new ITRS passed thereafter
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeEmdeddedSerializable ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			string defaultType = returnedNode.GetValueTypeName ((ITypeResolutionService) null);
@@ -97,7 +97,7 @@ namespace MonoTests.System.Resources {
 			// check that first call to GetValue sets the type for GetValueTypeName
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeEmdeddedSerializable ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			// get value passing no params
@@ -110,6 +110,84 @@ namespace MonoTests.System.Resources {
 			Assert.AreNotEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, newType, "#A4");
 			Assert.AreEqual ((typeof (serializable)).AssemblyQualifiedName, newType, "#A5");
 		}
+
+		[Test]
+		public void SoapFormattedObject ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (serializedResXSOAP);
+
+			Assert.IsNotNull (node, "#A1");
+			string name = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual (typeof (serializable).AssemblyQualifiedName, name, "#A2");
+		}
+
+		[Test]
+		public void DeserializationErrorReturnsObjectType ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (serializedResXCorruped);
+			Assert.IsNotNull (node, "#A1");
+			string type = node.GetValueTypeName ((AssemblyName []) null);
+
+			Assert.AreEqual (typeof (object).AssemblyQualifiedName,type, "#A2");
+		}
+
+		static string serializedResXCorruped =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+	<value>
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+</value>
+  </data>
+</root>";
+
+		static string serializedResXSOAP =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root> 
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" mimetype=""application/x-microsoft.net.object.soap.base64"">
+	<value>
+		PFNPQVAtRU5WOkVudmVsb3BlIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2Ui
+		IHhtbG5zOnhzZD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOlNPQVAtRU5DPSJodHRwOi8vc2No
+		ZW1hcy54bWxzb2FwLm9yZy9zb2FwL2VuY29kaW5nLyIgeG1sbnM6U09BUC1FTlY9Imh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAu
+		b3JnL3NvYXAvZW52ZWxvcGUvIiB4bWxuczpjbHI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vc29hcC9lbmNvZGlu
+		Zy9jbHIvMS4wIiBTT0FQLUVOVjplbmNvZGluZ1N0eWxlPSJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy9zb2FwL2VuY29k
+		aW5nLyI+DQo8U09BUC1FTlY6Qm9keT4NCjxhMTpzZXJpYWxpemFibGUgaWQ9InJlZi0xIiB4bWxuczphMT0iaHR0cDovL3Nj
+		aGVtYXMubWljcm9zb2Z0LmNvbS9jbHIvbnNhc3NlbS9Nb25vVGVzdHMuU3lzdGVtLlJlc291cmNlcy9TeXN0ZW0uV2luZG93
+		cy5Gb3Jtc190ZXN0X25ldF8yXzAlMkMlMjBWZXJzaW9uJTNEMC4wLjAuMCUyQyUyMEN1bHR1cmUlM0RuZXV0cmFsJTJDJTIw
+		UHVibGljS2V5VG9rZW4lM0RudWxsIj4NCjxzZXJuYW1lIGlkPSJyZWYtMyI+YW5hbWU8L3Nlcm5hbWU+DQo8c2VydmFsdWUg
+		aWQ9InJlZi00Ij5hdmFsdWU8L3NlcnZhbHVlPg0KPC9hMTpzZXJpYWxpemFibGU+DQo8L1NPQVAtRU5WOkJvZHk+DQo8L1NP
+		QVAtRU5WOkVudmVsb3BlPg==
+	</value>
+  </data>
+</root>";
 	}
 	
 }

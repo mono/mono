@@ -19,8 +19,7 @@ using System.Xml;
 using NUnit.Framework;
 using System.Reflection;
 
-namespace MonoTests.System.Resources
-{
+namespace MonoTests.System.Resources {
 	[TestFixture]
 	public class ResXResourceReaderTest : MonoTests.System.Windows.Forms.TestHelper
 	{
@@ -1298,6 +1297,72 @@ namespace MonoTests.System.Resources
 #endif
 					}
  				}
+			}
+		}
+
+        static string resXWithEmptyName =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="""">
+	<value>a resource with no name</value>
+  </data>
+</root>";
+
+		static string resxWithNullRef =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""NullRef"" type=""System.Resources.ResXNullRef, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"">
+	<value></value>
+  </data>
+</root>";
+
+		[Test]
+		public void ResName_Empty ()
+		{
+			using (StringReader sr = new StringReader (resXWithEmptyName)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					enumerator.MoveNext ();
+					Assert.AreEqual ("", enumerator.Key, "#A1");
+					Assert.AreEqual ("a resource with no name", (string) enumerator.Value, "#A2");
+				}
+			}
+		}
+
+		[Test]
+		public void ResXNullRef ()
+		{
+			using (StringReader sr = new StringReader (resxWithNullRef)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					enumerator.MoveNext ();
+					Assert.AreEqual ("NullRef", enumerator.Key, "#A1");
+					Assert.IsNull (enumerator.Value, "#A2");
+				}
 			}
 		}
 

@@ -39,9 +39,9 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeEmdeddedBytes1To10 ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
-            Assert.IsNotNull (returnedNode, "#A1");
+			Assert.IsNotNull (returnedNode, "#A1");
 			object val = returnedNode.GetValue (new AlwaysReturnIntTypeResolutionService ());
 			Assert.IsInstanceOfType (typeof (byte[]), val, "#A2");
 		}
@@ -51,7 +51,7 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeEmdeddedBytes1To10 ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			//would raise error if touched
@@ -78,7 +78,7 @@ namespace MonoTests.System.Resources {
 			originalNode = GetNodeEmdeddedBytes1To10 ();
 			returnedNode = GetNodeFromResXReader (originalNode);
 
-            Assert.IsNotNull (returnedNode, "#A1");
+			Assert.IsNotNull (returnedNode, "#A1");
 			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
 			Assert.AreEqual ((typeof (int)).AssemblyQualifiedName, returnedType, "#A2");
 		}
@@ -90,7 +90,7 @@ namespace MonoTests.System.Resources {
 			originalNode = GetNodeEmdeddedBytes1To10 ();
 			returnedNode = GetNodeFromResXReader (originalNode);
 
-            Assert.IsNotNull (returnedNode, "#A1");
+			Assert.IsNotNull (returnedNode, "#A1");
 			object obj = returnedNode.GetValue ((ITypeResolutionService) null);
 			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
 			Assert.AreEqual ((typeof (int)).AssemblyQualifiedName, returnedType, "#A2");
@@ -111,8 +111,8 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ChangesToReturnedByteArrayNotLaterWrittenBack ()
 		{
-            ResXDataNode originalNode, returnedNode, finalNode;
-            originalNode = GetNodeEmdeddedBytes1To10 ();
+			ResXDataNode originalNode, returnedNode, finalNode;
+			originalNode = GetNodeEmdeddedBytes1To10 ();
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");

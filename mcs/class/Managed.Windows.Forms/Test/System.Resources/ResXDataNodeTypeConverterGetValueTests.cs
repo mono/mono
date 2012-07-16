@@ -36,101 +36,101 @@ namespace MonoTests.System.Resources
 {
 	[TestFixture]
 	public class ResXDataNodeTypeConverterGetValueTests : ResourcesTestHelper {
-        [Test]
-        public void ITRSNotUsedWhenCreatedNew ()
-        {
-            // check supplying params to GetValue of the UseResXDataNode does not change the output
-            // of the method for an instance created manually
-            ResXDataNode node;
-            node = new ResXDataNode ("along", 34L);
+		[Test]
+		public void ITRSNotUsedWhenCreatedNew ()
+		{
+			// check supplying params to GetValue of the UseResXDataNode does not change the output
+			// of the method for an instance created manually
+			ResXDataNode node;
+			node = new ResXDataNode ("along", 34L);
 
-            object obj = node.GetValue (new AlwaysReturnIntTypeResolutionService ());
-            Assert.IsInstanceOfType (typeof (long), obj, "#A1");
-        }
+			object obj = node.GetValue (new AlwaysReturnIntTypeResolutionService ());
+			Assert.IsInstanceOfType (typeof (long), obj, "#A1");
+		}
 
-        [Test]
-        public void ITRSUsedEachTimeWithNodeFromReader ()
-        {
-            // check GetValue uses ITRS param each time its called for a node from a ResXResourceReader 
-            // for an object stored by means of a typeconverter, 
-            ResXDataNode returnedNode, originalNode;
-            originalNode = new ResXDataNode ("aNumber", 23L);
-            returnedNode = GetNodeFromResXReader (originalNode);
+		[Test]
+		public void ITRSUsedEachTimeWithNodeFromReader ()
+		{
+			// check GetValue uses ITRS param each time its called for a node from a ResXResourceReader 
+			// for an object stored by means of a typeconverter, 
+			ResXDataNode returnedNode, originalNode;
+			originalNode = new ResXDataNode ("aNumber", 23L);
+			returnedNode = GetNodeFromResXReader (originalNode);
 
-            Assert.IsNotNull (returnedNode, "#A1");
+			Assert.IsNotNull (returnedNode, "#A1");
 
-            object newVal = returnedNode.GetValue (new AlwaysReturnIntTypeResolutionService ());
-            Assert.AreEqual (typeof (int).AssemblyQualifiedName, newVal.GetType ().AssemblyQualifiedName, "#A2");
+			object newVal = returnedNode.GetValue (new AlwaysReturnIntTypeResolutionService ());
+			Assert.AreEqual (typeof (int).AssemblyQualifiedName, newVal.GetType ().AssemblyQualifiedName, "#A2");
 
-            object origVal = returnedNode.GetValue ((ITypeResolutionService) null);
-            Assert.AreEqual (typeof (long).AssemblyQualifiedName, origVal.GetType ().AssemblyQualifiedName, "#A3");
-        }
+			object origVal = returnedNode.GetValue ((ITypeResolutionService) null);
+			Assert.AreEqual (typeof (long).AssemblyQualifiedName, origVal.GetType ().AssemblyQualifiedName, "#A3");
+		}
 
-        [Test, ExpectedException (typeof (NotImplementedException))]
-        public void GetValueParamIsTouchedWhenEmbeddedReturnedFromResXResourceReader ()
-        {
-            // after running the enumerator of ResXResourceReader with UseResXDataNodes set 
-            // to true, check params supplied to GetValue method
-            // of ResXDataNode are used to deserialise
-            // for now just throwing exception in param object to ensure its accessed
-            ResXDataNode originalNode, returnedNode;
+		[Test, ExpectedException (typeof (NotImplementedException))]
+		public void GetValueParamIsTouchedWhenEmbeddedReturnedFromResXResourceReader ()
+		{
+			// after running the enumerator of ResXResourceReader with UseResXDataNodes set 
+			// to true, check params supplied to GetValue method
+			// of ResXDataNode are used to deserialise
+			// for now just throwing exception in param object to ensure its accessed
+			ResXDataNode originalNode, returnedNode;
 				
-            originalNode = GetNodeEmdeddedIcon ();
-            returnedNode = GetNodeFromResXReader (originalNode);
+			originalNode = GetNodeEmdeddedIcon ();
+			returnedNode = GetNodeFromResXReader (originalNode);
 
-            Assert.IsNotNull (returnedNode, "#A1");
-            // should raise error
-            Icon ico = (Icon)returnedNode.GetValue (new ExceptionalTypeResolutionService ());
-        }
-        
-        #region initial
+			Assert.IsNotNull (returnedNode, "#A1");
+			// should raise error
+			Icon ico = (Icon)returnedNode.GetValue (new ExceptionalTypeResolutionService ());
+		}
 
-        [Test]
-        public void NullAssemblyNamesOK ()
-        {
-            ResXDataNode node = GetNodeEmdeddedIcon ();
+		#region initial
 
-            Object ico = node.GetValue ((AssemblyName []) null);
-            Assert.IsNotNull (ico, "#A1");
-            Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
-        }
+		[Test]
+		public void NullAssemblyNamesOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
 
-        [Test]
-        public void NullITypeResolutionServiceOK ()
-        {
-            ResXDataNode node = GetNodeEmdeddedIcon ();
+			Object ico = node.GetValue ((AssemblyName []) null);
+			Assert.IsNotNull (ico, "#A1");
+			Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
+		}
 
-            Object ico = node.GetValue ((ITypeResolutionService) null);
-            Assert.IsNotNull (ico, "#A1");
-            Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
-        }
+		[Test]
+		public void NullITypeResolutionServiceOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
 
-        [Test]
-        public void WrongITypeResolutionServiceOK ()
-        {
-            ResXDataNode node = GetNodeEmdeddedIcon ();
+			Object ico = node.GetValue ((ITypeResolutionService) null);
+			Assert.IsNotNull (ico, "#A1");
+			Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
+		}
 
-            Object ico = node.GetValue (new DummyTypeResolutionService ());
-            Assert.IsNotNull (ico, "#A1");
-            Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
-        }
+		[Test]
+		public void WrongITypeResolutionServiceOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
 
-        [Test]
-        public void WrongAssemblyNamesOK ()
-        {
-            ResXDataNode node = GetNodeEmdeddedIcon ();
-            AssemblyName [] ass = new AssemblyName [1];
+			Object ico = node.GetValue (new DummyTypeResolutionService ());
+			Assert.IsNotNull (ico, "#A1");
+			Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
+		}
 
-            ass [0] = new AssemblyName ("System.Design");
+		[Test]
+		public void WrongAssemblyNamesOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
+			AssemblyName [] ass = new AssemblyName [1];
 
-            Object ico = node.GetValue (ass);
-            Assert.IsNotNull (ico, "#A1");
-            Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
-        }
+			ass [0] = new AssemblyName ("System.Design");
 
-        #endregion
+			Object ico = node.GetValue (ass);
+			Assert.IsNotNull (ico, "#A1");
+			Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
+		}
 
-    }
+		#endregion
+
+	}
 
 
 }

@@ -28,7 +28,7 @@ using System.ComponentModel.Design;
 using System.ComponentModel;
 
 namespace System.Resources {
-	internal class ByteArrayFromResXHandler : ResXDataNodeHandler {
+	internal class ByteArrayFromResXHandler : ResXDataNodeHandler, IWritableHandler {
 
 		string dataString;
 
@@ -60,8 +60,15 @@ namespace System.Resources {
 			//FIXME: what if only fullname for byte[] present?
 			return typeof (byte[]).AssemblyQualifiedName;
 		}
-		#endregion
+		#endregion		
 
+		#region IWritableHandler implementation
+		public string DataString {
+			get {
+				return dataString;
+			}
+		}
+		#endregion
 	}
 }
 
