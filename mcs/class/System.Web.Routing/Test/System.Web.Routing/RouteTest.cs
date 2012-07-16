@@ -979,7 +979,21 @@ namespace MonoTests.System.Web.Routing
 
 			Assert.IsNull (rd, "#1");
 		}
-		
+
+		[Test]
+		public void GetRouteData48 ()
+		{
+			var r = new Route ("{first}/{*rest}", null);
+			var hc = new HttpContextStub ("~/a/", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (2, rd.Values.Count, "#4");
+			Assert.AreEqual ("a", rd.Values ["first"], "#4-1");
+			Assert.AreEqual (String.Empty, rd.Values ["rest"], "#4-2"
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetVirtualPathNullContext ()
