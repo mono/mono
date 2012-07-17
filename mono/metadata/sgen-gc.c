@@ -3013,6 +3013,14 @@ reset_minor_collection_allowance (void)
 	need_calculate_minor_collection_allowance = TRUE;
 }
 
+static mword
+double_to_mword_with_saturation (double value)
+{
+	if (value >= (double)MWORD_MAX_VALUE)
+		return MWORD_MAX_VALUE;
+	return (mword)value;
+}
+
 static void
 try_calculate_minor_collection_allowance (gboolean overwrite)
 {
@@ -3062,7 +3070,7 @@ try_calculate_minor_collection_allowance (gboolean overwrite)
 	 *
 	 * hence:
 	 */
-	allowance_target = (mword)((double)save_target * (double)(minor_collection_sections_alloced * major_collector.section_size + last_collection_los_memory_alloced) / (double)(num_major_sections_saved * major_collector.section_size + los_memory_saved));
+	allowance_target = double_to_mword_with_saturation ((double)save_target * (double)(minor_collection_sections_alloced * major_collector.section_size + last_collection_los_memory_alloced) / (double)(num_major_sections_saved * major_collector.section_size + los_memory_saved));
 
 	minor_collection_allowance = MAX (MIN (allowance_target, num_major_sections * major_collector.section_size + los_memory_usage), MIN_MINOR_COLLECTION_ALLOWANCE);
 
