@@ -220,10 +220,6 @@ static int GC_setspecific (GC_key_t key, void *value) {
 
 static GC_bool keys_initialized;
 
-static pthread_t main_pthread_self;
-static void *main_stack, *main_altstack;
-static int main_stack_size, main_altstack_size;
-
 #ifdef MONO_DEBUGGER_SUPPORTED
 #include "include/libgc-mono-debugger.h"
 #endif
