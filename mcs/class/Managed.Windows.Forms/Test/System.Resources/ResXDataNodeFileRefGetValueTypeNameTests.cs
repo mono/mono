@@ -67,8 +67,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ITRSUsedWhenNodeFromReader ()
 		{
-			// for a node returned from ResXResourceReader, check supplying params to 
-			// GetValueTypeName changes the output of the method
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb",true);
 			returnedNode = GetNodeFromResXReader (originalNode);
@@ -81,9 +79,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ITRSUsedWhenNodeCreatedNew ()
 		{
-			// check supplying params GetValueTypeName of the 
-			// UseResXDataNode does the output of the method for an instance
-			// initialised manually
 			ResXDataNode node;
 			node = GetNodeFileRefToSerializable ("ser.bbb",true);
 

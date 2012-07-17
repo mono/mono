@@ -15,6 +15,7 @@ using System.Resources;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Runtime.Serialization;
 
 using NUnit.Framework;
 using System.Reflection;
@@ -1721,13 +1722,13 @@ namespace MonoTests.System.Resources {
 				"	<data name=\"Data\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
 				"		<value>Random Thoughts</value>" +
 				"	</data>" +
-				"	<data name=\"Foo\" type=\"System.Windows.Forms.Application, {1}\">" +
+				/*s*/"	<data name=\"Foo\" type=\"System.Windows.Forms.Application, {1}\">" +
 				"		<value>A B C</value>" +
 				"	</data>" +
 				"	<data name=\"Image\" type=\"{2}\">" +
 				"		<value>Summer.jpg</value>" +
 				"	</data>" +
-				"	<data name=\"Text\">" +
+				/*e*/"	<data name=\"Text\">" +
 				"		<value>OK</value>" +
 				"	</data>" +
 				"	<data name=\"Unknown\" mimetype=\"application/xxx\">" +
@@ -1736,10 +1737,10 @@ namespace MonoTests.System.Resources {
 				"	<data name=\"Wrong\" typeof=\"{2}\" mimetype=\"application/xxx\">" +
 				"		<value>SuperUnknown</value>" +
 				"	</data>" +
-				"	<data name=\"Xtra\" type=\"System.Windows.Forms.AnchorStyles, {1}\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
+				/*s*/"	<data name=\"Xtra\" type=\"System.Windows.Forms.AnchorStyles, {1}\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
 				"		<value>LeftRight</value>" +
 				"	</data>" +
-				"</root>",
+				/*e*/"</root>",
 				ResXResourceWriter.ResMimeType, Consts.AssemblySystem_Windows_Forms,
 				typeof (Bitmap).AssemblyQualifiedName, typeof (byte []).AssemblyQualifiedName);
 
@@ -1823,6 +1824,85 @@ namespace MonoTests.System.Resources {
 				}
 			}
 		}
+
+		[Test, ExpectedException (typeof (SerializationException))]
+		public void DeSerializationErrorBubbles ()
+		{
+			using (StringReader sr = new StringReader (serializedResXCorruped)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					// should throw exception
+				}
+			}
+		}
+
+		[Test, ExpectedException (typeof (TargetInvocationException))]
+		public void FileRef_DeserializationFails ()
+		{
+			string corruptFile = Path.GetTempFileName ();
+			ResXFileRef fileRef = new ResXFileRef (corruptFile, typeof (serializable).AssemblyQualifiedName);
+
+			File.AppendAllText (corruptFile,"corrupt");
+
+			StringBuilder sb = new StringBuilder();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource ("test", fileRef);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				using (ResXResourceReader reader = new ResXResourceReader (sr)) {
+					reader.GetEnumerator ();
+				}
+			}
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void FileRef_TypeCantBeResolved ()
+		{
+			string aFile = Path.GetTempFileName ();
+			ResXFileRef fileRef = new ResXFileRef (aFile, "a.type.doesnt.exist");
+
+			StringBuilder sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource ("test", fileRef);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				using (ResXResourceReader reader = new ResXResourceReader (sr)) {
+					reader.GetEnumerator ();
+				}
+			}
+		}
+
+		static string serializedResXCorruped =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+	<value>
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+</value>
+  </data>
+</root>";
 
 		private static void WriteEmbeddedResource (string name, string filename)
 		{

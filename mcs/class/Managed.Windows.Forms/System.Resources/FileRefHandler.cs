@@ -51,7 +51,6 @@ namespace System.Resources {
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
 			// although params ignored by GetValue. .NET resolves the type for GetValueTypeName
-			// FIXME: create test to check the resXFileRef.TypeName is returned if type not resolved
 			Type type = ResolveType (resXFileRef.TypeName, typeResolver);
 
 			if (type == null)
@@ -62,8 +61,6 @@ namespace System.Resources {
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
-			// although params ignored by GetValue. .NET resolves the type for GetValueTypeName
-			// FIXME: create test to check the resXFileRef.TypeName is returned if type not resolved
 			Type type = ResolveType (resXFileRef.TypeName, assemblyNames);
 
 			if (type == null)
@@ -76,10 +73,14 @@ namespace System.Resources {
 		private object GetValue ()
 		{
 			TypeConverter c = TypeDescriptor.GetConverter (typeof (ResXFileRef));
+
 			try {
 				return c.ConvertFromInvariantString (resXFileRef.ToString ());
-			} catch (Exception ex) {
-				throw new TypeLoadException ("Could not load object",ex); //FIXME: error message?
+			} catch (ArgumentNullException ex) {
+				if (ex.ParamName == "type")
+					throw new TypeLoadException ("Could not find type", ex); //FIXME: error message?
+				else 
+					throw ex;
 			}
 		}
 

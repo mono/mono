@@ -77,7 +77,6 @@ namespace System.Resources {
 
 		protected Type ResolveType (string typeString, ITypeResolutionService typeResolver) 
 		{
-			// mono implementation previously didnt fallback to type check
 			Type result = null;
 
 			if (typeResolver != null)

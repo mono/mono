@@ -301,7 +301,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ITRSPassedToResourceReaderDoesNotAffectResXDataNode_TypeConverter ()
 		{
-			
 			ResXDataNode dn = new ResXDataNode ("test", 34L);
 			
 			string resXFile = GetResXFileWithNode (dn,"resx.resx");
@@ -326,7 +325,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ITRSPassedToResourceReaderDoesNotAffectResXDataNode_Serializable ()
 		{
-			
 			serializable ser = new serializable ("aaaaa", "bbbbb");
 			ResXDataNode dn = new ResXDataNode ("test", ser);
 			
@@ -351,7 +349,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ITRSPassedToResourceReaderAffectsDictionary_Serializable ()
 		{
-			
 			serializable ser = new serializable ("aaaaa", "bbbbb");
 			ResXDataNode dn = new ResXDataNode ("test", ser);
 			
@@ -374,7 +371,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ITRSPassedToResourceReaderAffectsDictionary_TypeConverter ()
 		{
-			
 			ResXDataNode dn = new ResXDataNode ("test", 34L);
 			
 			string resXFile = GetResXFileWithNode (dn,"resx.resx");

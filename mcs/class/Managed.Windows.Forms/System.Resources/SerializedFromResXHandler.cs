@@ -48,24 +48,30 @@ namespace System.Resources {
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
 		public override object GetValue (ITypeResolutionService typeResolver)
 		{
-			if (retrievedObject == null)
-				retrievedObject = DeserializeObject (typeResolver);
+				if (retrievedObject == null)
+					retrievedObject = DeserializeObject (typeResolver);
 
-			return retrievedObject;
+				return retrievedObject;
+			
 		}
 
 		public override object GetValue (AssemblyName[] assemblyNames)
 		{
-			if (retrievedObject == null)
-				retrievedObject = DeserializeObject ((ITypeResolutionService) null);
+				if (retrievedObject == null)
+					retrievedObject = DeserializeObject ((ITypeResolutionService) null);
 
-			return retrievedObject;
+				return retrievedObject;
 		}
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
-			if (retrievedObject == null)
-				retrievedObject = DeserializeObject (typeResolver);
+			if (retrievedObject == null) {
+				try {
+					retrievedObject = DeserializeObject (typeResolver);
+				} catch {
+					return typeof (object).AssemblyQualifiedName;
+				}
+			}
 
 			if (retrievedObject == null)
 				return null;
@@ -75,8 +81,13 @@ namespace System.Resources {
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
-			if (retrievedObject == null)
-				retrievedObject = DeserializeObject ((ITypeResolutionService) null);
+			if (retrievedObject == null) {
+				try {
+					retrievedObject = DeserializeObject ((ITypeResolutionService) null);
+				} catch {
+					return typeof (object).AssemblyQualifiedName;
+				}
+			}
 
 			if (retrievedObject == null)
 				return null;
@@ -95,25 +106,32 @@ namespace System.Resources {
 
 		object DeserializeObject (ITypeResolutionService typeResolver)
 		{
-			if (mime_type == ResXResourceWriter.SoapSerializedObjectMimeType) {
-				//FIXME: theres a test in the suite to check that a type converter converts from invariant string
-				//do i need to take the string culture into consideration here?
-				SoapFormatter soapF = new SoapFormatter ();
-				soapF.Binder = new CustomBinder (typeResolver);
-				byte [] data = Convert.FromBase64String (dataString);
-				using (MemoryStream s = new MemoryStream (data)) {
-					return soapF.Deserialize (s);
-				}
-			} else if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
-				BinaryFormatter binF = new BinaryFormatter();
-				binF.Binder = new CustomBinder (typeResolver);
+			try {
+				if (mime_type == ResXResourceWriter.SoapSerializedObjectMimeType) {
+					//FIXME: theres a test in the suite to check that a type converter converts from invariant string
+					//do i need to take the string culture into consideration here?
+					SoapFormatter soapF = new SoapFormatter ();
+					soapF.Binder = new CustomBinder (typeResolver);
+					byte [] data = Convert.FromBase64String (dataString);
+					using (MemoryStream s = new MemoryStream (data)) {
+						return soapF.Deserialize (s);
+					}
+				} else if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
+					BinaryFormatter binF = new BinaryFormatter();
+					binF.Binder = new CustomBinder (typeResolver);
 
-				byte [] data = Convert.FromBase64String (dataString);
-				using (MemoryStream s = new MemoryStream (data)) {
-					return binF.Deserialize (s);
-				}
-			} else // invalid mime_type
-				return null; 
+					byte [] data = Convert.FromBase64String (dataString);
+					using (MemoryStream s = new MemoryStream (data)) {
+						return binF.Deserialize (s);
+					}
+				} else // invalid mime_type
+					return null; 
+			} catch (SerializationException ex) { 
+				if (ex.Message.StartsWith ("Couldn't find assembly"))
+					throw new ArgumentException (ex.Message);
+				else
+					throw ex;
+			}
 		}
 
 		sealed class CustomBinder : SerializationBinder 

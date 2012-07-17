@@ -40,6 +40,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Reflection;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace System.Resources
 {
@@ -184,6 +185,10 @@ namespace System.Resources
 					}
 				} catch (XmlException ex) {
 					throw new ArgumentException ("Invalid ResX input.", ex);
+				} catch (SerializationException ex) {
+					throw ex;
+				} catch (TargetInvocationException ex) {
+					throw ex;
 				} catch (Exception ex) {
 					XmlException xex = new XmlException (ex.Message, ex, 
 						xmlReader.LineNumber, xmlReader.LinePosition);
@@ -296,33 +301,29 @@ namespace System.Resources
 				                        node.GetValue ((AssemblyName []) null).ToString()));
 
 			// useResXDataNodes is false, add to dictionary of values
-			if (assemblyNames != null)
-				hashtable [name] = node.GetValue (assemblyNames);
-			else
-				hashtable [name] = node.GetValue (typeresolver); // saves another else
-
-		}
-
-		private Type ResolveType (string type)
-		{
-			if (typeresolver != null) {
-				return typeresolver.GetType (type);
-			} 
-			if (assemblyNames != null) {
-				Type result;
-				foreach (AssemblyName assem in assemblyNames) {
-					Assembly myAssembly = Assembly.Load (assem);
-					result = myAssembly.GetType (type, false);
-					if (result != null)
-						return result;
-					//else loop
+			if (assemblyNames != null) { 
+				try {
+					hashtable [name] = node.GetValue (assemblyNames);
+				} catch (TypeLoadException ex) {
+					// different error messages depending on type of resource, hacky solution
+					if (node.handler is TypeConverterFromResXHandler)
+						hashtable [name] = null;
+					else 
+						throw ex;
 				}
-				//if type not found on assembly list we return null or we get from current assembly?
-				//=> unit test needed
+			} else { // there is a typeresolver or its null
+				try {
+					hashtable [name] = node.GetValue (typeresolver); 
+				} catch (TypeLoadException ex) {
+					if (node.handler is TypeConverterFromResXHandler)
+						hashtable [name] = null;
+					else 
+						throw ex;
+				}
 			}
-			return Type.GetType (type);
 
 		}
+
 		#endregion	// Private Methods
 
 		#region Public Methods

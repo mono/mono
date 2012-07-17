@@ -45,24 +45,10 @@ namespace MonoTests.System.Resources {
 			object val = returnedNode.GetValue (new AlwaysReturnIntTypeResolutionService ());
 			Assert.IsInstanceOfType (typeof (byte[]), val, "#A2");
 		}
-		/*
-		[Test, ExpectedException (typeof (NotImplementedException))]
-		public void GetValueITRSIsTouchedWhenNodeReturnedFromReader ()
-		{
-			ResXDataNode originalNode, returnedNode;
-			originalNode = GetNodeEmdeddedBytes1To10 ();
-			returnedNode = GetNodeFromResXReader (originalNode);
 
-			Assert.IsNotNull (returnedNode, "#A1");
-			//would raise error if touched
-			object val = returnedNode.GetValue (new ExceptionalTypeResolutionService ());
-		}
-		*/
 		[Test]
 		public void GetValueITRSNotTouchedWhenNodeCreatedNew ()
 		{
-			// check supplied params to GetValue are not touched
-			// for an instance created manually
 			ResXDataNode node;
 			node = GetNodeEmdeddedBytes1To10 ();
 
@@ -99,8 +85,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void GetValueTypeNameITRSNotUsedWhenNodeCreatedNew ()
 		{
-			// check supplying params to GetValueType of the ResXDataNode does not change the output
-			// of the method for an instance created manually
 			ResXDataNode node;
 			node = GetNodeEmdeddedBytes1To10 ();
 

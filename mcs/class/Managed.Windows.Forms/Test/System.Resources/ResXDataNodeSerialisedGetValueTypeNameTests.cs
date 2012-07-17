@@ -69,26 +69,11 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void ITRSNotUsedWhenNodeCreatedNew ()
 		{
-			// check supplying params to GetValueType of the UseResXDataNode does not change the output
-			// of the method for an instance created manually
 			ResXDataNode node;
 			node = GetNodeEmdeddedSerializable ();
 
 			string returnedType = node.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
 			Assert.AreEqual ((typeof (serializable)).AssemblyQualifiedName, returnedType, "#A1");
-		}
-
-		[Test]
-		public void ITRSNotTouchedWhenNodeCreatedNew ()
-		{
-			// check supplied params to GetValueType of the UseResXDataNode are not touched
-			// for an instance created manually
-			ResXDataNode node;
-			node = GetNodeEmdeddedSerializable ();
-
-			// would raise exception if accessed
-			string returnedType = node.GetValueTypeName (new ExceptionalTypeResolutionService ());
-			//Assert.AreEqual ((typeof (serializable)).AssemblyQualifiedName, returnedType, "#A1");
 		}
 
 		[Test]
@@ -138,6 +123,25 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (node, "#A1");
 			string type = node.GetValueTypeName ((AssemblyName []) null);
 			Assert.IsNull (type, "#A2");
+		}
+
+		[Test]
+		public void AssemblyAutomaticallyLoaded ()
+		{
+			// DummyAssembly must be in the same directory as current assembly to work correctly
+			ResXDataNode node = GetNodeFromResXReader (anotherSerializableFromDummyAssembly);
+			Assert.IsNotNull (node, "#A1");
+			string type = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("DummyAssembly.AnotherSerializable, DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", type, "#A2");
+		}
+
+		[Test]
+		public void ReturnsObjectAssemblyMissing ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (missingSerializableFromMissingAssembly);
+			Assert.IsNotNull (node, "#A1");
+			string type = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual (typeof (object).AssemblyQualifiedName, type, "#A2");
 		}
 
 		static string serializedResXInvalidMimeType =
@@ -223,6 +227,102 @@ namespace MonoTests.System.Resources {
 	</value>
   </data>
 </root>";
+
+		static string missingSerializableFromMissingAssembly =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  <resheader name=""resmimetype"">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+    <value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""aname"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEZNaXNzaW5nQXNzZW1ibHksIFZlcnNpb249MS4wLjAuMCwgQ3Vs
+        dHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1udWxsBQEAAAAhRHVtbXlBc3NlbWJseS5NaXNzaW5n
+        U2VyaWFsaXphYmxlAgAAAAdzZXJuYW1lCHNlcnZhbHVlAQECAAAABgMAAAAFYW5hbWUGBAAAAAZhdmFs
+        dWUL
+</value>
+  </data>
+</root>";
+
+		static string anotherSerializableFromDummyAssembly =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+ 
+  <resheader name=""resmimetype"">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+    <value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""aname"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEREdW1teUFzc2VtYmx5LCBWZXJzaW9uPTEuMC4wLjAsIEN1bHR1
+        cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAIUR1bW15QXNzZW1ibHkuQW5vdGhlclNl
+        cmlhbGl6YWJsZQIAAAAHc2VybmFtZQhzZXJ2YWx1ZQEBAgAAAAYDAAAABWFuYW1lBgQAAAAGYXZhbHVl
+        Cw==
+</value>
+  </data>
+</root>";
+
+		static string convertableResXWithoutAssemblyName =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <data name=""test"" type=""DummyAssembly.Convertable"">
+	<value>im a name	im a value</value>
+  </data>
+</root>";
+
+		static string thisAssemblyConvertableResXWithoutAssemblyName =
+	@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <data name=""test"" type=""MonoTests.System.Resources.ThisAssemblyConvertable"">
+	<value>im a name	im a value</value>
+  </data>
+</root>";
+
 	}
 	
 }

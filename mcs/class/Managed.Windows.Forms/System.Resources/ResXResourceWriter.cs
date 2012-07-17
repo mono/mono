@@ -257,7 +257,6 @@ namespace System.Resources
 
 			if (value == null) {
 				// nulls written as ResXNullRef
-				//throw new ArgumentNullException ("value"); 
 				WriteString (name, "", typeof (ResXNullRef), comment); //FIXME: ive included comment here
 				return;
 			}

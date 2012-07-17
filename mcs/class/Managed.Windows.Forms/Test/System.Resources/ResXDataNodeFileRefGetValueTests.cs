@@ -36,26 +36,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace MonoTests.System.Resources {
 	[TestFixture]
 	public class ResXDataNodeFileRefGetValueTests : ResourcesTestHelper {
-		/*
-		[Test, ExpectedException (typeof (NotImplementedException))]
-		public void ITRSTouchedWhenNodeFromReader ()
-		{
-			// for a node returned from ResXResourceReader with FileRef, 
-			// check params supplied to GetValue method of ResXDataNode are touched
-			ResXDataNode originalNode, returnedNode;
-			originalNode = GetNodeFileRefToSerializable ("ser.bbb",true);
-			returnedNode = GetNodeFromResXReader (originalNode);
-
-			Assert.IsNotNull (returnedNode, "#A1");
-			// raises error if touched
-			Icon ico = (Icon) returnedNode.GetValue (new ExceptionalTypeResolutionService ());
-		}
-		*/
 		[Test]
 		public void ITRSNotUsedWhenNodeFromReader ()
 		{
-			// for a node returned from reader with a FileRef, 
-			// check ITRS supplied to GetValue method not actually used
 			ResXDataNode originalNode, returnedNode;
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb",true);
 			returnedNode = GetNodeFromResXReader (originalNode);
@@ -91,24 +74,10 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (returnedNode, "#A1");
 			object obj = returnedNode.GetValue (assemblyNames);
 		}
-		/*
-		[Test, ExpectedException (typeof (NotImplementedException))]
-		public void ITRSTouchedWhenNodeCreatedNew ()
-		{
-			// check supplyied params to GetValue of the ResXDataNode are touched for
-			// an instance initialised by me
-			ResXDataNode node;
-			node = GetNodeFileRefToSerializable ("ser.bbb",true);
 
-			//raises exception if param touched
-			Object obj = node.GetValue (new ExceptionalTypeResolutionService ());
-		}
-		*/
 		[Test]
 		public void ITRSNotUsedWhenNodeCreatedNew ()
 		{
-			// check supplyied params to GetValue of the ResXDataNode are not used for
-			// an instance initialised by me
 			ResXDataNode node;
 			node = GetNodeFileRefToSerializable ("ser.bbb",true);
 
@@ -117,7 +86,18 @@ namespace MonoTests.System.Resources {
 			Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
 		}
 
-		#region Initial Exploratory Tests
+		[Test, ExpectedException (typeof (TargetInvocationException))]
+		public void LoadingFileFails ()
+		{
+			string corruptFile = Path.GetTempFileName ();
+			ResXFileRef fileRef = new ResXFileRef (corruptFile, typeof (serializable).AssemblyQualifiedName);
+
+			File.AppendAllText (corruptFile, "corrupt");
+			ResXDataNode node = new ResXDataNode ("aname", fileRef);
+			node.GetValue ((AssemblyName []) null);
+		}
+
+		#region initial
 
 		[Test]
 		public void ResXFileRefNullAssemblyNamesOK ()

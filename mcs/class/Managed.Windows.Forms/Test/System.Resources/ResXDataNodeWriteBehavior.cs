@@ -60,7 +60,7 @@ namespace MonoTests.System.Resources {
 		[Test, ExpectedException (typeof (ArgumentException))]
 		public void FileRefIsLoaded ()
 		{
-			// .NET does instantiate the encoding until the write, as exception not thrown until write
+			// .NET doesnt instantiate the encoding until the write
 			ResXDataNode node = GetNodeFromResXReader (fileRefResXCorrupted);
 			Assert.IsNotNull (node, "#A1");
 			// would cause error if object loaded

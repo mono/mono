@@ -39,8 +39,6 @@ namespace MonoTests.System.Resources
 		[Test]
 		public void ITRSUsedWithNodeFromReader ()
 		{
-			// for node returned from ResXResourceReader for an object stored by means of a typeconverter, 
-			// check supplying ITRS changes output of method
 			ResXDataNode returnedNode, originalNode;
 			originalNode = new ResXDataNode ("aNumber", 23L);
 			returnedNode = GetNodeFromResXReader (originalNode);
@@ -53,8 +51,6 @@ namespace MonoTests.System.Resources
 		[Test]
 		public void ITRSUsedEachTimeWhenNodeFromReader ()
 		{
-			// for node returned from ResXResourceReader for an object stored by means of a typeconverter, 
-			// check supplied ITRS changes output each time
 			ResXDataNode returnedNode, originalNode;
 			originalNode = new ResXDataNode ("aNumber", 23L);
 			returnedNode = GetNodeFromResXReader (originalNode);
@@ -64,14 +60,11 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (typeof (int).AssemblyQualifiedName, newType, "#A2");
 			string origType = returnedNode.GetValueTypeName ((ITypeResolutionService) null);
 			Assert.AreEqual (typeof (long).AssemblyQualifiedName, origType, "#A3");				
-			
 		}
 
 		[Test]
 		public void ITRSNotUsedWhenNodeCreatedNew ()
 		{
-			// check supplying params to GetValueTypeName of the UseResXDataNode does not change the output
-			// of the method for an instance created manually
 			ResXDataNode node;
 			node = new ResXDataNode ("along", 34L);
 
@@ -95,6 +88,46 @@ namespace MonoTests.System.Resources
 			Assert.IsNotNull (node, "#A1");
 			string type = node.GetValueTypeName ((AssemblyName []) null);
 			Assert.AreEqual (typeof (string).AssemblyQualifiedName, type, "#A2");
+		}
+
+		[Test]
+		public void ReturnsFullNameWereOnlyFullNameInResX ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+
+			Assert.IsNotNull (node, "#A1");
+			string returnedType = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("DummyAssembly.Convertable", returnedType, "#A2");
+		}
+
+		[Test]
+		public void AssemblyNameUsedWhereOnlyFullNameInResX ()
+		{
+			// DummyAssembly must be in the same directory as current assembly to work correctly
+			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
+
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+
+			Assert.IsNotNull (node, "#A1");
+			string returnedType = node.GetValueTypeName (assemblyNames);
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedType, "#A2");
+		}
+
+		[Test]
+		public void AssemblyNameUsedEachTimeWhereOnlyFullNameInResX ()
+		{
+			// DummyAssembly must be in the same directory as current assembly to work correctly
+			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
+
+			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
+
+			Assert.IsNotNull (node, "#A1");
+			string returnedName = node.GetValueTypeName (assemblyNames);
+			Assert.AreEqual ("DummyAssembly.Convertable, " + aName, returnedName, "#A2");
+			string nameWithNullParam = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("DummyAssembly.Convertable", nameWithNullParam, "#A3");
 		}
 
 		static string typeconResXInvalidMimeTypeAndType =
@@ -136,6 +169,102 @@ namespace MonoTests.System.Resources
   </resheader>
   <data name=""test"" type=""System.String"" mimetype=""application/xxxx"">
 	<value>42</value>
+  </data>
+</root>";
+
+		
+		static string missingSerializableFromMissingAssembly =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  <resheader name=""resmimetype"">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+    <value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""aname"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEZNaXNzaW5nQXNzZW1ibHksIFZlcnNpb249MS4wLjAuMCwgQ3Vs
+        dHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1udWxsBQEAAAAhRHVtbXlBc3NlbWJseS5NaXNzaW5n
+        U2VyaWFsaXphYmxlAgAAAAdzZXJuYW1lCHNlcnZhbHVlAQECAAAABgMAAAAFYW5hbWUGBAAAAAZhdmFs
+        dWUL
+</value>
+  </data>
+</root>";
+
+		static string anotherSerializableFromDummyAssembly =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+ 
+  <resheader name=""resmimetype"">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+    <value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""aname"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAEREdW1teUFzc2VtYmx5LCBWZXJzaW9uPTEuMC4wLjAsIEN1bHR1
+        cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAIUR1bW15QXNzZW1ibHkuQW5vdGhlclNl
+        cmlhbGl6YWJsZQIAAAAHc2VybmFtZQhzZXJ2YWx1ZQEBAgAAAAYDAAAABWFuYW1lBgQAAAAGYXZhbHVl
+        Cw==
+</value>
+  </data>
+</root>";
+
+		static string convertableResXWithoutAssemblyName =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <data name=""test"" type=""DummyAssembly.Convertable"">
+	<value>im a name	im a value</value>
+  </data>
+</root>";
+
+		static string thisAssemblyConvertableResXWithoutAssemblyName =
+	@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <data name=""test"" type=""MonoTests.System.Resources.ThisAssemblyConvertable"">
+	<value>im a name	im a value</value>
   </data>
 </root>";
 

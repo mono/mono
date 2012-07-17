@@ -49,7 +49,7 @@ namespace System.Resources
 		private string comment;
 		private Point pos;
 
-		private ResXDataNodeHandler handler;
+		internal ResXDataNodeHandler handler;
 
 
 		public string Comment {

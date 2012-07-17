@@ -186,9 +186,7 @@ System.Resources/HelperClasses_ITRS.cs
 System.Resources/HelperClasses_Resources.cs
 System.Resources/ResourcesTestHelper.cs
 System.Resources/ResXDataNodeAliasTests.cs
-System.Resources/ResXDataNodeAssemblyNameTests.cs
 System.Resources/ResXDataNodeByteArrayTests.cs
-System.Resources/ResXDataNodeFileRefBitmapTests.cs
 System.Resources/ResXDataNodeFileRefGetValueTests.cs
 System.Resources/ResXDataNodeFileRefGetValueTypeNameTests.cs
 System.Resources/ResXDataNodeSerialisedGetValueTypeNameTests.cs

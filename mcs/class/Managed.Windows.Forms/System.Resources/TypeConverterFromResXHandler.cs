@@ -44,9 +44,6 @@ namespace System.Resources {
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
 		public override object GetValue (ITypeResolutionService typeResolver)
 		{
-			/*if (typeString == String.Empty || typeString == null)
-				return null;*/
-
 			if (!String.IsNullOrEmpty(mime_type)
 			    && mime_type != ResXResourceWriter.ByteArraySerializedObjectMimeType)
 				return null;
@@ -64,9 +61,6 @@ namespace System.Resources {
 
 		public override object GetValue (AssemblyName[] assemblyNames)
 		{
-			/*if (typeString == String.Empty || typeString == null)
-				return null;*/
-
 			if (!String.IsNullOrEmpty(mime_type)
 			    && mime_type != ResXResourceWriter.ByteArraySerializedObjectMimeType)
 				return null;
@@ -84,9 +78,6 @@ namespace System.Resources {
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
-			/*if (typeString == String.Empty || typeString == null)
-				return String.Empty;*/
-
 			Type type = ResolveType (typeString, typeResolver);
 
 			if (type == null)
@@ -97,9 +88,6 @@ namespace System.Resources {
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
-			/*if (typeString == String.Empty || typeString == null)
-				return String.Empty;*/
-
 			Type type = ResolveType (typeString, assemblyNames);
 
 			if (type == null)
@@ -119,7 +107,6 @@ namespace System.Resources {
 
 		object ConvertData (TypeConverter c)
 		{
-			//FIXME: throw errors when converter not found?
 			if (mime_type == ResXResourceWriter.ByteArraySerializedObjectMimeType) {
 				if (c.CanConvertFrom (typeof (byte [])))
 					return c.ConvertFrom (Convert.FromBase64String (dataString));

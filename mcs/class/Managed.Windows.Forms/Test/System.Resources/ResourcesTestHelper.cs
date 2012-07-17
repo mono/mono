@@ -160,7 +160,6 @@ namespace MonoTests.System.Resources {
 			stream.Close ();
 		}
 
-
 		[TearDown]
 		protected virtual void TearDown ()
 		{
