@@ -82,6 +82,10 @@
 #   define _USING_POSIX4A_DRAFT10 1
 # endif
 
+static pthread_t main_pthread_self;
+static void *main_stack, *main_altstack;
+static int main_stack_size, main_altstack_size;
+
 # ifdef THREAD_LOCAL_ALLOC
 #   if !defined(USE_PTHREAD_SPECIFIC) && !defined(USE_COMPILER_TLS)
 #     include "private/specific.h"
