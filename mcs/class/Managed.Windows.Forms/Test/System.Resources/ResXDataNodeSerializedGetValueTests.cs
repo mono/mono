@@ -132,6 +132,41 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (node, "#A1");
 			object val = node.GetValue ((AssemblyName []) null);
 		}
+		
+		[Test]
+		public void InvalidMimeTypeFromReaderReturnsNull ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (serializedResXInvalidMimeType);
+			Assert.IsNotNull (node, "#A1");
+			object val = node.GetValue ((AssemblyName []) null);
+			Assert.IsNull (val, "#A2");
+		}
+
+		static string serializedResXInvalidMimeType =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" mimetype=""application/xxxx"">
+	<value>
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+</value>
+  </data>
+</root>";
 
 		static string serializedResXCorruped =
 @"<?xml version=""1.0"" encoding=""utf-8""?>

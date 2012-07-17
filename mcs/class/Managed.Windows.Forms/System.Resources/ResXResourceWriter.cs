@@ -246,10 +246,7 @@ namespace System.Resources
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (value == null)
-				throw new ArgumentNullException ("value");
-
-			if (!value.GetType ().IsSerializable)
+			if (value != null && !value.GetType ().IsSerializable)
 					throw new InvalidOperationException (String.Format ("The element '{0}' of type '{1}' is not serializable.", name, value.GetType ().Name));
 
 			if (written)
@@ -258,6 +255,13 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
+			if (value == null) {
+				// nulls written as ResXNullRef
+				//throw new ArgumentNullException ("value"); 
+				WriteString (name, "", typeof (ResXNullRef), comment); //FIXME: ive included comment here
+				return;
+			}
+			// FIXME: why no comments for any of the below? are there other code paths without comments?
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
 			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
 				string str = (string) converter.ConvertToInvariantString (value);

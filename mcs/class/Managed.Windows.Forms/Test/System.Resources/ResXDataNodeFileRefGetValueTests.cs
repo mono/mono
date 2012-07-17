@@ -36,6 +36,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace MonoTests.System.Resources {
 	[TestFixture]
 	public class ResXDataNodeFileRefGetValueTests : ResourcesTestHelper {
+		/*
 		[Test, ExpectedException (typeof (NotImplementedException))]
 		public void ITRSTouchedWhenNodeFromReader ()
 		{
@@ -49,7 +50,7 @@ namespace MonoTests.System.Resources {
 			// raises error if touched
 			Icon ico = (Icon) returnedNode.GetValue (new ExceptionalTypeResolutionService ());
 		}
-
+		*/
 		[Test]
 		public void ITRSNotUsedWhenNodeFromReader ()
 		{
@@ -90,7 +91,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (returnedNode, "#A1");
 			object obj = returnedNode.GetValue (assemblyNames);
 		}
-
+		/*
 		[Test, ExpectedException (typeof (NotImplementedException))]
 		public void ITRSTouchedWhenNodeCreatedNew ()
 		{
@@ -102,7 +103,7 @@ namespace MonoTests.System.Resources {
 			//raises exception if param touched
 			Object obj = node.GetValue (new ExceptionalTypeResolutionService ());
 		}
-
+		*/
 		[Test]
 		public void ITRSNotUsedWhenNodeCreatedNew ()
 		{

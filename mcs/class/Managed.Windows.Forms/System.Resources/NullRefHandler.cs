@@ -21,67 +21,47 @@
 //
 // Authors:
 //	Gary Barnett
-
-using System;
 using System.Reflection;
 using System.ComponentModel.Design;
-using System.ComponentModel;
-using System.IO;
 
 namespace System.Resources {
-	internal class FileRefHandler : ResXDataNodeHandler {
-		ResXFileRef resXFileRef; // same as that referenced in ResXDataNode
+	internal class NullRefHandler : ResXDataNodeHandler, IWritableHandler {
+		string dataString;
 
-		public FileRefHandler (ResXFileRef fileRef)
+		public NullRefHandler (string _dataString)
 		{
-			resXFileRef = fileRef;
+			dataString = _dataString;
 		}
 
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
 		public override object GetValue (ITypeResolutionService typeResolver)
 		{
-			return GetValue ();		
+			return null;
 		}
 
 		public override object GetValue (AssemblyName[] assemblyNames)
 		{
-			return GetValue ();
+			return null;
 		}
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
-			// although params ignored by GetValue. .NET resolves the type for GetValueTypeName
-			// FIXME: create test to check the resXFileRef.TypeName is returned if type not resolved
-			Type type = ResolveType (resXFileRef.TypeName, typeResolver);
-
-			if (type == null)
-				return resXFileRef.TypeName;
-			else
-				return type.AssemblyQualifiedName;
+			return typeof (object).AssemblyQualifiedName;
 		}
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
-			// although params ignored by GetValue. .NET resolves the type for GetValueTypeName
-			// FIXME: create test to check the resXFileRef.TypeName is returned if type not resolved
-			Type type = ResolveType (resXFileRef.TypeName, assemblyNames);
-
-			if (type == null)
-				return resXFileRef.TypeName;
-			else
-				return type.AssemblyQualifiedName;
+			return typeof (object).AssemblyQualifiedName;
+		}
+		#endregion		
+		#region IWritableHandler implementation
+		public string DataString {
+			get {
+				return dataString;
+			}
 		}
 		#endregion
 
-		private object GetValue ()
-		{
-			TypeConverter c = TypeDescriptor.GetConverter (typeof (ResXFileRef));
-			try {
-				return c.ConvertFromInvariantString (resXFileRef.ToString ());
-			} catch (Exception ex) {
-				throw new TypeLoadException ("Could not load object",ex); //FIXME: error message?
-			}
-		}
 
 	}
 }

@@ -6,6 +6,7 @@ System.Resources/ByteArrayFromResXHandler.cs
 System.Resources/ResXNullRef.cs
 System.Resources/ResXResourceReader.cs
 System.Resources/FileRefHandler.cs
+System.Resources/NullRefHandler.cs
 System.Resources/ResXResourceSet.cs
 System.Resources/InMemoryHandler.cs
 System.Resources/ResXResourceWriter.cs

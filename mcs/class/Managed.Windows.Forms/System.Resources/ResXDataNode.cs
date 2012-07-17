@@ -113,7 +113,7 @@ namespace System.Resources
 			this.name = name;
 			this.fileRef = fileRef;
 			pos = Point.Empty;
-			handler = new FileRefHandler (fileRef, null);
+			handler = new FileRefHandler (fileRef);
 		}
 
 		internal ResXDataNode (string name, object value, Point position)
@@ -147,30 +147,21 @@ namespace System.Resources
 			mime_type = mime_typeAtt;
 			type = typeAtt;
 
-			// handle ResXNullRef
-			if (!String.IsNullOrEmpty (typeAtt) 
-			    && typeAtt.StartsWith ("System.Resources.ResXNullRef, System.Windows.Forms")) {
-				handler = new InMemoryHandler (null);
-				return;
-			}
-
 			if (!String.IsNullOrEmpty (mime_typeAtt)) {
-				if (mime_typeAtt == ResXResourceWriter.BinSerializedObjectMimeType 
-				    || mime_typeAtt == ResXResourceWriter.SoapSerializedObjectMimeType) {
-					handler = new SerializedFromResXHandler (dataString, mime_typeAtt);
-				} else if (mime_typeAtt == ResXResourceWriter.ByteArraySerializedObjectMimeType) {
-					// FIXME: need test to see if with this mimetype and no type attrib gets written back without being loaded
+				if (!String.IsNullOrEmpty(typeAtt)) {
+					// FIXME: if empty too?
 					handler = new TypeConverterFromResXHandler (dataString, mime_typeAtt, typeAtt);
 				} else {
-					//FIXME: invalid mime types should be converted to null, but should they be written back as null?
-					handler = new InMemoryHandler (null);
+					handler = new SerializedFromResXHandler (dataString, mime_typeAtt);
 				}
-			} else if (!String.IsNullOrEmpty (typeAtt)) { //FIXME: OK to use hard coded type here?
-				if (typeAtt.StartsWith("System.Byte[], mscorlib")) { 
+			} else if (!String.IsNullOrEmpty (typeAtt)) { //FIXME: OK to use hard coded types here?
+				if (typeAtt.StartsWith ("System.Resources.ResXNullRef, System.Windows.Forms")) {
+					handler = new NullRefHandler (typeAtt);
+				} else if (typeAtt.StartsWith ("System.Byte[], mscorlib")) { 
 					handler = new ByteArrayFromResXHandler (dataString);
-				} else if (typeAtt.StartsWith("System.Resources.ResXFileRef, System.Windows.Forms")) {
-					ResXFileRef newFileRef = BuildFileRef (dataString);
-					handler = new FileRefHandler (newFileRef, basePath);
+				} else if (typeAtt.StartsWith ("System.Resources.ResXFileRef, System.Windows.Forms")) {
+					ResXFileRef newFileRef = BuildFileRef (dataString, basePath);
+					handler = new FileRefHandler (newFileRef);
 					this.fileRef = newFileRef;
 				} else {
 					handler = new TypeConverterFromResXHandler (dataString, mime_typeAtt, typeAtt);
@@ -179,9 +170,8 @@ namespace System.Resources
 				handler = new InMemoryHandler (dataString);
 			}
 
-			//FIXME: what exception should i throw?
 			if (handler == null)
-				throw new Exception("handler is null");
+				throw new Exception ("handler is null");
 		}
 
 		public Point GetNodePosition ()
@@ -209,7 +199,7 @@ namespace System.Resources
 			return handler.GetValue (typeResolver);
 		}
 		//FIXME: .net doesnt instantiate encoding at this stage
-		private ResXFileRef BuildFileRef (string dataString)
+		private ResXFileRef BuildFileRef (string dataString, string basePath)
 		{
 			ResXFileRef fr;
 
@@ -219,6 +209,9 @@ namespace System.Resources
 				throw new ArgumentException ("ResXFileRef cannot be generated");
 
 			string fileName = parts[0];
+			if (basePath != null) //FIXME: check for trailing separator?
+				fileName = Path.Combine (basePath, parts[0]);
+
 			string typeName = parts[1];
 
 			if (parts.Length == 3) {

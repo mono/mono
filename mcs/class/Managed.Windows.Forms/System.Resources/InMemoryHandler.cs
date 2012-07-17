@@ -46,15 +46,21 @@ namespace System.Resources {
 		{
 			return value;
 		}
-		//FIXME: what if value null??
+
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
-			return value.GetType ().AssemblyQualifiedName;
+			if (value == null)
+				return null;
+			else
+				return value.GetType ().AssemblyQualifiedName;
 		}
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
-			return value.GetType ().AssemblyQualifiedName;
+			if (value  == null)
+				return null;
+			else
+				return value.GetType ().AssemblyQualifiedName;
 		}
 		#endregion
 

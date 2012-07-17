@@ -83,6 +83,65 @@ namespace MonoTests.System.Resources
 			Icon ico = (Icon)returnedNode.GetValue (new ExceptionalTypeResolutionService ());
 		}
 
+		[Test]
+		public void InvalidMimeTypeAndTypeReturnedFromReader_ObjectIsNull ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (typeconResXInvalidMimeTypeAndType);
+			Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue ((AssemblyName []) null);
+			Assert.IsNull (obj, "#A2");
+		}
+
+		[Test, ExpectedException (typeof (TypeLoadException))]
+		public void InvalidTypeReturnedFromReader_Exceptions ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (typeconResXInvalidType);
+			Assert.IsNotNull (node, "#A1");
+			object obj = node.GetValue ((AssemblyName []) null);
+		}
+
+		static string typeconResXInvalidType =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" type=""A.type"">
+	<value>42</value>
+  </data>
+</root>";
+
+		static string typeconResXInvalidMimeTypeAndType =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" type=""A.type"" mimetype=""application/xxxx"">
+	<value>42</value>
+  </data>
+</root>";
+
 		#region initial
 
 		[Test]

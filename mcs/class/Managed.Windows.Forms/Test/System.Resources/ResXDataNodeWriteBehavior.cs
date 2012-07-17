@@ -89,6 +89,16 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
+		public void InvalidMimeTypeAndType_WriteBack ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (typeconResXInvalidMimeTypeAndType);
+			ResXDataNode returnedNode = GetNodeFromResXReader (node);
+
+			string type = returnedNode.GetValueTypeName ((AssemblyName[]) null);
+			Assert.AreEqual ("A.type", type, "#A1");
+		}
+
+		[Test]
 		public void BinTypeConverter_WriteBack ()
 		{
 			MyBinType mb = new MyBinType ("contents");
@@ -135,17 +145,17 @@ namespace MonoTests.System.Resources {
 
 			using (ResXResourceReader reader = new ResXResourceReader (sr)) {
 				reader.UseResXDataNodes = true;
-				reader.BasePath = "c:\\";
+				reader.BasePath = "basePath";
 				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
 				enumerator.MoveNext ();
 
 				ResXDataNode node = ((DictionaryEntry) enumerator.Current).Value as ResXDataNode;
 				Assert.IsNotNull (node, "#A1");
-				Assert.AreEqual ("c:\\file.name", node.FileRef.FileName, "#A2");
+				Assert.AreEqual (Path.Combine ("basePath","file.name"), node.FileRef.FileName, "#A2");
 				returnedNode = GetNodeFromResXReader (node);
 			}
 
-			Assert.AreEqual ("c:\\file.name", returnedNode.FileRef.FileName, "#A3");
+			Assert.AreEqual (Path.Combine ("basePath","file.name"), returnedNode.FileRef.FileName, "#A3");
 		}
 
 		[Test]
@@ -175,6 +185,26 @@ namespace MonoTests.System.Resources {
 			Assert.AreEqual ("testName", finalSer.name, "A6");
 		}
 
+		static string typeconResXInvalidMimeTypeAndType =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" type=""A.type"" mimetype=""application/xxxx"">
+	<value>42</value>
+  </data>
+</root>";
 
 		static string fileRefResX =
 @"<?xml version=""1.0"" encoding=""utf-8""?>

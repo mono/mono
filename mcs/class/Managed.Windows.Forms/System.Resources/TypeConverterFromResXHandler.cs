@@ -44,7 +44,11 @@ namespace System.Resources {
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
 		public override object GetValue (ITypeResolutionService typeResolver)
 		{
-			if (typeString == String.Empty || typeString == null)
+			/*if (typeString == String.Empty || typeString == null)
+				return null;*/
+
+			if (!String.IsNullOrEmpty(mime_type)
+			    && mime_type != ResXResourceWriter.ByteArraySerializedObjectMimeType)
 				return null;
 
 			Type type = ResolveType (typeString, typeResolver);
@@ -60,7 +64,11 @@ namespace System.Resources {
 
 		public override object GetValue (AssemblyName[] assemblyNames)
 		{
-			if (typeString == String.Empty || typeString == null)
+			/*if (typeString == String.Empty || typeString == null)
+				return null;*/
+
+			if (!String.IsNullOrEmpty(mime_type)
+			    && mime_type != ResXResourceWriter.ByteArraySerializedObjectMimeType)
 				return null;
 
 			Type type = ResolveType (typeString, assemblyNames);
@@ -76,9 +84,8 @@ namespace System.Resources {
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
-			//FIXME: need test to see what is returned if typeString empty
-			if (typeString == String.Empty || typeString == null)
-				return String.Empty;
+			/*if (typeString == String.Empty || typeString == null)
+				return String.Empty;*/
 
 			Type type = ResolveType (typeString, typeResolver);
 
@@ -90,9 +97,8 @@ namespace System.Resources {
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
-			//FIXME: need test to see what is returned if typeString empty
-			if (typeString == String.Empty || typeString == null)
-				return String.Empty;
+			/*if (typeString == String.Empty || typeString == null)
+				return String.Empty;*/
 
 			Type type = ResolveType (typeString, assemblyNames);
 
@@ -121,8 +127,10 @@ namespace System.Resources {
 				if (c.CanConvertFrom (typeof (string)))
 					return c.ConvertFromInvariantString (dataString);
 			}
-			// shouldnt get here
-			throw new Exception ("shouldnt see me -> mimetype invalid, this handler shouldnt have been used");
+			else
+				throw new Exception ("shouldnt get here, invalid mime type");
+
+			throw new TypeLoadException ("No converter for this type found");
 		}
 
 	}

@@ -182,6 +182,13 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
+		public void NullObjectGetValueTypeNameIsNull ()
+		{
+			ResXDataNode node = new ResXDataNode ("aname", (object) null);
+			Assert.IsNull (node.GetValueTypeName ((AssemblyName []) null), "#A1");
+		}
+
+		[Test]
 		public void NullObjectWrittenToResXOK ()
 		{
 			ResXDataNode node = new ResXDataNode ("aname", (object) null);
@@ -395,7 +402,7 @@ namespace MonoTests.System.Resources {
 			string resXFile = GetResXFileWithNode (node, "afilename.xxx");
 
 			using (ResXResourceReader rr = new ResXResourceReader (resXFile)) {
-				rr.BasePath = "c:\\";
+				rr.BasePath = "basePath";
 				rr.UseResXDataNodes = true;
 				IDictionaryEnumerator en = rr.GetEnumerator ();
 				en.MoveNext ();
@@ -403,7 +410,7 @@ namespace MonoTests.System.Resources {
 				ResXDataNode returnedNode = ((DictionaryEntry) en.Current).Value as ResXDataNode;
 
 				Assert.IsNotNull (node, "#A1");
-				Assert.AreEqual ("c:\\file.name", returnedNode.FileRef.FileName, "#A2");
+				Assert.AreEqual (Path.Combine ("basePath", "file.name"), returnedNode.FileRef.FileName, "#A2");
 			}
 		}
 

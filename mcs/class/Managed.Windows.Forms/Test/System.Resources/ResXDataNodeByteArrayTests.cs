@@ -45,7 +45,7 @@ namespace MonoTests.System.Resources {
 			object val = returnedNode.GetValue (new AlwaysReturnIntTypeResolutionService ());
 			Assert.IsInstanceOfType (typeof (byte[]), val, "#A2");
 		}
-
+		/*
 		[Test, ExpectedException (typeof (NotImplementedException))]
 		public void GetValueITRSIsTouchedWhenNodeReturnedFromReader ()
 		{
@@ -57,7 +57,7 @@ namespace MonoTests.System.Resources {
 			//would raise error if touched
 			object val = returnedNode.GetValue (new ExceptionalTypeResolutionService ());
 		}
-
+		*/
 		[Test]
 		public void GetValueITRSNotTouchedWhenNodeCreatedNew ()
 		{

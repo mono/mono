@@ -67,7 +67,10 @@ namespace System.Resources {
 			if (retrievedObject == null)
 				retrievedObject = DeserializeObject (typeResolver);
 
-			return retrievedObject.GetType ().AssemblyQualifiedName;
+			if (retrievedObject == null)
+				return null;
+			else
+				return retrievedObject.GetType ().AssemblyQualifiedName;
 		}
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
@@ -75,7 +78,10 @@ namespace System.Resources {
 			if (retrievedObject == null)
 				retrievedObject = DeserializeObject ((ITypeResolutionService) null);
 
-			return retrievedObject.GetType ().AssemblyQualifiedName;
+			if (retrievedObject == null)
+				return null;
+			else
+				return retrievedObject.GetType ().AssemblyQualifiedName;
 		}
 		#endregion
 
@@ -106,8 +112,8 @@ namespace System.Resources {
 				using (MemoryStream s = new MemoryStream (data)) {
 					return binF.Deserialize (s);
 				}
-			} else
-				throw new Exception ("shouldnt see me, invalid mime type found after handler created"); 
+			} else // invalid mime_type
+				return null; 
 		}
 
 		sealed class CustomBinder : SerializationBinder 

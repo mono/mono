@@ -79,6 +79,66 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual ((typeof (long)).AssemblyQualifiedName, returnedType, "#A1");
 		}
 
+		[Test]
+		public void InvalidMimeTypeReturnedFromReader_ReturnsStringIfCantResolveType ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (typeconResXInvalidMimeTypeAndType);
+			Assert.IsNotNull (node, "#A1");
+			string type = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual ("A.type", type, "#A2");
+		}
+
+		[Test]
+		public void InvalidMimeTypeReturnedFromReader_TriesToResolve ()
+		{
+			ResXDataNode node = GetNodeFromResXReader (typeconResXInvalidMimeType);
+			Assert.IsNotNull (node, "#A1");
+			string type = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual (typeof (string).AssemblyQualifiedName, type, "#A2");
+		}
+
+		static string typeconResXInvalidMimeTypeAndType =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" type=""A.type"" mimetype=""application/xxxx"">
+	<value>42</value>
+  </data>
+</root>";
+
+		static string typeconResXInvalidMimeType =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" type=""System.String"" mimetype=""application/xxxx"">
+	<value>42</value>
+  </data>
+</root>";
+
 		#region initial
 
 		[Test]
@@ -121,6 +181,9 @@ namespace MonoTests.System.Resources
 		}
 
 		#endregion
+		
+
+
 	}
 
 
