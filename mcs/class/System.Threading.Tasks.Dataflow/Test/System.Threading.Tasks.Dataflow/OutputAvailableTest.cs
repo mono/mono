@@ -153,7 +153,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			tokenSource.Cancel();
 
-			Assert.Throws<AggregateException>(() => task.Wait(100));
+			AssertEx.Throws<AggregateException>(() => task.Wait(100));
 			Assert.IsTrue(task.IsCanceled);
 		}
 	}
