@@ -263,7 +263,12 @@ namespace System
 
 			builder.Append (scheme);
 			// note: mailto and news use ':', not "://", as their delimiter
-			builder.Append (Uri.GetSchemeDelimiter (scheme));
+			if (UriParser.IsKnownScheme(scheme)) {
+				builder.Append (Uri.GetSchemeDelimiter (scheme));
+			}
+			else {
+				builder.Append (host.Length > 0 ? Uri.SchemeDelimiter : ":");
+			}
 
 			if (username != String.Empty) {
 				builder.Append (username);
@@ -280,7 +285,8 @@ namespace System
 
 			if (path != String.Empty &&
 			    builder [builder.Length - 1] != '/' &&
-			    path.Length > 0 && path [0] != '/')
+			    path.Length > 0 && path [0] != '/' &&
+				host.Length > 0)
 				builder.Append ('/');
 			builder.Append (path);
 			builder.Append (query);
