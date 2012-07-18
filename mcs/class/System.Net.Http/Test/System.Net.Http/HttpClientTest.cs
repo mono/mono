@@ -65,6 +65,24 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
+		class HttpClientHandlerMock : HttpClientHandler
+		{
+			public Func<HttpRequestMessage, Task<HttpResponseMessage>> OnSend;
+			public Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> OnSendFull;
+
+			protected override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+			{
+				if (OnSend != null)
+					return OnSend (request);
+
+				if (OnSendFull != null)
+					return OnSendFull (request, cancellationToken);
+
+				Assert.Fail ("Send");
+				return null;
+			}
+		}
+
 		const int WaitTimeout = 2500;
 
 		string port, TestHost, LocalServer;
@@ -714,6 +732,58 @@ namespace MonoTests.System.Net.Http
 				listener.Abort ();
 				listener.Close ();
 			}
+		}
+
+		[Test]
+		/*
+		 * Properties may only be modified before sending the first request.
+		 */
+		public void ModifyHandlerAfterFirstRequest ()
+		{
+			var chandler = new HttpClientHandler ();
+			chandler.AllowAutoRedirect = true;
+			var client = new HttpClient (chandler, true);
+
+			var listener = CreateListener (l => {
+				var response = l.Response;
+				response.StatusCode = 200;
+				response.OutputStream.WriteByte (55);
+			});
+
+			try {
+				client.GetStringAsync (LocalServer).Wait (WaitTimeout);
+				try {
+					chandler.AllowAutoRedirect = false;
+					Assert.Fail ("#1");
+				} catch (InvalidOperationException) {
+					;
+				}
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		/*
+		 * However, this policy is not enforced for custom handlers and there
+		 * is also no way a derived class could tell its HttpClientHandler parent
+		 * that it just sent a request.
+		 * 
+		 */
+		public void ModifyHandlerAfterFirstRequest_Mock ()
+		{
+			var ch = new HttpClientHandlerMock ();
+			ch.AllowAutoRedirect = true;
+
+			var client = new HttpClient (ch);
+
+			ch.OnSend = (l) => {
+				return Task.FromResult (new HttpResponseMessage ());
+			};
+
+			client.GetAsync ("http://xamarin.com").Wait (WaitTimeout);
+			ch.AllowAutoRedirect = false;
 		}
 
 		HttpListener CreateListener (Action<HttpListenerContext> contextAssert)
