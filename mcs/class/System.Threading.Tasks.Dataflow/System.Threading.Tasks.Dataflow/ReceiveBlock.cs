@@ -27,12 +27,11 @@ namespace System.Threading.Tasks.Dataflow {
 	/// to retrieve elements in a blocking way
 	/// </summary>
 	internal class ReceiveBlock<TOutput> : ITargetBlock<TOutput> {
-		readonly ManualResetEventSlim waitHandle =
-			new ManualResetEventSlim (false);
 		readonly TaskCompletionSource<TOutput> completion =
 			new TaskCompletionSource<TOutput> ();
 		IDisposable linkBridge;
-		volatile bool completed;
+		CancellationTokenRegistration cancellationRegistration;
+		Timer timeoutTimer;
 
 		public DataflowMessageStatus OfferMessage (
 			DataflowMessageHeader messageHeader, TOutput messageValue,
@@ -41,70 +40,84 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!messageHeader.IsValid)
 				return DataflowMessageStatus.Declined;
 
-			if (consumeToAccept) {
-				bool consummed;
-				if (!source.ReserveMessage (messageHeader, this))
-					return DataflowMessageStatus.NotAvailable;
-				messageValue = source.ConsumeMessage (messageHeader, this, out consummed);
-				if (!consummed)
-					return DataflowMessageStatus.NotAvailable;
-			}
+			if (completion.Task.Status != TaskStatus.WaitingForActivation)
+				return DataflowMessageStatus.DecliningPermanently;
 
-			ReceivedValue = messageValue;
-			completion.TrySetResult (messageValue);
-			Thread.MemoryBarrier ();
-			waitHandle.Set ();
+			lock (completion) {
+				if (completion.Task.Status != TaskStatus.WaitingForActivation)
+					return DataflowMessageStatus.DecliningPermanently;
 
-			// We do the unlinking here so that we don't get called twice
-			if (linkBridge != null) {
-				linkBridge.Dispose ();
-				linkBridge = null;
+				if (consumeToAccept) {
+					bool consummed;
+					if (!source.ReserveMessage (messageHeader, this))
+						return DataflowMessageStatus.NotAvailable;
+					messageValue = source.ConsumeMessage (messageHeader, this, out consummed);
+					if (!consummed)
+						return DataflowMessageStatus.NotAvailable;
+				}
+
+				completion.TrySetResult (messageValue);
 			}
+			CompletionSet ();
 
 			return DataflowMessageStatus.Accepted;
 		}
 
 		public TOutput WaitAndGet (IDisposable bridge, CancellationToken token, int timeout)
 		{
-			this.linkBridge = bridge;
-			Wait (token, timeout);
-			return ReceivedValue;
+			try {
+				return AsyncGet (bridge, token, timeout).Result;
+			} catch (AggregateException e) {
+				// resets the stack trace, but that shouldn't matter here
+				throw e.InnerException;
+			}
 		}
 
-		public Task<TOutput> AsyncGet (IDisposable bridge, CancellationToken token, long timeout)
+		public Task<TOutput> AsyncGet (IDisposable bridge, CancellationToken token, int timeout)
 		{
-			this.linkBridge = bridge;
-			token.Register (() => completion.TrySetCanceled ());
-			// TODO : take care of timeout through the TaskEx.Wait thing
+			linkBridge = bridge;
+			cancellationRegistration = token.Register (() =>
+			{
+				lock (completion) {
+					completion.TrySetCanceled ();
+				}
+				CompletionSet ();
+			});
+			timeoutTimer = new Timer (
+				_ =>
+				{
+					lock (completion) {
+						completion.TrySetException (new TimeoutException ());
+					}
+					CompletionSet ();
+				}, null, timeout,
+				Timeout.Infinite);
+
 			return completion.Task;
 		}
 
-		public void Wait (CancellationToken token, int timeout)
+		void CompletionSet ()
 		{
-			// Wait() throws correct cancellation exception by itself
-			if (!waitHandle.Wait (timeout, token))
-				throw new TimeoutException ();
+			if (linkBridge != null) {
+				linkBridge.Dispose ();
+				linkBridge = null;
+			}
 
-			if (completed)
-				throw new InvalidOperationException (
-					"No item could be received from the source.");
-		}
-
-		public TOutput ReceivedValue {
-			get;
-			private set;
+			cancellationRegistration.Dispose ();
+			timeoutTimer.Dispose ();
 		}
 
 		public Task Completion {
-			get {
-				return null;
-			}
+			get { throw new NotSupportedException (); }
 		}
 
 		public void Complete ()
 		{
-			completed = true;
-			waitHandle.Set ();
+			lock (completion) {
+				completion.TrySetException (new InvalidOperationException (
+					"No item could be received from the source."));
+			}
+			CompletionSet ();
 		}
 
 		public void Fault (Exception exception)

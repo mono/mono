@@ -220,7 +220,9 @@ namespace System.Threading.Tasks.Dataflow {
 			return ReceiveAsync (source, timeout, CancellationToken.None);
 		}
 
-		public static Task<TOutput> ReceiveAsync<TOutput> (this ISourceBlock<TOutput> source, TimeSpan timeout, CancellationToken cancellationToken)
+		public static Task<TOutput> ReceiveAsync<TOutput> (
+			this ISourceBlock<TOutput> source, TimeSpan timeout,
+			CancellationToken cancellationToken)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -231,10 +233,10 @@ namespace System.Threading.Tasks.Dataflow {
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			long tm = (long)timeout.TotalMilliseconds;
-			ReceiveBlock<TOutput> block = new ReceiveBlock<TOutput> ();
+			int timeoutMilliseconds = (int)timeout.TotalMilliseconds;
+			var block = new ReceiveBlock<TOutput> ();
 			var bridge = source.LinkTo (block);
-			return block.AsyncGet (bridge, cancellationToken, tm);
+			return block.AsyncGet (bridge, cancellationToken, timeoutMilliseconds);
 		}
 
 		public static bool TryReceive<TOutput> (this IReceivableSourceBlock<TOutput> source, out TOutput item)

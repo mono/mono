@@ -196,7 +196,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		}
 
 		[Test]
-		public void FaultConsume()
+		public void FaultConsume ()
 		{
 			var scheduler = new TestScheduler ();
 			var source =
@@ -218,7 +218,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		}
 
 		[Test]
-		public void ReserveFaultConsume()
+		public void ReserveFaultConsume ()
 		{
 			var scheduler = new TestScheduler ();
 			var source =
@@ -239,6 +239,53 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			int value;
 			Assert.IsTrue (target.RetryPostponed (out value));
+		}
+
+		[Test]
+		public void PostAfterTimeout ()
+		{
+			var scheduler = new TestScheduler ();
+			var block =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+
+			AssertEx.Throws<TimeoutException> (
+				() => block.Receive (TimeSpan.FromMilliseconds (100)));
+
+			block.Post (1);
+
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (block.TryReceive (out item));
+			Assert.AreEqual (1, item);
+		}
+
+		[Test]
+		public void PostAfterCancellation ()
+		{
+			var scheduler = new TestScheduler ();
+			var block =
+				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+
+			var tokenSource = new CancellationTokenSource ();
+
+			Task.Factory.StartNew (
+				() =>
+				{
+					Thread.Sleep (100);
+					tokenSource.Cancel ();
+				});
+
+			AssertEx.Throws<OperationCanceledException> (
+				() => block.Receive (tokenSource.Token));
+
+			block.Post (1);
+
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (block.TryReceive (out item));
+			Assert.AreEqual (1, item);
 		}
 	}
 
