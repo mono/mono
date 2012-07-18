@@ -44,7 +44,7 @@ namespace MonoTests.System.Resources {
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			object val = returnedNode.GetValue (new ReturnSerializableSubClassITRS ());
 			Assert.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A2");
 			Assert.IsInstanceOfType (typeof (serializable), val, "#A3");
 		}
@@ -57,7 +57,7 @@ namespace MonoTests.System.Resources {
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			object obj = returnedNode.GetValue ((AssemblyName[]) null);
+			object obj = returnedNode.GetValue ((AssemblyName []) null);
 		}
 
 		[Test, ExpectedException (typeof (TypeLoadException))]
@@ -81,7 +81,7 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node;
 			node = GetNodeFileRefToSerializable ("ser.bbb",true);
 
-			object val = node.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			object val = node.GetValue (new ReturnSerializableSubClassITRS ());
 			Assert.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A1");
 			Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
 		}
@@ -100,7 +100,7 @@ namespace MonoTests.System.Resources {
 		#region initial
 
 		[Test]
-		public void ResXFileRefNullAssemblyNamesOK ()
+		public void NullAssemblyNamesOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
@@ -110,7 +110,7 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void ResXFileRefNullITypeResolutionServiceOK ()
+		public void NullITRSOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
@@ -120,17 +120,17 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void ResXFileRefWrongITypeResolutionServiceOK ()
+		public void WrongITRSOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
-			Object ico = node.GetValue (new DummyTypeResolutionService ());
+			Object ico = node.GetValue (new DummyITRS ());
 			Assert.IsNotNull (ico, "#A1");
 			Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
 		}
 		
 		[Test]
-		public void ResXFileRefWrongAssemblyNamesOK ()
+		public void WrongAssemblyNamesOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 			AssemblyName [] ass = new AssemblyName [1];

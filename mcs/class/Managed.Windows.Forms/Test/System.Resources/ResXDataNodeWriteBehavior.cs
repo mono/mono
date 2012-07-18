@@ -39,9 +39,6 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void TypeConverterObjectNotLoaded ()
 		{
-			string aName = "System.Windows.Forms_test_net_2_0, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
-			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
-
 			ResXDataNode node = GetNodeFromResXReader (convertableResXWithoutAssemblyName);
 			Assert.IsNotNull (node, "#A1");
 			// would cause error if object loaded
@@ -74,7 +71,7 @@ namespace MonoTests.System.Resources {
 			node.Comment = "acomment";
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
 			Assert.IsNotNull (returnedNode, "#A1");
-			Assert.IsNull (returnedNode.GetValue ((AssemblyName[]) null), "#A2");
+			Assert.IsNull (returnedNode.GetValue ((AssemblyName []) null), "#A2");
 			Assert.AreEqual ("acomment", returnedNode.Comment,"#A3");
 			ResXDataNode finalNode = GetNodeFromResXReader (returnedNode);
 			Assert.IsNotNull (finalNode, "#A4");
@@ -90,7 +87,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (node, "#A1");
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
 			Assert.IsNotNull (returnedNode, "#A2");
-			object obj = returnedNode.GetValue ((AssemblyName[]) null);
+			object obj = returnedNode.GetValue ((AssemblyName []) null);
 			Assert.IsNull (obj, "#A3");
 		}
 
@@ -101,7 +98,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (node, "#A1");
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
 			Assert.IsNotNull (returnedNode, "#A2");
-			string type = returnedNode.GetValueTypeName ((AssemblyName[]) null);
+			string type = returnedNode.GetValueTypeName ((AssemblyName []) null);
 			Assert.AreEqual ("A.type", type, "#A3");
 		}
 
@@ -205,6 +202,55 @@ namespace MonoTests.System.Resources {
 			Assert.IsInstanceOfType (typeof (serializable), finalObj, "#A7");
 			serializable finalSer = (serializable) finalObj;
 			Assert.AreEqual ("testName", finalSer.name, "A7");
+		}
+
+		[Test]
+		public void ChangesToReturnedByteArrayNotLaterWrittenBack ()
+		{
+			ResXDataNode originalNode, returnedNode, finalNode;
+			originalNode = GetNodeEmdeddedBytes1To10 ();
+			returnedNode = GetNodeFromResXReader (originalNode);
+
+			Assert.IsNotNull (returnedNode, "#A1");
+
+			object val = returnedNode.GetValue ((ITypeResolutionService) null);
+			Assert.IsInstanceOfType (typeof (byte []), val, "#A2");
+
+			byte[] newBytes = (byte[]) val;
+			Assert.AreEqual (1, newBytes [0], "A3");
+			newBytes [0] = 99;
+
+			finalNode = GetNodeFromResXReader (returnedNode);
+			
+			Assert.IsNotNull (finalNode, "#A4");
+
+			object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
+			Assert.IsInstanceOfType (typeof (byte []), finalVal, "#A5");
+			byte [] finalBytes = (byte []) finalVal;
+			// would be 99 if written back
+			Assert.AreEqual (1,finalBytes [0],"A6");
+		}
+
+		[Test]
+		public void OriginalTypeUsedSerializableWhenWritingBackToResX ()
+		{
+			// check although calls subsequent to an ITRS being supplied to GetValue return that resolved type
+			// when the node is written back using ResXResourceWriter it uses the original type
+			ResXDataNode originalNode, returnedNode, finalNode;
+
+			originalNode = GetNodeEmdeddedSerializable ();
+			returnedNode = GetNodeFromResXReader (originalNode);
+			
+			Assert.IsNotNull (returnedNode, "#A1");
+			object val = returnedNode.GetValue (new ReturnSerializableSubClassITRS ());
+			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
+
+			finalNode = GetNodeFromResXReader (returnedNode);
+			Assert.IsNotNull (finalNode, "#A3");
+
+			object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
+			Assert.IsNotInstanceOfType (typeof (serializableSubClass), finalVal, "#A4");
+			Assert.IsInstanceOfType (typeof (serializable), finalVal, "#A5");
 		}
 
 		static string typeconResXInvalidMimeTypeAndType =

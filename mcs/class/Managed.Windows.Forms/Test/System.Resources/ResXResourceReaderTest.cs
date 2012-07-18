@@ -1910,7 +1910,7 @@ namespace MonoTests.System.Resources {
 			}
 
 			using (StringReader sr = new StringReader (sb.ToString ())) {
-				ResXResourceReader rr = new ResXResourceReader (sr, new AlwaysReturnIntTypeResolutionService ());
+				ResXResourceReader rr = new ResXResourceReader (sr, new ReturnIntITRS ());
 	 			IDictionaryEnumerator en = rr.GetEnumerator ();
 				en.MoveNext ();
 
@@ -1936,7 +1936,7 @@ namespace MonoTests.System.Resources {
 			}
 
 			using (StringReader sr = new StringReader (sb.ToString ())) {
-				ResXResourceReader rr = new ResXResourceReader (sr, new AlwaysReturnSerializableSubClassTypeResolutionService ());
+				ResXResourceReader rr = new ResXResourceReader (sr, new ReturnSerializableSubClassITRS ());
 	 			
 				IDictionaryEnumerator en = rr.GetEnumerator ();
 				en.MoveNext ();

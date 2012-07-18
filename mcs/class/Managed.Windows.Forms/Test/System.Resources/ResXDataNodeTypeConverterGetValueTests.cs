@@ -42,7 +42,7 @@ namespace MonoTests.System.Resources
 			ResXDataNode node;
 			node = new ResXDataNode ("along", 34L);
 
-			object obj = node.GetValue (new AlwaysReturnIntTypeResolutionService ());
+			object obj = node.GetValue (new ReturnIntITRS ());
 			Assert.IsInstanceOfType (typeof (long), obj, "#A1");
 		}
 
@@ -55,7 +55,7 @@ namespace MonoTests.System.Resources
 
 			Assert.IsNotNull (returnedNode, "#A1");
 
-			object newVal = returnedNode.GetValue (new AlwaysReturnIntTypeResolutionService ());
+			object newVal = returnedNode.GetValue (new ReturnIntITRS ());
 			Assert.AreEqual (typeof (int).AssemblyQualifiedName, newVal.GetType ().AssemblyQualifiedName, "#A2");
 
 			object origVal = returnedNode.GetValue ((ITypeResolutionService) null);
@@ -281,7 +281,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		public void NullITypeResolutionServiceOK ()
+		public void NullITRSOK ()
 		{
 			ResXDataNode node = GetNodeEmdeddedIcon ();
 
@@ -291,11 +291,11 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		public void WrongITypeResolutionServiceOK ()
+		public void WrongITRSOK ()
 		{
 			ResXDataNode node = GetNodeEmdeddedIcon ();
 
-			Object ico = node.GetValue (new DummyTypeResolutionService ());
+			Object ico = node.GetValue (new DummyITRS ());
 			Assert.IsNotNull (ico, "#A1");
 			Assert.IsInstanceOfType (typeof (Icon), ico, "#A2");
 		}

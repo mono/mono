@@ -44,7 +44,7 @@ namespace MonoTests.System.Resources
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			string returnedType = returnedNode.GetValueTypeName (new ReturnIntITRS ());
 			Assert.AreEqual ((typeof (Int32)).AssemblyQualifiedName, returnedType, "#A2");
 		}
 
@@ -56,7 +56,7 @@ namespace MonoTests.System.Resources
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			string newType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			string newType = returnedNode.GetValueTypeName (new ReturnIntITRS ());
 			Assert.AreEqual (typeof (int).AssemblyQualifiedName, newType, "#A2");
 			string origType = returnedNode.GetValueTypeName ((ITypeResolutionService) null);
 			Assert.AreEqual (typeof (long).AssemblyQualifiedName, origType, "#A3");				
@@ -68,7 +68,7 @@ namespace MonoTests.System.Resources
 			ResXDataNode node;
 			node = new ResXDataNode ("along", 34L);
 
-			string returnedType = node.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			string returnedType = node.GetValueTypeName (new ReturnIntITRS ());
 			Assert.AreEqual ((typeof (long)).AssemblyQualifiedName, returnedType, "#A1");
 		}
 
@@ -268,10 +268,11 @@ namespace MonoTests.System.Resources
   </data>
 </root>";
 
+
 		#region initial
 
 		[Test]
-		public void EmbeddedNullITypeResolutionServiceOK ()
+		public void NullITRSServiceOK ()
 		{
 			ResXDataNode node = GetNodeEmdeddedIcon ();
 
@@ -280,16 +281,16 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		public void EmbeddedWrongITypeResolutionServiceOK ()
+		public void WrongITRSOK ()
 		{
 			ResXDataNode node = GetNodeEmdeddedIcon ();
 
-			string name = node.GetValueTypeName (new DummyTypeResolutionService ());
+			string name = node.GetValueTypeName (new DummyITRS ());
 			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
 		}
 
 		[Test]
-		public void EmbeddedWrongAssemblyNamesOK ()
+		public void WrongAssemblyNamesOK ()
 		{
 			ResXDataNode node = GetNodeEmdeddedIcon ();
 			AssemblyName [] ass = new AssemblyName [1];
@@ -301,7 +302,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		public void EmbeddedNullAssemblyNamesOK ()
+		public void NullAssemblyNamesOK ()
 		{
 			ResXDataNode node = GetNodeEmdeddedIcon ();
 

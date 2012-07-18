@@ -27,7 +27,7 @@ using System.ComponentModel.Design;
 using System.Reflection;
 
 namespace MonoTests.System.Resources {
-	public class DummyTypeResolutionService : ITypeResolutionService {
+	public class DummyITRS : ITypeResolutionService {
 		public Assembly GetAssembly (AssemblyName name, bool throwOnError)
 		{
 			return null;
@@ -64,7 +64,7 @@ namespace MonoTests.System.Resources {
 		}
 	}
 
-	public class AlwaysReturnSerializableSubClassTypeResolutionService : ITypeResolutionService {
+	public class ReturnSerializableSubClassITRS : ITypeResolutionService {
 		public Assembly GetAssembly (AssemblyName name, bool throwOnError)
 		{
 			throw new NotImplementedException ("I was accessed");
@@ -102,7 +102,7 @@ namespace MonoTests.System.Resources {
 
 	}
 
-	public class AlwaysReturnIntTypeResolutionService : ITypeResolutionService {
+	public class ReturnIntITRS : ITypeResolutionService {
 		public Assembly GetAssembly (AssemblyName name, bool throwOnError)
 		{
 			throw new NotImplementedException ("I was accessed");
@@ -139,7 +139,7 @@ namespace MonoTests.System.Resources {
 		}
 	}
 
-	public class ExceptionalTypeResolutionService : ITypeResolutionService {
+	public class ExceptionalITRS : ITypeResolutionService {
 		public Assembly GetAssembly (AssemblyName name, bool throwOnError)
 		{
 			throw new NotImplementedException ("I was accessed");

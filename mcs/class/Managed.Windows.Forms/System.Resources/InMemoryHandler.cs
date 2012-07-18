@@ -42,7 +42,7 @@ namespace System.Resources {
 			return value;
 		}
 
-		public override object GetValue (AssemblyName[] assemblyNames)
+		public override object GetValue (AssemblyName [] assemblyNames)
 		{
 			return value;
 		}
@@ -55,7 +55,7 @@ namespace System.Resources {
 				return value.GetType ().AssemblyQualifiedName;
 		}
 
-		public override string GetValueTypeName (AssemblyName[] assemblyNames)
+		public override string GetValueTypeName (AssemblyName [] assemblyNames)
 		{
 			if (value  == null)
 				return null;

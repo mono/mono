@@ -182,7 +182,7 @@ namespace MonoTests.System.Resources
 			try {
 				_converter.ConvertFrom (fileRef);
 				Assert.Fail ("#A1");
-			} catch (FileNotFoundException ex) { //FIXME: GB: surely this should be Exception ex
+			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.FileName, "#A4");

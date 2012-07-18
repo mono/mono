@@ -44,7 +44,7 @@ namespace MonoTests.System.Resources {
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string returnedType = returnedNode.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, returnedType, "#A2");
 		}
 
@@ -61,7 +61,7 @@ namespace MonoTests.System.Resources {
 			string defaultType = returnedNode.GetValueTypeName ((ITypeResolutionService) null);
 			Assert.AreEqual ((typeof (serializable)).AssemblyQualifiedName, defaultType, "#A2");
 
-			string newType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string newType = returnedNode.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreNotEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, newType, "#A3");
 			Assert.AreEqual ((typeof (serializable)).AssemblyQualifiedName, newType, "#A4");
 		}
@@ -72,7 +72,7 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node;
 			node = GetNodeEmdeddedSerializable ();
 
-			string returnedType = node.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string returnedType = node.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreEqual ((typeof (serializable)).AssemblyQualifiedName, returnedType, "#A1");
 		}
 
@@ -91,7 +91,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A3");
 
 			//get value type passing different params
-			string newType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string newType = returnedNode.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreNotEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, newType, "#A4");
 			Assert.AreEqual ((typeof (serializable)).AssemblyQualifiedName, newType, "#A5");
 		}
@@ -103,7 +103,7 @@ namespace MonoTests.System.Resources {
 
 			Assert.IsNotNull (node, "#A1");
 			// hard coded assembly name value refers to that generated under 2.0 prefix, so use compatible available class
-			string name = node.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string name = node.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreEqual (typeof (serializableSubClass).AssemblyQualifiedName, name, "#A2");
 		}
 

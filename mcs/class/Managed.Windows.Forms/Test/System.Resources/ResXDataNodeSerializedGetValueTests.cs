@@ -50,7 +50,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsInstanceOfType (typeof (serializable), defaultVal, "#A2");
 			Assert.IsNotInstanceOfType (typeof (serializableSubClass), defaultVal, "#A3");
 
-			object newVal = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			object newVal = returnedNode.GetValue (new ReturnSerializableSubClassITRS ());
 			Assert.IsNotInstanceOfType (typeof (serializableSubClass), newVal, "#A4");
 			Assert.IsInstanceOfType (typeof (serializable), newVal, "#A5");
 		}
@@ -64,30 +64,8 @@ namespace MonoTests.System.Resources {
 
 			Assert.IsNotNull (returnedNode, "#A1");
 
-			object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			object val = returnedNode.GetValue (new ReturnSerializableSubClassITRS ());
 			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
-		}
-
-		[Test]
-		public void OriginalTypeUsedWhenWritingBackToResX ()
-		{
-			// check although calls subsequent to an ITRS being supplied to GetValue return that resolved type
-			// when the node is written back using ResXResourceWriter it uses the original type
-			ResXDataNode originalNode, returnedNode, finalNode;
-
-			originalNode = GetNodeEmdeddedSerializable ();
-			returnedNode = GetNodeFromResXReader (originalNode);
-			
-			Assert.IsNotNull (returnedNode, "#A1");
-			object val = returnedNode.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
-			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A2");
-
-			finalNode = GetNodeFromResXReader (returnedNode);
-			Assert.IsNotNull (finalNode, "#A3");
-
-			object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), finalVal, "#A4");
-			Assert.IsInstanceOfType (typeof (serializable), finalVal, "#A5");
 		}
 
 		[Test]
@@ -102,7 +80,7 @@ namespace MonoTests.System.Resources {
 			Assert.IsNotNull (returnedNode, "#A1");
 
 			//get value type passing params
-			string newType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string newType = returnedNode.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, newType, "#A2");
 			Assert.AreNotEqual ((typeof (serializable)).AssemblyQualifiedName, newType, "#A3");
 
@@ -120,7 +98,7 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node = GetNodeEmdeddedSerializable ();
 
 			//would raise exception if param used
-			Object obj = node.GetValue (new ExceptionalTypeResolutionService ());
+			Object obj = node.GetValue (new ExceptionalITRS ());
 			Assert.IsInstanceOfType (typeof (serializable), obj, "#A1");
 		}
 
@@ -147,7 +125,7 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node = GetNodeFromResXReader (serializedResXSOAP);
 			Assert.IsNotNull (node, "#A1");
 			// hard coded assembly name value refers to that generated under 2.0 prefix, so use compatible available class
-			object val = node.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			object val = node.GetValue (new ReturnSerializableSubClassITRS ());
 			Assert.AreEqual ("name=aname;value=avalue", val.ToString (), "#A2");
 		}
 
@@ -157,17 +135,16 @@ namespace MonoTests.System.Resources {
 			// DummyAssembly must be in the same directory as current assembly to work correctly
 			ResXDataNode node = GetNodeFromResXReader (anotherSerializableFromDummyAssembly);
 			Assert.IsNotNull (node, "#A1");
-			object value = node.GetValue ((AssemblyName[]) null);
+			object value = node.GetValue ((AssemblyName []) null);
 			Assert.AreEqual ("DummyAssembly.AnotherSerializable, DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", value.GetType ().AssemblyQualifiedName, "#A2");
 		}
 
 		[Test, ExpectedException (typeof (ArgumentException))]
 		public void ErrorWhenAssemblyMissing ()
 		{
-			//FIXME: depends on net_2_0 assembly being available
 			ResXDataNode node = GetNodeFromResXReader (missingSerializableFromMissingAssembly);
 			Assert.IsNotNull (node, "#A1");
-			object val = node.GetValue ((AssemblyName[]) null);
+			object val = node.GetValue ((AssemblyName []) null);
 		}
 
 		[Test]

@@ -43,20 +43,20 @@ namespace System.Resources {
 			return Convert.FromBase64String (dataString);
 		}
 
-		public override object GetValue (AssemblyName[] assemblyNames)
+		public override object GetValue (AssemblyName [] assemblyNames)
 		{
 			return Convert.FromBase64String (dataString);
 		}
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
-			Type type = ResolveType (typeof (byte[]).AssemblyQualifiedName, typeResolver);
+			Type type = ResolveType (typeof (byte []).AssemblyQualifiedName, typeResolver);
 			return type.AssemblyQualifiedName;
 		}
 
-		public override string GetValueTypeName (AssemblyName[] assemblyNames)
+		public override string GetValueTypeName (AssemblyName [] assemblyNames)
 		{
-			return typeof (byte[]).AssemblyQualifiedName;
+			return typeof (byte []).AssemblyQualifiedName;
 		}
 		#endregion		
 

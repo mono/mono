@@ -39,7 +39,7 @@ namespace System.Resources {
 			return null;
 		}
 
-		public override object GetValue (AssemblyName[] assemblyNames)
+		public override object GetValue (AssemblyName [] assemblyNames)
 		{
 			return null;
 		}
@@ -49,7 +49,7 @@ namespace System.Resources {
 			return typeof (object).AssemblyQualifiedName;
 		}
 
-		public override string GetValueTypeName (AssemblyName[] assemblyNames)
+		public override string GetValueTypeName (AssemblyName [] assemblyNames)
 		{
 			return typeof (object).AssemblyQualifiedName;
 		}

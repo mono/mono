@@ -288,7 +288,7 @@ namespace System.Resources
 			string comment = null;
 			string value = GetDataValue (meta, out comment);
 
-			ResXDataNode node = new ResXDataNode (name, mime_type, type_name, value, comment, pos, BasePath, meta);
+			ResXDataNode node = new ResXDataNode (name, mime_type, type_name, value, comment, pos, BasePath);
 
 			if (useResXDataNodes) {
 				hashtable [name] = node;

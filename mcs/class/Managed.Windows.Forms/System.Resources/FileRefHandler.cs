@@ -43,7 +43,7 @@ namespace System.Resources {
 			return GetValue ();		
 		}
 
-		public override object GetValue (AssemblyName[] assemblyNames)
+		public override object GetValue (AssemblyName [] assemblyNames)
 		{
 			return GetValue ();
 		}
@@ -59,7 +59,7 @@ namespace System.Resources {
 				return type.AssemblyQualifiedName;
 		}
 
-		public override string GetValueTypeName (AssemblyName[] assemblyNames)
+		public override string GetValueTypeName (AssemblyName [] assemblyNames)
 		{
 			Type type = ResolveType (resXFileRef.TypeName, assemblyNames);
 

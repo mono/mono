@@ -41,12 +41,6 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Assembly\Locale.cs" />
-    <Compile Include="System.Resources\ResXDataNode.cs" />
-    <Compile Include="System.Resources\ResXFileRef.cs" />
-    <Compile Include="System.Resources\ResXNullRef.cs" />
-    <Compile Include="System.Resources\ResXResourceReader.cs" />
-    <Compile Include="System.Resources\ResXResourceSet.cs" />
-    <Compile Include="System.Resources\ResXResourceWriter.cs" />
     <Compile Include="System.Windows.Forms.Design\ComponentEditorForm.cs" />
     <Compile Include="System.Windows.Forms.Design\ComponentEditorPage.cs" />
     <Compile Include="System.Windows.Forms.Design\EventsTab.cs" />
@@ -939,13 +933,20 @@
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\ConfirmCheck.cs" />
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\Generic.cs" />
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\Prompt.cs" />
-    <Compile Include="System.Resources\ResXDataNodeHandler.cs" />
-    <Compile Include="System.Resources\InMemoryHandler.cs" />
-    <Compile Include="System.Resources\FileRefHandler.cs" />
     <Compile Include="System.Resources\ByteArrayFromResXHandler.cs" />
-    <Compile Include="System.Resources\TypeConverterFromResXHandler.cs" />
-    <Compile Include="System.Resources\SerializedFromResXHandler.cs" />
+    <Compile Include="System.Resources\FileRefHandler.cs" />
+    <Compile Include="System.Resources\InMemoryHandler.cs" />
     <Compile Include="System.Resources\NoLoadNodeHandler.cs" />
+    <Compile Include="System.Resources\NullRefHandler.cs" />
+    <Compile Include="System.Resources\ResXDataNode.cs" />
+    <Compile Include="System.Resources\ResXDataNodeHandler.cs" />
+    <Compile Include="System.Resources\ResXFileRef.cs" />
+    <Compile Include="System.Resources\ResXNullRef.cs" />
+    <Compile Include="System.Resources\ResXResourceReader.cs" />
+    <Compile Include="System.Resources\ResXResourceSet.cs" />
+    <Compile Include="System.Resources\ResXResourceWriter.cs" />
+    <Compile Include="System.Resources\SerializedFromResXHandler.cs" />
+    <Compile Include="System.Resources\TypeConverterFromResXHandler.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -976,6 +977,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="System.Resources\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\SplitterNS.cur">

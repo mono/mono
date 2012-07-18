@@ -39,7 +39,7 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode node = GetNodeFromResXReader (convertableResX);
 			Assert.IsNotNull (node, "#A1");
-			object obj = node.GetValue ((AssemblyName[]) null);
+			object obj = node.GetValue ((AssemblyName []) null);
 		}
 
 		[Test, ExpectedException (typeof (TypeLoadException))]

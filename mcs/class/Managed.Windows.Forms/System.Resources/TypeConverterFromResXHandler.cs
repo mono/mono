@@ -86,7 +86,7 @@ namespace System.Resources {
 				return type.AssemblyQualifiedName;
 		}
 
-		public override string GetValueTypeName (AssemblyName[] assemblyNames)
+		public override string GetValueTypeName (AssemblyName [] assemblyNames)
 		{
 			Type type = ResolveType (typeString, assemblyNames);
 

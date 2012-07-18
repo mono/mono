@@ -138,7 +138,7 @@ namespace System.Resources
 
 		internal ResXDataNode (string nameAtt, string mime_typeAtt, string typeAtt, 
 		                       string dataString, string commentString, Point position, 
-		                       string basePath, bool IsMeta) // not using IsMeta
+		                       string basePath)
 		{
 
 			name = nameAtt;
@@ -149,7 +149,6 @@ namespace System.Resources
 
 			if (!String.IsNullOrEmpty (mime_typeAtt)) {
 				if (!String.IsNullOrEmpty(typeAtt)) {
-					// FIXME: if empty too?
 					handler = new TypeConverterFromResXHandler (dataString, mime_typeAtt, typeAtt);
 				} else {
 					handler = new SerializedFromResXHandler (dataString, mime_typeAtt);
@@ -209,7 +208,7 @@ namespace System.Resources
 				throw new ArgumentException ("ResXFileRef cannot be generated");
 
 			string fileName = parts[0];
-			if (basePath != null) //FIXME: check for trailing separator?
+			if (basePath != null) 
 				fileName = Path.Combine (basePath, parts[0]);
 
 			string typeName = parts[1];
@@ -223,7 +222,6 @@ namespace System.Resources
 		}
 
 		#region ISerializable Members
-		//FIXME: GB: no data serialized, is this right?
 		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			si.AddValue ("Name", this.Name);

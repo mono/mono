@@ -159,7 +159,7 @@ namespace MonoTests.System.Resources {
 				ResXDataNode node = ((DictionaryEntry)en.Current).Value as ResXDataNode;
 				if (node == null)
 					break;
-				serializable o = node.GetValue ((AssemblyName[]) null) as serializable;
+				serializable o = node.GetValue ((AssemblyName []) null) as serializable;
 				if (o != null) {
 					found = true;
 					Assert.AreEqual (ser, o, "#A1");
@@ -282,7 +282,7 @@ namespace MonoTests.System.Resources {
 			
 			string resXFile = GetResXFileWithNode (dn,"resx.resx");
 
-			ResXResourceReader rr = new ResXResourceReader (resXFile, new AlwaysReturnIntTypeResolutionService());
+			ResXResourceReader rr = new ResXResourceReader (resXFile, new ReturnIntITRS ());
 			rr.UseResXDataNodes = true;
 			IDictionaryEnumerator en = rr.GetEnumerator ();
 			en.MoveNext ();
@@ -307,7 +307,7 @@ namespace MonoTests.System.Resources {
 			
 			string resXFile = GetResXFileWithNode (dn,"resx.resx");
 
-			ResXResourceReader rr = new ResXResourceReader (resXFile, new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			ResXResourceReader rr = new ResXResourceReader (resXFile, new ReturnSerializableSubClassITRS ());
 			rr.UseResXDataNodes = true;
 			IDictionaryEnumerator en = rr.GetEnumerator ();
 			en.MoveNext ();

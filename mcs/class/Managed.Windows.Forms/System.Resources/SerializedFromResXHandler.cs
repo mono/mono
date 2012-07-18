@@ -51,7 +51,7 @@ namespace System.Resources {
 			return DeserializeObject (typeResolver);
 		}
 
-		public override object GetValue (AssemblyName[] assemblyNames)
+		public override object GetValue (AssemblyName [] assemblyNames)
 		{
 			return DeserializeObject ((ITypeResolutionService) null);
 		}
@@ -61,7 +61,7 @@ namespace System.Resources {
 			return InternalGetValueType (typeResolver);
 		}
 
-		public override string GetValueTypeName (AssemblyName[] assemblyNames)
+		public override string GetValueTypeName (AssemblyName [] assemblyNames)
 		{
 			return InternalGetValueType (null);
 		}
@@ -105,7 +105,7 @@ namespace System.Resources {
 						return soapF.Deserialize (s);
 					}
 				} else if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
-					BinaryFormatter binF = new BinaryFormatter();
+					BinaryFormatter binF = new BinaryFormatter ();
 					if (binder == null)
 						binder = new CustomBinder (typeResolver);
 					binF.Binder = binder;

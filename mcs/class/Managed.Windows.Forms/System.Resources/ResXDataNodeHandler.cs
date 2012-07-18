@@ -38,16 +38,16 @@ namespace System.Resources {
 
 		public abstract object GetValue (ITypeResolutionService typeResolver);
 		
-		public abstract object GetValue (AssemblyName[] assemblyNames);
+		public abstract object GetValue (AssemblyName [] assemblyNames);
 
 		public abstract string GetValueTypeName (ITypeResolutionService typeResolver);
 
-		public abstract string GetValueTypeName (AssemblyName[] assemblyNames);
+		public abstract string GetValueTypeName (AssemblyName [] assemblyNames);
 
 		//override by any inheritor that doesnt want to send the default output of GetValue to be written to ResXFile
 		public virtual object GetValueForResX ()
 		{
-			return GetValue ((AssemblyName[]) null);
+			return GetValue ((AssemblyName []) null);
 		}
 
 		protected Type ResolveType (string typeString) 
@@ -56,7 +56,7 @@ namespace System.Resources {
 			return Type.GetType (typeString);
 		}
 
-		protected Type ResolveType (string typeString, AssemblyName[] assemblyNames) 
+		protected Type ResolveType (string typeString, AssemblyName [] assemblyNames) 
 		{
 			Type result = null;
 

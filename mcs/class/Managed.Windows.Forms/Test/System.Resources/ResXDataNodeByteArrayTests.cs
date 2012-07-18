@@ -42,7 +42,7 @@ namespace MonoTests.System.Resources {
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			object val = returnedNode.GetValue (new AlwaysReturnIntTypeResolutionService ());
+			object val = returnedNode.GetValue (new ReturnIntITRS ());
 			Assert.IsInstanceOfType (typeof (byte[]), val, "#A2");
 		}
 
@@ -53,7 +53,7 @@ namespace MonoTests.System.Resources {
 			node = GetNodeEmdeddedBytes1To10 ();
 
 			//would raise exception if param used
-			Object obj = node.GetValue (new ExceptionalTypeResolutionService ());
+			Object obj = node.GetValue (new ExceptionalITRS ());
 			Assert.IsInstanceOfType (typeof (byte[]), obj, "#A1");
 		}
 
@@ -65,7 +65,7 @@ namespace MonoTests.System.Resources {
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			string returnedType = returnedNode.GetValueTypeName (new ReturnIntITRS ());
 			Assert.AreEqual ((typeof (int)).AssemblyQualifiedName, returnedType, "#A2");
 		}
 
@@ -78,7 +78,7 @@ namespace MonoTests.System.Resources {
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			object obj = returnedNode.GetValue ((ITypeResolutionService) null);
-			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			string returnedType = returnedNode.GetValueTypeName (new ReturnIntITRS ());
 			Assert.AreEqual ((typeof (int)).AssemblyQualifiedName, returnedType, "#A2");
 		}
 
@@ -88,37 +88,9 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node;
 			node = GetNodeEmdeddedBytes1To10 ();
 
-			string returnedType = node.GetValueTypeName (new AlwaysReturnIntTypeResolutionService ());
+			string returnedType = node.GetValueTypeName (new ReturnIntITRS ());
 			Assert.AreEqual ((typeof (byte[])).AssemblyQualifiedName, returnedType, "#A1");
 		}
-
-		[Test]
-		public void ChangesToReturnedByteArrayNotLaterWrittenBack ()
-		{
-			ResXDataNode originalNode, returnedNode, finalNode;
-			originalNode = GetNodeEmdeddedBytes1To10 ();
-			returnedNode = GetNodeFromResXReader (originalNode);
-
-			Assert.IsNotNull (returnedNode, "#A1");
-
-			object val = returnedNode.GetValue ((ITypeResolutionService) null);
-			Assert.IsInstanceOfType (typeof (byte []), val, "#A2");
-
-			byte[] newBytes = (byte[]) val;
-			Assert.AreEqual (1, newBytes [0], "A3");
-			newBytes [0] = 99;
-
-			finalNode = GetNodeFromResXReader (returnedNode);
-			
-			Assert.IsNotNull (finalNode, "#A4");
-
-			object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
-			Assert.IsInstanceOfType (typeof (byte []), finalVal, "#A5");
-			byte [] finalBytes = (byte []) finalVal;
-			// would be 99 if written back
-			Assert.AreEqual (1,finalBytes [0],"A6");
-		}
-
 	}
 
 	

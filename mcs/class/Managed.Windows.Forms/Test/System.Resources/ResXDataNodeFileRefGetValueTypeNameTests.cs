@@ -72,7 +72,7 @@ namespace MonoTests.System.Resources {
 			returnedNode = GetNodeFromResXReader (originalNode);
 
 			Assert.IsNotNull (returnedNode, "#A1");
-			string returnedType = returnedNode.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string returnedType = returnedNode.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, returnedType, "#A2");
 		}
 
@@ -82,7 +82,7 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node;
 			node = GetNodeFileRefToSerializable ("ser.bbb",true);
 
-			string returnedType = node.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			string returnedType = node.GetValueTypeName (new ReturnSerializableSubClassITRS ());
 			Assert.AreEqual ((typeof (serializableSubClass)).AssemblyQualifiedName, returnedType, "#A1");
 		}
 
@@ -118,7 +118,7 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void NullITypeResolutionServiceOK ()
+		public void NullITRSOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
@@ -127,11 +127,11 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void WrongITypeResolutionServiceOK ()
+		public void WrongITRSOK ()
 		{
 			ResXDataNode node = GetNodeFileRefToIcon ();
 
-			string name = node.GetValueTypeName (new DummyTypeResolutionService ());
+			string name = node.GetValueTypeName (new DummyITRS ());
 			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
 		}
 
