@@ -1,5 +1,6 @@
 TestScheduler.cs
 AssertEx.cs
+Blocks.cs
 System.Threading.Tasks.Dataflow/DataflowMessageHeaderTest.cs
 System.Threading.Tasks.Dataflow/CompletionHelperTest.cs
 System.Threading.Tasks.Dataflow/CompletionTest.cs
@@ -21,6 +22,7 @@ System.Threading.Tasks.Dataflow/JoinBlock`3Test.cs
 System.Threading.Tasks.Dataflow/TransformBlockTest.cs
 System.Threading.Tasks.Dataflow/TransformManyBlockTest.cs
 System.Threading.Tasks.Dataflow/WriteOnceBlockTest.cs
+System.Threading.Tasks.Dataflow/InvalidArgumentsTest.cs
 System.Threading.Tasks.Dataflow/OutputAvailableTest.cs
 ../System.Threading.Tasks.Dataflow/CompletionHelper.cs
 ../../corlib/System.Threading/AtomicBoolean.cs
