@@ -3760,7 +3760,9 @@ namespace Mono.CSharp {
 				if (!TypeSpecComparer.Equals (p_m.Parameters.Types, q_m.Parameters.Types))
 					return 0;
 
+				var orig_p = p;
 				p = p_m.ReturnType;
+				var orig_q = q;
 				q = q_m.ReturnType;
 
 				//
@@ -3777,20 +3779,33 @@ namespace Mono.CSharp {
 					return p.Kind != MemberKind.Void ? 1: 0;
 				}
 
+				var am = (AnonymousMethodExpression) a.Expr;
+
 				//
 				// When anonymous method is an asynchronous, and P has a return type Task<Y1>, and Q has a return type Task<Y2>
 				// better conversion is performed between underlying types Y1 and Y2
 				//
 				if (p.IsGenericTask || q.IsGenericTask) {
-					var async_am = a.Expr as AnonymousMethodExpression;
-					if (async_am != null && async_am.Block.IsAsync) {
-
+					if (am.Block.IsAsync) {
 						if (p.IsGenericTask != q.IsGenericTask) {
 							return 0;
 						}
 
 						q = q.TypeArguments[0];
 						p = p.TypeArguments[0];
+					}
+				} else if (q != p) {
+					//
+					// LAMESPEC: Lambda expression returning dynamic type has identity (better) conversion to delegate returning object type
+					//
+					if (q.BuiltinType == BuiltinTypeSpec.Type.Object) {
+						var am_rt = am.InferReturnType (ec, null, orig_q);
+						if (am_rt != null && am_rt.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+							return 2;
+					} else if (p.BuiltinType == BuiltinTypeSpec.Type.Object) {
+						var am_rt = am.InferReturnType (ec, null, orig_p);
+						if (am_rt != null && am_rt.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+							return 1;
 					}
 				}
 
