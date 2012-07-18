@@ -23,13 +23,14 @@
 
 namespace System.Threading.Tasks.Dataflow {
 	public struct DataflowMessageHeader : IEquatable<DataflowMessageHeader> {
-		bool isValid;
 		long id;
 
 		public DataflowMessageHeader (long id)
 		{
+			if (id == 0)
+				throw new ArgumentException("The value of 0 can't be used as an id for a valid header.");
+
 			this.id = id;
-			this.isValid = true;
 		}
 
 		public long Id {
@@ -40,7 +41,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public bool IsValid {
 			get {
-				return isValid;
+				return id != 0;
 			}
 		}
 
@@ -61,8 +62,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public bool Equals (DataflowMessageHeader other)
 		{
-			// both are invalid or both are valid and have the same id
-			return other.isValid == isValid && (!isValid || other.id == id);
+			return other.id == id;
 		}
 
 		public override int GetHashCode ()

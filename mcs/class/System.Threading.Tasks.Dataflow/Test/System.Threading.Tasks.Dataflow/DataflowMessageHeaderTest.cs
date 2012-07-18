@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Threading.Tasks.Dataflow;
 
 using NUnit.Framework;
@@ -58,6 +59,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsFalse (header1.IsValid);
 			Assert.IsTrue (header2.IsValid);
 			Assert.IsTrue (header3.IsValid);
+		}
+
+		[Test]
+		public void ZeroIdTest ()
+		{
+			AssertEx.Throws<ArgumentException> (() => new DataflowMessageHeader (0));
+			Assert.AreEqual (0, new DataflowMessageHeader ().Id);
 		}
 	}
 }
