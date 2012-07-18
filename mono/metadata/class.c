@@ -579,6 +579,15 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		mono_metadata_free_type (inflated);
 		return nt;
 	}
+	case MONO_TYPE_PTR: {
+		MonoType *nt, *inflated = inflate_generic_type(NULL, type->data.type, context, error);
+		if (!inflated || !mono_error_ok (error))
+			return NULL;
+
+		nt = mono_metadata_type_dup (image, type);
+		nt->data.type = inflated;
+		return nt;
+	}
 	case MONO_TYPE_GENERICINST: {
 		MonoGenericClass *gclass = type->data.generic_class;
 		MonoGenericInst *inst;
