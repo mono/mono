@@ -65,6 +65,8 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
+		const int WaitTimeout = 2500;
+
 		string port, TestHost, LocalServer;
 
 		[SetUp]
@@ -108,7 +110,7 @@ namespace MonoTests.System.Net.Http
 			};
 
 			var t = Task.Factory.StartNew (() => {
-				client.SendAsync (request).Wait ();
+				client.SendAsync (request).Wait (WaitTimeout);
 			});
 
 			Assert.IsTrue (mre.WaitOne (500), "#1");
@@ -122,7 +124,7 @@ namespace MonoTests.System.Net.Http
 				return Task.FromResult (new HttpResponseMessage ());
 			};
 
-			client.SendAsync (request).Wait ();
+			client.SendAsync (request).Wait (WaitTimeout);
 		}
 
 		[Test]
@@ -144,10 +146,10 @@ namespace MonoTests.System.Net.Http
 				return Task.FromResult (new HttpResponseMessage ());
 			};
 
-			client.SendAsync (request).Wait ();
+			client.SendAsync (request).Wait (WaitTimeout);
 
 			request = new HttpRequestMessage (HttpMethod.Get, "http://xamarin.com");
-			client.SendAsync (request).Wait ();
+			client.SendAsync (request).Wait (WaitTimeout);
 		}
 
 		[Test]
@@ -502,7 +504,7 @@ namespace MonoTests.System.Net.Http
 				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
 
 				try {
-					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait ();
+					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait (WaitTimeout);
 					Assert.Fail ("#2");
 				} catch (AggregateException e) {
 					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#3");
@@ -600,14 +602,14 @@ namespace MonoTests.System.Net.Http
 		{
 			var client = new HttpClient ();
 			try {
-				client.SendAsync (null).Wait ();
+				client.SendAsync (null).Wait (WaitTimeout);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException) {
 			}
 
 			try {
 				var request = new HttpRequestMessage ();
-				client.SendAsync (request).Wait ();
+				client.SendAsync (request).Wait (WaitTimeout);
 				Assert.Fail ("#2");
 			} catch (InvalidOperationException) {
 			}
@@ -629,7 +631,7 @@ namespace MonoTests.System.Net.Http
 
 			try {
 				// Broken by design
-				client.SendAsync (request).Wait ();
+				client.SendAsync (request).Wait (WaitTimeout);
 				Assert.Fail ("#2");
 			} catch (Exception) {
 			}
@@ -645,9 +647,9 @@ namespace MonoTests.System.Net.Http
 
 			mh.OnSend = l => Task.FromResult (new HttpResponseMessage ());
 
-			client.SendAsync (request).Wait ();
+			client.SendAsync (request).Wait (WaitTimeout);
 			try {
-				client.SendAsync (request).Wait ();
+				client.SendAsync (request).Wait (WaitTimeout);
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {
 			}
@@ -676,7 +678,7 @@ namespace MonoTests.System.Net.Http
 			try {
 				var client = new HttpClient ();
 				try {
-					client.GetByteArrayAsync (LocalServer).Wait ();
+					client.GetByteArrayAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
 					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
@@ -703,7 +705,7 @@ namespace MonoTests.System.Net.Http
 				var client = new HttpClient (chandler);
 
 				try {
-					client.GetStringAsync (LocalServer).Wait ();
+					client.GetStringAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
 					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
