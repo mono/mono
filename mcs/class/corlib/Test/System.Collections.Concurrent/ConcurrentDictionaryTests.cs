@@ -314,6 +314,33 @@ namespace MonoTests.System.Collections.Concurrent
 			foreach (var id in ids)
 				Assert.IsFalse (dict.TryGetValue (id, out result), id.ToString () + " (second)");
 		}
+
+		[Test]
+		public void NullArgumentsTest ()
+		{
+			AssertThrowsArgumentNullException (() => { var x = map[null]; });
+			AssertThrowsArgumentNullException (() => map[null] = 0);
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate (null, k => 0, (k, v) => v));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate ("", null, (k, v) => v));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate ("", k => 0, null));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate (null, 0, (k, v) => v));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate ("", 0, null));
+			AssertThrowsArgumentNullException (() => map.ContainsKey (null));
+			AssertThrowsArgumentNullException (() => map.GetOrAdd (null, 0));
+			int value;
+			AssertThrowsArgumentNullException (() => map.TryGetValue (null, out value));
+			AssertThrowsArgumentNullException (() => map.TryRemove (null, out value));
+			AssertThrowsArgumentNullException (() => map.TryUpdate (null, 0, 0));
+		} 
+
+		void AssertThrowsArgumentNullException (Action action)
+		{
+			try {
+				action ();
+				Assert.Fail ("Expected ArgumentNullException.");
+			} catch (ArgumentNullException ex) {
+			}
+		}
 	}
 }
 #endif
