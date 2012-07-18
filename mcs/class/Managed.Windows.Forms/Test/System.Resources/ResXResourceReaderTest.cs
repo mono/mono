@@ -1878,6 +1878,98 @@ namespace MonoTests.System.Resources {
 			}
 		}
 
+		[Test]
+		public void TypeConverter_AssemblyNamesUsed ()
+		{
+			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
+
+			StringReader sr = new StringReader (convertableResXWithoutAssemblyName);
+
+			using (ResXResourceReader rr = new ResXResourceReader (sr, assemblyNames)) {
+				IDictionaryEnumerator en = rr.GetEnumerator ();
+				en.MoveNext ();
+
+				object obj = ((DictionaryEntry) en.Current).Value;
+				Assert.IsNotNull (obj, "#A1");
+				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A2");
+			}
+
+		}
+
+		[Test]
+		public void TypeConverter_ITRSUsed ()
+		{
+			ResXDataNode dn = new ResXDataNode ("test", 34L);
+
+			StringBuilder sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource (dn);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				ResXResourceReader rr = new ResXResourceReader (sr, new AlwaysReturnIntTypeResolutionService ());
+	 			IDictionaryEnumerator en = rr.GetEnumerator ();
+				en.MoveNext ();
+
+				object o = ((DictionaryEntry) en.Current).Value;
+				Assert.IsNotNull (o, "#A1");
+				Assert.IsInstanceOfType (typeof (int), o,"#A2");
+				Assert.AreEqual (34, o,"#A3");
+				rr.Close ();
+			}
+		}
+
+		[Test]
+		public void Serializable_ITRSUsed ()
+		{
+			serializable ser = new serializable ("aaaaa", "bbbbb");
+			ResXDataNode dn = new ResXDataNode ("test", ser);
+
+			StringBuilder sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource (dn);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				ResXResourceReader rr = new ResXResourceReader (sr, new AlwaysReturnSerializableSubClassTypeResolutionService ());
+	 			
+				IDictionaryEnumerator en = rr.GetEnumerator ();
+				en.MoveNext ();
+
+				object o = ((DictionaryEntry) en.Current).Value;
+				Assert.IsNotNull (o, "#A1");
+				Assert.IsInstanceOfType (typeof (serializableSubClass), o,"#A2");
+				rr.Close ();
+			}
+		}
+
+		static string convertableResXWithoutAssemblyName =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <data name=""test"" type=""DummyAssembly.Convertable"">
+	<value>im a name	im a value</value>
+  </data>
+</root>";
+
 		static string serializedResXCorruped =
 @"<?xml version=""1.0"" encoding=""utf-8""?>
 <root>

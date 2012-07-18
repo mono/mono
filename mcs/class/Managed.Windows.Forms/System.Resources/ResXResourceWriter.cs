@@ -178,9 +178,9 @@ namespace System.Resources
 			writer.WriteEndElement ();
 		}
 
-		void WriteBytes (string name, Type type, byte [] value)
+		void WriteBytes (string name, Type type, byte [] value, string comment)
 		{
-			WriteBytes (name, type, value, 0, value.Length);
+			WriteBytes (name, type, value, 0, value.Length, comment);
 		}
 
 		void WriteString (string name, string value)
@@ -223,7 +223,7 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
-			WriteBytes (name, value.GetType (), value);
+			WriteBytes (name, value.GetType (), value, null);
 		}
 
 		public void AddResource (string name, object value)
@@ -235,11 +235,6 @@ namespace System.Resources
 		{
 			if (value is string) {
 				AddResource (name, (string) value, comment);
-				return;
-			}
-
-			if (value is byte[]) {
-				AddResource (name, (byte[]) value);
 				return;
 			}
 
@@ -255,22 +250,27 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
+			if (value is byte[]) {
+				WriteBytes (name, value.GetType (), (byte []) value, comment);
+				return;
+			}
+
 			if (value == null) {
 				// nulls written as ResXNullRef
-				WriteString (name, "", typeof (ResXNullRef), comment); //FIXME: ive included comment here
+				WriteString (name, "", typeof (ResXNullRef), comment);
 				return;
 			}
 			// FIXME: why no comments for any of the below? are there other code paths without comments?
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
 			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
 				string str = (string) converter.ConvertToInvariantString (value);
-				WriteString (name, str, value.GetType ());
+				WriteString (name, str, value.GetType (), comment);
 				return;
 			}
 			
 			if (converter != null && converter.CanConvertTo (typeof (byte[])) && converter.CanConvertFrom (typeof (byte[]))) {
 				byte[] b = (byte[]) converter.ConvertTo (value, typeof (byte[]));
-				WriteBytes (name, value.GetType (), b);
+				WriteBytes (name, value.GetType (), b, comment);
 				return;
 			}
 			

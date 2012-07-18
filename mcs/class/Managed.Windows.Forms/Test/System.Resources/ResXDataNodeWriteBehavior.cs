@@ -71,10 +71,15 @@ namespace MonoTests.System.Resources {
 		public void ResXNullRef_WriteBack ()
 		{
 			ResXDataNode node = new ResXDataNode ("NullRef", (object) null);
+			node.Comment = "acomment";
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
-			Assert.AreEqual (null, returnedNode.GetValue ((AssemblyName[]) null), "#A1");
+			Assert.IsNotNull (returnedNode, "#A1");
+			Assert.IsNull (returnedNode.GetValue ((AssemblyName[]) null), "#A2");
+			Assert.AreEqual ("acomment", returnedNode.Comment,"#A3");
 			ResXDataNode finalNode = GetNodeFromResXReader (returnedNode);
-			Assert.AreEqual (null, finalNode.GetValue ((AssemblyName []) null), "#A2");
+			Assert.IsNotNull (finalNode, "#A4");
+			Assert.IsNull (finalNode.GetValue ((AssemblyName []) null), "#A5");
+			Assert.AreEqual ("acomment", finalNode.Comment,"#A6");
 		}
 
 		[Test]
@@ -82,20 +87,22 @@ namespace MonoTests.System.Resources {
 		{
 			//FIXME: should check the ResX output to ensure mime type / value info still there
 			ResXDataNode node = GetNodeFromResXReader (serializedResXInvalidMimeType);
+			Assert.IsNotNull (node, "#A1");
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
-
+			Assert.IsNotNull (returnedNode, "#A2");
 			object obj = returnedNode.GetValue ((AssemblyName[]) null);
-			Assert.IsNull (obj, "#A1");
+			Assert.IsNull (obj, "#A3");
 		}
 
 		[Test]
 		public void InvalidMimeTypeAndType_WriteBack ()
 		{
 			ResXDataNode node = GetNodeFromResXReader (typeconResXInvalidMimeTypeAndType);
+			Assert.IsNotNull (node, "#A1");
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
-
+			Assert.IsNotNull (returnedNode, "#A2");
 			string type = returnedNode.GetValueTypeName ((AssemblyName[]) null);
-			Assert.AreEqual ("A.type", type, "#A1");
+			Assert.AreEqual ("A.type", type, "#A3");
 		}
 
 		[Test]
@@ -103,22 +110,37 @@ namespace MonoTests.System.Resources {
 		{
 			MyBinType mb = new MyBinType ("contents");
 			ResXDataNode node = new ResXDataNode ("aname", mb);
+			node.Comment = "acomment";
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
 			Assert.IsNotNull (returnedNode, "#A1");
+			MyBinType returnedMB = (MyBinType) returnedNode.GetValue ((AssemblyName []) null);
+			Assert.AreEqual ("contents", returnedMB.Value, "#A2");
+			Assert.AreEqual ("acomment", returnedNode.Comment, "#A3");
 			ResXDataNode finalNode = GetNodeFromResXReader (returnedNode);
-			MyBinType returnedMb = (MyBinType) finalNode.GetValue ((AssemblyName []) null);
-			Assert.AreEqual ("contents", returnedMb.Value, "#A2");
+			Assert.IsNotNull (finalNode, "#A4");
+			MyBinType finalMB = (MyBinType) finalNode.GetValue ((AssemblyName []) null);
+			Assert.AreEqual ("contents", finalMB.Value, "#A5");
+			Assert.AreEqual ("acomment", finalNode.Comment, "#A6");
 		}
 
 		[Test]
 		public void FileRefWithEncoding_WriteBack ()
 		{
 			ResXFileRef fileRef = new ResXFileRef ("afilename", "A.Type.Name", Encoding.UTF7);
-			ResXDataNode node = GetNodeFromResXReader (new ResXDataNode ("aname", fileRef));
-			Assert.IsNotNull (node, "#A1");
+			ResXDataNode node = new ResXDataNode ("aname", fileRef);
+			node.Comment = "acomment";
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
-			Assert.IsNotNull (returnedNode, "#A2");
-			Assert.IsInstanceOfType (Encoding.UTF7.GetType (), returnedNode.FileRef.TextFileEncoding);
+			Assert.IsNotNull (returnedNode, "#A1");
+			Assert.AreEqual ("afilename", returnedNode.FileRef.FileName, "#A2");
+			Assert.AreEqual ("A.Type.Name", returnedNode.FileRef.TypeName, "#A3");
+			Assert.AreEqual ("acomment", returnedNode.Comment, "#A4");
+			Assert.IsInstanceOfType (Encoding.UTF7.GetType (), returnedNode.FileRef.TextFileEncoding, "#A5");
+			ResXDataNode finalNode = GetNodeFromResXReader (returnedNode);
+			Assert.IsNotNull (finalNode, "#A6");
+			Assert.AreEqual ("afilename", finalNode.FileRef.FileName, "#A7");
+			Assert.AreEqual ("A.Type.Name", finalNode.FileRef.TypeName, "#A8");
+			Assert.AreEqual ("acomment", finalNode.Comment, "#A9");
+			Assert.IsInstanceOfType (Encoding.UTF7.GetType (), finalNode.FileRef.TextFileEncoding, "#A10");
 		}
 
 		[Test]
@@ -126,12 +148,15 @@ namespace MonoTests.System.Resources {
 		{
 			byte [] testBytes = new byte [] { 1,2,3,4,5,6,7,8,9,10 };
 			ResXDataNode node = new ResXDataNode ("aname", testBytes);
+			node.Comment = "acomment";
 			ResXDataNode returnedNode = GetNodeFromResXReader (node);
 			Assert.IsNotNull (returnedNode, "#A1");
 			Assert.AreEqual (testBytes, returnedNode.GetValue ((AssemblyName []) null), "#A2");
+			Assert.AreEqual ("acomment", returnedNode.Comment, "#A3");
 			ResXDataNode finalNode = GetNodeFromResXReader (returnedNode);
-			Assert.IsNotNull (finalNode,"#A3");
-			Assert.AreEqual (testBytes, finalNode.GetValue ((AssemblyName []) null), "#A4");
+			Assert.IsNotNull (finalNode,"#A4");
+			Assert.AreEqual (testBytes, finalNode.GetValue ((AssemblyName []) null), "#A5");
+			Assert.AreEqual ("acomment", finalNode.Comment, "#A6");
 		}
 
 		[Test]
@@ -159,30 +184,27 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void SerializedChangesToReturnedObjectNotLaterWrittenBack ()
+		public void Serialized_WriteBack ()
 		{
-			ResXDataNode originalNode, returnedNode, finalNode;
 
-			originalNode = GetNodeEmdeddedSerializable ();
-			returnedNode = GetNodeFromResXReader (originalNode);
-
+			ResXDataNode node, returnedNode, finalNode;
+			node = GetNodeEmdeddedSerializable ();
+			node.Comment = "acomment";
+			returnedNode = GetNodeFromResXReader (node);
 			Assert.IsNotNull (returnedNode, "#A1");
-			object val = returnedNode.GetValue ((ITypeResolutionService) null);
-			Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
+			Assert.AreEqual ("acomment", returnedNode.Comment, "#A2");
+			object returnedObj = returnedNode.GetValue ((ITypeResolutionService) null);
+			Assert.IsInstanceOfType (typeof (serializable), returnedObj, "#A3");
+			serializable returnedSer = (serializable) returnedObj;
+			Assert.AreEqual ("testName", returnedSer.name, "A4");
 
-			serializable ser = (serializable) val;
-
-			Assert.AreEqual ("testName", ser.name, "A3");
-			ser.name = "changed";
 			finalNode = GetNodeFromResXReader (returnedNode);
-
-			Assert.IsNotNull (finalNode, "#A4");
-			object finalVal = finalNode.GetValue ((ITypeResolutionService) null);
-			Assert.IsInstanceOfType (typeof (serializable), finalVal, "#A5");
-
-			serializable finalSer = (serializable) finalVal;
-			// would be "changed" if written back
-			Assert.AreEqual ("testName", finalSer.name, "A6");
+			Assert.IsNotNull (finalNode, "#A5");
+			Assert.AreEqual ("acomment", finalNode.Comment, "#A6");
+			object finalObj = finalNode.GetValue ((ITypeResolutionService) null);
+			Assert.IsInstanceOfType (typeof (serializable), finalObj, "#A7");
+			serializable finalSer = (serializable) finalObj;
+			Assert.AreEqual ("testName", finalSer.name, "A7");
 		}
 
 		static string typeconResXInvalidMimeTypeAndType =

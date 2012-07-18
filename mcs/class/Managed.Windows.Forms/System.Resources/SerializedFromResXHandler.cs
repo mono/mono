@@ -37,7 +37,7 @@ namespace System.Resources {
 
 		string dataString;
 		string mime_type;
-		object retrievedObject;
+		CustomBinder binder; // so type set after first call
 
 		public SerializedFromResXHandler (string data, string _mime_type)
 		{
@@ -48,51 +48,22 @@ namespace System.Resources {
 		#region implemented abstract members of System.Resources.ResXDataNodeHandler
 		public override object GetValue (ITypeResolutionService typeResolver)
 		{
-				if (retrievedObject == null)
-					retrievedObject = DeserializeObject (typeResolver);
-
-				return retrievedObject;
-			
+			return DeserializeObject (typeResolver);
 		}
 
 		public override object GetValue (AssemblyName[] assemblyNames)
 		{
-				if (retrievedObject == null)
-					retrievedObject = DeserializeObject ((ITypeResolutionService) null);
-
-				return retrievedObject;
+			return DeserializeObject ((ITypeResolutionService) null);
 		}
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
-			if (retrievedObject == null) {
-				try {
-					retrievedObject = DeserializeObject (typeResolver);
-				} catch {
-					return typeof (object).AssemblyQualifiedName;
-				}
-			}
-
-			if (retrievedObject == null)
-				return null;
-			else
-				return retrievedObject.GetType ().AssemblyQualifiedName;
+			return InternalGetValueType (typeResolver);
 		}
 
 		public override string GetValueTypeName (AssemblyName[] assemblyNames)
 		{
-			if (retrievedObject == null) {
-				try {
-					retrievedObject = DeserializeObject ((ITypeResolutionService) null);
-				} catch {
-					return typeof (object).AssemblyQualifiedName;
-				}
-			}
-
-			if (retrievedObject == null)
-				return null;
-			else
-				return retrievedObject.GetType ().AssemblyQualifiedName;
+			return InternalGetValueType (null);
 		}
 		#endregion
 
@@ -104,6 +75,21 @@ namespace System.Resources {
 		}
 		#endregion
 
+		string InternalGetValueType (ITypeResolutionService typeResolver)
+		{
+			object retrievedObject;
+			try {
+				retrievedObject = DeserializeObject (typeResolver);
+			} catch {
+				return typeof (object).AssemblyQualifiedName;
+			}
+
+			if (retrievedObject == null)
+				return null;
+			else
+				return retrievedObject.GetType ().AssemblyQualifiedName;
+		}
+
 		object DeserializeObject (ITypeResolutionService typeResolver)
 		{
 			try {
@@ -111,15 +97,18 @@ namespace System.Resources {
 					//FIXME: theres a test in the suite to check that a type converter converts from invariant string
 					//do i need to take the string culture into consideration here?
 					SoapFormatter soapF = new SoapFormatter ();
-					soapF.Binder = new CustomBinder (typeResolver);
+					if (binder == null)
+						binder = new CustomBinder (typeResolver);
+					soapF.Binder = binder;
 					byte [] data = Convert.FromBase64String (dataString);
 					using (MemoryStream s = new MemoryStream (data)) {
 						return soapF.Deserialize (s);
 					}
 				} else if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
 					BinaryFormatter binF = new BinaryFormatter();
-					binF.Binder = new CustomBinder (typeResolver);
-
+					if (binder == null)
+						binder = new CustomBinder (typeResolver);
+					binF.Binder = binder;
 					byte [] data = Convert.FromBase64String (dataString);
 					using (MemoryStream s = new MemoryStream (data)) {
 						return binF.Deserialize (s);

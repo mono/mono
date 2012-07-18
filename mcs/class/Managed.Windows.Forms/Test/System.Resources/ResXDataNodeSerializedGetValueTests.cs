@@ -172,6 +172,18 @@ namespace MonoTests.System.Resources {
 			object val = node.GetValue ((AssemblyName[]) null);
 		}
 
+		[Test]
+		public void RefToSameObjectNotHeld ()
+		{
+			ResXDataNode node = GetNodeEmdeddedSerializable ();
+			ResXDataNode returnedNode = GetNodeFromResXReader (node);
+			Assert.IsNotNull (returnedNode, "#A1");
+			serializable ser1 = (serializable) returnedNode.GetValue ((AssemblyName []) null);
+			ser1.name = "beenchanged";
+			serializable ser2 = (serializable) returnedNode.GetValue ((AssemblyName []) null);
+			Assert.AreNotSame (ser1, ser2, "#A2");
+		}
+
 		static string serializedResXInvalidMimeType =
 @"<?xml version=""1.0"" encoding=""utf-8""?>
 <root>

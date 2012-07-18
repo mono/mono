@@ -253,8 +253,6 @@ namespace MonoTests.System.Resources {
 			Assert.AreEqual (34L, o, "#A3");
 		}
 
-		//FIXME: should move following tests to files associated with ResXResourceReader Tests
-
 		[Test,ExpectedException (typeof(TypeLoadException))]
 		public void AssemblyNamesPassedToResourceReaderDoesNotAffectResXDataNode_TypeConverter ()
 		{
@@ -274,27 +272,6 @@ namespace MonoTests.System.Resources {
 
 				//should raise exception 
 				object o = node.GetValue ((AssemblyName []) null);
-			}
-		}
-
-		[Test]
-		public void AssemblyNamesPassedToResourceReaderAffectsDictionary_TypeConverter ()
-		{
-			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
-			
-			string resXFile = GetFileFromString ("test.resx", convertableResXWithoutAssemblyName);
-
-			using (ResXResourceReader rr = new ResXResourceReader (resXFile, assemblyNames)) {
-				IDictionaryEnumerator en = rr.GetEnumerator ();
-				en.MoveNext ();
-
-				object obj = ((DictionaryEntry) en.Current).Value;
-				
-				Assert.IsNotNull (obj, "#A1");
-
-				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A2");
-
 			}
 		}
 
@@ -343,50 +320,6 @@ namespace MonoTests.System.Resources {
 
 			Assert.IsNotInstanceOfType (typeof (serializableSubClass), o, "#A2");
 			Assert.IsInstanceOfType (typeof (serializable), o, "#A3");
-			rr.Close ();
-		}
-
-		[Test]
-		public void ITRSPassedToResourceReaderAffectsDictionary_Serializable ()
-		{
-			serializable ser = new serializable ("aaaaa", "bbbbb");
-			ResXDataNode dn = new ResXDataNode ("test", ser);
-			
-			string resXFile = GetResXFileWithNode (dn,"resx.resx");
-
-			ResXResourceReader rr = new ResXResourceReader (resXFile, new AlwaysReturnSerializableSubClassTypeResolutionService ());
- 			
-			IDictionaryEnumerator en = rr.GetEnumerator ();
-			en.MoveNext ();
-
-			object o = ((DictionaryEntry) en.Current).Value;
-
-			Assert.IsNotNull (o, "#A1");
-
-			Assert.IsInstanceOfType (typeof (serializableSubClass), o,"#A2");
-
-			rr.Close ();
-		}
-
-		[Test]
-		public void ITRSPassedToResourceReaderAffectsDictionary_TypeConverter ()
-		{
-			ResXDataNode dn = new ResXDataNode ("test", 34L);
-			
-			string resXFile = GetResXFileWithNode (dn,"resx.resx");
-
-			ResXResourceReader rr = new ResXResourceReader (resXFile, new AlwaysReturnIntTypeResolutionService ());
- 
-			IDictionaryEnumerator en = rr.GetEnumerator ();
-			en.MoveNext ();
-
-			object o = ((DictionaryEntry) en.Current).Value;
-
-			Assert.IsNotNull (o, "#A1");
-
-			Assert.IsInstanceOfType (typeof (int), o,"#A2");
-			Assert.AreEqual (34, o,"#A3");
-
 			rr.Close ();
 		}
 
