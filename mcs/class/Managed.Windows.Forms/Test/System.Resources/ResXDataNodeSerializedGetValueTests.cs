@@ -145,13 +145,10 @@ namespace MonoTests.System.Resources {
 		public void SoapFormattedObject ()
 		{
 			ResXDataNode node = GetNodeFromResXReader (serializedResXSOAP);
-
 			Assert.IsNotNull (node, "#A1");
-			object val = node.GetValue ((AssemblyName []) null);
-			Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
-			serializable ser = (serializable) val;
-			Assert.AreEqual ("aname", ser.name, "#A3");
-			Assert.AreEqual ("avalue", ser.value, "#A4");
+			// hard coded assembly name value refers to that generated under 2.0 prefix, so use compatible available class
+			object val = node.GetValue (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			Assert.AreEqual ("name=aname;value=avalue", val.ToString (), "#A2");
 		}
 
 		[Test]
@@ -167,6 +164,7 @@ namespace MonoTests.System.Resources {
 		[Test, ExpectedException (typeof (ArgumentException))]
 		public void ErrorWhenAssemblyMissing ()
 		{
+			//FIXME: depends on net_2_0 assembly being available
 			ResXDataNode node = GetNodeFromResXReader (missingSerializableFromMissingAssembly);
 			Assert.IsNotNull (node, "#A1");
 			object val = node.GetValue ((AssemblyName[]) null);

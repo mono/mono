@@ -41,7 +41,7 @@ namespace MonoTests.System.Resources {
 		{
 			ResXDataNode originalNode, returnedNode;
 
-			string aName = "System.Windows.Forms_test_net_2_0, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+			string aName = this.GetType ().Assembly.FullName;
 			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
 
 			originalNode = GetNodeFileRefToSerializable ("ser.bbb", false);

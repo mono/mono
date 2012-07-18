@@ -102,8 +102,9 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node = GetNodeFromResXReader (serializedResXSOAP);
 
 			Assert.IsNotNull (node, "#A1");
-			string name = node.GetValueTypeName ((AssemblyName []) null);
-			Assert.AreEqual (typeof (serializable).AssemblyQualifiedName, name, "#A2");
+			// hard coded assembly name value refers to that generated under 2.0 prefix, so use compatible available class
+			string name = node.GetValueTypeName (new AlwaysReturnSerializableSubClassTypeResolutionService ());
+			Assert.AreEqual (typeof (serializableSubClass).AssemblyQualifiedName, name, "#A2");
 		}
 
 		[Test]
