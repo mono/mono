@@ -79,18 +79,23 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		public void DequeueItem()
+		{
+			T item;
+			if (Outgoing.TryTake (out item)) {
+				DecreaseCounts (item);
+				targets.SetCurrentItem (item);
+
+				CurrentItem = item;
+			}
+		}
+
 		protected override void Process ()
 		{
 			do {
 				ForceProcessing = false;
 
-				T item;
-				if (Outgoing.TryTake (out item)) {
-					DecreaseCounts (item);
-					targets.SetCurrentItem (item);
-
-					CurrentItem = item;
-				}
+				DequeueItem ();
 
 				targets.OfferItemToTargets ();
 			} while (!Store.IsEmpty || targets.NeedsProcessing);
@@ -187,18 +192,6 @@ namespace System.Threading.Tasks.Dataflow {
 				return true;
 			}
 
-			return false;
-		}
-
-		public bool TryReceiveAll (out T[] items)
-		{
-			T item;
-			if (TryReceive (null, out item)) {
-				items = new[] { item };
-				return true;
-			}
-
-			items = null;
 			return false;
 		}
 	}

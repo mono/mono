@@ -102,14 +102,14 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public bool TryReceiveAll (out IList<T> items)
 		{
-			T[] originalItems;
-			bool received = outgoing.TryReceiveAll (out originalItems);
-			if (received && cloner != null)
-				items = Array.ConvertAll (originalItems, new Converter<T, T> (cloner));
-			else
-				items = originalItems;
+			T item;
+			if (!TryReceive (null, out item)) {
+				items = null;
+				return false;
+			}
 
-			return received;
+			items = new[] { item };
+			return true;
 		}
 
 		void BroadcastProcess ()
