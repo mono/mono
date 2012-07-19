@@ -307,6 +307,8 @@ namespace System.Xml.Linq
 		public void Remove ()
 		{
 			if (Parent != null) {
+				var owner = Owner;
+				owner.OnRemovingObject (this);
 				if (next != null)
 					next.previous = previous;
 				if (previous != null)
@@ -316,6 +318,7 @@ namespace System.Xml.Linq
 				if (Parent.LastAttribute == this)
 					Parent.LastAttribute = previous;
 				SetOwner (null);
+				owner.OnRemovedObject (this);
 			}
 			next = null;
 			previous = null;

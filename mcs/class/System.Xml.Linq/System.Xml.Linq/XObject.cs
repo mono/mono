@@ -163,20 +163,43 @@ namespace System.Xml.Linq
 				BaseUri = r.BaseURI;
 		}
 		
-		internal virtual void OnAddingObject ()
+		internal void OnAddingObject (object addedObject)
 		{
-			if (Parent != null)
-				Parent.OnAddingObject ();
-			if (Changing != null)
-				Changing.Invoke (this, null);
+			OnChanging (addedObject, new XObjectChangeEventArgs (XObjectChange.Add));
 		}
-		
-		internal virtual void OnAddedObject ()
+
+		internal void OnAddedObject (object addedObject)
 		{
+			OnChanged (addedObject, new XObjectChangeEventArgs (XObjectChange.Add));
+		}
+
+		
+		public void OnRemovingObject (object removedObject)
+		{
+			OnChanging (removedObject, new XObjectChangeEventArgs (XObjectChange.Remove));
+		}
+
+
+		public void OnRemovedObject (object removedObject)
+		{
+			OnChanged (removedObject, new XObjectChangeEventArgs (XObjectChange.Remove));
+		}
+
+		
+		void OnChanging (object sender, XObjectChangeEventArgs args)
+		{
+			if (Changing != null)
+				Changing (sender, args);
 			if (Parent != null)
-				Parent.OnAddedObject ();
+				Parent.OnChanging (sender, args);
+		}
+
+		void OnChanged (object sender, XObjectChangeEventArgs args)
+		{
 			if (Changed != null)
-				Changed.Invoke (this, null);
+				Changed (sender, args);
+			if (Parent != null)
+				Parent.OnChanged (sender, args);
 		}
 	}
 }

@@ -641,6 +641,7 @@ namespace System.Xml.Linq
 
 		void SetAttributeObject (XAttribute a)
 		{
+			OnAddingObject (a);
 			a = (XAttribute) XUtil.GetDetachedObject (a);
 			a.SetOwner (this);
 			if (attr_first == null) {
@@ -651,6 +652,7 @@ namespace System.Xml.Linq
 				a.PreviousAttribute = attr_last;
 				attr_last = a;
 			}
+			OnAddedObject (a);
 		}
 
 		string LookupPrefix (string ns, XmlWriter w)
