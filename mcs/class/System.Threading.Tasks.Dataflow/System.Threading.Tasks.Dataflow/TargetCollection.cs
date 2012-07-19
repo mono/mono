@@ -28,22 +28,28 @@ namespace System.Threading.Tasks.Dataflow {
 	/// Collection of target blocks for a source block.
 	/// Also handles sending messages to the target blocks.
 	/// </summary>
-	class TargetCollection<T> {
+	abstract class TargetCollectionBase<T> {
 		/// <summary>
 		/// Represents a target block with its options.
 		/// </summary>
-		class Target : IDisposable {
+		protected class Target : IDisposable {
+			readonly TargetCollectionBase<T> targetCollection;
 			volatile int remainingMessages;
 			readonly CancellationTokenSource cancellationTokenSource;
 
 			public ITargetBlock<T> TargetBlock { get; private set; }
 
-			public Target (ITargetBlock<T> targetBlock, int maxMessages,
+			public Target (TargetCollectionBase<T> targetCollection,
+			               ITargetBlock<T> targetBlock, int maxMessages,
 			               CancellationTokenSource cancellationTokenSource)
 			{
 				TargetBlock = targetBlock;
+				this.targetCollection = targetCollection;
 				remainingMessages = maxMessages;
 				this.cancellationTokenSource = cancellationTokenSource;
+
+				Postponed = new AtomicBoolean ();
+				Reserved = new AtomicBoolean ();
 			}
 
 			public void MessageSent()
@@ -67,34 +73,47 @@ namespace System.Threading.Tasks.Dataflow {
 				if (cancellationTokenSource != null)
 					cancellationTokenSource.Cancel ();
 
+				Target ignored;
+				targetCollection.targetDictionary.TryRemove (TargetBlock, out ignored);
+
 				// to avoid memory leak; it could take a long time
 				// before this object is actually removed from the collection
 				TargetBlock = null;
 			}
+
+			public AtomicBoolean Postponed { get; private set; }
+			
+			// used only by broadcast blocks
+			public AtomicBoolean Reserved { get; private set; }
 		}
 
 		readonly ISourceBlock<T> block;
+		readonly bool broadcast;
+		readonly bool consumeToAccept;
 
 		readonly ConcurrentQueue<Target> prependQueue = new ConcurrentQueue<Target> ();
 		readonly ConcurrentQueue<Target> appendQueue = new ConcurrentQueue<Target> ();
 		readonly LinkedList<Target> targets = new LinkedList<Target> ();
-		readonly ConcurrentDictionary<ITargetBlock<T>, Target> postponedTargetBlocks =
-			new ConcurrentDictionary<ITargetBlock<T>, Target> ();
-		readonly ConcurrentQueue<Target> unpostponedTargets =
-			new ConcurrentQueue<Target> ();
 
-		int messageHeaderId;
+		protected readonly ConcurrentDictionary<ITargetBlock<T>, Target> targetDictionary =
+			new ConcurrentDictionary<ITargetBlock<T>, Target> ();
+
+		// lastMessageHeaderId will be always accessed only from one thread
+		long lastMessageHeaderId;
+		// currentMessageHeaderId can be read from multiple threads at the same time
+		long currentMessageHeaderId;
 
 		bool firstOffering;
 		T currentItem;
-		DataflowMessageHeader currentHeader;
 
-		public TargetCollection (ISourceBlock<T> block)
+		public TargetCollectionBase (ISourceBlock<T> block, bool broadcast, bool consumeToAccept)
 		{
 			this.block = block;
+			this.broadcast = broadcast;
+			this.consumeToAccept = consumeToAccept;
 		}
 
-		public IDisposable AddTarget(ITargetBlock<T> targetBlock, DataflowLinkOptions options)
+		public IDisposable AddTarget (ITargetBlock<T> targetBlock, DataflowLinkOptions options)
 		{
 			CancellationTokenSource cancellationTokenSource = null;
 			if (options.PropagateCompletion) {
@@ -108,41 +127,42 @@ namespace System.Threading.Tasks.Dataflow {
 				}, cancellationTokenSource.Token);
 			}
 
-
-			var target = new Target (targetBlock, options.MaxMessages, cancellationTokenSource);
+			var target = new Target (
+				this, targetBlock, options.MaxMessages, cancellationTokenSource);
+			targetDictionary [targetBlock] = target;
 			if (options.Append)
 				appendQueue.Enqueue (target);
 			else
 				prependQueue.Enqueue (target);
+
 			return target;
 		}
 
-		public void SetCurrentItem(T item)
+		public void SetCurrentItem (T item)
 		{
 			firstOffering = true;
 			currentItem = item;
-			currentHeader = new DataflowMessageHeader(++messageHeaderId);
+			Thread.VolatileWrite (ref currentMessageHeaderId, ++lastMessageHeaderId);
 
-			// clear unpostponed
-			Target ignored;
-			while (unpostponedTargets.TryDequeue (out ignored)) {
-			}
+			ClearUnpostponed ();
 		}
 
-		public void ResetCurrentItem()
+		protected abstract void ClearUnpostponed ();
+
+		public void ResetCurrentItem ()
 		{
 			currentItem = default(T);
-			currentHeader = new DataflowMessageHeader();
+			Thread.VolatileWrite (ref currentMessageHeaderId, 0);
 		}
 
 		public bool HasCurrentItem {
-			get { return currentHeader.IsValid; }
+			get { return Thread.VolatileRead (ref currentMessageHeaderId) != 0; }
 		}
 
-		public bool OfferItemToTargets()
+		public bool OfferItemToTargets ()
 		{
 			// is there an item to offer?
-			if (!currentHeader.IsValid)
+			if (!HasCurrentItem)
 				return false;
 
 			var old = Tuple.Create (targets.First, targets.Last);
@@ -153,19 +173,19 @@ namespace System.Threading.Tasks.Dataflow {
 				var appended = PrependOrAppend (false);
 				var prepended = PrependOrAppend (true);
 
-				if (OfferItemToTargets(prepended))
+				if (OfferItemToTargets (prepended))
 					return true;
 
 				if (firstOffering) {
-					if (OfferItemToTargets(old))
+					if (OfferItemToTargets (old))
 						return true;
 					firstOffering = false;
 				} else {
-					if (OfferItemToUnpostponed())
+					if (OfferItemToUnpostponed ())
 						return true;
 				}
 
-				if (OfferItemToTargets(appended))
+				if (OfferItemToTargets (appended))
 					return true;
 			} while (NeedsProcessing);
 
@@ -175,9 +195,11 @@ namespace System.Threading.Tasks.Dataflow {
 		public bool NeedsProcessing {
 			get {
 				return !appendQueue.IsEmpty || !prependQueue.IsEmpty
-				       || !unpostponedTargets.IsEmpty;
+				       || !UnpostponedIsEmpty;
 			}
 		}
+
+		protected abstract bool UnpostponedIsEmpty { get; }
 
 		Tuple<LinkedListNode<Target>, LinkedListNode<Target>> PrependOrAppend (
 			bool prepend)
@@ -221,7 +243,7 @@ namespace System.Threading.Tasks.Dataflow {
 					continue;
 				}
 
-				if (OfferItem(node.Value))
+				if (OfferItem (node.Value) && !broadcast)
 					return true;
 
 				node = node.Next;
@@ -230,31 +252,27 @@ namespace System.Threading.Tasks.Dataflow {
 			return false;
 		}
 
-		bool OfferItemToUnpostponed ()
-		{
-			Target target;
-			while (unpostponedTargets.TryDequeue (out target)) {
-				if (!target.Disabled && OfferItem(target))
-					return true;
-			}
+		protected abstract bool OfferItemToUnpostponed ();
 
-			return false;
-		}
-
-		bool OfferItem (Target target)
+		protected bool OfferItem (Target target)
 		{
-			if (postponedTargetBlocks.ContainsKey (target.TargetBlock))
+			if (target.Reserved.Value)
+				return false;
+			if (!broadcast && target.Postponed.Value)
 				return false;
 
 			var result = target.TargetBlock.OfferMessage (
-				currentHeader, currentItem, block, false);
+				// volatile read is not necessary here,
+				// because currentMessageHeaderId is always written from this thread
+				new DataflowMessageHeader (currentMessageHeaderId), currentItem, block,
+				consumeToAccept);
 
 			switch (result) {
 			case DataflowMessageStatus.Accepted:
 				target.MessageSent ();
 				return true;
 			case DataflowMessageStatus.Postponed:
-				postponedTargetBlocks.TryAdd (target.TargetBlock, target);
+				target.Postponed.Value = true;
 				return false;
 			case DataflowMessageStatus.DecliningPermanently:
 				target.Dispose ();
@@ -264,19 +282,128 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
-		public void UnpostponeTarget (ITargetBlock<T> targetBlock, bool messageConsumed)
+		public bool VerifyHeader (DataflowMessageHeader header)
 		{
-			Target target;
-			postponedTargetBlocks.TryRemove (targetBlock, out target);
-			if (messageConsumed)
-				target.MessageSent ();
-			unpostponedTargets.Enqueue (target);
+			return header.Id == Thread.VolatileRead (ref currentMessageHeaderId);
+		}
+	}
+
+	class TargetCollection<T> : TargetCollectionBase<T> {
+		readonly ConcurrentQueue<Target> unpostponedTargets =
+			new ConcurrentQueue<Target> ();
+
+		public TargetCollection (ISourceBlock<T> block)
+			: base (block, false, false)
+		{
+		}
+
+		protected override bool UnpostponedIsEmpty {
+			get { return unpostponedTargets.IsEmpty; }
 		}
 
 		public bool VerifyHeader (DataflowMessageHeader header, ITargetBlock<T> targetBlock)
 		{
-			return header == currentHeader
-			       && postponedTargetBlocks.ContainsKey (targetBlock);
+			return VerifyHeader (header)
+			       && targetDictionary[targetBlock].Postponed.Value;
+		}
+
+		public void UnpostponeTarget (ITargetBlock<T> targetBlock, bool messageConsumed)
+		{
+			Target target;
+			if (!targetDictionary.TryGetValue (targetBlock, out target))
+				return;
+
+			if (messageConsumed)
+				target.MessageSent ();
+			unpostponedTargets.Enqueue (target);
+
+			target.Postponed.Value = false;
+		}
+
+		protected override void ClearUnpostponed ()
+		{
+			Target ignored;
+			while (unpostponedTargets.TryDequeue (out ignored)) {
+			}
+		}
+
+		protected override bool OfferItemToUnpostponed ()
+		{
+			Target target;
+			while (unpostponedTargets.TryDequeue (out target)) {
+				if (!target.Disabled && OfferItem (target))
+					return true;
+			}
+
+			return false;
+		}
+	}
+
+	class BroadcastTargetCollection<T> : TargetCollectionBase<T> {
+		// it's necessary to store the headers because of a race between
+		// UnpostponeTargetConsumed and SetCurrentItem
+		readonly ConcurrentQueue<Tuple<Target, DataflowMessageHeader>>
+			unpostponedTargets =
+				new ConcurrentQueue<Tuple<Target, DataflowMessageHeader>> ();
+
+		public BroadcastTargetCollection (ISourceBlock<T> block, bool consumeToAccept)
+			: base (block, true, consumeToAccept)
+		{
+		}
+
+		protected override bool UnpostponedIsEmpty {
+			get { return unpostponedTargets.IsEmpty; }
+		}
+
+		public void ReserveTarget (ITargetBlock<T> targetBlock)
+		{
+			targetDictionary [targetBlock].Reserved.Value = true;
+		}
+
+		public void UnpostponeTargetConsumed (ITargetBlock<T> targetBlock,
+		                                      DataflowMessageHeader header)
+		{
+			Target target = targetDictionary [targetBlock];
+
+			target.MessageSent ();
+			unpostponedTargets.Enqueue (Tuple.Create (target, header));
+
+			target.Postponed.Value = false;
+			target.Reserved.Value = false;
+		}
+
+		public void UnpostponeTargetNotConsumed (ITargetBlock<T> targetBlock)
+		{
+			Target target;
+			if (!targetDictionary.TryGetValue (targetBlock, out target))
+				return;
+
+			unpostponedTargets.Enqueue (Tuple.Create (target,
+				new DataflowMessageHeader ()));
+
+			target.Postponed.Value = false;
+			target.Reserved.Value = false;
+		}
+
+		protected override void ClearUnpostponed ()
+		{
+			Tuple<Target, DataflowMessageHeader> ignored;
+			while (unpostponedTargets.TryDequeue (out ignored)) {
+			}
+		}
+
+		protected override bool OfferItemToUnpostponed ()
+		{
+			Tuple<Target, DataflowMessageHeader> tuple;
+			while (unpostponedTargets.TryDequeue (out tuple)) {
+				// offer to unconditionaly unpostponed
+				// and those that consumed some old value
+				if (!tuple.Item1.Disabled
+				    && (!tuple.Item2.IsValid || !VerifyHeader (tuple.Item2)))
+					OfferItem (tuple.Item1);
+			}
+
+			return false;
 		}
 	}
 }

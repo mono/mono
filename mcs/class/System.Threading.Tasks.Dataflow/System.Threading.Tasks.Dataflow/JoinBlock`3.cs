@@ -31,7 +31,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		readonly CompletionHelper compHelper;
 		readonly GroupingDataflowBlockOptions dataflowBlockOptions;
-		readonly MessageOutgoingQueue<Tuple<T1, T2, T3>> outgoing;
+		readonly OutgoingQueue<Tuple<T1, T2, T3>> outgoing;
 
 		readonly JoinTarget<T1> target1;
 		readonly JoinTarget<T2> target2;
@@ -66,7 +66,7 @@ namespace System.Threading.Tasks.Dataflow
 			target3 = new JoinTarget<T3> (this, SignalArrivalTargetImpl, compHelper,
 				() => outgoing.IsCompleted, dataflowBlockOptions,
 				dataflowBlockOptions.Greedy, TryAdd3);
-			outgoing = new MessageOutgoingQueue<Tuple<T1, T2, T3>> (
+			outgoing = new OutgoingQueue<Tuple<T1, T2, T3>> (
 				this, compHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
 				      || target3.Buffer.IsCompleted,

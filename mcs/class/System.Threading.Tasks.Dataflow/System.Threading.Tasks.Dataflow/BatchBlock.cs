@@ -34,7 +34,7 @@ namespace System.Threading.Tasks.Dataflow {
 		int batchCount;
 		long numberOfGroups;
 		SpinLock batchCountLock;
-		readonly MessageOutgoingQueue<T[]> outgoing;
+		readonly OutgoingQueue<T[]> outgoing;
 		SpinLock batchLock;
 		readonly AtomicBoolean nonGreedyProcessing = new AtomicBoolean ();
 
@@ -71,7 +71,7 @@ namespace System.Threading.Tasks.Dataflow {
 			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, processQueue, dataflowBlockOptions,
 				dataflowBlockOptions.Greedy, canAccept);
-			this.outgoing = new MessageOutgoingQueue<T[]> (this, compHelper,
+			this.outgoing = new OutgoingQueue<T[]> (this, compHelper,
 				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions, batch => batch.Length);
 		}

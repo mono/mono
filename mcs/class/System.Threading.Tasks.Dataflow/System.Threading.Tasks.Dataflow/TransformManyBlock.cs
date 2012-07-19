@@ -35,7 +35,7 @@ namespace System.Threading.Tasks.Dataflow
 		readonly MessageBox<TInput> messageBox;
 		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
 		readonly Func<TInput, IEnumerable<TOutput>> transformer;
-		readonly MessageOutgoingQueue<TOutput> outgoing;
+		readonly OutgoingQueue<TOutput> outgoing;
 
 		public TransformManyBlock (Func<TInput, IEnumerable<TOutput>> transformer)
 			: this (transformer, defaultOptions)
@@ -56,7 +56,7 @@ namespace System.Threading.Tasks.Dataflow
 			this.messageBox = new ExecutingMessageBox<TInput> (this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
 				dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<TOutput> (this, compHelper,
+			this.outgoing = new OutgoingQueue<TOutput> (this, compHelper,
 				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions);
 		}

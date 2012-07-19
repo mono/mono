@@ -16,7 +16,9 @@ System.Threading.Tasks.Dataflow/ISourceBlock.cs
 System.Threading.Tasks.Dataflow/ITargetBlock.cs
 System.Threading.Tasks.Dataflow/CompletionHelper.cs
 System.Threading.Tasks.Dataflow/MessageBox.cs
-System.Threading.Tasks.Dataflow/MessageOutgoingQueue.cs
+System.Threading.Tasks.Dataflow/OutgoingQueueBase.cs
+System.Threading.Tasks.Dataflow/OutgoingQueue.cs
+System.Threading.Tasks.Dataflow/BroadcastOutgoingQueue.cs
 System.Threading.Tasks.Dataflow/MessageVault.cs
 System.Threading.Tasks.Dataflow/PassingMessageBox.cs
 System.Threading.Tasks.Dataflow/TargetBuffer.cs

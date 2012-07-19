@@ -28,7 +28,7 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly DataflowBlockOptions dataflowBlockOptions;
 		readonly CompletionHelper compHelper;
 		readonly MessageBox<T> messageBox;
-		readonly MessageOutgoingQueue<T> outgoing;
+		readonly OutgoingQueue<T> outgoing;
 		readonly BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
 
 		public BufferBlock () : this (DataflowBlockOptions.Default)
@@ -44,7 +44,7 @@ namespace System.Threading.Tasks.Dataflow {
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, _ => ProcessQueue (), dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<T> (this, compHelper,
+			this.outgoing = new OutgoingQueue<T> (this, compHelper,
 				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions);
 		}

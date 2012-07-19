@@ -46,6 +46,8 @@
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\BroadcastOutgoingQueue.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\OutgoingQueueBase.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\SendBlock.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock`3.cs" />
@@ -64,7 +66,7 @@
    <Compile Include="System.Threading.Tasks.Dataflow\CompletionHelper.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\JoinTarget.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\MessageBox.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\MessageOutgoingQueue.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\OutgoingQueue.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\MessageVault.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\NameHelper.cs" />
    <Compile Include="System.Threading.Tasks.Dataflow\PassingMessageBox.cs" />

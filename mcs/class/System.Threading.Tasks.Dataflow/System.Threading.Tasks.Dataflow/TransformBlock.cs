@@ -34,7 +34,7 @@ namespace System.Threading.Tasks.Dataflow
 		readonly CompletionHelper compHelper;
 		readonly BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
 		readonly MessageBox<TInput> messageBox;
-		readonly MessageOutgoingQueue<TOutput> outgoing;
+		readonly OutgoingQueue<TOutput> outgoing;
 		readonly Func<TInput, TOutput> transformer;
 
 		public TransformBlock (Func<TInput, TOutput> transformer) : this (transformer, defaultOptions)
@@ -56,7 +56,7 @@ namespace System.Threading.Tasks.Dataflow
 				this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
 				dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<TOutput> (this, compHelper,
+			this.outgoing = new OutgoingQueue<TOutput> (this, compHelper,
 				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions);
 		}

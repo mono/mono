@@ -28,7 +28,7 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly GroupingDataflowBlockOptions options;
 
 		readonly CompletionHelper completionHelper;
-		readonly MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> outgoing;
+		readonly OutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> outgoing;
 		SpinLock batchLock;
 
 		readonly JoinTarget<T1> target1;
@@ -74,7 +74,7 @@ namespace System.Threading.Tasks.Dataflow {
 				this, SignalTarget, completionHelper, () => outgoing.IsCompleted,
 				dataflowBlockOptions, true, TryAdd);
 
-			outgoing = new MessageOutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> (
+			outgoing = new OutgoingQueue<Tuple<IList<T1>, IList<T2>, IList<T3>>> (
 				this, completionHelper,
 				() => target1.Buffer.IsCompleted || target2.Buffer.IsCompleted
 				      || target3.Buffer.IsCompleted,
