@@ -41,6 +41,14 @@ using System.Collections.Generic;
 
 namespace MonoTests.System.Xml
 {
+	public static class Helpers
+	{
+		public static string NormalizeNewline(this string str)
+		{
+			return str.Replace("\r\n", "\n");
+		}
+	}
+
 	[TestFixture]
 	public class ExtensionsTest
 	{
@@ -419,7 +427,7 @@ namespace MonoTests.System.Xml
 			string ret = @"<one>
   <two>Some data.</two>
 </one>";
-			Assert.AreEqual (ret, nav.OuterXml.Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (ret.NormalizeNewline (), nav.OuterXml.NormalizeNewline (), "#1");
 		}
 
 		[Test]
