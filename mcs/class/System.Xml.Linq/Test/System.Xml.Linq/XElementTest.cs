@@ -331,6 +331,101 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void RemoveElement_FromChildNode_ChangeTriggers()
+		{
+			var childChanging = false;
+			var childChanged = false;
+			var rootChanging = false;
+			var rootChanged = false;
+			
+			var subchild = new XElement("subfoo");
+			var child = new XElement("foo", subchild);
+			var root = new XElement("root", child);
+			
+			child.Changing += (o, e) => {
+				Assert.IsFalse(childChanging, "#c1");
+				Assert.IsFalse(childChanged, "#c2");
+				Assert.IsFalse(rootChanging, "#c3");
+				Assert.IsFalse(rootChanged, "#c4");
+				Assert.AreSame(subchild, o, "#c5");
+				Assert.AreEqual(XObjectChange.Remove, e.ObjectChange, "#c6");
+				Assert.IsNotNull(subchild.Parent, "childChangingParent");
+				childChanging = true;
+			};
+			root.Changing += (o, e) => {
+				Assert.IsTrue(childChanging, "#r1");
+				Assert.IsFalse(childChanged, "#r2");
+				Assert.IsFalse(rootChanging, "#r3");
+				Assert.IsFalse(rootChanged, "#r4");
+				Assert.AreSame(subchild, o, "#r5");
+				Assert.AreEqual(XObjectChange.Remove, e.ObjectChange, "#r6");
+				Assert.IsNotNull(subchild.Parent, "rootChangingParent");
+				rootChanging = true;
+			};
+			child.Changed += (o, e) =>  {
+				Assert.IsTrue(childChanging, "#c7");
+				Assert.IsFalse(childChanged, "#c8");
+				Assert.IsTrue(rootChanging, "#c9");
+				Assert.IsFalse(rootChanged, "#c10");
+				Assert.AreSame(subchild, o, "#c11");
+				Assert.AreEqual(XObjectChange.Remove, e.ObjectChange, "#c12");
+				Assert.IsNull(subchild.Parent, "childChangedParent");
+				childChanged = true;
+			};
+			root.Changed += (o, e) => {
+				Assert.IsTrue(childChanging, "#r7");
+				Assert.IsTrue(childChanged, "#r8");
+				Assert.IsTrue(rootChanging, "#r9");
+				Assert.IsFalse(rootChanged, "#r10");
+				Assert.AreSame(subchild, o, "#11");
+				Assert.AreEqual(XObjectChange.Remove, e.ObjectChange, "#12");
+				Assert.IsNull(subchild.Parent, "rootChangedParent");
+				rootChanged = true;
+			};
+			
+			subchild.Remove();
+			Assert.IsTrue(childChanging, "#a");
+			Assert.IsTrue(childChanged, "#b");
+			Assert.IsTrue(rootChanging, "#c");
+			Assert.IsTrue(rootChanged, "#d");
+		}
+
+		[Test]
+		public void RemoveElement_FromRootNode_ChangeTriggers()
+		{
+			var childChanging = false;
+			var childChanged = false;
+			var rootChanging = false;
+			var rootChanged = false;
+			
+			var child = new XElement ("foo");
+			var root = new XElement ("root", child);
+			child.Changing += (o, e) => childChanging = true;
+			child.Changed += (o, e) => childChanged = true;
+			
+			root.Changing += (o, e) => {
+				Assert.IsFalse(rootChanging, "#1");
+				Assert.IsFalse(rootChanged, "#2");
+				Assert.AreSame (child, o, "#3");
+				Assert.AreEqual(XObjectChange.Remove, e.ObjectChange, "#4");
+				rootChanging = true;
+			};
+			root.Changed += (o, e) =>  {
+				Assert.IsFalse(rootChanged, "#5");
+				Assert.IsTrue(rootChanging, "#6");
+				Assert.AreSame(child, o, "#7");
+				Assert.AreEqual(XObjectChange.Remove, e.ObjectChange, "#8");
+				rootChanged = true;
+			};
+			
+			child.Remove();
+			Assert.IsFalse(childChanging, "#9");
+			Assert.IsFalse(childChanged, "#10");
+			Assert.IsTrue(rootChanging, "#11");
+			Assert.IsTrue(rootChanged, "#12");
+		}
+
+		[Test]
 		public void ReplaceWith ()
 		{
 			XElement el = XElement.Parse ("<root><foo/><bar/></root>");
@@ -1603,60 +1698,213 @@ namespace MonoTests.System.Xml.Linq
 </rt>";
 			Assert.AreEqual (xml.NormalizeNewline (), root.ToString ().NormalizeNewline (), "#1");
 		}
-		
-		private class EventHandler
-		{
-			public bool ChangingInvoked { get; private set; }
-			
-			public bool HasChanged { get; private set; }
-			
-			public void OnChanging (object node, XObjectChangeEventArgs args)
-			{
-				ChangingInvoked = true;
-			}
-			
-			public void OnChanged (object node, XObjectChangeEventArgs args)
-			{
-				HasChanged = true;
-			}
-		}
-		
+
 		[Test]
-		public void Add_ToRootNode_ChangeTriggers ()
+		public void AddBefore_ChildNode_ChangeTriggers()
 		{
-			var inputXml = "<root><a><b /></a></root>";
-			var reader = XmlReader.Create (new StringReader (inputXml), new XmlReaderSettings ());
-			XDocument doc = XDocument.Load (reader);
-			var eventHandler = new EventHandler ();
-			doc.Root.Changing += eventHandler.OnChanging;
-			doc.Root.Changed += eventHandler.OnChanged;
-			
-			var newElement = XElement.Parse ("<c/>");
-			
-			doc.Root.Add (newElement);
-			
-			Assert.IsTrue (eventHandler.ChangingInvoked, "OnChanging not triggered");
-			Assert.IsTrue (eventHandler.HasChanged, "OnChanged not triggered");
+			int changed = 0;
+			int changing = 0;
+			var child = new XElement("child");
+			var root = new XElement("root", child);
+			root.Changed += (o, e) => changed++;
+			root.Changing += (o, e) => changing++;
+
+			child.AddAfterSelf(new XElement("a"));
+			Assert.AreEqual(1, changed, "#1");
+			Assert.AreEqual(1, changing, "#2");
+
+			child.AddBeforeSelf(new XElement("b"));
+			Assert.AreEqual(2, changed, "#3");
+			Assert.AreEqual(2, changing, "#4");
+
+			child.AddFirst(new XElement("c"));
+			Assert.AreEqual(3, changed, "#5");
+			Assert.AreEqual(3, changing, "#6");
 		}
 
 		[Test]
-		public void Add_ToChildNode_ChangeTriggersOnRoot ()
+		public void AddAttribute_ToRootNode_ChangeTriggers()
 		{
-			var inputXml = "<root><a><b /></a></root>";
-			var reader = XmlReader.Create (new StringReader (inputXml), new XmlReaderSettings ());
-			XDocument doc = XDocument.Load (reader);
-			var eventHandler = new EventHandler ();
-			
-			var newElement = XElement.Parse ("<c/>");
-			doc.Root.Add (newElement);
+			int changed = 0;
+			int changing = 0;
+			var node = new XElement("foo");
+			node.Changed += (o, e) => changed ++;
+			node.Changing += (o, e) => changing++;
 
-			doc.Root.Changing += eventHandler.OnChanging;
-			doc.Root.Changed += eventHandler.OnChanged;
-			var nextNewElement = XElement.Parse ("<d/>");
-			newElement.Add (nextNewElement);
+			node.Add(new XAttribute("foo", "bar"));
+			Assert.AreEqual(1, changing, "#1");
+			Assert.AreEqual(1, changed, "#2");
+
+			node.Add(new XAttribute("foo2", "bar2"));
+			Assert.AreEqual(2, changing, "#3");
+			Assert.AreEqual(2, changed, "#4");
+		}
+
+		[Test]
+		public void SetAttributeValue_ToRootNode_ChangeTriggers()
+		{
+			int changed = 0;
+			int changing = 0;
+			var node = new XElement("foo");
+			node.Changed += (o, e) => changed++;
+			node.Changing += (o, e) => changing++;
+
+			node.SetAttributeValue("foo", "bar");
+			Assert.AreEqual(1, changing, "#1");
+			Assert.AreEqual(1, changed, "#2");
+
+			node.SetAttributeValue("foo2", "bar2");
+			Assert.AreEqual(2, changing, "#3");
+			Assert.AreEqual(2, changed, "#4");
+
+			node.SetAttributeValue("foo2", null);
+			Assert.AreEqual(3, changing, "#7");
+			Assert.AreEqual(3, changed, "#8");
+
+			node.SetAttributeValue("foo52", null);
+			Assert.AreEqual(3, changing, "#9");
+			Assert.AreEqual(3, changed, "#10");
+		}
+
+		[Test]
+		public void RemoveAttributes_FromRootNode_ChangeTriggers()
+		{
+			int changed = 0;
+			int changing = 0;
+			var node = new XElement("foo", new XAttribute("foo", "bar"), new XAttribute("foo2", "bar2"), new XElement ("Barry"));
+			node.Changed += (o, e) => changed++;
+			node.Changing += (o, e) => changing++;
+
+			node.RemoveAttributes();
+			Assert.AreEqual(2, changing, "#1");
+			Assert.AreEqual(2, changed, "#2");
+		}
+
+		[Test]
+		public void RemoveNodes_FromRootNode_ChangeTriggers()
+		{
+			int changed = 0;
+			int changing = 0;
+			var node = new XElement("foo", new XAttribute("foo", "bar"), new XAttribute("foo2", "bar2"), new XElement("Barry"));
+			node.Changed += (o, e) => changed++;
+			node.Changing += (o, e) => changing++;
+
+			node.RemoveNodes();
+			Assert.AreEqual(1, changing, "#1");
+			Assert.AreEqual(1, changed, "#2");
+		}
+
+		[Test]
+		public void RemoveAll_FromRootNode_ChangeTriggers()
+		{
+			int changed = 0;
+			int changing = 0;
+			var node = new XElement("foo", new XAttribute("foo", "bar"), new XAttribute("foo2", "bar2"), new XElement("Barry"));
+			node.Changed += (o, e) => changed++;
+			node.Changing += (o, e) => changing++;
+
+			node.RemoveAll ();
+			Assert.AreEqual(3, changing, "#1");
+			Assert.AreEqual(3, changed, "#2");
+		}
+
+		[Test]
+		public void AddElement_ToRootNode_ChangeTriggers()
+		{
+			var childChanging = false;
+			var childChanged = false;
+			var rootChanging = false;
+			var rootChanged = false;
 			
-			Assert.IsTrue (eventHandler.ChangingInvoked, "OnChanging not triggered");
-			Assert.IsTrue (eventHandler.HasChanged, "OnChanged not triggered");
+			var child = new XElement("foo");
+			var root = new XElement("root");
+			child.Changing += (o, e) => childChanging = true;
+			child.Changed += (o, e) => childChanged = true;
+			
+			root.Changing += (o, e) => {
+				Assert.IsFalse(rootChanging, "#1");
+				Assert.IsFalse(rootChanged, "#2");
+				Assert.AreSame(child, o, "#3");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#4");
+				rootChanging = true;
+			};
+			root.Changed += (o, e) => {
+				Assert.IsFalse(rootChanged, "#5");
+				Assert.IsTrue(rootChanging, "#6");
+				Assert.AreSame(child, o, "#7");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#8");
+				rootChanged = true;
+			};
+			
+			root.Add (child);
+			Assert.IsFalse(childChanging, "#9");
+			Assert.IsFalse(childChanged, "#10");
+			Assert.IsTrue(rootChanging, "#11");
+			Assert.IsTrue(rootChanged, "#12");
+		}
+
+		[Test]
+		public void AddElement_ToChildNode_ChangeTriggers()
+		{
+			var childChanging = false;
+			var childChanged = false;
+			var rootChanging = false;
+			var rootChanged = false;
+			
+			var subchild = new XElement("subfoo");
+			var child = new XElement("foo");
+			var root = new XElement("root", child);
+			
+			child.Changing += (o, e) =>
+			{
+				Assert.IsFalse(childChanging, "#c1");
+				Assert.IsFalse(childChanged, "#c2");
+				Assert.IsFalse(rootChanging, "#c3");
+				Assert.IsFalse(rootChanged, "#c4");
+				Assert.AreSame(subchild, o, "#c5");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#c6");
+				Assert.IsNull(subchild.Parent, "childChangingParent");
+				childChanging = true;
+			};
+			root.Changing += (o, e) =>
+			{
+				Assert.IsTrue(childChanging, "#r1");
+				Assert.IsFalse(childChanged, "#r2");
+				Assert.IsFalse(rootChanging, "#r3");
+				Assert.IsFalse(rootChanged, "#r4");
+				Assert.AreSame(subchild, o, "#r5");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#r6");
+				Assert.IsNull(subchild.Parent, "rootChangingParent");
+				rootChanging = true;
+			};
+			child.Changed += (o, e) =>
+			{
+				Assert.IsTrue(childChanging, "#c7");
+				Assert.IsFalse(childChanged, "#c8");
+				Assert.IsTrue(rootChanging, "#c9");
+				Assert.IsFalse(rootChanged, "#c10");
+				Assert.AreSame(subchild, o, "#c11");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#c12");
+				Assert.IsNotNull(subchild.Parent, "childChangedParent");
+				childChanged = true;
+			};
+			root.Changed += (o, e) =>
+			{
+				Assert.IsTrue(childChanging, "#r7");
+				Assert.IsTrue(childChanged, "#r8");
+				Assert.IsTrue(rootChanging, "#r9");
+				Assert.IsFalse(rootChanged, "#r10");
+				Assert.AreSame(subchild, o, "#11");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#12");
+				Assert.IsNotNull(subchild.Parent, "rootChangedParent");
+				rootChanged = true;
+			};
+			
+			child.Add (subchild);
+			Assert.IsTrue(childChanging, "#a");
+			Assert.IsTrue(childChanged, "#b");
+			Assert.IsTrue(rootChanging, "#c");
+			Assert.IsTrue(rootChanged, "#d");
 		}
 
 		[Test]
