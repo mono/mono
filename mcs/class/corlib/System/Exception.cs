@@ -61,6 +61,7 @@ namespace System
 		internal int hresult = -2146233088;
 		string source;
 		IDictionary _data;
+		IntPtr[] native_trace_ips;
 		#endregion
 #pragma warning restore 169, 649		
 

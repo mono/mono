@@ -244,6 +244,7 @@ struct _MonoException {
 	gint32	    hresult;
 	MonoString *source;
 	MonoObject *_data;
+	MonoArray  *native_trace_ips;
 };
 
 typedef struct {
