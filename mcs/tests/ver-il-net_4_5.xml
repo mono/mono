@@ -2866,6 +2866,25 @@
       </method>
     </type>
   </test>
+  <test name="dtest-057.cs">
+    <type name="Program">
+      <method name="Int32 Test(System.Func`1[System.Object])" attrs="150">
+        <size>17</size>
+      </method>
+      <method name="Int32 Test(System.Func`1[System.String])" attrs="150">
+        <size>17</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>57</size>
+      </method>
+      <method name="System.Object &lt;Main&gt;m__0()" attrs="145">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
@@ -20251,6 +20270,22 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>19</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-28.cs">
+    <type name="Repro">
+      <method name="Void UseField()" attrs="129">
+        <size>70</size>
+      </method>
+      <method name="Void TakeExpression(System.Linq.Expressions.Expression`1[System.Action])" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>14</size>
       </method>
     </type>
   </test>

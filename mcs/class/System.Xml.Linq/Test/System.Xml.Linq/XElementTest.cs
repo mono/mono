@@ -1601,7 +1601,7 @@ namespace MonoTests.System.Xml.Linq
   <A />
   <D />
 </rt>";
-			Assert.AreEqual (xml, root.ToString ().Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (xml.NormalizeNewline (), root.ToString ().NormalizeNewline (), "#1");
 		}
 		
 		private class EventHandler

@@ -8239,9 +8239,19 @@ namespace Mono.CSharp
 		{
 			if (ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2 && !ec.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
 				ec.Report.SymbolRelatedToPreviousError (type);
+
+				var cand = ec.Module.GlobalRootNamespace.FindExtensionMethodNamespaces (ec, type, name, Arity);
+				string missing;
+				// a using directive or an assembly reference
+				if (cand != null) {
+					missing = "`" + string.Join ("' or `", cand.ToArray ()) + "' using directive";
+				} else {
+					missing = "an assembly reference";
+				}
+
 				ec.Report.Error (1061, loc,
-					"Type `{0}' does not contain a definition for `{1}' and no extension method `{1}' of type `{0}' could be found (are you missing a using directive or an assembly reference?)",
-					type.GetSignatureForError (), name);
+					"Type `{0}' does not contain a definition for `{1}' and no extension method `{1}' of type `{0}' could be found. Are you missing {2}?",
+					type.GetSignatureForError (), name, missing);
 				return;
 			}
 
