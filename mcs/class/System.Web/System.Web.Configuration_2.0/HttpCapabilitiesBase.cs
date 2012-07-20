@@ -41,7 +41,6 @@ namespace System.Web.Configuration
 
 		public virtual string this [string key] {
 			get { return capabilities [key] as string; }
-			//get { return capabilities.Contains(key) ? capabilities [key] as string : null; }
 		}
 
 		internal static string GetUserAgentForDetection (HttpRequest request)
@@ -249,16 +248,7 @@ namespace System.Web.Configuration
 
 		public IDictionary Capabilities {
 			get { return capabilities; }
-			set { 
-				IDictionary cap = new Hashtable(new CaseInsensitiveHashCodeProvider(), new CaseInsensitiveComparer() );
-
-				foreach(string key in value)
-				{
-					cap[key] = value[key];
-				}
-
-				capabilities = cap;
-			}
+			set { capabilities = new Hashtable(value, new CaseInsensitiveCapabilityEqualityComparer()); }
 		}
 
 		int defaultSubmitButtonLimit;
@@ -385,7 +375,6 @@ namespace System.Web.Configuration
 					Set (HaveIsMobileDevice);
 				}
 
-				//return capabilities.Contains ("ismobiledevice") ? bool.Parse (capabilities["ismobiledevice"] as string) : false;
 				return isMobileDevice;
 			}
 		}
@@ -1165,6 +1154,17 @@ namespace System.Web.Configuration
 			set { _provider = value; }
 		}
 #endif
+
+		class CaseInsensitiveCapabilityEqualityComparer : IEqualityComparer
+		{
+			public new bool Equals(object x, object y) {
+				return string.Compare((string)x, (string)y, true) == 0;
+		    }
+
+		    public int GetHashCode(object obj) {
+		        return obj.ToString().ToLower().GetHashCode();
+		    }
+		}
 	}
 }
 
