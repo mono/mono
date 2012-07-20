@@ -98,8 +98,8 @@ namespace System.Xml.Linq
 			foreach (object o in XUtil.ExpandArray (content)) {
 				if (o == null || Owner.OnAddingObject (o, true, here, false))
 					continue;
-				Owner.OnAddingObject (o);
 				XNode n = XUtil.ToNode (o);
+				Owner.OnAddingObject (n);
 				n = (XNode) XUtil.GetDetachedObject (n);
 				n.SetOwner (Owner);
 				n.previous = here;
@@ -110,7 +110,7 @@ namespace System.Xml.Linq
 				else
 					Owner.LastNode = n;
 				here = n;
-				Owner.OnAddedObject (o);
+				Owner.OnAddedObject (n);
 			}
 		}
 
@@ -129,8 +129,8 @@ namespace System.Xml.Linq
 				if (o == null || Owner.OnAddingObject (o, true, previous, true))
 					continue;
 
-				Owner.OnAddingObject (o);
 				XNode n = XUtil.ToNode (o);
+				Owner.OnAddingObject (n);
 				n = (XNode) XUtil.GetDetachedObject (n);
 				n.SetOwner (Owner);
 				n.previous = previous;
@@ -140,7 +140,7 @@ namespace System.Xml.Linq
 				previous = n;
 				if (Owner.FirstNode == this)
 					Owner.FirstNode = n;
-				Owner.OnAddedObject (o);
+				Owner.OnAddedObject (n);
 			}
 		}
 
