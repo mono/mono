@@ -1548,6 +1548,9 @@ mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *
 char *
 mono_exception_get_native_backtrace (MonoException *exc) MONO_INTERNAL;
 
+MonoString *
+ves_icall_Mono_Runtime_GetNativeStackTrace (MonoException *exc) MONO_INTERNAL;
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 
 
