@@ -172,17 +172,25 @@ namespace System.Xml.Linq
 		{
 			OnChanged (addedObject, new XObjectChangeEventArgs (XObjectChange.Add));
 		}
-
 		
-		public void OnRemovingObject (object removedObject)
+		internal void OnRemovingObject (object removedObject)
 		{
 			OnChanging (removedObject, new XObjectChangeEventArgs (XObjectChange.Remove));
 		}
 
-
-		public void OnRemovedObject (object removedObject)
+		internal void OnRemovedObject (object removedObject)
 		{
 			OnChanged (removedObject, new XObjectChangeEventArgs (XObjectChange.Remove));
+		}
+
+		internal void OnValueChanging (object changedObject)
+		{
+			OnChanging (changedObject, new XObjectChangeEventArgs (XObjectChange.Value));
+		}
+
+		internal void OnValueChanged (object changedObject)
+		{
+			OnChanged (changedObject, new XObjectChangeEventArgs (XObjectChange.Value));
 		}
 
 		

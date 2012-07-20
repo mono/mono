@@ -99,6 +99,87 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void SetValue_Null()
+		{
+			var a = new XAttribute("foo", "bar");
+			AssertThrows<ArgumentNullException>(() => a.Value = null, "#1");
+			AssertThrows<ArgumentNullException>(() => a.SetValue (null), "#2");
+		}
+
+		[Test]
+		public void SetValue_ChangeTriggers()
+		{
+			bool changing = false;
+			bool changed = false;
+
+			var a = new XAttribute("foo", "bar");
+			a.Changing += (o, e) => {
+				Assert.IsFalse(changing, "#1");
+				Assert.IsFalse(changed, "#2");
+				Assert.AreSame(a, o, "#3");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#4");
+				changing = true;
+			};
+			a.Changed += (o, e) => {
+				Assert.IsTrue(changing, "#5");
+				Assert.IsFalse(changed, "#6");
+				Assert.AreSame(a, o, "#7");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#8");
+				changed = true;
+			};
+			a.Value = "foo";
+			Assert.IsTrue(changing, "changing");
+			Assert.IsTrue(changed, "changed");
+		}
+
+		[Test]
+		public void SetValue2_ChangeTriggers()
+		{
+			bool changing = false;
+			bool changed = false;
+			
+			var a = new XAttribute("foo", "bar");
+			a.Changing += (o, e) =>
+			{
+				Assert.IsFalse(changing, "#1");
+				Assert.IsFalse(changed, "#2");
+				Assert.AreSame(a, o, "#3");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#4");
+				changing = true;
+			};
+			a.Changed += (o, e) =>
+			{
+				Assert.IsTrue(changing, "#5");
+				Assert.IsFalse(changed, "#6");
+				Assert.AreSame(a, o, "#7");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#8");
+				changed = true;
+			};
+			a.SetValue("zap");
+			Assert.IsTrue(changing, "changing");
+			Assert.IsTrue(changed, "changed");
+		}
+
+		[Test]
+		public void SetValue_SameValue_ChangeTrigger()
+		{
+			int changed = 0;
+			int changing = 0;
+
+			var a = new XAttribute("foo", "bar");
+			a.Changed += (o, e) => changed++;
+			a.Changing += (o, e) => changing++;
+
+			a.SetValue("bar");
+			Assert.AreEqual(1, changed, "#1");
+			Assert.AreEqual(1, changing, "#2");
+
+			a.Value = "bar";
+			Assert.AreEqual(2, changed, "#3");
+			Assert.AreEqual(2, changing, "#4");
+		}
+
+		[Test]
 		public void ToString ()
 		{
 			XAttribute a = new XAttribute (XName.Get ("a"), "v");
