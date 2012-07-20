@@ -1545,6 +1545,9 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass) MONO_INTERNAL;
 void
 mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *vt, MonoClassField *field, void *value) MONO_INTERNAL;
 
+char *
+mono_exception_get_native_backtrace (MonoException *exc) MONO_INTERNAL;
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 
 
