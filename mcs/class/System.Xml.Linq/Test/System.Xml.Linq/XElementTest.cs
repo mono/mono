@@ -1612,6 +1612,34 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void SetValue_ChangeTriggers()
+		{
+			bool changed = false;
+			bool changing = false;
+			
+			var element = new XElement("foo");
+			element.Changing += (o, e) => {
+				Assert.IsFalse(changing, "#1");
+				Assert.IsFalse(changed, "#2");
+				Assert.IsTrue (o is XText, "#3");
+				Assert.AreEqual("bar", ((XText)o).Value, "#4");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#5");
+				changing = true;
+			};
+			element.Changed += (o, e) => {
+				Assert.IsTrue(changing, "#5");
+				Assert.IsFalse(changed, "#6");
+				Assert.IsTrue (o is XText, "#7");
+				Assert.AreEqual("bar", ((XText)o).Value, "#8");
+				Assert.AreEqual(XObjectChange.Add, e.ObjectChange, "#9");
+				changed = true;
+			};
+			
+			element.SetValue("bar");
+			Assert.IsTrue(changed, "#changed");
+		}
+
+		[Test]
 		// LAMESPEC: there is no reason to not reject XDeclaration while it rejects XDocument.
 		[ExpectedException (typeof (ArgumentException))]
 		[Category ("NotDotNet")]
