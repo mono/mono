@@ -330,7 +330,9 @@ namespace System.Xml.Linq
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("Name");
+				OnNameChanging (this);
 				name = value;
+				OnNameChanged (this);
 			}
 		}
 

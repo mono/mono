@@ -101,6 +101,33 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void Rename()
+		{
+			bool changed = false;
+			bool changing = false;
+			var element = new XElement("foo");
+			element.Changing += (o, e) => {
+				Assert.IsFalse (changing, "#1");
+				Assert.IsFalse (changed, "#2");
+				Assert.AreSame (element, o, "#3");
+				Assert.AreEqual (XObjectChange.Name, e.ObjectChange, "#4");
+				changing = true;
+			};
+
+			element.Changed += (o, e) => {
+				Assert.IsTrue (changing, "#5");
+				Assert.IsFalse (changed, "#6");
+				Assert.AreSame (element, o, "#7");
+				Assert.AreEqual (XObjectChange.Name, e.ObjectChange, "#8");
+				changed = true;
+			};
+
+			element.Name = "bar";
+			Assert.AreEqual("bar", element.Name.LocalName, "#name");
+			Assert.IsTrue(changed, "changed");
+		}
+
+		[Test]
 		public void Load2 ()
 		{
 			string xml = "<root>foo</root>";
