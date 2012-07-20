@@ -1662,10 +1662,13 @@ namespace MonoTests.System.Xml.Linq
 		{
 			XElement root = new XElement (XName.Get ("Root", ""));
 			XElement child = new XElement (XName.Get ("Child", ""));
-
+			
 			root.Add (child);
 			root.Add (child);
-			root.ToString ();
+			Assert.AreEqual(2, root.Elements().Count(), "#1");
+			child.Remove ();
+			Assert.AreEqual(1, root.Elements().Count(), "#2");
+			AssertThrows<InvalidOperationException>(() => child.Remove(), "#3");
 		}
 
 		[Test]
@@ -1677,7 +1680,7 @@ namespace MonoTests.System.Xml.Linq
 
 			root.Add (attr);
 			root.Add (attr); // duplicate attribute
-			root.ToString ();
+			Assert.AreEqual(2, root.Attributes().Count(), "#1");
 		}
 
 		[Test]
