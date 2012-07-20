@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -36,6 +37,29 @@ namespace MonoTests.System.Xml.Linq
 	[TestFixture]
 	public class XAttributeTest
 	{
+		[Test]
+		public void Annotations_GetSubclass()
+		{
+			var x = new XAttribute("foo", "bar");
+			var annotation = new InvalidCastException();
+			x.AddAnnotation(annotation);
+			
+			Assert.AreSame(annotation, x.Annotation<InvalidCastException>(), "#1");
+			Assert.AreSame(annotation, x.Annotation<object>(), "#2");
+			Assert.AreSame(annotation, x.Annotations<object>().Single (), "#3");
+		}
+
+		[Test]
+		public void Annotations_SameTypeTwice()
+		{
+			var x = new XAttribute("foo", "bar");
+			var first = new InvalidCastException();
+			var second = new InvalidCastException();
+			x.AddAnnotation(first);
+			x.AddAnnotation(second);
+			Assert.AreEqual(2, x.Annotations<object>().Count(), "#1");
+			Assert.AreSame(first, x.Annotation<object>(), "#2");
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
