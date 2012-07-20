@@ -301,7 +301,7 @@ namespace System.Xml.Linq
 
 		public string Value {
 			get { return XUtil.ToString (value); }
-			set { this.value = value; }
+			set { SetValue (value); }
 		}
 
 		public void Remove ()
@@ -328,7 +328,10 @@ namespace System.Xml.Linq
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
+
+			OnValueChanging (this);
 			this.value = XUtil.ToString (value);
+			OnValueChanged (this);
 		}
 
 		static readonly char [] escapeChars = new char [] {'<', '>', '&', '"', '\r', '\n', '\t'};
