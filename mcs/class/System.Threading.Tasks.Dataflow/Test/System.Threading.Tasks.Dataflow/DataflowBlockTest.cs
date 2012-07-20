@@ -237,5 +237,108 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			Assert.IsTrue (task.Wait (100));
 			Assert.IsFalse (task.Result);
 		}
+
+		[Test]
+		public void LinkToPredicateTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var source = new BufferBlock<int> (
+				new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new BufferBlock<int> ();
+			source.LinkTo (target, i => i % 2 == 1);
+
+			Assert.IsTrue (source.Post (1));
+			Assert.IsTrue (source.Post (2));
+			Assert.IsTrue (source.Post (3));
+
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (1, item);
+			Assert.IsFalse (target.TryReceive (out item));
+
+			Assert.IsTrue (source.TryReceive (out item));
+			Assert.AreEqual (2, item);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (3, item);
+		}
+
+		[Test]
+		public void LinkToPredicateMaxMessagesTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var source = new BufferBlock<int> (
+				new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new BufferBlock<int> ();
+			source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 1 },
+				i => i % 2 == 1);
+
+			Assert.IsTrue (source.Post (2));
+			Assert.IsTrue (source.Post (1));
+			Assert.IsTrue (source.Post (3));
+
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsFalse (target.TryReceive (out item));
+			Assert.IsTrue (source.TryReceive (out item));
+			Assert.AreEqual (2, item);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (1, item);
+
+			scheduler.ExecuteAll ();
+			
+			Assert.IsFalse (target.TryReceive (out item));
+		}
+
+		[Test]
+		public void LinkToPredicatePostponed ()
+		{
+			var scheduler = new TestScheduler ();
+			var source = new BufferBlock<int> (
+				new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new BufferBlock<int> (
+				new DataflowBlockOptions { BoundedCapacity = 1, TaskScheduler = scheduler });
+			source.LinkTo (target, i => true);
+
+			Assert.IsTrue (target.Post (1));
+			Assert.IsTrue (source.Post (2));
+
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (1, item);
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (2, item);
+		}
+
+		[Test]
+		public void LinkToPredicateClonerTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var source = new BroadcastBlock<int> (i => i * 10,
+				new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new BufferBlock<int> ();
+			source.LinkTo (target, i => i < 10);
+
+			Assert.IsTrue (source.Post (1));
+
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (10, item);
+		}
 	}
 }

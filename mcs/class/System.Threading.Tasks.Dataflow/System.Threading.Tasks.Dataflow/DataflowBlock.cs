@@ -132,7 +132,6 @@ namespace System.Threading.Tasks.Dataflow {
 			return source.LinkTo (target, DataflowLinkOptions.Default, predicate);
 		}
 
-		[MonoTODO("Use predicate")]
 		public static IDisposable LinkTo<TOutput> (
 			this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target,
 			DataflowLinkOptions linkOptions, Predicate<TOutput> predicate)
@@ -142,7 +141,9 @@ namespace System.Threading.Tasks.Dataflow {
 			if (predicate == null)
 				throw new ArgumentNullException("predicate");
 
-			return source.LinkTo (target, linkOptions);
+			var predicateBlock = new PredicateBlock<TOutput> (source, target, predicate);
+
+			return source.LinkTo (predicateBlock, linkOptions);
 		}
 
 		[MonoTODO]
