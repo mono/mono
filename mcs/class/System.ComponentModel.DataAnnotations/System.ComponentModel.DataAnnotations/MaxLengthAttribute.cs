@@ -39,6 +39,7 @@ namespace System.ComponentModel.DataAnnotations
 		
 		public MaxLengthAttribute (int length)
 		{
+			Length = length;
 		}
 		
 		public int Length { get; private set; }
