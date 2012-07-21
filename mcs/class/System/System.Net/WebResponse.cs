@@ -72,7 +72,9 @@ namespace System.Net
 		public virtual bool IsFromCache
 		{
 			get {
-				throw GetMustImplement ();
+				return false;
+				// Better to return false than to kill the application
+				// throw GetMustImplement ();
 			}
 		}
 		
