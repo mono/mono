@@ -249,7 +249,7 @@ namespace System.Web.Configuration
 
 		public IDictionary Capabilities {
 			get { return capabilities; }
-			set { capabilities = value; }
+			set { capabilities = new Hashtable(value, new CaseInsensitiveCapabilityEqualityComparer()); }
 		}
 
 		int defaultSubmitButtonLimit;
@@ -1146,6 +1146,25 @@ namespace System.Web.Configuration
 
 				return useOptimizedCacheKey;
 			}
+		}
+		
+#if NET_4_0
+		static HttpCapabilitiesProvider _provider = new HttpCapabilitiesDefaultProvider();
+		public static HttpCapabilitiesProvider BrowserCapabilitiesProvider { 
+			get { return _provider; }
+			set { _provider = value; }
+		}
+#endif
+
+		class CaseInsensitiveCapabilityEqualityComparer : IEqualityComparer
+		{
+			public new bool Equals(object x, object y) {
+				return string.Compare((string)x, (string)y, true) == 0;
+		    }
+
+		    public int GetHashCode(object obj) {
+		        return obj.ToString().ToLower().GetHashCode();
+		    }
 		}
 	}
 }
