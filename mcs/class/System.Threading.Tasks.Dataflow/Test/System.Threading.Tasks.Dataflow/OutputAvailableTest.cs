@@ -38,7 +38,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			var task = source.OutputAvailableAsync();
 
-			// not necessarx in MS.NET
+			// not necessary in MS.NET
 			scheduler.ExecuteAll();
 
 			Assert.IsTrue(task.IsCompleted);

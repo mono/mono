@@ -115,6 +115,10 @@ namespace System.Threading.Tasks.Dataflow {
 				if (targets.VerifyHeader (messageHeader, targetBlock)
 				    && (reservedForTargetBlock == null
 				        || reservedForTargetBlock == targetBlock)) {
+					// cannot consume from faulted block, unless reserved
+					if (reservedForTargetBlock == null && IsFaultedOrCancelled)
+						return result;
+
 					Outgoing.TryTake (out result);
 					messageConsumed = true;
 					DecreaseCounts (result);

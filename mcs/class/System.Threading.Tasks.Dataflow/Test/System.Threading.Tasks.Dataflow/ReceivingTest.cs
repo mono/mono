@@ -218,11 +218,95 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		}
 
 		[Test]
+		public void FaultConsumeBroadcast ()
+		{
+			var scheduler = new TestScheduler ();
+			var source = new BroadcastBlock<int> (null,
+				new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new TestTargetBlock<int> { Postpone = true };
+			Assert.IsNotNull (source.LinkTo (target));
+
+			Assert.IsTrue (source.Post (42));
+			scheduler.ExecuteAll ();
+			Assert.IsTrue (target.HasPostponed);
+
+			((IDataflowBlock)source).Fault (new Exception ());
+
+			scheduler.ExecuteAll ();
+			Thread.Sleep (100);
+
+			Assert.IsTrue (source.Completion.IsFaulted);
+			int value;
+			Assert.IsTrue (target.RetryPostponed (out value));
+			Assert.AreEqual (42, value);
+		}
+
+		[Test]
+		public void FaultExecutingConsume ()
+		{
+			var evt = new ManualResetEventSlim ();
+			var source = new TransformBlock<int, int> (i =>
+			{
+				if (i == 2)
+					evt.Wait ();
+				return i;
+			});
+			var target = new TestTargetBlock<int> { Postpone = true };
+			Assert.IsNotNull (source.LinkTo (target));
+
+			Assert.IsTrue (source.Post (1));
+			Assert.IsTrue (source.Post (2));
+			Assert.IsTrue (source.Post (3));
+			Thread.Sleep (100);
+			Assert.IsTrue (target.HasPostponed);
+
+			((IDataflowBlock)source).Fault (new Exception ());
+
+			Thread.Sleep (100);
+
+			Assert.IsFalse (source.Completion.IsFaulted);
+			int value;
+			Assert.IsTrue (target.RetryPostponed (out value));
+			Assert.AreEqual (1, value);
+
+			evt.Set ();
+
+			Thread.Sleep (100);
+
+			Assert.IsTrue (source.Completion.IsFaulted);
+			Assert.IsFalse (target.RetryPostponed (out value));
+		}
+
+		[Test]
 		public void ReserveFaultConsume ()
 		{
 			var scheduler = new TestScheduler ();
 			var source =
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new TestTargetBlock<int> { Postpone = true };
+			Assert.IsNotNull (source.LinkTo (target));
+
+			Assert.IsTrue (source.Post (42));
+			scheduler.ExecuteAll ();
+			Assert.IsTrue (target.HasPostponed);
+
+			Assert.IsTrue (target.ReservePostponed ());
+
+			((IDataflowBlock)source).Fault (new Exception ());
+
+			scheduler.ExecuteAll ();
+			Thread.Sleep (100);
+
+			int value;
+			Assert.IsTrue (target.RetryPostponed (out value));
+		}
+
+		[Test]
+		public void ReserveFaultConsumeBroadcast ()
+		{
+			var scheduler = new TestScheduler ();
+			var source = new BroadcastBlock<int> (null,
+				new DataflowBlockOptions { TaskScheduler = scheduler });
 			var target = new TestTargetBlock<int> { Postpone = true };
 			Assert.IsNotNull (source.LinkTo (target));
 

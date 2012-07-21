@@ -112,6 +112,10 @@ namespace System.Threading.Tasks.Dataflow {
 				compHelper.Complete ();
 		}
 
+		protected bool IsFaultedOrCancelled {
+			get { return compHelper.Completion.IsFaulted || compHelper.Completion.IsCanceled; }
+		}
+
 		protected void DecreaseCounts (T data)
 		{
 			var modifiedCount = GetModifiedCount (data);
