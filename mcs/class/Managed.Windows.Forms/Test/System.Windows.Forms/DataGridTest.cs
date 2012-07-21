@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Xml;
 using NUnit.Framework;
 using System.Data;
+using System.Xml;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -618,6 +619,97 @@ namespace MonoTests.System.Windows.Forms
 			dg.DataSource = dt;
 
 			Assert.AreEqual (1, table_style.GridColumnStyles.Count, "#B1");
+		}
+
+		public class ClickableDataGrid : DataGrid
+		{
+			public void ClickGrid (int X, int Y)
+			{
+				MouseEventArgs me = new MouseEventArgs (
+					MouseButtons.Left,
+					1, /*# of clicks*/
+					X, Y, 0);
+				OnMouseDown (me);
+				OnClick (me);
+				OnMouseUp (me);
+			}
+		}
+
+		public class Form5487 : Form
+		{
+			private ClickableDataGrid dataGrid1;
+			private Container components = null;
+
+			public Form5487 ()
+			{
+				InitializeComponent ();
+			}
+
+			protected override void Dispose (bool disposing)
+			{
+				if (disposing) {
+					if (components != null) {
+						components.Dispose ();
+					}
+				}
+				base.Dispose (disposing);
+			}
+
+			private void InitializeComponent ()
+			{
+				this.dataGrid1 = new ClickableDataGrid ();
+				((ISupportInitialize)(this.dataGrid1)).BeginInit ();
+				this.SuspendLayout ();
+				this.dataGrid1.DataMember = "";
+				this.dataGrid1.HeaderForeColor = SystemColors.ControlText;
+				this.dataGrid1.Location = new Point (16, 16);
+				this.dataGrid1.Name = "dataGrid1";
+				this.dataGrid1.Size = new Size (624, 440);
+				this.dataGrid1.TabIndex = 0;
+				this.AutoScaleBaseSize = new Size (5, 13);
+				this.ClientSize = new Size (656, 470);
+				this.Controls.Add (this.dataGrid1);
+				this.Name = "Form1";
+				this.Text = "Form1";
+				this.Shown += new EventHandler (this.Form1_Load);
+				((ISupportInitialize)(this.dataGrid1)).EndInit ();
+				this.ResumeLayout (false);
+
+			}
+
+			private void Form1_Load (object sender, EventArgs e)
+			{
+				DataSet ds = new DataSet ();
+				String XMLString = "";
+				XmlTextReader XMLTR;
+
+				XMLString += "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
+				XMLString += "<pa><pb><pc><pd><id>1</id>";
+				XMLString += "</pd></pc><pc><pd><id>1</id>";
+				XMLString += "</pd><pd><id>1</id></pd><pd>";
+				XMLString += "<id>1</id></pd><pd><id>1</id>";
+				XMLString += "</pd><pd><id>1</id></pd><pd>";
+				XMLString += "<id>1</id></pd><pd><id>1</id>";
+				XMLString += "</pd><pd><id>1</id></pd></pc>";
+				XMLString += "</pb></pa>";
+				XMLTR = new XmlTextReader (XMLString,
+					XmlNodeType.Document, null);
+				XMLTR.ReadOuterXml ();
+				ds.ReadXml (XMLTR);
+				this.dataGrid1.DataSource = ds;
+				this.dataGrid1.ClickGrid (25, 45);
+				Application.DoEvents ();
+				this.dataGrid1.ClickGrid (46, 73);
+				Application.DoEvents ();
+				this.dataGrid1.NavigateBack ();
+				Close ();
+			}
+		}
+		[Test]
+		public void Bug5487AndRelated ()
+		{
+			//this should crash on fail
+			Application.Run (new Form5487 ());
 		}
 	}
 }
