@@ -1,4 +1,4 @@
-// ReceiveBlock.cs
+﻿// OutputAvailableBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
 // Copyright (c) 2012 Petr Onderka
@@ -23,15 +23,14 @@
 
 namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
-	/// This internal block is used by the Receive methods in DataflowBlock static class
-	/// to retrieve elements in either blocking or asynchronous way
+	/// This internal block is used by the OutputAvailable methods in DataflowBlock static class
+	/// to check for available items in an asynchrnousy way
 	/// </summary>
-	class ReceiveBlock<TOutput> : ITargetBlock<TOutput> {
-		readonly TaskCompletionSource<TOutput> completion =
-			new TaskCompletionSource<TOutput> ();
+	class OutputAvailableBlock<TOutput> : ITargetBlock<TOutput> {
+		readonly TaskCompletionSource<bool> completion =
+			new TaskCompletionSource<bool> ();
 		IDisposable linkBridge;
 		CancellationTokenRegistration cancellationRegistration;
-		Timer timeoutTimer;
 
 		public DataflowMessageStatus OfferMessage (
 			DataflowMessageHeader messageHeader, TOutput messageValue,
@@ -43,37 +42,13 @@ namespace System.Threading.Tasks.Dataflow {
 			if (completion.Task.Status != TaskStatus.WaitingForActivation)
 				return DataflowMessageStatus.DecliningPermanently;
 
-			lock (completion) {
-				if (completion.Task.Status != TaskStatus.WaitingForActivation)
-					return DataflowMessageStatus.DecliningPermanently;
-
-				if (consumeToAccept) {
-					bool consummed;
-					if (!source.ReserveMessage (messageHeader, this))
-						return DataflowMessageStatus.NotAvailable;
-					messageValue = source.ConsumeMessage (messageHeader, this, out consummed);
-					if (!consummed)
-						return DataflowMessageStatus.NotAvailable;
-				}
-
-				completion.TrySetResult (messageValue);
-			}
+			completion.TrySetResult (true);
 			CompletionSet ();
 
-			return DataflowMessageStatus.Accepted;
+			return DataflowMessageStatus.DecliningPermanently;
 		}
 
-		public TOutput WaitAndGet (IDisposable bridge, CancellationToken token, int timeout)
-		{
-			try {
-				return AsyncGet (bridge, token, timeout).Result;
-			} catch (AggregateException e) {
-				// resets the stack trace, but that shouldn't matter here
-				throw e.InnerException;
-			}
-		}
-
-		public Task<TOutput> AsyncGet (IDisposable bridge, CancellationToken token, int timeout)
+		public Task<bool> AsyncGet (IDisposable bridge, CancellationToken token)
 		{
 			linkBridge = bridge;
 			cancellationRegistration = token.Register (() =>
@@ -83,15 +58,6 @@ namespace System.Threading.Tasks.Dataflow {
 				}
 				CompletionSet ();
 			});
-			timeoutTimer = new Timer (
-				_ =>
-				{
-					lock (completion) {
-						completion.TrySetException (new TimeoutException ());
-					}
-					CompletionSet ();
-				}, null, timeout,
-				Timeout.Infinite);
 
 			return completion.Task;
 		}
@@ -104,7 +70,6 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 
 			cancellationRegistration.Dispose ();
-			timeoutTimer.Dispose ();
 		}
 
 		public Task Completion {
@@ -113,10 +78,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public void Complete ()
 		{
-			lock (completion) {
-				completion.TrySetException (new InvalidOperationException (
-					"No item could be received from the source."));
-			}
+			completion.TrySetResult (false);
 			CompletionSet ();
 		}
 

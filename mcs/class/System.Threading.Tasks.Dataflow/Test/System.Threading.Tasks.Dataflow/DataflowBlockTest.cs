@@ -1,4 +1,3 @@
-// 
 // DataflowBlockTest.cs
 //  
 // Author:
@@ -30,14 +29,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-
 using NUnit.Framework;
 
-namespace MonoTests.System.Threading.Tasks.Dataflow
-{
+namespace MonoTests.System.Threading.Tasks.Dataflow {
 	[TestFixture]
-	public class DataflowBlockTest
-	{
+	public class DataflowBlockTest {
 		[Test]
 		public void ChooseTest ()
 		{

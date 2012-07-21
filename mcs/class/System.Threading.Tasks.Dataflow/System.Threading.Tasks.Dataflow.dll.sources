@@ -43,3 +43,4 @@ System.Threading.Tasks.Dataflow/TransformManyBlock.cs
 System.Threading.Tasks.Dataflow/WriteOnceBlock.cs
 System.Threading.Tasks.Dataflow/SendBlock.cs
 System.Threading.Tasks.Dataflow/PredicateBlock.cs
+System.Threading.Tasks.Dataflow/OutputAvailableBlock.cs

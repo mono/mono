@@ -146,10 +146,28 @@ namespace System.Threading.Tasks.Dataflow {
 			return source.LinkTo (predicateBlock, linkOptions);
 		}
 
-		[MonoTODO]
-		public static Task<bool> OutputAvailableAsync<TOutput> (this ISourceBlock<TOutput> source)
+		public static Task<bool> OutputAvailableAsync<TOutput> (
+			this ISourceBlock<TOutput> source)
 		{
-			throw new NotImplementedException ();
+			return OutputAvailableAsync (source, CancellationToken.None);
+		}
+
+		public static Task<bool> OutputAvailableAsync<TOutput> (
+			this ISourceBlock<TOutput> source, CancellationToken cancellationToken)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			if (source.Completion.IsCompleted || source.Completion.IsCanceled
+			    || source.Completion.IsFaulted)
+				return Task.FromResult (false);
+
+			var block = new OutputAvailableBlock<TOutput> ();
+			var bridge = source.LinkTo (block,
+				new DataflowLinkOptions { PropagateCompletion = true });
+			return block.AsyncGet (bridge, cancellationToken);
 		}
 
 		public static bool Post<TInput> (this ITargetBlock<TInput> target, TInput item)
