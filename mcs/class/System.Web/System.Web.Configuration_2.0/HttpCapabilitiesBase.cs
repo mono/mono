@@ -249,7 +249,7 @@ namespace System.Web.Configuration
 
 		public IDictionary Capabilities {
 			get { return capabilities; }
-			set { capabilities = new Hashtable(value, new CaseInsensitiveCapabilityEqualityComparer()); }
+			set { capabilities = new Hashtable(value, StringComparer.OrdinalIgnoreCase); }
 		}
 
 		int defaultSubmitButtonLimit;
@@ -1155,17 +1155,6 @@ namespace System.Web.Configuration
 			set { _provider = value; }
 		}
 #endif
-
-		class CaseInsensitiveCapabilityEqualityComparer : IEqualityComparer
-		{
-			public new bool Equals(object x, object y) {
-				return string.Compare((string)x, (string)y, true) == 0;
-		    }
-
-		    public int GetHashCode(object obj) {
-		        return obj.ToString().ToLower().GetHashCode();
-		    }
-		}
 	}
 }
 
