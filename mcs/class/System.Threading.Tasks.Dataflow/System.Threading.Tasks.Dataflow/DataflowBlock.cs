@@ -57,11 +57,11 @@ namespace System.Threading.Tasks.Dataflow {
 			if (source2 == null)
 				throw new ArgumentNullException ("source2");
 			if (action1 == null)
-				throw new ArgumentNullException("action1");
+				throw new ArgumentNullException ("action1");
 			if (action2 == null)
-				throw new ArgumentNullException("action2");
+				throw new ArgumentNullException ("action2");
 			if (dataflowBlockOptions == null)
-				throw new ArgumentNullException("dataflowBlockOptions");
+				throw new ArgumentNullException ("dataflowBlockOptions");
 
 			var chooser = new ChooserBlock<T1, T2, object> (action1, action2, null, dataflowBlockOptions);
 			source1.LinkTo (chooser.Target1);
@@ -92,13 +92,13 @@ namespace System.Threading.Tasks.Dataflow {
 			if (source3 == null)
 				throw new ArgumentNullException ("source3");
 			if (action1 == null)
-				throw new ArgumentNullException("action1");
+				throw new ArgumentNullException ("action1");
 			if (action2 == null)
-				throw new ArgumentNullException("action2");
+				throw new ArgumentNullException ("action2");
 			if (action3 == null)
-				throw new ArgumentNullException("action3");
+				throw new ArgumentNullException ("action3");
 			if (dataflowBlockOptions == null)
-				throw new ArgumentNullException("dataflowBlockOptions");
+				throw new ArgumentNullException ("dataflowBlockOptions");
 
 			var chooser = new ChooserBlock<T1, T2, T3> (action1, action2, action3, dataflowBlockOptions);
 			source1.LinkTo (chooser.Target1);
@@ -117,7 +117,7 @@ namespace System.Threading.Tasks.Dataflow {
 		public static IDisposable LinkTo<TOutput> (this ISourceBlock<TOutput> source, ITargetBlock<TOutput> target)
 		{
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException ("source");
 
 			return source.LinkTo (target, DataflowLinkOptions.Default);
 		}
@@ -127,7 +127,7 @@ namespace System.Threading.Tasks.Dataflow {
 			Predicate<TOutput> predicate)
 		{
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException ("source");
 
 			return source.LinkTo (target, DataflowLinkOptions.Default, predicate);
 		}
@@ -137,9 +137,11 @@ namespace System.Threading.Tasks.Dataflow {
 			DataflowLinkOptions linkOptions, Predicate<TOutput> predicate)
 		{
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException ("source");
 			if (predicate == null)
-				throw new ArgumentNullException("predicate");
+				throw new ArgumentNullException ("predicate");
+			if (target == null)
+				throw new ArgumentNullException ("target");
 
 			var predicateBlock = new PredicateBlock<TOutput> (source, target, predicate);
 
@@ -156,7 +158,7 @@ namespace System.Threading.Tasks.Dataflow {
 			this ISourceBlock<TOutput> source, CancellationToken cancellationToken)
 		{
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException ("source");
 
 			cancellationToken.ThrowIfCancellationRequested ();
 
