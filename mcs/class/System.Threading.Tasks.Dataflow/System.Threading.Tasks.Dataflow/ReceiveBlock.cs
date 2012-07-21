@@ -68,6 +68,8 @@ namespace System.Threading.Tasks.Dataflow {
 			try {
 				return AsyncGet (bridge, token, timeout).Result;
 			} catch (AggregateException e) {
+				if (e.InnerException is TaskCanceledException)
+					throw new OperationCanceledException (token);
 				// resets the stack trace, but that shouldn't matter here
 				throw e.InnerException;
 			}
