@@ -13,6 +13,8 @@ namespace MonoTests {
 			}
 
 			Assert.IsNotNull (exception);
+			// to check for exact type
+			Assert.AreEqual(typeof(T), exception.GetType ());
 
 			return exception;
 		}

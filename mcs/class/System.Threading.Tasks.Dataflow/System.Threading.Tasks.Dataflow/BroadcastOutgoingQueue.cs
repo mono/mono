@@ -115,6 +115,8 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!messageHeader.IsValid)
 				throw new ArgumentException ("The messageHeader is not valid.",
 					"messageHeader");
+			if (target == null)
+				throw new ArgumentNullException("target");
 
 			T item;
 			if (reservedMessages.TryRemove (Tuple.Create (messageHeader, target), out item)) {
@@ -147,6 +149,8 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!messageHeader.IsValid)
 				throw new ArgumentException ("The messageHeader is not valid.",
 					"messageHeader");
+			if (target == null)
+				throw new ArgumentNullException("target");
 
 			T item = CurrentItem;
 
@@ -167,6 +171,8 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!messageHeader.IsValid)
 				throw new ArgumentException ("The messageHeader is not valid.",
 					"messageHeader");
+			if (target == null)
+				throw new ArgumentNullException("target");
 
 			T item;
 			if (!reservedMessages.TryRemove (Tuple.Create (messageHeader, target), out item))

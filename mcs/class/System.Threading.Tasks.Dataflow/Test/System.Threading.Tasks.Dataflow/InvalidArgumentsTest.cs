@@ -174,7 +174,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			// header that wasn't sent by the block doesn't throw
 			block.ConsumeMessage (new DataflowMessageHeader (1), target, out consumed);
 
-			AssertEx.Throws<ArgumentException> (
+			AssertEx.Throws<ArgumentNullException> (
 				() =>
 				block.ConsumeMessage (new DataflowMessageHeader (1), null, out consumed));
 
@@ -186,7 +186,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			// header that wasn't sent by the block doesn't throw
 			block.ReserveMessage (new DataflowMessageHeader (1), target);
 
-			AssertEx.Throws<ArgumentException> (
+			AssertEx.Throws<ArgumentNullException> (
 				() =>
 				block.ReserveMessage (new DataflowMessageHeader (1), null));
 

@@ -104,6 +104,8 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!messageHeader.IsValid)
 				throw new ArgumentException ("The messageHeader is not valid.",
 					"messageHeader");
+			if (targetBlock == null)
+				throw new ArgumentNullException("target");
 
 			T result = default(T);
 			messageConsumed = false;
@@ -142,6 +144,8 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!messageHeader.IsValid)
 				throw new ArgumentException ("The messageHeader is not valid.",
 					"messageHeader");
+			if (target == null)
+				throw new ArgumentNullException("target");
 
 			bool lockTaken = false;
 			try {
@@ -167,6 +171,8 @@ namespace System.Threading.Tasks.Dataflow {
 			if (!messageHeader.IsValid)
 				throw new ArgumentException ("The messageHeader is not valid.",
 					"messageHeader");
+			if (target == null)
+				throw new ArgumentNullException("target");
 
 			bool lockTaken = false;
 			try
