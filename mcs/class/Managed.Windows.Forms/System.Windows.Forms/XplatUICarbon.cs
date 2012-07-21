@@ -94,6 +94,7 @@ namespace System.Windows.Forms {
 		static readonly object queuelock = new object ();
 		
 		// Event Handlers
+		internal override event EventHandler Idle;
 		#endregion
 		
 		#region Constructors
@@ -768,12 +769,8 @@ namespace System.Windows.Forms {
 
 		internal override void RaiseIdle (EventArgs e)
 		{
-			int id = Thread.CurrentThread.ManagedThreadId;
-			if (Idle_Threads != null && 
-			    Idle_Threads.ContainsKey (id) 
-			    && Idle_Threads [id] != null) {
-                               Idle_Threads [id] (this, e);
-			}
+			if (Idle != null)
+				Idle (this, e);
 		}
 
 		internal override IntPtr InitializeDriver() {
@@ -1369,13 +1366,9 @@ namespace System.Windows.Forms {
 			lock (queuelock) {
 
 				if (MessageQueue.Count <= 0) {
-					int id = Thread.CurrentThread.ManagedThreadId;	
-					if (Idle_Threads != null && 
-					   Idle_Threads.ContainsKey (id) && 
-					   Idle_Threads [id] != null)
-					{
-						Idle_Threads [id] (this, EventArgs.Empty);
-					} else if (TimerList.Count == 0) {
+					if (Idle != null) 
+						Idle (this, EventArgs.Empty);
+					else if (TimerList.Count == 0) {
 						ReceiveNextEvent (0, IntPtr.Zero, 0.15, true, ref evtRef);
 						if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 							SendEventToEventTarget (evtRef, target);

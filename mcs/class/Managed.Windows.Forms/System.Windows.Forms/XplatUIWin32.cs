@@ -1239,14 +1239,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void RaiseIdle (EventArgs e)
-		{	
-			int id = Thread.CurrentThread.ManagedThreadId;
-			if (Idle_Threads != null && 
-				Idle_Threads.ContainsKey (id) && 
-				Idle_Threads [id] != null)
-			{
-				Idle_Threads [id] (this, e);
-			}
+		{
+			if (Idle != null)
+				Idle (this, e);
 		}
 
 		internal override Keys ModifierKeys {
@@ -2026,27 +2021,18 @@ namespace System.Windows.Forms {
 
 		private bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, bool blocking) {
 			bool		result;
-			bool		CheckIdle = blocking;
-
-			ProcessNextMessage:
 
 			msg.refobject = 0;
 			if (RetrieveMessage(ref msg)) {
 				return true;
 			}
 
-			if (blocking && !CheckIdle) {
+			if (blocking) {
 				result = Win32GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
 			} else {
 				result = Win32PeekMessage(ref msg, hWnd, wFilterMin, wFilterMax, (uint)PeekMessageFlags.PM_REMOVE);
 				if (!result) {
-					if (CheckIdle) {
-						RaiseIdle (null);
-						CheckIdle = false;
-						goto ProcessNextMessage;
-					} else {
-						return false;
-					}
+					return false;
 				}
 			}
 
@@ -3337,6 +3323,7 @@ namespace System.Windows.Forms {
 			Win32SetForegroundWindow(handle);
 		}
 
+		internal override event EventHandler Idle;
 		#endregion	// Public Static Methods
 
 		#region Win32 Imports

@@ -1199,12 +1199,8 @@ namespace System.Windows.Forms {
 			}
 			
 			if (pending == 0) {
-				int id = Thread.CurrentThread.ManagedThreadId;
-				if (Idle_Threads != null && 
-				    Idle_Threads.ContainsKey (id) && 
-				    Idle_Threads [id] != null){
-				{
-					Idle_Threads [id] (this, EventArgs.Empty);
+				if (Idle != null) {
+					Idle (this, EventArgs.Empty);
 				}
 				
 				lock (XlibLock) {
@@ -4356,6 +4352,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 		
 		#region Events
+		internal override event EventHandler Idle;
 		#endregion	// Events
 		
 		#region X11 Imports
