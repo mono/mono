@@ -39,8 +39,7 @@ namespace System.Web.Configuration
 
 		public HttpCapabilitiesBase () { }
 
-		public virtual string this [string key]
-		{
+		public virtual string this [string key] {
 			get { return capabilities [key] as string; }
 		}
 
