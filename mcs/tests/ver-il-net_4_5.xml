@@ -21129,6 +21129,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-44.cs">
+    <type name="UnusedFieldWarningTest2.Repro">
+      <method name="Void Foo()" attrs="129">
+        <size>18</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>23</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-fixedbuffer-01.cs">
     <type name="TestNew">
       <method name="Void SetTest()" attrs="134">
