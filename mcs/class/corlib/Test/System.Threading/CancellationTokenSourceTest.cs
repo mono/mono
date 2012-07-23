@@ -395,6 +395,24 @@ namespace MonoTests.System.Threading
 			req.Dispose ();
 			Assert.IsFalse (ran);
 		}
+
+		[Test]
+		public void CancelLinkedTokenSource ()
+		{
+			var cts = new CancellationTokenSource ();
+			bool canceled = false;
+			cts.Token.Register (() => canceled = true);
+
+			using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cts.Token))
+				;
+
+			Assert.IsFalse (canceled, "#1");
+			Assert.IsFalse (cts.IsCancellationRequested, "#2");
+
+			cts.Cancel ();
+
+			Assert.IsTrue (canceled, "#3");
+		}
 	}
 }
 
