@@ -315,12 +315,12 @@ namespace MonoTests.System.Threading
 
 				var t1 = new Thread (() => {
 					if (!cntd.Signal ())
-						cntd.Wait ();
+						cntd.Wait (200);
 					src.Cancel ();
 				});
 				var t2 = new Thread (() => {
 					if (!cntd.Signal ())
-						cntd.Wait ();
+						cntd.Wait (200);
 					linked.Dispose ();
 				});
 
@@ -328,7 +328,7 @@ namespace MonoTests.System.Threading
 				t2.Start ();
 				t1.Join (500);
 				t2.Join (500);
-				}, 500);
+			}, 500);
 		}
 	}
 }
