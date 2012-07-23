@@ -33,6 +33,7 @@ using System;
 using System.Threading;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using MonoTests.System.Threading.Tasks;
 
 namespace MonoTests.System.Threading
 {
@@ -302,6 +303,32 @@ namespace MonoTests.System.Threading
 			cts.Cancel ();
 
 			Assert.IsTrue (canceled, "#3");
+		}
+
+		[Test]
+		public void ConcurrentCancelLinkedTokenSourceWhileDisposing ()
+		{
+			ParallelTestHelper.Repeat (delegate {
+				var src = new CancellationTokenSource ();
+				var linked = CancellationTokenSource.CreateLinkedTokenSource (src.Token);
+				var cntd = new CountdownEvent (2);
+
+				var t1 = new Thread (() => {
+					if (!cntd.Signal ())
+						cntd.Wait ();
+					src.Cancel ();
+				});
+				var t2 = new Thread (() => {
+					if (!cntd.Signal ())
+						cntd.Wait ();
+					linked.Dispose ();
+				});
+
+				t1.Start ();
+				t2.Start ();
+				t1.Join (500);
+				t2.Join (500);
+				}, 500);
 		}
 	}
 }
