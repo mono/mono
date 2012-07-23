@@ -296,5 +296,10 @@ namespace System.Threading.Tasks.Dataflow {
 			var block = new SendBlock<TInput> (target, item, cancellationToken);
 			return block.Send ();
 		}
+
+		public static ITargetBlock<TInput> NullTarget<TInput>()
+		{
+			return new NullTargetBlock<TInput> ();
+		}
 	}
 }

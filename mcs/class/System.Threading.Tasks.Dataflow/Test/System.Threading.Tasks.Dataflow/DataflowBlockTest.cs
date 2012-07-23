@@ -336,5 +336,32 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (target.TryReceive (out item));
 			Assert.AreEqual (10, item);
 		}
+
+		[Test]
+		public void NullTargetTest ()
+		{
+			var target = DataflowBlock.NullTarget<int> ();
+			Assert.IsTrue (target.Post (1));
+
+			var source = new TestSourceBlock<int> ();
+			var header = new DataflowMessageHeader (1);
+			source.AddMessage (header, 2);
+
+			Assert.IsFalse (source.WasConsumed (header));
+
+			Assert.AreEqual (DataflowMessageStatus.Accepted,
+				target.OfferMessage (header, 2, source, true));
+			Assert.IsTrue (source.WasConsumed (header));
+
+			Assert.IsFalse (target.Completion.Wait (100));
+
+			target.Complete ();
+
+			Assert.IsFalse (target.Completion.Wait (100));
+
+			target.Fault (new Exception ());
+
+			Assert.IsFalse (target.Completion.Wait (100));
+		}
 	}
 }

@@ -92,9 +92,9 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 
 			if (consumeToAccept) {
-				bool consummed;
 				if (!source.ReserveMessage (messageHeader, Target))
 					return DataflowMessageStatus.NotAvailable;
+				bool consummed;
 				messageValue = source.ConsumeMessage (messageHeader, Target, out consummed);
 				if (!consummed)
 					return DataflowMessageStatus.NotAvailable;

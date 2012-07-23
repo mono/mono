@@ -105,6 +105,7 @@ namespace MonoTests {
 			yield return new TransformBlock<T, T> (i => i);
 			yield return new TransformManyBlock<T, T>(x => new T[0]);
 			yield return new WriteOnceBlock<T> (x => x);
+			yield return DataflowBlock.NullTarget<T> ();
 		}
 	}
 }
