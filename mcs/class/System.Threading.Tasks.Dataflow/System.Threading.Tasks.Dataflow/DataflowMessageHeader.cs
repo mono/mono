@@ -23,7 +23,7 @@
 
 namespace System.Threading.Tasks.Dataflow {
 	public struct DataflowMessageHeader : IEquatable<DataflowMessageHeader> {
-		long id;
+		readonly long id;
 
 		public DataflowMessageHeader (long id)
 		{
@@ -43,16 +43,6 @@ namespace System.Threading.Tasks.Dataflow {
 			get {
 				return id != 0;
 			}
-		}
-
-		internal DataflowMessageHeader Increment ()
-		{
-			return new DataflowMessageHeader (Interlocked.Increment (ref id));
-		}
-
-		internal static DataflowMessageHeader NewValid ()
-		{
-			return new DataflowMessageHeader (1);
 		}
 
 		public override bool Equals (object obj)

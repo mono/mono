@@ -1,6 +1,7 @@
 // TransformBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,33 +24,30 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
+namespace System.Threading.Tasks.Dataflow {
 	public sealed class TransformBlock<TInput, TOutput> :
-		IPropagatorBlock<TInput, TOutput>, IReceivableSourceBlock<TOutput>
-	{
-		static readonly ExecutionDataflowBlockOptions defaultOptions = new ExecutionDataflowBlockOptions ();
-
+		IPropagatorBlock<TInput, TOutput>, IReceivableSourceBlock<TOutput> {
 		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
 		readonly CompletionHelper compHelper;
 		readonly BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
 		readonly MessageBox<TInput> messageBox;
 		readonly OutgoingQueue<TOutput> outgoing;
-		readonly Func<TInput, TOutput> transformer;
+		readonly Func<TInput, TOutput> transform;
 
-		public TransformBlock (Func<TInput, TOutput> transformer) : this (transformer, defaultOptions)
+		public TransformBlock (Func<TInput, TOutput> transform)
+			: this (transform, ExecutionDataflowBlockOptions.Default)
 		{
-
 		}
 
-		public TransformBlock (Func<TInput, TOutput> transformer, ExecutionDataflowBlockOptions dataflowBlockOptions)
+		public TransformBlock (Func<TInput, TOutput> transform,
+		                       ExecutionDataflowBlockOptions dataflowBlockOptions)
 		{
-			if (transformer == null)
-				throw new ArgumentNullException("transformer");
+			if (transform == null)
+				throw new ArgumentNullException("transform");
 			if (dataflowBlockOptions == null)
 				throw new ArgumentNullException ("dataflowBlockOptions");
 
-			this.transformer = transformer;
+			this.transform = transform;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new ExecutingMessageBox<TInput> (
@@ -61,10 +59,9 @@ namespace System.Threading.Tasks.Dataflow
 				dataflowBlockOptions);
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           TInput messageValue,
-		                                           ISourceBlock<TInput> source,
-		                                           bool consumeToAccept)
+		DataflowMessageStatus ITargetBlock<TInput>.OfferMessage (
+			DataflowMessageHeader messageHeader, TInput messageValue,
+			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
 			return messageBox.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
@@ -74,17 +71,21 @@ namespace System.Threading.Tasks.Dataflow
 			return outgoing.AddTarget (target, linkOptions);
 		}
 
-		public TOutput ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed)
+		TOutput ISourceBlock<TOutput>.ConsumeMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target,
+			out bool messageConsumed)
 		{
 			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		void ISourceBlock<TOutput>.ReleaseReservation (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
 		{
 			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		bool ISourceBlock<TOutput>.ReserveMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
 		{
 			return outgoing.ReserveMessage (messageHeader, target);
 		}
@@ -105,7 +106,7 @@ namespace System.Threading.Tasks.Dataflow
 
 			var dequeued = messageQueue.TryTake (out input);
 			if (dequeued)
-				outgoing.AddData (transformer (input));
+				outgoing.AddData (transform (input));
 
 			return dequeued;
 		}
@@ -115,7 +116,7 @@ namespace System.Threading.Tasks.Dataflow
 			messageBox.Complete ();
 		}
 
-		public void Fault (Exception exception)
+		void IDataflowBlock.Fault (Exception exception)
 		{
 			compHelper.RequestFault (exception);
 		}

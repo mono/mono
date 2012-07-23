@@ -76,7 +76,7 @@ namespace System.Threading.Tasks.Dataflow {
 				dataflowBlockOptions, batch => batch.Length);
 		}
 
-		public DataflowMessageStatus OfferMessage (
+		DataflowMessageStatus ITargetBlock<T>.OfferMessage (
 			DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source,
 			bool consumeToAccept)
 		{
@@ -89,19 +89,21 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.AddTarget (target, linkOptions);
 		}
 
-		public T[] ConsumeMessage (
+		T[] ISourceBlock<T[]>.ConsumeMessage (
 			DataflowMessageHeader messageHeader, ITargetBlock<T[]> target,
 			out bool messageConsumed)
 		{
 			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<T[]> target)
+		void ISourceBlock<T[]>.ReleaseReservation (
+			DataflowMessageHeader messageHeader, ITargetBlock<T[]> target)
 		{
 			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<T[]> target)
+		bool ISourceBlock<T[]>.ReserveMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<T[]> target)
 		{
 			return outgoing.ReserveMessage (messageHeader, target);
 		}
@@ -320,21 +322,21 @@ namespace System.Threading.Tasks.Dataflow {
 			outgoing.Complete ();
 		}
 
-		public void Fault (Exception exception)
+		void IDataflowBlock.Fault (Exception exception)
 		{
 			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {
-			get {
-				return compHelper.Completion;
-			}
+			get { return compHelper.Completion; }
 		}
 
 		public int OutputCount {
-			get {
-				return outgoing.Count;
-			}
+			get { return outgoing.Count; }
+		}
+
+		public int BatchSize {
+			get { return batchSize; }
 		}
 
 		public override string ToString ()

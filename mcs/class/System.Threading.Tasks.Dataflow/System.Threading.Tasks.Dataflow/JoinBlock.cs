@@ -27,8 +27,6 @@ namespace System.Threading.Tasks.Dataflow
 {
 	public sealed class JoinBlock<T1, T2> : IReceivableSourceBlock<Tuple<T1, T2>>
 	{
-		static readonly GroupingDataflowBlockOptions defaultOptions = new GroupingDataflowBlockOptions ();
-
 		readonly CompletionHelper compHelper;
 		readonly GroupingDataflowBlockOptions dataflowBlockOptions;
 		readonly OutgoingQueue<Tuple<T1, T2>> outgoing;
@@ -43,7 +41,7 @@ namespace System.Threading.Tasks.Dataflow
 		long target2Count;
 		long numberOfGroups;
 
-		public JoinBlock () : this (defaultOptions)
+		public JoinBlock () : this (GroupingDataflowBlockOptions.Default)
 		{
 		}
 
@@ -84,17 +82,21 @@ namespace System.Threading.Tasks.Dataflow
 			return outgoing.TryReceiveAll (out items);
 		}
 
-		public Tuple<T1, T2> ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target, out bool messageConsumed)
+		Tuple<T1, T2> ISourceBlock<Tuple<T1, T2>>.ConsumeMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target,
+			out bool messageConsumed)
 		{
 			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target)
+		void ISourceBlock<Tuple<T1, T2>>.ReleaseReservation (
+			DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target)
 		{
 			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target)
+		bool ISourceBlock<Tuple<T1, T2>>.ReserveMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<Tuple<T1, T2>> target)
 		{
 			return outgoing.ReserveMessage (messageHeader, target);
 		}
@@ -106,7 +108,7 @@ namespace System.Threading.Tasks.Dataflow
 			outgoing.Complete ();
 		}
 
-		public void Fault (Exception exception)
+		void IDataflowBlock.Fault (Exception exception)
 		{
 			compHelper.RequestFault (exception);
 		}
@@ -222,6 +224,10 @@ namespace System.Threading.Tasks.Dataflow
 			get {
 				return target2;
 			}
+		}
+
+		public int OutputCount {
+			get { return outgoing.Count; }
 		}
 
 		public override string ToString ()

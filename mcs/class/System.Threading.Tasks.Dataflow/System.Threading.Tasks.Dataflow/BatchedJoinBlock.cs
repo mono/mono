@@ -245,6 +245,10 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.TryReceiveAll (out items);
 		}
 
+		public int OutputCount {
+			get { return outgoing.Count; }
+		}
+
 		public override string ToString ()
 		{
 			return NameHelper.GetName (this, options);

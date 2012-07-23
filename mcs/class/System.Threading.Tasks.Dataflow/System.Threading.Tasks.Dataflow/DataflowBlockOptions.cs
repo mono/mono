@@ -30,7 +30,7 @@ namespace System.Threading.Tasks.Dataflow {
 			get { return DefaultOptions; }
 		}
 
-		public readonly static int Unbounded = -1;
+		public const int Unbounded = -1;
 
 		int boundedCapacity;
 		int maxMessagesPerTask;

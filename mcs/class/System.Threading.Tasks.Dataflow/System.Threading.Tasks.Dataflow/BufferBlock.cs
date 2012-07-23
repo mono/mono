@@ -61,17 +61,21 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.AddTarget (target, linkOptions);
 		}
 
-		public T ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed)
+		T ISourceBlock<T>.ConsumeMessage (DataflowMessageHeader messageHeader,
+		                                  ITargetBlock<T> target,
+		                                  out bool messageConsumed)
 		{
 			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> target)
+		bool ISourceBlock<T>.ReserveMessage (DataflowMessageHeader messageHeader,
+		                                     ITargetBlock<T> target)
 		{
 			return outgoing.ReserveMessage (messageHeader, target);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<T> target)
+		void ISourceBlock<T>.ReleaseReservation (DataflowMessageHeader messageHeader,
+		                                         ITargetBlock<T> target)
 		{
 			outgoing.ReleaseReservation (messageHeader, target);
 		}
@@ -99,7 +103,7 @@ namespace System.Threading.Tasks.Dataflow {
 			outgoing.Complete ();
 		}
 
-		public void Fault (Exception exception)
+		void IDataflowBlock.Fault (Exception exception)
 		{
 			compHelper.RequestFault (exception);
 		}

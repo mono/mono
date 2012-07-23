@@ -23,7 +23,14 @@
 
 namespace System.Threading.Tasks.Dataflow {
 	public class ExecutionDataflowBlockOptions : DataflowBlockOptions {
+		static readonly ExecutionDataflowBlockOptions DefaultOptions =
+			new ExecutionDataflowBlockOptions ();
+
 		int maxDegreeOfParallelism;
+
+		internal static new ExecutionDataflowBlockOptions Default {
+			get { return DefaultOptions; }
+		}
 
 		public ExecutionDataflowBlockOptions ()
 		{
@@ -39,5 +46,7 @@ namespace System.Threading.Tasks.Dataflow {
 				maxDegreeOfParallelism = value;
 			}
 		}
+
+		public bool SingleProducerConstrained { get; set; }
 	}
 }

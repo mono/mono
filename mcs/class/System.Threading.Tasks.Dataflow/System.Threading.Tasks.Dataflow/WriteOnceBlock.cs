@@ -30,22 +30,22 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
 		readonly MessageBox<T> messageBox;
 		readonly DataflowBlockOptions dataflowBlockOptions;
-		readonly Func<T, T> cloner;
+		readonly Func<T, T> cloningFunction;
 		readonly BroadcastOutgoingQueue<T> outgoing;
 		AtomicBooleanValue written;
 
-		public WriteOnceBlock (Func<T, T> cloner)
-			: this (cloner, DataflowBlockOptions.Default)
+		public WriteOnceBlock (Func<T, T> cloningFunction)
+			: this (cloningFunction, DataflowBlockOptions.Default)
 		{
 		}
 
-		public WriteOnceBlock (Func<T, T> cloner,
+		public WriteOnceBlock (Func<T, T> cloningFunction,
 		                       DataflowBlockOptions dataflowBlockOptions)
 		{
 			if (dataflowBlockOptions == null)
 				throw new ArgumentNullException ("dataflowBlockOptions");
 
-			this.cloner = cloner;
+			this.cloningFunction = cloningFunction;
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
@@ -53,10 +53,10 @@ namespace System.Threading.Tasks.Dataflow {
 				canAccept: () => written.TrySet ());
 			this.outgoing = new BroadcastOutgoingQueue<T> (this, compHelper,
 				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
-				dataflowBlockOptions, cloner != null);
+				dataflowBlockOptions, cloningFunction != null);
 		}
 
-		public DataflowMessageStatus OfferMessage (
+		DataflowMessageStatus ITargetBlock<T>.OfferMessage (
 			DataflowMessageHeader messageHeader, T messageValue,
 			ISourceBlock<T> source, bool consumeToAccept)
 		{
@@ -73,24 +73,25 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.AddTarget (target, linkOptions);
 		}
 
-		public T ConsumeMessage (DataflowMessageHeader messageHeader,
-		                         ITargetBlock<T> target, out bool messageConsumed)
+		T ISourceBlock<T>.ConsumeMessage (DataflowMessageHeader messageHeader,
+		                                  ITargetBlock<T> target,
+		                                  out bool messageConsumed)
 		{
 			T message = outgoing.ConsumeMessage (
 				messageHeader, target, out messageConsumed);
-			if (messageConsumed && cloner != null)
-				message = cloner (message);
+			if (messageConsumed && cloningFunction != null)
+				message = cloningFunction (message);
 			return message;
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader,
-		                                ITargetBlock<T> target)
+		void ISourceBlock<T>.ReleaseReservation (DataflowMessageHeader messageHeader,
+		                                         ITargetBlock<T> target)
 		{
 			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader,
-		                            ITargetBlock<T> target)
+		bool ISourceBlock<T>.ReserveMessage (DataflowMessageHeader messageHeader,
+		                                     ITargetBlock<T> target)
 		{
 			return outgoing.ReserveMessage (messageHeader, target);
 		}
@@ -98,12 +99,12 @@ namespace System.Threading.Tasks.Dataflow {
 		public bool TryReceive (Predicate<T> filter, out T item)
 		{
 			var received = outgoing.TryReceive (filter, out item);
-			if (received && cloner != null)
-				item = cloner (item);
+			if (received && cloningFunction != null)
+				item = cloningFunction (item);
 			return received;
 		}
 
-		public bool TryReceiveAll (out IList<T> items)
+		bool IReceivableSourceBlock<T>.TryReceiveAll (out IList<T> items)
 		{
 			T item;
 			if (!TryReceive (null, out item)) {
@@ -129,7 +130,7 @@ namespace System.Threading.Tasks.Dataflow {
 			outgoing.Complete ();
 		}
 
-		public void Fault (Exception exception)
+		void IDataflowBlock.Fault (Exception exception)
 		{
 			compHelper.RequestFault (exception);
 		}

@@ -29,7 +29,7 @@ namespace System.Threading.Tasks.Dataflow
 
 		long maxNumberOfGroups;
 
-		internal static GroupingDataflowBlockOptions Default {
+		internal static new GroupingDataflowBlockOptions Default {
 			get { return DefaultOptions; }
 		}
 

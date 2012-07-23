@@ -1,6 +1,7 @@
 // ActionBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,31 +20,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	public sealed class ActionBlock<TInput> : ITargetBlock<TInput>, IDataflowBlock
-	{
-		static readonly ExecutionDataflowBlockOptions defaultOptions = new ExecutionDataflowBlockOptions ();
+namespace System.Threading.Tasks.Dataflow {
+	public sealed class ActionBlock<TInput> : ITargetBlock<TInput> {
+		readonly CompletionHelper compHelper;
+		readonly BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
+		readonly ExecutingMessageBox<TInput> messageBox;
+		readonly Action<TInput> action;
+		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
 
-		CompletionHelper compHelper;
-		BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
-		ExecutingMessageBox<TInput> messageBox;
-		Action<TInput> action;
-		ExecutionDataflowBlockOptions dataflowBlockOptions;
-
-
-		public ActionBlock (Action<TInput> action) : this (action, defaultOptions)
+		public ActionBlock (Action<TInput> action)
+			: this (action, ExecutionDataflowBlockOptions.Default)
 		{
-			
 		}
 
 		public ActionBlock (Action<TInput> action, ExecutionDataflowBlockOptions dataflowBlockOptions)
@@ -60,10 +50,9 @@ namespace System.Threading.Tasks.Dataflow
 				() => true, ProcessItem, () => { }, dataflowBlockOptions);
 		}
 
-		[MonoTODO]
-		public ActionBlock (Func<TInput, Task> action) : this (action, defaultOptions)
+		public ActionBlock (Func<TInput, Task> action)
+			: this (action, ExecutionDataflowBlockOptions.Default)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -72,12 +61,19 @@ namespace System.Threading.Tasks.Dataflow
 			throw new NotImplementedException ();
 		}
 
-		public DataflowMessageStatus OfferMessage (
+		DataflowMessageStatus ITargetBlock<TInput>.OfferMessage (
 			DataflowMessageHeader messageHeader, TInput messageValue,
 			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
 			return messageBox.OfferMessage (
 				messageHeader, messageValue, source, consumeToAccept);
+		}
+
+		public bool Post (TInput item)
+		{
+			return messageBox.OfferMessage (
+				new DataflowMessageHeader (1), item, null, false)
+			       == DataflowMessageStatus.Accepted;
 		}
 
 		bool ProcessItem ()
@@ -94,7 +90,7 @@ namespace System.Threading.Tasks.Dataflow
 			messageBox.Complete ();
 		}
 
-		public void Fault (Exception exception)
+		void IDataflowBlock.Fault (Exception exception)
 		{
 			compHelper.RequestFault (exception);
 		}
