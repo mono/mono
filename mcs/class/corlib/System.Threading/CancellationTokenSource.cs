@@ -273,7 +273,6 @@ namespace System.Threading
 				return;
 			foreach (var linked in registrations)
 				linked.Dispose ();
-			registrations = null;
 		}
 		
 		internal CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext)
