@@ -98,7 +98,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsTrue (broadcast.Post (2));
 
-			Assert.AreEqual (1, target.Receive (TimeSpan.FromMilliseconds (100)));
+			Assert.AreEqual (1, target.Receive (TimeSpan.FromMilliseconds (0)));
 			Assert.AreEqual (2, target.Receive (TimeSpan.FromMilliseconds (100)));
 		}
 

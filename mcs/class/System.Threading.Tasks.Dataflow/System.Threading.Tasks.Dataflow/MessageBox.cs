@@ -82,6 +82,9 @@ namespace System.Threading.Tasks.Dataflow {
 
 				postponedMessages [source] = messageHeader;
 
+				// necessary to avoid race condition
+				DecreaseCount (0);
+
 				if (!greedy && !full)
 					EnsureProcessing (true);
 				
