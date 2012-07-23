@@ -44,8 +44,18 @@ void mono_file_map_override(MonoFileMapOpen open_func, MonoFileMapSize size_func
 MonoFileMap *
 mono_file_map_open (const char* name)
 {
+	gunichar2* name_utf16;
+	MonoFileMap* res;
 	if (file_open_func) return file_open_func(name);
-	return (MonoFileMap *)fopen (name, "rb");
+#ifdef PLATFORM_WIN32
+	name_utf16 = g_utf8_to_utf16 (name, -1, NULL, NULL, NULL);
+	res = (MonoFileMap *)_wfopen (name_utf16, L"rb");
+	g_free (name_utf16);
+#else
+	res = (MonoFileMap *)fopen (name, "rb");
+#endif
+
+	return res;
 }
 
 guint64 
