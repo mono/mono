@@ -158,6 +158,17 @@ namespace System.Threading
 				throw new AggregateException (exceptions);
 		}
 
+		/* This is the callback registered on linked tokens
+		 * so that they don't throw an ODE if the callback
+		 * is called concurrently with a Dispose
+		 */
+		void SafeLinkedCancel ()
+		{
+			try {
+				Cancel ();
+			} catch (ObjectDisposedException) {}
+		}
+
 #if NET_4_5
 		public void CancelAfter (TimeSpan delay)
 		{
@@ -199,7 +210,7 @@ namespace System.Threading
 				throw new ArgumentException ("Empty tokens array");
 
 			CancellationTokenSource src = new CancellationTokenSource ();
-			Action action = src.Cancel;
+			Action action = src.SafeLinkedCancel;
 			var registrations = new List<CancellationTokenRegistration> (tokens.Length);
 
 			foreach (CancellationToken token in tokens) {
