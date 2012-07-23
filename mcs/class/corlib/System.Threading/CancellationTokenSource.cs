@@ -39,6 +39,7 @@ namespace System.Threading
 		
 		int currId = int.MinValue;
 		ConcurrentDictionary<CancellationTokenRegistration, Action> callbacks;
+		CancellationTokenRegistration[] linkedTokens;
 
 		ManualResetEvent handle;
 		
@@ -135,11 +136,13 @@ namespace System.Threading
 
 			CancellationTokenSource src = new CancellationTokenSource ();
 			Action action = src.Cancel;
+			var registrations = new List<CancellationTokenRegistration> (tokens.Length);
 
 			foreach (CancellationToken token in tokens) {
 				if (token.CanBeCanceled)
-					token.Register (action);
+					registrations.Add (token.Register (action));
 			}
+			src.linkedTokens = registrations.ToArray ();
 			
 			return src;
 		}
@@ -171,8 +174,21 @@ namespace System.Threading
 				Thread.MemoryBarrier ();
 
 				callbacks = null;
+				if (!canceled) {
+					Thread.MemoryBarrier ();
+					UnregisterLinkedTokens ();
+				}
 				handle.Dispose ();
 			}
+		}
+
+		void UnregisterLinkedTokens ()
+		{
+			if (linkedTokens == null)
+				return;
+			foreach (var linked in linkedTokens)
+				linked.Dispose ();
+			linkedTokens = null;
 		}
 		
 		internal CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext)

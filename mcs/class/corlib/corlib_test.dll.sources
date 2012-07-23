@@ -454,6 +454,7 @@ System.Collections.Concurrent/ConcurrentDictionaryTests.cs
 System.Collections.Concurrent/CollectionStressTestHelper.cs
 System.Collections.Concurrent/ParallelConcurrentQueueTests.cs
 System.Threading/CancellationTokenTests.cs
+System.Threading/CancellationTokenSourceTest.cs
 System.Threading/ManualResetEventSlimTests.cs
 System.Threading/SemaphoreSlimTests.cs
 System.Threading/CountdownEventTests.cs
