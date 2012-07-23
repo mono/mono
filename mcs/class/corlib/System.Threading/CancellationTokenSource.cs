@@ -89,6 +89,8 @@ namespace System.Threading
 
 			canceled = true;
 			handle.Set ();
+			if (linkedTokens != null)
+				UnregisterLinkedTokens ();
 			
 			List<Exception> exceptions = null;
 			
@@ -195,11 +197,12 @@ namespace System.Threading
 
 		void UnregisterLinkedTokens ()
 		{
-			if (linkedTokens == null)
+			var registrations = Interlocked.Exchange (ref linkedTokens, null);
+			if (registrations == null)
 				return;
-			foreach (var linked in linkedTokens)
+			foreach (var linked in registrations)
 				linked.Dispose ();
-			linkedTokens = null;
+			registrations = null;
 		}
 		
 		internal CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext)
