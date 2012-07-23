@@ -196,6 +196,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return elements.TryGetValue (key, out value);
         }
 
+        public bool Has(TDomain key)
+        {
+            return elements.ContainsKey (key);
+        }
+
         protected abstract TThis NewInstance();
 
         public override string ToString()

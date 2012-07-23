@@ -1,15 +1,15 @@
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    internal abstract class GenericTypeExpressionVisitor<Var, Expr, In, Out>
+    internal abstract class GenericTypeExpressionVisitor<TVariable, TExpression, TIn, TOut>
     {
-        protected IExpressionDecoder<Var, Expr> Decoder { get; private set; }
+        protected readonly IExpressionDecoder<TVariable, TExpression> Decoder;
 
-        protected GenericTypeExpressionVisitor (IExpressionDecoder<Var, Expr> decoder)
+        protected GenericTypeExpressionVisitor (IExpressionDecoder<TVariable, TExpression> decoder)
         {
             this.Decoder = decoder;
         }
 
-        public virtual Out Visit(Expr e, In input)
+        public    virtual TOut Visit(TExpression e, TIn input)
         {
             switch (Decoder.TypeOf(e))
             {
@@ -24,15 +24,15 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             }
         }
 
-        protected virtual Out VisitBool (Expr expr, In input)
+        protected virtual TOut VisitBool  (TExpression expr, TIn input)
         {
             return this.Default (expr, input);
         }
-        protected virtual Out VisitInt32 (Expr expr, In input)
+        protected virtual TOut VisitInt32 (TExpression expr, TIn input)
         {
             return this.Default(expr, input);
         }
 
-        protected abstract Out Default (Expr expr, In input);
+        protected abstract TOut Default   (TExpression expr, TIn input);
     }
 }

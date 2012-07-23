@@ -397,7 +397,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 if (polyLeft.IsIntConstant(out kLeft) && polyRight.IsIntConstant(out kRight) && 
                     EvaluateArithmeticWithOverflow.TryBinary<long>(Decoder.TypeOf (original), ExpressionOperator.Add, kLeft, kRight, out addition))
                 {
-                    var longValue = addition.ForceLong ();
+                    var longValue = addition.ConvertToLong ();
                     if (longValue.HasValue)
                         return true.With(new Polynomial<Var, Expr>(Monomial<Var>.From(Rational.For(longValue.Value))), out poly);
                 }
@@ -415,7 +415,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 if (polyLeft.IsIntConstant(out kLeft) && polyRight.IsIntConstant(out kRight) &&
                     EvaluateArithmeticWithOverflow.TryBinary(Decoder.TypeOf(original), ExpressionOperator.Sub, kLeft, kRight, out subtraction))
                 {
-                    var longValue = subtraction.ForceLong();
+                    var longValue = subtraction.ConvertToLong();
                     if (longValue.HasValue)
                         return true.With(new Polynomial<Var, Expr>(Monomial<Var>.From(Rational.For(longValue.Value))), out poly);
                 }
@@ -436,7 +436,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                         EvaluateArithmeticWithOverflow.TryBinary (
                             Decoder.TypeOf (original), ExpressionOperator.Mult, kLeft, kRight, out mult))
                     {
-                        long? longValue = mult.ForceLong ();
+                        long? longValue = mult.ConvertToLong ();
                         if (longValue.HasValue)
                         {
                             var monomial = Monomial<Var>.From (Rational.For (longValue.Value));
@@ -617,127 +617,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             {
                 return new Pair<Rational, bool> (value, true);
             }
-        }
-    }
-
-    internal static class EvaluateArithmeticWithOverflow
-    {
-        public static bool TryBinary (ExpressionOperator op, long left, long right, out int res)
-        {
-            return new EvalInt32 ().VisitBinary (op, left, right, out res);
-        }
-        public static bool TryBinary (ExpressionOperator op, long left, long right, out uint res)
-        {
-            return false.Without (out res);
-        }
-
-        public static bool TryBinary<In>(ExpressionType targetType, ExpressionOperator op, In left, In right, out object res)
-            where In : struct
-        {
-            res = null;
-
-            switch (targetType)
-            {
-                case ExpressionType.Unknown:
-                case ExpressionType.Bool:
-                    return false;
-                case ExpressionType.Int32:
-                    long? l = left.ForceLong();
-                    long? r = right.ForceLong();
-
-                    int intResult;
-                    if (!l.HasValue || !r.HasValue || !TryBinary(op, l.Value, r.Value, out intResult))
-                        return false;
-                    
-                    return true.With (intResult, out res);
-            }
-            return false;
-        }
-
-        private class EvalInt32 : GenericConstantEvalVisitor<long, int>
-        {
-            protected override bool VisitAdd              (long left, long right, out int result)
-            {
-                return true.With ((int)left + (int)right, out result);
-            }
-            protected override bool VisitAnd              (long left, long right, out int result)
-            {
-                return true.With((int)left & (int)right, out result);
-            }
-            protected override bool VisitOr               (long left, long right, out int result)
-            {
-                return true.With((int)left | (int)right, out result);
-            }
-            protected override bool VisitXor              (long left, long right, out int result)
-            {
-                return true.With((int)left ^ (int)right, out result);
-            }
-            protected override bool VisitEqual            (long left, long right, out int result)
-            {
-                return true.With((int)left == (int)right ? 1 : 0, out result);
-            }
-            protected override bool VisitNotEqual         (long left, long right, out int result)
-            {
-                return true.With((int)left != (int)right ? 1 : 0, out result);
-            }
-            protected override bool VisitLessThan         (long left, long right, out int result)
-            {
-                return true.With((int)left < (int)right ? 1 : 0, out result);
-            }
-            protected override bool VisitLessEqualThan    (long left, long right, out int result)
-            {
-                return true.With((int)left <= (int)right ? 1 : 0, out result);
-            }
-            protected override bool VisitGreaterThan      (long left, long right, out int result)
-            {
-                return true.With((int)left > (int)right ? 1 : 0, out result);
-            }
-            protected override bool VisitGreaterEqualThan (long left, long right, out int result)
-            {
-                return true.With((int)left >= (int)right ? 1 : 0, out result);
-            }
-            protected override bool VisitSub              (long left, long right, out int result)
-            {
-                return true.With((int)left - (int)right, out result);
-            }
-            protected override bool VisitMult             (long left, long right, out int result)
-            {
-                return true.With((int)left * (int)right, out result);
-            }
-            protected override bool VisitDiv              (long left, long right, out int result)
-            {
-                if (right == 0)
-                    return false.Without (out result);
-
-                return true.With ((int)left / (int)right, out result);
-            }
-            protected override bool VisitMod              (long left, long right, out int result)
-            {
-                if (right == 0)
-                    return false.Without(out result);
-
-                return true.With((int)left % (int)right, out result);
-            }
-        }
-
-    }
-
-    public static class ObjectExtensions
-    {
-        public static long? ForceLong(this object value)
-        {
-            var convertible = value as IConvertible;
-            if (convertible != null)
-            {
-                try
-                {
-                    convertible.ToInt64 (null);
-                }
-                catch
-                {
-                }
-            }
-            return null;
         }
     }
 }

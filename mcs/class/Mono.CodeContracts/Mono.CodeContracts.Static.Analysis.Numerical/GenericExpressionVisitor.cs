@@ -36,7 +36,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     abstract class GenericExpressionVisitor<In, Out, Var, Expr>
     {
-        protected IExpressionDecoder<Var, Expr> Decoder { get; private set; }
+        protected readonly IExpressionDecoder<Var, Expr> Decoder;
 
         protected GenericExpressionVisitor(IExpressionDecoder<Var, Expr> decoder)
         {
@@ -45,95 +45,40 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public virtual Out Visit(Expr expr, In data)
         {
-            var op = Decoder.OperatorFor (expr);
+            var op = Decoder.OperatorFor(expr);
             switch (op)
             {
-                case Op.Constant:         return VisitConstant      (expr, data);
-                case Op.Variable:         return VisitVariable      (Decoder.UnderlyingVariable(expr), expr, data);
-                case Op.Not:              return DispatchVisitNot   (Decoder.LeftExpressionFor(expr), data);
-                case Op.And:              return VisitAnd           (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.Or:               return VisitOr            (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.Xor:              return VisitXor           (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.LogicalAnd:       return VisitLogicalAnd    (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.LogicalOr:        return VisitLogicalOr     (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.NotEqual:         return VisitNotEqual      (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                
+                case Op.Constant: return VisitConstant(expr, data);
+                case Op.Variable: return VisitVariable(Decoder.UnderlyingVariable(expr), expr, data);
+                case Op.Not: return DispatchVisitNot(Decoder.LeftExpressionFor(expr), data);
+                case Op.And: return VisitAnd(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.Or: return VisitOr(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.Xor: return VisitXor(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.LogicalAnd: return VisitLogicalAnd(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.LogicalOr: return VisitLogicalOr(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.NotEqual: return VisitNotEqual(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+
                 case Op.Equal:
-                case Op.Equal_Obj:        return DispatchVisitEqual (op, Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                    
-                case Op.LessThan:         return DispatchCompare    (VisitLessThan,         Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.LessEqualThan:    return DispatchCompare    (VisitLessEqualThan,    Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.GreaterThan:      return DispatchCompare    (VisitGreaterThan,      Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.GreaterEqualThan: return DispatchCompare    (VisitGreaterEqualThan, Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                                                                    
-                case Op.Add:              return VisitAddition      (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.Div:              return VisitDivision      (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data); 
-                case Op.Sub:              return VisitSubtraction   (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.Mod:              return VisitModulus       (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                case Op.Mult:             return VisitMultiply      (Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
-                                                                    
-                case Op.SizeOf:           return VisitSizeOf        (Decoder.LeftExpressionFor(expr), data);
-                case Op.UnaryMinus:       return VisitUnaryMinus    (Decoder.LeftExpressionFor(expr), expr, data);
-                case Op.LogicalNot:       return VisitLogicalNot    (Decoder.LeftExpressionFor(expr), expr, data);
-                case Op.Unknown:          return VisitUnknown       (expr, data);
+                case Op.Equal_Obj: return DispatchVisitEqual(op, Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+
+                case Op.LessThan: return DispatchCompare(VisitLessThan, Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.LessEqualThan: return DispatchCompare(VisitLessEqualThan, Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.GreaterThan: return DispatchCompare(VisitGreaterThan, Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.GreaterEqualThan: return DispatchCompare(VisitGreaterEqualThan, Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+
+                case Op.Add: return VisitAddition(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.Div: return VisitDivision(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.Sub: return VisitSubtraction(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.Mod: return VisitModulus(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+                case Op.Mult: return VisitMultiply(Decoder.LeftExpressionFor(expr), Decoder.RightExpressionFor(expr), expr, data);
+
+                case Op.SizeOf: return VisitSizeOf(Decoder.LeftExpressionFor(expr), data);
+                case Op.UnaryMinus: return VisitUnaryMinus(Decoder.LeftExpressionFor(expr), expr, data);
+                case Op.LogicalNot: return VisitLogicalNot(Decoder.LeftExpressionFor(expr), expr, data);
+                case Op.Unknown: return VisitUnknown(expr, data);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private Out DispatchVisitEqual(ExpressionOperator eqKind, Expr left, Expr right, Expr original, In data)
-        {
-            // { left :eq: right }
-            switch (Decoder.OperatorFor(left))
-            {
-                case Op.GreaterEqualThan:
-                case Op.GreaterThan:
-                case Op.LessThan:
-                case Op.LessEqualThan:
-                case Op.Equal:
-                case Op.Equal_Obj:
-                    // { ( a ?= b ) :eq: right } 
-                    bool shouldNegate;
-                    if (this.TryPolarity (right, data, out shouldNegate)) // { (a ?= b) :eq: true => (a ?= b) }; (a ?= b) :eq: false => !(a ?= b) }
-                        return shouldNegate ? this.DispatchVisitNot (left, data) : this.Visit (left, data);
-                    break;
-                default:
-                    break;
-            }
-
-            switch (Decoder.OperatorFor(right))
-            {
-                case Op.GreaterEqualThan:
-                case Op.GreaterThan:
-                case Op.LessThan:
-                case Op.LessEqualThan:
-                case Op.Equal:
-                case Op.Equal_Obj:
-                    // { left :eq: (a ?= b) }
-                    bool shouldNegate;
-                    if (this.TryPolarity(left, data, out shouldNegate)) // { true :eq: (a ?= b) => (a ?= b) }; false :eq: (a ?= b) => !(a ?= b) }
-                        return shouldNegate ? this.DispatchVisitNot(right, data) : this.Visit(right, data);
-                    break;
-                default:
-                    break;
-            }
-
-            return VisitEqual(left, right, original, data);
-        }
-
-        protected virtual bool TryPolarity (Expr expr, In data, out bool shouldNegate)
-        {
-            if (Decoder.IsConstant (expr))
-            {
-                int intValue;
-                if (this.Decoder.TryValueOf(expr, ExpressionType.Int32, out intValue))
-                    return true.With (intValue == 0, out shouldNegate);
-                
-                bool boolValue;
-                if (this.Decoder.TryValueOf(expr, ExpressionType.Int32, out boolValue))
-                    return true.With(boolValue, out shouldNegate);
-            }
-            return false.Without (out shouldNegate);
         }
 
         public virtual Out VisitVariable (Var var, Expr expr, In data)
@@ -232,8 +177,25 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return Default(data);
         }
 
+        protected virtual bool TryPolarity(Expr expr, In data, out bool shouldNegate)
+        {
+            if (Decoder.IsConstant(expr))
+            {
+                int intValue;
+                if (this.Decoder.TryValueOf(expr, ExpressionType.Int32, out intValue))
+                    return true.With(intValue == 0, out shouldNegate);
+
+                bool boolValue;
+                if (this.Decoder.TryValueOf(expr, ExpressionType.Bool, out boolValue))
+                    return true.With(boolValue, out shouldNegate);
+            }
+
+            return false.Without(out shouldNegate);
+        }
+
         protected delegate Out CompareVisitor (Expr left, Expr right, Expr original, In data);
-        protected Out DispatchCompare (CompareVisitor cmp, Expr left, Expr right, Expr original, In data)
+        
+        protected virtual Out DispatchCompare (CompareVisitor cmp, Expr left, Expr right, Expr original, In data)
         {
             if (Decoder.IsConstant(left) && Decoder.OperatorFor(right) == ExpressionOperator.Sub) // const OP (a - b)
             {
@@ -250,8 +212,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
             return cmp(left, right, original, data);
         }
-
         protected abstract Out Default (In data);
+
         private Out DispatchVisitNot(Expr expr, In data)
         {
             switch (Decoder.OperatorFor(expr))
@@ -271,29 +233,40 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                     return VisitNot(expr, data);
             }
         }
-    }
+        private Out DispatchVisitEqual(ExpressionOperator eqKind, Expr left, Expr right, Expr original, In data)
+        {
+            // { left :eq: right }
+            switch (Decoder.OperatorFor(left))
+            {
+                case Op.GreaterEqualThan:
+                case Op.GreaterThan:
+                case Op.LessThan:
+                case Op.LessEqualThan:
+                case Op.Equal:
+                case Op.Equal_Obj:
+                    // { ( a ?= b ) :eq: right } 
+                    bool shouldNegate;
+                    if (this.TryPolarity(right, data, out shouldNegate)) // { (a ?= b) :eq: true => (a ?= b) }; (a ?= b) :eq: false => !(a ?= b) }
+                        return shouldNegate ? this.DispatchVisitNot(left, data) : this.Visit(left, data);
+                    break;
+            }
 
-    internal interface IExpressionDecoder<Var, Expr>
-    {
-        ExpressionOperator OperatorFor(Expr expr);
+            switch (Decoder.OperatorFor(right))
+            {
+                case Op.GreaterEqualThan:
+                case Op.GreaterThan:
+                case Op.LessThan:
+                case Op.LessEqualThan:
+                case Op.Equal:
+                case Op.Equal_Obj:
+                    // { left :eq: (a ?= b) }
+                    bool shouldNegate;
+                    if (this.TryPolarity(left, data, out shouldNegate)) // { true :eq: (a ?= b) => (a ?= b) }; false :eq: (a ?= b) => !(a ?= b) }
+                        return shouldNegate ? this.DispatchVisitNot(right, data) : this.Visit(right, data);
+                    break;
+            }
 
-        Var UnderlyingVariable(Expr expr);
-        Expr LeftExpressionFor(Expr expr);
-        Expr RightExpressionFor(Expr expr);
-
-        bool IsConstant (Expr expr);
-        bool TryValueOf<T> (Expr left, ExpressionType int32, out T num);
-        bool TrySizeOf (Expr expr, out int size);
-        ExpressionType TypeOf (Expr expr);
-
-        bool IsNull(Expr expr);
-        
-    }
-
-    enum ExpressionType
-    {
-        Unknown,
-        Int32,
-        Bool
+            return VisitEqual(left, right, original, data);
+        }
     }
 }

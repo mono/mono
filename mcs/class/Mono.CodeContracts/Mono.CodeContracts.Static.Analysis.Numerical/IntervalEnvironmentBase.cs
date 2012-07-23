@@ -108,9 +108,30 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 this[var] = intv;
             }
         }
+        
+        public TEnv TestTrueEqual(Expr left, Expr right)
+        {
+            TEnv res = this as TEnv;
 
+            var leftVar = decoder.UnderlyingVariable (left);
+            var rightVar = decoder.UnderlyingVariable (right);
 
+            if (this.Has(leftVar))
+            {
+                var cur = Clone();
+                var interval = Eval(left).Meet(Eval(right));
 
+                cur[leftVar] = interval;
+                cur[rightVar] = interval;
+
+                res = cur;
+            }
+            else if (decoder.IsConstant(left) && decoder.IsConstant(right) && this.Eval(left).Meet(Eval(right)).IsBottom)
+                return Bottom;
+
+            return res;
+        }
+        
         protected abstract TInterval Eval (Expr expr);
 
         protected abstract bool IsZero (TNumeric lowerBound);
@@ -127,18 +148,49 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return "< not implemented >";
         }
 
-        private class IntervalTrueTestVisitor : TestTrueVisitor<TEnv, Var, Expr>
+        public TEnv TestTrue (Expr guard)
         {
-            public IntervalTrueTestVisitor (IExpressionDecoder<Var, Expr> decoder)
-                : base (decoder)
+            this.TestNotEqualToZero (decoder.UnderlyingVariable (guard));
+            return new IntervalTestVisitor (decoder).VisitTrue (guard, this as TEnv);
+        }
+
+        public abstract TEnv TestTrueLessThan (Expr left, Expr right);
+        public abstract TEnv TestTrueLessEqualThan(Expr left, Expr right);
+
+        protected abstract TEnv TestNotEqualToZero (Var var);
+
+        public TEnv TestFalse (Expr guard)
+        {
+            throw new System.NotImplementedException ();
+        }
+
+        public FlatDomain<bool> CheckIfHolds (Expr expr)
+        {
+            throw new System.NotImplementedException ();
+        }
+
+        private class IntervalTestVisitor
+        {
+            private readonly IntervalTestTrueVisitor<TEnv, Var, Expr, TInterval, TNumeric> trueVisitor;
+            private readonly IntervalTestFalseVisitor<TEnv, Var, Expr, TInterval, TNumeric> falseVisitor;
+
+            public IntervalTestVisitor(IExpressionDecoder<Var, Expr> decoder)
             {
+                this.trueVisitor = new IntervalTestTrueVisitor<TEnv, Var, Expr, TInterval, TNumeric> (decoder);
+                this.falseVisitor = new IntervalTestFalseVisitor<TEnv, Var, Expr, TInterval, TNumeric> (decoder);
+
+                this.trueVisitor.FalseVisitor = this.falseVisitor;
+                this.falseVisitor.TrueVisitor = this.trueVisitor;
             }
 
-            public override TEnv VisitLessEqualThan(Expr left, Expr right, Expr original, TEnv data)
+            public TEnv VisitTrue(Expr guard, TEnv data)
             {
-                return data;
-                //TODO:
-//                return data.TestTrueLessEqualThan (left, right);
+                return trueVisitor.Visit (guard, data);
+            }
+
+            public TEnv VisitFalse(Expr guard, TEnv data)
+            {
+                return falseVisitor.Visit (guard, data);
             }
         }
     }

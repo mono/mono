@@ -2,14 +2,14 @@ using System;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    abstract class GenericConstantEvalVisitor<In, Out>
+    abstract class ConstantEvaluatorVisitor<In, Out>
     {
         protected virtual bool Default(out Out result)
         {
             return false.Without (out result);
         }
 
-        public bool VisitBinary(ExpressionOperator o, In left, In right, out Out result)
+        protected bool VisitBinary(ExpressionOperator o, In left, In right, out Out result)
         {
             try
             {

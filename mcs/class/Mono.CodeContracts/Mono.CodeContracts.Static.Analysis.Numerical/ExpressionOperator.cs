@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     enum ExpressionOperator
@@ -28,8 +30,21 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         Unknown
     }
 
-    public static class ExpressionOperatorExtensions
+    static class ExpressionOperatorExtensions
     {
+        private static readonly HashSet<ExpressionOperator> relationalOperators = new HashSet<ExpressionOperator> (); 
+
+        static ExpressionOperatorExtensions()
+        {
+            relationalOperators.Add (ExpressionOperator.LessThan);
+            relationalOperators.Add (ExpressionOperator.LessEqualThan);
+            relationalOperators.Add (ExpressionOperator.GreaterThan);
+            relationalOperators.Add (ExpressionOperator.GreaterEqualThan);
+            relationalOperators.Add (ExpressionOperator.Equal);
+            relationalOperators.Add (ExpressionOperator.Equal_Obj);
+            relationalOperators.Add (ExpressionOperator.NotEqual);
+        }
+
         internal static bool IsGreaterThan(this ExpressionOperator op)
         {
             return op == ExpressionOperator.GreaterThan;
@@ -48,6 +63,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         internal static bool IsLessEqualThan(this ExpressionOperator op)
         {
             return op == ExpressionOperator.LessEqualThan;
+        }
+
+        internal static bool IsRelational(this ExpressionOperator op)
+        {
+            return relationalOperators.Contains (op);
         }
     }
 }
