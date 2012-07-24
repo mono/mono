@@ -1129,7 +1129,7 @@ MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass) MONO_INTERNAL;
 
 char*
-mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format) MONO_INTERNAL;
+mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format);
 
 char*
 mono_type_get_full_name (MonoClass *class) MONO_INTERNAL;

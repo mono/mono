@@ -185,7 +185,9 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	fprintf (ofd, "\n");
 	fclose (ofd);
 
-#ifdef __APPLE__
+#if defined (PLATFORM_IPHONE_XCOMP)
+#define DIS_CMD "otool -v -t"
+#elif defined(__APPLE__)
 #ifdef __ppc64__
 #define DIS_CMD "otool64 -v -t"
 #else
@@ -201,7 +203,10 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 #endif
 #endif
 
-#if defined(sparc)
+#if defined (PLATFORM_IPHONE_XCOMP)
+// FIXME: I don't have a working 'as' driver to test this out
+#define AS_CMD "as"
+#elif defined(sparc)
 #define AS_CMD "as -xarch=v9"
 #elif defined(__i386__) || defined(__x86_64__)
 #  if defined(__APPLE__)

@@ -65,10 +65,8 @@ fi
 	
 mkdir -p builds/crosscompiler/iphone
 cp msvc/Win32-Release_eglib_xarm/mono.exe builds/crosscompiler/iphone/mono-xcompiler.exe
-cp msvc/Win32-Release_eglib_xarm/mono.dll builds/crosscompiler/iphone/mono.dll
 
 # make sure we have read/write permissions
 chmod +rwx builds/crosscompiler/iphone/mono-xcompiler.exe
-chmod +rwx builds/crosscompiler/iphone/mono.dll
 
 echo "iPhone cross compiler build done"

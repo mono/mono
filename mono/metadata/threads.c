@@ -3122,6 +3122,7 @@ collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 	MonoThread *thread = (MonoThread*)value;
 	struct wait_data *wait = (struct wait_data*)user_data;
 	HANDLE handle;
+	guint32 exit_code = 0;
 
 	/* 
 	 * We try to exclude threads early, to avoid running into the MAXIMUM_WAIT_OBJECTS
@@ -3135,6 +3136,8 @@ collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 	if (wait->num<MAXIMUM_WAIT_OBJECTS) {
 		handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
 		if (handle == NULL)
+			return;
+		if (GetExitCodeThread (handle, &exit_code) && exit_code != STILL_ACTIVE)
 			return;
 
 		wait->handles [wait->num] = handle;

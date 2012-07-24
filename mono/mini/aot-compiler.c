@@ -103,9 +103,10 @@ typedef struct MonoAotOptions {
 	int nimt_trampolines;
 	gboolean print_skipped_methods;
 	char *tool_prefix;
-#if defined(PLATFORM_IPHONE_XCOMP)                                                                                                                                                                
-       gboolean ficall;                                                                                                                                                                           
+#if defined(PLATFORM_IPHONE_XCOMP)
+	gboolean ficall;
 #endif 
+	gboolean lf_eol;
 } MonoAotOptions;
 
 typedef struct MonoAotStats {
@@ -344,7 +345,7 @@ emit_string_symbol (MonoAotCompile *acfg, const char *name, const char *value)
 {
 	img_writer_emit_section_change (acfg->w, ".text", 1);
 	emit_global (acfg, name, FALSE);
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(PLATFORM_IPHONE_XCOMP)
 	/* On apple, all symbols need to be aligned to avoid warnings from ld */
 	emit_alignment (acfg, 4);
 #endif
@@ -1718,7 +1719,7 @@ is_plt_patch (MonoJumpInfo *patch_info)
 static char*
 get_plt_symbol (MonoAotCompile *acfg, int plt_offset, MonoJumpInfo *patch_info)
 {
-#ifdef __MACH__
+#if defined(__MACH__) || defined (PLATFORM_IPHONE_XCOMP)
 	/* 
 	 * The Apple linker reorganizes object files, so it doesn't like branches to local
 	 * labels, since those have no relocations.
@@ -2860,7 +2861,7 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 *   yet supported.
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(PLATFORM_IPHONE_XCOMP)
 #define C_METHOD_PREFIX "m_"
 #else
 #define C_METHOD_PREFIX ""
@@ -3787,10 +3788,12 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->no_dlsym = TRUE;
 		} else if (str_begins_with (arg, "asmonly")) {
 			opts->asm_only = TRUE;
-#if defined(PLATFORM_IPHONE_XCOMP)                                                                                                                                                                
-                } else if (str_begins_with (arg, "ficall")) {
-                        opts->ficall = TRUE;                                                                                                                                                       
+#if defined(PLATFORM_IPHONE_XCOMP)
+		} else if (str_begins_with (arg, "ficall")) {
+			opts->ficall = TRUE;
 #endif 
+		} else if (str_begins_with (arg, "lf-eol")) {
+			opts->lf_eol = TRUE;
 		} else if (str_begins_with (arg, "asmwriter")) {
 			opts->asm_writer = TRUE;
 		} else if (str_begins_with (arg, "nodebug")) {
@@ -3928,18 +3931,18 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	int index, depth;
 	MonoMethod *wrapped;
 
-#if defined(PLATFORM_IPHONE_XCOMP)                                                                                                                                                                
-        if (acfg->aot_opts.ficall && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)                                                                                                       
-         {                                                                                                                                                                                         
-             method->save_lmf = FALSE;                                                                                                                                                             
-             wrapped = mono_marshal_method_from_wrapper (method);
-             if (wrapped && (wrapped->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))                                                                                                               
-             {
-                 if (wrapped->signature->ret->type != MONO_TYPE_R4)                                                                                                                                
-                     return;                                                                                                                                                                       
-             }                                                                                                                                                                                     
-         }                                                                                                                                                                                         
-#endif        
+#if defined(PLATFORM_IPHONE_XCOMP)
+	if (acfg->aot_opts.ficall && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
+	{
+		method->save_lmf = FALSE;
+		wrapped = mono_marshal_method_from_wrapper (method);
+		if (wrapped && (wrapped->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
+		{
+			if (wrapped->signature->ret->type != MONO_TYPE_R4)
+				return;
+		}
+	}
+#endif
 
 	if (acfg->aot_opts.metadata_only)
 		return;
@@ -5274,7 +5277,7 @@ emit_globals_table (MonoAotCompile *acfg)
 
 		sprintf (symbol, "name_%d", i);
 		emit_section_change (acfg, ".text", 1);
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(PLATFORM_IPHONE_XCOMP)
 		emit_alignment (acfg, 4);
 #endif
 		emit_label (acfg, symbol);
@@ -5345,7 +5348,7 @@ emit_globals (MonoAotCompile *acfg)
 		 * Emit a global symbol which can be passed by an embedding app to
 		 * mono_aot_register_module ().
 		 */
-#if defined(__MACH__)
+#if defined(__MACH__) || defined(PLATFORM_IPHONE_XCOMP)
 		sprintf (symbol, "_mono_aot_module_%s_info", acfg->image->assembly->aname.name);
 #else
 		sprintf (symbol, "mono_aot_module_%s_info", acfg->image->assembly->aname.name);
@@ -5859,10 +5862,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 				acfg->tmpfname = g_strdup_printf ("%s", acfg->aot_opts.outfile);
 			else
 				acfg->tmpfname = g_strdup_printf ("%s.s", acfg->image->name);
-			acfg->fp = fopen (acfg->tmpfname, "w+");
+			acfg->fp = fopen (acfg->tmpfname, acfg->aot_opts.lf_eol ? "w+b" : "w+");
 		} else {
 			int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
-			acfg->fp = fdopen (i, "w+");
+			acfg->fp = fdopen (i, acfg->aot_opts.lf_eol ? "w+b" : "w+");
 		}
 		g_assert (acfg->fp);
 
