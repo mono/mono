@@ -1174,6 +1174,7 @@ System.Web.Util/IWebPropertyAccessor.cs
 System.Web.Util/MachineKeySectionUtils.cs
 System.Web.Util/RuntimeHelpers.cs
 System.Web.Util/SearchPattern.cs
+System.Web.Util/SecureHashCodeProvider.cs
 System.Web.Util/SerializationHelper.cs
 System.Web.Util/StrUtils.cs
 System.Web.Util/TimeUtil.cs
