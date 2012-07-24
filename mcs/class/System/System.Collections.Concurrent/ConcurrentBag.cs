@@ -116,7 +116,32 @@ namespace System.Collections.Concurrent
 
 		public bool TryPeek (out T result)
 		{
-			throw new NotImplementedException ();
+			result = default (T);
+
+			if (count == 0)
+				return false;
+
+			int hintIndex;
+			CyclicDeque<T> bag = GetBag (out hintIndex);
+			bool hintEnabled = container.Count > hintThreshold;
+			
+			if (bag == null || !bag.PeekTop (out result)) {
+				foreach (var other in container) {
+					// Try to retrieve something based on a hint
+					bool ret = hintEnabled && addHints.TryPeek (out hintIndex) && container[hintIndex].PeekTop (out result);
+
+					// We fall back to testing our slot
+					if (!ret && other.Value != bag)
+						ret = other.Value.PeekTop (out result);
+					
+					// If we found something, stop
+					if (ret)
+						return true;
+				}
+			} else
+				return true;
+			
+			return false;
 		}
 		
 		public int Count {

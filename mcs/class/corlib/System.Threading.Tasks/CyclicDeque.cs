@@ -118,6 +118,22 @@ namespace System.Threading.Tasks
 			var a = array;
 			return a.GetEnumerable (bottom, ref top);
 		}
+		
+		internal bool PeekTop (out T obj)
+		{
+			obj = default (T);
+			
+			long t = Interlocked.Read (ref top);
+			long b = Interlocked.Read (ref bottom);
+			
+			if (b - t <= 0)
+				return false;
+			
+			var a = array;
+			obj = a.segment[t % a.size];
+			
+			return true;
+		}
 	}
 	
 	internal class CircularArray<T>
