@@ -126,11 +126,12 @@ namespace System.Windows.Forms.Layout
 
 						grid[col, row] = c;
 
-						for (int i = 1; i < col_span; i++)
-							grid[col + i, row] = dummy_control;
-
-						for (int i = 1; i < row_span; i++)
-							grid[col, row + i] = dummy_control;
+						// Fill in the rest of this control's row/column extent with dummy
+						// controls, so that other controls don't get put there.
+						for (int i = 0; i < col_span; i++)
+							for (int j = 0; j < row_span; j++)
+								if (i != 0 || j != 0)
+									grid[col + i, row + j] = dummy_control;
 					}
 				}
 			}
@@ -177,11 +178,12 @@ namespace System.Windows.Forms.Layout
 
 							grid[x, y] = c;
 
-							for (int i = 1; i < col_span; i++)
-								grid[x + i, y] = dummy_control;
-
-							for (int i = 1; i < row_span; i++)
-								grid[x, y + i] = dummy_control;
+							// Fill in the rest of this control's row/column extent with dummy
+							// controls, so that other controls don't get put there.
+							for (int i = 0; i < col_span; i++)
+								for (int j = 0; j < row_span; j++)
+									if (i != 0 || j != 0)
+										grid[x + i, y + j] = dummy_control;
 
 							// I know someone will kill me for using a goto, but 
 							// sometimes they really are the easiest way...

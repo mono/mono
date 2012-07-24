@@ -601,6 +601,36 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void TestCellPositioning18 ()
+		{
+			// A control with both rowspan and columnspan > 1 was getting
+			// other controls put into its extent (i.e. c3 was ending up
+			// at (1,1) instead of (2,1).
+			TableLayoutPanel p = new TableLayoutPanel ();
+			Control c1 = new Button ();
+			Control c2 = new Button ();
+			Control c3 = new Button ();
+			Control c4 = new Button ();
+
+			p.ColumnCount = 3;
+			p.RowCount = 4;
+
+			p.SetRowSpan (c1, 2);
+			p.SetColumnSpan (c1, 2);
+			p.SetCellPosition (c1, new TableLayoutPanelCellPosition (0, 0));
+
+			p.Controls.Add (c1);
+			p.Controls.Add (c2);
+			p.Controls.Add (c3);
+			p.Controls.Add (c4);
+
+			Assert.AreEqual (new TableLayoutPanelCellPosition (0, 0), p.GetPositionFromControl (c1), "C1");
+			Assert.AreEqual (new TableLayoutPanelCellPosition (2, 0), p.GetPositionFromControl (c2), "C2");
+			Assert.AreEqual (new TableLayoutPanelCellPosition (2, 1), p.GetPositionFromControl (c3), "C3");
+			Assert.AreEqual (new TableLayoutPanelCellPosition (0, 2), p.GetPositionFromControl (c4), "C4");
+		}
+
+		[Test]
 		public void TestRowColumnSizes1 ()
 		{
 			// Row span = 2, but control is in the last row, creates new row
