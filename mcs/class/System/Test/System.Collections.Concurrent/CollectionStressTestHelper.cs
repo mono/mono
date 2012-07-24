@@ -84,10 +84,12 @@ namespace MonoTests.System.Collections.Concurrent
 					while (!coll.TryAdd (i));
 				
 				bool state = true;
+				bool ran = false;
 				
 				Assert.AreEqual ((count + delta) * threads, coll.Count, "#0");
 				
 				ParallelTestHelper.ParallelStressTest (coll, (q) => {
+					ran = true;
 					bool s = true;
 					int t;
 					
@@ -101,7 +103,8 @@ namespace MonoTests.System.Collections.Concurrent
 					if (!s)
 						state = false;
 				}, threads);
-				
+
+				Assert.IsTrue (ran, "#1-pre");
 				Assert.IsTrue (state, "#1");
 				Assert.AreEqual (delta * threads, coll.Count, "#2");
 				
