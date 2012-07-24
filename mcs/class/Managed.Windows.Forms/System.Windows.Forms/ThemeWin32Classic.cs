@@ -6673,7 +6673,12 @@ namespace System.Windows.Forms
 
 		public override void CPDrawCheckBox (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
-			Pen check_pen = Pens.Black;
+			CPDrawCheckBoxInternal (dc, rectangle, state, false /* mixed */);
+		}
+
+		private void CPDrawCheckBoxInternal (Graphics dc, Rectangle rectangle, ButtonState state, bool mixed)
+		{
+			Pen check_pen = (mixed) ? Pens.Gray : Pens.Black;
 			
 			Rectangle cb_rect = new Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 			
@@ -7099,10 +7104,9 @@ namespace System.Windows.Forms
 
 		}
 
-		[MonoInternalNote ("Does not respect Mixed")]
 		public override void CPDrawMixedCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
-			CPDrawCheckBox (graphics, rectangle, state);
+			CPDrawCheckBoxInternal (graphics, rectangle, state, true /* mixed */);
 		}
 
 		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)
