@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Mono.CodeContracts.Static.DataStructures
+namespace Mono.CodeContracts.Static.DataStructures.Patricia
 {
     internal class BranchNode<T> : PatriciaTrieNode<T>
     {

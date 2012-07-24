@@ -109,7 +109,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		{
 			FlatDomain<TypeNode> aType = ContextProvider.ExpressionContext.GetType (expr);
 			if (aType.IsNormal()) {
-				type = aType.Concrete;
+				type = aType.Value;
 				return true;
 			}
 

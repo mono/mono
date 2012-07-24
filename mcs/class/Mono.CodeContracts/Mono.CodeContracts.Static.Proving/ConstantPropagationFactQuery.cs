@@ -26,16 +26,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System.Linq;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Proving
 {
-	class ConstantPropagationFactQuery<Variable> : IFactQuery<BoxedExpression, Variable>
-	{
+	class ConstantPropagationFactQuery<Variable> : IFactQuery<BoxedExpression, Variable> {
 		#region Implementation of IFactBase<Variable>
+        public bool IsUnreachable(APC pc)
+        {
+            return false;
+        }
+
 		public ProofOutcome IsNull(APC pc, Variable variable)
 		{
 			return ProofOutcome.Top;
@@ -45,11 +48,6 @@ namespace Mono.CodeContracts.Static.Proving
 		{
 			return ProofOutcome.Top;
 		}
-
-		public bool IsUnreachable(APC pc)
-		{
-			return false;
-		}
 		#endregion
 
 		#region Implementation of IFactQuery<BoxedExpression,Variable>
@@ -57,7 +55,7 @@ namespace Mono.CodeContracts.Static.Proving
 		{
 			int num;
 			if (expr.IsConstantIntOrNull (out num))
-				return IsTrueOrTop (num == 0);
+				return (num == 0).ToTrueOrTop ();
 
 			return ProofOutcome.Top;
 		}
@@ -66,7 +64,7 @@ namespace Mono.CodeContracts.Static.Proving
 		{
 			int num;
 			if (expr.IsConstantIntOrNull (out num))
-				return IsTrueOrTop (num != 0);
+				return (num != 0).ToTrueOrTop ();
 
 			return ProofOutcome.Top;
 		}
@@ -75,11 +73,10 @@ namespace Mono.CodeContracts.Static.Proving
 		{
 			int num;
 			if (expr.IsConstantIntOrNull (out num))
-				return IsTrueOrTop (num != 0);
+				return (num != 0).ToTrueOrTop ();
 
 			return ConstantFact (expr);
 		}
-
 
 		public ProofOutcome IsTrueImply(APC pc, Sequence<BoxedExpression> positiveAssumptions, Sequence<BoxedExpression> negativeAssumptions, BoxedExpression goal)
 		{
@@ -88,7 +85,7 @@ namespace Mono.CodeContracts.Static.Proving
 			while (goal.IsUnaryExpression (out op, out arg) && op.IsConversionOperator ())
 				goal = arg;
 
-			if (positiveAssumptions.AsEnumerable ().Any (positiveAssumption => positiveAssumptions.Equals (goal)))
+			if (positiveAssumptions.Any(assumption => assumption.Equals (goal)))
 				return ProofOutcome.True;
 
 			return ProofOutcome.Top;
@@ -98,7 +95,7 @@ namespace Mono.CodeContracts.Static.Proving
 		{
 			int num;
 			if (expr.IsConstantIntOrNull(out num))
-				return IsTrueOrTop(num >= 0);
+				return (num >= 0).ToTrueOrTop ();
 
 			return ProofOutcome.Top;
 		}
@@ -108,7 +105,7 @@ namespace Mono.CodeContracts.Static.Proving
 			int l;
 			int r;
 			if (left.IsConstantIntOrNull(out l) && right.IsConstantIntOrNull(out r))
-				return IsTrueOrTop (l < r);
+				return (l < r).ToTrueOrTop ();
 
 			return ProofOutcome.Top;
 		}
@@ -117,17 +114,12 @@ namespace Mono.CodeContracts.Static.Proving
 		{
 			int num;
 			if (expr.IsConstantIntOrNull(out num))
-				return IsTrueOrTop (num != 0);
+				return (num != 0).ToTrueOrTop ();
 
 			return ProofOutcome.Top;
 		}
 
-		private static ProofOutcome IsTrueOrTop(bool condition)
-		{
-			return condition ? ProofOutcome.True : ProofOutcome.Top;
-		}
-
-		private ProofOutcome ConstantFact(BoxedExpression expr)
+	    private static ProofOutcome ConstantFact(BoxedExpression expr)
 		{
 			BinaryOperator op;
 			BoxedExpression left;
@@ -142,65 +134,42 @@ namespace Mono.CodeContracts.Static.Proving
 				if (leftIsInt || rightIsInt) {
 					if (leftIsInt && rightIsInt) {
 						switch (op) {
-							case BinaryOperator.Add:
-								return IsTrueOrTop ((l + r) != 0);
-							case BinaryOperator.And:
-								return IsTrueOrTop((l & r) != 0);
-							case BinaryOperator.Ceq:
-								return IsTrueOrTop(l == r);
-							case BinaryOperator.Cobjeq:
-								return ProofOutcome.Top;
-							case BinaryOperator.Cne_Un:
-								return IsTrueOrTop(l != r);
-							case BinaryOperator.Cge:
-								return IsTrueOrTop(l >= r);
-							case BinaryOperator.Cge_Un:
-								return IsTrueOrTop((uint)l >= (uint)r);
-							case BinaryOperator.Cgt:
-								return IsTrueOrTop(l > r);
-							case BinaryOperator.Cgt_Un:
-								return IsTrueOrTop((uint)l > (uint)r);
-							case BinaryOperator.Cle:
-								return IsTrueOrTop(l <= r);
-							case BinaryOperator.Cle_Un:
-								return IsTrueOrTop((uint)l <= (uint)r);
-							case BinaryOperator.Clt:
-								return IsTrueOrTop(l < r);
-							case BinaryOperator.Clt_Un:
-								return IsTrueOrTop((uint)l < (uint)r);
-							case BinaryOperator.Div:
-								return IsTrueOrTop(r != 0 && ((l / r) != 0));
-							case BinaryOperator.LogicalAnd:
-								return IsTrueOrTop(l != 0 && r != 0);
-							case BinaryOperator.LogicalOr:
-								return IsTrueOrTop(l != 0 || r != 0);
-							case BinaryOperator.Mul:
-								return IsTrueOrTop(l * r != 0);
-							case BinaryOperator.Or:
-								return IsTrueOrTop((l | r) != 0);
-							case BinaryOperator.Rem:
-								return IsTrueOrTop(r != 0 && (l % r != 0));
-							case BinaryOperator.Shl:
-								return IsTrueOrTop(l << r != 0);
-							case BinaryOperator.Shr:
-								return IsTrueOrTop(l >> r != 0);
-							case BinaryOperator.Sub:
-								return IsTrueOrTop(l - r != 0);
-							case BinaryOperator.Xor:
-								return IsTrueOrTop((l ^ r) != 0);
+							case BinaryOperator.Add:        return ((l + r) != 0).ToTrueOrTop ();
+							case BinaryOperator.And:        return ((l & r) != 0).ToTrueOrTop ();
+							case BinaryOperator.Ceq:        return (l == r).ToTrueOrTop ();
+							case BinaryOperator.Cobjeq:     return ProofOutcome.Top;
+							case BinaryOperator.Cne_Un:     return (l != r).ToTrueOrTop ();
+							case BinaryOperator.Cge:        return (l >= r).ToTrueOrTop ();
+							case BinaryOperator.Cge_Un:     return ((uint)l >= (uint)r).ToTrueOrTop ();
+							case BinaryOperator.Cgt:        return (l > r).ToTrueOrTop ();
+							case BinaryOperator.Cgt_Un:     return ((uint)l > (uint)r).ToTrueOrTop ();
+							case BinaryOperator.Cle:        return (l <= r).ToTrueOrTop ();
+							case BinaryOperator.Cle_Un:     return ((uint)l <= (uint)r).ToTrueOrTop ();
+							case BinaryOperator.Clt:        return (l < r).ToTrueOrTop ();
+							case BinaryOperator.Clt_Un:     return ((uint)l < (uint)r).ToTrueOrTop ();
+							case BinaryOperator.Div:        return (r != 0 && ((l / r) != 0)).ToTrueOrTop ();
+							case BinaryOperator.LogicalAnd: return (l != 0 && r != 0).ToTrueOrTop ();
+							case BinaryOperator.LogicalOr:  return (l != 0 || r != 0).ToTrueOrTop ();
+							case BinaryOperator.Mul:        return (l * r != 0).ToTrueOrTop ();
+							case BinaryOperator.Or:         return ((l | r) != 0).ToTrueOrTop ();
+							case BinaryOperator.Rem:        return (r != 0 && (l % r != 0)).ToTrueOrTop ();
+							case BinaryOperator.Shl:        return (l << r != 0).ToTrueOrTop ();
+							case BinaryOperator.Shr:        return (l >> r != 0).ToTrueOrTop ();
+							case BinaryOperator.Sub:        return (l - r != 0).ToTrueOrTop ();
+							case BinaryOperator.Xor:        return ((l ^ r) != 0).ToTrueOrTop ();
 						}
 					}
 					if (op == BinaryOperator.Ceq && (leftIsInt && l == 0 || rightIsInt && r == 0))
-						return this.ConstantFact (left).Negate ();
+						return ConstantFact (left).Negate ();
 				}
 				else if (left.IsConstant && right.IsConstant) {
 					var lConst = left.Constant;
 					var rConst = right.Constant;
 					switch (op) {
 						case BinaryOperator.Cobjeq:
-							return lConst == null ? IsTrueOrTop (rConst == null) : IsTrueOrTop (lConst.Equals (rConst));
+							return lConst == null ? (rConst == null).ToTrueOrTop () : lConst.Equals (rConst).ToTrueOrTop ();
 						case BinaryOperator.Cne_Un:
-							return lConst == null ? IsTrueOrTop (rConst != null) : IsTrueOrTop (!lConst.Equals (rConst));
+							return lConst == null ? (rConst != null).ToTrueOrTop () : (!lConst.Equals (rConst)).ToTrueOrTop ();
 					}
 				}
 			}

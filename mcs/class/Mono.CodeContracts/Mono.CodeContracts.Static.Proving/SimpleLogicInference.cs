@@ -29,6 +29,7 @@
 using System;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 using Mono.CodeContracts.Static.ControlFlow;
 
 namespace Mono.CodeContracts.Static.Proving {
@@ -53,14 +54,12 @@ namespace Mono.CodeContracts.Static.Proving {
 					return ProofOutcome.True;
 				if (constant is string)
 					return ProofOutcome.False;
-				var convertible = constant as IConvertible;
-				if (convertible != null) {
-					try {
-						return (convertible.ToInt64 (null) == 0) ? ProofOutcome.True : ProofOutcome.False;
-					} catch {
-						return ProofOutcome.Top;
-					}
-				}
+
+			    long? longValue = constant.ConvertToLong ();
+                if (longValue.HasValue)
+                    return longValue == 0 ? ProofOutcome.True : ProofOutcome.False;
+                
+                return ProofOutcome.Top;
 			}
 
 			BinaryOperator op;
@@ -90,14 +89,12 @@ namespace Mono.CodeContracts.Static.Proving {
 					return ProofOutcome.False;
 				if (constant is string)
 					return ProofOutcome.True;
-				var convertible = constant as IConvertible;
-				if (convertible != null) {
-					try {
-						return (convertible.ToInt64 (null) == 0) ? ProofOutcome.False : ProofOutcome.True;
-					} catch {
-						return ProofOutcome.Top;
-					}
-				}
+                
+                long? longValue = constant.ConvertToLong();
+                if (longValue.HasValue)
+                    return longValue != 0 ? ProofOutcome.True : ProofOutcome.False;
+				
+                return ProofOutcome.Top;
 			}
 
 			BinaryOperator op;

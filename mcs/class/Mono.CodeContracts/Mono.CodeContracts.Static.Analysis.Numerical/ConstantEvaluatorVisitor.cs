@@ -1,5 +1,7 @@
 using System;
 
+using Mono.CodeContracts.Static.DataStructures;
+
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     abstract class ConstantEvaluatorVisitor<In, Out>

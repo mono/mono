@@ -60,5 +60,7 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		void Print (TextWriter tw, ILPrinter<APC> printer,
 		            Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
 		            Sequence<Edge<CFGBlock, EdgeTag>> context);
+
+	    bool IsForwardBackEdge (APC @from, APC to);
 	}
 }

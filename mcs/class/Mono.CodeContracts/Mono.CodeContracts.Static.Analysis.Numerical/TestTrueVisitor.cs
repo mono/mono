@@ -1,3 +1,4 @@
+using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
@@ -82,8 +83,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             if (!holds.IsNormal())
                 return false.Without (out shouldNegate);
 
-            return true.With (!holds.Concrete, out shouldNegate);
-        }
-
-    }
+            return true.With (!holds.Value, out shouldNegate);
+        }    }
 }

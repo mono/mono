@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Mono.CodeContracts.Static.DataStructures
+namespace Mono.CodeContracts.Static.DataStructures.Patricia
 {
     abstract class PatriciaTrieNode<T> : IImmutableIntMap<T>
     {
@@ -55,8 +55,6 @@ namespace Mono.CodeContracts.Static.DataStructures
         protected internal abstract void FillValuesTo(List<T> list);
         protected internal abstract void AppendToBuilder(StringBuilder sb);
         protected internal abstract void Dump(TextWriter tw, string prefix);
-
-        
 
         public override string ToString()
         {

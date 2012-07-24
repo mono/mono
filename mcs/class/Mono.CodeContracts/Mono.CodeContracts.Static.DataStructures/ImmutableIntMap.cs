@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using Mono.CodeContracts.Static.DataStructures.Patricia;
+
 namespace Mono.CodeContracts.Static.DataStructures {
 	static class ImmutableIntMap<T>
 	{

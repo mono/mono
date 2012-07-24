@@ -1,4 +1,4 @@
-using Mono.CodeContracts.Static.Analysis.Numerical;
+using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Lattices
 {

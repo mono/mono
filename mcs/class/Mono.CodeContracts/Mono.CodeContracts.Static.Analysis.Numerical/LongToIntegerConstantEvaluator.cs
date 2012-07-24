@@ -1,3 +1,5 @@
+using Mono.CodeContracts.Static.DataStructures;
+
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     internal class LongToIntegerConstantEvaluator : ConstantEvaluatorVisitor<long, int>

@@ -147,9 +147,7 @@ namespace Mono.CodeContracts.Static.DataFlowAnalysis {
 
 		protected override bool IsBackEdge (APC from, APC to)
 		{
-			//todo: implement this
-			//can't be false, because back edges means having cycles, so we definitely have to widen
-			return true;
+		    return CFG.IsForwardBackEdge (from, to);
 		}
 	}
 }

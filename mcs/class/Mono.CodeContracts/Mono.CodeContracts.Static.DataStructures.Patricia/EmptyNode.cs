@@ -3,76 +3,63 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Mono.CodeContracts.Static.DataStructures
+namespace Mono.CodeContracts.Static.DataStructures.Patricia
 {
-    internal class LeafNode<T> : PatriciaTrieNode<T>
+    class EmptyNode<T> : PatriciaTrieNode<T>
     {
-        private readonly int _key;
+        public static readonly EmptyNode<T> Instance = new EmptyNode<T>();
 
         public override bool Contains(int key)
         {
-            return key == _key;
+            return false;
         }
 
-        public override int Key { get { return _key; } }
-        public override int Count { get { return 1; } }
-        public T Value { get; private set; }
+        public override int Key { get { throw new NotSupportedException("No key for empty node");} }
 
-        public LeafNode(int key, T value)
+        public override int Count
         {
-            _key = key;
-            Value = value;
+            get { return 0; }
         }
 
         public override IImmutableIntMap<T> Add(int key, T value)
         {
-            if (key == Key)
-                return new LeafNode<T>(key, value);
-
-            return Join(new LeafNode<T>(key, value), this);
+            return new LeafNode<T>(key, value);
         }
 
         public override IImmutableIntMap<T> Remove(int key)
         {
-            if (key == this.Key)
-                return EmptyNode<T>.Instance;
-
             return this;
         }
 
         public override void Visit(Action<T> action)
         {
-            action(Value);
         }
 
         public override void Visit(Action<int, T> action)
         {
-            action(Key, Value);
         }
 
         protected internal override void FillKeysTo(List<int> list)
         {
-            list.Add(_key);
         }
 
         protected internal override void FillValuesTo(List<T> list)
         {
-            list.Add(Value);
         }
 
         protected internal override void AppendToBuilder(StringBuilder sb)
         {
-            sb.AppendFormat("{0}->'{1}' ", _key, Value);
+            sb.Append("*");
         }
 
         protected internal override void Dump(TextWriter tw, string prefix)
         {
-            tw.WriteLine(prefix + "<Leaf Key={0} Value='{1}' />", _key, Value);
+            tw.WriteLine(prefix + "<empty/>");
         }
 
         public override T Lookup(int key)
         {
-            return key == _key ? Value : default(T);
+            return default(T);
         }
     }
 }

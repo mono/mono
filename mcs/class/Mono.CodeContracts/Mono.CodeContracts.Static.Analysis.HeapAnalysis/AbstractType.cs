@@ -53,7 +53,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		public TypeNode ConcreteType
 		{
-			get { return this.value.Concrete; }
+			get { return this.value.Value; }
 		}
 
 		private static AbstractType ForManifestedFieldValue

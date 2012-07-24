@@ -149,7 +149,13 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 				DecoratorHelper.Pop ();
 			}
 		}
-		#endregion
+
+	    public bool IsForwardBackEdge (APC @from, APC to)
+	    {
+	        return underlying.IsForwardBackEdge (from, to);
+	    }
+
+	    #endregion
 
 		#region Implementation of IEdgeSubroutineAdaptor
 		Sequence<Pair<EdgeTag, Subroutine>> IEdgeSubroutineAdaptor.GetOrdinaryEdgeSubroutinesInternal (CFGBlock @from, CFGBlock to,

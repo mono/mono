@@ -215,7 +215,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		private void AssignValue (SymValue address, FlatDomain<TypeNode> type)
 		{
 			Havoc (address);
-			SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Concrete) : type);
+			SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Value) : type);
 			if (IsStructWithFields (type))
 				return;
 
@@ -226,7 +226,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			if (!type.IsNormal())
 				return;
 
-			if (NeedsArrayLengthManifested (type.Concrete))
+			if (NeedsArrayLengthManifested (type.Value))
 				ManifestArrayLength (fresh);
 		}
 
@@ -271,7 +271,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		{
 			var args = new[] {Value (op1), Value (op2)};
 			SymFunction c = this.Functions.For (op);
-			TypeNode type = !typeOpt.IsNormal() ? MetaDataProvider.System_Int32 : typeOpt.Concrete;
+			TypeNode type = !typeOpt.IsNormal() ? MetaDataProvider.System_Int32 : typeOpt.Value;
 
 			bool fresh;
 
@@ -285,7 +285,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		public void AssignPureUnary (int dest, UnaryOperator op, FlatDomain<TypeNode> typeOpt, int operand)
 		{
 			SymFunction c = this.Functions.For (op);
-			TypeNode type = !typeOpt.IsNormal() ? MetaDataProvider.System_Int32 : typeOpt.Concrete;
+			TypeNode type = !typeOpt.IsNormal() ? MetaDataProvider.System_Int32 : typeOpt.Value;
 
 			SymValue unaryOperand = this.egraph [c, Value (operand)];
 			SymValue sv = Address (dest);
@@ -464,8 +464,8 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			FlatDomain<TypeNode> targetType = TargetType (addrType);
 
 			if (IsStructWithFields (targetType))
-				CopyOldStructValue (pc, destAddr, srcAddr, targetType.Concrete, target, atEndOld);
-			else if (atEndOld && targetType.IsNormal() && MetaDataProvider.IsManagedPointer (targetType.Concrete)) {
+				CopyOldStructValue (pc, destAddr, srcAddr, targetType.Value, target, atEndOld);
+			else if (atEndOld && targetType.IsNormal() && MetaDataProvider.IsManagedPointer (targetType.Value)) {
 				srcAddr = TryValue (srcAddr);
 				if (srcAddr == null)
 					return;
@@ -697,7 +697,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		{
 			FlatDomain<TypeNode> type = TargetType (addrType);
 			if (IsStructWithFields (type))
-				CopyStructValue (destAddr, sourceAddr, type.Concrete);
+				CopyStructValue (destAddr, sourceAddr, type.Value);
 
 			CopyPrimValue (destAddr, sourceAddr, cast, type);
 		}
@@ -711,7 +711,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 				SetTypeIfUnknown (value, elementType);
 
 			if (elementType.IsNormal()) {
-				if (NeedsArrayLengthManifested (elementType.Concrete))
+				if (NeedsArrayLengthManifested (elementType.Value))
 					ManifestArrayLength (value);
 			}
 
@@ -775,7 +775,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			if (!targetType.IsNormal())
 				return;
 
-			if (NeedsArrayLengthManifested (targetType.Concrete))
+			if (NeedsArrayLengthManifested (targetType.Value))
 				ManifestArrayLength (fresh);
 		}
 
@@ -973,7 +973,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			if (!type.IsNormal())
 				return false;
 
-			return !MetaDataProvider.HasValueRepresentation (type.Concrete);
+			return !MetaDataProvider.HasValueRepresentation (type.Value);
 		}
 
 		private FlatDomain<TypeNode> TargetType (FlatDomain<TypeNode> type)
@@ -981,7 +981,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			if (!type.IsNormal())
 				return type;
 
-			TypeNode normalType = type.Concrete;
+			TypeNode normalType = type.Value;
 			if (MetaDataProvider.IsManagedPointer (normalType))
 				return MetaDataProvider.ElementType (normalType);
 
@@ -1185,11 +1185,11 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 				SymValue ptrValue = this.egraph.FreshSymbol ();
 				if (type.IsNormal())
 					aType = new AbstractType (!unsigned ? MetaDataProvider.System_IntPtr : MetaDataProvider.System_UIntPtr, aType.IsZero);
-				SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Concrete) : type);
+				SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Value) : type);
 				this.egraph [ptrValue] = aType;
 				this.egraph [this.Functions.ValueOf, address] = ptrValue;
 			} else
-				SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Concrete) : type);
+				SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Value) : type);
 		}
 
 		public TypeNode UnaryResultType (UnaryOperator op, AbstractType type)
@@ -1223,7 +1223,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			SymValue srcAddr = Address (temporaryForWhichAddressIsTaken);
 			this.egraph [this.Functions.ValueOf, destAddr] = srcAddr;
 			AbstractType aType = CurrentType (srcAddr);
-			FlatDomain<TypeNode> t = !aType.IsNormal() ? new FlatDomain<TypeNode> () : MetaDataProvider.ManagedPointer (aType.Type.Concrete);
+			FlatDomain<TypeNode> t = !aType.IsNormal() ? new FlatDomain<TypeNode> () : MetaDataProvider.ManagedPointer (aType.Type.Value);
 			SetType (destAddr, t);
 		}
 

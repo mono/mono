@@ -32,13 +32,13 @@ using System.IO;
 using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.NonNull {
-	struct Domain<V> where V : IEquatable<V> {
-		public static readonly Domain<V> BottomValue = new Domain<V> (SetDomain<V>.BottomValue, SetDomain<V>.BottomValue);
+	struct NonNullDomain<V> where V : IEquatable<V> {
+		public static readonly NonNullDomain<V> BottomValue = new NonNullDomain<V> (SetDomain<V>.BottomValue, SetDomain<V>.BottomValue);
 
 		public SetDomain<V> NonNulls;
 		public SetDomain<V> Nulls;
 
-		public Domain(SetDomain<V> nonNulls, SetDomain<V> nulls)
+		public NonNullDomain(SetDomain<V> nonNulls, SetDomain<V> nulls)
 		{
 			this.NonNulls = nonNulls;
 			this.Nulls = nulls;

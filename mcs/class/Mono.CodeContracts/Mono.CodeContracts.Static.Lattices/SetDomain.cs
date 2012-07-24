@@ -111,10 +111,9 @@ namespace Mono.CodeContracts.Static.Lattices {
 
 	    public SetDomain<T> Meet (SetDomain<T> that)
 		{
-			if (this.set == that.set || IsBottom || that.IsTop)
-				return this;
-			if (that.IsBottom || IsTop)
-				return that;
+	        SetDomain<T> result;
+	        if (this.TryTrivialMeet (that, out result))
+	            return result;
 
 			return new SetDomain<T> (this.set.Union (that.set));
 		}
@@ -139,12 +138,12 @@ namespace Mono.CodeContracts.Static.Lattices {
 			return this;
 		}
 
-		public SetDomain<T> Add (T elem)
+		public SetDomain<T> With (T elem)
 		{
 			return new SetDomain<T> (this.set.Add (elem));
 		}
 
-		public SetDomain<T> Remove (T elem)
+		public SetDomain<T> Without (T elem)
 		{
 			return new SetDomain<T> (this.set.Remove (elem));
 		}

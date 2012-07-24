@@ -26,11 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System.ComponentModel;
+
 namespace Mono.CodeContracts.Static {
 	public enum ProofOutcome {
+        [Description("Can be true or false.")]
 		Top,
+        [Description("Definitely true.")]
 		True,
+        [Description("Definitely false.")]
 		False,
+        [Description("Unreachable.")]
 		Bottom
 	}
 }

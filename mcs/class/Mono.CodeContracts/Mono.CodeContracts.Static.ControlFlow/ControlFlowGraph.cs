@@ -167,7 +167,28 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			var set = new HashSet<Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>>> ();
 			this.method_subroutine.Print (tw, printer, contextLookup, context, set);
 		}
-		#endregion
+
+	    public bool IsForwardBackEdge (APC @from, APC to)
+	    {
+            if (to.Index != 0)
+                return false;
+
+	        return this.IsForwardBackEdgeHelper (from, to);
+	    }
+
+	    private bool IsForwardBackEdgeHelper (APC @from, APC to)
+	    {
+            if (to.Block.Subroutine.EdgeInfo.IsBackEdge(from.Block, Dummy.Value, to.Block))
+                return true;
+
+            if (from.SubroutineContext.IsEmpty() || from.SubroutineContext.Tail != to.SubroutineContext)
+                return false;
+
+	        Edge<CFGBlock, EdgeTag> edge = @from.SubroutineContext.Head;
+	        return edge.To.Subroutine.EdgeInfo.IsBackEdge (edge.From, Dummy.Value, edge.To);
+	    }
+
+	    #endregion
 
 		private bool IsJoinPoint (CFGBlock block)
 		{

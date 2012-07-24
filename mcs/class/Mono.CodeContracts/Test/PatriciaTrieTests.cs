@@ -29,6 +29,7 @@
 #endregion
 
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.DataStructures.Patricia;
 
 using NUnit.Framework;
 

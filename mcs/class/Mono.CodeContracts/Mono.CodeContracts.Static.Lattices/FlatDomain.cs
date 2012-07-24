@@ -47,19 +47,19 @@ namespace Mono.CodeContracts.Static.Lattices {
 		public static readonly FlatDomain<T> BottomValue = new FlatDomain<T> (DomainKind.Bottom);
 		public static readonly FlatDomain<T> TopValue = new FlatDomain<T> (DomainKind.Top);
 
-		public readonly T Concrete;
+		public readonly T Value;
 		private readonly DomainKind state;
 
 		private FlatDomain (DomainKind state)
 		{
 			this.state = state;
-			this.Concrete = default(T);
+			this.Value = default(T);
 		}
 
 		public FlatDomain (T value)
 		{
 			this.state = DomainKind.Normal;
-			this.Concrete = value;
+			this.Value = value;
 		}
 
 		public static implicit operator FlatDomain<T> (T value)
@@ -102,7 +102,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 				weaker = !that.IsBottom;
 				return that;
 			}
-			if (this.Concrete.Equals (that.Concrete)) {
+			if (this.Value.Equals (that.Value)) {
 				weaker = false;
 				return that;
 			}
@@ -125,7 +125,7 @@ namespace Mono.CodeContracts.Static.Lattices {
                 return result;
 
             // this and that must be normal here
-            return this.Concrete.Equals(that.Concrete) ? this : TopValue;
+            return this.Value.Equals(that.Value) ? this : TopValue;
         }
 
 		public FlatDomain<T> Meet (FlatDomain<T> that)
@@ -134,7 +134,7 @@ namespace Mono.CodeContracts.Static.Lattices {
             if (this.TryTrivialMeet(that, out result))
                 return result;
 
-		    return this.Concrete.Equals(that.Concrete) ? this : BottomValue;
+		    return this.Value.Equals(that.Value) ? this : BottomValue;
 		}
 
 		public bool LessEqual (FlatDomain<T> that)
@@ -143,7 +143,7 @@ namespace Mono.CodeContracts.Static.Lattices {
             if (this.TryTrivialLessEqual(that, out result))
                 return result;
 
-		    return this.Concrete.Equals(that.Concrete);
+		    return this.Value.Equals(that.Value);
 		}
 
 		public FlatDomain<T> ImmutableVersion ()
@@ -163,7 +163,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 			else if (IsBottom)
 				tw.WriteLine (this.BottomSymbolIfAny());
 			else
-				tw.WriteLine ("<{0}>", this.Concrete);
+				tw.WriteLine ("<{0}>", this.Value);
 		}
 
 		public override string ToString ()
@@ -173,7 +173,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 			if (IsBottom)
 				return this.BottomSymbolIfAny();
 
-			return string.Format ("<{0}>", this.Concrete);
+			return string.Format ("<{0}>", this.Value);
 		}
 		#endregion
 
@@ -182,7 +182,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 			if (!this.IsNormal())
 				return this.state == that.state;
 
-			return that.IsNormal() && this.Concrete.Equals (that.Concrete);
+			return that.IsNormal() && this.Value.Equals (that.Value);
 		}
 	}
     

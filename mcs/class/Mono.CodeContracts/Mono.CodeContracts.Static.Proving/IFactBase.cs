@@ -29,9 +29,10 @@
 using Mono.CodeContracts.Static.ControlFlow;
 
 namespace Mono.CodeContracts.Static.Proving {
-	interface IFactBase<Variable> {
+	interface IFactBase<in Variable> {
+        bool IsUnreachable(APC pc);
+
 		ProofOutcome IsNull (APC pc, Variable variable);
 		ProofOutcome IsNonNull (APC pc, Variable variable);
-		bool IsUnreachable (APC pc);
 	}
 }

@@ -45,7 +45,7 @@ namespace Mono.CodeContracts.Static.Proving
 			this.isUnreachable = isUnreachable;
 		}
 
-		public void Add(IFactQuery<BoxedExpression, Variable> item )
+		public void Add(IFactQuery<BoxedExpression, Variable> item)
 		{
 			if (item == null)
 				return;

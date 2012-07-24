@@ -76,9 +76,8 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 
 			FlatDomain<Expr<TSymbolicValue>> aExpr = ifFound [expr.Symbol];
 			if (aExpr.IsNormal()) {
-				return aExpr.Concrete.Decode<Data, Result, ExpressionDecoderAdapter<TSymbolicValue, Data, Result, Visitor>>
-					(expr.ReadAt, expr.Symbol,
-					 new ExpressionDecoderAdapter<TSymbolicValue, Data, Result, Visitor> (visitor), data);
+				return aExpr.Value.Decode<Data, Result, ExpressionDecoderAdapter<TSymbolicValue, Data, Result, Visitor>>
+					(expr.ReadAt, expr.Symbol, new ExpressionDecoderAdapter<TSymbolicValue, Data, Result, Visitor> (visitor), data);
 			}
 
 			TypeNode type;

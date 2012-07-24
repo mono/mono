@@ -33,9 +33,9 @@ using Mono.CodeContracts.Static.Analysis;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.ControlFlow {
-	abstract class Subroutine : ITypedProperties, IEquatable<Subroutine> {
+	abstract class Subroutine : IPropertyCollection, IEquatable<Subroutine> {
 		private static int _subroutineIdGenerator;
-		private readonly TypedProperties properties = new TypedProperties ();
+		private readonly PropertyCollection properties = new PropertyCollection ();
 		private readonly int subroutine_id = _subroutineIdGenerator++;
 
 		public virtual SubroutineKind Kind
@@ -110,14 +110,14 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 
 		public abstract int StackDelta { get; }
 
-		#region ITypedProperties Members
+		#region IPropertyCollection Members
 		public bool TryGetValue<T> (TypedKey key, out T value)
 		{
 			return this.properties.TryGetValue (key, out value);
 		}
 		#endregion
 
-		#region Implementation of ITypedProperties
+		#region Implementation of IPropertyCollection
 		public bool Contains (TypedKey key)
 		{
 			return this.properties.Contains (key);

@@ -17,17 +17,17 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public override TEnv VisitEqual(Expr left, Expr right, Expr original, TEnv data)
         {
-            return data.TestTrueEqual (left, right);
+            return data.TrueTester.TestTrueEqual (left, right);
         }
 
         public override TEnv VisitLessThan(Expr left, Expr right, Expr original, TEnv data)
         {
-            return data.TestTrueLessThan (left, right);
+            return data.TrueTester.TestTrueLessThan (left, right);
         }
 
         public override TEnv VisitLessEqualThan(Expr left, Expr right, Expr original, TEnv data)
         {
-            return data.TestTrueLessEqualThan (left, right);
+            return data.TrueTester.TestTrueLessEqualThan (left, right);
         }
     }
 }

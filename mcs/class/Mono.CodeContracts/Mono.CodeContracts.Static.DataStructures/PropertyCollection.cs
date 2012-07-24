@@ -1,5 +1,5 @@
 // 
-// Literal.cs
+// PropertyCollection.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)
@@ -26,30 +26,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-namespace Mono.CodeContracts.Static.AST {
-	sealed class Literal : Expression {
-		public static readonly Literal Null = new Literal (null);
-		public readonly object Value;
+using System.Collections.Generic;
 
-		public Literal () : base (NodeType.Literal)
+using Mono.CodeContracts.Static.Analysis.Numerical;
+
+namespace Mono.CodeContracts.Static.DataStructures {
+	class PropertyCollection : IPropertyCollection {
+		private readonly Dictionary<object, object> dictionary = new Dictionary<object, object> ();
+
+		#region Implementation of IPropertyCollection
+		public bool Contains (TypedKey key)
 		{
+			return this.dictionary.ContainsKey (key);
 		}
 
-		public Literal (object value)
-			: base (NodeType.Literal)
+	    public void Add<T> (TypedKey key, T value)
 		{
-			this.Value = value;
+			this.dictionary.Add (key, value);
 		}
 
-		public Literal (object value, TypeNode type) : base (NodeType.Literal)
-		{
-			this.Value = value;
-			this.type = type;
-		}
+	    public bool TryGetValue<T> (TypedKey key, out T value)
+	    {
+	        object result;
 
-		public override string ToString ()
-		{
-			return string.Format ("Literal({0})", this.Value ?? "<null>");
-		}
+	        if (!this.dictionary.TryGetValue (key, out result))
+	            return false.Without (out value);
+
+	        value = (T) result;
+	        return true;
+	    }
+
+	    public void Remove(TypedKey key)
+	    {
+	        this.dictionary.Remove (key);
+	    }
+
+	    #endregion
 	}
 }

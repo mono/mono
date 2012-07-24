@@ -33,10 +33,30 @@ using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
+    internal abstract class IntervalTrueTesterBase<TEnv, Var, Expr, TInterval, TNumeric>
+        where TEnv : IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric>
+        where TInterval : IntervalBase<TInterval, TNumeric>
+    {
+        protected readonly TEnv env;
+
+        protected IntervalTrueTesterBase(TEnv env)
+        {
+            this.env = env;
+        }
+
+        public abstract TEnv TestTrueEqual         (Expr left, Expr right);
+        public abstract TEnv TestTrueNotEqual      (Expr left, Expr right);
+        public abstract TEnv TestTrueLessThan      (Expr left, Expr right);
+        public abstract TEnv TestTrueLessEqualThan (Expr left, Expr right);
+        public abstract TEnv TestTrueNotEqualToZero(Expr expr);
+    }
+
     abstract class IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric> : FunctionalAbstractDomain<TEnv, Var, TInterval>, IAbstractDomainForEnvironments<TEnv, Var, Expr> 
         where TEnv : IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric>
         where TInterval : IntervalBase<TInterval, TNumeric>
     {
+        public readonly IntervalTrueTesterBase<TEnv, Var, Expr, TInterval, TNumeric> TrueTester;
+
         private IExpressionDecoder<Var, Expr> decoder;
 
         public abstract TNumeric PlusInfinity { get; }
@@ -49,9 +69,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             get { return this.Keys; }
         }
 
-        protected IntervalEnvironmentBase(IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric> original)
+        protected IntervalEnvironmentBase(IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric> original,
+            IntervalTrueTesterBase<TEnv, Var, Expr, TInterval, TNumeric> trueTester)
             : base(original)
         {
+            this.TrueTester = trueTester;
         }
 
         public abstract TInterval For (long v);
