@@ -65,7 +65,7 @@ namespace System.ComponentModel.Design
 		}
 
 		public object OldValue {
-			get { return olVdalue; }
+			get { return oldValue; }
 		}
 	}
 }
