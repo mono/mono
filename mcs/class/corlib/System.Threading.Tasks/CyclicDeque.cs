@@ -99,6 +99,22 @@ namespace System.Threading.Tasks
 			
 			return PopResult.Succeed;
 		}
+
+		public bool PeekBottom (out T obj)
+		{
+			obj = default (T);
+
+			long b = Interlocked.Decrement (ref bottom);
+			var a = array;
+			long t = Interlocked.Read (ref top);
+			long size = b - t;
+
+			if (size < 0)
+				return false;
+
+			obj = a[b];
+			return true;
+		}
 		
 		public PopResult PopTop (out T obj)
 		{
@@ -118,11 +134,35 @@ namespace System.Threading.Tasks
 			
 			return PopResult.Succeed;
 		}
+
+		internal bool PeekTop (out T obj)
+		{
+			obj = default (T);
+
+			long t = Interlocked.Read (ref top);
+			long b = Interlocked.Read (ref bottom);
+
+			if (b - t <= 0)
+				return false;
+
+			var a = array;
+			obj = a[t];
+
+			return true;
+		}
 		
 		public IEnumerable<T> GetEnumerable ()
 		{
 			var a = array;
 			return a.GetEnumerable (bottom, ref top);
+		}
+
+		public bool IsEmpty {
+			get {
+				long t = Interlocked.Read (ref top);
+				long b = Interlocked.Read (ref bottom);
+				return b - t <= 0;
+			}
 		}
 	}
 	
