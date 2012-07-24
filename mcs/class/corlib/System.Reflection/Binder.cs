@@ -195,12 +195,12 @@ namespace System.Reflection
 						if (i < names.Length)
 							continue;
 
-						selected = SelectMethod (bindingAttr, new MethodBase [] { m }, newTypes, newModifiers, true);
+						selected = SelectMethod (bindingAttr, new MethodBase [] { m }, newTypes, newModifiers, true, args);
 						if (selected != null)
 							break;
 					}
 				} else {
-					selected = SelectMethod (bindingAttr, match, types, modifiers, true);
+					selected = SelectMethod (bindingAttr, match, types, modifiers, true, args);
 				}
 
 				state = null;
@@ -451,10 +451,10 @@ namespace System.Reflection
 			public override MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase [] match, Type [] types, ParameterModifier [] modifiers)
 			{
 				return SelectMethod (bindingAttr, match, types, modifiers,
-					false);
+					false, null);
 			}
 
-			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch)
+			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch, object[] parameters)
 			{
 				MethodBase m;
 				int i, j;
@@ -527,7 +527,35 @@ namespace System.Reflection
 						result = m;
 				}
 
-				return result;
+				if (result != null || parameters == null || types.Length != parameters.Length)
+					return result;
+
+				// Xamarin-5278: try with parameters that are COM objects
+				// REVIEW: do we also need to implement best method match?
+				for (i = 0; i < match.Length; ++i) {
+					m = match [i];
+					ParameterInfo[] methodArgs = m.GetParameters ();
+					if (methodArgs.Length != types.Length)
+						continue;
+					for (j = 0; j < types.Length; ++j) {
+						var requiredType = methodArgs [j].ParameterType;
+						if (types [j] == requiredType)
+							continue;
+						if (types [j] == typeof (__ComObject) && requiredType.IsInterface) {
+							var iface = Marshal.GetComInterfaceForObject (parameters [j], requiredType);
+							if (iface != IntPtr.Zero) {
+								// the COM object implements the desired interface
+								Marshal.Release (iface);
+								continue;
+							}
+						}
+						break;
+					}
+
+					if (j == types.Length)
+						return m;
+				}
+				return null;
 			}
 
 			MethodBase GetBetterMethod (MethodBase m1, MethodBase m2, Type [] types)

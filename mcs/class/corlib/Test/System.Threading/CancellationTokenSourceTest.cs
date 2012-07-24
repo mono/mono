@@ -33,6 +33,7 @@ using System;
 using System.Threading;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using MonoTests.System.Threading.Tasks;
 
 namespace MonoTests.System.Threading
 {
@@ -394,6 +395,50 @@ namespace MonoTests.System.Threading
 			source.Dispose ();
 			req.Dispose ();
 			Assert.IsFalse (ran);
+		}
+
+		[Test]
+		public void CancelLinkedTokenSource ()
+		{
+			var cts = new CancellationTokenSource ();
+			bool canceled = false;
+			cts.Token.Register (() => canceled = true);
+
+			using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cts.Token))
+				;
+
+			Assert.IsFalse (canceled, "#1");
+			Assert.IsFalse (cts.IsCancellationRequested, "#2");
+
+			cts.Cancel ();
+
+			Assert.IsTrue (canceled, "#3");
+		}
+
+		[Test]
+		public void ConcurrentCancelLinkedTokenSourceWhileDisposing ()
+		{
+			ParallelTestHelper.Repeat (delegate {
+				var src = new CancellationTokenSource ();
+				var linked = CancellationTokenSource.CreateLinkedTokenSource (src.Token);
+				var cntd = new CountdownEvent (2);
+
+				var t1 = new Thread (() => {
+					if (!cntd.Signal ())
+						cntd.Wait (200);
+					src.Cancel ();
+				});
+				var t2 = new Thread (() => {
+					if (!cntd.Signal ())
+						cntd.Wait (200);
+					linked.Dispose ();
+				});
+
+				t1.Start ();
+				t2.Start ();
+				t1.Join (500);
+				t2.Join (500);
+			}, 500);
 		}
 	}
 }

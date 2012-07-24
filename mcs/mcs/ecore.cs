@@ -3183,8 +3183,12 @@ namespace Mono.CSharp {
 			}
 
 			var me = ExtensionExpression as MemberExpr;
-			if (me != null)
+			if (me != null) {
 				me.ResolveInstanceExpression (ec, null);
+				var fe = me as FieldExpr;
+				if (fe != null)
+					fe.Spec.MemberDefinition.SetIsUsed ();
+			}
 
 			InstanceExpression = null;
 			return this;

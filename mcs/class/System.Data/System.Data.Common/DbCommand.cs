@@ -30,10 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || TARGET_JVM
-
 using System.ComponentModel;
 using System.Data;
+
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Data.Common {
 	public abstract class DbCommand : Component, IDbCommand, IDisposable
@@ -147,9 +150,60 @@ namespace System.Data.Common {
 
 		public abstract void Prepare ();
 		
+#if NET_4_5
+		[MonoTODO]
+		protected virtual Task<DbDataReader> ExecuteDbDataReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public Task<int> ExecuteNonQueryAsync ()
+		{
+			return ExecuteNonQueryAsync (CancellationToken.None);
+		}
+		
+		[MonoTODO]
+		public virtual Task<int> ExecuteNonQueryAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public Task<Object> ExecuteScalarAsync ()
+		{
+			return ExecuteScalarAsync (CancellationToken.None);
+		}
+		
+		[MonoTODO]
+		public virtual Task<Object> ExecuteScalarAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public Task<DbDataReader> ExecuteReaderAsync ()
+		{
+			return ExecuteReaderAsync (CancellationToken.None);
+		}
+		
+		[MonoTODO]
+		public Task<DbDataReader> ExecuteReaderAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior)
+		{
+			return ExecuteReaderAsync (behavior, CancellationToken.None);
+		}
+		
+		[MonoTODO]
+		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
+		
 		#endregion // Methods
 
 	}
 }
-
-#endif
