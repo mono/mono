@@ -1497,6 +1497,10 @@ namespace Mono.CSharp {
 
 			aec.Set (flags);
 
+			var bc = ec as BlockContext;
+			if (bc != null)
+				aec.FlowOffset = bc.FlowOffset;
+
 			var errors = ec.Report.Errors;
 
 			bool res = Block.Resolve (ec.CurrentBranching, aec, null);
