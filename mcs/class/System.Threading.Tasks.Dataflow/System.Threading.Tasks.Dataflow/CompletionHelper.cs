@@ -1,4 +1,4 @@
-// ActionBlock.cs
+// CompletionHelper.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
 // Copyright (c) 2012 Petr Onderka
@@ -20,33 +20,34 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-namespace System.Threading.Tasks.Dataflow
-{
+namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
 	/// This is used to implement a default behavior for Dataflow completion tracking
 	/// that is the Completion property, Complete/Fault method combo
 	/// and the CancellationToken option.
 	/// </summary>
-	internal class CompletionHelper
-	{
-		TaskCompletionSource<object> source;
+	class CompletionHelper {
+		readonly TaskCompletionSource<object> source;
 
-		private readonly AtomicBoolean canFaultOrCancelImmediatelly =
+		readonly AtomicBoolean canFaultOrCancelImmediatelly =
 			new AtomicBoolean { Value = true };
-		private readonly AtomicBoolean requestedFaultOrCancel =
+		readonly AtomicBoolean requestedFaultOrCancel =
 			new AtomicBoolean { Value = false };
 
 		Exception requestedException;
 
+		public CompletionHelper (DataflowBlockOptions options)
+		{
+			source = new TaskCompletionSource<object> ();
+			if (options != null)
+				SetOptions (options);
+		}
+
+		[Obsolete ("Use ctor")]
 		public static CompletionHelper GetNew (DataflowBlockOptions options)
 		{
-			var completionHelper = new CompletionHelper { source = new TaskCompletionSource<object> () };
-			if (options != null)
-				completionHelper.SetOptions (options);
-			return completionHelper;
+			return new CompletionHelper (options);
 		}
 
 		public Task Completion {
@@ -83,7 +84,7 @@ namespace System.Threading.Tasks.Dataflow
 		public void RequestFault (Exception exception)
 		{
 			if (exception == null)
-				throw new ArgumentNullException("exception");
+				throw new ArgumentNullException ("exception");
 
 			if (CanFaultOrCancelImmediatelly)
 				Fault (exception);
@@ -101,7 +102,7 @@ namespace System.Threading.Tasks.Dataflow
 		void RequestCancel ()
 		{
 			if (CanFaultOrCancelImmediatelly)
-				Cancel();
+				Cancel ();
 			else
 				requestedFaultOrCancel.Value = true;
 		}

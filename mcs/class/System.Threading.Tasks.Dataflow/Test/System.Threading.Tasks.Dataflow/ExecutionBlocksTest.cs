@@ -22,7 +22,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using NUnit.Framework;
 
@@ -40,14 +42,35 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			yield return new TransformManyBlock<int, int> (i =>
 			{
 				action ();
-				return new int[0];
+				return Enumerable.Empty<int> ();
 			});
 		}
-			
+
+		static IEnumerable<ITargetBlock<int>> GetExecutionBlocksWithAsyncAction (
+			Func<int, Task> action, ExecutionDataflowBlockOptions options)
+		{
+			yield return new ActionBlock<int> (action, options);
+			yield return new TransformBlock<int, int> (
+				i => action (i).ContinueWith (
+					t =>
+					{
+						t.Wait ();
+						return i;
+					}), options);
+			yield return new TransformManyBlock<int, int> (
+				i => action (i).ContinueWith (
+					t =>
+					{
+						t.Wait ();
+						return Enumerable.Empty<int> ();
+					}), options);
+		}
+
 		[Test]
 		public void ExceptionTest ()
 		{
-			var blocks = GetExecutionBlocksWithAction (() => { throw new Exception (); });
+			var exception = new Exception ();
+			var blocks = GetExecutionBlocksWithAction (() => { throw exception; });
 			foreach (var block in blocks) {
 				Assert.IsFalse (block.Completion.Wait (100));
 
@@ -56,7 +79,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				var ae =
 					AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 				Assert.AreEqual (1, ae.InnerExceptions.Count);
-				Assert.AreEqual (typeof(Exception), ae.InnerException.GetType ());
+				Assert.AreSame (exception, ae.InnerException);
 			}
 		}
 
@@ -100,6 +123,76 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				Thread.Sleep (100);
 
 				Assert.AreEqual (0, Thread.VolatileRead (ref ranAfterFault));
+			}
+		}
+
+		[Test]
+		public void AsyncTest ()
+		{
+			var tcs = new TaskCompletionSource<int> ();
+			int result = 0;
+
+			var scheduler = new TestScheduler ();
+
+			var blocks = GetExecutionBlocksWithAsyncAction (
+				i =>
+				tcs.Task.ContinueWith (t => Thread.VolatileWrite (ref result, i + t.Result)),
+				new ExecutionDataflowBlockOptions { TaskScheduler = scheduler });
+
+			foreach (var block in blocks) {
+				Assert.IsTrue (block.Post (1));
+
+				scheduler.ExecuteAll ();
+				Thread.Sleep (100);
+				Thread.MemoryBarrier ();
+
+				Assert.AreEqual (0, result);
+
+				tcs.SetResult (10);
+
+				Thread.Sleep (100);
+
+				// the continuation should be executed on the configured TaskScheduler
+				Assert.AreEqual (0, result);
+
+				scheduler.ExecuteAll ();
+
+				Assert.AreEqual (11, result);
+
+				tcs = new TaskCompletionSource<int> ();
+				Thread.VolatileWrite (ref result, 0);
+			}
+		}
+
+		[Test]
+		public void AsyncExceptionTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var exception = new Exception ();
+
+			var blocks = GetExecutionBlocksWithAsyncAction (
+				i =>
+				{
+					var tcs = new TaskCompletionSource<int> ();
+					tcs.SetException (exception);
+					return tcs.Task;
+				},
+				new ExecutionDataflowBlockOptions { TaskScheduler = scheduler });
+
+			foreach (var block in blocks) {
+				Assert.IsTrue (block.Post (1));
+
+				// the task should be executed on the configured TaskScheduler
+				Assert.IsFalse (block.Completion.Wait (100));
+
+				scheduler.ExecuteAll ();
+
+				var ae =
+					AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100)).
+						Flatten ();
+
+				Assert.AreEqual (1, ae.InnerExceptions.Count);
+				Assert.AreSame (exception, ae.InnerException);
 			}
 		}
 	}

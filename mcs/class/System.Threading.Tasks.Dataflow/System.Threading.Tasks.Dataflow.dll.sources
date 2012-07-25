@@ -45,3 +45,5 @@ System.Threading.Tasks.Dataflow/SendBlock.cs
 System.Threading.Tasks.Dataflow/PredicateBlock.cs
 System.Threading.Tasks.Dataflow/OutputAvailableBlock.cs
 System.Threading.Tasks.Dataflow/NullTargetBlock.cs
+System.Threading.Tasks.Dataflow/AsyncExecutingMessageBox.cs
+System.Threading.Tasks.Dataflow/ExecutingMessageBoxBase.cs

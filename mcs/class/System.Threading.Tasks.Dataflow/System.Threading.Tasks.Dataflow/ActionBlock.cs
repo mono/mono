@@ -27,25 +27,33 @@ namespace System.Threading.Tasks.Dataflow {
 	public sealed class ActionBlock<TInput> : ITargetBlock<TInput> {
 		readonly CompletionHelper compHelper;
 		readonly BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
-		readonly ExecutingMessageBox<TInput> messageBox;
+		readonly ExecutingMessageBoxBase<TInput> messageBox;
 		readonly Action<TInput> action;
+		readonly Func<TInput, Task> asyncAction;
 		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
+
+		ActionBlock (ExecutionDataflowBlockOptions dataflowBlockOptions)
+		{
+			if (dataflowBlockOptions == null)
+				throw new ArgumentNullException ("dataflowBlockOptions");
+
+			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.compHelper = new CompletionHelper (dataflowBlockOptions);
+		}
 
 		public ActionBlock (Action<TInput> action)
 			: this (action, ExecutionDataflowBlockOptions.Default)
 		{
 		}
 
-		public ActionBlock (Action<TInput> action, ExecutionDataflowBlockOptions dataflowBlockOptions)
+		public ActionBlock (Action<TInput> action,
+		                    ExecutionDataflowBlockOptions dataflowBlockOptions)
+			: this (dataflowBlockOptions)
 		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
-			if (dataflowBlockOptions == null)
-				throw new ArgumentNullException ("dataflowBlockOptions");
 
 			this.action = action;
-			this.dataflowBlockOptions = dataflowBlockOptions;
-			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new ExecutingMessageBox<TInput> (this, messageQueue, compHelper,
 				() => true, ProcessItem, () => { }, dataflowBlockOptions);
 		}
@@ -55,10 +63,17 @@ namespace System.Threading.Tasks.Dataflow {
 		{
 		}
 
-		[MonoTODO]
-		public ActionBlock (Func<TInput, Task> action, ExecutionDataflowBlockOptions dataflowBlockOptions)
+		public ActionBlock (Func<TInput, Task> action,
+		                    ExecutionDataflowBlockOptions dataflowBlockOptions)
+			: this (dataflowBlockOptions)
 		{
-			throw new NotImplementedException ();
+			if (action == null)
+				throw new ArgumentNullException ("action");
+
+			this.asyncAction = action;
+			this.messageBox = new AsyncExecutingMessageBox<TInput, Task> (
+				this, messageQueue, compHelper, () => true, AsyncProcessItem, null,
+				() => { }, dataflowBlockOptions);
 		}
 
 		DataflowMessageStatus ITargetBlock<TInput>.OfferMessage (
@@ -82,6 +97,17 @@ namespace System.Threading.Tasks.Dataflow {
 			bool dequeued = messageQueue.TryTake (out data);
 			if (dequeued)
 				action (data);
+			return dequeued;
+		}
+
+		bool AsyncProcessItem(out Task task)
+		{
+			TInput data;
+			bool dequeued = messageQueue.TryTake (out data);
+			if (dequeued)
+				task = asyncAction (data);
+			else
+				task = null;
 			return dequeued;
 		}
 

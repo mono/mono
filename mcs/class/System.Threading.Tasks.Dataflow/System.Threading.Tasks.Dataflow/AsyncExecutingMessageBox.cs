@@ -1,4 +1,4 @@
-// ExecutingMessageBox.cs
+﻿// AsyncExecutingMessageBox.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
 // Copyright (c) 2012 Petr Onderka
@@ -24,30 +24,54 @@
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow {
-	class ExecutingMessageBox<TInput> : ExecutingMessageBoxBase<TInput> {
-		readonly Func<bool> processItem;
+	class AsyncExecutingMessageBox<TInput, TTask>
+		: ExecutingMessageBoxBase<TInput>
+		where TTask : Task {
+		public delegate bool AsyncProcessItem (out TTask task);
 
-		public ExecutingMessageBox (
+		readonly AsyncProcessItem processItem;
+		readonly Action<TTask> processFinishedTask;
+
+		public AsyncExecutingMessageBox (
 			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
 			CompletionHelper compHelper, Func<bool> externalCompleteTester,
-			Func<bool> processItem, Action outgoingQueueComplete,
-			ExecutionDataflowBlockOptions options)
+			AsyncProcessItem processItem, Action<TTask> processFinishedTask,
+			Action outgoingQueueComplete, ExecutionDataflowBlockOptions options)
 			: base (
 				target, messageQueue, compHelper, externalCompleteTester,
 				outgoingQueueComplete, options)
 		{
 			this.processItem = processItem;
+			this.processFinishedTask = processFinishedTask;
 		}
 
 		protected override void ProcessQueue ()
 		{
 			StartProcessQueue ();
 
+			ProcessQueueWithoutStart ();
+		}
+
+		void ProcessQueueWithoutStart ()
+		{
 			try {
 				int i = 0;
 				while (CanRun (i)) {
-					if (!processItem ())
+					TTask task;
+					if (!processItem (out task))
 						break;
+					if (task == null || task.IsCanceled
+					    || (task.IsCompleted && !task.IsFaulted)) {
+						if (processFinishedTask != null)
+							processFinishedTask (task);
+					} else if (task.IsFaulted) {
+						CompHelper.RequestFault (task.Exception);
+						break;
+					} else {
+						task.ContinueWith (
+							t => TaskFinished ((TTask)t), Options.TaskScheduler);
+						return;
+					}
 					i++;
 				}
 			} catch (Exception e) {
@@ -55,6 +79,20 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 
 			FinishProcessQueue ();
+		}
+
+		void TaskFinished (TTask task)
+		{
+			if (task.IsFaulted) {
+				CompHelper.RequestFault (task.Exception);
+				FinishProcessQueue ();
+				return;
+			}
+
+			if (processFinishedTask != null)
+				processFinishedTask (task);
+
+			ProcessQueueWithoutStart ();
 		}
 	}
 }

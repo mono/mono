@@ -30,8 +30,8 @@ namespace System.Threading.Tasks.Dataflow {
 	/// later processed 
 	/// </summary>
 	internal class MessageBox<TInput> {
-		protected ITargetBlock<TInput> Target;
-		readonly CompletionHelper compHelper;
+		protected ITargetBlock<TInput> Target { get; set; }
+		protected CompletionHelper CompHelper { get; private set; }
 		readonly Func<bool> externalCompleteTester;
 		readonly DataflowBlockOptions options;
 		readonly bool greedy;
@@ -51,7 +51,7 @@ namespace System.Threading.Tasks.Dataflow {
 			DataflowBlockOptions options, bool greedy = true, Func<bool> canAccept = null)
 		{
 			this.Target = target;
-			this.compHelper = compHelper;
+			this.CompHelper = compHelper;
 			this.MessageQueue = messageQueue;
 			this.externalCompleteTester = externalCompleteTester;
 			this.options = options;
@@ -71,7 +71,7 @@ namespace System.Threading.Tasks.Dataflow {
 					"consumeToAccept may only be true if provided with a non-null source.",
 					"consumeToAccept");
 
-			if (MessageQueue.IsAddingCompleted || !compHelper.CanRun)
+			if (MessageQueue.IsAddingCompleted || !CompHelper.CanRun)
 				return DataflowMessageStatus.DecliningPermanently;
 
 			var full = options.BoundedCapacity != -1
@@ -250,7 +250,7 @@ namespace System.Threading.Tasks.Dataflow {
 		protected  virtual void VerifyCompleteness ()
 		{
 			if (MessageQueue.IsCompleted && externalCompleteTester ())
-				compHelper.Complete ();
+				CompHelper.Complete ();
 		}
 	}
 }

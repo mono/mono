@@ -46,7 +46,9 @@
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\AsyncExecutingMessageBox.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\BroadcastOutgoingQueue.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ExecutingMessageBoxBase.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\NullTargetBlock.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\OutgoingQueueBase.cs" />
     <Compile Include="System.Threading.Tasks.Dataflow\OutputAvailableBlock.cs" />

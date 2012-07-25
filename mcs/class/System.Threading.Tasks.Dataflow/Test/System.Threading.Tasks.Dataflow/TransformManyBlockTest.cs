@@ -29,15 +29,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Threading.Tasks.Dataflow
-{
+namespace MonoTests.System.Threading.Tasks.Dataflow {
 	[TestFixture]
-	public class TransformManyBlockTest
-	{
+	public class TransformManyBlockTest {
 		[Test]
 		public void BasicUsageTest ()
 		{
@@ -91,6 +90,44 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			transformMany.Complete ();
 			Assert.IsTrue (transformMany.Completion.Wait (100));
 			Assert.IsFalse (received);
+		}
+
+		[Test]
+		public void AsyncNullTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new TransformManyBlock<int, int> (
+				i => (Task<IEnumerable<int>>)null,
+				new ExecutionDataflowBlockOptions { TaskScheduler = scheduler });
+
+			Assert.IsTrue (block.Post (1));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsFalse (block.Completion.Wait (100));
+
+			block.Complete ();
+
+			Assert.IsTrue (block.Completion.Wait (100));
+		}
+
+		[Test]
+		public void AsyncCancelledTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var block = new TransformManyBlock<int, int> (
+				i =>
+				{
+					var tcs = new TaskCompletionSource<IEnumerable<int>> ();
+					tcs.SetCanceled ();
+					return tcs.Task;
+				}, new ExecutionDataflowBlockOptions { TaskScheduler = scheduler });
+
+			Assert.IsTrue (block.Post (1));
+
+			scheduler.ExecuteAll ();
+
+			Assert.IsFalse (block.Completion.Wait (100));
 		}
 	}
 }

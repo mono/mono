@@ -32,7 +32,17 @@ namespace System.Threading.Tasks.Dataflow {
 		readonly MessageBox<TInput> messageBox;
 		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
 		readonly Func<TInput, IEnumerable<TOutput>> transform;
+		readonly Func<TInput, Task<IEnumerable<TOutput>>> asyncTransform;
 		readonly OutgoingQueue<TOutput> outgoing;
+
+		TransformManyBlock (ExecutionDataflowBlockOptions dataflowBlockOptions)
+		{
+			if (dataflowBlockOptions == null)
+				throw new ArgumentNullException ("dataflowBlockOptions");
+			
+			this.dataflowBlockOptions = dataflowBlockOptions;
+			this.compHelper = new CompletionHelper (dataflowBlockOptions);
+		}
 
 		public TransformManyBlock (Func<TInput, IEnumerable<TOutput>> transform)
 			: this (transform, ExecutionDataflowBlockOptions.Default)
@@ -41,21 +51,39 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public TransformManyBlock (Func<TInput, IEnumerable<TOutput>> transform,
 		                           ExecutionDataflowBlockOptions dataflowBlockOptions)
+			: this (dataflowBlockOptions)
 		{
 			if (transform == null)
 				throw new ArgumentNullException ("transform");
-			if (dataflowBlockOptions == null)
-				throw new ArgumentNullException ("dataflowBlockOptions");
 
 			this.transform = transform;
-			this.dataflowBlockOptions = dataflowBlockOptions;
-			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
 			this.messageBox = new ExecutingMessageBox<TInput> (this, messageQueue, compHelper,
 				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
 				dataflowBlockOptions);
 			this.outgoing = new OutgoingQueue<TOutput> (this, compHelper,
 				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
 				dataflowBlockOptions);
+		}
+
+		public TransformManyBlock (Func<TInput, Task<IEnumerable<TOutput>>> transform)
+			: this (transform, ExecutionDataflowBlockOptions.Default)
+		{
+		}
+
+		public TransformManyBlock (Func<TInput, Task<IEnumerable<TOutput>>> transform,
+		                           ExecutionDataflowBlockOptions dataflowBlockOptions)
+			: this (dataflowBlockOptions)
+		{
+			if (transform == null)
+				throw new ArgumentNullException ("transform");
+
+			this.asyncTransform = transform;
+			this.messageBox = new AsyncExecutingMessageBox<TInput, Task<IEnumerable<TOutput>>> (this, messageQueue, compHelper,
+				() => outgoing.IsCompleted, AsyncTransformProcess, ProcessFinishedTask, () => outgoing.Complete (),
+				dataflowBlockOptions);
+			this.outgoing = new OutgoingQueue<TOutput> (this, compHelper,
+				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
+				dataflowBlockOptions);			
 		}
 
 		DataflowMessageStatus ITargetBlock<TInput>.OfferMessage (
@@ -107,21 +135,47 @@ namespace System.Threading.Tasks.Dataflow {
 			if (dequeued) {
 				var result = transform (input);
 
-				bool first = true;
-				if (result != null) {
-					foreach (var item in result) {
-						if (first)
-							first = false;
-						else
-							messageBox.IncreaseCount ();
-						outgoing.AddData (item);
-					}
-				}
-				if (first)
-					messageBox.DecreaseCount ();
+				EnqueueTransformed (result);
 			}
 
 			return dequeued;
+		}
+
+		void EnqueueTransformed (IEnumerable<TOutput> transformed)
+		{
+			bool first = true;
+			if (transformed != null) {
+				foreach (var item in transformed) {
+					if (first)
+						first = false;
+					else
+						messageBox.IncreaseCount ();
+					outgoing.AddData (item);
+				}
+			}
+			if (first)
+				messageBox.DecreaseCount ();
+		}
+
+		bool AsyncTransformProcess (out Task<IEnumerable<TOutput>> task)
+		{
+			TInput input;
+
+			var dequeued = messageQueue.TryTake (out input);
+			if (dequeued)
+				task = asyncTransform (input);
+			else
+				task = null;
+
+			return dequeued;
+		}
+
+		void ProcessFinishedTask (Task<IEnumerable<TOutput>> task)
+		{
+			if (task == null || task.IsCanceled)
+				messageBox.DecreaseCount ();
+			else
+				EnqueueTransformed (task.Result);
 		}
 
 		public void Complete ()
