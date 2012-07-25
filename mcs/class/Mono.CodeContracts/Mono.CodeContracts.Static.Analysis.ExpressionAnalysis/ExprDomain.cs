@@ -86,12 +86,12 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 
 		public ExprDomain<TSymValue> Add (TSymValue sv, Expr<TSymValue> expr)
 		{
-			return new ExprDomain<TSymValue> (this.expressions.Add (sv, expr));
+			return new ExprDomain<TSymValue> (this.expressions.With (sv, expr));
 		}
 
 		public ExprDomain<TSymValue> Remove(TSymValue sv)
 		{
-			return new ExprDomain<TSymValue> (this.expressions.Remove (sv));
+			return new ExprDomain<TSymValue> (this.expressions.Without (sv));
 		}
 
 		public ExprDomain<TSymValue> Empty()

@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.Analysis.Drivers;
 using Mono.CodeContracts.Static.ControlFlow;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Proving {
 	static class AssertionFinder {
@@ -55,23 +56,16 @@ namespace Mono.CodeContracts.Static.Proving {
 
 				object assertStats;
 				foreach (AssertionObligation obl in GetAssertions (driver, out assertStats)) {
-					ProofOutcome outcome = facts.IsTrue (obl.Apc, BoxedExpression.For (driver.ContextProvider.ExpressionContext.Refine (obl.Apc, obl.Condition), driver.ExpressionDecoder));
+					FlatDomain<bool> outcome = facts.IsTrue (obl.Apc, BoxedExpression.For (driver.ContextProvider.ExpressionContext.Refine (obl.Apc, obl.Condition), driver.ExpressionDecoder));
 
 					string pc = obl.Apc.ToString ();
-					switch (outcome) {
-					case ProofOutcome.Top:
-						proofResults.Add ("Assertion at point " + pc + " is unproven");
-						break;
-					case ProofOutcome.True:
-						proofResults.Add ("Assertion at point " + pc + " is true");
-						break;
-					case ProofOutcome.False:
-						proofResults.Add ("Assertion at point " + pc + " is false");
-						break;
-					case ProofOutcome.Bottom:
-						proofResults.Add ("Assertion at point " + pc + " is unreachable");
-						break;
-					}
+
+				    if (outcome.IsNormal ())
+				        proofResults.Add (string.Format ("Assertion at point {0} is {1}", pc, outcome.IsTrue () ? "true" : "false"));
+				    else if (outcome.IsTop)
+				        proofResults.Add ("Assertion at point " + pc + " is unproven");
+                    else
+                        proofResults.Add("Assertion at point " + pc + " is unreachable");
 				}
 			}
 

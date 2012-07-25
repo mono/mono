@@ -5,6 +5,7 @@ using Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Lattices;
 using Mono.CodeContracts.Static.Providers;
 using Mono.CodeContracts.Static.Proving;
 
@@ -41,12 +42,12 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 			}
 
 			#region IFactBase<SymbolicValue> Members
-			public ProofOutcome IsNull (APC pc, SymbolicValue variable)
+			public FlatDomain<bool> IsNull (APC pc, SymbolicValue variable)
 			{
 				return ProofOutcome.Top;
 			}
 
-			public ProofOutcome IsNonNull (APC pc, SymbolicValue variable)
+            public FlatDomain<bool> IsNonNull(APC pc, SymbolicValue variable)
 			{
 				return ProofOutcome.Top;
 			}

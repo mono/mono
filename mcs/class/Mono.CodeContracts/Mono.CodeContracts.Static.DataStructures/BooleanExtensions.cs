@@ -26,9 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using Mono.CodeContracts.Static.Lattices;
+
 namespace Mono.CodeContracts.Static.DataStructures
 {
-    public static class BooleanExtensions
+    static class BooleanExtensions
     {
         /// <summary>
         /// Returns value and sets result to a resultValue.
@@ -53,10 +55,9 @@ namespace Mono.CodeContracts.Static.DataStructures
         /// </summary>
         /// <param name="condition">Condition to check.</param>
         /// <returns><see cref="ProofOutcome.True"/> if condition holds, otherwise <see cref="ProofOutcome.Top"/></returns>
-        public static ProofOutcome ToTrueOrTop(this bool condition)
+        public static FlatDomain<bool> ToTrueOrTop(this bool condition)
         {
             return condition ? ProofOutcome.True : ProofOutcome.Top;
         }
     }
-
 }

@@ -1,9 +1,11 @@
+using System;
+
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     class IntervalTestFalseVisitor<TEnv, Var, Expr, TInterval, TNumeric> : TestFalseVisitor<TEnv, Var, Expr>
         where TEnv : IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric>
-        where TInterval : IntervalBase<TInterval, TNumeric>
-    {
+        where TInterval : IntervalBase<TInterval, TNumeric> 
+        where Var : IEquatable<Var> {
         public IntervalTestFalseVisitor(IExpressionDecoder<Var, Expr> decoder)
             : base(decoder)
         {

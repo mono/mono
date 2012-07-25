@@ -21,6 +21,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         bool IsNull (TExpression expr);
         
-        bool IsConstantInt (object right, out int value);
+        bool IsConstantInt (TExpression right, out int value);
     }
 }

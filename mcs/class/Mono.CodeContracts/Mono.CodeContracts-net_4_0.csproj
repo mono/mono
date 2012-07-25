@@ -162,13 +162,14 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisInterval.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionType.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IExpressionDecoder.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IIntervalHelper.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalTestFalseVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalTestTrueVisitor.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalAssumerBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\LongToIntegerConstantEvaluator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\EvaluateArithmeticWithOverflow.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionOperator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionViaStringComparer.cs" />
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\FunctionalAbstractDomain.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ConstantEvaluatorVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericExpressionVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericTypeExpressionVisitor.cs" />
@@ -386,7 +387,6 @@
     <Compile Include="Mono.CodeContracts.Static\Checker.cs" />
     <Compile Include="Mono.CodeContracts.Static\DebugOptions.cs" />
     <Compile Include="Mono.CodeContracts.Static\ProofOutcome.cs" />
-    <Compile Include="Mono.CodeContracts.Static\ProofOutcomeExtensions.cs" />
     <Compile Include="Test\AbstractDomainExtensionsTests.cs" />
     <Compile Include="Test\DisIntervalTests.cs" />
     <Compile Include="Test\DomainTestBase.cs" />

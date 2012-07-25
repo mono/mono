@@ -30,10 +30,11 @@ using System;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.ControlFlow;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.NonNull {
-	struct ExpressionAssertDischarger<E, V> 
-		: ISymbolicExpressionVisitor<E, E, V, bool, ProofOutcome> 
+	struct ExpressionAssertDischarger<E, V>
+        : ISymbolicExpressionVisitor<E, E, V, bool, FlatDomain<bool>> 
 		where E : IEquatable<E> 
 		where V : IEquatable<V> {
 		private readonly Analysis<E, V> analysis;
@@ -51,12 +52,12 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 		} 
 
 		#region Implementation of IExpressionILVisitor<Expression,Expression,Variable,bool,ProofOutcome>
-		private ProofOutcome Recurse(bool polarity, E expr)
+        private FlatDomain<bool> Recurse(bool polarity, E expr)
 		{
-			return this.ContextProvider.ExpressionContext.Decode<bool, ProofOutcome, ExpressionAssertDischarger<E, V>> (expr, this, polarity);
+            return this.ContextProvider.ExpressionContext.Decode<bool, FlatDomain<bool>, ExpressionAssertDischarger<E, V>>(expr, this, polarity);
 		}
 
-		public ProofOutcome Binary(E orig, BinaryOperator op, V dest, E operand1, E operand2, bool polarity)
+        public FlatDomain<bool> Binary(E orig, BinaryOperator op, V dest, E operand1, E operand2, bool polarity)
 		{
 			switch (op) {
 			case BinaryOperator.Ceq:
@@ -73,33 +74,33 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			}
 		}
 
-		public ProofOutcome Isinst(E orig, TypeNode type, V dest, E obj, bool polarity)
+        public FlatDomain<bool> Isinst(E orig, TypeNode type, V dest, E obj, bool polarity)
 		{
 			if (!polarity)
 				return this.analysis.IsNull (this.pc, dest);
-			ProofOutcome outcome = this.analysis.IsNonNull (this.pc, dest);
+            FlatDomain<bool> outcome = this.analysis.IsNonNull(this.pc, dest);
 
-			return outcome != ProofOutcome.True ? outcome : this.Recurse (true, obj);
+			return outcome.IsTrue() ? outcome : this.Recurse (true, obj);
 		}
 
-		public ProofOutcome LoadNull(E orig, V dest, bool polarity)
+        public FlatDomain<bool> LoadNull(E orig, V dest, bool polarity)
 		{
 			return polarity ? ProofOutcome.False : ProofOutcome.True;
 		}
 
-		public ProofOutcome LoadConst(E orig, TypeNode type, object constant, V dest, bool polarity)
+        public FlatDomain<bool> LoadConst(E orig, TypeNode type, object constant, V dest, bool polarity)
 		{
 			var isConstantEqualZero = constant is int && (int) constant == 0;
 			
 			return (isConstantEqualZero != polarity) ? ProofOutcome.True : ProofOutcome.False;
 		}
 
-		public ProofOutcome Sizeof(E pc, TypeNode type, V dest, bool polarity)
+        public FlatDomain<bool> Sizeof(E pc, TypeNode type, V dest, bool polarity)
 		{
 			return polarity ? ProofOutcome.True : ProofOutcome.False;
 		}
 
-		public ProofOutcome Unary(E orig, UnaryOperator op, bool unsigned, V dest, E source, bool polarity)
+        public FlatDomain<bool> Unary(E orig, UnaryOperator op, bool unsigned, V dest, E source, bool polarity)
 		{
 			switch (op) {
 			case UnaryOperator.Conv_i:
@@ -124,7 +125,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 		#endregion
 
 		#region Implementation of ISymbolicExpressionVisitor<Expression,Expression,Variable,bool,ProofOutcome>
-		public ProofOutcome SymbolicConstant(E pc, V variable, bool polarity)
+        public FlatDomain<bool> SymbolicConstant(E pc, V variable, bool polarity)
 		{
 			return polarity ? this.analysis.IsNonNull (this.pc, variable) : this.analysis.IsNull(this.pc, variable);
 		}

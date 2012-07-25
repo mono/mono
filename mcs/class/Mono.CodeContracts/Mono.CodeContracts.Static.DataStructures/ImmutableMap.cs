@@ -51,16 +51,23 @@ namespace Mono.CodeContracts.Static.DataStructures {
 		{
 			get
 			{
-				for (Sequence<Pair<K, V>> list = this.immutable_int_map [key.GetHashCode ()]; list != null; list = list.Tail) {
-					K k = list.Head.Key;
-					if (key.Equals (k))
-						return list.Head.Value;
-				}
-				return default(V);
+			    V value;
+			    return TryGetValue (key, out value) ? value : default(V);
 			}
 		}
 
-		public K AnyKey
+	    public bool TryGetValue (K key, out V value)
+	    {
+	        for (Sequence<Pair<K, V>> list = this.immutable_int_map[key.GetHashCode ()]; list != null; list = list.Tail)
+	        {
+	            K k = list.Head.Key;
+	            if (key.Equals (k))
+	                return true.With (list.Head.Value, out value);
+	        }
+	        return false.Without (out value);
+	    }
+
+	    public K AnyKey
 		{
 			get { return this.keys.Head; }
 		}
@@ -83,9 +90,9 @@ namespace Mono.CodeContracts.Static.DataStructures {
 		public IImmutableMap<K, V> Add (K key, V value)
 		{
 			int hashCode = key.GetHashCode ();
-			Sequence<Pair<K, V>> list1 = this.immutable_int_map [hashCode];
-			Sequence<Pair<K, V>> newList = Remove (list1, key).Cons (new Pair<K, V> (key, value));
-			int diff = newList.Length () - list1.Length ();
+			Sequence<Pair<K, V>> cur = this.immutable_int_map [hashCode];
+			Sequence<Pair<K, V>> newList = Remove (cur, key).Cons (new Pair<K, V> (key, value));
+			int diff = newList.Length () - cur.Length ();
 			Sequence<K> newKeys = diff == 0 ? this.keys : this.keys.Cons (key);
 
 			return new ImmutableMap<K, V> (this.immutable_int_map.Add (hashCode, newList), this.count + diff, newKeys);
@@ -100,6 +107,7 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			Sequence<Pair<K, V>> newList = Remove (from, key);
 			if (newList == from)
 				return this;
+
 			Sequence<K> newKeys = RemoveKey (key, this.keys);
 			if (newList == null)
 				return new ImmutableMap<K, V> (this.immutable_int_map.Remove (hashCode), this.count - 1, newKeys);
@@ -119,7 +127,7 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			                              });
 		}
 
-		private Sequence<Pair<K, V>> Remove (Sequence<Pair<K, V>> from, K key)
+	    private Sequence<Pair<K, V>> Remove (Sequence<Pair<K, V>> from, K key)
 		{
 			if (from == null)
 				return null;

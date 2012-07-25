@@ -44,5 +44,7 @@ namespace Mono.CodeContracts.Static.DataStructures {
 
 		bool ContainsKey (K key);
 		void Visit (Func<K, V, VisitStatus> func);
+
+	    bool TryGetValue (K key, out V value);
 	}
 }

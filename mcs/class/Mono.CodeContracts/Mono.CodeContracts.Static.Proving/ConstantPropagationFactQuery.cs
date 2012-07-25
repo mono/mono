@@ -29,6 +29,7 @@
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Proving
 {
@@ -39,19 +40,19 @@ namespace Mono.CodeContracts.Static.Proving
             return false;
         }
 
-		public ProofOutcome IsNull(APC pc, Variable variable)
+		public FlatDomain<bool> IsNull(APC pc, Variable variable)
 		{
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsNonNull(APC pc, Variable variable)
+        public FlatDomain<bool> IsNonNull(APC pc, Variable variable)
 		{
 			return ProofOutcome.Top;
 		}
 		#endregion
 
 		#region Implementation of IFactQuery<BoxedExpression,Variable>
-		public ProofOutcome IsNull(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsNull(APC pc, BoxedExpression expr)
 		{
 			int num;
 			if (expr.IsConstantIntOrNull (out num))
@@ -60,7 +61,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsNonNull(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsNonNull(APC pc, BoxedExpression expr)
 		{
 			int num;
 			if (expr.IsConstantIntOrNull (out num))
@@ -69,7 +70,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsTrue(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsTrue(APC pc, BoxedExpression expr)
 		{
 			int num;
 			if (expr.IsConstantIntOrNull (out num))
@@ -78,7 +79,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return ConstantFact (expr);
 		}
 
-		public ProofOutcome IsTrueImply(APC pc, Sequence<BoxedExpression> positiveAssumptions, Sequence<BoxedExpression> negativeAssumptions, BoxedExpression goal)
+        public FlatDomain<bool> IsTrueImply(APC pc, Sequence<BoxedExpression> positiveAssumptions, Sequence<BoxedExpression> negativeAssumptions, BoxedExpression goal)
 		{
 			UnaryOperator op;
 			BoxedExpression arg;
@@ -91,7 +92,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsGreaterEqualToZero(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsGreaterEqualToZero(APC pc, BoxedExpression expr)
 		{
 			int num;
 			if (expr.IsConstantIntOrNull(out num))
@@ -100,7 +101,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsLessThan(APC pc, BoxedExpression left, BoxedExpression right)
+        public FlatDomain<bool> IsLessThan(APC pc, BoxedExpression left, BoxedExpression right)
 		{
 			int l;
 			int r;
@@ -110,7 +111,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsNonZero(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsNonZero(APC pc, BoxedExpression expr)
 		{
 			int num;
 			if (expr.IsConstantIntOrNull(out num))
@@ -119,7 +120,7 @@ namespace Mono.CodeContracts.Static.Proving
 			return ProofOutcome.Top;
 		}
 
-	    private static ProofOutcome ConstantFact(BoxedExpression expr)
+        private static FlatDomain<bool> ConstantFact(BoxedExpression expr)
 		{
 			BinaryOperator op;
 			BoxedExpression left;

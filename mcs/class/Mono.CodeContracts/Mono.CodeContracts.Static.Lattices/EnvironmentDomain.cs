@@ -36,8 +36,10 @@ namespace Mono.CodeContracts.Static.Lattices {
 	class EnvironmentDomain<K, V> : IAbstractDomain<EnvironmentDomain<K, V>>
 		where V : IAbstractDomain<V>
 		where K : IEquatable<K> {
-		public static readonly EnvironmentDomain<K, V> BottomValue = new EnvironmentDomain<K, V> (null);
+		
+        public static readonly EnvironmentDomain<K, V> BottomValue = new EnvironmentDomain<K, V> (null);
 		private static Func<K, int> KeyConverter;
+
 		private readonly IImmutableMap<K, V> map;
 
 		private EnvironmentDomain (IImmutableMap<K, V> map)
@@ -78,11 +80,48 @@ namespace Mono.CodeContracts.Static.Lattices {
 
 	    public EnvironmentDomain<K, V> Join(EnvironmentDomain<K, V> that)
 	    {
-	        throw new NotImplementedException();
+	        return JoinOrWiden (that, (a,b)=>a.Join (b));
+	    }
+
+	    public EnvironmentDomain<K, V> Widen(EnvironmentDomain<K, V> that)
+	    {
+            return JoinOrWiden(that, (a, b) => a.Widen(b));
+	    }
+
+	    private EnvironmentDomain<K, V> JoinOrWiden (EnvironmentDomain<K, V> that, Func<V,V,V> op)
+	    {
+            if (ReferenceEquals(this.map, that.map) || this.IsBottom)
+                return that;
+            if (that.IsBottom)
+                return this;
+
+	        IImmutableMap<K, V> min;
+	        IImmutableMap<K, V> max;
+	        GetMinAndMaxByCount (this.map, that.map, out min, out max);
+
+	        IImmutableMap<K, V> result = min; // intersection of keys
+	        foreach (var key in min.Keys)
+	        {
+	            V thatValue;
+	            if (max.TryGetValue (key, out thatValue))
+	            {
+	                V join = op (min[key], thatValue);
+                    if (join.IsBottom)
+                        return Bottom;
+
+	                result = join.IsTop ? result.Remove (key) : result.Add (key, join);
+	            }
+	            else
+	                result = result.Remove (key);
+	        }
+
+            return new EnvironmentDomain<K, V> (result);
 	    }
 
 	    public EnvironmentDomain<K, V> Join (EnvironmentDomain<K, V> that, bool widening, out bool weaker)
 		{
+            //todo: remove it
+
 			weaker = false;
 			if (this.map == that.map || IsTop)
 				return this;
@@ -119,14 +158,9 @@ namespace Mono.CodeContracts.Static.Lattices {
 			return new EnvironmentDomain<K, V> (intersect);
 		}
 
-	    public EnvironmentDomain<K, V> Widen(EnvironmentDomain<K, V> that)
-	    {
-	        throw new NotImplementedException();
-	    }
-
 	    public EnvironmentDomain<K, V> Meet (EnvironmentDomain<K, V> that)
 		{
-			if (this.map == that.map)
+			if (ReferenceEquals (this.map, that.map))
 				return this;
 			if (IsTop)
 				return that;
@@ -154,9 +188,11 @@ namespace Mono.CodeContracts.Static.Lattices {
 
 		public bool LessEqual (EnvironmentDomain<K, V> that)
 		{
-			if (that.IsTop || IsBottom)
-				return true;
-			if (IsTop || that.IsBottom || this.map.Count < that.map.Count)
+		    bool result;
+            if (this.TryTrivialLessEqual(that, out result))
+                return result;
+
+			if (this.map.Count < that.map.Count)
 				return false;
 
 			return that.map.Keys.All (key => this.map.ContainsKey (key) && this.map [key].LessEqual (that.map [key]));
@@ -187,33 +223,23 @@ namespace Mono.CodeContracts.Static.Lattices {
 		}
 		#endregion
 
-		private static bool GetMinAndMaxByCount (IImmutableMap<K, V> a, IImmutableMap<K, V> b,
-		                                         out IImmutableMap<K, V> min, out IImmutableMap<K, V> max)
-		{
-			if (a.Count < b.Count) {
-				min = a;
-				max = b;
-				return true;
-			}
-			max = a;
-			min = b;
-			return false;
-		}
-
 		public static EnvironmentDomain<K, V> TopValue (Func<K, int> keyConverter)
 		{
 			if (KeyConverter == null)
 				KeyConverter = keyConverter;
 
-			return new EnvironmentDomain<K, V> (ImmutableIntKeyMap<K, V>.Empty (KeyConverter));
+			return new EnvironmentDomain<K, V> (ImmutableIntKeyMap<K, V>.Empty (keyConverter));
 		}
 
-		public EnvironmentDomain<K, V> Add (K key, V value)
+		public EnvironmentDomain<K, V> With (K key, V value)
 		{
+            if (value.IsTop)
+                return Without (key);
+
 			return new EnvironmentDomain<K, V> (this.map.Add (key, value));
 		}
 
-		public EnvironmentDomain<K, V> Remove (K key)
+		public EnvironmentDomain<K, V> Without (K key)
 		{
 			return new EnvironmentDomain<K, V> (this.map.Remove (key));
 		}
@@ -223,9 +249,28 @@ namespace Mono.CodeContracts.Static.Lattices {
 			return this.map.ContainsKey (key);
 		}
 
+        public bool TryGetValue(K key, out V value)
+        {
+            return this.map.TryGetValue (key, out value);
+        } 
+
 		public EnvironmentDomain<K, V> Empty ()
 		{
 			return new EnvironmentDomain<K, V> (this.map.EmptyMap);
 		}
+
+        private static bool GetMinAndMaxByCount(IImmutableMap<K, V> a, IImmutableMap<K, V> b,
+                                                 out IImmutableMap<K, V> min, out IImmutableMap<K, V> max)
+        {
+            if (a.Count < b.Count)
+            {
+                min = a;
+                max = b;
+                return true;
+            }
+            max = a;
+            min = b;
+            return false;
+        }
 	}
 }

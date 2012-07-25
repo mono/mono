@@ -142,7 +142,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 		#endregion
 
 		#region IFactBase<V> Members
-		public ProofOutcome IsNull (APC pc, V variable)
+        public FlatDomain<bool> IsNull(APC pc, V variable)
 		{
 			if (ContextProvider.ValueContext.IsZero (pc, variable))
 				return ProofOutcome.True;
@@ -158,7 +158,7 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsNonNull (APC pc, V variable)
+        public FlatDomain<bool> IsNonNull(APC pc, V variable)
 		{
 			NonNullDomain<V> domain;
 			if (!PreStateLookup (pc, out domain) || domain.NonNulls.IsBottom)
@@ -403,12 +403,12 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			get { return new SimpleLogicInference<E, V> (ContextProvider, this, this.method_driver.BasicFacts.IsUnreachable); }
 		}
 
-		public ProofOutcome ValidateExplicitAssertion (APC pc, V value)
+        public FlatDomain<bool> ValidateExplicitAssertion(APC pc, V value)
 		{
 			NonNullDomain<V> domain;
 			if (PreStateLookup (pc, out domain) && !domain.NonNulls.IsBottom) {
 				IExpressionContext<E, V> exprCtx = ContextProvider.ExpressionContext;
-				return exprCtx.Decode<bool, ProofOutcome, ExpressionAssertDischarger<E, V>> (exprCtx.Refine (pc, value), new ExpressionAssertDischarger<E, V> (this, pc), true);
+                return exprCtx.Decode<bool, FlatDomain<bool>, ExpressionAssertDischarger<E, V>>(exprCtx.Refine(pc, value), new ExpressionAssertDischarger<E, V>(this, pc), true);
 			}
 			return ProofOutcome.Bottom;
 		}
