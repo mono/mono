@@ -1175,7 +1175,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void ProcessPostData (NameValueCollection data, bool second)
 	{
-		NameValueCollection requestValues = _requestValueCollection == null ? new NameValueCollection () : _requestValueCollection;
+		NameValueCollection requestValues = _requestValueCollection == null ? new NameValueCollection (SecureHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant) : _requestValueCollection;
 		
 		if (data != null && data.Count > 0) {
 			var used = new Dictionary <string, string> (StringComparer.Ordinal);
@@ -1210,7 +1210,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 				} else if (!second) {
 					if (secondPostData == null)
-						secondPostData = new NameValueCollection ();
+						secondPostData = new NameValueCollection (SecureHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
 					secondPostData.Add (id, data [id]);
 				}
 			}
