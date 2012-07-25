@@ -95,11 +95,11 @@ namespace System.Collections.Concurrent
 				do {
 					i = addIndex;
 				} while ((i & bit) > 0);
-				// If no more room just forget about the object altogether
-				if (i - removeIndex >= capacity - 1)
+				// If no more room or too busy just forget about the object altogether
+				if (i - removeIndex >= capacity - 1 || tries == 0)
 					return;
 				// We update addIndex and notify that we are going to set buffer correctly
-			} while (Interlocked.CompareExchange (ref addIndex, i + 1 + bit, i) != i && --tries > 0);
+			} while (Interlocked.CompareExchange (ref addIndex, i + 1 + bit, i) != i && --tries > -1);
 
 			buffer[i % capacity] = obj;
 			Thread.MemoryBarrier ();
