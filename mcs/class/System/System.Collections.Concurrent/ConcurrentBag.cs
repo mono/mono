@@ -87,13 +87,17 @@ namespace System.Collections.Concurrent
 			bool ret = true;
 			
 			if (bag == null || bag.PopBottom (out result) != PopResult.Succeed) {
+				var self = bag;
 				foreach (var other in staging) {
 					// Try to retrieve something based on a hint
 					ret = TryGetHint (out hintIndex) && (bag = container[hintIndex]).PopTop (out result) == PopResult.Succeed;
 
 					// We fall back to testing our slot
-					if (!ret && other.Value != bag) {
-						ret = other.Value.PopTop (out result) == PopResult.Succeed;
+					if (!ret && other.Value != self) {
+						var status = other.Value.PopTop (out result);
+						while (status == PopResult.Abort)
+							status = other.Value.PopTop (out result);
+						ret = status == PopResult.Succeed;
 						hintIndex = other.Key;
 						bag = other.Value;
 					}
@@ -124,12 +128,13 @@ namespace System.Collections.Concurrent
 			bool ret = true;
 
 			if (bag == null || !bag.PeekBottom (out result)) {
+				var self = bag;
 				foreach (var other in staging) {
 					// Try to retrieve something based on a hint
 					ret = TryGetHint (out hintIndex) && container[hintIndex].PeekTop (out result);
 
 					// We fall back to testing our slot
-					if (!ret && other.Value != bag)
+					if (!ret && other.Value != self)
 						ret = other.Value.PeekTop (out result);
 
 					// If we found something, stop
