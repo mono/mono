@@ -29,6 +29,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using System.Net.Http;
 using System.Net;
@@ -431,7 +432,9 @@ namespace MonoTests.System.Net.Http
 			headers.Connection.Add ("Close");
 			Assert.IsTrue (headers.ConnectionClose.Value, "#4");
 
-			Assert.AreEqual ("StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: <null>, Headers:\r\n{\r\nConnection: Close\r\n}", message.ToString (), "#5");
+			// .NET encloses the "Connection: Close" with two whitespaces.
+			var normalized = Regex.Replace (message.ToString (), @"\s", "");
+			Assert.AreEqual ("StatusCode:200,ReasonPhrase:'OK',Version:1.1,Content:<null>,Headers:{Connection:Close}", normalized, "#5");
 		}
 
 		[Test]
