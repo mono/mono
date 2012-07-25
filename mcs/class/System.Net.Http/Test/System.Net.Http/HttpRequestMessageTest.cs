@@ -29,6 +29,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using System.Net.Http;
 using System.Net;
@@ -489,7 +490,9 @@ namespace MonoTests.System.Net.Http
 			headers.TryAddWithoutValidation ("Age", "vv");
 			Assert.AreEqual ("vv", headers.GetValues ("Age").First (), "#2");
 
-			Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\nAge: vv\r\n}", message.ToString (), "#3");
+			// .NET encloses the "Age: vv" with two whitespaces.
+			var normalized = Regex.Replace (message.ToString (), @"\s", "");
+			Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:1.1,Content:<null>,Headers:{Age:vv}", normalized, "#3");
 		}
 
 		[Test]
