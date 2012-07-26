@@ -99,7 +99,7 @@ namespace System.Data.Common {
 			set {}
 		}
 		
-		internal protected static Hashtable DbTypeMapping {
+		internal static Hashtable DbTypeMapping {
 			get { return dbTypeMapping;}
 			set { dbTypeMapping = value;}
 		}
