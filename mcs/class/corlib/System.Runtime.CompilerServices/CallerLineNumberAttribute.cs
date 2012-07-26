@@ -30,7 +30,7 @@
 
 namespace System.Runtime.CompilerServices
 {
-	[AttributeUsageAttribute (AttributeTargets.Parameter)]
+	[AttributeUsageAttribute (AttributeTargets.Parameter, Inherited = false)]
 	public sealed class CallerLineNumberAttribute : Attribute
 	{
 	}

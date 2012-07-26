@@ -31,7 +31,8 @@ namespace System.Security {
 #if !MOONLIGHT
 	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
 #endif
-	[AttributeUsage (AttributeTargets.All, AllowMultiple=false, Inherited=false)]
+	[AttributeUsage (AttributeTargets.Delegate | AttributeTargets.Interface | AttributeTargets.Field | AttributeTargets.Method |
+			AttributeTargets.Constructor | AttributeTargets.Enum | AttributeTargets.Struct | AttributeTargets.Class, AllowMultiple=false, Inherited=false)]
 	public sealed class SecuritySafeCriticalAttribute : Attribute {
 
 		public SecuritySafeCriticalAttribute ()

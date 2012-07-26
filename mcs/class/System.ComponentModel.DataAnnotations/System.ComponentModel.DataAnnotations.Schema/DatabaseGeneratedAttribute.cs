@@ -32,7 +32,7 @@ using System;
 
 namespace System.ComponentModel.DataAnnotations.Schema
 {
-	[AttributeUsageAttribute (AttributeTargets.Class, AllowMultiple = false)]
+	[AttributeUsageAttribute (AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
 	public class DatabaseGeneratedAttribute : Attribute
 	{
 		public DatabaseGeneratedAttribute (DatabaseGeneratedOption databaseGeneratedOption)

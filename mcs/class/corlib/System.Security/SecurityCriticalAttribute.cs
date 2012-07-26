@@ -44,9 +44,9 @@ namespace System.Security {
 #else
 
 	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct |
 		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
-		AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate,
+		AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Delegate,
 		AllowMultiple=false, Inherited=false)]
 	public sealed class SecurityCriticalAttribute : Attribute {
 

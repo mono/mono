@@ -35,7 +35,7 @@ namespace System.Diagnostics.Contracts {
 
 	public sealed class ContractFailedEventArgs : EventArgs {
 		
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public ContractFailedEventArgs (ContractFailureKind failureKind, string message, string condition, Exception originalException)
 		{
 			Condition = condition;

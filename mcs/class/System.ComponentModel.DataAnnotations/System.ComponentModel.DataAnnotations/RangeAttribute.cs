@@ -32,7 +32,11 @@ using System.ComponentModel;
 
 namespace System.ComponentModel.DataAnnotations
 {
+#if NET_4_0
+	[AttributeUsage (AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
+#else
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
+#endif
 	public class RangeAttribute : ValidationAttribute
 	{
 		Func <object, bool> comparer;

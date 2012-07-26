@@ -32,7 +32,11 @@ using System.ComponentModel;
 
 namespace System.ComponentModel.DataAnnotations
 {
+#if NET_4_0
+	[AttributeUsage (AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = false)]
+#else
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
+#endif
 	public class DataTypeAttribute : ValidationAttribute
 	{
 		public DataTypeAttribute (DataType dataType)

@@ -57,7 +57,7 @@ namespace System.Diagnostics.Contracts.Internal
 		}
 #endif
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		[DebuggerNonUserCode]
 		public static string RaiseContractFailedEvent (ContractFailureKind failureKind, string userMessage, string conditionText, Exception innerException)
 		{
