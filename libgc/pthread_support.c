@@ -1383,7 +1383,6 @@ int GC_thread_register_foreign (void *base_addr)
 void * GC_start_routine(void * arg)
 {
 #if defined(PLATFORM_ANDROID)
-	extern int prctl(int option, unsigned long arg2, unsigned long arg3 , unsigned long arg4, unsigned long arg5);
 	prctl(15/*PR_SET_NAME*/, (unsigned long)__FUNCTION__,0,0,0);
 #endif
     int dummy;

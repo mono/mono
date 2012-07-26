@@ -18,6 +18,8 @@ our @EXPORT_OK=qw(GetAndroidSDK);
 our $SDK_ROOT_ENV = "ANDROID_SDK_ROOT";
 our $NDK_ROOT_ENV = "ANDROID_NDK_ROOT";
 
+# based on https://dl-ssl.google.com/android/repository/repository-7.xml
+
 our $BASE_URL_SDK = "http://dl.google.com/android/repository/";
 our $BASE_URL_NDK = "http://dl.google.com/android/ndk/";
 
@@ -30,21 +32,25 @@ our $sdks =
 	"android-11"	=> "android-3.0_r02-linux.zip",
 	"android-12"	=> "android-3.1_r03-linux.zip",
 	"android-13"	=> "android-3.2_r01-linux.zip",
-	"android-14"	=> "android-14_r01.zip"
+	"android-14"	=> "android-14_r03.zip",
+	"android-15"	=> "android-15_r03.zip",
+	"android-16"	=> "android-16_r02.zip"
 };
 
 our $sdk_tools =
 {
-	"windows"		=> "tools_r15-windows.zip",
-	"linux"			=> "tools_r15-linux.zip",
-	"macosx"		=> "tools_r15-macosx.zip",
+	"version"		=> "20",
+	"windows"		=> "tools_r20-windows.zip",
+	"linux"			=> "tools_r20-linux.zip",
+	"macosx"		=> "tools_r20-macosx.zip",
 };
 
 our $platform_tools =
 {
-	"windows"		=> "platform-tools_r09-windows.zip",
-	"linux"			=> "platform-tools_r09-linux.zip",
-	"macosx"		=> "platform-tools_r09-macosx.zip",
+	"version"		=> "14",
+	"windows"		=> "platform-tools_r12-windows.zip",
+	"linux"			=> "platform-tools_r12-linux.zip",
+	"macosx"		=> "platform-tools_r12-macosx.zip",
 };
 
 our $ndks =
@@ -84,6 +90,30 @@ our $ndks =
 						"windows" => "android-ndk-r7-windows.zip",
 						"macosx" => "android-ndk-r7-darwin-x86.tar.bz2",
 						"linux" => "android-ndk-r7-linux-x86.tar.bz2",
+					},
+	"r7b"		=>
+					{
+						"windows" => "android-ndk-r7b-windows.zip",
+						"macosx" => "android-ndk-r7b-darwin-x86.tar.bz2",
+						"linux" => "android-ndk-r7b-linux-x86.tar.bz2",
+					},
+	"r7c"		=>
+					{
+						"windows" => "android-ndk-r7c-windows.zip",
+						"macosx" => "android-ndk-r7c-darwin-x86.tar.bz2",
+						"linux" => "android-ndk-r7c-linux-x86.tar.bz2",
+					},
+	"r8"		=>
+					{
+						"windows" => "android-ndk-r8-windows.zip",
+						"macosx" => "android-ndk-r8-darwin-x86.tar.bz2",
+						"linux" => "android-ndk-r8-linux-x86.tar.bz2",
+					},
+	"r8b"		=>
+					{
+						"windows" => "android-ndk-r8b-windows.zip",
+						"macosx" => "android-ndk-r8b-darwin-x86.tar.bz2",
+						"linux" => "android-ndk-r8b-linux-x86.tar.bz2",
 					},
 };
 
@@ -133,22 +163,40 @@ else
 	print "\t\$$NDK_ROOT_ENV = $ENV{$NDK_ROOT_ENV}\n" if ($ENV{$NDK_ROOT_ENV});
 	print "\n";
 
-my ($sdk, $ndk, $setenv) = @_;
+my ($sdk, $tools, $ndk, $setenv) = @_;
 
 #	Getopt::Long::GetOptions("sdk=s"=>\$sdk, "ndk=s"=>\$ndk) or die ("Illegal cmdline options");
 
-
-if ($sdk)
+if ($sdk or $tools)
 {
-	print "Installing SDK '$sdk':\n";
+	if ($sdk)
+	{
+		print "Installing SDK '$sdk':\n";
+	}
+	elsif($tools)
+	{
+		print "Installing SDK Tools '$tools':\n";
+	}
+
 	if (!$ENV{$SDK_ROOT_ENV})
 	{
 		$ENV{$SDK_ROOT_ENV} = catfile($HOME, "android-sdk_auto");
 		print "\t\$$SDK_ROOT_ENV not set; using $ENV{$SDK_ROOT_ENV} instead\n";
 	}
 
-	PrepareSDKTools();
-	PrepareSDK($sdk);
+	if (not $tools and $sdk)
+	{
+		my @split = split('-', $sdk);
+		$tools = $split[1];
+	}
+	if ($tools)
+	{
+		PrepareSDKTools($tools);
+	}
+	if ($sdk)
+	{
+		PrepareSDK($sdk);
+	}
 	print "\n";
 }
 
@@ -189,13 +237,36 @@ if ($ndk)
 
 sub PrepareSDKTools
 {
+	my ($sdk_version) = @_;
+	my $current_version = 0;
+
+	print "\tMinimum SDK Tools = $sdk_version\n";
 	my $sdk_root = $ENV{$SDK_ROOT_ENV};
 	my $sdk_tool_path = catfile($sdk_root, "tools");
 	my $platform_tool_path = catfile($sdk_root, "platform-tools");
-	if (-e catfile($sdk_tool_path, "NOTICE.txt") and -e catfile($platform_tool_path, "NOTICE.txt") )
+	if (open PROPS, "<", catfile("$sdk_tool_path", "source.properties"))
+	{
+		my @content = <PROPS>;
+		close PROPS;
+		chomp(@content);
+		foreach (@content)
+		{
+			if (index($_, "Pkg.Revision") != -1)
+			{
+				my @tokens = split('=', $_);
+				$current_version = int($tokens[1]);
+			}
+		}
+		print "\tInstalled SDK Tools = $current_version\n";
+	}
+	if ($current_version >= $sdk_version and -e catfile($platform_tool_path, "NOTICE.txt") )
 	{
 		print "\tSDK tools are already installed.\n";
 		return;
+	}
+	if ($sdk_version > $sdk_tools->{'version'})
+	{
+		die "Unknown SDK Tools = $sdk_version\n";
 	}
 	my $sdk_tool = $sdk_tools->{$HOST_ENV};
 	my $platform_tool = $platform_tools->{$HOST_ENV};

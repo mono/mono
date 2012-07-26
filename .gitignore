@@ -35,3 +35,18 @@
 libeglib.la
 libeglib_la-*.lo
 libeglib_la-*.o
+
+# files generated from an android build
+/android_cross.cache
+/envsetup.sh
+/libtool.m4
+/lt*.m4
+/mono-core.spec
+/data/net_4_0/Makefile
+/data/net_4_0/Makefile.in
+/mono/arch/arm/arm_*macros.h
+/mono/mini/cpu-arm.h
+/mono/mini/cpu-x86.h
+/mono/tests/tests-config
+/scripts/lc
+/scripts/pdb2mdb

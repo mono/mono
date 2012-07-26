@@ -1,14 +1,10 @@
 //
-// System.Collections.Generic.KeyValuePair
+// CollectionDebuggerView.cs
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) 2003 Ben Maurer
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -17,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,37 +26,51 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Diagnostics;
 
-namespace System.Collections.Generic {
-	[Serializable]
-	[DebuggerDisplay ("{value}", Name="[{key}]")]	
-	public struct KeyValuePair<TKey,TValue> {
-		private TKey key;
-		private TValue value;
+#if NET_2_0
+namespace System.Collections.Generic
+{
+	//
+	// Custom debugger type proxy to display collections as arrays
+	//
+	sealed class CollectionDebuggerView<T>
+	{
+		readonly ICollection<T> c;
 
-		public TKey Key {
-			get { return key; }
-			private set { key = value; }
-		}
-
-		public TValue Value {
-			get { return value; }
-			private set { this.value = value; }
+		public CollectionDebuggerView (ICollection<T> col)
+		{
+			this.c = col;
 		}
 		
-		public KeyValuePair (TKey key, TValue value)
-		{
-			Key = key;
-			Value = value;
-		}
-
-		public override string ToString()
-		{
-			return "[" + (Key != null ? Key.ToString() : string.Empty)  + ", " + (Value != null ? Value.ToString() : string.Empty) + "]";
+		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+		public T[] Items {
+			get {
+				var o = new T [c.Count];
+				c.CopyTo (o, 0);
+				return o;
+			}
 		}
 	}
+	
+	sealed class CollectionDebuggerView<T, U>
+	{
+		readonly ICollection<KeyValuePair<T, U>> c;
+
+		public CollectionDebuggerView (ICollection<KeyValuePair<T, U>> col)
+		{
+			this.c = col;
+		}
+
+		[DebuggerBrowsable (DebuggerBrowsableState.RootHidden)]
+		public KeyValuePair<T, U>[] Items {
+			get {
+				var o = new KeyValuePair<T, U> [c.Count];
+				c.CopyTo (o, 0);
+				return o;
+			}
+		}
+	}	
 }
 #endif

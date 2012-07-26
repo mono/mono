@@ -34,9 +34,12 @@
 
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System.Collections.Generic {
 	[Serializable]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class List <T> : IList <T>, IList, ICollection {
 		T [] _items;
 		int _size;

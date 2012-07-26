@@ -45,7 +45,7 @@ static int thumb_supported = 0;
  * http://developer.apple.com/iphone/library/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html                                                                                                                        
  * Basically, r7 is used as a frame pointer and it should point to the saved r7 + lr.                                                                                                                                                                                 
  */                                                                                                                                                                                                                                                                   
-static int iphone_abi = TRUE;   
+static int iphone_abi = 0;
 
 /*
  * The code generated for sequence points reads from this location, which is
@@ -1051,6 +1051,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		cfg->param_area = MAX (cfg->param_area, sizeof (gpointer)*8);
 
 	header = mono_method_get_header (cfg->method);
+
+	/* See mono_arch_get_global_int_regs () */
+	if (cfg->flags & MONO_CFG_HAS_CALLS)
+		cfg->uses_rgctx_reg = TRUE;
 
 	/* 
 	 * We use the frame register also for any method that has

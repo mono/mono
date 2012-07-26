@@ -12,11 +12,11 @@ use PrepareAndroidSDK;
 if ($#ARGV + 1 == 0)
 {
 	print "Usage:\n";
-	print "\t" . basename(__FILE__) . " -sdk=<android-X> -ndk=<rX> -env=<envsetup.sh/.bat>\n";
-	print "\ti.e. \"" . basename(__FILE__) . " -sdk=android-8 -ndk=r5c -env=setupenv.sh && source setupenv.sh\"\n";
+	print "\t" . basename(__FILE__) . " -sdk=<android-X> -tools=<N> -ndk=<rX> -env=<envsetup.sh/.bat>\n";
+	print "\ti.e. \"" . basename(__FILE__) . " -sdk=android-8 -tools=17 -ndk=r5c -env=setupenv.sh && source setupenv.sh\"\n";
 	print "\n";
 }
 
-my ($sdk, $ndk, $env);
-Getopt::Long::GetOptions("sdk=s"=>\$sdk, "ndk=s"=>\$ndk, "env=s"=>\$setenv) or die ("Illegal cmdline options");
-PrepareAndroidSDK::GetAndroidSDK($sdk, $ndk, $setenv);
+my ($sdk, $tools, $ndk, $env);
+Getopt::Long::GetOptions("sdk=s"=>\$sdk, "tools=s"=>\$tools, "ndk=s"=>\$ndk, "env=s"=>\$setenv) or die ("Illegal cmdline options");
+PrepareAndroidSDK::GetAndroidSDK($sdk, $tools, $ndk, $setenv);
