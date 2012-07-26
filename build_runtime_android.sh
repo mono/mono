@@ -9,7 +9,7 @@ GCC_VERSION=4.4.3
 OUTDIR=builds/embedruntimes/android
 PREFIX=`pwd`/builds/android
 
-perl PrepareAndroidSDK.pl -ndk=r7 -env=envsetup.sh && source envsetup.sh
+perl PrepareAndroidSDK.pl -ndk=r8 -env=envsetup.sh && source envsetup.sh
 
 NDK_ROOT=`cd $ANDROID_NDK_ROOT && pwd`
 
