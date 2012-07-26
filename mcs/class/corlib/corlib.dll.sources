@@ -1471,6 +1471,7 @@ System.Collections.Generic/KeyValuePair.cs
 System.Collections.Generic/EqualityComparer.cs
 System.Collections.Generic/KeyNotFoundException.cs
 System.Collections.Generic/List.cs
+System.Collections.Generic/CollectionDebuggerView.cs
 System.Collections.ObjectModel/Collection.cs
 System.Collections.ObjectModel/KeyedCollection.cs
 System.Collections.ObjectModel/ReadOnlyCollection.cs

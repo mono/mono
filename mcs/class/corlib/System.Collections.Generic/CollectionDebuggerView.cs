@@ -29,6 +29,7 @@
 using System;
 using System.Diagnostics;
 
+#if NET_2_0
 namespace System.Collections.Generic
 {
 	//
@@ -72,3 +73,4 @@ namespace System.Collections.Generic
 		}
 	}	
 }
+#endif
