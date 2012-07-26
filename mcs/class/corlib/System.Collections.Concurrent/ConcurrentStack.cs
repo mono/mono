@@ -177,7 +177,7 @@ namespace System.Collections.Concurrent
 				temp = temp.Next;
 				pool.Release (ZeroOut (end));
 			}
-			this.count -= (i - startIndex);
+			Interlocked.Add (ref this.count, -(i - startIndex));
 			
 			return i - startIndex;
 		}
