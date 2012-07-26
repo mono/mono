@@ -36,7 +36,7 @@ namespace System.Collections
 	//
 	// Custom debugger type proxy to display collections as arrays
 	//
-	internal sealed class CollectionDebuggerView
+	sealed class CollectionDebuggerView
 	{
 		readonly ICollection c;
 
