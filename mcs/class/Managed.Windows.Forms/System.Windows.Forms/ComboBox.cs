@@ -2000,8 +2000,10 @@ namespace System.Windows.Forms
 					if (index == owner.SelectedIndex) {
 						if (owner.textbox_ctrl == null)
 							owner.Refresh ();
-						else
-							owner.textbox_ctrl.SelectedText = value.ToString ();
+						else {
+							owner.textbox_ctrl.Text = value.ToString ();
+							owner.textbox_ctrl.SelectAll ();
+						}
 					}
 				}
 			}
