@@ -190,6 +190,30 @@ namespace MonoTests.System.Collections.Concurrent
 			Assert.IsTrue(s == "9876543210", "#1 : " + s);
 		}
 
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void ToExistingArray_Null ()
+		{
+			stack.CopyTo (null, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToExistingArray_OutOfRange ()
+		{
+			stack.CopyTo (new int[3], -1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ToExistingArray_IndexOverflow ()
+		{
+			stack.CopyTo (new int[3], 4);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ToExistingArray_Overflow ()
+		{
+			stack.CopyTo (new int[3], 0);
+		}
+
 		[Test]
 		public void TryPopRangeTest ()
 		{
