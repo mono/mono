@@ -45,6 +45,21 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             relationalOperators.Add (ExpressionOperator.NotEqual);
         }
 
+        internal static bool IsUnary(this ExpressionOperator op)
+        {
+            return op == ExpressionOperator.UnaryMinus || op == ExpressionOperator.Not;
+        }
+
+        internal static bool IsZerary(this ExpressionOperator op)
+        {
+            return op == ExpressionOperator.Constant || op == ExpressionOperator.Variable;
+        }
+
+        internal static bool IsBinary(this ExpressionOperator op)
+        {
+            return !op.IsUnary () && !op.IsZerary();
+        }
+
         internal static bool IsGreaterThan(this ExpressionOperator op)
         {
             return op == ExpressionOperator.GreaterThan;

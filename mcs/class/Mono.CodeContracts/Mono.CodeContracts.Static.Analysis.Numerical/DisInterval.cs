@@ -227,6 +227,19 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public override bool IsBottom { get { return state == State.Bottom; } }
 
+        public bool IsNotZero
+        {
+            get
+            {
+                if (!this.IsNormal ())
+                    return false;
+
+                return intervals.All (intv => !intv.Includes (0));
+            }
+        }
+
+        public bool IsPositiveOrZero { get { return this.IsNormal () && this.LowerBound >= 0L; } }
+
         protected override bool IsFiniteBound (Rational n)
         {
             return !n.IsInfinity;

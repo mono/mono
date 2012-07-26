@@ -4,6 +4,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
     {
         Unknown,
         Int32,
+        Float32,
+        Float64,
         Bool
     }
 }

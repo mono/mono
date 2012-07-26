@@ -28,6 +28,7 @@
 // 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -245,7 +246,35 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
             return For (-l.UpperBound, -l.LowerBound);
         }
-        
+
+        public bool TryGetSingletonFiniteInt32(out int value)
+        {
+            int lower;
+            int upper;
+            if (this.IsFiniteAndInt32(out lower, out upper) && lower == upper)
+                return true.With (lower, out value);
+            return false.Without (out value);
+        }
+
+        private bool IsFiniteAndInt32 (out int lower, out int upper)
+        {
+            if (this.IsFinite && this.LowerBound.IsInteger && this.UpperBound.IsInteger)
+            {
+                try
+                {
+                    lower = (int)(long)this.LowerBound;
+                    upper = (int)(long)this.UpperBound;
+                    return true;
+                }
+                catch (ArithmeticException)
+                {
+                }
+            }
+
+            return false.With (0, out lower).
+                         With (0, out upper);
+        }
+
         public bool Includes(int x)
         {
             return this.IsNormal () && LowerBound <= x && x <= UpperBound;

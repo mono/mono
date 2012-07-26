@@ -46,5 +46,11 @@ namespace Mono.CodeContracts.Static.DataStructures {
 		void Visit (Func<K, V, VisitStatus> func);
 
 	    bool TryGetValue (K key, out V value);
+
+	    IImmutableMapFactory<K, V> Factory();
 	}
+
+    internal interface IImmutableMapFactory<K, V> {
+        IImmutableMap<K, V> Empty { get; }
+    }
 }

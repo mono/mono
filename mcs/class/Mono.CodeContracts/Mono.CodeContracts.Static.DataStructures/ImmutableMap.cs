@@ -148,5 +148,15 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			return RemoveKey (key, keys.Tail).Cons (keys.Head);
 		}
 		#endregion
+
+        public IImmutableMapFactory<K, V> Factory ()
+	    {
+	        return new MapFactory ();
+	    }
+
+        private class MapFactory : IImmutableMapFactory<K, V>
+        {
+            public IImmutableMap<K, V> Empty { get { return ImmutableMap<K,V>.Empty;}}
+        }
 	}
 }

@@ -111,6 +111,37 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             }
         }
 
+
+        /// <summary>
+        /// Returns true if poly is in form: 'k*x &lt; c'
+        /// </summary>
+        public bool IsIntervalForm
+        {
+            get
+            {
+                ExpressionOperator? op = this.Relation;
+                
+                if (!op.HasValue)
+                    return false;
+                if (this.left.Length != 1 || this.right.Length != 1 || this.left[0].Degree != 1 || !this.right[0].IsConstant)
+                    return false;
+
+                return op.Value == ExpressionOperator.LessEqualThan;
+            }
+        }
+
+        public bool IsLinear
+        {
+            get
+            {
+                if (this.left.Any (m => !m.IsLinear))
+                    return false;
+                if (this.Relation.HasValue && this.right.Any (m => !m.IsLinear))
+                    return false;
+                return true;
+            }
+        }
+
         public static bool TryToPolynomial(Monomial<Var>[] monomials, out Polynomial<Var, Expr> polynome)
         {
             if (monomials.Length > 1)
@@ -320,7 +351,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return true;
         }
 
-        private static bool TryBuildFrom(Expr expr, IExpressionDecoder<Var, Expr> decoder, out Polynomial<Var, Expr> result)
+        public static bool TryBuildFrom(Expr expr, IExpressionDecoder<Var, Expr> decoder, out Polynomial<Var, Expr> result)
         {
             return new PolynomialBuilder (decoder).Build (expr, out result);
         }
@@ -617,6 +648,23 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             {
                 return new Pair<Rational, bool> (value, true);
             }
+        }
+
+        public static bool TryToPolynomial(ExpressionOperator op, Polynomial<Var, Expr> left, Polynomial<Var, Expr> right, out Polynomial<Var, Expr> result)
+        {
+            if (op.IsBinary() && !left.Relation.HasValue)
+            {
+                try
+                {
+                    var poly = new Polynomial<Var, Expr> (op, left, right);
+                    if (poly.TryToCanonicalForm(out result))
+                        return true;
+                }catch(Exception)
+                {
+                }
+            }
+
+            return false.Without (out result);
         }
     }
 }

@@ -99,8 +99,8 @@ namespace Mono.CodeContracts.Static.DataStructures {
                 return true.With(pair.Value, out value);
             return false.Without(out value);
         }
-
-		public void Visit (Func<K, V, VisitStatus> func)
+        
+	    public void Visit (Func<K, V, VisitStatus> func)
 		{
 			this.immutable_int_map.Visit (data => func (data.Key, data.Value));
 		}
@@ -118,5 +118,21 @@ namespace Mono.CodeContracts.Static.DataStructures {
 		{
 			return new ImmutableIntKeyMap<K, V> (ImmutableIntMap<Pair<K, V>>.Empty, keyConverter);
 		}
+
+        public IImmutableMapFactory<K, V> Factory ()
+	    {
+            return new MapFactory (this.keyConverter);
+	    }
+
+        private class MapFactory : IImmutableMapFactory<K,V> {
+            private readonly Func<K, int> keyConverter;
+
+            public MapFactory (Func<K, int> keyConverter)
+            {
+                this.keyConverter = keyConverter;
+            }
+
+            public IImmutableMap<K, V> Empty { get { return ImmutableIntKeyMap<K, V>.Empty (keyConverter);}}
+        }
 	}
 }

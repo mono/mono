@@ -40,7 +40,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         where TVar : IEquatable<TVar> 
     {
         public readonly IntervalAssumerBase<TEnv, TVar, TExpr, TInterval, TNumeric> Assumer;
-        public static readonly IIntervalHelper<TInterval,TNumeric> IntervalHelper;
+        public static readonly IntervalContextBase<TInterval,TNumeric> IntervalContext;
 
         private readonly EnvironmentDomain<TVar, TInterval> varsToIntervals;
         
@@ -116,7 +116,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         {
             int intValue;
             if (decoder.IsConstantInt(expr, out intValue))
-                return IntervalHelper.For (intValue);
+                return IntervalContext.For (intValue);
 
             throw new NotImplementedException ();
         }
@@ -176,7 +176,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public TEnv Top { get { return NewInstance (EnvironmentDomain<TVar, TInterval>.TopValue (null)); } }
 
-        public TEnv Bottom { get { return NewInstance (EnvironmentDomain<TVar, TInterval>.BottomValue); } }
+        public TEnv Bottom { get { return NewInstance (EnvironmentDomain<TVar, TInterval>.BottomValue()); } }
 
         public bool IsTop { get { return this.varsToIntervals.IsTop; } }
 

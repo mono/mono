@@ -37,35 +37,44 @@ namespace Mono.CodeContracts.Static.Lattices {
 		where V : IAbstractDomain<V>
 		where K : IEquatable<K> {
 		
-        public static readonly EnvironmentDomain<K, V> BottomValue = new EnvironmentDomain<K, V> (null);
-		private static Func<K, int> KeyConverter;
+        private readonly IImmutableMapFactory<K,V> factory;
+        private readonly IImmutableMap<K, V> map;
 
-		private readonly IImmutableMap<K, V> map;
+	    private EnvironmentDomain(IImmutableMapFactory<K, V> factory)
+            : this(factory, factory.Empty)
+        {
+        }
 
-		private EnvironmentDomain (IImmutableMap<K, V> map)
+	    private EnvironmentDomain(IImmutableMap<K, V> map)
+            : this(map.Factory (), map)
+        {
+        }
+
+	    private EnvironmentDomain(IImmutableMapFactory<K, V> factory, IImmutableMap<K,V> map )
+	    {
+	        this.factory = factory;
+	        this.map = map;
+	    }
+
+	    public V this [K key]
 		{
-			this.map = map;
-		}
-
-		public V this [K key]
-		{
-			get { return this.map == null ? default(V) : this.map [key]; }
+            get { return this.map == null ? default(V) : this.map[key]; }
 		}
 
 		public IEnumerable<K> Keys
 		{
-			get { return this.map.Keys; }
+            get { return this.map.Keys; }
 		}
 
 		#region IAbstractDomain<EnvironmentDomain<K,V>> Members
 		public EnvironmentDomain<K, V> Top
 		{
-			get { return TopValue (KeyConverter); }
+			get { return new EnvironmentDomain<K, V> (factory.Empty); }
 		}
 
 		public EnvironmentDomain<K, V> Bottom
 		{
-			get { return BottomValue; }
+			get { return new EnvironmentDomain<K, V> (factory, null); }
 		}
 
 		public bool IsTop
@@ -225,11 +234,29 @@ namespace Mono.CodeContracts.Static.Lattices {
 
 		public static EnvironmentDomain<K, V> TopValue (Func<K, int> keyConverter)
 		{
-			if (KeyConverter == null)
-				KeyConverter = keyConverter;
+            if (keyConverter == null)
+                throw new ArgumentNullException("keyConverter");
 
 			return new EnvironmentDomain<K, V> (ImmutableIntKeyMap<K, V>.Empty (keyConverter));
 		}
+
+        public static EnvironmentDomain<K, V> TopValue()
+        {
+            return new EnvironmentDomain<K, V>(ImmutableMap<K,V>.Empty);
+        }
+
+        public static EnvironmentDomain<K, V> BottomValue(Func<K,int> keyConverter)
+        {
+            if (keyConverter == null)
+                throw new ArgumentNullException("keyConverter");
+
+            return new EnvironmentDomain<K, V>(ImmutableIntKeyMap<K,V>.Empty (keyConverter).Factory (), null);
+        }
+
+        public static EnvironmentDomain<K, V> BottomValue()
+        {
+            return new EnvironmentDomain<K, V>(ImmutableMap<K,V>.Empty.Factory(), null);
+        }
 
 		public EnvironmentDomain<K, V> With (K key, V value)
 		{
@@ -239,24 +266,36 @@ namespace Mono.CodeContracts.Static.Lattices {
 			return new EnvironmentDomain<K, V> (this.map.Add (key, value));
 		}
 
-		public EnvironmentDomain<K, V> Without (K key)
+        public EnvironmentDomain<K,V> RefineWith(K key, V value)
+        {
+            V old;
+            if (this.map.TryGetValue (key, out old))
+                value = value.Meet (old);
+
+            return With (key, value);
+        }
+
+	    public EnvironmentDomain<K, V> Without (K key)
 		{
 			return new EnvironmentDomain<K, V> (this.map.Remove (key));
 		}
 
 		public bool Contains (K key)
 		{
-			return this.map.ContainsKey (key);
+			return this.map != null && this.map.ContainsKey (key);
 		}
 
         public bool TryGetValue(K key, out V value)
         {
+            if (this.map == null)
+                return false.Without (out value);
+
             return this.map.TryGetValue (key, out value);
         } 
 
 		public EnvironmentDomain<K, V> Empty ()
 		{
-			return new EnvironmentDomain<K, V> (this.map.EmptyMap);
+			return new EnvironmentDomain<K, V> (this.factory.Empty);
 		}
 
         private static bool GetMinAndMaxByCount(IImmutableMap<K, V> a, IImmutableMap<K, V> b,
@@ -273,4 +312,6 @@ namespace Mono.CodeContracts.Static.Lattices {
             return false;
         }
 	}
+
+    
 }

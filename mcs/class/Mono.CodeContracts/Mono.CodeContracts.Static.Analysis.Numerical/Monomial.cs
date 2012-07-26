@@ -96,7 +96,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return variables.Any ((v) => v.Equals (var));
         }
 
-        public bool IsVariable(out Variable var)
+        public bool IsSingleVariable(out Variable var)
         {
             if (this.Degree == 1)
                 return true.With (this.variables.Head, out var);
