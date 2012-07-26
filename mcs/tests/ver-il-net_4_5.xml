@@ -17641,6 +17641,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-570.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1[T]">
+      <method name="C`1 op_Implicit(T)" attrs="2198">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">

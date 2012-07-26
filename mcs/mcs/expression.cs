@@ -9300,6 +9300,9 @@ namespace Mono.CSharp
 		
 		public UserCast (MethodSpec method, Expression source, Location l)
 		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
 			this.method = method;
 			this.source = source;
 			type = method.ReturnType;

@@ -1090,12 +1090,13 @@ namespace Mono.CSharp {
 			Expression source_type_expr;
 
 			if (source_type.IsNullableType) {
-				// No implicit conversion S? -> T for non-reference types
-				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType)
-					return null;
-
-				source_type_expr = Nullable.Unwrap.Create (source);
-				source_type = source_type_expr.Type;
+				// No unwrapping conversion S? -> T for non-reference types
+				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType) {
+					source_type_expr = source;
+				} else {
+					source_type_expr = Nullable.Unwrap.Create (source);
+					source_type = source_type_expr.Type;
+				}
 			} else {
 				source_type_expr = source;
 			}
@@ -1196,7 +1197,11 @@ namespace Mono.CSharp {
 				var c = source as Constant;
 				if (c != null) {
 					source = c.TryReduce (ec, s_x);
-				} else {
+					if (source == null)
+						c = null;
+				}
+
+				if (c == null) {
 					source = implicitOnly ?
 						ImplicitConversionStandard (ec, source_type_expr, s_x, loc) :
 						ExplicitConversionStandard (ec, source_type_expr, s_x, loc);
