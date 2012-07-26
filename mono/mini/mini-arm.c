@@ -45,7 +45,7 @@ static int thumb_supported = 0;
  * http://developer.apple.com/iphone/library/documentation/Xcode/Conceptual/iPhoneOSABIReference/Articles/ARMv6FunctionCallingConventions.html                                                                                                                        
  * Basically, r7 is used as a frame pointer and it should point to the saved r7 + lr.                                                                                                                                                                                 
  */                                                                                                                                                                                                                                                                   
-static int iphone_abi = TRUE;   
+static int iphone_abi = 0;
 
 /*
  * The code generated for sequence points reads from this location, which is
