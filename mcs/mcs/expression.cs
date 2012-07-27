@@ -7042,7 +7042,7 @@ namespace Mono.CSharp
 					// Hoisted this is almost like hoisted variable but not exactly. When
 					// there is no variable hoisted we can simply emit an instance method
 					// without lifting this into a storey. Unfotunatelly this complicates
-					// this in other cases because we don't know where this will be hoisted
+					// things in other cases because we don't know where this will be hoisted
 					// until top-level block is fully resolved
 					//
 					top.AddThisReferenceFromChildrenBlock (block.Explicit);

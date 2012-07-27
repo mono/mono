@@ -1638,9 +1638,9 @@ namespace Mono.CSharp {
 					var sm = src_block.ParametersBlock.TopBlock.StateMachine;
 
 					//
-					// Remove hoisted this demand when simple instance method is enough
+					// Remove hoisted this demand when simple instance method is enough (no hoisted variables only this)
 					//
-					if (src_block.HasCapturedThis) {
+					if (src_block.HasCapturedThis && src_block.ParametersBlock.StateMachine == null) {
 						src_block.ParametersBlock.TopBlock.RemoveThisReferenceFromChildrenBlock (src_block);
 
 						//

@@ -2835,7 +2835,7 @@ namespace Mono.CSharp {
 			// Overwrite original for comparison purposes when linking cross references
 			// between anonymous methods
 			//
-			Original = source;
+			Original = source.Original;
 		}
 
 		#region Properties
