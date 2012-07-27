@@ -153,15 +153,19 @@ namespace System.Collections.Concurrent
 				return;
 			var hs = hints;
 			// If cas failed then we don't retry
-			Interlocked.CompareExchange (ref hints, (hs << 4) | (uint)index, hs);
+			Interlocked.CompareExchange (ref hints, (long)(((ulong)hs) << 4 | (uint)index), (long)hs);
 		}
 
 		bool TryGetHint (out int index)
 		{
+			/* Funny little thing to know, since hints is a long (because CAS has no ulong overload),
+			 * a shift-right operation is an arithmetic shift which might set high-order right bits
+			 * to 1 instead of 0 if the number turns negative.
+			 */
 			var hs = hints;
 			index = 0;
 
-			if (Interlocked.CompareExchange (ref hints, hs >> 4, hs) == hs)
+			if (Interlocked.CompareExchange (ref hints, (long)(((ulong)hs) >> 4), hs) == hs)
 				index = (int)(hs & 0xF);
 
 			return index > 0;
