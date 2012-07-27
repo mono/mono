@@ -13,6 +13,3 @@
 [submodule "external/entityframework"]
 	path = external/entityframework
 	url = git://github.com/mono/entityframework.git
-[submodule "entityframework"]
-	path = entityframework
-	url = git://github.com/mono/entityframework.git
