@@ -97,7 +97,7 @@ namespace System.Resources
 		void InitWriter ()
 		{
 			if (filename != null)
-				stream = File.OpenWrite (filename);
+				stream = File.Open (filename, FileMode.Create);
 			if (textwriter == null)
 				textwriter = new StreamWriter (stream, Encoding.UTF8);
 
