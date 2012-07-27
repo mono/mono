@@ -48,7 +48,6 @@ using Mono.Interop;
 
 namespace System.Runtime.InteropServices
 {
-	[SuppressUnmanagedCodeSecurity ()]
 	public static class Marshal
 	{
 		/* fields */
@@ -656,6 +655,7 @@ namespace System.Runtime.InteropServices
 		public extern static byte ReadByte (IntPtr ptr, int ofs);
 
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static byte ReadByte ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs)
 		{
 			throw new NotImplementedException ();
@@ -670,6 +670,7 @@ namespace System.Runtime.InteropServices
 		public extern static short ReadInt16 (IntPtr ptr, int ofs);
 
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static short ReadInt16 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs)
 		{
 			throw new NotImplementedException ();
@@ -687,6 +688,7 @@ namespace System.Runtime.InteropServices
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static int ReadInt32 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs)
 		{
 			throw new NotImplementedException ();
@@ -698,12 +700,12 @@ namespace System.Runtime.InteropServices
 			return ReadInt64 (ptr, 0);
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long ReadInt64 (IntPtr ptr, int ofs);
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static long ReadInt64 ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs)
 		{
 			throw new NotImplementedException ();
@@ -952,6 +954,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteByte (IntPtr ptr, int ofs, byte val);
 
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static void WriteByte ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, byte val)
 		{
 			throw new NotImplementedException ();
@@ -966,6 +969,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt16 (IntPtr ptr, int ofs, short val);
 
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static void WriteInt16 ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, short val)
 		{
 			throw new NotImplementedException ();
@@ -995,6 +999,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt32 (IntPtr ptr, int ofs, int val);
 
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static void WriteInt32([In, Out, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs, int val)
 		{
 			throw new NotImplementedException ();
@@ -1009,6 +1014,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt64 (IntPtr ptr, int ofs, long val);
 
 		[MonoTODO]
+		[SuppressUnmanagedCodeSecurity]
 		public static void WriteInt64 ([In, Out, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs, long val)
 		{
 			throw new NotImplementedException ();

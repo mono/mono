@@ -65,7 +65,11 @@ namespace System.Runtime.InteropServices
 			return Path.GetDirectoryName (typeof (int).Assembly.Location);	
 		}
 
+#if NET_4_0
+		[SecuritySafeCritical]
+#else
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public static string GetSystemVersion ()
 		{
 			return "v" + Environment.Version.Major + "." + Environment.Version.Minor + "." + Environment.Version.Build;
