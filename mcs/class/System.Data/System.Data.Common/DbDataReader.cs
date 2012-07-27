@@ -33,6 +33,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 
 #if NET_4_5
 using System.Threading;
@@ -188,6 +189,12 @@ namespace System.Data.Common {
 		}
 		
 #if NET_4_5
+		[MonoTODO]
+		public virtual T GetFieldValue<T> (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public Task<T> GetFieldValueAsync<T> (int ordinal)
 		{
 			return GetFieldValueAsync<T> (ordinal, CancellationToken.None);
@@ -208,7 +215,19 @@ namespace System.Data.Common {
 		{
 			return IsDBNullAsync (ordinal, CancellationToken.None);
 		}
+
+		[MonoTODO]
+		public virtual Stream GetStream (int i)
+		{
+			throw new NotImplementedException ();
+		}
 		
+		[MonoTODO]
+		public virtual TextReader GetTextReader (int i)
+		{
+			throw new NotImplementedException ();	
+		}
+
 		[MonoTODO]
 		public virtual Task<bool> IsDBNullAsync (int ordinal, CancellationToken cancellationToken)
 		{
