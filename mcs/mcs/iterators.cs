@@ -60,7 +60,7 @@ namespace Mono.CSharp
 			machine_initializer = bc.CurrentAnonymousMethod as T;
 
 			if (!bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				unwind_protect = bc.CurrentBranching.AddResumePoint (this, out resume_pc);
+				unwind_protect = bc.CurrentBranching.AddResumePoint (this, this, out resume_pc);
 
 			return true;
 		}
