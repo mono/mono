@@ -105,32 +105,32 @@ namespace System.Security.AccessControl
 			return new AccessRule<T> (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, type);
 		}
 		
-		public void AddAccessRule (AccessRule<T> rule)
+		public virtual void AddAccessRule (AccessRule<T> rule)
 		{
 			AddAccessRule ((AccessRule)rule);
 		}
 		
-		public bool RemoveAccessRule (AccessRule<T> rule)
+		public virtual bool RemoveAccessRule (AccessRule<T> rule)
 		{
 			return RemoveAccessRule ((AccessRule)rule);
 		}
 		
-		public void RemoveAccessRuleAll (AccessRule<T> rule)
+		public virtual void RemoveAccessRuleAll (AccessRule<T> rule)
 		{
 			RemoveAccessRuleAll ((AccessRule)rule);
 		}
 		
-		public void RemoveAccessRuleSpecific (AccessRule<T> rule)
+		public virtual void RemoveAccessRuleSpecific (AccessRule<T> rule)
 		{
 			RemoveAccessRuleSpecific ((AccessRule)rule);
 		}
 		
-		public void ResetAccessRule (AccessRule<T> rule)
+		public virtual void ResetAccessRule (AccessRule<T> rule)
 		{
 			ResetAccessRule ((AccessRule)rule);
 		}
 		
-		public void SetAccessRule (AccessRule<T> rule)
+		public virtual void SetAccessRule (AccessRule<T> rule)
 		{
 			SetAccessRule ((AccessRule)rule);
 		}
@@ -142,27 +142,27 @@ namespace System.Security.AccessControl
 			return new AuditRule<T> (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, flags);
 		}
 		
-		public void AddAuditRule (AuditRule<T> rule)
+		public virtual void AddAuditRule (AuditRule<T> rule)
 		{
 			AddAuditRule ((AuditRule)rule);
 		}
 		
-		public bool RemoveAuditRule (AuditRule<T> rule)
+		public virtual bool RemoveAuditRule (AuditRule<T> rule)
 		{
 			return RemoveAuditRule((AuditRule)rule);
 		}
 		
-		public void RemoveAuditRuleAll (AuditRule<T> rule)
+		public virtual void RemoveAuditRuleAll (AuditRule<T> rule)
 		{
 			RemoveAuditRuleAll((AuditRule)rule);
 		}
 		
-		public void RemoveAuditRuleSpecific (AuditRule<T> rule)
+		public virtual void RemoveAuditRuleSpecific (AuditRule<T> rule)
 		{
 			RemoveAuditRuleSpecific((AuditRule)rule);
 		}
 		
-		public void SetAuditRule (AuditRule<T> rule)
+		public virtual void SetAuditRule (AuditRule<T> rule)
 		{
 			SetAuditRule((AuditRule)rule);
 		}

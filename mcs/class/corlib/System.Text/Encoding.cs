@@ -43,7 +43,7 @@ public abstract class Encoding : ICloneable
 	internal int windows_code_page;
 	bool is_readonly = true;
 	
-	protected static readonly byte[] empty = new byte[0];
+	internal static readonly byte[] empty = new byte[0];
 
 	// Constructor.
 	protected Encoding ()

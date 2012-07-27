@@ -33,6 +33,9 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using System.Runtime.InteropServices;
 using System.Threading;
+#if NET_4_0
+using System.Runtime.ExceptionServices;
+#endif
 
 namespace System.Security.AccessControl
 {
@@ -349,6 +352,9 @@ namespace System.Security.AccessControl
 		}
 		
 		[MonoTODO]
+#if NET_4_0
+		[HandleProcessCorruptedStateExceptions]
+#endif
 		protected virtual void Persist (bool enableOwnershipPrivilege, string name, AccessControlSections includeSections)
 		{
 			throw new NotImplementedException ();

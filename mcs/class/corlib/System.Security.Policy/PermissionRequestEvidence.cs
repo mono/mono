@@ -34,7 +34,11 @@ namespace System.Security.Policy {
 
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class PermissionRequestEvidence : IBuiltInEvidence {
+	public sealed class PermissionRequestEvidence :
+#if NET_4_0
+		EvidenceBase,
+#endif
+		IBuiltInEvidence {
 
 		private PermissionSet requested, optional, denied;
 
