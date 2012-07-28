@@ -906,6 +906,50 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (81, p.GetColumnWidths ()[0], "D3");
 			Assert.AreEqual (119, p.GetColumnWidths ()[1], "D4");
 		}
+
+		[Test]
+		public void TestRowColumnSizes11 ()
+		{
+			// AutoSize Columns/Rows, and column-spanning controls, but
+			// no control starts in column 1.
+			// Mono's old behavior was for column 1 to have a zero width.
+			TableLayoutPanel p = new TableLayoutPanel ();
+			Control c1 = new Button ();
+			Control c2 = new Button ();
+			Control c3 = new Button ();
+
+			c1.Size = new Size (150, 25);
+			c2.Size = new Size (75, 25);
+			c3.Size = new Size (150, 25);
+
+			p.ColumnCount = 4;
+			p.RowCount = 3;
+
+			p.RowStyles.Add (new RowStyle (SizeType.AutoSize));
+			p.RowStyles.Add (new RowStyle (SizeType.AutoSize));
+			p.RowStyles.Add (new RowStyle (SizeType.AutoSize));
+			p.ColumnStyles.Add (new ColumnStyle (SizeType.AutoSize));
+			p.ColumnStyles.Add (new ColumnStyle (SizeType.AutoSize));
+			p.ColumnStyles.Add (new ColumnStyle (SizeType.AutoSize));
+			p.ColumnStyles.Add (new ColumnStyle (SizeType.AutoSize));
+
+			p.SetColumnSpan (c1, 2);
+			p.SetColumnSpan (c3, 2);
+
+			p.Controls.Add (c1, 0, 0);
+			p.Controls.Add (c2, 0, 1);
+			p.Controls.Add (c3, 1, 1);
+
+			// The bug fix gets Mono to behave very closely to .NET,
+			// but not exactly...3 pixels off somewhere...
+			Assert.AreEqual (31, p.GetRowHeights ()[0], "D1");
+			Assert.AreEqual (31, p.GetRowHeights ()[1], "D2");
+			Assert.AreEqual (81, p.GetColumnWidths ()[0], "D3");
+			Assert.LessOrEqual (75, p.GetColumnWidths ()[1], "D4");
+			Assert.GreaterOrEqual (78, p.GetColumnWidths ()[1], "D5");
+			Assert.LessOrEqual (78, p.GetColumnWidths ()[2], "D6");
+			Assert.GreaterOrEqual (81, p.GetColumnWidths ()[2], "D7");
+		}
 		
 		[Test]
 		public void Bug81843 ()
@@ -1208,7 +1252,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test] // bug #346246
-		public void AutoSizePanelVerical ()
+		public void AutoSizePanelVertical ()
 		{
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
