@@ -2440,6 +2440,17 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (30, dgv.Rows [1].MinimumHeight);
 			}
 		}
+
+		[Test] // Novell bug 660986
+		public void TestDispose ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("TestColumn", "Test column");
+			dgv.Rows.Add ();
+			dgv.Dispose ();
+			Assert.Throws (typeof (ArgumentOutOfRangeException), delegate { DataGridViewColumn col = dgv.Columns[0]; }, "#1");
+			Assert.Throws (typeof (ArgumentOutOfRangeException), delegate { DataGridViewRow row = dgv.Rows[0]; }, "#2");
+		}
 	}
 	
 	[TestFixture]
