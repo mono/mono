@@ -1213,6 +1213,8 @@ namespace MonoTests.System.Windows.Forms
 			
 			// Height is font dependent, but this bug is about the width anyways
 			Assert.AreEqual (244, l.Width, "A1");
+
+			f.Dispose ();
 		}
 		
 		[Test] // bug #82040
