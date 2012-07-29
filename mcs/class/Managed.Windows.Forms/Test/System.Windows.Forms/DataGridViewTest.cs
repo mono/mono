@@ -2448,8 +2448,20 @@ namespace MonoTests.System.Windows.Forms
 			dgv.Columns.Add ("TestColumn", "Test column");
 			dgv.Rows.Add ();
 			dgv.Dispose ();
-			Assert.Throws (typeof (ArgumentOutOfRangeException), delegate { DataGridViewColumn col = dgv.Columns[0]; }, "#1");
-			Assert.Throws (typeof (ArgumentOutOfRangeException), delegate { DataGridViewRow row = dgv.Rows[0]; }, "#2");
+
+			try {
+				DataGridViewColumn col = dgv.Columns[0];
+				Assert.Fail("#1");
+			}
+			catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				DataGridViewRow row = dgv.Rows[0];
+				Assert.Fail("#2");
+			}
+			catch (ArgumentOutOfRangeException) {
+			}
 		}
 	}
 	
