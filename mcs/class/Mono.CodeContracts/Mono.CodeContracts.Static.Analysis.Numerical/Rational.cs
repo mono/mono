@@ -413,10 +413,23 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 }
                 catch (ArithmeticException)
                 {
-                    return l - For (i);
                 }
 
             return l - For (i);
+        }
+
+        public static Rational operator +(Rational l, long i)
+        {
+            if (l.kind == Kind.Normal && l.down == 1L)
+                try
+                {
+                    return For(checked(l.up + i));
+                }
+                catch (ArithmeticException)
+                {
+                }
+
+            return l + For(i);
         }
 
         public static Rational operator -(Rational value)

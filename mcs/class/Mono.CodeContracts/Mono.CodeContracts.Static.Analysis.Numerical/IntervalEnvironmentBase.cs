@@ -226,7 +226,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         protected abstract TEnv NewInstance(EnvironmentDomain<TVar, TInterval> varsToIntervals);
 
-
         private class IntervalTestVisitor
         {
             private readonly IntervalTestTrueVisitor<TEnv, TVar, TExpr, TInterval, TNumeric> trueVisitor;
