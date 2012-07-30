@@ -139,6 +139,13 @@ get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoPr
 	FILE *f;
 	int len = strlen (item);
 
+	if (error)
+		*error = MONO_PROCESS_ERROR_OTHER;
+
+#if USE_SYSCTL
+	return NULL;
+#endif
+
 	g_snprintf (buf, sizeof (buf), "/proc/%d/status", pid);
 	f = fopen (buf, "r");
 	if (!f) {
@@ -267,6 +274,10 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	FILE *f;
 	int len, i;
 	gint64 value;
+
+#if USE_SYSCTL
+	RET_ERROR (MONO_PROCESS_ERROR_OTHER);
+#endif
 
 	g_snprintf (buf, sizeof (buf), "/proc/%d/stat", pid);
 	f = fopen (buf, "r");
@@ -448,7 +459,13 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	char *s;
 	int hz = get_user_hz ();
 	long long unsigned int user_ticks, nice_ticks, system_ticks, idle_ticks, iowait_ticks, irq_ticks, sirq_ticks;
-	FILE *f = fopen ("/proc/stat", "r");
+	FILE *f = NULL;
+
+#if USE_SYSCTL
+	return;
+#endif
+
+	f = fopen ("/proc/stat", "r");
 	if (!f)
 		return;
 	if (cpu_id < 0)

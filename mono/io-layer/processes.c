@@ -1683,7 +1683,7 @@ gpointer OpenProcess (guint32 req_access G_GNUC_UNUSED, gboolean inherit G_GNUC_
 				      process_open_compare,
 				      GUINT_TO_POINTER (pid), NULL, TRUE);
 	if (handle == 0) {
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) || defined(PLATFORM_MACOSX)
 		if ((kill(pid, 0) == 0) || (errno == EPERM)) {
 #else
 		gchar *dir = g_strdup_printf ("/proc/%d", pid);
@@ -2112,7 +2112,7 @@ static gboolean match_procname_to_modulename (gchar *procname, gchar *modulename
 	return result;
 }
 
-#if !defined(__OpenBSD__)
+#if !defined(__OpenBSD__) && !defined (PLATFORM_MACOSX)
 static FILE *
 open_process_map (int pid, const char *mode)
 {

@@ -81,10 +81,10 @@ if (not $skipbuild)
 
 	if ($debug)
 	{
-		$ENV{CFLAGS} = "-g -O0 -DMONO_DISABLE_SHM=1";
+		$ENV{CFLAGS} = "-g -O0 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1";
 	} else
 	{
-		$ENV{CFLAGS} = "-Os -DMONO_DISABLE_SHM=1"  #optimize for size
+		$ENV{CFLAGS} = "-Os -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1"  #optimize for size
 	}
 
 	if ($iphone_simulator)

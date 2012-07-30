@@ -588,7 +588,7 @@ mono_set_rootdir (void)
 	g_free (installdir);
 	g_free (bindir);
 	g_free (name);
-#elif defined(DISABLE_MONO_AUTODETECTION)
+#elif defined(DISABLE_MONO_AUTODETECTION) || defined (PLATFORM_MACOSX)
 	fallback ();
 #else
 	char buf [4096];
