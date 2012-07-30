@@ -685,11 +685,13 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of threads of this process.")]
 		public ProcessThreadCollection Threads {
 			get {
-				return ProcessThreadCollection.GetEmpty ();
+				// This'll return a correctly-sized array of empty ProcessThreads for now.
+				int error;
+				return new ProcessThreadCollection(new ProcessThread[GetProcessData (pid, 0, out error)]);
 			}
 		}
 
