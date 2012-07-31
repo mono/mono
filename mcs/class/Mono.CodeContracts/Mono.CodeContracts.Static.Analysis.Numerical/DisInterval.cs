@@ -555,5 +555,28 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
             return sb.ToString ();
         }
+
+        public DisInterval Select (Func<Interval, Interval> selector)
+        {
+            if (this.IsBottom)
+                return this;
+            if (this.IsTop)
+                return new DisInterval (selector(Interval.TopValue));
+
+            var list = new List<Interval> ();
+
+            for (int i = 0; i < intervals.Count; i++)
+            {
+                var intv = selector (intervals[i]);
+                if (intv.IsBottom)
+                    return this.Bottom;
+                if (intv.IsTop)
+                    return this.Top;
+
+                list.Add (intv);
+            }
+
+            return new DisInterval (list);
+        }
     }
 }

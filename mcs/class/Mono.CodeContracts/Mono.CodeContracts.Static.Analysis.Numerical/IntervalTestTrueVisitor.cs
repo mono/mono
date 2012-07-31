@@ -35,8 +35,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         public override TEnv VisitAddition(Expr left, Expr right, Expr original, TEnv data)
         {
-            throw new NotImplementedException();
-            //return data.Assumer.AssumeNotEqualToZero (original);
+            data = base.VisitAddition (left, right, original, data);
+
+            return data.Assumer.AssumeNotEqualToZero (original);
         }
     }
 }

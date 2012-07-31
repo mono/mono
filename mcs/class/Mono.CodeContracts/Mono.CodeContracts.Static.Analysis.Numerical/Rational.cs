@@ -178,6 +178,18 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             }
         }
 
+        public Rational PreviousInt32
+        {
+            get
+            {
+                if (IsInfinity)
+                    return this;
+                var prev = (long)Math.Floor((double)this);
+
+                return For(prev <= int.MinValue ? int.MinValue : prev);
+            }
+        }
+
         public Rational NextInt64
         {
             get
@@ -463,6 +475,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 return (long)Math.Round((double)r.up / r.down);
 
             return r.up;
+        }
+
+        public static explicit operator int(Rational r)
+        {
+            if (r.down != 0L)
+                return (int)Math.Round ((double)r.up / r.down);
+
+            return r.up >= 0L ? int.MaxValue : int.MinValue;
         }
 
         public static Rational Abs (Rational a)
@@ -817,6 +837,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             Normal,
             PlusInfinity,
             MinusInfinity,
+        }
+
+        public bool IsInRange (int min, int max)
+        {
+            return min <= this && this <= max;
         }
     }
 }

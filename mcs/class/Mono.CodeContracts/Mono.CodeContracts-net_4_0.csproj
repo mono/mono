@@ -161,6 +161,8 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AbstractInterpretationException.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisInterval.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisIntervalContext.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ConstToIntervalEvaluator.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\EvaluateExpressionVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionType.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IExpressionDecoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IIntervalEnvironment.cs" />

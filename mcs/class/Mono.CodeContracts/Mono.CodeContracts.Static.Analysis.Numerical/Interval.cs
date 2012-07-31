@@ -216,11 +216,17 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             if (l.IsBottom || r.IsBottom)
                 return BottomValue;
 
-            Rational lower, upper;
-            if (l.IsTop || r.IsTop
-                || !Rational.TryDiv(l.LowerBound, r.UpperBound, out lower)
-                || !Rational.TryDiv(l.UpperBound, r.LowerBound, out upper))
+            Rational a, b, c, d;
+            if (l.IsTop || r.IsTop || r.Includes (0)
+                || !Rational.TryDiv(l.LowerBound, r.UpperBound, out a)
+                || !Rational.TryDiv(l.LowerBound, r.LowerBound, out b)
+                || !Rational.TryDiv(l.UpperBound, r.UpperBound, out c)
+                || !Rational.TryDiv(l.UpperBound, r.LowerBound, out d))
+
                 return TopValue;
+
+            Rational lower = Rational.Min (Rational.Min (a, b), Rational.Min (c, d));
+            Rational upper = Rational.Max (Rational.Max (a, b), Rational.Max (c, d));
 
             return For (lower, upper);
         }
@@ -329,6 +335,28 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         public bool LessEqual(IEnumerable<Interval> right)
         {
             return right.Any(i => this.LessEqual(i));
+        }
+
+        private Interval RefineWithTypeRanges (int min, int max)
+        {
+            var lower = this.LowerBound.IsInfinity || !this.LowerBound.IsInRange (min, max) ? Rational.MinusInfinity : this.LowerBound.PreviousInt32;
+            var upper = this.UpperBound.IsInfinity || !this.UpperBound.IsInRange (min, max) ? Rational.PlusInfinity  : this.UpperBound.NextInt32;
+            
+            return For(lower, upper);
+        }
+
+        public static Interval ApplyConversion (ExpressionOperator conv, Interval intv)
+        {
+            if (intv.isBottom)
+                return intv;
+
+            switch (conv)
+            {
+                case ExpressionOperator.ConvertToInt32:
+                    return intv.RefineWithTypeRanges (int.MinValue, int.MaxValue);
+                default:
+                    return intv;
+            }
         }
     }
 }

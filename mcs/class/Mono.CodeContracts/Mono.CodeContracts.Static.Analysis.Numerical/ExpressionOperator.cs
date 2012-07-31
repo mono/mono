@@ -27,7 +27,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         Mod,
         UnaryMinus,
         SizeOf,
-        Unknown
+        Unknown,
+
+        ConvertToInt32
     }
 
     static class ExpressionOperatorExtensions

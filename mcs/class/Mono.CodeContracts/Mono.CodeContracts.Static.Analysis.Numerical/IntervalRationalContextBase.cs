@@ -1,3 +1,5 @@
+using Mono.CodeContracts.Static.Lattices;
+
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
     internal abstract class IntervalRationalContextBase<TInterval> : IntervalContextBase<TInterval, Rational>
         where TInterval : IntervalBase<TInterval, Rational> {
@@ -19,6 +21,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         public override bool IsLessEqualThanZero (Rational value)
         {
             return value <= Rational.Zero;
+        }
+
+        public override bool IsLessEqualThanZero (TInterval value)
+        {
+            if (value.IsNormal ())
+                return this.IsLessEqualThanZero (value.UpperBound);
+
+            return false;
         }
 
         public override bool IsLessThan (Rational a, Rational b)
@@ -55,5 +65,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         {
             return a == b;
         }
+
+        public override bool IsMaxInt32 (TInterval value)
+        {
+            return value.IsSinglePoint && value.LowerBound.IsInteger && (int)value.LowerBound.NextInt32 == int.MaxValue;
         }
+    }
 }

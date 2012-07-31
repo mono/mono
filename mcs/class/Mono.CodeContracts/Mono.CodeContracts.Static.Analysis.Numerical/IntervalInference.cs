@@ -159,7 +159,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  return result;
              }
 
-
              /// <summary>
              /// Get interval for 'left' in inequation 'left &lt;= k'.
              /// </summary>
@@ -242,6 +241,47 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  var by = poly.Left[1];
 
                  TVar x, y;
+                 ax.IsSingleVariable(out x);
+                 by.IsSingleVariable(out y);
+
+                 Rational k = poly.Right[0].Coeff;
+                 Rational a = ax.Coeff;
+                 Rational b = by.Coeff;
+
+                 var aInterval = env.Context.For(a);
+                 var bInterval = env.Context.For(b);
+                 var kInterval = env.Context.For(k);
+
+                 var xInterval = env.Evaluate(x);
+                 var yInterval = env.Evaluate(y);
+
+                 var ctx = env.Context;
+
+                 // x <= (k - (b * y)) / a;
+                 TInterval boundingInterval = ctx.Div(ctx.Sub(kInterval, ctx.Mul(bInterval, yInterval)), aInterval);
+                 Func<Rational, TInterval> upperBounded = (i) => ctx.For (Rational.MinusInfinity, i);
+                 Func<Rational, TInterval> lowerBounded = (i) => ctx.For (i, Rational.PlusInfinity);
+
+                 if (BoundVariable(ctx, a, xInterval, boundingInterval, x, result, out isBottom, upperBounded, lowerBounded))
+                     return result;
+
+                 // y <= (k - (a * x)) / b;
+                 boundingInterval = ctx.Div(ctx.Sub(kInterval, ctx.Mul(aInterval, xInterval)), bInterval);
+                 if (BoundVariable(ctx, b, yInterval, boundingInterval, y, result, out isBottom, upperBounded, lowerBounded))
+                     return result;
+
+                 return result;
+             }
+
+             private static IDictionary<TVar, Sequence<TInterval>> TestTrueLessEqualThan_AxByLtK<TVar, TExpr, TInterval>(Polynomial<TVar, TExpr> poly, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, IDictionary<TVar, Sequence<TInterval>> result, out bool isBottom)
+                 where TVar : IEquatable<TVar>
+                 where TInterval : IntervalBase<TInterval, Rational>
+             {
+                 // ax + by <= k
+                 var ax = poly.Left[0];
+                 var by = poly.Left[1];
+
+                 TVar x, y;
                  ax.IsSingleVariable (out x);
                  by.IsSingleVariable (out y);
 
@@ -257,15 +297,19 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  var yInterval = env.Evaluate (y);
 
                  var ctx = env.Context;
+                 Func<Rational, TInterval> upperBounded =
+                     (i) => ctx.For (Rational.MinusInfinity, !i.IsInteger ? i.PreviousInt32 : i - 1L);
+                 Func<Rational, TInterval> lowerBounded =
+                     (i) => ctx.For (!i.IsInteger ? i.NextInt32 : i + 1L, Rational.PlusInfinity);
 
                  // x <= (k - (b * y)) / a;
-                 TInterval boundingInterval = ctx.Div(ctx.Sub(kInterval, ctx.Mul(bInterval, yInterval)), aInterval);
-                 if (BoundVariable(ctx, a, xInterval, boundingInterval, x, result, out isBottom))
+                 TInterval boundingInterval = ctx.Div (ctx.Sub (kInterval, ctx.Mul (bInterval, yInterval)), aInterval);
+                 if (BoundVariable (ctx, a, xInterval, boundingInterval, x, result, out isBottom, upperBounded, lowerBounded))
                      return result;
 
                  // y <= (k - (a * x)) / b;
-                 boundingInterval = ctx.Div(ctx.Sub(kInterval, ctx.Mul(aInterval, xInterval)), bInterval);
-                 if (BoundVariable(ctx, b, yInterval, boundingInterval, y, result, out isBottom))
+                 boundingInterval = ctx.Div (ctx.Sub (kInterval, ctx.Mul (aInterval, xInterval)), bInterval);
+                 if (BoundVariable (ctx, b, yInterval, boundingInterval, y, result, out isBottom, upperBounded, lowerBounded))
                      return result;
 
                  return result;
@@ -362,7 +406,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  return result;
              }
 
-             private static bool BoundVariable<TVar, TInterval> (IntervalContextBase<TInterval, Rational> ctx, Rational a, TInterval xIntervalOld, TInterval boundingInterval, TVar x, IDictionary<TVar, Sequence<TInterval>> result, out bool isBottom ) 
+             private static bool BoundVariable<TVar, TInterval> (IntervalContextBase<TInterval, Rational> ctx, Rational a, TInterval xIntervalOld, TInterval boundingInterval, TVar x, IDictionary<TVar, Sequence<TInterval>> result, out bool isBottom, 
+                 Func<Rational, TInterval> upperBounded, Func<Rational, TInterval> lowerBounded) 
                  where TVar : IEquatable<TVar> 
                  where TInterval : IntervalBase<TInterval, Rational>
              {
@@ -371,9 +416,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  {
                      TInterval boundingForVariable;
                      if (a.Sign > 0L)
-                         boundingForVariable = ctx.For (Rational.MinusInfinity, boundingInterval.UpperBound);
+                         boundingForVariable = upperBounded (boundingInterval.UpperBound);
                      else
-                         boundingForVariable = ctx.For (boundingInterval.LowerBound, Rational.PlusInfinity);
+                         boundingForVariable = lowerBounded (boundingInterval.LowerBound);
 
                      TInterval refined = xIntervalOld.Meet (boundingForVariable);
                      if (refined.IsBottom)

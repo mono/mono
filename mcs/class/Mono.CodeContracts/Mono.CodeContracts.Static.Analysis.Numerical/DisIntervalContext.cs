@@ -12,6 +12,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         public override DisInterval Positive { get { return DisInterval.For(Interval.For(Rational.Zero, Rational.PlusInfinity)); ; } }
         public override DisInterval Negative { get { return DisInterval.For(Interval.For(Rational.MinusInfinity, Rational.Zero)); } }
 
+        public override DisInterval GreaterEqualThanMinusOne { get { return DisInterval.For (Interval.For (Rational.MinusOne, Rational.PlusInfinity)); } }
+
         public override DisInterval For (long value)
         {
             return DisInterval.For (Interval.For (value));
@@ -70,5 +72,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         {
             return -value;
         }
+
+        public override DisInterval ApplyConversion (ExpressionOperator conv, DisInterval intv)
+        {
+            return intv.Select ((i) => Interval.ApplyConversion (conv, i));
+        }
+
+        
     }
 }

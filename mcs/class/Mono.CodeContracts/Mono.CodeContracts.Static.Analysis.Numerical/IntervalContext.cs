@@ -16,6 +16,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
         public override Interval Negative { get { return Interval.For (Rational.MinusInfinity, 0); } }
 
+        public override Interval GreaterEqualThanMinusOne { get { return Interval.For (Rational.MinusOne, Rational.PlusInfinity); } }
+
         public override Interval For (long value)
         {
             return Interval.For (value);
@@ -71,6 +73,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         public override Interval UnaryMinus (Interval value)
         {
             return -value;
+        }
+
+        public override Interval ApplyConversion (ExpressionOperator conv, Interval intv)
+        {
+            return Interval.ApplyConversion (conv, intv);
         }
     }
 }

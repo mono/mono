@@ -31,6 +31,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         /// </summary>
         public abstract TInterval Negative { get; }
 
+        /// <summary>
+        /// [-1, +oo)
+        /// </summary>
+        public abstract TInterval GreaterEqualThanMinusOne { get; }
+
         public abstract TInterval For (long value);
         public abstract TInterval For (TNumeric value);
         public abstract TInterval For (TNumeric lower, TNumeric upper);
@@ -40,6 +45,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
         public abstract bool IsLessThanZero (TNumeric value);
         public abstract bool IsLessEqualThanZero (TNumeric value);
+
+        public abstract bool IsLessEqualThanZero(TInterval value);
 
         public abstract bool IsLessThan (TNumeric a, TNumeric b);
         public abstract bool IsLessEqualThan (TNumeric a, TNumeric b);
@@ -62,6 +69,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         public abstract TInterval Not (TInterval value);
 
         public abstract TInterval UnaryMinus (TInterval value);
+
+        public abstract TInterval ApplyConversion(ExpressionOperator conv, TInterval intv);
 
         public virtual FlatDomain<bool> IsLessThan (TInterval a, TInterval b)
         {
@@ -93,5 +102,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         {
             throw new NotImplementedException ();
         }
+
+        public abstract bool IsMaxInt32 (TInterval value);
     }
 }
