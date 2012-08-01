@@ -90,11 +90,10 @@ build_iphone_runtime ()
 {
 	echo "Building iPhone runtime"
 	build_arm_mono "armv7" || exit 1
-	build_arm_mono "armv6" || exit 1
 
-	libtool -static -o builds/embedruntimes/iphone/libmono.a builds/embedruntimes/iphone/libmono-armv6.a builds/embedruntimes/iphone/libmono-armv7.a || exit 1
-	rm builds/embedruntimes/iphone/libmono-armv6.a
+	cp builds/embedruntimes/iphone/libmono-armv7.a builds/embedruntimes/iphone/libmono.a
 	rm builds/embedruntimes/iphone/libmono-armv7.a
+
 	unsetenv
 	echo "iPhone runtime build done"
 }
