@@ -136,7 +136,12 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SeekableStreamReader : IDisposable
 	{
-		public const int DefaultReadAheadSize = 2048;
+		public const int DefaultReadAheadSize =
+#if FULL_AST
+			65536 / 2; // Large buffer because of ReadChars of large literal string
+#else
+			4096 / 2;
+#endif
 
 		StreamReader reader;
 		Stream stream;
