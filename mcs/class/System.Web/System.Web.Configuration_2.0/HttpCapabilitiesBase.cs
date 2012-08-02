@@ -39,8 +39,7 @@ namespace System.Web.Configuration
 
 		public HttpCapabilitiesBase () { }
 
-		public virtual string this [string key]
-		{
+		public virtual string this [string key] {
 			get { return capabilities [key] as string; }
 		}
 
@@ -249,7 +248,7 @@ namespace System.Web.Configuration
 
 		public IDictionary Capabilities {
 			get { return capabilities; }
-			set { capabilities = value; }
+			set { capabilities = new Hashtable(value, StringComparer.OrdinalIgnoreCase); }
 		}
 
 		int defaultSubmitButtonLimit;
@@ -1147,6 +1146,14 @@ namespace System.Web.Configuration
 				return useOptimizedCacheKey;
 			}
 		}
+		
+#if NET_4_0
+		static HttpCapabilitiesProvider _provider = new HttpCapabilitiesDefaultProvider();
+		public static HttpCapabilitiesProvider BrowserCapabilitiesProvider { 
+			get { return _provider; }
+			set { _provider = value; }
+		}
+#endif
 	}
 }
 
