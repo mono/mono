@@ -14,6 +14,7 @@ namespace Mono.Debugger.Soft
 		TypeMirror declaring_type;
 		DebugInfo debug_info;
 		C.MethodDefinition meta;
+		CustomAttributeDataMirror[] cattrs;
 		ParameterInfoMirror[] param_info;
 		ParameterInfoMirror ret_param;
 		LocalVariable[] locals;
@@ -70,6 +71,37 @@ namespace Mono.Debugger.Soft
 				sb.Append(")");
 				return sb.ToString ();
 			}
+		}
+
+		/*
+		 * Creating the custom attributes themselves could modify the behavior of the
+		 * debuggee, so we return objects similar to the CustomAttributeData objects
+		 * used by the reflection-only functionality on .net.
+		 */
+		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
+			return GetCAttrs (null, inherit);
+		}
+
+		public CustomAttributeDataMirror[] GetCustomAttributes (TypeMirror attributeType, bool inherit) {
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");
+			return GetCAttrs (attributeType, inherit);
+		}
+
+		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
+				cattrs = new CustomAttributeDataMirror [0];
+
+			// FIXME: Handle inherit
+			if (cattrs == null) {
+				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);
+				cattrs = CustomAttributeDataMirror.Create (vm, info);
+			}
+			var res = new List<CustomAttributeDataMirror> ();
+			foreach (var attr in cattrs)
+				if (type == null || attr.Constructor.DeclaringType == type)
+					res.Add (attr);
+			return res.ToArray ();
 		}
 
 		MethodInfo GetInfo () {
