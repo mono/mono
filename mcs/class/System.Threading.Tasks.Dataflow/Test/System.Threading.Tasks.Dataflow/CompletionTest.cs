@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
@@ -57,24 +58,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		}
 
 		[Test]
-		public void EmptyAfterReceive ()
-		{
-			var block = new BufferBlock<int> ();
-			Assert.IsTrue (block.Post (42));
-			block.Complete ();
-
-			Assert.IsFalse (block.Completion.Wait (100));
-			Assert.IsFalse (block.Completion.IsCompleted);
-			Assert.AreEqual (TaskStatus.WaitingForActivation, block.Completion.Status);
-
-			block.Receive ();
-
-			Assert.IsTrue (block.Completion.Wait (100));
-			Assert.IsTrue (block.Completion.IsCompleted);
-			Assert.AreEqual (TaskStatus.RanToCompletion, block.Completion.Status);
-		}
-
-		[Test]
 		public void WithElementsStillLingeringButFaulted ()
 		{
 			var block = new BufferBlock<int> ();
@@ -84,6 +67,25 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 			AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.Faulted, block.Completion.Status);
+			Assert.IsFalse (block.Post (43));
+		}
+
+		[Test]
+		public void WithElementsStillLingeringButCancelled ()
+		{
+			var tokenSource = new CancellationTokenSource ();
+			var block = new BufferBlock<int> (
+				new DataflowBlockOptions { CancellationToken = tokenSource.Token });
+			Assert.IsTrue (block.Post (42));
+			tokenSource.Cancel ();
+
+			var ae = AssertEx.Throws<AggregateException> (
+				() => block.Completion.Wait (100));
+			Assert.AreEqual (1, ae.InnerExceptions.Count);
+			Assert.AreEqual (typeof(TaskCanceledException), ae.InnerException.GetType ());
+
+			Assert.IsTrue (block.Completion.IsCompleted);
+			Assert.AreEqual (TaskStatus.Canceled, block.Completion.Status);
 			Assert.IsFalse (block.Post (43));
 		}
 

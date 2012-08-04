@@ -47,7 +47,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		}
 
 		[Test]
-		public void CancellationTest()
+		public void CancellationTest ()
 		{
 			var source = new CancellationTokenSource ();
 			var blocks = Blocks.CreateBlocksWithCancellationToken (source.Token).ToArray ();
