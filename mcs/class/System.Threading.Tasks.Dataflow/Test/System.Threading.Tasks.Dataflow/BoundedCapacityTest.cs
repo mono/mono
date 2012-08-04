@@ -251,6 +251,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 		readonly HashSet<DataflowMessageHeader> consumed =
 			new HashSet<DataflowMessageHeader> ();
+		readonly HashSet<DataflowMessageHeader> reserved =
+			new HashSet<DataflowMessageHeader> ();
 
 		public void Complete ()
 		{
@@ -274,6 +276,11 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			return consumed.Contains (header);
 		}
 
+		public bool WasReserved (DataflowMessageHeader header)
+		{
+			return reserved.Contains (header);
+		}
+			 
 		public T ConsumeMessage (DataflowMessageHeader messageHeader,
 		                         ITargetBlock<T> target, out bool messageConsumed)
 		{
@@ -297,6 +304,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		public bool ReserveMessage (DataflowMessageHeader messageHeader,
 		                            ITargetBlock<T> target)
 		{
+			reserved.Add (messageHeader);
 			return messages.ContainsKey (messageHeader);
 		}
 
