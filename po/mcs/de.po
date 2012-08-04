@@ -3074,7 +3074,7 @@ msgstr ""
 #, csharp-format
 msgid ""
 "`{0}' does not implement interface member `{1}' and the best implementing "
-"candidate `{2}' in not public"
+"candidate `{2}' is not public"
 msgstr ""
 
 #: mcs/mcs/pending.cs:699
