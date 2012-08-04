@@ -19,6 +19,21 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
             return DisInterval.For (Interval.For (value));
         }
 
+        public override DisInterval For (long lower, long upper)
+        {
+            return DisInterval.For (Interval.For (lower, upper));
+        }
+
+        public override DisInterval For (long lower, Rational upper)
+        {
+            return DisInterval.For(Interval.For(lower, upper));
+        }
+
+        public override DisInterval For (Rational lower, long upper)
+        {
+            return DisInterval.For (Interval.For (lower, upper));
+        }
+
         public override DisInterval For (Rational value)
         {
             return DisInterval.For(Interval.For(value));
@@ -78,6 +93,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
             return intv.Select ((i) => Interval.ApplyConversion (conv, i));
         }
 
-        
+        public override DisInterval RightOpen (Rational lowerBound)
+        {
+            return DisInterval.For (Interval.For (lowerBound, Rational.PlusInfinity));
+        }
+
+        public override DisInterval LeftOpen (Rational lowerBound)
+        {
+            return DisInterval.For (Interval.For (Rational.MinusInfinity, lowerBound));
+        }
     }
 }

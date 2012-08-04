@@ -1,14 +1,14 @@
+using System;
+
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     internal interface IExpressionDecoder<TVariable, TExpression>
     {
         ExpressionOperator OperatorFor (TExpression expr);
+        TExpression LeftExpressionFor(TExpression expr);
+        TExpression RightExpressionFor(TExpression expr);
 
         TVariable UnderlyingVariable (TExpression expr);
-
-        TExpression LeftExpressionFor (TExpression expr);
-
-        TExpression RightExpressionFor (TExpression expr);
 
         bool IsConstant (TExpression expr);
         bool IsVariable (TExpression expr);
@@ -22,5 +22,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         bool IsNull (TExpression expr);
         
         bool IsConstantInt (TExpression right, out int value);
+        string NameOf (TVariable variable);
+
+        bool IsBinaryExpression (TExpression expr);
     }
 }

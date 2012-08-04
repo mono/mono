@@ -23,6 +23,21 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
             return Interval.For (value);
         }
 
+        public override Interval For (long lower, long upper)
+        {
+            return Interval.For (lower, upper);
+        }
+
+        public override Interval For (long lower, Rational upper)
+        {
+            return Interval.For(lower, upper);
+        }
+
+        public override Interval For (Rational lower, long upper)
+        {
+            return Interval.For(lower, upper);
+        }
+
         public override Interval For (Rational value)
         {
             return Interval.For (value);
@@ -78,6 +93,16 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         public override Interval ApplyConversion (ExpressionOperator conv, Interval intv)
         {
             return Interval.ApplyConversion (conv, intv);
+        }
+
+        public override Interval LeftOpen (Rational upperBound)
+        {
+            return Interval.For (Rational.MinusInfinity, upperBound);
+        }
+
+        public override Interval RightOpen (Rational lowerBound)
+        {
+            return Interval.For(lowerBound, Rational.PlusInfinity);
         }
     }
 }

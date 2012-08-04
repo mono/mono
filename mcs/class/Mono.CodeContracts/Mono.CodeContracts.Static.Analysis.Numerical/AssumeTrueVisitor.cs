@@ -3,14 +3,12 @@ using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    abstract class TestTrueVisitor<Domain, Var, Expr> : GenericExpressionVisitor<Domain, Domain, Var, Expr>
+    abstract class AssumeTrueVisitor<Domain, Var, Expr> : GenericExpressionVisitor<Domain, Domain, Var, Expr>
         where Domain : IAbstractDomainForEnvironments<Domain, Var, Expr>
     {
-        private Domain result;
-        
-        public TestFalseVisitor<Domain, Var,Expr> FalseVisitor { get; set; }
+        public AssumeFalseVisitor<Domain, Var,Expr> FalseVisitor { get; set; }
 
-        protected TestTrueVisitor (IExpressionDecoder<Var, Expr> decoder)
+        protected AssumeTrueVisitor (IExpressionDecoder<Var, Expr> decoder)
             : base (decoder)
         {
         }
@@ -25,7 +23,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             bool valueBool;
             int valueInt;
             
-            result = data;
+            var result = data;
             if (this.Decoder.TryValueOf(left, ExpressionType.Bool, out valueBool))
                 result = valueBool ? data : data.Bottom;
             else if (this.Decoder.TryValueOf(left, ExpressionType.Int32, out valueInt))
@@ -43,9 +41,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             bool rightIsConstant = Decoder.IsConstant (right);
 
             if (leftIsVariable && rightIsConstant || leftIsConstant && rightIsVariable)
-                return result = data;
+                return data;
             
-            return result = data.Clone ().TestTrue(left).TestTrue(right);
+            return data.AssumeTrue(left).AssumeTrue(right);
         }
 
         public override Domain VisitLogicalOr(Expr left, Expr right, Expr original, Domain data)
@@ -57,15 +55,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             bool rightIsConstant = Decoder.IsConstant(right);
 
             if (leftIsVariable && rightIsConstant || leftIsConstant && rightIsVariable)
-                return result = data;
+                return data;
 
-            Domain leftDomain = data.Clone ();
-            Domain rightDomain = data.Clone ();
+            Domain leftBranch = data.AssumeTrue (left);
+            Domain rightBranch = data.AssumeTrue (right);
 
-            leftDomain = leftDomain.TestTrue (left);
-            rightDomain = rightDomain.TestTrue (left);
-
-            return result = leftDomain.Join (rightDomain);
+            return leftBranch.Join (rightBranch);
         }
 
         public override Domain VisitNot(Expr expr, Domain data)

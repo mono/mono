@@ -159,6 +159,7 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\ExpressionAssumeDecoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\NonNullAnalysisFacade.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AbstractInterpretationException.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Counter.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisInterval.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisIntervalContext.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ConstToIntervalEvaluator.cs" />
@@ -171,8 +172,9 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalInference.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalRationalContextBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalTestFalseVisitor.cs" />
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalTestTrueVisitor.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalAssumeTrueVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalAssumerBase.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalTrueTester.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\LongToIntegerConstantEvaluator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\EvaluateArithmeticWithOverflow.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionOperator.cs" />
@@ -188,8 +190,8 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ObjectExtensions.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Polynomial.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Rational.cs" />
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\TestFalseVisitor.cs" />
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\TestTrueVisitor.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AssumeFalseVisitor.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AssumeTrueVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\APCMap.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\SequenceGenerator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\StackDecoder.cs" />

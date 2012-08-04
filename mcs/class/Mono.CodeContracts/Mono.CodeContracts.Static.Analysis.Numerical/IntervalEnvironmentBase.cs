@@ -29,89 +29,35 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    abstract class IntervalEnvironmentBase<TEnv, TVar, TExpr, TInterval, TNumeric> : IAbstractDomainForEnvironments<TEnv, TVar, TExpr> 
+    abstract class IntervalEnvironmentBase<TEnv, TVar, TExpr, TInterval, TNumeric> : IIntervalEnvironment<TVar, TExpr, TInterval, TNumeric>,IAbstractDomainForEnvironments<TEnv, TVar, TExpr> 
         where TEnv : IntervalEnvironmentBase<TEnv, TVar, TExpr, TInterval, TNumeric>
         where TInterval : IntervalBase<TInterval, TNumeric> 
         where TVar : IEquatable<TVar> 
     {
         public readonly IntervalAssumerBase<TEnv, TVar, TExpr, TInterval, TNumeric> Assumer;
-        public readonly IntervalContextBase<TInterval,TNumeric> Context;
-
         private readonly EnvironmentDomain<TVar, TInterval> varsToIntervals;
         
         public readonly IExpressionDecoder<TVar, TExpr> Decoder;
 
-        public abstract TNumeric PlusInfinity { get; }
-        public abstract TNumeric MinusInfinity { get; }
-
-        public abstract TInterval IntervalUnknown { get; }
+        public IntervalContextBase<TInterval, TNumeric> Context { get; private set; }
 
         public IEnumerable<TVar> Variables { get { return this.varsToIntervals.Keys; } }
 
-        protected IntervalEnvironmentBase(IExpressionDecoder<TVar, TExpr> decoder , IntervalAssumerBase<TEnv, TVar, TExpr, TInterval, TNumeric> assumer)
+        protected IntervalEnvironmentBase(IExpressionDecoder<TVar, TExpr> decoder , IntervalAssumerBase<TEnv, TVar, TExpr, TInterval, TNumeric> assumer, IntervalContextBase<TInterval, TNumeric> context)
         {
             this.Decoder = decoder;
             this.Assumer = assumer;
+            this.Context = context;
             this.varsToIntervals = EnvironmentDomain<TVar, TInterval>.TopValue (null);
-            
         }
 
-        public virtual FlatDomain<bool> IsNotZero(TInterval intv)
-        {
-            if (intv.IsNormal ())
-            {
-                if (this.IsGreaterThanZero(intv.LowerBound) || this.IsLessThanZero(intv.UpperBound))
-                    return true;
-                if (this.IsZero(intv.LowerBound) && this.IsZero(intv.UpperBound))
-                    return false;
-            }
-            
-            return FlatDomain<bool>.TopValue;
-        }
-
-        public bool IsGreaterEqualThanZero(TInterval intv)
-        {
-            if (intv.IsNormal())
-                return this.IsGreaterEqualThanZero (intv.LowerBound);
-
-            return false;
-        }
-
-        public bool IsLessEqualThanZero(TInterval intv)
-        {
-            if (intv.IsNormal())
-                return this.IsLessEqualThanZero(intv.UpperBound);
-
-            return false;
-        }
-
-        public TEnv TestTrueEqual(TExpr left, TExpr right)
-        {
-            var leftVar = Decoder.UnderlyingVariable(left);
-            var rightVar = Decoder.UnderlyingVariable(right);
-
-            if (this.varsToIntervals.Contains(leftVar))
-            {
-                var res = varsToIntervals;
-                var interval = Eval(left).Meet(Eval(right));
-
-                res = res.With (leftVar, interval);
-                res = res.With (rightVar, interval);
-
-                return NewInstance (res);
-            }
-            if (Decoder.IsConstant(left) && Decoder.IsConstant(right) && this.Eval(left).Meet(Eval(right)).IsBottom)
-                return Bottom;
-
-            return (TEnv)this;
-        }
-        
         public TInterval Eval (TExpr expr)
         {
             int intValue;
@@ -119,7 +65,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 return Context.For (intValue);
 
             var evaluator = new EvaluateExpressionVisitor<TEnv, TVar, TExpr, TInterval, TNumeric>(Decoder);
-            var interval = evaluator.Visit (expr, new Pair<TEnv, int> ((TEnv)this, 0));
+            var interval = evaluator.Visit (expr, new Counter<TEnv> (this as TEnv));
 
             if (evaluator.DuplicatedOccurences.Length () >= 1)
             {
@@ -148,49 +94,69 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return interval;
         }
 
+        public TInterval Eval (TVar var)
+        {
+            TInterval intv;
+            if (this.TryGetValue(var, out intv))
+                return intv;
+
+            return Context.TopValue;
+        }
+
         private TInterval EvalWithExtremes(TExpr expr, TVar @var, TInterval intv)
         {
             var evaluator = new EvaluateExpressionVisitor<TEnv, TVar, TExpr, TInterval, TNumeric> (Decoder);
 
-            var env = this.With (var, Context.For (intv.LowerBound)); // replace current intv with it's only lowerbound
-            var withLowerBound = evaluator.Visit (expr, new Pair<TEnv, int> (env, 0));
+            var envLowerBound = this.With (var, Context.For (intv.LowerBound)); // replace current intv with it's only lowerbound
+            var withLowerBound = evaluator.Visit (expr, new Counter<TEnv> (envLowerBound));
 
-            env = this.With (var, Context.For (intv.UpperBound));     // replace current intv with it's only upperBound
-            var withUpperBound = evaluator.Visit (expr, new Pair<TEnv, int> (env, 0));
+            var envUpperBound = this.With (var, Context.For (intv.UpperBound)); // replace current intv with it's only upperBound
+            var withUpperBound = evaluator.Visit (expr, new Counter<TEnv> (envUpperBound));
 
             return withLowerBound.Join (withUpperBound);
         }
 
-        protected abstract bool IsZero (TNumeric lowerBound);
-
-        protected abstract bool IsGreaterThanZero (TNumeric lowerBound);
-        protected abstract bool IsGreaterEqualThanZero (TNumeric lowerBound);
-
-        protected abstract bool IsLessThanZero (TNumeric upperBound);
-        protected abstract bool IsLessEqualThanZero (TNumeric upperBound);
-
         public string ToString(TExpr expr)
         {
-            // TODO: implement this
-            return "< not implemented >";
+            if (this.IsBottom)
+                return this.BottomSymbolIfAny ();
+            if (this.IsTop)
+                return "Top";
+
+            var list = new List<string> ();
+            foreach (var variable in this.Variables)
+            {
+                var intv = this.varsToIntervals[variable];
+                if (!intv.IsTop)
+                {
+                    var name = this.Decoder != null ? this.Decoder.NameOf (variable) : variable.ToString ();
+                    list.Add (name + ": " + intv);
+                }
+            }
+            list.Sort();
+            return string.Join(", ", list);
         }
 
-        public TEnv TestTrue (TExpr guard)
+        public TEnv AssumeTrue(TExpr guard)
         {
-            this.TestNotEqualToZero(Decoder.UnderlyingVariable(guard));
-            return new IntervalTestVisitor(Decoder).VisitTrue(guard, this as TEnv);
+            Assumer.AssumeNotEqualToZero (Decoder.UnderlyingVariable (guard));
+            return new IntervalTestVisitor (Decoder).VisitTrue (guard, this as TEnv);
         }
 
-        protected abstract TEnv TestNotEqualToZero (TVar var);
-
-        public TEnv TestFalse (TExpr guard)
+        public TEnv AssumeFalse(TExpr guard)
         {
-            throw new System.NotImplementedException ();
+            Assumer.AssumeEqualToZero (Decoder.UnderlyingVariable (guard));
+            return new IntervalTestVisitor (Decoder).VisitFalse (guard, this as TEnv);
         }
 
         public FlatDomain<bool> CheckIfHolds (TExpr expr)
         {
             throw new System.NotImplementedException ();
+        }
+
+        public bool Contains(TVar v)
+        {
+            return this.varsToIntervals.Contains (v);
         }
 
         public bool TryGetValue(TVar v, out TInterval interval)
@@ -268,12 +234,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 
         private class IntervalTestVisitor
         {
-            private readonly IntervalTestTrueVisitor<TEnv, TVar, TExpr, TInterval, TNumeric> trueVisitor;
+            private readonly IntervalAssumeTrueVisitor<TEnv, TVar, TExpr, TInterval, TNumeric> trueVisitor;
             private readonly IntervalTestFalseVisitor<TEnv, TVar, TExpr, TInterval, TNumeric> falseVisitor;
 
             public IntervalTestVisitor(IExpressionDecoder<TVar, TExpr> decoder)
             {
-                this.trueVisitor = new IntervalTestTrueVisitor<TEnv, TVar, TExpr, TInterval, TNumeric>(decoder);
+                this.trueVisitor = new IntervalAssumeTrueVisitor<TEnv, TVar, TExpr, TInterval, TNumeric>(decoder);
                 this.falseVisitor = new IntervalTestFalseVisitor<TEnv, TVar, TExpr, TInterval, TNumeric>(decoder);
 
                 this.trueVisitor.FalseVisitor = this.falseVisitor;

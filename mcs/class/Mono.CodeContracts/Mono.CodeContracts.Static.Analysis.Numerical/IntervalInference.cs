@@ -42,7 +42,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  var result = new Dictionary<TVar, Sequence<TInterval>> ();
                  var variable = decoder.UnderlyingVariable (expr);
 
-                 AddToResult (result, variable, env.Evaluate (expr).Meet (env.Context.Positive));
+                 AddToResult (result, variable, env.Eval (expr).Meet (env.Context.Positive));
 
                  if (!decoder.IsVariable (expr))
                  {
@@ -65,9 +65,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                          {
                              TInterval interval;
                              if (k > 0L) // +x <= constraint
-                                 interval = env.Evaluate (x).Meet (env.Context.For (Rational.MinusInfinity, constraint));
+                                 interval = env.Eval (x).Meet (env.Context.For (Rational.MinusInfinity, constraint));
                              else        // -x <= -constraint ==> x >= constraint
-                                 interval = env.Evaluate (x).Meet (env.Context.For (constraint, Rational.PlusInfinity));
+                                 interval = env.Eval (x).Meet (env.Context.For (constraint, Rational.PlusInfinity));
 
                              AddToResult(result, x, interval);
                          }
@@ -86,14 +86,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  if (IsFloat(left, decoder) || IsFloat(right, decoder))
                      return result;
 
-                 var leftIntv = env.Evaluate (left);
-                 var rightIntv = env.Evaluate (right);
+                 var leftIntv = env.Eval (left);
+                 var rightIntv = env.Eval (right);
 
                  var leftVar  = decoder.UnderlyingVariable (left);
                  var rightVar = decoder.UnderlyingVariable (right);
 
                  TInterval refinedIntv;
-                 if (TryRefineKLessEqualThanRight (leftIntv, rightVar, env, out refinedIntv))
+                 if (TryRefineLessEqualThan (leftIntv, rightVar, env, out refinedIntv))
                      AddToResult (result, rightVar, refinedIntv);
 
                  if (TryRefineLeftLessEqualThanK (leftVar, rightIntv, env, out refinedIntv))
@@ -124,8 +124,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  isBottom = false;
                  var result = new Dictionary<TVar, Sequence<TInterval>>();
 
-                 var leftIntv = env.Evaluate(left);
-                 var rightIntv = env.Evaluate(right);
+                 var leftIntv = env.Eval(left);
+                 var rightIntv = env.Eval(right);
 
                  var rightVar = decoder.UnderlyingVariable(right);
                  var successor = IsFloat (left, decoder) || IsFloat (right, decoder) ? Rational.Zero : Rational.One;
@@ -138,7 +138,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                      return result;
 
                  var leftVar = decoder.UnderlyingVariable(left);
-                 if (TryRefineLeftLessThanK(leftVar, rightIntv, env, out refinedIntv) && !refinedIntv.IsSinglePoint)
+                 if (TryRefineLessThan(leftVar, rightIntv, env, out refinedIntv) && !refinedIntv.IsSinglePoint)
                      AddToResult(result, leftVar, refinedIntv);
 
                  Polynomial<TVar, TExpr> poly;
@@ -180,7 +180,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
              /// <summary>
              /// Get interval for 'left' in inequation 'left &lt; k'.
              /// </summary>
-             public static bool TryRefineLeftLessThanK<TVar, TExpr, TInterval>(TVar left, TInterval k, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out TInterval refined)
+             public static bool TryRefineLessThan<TVar, TExpr, TInterval>(TVar left, TInterval k, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out TInterval refined)
                  where TInterval : IntervalBase<TInterval, Rational>
              {
                  if (!k.IsNormal())
@@ -198,13 +198,13 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
              /// <summary>
              /// Get interval for 'right' in inequation 'k &lt;= right'.
              /// </summary>
-             private static bool TryRefineKLessEqualThanRight<TVar, TExpr, TInterval>(TInterval k, TVar right, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out TInterval refined) 
+             public static bool TryRefineLessEqualThan<TVar, TExpr, TInterval>(TInterval k, TVar right, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out TInterval refined)
                  where TInterval : IntervalBase<TInterval, Rational>
              {
                  if (!k.IsNormal())
                      return false.Without (out refined);
 
-                 var interval = env.Context.For (k.LowerBound, Rational.PlusInfinity);
+                 var interval = env.Context.RightOpen (k.LowerBound);
 
                  TInterval rightIntv;
                  if (env.TryGetValue(right, out rightIntv))
@@ -216,7 +216,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
              /// <summary>
              /// Get interval for 'right' in inequation 'k &lt; right'.
              /// </summary>
-             private static bool TryRefineKLessThanRight<TVar, TExpr, TInterval>(TInterval k, TVar right, Rational successor, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out TInterval refined)
+             public static bool TryRefineKLessThanRight<TVar, TExpr, TInterval>(TInterval k, TVar right, Rational successor, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out TInterval refined)
                  where TInterval : IntervalBase<TInterval, Rational>
              {
                  if (!k.IsNormal())
@@ -230,6 +230,42 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                      interval = interval.Meet(rightIntv);
 
                  return true.With(interval, out refined);
+             }
+
+             public static void NotEqual<TVar, TExpr, TInterval>(TExpr left, TExpr right, IExpressionDecoder<TVar, TExpr> decoder, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out InferenceResult<TVar, TInterval> resultLeft, out InferenceResult<TVar, TInterval> resultRight)
+                 where TInterval : IntervalBase<TInterval, Rational> 
+                 where TVar : IEquatable<TVar>
+             {
+                 resultLeft = InferenceResult<TVar, TInterval>.Empty;
+                 resultRight = InferenceResult<TVar, TInterval>.Empty;
+
+                 var leftIntv = env.Eval (left);
+                 var rightIntv = env.Eval (right);
+
+                 var leftVar = decoder.UnderlyingVariable (left);
+                 var rightVar = decoder.UnderlyingVariable (right);
+
+                 Rational successor = IsFloat (left, decoder) || IsFloat (right, decoder) ? Rational.Zero : Rational.One;
+                 
+                 // l != r <==> l < r && r < l
+                 LessThanRefinement (successor, env, leftIntv, rightIntv, leftVar, rightVar, ref resultLeft);
+                 LessThanRefinement (successor, env, rightIntv, leftIntv, rightVar, leftVar, ref resultRight);
+                 
+                 //todo: add refinement from polynomials
+             }
+
+             private static void LessThanRefinement<TVar, TExpr, TInterval>(Rational successor, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, 
+                 TInterval leftIntv, TInterval rightIntv, 
+                 TVar leftVar, TVar rightVar, 
+                 ref InferenceResult<TVar, TInterval> result) 
+                 where TInterval : IntervalBase<TInterval, Rational> 
+                 where TVar : IEquatable<TVar>
+             {
+                 TInterval refined;
+                 if (TryRefineKLessThanRight(leftIntv, rightVar, successor, env, out refined))
+                     result = result.AddConstraintFor (rightVar, refined);
+                 if (TryRefineLessThan (leftVar, rightIntv, env, out refined))
+                     result = result.AddConstraintFor (leftVar, refined);
              }
 
              private static IDictionary<TVar, Sequence<TInterval>> TestTrueLessEqualThan_AxByLeqK<TVar, TExpr, TInterval>(Polynomial<TVar, TExpr> poly, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, IDictionary<TVar, Sequence<TInterval>> result, out bool isBottom)
@@ -252,8 +288,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  var bInterval = env.Context.For(b);
                  var kInterval = env.Context.For(k);
 
-                 var xInterval = env.Evaluate(x);
-                 var yInterval = env.Evaluate(y);
+                 var xInterval = env.Eval(x);
+                 var yInterval = env.Eval(y);
 
                  var ctx = env.Context;
 
@@ -293,8 +329,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  var bInterval = env.Context.For (b);
                  var kInterval = env.Context.For (k);
 
-                 var xInterval = env.Evaluate (x);
-                 var yInterval = env.Evaluate (y);
+                 var xInterval = env.Eval (x);
+                 var yInterval = env.Eval (y);
 
                  var ctx = env.Context;
                  Func<Rational, TInterval> upperBounded =
@@ -343,7 +379,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                      Rational div;
                      if (Rational.TryDiv (k.Coeff, ax.Coeff, out div))
                      {
-                         var intv = env.Evaluate (x);
+                         var intv = env.Eval (x);
 
                          var refined = ax.Coeff.Sign < 1
                                            ? intv.Meet (env.Context.For (div, Rational.PlusInfinity))
@@ -384,7 +420,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                      Rational div;
                      if (Rational.TryDiv (k.Coeff, ax.Coeff, out div))
                      {
-                         var intv = env.Evaluate (x);
+                         var intv = env.Eval (x);
 
                          TInterval boundByDivPlus = !div.IsInteger
                                                         ? env.Context.For (div.NextInt32, Rational.PlusInfinity)
@@ -451,5 +487,59 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  result[variable] = value.Cons (intv);
              }
          }
+
+         public struct InferenceResult<TVar, TInterval>
+            where TInterval : IAbstractDomain<TInterval> 
+             where TVar : IEquatable<TVar> {
+             public static readonly InferenceResult<TVar, TInterval> Empty =
+                new InferenceResult<TVar, TInterval>(false, ImmutableMap<TVar, Sequence<TInterval>>.Empty);
+
+            public readonly bool IsBottom;
+
+            public readonly IImmutableMap<TVar, Sequence<TInterval>> Constraints;
+
+            private InferenceResult (bool isbottom, IImmutableMap<TVar, Sequence<TInterval>> map)
+            {
+                this.Constraints = map;
+                this.IsBottom = false;
+            }
+
+            public InferenceResult<TVar, TInterval> AddConstraintFor(TVar rightVar, TInterval refined)
+            {
+                Sequence<TInterval> seq;
+                Constraints.TryGetValue (rightVar, out seq);
+
+                return new InferenceResult<TVar, TInterval>(IsBottom, this.Constraints.Add(rightVar, seq.Cons(refined)));
+            }
+
+            public InferenceResult<TVar, TInterval> Join(InferenceResult<TVar, TInterval> that)
+            {
+                if (this.IsBottom)
+                    return that;
+                if (that.IsBottom)
+                    return this;
+                
+                var result = Empty;
+                foreach (var var in this.Constraints.Keys)
+                {
+                    // todo: what to do if constraint count > 1 ?
+
+                    Sequence<TInterval> leftContraints = this.Constraints[var];
+                    if (leftContraints == null)
+                        continue;
+
+                    // tops are not included
+                    Sequence<TInterval> rightConstraints;
+                    if (that.Constraints.TryGetValue (var, out rightConstraints) && rightConstraints != null)
+                    {
+                        var intv = leftContraints.Head.Join (rightConstraints.Head);
+                        if (!intv.IsTop)
+                            result.AddConstraintFor (var, intv);
+                    }
+                }
+
+                return result;
+            } 
+        }
     }
 }

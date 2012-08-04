@@ -1,13 +1,13 @@
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    abstract class TestFalseVisitor<Domain, Var, Expr> : GenericExpressionVisitor<Domain, Domain, Var, Expr>
+    abstract class AssumeFalseVisitor<Domain, Var, Expr> : GenericExpressionVisitor<Domain, Domain, Var, Expr>
         where Domain : IAbstractDomainForEnvironments<Domain, Var, Expr>
     {
         private Domain result;
 
-        public TestTrueVisitor<Domain, Var, Expr> TrueVisitor { get; set; }
+        public AssumeTrueVisitor<Domain, Var, Expr> TrueVisitor { get; set; }
 
-        protected TestFalseVisitor(IExpressionDecoder<Var, Expr> decoder)
+        protected AssumeFalseVisitor(IExpressionDecoder<Var, Expr> decoder)
             : base(decoder)
         {
         }

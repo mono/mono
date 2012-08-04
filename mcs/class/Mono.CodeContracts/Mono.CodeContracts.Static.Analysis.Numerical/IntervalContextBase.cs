@@ -36,43 +36,46 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         /// </summary>
         public abstract TInterval GreaterEqualThanMinusOne { get; }
 
-        public abstract TInterval For (long value);
-        public abstract TInterval For (TNumeric value);
-        public abstract TInterval For (TNumeric lower, TNumeric upper);
+        public abstract TInterval For(long value);
+        public abstract TInterval For(long lower, long upper);
+        public abstract TInterval For(long lower, TNumeric upper);
+        public abstract TInterval For(TNumeric lower, long upper);
+        public abstract TInterval For(TNumeric value);
+        public abstract TInterval For(TNumeric lower, TNumeric upper);
 
-        public abstract bool IsGreaterThanZero (TNumeric value);
-        public abstract bool IsGreaterEqualThanZero (TNumeric value);
+        public abstract bool IsGreaterThanZero(TNumeric value);
+        public abstract bool IsGreaterEqualThanZero(TNumeric value);
 
-        public abstract bool IsLessThanZero (TNumeric value);
-        public abstract bool IsLessEqualThanZero (TNumeric value);
+        public abstract bool IsLessThanZero(TNumeric value);
+        public abstract bool IsLessEqualThanZero(TNumeric value);
 
         public abstract bool IsLessEqualThanZero(TInterval value);
 
-        public abstract bool IsLessThan (TNumeric a, TNumeric b);
-        public abstract bool IsLessEqualThan (TNumeric a, TNumeric b);
+        public abstract bool IsLessThan(TNumeric a, TNumeric b);
+        public abstract bool IsLessEqualThan(TNumeric a, TNumeric b);
 
-        public abstract bool IsZero (TNumeric value);
+        public abstract bool IsZero(TNumeric value);
 
-        public abstract bool IsNotZero (TNumeric value);
+        public abstract bool IsNotZero(TNumeric value);
 
-        public abstract bool IsPlusInfinity (TNumeric value);
+        public abstract bool IsPlusInfinity(TNumeric value);
 
-        public abstract bool IsMinusInfinity (TNumeric value);
+        public abstract bool IsMinusInfinity(TNumeric value);
 
-        public abstract bool AreEqual (TNumeric a, TNumeric b);
+        public abstract bool AreEqual(TNumeric a, TNumeric b);
 
-        public abstract TInterval Add (TInterval a, TInterval b);
-        public abstract TInterval Sub (TInterval a, TInterval b);
-        public abstract TInterval Div (TInterval a, TInterval b);
-        public abstract TInterval Rem (TInterval a, TInterval b);
-        public abstract TInterval Mul (TInterval a, TInterval b);
-        public abstract TInterval Not (TInterval value);
+        public abstract TInterval Add(TInterval a, TInterval b);
+        public abstract TInterval Sub(TInterval a, TInterval b);
+        public abstract TInterval Div(TInterval a, TInterval b);
+        public abstract TInterval Rem(TInterval a, TInterval b);
+        public abstract TInterval Mul(TInterval a, TInterval b);
+        public abstract TInterval Not(TInterval value);
 
-        public abstract TInterval UnaryMinus (TInterval value);
+        public abstract TInterval UnaryMinus(TInterval value);
 
         public abstract TInterval ApplyConversion(ExpressionOperator conv, TInterval intv);
 
-        public virtual FlatDomain<bool> IsLessThan (TInterval a, TInterval b)
+        public virtual FlatDomain<bool> IsLessThan(TInterval a, TInterval b)
         {
             if (a.IsNormal() || b.IsNormal())
                 return ProofOutcome.Top;
@@ -85,7 +88,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
             return ProofOutcome.Top;
         }
 
-        public virtual FlatDomain<bool> IsLessEqualThan (TInterval a, TInterval b)
+        public virtual FlatDomain<bool> IsLessEqualThan(TInterval a, TInterval b)
         {
             if (a.IsNormal() || b.IsNormal())
                 return ProofOutcome.Top;
@@ -98,11 +101,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
             return ProofOutcome.Top;
         }
 
-        public virtual FlatDomain<bool> IsEqualThan (TInterval a, TInterval b)
+        public virtual FlatDomain<bool> IsEqualThan(TInterval a, TInterval b)
         {
-            throw new NotImplementedException ();
+            throw new NotImplementedException();
         }
 
-        public abstract bool IsMaxInt32 (TInterval value);
+        public abstract bool IsMaxInt32(TInterval value);
+
+        public abstract TInterval RightOpen(TNumeric lowerBound);
+        public abstract TInterval LeftOpen(TNumeric lowerBound);
     }
 }

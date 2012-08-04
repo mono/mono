@@ -9,10 +9,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
     }
 
     internal interface IPureExpressionTest<TThis, Var, Expr>
-        where TThis : IAbstractDomainForEnvironments<TThis, Var, Expr>
+        where TThis : IPureExpressionTest<TThis, Var, Expr>
     {
-        TThis TestTrue  (Expr guard);
-        TThis TestFalse (Expr guard);
+        TThis AssumeTrue  (Expr guard);
+        TThis AssumeFalse (Expr guard);
 
         FlatDomain<bool> CheckIfHolds (Expr expr);
     }
