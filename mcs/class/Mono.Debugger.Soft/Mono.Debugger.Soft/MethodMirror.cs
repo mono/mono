@@ -77,11 +77,13 @@ namespace Mono.Debugger.Soft
 		 * Creating the custom attributes themselves could modify the behavior of the
 		 * debuggee, so we return objects similar to the CustomAttributeData objects
 		 * used by the reflection-only functionality on .net.
+		 * Since protocol version 2.21
 		 */
 		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
 			return GetCAttrs (null, inherit);
 		}
 
+		/* Since protocol version 2.21 */
 		public CustomAttributeDataMirror[] GetCustomAttributes (TypeMirror attributeType, bool inherit) {
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
@@ -89,12 +91,12 @@ namespace Mono.Debugger.Soft
 		}
 
 		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
-			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
+			if (cattrs == null && meta != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
 
 			// FIXME: Handle inherit
 			if (cattrs == null) {
-				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);
+				CattrInfo[] info = vm.conn.Method_GetCustomAttributes (id, 0, false);
 				cattrs = CustomAttributeDataMirror.Create (vm, info);
 			}
 			var res = new List<CustomAttributeDataMirror> ();

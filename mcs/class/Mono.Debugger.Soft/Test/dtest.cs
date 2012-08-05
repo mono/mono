@@ -3019,6 +3019,10 @@ public class DebuggerTests
 		args = gmd.GetGenericArguments ();
 		Assert.AreEqual (1, args.Length);
 		Assert.AreEqual ("T", args [0].Name);
+
+		var attrs = m.GetCustomAttributes (true);
+		Assert.AreEqual (1, attrs.Length);
+		Assert.AreEqual ("StateMachineAttribute", attrs [0].Constructor.DeclaringType.Name);
 	}
 
 	[Test]

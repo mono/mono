@@ -395,7 +395,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 20;
+		internal const int MINOR_VERSION = 21;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -517,7 +517,8 @@ namespace Mono.Debugger.Soft
 			GET_LOCALS_INFO = 5,
 			GET_INFO = 6,
 			GET_BODY = 7,
-			RESOLVE_TOKEN = 8
+			RESOLVE_TOKEN = 8,
+			GET_CATTRS = 9
 		}
 
 		enum CmdType {
@@ -1822,6 +1823,11 @@ namespace Mono.Debugger.Soft
 			default:
 				throw new NotImplementedException ();
 			}
+		}
+
+		internal CattrInfo[] Method_GetCustomAttributes (long id, long attr_type_id, bool inherit) {
+			PacketReader r = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_CATTRS, new PacketWriter ().WriteId (id).WriteId (attr_type_id));
+			return ReadCattrs (r);
 		}
 
 		/*
