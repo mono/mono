@@ -693,6 +693,9 @@ namespace System {
 #if NET_4_0 || MOONLIGHT || MOBILE
 		public static Guid Parse (string input)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
 			Guid guid;
 			if (!TryParse (input, out guid))
 				throw CreateFormatException (input);
@@ -702,6 +705,11 @@ namespace System {
 
 		public static Guid ParseExact (string input, string format)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
 			Guid guid;
 			if (!TryParseExact (input, format, out guid))
 				throw CreateFormatException (input);
@@ -711,8 +719,10 @@ namespace System {
 
 		public static bool TryParse (string input, out Guid result)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
+			if (input == null) {
+				result = Empty;
+				return false;
+			}
 
 			var parser = new GuidParser (input);
 			return parser.Parse (out result);
@@ -720,10 +730,10 @@ namespace System {
 
 		public static bool TryParseExact (string input, string format, out Guid result)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-			if (format == null)
-				throw new ArgumentNullException ("format");
+			if (input == null || format == null) {
+				result = Empty;
+				return false;
+			}
 
 			var parser = new GuidParser (input);
 			return parser.Parse (ParseFormat (format), out result);
