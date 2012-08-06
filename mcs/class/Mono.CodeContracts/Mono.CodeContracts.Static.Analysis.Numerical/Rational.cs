@@ -477,6 +477,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             return r.up;
         }
 
+        public static implicit operator Rational(long l)
+        {
+            return Rational.For (l);
+        }
+
         public static explicit operator int(Rational r)
         {
             if (r.down != 0L)

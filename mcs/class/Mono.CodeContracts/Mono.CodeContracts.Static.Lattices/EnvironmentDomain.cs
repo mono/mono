@@ -222,7 +222,7 @@ namespace Mono.CodeContracts.Static.Lattices {
 			if (IsTop)
 				tw.WriteLine ("Top");
 			else if (IsBottom)
-				tw.WriteLine ("Bot");
+				tw.WriteLine (this.BottomSymbolIfAny ());
 			else {
 				this.map.Visit ((k, v) => {
 				                	tw.WriteLine ("{0} -> {1}", k, v);
@@ -312,6 +312,4 @@ namespace Mono.CodeContracts.Static.Lattices {
             return false;
         }
 	}
-
-    
 }

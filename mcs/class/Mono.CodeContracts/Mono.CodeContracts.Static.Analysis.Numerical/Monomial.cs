@@ -1,5 +1,4 @@
-﻿#region Copyright Header
-// 
+﻿// 
 // Monomial.cs
 // 
 // Authors:
@@ -26,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -53,13 +51,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         public bool IsLinear { get { return this.Degree <= 1; } }
 
         public bool IsConstant { get { return Degree == 0; } }
-
-        public Monomial (int k)
-            : this (Rational.For (k))
-        {
-        }
-
-        public Monomial (Rational coeff)
+        
+        private Monomial (Rational coeff)
             : this ()
         {
             this.coefficient = coeff;
@@ -83,7 +76,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             this.Degree = variables.Length ();
         }
 
-        public Monomial (Rational k, Sequence<Variable> vars)
+        private Monomial (Rational k, Sequence<Variable> vars)
             : this ()
         {
             this.coefficient = k;
@@ -128,7 +121,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         {
             return m.With (-m.coefficient);
         }
-        
+
         public static Monomial<Variable> From(Rational coeff)
         {
             return new Monomial<Variable> (coeff);

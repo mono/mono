@@ -76,7 +76,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                  return result;
              }
 
-             public static IDictionary<TVar, Sequence<TInterval>> LessEqual<TVar, TExpr, TInterval>(TExpr left, TExpr right, IExpressionDecoder<TVar, TExpr> decoder, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out bool isBottom)
+             public static IDictionary<TVar, Sequence<TInterval>> LessEqualThan<TVar, TExpr, TInterval>(TExpr left, TExpr right, IExpressionDecoder<TVar, TExpr> decoder, IIntervalEnvironment<TVar, TExpr, TInterval, Rational> env, out bool isBottom)
                  where TVar : IEquatable<TVar>
                  where TInterval : IntervalBase<TInterval, Rational>
              {

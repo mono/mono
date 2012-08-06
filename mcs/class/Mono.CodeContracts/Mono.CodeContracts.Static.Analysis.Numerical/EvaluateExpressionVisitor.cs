@@ -27,14 +27,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
             if (data.Count >= 10) // to avoid recursion if any
                 return this.Default (data);
 
-            var intv = base.Visit (expr, data.Increment ());
+            var intv = base.Visit (expr, data.Incremented ());
             if (intv == null)
                 return this.Default (data);
 
             intv = this.RefineWithTypeRanges (intv, expr, data.Env);
 
             var var = this.Decoder.UnderlyingVariable (expr);
-
+            
             TInterval current;
             if (data.Env.TryGetValue (var, out current))
                 intv = intv.Meet (current);
@@ -49,47 +49,47 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
         public override TInterval VisitAddition (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultBinary (left, right, original, data, (d, l, r) => d.Env.Context.Add (l, r));
+            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Add (l, r));
         }
 
         public override TInterval VisitDivision (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultBinary (left, right, original, data, (d, l, r) => d.Env.Context.Div (l, r));
+            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Div (l, r));
         }
 
         public override TInterval VisitMultiply (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultBinary (left, right, original, data, (d, l, r) => d.Env.Context.Mul (l, r));
+            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Mul (l, r));
         }
 
         public override TInterval VisitSubtraction (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultBinary (left, right, original, data, (d, l, r) => d.Env.Context.Sub (l, r));
+            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Sub (l, r));
         }
 
         public override TInterval VisitEqual (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultRelations (left, right, data);
+            return this.DefaultComparisons (left, right, data);
         }
 
         public override TInterval VisitLessThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultRelations (left, right, data);
+            return this.DefaultComparisons (left, right, data);
         }
 
         public override TInterval VisitGreaterEqualThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultRelations (left, right, data);
+            return this.DefaultComparisons (left, right, data);
         }
 
         public override TInterval VisitLessEqualThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultRelations (left, right, data);
+            return this.DefaultComparisons (left, right, data);
         }
 
         public override TInterval VisitGreaterThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
         {
-            return this.DefaultRelations (left, right, data);
+            return this.DefaultComparisons (left, right, data);
         }
 
         public override TInterval VisitUnknown (TExpr expr, Counter<TEnv> data)
@@ -106,18 +106,18 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
         private delegate TInterval BinaryEvaluator (Counter<TEnv> env, TInterval left, TInterval right);
 
-        private TInterval DefaultBinary(TExpr left, TExpr right, TExpr original, Counter<TEnv> data, BinaryEvaluator binop)
+        private TInterval DefaultBinary(TExpr left, TExpr right, Counter<TEnv> data, BinaryEvaluator binop)
         {
             this.occurences.Add(left, right);
 
-            var incremented = data.Increment();
+            var incremented = data.Incremented();
             var leftIntv = this.Visit(left, incremented);
             var rightIntv = this.Visit(right, incremented);
 
             return binop(data, leftIntv, rightIntv);
         }
 
-        private TInterval DefaultRelations(TExpr left, TExpr right, Counter<TEnv> data)
+        private TInterval DefaultComparisons(TExpr left, TExpr right, Counter<TEnv> data)
         {
             this.occurences.Add(left, right);
 
@@ -137,7 +137,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
             }
         }
 
-        private class VariableOccurences {
+        private class VariableOccurences
+        {
             private readonly Dictionary<TVar, int> occurences;
 
             private readonly IExpressionDecoder<TVar, TExpr> decoder;
@@ -153,7 +154,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
             public Sequence<TVar> Duplicated { get { return this.duplicated; } }
 
-            public void Add (TVar var)
+            private void Add (TVar var)
             {
                 int cnt;
                 if (!this.occurences.TryGetValue (var, out cnt))
@@ -181,5 +182,5 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 return this.occurences.ToString ();
             }
         }
-        }
+    }
 }

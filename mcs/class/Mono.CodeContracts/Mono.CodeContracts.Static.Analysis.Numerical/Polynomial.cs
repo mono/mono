@@ -258,9 +258,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                     right.Add (monomial);
 
             if (left.Count == 0)
-                left.Add (new Monomial<Var> (0));
+                left.Add (Monomial<Var>.From (0L));
             if (right.Count == 0)
-                right.Add (new Monomial<Var> (0));
+                right.Add (Monomial<Var>.From (0));
 
             return new Polynomial<Var, Expr> (this.relation.Value, left.ToArray (), right.ToArray ());
         }

@@ -2,11 +2,11 @@ using System;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
-    class IntervalTestFalseVisitor<TEnv, Var, Expr, TInterval, TNumeric> : AssumeFalseVisitor<TEnv, Var, Expr>
+    class IntervalAssumeFalseVisitor<TEnv, Var, Expr, TInterval, TNumeric> : AssumeFalseVisitor<TEnv, Var, Expr>
         where TEnv : IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric>
         where TInterval : IntervalBase<TInterval, TNumeric> 
         where Var : IEquatable<Var> {
-        public IntervalTestFalseVisitor(IExpressionDecoder<Var, Expr> decoder)
+        public IntervalAssumeFalseVisitor(IExpressionDecoder<Var, Expr> decoder)
             : base(decoder)
         {
         }
@@ -32,12 +32,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                 case ExpressionOperator.LessThan:
                     {
                         var leftVar = Decoder.UnderlyingVariable (left);
-                        return res.Assumer.AssumeLessEqualThan (intv, leftVar);
+                        return res.Assumer.AssumeLessEqualThan (intv, leftVar, res);
                     }
                 case ExpressionOperator.LessEqualThan:
                     {
                         var leftVar = Decoder.UnderlyingVariable(left);
-                        return res.Assumer.AssumeLessThan(intv, leftVar);
+                        return res.Assumer.AssumeLessThan(intv, leftVar, res);
                     }
             }
 

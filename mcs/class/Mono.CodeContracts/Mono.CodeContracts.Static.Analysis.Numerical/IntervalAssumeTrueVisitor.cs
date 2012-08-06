@@ -12,70 +12,70 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
         {
         }
 
-        protected override TEnv DispatchCompare(CompareVisitor cmp, Expr left, Expr right, Expr original, TEnv data)
+        protected override TEnv DispatchCompare(CompareVisitor cmp, Expr left, Expr right, Expr original, TEnv env)
         {
-            data = cmp (left, right, original, data);
-            return base.DispatchCompare (cmp, left, right, original, data);
+            env = cmp (left, right, original, env);
+            return base.DispatchCompare (cmp, left, right, original, env);
         }
 
-        public override TEnv VisitEqual(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitEqual(Expr left, Expr right, Expr original, TEnv env)
         {
-            return data.Assumer.AssumeEqual (left, right);
+            return env.Assumer.AssumeEqual (left, right, env);
         }
 
-        public override TEnv VisitLessThan(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitLessThan(Expr left, Expr right, Expr original, TEnv env)
         {
-            return data.Assumer.AssumeLessThan (left, right);
+            return env.Assumer.AssumeLessThan (left, right, env);
         }
 
-        public override TEnv VisitLessEqualThan(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitLessEqualThan(Expr left, Expr right, Expr original, TEnv env)
         {
-            return data.Assumer.AssumeLessEqualThan (left, right);
+            return env.Assumer.AssumeLessEqualThan (left, right, env);
         }
 
-        public override TEnv VisitAddition(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitAddition(Expr left, Expr right, Expr original, TEnv env)
         {
-            data = base.VisitAddition (left, right, original, data);
-            return data.Assumer.AssumeNotEqualToZero (original);
+            env = base.VisitAddition (left, right, original, env);
+            return env.Assumer.AssumeNotEqualToZero (original, env);
         }
 
-        public override TEnv VisitDivision(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitDivision(Expr left, Expr right, Expr original, TEnv env)
         {
-            data = base.VisitDivision (left, right, original, data);
-            return data.Assumer.AssumeNotEqualToZero (original);
+            env = base.VisitDivision (left, right, original, env);
+            return env.Assumer.AssumeNotEqualToZero (original, env);
         }
 
-        public override TEnv VisitMultiply(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitMultiply(Expr left, Expr right, Expr original, TEnv env)
         {
-            data = base.VisitMultiply (left, right, original, data);
-            return data.Assumer.AssumeNotEqualToZero (original);
+            env = base.VisitMultiply (left, right, original, env);
+            return env.Assumer.AssumeNotEqualToZero (original, env);
         }
 
-        public override TEnv VisitUnknown(Expr expr, TEnv data)
+        public override TEnv VisitUnknown(Expr expr, TEnv env)
         {
-            data = base.VisitUnknown(expr, data);
-            return data.Assumer.AssumeNotEqualToZero (expr);
+            env = base.VisitUnknown(expr, env);
+            return env.Assumer.AssumeNotEqualToZero (expr, env);
         }
 
-        public override TEnv VisitNot(Expr expr, TEnv data)
+        public override TEnv VisitNot(Expr expr, TEnv env)
         {
-            return FalseVisitor.Visit (expr, data);
+            return FalseVisitor.Visit (expr, env);
         }
 
-        public override TEnv VisitNotEqual(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitNotEqual(Expr left, Expr right, Expr original, TEnv env)
         {
-            return data.Assumer.AssumeNotEqual (left, right);
+            return env.Assumer.AssumeNotEqual (left, right, env);
         }
 
-        public override TEnv VisitVariable(Var var, Expr expr, TEnv data)
+        public override TEnv VisitVariable(Var var, Expr expr, TEnv env)
         {
-            return data.Assumer.AssumeNotEqualToZero (expr);
+            return env.Assumer.AssumeNotEqualToZero (expr, env);
         }
 
-        public override TEnv VisitSubtraction(Expr left, Expr right, Expr original, TEnv data)
+        public override TEnv VisitSubtraction(Expr left, Expr right, Expr original, TEnv env)
         {
-            data = base.VisitSubtraction(left, right, original, data);
-            return data.Assumer.AssumeNotEqualToZero (original);
+            env = base.VisitSubtraction(left, right, original, env);
+            return env.Assumer.AssumeNotEqualToZero (original, env);
         }
     }
 }

@@ -1,22 +1,22 @@
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-    struct Counter<TEnv> {
-        public readonly TEnv Env;
+    struct Counter<T> {
+        public readonly T Env;
         public readonly int Count;
 
-        public Counter (TEnv env)
+        public Counter (T env)
             : this(env, 0)
         {
         }
 
-        private Counter(TEnv env, int count)
+        private Counter(T env, int count)
         {
             this.Env = env;
             this.Count = count;
         }
 
-        public Counter<TEnv> Increment()
+        public Counter<T> Incremented()
         {
-            return new Counter<TEnv> (Env, Count + 1);
+            return new Counter<T> (Env, Count + 1);
         } 
     }
 }

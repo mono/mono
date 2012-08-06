@@ -11,6 +11,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
 {
     class DisInterval : IntervalBase<DisInterval, Rational>
     {
+        public static readonly DisInterval NotZero =
+            For (new List<Interval>
+                {Interval.For (Rational.MinusInfinity, -1L), Interval.For (1L, Rational.PlusInfinity)});
+
         public override bool Equals (object other)
         {
             if (ReferenceEquals(this, other))
@@ -577,6 +581,23 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
             }
 
             return new DisInterval (list);
+        }
+
+        public static DisInterval EverythingExcept (DisInterval interval)
+        {
+            var left = Interval.For (Rational.MinusInfinity, interval.LowerBound - 1L);
+            var right = Interval.For (interval.UpperBound + 1L, Rational.PlusInfinity);
+
+            if (left.IsNormal () && right.IsNormal ())
+                return new DisInterval (new List<Interval> {left, right});
+            
+            if (left.IsNormal ())
+                return new DisInterval (left);
+
+            if (right.IsNormal ())
+                return new DisInterval (right);
+
+            return TopValue;
         }
     }
 }
