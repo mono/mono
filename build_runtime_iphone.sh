@@ -18,6 +18,7 @@ ORIG_PATH=$PATH
 PRFX=$PWD/tmp 
 
 
+
 if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
         echo "Erasing builds folder to make sure we start with a clean slate"
         rm -rf builds
@@ -64,21 +65,25 @@ build_arm_mono ()
 {
 	setenv "$1"
 
-	make clean
-	rm config.h*
+	if [ $2 -eq 0 ]; then
+		make clean
+		rm config.h*
 
-	pushd eglib 
-	./autogen.sh --host=arm-apple-darwin9 --prefix=$PRFX
-	make clean
-	popd
+		pushd eglib 
+		./autogen.sh --host=arm-apple-darwin9 --prefix=$PRFX
+		make clean
+		popd
 
-	./autogen.sh --prefix=$PRFX --disable-mcs-build --host=arm-apple-darwin9 --disable-shared-handles --with-tls=pthread --with-sigaltstack=no --with-glib=embedded --enable-minimal=jit,profiler,com --disable-nls || exit 1
-	perl -pi -e 's/MONO_SIZEOF_SUNPATH 0/MONO_SIZEOF_SUNPATH 104/' config.h
-	perl -pi -e 's/#define HAVE_FINITE 1//' config.h
-	#perl -pi -e 's/#define HAVE_MMAP 1//' config.h
-	perl -pi -e 's/#define HAVE_CURSES_H 1//' config.h
-	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
-	make
+		./autogen.sh --prefix=$PRFX --disable-mcs-build --host=arm-apple-darwin9 --disable-shared-handles --with-tls=pthread --with-sigaltstack=no --with-glib=embedded --enable-minimal=jit,profiler,com --disable-nls || exit 1
+		perl -pi -e 's/MONO_SIZEOF_SUNPATH 0/MONO_SIZEOF_SUNPATH 104/' config.h
+		perl -pi -e 's/#define HAVE_FINITE 1//' config.h
+		#perl -pi -e 's/#define HAVE_MMAP 1//' config.h
+		perl -pi -e 's/#define HAVE_CURSES_H 1//' config.h
+		perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
+		make
+	else
+		echo "Skipping autogen.sh for incremental build"
+	fi
 
 	make || exit 1
 
@@ -89,7 +94,7 @@ build_arm_mono ()
 build_iphone_runtime () 
 {
 	echo "Building iPhone runtime"
-	build_arm_mono "armv7" || exit 1
+	build_arm_mono "armv7" $1 || exit 1
 
 	cp builds/embedruntimes/iphone/libmono-armv7.a builds/embedruntimes/iphone/libmono.a
 	rm builds/embedruntimes/iphone/libmono-armv7.a
@@ -110,14 +115,19 @@ build_iphone_crosscompiler ()
 
 	export PLATFORM_IPHONE_XCOMP=1	
 
-	pushd eglib 
-	./autogen.sh --prefix=$PRFX || exit 1
-	make clean
-	popd
+    if [ $1 -eq 0 ]; then
+		pushd eglib 
+		./autogen.sh --prefix=$PRFX || exit 1
+		make clean
+		popd
 	
-	./autogen.sh --prefix=$PRFX --with-macversion=$MAC_SDK_VERSION --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
-	perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
-	make clean || exit 1
+		./autogen.sh --prefix=$PRFX --with-macversion=$MAC_SDK_VERSION --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
+		perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
+		make clean || exit 1
+	else
+		echo "Skipping autogen.sh for incremental build"
+	fi
+
 	make || exit 1
 	mkdir -p builds/crosscompiler/iphone
 	cp mono/mini/mono builds/crosscompiler/iphone/mono-xcompiler
@@ -145,20 +155,30 @@ usage()
 	echo "available arguments: [--runtime-only|--xcomp-only|--simulator-only]";
 }
 
-if [ $# -gt 1 ]; then
+INCREMENTAL=0
+
+
+if [ $# -gt 2 ]; then
  	usage
 	exit 1
 fi
-if [ $# -eq 1 ]; then
+if [ $# -gt 0 ]; then
+	if [ $# -eq 2 ]; then
+		if [ "x$2" == "x--incremental" ]; then
+			INCREMENTAL=1
+		fi
+	fi
+
 	if [ "x$1" == "x--runtime-only" ]; then
-		build_iphone_runtime || exit 1
+		build_iphone_runtime $INCREMENTAL || exit 1
 	elif [ "x$1" == "x--xcomp-only" ]; then
-		build_iphone_crosscompiler || exit 1	
+		build_iphone_crosscompiler $INCREMENTAL || exit 1	
 	elif [ "x$1" == "x--simulator-only" ]; then
-		build_iphone_simulator|| exit 1	
+		build_iphone_simulator $INCREMENTAL || exit 1	
 	else
 		usage
 	fi
+
 fi
 if [ $# -eq 0 ]; then
 	build_iphone_runtime || exit 1
