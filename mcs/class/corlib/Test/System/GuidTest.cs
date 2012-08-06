@@ -392,6 +392,30 @@ namespace MonoTests.System {
 		{
 			Guid.ParseExact ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", "D");
 		}
+
+		[Test]
+		public void TryParse()
+		{
+			Guid guid;
+			Assert.IsFalse (Guid.TryParse(null, out guid), "A1");
+			Assert.AreEqual (Guid.Empty, guid, "A2");
+			Assert.IsFalse (Guid.TryParse("", out guid), "A3");
+			Assert.AreEqual (Guid.Empty, guid, "A4");
+			Assert.IsFalse (Guid.TryParse("foobar", out guid), "A5");
+			Assert.AreEqual (Guid.Empty, guid, "A6");
+		}
+
+		[Test]
+		public void TryParseExact()
+		{
+			Guid guid;
+			Assert.IsFalse (Guid.TryParseExact(null, null, out guid), "A1");
+			Assert.AreEqual (Guid.Empty, guid, "A2");
+			Assert.IsFalse (Guid.TryParseExact("", null, out guid), "A3");
+			Assert.AreEqual (Guid.Empty, guid, "A4");
+			Assert.IsFalse (Guid.TryParseExact("foobar", null, out guid), "A5");
+			Assert.AreEqual (Guid.Empty, guid, "A6");
+		}
 #endif
 	}
 }
