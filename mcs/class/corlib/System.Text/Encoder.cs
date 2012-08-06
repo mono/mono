@@ -133,11 +133,11 @@ public abstract class Encoder
 			throw new ArgumentNullException ("chars");
 		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
-		if (charIndex < 0 || chars.Length <= charIndex)
+		if (charIndex < 0)
 			throw new ArgumentOutOfRangeException ("charIndex");
 		if (charCount < 0 || chars.Length < charIndex + charCount)
 			throw new ArgumentOutOfRangeException ("charCount");
-		if (byteIndex < 0 || bytes.Length <= byteIndex)
+		if (byteIndex < 0)
 			throw new ArgumentOutOfRangeException ("byteIndex");
 		if (byteCount < 0 || bytes.Length < byteIndex + byteCount)
 			throw new ArgumentOutOfRangeException ("byteCount");
