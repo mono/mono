@@ -1145,7 +1145,9 @@ namespace System.Net
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
 				if (cookieHeader != "")
-					webHeaders.SetInternal ("Cookie", cookieHeader);
+					webHeaders.RemoveAndAdd ("Cookie", cookieHeader);
+				else
+					webHeaders.RemoveInternal ("Cookie");
 			}
 
 			string accept_encoding = null;
