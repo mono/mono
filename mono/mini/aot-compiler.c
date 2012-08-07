@@ -3916,6 +3916,9 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 static void
 add_generic_class (MonoAotCompile *acfg, MonoClass *klass);
 
+gboolean
+mono_method_marked_as_wrapperless(MonoMethod* method);
+
 /*
  * compile_method:
  *
@@ -3934,10 +3937,11 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 #if defined(PLATFORM_IPHONE_XCOMP)
 	if (acfg->aot_opts.ficall && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
 	{
-		method->save_lmf = FALSE;
 		wrapped = mono_marshal_method_from_wrapper (method);
-		if (wrapped && (wrapped->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
+		if (wrapped && (wrapped->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
+			mono_method_marked_as_wrapperless(wrapped))
 		{
+			method->save_lmf = FALSE;
 			if (wrapped->signature->ret->type != MONO_TYPE_R4)
 				return;
 		}

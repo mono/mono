@@ -2344,6 +2344,21 @@ find_extra_method (MonoMethod *method, MonoAotModule **out_amodule)
 	return index;
 }
 
+gboolean
+mono_method_marked_as_wrapperless(MonoMethod* method)
+{
+	int j;
+	gboolean res = FALSE;
+	MonoCustomAttrInfo *cattr = mono_custom_attrs_from_method (method);
+	if (cattr)
+    	for (j = 0; j < cattr->num_attrs; ++j)
+		{
+        	if (cattr->attrs [j].ctor && !strcmp (cattr->attrs [j].ctor->klass->name, "WrapperlessIcall"))
+				res = TRUE;
+		}
+	return res;
+}
+
 /*
  * mono_aot_get_method:
  *
@@ -2365,12 +2380,13 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 	if (amodule->out_of_date)
 		return NULL;
 
-#if defined (PLATFORM_IPHONE)                                                                                                                                                                     
-        if (mono_ficall_flag && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {                                                                                                          
+#if defined (PLATFORM_IPHONE) 
+        if (mono_ficall_flag && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
         	MonoMethod *wrapped = mono_marshal_method_from_wrapper (method);
-        	if (wrapped && (wrapped->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
-          	if (wrapped->signature->ret->type != MONO_TYPE_R4)
-               		return mono_lookup_internal_call (wrapped);                                                                                                                                        
+        	if (wrapped && (wrapped->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && 
+				mono_method_marked_as_wrapperless(wrapped))
+          		if (wrapped->signature->ret->type != MONO_TYPE_R4)
+               		return mono_lookup_internal_call (wrapped); 
     	}
 #endif   
 
