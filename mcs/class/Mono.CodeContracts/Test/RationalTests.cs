@@ -55,6 +55,13 @@ namespace Test
         }
 
         [Test]
+        public void ShouldInterpretMinusMinValueAsMaxValue ()
+        {
+            var maxValue = Rational.For (long.MinValue, -1L);
+            Assert.IsTrue ((long)maxValue == long.MaxValue);
+        }
+
+        [Test]
         public void ShouldBeEqualByModuloOfDenominator ()
         {
             Assert.IsTrue (threeFourth == sixEighth);
@@ -63,7 +70,7 @@ namespace Test
         [Test]
         public void ShouldHaveNextInt32()
         {
-            Assert.That (threeFourth.NextInt32, Is.EqualTo (Rational.For (1)));
+            Assert.That (threeFourth.NextInt32, Is.EqualTo (Rational.One));
         }
 
         [Test]
@@ -94,7 +101,23 @@ namespace Test
         }
 
         [Test]
-        public void ShouldHaveAddOperation ()
+        public void ShouldHaveLessThanOperator ()
+        {
+            minusInf.ShouldNotBeLessThan (minusInf);
+            minusInf.ShouldBeLessThan (plusInf);
+            minusInf.ShouldBeLessThan (one);
+
+            zero.ShouldNotBeLessThan (minusInf);
+            zero.ShouldBeLessThan (plusInf);
+            zero.ShouldBeLessThan (one);
+
+            plusInf.ShouldNotBeLessThan (minusInf);
+            plusInf.ShouldNotBeLessThan (plusInf);
+            plusInf.ShouldNotBeLessThan (one);
+        }
+
+        [Test]
+        public void ShouldHaveAddOperation()
         {
             Rational seven20 = Rational.For (7, 20);
             Rational eleven15 = Rational.For (11, 15);
@@ -129,24 +152,8 @@ namespace Test
             Assert.That(seven22 / eleven21, Is.EqualTo(Rational.For(1, 6)));
             
             Rational result;
-            Assert.That(Rational.TryDiv(one, zero, out result), Is.False, "shouldn't div by zero");
-            Assert.That(Rational.TryDiv(seven22, zero, out result), Is.False, "shouldn't div by zero");
-        }
-
-        [Test]
-        public void LessThanOperator()
-        {
-            minusInf.ShouldNotBeLessThan (minusInf);
-            minusInf.ShouldBeLessThan (plusInf);
-            minusInf.ShouldBeLessThan (one);
-
-            zero.ShouldNotBeLessThan(minusInf);
-            zero.ShouldBeLessThan(plusInf);
-            zero.ShouldBeLessThan(one);
-         
-            plusInf.ShouldNotBeLessThan (minusInf);
-            plusInf.ShouldNotBeLessThan (plusInf);
-            plusInf.ShouldNotBeLessThan (one);
+            Assert.That(Rational.TryDivide(one, zero, out result), Is.False, "shouldn't div by zero");
+            Assert.That(Rational.TryDivide(seven22, zero, out result), Is.False, "shouldn't div by zero");
         }
     }
 

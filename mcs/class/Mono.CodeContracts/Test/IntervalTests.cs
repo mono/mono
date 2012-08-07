@@ -36,8 +36,9 @@ namespace Test
     internal class IntervalTests : DomainTestBase<Interval>
     {
         private readonly Interval _1__2 = Interval.For (1, 2);
+        private readonly Interval _2__4 = Interval.For (2, 4);
         private readonly Interval _3__4 = Interval.For (3, 4);
-        private readonly Interval _1__4 = Interval.For(1, 4);
+        private readonly Interval _1__4 = Interval.For (1, 4);
 
         private readonly Interval zeroToOne = Interval.For (Rational.Zero, Rational.One);
         private readonly Interval minusOneToZero = Interval.For (Rational.MinusOne, Rational.Zero);
@@ -150,6 +151,17 @@ namespace Test
             Assert.That (Interval.AreConsecutiveIntegers(_1__2, _1__2), Is.False);
             Assert.That (Interval.AreConsecutiveIntegers(_3__4, _1__2), Is.False);
             Assert.That (Interval.AreConsecutiveIntegers(Interval.For (Rational.For (1,3)), _1__2), Is.False);
+        }
+
+        [Test]
+        public void OnTheLeftOf ()
+        {
+            Assert.IsTrue (_1__2.OnTheLeftOf(_3__4));
+            Assert.IsTrue (_1__2.OnTheLeftOf (_2__4));
+
+            Assert.IsFalse (_2__4.OnTheLeftOf (_1__2));
+            Assert.IsFalse (_1__4.OnTheLeftOf (_1__2));
+            Assert.IsFalse (_1__2.OnTheLeftOf (_1__4));
         }
 
         protected override Interval top { get { return Interval.TopValue; } }

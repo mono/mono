@@ -30,96 +30,117 @@ using System;
 using System.Collections.Generic;
 
 namespace Mono.CodeContracts.Static.DataStructures {
-	static class SequenceExtensions {
-		public static Sequence<T> Cons<T> (this Sequence<T> rest, T elem)
-		{
-			return Sequence<T>.Cons (elem, rest);
-		}
+        static class SequenceExtensions {
+                public static Sequence<T> Cons<T> (this Sequence<T> rest, T elem)
+                {
+                        return Sequence<T>.Cons (elem, rest);
+                }
 
-		public static Sequence<T> Append<T> (this Sequence<T> list, Sequence<T> append)
-		{
-			if (list == null)
-				return append;
-			if (append == null)
-				return list;
+                public static Sequence<T> Append<T> (this Sequence<T> list, Sequence<T> append)
+                {
+                        if (list == null)
+                                return append;
+                        if (append == null)
+                                return list;
 
-			return Cons (list.Tail.Append (append), list.Head);
-		}
+                        return Cons (list.Tail.Append (append), list.Head);
+                }
 
-		public static Sequence<T> Where<T> (this Sequence<T> list, Predicate<T> keep)
-		{
-			if (list == null)
-				return null;
-			Sequence<T> rest = list.Tail.Where (keep);
-			if (!keep (list.Head))
-				return rest;
+                public static Sequence<T> Where<T> (this Sequence<T> list, Predicate<T> keep)
+                {
+                        if (list == null)
+                                return null;
+                        Sequence<T> rest = list.Tail.Where (keep);
+                        if (!keep (list.Head))
+                                return rest;
 
-			if (rest == list.Tail)
-				return list;
+                        if (rest == list.Tail)
+                                return list;
 
-			return Cons (rest, list.Head);
-		}
+                        return Cons (rest, list.Head);
+                }
 
-		public static void Apply<T> (this Sequence<T> list, Action<T> action)
-		{
-			Sequence<T>.Apply (list, action);
-		}
+                public static void Apply<T> (this Sequence<T> list, Action<T> action)
+                {
+                        Sequence<T>.Apply (list, action);
+                }
 
-		public static IEnumerable<T> AsEnumerable<T> (this Sequence<T> list)
-		{
-			return Sequence<T>.PrivateGetEnumerable (list);
-		}
+                public static IEnumerable<T> AsEnumerable<T> (this Sequence<T> list)
+                {
+                        return Sequence<T>.PrivateGetEnumerable (list);
+                }
 
-		public static bool Any<T> (this Sequence<T> list, Predicate<T> predicate)
-		{
-			if (list == null)
-				return false;
+                public static bool Any<T> (this Sequence<T> list, Predicate<T> predicate)
+                {
+                        if (list == null)
+                                return false;
 
-			if (predicate (list.Head))
-				return true;
+                        if (predicate (list.Head))
+                                return true;
 
-			return list.Tail.Any (predicate);
-		}
+                        return list.Tail.Any (predicate);
+                }
 
-		public static int Length<T> (this Sequence<T> list)
-		{
-			return Sequence<T>.LengthOf (list);
-		}
+                public static bool All<T> (this Sequence<T> list, Predicate<T> predicate)
+                {
+                        if (list == null)
+                                return true;
 
-		public static bool IsEmpty<T> (this Sequence<T> list)
-		{
-			return list == null;
-		}
+                        if (!predicate (list.Head))
+                                return false;
 
-		public static Sequence<S> Select<T, S> (this Sequence<T> list, Func<T, S> selector)
-		{
-			return Sequence<T>.Select (list, selector);
-		}
+                        return list.Tail.All (predicate);
+                }
 
-		public static T Last<T> (this Sequence<T> list)
-		{
-			if (list == null)
-				return default(T);
+                public static int Length<T> (this Sequence<T> list)
+                {
+                        return Sequence<T>.LengthOf (list);
+                }
 
-			while (Sequence<T>.LengthOf (list) > 1)
-				list = list.Tail;
+                public static bool IsEmpty<T> (this Sequence<T> list)
+                {
+                        return list == null;
+                }
 
-			return list.Head;
-		}
+                public static Sequence<S> Select<T, S> (this Sequence<T> list, Func<T, S> selector)
+                {
+                        return Sequence<T>.Select (list, selector);
+                }
 
-		public static Sequence<T> Coerce<S, T> (this Sequence<S> list)
-			where S : T
-		{
-			return list.Select (l => (T) l);
-		}
+                public static T Last<T> (this Sequence<T> list)
+                {
+                        if (list == null)
+                                return default(T);
 
-        public static void ForEach<T>(this Sequence<T> seq, Action<T> action)
-        {
-            if (seq == null)
-                return;
+                        while (Sequence<T>.LengthOf (list) > 1)
+                                list = list.Tail;
 
-            action(seq.Head);
-            seq.Tail.ForEach(action);
+                        return list.Head;
+                }
+
+                public static Sequence<T> Coerce<S, T> (this Sequence<S> list)
+                        where S : T
+                {
+                        return list.Select (l => (T) l);
+                }
+
+                public static Sequence<T> Reverse<T> (this Sequence<T> list)
+                {
+                        Sequence<T> rest = null;
+                        
+                        for (Sequence<T> cur = list; cur != null; cur = cur.Tail)
+                                rest = rest.Cons (cur.Head);
+
+                        return rest;
+                }
+
+                public static void ForEach<T> (this Sequence<T> seq, Action<T> action)
+                {
+                        if (seq == null)
+                                return;
+
+                        action (seq.Head);
+                        seq.Tail.ForEach (action);
+                }
         }
-	}
 }

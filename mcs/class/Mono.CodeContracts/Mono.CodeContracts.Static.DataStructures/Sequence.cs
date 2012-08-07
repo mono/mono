@@ -30,127 +30,138 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Mono.CodeContracts.Static.Analysis.Numerical;
-
 namespace Mono.CodeContracts.Static.DataStructures {
-	class Sequence<T> {
-		public static readonly Sequence<T> Empty = null;
-		private readonly int count;
-		private readonly T element;
-		private readonly Sequence<T> tail;
+        class Sequence<T> : IEquatable<Sequence<T>> {
+                public static readonly Sequence<T> Empty = null;
+                readonly int count;
+                readonly T element;
+                readonly Sequence<T> tail;
 
-		private Sequence (T elem, Sequence<T> tail)
-		{
-			this.element = elem;
-			this.tail = tail;
-			this.count = LengthOf (tail) + 1;
-		}
+                Sequence (T elem, Sequence<T> tail)
+                {
+                        this.element = elem;
+                        this.tail = tail;
+                        this.count = LengthOf (tail) + 1;
+                }
 
-		public T Head
-		{
-			get { return this.element; }
-		}
+                public T Head { get { return this.element; } }
 
-		public Sequence<T> Tail
-		{
-			get { return this.tail; }
-		}
+                public Sequence<T> Tail { get { return this.tail; } }
 
-		public static Sequence<T> Cons (T elem, Sequence<T> tail)
-		{
-			return new Sequence<T> (elem, tail);
-		}
+                public static Sequence<T> Cons (T elem, Sequence<T> tail)
+                {
+                        return new Sequence<T> (elem, tail);
+                }
 
-		public Sequence<T> Reverse ()
-		{
-			Sequence<T> rest = null;
-			for (var list = this; list != null; list = list.tail)
-				rest = rest.Cons (list.element);
-			return rest;
-		}
+                public static bool Contains (Sequence<T> l, T o)
+                {
+                        if (l == null)
+                                return false;
+                        var equatable = o as IEquatable<T>;
+                        if (equatable != null) {
+                                if (equatable.Equals (l.element))
+                                        return true;
+                        }
+                        else if (o.Equals (l.element))
+                                return true;
 
-		public static bool Contains (Sequence<T> l, T o)
-		{
-			if (l == null)
-				return false;
-			var equatable = o as IEquatable<T>;
-			if (equatable != null) {
-				if (equatable.Equals (l.element))
-					return true;
-			} else if (o.Equals (l.element))
-				return true;
+                        return Contains (l.tail, o);
+                }
 
-			return Contains (l.tail, o);
-		}
+                public static int LengthOf (Sequence<T> list)
+                {
+                        if (list == null)
+                                return 0;
+                        return list.count;
+                }
 
-		public static int LengthOf (Sequence<T> list)
-		{
-			if (list == null)
-				return 0;
-			return list.count;
-		}
+                public static void Apply (Sequence<T> list, Action<T> action)
+                {
+                        for (; list != null; list = list.tail)
+                                action (list.Head);
+                }
 
-		public static void Apply (Sequence<T> list, Action<T> action)
-		{
-			for (; list != null; list = list.tail)
-				action (list.Head);
-		}
+                public static IEnumerable<T> PrivateGetEnumerable (Sequence<T> list)
+                {
+                        Sequence<T> current = list;
+                        while (current != null) {
+                                T next = current.Head;
+                                current = current.tail;
+                                yield return next;
+                        }
+                }
 
-		public static IEnumerable<T> PrivateGetEnumerable (Sequence<T> list)
-		{
-			Sequence<T> current = list;
-			while (current != null) {
-				T next = current.Head;
-				current = current.tail;
-				yield return next;
-			}
-		}
+                public static Sequence<S> Select<S> (Sequence<T> list, Func<T, S> selector)
+                {
+                        if (list == null)
+                                return null;
+                        return list.tail.Select (selector).Cons (selector (list.Head));
+                }
 
-		public static Sequence<S> Select<S> (Sequence<T> list, Func<T, S> selector)
-		{
-			if (list == null)
-				return null;
-			return list.tail.Select (selector).Cons (selector (list.Head));
-		}
+                public static Sequence<T> From (params T[] elems)
+                {
+                        Sequence<T> result = null;
+                        foreach (T elem in elems)
+                                result = result.Cons (elem);
 
-        public static Sequence<T> From(params T[] elems)
-        {
-            Sequence<T> result = null;
-            foreach (var elem in elems)
-                result = result.Cons (elem);
+                        return result.Reverse ();
+                }
 
-            return result.Reverse ();
+                public static Sequence<T> From (IEnumerable<T> elems)
+                {
+                        Sequence<T> result = null;
+                        foreach (T elem in elems)
+                                result = result.Cons (elem);
+
+                        return result.Reverse ();
+                }
+
+                public bool Equals (Sequence<T> other)
+                {
+                        if (ReferenceEquals (other, null))
+                                return false;
+                        if (ReferenceEquals (this, other))
+                                return true;
+
+                        if (!this.Head.Equals (other.Head))
+                                return false;
+
+                        if (ReferenceEquals (this.tail, null))
+                                return ReferenceEquals (other.tail, null);
+
+                        return this.tail.Equals(other.tail);
+                }
+
+                public override bool Equals (object obj)
+                {
+                        if (obj == null)
+                                return false;
+
+                        return Equals(obj as Sequence<T>);
+                }
+
+                public override string ToString ()
+                {
+                        var sb = new StringBuilder ();
+                        this.BuildString (sb);
+
+                        return sb.ToString ();
+                }
+
+                void BuildString (StringBuilder sb)
+                {
+                        sb.Append (this.element == null ? "<null>" : this.element.ToString ());
+                        if (this.tail != null) {
+                                sb.Append (",");
+                                this.tail.BuildString (sb);
+                        }
+                }
+
+                public static Sequence<T> Singleton (T value)
+                {
+                        return new Sequence<T> (value, null);
+                }
+
+
         }
-
-        public static Sequence<T> From(IEnumerable<T> elems)
-        {
-            Sequence<T> result = null;
-            foreach (var elem in elems)
-                result = result.Cons(elem);
-
-            return result.Reverse();
-        } 
-
-		public override string ToString ()
-		{
-			var sb = new StringBuilder ();
-			BuildString (sb);
-
-			return sb.ToString ();
-		}
-
-		private void BuildString (StringBuilder sb)
-		{
-			sb.Append (this.element == null ? "<null>" : this.element.ToString ());
-			if (this.tail != null) {
-				sb.Append (",");
-				this.tail.BuildString (sb);
-			}
-		}
-
-	    public static Sequence<T> Singleton (T value)
-	    {
-	        return new Sequence<T> (value, null);
-	    }
-	}
 }

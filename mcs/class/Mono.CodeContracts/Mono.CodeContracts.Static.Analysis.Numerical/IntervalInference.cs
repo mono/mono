@@ -61,7 +61,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                          fullPoly.Left[0].IsSingleVariable (out x);
                          
                          Rational constraint;
-                         if (Rational.TryDiv (fullPoly.Right[0].Coeff, k, out constraint))
+                         if (Rational.TryDivide (fullPoly.Right[0].Coeff, k, out constraint))
                          {
                              TInterval interval;
                              if (k > 0L) // +x <= constraint
@@ -377,7 +377,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                      TVar x;
                      ax.IsSingleVariable (out x);
                      Rational div;
-                     if (Rational.TryDiv (k.Coeff, ax.Coeff, out div))
+                     if (Rational.TryDivide (k.Coeff, ax.Coeff, out div))
                      {
                          var intv = env.Eval (x);
 
@@ -418,7 +418,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                      TVar x;
                      ax.IsSingleVariable (out x);
                      Rational div;
-                     if (Rational.TryDiv (k.Coeff, ax.Coeff, out div))
+                     if (Rational.TryDivide (k.Coeff, ax.Coeff, out div))
                      {
                          var intv = env.Eval (x);
 

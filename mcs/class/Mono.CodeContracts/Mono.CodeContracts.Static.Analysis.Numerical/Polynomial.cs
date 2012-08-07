@@ -486,7 +486,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical
                     foreach (var n in right.left)
                     {
                         Rational mul;
-                        if (!Rational.TryMul(m.Coeff, n.Coeff, out mul))
+                        if (!Rational.TryMultiply(m.Coeff, n.Coeff, out mul))
                             return false.Without (out result);
 
                         list.Add (Monomial<Var>.From (mul, m.Variables.Concat (n.Variables)));

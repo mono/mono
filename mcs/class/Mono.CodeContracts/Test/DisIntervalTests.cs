@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-
 using Mono.CodeContracts.Static.Analysis.Numerical;
+using Mono.CodeContracts.Static.DataStructures;
 
 using NUnit.Framework;
 
@@ -45,35 +43,35 @@ namespace Test
 
         private Interval JoinAll (params Interval[] intervals)
         {
-            return DisInterval.JoinAll(new List<Interval>(intervals));
+            return DisInterval.JoinAll(Sequence<Interval>.From (intervals));
         }
 
         [Test]
         public void NormalizeTests()
         {
             bool isBottom;
-            CollectionAssert.AreEqual (
-                DisInterval.Normalize (new List<Interval> (new[] { _1__2, _3__4 }), out isBottom), new[] { _1__4 });
+            Assert.AreEqual (DisInterval.Normalize (Sequence<Interval>.From (_1__2, _3__4), out isBottom), 
+                             Sequence<Interval>.From (_1__4));
 
-            CollectionAssert.AreEqual(
-                DisInterval.Normalize(new List<Interval>(new[] { _1__4, _1__2 }), out isBottom), new[] { _1__4 });
+            Assert.AreEqual (DisInterval.Normalize (Sequence<Interval>.From (_1__4, _1__2), out isBottom),
+                         Sequence<Interval>.From (_1__4));
 
-            CollectionAssert.AreEqual(
-               DisInterval.Normalize(new List<Interval>(new[] { _1__2, _1__4 }), out isBottom), new[] { _1__4 });
+            Assert.AreEqual (DisInterval.Normalize (Sequence<Interval>.From (_1__2, _1__4), out isBottom),
+                         Sequence<Interval>.From (_1__4));
 
-            CollectionAssert.AreEqual(
-               DisInterval.Normalize(new List<Interval>(new[] { _1__4, _2__4 }), out isBottom), new[] { _1__4 });
-            
-            CollectionAssert.AreEqual(
-               DisInterval.Normalize(new List<Interval>(new[] { _1__3, _2__5 }), out isBottom), new[] { _1__5 });
+            Assert.AreEqual (DisInterval.Normalize (Sequence<Interval>.From (_1__4, _2__4), out isBottom),
+                         Sequence<Interval>.From (_1__4));
 
-            CollectionAssert.AreEqual(
-               DisInterval.Normalize(new List<Interval>(new[] { Interval.BottomValue, Interval.BottomValue }), out isBottom), new Interval[0] );
+            Assert.AreEqual (DisInterval.Normalize (Sequence<Interval>.From (_1__3, _2__5), out isBottom),
+                         Sequence<Interval>.From (_1__5));
+
+            Assert.AreEqual (DisInterval.Normalize (Sequence<Interval>.From (Interval.BottomValue, Interval.BottomValue), out isBottom),
+                         Sequence<Interval>.Empty);
             Assert.IsTrue (isBottom);
 
-            CollectionAssert.AreEqual(
-               DisInterval.Normalize(new List<Interval>(new[] { Interval.BottomValue }), out isBottom), new Interval[0]);
-            Assert.IsTrue(isBottom);
+            Assert.AreEqual (DisInterval.Normalize (Sequence<Interval>.From (Interval.BottomValue), out isBottom),
+                            Sequence<Interval>.Empty);
+            Assert.IsTrue (isBottom);
         }
 
         [Test]
