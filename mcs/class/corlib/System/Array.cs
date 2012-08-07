@@ -1522,23 +1522,27 @@ namespace System
 				do {
 					// Move the walls in
 					if (comparer != null) {
-						while (i < k && comparer.Compare (key, keys.GetValueImpl (i)) >= 0)
+						// find the first element with a value >= pivot value
+						while (i < k && comparer.Compare (key, keys.GetValueImpl (i)) > 0)
 							i++;
 						
-						while (k >= i && comparer.Compare (key, keys.GetValueImpl (k)) < 0)
+						// find the last element with a value <= pivot value
+						while (k > i && comparer.Compare (key, keys.GetValueImpl (k)) < 0)
 							k--;
 					} else if (cmp != null) {
-						while (i < k && cmp.CompareTo (keys.GetValueImpl (i)) >= 0)
+						// find the first element with a value >= pivot value
+						while (i < k && cmp.CompareTo (keys.GetValueImpl (i)) > 0)
 							i++;
 						
-						while (k >= i && cmp.CompareTo (keys.GetValueImpl (k)) < 0)
+						// find the last element with a value <= pivot value
+						while (k > i && cmp.CompareTo (keys.GetValueImpl (k)) < 0)
 							k--;
 					} else {
 						// This has the effect of moving the null values to the front if comparer is null
 						while (i < k && keys.GetValueImpl (i) == null)
 							i++;
 						
-						while (k >= i && keys.GetValueImpl (k) != null)
+						while (k > i && keys.GetValueImpl (k) != null)
 							k--;
 					}
 					
@@ -1547,45 +1551,34 @@ namespace System
 					
 					swap (keys, items, i, k);
 					
-					// make sure we keep track of our pivot element
-					if (mid == i)
-						mid = k;
-					else if (mid == k)
-						mid = i;
-					
 					i++;
 					k--;
 				} while (true);
-				
-				if (k != mid) {
-					// swap the pivot with the last element in the first partition
-					swap (keys, items, mid, k);
-				}
 				
 				// push our partitions onto the stack, largest first
 				// (to make sure we don't run out of stack space)
 				if ((high - k) >= (k - low)) {
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 					
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 				} else {
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 					
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 				}
@@ -1964,18 +1957,18 @@ namespace System
 				
 				do {
 					if (key != null) {
-						// find the first element with a value > pivot value
-						while (i < k && key.CompareTo (keys[i]) >= 0)
+						// find the first element with a value >= pivot value
+						while (i < k && key.CompareTo (keys[i]) > 0)
 							i++;
 						
 						// find the last element with a value <= pivot value
-						while (k >= i && key.CompareTo (keys[k]) < 0)
+						while (k > i && key.CompareTo (keys[k]) < 0)
 							k--;
 					} else {
 						while (i < k && keys[i] == null)
 							i++;
 						
-						while (k >= i && keys[k] != null)
+						while (k > i && keys[k] != null)
 							k--;
 					}
 					
@@ -1984,45 +1977,34 @@ namespace System
 					
 					swap (keys, items, i, k);
 					
-					// make sure we keep track of our pivot element
-					if (mid == i)
-						mid = k;
-					else if (mid == k)
-						mid = i;
-					
 					i++;
 					k--;
 				} while (true);
-				
-				if (k != mid) {
-					// swap the pivot with the last element in the first partition
-					swap (keys, items, mid, k);
-				}
 				
 				// push our partitions onto the stack, largest first
 				// (to make sure we don't run out of stack space)
 				if ((high - k) >= (k - low)) {
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 					
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 				} else {
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 					
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 				}
@@ -2084,8 +2066,8 @@ namespace System
 				
 				do {
 					if (key != null) {
-						// find the first element with a value > pivot value
-						while (i < k && key.CompareTo (keys[i]) >= 0)
+						// find the first element with a value >= pivot value
+						while (i < k && key.CompareTo (keys[i]) > 0)
 							i++;
 						
 						// find the last element with a value <= pivot value
@@ -2104,45 +2086,34 @@ namespace System
 					
 					swap (keys, i, k);
 					
-					// make sure we keep track of our pivot element
-					if (mid == i)
-						mid = k;
-					else if (mid == k)
-						mid = i;
-					
 					i++;
 					k--;
 				} while (true);
-				
-				if (k != mid) {
-					// swap the pivot with the last element in the first partition
-					swap (keys, mid, k);
-				}
 				
 				// push our partitions onto the stack, largest first
 				// (to make sure we don't run out of stack space)
 				if ((high - k) >= (k - low)) {
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 					
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 				} else {
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 					
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 				}
@@ -2303,29 +2274,35 @@ namespace System
 				do {
 					// Move the walls in
 					if (comparer != null) {
-						while (i < k && comparer.Compare (key, keys[i]) >= 0)
+						// find the first element with a value >= pivot value
+						while (i < k && comparer.Compare (key, keys[i]) > 0)
 							i++;
 						
-						while (k >= i && comparer.Compare (key, keys[k]) < 0)
+						// find the last element with a value <= pivot value
+						while (k > i && comparer.Compare (key, keys[k]) < 0)
 							k--;
 					} else {
 						if (gcmp != null) {
-							while (i < k && gcmp.CompareTo (keys[i]) >= 0)
+							// find the first element with a value >= pivot value
+							while (i < k && gcmp.CompareTo (keys[i]) > 0)
 								i++;
 							
-							while (k >= i && gcmp.CompareTo (keys[k]) < 0)
+							// find the last element with a value <= pivot value
+							while (k > i && gcmp.CompareTo (keys[k]) < 0)
 								k--;
 						} else if (cmp != null) {
-							while (i < k && cmp.CompareTo (keys[i]) >= 0)
+							// find the first element with a value >= pivot value
+							while (i < k && cmp.CompareTo (keys[i]) > 0)
 								i++;
 							
-							while (k >= i && cmp.CompareTo (keys[k]) < 0)
+							// find the last element with a value <= pivot value
+							while (k > i && cmp.CompareTo (keys[k]) < 0)
 								k--;
 						} else {
 							while (i < k && keys[i] == null)
 								i++;
 							
-							while (k >= i && keys[k] != null)
+							while (k > i && keys[k] != null)
 								k--;
 						}
 					}
@@ -2335,45 +2312,34 @@ namespace System
 					
 					swap<K, V> (keys, items, i, k);
 					
-					// make sure we keep track of our pivot element
-					if (mid == i)
-						mid = k;
-					else if (mid == k)
-						mid = i;
-					
 					i++;
 					k--;
 				} while (true);
-				
-				if (k != mid) {
-					// swap the pivot with the last element in the first partition
-					swap<K, V> (keys, items, mid, k);
-				}
 				
 				// push our partitions onto the stack, largest first
 				// (to make sure we don't run out of stack space)
 				if ((high - k) >= (k - low)) {
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 					
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 				} else {
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 					
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 				}
@@ -2454,29 +2420,35 @@ namespace System
 				do {
 					// Move the walls in
 					if (comparer != null) {
-						while (i < k && comparer.Compare (key, keys[i]) >= 0)
+						// find the first element with a value >= pivot value
+						while (i < k && comparer.Compare (key, keys[i]) > 0)
 							i++;
 						
-						while (k >= i && comparer.Compare (key, keys[k]) < 0)
+						// find the last element with a value <= pivot value
+						while (k > i && comparer.Compare (key, keys[k]) < 0)
 							k--;
 					} else {
 						if (gcmp != null) {
-							while (i < k && gcmp.CompareTo (keys[i]) >= 0)
+							// find the first element with a value >= pivot value
+							while (i < k && gcmp.CompareTo (keys[i]) > 0)
 								i++;
 							
-							while (k >= i && gcmp.CompareTo (keys[k]) < 0)
+							// find the last element with a value <= pivot value
+							while (k > i && gcmp.CompareTo (keys[k]) < 0)
 								k--;
 						} else if (cmp != null) {
-							while (i < k && cmp.CompareTo (keys[i]) >= 0)
+							// find the first element with a value >= pivot value
+							while (i < k && cmp.CompareTo (keys[i]) > 0)
 								i++;
 							
-							while (k >= i && cmp.CompareTo (keys[k]) < 0)
+							// find the last element with a value <= pivot value
+							while (k > i && cmp.CompareTo (keys[k]) < 0)
 								k--;
 						} else {
 							while (i < k && keys[i] == null)
 								i++;
 							
-							while (k >= i && keys[k] != null)
+							while (k > i && keys[k] != null)
 								k--;
 						}
 					}
@@ -2486,45 +2458,34 @@ namespace System
 					
 					swap<K> (keys, i, k);
 					
-					// make sure we keep track of our pivot element
-					if (mid == i)
-						mid = k;
-					else if (mid == k)
-						mid = i;
-					
 					i++;
 					k--;
 				} while (true);
-				
-				if (k != mid) {
-					// swap the pivot with the last element in the first partition
-					swap<K> (keys, mid, k);
-				}
 				
 				// push our partitions onto the stack, largest first
 				// (to make sure we don't run out of stack space)
 				if ((high - k) >= (k - low)) {
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 					
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 				} else {
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 					
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 				}
@@ -2598,18 +2559,18 @@ namespace System
 				do {
 					// Move the walls in
 					if (key != null) {
-						// find the first element with a value > pivot value
-						while (i < k && compare (key, array[i]) >= 0)
+						// find the first element with a value >= pivot value
+						while (i < k && compare (key, array[i]) > 0)
 							i++;
 						
 						// find the last element with a value <= pivot value
-						while (k >= i && compare (key, array[k]) < 0)
+						while (k > i && compare (key, array[k]) < 0)
 							k--;
 					} else {
 						while (i < k && array[i] == null)
 							i++;
 						
-						while (k >= i && array[k] != null)
+						while (k > i && array[k] != null)
 							k--;
 					}
 					
@@ -2618,45 +2579,34 @@ namespace System
 					
 					swap<T> (array, i, k);
 					
-					// make sure we keep track of our pivot element
-					if (mid == i)
-						mid = k;
-					else if (mid == k)
-						mid = i;
-					
 					i++;
 					k--;
 				} while (true);
-				
-				if (k != mid) {
-					// swap the pivot with the last element in the first partition
-					swap<T> (array, mid, k);
-				}
 				
 				// push our partitions onto the stack, largest first
 				// (to make sure we don't run out of stack space)
 				if ((high - k) >= (k - low)) {
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 					
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 				} else {
 					if ((k - 1) > low) {
-						stack[sp].high = k - 1;
+						stack[sp].high = k;
 						stack[sp].low = low;
 						sp++;
 					}
 					
 					if ((k + 1) < high) {
 						stack[sp].high = high;
-						stack[sp].low = k + 1;
+						stack[sp].low = k;
 						sp++;
 					}
 				}
