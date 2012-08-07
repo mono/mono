@@ -1505,23 +1505,23 @@ namespace System
 				do {
 					// Move the walls in
 					if (comparer != null) {
-						while (low < high0 && comparer.Compare (key, keys.GetValueImpl (low)) > 0)
+						while (low < high && comparer.Compare (key, keys.GetValueImpl (low)) > 0)
 							low++;
 
-						while (high > low0 && comparer.Compare (key, keys.GetValueImpl (high)) < 0)
+						while (high > low && comparer.Compare (key, keys.GetValueImpl (high)) < 0)
 							high--;
 					} else if (cmp != null) {
-						while (low < high0 && cmp.CompareTo (keys.GetValueImpl (low)) > 0)
+						while (low < high && cmp.CompareTo (keys.GetValueImpl (low)) > 0)
 							low++;
 
-						while (high > low0 && cmp.CompareTo (keys.GetValueImpl (high)) < 0)
+						while (high > low && cmp.CompareTo (keys.GetValueImpl (high)) < 0)
 							high--;
 					} else {
 						// This has the effect of moving the null values to the front if comparer is null
-						while (low < high0 && keys.GetValueImpl (low) == null)
+						while (low < high && keys.GetValueImpl (low) == null)
 							low++;
 
-						while (high > low0 && keys.GetValueImpl (high) != null)
+						while (high > low && keys.GetValueImpl (high) != null)
 							high--;
 					}
 
@@ -1911,17 +1911,17 @@ namespace System
 				do {
 					if (key != null) {
 						// find the first element with a value >= pivot value
-						while (low < high0 && key.CompareTo (keys[low]) > 0)
+						while (low < high && key.CompareTo (keys[low]) > 0)
 							low++;
 
 						// find the last element with a value <= pivot value
-						while (high > low0 && key.CompareTo (keys[high]) < 0)
+						while (high > low && key.CompareTo (keys[high]) < 0)
 							high--;
 					} else {
-						while (low < high0 && keys[low] == null)
+						while (low < high && keys[low] == null)
 							low++;
 
-						while (high > low0 && keys[high] != null)
+						while (high > low && keys[high] != null)
 							high--;
 					}
 
@@ -1994,17 +1994,17 @@ namespace System
 				do {
 					if (key != null) {
 						// find the first element with a value >= pivot value
-						while (low < high0 && key.CompareTo (keys[low]) > 0)
+						while (low < high && key.CompareTo (keys[low]) > 0)
 							low++;
 
 						// find the last element with a value <= pivot value
-						while (high > low0 && key.CompareTo (keys[high]) < 0)
+						while (high > low && key.CompareTo (keys[high]) < 0)
 							high--;
 					} else {
-						while (low < high0 && keys[low] == null)
+						while (low < high && keys[low] == null)
 							low++;
 
-						while (high > low0 && keys[high] != null)
+						while (high > low && keys[high] != null)
 							high--;
 					}
 
@@ -2175,29 +2175,29 @@ namespace System
 				do {
 					// Move the walls in
 					if (comparer != null) {
-						while (low < high0 && comparer.Compare (key, keys[low]) > 0)
+						while (low < high && comparer.Compare (key, keys[low]) > 0)
 							low++;
 
-						while (high > low0 && comparer.Compare (key, keys[high]) < 0)
+						while (high > low && comparer.Compare (key, keys[high]) < 0)
 							high--;
 					} else {
 						if (gcmp != null) {
-							while (low < high0 && gcmp.CompareTo (keys[low]) > 0)
+							while (low < high && gcmp.CompareTo (keys[low]) > 0)
 								low++;
 
-							while (high > low0 && gcmp.CompareTo (keys[high]) < 0)
+							while (high > low && gcmp.CompareTo (keys[high]) < 0)
 								high--;
 						} else if (cmp != null) {
-							while (low < high0 && cmp.CompareTo (keys[low]) > 0)
+							while (low < high && cmp.CompareTo (keys[low]) > 0)
 								low++;
 
-							while (high > low0 && cmp.CompareTo (keys[high]) < 0)
+							while (high > low && cmp.CompareTo (keys[high]) < 0)
 								high--;
 						} else {
-							while (low < high0 && keys[low] == null)
+							while (low < high && keys[low] == null)
 								low++;
 
-							while (high > low0 && keys[high] != null)
+							while (high > low && keys[high] != null)
 								high--;
 						}
 					}
@@ -2289,29 +2289,29 @@ namespace System
 				do {
 					// Move the walls in
 					if (comparer != null) {
-						while (low < high0 && comparer.Compare (key, keys[low]) > 0)
+						while (low < high && comparer.Compare (key, keys[low]) > 0)
 							low++;
 
-						while (high > low0 && comparer.Compare (key, keys[high]) < 0)
+						while (high > low && comparer.Compare (key, keys[high]) < 0)
 							high--;
 					} else {
 						if (gcmp != null) {
-							while (low < high0 && gcmp.CompareTo (keys[low]) > 0)
+							while (low < high && gcmp.CompareTo (keys[low]) > 0)
 								low++;
 
-							while (high > low0 && gcmp.CompareTo (keys[high]) < 0)
+							while (high > low && gcmp.CompareTo (keys[high]) < 0)
 								high--;
 						} else if (cmp != null) {
-							while (low < high0 && cmp.CompareTo (keys[low]) > 0)
+							while (low < high && cmp.CompareTo (keys[low]) > 0)
 								low++;
 
-							while (high > low0 && cmp.CompareTo (keys[high]) < 0)
+							while (high > low && cmp.CompareTo (keys[high]) < 0)
 								high--;
 						} else {
-							while (low < high0 && keys[low] == null)
+							while (low < high && keys[low] == null)
 								low++;
 
-							while (high > low0 && keys[high] != null)
+							while (high > low && keys[high] != null)
 								high--;
 						}
 					}
@@ -2396,11 +2396,11 @@ namespace System
 					// Move the walls in
 					if (key != null) {
 						// find the first element with a value >= pivot value
-						while (low < high0 && compare (key, array[low]) > 0)
+						while (low < high && compare (key, array[low]) > 0)
 							low++;
 
 						// find the last element with a value <= pivot value
-						while (high > low0 && compare (key, array[high]) < 0)
+						while (high > low && compare (key, array[high]) < 0)
 							high--;
 					} else {
 						while (low < high && array[low] == null)
