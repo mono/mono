@@ -2544,6 +2544,90 @@ namespace MonoTests.System.Net
 			};
 		}
 #endif
+
+		[Test]
+		public void CookieContainerTest ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 11002);
+			string url = "http://" + ep.ToString ();
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (CookieRequestHandler))) {
+				responder.Start ();
+
+				CookieContainer container = new CookieContainer ();
+				container.Add(new Uri (url), new Cookie ("foo", "bar"));
+				HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
+				request.CookieContainer = container;
+				WebHeaderCollection headers = request.Headers;
+				headers.Add("Cookie", "foo=baz");
+				HttpWebResponse response = (HttpWebResponse) request.GetResponse ();
+				string responseString = null;
+				using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
+					responseString = reader.ReadToEnd ();
+				}
+				response.Close ();
+				Assert.AreEqual (1, response.Cookies.Count, "#01");
+				Assert.AreEqual ("foo=bar", response.Headers.Get("Set-Cookie"), "#02");
+			}
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (CookieRequestHandler))) {
+				responder.Start ();
+
+				CookieContainer container = new CookieContainer ();
+				HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
+				request.CookieContainer = container;
+				WebHeaderCollection headers = request.Headers;
+				headers.Add("Cookie", "foo=baz");
+				HttpWebResponse response = (HttpWebResponse) request.GetResponse ();
+				string responseString = null;
+				using (StreamReader reader = new StreamReader (response.GetResponseStream ())) {
+					responseString = reader.ReadToEnd ();
+				}
+				response.Close ();
+				Assert.AreEqual (0, response.Cookies.Count, "#03");
+				Assert.AreEqual ("", response.Headers.Get("Set-Cookie"), "#04");
+			}
+		}
+
+		internal static byte[] CookieRequestHandler (Socket socket)
+		{
+			MemoryStream ms = new MemoryStream ();
+			byte[] buffer = new byte[4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				ms.Write(buffer, 0, bytesReceived);
+				// We don't check for Content-Length or anything else here, so we give the client a little time to write
+				// after sending the headers
+				Thread.Sleep(200);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
+			ms.Flush();
+			ms.Position = 0;
+			string cookies = string.Empty;
+			using (StreamReader sr = new StreamReader (ms, Encoding.UTF8)) {
+				string line;
+				while ((line = sr.ReadLine ()) != null) {
+					if (line.StartsWith ("Cookie:")) {
+						cookies = line.Substring ("cookie: ".Length);
+					}
+				}
+			}
+
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/xml");
+			sw.WriteLine ("Set-Cookie: " + cookies);
+			sw.WriteLine ("Content-Length: " + cookies.Length.ToString (CultureInfo.InvariantCulture));
+			sw.WriteLine ();
+			sw.Write (cookies);
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
 	}
 
 	[TestFixture]
