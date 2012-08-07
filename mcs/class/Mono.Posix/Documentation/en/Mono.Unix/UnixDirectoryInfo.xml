@@ -92,8 +92,13 @@
         <summary>Create the directory 
         <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.</summary>
         <remarks>This is identical to calling 
-        <see cref="M:Mono.Unix.UnixDirectoryInfo.Create" />
-        (<see cref="F:Mono.Unix.FileAccessPermissions.AllPermissions" />).</remarks>
+          <c><see cref="M:Mono.Unix.UnixDirectoryInfo.Create" />
+            (<see cref="F:Mono.Unix.FileAccessPermissions.AllPermissions" />)</c>.
+          <block subset="none" type="note">
+            The <c>Create</c> obeys the process'
+            <see cref="M:Mono.Unix.Native.Syscall.umask" /> value.
+          </block>
+        </remarks>
         <exception cref="T:System.UnauthorizedAccessException">
           <para>Search permission is denied for a component of 
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.
@@ -197,6 +202,10 @@
         <summary>Create the directory 
         <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.</summary>
         <remarks>
+          <block subset="none" type="note">
+            The <c>Create</c> obeys the process'
+            <see cref="M:Mono.Unix.Native.Syscall.umask" /> value.
+          </block>
         </remarks>
         <exception cref="T:System.UnauthorizedAccessException">
           <para>Search permission is denied for a component of 
