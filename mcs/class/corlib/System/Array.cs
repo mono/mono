@@ -1455,7 +1455,7 @@ namespace System
 		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
 		{
 			QSortStack[] stack = new QSortStack[32];
-			//const int QSORT_THRESHOLD = 7;
+			const int QSORT_THRESHOLD = 7;
 			int high, low, mid, i, k;
 			object key, hi, lo;
 			IComparable cmp;
@@ -1471,7 +1471,32 @@ namespace System
 				high = stack[sp].high;
 				low = stack[sp].low;
 				
-				// TODO: implement InsertionSort when QSORT_THRESHOLD reached
+				if ((low + QSORT_THRESHOLD) > high) {
+					// switch to insertion sort
+					for (i = low + 1; i <= high; i++) {
+						for (k = i; k > low; k--) {
+							lo = keys.GetValueImpl (k - 1);
+							hi = keys.GetValueImpl (k);
+							if (comparer != null) {
+								if (comparer.Compare (hi, lo) >= 0)
+									break;
+							} else {
+								if (lo == null)
+									break;
+								
+								if (hi != null) {
+									cmp = hi as IComparable;
+									if (cmp.CompareTo (lo) >= 0)
+										break;
+								}
+							}
+							
+							swap (keys, items, k - 1, k);
+						}
+					}
+					
+					continue;
+				}
 				
 				// calculate the middle element
 				mid = low + ((high - low) / 2);
