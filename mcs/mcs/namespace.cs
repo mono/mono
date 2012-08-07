@@ -900,13 +900,33 @@ namespace Mono.CSharp {
 				}
 			} else {
 				names_container.DefinedNames.Add (name, tc);
+
+				var tdef = tc.PartialContainer;
+				if (tdef != null) {
+					//
+					// Same name conflict in different namespace containers
+					//
+					var conflict = ns.GetAllTypes (name);
+					if (conflict != null) {
+						foreach (var e in conflict) {
+							if (e.Arity == mn.Arity) {
+								mc = (MemberCore) e.MemberDefinition;
+								break;
+							}
+						}
+					}
+
+					if (mc != null) {
+						Report.SymbolRelatedToPreviousError (mc);
+						Report.Error (101, tc.Location, "The namespace `{0}' already contains a definition for `{1}'",
+							GetSignatureForError (), mn.GetSignatureForError ());
+					} else {
+						ns.AddType (Module, tdef.Definition);
+					}
+				}
 			}
 
 			base.AddTypeContainer (tc);
-
-			var tdef = tc.PartialContainer;
-			if (tdef != null)
-				ns.AddType (Module, tdef.Definition);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
