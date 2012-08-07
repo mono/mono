@@ -2856,7 +2856,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < ga_u.Length; ++i)
 					score += ExactInference (ga_u [i], ga_v [i]);
 
-				return score > 0 ? 1 : 0;
+				return System.Math.Min (1, score);
 			}
 
 			// If V is one of the unfixed type arguments

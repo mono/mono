@@ -45820,6 +45820,27 @@
       </method>
     </type>
   </test>
+  <test name="test-848.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Foo[TEventArgs,TEventHandler](A`1[TEventHandler], System.Action`2[System.Object,TEventArgs])" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>39</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0(System.Object, System.String)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-85.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="145">

@@ -1095,9 +1095,19 @@ namespace Mono.CSharp {
 			if (d_params.Count != Parameters.Count)
 				return false;
 
+			var ptypes = Parameters.Types;
+			var dtypes = d_params.Types;
 			for (int i = 0; i < Parameters.Count; ++i) {
-				if (type_inference.ExactInference (Parameters.Types[i], d_params.Types[i]) == 0)
+				if (type_inference.ExactInference (ptypes[i], dtypes[i]) == 0) {
+					//
+					// Continue when 0 (quick path) does not mean inference failure. Checking for
+					// same type handles cases like int -> int
+					//
+					if (ptypes[i] == dtypes[i])
+						continue;
+
 					return false;
+				}
 			}
 
 			return true;
