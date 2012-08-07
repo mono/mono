@@ -1417,6 +1417,11 @@ namespace System
 			array [j] = val;
 		}
 		
+		struct QSortStack {
+			public int high;
+			public int low;
+		}
+		
 		static bool QSortArrange (Array keys, Array items, int lo, ref object v0, int hi, ref object v1, IComparer comparer)
 		{
 			IComparable cmp;
@@ -1447,14 +1452,25 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort (Array keys, Array items, int low, int high, IComparer comparer)
+		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
 		{
+			QSortStack[] stack = new QSortStack[32];
 			//const int QSORT_THRESHOLD = 7;
+			int high, low, mid, i, k;
 			object key, hi, lo;
 			IComparable cmp;
-			int mid, i, k;
+			int sp = 1;
+			
+			// initialize our stack
+			stack[0].high = high0;
+			stack[0].low = low0;
 			
 			do {
+				// pop the stack
+				sp--;
+				high = stack[sp].high;
+				low = stack[sp].low;
+				
 				// TODO: implement InsertionSort when QSORT_THRESHOLD reached
 				
 				// calculate the middle element
@@ -1521,19 +1537,34 @@ namespace System
 					swap (keys, items, mid, k);
 				}
 				
-				// recursively sort the smallest partition
-				if ((high - (k + 1)) < ((k - 1) - low)) {
-					if ((k + 1) < high)
-						qsort (keys, items, k + 1, high, comparer);
+				// push our partitions onto the stack, largest first
+				// (to make sure we don't run out of stack space)
+				if ((high - k) >= (k - low)) {
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 					
-					high = k - 1;
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 				} else {
-					if ((k - 1) > low)
-						qsort (keys, items, low, k - 1, comparer);
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 					
-					low = k + 1;
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 				}
-			} while (low < high);
+			} while (sp > 0);
 		}
 
 		private static void CheckComparerAvailable (Array keys, int low, int high)
@@ -1854,13 +1885,24 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort<T, U> (T[] keys, U[] items, int low, int high) where T : IComparable<T>
+		private static void qsort<T, U> (T[] keys, U[] items, int low0, int high0) where T : IComparable<T>
 		{
+			QSortStack[] stack = new QSortStack[32];
 			const int QSORT_THRESHOLD = 7;
-			int mid, i, k;
+			int high, low, mid, i, k;
+			int sp = 1;
 			T key;
 			
+			// initialize our stack
+			stack[0].high = high0;
+			stack[0].low = low0;
+			
 			do {
+				// pop the stack
+				sp--;
+				high = stack[sp].high;
+				low = stack[sp].low;
+				
 				if ((low + QSORT_THRESHOLD) > high) {
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
@@ -1876,7 +1918,7 @@ namespace System
 						}
 					}
 					
-					return;
+					continue;
 				}
 				
 				// calculate the middle element
@@ -1932,29 +1974,55 @@ namespace System
 					swap (keys, items, mid, k);
 				}
 				
-				// recursively sort the smallest partition
-				if ((high - (k + 1)) < ((k - 1) - low)) {
-					if ((k + 1) < high)
-						qsort (keys, items, k + 1, high);
+				// push our partitions onto the stack, largest first
+				// (to make sure we don't run out of stack space)
+				if ((high - k) >= (k - low)) {
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 					
-					high = k - 1;
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 				} else {
-					if ((k - 1) > low)
-						qsort (keys, items, low, k - 1);
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 					
-					low = k + 1;
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 				}
-			} while (low < high);
+			} while (sp > 0);
 		}		
 
 		// Specialized version for items==null
-		private static void qsort<T> (T[] keys, int low, int high) where T : IComparable<T>
+		private static void qsort<T> (T[] keys, int low0, int high0) where T : IComparable<T>
 		{
+			QSortStack[] stack = new QSortStack[32];
 			const int QSORT_THRESHOLD = 7;
-			int mid, i, k;
+			int high, low, mid, i, k;
+			int sp = 1;
 			T key;
-
+			
+			// initialize our stack
+			stack[0].high = high0;
+			stack[0].low = low0;
+			
 			do {
+				// pop the stack
+				sp--;
+				high = stack[sp].high;
+				low = stack[sp].low;
+				
 				if ((low + QSORT_THRESHOLD) > high) {
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
@@ -1970,7 +2038,7 @@ namespace System
 						}
 					}
 					
-					return;
+					continue;
 				}
 				
 				// calculate the middle element
@@ -2025,21 +2093,36 @@ namespace System
 					// swap the pivot with the last element in the first partition
 					swap (keys, mid, k);
 				}
-
-				// recursively sort the smallest partition
-				if ((high - (k + 1)) < ((k - 1) - low)) {
-					if ((k + 1) < high)
-						qsort (keys, k + 1, high);
+				
+				// push our partitions onto the stack, largest first
+				// (to make sure we don't run out of stack space)
+				if ((high - k) >= (k - low)) {
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 					
-					high = k - 1;
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 				} else {
-					if ((k - 1) > low)
-						qsort (keys, low, k - 1);
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 					
-					low = k + 1;
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 				}
-			} while (low < high);
-		}		
+			} while (sp > 0);
+		}
 		
 		static bool QSortArrange<K, V> (K [] keys, V [] items, int lo, int hi, IComparer<K> comparer)
 		{
@@ -2122,15 +2205,26 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort<K, V> (K [] keys, V [] items, int low, int high, IComparer<K> comparer)
+		private static void qsort<K, V> (K [] keys, V [] items, int low0, int high0, IComparer<K> comparer)
 		{
+			QSortStack[] stack = new QSortStack[32];
 			const int QSORT_THRESHOLD = 7;
+			int high, low, mid, i, k;
 			IComparable<K> gcmp;
 			IComparable cmp;
-			int mid, i, k;
+			int sp = 1;
 			K key;
 			
+			// initialize our stack
+			stack[0].high = high0;
+			stack[0].low = low0;
+			
 			do {
+				// pop the stack
+				sp--;
+				high = stack[sp].high;
+				low = stack[sp].low;
+				
 				if ((low + QSORT_THRESHOLD) > high) {
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
@@ -2160,7 +2254,7 @@ namespace System
 						}
 					}
 					
-					return;
+					continue;
 				}
 				
 				// calculate the middle element
@@ -2231,31 +2325,57 @@ namespace System
 					swap<K, V> (keys, items, mid, k);
 				}
 				
-				// recursively sort the smallest partition
-				if ((high - (k + 1)) < ((k - 1) - low)) {
-					if ((k + 1) < high)
-						qsort<K, V> (keys, items, k + 1, high, comparer);
+				// push our partitions onto the stack, largest first
+				// (to make sure we don't run out of stack space)
+				if ((high - k) >= (k - low)) {
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 					
-					high = k - 1;
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 				} else {
-					if ((k - 1) > low)
-						qsort<K, V> (keys, items, low, k - 1, comparer);
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 					
-					low = k + 1;
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 				}
-			} while (low < high);
+			} while (sp > 0);
 		}
 
 		// Specialized version for items==null
-		private static void qsort<K> (K [] keys, int low, int high, IComparer<K> comparer)
+		private static void qsort<K> (K [] keys, int low0, int high0, IComparer<K> comparer)
 		{
+			QSortStack[] stack = new QSortStack[32];
 			const int QSORT_THRESHOLD = 7;
+			int high, low, mid, i, k;
 			IComparable<K> gcmp;
 			IComparable cmp;
-			int mid, i, k;
+			int sp = 1;
 			K key;
 			
+			// initialize our stack
+			stack[0].high = high0;
+			stack[0].low = low0;
+			
 			do {
+				// pop the stack
+				sp--;
+				high = stack[sp].high;
+				low = stack[sp].low;
+				
 				if ((low + QSORT_THRESHOLD) > high) {
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
@@ -2285,7 +2405,7 @@ namespace System
 						}
 					}
 					
-					return;
+					continue;
 				}
 				
 				// calculate the middle element
@@ -2356,19 +2476,34 @@ namespace System
 					swap<K> (keys, mid, k);
 				}
 				
-				// recursively sort the smallest partition
-				if ((high - (k + 1)) < ((k - 1) - low)) {
-					if ((k + 1) < high)
-						qsort<K> (keys, k + 1, high, comparer);
+				// push our partitions onto the stack, largest first
+				// (to make sure we don't run out of stack space)
+				if ((high - k) >= (k - low)) {
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 					
-					high = k - 1;
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 				} else {
-					if ((k - 1) > low)
-						qsort<K> (keys, low, k - 1, comparer);
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 					
-					low = k + 1;
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 				}
-			} while (low < high);
+			} while (sp > 0);
 		}
 		
 		static bool QSortArrange<T> (T [] array, int lo, int hi, Comparison<T> compare)
@@ -2383,13 +2518,24 @@ namespace System
 			return false;
 		}
 		
-		private static void qsort<T> (T [] array, int low, int high, Comparison<T> compare)
+		private static void qsort<T> (T [] array, int low0, int high0, Comparison<T> compare)
 		{
+			QSortStack[] stack = new QSortStack[32];
 			const int QSORT_THRESHOLD = 7;
-			int mid, i, k;
+			int high, low, mid, i, k;
+			int sp = 1;
 			T key;
 			
+			// initialize our stack
+			stack[0].high = high0;
+			stack[0].low = low0;
+			
 			do {
+				// pop the stack
+				sp--;
+				high = stack[sp].high;
+				low = stack[sp].low;
+				
 				if ((low + QSORT_THRESHOLD) > high) {
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
@@ -2405,7 +2551,7 @@ namespace System
 						}
 					}
 					
-					return;
+					continue;
 				}
 				
 				// calculate the middle element
@@ -2462,19 +2608,34 @@ namespace System
 					swap<T> (array, mid, k);
 				}
 				
-				// recursively sort the smallest partition
-				if ((high - (k + 1)) < ((k - 1) - low)) {
-					if ((k + 1) < high)
-						qsort<T> (array, k + 1, high, compare);
+				// push our partitions onto the stack, largest first
+				// (to make sure we don't run out of stack space)
+				if ((high - k) >= (k - low)) {
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 					
-					high = k - 1;
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 				} else {
-					if ((k - 1) > low)
-						qsort<T> (array, low, k - 1, compare);
+					if ((k - 1) > low) {
+						stack[sp].high = k - 1;
+						stack[sp].low = low;
+						sp++;
+					}
 					
-					low = k + 1;
+					if ((k + 1) < high) {
+						stack[sp].high = high;
+						stack[sp].low = k + 1;
+						sp++;
+					}
 				}
-			} while (low < high);
+			} while (sp > 0);
 		}
 
 		private static void CheckComparerAvailable<K> (K [] keys, int low, int high)
