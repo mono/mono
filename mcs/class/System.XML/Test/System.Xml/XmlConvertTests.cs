@@ -366,6 +366,13 @@ namespace MonoTests.System.Xml
 			// Must not throw an exception...
 			Assert.IsNotNull ("-P10675199DT2H48M5.4775808S", XmlConvert.ToString (TimeSpan.MinValue));
 		}
+		
+		[Test]
+        public void TimeSpanToStringShouldNotHaveTimeSuffixIfTimeIsZero()
+        {
+            string s = XmlConvert.ToString(new TimeSpan(345, 0, 0, 0));
+            Assert.AreEqual("P345D", s);
+        }
 
 		[Test]
 		public void FromTimeSpan ()
