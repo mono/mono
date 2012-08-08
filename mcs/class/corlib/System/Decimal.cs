@@ -225,10 +225,10 @@ namespace System
 		{
 			if (bits == null) 
 			{
-				throw new ArgumentNullException (Locale.GetText ("Bits is a null reference"));
+				throw new ArgumentNullException (Locale.GetText ("bits is a null reference"));
 			}
 
-			if (bits.GetLength(0) != 4) 
+			if (bits.Length != 4) 
 			{
 				throw new ArgumentException (Locale.GetText ("bits does not contain four values"));
 			}
