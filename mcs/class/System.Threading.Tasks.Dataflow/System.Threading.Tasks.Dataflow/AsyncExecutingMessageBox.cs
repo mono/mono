@@ -54,6 +54,7 @@ namespace System.Threading.Tasks.Dataflow {
 
 		void ProcessQueueWithoutStart ()
 		{
+			// catch is needed here, if the Task-returning delegate throws exception itself
 			try {
 				int i = 0;
 				while (CanRun (i)) {
@@ -65,7 +66,7 @@ namespace System.Threading.Tasks.Dataflow {
 						if (processFinishedTask != null)
 							processFinishedTask (task);
 					} else if (task.IsFaulted) {
-						CompHelper.RequestFault (task.Exception);
+						CompHelper.RequestFault (task.Exception, false);
 						break;
 					} else {
 						task.ContinueWith (
@@ -75,7 +76,7 @@ namespace System.Threading.Tasks.Dataflow {
 					i++;
 				}
 			} catch (Exception e) {
-				CompHelper.RequestFault (e);
+				CompHelper.RequestFault (e, false);
 			}
 
 			FinishProcessQueue ();
@@ -84,7 +85,7 @@ namespace System.Threading.Tasks.Dataflow {
 		void TaskFinished (TTask task)
 		{
 			if (task.IsFaulted) {
-				CompHelper.RequestFault (task.Exception);
+				CompHelper.RequestFault (task.Exception, false);
 				FinishProcessQueue ();
 				return;
 			}

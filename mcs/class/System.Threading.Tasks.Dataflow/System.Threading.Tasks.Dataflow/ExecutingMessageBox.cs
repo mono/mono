@@ -51,7 +51,7 @@ namespace System.Threading.Tasks.Dataflow {
 					i++;
 				}
 			} catch (Exception e) {
-				CompHelper.RequestFault (e);
+				CompHelper.RequestFault (e, false);
 			}
 
 			FinishProcessQueue ();

@@ -21,6 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
 	/// This is used to implement a default behavior for Dataflow completion tracking
@@ -28,18 +32,19 @@ namespace System.Threading.Tasks.Dataflow {
 	/// and the CancellationToken option.
 	/// </summary>
 	class CompletionHelper {
-		readonly TaskCompletionSource<object> source;
+		readonly TaskCompletionSource<object> source =
+			new TaskCompletionSource<object> ();
 
 		readonly AtomicBoolean canFaultOrCancelImmediatelly =
 			new AtomicBoolean { Value = true };
 		readonly AtomicBoolean requestedFaultOrCancel =
 			new AtomicBoolean { Value = false };
 
-		Exception requestedException;
+		readonly ConcurrentQueue<Tuple<Exception, bool>> requestedExceptions =
+			new ConcurrentQueue<Tuple<Exception, bool>> ();
 
 		public CompletionHelper (DataflowBlockOptions options)
 		{
-			source = new TaskCompletionSource<object> ();
 			if (options != null)
 				SetOptions (options);
 		}
@@ -59,10 +64,30 @@ namespace System.Threading.Tasks.Dataflow {
 			set {
 				if (value) {
 					if (canFaultOrCancelImmediatelly.TrySet () && requestedFaultOrCancel.Value) {
-						if (requestedException == null)
-							Cancel ();
-						else
-							Fault (requestedException);
+						bool canAllBeIgnored = requestedExceptions.All (t => t.Item2);
+						if (canAllBeIgnored) {
+							Tuple<Exception, bool> tuple;
+							requestedExceptions.TryDequeue (out tuple);
+							var exception = tuple.Item1;
+							if (exception == null)
+								Cancel ();
+							else
+								Fault (exception);
+						} else {
+							Tuple<Exception, bool> tuple;
+							bool first = true;
+							var exceptions = new List<Exception> (requestedExceptions.Count);
+							while (requestedExceptions.TryDequeue (out tuple)) {
+								var exception = tuple.Item1;
+								bool canBeIgnored = tuple.Item2;
+								if (first || !canBeIgnored) {
+									if (exception != null)
+										exceptions.Add (exception);
+								}
+								first = false;
+							}
+							Fault (exceptions);
+						}
 					}
 				} else
 					canFaultOrCancelImmediatelly.Value = false;
@@ -81,7 +106,7 @@ namespace System.Threading.Tasks.Dataflow {
 			source.TrySetResult (null);
 		}
 
-		public void RequestFault (Exception exception)
+		public void RequestFault (Exception exception, bool canBeIgnored = true)
 		{
 			if (exception == null)
 				throw new ArgumentNullException ("exception");
@@ -89,22 +114,32 @@ namespace System.Threading.Tasks.Dataflow {
 			if (CanFaultOrCancelImmediatelly)
 				Fault (exception);
 			else {
-				Interlocked.CompareExchange (ref requestedException, exception, null);
+				// still need to store canBeIgnored, if we don't want to add locking here
+				if (!canBeIgnored || requestedExceptions.Count == 0)
+					requestedExceptions.Enqueue (Tuple.Create (exception, canBeIgnored));
 				requestedFaultOrCancel.Value = true;
 			}
 		}
 
-		void Fault (Exception ex)
+		void Fault (Exception exception)
 		{
-			source.TrySetException (ex);
+			source.TrySetException (exception);
+		}
+
+		void Fault (IEnumerable<Exception> exceptions)
+		{
+			source.TrySetException (exceptions);
 		}
 
 		void RequestCancel ()
 		{
 			if (CanFaultOrCancelImmediatelly)
 				Cancel ();
-			else
+			else {
+				if (requestedExceptions.Count == 0)
+					requestedExceptions.Enqueue (Tuple.Create<Exception, bool> (null, true));
 				requestedFaultOrCancel.Value = true;
+			}
 		}
 
 		void Cancel ()
