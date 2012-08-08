@@ -82,14 +82,11 @@ namespace System
 	}
 
 	[Serializable]
-	[DebuggerDisplay ("{DebuggerDisplay}")]
 	[DebuggerStepThrough]
 	public struct Nullable<T> where T: struct
 	{
 		#region Sync with runtime code
-		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
 		internal T value;
-		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
 		internal bool has_value;
 		#endregion
 
@@ -99,19 +96,10 @@ namespace System
 			this.value = value;
 		}
 
-		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
-		string DebuggerDisplay {
-			get {
-				return has_value ? value.ToString () : null;
-			}
-		}
-
-		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
 		public bool HasValue {
 			get { return has_value; }
 		}
 
-		[DebuggerBrowsable (DebuggerBrowsableState.Never)]
 		public T Value {
 			get { 
 				if (!has_value)
