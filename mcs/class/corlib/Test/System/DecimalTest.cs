@@ -1532,5 +1532,24 @@ namespace MonoTests.System
 
 			Assert.Fail ("Expected FormatException");
 		}
+
+		[Test]
+		[SetCulture("en-US")]
+		public void ParseZeros ()
+		{
+			var d = Decimal.Parse ("0.000");
+			var bits = Decimal.GetBits (d);
+			Assert.AreEqual (0, bits[0], "#1");
+			Assert.AreEqual (0, bits[1], "#2");
+			Assert.AreEqual (0, bits[2], "#3");
+			Assert.AreEqual (196608, bits[3], "#4");
+			Assert.AreEqual ("0.000", d.ToString (), "#5");
+
+			d = Decimal.Parse("0.000000000000000000000000000000000000000000000000000000000000000000");
+			Assert.AreEqual ("0.0000000000000000000000000000", d.ToString (), "#10");
+
+			d = Decimal.Parse ("0.");
+			Assert.AreEqual ("0", d.ToString (), "#11");
+		}
 	}
 }
