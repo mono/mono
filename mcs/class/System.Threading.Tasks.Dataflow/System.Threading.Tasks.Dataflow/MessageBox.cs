@@ -29,7 +29,7 @@ namespace System.Threading.Tasks.Dataflow {
 	/// In MessageBox we store message that have been offered to us so that they can be
 	/// later processed 
 	/// </summary>
-	internal class MessageBox<TInput> {
+	internal abstract class MessageBox<TInput> {
 		protected ITargetBlock<TInput> Target { get; set; }
 		protected CompletionHelper CompHelper { get; private set; }
 		readonly Func<bool> externalCompleteTester;
@@ -43,9 +43,14 @@ namespace System.Threading.Tasks.Dataflow {
 		int itemCount;
 		readonly AtomicBoolean postponedProcessing = new AtomicBoolean ();
 
+		// these two fields are used only in one special case
+		SpinLock consumingLock;
+		// this is necessary, because canAccept is not pure
+		bool canAcceptFromBefore;
+
 		protected BlockingCollection<TInput> MessageQueue { get; private set; }
 
-		public MessageBox (
+		protected MessageBox (
 			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
 			CompletionHelper compHelper, Func<bool> externalCompleteTester,
 			DataflowBlockOptions options, bool greedy = true, Func<bool> canAccept = null)
@@ -91,15 +96,38 @@ namespace System.Threading.Tasks.Dataflow {
 				return DataflowMessageStatus.Postponed;
 			}
 
-			if (consumeToAccept) {
-				bool consummed;
-				messageValue = source.ConsumeMessage (messageHeader, Target, out consummed);
-				if (!consummed)
-					return DataflowMessageStatus.NotAvailable;
-			}
+			// in this case, we need to use locking to make sure
+			// we don't consume when we can't accept
+			if (consumeToAccept && canAccept != null) {
+				bool lockTaken = false;
+				try {
+					consumingLock.Enter (ref lockTaken);
+					if (!canAcceptFromBefore && !canAccept ())
+						return DataflowMessageStatus.DecliningPermanently;
 
-			if (canAccept != null && !canAccept ())
-				return DataflowMessageStatus.DecliningPermanently;
+					bool consummed;
+					messageValue = source.ConsumeMessage (messageHeader, Target, out consummed);
+					if (!consummed) {
+						canAcceptFromBefore = true;
+						return DataflowMessageStatus.NotAvailable;
+					}
+
+					canAcceptFromBefore = false;
+				} finally {
+					if (lockTaken)
+						consumingLock.Exit ();
+				}
+			} else {
+				if (consumeToAccept) {
+					bool consummed;
+					messageValue = source.ConsumeMessage (messageHeader, Target, out consummed);
+					if (!consummed)
+						return DataflowMessageStatus.NotAvailable;
+				}
+
+				if (canAccept != null && !canAccept ())
+					return DataflowMessageStatus.DecliningPermanently;
+			}
 
 			try {
 				MessageQueue.Add (messageValue);

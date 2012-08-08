@@ -280,12 +280,16 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		{
 			return reserved.Contains (header);
 		}
+
+		public Action ConsumeWaiter { get; set; }
 			 
 		public T ConsumeMessage (DataflowMessageHeader messageHeader,
 		                         ITargetBlock<T> target, out bool messageConsumed)
 		{
 			T item;
 			if (messages.TryGetValue (messageHeader, out item)) {
+				if (ConsumeWaiter != null)
+					ConsumeWaiter ();
 				messages.Remove (messageHeader);
 				consumed.Add (messageHeader);
 				messageConsumed = true;

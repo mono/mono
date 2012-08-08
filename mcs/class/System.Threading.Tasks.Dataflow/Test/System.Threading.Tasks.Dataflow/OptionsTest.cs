@@ -375,5 +375,45 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.AreEqual (44, item);
 		}
 
+		[Test]
+		public void MaxNumberOfGroupsWithConsumeToAcceptTest ()
+		{
+			ITargetBlock<int> block = new BatchBlock<int> (1,
+				new GroupingDataflowBlockOptions { MaxNumberOfGroups = 1 });
+
+			var evt = new ManualResetEventSlim ();
+
+			Func<Task<Tuple<DataflowMessageStatus, bool>>> startTask =
+				() => Task.Factory.StartNew (
+					() =>
+					{
+						var sourceBlock = new TestSourceBlock<int> { ConsumeWaiter = evt.Wait };
+						var header = new DataflowMessageHeader (1);
+						sourceBlock.AddMessage (header, 1);
+						var status = block.OfferMessage (header, 1, sourceBlock, true);
+
+						return Tuple.Create (status, sourceBlock.WasConsumed (header));
+					});
+
+			var task1 = startTask ();
+			var task2 = startTask ();
+
+			Thread.Sleep (100);
+
+			Assert.IsFalse (task1.IsCompleted);
+			Assert.IsFalse (task2.IsCompleted);
+
+			evt.Set ();
+
+			Assert.IsTrue (Task.WaitAll (new Task[] { task1, task2 }, 100));
+
+			CollectionAssert.AreEquivalent (
+				new[]
+				{
+					Tuple.Create (DataflowMessageStatus.Accepted, true),
+					Tuple.Create (DataflowMessageStatus.DecliningPermanently, false)
+				},
+				new[] { task1.Result, task2.Result });
+		}
 	}
 }
