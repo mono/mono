@@ -1,4 +1,4 @@
-//
+﻿//
 // DateTimeTest.cs - NUnit Test Cases for the System.DateTime struct
 //
 // author:
@@ -2469,6 +2469,14 @@ namespace MonoTests.System
 			DateTimeOffset result = DateTimeOffset.Parse (testDateWithTimeZoneInfo, null, DateTimeStyles.RoundtripKind);
 
 			Assert.AreEqual (expectedUtcTics, result.UtcTicks);
+		}
+		
+		[Test]
+		public void Foo ()
+		{
+			var ci = new CultureInfo ("ru-RU");
+			var dt = new DateTime (2012, 9, 15);
+			Assert.AreEqual ("сентября 15", dt.ToString ("m", ci));
 		}
 	}
 }
