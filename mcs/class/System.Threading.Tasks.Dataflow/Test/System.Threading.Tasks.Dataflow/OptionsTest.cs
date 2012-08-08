@@ -342,5 +342,38 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (source.TryReceive (null, out item));
 			Assert.AreEqual (45, item);
 		}
+
+		[Test]
+		public void MaxMessagesBroadcastTest ()
+		{
+			var scheduler = new TestScheduler ();
+			var source = new BroadcastBlock<int> (
+				null, new DataflowBlockOptions { TaskScheduler = scheduler });
+			var target = new BufferBlock<int>(
+				new DataflowBlockOptions { TaskScheduler = scheduler, BoundedCapacity = 1 });
+			Assert.IsNotNull (
+				source.LinkTo (target, new DataflowLinkOptions { MaxMessages = 2 }));
+
+			// should be accepted
+			Assert.IsTrue (source.Post (42));
+			scheduler.ExecuteAll ();
+
+			// should be postponed, but counted into the limit
+			Assert.IsTrue (source.Post (43));
+			scheduler.ExecuteAll ();
+
+			// shouldn't be even offered for now
+			Assert.IsTrue (source.Post (44));
+			scheduler.ExecuteAll ();
+
+			int item;
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (42, item);
+
+			scheduler.ExecuteAll ();
+			Assert.IsTrue (target.TryReceive (out item));
+			Assert.AreEqual (44, item);
+		}
+
 	}
 }
