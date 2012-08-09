@@ -4646,7 +4646,7 @@ namespace Mono.CSharp
 							if (conv_false_expr is IntConstant && conv is Constant) {
 								type = true_type;
 								conv_false_expr = null;
-							} else if (conv.Type.BuiltinType == BuiltinTypeSpec.Type.Int && conv_false_expr is Constant) {
+							} else if (type.BuiltinType == BuiltinTypeSpec.Type.Int && conv_false_expr is Constant) {
 								conv_false_expr = null;
 							}
 						}
