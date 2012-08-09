@@ -1953,6 +1953,8 @@ namespace System
 
 			int ptr = 0;
 			int start = ptr;
+			var formatter = provider != null ? provider.GetFormat (typeof (ICustomFormatter)) as ICustomFormatter : null;
+
 			while (ptr < format.length) {
 				char c = format[ptr ++];
 
@@ -1981,21 +1983,21 @@ namespace System
 					object arg = args[n];
 
 					string str;
-					ICustomFormatter formatter = null;
-					if (provider != null)
-						formatter = provider.GetFormat (typeof (ICustomFormatter))
-							as ICustomFormatter;
 					if (arg == null)
 						str = Empty;
 					else if (formatter != null)
 						str = formatter.Format (arg_format, arg, provider);
-					else if (arg is IFormattable)
-						str = ((IFormattable)arg).ToString (arg_format, provider);
 					else
-						str = arg.ToString ();
+						str = null;
+
+					if (str == null) {
+						if (arg is IFormattable)
+							str = ((IFormattable)arg).ToString (arg_format, provider);
+						else
+							str = arg.ToString ();
+					}
 
 					// pad formatted string and append to result
-
 					if (width > str.length) {
 						const char padchar = ' ';
 						int padlen = width - str.length;
@@ -2008,9 +2010,9 @@ namespace System
 							result.Append (padchar, padlen);
 							result.Append (str);
 						}
-					}
-					else
+					} else {
 						result.Append (str);
+					}
 
 					start = ptr;
 				}

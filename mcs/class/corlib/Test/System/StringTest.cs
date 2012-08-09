@@ -24,6 +24,20 @@ namespace MonoTests.System
 [TestFixture]
 public class StringTest
 {
+	class NullFormatter : IFormatProvider, ICustomFormatter
+	{
+		public string Format (string format, object arg, IFormatProvider provider)
+		{
+			return null;
+		}
+
+		public object GetFormat (Type formatType)
+		{
+			return this;
+		}
+	}
+
+
 	private CultureInfo orgCulture;
 
 	[SetUp]
@@ -1159,6 +1173,13 @@ public class StringTest
 			Assert.IsNotNull (ex.Message, "#4");
 			Assert.AreEqual ("format", ex.ParamName, "#5");
 		}
+	}
+
+	[Test]
+	public void Format ()
+	{
+		var s = String.Format (new NullFormatter (), "{0:}", "test");
+		Assert.AreEqual ("test", s);
 	}
 
 	[Test]
