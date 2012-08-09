@@ -121,6 +121,9 @@ namespace System.ServiceModel.Description
 
 		internal void Validate ()
 		{
+			if (Contract.Operations.Count == 0)
+				throw new InvalidOperationException (String.Format ("ContractDescription '{0}' has zero operations; a contract must have at least one operation.", Contract.ContractType.Name));
+
 			foreach (IContractBehavior b in Contract.Behaviors)
 				b.Validate (Contract, this);
 			foreach (IEndpointBehavior b in Behaviors)
