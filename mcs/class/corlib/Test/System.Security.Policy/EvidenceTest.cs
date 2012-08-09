@@ -297,6 +297,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsNotNull (e.SyncRoot, "SyncRoot");
 		}
 
+#if !NET_4_0
 		[Test]
 		public void Equals_GetHashCode () 
 		{
@@ -312,6 +313,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreNotEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-3");
 			Assert.IsFalse (e2.Equals (e1), "e2.Equals(e1)");
 		}
+#endif
 
 		[Test]
 		public void Clear () 
