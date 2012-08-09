@@ -379,7 +379,6 @@ namespace Mono.Data.Sqlite
         return _keyInfo.GetDataTypeName(i - VisibleFieldCount);
 
       SQLiteType typ = GetSQLiteType(i);
-      if (typ.Type == DbType.Object) return SqliteConvert.SQLiteTypeToType(typ).Name;
       return _activeStatement._sql.ColumnType(_activeStatement, i, out typ.Affinity);
     }
 
