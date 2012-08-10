@@ -303,15 +303,15 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Evidence e1 = new Evidence ();
 			Evidence e2 = new Evidence ();
-			Assert.AreNotEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-1");
-			Assert.IsFalse (e1.Equals (e2), "e1.Equals(e2)");
+			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-1");
+			Assert.IsTrue (e1.Equals (e2), "e1.Equals(e2)");
 			e1.AddAssembly (String.Empty);
 			e2.AddAssembly (String.Empty);
-			Assert.AreNotEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-2");
+			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-2");
 			e1.AddHost (String.Empty);
 			e2.AddHost (String.Empty);
-			Assert.AreNotEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-3");
-			Assert.IsFalse (e2.Equals (e1), "e2.Equals(e1)");
+			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-3");
+			Assert.IsTrue (e2.Equals (e1), "e2.Equals(e1)");
 		}
 #endif
 
