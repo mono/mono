@@ -494,7 +494,11 @@ namespace System.Net
 				stream.ReadBuffer = cnc.buffer;
 				stream.ReadBufferOffset = pos;
 				stream.ReadBufferSize = nread;
-				stream.CheckResponseInBuffer ();
+				try {
+					stream.CheckResponseInBuffer ();
+				} catch (Exception e) {
+					cnc.HandleError (WebExceptionStatus.ReceiveFailure, e, "ReadDone7");
+				}
 			} else if (cnc.chunkStream == null) {
 				try {
 					cnc.chunkStream = new ChunkStream (cnc.buffer, pos, nread, data.Headers);
