@@ -102,10 +102,8 @@ namespace Mono.XBuild.CommandLine {
 				LoadResponseFile (responseFile);
 			}
 			foreach (string s in flatArguments) {
-				if (s [0] != '/')
+				if (s [0] != '/' || !ParseFlatArgument (s))
 					remainingArguments.Add (s);
-				else if (!ParseFlatArgument (s))
-					ReportError (1, "Unknown switch: " + s);
 			}
 			if (remainingArguments.Count == 0) {
 				string[] sln_files = Directory.GetFiles (Directory.GetCurrentDirectory (), "*.sln");
