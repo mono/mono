@@ -2463,6 +2463,29 @@ namespace MonoTests.System.Windows.Forms
 			catch (ArgumentOutOfRangeException) {
 			}
 		}
+
+        [Test] // Xamarin bug 3125
+        public void TestRemoveBug3125()
+        {
+            DataGridViewRow dgvr1 = new DataGridViewRow();
+            DataGridViewRow dgvr2 = new DataGridViewRow();
+            DataGridViewRow dgvr3 = new DataGridViewRow();
+
+            Assert.IsNull (dgvr1.DataGridView, "#1");
+            Assert.IsNull (dgvr2.DataGridView, "#2");
+            Assert.IsNull (dgvr3.DataGridView, "#3");
+
+            DataGridView dgv = new DataGridView();
+            dgv.Rows.Add(dgvr1);
+            dgv.Rows.Add(dgvr2);
+            dgv.Rows.Add(dgvr3);
+
+            dgv.Clear();
+
+            Assert.IsNull(dgvr1.DataGridView, "#4");
+            Assert.IsNull(dgvr2.DataGridView, "#5");
+            Assert.IsNull(dgvr3.DataGridView, "#6");
+        }
 	}
 	
 	[TestFixture]
