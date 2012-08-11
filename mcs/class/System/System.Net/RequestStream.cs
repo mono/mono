@@ -158,7 +158,7 @@ namespace System.Net {
 				ares.Count = count;
 				ares.Callback = cback;
 				ares.State = state;
-				ares.SynchRead = nread;
+				ares.SynchRead = Math.Max (0, nread);
 				ares.Complete ();
 				return ares;
 			}

@@ -100,7 +100,7 @@ namespace System.ServiceModel.Channels.Http
 					if (timeout == TimeSpan.MaxValue)
 						waitTimeout = TimeSpan.FromMilliseconds (int.MaxValue);
 					bool ret = ce.WaitHandle.WaitOne (waitTimeout);
-					return ret && TryDequeueRequest (channel, timeout - (DateTime.Now - start), out context); // recurse, am lazy :/
+					return ret && TryDequeueRequest (channel, waitTimeout - (DateTime.Now - start), out context); // recurse, am lazy :/
 				}
 				context = q.Dequeue ();
 				return true;

@@ -2017,7 +2017,8 @@ namespace System {
 		private UriParser Parser {
 			get {
 				if (parser == null) {
-					parser = UriParser.GetParser (Scheme);
+					if (isAbsoluteUri)
+						parser = UriParser.GetParser (Scheme);
 					// no specific parser ? then use a default one
 					if (parser == null)
 						parser = new DefaultUriParser ("*");
