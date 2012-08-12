@@ -1182,6 +1182,8 @@ namespace Mono.Debugger.Soft
 						if (cb == null) {
 							reply_packets [id] = packet;
 							Monitor.PulseAll (reply_packets_monitor);
+						} else {
+							reply_cbs.Remove (id);
 						}
 					}
 
