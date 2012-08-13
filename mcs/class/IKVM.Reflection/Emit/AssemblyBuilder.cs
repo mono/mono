@@ -27,6 +27,7 @@ using System.Configuration.Assemblies;
 using System.IO;
 using System.Diagnostics;
 using System.Globalization;
+using System.Resources;
 using System.Security.Cryptography;
 using System.Security;
 using IKVM.Reflection.Metadata;
@@ -72,6 +73,7 @@ namespace IKVM.Reflection.Emit
 			internal string Name;
 			internal string FileName;
 			internal ResourceAttributes Attributes;
+			internal ResourceWriter Writer;
 		}
 
 		internal AssemblyBuilder(Universe universe, AssemblyName name, string dir, PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPermissions)
@@ -297,6 +299,7 @@ namespace IKVM.Reflection.Emit
 
 			foreach (ModuleBuilder moduleBuilder in modules)
 			{
+				moduleBuilder.SetIsSaved();
 				moduleBuilder.PopulatePropertyAndEventTables();
 
 				if (manifestModule == null
@@ -403,6 +406,11 @@ namespace IKVM.Reflection.Emit
 
 			foreach (ResourceFile resfile in resourceFiles)
 			{
+				if (resfile.Writer != null)
+				{
+					resfile.Writer.Generate();
+					resfile.Writer.Close();
+				}
 				int fileToken = AddFile(manifestModule, resfile.FileName, 1 /*ContainsNoMetaData*/);
 				ManifestResourceTable.Record rec = new ManifestResourceTable.Record();
 				rec.Offset = 0;
@@ -417,6 +425,7 @@ namespace IKVM.Reflection.Emit
 			foreach (ModuleBuilder moduleBuilder in modules)
 			{
 				moduleBuilder.FillAssemblyRefTable();
+				moduleBuilder.EmitResources();
 				if (moduleBuilder != manifestModule)
 				{
 					int fileToken;
@@ -480,6 +489,30 @@ namespace IKVM.Reflection.Emit
 			resfile.FileName = fileName;
 			resfile.Attributes = attribs;
 			resourceFiles.Add(resfile);
+		}
+
+		public IResourceWriter DefineResource(string name, string description, string fileName)
+		{
+			return DefineResource(name, description, fileName, ResourceAttributes.Public);
+		}
+
+		public IResourceWriter DefineResource(string name, string description, string fileName, ResourceAttributes attribute)
+		{
+			// FXBUG we ignore the description, because there is no such thing
+
+			string fullPath = fileName;
+			if (dir != null)
+			{
+				fullPath = Path.Combine(dir, fileName);
+			}
+			ResourceWriter rw = new ResourceWriter(fullPath);
+			ResourceFile resfile;
+			resfile.Name = name;
+			resfile.FileName = fileName;
+			resfile.Attributes = attribute;
+			resfile.Writer = rw;
+			resourceFiles.Add(resfile);
+			return rw;
 		}
 
 		public void DefineVersionInfoResource()
@@ -708,6 +741,11 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			return list;
+		}
+
+		internal bool IsWindowsRuntime
+		{
+			get { return (flags & (AssemblyNameFlags)0x200) != 0; }
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -33,6 +33,12 @@ namespace IKVM.Reflection
 		Retargetable = 256,
 		EnableJITcompileOptimizer = 16384,
 		EnableJITcompileTracking = 32768,
+	}
+
+	public enum AssemblyContentType
+	{
+		Default = 0,
+		WindowsRuntime = 1,
 	}
 
 	[Flags]
@@ -290,5 +296,29 @@ namespace IKVM.Reflection
 		NXCompat = 0x0100,				// IMAGE_DLLCHARACTERISTICS_NX_COMPAT
 		AppContainer = 0x1000,			// IMAGE_DLLCHARACTERISTICS_APPCONTAINER
 		TerminalServerAware = 0x8000,	// IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE
+	}
+
+	// IKVM.Reflection specific type
+	[Flags]
+	public enum ImplMapFlags
+	{
+		NoMangle = 0x0001,
+		CharSetMask = 0x0006,
+		CharSetNotSpec = 0x0000,
+		CharSetAnsi = 0x0002,
+		CharSetUnicode = 0x0004,
+		CharSetAuto = 0x0006,
+		SupportsLastError = 0x0040,
+		CallConvMask = 0x0700,
+		CallConvWinapi = 0x0100,
+		CallConvCdecl = 0x0200,
+		CallConvStdcall = 0x0300,
+		CallConvThiscall = 0x0400,
+		CallConvFastcall = 0x0500,
+		// non-standard flags (i.e. CLR specific)
+		BestFitOn = 0x0010,
+		BestFitOff = 0x0020,
+		CharMapErrorOn = 0x1000,
+		CharMapErrorOff = 0x2000,
 	}
 }

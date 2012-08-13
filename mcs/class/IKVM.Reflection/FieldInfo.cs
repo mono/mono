@@ -130,6 +130,13 @@ namespace IKVM.Reflection
 			return this;
 		}
 
+		public abstract bool __TryGetFieldOffset(out int offset);
+
+		public bool __TryGetFieldMarshal(out FieldMarshal fieldMarshal)
+		{
+			return FieldMarshal.ReadFieldMarshal(this.Module, GetCurrentToken(), out fieldMarshal);
+		}
+
 		internal abstract int ImportTo(Emit.ModuleBuilder module);
 
 		internal virtual FieldInfo BindTypeParameters(Type type)
@@ -153,6 +160,29 @@ namespace IKVM.Reflection
 		internal sealed override MemberInfo SetReflectedType(Type type)
 		{
 			return new FieldInfoWithReflectedType(type, this);
+		}
+
+		internal sealed override List<CustomAttributeData> GetPseudoCustomAttributes(Type attributeType)
+		{
+			Module module = this.Module;
+			List<CustomAttributeData> list = new List<CustomAttributeData>();
+			if (attributeType == null || attributeType.IsAssignableFrom(module.universe.System_Runtime_InteropServices_MarshalAsAttribute))
+			{
+				FieldMarshal spec;
+				if (__TryGetFieldMarshal(out spec))
+				{
+					list.Add(CustomAttributeData.CreateMarshalAsPseudoCustomAttribute(module, spec));
+				}
+			}
+			if (attributeType == null || attributeType.IsAssignableFrom(module.universe.System_Runtime_InteropServices_FieldOffsetAttribute))
+			{
+				int offset;
+				if (__TryGetFieldOffset(out offset))
+				{
+					list.Add(CustomAttributeData.CreateFieldOffsetPseudoCustomAttribute(module, offset));
+				}
+			}
+			return list;
 		}
 	}
 
@@ -181,6 +211,11 @@ namespace IKVM.Reflection
 		public override int __FieldRVA
 		{
 			get { return field.__FieldRVA; }
+		}
+
+		public override bool __TryGetFieldOffset(out int offset)
+		{
+			return field.__TryGetFieldOffset(out offset);
 		}
 
 		public override Object GetRawConstantValue()
@@ -236,11 +271,6 @@ namespace IKVM.Reflection
 			return reflectedType.GetHashCode() ^ field.GetHashCode();
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return field.GetCustomAttributesData(attributeType);
-		}
-
 		public override int MetadataToken
 		{
 			get { return field.MetadataToken; }
@@ -259,6 +289,16 @@ namespace IKVM.Reflection
 		public override string ToString()
 		{
 			return field.ToString();
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return field.GetCurrentToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return field.IsBaked; }
 		}
 	}
 }

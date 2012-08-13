@@ -192,7 +192,11 @@ namespace IKVM.Reflection.Emit
 			rec.EventType = eventtype;
 			int token = 0x14000000 | typeBuilder.ModuleBuilder.Event.AddRecord(rec);
 
-			if (lazyPseudoToken != 0)
+			if (lazyPseudoToken == 0)
+			{
+				lazyPseudoToken = token;
+			}
+			else
 			{
 				typeBuilder.ModuleBuilder.RegisterTokenFixup(lazyPseudoToken, token);
 			}
@@ -254,6 +258,23 @@ namespace IKVM.Reflection.Emit
 					}
 				}
 				return false;
+			}
+		}
+
+		internal override bool IsBaked
+		{
+			get { return typeBuilder.IsBaked; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			if (typeBuilder.ModuleBuilder.IsSaved && typeBuilder.ModuleBuilder.IsPseudoToken(lazyPseudoToken))
+			{
+				return typeBuilder.ModuleBuilder.ResolvePseudoToken(lazyPseudoToken);
+			}
+			else
+			{
+				return lazyPseudoToken;
 			}
 		}
 	}

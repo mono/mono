@@ -27,6 +27,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
 using System.Security.Cryptography;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using IKVM.Reflection.Impl;
@@ -56,8 +57,8 @@ namespace IKVM.Reflection.Emit
 		internal readonly ByteBuffer initializedData = new ByteBuffer(512);
 		internal readonly ByteBuffer manifestResources = new ByteBuffer(512);
 		internal ResourceSection unmanagedResources;
-		private readonly Dictionary<MemberInfo, int> importedMembers = new Dictionary<MemberInfo, int>();
 		private readonly Dictionary<MemberRefKey, int> importedMemberRefs = new Dictionary<MemberRefKey, int>();
+		private readonly Dictionary<MethodSpecKey, int> importedMethodSpecs = new Dictionary<MethodSpecKey, int>();
 		private readonly Dictionary<Assembly, int> referencedAssemblies = new Dictionary<Assembly, int>();
 		private List<AssemblyName> referencedAssemblyNames;
 		private int nextPseudoToken = -1;
@@ -70,6 +71,32 @@ namespace IKVM.Reflection.Emit
 		internal readonly List<VTableFixups> vtablefixups = new List<VTableFixups>();
 		internal readonly List<UnmanagedExport> unmanagedExports = new List<UnmanagedExport>();
 		private List<InterfaceImplCustomAttribute> interfaceImplCustomAttributes;
+		private List<ResourceWriterRecord> resourceWriters;
+		private bool saved;
+
+		private struct ResourceWriterRecord
+		{
+			private readonly string name;
+			private readonly ResourceWriter rw;
+			private readonly MemoryStream mem;
+			private readonly ResourceAttributes attributes;
+
+			internal ResourceWriterRecord(string name, ResourceWriter rw, MemoryStream mem, ResourceAttributes attributes)
+			{
+				this.name = name;
+				this.rw = rw;
+				this.mem = mem;
+				this.attributes = attributes;
+			}
+
+			internal void Emit(ModuleBuilder mb)
+			{
+				rw.Generate();
+				mem.Position = 0;
+				mb.DefineManifestResource(name, mem, attributes);
+				rw.Close();
+			}
+		}
 
 		internal struct VTableFixups
 		{
@@ -119,6 +146,46 @@ namespace IKVM.Reflection.Emit
 			public override int GetHashCode()
 			{
 				return type.GetHashCode() + name.GetHashCode() + signature.GetHashCode();
+			}
+
+			internal MethodBase LookupMethod()
+			{
+				return type.FindMethod(name, (MethodSignature)signature);
+			}
+		}
+
+		struct MethodSpecKey : IEquatable<MethodSpecKey>
+		{
+			private readonly Type type;
+			private readonly string name;
+			private readonly MethodSignature signature;
+			private readonly Type[] genericParameters;
+
+			internal MethodSpecKey(Type type, string name, MethodSignature signature, Type[] genericParameters)
+			{
+				this.type = type;
+				this.name = name;
+				this.signature = signature;
+				this.genericParameters = genericParameters;
+			}
+
+			public bool Equals(MethodSpecKey other)
+			{
+				return other.type.Equals(type)
+					&& other.name == name
+					&& other.signature.Equals(signature)
+					&& Util.ArrayEquals(other.genericParameters, genericParameters);
+			}
+
+			public override bool Equals(object obj)
+			{
+				MethodSpecKey? other = obj as MethodSpecKey?;
+				return other != null && Equals(other);
+			}
+
+			public override int GetHashCode()
+			{
+				return type.GetHashCode() + name.GetHashCode() + signature.GetHashCode() + Util.GetHashCode(genericParameters);
 			}
 		}
 
@@ -366,7 +433,7 @@ namespace IKVM.Reflection.Emit
 			Debug.Assert(!customBuilder.IsPseudoCustomAttribute);
 			CustomAttributeTable.Record rec = new CustomAttributeTable.Record();
 			rec.Parent = token;
-			rec.Type = this.GetConstructorToken(customBuilder.Constructor).Token;
+			rec.Type = asm.IsWindowsRuntime ? customBuilder.Constructor.ImportTo(this) : GetConstructorToken(customBuilder.Constructor).Token;
 			rec.Value = customBuilder.WriteBlob(this);
 			this.CustomAttribute.AddRecord(rec);
 		}
@@ -454,6 +521,36 @@ namespace IKVM.Reflection.Emit
 			manifestResources.Position = savePosition;
 		}
 
+		public IResourceWriter DefineResource(string name, string description)
+		{
+			return DefineResource(name, description, ResourceAttributes.Public);
+		}
+
+		public IResourceWriter DefineResource(string name, string description, ResourceAttributes attribute)
+		{
+			// FXBUG we ignore the description, because there is no such thing
+
+			if (resourceWriters == null)
+			{
+				resourceWriters = new List<ResourceWriterRecord>();
+			}
+			MemoryStream mem = new MemoryStream();
+			ResourceWriter rw = new ResourceWriter(mem);
+			resourceWriters.Add(new ResourceWriterRecord(name, rw, mem, attribute));
+			return rw;
+		}
+
+		internal void EmitResources()
+		{
+			if (resourceWriters != null)
+			{
+				foreach (ResourceWriterRecord rwr in resourceWriters)
+				{
+					rwr.Emit(this);
+				}
+			}
+		}
+
 		public override Assembly Assembly
 		{
 			get { return asm; }
@@ -511,7 +608,7 @@ namespace IKVM.Reflection.Emit
 
 		public TypeToken GetTypeToken(Type type)
 		{
-			if (type.Module == this)
+			if (type.Module == this && !asm.IsWindowsRuntime)
 			{
 				return new TypeToken(type.GetModuleBuilderToken());
 			}
@@ -567,7 +664,7 @@ namespace IKVM.Reflection.Emit
 			}
 			else
 			{
-				return new FieldToken(ImportMember(field));
+				return new FieldToken(field.ImportTo(this));
 			}
 		}
 
@@ -580,7 +677,7 @@ namespace IKVM.Reflection.Emit
 			}
 			else
 			{
-				return new MethodToken(ImportMember(method));
+				return new MethodToken(method.ImportTo(this));
 			}
 		}
 
@@ -618,7 +715,7 @@ namespace IKVM.Reflection.Emit
 			}
 			if (IsFromGenericTypeDefinition(method))
 			{
-				return new MethodToken(ImportMember(method));
+				return new MethodToken(method.ImportTo(this));
 			}
 			else
 			{
@@ -626,16 +723,14 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
+		internal int GetMethodTokenWinRT(MethodInfo method)
+		{
+			return asm.IsWindowsRuntime ? method.ImportTo(this) : GetMethodToken(method).Token;
+		}
+
 		public MethodToken GetConstructorToken(ConstructorInfo constructor)
 		{
-			if (constructor.Module == this && constructor.GetMethodInfo() is MethodBuilder)
-			{
-				return new MethodToken(constructor.MetadataToken);
-			}
-			else
-			{
-				return new MethodToken(ImportMember(constructor));
-			}
+			return GetMethodToken(constructor.GetMethodInfo());
 		}
 
 		// new in .NET 4.5
@@ -649,32 +744,11 @@ namespace IKVM.Reflection.Emit
 			return __GetMethodToken(constructor.GetMethodInfo(), optionalParameterTypes, customModifiers);
 		}
 
-		internal int ImportMember(MethodBase member)
-		{
-			int token;
-			if (!importedMembers.TryGetValue(member, out token))
-			{
-				token = member.ImportTo(this);
-				importedMembers.Add(member, token);
-			}
-			return token;
-		}
-
-		internal int ImportMember(FieldInfo member)
-		{
-			int token;
-			if (!importedMembers.TryGetValue(member, out token))
-			{
-				token = member.ImportTo(this);
-				importedMembers.Add(member, token);
-			}
-			return token;
-		}
-
 		internal int ImportMethodOrField(Type declaringType, string name, Signature sig)
 		{
 			int token;
-			if (!importedMemberRefs.TryGetValue(new MemberRefKey(declaringType, name, sig), out token))
+			MemberRefKey key = new MemberRefKey(declaringType, name, sig);
+			if (!importedMemberRefs.TryGetValue(key, out token))
 			{
 				MemberRefTable.Record rec = new MemberRefTable.Record();
 				rec.Class = GetTypeTokenForMemberRef(declaringType);
@@ -683,7 +757,35 @@ namespace IKVM.Reflection.Emit
 				sig.WriteSig(this, bb);
 				rec.Signature = this.Blobs.Add(bb);
 				token = 0x0A000000 | this.MemberRef.AddRecord(rec);
-				importedMemberRefs.Add(new MemberRefKey(declaringType, name, sig), token);
+				importedMemberRefs.Add(key, token);
+			}
+			return token;
+		}
+
+		internal int ImportMethodSpec(Type declaringType, MethodInfo method, Type[] genericParameters)
+		{
+			Debug.Assert(method.__IsMissing || method.GetMethodOnTypeDefinition() == method);
+			int token;
+			MethodSpecKey key = new MethodSpecKey(declaringType, method.Name, method.MethodSignature, genericParameters);
+			if (!importedMethodSpecs.TryGetValue(key, out token))
+			{
+				MethodSpecTable.Record rec = new MethodSpecTable.Record();
+				MethodBuilder mb = method as MethodBuilder;
+				if (mb != null && mb.ModuleBuilder == this && !declaringType.IsGenericType)
+				{
+					rec.Method = mb.MetadataToken;
+				}
+				else
+				{
+					// we're calling ImportMethodOrField directly here, because 'method' may be a MethodDef on a generic TypeDef and 'declaringType' the type instance
+					// (in order words the method and type have already been decoupled by the caller)
+					rec.Method = ImportMethodOrField(declaringType, method.Name, method.MethodSignature);
+				}
+				Writer.ByteBuffer spec = new Writer.ByteBuffer(10);
+				Signature.WriteMethodSpec(this, spec, genericParameters);
+				rec.Instantiation = this.Blobs.Add(spec);
+				token = 0x2B000000 | this.MethodSpec.FindOrAddRecord(rec);
+				importedMethodSpecs.Add(key, token);
 			}
 			return token;
 		}
@@ -693,7 +795,7 @@ namespace IKVM.Reflection.Emit
 			int token;
 			if (!typeTokens.TryGetValue(type, out token))
 			{
-				if (type.HasElementType || type.IsGenericTypeInstance || type.__IsFunctionPointer)
+				if (type.HasElementType || type.IsConstructedGenericType || type.__IsFunctionPointer)
 				{
 					ByteBuffer spec = new ByteBuffer(5);
 					Signature.WriteTypeSpec(this, spec, type);
@@ -705,6 +807,10 @@ namespace IKVM.Reflection.Emit
 					if (type.IsNested)
 					{
 						rec.ResolutionScope = GetTypeToken(type.DeclaringType).Token;
+					}
+					else if (type.Module == this)
+					{
+						rec.ResolutionScope = 1;
 					}
 					else
 					{
@@ -758,6 +864,10 @@ namespace IKVM.Reflection.Emit
 			if ((name.RawFlags & afPA_Specified) != 0)
 			{
 				rec.Flags |= (int)(name.RawFlags & afPA_Mask);
+			}
+			if (name.ContentType == AssemblyContentType.WindowsRuntime)
+			{
+				rec.Flags |= 0x0200;
 			}
 			byte[] publicKeyOrToken = null;
 			if (usePublicKeyAssemblyReference)
@@ -1132,9 +1242,9 @@ namespace IKVM.Reflection.Emit
 			get { return this; }
 		}
 
-		public override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		internal override Type ResolveType(int metadataToken, IGenericContext context)
 		{
-			if (genericTypeArguments != null || genericMethodArguments != null)
+			if (metadataToken >> 24 != TypeDefTable.Index)
 			{
 				throw new NotImplementedException();
 			}
@@ -1150,11 +1260,11 @@ namespace IKVM.Reflection.Emit
 			// this method is inefficient, but since it isn't used we don't care
 			if ((metadataToken >> 24) == MemberRefTable.Index)
 			{
-				foreach (KeyValuePair<MemberInfo, int> kv in importedMembers)
+				foreach (KeyValuePair<MemberRefKey, int> kv in importedMemberRefs)
 				{
 					if (kv.Value == metadataToken)
 					{
-						return (MethodBase)kv.Key;
+						return kv.Key.LookupMethod();
 					}
 				}
 			}
@@ -1378,6 +1488,7 @@ namespace IKVM.Reflection.Emit
 
 		private void SaveImpl(Stream streamOrNull, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
+			SetIsSaved();
 			PopulatePropertyAndEventTables();
 			IList<CustomAttributeData> attributes = asm.GetCustomAttributesData(null);
 			if (attributes.Count > 0)
@@ -1416,6 +1527,7 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			FillAssemblyRefTable();
+			EmitResources();
 			ModuleWriter.WriteModule(null, null, this, PEFileKinds.Dll, portableExecutableKind, imageFileMachine, unmanagedResources, 0, streamOrNull);
 		}
 
@@ -1609,6 +1721,25 @@ namespace IKVM.Reflection.Emit
 				token = ResolvePseudoToken(token);
 			}
 		}
+
+		internal void SetIsSaved()
+		{
+			if (saved)
+			{
+				throw new InvalidOperationException();
+			}
+			saved = true;
+		}
+
+		internal bool IsSaved
+		{
+			get { return saved; }
+		}
+
+		internal override string GetString(int index)
+		{
+			return this.Strings.Find(index);
+		}
 	}
 
 	struct UnmanagedExport
@@ -1708,7 +1839,7 @@ namespace IKVM.Reflection.Emit
 
 		public override Module Module
 		{
-			// like .NET, we return the module that GetArrayMethod was called on, not the module associated with the array type
+			// FXBUG like .NET, we return the module that GetArrayMethod was called on, not the module associated with the array type
 			get { return module; }
 		}
 
@@ -1724,6 +1855,7 @@ namespace IKVM.Reflection.Emit
 
 		public override ParameterInfo ReturnParameter
 		{
+			// FXBUG like .NET, we throw NotImplementedException
 			get { throw new NotImplementedException(); }
 		}
 
@@ -1735,6 +1867,16 @@ namespace IKVM.Reflection.Emit
 		internal override bool HasThis
 		{
 			get { return (callingConvention & (CallingConventions.HasThis | CallingConventions.ExplicitThis)) == CallingConventions.HasThis; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return this.MetadataToken;
+		}
+
+		internal override bool IsBaked
+		{
+			get { return arrayClass.IsBaked; }
 		}
 	}
 }

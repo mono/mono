@@ -223,10 +223,9 @@ namespace IKVM.Reflection.Writer
 			}
 		}
 
-		internal void WriteHasCustomAttribute(int encodedToken)
+		internal void WriteHasCustomAttribute(int token)
 		{
-			// NOTE because we've already had to do the encoding (to be able to sort the table)
-			// here we simple write the value
+			int encodedToken = CustomAttributeTable.EncodeHasCustomAttribute(token);
 			if (bigHasCustomAttribute)
 			{
 				Write(encodedToken);
@@ -440,10 +439,9 @@ namespace IKVM.Reflection.Writer
 			}
 		}
 
-		internal void WriteHasConstant(int encodedToken)
+		internal void WriteHasConstant(int token)
 		{
-			// NOTE because we've already had to do the encoding (to be able to sort the table)
-			// here we simple write the value
+			int encodedToken = ConstantTable.EncodeHasConstant(token);
 			if (bigHasConstant)
 			{
 				Write(encodedToken);
@@ -547,13 +545,12 @@ namespace IKVM.Reflection.Writer
 			}
 		}
 
-		internal void WriteHasFieldMarshal(int encodedToken)
+		internal void WriteHasFieldMarshal(int token)
 		{
-			// NOTE because we've already had to do the encoding (to be able to sort the table)
-			// here we simple write the value
+			int encodedToken = FieldMarshalTable.EncodeHasFieldMarshal(token);
 			if (bigHasFieldMarshal)
 			{
-				Write(encodedToken & 0xFFFFFF);
+				Write(encodedToken);
 			}
 			else
 			{

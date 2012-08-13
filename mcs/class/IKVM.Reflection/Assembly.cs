@@ -165,7 +165,7 @@ namespace IKVM.Reflection
 
 		public static string CreateQualifiedName(string assemblyName, string typeName)
 		{
-			return assemblyName == null ? typeName : typeName + ", " + assemblyName;
+			return typeName + ", " + assemblyName;
 		}
 
 		public static Assembly GetAssembly(Type type)

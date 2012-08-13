@@ -358,7 +358,8 @@ namespace IKVM.Reflection
 			get { return false; }
 		}
 
-		internal virtual bool IsGenericTypeInstance
+		// .NET 4.5 API
+		public virtual bool IsConstructedGenericType
 		{
 			get { return false; }
 		}
@@ -754,7 +755,6 @@ namespace IKVM.Reflection
 
 		private static void AddInterfaces(List<Type> list, Type type)
 		{
-			type.CheckBaked();
 			foreach (Type iface in type.__GetDeclaredInterfaces())
 			{
 				if (!list.Contains(iface))
@@ -801,7 +801,7 @@ namespace IKVM.Reflection
 								{
 									baseMethods = new List<MethodInfo>();
 								}
-								else if (FindMethod(baseMethods, mi.GetBaseDefinition()))
+								else if (baseMethods.Contains(mi.GetBaseDefinition()))
 								{
 									continue;
 								}
@@ -813,18 +813,6 @@ namespace IKVM.Reflection
 				}
 			}
 			return list.ToArray();
-		}
-
-		private static bool FindMethod(List<MethodInfo> methods, MethodInfo method)
-		{
-			foreach (MethodInfo m in methods)
-			{
-				if (m.Name == method.Name && m.MethodSignature.Equals(method.MethodSignature))
-				{
-					return true;
-				}
-			}
-			return false;
 		}
 
 		public MethodInfo[] GetMethods()
@@ -894,10 +882,32 @@ namespace IKVM.Reflection
 
 		public ConstructorInfo GetConstructor(BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers)
 		{
+			ConstructorInfo ci1 = null;
+			if ((bindingAttr & BindingFlags.Instance) != 0)
+			{
+				ci1 = GetConstructorImpl(ConstructorInfo.ConstructorName, bindingAttr, binder, types, modifiers);
+			}
+			if ((bindingAttr & BindingFlags.Static) != 0)
+			{
+				ConstructorInfo ci2 = GetConstructorImpl(ConstructorInfo.TypeConstructorName, bindingAttr, binder, types, modifiers);
+				if (ci2 != null)
+				{
+					if (ci1 != null)
+					{
+						throw new AmbiguousMatchException();
+					}
+					return ci2;
+				}
+			}
+			return ci1;
+		}
+
+		private ConstructorInfo GetConstructorImpl(string name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers)
+		{
 			// first we try an exact match and only if that fails we fall back to using the binder
-			return GetMemberByName<ConstructorInfo>(ConstructorInfo.ConstructorName, bindingAttr | BindingFlags.DeclaredOnly,
+			return GetMemberByName<ConstructorInfo>(name, bindingAttr | BindingFlags.DeclaredOnly,
 				delegate(ConstructorInfo ctor) { return ctor.MethodSignature.MatchParameterTypes(types); })
-				?? GetMethodWithBinder<ConstructorInfo>(ConstructorInfo.ConstructorName, bindingAttr, binder ?? DefaultBinder, types, modifiers);
+				?? GetMethodWithBinder<ConstructorInfo>(name, bindingAttr, binder ?? DefaultBinder, types, modifiers);
 		}
 
 		public ConstructorInfo GetConstructor(BindingFlags bindingAttr, Binder binder, CallingConventions callingConvention, Type[] types, ParameterModifier[] modifiers)
@@ -1503,7 +1513,6 @@ namespace IKVM.Reflection
 			get { return Module.Assembly; }
 		}
 
-		// note that interface/delegate co- and contravariance is not considered
 		public bool IsAssignableFrom(Type type)
 		{
 			if (this.Equals(type))
@@ -1528,13 +1537,24 @@ namespace IKVM.Reflection
 				Type e2 = type.GetElementType();
 				return e1.IsValueType == e2.IsValueType && e1.IsAssignableFrom(e2);
 			}
+			else if (this.IsCovariant(type))
+			{
+				return true;
+			}
 			else if (this.IsSealed)
 			{
 				return false;
 			}
 			else if (this.IsInterface)
 			{
-				return Array.IndexOf(type.GetInterfaces(), this) != -1;
+				foreach (Type iface in type.GetInterfaces())
+				{
+					if (this.Equals(iface) || this.IsCovariant(iface))
+					{
+						return true;
+					}
+				}
+				return false;
 			}
 			else if (type.IsInterface)
 			{
@@ -1548,6 +1568,48 @@ namespace IKVM.Reflection
 			{
 				return type.IsSubclassOf(this);
 			}
+		}
+
+		private bool IsCovariant(Type other)
+		{
+			if (this.IsConstructedGenericType
+				&& other.IsConstructedGenericType
+				&& this.GetGenericTypeDefinition() == other.GetGenericTypeDefinition())
+			{
+				Type[] typeParameters = GetGenericTypeDefinition().GetGenericArguments();
+				for (int i = 0; i < typeParameters.Length; i++)
+				{
+					Type t1 = this.GetGenericTypeArgument(i);
+					Type t2 = other.GetGenericTypeArgument(i);
+					if (t1.IsValueType != t2.IsValueType)
+					{
+						return false;
+					}
+					switch (typeParameters[i].GenericParameterAttributes & GenericParameterAttributes.VarianceMask)
+					{
+						case GenericParameterAttributes.Covariant:
+							if (!t1.IsAssignableFrom(t2))
+							{
+								return false;
+							}
+							break;
+						case GenericParameterAttributes.Contravariant:
+							if (!t2.IsAssignableFrom(t1))
+							{
+								return false;
+							}
+							break;
+						case GenericParameterAttributes.None:
+							if (t1 != t2)
+							{
+								return false;
+							}
+							break;
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 
 		public bool IsSubclassOf(Type type)
@@ -1711,7 +1773,7 @@ namespace IKVM.Reflection
 		{
 			get
 			{
-				IList<CustomAttributeData> cad = GetCustomAttributesData(this.Module.universe.System_AttributeUsageAttribute);
+				IList<CustomAttributeData> cad = CustomAttributeData.__GetCustomAttributes(this, this.Module.universe.System_AttributeUsageAttribute, false);
 				if (cad.Count == 1)
 				{
 					foreach (CustomAttributeNamedArgument arg in cad[0].NamedArguments)
@@ -1835,7 +1897,10 @@ namespace IKVM.Reflection
 
 		private bool ResolvePotentialEnumOrValueType()
 		{
-			if (this.Assembly == this.Universe.Mscorlib || this.Assembly.GetName().Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase))
+			if (this.Assembly == this.Universe.Mscorlib
+				|| this.Assembly.GetName().Name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase)
+				// check if mscorlib forwards the type (.NETCore profile reference mscorlib forwards System.Enum and System.ValueType to System.Runtime.dll)
+				|| this.Universe.Mscorlib.FindType(new TypeName(__Namespace, __Name)) == this)
 			{
 				typeFlags = (typeFlags & ~TypeFlags.PotentialEnumOrValueType) | TypeFlags.EnumOrValueType;
 				return true;
@@ -1856,11 +1921,6 @@ namespace IKVM.Reflection
 			}
 		}
 
-		internal virtual IList<CustomAttributeData> GetInterfaceImplCustomAttributes(Type interfaceType, Type attributeType)
-		{
-			throw new NotSupportedException();
-		}
-
 		internal virtual Universe Universe
 		{
 			get { return Module.universe; }
@@ -1874,6 +1934,17 @@ namespace IKVM.Reflection
 		internal sealed override MemberInfo SetReflectedType(Type type)
 		{
 			throw new InvalidOperationException();
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return this.MetadataToken;
+		}
+
+		internal sealed override List<CustomAttributeData> GetPseudoCustomAttributes(Type attributeType)
+		{
+			// types don't have pseudo custom attributes
+			return null;
 		}
 	}
 
@@ -1988,14 +2059,20 @@ namespace IKVM.Reflection
 			elementType.CheckBaked();
 		}
 
-		internal sealed override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return CustomAttributeData.EmptyList;
-		}
-
 		internal sealed override Universe Universe
 		{
 			get { return elementType.Universe; }
+		}
+
+		internal sealed override bool IsBaked
+		{
+			get { return elementType.IsBaked; }
+		}
+
+		internal sealed override int GetCurrentToken()
+		{
+			// we don't have a token, so we return 0 (which is never a valid token)
+			return 0;
 		}
 
 		internal abstract string GetSuffix();
@@ -2292,6 +2369,12 @@ namespace IKVM.Reflection
 				return new CustomModifiers();
 			}
 
+			public override bool __TryGetFieldMarshal(out FieldMarshal fieldMarshal)
+			{
+				fieldMarshal = new FieldMarshal();
+				return false;
+			}
+
 			public override MemberInfo Member
 			{
 				get { return method.IsConstructor ? (MethodBase)new ConstructorInfoImpl(method) : method; }
@@ -2299,7 +2382,7 @@ namespace IKVM.Reflection
 
 			public override int MetadataToken
 			{
-				get { return 0x8000000; }
+				get { return 0x08000000; }
 			}
 
 			internal override Module Module
@@ -2668,7 +2751,7 @@ namespace IKVM.Reflection
 			get { return true; }
 		}
 
-		internal override bool IsGenericTypeInstance
+		public override bool IsConstructedGenericType
 		{
 			get { return true; }
 		}
@@ -2757,9 +2840,14 @@ namespace IKVM.Reflection
 			return this;
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
+		internal override int GetCurrentToken()
 		{
-			return type.GetCustomAttributesData(attributeType);
+			return type.GetCurrentToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return type.IsBaked; }
 		}
 	}
 
@@ -2836,6 +2924,11 @@ namespace IKVM.Reflection
 		{
 			return "<FunctionPtr>";
 		}
+
+		internal override bool IsBaked
+		{
+			get { return true; }
+		}
 	}
 
 	sealed class MarkerType : Type
@@ -2874,6 +2967,11 @@ namespace IKVM.Reflection
 		}
 
 		public override Module Module
+		{
+			get { throw new InvalidOperationException(); }
+		}
+
+		internal override bool IsBaked
 		{
 			get { throw new InvalidOperationException(); }
 		}

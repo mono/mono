@@ -111,7 +111,7 @@ namespace IKVM.Reflection.Emit
 			}
 			else if (customAttributeBuilder.Constructor.DeclaringType == u.System_Runtime_InteropServices_MarshalAsAttribute)
 			{
-				MarshalSpec.SetMarshalAsAttribute(moduleBuilder, PseudoToken, customAttributeBuilder);
+				FieldMarshal.SetMarshalAsAttribute(moduleBuilder, PseudoToken, customAttributeBuilder);
 				flags |= (short)ParameterAttributes.HasFieldMarshal;
 			}
 			else

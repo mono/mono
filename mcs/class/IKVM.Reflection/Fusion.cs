@@ -38,6 +38,7 @@ namespace IKVM.Reflection
 		internal bool? Retargetable;
 		internal ProcessorArchitecture ProcessorArchitecture;
 		internal bool HasPublicKey;
+		internal bool WindowsRuntime;
 	}
 
 	enum ParseAssemblyResult
@@ -308,6 +309,7 @@ namespace IKVM.Reflection
 			{
 				System.Collections.Generic.Dictionary<string, string> unknownAttributes = null;
 				bool hasProcessorArchitecture = false;
+				bool hasContentType = false;
 				string[] parts = fullName.Substring(pos).Split(',');
 				for (int i = 0; i < parts.Length; i++)
 				{
@@ -405,6 +407,18 @@ namespace IKVM.Reflection
 								default:
 									return ParseAssemblyResult.GenericError;
 							}
+							break;
+						case "contenttype":
+							if (hasContentType)
+							{
+								return ParseAssemblyResult.DuplicateKey;
+							}
+							hasContentType = true;
+							if (kv[1].Trim().ToLowerInvariant() != "windowsruntime")
+							{
+								return ParseAssemblyResult.GenericError;
+							}
+							parsedName.WindowsRuntime = true;
 							break;
 						default:
 							if (kv[1].Trim() == "")

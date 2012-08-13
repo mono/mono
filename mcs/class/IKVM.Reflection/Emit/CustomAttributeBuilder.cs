@@ -351,7 +351,7 @@ namespace IKVM.Reflection.Emit
 					GetTypeNameImpl(sb, type.GetElementType());
 					sb.Append(((ElementHolderType)type).GetSuffix());
 				}
-				else if (type.IsGenericTypeInstance)
+				else if (type.IsConstructedGenericType)
 				{
 					sb.Append(type.GetGenericTypeDefinition().FullName);
 					sb.Append('[');

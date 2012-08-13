@@ -165,5 +165,15 @@ namespace IKVM.Reflection.Reader
 			module.MethodSemantics.ComputeFlags(module, this.MetadataToken, out isPublic, out isNonPrivate, out isStatic);
 			flagsCached = true;
 		}
+
+		internal override bool IsBaked
+		{
+			get { return true; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return this.MetadataToken;
+		}
 	}
 }

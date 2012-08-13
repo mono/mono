@@ -101,6 +101,12 @@ namespace IKVM.Reflection
 		{
 			return new EventInfoWithReflectedType(type, this);
 		}
+
+		internal sealed override List<CustomAttributeData> GetPseudoCustomAttributes(Type attributeType)
+		{
+			// events don't have pseudo custom attributes
+			return null;
+		}
 	}
 
 	sealed class EventInfoWithReflectedType : EventInfo
@@ -203,11 +209,6 @@ namespace IKVM.Reflection
 			return reflectedType.GetHashCode() ^ eventInfo.GetHashCode();
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return eventInfo.GetCustomAttributesData(attributeType);
-		}
-
 		public override int MetadataToken
 		{
 			get { return eventInfo.MetadataToken; }
@@ -221,6 +222,16 @@ namespace IKVM.Reflection
 		public override string Name
 		{
 			get { return eventInfo.Name; }
+		}
+
+		internal override bool IsBaked
+		{
+			get { return eventInfo.IsBaked; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return eventInfo.GetCurrentToken();
 		}
 	}
 }
