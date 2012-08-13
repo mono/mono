@@ -141,7 +141,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				Thread.Sleep (100);
 				block.Post (42);
 			});
-			Assert.IsTrue (mre.Wait (300));
+			Assert.IsTrue (mre.Wait (1000));
 
 			Assert.AreEqual (42, result);
 		}

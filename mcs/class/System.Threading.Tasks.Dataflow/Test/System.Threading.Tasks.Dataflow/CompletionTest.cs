@@ -189,7 +189,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			block.Post (2);
 
 			var exception =
-				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 
 			Assert.AreEqual (2, exception.InnerExceptions.Count);
 		}

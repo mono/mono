@@ -257,7 +257,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (source.Post (1));
 			Assert.IsTrue (source.Post (2));
 			Assert.IsTrue (source.Post (3));
-			Thread.Sleep (100);
+			Thread.Sleep (500);
 			Assert.IsTrue (target.HasPostponed);
 
 			((IDataflowBlock)source).Fault (new Exception ());
