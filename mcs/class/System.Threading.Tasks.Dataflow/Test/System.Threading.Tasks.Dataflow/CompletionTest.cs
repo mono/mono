@@ -240,7 +240,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.AreEqual (2, exception.InnerExceptions.Count);
 			CollectionAssert.AreEqual (new[] { "fault1", "action" },
-				exception.InnerExceptions.Select (e => e.Message));
+				exception.InnerExceptions.Select (e => e.Message).ToArray ());
 		}
 
 		[Test]
