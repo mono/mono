@@ -73,10 +73,10 @@ namespace System.Data.SqlClient
 		// The set of SQL connection pools
 		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds80);
 #if NET_2_0
-		const int DEFAULT_PACKETSIZE = 32768;
+		const int DEFAULT_PACKETSIZE = 8000;
 		const int MAX_PACKETSIZE = 32768;
 #else
-		const int DEFAULT_PACKETSIZE = 32767;
+		const int DEFAULT_PACKETSIZE = 8192;
 		const int MAX_PACKETSIZE = 32767;
 #endif
 		const int MIN_PACKETSIZE = 512;
