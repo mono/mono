@@ -402,19 +402,8 @@ namespace System.Net
 			static bool is_macosx = System.IO.File.Exists (MSX.OSX509Certificates.SecurityLibrary);
 			static X509RevocationMode revocation_mode;
 
-#if MONODROID
-			static readonly Converter<Mono.Security.X509.X509CertificateCollection, bool> monodroidCallback;
-#endif
-
 			static ChainValidationHelper ()
 			{
-#if MONODROID
-				monodroidCallback = (Converter<Mono.Security.X509.X509CertificateCollection, bool>)
-					Delegate.CreateDelegate (typeof(Converter<Mono.Security.X509.X509CertificateCollection, bool>), 
-							Type.GetType ("Android.Runtime.AndroidEnvironment, Mono.Android", true)
-							.GetMethod ("TrustEvaluateSsl", 
-								System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic));
-#endif
 #if !MONOTOUCH
 				revocation_mode = X509RevocationMode.NoCheck;
 				try {
@@ -518,7 +507,7 @@ namespace System.Net
 #endif
 
 #if MONODROID
-				result = monodroidCallback (certs);
+				result = AndroidPlatform.TrustEvaluateSsl (certs, sender, leaf, chain, errors);
 				if (result) {
 					status11 = 0;
 					errors = 0;
