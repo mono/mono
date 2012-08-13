@@ -142,7 +142,6 @@ moonlight_raw_dirs := \
 mobile_dirs := \
 	corlib	\
 	System	\
-	Mono.CompilerServices.SymbolWriter	\
 	System.Core	\
 	System.XML	\
 	Mono.Security	\
@@ -161,6 +160,11 @@ mobile_dirs := \
 	Mono.Data.Sqlite	\
 	System.Numerics	\
 	System.Data.Services.Client
+
+monodroid_dirs := \
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.CSharp	\
+	Microsoft.CSharp
 
 net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\
@@ -206,7 +210,7 @@ net_4_5_dirs := \
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
-monodroid_SUBDIRS := $(mobile_dirs) Mono.CSharp Microsoft.CSharp
+monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
