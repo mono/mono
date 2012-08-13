@@ -67,7 +67,7 @@ namespace System.Threading.Tasks.Dataflow {
 						startDegreeOfParallelism + 1, startDegreeOfParallelism);
 			} while (startDegreeOfParallelism != currentDegreeOfParallelism);
 
-			Task.Factory.StartNew (ProcessQueue, Options.CancellationToken,
+			Task.Factory.StartNew (ProcessQueue, CancellationToken.None,
 				TaskCreationOptions.PreferFairness, Options.TaskScheduler);
 		}
 

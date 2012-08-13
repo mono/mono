@@ -191,7 +191,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (2, exception.InnerExceptions.Count);
 		}
 
@@ -211,7 +210,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("action", exception.InnerException.Message);
 		}
@@ -240,7 +238,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (2, exception.InnerExceptions.Count);
 			CollectionAssert.AreEqual (new[] { "fault1", "action" },
 				exception.InnerExceptions.Select (e => e.Message));
@@ -264,7 +261,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("action", exception.InnerException.Message);
 		}
@@ -274,6 +270,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		{
 			var tokenSource = new CancellationTokenSource ();
 			var evt = new ManualResetEventSlim ();
+
 			var block = new ActionBlock<int> (
 				_ =>
 				{
@@ -294,7 +291,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("action", exception.InnerException.Message);
 		}
@@ -315,7 +311,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual (typeof(TaskCanceledException),
 				exception.InnerException.GetType ());
@@ -348,7 +343,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual (typeof(TaskCanceledException),
 				exception.InnerException.GetType ());
@@ -381,7 +375,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var exception =
 				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
 
-			Assert.IsNotNull (exception);
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("fault", exception.InnerException.Message);
 		}
