@@ -1896,7 +1896,8 @@ namespace System.Windows.Forms
 			set {
 				if (this.owner != value) {
 					this.owner = value;
-					this.CalculateAutoSize ();
+					if (this.owner != null)
+						this.CalculateAutoSize ();
 					OnOwnerChanged (EventArgs.Empty);
 				}
 			}
