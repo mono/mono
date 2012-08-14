@@ -266,7 +266,7 @@ namespace System.Windows.Forms
 				if (row.IsNewRow)
 					break;
 
-                row.SetDataGridView(null);
+				row.SetDataGridView (null);
 				list.Remove (row);
 				ReIndex ();
 			}
@@ -486,7 +486,7 @@ namespace System.Windows.Forms
 				throw new InvalidOperationException ("Cannot delete the new row");
 				
 			DataGridView.OnRowsPreRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
-            dataGridViewRow.SetDataGridView(null);
+			dataGridViewRow.SetDataGridView (null);
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
@@ -496,7 +496,7 @@ namespace System.Windows.Forms
 		internal virtual void RemoveInternal (DataGridViewRow dataGridViewRow)
 		{
 			DataGridView.OnRowsPreRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
-            dataGridViewRow.SetDataGridView(null);
+			dataGridViewRow.SetDataGridView (null);
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
