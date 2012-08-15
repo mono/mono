@@ -238,7 +238,7 @@ namespace System.IO
 		{
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-            string result = InsecureGetCurrentDirectory();
+			string result = InsecureGetCurrentDirectory();
 #if !NET_2_1
 			if ((result != null) && (result.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, result).Demand ();
@@ -247,16 +247,16 @@ namespace System.IO
 			return result;
 		}
 
-        internal static string InsecureGetCurrentDirectory ()
-        {
-            MonoIOError error;
-            string result = MonoIO.GetCurrentDirectory(out error);
-            
-            if (error != MonoIOError.ERROR_SUCCESS)
-                throw MonoIO.GetException(error);
+		internal static string InsecureGetCurrentDirectory()
+		{
+			MonoIOError error;
+			string result = MonoIO.GetCurrentDirectory(out error);
 
-            return result;
-        }
+			if (error != MonoIOError.ERROR_SUCCESS)
+				throw MonoIO.GetException(error);
+
+			return result;
+		}
 		
 		public static string [] GetDirectories (string path)
 		{
