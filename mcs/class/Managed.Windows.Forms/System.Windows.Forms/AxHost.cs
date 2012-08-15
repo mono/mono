@@ -601,17 +601,17 @@ namespace System.Windows.Forms {
 		
 		protected override void OnBackColorChanged (EventArgs e)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			base.OnBackColorChanged(e);
 		}
 		
 		protected override void OnFontChanged (EventArgs e)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			base.OnFontChanged(e);
 		}
 		
 		protected override void OnForeColorChanged (EventArgs e)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			base.OnForeColorChanged(e);
 		}
 		
 		protected override void OnHandleCreated (EventArgs e)
@@ -632,7 +632,7 @@ namespace System.Windows.Forms {
 		
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			return base.ProcessDialogKey(keyData);
 		}
 
 		protected override bool ProcessMnemonic (char charCode)
@@ -707,7 +707,7 @@ namespace System.Windows.Forms {
 		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			base.SetBoundsCore(x, y, width, height, specified);
 		}
 		
 		protected override void SetVisibleCore (bool value)
