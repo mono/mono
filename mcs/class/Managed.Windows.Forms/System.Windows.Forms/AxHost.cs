@@ -186,6 +186,7 @@ namespace System.Windows.Forms {
 
 		//private int flags;
 		//private Guid clsid;
+		private AboutBoxDelegate aboutDelegate = null;
 
 		#region Protected Constructors
 
@@ -327,8 +328,8 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public bool HasAboutBox {
-			get { 
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+			get {
+				return aboutDelegate != null;
 			}
 		}
 
@@ -528,7 +529,8 @@ namespace System.Windows.Forms {
 
 		public void ShowAboutBox ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			if (aboutDelegate != null)
+				this.aboutDelegate();
 		}
 		
 		public void ShowPropertyPages ()
@@ -700,7 +702,7 @@ namespace System.Windows.Forms {
 
 		protected void SetAboutBoxDelegate (AxHost.AboutBoxDelegate d)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			this.aboutDelegate = d;
 		}
 		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
