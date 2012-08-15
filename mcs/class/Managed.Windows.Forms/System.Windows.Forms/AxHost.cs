@@ -483,9 +483,9 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public void BeginInit ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		
 		public void DoVerb (int verb)
@@ -494,9 +494,9 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[MonoTODO]
 		public void EndInit ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
