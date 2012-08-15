@@ -64,6 +64,8 @@ System.ComponentModel.Design/MenuCommand.cs
 System.ComponentModel.Design/ServiceCreatorCallback.cs
 System.ComponentModel.Design/StandardCommands.cs
 System.ComponentModel.Design/ViewTechnology.cs
+System.ComponentModel/AddingNewEventArgs.cs
+System.ComponentModel/AddingNewEventHandler.cs
 System.ComponentModel/ArrayConverter.cs
 System.ComponentModel/AsyncCompletedEventArgs.cs
 System.ComponentModel/AsyncCompletedEventHandler.cs
@@ -73,6 +75,7 @@ System.ComponentModel/AttributeCollection.cs
 System.ComponentModel/BackgroundWorker.cs
 System.ComponentModel/BaseNumberConverter.cs
 System.ComponentModel/BindableSupport.cs
+System.ComponentModel/BindingList.cs
 System.ComponentModel/BooleanConverter.cs
 System.ComponentModel/BrowsableAttribute.cs
 System.ComponentModel/ByteConverter.cs
@@ -115,6 +118,7 @@ System.ComponentModel/ExpandableObjectConverter.cs
 System.ComponentModel/GuidConverter.cs
 System.ComponentModel/IBindingList.cs
 System.ComponentModel/IBindingListView.cs
+System.ComponentModel/ICancelAddNew.cs
 System.ComponentModel/IChangeTracking.cs
 System.ComponentModel/IComNativeDescriptorHandler.cs
 System.ComponentModel/IComponent.cs
@@ -127,6 +131,7 @@ System.ComponentModel/IEditableObject.cs
 System.ComponentModel/IListSource.cs
 System.ComponentModel/INotifyPropertyChanged.cs
 System.ComponentModel/INotifyPropertyChanging.cs
+System.ComponentModel/IRaiseItemChangedEvents.cs
 System.ComponentModel/IRevertibleChangeTracking.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ISupportInitialize.cs
