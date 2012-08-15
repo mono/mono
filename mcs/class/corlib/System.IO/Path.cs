@@ -295,7 +295,7 @@ namespace System.IO {
 			if ((path [1] != ':') || !Char.IsLetter (path [0]))
 				return path;
 
-			string current = Directory.GetCurrentDirectory ();
+			string current = Directory.InsecureGetCurrentDirectory ();
 			// first, only the drive is specified
 			if (path.Length == 2) {
 				// then if the current directory is on the same drive
@@ -357,13 +357,13 @@ namespace System.IO {
 						}
 						canonicalize = start > 0;
 					}
-					
-					path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
+
+					path = Directory.InsecureGetCurrentDirectory() + DirectorySeparatorStr + path;
 				} else if (DirectorySeparatorChar == '\\' &&
 					path.Length >= 2 &&
 					IsDsc (path [0]) &&
 					!IsDsc (path [1])) { // like `\abc\def'
-					string current = Directory.GetCurrentDirectory ();
+					string current = Directory.InsecureGetCurrentDirectory();
 					if (current [1] == VolumeSeparatorChar)
 						path = current.Substring (0, 2) + path;
 					else
