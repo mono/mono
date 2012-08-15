@@ -81,7 +81,7 @@ namespace System.Threading.Tasks.Dataflow {
 				Interlocked.Increment (ref degreeOfParallelism);
 			if ((Options.MaxDegreeOfParallelism == DataflowBlockOptions.Unbounded
 			     || incrementedDegreeOfParallelism / 2 < Options.MaxDegreeOfParallelism)
-			    && MessageQueue.Count > 0 && CompHelper.CanRun)
+			    && MessageQueue.Count > 1 && CompHelper.CanRun)
 				StartProcessing ();
 		}
 
