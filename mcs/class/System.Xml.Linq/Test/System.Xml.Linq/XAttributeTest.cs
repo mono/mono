@@ -62,19 +62,11 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorNameNull ()
+		public void Constructor_NullParameters ()
 		{
-			XAttribute a = new XAttribute (null, "v");
-			
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorValueNull ()
-		{
-			XAttribute a = new XAttribute (XName.Get ("a"), null);
-			
+			AssertThrows<ArgumentNullException>(() => new XAttribute(null, "v"), "#1");
+			AssertThrows<ArgumentNullException>(() => new XAttribute(XName.Get("a"), null), "#2");
+			AssertThrows<ArgumentNullException>(() => new XAttribute((XAttribute) null), "#3");
 		}
 
 		[Test]
