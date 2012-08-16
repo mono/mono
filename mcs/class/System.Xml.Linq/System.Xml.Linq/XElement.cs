@@ -52,12 +52,16 @@ namespace System.Xml.Linq
 
 		public XElement (XName name, object content)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			this.name = name;
 			Add (content);
 		}
 
 		public XElement (XElement other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
 			name = other.name;
 			Add (other.Attributes ());
 			Add (other.Nodes ());
@@ -65,17 +69,23 @@ namespace System.Xml.Linq
 
 		public XElement (XName name)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			this.name = name;
 		}
 
 		public XElement (XName name, params object [] content)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			this.name = name;
 			Add (content);
 		}
 
 		public XElement (XStreamingElement other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
 			this.name = other.Name;
 			Add (other.Contents);
 		}
