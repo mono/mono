@@ -4848,13 +4848,18 @@ namespace Mono.CSharp {
 				return null;
 
 			//
-			// Check ObsoleteAttribute on the best method
+			// Don't run possibly expensive checks in probing mode
 			//
-			ObsoleteAttribute oa = best_candidate.GetAttributeObsolete ();
-			if (oa != null && !rc.IsObsolete)
-				AttributeTester.Report_ObsoleteMessage (oa, best_candidate.GetSignatureForError (), loc, rc.Report);
+			if (!rc.IsInProbingMode) {
+				//
+				// Check ObsoleteAttribute on the best method
+				//
+				ObsoleteAttribute oa = best_candidate.GetAttributeObsolete ();
+				if (oa != null && !rc.IsObsolete)
+					AttributeTester.Report_ObsoleteMessage (oa, best_candidate.GetSignatureForError (), loc, rc.Report);
 
-			best_candidate.MemberDefinition.SetIsUsed ();
+				best_candidate.MemberDefinition.SetIsUsed ();
+			}
 
 			args = best_candidate_args;
 			return (T) best_candidate;
