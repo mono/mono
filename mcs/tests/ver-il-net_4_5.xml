@@ -45861,6 +45861,22 @@
       </method>
     </type>
   </test>
+  <test name="test-850.cs">
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>39</size>
+      </method>
+      <method name="Int32 F(System.String, System.String[])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 F(System.String[])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-86.cs">
     <type name="T.T">
       <method name="Int32 method1(System.Type, Int32)" attrs="145">

@@ -4015,19 +4015,20 @@ namespace Mono.CSharp {
 			//
 			//  Foo (int i) is better than Foo (int i, long l = 0)
 			//  Foo (params int[] args) is better than Foo (int i = 0, params int[] args)
+			//  Foo (string s, params string[] args) is better than Foo (params string[] args)
 			//
 			// Prefer non-optional version
 			//
 			// LAMESPEC: Specification claims this should be done at last but the opposite is true
 			//
 			if (candidate_params == best_params && candidate_pd.Count != best_pd.Count) {
-				if (candidate_pd.Count >= best_pd.Count)
-					return false;
-
 				if (j < candidate_pd.Count && candidate_pd.FixedParameters[j].HasDefaultValue)
 					return false;
 
-				return true;
+				if (j < best_pd.Count && best_pd.FixedParameters[j].HasDefaultValue)
+					return true;
+
+				return candidate_pd.Count >= best_pd.Count;
 			}
 
 			//
