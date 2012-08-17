@@ -260,8 +260,15 @@ namespace System.Resources
 				WriteString (name, "", typeof (ResXNullRef), comment);
 				return;
 			}
-			// FIXME: why no comments for any of the below? are there other code paths without comments?
+
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
+			if (value is ResXFileRef) {
+				ResXFileRef fileRef = ProcessFileRefBasePath ((ResXFileRef) value);	
+				string str = (string) converter.ConvertToInvariantString (fileRef);
+				WriteString (name, str, value.GetType (), comment);
+				return;
+			}
+
 			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
 				string str = (string) converter.ConvertToInvariantString (value);
 				WriteString (name, str, value.GetType (), comment);
@@ -325,10 +332,27 @@ namespace System.Resources
 
 			if (node.IsWritable)
 				WriteWritableNode (node);
-			else if (node.FileRef != null) 
+			else if (node.FileRef != null)
 				AddResource (node.Name, node.FileRef, node.Comment);
 			else 
 				AddResource (node.Name, node.GetValue ((AssemblyName []) null), node.Comment);
+		}
+
+		ResXFileRef ProcessFileRefBasePath (ResXFileRef fileRef)
+		{
+			if (String.IsNullOrEmpty (BasePath))
+				return fileRef;
+
+			string basePathToUse = (BasePath.EndsWith (Path.DirectorySeparatorChar.ToString ())) ?
+				BasePath : BasePath + Path.DirectorySeparatorChar;
+
+			string filePath = fileRef.FileName;
+			
+			if (filePath.StartsWith (basePathToUse)) {
+				string newPath = filePath.Remove (0, basePathToUse.Length);
+				return new ResXFileRef (newPath, fileRef.TypeName, fileRef.TextFileEncoding);
+			} else
+				return fileRef;
 		}
 
 		// avoids instantiating objects
