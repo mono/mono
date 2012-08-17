@@ -61,10 +61,23 @@ namespace System.Text.RegularExpressions {
 
 		// IMachine implementation
 
-		public override Match Scan (Regex regex, string text, int start, int end) {
+		public override Match Scan (Regex regex, string text, int start, int end, bool substring_mode) {
+			this.regex_rtl = (regex.Options & RegexOptions.RightToLeft) != 0;
+
+			if (!initialized)
+			{
+				this.text_start = regex_rtl && substring_mode ? end : start;
+				this.text_end = regex_rtl ? substring_mode ? start : 0 : end;
+				this.initialized = true;
+			}
+			else
+			{
+				this.text_start = start;
+				this.text_end = end;
+			}
 			this.text = text;
-			this.text_end = end;
-			this.scan_ptr = start;
+			this.scan_ptr = text_start;
+			this.substring_mode = substring_mode;
 
 			if (Eval (Mode.Match, ref scan_ptr, program_start))
 				return GenerateMatch (regex);
@@ -94,7 +107,7 @@ namespace System.Text.RegularExpressions {
 					int anch_offset = program[pc + 2];
 					bool anch_reverse = (flags & OpFlags.RightToLeft) != 0;	
 					int anch_ptr = anch_reverse ?  ptr - anch_offset  : ptr + anch_offset;
-					int anch_end = text_end - match_min + anch_offset;	// maximum anchor position  
+					int anch_end = (regex_rtl ? text_start : text_end) - match_min + anch_offset; // maximum anchor position  
 					
 					
 					int anch_begin =  0;
@@ -264,7 +277,7 @@ namespace System.Text.RegularExpressions {
 
 					if (reverse) {
 						ptr -= len;
-						if (ptr < 0)
+						if ((!regex_rtl && ptr < 0) || (regex_rtl && ptr < text_end))
 							goto Fail;
 					}
 					else 
@@ -298,7 +311,7 @@ namespace System.Text.RegularExpressions {
 
 					if (reverse) {
 						ptr -= len;
-						if (ptr < 0)
+						if ((!regex_rtl && ptr < 0) || (regex_rtl && ptr < text_end))
 							goto Fail;
 					}
 					else if (ptr + len > text_end)
@@ -626,7 +639,7 @@ namespace System.Text.RegularExpressions {
 						
 						while (true) {
 							int p = ptr + coff;
-							if (c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) {
+							if (c1 < 0 || (p >= 0 && ((regex_rtl && p >= text_end) || (!regex_rtl && p < text_end)) && (c1 == text[p] || c2 == text[p]))) {
 								deep = null;
 								if (Eval (Mode.Match, ref ptr, pc))
 									break;
@@ -662,7 +675,7 @@ namespace System.Text.RegularExpressions {
 
 						while (true) {
 							int p = ptr + coff;
-							if (c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) {
+							if (c1 < 0 || (p >= 0 && ((regex_rtl && p >= text_end) || (!regex_rtl && p < text_end)) && (c1 == text[p] || c2 == text[p]))) {
 								deep = null;
 								if (Eval (Mode.Match, ref ptr, pc))
 									break;
@@ -742,13 +755,13 @@ namespace System.Text.RegularExpressions {
 
 				if (!consumed) {
 					if ((flags & OpFlags.RightToLeft) != 0) {
-						if (ptr <= 0)
+						if ((substring_mode && ptr <= (regex_rtl ? text_end : text_start)) || (!substring_mode && ptr <= 0))
 							return false;
 
 						c = text[-- ptr];
 					}
 					else {
-						if (ptr >= text_end)
+						if ((!regex_rtl && ptr >= text_end) || (regex_rtl && ptr >= text_start))
 							return false;
 
 						c = text[ptr ++];
@@ -837,42 +850,42 @@ namespace System.Text.RegularExpressions {
 		private bool IsPosition (Position pos, int ptr) {
 			switch (pos) {
 			case Position.Start: case Position.StartOfString:
-				return ptr == 0;
+				return ptr == 0 || (substring_mode && ((!regex_rtl && ptr == text_start) || (regex_rtl && ptr == text_end)));
 
 			case Position.StartOfLine:
-				return ptr == 0 || text[ptr - 1] == '\n';
+				return ptr == 0 || text[ptr - 1] == '\n' || (substring_mode && ((!regex_rtl && ptr == text_start) || (regex_rtl && ptr == text_end)));
 				
 			case Position.StartOfScan:
 				return ptr == scan_ptr;
 			
 			case Position.End:
-				return ptr == text_end ||
-					(ptr == text_end - 1 && text[ptr] == '\n');
+				return (!regex_rtl && ptr == text_end) || (regex_rtl && ptr == text_start) ||
+					(((!regex_rtl && ptr == text_end - 1) || (regex_rtl && ptr == text_start - 1)) && text[ptr] == '\n');
 
 			case Position.EndOfLine:
-				return ptr == text_end || text[ptr] == '\n';
+				return (!regex_rtl && ptr == text_end) || (regex_rtl && ptr == text_start) || text[ptr] == '\n';
 				
 			case Position.EndOfString:
-				return ptr == text_end;
+				return (!regex_rtl && ptr == text_end) || (regex_rtl && ptr == text_start);
 				
 			case Position.Boundary:
-				if (text_end == 0)
+				if ((!regex_rtl && text_end == 0) || (regex_rtl && text_start == 0))
 					return false;
 
 				if (ptr == 0)
 					return IsWordChar (text[ptr]);
-				else if (ptr == text_end)
+				else if ((!regex_rtl && ptr == text_end) || (regex_rtl && ptr == text_start))
 					return IsWordChar (text[ptr - 1]);
 				else
 					return IsWordChar (text[ptr]) != IsWordChar (text[ptr - 1]);
 
 			case Position.NonBoundary:
-				if (text_end == 0)
+				if ((!regex_rtl && text_end == 0) || (regex_rtl && text_start == 0))
 					return false;
 
 				if (ptr == 0)
 					return !IsWordChar (text[ptr]);
-				else if (ptr == text_end)
+				else if ((!regex_rtl && ptr == text_end) || (regex_rtl && ptr == text_start))
 					return !IsWordChar (text[ptr - 1]);
 				else
 					return IsWordChar (text[ptr]) == IsWordChar (text[ptr - 1]);
@@ -1050,6 +1063,11 @@ namespace System.Text.RegularExpressions {
 		private int group_count;		// number of capturing groups
 		private int match_min;//, match_max;	// match width information
 		private QuickSearch qs;			// fast substring matcher
+
+		private bool regex_rtl;
+		private int text_start;
+		private bool substring_mode;
+		private bool initialized;
 
 		// match state
 		
