@@ -96,6 +96,7 @@ namespace System.ServiceModel.Channels.Http
 			lock (ce.RetrieverLock) {
 				var q = ce.ContextQueue;
 				if (q.Count == 0) {
+					if (timeout.TotalMilliseconds < 0) return false;
 					TimeSpan waitTimeout = timeout;
 					if (timeout == TimeSpan.MaxValue)
 						waitTimeout = TimeSpan.FromMilliseconds (int.MaxValue);
