@@ -24,7 +24,7 @@
 //	Gonzalo Paniagua Javier	gonzalo@ximian.com
 //	Peter Bartok		pbartok@novell.com
 //	Gary Barnett
-//
+//	includes code by Mike Krüger and Lluis Sanchez
 
 using System.ComponentModel;
 using System.IO;
@@ -343,16 +343,88 @@ namespace System.Resources
 			if (String.IsNullOrEmpty (BasePath))
 				return fileRef;
 
-			string basePathToUse = (BasePath.EndsWith (Path.DirectorySeparatorChar.ToString ())) ?
-				BasePath : BasePath + Path.DirectorySeparatorChar;
+			string newPath = AbsoluteToRelativePath (BasePath, fileRef.FileName);
+			return new ResXFileRef (newPath, fileRef.TypeName, fileRef.TextFileEncoding);
+		}
 
-			string filePath = fileRef.FileName;
-			
-			if (filePath.StartsWith (basePathToUse)) {
-				string newPath = filePath.Remove (0, basePathToUse.Length);
-				return new ResXFileRef (newPath, fileRef.TypeName, fileRef.TextFileEncoding);
-			} else
-				return fileRef;
+		static bool IsSeparator (char ch)
+		{
+			return ch == Path.DirectorySeparatorChar || ch == Path.AltDirectorySeparatorChar || ch == Path.VolumeSeparatorChar;
+		}
+		//adapted from MonoDevelop.Core
+		unsafe static string AbsoluteToRelativePath (string baseDirectoryPath, string absPath)
+		{
+			if (string.IsNullOrEmpty (baseDirectoryPath))
+				return absPath;
+
+			baseDirectoryPath = baseDirectoryPath.TrimEnd (Path.DirectorySeparatorChar);
+
+			fixed (char* bPtr = baseDirectoryPath, aPtr = absPath) {
+				var bEnd = bPtr + baseDirectoryPath.Length;
+				var aEnd = aPtr + absPath.Length;
+				char* lastStartA = aEnd;
+				char* lastStartB = bEnd;
+				
+				int indx = 0;
+				// search common base path
+				var a = aPtr;
+				var b = bPtr;
+				while (a < aEnd) {
+					if (*a != *b)
+						break;
+					if (IsSeparator (*a)) {
+						indx++;
+						lastStartA = a + 1;
+						lastStartB = b; 
+					}
+					a++;
+					b++;
+					if (b >= bEnd) {
+						if (a >= aEnd || IsSeparator (*a)) {
+							indx++;
+							lastStartA = a + 1;
+							lastStartB = b;
+						}
+						break;
+					}
+				}
+				if (indx == 0) 
+					return absPath;
+				
+				if (lastStartA >= aEnd)
+					return ".";
+				
+				// handle case a: some/path b: some/path/deeper...
+				if (a >= aEnd) {
+					if (IsSeparator (*b)) {
+						lastStartA = a + 1;
+						lastStartB = b;
+					}
+				}
+				
+				// look how many levels to go up into the base path
+				int goUpCount = 0;
+				while (lastStartB < bEnd) {
+					if (IsSeparator (*lastStartB))
+						goUpCount++;
+					lastStartB++;
+				}
+				var size = goUpCount * 2 + goUpCount + aEnd - lastStartA;
+				var result = new char [size];
+				fixed (char* rPtr = result) {
+					// go paths up
+					var r = rPtr;
+					for (int i = 0; i < goUpCount; i++) {
+						*(r++) = '.';
+						*(r++) = '.';
+						*(r++) = Path.DirectorySeparatorChar;
+					}
+					// copy the remaining absulute path
+					while (lastStartA < aEnd)
+						*(r++) = *(lastStartA++);
+				}
+				return new string (result);
+			}
 		}
 
 		// avoids instantiating objects

@@ -206,18 +206,18 @@ namespace MonoTests.System.Resources
 		[Test]
 		public void BasePath_ChangesAbsoluteFileRef_Node ()
 		{
-			var node = new ResXDataNode ("name", new ResXFileRef (@"/adir/filename.ext", "System.String"));
-			var returnedNode = GetNodeFromResXWithBasePath (node, @"/");
+			var node = new ResXDataNode ("name", new ResXFileRef (@"/dir/dir/filename.ext", "System.String"));
+			var returnedNode = GetNodeFromResXWithBasePath (node, @"/dir");
 			Assert.IsNotNull (returnedNode, "#A1");
-			Assert.AreEqual (@"adir/filename.ext", returnedNode.FileRef.FileName, "#A2");
+			Assert.AreEqual (@"dir/filename.ext", returnedNode.FileRef.FileName, "#A2");
 		}
 
 		[Test]
 		public void BasePath_ChangesAbsoluteFileRef_Object ()
 		{
-			var fileref = new ResXFileRef (@"/adir/filename.ext", "System.String");
+			var fileref = new ResXFileRef (@"/dir/dir/filename.ext", "System.String");
 			
-			string basePath = @"/";
+			string basePath = @"/dir";
 			
 			StringWriter sw = new StringWriter ();
 			using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
@@ -232,58 +232,76 @@ namespace MonoTests.System.Resources
 				IDictionaryEnumerator enumerator = reader.GetEnumerator ();
 				enumerator.MoveNext ();
 				var returnedNode = ((DictionaryEntry) enumerator.Current).Value as ResXDataNode;
-				Assert.AreEqual (@"adir/filename.ext", returnedNode.FileRef.FileName);
+				Assert.AreEqual (@"dir/filename.ext", returnedNode.FileRef.FileName);
 			}
+		}
+
+		[Test]
+		public void BasePath_ChangesAbsoluteFileRef_Deeper ()
+		{
+			var node = new ResXDataNode ("name", new ResXFileRef (@"/adir/filename.ext", "System.String"));
+			var returnedNode = GetNodeFromResXWithBasePath (node, @"/dir1/dir2");
+			Assert.IsNotNull (returnedNode, "#A1");
+			Assert.AreEqual (@"../../adir/filename.ext", returnedNode.FileRef.FileName, "#A2");
 		}
 		
 		[Test]
 		public void BasePath_ComplexPath ()
 		{
-			var node = new ResXDataNode ("name", new ResXFileRef (@"/adir/../filename.ext", "System.String"));
-			var returnedNode = GetNodeFromResXWithBasePath (node, @"/");
+			var node = new ResXDataNode ("name", new ResXFileRef (@"/dir/dir/../filename.ext", "System.String"));
+			var returnedNode = GetNodeFromResXWithBasePath (node, @"/dir");
 			Assert.IsNotNull (returnedNode, "#A1");
-			Assert.AreEqual (@"adir/../filename.ext", returnedNode.FileRef.FileName, "#A2");
+			Assert.AreEqual (@"dir/../filename.ext", returnedNode.FileRef.FileName, "#A2");
 		}
 		
 		[Test]
 		public void BasePath_IgnoresTrailingSeparator ()
 		{
-			var node = new ResXDataNode ("name", new ResXFileRef (@"/adir/filename.ext", "System.String"));
-			var nonTrailNode = GetNodeFromResXWithBasePath (node, @"/adir");
+			var node = new ResXDataNode ("name", new ResXFileRef (@"/dir/filename.ext", "System.String"));
+			var nonTrailNode = GetNodeFromResXWithBasePath (node, @"/dir");
 			Assert.IsNotNull (nonTrailNode, "#A1");
 			Assert.AreEqual (@"filename.ext", nonTrailNode.FileRef.FileName, "#A2");
 			
-			var trailingNode = GetNodeFromResXWithBasePath (node, @"/adir/");
+			var trailingNode = GetNodeFromResXWithBasePath (node, @"/dir/");
 			Assert.IsNotNull (trailingNode, "#A3");
 			Assert.AreEqual (@"filename.ext", trailingNode.FileRef.FileName, "#A4");
 		}
 		
 		[Test]
-		public void BasePath_IgnoredIfNotPartOfPath ()
+		public void BasePath_IgnoredIfNotPartOfPath () // not really a valid test on linux systems
 		{
-			var node = new ResXDataNode ("name", new ResXFileRef (@"/adir/filename.ext", "System.String"));
-			var returnedNode = GetNodeFromResXWithBasePath (node, @"D:/");
+			var node = new ResXDataNode ("name", new ResXFileRef (@"/dir/filename.ext", "System.String"));
+			var returnedNode = GetNodeFromResXWithBasePath (node, @"D/");
 			Assert.IsNotNull (returnedNode, "#A1");
-			Assert.AreEqual (@"/adir/filename.ext", returnedNode.FileRef.FileName, "#A2");
+			Assert.AreEqual (@"/dir/filename.ext", returnedNode.FileRef.FileName, "#A2");
+		}
+
+		[Test] // FIXME: this fails on mono ("/dir/filename.ext" is returned) but passes on .net
+		public void BasePath_Root ()
+		{
+			var node = new ResXDataNode ("name", new ResXFileRef (@"/dir/filename.ext", "System.String"));
+			var returnedNode = GetNodeFromResXWithBasePath (node, @"/");
+			Assert.IsNotNull (returnedNode, "#A1");
+			Assert.AreEqual (@"dir/filename.ext", returnedNode.FileRef.FileName, "#A2");
 		}
 		
 		[Test]
-		public void BasePath_IgnoredOnRelativeFileRef ()
+		public void BasePath_RelativeFileRef ()
 		{
 			var node = new ResXDataNode ("name", new ResXFileRef (@"../../filename.ext", "System.String"));
-			var returnedNode = GetNodeFromResXWithBasePath (node, @"/");
+			var returnedNode = GetNodeFromResXWithBasePath (node, @"../");
 			Assert.IsNotNull (returnedNode, "#A1");
-			Assert.AreEqual (@"../../filename.ext", returnedNode.FileRef.FileName, "#A2");	
+			Assert.AreEqual (@"../filename.ext", returnedNode.FileRef.FileName, "#A2");	
 		}
 		
 		[Test]
 		public void BasePath_DoesntAffectOriginalNode ()
 		{
-			var node = new ResXDataNode ("name", new ResXFileRef (@"/adir/filename.ext", "System.String"));
-			var returnedNode = GetNodeFromResXWithBasePath (node, @"/");
+			var node = new ResXDataNode ("name", new ResXFileRef (@"/dir/dir/filename.ext", "System.String"));
+			var returnedNode = GetNodeFromResXWithBasePath (node, @"/dir");
 			Assert.IsNotNull (returnedNode, "#A1");
-			Assert.AreEqual (@"adir/filename.ext", returnedNode.FileRef.FileName, "#A2");
-			Assert.AreEqual (@"/adir/filename.ext", node.FileRef.FileName, "#A3");
+			Assert.AreEqual (@"dir/filename.ext", returnedNode.FileRef.FileName, "#A2");
+			Assert.AreEqual (@"/dir/dir/filename.ext", node.FileRef.FileName, "#A3");
 		}
 	}
 
