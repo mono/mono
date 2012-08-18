@@ -90,6 +90,9 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.TryReceiveAll (out items);
 		}
 
+		/// <summary>
+		/// Moves items from the input queue to the output queue.
+		/// </summary>
 		void ProcessQueue ()
 		{
 			T item;

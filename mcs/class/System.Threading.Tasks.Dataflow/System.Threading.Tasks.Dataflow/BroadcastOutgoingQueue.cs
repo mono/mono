@@ -24,8 +24,7 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
-	/// Version of <see cref="OutgoingQueueBase{T}"/>
-	/// for broadcast blocks.
+	/// Version of <see cref="OutgoingQueueBase{T}"/> for broadcast blocks.
 	/// </summary>
 	class BroadcastOutgoingQueue<T> : OutgoingQueueBase<T> {
 		volatile bool hasCurrentItem;
@@ -52,6 +51,9 @@ namespace System.Threading.Tasks.Dataflow {
 			targets = new BroadcastTargetCollection<T> (block, hasCloner);
 		}
 
+		/// <summary>
+		/// The current item that is to be sent to taget blocks.
+		/// </summary>
 		T CurrentItem {
 			get {
 				T item;
@@ -79,6 +81,9 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Takes an item from the queue and sets it as <see cref="CurrentItem"/>.
+		/// </summary>
 		public void DequeueItem()
 		{
 			T item;
@@ -90,6 +95,9 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Manages sending items to the target blocks.
+		/// </summary>
 		protected override void Process ()
 		{
 			do {

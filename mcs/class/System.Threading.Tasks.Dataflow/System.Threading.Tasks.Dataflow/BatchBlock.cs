@@ -118,6 +118,10 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.TryReceiveAll (out items);
 		}
 
+		/// <summary>
+		/// Verifies whether <see cref="GroupingDataflowBlockOptions.MaxNumberOfGroups"/>
+		/// has been reached. If it did, <see cref="Complete"/>s the block.
+		/// </summary>
 		void VerifyMaxNumberOfGroups ()
 		{
 			if (dataflowBlockOptions.MaxNumberOfGroups == -1)
@@ -139,6 +143,11 @@ namespace System.Threading.Tasks.Dataflow {
 				Complete ();
 		}
 
+		/// <summary>
+		/// Returns whether a new item can be accepted, and increments a counter if it can.
+		/// Only makes sense when <see cref="GroupingDataflowBlockOptions.MaxNumberOfGroups"/>
+		/// is not unbounded.
+		/// </summary>
 		bool TryAdd ()
 		{
 			bool lockTaken = false;
@@ -185,6 +194,12 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Decides whether to create a new batch or not.
+		/// </summary>
+		/// <param name="addedItems">
+		/// Number of newly added items. Used only with greedy processing.
+		/// </param>
 		void BatchProcess (int addedItems = 0)
 		{
 			if (dataflowBlockOptions.Greedy) {
@@ -214,6 +229,9 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Returns whether non-greedy creation of a batch should be started.
+		/// </summary>
 		bool ShouldProcessNonGreedy ()
 		{
 			// do we have enough items waiting and would the new batch fit?
@@ -222,6 +240,9 @@ namespace System.Threading.Tasks.Dataflow {
 			           || outgoing.Count + batchSize <= dataflowBlockOptions.BoundedCapacity);
 		}
 
+		/// <summary>
+		/// Creates a batch of the given size and adds the resulting batch to the output queue.
+		/// </summary>
 		void MakeBatch (int size)
 		{
 			T[] batch = new T[size];
@@ -243,6 +264,10 @@ namespace System.Threading.Tasks.Dataflow {
 			VerifyMaxNumberOfGroups ();
 		}
 
+		/// <summary>
+		/// Starts non-greedy creation of batches, if one doesn't already run.
+		/// </summary>
+		/// <param name="manuallyTriggered">Whether the batch was triggered by <see cref="TriggerBatch"/>.</param>
 		void EnsureNonGreedyProcessing (bool manuallyTriggered)
 		{
 			if (nonGreedyProcessing.TrySet ())
@@ -252,6 +277,11 @@ namespace System.Threading.Tasks.Dataflow {
 					dataflowBlockOptions.TaskScheduler);
 		}
 
+		/// <summary>
+		/// Creates batches in non-greedy mode,
+		/// making sure the whole batch is available by using reservations.
+		/// </summary>
+		/// <param name="manuallyTriggered">Whether the batch was triggered by <see cref="TriggerBatch"/>.</param>
 		void NonGreedyProcess (bool manuallyTriggered)
 		{
 			bool first = true;

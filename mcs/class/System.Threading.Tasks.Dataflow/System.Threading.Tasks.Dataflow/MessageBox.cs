@@ -171,6 +171,7 @@ namespace System.Threading.Tasks.Dataflow {
 		public Tuple<ISourceBlock<TInput>, DataflowMessageHeader> ReserveMessage()
 		{
 			while (!postponedMessages.IsEmpty) {
+				// KeyValuePair is a struct, so default value is not null
 				var block = postponedMessages.FirstOrDefault () .Key;
 
 				// collection is empty
@@ -254,9 +255,11 @@ namespace System.Threading.Tasks.Dataflow {
 				EnsurePostponedProcessing ();
 		}
 
-		protected virtual void EnsureProcessing (bool newItem)
-		{
-		}
+		/// <summary>
+		/// Makes sure the input queue is processed the way it needs to.
+		/// </summary>
+		/// <param name="newItem">Was new item just added?</param>
+		protected abstract void EnsureProcessing (bool newItem);
 
 		public void Complete ()
 		{
@@ -269,11 +272,17 @@ namespace System.Threading.Tasks.Dataflow {
 				EnsurePostponedProcessing ();
 		}
 
+		/// <summary>
+		/// Notifies that outgoing queue should be completed, if possible.
+		/// </summary>
 		protected virtual void OutgoingQueueComplete ()
 		{
 		}
 
-		protected  virtual void VerifyCompleteness ()
+		/// <summary>
+		/// Makes sure the block is completed if it should be.
+		/// </summary>
+		protected virtual void VerifyCompleteness ()
 		{
 			if (MessageQueue.IsCompleted && externalCompleteTester ())
 				CompHelper.Complete ();

@@ -27,7 +27,7 @@ using System.Linq;
 
 namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
-	/// This is used to implement a default behavior for Dataflow completion tracking
+	/// Used to implement Dataflow completion tracking,
 	/// that is the Completion property, Complete/Fault method combo
 	/// and the CancellationToken option.
 	/// </summary>
@@ -45,8 +45,8 @@ namespace System.Threading.Tasks.Dataflow {
 
 		public CompletionHelper (DataflowBlockOptions options)
 		{
-			if (options != null)
-				SetOptions (options);
+			if (options != null && options.CancellationToken != CancellationToken.None)
+				options.CancellationToken.Register (RequestCancel);
 		}
 
 		[Obsolete ("Use ctor")]
@@ -59,6 +59,12 @@ namespace System.Threading.Tasks.Dataflow {
 			get { return source.Task; }
 		}
 
+		/// <summary>
+		/// Whether <see cref="Completion"/> can be faulted or cancelled immediatelly.
+		/// It can't for example when a block is currently executing user action.
+		/// In that case, the fault (or cancellation) is queued,
+		/// and is actually acted upon when this property is set back to <c>true</c>.
+		/// </summary>
 		public bool CanFaultOrCancelImmediatelly {
 			get { return canFaultOrCancelImmediatelly.Value; }
 			set {
@@ -94,18 +100,38 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Whether the block can act as if it's not completed
+		/// (accept new items, start executing user action).
+		/// </summary>
 		public bool CanRun {
-			get {
-				return source.Task.Status == TaskStatus.WaitingForActivation
-				       && !requestedFaultOrCancel.Value;
-			}
+			get { return !Completion.IsCompleted && !requestedFaultOrCancel.Value; }
 		}
 
+		/// <summary>
+		/// Sets the block as completed.
+		/// Should be called only when the block is really completed
+		/// (e.g. the output queue is empty) and not right after
+		/// the user calls <see cref="IDataflowBlock.Complete"/>.
+		/// </summary>
 		public void Complete ()
 		{
 			source.TrySetResult (null);
 		}
 
+		/// <summary>
+		/// Requests faulting of the block using a given exception.
+		/// If the block can't be faulted immediatelly (see <see cref="CanFaultOrCancelImmediatelly"/>),
+		/// the exception will be queued, and the block will fault as soon as it can.
+		/// </summary>
+		/// <param name="exception">The exception that is the cause of the fault.</param>
+		/// <param name="canBeIgnored">Can this exception be ignored, if there are more exceptions?</param>
+		/// <remarks>
+		/// When calling <see cref="IDataflowBlock.Fault"/> repeatedly, only the first exception counts,
+		/// even in the cases where the block can't be faulted immediatelly.
+		/// But exceptions from user actions in execution blocks count always,
+		/// which is the reason for the <paramref name="canBeIgnored"/> parameter.
+		/// </remarks>
 		public void RequestFault (Exception exception, bool canBeIgnored = true)
 		{
 			if (exception == null)
@@ -121,16 +147,33 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Actually faults the block with a single exception.
+		/// </summary>
+		/// <remarks>
+		/// Should be only called when <see cref="CanFaultOrCancelImmediatelly"/> is <c>true</c>.
+		/// </remarks>
 		void Fault (Exception exception)
 		{
 			source.TrySetException (exception);
 		}
 
+		/// <summary>
+		/// Actually faults the block with a multiple exceptions.
+		/// </summary>
+		/// <remarks>
+		/// Should be only called when <see cref="CanFaultOrCancelImmediatelly"/> is <c>true</c>.
+		/// </remarks>
 		void Fault (IEnumerable<Exception> exceptions)
 		{
 			source.TrySetException (exceptions);
 		}
 
+		/// <summary>
+		/// Requests cancellation of the block.
+		/// If the block can't be cancelled immediatelly (see <see cref="CanFaultOrCancelImmediatelly"/>),
+		/// the cancellation will be queued, and the block will cancel as soon as it can.
+		/// </summary>
 		void RequestCancel ()
 		{
 			if (CanFaultOrCancelImmediatelly)
@@ -142,15 +185,15 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Actually cancels the block.
+		/// </summary>
+		/// <remarks>
+		/// Should be only called when <see cref="CanFaultOrCancelImmediatelly"/> is <c>true</c>.
+		/// </remarks>
 		void Cancel ()
 		{
 			source.TrySetCanceled ();
-		}
-
-		void SetOptions (DataflowBlockOptions options)
-		{
-			if (options.CancellationToken != CancellationToken.None)
-				options.CancellationToken.Register (RequestCancel);
 		}
 	}
 }

@@ -24,6 +24,10 @@
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Message box for executing blocks with synchrnous actions.
+	/// </summary>
+	/// <typeparam name="TInput">Type of the item the block is processing.</typeparam>
 	class ExecutingMessageBox<TInput> : ExecutingMessageBoxBase<TInput> {
 		readonly Func<bool> processItem;
 
@@ -39,6 +43,9 @@ namespace System.Threading.Tasks.Dataflow {
 			this.processItem = processItem;
 		}
 
+		/// <summary>
+		/// Processes the input queue of the block.
+		/// </summary>
 		protected override void ProcessQueue ()
 		{
 			StartProcessQueue ();

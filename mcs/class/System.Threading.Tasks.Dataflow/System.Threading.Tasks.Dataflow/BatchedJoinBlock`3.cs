@@ -100,6 +100,9 @@ namespace System.Threading.Tasks.Dataflow {
 			get { return target3; }
 		}
 
+		/// <summary>
+		/// Returns whether a new item can be accepted, and increments a counter if it can.
+		/// </summary>
 		bool TryAdd ()
 		{
 			bool lockTaken = false;
@@ -118,6 +121,9 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Decides whether to create a new batch or not.
+		/// </summary>
 		void SignalTarget ()
 		{
 			bool lockTaken = false;
@@ -137,6 +143,9 @@ namespace System.Threading.Tasks.Dataflow {
 			MakeBatch (BatchSize);
 		}
 
+		/// <summary>
+		/// Creates a batch of the given size and adds the resulting batch to the output queue.
+		/// </summary>
 		void MakeBatch (int batchSize)
 		{
 			if (batchSize == 0)
@@ -186,6 +195,10 @@ namespace System.Threading.Tasks.Dataflow {
 			VerifyMaxNumberOfGroups ();
 		}
 
+		/// <summary>
+		/// Verifies whether <see cref="GroupingDataflowBlockOptions.MaxNumberOfGroups"/>
+		/// has been reached. If it did, <see cref="Complete"/>s the block.
+		/// </summary>
 		void VerifyMaxNumberOfGroups ()
 		{
 			if (options.MaxNumberOfGroups == -1)

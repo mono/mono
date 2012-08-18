@@ -24,9 +24,20 @@
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Message box for executing blocks with asynchrnous
+	/// (<see cref="Task"/>-returning) actions.
+	/// </summary>
+	/// <typeparam name="TInput">Type of the item the block is processing.</typeparam>
+	/// <typeparam name="TTask">Type of the Task the action is returning.</typeparam>
 	class AsyncExecutingMessageBox<TInput, TTask>
 		: ExecutingMessageBoxBase<TInput>
 		where TTask : Task {
+		/// <summary>
+		/// Represents executing synchrnous part of the action.
+		/// </summary>
+		/// <param name="task">The Task that was returned by the synchronous part of the action.</param>
+		/// <returns>Returns whether an item was processed. Returns <c>false</c> if the queue was empty.</returns>
 		public delegate bool AsyncProcessItem (out TTask task);
 
 		readonly AsyncProcessItem processItem;
@@ -45,6 +56,9 @@ namespace System.Threading.Tasks.Dataflow {
 			this.processFinishedTask = processFinishedTask;
 		}
 
+		/// <summary>
+		/// Processes the input queue of the block.
+		/// </summary>
 		protected override void ProcessQueue ()
 		{
 			StartProcessQueue ();
@@ -52,6 +66,11 @@ namespace System.Threading.Tasks.Dataflow {
 			ProcessQueueWithoutStart ();
 		}
 
+		/// <summary>
+		/// The part of <see cref="ProcessQueue"/> specific to asynchronous execution.
+		/// Handles scheduling continuation on the Task returned by the block's action
+		/// (or continuing synchrnously if possible).
+		/// </summary>
 		void ProcessQueueWithoutStart ()
 		{
 			// catch is needed here, if the Task-returning delegate throws exception itself
@@ -82,6 +101,9 @@ namespace System.Threading.Tasks.Dataflow {
 			FinishProcessQueue ();
 		}
 
+		/// <summary>
+		/// Handles asynchronously finished Task, continues processing the queue.
+		/// </summary>
 		void TaskFinished (TTask task)
 		{
 			if (task.IsFaulted) {

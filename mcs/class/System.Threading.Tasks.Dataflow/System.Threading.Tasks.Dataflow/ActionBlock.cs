@@ -91,6 +91,10 @@ namespace System.Threading.Tasks.Dataflow {
 			       == DataflowMessageStatus.Accepted;
 		}
 
+		/// <summary>
+		/// Processes one item from the queue if the action is synchronous.
+		/// </summary>
+		/// <returns>Returns whether an item was processed. Returns <c>false</c> if the queue is empty.</returns>
 		bool ProcessItem ()
 		{
 			TInput data;
@@ -100,6 +104,11 @@ namespace System.Threading.Tasks.Dataflow {
 			return dequeued;
 		}
 
+		/// <summary>
+		/// Processes one item from the queue if the action is asynchronous.
+		/// </summary>
+		/// <param name="task">The Task that was returned by the synchronous part of the action.</param>
+		/// <returns>Returns whether an item was processed. Returns <c>false</c> if the queue was empty.</returns>
 		bool AsyncProcessItem(out Task task)
 		{
 			TInput data;
