@@ -897,14 +897,26 @@ namespace System.Text.RegularExpressions {
 					    (TriedCombos[i].Count > 0))
 					{
 						int j = TriedCombos[i].Count - 1;
+						// first condition: If We have a
+						// new match:
 						if ((TriedCombos[i][j].pc == pc) && (TriedCombos[i][j].ptr == ptr)) 
 						{
 							if (CheckSubCmb( TriedCombos, JumpTestList,
-							      i,j,ref Match))
+							      i, j, ref Match))
 							{
 								return true;
 							}
+						} 
+						// second condition: if we 
+						// already matched this bunch:
+						else {
+							if (CheckSubBeenHere( 
+							  TriedCombos, i,
+							  JumpTestList)) {
+								return true;
+							}
 						}
+						
 					}
 				}
 			}
@@ -912,6 +924,24 @@ namespace System.Text.RegularExpressions {
 		}
 
 
+		private bool CheckSubBeenHere( List<List<JumpTestEntry>> TriedCombos, 
+			int i, List<JumpTestEntry> JumpTestList )
+		{
+			bool found=false;
+			if (TriedCombos[i].Count < JumpTestList.Count) {
+				found = true; //presume at first
+				for (int ct = 0; 
+				         ct < TriedCombos[i].Count; 
+					 ct++) {
+					if ((TriedCombos[i][ct].pc != JumpTestList[ct].pc) &&
+					   (TriedCombos[i][ct].ptr != JumpTestList[ct].ptr)) {
+						found=false;
+					 	break;
+					}
+				}
+			}
+			return found;
+		}
 		private bool CheckSubCmb(List<List<JumpTestEntry>> TriedCombos,
 		    List<JumpTestEntry> JumpTestList,int i,int j,ref bool Match)
 		{
