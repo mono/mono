@@ -280,7 +280,6 @@ namespace System.Threading.Tasks.Dataflow {
 				if (reservations.Count < expectedSize) {
 					foreach (var reservation in reservations)
 						messageBox.RelaseReservation (reservation);
-					BatchProcess (reservations.Count);
 
 					// some reservations failed, which most likely means the message
 					// was consumed by someone else and a new one will be offered soon;
