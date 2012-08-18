@@ -482,7 +482,7 @@ ves_icall_System_IO_MonoIO_FindNext (gpointer handle, gint32 *result_attr, gint3
 	WIN32_FIND_DATA data;
 	MonoString *result;
 
-	error = ERROR_SUCCESS;
+	*error = ERROR_SUCCESS;
 	do {
 		if (FindNextFile (ifh->find_handle, &data) == FALSE){
 			int e = GetLastError ();
