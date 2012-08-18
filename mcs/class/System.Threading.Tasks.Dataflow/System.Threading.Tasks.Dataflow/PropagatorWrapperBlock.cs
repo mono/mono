@@ -1,6 +1,7 @@
 // PropagatorWrapperBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,71 +21,69 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-namespace System.Threading.Tasks.Dataflow
-{
-	internal class PropagatorWrapperBlock<TInput, TOutput> : IPropagatorBlock<TInput, TOutput>
-	{
-		readonly ITargetBlock<TInput> target;
-		readonly ISourceBlock<TOutput> source;
-		readonly CompletionHelper compHelper = CompletionHelper.GetNew (null);
+namespace System.Threading.Tasks.Dataflow {
+	class PropagatorWrapperBlock<TInput, TOutput> :
+		IPropagatorBlock<TInput, TOutput> {
+		readonly ITargetBlock<TInput> targetBlock;
+		readonly ISourceBlock<TOutput> sourceBlock;
 
-		public PropagatorWrapperBlock (ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
+		public PropagatorWrapperBlock (
+			ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
 		{
 			if (target == null)
-				throw new ArgumentNullException("target");
+				throw new ArgumentNullException ("target");
 			if (source == null)
-				throw new ArgumentNullException("source");
+				throw new ArgumentNullException ("source");
 
-			this.target = target;
-			this.source = source;
+			targetBlock = target;
+			sourceBlock = source;
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           TInput messageValue,
-		                                           ISourceBlock<TInput> source,
-		                                           bool consumeToAccept)
+		public DataflowMessageStatus OfferMessage (
+			DataflowMessageHeader messageHeader, TInput messageValue,
+			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
-			return target.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
+			return targetBlock.OfferMessage (
+				messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		public TOutput ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed)
+		public TOutput ConsumeMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target,
+			out bool messageConsumed)
 		{
-			return source.ConsumeMessage (messageHeader, target, out messageConsumed);
+			return sourceBlock.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions)
+		public IDisposable LinkTo (
+			ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions)
 		{
-			return source.LinkTo (target, linkOptions);
+			return sourceBlock.LinkTo (target, linkOptions);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		public void ReleaseReservation (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
 		{
-			source.ReleaseReservation (messageHeader, target);
+			sourceBlock.ReleaseReservation (messageHeader, target);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		public bool ReserveMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
 		{
-			return source.ReserveMessage (messageHeader, target);
+			return sourceBlock.ReserveMessage (messageHeader, target);
 		}
 
 		public void Complete ()
 		{
-			compHelper.Complete ();
-			source.Complete ();
-			target.Complete ();
+			targetBlock.Complete ();
 		}
 
 		public void Fault (Exception exception)
 		{
-			compHelper.RequestFault (exception);
-			source.Fault (exception);
-			target.Fault (exception);
+			targetBlock.Fault (exception);
 		}
 
 		public Task Completion {
-			get {
-				return compHelper.Completion;
-			}
+			get { return sourceBlock.Completion; }
 		}
 	}
 }

@@ -24,5 +24,6 @@ System.Threading.Tasks.Dataflow/TransformManyBlockTest.cs
 System.Threading.Tasks.Dataflow/WriteOnceBlockTest.cs
 System.Threading.Tasks.Dataflow/InvalidArgumentsTest.cs
 System.Threading.Tasks.Dataflow/OutputAvailableTest.cs
+System.Threading.Tasks.Dataflow/EncapsulateTest.cs
 ../System.Threading.Tasks.Dataflow/CompletionHelper.cs
 ../../corlib/System.Threading/AtomicBoolean.cs
