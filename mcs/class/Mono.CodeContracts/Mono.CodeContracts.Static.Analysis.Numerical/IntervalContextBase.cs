@@ -3,112 +3,116 @@ using System;
 using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-    internal abstract class IntervalContextBase<TInterval, TNumeric>
-        where TInterval : IntervalBase<TInterval, TNumeric>
-    {
-        /// <summary>
-        /// (-oo, +oo)
-        /// </summary>
-        public abstract TInterval TopValue { get; }
-        /// <summary>
-        /// Empty set of values
-        /// </summary>
-        public abstract TInterval BottomValue { get; }
-        /// <summary>
-        /// [0, 0]
-        /// </summary>
-        public abstract TInterval Zero { get; }
-        /// <summary>
-        /// [1, 1]
-        /// </summary>
-        public abstract TInterval One { get; }
-        /// <summary>
-        /// [0, +oo)
-        /// </summary>
-        public abstract TInterval Positive { get; }
-        /// <summary>
-        /// (-oo, 0]
-        /// </summary>
-        public abstract TInterval Negative { get; }
+        abstract class IntervalContextBase<TInterval, TNumeric>
+                where TInterval : IntervalBase<TInterval, TNumeric> {
+                /// <summary>
+                /// (-oo, +oo)
+                /// </summary>
+                public abstract TInterval TopValue { get; }
 
-        /// <summary>
-        /// [-1, +oo)
-        /// </summary>
-        public abstract TInterval GreaterEqualThanMinusOne { get; }
+                /// <summary>
+                /// Empty set of values
+                /// </summary>
+                public abstract TInterval BottomValue { get; }
 
-        public abstract TInterval For(long value);
-        public abstract TInterval For(long lower, long upper);
-        public abstract TInterval For(long lower, TNumeric upper);
-        public abstract TInterval For(TNumeric lower, long upper);
-        public abstract TInterval For(TNumeric value);
-        public abstract TInterval For(TNumeric lower, TNumeric upper);
+                /// <summary>
+                /// [0, 0]
+                /// </summary>
+                public abstract TInterval Zero { get; }
 
-        public abstract bool IsGreaterThanZero(TNumeric value);
-        public abstract bool IsGreaterEqualThanZero(TNumeric value);
+                /// <summary>
+                /// [1, 1]
+                /// </summary>
+                public abstract TInterval One { get; }
 
-        public abstract bool IsLessThanZero(TNumeric value);
-        public abstract bool IsLessEqualThanZero(TNumeric value);
+                /// <summary>
+                /// [0, +oo)
+                /// </summary>
+                public abstract TInterval Positive { get; }
 
-        public abstract bool IsLessEqualThanZero(TInterval value);
+                /// <summary>
+                /// (-oo, 0]
+                /// </summary>
+                public abstract TInterval Negative { get; }
 
-        public abstract bool IsLessThan(TNumeric a, TNumeric b);
-        public abstract bool IsLessEqualThan(TNumeric a, TNumeric b);
+                /// <summary>
+                /// [-1, +oo)
+                /// </summary>
+                public abstract TInterval GreaterEqualThanMinusOne { get; }
 
-        public abstract bool IsZero(TNumeric value);
+                public abstract TInterval For (long value);
+                public abstract TInterval For (long lower, long upper);
+                public abstract TInterval For (long lower, TNumeric upper);
+                public abstract TInterval For (TNumeric lower, long upper);
+                public abstract TInterval For (TNumeric value);
+                public abstract TInterval For (TNumeric lower, TNumeric upper);
 
-        public abstract bool IsNotZero(TNumeric value);
+                public abstract bool IsGreaterThanZero (TNumeric value);
+                public abstract bool IsGreaterEqualThanZero (TNumeric value);
 
-        public abstract bool IsPlusInfinity(TNumeric value);
+                public abstract bool IsLessThanZero (TNumeric value);
+                public abstract bool IsLessEqualThanZero (TNumeric value);
 
-        public abstract bool IsMinusInfinity(TNumeric value);
+                public abstract bool IsLessEqualThanZero (TInterval value);
 
-        public abstract bool AreEqual(TNumeric a, TNumeric b);
+                public abstract bool IsLessThan (TNumeric a, TNumeric b);
+                public abstract bool IsLessEqualThan (TNumeric a, TNumeric b);
 
-        public abstract TInterval Add(TInterval a, TInterval b);
-        public abstract TInterval Sub(TInterval a, TInterval b);
-        public abstract TInterval Div(TInterval a, TInterval b);
-        public abstract TInterval Rem(TInterval a, TInterval b);
-        public abstract TInterval Mul(TInterval a, TInterval b);
-        public abstract TInterval Not(TInterval value);
+                public abstract bool IsZero (TNumeric value);
 
-        public abstract TInterval UnaryMinus(TInterval value);
+                public abstract bool IsNotZero (TNumeric value);
 
-        public abstract TInterval ApplyConversion(ExpressionOperator conv, TInterval intv);
+                public abstract bool IsPlusInfinity (TNumeric value);
 
-        public virtual FlatDomain<bool> IsLessThan(TInterval a, TInterval b)
-        {
-            if (a.IsNormal() || b.IsNormal())
-                return ProofOutcome.Top;
+                public abstract bool IsMinusInfinity (TNumeric value);
 
-            if (this.IsLessThan(a.UpperBound, b.LowerBound))
-                return true;
-            if (this.IsLessEqualThan(b.UpperBound, a.LowerBound))
-                return false;
+                public abstract bool AreEqual (TNumeric a, TNumeric b);
 
-            return ProofOutcome.Top;
-        }
+                public abstract TInterval Add (TInterval a, TInterval b);
+                public abstract TInterval Sub (TInterval a, TInterval b);
+                public abstract TInterval Div (TInterval a, TInterval b);
+                public abstract TInterval Rem (TInterval a, TInterval b);
+                public abstract TInterval Mul (TInterval a, TInterval b);
+                public abstract TInterval Not (TInterval value);
 
-        public virtual FlatDomain<bool> IsLessEqualThan(TInterval a, TInterval b)
-        {
-            if (a.IsNormal() || b.IsNormal())
-                return ProofOutcome.Top;
+                public abstract TInterval UnaryMinus (TInterval value);
 
-            if (this.IsLessEqualThan(a.UpperBound, b.LowerBound))
-                return true;
-            if (this.IsLessThan(b.UpperBound, a.LowerBound))
-                return false;
+                public abstract TInterval ApplyConversion (ExpressionOperator conv, TInterval intv);
 
-            return ProofOutcome.Top;
-        }
+                public virtual FlatDomain<bool> IsLessThan (TInterval a, TInterval b)
+                {
+                        if (a.IsNormal () || b.IsNormal ())
+                                return ProofOutcome.Top;
 
-        public virtual FlatDomain<bool> IsEqualThan(TInterval a, TInterval b)
-        {
-            throw new NotImplementedException();
-        }
+                        if (IsLessThan (a.UpperBound, b.LowerBound))
+                                return true;
+                        if (IsLessEqualThan (b.UpperBound, a.LowerBound))
+                                return false;
 
-        public abstract bool IsMaxInt32(TInterval value);
+                        return ProofOutcome.Top;
+                }
 
-        public abstract TInterval RightOpen(TNumeric lowerBound);
-        public abstract TInterval LeftOpen(TNumeric lowerBound);
-    }
+                public virtual FlatDomain<bool> IsLessEqualThan (TInterval a, TInterval b)
+                {
+                        if (a.IsNormal () || b.IsNormal ())
+                                return ProofOutcome.Top;
+
+                        if (IsLessEqualThan (a.UpperBound, b.LowerBound))
+                                return true;
+                        if (IsLessThan (b.UpperBound, a.LowerBound))
+                                return false;
+
+                        return ProofOutcome.Top;
+                }
+
+                public virtual FlatDomain<bool> IsEqualThan (TInterval a, TInterval b)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public abstract bool IsMaxInt32 (TInterval value);
+
+                public abstract TInterval RightOpen (TNumeric lowerBound);
+                public abstract TInterval LeftOpen (TNumeric lowerBound);
+       }
 }

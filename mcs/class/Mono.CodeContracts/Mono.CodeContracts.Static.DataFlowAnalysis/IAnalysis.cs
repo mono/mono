@@ -28,8 +28,11 @@
 
 using System;
 using System.IO;
+
+using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Proving;
 
 namespace Mono.CodeContracts.Static.DataFlowAnalysis {
 	interface IAnalysis<Label, AbstractState, Visitor, EdgeData> {
@@ -42,4 +45,10 @@ namespace Mono.CodeContracts.Static.DataFlowAnalysis {
 		Predicate<Label> SaveFixPointInfo (IFixPointInfo<Label, AbstractState> fixPointInfo);
 		void Dump (Pair<AbstractState, TextWriter> pair);
 	}
+
+        interface IAbstractAnalysis<TDomain, TVar> : IAnalysis<APC, TDomain, IILVisitor<APC, TVar, TVar, TDomain, TDomain>, IImmutableMap<TVar, Sequence<TVar>>> {
+                TDomain TopValue ();
+                TDomain BottomValue ();
+                IFactQuery<BoxedExpression, TVar> FactQuery (IFixPointInfo<APC, TDomain> fixpoint);
+        }
 }

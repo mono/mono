@@ -30,142 +30,144 @@ using Mono.CodeContracts.Static.Analysis.Numerical;
 
 using NUnit.Framework;
 
-namespace Test
-{
-    [TestFixture(typeof(Interval))]
-    internal class IntervalTests : DomainTestBase<Interval>
-    {
-        private readonly Interval _1__2 = Interval.For (1, 2);
-        private readonly Interval _2__4 = Interval.For (2, 4);
-        private readonly Interval _3__4 = Interval.For (3, 4);
-        private readonly Interval _1__4 = Interval.For (1, 4);
+namespace MonoTests.Mono.CodeContracts {
+        [TestFixture (typeof (Interval))]
+        class IntervalTests : DomainTestBase<Interval> {
+                readonly Interval _1__2 = Interval.For (1, 2);
+                readonly Interval _2__4 = Interval.For (2, 4);
+                readonly Interval _3__4 = Interval.For (3, 4);
+                readonly Interval _1__4 = Interval.For (1, 4);
 
-        private readonly Interval zeroToOne = Interval.For (Rational.Zero, Rational.One);
-        private readonly Interval minusOneToZero = Interval.For (Rational.MinusOne, Rational.Zero);
+                readonly Interval zero_to_one = Interval.For (Rational.Zero, Rational.One);
+                readonly Interval minus_one_to_zero = Interval.For (Rational.MinusOne, Rational.Zero);
 
-        [Test]
-        public void ShouldAddIntervalsByEachBound ()
-        {
-            Assert.That (bot + _1__2, Is.EqualTo (bot), "bottom + normal = bottom");
-            Assert.That (bot + top, Is.EqualTo (bot), "bottom + top = bottom");
-            Assert.That (bot + bot, Is.EqualTo (bot), "bottom + bottom = bottom");
+                protected override Interval Top { get { return Interval.TopValue; } }
+                protected override Interval Bottom { get { return Interval.BottomValue; } }
+                protected override Interval Normal { get { return this._1__2; } }
 
-            Assert.That (top + top, Is.EqualTo (top), "top + top = top");
-            Assert.That (top + _1__2, Is.EqualTo (top), "top + normal = top");
-            Assert.That (top + bot, Is.EqualTo (bot), "top + bottom = bottom");
+                [Test]
+                public void ConsecutiveIntegers ()
+                {
+                        Assert.That (Interval.AreConsecutiveIntegers (this._1__2, this._3__4), Is.True);
+                        Assert.That (Interval.AreConsecutiveIntegers (this._1__2, this._1__2), Is.False);
+                        Assert.That (Interval.AreConsecutiveIntegers (this._3__4, this._1__2), Is.False);
+                        Assert.That (Interval.AreConsecutiveIntegers (Interval.For (Rational.For (1, 3)), this._1__2),
+                                     Is.False);
+                }
 
-            Assert.That (_1__2 + bot, Is.EqualTo (bot), "normal + bottom = bottom");
-            Assert.That (_1__2 + top, Is.EqualTo (top), "normal + top = top");
-            Assert.That (_1__2 + _3__4, Is.EqualTo (Interval.For (1 + 3, 2 + 4)));
+                [Test]
+                public void OnTheLeftOf ()
+                {
+                        Assert.IsTrue (this._1__2.OnTheLeftOf (this._3__4));
+                        Assert.IsTrue (this._1__2.OnTheLeftOf (this._2__4));
+
+                        Assert.IsFalse (this._2__4.OnTheLeftOf (this._1__2));
+                        Assert.IsFalse (this._1__4.OnTheLeftOf (this._1__2));
+                        Assert.IsFalse (this._1__2.OnTheLeftOf (this._1__4));
+                }
+
+                [Test]
+                public void ShouldAddIntervalsByEachBound ()
+                {
+                        Assert.That (this.Bottom + this._1__2, Is.EqualTo (this.Bottom), "bottom + normal = bottom");
+                        Assert.That (this.Bottom + this.Top, Is.EqualTo (this.Bottom), "bottom + top = bottom");
+                        Assert.That (this.Bottom + this.Bottom, Is.EqualTo (this.Bottom), "bottom + bottom = bottom");
+
+                        Assert.That (this.Top + this.Top, Is.EqualTo (this.Top), "top + top = top");
+                        Assert.That (this.Top + this._1__2, Is.EqualTo (this.Top), "top + normal = top");
+                        Assert.That (this.Top + this.Bottom, Is.EqualTo (this.Bottom), "top + bottom = bottom");
+
+                        Assert.That (this._1__2 + this.Bottom, Is.EqualTo (this.Bottom), "normal + bottom = bottom");
+                        Assert.That (this._1__2 + this.Top, Is.EqualTo (this.Top), "normal + top = top");
+                        Assert.That (this._1__2 + this._3__4, Is.EqualTo (Interval.For (1 + 3, 2 + 4)));
+                }
+
+                [Test]
+                public void ShouldDivIntervalsByMaxMin ()
+                {
+                        Assert.That (this.Bottom / this._1__2, Is.EqualTo (this.Bottom), "bottom / normal = bottom");
+                        Assert.That (this.Bottom / this.Top, Is.EqualTo (this.Bottom), "bottom / top = bottom");
+                        Assert.That (this.Bottom / this.Bottom, Is.EqualTo (this.Bottom), "bottom / bottom = bottom");
+
+                        Assert.That (this.Top / this.Top, Is.EqualTo (this.Top), "top / top = top");
+                        Assert.That (this.Top / this._1__2, Is.EqualTo (this.Top), "top / normal = top");
+                        Assert.That (this.Top / this.Bottom, Is.EqualTo (this.Bottom), "top / bottom = bottom");
+
+                        Assert.That (this._1__2 / this.Bottom, Is.EqualTo (this.Bottom), "normal / bottom = bottom");
+                        Assert.That (this._1__2 / this.Top, Is.EqualTo (this.Top), "normal / top = top");
+
+                        Assert.That (this._1__2 / this.zero_to_one, Is.EqualTo (this.Top), "normal / zeroToOne = top");
+                        Assert.That (this._1__2 / this.minus_one_to_zero, Is.EqualTo (this.Top),
+                                     "normal / minusOneToZero = top");
+                        Assert.That (
+                                this._1__2 / this._3__4,
+                                Is.EqualTo (Interval.For (Rational.For (1, 4), Rational.For (2, 3))),
+                                "normal / normal = normal");
+                }
+
+                [Test]
+                public void ShouldJoinByInclusion ()
+                {
+                        Assert.That (this._1__2.Join (this._3__4), Is.EqualTo (Interval.For (1, 4)));
+                        Assert.That (this._3__4.Join (this._1__2), Is.EqualTo (Interval.For (1, 4)));
+                }
+
+                [Test]
+                public void ShouldLessEqualByInclusion ()
+                {
+                        Assert.That (this._1__2.LessEqual (this._1__2), Is.True);
+
+                        Assert.That (this._1__2.LessEqual (this._1__4), Is.True);
+                        Assert.That (this._3__4.LessEqual (this._1__4), Is.True);
+
+                        Assert.That (this._1__2.LessEqual (this._3__4), Is.False);
+                        Assert.That (this._3__4.LessEqual (this._1__2), Is.False);
+
+                        Assert.That (this._1__4.LessEqual (this._1__2), Is.False);
+                        Assert.That (this._1__4.LessEqual (this._3__4), Is.False);
+                }
+
+                [Test]
+                public void ShouldMultIntervalsByMaxMin ()
+                {
+                        Assert.That (this.Bottom * this._1__2, Is.EqualTo (this.Bottom), "bottom * normal = bottom");
+                        Assert.That (this.Bottom * this.Top, Is.EqualTo (this.Bottom), "bottom * top = bottom");
+                        Assert.That (this.Bottom * this.Bottom, Is.EqualTo (this.Bottom), "bottom * bottom = bottom");
+
+                        Assert.That (this.Top * this.Top, Is.EqualTo (this.Top), "top * top = top");
+                        Assert.That (this.Top * this._1__2, Is.EqualTo (this.Top), "top * normal = top");
+                        Assert.That (this.Top * this.Bottom, Is.EqualTo (this.Bottom), "top * bottom = bottom");
+
+                        Assert.That (this._1__2 * this.Bottom, Is.EqualTo (this.Bottom), "normal * bottom = bottom");
+                        Assert.That (this._1__2 * this.Top, Is.EqualTo (this.Top), "normal * top = top");
+
+                        Assert.That (this._1__2 * this._3__4, Is.EqualTo (Interval.For (3, 8)),
+                                     "normal * normal = normal");
+                }
+
+                [Test]
+                public void ShouldSubIntervalsByMaxMin ()
+                {
+                        Assert.That (this.Bottom - this._1__2, Is.EqualTo (this.Bottom), "bottom - normal = bottom");
+                        Assert.That (this.Bottom - this.Top, Is.EqualTo (this.Bottom), "bottom - top = bottom");
+                        Assert.That (this.Bottom - this.Bottom, Is.EqualTo (this.Bottom), "bottom - bottom = bottom");
+
+                        Assert.That (this.Top - this.Top, Is.EqualTo (this.Top), "top - top = top");
+                        Assert.That (this.Top - this._1__2, Is.EqualTo (this.Top), "top - normal = top");
+                        Assert.That (this.Top - this.Bottom, Is.EqualTo (this.Bottom), "top - bottom = bottom");
+
+                        Assert.That (this._1__2 - this.Bottom, Is.EqualTo (this.Bottom), "normal - bottom = bottom");
+                        Assert.That (this._1__2 - this.Top, Is.EqualTo (this.Top), "normal - top = top");
+                        Assert.That (this._1__2 - this._3__4, Is.EqualTo (Interval.For (1 - 4, 2 - 3)),
+                                     "normal - normal = normal");
+                }
+
+                [Test]
+                public void ShouldUnaryMinusIntervals ()
+                {
+                        Assert.That (-this.Bottom, Is.EqualTo (this.Bottom), "-bottom = bottom");
+                        Assert.That (-this.Top, Is.EqualTo (this.Top), "-top = top");
+                        Assert.That (-this._1__2, Is.EqualTo (Interval.For (-2, -1)), "normal: -[l,r] = [-r,-l]");
+                }
         }
-
-        [Test]
-        public void ShouldSubIntervalsByMaxMin ()
-        {
-            Assert.That (bot - _1__2, Is.EqualTo (bot), "bottom - normal = bottom");
-            Assert.That (bot - top, Is.EqualTo (bot), "bottom - top = bottom");
-            Assert.That (bot - bot, Is.EqualTo (bot), "bottom - bottom = bottom");
-
-            Assert.That (top - top, Is.EqualTo (top), "top - top = top");
-            Assert.That (top - _1__2, Is.EqualTo (top), "top - normal = top");
-            Assert.That (top - bot, Is.EqualTo (bot), "top - bottom = bottom");
-
-            Assert.That (_1__2 - bot, Is.EqualTo (bot), "normal - bottom = bottom");
-            Assert.That (_1__2 - top, Is.EqualTo (top), "normal - top = top");
-            Assert.That (_1__2 - _3__4, Is.EqualTo (Interval.For (1 - 4, 2 - 3)), "normal - normal = normal");
-        }
-
-        [Test]
-        public void ShouldDivIntervalsByMaxMin ()
-        {
-            Assert.That (bot / _1__2, Is.EqualTo (bot), "bottom / normal = bottom");
-            Assert.That (bot / top, Is.EqualTo (bot), "bottom / top = bottom");
-            Assert.That (bot / bot, Is.EqualTo (bot), "bottom / bottom = bottom");
-
-            Assert.That (top / top, Is.EqualTo (top), "top / top = top");
-            Assert.That (top / _1__2, Is.EqualTo (top), "top / normal = top");
-            Assert.That (top / bot, Is.EqualTo (bot), "top / bottom = bottom");
-
-            Assert.That (_1__2 / bot, Is.EqualTo (bot), "normal / bottom = bottom");
-            Assert.That (_1__2 / top, Is.EqualTo (top), "normal / top = top");
-
-            Assert.That (_1__2 / zeroToOne, Is.EqualTo (top), "normal / zeroToOne = top");
-            Assert.That (_1__2 / minusOneToZero, Is.EqualTo (top), "normal / minusOneToZero = top");
-            Assert.That (
-                _1__2 / _3__4,
-                Is.EqualTo (Interval.For (Rational.For (1, 4), Rational.For (2, 3))),
-                "normal / normal = normal");
-        }
-
-        [Test]
-        public void ShouldMultIntervalsByMaxMin ()
-        {
-            Assert.That (bot * _1__2, Is.EqualTo (bot), "bottom * normal = bottom");
-            Assert.That (bot * top, Is.EqualTo (bot), "bottom * top = bottom");
-            Assert.That (bot * bot, Is.EqualTo (bot), "bottom * bottom = bottom");
-
-            Assert.That (top * top, Is.EqualTo (top), "top * top = top");
-            Assert.That (top * _1__2, Is.EqualTo (top), "top * normal = top");
-            Assert.That (top * bot, Is.EqualTo (bot), "top * bottom = bottom");
-
-            Assert.That (_1__2 * bot, Is.EqualTo (bot), "normal * bottom = bottom");
-            Assert.That (_1__2 * top, Is.EqualTo (top), "normal * top = top");
-
-            Assert.That (_1__2 * _3__4, Is.EqualTo (Interval.For (3, 8)), "normal * normal = normal");
-        }
-
-        [Test]
-        public void ShouldUnaryMinusIntervals ()
-        {
-            Assert.That (-bot, Is.EqualTo (bot), "-bottom = bottom");
-            Assert.That (-top, Is.EqualTo (top), "-top = top");
-            Assert.That (-_1__2, Is.EqualTo (Interval.For (-2, -1)), "normal: -[l,r] = [-r,-l]");
-        }
-
-        [Test]
-        public void ShouldJoinByInclusion ()
-        {
-            Assert.That (_1__2.Join (_3__4), Is.EqualTo (Interval.For (1, 4)));
-            Assert.That (_3__4.Join (_1__2), Is.EqualTo (Interval.For (1, 4)));
-        }
-
-        [Test]
-        public void ShouldLessEqualByInclusion()
-        {
-            Assert.That(_1__2.LessEqual(_1__2), Is.True);
-
-            Assert.That(_1__2.LessEqual(_1__4), Is.True);
-            Assert.That(_3__4.LessEqual(_1__4), Is.True);
-
-            Assert.That(_1__2.LessEqual(_3__4), Is.False);
-            Assert.That(_3__4.LessEqual(_1__2), Is.False);
-
-            Assert.That(_1__4.LessEqual(_1__2), Is.False);
-            Assert.That(_1__4.LessEqual(_3__4), Is.False);
-        }
-
-        [Test]
-        public void ConsecutiveIntegers()
-        {
-            Assert.That (Interval.AreConsecutiveIntegers(_1__2, _3__4), Is.True);
-            Assert.That (Interval.AreConsecutiveIntegers(_1__2, _1__2), Is.False);
-            Assert.That (Interval.AreConsecutiveIntegers(_3__4, _1__2), Is.False);
-            Assert.That (Interval.AreConsecutiveIntegers(Interval.For (Rational.For (1,3)), _1__2), Is.False);
-        }
-
-        [Test]
-        public void OnTheLeftOf ()
-        {
-            Assert.IsTrue (_1__2.OnTheLeftOf(_3__4));
-            Assert.IsTrue (_1__2.OnTheLeftOf (_2__4));
-
-            Assert.IsFalse (_2__4.OnTheLeftOf (_1__2));
-            Assert.IsFalse (_1__4.OnTheLeftOf (_1__2));
-            Assert.IsFalse (_1__2.OnTheLeftOf (_1__4));
-        }
-
-        protected override Interval top { get { return Interval.TopValue; } }
-        protected override Interval bot { get { return Interval.BottomValue; } }
-        protected override Interval normal { get { return _1__2; } }
-    }
 }

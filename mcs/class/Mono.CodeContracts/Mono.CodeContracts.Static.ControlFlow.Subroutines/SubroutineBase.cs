@@ -68,9 +68,9 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			this.exception_exit = new CatchFilterEntryBlock<Label> (this, ref this.BlockIdGenerator);
 		}
 
-		protected SubroutineBase (SubroutineFacade SubroutineFacade,
+		protected SubroutineBase (SubroutineFacade facade,
 		                          Label startLabel, SubroutineBuilder<Label> builder)
-			: this (SubroutineFacade)
+			: this (facade)
 		{
 			this.StartLabel = startLabel;
 			Builder = builder;
@@ -415,12 +415,11 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			if (subroutine == null)
 				return;
 
-			var key = new Pair<CFGBlock, CFGBlock> (from, to);
-			Sequence<Pair<EdgeTag, Subroutine>> list;
-			var item = new Pair<EdgeTag, Subroutine> (tag, subroutine);
+			var key = Pair.From (from, to);
 
+		        Sequence<Pair<EdgeTag, Subroutine>> list;
 			this.edge_subroutines.TryGetValue (key, out list);
-			this.edge_subroutines [key] = list.Cons (item);
+		        this.edge_subroutines[key] = list.Cons (Pair.From (tag, subroutine));
 		}
 
 		public override IEnumerable<APC> Successors (APC pc)

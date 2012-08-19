@@ -159,25 +159,34 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\ExpressionAssumeDecoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.NonNull\NonNullAnalysisFacade.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AbstractInterpretationException.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysers.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.GenericValueAnalysis.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BoxedExpressionDecoder.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BoxedExpressionEncoder.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BoxedVariable.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Counter.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisInterval.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisIntervalAssumer.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisIntervalContext.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ConstToIntervalEvaluator.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\DisIntervalEnvironment.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\EvaluateExpressionVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionType.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GetThresholdVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IExpressionDecoder.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IExpressionEncoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IIntervalEnvironment.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalAssumer.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalContext.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalContextBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalEnvironment.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalInference.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalRationalAssumerBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalRationalContextBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalAssumeFalseVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalAssumeTrueVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalAssumerBase.cs" />
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalTrueTester.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\LongToIntegerConstantEvaluator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\EvaluateArithmeticWithOverflow.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ExpressionOperator.cs" />
@@ -185,7 +194,7 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ConstantEvaluatorVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericExpressionVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\GenericTypeExpressionVisitor.cs" />
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IAbstractDomainForEnvironments.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IEnvironmentDomain.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Interval.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalBase.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\IntervalEnvironmentBase.cs" />
@@ -195,6 +204,10 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Rational.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AssumeFalseVisitor.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\AssumeTrueVisitor.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\RationalThreshold.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Threshold.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\TresholdDB.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\ValueExpressionDecoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\APCMap.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\SequenceGenerator.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.StackAnalysis\StackDecoder.cs" />
@@ -402,10 +415,12 @@
     <Compile Include="Test\AbstractDomainExtensionsTests.cs" />
     <Compile Include="Test\DisIntervalTests.cs" />
     <Compile Include="Test\DomainTestBase.cs" />
+    <Compile Include="Test\FlatDomainTests.cs" />
     <Compile Include="Test\IntervalTests.cs" />
     <Compile Include="Test\PatriciaTrieTests.cs" />
-    <Compile Include="Test\PolynomialTests.cs" />
+    <Compile Include="Test\RationalTestExtensions.cs" />
     <Compile Include="Test\RationalTests.cs" />
+    <Compile Include="Test\RationalThresholdTests.cs" />
     <Compile Include="Test\RewriteAndLoad.cs" />
     <Compile Include="Test\SequenceTests.cs" />
     <Compile Include="Test\TestCCRewrite.cs" />
@@ -447,6 +462,9 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Mono.CodeContracts.Static.Analysis.Numerical\roadmap.txt" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.ConstantEvaluator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.GenericNumericalAnalysis.cs" />
   </ItemGroup>
 </Project>

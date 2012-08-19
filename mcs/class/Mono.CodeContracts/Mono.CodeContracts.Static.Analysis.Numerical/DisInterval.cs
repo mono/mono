@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using Mono.CodeContracts.Static.DataStructures;
@@ -14,8 +15,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 static DisInterval cached_bottom;
                 static DisInterval cached_top;
-                
-                readonly Sequence<Interval> intervals; 
+
+                readonly Sequence<Interval> intervals;
                 readonly Interval join_interval;
                 readonly State state;
 
@@ -24,16 +25,16 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 {
                         var list = Sequence<Interval>.Empty;
                         if (interval.IsTop)
-                                this.state = State.Top;
+                                state = State.Top;
                         else if (interval.IsBottom)
-                                this.state = State.Bottom;
+                                state = State.Bottom;
                         else {
-                                this.state = State.Normal;
+                                state = State.Normal;
                                 list = list.Cons (interval);
                         }
 
-                        this.intervals = list;
-                        this.join_interval = interval;
+                        intervals = list;
+                        join_interval = interval;
                 }
 
                 DisInterval (Sequence<Interval> intervals)
@@ -43,21 +44,21 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         this.intervals = Normalize (intervals, out isBottom);
 
                         if (isBottom) {
-                                this.join_interval = Interval.BottomValue;
-                                this.state = State.Bottom;
+                                join_interval = Interval.BottomValue;
+                                state = State.Bottom;
 
                                 return;
                         }
 
-                        this.join_interval = JoinAll (intervals);
-                        if (this.join_interval.IsBottom)
-                                this.state = State.Bottom;
-                        else if (this.join_interval.IsTop)
-                                this.state = intervals.Length () <= 1 ? State.Top : State.Normal;
+                        join_interval = JoinAll (intervals);
+                        if (join_interval.IsBottom)
+                                state = State.Bottom;
+                        else if (join_interval.IsTop)
+                                state = intervals.Length () <= 1 ? State.Top : State.Normal;
                         else {
-                                this.LowerBound = this.join_interval.LowerBound;
-                                this.UpperBound = this.join_interval.UpperBound;
-                                this.state = State.Normal;
+                                LowerBound = join_interval.LowerBound;
+                                UpperBound = join_interval.UpperBound;
+                                state = State.Normal;
                         }
                 }
 
@@ -65,39 +66,23 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         : base (Rational.MinusInfinity, Rational.PlusInfinity)
                 {
                         this.state = state;
-                        this.join_interval = state == State.Bottom ? Interval.BottomValue : Interval.TopValue;
-                        this.intervals = Sequence<Interval>.Empty;
+                        join_interval = state == State.Bottom ? Interval.BottomValue : Interval.TopValue;
+                        intervals = Sequence<Interval>.Empty;
                 }
 
-                public static DisInterval BottomValue
-                {
-                        get
-                        {
-                                if (cached_bottom == null)
-                                        cached_bottom = new DisInterval (State.Bottom);
-                                return cached_bottom;
-                        }
-                }
+                public static DisInterval BottomValue { get { return cached_bottom ?? (cached_bottom = new DisInterval (State.Bottom)); } }
 
-                public static DisInterval TopValue
-                {
-                        get
-                        {
-                                if (cached_top == null)
-                                        cached_top = new DisInterval (State.Top);
-                                return cached_top;
-                        }
-                }
+                public static DisInterval TopValue { get { return cached_top ?? (cached_top = new DisInterval (State.Top)); } }
 
-                public Interval AsInterval { get { return this.join_interval; } }
+                public Interval AsInterval { get { return join_interval; } }
 
                 public override DisInterval Top { get { return TopValue; } }
 
                 public override DisInterval Bottom { get { return BottomValue; } }
 
-                public override bool IsTop { get { return this.state == State.Top; } }
+                public override bool IsTop { get { return state == State.Top; } }
 
-                public override bool IsBottom { get { return this.state == State.Bottom; } }
+                public override bool IsBottom { get { return state == State.Bottom; } }
 
                 public bool IsNotZero
                 {
@@ -106,11 +91,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 if (!this.IsNormal ())
                                         return false;
 
-                                return this.intervals.All (intv => !intv.Includes (0));
+                                return intervals.All (intv => !intv.Includes (0));
                         }
                 }
 
-                public bool IsPositiveOrZero { get { return this.IsNormal () && this.LowerBound >= 0L; } }
+                public bool IsPositiveOrZero { get { return this.IsNormal () && LowerBound >= 0L; } }
 
                 public override bool Equals (object other)
                 {
@@ -123,11 +108,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 if (intv == null)
                                         return false;
 
-                                return this.Equals (For (intv));
+                                return Equals (For (intv));
                         }
 
-                        if (this.state == that.state && this.join_interval.Equals (that.join_interval))
-                                return HaveSameIntervals (this.intervals, that.intervals);
+                        if (state == that.state && join_interval.Equals (that.join_interval))
+                                return HaveSameIntervals (intervals, that.intervals);
 
                         return false;
                 }
@@ -153,8 +138,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 public override int GetHashCode ()
                 {
                         unchecked {
-                                return (this.state.GetHashCode () * 397) ^
-                                       (this.join_interval != null ? this.join_interval.GetHashCode () : 0);
+                                return (state.GetHashCode () * 397) ^
+                                       (join_interval != null ? join_interval.GetHashCode () : 0);
                         }
                 }
 
@@ -173,11 +158,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                         var list = Sequence<Interval>.Empty;
 
-                        int bottomCnt = 0;
+                        var bottomCnt = 0;
                         Interval last = null;
 
-                        for (int i = 0; i < intervalList.Count; i++) {
-                                Interval cur = intervalList[i];
+                        foreach (var t in intervalList) {
+                                var cur = t;
 
                                 if (cur.IsBottom)
                                         bottomCnt++;
@@ -187,7 +172,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 }
                                 else if (!cur.Equals (last)) {
                                         if (last != null) {
-                                                while (list != Sequence<Interval>.Empty) {
+                                                while (list != null) {
                                                         last = list.Head;
                                                         if (Interval.AreConsecutiveIntegers (last, cur)) {
                                                                 list = list.Tail;
@@ -215,17 +200,17 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public static Interval JoinAll (Sequence<Interval> list)
                 {
-                        if (list == Sequence<Interval>.Empty)
+                        if (list == null)
                                 return Interval.TopValue;
 
-                        Interval res = list.Head;
-                        
-                        Sequence<Interval> cur = list.Tail;
+                        var res = list.Head;
+
+                        var cur = list.Tail;
                         while (cur != null) {
                                 res = res.Join (cur.Head);
                                 cur = cur.Tail;
                         }
-                        
+
                         return res;
                 }
 
@@ -273,12 +258,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                         var intervals = Sequence<Interval>.Empty;
 
-                        bool hasNoNormals = true;
+                        var hasNoNormals = true;
 
                         if (propagateTop || (left.IsNormal () && right.IsNormal ()))
-                                foreach (Interval leftIntv in left.intervals.AsEnumerable ())
-                                        foreach (Interval rightIntv in right.intervals.AsEnumerable ()) {
-                                                Interval res = binop (leftIntv, rightIntv);
+                                foreach (var leftIntv in left.intervals.AsEnumerable ())
+                                        foreach (var rightIntv in right.intervals.AsEnumerable ()) {
+                                                var res = binop (leftIntv, rightIntv);
                                                 if (res.IsTop)
                                                         return TopValue;
                                                 if (res.IsBottom)
@@ -288,13 +273,13 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                                 intervals = intervals.Cons (res);
                                         }
                         else {
-                                DisInterval notTop = left.IsTop ? right : left;
-                                bool rightIsTop = !left.IsTop;
+                                var notTop = left.IsTop ? right : left;
+                                var rightIsTop = !left.IsTop;
 
-                                foreach (Interval intv in notTop.intervals.AsEnumerable ()) {
-                                        Interval res = rightIsTop
-                                                               ? binop (intv, Interval.TopValue)
-                                                               : binop (Interval.TopValue, intv);
+                                foreach (var intv in notTop.intervals.AsEnumerable ()) {
+                                        var res = rightIsTop
+                                                          ? binop (intv, Interval.TopValue)
+                                                          : binop (Interval.TopValue, intv);
 
                                         if (res.IsTop)
                                                 return TopValue;
@@ -311,10 +296,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public override DisInterval Widen (DisInterval that)
                 {
-                        if (this.IsTop || that.IsTop)
+                        if (IsTop || that.IsTop)
                                 return TopValue;
 
-                        return new DisInterval (Widen (this.intervals, that.intervals));
+                        return new DisInterval (Widen (intervals, that.intervals));
                 }
 
                 static Sequence<Interval> Widen (Sequence<Interval> left, Sequence<Interval> right)
@@ -333,8 +318,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         if (right.Length () == 1)
                                 return Sequence<Interval>.Singleton (left.Head.Join (left.Last ()).Widen (right.Head));
 
-                        Interval l = left.Head.Widen (right.Head);
-                        Interval r = left.Last().Widen (right.Last ());
+                        var l = left.Head.Widen (right.Head);
+                        var r = left.Last ().Widen (right.Last ());
 
                         var list = Sequence<Interval>.Singleton (l);
 
@@ -359,8 +344,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 return result;
 
                         bool isBottom;
-                        var meetIntervals = Meet (this.intervals, that.intervals, out isBottom);
-                        
+                        var meetIntervals = Meet (intervals, that.intervals, out isBottom);
+
                         if (isBottom)
                                 return BottomValue;
                         if (meetIntervals.Length () == 0)
@@ -373,9 +358,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 {
                         isBottom = true;
                         var list = Sequence<Interval>.Empty;
-                        foreach (Interval leftIntv in left.AsEnumerable ()) {
-                                foreach (Interval rightIntv in right.AsEnumerable ()) {
-                                        Interval res = leftIntv.Meet (rightIntv);
+                        foreach (var leftIntv in left.AsEnumerable ()) {
+                                foreach (var rightIntv in right.AsEnumerable ()) {
+                                        var res = leftIntv.Meet (rightIntv);
                                         if (res.IsNormal ()) {
                                                 isBottom = false;
                                                 list = list.Cons (res);
@@ -398,7 +383,6 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public override void Dump (TextWriter tw)
                 {
-                        throw new NotImplementedException ();
                 }
 
                 public override bool LessEqual (DisInterval that)
@@ -407,21 +391,16 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         if (this.TryTrivialLessEqual (that, out result))
                                 return result;
 
-                        if (!this.join_interval.LessEqual (that.join_interval))
+                        if (!join_interval.LessEqual (that.join_interval))
                                 return false;
 
-                        foreach (Interval leftInv in this.intervals.AsEnumerable ()) {
-                                if (!that.intervals.Any (rightInv => leftInv.LessEqual (rightInv)))
-                                        return false;
-                        }
-
-                        return true;
+                        return intervals.AsEnumerable ().All (inv => that.intervals.Any (inv.LessEqual));
                 }
 
                 public override DisInterval Join (DisInterval that, bool widening, out bool weaker)
                 {
                         weaker = false;
-                        return this.Join (that);
+                        return Join (that);
                 }
 
                 public override DisInterval Join (DisInterval that)
@@ -430,11 +409,11 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         if (this.TryTrivialJoin (that, out result))
                                 return result;
 
-                        Sequence<Interval> intervals = Join (this.intervals, that.intervals);
-                        if (intervals.IsEmpty ())
+                        var join = Join (intervals, that.intervals);
+                        if (join.IsEmpty ())
                                 return TopValue;
 
-                        return For (intervals);
+                        return For (join);
                 }
 
                 static Sequence<Interval> Join (Sequence<Interval> left, Sequence<Interval> right)
@@ -445,8 +424,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         var curRight = right;
 
                         while (!curLeft.IsEmpty () && !curRight.IsEmpty ()) {
-                                Interval l = curLeft.Head;
-                                Interval r = curRight.Head;
+                                var l = curLeft.Head;
+                                var r = curRight.Head;
 
                                 if (l.IsTop || r.IsTop)
                                         return Sequence<Interval>.Empty;
@@ -489,7 +468,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 list = list.Cons (curRight.Head);
                                 curRight = curRight.Tail;
                         }
-                        
+
                         return list.Reverse ();
                 }
 
@@ -505,14 +484,14 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public override string ToString ()
                 {
-                        if (this.IsTop)
+                        if (IsTop)
                                 return "Top";
-                        if (this.IsBottom)
+                        if (IsBottom)
                                 return this.BottomSymbolIfAny ();
-                        if (this.intervals != null && this.intervals.Length () == 1)
-                                return this.intervals.Head.ToString ();
+                        if (intervals != null && intervals.Length () == 1)
+                                return intervals.Head.ToString ();
 
-                        return string.Format ("({0})", this.ToString (this.intervals));
+                        return string.Format ("({0})", ToString (intervals));
                 }
 
                 string ToString (Sequence<Interval> list)
@@ -521,9 +500,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 return "null";
 
                         var sb = new StringBuilder ();
-                        bool first = true;
+                        var first = true;
 
-                        foreach (Interval intv in list.AsEnumerable ()) {
+                        foreach (var intv in list.AsEnumerable ()) {
                                 if (first)
                                         first = false;
                                 else
@@ -537,19 +516,19 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public DisInterval Select (Func<Interval, Interval> selector)
                 {
-                        if (this.IsBottom)
+                        if (IsBottom)
                                 return this;
-                        if (this.IsTop)
+                        if (IsTop)
                                 return new DisInterval (selector (Interval.TopValue));
-                        
+
                         var list = Sequence<Interval>.Empty;
 
-                        for (Sequence<Interval> cur = intervals; cur != null; cur = cur.Tail) {
-                                Interval intv = selector (cur.Head);
+                        for (var cur = intervals; cur != null; cur = cur.Tail) {
+                                var intv = selector (cur.Head);
                                 if (intv.IsBottom)
-                                        return this.Bottom;
+                                        return Bottom;
                                 if (intv.IsTop)
-                                        return this.Top;
+                                        return Top;
 
                                 list = list.Cons (intv);
                         }
@@ -559,8 +538,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public static DisInterval EverythingExcept (DisInterval interval)
                 {
-                        Interval left = Interval.For (Rational.MinusInfinity, interval.LowerBound - 1L);
-                        Interval right = Interval.For (interval.UpperBound + 1L, Rational.PlusInfinity);
+                        var left = Interval.For (Rational.MinusInfinity, interval.LowerBound - 1L);
+                        var right = Interval.For (interval.UpperBound + 1L, Rational.PlusInfinity);
 
                         if (left.IsNormal () && right.IsNormal ())
                                 return new DisInterval (Sequence<Interval>.From (left, right));

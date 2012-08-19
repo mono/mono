@@ -48,7 +48,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		public readonly VisitorForValueOf<V, E> ValueOfVisitor;
 		public readonly VisitorForVariable<V, E> VariableVisitor;
 		public readonly VisitorForVariablesIn<V, E> VariablesInVisitor;
-		private readonly IMetaDataProvider meta_data_provider;
+		protected readonly IMetaDataProvider MetaDataProvider;
 
 		#region Implementation of IFullExpressionDecoder<V,E>
 		public bool IsVariable (E expr, out object variable)
@@ -126,7 +126,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		{
 			TypeNode type;
 			if (VisitorForSizeOf<V, E>.IsSizeOf (expr, out type, this)) {
-				int size = this.meta_data_provider.TypeSize (type);
+				int size = this.MetaDataProvider.TypeSize (type);
 				if (size != -1) {
 					sizeAsConstant = size;
 					return true;
@@ -141,7 +141,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		public FullExpressionDecoder (IMetaDataProvider metaDataProvider, IExpressionContextProvider<E, V> contextProvider)
 		{
 			ContextProvider = contextProvider;
-			this.meta_data_provider = metaDataProvider;
+			this.MetaDataProvider = metaDataProvider;
 			this.VariableVisitor = new VisitorForVariable<V, E> ();
 			this.UnderlyingVariableVisitor = new VisitorForUnderlyingVariable<V, E> ();
 			this.UnaryExpressionVisitor = new VisitorForIsUnaryExpression<V, E> ();

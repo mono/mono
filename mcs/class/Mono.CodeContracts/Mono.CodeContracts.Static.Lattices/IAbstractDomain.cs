@@ -26,58 +26,57 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 
 namespace Mono.CodeContracts.Static.Lattices {
-	/// <summary>
-	/// Represents abstraction of concrete value
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	interface IAbstractDomain<T> {
-		/// <summary>
-		/// Represents universe set (which holds every value)
-		/// </summary>
-		T Top { get; }
-
-		/// <summary>
-		/// Represents empty set (which holds nothing)
-		/// </summary>
-		T Bottom { get; }
-
-		/// <summary>
-		/// Is this value a universe set
-		/// </summary>
-		bool IsTop { get; }
-
-		/// <summary>
-		/// Is this value an empty set
-		/// </summary>
-		bool IsBottom { get; }
-
-		/// <summary>
-		/// Returns a union of this and that
-		/// </summary>
-		/// <param name="that"></param>
-		/// <returns></returns>
-		T Join (T that);
-
-        T Join(T that, bool widen, out bool weaker);
-
-	    T Widen (T that);
-		
         /// <summary>
-		/// Returns an intersection of this and that
-		/// </summary>
-		/// <param name="that"></param>
-		/// <returns></returns>
-		T Meet (T that);
+        /// Represents abstraction of concrete value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        interface IAbstractDomain<T> {
+                /// <summary>
+                /// Represents universe set (which holds every value)
+                /// </summary>
+                T Top { get; }
 
-		bool LessEqual (T that);
+                /// <summary>
+                /// Represents empty set (which holds nothing)
+                /// </summary>
+                T Bottom { get; }
 
-		T ImmutableVersion ();
-		T Clone ();
+                /// <summary>
+                /// Is this value a universe set
+                /// </summary>
+                bool IsTop { get; }
 
-		void Dump (TextWriter tw);
-	}
+                /// <summary>
+                /// Is this value an empty set
+                /// </summary>
+                bool IsBottom { get; }
+
+                /// <summary>
+                /// Returns a union of this and that
+                /// </summary>
+                /// <param name="that"></param>
+                /// <returns></returns>
+                T Join (T that);
+
+                T Join (T that, bool widen, out bool weaker);
+
+                T Widen (T that);
+
+                /// <summary>
+                /// Returns an intersection of this and that
+                /// </summary>
+                /// <param name="that"></param>
+                /// <returns></returns>
+                T Meet (T that);
+
+                bool LessEqual (T that);
+
+                T ImmutableVersion ();
+                T Clone ();
+
+                void Dump (TextWriter tw);
+        }
 }

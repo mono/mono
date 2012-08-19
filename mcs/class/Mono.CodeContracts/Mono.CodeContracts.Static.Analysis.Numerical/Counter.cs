@@ -1,5 +1,5 @@
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-        internal struct Counter<T> {
+        struct Counter<T> {
                 public readonly int Count;
                 public readonly T Env;
 
@@ -8,15 +8,15 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 {
                 }
 
-                private Counter (T env, int count)
+                Counter (T env, int count)
                 {
-                        this.Env = env;
-                        this.Count = count;
+                        Env = env;
+                        Count = count;
                 }
 
                 public Counter<T> Incremented ()
                 {
-                        return new Counter<T> (this.Env, this.Count + 1);
+                        return new Counter<T> (Env, Count + 1);
                 }
 
                 public override string ToString ()

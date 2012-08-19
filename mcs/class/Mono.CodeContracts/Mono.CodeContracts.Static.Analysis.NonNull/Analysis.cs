@@ -29,6 +29,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.Analysis.Drivers;
@@ -377,16 +379,13 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 
 		private bool TryFindOldState (APC pc, out NonNullDomain<V> old)
 		{
-			for (Sequence<Edge<CFGBlock, EdgeTag>> flist = pc.SubroutineContext; flist != null; flist = flist.Tail) {
-				Edge<CFGBlock, EdgeTag> head = flist.Head;
-				if (head.Tag.Is (EdgeTag.AfterMask))
-					return this.callSiteCache.TryGetValue (pc, out old);
-			}
-			old = new NonNullDomain<V> ();
-			return false;
+		        if (pc.SubroutineContext.AsEnumerable().Any (edge => edge.Tag.Is (EdgeTag.AfterMask))) 
+		                return this.callSiteCache.TryGetValue (pc, out old);
+
+		        return false.Without (out old);
 		}
 
-		public NonNullDomain<V> InitialValue (Func<V, int> keyConverter)
+	        public NonNullDomain<V> InitialValue (Func<V, int> keyConverter)
 		{
 			return new NonNullDomain<V> (new SetDomain<V> (keyConverter), new SetDomain<V> (keyConverter));
 		}

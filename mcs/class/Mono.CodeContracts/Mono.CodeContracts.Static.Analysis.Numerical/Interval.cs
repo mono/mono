@@ -31,8 +31,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Lattices;
+using Mono.CodeContracts.Static.Providers;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
         /// <summary>
@@ -51,12 +53,12 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         if (lowerBound.IsMinusInfinity && upperBound.IsPlusInfinity ||
                             lowerBound.IsMinusInfinity && upperBound.IsMinusInfinity ||
                             lowerBound.IsPlusInfinity && upperBound.IsPlusInfinity) {
-                                this.LowerBound = Rational.MinusInfinity;
-                                this.UpperBound = Rational.PlusInfinity;
-                                this.is_top = true;
+                                LowerBound = Rational.MinusInfinity;
+                                UpperBound = Rational.PlusInfinity;
+                                is_top = true;
                         }
 
-                        this.is_bottom = this.LowerBound > this.UpperBound;
+                        is_bottom = LowerBound > UpperBound;
                 }
 
                 public static Interval TopValue
@@ -83,8 +85,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 public override Interval Top { get { return TopValue; } }
                 public override Interval Bottom { get { return BottomValue; } }
 
-                public override bool IsTop { get { return this.is_top; } }
-                public override bool IsBottom { get { return this.is_bottom; } }
+                public override bool IsTop { get { return is_top; } }
+                public override bool IsBottom { get { return is_bottom; } }
 
                 public override bool LessEqual (Interval that)
                 {
@@ -93,19 +95,19 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 return result;
 
                         //less equal <==> is included in
-                        return this.LowerBound >= that.LowerBound && this.UpperBound <= that.UpperBound;
+                        return LowerBound >= that.LowerBound && UpperBound <= that.UpperBound;
                 }
 
                 public bool LessEqual (IEnumerable<Interval> right)
                 {
-                        return right.Any (intv => this.LessEqual (intv));
+                        return right.Any (LessEqual);
                 }
 
                 public override Interval Join (Interval that, bool widening, out bool weaker)
                 {
                         weaker = false;
 
-                        return widening ? this.Widen (that) : this.Join (that);
+                        return widening ? Widen (that) : Join (that);
                 }
 
                 public override Interval Join (Interval that)
@@ -114,15 +116,22 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         if (this.TryTrivialJoin (that, out result))
                                 return result;
 
-                        return For (Rational.Min (this.LowerBound, that.LowerBound),
-                                    Rational.Max (this.UpperBound, that.UpperBound));
+                        return For (Rational.Min (LowerBound, that.LowerBound),
+                                    Rational.Max (UpperBound, that.UpperBound));
                 }
 
                 public override Interval Widen (Interval that)
                 {
-                        //todo: widen here is very needed - infinite lattice
+                        Interval result;
+                        if (this.TryTrivialJoin (that, out result))
+                                return result;
 
-                        return this.Join (that);
+                        return For (LowerBound < that.LowerBound
+                                            ? ThresholdDB.GetPrevious (LowerBound)
+                                            : that.LowerBound,
+                                    UpperBound > that.UpperBound
+                                            ? ThresholdDB.GetNext (UpperBound)
+                                            : that.UpperBound);
                 }
 
                 public override Interval Meet (Interval that)
@@ -132,8 +141,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 return result;
 
                         return For (
-                                Rational.Max (this.LowerBound, that.LowerBound),
-                                Rational.Min (this.UpperBound, that.UpperBound));
+                                Rational.Max (LowerBound, that.LowerBound),
+                                Rational.Min (UpperBound, that.UpperBound));
                 }
 
                 public static Interval For (Rational lowerBound, Rational upperBound)
@@ -208,8 +217,8 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                                 return TopValue;
 
-                        Rational lower = Rational.Min (Rational.Min (a, b), Rational.Min (c, d));
-                        Rational upper = Rational.Max (Rational.Max (a, b), Rational.Max (c, d));
+                        var lower = Rational.Min (Rational.Min (a, b), Rational.Min (c, d));
+                        var upper = Rational.Max (Rational.Max (a, b), Rational.Max (c, d));
 
                         return For (lower, upper);
                 }
@@ -257,10 +266,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 return intv;
 
                         switch (conv) {
-                                case ExpressionOperator.ConvertToInt32:
-                                        return intv.RefineWithTypeRanges (int.MinValue, int.MaxValue);
-                                default:
-                                        return intv;
+                        case ExpressionOperator.ConvertToInt32:
+                                return intv.RefineWithTypeRanges (int.MinValue, int.MaxValue);
+                        default:
+                                return intv;
                         }
                 }
 
@@ -268,7 +277,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 {
                         int lower;
                         int upper;
-                        if (this.IsFiniteAndInt32 (out lower, out upper) && lower == upper)
+                        if (IsFiniteAndInt32 (out lower, out upper) && lower == upper)
                                 return true.With (lower, out value);
 
                         return false.Without (out value);
@@ -276,17 +285,17 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 public bool Includes (long x)
                 {
-                        return this.IsNormal () && this.LowerBound <= x && x <= this.UpperBound;
+                        return this.IsNormal () && LowerBound <= x && x <= UpperBound;
                 }
 
                 public bool Includes (int x)
                 {
-                        return this.IsNormal () && this.LowerBound <= x && x <= this.UpperBound;
+                        return this.IsNormal () && LowerBound <= x && x <= UpperBound;
                 }
 
                 public bool OverlapsWith (Interval that)
                 {
-                        return !this.Meet (that).IsBottom;
+                        return !Meet (that).IsBottom;
                 }
 
                 public bool OnTheLeftOf (Interval that)
@@ -294,7 +303,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         if (!this.IsNormal () || !that.IsNormal ())
                                 return false;
 
-                        return this.UpperBound <= that.LowerBound;
+                        return UpperBound <= that.LowerBound;
                 }
 
                 public override Interval ImmutableVersion ()
@@ -313,7 +322,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 return false;
                         if (ReferenceEquals (this, obj))
                                 return true;
-                        return this.Equals ((Interval) obj);
+                        return Equals ((Interval) obj);
                 }
 
                 public bool Equals (Interval that)
@@ -323,17 +332,17 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         if (ReferenceEquals (that, null))
                                 return false;
 
-                        return this.LowerBound == that.LowerBound && this.UpperBound == that.UpperBound;
+                        return LowerBound == that.LowerBound && UpperBound == that.UpperBound;
                 }
 
                 public override int GetHashCode ()
                 {
-                        return (this.LowerBound.GetHashCode () * 397) ^ this.UpperBound.GetHashCode ();
+                        return (LowerBound.GetHashCode () * 397) ^ UpperBound.GetHashCode ();
                 }
 
                 public override void Dump (TextWriter tw)
                 {
-                        tw.WriteLine (this.ToString ());
+                        tw.WriteLine (ToString ());
                 }
 
                 protected override bool IsFiniteBound (Rational n)
@@ -343,10 +352,10 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 bool IsFiniteAndInt32 (out int lower, out int upper)
                 {
-                        if (this.IsFinite && this.LowerBound.IsInt32 && this.UpperBound.IsInt32) {
+                        if (IsFinite && LowerBound.IsInt32 && UpperBound.IsInt32) {
                                 try {
-                                        lower = (int) this.LowerBound;
-                                        upper = (int) this.UpperBound;
+                                        lower = (int) LowerBound;
+                                        upper = (int) UpperBound;
                                         return true;
                                 }
                                 catch (ArithmeticException) {
@@ -359,15 +368,37 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                 Interval RefineWithTypeRanges (int min, int max)
                 {
-                        Rational lower = this.LowerBound.IsInfinity || !this.LowerBound.IsInRange (min, max)
-                                                 ? Rational.MinusInfinity
-                                                 : this.LowerBound.PreviousInt32;
+                        var lower = LowerBound.IsInfinity || !LowerBound.IsInRange (min, max)
+                                            ? Rational.MinusInfinity
+                                            : LowerBound.PreviousInt32;
 
-                        Rational upper = this.UpperBound.IsInfinity || !this.UpperBound.IsInRange (min, max)
-                                                 ? Rational.PlusInfinity
-                                                 : this.UpperBound.NextInt32;
+                        var upper = UpperBound.IsInfinity || !UpperBound.IsInRange (min, max)
+                                            ? Rational.PlusInfinity
+                                            : UpperBound.NextInt32;
 
                         return For (lower, upper);
+                }
+
+                public static class Ranges {
+                        static Interval int8Range;
+                        static Interval int32Range;
+                        static Interval int64Range;
+
+                        public static Interval Int8Range { get { return int8Range ?? (int8Range = For (sbyte.MinValue, sbyte.MaxValue)); } }
+                        public static Interval Int32Range { get { return int32Range ?? (int32Range = For (int.MinValue, int.MaxValue)); } }
+                        public static Interval Int64Range { get { return int64Range ?? (int64Range = For (int.MinValue, int.MaxValue)); } }
+
+                        public static Interval GetIntervalForType (TypeNode type, IMetaDataProvider provider)
+                        {
+                                if (provider.Equal (provider.System_Int8, type))
+                                        return Int8Range;
+                                if (provider.Equal (provider.System_Int32, type))
+                                        return Int32Range;
+                                if (provider.Equal (provider.System_Int64, type))
+                                        return Int64Range;
+
+                                return TopValue;
+                        }
                 }
         }
 }

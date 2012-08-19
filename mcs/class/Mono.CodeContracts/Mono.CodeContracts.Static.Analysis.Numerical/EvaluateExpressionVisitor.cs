@@ -4,183 +4,188 @@ using System.Collections.Generic;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-    internal class EvaluateExpressionVisitor<TEnv, TVar, TExpr, TInterval, TNumeric> :
-        GenericExpressionVisitor<Counter<TEnv>, TInterval, TVar, TExpr>
-        where TEnv : IntervalEnvironmentBase<TEnv, TVar, TExpr, TInterval, TNumeric>
-        where TVar : IEquatable<TVar>
-        where TInterval : IntervalBase<TInterval, TNumeric> {
+        class EvaluateExpressionVisitor<TEnv, TVar, TExpr, TInterval, TNumeric> :
+                GenericExpressionVisitor<Counter<TEnv>, TInterval, TVar, TExpr>
+                where TEnv : IntervalEnvironmentBase<TVar, TExpr, TInterval, TNumeric>
+                where TVar : IEquatable<TVar>
+                where TInterval : IntervalBase<TInterval, TNumeric> {
+                readonly
+                        ConstToIntervalEvaluator
+                                <IntervalContextBase<TInterval, TNumeric>, TVar, TExpr, TInterval, TNumeric> constToIntv;
 
-        private readonly ConstToIntervalEvaluator<IntervalContextBase<TInterval, TNumeric>, TVar, TExpr, TInterval, TNumeric> constToIntv;
-        private readonly VariableOccurences occurences;
+                readonly VariableOccurences occurences;
 
-        public Sequence<TVar> DuplicatedOccurences { get { return this.occurences.Duplicated; } }
+                public Sequence<TVar> DuplicatedOccurences { get { return occurences.Duplicated; } }
 
-        public EvaluateExpressionVisitor (IExpressionDecoder<TVar, TExpr> decoder)
-            : base (decoder)
-        {
-            this.occurences = new VariableOccurences (decoder);
-            this.constToIntv = new ConstToIntervalEvaluator<IntervalContextBase<TInterval, TNumeric>, TVar, TExpr, TInterval, TNumeric>(decoder);
-        }
+                public EvaluateExpressionVisitor (IExpressionDecoder<TVar, TExpr> decoder)
+                        : base (decoder)
+                {
+                        occurences = new VariableOccurences (decoder);
+                        constToIntv =
+                                new ConstToIntervalEvaluator
+                                        <IntervalContextBase<TInterval, TNumeric>, TVar, TExpr, TInterval, TNumeric> (
+                                        decoder);
+                }
 
-        public override TInterval Visit (TExpr expr, Counter<TEnv> data)
-        {
-            if (data.Count >= 10) // to avoid recursion if any
-                return this.Default (data);
+                public override TInterval Visit (TExpr expr, Counter<TEnv> data)
+                {
+                        if (data.Count >= 10) // to avoid recursion if any
+                                return Default (data);
 
-            var intv = base.Visit (expr, data.Incremented ());
-            if (intv == null)
-                return this.Default (data);
+                        var intv = base.Visit (expr, data.Incremented ());
+                        if (intv == null)
+                                return Default (data);
 
-            intv = this.RefineWithTypeRanges (intv, expr, data.Env);
+                        intv = RefineWithTypeRanges (intv, expr, data.Env);
 
-            var var = this.Decoder.UnderlyingVariable (expr);
-            
-            TInterval current;
-            if (data.Env.TryGetValue (var, out current))
-                intv = intv.Meet (current);
+                        var var = Decoder.UnderlyingVariable (expr);
 
-            return intv;
-        }
+                        TInterval current;
+                        if (data.Env.TryGetValue (var, out current))
+                                intv = intv.Meet (current);
 
-        public override TInterval VisitConstant (TExpr expr, Counter<TEnv> data)
-        {
-            return this.constToIntv.Visit (expr, data.Env.Context);
-        }
+                        return intv;
+                }
 
-        public override TInterval VisitAddition (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Add (l, r));
-        }
+                public override TInterval VisitConstant (TExpr expr, Counter<TEnv> data)
+                {
+                        return constToIntv.Visit (expr, data.Env.Context);
+                }
 
-        public override TInterval VisitDivision (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Div (l, r));
-        }
+                public override TInterval VisitAddition (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
+                {
+                        return DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Add (l, r));
+                }
 
-        public override TInterval VisitMultiply (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Mul (l, r));
-        }
+                public override TInterval VisitDivision (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
+                {
+                        return DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Div (l, r));
+                }
 
-        public override TInterval VisitSubtraction (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Sub (l, r));
-        }
+                public override TInterval VisitMultiply (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
+                {
+                        return DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Mul (l, r));
+                }
 
-        public override TInterval VisitEqual (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultComparisons (left, right, data);
-        }
+                public override TInterval VisitSubtraction (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
+                {
+                        return DefaultBinary (left, right, data, (d, l, r) => d.Env.Context.Sub (l, r));
+                }
 
-        public override TInterval VisitLessThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultComparisons (left, right, data);
-        }
+                public override TInterval VisitEqual (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
+                {
+                        return DefaultComparisons (left, right, data);
+                }
 
-        public override TInterval VisitGreaterEqualThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultComparisons (left, right, data);
-        }
+                public override TInterval VisitLessThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
+                {
+                        return DefaultComparisons (left, right, data);
+                }
 
-        public override TInterval VisitLessEqualThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultComparisons (left, right, data);
-        }
+                public override TInterval VisitGreaterEqualThan (TExpr left, TExpr right, TExpr original,
+                                                                 Counter<TEnv> data)
+                {
+                        return DefaultComparisons (left, right, data);
+                }
 
-        public override TInterval VisitGreaterThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
-        {
-            return this.DefaultComparisons (left, right, data);
-        }
+                public override TInterval VisitLessEqualThan (TExpr left, TExpr right, TExpr original,
+                                                              Counter<TEnv> data)
+                {
+                        return DefaultComparisons (left, right, data);
+                }
 
-        public override TInterval VisitUnknown (TExpr expr, Counter<TEnv> data)
-        {
-            this.occurences.Add (expr);
+                public override TInterval VisitGreaterThan (TExpr left, TExpr right, TExpr original, Counter<TEnv> data)
+                {
+                        return DefaultComparisons (left, right, data);
+                }
 
-            return this.Default (data);
-        }
+                public override TInterval VisitUnknown (TExpr expr, Counter<TEnv> data)
+                {
+                        occurences.Add (expr);
 
-        protected override TInterval Default (Counter<TEnv> data)
-        {
-            return data.Env.Context.TopValue;
-        }
+                        return Default (data);
+                }
 
-        private delegate TInterval BinaryEvaluator (Counter<TEnv> env, TInterval left, TInterval right);
+                protected override TInterval Default (Counter<TEnv> data)
+                {
+                        return data.Env.Context.TopValue;
+                }
 
-        private TInterval DefaultBinary(TExpr left, TExpr right, Counter<TEnv> data, BinaryEvaluator binop)
-        {
-            this.occurences.Add(left, right);
+                delegate TInterval BinaryEvaluator (Counter<TEnv> env, TInterval left, TInterval right);
 
-            var incremented = data.Incremented();
-            var leftIntv = this.Visit(left, incremented);
-            var rightIntv = this.Visit(right, incremented);
+                TInterval DefaultBinary (TExpr left, TExpr right, Counter<TEnv> data, BinaryEvaluator binop)
+                {
+                        occurences.Add (left, right);
 
-            return binop(data, leftIntv, rightIntv);
-        }
+                        var incremented = data.Incremented ();
+                        var leftIntv = Visit (left, incremented);
+                        var rightIntv = Visit (right, incremented);
 
-        private TInterval DefaultComparisons(TExpr left, TExpr right, Counter<TEnv> data)
-        {
-            this.occurences.Add(left, right);
+                        return binop (data, leftIntv, rightIntv);
+                }
 
-            return this.Default(data);
-        }
+                TInterval DefaultComparisons (TExpr left, TExpr right, Counter<TEnv> data)
+                {
+                        occurences.Add (left, right);
 
-        private TInterval RefineWithTypeRanges (TInterval intv, TExpr expr, TEnv env)
-        {
-            switch (this.Decoder.TypeOf (expr))
-            {
-                case ExpressionType.Int32:
-                    return env.Context.ApplyConversion (ExpressionOperator.ConvertToInt32, intv);
-                case ExpressionType.Bool:
-                    return env.Context.ApplyConversion (ExpressionOperator.ConvertToInt32, intv);
-                default:
-                    return intv;
-            }
-        }
+                        return Default (data);
+                }
 
-        private class VariableOccurences
-        {
-            private readonly Dictionary<TVar, int> occurences;
+                TInterval RefineWithTypeRanges (TInterval intv, TExpr expr, TEnv env)
+                {
+                        switch (Decoder.TypeOf (expr)) {
+                        case ExpressionType.Int32:
+                                return env.Context.ApplyConversion (ExpressionOperator.ConvertToInt32, intv);
+                        case ExpressionType.Bool:
+                                return env.Context.ApplyConversion (ExpressionOperator.ConvertToInt32, intv);
+                        default:
+                                return intv;
+                        }
+                }
 
-            private readonly IExpressionDecoder<TVar, TExpr> decoder;
+                class VariableOccurences {
+                        readonly Dictionary<TVar, int> occurences;
 
-            private Sequence<TVar> duplicated;
+                        readonly IExpressionDecoder<TVar, TExpr> decoder;
 
-            public VariableOccurences (IExpressionDecoder<TVar, TExpr> decoder)
-            {
-                this.decoder = decoder;
-                this.occurences = new Dictionary<TVar, int> ();
-                this.duplicated = Sequence<TVar>.Empty;
-            }
+                        Sequence<TVar> duplicated;
 
-            public Sequence<TVar> Duplicated { get { return this.duplicated; } }
+                        public VariableOccurences (IExpressionDecoder<TVar, TExpr> decoder)
+                        {
+                                this.decoder = decoder;
+                                occurences = new Dictionary<TVar, int> ();
+                                duplicated = Sequence<TVar>.Empty;
+                        }
 
-            private void Add (TVar var)
-            {
-                int cnt;
-                if (!this.occurences.TryGetValue (var, out cnt))
-                    cnt = 0;
+                        public Sequence<TVar> Duplicated { get { return duplicated; } }
 
-                this.occurences[var] = cnt + 1;
+                        void Add (TVar var)
+                        {
+                                int cnt;
+                                if (!occurences.TryGetValue (var, out cnt))
+                                        cnt = 0;
 
-                if (cnt == 1) // if already was occurence
-                    this.duplicated = this.duplicated.Cons (var);
-            }
+                                occurences[var] = cnt + 1;
 
-            public void Add (TExpr e)
-            {
-                this.Add (this.decoder.UnderlyingVariable (e));
-            }
+                                if (cnt == 1) // if already was occurence
+                                        duplicated = duplicated.Cons (var);
+                        }
 
-            public void Add (params TExpr[] exprs)
-            {
-                foreach (var expr in exprs)
-                    this.Add (expr);
-            }
+                        public void Add (TExpr e)
+                        {
+                                Add (decoder.UnderlyingVariable (e));
+                        }
 
-            public override string ToString ()
-            {
-                return this.occurences.ToString ();
-            }
-        }
-    }
+                        public void Add (params TExpr[] exprs)
+                        {
+                                foreach (var expr in exprs)
+                                        Add (expr);
+                        }
+
+                        public override string ToString ()
+                        {
+                                return occurences.ToString ();
+                        }
+                }
+                }
 }

@@ -258,7 +258,7 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			return false;
 		}
 
-		public static void ToString (StringBuilder sb, Sequence<Edge<CFGBlock, EdgeTag>> context)
+	        static void ToString (StringBuilder sb, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			bool wasFirst = false;
 			for (; context != null; context = context.Tail) {

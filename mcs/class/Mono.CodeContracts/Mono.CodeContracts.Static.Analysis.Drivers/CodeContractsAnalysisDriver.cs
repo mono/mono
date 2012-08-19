@@ -47,7 +47,7 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 				return ProofOutcome.Top;
 			}
 
-            public FlatDomain<bool> IsNonNull(APC pc, SymbolicValue variable)
+                        public FlatDomain<bool> IsNonNull(APC pc, SymbolicValue variable)
 			{
 				return ProofOutcome.Top;
 			}
@@ -141,7 +141,7 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 				return SymbolicValue.GetUniqueKey (var);
 			}
 			#endregion
-		                             }
+                }
 		#endregion
-		}
+	}
 }

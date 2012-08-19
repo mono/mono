@@ -30,49 +30,48 @@ using System.IO;
 
 using Mono.CodeContracts.Static.Lattices;
 
-namespace Mono.CodeContracts.Static.Analysis.Numerical
-{
-    /// <summary>
-    /// Represents a generic class for intervals on numeric values.
-    /// </summary>
-    abstract class IntervalBase<TInterval, TNumeric> : IAbstractDomain<TInterval>
-        where TInterval : IntervalBase<TInterval, TNumeric>
-    {
-        protected IntervalBase (TNumeric lowerBound, TNumeric upperBound)
-        {
-            LowerBound = lowerBound;
-            UpperBound = upperBound;
-        }
+namespace Mono.CodeContracts.Static.Analysis.Numerical {
+        /// <summary>
+        /// Represents a generic class for intervals on numeric values.
+        /// </summary>
+        abstract class IntervalBase<TInterval, TNumeric> : IAbstractDomain<TInterval>
+                where TInterval : IntervalBase<TInterval, TNumeric> {
+                protected IntervalBase (TNumeric lowerBound, TNumeric upperBound)
+                {
+                        LowerBound = lowerBound;
+                        UpperBound = upperBound;
+                }
 
-        public TNumeric UpperBound { get; protected set; }
-        public TNumeric LowerBound { get; protected set; }
+                public TNumeric UpperBound { get; protected set; }
+                public TNumeric LowerBound { get; protected set; }
 
-        public abstract TInterval Top { get; }
-        public abstract TInterval Bottom { get; }
+                public abstract TInterval Top { get; }
+                public abstract TInterval Bottom { get; }
 
-        public abstract bool IsTop { get; }
-        public abstract bool IsBottom { get; }
+                public abstract bool IsTop { get; }
+                public abstract bool IsBottom { get; }
 
-        public bool IsSinglePoint { get { return this.IsNormal () && LowerBound.Equals (UpperBound); } }
-        public bool IsFinite { get { return this.IsNormal () && this.IsFiniteBound (LowerBound) && this.IsFiniteBound (UpperBound); } }
+                public bool IsSinglePoint { get { return this.IsNormal () && LowerBound.Equals (UpperBound); } }
+                public bool IsFinite { get { return this.IsNormal () && IsFiniteBound (LowerBound) && IsFiniteBound (UpperBound); } }
 
-        public abstract bool LessEqual (TInterval that);
+                public abstract bool LessEqual (TInterval that);
 
-        public abstract TInterval Join (TInterval that, bool widening, out bool weaker);
-        public abstract TInterval Join (TInterval that);
+                public abstract TInterval Join (TInterval that, bool widening, out bool weaker);
+                public abstract TInterval Join (TInterval that);
 
-        public abstract TInterval Widen(TInterval that);
-        public abstract TInterval Meet (TInterval that);
+                public abstract TInterval Widen (TInterval that);
+                public abstract TInterval Meet (TInterval that);
 
-        public abstract TInterval ImmutableVersion ();
-        public abstract TInterval Clone ();
+                public abstract TInterval ImmutableVersion ();
+                public abstract TInterval Clone ();
 
-        public abstract void Dump (TextWriter tw);
-        public override string ToString ()
-        {
-            return string.Format ("[{0}, {1}]{2}", LowerBound, UpperBound, this.BottomSymbolIfAny ());
-        }
+                public abstract void Dump (TextWriter tw);
 
-        protected abstract bool IsFiniteBound (TNumeric n);
-    }
+                public override string ToString ()
+                {
+                        return string.Format ("[{0}, {1}]{2}", LowerBound, UpperBound, this.BottomSymbolIfAny ());
+                }
+
+                protected abstract bool IsFiniteBound (TNumeric n);
+       }
 }

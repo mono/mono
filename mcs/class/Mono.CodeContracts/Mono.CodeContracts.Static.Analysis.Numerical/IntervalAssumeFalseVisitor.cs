@@ -1,54 +1,55 @@
 using System;
 
-namespace Mono.CodeContracts.Static.Analysis.Numerical
-{
-    class IntervalAssumeFalseVisitor<TEnv, Var, Expr, TInterval, TNumeric> : AssumeFalseVisitor<TEnv, Var, Expr>
-        where TEnv : IntervalEnvironmentBase<TEnv, Var, Expr, TInterval, TNumeric>
-        where TInterval : IntervalBase<TInterval, TNumeric> 
-        where Var : IEquatable<Var> {
-        public IntervalAssumeFalseVisitor(IExpressionDecoder<Var, Expr> decoder)
-            : base(decoder)
-        {
-        }
+namespace Mono.CodeContracts.Static.Analysis.Numerical {
+        class IntervalAssumeFalseVisitor<TVar, TExpr, TInterval, TNumeric> :
+                AssumeFalseVisitor<IntervalEnvironmentBase<TVar, TExpr, TInterval, TNumeric>, TVar, TExpr>
+                where TInterval : IntervalBase<TInterval, TNumeric>
+                where TVar : IEquatable<TVar> {
+                public IntervalAssumeFalseVisitor (IExpressionDecoder<TVar, TExpr> decoder)
+                        : base (decoder)
+                {
+                }
 
-        public override TEnv Visit(Expr expr, TEnv data)
-        {
-            TEnv res = base.Visit(expr, data);
+                public override IntervalEnvironmentBase<TVar, TExpr, TInterval, TNumeric> Visit (TExpr expr,
+                                                                                               IntervalEnvironmentBase
+                                                                                                       <TVar, TExpr,
+                                                                                                       TInterval,
+                                                                                                       TNumeric> data)
+                {
+                        var res = base.Visit (expr, data);
 
-            if (!Decoder.IsBinaryExpression(expr))
-                return res;
+                        if (!Decoder.IsBinaryExpression (expr))
+                                return res;
 
-            var left = Decoder.LeftExpressionFor (expr);
-            var right = Decoder.RightExpressionFor (expr);
+                        var left = Decoder.LeftExpressionFor (expr);
+                        var right = Decoder.RightExpressionFor (expr);
 
-            var intv = data.Eval (right);
-            if (intv.IsBottom)
-                return data.Bottom;
-            if (!intv.IsSinglePoint)
-                return res;
+                        var intv = data.Eval (right);
+                        if (intv.IsBottom)
+                                return data.Bottom;
+                        if (!intv.IsSinglePoint)
+                                return res;
 
-            switch (Decoder.OperatorFor(expr))
-            {
-                case ExpressionOperator.LessThan:
-                    {
-                        var leftVar = Decoder.UnderlyingVariable (left);
-                        return res.Assumer.AssumeLessEqualThan (intv, leftVar, res);
-                    }
-                case ExpressionOperator.LessEqualThan:
-                    {
-                        var leftVar = Decoder.UnderlyingVariable(left);
-                        return res.Assumer.AssumeLessThan(intv, leftVar, res);
-                    }
-            }
+                        switch (Decoder.OperatorFor (expr)) {
+                        case ExpressionOperator.LessThan: {
+                                var leftVar = Decoder.UnderlyingVariable (left);
+                                return res.Assumer.AssumeLessEqualThan (intv, leftVar, res);
+                        }
+                        case ExpressionOperator.LessEqualThan: {
+                                var leftVar = Decoder.UnderlyingVariable (left);
+                                return res.Assumer.AssumeLessThan (intv, leftVar, res);
+                        }
+                        }
 
-            return data;
-        }
+                        return data;
+                }
 
-
-        protected override TEnv DispatchCompare(CompareVisitor cmp, Expr left, Expr right, Expr original, TEnv data)
-        {
-            data = cmp(left, right, original, data);
-            return base.DispatchCompare(cmp, left, right, original, data);
-        }
-    }
+                protected override IntervalEnvironmentBase<TVar, TExpr, TInterval, TNumeric> DispatchCompare (
+                        CompareVisitor cmp, TExpr left, TExpr right, TExpr original,
+                        IntervalEnvironmentBase<TVar, TExpr, TInterval, TNumeric> data)
+                {
+                        data = cmp (left, right, original, data);
+                        return base.DispatchCompare (cmp, left, right, original, data);
+                }
+                }
 }

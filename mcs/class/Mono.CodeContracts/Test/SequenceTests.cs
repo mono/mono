@@ -1,4 +1,5 @@
 ﻿#region Copyright Header
+
 // // 
 // // SequenceTests.cs.cs
 // // 
@@ -26,59 +27,58 @@
 // // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // // 
+
 #endregion
 
 using Mono.CodeContracts.Static.DataStructures;
 
 using NUnit.Framework;
 
-namespace MonoTests.Mono.CodeContracts
-{
-    [TestFixture]
-    public class SequenceTests
-    {
-        private readonly Sequence<int> empty = Sequence<int>.Empty;
+namespace MonoTests.Mono.CodeContracts {
+        [TestFixture]
+        public class SequenceTests {
+                readonly Sequence<int> empty = Sequence<int>.Empty;
 
-        [Test]
-        public void ShouldHasCountEq1WithOneElement()
-        {
-            var list = empty.Cons (5);
+                [Test]
+                public void FromListShouldCreateSequenceInOrder ()
+                {
+                        Sequence<int> seq = Sequence<int>.From (1, 2, 3);
 
-            Assert.That(list.Length(), Is.EqualTo(1));
-            Assert.That(list.Head, Is.EqualTo(5));
-            Assert.That(list.Tail, Is.Null);
+                        Assert.That (seq.Length (), Is.EqualTo (3));
+                        Assert.That (seq.Head, Is.EqualTo (1));
+                        Assert.That (seq.Tail.Head, Is.EqualTo (2));
+                        Assert.That (seq.Tail.Tail.Head, Is.EqualTo (3));
+                }
+
+                [Test]
+                public void MultipleConsAreInsertedAsAStack ()
+                {
+                        Sequence<int> seq = this.empty.Cons (1).Cons (2).Cons (3);
+
+                        Assert.That (seq.Head, Is.EqualTo (3));
+                        Assert.That (seq.Tail.Head, Is.EqualTo (2));
+                        Assert.That (seq.Tail.Tail.Head, Is.EqualTo (1));
+                }
+
+                [Test]
+                public void ReverseShouldReverse ()
+                {
+                        Sequence<int> seq = Sequence<int>.From (1, 2);
+                        Sequence<int> reversed = seq.Reverse ();
+
+                        Assert.That (reversed.Length (), Is.EqualTo (2));
+                        Assert.That (reversed.Head, Is.EqualTo (2));
+                        Assert.That (reversed.Tail.Head, Is.EqualTo (1));
+                }
+
+                [Test]
+                public void ShouldHasCountEq1WithOneElement ()
+                {
+                        Sequence<int> seq = Sequence<int>.From (5);
+
+                        Assert.That (seq.Length (), Is.EqualTo (1));
+                        Assert.That (seq.Head, Is.EqualTo (5));
+                        Assert.That (seq.Tail, Is.Null);
+                }
         }
-
-        [Test]
-        public void FromListShouldCreateSequenceInOrder()
-        {
-            var list = Sequence<int>.From (1, 2, 3);
-
-            Assert.That (list.Length(), Is.EqualTo (3));
-            Assert.That (list.Head, Is.EqualTo (1));
-            Assert.That (list.Tail.Head, Is.EqualTo (2));
-            Assert.That (list.Tail.Tail.Head, Is.EqualTo (3));
-        }
-
-        [Test]
-        public void MultipleConsAreInsertedFirst ()
-        {
-            var list = empty.Cons (1).Cons (2).Cons (3);
-            
-            Assert.That (list.Head, Is.EqualTo (3));
-            Assert.That (list.Tail.Head, Is.EqualTo (2));
-            Assert.That (list.Tail.Tail.Head, Is.EqualTo (1));
-        }
-
-        [Test]
-        public void ReverseShouldReverse ()
-        {
-            var list = Sequence<int>.From (1, 2);
-            var reversed = list.Reverse ();
-
-            Assert.That (reversed.Length(), Is.EqualTo (2));
-            Assert.That (reversed.Head, Is.EqualTo (2));
-            Assert.That (reversed.Tail.Head, Is.EqualTo (1));
-        }
-    }
 }

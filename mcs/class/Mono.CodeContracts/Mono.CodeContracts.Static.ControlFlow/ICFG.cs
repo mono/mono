@@ -62,5 +62,6 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		            Sequence<Edge<CFGBlock, EdgeTag>> context);
 
 	    bool IsForwardBackEdge (APC @from, APC to);
+	        APC Post (APC pc);
 	}
 }

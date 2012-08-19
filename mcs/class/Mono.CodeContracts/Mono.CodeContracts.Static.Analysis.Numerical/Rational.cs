@@ -160,6 +160,9 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         }
                 }
 
+                public long Up { get { return up; } }
+                public long Down { get { return down; } }
+
                 public bool IsInRange (long min, long max)
                 {
                         return min <= this && this <= max;
@@ -787,6 +790,25 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         Normal,
                         PlusInfinity,
                         MinusInfinity,
+                }
+        }
+
+        static class RationalExtensions {
+                public static TExpr ToExpression<TVar, TExpr>(this Rational value, IExpressionEncoder<TVar, TExpr> encoder )
+                {
+                        if (value.IsInteger)
+                                return encoder.ConstantFor ((long) value);
+                        if (value.IsPlusInfinity)
+                                return encoder.CompoundFor (ExpressionType.Int32, ExpressionOperator.Div,
+                                                            encoder.ConstantFor (1L), encoder.ConstantFor (0L));
+                        if (value.IsMinusInfinity)
+                                return encoder.CompoundFor (ExpressionType.Int32, ExpressionOperator.Div,
+                                                            encoder.ConstantFor (-1L), encoder.ConstantFor (0L));
+
+                        TExpr l = encoder.ConstantFor (value.Up);
+                        TExpr r = encoder.ConstantFor (value.Down);
+
+                        return encoder.CompoundFor (ExpressionType.Int32, ExpressionOperator.Div, l, r);
                 }
         }
 }

@@ -311,7 +311,12 @@ namespace Mono.CodeContracts.Static.Analysis.StackAnalysis {
 	        return this.UnderlyingCFG.IsForwardBackEdge (from, to);
 	    }
 
-	    #endregion
+            public APC Post (APC pc)
+            {
+                    return UnderlyingCFG.Post (pc);
+            }
+
+	        #endregion
 
 		#region Implementation of IStackInfo
 		bool IStackInfo.IsCallOnThis (APC pc)
