@@ -23,8 +23,8 @@
 
 namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
-	/// This internal block is used by the Receive methods in DataflowBlock static class
-	/// to retrieve elements in either blocking or asynchronous way
+	/// This internal block is used by the <see cref="DataflowBlock.Receive"/> methods
+	/// to retrieve elements in either blocking or asynchronous way.
 	/// </summary>
 	class ReceiveBlock<TOutput> : ITargetBlock<TOutput> {
 		readonly TaskCompletionSource<TOutput> completion =
@@ -63,6 +63,12 @@ namespace System.Threading.Tasks.Dataflow {
 			return DataflowMessageStatus.Accepted;
 		}
 
+		/// <summary>
+		/// Synchronously waits until an item is available.
+		/// </summary>
+		/// <param name="bridge">The disposable object returned by <see cref="ISourceBlock{TOutput}.LinkTo"/>.</param>
+		/// <param name="token">Cancellation token for this operation.</param>
+		/// <param name="timeout">Timeout of this operation, in milliseconds.</param>
 		public TOutput WaitAndGet (IDisposable bridge, CancellationToken token, int timeout)
 		{
 			try {
@@ -75,6 +81,12 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Asynchronously waits until an item is available.
+		/// </summary>
+		/// <param name="bridge">The disposable object returned by <see cref="ISourceBlock{TOutput}.LinkTo"/>.</param>
+		/// <param name="token">Cancellation token for this operation.</param>
+		/// <param name="timeout">Timeout of this operation, in milliseconds.</param>
 		public Task<TOutput> AsyncGet (IDisposable bridge, CancellationToken token, int timeout)
 		{
 			linkBridge = bridge;
@@ -98,6 +110,10 @@ namespace System.Threading.Tasks.Dataflow {
 			return completion.Task;
 		}
 
+		/// <summary>
+		/// Called after the result has been set,
+		/// cleans up after this block.
+		/// </summary>
 		void CompletionSet ()
 		{
 			if (linkBridge != null) {

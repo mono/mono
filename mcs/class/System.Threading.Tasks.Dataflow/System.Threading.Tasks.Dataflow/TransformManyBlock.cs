@@ -127,6 +127,10 @@ namespace System.Threading.Tasks.Dataflow {
 			return outgoing.TryReceiveAll (out items);
 		}
 
+		/// <summary>
+		/// Transforms one item from the queue if the transform delegate is synchronous.
+		/// </summary>
+		/// <returns>Returns whether an item was processed. Returns <c>false</c> if the queue is empty.</returns>
 		bool TransformProcess ()
 		{
 			TInput input;
@@ -141,6 +145,9 @@ namespace System.Threading.Tasks.Dataflow {
 			return dequeued;
 		}
 
+		/// <summary>
+		/// Adds the transformed collection to the output queue.
+		/// </summary>
 		void EnqueueTransformed (IEnumerable<TOutput> transformed)
 		{
 			bool first = true;
@@ -157,6 +164,11 @@ namespace System.Threading.Tasks.Dataflow {
 				messageBox.DecreaseCount ();
 		}
 
+		/// <summary>
+		/// Processes one item from the queue if the transform delegate is asynchronous.
+		/// </summary>
+		/// <param name="task">The Task that was returned by the synchronous part of the delegate.</param>
+		/// <returns>Returns whether an item was processed. Returns <c>false</c> if the queue was empty.</returns>
 		bool AsyncTransformProcess (out Task<IEnumerable<TOutput>> task)
 		{
 			TInput input;
@@ -170,6 +182,9 @@ namespace System.Threading.Tasks.Dataflow {
 			return dequeued;
 		}
 
+		/// <summary>
+		/// Process result of finished asynchronous transformation.
+		/// </summary>
 		void ProcessFinishedTask (Task<IEnumerable<TOutput>> task)
 		{
 			if (task == null || task.IsCanceled)
@@ -189,21 +204,15 @@ namespace System.Threading.Tasks.Dataflow {
 		}
 
 		public Task Completion {
-			get {
-				return compHelper.Completion;
-			}
+			get { return compHelper.Completion; }
 		}
 
 		public int OutputCount {
-			get {
-				return outgoing.Count;
-			}
+			get { return outgoing.Count; }
 		}
 
 		public int InputCount {
-			get {
-				return messageQueue.Count;
-			}
+			get { return messageQueue.Count; }
 		}
 
 		public override string ToString ()

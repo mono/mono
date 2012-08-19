@@ -241,7 +241,7 @@ namespace System.Threading.Tasks.Dataflow {
 		}
 
 		/// <summary>
-		/// Creates a batch of the given size and adds the resulting batch to the output queue.
+		/// Creates a batch of the given size and adds the result to the output queue.
 		/// </summary>
 		void MakeBatch (int size)
 		{

@@ -46,6 +46,10 @@ namespace System.Threading.Tasks.Dataflow {
 			this.cancellationToken = cancellationToken;
 		}
 
+		/// <summary>
+		/// Sends the item given in the constructor to the target block.
+		/// </summary>
+		/// <returns>Task that completes when the sending is done, or can't be performed.</returns>
 		public Task<bool> Send ()
 		{
 			cancellationTokenRegistration = cancellationToken.Register (
@@ -60,6 +64,9 @@ namespace System.Threading.Tasks.Dataflow {
 			return taskCompletionSource.Task;
 		}
 
+		/// <summary>
+		/// Offers the item to the target and hadles its response.
+		/// </summary>
 		void PerformSend ()
 		{
 			DisableCancel ();
@@ -148,11 +155,19 @@ namespace System.Threading.Tasks.Dataflow {
 			return false;
 		}
 
+		/// <summary>
+		/// Temporarily disables cancelling.
+		/// </summary>
 		void DisableCancel ()
 		{
 			cancelDisabled = true;
 		}
 
+		/// <summary>
+		/// Enables cancelling after it was disabled.
+		/// If cancellation was attempted in the meantime,
+		/// actually performs the cancelling.
+		/// </summary>
 		void EnableCancel ()
 		{
 			cancelDisabled = false;
@@ -161,6 +176,9 @@ namespace System.Threading.Tasks.Dataflow {
 				taskCompletionSource.SetCanceled ();
 		}
 
+		/// <summary>
+		/// Sets the result of the operation.
+		/// </summary>
 		void SetResult (bool result)
 		{
 			cancellationTokenRegistration.Dispose ();

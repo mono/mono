@@ -26,6 +26,9 @@ namespace System.Threading.Tasks.Dataflow {
 		static readonly DataflowBlockOptions DefaultOptions =
 			new DataflowBlockOptions ();
 
+		/// <summary>
+		/// Cached default block options
+		/// </summary>
 		internal static DataflowBlockOptions Default {
 			get { return DefaultOptions; }
 		}

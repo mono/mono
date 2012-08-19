@@ -22,7 +22,13 @@
 // THE SOFTWARE.
 
 namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Block used in all versions of <see cref="DataflowBlock.Choose"/>.
+	/// </summary>
 	class ChooserBlock<T1, T2, T3> {
+		/// <summary>
+		/// Target for one of the sources to choose from.
+		/// </summary>
 		class ChooseTarget<TMessage> : ITargetBlock<TMessage> {
 			readonly ChooserBlock<T1, T2, T3> chooserBlock;
 			readonly int index;
@@ -97,6 +103,11 @@ namespace System.Threading.Tasks.Dataflow {
 				dataflowBlockOptions.CancellationToken.Register (Cancelled);
 		}
 
+		/// <summary>
+		/// Causes cancellation of <see cref="Completion"/>.
+		/// If a message is already being consumed (and the consumsing succeeds)
+		/// or if its action is being invoked, the Task is not cancelled.
+		/// </summary>
 		void Cancelled ()
 		{
 			if (!canAccept)
@@ -117,11 +128,19 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Called when all sources have completed,
+		/// causes cancellation of <see cref="Completion"/>.
+		/// </summary>
 		public void AllSourcesCompleted ()
 		{
 			Cancelled ();
 		}
 
+		/// <summary>
+		/// Called when message has arrived (and was consumed, if necessary).
+		/// This method can be called only once in the lifetime of this object.
+		/// </summary>
 		void MessageArrived<TMessage> (
 			int index, Action<TMessage> action, TMessage value)
 		{
@@ -133,12 +152,26 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Target block for the first source block.
+		/// </summary>
 		public ITargetBlock<T1> Target1 { get; private set; }
 
+		/// <summary>
+		/// Target block for the second source block.
+		/// </summary>
 		public ITargetBlock<T2> Target2 { get; private set; }
 
+		/// <summary>
+		/// Target block for the third source block.
+		/// Is <c>null</c> if there are only two actions.
+		/// </summary>
 		public ITargetBlock<T3> Target3 { get; private set; }
 
+		/// <summary>
+		/// Task that signifies that an item was accepted and
+		/// its action has been called.
+		/// </summary>
 		public Task<int> Completion {
 			get { return completion.Task; }
 		}

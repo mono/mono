@@ -29,6 +29,9 @@ namespace System.Threading.Tasks.Dataflow
 
 		long maxNumberOfGroups;
 
+		/// <summary>
+		/// Cached default block options
+		/// </summary>
 		internal static new GroupingDataflowBlockOptions Default {
 			get { return DefaultOptions; }
 		}

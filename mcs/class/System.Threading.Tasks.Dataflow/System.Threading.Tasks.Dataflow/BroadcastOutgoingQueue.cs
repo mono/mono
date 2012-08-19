@@ -84,7 +84,7 @@ namespace System.Threading.Tasks.Dataflow {
 		/// <summary>
 		/// Takes an item from the queue and sets it as <see cref="CurrentItem"/>.
 		/// </summary>
-		public void DequeueItem()
+		public void DequeueItem ()
 		{
 			T item;
 			if (Outgoing.TryTake (out item)) {

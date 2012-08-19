@@ -22,6 +22,9 @@
 // THE SOFTWARE.
 
 namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Block returned by <see cref="DataflowBlock.Encapsulate{TInput,TOutput}"/>.
+	/// </summary>
 	class PropagatorWrapperBlock<TInput, TOutput> :
 		IPropagatorBlock<TInput, TOutput> {
 		readonly ITargetBlock<TInput> targetBlock;

@@ -116,6 +116,9 @@ namespace System.Threading.Tasks.Dataflow {
 			return true;
 		}
 
+		/// <summary>
+		/// Moves an item from the input queue to the output queue.
+		/// </summary>
 		void BroadcastProcess ()
 		{
 			T item;

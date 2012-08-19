@@ -146,11 +146,21 @@ namespace System.Threading.Tasks.Dataflow {
 			return DataflowMessageStatus.Accepted;
 		}
 
+		/// <summary>
+		/// Increses the count of items in the block by 1.
+		/// </summary>
 		public void IncreaseCount ()
 		{
 			Interlocked.Increment (ref itemCount);
 		}
 
+		/// <summary>
+		/// Decreses the number of items in the block by the given count.
+		/// </summary>
+		/// <remarks>
+		/// The <paramref name="count"/> parameter is used when one object
+		/// can represent many items, like a batch in <see cref="BatchBlock{T}"/>.
+		/// </remarks>
 		public void DecreaseCount (int count = 1)
 		{
 			int decreased = Interlocked.Add (ref itemCount, -count);
@@ -164,10 +174,22 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// The number of messages that were postponed
+		/// and can be attempted to be consumed.
+		/// </summary>
 		public int PostponedMessagesCount {
 			get { return postponedMessages.Count; }
 		}
 
+		/// <summary>
+		/// Reserves a message from those that were postponed.
+		/// Does not guarantee any order of the messages being reserved.
+		/// </summary>
+		/// <returns>
+		/// An object representing the reservation on success,
+		/// <c>null</c> on failure.
+		/// </returns>
 		public Tuple<ISourceBlock<TInput>, DataflowMessageHeader> ReserveMessage()
 		{
 			while (!postponedMessages.IsEmpty) {
@@ -193,11 +215,17 @@ namespace System.Threading.Tasks.Dataflow {
 			return null;
 		}
 
+		/// <summary>
+		/// Releases the given reservation.
+		/// </summary>
 		public void RelaseReservation(Tuple<ISourceBlock<TInput>, DataflowMessageHeader> reservation)
 		{
 			reservation.Item1.ReleaseReservation (reservation.Item2, Target);
 		}
 
+		/// <summary>
+		/// Consumes previously reserved item.
+		/// </summary>
 		public TInput ConsumeReserved(Tuple<ISourceBlock<TInput>, DataflowMessageHeader> reservation)
 		{
 			bool consumed;
@@ -205,6 +233,11 @@ namespace System.Threading.Tasks.Dataflow {
 				reservation.Item2, Target, out consumed);
 		}
 
+		/// <summary>
+		/// Makes sure retrieving items that were postponed,
+		/// because they would exceed <see cref="DataflowBlockOptions.BoundedCapacity"/>,
+		/// is currently running.
+		/// </summary>
 		void EnsurePostponedProcessing ()
 		{
 			if (postponedProcessing.TrySet())
@@ -212,6 +245,10 @@ namespace System.Threading.Tasks.Dataflow {
 					TaskCreationOptions.PreferFairness, options.TaskScheduler);
 		}
 
+		/// <summary>
+		/// Retrieves items that were postponed,
+		/// because they would exceed <see cref="DataflowBlockOptions.BoundedCapacity"/>.
+		/// </summary>
 		void RetrievePostponed ()
 		{
 			// BoundedCapacity can't be -1 here, because in that case there would be no postponing
@@ -261,6 +298,10 @@ namespace System.Threading.Tasks.Dataflow {
 		/// <param name="newItem">Was new item just added?</param>
 		protected abstract void EnsureProcessing (bool newItem);
 
+		/// <summary>
+		/// Completes the box, no new messages will be accepted.
+		/// Also starts the process of completing the output queue.
+		/// </summary>
 		public void Complete ()
 		{
 			// Make message queue complete

@@ -1,6 +1,7 @@
-// JoinBlock.cs
+ï»¿// JoinBlock.cs
 //
-// Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2011 JÃ©rÃ©mie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +24,11 @@
 using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow {
-	internal class JoinTarget<TTarget> : MessageBox<TTarget>, ITargetBlock<TTarget>
-	{
+	/// <summary>
+	/// Target block use by join blocks in their TargetN properties.
+	/// Also serves as its own <see cref="MessageBox{TInput}"/>.
+	/// </summary>
+	class JoinTarget<TTarget> : MessageBox<TTarget>, ITargetBlock<TTarget> {
 		readonly IDataflowBlock joinBlock;
 		readonly Action signal;
 
@@ -40,21 +44,25 @@ namespace System.Threading.Tasks.Dataflow {
 			Target = this;
 		}
 
+		/// <summary>
+		/// Makes sure the input queue is processed the way it needs to,
+		/// by signaling the parent join block.
+		/// </summary>
 		protected override void EnsureProcessing (bool newItem)
 		{
 			signal ();
 		}
 
+		/// <summary>
+		/// The input queue of this block.
+		/// </summary>
 		public BlockingCollection<TTarget> Buffer {
-			get {
-				return MessageQueue;
-			}
+			get { return MessageQueue; }
 		}
 
-		DataflowMessageStatus ITargetBlock<TTarget>.OfferMessage (DataflowMessageHeader messageHeader,
-		                                                          TTarget messageValue,
-		                                                          ISourceBlock<TTarget> source,
-		                                                          bool consumeToAccept)
+		DataflowMessageStatus ITargetBlock<TTarget>.OfferMessage (
+			DataflowMessageHeader messageHeader, TTarget messageValue,
+			ISourceBlock<TTarget> source, bool consumeToAccept)
 		{
 			return OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
@@ -65,9 +73,7 @@ namespace System.Threading.Tasks.Dataflow {
 		}
 
 		Task IDataflowBlock.Completion {
-			get {
-				throw new NotSupportedException();
-			}
+			get { throw new NotSupportedException (); }
 		}
 
 		void IDataflowBlock.Fault (Exception exception)

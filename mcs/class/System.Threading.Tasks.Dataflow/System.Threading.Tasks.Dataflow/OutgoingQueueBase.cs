@@ -25,7 +25,7 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
-	/// This class handles outgoing message that get queued when there is no
+	/// Handles outgoing messages that get queued when there is no
 	/// block on the other end to proces it. It also allows receive operations.
 	/// </summary>
 	abstract class OutgoingQueueBase<T> {
@@ -54,19 +54,35 @@ namespace System.Threading.Tasks.Dataflow {
 			this.decreaseItemsCount = decreaseItemsCount;
 		}
 
+		/// <summary>
+		/// Is the queue completed?
+		/// Queue is completed after <see cref="Complete"/> is called
+		/// and all items are retrieved from it.
+		/// </summary>
 		public bool IsCompleted {
 			get { return Outgoing.IsCompleted; }
 		}
 
+		/// <summary>
+		/// Current number of items in the queue.
+		/// Item are counted the way <see cref="DataflowBlockOptions.BoundedCapacity"/>
+		/// counts them, e.g. each item in a batch counts, even if batch is a single object.
+		/// </summary>
 		public int Count {
 			get { return totalModifiedCount; }
 		}
 
+		/// <summary>
+		/// Calculates the count of items in the given object.
+		/// </summary>
 		protected virtual int GetModifiedCount (T data)
 		{
 			return 1;
 		}
 
+		/// <summary>
+		/// Adds an object to the queue.
+		/// </summary>
 		public void AddData (T data)
 		{
 			try {
@@ -79,6 +95,9 @@ namespace System.Threading.Tasks.Dataflow {
 			}
 		}
 
+		/// <summary>
+		/// Makes sure sending messages to targets is running.
+		/// </summary>
 		protected void EnsureProcessing ()
 		{
 			ForceProcessing = true;
@@ -87,13 +106,25 @@ namespace System.Threading.Tasks.Dataflow {
 					TaskCreationOptions.PreferFairness, options.TaskScheduler);
 		}
 
+		/// <summary>
+		/// Indicates whether sending messages should be forced to start.
+		/// </summary>
 		protected bool ForceProcessing {
 			get { return forceProcessing; }
 			set { forceProcessing = value; }
 		}
 
+		/// <summary>
+		/// Sends messages to targets.
+		/// </summary>
 		protected abstract void Process ();
 
+		/// <summary>
+		/// Adds a target block to send messages to.
+		/// </summary>
+		/// <returns>
+		/// An object that can be used to destroy the link to the added target.
+		/// </returns>
 		public IDisposable AddTarget (ITargetBlock<T> targetBlock, DataflowLinkOptions linkOptions)
 		{
 			if (targetBlock == null)
@@ -106,16 +137,26 @@ namespace System.Threading.Tasks.Dataflow {
 			return result;
 		}
 
+		/// <summary>
+		/// Makes sure the block is completed if it should be.
+		/// </summary>
 		protected void VerifyCompleteness ()
 		{
 			if (Outgoing.IsCompleted && externalCompleteTester ())
 				compHelper.Complete ();
 		}
 
+		/// <summary>
+		/// Is the block faulted or cancelled?
+		/// </summary>
 		protected bool IsFaultedOrCancelled {
 			get { return compHelper.Completion.IsFaulted || compHelper.Completion.IsCanceled; }
 		}
 
+		/// <summary>
+		/// Used to notify that object was removed from the queue
+		/// and to update counts.
+		/// </summary>
 		protected void DecreaseCounts (T data)
 		{
 			var modifiedCount = GetModifiedCount (data);
@@ -124,6 +165,9 @@ namespace System.Threading.Tasks.Dataflow {
 			decreaseItemsCount (modifiedCount);
 		}
 
+		/// <summary>
+		/// Marks the queue for completion.
+		/// </summary>
 		public void Complete ()
 		{
 			Outgoing.CompleteAdding ();

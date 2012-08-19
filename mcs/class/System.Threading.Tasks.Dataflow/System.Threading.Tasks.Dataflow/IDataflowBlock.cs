@@ -19,23 +19,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-
-namespace System.Threading.Tasks.Dataflow
-{
-	public interface IDataflowBlock
-	{
-		Task Completion {
-			get;
-		}
+namespace System.Threading.Tasks.Dataflow {
+	public interface IDataflowBlock {
+		Task Completion { get; }
 
 		void Complete ();
 		void Fault (Exception exception);
 	}
 }
-

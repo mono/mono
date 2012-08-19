@@ -23,10 +23,11 @@
 
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	internal class PassingMessageBox<TInput> : MessageBox<TInput>
-	{
+namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Message box for blocks that don't need any special processing of incoming items.
+	/// </summary>
+	class PassingMessageBox<TInput> : MessageBox<TInput> {
 		readonly Action<bool> processQueue;
 
 		public PassingMessageBox (
@@ -40,6 +41,11 @@ namespace System.Threading.Tasks.Dataflow
 			this.processQueue = processQueue;
 		}
 
+		/// <summary>
+		/// Makes sure the input queue is processed the way it needs to.
+		/// Executes synchronously, so shouldn't cause any long processing.
+		/// </summary>
+		/// <param name="newItem">Was new item just added?</param>
 		protected override void EnsureProcessing (bool newItem)
 		{
 			processQueue (newItem);

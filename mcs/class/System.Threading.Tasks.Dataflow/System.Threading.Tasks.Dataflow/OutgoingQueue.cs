@@ -49,6 +49,9 @@ namespace System.Threading.Tasks.Dataflow {
 			this.countSelector = countSelector;
 		}
 
+		/// <summary>
+		/// Calculates the count of items in the given object.
+		/// </summary>
 		protected override int GetModifiedCount(T data)
 		{
 			if (countSelector == null)
@@ -57,6 +60,9 @@ namespace System.Threading.Tasks.Dataflow {
 			return countSelector (data);
 		}
 
+		/// <summary>
+		/// Sends messages to targets.
+		/// </summary>
 		protected override void Process ()
 		{
 			bool processed;
@@ -194,6 +200,9 @@ namespace System.Threading.Tasks.Dataflow {
 			EnsureProcessing ();
 		}
 
+		/// <summary>
+		/// Notifies that the first item in the queue changed.
+		/// </summary>
 		void FirstItemChanged ()
 		{
 			T firstItem;

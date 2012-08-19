@@ -28,6 +28,9 @@ namespace System.Threading.Tasks.Dataflow {
 
 		int maxDegreeOfParallelism;
 
+		/// <summary>
+		/// Cached default block options
+		/// </summary>
 		internal static new ExecutionDataflowBlockOptions Default {
 			get { return DefaultOptions; }
 		}

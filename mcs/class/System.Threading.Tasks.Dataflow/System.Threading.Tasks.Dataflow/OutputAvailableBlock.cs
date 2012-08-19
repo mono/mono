@@ -23,8 +23,8 @@
 
 namespace System.Threading.Tasks.Dataflow {
 	/// <summary>
-	/// This internal block is used by the OutputAvailable methods in DataflowBlock static class
-	/// to check for available items in an asynchrnousy way
+	/// This internal block is used by the <see cref="DataflowBlock.OutputAvailableAsync"/> methods
+	/// to check for available items in an asynchronous way.
 	/// </summary>
 	class OutputAvailableBlock<TOutput> : ITargetBlock<TOutput> {
 		readonly TaskCompletionSource<bool> completion =
@@ -48,6 +48,11 @@ namespace System.Threading.Tasks.Dataflow {
 			return DataflowMessageStatus.DecliningPermanently;
 		}
 
+		/// <summary>
+		/// Returns a Task that can be used to wait until output from a block is available.
+		/// </summary>
+		/// <param name="bridge">The disposable object returned by <see cref="ISourceBlock{TOutput}.LinkTo"/>.</param>
+		/// <param name="token">Cancellation token for this operation.</param>
 		public Task<bool> AsyncGet (IDisposable bridge, CancellationToken token)
 		{
 			linkBridge = bridge;
@@ -60,6 +65,10 @@ namespace System.Threading.Tasks.Dataflow {
 			return completion.Task;
 		}
 
+		/// <summary>
+		/// Called after the result has been set,
+		/// cleans up after this block.
+		/// </summary>
 		void CompletionSet ()
 		{
 			if (linkBridge != null) {

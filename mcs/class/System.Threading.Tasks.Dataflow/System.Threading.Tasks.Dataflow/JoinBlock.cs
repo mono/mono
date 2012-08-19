@@ -52,10 +52,10 @@ namespace System.Threading.Tasks.Dataflow
 
 			this.dataflowBlockOptions = dataflowBlockOptions;
 			compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
-			target1 = new JoinTarget<T1> (this, SignalArrivalTargetImpl, compHelper,
+			target1 = new JoinTarget<T1> (this, SignalArrivalTarget, compHelper,
 				() => outgoing.IsCompleted, dataflowBlockOptions,
 				dataflowBlockOptions.Greedy, TryAdd1);
-			target2 = new JoinTarget<T2> (this, SignalArrivalTargetImpl, compHelper,
+			target2 = new JoinTarget<T2> (this, SignalArrivalTarget, compHelper,
 				() => outgoing.IsCompleted, dataflowBlockOptions,
 				dataflowBlockOptions.Greedy, TryAdd2);
 			outgoing = new OutgoingQueue<Tuple<T1, T2>> (this, compHelper,
@@ -114,11 +114,13 @@ namespace System.Threading.Tasks.Dataflow
 		}
 
 		public Task Completion {
-			get {
-				return compHelper.Completion;
-			}
+			get { return compHelper.Completion; }
 		}
 
+		/// <summary>
+		/// Returns whether a new item can be accepted by the first target,
+		/// and increments a counter if it can.
+		/// </summary>
 		bool TryAdd1 ()
 		{
 			return dataflowBlockOptions.MaxNumberOfGroups == -1
@@ -126,6 +128,10 @@ namespace System.Threading.Tasks.Dataflow
 			       <= dataflowBlockOptions.MaxNumberOfGroups;
 		}
 
+		/// <summary>
+		/// Returns whether a new item can be accepted by the second target,
+		/// and increments a counter if it can.
+		/// </summary>
 		bool TryAdd2 ()
 		{
 			return dataflowBlockOptions.MaxNumberOfGroups == -1
@@ -133,7 +139,10 @@ namespace System.Threading.Tasks.Dataflow
 			       <= dataflowBlockOptions.MaxNumberOfGroups;
 		}
 
-		void SignalArrivalTargetImpl()
+		/// <summary>
+		/// Decides whether to create a new tuple or not.
+		/// </summary>
+		void SignalArrivalTarget ()
 		{
 			if (dataflowBlockOptions.Greedy) {
 				bool taken = false;
@@ -160,6 +169,9 @@ namespace System.Threading.Tasks.Dataflow
 			}
 		}
 
+		/// <summary>
+		/// Returns whether non-greedy creation of a tuple should be started.
+		/// </summary>
 		bool ShouldProcessNonGreedy ()
 		{
 			return target1.PostponedMessagesCount >= 1
@@ -168,6 +180,9 @@ namespace System.Threading.Tasks.Dataflow
 			           || outgoing.Count < dataflowBlockOptions.BoundedCapacity);
 		}
 
+		/// <summary>
+		/// Starts non-greedy creation of tuples, if one doesn't already run.
+		/// </summary>
 		void EnsureNonGreedyProcessing ()
 		{
 			if (nonGreedyProcessing.TrySet ())
@@ -177,6 +192,10 @@ namespace System.Threading.Tasks.Dataflow
 					dataflowBlockOptions.TaskScheduler);
 		}
 
+		/// <summary>
+		/// Creates tuples in non-greedy mode,
+		/// making sure the whole tuple is available by using reservations.
+		/// </summary>
 		void NonGreedyProcess()
 		{
 			while (ShouldProcessNonGreedy ()) {
@@ -204,6 +223,9 @@ namespace System.Threading.Tasks.Dataflow
 		}
 
 
+		/// <summary>
+		/// Creates a tuple from the given values and adds the result to the output queue.
+		/// </summary>
 		void TriggerMessage (T1 val1, T2 val2)
 		{
 			outgoing.AddData (Tuple.Create (val1, val2));
@@ -215,15 +237,11 @@ namespace System.Threading.Tasks.Dataflow
 		}
 
 		public ITargetBlock<T1> Target1 {
-			get {
-				return target1;
-			}
+			get { return target1; }
 		}
 
 		public ITargetBlock<T2> Target2 {
-			get {
-				return target2;
-			}
+			get { return target2; }
 		}
 
 		public int OutputCount {
