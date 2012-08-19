@@ -35,49 +35,6 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 	[TestFixture]
 	public class DataflowBlockTest {
 		[Test]
-		public void ChooseTest ()
-		{
-			var source1 = new BufferBlock<int> ();
-			var source2 = new BufferBlock<long> ();
-
-			bool action1 = false;
-			bool action2 = false;
-			var completion = DataflowBlock.Choose (source1, (_) => action1 = true, source2, (_) => action2 = true);
-
-			source1.Post (42);
-
-			Thread.Sleep (1600);
-			Assert.IsTrue (action1);
-			Assert.IsFalse (action2);
-			Assert.IsTrue (completion.IsCompleted);
-			Assert.AreEqual (TaskStatus.RanToCompletion, completion.Status);
-			Assert.AreEqual (0, completion.Result);
-		}
-
-		[Test]
-		public void ChooseTest_3 ()
-		{
-			var source1 = new BufferBlock<int> ();
-			var source2 = new BufferBlock<long> ();
-			var source3 = new BufferBlock<object> ();
-
-			bool action1 = false;
-			bool action2 = false;
-			bool action3 = false;
-			var completion = DataflowBlock.Choose (source1, (_) => action1 = true, source2, (_) => action2 = true, source3, (_) => action3 = true);
-
-			source3.Post (new object ());
-
-			Thread.Sleep (1600);
-			Assert.IsFalse (action1);
-			Assert.IsFalse (action2);
-			Assert.IsTrue (action3);
-			Assert.IsTrue (completion.IsCompleted);
-			Assert.AreEqual (TaskStatus.RanToCompletion, completion.Status);
-			Assert.AreEqual (2, completion.Result);			
-		}
-
-		[Test]
 		public void TryReceiveTest ()
 		{
 			var block = new BufferBlock<int> ();

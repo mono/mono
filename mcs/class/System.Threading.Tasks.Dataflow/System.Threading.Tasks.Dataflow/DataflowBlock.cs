@@ -67,6 +67,9 @@ namespace System.Threading.Tasks.Dataflow {
 			source1.LinkTo (chooser.Target1);
 			source2.LinkTo (chooser.Target2);
 
+			Task.WhenAll (source1.Completion, source2.Completion)
+				.ContinueWith (_ => chooser.AllSourcesCompleted ());
+
 			return chooser.Completion;
 		}
 
@@ -104,6 +107,9 @@ namespace System.Threading.Tasks.Dataflow {
 			source1.LinkTo (chooser.Target1);
 			source2.LinkTo (chooser.Target2);
 			source3.LinkTo (chooser.Target3);
+
+			Task.WhenAll (source1.Completion, source2.Completion, source3.Completion)
+				.ContinueWith (_ => chooser.AllSourcesCompleted ());
 
 			return chooser.Completion;
 		}
