@@ -53,9 +53,7 @@ namespace System.Threading.Tasks.Dataflow {
 			linkBridge = bridge;
 			cancellationRegistration = token.Register (() =>
 			{
-				lock (completion) {
-					completion.TrySetCanceled ();
-				}
+				completion.TrySetCanceled ();
 				CompletionSet ();
 			});
 
