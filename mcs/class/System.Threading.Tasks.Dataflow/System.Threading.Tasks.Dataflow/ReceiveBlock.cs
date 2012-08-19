@@ -29,9 +29,33 @@ namespace System.Threading.Tasks.Dataflow {
 	class ReceiveBlock<TOutput> : ITargetBlock<TOutput> {
 		readonly TaskCompletionSource<TOutput> completion =
 			new TaskCompletionSource<TOutput> ();
-		IDisposable linkBridge;
+
+		readonly CancellationToken token;
 		CancellationTokenRegistration cancellationRegistration;
-		Timer timeoutTimer;
+		readonly Timer timeoutTimer;
+
+		IDisposable linkBridge;
+
+		public ReceiveBlock (CancellationToken token, int timeout)
+		{
+			this.token = token;
+			cancellationRegistration = token.Register (() =>
+			{
+				lock (completion) {
+					completion.TrySetCanceled ();
+				}
+				CompletionSet ();
+			});
+			timeoutTimer = new Timer (
+				_ =>
+				{
+					lock (completion) {
+						completion.TrySetException (new TimeoutException ());
+					}
+					CompletionSet ();
+				}, null, timeout,
+				Timeout.Infinite);
+		}
 
 		public DataflowMessageStatus OfferMessage (
 			DataflowMessageHeader messageHeader, TOutput messageValue,
@@ -59,7 +83,6 @@ namespace System.Threading.Tasks.Dataflow {
 				completion.TrySetResult (messageValue);
 			}
 			CompletionSet ();
-
 			return DataflowMessageStatus.Accepted;
 		}
 
@@ -67,12 +90,10 @@ namespace System.Threading.Tasks.Dataflow {
 		/// Synchronously waits until an item is available.
 		/// </summary>
 		/// <param name="bridge">The disposable object returned by <see cref="ISourceBlock{TOutput}.LinkTo"/>.</param>
-		/// <param name="token">Cancellation token for this operation.</param>
-		/// <param name="timeout">Timeout of this operation, in milliseconds.</param>
-		public TOutput WaitAndGet (IDisposable bridge, CancellationToken token, int timeout)
+		public TOutput WaitAndGet (IDisposable bridge)
 		{
 			try {
-				return AsyncGet (bridge, token, timeout).Result;
+				return AsyncGet (bridge).Result;
 			} catch (AggregateException e) {
 				if (e.InnerException is TaskCanceledException)
 					throw new OperationCanceledException (token);
@@ -85,27 +106,9 @@ namespace System.Threading.Tasks.Dataflow {
 		/// Asynchronously waits until an item is available.
 		/// </summary>
 		/// <param name="bridge">The disposable object returned by <see cref="ISourceBlock{TOutput}.LinkTo"/>.</param>
-		/// <param name="token">Cancellation token for this operation.</param>
-		/// <param name="timeout">Timeout of this operation, in milliseconds.</param>
-		public Task<TOutput> AsyncGet (IDisposable bridge, CancellationToken token, int timeout)
+		public Task<TOutput> AsyncGet (IDisposable bridge)
 		{
 			linkBridge = bridge;
-			cancellationRegistration = token.Register (() =>
-			{
-				lock (completion) {
-					completion.TrySetCanceled ();
-				}
-				CompletionSet ();
-			});
-			timeoutTimer = new Timer (
-				_ =>
-				{
-					lock (completion) {
-						completion.TrySetException (new TimeoutException ());
-					}
-					CompletionSet ();
-				}, null, timeout,
-				Timeout.Infinite);
 
 			return completion.Task;
 		}

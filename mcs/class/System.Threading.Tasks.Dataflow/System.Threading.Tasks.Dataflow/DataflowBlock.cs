@@ -226,10 +226,10 @@ namespace System.Threading.Tasks.Dataflow {
 					"No item could be received from the source.");
 
 			int timeoutMilliseconds = (int)timeout.TotalMilliseconds;
-			var block = new ReceiveBlock<TOutput> ();
+			var block = new ReceiveBlock<TOutput> (cancellationToken, timeoutMilliseconds);
 			var bridge = source.LinkTo (block,
 				new DataflowLinkOptions { PropagateCompletion = true });
-			return block.WaitAndGet (bridge, cancellationToken, timeoutMilliseconds);
+			return block.WaitAndGet (bridge);
 		}
 
 		public static Task<TOutput> ReceiveAsync<TOutput> (this ISourceBlock<TOutput> source)
@@ -261,9 +261,9 @@ namespace System.Threading.Tasks.Dataflow {
 			cancellationToken.ThrowIfCancellationRequested ();
 
 			int timeoutMilliseconds = (int)timeout.TotalMilliseconds;
-			var block = new ReceiveBlock<TOutput> ();
+			var block = new ReceiveBlock<TOutput> (cancellationToken, timeoutMilliseconds);
 			var bridge = source.LinkTo (block);
-			return block.AsyncGet (bridge, cancellationToken, timeoutMilliseconds);
+			return block.AsyncGet (bridge);
 		}
 
 		public static bool TryReceive<TOutput> (this IReceivableSourceBlock<TOutput> source, out TOutput item)
