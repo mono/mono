@@ -91,16 +91,18 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			var barrier = new Barrier (2);
 
-			Task.Run (() =>
+			var t1 = Task.Run (() =>
 			{
 				barrier.SignalAndWait ();
 				source1.Post (10);
 			});
-			Task.Run (() =>
+			var t2 = Task.Run (() =>
 			{
 				barrier.SignalAndWait ();
 				source2.Post (20);
 			});
+
+			Task.WaitAll (t1, t2);
 
 			Assert.IsTrue (completion.Wait (500));
 			Assert.AreEqual (1, action1 + action2);
