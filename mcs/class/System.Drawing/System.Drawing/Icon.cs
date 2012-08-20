@@ -2,7 +2,7 @@
 // System.Drawing.Icon.cs
 //
 // Authors:
-//   Gary Barnett
+//   Gary Barnett (gary.barnett.mono@gmail.com)
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Sanjay Gupta (gsanjay@novell.com)

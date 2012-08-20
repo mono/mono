@@ -2,7 +2,7 @@
 // Icon class testing unit
 //
 // Authors:
-//	Gary Barnett
+//	Gary Barnett <gary.barnett.mono@gmail.com>
 // 	Sanjay Gupta <gsanjay@novell.com>
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
