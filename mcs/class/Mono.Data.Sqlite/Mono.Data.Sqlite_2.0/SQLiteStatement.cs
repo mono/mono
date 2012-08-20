@@ -181,6 +181,7 @@ namespace Mono.Data.Sqlite
         case DbType.DateTime:
           _sql.Bind_DateTime(this, index, Convert.ToDateTime(obj, CultureInfo.CurrentCulture));
           break;
+        case DbType.UInt32:
         case DbType.Int64:
         case DbType.UInt64:
           _sql.Bind_Int64(this, index, Convert.ToInt64(obj, CultureInfo.CurrentCulture));
@@ -189,7 +190,6 @@ namespace Mono.Data.Sqlite
         case DbType.Int16:
         case DbType.Int32:
         case DbType.UInt16:
-        case DbType.UInt32:
         case DbType.SByte:
         case DbType.Byte:
           _sql.Bind_Int32(this, index, Convert.ToInt32(obj, CultureInfo.CurrentCulture));
