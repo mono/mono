@@ -23,7 +23,7 @@
 //	Duncan Mak		duncan@ximian.com
 //	Gonzalo Paniagua Javier	gonzalo@ximian.com
 //	Peter Bartok		pbartok@novell.com
-//	Gary Barnett
+//	Gary Barnett		gary.barnett.mono@gmail.com
 //	includes code by Mike Krüger and Lluis Sanchez
 
 using System.ComponentModel;

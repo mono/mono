@@ -3,7 +3,7 @@
 //
 // Authors:
 //     Robert Jordan <robertj@gmx.net>
-//     Gary Barnett
+//     Gary Barnett <gary.barnett.mono@gmail.com>
 
 using System;
 using System.Collections;

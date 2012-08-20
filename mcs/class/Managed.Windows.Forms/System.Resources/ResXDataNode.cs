@@ -22,7 +22,7 @@
 // Authors:
 //	Andreia Gaita	(avidigal@novell.com)
 //  	Olivier Dufour  olivier.duff@gmail.com
-//	Gary Barnett
+//	Gary Barnett	gary.barnett.mono@gmail.com
 
 using System;
 using System.Runtime.Serialization;
@@ -153,7 +153,7 @@ namespace System.Resources
 				} else {
 					handler = new SerializedFromResXHandler (dataString, mime_typeAtt);
 				}
-			} else if (!String.IsNullOrEmpty (typeAtt)) { //FIXME: OK to use hard coded types here?
+			} else if (!String.IsNullOrEmpty (typeAtt)) { //FIXME: OK to use hard coded types here to avoid version mismatches?
 				if (typeAtt.StartsWith ("System.Resources.ResXNullRef, System.Windows.Forms")) {
 					handler = new NullRefHandler (typeAtt);
 				} else if (typeAtt.StartsWith ("System.Byte[], mscorlib")) { 

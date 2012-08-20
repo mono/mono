@@ -1,6 +1,7 @@
 //
-// StronglyTypedResourceBuilderNamespaceTests.cs - tests the generatedCodeNamespace
-// and resourcesNamespace params of the main Create overload
+// StronglyTypedResourceBuilderNamespaceTests.cs - tests the 
+// generatedCodeNamespace and resourcesNamespace params of the main 
+// Create overload
 // 
 // Author:
 //	Gary Barnett (gary.barnett.mono@gmail.com)

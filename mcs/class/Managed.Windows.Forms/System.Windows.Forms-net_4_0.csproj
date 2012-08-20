@@ -14,14 +14,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>System.Windows.Forms</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,9 +26,8 @@
     <OutputPath>..\lib\net_4_0</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -939,7 +935,6 @@
     <Compile Include="System.Resources\ByteArrayFromResXHandler.cs" />
     <Compile Include="System.Resources\FileRefHandler.cs" />
     <Compile Include="System.Resources\InMemoryHandler.cs" />
-    <Compile Include="System.Resources\NoLoadNodeHandler.cs" />
     <Compile Include="System.Resources\NullRefHandler.cs" />
     <Compile Include="System.Resources\ResXDataNode.cs" />
     <Compile Include="System.Resources\ResXDataNodeHandler.cs" />

@@ -1,5 +1,5 @@
 //
-// StronglyTypedResourceBuilderBaseNameTests.cs - tests thae baseName 
+// StronglyTypedResourceBuilderBaseNameTests.cs - tests the baseName 
 // parameter passed to main Create overload
 //
 // Author:

@@ -1,3 +1,13 @@
+//
+// FileRefHandler.cs : Handles a ResXFileRef that was either stored in 
+// a resx file or has been added to a ResXDataNode that was freshly 
+// instantiated by a user 
+// 
+// Author:
+//	Gary Barnett (gary.barnett.mono@gmail.com)
+// 
+// Copyright (C) Gary Barnett (2012)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -16,11 +26,6 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// Copyright (c) 2012 Gary Barnett
-//
-// Authors:
-//	Gary Barnett
 
 using System;
 using System.Reflection;

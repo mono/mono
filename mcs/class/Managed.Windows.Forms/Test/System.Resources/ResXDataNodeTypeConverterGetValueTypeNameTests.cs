@@ -1,4 +1,12 @@
-﻿// Permission is hereby granted, free of charge, to any person obtaining
+﻿//
+// ResXDataNodeTypeConverterGetValueTypeNameTests.cs
+// 
+// Author:
+//	Gary Barnett (gary.barnett.mono@gmail.com)
+// 
+// Copyright (C) Gary Barnett (2012)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -16,11 +24,6 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// Copyright (c) 2012 Gary Barnett
-//
-// Authors:
-//	Gary Barnett
 
 #if NET_2_0
 using System;
@@ -129,6 +132,49 @@ namespace MonoTests.System.Resources
 			string nameWithNullParam = node.GetValueTypeName ((AssemblyName []) null);
 			Assert.AreEqual ("DummyAssembly.Convertable", nameWithNullParam, "#A3");
 		}
+
+		#region initial
+		
+		[Test]
+		public void NullITRSServiceOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
+			
+			string name = node.GetValueTypeName ((ITypeResolutionService) null);
+			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+		}
+		
+		[Test]
+		public void WrongITRSOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
+			
+			string name = node.GetValueTypeName (new DummyITRS ());
+			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+		}
+		
+		[Test]
+		public void WrongAssemblyNamesOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
+			AssemblyName [] ass = new AssemblyName [1];
+			
+			ass [0] = new AssemblyName ("System.Design");
+			
+			string name = node.GetValueTypeName (ass);
+			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+		}
+		
+		[Test]
+		public void NullAssemblyNamesOK ()
+		{
+			ResXDataNode node = GetNodeEmdeddedIcon ();
+			
+			string name = node.GetValueTypeName ((AssemblyName []) null);
+			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
+		}
+		
+#endregion
 
 		static string typeconResXInvalidMimeTypeAndType =
 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -267,52 +313,6 @@ namespace MonoTests.System.Resources
 	<value>im a name	im a value</value>
   </data>
 </root>";
-
-
-		#region initial
-
-		[Test]
-		public void NullITRSServiceOK ()
-		{
-			ResXDataNode node = GetNodeEmdeddedIcon ();
-
-			string name = node.GetValueTypeName ((ITypeResolutionService) null);
-			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
-		}
-
-		[Test]
-		public void WrongITRSOK ()
-		{
-			ResXDataNode node = GetNodeEmdeddedIcon ();
-
-			string name = node.GetValueTypeName (new DummyITRS ());
-			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
-		}
-
-		[Test]
-		public void WrongAssemblyNamesOK ()
-		{
-			ResXDataNode node = GetNodeEmdeddedIcon ();
-			AssemblyName [] ass = new AssemblyName [1];
-
-			ass [0] = new AssemblyName ("System.Design");
-
-			string name = node.GetValueTypeName (ass);
-			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
-		}
-
-		[Test]
-		public void NullAssemblyNamesOK ()
-		{
-			ResXDataNode node = GetNodeEmdeddedIcon ();
-
-			string name = node.GetValueTypeName ((AssemblyName []) null);
-			Assert.AreEqual (typeof (Icon).AssemblyQualifiedName, name);
-		}
-
-		#endregion
-		
-
 
 	}
 

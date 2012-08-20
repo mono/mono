@@ -23,7 +23,7 @@
 //
 // Authors:
 //		Andreia Gaita	(avidigal@novell.com)
-//  	Gary Barnett
+//  		Gary Barnett	(gary.barnett.mono@gmail.com)
 
 
 #if NET_2_0

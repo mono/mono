@@ -1,3 +1,19 @@
+//
+// ResXDataNodeHandler.cs : ResXDataNodeHandler is the base class for the 
+// handler classes which are used to abstract away the different ways in
+// which the ResXDataNode members behave based on the resource type / how
+// it is stored in the resx file / whether it has been stored in a resx 
+// file as determined by tests against the .net framework.
+//
+// The IWritableHandler interface signifies a handler can return a copy
+// of the resource in the string form it appeared in the resx file thus
+// avoiding the need for instantiation.
+// 
+// Author:
+//	Gary Barnett (gary.barnett.mono@gmail.com)
+// 
+// Copyright (C) Gary Barnett (2012)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -16,11 +32,6 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// Copyright (c) 2012 Gary Barnett
-//
-// Authors:
-//	Gary Barnett
 
 using System;
 using System.ComponentModel.Design;
@@ -60,7 +71,6 @@ namespace System.Resources {
 		{
 			Type result = null;
 
-			//FIXME: should I unload the assemblies again if type not found?
 			if (assemblyNames != null) {
 				foreach (AssemblyName assem in assemblyNames) {
 						Assembly myAssembly = Assembly.Load (assem);
