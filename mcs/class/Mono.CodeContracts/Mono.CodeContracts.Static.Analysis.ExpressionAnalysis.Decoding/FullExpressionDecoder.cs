@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis.Paths;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Lattices;
 using Mono.CodeContracts.Static.Providers;
@@ -47,7 +48,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		public readonly VisitorForValueOf<V, E> ValueOfVisitor;
 		public readonly VisitorForVariable<V, E> VariableVisitor;
 		public readonly VisitorForVariablesIn<V, E> VariablesInVisitor;
-		private readonly IMetaDataProvider meta_data_provider;
+		protected readonly IMetaDataProvider MetaDataProvider;
 
 		#region Implementation of IFullExpressionDecoder<V,E>
 		public bool IsVariable (E expr, out object variable)
@@ -99,7 +100,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 			VisitorForVariablesIn<V, E>.AddFreeVariables (expr, set, this);
 		}
 
-		public LispList<PathElement> GetVariableAccessPath (E expr)
+		public Sequence<PathElement> GetVariableAccessPath (E expr)
 		{
 			return ContextProvider.ValueContext.AccessPathList (ContextProvider.ExpressionContext.GetPC (expr), ContextProvider.ExpressionContext.Unrefine (expr), true, false);
 		}
@@ -107,8 +108,8 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		public bool TryGetType (E expr, out TypeNode type)
 		{
 			FlatDomain<TypeNode> aType = ContextProvider.ExpressionContext.GetType (expr);
-			if (aType.IsNormal) {
-				type = aType.Concrete;
+			if (aType.IsNormal()) {
+				type = aType.Value;
 				return true;
 			}
 
@@ -121,11 +122,11 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 			return TrySizeOf (expr, out sizeAsConstant);
 		}
 
-		private bool TrySizeOf (E expr, out int sizeAsConstant)
+	    private bool TrySizeOf (E expr, out int sizeAsConstant)
 		{
 			TypeNode type;
 			if (VisitorForSizeOf<V, E>.IsSizeOf (expr, out type, this)) {
-				int size = this.meta_data_provider.TypeSize (type);
+				int size = this.MetaDataProvider.TypeSize (type);
 				if (size != -1) {
 					sizeAsConstant = size;
 					return true;
@@ -140,7 +141,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		public FullExpressionDecoder (IMetaDataProvider metaDataProvider, IExpressionContextProvider<E, V> contextProvider)
 		{
 			ContextProvider = contextProvider;
-			this.meta_data_provider = metaDataProvider;
+			this.MetaDataProvider = metaDataProvider;
 			this.VariableVisitor = new VisitorForVariable<V, E> ();
 			this.UnderlyingVariableVisitor = new VisitorForUnderlyingVariable<V, E> ();
 			this.UnaryExpressionVisitor = new VisitorForIsUnaryExpression<V, E> ();

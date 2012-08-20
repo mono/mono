@@ -31,6 +31,6 @@ using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.AST.Visitors {
 	class ValueCodeVisitor<Variable> : 
-		CodeVisitor<Variable, Variable, IValueContextProvider<Variable>, IImmutableMap<Variable, LispList<Variable>>> {
+		CodeVisitor<Variable, Variable, IValueContextProvider<Variable>, IImmutableMap<Variable, Sequence<Variable>>> {
 	}
 }

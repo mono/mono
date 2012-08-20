@@ -43,8 +43,8 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		protected readonly Label StartLabel;
 		public readonly SubroutineFacade SubroutineFacade;
 
-		private readonly Dictionary<Pair<CFGBlock, CFGBlock>, LispList<Pair<EdgeTag, Subroutine>>> edge_subroutines
-			= new Dictionary<Pair<CFGBlock, CFGBlock>, LispList<Pair<EdgeTag, Subroutine>>> ();
+		private readonly Dictionary<Pair<CFGBlock, CFGBlock>, Sequence<Pair<EdgeTag, Subroutine>>> edge_subroutines
+			= new Dictionary<Pair<CFGBlock, CFGBlock>, Sequence<Pair<EdgeTag, Subroutine>>> ();
 
 		private readonly BlockWithLabels<Label> entry;
 		private readonly BlockWithLabels<Label> entry_after_requires;
@@ -68,9 +68,9 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			this.exception_exit = new CatchFilterEntryBlock<Label> (this, ref this.BlockIdGenerator);
 		}
 
-		protected SubroutineBase (SubroutineFacade SubroutineFacade,
+		protected SubroutineBase (SubroutineFacade facade,
 		                          Label startLabel, SubroutineBuilder<Label> builder)
-			: this (SubroutineFacade)
+			: this (facade)
 		{
 			this.StartLabel = startLabel;
 			Builder = builder;
@@ -162,9 +162,9 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		#endregion
 
 		#region IEdgeSubroutineAdaptor Members
-		public LispList<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutinesInternal (CFGBlock from, CFGBlock to, LispList<Edge<CFGBlock, EdgeTag>> context)
+		public Sequence<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutinesInternal (CFGBlock from, CFGBlock to, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
-			LispList<Pair<EdgeTag, Subroutine>> list;
+			Sequence<Pair<EdgeTag, Subroutine>> list;
 			this.edge_subroutines.TryGetValue (new Pair<CFGBlock, CFGBlock> (from, to), out list);
 			if (list != null && context != null)
 				list = list.Where (FilterRecursiveContracts (to, context));
@@ -268,7 +268,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 				return false;
 			}
 
-			LispList<Pair<EdgeTag, Subroutine>> list = EdgeSubroutinesOuterToInner (onlyOne, point.Block, point.SubroutineContext);
+			Sequence<Pair<EdgeTag, Subroutine>> list = EdgeSubroutinesOuterToInner (onlyOne, point.Block, point.SubroutineContext);
 			if (list.IsEmpty ()) {
 				ifFound = APC.ForEnd (onlyOne, point.SubroutineContext);
 				return true;
@@ -284,8 +284,8 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		{
 			Edge<CFGBlock, EdgeTag> head = point.SubroutineContext.Head;
 			bool isExceptionHandlerEdge;
-			LispList<Edge<CFGBlock, EdgeTag>> tail = point.SubroutineContext.Tail;
-			LispList<Pair<EdgeTag, Subroutine>> flist = EdgeSubroutinesOuterToInner (head.From, head.To, out isExceptionHandlerEdge, tail);
+			Sequence<Edge<CFGBlock, EdgeTag>> tail = point.SubroutineContext.Tail;
+			Sequence<Pair<EdgeTag, Subroutine>> flist = EdgeSubroutinesOuterToInner (head.From, head.To, out isExceptionHandlerEdge, tail);
 			while (flist.Head.Value != this)
 				flist = flist.Tail;
 			if (flist.Tail.IsEmpty ()) {
@@ -307,8 +307,8 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		private APC ComputeSubroutineContinuation (APC point)
 		{
 			Edge<CFGBlock, EdgeTag> head = point.SubroutineContext.Head;
-			LispList<Edge<CFGBlock, EdgeTag>> tail = point.SubroutineContext.Tail;
-			LispList<Pair<EdgeTag, Subroutine>> outerToInner = EdgeSubroutinesOuterToInner (head.From, head.To, tail);
+			Sequence<Edge<CFGBlock, EdgeTag>> tail = point.SubroutineContext.Tail;
+			Sequence<Pair<EdgeTag, Subroutine>> outerToInner = EdgeSubroutinesOuterToInner (head.From, head.To, tail);
 			if (outerToInner.Head.Value == this)
 				return new APC (head.To, 0, tail);
 
@@ -415,12 +415,11 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			if (subroutine == null)
 				return;
 
-			var key = new Pair<CFGBlock, CFGBlock> (from, to);
-			LispList<Pair<EdgeTag, Subroutine>> list;
-			var item = new Pair<EdgeTag, Subroutine> (tag, subroutine);
+			var key = Pair.From (from, to);
 
+		        Sequence<Pair<EdgeTag, Subroutine>> list;
 			this.edge_subroutines.TryGetValue (key, out list);
-			this.edge_subroutines [key] = list.Cons (item);
+		        this.edge_subroutines[key] = list.Cons (Pair.From (tag, subroutine));
 		}
 
 		public override IEnumerable<APC> Successors (APC pc)
@@ -446,7 +445,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 				}
 			} else {
 				foreach (CFGBlock block in pc.Block.Subroutine.PredecessorBlocks (pc.Block)) {
-					LispList<Pair<EdgeTag, Subroutine>> diffs = EdgeSubroutinesOuterToInner (block, pc.Block, pc.SubroutineContext);
+					Sequence<Pair<EdgeTag, Subroutine>> diffs = EdgeSubroutinesOuterToInner (block, pc.Block, pc.SubroutineContext);
 					if (diffs.IsEmpty ())
 						yield return APC.ForEnd (block, pc.SubroutineContext);
 					else {
@@ -461,10 +460,10 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		private IEnumerable<APC> ComputeSubroutinePreContinuation (APC point)
 		{
 			Edge<CFGBlock, EdgeTag> edge = point.SubroutineContext.Head;
-			LispList<Edge<CFGBlock, EdgeTag>> tail = point.SubroutineContext.Tail;
+			Sequence<Edge<CFGBlock, EdgeTag>> tail = point.SubroutineContext.Tail;
 
 			bool isHandlerEdge;
-			LispList<Pair<EdgeTag, Subroutine>> diffs = EdgeSubroutinesOuterToInner (edge.From, edge.To, out isHandlerEdge, tail);
+			Sequence<Pair<EdgeTag, Subroutine>> diffs = EdgeSubroutinesOuterToInner (edge.From, edge.To, out isHandlerEdge, tail);
 			while (diffs.Head.Value != this)
 				diffs = diffs.Tail;
 
@@ -483,7 +482,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 
 		public override APC ComputeTargetFinallyContext (APC pc, CFGBlock succ)
 		{
-			LispList<Pair<EdgeTag, Subroutine>> list = EdgeSubroutinesOuterToInner (pc.Block, succ, pc.SubroutineContext);
+			Sequence<Pair<EdgeTag, Subroutine>> list = EdgeSubroutinesOuterToInner (pc.Block, succ, pc.SubroutineContext);
 			if (list.IsEmpty ())
 				return new APC (succ, 0, pc.SubroutineContext);
 
@@ -491,13 +490,13 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			return new APC (last.Value.Entry, 0, pc.SubroutineContext.Cons (new Edge<CFGBlock, EdgeTag> (pc.Block, succ, last.Key)));
 		}
 
-		private LispList<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock from, CFGBlock succ, LispList<Edge<CFGBlock, EdgeTag>> subroutineContext)
+		private Sequence<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock from, CFGBlock succ, Sequence<Edge<CFGBlock, EdgeTag>> subroutineContext)
 		{
 			bool isExceptionHandlerEdge;
 			return EdgeSubroutinesOuterToInner (from, succ, out isExceptionHandlerEdge, subroutineContext);
 		}
 
-		public override LispList<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock from, CFGBlock succ, out bool isExceptionHandlerEdge, LispList<Edge<CFGBlock, EdgeTag>> context)
+		public override Sequence<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock from, CFGBlock succ, out bool isExceptionHandlerEdge, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			if (from.Subroutine != this)
 				return from.Subroutine.EdgeSubroutinesOuterToInner (from, succ, out isExceptionHandlerEdge, context);
@@ -506,14 +505,14 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			return GetOrdinaryEdgeSubroutines (from, succ, context);
 		}
 
-		public override LispList<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutines (CFGBlock from, CFGBlock to, LispList<Edge<CFGBlock, EdgeTag>> context)
+		public override Sequence<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutines (CFGBlock from, CFGBlock to, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			IMetaDataProvider metadataDecoder = this.SubroutineFacade.MetaDataProvider;
 			var apc = new APC (to, 0, context);
 
 			DecoratorHelper.Push (this);
 			try {
-				LispList<Pair<EdgeTag, Subroutine>> list = DecoratorHelper.Dispatch<IEdgeSubroutineAdaptor> (this).GetOrdinaryEdgeSubroutinesInternal (from, to, context);
+				Sequence<Pair<EdgeTag, Subroutine>> list = DecoratorHelper.Dispatch<IEdgeSubroutineAdaptor> (this).GetOrdinaryEdgeSubroutinesInternal (from, to, context);
 				if (apc.InsideContract) {
 					if (context != null && !list.IsEmpty ()) {
 						Method calledMethod;
@@ -591,9 +590,9 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			}
 		}
 
-		private LispList<Pair<EdgeTag, Subroutine>> InsertInvariant (CFGBlock from, LispList<Pair<EdgeTag, Subroutine>> list,
+		private Sequence<Pair<EdgeTag, Subroutine>> InsertInvariant (CFGBlock from, Sequence<Pair<EdgeTag, Subroutine>> list,
 		                                                             Method calledMethod, ref TypeNode type,
-		                                                             LispList<Edge<CFGBlock, EdgeTag>> context)
+		                                                             Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			IMetaDataProvider metadataDecoder = this.SubroutineFacade.MetaDataProvider;
 
@@ -617,18 +616,18 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			return list;
 		}
 
-		private bool WithinConstructor (CFGBlock current, LispList<Edge<CFGBlock, EdgeTag>> context)
+		private bool WithinConstructor (CFGBlock current, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			return new APC (current, 0, context).InsideConstructor;
 		}
 
-		private LispList<Pair<EdgeTag, Subroutine>> SpecializedEnsures (LispList<Pair<EdgeTag, Subroutine>> subroutines,
+		private Sequence<Pair<EdgeTag, Subroutine>> SpecializedEnsures (Sequence<Pair<EdgeTag, Subroutine>> subroutines,
 		                                                                Subroutine toReplace, Subroutine specializedEnsures)
 		{
 			return subroutines.Select (pair => new Pair<EdgeTag, Subroutine> (pair.Key, pair.Value == toReplace ? specializedEnsures : pair.Value));
 		}
 
-		private static Predicate<Pair<EdgeTag, Subroutine>> FilterRecursiveContracts (CFGBlock from, LispList<Edge<CFGBlock, EdgeTag>> context)
+		private static Predicate<Pair<EdgeTag, Subroutine>> FilterRecursiveContracts (CFGBlock from, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			return (candidate) => {
 			       	Subroutine sub = candidate.Value;
@@ -701,11 +700,11 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 
 
 		public override void Print (TextWriter tw, ILPrinter<APC> printer, Func<CFGBlock,
-		                                                                   	IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                            LispList<Edge<CFGBlock, EdgeTag>> context,
-		                            HashSet<Pair<Subroutine, LispList<Edge<CFGBlock, EdgeTag>>>> printed)
+		                                                                   	IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		                            Sequence<Edge<CFGBlock, EdgeTag>> context,
+		                            HashSet<Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>>> printed)
 		{
-			var element = new Pair<Subroutine, LispList<Edge<CFGBlock, EdgeTag>>> (this, context);
+			var element = new Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>> (this, context);
 			if (printed.Contains (element))
 				return;
 			printed.Add (element);
@@ -740,7 +739,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 					if (this.edge_info.IsBackEdge (block, Dummy.Value, edge.Value))
 						tw.Write (" BE");
 
-					for (LispList<Pair<EdgeTag, Subroutine>> list = GetOrdinaryEdgeSubroutines (block, edge.Value, context); list != null; list = list.Tail) {
+					for (Sequence<Pair<EdgeTag, Subroutine>> list = GetOrdinaryEdgeSubroutines (block, edge.Value, context); list != null; list = list.Tail) {
 						subs.Add (list.Head.Value);
 						tw.Write (" SR{0}({1})", list.Head.Value.Id, list.Head.Key);
 					}
@@ -752,9 +751,9 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		}
 
 		protected virtual void PrintReferencedSubroutines (TextWriter tw, HashSet<Subroutine> subs, ILPrinter<APC> printer,
-		                                                   Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                                                   LispList<Edge<CFGBlock, EdgeTag>> context,
-		                                                   HashSet<Pair<Subroutine, LispList<Edge<CFGBlock, EdgeTag>>>> printed)
+		                                                   Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		                                                   Sequence<Edge<CFGBlock, EdgeTag>> context,
+		                                                   HashSet<Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>>> printed)
 		{
 			foreach (Subroutine subroutine in subs) {
 				if (contextLookup == null)

@@ -56,7 +56,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Expressions {
 			return visitor.Unary (pc, this.Operator, this.Unsigned, dest, this.Source, data);
 		}
 
-		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, LispList<TSymbolicValue>> substitutions)
+		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, Sequence<TSymbolicValue>> substitutions)
 		{
 			if (substitutions.ContainsKey (this.Source))
 				return new UnaryExpr<TSymbolicValue> (substitutions [this.Source].Head, this.Operator, this.Unsigned);

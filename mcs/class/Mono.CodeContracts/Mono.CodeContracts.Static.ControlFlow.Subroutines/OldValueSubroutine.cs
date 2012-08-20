@@ -32,12 +32,12 @@ using Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
-	class OldValueSubroutine<Label> : MethodContractSubroutine<Label> {
-		private BlockWithLabels<Label> begin_old_block;
-		private BlockWithLabels<Label> end_old_block;
+	class OldValueSubroutine<TLabel> : MethodContractSubroutine<TLabel> {
+		private BlockWithLabels<TLabel> begin_old_block;
+		private BlockWithLabels<TLabel> end_old_block;
 
 		public OldValueSubroutine (SubroutineFacade subroutineFacade, Method method,
-		                           SimpleSubroutineBuilder<Label> builder, Label startLabel)
+		                           SimpleSubroutineBuilder<TLabel> builder, TLabel startLabel)
 			: base (subroutineFacade, method, builder, startLabel)
 		{
 		}
@@ -61,23 +61,23 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		{
 		}
 
-		public void Commit (BlockWithLabels<Label> endOldBlock)
+		public void Commit (BlockWithLabels<TLabel> endOldBlock)
 		{
 			this.end_old_block = endOldBlock;
 			base.Commit ();
 		}
 
-		public void RegisterBeginBlock (BlockWithLabels<Label> beginOldBlock)
+		public void RegisterBeginBlock (BlockWithLabels<TLabel> beginOldBlock)
 		{
 			this.begin_old_block = beginOldBlock;
 		}
 
-		public APC BeginOldAPC (LispList<Edge<CFGBlock, EdgeTag>> context)
+		public APC BeginOldAPC (Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			return new APC (this.begin_old_block, 0, context);
 		}
 
-		public APC EndOldAPC (LispList<Edge<CFGBlock, EdgeTag>> context)
+		public APC EndOldAPC (Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			return new APC (this.end_old_block, this.end_old_block.Count - 1, context);
 		}

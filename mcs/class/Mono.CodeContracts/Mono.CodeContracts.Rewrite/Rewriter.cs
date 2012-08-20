@@ -33,7 +33,6 @@ using System.Text;
 using Mono.Cecil.Cil;
 using Mono.Cecil;
 using System.IO;
-using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CodeContracts.Rewrite {
 	public class Rewriter {
@@ -52,8 +51,6 @@ namespace Mono.CodeContracts.Rewrite {
 		private RewriterOptions options;
 		private List<string> warnings = new List<string> ();
 		private List<string> errors = new List<string> ();
-		private bool usingMdb = false;
-		private bool usingPdb = false;
 
 		private RewriterResults RewriteImpl ()
 		{

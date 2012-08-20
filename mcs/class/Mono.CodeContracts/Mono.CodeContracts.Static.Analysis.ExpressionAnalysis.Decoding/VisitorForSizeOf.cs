@@ -34,20 +34,21 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 	class VisitorForSizeOf<V, E> : QueryVisitor<V, E>
 		where V : IEquatable<V>
 		where E : IEquatable<E> {
-		private TypeNode Type;
+		
+        private TypeNode result;
 
 		public static bool IsSizeOf (E expr, out TypeNode type, FullExpressionDecoder<V, E> decoder)
 		{
 			VisitorForSizeOf<V, E> v = decoder.SizeOfVisitor;
 			bool res = Decode (expr, v, decoder);
 
-			type = v.Type;
+			type = v.result;
 			return res;
 		}
 
 		public override bool Sizeof (E pc, TypeNode type, V dest, Dummy data)
 		{
-			this.Type = type;
+			this.result = type;
 			return true;
 		}
 	}

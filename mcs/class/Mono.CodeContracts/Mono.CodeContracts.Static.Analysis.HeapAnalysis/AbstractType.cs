@@ -53,12 +53,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		public TypeNode ConcreteType
 		{
-			get { return this.value.Concrete; }
-		}
-
-		public bool IsNormal
-		{
-			get { return this.value.IsNormal; }
+			get { return this.value.Value; }
 		}
 
 		private static AbstractType ForManifestedFieldValue
@@ -96,7 +91,12 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			get { return IsZero && this.value.IsBottom; }
 		}
 
-		public AbstractType Join (AbstractType that, bool widening, out bool weaker)
+	    public AbstractType Join(AbstractType that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public AbstractType Join (AbstractType that, bool widening, out bool weaker)
 		{
 			if (that.IsZero) {
 				weaker = false;
@@ -115,7 +115,12 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return new AbstractType (resultType, false);
 		}
 
-		public AbstractType Meet (AbstractType that)
+	    public AbstractType Widen(AbstractType that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public AbstractType Meet (AbstractType that)
 		{
 			return new AbstractType (this.value.Meet (that.value), IsZero || that.IsZero);
 		}

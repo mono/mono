@@ -34,7 +34,7 @@ using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.Paths {
 	static class PathExtensions {
-		public static HashSet<Field> FieldsIn (this LispList<PathElement> path)
+		public static HashSet<Field> FieldsIn (this Sequence<PathElement> path)
 		{
 			var result = new HashSet<Field> ();
 			if (path != null) {
@@ -52,7 +52,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.Paths {
 			return PathToString (path);
 		}
 
-		public static string ToCodeString (this LispList<PathElement> path)
+		public static string ToCodeString (this Sequence<PathElement> path)
 		{
 			return PathToString (path.AsEnumerable ());
 		}

@@ -26,11 +26,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
+using System.ComponentModel;
+
+using Mono.CodeContracts.Static.Lattices;
+
 namespace Mono.CodeContracts.Static {
-	public enum ProofOutcome {
-		Top,
-		True,
-		False,
-		Bottom
-	}
+    static class ProofOutcome {
+        /// <summary>
+        /// Can be true or false.
+        /// </summary>
+        public static readonly FlatDomain<bool> Top = FlatDomain<bool>.TopValue;
+        /// <summary>
+        /// Unreachable.
+        /// </summary>
+        public static readonly FlatDomain<bool> Bottom = FlatDomain<bool>.BottomValue;
+        /// <summary>
+        /// Definitely true.
+        /// </summary>
+        public static readonly FlatDomain<bool> True = true;
+        /// <summary>
+        /// Definitely false.
+        /// </summary>
+        public static readonly FlatDomain<bool> False = false;
+
+        public static FlatDomain<bool> Negate(this FlatDomain<bool> o)
+        {
+            if (o.IsNormal())
+                return !o.IsTrue();
+
+            return o;
+        }
+
+        public static bool IsTrue(this FlatDomain<bool> o) 
+        {
+            return o.IsNormal () && o.Value;
+        }
+
+        public static bool IsFalse(this FlatDomain<bool> o)
+        {
+            return o.IsNormal () && !o.Value;
+        }
+    }
 }

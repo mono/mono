@@ -1,10 +1,10 @@
 // 
-// TypedProperties.cs
+// IExpressionDecoder.cs
 // 
 // Authors:
-// 	Alexander Chebaturkin (chebaturkin@gmail.com)
+//	Alexander Chebaturkin (chebaturkin@gmail.com)
 // 
-// Copyright (C) 2011 Alexander Chebaturkin
+// Copyright (C) 2012 Alexander Chebaturkin
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,37 +24,30 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
+//
 
-using System.Collections.Generic;
+namespace Mono.CodeContracts.Static.Analysis.Numerical {
+        interface IExpressionDecoder<TVariable, TExpression> {
+                ExpressionOperator OperatorFor (TExpression expr);
+                TExpression LeftExpressionFor (TExpression expr);
+                TExpression RightExpressionFor (TExpression expr);
 
-namespace Mono.CodeContracts.Static.DataStructures {
-	class TypedProperties : ITypedProperties {
-		private readonly Dictionary<object, object> dictionary = new Dictionary<object, object> ();
+                TVariable UnderlyingVariable (TExpression expr);
 
-		#region Implementation of ITypedProperties
-		public bool Contains (TypedKey key)
-		{
-			return this.dictionary.ContainsKey (key);
-		}
+                bool IsConstant (TExpression expr);
+                bool IsVariable (TExpression expr);
 
-		public void Add<T> (TypedKey key, T value)
-		{
-			this.dictionary.Add (key, value);
-		}
+                bool TryValueOf<T> (TExpression left, ExpressionType type, out T result);
 
-		public bool TryGetValue<T> (TypedKey key, out T value)
-		{
-			object result;
+                bool TrySizeOf (TExpression expr, out int size);
 
-			if (!this.dictionary.TryGetValue (key, out result)) {
-				value = default(T);
-				return false;
-			}
+                ExpressionType TypeOf (TExpression expr);
 
-			value = (T) result;
-			return true;
-		}
-		#endregion
-	}
+                bool IsNull (TExpression expr);
+
+                bool IsConstantInt (TExpression expr, out int value);
+                string NameOf (TVariable variable);
+
+                bool IsBinaryExpression (TExpression expr);
+        }
 }

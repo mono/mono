@@ -28,15 +28,16 @@
 
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Proving {
 	interface IFactQuery<Expression, Variable> : IFactBase<Variable> {
-		ProofOutcome IsNull (APC pc, Expression expr);
-		ProofOutcome IsNonNull (APC pc, Expression expr);
-		ProofOutcome IsTrue (APC pc, Expression expr);
-		ProofOutcome IsTrueImply (APC pc, LispList<Expression> positiveAssumptions, LispList<Expression> negativeAssumptions, Expression goal);
-		ProofOutcome IsGreaterEqualToZero (APC pc, Expression expr);
-		ProofOutcome IsLessThan (APC pc, Expression expr, Expression right);
-		ProofOutcome IsNonZero (APC pc, Expression expr);
+        FlatDomain<bool> IsNull(APC pc, Expression expr);
+        FlatDomain<bool> IsNonNull(APC pc, Expression expr);
+        FlatDomain<bool> IsTrue(APC pc, Expression expr);
+        FlatDomain<bool> IsTrueImply(APC pc, Sequence<Expression> positiveAssumptions, Sequence<Expression> negativeAssumptions, Expression goal);
+        FlatDomain<bool> IsGreaterEqualToZero(APC pc, Expression expr);
+        FlatDomain<bool> IsLessThan(APC pc, Expression expr, Expression right);
+        FlatDomain<bool> IsNonZero(APC pc, Expression expr);
 	}
 }

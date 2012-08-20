@@ -1,5 +1,5 @@
 // 
-// ITypedProperties.cs
+// IPropertyCollection.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)
@@ -27,7 +27,7 @@
 // 
 
 namespace Mono.CodeContracts.Static.DataStructures {
-	internal interface ITypedProperties {
+	internal interface IPropertyCollection {
 		bool Contains (TypedKey key);
 		void Add<T> (TypedKey key, T value);
 		bool TryGetValue<T> (TypedKey key, out T value);
