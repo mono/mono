@@ -10,44 +10,44 @@
     <NoWarn>1699</NoWarn>
     <OutputPath>.\</OutputPath>
     <NoStdLib>true</NoStdLib>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
     <AssemblyName>System.Design_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699</NoWarn>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699</NoWarn>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.ComponentModel.Design\DesignerActionListsChangedEventArgsTest.cs" />
-   <Compile Include="Test\System.ComponentModel.Design\DesignerActionMethodItemTest.cs" />
-   <Compile Include="Test\System.ComponentModel.Design\DesignerActionPropertyItemTest.cs" />
-   <Compile Include="Test\System.Diagnostics.Design\StringValueConverterTest.cs" />
-   <Compile Include="Test\System.Windows.Forms.Design\MenuCommandsTest.cs" />
-
+    <Compile Include="Test\System.ComponentModel.Design\DesignerActionListsChangedEventArgsTest.cs" />
+    <Compile Include="Test\System.ComponentModel.Design\DesignerActionMethodItemTest.cs" />
+    <Compile Include="Test\System.ComponentModel.Design\DesignerActionPropertyItemTest.cs" />
+    <Compile Include="Test\System.Diagnostics.Design\StringValueConverterTest.cs" />
+    <Compile Include="Test\System.Windows.Forms.Design\MenuCommandsTest.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderBaseNameTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderCodeDomTest.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderNamespaceTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderOtherTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderResourceNameTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderResxFileTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderVerifyResourceNameTests.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -57,27 +57,23 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
     <Reference Include="./../../class/lib/net_4_5/System.Design.dll">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../class/lib/net_4_5/System.Design.dll</HintPath>
     </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="nunit.framework" />
+    <Reference Include="mscorlib">
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
       <HintPath>System.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework" />
-
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Test\System.Resources.Tools\" />
   </ItemGroup>
-  
 </Project>
-

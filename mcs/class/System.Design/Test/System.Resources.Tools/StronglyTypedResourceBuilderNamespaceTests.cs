@@ -1,13 +1,12 @@
 //
-// StronglyTypedResourceBuilderNamespaceTests.cs - tests the GeneratedCodeNamespace
-// and ResourcesNamespace params of the main Create overload
+// StronglyTypedResourceBuilderNamespaceTests.cs - tests the generatedCodeNamespace
+// and resourcesNamespace params of the main Create overload
 // 
 // Author:
-//  	Gary Barnett (2012)
+//	Gary Barnett (gary.barnett.mono@gmail.com)
 // 
 // Copyright (C) Gary Barnett (2012)
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
