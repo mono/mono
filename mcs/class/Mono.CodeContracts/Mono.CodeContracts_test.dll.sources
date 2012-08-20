@@ -1,2 +1,12 @@
+AbstractDomainExtensionsTests.cs
+DisIntervalTests.cs
+DomainTestBase.cs
+FlatDomainTests.cs
+IntervalTests.cs
+PatriciaTrieTests.cs
+RationalTestExtensions.cs
+RationalTests.cs
+RationalThresholdTests.cs
 RewriteAndLoad.cs
+SequenceTests.cs
 TestCCRewrite.cs

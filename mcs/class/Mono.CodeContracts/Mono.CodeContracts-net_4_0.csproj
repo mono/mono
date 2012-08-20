@@ -10,9 +10,9 @@
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_0</OutputPath>
     <NoStdLib>true</NoStdLib>
+
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>Mono.CodeContracts</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -38,6 +38,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.CodeContracts.Rewrite\AssemblyRef.cs" />
     <Compile Include="Mono.CodeContracts.Rewrite\ConditionTextExtractor.cs" />
@@ -162,6 +163,8 @@
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysers.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.GenericValueAnalysis.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.ConstantEvaluator.cs" />
+    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.GenericNumericalAnalysis.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BoxedExpressionDecoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BoxedExpressionEncoder.cs" />
     <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\BoxedVariable.cs" />
@@ -411,19 +414,7 @@
     <Compile Include="Mono.CodeContracts.Static\CheckOptions.cs" />
     <Compile Include="Mono.CodeContracts.Static\Checker.cs" />
     <Compile Include="Mono.CodeContracts.Static\DebugOptions.cs" />
-    <Compile Include="Mono.CodeContracts.Static\ProofOutcome.cs" />
-    <Compile Include="Test\AbstractDomainExtensionsTests.cs" />
-    <Compile Include="Test\DisIntervalTests.cs" />
-    <Compile Include="Test\DomainTestBase.cs" />
-    <Compile Include="Test\FlatDomainTests.cs" />
-    <Compile Include="Test\IntervalTests.cs" />
-    <Compile Include="Test\PatriciaTrieTests.cs" />
-    <Compile Include="Test\RationalTestExtensions.cs" />
-    <Compile Include="Test\RationalTests.cs" />
-    <Compile Include="Test\RationalThresholdTests.cs" />
-    <Compile Include="Test\RewriteAndLoad.cs" />
-    <Compile Include="Test\SequenceTests.cs" />
-    <Compile Include="Test\TestCCRewrite.cs" />
+    <Compile Include="Mono.CodeContracts.Static\ProofOutcome.cs" />    
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -433,38 +424,33 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\lib\net_4_0_Debug\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\lib\net_4_0_Debug\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\lib\net_4_0_Debug\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\lib\net_4_0_Debug\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>packages\NUnit.2.6.0.12054\lib\nunit.framework.dll</HintPath>
+    <Reference Include="System">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System</HintPath>
     </Reference>
-    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.ConstantEvaluator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Mono.CodeContracts.Static.Analysis.Numerical\Analysis.GenericNumericalAnalysis.cs" />
-  </ItemGroup>
+
 </Project>
