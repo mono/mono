@@ -8,4 +8,5 @@ include ../../build/library.make
 
 LIB_MCS_FLAGS += -r:$(corlib) -r:System.Core.dll -r:System.dll
 
-TEST_MCS_FLAGS = -r:System.Core.dll
+TEST_MCS_FLAGS = -r:System.Core.dll -r:System.dll
+
