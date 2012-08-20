@@ -1,5 +1,5 @@
 ﻿// 
-// PatriciaTrieTests.cs.cs
+// PatriciaTrieTests.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)

@@ -1,5 +1,5 @@
 ﻿// 
-// RationalTests.cs.cs
+// RationalTests.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)

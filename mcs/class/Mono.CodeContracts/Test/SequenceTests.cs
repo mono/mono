@@ -1,5 +1,5 @@
 ﻿// // 
-// // SequenceTests.cs.cs
+// // SequenceTests.cs
 // // 
 // // Authors:
 // // 	Alexander Chebaturkin (chebaturkin@gmail.com)
