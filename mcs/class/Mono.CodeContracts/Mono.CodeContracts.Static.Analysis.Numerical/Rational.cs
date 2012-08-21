@@ -154,7 +154,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         {
                                 if (this.IsInfinity)
                                         return this;
-                                double next = Math.Ceiling ((double) this);
+                                double next = System.Math.Ceiling ((double) this);
 
                                 return For (next >= (double) long.MaxValue ? long.MaxValue : (long) System.Math.Truncate (next));
                         }
