@@ -80,17 +80,17 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
 
                         this.kind = Kind.Normal;
 
-                        int sign = Math.Sign (nominator) * Math.Sign (denominator);
+                        int sign = System.Math.Sign (nominator) * System.Math.Sign (denominator);
 
                         if (nominator == long.MinValue)
                                 nominator = sign >= 0 ? long.MaxValue : long.MinValue;
                         else
-                                nominator = sign * Math.Abs (nominator);
+                                nominator = sign * System.Math.Abs (nominator);
 
                         if (denominator == long.MinValue)
                                 denominator = long.MaxValue;
                         else
-                                denominator = Math.Abs (denominator);
+                                denominator = System.Math.Abs (denominator);
 
                         if (nominator % denominator == 0) {
                                 this.up = nominator / denominator;
@@ -102,7 +102,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         long gcd = (nominator == 0L || nominator == long.MaxValue ||
                                     denominator == 0L || denominator == long.MaxValue)
                                            ? 1L
-                                           : GCD (Math.Abs (nominator), Math.Abs (denominator));
+                                           : GCD (System.Math.Abs (nominator), System.Math.Abs (denominator));
 
                         this.up = nominator / gcd;
                         this.down = denominator / gcd;
@@ -129,7 +129,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         {
                                 if (this.IsInfinity)
                                         return this;
-                                var next = (long) Math.Ceiling ((double) this);
+                                var next = (long) System.Math.Ceiling ((double) this);
 
                                 return For (next >= int.MaxValue ? int.MaxValue : next);
                         }
@@ -142,7 +142,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 if (this.IsInfinity)
                                         return this;
 
-                                var prev = (long) Math.Floor ((double) this);
+                                var prev = (long) System.Math.Floor ((double) this);
 
                                 return For (prev <= int.MinValue ? int.MinValue : prev);
                         }
@@ -156,7 +156,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                         return this;
                                 double next = Math.Ceiling ((double) this);
 
-                                return For (next >= (double) long.MaxValue ? long.MaxValue : (long) Math.Truncate (next));
+                                return For (next >= (double) long.MaxValue ? long.MaxValue : (long) System.Math.Truncate (next));
                         }
                 }
 
@@ -424,7 +424,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 return r.up >= 0L ? long.MaxValue : long.MinValue;
 
                         if (!r.IsInteger)
-                                return (long) Math.Round ((double) r.up / r.down);
+                                return (long) System.Math.Round ((double) r.up / r.down);
 
                         return r.up;
                 }
@@ -432,7 +432,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                 public static explicit operator int (Rational r)
                 {
                         if (r.down != 0L)
-                                return (int) Math.Round ((double) r.up / r.down);
+                                return (int) System.Math.Round ((double) r.up / r.down);
 
                         return r.up >= 0L ? int.MaxValue : int.MinValue;
                 }
@@ -702,7 +702,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                                 case Kind.MinusInfinity:
                                         return -1;
                                 default:
-                                        return Math.Sign (r.up) * Math.Sign (r.down);
+                                        return System.Math.Sign (r.up) * System.Math.Sign (r.down);
                         }
                 }
 
