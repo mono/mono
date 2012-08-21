@@ -29,7 +29,7 @@
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Lattices {
-        static class AbstractDomainExtensions {
+        public static class AbstractDomainExtensions {
                 public static bool IsNormal<T> (this IAbstractDomain<T> domain)
                 {
                         return !domain.IsTop && !domain.IsBottom;

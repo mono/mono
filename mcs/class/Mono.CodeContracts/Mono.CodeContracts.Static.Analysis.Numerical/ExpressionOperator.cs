@@ -29,7 +29,7 @@
 using System.Collections.Generic;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-        enum ExpressionOperator {
+        public enum ExpressionOperator {
                 Constant,
                 Variable,
                 Not,

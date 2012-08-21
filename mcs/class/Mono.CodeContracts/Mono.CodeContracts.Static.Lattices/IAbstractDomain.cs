@@ -33,7 +33,7 @@ namespace Mono.CodeContracts.Static.Lattices {
         /// Represents abstraction of concrete value
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        interface IAbstractDomain<T> {
+        public interface IAbstractDomain<T> {
                 /// <summary>
                 /// Represents universe set (which holds every value)
                 /// </summary>

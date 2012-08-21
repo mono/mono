@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Mono.CodeContracts.Static.DataStructures {
-        class Sequence<T> : IEquatable<Sequence<T>> {
+        public class Sequence<T> : IEquatable<Sequence<T>> {
                 public static readonly Sequence<T> Empty = null;
                 readonly int count;
                 readonly T element;

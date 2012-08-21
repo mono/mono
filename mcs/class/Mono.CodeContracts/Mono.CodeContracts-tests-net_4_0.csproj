@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,9 +38,18 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\RewriteAndLoad.cs" />
-   <Compile Include="Test\TestCCRewrite.cs" />
-
+    <Compile Include="Test\AbstractDomainExtensionsTests.cs" />
+    <Compile Include="Test\DisIntervalTests.cs" />
+    <Compile Include="Test\DomainTestBase.cs" />
+    <Compile Include="Test\FlatDomainTests.cs" />    
+    <Compile Include="Test\IntervalTests.cs" />
+    <Compile Include="Test\PatriciaTrieTests.cs" />
+    <Compile Include="Test\RationalTestExtensions.cs" />
+    <Compile Include="Test\RationalTests.cs" />
+    <Compile Include="Test\RationalThresholdTests.cs" />
+    <Compile Include="Test\RewriteAndLoad.cs" />
+    <Compile Include="Test\SequenceTests.cs" />
+    <Compile Include="Test\TestCCRewrite.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -69,4 +78,3 @@
   </ItemGroup>
   
 </Project>
-

@@ -29,7 +29,7 @@
 using Mono.CodeContracts.Static.DataStructures.Patricia;
 
 namespace Mono.CodeContracts.Static.DataStructures {
-	static class ImmutableIntMap<T>
+        public static class ImmutableIntMap<T>
 	{
         public static readonly IImmutableIntMap<T> Empty = EmptyNode<T>.Instance;    
 	}

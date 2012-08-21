@@ -33,7 +33,7 @@ using System.Text;
 
 namespace Mono.CodeContracts.Static.DataStructures.Patricia
 {
-    class EmptyNode<T> : PatriciaTrieNode<T>
+        public class EmptyNode<T> : PatriciaTrieNode<T>
     {
         public static readonly EmptyNode<T> Instance = new EmptyNode<T>();
 

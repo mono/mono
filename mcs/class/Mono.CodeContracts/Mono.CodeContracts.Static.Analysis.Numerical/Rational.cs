@@ -34,7 +34,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         /// <summary>
         /// Represents a rational number.
         /// </summary>
-        struct Rational : IEquatable<Rational> {
+        public struct Rational : IEquatable<Rational> {
                 public static readonly Rational Zero = new Rational (0L);
                 public static readonly Rational One = new Rational (1L);
                 public static readonly Rational MinusOne = new Rational (-1L);

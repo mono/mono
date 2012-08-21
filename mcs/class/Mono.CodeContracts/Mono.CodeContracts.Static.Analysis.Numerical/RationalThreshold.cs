@@ -27,7 +27,7 @@
 //
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-        class RationalThreshold : Threshold<Rational> {
+        public class RationalThreshold : Threshold<Rational> {
                 public RationalThreshold (int size) : base (size)
                 {
                 }

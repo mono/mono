@@ -29,7 +29,7 @@
 using System.Collections.Generic;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-        abstract class Threshold<T> {
+        public abstract class Threshold<T> {
                 protected int NextFree;
                 protected readonly List<T> Values;
 

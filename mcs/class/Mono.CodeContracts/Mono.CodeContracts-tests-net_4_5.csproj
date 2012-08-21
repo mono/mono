@@ -38,7 +38,17 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+   <Compile Include="Test\AbstractDomainExtensionsTests.cs" />
+   <Compile Include="Test\DisIntervalTests.cs" />
+   <Compile Include="Test\DomainTestBase.cs" />
+   <Compile Include="Test\FlatDomainTests.cs" />
+   <Complie Include="Test\IntervalTests.cs" />
+   <Compile Include="Test\PatriciaTrieTests.cs" />
+   <Compile Include="Test\RationalTestExtensions.cs" />
+   <Compile Include="Test\RationalTests.cs" />
+   <Compile Include="Test\RationalThresholdTests.cs" />
    <Compile Include="Test\RewriteAndLoad.cs" />
+   <Compile Include="Test\SequenceTests.cs" />
    <Compile Include="Test\TestCCRewrite.cs" />
 
   </ItemGroup>
