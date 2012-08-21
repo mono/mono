@@ -4882,7 +4882,7 @@ namespace Mono.CSharp {
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				ec.Report.SymbolRelatedToPreviousError (method);
 				if ((expected_par.FixedParameters[idx].ModFlags & Parameter.Modifier.RefOutMask) != 0) {
-					ec.Report.Error (1954, loc, "The best overloaded collection initalizer method `{0}' cannot have 'ref', or `out' modifier",
+					ec.Report.Error (1954, loc, "The best overloaded collection initalizer method `{0}' cannot have `ref' or `out' modifier",
 						TypeManager.CSharpSignature (method));
 					return;
 				}
@@ -4916,7 +4916,12 @@ namespace Mono.CSharp {
 					p2 = paramType.GetSignatureForErrorIncludingAssemblyName ();
 				}
 
-				ec.Report.Error (1503, loc,
+				if ((mod & Parameter.Modifier.RefOutMask) != 0) {
+					p1 = Parameter.GetModifierSignature (a.Modifier) + " " + p1;
+					p2 = Parameter.GetModifierSignature (a.Modifier) + " " + p2;
+				}
+
+				ec.Report.Error (1503, a.Expr.Location,
 					"Argument `#{0}' cannot convert `{1}' expression to type `{2}'", index, p1, p2);
 			}
 		}
