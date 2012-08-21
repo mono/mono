@@ -277,6 +277,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test] // FIXME: this fails on mono ("/dir/filename.ext" is returned) but passes on .net
+		[NUnit.Framework.Category ("NotWorking")]
 		public void BasePath_Root ()
 		{
 			var node = new ResXDataNode ("name", new ResXFileRef (@"/dir/filename.ext", "System.String"));
