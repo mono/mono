@@ -38,9 +38,9 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 
 		public readonly CFGBlock Block;
 		public readonly int Index;
-		public readonly LispList<Edge<CFGBlock, EdgeTag>> SubroutineContext;
+		public readonly Sequence<Edge<CFGBlock, EdgeTag>> SubroutineContext;
 
-		public APC (CFGBlock block, int index, LispList<Edge<CFGBlock, EdgeTag>> subroutineContext)
+		public APC (CFGBlock block, int index, Sequence<Edge<CFGBlock, EdgeTag>> subroutineContext)
 		{
 			this.Block = block;
 			this.Index = index;
@@ -65,7 +65,7 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		{
 			get
 			{
-				LispList<Edge<CFGBlock, EdgeTag>> ctx = this.SubroutineContext;
+				Sequence<Edge<CFGBlock, EdgeTag>> ctx = this.SubroutineContext;
 				CFGBlock block = this.Block;
 				while (block != null) {
 					Subroutine subroutine = block.Subroutine;
@@ -195,7 +195,7 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			{
 				if (!this.Block.Subroutine.IsRequires || this.SubroutineContext == null)
 					return false;
-				for (LispList<Edge<CFGBlock, EdgeTag>> list = this.SubroutineContext; list != null; list = list.Tail) {
+				for (Sequence<Edge<CFGBlock, EdgeTag>> list = this.SubroutineContext; list != null; list = list.Tail) {
 					if (list.Head.Tag == EdgeTag.Entry)
 						return false;
 					if (list.Head.Tag.Is (EdgeTag.BeforeMask)) {
@@ -222,12 +222,12 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			return this;
 		}
 
-		public static APC ForEnd (CFGBlock block, LispList<Edge<CFGBlock, EdgeTag>> subroutineContext)
+		public static APC ForEnd (CFGBlock block, Sequence<Edge<CFGBlock, EdgeTag>> subroutineContext)
 		{
 			return new APC (block, block.Count, subroutineContext);
 		}
 
-		public static APC ForStart (CFGBlock block, LispList<Edge<CFGBlock, EdgeTag>> subroutineContext)
+		public static APC ForStart (CFGBlock block, Sequence<Edge<CFGBlock, EdgeTag>> subroutineContext)
 		{
 			return new APC (block, 0, subroutineContext);
 		}
@@ -239,7 +239,7 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 
 		public bool TryGetContainingMethod (out Method method)
 		{
-			LispList<Edge<CFGBlock, EdgeTag>> list = this.SubroutineContext;
+			Sequence<Edge<CFGBlock, EdgeTag>> list = this.SubroutineContext;
 			CFGBlock block = this.Block;
 			while (block != null) {
 				var mi = block.Subroutine as IMethodInfo;
@@ -258,7 +258,7 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			return false;
 		}
 
-		public static void ToString (StringBuilder sb, LispList<Edge<CFGBlock, EdgeTag>> context)
+	        static void ToString (StringBuilder sb, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			bool wasFirst = false;
 			for (; context != null; context = context.Tail) {

@@ -34,7 +34,7 @@ using Mono.CodeContracts.Static.Providers;
 
 namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 	class ValueDecoder<TContext> : 
-		IILDecoder<APC, SymbolicValue, SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>>
+		IILDecoder<APC, SymbolicValue, SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>>
 		where TContext : IStackContextProvider
 	{
 		private readonly HeapAnalysis parent;
@@ -48,7 +48,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			this.stack_decoder = stackDecoder;
 		}
 
-		#region Implementation of IILDecoder<APC,SymbolicValue,SymbolicValue,IValueContext<SymbolicValue>,IImmutableMap<SymbolicValue,LispList<SymbolicValue>>>
+		#region Implementation of IILDecoder<APC,SymbolicValue,SymbolicValue,IValueContext<SymbolicValue>,IImmutableMap<SymbolicValue,Sequence<SymbolicValue>>>
 		public IValueContextProvider<SymbolicValue> ContextProvider { get { return context.Value; } }
 
 		public Result ForwardDecode<Data, Result, Visitor>(APC pc, Visitor visitor, Data state)
@@ -63,7 +63,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return this.parent.IsUnreachable (pc);
 		}
 
-		public IImmutableMap<SymbolicValue, LispList<SymbolicValue>> EdgeData(APC from, APC to)
+		public IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> EdgeData(APC from, APC to)
 		{
 			if (!this.parent.RenamePoints.ContainsKey(from, to))
 				return null;
@@ -73,7 +73,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return this.parent.EdgeRenaming (new Pair<APC, APC> (from, to), this.ContextProvider.MethodContext.CFG.IsJoinPoint (to));
 		}
 
-		public void Dump(TextWriter tw, string prefix, IImmutableMap<SymValue, LispList<SymValue>> edgeData )
+		public void Dump(TextWriter tw, string prefix, IImmutableMap<SymValue, Sequence<SymValue>> edgeData )
 		{
 			if (edgeData == null)
 				return;

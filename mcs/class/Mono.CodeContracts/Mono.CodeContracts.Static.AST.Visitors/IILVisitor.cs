@@ -30,73 +30,73 @@ using System.Collections.Generic;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.AST.Visitors {
-	interface IILVisitor<Label, Source, Dest, Data, Result> :
-		IExpressionILVisitor<Label, Source, Dest, Data, Result>,
-		ISyntheticILVisitor<Label, Source, Dest, Data, Result> {
-		Result Arglist (Label pc, Dest dest, Data data);
-		Result Branch (Label pc, Label target, bool leavesExceptionBlock, Data data);
-		Result BranchCond (Label pc, Label target, BranchOperator bop, Source value1, Source value2, Data data);
-		Result BranchTrue (Label pc, Label target, Source cond, Data data);
-		Result BranchFalse (Label pc, Label target, Source cond, Data data);
-		Result Break (Label pc, Data data);
+	interface IILVisitor<TLabel, TSource, TDest, TData, TResult> :
+		IExpressionILVisitor<TLabel, TSource, TDest, TData, TResult>,
+		ISyntheticILVisitor<TLabel, TSource, TDest, TData, TResult> {
+		TResult Arglist (TLabel pc, TDest dest, TData data);
+		TResult Branch (TLabel pc, TLabel target, bool leavesExceptionBlock, TData data);
+		TResult BranchCond (TLabel pc, TLabel target, BranchOperator bop, TSource value1, TSource value2, TData data);
+		TResult BranchTrue (TLabel pc, TLabel target, TSource cond, TData data);
+		TResult BranchFalse (TLabel pc, TLabel target, TSource cond, TData data);
+		TResult Break (TLabel pc, TData data);
 
-		Result Call<TypeList, ArgList> (Label pc, Method method, bool virt, TypeList extraVarargs, Dest dest, ArgList args, Data data)
+		TResult Call<TypeList, ArgList> (TLabel pc, Method method, bool virt, TypeList extraVarargs, TDest dest, ArgList args, TData data)
 			where TypeList : IIndexable<TypeNode>
-			where ArgList : IIndexable<Source>;
+			where ArgList : IIndexable<TSource>;
 
-		Result Calli<TypeList, ArgList> (Label pc, TypeNode returnType, TypeList argTypes, bool instance, Dest dest, Source functionPointer, ArgList args, Data data)
+		TResult Calli<TypeList, ArgList> (TLabel pc, TypeNode returnType, TypeList argTypes, bool instance, TDest dest, TSource functionPointer, ArgList args, TData data)
 			where TypeList : IIndexable<TypeNode>
-			where ArgList : IIndexable<Source>;
+			where ArgList : IIndexable<TSource>;
 
-		Result CheckFinite (Label pc, Dest dest, Source source, Data data);
-		Result CopyBlock (Label pc, Source destAddress, Source srcAddress, Source len, Data data);
-		Result EndFilter (Label pc, Source decision, Data data);
-		Result EndFinally (Label pc, Data data);
-		Result Jmp (Label pc, Method method, Data data);
-		Result LoadArg (Label pc, Parameter argument, bool isOld, Dest dest, Data data);
-		Result LoadArgAddress (Label pc, Parameter argument, bool isOld, Dest dest, Data data);
-		Result LoadLocal (Label pc, Local local, Dest dest, Data data);
-		Result LoadLocalAddress (Label pc, Local local, Dest dest, Data data);
-		Result Nop (Label pc, Data data);
-		Result Pop (Label pc, Source source, Data data);
-		Result Return (Label pc, Source source, Data data);
-		Result StoreArg (Label pc, Parameter argument, Source source, Data data);
-		Result StoreLocal (Label pc, Local local, Source source, Data data);
-		Result Switch (Label pc, TypeNode type, IEnumerable<Pair<object, Label>> cases, Source value, Data data);
-		Result Box (Label pc, TypeNode type, Dest dest, Source source, Data data);
+		TResult CheckFinite (TLabel pc, TDest dest, TSource source, TData data);
+		TResult CopyBlock (TLabel pc, TSource destAddress, TSource srcAddress, TSource len, TData data);
+		TResult EndFilter (TLabel pc, TSource decision, TData data);
+		TResult EndFinally (TLabel pc, TData data);
+		TResult Jmp (TLabel pc, Method method, TData data);
+		TResult LoadArg (TLabel pc, Parameter argument, bool isOld, TDest dest, TData data);
+		TResult LoadArgAddress (TLabel pc, Parameter argument, bool isOld, TDest dest, TData data);
+		TResult LoadLocal (TLabel pc, Local local, TDest dest, TData data);
+		TResult LoadLocalAddress (TLabel pc, Local local, TDest dest, TData data);
+		TResult Nop (TLabel pc, TData data);
+		TResult Pop (TLabel pc, TSource source, TData data);
+		TResult Return (TLabel pc, TSource source, TData data);
+		TResult StoreArg (TLabel pc, Parameter argument, TSource source, TData data);
+		TResult StoreLocal (TLabel pc, Local local, TSource source, TData data);
+		TResult Switch (TLabel pc, TypeNode type, IEnumerable<Pair<object, TLabel>> cases, TSource value, TData data);
+		TResult Box (TLabel pc, TypeNode type, TDest dest, TSource source, TData data);
 
-		Result ConstrainedCallvirt<TypeList, ArgList> (Label pc, Method method, TypeNode constraint, TypeList extraVarargs, Dest dest, ArgList args, Data data)
+		TResult ConstrainedCallvirt<TypeList, ArgList> (TLabel pc, Method method, TypeNode constraint, TypeList extraVarargs, TDest dest, ArgList args, TData data)
 			where TypeList : IIndexable<TypeNode>
-			where ArgList : IIndexable<Source>;
+			where ArgList : IIndexable<TSource>;
 
-		Result CastClass (Label pc, TypeNode type, Dest dest, Source obj, Data data);
-		Result CopyObj (Label pc, TypeNode type, Source destPtr, Source sourcePtr, Data data);
-		Result Initobj (Label pc, TypeNode type, Source ptr, Data data);
-		Result LoadElement (Label pc, TypeNode type, Dest dest, Source array, Source index, Data data);
-		Result LoadField (Label pc, Field field, Dest dest, Source obj, Data data);
-		Result LoadFieldAddress (Label pc, Field field, Dest dest, Source obj, Data data);
-		Result LoadLength (Label pc, Dest dest, Source array, Data data);
-		Result LoadStaticField (Label pc, Field field, Dest dest, Data data);
-		Result LoadStaticFieldAddress (Label pc, Field field, Dest dest, Data data);
-		Result LoadTypeToken (Label pc, TypeNode type, Dest dest, Data data);
-		Result LoadFieldToken (Label pc, Field type, Dest dest, Data data);
-		Result LoadMethodToken (Label pc, Method type, Dest dest, Data data);
+		TResult CastClass (TLabel pc, TypeNode type, TDest dest, TSource obj, TData data);
+		TResult CopyObj (TLabel pc, TypeNode type, TSource destPtr, TSource sourcePtr, TData data);
+		TResult Initobj (TLabel pc, TypeNode type, TSource ptr, TData data);
+		TResult LoadElement (TLabel pc, TypeNode type, TDest dest, TSource array, TSource index, TData data);
+		TResult LoadField (TLabel pc, Field field, TDest dest, TSource obj, TData data);
+		TResult LoadFieldAddress (TLabel pc, Field field, TDest dest, TSource obj, TData data);
+		TResult LoadLength (TLabel pc, TDest dest, TSource array, TData data);
+		TResult LoadStaticField (TLabel pc, Field field, TDest dest, TData data);
+		TResult LoadStaticFieldAddress (TLabel pc, Field field, TDest dest, TData data);
+		TResult LoadTypeToken (TLabel pc, TypeNode type, TDest dest, TData data);
+		TResult LoadFieldToken (TLabel pc, Field type, TDest dest, TData data);
+		TResult LoadMethodToken (TLabel pc, Method type, TDest dest, TData data);
 
-		Result NewArray<ArgList> (Label pc, TypeNode type, Dest dest, ArgList lengths, Data data)
-			where ArgList : IIndexable<Source>;
+		TResult NewArray<ArgList> (TLabel pc, TypeNode type, TDest dest, ArgList lengths, TData data)
+			where ArgList : IIndexable<TSource>;
 
-		Result NewObj<ArgList> (Label pc, Method ctor, Dest dest, ArgList args, Data data)
-			where ArgList : IIndexable<Source>;
+		TResult NewObj<ArgList> (TLabel pc, Method ctor, TDest dest, ArgList args, TData data)
+			where ArgList : IIndexable<TSource>;
 
-		Result MkRefAny (Label pc, TypeNode type, Dest dest, Source obj, Data data);
-		Result RefAnyType (Label pc, Dest dest, Source source, Data data);
-		Result RefAnyVal (Label pc, TypeNode type, Dest dest, Source source, Data data);
-		Result Rethrow (Label pc, Data data);
-		Result StoreElement (Label pc, TypeNode type, Source array, Source index, Source value, Data data);
-		Result StoreField (Label pc, Field field, Source obj, Source value, Data data);
-		Result StoreStaticField (Label pc, Field field, Source value, Data data);
-		Result Throw (Label pc, Source exception, Data data);
-		Result Unbox (Label pc, TypeNode type, Dest dest, Source obj, Data data);
-		Result UnboxAny (Label pc, TypeNode type, Dest dest, Source obj, Data data);
-		}
+		TResult MkRefAny (TLabel pc, TypeNode type, TDest dest, TSource obj, TData data);
+		TResult RefAnyType (TLabel pc, TDest dest, TSource source, TData data);
+		TResult RefAnyVal (TLabel pc, TypeNode type, TDest dest, TSource source, TData data);
+		TResult Rethrow (TLabel pc, TData data);
+		TResult StoreElement (TLabel pc, TypeNode type, TSource array, TSource index, TSource value, TData data);
+		TResult StoreField (TLabel pc, Field field, TSource obj, TSource value, TData data);
+		TResult StoreStaticField (TLabel pc, Field field, TSource value, TData data);
+		TResult Throw (TLabel pc, TSource exception, TData data);
+		TResult Unbox (TLabel pc, TypeNode type, TDest dest, TSource obj, TData data);
+		TResult UnboxAny (TLabel pc, TypeNode type, TDest dest, TSource obj, TData data);
+	}
 }

@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,7 +62,9 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 		public IEnumerable<Pair<Dummy, TSymValue>> Successors(TSymValue node)
 		{
 			FlatDomain<Expr<TSymValue>> expr = this.expressions[node];
-			if (expr.IsNormal) foreach (TSymValue sv in expr.Concrete.Variables) yield return new Pair<Dummy, TSymValue> (Dummy.Value, sv);
+			if (expr.IsNormal()) 
+                foreach (TSymValue sv in expr.Value.Variables) 
+                    yield return new Pair<Dummy, TSymValue> (Dummy.Value, sv);
 		}
 		#endregion
 
@@ -77,19 +78,19 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			return new ExprDomain<TSymValue> (this.expressions.Join (that.expressions, widening, out weaker));
 		}
 
-		public static ExprDomain<TSymValue> TopValue(Func<TSymValue, int> keyConverter )
+		public static ExprDomain<TSymValue> TopValue(Func<TSymValue, int> keyConverter)
 		{
 			return new ExprDomain<TSymValue> (EnvironmentDomain<TSymValue, FlatDomain<Expr<TSymValue>>>.TopValue (keyConverter));
 		}
 
 		public ExprDomain<TSymValue> Add (TSymValue sv, Expr<TSymValue> expr)
 		{
-			return new ExprDomain<TSymValue> (this.expressions.Add (sv, expr));
+			return new ExprDomain<TSymValue> (this.expressions.With (sv, expr));
 		}
 
 		public ExprDomain<TSymValue> Remove(TSymValue sv)
 		{
-			return new ExprDomain<TSymValue> (this.expressions.Remove (sv));
+			return new ExprDomain<TSymValue> (this.expressions.Without (sv));
 		}
 
 		public ExprDomain<TSymValue> Empty()
@@ -108,7 +109,8 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			DepthFirst.Visit (this, source, sv => {
 			                                	if (sv.Equals (target))
 			                                		reachable = true;
-			                                	return true;
+
+			                                	return !reachable; // break if reachable
 			                                }, null);
 			return reachable;
 		}

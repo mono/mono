@@ -26,9 +26,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System.Collections.Generic;
+
 namespace Mono.CodeContracts.Static.DataStructures {
-	interface IIndexable<T> {
+	interface IIndexable<out T> {
 		int Count { get; }
 		T this [int index] { get; }
 	}
+
+        static class IndexableExtensions {
+                public static IEnumerable<T> AsEnumerable<T>(this IIndexable<T> indexable)
+                {
+                        for (int i = 0; i < indexable.Count; i++) {
+                                yield return indexable[i];
+                        }
+                }
+        }
 }

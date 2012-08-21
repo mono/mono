@@ -1,3 +1,31 @@
+// 
+// CodeContractsAnalysisDriver.cs
+// 
+// Authors:
+//	Alexander Chebaturkin (chebaturkin@gmail.com)
+// 
+// Copyright (C) 2012 Alexander Chebaturkin
+// 
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//  
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis.ExpressionAnalysis;
@@ -5,6 +33,7 @@ using Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Lattices;
 using Mono.CodeContracts.Static.Providers;
 using Mono.CodeContracts.Static.Proving;
 
@@ -41,12 +70,12 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 			}
 
 			#region IFactBase<SymbolicValue> Members
-			public ProofOutcome IsNull (APC pc, SymbolicValue variable)
+			public FlatDomain<bool> IsNull (APC pc, SymbolicValue variable)
 			{
 				return ProofOutcome.Top;
 			}
 
-			public ProofOutcome IsNonNull (APC pc, SymbolicValue variable)
+                        public FlatDomain<bool> IsNonNull(APC pc, SymbolicValue variable)
 			{
 				return ProofOutcome.Top;
 			}
@@ -60,15 +89,15 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 			#region IMethodDriver<LabeledSymbol<APC,SymbolicValue>,SymbolicValue> Members
 			public ICodeLayer<SymbolicValue, SymbolicValue,
 				IValueContextProvider<SymbolicValue>,
-				IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> ValueLayer { get; private set; }
+				IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> ValueLayer { get; private set; }
 
 			public ICodeLayer<LabeledSymbol<APC, SymbolicValue>, SymbolicValue,
 				IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue>,
-				IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> ExpressionLayer { get; private set; }
+				IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> ExpressionLayer { get; private set; }
 
 			public ICodeLayer<SymbolicValue, SymbolicValue,
 				IValueContextProvider<SymbolicValue>,
-				IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> HybridLayer { get; private set; }
+				IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> HybridLayer { get; private set; }
 
 			public IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue> ContextProvider
 			{
@@ -107,7 +136,7 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 				ValueLayer = CodeLayerFactory.Create (
 				                                      this.heap_analysis.GetDecoder (StackLayer.ILDecoder), StackLayer.MetaDataProvider, StackLayer.ContractProvider,
 				                                      source => source.ToString (), dest => dest.ToString ());
-				var expressionAnalysis = new ExpressionAnalysisFacade<SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>>
+				var expressionAnalysis = new ExpressionAnalysisFacade<SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>>
 					(ValueLayer, this.heap_analysis.IsUnreachable);
 				ValueLayer.CreateForward (expressionAnalysis.CreateExpressionAnalysis ()) (expressionAnalysis.InitialValue (SymbolicValue.GetUniqueKey));
 
@@ -118,7 +147,7 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 				}
 
 				IILDecoder
-					<APC, LabeledSymbol<APC, SymbolicValue>, SymbolicValue, IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>>
+					<APC, LabeledSymbol<APC, SymbolicValue>, SymbolicValue, IExpressionContextProvider<LabeledSymbol<APC, SymbolicValue>, SymbolicValue>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>>
 					decoder = expressionAnalysis.GetDecoder (ValueLayer.ILDecoder);
 				this.expr2String = ExpressionPrinterFactory.Printer (decoder.ContextProvider, this);
 				ExpressionLayer = CodeLayerFactory.Create (decoder, ValueLayer.MetaDataProvider, ValueLayer.ContractProvider,
@@ -140,7 +169,7 @@ namespace Mono.CodeContracts.Static.Analysis.Drivers {
 				return SymbolicValue.GetUniqueKey (var);
 			}
 			#endregion
-		                             }
+                }
 		#endregion
-		}
+	}
 }

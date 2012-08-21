@@ -1,10 +1,10 @@
-// 
-// Domain.cs
+﻿// 
+// BooleanExtensions.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)
 // 
-// Copyright (C) 2011 Alexander Chebaturkin
+// Copyright (C) 2012 Alexander Chebaturkin
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,33 +26,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-using System;
 using Mono.CodeContracts.Static.Lattices;
 
-namespace Mono.CodeContracts.Static.Analysis.NonNull {
-	struct Domain<E, V> 
-		where E : IEquatable<E> 
-		where V : IEquatable<V> {
-		public static readonly Domain<E, V> BottomValue 
-			= new Domain<E, V> (SetDomain<V>.BottomValue, SetDomain<V>.BottomValue);
+namespace Mono.CodeContracts.Static.DataStructures
+{
+    static class BooleanExtensions
+    {
+        /// <summary>
+        /// Returns value and sets result to a resultValue.
+        /// </summary>
+        public static bool With<T>(this bool value, T resultValue, out T result)
+        {
+            result = resultValue;
+            return value;
+        }
 
-		public SetDomain<V> NonNulls;
-		public SetDomain<V> Nulls;
+        /// <summary>
+        /// Returns value and sets result to a default(T).
+        /// </summary>
+        public static bool Without<T>(this bool value, out T result)
+        {
+            result = default(T);
+            return value;
+        }
 
-		public Domain(SetDomain<V> nonNulls, SetDomain<V> nulls)
-		{
-			this.NonNulls = nonNulls;
-			this.Nulls = nulls;
-		}
-
-		public bool IsNonNull(V v)
-		{
-			return this.NonNulls.Contains (v);
-		}
-
-		public bool IsNull(V v)
-		{
-			return this.Nulls.Contains (v);
-		}
-	}
+        /// <summary>
+        /// Returns ProofOutcome value based on input.
+        /// </summary>
+        /// <param name="condition">Condition to check.</param>
+        /// <returns><see cref="ProofOutcome.True"/> if condition holds, otherwise <see cref="ProofOutcome.Top"/></returns>
+        public static FlatDomain<bool> ToTrueOrTop(this bool condition)
+        {
+            return condition ? ProofOutcome.True : ProofOutcome.Top;
+        }
+    }
 }

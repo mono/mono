@@ -399,11 +399,11 @@ namespace Mono.CodeContracts.Static.Providers {
 				var binary = node as BinaryExpression;
 				if (binary != null) {
 					if (index == 0) {
-						nested = binary.Operand1;
+						nested = binary.Left;
 						return null;
 					}
 					if (index == 1) {
-						nested = binary.Operand2;
+						nested = binary.Right;
 						return null;
 					}
 					nested = null;

@@ -37,12 +37,11 @@ namespace Mono.CodeContracts.Static.Analysis.NonNull {
 			get { return "Non-null"; }
 		}
 
-		public IMethodResult<Variable> Analyze<Expression, Variable>
-			(string fullMethodName, IMethodDriver<Expression, Variable> methodDriver)
-			where Expression : IEquatable<Expression>
-			where Variable : IEquatable<Variable>
+		public IMethodResult<Var> Analyze<Expr, Var> (string fullMethodName, IMethodDriver<Expr, Var> methodDriver)
+			where Expr : IEquatable<Expr>
+			where Var : IEquatable<Var>
 		{
-			var analysis = new Analysis<Expression, Variable> (methodDriver);
+			var analysis = new Analysis<Expr, Var> (methodDriver);
 			methodDriver.HybridLayer.CreateForward (analysis) (analysis.InitialValue (methodDriver.KeyConverter));
 			analysis.MethodAnalysis = this;
 

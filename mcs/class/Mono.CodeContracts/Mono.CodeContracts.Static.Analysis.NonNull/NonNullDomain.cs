@@ -1,5 +1,5 @@
 // 
-// ProofOutcomeExtensions.cs
+// Domain.cs
 // 
 // Authors:
 // 	Alexander Chebaturkin (chebaturkin@gmail.com)
@@ -26,48 +26,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
-namespace Mono.CodeContracts.Static {
-	static class ProofOutcomeExtensions {
-		public static ProofOutcome Negate (this ProofOutcome o)
+using System;
+using System.IO;
+
+using Mono.CodeContracts.Static.Lattices;
+
+namespace Mono.CodeContracts.Static.Analysis.NonNull {
+	struct NonNullDomain<V> where V : IEquatable<V> {
+		public static readonly NonNullDomain<V> BottomValue = new NonNullDomain<V> (SetDomain<V>.BottomValue, SetDomain<V>.BottomValue);
+
+		public SetDomain<V> NonNulls;
+		public SetDomain<V> Nulls;
+
+		public NonNullDomain(SetDomain<V> nonNulls, SetDomain<V> nulls)
 		{
-			switch (o) {
-			case ProofOutcome.Top:
-			case ProofOutcome.Bottom:
-				return o;
-			case ProofOutcome.True:
-				return ProofOutcome.False;
-			case ProofOutcome.False:
-				return ProofOutcome.True;
-			default:
-				return ProofOutcome.Top;
-			}
+			this.NonNulls = nonNulls;
+			this.Nulls = nulls;
 		}
 
-		public static ProofOutcome Meet (this ProofOutcome a, ProofOutcome b)
+		public bool IsNonNull(V v)
 		{
-			if (a == b)
-				return a;
-			if (a == ProofOutcome.Top || b == ProofOutcome.Bottom)
-				return b;
-			if (b == ProofOutcome.Top || a == ProofOutcome.Bottom)
-				return a;
-
-			return ProofOutcome.Bottom;
+			return this.NonNulls.Contains (v);
 		}
 
-		public static ProofOutcome Join (this ProofOutcome a, ProofOutcome b)
+		public bool IsNull(V v)
 		{
-			if (a == b || a == ProofOutcome.Top || b == ProofOutcome.Bottom)
-				return a;
-			if (b == ProofOutcome.Top || a == ProofOutcome.Bottom)
-				return b;
-
-			return ProofOutcome.Top;
+			return this.Nulls.Contains (v);
 		}
 
-		public static bool IsNormal (this ProofOutcome o)
-		{
-			return o == ProofOutcome.False || o == ProofOutcome.True;
-		}
+        public override string ToString()
+        {
+            var sw = new StringWriter();
+
+            sw.WriteLine("Nulls:");
+                sw.WriteLine("<");
+                this.Nulls.Dump (sw);
+                sw.WriteLine(">");
+
+            sw.WriteLine("Non-Nulls:");
+                sw.WriteLine("<");
+                this.NonNulls.Dump(sw);
+                sw.WriteLine(">");
+
+            return sw.ToString ();
+        }
 	}
 }

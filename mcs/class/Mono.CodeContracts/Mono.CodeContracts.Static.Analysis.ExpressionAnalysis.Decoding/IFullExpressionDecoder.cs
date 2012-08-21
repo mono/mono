@@ -29,6 +29,7 @@
 using System.Collections.Generic;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis.Paths;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
@@ -42,7 +43,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		bool IsUnaryExpression (Expression expr, out UnaryOperator op, out Expression arg);
 		bool IsBinaryExpression (Expression expr, out BinaryOperator op, out Expression left, out Expression right);
 		void AddFreeVariables (Expression expr, ISet<Expression> set);
-		LispList<PathElement> GetVariableAccessPath (Expression expr);
+		Sequence<PathElement> GetVariableAccessPath (Expression expr);
 		bool TryGetType (Expression expr, out TypeNode type);
 		bool TrySizeOfAsConstant (Expression expr, out int sizeAsConstant);
 	}

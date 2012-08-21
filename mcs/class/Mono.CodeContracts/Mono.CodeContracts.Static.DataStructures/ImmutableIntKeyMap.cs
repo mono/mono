@@ -46,14 +46,13 @@ namespace Mono.CodeContracts.Static.DataStructures {
 		{
 			get
 			{
-				Pair<K, V> pair = this.immutable_int_map [this.keyConverter (key)];
-				if (pair != null)
-					return pair.Value;
-				return default(V);
+			    V value;
+			    TryGetValue (key, out value);
+			    return value;
 			}
 		}
 
-		public K AnyKey
+	    public K AnyKey
 		{
 			get { return Keys.First (); }
 		}
@@ -93,11 +92,20 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			return this.immutable_int_map.Contains (this.keyConverter (key));
 		}
 
-		public void Visit (Func<K, V, VisitStatus> func)
+        public bool TryGetValue(K key, out V value)
+        {
+            Pair<K, V> pair = this.immutable_int_map[this.keyConverter(key)];
+            if (pair != null)
+                return true.With(pair.Value, out value);
+            return false.Without(out value);
+        }
+        
+	    public void Visit (Func<K, V, VisitStatus> func)
 		{
 			this.immutable_int_map.Visit (data => func (data.Key, data.Value));
 		}
-		#endregion
+
+	    #endregion
 
 		#region Implementation of IEquatable<IImmutableMap<K,V>>
 		public bool Equals (IImmutableMap<K, V> other)
@@ -108,7 +116,23 @@ namespace Mono.CodeContracts.Static.DataStructures {
 
 		public static IImmutableMap<K, V> Empty (Func<K, int> keyConverter)
 		{
-			return new ImmutableIntKeyMap<K, V> (ImmutableIntMap<Pair<K, V>>.Empty (), keyConverter);
+			return new ImmutableIntKeyMap<K, V> (ImmutableIntMap<Pair<K, V>>.Empty, keyConverter);
 		}
+
+        public IImmutableMapFactory<K, V> Factory ()
+	    {
+            return new MapFactory (this.keyConverter);
+	    }
+
+        private class MapFactory : IImmutableMapFactory<K,V> {
+            private readonly Func<K, int> keyConverter;
+
+            public MapFactory (Func<K, int> keyConverter)
+            {
+                this.keyConverter = keyConverter;
+            }
+
+            public IImmutableMap<K, V> Empty { get { return ImmutableIntKeyMap<K, V>.Empty (keyConverter);}}
+        }
 	}
 }
