@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Mono.CodeContracts.Static.DataStructures {
 	interface IImmutableMap<K, V> {
@@ -44,5 +45,6 @@ namespace Mono.CodeContracts.Static.DataStructures {
 
 		bool ContainsKey (K key);
 		void Visit (Func<K, V, VisitStatus> func);
+		void Dump(TextWriter tw);
 	}
 }

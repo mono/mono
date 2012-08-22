@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
+using Mono.CodeContracts.Static.Analysis;
 
 namespace Mono.CodeContracts.Static.AST {
 	static class OperatorExtensions {
@@ -53,6 +54,27 @@ namespace Mono.CodeContracts.Static.AST {
 		public static bool IsEqualityOperator (this BinaryOperator bop)
 		{
 			return bop == BinaryOperator.Ceq || bop == BinaryOperator.Cobjeq;
+		}
+		
+		public static bool IsComparisonBinarayOperator(this BinaryOperator bop)
+		{
+			switch (bop)
+	        {
+	        	case BinaryOperator.Ceq:
+	        	case BinaryOperator.Cobjeq:
+	        	case BinaryOperator.Cne_Un:
+	        	case BinaryOperator.Cge:
+	        	case BinaryOperator.Cge_Un:
+	        	case BinaryOperator.Cgt:
+	        	case BinaryOperator.Cgt_Un:
+	        	case BinaryOperator.Cle:
+	        	case BinaryOperator.Cle_Un:
+	        	case BinaryOperator.Clt:
+	       		case BinaryOperator.Clt_Un:
+	          		return true;
+	        	default:
+	          		return false;
+	      }
 		}
 	}
 }

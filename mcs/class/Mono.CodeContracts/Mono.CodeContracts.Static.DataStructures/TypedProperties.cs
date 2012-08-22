@@ -38,12 +38,12 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			return this.dictionary.ContainsKey (key);
 		}
 
-		public void Add<T> (TypedKey key, T value)
+		public void Add<T> (TypedKey<T> key, T value)
 		{
 			this.dictionary.Add (key, value);
 		}
 
-		public bool TryGetValue<T> (TypedKey key, out T value)
+		public bool TryGetValue<T> (TypedKey<T> key, out T value)
 		{
 			object result;
 

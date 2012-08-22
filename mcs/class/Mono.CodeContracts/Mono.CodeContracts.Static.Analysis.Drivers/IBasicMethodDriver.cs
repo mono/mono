@@ -29,14 +29,24 @@
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
 
-namespace Mono.CodeContracts.Static.Analysis.Drivers {
-	interface IBasicMethodDriver {
-		ICodeLayer<Dummy, Dummy, IMethodContextProvider, Dummy> RawLayer { get; }
-		ICodeLayer<int, int, IStackContextProvider, Dummy> StackLayer { get; }
-		ICodeLayer<Dummy, Dummy, IMethodContextProvider, Dummy> ContractFreeRawLayer { get; }
-		ICodeLayer<int, int, IStackContextProvider, Dummy> ContractFreeStackLayer { get; }
+namespace Mono.CodeContracts.Static.Analysis.Drivers 
+{
+	interface IBasicMethodDriverMultiParam<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, LogOptions> where Type : IEquatable<Type> where LogOptions : IFrameworkLogOptions
+	{
+	    ICodeLayer<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Unit, Unit, IMethodContext<Field, Method>, Unit> RawLayer { get; }
 
-		ICFG ContractFreeCFG { get; }
-		IBasicAnalysisDriver AnalysisDriver { get; }
+	    ICodeLayer<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, int, int, IStackContext<Field, Method>, Unit> StackLayer { get; }
+
+	    ICodeLayer<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Unit, Unit, IMethodContext<Field, Method>, Unit> ContractFreeRawLayer { get; }
+
+	    ICodeLayer<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, int, int, IStackContext<Field, Method>, Unit> ContractFreeStackLayer { get; }
+
+	    LogOptions Options { get; }
+
+	    ICFG ContractFreeCFG { get; }
+
+	    SyntacticComplexity SyntacticComplexity { get; set; }
+
+	    IBasicAnalysisDriver<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, LogOptions> AnalysisDriver { get; }
 	}
 }

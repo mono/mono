@@ -79,5 +79,25 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			for (int i = 0; i < Count; i++)
 				yield return new APC (this, i, context);
 		}
+
+		public abstract string SourceDocument(APC pc);
+
+		public abstract string SourceAssertionCondition(APC pc);
+
+		public abstract int SourceStartLine(APC pc);
+
+		public abstract int SourceStartColoumn(APC pc);
+
+		public abstract int SourceStartIndex(APC pc);
+	
+		public abstract int SourceEndLine(APC pc);
+
+		public abstract int SourceEndColoumn(APC pc);
+
+		public abstract int SourceLength(APC pc);
+
+		public abstract int ILOffset(APC pc);
+
+		public abstract string SourceContext(APC pc);
 	}
 }

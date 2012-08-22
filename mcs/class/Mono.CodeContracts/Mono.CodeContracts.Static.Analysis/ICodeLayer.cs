@@ -25,25 +25,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 using System;
 using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataFlowAnalysis;
 using Mono.CodeContracts.Static.Providers;
 
-namespace Mono.CodeContracts.Static.Analysis {
-	interface ICodeLayer<Expression, Variable, ContextData, EdgeData> where ContextData : IMethodContextProvider {
-		IMetaDataProvider MetaDataProvider { get; }
-		IContractProvider ContractProvider { get; }
-		IILDecoder<APC, Expression, Variable, ContextData, EdgeData> ILDecoder { get; }
+namespace Mono.CodeContracts.Static.Analysis
+{
+	internal interface ICodeLayer<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Expression, Variable, ContextData, EdgeConversionData> where Type : IEquatable<Type> where ContextData : IMethodContext<Field, Method>
+	{
+		IDecodeMetaData<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly> MetaDataDecoder { get; }
+
+		Converter<Variable, string> VariableToString { get; }
+
+		Converter<Expression, string> ExpressionToString { get; }
 
 		ILPrinter<APC> Printer { get; }
-		Func<Expression, string> ExpressionToString { get; }
-		Func<Variable, string> VariableToString { get; }
-
-		Func<AnalysisState, IFixPointInfo<APC, AnalysisState>> CreateForward<AnalysisState> (
-			IAnalysis<APC, AnalysisState, IILVisitor<APC, Expression, Variable, AnalysisState, AnalysisState>, EdgeData> analysis
-			);
 	}
 }

@@ -27,6 +27,7 @@
 // 
 
 using System;
+using Mono.CodeContracts.Static.Analysis;
 
 namespace Mono.CodeContracts.Static.Proving
 {
@@ -41,16 +42,63 @@ namespace Mono.CodeContracts.Static.Proving
 					if (e.Constant is string || e.Constant is float || e.Constant is double)
 						return false;
 
-					try {
+					try 
+					{
 						res = convertible.ToInt32 (null);
 						return true;
-					} catch {
-					}
+						
+					} catch {}
 				}
 				if (e.Constant == null)
 					return true;
 			}
 			return false;
 		}
+		
+		public static bool IsConstantInt(this BoxedExpression e, out int value)
+		{
+			if(e.IsConstant)
+			{
+				object obj = e.Constant;
+				if(obj is int)
+				{
+					value = (int) obj;
+					return true;
+				}
+				else
+				{
+					try
+					{
+						IConvertible cnv = obj as IConvertible;
+						if(IConvertible == null || IsConstantInt is string)
+						{
+							value = cnv.ToInt32((IFormatProvider) null);
+							return true;
+						}
+					}
+					catch(Exception ex) 
+					{
+						value = 0;
+	      				return false;
+					}
+				}
+			}
+			value = 0;
+	      	return false;
+		}
+
+		public static BoxedExpression StripIfCastOfArrayLength(this BoxedExpression exp)
+		{
+			UnaryOperator cast;
+      		BoxedExpression casted;
+			if (BoxedExpressionExtensions.IsCastExpression(exp, out cast, out casted) && cast == UnaryOperator.Conv_i4 && casted.AccessPath != null)
+			{
+				PathElement[] pathElementArray = Enumerable.ToArray<PathElement>((IEnumerable<PathElement>) casted.AccessPath);
+				if (pathElementArray.Length >= 2 && pathElementArray[pathElementArray.Length - 1].ToString() == "Length")
+          			return casted;
+			}
+      		return exp;
+		}
 	}
+	
 }

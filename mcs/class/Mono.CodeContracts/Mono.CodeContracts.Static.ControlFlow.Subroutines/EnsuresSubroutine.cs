@@ -148,5 +148,13 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			endOldType = pair.Value;
 			return pair.Key;
 		}
+
+		private enum ScanState
+        {
+        	OutsideOld,
+         	InsideOld,
+        	InsertingOld,
+         	InsertingOldAfterCall,
+        }
 	}
 }

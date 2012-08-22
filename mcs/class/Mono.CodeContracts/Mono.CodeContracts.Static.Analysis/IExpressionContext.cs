@@ -25,26 +25,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
-
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.Lattices;
 
-namespace Mono.CodeContracts.Static.Analysis {
-	interface IExpressionContext<Expression, Variable> {
-		Expression Refine (APC pc, Variable variable);
-		Variable Unrefine (Expression expression);
-
-		Result Decode<Data, Result, Visitor> (Expression expr, Visitor visitor, Data data)
-			where Visitor : ISymbolicExpressionVisitor<Expression, Expression, Variable, Data, Result>;
-
-		FlatDomain<TypeNode> GetType (Expression expr);
-
-		APC GetPC (Expression pc);
-
-		Expression For (Variable variable);
-
-		bool IsZero (Expression expression);
+namespace Mono.CodeContracts.Static.Analysis
+{
+	internal interface IExpressionContext<Local, Parameter, Method, Field, Type, Expression, SymbolicValue> : IValueContext<Local, Parameter, Method, Field, Type, SymbolicValue>, IStackContext<Field, Method>, IMethodContext<Field, Method> where Type : IEquatable<Type>
+	{
+		IExpressionContextData<Local, Parameter, Method, Field, Type, Expression, SymbolicValue> ExpressionContext { get; }
 	}
 }
