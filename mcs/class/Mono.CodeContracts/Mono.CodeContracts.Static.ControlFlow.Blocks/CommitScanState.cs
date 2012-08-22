@@ -74,11 +74,6 @@ namespace Mono.CodeContracts.Static.ControlFlow.Blocks
           return this.currentBlock.UsesOverriding;
         }
 
-        public override bool Ldarga(Label pc, Parameter argument, bool dummyIsOld, Unit dest, int index)
-        {
-          // ISSUE: unable to decompile the method.
-        }
-
         public override bool Ldind(Label pc, Type type, bool @volatile, Unit dest, Unit ptr, int index)
         {
           if (this.state != 2)

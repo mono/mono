@@ -29,9 +29,6 @@ namespace Mono.CodeContracts.Static.Inference
 		public bool TryInferPrecondition(ProofObligation obl, ICodeFixesManager codefixesManager, out InferredPreconditions preConditions)
 	    {
 	      Func<BoxedExpression, SimpleInferredPrecondition> func = (Func<BoxedExpression, SimpleInferredPrecondition>) null;
-	      PreconditionInferenceBackwardSymbolic<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Expression, Variable, LogOptions>.\u003C\u003Ec__DisplayClass7 cDisplayClass7 = new PreconditionInferenceBackwardSymbolic<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Expression, Variable, LogOptions>.\u003C\u003Ec__DisplayClass7();
-	      cDisplayClass7.obl = obl;
-	      cDisplayClass7.\u003C\u003E4__this = this;
 	      preConditions = (InferredPreconditions) null;
 	      if (this.timeout.HasAlreadyTimeOut)
 	        return false;
@@ -218,11 +215,12 @@ namespace Mono.CodeContracts.Static.Inference
 	        APC that = pc.FirstInBlock();
 	        IEnumerable<APC> source = this.CFG.Predecessors(pc);
 	        newPrecondition = preCondition;
-	        for (; Enumerable.Count<APC>(source) == 1; {
+	        for (; Enumerable.Count<APC>(source) == 1;) 
+			{
 	          APC apc;
 	          source = this.CFG.Predecessors(apc);
 	        }
-	        )
+	        
 	        {
 	          if (pc.Equals(that))
 	            return that;
@@ -849,8 +847,6 @@ namespace Mono.CodeContracts.Static.Inference
 
 	      public Precondition(BoxedExpression Premise, BoxedExpression Condition, List<BoxedExpression> knownFacts = null)
 	      {
-	        // ISSUE: explicit reference operation
-	        // ISSUE: variable of a reference type
 	        PreconditionInferenceBackwardSymbolic<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Expression, Variable, LogOptions>.Precondition& local = @this;
 	        List<BoxedExpression> Premises;
 	        if (Premise == null)
@@ -862,8 +858,7 @@ namespace Mono.CodeContracts.Static.Inference
 	          };
 	        BoxedExpression Condition1 = Condition;
 	        List<BoxedExpression> knownFacts1 = knownFacts;
-	        // ISSUE: explicit reference operation
-	        ^local = new PreconditionInferenceBackwardSymbolic<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Expression, Variable, LogOptions>.Precondition(Premises, Condition1, knownFacts1);
+	        local = new PreconditionInferenceBackwardSymbolic<Local, Parameter, Method, Field, Property, Event, Type, Attribute, Assembly, Expression, Variable, LogOptions>.Precondition(Premises, Condition1, knownFacts1);
 	      }
 
 	      public Precondition(List<BoxedExpression> Premises, BoxedExpression Condition, List<BoxedExpression> knownFacts = null)
@@ -1169,10 +1164,6 @@ namespace Mono.CodeContracts.Static.Inference
 	      {
 	        return this.Invariants.ToString();
 	      }
-
-		private void ObjectInvariant()
-	    {
-	    }
 	}
 }
 

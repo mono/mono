@@ -109,7 +109,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis
           return false;
       }
       MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label> builder = new MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label>(codeProvider, this, precondition);
-      MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.RequiresSubroutine<Label> requiresSubroutine = new MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.RequiresSubroutine<Label>(this, method, builder, precondition, FunctionalSet<Subroutine>.Empty());
+      MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.RequiresSubroutine<Label> requiresSubroutine = new MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.RequiresSubroutine<Label>(this, method, builder, precondition, ImmutableSet<Subroutine>.Empty());
       requiresSubroutine.Initialize();
       if (requires == null)
       {
@@ -133,7 +133,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis
     {
       Subroutine ensures = this.GetEnsures(method);
       MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label> builder = new MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label>(codeProvider, this, postCondition);
-      MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.EnsuresSubroutine<Label> ensuresSubroutine = new MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.EnsuresSubroutine<Label>(this, method, builder, postCondition, FunctionalSet<Subroutine>.Empty());
+      MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.EnsuresSubroutine<Label> ensuresSubroutine = new MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.EnsuresSubroutine<Label>(this, method, builder, postCondition, ImmutableSet<Subroutine>.Empty());
       ensuresSubroutine.Initialize();
       if (ensures == null)
       {

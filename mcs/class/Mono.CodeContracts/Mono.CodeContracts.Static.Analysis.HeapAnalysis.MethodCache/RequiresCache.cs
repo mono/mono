@@ -4,10 +4,11 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Mono.CodeContracts.Static.Analysis;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis;
+using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.MethodCache
 {
-	public class RequiresCache : MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SubroutineFactory<Method, Pair<Method, IFunctionalSet<Subroutine>>>
+	public class RequiresCache : MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SubroutineFactory<Method, Pair<Method, IImmutableSet<Subroutine>>>
     {
       private ErrorHandler output;
 
@@ -17,7 +18,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.MethodCache
         this.output = output;
       }
 
-      protected override Subroutine Factory<Label>(MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label> sb, Label entry, Pair<Method, IFunctionalSet<Subroutine>> data)
+      protected override Subroutine Factory<Label>(MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label> sb, Label entry, Pair<Method, IImmutableSet<Subroutine>> data)
       {
         return (Subroutine) new MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.RequiresSubroutine<Label>(this.MethodCache, data.One, sb, entry, data.Two);
       }
@@ -26,9 +27,9 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.MethodCache
       {
         if (this.ContractDecoder != null)
         {
-          IFunctionalSet<Subroutine> inheritedRequires = this.GetInheritedRequires(method);
+          IImmutableSet<Subroutine> inheritedRequires = this.GetInheritedRequires(method);
           if (this.ContractDecoder.HasRequires(method))
-            return this.ContractDecoder.AccessRequires<Pair<Method, IFunctionalSet<Subroutine>>, Subroutine>(method, (ICodeConsumer<Local, Parameter, Method, Field, Type, Pair<Method, IFunctionalSet<Subroutine>>, Subroutine>) this, new Pair<Method, IFunctionalSet<Subroutine>>(method, inheritedRequires));
+            return this.ContractDecoder.AccessRequires<Pair<Method, IImmutableSet<Subroutine>>, Subroutine>(method, (ICodeConsumer<Local, Parameter, Method, Field, Type, Pair<Method, IImmutableSet<Subroutine>>, Subroutine>) this, new Pair<Method, IImmutableSet<Subroutine>>(method, inheritedRequires));
           if (inheritedRequires.Count > 0)
           {
             if (inheritedRequires.Count == 1)
@@ -40,9 +41,9 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.MethodCache
         return (Subroutine) null;
       }
 
-      private IFunctionalSet<Subroutine> GetInheritedRequires(Method method)
+      private IImmutableSet<Subroutine> GetInheritedRequires(Method method)
       {
-        IFunctionalSet<Subroutine> functionalSet = FunctionalSet<Subroutine>.Empty(new Converter<Subroutine, int>(Subroutine.GetKey));
+        IImmutableSet<Subroutine> functionalSet = ImmutableSet<Subroutine>.Empty(new Converter<Subroutine, int>(Subroutine.GetKey));
         if (this.MetadataDecoder.IsVirtual(method) && this.ContractDecoder.CanInheritContracts(method))
         {
           Method rootMethod;

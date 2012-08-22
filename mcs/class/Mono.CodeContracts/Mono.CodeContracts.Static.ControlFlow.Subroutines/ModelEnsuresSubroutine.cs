@@ -25,12 +25,12 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines
         }
       }
 
-      public ModelEnsuresSubroutine(MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly> methodCache, Method method, MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label> builder, Label startLabel, IFunctionalSet<Subroutine> inherited)
+      public ModelEnsuresSubroutine(MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly> methodCache, Method method, MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly>.SimpleSubroutineBuilder<Label> builder, Label startLabel, IImmutableSet<Subroutine> inherited)
         : base(methodCache, method, builder, startLabel, inherited)
       {
       }
 
-      public ModelEnsuresSubroutine(MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly> methodCache, Method method, IFunctionalSet<Subroutine> inherited)
+      public ModelEnsuresSubroutine(MethodCache<Local, Parameter, Type, Method, Field, Property, Event, Attribute, Assembly> methodCache, Method method, IImmutableSet<Subroutine> inherited)
         : base(methodCache, method, inherited)
       {
       }

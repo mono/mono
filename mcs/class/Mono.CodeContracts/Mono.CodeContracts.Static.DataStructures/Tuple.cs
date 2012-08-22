@@ -2,13 +2,13 @@ using System;
 
 namespace Mono.CodeContracts.Static.DataStructures
 {
-	struct CortegeForThreeParams<One, Two, Three>
+	struct Tuple<One, Two, Three>
 	{
 		public readonly One one;
 		public readonly Two two;
 		public readonly Three three;
 		
-		public CortegeForThreeParams(One first, Two second, Three third)
+		public Tuple(One first, Two second, Three third)
 	    {
 	      this.one = first;
 	      this.two = second;
