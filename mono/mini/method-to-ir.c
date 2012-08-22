@@ -8952,6 +8952,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					dreg = alloc_ireg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, ins, OP_ADD_IMM, dreg, array_reg, (offset & 0xffffff));
 				}
+#ifdef HOST_WIN32
+			} else if ((field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) &&
+					field->parent && field->parent->image &&
+					field->parent->image->is_module_handle &&
+					mono_field_get_data (field)) {
+				if (cfg->verbose_level > 3)
+				    g_print ("rva field %p\n", mono_field_get_data (field));
+				EMIT_NEW_PCONST (cfg, ins, (gpointer)mono_field_get_data (field));
+#endif
 			} else if ((cfg->opt & MONO_OPT_SHARED) ||
 					(cfg->compile_aot && is_special_static) ||
 					(context_used && is_special_static)) {
