@@ -1247,6 +1247,7 @@
    <Compile Include="System.Security.AccessControl\AceType.cs" />
    <Compile Include="System.Security.AccessControl\AuditFlags.cs" />
    <Compile Include="System.Security.AccessControl\AuditRule.cs" />
+   <Compile Include="System.Security.AccessControl\AuditRule_T.cs" />
    <Compile Include="System.Security.AccessControl\AuthorizationRule.cs" />
    <Compile Include="System.Security.AccessControl\AuthorizationRuleCollection.cs" />
    <Compile Include="System.Security.AccessControl\CommonAce.cs" />
