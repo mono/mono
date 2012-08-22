@@ -1458,6 +1458,7 @@
    <Compile Include="System.Security.Policy\CodeGroup.cs" />
    <Compile Include="System.Security.Policy\DefaultPolicies.cs" />
    <Compile Include="System.Security.Policy\Evidence.cs" />
+   <Compile Include="System.Security.Policy\EvidenceBase.cs" />
    <Compile Include="System.Security.Policy\FileCodeGroup.cs" />
    <Compile Include="System.Security.Policy\FirstMatchCodeGroup.cs" />
    <Compile Include="System.Security.Policy\Gac.cs" />
