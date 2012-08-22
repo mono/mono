@@ -150,6 +150,16 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 	const int top = iinfo->cli_section_count;
 	MonoSectionTable *tables = iinfo->cli_section_tables;
 	int i;
+
+#ifdef HOST_WIN32
+	if (image->is_module_handle)
+	{
+	    if (addr)
+		    return image->raw_data + addr;
+	    else
+	        return NULL;
+	}
+#endif
 	
 	for (i = 0; i < top; i++){
 		if ((addr >= tables->st_virtual_address) &&
@@ -158,10 +168,6 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 				if (!mono_image_ensure_section_idx (image, i))
 					return NULL;
 			}
-#ifdef HOST_WIN32
-			if (image->is_module_handle)
-				return image->raw_data + addr;
-#endif
 			return (char*)iinfo->cli_sections [i] +
 				(addr - tables->st_virtual_address);
 		}
