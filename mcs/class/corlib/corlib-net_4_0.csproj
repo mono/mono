@@ -1241,6 +1241,7 @@
    <Compile Include="System.Security.AccessControl\AccessControlSections.cs" />
    <Compile Include="System.Security.AccessControl\AccessControlType.cs" />
    <Compile Include="System.Security.AccessControl\AccessRule.cs" />
+   <Compile Include="System.Security.AccessControl\AccessRule_T.cs" />
    <Compile Include="System.Security.AccessControl\AceEnumerator.cs" />
    <Compile Include="System.Security.AccessControl\AceFlags.cs" />
    <Compile Include="System.Security.AccessControl\AceQualifier.cs" />
