@@ -742,6 +742,15 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 #endif /* !G_COMPILER_CODEWARRIOR */
 
 #elif defined(__arm__)
+
+#ifdef __native_client__
+#define MASK_REGISTER(reg, cond) "bic" cond " " reg ", " reg ", #0xc0000000\n"
+#define NACL_ALIGN() ".align 4\n"
+#else
+#define MASK_REGISTER(reg, cond)
+#define NACL_ALIGN()
+#endif
+
 #define WAPI_ATOMIC_ASM
 
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp)
@@ -749,10 +758,15 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 ex
 #if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
 	gint32 ret, tmp;
 	__asm__ __volatile__ (	"1:\n"
+				NACL_ALIGN()
 				"mov	%0, #0\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "al")
 				"ldrex %1, [%2]\n"
 				"teq	%1, %3\n"
 				"it eq\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "eq")
 				"strexeq %0, %4, [%2]\n"
 				"teq %0, #0\n"
 				"bne 1b\n"
@@ -765,12 +779,18 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 ex
 	gint32 a, b;
 
 	__asm__ __volatile__ (    "0:\n\t"
+				  NACL_ALIGN()
+				  MASK_REGISTER("%2", "al")
 				  "ldr %1, [%2]\n\t"
 				  "cmp %1, %4\n\t"
 				  "mov %0, %1\n\t"
 				  "bne 1f\n\t"
+				  NACL_ALIGN()
+				  MASK_REGISTER("%2", "al")
 				  "swp %0, %3, [%2]\n\t"
 				  "cmp %0, %1\n\t"
+				  NACL_ALIGN()
+				  MASK_REGISTER("%2", "ne")
 				  "swpne %3, %0, [%2]\n\t"
 				  "bne 0b\n\t"
 				  "1:"
@@ -787,10 +807,15 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 #if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
 	gpointer ret, tmp;
 	__asm__ __volatile__ (	"1:\n"
+				NACL_ALIGN()
 				"mov	%0, #0\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "al")
 				"ldrex %1, [%2]\n"
 				"teq	%1, %3\n"
 				"it eq\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "eq")
 				"strexeq %0, %4, [%2]\n"
 				"teq %0, #0\n"
 				"bne 1b\n"
@@ -803,12 +828,18 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 	gpointer a, b;
 
 	__asm__ __volatile__ (    "0:\n\t"
+				  NACL_ALIGN()
+				  MASK_REGISTER("%2", "al")
 				  "ldr %1, [%2]\n\t"
 				  "cmp %1, %4\n\t"
 				  "mov %0, %1\n\t"
 				  "bne 1f\n\t"
+				  NACL_ALIGN()
+				  MASK_REGISTER("%2", "eq")
 				  "swpeq %0, %3, [%2]\n\t"
 				  "cmp %0, %1\n\t"
+				  NACL_ALIGN()
+				  MASK_REGISTER("%2", "ne")
 				  "swpne %3, %0, [%2]\n\t"
 				  "bne 0b\n\t"
 				  "1:"
@@ -825,8 +856,12 @@ static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 #if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
 	gint32 ret, flag;
 	__asm__ __volatile__ (	"1:\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "al")
 				"ldrex %0, [%2]\n"
 				"add %0, %0, %3\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "al")
 				"strex %1, %0, [%2]\n"
 				"teq %1, #0\n"
 				"bne 1b\n"
@@ -839,10 +874,16 @@ static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 	gint32 a, b, c;
 
 	__asm__ __volatile__ (  "0:\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"ldr %0, [%3]\n\t"
 				"add %1, %0, %4\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"swp %2, %1, [%3]\n\t"
 				"cmp %0, %2\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "ne")
 				"swpne %1, %2, [%3]\n\t"
 				"bne 0b"
 				: "=&r" (a), "=&r" (b), "=&r" (c)
@@ -858,8 +899,12 @@ static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 #if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
 	gint32 ret, flag;
 	__asm__ __volatile__ (	"1:\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "al")
 				"ldrex %0, [%2]\n"
 				"sub %0, %0, %3\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%2", "al")
 				"strex %1, %0, [%2]\n"
 				"teq %1, #0\n"
 				"bne 1b\n"
@@ -872,10 +917,16 @@ static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 	gint32 a, b, c;
 
 	__asm__ __volatile__ (  "0:\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"ldr %0, [%3]\n\t"
 				"add %1, %0, %4\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"swp %2, %1, [%3]\n\t"
 				"cmp %0, %2\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "ne")
 				"swpne %1, %2, [%3]\n\t"
 				"bne 0b"
 				: "=&r" (a), "=&r" (b), "=&r" (c)
@@ -892,7 +943,11 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 	gint32 ret, flag;
 	__asm__ __volatile__ (
 			      "1:\n"
+			      NACL_ALIGN()
+			      MASK_REGISTER("%3", "al")
 			      "ldrex %0, [%3]\n"
+			      NACL_ALIGN()
+			      MASK_REGISTER("%3", "al")
 			      "strex %1, %2, [%3]\n"
 			      "teq %1, #0\n"
 			      "bne 1b\n"
@@ -903,7 +958,9 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 #else
 	gint32 a;
 
-	__asm__ __volatile__ (  "swp %0, %2, [%1]"
+	__asm__ __volatile__ (  NACL_ALIGN()
+				MASK_REGISTER("%1", "al")
+                                "swp %0, %2, [%1]"
 				: "=&r" (a)
 				: "r" (dest), "r" (exch));
 
@@ -917,7 +974,11 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpoin
 	gpointer ret, flag;
 	__asm__ __volatile__ (
 			      "1:\n"
+			      NACL_ALIGN()
+			      MASK_REGISTER("%3", "al")
 			      "ldrex %0, [%3]\n"
+			      NACL_ALIGN()
+			      MASK_REGISTER("%3", "al")
 			      "strex %1, %2, [%3]\n"
 			      "teq %1, #0\n"
 			      "bne 1b\n"
@@ -928,7 +989,9 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpoin
 #else
 	gpointer a;
 
-	__asm__ __volatile__ (	"swp %0, %2, [%1]"
+	__asm__ __volatile__ (	NACL_ALIGN()
+				MASK_REGISTER("%1", "al")
+                                "swp %0, %2, [%1]"
 				: "=&r" (a)
 				: "r" (dest), "r" (exch));
 
@@ -941,8 +1004,12 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 #if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
 	gint32 ret, tmp, flag;
 	__asm__ __volatile__ (	"1:\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"ldrex %0, [%3]\n"
 				"add %1, %0, %4\n"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"strex %2, %1, [%3]\n"
 				"teq %2, #0\n"
 				"bne 1b\n"
@@ -955,10 +1022,16 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 	int a, b, c;
 
 	__asm__ __volatile__ (  "0:\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"ldr %0, [%3]\n\t"
 				"add %1, %0, %4\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "al")
 				"swp %2, %1, [%3]\n\t"
 				"cmp %0, %2\n\t"
+				NACL_ALIGN()
+				MASK_REGISTER("%3", "ne")
 				"swpne %1, %2, [%3]\n\t"
 				"bne 0b"
 				: "=&r" (a), "=&r" (b), "=&r" (c)

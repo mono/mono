@@ -560,8 +560,12 @@ thread_suspend_func (gpointer user_data, void *sigctx)
 
 	tls->lmf = mono_get_lmf ();
 	if (sigctx) {
+#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 		mono_arch_sigctx_to_monoctx (sigctx, &tls->ctx);
 		tls->has_context = TRUE;
+#else
+		tls->has_context = FALSE;
+#endif
 	} else {
 		tls->has_context = FALSE;
 	}

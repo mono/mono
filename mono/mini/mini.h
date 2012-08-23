@@ -1796,6 +1796,7 @@ extern const guint kNaClAlignmentMask;
 #endif
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
+extern volatile int __nacl_thread_suspension_needed;
 void mono_nacl_gc();
 #endif
 

@@ -30,7 +30,7 @@ extern int isinf (double);
 #endif
 
 #if defined(__native_client__) && defined(__GLIBC__)
-int __nacl_thread_suspension_needed = 0;
+volatile int __nacl_thread_suspension_needed = 0;
 void __nacl_suspend_thread_if_needed() {}
 #endif
 

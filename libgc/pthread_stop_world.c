@@ -533,6 +533,22 @@ static void pthread_stop_world()
 	__asm__ __volatile__ ("add $16, %esp");\
     } while (0)
 
+#elif __arm__
+
+#define NACL_STORE_REGS()  \
+    do {                  \
+	__asm__ __volatile__ ("push {r4-r12,lr}");\
+	__asm__ __volatile__ ("mov r0, %0" : : "r" (&nacl_gc_thread_self->stop_info.stack_ptr)); \
+	__asm__ __volatile__ ("bic r0, r0, #0xc0000000");\
+	__asm__ __volatile__ ("str sp, [r0]");\
+	memcpy(nacl_gc_thread_self->stop_info.reg_storage, nacl_gc_thread_self->stop_info.stack_ptr, NACL_GC_REG_STORAGE_SIZE * sizeof(ptr_t));\
+	__asm__ __volatile__ ("add sp, sp, #40");\
+	__asm__ __volatile__ ("bic sp, sp, #0xc0000000");\
+    } while (0)
+#else
+
+#error "Please port NACL_STORE_REGS"
+
 #endif
 
 void nacl_pre_syscall_hook()
@@ -544,6 +560,8 @@ void nacl_pre_syscall_hook()
         nacl_thread_parked[nacl_thread_idx] = 1;
     }
 }
+
+void __nacl_suspend_thread_if_needed();
 
 void nacl_post_syscall_hook()
 {
