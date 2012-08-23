@@ -1,4 +1,5 @@
 // Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+// Copyright 2012 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,7 +39,7 @@ namespace Mono.Security.X509 {
 		extern static int SecTrustCreateWithCertificates (IntPtr certOrCertArray, IntPtr policies, out IntPtr sectrustref);
 		
 		[DllImport (SecurityLibrary)]
-		extern static IntPtr SecPolicyCreateSSL (int server, IntPtr cfStringHostname);
+		extern static IntPtr SecPolicyCreateSSL (bool server, IntPtr cfStringHostname);
 		
 		[DllImport (SecurityLibrary)]
 		extern static int SecTrustEvaluate (IntPtr secTrustRef, out SecTrustResult secTrustResultTime);
@@ -63,7 +64,7 @@ namespace Mono.Security.X509 {
 			ResultOtherError,
 		}
 
-		static IntPtr sslsecpolicy = SecPolicyCreateSSL (0, IntPtr.Zero);
+		static IntPtr sslsecpolicy = SecPolicyCreateSSL (true, IntPtr.Zero);
 
 		static IntPtr MakeCFData (byte [] data)
 		{
