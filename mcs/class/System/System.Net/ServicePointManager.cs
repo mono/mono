@@ -510,10 +510,6 @@ namespace System.Net
 
 #if MONODROID
 				result = AndroidPlatform.TrustEvaluateSsl (certs, sender, leaf, chain, errors);
-				if (result) {
-					status11 = 0;
-					errors = 0;
-				}
 #endif
 
 				if (policy != null && (!(policy is DefaultCertificatePolicy) || cb == null)) {
