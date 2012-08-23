@@ -44,6 +44,9 @@ namespace Mono.Security.X509 {
 		[DllImport (SecurityLibrary)]
 		extern static int SecTrustEvaluate (IntPtr secTrustRef, out SecTrustResult secTrustResultTime);
 
+		[DllImport (CoreFoundationLibrary, CharSet=CharSet.Unicode)]
+		extern static IntPtr CFStringCreateWithCharacters (IntPtr allocator, string str, int count);
+
 		[DllImport (CoreFoundationLibrary)]
 		unsafe extern static IntPtr CFDataCreate (IntPtr allocator, byte *bytes, IntPtr length);
 
@@ -64,8 +67,6 @@ namespace Mono.Security.X509 {
 			ResultOtherError,
 		}
 
-		static IntPtr sslsecpolicy = SecPolicyCreateSSL (true, IntPtr.Zero);
-
 		static IntPtr MakeCFData (byte [] data)
 		{
 			unsafe {
@@ -85,24 +86,26 @@ namespace Mono.Security.X509 {
 			}
 		}
 		
-		public static SecTrustResult TrustEvaluateSsl (X509CertificateCollection certificates)
+		public static SecTrustResult TrustEvaluateSsl (X509CertificateCollection certificates, string host)
 		{
+			if (certificates == null)
+				return SecTrustResult.Deny;
+
 			try {
-				return _TrustEvaluateSsl (certificates);
+				return _TrustEvaluateSsl (certificates, host);
 			} catch {
 				return SecTrustResult.Deny;
 			}
 		}
 		
-		static SecTrustResult _TrustEvaluateSsl (X509CertificateCollection certificates)
+		static SecTrustResult _TrustEvaluateSsl (X509CertificateCollection certificates, string hostName)
 		{
-			if (certificates == null)
-				throw new ArgumentNullException ("certificates");
-
 			int certCount = certificates.Count;
 			IntPtr [] cfDataPtrs = new IntPtr [certCount];
 			IntPtr [] secCerts = new IntPtr [certCount];
 			IntPtr certArray = IntPtr.Zero;
+			IntPtr sslsecpolicy = IntPtr.Zero;
+			IntPtr host = IntPtr.Zero;
 			
 			try {
 				for (int i = 0; i < certCount; i++)
@@ -114,6 +117,8 @@ namespace Mono.Security.X509 {
 						return SecTrustResult.Deny;
 				}
 				certArray = FromIntPtrs (secCerts);
+				host = CFStringCreateWithCharacters (IntPtr.Zero, hostName, hostName.Length);
+				sslsecpolicy = SecPolicyCreateSSL (true, host);
 				IntPtr sectrust;
 				int code = SecTrustCreateWithCertificates (certArray, sslsecpolicy, out sectrust);
 				if (code == 0){
@@ -138,6 +143,11 @@ namespace Mono.Security.X509 {
 				for (int i = 0; i < certCount; i++)
 					if (secCerts [i] != IntPtr.Zero)
 						CFRelease (secCerts [i]);
+
+				if (sslsecpolicy != IntPtr.Zero)
+					CFRelease (sslsecpolicy);
+				if (host != IntPtr.Zero)
+					CFRelease (host);
 			}
 		}
 	}
