@@ -227,6 +227,47 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			";
 		}
 
+		[Test]
+		public void TestSystemDll ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Reference Include='System.dll' />
+					</ItemGroup>
+					<PropertyGroup>
+						<SearchPaths>
+							{CandidateAssemblyFiles};
+							$(ReferencePath);
+							{HintPathFromItem};
+							{TargetFrameworkDirectory};
+							{AssemblyFolders};
+							{GAC};
+							{RawFileName};
+							$(OutputPath)
+						</SearchPaths>
+					</PropertyGroup>
+					<Target Name='A'>
+						<ResolveAssemblyReference
+							Assemblies='@(Reference)'
+							SearchPaths='$(SearchPaths)'
+						>
+							<Output TaskParameter='ResolvedFiles' ItemName='ResolvedFiles'/>
+						</ResolveAssemblyReference>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsTrue (project.Build ("A"), "A1");
+			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
+			Assert.AreEqual (1, big.Count, "A2");
+			Assert.IsTrue (big [0].Include.EndsWith (".dll"), "A3");
+		}
+
 		string GetGacDir ()
 		{
 			// copied from mcs/tools/gacutil/driver.cs
