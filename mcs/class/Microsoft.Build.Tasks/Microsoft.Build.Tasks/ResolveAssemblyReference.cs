@@ -156,6 +156,9 @@ namespace Microsoft.Build.Tasks {
 
 				LogWithPrecedingNewLine (MessageImportance.Low, "Primary Reference {0}", item.ItemSpec);
 				ResolvedReference resolved_ref = ResolveReference (item, searchPaths, true);
+				if (resolved_ref == null)
+					resolved_ref = ResolveWithAlternateName (item, allowedAssemblyExtensions ?? default_assembly_extensions);
+
 				if (resolved_ref == null) {
 					Log.LogWarning ("Reference '{0}' not resolved", item.ItemSpec);
 					assembly_resolver.LogSearchLoggerMessages (MessageImportance.Normal);
@@ -180,6 +183,19 @@ namespace Microsoft.Build.Tasks {
 					}
 				}
 			}
+		}
+
+
+		ResolvedReference ResolveWithAlternateName (ITaskItem item, string[] extensions)
+		{
+			foreach (string extn in extensions) {
+				if (item.ItemSpec.EndsWith (extn)) {
+					ITaskItem altitem = new TaskItem (item.ItemSpec.Substring (0, item.ItemSpec.Length - extn.Length));
+					item.CopyMetadataTo (altitem);
+					return ResolveReference (altitem, searchPaths, true);
+				}
+			}
+			return null;
 		}
 
 		// Use @search_paths to resolve the reference
