@@ -74,6 +74,8 @@ namespace System.Net
 				throw new InvalidOperationException ("cnc.Data was not initialized");
 			if (cnc.Data.Headers == null)
 				throw new InvalidOperationException ("cnc.Data.Headers was not initialized");
+			if (cnc.Data.request == null)
+				throw new InvalidOperationException ("cnc.Data.request was not initialized");
 			isRead = true;
 			cb_wrapper = new AsyncCallback (ReadCallbackWrapper);
 			pending = new ManualResetEvent (true);
