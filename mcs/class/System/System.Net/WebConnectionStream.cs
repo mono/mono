@@ -70,6 +70,10 @@ namespace System.Net
 
 		public WebConnectionStream (WebConnection cnc)
 		{
+			if (cnc.Data == null)
+				throw new InvalidOperationException ("cnc.Data was not initialized");
+			if (cnc.Data.Headers == null)
+				throw new InvalidOperationException ("cnc.Data.Headers was not initialized");
 			isRead = true;
 			cb_wrapper = new AsyncCallback (ReadCallbackWrapper);
 			pending = new ManualResetEvent (true);
