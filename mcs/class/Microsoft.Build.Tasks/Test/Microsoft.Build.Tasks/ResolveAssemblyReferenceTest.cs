@@ -136,17 +136,58 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("FancyStuff.dll")), "A6");
 			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("Testing.dll")), "A7");
 		}
-		
-		string ResolveAssembly (string gacAssembly, string hintPath)
+
+		[Test]
+		public void ResolveBinary_FancyStuffAndXbuild ()
 		{
-			string reference;
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\FancyStuff.dll", @"Test\resources\binary\XbuildReferenceBugTest.exe"));
+			
+			Assert.IsTrue (project.Build ("A"), "A1");
+			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
+			Assert.AreEqual (2, big.Count, "A2");
+			Assert.IsTrue (big[0].Include.EndsWith ("FancyStuff.dll"), "A3");
+			Assert.IsTrue (big[1].Include.EndsWith ("XbuildReferenceBugTest.exe"), "A3");
+			
+			big = project.GetEvaluatedItemsByName ("ResolvedDependencyFiles");
+			Assert.AreEqual (2, big.Count, "A4");
+			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("SimpleWrite.dll")), "A5");
+			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("Testing.dll")), "A6");
+		}
+
+		[Test]
+		public void ResolveBinary_SameAssemblyTwice ()
+		{
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (ResolveAssembly (null, @"Test\resources\binary\XbuildReferenceBugTest.exe", @"Test\resources\binary\XbuildReferenceBugTest2.exe"));
+
+			Assert.IsTrue (project.Build ("A"), "A1");
+			big = project.GetEvaluatedItemsByName ("ResolvedFiles");
+			Assert.AreEqual (2, big.Count, "A2");
+			Assert.IsTrue (big[0].Include.EndsWith ("XbuildReferenceBugTest.exe"), "A3");
+			Assert.IsTrue (big[1].Include.EndsWith ("XbuildReferenceBugTest2.exe"), "A3b");
+			
+			big = project.GetEvaluatedItemsByName ("ResolvedDependencyFiles");
+			Assert.AreEqual (3, big.Count, "A4");
+			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("SimpleWrite.dll")), "A5");
+			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("FancyStuff.dll")), "A6");
+			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("Testing.dll")), "A7");
+		}
+
+		string ResolveAssembly (string gacAssembly, params string[] hintPaths)
+		{
+			string reference = "";
 			if (string.IsNullOrEmpty (gacAssembly)) {
-				reference = string.Format (
-					@"<Reference Include='{0}'>
-							<HintPath>{1}</HintPath>
-						</Reference>", System.IO.Path.GetFileNameWithoutExtension (hintPath), hintPath);
+				foreach (var hintPath in hintPaths) {
+					reference += string.Format (
+						@"<Reference Include='{0}'>
+								<HintPath>{1}</HintPath>
+							</Reference>", System.IO.Path.GetFileNameWithoutExtension (hintPath), hintPath);
+				}
 			} else {
-				reference = string.Format (
+				reference += string.Format (
 					@"<Reference Include='{0}'/>", gacAssembly);
 			}
 			

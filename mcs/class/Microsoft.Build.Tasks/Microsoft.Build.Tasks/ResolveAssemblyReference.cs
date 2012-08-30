@@ -338,7 +338,7 @@ namespace Microsoft.Build.Tasks {
 
 					if (resolved_ref != null && !IsFromGacOrTargetFramework (resolved_ref)
 							&& resolved_ref.FoundInSearchPath != SearchPath.PkgConfig) {
-						tempResolvedDepFiles.Add (resolved_ref.AssemblyName.FullName, resolved_ref.TaskItem);
+						tempResolvedDepFiles[resolved_ref.AssemblyName.FullName] = resolved_ref.TaskItem;
 						dependencies.Enqueue (resolved_ref.TaskItem.ItemSpec);
 					}
 				}
