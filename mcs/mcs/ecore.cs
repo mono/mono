@@ -4370,16 +4370,32 @@ namespace Mono.CSharp {
 					// if the type matches
 					//
 					Expression e = fp.DefaultValue;
-					if (!(e is Constant) || e.Type.IsGenericOrParentIsGeneric || e.Type.IsGenericParameter) {
+					if (!(e is Constant) || e.Type != ptypes [i]) {
 						//
 						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 						//
-						if (e == EmptyExpression.MissingValue && ptypes[i].BuiltinType == BuiltinTypeSpec.Type.Object || ptypes[i].BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+						var ptype = ptypes [i];
+						if (e == EmptyExpression.MissingValue && ptype.BuiltinType == BuiltinTypeSpec.Type.Object || ptype.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 							e = new MemberAccess (new MemberAccess (new MemberAccess (
 								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
+						} else if (e is Constant) {
+							//
+							// Handles int to int? conversions
+							//
+							e = Convert.ImplicitConversionStandard (ec, e, ptype, loc);
+							
+							//
+							// When constant type paramter contains type argument
+							//
+							// Foo (T[] arg = null)
+							//
+							if (e == null) {
+								e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
+							}
 						} else {
-							e = new DefaultValueExpression (new TypeExpression (ptypes [i], loc), loc);
+							e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
 						}
+					
 
 						e = e.Resolve (ec);
 					}
