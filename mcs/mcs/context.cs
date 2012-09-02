@@ -475,7 +475,7 @@ namespace Mono.CSharp
 			// or it's a parameter
 			//
 			if (CurrentAnonymousMethod.IsIterator)
-				return local.IsParameter || CurrentBlock.Explicit.HasYield;
+				return local.IsParameter || local.Block.Explicit.HasYield;
 
 			//
 			// Capture only if this or any of child blocks contain await
