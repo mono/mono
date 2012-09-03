@@ -56,7 +56,10 @@ namespace System.Linq.Parallel.QueryNodes
 
 		internal static IList<IEnumerable<TEnum>> Wrap<TEnum> (this IList<IEnumerator<TEnum>> src)
 		{
-			return src.Select ((e) => (IEnumerable<TEnum>)new EnumeratorWrapper<TEnum> (e)).ToArray ();
+			var list = new List<IEnumerable<TEnum>> (src.Count);
+			foreach (var iterator in src)
+				list.Add (new EnumeratorWrapper<TEnum> (iterator));
+			return list;
 		}
 	}
 }
