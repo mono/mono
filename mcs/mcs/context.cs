@@ -482,7 +482,7 @@ namespace Mono.CSharp
 			// or it's a parameter
 			//
 			if (CurrentAnonymousMethod is AsyncInitializer)
-				return local.IsParameter || CurrentBlock.Explicit.HasAwait;
+				return local.IsParameter || local.Block.Explicit.HasAwait || CurrentBlock.Explicit.HasAwait;
 
 			return local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 		}
