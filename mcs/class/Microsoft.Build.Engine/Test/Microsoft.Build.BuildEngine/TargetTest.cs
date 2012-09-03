@@ -192,12 +192,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			IEnumerator e = target.GetEnumerator ();
 
 			bool thrown = false;
-			try
-			{
+			try {
 				var name = ((BuildTask)e.Current).Name;
-			}
-			catch (InvalidOperationException) // "Enumeration has not started. Call MoveNext"
-			{
+			} catch (InvalidOperationException) { // "Enumeration has not started. Call MoveNext"
 				thrown = true;
 			}
 			if (!thrown)
@@ -207,12 +204,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (true, e.MoveNext (), "A5");
 			Assert.AreEqual ("Message", ((BuildTask)e.Current).Name, "A6");
 			Assert.AreEqual (false, e.MoveNext (), "A7");
-			try
-			{
+			try {
 				var name = ((BuildTask) e.Current).Name;
-			}
-			catch (InvalidOperationException) //"Enumeration already finished."
-			{
+			} catch (InvalidOperationException) { //"Enumeration already finished."
 				return;
 			}
 			Assert.Fail ("A8: Should have thrown IOE, because there's only one buidTask");
