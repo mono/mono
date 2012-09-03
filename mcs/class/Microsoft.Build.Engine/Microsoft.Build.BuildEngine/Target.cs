@@ -82,7 +82,7 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 		}
-		
+
 		[MonoTODO]
 		public BuildTask AddNewTask (string taskName)
 		{
@@ -99,8 +99,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public IEnumerator GetEnumerator ()
 		{
-			foreach (BuildTask bt in buildTasks)
-				yield return bt;
+			return buildTasks.ToArray ().GetEnumerator ();
 		}
 
 		// FIXME: shouldn't we remove it from XML?
