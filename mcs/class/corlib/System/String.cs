@@ -795,7 +795,7 @@ namespace System
 			int lengthA = Math.Min (lenA, strA.Length - indexA);
 			int lengthB = Math.Min (lenB, strB.Length - indexB);
 
-			if (lengthA == lengthB && Object.ReferenceEquals (strA, strB))
+			if (lengthA == lengthB && indexA == indexB && Object.ReferenceEquals (strA, strB))
 				return 0;
 
 			fixed (char* aptr = strA, bptr = strB) {

@@ -649,6 +649,16 @@ public class StringTest
 	}
 
 	[Test]
+	public void CompareOrdinalWithOffset ()
+	{
+		string ab1 = "ab";
+		string ab2 = "a" + new string ('b', 1);
+		
+		Assert.IsTrue (string.CompareOrdinal (ab1, 0, ab1, 1, 1) < 0, "#1");
+		Assert.IsTrue (string.CompareOrdinal (ab2, 0, ab1, 1, 1) < 0, "#2");
+	}
+
+	[Test]
 	public void CompareTo ()
 	{
 		string lower = "abc";
