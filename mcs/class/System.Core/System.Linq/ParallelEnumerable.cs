@@ -1963,32 +1963,50 @@ namespace System.Linq
 			if (source.Node.IsOrdered ())
 				return ToListOrdered (source).ToArray ();
 
-			TSource[] result = null;
+			var helper = new ArrayAggregateHelper<TSource> ();
+			ParallelExecuter.ProcessAndAggregate<TSource, List<TSource>> (source.Node,
+			                                                              helper.Seed,
+			                                                              helper.Intermediate,
+			                                                              helper.Final);
 
-			Func<List<TSource>, TSource, List<TSource>> intermediate = (list, e) => {
-				list.Add (e); return list;
-			};
+			return helper.Result;
+		}
 
-			Action<IList<List<TSource>>> final = (list) => {
+		class ArrayAggregateHelper<TSource>
+		{
+			TSource[] result;
+
+			public TSource[] Result {
+				get {
+					return result;
+				}
+			}
+
+			internal List<TSource> Seed ()
+			{
+				return new List<TSource> ();
+			}
+
+			internal List<TSource> Intermediate (List<TSource> list, TSource e)
+			{
+				list.Add (e);
+				return list;
+			}
+
+			internal void Final (IList<List<TSource>> list)
+			{
 				int count = 0;
 
 				for (int i = 0; i < list.Count; i++)
-				  count += list[i].Count;
+					count += list[i].Count;
 
 				result = new TSource[count];
 				int insertIndex = -1;
 
 				for (int i = 0; i < list.Count; i++)
-				  for (int j = 0; j < list[i].Count; j++)
-				    result [++insertIndex] = list[i][j];
-			};
-
-			ParallelExecuter.ProcessAndAggregate<TSource, List<TSource>> (source.Node,
-			                                                              () => new List<TSource> (),
-			                                                              intermediate,
-			                                                              final);
-
-			return result;
+					for (int j = 0; j < list[i].Count; j++)
+						result [++insertIndex] = list[i][j];
+			}
 		}
 
 		public static Dictionary<TKey, TSource> ToDictionary<TSource, TKey> (this ParallelQuery<TSource> source,
