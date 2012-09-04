@@ -551,17 +551,18 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			CancellationTokenSource source = new CancellationTokenSource ();
-			ParallelQuery<bool> innerQuery
-				= first.Zip (second, (e1, e2) => comparer.Equals (e1, e2)).Where ((e) => !e).WithImplementerToken (source);
+			var source = new CancellationTokenSource ();
+			var innerQuery = first.Zip (second, comparer.Equals).WithImplementerToken (source);
 
 			bool result = true;
 
 			try {
-				innerQuery.ForAll ((value) => {
+				innerQuery.ForAll (value => {
+					if (!value) {
 						result = false;
 						source.Cancel ();
-					});
+					}
+				});
 			} catch (OperationCanceledException e) {
 				if (e.CancellationToken != source.Token)
 					throw e;
