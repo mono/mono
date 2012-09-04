@@ -1912,11 +1912,37 @@ namespace System.Linq
 			if (source.Node.IsOrdered ())
 				return ToListOrdered (source);
 
-			List<TSource> temp = source.Aggregate (() => new List<TSource>(50),
-			                                       (list, e) => { list.Add (e); return list; },
-			                                       (list, list2) => { list.AddRange (list2); return list; },
-			                                       (list) => list);
+			var helper = new ListAggregateHelper<TSource> ();
+			List<TSource> temp = source.Aggregate (helper.Seed,
+			                                       helper.Intermediate,
+			                                       helper.Reducer,
+			                                       helper.Final);
 			return temp;
+		}
+
+		class ListAggregateHelper<TSource>
+		{
+			public List<TSource> Seed ()
+			{
+				return new List<TSource> (50);
+			}
+
+			public List<TSource> Intermediate (List<TSource> list, TSource e)
+			{
+				list.Add (e);
+				return list;
+			}
+
+			public List<TSource> Reducer (List<TSource> list, List<TSource> list2)
+			{
+				list.AddRange (list2);
+				return list;
+			}
+
+			public List<TSource> Final (List<TSource> list)
+			{
+				return list;
+			}
 		}
 
 		internal static List<TSource> ToListOrdered<TSource> (this ParallelQuery<TSource> source)
