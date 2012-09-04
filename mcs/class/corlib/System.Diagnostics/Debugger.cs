@@ -110,5 +110,15 @@ namespace System.Diagnostics
 		public Debugger()
 		{
 		}
+
+#if MONODROID
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static void Mono_UnhandledException_internal (Exception ex);
+
+		internal static void Mono_UnhandledException (Exception ex)
+		{
+			Mono_UnhandledException_internal (ex);
+		}
+#endif
 	}
 }
