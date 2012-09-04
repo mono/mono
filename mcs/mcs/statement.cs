@@ -2534,10 +2534,17 @@ namespace Mono.CSharp {
 				// Only first storey in path will hold this reference. All children blocks will
 				// reference it indirectly using $ref field
 				//
-				for (Block b = Original.Explicit.Parent; b != null; b = b.Parent) {
-					var s = b.Explicit.AnonymousMethodStorey;
-					if (s != null) {
-						storey.HoistedThis = s.HoistedThis;
+				for (Block b = Original.Explicit; b != null; b = b.Parent) {
+					if (b.Parent != null) {
+						var s = b.Parent.Explicit.AnonymousMethodStorey;
+						if (s != null) {
+							storey.HoistedThis = s.HoistedThis;
+							break;
+						}
+					}
+
+					if (b.Explicit == b.Explicit.ParametersBlock && b.Explicit.ParametersBlock.StateMachine != null) {
+						storey.HoistedThis = b.Explicit.ParametersBlock.StateMachine.HoistedThis;
 						break;
 					}
 				}
