@@ -65,7 +65,7 @@ namespace System.Collections.Concurrent
 
 		/* For time based operations, we share this instance of Stopwatch and base calculation
 		   on a time offset at each of these method call */
-		static Stopwatch watch = new Stopwatch ();
+		static Stopwatch watch = Stopwatch.StartNew ();
 
 		#region ctors
 		public BlockingCollection ()

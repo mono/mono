@@ -182,6 +182,16 @@ namespace MonoTests.System.Collections.Concurrent
 			Assert.AreEqual (default (int), value2);
 			Assert.IsFalse (secondTake);
 		}
+
+		[Test]
+		public void EmptyTryTakeWithTimeout ()
+		{
+			object o = null;
+			var queue = new BlockingCollection<object> ();
+			bool success = queue.TryTake (out o, 500);
+			Assert.IsNull (o);
+			Assert.IsFalse (success);
+		}
 	}
 }
 #endif
