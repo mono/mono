@@ -1585,7 +1585,8 @@ parameter_array
 	| opt_attributes params_modifier type error
 	  {
 		Error_SyntaxError (yyToken);
-		$$ = null;
+
+		$$ = new ParamsParameter ((FullNamedExpression) $3, null, (Attributes) $1, Location.Null);
 	  }
 	;
 	
