@@ -1974,6 +1974,10 @@ namespace Mono.CSharp
 				foreach (var member in all) {
 					switch (member.MemberType) {
 					case MemberTypes.Constructor:
+						if (declaringType.IsInterface)
+							continue;
+
+						goto case MemberTypes.Method;
 					case MemberTypes.Method:
 						MethodBase mb = (MethodBase) member;
 						var attrs = mb.Attributes;
@@ -2093,6 +2097,9 @@ namespace Mono.CSharp
 					default:
 						throw new NotImplementedException (member.ToString ());
 					}
+
+					if (imported.IsStatic && declaringType.IsInterface)
+						continue;
 
 					cache.AddMemberImported (imported);
 				}
