@@ -2043,10 +2043,49 @@ namespace System.Linq
 			if (elementSelector == null)
 				throw new ArgumentNullException ("elementSelector");
 
-			return source.Aggregate (() => new Dictionary<TKey, TElement> (comparer),
-			                          (d, e) => { d.Add (keySelector (e), elementSelector (e)); return d; },
-			                          (d1, d2) => { foreach (var couple in d2) d1.Add (couple.Key, couple.Value); return d1; },
-			                          (d) => d);
+			var helper = new DictionaryAggregateHelper<TSource, TKey, TElement> (comparer, keySelector, elementSelector);
+			return source.Aggregate (helper.Seed,
+			                         helper.Intermediate,
+			                         helper.Reducer,
+			                         helper.Final);
+		}
+
+		class DictionaryAggregateHelper<TSource, TKey, TElement>
+		{
+			IEqualityComparer<TKey> comparer;
+			Func<TSource, TKey> keySelector;
+			Func<TSource, TElement> elementSelector;
+
+			public DictionaryAggregateHelper (IEqualityComparer<TKey> comparer,
+			                                  Func<TSource, TKey> keySelector,
+			                                  Func<TSource, TElement> elementSelector)
+			{
+				this.comparer = comparer;
+				this.keySelector = keySelector;
+				this.elementSelector = elementSelector;
+			}
+
+			public Dictionary<TKey, TElement> Seed ()
+			{
+				return new Dictionary<TKey, TElement> (comparer);
+			}
+
+			public Dictionary<TKey, TElement> Intermediate (Dictionary<TKey, TElement> d, TSource e)
+			{
+				d.Add (keySelector (e), elementSelector (e));
+				return d;
+			}
+
+			public Dictionary<TKey, TElement> Reducer (Dictionary<TKey, TElement> d1, Dictionary<TKey, TElement> d2)
+			{
+				foreach (var couple in d2) d1.Add (couple.Key, couple.Value);
+				return d1;
+			}
+
+			public Dictionary<TKey, TElement> Final (Dictionary<TKey, TElement> d)
+			{
+				return d;
+			}
 		}
 
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this ParallelQuery<TSource> source,
