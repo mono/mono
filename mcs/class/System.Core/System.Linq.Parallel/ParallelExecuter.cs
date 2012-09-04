@@ -127,14 +127,14 @@ namespace System.Linq.Parallel
 		{
 			QueryOptions options = CheckQuery (node, true);
 
-			Task[] tasks = Process (node, call, (n, o) => n.GetEnumerables (o), options);
+			Task[] tasks = Process (node, call, new QueryBaseNodeHelper<T> ().GetEnumerables, options);
 			Task.WaitAll (tasks, options.Token);
 		}
 
 		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<T, CancellationToken> call,
 		                                              Action callback, QueryOptions options)
 		{
-			Task[] tasks = Process (node, call, (n, o) => n.GetEnumerables (o), options);
+			Task[] tasks = Process (node, call, new QueryBaseNodeHelper<T> ().GetEnumerables, options);
 			if (callback != null)
 				Task.Factory.ContinueWhenAll (tasks,  (_) => callback ());
 
@@ -145,7 +145,7 @@ namespace System.Linq.Parallel
 		                                              Action endAction,
 		                                              Action callback, QueryOptions options)
 		{
-			Task[] tasks = Process (node, call, (n, o) => n.GetOrderedEnumerables (o), endAction, options);
+			Task[] tasks = Process (node, call, new QueryBaseNodeHelper<T> ().GetOrderedEnumerables, endAction, options);
 			if (callback != null)
 				Task.Factory.ContinueWhenAll (tasks,  (_) => callback ());
 
@@ -230,6 +230,19 @@ namespace System.Linq.Parallel
 				} finally {
 					enumerator.Dispose ();
 				}
+			}
+		}
+
+		class QueryBaseNodeHelper<T>
+		{
+			internal IList<IEnumerable<T>> GetEnumerables (QueryBaseNode<T> source, QueryOptions options)
+			{
+				return source.GetEnumerables (options);
+			}
+
+			internal IList<IEnumerable<KeyValuePair<long,T>>> GetOrderedEnumerables (QueryBaseNode<T> source, QueryOptions options)
+			{
+				return source.GetOrderedEnumerables (options);
 			}
 		}
 	}
