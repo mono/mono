@@ -3209,6 +3209,7 @@ namespace MonoTests.Microsoft.Win32
 						createdKey.SetValue ("test-ulong", (ulong) 1, RegistryValueKind.DWord);
 						createdKey.SetValue ("test-decimal", (decimal) 1, RegistryValueKind.DWord);
 						createdKey.SetValue ("test-float", (float) 1, RegistryValueKind.DWord);
+						createdKey.SetValue ("test-bool", true, RegistryValueKind.DWord);
 
 						createdKey.SetValue ("dtest-int", (int) 1, RegistryValueKind.QWord);
 						createdKey.SetValue ("dtest-uint", (uint) 1, RegistryValueKind.QWord);
@@ -3220,6 +3221,7 @@ namespace MonoTests.Microsoft.Win32
 						createdKey.SetValue ("dtest-ulong", (ulong) 1, RegistryValueKind.QWord);
 						createdKey.SetValue ("dtest-decimal", (decimal) 1, RegistryValueKind.QWord);
 						createdKey.SetValue ("dtest-float", (float) 1, RegistryValueKind.QWord);
+						createdKey.SetValue ("dtest-bool", true, RegistryValueKind.QWord);
 
 						object r = createdKey.GetValue ("test-int");
 						Assert.AreEqual (r is int, true);
@@ -3277,6 +3279,8 @@ namespace MonoTests.Microsoft.Win32
 						r = createdKey.GetValue ("dtest-float");
 						Assert.IsTrue (r is long);
 						Assert.AreEqual ((long) r, 1);
+						r = createdKey.GetValue ("dtest-bool");
+						Assert.AreEqual (typeof (long), r.GetType ());
 
 						try {
 							createdKey.SetValue ("test-int", uint.MaxValue, RegistryValueKind.DWord);

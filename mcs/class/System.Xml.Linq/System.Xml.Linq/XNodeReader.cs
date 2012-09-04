@@ -46,6 +46,10 @@ namespace System.Xml.Linq
 			this.node = node;
 			start = node;
 		}
+		
+#if NET_4_0
+		internal bool OmitDuplicateNamespaces { get; set; }
+#endif
 
 		int IXmlLineInfo.LineNumber {
 			get {

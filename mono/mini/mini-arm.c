@@ -700,7 +700,7 @@ mono_arch_cleanup (void)
  * This function returns the optimizations supported on this cpu.
  */
 guint32
-mono_arch_cpu_optimizazions (guint32 *exclude_mask)
+mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
 	guint32 opts = 0;
 	const char *cpu_arch = getenv ("MONO_CPU_ARCH");
@@ -753,6 +753,20 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	*exclude_mask = 0;
 	return opts;
 }
+
+/*
+ * This function test for all SIMD functions supported.
+ *
+ * Returns a bitmask corresponding to all supported versions.
+ *
+ */
+guint32
+mono_arch_cpu_enumerate_simd_versions (void)
+{
+	/* SIMD is currently unimplemented */
+	return 0;
+}
+
 
 #ifndef DISABLE_JIT
 
@@ -2680,7 +2694,7 @@ branch_cc_table [] = {
 	ARMCOND_LO
 };
 
-#define NEW_INS(cfg,dest,op) do {       \
+#define ADD_NEW_INS(cfg,dest,op) do {       \
 		MONO_INST_NEW ((cfg), (dest), (op)); \
         mono_bblock_insert_before_ins (bb, ins, (dest)); \
 	} while (0)
@@ -2782,7 +2796,7 @@ loop_start:
 		case OP_IOR_IMM:
 		case OP_IXOR_IMM:
 			if ((imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount)) < 0) {
-				NEW_INS (cfg, temp, OP_ICONST);
+				ADD_NEW_INS (cfg, temp, OP_ICONST);
 				temp->inst_c0 = ins->inst_imm;
 				temp->dreg = mono_alloc_ireg (cfg);
 				ins->sreg2 = temp->dreg;
@@ -2809,7 +2823,7 @@ loop_start:
 				ins->inst_imm = imm8;
 				break;
 			}
-			NEW_INS (cfg, temp, OP_ICONST);
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg2 = temp->dreg;
@@ -2824,7 +2838,7 @@ loop_start:
 				ins->next->opcode = OP_COND_EXC_NC;
 			break;
 		case OP_LOCALLOC_IMM:
-			NEW_INS (cfg, temp, OP_ICONST);
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg1 = temp->dreg;
@@ -2841,7 +2855,7 @@ loop_start:
 			 */
 			if (arm_is_imm12 (ins->inst_offset))
 				break;
-			NEW_INS (cfg, temp, OP_ICONST);
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_offset;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg2 = temp->dreg;
@@ -2852,7 +2866,7 @@ loop_start:
 		case OP_LOADI1_MEMBASE:
 			if (arm_is_imm8 (ins->inst_offset))
 				break;
-			NEW_INS (cfg, temp, OP_ICONST);
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_offset;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg2 = temp->dreg;
@@ -2864,23 +2878,34 @@ loop_start:
 				break;
 			low_imm = ins->inst_offset & 0x1ff;
 			if ((imm8 = mono_arm_is_rotated_imm8 (ins->inst_offset & ~0x1ff, &rot_amount)) >= 0) {
-				NEW_INS (cfg, temp, OP_ADD_IMM);
+				ADD_NEW_INS (cfg, temp, OP_ADD_IMM);
 				temp->inst_imm = ins->inst_offset & ~0x1ff;
 				temp->sreg1 = ins->inst_basereg;
 				temp->dreg = mono_alloc_ireg (cfg);
 				ins->inst_basereg = temp->dreg;
 				ins->inst_offset = low_imm;
-				break;
+			} else {
+				MonoInst *add_ins;
+
+				ADD_NEW_INS (cfg, temp, OP_ICONST);
+				temp->inst_c0 = ins->inst_offset;
+				temp->dreg = mono_alloc_ireg (cfg);
+
+				ADD_NEW_INS (cfg, add_ins, OP_IADD);
+				add_ins->sreg1 = ins->inst_basereg;
+				add_ins->sreg2 = temp->dreg;
+				add_ins->dreg = mono_alloc_ireg (cfg);
+
+				ins->inst_basereg = add_ins->dreg;
+				ins->inst_offset = 0;
 			}
-			/* VFP/FPA doesn't have indexed load instructions */
-			g_assert_not_reached ();
 			break;
 		case OP_STORE_MEMBASE_REG:
 		case OP_STOREI4_MEMBASE_REG:
 		case OP_STOREI1_MEMBASE_REG:
 			if (arm_is_imm12 (ins->inst_offset))
 				break;
-			NEW_INS (cfg, temp, OP_ICONST);
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_offset;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg2 = temp->dreg;
@@ -2889,7 +2914,7 @@ loop_start:
 		case OP_STOREI2_MEMBASE_REG:
 			if (arm_is_imm8 (ins->inst_offset))
 				break;
-			NEW_INS (cfg, temp, OP_ICONST);
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_offset;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg2 = temp->dreg;
@@ -2901,23 +2926,33 @@ loop_start:
 				break;
 			low_imm = ins->inst_offset & 0x1ff;
 			if ((imm8 = mono_arm_is_rotated_imm8 (ins->inst_offset & ~ 0x1ff, &rot_amount)) >= 0 && arm_is_fpimm8 (low_imm)) {
-				NEW_INS (cfg, temp, OP_ADD_IMM);
+				ADD_NEW_INS (cfg, temp, OP_ADD_IMM);
 				temp->inst_imm = ins->inst_offset & ~0x1ff;
 				temp->sreg1 = ins->inst_destbasereg;
 				temp->dreg = mono_alloc_ireg (cfg);
 				ins->inst_destbasereg = temp->dreg;
 				ins->inst_offset = low_imm;
-				break;
+			} else {
+				MonoInst *add_ins;
+
+				ADD_NEW_INS (cfg, temp, OP_ICONST);
+				temp->inst_c0 = ins->inst_offset;
+				temp->dreg = mono_alloc_ireg (cfg);
+
+				ADD_NEW_INS (cfg, add_ins, OP_IADD);
+				add_ins->sreg1 = ins->inst_destbasereg;
+				add_ins->sreg2 = temp->dreg;
+				add_ins->dreg = mono_alloc_ireg (cfg);
+
+				ins->inst_destbasereg = add_ins->dreg;
+				ins->inst_offset = 0;
 			}
-			/*g_print ("fail with: %d (%d, %d)\n", ins->inst_offset, ins->inst_offset & ~0x1ff, low_imm);*/
-			/* VFP/FPA doesn't have indexed store instructions */
-			g_assert_not_reached ();
 			break;
 		case OP_STORE_MEMBASE_IMM:
 		case OP_STOREI1_MEMBASE_IMM:
 		case OP_STOREI2_MEMBASE_IMM:
 		case OP_STOREI4_MEMBASE_IMM:
-			NEW_INS (cfg, temp, OP_ICONST);
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg1 = temp->dreg;
@@ -5202,10 +5237,18 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					}
 					break;
 				case 8:
-					g_assert (arm_is_imm12 (inst->inst_offset));
-					ARM_STR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					g_assert (arm_is_imm12 (inst->inst_offset + 4));
-					ARM_STR_IMM (code, ainfo->reg + 1, inst->inst_basereg, inst->inst_offset + 4);
+					if (arm_is_imm12 (inst->inst_offset)) {
+						ARM_STR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+					} else {
+						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
+						ARM_STR_REG_REG (code, ainfo->reg, inst->inst_basereg, ARMREG_IP);
+					}
+					if (arm_is_imm12 (inst->inst_offset + 4)) {
+						ARM_STR_IMM (code, ainfo->reg + 1, inst->inst_basereg, inst->inst_offset + 4);
+					} else {
+						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset + 4);
+						ARM_STR_REG_REG (code, ainfo->reg + 1, inst->inst_basereg, ARMREG_IP);
+					}
 					break;
 				default:
 					if (arm_is_imm12 (inst->inst_offset)) {

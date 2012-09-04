@@ -206,7 +206,7 @@ namespace System.Threading.Tasks
 			Status = TaskStatus.WaitingToRun;
 
 			try {
-				if (scheduler.RunInline (this))
+				if (scheduler.RunInline (this, false))
 					return;
 			} catch (Exception inner) {
 				throw new TaskSchedulerException (inner);
@@ -605,7 +605,7 @@ namespace System.Threading.Tasks
 			if (!IsCompleted) {
 				// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
 				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
-					Execute ();
+					scheduler.RunInline (this, true);
 
 				if (!IsCompleted) {
 					var continuation = new ManualResetContinuation ();
@@ -908,8 +908,10 @@ namespace System.Threading.Tasks
 
 			var task = new Task (TaskActionInvoker.Delay, millisecondsDelay, cancellationToken, TaskCreationOptions.None, null, TaskConstants.Finished);
 			task.SetupScheduler (TaskScheduler.Current);
-			// TODO: Does not guarantee the task will run
-			task.scheduler.QueueTask (task);
+			
+			if (millisecondsDelay != Timeout.Infinite)
+				task.scheduler.QueueTask (task);
+
 			return task;
 		}
 

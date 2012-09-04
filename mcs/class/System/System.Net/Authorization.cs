@@ -76,7 +76,6 @@ namespace System.Net {
 			set { module = value; }
 		}
 
-#if NET_2_0
 		static Exception GetMustImplement ()
 		{
 			return new NotImplementedException ();
@@ -92,6 +91,5 @@ namespace System.Net {
 				throw GetMustImplement ();
 			}
 		}
-#endif		
 	}
 }

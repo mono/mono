@@ -36,6 +36,7 @@
 #include "regalloc.h"
 #include "declsec.h"
 #include "mini-unwind.h"
+#include "jit.h"
 
 #ifndef G_LIKELY
 #define G_LIKELY(a) (a)
@@ -118,7 +119,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 82
+#define MONO_AOT_FILE_VERSION 83
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -241,6 +242,8 @@ typedef struct MonoAotFileInfo
 	guint32 flags;
 	/* Optimization flags used to compile the module */
 	guint32 opts;
+	/* SIMD flags used to compile the module */
+	guint32 simd_opts;
 	/* Index of the blob entry holding the GC used by this module */
 	gint32 gc_name_index;
 
@@ -1748,7 +1751,6 @@ void        mono_set_defaults              (int verbose_level, guint32 opts);
 MonoDomain* mini_init                      (const char *filename, const char *runtime_version) MONO_INTERNAL;
 void        mini_cleanup                   (MonoDomain *domain) MONO_INTERNAL;
 MonoDebugOptions *mini_get_debug_options   (void) MONO_INTERNAL;
-char*       mono_get_runtime_build_info    (void) MONO_INTERNAL;
 
 /* helper methods */
 void      mono_disable_optimizations       (guint32 opts) MONO_INTERNAL;
@@ -2047,7 +2049,7 @@ void      mono_arch_init                        (void) MONO_INTERNAL;
 void      mono_arch_finish_init                 (void) MONO_INTERNAL;
 void      mono_arch_cleanup                     (void) MONO_INTERNAL;
 void      mono_arch_cpu_init                    (void) MONO_INTERNAL;
-guint32   mono_arch_cpu_optimizazions           (guint32 *exclude_mask) MONO_INTERNAL;
+guint32   mono_arch_cpu_optimizations           (guint32 *exclude_mask) MONO_INTERNAL;
 void      mono_arch_instrument_mem_needs        (MonoMethod *method, int *stack, int *code) MONO_INTERNAL;
 void     *mono_arch_instrument_prolog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments) MONO_INTERNAL;
 void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments) MONO_INTERNAL;

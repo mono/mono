@@ -35,15 +35,6 @@
 	a MonoTODO, this will be useful in the future for our
 	automated tools that can assist in developers porting their code.
 
-* Supporting .NET 1.2, .NET 1.1 and .NET 1.0 builds
-
-	The defines NET_1_1 and NET_2_0 are used to include
-	features.   When NET_2_0 is defined, it also implies that the
-	NET_1_1 is defined.
-
-	To have code which is only available in an old version, use ONLY_1_0,
-	ONLY_1_1
-
 * Tagging buggy code
 
 	If there is a bug in your implementation tag the problem by using

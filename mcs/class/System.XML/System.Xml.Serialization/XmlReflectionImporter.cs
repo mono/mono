@@ -118,9 +118,9 @@ namespace System.Xml.Serialization {
 			string ns, 
 			XmlReflectionMember[] members, 
 			bool hasWrapperElement, 
-			bool writeAccessors)
+			bool rpc)
 		{
-			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, writeAccessors, true);
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, rpc, true);
 		}
 
 #if NET_2_0
@@ -131,10 +131,10 @@ namespace System.Xml.Serialization {
 			string ns, 
 			XmlReflectionMember[] members, 
 			bool hasWrapperElement, 
-			bool writeAccessors, 
-			bool validate)
+			bool rpc, 
+			bool openModel)
 		{
-			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, writeAccessors, validate, XmlMappingAccess.Read | XmlMappingAccess.Write);
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, rpc, openModel, XmlMappingAccess.Read | XmlMappingAccess.Write);
 		}
 
 #if NET_2_0
@@ -145,8 +145,8 @@ namespace System.Xml.Serialization {
 			string ns, 
 			XmlReflectionMember[] members, 
 			bool hasWrapperElement, 
-			bool writeAccessors, 
-			bool validate,
+			bool rpc, 
+			bool openModel,
 			XmlMappingAccess access)
 		{
 //			Reset ();	Disabled. See ChangeLog
@@ -181,9 +181,9 @@ namespace System.Xml.Serialization {
 			return ImportTypeMapping (type, null, defaultNamespace);
 		}
 
-		public XmlTypeMapping ImportTypeMapping (Type type, XmlRootAttribute group)
+		public XmlTypeMapping ImportTypeMapping (Type type, XmlRootAttribute root)
 		{
-			return ImportTypeMapping (type, group, null);
+			return ImportTypeMapping (type, root, null);
 		}
 
 		public XmlTypeMapping ImportTypeMapping (Type type, XmlRootAttribute root, string defaultNamespace)

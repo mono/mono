@@ -67,7 +67,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 				base.Render (writer);
 				return writer.InnerWriter.ToString ();
 			}
-#if NET_2_0
 			protected override Style CreateControlStyle ()
 			{
 				Style s = new Style (new StateBag ());
@@ -104,7 +103,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 				base.RenderEndTag (writer);
 				return writer.InnerWriter.ToString ();
 			}
-#endif
 		}
 
 		class PokerR : Panel
@@ -118,7 +116,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 				base.Render (writer);
 				return writer.InnerWriter.ToString ();
 			}
-#if NET_2_0
+
 			public override void RenderBeginTag (HtmlTextWriter writer)
 			{
 				writer.Write ("RenderBeginTag");
@@ -128,26 +126,24 @@ namespace MonoTests.System.Web.UI.WebControls {
 			{
 				writer.Write ("RenderEndTag");
 			}
-#endif
 		}
 		#endregion
-#if NET_2_0
+
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
 		}
-#endif
+
 		[Test]
 		public void Defaults ()
 		{
 			Poker p = new Poker ();
-#if NET_2_0
+
 			Assert.AreEqual (ContentDirection.NotSet, p.Direction, "Direction"); 
 			Assert.AreEqual (string.Empty, p.GroupingText, "GroupingText");
 			Assert.AreEqual (ScrollBars.None, p.ScrollBars, "ScrollBars"); 
 			Assert.AreEqual (string.Empty, p.DefaultButton, "DefaultButton");
-#endif
 		}
 		
 		[Test]
@@ -156,15 +152,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Poker p = new Poker ();
 			p.Wrap = false;
 			p.Controls.Add (new LiteralControl ("TEXT"));
-#if NET_2_0
 			const string html ="<div style=\"white-space:nowrap;\">\n\tTEXT\n</div>";
-#elif NET_1_1
-			const string html ="<div nowrap=\"nowrap\">\n\tTEXT\n</div>";
-#endif
 			Assert.AreEqual (html, p.Render ());
 		}
 
-#if NET_2_0
 		[Test]
 		public void CreateControlStyle ()
 		{
@@ -289,7 +280,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }
 

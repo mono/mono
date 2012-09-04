@@ -579,7 +579,7 @@ namespace System.IO.IsolatedStorage {
 #endif
 				directory.CreateSubdirectory (dir);
 			} else {
-				string[] dirs = dir.Split (Path.PathSeparatorChars);
+				string[] dirs = dir.Split (Path.PathSeparatorChars, StringSplitOptions.RemoveEmptyEntries);
 				DirectoryInfo dinfo = directory;
 
 				for (int i = 0; i < dirs.Length; i++) {
@@ -646,6 +646,8 @@ namespace System.IO.IsolatedStorage {
 		public void DeleteDirectory (string dir)
 		{
 			try {
+				if (Path.IsPathRooted (dir))
+					dir = dir.Substring (1);
 				DirectoryInfo subdir = directory.CreateSubdirectory (dir);
 				subdir.Delete ();
 			}

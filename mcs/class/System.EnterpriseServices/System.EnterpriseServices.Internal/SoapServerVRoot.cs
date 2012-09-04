@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("CAA817CC-0C04-4d22-A05C-2B7E162F4E8F")]
 	public sealed class SoapServerVRoot : ISoapServerVRoot {
 
@@ -61,5 +60,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

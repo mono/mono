@@ -65,9 +65,9 @@ namespace System
 		string daylightDisplayName;
 		public string DaylightName {
 			get { 
-				if (disableDaylightSavingTime)
-					return String.Empty;
-				return daylightDisplayName; 
+				return supportsDaylightSavingTime
+					? daylightDisplayName
+					: string.Empty;
 			}
 		}
 
@@ -122,9 +122,9 @@ namespace System
 			get { return standardDisplayName; }
 		}
 
-		bool disableDaylightSavingTime;
+		bool supportsDaylightSavingTime;
 		public bool SupportsDaylightSavingTime {
-			get  { return !disableDaylightSavingTime; }
+			get  { return supportsDaylightSavingTime; }
 		}
 
 		static TimeZoneInfo utc;
@@ -352,6 +352,13 @@ namespace System
 			return new TimeZoneInfo (id, baseUtcOffset, displayName, standardDisplayName, daylightDisplayName, adjustmentRules, disableDaylightSavingTime);
 		}
 
+#if NET_4_5
+		public override bool Equals (object obj)
+		{
+			return Equals (obj as TimeZoneInfo);
+		}
+#endif
+
 		public bool Equals (TimeZoneInfo other)
 		{
 			if (other == null)
@@ -536,7 +543,7 @@ namespace System
 
 		public AdjustmentRule [] GetAdjustmentRules ()
 		{
-			if (disableDaylightSavingTime)
+			if (!supportsDaylightSavingTime)
 				return new AdjustmentRule [0];
 			else
 				return (AdjustmentRule []) adjustmentRules.Clone ();
@@ -794,6 +801,8 @@ namespace System
 				throw new ArgumentException ("id parameter shouldn't be longer than 32 characters");
 #endif
 
+			bool supportsDaylightSavingTime = !disableDaylightSavingTime;
+
 			if (adjustmentRules != null && adjustmentRules.Length != 0) {
 				AdjustmentRule prev = null;
 				foreach (AdjustmentRule current in adjustmentRules) {
@@ -815,6 +824,8 @@ namespace System
 
 					prev = current;
 				}
+			} else {
+				supportsDaylightSavingTime = false;
 			}
 			
 			this.id = id;
@@ -822,7 +833,7 @@ namespace System
 			this.displayName = displayName ?? id;
 			this.standardDisplayName = standardDisplayName ?? id;
 			this.daylightDisplayName = daylightDisplayName;
-			this.disableDaylightSavingTime = disableDaylightSavingTime;
+			this.supportsDaylightSavingTime = supportsDaylightSavingTime;
 			this.adjustmentRules = adjustmentRules;
 		}
 

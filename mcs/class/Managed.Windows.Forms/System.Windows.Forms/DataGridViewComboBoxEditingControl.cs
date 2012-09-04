@@ -91,6 +91,12 @@ namespace System.Windows.Forms {
 			base.OnSelectedIndexChanged (e);
 		}
 
+		// This internal method is needed by DataGridViewComboBoxCell
+		// to pass along user interaction with the cell.
+		internal void OnMouseDownInternal (DataGridViewCellMouseEventArgs e)
+		{
+			OnMouseDown (e);
+		}
 	}
 
 }

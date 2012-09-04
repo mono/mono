@@ -103,7 +103,9 @@ export PATH=/opt/novell/llvm-mono/bin:$PATH
 %endif
   --with-ikvm=yes \
   --with-moonlight=no
-make # We are not -jN safe! %{?jobs:-j%jobs}
+#make # We are not -jN safe! %{?jobs:-j%jobs}
+# We are now !
+make %{?_smp_mflags}
 
 %install
 make install DESTDIR=%buildroot
@@ -549,6 +551,8 @@ Database connectivity for Mono.
 %_prefix/lib/mono/4.5/System.Runtime.Serialization.dll
 %_prefix/lib/mono/4.5/System.Transactions.dll
 %_prefix/lib/mono/4.5/WebMatrix.Data.dll
+%_prefix/lib/mono/4.5/EntityFramework.dll
+%_prefix/lib/mono/4.5/EntityFramework.SqlServer.dll
 %_prefix/lib/mono/4.5/sqlmetal.exe*
 %_prefix/lib/mono/4.5/sqlsharp.exe*
 %_prefix/lib/mono/gac/Mono.Data.Tds
@@ -561,6 +565,8 @@ Database connectivity for Mono.
 %_prefix/lib/mono/gac/System.Runtime.Serialization
 %_prefix/lib/mono/gac/System.Transactions
 %_prefix/lib/mono/gac/WebMatrix.Data
+%_prefix/lib/mono/gac/EntityFramework
+%_prefix/lib/mono/gac/EntityFramework.SqlServer
 
 %package -n mono-winforms
 License:        LGPL v2.1 only
@@ -848,6 +854,7 @@ Mono implementation of ASP.NET, Remoting and Web Services.
 %_bindir/wsdl
 %_bindir/wsdl2
 %_bindir/xsd
+%_libdir/pkgconfig/aspnetwebstack.pc
 %_libdir/pkgconfig/mono.web.pc
 %_mandir/man1/disco.1%ext_man
 %_mandir/man1/mconfig.1%ext_man
@@ -940,6 +947,7 @@ Mono implementation of ASP.NET MVC.
 %_libdir/pkgconfig/system.web.extensions_1.0.pc
 %_libdir/pkgconfig/system.web.mvc.pc
 %_libdir/pkgconfig/system.web.mvc2.pc
+%_libdir/pkgconfig/system.web.mvc3.pc
 %_prefix/lib/mono/2.0/System.Web.DynamicData.dll
 %_prefix/lib/mono/2.0/System.Web.Extensions.Design.dll
 %_prefix/lib/mono/2.0/System.Web.Extensions.dll

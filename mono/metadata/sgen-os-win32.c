@@ -91,6 +91,9 @@ sgen_thread_handshake (BOOL suspend)
 	int count = 0;
 
 	FOREACH_THREAD_SAFE (info) {
+		if (info->joined_stw == suspend)
+			continue;
+		info->joined_stw = suspend;
 		if (info == current)
 			continue;
 		if (info->gc_disabled)
@@ -108,7 +111,6 @@ sgen_thread_handshake (BOOL suspend)
 			if (!sgen_resume_thread (info))
 				continue;
 		}
-
 		++count;
 	} END_FOREACH_THREAD_SAFE
 	return count;

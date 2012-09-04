@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -23,9 +23,9 @@ using System.Diagnostics.SymbolStore;
 // Not needed in CLR 4 builds because we have the
 // ILGenerator.ILOffset property.
 
-#if CLR2 || SILVERLIGHT
+#if !FEATURE_CORE_DLR || SILVERLIGHT
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast.Compiler {
 #else
 namespace System.Linq.Expressions.Compiler {

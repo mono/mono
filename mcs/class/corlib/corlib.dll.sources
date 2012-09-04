@@ -79,6 +79,7 @@ Mono.Xml/SecurityParser.cs
 System/AccessViolationException.cs
 System/ActivationContext.cs
 System/Activator.cs
+System/AndroidPlatform.cs
 System/AppDomain.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager.cs
@@ -476,10 +477,12 @@ System.Reflection/AssemblyFlagsAttribute.cs
 System.Reflection/AssemblyInformationalVersionAttribute.cs
 System.Reflection/AssemblyKeyFileAttribute.cs
 System.Reflection/AssemblyKeyNameAttribute.cs
+System.Reflection/AssemblyMetadataAttribute.cs
 System.Reflection/AssemblyName.cs
 System.Reflection/AssemblyNameFlags.cs
 System.Reflection/AssemblyNameProxy.cs
 System.Reflection/AssemblyProductAttribute.cs
+System.Reflection/AssemblySignatureKeyAttribute.cs
 System.Reflection/AssemblyTitleAttribute.cs
 System.Reflection/AssemblyTradeMarkAttribute.cs
 System.Reflection/AssemblyVersionAttribute.cs
@@ -488,6 +491,7 @@ System.Reflection/BindingFlags.cs
 System.Reflection/CallingConventions.cs
 System.Reflection/ConstructorInfo.cs
 System.Reflection/CustomAttributeData.cs
+System.Reflection/CustomAttributeExtensions.cs
 System.Reflection/CustomAttributeFormatException.cs
 System.Reflection/CustomAttributeNamedArgument.cs
 System.Reflection/CustomAttributeTypedArgument.cs
@@ -614,6 +618,7 @@ System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
 System.Runtime/TargetedPatchingOptOutAttribute.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs
+System.Runtime.CompilerServices/AsyncStateMachineAttribute.cs
 System.Runtime.CompilerServices/AsyncVoidMethodBuilder.cs
 System.Runtime.CompilerServices/AsyncTaskMethodBuilder.cs
 System.Runtime.CompilerServices/AsyncTaskMethodBuilder_T.cs
@@ -663,6 +668,7 @@ System.Runtime.CompilerServices/IsPinned.cs
 System.Runtime.CompilerServices/IsSignUnspecifiedByte.cs
 System.Runtime.CompilerServices/IsUdtReturn.cs
 System.Runtime.CompilerServices/IsVolatile.cs
+System.Runtime.CompilerServices/IteratorStateMachineAttribute.cs
 System.Runtime.CompilerServices/LoadHint.cs
 System.Runtime.CompilerServices/MethodCodeType.cs
 System.Runtime.CompilerServices/MethodImplAttribute.cs
@@ -675,6 +681,7 @@ System.Runtime.CompilerServices/RuntimeWrappedException.cs
 System.Runtime.CompilerServices/SpecialNameAttribute.cs 
 System.Runtime.CompilerServices/ScopelessEnumAttribute.cs
 System.Runtime.CompilerServices/SuppressIldasmAttribute.cs
+System.Runtime.CompilerServices/StateMachineAttribute.cs
 System.Runtime.CompilerServices/StringFreezingAttribute.cs 
 System.Runtime.CompilerServices/UnsafeValueTypeAttribute.cs
 System.Runtime.CompilerServices/TaskAwaiter.cs
@@ -1190,12 +1197,14 @@ System.Security.AccessControl/AccessControlModification.cs
 System.Security.AccessControl/AccessControlSections.cs
 System.Security.AccessControl/AccessControlType.cs
 System.Security.AccessControl/AccessRule.cs
+System.Security.AccessControl/AccessRule_T.cs
 System.Security.AccessControl/AceEnumerator.cs
 System.Security.AccessControl/AceFlags.cs
 System.Security.AccessControl/AceQualifier.cs
 System.Security.AccessControl/AceType.cs
 System.Security.AccessControl/AuditFlags.cs
 System.Security.AccessControl/AuditRule.cs
+System.Security.AccessControl/AuditRule_T.cs
 System.Security.AccessControl/AuthorizationRule.cs
 System.Security.AccessControl/AuthorizationRuleCollection.cs
 System.Security.AccessControl/CommonAce.cs
@@ -1407,6 +1416,7 @@ System.Security.Policy/CodeConnectAccess.cs
 System.Security.Policy/CodeGroup.cs
 System.Security.Policy/DefaultPolicies.cs
 System.Security.Policy/Evidence.cs
+System.Security.Policy/EvidenceBase.cs
 System.Security.Policy/FileCodeGroup.cs
 System.Security.Policy/FirstMatchCodeGroup.cs
 System.Security.Policy/Gac.cs
@@ -1544,6 +1554,7 @@ System.Collections.Generic/IList.cs
 System.Collections.Generic/IComparer.cs
 System.Collections.Generic/IEqualityComparer.cs
 System.Collections.Generic/IDictionary.cs
+System.Collections.Generic/IReadOnlyCollection.cs
 System.Collections.Generic/IReadOnlyList.cs
 System.Collections.Generic/IReadOnlyDictionary.cs
 System.Collections.Generic/KeyValuePair.cs
@@ -1560,6 +1571,7 @@ System/Converter.cs
 System/Predicate.cs
 System.Collections.Generic/Comparer.cs
 
+System.Threading.Tasks/ConcurrentExclusiveSchedulerPair.cs
 System.Threading.Tasks/TaskFactory.cs
 System.Threading.Tasks/TaskFactory_T.cs
 System.Threading.Tasks/TaskStatus.cs

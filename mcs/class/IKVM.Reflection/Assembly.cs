@@ -36,6 +36,11 @@ namespace IKVM.Reflection
 			this.universe = universe;
 		}
 
+		public sealed override string ToString()
+		{
+			return FullName;
+		}
+
 		public abstract Type[] GetTypes();
 		public abstract AssemblyName GetName();
 		public abstract string ImageRuntimeVersion { get; }

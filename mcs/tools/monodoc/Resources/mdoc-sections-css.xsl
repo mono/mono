@@ -113,8 +113,12 @@
 
 	<xsl:template name="CreateSignature">
 		<xsl:param name="content" />
+		<xsl:param name="id" />
 		<h2>Syntax</h2>
 		<div class="Signature">
+			<xsl:attribute name="id">
+			  <xsl:copy-of select="$id" />
+			</xsl:attribute>
 			<xsl:copy-of select="$content" />
 		</div>
 	</xsl:template>

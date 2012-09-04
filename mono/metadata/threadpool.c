@@ -630,7 +630,7 @@ mono_async_invoke (ThreadPool *tp, MonoAsyncResult *ares)
 	if (ac == NULL) {
 		/* Fast path from ThreadPool.*QueueUserWorkItem */
 		void *pa = ares->async_state;
-		mono_runtime_delegate_invoke (ares->async_delegate, &pa, &exc);
+		res = mono_runtime_delegate_invoke (ares->async_delegate, &pa, &exc);
 	} else {
 		MonoObject *cb_exc = NULL;
 
@@ -654,7 +654,6 @@ mono_async_invoke (ThreadPool *tp, MonoAsyncResult *ares)
 			void *pa = &ares;
 			cb_exc = NULL;
 			mono_runtime_invoke (ac->cb_method, ac->cb_target, pa, &cb_exc);
-			MONO_OBJECT_SETREF (ac->msg, exc, cb_exc);
 			exc = cb_exc;
 		} else {
 			exc = NULL;
@@ -1110,6 +1109,23 @@ threadpool_clear_queue (ThreadPool *tp, MonoDomain *domain)
 	}
 }
 
+static gboolean
+remove_sockstate_for_domain (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMList *list = value;
+	gboolean remove = FALSE;
+	while (list) {
+		MonoObject *data = mono_mlist_get_data (list);
+		if (mono_object_domain (data) == user_data) {
+			remove = TRUE;
+			mono_mlist_set_data (list, NULL);
+		}
+		list = mono_mlist_next (list);
+	}
+	//FIXME is there some sort of additional unregistration we need to perform here?
+	return remove;
+}
+
 /*
  * Clean up the threadpool of all domain jobs.
  * Can only be called as part of the domain unloading process as
@@ -1127,6 +1143,12 @@ mono_thread_pool_remove_domain_jobs (MonoDomain *domain, int timeout)
 	threadpool_clear_queue (&async_tp, domain);
 	threadpool_clear_queue (&async_io_tp, domain);
 
+	EnterCriticalSection (&socket_io_data.io_lock);
+	if (socket_io_data.sock_to_state)
+		mono_g_hash_table_foreach_remove (socket_io_data.sock_to_state, remove_sockstate_for_domain, domain);
+
+	LeaveCriticalSection (&socket_io_data.io_lock);
+	
 	/*
 	 * There might be some threads out that could be about to execute stuff from the given domain.
 	 * We avoid that by setting up a semaphore to be pulsed by the thread that reaches zero.
@@ -1440,20 +1462,8 @@ async_invoke_thread (gpointer data)
 					exc = mono_async_invoke (tp, ar);
 					if (tp_item_end_func)
 						tp_item_end_func (tp_item_user_data);
-					if (exc && mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_CURRENT) {
-						gboolean unloaded;
-						MonoClass *klass;
-
-						klass = exc->vtable->klass;
-						unloaded = is_appdomainunloaded_exception (exc->vtable->domain, klass);
-						if (!unloaded && klass != mono_defaults.threadabortexception_class) {
-							mono_unhandled_exception (exc);
-							if (mono_environment_exitcode_get () == 1)
-								exit (255);
-						}
-						if (klass == mono_defaults.threadabortexception_class)
-							mono_thread_internal_reset_abort (thread);
-					}
+					if (exc)
+						mono_internal_thread_unhandled_exception (exc);
 					if (is_socket && tp->is_io) {
 						MonoSocketAsyncResult *state = (MonoSocketAsyncResult *) data;
 
@@ -1654,3 +1664,21 @@ mono_install_threadpool_item_hooks (MonoThreadPoolItemFunc begin_func, MonoThrea
 	tp_item_user_data = user_data;
 }
 
+void
+mono_internal_thread_unhandled_exception (MonoObject* exc)
+{
+	if (mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_CURRENT) {
+		gboolean unloaded;
+		MonoClass *klass;
+
+		klass = exc->vtable->klass;
+		unloaded = is_appdomainunloaded_exception (exc->vtable->domain, klass);
+		if (!unloaded && klass != mono_defaults.threadabortexception_class) {
+			mono_unhandled_exception (exc);
+			if (mono_environment_exitcode_get () == 1)
+				exit (255);
+		}
+		if (klass == mono_defaults.threadabortexception_class)
+		 mono_thread_internal_reset_abort (mono_thread_internal_current ());
+	}
+}

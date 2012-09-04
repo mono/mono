@@ -585,7 +585,7 @@ fallback (void)
 	mono_set_dirs (MONO_ASSEMBLIES, MONO_CFG_DIR);
 }
 
-static void
+static G_GNUC_UNUSED void
 set_dirs (char *exe)
 {
 	char *base;
@@ -2889,6 +2889,21 @@ MonoAssembly*
 mono_assembly_loaded (MonoAssemblyName *aname)
 {
 	return mono_assembly_loaded_full (aname, FALSE);
+}
+
+void
+mono_assembly_release_gc_roots (MonoAssembly *assembly)
+{
+	if (assembly == NULL || assembly == REFERENCE_MISSING)
+		return;
+
+	if (assembly->dynamic) {
+		int i;
+		MonoDynamicImage *dynimg = (MonoDynamicImage *)assembly->image;
+		for (i = 0; i < dynimg->image.module_count; ++i)
+			mono_dynamic_image_release_gc_roots ((MonoDynamicImage *)dynimg->image.modules [i]);
+		mono_dynamic_image_release_gc_roots (dynimg);
+	}
 }
 
 /*

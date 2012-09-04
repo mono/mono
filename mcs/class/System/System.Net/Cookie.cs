@@ -196,6 +196,7 @@ namespace System.Net {
 
 		internal int [] Ports {
 			get { return ports; }
+			set { ports = value; }
 		}
 
 		public bool Secure {

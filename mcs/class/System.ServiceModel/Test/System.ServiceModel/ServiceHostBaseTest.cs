@@ -324,12 +324,14 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Timeouts randomly #5813
 		public void RunDestinationUnreachableTest ()
 		{
 			RunDestinationUnreachableTest ("BasicHttp", new BasicHttpBinding ());
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Timeouts randomly #5813
 		public void RunDestinationUnreachableTest2 ()
 		{
 			RunDestinationUnreachableTest ("CustomSoap12", new CustomBinding (new HttpTransportBindingElement ()));

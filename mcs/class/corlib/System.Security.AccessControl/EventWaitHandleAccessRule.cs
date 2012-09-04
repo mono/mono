@@ -33,26 +33,23 @@ namespace System.Security.AccessControl
 {
 	public sealed class EventWaitHandleAccessRule : AccessRule
 	{
-		EventWaitHandleRights rights;
-		
 		public EventWaitHandleAccessRule (IdentityReference identity,
 						  EventWaitHandleRights eventRights,
 						  AccessControlType type)
-			// FIXME: accessMask=0 likely causes an error
-			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow)
+			: base (identity, (int)eventRights, false,
+				InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow)
 		{
-			this.rights = eventRights;
 		}
 
 		public EventWaitHandleAccessRule (string identity,
 						  EventWaitHandleRights eventRights,
 						  AccessControlType type)
-			: this (new SecurityIdentifier (identity), eventRights, type)
+			: this (new NTAccount (identity), eventRights, type)
 		{
 		}
 		
 		public EventWaitHandleRights EventWaitHandleRights {
-			get { return rights; }
+			get { return (EventWaitHandleRights)AccessMask; }
 		}
 	}
 }

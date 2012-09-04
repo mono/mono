@@ -54,13 +54,15 @@ namespace System.Windows.Forms
 		protected static StringFormat string_format_menu_text;
 		protected static StringFormat string_format_menu_shortcut;
 		protected static StringFormat string_format_menu_menubar_text;
-		static ImageAttributes imagedisabled_attributes = null;
+		static ImageAttributes imagedisabled_attributes;
+		Font window_border_font;
 		const int SEPARATOR_HEIGHT = 6;
 		const int SEPARATOR_MIN_WIDTH = 20;
 		const int SM_CXBORDER = 1;
 		const int SM_CYBORDER = 1;		
 		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tabd
 		const int MENU_BAR_ITEMS_SPACE = 8;	// Space between menu bar items
+		const int CheckSize = 13;
 
 		#region	Principal Theme Methods
 		public ThemeWin32Classic ()
@@ -71,7 +73,7 @@ namespace System.Windows.Forms
 		public override void ResetDefaults() {
 			defaultWindowBackColor = this.ColorWindow;
 			defaultWindowForeColor = this.ColorControlText;
-			window_border_font = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Bold);
+			window_border_font = null;
 			
 			/* Menu string formats */
 			string_format_menu_text = new StringFormat ();
@@ -104,6 +106,12 @@ namespace System.Windows.Forms
 		public override int VerticalScrollBarWidth {
 			get {
 				return XplatUI.VerticalScrollBarWidth;
+			}
+		}
+		
+		public override Font WindowBorderFont {
+			get {
+				return window_border_font ?? (window_border_font = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Bold));
 			}
 		}
 
@@ -360,7 +368,7 @@ namespace System.Windows.Forms
 		{
 			Image image = button.Image;
 			string text = button.Text;
-			Rectangle content_rect = button.ClientRectangle;
+			Rectangle content_rect = button.PaddingClientRectangle;
 			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			Size image_size = image == null ? Size.Empty : image.Size;
 
@@ -947,15 +955,15 @@ namespace System.Windows.Forms
 
 		public override void CalculateCheckBoxTextAndImageLayout (ButtonBase button, Point p, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle)
 		{
-			int check_size = 13;
-			
+			int check_size = CheckSize;
+
 			if (button is CheckBox)
-				check_size = (button as CheckBox).Appearance == Appearance.Normal ? 13 : 0;
+				check_size = (button as CheckBox).Appearance == Appearance.Normal ? check_size : 0;
 				
-			glyphArea = new Rectangle (0, 2, check_size, check_size);
+			glyphArea = new Rectangle (button.Padding.Left, button.Padding.Top, check_size, check_size);
 			
-			Rectangle content_rect = button.ClientRectangle;
-			ContentAlignment align = ContentAlignment.TopLeft;;
+			Rectangle content_rect = button.PaddingClientRectangle;
+			ContentAlignment align = ContentAlignment.TopLeft;
 			
 			if (button is CheckBox)
 				align = (button as CheckBox).CheckAlign;
@@ -964,42 +972,42 @@ namespace System.Windows.Forms
 
 			switch (align) {
 				case ContentAlignment.BottomCenter:
-					glyphArea.Y = button.Height - check_size;
-					glyphArea.X = (button.Width - check_size) / 2 - 2;
+					glyphArea.Y += content_rect.Height - check_size - 2;
+					glyphArea.X += (content_rect.Width - check_size) / 2;
 					break;
 				case ContentAlignment.BottomLeft:
-					glyphArea.Y = button.Height - check_size - 2;
+					glyphArea.Y += content_rect.Height - check_size - 2;
 					content_rect.Width -= check_size;
 					content_rect.Offset (check_size, 0);
 					break;
 				case ContentAlignment.BottomRight:
-					glyphArea.Y = button.Height - check_size - 2;
-					glyphArea.X = button.Width - check_size;
+					glyphArea.Y += content_rect.Height - check_size - 2;
+					glyphArea.X += content_rect.Width - check_size;
 					content_rect.Width -= check_size;
 					break;
 				case ContentAlignment.MiddleCenter:
-					glyphArea.Y = (button.Height - check_size) / 2;
-					glyphArea.X = (button.Width - check_size) / 2;
+					glyphArea.Y += (content_rect.Height - check_size) / 2;
+					glyphArea.X += (content_rect.Width - check_size) / 2;
 					break;
 				case ContentAlignment.MiddleLeft:
-					glyphArea.Y = (button.Height - check_size) / 2;
+					glyphArea.Y += (content_rect.Height - check_size) / 2;
 					content_rect.Width -= check_size;
 					content_rect.Offset (check_size, 0);
 					break;
 				case ContentAlignment.MiddleRight:
-					glyphArea.Y = (button.Height - check_size) / 2;
-					glyphArea.X = button.Width - check_size;
+					glyphArea.Y += (content_rect.Height - check_size) / 2;
+					glyphArea.X += content_rect.Width - check_size;
 					content_rect.Width -= check_size;
 					break;
 				case ContentAlignment.TopCenter:
-					glyphArea.X = (button.Width - check_size) / 2;
+					glyphArea.X += (content_rect.Width - check_size) / 2;
 					break;
 				case ContentAlignment.TopLeft:
 					content_rect.Width -= check_size;
 					content_rect.Offset (check_size, 0);
 					break;
 				case ContentAlignment.TopRight:
-					glyphArea.X = button.Width - check_size;
+					glyphArea.X += content_rect.Width - check_size;
 					content_rect.Width -= check_size;
 					break;
 			}
@@ -1011,7 +1019,7 @@ namespace System.Windows.Forms
 			
 			// Force wrapping if we aren't AutoSize and our text is too long
 			if (!button.AutoSize)
-				proposed.Width = button.Width - glyphArea.Width - 2;
+				proposed.Width = button.PaddingClientRectangle.Width - glyphArea.Width - 2;
 
 			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, proposed, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			
@@ -1028,58 +1036,58 @@ namespace System.Windows.Forms
 				case TextImageRelation.Overlay:
 					// Text is centered vertically, and 2 pixels to the right
 					textRectangle.X = content_rect.Left + 2;
-					textRectangle.Y = ((content_rect.Height - text_size.Height) / 2) - 1;
+					textRectangle.Y = button.PaddingClientRectangle.Top + ((content_rect.Height - text_size.Height) / 2) - 1;
 					textRectangle.Size = text_size;
 
 					// Image is dependent on ImageAlign
 					if (image == null)
 						return;
 
-					int image_x = 0;
-					int image_y = 0;
+					int image_x = button.PaddingClientRectangle.Left;
+					int image_y = button.PaddingClientRectangle.Top;
 					int image_height = image.Height;
 					int image_width = image.Width;
 
 					switch (button.ImageAlign) {
 						case System.Drawing.ContentAlignment.TopLeft:
-							image_x = 5;
-							image_y = 5;
+							image_x += 5;
+							image_y += 5;
 							break;
 						case System.Drawing.ContentAlignment.TopCenter:
-							image_x = (content_rect.Width - image_width) / 2;
-							image_y = 5;
+							image_x += (content_rect.Width - image_width) / 2;
+							image_y += 5;
 							break;
 						case System.Drawing.ContentAlignment.TopRight:
-							image_x = content_rect.Width - image_width - 5;
-							image_y = 5;
+							image_x += content_rect.Width - image_width - 5;
+							image_y += 5;
 							break;
 						case System.Drawing.ContentAlignment.MiddleLeft:
-							image_x = 5;
-							image_y = (content_rect.Height - image_height) / 2;
+							image_x += 5;
+							image_y += (content_rect.Height - image_height) / 2;
 							break;
 						case System.Drawing.ContentAlignment.MiddleCenter:
-							image_x = (content_rect.Width - image_width) / 2;
-							image_y = (content_rect.Height - image_height) / 2;
+							image_x += (content_rect.Width - image_width) / 2;
+							image_y += (content_rect.Height - image_height) / 2;
 							break;
 						case System.Drawing.ContentAlignment.MiddleRight:
-							image_x = content_rect.Width - image_width - 4;
-							image_y = (content_rect.Height - image_height) / 2;
+							image_x += content_rect.Width - image_width - 4;
+							image_y += (content_rect.Height - image_height) / 2;
 							break;
 						case System.Drawing.ContentAlignment.BottomLeft:
-							image_x = 5;
-							image_y = content_rect.Height - image_height - 4;
+							image_x += 5;
+							image_y += content_rect.Height - image_height - 4;
 							break;
 						case System.Drawing.ContentAlignment.BottomCenter:
-							image_x = (content_rect.Width - image_width) / 2;
-							image_y = content_rect.Height - image_height - 4;
+							image_x += (content_rect.Width - image_width) / 2;
+							image_y += content_rect.Height - image_height - 4;
 							break;
 						case System.Drawing.ContentAlignment.BottomRight:
-							image_x = content_rect.Width - image_width - 4;
-							image_y = content_rect.Height - image_height - 4;
+							image_x += content_rect.Width - image_width - 4;
+							image_y += content_rect.Height - image_height - 4;
 							break;
 						default:
-							image_x = 5;
-							image_y = 5;
+							image_x += 5;
+							image_y += 5;
 							break;
 					}
 
@@ -1149,7 +1157,7 @@ namespace System.Windows.Forms
 			Rectangle		client_rectangle;
 			Rectangle		text_rectangle;
 			Rectangle		checkbox_rectangle;
-			int			checkmark_size=13;
+			int			checkmark_size = CheckSize;
 			int			checkmark_space = 4;
 
 			client_rectangle = checkbox.ClientRectangle;
@@ -1505,7 +1513,7 @@ namespace System.Windows.Forms
 			if (ctrl.ThreeDCheckBoxes == false)
 				state |= ButtonState.Flat;
 
-			Rectangle checkbox_rect = new Rectangle (2, (item_rect.Height - 11) / 2, 13, 13);
+			Rectangle checkbox_rect = new Rectangle (2, (item_rect.Height - 11) / 2, CheckSize, CheckSize);
 			ControlPaint.DrawCheckBox (e.Graphics,
 				item_rect.X + checkbox_rect.X, item_rect.Y + checkbox_rect.Y,
 				checkbox_rect.Width, checkbox_rect.Height,
@@ -6665,7 +6673,12 @@ namespace System.Windows.Forms
 
 		public override void CPDrawCheckBox (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
-			Pen check_pen = Pens.Black;
+			CPDrawCheckBoxInternal (dc, rectangle, state, false /* mixed */);
+		}
+
+		private void CPDrawCheckBoxInternal (Graphics dc, Rectangle rectangle, ButtonState state, bool mixed)
+		{
+			Pen check_pen = (mixed) ? Pens.Gray : Pens.Black;
 			
 			Rectangle cb_rect = new Rectangle (rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 			
@@ -7091,10 +7104,9 @@ namespace System.Windows.Forms
 
 		}
 
-		[MonoInternalNote ("Does not respect Mixed")]
 		public override void CPDrawMixedCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
-			CPDrawCheckBox (graphics, rectangle, state);
+			CPDrawCheckBoxInternal (graphics, rectangle, state, true /* mixed */);
 		}
 
 		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)

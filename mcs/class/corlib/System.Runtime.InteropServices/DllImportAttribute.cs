@@ -48,13 +48,8 @@ namespace System.Runtime.InteropServices {
 		public bool PreserveSig;
 		public bool SetLastError;
 
-#if NET_1_1
 		public bool BestFitMapping;
 		public bool ThrowOnUnmappableChar;
-#else
-		private bool BestFitMapping;
-		private bool ThrowOnUnmappableChar;
-#endif
 		#endregion
 
 		public string Value {

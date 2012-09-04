@@ -364,14 +364,12 @@ namespace System.Runtime.Remoting
 			}
 		}
 		
-#if NET_1_1
 		public static bool CustomErrorsEnabled (bool isLocalRequest)
 		{
 			if (_errorMode == "off") return false;
 			if (_errorMode == "on") return true;
 			return !isLocalRequest;
 		}
-#endif
 
 		internal static void SetCustomErrorsMode (string mode)
 		{

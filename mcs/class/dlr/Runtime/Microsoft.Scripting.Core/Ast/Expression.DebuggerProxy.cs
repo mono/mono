@@ -18,12 +18,11 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
 #endif
-#if !SILVERLIGHT
     public partial class Expression {
         #region Generated Expression Debugger Proxies
 
@@ -453,5 +452,4 @@ namespace System.Linq.Expressions {
 
         #endregion
     }
-#endif
 }

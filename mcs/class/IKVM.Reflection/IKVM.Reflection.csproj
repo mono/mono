@@ -76,8 +76,6 @@
     <Compile Include="FieldSignature.cs" />
     <Compile Include="Fusion.cs" />
     <Compile Include="GenericWrappers.cs" />
-    <Compile Include="Impl\CryptoConvert.cs" />
-    <Compile Include="Impl\CryptoHack.cs" />
     <Compile Include="Impl\ITypeOwner.cs" />
     <Compile Include="Impl\MdbWriter.cs" />
     <Compile Include="Impl\PdbWriter.cs" />

@@ -30,9 +30,8 @@
 
 namespace System.Collections.Generic
 {
-	public interface IReadOnlyDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
+	public interface IReadOnlyDictionary<TKey, TValue> : IReadOnlyCollection<KeyValuePair<TKey, TValue>>
 	{
-		int Count { get; }
 		TValue this [TKey key] { get; }
 		IEnumerable<TKey> Keys { get; }
 		IEnumerable<TValue> Values { get; }

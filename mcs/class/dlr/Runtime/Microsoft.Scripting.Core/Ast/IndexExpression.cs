@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -22,11 +22,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -34,9 +30,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents indexing a property or array.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.IndexExpressionProxy))]
-#endif
     public sealed class IndexExpression : Expression, IArgumentProvider {
         private readonly Expression _instance;
         private readonly PropertyInfo _indexer;

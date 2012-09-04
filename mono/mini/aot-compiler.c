@@ -184,6 +184,7 @@ typedef struct MonoAotCompile {
 	MonoAotOptions aot_opts;
 	guint32 nmethods;
 	guint32 opts;
+	guint32 simd_opts;
 	MonoMemPool *mempool;
 	MonoAotStats stats;
 	int method_index;
@@ -1329,7 +1330,7 @@ arch_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
 #if defined(__native_client_codegen__)
 	guint8 *buf_alloc;
 #endif
-	guint8 *labels [3];
+	guint8 *labels [16];
 	guint8 mov_buf[3];
 	guint8 *mov_buf_ptr = mov_buf;
 
@@ -1369,8 +1370,18 @@ arch_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
 	amd64_jump_membase (code, MONO_ARCH_IMT_SCRATCH_REG, 0);
 
 	/* No match */
-	/* FIXME: */
 	mono_amd64_patch (labels [1], code);
+	/* Load fail tramp */
+	amd64_alu_reg_imm (code, X86_ADD, MONO_ARCH_IMT_SCRATCH_REG, sizeof (gpointer));
+	/* Check if there is a fail tramp */
+	amd64_alu_membase_imm (code, X86_CMP, MONO_ARCH_IMT_SCRATCH_REG, 0, 0);
+	labels [3] = code;
+	amd64_branch8 (code, X86_CC_Z, 0, FALSE);
+	/* Jump to fail tramp */
+	amd64_jump_membase (code, MONO_ARCH_IMT_SCRATCH_REG, 0);
+
+	/* Fail */
+	mono_amd64_patch (labels [3], code);
 	x86_breakpoint (code);
 
 	/* mov <OFFSET>(%rip), MONO_ARCH_IMT_SCRATCH_REG */
@@ -1399,7 +1410,7 @@ arch_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
 #ifdef __native_client_codegen__
 	guint8 *buf_alloc;
 #endif
-	guint8 *labels [3];
+	guint8 *labels [16];
 
 #if defined(__default_codegen__)
 	code = buf = g_malloc (256);
@@ -1444,8 +1455,19 @@ arch_emit_imt_thunk (MonoAotCompile *acfg, int offset, int *tramp_size)
 	x86_ret (code);
 
 	/* No match */
-	/* FIXME: */
 	mono_x86_patch (labels [1], code);
+	/* Load fail tramp */
+	x86_mov_reg_membase (code, X86_EAX, X86_EAX, sizeof (gpointer), 4);
+	x86_alu_membase_imm (code, X86_CMP, X86_EAX, 0, 0);
+	labels [3] = code;
+	x86_branch8 (code, X86_CC_Z, FALSE, 0);
+	/* Jump to fail tramp */
+	x86_mov_membase_reg (code, X86_ESP, 4, X86_EAX, 4);
+	x86_pop_reg (code, X86_EAX);
+	x86_ret (code);
+
+	/* Fail */
+	mono_x86_patch (labels [3], code);
 	x86_breakpoint (code);
 
 #ifdef __native_client_codegen__
@@ -2259,6 +2281,8 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
 				strcpy ((char*)p, method->name);
 				p += strlen (method->name) + 1;
+			} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
+				encode_method_ref (acfg, info->d.managed_to_native.method, p, &p);
 			} else {
 				g_assert (info->subtype == WRAPPER_SUBTYPE_NONE);
 				encode_method_ref (acfg, info->d.managed_to_native.method, p, &p);
@@ -2963,6 +2987,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* delegate-invoke wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
 		MonoClass *klass;
+		MonoCustomAttrInfo *cattr;
 		
 		token = MONO_TOKEN_TYPE_DEF | (i + 1);
 		klass = mono_class_get (acfg->image, token);
@@ -2986,6 +3011,18 @@ add_wrappers (MonoAotCompile *acfg)
 			method = mono_class_get_method_from_name_flags (klass, "EndInvoke", -1, 0);
 			if (method)
 				add_method (acfg, mono_marshal_get_delegate_end_invoke (method));
+
+			cattr = mono_custom_attrs_from_class (klass);
+
+			if (cattr) {
+				int j;
+
+				for (j = 0; j < cattr->num_attrs; ++j)
+					if (cattr->attrs [j].ctor && !strcmp (cattr->attrs [j].ctor->klass->name, "MonoNativeFunctionWrapperAttribute"))
+						break;
+				if (j < cattr->num_attrs)
+					add_method (acfg, mono_marshal_get_native_func_wrapper_aot (klass));
+			}
 		}
 	}
 
@@ -3230,6 +3267,7 @@ static void
 add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth, const char *ref)
 {
 	MonoMethod *method;
+	MonoClassField *field;
 	gpointer iter;
 
 	if (!acfg->ginst_hash)
@@ -3275,6 +3313,12 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		 * for example Array.Resize<int> for List<int>.Add ().
 		 */
 		add_extra_method_with_depth (acfg, method, depth + 1);
+	}
+
+	iter = NULL;
+	while ((field = mono_class_get_fields (klass, &iter))) {
+		if (field->type->type == MONO_TYPE_GENERICINST)
+			add_generic_class_with_depth (acfg, mono_class_from_mono_type (field->type), depth + 1, "field");
 	}
 
 	if (klass->delegate) {
@@ -6983,6 +7027,7 @@ emit_file_info (MonoAotCompile *acfg)
 	emit_int32 (acfg, acfg->nmethods);
 	emit_int32 (acfg, acfg->flags);
 	emit_int32 (acfg, acfg->opts);
+	emit_int32 (acfg, acfg->simd_opts);
 	emit_int32 (acfg, gc_name_offset);
 
 	for (i = 0; i < MONO_AOT_TRAMP_NUM; ++i)
@@ -7351,6 +7396,8 @@ acfg_create (MonoAssembly *ass, guint32 opts)
 	acfg->globals = g_ptr_array_new ();
 	acfg->image = image;
 	acfg->opts = opts;
+	/* TODO: Write out set of SIMD instructions used, rather than just those available */
+	acfg->simd_opts = mono_arch_cpu_enumerate_simd_versions ();
 	acfg->mempool = mono_mempool_new ();
 	acfg->extra_methods = g_ptr_array_new ();
 	acfg->unwind_info_offsets = g_hash_table_new (NULL, NULL);

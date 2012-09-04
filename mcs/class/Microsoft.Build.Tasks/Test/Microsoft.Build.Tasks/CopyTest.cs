@@ -29,6 +29,7 @@ using System;
 using System.IO;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
+using System.Text;
 
 namespace MonoTests.Microsoft.Build.Tasks {
 
@@ -88,8 +89,9 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			project.LoadXml (documentString);
 
 			if (!project.Build ("1")) {
-				testLogger.DumpMessages ();
-				Assert.Fail ("Build failed");
+				var sb = new StringBuilder ();
+				testLogger.DumpMessages (sb);
+				Assert.Fail ("Build failed " + sb.ToString ());
 			}
 			Assert.IsTrue (File.Exists (target_file), "A2");
 
@@ -286,7 +288,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					
 		}
 
-#if NET_3_5 || NET_4_0
+#if NET_3_5
 		[Test]
 		public void TestCopy_OverwriteReadOnlyTrue ()
 		{
@@ -302,7 +304,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (FileAttributes.ReadOnly, File.GetAttributes (target_file), "A1");
 			
 			string documentString = @"
-				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
 					<PropertyGroup><DestFile>" + target_file + @"</DestFile></PropertyGroup>
 					<ItemGroup>
 						<SFiles Include='" + file_path + @"'><Md>1</Md></SFiles>
@@ -327,8 +329,9 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			project.LoadXml (documentString);
 
 			if (!project.Build ("1")) {
-				testLogger.DumpMessages ();
-				Assert.Fail ("Build failed");
+				var sb = new StringBuilder ();
+				testLogger.DumpMessages (sb);
+				Assert.Fail ("Build failed " + sb.ToString ());
 			}
 			Assert.IsTrue (File.Exists (target_file), "A2");
 			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					

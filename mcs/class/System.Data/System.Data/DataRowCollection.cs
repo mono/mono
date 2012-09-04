@@ -123,11 +123,7 @@ namespace System.Data
 		/// <summary>
 		/// Creates a row using specified values and adds it to the DataRowCollection.
 		/// </summary>
-#if NET_2_0
 		public DataRow Add (params object[] values)
-#else
-		public virtual DataRow Add (object[] values)
-#endif
 		{
 			if (values == null)
 				throw new NullReferenceException ();
@@ -155,24 +151,16 @@ namespace System.Data
 
 					string err = String.Format ("Cannot clear table Parent because " +
 								"ForeignKeyConstraint {0} enforces Child.", uc.ConstraintName);
-#if NET_1_1
 					throw new InvalidConstraintException (err);
-#else
-					throw new ArgumentException (err);
-#endif
 				}
 			}
 
-#if NET_2_0
 			table.DataTableClearing ();
-#endif	
 			List.Clear ();
 
 			// Remove from indexes
 			table.ResetIndexes ();
-#if NET_2_0
 			table.DataTableCleared ();
-#endif
 			OnListChanged (this, new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
@@ -340,7 +328,6 @@ namespace System.Data
 		}
 	}
 
-#if NET_2_0
 	sealed partial class DataRowCollection {
 		public override int Count {
 			get { return List.Count; }
@@ -351,9 +338,9 @@ namespace System.Data
 			CopyTo ((Array) array, index);
 		}
 
-		public override void CopyTo (Array array, int index)
+		public override void CopyTo (Array ar, int index)
 		{
-			base.CopyTo (array, index);
+			base.CopyTo (ar, index);
 		}
 
 		public override IEnumerator GetEnumerator ()
@@ -361,15 +348,4 @@ namespace System.Data
 			return base.GetEnumerator ();
 		}
 	}
-#else
-	[Serializable]
-	partial class DataRowCollection {
-		/// <summary>
-		/// This member overrides InternalDataCollectionBase.List
-		/// </summary>
-		protected override ArrayList List {
-			get { return base.List; }
-		}
-	}
-#endif
 }

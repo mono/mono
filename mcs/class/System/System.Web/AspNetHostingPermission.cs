@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 using System.Security;
 using System.Security.Permissions;
 
@@ -107,10 +105,8 @@ namespace System.Web {
 		public override SecurityElement ToXml ()
 		{
 			SecurityElement se = PermissionHelper.Element (typeof (AspNetHostingPermission), version);
-#if NET_2_0
 			if (IsUnrestricted ())
 				se.AddAttribute ("Unrestricted", "true"); // FDBK15156 fixed in 2.0 RC
-#endif
 			se.AddAttribute ("Level", _level.ToString ());
 			return se;
 		}
@@ -161,5 +157,3 @@ namespace System.Web {
 		}
 	}
 }
-
-#endif

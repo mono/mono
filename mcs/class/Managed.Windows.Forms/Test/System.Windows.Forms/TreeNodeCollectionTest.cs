@@ -231,9 +231,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Remove_NotInCollection ()
 		{
 			TreeView tv = new TreeView ();

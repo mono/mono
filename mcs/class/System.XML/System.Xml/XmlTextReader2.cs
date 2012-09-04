@@ -254,9 +254,11 @@ namespace System.Xml
 			get { return entity != null ? ReadState.Interactive : source.ReadState; }
 		}
 
+#if !NET_4_5
 		public override XmlReaderSettings Settings {
 			get { return base.Settings; }
 		}
+#endif
 
 		public override string Value {
 			get { return Current.Value; }
@@ -497,11 +499,11 @@ namespace System.Xml
 			return true;
 		}
 
-		public override bool MoveToAttribute (string localName, string namespaceName)
+		public override bool MoveToAttribute (string localName, string namespaceURI)
 		{
 			if (entity != null && !entityInsideAttribute)
-				return entity.MoveToAttribute (localName, namespaceName);
-			if (!source.MoveToAttribute (localName, namespaceName))
+				return entity.MoveToAttribute (localName, namespaceURI);
+			if (!source.MoveToAttribute (localName, namespaceURI))
 				return false;
 			if (entity != null && entityInsideAttribute)
 				CloseEntity ();
@@ -651,67 +653,67 @@ namespace System.Xml
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public int ReadBase64 (byte [] buffer, int offset, int length)
+		public int ReadBase64 (byte [] array, int offset, int len)
 		{
 			if (entity != null)
-				return entity.ReadBase64 (buffer, offset, length);
+				return entity.ReadBase64 (array, offset, len);
 			else
-				return source.ReadBase64 (buffer, offset, length);
+				return source.ReadBase64 (array, offset, len);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public int ReadBinHex (byte [] buffer, int offset, int length)
+		public int ReadBinHex (byte [] array, int offset, int len)
 		{
 			if (entity != null)
-				return entity.ReadBinHex (buffer, offset, length);
+				return entity.ReadBinHex (array, offset, len);
 			else
-				return source.ReadBinHex (buffer, offset, length);
+				return source.ReadBinHex (array, offset, len);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public int ReadChars (char [] buffer, int offset, int length)
+		public int ReadChars (char [] buffer, int index, int count)
 		{
 			if (entity != null)
-				return entity.ReadChars (buffer, offset, length);
+				return entity.ReadChars (buffer, index, count);
 			else
-				return source.ReadChars (buffer, offset, length);
+				return source.ReadChars (buffer, index, count);
 		}
 
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadContentAsBase64 (byte [] buffer, int offset, int length)
+		public override int ReadContentAsBase64 (byte [] buffer, int index, int count)
 		{
 			if (entity != null)
-				return entity.ReadContentAsBase64 (buffer, offset, length);
+				return entity.ReadContentAsBase64 (buffer, index, count);
 			else
-				return source.ReadContentAsBase64 (buffer, offset, length);
+				return source.ReadContentAsBase64 (buffer, index, count);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadContentAsBinHex (byte [] buffer, int offset, int length)
+		public override int ReadContentAsBinHex (byte [] buffer, int index, int count)
 		{
 			if (entity != null)
-				return entity.ReadContentAsBinHex (buffer, offset, length);
+				return entity.ReadContentAsBinHex (buffer, index, count);
 			else
-				return source.ReadContentAsBinHex (buffer, offset, length);
+				return source.ReadContentAsBinHex (buffer, index, count);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadElementContentAsBase64 (byte [] buffer, int offset, int length)
+		public override int ReadElementContentAsBase64 (byte [] buffer, int index, int count)
 		{
 			if (entity != null)
-				return entity.ReadElementContentAsBase64 (buffer, offset, length);
+				return entity.ReadElementContentAsBase64 (buffer, index, count);
 			else
-				return source.ReadElementContentAsBase64 (buffer, offset, length);
+				return source.ReadElementContentAsBase64 (buffer, index, count);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadElementContentAsBinHex (byte [] buffer, int offset, int length)
+		public override int ReadElementContentAsBinHex (byte [] buffer, int index, int count)
 		{
 			if (entity != null)
-				return entity.ReadElementContentAsBinHex (buffer, offset, length);
+				return entity.ReadElementContentAsBinHex (buffer, index, count);
 			else
-				return source.ReadElementContentAsBinHex (buffer, offset, length);
+				return source.ReadElementContentAsBinHex (buffer, index, count);
 		}
 		#endregion
 	}

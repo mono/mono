@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 using System.IO;
 using System.Globalization;
 using System.Reflection;
@@ -137,4 +135,3 @@ namespace System.Runtime.InteropServices
 	}
 }
 
-#endif

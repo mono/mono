@@ -20,11 +20,7 @@ using System.Diagnostics;
 using System.Dynamic.Utils;
 using System.Runtime.CompilerServices;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -33,9 +29,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents creating a new array and possibly initializing the elements of the new array.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.NewArrayExpressionProxy))]
-#endif
     public class NewArrayExpression : Expression {
         private readonly ReadOnlyCollection<Expression> _expressions;
         private readonly Type _type;

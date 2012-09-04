@@ -173,9 +173,6 @@
     <Compile Include="..\class\IKVM.Reflection\Writer\*.cs">
       <Visible>false</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Impl\CryptoHack.cs">
-      <Visible>false</Visible>
-    </Compile>
     <Compile Include="..\class\IKVM.Reflection\Impl\ITypeOwner.cs">
       <Visible>false</Visible>
     </Compile>

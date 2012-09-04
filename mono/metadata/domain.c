@@ -1011,6 +1011,23 @@ mono_jit_info_get_arch_eh_info (MonoJitInfo *ji)
 	}
 }
 
+MonoMethodCasInfo*
+mono_jit_info_get_cas_info (MonoJitInfo *ji)
+{
+	if (ji->has_cas_info) {
+		char *ptr = (char*)&ji->clauses [ji->num_clauses];
+		if (ji->has_generic_jit_info)
+			ptr += sizeof (MonoGenericJitInfo);
+		if (ji->has_try_block_holes)
+			ptr += sizeof (MonoTryBlockHoleTableJitInfo);
+		if (ji->has_arch_eh_info)
+			ptr += sizeof (MonoArchEHJitInfo);
+		return (MonoMethodCasInfo*)ptr;
+	} else {
+		return NULL;
+	}
+}
+
 void
 mono_install_create_domain_hook (MonoCreateDomainFunc func)
 {
@@ -1954,12 +1971,17 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 			unregister_vtable_reflection_type (g_ptr_array_index (domain->class_vtable_array, i));
 	}
 
+	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly *ass = tmp->data;
+		mono_assembly_release_gc_roots (ass);
+	}
+
 	/* This needs to be done before closing assemblies */
 	mono_gc_clear_domain (domain);
 
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = tmp->data;
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d\n", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
 			tmp->data = NULL;
 	}

@@ -112,14 +112,18 @@ namespace System.ComponentModel
 		public virtual object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value,
 						 Type destinationType)
 		{
-			// context? culture?
+			// context?
 			if (destinationType == null)
 				throw new ArgumentNullException ("destinationType");
 
 			if (destinationType == typeof (string)) {
-				if (value != null)
-					return value.ToString();
-				return String.Empty;
+				if (value == null)
+					return String.Empty;
+
+				if (culture != null)
+					return Convert.ToString (value, culture);
+
+				return value.ToString();
 			}
 
 			return GetConvertToException (value, destinationType);

@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal {
 
-#if NET_1_1
 	[Guid("E7F0F021-9201-47e4-94DA-1D1416DEC27A")]
 	public interface ISoapClientImport {
 		[DispId(1)]
@@ -43,5 +42,4 @@ namespace System.EnterpriseServices.Internal {
 			[MarshalAs(UnmanagedType.BStr)] string assemblyName,
 			[MarshalAs(UnmanagedType.BStr)] string typeName);
 	}
-#endif
 }

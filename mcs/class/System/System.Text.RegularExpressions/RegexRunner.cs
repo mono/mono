@@ -55,13 +55,11 @@ namespace System.Text.RegularExpressions {
 		protected void Capture (int capnum, int start, int end) {
 			throw new NotImplementedException ();
 		}
-#if NET_2_0
 		[MonoTODO]
 		protected static bool CharInClass (char ch, string charClass)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		[MonoTODO]
 		protected static bool CharInSet (char ch, string set, string category) {
 			throw new NotImplementedException ();

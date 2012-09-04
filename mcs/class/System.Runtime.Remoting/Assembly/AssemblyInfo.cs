@@ -61,16 +61,8 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyKeyFile("../ecma.pub")]
 #endif
 
-#if NET_2_0
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: CLSCompliant (false)]
-	[assembly: ComVisible (false)]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-	[assembly: TypeLibVersion (2, 0)]
-#elif NET_1_1
-	[assembly: TypeLibVersion (1, 10)]
-#elif NET_1_0
-	[assembly: TypeLibVersion (1, 10)]
-#endif
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: CLSCompliant (false)]
+[assembly: ComVisible (false)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: TypeLibVersion (2, 0)]

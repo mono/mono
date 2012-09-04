@@ -117,7 +117,7 @@ namespace System.Net.Http.Headers
 				return GetValue<DateTimeOffset?> ("Date");
 			}
 			set {
-				AddOrRemove ("Date", value);
+				AddOrRemove ("Date", value, Parser.DateTime.ToString);
 			}
 		}
 
@@ -180,7 +180,7 @@ namespace System.Net.Http.Headers
 				return GetValue<DateTimeOffset?> ("If-Modified-Since");
 			}
 			set {
-				AddOrRemove ("If-Modified-Since", value);
+				AddOrRemove ("If-Modified-Since", value, Parser.DateTime.ToString);
 			}
 		}
 
@@ -204,7 +204,7 @@ namespace System.Net.Http.Headers
 				return GetValue<DateTimeOffset?> ("If-Unmodified-Since");
 			}
 			set {
-				AddOrRemove ("If-Unmodified-Since", value);
+				AddOrRemove ("If-Unmodified-Since", value, Parser.DateTime.ToString);
 			}
 		}
 
@@ -315,7 +315,7 @@ namespace System.Net.Http.Headers
 		internal void AddHeaders (HttpRequestHeaders headers)
 		{
 			foreach (var header in headers) {
-				AddWithoutValidation (header.Key, header.Value);
+				TryAddWithoutValidation (header.Key, header.Value);
 			}
 		}
 	}

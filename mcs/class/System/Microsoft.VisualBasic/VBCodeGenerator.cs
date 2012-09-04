@@ -338,13 +338,8 @@ namespace Microsoft.VisualBasic
 		{
 			CodeEventReferenceExpression ev = expression.TargetObject as CodeEventReferenceExpression;
 			
-#if ONLY_1_1
-			Output.Write ("RaiseEvent ");
-#endif
 			if (ev != null) {
-#if NET_2_0
 				Output.Write ("RaiseEvent ");
-#endif
 				if (ev.TargetObject != null && !(ev.TargetObject is CodeThisReferenceExpression)) {
 					GenerateExpression (ev.TargetObject);
 					Output.Write (".");

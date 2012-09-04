@@ -39,7 +39,11 @@ namespace System.Security.Policy {
 
 	[Serializable]
 	[ComVisible (true)]
-        public sealed class Url: IIdentityPermissionFactory, IBuiltInEvidence {
+	public sealed class Url :
+#if NET_4_0
+		EvidenceBase,
+#endif
+		IIdentityPermissionFactory, IBuiltInEvidence {
 
                 private string origin_url;
                 

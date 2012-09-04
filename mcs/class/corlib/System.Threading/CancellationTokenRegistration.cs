@@ -67,7 +67,7 @@ namespace System.Threading
 		
 		public override int GetHashCode ()
 		{
-			return id.GetHashCode () ^ source.GetHashCode ();
+			return id.GetHashCode () ^ (source == null ? 0 : source.GetHashCode ());
 		}
 
 		public override bool Equals (object obj)

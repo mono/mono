@@ -83,8 +83,6 @@
 ../../../external/aspnetwebstack/src/System.Net.Http.Formatting/UriExtensions.cs
 
 
-Extensions.cs
-
 ../../../external/Newtonsoft.Json/Src/Newtonsoft.Json/Bson/BsonBinaryType.cs
 ../../../external/Newtonsoft.Json/Src/Newtonsoft.Json/Bson/BsonBinaryWriter.cs
 ../../../external/Newtonsoft.Json/Src/Newtonsoft.Json/Bson/BsonReader.cs

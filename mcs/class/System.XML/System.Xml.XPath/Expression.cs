@@ -36,11 +36,7 @@ using System.Xml.Xsl;
 using System.Globalization;
 using Mono.Xml.XPath;
 
-#if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
-#else
-using NSResolver = System.Xml.XmlNamespaceManager;
-#endif
 
 namespace System.Xml.XPath
 {
@@ -128,12 +124,10 @@ namespace System.Xml.XPath
 			_nsm = nsManager;
 		}
 
-#if NET_2_0
 		public override void SetContext (IXmlNamespaceResolver nsResolver)
 		{
 			_nsm = nsResolver;
 		}
-#endif
 
 		internal NSResolver NamespaceManager { get { return _nsm; } }
 		public override String Expression { get { return rawExpression; }}
@@ -1695,14 +1689,7 @@ namespace System.Xml.XPath
 				if (resolvedName)
 					strURI1 = _name.Namespace;
 				else if (nsm != null)
-// We still need to have such tricky switch, because the behavior is 
-// inconsistent between .NET 1.x and 2.0 when the argument is not
-// atomic string.
-#if NET_2_0
 					strURI1 = nsm.LookupNamespace (_name.Namespace);
-#else
-					strURI1 = nsm.LookupNamespace (_name.Namespace, false);
-#endif
 				if (strURI1 == null)
 					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
@@ -1725,14 +1712,7 @@ namespace System.Xml.XPath
 				if (resolvedName)
 					ns = _name.Namespace;
 				else
-// We still need to have such tricky switch, because the behavior is 
-// inconsistent between .NET 1.x and 2.0 when the argument is not
-// atomic string.
-#if NET_2_0
 					ns = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
-#else
-					ns = nsm.LookupNamespace (_name.Namespace, false);	// TODO: check to see if this returns null or ""
-#endif
 				if (ns == null)
 					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}

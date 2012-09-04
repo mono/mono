@@ -692,7 +692,7 @@ namespace Mono.CSharp {
 									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError ());
 							} else if ((candidate.Modifiers & Modifiers.PUBLIC) == 0) {
 								Report.Error (737, container.Location,
-									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' in not public",
+									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is not public",
 									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError ());
 							} else {
 								Report.Error (738, container.Location,

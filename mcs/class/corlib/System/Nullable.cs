@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System
 {
@@ -81,6 +82,7 @@ namespace System
 	}
 
 	[Serializable]
+	[DebuggerStepThrough]
 	public struct Nullable<T> where T: struct
 	{
 		#region Sync with runtime code

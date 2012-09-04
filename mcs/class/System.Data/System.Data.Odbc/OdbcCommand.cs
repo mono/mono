@@ -133,23 +133,13 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcDescriptionAttribute ("Time to wait for command to execute")]
-#if NET_1_0 || ONLY_1_1
-		[DefaultValue (DEFAULT_COMMAND_TIMEOUT)]
-#endif
-		public
-#if NET_2_0
-		override
-#endif
+		public override
 		int CommandTimeout {
 			get { return timeout; }
 			set {
 				if (value < 0)
-#if NET_2_0
 					throw new ArgumentException ("The property value assigned is less than 0.",
 						"CommandTimeout");
-#else
-					throw new ArgumentException ("The property value assigned is less than 0.");
-#endif
 				timeout = value;
 			}
 		}

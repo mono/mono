@@ -30,6 +30,10 @@
 using System.Net;
 using System.IO;
 using System.Text;
+#if NET_4_5
+using System.Net.Cache;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Xml
 {
@@ -37,6 +41,10 @@ namespace System.Xml
 	{
 		// Field
 		ICredentials credential;
+#if NET_4_5
+		RequestCachePolicy cachePolicy;
+		IWebProxy proxy;
+#endif
 
 		// Constructor
 		public XmlUrlResolver ()
@@ -49,6 +57,16 @@ namespace System.Xml
 		{
 			set { credential = value; }
 		}
+
+#if NET_4_5
+		public RequestCachePolicy CachePolicy {
+			set { cachePolicy = value; }
+		}
+
+		public IWebProxy Proxy {
+			set { proxy = value; }
+		}
+#endif
 
 		// Methods
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
@@ -71,6 +89,12 @@ namespace System.Xml
 
 			// (MS documentation says) parameter role isn't used yet.
 			WebRequest req = WebRequest.Create (absoluteUri);
+#if NET_4_5
+			if (cachePolicy != null)
+				req.CachePolicy = cachePolicy;
+			if (proxy != null)
+				req.Proxy = proxy;
+#endif
 			if (credential != null)
 				req.Credentials = credential;
 			return req.GetResponse().GetResponseStream();
@@ -93,5 +117,36 @@ namespace System.Xml
 				.Replace ("%20", " ")
 				.Replace ("%25", "%");
 		}
+
+#if NET_4_5
+		public override async Task<object> GetEntityAsync (
+			Uri absoluteUri, string role, Type ofObjectToReturn)
+		{
+			if (ofObjectToReturn == null)
+				ofObjectToReturn = typeof (Stream);
+			if (ofObjectToReturn != typeof (Stream))
+				throw new XmlException ("This object type is not supported.");
+
+			if (!absoluteUri.IsAbsoluteUri)
+				throw new ArgumentException ("uri must be absolute.", "absoluteUri");
+
+			if (absoluteUri.Scheme == "file") {
+				if (absoluteUri.AbsolutePath == String.Empty)
+					throw new ArgumentException ("uri must be absolute.", "absoluteUri");
+				return new FileStream (UnescapeRelativeUriBody (absoluteUri.LocalPath), FileMode.Open, FileAccess.Read, FileShare.Read);
+			}
+
+			// (MS documentation says) parameter role isn't used yet.
+			WebRequest req = WebRequest.Create (absoluteUri);
+			if (cachePolicy != null)
+				req.CachePolicy = cachePolicy;
+			if (proxy != null)
+				req.Proxy = proxy;
+			if (credential != null)
+				req.Credentials = credential;
+			var res = await req.GetResponseAsync ().ConfigureAwait (false);
+			return res.GetResponseStream ();
+		}
+#endif
 	}
 }

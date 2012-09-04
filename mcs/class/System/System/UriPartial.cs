@@ -37,8 +37,6 @@ namespace System {
 		Scheme = 0,
 		Authority = 1,
 		Path = 2,
-#if NET_2_0
 		Query
-#endif
 	}
 }

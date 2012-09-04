@@ -94,10 +94,6 @@ namespace System.Security.Cryptography {
 		public RC2Transform (RC2 rc2Algo, bool encryption, byte[] key, byte[] iv)
 			: base (rc2Algo, encryption, iv)
 		{
-#if ONLY_1_1
-			if (key == null)
-				throw new ArgumentNullException ("key");
-#endif
 			int t1 = rc2Algo.EffectiveKeySize;
 			if (key == null) {
 				key = KeyBuilder.Key (rc2Algo.KeySize >> 3);

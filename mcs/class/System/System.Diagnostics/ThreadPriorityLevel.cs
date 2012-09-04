@@ -29,9 +29,6 @@
 //
 
 namespace System.Diagnostics {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum ThreadPriorityLevel {
 		AboveNormal=1,
 		BelowNormal=-1,

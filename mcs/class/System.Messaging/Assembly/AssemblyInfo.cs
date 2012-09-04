@@ -57,15 +57,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
-#if NET_2_0
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-#elif NET_1_1
-	[assembly: AssemblyTrademark ("")]
-	[assembly: AssemblyConfiguration ("")]
-#elif NET_1_0
-	[assembly: AssemblyTrademark ("")]
-	[assembly: AssemblyConfiguration ("")]
-#endif
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

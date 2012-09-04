@@ -30,9 +30,6 @@
 using System;
 
 namespace System.ComponentModel {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public delegate void ListChangedEventHandler(object sender, 
 						     ListChangedEventArgs e);
 }						    

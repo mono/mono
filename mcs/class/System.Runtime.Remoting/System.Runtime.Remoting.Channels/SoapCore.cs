@@ -43,9 +43,7 @@ namespace System.Runtime.Remoting.Channels
 		bool _strictBinding = false;
 		IDictionary _properties;
 		
-#if NET_1_1
 		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
-#endif
 
 		public static SoapCore DefaultInstance = new SoapCore ();
 		
@@ -73,7 +71,6 @@ namespace System.Runtime.Remoting.Channels
 					case "strictBinding":
 						_strictBinding = Convert.ToBoolean (property.Value);
 						break;
-#if NET_1_1
 					case "typeFilterLevel":
 						if (property.Value is TypeFilterLevel)
 							_filterLevel = (TypeFilterLevel) property.Value;
@@ -82,7 +79,6 @@ namespace System.Runtime.Remoting.Channels
 							_filterLevel = (TypeFilterLevel) Enum.Parse (typeof(TypeFilterLevel), s);
 						}
 						break;
-#endif
 				}
 			}
 			
@@ -103,10 +99,8 @@ namespace System.Runtime.Remoting.Channels
 			_serializationFormatter = CreateFormatter (surrogateSelector, context);
 			_deserializationFormatter = CreateFormatter (null, context);
 
-#if NET_1_1
 			_serializationFormatter.FilterLevel = _filterLevel;
 			_deserializationFormatter.FilterLevel = _filterLevel;
-#endif
 		}
 		
 		SoapFormatter CreateFormatter (ISurrogateSelector selector, StreamingContext context)
@@ -143,12 +137,10 @@ namespace System.Runtime.Remoting.Channels
 			get { return _properties; }
 		}
 		
-#if NET_1_1
 		public TypeFilterLevel TypeFilterLevel
 		{
 			get { return _filterLevel; }
 		}
-#endif
 	}
 }
 

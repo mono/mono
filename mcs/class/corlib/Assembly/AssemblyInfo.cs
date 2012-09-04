@@ -70,8 +70,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: ComVisible (false)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: TypeLibVersion (2, 0)]
+[assembly: TypeLibVersion (2, 4)]
 [assembly: DefaultDependency (LoadHint.Always)]
 [assembly: StringFreezing]
 

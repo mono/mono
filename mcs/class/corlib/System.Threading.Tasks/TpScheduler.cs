@@ -31,6 +31,8 @@
 
 #if NET_4_0 || MOBILE
 
+using System.Collections.Generic;
+
 namespace System.Threading.Tasks
 {
 	sealed class TpScheduler: TaskScheduler
@@ -57,18 +59,22 @@ namespace System.Threading.Tasks
 			task.Execute ();
 		}
 
-		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
+		protected override IEnumerable<Task> GetScheduledTasks ()
 		{
-			throw new System.NotImplementedException();
+			throw new NotImplementedException();
 		}
 
+		[MonoTODO ("Tasks cannot be dequeued")]
 		protected internal override bool TryDequeue (Task task)
 		{
-			throw new System.NotImplementedException();
+			return false;
 		}
 
 		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 		{
+			if (taskWasPreviouslyQueued && !TryDequeue (task))
+				return false;
+
 		    return TryExecuteTask(task);
 		}
 	}

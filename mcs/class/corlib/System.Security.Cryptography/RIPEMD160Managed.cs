@@ -120,12 +120,6 @@ namespace System.Security.Cryptography {
 			}
 			return hash;
 		}
-		/// <summary>
-		/// Finalizes the RIPEMD160Managed.
-		/// </summary>
-		~RIPEMD160Managed() {
-			Dispose(false);
-		}
 
 		/// <summary>
 		/// Processes one block of data.

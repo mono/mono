@@ -422,9 +422,9 @@ namespace Mono.CSharp
 			return Parent.CheckRethrow (loc);
 		}
 
-		public virtual bool AddResumePoint (ResumableStatement stmt, out int pc)
+		public virtual bool AddResumePoint (ResumableStatement stmt, ResumableStatement current, out int pc)
 		{
-			return Parent.AddResumePoint (stmt, out pc);
+			return Parent.AddResumePoint (stmt, current, out pc);
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
@@ -651,9 +651,9 @@ namespace Mono.CSharp
 			this.iterator = iterator;
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, ResumableStatement current, out int pc)
 		{
-			pc = iterator.AddResumePoint (stmt);
+			pc = iterator.AddResumePoint (current);
 			return false;
 		}
 	}
@@ -673,7 +673,7 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, ResumableStatement current, out int pc)
 		{
 			throw new InternalErrorException ("A yield in a non-iterator block");
 		}
@@ -750,16 +750,16 @@ namespace Mono.CSharp
 			return CurrentUsageVector.Next != null || Parent.CheckRethrow (loc);
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, ResumableStatement current, out int pc)
 		{
 			int errors = Report.Errors;
-			Parent.AddResumePoint (tc.IsTryCatchFinally ? stmt : tc, out pc);
+			Parent.AddResumePoint (stmt, tc.IsTryCatchFinally ? current : tc, out pc);
 			if (errors == Report.Errors) {
 				if (stmt is AwaitStatement) {
 					if (CurrentUsageVector.Next != null) {
 						Report.Error (1985, stmt.loc, "The `await' operator cannot be used in the body of a catch clause");
 					} else {
-						this.tc.AddResumePoint (stmt, pc);
+						this.tc.AddResumePoint (current, pc);
 					}
 				} else {
 					if (CurrentUsageVector.Next == null)
@@ -815,9 +815,9 @@ namespace Mono.CSharp
 			return CurrentUsageVector.Next != null || Parent.CheckRethrow (loc);
 		}
 */
-		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, ResumableStatement current, out int pc)
 		{
-			pc = async_init.AddResumePoint (stmt);
+			pc = async_init.AddResumePoint (current);
 			return true;
 		}
 
@@ -969,13 +969,13 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override bool AddResumePoint (ResumableStatement stmt, out int pc)
+		public override bool AddResumePoint (ResumableStatement stmt, ResumableStatement current, out int pc)
 		{
 			int errors = Report.Errors;
-			Parent.AddResumePoint (this.stmt, out pc);
+			Parent.AddResumePoint (stmt, this.stmt, out pc);
 			if (errors == Report.Errors) {
 				if (finally_vector == null)
-					this.stmt.AddResumePoint (stmt, pc);
+					this.stmt.AddResumePoint (current, pc);
 				else {
 					if (stmt is AwaitStatement) {
 						Report.Error (1984, stmt.loc, "The `await' operator cannot be used in the body of a finally clause");

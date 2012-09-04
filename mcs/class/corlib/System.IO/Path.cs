@@ -349,12 +349,14 @@ namespace System.IO {
 				if (!IsPathRooted (path)) {
 					
 					// avoid calling expensive CanonicalizePath when possible
-					var start = 0;
-					while ((start = path.IndexOf ('.', start)) != -1) {
-						if (++start == path.Length || path [start] == DirectorySeparatorChar || path [start] == AltDirectorySeparatorChar)
-							break;
+					if (!Environment.IsRunningOnWindows) {
+						var start = 0;
+						while ((start = path.IndexOf ('.', start)) != -1) {
+							if (++start == path.Length || path [start] == DirectorySeparatorChar || path [start] == AltDirectorySeparatorChar)
+								break;
+						}
+						canonicalize = start > 0;
 					}
-					canonicalize = start > 0;
 					
 					path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
 				} else if (DirectorySeparatorChar == '\\' &&

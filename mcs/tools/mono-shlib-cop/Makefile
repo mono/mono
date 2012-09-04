@@ -12,8 +12,6 @@ EXTRA_DISTFILES = test.cs
 
 include ../../build/executable.make
 
-test-local: $(PROGRAM) $(TEST_INPUT)
-
 clean-local: cleanup
 
 cleanup:
@@ -21,9 +19,8 @@ cleanup:
 
 run-test-local: run-mono-shlib-cop-test
 
-run-mono-shlib-cop-test: $(PROGRAM) $(TEST_INPUT)
-	$(RUNTIME) $(PROGRAM) $(TEST_INPUT) | diff - test.dll.out
+run-mono-shlib-cop-test: $(the_lib) $(TEST_INPUT)
+	$(RUNTIME) $(the_lib) $(TEST_INPUT) | diff - test.dll.out
 
 $(TEST_INPUT) : test.cs
 	$(CSCOMPILE) -target:library $< -out:$@
-

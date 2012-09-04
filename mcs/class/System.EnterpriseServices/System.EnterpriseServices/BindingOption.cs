@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[Serializable]
 	[ComVisible(false)]
 	public enum BindingOption {
@@ -39,5 +38,4 @@ namespace System.EnterpriseServices {
 		NoBinding,
 		BindingToPoolThread
 	}
-#endif
 }

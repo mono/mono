@@ -70,11 +70,9 @@ namespace System.Net.Sockets {
 		/// </summary>
 		Idp = 22,
 
-#if NET_1_1
 		/// <summary>
 		/// </summary>
 		IPv6 = 41,
-#endif
 
 		/// <summary>
 		/// </summary>
@@ -104,7 +102,6 @@ namespace System.Net.Sockets {
 		/// </summary>
 		Unknown = -1,
 
-#if NET_2_0
 		IPv4 = 4,
 		IPv6RoutingHeader = 43,
 		IPv6FragmentHeader = 44,
@@ -114,7 +111,6 @@ namespace System.Net.Sockets {
 		IPv6NoNextHeader = 59,
 		IPv6DestinationOptions = 60,
 		IPv6HopByHopOptions = 0,
-#endif
 	} // ProtocolType
 
 } // System.Net.Sockets

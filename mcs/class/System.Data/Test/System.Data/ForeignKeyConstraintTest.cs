@@ -209,15 +209,11 @@ namespace MonoTests.System.Data
 			// Create a ForeingKeyConstraint Object using the constructor
                         // ForeignKeyConstraint (string, string, string[], string[], AcceptRejectRule, Rule, Rule);
 			 ForeignKeyConstraint fkc = new ForeignKeyConstraint ("hello world", parentTableName, parentColumnNames, childColumnNames, AcceptRejectRule.Cascade, Rule.Cascade, Rule.Cascade);                                                                                                                            // Assert that the Constraint object does not belong to any table yet
-#if NET_1_1
 			try {
 				DataTable tmp = fkc.Table;
 				Fail ("When table is null, get_Table causes an InvalidOperationException.");
 			} catch (InvalidOperationException) {
 			}
-#else
-                        Assertion.AssertEquals ("#A01 Table should not be set", fkc.Table, null);
-#endif
                                                                                                     
                         Constraint []constraints = new Constraint[3];
                         constraints [0] = new UniqueConstraint (column1);
@@ -302,11 +298,7 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint((DataColumn)null,(DataColumn)null);
 				Fail("Failed to throw ArgumentNullException.");
 			}
-#if NET_1_1
 			catch (NullReferenceException) {}
-#else
-			catch (ArgumentNullException) {}
-#endif
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
@@ -344,13 +336,8 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[1]);
 				Fail("Failed to throw InvalidConstraintException.");
 			}
-#if NET_1_1
 			// tables in different datasets
 			catch (InvalidOperationException) {}
-#else
-			//different dataTypes
-			catch (InvalidConstraintException) {}
-#endif
 
 			// Cannot create a Key from Columns that belong to
 			// different tables.
@@ -525,6 +512,30 @@ namespace MonoTests.System.Data
 
 			t1.Rows [0][0]=20;
 			Assert("#1", (int)t2.Rows [0][0] == 20);
+		}
+
+		[Test]
+		// https://bugzilla.novell.com/show_bug.cgi?id=650402
+		public void ForeignKey_650402 ()
+		{
+			DataSet data = new DataSet ();
+			DataTable parent = new DataTable ("parent");
+			DataColumn pk = parent.Columns.Add ("PK");
+			DataTable child = new DataTable ("child");
+			DataColumn fk = child.Columns.Add ("FK");
+			
+			data.Tables.Add (parent);
+			data.Tables.Add (child);
+			data.Relations.Add (pk, fk);
+			
+			parent.Rows.Add ("value");
+			child.Rows.Add ("value");
+			data.AcceptChanges ();
+			child.Rows[0].Delete ();
+			parent.Rows[0][0] = "value2";
+			
+			data.EnforceConstraints = false;
+			data.EnforceConstraints = true;
 		}
 	}
 }

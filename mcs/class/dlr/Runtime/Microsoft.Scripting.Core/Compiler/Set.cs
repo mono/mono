@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -17,7 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 // Note: can't move to Utils because name conflicts with System.Linq.Set
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {

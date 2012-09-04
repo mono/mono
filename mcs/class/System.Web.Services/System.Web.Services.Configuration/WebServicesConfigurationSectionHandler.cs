@@ -42,11 +42,9 @@ namespace System.Web.Services.Configuration
 		HttpPost = 1 << 1,
 		HttpGet =  1 << 2,
 		Documentation = 1 << 3,
-#if NET_1_1
 		HttpSoap12 = 1 << 4,
 		HttpPostLocalhost = 1 << 5,
 		AnyHttpSoap = HttpSoap | HttpSoap12,
-#endif
 		All = 0xFF
 	}
 	

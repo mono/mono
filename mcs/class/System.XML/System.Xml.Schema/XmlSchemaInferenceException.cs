@@ -63,8 +63,8 @@ namespace System.Xml.Schema
 		}
 
 		public XmlSchemaInferenceException (string message,
-			Exception innerException, int line, int column)
-			: base (message, innerException, line, column)
+			Exception innerException, int lineNumber, int linePosition)
+			: base (message, innerException, lineNumber, linePosition)
 		{
 		}
 

@@ -165,7 +165,7 @@ restart_handler (int sig)
 	rely on pthread_self () and seatch over the thread list.
 	*/
 	if (!info)
-		info = mono_thread_info_lookup (pthread_self ());
+		info = (SgenThreadInfo*)mono_thread_info_lookup (pthread_self ());
 
 	/*
 	 * If a thread is dying there might be no thread info.  In
@@ -198,7 +198,7 @@ sgen_wait_for_suspend_ack (int count)
 	for (i = 0; i < count; ++i) {
 		while ((result = MONO_SEM_WAIT (suspend_ack_semaphore_ptr)) != 0) {
 			if (errno != EINTR) {
-				g_error ("sem_wait ()");
+				g_error ("MONO_SEM_WAIT FAILED with %d errno %d (%s)", result, errno, strerror (errno));
 			}
 		}
 	}
@@ -225,6 +225,9 @@ sgen_thread_handshake (BOOL suspend)
 
 	count = 0;
 	FOREACH_THREAD_SAFE (info) {
+		if (info->joined_stw == suspend)
+			continue;
+		info->joined_stw = suspend;
 		if (mono_native_thread_id_equals (mono_thread_info_get_tid (info), me)) {
 			continue;
 		}

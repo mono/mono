@@ -1096,6 +1096,22 @@ mono_test_marshal_stringbuilder_out_unicode (gunichar2 **s)
 	return 0;
 }
 
+LIBTEST_API int STDCALL
+mono_test_marshal_stringbuilder_ref (char **s)
+{
+	const char m[] = "This is my message.  Isn't it nice?";
+	char *str;
+
+	if (strcmp (*s, "ABC"))
+		return 1;
+
+	str = marshal_alloc (strlen (m) + 1);
+	memcpy (str, m, strlen (m) + 1);
+	
+	*s = str;
+	return 0;
+}
+
 typedef struct {
 #ifndef __GNUC__
     char a;
@@ -1407,6 +1423,8 @@ string_marshal_test2 (char **str)
 
 	if (strcmp (*str, "TEST1"))
 		return -1;
+
+	*str = marshal_strdup ("TEST2");
 
 	return 0;
 }
@@ -3146,9 +3164,12 @@ ITestOut(MonoComObject* pUnk, MonoComObject* *ppUnk)
 	return S_OK;
 }
 
+static void create_com_object (MonoComObject** pOut);
+
 LIBTEST_API int STDCALL 
 get_ITest(MonoComObject* pUnk, MonoComObject* *ppUnk)
 {
+	create_com_object (ppUnk);
 	return S_OK;
 }
 

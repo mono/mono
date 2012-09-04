@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 
 namespace System.Net.Mail 
@@ -37,4 +35,3 @@ namespace System.Net.Mail
 	public delegate void SendCompletedEventHandler (object sender, AsyncCompletedEventArgs e);
 }
 
-#endif // NET_2_0

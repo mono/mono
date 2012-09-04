@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -13,10 +13,10 @@
  *
  * ***************************************************************************/
 
-#if CLR2
-using Microsoft.Scripting.Ast;
-#else
+#if FEATURE_CORE_DLR
 using System.Linq.Expressions;
+#else
+using Microsoft.Scripting.Ast;
 #endif
 
 namespace System.Dynamic {

@@ -142,6 +142,11 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		/*
+		 * The .NET runtime hits the "#9" assertion.
+		 * The test succeeds with Mono.
+		 */
+		[Category ("NotWorking")]
 		public void CopyToAsync ()
 		{
 			var ms = new MemoryStream ();
@@ -300,6 +305,22 @@ namespace MonoTests.System.Net.Http
 
 			var sc = new StreamContent (ms);
 			Assert.IsTrue (sc.LoadIntoBufferAsync (400).Wait (200));
+		}
+
+		[Test]
+		public void LoadIntoBuffer_BufferOverflow ()
+		{
+			var ms = new MemoryStream ();
+			ms.Write (new byte[10000], 0, 10000);
+			ms.Seek (0, SeekOrigin.Begin);
+
+			var sc = new StreamContent (ms);
+			try {
+				Assert.IsTrue (sc.LoadIntoBufferAsync (50).Wait (200));
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+			}
 		}
 
 		[Test]

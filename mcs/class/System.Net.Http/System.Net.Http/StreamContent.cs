@@ -67,13 +67,17 @@ namespace System.Net.Http
 			base.Dispose (disposing);
 		}
 
-		protected override Task SerializeToStreamAsync (Stream stream, TransportContext context)
+		protected internal override Task SerializeToStreamAsync (Stream stream, TransportContext context)
 		{
 			return content.CopyToAsync (stream, bufferSize);
 		}
 
 		protected internal override bool TryComputeLength (out long length)
 		{
+			if (!content.CanSeek) {
+				length = 0;
+				return false;
+			}
 			length = content.Length;
 			return true;
 		}

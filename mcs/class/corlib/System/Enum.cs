@@ -167,7 +167,7 @@ namespace System
 			names = other.names;
 			name_hash = other.name_hash;
 		}
-
+		
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
 			/* First check the thread-local cache without locking */
@@ -187,18 +187,9 @@ namespace System
 
 			get_enum_info (enumType, out info);
 
-			IComparer ic = null;
 			Type et = Enum.GetUnderlyingType (enumType);
-			if (et == typeof (int))
-				ic = int_comparer;
-			else if (et == typeof (short))
-				ic = short_comparer;
-			else if (et == typeof (sbyte))
-				ic = sbyte_comparer;
-			else if (et == typeof (long))
-				ic = long_comparer;
+			SortEnums (et, info.values, info.names);
 			
-			Array.Sort (info.values, info.names, ic);
 			if (info.names.Length > 50) {
 				info.name_hash = new Hashtable (info.names.Length);
 				for (int i = 0; i <  info.names.Length; ++i)
@@ -208,6 +199,21 @@ namespace System
 			lock (global_cache_monitor) {
 				global_cache [enumType] = cached;
 			}
+		}
+		
+		internal static void SortEnums (Type et, Array values, Array names)
+		{
+			IComparer ic = null;
+			if (et == typeof (int))
+				ic = int_comparer;
+			else if (et == typeof (short))
+				ic = short_comparer;
+			else if (et == typeof (sbyte))
+				ic = sbyte_comparer;
+			else if (et == typeof (long))
+				ic = long_comparer;
+			
+			Array.Sort (values, names, ic);
 		}
 	};
 

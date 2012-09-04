@@ -874,7 +874,7 @@ namespace System.Windows.Forms {
 			return Carbon.Pasteboard.Retrieve (handle, type);
 		}
 
-		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
+		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy) {
 			Carbon.Pasteboard.Store (handle, obj, type);
 		}
 		

@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -13,13 +13,10 @@
  *
  * ***************************************************************************/
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 using Microsoft.Scripting.Ast;
 #else
 using System.Linq.Expressions;
-#endif
-#if SILVERLIGHT
-using System.Core;
 #endif
 
 using System.Collections.Generic;

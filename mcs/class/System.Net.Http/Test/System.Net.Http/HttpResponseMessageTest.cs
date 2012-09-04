@@ -29,6 +29,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using System.Net.Http;
 using System.Net;
@@ -62,6 +63,8 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (HttpStatusCode.OK, m.StatusCode, "#6");
 			Assert.AreEqual (new Version (1, 1), m.Version, "#7");
 			Assert.IsNull (m.Headers.CacheControl, "#8");
+
+			Assert.AreEqual ("StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#9");
 		}
 
 		[Test]
@@ -302,7 +305,7 @@ namespace MonoTests.System.Net.Http
 			headers.Add ("c", null as string);
 			headers.Add ("d", new string[0]);
 
-			headers.AddWithoutValidation ("cache-control", "audio");
+			headers.TryAddWithoutValidation ("cache-control", "audio");
 
 			Assert.IsFalse (headers.Contains ("nn"), "#1a");
 			Assert.IsTrue (headers.Contains ("b"), "#1b");
@@ -360,17 +363,9 @@ namespace MonoTests.System.Net.Http
 			} catch (InvalidOperationException) {
 			}
 
-			try {
-				headers.AddWithoutValidation ("Allow", "");
-				Assert.Fail ("#3");
-			} catch (InvalidOperationException) {
-			}
+			Assert.IsFalse (headers.TryAddWithoutValidation ("Allow", ""), "#3");
 
-			try {
-				headers.AddWithoutValidation (null, "");
-				Assert.Fail ("#4");
-			} catch (ArgumentException) {
-			}
+			Assert.IsFalse (headers.TryAddWithoutValidation (null, ""), "#4");
 
 			try {
 				headers.Contains (null);
@@ -396,7 +391,7 @@ namespace MonoTests.System.Net.Http
 			} catch (FormatException) {
 			}
 
-			headers.AddWithoutValidation ("location", "a@a.com");
+			headers.TryAddWithoutValidation ("location", "a@a.com");
 			try {
 				headers.Add ("location", "w3.org");
 				Assert.Fail ("#7b");
@@ -414,7 +409,7 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual ("audio", headers.GetValues ("Accept").First (), "#1");
 
 			headers.Clear ();
-			headers.AddWithoutValidation ("accept", "audio");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("accept", "audio"), "#2a");
 			Assert.AreEqual ("audio", headers.GetValues ("Accept").First (), "#2");
 		}
 
@@ -436,6 +431,10 @@ namespace MonoTests.System.Net.Http
 			headers.Clear ();
 			headers.Connection.Add ("Close");
 			Assert.IsTrue (headers.ConnectionClose.Value, "#4");
+
+			// .NET encloses the "Connection: Close" with two whitespaces.
+			var normalized = Regex.Replace (message.ToString (), @"\s", "");
+			Assert.AreEqual ("StatusCode:200,ReasonPhrase:'OK',Version:1.1,Content:<null>,Headers:{Connection:Close}", normalized, "#5");
 		}
 
 		[Test]
@@ -443,7 +442,7 @@ namespace MonoTests.System.Net.Http
 		{
 			HttpResponseMessage message = new HttpResponseMessage ();
 			HttpResponseHeaders headers = message.Headers;
-			headers.AddWithoutValidation ("location", "http://w3.org");
+			headers.TryAddWithoutValidation ("location", "http://w3.org");
 			Assert.AreEqual (new Uri ("http://w3.org"), headers.Location);
 		}
 
@@ -452,9 +451,9 @@ namespace MonoTests.System.Net.Http
 		{
 			HttpResponseMessage message = new HttpResponseMessage ();
 			HttpResponseHeaders headers = message.Headers;
-			headers.AddWithoutValidation ("Transfer-Encoding", "mmm");
-			headers.AddWithoutValidation ("Transfer-Encoding", "▀");
-			headers.AddWithoutValidation ("Transfer-Encoding", "zz");
+			headers.TryAddWithoutValidation ("Transfer-Encoding", "mmm");
+			headers.TryAddWithoutValidation ("Transfer-Encoding", "▀");
+			headers.TryAddWithoutValidation ("Transfer-Encoding", "zz");
 
 			var a = headers.TransferEncoding;
 			Assert.AreEqual (2, a.Count, "#1");
@@ -479,16 +478,16 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (1, headers.TransferEncoding.Count, "#3b");
 
 			headers.Clear ();
-			headers.AddWithoutValidation ("Transfer-Encoding", "value");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("Transfer-Encoding", "value"), "#4-0");
 //			Assert.AreEqual (false, headers.TransferEncodingChunked, "#4");
 
 			headers.Clear ();
-			headers.AddWithoutValidation ("Transfer-Encoding", "chunked");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("Transfer-Encoding", "chunked"), "#5-0");
 			Assert.AreEqual (true, headers.TransferEncodingChunked, "#5");
 
 			message = new HttpResponseMessage ();
 			headers = message.Headers;
-			headers.AddWithoutValidation ("Transfer-Encoding", "ß");
+			Assert.IsTrue (headers.TryAddWithoutValidation ("Transfer-Encoding", "ß"), "#6-0");
 			Assert.IsNull (headers.TransferEncodingChunked, "#6");
 		}
 

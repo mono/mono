@@ -33,9 +33,6 @@ namespace System.ComponentModel
 	/// <summary>
 	/// Specifies the direction of a sort operation.
 	/// </summary>
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum ListSortDirection {
 		Ascending = 0,
 		Descending = 1

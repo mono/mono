@@ -53,23 +53,14 @@ namespace System.Net {
 
 		public string Accept {
 			get {
-#if NET_2_0
 				if (m_accept == null)
 					return null;
-#endif
 				return (m_accept as WebPermissionInfo).Info; 
 			}
 			set { 
 				if (m_accept != null)
 					AlreadySet ("Accept", "Accept");
-#if NET_2_0
 				m_accept = new WebPermissionInfo (WebPermissionInfoType.InfoString, value);
-#else
-				if (value == null)
-					m_accept = null;
-				else
-					m_accept = new WebPermissionInfo (WebPermissionInfoType.InfoString, value);
-#endif
 			}
 		}
 
@@ -91,23 +82,14 @@ namespace System.Net {
 
 		public string Connect {
 			get {
-#if NET_2_0
 				if (m_connect == null)
 					return null;
-#endif
 				return (m_connect as WebPermissionInfo).Info; 
 			}
 			set { 
 				if (m_connect != null)
 					AlreadySet ("Connect", "Connect");
-#if NET_2_0
 				m_connect = new WebPermissionInfo (WebPermissionInfoType.InfoString, value);
-#else
-				if (value == null)
-					m_connect = null;
-				else
-					m_connect = new WebPermissionInfo (WebPermissionInfoType.InfoString, value);
-#endif
 			}
 		}
 

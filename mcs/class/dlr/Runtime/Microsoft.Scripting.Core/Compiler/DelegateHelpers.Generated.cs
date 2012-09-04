@@ -21,7 +21,7 @@ using System.Dynamic;
 using System.Dynamic.Utils;
 using System.Runtime.CompilerServices;
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast.Compiler {
     using Microsoft.Scripting.Utils;
 #else

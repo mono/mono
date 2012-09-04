@@ -32,9 +32,7 @@ using System.Security.Permissions;
 
 namespace System.ComponentModel {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	public class WarningException : SystemException
 	{
 		private string helpUrl;
@@ -58,7 +56,6 @@ namespace System.ComponentModel {
 			this.helpTopic = helpTopic;
 		}
 
-#if NET_2_0
 		public WarningException () 
 			: base (Locale.GetText ("Warning"))
 		{
@@ -93,7 +90,6 @@ namespace System.ComponentModel {
 			info.AddValue ("helpTopic", helpTopic);
 			info.AddValue ("helpUrl", helpUrl);
 		}
-#endif
 
 		public string HelpTopic {
 			get {

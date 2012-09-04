@@ -11,8 +11,6 @@ ifndef base_prog_config
 base_prog_config := $(wildcard $(base_prog).config)
 endif
 
-executable_CLEAN_FILES = *.exe $(PROGRAM) $(PROGRAM).mdb $(BUILT_SOURCES)
-
 ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
 response = $(sourcefile)
 else
@@ -36,10 +34,10 @@ endif
 the_lib = $(the_libdir)$(base_prog)
 build_lib = $(build_libdir)$(base_prog)
 
+executable_CLEAN_FILES += $(the_lib)   $(the_lib).so   $(the_lib).mdb   $(the_lib:.exe=.pdb)
+executable_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_lib:.exe=.pdb)
+
 makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
-pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
-mdb = $(patsubst %.exe,%.mdb,$(PROGRAM))
-executable_CLEAN_FILES += $(makefrag) $(pdb) $(mdb)
 
 all-local: $(the_lib) $(PROGRAM_config)
 

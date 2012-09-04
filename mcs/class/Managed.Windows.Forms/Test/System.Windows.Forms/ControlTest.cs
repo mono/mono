@@ -2948,6 +2948,19 @@ namespace MonoTests.System.Windows.Forms
 			f.Show ();
 			f.Dispose ();
 		}
+
+		[Test]
+		public void DisplayRectangle_SamePadding ()
+		{
+			// The MSDN documentation says that for a control ClientRectangle == DisplayRectangle
+			using (var c = new Control ())
+			{
+				c.Size = new Size (100, 100);
+				c.Padding = new Padding (4);
+				Assert.AreEqual (new Rectangle (0, 0, 100, 100), c.ClientRectangle);
+				Assert.AreEqual (c.ClientRectangle, c.DisplayRectangle);
+			}
+		}
 	}
 
 	[TestFixture]

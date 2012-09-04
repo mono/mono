@@ -433,7 +433,12 @@ namespace System.Net
 			int nread = -1;
 			try {
 				nread = ns.EndRead (result);
+			} catch (ObjectDisposedException) {
+				return;
 			} catch (Exception e) {
+				if (e.InnerException is ObjectDisposedException)
+					return;
+
 				cnc.HandleError (WebExceptionStatus.ReceiveFailure, e, "ReadDone1");
 				return;
 			}
@@ -555,7 +560,7 @@ namespace System.Net
 				if (readState == ReadState.None) {
 					lineok = ReadLine (buffer, ref pos, max, ref line);
 					if (!lineok)
-						return -1;
+						return 0;
 
 					if (line == null) {
 						emptyFirstLine = true;
@@ -616,7 +621,7 @@ namespace System.Net
 					}
 
 					if (!finished)
-						return -1;
+						return 0;
 
 					foreach (string s in headers)
 						Data.Headers.SetInternal (s);
@@ -655,8 +660,7 @@ namespace System.Net
 				return;
 
 			keepAlive = request.KeepAlive;
-			Data = new WebConnectionData ();
-			Data.request = request;
+			Data = new WebConnectionData (request);
 		retry:
 			Connect (request);
 			if (request.Aborted)
@@ -713,7 +717,8 @@ namespace System.Net
 		{
 			lock (queue) {
 				if (queue.Count > 0) {
-					SendRequest ((HttpWebRequest) queue.Dequeue ());
+					Data.request = (HttpWebRequest) queue.Dequeue ();
+					SendRequest (Data.request);
 				}
 			}
 		}
@@ -721,7 +726,8 @@ namespace System.Net
 		internal void NextRead ()
 		{
 			lock (this) {
-				Data.request.FinishedReading = true;
+				if (Data.request != null)
+					Data.request.FinishedReading = true;
 				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
 				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
 				bool keepAlive = (Data.Version == HttpVersion.Version11 && this.keepAlive);
@@ -1092,7 +1098,7 @@ namespace System.Net
 			lock (this) {
 				lock (queue) {
 					HttpWebRequest req = (HttpWebRequest) sender;
-					if (Data.request == req) {
+					if (Data.request == req || Data.request == null) {
 						if (!req.FinishedReading) {
 							status = WebExceptionStatus.RequestCanceled;
 							Close (false);

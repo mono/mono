@@ -26,13 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 namespace System.Web {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	public enum AspNetHostingPermissionLevel {
 		None = 100,
 		Minimal = 200,
@@ -42,5 +38,3 @@ namespace System.Web {
 		Unrestricted = 600
 	}
 }
-
-#endif

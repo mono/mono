@@ -65,7 +65,6 @@ namespace System.ComponentModel
 		{
 			native_error_code = error;
 		}
-#if NET_2_0
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 #if TARGET_JVM
 		[MonoNotSupported ("")]
@@ -85,7 +84,7 @@ namespace System.ComponentModel
 		{
 			native_error_code = Marshal.GetLastWin32Error ();
 		}
-#endif
+
 		protected Win32Exception(SerializationInfo info,
 					 StreamingContext context)
 			: base (info, context) {

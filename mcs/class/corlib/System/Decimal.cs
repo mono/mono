@@ -225,10 +225,10 @@ namespace System
 		{
 			if (bits == null) 
 			{
-				throw new ArgumentNullException (Locale.GetText ("Bits is a null reference"));
+				throw new ArgumentNullException (Locale.GetText ("bits is a null reference"));
 			}
 
-			if (bits.GetLength(0) != 4) 
+			if (bits.Length != 4) 
 			{
 				throw new ArgumentException (Locale.GetText ("bits does not contain four values"));
 			}
@@ -766,6 +766,11 @@ namespace System
 
 			string decimalSep = (hasCurrency) ? nfi.CurrencyDecimalSeparator : nfi.NumberDecimalSeparator;
 			string groupSep = (hasCurrency) ? nfi.CurrencyGroupSeparator : nfi.NumberGroupSeparator;
+			string negativeSign = nfi.NegativeSign;
+			string positiveSign = nfi.PositiveSign;
+
+			// If we don't have a group separator defined, it has the same effect as if it wasn't allowed.
+			if (string.IsNullOrEmpty(groupSep)) allowedThousands = false;
 
 			int pos = 0;
 			int len = s.Length;
@@ -791,20 +796,20 @@ namespace System
 					isNegative = true;
 					pos++;
 				}
-				else if (allowedLeadingSign && ch == nfi.NegativeSign[0] && !hasSign) 
+				else if (allowedLeadingSign && !string.IsNullOrEmpty (negativeSign) && ch == negativeSign[0] && !hasSign)
 				{
-					int slen = nfi.NegativeSign.Length;
-					if (slen == 1 || s.IndexOf (nfi.NegativeSign, pos, slen) == pos) 
+					int slen = negativeSign.Length;
+					if (slen == 1 || s.IndexOf (negativeSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						isNegative = true;
 						pos += slen;
 					}
 				}
-				else if (allowedLeadingSign && ch == nfi.PositiveSign[0] && !hasSign) 
+				else if (allowedLeadingSign && !string.IsNullOrEmpty (positiveSign) && ch == positiveSign[0] && !hasSign)
 				{
-					int slen = nfi.PositiveSign.Length;
-					if (slen == 1 || s.IndexOf (nfi.PositiveSign, pos, slen) == pos) 
+					int slen = positiveSign.Length;
+					if (slen == 1 || s.IndexOf (positiveSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						pos += slen;
@@ -891,10 +896,10 @@ namespace System
 					}
 					ch = s[pos];
 					bool isNegativeExp = false;
-					if (ch == nfi.PositiveSign[0])
+					if (!string.IsNullOrEmpty (positiveSign) && ch == positiveSign[0])
 					{
-						int slen = nfi.PositiveSign.Length;
-						if (slen == 1 || s.IndexOf (nfi.PositiveSign, pos, slen) == pos) 
+						int slen = positiveSign.Length;
+						if (slen == 1 || s.IndexOf (positiveSign, pos, slen) == pos)
 						{
 							pos += slen;
 							if (pos >= len) {
@@ -905,10 +910,10 @@ namespace System
 							}
 						}
 					}
-					else if (ch == nfi.NegativeSign[0])
+					else if (!string.IsNullOrEmpty (negativeSign) && ch == negativeSign[0])
 					{
-						int slen = nfi.NegativeSign.Length;
-						if (slen == 1 || s.IndexOf (nfi.NegativeSign, pos, slen) == pos) 
+						int slen = negativeSign.Length;
+						if (slen == 1 || s.IndexOf (negativeSign, pos, slen) == pos)
 						{
 							pos += slen;
 							if (pos >= len) {
@@ -953,20 +958,20 @@ namespace System
 					hasOpeningParentheses = false;
 					pos++;
 				}
-				else if (allowedTrailingSign && ch == nfi.NegativeSign[0] && !hasSign) 
+				else if (allowedTrailingSign && !string.IsNullOrWhiteSpace (negativeSign) && ch == negativeSign[0] && !hasSign)
 				{
-					int slen = nfi.NegativeSign.Length;
-					if (slen == 1 || s.IndexOf (nfi.NegativeSign, pos, slen) == pos) 
+					int slen = negativeSign.Length;
+					if (slen == 1 || s.IndexOf(negativeSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						isNegative = true;
 						pos += slen;
 					}
 				}
-				else if (allowedTrailingSign && ch == nfi.PositiveSign[0] && !hasSign) 
+				else if (allowedTrailingSign && !string.IsNullOrWhiteSpace (positiveSign) && ch == positiveSign[0] && !hasSign)
 				{
-					int slen = nfi.PositiveSign.Length;
-					if (slen == 1 || s.IndexOf(nfi.PositiveSign, pos, slen) == pos) 
+					int slen = positiveSign.Length;
+					if (slen == 1 || s.IndexOf (positiveSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						pos += slen;
@@ -1361,10 +1366,6 @@ namespace System
 		private static extern int decimalIncr (ref Decimal d1, ref Decimal d2);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern int decimal2string (ref Decimal val, 
-		    int digits, int decimals, char[] bufDigits, int bufSize, out int decPos, out int sign);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern int string2decimal (out Decimal val, String sDigits, uint decPos, int sign);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1406,13 +1407,6 @@ namespace System
 		//![MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[DllImport("libdec", EntryPoint="decimalIncr")]
 		private static extern int decimalIncr (ref Decimal d1, ref Decimal d2);
-
-		//![MethodImplAttribute(MethodImplOptions.InternalCall)]
-		[DllImport("libdec", EntryPoint="decimal2string")]
-		internal static extern int decimal2string (ref Decimal val, 
-		    int digits, int decimals,
-		    [MarshalAs(UnmanagedType.LPWStr)]StringBuilder bufDigits, 
-		    int bufSize, out int decPos, out int sign);
 
 		//![MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[DllImport("libdec", EntryPoint="string2decimal")]

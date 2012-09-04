@@ -43,6 +43,7 @@ namespace Mono.Debugger.Soft
 		public int max_il_offset;
 		public int[] il_offsets;
 		public int[] line_numbers;
+		public int[] column_numbers;
 		public SourceInfo[] source_files;
 	}
 
@@ -79,6 +80,24 @@ namespace Mono.Debugger.Soft
 
 	class MethodBodyInfo {
 		public byte[] il;
+		public ExceptionClauseInfo[] clauses;
+	}
+
+	struct ExceptionClauseInfo {
+		public ExceptionClauseFlags flags;
+		public int try_offset;
+		public int try_length;
+		public int handler_offset;
+		public int handler_length;
+		public int filter_offset;
+		public long catch_type_id;
+	}
+
+	enum ExceptionClauseFlags {
+		None = 0x0,
+		Filter = 0x1,
+		Finally = 0x2,
+		Fault = 0x4,
 	}
 
 	struct ParamInfo {
@@ -353,7 +372,7 @@ namespace Mono.Debugger.Soft
 	/*
 	 * Represents the connection to the debuggee
 	 */
-	public abstract class Connection : IDisposable
+	public abstract class Connection
 	{
 		/*
 		 * The protocol and the packet format is based on JDWP, the differences 
@@ -376,7 +395,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 17;
+		internal const int MINOR_VERSION = 21;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -498,7 +517,8 @@ namespace Mono.Debugger.Soft
 			GET_LOCALS_INFO = 5,
 			GET_INFO = 6,
 			GET_BODY = 7,
-			RESOLVE_TOKEN = 8
+			RESOLVE_TOKEN = 8,
+			GET_CATTRS = 9
 		}
 
 		enum CmdType {
@@ -1132,7 +1152,9 @@ namespace Mono.Debugger.Soft
 					if (!res)
 						break;
 				} catch (Exception ex) {
-					Console.WriteLine (ex);
+					if (!closed) {
+						Console.WriteLine (ex);
+					}
 					break;
 				}
 			}
@@ -1670,6 +1692,7 @@ namespace Mono.Debugger.Soft
 			info.il_offsets = new int [n_il_offsets];
 			info.line_numbers = new int [n_il_offsets];
 			info.source_files = new SourceInfo [n_il_offsets];
+			info.column_numbers = new int [n_il_offsets];
 			for (int i = 0; i < n_il_offsets; ++i) {
 				info.il_offsets [i] = res.ReadInt ();
 				info.line_numbers [i] = res.ReadInt ();
@@ -1679,6 +1702,10 @@ namespace Mono.Debugger.Soft
 				} else {
 					info.source_files [i] = sources [0];
 				}
+				if (Version.AtLeast (2, 19))
+					info.column_numbers [i] = res.ReadInt ();
+				else
+					info.column_numbers [i] = 0;
 			}
 
 			return info;
@@ -1755,6 +1782,28 @@ namespace Mono.Debugger.Soft
 			for (int i = 0; i < info.il.Length; ++i)
 				info.il [i] = (byte)res.ReadByte ();
 
+			if (Version.AtLeast (2, 18)) {
+				info.clauses = new ExceptionClauseInfo [res.ReadInt ()];
+
+				for (int i = 0; i < info.clauses.Length; ++i) {
+					var clause = new ExceptionClauseInfo {
+						flags = (ExceptionClauseFlags) res.ReadInt (),
+						try_offset = res.ReadInt (),
+						try_length = res.ReadInt (),
+						handler_offset = res.ReadInt (),
+						handler_length = res.ReadInt (),
+					};
+
+					if (clause.flags == ExceptionClauseFlags.None)
+						clause.catch_type_id = res.ReadId ();
+					else if (clause.flags == ExceptionClauseFlags.Filter)
+						clause.filter_offset = res.ReadInt ();
+
+					info.clauses [i] = clause;
+				}
+			} else
+				info.clauses = new ExceptionClauseInfo [0];
+
 			return info;
 		}
 
@@ -1774,6 +1823,11 @@ namespace Mono.Debugger.Soft
 			default:
 				throw new NotImplementedException ();
 			}
+		}
+
+		internal CattrInfo[] Method_GetCustomAttributes (long id, long attr_type_id, bool inherit) {
+			PacketReader r = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_CATTRS, new PacketWriter ().WriteId (id).WriteId (attr_type_id));
+			return ReadCattrs (r);
 		}
 
 		/*
@@ -2214,20 +2268,10 @@ namespace Mono.Debugger.Soft
 			res.domain_id = r.ReadId ();
 			return res;
 		}
-		
-		public void Dispose ()
+
+		public void ForceDisconnect ()
 		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-		
-		protected virtual void Dispose (bool disposing)
-		{
-		}
-		
-		~Connection ()
-		{
-			Dispose (false);
+			TransportClose ();
 		}
 	}
 	
@@ -2266,15 +2310,6 @@ namespace Mono.Debugger.Soft
 		protected override void TransportClose ()
 		{
 			socket.Close ();
-		}
-		
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing) {
-				//Socket.Dispose is explicit in < .NET 4.0
-				((IDisposable)socket).Dispose ();
-			}
-			base.Dispose (disposing);
 		}
 	}
 

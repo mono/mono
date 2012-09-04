@@ -24,6 +24,20 @@ namespace MonoTests.System
 [TestFixture]
 public class StringTest
 {
+	class NullFormatter : IFormatProvider, ICustomFormatter
+	{
+		public string Format (string format, object arg, IFormatProvider provider)
+		{
+			return null;
+		}
+
+		public object GetFormat (Type formatType)
+		{
+			return this;
+		}
+	}
+
+
 	private CultureInfo orgCulture;
 
 	[SetUp]
@@ -1159,6 +1173,13 @@ public class StringTest
 			Assert.IsNotNull (ex.Message, "#4");
 			Assert.AreEqual ("format", ex.ParamName, "#5");
 		}
+	}
+
+	[Test]
+	public void Format ()
+	{
+		var s = String.Format (new NullFormatter (), "{0:}", "test");
+		Assert.AreEqual ("test", s);
 	}
 
 	[Test]
@@ -2298,10 +2319,12 @@ public class StringTest
 
 		string s3 = new DateTime (2000, 3, 7).ToString ();
 		Assert.IsNull (String.IsInterned (s3), "#C1");
-		Assert.AreSame (s3, String.Intern (s3), "#C2");
-		Assert.AreSame (s3, String.IsInterned (s3), "#C3");
-		Assert.AreSame (s3, String.IsInterned (new DateTime (2000, 3, 7).ToString ()), "#C4");
-		Assert.AreSame (s3, String.Intern (new DateTime (2000, 3, 7).ToString ()), "#C5");
+
+		string s4 = String.Intern (s3);
+		Assert.AreEqual (s3, s4, "#C2");
+		Assert.AreSame (s4, String.IsInterned (s4), "#C3");
+		Assert.AreSame (s4, String.IsInterned (new DateTime (2000, 3, 7).ToString ()), "#C4");
+		Assert.AreSame (s4, String.Intern (new DateTime (2000, 3, 7).ToString ()), "#C5");
 	}
 
 	[Test]
@@ -4133,6 +4156,10 @@ public class StringTest
 		Assert.AreEqual (2, res.Length, "#11-09-3");
 
 		Assert.AreEqual (0, "    ".Split ((char[]) null, 2, StringSplitOptions.RemoveEmptyEntries).Length, "#12-00-0");
+		
+		res = "not found".Split (new char[2]);
+		Assert.AreEqual ("not found", res[0], "#12-04-27");
+		Assert.AreEqual (1, res.Length, "#12-04-27-A");
 	}
 	
 	[Test]

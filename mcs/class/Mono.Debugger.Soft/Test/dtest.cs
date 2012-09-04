@@ -15,6 +15,9 @@ using NUnit.Framework;
 
 #pragma warning disable 0219
 
+namespace MonoTests
+{
+
 [TestFixture]
 public class DebuggerTests
 {
@@ -192,7 +195,7 @@ public class DebuggerTests
 		// Argument checking
 		AssertThrows<ArgumentException> (delegate {
 				// Invalid IL offset
-				vm.SetBreakpoint (m, 1);
+				vm.SetBreakpoint (m, 2);
 			});
 	}
 
@@ -502,7 +505,25 @@ public class DebuggerTests
 		e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		Assert.AreEqual ("ss6", (e as StepEvent).Method.Name);
+		req.Disable ();
 
+		// Check that a step over stops at an EH clause
+		e = run_until ("ss7_2");
+		req = vm.CreateStepRequest (e.Thread);
+		req.Depth = StepDepth.Out;
+		req.Enable ();
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+		Assert.AreEqual ("ss7", (e as StepEvent).Method.Name);
+		req.Disable ();
+		req = vm.CreateStepRequest (e.Thread);
+		req.Depth = StepDepth.Over;
+		req.Enable ();
+		vm.Resume ();
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+		Assert.AreEqual ("ss7", (e as StepEvent).Method.Name);
 		req.Disable ();
 	}
 
@@ -867,7 +888,6 @@ public class DebuggerTests
 		AssertValue (Int32.MaxValue - 5, (f as StructMirror).Fields [0]);
 
 		// enums
-
 		FieldInfoMirror field = o.Type.GetField ("field_enum");
 		f = o.GetValue (field);
 		(f as EnumMirror).Value = 5;
@@ -884,6 +904,20 @@ public class DebuggerTests
 		field = o.Type.GetField ("generic_field_struct");
 		f = o.GetValue (field);
 		o.SetValue (field, f);
+
+		// nullables
+		field = o.Type.GetField ("field_nullable");
+		f = o.GetValue (field);
+		AssertValue (0, (f as StructMirror).Fields [0]);
+		AssertValue (false, (f as StructMirror).Fields [1]);
+		o.SetValue (field, vm.CreateValue (6));
+		f = o.GetValue (field);
+		AssertValue (6, (f as StructMirror).Fields [0]);
+		AssertValue (true, (f as StructMirror).Fields [1]);
+		o.SetValue (field, vm.CreateValue (null));
+		f = o.GetValue (field);
+		AssertValue (0, (f as StructMirror).Fields [0]);
+		AssertValue (false, (f as StructMirror).Fields [1]);
 
 		// Argument checking
 		AssertThrows<ArgumentNullException> (delegate () {
@@ -1566,7 +1600,7 @@ public class DebuggerTests
 	public void Dispose () {
 		run_until ("Main");
 
-		vm.Dispose ();
+		vm.Detach ();
 
 		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDisconnectEvent), e);
@@ -1587,7 +1621,32 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category("only88")]
+	public void ColumnNumbers () {
+		Event e = run_until ("line_numbers");
+
+		// FIXME: Merge this with LineNumbers () when its fixed
+
+		step_req = vm.CreateStepRequest (e.Thread);
+		step_req.Depth = StepDepth.Into;
+		step_req.Enable ();
+
+		Location l;
+		
+		vm.Resume ();
+
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+
+		l = e.Thread.GetFrames ()[0].Location;
+
+		Assert.AreEqual (3, l.ColumnNumber);
+
+		step_req.Disable ();
+	}
+
+	[Test]
+	// Broken by mcs+runtime changes (#5438)
+	[Category("NotWorking")]
 	public void LineNumbers () {
 		Event e = run_until ("line_numbers");
 
@@ -1668,7 +1727,7 @@ public class DebuggerTests
 
 	[Test]
 	public void Suspend () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "suspend-test" });
 
@@ -1810,11 +1869,27 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_return_nullable");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		Assert.IsInstanceOfType (typeof (StructMirror), v);
+		var s = v as StructMirror;
+		AssertValue (42, s.Fields [0]);
+		AssertValue (true, s.Fields [1]);
+
+		// pass nullable as this
+		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
+		m = s.Type.GetMethod ("ToString");
+		v = s.InvokeMethod (e.Thread, m, null);
 
 		// return nullable null
 		m = t.GetMethod ("invoke_return_nullable_null");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
-		AssertValue (null, v);
+		Assert.IsInstanceOfType (typeof (StructMirror), v);
+		s = v as StructMirror;
+		AssertValue (0, s.Fields [0]);
+		AssertValue (false, s.Fields [1]);
+
+		// pass nullable as this
+		//m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
+		m = s.Type.GetMethod ("ToString");
+		v = s.InvokeMethod (e.Thread, m, null);
 
 		// pass primitive
 		m = t.GetMethod ("invoke_pass_primitive");
@@ -2031,7 +2106,7 @@ public class DebuggerTests
 
 	[Test]
 	public void InvokeSingleThreaded () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "invoke-single-threaded" });
 
@@ -2358,7 +2433,7 @@ public class DebuggerTests
 
 	[Test]
 	public void ExceptionFilter2 () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-excfilter.exe" });
 
@@ -2458,7 +2533,7 @@ public class DebuggerTests
 
 	[Test]
 	public void Domains () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "domain-test" });
 
@@ -2472,6 +2547,17 @@ public class DebuggerTests
 		Assert.IsInstanceOfType (typeof (AppDomainCreateEvent), e);
 
 		var domain = (e as AppDomainCreateEvent).Domain;
+
+		// Check the object type
+		e = run_until ("domains_2");
+		var frame = e.Thread.GetFrames ()[0];
+		var o = frame.GetArgument (0) as ObjectMirror;
+		Assert.AreEqual ("CrossDomain", o.Type.Name);
+
+		// Do a remoting invoke
+		var cross_domain_type = o.Type;
+		var v = o.InvokeMethod (e.Thread, cross_domain_type.GetMethod ("invoke_3"), null);
+		AssertValue (42, v);
 
 		// Run until the callback in the domain
 		MethodMirror m = entry_point.DeclaringType.GetMethod ("invoke_in_domain");
@@ -2527,7 +2613,7 @@ public class DebuggerTests
 		Assert.AreEqual (domain, (e as AppDomainUnloadEvent).Domain);
 
 		// Run past the unload
-		e = run_until ("domains_2");
+		e = run_until ("domains_3");
 
 		// Test access to unloaded types
 		// FIXME: Add an exception type for this
@@ -2553,7 +2639,7 @@ public class DebuggerTests
 
 	[Test]
 	public void RefEmit () {
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "ref-emit-test" });
 
@@ -2589,7 +2675,7 @@ public class DebuggerTests
 	[Test]
 	public void StackTraceInNative () {
 		// Check that stack traces can be produced for threads in native code
-		vm.Dispose ();
+		vm.Detach ();
 
 		Start (new string [] { "dtest-app.exe", "frames-in-native" });
 
@@ -2933,5 +3019,30 @@ public class DebuggerTests
 		args = gmd.GetGenericArguments ();
 		Assert.AreEqual (1, args.Length);
 		Assert.AreEqual ("T", args [0].Name);
+
+		var attrs = m.GetCustomAttributes (true);
+		Assert.AreEqual (1, attrs.Length);
+		Assert.AreEqual ("StateMachineAttribute", attrs [0].Constructor.DeclaringType.Name);
 	}
+
+	[Test]
+	public void UnhandledException () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "unhandled-exception" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is ExceptionEvent);
+
+		vm.Exit (0);
+		vm = null;
+	}
+}
+
 }

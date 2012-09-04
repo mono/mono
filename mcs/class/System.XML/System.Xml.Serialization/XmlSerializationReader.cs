@@ -757,9 +757,9 @@ namespace System.Xml.Serialization
 			return (value + reader.ReadString ());
 		}
 
-		protected object ReadTypedPrimitive (XmlQualifiedName qname)
+		protected object ReadTypedPrimitive (XmlQualifiedName type)
 		{
-			return ReadTypedPrimitive (qname, false);
+			return ReadTypedPrimitive (type, false);
 		}
 		
 		object ReadTypedPrimitive (XmlQualifiedName qname, bool reportUnknown)

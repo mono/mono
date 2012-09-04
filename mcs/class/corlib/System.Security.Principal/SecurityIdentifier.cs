@@ -4,8 +4,10 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //	Kenneth Bell
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012       James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,15 +34,15 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Security.Principal {
-
+namespace System.Security.Principal
+{
 	[ComVisible (false)]
-	public sealed class SecurityIdentifier : IdentityReference, IComparable<SecurityIdentifier> {
+	public sealed class SecurityIdentifier : IdentityReference, IComparable<SecurityIdentifier>
+	{
 		private byte[] buffer;
 
 		public static readonly int MaxBinaryLength = 68;
 		public static readonly int MinBinaryLength = 8;
-
 
 		public SecurityIdentifier (string sddlForm)
 		{
@@ -50,29 +52,35 @@ namespace System.Security.Principal {
 			buffer = ParseSddlForm (sddlForm);
 		}
 
-		public SecurityIdentifier (byte[] binaryForm, int offset)
+		unsafe public SecurityIdentifier (byte[] binaryForm, int offset)
 		{
 			if (binaryForm == null)
 				throw new ArgumentNullException ("binaryForm");
 			if ((offset < 0) || (offset > binaryForm.Length - 2))
 				throw new ArgumentException ("offset");
 			
-			int revision = binaryForm[offset];
-			int numSubAuthorities = binaryForm[offset + 1];
-			if (revision != 1 || numSubAuthorities > 15)
-				throw new ArgumentException ("Value was invalid.");
-			if (offset > binaryForm.Length - (8 + (numSubAuthorities * 4)))
-				throw new ArgumentException ("offset");
-			
-			buffer = new byte[8 + (numSubAuthorities * 4)];
-			Array.Copy (binaryForm, offset, buffer, 0, buffer.Length);
+			fixed (byte* binaryFormPtr = binaryForm)
+				CreateFromBinaryForm ((IntPtr)(binaryFormPtr + offset), binaryForm.Length - offset);
 		}
 
 		public SecurityIdentifier (IntPtr binaryForm)
-		{
-			throw new NotImplementedException ();
+		{				
+			CreateFromBinaryForm (binaryForm, int.MaxValue);
 		}
-
+		
+		void CreateFromBinaryForm (IntPtr binaryForm, int length)
+		{			
+			int revision = Marshal.ReadByte (binaryForm, 0);
+			int numSubAuthorities = Marshal.ReadByte (binaryForm, 1);
+			if (revision != 1 || numSubAuthorities > 15)
+				throw new ArgumentException ("Value was invalid.");
+			if (length < (8 + (numSubAuthorities * 4)))
+				throw new ArgumentException ("offset");
+			
+			buffer = new byte[8 + (numSubAuthorities * 4)];
+			Marshal.Copy (binaryForm, buffer, 0, buffer.Length);
+		}
+		
 		public SecurityIdentifier (WellKnownSidType sidType,
 		                           SecurityIdentifier domainSid)
 		{
@@ -114,32 +122,56 @@ namespace System.Security.Principal {
 			get {
 				StringBuilder s = new StringBuilder ();
 				
-				ulong authority = (((ulong)buffer[2]) << 40) | (((ulong)buffer[3]) << 32)
-					| (((ulong)buffer[4]) << 24) | (((ulong)buffer[5]) << 16)
-					| (((ulong)buffer[6]) << 8) | (((ulong)buffer[7]) << 0);
+				ulong authority = GetSidAuthority ();
 				s.AppendFormat (CultureInfo.InvariantCulture, "S-1-{0}", authority);
 				
-				for (int i = 0; i < buffer[1]; ++i) {
-					// Note sub authorities little-endian, authority (above) is big-endian!
-					int offset = 8 + (i * 4);
-					
-					uint subAuthority =
-						(((uint)buffer[offset + 0]) << 0)
-						| (((uint)buffer[offset + 1]) << 8)
-						| (((uint)buffer[offset + 2]) << 16)
-						| (((uint)buffer[offset + 3]) << 24);
+				for (byte i = 0; i < GetSidSubAuthorityCount (); ++i)
 					s.AppendFormat (
 						CultureInfo.InvariantCulture,
-					        "-{0}", subAuthority);
-				}
+					        "-{0}", GetSidSubAuthority (i));
 				
 				return s.ToString ();
 			}
 		}
 
+		ulong GetSidAuthority ()
+		{
+			return (((ulong)buffer [2]) << 40) | (((ulong)buffer [3]) << 32)
+			     | (((ulong)buffer [4]) << 24) | (((ulong)buffer [5]) << 16)
+			     | (((ulong)buffer [6]) <<  8) | (((ulong)buffer [7]) <<  0);
+		}
+		
+		byte GetSidSubAuthorityCount ()
+		{
+			return buffer [1];
+		}
+		
+		uint GetSidSubAuthority (byte index)
+		{
+			// Note sub authorities little-endian, authority (above) is big-endian!
+			int offset = 8 + (index * 4);
+			
+			return (((uint)buffer [offset + 0]) <<  0)
+			     | (((uint)buffer [offset + 1]) <<  8)
+			     | (((uint)buffer [offset + 2]) << 16)
+			     | (((uint)buffer [offset + 3]) << 24);
+		}
+		
+		// The CompareTo ordering was determined by unit test applied to MS.NET implementation,
+		// necessary because the CompareTo has no details in its documentation.
+		// (See MonoTests.System.Security.AccessControl.DiscretionaryAclTest.)
+		// The comparison was determined to be: authority, then subauthority count, then subauthority.
 		public int CompareTo (SecurityIdentifier sid)
 		{
-			return Value.CompareTo (sid.Value);
+			if (sid == null)
+				throw new ArgumentNullException ("sid");
+				
+			int result;
+			if (0 != (result = GetSidAuthority ().CompareTo (sid.GetSidAuthority ()))) return result;
+			if (0 != (result = GetSidSubAuthorityCount ().CompareTo (sid.GetSidSubAuthorityCount ()))) return result;
+			for (byte i = 0; i < GetSidSubAuthorityCount (); ++i)
+				if (0 != (result = GetSidSubAuthority (i).CompareTo (sid.GetSidSubAuthority (i)))) return result;
+			return 0;
 		}
 
 		public override bool Equals (object o)

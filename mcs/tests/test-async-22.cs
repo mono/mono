@@ -38,6 +38,20 @@ class B
 	}
 }
 
+class C
+{
+	static void Test (bool async)
+	{
+		var a = async ? Prop : 2;
+	}
+
+	static int Prop {
+		get {
+			return 3;
+		}
+	}
+}
+
 class async
 {
 	async (async arg)

@@ -1,7 +1,11 @@
 //
 // TaskTest.cs
 //
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
+//
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +32,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace MonoTests.System.Threading.Tasks
@@ -36,6 +40,30 @@ namespace MonoTests.System.Threading.Tasks
 	[TestFixture]
 	public class TaskTests
 	{
+		class MockScheduler : TaskScheduler
+		{
+			public event Action<Task, bool> TryExecuteTaskInlineHandler;
+
+			protected override IEnumerable<Task> GetScheduledTasks ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			protected override void QueueTask (Task task)
+			{
+				return;
+			}
+
+			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
+			{
+				if (TryExecuteTaskInlineHandler != null)
+					TryExecuteTaskInlineHandler (task, taskWasPreviouslyQueued);
+
+				return base.TryExecuteTask (task);
+			}
+		}
+
+
 		Task[] tasks;
 		const int max = 6;
 		
@@ -303,6 +331,15 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (tasks[0].IsCompleted, "#3");
 			Assert.IsTrue (tasks[1].IsCanceled, "#4");
 		}
+		
+		[Test]
+		public void WaitAll_CancelledAndTimeout ()
+		{
+			var ct = new CancellationToken (true);
+			var t1 = new Task (() => {}, ct);
+			var t2 = Task.Delay (3000);
+			Assert.IsFalse (Task.WaitAll (new[] { t1, t2 }, 10));
+		}
 
 		[Test]
 		public void WaitAllExceptionThenCancelled ()
@@ -382,6 +419,23 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.AreEqual (t, details.Task, "#2e");
 				Assert.IsNull (details.Task.Exception, "#2e2");
 			}
+		}
+
+		[Test]
+		public void Wait_Inlined ()
+		{
+			bool? previouslyQueued = null;
+
+			var scheduler = new MockScheduler ();
+			scheduler.TryExecuteTaskInlineHandler += (task, b) => {
+				previouslyQueued = b;
+			};
+
+			var tf = new TaskFactory (scheduler);
+			var t = tf.StartNew (() => { });
+			t.Wait ();
+
+			Assert.AreEqual (true, previouslyQueued);
 		}
 
 		[Test, ExpectedException (typeof (InvalidOperationException))]
@@ -666,22 +720,21 @@ namespace MonoTests.System.Threading.Tasks
 		public void DoubleWaitTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
-				Console.WriteLine ("run");
 				var evt = new ManualResetEventSlim ();
-				var t = Task.Factory.StartNew (() => evt.Wait (2000));
+				var t = Task.Factory.StartNew (() => evt.Wait (5000));
 				var cntd = new CountdownEvent (2);
+				var cntd2 = new CountdownEvent (2);
 
 				bool r1 = false, r2 = false;
-				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r1 = t.Wait (1000); Console.WriteLine ("out 1 {0}", r1); cntd.Signal (); });
-				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r2 = t.Wait (1000); Console.WriteLine ("out 2 {0}", r2); cntd.Signal (); });
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r1 = t.Wait (1000) && t.Result; cntd2.Signal (); });
+				ThreadPool.QueueUserWorkItem (delegate { cntd.Signal (); r2 = t.Wait (1000) && t.Result; cntd2.Signal (); });
 
-				cntd.Wait (2000);
-				cntd.Reset ();
+				Assert.IsTrue (cntd.Wait (2000), "#1");
 				evt.Set ();
-				cntd.Wait (2000);
-				Assert.IsTrue (r1);
-				Assert.IsTrue (r2);
-			}, 5);
+				Assert.IsTrue (cntd2.Wait (2000), "#2");
+				Assert.IsTrue (r1, "r1");
+				Assert.IsTrue (r2, "r2");
+			}, 10);
 		}
 
 		[Test]
@@ -701,13 +754,27 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		public void ExecuteSynchronouslyTest ()
+		public void RunSynchronously ()
 		{
 			var val = 0;
 			Task t = new Task (() => { Thread.Sleep (100); val = 1; });
 			t.RunSynchronously ();
 
-			Assert.AreEqual (1, val);
+			Assert.AreEqual (1, val, "#1");
+
+			t = new Task (() => { Thread.Sleep (0); val = 2; });
+
+			bool? previouslyQueued = null;
+
+			var scheduler = new MockScheduler ();
+			scheduler.TryExecuteTaskInlineHandler += (task, b) => {
+				previouslyQueued = b;
+			};
+
+			t.RunSynchronously (scheduler);
+
+			Assert.AreEqual (2, val, "#2");
+			Assert.AreEqual (false, previouslyQueued, "#2a");
 		}
 
 		[Test]
@@ -958,7 +1025,7 @@ namespace MonoTests.System.Threading.Tasks
 		public void Delay_Simple ()
 		{
 			var t = Task.Delay (300);
-			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			Assert.IsTrue (TaskStatus.WaitingForActivation == t.Status || TaskStatus.Running == t.Status, "#1");
 			Assert.IsTrue (t.Wait (400), "#2");
 		}
 
@@ -968,13 +1035,24 @@ namespace MonoTests.System.Threading.Tasks
 			var cancelation = new CancellationTokenSource ();
 
 			var t = Task.Delay (5000, cancelation.Token);
-			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#1");
+			Assert.IsTrue (TaskStatus.WaitingForActivation == t.Status || TaskStatus.Running == t.Status, "#1");
 			cancelation.Cancel ();
 			try {
-				t.Wait (100);
+				t.Wait (1000);
 				Assert.Fail ("#2");
 			} catch (AggregateException) {
 				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#3");
+			}
+			
+			cancelation = new CancellationTokenSource ();
+			t = Task.Delay (Timeout.Infinite, cancelation.Token);
+			Assert.AreEqual (TaskStatus.WaitingForActivation, t.Status, "#11");
+			cancelation.Cancel ();
+			try {
+				t.Wait (1000);
+				Assert.Fail ("#12");
+			} catch (AggregateException) {
+				Assert.AreEqual (TaskStatus.Canceled, t.Status, "#13");
 			}
 		}
 

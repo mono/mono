@@ -30,11 +30,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || TARGET_JVM
-
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
+
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Data.Common {
 	public abstract class DbDataReader : MarshalByRefObject, IDataReader, IDataRecord, IDisposable, IEnumerable
@@ -53,7 +57,7 @@ namespace System.Data.Common {
 		public abstract int FieldCount { get; }
 		public abstract bool HasRows { get; }
 		public abstract bool IsClosed { get; }
-		public abstract object this [int index] { get; }
+		public abstract object this [int ordinal] { get; }
 		public abstract object this [string name] { get; }
 		public abstract int RecordsAffected { get; }
 
@@ -67,11 +71,11 @@ namespace System.Data.Common {
 		#region Methods
 
 		public abstract void Close ();
-		public abstract bool GetBoolean (int i);
-		public abstract byte GetByte (int i);
-		public abstract long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length);
-		public abstract char GetChar (int i);
-		public abstract long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length);
+		public abstract bool GetBoolean (int ordinal);
+		public abstract byte GetByte (int ordinal);
+		public abstract long GetBytes (int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length);
+		public abstract char GetChar (int ordinal);
+		public abstract long GetChars (int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length);
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void Dispose ()
@@ -86,40 +90,40 @@ namespace System.Data.Common {
 		}
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public DbDataReader GetData (int i)
+		public DbDataReader GetData (int ordinal)
 		{
-			return ((DbDataReader) this [i]);
+			return ((DbDataReader) this [ordinal]);
 		}
 #endif
 
-		public abstract string GetDataTypeName (int i);
-		public abstract DateTime GetDateTime (int i);
-		public abstract decimal GetDecimal (int i);
-		public abstract double GetDouble (int i);
+		public abstract string GetDataTypeName (int ordinal);
+		public abstract DateTime GetDateTime (int ordinal);
+		public abstract decimal GetDecimal (int ordinal);
+		public abstract double GetDouble (int ordinal);
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract IEnumerator GetEnumerator ();
 
-		public abstract Type GetFieldType (int i);
-		public abstract float GetFloat (int i);
-		public abstract Guid GetGuid (int i);
-		public abstract short GetInt16 (int i);
-		public abstract int GetInt32 (int i);
-		public abstract long GetInt64 (int i);
-		public abstract string GetName (int i);
+		public abstract Type GetFieldType (int ordinal);
+		public abstract float GetFloat (int ordinal);
+		public abstract Guid GetGuid (int ordinal);
+		public abstract short GetInt16 (int ordinal);
+		public abstract int GetInt32 (int ordinal);
+		public abstract long GetInt64 (int ordinal);
+		public abstract string GetName (int ordinal);
 		public abstract int GetOrdinal (string name);
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public virtual Type GetProviderSpecificFieldType (int i)
+		public virtual Type GetProviderSpecificFieldType (int ordinal)
 		{
-			return GetFieldType (i);
+			return GetFieldType (ordinal);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public virtual object GetProviderSpecificValue (int i)
+		public virtual object GetProviderSpecificValue (int ordinal)
 		{
-			return GetValue (i);
+			return GetValue (ordinal);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -135,16 +139,16 @@ namespace System.Data.Common {
 #endif 
 
 		public abstract DataTable GetSchemaTable ();
-		public abstract string GetString (int i);
-		public abstract object GetValue (int i);
+		public abstract string GetString (int ordinal);
+		public abstract object GetValue (int ordinal);
 		public abstract int GetValues (object[] values);
 
-		IDataReader IDataRecord.GetData (int i)
+		IDataReader IDataRecord.GetData (int ordinal)
 		{
-			return ((IDataReader) this).GetData (i);
+			return ((IDataReader) this).GetData (ordinal);
 		}
 
-		public abstract bool IsDBNull (int i);
+		public abstract bool IsDBNull (int ordinal);
 		public abstract bool NextResult ();
 		public abstract bool Read ();
 
@@ -183,9 +187,72 @@ namespace System.Data.Common {
 
 			return schemaTable;
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public virtual T GetFieldValue<T> (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Task<T> GetFieldValueAsync<T> (int ordinal)
+		{
+			return GetFieldValueAsync<T> (ordinal, CancellationToken.None);
+		}
+		
+		[MonoTODO]
+		public virtual Task<T> GetFieldValueAsync<T> (int ordinal, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public Task<bool> NextResultAsync ()
+		{
+			return NextResultAsync (CancellationToken.None);
+		}
+		
+		public Task<bool> IsDBNullAsync (int ordinal)
+		{
+			return IsDBNullAsync (ordinal, CancellationToken.None);
+		}
+
+		[MonoTODO]
+		public virtual Stream GetStream (int i)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public virtual TextReader GetTextReader (int i)
+		{
+			throw new NotImplementedException ();	
+		}
+
+		[MonoTODO]
+		public virtual Task<bool> IsDBNullAsync (int ordinal, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public virtual Task<bool> NextResultAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public Task<bool> ReadAsync ()
+		{
+			return ReadAsync (CancellationToken.None);
+		}
+		
+		[MonoTODO]
+		public virtual Task<bool> ReadAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Methods
 	}
 }
 
-#endif

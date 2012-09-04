@@ -73,7 +73,9 @@ namespace System.Security.Permissions {
 			}
 		}
 		
+#if NET_4_0
 		[Obsolete]
+#endif
 		public bool ReflectionEmit
 		{
 			get { return reflectionEmit; }

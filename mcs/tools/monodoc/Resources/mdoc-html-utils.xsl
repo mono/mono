@@ -127,16 +127,16 @@
 	</xsl:template>
 
 	<xsl:template name="CreateTypeSignature">
-			<xsl:attribute name="id">
-				<xsl:text>T:</xsl:text>
-				<xsl:call-template name="GetEscapedTypeName">
-					<xsl:with-param name="typename" select="@FullName" />
-				</xsl:call-template>
-				<xsl:text>:Signature</xsl:text>
-			</xsl:attribute>
-			<!-- signature -->
 			<xsl:call-template name="CreateSignature">
+			    <xsl:with-param name="id">
+				  <xsl:text>T:</xsl:text>
+				  <xsl:call-template name="GetEscapedTypeName">
+					<xsl:with-param name="typename" select="@FullName" />
+				  </xsl:call-template>
+				  <xsl:text>:Signature</xsl:text>
+				</xsl:with-param>
 				<xsl:with-param name="content">
+			<!-- signature -->
 					<xsl:choose>
 					<xsl:when test="$language='C#'">
 

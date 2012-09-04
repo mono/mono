@@ -51,6 +51,11 @@ namespace System.Xml
 		private bool omitXmlDeclaration;
 		private XmlOutputMethod outputMethod;
 
+#if NET_4_5
+		private bool isReadOnly;
+		private bool isAsync;
+#endif
+
 		public XmlWriterSettings ()
 		{
 			Reset ();
@@ -78,12 +83,14 @@ namespace System.Xml
 			encoding = Encoding.UTF8;
 			indent = false;
 			indentChars = "  ";
-			// LAMESPEC: MS.NET says it is "\r\n", but it is silly decision.
-			newLineChars = Environment.NewLine;
+			newLineChars = "\r\n";
 			newLineOnAttributes = false;
-			newLineHandling = NewLineHandling.None;
+			newLineHandling = NewLineHandling.Replace;
 			omitXmlDeclaration = false;
 			outputMethod = XmlOutputMethod.AutoDetect;
+#if NET_4_5
+			isAsync = false;
+#endif
 		}
 
 		// It affects only on XmlTextWriter
@@ -161,6 +168,32 @@ namespace System.Xml
 		internal
 #endif
 		NamespaceHandling NamespaceHandling { get; set; }
+
+#if NET_4_5
+		internal void SetReadOnly ()
+		{
+			isReadOnly = true;
+		}
+
+		/*
+		 * FIXME: The .NET 4.5 runtime throws an exception when attempting to
+		 *        modify any of the properties after the XmlReader has been constructed.
+		 */
+		void EnsureWritability ()
+		{
+			if (isReadOnly)
+				throw new InvalidOperationException ("XmlReaderSettings in read-only");
+		}
+
+		public bool Async {
+			get { return isAsync; }
+			set {
+				EnsureWritability ();
+				isAsync = value;
+			}
+		}
+#endif
+
 	}
 }
 

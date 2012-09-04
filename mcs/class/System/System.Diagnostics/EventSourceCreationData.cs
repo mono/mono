@@ -29,12 +29,7 @@
 
 namespace System.Diagnostics
 {
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	class EventSourceCreationData
+	public class EventSourceCreationData
 	{
 		string _source;
 		string _logName;

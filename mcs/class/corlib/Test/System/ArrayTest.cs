@@ -225,7 +225,23 @@ public class ArrayTest
 		Assert.AreEqual (-1, Array.BinarySearch (o, 0, 3, null, null), "O=a,i,i,o,c");
 	}
 
-	// TODO - testBinarySearch with explicit IComparer args
+	class TestComparer7 : IComparer<int>
+	{
+		public int Compare (int x, int y)
+		{
+			if (y != 7)
+				throw new ApplicationException ();
+
+			return x.CompareTo (y);
+		}
+	}
+
+	[Test]
+	public void BinarySearch_WithComparer ()
+	{
+		var a = new int[] { 2, 6, 9 };
+		Assert.AreEqual (-3, Array.BinarySearch (a, 7, new TestComparer7 ()));
+	}
 
 	[Test]
 	public void TestClear() {
@@ -657,7 +673,7 @@ public class ArrayTest
 			}
 			Assert.IsTrue (errorThrown, "#F03a");
 		}
-#if NET_1_1
+
 		{
 			bool errorThrown = false;
 			try {
@@ -667,7 +683,6 @@ public class ArrayTest
 			}
 			Assert.IsTrue (errorThrown, "#F03b");
 		}
-#endif
 #if !TARGET_JVM // Arrays lower bounds are not supported for TARGET_JVM
 		{
 			bool errorThrown = false;

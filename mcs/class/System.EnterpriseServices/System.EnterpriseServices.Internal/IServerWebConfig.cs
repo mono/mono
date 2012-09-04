@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal {
 
-#if NET_1_1
 	[Guid("6261e4b5-572a-4142-a2f9-1fe1a0c97097")]
 	public interface IServerWebConfig {
 		[DispId(1)]
@@ -49,5 +48,4 @@ namespace System.EnterpriseServices.Internal {
 			[MarshalAs(UnmanagedType.BStr)] string FileRootName,
 			[MarshalAs(UnmanagedType.BStr)] out string Error);
 	}
-#endif
 }

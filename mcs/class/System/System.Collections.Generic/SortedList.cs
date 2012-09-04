@@ -197,13 +197,6 @@ namespace System.Collections.Generic
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
 				}
-#if NET_1_0
-				else if (current > defaultCapacity && value < current) {
-                                        KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [defaultCapacity];
-                                        Array.Copy (table, newTable, inUse);
-                                        this.table = newTable;
-                                }
-#endif
 				else if (value > inUse) {
                                         KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [value];
                                         Array.Copy (table, newTable, inUse);
@@ -475,12 +468,7 @@ namespace System.Collections.Generic
 			if (key == null)
 				throw new ArgumentNullException ("key");
 
-			int indx = 0;
-			try {
-				indx = Find (key);
-			} catch (Exception) {
-				throw new InvalidOperationException();
-			}
+			int indx = Find (key);
 
 			return (indx | (indx >> 31));
 		}
@@ -570,13 +558,7 @@ namespace System.Collections.Generic
 
 			KeyValuePair<TKey, TValue> [] table = this.table;
 
-			int freeIndx = -1;
-
-			try {
-				freeIndx = Find (key);
-			} catch (Exception) {
-				throw new InvalidOperationException();
-			}
+			int freeIndx = Find (key);
 
 			if (freeIndx >= 0) {
 				if (!overwrite)
@@ -631,6 +613,15 @@ namespace System.Collections.Generic
 			}
 		}
 
+		private int Compare (TKey a, TKey b)
+		{
+			try {
+				return comparer.Compare (a, b);
+			} catch (Exception ex) {
+				throw new InvalidOperationException ("Failed to compare two elements.", ex);
+			}
+		}
+
 		private int Find (TKey key)
 		{
 			KeyValuePair<TKey, TValue> [] table = this.table;
@@ -644,7 +635,7 @@ namespace System.Collections.Generic
 			while (left <= right) {
 				int guess = (left + right) >> 1;
 
-				int cmp = comparer.Compare (table[guess].Key, key);
+				int cmp = Compare (table[guess].Key, key);
 				if (cmp == 0) return guess;
 
 				if (cmp <  0) left = guess+1;

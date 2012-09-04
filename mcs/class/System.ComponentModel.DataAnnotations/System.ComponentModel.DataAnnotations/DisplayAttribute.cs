@@ -71,12 +71,11 @@ namespace System.ComponentModel.DataAnnotations
 		}
 
 		int? _order;
-		public int? Order {
+		public int Order {
 			get {
-				if (_order == null) {
+				if (_order == null)
 					throw new InvalidOperationException (string.Format (property_not_set_message, "Order"));
-				}
-				
+					
 				return _order.Value;
 			}
 			set { _order = value; }

@@ -75,11 +75,12 @@ namespace System.Linq.Parallel.QueryNodes
 		internal ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> GetStore ()
 		{
 			var store = new ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> ();
+			Func<TKey, ConcurrentQueue<TElement>> queueFactory = (_) => new ConcurrentQueue<TElement> ();
 
 			ParallelExecuter.ProcessAndBlock (Parent, (e, c) => {
-					ConcurrentQueue<TElement> queue = store.GetOrAdd (keySelector (e), (_) => new ConcurrentQueue<TElement> ());
-					queue.Enqueue (elementSelector (e));
-				});
+				ConcurrentQueue<TElement> queue = store.GetOrAdd (keySelector (e), queueFactory);
+				queue.Enqueue (elementSelector (e));
+			});
 
 			return store;
 		}

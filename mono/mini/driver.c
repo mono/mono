@@ -150,7 +150,7 @@ parse_optimizations (const char* p)
 	int i, invert, len;
 
 	/* call out to cpu detection code here that sets the defaults ... */
-	opt |= mono_arch_cpu_optimizazions (&exclude);
+	opt |= mono_arch_cpu_optimizations (&exclude);
 	opt &= ~exclude;
 	if (!p)
 		return opt;
@@ -351,7 +351,7 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 	MonoDomain *domain = mono_domain_get ();
 	guint32 exclude = 0;
 
-	mono_arch_cpu_optimizazions (&exclude);
+	mono_arch_cpu_optimizations (&exclude);
 
 	if (mini_stats_fd) {
 		fprintf (mini_stats_fd, "$stattitle = \'Mono Benchmark Results (various optimizations)\';\n");
@@ -1344,6 +1344,12 @@ mono_jit_parse_options (int argc, char * argv[])
 			
 			if (!mono_debugger_insert_breakpoint (argv [++i], FALSE))
 				fprintf (stderr, "Error: invalid method name '%s'\n", argv [i]);
+		} else if (strcmp (argv [i], "--llvm") == 0) {
+#ifndef MONO_ARCH_LLVM_SUPPORTED
+			fprintf (stderr, "Mono Warning: --llvm not supported on this platform.\n");
+#else
+			mono_use_llvm = TRUE;
+#endif
 		} else {
 			fprintf (stderr, "Unsupported command line option: '%s'\n", argv [i]);
 			exit (1);
@@ -1434,22 +1440,6 @@ mono_main (int argc, char* argv[])
 	
 	if (!g_thread_supported ())
 		g_thread_init (NULL);
-
-	if (mono_running_on_valgrind () && getenv ("MONO_VALGRIND_LEAK_CHECK")) {
-		GMemVTable mem_vtable;
-
-		/* 
-		 * Instruct glib to use the system allocation functions so valgrind
-		 * can track the memory allocated by the g_... functions.
-		 */
-		memset (&mem_vtable, 0, sizeof (mem_vtable));
-		mem_vtable.malloc = malloc;
-		mem_vtable.realloc = realloc;
-		mem_vtable.free = free;
-		mem_vtable.calloc = calloc;
-
-		g_mem_set_vtable (&mem_vtable);
-	}
 
 	g_log_set_always_fatal (G_LOG_LEVEL_ERROR);
 	g_log_set_fatal_mask (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR);

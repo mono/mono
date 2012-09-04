@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[ComVisible(false)]
 	public sealed class ServiceDomain {
 		#region Constructors
@@ -58,5 +57,4 @@ namespace System.EnterpriseServices {
 
 		#endregion
 	}
-#endif
 }

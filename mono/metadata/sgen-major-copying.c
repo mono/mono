@@ -57,6 +57,7 @@
 #include "metadata/mono-gc.h"
 #include "metadata/object-internals.h"
 #include "metadata/profiler-private.h"
+#include "metadata/sgen-memory-governor.h"
 
 #define MAJOR_SECTION_SIZE		SGEN_PINNED_CHUNK_SIZE
 #define BLOCK_FOR_OBJECT(o)		SGEN_PINNED_CHUNK_FOR_PTR ((o))
@@ -134,7 +135,7 @@ alloc_major_section (void)
 	section->size = MAJOR_SECTION_SIZE - SGEN_SIZEOF_GC_MEM_SECTION;
 	section->end_data = section->data + section->size;
 	sgen_update_heap_boundaries ((mword)section->data, (mword)section->end_data);
-	DEBUG (3, fprintf (gc_debug_file, "New major heap section: (%p-%p), total: %lld\n", section->data, section->end_data, mono_gc_get_heap_size ()));
+	DEBUG (3, fprintf (gc_debug_file, "New major heap section: (%p-%p), total: %lld\n", section->data, section->end_data, (long long int)mono_gc_get_heap_size ()));
 	scan_starts = (section->size + SGEN_SCAN_START_SIZE - 1) / SGEN_SCAN_START_SIZE;
 	section->scan_starts = sgen_alloc_internal_dynamic (sizeof (char*) * scan_starts, INTERNAL_MEM_SCAN_STARTS);
 	section->num_scan_start = scan_starts;

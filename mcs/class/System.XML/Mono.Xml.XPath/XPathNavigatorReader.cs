@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
 using System;
 using System.Text;
@@ -52,17 +51,13 @@ namespace Mono.Xml.XPath
 		bool endElement;
 		bool attributeValueConsumed;
 		StringBuilder readStringBuffer = new StringBuilder ();
-#if NET_2_0
-		StringBuilder innerXmlBuilder = new StringBuilder ();
-#endif
 
-		int depth = 0;
-		int attributeCount = 0;
+		int depth;
+		int attributeCount;
 		bool eof;
 
 		#region Properties
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return true; }
 		}
@@ -70,7 +65,6 @@ namespace Mono.Xml.XPath
 		public override bool CanReadValueChunk {
 			get { return true; }
 		}
-#endif
 
 		public override XmlNodeType NodeType {
 			get {
@@ -611,107 +605,6 @@ namespace Mono.Xml.XPath
 			return ret;
 		}
 
-#if NET_1_1
-#else
-		public override string ReadInnerXml ()
-		{
-			if (ReadState != ReadState.Interactive)
-				return String.Empty;
-
-			switch (NodeType) {
-			case XmlNodeType.Attribute:
-				return Value;
-			case XmlNodeType.Element:
-				if (IsEmptyElement)
-					return String.Empty;
-
-				int startDepth = Depth;
-
-				innerXmlBuilder.Length = 0;
-				bool loop = true;
-				do {
-					Read ();
-					if (NodeType ==XmlNodeType.None)
-						throw new InvalidOperationException ("unexpected end of xml.");
-					else if (NodeType == XmlNodeType.EndElement && Depth == startDepth) {
-						loop = false;
-						Read ();
-					}
-					else
-						innerXmlBuilder.Append (GetCurrentTagMarkup ());
-				} while (loop);
-				string xml = innerXmlBuilder.ToString ();
-				innerXmlBuilder.Length = 0;
-				return xml;
-			case XmlNodeType.None:
-				// MS document is incorrect. Seems not to progress.
-				return String.Empty;
-			default:
-				Read ();
-				return String.Empty;
-			}
-		}
-		
-		StringBuilder atts = new StringBuilder ();
-		private string GetCurrentTagMarkup ()
-		{
-			switch (NodeType) {
-			case XmlNodeType.CDATA:
-				return String.Format ("<![CDATA[{0}]]>", Value.Replace ("]]>", "]]&gt;"));
-			case XmlNodeType.Text:
-				return Value.Replace ("<", "&lt;");
-			case XmlNodeType.Comment:
-				return String.Format ("<!--{0}-->", Value);
-			case XmlNodeType.SignificantWhitespace:
-			case XmlNodeType.Whitespace:
-				return Value;
-			case XmlNodeType.EndElement:
-				return String.Format ("</{0}>", Name);
-			}
-
-			bool isEmpty = IsEmptyElement;
-			string name = Name;
-			atts.Length = 0;
-			XPathNavigator temp = current.Clone ();
-			while (temp.MoveToNextAttribute ())
-				atts.AppendFormat (" {0}='{1}'", temp.Name, temp.Value.Replace ("'", "&apos;"));
-			if (!IsEmptyElement)
-				return String.Format ("<{0}{1}>", name, atts);
-			else
-				return String.Format ("<{0}{1} />", name, atts);
-		}
-
-		// Arranged copy of XmlTextReader.ReadOuterXml()
-		public override string ReadOuterXml ()
-		{
-			if (ReadState != ReadState.Interactive)
-				return String.Empty;
-
-			switch (NodeType) {
-			case XmlNodeType.Attribute:
-				// strictly incompatible with MS... (it holds spaces attribute between name, value and "=" char (very trivial).
-				return String.Format ("{0}={1}{2}{1}", Name, QuoteChar, ReadInnerXml ());
-			case XmlNodeType.Element:
-				bool isEmpty = IsEmptyElement;
-				string name = Name;
-				StringBuilder atts = new StringBuilder ();
-				XPathNavigator temp = current.Clone ();
-				while (temp.MoveToNextAttribute ())
-					atts.AppendFormat (" {0}='{1}'", temp.Name, temp.Value.Replace ("'", "&apos;"));
-
-				if (!isEmpty)
-					return String.Format ("{0}{1}</{2}>", GetCurrentTagMarkup (), atts, ReadInnerXml (), name);
-				else
-					return String.Format ("{0}", GetCurrentTagMarkup ());
-			case XmlNodeType.None:
-				// MS document is incorrect. Seems not to progress.
-				return String.Empty;
-			default:
-				Read ();
-				return String.Empty;
-			}
-		}
-#endif
 
 		public override string LookupNamespace (string prefix)
 		{
@@ -749,5 +642,3 @@ namespace Mono.Xml.XPath
 		#endregion
 	}
 }
-
-#endif

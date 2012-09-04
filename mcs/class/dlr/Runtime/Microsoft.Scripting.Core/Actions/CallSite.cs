@@ -13,17 +13,13 @@
  *
  * ***************************************************************************/
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 using Microsoft.Scripting.Ast;
 using Microsoft.Scripting.Ast.Compiler;
 using Microsoft.Scripting.Utils;
 #else
 using System.Linq.Expressions;
 using System.Linq.Expressions.Compiler;
-#endif
-
-#if SILVERLIGHT
-using System.Core;
 #endif
 
 using System.Collections.Generic;

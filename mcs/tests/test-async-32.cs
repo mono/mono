@@ -52,16 +52,21 @@ class Program
 			return 12;
 
 		bool faulted = false;
+		bool has_exception = false;
 		t = TestException().ContinueWith(l =>
 		{
 			faulted = l.IsFaulted;
+			has_exception = l.Exception != null; // Has to observe it or will throw on shutdown
 		}, TaskContinuationOptions.ExecuteSynchronously);
 
 		if (!faulted)
 			return 21;
+			
+		if (!has_exception)
+			return 22;
 
 		if (t.Exception != null)
-			return 22;
+			return 23;
 
 		Console.WriteLine("ok");
 		return 0;

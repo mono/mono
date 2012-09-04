@@ -188,9 +188,9 @@ namespace System.Xml.Schema
 		}
 
 #if NET_2_0
-		public static XmlSchemaComplexType GetBuiltInComplexType (XmlTypeCode type)
+		public static XmlSchemaComplexType GetBuiltInComplexType (XmlTypeCode typeCode)
 		{
-			switch (type) {
+			switch (typeCode) {
 			case XmlTypeCode.Item:
 				return XmlSchemaComplexType.AnyType;
 			}
@@ -326,9 +326,9 @@ namespace System.Xml.Schema
 
 		[MonoTODO]
 		// Don't use this method to cover all XML Schema datatypes.
-		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlTypeCode type)
+		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlTypeCode typeCode)
 		{
-			switch (type) {
+			switch (typeCode) {
 			case XmlTypeCode.None:
 			case XmlTypeCode.Item:
 			case XmlTypeCode.Node:

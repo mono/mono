@@ -32,6 +32,9 @@ using System.Net;
 using System.Security;
 using System.Security.Policy;
 using System.Security.Permissions;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Xml
 {
@@ -131,6 +134,22 @@ namespace System.Xml
 		{
 			return resolver.ResolveUri (baseUri, relativeUri);
 		}
+
+#if NET_4_5
+		public override Task<object> GetEntityAsync (
+			Uri absoluteUri, string role, Type ofObjectToReturn)
+		{
+			if (SecurityManager.SecurityEnabled) {
+				// in case the security manager was switched after the constructor was called
+				if (permissionSet == null) {
+					throw new SecurityException (Locale.GetText (
+						"Security Manager wasn't active when instance was created."));
+				}
+				permissionSet.PermitOnly ();
+			}
+			return resolver.GetEntityAsync (absoluteUri, role, ofObjectToReturn);
+		}
+#endif
 #endregion
 
 	}

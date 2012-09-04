@@ -17,7 +17,7 @@
 #include <signal.h>
 #include <string.h>
 
-#if defined(__OpenBSD__)
+#if defined(__OpenBSD__) || defined(__FreeBSD__)
 #include <pthread.h>
 #include <pthread_np.h>
 #endif
@@ -53,6 +53,11 @@
 #include <errno.h>
 
 extern int tkill (pid_t tid, int signal);
+#endif
+
+#if defined(PLATFORM_MACOSX) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
+void *pthread_get_stackaddr_np(pthread_t);
+size_t pthread_get_stacksize_np(pthread_t);
 #endif
 
 /*#define THREAD_DEBUG(a) do { a; } while (0)*/
@@ -359,6 +364,28 @@ static void thread_cleanup (MonoInternalThread *thread)
 			mono_array_set (thread->cached_culture_info, MonoObject*, i, NULL);
 	}
 
+	ensure_synch_cs_set (thread);
+
+	EnterCriticalSection (thread->synch_cs);
+
+	thread->state |= ThreadState_Stopped;
+	thread->state &= ~ThreadState_Background;
+
+	LeaveCriticalSection (thread->synch_cs);
+
+	/*
+	An interruption request has leaked to cleanup. Adjust the global counter.
+
+	This can happen is the abort source thread finds the abortee (this) thread
+	in unmanaged code. If this thread never trips back to managed code or check
+	the local flag it will be left set and positively unbalance the global counter.
+	
+	Leaving the counter unbalanced will cause a performance degradation since all threads
+	will now keep checking their local flags all the time.
+	*/
+	if (InterlockedExchange (&thread->interruption_requested, 0))
+		InterlockedDecrement (&thread_interruption_requested);
+
 	/* if the thread is not in the hash it has been removed already */
 	if (!handle_remove (thread)) {
 		/* This needs to be called even if handle_remove () fails */
@@ -368,15 +395,6 @@ static void thread_cleanup (MonoInternalThread *thread)
 	}
 	mono_release_type_locks (thread);
 
-	ensure_synch_cs_set (thread);
-
-	EnterCriticalSection (thread->synch_cs);
-
-	thread->state |= ThreadState_Stopped;
-	thread->state &= ~ThreadState_Background;
-
-	LeaveCriticalSection (thread->synch_cs);
-	
 	mono_profiler_thread_end (thread->tid);
 
 	if (thread == mono_thread_internal_current ())
@@ -609,12 +627,10 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 
 static guint32 WINAPI start_wrapper(void *data)
 {
-#ifdef HAVE_SGEN_GC
 	volatile int dummy;
 
 	/* Avoid scanning the frames above this frame during a GC */
 	mono_gc_set_stack_end ((void*)&dummy);
-#endif
 
 	return start_wrapper_internal (data);
 }
@@ -3511,7 +3527,6 @@ static const int static_data_size [NUM_STATIC_DATA_IDX] = {
 
 static uintptr_t* static_reference_bitmaps [NUM_STATIC_DATA_IDX];
 
-#ifdef HAVE_SGEN_GC
 static void
 mark_tls_slots (void *addr, MonoGCMarkFunc mark_func)
 {
@@ -3537,7 +3552,6 @@ mark_tls_slots (void *addr, MonoGCMarkFunc mark_func)
 		}
 	}
 }
-#endif
 
 /*
  *  mono_alloc_static_data
@@ -3553,10 +3567,8 @@ mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean thr
 	gpointer* static_data = *static_data_ptr;
 	if (!static_data) {
 		static void* tls_desc = NULL;
-#ifdef HAVE_SGEN_GC
-		if (!tls_desc)
+		if (mono_gc_user_markers_supported () && !tls_desc)
 			tls_desc = mono_gc_make_root_descr_user (mark_tls_slots);
-#endif
 		static_data = mono_gc_alloc_fixed (static_data_size [0], threadlocal?tls_desc:NULL);
 		*static_data_ptr = static_data;
 		static_data [0] = static_data;
@@ -3565,11 +3577,10 @@ mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean thr
 	for (i = 1; i <= idx; ++i) {
 		if (static_data [i])
 			continue;
-#ifdef HAVE_SGEN_GC
-		static_data [i] = threadlocal?g_malloc0 (static_data_size [i]):mono_gc_alloc_fixed (static_data_size [i], NULL);
-#else
-		static_data [i] = mono_gc_alloc_fixed (static_data_size [i], NULL);
-#endif
+		if (mono_gc_user_markers_supported () && threadlocal)
+			static_data [i] = g_malloc0 (static_data_size [i]);
+		else
+			static_data [i] = mono_gc_alloc_fixed (static_data_size [i], NULL);
 	}
 }
 
@@ -3580,14 +3591,10 @@ mono_free_static_data (gpointer* static_data, gboolean threadlocal)
 	for (i = 1; i < NUM_STATIC_DATA_IDX; ++i) {
 		if (!static_data [i])
 			continue;
-#ifdef HAVE_SGEN_GC
-		if (threadlocal)
+		if (mono_gc_user_markers_supported () && threadlocal)
 			g_free (static_data [i]);
 		else
 			mono_gc_free_fixed (static_data [i]);
-#else
-		mono_gc_free_fixed (static_data [i]);
-#endif
 	}
 	mono_gc_free_fixed (static_data);
 }
@@ -3879,7 +3886,7 @@ mono_thread_alloc_tls (MonoReflectionType *type)
 	/* TlsDatum is a struct, so we subtract the object header size offset */
 	bitmap = mono_class_compute_bitmap (klass, default_bitmap, sizeof (default_bitmap) * 8, - (int)(sizeof (MonoObject) / sizeof (gpointer)), &max_set, FALSE);
 	size = mono_type_size (type->type, &align);
-	tls_offset = mono_alloc_special_static_data (SPECIAL_STATIC_THREAD, size, align, bitmap, max_set);
+	tls_offset = mono_alloc_special_static_data (SPECIAL_STATIC_THREAD, size, align, (uintptr_t*)bitmap, max_set);
 	if (bitmap != default_bitmap)
 		g_free (bitmap);
 	tlsrec = g_new0 (MonoTlsDataRecord, 1);
@@ -4096,13 +4103,13 @@ mono_thread_request_interruption (gboolean running_managed)
 	
 	if (InterlockedCompareExchange (&thread->interruption_requested, 1, 0) == 1)
 		return NULL;
+	InterlockedIncrement (&thread_interruption_requested);
 
 	if (!running_managed || is_running_protected_wrapper ()) {
 		/* Can't stop while in unmanaged code. Increase the global interruption
 		   request count. When exiting the unmanaged method the count will be
 		   checked and the thread will be interrupted. */
 		
-		InterlockedIncrement (&thread_interruption_requested);
 
 		if (mono_thread_notify_pending_exc_fn && !running_managed)
 			/* The JIT will notify the thread about the interruption */
@@ -4487,6 +4494,7 @@ abort_thread_internal (MonoInternalThread *thread, gboolean can_raise_exception,
 		mono_thread_info_resume (mono_thread_info_get_tid (info));
 		return;
 	}
+	InterlockedIncrement (&thread_interruption_requested);
 
 	ji = mono_thread_info_get_last_managed (info);
 	protected_wrapper = ji && mono_threads_is_critical_method (ji->method);
@@ -4507,7 +4515,6 @@ abort_thread_internal (MonoInternalThread *thread, gboolean can_raise_exception,
 		 * functions in the io-layer until the signal handler calls QueueUserAPC which will
 		 * make it return.
 		 */
-		InterlockedIncrement (&thread_interruption_requested);
 #ifndef HOST_WIN32
 		interrupt_handle = wapi_prepare_interrupt_thread (thread->handle);
 #endif

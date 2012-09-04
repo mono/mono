@@ -49,4 +49,4 @@ jay: $(sources:.c=.o)
 	$(CCOMPILE) $(LDFLAGS) -o $@ $^
 
 %.o: %.c
-	$(CCOMPILE) -c -o $@ $^
+	$(CCOMPILE) $(JAY_CFLAGS) -c -o $@ $^

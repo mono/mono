@@ -602,6 +602,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestSampleFileImportSimple ()
 		{
 			DataSet ds = new DataSet ();

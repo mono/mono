@@ -43,10 +43,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace System.Diagnostics {
-#if NET_2_0
-#else
-	[ComVisible(false)]
-#endif
 	public class DefaultTraceListener : TraceListener {
 
 		private static readonly bool OnWin32;

@@ -41,32 +41,19 @@
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
-
-#if NET_2_0
 using System.Xml;
 
 namespace Mono.Xml2
-#else
-namespace System.Xml
-#endif
 {
-
-#if NET_2_0
-	internal class XmlTextReader : XmlReader,
+	class XmlTextReader : XmlReader,
 		IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext
-#else
-	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-	public class XmlTextReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
-#endif
 	{
 		#region Constructors
 
@@ -213,7 +200,6 @@ namespace System.Xml
 			get { return parserContext.BaseURI; }
 		}
 
-#if NET_2_0
 		public override bool CanReadBinaryContent {
 			get { return true; }
 		}
@@ -221,15 +207,6 @@ namespace System.Xml
 		public override bool CanReadValueChunk {
 			get { return true; }
 		}
-#else
-		internal override bool CanReadBinaryContent {
-			get { return true; }
-		}
-
-		internal override bool CanReadValueChunk {
-			get { return true; }
-		}
-#endif
 
 		internal bool CharacterChecking {
 			get { return checkCharacters; }
@@ -258,12 +235,11 @@ namespace System.Xml
 		{
 			get { return parserContext.Encoding; }
 		}
-#if NET_2_0
+
 		public EntityHandling EntityHandling {
 			get { return entityHandling; }
 			set { entityHandling = value; }
 		}
-#endif
 
 		public override bool EOF {
 			get { return readState == ReadState.EndOfFile; }
@@ -281,21 +257,6 @@ namespace System.Xml
 		public override bool IsEmptyElement {
 			get { return cursorToken.IsEmptyElement; }
 		}
-
-#if NET_2_0
-#else
-		public override string this [int i] {
-			get { return GetAttribute (i); }
-		}
-
-		public override string this [string name] {
-			get { return GetAttribute (name); }
-		}
-
-		public override string this [string localName, string namespaceName] {
-			get { return GetAttribute (localName, namespaceName); }
-		}
-#endif
 
 		public int LineNumber {
 			get {
@@ -366,11 +327,9 @@ namespace System.Xml
 			get { return readState; }
 		}
 
-#if NET_2_0
 		public override XmlReaderSettings Settings {
 			get { return base.Settings; }
 		}
-#endif
 
 		public override string Value {
 			get { return cursorToken.Value != null ? cursorToken.Value : String.Empty; }
@@ -451,7 +410,6 @@ namespace System.Xml
 			return attributeTokens [idx].Value;
 		}
 
-#if NET_2_0
 		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			return nsmgr.GetNamespacesInScope (scope);
@@ -461,7 +419,6 @@ namespace System.Xml
 		{
 			return GetNamespacesInScope (scope);
 		}
-#endif
 
 		public TextReader GetRemainder ()
 		{
@@ -470,11 +427,7 @@ namespace System.Xml
 			return new StringReader (new string (peekChars, peekCharsIndex, peekCharsLength - peekCharsIndex) + reader.ReadToEnd ());
 		}
 
-#if NET_2_0
 		public bool HasLineInfo ()
-#else
-		bool IXmlLineInfo.HasLineInfo ()
-#endif
 		{
 			return true;
 		}
@@ -491,7 +444,6 @@ namespace System.Xml
 			return s == String.Empty ? null : s;
 		}
 
-#if NET_2_0
 		string IXmlNamespaceResolver.LookupPrefix (string ns)
 		{
 			return LookupPrefix (ns, false);
@@ -501,7 +453,6 @@ namespace System.Xml
 		{
 			return nsmgr.LookupPrefix (ns, atomizedName);
 		}
-#endif
 
 		public override void MoveToAttribute (int i)
 		{
@@ -720,13 +671,11 @@ namespace System.Xml
 			throw new InvalidOperationException ("XmlTextReader cannot resolve external entities.");
 		}
 
-#if NET_2_0
 		[MonoTODO] // FIXME: Implement, for performance improvement
 		public override void Skip ()
 		{
 			base.Skip ();
 		}
-#endif
 		#endregion
 
 		#region Internals
@@ -997,10 +946,8 @@ namespace System.Xml
 #endif
 
 			checkCharacters = true;
-#if NET_2_0
 			if (Settings != null)
 				checkCharacters = Settings.CheckCharacters;
-#endif
 			prohibitDtd = false;
 			closeInput = true;
 			entityHandling = EntityHandling.ExpandCharEntities;
@@ -1073,11 +1020,7 @@ namespace System.Xml
 #else
 				Uri uri = null;
 				try {
-#if NET_2_0
 					uri = new Uri (url, UriKind.RelativeOrAbsolute);
-#else
-					uri = new Uri (url);
-#endif
 				} catch (Exception) {
 					string path = Path.GetFullPath ("./a");
 					uri = new Uri (new Uri (path), url);
@@ -1105,7 +1048,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		internal ConformanceLevel Conformance {
 			get { return allowMultipleRoot ? ConformanceLevel.Fragment : ConformanceLevel.Document; }
 			set {
@@ -1126,7 +1068,6 @@ namespace System.Xml
 		{
 			parserContext.NameTable = nameTable;
 		}
-#endif
 
 		// Use this method rather than setting the properties
 		// directly so that all the necessary properties can
@@ -1625,7 +1566,7 @@ namespace System.Xml
 					break;
 				if (whitespacePool == null)
 					whitespacePool = new NameTable ();
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 				valueBuffer.CopyTo (0, whitespaceCache, 0, len);
 #else
 				for (int i = 0; i < len; i++)
@@ -1974,14 +1915,11 @@ namespace System.Xml
 					int predefined = XmlChar.GetPredefinedEntity (entName);
 					if (predefined < 0) {
 						CheckAttributeEntityReferenceWFC (entName);
-#if NET_2_0
 						if (entityHandling == EntityHandling.ExpandEntities) {
 							string value = DTD.GenerateEntityAttributeText (entName);
 							foreach (char c in (IEnumerable<char>) value)
 								AppendValueChar (c);
-						} else
-#endif
-						{
+						} else {
 							currentAttributeValueToken.ValueBufferEnd = valueBuffer.Length;
 							currentAttributeValueToken.NodeType = XmlNodeType.Text;
 							if (!isNewToken)
@@ -2272,13 +2210,11 @@ namespace System.Xml
 				}
 				// Encoding value should be checked inside XmlInputStream.
 			}
-#if NET_2_0
 			// this condition is to check if this instance is
 			// not created by XmlReader.Create() (which just
 			// omits strict text declaration check).
 			else if (Conformance == ConformanceLevel.Auto)
 				throw NotWFError ("Encoding declaration is mandatory in text declaration.");
-#endif
 
 			Expect ("?>");
 

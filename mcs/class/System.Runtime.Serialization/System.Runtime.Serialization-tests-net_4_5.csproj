@@ -16,8 +16,11 @@
     <AssemblyName>System.Runtime.Serialization_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,168,169,219,414</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,168,169,219,414</NoWarn>
     <Optimize>true</Optimize>
@@ -41,9 +45,12 @@
    <Compile Include="Test\System.Runtime.Serialization\Bug666333Test.cs" />
    <Compile Include="Test\System.Runtime.Serialization\Bug675144Test.cs" />
    <Compile Include="Test\System.Runtime.Serialization\Bug2843Test.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_NullableWithDictionary.cs" />
+   <Compile Include="Test\System.Runtime.Serialization\Bug3258Test.cs" />
+   <Compile Include="Test\System.Runtime.Serialization\Bug242Test.cs" />
    <Compile Include="Test\System.Runtime.Serialization\Bug695203Test.cs" />
    <Compile Include="Test\System.Runtime.Serialization\DataContractResolverTest.cs" />
+   <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_DuplicateQName.cs" />
+   <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_NullableWithDictionary.cs" />
    <Compile Include="Test\System.Runtime.Serialization\KnownTypeAttributeTest.cs" />
    <Compile Include="Test\System.Runtime.Serialization\XmlObjectSerializerTest.cs" />
    <Compile Include="Test\System.Runtime.Serialization\XsdDataContractExporterTest.cs" />

@@ -43,6 +43,7 @@
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/utils/mono-memory-model.h>
 #include "cominterop.h"
 
 #ifdef HAVE_BOEHM_GC
@@ -100,7 +101,8 @@ mono_runtime_object_init (MonoObject *this)
 	MonoClass *klass = this->vtable->klass;
 
 	method = mono_class_get_method_from_name (klass, ".ctor", 0);
-	g_assert (method);
+	if (!method)
+		g_error ("Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
 
 	if (method->klass->valuetype)
 		this = mono_object_unbox (this);
@@ -223,8 +225,9 @@ get_type_init_exception_for_vtable (MonoVTable *vtable)
 	MonoException *ex;
 	gchar *full_name;
 
-	g_assert (vtable->init_failed);
-
+	if (!vtable->init_failed)
+		g_error ("Trying to get the init exception for a non-failed vtable of class %s", mono_type_get_full_name (klass));
+	
 	/* 
 	 * If the initializing thread was rudely aborted, the exception is not stored
 	 * in the hash.
@@ -1083,9 +1086,8 @@ mono_method_get_imt_slot (MonoMethod *method)
 	hashes = hashes_start;
 
 	if (! MONO_CLASS_IS_INTERFACE (method->klass)) {
-		printf ("mono_method_get_imt_slot: %s.%s.%s is not an interface MonoMethod\n",
+		g_error ("mono_method_get_imt_slot: %s.%s.%s is not an interface MonoMethod",
 				method->klass->name_space, method->klass->name, method->name);
-		g_assert_not_reached ();
 	}
 	
 	/* Initialize hashes */
@@ -2972,8 +2974,7 @@ handle_enum:
 		t = type->data.generic_class->container_class->byval_arg.type;
 		goto handle_enum;
 	default:
-		g_warning ("got type %x", type->type);
-		g_assert_not_reached ();
+		g_error ("got type %x", type->type);
 	}
 }
 
@@ -3414,6 +3415,9 @@ void
 mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass)
 {
 	MonoClass *param_class = klass->cast_class;
+
+	mono_class_setup_fields_locking (klass);
+	g_assert (klass->fields_inited);
 				
 	g_assert (mono_class_from_mono_type (klass->fields [0].type) == param_class);
 	g_assert (mono_class_from_mono_type (klass->fields [1].type) == mono_defaults.boolean_class);
@@ -3441,6 +3445,9 @@ MonoObject*
 mono_nullable_box (guint8 *buf, MonoClass *klass)
 {
 	MonoClass *param_class = klass->cast_class;
+
+	mono_class_setup_fields_locking (klass);
+	g_assert (klass->fields_inited);
 
 	g_assert (mono_class_from_mono_type (klass->fields [0].type) == param_class);
 	g_assert (mono_class_from_mono_type (klass->fields [1].type) == mono_defaults.boolean_class);
@@ -3493,9 +3500,11 @@ MonoObject*
 mono_runtime_delegate_invoke (MonoObject *delegate, void **params, MonoObject **exc)
 {
 	MonoMethod *im;
+	MonoClass *klass = delegate->vtable->klass;
 
-	im = mono_get_delegate_invoke (delegate->vtable->klass);
-	g_assert (im);
+	im = mono_get_delegate_invoke (klass);
+	if (!im)
+		g_error ("Could not lookup delegate invoke method for delegate %s", mono_type_get_full_name (klass));
 
 	return mono_runtime_invoke (im, delegate, params, exc);
 }
@@ -5714,26 +5723,13 @@ mono_raise_exception (MonoException *ex)
 	 * that will cause gcc to omit the function epilog, causing problems when
 	 * the JIT tries to walk the stack, since the return address on the stack
 	 * will point into the next function in the executable, not this one.
-	 */
-
-	if (((MonoObject*)ex)->vtable->klass == mono_defaults.threadabortexception_class) {
-		MonoInternalThread *thread = mono_thread_internal_current ();
-		g_assert (ex->object.vtable->domain == mono_domain_get ());
-		MONO_OBJECT_SETREF (thread, abort_exc, ex);
-	}
-	
+	 */	
 	eh_callbacks.mono_raise_exception (ex);
 }
 
 void
 mono_raise_exception_with_context (MonoException *ex, MonoContext *ctx) 
 {
-	if (((MonoObject*)ex)->vtable->klass == mono_defaults.threadabortexception_class) {
-		MonoInternalThread *thread = mono_thread_internal_current ();
-		g_assert (ex->object.vtable->domain == mono_domain_get ());
-		MONO_OBJECT_SETREF (thread, abort_exc, ex);
-	}
-	
 	eh_callbacks.mono_raise_exception_with_ctx (ex, ctx);
 }
 
@@ -5857,23 +5853,18 @@ mono_message_init (MonoDomain *domain,
 	if (!object_array_klass) {
 		MonoClass *klass;
 
-		klass = mono_array_class_get (mono_defaults.object_class, 1);
-		g_assert (klass);
-
-		mono_memory_barrier ();
-		object_array_klass = klass;
-
 		klass = mono_array_class_get (mono_defaults.byte_class, 1);
 		g_assert (klass);
-
-		mono_memory_barrier ();
 		byte_array_klass = klass;
 
 		klass = mono_array_class_get (mono_defaults.string_class, 1);
 		g_assert (klass);
-
-		mono_memory_barrier ();
 		string_array_klass = klass;
+
+		klass = mono_array_class_get (mono_defaults.object_class, 1);
+		g_assert (klass);
+
+		mono_atomic_store_release (&object_array_klass, klass);
 	}
 
 	MONO_OBJECT_SETREF (this, method, method);
@@ -6046,15 +6037,22 @@ mono_print_unhandled_exception (MonoObject *exc)
 
 	if (exc == (MonoObject*)mono_object_domain (exc)->out_of_memory_ex) {
 		message = g_strdup ("OutOfMemoryException");
+		free_message = TRUE;
 	} else {
-		str = mono_object_to_string (exc, NULL);
-		if (str) {
-			message = mono_string_to_utf8_checked (str, &error);
-			if (!mono_error_ok (&error)) {
-				mono_error_cleanup (&error);
-				message = (char *) "";
-			} else {
-				free_message = TRUE;
+		
+		if (((MonoException*)exc)->native_trace_ips) {
+			message = mono_exception_get_native_backtrace ((MonoException*)exc);
+			free_message = TRUE;
+		} else {
+			str = mono_object_to_string (exc, NULL);
+			if (str) {
+				message = mono_string_to_utf8_checked (str, &error);
+				if (!mono_error_ok (&error)) {
+					mono_error_cleanup (&error);
+					message = (char *) "";
+				} else {
+					free_message = TRUE;
+				}
 			}
 		}
 	}
@@ -6063,7 +6061,7 @@ mono_print_unhandled_exception (MonoObject *exc)
 	 * g_printerr ("\nUnhandled Exception: %s.%s: %s\n", exc->vtable->klass->name_space, 
 	 *	   exc->vtable->klass->name, message);
 	 */
-	g_printerr ("\nUnhandled Exception: %s\n", message);
+	g_printerr ("\nUnhandled Exception:\n%s\n", message);
 	
 	if (free_message)
 		g_free (message);

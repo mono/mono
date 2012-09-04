@@ -8,13 +8,9 @@ include ../build/rules.make
 
 EXTRA_DISTFILES = \
 	mcs.csproj		\
-	compiler.doc		\
 	mcs.sln		\
 	cs-parser.jay		\
-	mcs.exe.sources		\
-	NOTES			\
-	TODO			\
-	ikvm.cs
+	mcs.exe.sources
 
 ifeq (basic, $(PROFILE))
 PROGRAM = basic.exe
@@ -103,6 +99,7 @@ profile : $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:mcs2.exe $(BUILT_SOURCES) @$(response)
 
 debug-parser:
+	rm cs-parser.cs
 	$(MAKE) JAY_FLAGS=-cvt
 
 #

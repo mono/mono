@@ -1,4 +1,4 @@
-// CS0246: The type or namespace name `RNGCryptoServiceProvider' could not be found. Are you missing a using directive or an assembly reference?
+// CS0246: The type or namespace name `RNGCryptoServiceProvider' could not be found. Are you missing `System.Security.Cryptography' using directive?
 // Line: 13
 
 using System;

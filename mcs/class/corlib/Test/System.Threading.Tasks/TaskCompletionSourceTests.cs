@@ -198,6 +198,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Ignore ("#4550, Mono GC is lame")]
 		public void SetExceptionAndUnobservedEvent ()
 		{
 			bool notFromMainThread = false;

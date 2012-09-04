@@ -7,7 +7,6 @@ namespace Mono.Debugger.Soft
 	 * Represents a value of a primitive type in the debuggee
 	 */
 	public class PrimitiveValue : Value {
-
 		object value;
 
 		public PrimitiveValue (VirtualMachine vm, object value) : base (vm, 0) {
@@ -33,7 +32,9 @@ namespace Mono.Debugger.Soft
 		}
 
 		public override string ToString () {
-			return "PrimitiveValue<" + Value + ">";
+			object v = Value;
+
+			return "PrimitiveValue<" + (v != null ? v.ToString () : "(null)") + ">";
 		}
 
 		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {

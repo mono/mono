@@ -182,26 +182,40 @@ namespace System.Collections.Concurrent
 		
 		void ICollection.CopyTo (Array array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (array.Rank > 1)
+				throw new ArgumentException ("The array can't be multidimensional");
+			if (array.GetLowerBound (0) != 0)
+				throw new ArgumentException ("The array needs to be 0-based");
+
 			T[] dest = array as T[];
 			if (dest == null)
-				return;
+				throw new ArgumentException ("The array cannot be cast to the collection element type", "array");
 			CopyTo (dest, index);
 		}
 		
 		public void CopyTo (T[] array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			if (index >= array.Length)
+				throw new ArgumentException ("index is equals or greather than array length", "index");
+
 			IEnumerator<T> e = InternalGetEnumerator ();
 			int i = index;
 			while (e.MoveNext ()) {
-				array [i++] = e.Current;
+				if (i == array.Length - index)
+					throw new ArgumentException ("The number of elememts in the collection exceeds the capacity of array", "array");
+				array[i++] = e.Current;
 			}
 		}
 		
 		public T[] ToArray ()
 		{
-			T[] dest = new T [count];
-			CopyTo (dest, 0);
-			return dest;
+			return new List<T> (this).ToArray ();
 		}
 		
 		bool ICollection.IsSynchronized {

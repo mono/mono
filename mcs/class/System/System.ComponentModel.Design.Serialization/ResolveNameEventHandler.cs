@@ -29,8 +29,5 @@
 
 namespace System.ComponentModel.Design.Serialization
 {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public delegate void ResolveNameEventHandler (object sender, ResolveNameEventArgs e);
 }

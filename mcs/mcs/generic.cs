@@ -731,6 +731,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasAnyTypeConstraint {
+			get {
+				return (spec & (SpecialConstraint.Class | SpecialConstraint.Struct)) != 0 || ifaces != null || targs != null || HasTypeConstraint;
+			}
+		}
+
 		public bool HasTypeConstraint {
 			get {
 				var bt = BaseType.BuiltinType;
@@ -1214,6 +1220,30 @@ namespace Mono.CSharp {
 				foreach (var t in TypeArguments) {
 					if (((TypeParameterSpec) t).IsConvertibleToInterface (iface))
 						return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool HasAnyTypeParameterTypeConstrained (IGenericMethodDefinition md)
+		{
+			var tps = md.TypeParameters;
+			for (int i = 0; i < md.TypeParametersCount; ++i) {
+				if (tps[i].HasAnyTypeConstraint) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool HasAnyTypeParameterConstrained (IGenericMethodDefinition md)
+		{
+			var tps = md.TypeParameters;
+			for (int i = 0; i < md.TypeParametersCount; ++i) {
+				if (tps[i].IsConstrained) {
+					return true;
 				}
 			}
 
@@ -2214,28 +2244,13 @@ namespace Mono.CSharp {
 	struct ConstraintChecker
 	{
 		IMemberContext mc;
-		bool ignore_inferred_dynamic;
 		bool recursive_checks;
 
 		public ConstraintChecker (IMemberContext ctx)
 		{
 			this.mc = ctx;
-			ignore_inferred_dynamic = false;
 			recursive_checks = false;
 		}
-
-		#region Properties
-
-		public bool IgnoreInferredDynamic {
-			get {
-				return ignore_inferred_dynamic;
-			}
-			set {
-				ignore_inferred_dynamic = value;
-			}
-		}
-
-		#endregion
 
 		//
 		// Checks the constraints of open generic type against type
@@ -2286,9 +2301,6 @@ namespace Mono.CSharp {
 		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
-				if (ignore_inferred_dynamic && targs[i].BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-					continue;
-
 				var targ = targs[i];
 				if (!CheckConstraint (context, targ, tparams [i], loc))
 					return false;
@@ -2435,14 +2447,6 @@ namespace Mono.CSharp {
 				if (Convert.ImplicitReferenceConversionExists (atype, ttype) || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			}
-
-			//
-			// When partial/full type inference finds a dynamic type argument delay
-			// the constraint check to runtime, it can succeed for real underlying
-			// dynamic type
-			//
-			if (ignore_inferred_dynamic && HasDynamicTypeArgument (ttype.TypeArguments))
-				return true;
 
 			if (mc != null) {
 				mc.Module.Compiler.Report.SymbolRelatedToPreviousError (tparam);
@@ -2852,7 +2856,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < ga_u.Length; ++i)
 					score += ExactInference (ga_u [i], ga_v [i]);
 
-				return score > 0 ? 1 : 0;
+				return System.Math.Min (1, score);
 			}
 
 			// If V is one of the unfixed type arguments

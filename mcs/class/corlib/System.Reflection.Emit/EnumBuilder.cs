@@ -411,5 +411,11 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override bool IsUserType {
+			get {
+				return false;
+			}
+		}
 	}
 }

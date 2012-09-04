@@ -120,6 +120,15 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		// Bug #5169
+		public void ExpandEnvironmentVariables_ExpandMultiple ()
+		{
+			string path = Environment.GetEnvironmentVariable ("PATH");
+			var expected = "%TEST123" + path + "TEST456%";
+			ExpandEquals ("%TEST123%PATH%TEST456%", expected);
+		}
+
+		[Test]
 		public void GetEnvironmentVariables ()
 		{
 			IDictionary d = Environment.GetEnvironmentVariables ();

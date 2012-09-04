@@ -36,11 +36,11 @@ namespace System.Xml
 {
 	internal class XmlIteratorNodeList : XmlNodeList//, IDisposable
 	{
-		XmlDocument doc;
+		//XmlDocument doc;
 		XPathNodeIterator source;
 		XPathNodeIterator iterator;
 		ArrayList list;
-		bool finished, event_detached;
+		bool finished;
 
 		#region Constructors
 
@@ -48,7 +48,7 @@ namespace System.Xml
 		{
 			if (doc == null)
 				throw new Exception ("huh?");
-			this.doc = doc;
+			//this.doc = doc;
 			//doc.NodeRemoving += SaveNodeList;
 			source = iter;
 			iterator = iter.Clone ();

@@ -94,7 +94,6 @@ namespace System {
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
 		private static readonly string [] Empty = new string [0];
 		private static bool isWin32 = (Path.DirectorySeparatorChar == '\\');
-
 	
 		// Fields
 		
@@ -109,6 +108,20 @@ namespace System {
 		public static readonly string UriSchemeNntp = "nntp";
 		public static readonly string UriSchemeNetPipe = "net.pipe";
 		public static readonly string UriSchemeNetTcp = "net.tcp";
+		
+		private static readonly string [] knownUriSchemes =
+		{
+			UriSchemeFile,
+			UriSchemeFtp,
+			UriSchemeGopher,
+			UriSchemeHttp,
+			UriSchemeHttps,
+			UriSchemeMailto,
+			UriSchemeNews,
+			UriSchemeNntp,
+			UriSchemeNetPipe,
+			UriSchemeNetTcp
+		};
 
 		// Constructors		
 
@@ -773,6 +786,7 @@ namespace System {
 					if (i + 1 < len && name [i + 1] == '.')
 						return false;
 					count = 0;
+					continue;
 				} else if (!Char.IsLetterOrDigit (c) && c != '-' && c != '_') {
 					return false;
 				}
@@ -1430,6 +1444,8 @@ namespace System {
 				path = uriString;
 				return null;
 			}
+			
+			scheme = TryGetKnownUriSchemeInstance (scheme);
 
 			// from here we're practically working on uriString.Substring(startpos,endpos-startpos)
 			int startpos = pos + 1;
@@ -1636,7 +1652,17 @@ namespace System {
 
 			return null;
 		}
-
+		
+		private static string TryGetKnownUriSchemeInstance (string scheme)
+		{
+			foreach (string knownScheme in knownUriSchemes) {
+				if (knownScheme == scheme)
+					return knownScheme;
+			}
+			
+			return scheme;
+		}
+	
 		private static bool CompactEscaped (string scheme)
 		{
 			if (scheme == null || scheme.Length < 4)

@@ -48,8 +48,8 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		public EvaluateException (string message, Exception inner)
-			: base (message, inner)
+		public EvaluateException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 #endif

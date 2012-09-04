@@ -93,7 +93,7 @@ namespace System.Threading
 		}
 
 #if !NET_2_1
-		[MonoTODO ("Implement MutexSecurity")]
+		[MonoTODO ("Use MutexSecurity in CreateMutex_internal")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public Mutex (bool initiallyOwned, string name, out bool createdNew, MutexSecurity mutexSecurity)
 		{
@@ -102,7 +102,10 @@ namespace System.Threading
 
 		public MutexSecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			return new MutexSecurity (SafeWaitHandle,
+						  AccessControlSections.Owner |
+						  AccessControlSections.Group |
+						  AccessControlSections.Access);
 		}
 
 		public static Mutex OpenExisting (string name)
@@ -150,7 +153,10 @@ namespace System.Threading
 #if !NET_2_1
 		public void SetAccessControl (MutexSecurity mutexSecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == mutexSecurity)
+				throw new ArgumentNullException ("mutexSecurity");
+				
+			mutexSecurity.PersistModifications (SafeWaitHandle);
 		}
 #endif
 	}

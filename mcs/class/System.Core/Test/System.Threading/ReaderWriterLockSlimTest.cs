@@ -29,8 +29,10 @@
 using System;
 using NUnit.Framework;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Linq;
+#if NET_4_0
+using System.Threading.Tasks;
+#endif
 
 namespace MonoTests.System.Threading
 {

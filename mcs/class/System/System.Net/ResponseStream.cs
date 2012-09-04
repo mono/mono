@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 using System.IO;
 using System.Net.Sockets;
@@ -101,11 +101,14 @@ namespace System.Net {
 
 		MemoryStream GetHeaders (bool closing)
 		{
-			if (response.HeadersSent)
-				return null;
-			MemoryStream ms = new MemoryStream ();
-			response.SendHeaders (closing, ms);
-			return ms;
+			// SendHeaders works on shared headers
+			lock (response.headers_lock) {
+				if (response.HeadersSent)
+					return null;
+				MemoryStream ms = new MemoryStream ();
+				response.SendHeaders (closing, ms);
+				return ms;
+			}
 		}
 
 		public override void Flush ()

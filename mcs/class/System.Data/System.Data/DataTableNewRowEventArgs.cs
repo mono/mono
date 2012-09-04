@@ -40,9 +40,9 @@ namespace System.Data
 		#endregion //Fields
 
                 #region Constructors
-                public DataTableNewRowEventArgs(DataRow row)
+                public DataTableNewRowEventArgs(DataRow dataRow)
                 {
-                        _row = row;
+                        _row = dataRow;
 		}
 		#endregion // Constructors
 

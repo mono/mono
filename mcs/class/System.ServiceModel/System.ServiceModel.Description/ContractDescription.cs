@@ -40,6 +40,7 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Description
 {
+#if !NET_4_5	
 	internal static class Extensions
 	{
 		public static T GetCustomAttribute<T> (this MemberInfo mi, bool inherit) where T : Attribute
@@ -56,6 +57,7 @@ namespace System.ServiceModel.Description
 			return null;
 		}
 	}
+#endif
 
 	[DebuggerDisplay ("Name={name}, Namespace={ns}, ContractType={contractType}")]
 	public class ContractDescription

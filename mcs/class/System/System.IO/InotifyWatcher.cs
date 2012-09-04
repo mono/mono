@@ -555,9 +555,7 @@ namespace System.IO {
 							foreach (InotifyData child in parent.children) {
 									
 								if (child.Directory.StartsWith (renamedOldFullPath
-#if NET_2_0
 												, StringComparison.Ordinal
-#endif
 								    )) {
 									child.Directory = renamedFullPath +
 										child.Directory.Substring (renamedOldFullPathLength);

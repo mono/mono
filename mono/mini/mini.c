@@ -3171,10 +3171,16 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_ICALL_ADDR:
 		/* run_cctors == 0 -> AOT */
 		if (patch_info->data.method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
+			const char *exc_class;
+			const char *exc_arg;
+
 			if (run_cctors) {
-				target = mono_lookup_pinvoke_call (patch_info->data.method, NULL, NULL);
-				if (!target)
+				target = mono_lookup_pinvoke_call (patch_info->data.method, &exc_class, &exc_arg);
+				if (!target) {
+					if (mono_aot_only)
+						mono_raise_exception (mono_exception_from_name_msg (mono_defaults.corlib, "System", exc_class, exc_arg));
 					g_error ("Unable to resolve pinvoke method '%s' Re-run with MONO_LOG_LEVEL=debug for more information.\n", mono_method_full_name (patch_info->data.method, TRUE));
+				}
 			} else {
 				target = NULL;
 			}
@@ -3568,6 +3574,29 @@ mono_save_seq_point_info (MonoCompile *cfg)
 
 			last = ins;
 		}
+
+		if (bb->last_ins && bb->last_ins->opcode == OP_ENDFINALLY) {
+			MonoBasicBlock *bb2;
+			MonoInst *endfinally_seq_point = NULL;
+
+			/*
+			 * The ENDFINALLY branches are not represented in the cfg, so link it with all seq points starting bbs.
+			 */
+			l = g_slist_last (bb->seq_points);
+			g_assert (l);
+			endfinally_seq_point = l->data;
+
+			for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
+				GSList *l = g_slist_last (bb2->seq_points);
+
+				if (l) {
+					MonoInst *ins = l->data;
+
+					if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
+						next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+				}
+			}
+		}
 	}
 
 	if (cfg->verbose_level > 2) {
@@ -3583,10 +3612,10 @@ mono_save_seq_point_info (MonoCompile *cfg)
 		sp->next = g_new (int, sp->next_len);
 		j = 0;
 		if (cfg->verbose_level > 2 && next [i]) {
-			printf ("\t0x%x ->", sp->il_offset);
+			printf ("\tIL0x%x ->", sp->il_offset);
 			for (l = next [i]; l; l = l->next) {
 				next_index = GPOINTER_TO_UINT (l->data);
-				printf (" 0x%x", info->seq_points [next_index].il_offset);
+				printf (" IL0x%x", info->seq_points [next_index].il_offset);
 			}
 			printf ("\n");
 		}
@@ -3854,7 +3883,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	MonoJitInfo *jinfo;
 	int num_clauses;
 	int generic_info_size, arch_eh_info_size = 0;
-	int holes_size = 0, num_holes = 0;
+	int holes_size = 0, num_holes = 0, cas_size = 0;
 	guint32 stack_size = 0;
 
 	g_assert (method_to_compile == cfg->method);
@@ -3898,6 +3927,10 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 			printf ("Number of try block holes %d\n", num_holes);
 	}
 
+	if (mono_method_has_declsec (cfg->method_to_register)) {
+		cas_size = sizeof (MonoMethodCasInfo);
+	}
+
 	if (COMPILE_LLVM (cfg))
 		num_clauses = cfg->llvm_ex_info_len;
 	else
@@ -3905,11 +3938,11 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 
 	if (cfg->method->dynamic) {
 		jinfo = g_malloc0 (MONO_SIZEOF_JIT_INFO + (num_clauses * sizeof (MonoJitExceptionInfo)) +
-				generic_info_size + holes_size + arch_eh_info_size);
+				generic_info_size + holes_size + arch_eh_info_size + cas_size);
 	} else {
 		jinfo = mono_domain_alloc0 (cfg->domain, MONO_SIZEOF_JIT_INFO +
 				(num_clauses * sizeof (MonoJitExceptionInfo)) +
-				generic_info_size + holes_size + arch_eh_info_size);
+				generic_info_size + holes_size + arch_eh_info_size + cas_size);
 	}
 
 	jinfo->method = cfg->method_to_register;
@@ -3917,8 +3950,8 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	jinfo->code_size = cfg->code_len;
 	jinfo->used_regs = cfg->used_int_regs;
 	jinfo->domain_neutral = (cfg->opt & MONO_OPT_SHARED) != 0;
-	jinfo->cas_inited = FALSE; /* initialization delayed at the first stalk walk using this method */
 	jinfo->num_clauses = num_clauses;
+
 	if (COMPILE_LLVM (cfg))
 		jinfo->from_llvm = TRUE;
 
@@ -4034,6 +4067,10 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 		info = mono_jit_info_get_arch_eh_info (jinfo);
 
 		info->stack_size = stack_size;
+	}
+
+	if (cas_size) {
+		jinfo->has_cas_info = 1;
 	}
 
 	if (COMPILE_LLVM (cfg)) {
@@ -6473,6 +6510,7 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mono_aot_only) {
 		/* This helps catch code allocation requests */
 		mono_code_manager_set_read_only (domain->code_mp);
+		mono_marshal_use_aot_wrappers (TRUE);
 	}
 
 #ifdef MONO_ARCH_HAVE_IMT
@@ -6903,11 +6941,12 @@ mono_set_verbose_level (guint32 level)
 	mini_verbose = level;
 }
 
-/*
+/**
  * mono_get_runtime_build_info:
  *
- *   Return the runtime version + build date in string format.
- * The returned string is owned by the caller.
+ * Return the runtime version + build date in string format.
+ * The returned string is owned by the caller. The returned string
+ * format is "VERSION (FULL_VERSION BUILD_DATE)" and build date is optional.
  */
 char*
 mono_get_runtime_build_info (void)

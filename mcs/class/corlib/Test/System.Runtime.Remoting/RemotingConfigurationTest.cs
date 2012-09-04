@@ -6,9 +6,7 @@
 // 
 
 using System;
-#if NET_1_1
-	using System.Net.Sockets;
-#endif
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -190,11 +188,7 @@ namespace MonoTests.System.Runtime.Remoting
 		
 		// tests the CAO related methods
 		[Test]
-#if NET_1_1
 		[ExpectedException(typeof(SocketException))]
-#else
-		[ExpectedException(typeof(RemotingException))]
-#endif
 		public void RegisterActivatedType()
 		{
 			TcpChannel chn = null;

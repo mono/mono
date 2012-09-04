@@ -41,6 +41,10 @@ using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml.Schema; // only required for NET_2_0
 #endif
 using Mono.Xml; // only required for NET_2_0
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Xml
 {
@@ -236,7 +240,15 @@ namespace System.Xml
 
 		#region Methods
 
+#if NET_4_5
+		public virtual void Close ()
+		{
+			if (asyncRunning)
+				throw new InvalidOperationException ("An asynchronous operation is already in progress.");
+		}
+#else
 		public abstract void Close ();
+#endif
 
 #if NET_2_0
 		private static XmlNameTable PopulateNameTable (
@@ -306,10 +318,30 @@ namespace System.Xml
 
 		static XmlReaderSettings PopulateSettings (XmlReaderSettings src)
 		{
+			XmlReaderSettings copy;
 			if (src == null)
-				return new XmlReaderSettings ();
+				copy = new XmlReaderSettings ();
 			else
-				return src.Clone ();
+				copy = src.Clone ();
+#if NET_4_5
+			copy.SetReadOnly ();
+#endif
+			return copy;
+		}
+
+		static XmlReaderSettings PopulateSettings (XmlReader reader, XmlReaderSettings src)
+		{
+			XmlReaderSettings copy;
+			if (src == null)
+				copy = new XmlReaderSettings ();
+			else
+				copy = src.Clone ();
+#if NET_4_5
+			if (reader.Settings != null)
+				copy.Async = reader.Settings.Async;
+			copy.SetReadOnly ();
+#endif
+			return copy;
 		}
 
 		public static XmlReader Create (Stream input, XmlReaderSettings settings, string baseUri)
@@ -328,7 +360,7 @@ namespace System.Xml
 
 		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
 		{
-			settings = PopulateSettings (settings);
+			settings = PopulateSettings (reader, settings);
 			XmlReader r = CreateFilteredXmlReader (reader, settings);
 			r.settings = settings;
 			return r;
@@ -464,7 +496,11 @@ namespace System.Xml
 #endif
 		}
 
-		void IDisposable.Dispose ()
+#if NET_4_0 || MOBILE
+		public void Dispose ()
+#else
+		void IDisposable.Dispose() 
+#endif
 		{
 			Dispose (false);
 		}
@@ -975,6 +1011,13 @@ namespace System.Xml
 			return ReadContentAs (ValueType, null);
 		}
 
+#if NET_4_5
+		public virtual DateTimeOffset ReadContentAsDateTimeOffset ()
+		{
+			return XmlConvert.ToDateTimeOffset (ReadContentString ());
+		}
+#endif
+
 		public virtual object ReadElementContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver)
 		{
 			bool isEmpty = IsEmptyElement;
@@ -1357,5 +1400,228 @@ namespace System.Xml
 		}
 #endif
 		#endregion
+
+#if NET_4_5
+		#region .NET 4.5 Async Methods
+
+		bool asyncRunning;
+
+		void StartAsync ()
+		{
+			if (!settings.Async)
+				throw new InvalidOperationException ("Set XmlReaderSettings.Async to true if you want to use Async Methods.");
+			lock (this) {
+				if (asyncRunning)
+					throw new InvalidOperationException ("An asynchronous operation is already in progress.");
+				asyncRunning = true;
+			}
+		}
+
+		public virtual Task<bool> ReadAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return Read ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> GetValueAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return Value;
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadInnerXmlAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadInnerXml ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadOuterXmlAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadOuterXml ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadContentAsStringAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsString ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadContentAsBase64Async (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsBase64 (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadContentAsBinHexAsync (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsBinHex (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadElementContentAsBase64Async (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsBase64 (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadElementContentAsBinHexAsync (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsBinHex (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadValueChunkAsync (char[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadValueChunk (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadContentAsAsync (Type returnType, IXmlNamespaceResolver namespaceResolver)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAs (returnType, namespaceResolver);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadContentAsObjectAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsObject ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadElementContentAsAsync (Type returnType, IXmlNamespaceResolver namespaceResolver)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAs (returnType, namespaceResolver);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadElementContentAsObjectAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsObject ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadElementContentAsStringAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsString ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<XmlNodeType> MoveToContentAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return MoveToContent ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task SkipAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					Skip ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		#endregion
+#endif
 	}
 }

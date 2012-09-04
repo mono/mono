@@ -28,7 +28,11 @@
 
 namespace System.Security {
 
-	[AttributeUsage (AttributeTargets.All, AllowMultiple=false, Inherited=false)]
+	[AttributeUsage (AttributeTargets.Delegate | AttributeTargets.Interface | AttributeTargets.Field |
+		AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Enum | AttributeTargets.Struct |
+		AttributeTargets.Class | AttributeTargets.Assembly,
+		AllowMultiple=false, Inherited=false)]
+	[Obsolete ("Use the SecuritySafeCriticalAttribute instead")]
 	[MonoTODO ("Not supported by the runtime")]
 	public sealed class SecurityTreatAsSafeAttribute : Attribute {
 

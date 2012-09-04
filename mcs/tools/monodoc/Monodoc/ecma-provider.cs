@@ -1632,7 +1632,7 @@ public class EcmaHelpSource : HelpSource {
 			return name.Replace("+", ".");
 		}
 
-		public string MonoImpInfo(string assemblyname, string typename, string membername, string arglist, bool strlong)
+		string MonoImpInfo(string assemblyname, string typename, string membername, string arglist, bool strlong)
 		{
 			if (quiet)
 				return "";
@@ -1642,7 +1642,7 @@ public class EcmaHelpSource : HelpSource {
 			return MonoImpInfo(assemblyname, typename, membername, a, strlong);
 		}
 
-		public string MonoImpInfo(string assemblyname, string typename, string membername, XPathNodeIterator itr, bool strlong)
+		string MonoImpInfo(string assemblyname, string typename, string membername, XPathNodeIterator itr, bool strlong)
 		{
 			if (quiet)
 				return "";
@@ -1654,7 +1654,7 @@ public class EcmaHelpSource : HelpSource {
 			return MonoImpInfo (assemblyname, typename, membername, rgs, strlong);
 		}
 		
-		public string MonoImpInfo(string assemblyname, string typename, string membername, ArrayList arglist, bool strlong)
+		string MonoImpInfo(string assemblyname, string typename, string membername, ArrayList arglist, bool strlong)
 		{
 			try {
 				Assembly assembly = null;
@@ -1717,7 +1717,7 @@ public class EcmaHelpSource : HelpSource {
 			}
 		}
 		
-		public string MonoImpInfo(System.Reflection.MemberInfo mi, string itemtype, bool strlong)
+		string MonoImpInfo(System.Reflection.MemberInfo mi, string itemtype, bool strlong)
 		{
 			if (quiet)
 				return "";

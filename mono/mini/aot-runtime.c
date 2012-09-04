@@ -804,7 +804,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				kind = decode_value (p, &p);
 
 				/* Can't decode this */
-				g_assert (target);
+				if (!target)
+					return FALSE;
 				if (target->wrapper_type == MONO_WRAPPER_STELEMREF) {
 					info = mono_marshal_get_wrapper_info (target);
 
@@ -840,7 +841,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				if (!klass)
 					return FALSE;
 
-				g_assert (target);
+				if (!target)
+					return FALSE;
 				if (klass != target->klass)
 					return FALSE;
 
@@ -891,7 +893,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				if (!m)
 					return FALSE;
 
-				g_assert (target);
+				if (!target)
+					return FALSE;
 				g_assert (target->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED);
 
 				info = mono_marshal_get_wrapper_info (target);
@@ -908,7 +911,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			char *name;
 
 			if (subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-				g_assert (target);
+				if (!target)
+					return FALSE;
 
 				name = (char*)p;
 				if (strcmp (target->name, name) != 0)
@@ -921,7 +925,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 					return FALSE;
 
 				/* This should only happen when looking for an extra method */
-				g_assert (target);
+				if (!target)
+					return FALSE;
 				if (mono_marshal_method_from_wrapper (target) == m)
 					ref->method = target;
 				else
@@ -943,7 +948,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		case MONO_WRAPPER_RUNTIME_INVOKE: {
 			int subtype = decode_value (p, &p);
 
-			g_assert (target);
+			if (!target)
+				return FALSE;
 
 			if (subtype == WRAPPER_SUBTYPE_RUNTIME_INVOKE_DYNAMIC) {
 				if (strcmp (target->name, "runtime_invoke_dynamic") != 0)
@@ -978,7 +984,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			 * These wrappers are associated with a signature, not with a method.
 			 * Since we can't decode them into methods, they need a target method.
 			 */
-			g_assert (target);
+			if (!target)
+				return FALSE;
 
 			if (sig_matches_target (module, target, p, &p))
 				ref->method = target;
@@ -1312,6 +1319,7 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, char **out_msg)
 	gboolean usable = TRUE;
 	gboolean full_aot;
 	guint8 *blob;
+	guint32 excluded_cpu_optimizations;
 
 	if (strcmp (assembly->image->guid, info->assembly_guid)) {
 		msg = g_strdup_printf ("doesn't match assembly");
@@ -1348,6 +1356,17 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, char **out_msg)
 #endif
 	if (mini_get_debug_options ()->mdb_optimizations && !(info->flags & MONO_AOT_FILE_FLAG_DEBUG) && !full_aot) {
 		msg = g_strdup_printf ("not compiled for debugging");
+		usable = FALSE;
+	}
+
+	mono_arch_cpu_optimizations (&excluded_cpu_optimizations);
+	if (info->opts & excluded_cpu_optimizations) {
+		msg = g_strdup_printf ("compiled with unsupported CPU optimizations");
+		usable = FALSE;
+	}
+
+	if (!mono_aot_only && (info->simd_opts & ~mono_arch_cpu_enumerate_simd_versions ())) {
+		msg = g_strdup_printf ("compiled with unsupported SIMD extensions");
 		usable = FALSE;
 	}
 
@@ -2464,7 +2483,7 @@ MonoJitInfo *
 mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 {
 	int pos, left, right, offset, offset1, offset2, code_len;
-	int method_index, table_len, is_wrapper;
+	int method_index, table_len;
 	guint32 token;
 	MonoAotModule *amodule = image->aot_module;
 	MonoMethod *method;
@@ -2502,14 +2521,18 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 		for (i = 0; i < offsets_len -1; ++i)
 			g_assert (code_offsets [(i * 2)] <= code_offsets [(i + 1) * 2]);
 
+		amodule->sorted_code_offsets_len = offsets_len;
+		mono_memory_barrier ();
 		if (InterlockedCompareExchangePointer ((gpointer*)&amodule->sorted_code_offsets, code_offsets, NULL) != NULL)
 			/* Somebody got in before us */
 			g_free (code_offsets);
-		amodule->sorted_code_offsets_len = offsets_len;
 	}
 
 	code_offsets = amodule->sorted_code_offsets;
 	offsets_len = amodule->sorted_code_offsets_len;
+
+	if (offsets_len > 0 && (offset < code_offsets [0] || offset >= (amodule->code_end - amodule->code)))
+		return NULL;
 
 	/* Binary search in the sorted_code_offsets table */
 	left = 0;
@@ -2582,10 +2605,10 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 			}
 
 			p = amodule->blob + table [(pos * 2) + 1];
-			is_wrapper = decode_value (p, &p);
-			g_assert (!is_wrapper);
 			method = decode_resolve_method_ref (amodule, p, &p);
-			g_assert (method);
+			if (!method)
+				/* Happens when a random address is passed in which matches a not-yey called wrapper encoded using its name */
+				return NULL;
 		} else {
 			token = mono_metadata_make_token (MONO_TABLE_METHOD, method_index + 1);
 			method = mono_get_method (image, token, NULL);

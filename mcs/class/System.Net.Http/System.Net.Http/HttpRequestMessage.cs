@@ -28,12 +28,12 @@
 
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace System.Net.Http
 {
 	public class HttpRequestMessage : IDisposable
 	{
-		HttpContent content;
 		HttpRequestHeaders headers;
 		HttpMethod method;
 		Version version;
@@ -48,7 +48,7 @@ namespace System.Net.Http
 		}
 
 		public HttpRequestMessage (HttpMethod method, string requestUri)
-			: this (method, string.IsNullOrEmpty (requestUri) ? (Uri) null : new Uri (requestUri))
+			: this (method, string.IsNullOrEmpty (requestUri) ? (Uri) null : new Uri (requestUri, System.UriKind.RelativeOrAbsolute))
 		{
 		}
 
@@ -58,14 +58,7 @@ namespace System.Net.Http
 			RequestUri = requestUri;
 		}
 
-		public HttpContent Content {
-			get {
-				return content;
-			}
-			set {
-				content = value;
-			}
-		}
+		public HttpContent Content { get; set; }
 
 		public HttpRequestHeaders Headers {
 			get {
@@ -96,7 +89,7 @@ namespace System.Net.Http
 				return uri;
 			}
 			set {
-				if (value != null && (value.Scheme != Uri.UriSchemeHttp && value.Scheme != Uri.UriSchemeHttps))
+				if (value != null && (value.IsAbsoluteUri && value.Scheme != Uri.UriSchemeHttp && value.Scheme != Uri.UriSchemeHttps))
 					throw new ArgumentException ("Only http or https scheme is allowed");
 
 				uri = value;
@@ -137,6 +130,21 @@ namespace System.Net.Http
 
 			is_used = true;
 			return false;
+		}
+		
+		public override string ToString ()
+		{
+			var sb = new StringBuilder ();
+			sb.Append ("Method: ").Append (method);
+			sb.Append (", RequestUri: '").Append (RequestUri != null ? RequestUri.ToString () : "<null>");
+			sb.Append ("', Version: ").Append (Version);
+			sb.Append (", Content: ").Append (Content != null ? Content.ToString () : "<null>");
+			sb.Append (", Headers:\r\n{\r\n").Append (Headers);
+			if (Content != null)
+				sb.Append (Content.Headers);
+			sb.Append ("}");
+			
+			return sb.ToString ();
 		}
 	}
 }

@@ -133,9 +133,9 @@ namespace System.Threading.Tasks
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);
 
-		internal bool RunInline (Task task)
+		internal bool RunInline (Task task, bool taskWasPreviouslyQueued)
 		{
-			if (!TryExecuteTaskInline (task, false))
+			if (!TryExecuteTaskInline (task, taskWasPreviouslyQueued))
 				return false;
 
 			if (!task.IsCompleted)

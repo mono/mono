@@ -337,7 +337,7 @@ namespace System
 					char* src_ptr = src;
 					int len = Length;
 
-					do {
+					while (len > 0) {
 						if (char.IsWhiteSpace (*src_ptr++)) {
 							if (split_points == null) {
 								split_points = new int[8];
@@ -349,7 +349,8 @@ namespace System
 							if (total_points == count && !removeEmpty)
 								break;
 						}
-					} while (len-- != 0);
+						--len;
+					}
 				}
 			} else {
 				fixed (char* src = this) {
@@ -357,7 +358,7 @@ namespace System
 						char* src_ptr = src;
 						char* sep_ptr_end = sep_src + sep.Length;
 						int len = Length;
-						do {
+						while (len > 0) {
 							char* sep_ptr = sep_src;
 							do {
 								if (*sep_ptr++ == *src_ptr) {
@@ -376,7 +377,8 @@ namespace System
 							} while (sep_ptr != sep_ptr_end);
 
 							++src_ptr;
-						} while (len-- != 0);
+							--len;
+						}
 					}
 				}
 			}
@@ -1951,6 +1953,8 @@ namespace System
 
 			int ptr = 0;
 			int start = ptr;
+			var formatter = provider != null ? provider.GetFormat (typeof (ICustomFormatter)) as ICustomFormatter : null;
+
 			while (ptr < format.length) {
 				char c = format[ptr ++];
 
@@ -1979,21 +1983,21 @@ namespace System
 					object arg = args[n];
 
 					string str;
-					ICustomFormatter formatter = null;
-					if (provider != null)
-						formatter = provider.GetFormat (typeof (ICustomFormatter))
-							as ICustomFormatter;
 					if (arg == null)
 						str = Empty;
 					else if (formatter != null)
 						str = formatter.Format (arg_format, arg, provider);
-					else if (arg is IFormattable)
-						str = ((IFormattable)arg).ToString (arg_format, provider);
 					else
-						str = arg.ToString ();
+						str = null;
+
+					if (str == null) {
+						if (arg is IFormattable)
+							str = ((IFormattable)arg).ToString (arg_format, provider);
+						else
+							str = arg.ToString ();
+					}
 
 					// pad formatted string and append to result
-
 					if (width > str.length) {
 						const char padchar = ' ';
 						int padlen = width - str.length;
@@ -2006,9 +2010,9 @@ namespace System
 							result.Append (padchar, padlen);
 							result.Append (str);
 						}
-					}
-					else
+					} else {
 						result.Append (str);
+					}
 
 					start = ptr;
 				}

@@ -82,7 +82,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.task = task;
 			this.taskElement = taskElement;
 			this.taskType = taskType;
-			values = new Dictionary <string, object> (StringComparer.InvariantCultureIgnoreCase);
+			values = new Dictionary <string, object> (StringComparer.OrdinalIgnoreCase);
 			
 			foreach (KeyValuePair <string, string> de in parameters) {
 				currentProperty = taskType.GetProperty (de.Key, BindingFlags.Public | BindingFlags.Instance

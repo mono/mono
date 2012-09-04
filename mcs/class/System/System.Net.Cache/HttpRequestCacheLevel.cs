@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Net.Cache 
 {
 	public enum HttpRequestCacheLevel
@@ -47,4 +45,3 @@ namespace System.Net.Cache
 	}
 }
 
-#endif

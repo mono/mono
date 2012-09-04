@@ -42,7 +42,8 @@ namespace System.Diagnostics {
 		public const string Key = ".__TraceInfoSettingsKey__.";
 
 		public bool AutoFlush;
-		public int IndentLevel, IndentSize = 4;
+		//public int IndentLevel;
+		public int IndentSize = 4;
 		public TraceListenerCollection Listeners = new TraceListenerCollection (false);
 
 		public TraceImplSettings ()
@@ -162,7 +163,7 @@ namespace System.Diagnostics {
 		}
 
 		static bool use_global_lock;
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static CorrelationManager CorrelationManager {
@@ -214,7 +215,7 @@ namespace System.Diagnostics {
 						d.Remove (TraceImplSettings.Key);
 
 						autoFlush   = s.AutoFlush;
-						indentLevel = s.IndentLevel;
+//						indentLevel = s.IndentLevel;
 						indentSize  = s.IndentSize;
 						listeners   = s.Listeners;
 					}

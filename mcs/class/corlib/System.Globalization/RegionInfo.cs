@@ -1,12 +1,12 @@
 //
 // System.Globalization.RegionInfo.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto  <atsushi@ximian.com>
-//
-
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -68,14 +68,12 @@ namespace System.Globalization
 		string iso3Name;
 		string win3Name;
 		string englishName;
+		string nativeName;
 		string currencySymbol;
 		string isoCurrencySymbol;
 		string currencyEnglishName;
+		string currencyNativeName;
 #pragma warning restore 649
-		
-		// new (instance) fields should be added here (and do not have to be duplicated in the runtime)
-		
-		int lcid; // it is used only for Equals() (not even used in GetHashCode()).
 		
 		public RegionInfo (int culture)
 		{
@@ -90,7 +88,6 @@ namespace System.Globalization
 				throw new ArgumentNullException ();
 
 			if (construct_internal_region_from_name (name.ToUpperInvariant ())) {
-				lcid = name.GetHashCode (); // random-ish
 				return;
 			}
 			if (!GetByTerritory (CultureInfo.GetCultureInfo (name)))
@@ -103,7 +100,7 @@ namespace System.Globalization
 				throw new Exception ("INTERNAL ERROR: should not happen.");
 			if (ci.IsNeutralCulture || ci.Territory == null)
 				return false;
-			this.lcid = ci.LCID;
+
 			return construct_internal_region_from_name (ci.Territory.ToUpperInvariant ());
 		}
 
@@ -149,15 +146,14 @@ namespace System.Globalization
 			get { return isoCurrencySymbol; }
 		}
 
-		[System.Runtime.InteropServices.ComVisible(false)]
+		[ComVisible(false)]
 		public virtual string NativeName {
-			get { return DisplayName; }
+			get { return nativeName; }
 		}
 
-		[MonoTODO ("Not implemented")]
-		[System.Runtime.InteropServices.ComVisible(false)]
+		[ComVisible(false)]
 		public virtual string CurrencyNativeName {
-			get { throw new NotImplementedException (); }
+			get { return currencyNativeName; }
 		}
 
 		public virtual string Name {
@@ -176,18 +172,15 @@ namespace System.Globalization
 			get { return iso2Name; }
 		}
 
-		//
-		// methods
-
 		public override bool Equals (object value)
 		{
 			RegionInfo other = value as RegionInfo;
-			return other != null && lcid == other.lcid;
+			return other != null && Name == other.Name;
 		}
 
 		public override int GetHashCode ()
 		{
-			return (int) (0x80000000 + (regionId << 3) + regionId); // it i still based on regionId
+			return Name.GetHashCode ();
 		}
 
 		public override string ToString ()

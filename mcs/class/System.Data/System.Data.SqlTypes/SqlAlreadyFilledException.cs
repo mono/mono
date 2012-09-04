@@ -47,8 +47,8 @@ namespace System.Data.SqlTypes {
 		{
 		}
 
-		public SqlAlreadyFilledException (string message, Exception inner)
-			: base (message, inner)
+		public SqlAlreadyFilledException (string message, Exception e)
+			: base (message, e)
 		{
 		}
 

@@ -221,6 +221,14 @@ namespace System {
 				return IsCOMObjectImpl ();
 			}
 		}
+		
+#if NET_4_5
+		public virtual bool IsConstructedGenericType {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 
 		public bool IsContextful {
 			get {
@@ -503,11 +511,19 @@ namespace System {
 
 			var fields = GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
-			string [] result = new string [fields.Length];
-			for (int i = 0; i < fields.Length; ++i)
-				result [i] = fields [i].Name;
+			string [] names = new string [fields.Length];
+			if (0 != names.Length) {
+				for (int i = 0; i < fields.Length; ++i)
+					names [i] = fields [i].Name;
+					
+				var et = GetEnumUnderlyingType ();
+				var values = Array.CreateInstance (et, names.Length);
+				for (int i = 0; i < fields.Length; ++i)
+					values.SetValue (fields [i].GetValue (null), i);
+				MonoEnumInfo.SortEnums (et, values, names);
+			}
 
-			return result;
+			return names;
 		}
 
 		static NotImplementedException CreateNIE () {
@@ -1357,6 +1373,14 @@ namespace System {
 				return _impl.Value != IntPtr.Zero;
 			}
 		}
+		
+#if NET_4_5
+		public virtual Type[] GenericTypeArguments {
+			get {
+				return IsGenericType ? GetGenericArguments () : EmptyTypes;
+			}
+		}
+#endif
 
 		public virtual Type[] GetGenericArguments ()
 		{
@@ -1384,28 +1408,9 @@ namespace System {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
-
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
-
-		static AssemblyBuilder PeelAssemblyBuilder (Type type)
-		{
-			if (type.Assembly is AssemblyBuilder)
-				return (AssemblyBuilder)type.Assembly;
-
-			if (type.HasElementType)
-				return PeelAssemblyBuilder (type.GetElementType ());
-
-			if (!type.IsGenericType || type.IsGenericParameter || type.IsGenericTypeDefinition)
-				return null;
-
-			foreach (Type arg in type.GetGenericArguments ()) {
-				AssemblyBuilder ab = PeelAssemblyBuilder (arg);
-				if (ab != null)
-					return ab;
-			}
-			return null;
-		}
 
 		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
@@ -1649,15 +1654,12 @@ namespace System {
 		/* 
 		 * Return whenever this object is an instance of a user defined subclass
 		 * of System.Type or an instance of TypeDelegator.
+		 * A user defined type is not simply the opposite of a system type.
+		 * It's any class that's neither a SRE or runtime baked type.
 		 */
-		internal bool IsUserType {
+		internal virtual bool IsUserType {
 			get {
-				/* 
-				 * subclasses cannot modify _impl so if it is zero, it means the
-				 * type is not created by the runtime.
-				 */
-				return _impl.Value == IntPtr.Zero &&
-					(GetType ().Assembly != typeof (Type).Assembly || GetType () == typeof (TypeDelegator));
+				return true;
 			}
 		}
 

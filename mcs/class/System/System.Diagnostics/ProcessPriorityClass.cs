@@ -29,9 +29,7 @@
 //
 
 namespace System.Diagnostics {
-#if !NET_2_0
-	[Serializable]
-#endif
+
 	public enum ProcessPriorityClass {
 		AboveNormal=0x08000,
 		BelowNormal=0x04000,

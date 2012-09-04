@@ -137,16 +137,11 @@ namespace System.Net
 		internal WebConnection Connection {
 			get { return cnc; }
 		}
-#if NET_2_0
 		public override bool CanTimeout {
 			get { return true; }
 		}
-#endif
 
-#if NET_2_0
-		public override
-#endif
-		int ReadTimeout {
+		public override int ReadTimeout {
 			get {
 				return read_timeout;
 			}
@@ -158,10 +153,7 @@ namespace System.Net
 			}
 		}
 
-#if NET_2_0
-		public override
-#endif
-		int WriteTimeout {
+		public override int WriteTimeout {
 			get {
 				return write_timeout;
 			}

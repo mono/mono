@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 using System.Globalization;
 using System.IO;
@@ -49,7 +49,10 @@ namespace System.Net {
 		string status_description = "OK";
 		bool chunked;
 		HttpListenerContext context;
+		
 		internal bool HeadersSent;
+		internal object headers_lock = new object ();
+		
 		bool force_close_chunked;
 
 		internal HttpListenerResponse (HttpListenerContext context)

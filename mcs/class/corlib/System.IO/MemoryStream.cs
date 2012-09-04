@@ -56,6 +56,7 @@ namespace System.IO
 		int position;
 		int dirty_bytes;
 #if NET_4_5
+		[NonSerialized]
 		Task<int> read_task;
 #endif
 

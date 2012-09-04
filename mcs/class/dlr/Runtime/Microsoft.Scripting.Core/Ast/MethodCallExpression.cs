@@ -21,11 +21,7 @@ using System.Dynamic.Utils;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -33,9 +29,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents a call to either static or an instance method.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.MethodCallExpressionProxy))]
-#endif
     public class MethodCallExpression : Expression, IArgumentProvider {
         private readonly MethodInfo _method;
 
@@ -814,9 +808,6 @@ namespace System.Linq.Expressions {
 
         private static void ValidateStaticOrInstanceMethod(Expression instance, MethodInfo method) {
             if (method.IsStatic) {
-#if SILVERLIGHT
-                if (SilverlightQuirks) return;
-#endif
                 if (instance != null) throw new ArgumentException(Strings.OnlyStaticMethodsHaveNullInstance, "instance");
             } else {
                 if (instance == null) throw new ArgumentException(Strings.OnlyStaticMethodsHaveNullInstance, "method");
@@ -917,9 +908,6 @@ namespace System.Linq.Expressions {
             // quote (produce a new tree closed over parameter values), only
             // works consistently for lambdas
             Type quoteable = typeof(LambdaExpression);
-#if SILVERLIGHT
-            if (SilverlightQuirks) quoteable = typeof(Expression);
-#endif
             if (TypeUtils.IsSameOrSubclass(quoteable, parameterType) &&
                 parameterType.IsAssignableFrom(argument.GetType())) {
                 argument = Expression.Quote(argument);

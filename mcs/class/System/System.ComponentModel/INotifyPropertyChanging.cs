@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 // SP1
-
 using System;
 
 namespace System.ComponentModel
@@ -37,5 +35,3 @@ namespace System.ComponentModel
 		event PropertyChangingEventHandler PropertyChanging;
 	}
 }
-
-#endif

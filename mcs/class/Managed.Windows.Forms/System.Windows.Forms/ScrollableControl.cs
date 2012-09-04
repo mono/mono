@@ -364,11 +364,13 @@ namespace System.Windows.Forms {
 					display_rectangle = base.DisplayRectangle;
 				}
 
-				if (dock_padding != null) {
-					display_rectangle.X += dock_padding.Left;
-					display_rectangle.Y += dock_padding.Top;
-					display_rectangle.Width -= dock_padding.Left + dock_padding.Right;
-					display_rectangle.Height -= dock_padding.Top + dock_padding.Bottom;
+				// DockPadding is the same as Padding (according to documentation) but is
+				// calculated lazily, so we use Padding here instead.
+				if (Padding != Padding.Empty) {
+					display_rectangle.X += Padding.Left;
+					display_rectangle.Y += Padding.Top;
+					display_rectangle.Width -= Padding.Horizontal;
+					display_rectangle.Height -= Padding.Vertical;
 				}
 
 				return display_rectangle;

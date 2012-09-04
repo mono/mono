@@ -246,6 +246,7 @@ struct _MonoException {
 	MonoString *source;
 	MonoObject *_data;
 	MonoObject *captured_traces;
+	MonoArray  *native_trace_ips;
 };
 
 typedef struct {
@@ -411,6 +412,7 @@ struct _MonoInternalThread {
 	gpointer android_tid;
 	gpointer thread_pinning_ref;
 	gint32 managed_id;
+	gint32 ignore_next_signal;
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to the unmanaged MonoThread structure.
@@ -442,24 +444,21 @@ typedef struct {
 	MonoString *LongTimePattern;
 	MonoString *MonthDayPattern;
 	MonoString *YearMonthPattern;
-	MonoString *FullDateTimePattern;
-	MonoString *RFC1123Pattern;
-	MonoString *SortableDateTimePattern;
-	MonoString *UniversalSortableDateTimePattern;
 	guint32 FirstDayOfWeek;
-	MonoObject *Calendar;
 	guint32 CalendarWeekRule;
 	MonoArray *AbbreviatedDayNames;
 	MonoArray *DayNames;
 	MonoArray *MonthNames;
+	MonoArray *GenitiveMonthNames;
 	MonoArray *AbbreviatedMonthNames;
+	MonoArray *GenitiveAbbreviatedMonthNames;
 	MonoArray *ShortDatePatterns;
 	MonoArray *LongDatePatterns;
 	MonoArray *ShortTimePatterns;
 	MonoArray *LongTimePatterns;
 	MonoArray *MonthDayPatterns;
 	MonoArray *YearMonthPatterns;
-	MonoArray *shortDayNames;
+	MonoArray *ShortestDayNames;
 } MonoDateTimeFormatInfo;
 
 typedef struct 
@@ -510,37 +509,37 @@ typedef struct {
 	MonoBoolean is_read_only;
 	gint32 lcid;
 	gint32 parent_lcid;
-	gint32 specific_lcid;
 	gint32 datetime_index;
 	gint32 number_index;
+	gint32 calendar_type;
 	MonoBoolean use_user_override;
 	MonoNumberFormatInfo *number_format;
 	MonoDateTimeFormatInfo *datetime_format;
 	MonoObject *textinfo;
 	MonoString *name;
-	MonoString *displayname;
 	MonoString *englishname;
 	MonoString *nativename;
 	MonoString *iso3lang;
 	MonoString *iso2lang;
-	MonoString *icu_name;
 	MonoString *win3lang;
 	MonoString *territory;
+	MonoArray *native_calendar_names;
 	MonoCompareInfo *compareinfo;
-	const gint32 *calendar_data;
 	const void* text_info_data;
 } MonoCultureInfo;
 
 typedef struct {
 	MonoObject obj;
-	gint32 region_id;
+	gint32 geo_id;
 	MonoString *iso2name;
 	MonoString *iso3name;
 	MonoString *win3name;
 	MonoString *english_name;
+	MonoString *native_name;
 	MonoString *currency_symbol;
 	MonoString *iso_currency_symbol;
 	MonoString *currency_english_name;
+	MonoString *currency_native_name;
 } MonoRegionInfo;
 
 typedef struct {
@@ -986,7 +985,7 @@ typedef struct {
 	MonoObject *type;
 	MonoArray *pinfo;
 	MonoArray *cattrs;
-	MonoReflectionMethod *override_method;
+	MonoArray *override_methods;
 	MonoString *dll;
 	MonoString *dllentry;
 	guint32 charset;
@@ -1352,6 +1351,7 @@ void          mono_image_module_basic_init (MonoReflectionModuleBuilder *module)
 void          mono_image_register_token (MonoDynamicImage *assembly, guint32 token, MonoObject *obj) MONO_INTERNAL;
 void          mono_dynamic_image_free (MonoDynamicImage *image) MONO_INTERNAL;
 void          mono_image_set_wrappers_type (MonoReflectionModuleBuilder *mb, MonoReflectionType *type) MONO_INTERNAL;
+void          mono_dynamic_image_release_gc_roots (MonoDynamicImage *image) MONO_INTERNAL;
 
 void        mono_reflection_setup_internal_class  (MonoReflectionTypeBuilder *tb) MONO_INTERNAL;
 
@@ -1384,7 +1384,7 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 MonoReflectionMethod*
 mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *method, MonoArray *types) MONO_INTERNAL;
 void
-mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoArray *methods, MonoArray *ctors, MonoArray *fields, MonoArray *properties, MonoArray *events) MONO_INTERNAL;
+mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoArray *fields) MONO_INTERNAL;
 MonoReflectionEvent *
 mono_reflection_event_builder_get_event_info (MonoReflectionTypeBuilder *tb, MonoReflectionEventBuilder *eb) MONO_INTERNAL;
 
@@ -1573,6 +1573,12 @@ mono_string_to_utf8_mp_ignore (MonoMemPool *mp, MonoString *s) MONO_INTERNAL;
 
 gboolean
 mono_monitor_is_il_fastpath_wrapper (MonoMethod *method) MONO_INTERNAL;
+
+char *
+mono_exception_get_native_backtrace (MonoException *exc) MONO_INTERNAL;
+
+MonoString *
+ves_icall_Mono_Runtime_GetNativeStackTrace (MonoException *exc) MONO_INTERNAL;
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

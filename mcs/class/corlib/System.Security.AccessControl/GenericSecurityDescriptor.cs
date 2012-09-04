@@ -45,7 +45,7 @@ namespace System.Security.AccessControl {
 					len += Owner.BinaryLength;
 				if (Group != null)
 					len += Group.BinaryLength;
-				if (DaclPresent)
+				if (DaclPresent && !DaclIsUnmodifiedAefa)
 					len += InternalDacl.BinaryLength;
 				if (SaclPresent)
 					len += InternalSacl.BinaryLength;
@@ -77,7 +77,15 @@ namespace System.Security.AccessControl {
 
 		public void GetBinaryForm (byte[] binaryForm, int offset)
 		{
+			if (null == binaryForm)
+				throw new ArgumentNullException ("binaryForm");
+
+			int binaryLength = BinaryLength;
+			if (offset < 0 || offset > binaryForm.Length - binaryLength)
+				throw new ArgumentOutOfRangeException ("offset");
+			
 			ControlFlags controlFlags = ControlFlags;
+			if (DaclIsUnmodifiedAefa) { controlFlags &= ~ControlFlags.DiscretionaryAclPresent; }
 			binaryForm[offset + 0x00] = Revision;
 			binaryForm[offset + 0x01] = InternalReservedField;
 			WriteUShort ((ushort)controlFlags, binaryForm,
@@ -112,7 +120,7 @@ namespace System.Security.AccessControl {
 			}
 			
 			GenericAcl discAcl = InternalDacl;
-			if (DaclPresent) {
+			if (DaclPresent && !DaclIsUnmodifiedAefa) {
 				WriteInt (pos, binaryForm, offset + 0x10);
 				discAcl.GetBinaryForm (binaryForm, offset + pos);
 				pos += InternalDacl.BinaryLength;
@@ -140,7 +148,7 @@ namespace System.Security.AccessControl {
 			}
 			
 			if ((includeSections & AccessControlSections.Access) != 0
-			    && InternalDacl != null) {
+			    && DaclPresent && !DaclIsUnmodifiedAefa) {
 				result.AppendFormat (
 					CultureInfo.InvariantCulture,
 					"D:{0}",
@@ -149,7 +157,7 @@ namespace System.Security.AccessControl {
 			}
 			
 			if ((includeSections & AccessControlSections.Audit) != 0
-			    && InternalSacl != null) {
+			    && SaclPresent) {
 				result.AppendFormat (
 					CultureInfo.InvariantCulture,
 					"S:{0}",
@@ -165,27 +173,32 @@ namespace System.Security.AccessControl {
 			return true;
 		}
 		
-		private bool DaclPresent {
+		// See CommonSecurityDescriptor constructor regarding this persistence detail.
+		internal virtual bool DaclIsUnmodifiedAefa {
+			get { return false; }
+		}
+		
+		bool DaclPresent {
 			get {
 				return InternalDacl != null
 				    && (ControlFlags & ControlFlags.DiscretionaryAclPresent) != 0;
 			}
 		}
-
-		private bool SaclPresent {
+		
+		bool SaclPresent {
 			get {
 				return InternalSacl != null
 				    && (ControlFlags & ControlFlags.SystemAclPresent) != 0;
 			}
 		}
-
-		private void WriteUShort (ushort val, byte[] buffer, int offset)
+				
+		void WriteUShort (ushort val, byte[] buffer, int offset)
 		{
 			buffer[offset] = (byte)val;
 			buffer[offset + 1] = (byte)(val >> 8);
 		}
 
-		private void WriteInt (int val, byte[] buffer, int offset)
+		void WriteInt (int val, byte[] buffer, int offset)
 		{
 			buffer[offset] = (byte)val;
 			buffer[offset + 1] = (byte)(val >> 8);

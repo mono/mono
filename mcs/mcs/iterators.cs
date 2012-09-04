@@ -60,7 +60,7 @@ namespace Mono.CSharp
 			machine_initializer = bc.CurrentAnonymousMethod as T;
 
 			if (!bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				unwind_protect = bc.CurrentBranching.AddResumePoint (this, out resume_pc);
+				unwind_protect = bc.CurrentBranching.AddResumePoint (this, this, out resume_pc);
 
 			return true;
 		}
@@ -972,7 +972,9 @@ namespace Mono.CSharp
 			method.Block.IsCompilerGenerated = true;
 			method.Block.AddStatement (new TryFinallyBlockProxyStatement (this, block));
 
-			storey.AddMember (method);
+			// Cannot it add to storey because it'd be emitted before nested
+			// anonoymous methods which could capture shared variable
+
 			return method;
 		}
 

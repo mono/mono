@@ -62,14 +62,7 @@ using System.EnterpriseServices;
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
-#if NET_2_0
-	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: ComVisible (true)]
-#elif NET_1_1
-	[assembly: TypeLibVersion (1, 10)]
-#elif NET_1_0
-	[assembly: TypeLibVersion (1, 10)]
-#endif
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: ComVisible (true)]

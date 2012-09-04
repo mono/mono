@@ -20,11 +20,7 @@ using System.Diagnostics;
 using System.Dynamic.Utils;
 using System.Threading;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -32,9 +28,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents a block that contains a sequence of expressions where variables can be defined.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.BlockExpressionProxy))]
-#endif
     public class BlockExpression : Expression {
         /// <summary>
         /// Gets the expressions in this block.

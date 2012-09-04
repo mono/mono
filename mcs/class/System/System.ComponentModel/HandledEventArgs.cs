@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.ComponentModel {
 
 	public class HandledEventArgs : EventArgs {
@@ -49,4 +47,3 @@ namespace System.ComponentModel {
 
 }
 
-#endif

@@ -34,7 +34,7 @@
 
 using System.Collections;
 using System.Collections.Specialized;
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 using System.Configuration;
 #endif
 
@@ -45,10 +45,8 @@ namespace System.Diagnostics
 		private string name;
 		private string description;
 		private int switchSetting;
-#if NET_2_0
 		private string value;
 		private string defaultSwitchValue;
-#endif
 		// MS Behavior is that (quoting from MSDN for OnSwitchSettingChanged()):
 		// 		"...It is invoked the first time a switch reads its value from the
 		// 		configuration file..."
@@ -70,13 +68,11 @@ namespace System.Diagnostics
 			this.description = description;
 		}
 
-#if NET_2_0
 		protected Switch(string displayName, string description, string defaultSwitchValue)
 			: this (displayName, description)
 		{
 			this.defaultSwitchValue = defaultSwitchValue;
 		}
-#endif
 
 		public string Description {
 			get {return description;}
@@ -104,7 +100,6 @@ namespace System.Diagnostics
 			}
 		}
 
-#if NET_2_0
 		StringDictionary attributes = new StringDictionary ();
 
 #if XML_DEP
@@ -118,7 +113,7 @@ namespace System.Diagnostics
 			get { return value; }
 			set {
 				this.value = value;
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 				try {
 					OnValueChanged ();
 				} catch (Exception ex) {
@@ -143,7 +138,6 @@ namespace System.Diagnostics
 		protected virtual void OnValueChanged ()
 		{
 		}
-#endif
 
 		private void GetConfigFileSetting ()
 		{
@@ -152,7 +146,7 @@ namespace System.Diagnostics
 			// Load up the specified switch
 			if (d != null) {
 				if (d.Contains (name)) {
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 					Value = d [name] as string;
 #else
 					switchSetting = (int) d [name];
@@ -161,12 +155,10 @@ namespace System.Diagnostics
 				}
 			}
 
-#if NET_2_0
 			if (defaultSwitchValue != null) {
 				value = defaultSwitchValue;
 				OnValueChanged ();
 			}
-#endif
 		}
 
 		protected virtual void OnSwitchSettingChanged()

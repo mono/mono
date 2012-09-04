@@ -195,13 +195,8 @@ namespace System.Collections.Specialized
 		protected NameObjectCollectionBase ()
 		{
 			m_readonly = false;
-#if NET_1_0
-			m_hashprovider = CaseInsensitiveHashCodeProvider.Default;
-			m_comparer = CaseInsensitiveComparer.Default;
-#else
 			m_hashprovider = CaseInsensitiveHashCodeProvider.DefaultInvariant;
 			m_comparer = CaseInsensitiveComparer.DefaultInvariant;
-#endif
 			m_defCapacity = 0;
 			Init();
 		}
@@ -209,13 +204,8 @@ namespace System.Collections.Specialized
 		protected NameObjectCollectionBase( int capacity )
 		{
 			m_readonly = false;
-#if NET_1_0
-			m_hashprovider = CaseInsensitiveHashCodeProvider.Default;
-			m_comparer = CaseInsensitiveComparer.Default;
-#else
 			m_hashprovider = CaseInsensitiveHashCodeProvider.DefaultInvariant;
 			m_comparer = CaseInsensitiveComparer.DefaultInvariant;
-#endif
 			m_defCapacity = capacity;
 			Init();
 		}		

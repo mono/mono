@@ -957,8 +957,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
-			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
+			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.OrdinalIgnoreCase);
+			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.OrdinalIgnoreCase);
 			if (building && current_settings == BuildSettings.None)
 				RemoveBuiltTargets ();
 
@@ -1145,7 +1145,7 @@ namespace Microsoft.Build.BuildEngine {
 						"the first import of this file will be used, ignoring others.",
 						import.EvaluatedProjectPath, existingImport.ContainedInProjectFileName);
 
-				return false;
+				return true;
 			}
 
 			if (String.Compare (fullFileName, import.EvaluatedProjectPath) == 0) {
@@ -1153,10 +1153,11 @@ namespace Microsoft.Build.BuildEngine {
 						"The main project file was imported here, which creates a circular " +
 						"reference. Ignoring this import.");
 
-				return false;
+				return true;
 			}
 
-			if (!import.CheckEvaluatedProjectPathExists ())
+			if (project_load_settings != ProjectLoadSettings.IgnoreMissingImports &&
+			    !import.CheckEvaluatedProjectPathExists ())
 				return false;
 
 			Imports.Add (import);

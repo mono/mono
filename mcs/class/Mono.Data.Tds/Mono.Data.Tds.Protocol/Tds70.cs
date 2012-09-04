@@ -779,7 +779,10 @@ namespace Mono.Data.Tds.Protocol
 			Parameters = parameters;
 
 			TdsMetaParameterCollection parms = new TdsMetaParameterCollection ();
-			TdsMetaParameter parm = new TdsMetaParameter ("@Handle", "int", null);
+			// Tested with MS SQL 2008 RC2 Express and MS SQL 2012 Express:
+			// You may pass either -1 or 0, but not null as initial value of @Handle,
+			// which is an output parameter.
+			TdsMetaParameter parm = new TdsMetaParameter ("@Handle", "int", -1);
 			parm.Direction = TdsParameterDirection.Output;
 			parms.Add (parm);
 

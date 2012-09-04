@@ -250,11 +250,17 @@ namespace System
 
 			var us = baseAddress.LocalPath;
 			if (us [us.Length - 1] != '/')
-				baseAddress = new Uri (baseAddress.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + baseAddress.Query, baseAddress.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+				baseAddress = new Uri (
+					baseAddress.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped) + '/' + baseAddress.Query,
+					baseAddress.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute
+				);
 			if (IgnoreTrailingSlash) {
 				us = candidate.LocalPath;
 				if (us.Length > 0 && us [us.Length - 1] != '/')
-					candidate = new Uri(candidate.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + candidate.Query, candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+					candidate = new Uri (
+						candidate.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped) + '/' + candidate.Query,
+						candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute
+					);
 			}
 
 			int i = 0, c = 0;
@@ -264,7 +270,11 @@ namespace System
 			m.RequestUri = candidate;
 			var vc = m.BoundVariables;
 
-			string cp = Uri.UnescapeDataString (baseAddress.MakeRelativeUri (new Uri (baseAddress, candidate.GetComponents (UriComponents.PathAndQuery, UriFormat.Unescaped))).ToString ());
+			string cp = baseAddress.MakeRelativeUri (new Uri (
+				baseAddress,
+				candidate.GetComponents (UriComponents.PathAndQuery, UriFormat.UriEscaped)
+			))
+				.ToString ();
 			if (IgnoreTrailingSlash && cp [cp.Length - 1] == '/')
 				cp = cp.Substring (0, cp.Length - 1);
 
@@ -279,7 +289,7 @@ namespace System
 
 			foreach (string name in path) {
 				if (name == wild_path_name) {
-					vc [name] = cp.Substring (c); // all remaining paths.
+					vc [name] = Uri.UnescapeDataString (cp.Substring (c)); // all remaining paths.
 					continue;
 				}
 				int n = StringIndexOf (template, '{' + name + '}', i);
@@ -291,10 +301,11 @@ namespace System
 				if (ce < 0)
 					ce = cp.Length;
 				string value = cp.Substring (c, ce - c);
+				string unescapedVaule = Uri.UnescapeDataString (value);
 				if (value.Length == 0)
 					return null; // empty => mismatch
-				vc [name] = value;
-				m.RelativePathSegments.Add (value);
+				vc [name] = unescapedVaule;
+				m.RelativePathSegments.Add (unescapedVaule);
 				c += value.Length;
 			}
 			int tEnd = template.IndexOf ('?');

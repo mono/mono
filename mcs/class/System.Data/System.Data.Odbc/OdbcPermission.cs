@@ -38,9 +38,7 @@ namespace System.Data.Odbc
 	{
 		#region Constructors
 
-#if NET_1_1
 		[Obsolete ("use OdbcPermission(PermissionState.None)", true)]
-#endif
 		public OdbcPermission ()
 			: base (PermissionState.None)
 		{
@@ -51,9 +49,7 @@ namespace System.Data.Odbc
 		{
 		}
 
-#if NET_1_1
 		[Obsolete ("use OdbcPermission(PermissionState.None)", true)]
-#endif
 		public OdbcPermission (PermissionState state, bool allowBlankPassword)
 			: base (state)
 		{

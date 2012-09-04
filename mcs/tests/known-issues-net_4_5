@@ -5,6 +5,3 @@
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
 gtest-230.cs
-gtest-437.cs
-
-test-106.cs bug #628662

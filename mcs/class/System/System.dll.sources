@@ -763,6 +763,7 @@ System.Net.Mime/ContentType.cs
 System.Net.Mime/DispositionTypeNames.cs
 System.Net.Mime/MediaTypeNames.cs
 System.Net.Mime/TransferEncoding.cs
+System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs
@@ -1001,6 +1002,8 @@ System/UriKind.cs
 System/UriParser.cs
 System/UriPartial.cs
 System/UriTypeConverter.cs
+System/UriElements.cs
+System/UriParseComponents.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionLevel.cs
@@ -1076,3 +1079,4 @@ Mono.Net.Dns/SimpleResolver.cs
 Mono.Net.Dns/ResolverError.cs
 Mono.Net.Dns/SimpleResolverEventArgs.cs
 System.Net/DnsAsyncResult.cs
+System.Windows.Input/ICommand.cs

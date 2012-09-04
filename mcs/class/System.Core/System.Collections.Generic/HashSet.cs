@@ -438,7 +438,7 @@ namespace System.Collections.Generic {
 		{
 			var set = enumerable as HashSet<T>;
 			if (set == null || !Comparer.Equals (set.Comparer))
-				set = new HashSet<T> (enumerable);
+				set = new HashSet<T> (enumerable, Comparer);
 
 			return set;
 		}

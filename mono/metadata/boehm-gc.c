@@ -37,6 +37,10 @@
 #include "private/pthread_support.h"
 #endif
 
+#if defined(PLATFORM_MACOSX) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
+void *pthread_get_stackaddr_np(pthread_t);
+#endif
+
 #define GC_NO_DESCRIPTOR ((gpointer)(0 | GC_DS_LENGTH))
 /*Boehm max heap cannot be smaller than 16MB*/
 #define MIN_BOEHM_MAX_HEAP_SIZE_IN_MB 16
@@ -1276,6 +1280,39 @@ guint
 mono_gc_get_vtable_bits (MonoClass *class)
 {
 	return 0;
+}
+
+/*
+ * mono_gc_register_altstack:
+ *
+ *   Register the dimensions of the normal stack and altstack with the collector.
+ * Currently, STACK/STACK_SIZE is only used when the thread is suspended while it is on an altstack.
+ */
+void
+mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size)
+{
+#ifdef USE_INCLUDED_LIBGC
+	GC_register_altstack (stack, stack_size, altstack, altstack_size);
+#endif
+}
+
+int
+mono_gc_get_los_limit (void)
+{
+	return G_MAXINT;
+}
+
+gboolean
+mono_gc_user_markers_supported (void)
+{
+	return FALSE;
+}
+
+void *
+mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)
+{
+	g_assert_not_reached ();
+	return NULL;
 }
 
 #endif /* no Boehm GC */

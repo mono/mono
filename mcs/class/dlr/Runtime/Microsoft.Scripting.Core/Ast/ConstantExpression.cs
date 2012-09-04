@@ -21,7 +21,7 @@ using System.Dynamic.Utils;
 using System.Core;
 #endif
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -30,9 +30,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents an expression that has a constant value.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.ConstantExpressionProxy))]
-#endif
     public class ConstantExpression : Expression {
         // Possible optimization: we could have a Constant<T> subclass that
         // stores the unboxed value.

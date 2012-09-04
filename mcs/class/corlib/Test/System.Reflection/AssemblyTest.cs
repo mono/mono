@@ -192,7 +192,6 @@ namespace MonoTests.System.Reflection
 
 			// corlib doesn't reference anything
 			Assert.AreEqual (0, corlib.GetReferencedAssemblies ().Length, "GetReferencedAssemblies");
-#if NET_2_0
 			Assert.AreEqual ("mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", corlib.FullName, "FullName");
 			// not really "true" but it's even more trusted so...
 			Assert.IsTrue (corlib.GlobalAssemblyCache, "GlobalAssemblyCache");
@@ -200,11 +199,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("v2.0.50727", corlib.ImageRuntimeVersion, "ImageRuntimeVersion");
 			Assert.IsFalse (corlib.ReflectionOnly, "ReflectionOnly");
 			Assert.AreEqual (0x1, corlib.ManifestModule.MetadataToken);
-#elif NET_1_1
-			Assert.IsFalse (corlib.GlobalAssemblyCache, "GlobalAssemblyCache");
-			Assert.AreEqual ("mscorlib, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", corlib.FullName, "FullName");
-			Assert.AreEqual ("v1.1.4322", corlib.ImageRuntimeVersion, "ImageRuntimeVersion");
-#endif
 		}
 
 		[Test]

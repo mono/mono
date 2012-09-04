@@ -12,8 +12,10 @@ Mono.Debugger.Soft/StackFrame.cs
 Mono.Debugger.Soft/CustomAttributeDataMirror.cs
 Mono.Debugger.Soft/ThreadStartEvent.cs
 Mono.Debugger.Soft/ILInstruction.cs
+Mono.Debugger.Soft/ILExceptionHandler.cs
 Mono.Debugger.Soft/InterfaceMappingMirror.cs
 Mono.Debugger.Soft/PrimitiveValue.cs
+Mono.Debugger.Soft/PointerValue.cs
 Mono.Debugger.Soft/VMDisconnectedException.cs
 Mono.Debugger.Soft/Mirror.cs
 Mono.Debugger.Soft/EnumMirror.cs

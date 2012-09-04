@@ -11,6 +11,7 @@
 //
 
 using System;
+using System.Diagnostics;
 
 namespace Mono.CSharp
 {
@@ -18,7 +19,7 @@ namespace Mono.CSharp
 	{
 		public virtual void Visit (MemberCore member)
 		{
-			Console.WriteLine ("unknown member type: " + member.GetType ());
+			Debug.Fail ("unknown member type: " + member.GetType ());
 		}
 
 		void VisitTypeContainer (TypeContainer tc)
@@ -131,7 +132,7 @@ namespace Mono.CSharp
 
 		public virtual object Visit (Statement stmt)
 		{
-			Console.WriteLine ("unknown statement:" + stmt);
+			Debug.Fail ("unknown statement:" + stmt);
 			return null;
 		}
 		
@@ -310,7 +311,7 @@ namespace Mono.CSharp
 
 		public virtual object Visit (Expression expression)
 		{
-			Console.WriteLine ("Visit unknown expression:" + expression);
+			Debug.Fail ("Visit unknown expression:" + expression);
 			return null;
 		}
 

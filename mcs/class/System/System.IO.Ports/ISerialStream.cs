@@ -9,8 +9,6 @@
 
 using System;
 
-#if NET_2_0
-
 namespace System.IO.Ports
 {
 	interface ISerialStream : IDisposable
@@ -32,5 +30,4 @@ namespace System.IO.Ports
 	}
 }
 
-#endif
 

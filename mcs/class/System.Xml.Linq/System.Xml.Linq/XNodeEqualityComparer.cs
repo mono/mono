@@ -38,19 +38,19 @@ namespace System.Xml.Linq
 		{
 		}
 
-		public bool Equals (XNode n1, XNode n2)
+		public bool Equals (XNode x, XNode y)
 		{
-			if (n1 == null)
-				return n2 == null;
-			else if (n2 == null)
+			if (x == null)
+				return y == null;
+			else if (y == null)
 				return false;
 			//throw new NotImplementedException ();
-			if (n1.NodeType != n2.NodeType)
+			if (x.NodeType != y.NodeType)
 				return false;
-			switch (n1.NodeType) {
+			switch (x.NodeType) {
 			case XmlNodeType.Document:
-				XDocument doc1 = (XDocument) n1;
-				XDocument doc2 = (XDocument) n2;
+				XDocument doc1 = (XDocument) x;
+				XDocument doc2 = (XDocument) y;
 				if (!Equals (doc1.Declaration, doc2.Declaration))
 					return false;
 				IEnumerator<XNode> id2 = doc2.Nodes ().GetEnumerator ();
@@ -62,8 +62,8 @@ namespace System.Xml.Linq
 				}
 				return !id2.MoveNext ();
 			case XmlNodeType.Element:
-				XElement e1 = (XElement) n1;
-				XElement e2 = (XElement) n2;
+				XElement e1 = (XElement) x;
+				XElement e2 = (XElement) y;
 				if (e1.Name != e2.Name)
 					return false;
 				IEnumerator<XAttribute> ia2 = e2.Attributes ().GetEnumerator ();
@@ -84,22 +84,22 @@ namespace System.Xml.Linq
 				}
 				return !ie2.MoveNext ();
 			case XmlNodeType.Comment:
-				XComment c1 = (XComment) n1;
-				XComment c2 = (XComment) n2;
+				XComment c1 = (XComment) x;
+				XComment c2 = (XComment) y;
 				return c1.Value == c2.Value;
 			case XmlNodeType.ProcessingInstruction:
-				XPI p1 = (XPI) n1;
-				XPI p2 = (XPI) n2;
+				XPI p1 = (XPI) x;
+				XPI p2 = (XPI) y;
 				return p1.Target == p2.Target && p1.Data == p2.Data;
 			case XmlNodeType.DocumentType:
-				XDocumentType d1 = (XDocumentType) n1;
-				XDocumentType d2 = (XDocumentType) n2;
+				XDocumentType d1 = (XDocumentType) x;
+				XDocumentType d2 = (XDocumentType) y;
 				return d1.Name == d2.Name &&
 				       d1.PublicId == d2.PublicId &&
 				       d1.SystemId == d2.SystemId &&
 				       d1.InternalSubset == d2.InternalSubset;
 			case XmlNodeType.Text:
-				return ((XText) n1).Value == ((XText) n2).Value;
+				return ((XText) x).Value == ((XText) y).Value;
 			}
 			throw new Exception ("INTERNAL ERROR: should not happen");
 		}
@@ -138,20 +138,20 @@ namespace System.Xml.Linq
 			       d.Standalone.GetHashCode ();
 		}
 
-		public int GetHashCode (XNode node)
+		public int GetHashCode (XNode obj)
 		{
-			if (node == null)
+			if (obj == null)
 				return 0;
-			int h = ((int) node.NodeType << 6);
-			switch (node.NodeType) {
+			int h = ((int) obj.NodeType << 6);
+			switch (obj.NodeType) {
 			case XmlNodeType.Document:
-				XDocument doc = (XDocument) node;
+				XDocument doc = (XDocument) obj;
 				h = h ^ GetHashCode (doc.Declaration);
 				foreach (XNode n in doc.Nodes ())
 					h = h ^ (n.GetHashCode () << 5);
 				break;
 			case XmlNodeType.Element:
-				XElement el = (XElement) node;
+				XElement el = (XElement) obj;
 				h = h ^ (el.Name.GetHashCode () << 3);
 				foreach (XAttribute a in el.Attributes ())
 					h = h ^ (a.GetHashCode () << 7);
@@ -159,29 +159,29 @@ namespace System.Xml.Linq
 					h = h ^ (n.GetHashCode () << 6);
 				break;
 			case XmlNodeType.Comment:
-				h = h ^ ((XComment) node).Value.GetHashCode ();
+				h = h ^ ((XComment) obj).Value.GetHashCode ();
 				break;
 			case XmlNodeType.ProcessingInstruction:
-				XPI pi = (XPI) node;
+				XPI pi = (XPI) obj;
 				h = h ^ ((pi.Target.GetHashCode () << 6) + pi.Data.GetHashCode ());
 				break;
 			case XmlNodeType.DocumentType:
-				XDocumentType dtd = (XDocumentType) node;
+				XDocumentType dtd = (XDocumentType) obj;
 				h = h ^ (dtd.Name.GetHashCode () << 7) ^
 				    (dtd.PublicId.GetHashCode () << 6) ^
 				    (dtd.SystemId.GetHashCode () << 5) ^
 				    (dtd.InternalSubset.GetHashCode () << 4);
 				break;
 			case XmlNodeType.Text:
-				h = h ^ (((XText) node).GetHashCode ());
+				h = h ^ (((XText) obj).GetHashCode ());
 				break;
 			}
 			return h;
 		}
 
-		int IEqualityComparer.GetHashCode (object node)
+		int IEqualityComparer.GetHashCode (object obj)
 		{
-			return GetHashCode ((XNode) node);
+			return GetHashCode ((XNode) obj);
 		}
 	}
 }

@@ -42,6 +42,7 @@
 #include "metadata/sgen-gc.h"
 #include "metadata/sgen-protocol.h"
 #include "metadata/sgen-cardtable.h"
+#include "metadata/sgen-memory-governor.h"
 #include "metadata/gc-internal.h"
 
 #define MS_BLOCK_SIZE	(16*1024)
@@ -376,7 +377,7 @@ ms_free_block (MSBlockInfo *block)
 	empty_blocks = block;
 	block->used = FALSE;
 	block->zeroed = FALSE;
-	sgen_release_space (MS_BLOCK_SIZE, SPACE_MAJOR);
+	sgen_memgov_release_space (MS_BLOCK_SIZE, SPACE_MAJOR);
 }
 #else
 static void*
@@ -431,7 +432,7 @@ ms_free_block (void *block)
 {
 	void *empty;
 
-	sgen_release_space (MS_BLOCK_SIZE, SPACE_MAJOR);
+	sgen_memgov_release_space (MS_BLOCK_SIZE, SPACE_MAJOR);
 	memset (block, 0, MS_BLOCK_SIZE);
 
 	do {
@@ -548,7 +549,7 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 	char *obj_start;
 	int i;
 
-	if (!sgen_try_alloc_space (MS_BLOCK_SIZE, SPACE_MAJOR))
+	if (!sgen_memgov_try_alloc_space (MS_BLOCK_SIZE, SPACE_MAJOR))
 		return FALSE;
 
 #ifdef FIXED_HEAP
@@ -801,8 +802,8 @@ major_alloc_small_pinned_obj (size_t size, gboolean has_references)
 	  *as pinned alloc is requested by the runtime.
 	  */
 	 if (!res) {
-		 sgen_collect_major_no_lock ("pinned alloc failure");
-		 res = alloc_obj (size, TRUE, has_references);
+		sgen_perform_collection (0, GENERATION_OLD, "pinned alloc failure");
+		res = alloc_obj (size, TRUE, has_references);
 	 }
 	 return res;
 }
@@ -909,6 +910,73 @@ major_iterate_objects (gboolean non_pinned, gboolean pinned, IterateObjectCallba
 				callback ((char*)obj, block->obj_size, data);
 		}
 	} END_FOREACH_BLOCK;
+}
+
+static gboolean
+major_is_valid_object (char *object)
+{
+	MSBlockInfo *block;
+
+	ms_wait_for_sweep_done ();
+	FOREACH_BLOCK (block) {
+		int idx;
+		char *obj;
+
+		if ((block->block > object) || ((block->block + MS_BLOCK_SIZE) <= object))
+			continue;
+
+		idx = MS_BLOCK_OBJ_INDEX (object, block);
+		obj = (char*)MS_BLOCK_OBJ (block, idx);
+		if (obj != object)
+			return FALSE;
+		return MS_OBJ_ALLOCED (obj, block);
+	} END_FOREACH_BLOCK;
+
+	return FALSE;
+}
+
+
+static gboolean
+major_describe_pointer (char *ptr)
+{
+	MSBlockInfo *block;
+
+	FOREACH_BLOCK (block) {
+		int idx;
+		char *obj;
+		gboolean live;
+		MonoVTable *vtable;
+
+		if ((block->block > ptr) || ((block->block + MS_BLOCK_SIZE) <= ptr))
+			continue;
+
+		fprintf (gc_debug_file, "major-ptr (block %p sz %d pin %d ref %d) ",
+			block->block, block->obj_size, block->pinned, block->has_references);
+
+		idx = MS_BLOCK_OBJ_INDEX (ptr, block);
+		obj = (char*)MS_BLOCK_OBJ (block, idx);
+		live = MS_OBJ_ALLOCED (obj, block);
+		vtable = live ? (MonoVTable*)SGEN_LOAD_VTABLE (obj) : NULL;
+		
+		if (obj == ptr) {
+			if (live)
+				fprintf (gc_debug_file, "(object %s.%s)", vtable->klass->name_space, vtable->klass->name);
+			else
+				fprintf (gc_debug_file, "(dead-object)");
+		} else {
+			if (live)
+				fprintf (gc_debug_file, "(interior-ptr offset %td of %p %s.%s)",
+					ptr - obj,
+					obj, vtable->klass->name_space, vtable->klass->name);
+			else
+				fprintf (gc_debug_file, "(dead-interior-ptr to %td to %p)",
+					ptr - obj, obj);
+		}
+
+		return TRUE;
+	} END_FOREACH_BLOCK;
+
+	return FALSE;
 }
 
 static void
@@ -1089,7 +1157,13 @@ major_copy_or_mark_object (void **ptr, SgenGrayQueue *queue)
 			 *
 			 * FIXME (2): We should rework this to avoid all those nursery checks.
 			 */
-			if (!sgen_ptr_in_nursery (obj)) { /*marking a nursery object is pretty stupid.*/
+			/*
+			 * For the split nursery allocator the object
+			 * might still be in the nursery despite
+			 * having being promoted, in which case we
+			 * can't mark it.
+			 */
+			if (!sgen_ptr_in_nursery (obj)) {
 				block = MS_BLOCK_FOR_OBJ (obj);
 				MS_CALC_MARK_BIT (word, bit, obj);
 				DEBUG (9, g_assert (!MS_MARK_BIT (block, word, bit)));
@@ -1226,7 +1300,12 @@ major_copy_or_mark_object (void **ptr, SgenGrayQueue *queue)
 		 *
 		 * FIXME (2): We should rework this to avoid all those nursery checks.
 		 */
-		if (!sgen_ptr_in_nursery (obj)) { /*marking a nursery object is pretty stupid.*/
+		/*
+		 * For the split nursery allocator the object might
+		 * still be in the nursery despite having being
+		 * promoted, in which case we can't mark it.
+		 */
+		if (!sgen_ptr_in_nursery (obj)) {
 			block = MS_BLOCK_FOR_OBJ (obj);
 			MS_CALC_MARK_BIT (word, bit, obj);
 			DEBUG (9, g_assert (!MS_MARK_BIT (block, word, bit)));
@@ -1458,7 +1537,7 @@ ms_sweep_thread_func (void *dummy)
 
 		while ((result = MONO_SEM_WAIT (&ms_sweep_cmd_semaphore)) != 0) {
 			if (errno != EINTR)
-				g_error ("MONO_SEM_WAIT");
+				g_error ("MONO_SEM_WAIT FAILED with %d errno %d (%s)", result, errno, strerror (errno));
 		}
 
 		ms_sweep ();
@@ -1960,7 +2039,7 @@ static void
 post_param_init (void)
 {
 	if (concurrent_sweep) {
-		if (mono_native_thread_create (&ms_sweep_thread, ms_sweep_thread_func, NULL)) {
+		if (!mono_native_thread_create (&ms_sweep_thread, ms_sweep_thread_func, NULL)) {
 			fprintf (stderr, "Error: Could not create sweep thread.\n");
 			exit (1);
 		}
@@ -2084,8 +2163,9 @@ sgen_marksweep_init
 	collector->print_gc_param_usage = major_print_gc_param_usage;
 	collector->is_worker_thread = major_is_worker_thread;
 	collector->post_param_init = post_param_init;
+	collector->is_valid_object = major_is_valid_object;
+	collector->describe_pointer = major_describe_pointer;
 
-	/* FIXME this macro mess */
 	collector->major_ops.copy_or_mark_object = major_copy_or_mark_object;
 	collector->major_ops.scan_object = major_scan_object;
 

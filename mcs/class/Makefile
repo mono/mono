@@ -200,6 +200,8 @@ net_4_5_dirs := \
 	System.Web.Mvc3 \
 	System.Net.Http.Formatting \
 	System.Web.Http \
+	EntityFramework	\
+	EntityFramework.SqlServer	\
 	Mono.CodeContracts
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler

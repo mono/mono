@@ -405,7 +405,7 @@ namespace System.Threading.Tasks
 			{
 				var mre = new ManualResetEventSlim ();
 				int timeout = (int) state;
-				mre.Wait (timeout, owner.CancellationToken);
+				mre.Wait (timeout, context.CancellationToken);
 			}
 		}
 

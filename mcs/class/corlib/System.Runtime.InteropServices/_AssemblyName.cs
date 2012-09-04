@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 using System.Reflection;
 
 namespace System.Runtime.InteropServices {
@@ -49,5 +47,3 @@ namespace System.Runtime.InteropServices {
 			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
 	}
 }
-
-#endif

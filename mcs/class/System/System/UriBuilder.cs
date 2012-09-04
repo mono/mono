@@ -230,7 +230,7 @@ namespace System
 			get {
 				if (!modified) 
 					return uri;
-				uri = new Uri (ToString (), true);
+				uri = new Uri (ToString ());
 				// some properties are updated once the Uri is created - see unit tests
 				host = uri.Host;
 				path = uri.AbsolutePath;

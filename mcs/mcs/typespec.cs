@@ -23,6 +23,9 @@ using System.Reflection;
 
 namespace Mono.CSharp
 {
+	//
+	// Inflated or non-inflated representation of any type. 
+	//
 	public class TypeSpec : MemberSpec
 	{
 		protected MetaType info;
@@ -306,6 +309,9 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// A cache of all type members (including nested types)
+		//
 		public MemberCache MemberCache {
 			get {
 				if (cache == null || (state & StateFlags.PendingMemberCacheMembers) != 0)
@@ -435,6 +441,9 @@ namespace Mono.CSharp
 			return aua;
 		}
 
+		//
+		// Return metadata information used during emit to describe the type
+		//
 		public virtual MetaType GetMetaInfo ()
 		{
 			return info;
@@ -445,6 +454,9 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		//
+		// Text representation of type used by documentation writer
+		//
 		public override string GetSignatureForDocumentation ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -651,6 +663,9 @@ namespace Mono.CSharp
 			return new InflatedTypeSpec (inflator.Context, this, inflator.TypeInstance, targs);
 		}
 
+		//
+		// Inflates current type using specific type arguments
+		//
 		public InflatedTypeSpec MakeGenericType (IModuleContext context, TypeSpec[] targs)
 		{
 			if (targs.Length == 0 && !IsNested)
@@ -753,6 +768,10 @@ namespace Mono.CSharp
 		}
 	}
 
+	//
+	// Special version used for types which must exist in corlib or
+	// the compiler cannot work
+	//
 	public sealed class BuiltinTypeSpec : TypeSpec
 	{
 		public enum Type
@@ -934,6 +953,9 @@ namespace Mono.CSharp
 		}
 	}
 
+	//
+	// Various type comparers used by compiler
+	//
 	static class TypeSpecComparer
 	{
 		//
@@ -1459,6 +1481,9 @@ namespace Mono.CSharp
 		#endregion
 	}
 
+	//
+	// Common base class for composite types
+	//
 	public abstract class ElementTypeSpec : TypeSpec, ITypeDefinition
 	{
 		protected ElementTypeSpec (MemberKind kind, TypeSpec element, MetaType info)

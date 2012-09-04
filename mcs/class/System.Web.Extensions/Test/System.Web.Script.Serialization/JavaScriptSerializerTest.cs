@@ -507,6 +507,7 @@ namespace MonoTests.System.Web.Script.Serialization
 		}
 
 		[Test]
+		[SetCulture ("en-US")]
 		public void TestDeserializeConverter () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			List<JavaScriptConverter> list = new List<JavaScriptConverter> ();

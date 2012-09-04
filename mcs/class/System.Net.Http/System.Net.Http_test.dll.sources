@@ -5,6 +5,8 @@ System.Net.Http/HttpClientTest.cs
 System.Net.Http/HttpMethodTest.cs
 System.Net.Http/HttpRequestMessageTest.cs
 System.Net.Http/HttpResponseMessageTest.cs
+System.Net.Http/MultipartContentTest.cs
+System.Net.Http/MultipartFormDataContentTest.cs
 System.Net.Http/StreamContentTest.cs
 System.Net.Http/StringContentTest.cs
 System.Net.Http.Headers/AuthenticationHeaderValueTest.cs

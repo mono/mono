@@ -34,7 +34,11 @@ namespace System.Security.Policy {
 
 [Serializable]
 [ComVisible (true)]
-public sealed class StrongName : IIdentityPermissionFactory, IBuiltInEvidence {
+public sealed class StrongName :
+#if NET_4_0
+		EvidenceBase,
+#endif
+		IIdentityPermissionFactory, IBuiltInEvidence {
 
 	private StrongNamePublicKeyBlob publickey;
 	private string name;

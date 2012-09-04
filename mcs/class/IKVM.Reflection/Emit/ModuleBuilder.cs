@@ -499,6 +499,11 @@ namespace IKVM.Reflection.Emit
 			return symbolWriter.DefineDocument(url, language, languageVendor, documentType);
 		}
 
+		public int __GetAssemblyToken(Assembly assembly)
+		{
+			return ImportAssemblyRef(assembly);
+		}
+
 		public TypeToken GetTypeToken(string name)
 		{
 			return new TypeToken(GetType(name, true, false).MetadataToken);
@@ -579,6 +584,30 @@ namespace IKVM.Reflection.Emit
 			}
 		}
 
+		// new in .NET 4.5
+		public MethodToken GetMethodToken(MethodInfo method, IEnumerable<Type> optionalParameterTypes)
+		{
+			return __GetMethodToken(method, Util.ToArray(optionalParameterTypes), null);
+		}
+
+		public MethodToken __GetMethodToken(MethodInfo method, Type[] optionalParameterTypes, CustomModifiers[] customModifiers)
+		{
+			ByteBuffer sig = new ByteBuffer(16);
+			method.MethodSignature.WriteMethodRefSig(this, sig, optionalParameterTypes, customModifiers);
+			MemberRefTable.Record record = new MemberRefTable.Record();
+			if (method.Module == this)
+			{
+				record.Class = method.MetadataToken;
+			}
+			else
+			{
+				record.Class = GetTypeTokenForMemberRef(method.DeclaringType ?? method.Module.GetModuleType());
+			}
+			record.Name = Strings.Add(method.Name);
+			record.Signature = Blobs.Add(sig);
+			return new MethodToken(0x0A000000 | MemberRef.FindOrAddRecord(record));
+		}
+
 		// when we refer to a method on a generic type definition in the IL stream,
 		// we need to use a MemberRef (even if the method is in the same module)
 		internal MethodToken GetMethodTokenForIL(MethodInfo method)
@@ -607,6 +636,17 @@ namespace IKVM.Reflection.Emit
 			{
 				return new MethodToken(ImportMember(constructor));
 			}
+		}
+
+		// new in .NET 4.5
+		public MethodToken GetConstructorToken(ConstructorInfo constructor, IEnumerable<Type> optionalParameterTypes)
+		{
+			return GetMethodToken(constructor.GetMethodInfo(), optionalParameterTypes);
+		}
+
+		public MethodToken __GetConstructorToken(ConstructorInfo constructor, Type[] optionalParameterTypes, CustomModifiers[] customModifiers)
+		{
+			return __GetMethodToken(constructor.GetMethodInfo(), optionalParameterTypes, customModifiers);
 		}
 
 		internal int ImportMember(MethodBase member)
@@ -687,9 +727,7 @@ namespace IKVM.Reflection.Emit
 			{
 				// We can't write the AssemblyRef record here yet, because the identity of the assembly can still change
 				// (if it's an AssemblyBuilder).
-				// We set the high bit of rid in the token to make sure we emit obviously broken metadata,
-				// if we forget to patch up the token somewhere.
-				token = 0x23800001 + referencedAssemblies.Count;
+				token = AllocPseudoToken();
 				referencedAssemblies.Add(asm, token);
 			}
 			return token;
@@ -697,30 +735,11 @@ namespace IKVM.Reflection.Emit
 
 		internal void FillAssemblyRefTable()
 		{
-			int[] realtokens = new int[referencedAssemblies.Count];
 			foreach (KeyValuePair<Assembly, int> kv in referencedAssemblies)
 			{
-				if ((kv.Value & 0x7F800000) == 0x23800000)
+				if (IsPseudoToken(kv.Value))
 				{
-					realtokens[(kv.Value & 0x7FFFFF) - 1] = FindOrAddAssemblyRef(kv.Key.GetName(), false);
-				}
-			}
-			// now fixup the resolution scopes in TypeRef
-			for (int i = 0; i < this.TypeRef.records.Length; i++)
-			{
-				int resolutionScope = this.TypeRef.records[i].ResolutionScope;
-				if ((resolutionScope & 0x7F800000) == 0x23800000)
-				{
-					this.TypeRef.records[i].ResolutionScope = realtokens[(resolutionScope & 0x7FFFFF) - 1];
-				}
-			}
-			// and implementation in ExportedType
-			for (int i = 0; i < this.ExportedType.records.Length; i++)
-			{
-				int implementation = this.ExportedType.records[i].Implementation;
-				if ((implementation & 0x7F800000) == 0x23800000)
-				{
-					this.ExportedType.records[i].Implementation = realtokens[(implementation & 0x7FFFFF) - 1];
+					RegisterTokenFixup(kv.Value, FindOrAddAssemblyRef(kv.Key.GetName(), false));
 				}
 			}
 		}
@@ -1580,6 +1599,14 @@ namespace IKVM.Reflection.Emit
 						}
 					}
 				}
+			}
+		}
+
+		internal void FixupPseudoToken(ref int token)
+		{
+			if (IsPseudoToken(token))
+			{
+				token = ResolvePseudoToken(token);
 			}
 		}
 	}

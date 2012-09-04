@@ -148,6 +148,9 @@ namespace System.Diagnostics {
 		}
 
 		[MonoLimitation ("Not possible to create StackTraces from other threads")]
+#if NET_4_5
+		[Obsolete]
+#endif
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{
 			if (targetThread == Thread.CurrentThread){

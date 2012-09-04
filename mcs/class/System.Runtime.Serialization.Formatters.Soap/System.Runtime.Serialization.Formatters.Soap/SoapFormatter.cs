@@ -52,9 +52,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private FormatterTypeStyle _typeFormat = FormatterTypeStyle.TypesWhenNeeded;
 		private ISoapMessage _topObject = null;
 		
-#if NET_1_1
 		TypeFilterLevel _filterLevel = TypeFilterLevel.Low;
-#endif
 
 		public SoapFormatter() {
 			_selector = null;
@@ -146,11 +144,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 		}
 		
-#if NET_1_1
 		[MonoTODO ("Interpret this")]
-#if ONLY_1_1
-		[ComVisible(false)]
-#endif
 		public TypeFilterLevel FilterLevel {
 			get {
 				return _filterLevel;
@@ -159,7 +153,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				_filterLevel = value;
 			}
 		}
-#endif
 		
 		public FormatterAssemblyStyle AssemblyFormat
 		{

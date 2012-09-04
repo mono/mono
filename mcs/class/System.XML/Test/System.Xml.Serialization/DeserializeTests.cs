@@ -1158,7 +1158,7 @@ namespace MonoTests.System.XmlSerialization
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e2 | FlagEnum.e4, e, "#A6");
 
-			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two\tone\u2002four\u200btwo one</FlagEnum>");
+			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum>two four two\tone\u2002four\rtwo one</FlagEnum>");
 			Assert.AreEqual (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, e, "#A7");
 
 			e = (FlagEnum) Deserialize (typeof (FlagEnum), "<FlagEnum></FlagEnum>");
@@ -1544,6 +1544,14 @@ namespace MonoTests.System.XmlSerialization
 				Assert.Fail ("Expected InvalidOperationException");
 			} catch (InvalidOperationException) {
 			}
+		}
+
+		[Test]
+		public void NotExactDateParse ()
+		{
+			XmlSerializer xs = new XmlSerializer (typeof (NotExactDateParseClass));
+			NotExactDateParseClass o = (NotExactDateParseClass) xs.Deserialize (new StringReader ("<NotExactDateParseClass xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SomeDate xsi:type=\"xsd:date\">2012-02-05-09:00</SomeDate></NotExactDateParseClass>"));
+			Assert.AreEqual (new DateTime (2012,2,5), o.SomeDate);
 		}
 	}
 }

@@ -51,10 +51,8 @@ namespace System.Text.RegularExpressions {
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("Name");
-#if NET_2_0
 				if (value.Length == 0)
 					throw new ArgumentException ("Name");
-#endif
 				name = value;
 			}
 		}

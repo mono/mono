@@ -732,7 +732,6 @@ namespace MonoTests.System.Web {
 			}
 		}
 
-#if NET_1_1
 		[Test]
 		public void UrlPathEncode ()
 		{
@@ -756,9 +755,7 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (s, s2, "UrlPathEncode " + s);
 		}
 
-#endif
 
-#if NET_2_0
 		[Test]
 #if TARGET_JVM
 		[Ignore ("TD #6956")]
@@ -829,7 +826,7 @@ namespace MonoTests.System.Web {
 					Assert.AreEqual (values [i] [q], tmp [q], msg + "[Value]");
 			}
 		}
-#endif
+
 		string [] decoding_pairs = {
 	@"&aacute;&Aacute;&acirc;&Acirc;&acute;&aelig;&AElig;&agrave;&Agrave;&alefsym;&alpha;&Alpha;&amp;&and;&ang;&aring;&Aring;&asymp;&atilde;&Atilde;&auml;&Auml;&bdquo;&beta;&Beta;&brvbar;&bull;&cap;&ccedil;&Ccedil;&cedil;&cent;&chi;&Chi;&circ;&clubs;&cong;&copy;&crarr;&cup;&curren;&dagger;&Dagger;&darr;&dArr;&deg;&delta;&Delta;&diams;&divide;&eacute;&Eacute;&ecirc;&Ecirc;&egrave;&Egrave;&empty;&emsp;&ensp;&epsilon;&Epsilon;&equiv;&eta;&Eta;&eth;&ETH;&euml;&Euml;&euro;&exist;&fnof;&forall;&frac12;&frac14;&frac34;&frasl;&gamma;&Gamma;&ge;&gt;&harr;&hArr;&hearts;&hellip;&iacute;&Iacute;&icirc;&Icirc;&iexcl;&igrave;&Igrave;&image;&infin;&int;&iota;&Iota;&iquest;&isin;&iuml;&Iuml;&kappa;&Kappa;&lambda;&Lambda;&lang;&laquo;&larr;&lArr;&lceil;&ldquo;&le;&lfloor;&lowast;&loz;&lrm;&lsaquo;&lsquo;&lt;&macr;&mdash;&micro;&middot;&minus;&mu;&Mu;&nabla;&nbsp;&ndash;&ne;&ni;&not;&notin;&nsub;&ntilde;&Ntilde;&nu;&Nu;&oacute;&Oacute;&ocirc;&Ocirc;&oelig;&OElig;&ograve;&Ograve;&oline;&omega;&Omega;&omicron;&Omicron;&oplus;&or;&ordf;&ordm;&oslash;&Oslash;&otilde;&Otilde;&otimes;&ouml;&Ouml;&para;&part;&permil;&perp;&phi;&Phi;&pi;&Pi;&piv;&plusmn;&pound;&prime;&Prime;&prod;&prop;&psi;&Psi;&quot;&radic;&rang;&raquo;&rarr;&rArr;&rceil;&rdquo;&real;&reg;&rfloor;&rho;&Rho;&rlm;&rsaquo;&rsquo;&sbquo;&scaron;&Scaron;&sdot;&sect;&shy;&sigma;&Sigma;&sigmaf;&sim;&spades;&sub;&sube;&sum;&sup;&sup1;&sup2;&sup3;&supe;&szlig;&tau;&Tau;&there4;&theta;&Theta;&thetasym;&thinsp;&thorn;&THORN;&tilde;&times;&trade;&uacute;&Uacute;&uarr;&uArr;&ucirc;&Ucirc;&ugrave;&Ugrave;&uml;&upsih;&upsilon;&Upsilon;&uuml;&Uuml;&weierp;&xi;&Xi;&yacute;&Yacute;&yen;&yuml;&Yuml;&zeta;&Zeta;&zwj;&zwnj;",
 	@"áÁâÂ´æÆàÀℵαΑ&∧∠åÅ≈ãÃäÄ„βΒ¦•∩çÇ¸¢χΧˆ♣≅©↵∪¤†‡↓⇓°δΔ♦÷éÉêÊèÈ∅  εΕ≡ηΗðÐëË€∃ƒ∀½¼¾⁄γΓ≥>↔⇔♥…íÍîÎ¡ìÌℑ∞∫ιΙ¿∈ïÏκΚλΛ〈«←⇐⌈“≤⌊∗◊‎‹‘<¯—µ·−μΜ∇ –≠∋¬∉⊄ñÑνΝóÓôÔœŒòÒ‾ωΩοΟ⊕∨ªºøØõÕ⊗öÖ¶∂‰⊥φΦπΠϖ±£′″∏∝ψΨ""√〉»→⇒⌉”ℜ®⌋ρΡ‏›’‚šŠ⋅§­σΣς∼♠⊂⊆∑⊃¹²³⊇ßτΤ∴θΘϑ þÞ˜×™úÚ↑⇑ûÛùÙ¨ϒυΥüÜ℘ξΞýÝ¥ÿŸζΖ‍‌",

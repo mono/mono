@@ -565,6 +565,7 @@ public class TimeSpanTest {
 		Assert.AreEqual (true, TimeSpan.Equals (null, null), "A10");
 	}
 
+	[Test]
 	public void TestFromXXXX ()
 	{
 		Assert.AreEqual ("12.08:16:48", TimeSpan.FromDays (12.345).ToString (), "A1");
@@ -573,6 +574,11 @@ public class TimeSpanTest {
 		Assert.AreEqual ("00:00:12.3450000", TimeSpan.FromSeconds (12.345).ToString (), "A4");
 		Assert.AreEqual ("00:00:00.0120000", TimeSpan.FromMilliseconds (12.345).ToString (), "A5");
 		Assert.AreEqual ("00:00:00.0012345", TimeSpan.FromTicks (12345).ToString (), "A6");
+		Assert.AreEqual ("-00:00:00.0010000", TimeSpan.FromMilliseconds (-0.5).ToString (), "A7");
+		Assert.AreEqual ("00:00:00.0010000", TimeSpan.FromMilliseconds (0.5).ToString (), "A8");
+		Assert.AreEqual ("-00:00:00.0030000", TimeSpan.FromMilliseconds (-2.5).ToString (), "A9");
+		Assert.AreEqual ("00:00:00.0030000", TimeSpan.FromMilliseconds (2.5).ToString (), "A10");
+		Assert.AreEqual ("00:00:00.0010000", TimeSpan.FromSeconds (0.0005).ToString (), "A11");
 	}
 
 	[Test]

@@ -109,6 +109,10 @@ endif
 include $(topdir)/build/profiles/$(PROFILE).make
 -include $(topdir)/build/config.make
 
+ifdef BCL_OPTIMIZE
+PROFILE_MCS_FLAGS += -optimize
+endif
+
 ifdef OVERRIDE_TARGET_ALL
 all: all.override
 else

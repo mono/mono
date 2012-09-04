@@ -52,9 +52,9 @@ namespace Microsoft.SqlServer.Server {
 
 		#region Constructors
 
-		public SqlUserDefinedTypeAttribute (Format f)
+		public SqlUserDefinedTypeAttribute (Format format)
 		{
-			format = f;
+			this.format = format;
 			IsByteOrdered = false;
 			IsFixedLength = false;
 			MaxByteSize = MaxByteSizeValue;

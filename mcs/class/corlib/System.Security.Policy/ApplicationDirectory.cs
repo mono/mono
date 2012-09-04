@@ -39,7 +39,11 @@ namespace System.Security.Policy {
 
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class ApplicationDirectory : IBuiltInEvidence {
+	public sealed class ApplicationDirectory :
+#if NET_4_0
+		EvidenceBase,
+#endif
+		IBuiltInEvidence {
 		
 		private string directory;
 

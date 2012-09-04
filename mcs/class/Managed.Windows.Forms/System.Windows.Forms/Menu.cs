@@ -33,6 +33,7 @@ using System.ComponentModel.Design;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace System.Windows.Forms
 {
@@ -43,7 +44,7 @@ namespace System.Windows.Forms
 		internal MenuItemCollection menu_items;
 		internal IntPtr menu_handle = IntPtr.Zero;
 		internal Menu parent_menu = null;
-		System.Drawing.Rectangle rect;
+		System.Drawing.Rectangle rect = new Rectangle ();
 		// UIA Framework Note: Used to keep track of expanded menus
 		internal Control Wnd;
 		internal MenuTracker tracker;
@@ -124,7 +125,7 @@ namespace System.Windows.Forms
 		#region Private Properties
 
 		// UIA Framework Note: Used to obtain menu bounds
-		internal System.Drawing.Rectangle Rect {
+		internal Rectangle Rect {
 			get { return rect; }
 		}
 
@@ -187,8 +188,14 @@ namespace System.Windows.Forms
 		}
 
 		protected override void Dispose (bool disposing)
-		{		
+		{
 			if (disposing) {
+				if (menu_items != null) {
+					// MenuItem.Dispose removes the item from the list
+					while (menu_items.Count > 0) {
+						menu_items [0].Dispose ();
+					}
+				}
 				if (menu_handle != IntPtr.Zero) {
 					menu_handle = IntPtr.Zero;
 				}

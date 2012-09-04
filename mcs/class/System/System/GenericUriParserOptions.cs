@@ -29,10 +29,7 @@
 namespace System {
 
 	[Flags]
-#if NET_2_0
-	public
-#endif
-	enum GenericUriParserOptions {
+	public enum GenericUriParserOptions {
 
 		Default = 0,
 		GenericAuthority = 1,

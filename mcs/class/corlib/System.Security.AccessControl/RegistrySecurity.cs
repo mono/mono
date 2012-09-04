@@ -4,8 +4,10 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,9 +31,17 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
-	public sealed class RegistrySecurity : NativeObjectSecurity {
+namespace System.Security.AccessControl
+{
+	public sealed class RegistrySecurity : NativeObjectSecurity
+	{
 		public RegistrySecurity ()
+			: base (true, ResourceType.RegistryKey)
+		{
+		}
+		
+		internal RegistrySecurity (string name, AccessControlSections includeSections)
+			: base (true, ResourceType.RegistryKey, name, includeSections)
 		{
 		}
 		
@@ -47,71 +57,75 @@ namespace System.Security.AccessControl {
 			get { return typeof (RegistryAuditRule); }
 		}
 		
-		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask,
+							      bool isInherited, InheritanceFlags inheritanceFlags,
+							      PropagationFlags propagationFlags, AccessControlType type)
 		{
-			// FIXME: isInherited is unused
-			return new RegistryAccessRule (identityReference, (RegistryRights) accessMask, inheritanceFlags, propagationFlags, type);
+			return new RegistryAccessRule (identityReference, (RegistryRights) accessMask, isInherited,
+						       inheritanceFlags, propagationFlags, type);
 		}
 		
 		public void AddAccessRule (RegistryAccessRule rule)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		public void AddAuditRule (RegistryAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
-		{
-			// FIXME: isInherited is unused
-			return new RegistryAuditRule (identityReference, (RegistryRights) accessMask, inheritanceFlags, propagationFlags, flags);
+			AddAccessRule ((AccessRule)rule);
 		}
 		
 		public bool RemoveAccessRule (RegistryAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAccessRule ((AccessRule)rule);
 		}
 		
 		public void RemoveAccessRuleAll (RegistryAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleAll ((AccessRule)rule);
 		}
 		
 		public void RemoveAccessRuleSpecific (RegistryAccessRule rule)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		public bool RemoveAuditRule (RegistryAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public void RemoveAuditRuleAll (RegistryAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public void RemoveAuditRuleSpecific (RegistryAuditRule rule)
-		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleSpecific ((AccessRule)rule);
 		}
 		
 		public void ResetAccessRule (RegistryAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			ResetAccessRule ((AccessRule)rule);
 		}
 		
 		public void SetAccessRule (RegistryAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAccessRule ((AccessRule)rule);
+		}
+		
+		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask,
+							    bool isInherited, InheritanceFlags inheritanceFlags,
+							    PropagationFlags propagationFlags, AuditFlags flags)
+		{
+			return new RegistryAuditRule (identityReference, (RegistryRights) accessMask, isInherited,
+						      inheritanceFlags, propagationFlags, flags);
+		}
+		
+		public void AddAuditRule (RegistryAuditRule rule)
+		{
+			AddAuditRule ((AuditRule)rule);
+		}
+		
+		public bool RemoveAuditRule (RegistryAuditRule rule)
+		{
+			return RemoveAuditRule((AuditRule)rule);
+		}
+		
+		public void RemoveAuditRuleAll (RegistryAuditRule rule)
+		{
+			RemoveAuditRuleAll((AuditRule)rule);
+		}
+		
+		public void RemoveAuditRuleSpecific (RegistryAuditRule rule)
+		{
+			RemoveAuditRuleSpecific((AuditRule)rule);
 		}
 		
 		public void SetAuditRule (RegistryAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAuditRule((AuditRule)rule);
 		}
 	}
 }

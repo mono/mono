@@ -42,9 +42,7 @@ namespace System.Net
 		bool bypassOnLocal;
 		ArrayList bypassList;
 		ICredentials credentials;
-#if NET_2_0
 		bool useDefaultCredentials;
-#endif
 
 		// Constructors
 
@@ -92,9 +90,7 @@ namespace System.Net
 			this.address = (Uri) serializationInfo.GetValue ("_ProxyAddress", typeof (Uri));
 			this.bypassOnLocal = serializationInfo.GetBoolean ("_BypassOnLocal");
 			this.bypassList = (ArrayList) serializationInfo.GetValue ("_BypassList", typeof (ArrayList));
-#if NET_2_0
 			this.useDefaultCredentials =  serializationInfo.GetBoolean ("_UseDefaultCredentials");
-#endif
 			this.credentials = null;
 			CheckBypassList ();
 		}
@@ -133,18 +129,14 @@ namespace System.Net
 			set { credentials = value; }
 		}
 
-#if NET_2_0
 		[MonoTODO ("Does not affect Credentials, since CredentialCache.DefaultCredentials is not implemented.")]
 		public bool UseDefaultCredentials {
 			get { return useDefaultCredentials; }
 			set { useDefaultCredentials = value; }
 		}
-#endif
 
 		// Methods
-#if NET_2_0
 		[Obsolete ("This method has been deprecated", false)]
-#endif
 		[MonoTODO("Can we get this info under windows from the system?")]
 		public static WebProxy GetDefaultProxy ()
 		{
@@ -166,10 +158,8 @@ namespace System.Net
 
 		public bool IsBypassed (Uri host)
 		{
-#if NET_2_0
 			if (host == null)
 				throw new ArgumentNullException ("host");
-#endif
 
 			if (host.IsLoopback && bypassOnLocal)
 				return true;
@@ -223,17 +213,12 @@ namespace System.Net
 			}
 		}
 
-#if NET_2_0
-		protected virtual 
-#endif
-		void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			serializationInfo.AddValue ("_BypassOnLocal", bypassOnLocal);
 			serializationInfo.AddValue ("_ProxyAddress", address);
 			serializationInfo.AddValue ("_BypassList", bypassList);
-#if NET_2_0
 			serializationInfo.AddValue ("_UseDefaultCredentials", UseDefaultCredentials);
-#endif
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,

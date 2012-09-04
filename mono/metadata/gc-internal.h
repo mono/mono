@@ -157,6 +157,9 @@ typedef void (*MonoGCRootMarkFunc) (void *addr, MonoGCMarkFunc mark_func);
 /* Create a descriptor with a user defined marking function */
 void *mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker);
 
+/* Return whenever user defined marking functions are supported */
+gboolean mono_gc_user_markers_supported (void) MONO_INTERNAL;
+
 /* desc is the result from mono_gc_make_descr*. A NULL value means
  * all the words might contain GC pointers.
  * The memory is non-moving and it will be explicitly deallocated.
@@ -374,5 +377,8 @@ void mono_gc_bzero (void *dest, size_t size) MONO_INTERNAL;
 void mono_gc_memmove (void *dest, const void *src, size_t size) MONO_INTERNAL;
 
 guint mono_gc_get_vtable_bits (MonoClass *class) MONO_INTERNAL;
+
+void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size) MONO_INTERNAL;
+
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
 

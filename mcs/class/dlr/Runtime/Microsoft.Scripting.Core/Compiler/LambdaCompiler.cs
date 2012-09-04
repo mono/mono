@@ -23,12 +23,12 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast.Compiler {
 #else
 namespace System.Linq.Expressions.Compiler {
 #endif
-#if CLR2 || SILVERLIGHT
+#if !FEATURE_CORE_DLR || SILVERLIGHT
     using ILGenerator = OffsetTrackingILGenerator;
 #endif
 
@@ -47,9 +47,10 @@ namespace System.Linq.Expressions.Compiler {
 
         private readonly ILGenerator _ilg;
 
+#if FEATURE_REFEMIT
         // The TypeBuilder backing this method, if any
         private readonly TypeBuilder _typeBuilder;
-
+#endif
         private readonly MethodInfo _method;
 
         // Currently active LabelTargets and their mapping to IL labels
@@ -87,7 +88,7 @@ namespace System.Linq.Expressions.Compiler {
         private LambdaCompiler(AnalyzedTree tree, LambdaExpression lambda) {
             Type[] parameterTypes = GetParameterTypes(lambda).AddFirst(typeof(Closure));
 
-#if SILVERLIGHT && CLR2
+#if (SILVERLIGHT && CLR2) || WP75
             var method = new DynamicMethod(lambda.Name ?? "lambda_method", lambda.ReturnType, parameterTypes);
 #else
             var method = new DynamicMethod(lambda.Name ?? "lambda_method", lambda.ReturnType, parameterTypes, true);
@@ -97,7 +98,7 @@ namespace System.Linq.Expressions.Compiler {
             _lambda = lambda;
             _method = method;
 
-#if CLR2 || SILVERLIGHT
+#if !FEATURE_CORE_DLR || SILVERLIGHT
             _ilg = new OffsetTrackingILGenerator(method.GetILGenerator());
 #else
             _ilg = method.GetILGenerator();
@@ -112,6 +113,7 @@ namespace System.Linq.Expressions.Compiler {
             InitializeMethod();
         }
 
+#if FEATURE_REFEMIT
         /// <summary>
         /// Creates a lambda compiler that will compile into the provided Methodbuilder
         /// </summary>
@@ -136,7 +138,7 @@ namespace System.Linq.Expressions.Compiler {
             _typeBuilder = (TypeBuilder)method.DeclaringType;
             _method = method;
 
-#if CLR2 || SILVERLIGHT
+#if !FEATURE_CORE_DLR || SILVERLIGHT
             _ilg = new OffsetTrackingILGenerator(method.GetILGenerator());
 #else
             _ilg = method.GetILGenerator();
@@ -148,6 +150,7 @@ namespace System.Linq.Expressions.Compiler {
 
             InitializeMethod();
         }
+#endif
 
         /// <summary>
         /// Creates a lambda compiler for an inlined lambda
@@ -158,9 +161,11 @@ namespace System.Linq.Expressions.Compiler {
             _method = parent._method;
             _ilg = parent._ilg;
             _hasClosureArgument = parent._hasClosureArgument;
-            _typeBuilder = parent._typeBuilder;
             _scope = _tree.Scopes[lambda];
             _boundConstants = parent._boundConstants;
+#if FEATURE_REFEMIT
+            _typeBuilder = parent._typeBuilder;
+#endif
         }
 
         private void InitializeMethod() {
@@ -209,6 +214,7 @@ namespace System.Linq.Expressions.Compiler {
             return c.CreateDelegate();
         }
 
+#if FEATURE_REFEMIT
         /// <summary>
         /// Mutates the MethodBuilder parameter, filling in IL, parameters,
         /// and return type.
@@ -227,7 +233,7 @@ namespace System.Linq.Expressions.Compiler {
             // 3. Emit
             c.EmitLambdaBody();
         }
-
+#endif
         #endregion
 
         private static AnalyzedTree AnalyzeLambda(ref LambdaExpression lambda) {
@@ -296,6 +302,7 @@ namespace System.Linq.Expressions.Compiler {
             return _method.CreateDelegate(_lambda.Type, new Closure(_boundConstants.ToArray(), null));
         }
 
+#if FEATURE_REFEMIT
         private FieldBuilder CreateStaticField(string name, Type type) {
             // We are emitting into someone else's type. We don't want name
             // conflicts, so choose a long name that is unlikely to confict.
@@ -303,17 +310,18 @@ namespace System.Linq.Expressions.Compiler {
             // uses.
             return _typeBuilder.DefineField("<ExpressionCompilerImplementationDetails>{" + Interlocked.Increment(ref _Counter) + "}" + name, type, FieldAttributes.Static | FieldAttributes.Private);
         }
-
+#endif
         /// <summary>
         /// Creates an unitialized field suitible for private implementation details
         /// Works with DynamicMethods or TypeBuilders.
         /// </summary>
         private MemberExpression CreateLazyInitializedField<T>(string name) {
-            if (_method is DynamicMethod) {
-                return Expression.Field(Expression.Constant(new StrongBox<T>(default(T))), "Value");
-            } else {
+#if FEATURE_REFEMIT
+            if (!(_method is DynamicMethod)) {
                 return Expression.Field(null, CreateStaticField(name, typeof(T)));
-            }
+            } 
+#endif
+            return Expression.Field(Expression.Constant(new StrongBox<T>(default(T))), "Value");
         }
     }
 }

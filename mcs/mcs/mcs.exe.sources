@@ -62,6 +62,5 @@ visit.cs
 ../class/IKVM.Reflection/Metadata/*.cs
 ../class/IKVM.Reflection/Reader/*.cs
 ../class/IKVM.Reflection/Writer/*.cs
-../class/IKVM.Reflection/Impl/CryptoHack.cs
 ../class/IKVM.Reflection/Impl/ITypeOwner.cs
 ../class/IKVM.Reflection/Impl/SymbolSupport.cs

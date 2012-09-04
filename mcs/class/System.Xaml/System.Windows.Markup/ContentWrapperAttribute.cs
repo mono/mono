@@ -38,7 +38,7 @@ namespace System.Windows.Markup
 		public Type ContentWrapper { get; private set; }
 #if !NET_2_1
 		public override Object TypeId {
-			get { return ContentWrapper; }
+			get { return this; }
 		}
 #endif
 

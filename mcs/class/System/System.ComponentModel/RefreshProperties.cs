@@ -30,9 +30,6 @@
 
 namespace System.ComponentModel
 {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum RefreshProperties {
 		All = 1,
 		None = 0,

@@ -221,18 +221,29 @@ namespace System.Net.Http.Headers
 			return ok;
 		}
 
-		public void AddWithoutValidation (string name, string value)
+		public bool TryAddWithoutValidation (string name, string value)
 		{
-			AddWithoutValidation (name, new[] { value });
+			return TryAddWithoutValidation (name, new[] { value });
 		}
 
-		public void AddWithoutValidation (string name, IEnumerable<string> values)
+		public bool TryAddWithoutValidation (string name, IEnumerable<string> values)
 		{
 			if (values == null)
 				throw new ArgumentNullException ("values");
 
-			CheckName (name);
+			if (string.IsNullOrEmpty (name))
+				return false;
+
+			Parser.Token.Check (name);
+
+			HeaderInfo headerInfo;
+			if (known_headers.TryGetValue (name, out headerInfo) && (headerInfo.HeaderKind & HeaderKind) == 0) {
+				if (HeaderKind != HttpHeaderKind.None && ((HeaderKind | headerInfo.HeaderKind) & HttpHeaderKind.Content) != 0)
+					return false;
+			}
+
 			AddInternal (name, values, null, true);
+			return true;
 		}
 
 		HeaderInfo CheckName (string name)

@@ -37,7 +37,12 @@ namespace System.Collections.Concurrent
 {
 	internal abstract class ObjectPool<T> where T : class
 	{
+		// This is the number of objects we are going to cache
 		const int capacity = 20;
+		/* We use this bit in addIndex to synchronize the array and the index itself
+		 * Namely when we update addIndex we also set that bit for the time the value
+		 * in the array hasn't still been updated to the object we are returning to the cache
+		 */
 		const int bit = 0x8000000;
 
 		readonly T[] buffer;
@@ -52,10 +57,14 @@ namespace System.Collections.Concurrent
 			addIndex = capacity - 1;
 		}
 
+		/* Code that want to use a pool subclass it and
+		 * implement that method. In most case 'new T ()'.
+		 */
 		protected abstract T Creator ();
 
 		public T Take ()
 		{
+			// If no element in the cache, we return a new object
 			if ((addIndex & ~bit) - 1 == removeIndex)
 				return Creator ();
 
@@ -65,6 +74,7 @@ namespace System.Collections.Concurrent
 
 			do {
 				i = removeIndex;
+				// We return a new element when looping becomes too costly
 				if ((addIndex & ~bit) - 1 == i || tries == 0)
 					return Creator ();
 				result = buffer[i % capacity];
@@ -81,14 +91,19 @@ namespace System.Collections.Concurrent
 			int i;
 			int tries = 3;
 			do {
+				// While an array update is ongoing (i.e. an extra write op) we loop
 				do {
 					i = addIndex;
 				} while ((i & bit) > 0);
-				if (i - removeIndex >= capacity - 1)
+				// If no more room or too busy just forget about the object altogether
+				if (i - removeIndex >= capacity - 1 || tries == 0)
 					return;
-			} while (Interlocked.CompareExchange (ref addIndex, i + 1 + bit, i) != i && --tries > 0);
+				// We update addIndex and notify that we are going to set buffer correctly
+			} while (Interlocked.CompareExchange (ref addIndex, i + 1 + bit, i) != i && --tries > -1);
 
 			buffer[i % capacity] = obj;
+			Thread.MemoryBarrier ();
+			// Since bit essentialy acts like a lock, we simply use an atomic read/write combo
 			addIndex = addIndex - bit;
 		}
 	}

@@ -609,14 +609,18 @@ namespace DrawingTestHelper
 		}
 
 		protected override Bitmap GetReferenceImage(string testName) {
+			string fileName = testName.Replace(":", "_") + ".png";
 			try{
-				string fileName = testName.Replace(":", "_") + ".png";
-				_bitmap.Save( fileName );
-				GC.Collect();
+				if (true){
+					return new Bitmap("/Developer/MonoTouch/Source/mono/mcs/class/System.Drawing/Test/DrawingTest/Test/PNGs/" + fileName);
+				} else {
+					_bitmap.Save( fileName );
+					GC.Collect();
+				}
 				return null;
 			}
 			catch(System.Exception e) {
-				throw new System.Exception("Error creating .Net reference image");
+				throw new System.Exception("Error loading .Net reference image: " + fileName);
 			}
 		}
 		
@@ -624,7 +628,7 @@ namespace DrawingTestHelper
 		private class NetForm:MonoTouch.UIKit.UIViewController,IMyForm {
 			Image image;
 			public NetForm(string title, Image anImage):base() {
-				base.Text = title;		
+				//base.Text = title;		
 				image = anImage;
 			}
 			void IMyForm.Show () {

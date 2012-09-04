@@ -170,6 +170,7 @@ public class Tests : TestsBase
 	double field_double;
 	Thread field_class;
 	IntPtr field_intptr;
+	int? field_nullable;
 	static int static_i = 55;
 	static string static_s = "A";
 	public const int literal_i = 56;
@@ -214,6 +215,10 @@ public class Tests : TestsBase
 		if (args.Length > 0 && args [0] == "suspend-test")
 			/* This contains an infinite loop, so execute it conditionally */
 			suspend ();
+		if (args.Length >0 && args [0] == "unhandled-exception") {
+			unhandled_exception ();
+			return 0;
+		}
 		breakpoints ();
 		single_stepping ();
 		arguments ();
@@ -304,6 +309,7 @@ public class Tests : TestsBase
 			ss6 (b);
 		} catch {
 		}
+		ss7 ();
 		ss_regress_654694 ();
 	}
 
@@ -350,13 +356,32 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss6 (bool b) {
 		if (b) {
-			ss7 ();
+			ss6_2 ();
 			throw new Exception ();
 		}
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss6_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss7 () {
+		try {
+			ss7_2 ();
+			ss7_3 ();
+		} catch {
+		}
+		ss7_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss7_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss7_3 () {
+		throw new Exception ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -487,6 +512,7 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	[StateMachine (typeof (int))]
 	public static void locals2<T> (string[] args, int arg, T t, ref string rs) {
 		long i = 42;
 		string s = "AB";
@@ -767,6 +793,14 @@ public class Tests : TestsBase
 		}
 	}
 
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception () {
+		ThreadPool.QueueUserWorkItem (delegate {
+				throw new InvalidOperationException ();
+			});
+		Thread.Sleep (10000);
+	}
+
 	internal static Delegate create_filter_delegate (Delegate dlg, MethodInfo filter_method)
 	{
 		if (dlg == null)
@@ -866,6 +900,8 @@ public class Tests : TestsBase
 		CrossDomain o = (CrossDomain)domain.CreateInstanceAndUnwrap (
 				   typeof (CrossDomain).Assembly.FullName, "CrossDomain");
 
+		domains_2 (o, new CrossDomain ());
+
 		o.invoke_2 ();
 
 		o.invoke ();
@@ -874,11 +910,15 @@ public class Tests : TestsBase
 
 		AppDomain.Unload (domain);
 
-		domains_2 ();
+		domains_3 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void domains_2 () {
+	public static void domains_2 (object o, object o2) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void domains_3 () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1014,6 +1054,10 @@ public class CrossDomain : MarshalByRefObject
 	public void invoke_2 () {
 		Tests.invoke_in_domain_2 ();
 	}
+
+	public int invoke_3 () {
+		return 42;
+	}
 }	
 
 public class Foo
@@ -1026,6 +1070,7 @@ public class LineNumbers
 {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ln1 () {
+		// Column 3
 		ln2 ();
 		ln3 ();
 	}

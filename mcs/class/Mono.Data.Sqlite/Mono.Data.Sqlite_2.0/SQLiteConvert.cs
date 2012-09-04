@@ -675,6 +675,7 @@ namespace Mono.Data.Sqlite
       new SQLiteTypeNames("YESNO", DbType.Boolean),
       new SQLiteTypeNames("LOGICAL", DbType.Boolean),
       new SQLiteTypeNames("BOOL", DbType.Boolean),
+      new SQLiteTypeNames("BOOLEAN", DbType.Boolean),
       new SQLiteTypeNames("NUMERIC", DbType.Decimal),
       new SQLiteTypeNames("DECIMAL", DbType.Decimal),
       new SQLiteTypeNames("MONEY", DbType.Decimal),
@@ -689,12 +690,14 @@ namespace Mono.Data.Sqlite
       new SQLiteTypeNames("GENERAL", DbType.Binary),
       new SQLiteTypeNames("OLEOBJECT", DbType.Binary),
       new SQLiteTypeNames("GUID", DbType.Guid),
+      new SQLiteTypeNames("GUIDBLOB", DbType.Guid),
       new SQLiteTypeNames("UNIQUEIDENTIFIER", DbType.Guid),
       new SQLiteTypeNames("MEMO", DbType.String),
       new SQLiteTypeNames("NOTE", DbType.String),
       new SQLiteTypeNames("SMALLINT", DbType.Int16),
       new SQLiteTypeNames("BIGINT", DbType.Int64),
       new SQLiteTypeNames("TIMESTAMP", DbType.DateTime),
+      new SQLiteTypeNames("DATETIME", DbType.DateTime),
     };
   }
 

@@ -12,8 +12,6 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Net;
 
-#if NET_2_0
-
 namespace System.Net
 {
 	public class FtpWebResponse : WebResponse
@@ -177,5 +175,4 @@ namespace System.Net
 	}
 }
 
-#endif
 

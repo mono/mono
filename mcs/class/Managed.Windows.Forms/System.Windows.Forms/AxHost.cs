@@ -184,15 +184,22 @@ namespace System.Windows.Forms {
 		#endregion	// AxHost.StateConverter Class
 		#endregion	// AxHost Subclasses
 
+		//private int flags;
+		//private Guid clsid;
+
 		#region Protected Constructors
-		protected AxHost (string clsid)
+
+		[MonoTODO]
+		protected AxHost (string clsid) : this(clsid, 0)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+
 		}
 
+		[MonoTODO]
 		protected AxHost (string clsid, int flags)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			//this.clsid = new Guid(clsid);
+			//this.flags = flags;
 		}
 		#endregion	// Public Instance Properties
 
@@ -201,10 +208,10 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color BackColor {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.BackColor;
 			}
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.BackColor = value;
 			}
 		}
 		
@@ -213,11 +220,11 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Image BackgroundImage {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.BackgroundImage;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.BackgroundImage = value;
 			}
 		}
 
@@ -226,11 +233,11 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override ImageLayout BackgroundImageLayout {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.BackgroundImageLayout;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.BackgroundImageLayout = value;
 			}
 		}
 		
@@ -251,11 +258,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ContextMenu ContextMenu {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.ContextMenu;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.ContextMenu = value;
 			}
 		}
 		
@@ -263,11 +270,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Cursor Cursor {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.Cursor;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.Cursor = value;
 			}
 		}
 		
@@ -284,11 +291,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new virtual bool Enabled {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.Enabled;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.Enabled = value;
 			}
 		}
 		
@@ -296,11 +303,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Font Font {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.Font;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.Font = value;
 			}
 		}
 		
@@ -308,11 +315,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color ForeColor {
 			get { 
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.ForeColor;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.ForeColor = value;
 			}
 		}
 		
@@ -330,10 +337,10 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
 			get { 
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.ImeMode;
 			}
 			set { 
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.ImeMode = value;
 			}
 		}
 		
@@ -356,11 +363,12 @@ namespace System.Windows.Forms {
 		[Localizable (true)]
 		public new virtual bool RightToLeft {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return base.RightToLeft == System.Windows.Forms.RightToLeft.Yes;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				base.RightToLeft = (value ? System.Windows.Forms.RightToLeft.Yes : 
+                                                       System.Windows.Forms.RightToLeft.No);
 			}
 		}
 		
@@ -380,9 +388,7 @@ namespace System.Windows.Forms {
 		
 		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
-			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
-			}
+			get { return base.CreateParams; }
 		}
 		
 		protected override Size DefaultSize {

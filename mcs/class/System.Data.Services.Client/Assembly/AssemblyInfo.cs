@@ -59,7 +59,6 @@ using System.Runtime.Versioning;
 [assembly: AssemblyInformationalVersion(Consts.FxFileVersion)]
 [assembly: AssemblyFileVersion(Consts.FxFileVersion)]
 
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: SecurityRules (SecurityRuleSet.Level1, SkipVerificationInFullTrust=true)]

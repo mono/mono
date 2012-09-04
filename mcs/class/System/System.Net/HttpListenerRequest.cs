@@ -2,11 +2,11 @@
 // System.Net.HttpListenerRequest
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
 //	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
-// Copyright 2011 Xamarin Inc.
+// Copyright (c) 2011-2012 Xamarin, Inc. (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,6 +42,7 @@ using System.Security.Authentication.ExtendedProtection;
 #if NET_4_5
 using System.Threading.Tasks;
 #endif
+using Mono.Security.Protocol.Tls;
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
@@ -57,8 +58,6 @@ namespace System.Net {
 #endif
 
 		string [] accept_types;
-//		int client_cert_error;
-//		bool no_get_certificate;
 		Encoding content_encoding;
 		long content_length;
 		bool cl_set;
@@ -76,6 +75,9 @@ namespace System.Net {
 		bool is_chunked;
 		bool ka_set;
 		bool keep_alive;
+		delegate X509Certificate2 GCCDelegate ();
+		GCCDelegate gcc_delegate;
+
 		static byte [] _100continue = Encoding.ASCII.GetBytes ("HTTP/1.1 100 Continue\r\n\r\n");
 
 		internal HttpListenerRequest (HttpListenerContext context)
@@ -331,15 +333,14 @@ namespace System.Net {
 			get { return accept_types; }
 		}
 
-		[MonoTODO ("Always returns 0")]
 		public int ClientCertificateError {
 			get {
-/*				
-				if (no_get_certificate)
-					throw new InvalidOperationException (
-						"Call GetClientCertificate() before calling this method.");
-				return client_cert_error;
-*/
+				HttpConnection cnc = context.Connection;
+				if (cnc.ClientCertificate == null)
+					throw new InvalidOperationException ("No client certificate");
+				int [] errors = cnc.ClientCertificateErrors;
+				if (errors != null && errors.Length > 0)
+					return errors [0];
 				return 0;
 			}
 		}
@@ -479,24 +480,27 @@ namespace System.Net {
 			get { return user_languages; }
 		}
 
-		[MonoTODO]
 		public IAsyncResult BeginGetClientCertificate (AsyncCallback requestCallback, object state)
 		{
-			throw new NotImplementedException ();
+			if (gcc_delegate == null)
+				gcc_delegate = new GCCDelegate (GetClientCertificate);
+			return gcc_delegate.BeginInvoke (requestCallback, state);
 		}
 
-		[MonoTODO]
 		public X509Certificate2 EndGetClientCertificate (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			if (gcc_delegate == null)
+				throw new InvalidOperationException ();
+
+			return gcc_delegate.EndInvoke (asyncResult);
 		}
 
 		public X509Certificate2 GetClientCertificate ()
 		{
-			// set no_client_certificate once done.
-
-			// InvalidOp if call in progress.
-			return null;
+			return context.Connection.ClientCertificate;
 		}
 
 #if NET_4_0

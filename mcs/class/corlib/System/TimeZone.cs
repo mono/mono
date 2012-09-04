@@ -131,7 +131,7 @@ namespace System
 			if (time.Kind == DateTimeKind.Local)
 				return time;
 
-			TimeSpan utcOffset = GetUtcOffset (time);
+			TimeSpan utcOffset = GetUtcOffset (new DateTime (time.Ticks));
 			if (utcOffset.Ticks > 0) {
 				if (DateTime.MaxValue - utcOffset < time)
 					return DateTime.SpecifyKind (DateTime.MaxValue, DateTimeKind.Local);
@@ -140,7 +140,7 @@ namespace System
 					return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Local);
 			}
 
-			DateTime local = time.Add (utcOffset);
+			DateTime local = DateTime.SpecifyKind (time.Add (utcOffset), DateTimeKind.Local);
 			DaylightTime dlt = GetDaylightChanges (time.Year);
 			if (dlt.Delta.Ticks == 0)
 				return DateTime.SpecifyKind (local, DateTimeKind.Local);
@@ -354,6 +354,9 @@ namespace System
 
 		public override TimeSpan GetUtcOffset (DateTime time)
 		{
+			if (time.Kind == DateTimeKind.Utc)
+				return TimeSpan.Zero;
+
 			if (IsDaylightSavingTime (time))
 				return utcOffsetWithDLS;
 

@@ -352,7 +352,18 @@ namespace MonoTests.System.Net {
 	public void TestFailedResolution ()
 	{
 		try {
-			WebRequest.Create ("http://thisdomaindoesnotexist.monotestcase.x/non-existant.txt").GetResponse ();
+			var req = WebRequest.Create ("http://thisdomaindoesnotexist.monotestcase.x/non-existant.txt").GetResponse ();
+			/*
+			 * Work around broken t-online.de DNS Server.
+			 * 
+			 * T-Online's DNS Server for DSL Customers resolves
+			 * non-exisitng domain names to
+			 * http://navigationshilfe1.t-online.de/dnserror?url=....
+			 * instead of reporting an error.
+			 */
+			if (req.ResponseUri.DnsSafeHost.Equals ("navigationshilfe1.t-online.de"))
+				return;
+
 			Assert.Fail ("Should have raised an exception");
 		} catch (Exception e) {
 			Assert.IsTrue (e is WebException);

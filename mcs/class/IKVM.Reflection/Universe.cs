@@ -87,6 +87,7 @@ namespace IKVM.Reflection
 
 	public sealed class Universe : IDisposable
 	{
+		internal static readonly bool MonoRuntime = System.Type.GetType("Mono.Runtime") != null;
 		private readonly Dictionary<Type, Type> canonicalizedTypes = new Dictionary<Type, Type>();
 		private readonly List<AssemblyReader> assemblies = new List<AssemblyReader>();
 		private readonly List<AssemblyBuilder> dynamicAssemblies = new List<AssemblyBuilder>();
@@ -171,7 +172,7 @@ namespace IKVM.Reflection
 			try
 			{
 				return Environment.OSVersion.Platform == PlatformID.Win32NT
-					&& System.Type.GetType("Mono.Runtime") == null
+					&& !MonoRuntime
 					&& Environment.GetEnvironmentVariable("IKVM_DISABLE_FUSION") == null;
 			}
 			catch (System.Security.SecurityException)

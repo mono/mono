@@ -466,7 +466,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("Additional namespace prefixes are added")]
 		public void TestWritePotentiallyReferencingElement ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -496,7 +496,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<x xmlns:q2='{0}' d1p1:type='q2:string' xmlns:d1p1='{1}' xmlns='{2}'>something</x>",
 				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace),
-				xsw.Content, "#2");
+				xsw.Content, "#4");
 
 			xsw.Reset ();
 

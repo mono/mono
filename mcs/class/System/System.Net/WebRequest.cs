@@ -63,22 +63,11 @@ namespace System.Net
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
 		static RequestCachePolicy defaultCachePolicy;
-		static MethodInfo cfGetDefaultProxy;
 		
 		// Constructors
 		
 		static WebRequest ()
 		{
-			if (Platform.IsMacOS) {
-#if MONOTOUCH
-				Type type = Type.GetType ("MonoTouch.CoreFoundation.CFNetwork, monotouch");
-#else
-				Type type = Type.GetType ("MonoMac.CoreFoundation.CFNetwork, monomac");
-#endif
-				if (type != null)
-					cfGetDefaultProxy = type.GetMethod ("GetDefaultProxy");
-			}
-			
 #if NET_2_1
 			IWebRequestCreate http = new HttpRequestCreator ();
 			RegisterPrefix ("http", http);
@@ -246,9 +235,14 @@ namespace System.Net
 			
 			ProxyElement pe = sec.Proxy;
 			
-			if ((pe.UseSystemDefault != ProxyElement.UseSystemDefaultValues.False) && (pe.ProxyAddress == null))
-				p = (WebProxy) GetSystemWebProxy ();
-			else
+			if ((pe.UseSystemDefault != ProxyElement.UseSystemDefaultValues.False) && (pe.ProxyAddress == null)) {
+				IWebProxy proxy = GetSystemWebProxy ();
+				
+				if (!(proxy is WebProxy))
+					return proxy;
+				
+				p = (WebProxy) proxy;
+			} else
 				p = new WebProxy ();
 			
 			if (pe.ProxyAddress != null)
@@ -303,7 +297,19 @@ namespace System.Net
 				throw new ArgumentNullException ("requestUri");
 			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
-
+#if NET_4_5 || MOBILE	
+		[MonoTODO ("for portable library support")]
+		public static HttpWebRequest CreateHttp (string requestUriString)
+		{
+			throw new NotImplementedException ();
+		}
+			
+		[MonoTODO ("for portable library support")]
+		public static HttpWebRequest CreateHttp (Uri requestUri)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
 			throw GetMustImplement ();
@@ -362,6 +368,9 @@ namespace System.Net
 				}
 			} else {
 #endif
+				if (Platform.IsMacOS)
+					return CFNetwork.GetDefaultProxy ();
+				
 				string address = Environment.GetEnvironmentVariable ("http_proxy");
 
 				if (address == null)
@@ -412,9 +421,6 @@ namespace System.Net
 #if !NET_2_1
 			}
 #endif
-			
-			if (cfGetDefaultProxy != null)
-				return (IWebProxy) cfGetDefaultProxy.Invoke (null, null);
 			
 			return new WebProxy ();
 		}
