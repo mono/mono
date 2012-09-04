@@ -552,7 +552,8 @@ namespace System.Linq
 				comparer = EqualityComparer<TSource>.Default;
 
 			var source = new CancellationTokenSource ();
-			var innerQuery = first.Zip (second, comparer.Equals).WithImplementerToken (source);
+			var zip = new QueryZipNode<TSource, TSource, bool> (comparer.Equals, first.Node, second.Node) {	Strict = true };
+			var innerQuery = new ParallelQuery<bool> (zip).WithImplementerToken (source);
 
 			bool result = true;
 
@@ -563,6 +564,11 @@ namespace System.Linq
 						source.Cancel ();
 					}
 				});
+			} catch (AggregateException ex) {
+				if (ex.InnerException is QueryZipException)
+					return false;
+				else
+					throw ex;
 			} catch (OperationCanceledException e) {
 				if (e.CancellationToken != source.Token)
 					throw e;
