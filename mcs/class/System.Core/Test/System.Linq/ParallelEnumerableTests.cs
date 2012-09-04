@@ -890,6 +890,21 @@ namespace MonoTests.System.Linq
 			Assert.IsFalse (data.AsReallyParallel ().All (x => x != 1));
 			Assert.IsTrue (empty.AsReallyParallel ().All (x => false));
 		}
+
+		[Test]
+		public void SequenceEqualsTest ()
+		{
+			var data1 = new int[] { 1, 2, 3 };
+			var data2 = new int[] { 1, 2, 4 };
+			var data3 = new int[] { 1, 2, 3, 4 };
+
+			Assert.IsTrue (data1.AsReallyParallel ().SequenceEqual (data1.AsReallyParallel ()));
+			Assert.IsTrue (data2.AsReallyParallel ().SequenceEqual (data2.AsReallyParallel ()));
+			Assert.IsTrue (data3.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
+			Assert.IsFalse (data1.AsReallyParallel ().SequenceEqual (data2.AsReallyParallel ()));
+			Assert.IsFalse (data1.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
+			Assert.IsFalse (data2.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
+		}
 	}
 }
 
