@@ -39,7 +39,12 @@ namespace System.ServiceModel
 		HttpProxyCredentialType proxy;
 		string realm = String.Empty;
 
-		internal HttpTransportSecurity ()
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		HttpTransportSecurity ()
 		{
 		}
 
