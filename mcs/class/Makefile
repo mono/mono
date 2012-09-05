@@ -204,6 +204,7 @@ net_4_5_dirs := \
 	System.Web.Mvc3 \
 	System.Net.Http.Formatting \
 	System.Web.Http \
+	System.Web.Http.SelfHost \
 	EntityFramework	\
 	EntityFramework.SqlServer	\
 	Mono.CodeContracts
