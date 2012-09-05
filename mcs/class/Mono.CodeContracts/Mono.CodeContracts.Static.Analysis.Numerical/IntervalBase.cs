@@ -34,7 +34,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         /// <summary>
         /// Represents a generic class for intervals on numeric values.
         /// </summary>
-        abstract class IntervalBase<TInterval, TNumeric> : IAbstractDomain<TInterval>
+        public abstract class IntervalBase<TInterval, TNumeric> : IAbstractDomain<TInterval>
                 where TInterval : IntervalBase<TInterval, TNumeric> {
                 protected IntervalBase (TNumeric lowerBound, TNumeric upperBound)
                 {

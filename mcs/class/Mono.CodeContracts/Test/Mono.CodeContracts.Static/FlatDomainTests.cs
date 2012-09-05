@@ -1,10 +1,10 @@
 // 
-// ImmutableIntMap.cs
+// FlatDomainTests.cs
 // 
 // Authors:
-// 	Alexander Chebaturkin (chebaturkin@gmail.com)
+//	Alexander Chebaturkin (chebaturkin@gmail.com)
 // 
-// Copyright (C) 2011 Alexander Chebaturkin
+// Copyright (C) 2012 Alexander Chebaturkin
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,13 +24,17 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
+//
 
-using Mono.CodeContracts.Static.DataStructures.Patricia;
+using Mono.CodeContracts.Static.Lattices;
 
-namespace Mono.CodeContracts.Static.DataStructures {
-        public static class ImmutableIntMap<T>
-	{
-        public static readonly IImmutableIntMap<T> Empty = EmptyNode<T>.Instance;    
-	}
+using NUnit.Framework;
+
+namespace MonoTests.Mono.CodeContracts {
+        [TestFixture (Category = "FlatDomainTrivialTests")]
+        class FlatDomainTests : DomainTestBase<FlatDomain<int>> {
+                protected override FlatDomain<int> Top { get { return FlatDomain<int>.TopValue; } }
+                protected override FlatDomain<int> Bottom { get { return FlatDomain<int>.BottomValue; } }
+                protected override FlatDomain<int> Normal { get { return 1; } }
+        }
 }

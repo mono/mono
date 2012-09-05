@@ -40,7 +40,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
         /// <summary>
         /// Represents a closed interval of <see cref="Rational"/> values.
         /// </summary>
-        class Interval : IntervalBase<Interval, Rational>, IEquatable<Interval> {
+        public class Interval : IntervalBase<Interval, Rational>, IEquatable<Interval> {
                 static Interval cached_top_value;
                 static Interval cached_bottom_value;
 
@@ -379,7 +379,7 @@ namespace Mono.CodeContracts.Static.Analysis.Numerical {
                         return For (lower, upper);
                 }
 
-                public static class Ranges {
+                internal static class Ranges {
                         static Interval int8Range;
                         static Interval int32Range;
                         static Interval int64Range;

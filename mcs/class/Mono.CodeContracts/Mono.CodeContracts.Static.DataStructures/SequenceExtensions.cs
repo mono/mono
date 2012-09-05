@@ -30,7 +30,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Mono.CodeContracts.Static.DataStructures {
-        static class SequenceExtensions {
+        public static class SequenceExtensions {
                 public static Sequence<T> Cons<T> (this Sequence<T> rest, T elem)
                 {
                         return Sequence<T>.Cons (elem, rest);

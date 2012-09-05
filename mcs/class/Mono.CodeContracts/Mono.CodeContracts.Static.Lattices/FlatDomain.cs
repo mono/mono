@@ -41,7 +41,7 @@ namespace Mono.CodeContracts.Static.Lattices {
         ///       Bot
         /// </example>
         /// <typeparam name="T"></typeparam>
-        struct FlatDomain<T> : IAbstractDomain<FlatDomain<T>>, IEquatable<FlatDomain<T>>
+        public struct FlatDomain<T> : IAbstractDomain<FlatDomain<T>>, IEquatable<FlatDomain<T>>
                 where T : IEquatable<T> {
                 public static readonly FlatDomain<T> BottomValue = new FlatDomain<T> (DomainKind.Bottom);
                 public static readonly FlatDomain<T> TopValue = new FlatDomain<T> (DomainKind.Top);

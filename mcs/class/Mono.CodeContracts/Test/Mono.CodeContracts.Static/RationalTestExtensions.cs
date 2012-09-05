@@ -1,10 +1,10 @@
 // 
-// ImmutableIntMap.cs
+// RationalTestExtensions.cs
 // 
 // Authors:
-// 	Alexander Chebaturkin (chebaturkin@gmail.com)
+//	Alexander Chebaturkin (chebaturkin@gmail.com)
 // 
-// Copyright (C) 2011 Alexander Chebaturkin
+// Copyright (C) 2012 Alexander Chebaturkin
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,13 +24,32 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-// 
+//
 
-using Mono.CodeContracts.Static.DataStructures.Patricia;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 
-namespace Mono.CodeContracts.Static.DataStructures {
-        public static class ImmutableIntMap<T>
-	{
-        public static readonly IImmutableIntMap<T> Empty = EmptyNode<T>.Instance;    
-	}
+using NUnit.Framework;
+
+namespace MonoTests.Mono.CodeContracts {
+        static class RationalTestExtensions {
+                public static void ShouldBeLessEqualThan (this Rational l, Rational r)
+                {
+                        Assert.IsTrue (l <= r);
+                }
+
+                public static void ShouldNotBeLessEqualThan (this Rational l, Rational r)
+                {
+                        Assert.IsFalse (l <= r);
+                }
+
+                public static void ShouldBeLessThan (this Rational l, Rational r)
+                {
+                        Assert.IsTrue (l < r);
+                }
+
+                public static void ShouldNotBeLessThan (this Rational l, Rational r)
+                {
+                        Assert.IsFalse (l < r);
+                }
+        }
 }

@@ -33,7 +33,7 @@ using System.Text;
 
 namespace Mono.CodeContracts.Static.DataStructures.Patricia
 {
-    internal class BranchNode<T> : PatriciaTrieNode<T>
+        public class BranchNode<T> : PatriciaTrieNode<T>
     {
         private readonly int count;
 

@@ -36,7 +36,7 @@ using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Analysis.Numerical {
-        class DisInterval : IntervalBase<DisInterval, Rational> {
+        public class DisInterval : IntervalBase<DisInterval, Rational> {
                 public static readonly DisInterval NotZero =
                         For (Sequence<Interval>.From (Interval.For (Rational.MinusInfinity, -1L),
                                                       Interval.For (1L, Rational.PlusInfinity)));

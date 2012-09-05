@@ -30,7 +30,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Mono.CodeContracts.Static.DataStructures {
-	interface IImmutableIntMap<T> {
+        public interface IImmutableIntMap<T> {
 		T this [int key] { get; }
 		T Any { get; }
 		IEnumerable<T> Values { get; }

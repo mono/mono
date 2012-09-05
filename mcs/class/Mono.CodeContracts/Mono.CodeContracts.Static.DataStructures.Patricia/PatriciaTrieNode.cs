@@ -33,7 +33,7 @@ using System.Text;
 
 namespace Mono.CodeContracts.Static.DataStructures.Patricia
 {
-    abstract class PatriciaTrieNode<T> : IImmutableIntMap<T>
+    public abstract class PatriciaTrieNode<T> : IImmutableIntMap<T>
     {
         public T this[int key]
         {
