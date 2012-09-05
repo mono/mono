@@ -612,6 +612,15 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		public void SmallJoinTest ()
+		{
+			var items = new [] { 1, 2, 3 };
+			var items2 = new [] { 1, 2, 3, 4 };
+			var actual = items.AsReallyParallel ().Join (items2.AsReallyParallel (), i => i, i => i, (e1, e2) => e1 + e2);
+			AreEquivalent (new[] { 2, 4, 6 }, actual, 1);
+		}
+
+		[Test]
 		[Category ("NotWorking")] // Deadlocks randomly
 		public void TestGroupBy ()
 		{
