@@ -608,7 +608,7 @@ namespace System.Linq
 		                                                                              Func<TSource, TKey> keySelector,
 		                                                                              IEqualityComparer<TKey> comparer)
 		{
-			return source.GroupBy (keySelector, (e) => e, comparer);
+			return source.GroupBy (keySelector, new Identity<TSource> ().Apply, comparer);
 		}
 		
 		public static ParallelQuery<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement> (this ParallelQuery<TSource> source,
@@ -2241,6 +2241,17 @@ namespace System.Linq
 		                                                                      Func<TFirst, TSecond, TResult> resultSelector)
 		{
 			throw new NotSupportedException ();
+		}
+		#endregion
+
+		#region Helpers
+
+		class Identity<T>
+		{
+			public T Apply (T input)
+			{
+				return input;
+			}
 		}
 		#endregion
 	}
