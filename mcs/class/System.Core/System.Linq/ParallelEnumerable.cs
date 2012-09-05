@@ -1086,10 +1086,11 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return source.Aggregate<TSource, int, int> (() => 0,
-			                                           (acc, e) => acc + 1,
-			                                           (acc1, acc2) => acc1 + acc2,
-			                                           (result) => result);
+			var helper = new CountAggregateHelper<TSource> ();
+			return source.Aggregate<TSource, int, int> (helper.Seed,
+			                                            helper.Intermediate,
+			                                            helper.Reducer,
+			                                            helper.Final);
 		}
 
 		public static int Count<TSource> (this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
@@ -1102,15 +1103,39 @@ namespace System.Linq
 			return source.Where (predicate).Count ();
 		}
 
+		class CountAggregateHelper<TSource>
+		{
+			public int Seed ()
+			{
+				return 0;
+			}
+
+			public int Intermediate (int acc, TSource e)
+			{
+				return acc + 1;
+			}
+
+			public int Reducer (int acc1, int acc2)
+			{
+				return acc1 + acc2;
+			}
+
+			public int Final (int acc)
+			{
+				return acc;
+			}
+		}
+
 		public static long LongCount<TSource> (this ParallelQuery<TSource> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return source.Aggregate<TSource, long, long> (() => 0,
-			                                              (acc, e) => acc + 1,
-			                                              (acc1, acc2) => acc1 + acc2,
-			                                              (result) => result);
+			var helper = new LongCountAggregateHelper<TSource> ();
+			return source.Aggregate<TSource, long, long> (helper.Seed,
+			                                              helper.Intermediate,
+			                                              helper.Reducer,
+			                                              helper.Final);
 		}
 
 		public static long LongCount<TSource> (this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
@@ -1121,6 +1146,29 @@ namespace System.Linq
 				throw new ArgumentNullException ("predicate");
 
 			return source.Where (predicate).LongCount ();
+		}
+
+		class LongCountAggregateHelper<TSource>
+		{
+			public long Seed ()
+			{
+				return 0;
+			}
+
+			public long Intermediate (long acc, TSource e)
+			{
+				return acc + 1;
+			}
+
+			public long Reducer (long acc1, long acc2)
+			{
+				return acc1 + acc2;
+			}
+
+			public long Final (long acc)
+			{
+				return acc;
+			}
 		}
 		#endregion
 
