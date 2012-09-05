@@ -2421,6 +2421,11 @@ namespace Mono.CSharp
 				}
 
 				Report.Warning (1634, 1, Location, "Expected disable or restore");
+
+				// Eat any remaining characters on the line
+				while (c != '\n' && c != -1)
+					c = get_char ();
+
 				return;
 			}
 
