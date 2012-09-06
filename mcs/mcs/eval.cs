@@ -656,7 +656,11 @@ namespace Mono.CSharp
 			}
 
 			module.CreateContainer ();
-			source_file.EnableUsingClausesRedefinition ();
+
+			// Disable module and source file re-definition checks
+			module.EnableRedefinition ();
+			source_file.EnableRedefinition ();
+
 			module.Define ();
 
 			if (Report.Errors != 0){

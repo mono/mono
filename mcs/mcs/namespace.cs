@@ -1287,8 +1287,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void EnableUsingClausesRedefinition ()
+		public void EnableRedefinition ()
 		{
+			is_defined = false;
 			namespace_using_table = null;
 		}
 
