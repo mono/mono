@@ -1551,50 +1551,76 @@ namespace System.Linq
 		#endregion
 
 		#region Min-Max
-		static T BestOrder<T> (ParallelQuery<T> source, Func<T, T, bool> bestSelector, T seed)
+		static T BestOrder<T> (ParallelQuery<T> source, BestOrderComparer<T> bestOrderComparer)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			T best = seed;
-
-			best = source.Aggregate (() => seed,
-			                        (first, second) => (bestSelector(first, second)) ? first : second,
-			                        (first, second) => (bestSelector(first, second)) ? first : second,
-			                        (e) => e);
+			T best = source.Aggregate (bestOrderComparer.Seed,
+			                           bestOrderComparer.Intermediate,
+			                           bestOrderComparer.Intermediate,
+			                           new Identity<T> ().Apply);
 			return best;
+		}
+
+		class BestOrderComparer<T>
+		{
+			IComparer<T> comparer;
+			int inverter;
+			T seed;
+
+			public BestOrderComparer (IComparer<T> comparer, int inverter, T seed)
+			{
+				this.comparer = comparer;
+				this.inverter = inverter;
+				this.seed = seed;
+			}
+
+			public T Seed ()
+			{
+				return seed;
+			}
+
+			public T Intermediate (T first, T second)
+			{
+				return Better (first, second) ? first : second;
+			}
+
+			bool Better (T first, T second)
+			{
+				return (inverter * comparer.Compare (first, second)) > 0;
+			}
 		}
 
 		public static int Min (this ParallelQuery<int> source)
 		{
-			return BestOrder (source, (first, second) => first < second, int.MaxValue);
+			return BestOrder (source, new BestOrderComparer<int> (Comparer<int>.Default, -1, int.MaxValue));
 		}
 
 		public static long Min (this ParallelQuery<long> source)
 		{
-			return BestOrder (source, (first, second) => first < second, long.MaxValue);
+			return BestOrder (source, new BestOrderComparer<long> (Comparer<long>.Default, -1, long.MaxValue));
 		}
 
 		public static float Min (this ParallelQuery<float> source)
 		{
-			return BestOrder (source, (first, second) => first < second, float.MaxValue);
+			return BestOrder (source, new BestOrderComparer<float> (Comparer<float>.Default, -1, float.MaxValue));
 		}
 
 		public static double Min (this ParallelQuery<double> source)
 		{
-			return BestOrder (source, (first, second) => first < second, double.MaxValue);
+			return BestOrder (source, new BestOrderComparer<double> (Comparer<double>.Default, -1, double.MaxValue));
 		}
 
 		public static decimal Min (this ParallelQuery<decimal> source)
 		{
-			return BestOrder (source, (first, second) => first < second, decimal.MaxValue);
+			return BestOrder (source, new BestOrderComparer<decimal> (Comparer<decimal>.Default, -1, decimal.MaxValue));
 		}
 
 		public static TSource Min<TSource> (this ParallelQuery<TSource> source)
 		{
 			IComparer<TSource> comparer = Comparer<TSource>.Default;
-
-			return BestOrder (source, (first, second) => comparer.Compare (first, second) < 0, default (TSource));
+			return BestOrder (source, new BestOrderComparer<TSource> (comparer, -1, default (TSource)));
 		}
 
 		public static TResult Min<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> selector)
@@ -1749,34 +1775,33 @@ namespace System.Linq
 
 		public static int Max (this ParallelQuery<int> source)
 		{
-			return BestOrder (source, (first, second) => first > second, int.MinValue);
+			return BestOrder (source, new BestOrderComparer<int> (Comparer<int>.Default, 1, int.MinValue));
 		}
 
-		public static long Max(this ParallelQuery<long> source)
+		public static long Max (this ParallelQuery<long> source)
 		{
-			return BestOrder(source, (first, second) => first > second, long.MinValue);
+			return BestOrder (source, new BestOrderComparer<long> (Comparer<long>.Default, 1, long.MinValue));
 		}
 
 		public static float Max (this ParallelQuery<float> source)
 		{
-			return BestOrder(source, (first, second) => first > second, float.MinValue);
+			return BestOrder (source, new BestOrderComparer<float> (Comparer<float>.Default, 1, float.MinValue));
 		}
 
 		public static double Max (this ParallelQuery<double> source)
 		{
-			return BestOrder(source, (first, second) => first > second, double.MinValue);
+			return BestOrder (source, new BestOrderComparer<double> (Comparer<double>.Default, 1, double.MinValue));
 		}
 
 		public static decimal Max (this ParallelQuery<decimal> source)
 		{
-			return BestOrder(source, (first, second) => first > second, decimal.MinValue);
+			return BestOrder (source, new BestOrderComparer<decimal> (Comparer<decimal>.Default, 1, decimal.MinValue));
 		}
 
 		public static TSource Max<TSource> (this ParallelQuery<TSource> source)
 		{
 			IComparer<TSource> comparer = Comparer<TSource>.Default;
-
-			return BestOrder (source, (first, second) => comparer.Compare (first, second) > 0, default (TSource));
+			return BestOrder (source, new BestOrderComparer<TSource> (comparer, 1, default (TSource)));
 		}
 
 		public static TResult Max<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> selector)
