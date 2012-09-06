@@ -7,7 +7,7 @@ LIBRARY = System.Web.Http.SelfHost.dll
 System.Web.Http.SelfHost.Properties.CommonWebApiResources.resources: ../../../external/aspnetwebstack/src/Common/CommonWebApiResources.resx
 	$(RESGEN) "$<" "$@"
 	
-System.Web.Http.SelfHost.Properties.SRResources.resources: ../../../external/aspnetwebstack/src/System.Web.Http.Selfhost/Properties/SRResources.resx
+System.Web.Http.SelfHost.Properties.SRResources.resources: ../../../external/aspnetwebstack/src/System.Web.Http.SelfHost/Properties/SRResources.resx
 	$(RESGEN) "$<" "$@"
 
 
