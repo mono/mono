@@ -896,6 +896,20 @@ namespace MonoTests.System.Linq
 			Assert.IsFalse (data1.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
 			Assert.IsFalse (data2.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
 		}
+
+		[Test]
+		public void ContainsTest ()
+		{
+			var data1 = new int[] { 1, 2, 3 };
+			var data2 = new int[] { 1, 2, 4 };
+			var data3 = new int[] { 1, 2, 3, 4 };
+
+			Assert.IsTrue (data1.AsReallyParallel ().Contains (3));
+			Assert.IsFalse (data2.AsReallyParallel ().Contains (3));
+			Assert.IsTrue (data3.AsReallyParallel ().Contains (3));
+			Assert.IsFalse (data3.AsReallyParallel ().Contains (5));
+			Assert.IsTrue (data2.AsReallyParallel ().Contains (2));
+		}
 	}
 }
 

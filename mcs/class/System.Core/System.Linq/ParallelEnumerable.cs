@@ -524,7 +524,7 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			return Any<TSource> (source, (e) => comparer.Equals (value));
+			return Any<TSource> (source, (e) => comparer.Equals (value, e));
 		}
 		#endregion
 
