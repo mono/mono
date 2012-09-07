@@ -85,6 +85,9 @@ namespace System.Net.Http
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 
+			if (buffer != null)
+				return Task.Factory.StartNew(() => buffer.CopyTo(stream));
+
 			return SerializeToStreamAsync (stream, context);
 		}
 
@@ -139,6 +142,9 @@ namespace System.Net.Http
 
 			if (stream == null)
 				stream = await CreateContentReadStreamAsync ().ConfigureAwait (false);
+
+			if (buffer != null)
+				return buffer;
 
 			return stream;
 		}
