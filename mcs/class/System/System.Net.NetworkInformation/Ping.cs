@@ -64,7 +64,10 @@ namespace System.Net.NetworkInformation {
 		static readonly string [] PingBinPaths = new string [] {
 			"/bin/ping",
 			"/sbin/ping",
-			"/usr/sbin/ping"
+			"/usr/sbin/ping",
+#if MONODROID
+			"/system/bin/ping"
+#endif
 		};
 		static readonly string PingBinPath;
 		const int default_timeout = 4000; // 4 sec.
