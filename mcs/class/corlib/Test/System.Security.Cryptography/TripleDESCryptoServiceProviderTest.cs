@@ -249,5 +249,20 @@ namespace MonoTests.System.Security.Cryptography {
 			int size = tdes.BlockSize; // 8 times too big
 			CreateDecryptor_IV (size);
 		}
+		
+		[Test]
+		public void TwoKeysTripleDes ()
+		{
+			byte[] key = new byte [16]; // 128 bits
+			Buffer.BlockCopy (tdes.Key, 0, key, 0, 16);
+			
+			ICryptoTransform encryptor = tdes.CreateEncryptor (key, tdes.IV);
+			byte[] data = new byte[encryptor.InputBlockSize];
+			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
+
+			ICryptoTransform decryptor = tdes.CreateDecryptor (key, tdes.IV);
+			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
+			Assert.IsTrue (BitConverter.ToString (data) == BitConverter.ToString (decdata), "Compare");
+		}
 	}
 }
