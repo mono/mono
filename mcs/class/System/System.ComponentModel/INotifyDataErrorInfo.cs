@@ -1,5 +1,4 @@
 //
-//
 // System.ComponentModel.INotifyDataErrorInfo.cs: Provides an interface for
 // async and sync data validation.
 //
@@ -27,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_4_5
+
 using System.Collections;
 
 namespace System.ComponentModel {
@@ -37,3 +38,5 @@ namespace System.ComponentModel {
                 event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
         }
 }
+
+#endif

@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_4_5
+
 namespace System.ComponentModel {
         public sealed class DataErrorsChangedEventArgs : EventArgs {
                 public DataErrorsChangedEventArgs (string propertyName)
@@ -36,3 +38,5 @@ namespace System.ComponentModel {
                 public string PropertyName { get; private set; }
         }
 }
+
+#endif
