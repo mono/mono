@@ -248,6 +248,7 @@
    <Compile Include="System.ComponentModel\ContainerFilterService.cs" />
    <Compile Include="System.ComponentModel\CultureInfoConverter.cs" />
    <Compile Include="System.ComponentModel\CustomTypeDescriptor.cs" />
+   <Compile Include="System.ComponentModel\DataErrorsChangedEventArgs.cs" />
    <Compile Include="System.ComponentModel\DataObjectAttribute.cs" />
    <Compile Include="System.ComponentModel\DataObjectFieldAttribute.cs" />
    <Compile Include="System.ComponentModel\DataObjectMethodAttribute.cs" />
@@ -381,6 +382,7 @@
    <Compile Include="System.ComponentModel\InheritanceAttribute.cs" />
    <Compile Include="System.ComponentModel\InheritanceLevel.cs" />
    <Compile Include="System.ComponentModel\InitializationEventAttribute.cs" />
+   <Compile Include="System.ComponentModel\INotifyDataErrorInfo.cs" />
    <Compile Include="System.ComponentModel\INotifyPropertyChanged.cs" />
    <Compile Include="System.ComponentModel\INotifyPropertyChanging.cs" />
    <Compile Include="System.ComponentModel\InstallerTypeAttribute.cs" />
