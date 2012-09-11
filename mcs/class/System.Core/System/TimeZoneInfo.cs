@@ -596,7 +596,9 @@ namespace System
 #endif
 #if MONODROID
 			foreach (string id in ZoneInfoDB.GetAvailableIds ()) {
-				systemTimeZones.Add (ZoneInfoDB.GetTimeZone (id));
+				var tz = ZoneInfoDB.GetTimeZone (id);
+				if (tz != null)
+					systemTimeZones.Add (tz);
 			}
 #elif MONOTOUCH
 				if (systemTimeZones.Count == 0) {
