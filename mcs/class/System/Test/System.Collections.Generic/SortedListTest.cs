@@ -463,6 +463,19 @@ namespace MonoTests.System.Collections.Generic
 			Assert.IsTrue(sl.Keys[1] == 2, "NCIC #D2");
 			Assert.IsTrue(sl.Keys[2] == 3, "NCIC #D3");
 		}
+
+		[Test]
+		public void ClearDoesNotTouchCapacity ()
+		{
+			SortedList<int, int> sl = new SortedList<int, int> ();
+			for (int i = 0; i < 18; i++) {
+				sl.Add (i, i);
+			}
+			int capacityBeforeClear = sl.Capacity;
+			sl.Clear ();
+			int capacityAfterClear = sl.Capacity;
+			Assert.AreEqual (capacityBeforeClear, capacityAfterClear);
+		}
 	}
 }
 
