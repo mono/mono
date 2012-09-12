@@ -105,13 +105,18 @@ namespace System.Linq.Parallel
 				tasks[i] = Task.Factory.StartNew (() => {
 					try {
 						foreach (TElement item in enumerables[index]) {
-							// This is from specific operators
-							if (options.ImplementerToken.IsCancellationRequested)
+							if (!CheckTokens (options))
 								break;
-							if (options.Token.IsCancellationRequested)
-								throw new OperationCanceledException (options.Token);
 
-							call (item, src.Token);
+							try {
+								call (item, src.Token);
+							} catch (OperationCanceledException canceledException) {
+								if (canceledException.CancellationToken != src.Token)
+									throw canceledException;
+							}
+
+							if (!CheckTokens (options))
+								break;
 						}
 					} finally {
 						if (endAction != null)
@@ -121,6 +126,16 @@ namespace System.Linq.Parallel
 			}
 
 			return tasks;
+		}
+
+		static bool CheckTokens (QueryOptions options)
+		{
+			// This is from specific operators
+			if (options.ImplementerToken.IsCancellationRequested)
+				return false;
+			if (options.Token.IsCancellationRequested)
+				throw new OperationCanceledException (options.Token);
+			return true;
 		}
 
 		internal static void ProcessAndBlock<T> (QueryBaseNode<T> node, Action<T, CancellationToken> call)
