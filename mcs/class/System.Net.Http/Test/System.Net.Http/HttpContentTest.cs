@@ -43,14 +43,9 @@ namespace MonoTests.System.Net.Http
 
 			var stream = new MemoryStream (10);
 
-			try
-			{
-				content.CopyToAsync (stream).Wait ();
-			}
-			catch (Exception ex)
-			{
-				Assert.Fail ("CopyToAsync threw an exception: " + ex.GetType().Name);
-			}
+			// This line throws if the buffer is not being used
+			// since the stream is closed
+			content.CopyToAsync (stream).Wait ();
 		}
 
 		[Test]
