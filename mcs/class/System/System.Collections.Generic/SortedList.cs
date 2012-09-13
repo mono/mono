@@ -305,16 +305,12 @@ namespace System.Collections.Generic
 
 		void ICollection<KeyValuePair<TKey, TValue>>.Clear () 
 		{
-			defaultCapacity = INITIAL_SIZE;
-			this.table = new KeyValuePair<TKey, TValue> [defaultCapacity];
-			inUse = 0;
-			modificationCount++;
+			Clear ();
 		}
 
 		public void Clear () 
 		{
-			defaultCapacity = INITIAL_SIZE;
-			this.table = new KeyValuePair<TKey, TValue> [defaultCapacity];
+			Array.Clear (table, 0, table.Length);
 			inUse = 0;
 			modificationCount++;
 		}
