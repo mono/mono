@@ -165,7 +165,7 @@ namespace System.Net {
 			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
 				path = raw_uri.PathAndQuery;
 			else
-				path = HttpUtility.UrlDecode (raw_url);
+				path = raw_url;
 
 			if ((host == null || host.Length == 0))
 				host = UserHostAddress;
