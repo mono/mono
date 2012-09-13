@@ -243,8 +243,7 @@ namespace System.Collections {
 
 		public virtual void Clear () 
 		{
-			defaultCapacity = INITIAL_SIZE;
-			this.table = new Slot [defaultCapacity];
+			Array.Clear (table, 0, table.Length);
 			inUse = 0;
 			modificationCount++;
 		}

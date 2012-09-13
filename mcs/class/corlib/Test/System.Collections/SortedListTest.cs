@@ -348,6 +348,20 @@ namespace MonoTests.System.Collections
 #endif
 
 		[Test]
+		public void ClearDoesNotTouchCapacity ()
+		{
+			SortedList sl = new SortedList ();
+			// according to MSDN docs Clear () does not change capacity
+			for (int i = 0; i < 18; i++) {
+				sl.Add (i, i);
+			}
+			int capacityBeforeClear = sl.Capacity;
+			sl.Clear ();
+			int capacityAfterClear = sl.Capacity;
+			Assert.AreEqual (capacityBeforeClear, capacityAfterClear);
+		}
+
+		[Test]
 		public void TestClone ()
 		{
 			{
