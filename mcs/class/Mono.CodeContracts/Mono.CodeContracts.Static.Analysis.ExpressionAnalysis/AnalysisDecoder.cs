@@ -45,9 +45,9 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 		{
 			FlatDomain<Expr<TSymValue>> aExpression = data [condition];
 
-			if (aExpression.IsNormal) {
+			if (aExpression.IsNormal()) {
 				bool truth = tag != EdgeTag.False;
-				data = aExpression.Concrete.Decode<ExprDomain<TSymValue>, ExprDomain<TSymValue>, AssumeDecoder<TSymValue>>
+				data = aExpression.Value.Decode<ExprDomain<TSymValue>, ExprDomain<TSymValue>, AssumeDecoder<TSymValue>>
 					(pc, condition, new AssumeDecoder<TSymValue> (truth), data);
 			}
 
@@ -57,8 +57,8 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 		public override ExprDomain<TSymValue> Assert (APC pc, EdgeTag tag, TSymValue condition, ExprDomain<TSymValue> data)
 		{
 			FlatDomain<Expr<TSymValue>> expression = data [condition];
-			if (expression.IsNormal) {
-				data = expression.Concrete.Decode<ExprDomain<TSymValue>, ExprDomain<TSymValue>, AssumeDecoder<TSymValue>>
+			if (expression.IsNormal()) {
+				data = expression.Value.Decode<ExprDomain<TSymValue>, ExprDomain<TSymValue>, AssumeDecoder<TSymValue>>
 					(pc, condition, new AssumeDecoder<TSymValue> (true), data);
 			}
 

@@ -24,11 +24,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void TestNewEmptyKeyNode () 
 		{
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
-#if NET_1_0
-			Assert.AreEqual ("<RetrievalElement xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "Empty");
-#else
 			Assert.AreEqual ("<RetrievalMethod xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />", (uri1.GetXml ().OuterXml), "Empty");
-#endif
 		}
 
 		[Test]
@@ -49,11 +45,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void TestImportKeyNode () 
 		{
-#if NET_1_0
-			string value = "<RetrievalElement URI=\"http://www.go-mono.com/\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />";
-#else
 			string value = "<RetrievalMethod URI=\"http://www.go-mono.com/\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />";
-#endif
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (value);
 

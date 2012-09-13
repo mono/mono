@@ -75,6 +75,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Use2 ()
 		{
 			var b = new ServiceDiscoveryBehavior ();
@@ -119,6 +120,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void UseHttpBinding ()
 		{
 			var ahost = new ServiceHost (typeof (AnnouncementService));

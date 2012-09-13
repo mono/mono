@@ -138,15 +138,15 @@ namespace System.Data
 #if NET_2_0
 		[Browsable (false)]
 		public DataRelation (string relationName, string parentTableName,
-				     string parentTableNameSpace, string childTableName,
-				     string childTableNameSpace, string[] parentColumnNames,
+				     string parentTableNamespace, string childTableName,
+				     string childTableNamespace, string[] parentColumnNames,
 				     string[] childColumnNames, bool nested)
 		{
 			_relationName = relationName;
 			_parentTableName = parentTableName;
-			_parentTableNameSpace = parentTableNameSpace;
+			_parentTableNameSpace = parentTableNamespace;
 			_childTableName = childTableName;
-			_childTableNameSpace = childTableNameSpace;
+			_childTableNameSpace = childTableNamespace;
 			_parentColumnNames = parentColumnNames;
 			_childColumnNames = childColumnNames;
 			_nested = nested;

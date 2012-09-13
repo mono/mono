@@ -283,11 +283,12 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			Assert.AreEqual ("              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring, "test#16");
-#if NET_2_0
+#if NET_4_0
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
+#elif NET_2_0
 			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 #else
-			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
+			#error "Unknown profile"
 #endif
 			if (substring.IndexOf ("<xs:element") < 0)
 				Assert.Fail ("test#16: " + substring);

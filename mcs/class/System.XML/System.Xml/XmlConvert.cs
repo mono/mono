@@ -568,7 +568,7 @@ namespace System.Xml {
 			if (value.Days > 0)
 				builder.Append (value.Days).Append ('D');
 			long ticks = value.Ticks % TimeSpan.TicksPerMillisecond;
-			if (value.Days > 0 || value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
+			if (value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
 				builder.Append('T');
 				if (value.Hours > 0)
 					builder.Append (value.Hours).Append ('H');

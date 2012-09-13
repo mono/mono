@@ -1454,5 +1454,102 @@ namespace MonoTests.System
 			Assert.AreEqual (-2.1M, Math.Round (-2.08M, 1, m), "#15");
 			Assert.AreEqual (-3.1M, Math.Round (-3.05M, 1, m), "#16");
 		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_NumberGroupSeparatorIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.NumberGroupSeparator = "";
+			Decimal.Parse ("1.5", nf);
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_CurrencyGroupSeparatorIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.CurrencyGroupSeparator = "";
+			Decimal.Parse ("\u00A41.5", NumberStyles.Currency, nf);
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_LeadingSign_PositiveSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.PositiveSign = "";
+			try {
+				Decimal.Parse ("+15", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_LeadingSign_NegativeSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.NegativeSign = "";
+			try {
+				Decimal.Parse ("-15", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_TrailingSign_PositiveSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.PositiveSign = "";
+			try {
+				Decimal.Parse ("15+", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_TrailingSign_NegativeSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.NegativeSign = "";
+			try {
+				Decimal.Parse ("15-", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test]
+		[SetCulture("en-US")]
+		public void ParseZeros ()
+		{
+			var d = Decimal.Parse ("0.000");
+			var bits = Decimal.GetBits (d);
+			Assert.AreEqual (0, bits[0], "#1");
+			Assert.AreEqual (0, bits[1], "#2");
+			Assert.AreEqual (0, bits[2], "#3");
+			Assert.AreEqual (196608, bits[3], "#4");
+			Assert.AreEqual ("0.000", d.ToString (), "#5");
+
+			d = Decimal.Parse("0.000000000000000000000000000000000000000000000000000000000000000000");
+			Assert.AreEqual ("0.0000000000000000000000000000", d.ToString (), "#10");
+
+			d = Decimal.Parse ("0.");
+			Assert.AreEqual ("0", d.ToString (), "#11");
+		}
 	}
 }

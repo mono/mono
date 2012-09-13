@@ -1,6 +1,7 @@
 // ExecutingMessageBox.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,55 +20,48 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	internal class ExecutingMessageBox<TInput> : MessageBox<TInput>
-	{
-		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
-		readonly BlockingCollection<TInput> messageQueue;
-		readonly Action processQueue;
-		readonly CompletionHelper compHelper;
+namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Message box for executing blocks with synchrnous actions.
+	/// </summary>
+	/// <typeparam name="TInput">Type of the item the block is processing.</typeparam>
+	class ExecutingMessageBox<TInput> : ExecutingMessageBoxBase<TInput> {
+		readonly Func<bool> processItem;
 
-		AtomicBoolean started = new AtomicBoolean ();
-		
-		public ExecutingMessageBox (BlockingCollection<TInput> messageQueue,
-		                            CompletionHelper compHelper,
-		                            Func<bool> externalCompleteTester,
-		                            Action processQueue,
-		                            ExecutionDataflowBlockOptions dataflowBlockOptions) : base (messageQueue, compHelper, externalCompleteTester)
+		public ExecutingMessageBox (
+			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
+			CompletionHelper compHelper, Func<bool> externalCompleteTester,
+			Func<bool> processItem, Action outgoingQueueComplete,
+			ExecutionDataflowBlockOptions options)
+			: base (
+				target, messageQueue, compHelper, externalCompleteTester,
+				outgoingQueueComplete, options)
 		{
-			this.messageQueue = messageQueue;
-			this.dataflowBlockOptions = dataflowBlockOptions;
-			this.processQueue = processQueue;
-			this.compHelper = compHelper;
+			this.processItem = processItem;
 		}
 
-		protected override void EnsureProcessing ()
+		/// <summary>
+		/// Processes the input queue of the block.
+		/// </summary>
+		protected override void ProcessQueue ()
 		{
-			if (!started.TryRelaxedSet ())
-				return;
+			StartProcessQueue ();
 
-			Task[] tasks = new Task[dataflowBlockOptions.MaxDegreeOfParallelism];
-			for (int i = 0; i < tasks.Length; ++i)
-				tasks[i] = Task.Factory.StartNew (processQueue);
-			Task.Factory.ContinueWhenAll (tasks, (_) => {
-				started.Value = false;
-				// Re-run ourselves in case of a race when data is available in the end
-				if (messageQueue.Count > 0)
-					EnsureProcessing ();
-				else if (messageQueue.IsCompleted)
-					compHelper.Complete ();
-			});
+			try {
+				int i = 0;
+				while (CanRun (i)) {
+					if (!processItem ())
+						break;
+					i++;
+				}
+			} catch (Exception e) {
+				CompHelper.RequestFault (e, false);
+			}
+
+			FinishProcessQueue ();
 		}
 	}
 }
-

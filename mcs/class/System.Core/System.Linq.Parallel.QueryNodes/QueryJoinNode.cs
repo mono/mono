@@ -82,7 +82,7 @@ namespace System.Linq.Parallel.QueryNodes
 			if (first.Count != second.Count)
 				throw new InvalidOperationException ("Internal size mismatch");
 
-			var store = new ConcurrentDictionary<TKey, Tuple<VSlot<TFirst>, VSlot<TSecond>>> (comparer);
+			var store = new TemporaryArea<TKey, Tuple<VSlot<TFirst>, VSlot<TSecond>>> (comparer);
 
 			return first
 				.Select ((f, i) => GetEnumerable (f, second[i], store, firstKeySelector, secondKeySelector, resultSelector))
@@ -98,7 +98,7 @@ namespace System.Linq.Parallel.QueryNodes
 			if (first.Count != second.Count)
 				throw new InvalidOperationException ("Internal size mismatch");
 
-			var store = new ConcurrentDictionary<TKey, Tuple<VSlot<KeyValuePair<long, TFirst>>, VSlot<KeyValuePair<long, TSecond>>>> (comparer);
+			var store = new TemporaryArea<TKey, Tuple<VSlot<KeyValuePair<long, TFirst>>, VSlot<KeyValuePair<long, TSecond>>>> (comparer);
 			
 			return first
 				.Select ((f, i) => GetEnumerable<KeyValuePair<long, TFirst>, KeyValuePair<long, TSecond>, KeyValuePair<long, TResult>> (f, 
@@ -112,7 +112,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		IEnumerable<T> GetEnumerable<U, V, T> (IEnumerable<U> first, 
 		                                       IEnumerable<V> second,
-		                                       ConcurrentDictionary<TKey, Tuple<VSlot<U>, VSlot<V>>> store,
+		                                       TemporaryArea<TKey, Tuple<VSlot<U>, VSlot<V>>> store,
 		                                       Func<U, TKey> fKeySelect,
 		                                       Func<V, TKey> sKeySelect,
 		                                       Func<U, V, T> resultor)
@@ -121,9 +121,10 @@ namespace System.Linq.Parallel.QueryNodes
 			IEnumerator<V> eSecond = second.GetEnumerator ();
 
 			try {
-				while (eFirst.MoveNext ()) {
-					if (!eSecond.MoveNext ())
-						yield break;
+				bool fstHasCurrent = false, sndHasCurrent = false;
+				Tuple<VSlot<U>, VSlot<V>> kvp;
+
+				while ((fstHasCurrent = eFirst.MoveNext ()) & (sndHasCurrent = eSecond.MoveNext ())) {
 
 					U e1 = eFirst.Current;
 					V e2 = eSecond.Current;
@@ -135,8 +136,6 @@ namespace System.Linq.Parallel.QueryNodes
 						yield return resultor (e1, e2);
 						continue;
 					}
-					
-					Tuple<VSlot<U>, VSlot<V>> kvp;
 					
 					do {
 						if (store.TryRemove (key1, out kvp) && kvp.Item2.HasValue) {
@@ -151,6 +150,32 @@ namespace System.Linq.Parallel.QueryNodes
 							break;
 						}
 					} while (!store.TryAdd (key2, Tuple.Create (new VSlot<U> (), new VSlot<V> (e2))));
+				}
+				if (fstHasCurrent) {
+					do {
+						U e1 = eFirst.Current;
+						TKey key1 = fKeySelect (e1);
+
+						do {
+							if (store.TryRemove (key1, out kvp) && kvp.Item2.HasValue) {
+								yield return resultor (e1, kvp.Item2.Value);
+								break;
+							}
+						} while (!store.TryAdd (key1, Tuple.Create (new VSlot<U> (e1), new VSlot<V> ())));
+					} while (eFirst.MoveNext ());
+				}
+				if (sndHasCurrent) {
+					do {
+						V e2 = eSecond.Current;
+						TKey key2 = sKeySelect (e2);
+
+						do {
+							if (store.TryRemove (key2, out kvp) && kvp.Item1.HasValue) {
+								yield return resultor (kvp.Item1.Value, e2);
+								break;
+							}
+						} while (!store.TryAdd (key2, Tuple.Create (new VSlot<U> (), new VSlot<V> (e2))));
+					} while (eSecond.MoveNext ());
 				}
 			} finally {
 				eFirst.Dispose ();

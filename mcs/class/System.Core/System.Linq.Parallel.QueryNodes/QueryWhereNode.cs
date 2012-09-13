@@ -79,11 +79,12 @@ namespace System.Linq.Parallel.QueryNodes
 			IList<IEnumerable<KeyValuePair<long, TSource>>> sources = Parent.GetOrderedEnumerables (options);
 
 			ProcessingSlot[] store = new ProcessingSlot[sources.Count];
+			Comparison<ProcessingSlot> arrayComparison = ArraySortMethod;
 			long lastIndex = 0;
 
 			Barrier barrier = new Barrier (sources.Count, delegate (Barrier b) {
 				// Sort the store
-				Array.Sort (store, ArraySortMethod);
+				Array.Sort (store, arrayComparison);
 
 				// Reassign a good index
 				int i = 0;

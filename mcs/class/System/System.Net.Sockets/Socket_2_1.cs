@@ -496,7 +496,6 @@ namespace System.Net.Sockets {
 				args.SetLastOperation (async_op);
 				args.SocketError = SocketError.Success;
 				args.BytesTransferred = 0;
-                                args.Count = 0;
 			}
 
 			public void Accept ()
@@ -867,7 +866,7 @@ namespace System.Net.Sockets {
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
 		internal bool blocking=true;
-		Thread blocking_thread;
+		List<Thread> blocking_threads;
 		private bool isbound;
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
@@ -886,6 +885,44 @@ namespace System.Net.Sockets {
 		 * Connect, etc.
  		 */
 		internal EndPoint seed_endpoint = null;
+
+		void RegisterForBlockingSyscall ()
+		{
+			while (blocking_threads == null) {
+				//In the rare event this CAS fail, there's a good chance other thread won, so we're kosher.
+				//In the VERY rare event of all CAS fail together, we pay the full price of of failure.
+				Interlocked.CompareExchange (ref blocking_threads, new List<Thread> (), null);
+			}
+
+			try {
+				
+			} finally {
+				/* We must use a finally block here to make this atomic. */
+				lock (blocking_threads) {
+					blocking_threads.Add (Thread.CurrentThread);
+				}
+			}
+		}
+
+		/* This must be called from a finally block! */
+		void UnRegisterForBlockingSyscall ()
+		{
+			//If this NRE, we're in deep problems because Register Must have
+			lock (blocking_threads) {
+				blocking_threads.Remove (Thread.CurrentThread);
+			}
+		}
+
+		void AbortRegisteredThreads () {
+			if (blocking_threads == null)
+				return;
+
+			lock (blocking_threads) {
+				foreach (var t in blocking_threads)
+					cancel_blocking_socket_operation (t);
+				blocking_threads.Clear ();
+			}
+		}
 
 #if !TARGET_JVM
 		// Creates a new system socket, returning the handle
@@ -1146,6 +1183,8 @@ namespace System.Net.Sockets {
 					return; */
 			}
 		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void cancel_blocking_socket_operation (Thread thread);
 
 		protected virtual void Dispose (bool disposing)
 		{
@@ -1160,11 +1199,8 @@ namespace System.Net.Sockets {
 				closed = true;
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
-				Thread th = blocking_thread;
-				if (th != null) {
-					th.Abort ();
-					blocking_thread = null;
-				}
+				
+				AbortRegisteredThreads ();
 
 				if (was_connected)
 					Linger (x);
@@ -1238,23 +1274,21 @@ namespace System.Net.Sockets {
 
 			int error = 0;
 
-			blocking_thread = Thread.CurrentThread;
 			try {
+				RegisterForBlockingSyscall ();
 				Connect_internal (socket, serial, out error);
-			} catch (ThreadAbortException) {
-				if (disposed) {
-					Thread.ResetAbort ();
-					error = (int) SocketError.Interrupted;
-				}
 			} finally {
-				blocking_thread = null;
+				UnRegisterForBlockingSyscall ();
 			}
 
 			if (error == 0 || error == 10035)
 				seed_endpoint = remoteEP; // Keep the ep around for non-blocking sockets
 
-			if (error != 0)
+			if (error != 0) {
+				if (closed)
+					error = SOCKET_CLOSED;
 				throw new SocketException (error);
+			}
 
 #if !MOONLIGHT
 			if (socket_type == SocketType.Dgram && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)))
@@ -1755,8 +1789,8 @@ namespace System.Net.Sockets {
 
 			// FIXME: this is canceling a synchronous connect, not an async one
 			Socket s = e.ConnectSocket;
-			if ((s != null) && (s.blocking_thread != null))
-				s.blocking_thread.Abort ();
+			if (s != null)
+				s.AbortRegisteredThreads ();
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

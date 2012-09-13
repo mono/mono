@@ -488,8 +488,13 @@ namespace MonoTests.System.Threading
 				TestThread.Abort();
 			}
 			
-			if (TestThread.IsAlive)
-				Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
+			if (TestThread.IsAlive) {
+				try {
+					Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
+				} catch (ThreadStateException) {
+					// Ignore if thread died meantime
+				}
+			}
 		}
 
 		[Test]

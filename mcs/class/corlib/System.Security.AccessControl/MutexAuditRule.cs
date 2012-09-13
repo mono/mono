@@ -33,18 +33,15 @@ namespace System.Security.AccessControl
 {
 	public sealed class MutexAuditRule : AuditRule
 	{
-		MutexRights rights;
-		
 		public MutexAuditRule (IdentityReference identity,
 				       MutexRights eventRights,
 				       AuditFlags flags)
-			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, flags)
+			: base (identity, (int)eventRights, false, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
-			this.rights = eventRights;
 		}
 		
 		public MutexRights MutexRights {
-			get { return rights; }
+			get { return (MutexRights)AccessMask; }
 		}
 	}
 }

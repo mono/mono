@@ -53,7 +53,7 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataTableTest :  DataSetAssertion
 	{
-		string EOL = Environment.NewLine;
+		string EOL = "\r\n";
 
 		[Test]
 		public void Ctor()
@@ -3236,6 +3236,7 @@ namespace MonoTests.System.Data
 			string TextString = GetNormalizedSchema (writer.ToString ());
 			//string TextString = writer.ToString ();
 
+			EOL = "\n";
 			string substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");

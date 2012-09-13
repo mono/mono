@@ -16,22 +16,26 @@
     <AssemblyName>System.Core_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>

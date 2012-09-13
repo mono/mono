@@ -1079,7 +1079,8 @@ namespace System.Net
 							new DownloadDataCompletedEventArgs (null, e, canceled, args [1]));
 					}
 				});
-				object [] cb_args = new object [] {address, userToken};
+				object [] cb_args = new object [] { CreateUri (address), userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1115,7 +1116,8 @@ namespace System.Net
 						OnDownloadFileCompleted (
 							new AsyncCompletedEventArgs (e, false, args [2]));
 					}});
-				object [] cb_args = new object [] {address, fileName, userToken};
+				object [] cb_args = new object [] { CreateUri (address), fileName, userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1150,7 +1152,8 @@ namespace System.Net
 						OnDownloadStringCompleted (
 							new DownloadStringCompletedEventArgs (null, e, canceled, args [1]));
 					}});
-				object [] cb_args = new object [] {address, userToken};
+				object [] cb_args = new object [] { CreateUri (address), userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1188,7 +1191,8 @@ namespace System.Net
 					} catch (Exception e){
 						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, e, false, args [1]));
 					} });
-				object [] cb_args = new object [] {address, userToken};
+				object [] cb_args = new object [] { CreateUri (address), userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1231,7 +1235,8 @@ namespace System.Net
 						OnOpenWriteCompleted (
 							new OpenWriteCompletedEventArgs (null, e, false, args [2]));
 					}});
-				object [] cb_args = new object [] {address, method, userToken};
+				object [] cb_args = new object [] { CreateUri (address), method, userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1275,7 +1280,8 @@ namespace System.Net
 						OnUploadDataCompleted (
 							new UploadDataCompletedEventArgs (null, e, false, args [3]));
 					}});
-				object [] cb_args = new object [] {address, method, data,  userToken};
+				object [] cb_args = new object [] { CreateUri (address), method, data,  userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1318,7 +1324,8 @@ namespace System.Net
 						OnUploadFileCompleted (
 							new UploadFileCompletedEventArgs (null, e, false, args [3]));
 					}});
-				object [] cb_args = new object [] {address, method, fileName,  userToken};
+				object [] cb_args = new object [] { CreateUri (address), method, fileName,  userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1360,7 +1367,8 @@ namespace System.Net
 						OnUploadStringCompleted (
 							new UploadStringCompletedEventArgs (null, e, false, args [3]));
 					}});
-				object [] cb_args = new object [] {address, method, data, userToken};
+				object [] cb_args = new object [] { CreateUri (address), method, data, userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}
@@ -1401,7 +1409,8 @@ namespace System.Net
 						OnUploadValuesCompleted (
 							new UploadValuesCompletedEventArgs (null, e, false, args [3]));
 					}});
-				object [] cb_args = new object [] {address, method, data,  userToken};
+				object [] cb_args = new object [] { CreateUri (address), method, data,  userToken };
+				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
 		}

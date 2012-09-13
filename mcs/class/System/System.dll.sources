@@ -204,6 +204,7 @@ System.ComponentModel/Container.cs
 System.ComponentModel/ContainerFilterService.cs
 System.ComponentModel/CultureInfoConverter.cs
 System.ComponentModel/CustomTypeDescriptor.cs
+System.ComponentModel/DataErrorsChangedEventArgs.cs
 System.ComponentModel/DataObjectAttribute.cs
 System.ComponentModel/DataObjectFieldAttribute.cs
 System.ComponentModel/DataObjectMethodAttribute.cs
@@ -337,6 +338,7 @@ System.ComponentModel/INestedSite.cs
 System.ComponentModel/InheritanceAttribute.cs
 System.ComponentModel/InheritanceLevel.cs
 System.ComponentModel/InitializationEventAttribute.cs
+System.ComponentModel/INotifyDataErrorInfo.cs
 System.ComponentModel/INotifyPropertyChanged.cs
 System.ComponentModel/INotifyPropertyChanging.cs
 System.ComponentModel/InstallerTypeAttribute.cs
@@ -1002,6 +1004,8 @@ System/UriKind.cs
 System/UriParser.cs
 System/UriPartial.cs
 System/UriTypeConverter.cs
+System/UriElements.cs
+System/UriParseComponents.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionLevel.cs

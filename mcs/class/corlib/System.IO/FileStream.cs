@@ -970,12 +970,18 @@ namespace System.IO
 #if !NET_2_1
 		public FileSecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			return new FileSecurity (SafeFileHandle,
+						 AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 		}
 		
 		public void SetAccessControl (FileSecurity fileSecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == fileSecurity)
+				throw new ArgumentNullException ("fileSecurity");
+				
+			fileSecurity.PersistModifications (SafeFileHandle);
 		}
 #endif
 

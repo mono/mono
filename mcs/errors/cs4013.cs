@@ -1,4 +1,4 @@
-// CS1913: Local variables of type `System.TypedReference' cannot be used inside anonymous methods, lambda expressions or query expressions
+// CS4013: Local variables of type `System.TypedReference' cannot be used inside anonymous methods, lambda expressions or query expressions
 // Line: 9
 
 using System;

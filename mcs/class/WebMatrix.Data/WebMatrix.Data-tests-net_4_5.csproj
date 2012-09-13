@@ -16,8 +16,11 @@
     <AssemblyName>WebMatrix.Data_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -67,6 +71,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Data.dll</HintPath>
@@ -74,6 +82,10 @@
     <Reference Include="Mono.Data.Sqlite.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 

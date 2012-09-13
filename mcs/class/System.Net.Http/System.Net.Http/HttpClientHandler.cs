@@ -47,6 +47,7 @@ namespace System.Net.Http
 		bool useDefaultCredentials;
 		bool useProxy;
 		ClientCertificateOption certificate;
+		bool sentRequest;
 
 		public HttpClientHandler ()
 		{
@@ -57,11 +58,20 @@ namespace System.Net.Http
 			useProxy = true;
 		}
 
+		void EnsureModifiability ()
+		{
+			if (sentRequest)
+				throw new InvalidOperationException (
+					"This instance has already started one or more requests. " +
+					"Properties can only be modified before sending the first request.");
+		}
+
 		public bool AllowAutoRedirect {
 			get {
 				return allowAutoRedirect;
 			}
 			set {
+				EnsureModifiability ();
 				allowAutoRedirect = value;
 			}
 		}
@@ -71,6 +81,7 @@ namespace System.Net.Http
 				return automaticDecompression;
 			}
 			set {
+				EnsureModifiability ();
 				automaticDecompression = value;
 			}
 		}
@@ -80,6 +91,7 @@ namespace System.Net.Http
 				return certificate;
 			}
 			set {
+				EnsureModifiability ();
 				certificate = value;
 			}
 		}
@@ -89,6 +101,7 @@ namespace System.Net.Http
 				return cookieContainer ?? (cookieContainer = new CookieContainer ());
 			}
 			set {
+				EnsureModifiability ();
 				cookieContainer = value;
 			}
 		}
@@ -98,6 +111,7 @@ namespace System.Net.Http
 				return credentials;
 			}
 			set {
+				EnsureModifiability ();
 				credentials = value;
 			}
 		}
@@ -107,6 +121,7 @@ namespace System.Net.Http
 				return maxAutomaticRedirections;
 			}
 			set {
+				EnsureModifiability ();
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ();
 
@@ -119,6 +134,7 @@ namespace System.Net.Http
 				return maxRequestContentBufferSize;
 			}
 			set {
+				EnsureModifiability ();
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
 
@@ -131,6 +147,7 @@ namespace System.Net.Http
 				return preAuthenticate;
 			}
 			set {
+				EnsureModifiability ();
 				preAuthenticate = value;
 			}
 		}
@@ -140,6 +157,7 @@ namespace System.Net.Http
 				return proxy;
 			}
 			set {
+				EnsureModifiability ();
 				if (!UseProxy)
 					throw new InvalidOperationException ();
 
@@ -170,6 +188,7 @@ namespace System.Net.Http
 				return useCookies;
 			}
 			set {
+				EnsureModifiability ();
 				useCookies = value;
 			}
 		}
@@ -179,6 +198,7 @@ namespace System.Net.Http
 				return useDefaultCredentials;
 			}
 			set {
+				EnsureModifiability ();
 				useDefaultCredentials = value;
 			}
 		}
@@ -188,6 +208,7 @@ namespace System.Net.Http
 				return useProxy;
 			}
 			set {
+				EnsureModifiability ();
 				useProxy = value;
 			}
 		}
@@ -218,6 +239,8 @@ namespace System.Net.Http
 			if (allowAutoRedirect) {
 				wr.AllowAutoRedirect = true;
 				wr.MaximumAutomaticRedirections = maxAutomaticRedirections;
+			} else {
+				wr.AllowAutoRedirect = false;
 			}
 
 			wr.AutomaticDecompression = automaticDecompression;
@@ -274,6 +297,7 @@ namespace System.Net.Http
 
 		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			sentRequest = true;
 			var wrequest = CreateWebRequest (request);
 
 			if (request.Content != null) {

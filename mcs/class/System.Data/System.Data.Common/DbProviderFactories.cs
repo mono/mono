@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Threading;
 using System.Reflection;
 using System.Collections;
@@ -79,6 +77,14 @@ namespace System.Data.Common {
 			}
 			throw new ConfigurationErrorsException (String.Format("Failed to find or load the registered .Net Framework Data Provider '{0}'.", providerInvariantName));
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public static DbProviderFactory GetFactory (DbConnection connection)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public static DataTable GetFactoryClasses ()
 		{
@@ -106,5 +112,3 @@ namespace System.Data.Common {
 		#endregion Internal Methods
 	}
 }
-
-#endif // NET_2_0

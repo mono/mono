@@ -116,7 +116,7 @@ namespace System.Net.Http
 
 		public Task LoadIntoBufferAsync ()
 		{
-			return LoadIntoBufferAsync (0x2000);
+			return LoadIntoBufferAsync (65536);
 		}
 
 		public async Task LoadIntoBufferAsync (long maxBufferSize)

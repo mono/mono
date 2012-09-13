@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace Mono.CSharp
 {
@@ -474,14 +475,14 @@ namespace Mono.CSharp
 			// or it's a parameter
 			//
 			if (CurrentAnonymousMethod.IsIterator)
-				return local.IsParameter || CurrentBlock.Explicit.HasYield;
+				return local.IsParameter || local.Block.Explicit.HasYield;
 
 			//
 			// Capture only if this or any of child blocks contain await
 			// or it's a parameter
 			//
 			if (CurrentAnonymousMethod is AsyncInitializer)
-				return local.IsParameter || CurrentBlock.Explicit.HasAwait;
+				return local.IsParameter || local.Block.Explicit.HasAwait || CurrentBlock.Explicit.HasAwait;
 
 			return local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 		}
@@ -728,6 +729,30 @@ namespace Mono.CSharp
 		public FlagsHandle With (Options options, bool enable)
 		{
 			return new FlagsHandle (this, options, enable ? options : 0);
+		}
+	}
+
+	//
+	// Parser session objects. We could recreate all these objects for each parser
+	// instance but the best parser performance the session object can be reused
+	//
+	public class ParserSession
+	{
+		MD5 md5;
+
+		public readonly char[] StreamReaderBuffer = new char[SeekableStreamReader.DefaultReadAheadSize * 2];
+		public readonly Dictionary<char[], string>[] Identifiers = new Dictionary<char[], string>[Tokenizer.MaxIdentifierLength + 1];
+		public readonly List<Parameter> ParametersStack = new List<Parameter> (4);
+		public readonly char[] IDBuilder = new char[Tokenizer.MaxIdentifierLength];
+		public readonly char[] NumberBuilder = new char[Tokenizer.MaxNumberLength];
+
+		public LocationsBag LocationsBag { get; set; }
+		public bool UseJayGlobalArrays { get; set; }
+		public Tokenizer.LocatedToken[] LocatedTokens { get; set; }
+
+		public MD5 GetChecksumAlgorithm ()
+		{
+			return md5 ?? (md5 = MD5.Create ());
 		}
 	}
 }

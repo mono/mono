@@ -13,6 +13,10 @@
 /* For mincore () */
 #define _DARWIN_C_SOURCE
 #endif
+#ifdef __FreeBSD__
+/* For mincore () */
+#define __BSD_VISIBLE 1
+#endif
 
 #include <sys/types.h>
 #include <sys/mman.h>

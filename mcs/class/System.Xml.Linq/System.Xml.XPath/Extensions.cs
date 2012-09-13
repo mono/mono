@@ -59,11 +59,11 @@ namespace System.Xml.XPath
 			return GetUnderlyingXObjects((XPathNodeIterator) navigationResult);
 		}
 
-		private static IEnumerable<XObject> GetUnderlyingXObjects(XPathNodeIterator nodeIterator)
+		private static IEnumerable<object> GetUnderlyingXObjects(XPathNodeIterator nodeIterator)
 		{
 			foreach (XPathNavigator nav in nodeIterator)
 			{
-				yield return (XObject)(nav.UnderlyingObject);
+				yield return nav.UnderlyingObject;
 			}
 		}
 

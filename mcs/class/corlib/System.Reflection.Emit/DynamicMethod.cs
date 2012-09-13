@@ -112,6 +112,9 @@ namespace System.Reflection.Emit {
 					if (parameterTypes [i] == null)
 						throw new ArgumentException ("Parameter " + i + " is null", "parameterTypes");
 			}
+			if (owner != null && (owner.IsArray || owner.IsInterface)) {
+				throw new ArgumentException ("Owner can't be an array or an interface.");
+			}
 
 			if (m == null)
 				m = AnonHostModuleHolder.AnonHostModule;

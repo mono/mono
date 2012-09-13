@@ -1,10 +1,12 @@
 //
 // TargetTest.cs
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Andres G. Aragoneses (knocte@gmail.com)
 //
 // (C) 2006 Marek Sieradzki
+// (C) 2012 Andres G. Aragoneses
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -163,6 +165,51 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			e.MoveNext ();
 			Assert.AreEqual ("Warning", ((BuildTask) e.Current).Name, "A2");
 			Assert.IsFalse (e.MoveNext (), "A3");
+		}
+
+		[Test]
+		public void TestOutOfRangeElementsOfTheEnumerator()
+		{
+			string documentString =
+				@"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='A'>
+						<Message Text='text' />
+					</Target>
+				</Project>";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsFalse (project.Targets == null, "A1");
+			Assert.AreEqual (1, project.Targets.Count, "A2");
+
+			Target target = project.Targets ["A"];
+			Assert.IsFalse (target == null, "A3");
+
+			IEnumerator e = target.GetEnumerator ();
+
+			bool thrown = false;
+			try {
+				var name = ((BuildTask)e.Current).Name;
+			} catch (InvalidOperationException) { // "Enumeration has not started. Call MoveNext"
+				thrown = true;
+			}
+			if (!thrown)
+				Assert.Fail ("A4: Should have thrown IOE");
+
+
+			Assert.AreEqual (true, e.MoveNext (), "A5");
+			Assert.AreEqual ("Message", ((BuildTask)e.Current).Name, "A6");
+			Assert.AreEqual (false, e.MoveNext (), "A7");
+			try {
+				var name = ((BuildTask) e.Current).Name;
+			} catch (InvalidOperationException) { //"Enumeration already finished."
+				return;
+			}
+			Assert.Fail ("A8: Should have thrown IOE, because there's only one buidTask");
 		}
 
 		[Test]

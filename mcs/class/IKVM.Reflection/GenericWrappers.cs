@@ -178,7 +178,7 @@ namespace IKVM.Reflection
 				{
 					return this;
 				}
-				else if (declaringType.IsGenericTypeInstance)
+				else if (declaringType.IsConstructedGenericType)
 				{
 					return new GenericMethodInstance(declaringType, method, null);
 				}
@@ -224,11 +224,6 @@ namespace IKVM.Reflection
 			return method.GetGenericMethodArgumentCount();
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return method.GetCustomAttributesData(attributeType);
-		}
-
 		internal override MethodInfo GetMethodOnTypeDefinition()
 		{
 			return method.GetMethodOnTypeDefinition();
@@ -242,20 +237,7 @@ namespace IKVM.Reflection
 			}
 			else
 			{
-				Writer.ByteBuffer spec = new Writer.ByteBuffer(10);
-				Signature.WriteMethodSpec(module, spec, methodArgs);
-				Metadata.MethodSpecTable.Record rec = new Metadata.MethodSpecTable.Record();
-				Emit.MethodBuilder mb = method as Emit.MethodBuilder;
-				if (mb != null && mb.ModuleBuilder == module && !declaringType.IsGenericType)
-				{
-					rec.Method = mb.MetadataToken;
-				}
-				else
-				{
-					rec.Method = module.ImportMember(GetGenericMethodDefinition());
-				}
-				rec.Instantiation = module.Blobs.Add(spec);
-				return 0x2B000000 | module.MethodSpec.FindOrAddRecord(rec);
+				return module.ImportMethodSpec(declaringType, method, methodArgs);
 			}
 		}
 
@@ -283,6 +265,16 @@ namespace IKVM.Reflection
 				methods[i] = (MethodInfo)methods[i].BindTypeParameters(declaringType);
 			}
 			return methods;
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return method.GetCurrentToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return method.IsBaked; }
 		}
 	}
 
@@ -348,14 +340,14 @@ namespace IKVM.Reflection
 			get { return field.__FieldRVA; }
 		}
 
+		public override bool __TryGetFieldOffset(out int offset)
+		{
+			return field.__TryGetFieldOffset(out offset);
+		}
+
 		public override FieldInfo __GetFieldOnTypeDefinition()
 		{
 			return field;
-		}
-
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return field.GetCustomAttributesData(attributeType);
 		}
 
 		internal override FieldSignature FieldSignature
@@ -371,6 +363,16 @@ namespace IKVM.Reflection
 		internal override FieldInfo BindTypeParameters(Type type)
 		{
 			return new GenericFieldInstance(declaringType.BindTypeParameters(type), field);
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return field.GetCurrentToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return field.IsBaked; }
 		}
 	}
 
@@ -413,6 +415,11 @@ namespace IKVM.Reflection
 		public override CustomModifiers __GetCustomModifiers()
 		{
 			return parameterInfo.__GetCustomModifiers().Bind(method);
+		}
+
+		public override bool __TryGetFieldMarshal(out FieldMarshal fieldMarshal)
+		{
+			return parameterInfo.__TryGetFieldMarshal(out fieldMarshal);
 		}
 
 		public override MemberInfo Member
@@ -542,14 +549,19 @@ namespace IKVM.Reflection
 			get { return property.MetadataToken; }
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return property.GetCustomAttributesData(attributeType);
-		}
-
 		internal override PropertyInfo BindTypeParameters(Type type)
 		{
 			return new GenericPropertyInfo(typeInstance.BindTypeParameters(type), property);
+		}
+
+		internal override bool IsBaked
+		{
+			get { return property.IsBaked; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return property.GetCurrentToken();
 		}
 	}
 
@@ -649,11 +661,6 @@ namespace IKVM.Reflection
 			get { return eventInfo.MetadataToken; }
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return eventInfo.GetCustomAttributesData(attributeType);
-		}
-
 		internal override EventInfo BindTypeParameters(Type type)
 		{
 			return new GenericEventInfo(typeInstance.BindTypeParameters(type), eventInfo);
@@ -672,6 +679,16 @@ namespace IKVM.Reflection
 		internal override bool IsStatic
 		{
 			get { return eventInfo.IsStatic; }
+		}
+
+		internal override bool IsBaked
+		{
+			get { return eventInfo.IsBaked; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return eventInfo.GetCurrentToken();
 		}
 	}
 }

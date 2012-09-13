@@ -205,6 +205,7 @@ System.IO.Ports/SerialPortTest.cs
 System.Net/CookieCollectionTest.cs
 System.Net/CookieContainerTest.cs
 System.Net/CookieTest.cs
+System.Net/CookieParserTest.cs
 System.Net/CredentialCacheTest.cs
 System.Net/DnsPermissionAttributeTest.cs
 System.Net/DnsPermissionTest.cs
@@ -247,6 +248,7 @@ System.Net.Sockets/TcpListenerTest.cs
 System.Net.Sockets/SocketTest.cs
 System.Net.Sockets/SocketAsyncEventArgsTest.cs
 System.Net.Sockets/UdpClientTest.cs
+System.Net.Sockets/SocketAsyncTest.cs
 System.Net.Mail/LinkedResourceTest.cs
 System.Net.Mail/AttachmentCollectionTest.cs
 System.Net.Mail/MailAddressCollectionTest.cs
@@ -264,7 +266,9 @@ System.Net.Mail/SmtpServer.cs
 System.Net.Mime/ContentDispositionTest.cs
 System.Net.Mime/ContentTypeTest.cs
 System.Net.NetworkInformation/PhysicalAddressTest.cs
+System.Net.Security/SslStreamTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
+System.Security.AccessControl/SemaphoreSecurityTest.cs
 System.Security.Cryptography/AsnEncodedDataTest.cs
 System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs

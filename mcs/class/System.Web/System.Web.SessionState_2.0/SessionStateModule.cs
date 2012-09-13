@@ -269,6 +269,10 @@ namespace System.Web.SessionState
 				if (hss != null)
 					storeData.Timeout = hss.Timeout;
 			}
+
+			// Whenever a container is abandoned, we temporarily disable the expire call back.
+			// So in this case we are quite sure we have a brand new container, so we make sure it works again.
+			supportsExpiration = handler.SetItemExpireCallback (OnSessionExpired);
 		}
 
 		void OnReleaseRequestState (object o, EventArgs args) {

@@ -309,7 +309,7 @@ namespace System
 				value = (value * (tickMultiplicator / TicksPerMillisecond));
 
 				checked {
-					long val = (long) Math.Round(value);
+					long val = (long) Math.Round(value, MidpointRounding.AwayFromZero);
 					return new TimeSpan (val * TicksPerMillisecond);
 				}
 			}

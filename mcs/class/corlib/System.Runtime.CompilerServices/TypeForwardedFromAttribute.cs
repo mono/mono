@@ -30,7 +30,7 @@
 
 namespace System.Runtime.CompilerServices
 {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface | AttributeTargets.Delegate)]
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface | AttributeTargets.Delegate, Inherited = false)]
 	public sealed class TypeForwardedFromAttribute : Attribute
 	{
 		readonly string name;

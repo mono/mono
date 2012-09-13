@@ -94,11 +94,11 @@ namespace Mono.Interop
 			Marshal.ThrowExceptionForHR (hr);
 			ComInteropProxy obj = FindProxy (ppv);
 			if (obj == null) {
-				Marshal.Release (pItf);
+				Marshal.Release (ppv);
 				return new ComInteropProxy (ppv);
 			}
 			else {
-				Marshal.Release (pItf);
+				Marshal.Release (ppv);
 				System.Threading.Interlocked.Increment (ref obj.ref_count);
 				return obj;
 			}

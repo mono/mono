@@ -19,20 +19,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	public interface IReceivableSourceBlock<TOutput> : ISourceBlock<TOutput>, IDataflowBlock
-	{
+namespace System.Threading.Tasks.Dataflow {
+	public interface IReceivableSourceBlock<TOutput> : ISourceBlock<TOutput> {
 		bool TryReceive (Predicate<TOutput> filter, out TOutput item);
 		bool TryReceiveAll (out IList<TOutput> items);
-	}
+	                                                   }
 }
-

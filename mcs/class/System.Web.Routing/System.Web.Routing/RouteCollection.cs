@@ -48,13 +48,13 @@ namespace System.Web.Routing
 	{
 		class Lock : IDisposable
 		{
-			RouteCollection owner;
-			bool read;
+			//RouteCollection owner;
+			//bool read;
 
 			public Lock (RouteCollection owner, bool read)
 			{
-				this.owner = owner;
-				this.read = read;
+				//this.owner = owner;
+				//this.read = read;
 			}
 
 			public void Dispose ()
@@ -74,13 +74,13 @@ namespace System.Web.Routing
 		public RouteCollection (VirtualPathProvider virtualPathProvider)
 		{
 			// null argument is allowed
-			provider = virtualPathProvider;
+			//provider = virtualPathProvider;
 
 			read_lock = new Lock (this, true);
 			write_lock = new Lock (this, false);
 		}
 
-		VirtualPathProvider provider;
+		//VirtualPathProvider provider;
 		Dictionary<string,RouteBase> d = new Dictionary<string,RouteBase> ();
 
 		Lock read_lock, write_lock;

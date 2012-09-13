@@ -16,8 +16,11 @@
     <AssemblyName>System</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
@@ -1042,6 +1046,8 @@
    <Compile Include="System\UriParser.cs" />
    <Compile Include="System\UriPartial.cs" />
    <Compile Include="System\UriTypeConverter.cs" />
+   <Compile Include="System\UriElements.cs" />
+   <Compile Include="System\UriParseComponents.cs" />
    <Compile Include="System.Web\AspNetHostingPermissionAttribute.cs" />
    <Compile Include="System.Web\AspNetHostingPermission.cs" />
    <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
@@ -1115,6 +1121,7 @@
    <Compile Include="Mono.Net.Dns\ResolverError.cs" />
    <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
    <Compile Include="System.Net\DnsAsyncResult.cs" />
+   <Compile Include="System.Windows.Input\ICommand.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

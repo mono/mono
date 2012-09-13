@@ -943,11 +943,10 @@ namespace Mono.CSharp
 
 				var cond = new BooleanExpression (new Binary (Binary.Operator.Inequality,
 					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj1, Location), Location),
-					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj2, Location), Location),
-					Location));
+					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj2, Location), Location)));
 
 				var body = new ExplicitBlock (block, Location, Location);
-				block.AddStatement (new Do (body, cond, Location));
+				block.AddStatement (new Do (body, cond, Location, Location));
 
 				body.AddStatement (new StatementExpression (
 					new SimpleAssign (new LocalVariableReference (obj2, Location), new LocalVariableReference (obj1, Location))));

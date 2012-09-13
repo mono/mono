@@ -1925,6 +1925,9 @@ namespace System
 
 		public long ToFileTimeUtc()
 		{
+			if (Kind == DateTimeKind.Local)
+				return ToFileTime ();
+
 			if (Ticks < w32file_epoch) {
 				throw new ArgumentOutOfRangeException("file time is not valid");
 			}

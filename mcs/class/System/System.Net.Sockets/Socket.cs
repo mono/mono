@@ -55,6 +55,7 @@ namespace System.Net.Sockets
 	{
 		private bool islistening;
 		private bool useoverlappedIO;
+		private const int SOCKET_CLOSED = 10004;
 
 		static void AddSockets (List<Socket> sockets, IList list, string name)
 		{
@@ -543,21 +544,19 @@ namespace System.Net.Sockets
 
 			int error = 0;
 			IntPtr sock = (IntPtr) (-1);
-			blocking_thread = Thread.CurrentThread;
 			try {
+				RegisterForBlockingSyscall ();
 				sock = Accept_internal(socket, out error, blocking);
-			} catch (ThreadAbortException) {
-				if (disposed) {
-					Thread.ResetAbort ();
-					error = (int) SocketError.Interrupted;
-				}
 			} finally {
-				blocking_thread = null;
+				UnRegisterForBlockingSyscall ();
 			}
 
-			if (error != 0)
-				throw new SocketException (error);
-			
+			if (error != 0) {
+				if (closed)
+					error = SOCKET_CLOSED;
+				throw new SocketException(error);
+			}
+
 			Socket accepted = new Socket(this.AddressFamily, this.SocketType,
 				this.ProtocolType, sock);
 
@@ -573,21 +572,19 @@ namespace System.Net.Sockets
 			
 			int error = 0;
 			IntPtr sock = (IntPtr)(-1);
-			blocking_thread = Thread.CurrentThread;
 			
 			try {
+				RegisterForBlockingSyscall ();
 				sock = Accept_internal (socket, out error, blocking);
-			} catch (ThreadAbortException) {
-				if (disposed) {
-					Thread.ResetAbort ();
-					error = (int)SocketError.Interrupted;
-				}
 			} finally {
-				blocking_thread = null;
+				UnRegisterForBlockingSyscall ();
 			}
 			
-			if (error != 0)
+			if (error != 0) {
+				if (closed)
+					error = SOCKET_CLOSED;
 				throw new SocketException (error);
+			}
 			
 			acceptSocket.address_family = this.AddressFamily;
 			acceptSocket.socket_type = this.SocketType;
@@ -1620,10 +1617,9 @@ namespace System.Net.Sockets
 			res.Size = e.Count;
 			res.EndPoint = e.RemoteEndPoint;
 			res.SockFlags = e.SocketFlags;
-			Worker worker = new Worker (e);
 			int count;
 			lock (readQ) {
-				readQ.Enqueue (worker);
+				readQ.Enqueue (e.Worker);
 				count = readQ.Count;
 			}
 			if (count == 1)
@@ -1941,10 +1937,9 @@ namespace System.Net.Sockets
 			res.Size = e.Count;
 			res.SockFlags = e.SocketFlags;
 			res.EndPoint = e.RemoteEndPoint;
-			Worker worker = new Worker (e);
 			int count;
 			lock (writeQ) {
-				writeQ.Enqueue (worker);
+				writeQ.Enqueue (e.Worker);
 				count = writeQ.Count;
 			}
 			if (count == 1)

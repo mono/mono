@@ -50,7 +50,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Expressions {
 			return visitor.LoadNull (pc, dest, data);
 		}
 
-		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, LispList<TSymbolicValue>> substitutions)
+		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, Sequence<TSymbolicValue>> substitutions)
 		{
 			return this;
 		}

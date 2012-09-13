@@ -11,6 +11,7 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell (http://www.novell.com)
+// Copyright (c) 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -785,17 +786,15 @@ namespace System
 		internal static unsafe int CompareOrdinalUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
 		{
 			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
-			} else if (strB == null) {
+				return strB == null ? 0 : -1;
+			}
+			if (strB == null) {
 				return 1;
 			}
 			int lengthA = Math.Min (lenA, strA.Length - indexA);
 			int lengthB = Math.Min (lenB, strB.Length - indexB);
 
-			if (lengthA == lengthB && Object.ReferenceEquals (strA, strB))
+			if (lengthA == lengthB && indexA == indexB && Object.ReferenceEquals (strA, strB))
 				return 0;
 
 			fixed (char* aptr = strA, bptr = strB) {
@@ -1953,6 +1952,8 @@ namespace System
 
 			int ptr = 0;
 			int start = ptr;
+			var formatter = provider != null ? provider.GetFormat (typeof (ICustomFormatter)) as ICustomFormatter : null;
+
 			while (ptr < format.length) {
 				char c = format[ptr ++];
 
@@ -1981,21 +1982,21 @@ namespace System
 					object arg = args[n];
 
 					string str;
-					ICustomFormatter formatter = null;
-					if (provider != null)
-						formatter = provider.GetFormat (typeof (ICustomFormatter))
-							as ICustomFormatter;
 					if (arg == null)
 						str = Empty;
 					else if (formatter != null)
 						str = formatter.Format (arg_format, arg, provider);
-					else if (arg is IFormattable)
-						str = ((IFormattable)arg).ToString (arg_format, provider);
 					else
-						str = arg.ToString ();
+						str = null;
+
+					if (str == null) {
+						if (arg is IFormattable)
+							str = ((IFormattable)arg).ToString (arg_format, provider);
+						else
+							str = arg.ToString ();
+					}
 
 					// pad formatted string and append to result
-
 					if (width > str.length) {
 						const char padchar = ' ';
 						int padlen = width - str.length;
@@ -2008,9 +2009,9 @@ namespace System
 							result.Append (padchar, padlen);
 							result.Append (str);
 						}
-					}
-					else
+					} else {
 						result.Append (str);
+					}
 
 					start = ptr;
 				}

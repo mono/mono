@@ -12,27 +12,27 @@
     </method>
     <method token="0x6000002">
       <sequencepoints>
-        <entry il="0x0" row="7" file_ref="1" hidden="false" />
-        <entry il="0x8" row="9" file_ref="2" hidden="false" />
+        <entry il="0x0" row="7" col="2" file_ref="1" hidden="false" />
+        <entry il="0x8" row="9" col="2" file_ref="2" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
     </method>
     <method token="0x6000003">
       <sequencepoints>
-        <entry il="0x0" row="12" file_ref="1" hidden="false" />
-        <entry il="0x8" row="14" file_ref="2" hidden="false" />
-        <entry il="0x10" row="14" file_ref="1" hidden="false" />
-        <entry il="0x16" row="15" file_ref="1" hidden="false" />
-        <entry il="0x17" row="16" file_ref="1" hidden="false" />
+        <entry il="0x0" row="12" col="2" file_ref="1" hidden="false" />
+        <entry il="0x8" row="14" col="2" file_ref="2" hidden="false" />
+        <entry il="0x10" row="14" col="2" file_ref="1" hidden="false" />
+        <entry il="0x16" row="15" col="2" file_ref="1" hidden="false" />
+        <entry il="0x17" row="16" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
     </method>
     <method token="0x6000004">
       <sequencepoints>
-        <entry il="0x0" row="22" file_ref="1" hidden="false" />
-        <entry il="0x1" row="23" file_ref="1" hidden="false" />
+        <entry il="0x0" row="22" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="23" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />

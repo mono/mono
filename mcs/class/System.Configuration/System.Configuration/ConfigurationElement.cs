@@ -163,19 +163,21 @@ namespace System.Configuration
 		protected void SetPropertyValue (ConfigurationProperty prop, object value, bool ignoreLocks)
 		{
 			try {
-				/* XXX all i know for certain is that Validation happens here */
-				prop.Validate (value);
+				if (value != null) {
+					/* XXX all i know for certain is that Validation happens here */
+					prop.Validate (value);
 
-				/* XXX presumably the actual setting of the
-				 * property happens here instead of in the
-				 * set_Item code below, but that would mean
-				 * the Value needs to be stuffed in the
-				 * property, not the propertyinfo (or else the
-				 * property needs a ref to the property info
-				 * to correctly set the value). */
+					/* XXX presumably the actual setting of the
+					 * property happens here instead of in the
+					 * set_Item code below, but that would mean
+					 * the Value needs to be stuffed in the
+					 * property, not the propertyinfo (or else the
+					 * property needs a ref to the property info
+					 * to correctly set the value). */
+				}
 			}
 			catch (Exception e) {
-				throw new ConfigurationErrorsException (String.Format ("The value for the property '{0}' is not valid. The error is: {1}", prop.Name, e.Message), e);
+				throw new ConfigurationErrorsException (String.Format ("The value for the property '{0}' on type {1} is not valid.", prop.Name, this.ElementInformation.Type), e);
 			}
 		}
 

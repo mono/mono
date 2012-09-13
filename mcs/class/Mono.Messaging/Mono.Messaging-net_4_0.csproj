@@ -16,8 +16,11 @@
     <AssemblyName>Mono.Messaging</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>

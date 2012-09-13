@@ -42,7 +42,7 @@ namespace System.Web
 				
 			throw new HttpException (403,
 						 "This type of page is not served.",
-						 req != null ? req.Path : null,
+						 req != null ? HttpUtility.HtmlEncode (req.Path) : null,
 						 description);
 		}
 

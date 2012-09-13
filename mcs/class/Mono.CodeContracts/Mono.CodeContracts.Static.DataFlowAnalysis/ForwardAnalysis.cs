@@ -35,27 +35,27 @@ using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Providers;
 
 namespace Mono.CodeContracts.Static.DataFlowAnalysis {
-	class ForwardAnalysis<AState, EdgeData> :
-		ForwardDataFlowAnalysisBase<AState>,
-		IFixPointInfo<APC, AState> {
-		private readonly Action<Pair<AState, TextWriter>> dumper;
-		private readonly EdgeConverter<APC, AState, EdgeData> edge_converter;
+	class ForwardAnalysis<AbstractState, EdgeData> :
+		ForwardDataFlowAnalysisBase<AbstractState>,
+		IFixPointInfo<APC, AbstractState> {
+		private readonly Action<Pair<AbstractState, TextWriter>> dumper;
+		private readonly EdgeConverter<APC, AbstractState, EdgeData> edge_converter;
 		private readonly Func<APC, APC, EdgeData> edge_data_getter;
-		private readonly Func<AState, AState> immutable_version;
-		private readonly Func<APC, AState, bool> is_bottom;
-		private readonly Joiner<APC, AState> joiner;
-		private readonly Func<AState, AState> mutable_version;
-		private readonly Func<APC, AState, AState> transfer;
+		private readonly Func<AbstractState, AbstractState> immutable_version;
+		private readonly Func<APC, AbstractState, bool> is_bottom;
+		private readonly Joiner<APC, AbstractState> joiner;
+		private readonly Func<AbstractState, AbstractState> mutable_version;
+		private readonly Func<APC, AbstractState, AbstractState> transfer;
 
 		public ForwardAnalysis (ICFG cfg,
-		                        Func<APC, AState, AState> transfer,
-		                        Joiner<APC, AState> joiner,
-		                        Func<AState, AState> immutableVersion,
-		                        Func<AState, AState> mutableVersion,
-		                        EdgeConverter<APC, AState, EdgeData> edgeConverter,
+		                        Func<APC, AbstractState, AbstractState> transfer,
+		                        Joiner<APC, AbstractState> joiner,
+		                        Func<AbstractState, AbstractState> immutableVersion,
+		                        Func<AbstractState, AbstractState> mutableVersion,
+		                        EdgeConverter<APC, AbstractState, EdgeData> edgeConverter,
 		                        Func<APC, APC, EdgeData> edgeDataGetter,
-		                        Func<APC, AState, bool> isBottom,
-		                        Action<Pair<AState, TextWriter>> dumper) : base (cfg)
+		                        Func<APC, AbstractState, bool> isBottom,
+		                        Action<Pair<AbstractState, TextWriter>> dumper) : base (cfg)
 		{
 			this.transfer = transfer;
 			this.joiner = joiner;
@@ -68,26 +68,26 @@ namespace Mono.CodeContracts.Static.DataFlowAnalysis {
 		}
 
 		#region IFixPointInfo<APC,AbstractState> Members
-		public bool PreStateLookup (APC pc, out AState state)
+		public bool PreStateLookup (APC pc, out AbstractState state)
 		{
 			return GetPreState (pc, out state);
 		}
 
-		public bool PostStateLookup (APC pc, out AState state)
+		public bool PostStateLookup (APC pc, out AbstractState state)
 		{
 			return GetPostState (pc, out state);
 		}
 		#endregion
 
-		public static ForwardAnalysis<AState, EdgeData> Make<Source, Dest, Context> (
+		public static ForwardAnalysis<AbstractState, EdgeData> Make<Source, Dest, Context> (
 			IILDecoder<APC, Source, Dest, Context, EdgeData> decoder,
-			IAnalysis<APC, AState, IILVisitor<APC, Source, Dest, AState, AState>, EdgeData> analysis)
+			IAnalysis<APC, AbstractState, IILVisitor<APC, Source, Dest, AbstractState, AbstractState>, EdgeData> analysis)
 			where Context : IMethodContextProvider
 		{
-			IILVisitor<APC, Source, Dest, AState, AState> visitor = analysis.GetVisitor ();
-			var forwardAnalysisSolver = new ForwardAnalysis<AState, EdgeData> (
+			IILVisitor<APC, Source, Dest, AbstractState, AbstractState> visitor = analysis.GetVisitor ();
+			var forwardAnalysisSolver = new ForwardAnalysis<AbstractState, EdgeData> (
 				decoder.ContextProvider.MethodContext.CFG,
-				(pc, state) => decoder.ForwardDecode<AState, AState, IILVisitor<APC, Source, Dest, AState, AState>> (pc, visitor, state),
+				(pc, state) => decoder.ForwardDecode<AbstractState, AbstractState, IILVisitor<APC, Source, Dest, AbstractState, AbstractState>> (pc, visitor, state),
 				analysis.Join,
 				analysis.ImmutableVersion,
 				analysis.MutableVersion,
@@ -106,19 +106,19 @@ namespace Mono.CodeContracts.Static.DataFlowAnalysis {
 			return forwardAnalysisSolver;
 		}
 
-		protected override void Dump (AState state)
+		protected override void Dump (AbstractState state)
 		{
-			this.dumper (new Pair<AState, TextWriter> (state, Console.Out));
+			this.dumper (new Pair<AbstractState, TextWriter> (state, Console.Out));
 		}
 
-		protected override void PushState (APC from, APC next, AState state)
+		protected override void PushState (APC from, APC next, AbstractState state)
 		{
 			EdgeData data = this.edge_data_getter (from, next);
-			AState pushState = this.edge_converter (from, next, RequiresJoining (next), data, state);
+			AbstractState pushState = this.edge_converter (from, next, RequiresJoining (next), data, state);
 			base.PushState (from, next, pushState);
 		}
 
-		protected override bool Join (Pair<APC, APC> edge, AState newState, AState existingState, out AState joinedState, bool widen)
+		protected override bool Join (Pair<APC, APC> edge, AbstractState newState, AbstractState existingState, out AbstractState joinedState, bool widen)
 		{
 			bool weaker;
 			joinedState = this.joiner (edge, newState, existingState, out weaker, widen);
@@ -126,24 +126,24 @@ namespace Mono.CodeContracts.Static.DataFlowAnalysis {
 			return weaker;
 		}
 
-		protected override bool IsBottom (APC pc, AState state)
+		protected override bool IsBottom (APC pc, AbstractState state)
 		{
 			return this.is_bottom (pc, state);
 		}
 
-		protected override AState Transfer (APC pc, AState state)
+		protected override AbstractState Transfer (APC pc, AbstractState state)
 		{
-			AState resultState = this.transfer (pc, state);
+			AbstractState resultState = this.transfer (pc, state);
 
 			return resultState;
 		}
 
-		protected override AState MutableVersion (AState state, APC at)
+		protected override AbstractState MutableVersion (AbstractState state, APC at)
 		{
 			return this.mutable_version (state);
 		}
 
-		protected override AState ImmutableVersion (AState state, APC at)
+		protected override AbstractState ImmutableVersion (AbstractState state, APC at)
 		{
 			return this.immutable_version (state);
 		}

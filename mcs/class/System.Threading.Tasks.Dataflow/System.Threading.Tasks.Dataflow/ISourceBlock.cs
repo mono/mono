@@ -1,6 +1,7 @@
 // ISourceBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,21 +20,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-
-namespace System.Threading.Tasks.Dataflow
-{
-	public interface ISourceBlock<TOutput> : IDataflowBlock
-	{
+namespace System.Threading.Tasks.Dataflow {
+	public interface ISourceBlock<out TOutput> : IDataflowBlock {
 		TOutput ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed);
-		IDisposable LinkTo (ITargetBlock<TOutput> target, bool unlinkAfterOne);
+		IDisposable LinkTo (ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions);
 		void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target);
 		bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target);
 	}
 }
-

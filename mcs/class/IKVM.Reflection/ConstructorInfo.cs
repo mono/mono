@@ -34,6 +34,11 @@ namespace IKVM.Reflection
 		{
 		}
 
+		public sealed override string ToString()
+		{
+			return GetMethodInfo().ToString();
+		}
+
 		public static readonly string ConstructorName = ".ctor";
 		public static readonly string TypeConstructorName = ".cctor";
 
@@ -79,9 +84,84 @@ namespace IKVM.Reflection
 			return parameters;
 		}
 
+		public sealed override CallingConventions CallingConvention
+		{
+			get { return GetMethodInfo().CallingConvention; }
+		}
+
+		public sealed override MethodAttributes Attributes
+		{
+			get { return GetMethodInfo().Attributes; }
+		}
+
+		public sealed override MethodImplAttributes GetMethodImplementationFlags()
+		{
+			return GetMethodInfo().GetMethodImplementationFlags();
+		}
+
+		public sealed override Type DeclaringType
+		{
+			get { return GetMethodInfo().DeclaringType; }
+		}
+
+		public sealed override string Name
+		{
+			get { return GetMethodInfo().Name; }
+		}
+
+		public sealed override int MetadataToken
+		{
+			get { return GetMethodInfo().MetadataToken; }
+		}
+
+		public sealed override Module Module
+		{
+			get { return GetMethodInfo().Module; }
+		}
+
+		public sealed override MethodBody GetMethodBody()
+		{
+			return GetMethodInfo().GetMethodBody();
+		}
+
+		public sealed override bool __IsMissing
+		{
+			get { return GetMethodInfo().__IsMissing; }
+		}
+
+		internal sealed override int ParameterCount
+		{
+			get { return GetMethodInfo().ParameterCount; }
+		}
+
 		internal sealed override MemberInfo SetReflectedType(Type type)
 		{
 			return new ConstructorInfoWithReflectedType(type, this);
+		}
+
+		internal sealed override int GetCurrentToken()
+		{
+			return GetMethodInfo().GetCurrentToken();
+		}
+
+		internal sealed override List<CustomAttributeData> GetPseudoCustomAttributes(Type attributeType)
+		{
+			return GetMethodInfo().GetPseudoCustomAttributes(attributeType);
+		}
+
+		internal sealed override bool IsBaked
+		{
+			get { return GetMethodInfo().IsBaked; }
+		}
+
+		internal sealed override MethodSignature MethodSignature
+		{
+			get { return GetMethodInfo().MethodSignature; }
+		}
+
+		internal sealed override int ImportTo(Emit.ModuleBuilder module)
+		{
+			return GetMethodInfo().ImportTo(module);
 		}
 	}
 
@@ -105,84 +185,14 @@ namespace IKVM.Reflection
 			return method.GetHashCode();
 		}
 
-		public override MethodBody GetMethodBody()
-		{
-			return method.GetMethodBody();
-		}
-
-		public override CallingConventions CallingConvention
-		{
-			get { return method.CallingConvention; }
-		}
-
-		public override MethodAttributes Attributes
-		{
-			get { return method.Attributes; }
-		}
-
-		public override MethodImplAttributes GetMethodImplementationFlags()
-		{
-			return method.GetMethodImplementationFlags();
-		}
-
-		internal override int ParameterCount
-		{
-			get { return method.ParameterCount; }
-		}
-
-		public override Type DeclaringType
-		{
-			get { return method.DeclaringType; }
-		}
-
-		public override string Name
-		{
-			get { return method.Name; }
-		}
-
-		public override string ToString()
-		{
-			return method.ToString();
-		}
-
-		public override Module Module
-		{
-			get { return method.Module; }
-		}
-
-		public override int MetadataToken
-		{
-			get { return method.MetadataToken; }
-		}
-
-		public override bool __IsMissing
-		{
-			get { return method.__IsMissing; }
-		}
-
 		internal override MethodInfo GetMethodInfo()
 		{
 			return method;
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return method.GetCustomAttributesData(attributeType);
-		}
-
 		internal override MethodInfo GetMethodOnTypeDefinition()
 		{
 			return method.GetMethodOnTypeDefinition();
-		}
-
-		internal override MethodSignature MethodSignature
-		{
-			get { return method.MethodSignature; }
-		}
-
-		internal override int ImportTo(Emit.ModuleBuilder module)
-		{
-			return method.ImportTo(module);
 		}
 	}
 
@@ -211,64 +221,9 @@ namespace IKVM.Reflection
 			return reflectedType.GetHashCode() ^ ctor.GetHashCode();
 		}
 
-		public override MethodBody GetMethodBody()
-		{
-			return ctor.GetMethodBody();
-		}
-
-		public override CallingConventions CallingConvention
-		{
-			get { return ctor.CallingConvention; }
-		}
-
-		public override MethodAttributes Attributes
-		{
-			get { return ctor.Attributes; }
-		}
-
-		public override MethodImplAttributes GetMethodImplementationFlags()
-		{
-			return ctor.GetMethodImplementationFlags();
-		}
-
-		internal override int ParameterCount
-		{
-			get { return ctor.ParameterCount; }
-		}
-
-		public override Type DeclaringType
-		{
-			get { return ctor.DeclaringType; }
-		}
-
 		public override Type ReflectedType
 		{
 			get { return reflectedType; }
-		}
-
-		public override string Name
-		{
-			get { return ctor.Name; }
-		}
-
-		public override string ToString()
-		{
-			return ctor.ToString();
-		}
-
-		public override Module Module
-		{
-			get { return ctor.Module; }
-		}
-
-		public override int MetadataToken
-		{
-			get { return ctor.MetadataToken; }
-		}
-
-		public override bool __IsMissing
-		{
-			get { return ctor.__IsMissing; }
 		}
 
 		internal override MethodInfo GetMethodInfo()
@@ -276,24 +231,9 @@ namespace IKVM.Reflection
 			return ctor.GetMethodInfo();
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return ctor.GetCustomAttributesData(attributeType);
-		}
-
 		internal override MethodInfo GetMethodOnTypeDefinition()
 		{
 			return ctor.GetMethodOnTypeDefinition();
-		}
-
-		internal override MethodSignature MethodSignature
-		{
-			get { return ctor.MethodSignature; }
-		}
-
-		internal override int ImportTo(Emit.ModuleBuilder module)
-		{
-			return ctor.ImportTo(module);
 		}
 	}
 }

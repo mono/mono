@@ -34,7 +34,7 @@ namespace System.Net
 {
 	class WebConnectionData
 	{
-		public HttpWebRequest request;
+		HttpWebRequest _request;
 		public int StatusCode;
 		public string StatusDescription;
 		public WebHeaderCollection Headers;
@@ -42,13 +42,22 @@ namespace System.Net
 		public Stream stream;
 		public string Challenge;
 
-		public void Init ()
+		public WebConnectionData ()
 		{
-			request = null;
-			StatusCode = 0;
-			StatusDescription = null;
-			Headers = null;
-			stream = null;
+		}
+
+		public WebConnectionData (HttpWebRequest request)
+		{
+			this._request = request;
+		}
+
+		public HttpWebRequest request {
+			get {
+				return _request;
+			}
+			set {
+				_request = value;
+			}
 		}
 	}
 }

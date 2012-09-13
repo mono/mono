@@ -14,6 +14,7 @@ namespace Mono.Debugger.Soft
 		TypeMirror declaring_type;
 		DebugInfo debug_info;
 		C.MethodDefinition meta;
+		CustomAttributeDataMirror[] cattrs;
 		ParameterInfoMirror[] param_info;
 		ParameterInfoMirror ret_param;
 		LocalVariable[] locals;
@@ -70,6 +71,39 @@ namespace Mono.Debugger.Soft
 				sb.Append(")");
 				return sb.ToString ();
 			}
+		}
+
+		/*
+		 * Creating the custom attributes themselves could modify the behavior of the
+		 * debuggee, so we return objects similar to the CustomAttributeData objects
+		 * used by the reflection-only functionality on .net.
+		 * Since protocol version 2.21
+		 */
+		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
+			return GetCAttrs (null, inherit);
+		}
+
+		/* Since protocol version 2.21 */
+		public CustomAttributeDataMirror[] GetCustomAttributes (TypeMirror attributeType, bool inherit) {
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");
+			return GetCAttrs (attributeType, inherit);
+		}
+
+		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+			if (cattrs == null && meta != null && !Metadata.HasCustomAttributes)
+				cattrs = new CustomAttributeDataMirror [0];
+
+			// FIXME: Handle inherit
+			if (cattrs == null) {
+				CattrInfo[] info = vm.conn.Method_GetCustomAttributes (id, 0, false);
+				cattrs = CustomAttributeDataMirror.Create (vm, info);
+			}
+			var res = new List<CustomAttributeDataMirror> ();
+			foreach (var attr in cattrs)
+				if (type == null || attr.Constructor.DeclaringType == type)
+					res.Add (attr);
+			return res.ToArray ();
 		}
 
 		MethodInfo GetInfo () {
@@ -303,24 +337,26 @@ namespace Mono.Debugger.Soft
 					var line_numbers = LineNumbers;
 					IList<Location> res = new Location [ILOffsets.Count];
 					for (int i = 0; i < il_offsets.Count; ++i)
-						res [i] = new Location (vm, this, -1, il_offsets [i], debug_info.source_files [i].source_file, line_numbers [i], 0, debug_info.source_files [i].hash);
+						res [i] = new Location (vm, this, -1, il_offsets [i], debug_info.source_files [i].source_file, line_numbers [i], debug_info.column_numbers [i], debug_info.source_files [i].hash);
 					locations = res;
 				}
 				return locations;
 			}
 		}				
 
-		internal int il_offset_to_line_number (int il_offset, out string src_file, out byte[] src_hash) {
+		internal int il_offset_to_line_number (int il_offset, out string src_file, out byte[] src_hash, out int column_number) {
 			if (debug_info == null)
 				debug_info = vm.conn.Method_GetDebugInfo (id);
 
 			// FIXME: Optimize this
 			src_file = null;
 			src_hash = null;
+			column_number = 0;
 			for (int i = debug_info.il_offsets.Length - 1; i >= 0; --i) {
 				if (debug_info.il_offsets [i] <= il_offset) {
 					src_file = debug_info.source_files [i].source_file;
 					src_hash = debug_info.source_files [i].hash;
+					column_number = debug_info.column_numbers [i];
 					return debug_info.line_numbers [i];
 				}
 			}

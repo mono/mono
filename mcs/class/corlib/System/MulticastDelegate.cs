@@ -146,7 +146,7 @@ namespace System
 			MulticastDelegate combined, orig, clone;
 
 			if (this.GetType() != follow.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types."));
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", this.GetType ().FullName, follow.GetType ().FullName));
 
 			combined = (MulticastDelegate)follow.Clone ();
 			combined.SetMulticastInvoke ();

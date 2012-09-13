@@ -79,7 +79,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("Async")]
+		[Category("InetAccess")]
 		public void DownloadFileTaskAsync ()
 		{
 			WebClient wc = new WebClient ();
@@ -93,7 +93,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("Async")]
+		[Category("InetAccess")]
 		public void Cancellation ()
 		{
 			WebClient wc = new WebClient ();
@@ -120,7 +120,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("Async")]
+		[Category("InetAccess")]
 		public void DownloadMultiple ()
 		{
 			WebClient wc = new WebClient ();
@@ -138,7 +138,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("Async")]
+		[Category("InetAccess")]
 		public void DownloadMultiple2 ()
 		{
 			WebClient wc = new WebClient ();
@@ -150,7 +150,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("Async")]
+		[Category("InetAccess")]
 		public void DownloadMultiple3 ()
 		{
 			WebClient wc = new WebClient ();

@@ -412,6 +412,11 @@ namespace Mono.CSharp
 			return base.DefineContainer ();
 		}
 
+		public void EnableRedefinition ()
+		{
+			is_defined = false;
+		}
+
 		public override void EmitContainer ()
 		{
 			if (OptAttributes != null)

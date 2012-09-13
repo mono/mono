@@ -55,6 +55,16 @@ namespace MonoTests.System.Net.Http.Headers
 		}
 
 		[Test]
+		/*
+		 * This fails on Windows with the .NET runtime:
+		 * 
+		 * Test Case Failures:
+		 * 1) MonoTests.System.Net.Http.Headers.ContentDispositionHeaderValueTest.Equals : System.NullReferenceException : Der Objektverweis wurde nicht auf eine Objektinstanz festgelegt.
+		 * bei System.Net.Http.Headers.ContentDispositionHeaderValue.set_Size(Nullable`1 value)
+		 * bei MonoTests.System.Net.Http.Headers.ContentDispositionHeaderValueTest.Equals()
+		 * 
+		 */
+		[Category ("NotWorking")]
 		public void Equals ()
 		{
 			var value = new ContentDispositionHeaderValue ("x");

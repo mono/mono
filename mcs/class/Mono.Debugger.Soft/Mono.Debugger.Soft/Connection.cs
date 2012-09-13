@@ -43,6 +43,7 @@ namespace Mono.Debugger.Soft
 		public int max_il_offset;
 		public int[] il_offsets;
 		public int[] line_numbers;
+		public int[] column_numbers;
 		public SourceInfo[] source_files;
 	}
 
@@ -394,7 +395,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 18;
+		internal const int MINOR_VERSION = 22;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -461,7 +462,8 @@ namespace Mono.Debugger.Soft
 			ABORT_INVOKE = 9,
 			SET_KEEPALIVE = 10,
 			GET_TYPES_FOR_SOURCE_FILE = 11,
-			GET_TYPES = 12
+			GET_TYPES = 12,
+			INVOKE_METHODS = 13
 		}
 
 		enum CmdEvent {
@@ -516,7 +518,8 @@ namespace Mono.Debugger.Soft
 			GET_LOCALS_INFO = 5,
 			GET_INFO = 6,
 			GET_BODY = 7,
-			RESOLVE_TOKEN = 8
+			RESOLVE_TOKEN = 8,
+			GET_CATTRS = 9
 		}
 
 		enum CmdType {
@@ -1020,6 +1023,7 @@ namespace Mono.Debugger.Soft
 		Thread receiver_thread;
 		Dictionary<int, byte[]> reply_packets;
 		Dictionary<int, ReplyCallback> reply_cbs;
+		Dictionary<int, int> reply_cb_counts;
 		object reply_packets_monitor;
 
 		internal event EventHandler<ErrorHandlerEventArgs> ErrorHandler;
@@ -1028,6 +1032,7 @@ namespace Mono.Debugger.Soft
 			closed = false;
 			reply_packets = new Dictionary<int, byte[]> ();
 			reply_cbs = new Dictionary<int, ReplyCallback> ();
+			reply_cb_counts = new Dictionary<int, int> ();
 			reply_packets_monitor = new Object ();
 		}
 		
@@ -1180,6 +1185,13 @@ namespace Mono.Debugger.Soft
 						if (cb == null) {
 							reply_packets [id] = packet;
 							Monitor.PulseAll (reply_packets_monitor);
+						} else {
+							int c = reply_cb_counts [id];
+							c --;
+							if (c == 0) {
+								reply_cbs.Remove (id);
+								reply_cb_counts.Remove (id);
+							}
 						}
 					}
 
@@ -1367,7 +1379,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		/* Send a request and call cb when a result is received */
-		int Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb) {
+		int Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb, int count) {
 			int id = IdGenerator;
 
 			Stopwatch watch = null;
@@ -1388,6 +1400,7 @@ namespace Mono.Debugger.Soft
 					PacketReader r = new PacketReader (p);
 					cb.BeginInvoke (r, null, null);
 				};
+				reply_cb_counts [id] = count;
 			}
 
 			WritePacket (encoded_packet);
@@ -1580,7 +1593,38 @@ namespace Mono.Debugger.Soft
 
 						callback (v, exc, 0, state);
 					}
-				});
+				}, 1);
+		}
+
+		internal int VM_BeginInvokeMethods (long thread, long[] methods, ValueImpl this_arg, List<ValueImpl[]> arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
+			// FIXME: Merge this with INVOKE_METHOD
+			var w = new PacketWriter ();
+			w.WriteId (thread);
+			w.WriteInt ((int)flags);
+			w.WriteInt (methods.Length);
+			for (int i = 0; i < methods.Length; ++i) {
+				w.WriteId (methods [i]);
+				w.WriteValue (this_arg);
+				w.WriteInt (arguments [i].Length);
+				w.WriteValues (arguments [i]);
+			}
+			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHODS, w, delegate (PacketReader r) {
+					ValueImpl v, exc;
+
+					if (r.ErrorCode != 0) {
+						callback (null, null, (ErrorCode)r.ErrorCode, state);
+					} else {
+						if (r.ReadByte () == 0) {
+							exc = r.ReadValue ();
+							v = null;
+						} else {
+							v = r.ReadValue ();
+							exc = null;
+						}
+
+						callback (v, exc, 0, state);
+					}
+				}, methods.Length);
 		}
 
 		internal void VM_AbortInvoke (long thread, int id)
@@ -1690,6 +1734,7 @@ namespace Mono.Debugger.Soft
 			info.il_offsets = new int [n_il_offsets];
 			info.line_numbers = new int [n_il_offsets];
 			info.source_files = new SourceInfo [n_il_offsets];
+			info.column_numbers = new int [n_il_offsets];
 			for (int i = 0; i < n_il_offsets; ++i) {
 				info.il_offsets [i] = res.ReadInt ();
 				info.line_numbers [i] = res.ReadInt ();
@@ -1699,6 +1744,10 @@ namespace Mono.Debugger.Soft
 				} else {
 					info.source_files [i] = sources [0];
 				}
+				if (Version.AtLeast (2, 19))
+					info.column_numbers [i] = res.ReadInt ();
+				else
+					info.column_numbers [i] = 0;
 			}
 
 			return info;
@@ -1816,6 +1865,11 @@ namespace Mono.Debugger.Soft
 			default:
 				throw new NotImplementedException ();
 			}
+		}
+
+		internal CattrInfo[] Method_GetCustomAttributes (long id, long attr_type_id, bool inherit) {
+			PacketReader r = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_CATTRS, new PacketWriter ().WriteId (id).WriteId (attr_type_id));
+			return ReadCattrs (r);
 		}
 
 		/*

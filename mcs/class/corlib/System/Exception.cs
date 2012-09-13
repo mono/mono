@@ -63,6 +63,7 @@ namespace System
 		string source;
 		IDictionary _data;
 		StackTrace[] captured_traces;
+		IntPtr[] native_trace_ips;
 		#endregion
 #pragma warning restore 169, 649
 

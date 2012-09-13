@@ -181,8 +181,8 @@ namespace Mono.CodeContracts.Static.AST.Visitors {
 			if (node == null)
 				return;
 
-			VisitExpression (node.Operand1);
-			VisitExpression (node.Operand2);
+			VisitExpression (node.Left);
+			VisitExpression (node.Right);
 		}
 
 		public virtual void VisitBlock (Block node)

@@ -57,7 +57,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		TGraph Join (TGraph that, out IMergeInfo mergeInfo, bool widen);
 
-		bool LessEqual (TGraph that, out IImmutableMap<SymValue, LispList<SymValue>> forward,
+		bool LessEqual (TGraph that, out IImmutableMap<SymValue, Sequence<SymValue>> forward,
 		                out IImmutableMap<SymValue, SymValue> backward);
 	}
 }

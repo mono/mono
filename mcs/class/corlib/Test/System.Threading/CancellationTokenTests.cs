@@ -94,6 +94,15 @@ namespace MonoTests.System.Threading
 			n.ThrowIfCancellationRequested ();
 			n.GetHashCode ();
 		}
+
+		[Test]
+		public void DefaultCancellationTokenRegistration ()
+		{
+			var registration = new CancellationTokenRegistration ();
+
+			// shouldn't throw
+			registration.Dispose ();
+		}
 	}
 }
 #endif

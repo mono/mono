@@ -74,6 +74,10 @@ namespace System.Net.Http
 
 		protected internal override bool TryComputeLength (out long length)
 		{
+			if (!content.CanSeek) {
+				length = 0;
+				return false;
+			}
 			length = content.Length;
 			return true;
 		}

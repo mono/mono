@@ -206,7 +206,7 @@ namespace System.Threading.Tasks
 		void InternalTaskProcesser ()
 		{
 			int times = 0;
-			const int lockWaitTime = 2;
+//			const int lockWaitTime = 2;
 
 			while (!concurrentTasks.IsEmpty || !exclusiveTasks.IsEmpty) {
 				if (maxItemsPerTask != -1 && ++times == maxItemsPerTask)

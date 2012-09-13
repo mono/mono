@@ -101,49 +101,9 @@ namespace IKVM.Reflection.Emit
 			methodBuilder.__ReleaseILGenerator();
 		}
 
-		public override CallingConventions CallingConvention
-		{
-			get { return methodBuilder.CallingConvention; }
-		}
-
-		public override MethodAttributes Attributes
-		{
-			get { return methodBuilder.Attributes; }
-		}
-
-		public override MethodImplAttributes GetMethodImplementationFlags()
-		{
-			return methodBuilder.GetMethodImplementationFlags();
-		}
-
 		public Type ReturnType
 		{
 			get { return methodBuilder.ReturnType; }
-		}
-
-		internal override int ParameterCount
-		{
-			get { return methodBuilder.ParameterCount; }
-		}
-
-		public override Type DeclaringType
-		{
-			get { return methodBuilder.DeclaringType; }
-		}
-
-		public override string Name
-		{
-			get { return methodBuilder.Name; }
-		}
-
-		public override int MetadataToken
-		{
-			get { return methodBuilder.MetadataToken; }
-		}
-
-		public override Module Module
-		{
-			get { return methodBuilder.Module; }
 		}
 
 		public Module GetModule()
@@ -154,11 +114,6 @@ namespace IKVM.Reflection.Emit
 		public MethodToken GetToken()
 		{
 			return methodBuilder.GetToken();
-		}
-
-		public override MethodBody GetMethodBody()
-		{
-			return methodBuilder.GetMethodBody();
 		}
 
 		public bool InitLocals
@@ -175,16 +130,6 @@ namespace IKVM.Reflection.Emit
 		internal override MethodInfo GetMethodOnTypeDefinition()
 		{
 			return methodBuilder;
-		}
-
-		internal override MethodSignature MethodSignature
-		{
-			get { return methodBuilder.MethodSignature; }
-		}
-
-		internal override int ImportTo(ModuleBuilder module)
-		{
-			return module.ImportMember(methodBuilder);
 		}
 	}
 }

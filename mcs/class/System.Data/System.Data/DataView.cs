@@ -1141,21 +1141,21 @@ namespace System.Data
 	}
 
 	partial class DataView {
-		public virtual bool Equals (DataView dv)
+		public virtual bool Equals (DataView view)
 		{
-			if (this == dv)
+			if (this == view)
 				return true;
-			if (!(this.Table == dv.Table && this.Sort == dv.Sort &&
-				this.RowFilter == dv.RowFilter &&
-				this.RowStateFilter == dv.RowStateFilter &&
-				this.AllowEdit == dv.AllowEdit &&
-				this.AllowNew == dv.AllowNew &&
-				this.AllowDelete == dv.AllowDelete &&
-				this.Count == dv.Count))
+			if (!(this.Table == view.Table && this.Sort == view.Sort &&
+				this.RowFilter == view.RowFilter &&
+				this.RowStateFilter == view.RowStateFilter &&
+				this.AllowEdit == view.AllowEdit &&
+				this.AllowNew == view.AllowNew &&
+				this.AllowDelete == view.AllowDelete &&
+				this.Count == view.Count))
 				return false;
 
 			for (int i = 0; i < Count; ++i)
-				if (!this [i].Equals (dv [i]))
+				if (!this [i].Equals (view [i]))
 					return false;
 			return true;
 		}
@@ -1169,17 +1169,17 @@ namespace System.Data
 			return this.ToTable (tableName, false, new string[] {});
 		}
 
-		public DataTable ToTable (bool isDistinct, params string[] columnNames)
+		public DataTable ToTable (bool distinct, params string[] columnNames)
 		{
-			return this.ToTable (Table.TableName, isDistinct, columnNames);
+			return this.ToTable (Table.TableName, distinct, columnNames);
 		}
 
-		public DataTable ToTable (string tablename, bool isDistinct, params string[] columnNames)
+		public DataTable ToTable (string tableName, bool distinct, params string[] columnNames)
 		{
 			if (columnNames == null)
 				throw new ArgumentNullException ("columnNames", "'columnNames' argument cannot be null.");
 
-			DataTable newTable = new DataTable (tablename);
+			DataTable newTable = new DataTable (tableName);
 
 			DataColumn[] columns;
 			ListSortDirection[] sortDirection = null;
@@ -1225,7 +1225,7 @@ namespace System.Data
 			else
 				index = new Index (new Key(Table, columns, sortDirection, RowStateFilter, rowFilterExpr));
 			
-			if (isDistinct)
+			if (distinct)
 				rows = index.GetDistinctRows ();
 			else
 				rows = index.GetAllRows ();

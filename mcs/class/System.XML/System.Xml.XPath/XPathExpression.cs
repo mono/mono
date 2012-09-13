@@ -32,11 +32,7 @@ using System.Collections;
 using Mono.Xml.XPath;
 using System.Xml.Xsl;
 
-#if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
-#else
-using NSResolver = System.Xml.XmlNamespaceManager;
-#endif
 
 namespace System.Xml.XPath
 {
@@ -74,23 +70,15 @@ namespace System.Xml.XPath
 
 		public abstract void SetContext (XmlNamespaceManager nsManager);
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		static XPathExpression Compile (string xpath)
+		public static XPathExpression Compile (string xpath)
 		{
 			return Compile (xpath, null, null);
 		}
 
-#if NET_2_0
-		public static XPathExpression Compile (
-			string xpath, NSResolver nsResolver)
+		public static XPathExpression Compile (string xpath, NSResolver nsResolver)
 		{
 			return Compile (xpath, nsResolver, null);
 		}
-#endif
 
 		internal static XPathExpression Compile (string xpath,
 			NSResolver nsResolver, IStaticXsltContext ctx)
@@ -101,9 +89,7 @@ namespace System.Xml.XPath
 			return x;
 		}
 
-#if NET_2_0
 		public abstract void SetContext (IXmlNamespaceResolver nsResolver);
-#endif
 		#endregion
 	}
 }

@@ -477,10 +477,12 @@ System.Reflection/AssemblyFlagsAttribute.cs
 System.Reflection/AssemblyInformationalVersionAttribute.cs
 System.Reflection/AssemblyKeyFileAttribute.cs
 System.Reflection/AssemblyKeyNameAttribute.cs
+System.Reflection/AssemblyMetadataAttribute.cs
 System.Reflection/AssemblyName.cs
 System.Reflection/AssemblyNameFlags.cs
 System.Reflection/AssemblyNameProxy.cs
 System.Reflection/AssemblyProductAttribute.cs
+System.Reflection/AssemblySignatureKeyAttribute.cs
 System.Reflection/AssemblyTitleAttribute.cs
 System.Reflection/AssemblyTradeMarkAttribute.cs
 System.Reflection/AssemblyVersionAttribute.cs
@@ -1195,12 +1197,14 @@ System.Security.AccessControl/AccessControlModification.cs
 System.Security.AccessControl/AccessControlSections.cs
 System.Security.AccessControl/AccessControlType.cs
 System.Security.AccessControl/AccessRule.cs
+System.Security.AccessControl/AccessRule_T.cs
 System.Security.AccessControl/AceEnumerator.cs
 System.Security.AccessControl/AceFlags.cs
 System.Security.AccessControl/AceQualifier.cs
 System.Security.AccessControl/AceType.cs
 System.Security.AccessControl/AuditFlags.cs
 System.Security.AccessControl/AuditRule.cs
+System.Security.AccessControl/AuditRule_T.cs
 System.Security.AccessControl/AuthorizationRule.cs
 System.Security.AccessControl/AuthorizationRuleCollection.cs
 System.Security.AccessControl/CommonAce.cs
@@ -1412,6 +1416,7 @@ System.Security.Policy/CodeConnectAccess.cs
 System.Security.Policy/CodeGroup.cs
 System.Security.Policy/DefaultPolicies.cs
 System.Security.Policy/Evidence.cs
+System.Security.Policy/EvidenceBase.cs
 System.Security.Policy/FileCodeGroup.cs
 System.Security.Policy/FirstMatchCodeGroup.cs
 System.Security.Policy/Gac.cs

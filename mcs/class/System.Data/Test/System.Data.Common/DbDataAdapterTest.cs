@@ -186,6 +186,7 @@ namespace MonoTests.System.Data.Common
 		}
 		
 		[Test]
+		[Category ("NotWorking")] // Requires newer sqlite than is on wrench
 		public void XimarinBugzillaBug853Test()
                 {
                         const string connectionString = "URI = file:./SqliteTest.db; Version = 3";//will be in System.Data directory

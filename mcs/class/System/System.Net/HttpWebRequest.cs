@@ -309,7 +309,10 @@ namespace System.Net
 				return DateTime.ParseExact (date, "r", CultureInfo.InvariantCulture).ToLocalTime ();
 			}
 			set {
-				webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
+				if (value.Equals (DateTime.MinValue))
+					webHeaders.RemoveInternal ("Date");
+				else
+					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
 			}
 		}
 #endif
@@ -1142,7 +1145,9 @@ namespace System.Net
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
 				if (cookieHeader != "")
-					webHeaders.SetInternal ("Cookie", cookieHeader);
+					webHeaders.RemoveAndAdd ("Cookie", cookieHeader);
+				else
+					webHeaders.RemoveInternal ("Cookie");
 			}
 
 			string accept_encoding = null;

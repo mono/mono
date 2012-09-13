@@ -191,6 +191,30 @@ namespace MonoTests.System.Collections.Concurrent
 			}
 			Assert.AreEqual("0123456789", s, "#2 : " + s);
 		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void ToExistingArray_Null ()
+		{
+			queue.CopyTo (null, 0);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToExistingArray_OutOfRange ()
+		{
+			queue.CopyTo (new int[3], -1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ToExistingArray_IndexOverflow ()
+		{
+			queue.CopyTo (new int[3], 4);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void ToExistingArray_Overflow ()
+		{
+			queue.CopyTo (new int[3], 0);
+		}
 	}
 }
 #endif

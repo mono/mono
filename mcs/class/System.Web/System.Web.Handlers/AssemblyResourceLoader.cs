@@ -385,7 +385,6 @@ namespace System.Web.Handlers
 			else
 				assembly = Assembly.Load (entry.AssemblyName);
 			
-			long atime;
 			DateTime modified;
 			if (HasIfModifiedSince (request, out modified)) {
 				if (File.GetLastWriteTimeUtc (assembly.Location) <= modified) {

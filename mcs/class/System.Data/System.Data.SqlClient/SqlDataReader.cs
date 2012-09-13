@@ -788,6 +788,24 @@ namespace System.Data.SqlClient
 			return (DateTime) value;
 		}
 
+		[MonoTODO]
+		public virtual DateTimeOffset GetDateTimeOffset (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual TimeSpan GetTimeSpan (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual SqlChars GetSqlChars (int i)
+		{
+			throw new NotImplementedException ();
+		}	
+
 		public
 #if NET_2_0
 		override
@@ -1571,7 +1589,6 @@ namespace System.Data.SqlClient
 			return new InvalidCastException (message);
 		}
 
-#if NET_2_0
 		public override Type GetProviderSpecificFieldType (int i)
 		{
 			return (GetSqlValue (i).GetType());
@@ -1596,8 +1613,21 @@ namespace System.Data.SqlClient
 			SqlBytes sb = new SqlBytes (val);
 			return (sb);
 		}
-#endif // NET_2_0
 
+#if NET_4_5
+		[MonoTODO]
+		public override T GetFieldValue<T> (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual XmlReader GetXmlReader (int i)
+		{
+			throw new NotImplementedException ();	
+		}
+
+#endif
 		#endregion // Methods
 	}
 }

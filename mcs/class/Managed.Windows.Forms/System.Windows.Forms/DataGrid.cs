@@ -269,6 +269,8 @@ namespace System.Windows.Forms
 		bool adding_new_row;			// Used to temporary ignore the new row added by CurrencyManager.AddNew in CurrentCell
 
 		internal Stack data_source_stack;
+		internal Stack data_grid_table_style_stack;
+		internal Stack grid_style_stack;
 
 		#endregion // Local Variables
 
@@ -292,6 +294,8 @@ namespace System.Windows.Forms
 			selection_start = -1;
 			rows = new DataGridRelationshipRow [0];
 
+			grid_style_stack = new Stack ();
+			data_grid_table_style_stack = new Stack ();
 			default_style = new DataGridTableStyle (true);
 			grid_style = new DataGridTableStyle ();
 
@@ -1304,8 +1308,13 @@ namespace System.Windows.Forms
 		{
 			if (data_source_stack.Count == 0)
 				return;
+		
+			EndEdit ();
 
 			DataGridDataSource source = (DataGridDataSource)data_source_stack.Pop ();
+			CurrentTableStyle= (DataGridTableStyle)data_grid_table_style_stack.Pop ();
+			grid_style = (DataGridTableStyle) grid_style_stack.Pop ();
+
 			list_manager = source.list_manager;
 			rows = source.Rows;
 			selected_rows = source.SelectedRows;
@@ -1320,12 +1329,19 @@ namespace System.Windows.Forms
 			if (allow_navigation == false)
 				return;
 
+			EndEdit ();
+
 			DataGridDataSource previous_source = new DataGridDataSource (this, list_manager, datasource, datamember, list_manager.Current, CurrentCell);
 			previous_source.Rows = rows;
 			previous_source.SelectedRows = selected_rows;
 			previous_source.SelectionStart = selection_start;
 
 			data_source_stack.Push (previous_source);
+			
+			data_grid_table_style_stack.Push (CurrentTableStyle);
+			grid_style_stack.Push (grid_style);
+			grid_style = new DataGridTableStyle ();
+			CurrentTableStyle = grid_style;
 
 			rows = null;
 			selected_rows = new Hashtable ();
@@ -2523,7 +2539,11 @@ namespace System.Windows.Forms
 			if (e.Index == -1) {
 				ResetSelection ();
 				if (rows == null || RowsCount != rows.Length - (ShowEditRow ? 1 : 0))
+				{
+					if (is_editing)
+						CancelEditing ();
 					RecreateDataGridRows (true);
+				}
 			} else {
 				InvalidateRow (e.Index);
 			}
@@ -2654,7 +2674,12 @@ namespace System.Windows.Forms
 			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
 
 			int pixel_offset = GetColumnStartingPixel (CurrentColumn);
-			int next_pixel_offset = pixel_offset + CurrentTableStyle.GridColumnStyles[CurrentColumn].Width;
+			int next_pixel_offset = pixel_offset;
+
+			if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count)
+			{
+				next_pixel_offset += CurrentTableStyle.GridColumnStyles[CurrentColumn].Width;
+			}
 
 			if (pixel_offset >= horiz_pixeloffset
 			    && next_pixel_offset < horiz_pixeloffset + cells_area.Width)

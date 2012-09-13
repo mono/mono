@@ -329,11 +329,6 @@ namespace IKVM.Reflection
 			get { return true; }
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			throw new MissingModuleException(this);
-		}
-
 		protected override Exception InvalidOperationException()
 		{
 			return new MissingModuleException(this);
@@ -545,11 +540,6 @@ namespace IKVM.Reflection
 			return typeArgs[index] ?? (typeArgs[index] = new MissingTypeParameter(this, index));
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			throw new MissingMemberException(this);
-		}
-
 		internal override Type BindTypeParameters(IGenericBinder binder)
 		{
 			return this;
@@ -559,6 +549,11 @@ namespace IKVM.Reflection
 		{
 			this.token = token;
 			return this;
+		}
+
+		internal override bool IsBaked
+		{
+			get { throw new MissingMemberException(this); }
 		}
 	}
 
@@ -608,6 +603,11 @@ namespace IKVM.Reflection
 			{
 				return binder.BindTypeParameter(this);
 			}
+		}
+
+		internal override bool IsBaked
+		{
+			get { return owner.IsBaked; }
 		}
 	}
 
@@ -730,6 +730,11 @@ namespace IKVM.Reflection
 					: method.signature.GetParameterCustomModifiers(method, index);
 			}
 
+			public override bool __TryGetFieldMarshal(out FieldMarshal fieldMarshal)
+			{
+				return Forwarder.__TryGetFieldMarshal(out fieldMarshal);
+			}
+
 			public override MemberInfo Member
 			{
 				get { return method; }
@@ -743,11 +748,6 @@ namespace IKVM.Reflection
 			internal override Module Module
 			{
 				get { return method.Module; }
-			}
-
-			internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-			{
-				return Forwarder.GetCustomAttributesData(attributeType);
 			}
 
 			public override string ToString()
@@ -845,11 +845,6 @@ namespace IKVM.Reflection
 			get { return Forwarder.ContainsGenericParameters; }
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return Forwarder.GetCustomAttributesData(attributeType);
-		}
-
 		public override Type[] GetGenericArguments()
 		{
 			MethodInfo method = TryGetForwarder();
@@ -917,6 +912,16 @@ namespace IKVM.Reflection
 		{
 			get { return Forwarder.MetadataToken; }
 		}
+
+		internal override int GetCurrentToken()
+		{
+			return Forwarder.GetCurrentToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return Forwarder.IsBaked; }
+		}
 	}
 
 	sealed class MissingField : FieldInfo
@@ -975,6 +980,11 @@ namespace IKVM.Reflection
 			get { return Forwarder.__FieldRVA; }
 		}
 
+		public override bool __TryGetFieldOffset(out int offset)
+		{
+			return Forwarder.__TryGetFieldOffset(out offset);
+		}
+
 		public override object GetRawConstantValue()
 		{
 			return Forwarder.GetRawConstantValue();
@@ -1020,11 +1030,6 @@ namespace IKVM.Reflection
 			return new GenericFieldInstance(type, this);
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return Forwarder.GetCustomAttributesData(attributeType);
-		}
-
 		public override int MetadataToken
 		{
 			get { return Forwarder.MetadataToken; }
@@ -1047,6 +1052,16 @@ namespace IKVM.Reflection
 		public override string ToString()
 		{
 			return this.FieldType.Name + " " + this.Name;
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return Forwarder.GetCurrentToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return Forwarder.IsBaked; }
 		}
 	}
 
@@ -1132,6 +1147,16 @@ namespace IKVM.Reflection
 		public override Module Module
 		{
 			get { return declaringType.Module; }
+		}
+
+		internal override bool IsBaked
+		{
+			get { return declaringType.IsBaked; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			throw new MissingMemberException(this);
 		}
 	}
 }

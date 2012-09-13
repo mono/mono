@@ -94,12 +94,10 @@ namespace System.Web.Security {
 			return AuthUrl2 (null, -1, -1, null, -1, null, -1, -1);
 		}
 
-#if (!NET_1_0)
 		public string AuthUrl2 (String strReturnUrl)
 		{
 			return AuthUrl2 (strReturnUrl, -1, -1, null, -1, null, -1, -1);
 		}
-#endif
 
 		public string AuthUrl2 (string strReturnUrl,
 					int iTimeWindow,
@@ -202,12 +200,10 @@ namespace System.Web.Security {
 			return GetLoginChallenge (null, -1, -1, null, -1, null, -1, -1, null);
 		}
 
-#if (!NET_1_0)
 		public string GetLoginChallenge (String strReturnUrl)
 		{
 			return GetLoginChallenge (strReturnUrl, -1, -1, null, -1, null, -1, -1, null);
 		}
-#endif
 
 		[MonoTODO("Not implemented")]
 		public string GetLoginChallenge (string szRetURL,
@@ -258,12 +254,10 @@ namespace System.Web.Security {
 			return LoginUser (null, -1, -1, null, -1, null, -1, -1, null);
 		}
 
-#if (!NET_1_0)
 		public int LoginUser (String strReturnUrl)
 		{
 			return LoginUser (strReturnUrl, -1, -1, null, -1, null, -1, -1, null);
 		}
-#endif
 
 		public int LoginUser (string szRetURL,
 				      int iTimeWindow,
@@ -297,12 +291,10 @@ namespace System.Web.Security {
 			return LogoTag (null, -1, -1, null, -1, -1, null, -1, -1);
 		}
 
-#if (!NET_1_0)
 		public string LogoTag (String strReturnUrl)
 		{
 			return LogoTag (strReturnUrl, -1, -1, null, -1, -1, null, -1, -1);
 		}
-#endif
 
 		public string LogoTag (string strReturnUrl,
 				       int iTimeWindow,
@@ -336,12 +328,10 @@ namespace System.Web.Security {
 			return LogoTag2 (null, -1, -1, null, -1, -1, null, -1, -1);
 		}
 
-#if (!NET_1_0)
 		public string LogoTag2 (String strReturnUrl)
 		{
 			return LogoTag2 (strReturnUrl, -1, -1, null, -1, -1, null, -1, -1);
 		}
-#endif
 
 		public string LogoTag2 (string strReturnUrl,
 				        int iTimeWindow,

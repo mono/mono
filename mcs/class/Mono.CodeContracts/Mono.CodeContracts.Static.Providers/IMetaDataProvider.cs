@@ -33,6 +33,8 @@ using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Providers {
 	interface IMetaDataProvider {
+                TypeNode System_Single { get; }
+                TypeNode System_Double { get; }
 		TypeNode System_Int32 { get; }
 		TypeNode System_String { get; }
 		TypeNode System_Boolean { get; }

@@ -16,7 +16,17 @@ namespace MonoTests.System.IO {
 
 [TestFixture]
 public class BinaryWriterTest {
-	
+	sealed class MyBinaryWriter : BinaryWriter
+	{
+		public MyBinaryWriter (Stream stream)
+			: base (stream)
+		{ }
+
+		public void WriteLeb128 (int value)
+		{
+			base.Write7BitEncodedInt (value);
+		}
+	}
 	
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	
@@ -510,6 +520,52 @@ public class BinaryWriterTest {
 		Assert.AreEqual (70, bytes [7], "test#09");
 		Assert.AreEqual (10, bytes [8], "test#10");
 		Assert.AreEqual (0, bytes [9], "test#11");		
+	}
+
+	[Test]
+	public void Write7BitEncodedIntTest ()
+	{
+		MemoryStream stream = new MemoryStream ();
+		var writer = new MyBinaryWriter (stream);
+		writer.WriteLeb128 (5);
+
+		Assert.AreEqual (new byte[] { 5 }, stream.ToArray (), "#1");
+
+		stream = new MemoryStream ();
+		writer = new MyBinaryWriter (stream);
+		writer.WriteLeb128 (int.MaxValue);
+
+		Assert.AreEqual (new byte[] { 255, 255, 255, 255, 7 }, stream.ToArray (), "#2");
+
+		stream = new MemoryStream ();
+		writer = new MyBinaryWriter (stream);
+		writer.WriteLeb128 (128);
+
+		Assert.AreEqual (new byte[] { 128, 1 }, stream.ToArray (), "#3");
+
+		stream = new MemoryStream ();
+		writer = new MyBinaryWriter (stream);
+		writer.WriteLeb128 (-1025);
+
+		Assert.AreEqual (new byte[] { 255, 247, 255, 255, 15 }, stream.ToArray (), "#4");
+
+		stream = new MemoryStream ();
+		writer = new MyBinaryWriter (stream);
+		writer.WriteLeb128 (int.MinValue);
+
+		Assert.AreEqual (new byte[] { 128, 128, 128, 128, 8 }, stream.ToArray (), "#5");
+
+		stream = new MemoryStream ();
+		writer = new MyBinaryWriter (stream);
+		writer.WriteLeb128 (-1);
+
+		Assert.AreEqual (new byte[] { 255, 255, 255, 255, 15 }, stream.ToArray (), "#6");
+
+		stream = new MemoryStream ();
+		writer = new MyBinaryWriter (stream);
+		writer.WriteLeb128 (0);
+
+		Assert.AreEqual (new byte[] { 0 }, stream.ToArray (), "#7");
 	}
 
 	[Test]

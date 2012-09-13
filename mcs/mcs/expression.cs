@@ -1211,7 +1211,7 @@ namespace Mono.CSharp
 
 			var one = new IntConstant (ec.BuiltinTypes, 1, loc);
 			var op = IsDecrement ? Binary.Operator.Subtraction : Binary.Operator.Addition;
-			operation = new Binary (op, source, one, loc);
+			operation = new Binary (op, source, one);
 			operation = operation.Resolve (ec);
 			if (operation == null)
 				throw new NotImplementedException ("should not be reached");
@@ -1527,7 +1527,7 @@ namespace Mono.CSharp
 						// Turn is check into simple null check for implicitly convertible reference types
 						//
 						return ReducedExpression.Create (
-							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc), loc).Resolve (ec),
+							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc)).Resolve (ec),
 							this).Resolve (ec);
 					}
 
@@ -2014,7 +2014,7 @@ namespace Mono.CSharp
 				// b = b.left >> b.right & (0x1f|0x3f)
 				//
 				b.right = new Binary (Operator.BitwiseAnd,
-					b.right, new IntConstant (ec.BuiltinTypes, right_mask, b.right.Location), b.loc).Resolve (ec);
+					b.right, new IntConstant (ec.BuiltinTypes, right_mask, b.right.Location)).Resolve (ec);
 
 				//
 				// Expression tree representation does not use & mask
@@ -2202,19 +2202,19 @@ namespace Mono.CSharp
 		protected State state;
 		Expression enum_conversion;
 
-		public Binary (Operator oper, Expression left, Expression right, bool isCompound, Location loc)
-			: this (oper, left, right, loc)
+		public Binary (Operator oper, Expression left, Expression right, bool isCompound)
+			: this (oper, left, right)
 		{
 			if (isCompound)
 				state |= State.Compound;
 		}
 
-		public Binary (Operator oper, Expression left, Expression right, Location loc)
+		public Binary (Operator oper, Expression left, Expression right)
 		{
 			this.oper = oper;
 			this.left = left;
 			this.right = right;
-			this.loc = loc;
+			this.loc = left.Location;
 		}
 
 		#region Properties
@@ -2319,7 +2319,7 @@ namespace Mono.CSharp
 
 		public static void Error_OperatorCannotBeApplied (ResolveContext ec, Expression left, Expression right, Operator oper, Location loc)
 		{
-			new Binary (oper, left, right, loc).Error_OperatorCannotBeApplied (ec, left, right);
+			new Binary (oper, left, right).Error_OperatorCannotBeApplied (ec, left, right);
 		}
 
 		public static void Error_OperatorCannotBeApplied (ResolveContext ec, Expression left, Expression right, string oper, Location loc)
@@ -3031,7 +3031,7 @@ namespace Mono.CSharp
 				(TypeSpec.IsValueType (left.Type) && right is NullLiteral) ||
 				(right.Type.IsNullableType && (left is NullLiteral || left.Type.IsNullableType || TypeSpec.IsValueType (left.Type))) ||
 				(TypeSpec.IsValueType (right.Type) && left is NullLiteral))) {
-				var lifted = new Nullable.LiftedBinaryOperator (oper, left, right, loc);
+				var lifted = new Nullable.LiftedBinaryOperator (oper, left, right);
 				lifted.state = state;
 				return lifted.Resolve (ec);
 			}
@@ -4409,7 +4409,7 @@ namespace Mono.CSharp
 					
 					// TODO: Should be the checks resolve context sensitive?
 					ResolveContext rc = new ResolveContext (ec.MemberContext, ResolveContext.Options.UnsafeScope);
-					right = new Binary (Binary.Operator.Multiply, right, right_const, loc).Resolve (rc);
+					right = new Binary (Binary.Operator.Multiply, right, right_const).Resolve (rc);
 					if (right == null)
 						return;
 				}
@@ -4630,11 +4630,32 @@ namespace Mono.CSharp
 					//
 					type = false_type;
 
-					if (false_type.BuiltinType != BuiltinTypeSpec.Type.Dynamic && Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
-						ec.Report.Error (172, true_expr.Location,
-							"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
-								true_type.GetSignatureForError (), false_type.GetSignatureForError ());
-						return null;
+					if (false_type.BuiltinType != BuiltinTypeSpec.Type.Dynamic) {
+						var conv_false_expr = Convert.ImplicitConversion (ec, false_expr, true_type, loc);
+						//
+						// LAMESPEC: There seems to be hardcoded promotition to int type when
+						// both sides are numeric constants and one side is int constant and
+						// other side is numeric constant convertible to int.
+						//
+						// var res = condition ? (short)1 : 1;
+						//
+						// Type of res is int even if according to the spec the conversion is
+						// ambiguous because 1 literal can be converted to short.
+						//
+						if (conv_false_expr != null) {
+							if (conv_false_expr is IntConstant && conv is Constant) {
+								type = true_type;
+								conv_false_expr = null;
+							} else if (type.BuiltinType == BuiltinTypeSpec.Type.Int && conv_false_expr is Constant) {
+								conv_false_expr = null;
+							}
+						}
+
+						if (conv_false_expr != null) {
+							ec.Report.Error (172, true_expr.Location,
+								"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
+									true_type.GetSignatureForError (), false_type.GetSignatureForError ());
+						}
 					}
 
 					true_expr = conv;
@@ -5250,8 +5271,10 @@ namespace Mono.CSharp
 		{
 			this.expr = expr;		
 			this.arguments = arguments;
-			if (expr != null)
-				loc = expr.Location;
+			if (expr != null) {
+				var ma = expr as MemberAccess;
+				loc = ma != null ? ma.GetLeftExpressionLocation () : expr.Location;
+			}
 		}
 
 		#region Properties
@@ -6131,7 +6154,7 @@ namespace Mono.CSharp
 		{
 			if (initializers != null && bounds == null) {
 				//
-				// We use this to store all the date values in the order in which we
+				// We use this to store all the data values in the order in which we
 				// will need to store them in the byte blob later
 				//
 				array_data = new List<Expression> ();
@@ -6189,7 +6212,16 @@ namespace Mono.CSharp
 						ec.Report.Error (623, loc, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
 						return false;
 					}
-					
+
+					// When we don't have explicitly specified dimensions, record whatever dimension we first encounter at each level
+					if (!bounds.ContainsKey(idx + 1))
+						bounds[idx + 1] = sub_probe.Count;
+
+					if (bounds[idx + 1] != sub_probe.Count) {
+						ec.Report.Error(847, sub_probe.Location, "An array initializer of length `{0}' was expected", bounds[idx + 1].ToString());
+						return false;
+					}
+
 					bool ret = CheckIndices (ec, sub_probe, idx + 1, specified_dims, child_bounds - 1);
 					if (!ret)
 						return false;
@@ -7031,7 +7063,7 @@ namespace Mono.CSharp
 					// Hoisted this is almost like hoisted variable but not exactly. When
 					// there is no variable hoisted we can simply emit an instance method
 					// without lifting this into a storey. Unfotunatelly this complicates
-					// this in other cases because we don't know where this will be hoisted
+					// things in other cases because we don't know where this will be hoisted
 					// until top-level block is fully resolved
 					//
 					top.AddThisReferenceFromChildrenBlock (block.Explicit);
@@ -7896,6 +7928,18 @@ namespace Mono.CSharp
 				expr.Error_OperatorCannotBeApplied (rc, loc, ".", type);
 		}
 
+		public Location GetLeftExpressionLocation ()
+		{
+			Expression expr = LeftExpression;
+			MemberAccess ma = expr as MemberAccess;
+			while (ma != null && ma.LeftExpression != null) {
+				expr = ma.LeftExpression;
+				ma = expr as MemberAccess;
+			}
+
+			return expr == null ? Location : expr.Location;
+		}
+
 		public static bool IsValidDotExpression (TypeSpec type)
 		{
 			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
@@ -8216,9 +8260,19 @@ namespace Mono.CSharp
 		{
 			if (ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2 && !ec.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
 				ec.Report.SymbolRelatedToPreviousError (type);
+
+				var cand = ec.Module.GlobalRootNamespace.FindExtensionMethodNamespaces (ec, type, name, Arity);
+				string missing;
+				// a using directive or an assembly reference
+				if (cand != null) {
+					missing = "`" + string.Join ("' or `", cand.ToArray ()) + "' using directive";
+				} else {
+					missing = "an assembly reference";
+				}
+
 				ec.Report.Error (1061, loc,
-					"Type `{0}' does not contain a definition for `{1}' and no extension method `{1}' of type `{0}' could be found (are you missing a using directive or an assembly reference?)",
-					type.GetSignatureForError (), name);
+					"Type `{0}' does not contain a definition for `{1}' and no extension method `{1}' of type `{0}' could be found. Are you missing {2}?",
+					type.GetSignatureForError (), name, missing);
 				return;
 			}
 
@@ -8485,11 +8539,6 @@ namespace Mono.CSharp
 			var res = CreateAccessExpression (ec);
 			if (res == null)
 				return null;
-
-			bool lvalue_instance = rhs != null && type.IsStruct && (Expr is Invocation || Expr is PropertyExpr);
-			if (lvalue_instance) {
-				Expr.Error_ValueAssignment (ec, EmptyExpression.LValueMemberAccess);
-			}
 
 			return res.ResolveLValue (ec, rhs);
 		}
@@ -9267,6 +9316,9 @@ namespace Mono.CSharp
 		
 		public UserCast (MethodSpec method, Expression source, Location l)
 		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
 			this.method = method;
 			this.source = source;
 			type = method.ReturnType;
@@ -9400,7 +9452,7 @@ namespace Mono.CSharp
 
 			this.left = left;
 			this.spec = spec;
-			this.loc = spec.Location;
+			this.loc = left.Location;
 		}
 
 		public override TypeSpec ResolveAsType (IMemberContext ec)

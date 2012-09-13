@@ -103,6 +103,7 @@ namespace System.Threading {
 		private IntPtr unused4;
 		private IntPtr unused5;
 		internal int managed_id;
+		int ignore_next_signal;
 		#endregion
 #pragma warning restore 169, 414, 649
 
@@ -476,6 +477,7 @@ namespace System.Threading {
 		}
 		
 		// part of ".NETPortable,Version=v4.0,Profile=Profile3" i.e. FX4 and SL4
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		~Thread ()
 		{
 		}

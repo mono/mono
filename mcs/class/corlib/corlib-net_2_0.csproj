@@ -16,8 +16,11 @@
     <AssemblyName>mscorlib</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>612,618,1699</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>612,618,1699</NoWarn>
     <Optimize>true</Optimize>
@@ -119,6 +123,7 @@
    <Compile Include="System\AccessViolationException.cs" />
    <Compile Include="System\ActivationContext.cs" />
    <Compile Include="System\Activator.cs" />
+   <Compile Include="System\AndroidPlatform.cs" />
    <Compile Include="System\AppDomain.cs" />
    <Compile Include="System\AppDomainInitializer.cs" />
    <Compile Include="System\AppDomainManager.cs" />
@@ -516,10 +521,12 @@
    <Compile Include="System.Reflection\AssemblyInformationalVersionAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyKeyFileAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyKeyNameAttribute.cs" />
+   <Compile Include="System.Reflection\AssemblyMetadataAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyName.cs" />
    <Compile Include="System.Reflection\AssemblyNameFlags.cs" />
    <Compile Include="System.Reflection\AssemblyNameProxy.cs" />
    <Compile Include="System.Reflection\AssemblyProductAttribute.cs" />
+   <Compile Include="System.Reflection\AssemblySignatureKeyAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyTitleAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyTradeMarkAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyVersionAttribute.cs" />
@@ -528,6 +535,7 @@
    <Compile Include="System.Reflection\CallingConventions.cs" />
    <Compile Include="System.Reflection\ConstructorInfo.cs" />
    <Compile Include="System.Reflection\CustomAttributeData.cs" />
+   <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
    <Compile Include="System.Reflection\CustomAttributeFormatException.cs" />
    <Compile Include="System.Reflection\CustomAttributeNamedArgument.cs" />
    <Compile Include="System.Reflection\CustomAttributeTypedArgument.cs" />
@@ -654,6 +662,7 @@
    <Compile Include="System.Runtime\MemoryFailPoint.cs" />
    <Compile Include="System.Runtime\TargetedPatchingOptOutAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\AccessedThroughPropertyAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\AsyncStateMachineAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\AsyncVoidMethodBuilder.cs" />
    <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilder.cs" />
    <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilder_T.cs" />
@@ -703,6 +712,7 @@
    <Compile Include="System.Runtime.CompilerServices\IsSignUnspecifiedByte.cs" />
    <Compile Include="System.Runtime.CompilerServices\IsUdtReturn.cs" />
    <Compile Include="System.Runtime.CompilerServices\IsVolatile.cs" />
+   <Compile Include="System.Runtime.CompilerServices\IteratorStateMachineAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\LoadHint.cs" />
    <Compile Include="System.Runtime.CompilerServices\MethodCodeType.cs" />
    <Compile Include="System.Runtime.CompilerServices\MethodImplAttribute.cs" />
@@ -715,6 +725,7 @@
    <Compile Include="System.Runtime.CompilerServices\SpecialNameAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\ScopelessEnumAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\SuppressIldasmAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\StateMachineAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\StringFreezingAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\UnsafeValueTypeAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\TaskAwaiter.cs" />
@@ -1584,6 +1595,7 @@
    <Compile Include="System.Collections.Generic\IComparer.cs" />
    <Compile Include="System.Collections.Generic\IEqualityComparer.cs" />
    <Compile Include="System.Collections.Generic\IDictionary.cs" />
+   <Compile Include="System.Collections.Generic\IReadOnlyCollection.cs" />
    <Compile Include="System.Collections.Generic\IReadOnlyList.cs" />
    <Compile Include="System.Collections.Generic\IReadOnlyDictionary.cs" />
    <Compile Include="System.Collections.Generic\KeyValuePair.cs" />
@@ -1599,6 +1611,7 @@
    <Compile Include="System\Converter.cs" />
    <Compile Include="System\Predicate.cs" />
    <Compile Include="System.Collections.Generic\Comparer.cs" />
+   <Compile Include="System.Threading.Tasks\ConcurrentExclusiveSchedulerPair.cs" />
    <Compile Include="System.Threading.Tasks\TaskFactory.cs" />
    <Compile Include="System.Threading.Tasks\TaskFactory_T.cs" />
    <Compile Include="System.Threading.Tasks\TaskStatus.cs" />

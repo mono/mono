@@ -1,23 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{C1445A71-BF0F-4604-B54F-E83B1EA0F38B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>true</NoStdLib>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Threading.Tasks.Dataflow</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -38,45 +42,55 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.Threading.Tasks\ConcurrentExclusiveSchedulerPair.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ExecutingMessageBox.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\DataflowBlockOptions.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\DataflowMessageHeader.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\DataflowMessageStatus.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ExecutionDataflowBlockOptions.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\GroupingDataflowBlockOptions.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\IDataflowBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\IPropagatorBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\IReceivableSourceBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ISourceBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ITargetBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\CompletionHelper.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\MessageBox.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\MessageOutgoingQueue.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\MessageVault.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\PassingMessageBox.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\TargetBuffer.cs" />
-   <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ActionBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\BatchBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\BroadcastBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\BufferBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ChooserBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\DataflowBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\JoinBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\JoinBlock`3.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ObservableDataflowBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ObserverDataflowBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\PropagatorWrapperBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\ReceiveBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\TransformBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\TransformManyBlock.cs" />
-   <Compile Include="System.Threading.Tasks.Dataflow\WriteOnceBlock.cs" />
-
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\AsyncExecutingMessageBox.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\BroadcastOutgoingQueue.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ExecutingMessageBoxBase.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\NullTargetBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\OutgoingQueueBase.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\OutputAvailableBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\PredicateBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\SendBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\BatchedJoinBlock`3.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\DataflowLinkOptions.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ExecutingMessageBox.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\DataflowBlockOptions.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\DataflowMessageHeader.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\DataflowMessageStatus.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ExecutionDataflowBlockOptions.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\GroupingDataflowBlockOptions.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\IDataflowBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\IPropagatorBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\IReceivableSourceBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ISourceBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ITargetBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\CompletionHelper.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\JoinTarget.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\MessageBox.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\OutgoingQueue.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\NameHelper.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\PassingMessageBox.cs" />
+    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ActionBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\BatchBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\BroadcastBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\BufferBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ChooserBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\DataflowBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\JoinBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\JoinBlock`3.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ObservableDataflowBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ObserverDataflowBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\PropagatorWrapperBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\ReceiveBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\TargetCollection.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\TransformBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\TransformManyBlock.cs" />
+    <Compile Include="System.Threading.Tasks.Dataflow\WriteOnceBlock.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -86,7 +100,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib.dll">
@@ -105,11 +120,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.dll</HintPath>
     </Reference>
-
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

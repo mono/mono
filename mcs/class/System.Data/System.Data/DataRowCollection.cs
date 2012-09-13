@@ -338,9 +338,9 @@ namespace System.Data
 			CopyTo ((Array) array, index);
 		}
 
-		public override void CopyTo (Array array, int index)
+		public override void CopyTo (Array ar, int index)
 		{
-			base.CopyTo (array, index);
+			base.CopyTo (ar, index);
 		}
 
 		public override IEnumerator GetEnumerator ()

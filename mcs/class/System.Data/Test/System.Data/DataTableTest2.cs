@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Globalization;
+using System.Collections.Generic;
 
 using MonoTests.System.Data.Utils;
 
@@ -2170,14 +2171,14 @@ namespace MonoTests_System.Data
 			DataTable dt = DataProvider.CreateChildDataTable ();
 
 			DataRow [] drSelect;
-			ArrayList al;
+			List<DataRow> al;
 
 			//add some rows
 			dt.Rows.Add (new object[] {99,88, "bla", "wowww"});
 			dt.Rows.Add (new object[] {999,888, string.Empty, "woowww"});
 
 			//get excepted resault
-			al = new ArrayList ();
+			al = new List<DataRow> ();
 			foreach (DataRow dr in dt.Rows) {
 				if ((int) dr["ChildId"] == 1)
 					al.Add (dr);
@@ -2189,7 +2190,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (al.ToArray (), drSelect, "DT193");
 
 			//get excepted resault
-			al = new ArrayList();
+			al = new List<DataRow>();
 			foreach (DataRow dr in dt.Rows) {
 				if (dr ["String1"].ToString () == "1-String1")
 					al.Add (dr);
@@ -2201,7 +2202,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (al.ToArray(),drSelect, "DT194");
 
 			//get excepted resault
-			al = new ArrayList ();
+			al = new List<DataRow> ();
 			foreach (DataRow dr in dt.Rows) {
 				if ((int) dr["ChildId"] == 1 && dr["String1"].ToString() == "1-String1")
 					al.Add (dr);
@@ -2214,7 +2215,7 @@ namespace MonoTests_System.Data
 			
 
 			//get excepted resault
-			al = new ArrayList ();
+			al = new List<DataRow> ();
 			foreach (DataRow dr in dt.Rows) {
 				if (dr ["String1"].ToString ().Length < 4)
 					al.Add (dr);
@@ -2224,9 +2225,23 @@ namespace MonoTests_System.Data
 
 			drSelect = dt.Select("Len(String1) < 4 ", "ParentId Desc");
 			Assert.AreEqual(al.ToArray(),drSelect, "DT196");
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void Select_StringString_1 ()
+		{
+			DataTable dt = DataProvider.CreateChildDataTable ();
 
+			DataRow [] drSelect;
+			List<DataRow> al;
+
+			//add some rows
+			dt.Rows.Add (new object[] {99,88, "bla", "wowww"});
+			dt.Rows.Add (new object[] {999,888, string.Empty, "woowww"});
+		
 			//get excepted resault
-			al = new ArrayList ();
+			al = new List<DataRow> ();
 			foreach (DataRow dr in dt.Rows) {
 				if (dr ["String1"].ToString ().IndexOf ("String") > 0)
 					al.Add (dr);
@@ -2238,7 +2253,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (al.ToArray (), drSelect, "DT197");
 			
 			//get excepted resault
-			al = new ArrayList ();
+			al = new List<DataRow> ();
 			foreach (DataRow dr in dt.Rows) {
 				if (((int) dr ["ChildId"] == 2) || ((int) dr ["ChildId"] == 3))
 					al.Add (dr);
@@ -2250,7 +2265,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (al.ToArray (), drSelect, "DT198");
 
 			//get excepted resault
-			al = new ArrayList ();
+			al = new List<DataRow> ();
 			foreach (DataRow dr in dt.Rows) {
 				if ((((int) dr ["ChildId"] * (int) dr ["ParentId"]) > 5))
 					al.Add (dr);
@@ -2269,7 +2284,7 @@ namespace MonoTests_System.Data
 			}
 
 			//get excepted resault
-			al = new ArrayList ();
+			al = new List<DataRow> ();
 			foreach (DataRow dr in dt.Rows) {
 				if (dr ["String2"].ToString ().Substring (2, 3) == "Str")
 					al.Add (dr);
@@ -2508,7 +2523,7 @@ namespace MonoTests_System.Data
 		}
 #endif
 
-		internal class DataRowsComparer : IComparer
+		internal class DataRowsComparer : IComparer<DataRow>
 		{
 			private string _columnName;
 			private string _direction;
@@ -2521,11 +2536,8 @@ namespace MonoTests_System.Data
 				_direction = direction;
 			}
 
-			public int Compare(object x, object y)
+			public int Compare(DataRow drX, DataRow drY)
 			{
-				DataRow drX = (DataRow)x;
-				DataRow drY = (DataRow)y;
-
 				object objX = drX[_columnName];
 				object objY = drY[_columnName];
 

@@ -37,6 +37,7 @@ using Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis.Paths;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Providers;
 
 namespace Mono.CodeContracts.Static.Proving {
 	internal abstract class BoxedExpression {
@@ -75,7 +76,7 @@ namespace Mono.CodeContracts.Static.Proving {
 			get { throw new InvalidOperationException (); }
 		}
 
-		public virtual bool IsSizeof
+                public virtual bool IsSizeof
 		{
 			get { return false; }
 		}
@@ -156,6 +157,11 @@ namespace Mono.CodeContracts.Static.Proving {
 			return false;
 		}
 
+                public virtual bool Sizeof (out int size)
+                {
+                        return false.Without (out size);
+                }
+
 		public virtual bool IsIsinstExpression (out BoxedExpression expr, out TypeNode type)
 		{
 			expr = null;
@@ -188,6 +194,11 @@ namespace Mono.CodeContracts.Static.Proving {
 			return new VariableExpression (var);
 		}
 
+                public static BoxedExpression Const (object value, TypeNode type)
+                {
+                        return new ConstantExpression (value, type);
+                }
+
 		public static BoxedExpression For<Variable, Expression> (Expression external, IFullExpressionDecoder<Variable, Expression> decoder)
 			where Expression : IEquatable<Expression>
 		{
@@ -210,7 +221,7 @@ namespace Mono.CodeContracts.Static.Proving {
 
 			object variable;
 			if (decoder.IsVariable (expr, out variable)) {
-				LispList<PathElement> variableAccessPath = decoder.GetVariableAccessPath (expr);
+				Sequence<PathElement> variableAccessPath = decoder.GetVariableAccessPath (expr);
 				return new VariableExpression (variable, variableAccessPath);
 			}
 
@@ -235,6 +246,16 @@ namespace Mono.CodeContracts.Static.Proving {
 
 			return new BinaryExpression (bop, Convert (left, decoder), Convert (right, decoder));
 		}
+
+                public static BoxedExpression Binary (BinaryOperator bop, BoxedExpression left, BoxedExpression right)
+                {
+                        return new BinaryExpression (bop, left, right);
+                }
+
+                public static BoxedExpression Unary (UnaryOperator op, BoxedExpression arg)
+                {
+                        return new UnaryExpression (op, arg);
+                }
 
 		#region Nested type: AssertExpression
 		public class AssertExpression : ContractExpression {
@@ -1347,7 +1368,13 @@ namespace Mono.CodeContracts.Static.Proving {
 			public override bool IsSizeof
 			{
 				get { return true; }
-			}
+                        }
+
+                        public override bool Sizeof (out int size)
+                        {
+                                size = SizeAsConstant;
+                                return size >= 0;
+                        }
 
 			public override void AddFreeVariables (HashSet<BoxedExpression> set)
 			{
@@ -1586,17 +1613,17 @@ namespace Mono.CodeContracts.Static.Proving {
 			public readonly object VarType;
 
 			public VariableExpression (object var)
-				: this (var, (LispList<PathElement>) null)
+				: this (var, (Sequence<PathElement>) null)
 			{
 			}
 
-			public VariableExpression (object var, LispList<PathElement> path)
+			public VariableExpression (object var, Sequence<PathElement> path)
 			{
 				this.UnderlyingVar = var;
 				this.Path = path != null ? path.AsEnumerable ().ToArray () : null;
 			}
 
-			public VariableExpression (object var, LispList<PathElement> path, object type)
+			public VariableExpression (object var, Sequence<PathElement> path, object type)
 				: this (var, path)
 			{
 				this.VarType = type;

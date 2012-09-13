@@ -27,8 +27,7 @@
 // 
 
 namespace Mono.CodeContracts.Static.Analysis {
-	interface IExpressionContextProvider<Expression, Variable>
-		: IValueContextProvider<Variable> {
-		IExpressionContext<Expression, Variable> ExpressionContext { get; }
-		}
+	interface IExpressionContextProvider<Expression, Variable> : IValueContextProvider<Variable> {
+		IExpressionContext<Expression, Variable> ExpressionContext { get; } 
+    }
 }

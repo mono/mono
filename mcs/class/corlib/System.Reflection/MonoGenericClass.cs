@@ -60,7 +60,6 @@ namespace System.Reflection
 		#endregion
 
 		Hashtable fields, ctors, methods;
-		int event_count;
 
 		internal MonoGenericClass ()
 		{
@@ -95,111 +94,10 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
+		extern void initialize (FieldInfo[] fields);
 
  		[MethodImplAttribute(MethodImplOptions.InternalCall)]
  		internal static extern void register_with_runtime (Type type);
-
-		EventInfo[] GetEventsFromGTD (BindingFlags flags) {
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetEvents (flags);
-
-			return tb.GetEvents_internal (flags);
-		}
-
-		ConstructorInfo[] GetConstructorsFromGTD (BindingFlags flags)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetConstructors (flags);
-
-			return tb.GetConstructorsInternal (flags);
-		}
-
-		/*
-		MethodInfo[] GetMethodsFromGTD (BindingFlags bf)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetMethods (bf);
-
-			MethodInfo[] res = new MethodInfo [tb.num_methods];
-			if (tb.num_methods > 0)
-				Array.Copy (tb.methods, res, tb.num_methods);
-
-			return res;
-		}
-		*/
-
-		FieldInfo[] GetFieldsFromGTD (BindingFlags bf)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetFields (bf);
-
-			FieldInfo[] res = new FieldInfo [tb.num_fields];
-			if (tb.num_fields > 0)
-				Array.Copy (tb.fields, res, tb.num_fields);
-
-			return res;
-		}
-
-		/*@hint might not be honored so it required aditional filtering
-		TODO move filtering into here for the TypeBuilder case and remove the hint ugliness 
-		*/
-		MethodInfo[] GetMethodsFromGTDWithHint (BindingFlags hint)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetMethods (hint);
-
-			if (tb.num_methods == 0)
-				return new MethodInfo [0];
-			MethodInfo[] res = new MethodInfo [tb.num_methods];
-			Array.Copy (tb.methods, 0, res, 0, tb.num_methods);
-			return res;
-		}
-
-		/*@hint might not be honored so it required aditional filtering
-		TODO move filtering into here for the TypeBuilder case and remove the hint ugliness 
-		*/
-		ConstructorInfo[] GetConstructorsFromGTDWithHint (BindingFlags hint)
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null)
-				return generic_type.GetConstructors (hint);
-
-			if (tb.ctors == null)
-				return new ConstructorInfo [0];
-			ConstructorInfo[] res = new ConstructorInfo [tb.ctors.Length];
-			tb.ctors.CopyTo (res, 0);
-			return res;
-		}
-
-		static Type PeelType (Type t) {
-			if (t.HasElementType)
-				return PeelType (t.GetElementType ());
-			if (t.IsGenericType && !t.IsGenericParameter)
-				return t.GetGenericTypeDefinition ();
-			return t;
-		}
-
-		static PropertyInfo[] GetPropertiesInternal (Type type, BindingFlags bf)
-		{
-			TypeBuilder tb = type as TypeBuilder;
-			if (tb != null)
-				return tb.properties;
-			return type.GetProperties (bf);	
-		}
-
-		Type[] GetInterfacesFromGTD ()
-		{
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb != null)
-				return tb.interfaces;
-			return generic_type.GetInterfaces ();	
-		}
 
 		internal bool IsCreated {
 			get {
@@ -219,14 +117,8 @@ namespace System.Reflection
 			MonoGenericClass parent = GetParentType () as MonoGenericClass;
 			if (parent != null)
 				parent.initialize ();
-			EventInfo[] events = GetEventsFromGTD (flags);
-			event_count = events.Length;
 				
-			initialize (generic_type.GetMethods (flags),
-						GetConstructorsFromGTD (flags),
-						generic_type.GetFields (flags),
-						generic_type.GetProperties (flags),
-						events);
+			initialize (generic_type.GetFields (flags));
 
 			initialized = true;
 		}
@@ -279,21 +171,7 @@ namespace System.Reflection
 		}
 		
 		public override Type BaseType {
-			get {
-				Type parent = GetParentType ();
-				return parent != null ? parent : generic_type.BaseType;
-			}
-		}
-
-		Type[] GetInterfacesInternal ()
-		{
-			Type[] ifaces = GetInterfacesFromGTD ();
-			if (ifaces == null)
-				return Type.EmptyTypes;
-			Type[] res = new Type [ifaces.Length];
-			for (int i = 0; i < res.Length; ++i)
-				res [i] = InflateType (ifaces [i]);
-			return res;
+			get { return generic_type.BaseType; }
 		}
 
 		public override Type[] GetInterfaces ()
@@ -343,102 +221,9 @@ namespace System.Reflection
 			throw new NotSupportedException ();
 		}
 
-		MethodInfo[] GetMethodsInternal (BindingFlags bf, MonoGenericClass reftype)
-		{
-			if (reftype != this)
-				bf |= BindingFlags.DeclaredOnly; /*To avoid duplicates*/
-
-			MethodInfo[] methods = GetMethodsFromGTDWithHint (bf);
-			if (methods.Length == 0)
-				return new MethodInfo [0];
-
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-
-			initialize ();
-
-			for (int i = 0; i < methods.Length; ++i) {
-				MethodInfo c = methods [i];
-
-				match = false;
-				mattrs = c.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bf & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bf & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				if (c.DeclaringType.IsGenericTypeDefinition)
-					c = TypeBuilder.GetMethod (this, c);
-				l.Add (c);
-			}
-
-			MethodInfo[] result = new MethodInfo [l.Count];
-			l.CopyTo (result);
-			return result;
-		}
-
 		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
 			throw new NotSupportedException ();
-		}
-
-		ConstructorInfo[] GetConstructorsInternal (BindingFlags bf, MonoGenericClass reftype)
-		{
-			ConstructorInfo[] ctors = GetConstructorsFromGTDWithHint (bf);
-			if (ctors == null || ctors.Length == 0)
-				return new ConstructorInfo [0];
-
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-
-			initialize ();
-
-			for (int i = 0; i < ctors.Length; i++) {
-				ConstructorInfo c = ctors [i];
-
-				match = false;
-				mattrs = c.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bf & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bf & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (TypeBuilder.GetConstructor (this, c));
-			}
-
-			ConstructorInfo[] result = new ConstructorInfo [l.Count];
-			l.CopyTo (result);
-			return result;
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bf)
@@ -446,189 +231,24 @@ namespace System.Reflection
 			throw new NotSupportedException ();
 		}
 
-		FieldInfo[] GetFieldsInternal (BindingFlags bf, MonoGenericClass reftype)
-		{
-			FieldInfo[] fields = GetFieldsFromGTD (bf);
-			if (fields.Length == 0)
-				return new FieldInfo [0];
-
-			ArrayList l = new ArrayList ();
-			bool match;
-			FieldAttributes fattrs;
-
-			initialize ();
-
-			for (int i = 0; i < fields.Length; i++) {
-				FieldInfo c = fields [i];
-
-				match = false;
-				fattrs = c.Attributes;
-				if ((fattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
-					if ((bf & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((fattrs & FieldAttributes.Static) != 0) {
-					if ((bf & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (TypeBuilder.GetField (this, c));
-			}
-
-			FieldInfo[] result = new FieldInfo [l.Count];
-			l.CopyTo (result);
-			return result;
-		}
-
 		public override PropertyInfo[] GetProperties (BindingFlags bf)
 		{
 			throw new NotSupportedException ();
-		}
-
-		PropertyInfo[] GetPropertiesInternal (BindingFlags bf, MonoGenericClass reftype)
-		{
-			PropertyInfo[] props = GetPropertiesInternal (generic_type, bf);
-			if (props == null || props.Length == 0)
-				return new PropertyInfo [0];
-
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-			MethodInfo accessor;
-
-			initialize ();
-
-			foreach (PropertyInfo pinfo in props) {
-				match = false;
-				accessor = pinfo.GetGetMethod (true);
-				if (accessor == null)
-					accessor = pinfo.GetSetMethod (true);
-				if (accessor == null)
-					continue;
-				mattrs = accessor.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bf & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bf & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (new PropertyOnTypeBuilderInst (reftype, pinfo));
-			}
-			PropertyInfo[] result = new PropertyInfo [l.Count];
-			l.CopyTo (result);
-			return result;
 		}
 
 		public override EventInfo[] GetEvents (BindingFlags bf)
 		{
 			throw new NotSupportedException ();
 		}
-	
-		EventInfo[] GetEventsInternal (BindingFlags bf, MonoGenericClass reftype) {
-			TypeBuilder tb = generic_type as TypeBuilder;
-			if (tb == null) {
-				EventInfo[] res = generic_type.GetEvents (bf);
-				for (int i = 0; i < res.Length; ++i)
-					res [i] = new EventOnTypeBuilderInst (this, res [i]);
-				return res;
-			}
-			EventBuilder[] events = tb.events;
-
-			if (events == null || events.Length == 0)
-				return new EventInfo [0];
-
-			initialize ();
-
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-			MethodInfo accessor;
-
-			for (int i = 0; i < event_count; ++i) {
-				EventBuilder ev = events [i];
-
-				match = false;
-				accessor = ev.add_method;
-				if (accessor == null)
-					accessor = ev.remove_method;
-				if (accessor == null)
-					continue;
-				mattrs = accessor.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bf & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bf & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bf & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (new EventOnTypeBuilderInst (this, ev));
-			}
-			EventInfo[] result = new EventInfo [l.Count];
-			l.CopyTo (result);
-			return result;
-		}
 
 		public override Type[] GetNestedTypes (BindingFlags bf)
 		{
-			return generic_type.GetNestedTypes (bf);
+			throw new NotSupportedException ();
 		}
 
 		public override bool IsAssignableFrom (Type c)
 		{
-			if (c == this)
-				return true;
-
-			Type[] interfaces = GetInterfacesInternal ();
-
-			if (c.IsInterface) {
-				if (interfaces == null)
-					return false;
-				foreach (Type t in interfaces)
-					if (c.IsAssignableFrom (t))
-						return true;
-				return false;
-			}
-
-			Type parent = GetParentType ();
-			if (parent == null)
-				return c == typeof (object);
-			else
-				return c.IsAssignableFrom (parent);
+			throw new NotSupportedException ();
 		}
 
 		public override Type UnderlyingSystemType {
@@ -717,10 +337,6 @@ namespace System.Reflection
 
 		public override bool ContainsGenericParameters {
 			get {
-				/*FIXME remove this once compound types are not instantiated using MGC*/
-				if (HasElementType)
-					return GetElementType ().ContainsGenericParameters;
-
 				foreach (Type t in type_arguments) {
 					if (t.ContainsGenericParameters)
 						return true;
@@ -734,11 +350,11 @@ namespace System.Reflection
 		}
 
 		public override bool IsGenericType {
-			get { return !HasElementType; }
+			get { return true; }
 		}
 
 		public override Type DeclaringType {
-			get { return InflateType (generic_type.DeclaringType); }
+			get { return generic_type.DeclaringType; }
 		}
 
 		public override RuntimeTypeHandle TypeHandle {
@@ -880,6 +496,17 @@ namespace System.Reflection
 		{
 			throw new NotSupportedException ();
 		}
+
+		internal override bool IsUserType {
+			get {
+				foreach (var t in type_arguments) {
+					if (t.IsUserType)
+						return true;
+				}
+				return false;
+			}
+		}
+
 	}
 }
 

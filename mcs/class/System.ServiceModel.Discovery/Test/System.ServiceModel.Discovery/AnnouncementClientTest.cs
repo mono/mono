@@ -54,6 +54,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void AnnonceOnlineOfflineNoEndpointAddress ()
 		{
 			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding () });
@@ -67,6 +68,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void AnnonceOnlineOfflineNoBinding ()
 		{
 			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Address = new EndpointAddress ("http://localhost:37564")});
@@ -91,6 +93,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
 		public void AnnonceOnlineOfflineAddressSchemeMismatch2 ()
 		{
 			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding (), Address = new EndpointAddress ("soap.udp://localhost:37564")});
@@ -104,6 +107,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void AnnonceOnlineOfflineHttpMessageVersionMismatch ()
 		{
 			var ac = new AnnouncementClient (new AnnouncementEndpoint () { Binding = new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (10), ReceiveTimeout = TimeSpan.FromSeconds (10) }, Address = http_address });
@@ -119,6 +123,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		[Test]
 		[ExpectedException (typeof (EndpointNotFoundException))]
+		[Category ("NotWorking")]
 		public void AnnonceOnlineOfflineHttpWSA10 ()
 		{
 			var binding = new CustomBinding (new HttpTransportBindingElement ()) { SendTimeout = TimeSpan.FromSeconds (10), ReceiveTimeout = TimeSpan.FromSeconds (10) };

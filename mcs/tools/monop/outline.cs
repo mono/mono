@@ -142,7 +142,6 @@ public class Outline {
 		first = true;
 		
 		foreach (ConstructorInfo ci in t.GetConstructors (DefaultFlags)) {
-			
 			if (! ShowMember (ci))
 				continue;
 			
@@ -150,6 +149,7 @@ public class Outline {
 				o.WriteLine ();
 			first = false;
 			
+			OutlineMemberAttribute (ci);
 			OutlineConstructor (ci);
 			
 			o.WriteLine ();
@@ -169,7 +169,8 @@ public class Outline {
 			if (first)
 				o.WriteLine ();
 			first = false;
-			
+
+			OutlineMemberAttribute (m);
 			OutlineMethod (m);
 			
 			o.WriteLine ();
@@ -191,6 +192,7 @@ public class Outline {
 				o.WriteLine ();
 			first = false;
 			
+			OutlineMemberAttribute (m);
 			OutlineOperator (m);
 			
 			o.WriteLine ();
@@ -208,6 +210,7 @@ public class Outline {
 				o.WriteLine ();
 			first = false;
 			
+			OutlineMemberAttribute (pi);
 			OutlineProperty (pi);
 			
 			o.WriteLine ();
@@ -224,6 +227,7 @@ public class Outline {
 				o.WriteLine ();
 			first = false;
 			
+			OutlineMemberAttribute (fi);
 			OutlineField (fi);
 			
 			o.WriteLine ();
@@ -240,6 +244,7 @@ public class Outline {
 				o.WriteLine ();
 			first = false;
 			
+			OutlineMemberAttribute (ei);
 			OutlineEvent (ei);
 			
 			o.WriteLine ();
@@ -286,6 +291,15 @@ public class Outline {
 			o.WriteLine ("[Obsolete]");
 	}
 
+	void OutlineMemberAttribute (MemberInfo mi)
+	{
+		if (!mi.IsDefined (typeof (System.ObsoleteAttribute), false))
+			return;
+		var oa = mi.GetCustomAttributes (typeof (System.ObsoleteAttribute), false) [0] as ObsoleteAttribute;
+		var msg = oa.Message;
+		o.WriteLine ("[Obsolete{0}]", msg == null || msg == "" ? "" : string.Format ("(\"{0}\")", msg));
+	}
+	
 	void OutlineEvent (EventInfo ei)
 	{
 		MethodBase accessor = ei.GetAddMethod (true);

@@ -747,22 +747,22 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				// do nothing if value exactly matches text of selected item
-				if (SelectedItem != null && string.Compare (value, GetItemText (SelectedItem), false, CultureInfo.CurrentCulture) == 0)
-					return;
-
-				// find exact match using case-sensitive comparison, and if does
-				// not result in any match then use case-insensitive comparison
-				int index = FindStringExact (value, -1, false);
-				if (index == -1) {
-					index = FindStringExact (value, -1, true);
+				// don't set the index if value exactly matches text of selected item
+				if (SelectedItem == null || string.Compare (value, GetItemText (SelectedItem), false, CultureInfo.CurrentCulture) != 0)
+				{
+					// find exact match using case-sensitive comparison, and if does
+					// not result in any match then use case-insensitive comparison
+					int index = FindStringExact (value, -1, false);
+					if (index == -1) {
+						index = FindStringExact (value, -1, true);
+					}
+					if (index != -1) {
+						SelectedIndex = index;
+						return;
+					}
 				}
-				if (index != -1) {
-					SelectedIndex = index;
-					return;
-				}
 
-				// set directly the passed value, since we already know it's not matching any item
+				// set directly the passed value
 				if (dropdown_style != ComboBoxStyle.DropDownList)
 					textbox_ctrl.Text = value;
 			}
@@ -2000,8 +2000,10 @@ namespace System.Windows.Forms
 					if (index == owner.SelectedIndex) {
 						if (owner.textbox_ctrl == null)
 							owner.Refresh ();
-						else
-							owner.textbox_ctrl.SelectedText = value.ToString ();
+						else {
+							owner.textbox_ctrl.Text = value.ToString ();
+							owner.textbox_ctrl.SelectAll ();
+						}
 					}
 				}
 			}
@@ -2115,11 +2117,9 @@ namespace System.Windows.Forms
 			{
 				if (value == null)
 					return;
-
-				if (IndexOf (value) == owner.SelectedIndex)
-					owner.SelectedIndex = -1;
-				
-				RemoveAt (IndexOf (value));
+				int index = IndexOf (value);
+				if (index >= 0)
+					RemoveAt (index);
 			}
 
 			public void RemoveAt (int index)
@@ -2127,7 +2127,9 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 					
-				if (index == owner.SelectedIndex)
+				if (index < owner.SelectedIndex)
+					--owner.SelectedIndex;
+				else if (index == owner.SelectedIndex)
 					owner.SelectedIndex = -1;
 
 				object removed = object_items [index];

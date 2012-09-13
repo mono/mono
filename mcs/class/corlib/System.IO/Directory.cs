@@ -236,18 +236,25 @@ namespace System.IO
 
 		public static string GetCurrentDirectory ()
 		{
-			MonoIOError error;
-
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
-				
-			string result = MonoIO.GetCurrentDirectory (out error);
-			if (error != MonoIOError.ERROR_SUCCESS)
-				throw MonoIO.GetException (error);
+
+			string result = InsecureGetCurrentDirectory();
 #if !NET_2_1
 			if ((result != null) && (result.Length > 0) && SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, result).Demand ();
 			}
 #endif
+			return result;
+		}
+
+		internal static string InsecureGetCurrentDirectory()
+		{
+			MonoIOError error;
+			string result = MonoIO.GetCurrentDirectory(out error);
+
+			if (error != MonoIOError.ERROR_SUCCESS)
+				throw MonoIO.GetException(error);
+
 			return result;
 		}
 		
@@ -393,7 +400,10 @@ namespace System.IO
 #if !MOONLIGHT
 		public static void SetAccessControl (string path, DirectorySecurity directorySecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == directorySecurity)
+				throw new ArgumentNullException ("directorySecurity");
+				
+			directorySecurity.PersistModifications (path);
 		}
 #endif
 
@@ -547,6 +557,12 @@ namespace System.IO
 				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
 
 			try {
+				//
+				// Convert any file specific flag to FileAttributes.Normal which is used as include files flag
+				//
+				if (((rattr & FileAttributes.Directory) == 0) && rattr != 0)
+					rattr |= FileAttributes.Normal;
+
 				bool first = true;
 				if (((rattr & FileAttributes.ReparsePoint) == 0) && ((rattr & kind) != 0))
 					yield return s;
@@ -633,16 +649,18 @@ namespace System.IO
 #endif
 
 #if !MOONLIGHT
-		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{
-			throw new PlatformNotSupportedException ();
+			return new DirectorySecurity (path, includeSections);
 		}
 
-		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public static DirectorySecurity GetAccessControl (string path)
 		{
-			throw new PlatformNotSupportedException ();
+			// AccessControlSections.Audit requires special permissions.
+			return GetAccessControl (path,
+						 AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 		}
 #endif
 	}

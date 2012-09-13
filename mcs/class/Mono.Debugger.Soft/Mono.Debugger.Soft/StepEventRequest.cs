@@ -19,7 +19,10 @@ namespace Mono.Debugger.Soft
 	 */
 	public enum StepFilter {
 		None = 0,
-		StaticCtor = 1
+		StaticCtor = 1,
+		/* Since protocol version 2.20 */
+		/* Methods which have the [DebuggerHidden] attribute */
+		DebuggerHidden = 2,
 	}
 
 	public sealed class StepEventRequest : EventRequest {

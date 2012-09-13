@@ -28,8 +28,8 @@
 
 namespace Mono.CodeContracts.Static.AST {
 	sealed class Literal : Expression {
-		public static Literal Null = new Literal (null);
-		public object Value;
+		public static readonly Literal Null = new Literal (null);
+		public readonly object Value;
 
 		public Literal () : base (NodeType.Literal)
 		{

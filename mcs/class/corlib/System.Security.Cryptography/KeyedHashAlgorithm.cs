@@ -42,11 +42,6 @@ public abstract class KeyedHashAlgorithm : HashAlgorithm {
 		// create a random 64 bits key
 	}
 
-	~KeyedHashAlgorithm () 
-	{
-		Dispose (false);
-	}
-
 	public virtual byte[] Key {
 		get { 
 			return (byte[]) KeyValue.Clone (); 

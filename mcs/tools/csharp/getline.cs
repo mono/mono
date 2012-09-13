@@ -23,10 +23,7 @@
 //    behind its back (P/Invoke puts for example).
 //    System.Console needs to get the DELETE character, and report accordingly.
 //
-#define IN_MCS_BUILD
 
-// Only compile this code in the 2.0 profile, but not in the Moonlight one
-#if (IN_MCS_BUILD && NET_2_0 && !SMCS_SOURCE) || !IN_MCS_BUILD
 using System;
 using System.Text;
 using System.IO;
@@ -1080,4 +1077,3 @@ namespace Mono.Terminal {
 	}
 #endif
 }
-#endif

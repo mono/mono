@@ -660,7 +660,7 @@ namespace MonoTests.System.Xml
 </child1>
 <child2 />
 <child3 />";
-			Assert.AreEqual (result, n.OuterXml.Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (result.NormalizeNewline (), n.OuterXml.NormalizeNewline (), "#1");
 		}
 
 		[Test] // bug #376191

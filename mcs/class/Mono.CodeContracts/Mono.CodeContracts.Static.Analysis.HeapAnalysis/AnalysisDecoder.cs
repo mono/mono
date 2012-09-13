@@ -183,7 +183,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 					if (derefThis)
 						loc = data.Value (loc);
 					AbstractType aType = data.GetType (loc);
-					if (aType.IsNormal)
+					if (aType.IsNormal())
 						DevirtualizeImplementingMethod (aType.ConcreteType, ref method);
 				}
 			}
@@ -1100,7 +1100,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 					else {
 						SymValue sv = data.Value (num);
 						AbstractType aType = data.GetType (sv);
-						type = aType.IsNormal ? aType.ConcreteType : MetaDataProvider.System_Object;
+						type = aType.IsNormal() ? aType.ConcreteType : MetaDataProvider.System_Object;
 					}
 				} else
 					type = argTypes [i];
@@ -1151,7 +1151,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			if (!MetaDataProvider.IsStruct (type)) {
 				SymValue sv = data.Value (array);
 				AbstractType aType = data.GetType (sv);
-				if (aType.IsNormal && MetaDataProvider.IsArray (aType.ConcreteType)) {
+				if (aType.IsNormal() && MetaDataProvider.IsArray (aType.ConcreteType)) {
 					t = MetaDataProvider.ElementType (aType.ConcreteType);
 					if (t == null)
 						t = type;
@@ -1167,7 +1167,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			SymValue ptr;
 			if (MetaDataProvider.IsStruct (MetaDataProvider.DeclaringType (field))) {
 				AbstractType abstractType = data.GetType (data.Address (obj));
-				ptr = abstractType.IsNormal
+				ptr = abstractType.IsNormal()
 				      && MetaDataProvider.IsManagedPointer (abstractType.ConcreteType)
 				      && MetaDataProvider.IsStruct (MetaDataProvider.ElementType (abstractType.ConcreteType))
 				      	? data.Address (obj)
@@ -1251,7 +1251,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		public static Domain FindOldState (APC pc, Domain data)
 		{
-			for (LispList<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
+			for (Sequence<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
 				Edge<CFGBlock, EdgeTag> pair = list.Head;
 				if (pair.Tag == EdgeTag.Exit || pair.Tag.Is (EdgeTag.AfterMask))
 					return data.GetStateAt (new APC (pair.From.Subroutine.EntryAfterRequires, 0, list.Tail));

@@ -99,6 +99,7 @@ profile : $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:mcs2.exe $(BUILT_SOURCES) @$(response)
 
 debug-parser:
+	rm cs-parser.cs
 	$(MAKE) JAY_FLAGS=-cvt
 
 #

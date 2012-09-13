@@ -35,7 +35,11 @@ namespace System.Security.Policy {
 
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class Publisher : IIdentityPermissionFactory, IBuiltInEvidence {
+	public sealed class Publisher :
+#if NET_4_0
+		EvidenceBase,
+#endif
+		IIdentityPermissionFactory, IBuiltInEvidence {
 	
 		private X509Certificate m_cert;
 

@@ -42,6 +42,7 @@ namespace System.Threading
 		
 		int currId = int.MinValue;
 		ConcurrentDictionary<CancellationTokenRegistration, Action> callbacks;
+		CancellationTokenRegistration[] linkedTokens;
 
 		ManualResetEvent handle;
 		
@@ -118,8 +119,15 @@ namespace System.Threading
 		{
 			CheckDisposed ();
 
+			if (canceled)
+				return;
+
+			Thread.MemoryBarrier ();
 			canceled = true;
+			
 			handle.Set ();
+			if (linkedTokens != null)
+				UnregisterLinkedTokens ();
 			
 			List<Exception> exceptions = null;
 			
@@ -150,6 +158,17 @@ namespace System.Threading
 
 			if (exceptions != null)
 				throw new AggregateException (exceptions);
+		}
+
+		/* This is the callback registered on linked tokens
+		 * so that they don't throw an ODE if the callback
+		 * is called concurrently with a Dispose
+		 */
+		void SafeLinkedCancel ()
+		{
+			try {
+				Cancel ();
+			} catch (ObjectDisposedException) {}
 		}
 
 #if NET_4_5
@@ -193,12 +212,14 @@ namespace System.Threading
 				throw new ArgumentException ("Empty tokens array");
 
 			CancellationTokenSource src = new CancellationTokenSource ();
-			Action action = src.Cancel;
+			Action action = src.SafeLinkedCancel;
+			var registrations = new List<CancellationTokenRegistration> (tokens.Length);
 
 			foreach (CancellationToken token in tokens) {
 				if (token.CanBeCanceled)
-					token.Register (action);
+					registrations.Add (token.Register (action));
 			}
+			src.linkedTokens = registrations.ToArray ();
 			
 			return src;
 		}
@@ -229,16 +250,29 @@ namespace System.Threading
 		void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
-				disposed = true;
 				Thread.MemoryBarrier ();
+				disposed = true;
 
-				callbacks = null;
+				if (!canceled) {
+					Thread.MemoryBarrier ();
+					UnregisterLinkedTokens ();
+					callbacks = null;
+				}
 #if NET_4_5
 				if (timer != null)
 					timer.Dispose ();
 #endif
 				handle.Dispose ();
 			}
+		}
+
+		void UnregisterLinkedTokens ()
+		{
+			var registrations = Interlocked.Exchange (ref linkedTokens, null);
+			if (registrations == null)
+				return;
+			foreach (var linked in registrations)
+				linked.Dispose ();
 		}
 		
 		internal CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext)

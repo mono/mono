@@ -31,7 +31,7 @@ namespace MonoTests.System.Linq
 {
 	public static class ParallelTestHelper
 	{
-		const int NumRun = 100;
+		const int NumRun = 17;
 		
 		public static void Repeat (Action action)
 		{

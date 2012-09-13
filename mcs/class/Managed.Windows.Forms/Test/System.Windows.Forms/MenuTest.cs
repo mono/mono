@@ -123,5 +123,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("Close", mainMenu1.MenuItems[0].MenuItems[1].Text, "ItemMerge#3");
 			Assert.AreEqual ("Exit",  mainMenu1.MenuItems[0].MenuItems[2].Text, "ItemMerge#4");
 		}
+
+		[Test] // Xamarin bug 3418
+		public void TestMenuItemsDispose ()
+		{
+			Menu menu = new MainMenu ();
+			menu.MenuItems.Add (new MenuItem ());
+			menu.Dispose ();
+			try {
+				MenuItem item = menu.MenuItems[0];
+				Assert.Fail ();
+			} catch (ArgumentOutOfRangeException) {
+			}
+		}
 	}
 }

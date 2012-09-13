@@ -51,13 +51,8 @@ using System.Text;
 using System.Xml;
 
 namespace System.Data.SqlClient {
-#if NET_2_0
 	[TypeConverterAttribute ("System.Data.SqlClient.SqlParameter+SqlParameterConverter, " + Consts.AssemblySystem_Data)]
 	public sealed class SqlParameter : DbParameter, IDbDataParameter, IDataParameter, ICloneable
-#else
-	[TypeConverterAttribute (typeof (SqlParameterConverter))]
-	public sealed class SqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -75,14 +70,10 @@ namespace System.Data.SqlClient {
 		int localeId;
 		Type sqlType;
 		bool typeChanged;
-#if NET_2_0
 		bool sourceColumnNullMapping;
 		string xmlSchemaCollectionDatabase = String.Empty;
 		string xmlSchemaCollectionOwningSchema = String.Empty;
 		string xmlSchemaCollectionName = String.Empty;
-#else
-		static Hashtable DbTypeMapping;
-#endif
 
 		static Hashtable type_mapping;
 
@@ -119,9 +110,7 @@ namespace System.Data.SqlClient {
 			DbTypeMapping.Add (SqlDbType.SmallInt, typeof (short));
 			DbTypeMapping.Add (SqlDbType.UniqueIdentifier, typeof (Guid));
 			DbTypeMapping.Add (SqlDbType.Variant, typeof (object));
-#if NET_2_0
 			DbTypeMapping.Add (SqlDbType.Xml, typeof (string));
-#endif
 
 			type_mapping = new Hashtable ();
 
@@ -131,11 +120,10 @@ namespace System.Data.SqlClient {
 			type_mapping.Add (typeof (bool), SqlDbType.Bit);
 			type_mapping.Add (typeof (SqlTypes.SqlBoolean), SqlDbType.Bit);
 
-#if NET_2_0
 			type_mapping.Add (typeof (char), SqlDbType.NVarChar);
 			type_mapping.Add (typeof (char []), SqlDbType.NVarChar);
 			type_mapping.Add (typeof (SqlTypes.SqlChars), SqlDbType.NVarChar);
-#endif
+
 			type_mapping.Add (typeof (string), SqlDbType.NVarChar);
 			type_mapping.Add (typeof (SqlTypes.SqlString), SqlDbType.NVarChar);
 
@@ -150,9 +138,8 @@ namespace System.Data.SqlClient {
 
 			type_mapping.Add (typeof (byte []), SqlDbType.VarBinary);
 			type_mapping.Add (typeof (SqlTypes.SqlBinary), SqlDbType.VarBinary);
-#if NET_2_0
+
 			type_mapping.Add (typeof (SqlTypes.SqlBytes), SqlDbType.VarBinary);
-#endif
 
 			type_mapping.Add (typeof (byte), SqlDbType.TinyInt);
 			type_mapping.Add (typeof (SqlTypes.SqlByte), SqlDbType.TinyInt);
@@ -171,10 +158,8 @@ namespace System.Data.SqlClient {
 
 			type_mapping.Add (typeof (SqlTypes.SqlMoney), SqlDbType.Money);
 
-#if NET_2_0
 			type_mapping.Add (typeof (XmlReader), SqlDbType.Xml);
 			type_mapping.Add (typeof (SqlTypes.SqlXml), SqlDbType.Xml);
-#endif
 
 			type_mapping.Add (typeof (object), SqlDbType.Variant);
 		}
@@ -228,7 +213,6 @@ namespace System.Data.SqlClient {
 			SourceVersion = sourceVersion;
 		}
 
-#if NET_2_0
 		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, bool sourceColumnNullMapping, Object value, string xmlSchemaCollectionDatabase, string xmlSchemaCollectionOwningSchema, string xmlSchemaCollectionName)
 			: this (parameterName, dbType, size, direction, false, precision, scale, sourceColumn, sourceVersion, value)
 		{
@@ -237,7 +221,6 @@ namespace System.Data.SqlClient {
 			XmlSchemaCollectionName = xmlSchemaCollectionName;
 			SourceColumnNullMapping = sourceColumnNullMapping;
 		}
-#endif
 
 		// This constructor is used internally to construct a
 		// SqlParameter.  The value array comes from sp_procedure_params_rowset.
@@ -306,18 +289,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 	
-#if ONLY_1_0 || ONLY_1_1
-		[Browsable (false)]
-		[DataSysDescription ("The parameter generic type.")]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[RefreshProperties (RefreshProperties.All)]
-		[DataCategory ("Data")]
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-	 	DbType DbType {
+		public override DbType DbType {
 			get { return dbType; }
 			set {
 				SetDbType (value);
@@ -326,18 +298,8 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("Input, output, or bidirectional parameter.")]
-		[DefaultValue (ParameterDirection.Input)]
-#endif
-#if NET_2_0
 		[RefreshProperties (RefreshProperties.All)]
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
+		public override
 		ParameterDirection Direction {
 			get { return direction; }
 			set { 
@@ -360,45 +322,19 @@ namespace System.Data.SqlClient {
 			get { return metaParameter; }
 		}
 
-#if ONLY_1_0 || ONLY_1_1
-		[Browsable (false)]
-		[DataSysDescription ("a design-time property used for strongly typed code-generation.")]
-		[DefaultValue (false)]
-		[DesignOnly (true)]
-		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-		bool IsNullable {
+		public override bool IsNullable {
 			get { return metaParameter.IsNullable; }
 			set { metaParameter.IsNullable = value; }
 		}
 
 		[Browsable (false)]
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("Offset in variable length data types.")]
-		[DefaultValue (0)]
-#endif
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public int Offset {
 			get { return offset; }
 			set { offset = value; }
 		}
 	
-#if ONLY_1_0 || ONLY_1_1
-		[DataSysDescription ("Name of the parameter, like '@p1'")]
-		[DefaultValue ("")]
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-		string ParameterName {
+		public override string ParameterName {
 			get { return metaParameter.ParameterName; }
 			set {
 				if (value == null)
@@ -408,49 +344,23 @@ namespace System.Data.SqlClient {
 		}
 
 		[DefaultValue (0)]
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
-#endif
 		public byte Precision {
 			get { return metaParameter.Precision; }
 			set { metaParameter.Precision = value; }
 		}
 
 		[DefaultValue (0)]
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
-#endif
 		public byte Scale {
 			get { return metaParameter.Scale; }
 			set { metaParameter.Scale = value; }
 		}
 
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("Size of variable length data types (string & arrays).")]
-		[DefaultValue (0)]
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-		int Size {
+		public override int Size {
 			get { return metaParameter.Size; }
 			set { metaParameter.Size = value; }
 		}
 
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
-		[DefaultValue ("")]
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-		string SourceColumn {
+		public override string SourceColumn {
 			get {
 				if (sourceColumn == null)
 					return string.Empty;
@@ -459,29 +369,13 @@ namespace System.Data.SqlClient {
 			set { sourceColumn = value; }
 		}
 
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
-		[DefaultValue (DataRowVersion.Current)]
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-		DataRowVersion SourceVersion {
+		public override DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
 		
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("The parameter native type.")]
-		[DefaultValue (SqlDbType.NVarChar)]
-#endif
 		[RefreshProperties (RefreshProperties.All)]
-#if NET_2_0
 		[DbProviderSpecificTypeProperty(true)]
-#endif
 		public SqlDbType SqlDbType {
 			get { return sqlDbType; }
 			set {
@@ -492,18 +386,8 @@ namespace System.Data.SqlClient {
 		}
 
 		[TypeConverterAttribute (typeof (StringConverter))]
-#if ONLY_1_0 || ONLY_1_1
-		[DataCategory ("Data")]
-		[DataSysDescription ("Value of the parameter.")]
-		[DefaultValue (null)]
-#else
 		[RefreshProperties (RefreshProperties.All)]
-#endif
-		public 
-#if NET_2_0
-		override
-#endif // NET_2_0
-		object Value {
+		public override object Value {
 			get {
 				if (sqlType != null)
 					return GetSqlValue (metaParameter.RawValue);
@@ -511,12 +395,7 @@ namespace System.Data.SqlClient {
 			}
 			set {
 				if (!isTypeSet) {
-#if NET_2_0
 					InferSqlType (value);
-#else
-					if (value != null && value != DBNull.Value)
-						InferSqlType (value);
-#endif
 				}
 
 				if (value is INullable) {
@@ -527,7 +406,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		public SqlCompareOptions CompareInfo{
 			get{ return compareInfo; }
@@ -574,7 +452,10 @@ namespace System.Data.SqlClient {
 				xmlSchemaCollectionOwningSchema = (value == null ? String.Empty : value);
 			}
 		}
-#endif
+
+		[BrowsableAttribute(false)]
+		public string UdtTypeName { get; set; }
+
 		#endregion // Properties
 
 		#region Methods
@@ -603,16 +484,12 @@ namespace System.Data.SqlClient {
 		}
 
 		// Returns System.Type corresponding to the underlying SqlDbType
-#if NET_2_0
-		internal override
-#endif
-		Type SystemType {
+		internal override Type SystemType {
 			get {
 				return (Type) DbTypeMapping [sqlDbType];
 			}
 		}
 
-#if NET_2_0
 		internal override object FrameworkDbType {
 			get {
 				return sqlDbType;
@@ -678,7 +555,6 @@ namespace System.Data.SqlClient {
 					throw new ArgumentException (exception);
 			}
 		}
-#endif
 
 		// When the DbType is set, we also set the SqlDbType, as well as the SQL Server
 		// string representation of the type name.  If the DbType is not convertible
@@ -764,14 +640,12 @@ namespace System.Data.SqlClient {
 				MetaParameter.TypeName = "datetime";
 				sqlDbType = SqlDbType.DateTime;
 				break;
-#if NET_2_0
 				// Handle Xml type as string
 			case DbType.Xml:
 				MetaParameter.TypeName = "xml";
 				sqlDbType = SqlDbType.Xml;
 				MetaParameter.IsVariableSizeType = true;
 				break;
-#endif
 			default:
 				string exception = String.Format ("No mapping exists from DbType {0} to a known SqlDbType.", type);
 				throw new ArgumentException (exception);
@@ -831,10 +705,8 @@ namespace System.Data.SqlClient {
 				return SqlDbType.VarChar;
 			case "sql_variant":
 				return SqlDbType.Variant;
-#if NET_2_0
 			case "xml":
 				return SqlDbType.Xml;
-#endif
 			default:
 				return SqlDbType.Variant;
 			}
@@ -951,13 +823,11 @@ namespace System.Data.SqlClient {
 				MetaParameter.TypeName = "sql_variant";
 				dbType = DbType.Object;
 				break;
-#if NET_2_0
 			case SqlDbType.Xml:
 				MetaParameter.TypeName = "xml";
 				dbType = DbType.Xml;
 				MetaParameter.IsVariableSizeType = true;
 				break;
-#endif
 			default:
 				string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
 				throw new ArgumentOutOfRangeException ("SqlDbType", exception);
@@ -1062,12 +932,10 @@ namespace System.Data.SqlClient {
 				if (value == DBNull.Value)
 					return SqlByte.Null;
 				return (SqlByte) ((byte) value);
-#if NET_2_0
 			case SqlDbType.Xml:
 				if (value == DBNull.Value)
 					return SqlXml.Null;
 				return (SqlXml) value;
-#endif
 			default:
 				throw new NotImplementedException ("Type '" + sqlDbType + "' not implemented.");
 			}
@@ -1109,7 +977,6 @@ namespace System.Data.SqlClient {
 				return ((SqlBinary) value).Value;
 			}
 			
-#if NET_2_0
 			if (typeof (SqlBytes) == type) {
 				return ((SqlBytes) value).Value;
 			}
@@ -1117,7 +984,7 @@ namespace System.Data.SqlClient {
 			if (typeof (SqlChars) == type) {
 				return ((SqlChars) value).Value;
 			}
-#endif
+
 			if (typeof (SqlBoolean) == type) {
 				return ((SqlBoolean) value).Value;
 			}
@@ -1164,7 +1031,6 @@ namespace System.Data.SqlClient {
 			if (valueType == frameworkType)
 				return value;
 
-#if NET_2_0
 			object sqlvalue = null;
 
 			try {
@@ -1176,9 +1042,6 @@ namespace System.Data.SqlClient {
 			}
 
 			return sqlvalue;
-#else
-			return ConvertToFrameworkType (value, frameworkType);
-#endif
 		}
 
 		object ConvertToFrameworkType (object value, Type frameworkType)
@@ -1193,7 +1056,6 @@ namespace System.Data.SqlClient {
 			return sqlvalue;
 		}
 
-#if NET_2_0
 		public override void ResetDbType ()
 		{
 			InferSqlType (Value);
@@ -1203,7 +1065,6 @@ namespace System.Data.SqlClient {
 		{
 			InferSqlType (Value);
 		}
-#endif // NET_2_0
 
 		#endregion // Methods
 	}

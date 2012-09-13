@@ -230,6 +230,7 @@ System.Linq.Parallel/ConcurrentLookup.cs
 System.Linq.Parallel/ConcurrentGrouping.cs
 System.Linq.Parallel/ReverseList.cs
 System.Linq.Parallel/ParallelExecuter.cs
+System.Linq.Parallel/TemporaryArea.cs
 System.Linq/ParallelQuery.cs
 System.Linq.Parallel.QueryNodes/QueryWhereNode.cs
 System.Linq.Parallel.QueryNodes/QueryCastNode.cs

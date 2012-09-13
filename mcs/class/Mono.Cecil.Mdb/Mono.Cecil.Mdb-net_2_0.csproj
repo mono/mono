@@ -16,8 +16,11 @@
     <AssemblyName>Mono.Cecil.Mdb</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -38,13 +42,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include=".\Mono.Cecil.Mdb\AssemblyInfo.cs" />
-   <Compile Include=".\Mono.Cecil.Mdb\MdbReader.cs" />
-   <Compile Include=".\Mono.Cecil.Mdb\MdbWriter.cs" />
-   <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
-   <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
-   <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
-   <Compile Include="..\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\AssemblyInfo.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbReader.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbWriter.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\SymbolWriterImpl.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -70,9 +74,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.dll</HintPath>
     </Reference>
-    <Reference Include="./../../class/lib/net_2_0/Mono.Cecil.dll">
+    <Reference Include="Mono.Cecil.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_2_0/Mono.Cecil.dll</HintPath>
+      <HintPath>Mono.Cecil.dll</HintPath>
     </Reference>
 
   </ItemGroup>

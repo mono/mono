@@ -57,8 +57,10 @@ EXTRA_DISTFILES = \
 	Test/System.Data/schemas/ChangeLog	\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
 	Mono.Data.SqlExpressions/Parser.jay	\
-	app_test_2.0.config			\
-	Test/System.Data/binserialize/*.bin
+	app_test_net_2_0.config			\
+	app_test_net_4_5.config			\
+	Test/System.Data/binserialize/*.bin	\
+	SqliteTest.db
 
 BUILT_SOURCES = Mono.Data.SqlExpressions/Parser.cs
 
@@ -68,9 +70,7 @@ Mono.Data.SqlExpressions/Parser.cs: Mono.Data.SqlExpressions/Parser.jay $(topdir
 
 include ../../build/library.make
 
-ifeq (net_2_0, $(PROFILE))
 $(test_lib): $(test_lib).config
 
-$(test_lib).config: app_test_2.0.config
+$(test_lib).config: app_test_$(PROFILE).config
 	cp $< $@
-endif

@@ -43,6 +43,7 @@ namespace MonoTests.System.Net
 	public class HttpListenerRequestTest
 	{
 		[Test]
+		[Category ("NotWorking")] // Bug #5742 
 		public void HasEntityBody ()
 		{
 			HttpListenerContext ctx;

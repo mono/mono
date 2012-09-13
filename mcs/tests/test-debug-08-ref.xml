@@ -6,7 +6,7 @@
   <methods>
     <method token="0x6000001">
       <sequencepoints>
-        <entry il="0x0" row="7" file_ref="1" hidden="false" />
+        <entry il="0x0" row="7" col="3" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -18,14 +18,14 @@
     </method>
     <method token="0x6000003">
       <sequencepoints>
-        <entry il="0x0" row="16" file_ref="1" hidden="false" />
+        <entry il="0x0" row="16" col="3" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
     </method>
     <method token="0x6000004">
       <sequencepoints>
-        <entry il="0x0" row="23" file_ref="1" hidden="false" />
+        <entry il="0x0" row="23" col="5" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes>

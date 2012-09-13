@@ -345,9 +345,9 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		protected override DbParameter GetParameter (string name)
+		protected override DbParameter GetParameter (string parameterName)
 		{
-			return this [name];
+			return this [parameterName];
 		}
 
 		protected override DbParameter GetParameter (int index)
@@ -355,9 +355,9 @@ namespace System.Data.Odbc
 			return this [index];
 		}
 
-		protected override void SetParameter (string name, DbParameter value)
+		protected override void SetParameter (string parameterName, DbParameter value)
 		{
-			this [name] = (OdbcParameter) value;
+			this [parameterName] = (OdbcParameter) value;
 		}
 
 		protected override void SetParameter (int index, DbParameter value)

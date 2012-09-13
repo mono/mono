@@ -91,6 +91,12 @@ namespace IKVM.Reflection
 				return property.PropertySignature.GetParameterCustomModifiers(parameter);
 			}
 
+			public override bool __TryGetFieldMarshal(out FieldMarshal fieldMarshal)
+			{
+				fieldMarshal = new FieldMarshal();
+				return false;
+			}
+
 			public override MemberInfo Member
 			{
 				get { return property; }
@@ -188,6 +194,12 @@ namespace IKVM.Reflection
 		internal sealed override MemberInfo SetReflectedType(Type type)
 		{
 			return new PropertyInfoWithReflectedType(type, this);
+		}
+
+		internal sealed override List<CustomAttributeData> GetPseudoCustomAttributes(Type attributeType)
+		{
+			// properties don't have pseudo custom attributes
+			return null;
 		}
 	}
 
@@ -305,11 +317,6 @@ namespace IKVM.Reflection
 			return reflectedType.GetHashCode() ^ property.GetHashCode();
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return property.GetCustomAttributesData(attributeType);
-		}
-
 		public override int MetadataToken
 		{
 			get { return property.MetadataToken; }
@@ -323,6 +330,16 @@ namespace IKVM.Reflection
 		public override string Name
 		{
 			get { return property.Name; }
+		}
+
+		internal override bool IsBaked
+		{
+			get { return property.IsBaked; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return property.GetCurrentToken();
 		}
 	}
 }

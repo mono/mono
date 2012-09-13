@@ -33,8 +33,6 @@ namespace System.Security.AccessControl
 {
 	public sealed class RegistryAccessRule : AccessRule
 	{
-		RegistryRights rights;
-		
 		public RegistryAccessRule (IdentityReference identity,
 					   RegistryRights registryRights,
 					   AccessControlType type)
@@ -54,11 +52,20 @@ namespace System.Security.AccessControl
 					   InheritanceFlags inheritanceFlags,
 					   PropagationFlags propagationFlags,
 					   AccessControlType type)
-			: base (identity, (int)registryRights, false, inheritanceFlags, propagationFlags, type)
+			: this (identity, registryRights, false, inheritanceFlags, propagationFlags, type)
 		{
-			this.rights = registryRights;
 		}
 		
+		internal RegistryAccessRule (IdentityReference identity,
+					     RegistryRights registryRights,
+					     bool isInherited,
+					     InheritanceFlags inheritanceFlags,
+					     PropagationFlags propagationFlags,
+					     AccessControlType type)
+			: base (identity, (int)registryRights, isInherited, inheritanceFlags, propagationFlags, type)
+		{
+		}
+
 		public RegistryAccessRule (string identity,
 					   RegistryRights registryRights,
 					   InheritanceFlags inheritanceFlags,
@@ -67,9 +74,9 @@ namespace System.Security.AccessControl
 			: this (new NTAccount (identity), registryRights, inheritanceFlags, propagationFlags, type)
 		{
 		}
-		
+				
 		public RegistryRights RegistryRights {
-			get { return rights; }
+			get { return (RegistryRights)AccessMask; }
 		}
 	}
 }

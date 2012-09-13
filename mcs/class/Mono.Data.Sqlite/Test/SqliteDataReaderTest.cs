@@ -29,8 +29,10 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Text;
 using Mono.Data.Sqlite;
 
 using NUnit.Framework;
@@ -176,30 +178,123 @@ namespace MonoTests.Mono.Data.Sqlite
 			}
 		}
 
-		[Test]
-		public void TestDateTimeType ()
+		void AddParameter (System.Data.Common.DbCommand cm, string name, object value)
 		{
+			var param = cm.CreateParameter ();
+			param.ParameterName = ":" + name;
+			param.Value = value;
+			cm.Parameters.Add (param);
+		}
+
+		class D
+		{
+			public string Sql;
+			public Type Expected;
+			public object Value;
+		}
+
+		[Test]
+		public void TestDataTypes ()
+		{
+			SqliteParameter param;
+			
+			var data = new List<D> ()
+			{
+				new D () { Sql = "DATETIME",            Expected = typeof (DateTime),   Value = DateTime.Now              },
+				new D () { Sql = "GUIDBLOB NOT NULL",   Expected = typeof (Guid),       Value = new byte [] { 3, 14, 15 } },
+				new D () { Sql = "BOOLEAN",             Expected = typeof (bool),       Value = true                      },
+				new D () { Sql = "INT32",               Expected = typeof (long),       Value = 1                         },
+				new D () { Sql = "INT32 NOT NULL",      Expected = typeof (long),       Value = 2                         },
+				new D () { Sql = "UINT1",               Expected = typeof (long),       Value = 3                         },
+				
+				// these map to the INTEGER affinity
+				new D () { Sql = "INT",                 Expected = typeof (int),       Value = 4  },
+				new D () { Sql = "INTEGER",             Expected = typeof (long),      Value = 5 },
+				new D () { Sql = "TINYINT",             Expected = typeof (byte),      Value = 6 },
+				new D () { Sql = "SMALLINT",            Expected = typeof (short),     Value = 7 },
+				new D () { Sql = "MEDIUMINT",           Expected = typeof (long),      Value = 8 },
+				new D () { Sql = "BIGINT",              Expected = typeof (long),      Value = 9 },
+				new D () { Sql = "UNSIGNED BIG INT",    Expected = typeof (long),      Value = 0 },
+				new D () { Sql = "INT2",                Expected = typeof (long),      Value = 1 },
+				new D () { Sql = "INT4",                Expected = typeof (long),      Value = 2 },
+				
+				// these map to the TEXT affinity
+				new D () { Sql = "CHARACTER(20)",          Expected = typeof (string),       Value = "a" },
+				new D () { Sql = "VARCHAR(255)",           Expected = typeof (string),       Value = "b" },
+				new D () { Sql = "VARYING CHARACTER(255)", Expected = typeof (string),       Value = "c" },
+				new D () { Sql = "NCHAR(55)",              Expected = typeof (string),       Value = "d" },
+				new D () { Sql = "NATIVE CHARACTER(70)",   Expected = typeof (string),       Value = "e" },
+				new D () { Sql = "NVARCHAR(100)",          Expected = typeof (string),       Value = "f" },
+				new D () { Sql = "TEXT",                   Expected = typeof (string),       Value = "g" },
+				new D () { Sql = "CLOB",                   Expected = typeof (string),       Value = "h" },
+				
+				// these map to the NONE affinity
+				new D () { Sql = "BLOB",           Expected = typeof (byte[]),       Value = new byte [] { 3, 14, 15 } },
+				new D () { Sql = "",               Expected = typeof (object),       Value = null                      },
+				
+				// these map to the REAL affinity
+				new D () { Sql = "REAL",               Expected = typeof (float),        Value = 3.2 },
+				new D () { Sql = "DOUBLE",             Expected = typeof (double),       Value = 4.2 },
+				new D () { Sql = "DOUBLE PRECISION",   Expected = typeof (double),       Value = 5.2 },
+				new D () { Sql = "FLOAT",              Expected = typeof (double),       Value = 6.2 },
+				
+				// these map to the NUMERIC affinity
+				new D () { Sql = "NUMERIC",            Expected = typeof (decimal),        Value = 3.2          },
+				new D () { Sql = "DECIMAL(10,5)",      Expected = typeof (decimal),        Value = null         },
+				new D () { Sql = "BOOLEAN",            Expected = typeof (bool),           Value = true         },
+				new D () { Sql = "DATE",               Expected = typeof (DateTime),       Value = DateTime.Now },
+				new D () { Sql = "DATETIME",           Expected = typeof (DateTime),       Value = DateTime.Now },
+				
+				
+			};
+			
 			_conn.ConnectionString = _connectionString;
 			using (_conn) {
 				_conn.Open();
 				
 				using (var cm = _conn.CreateCommand ()) {
-					cm.CommandText = "DROP TABLE TEST; CREATE TABLE TEST (F2 DATETIME); INSERT INTO TEST (F2) VALUES (:F2)";
-
-					var dp2 = cm.CreateParameter ();
-					dp2.ParameterName = ":F2";
-					dp2.Value = DateTime.Now;
-					cm.Parameters.Add (dp2);
+					var sql = new StringBuilder ();
+					var args = new StringBuilder ();
+					var vals = new StringBuilder ();
+					sql.AppendLine ("DROP TABLE TEST;");
+					sql.Append ("CREATE TABLE TEST (");
 					
+					bool comma = false;
+					for (int i = 0; i < data.Count; i++) {
+						if (comma) {
+							sql.Append (", ");
+							args.Append (", ");
+							vals.Append (", ");
+						}
+						comma = true;
+						sql.AppendFormat ("F{0} {1}", i, data [i].Sql);
+						args.AppendFormat ("F{0}", i);
+						vals.AppendFormat (":F{0}", i);
+						AddParameter (cm, "F" + i.ToString (), data [i].Value);
+					}
+					sql.AppendLine (");");
+					sql.Append ("INSERT INTO TEST (");
+					sql.Append (args.ToString ());
+					sql.Append (") VALUES (");
+					sql.Append (vals.ToString ());
+					sql.Append (");");
+		
+					cm.CommandText = sql.ToString ();
+
 					cm.ExecuteNonQuery ();
 				}
 				
 				using (var cm = _conn.CreateCommand ()) {
-					cm.CommandText = "SELECT F2 FROM TEST";
+					cm.CommandText = "SELECT * FROM TEST";
 					using (var dr = cm.ExecuteReader ()) {
 						dr.Read ();
 						
-						Assert.AreEqual ("System.DateTime", dr.GetFieldType (dr.GetOrdinal ("F2")).ToString ());
+						for (int i = 0; i < data.Count; i++) {
+							string tn = data [i].Sql.Replace (" NOT NULL", "");
+							int index = dr.GetOrdinal ("F" + i.ToString ());
+							Assert.AreEqual (tn, dr.GetDataTypeName (index), "F" + i.ToString () + " (" + data [i].Sql + ")");
+							Assert.AreEqual (data [i].Expected.FullName, dr.GetFieldType (index).ToString (), "F" + i.ToString () + " (" + data [i].Sql + ")");
+						}
 					}
 				}
 			}

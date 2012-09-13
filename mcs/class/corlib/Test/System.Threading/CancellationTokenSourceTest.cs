@@ -33,6 +33,7 @@ using System;
 using System.Threading;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using MonoTests.System.Threading.Tasks;
 
 namespace MonoTests.System.Threading
 {
@@ -129,6 +130,25 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (12, called, "#2");
 		}
 
+
+		[Test]
+		public void CancelWithDispose ()
+		{
+			CancellationTokenSource cts = new CancellationTokenSource ();
+			CancellationToken c = cts.Token;
+			c.Register (() => {
+				cts.Dispose ();
+			});
+
+			int called = 0;
+			c.Register (() => {
+				called++;
+			});
+
+			cts.Cancel ();
+			Assert.AreEqual (1, called, "#1");
+		}
+
 		[Test]
 		public void Cancel_SingleException ()
 		{
@@ -170,6 +190,31 @@ namespace MonoTests.System.Threading
 			}
 
 			cts.Cancel ();
+		}
+
+		[Test]
+		public void Cancel_MultipleException_Recursive ()
+		{
+			CancellationTokenSource cts = new CancellationTokenSource ();
+			CancellationToken c = cts.Token;
+			c.Register (() => {
+				cts.Cancel ();
+			});
+
+			c.Register (() => {
+				throw new ApplicationException ();
+			});
+
+			c.Register (() => {
+				throw new NotSupportedException ();
+			});
+
+			try {
+				cts.Cancel (false);
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.AreEqual (2, e.InnerExceptions.Count, "#2");
+			}
 		}
 
 		[Test]
@@ -350,6 +395,50 @@ namespace MonoTests.System.Threading
 			source.Dispose ();
 			req.Dispose ();
 			Assert.IsFalse (ran);
+		}
+
+		[Test]
+		public void CancelLinkedTokenSource ()
+		{
+			var cts = new CancellationTokenSource ();
+			bool canceled = false;
+			cts.Token.Register (() => canceled = true);
+
+			using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cts.Token))
+				;
+
+			Assert.IsFalse (canceled, "#1");
+			Assert.IsFalse (cts.IsCancellationRequested, "#2");
+
+			cts.Cancel ();
+
+			Assert.IsTrue (canceled, "#3");
+		}
+
+		[Test]
+		public void ConcurrentCancelLinkedTokenSourceWhileDisposing ()
+		{
+			ParallelTestHelper.Repeat (delegate {
+				var src = new CancellationTokenSource ();
+				var linked = CancellationTokenSource.CreateLinkedTokenSource (src.Token);
+				var cntd = new CountdownEvent (2);
+
+				var t1 = new Thread (() => {
+					if (!cntd.Signal ())
+						cntd.Wait (200);
+					src.Cancel ();
+				});
+				var t2 = new Thread (() => {
+					if (!cntd.Signal ())
+						cntd.Wait (200);
+					linked.Dispose ();
+				});
+
+				t1.Start ();
+				t2.Start ();
+				t1.Join (500);
+				t2.Join (500);
+			}, 500);
 		}
 	}
 }

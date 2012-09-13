@@ -32,7 +32,10 @@ using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
-	abstract class QueryVisitor<V, E> : ISymbolicExpressionVisitor<E, E, V, Dummy, bool> where V : IEquatable<V> where E : IEquatable<E> {
+	abstract class QueryVisitor<V, E> : ISymbolicExpressionVisitor<E, E, V, Dummy, bool> 
+        where V : IEquatable<V> 
+        where E : IEquatable<E> 
+    {
 		#region ISymbolicExpressionVisitor<E,E,V,Dummy,bool> Members
 		public virtual bool Binary (E pc, BinaryOperator op, V dest, E operand1, E operand2, Dummy data)
 		{

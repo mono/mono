@@ -108,7 +108,7 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		public void CopyToRows (DataRow [] array, int ArrayIndex)
+		public void CopyToRows (DataRow [] array, int arrayIndex)
 		{
 			throw new NotImplementedException ();
 		}

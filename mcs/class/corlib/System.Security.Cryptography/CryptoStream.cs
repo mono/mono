@@ -79,11 +79,6 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		~CryptoStream () 
-		{
-			Dispose (false);
-		}
-		
 		public override bool CanRead {
 			get { return (_mode == CryptoStreamMode.Read); }
 		}

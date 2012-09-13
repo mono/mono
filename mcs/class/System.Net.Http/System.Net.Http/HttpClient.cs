@@ -248,6 +248,11 @@ namespace System.Net.Http
 					throw new InvalidOperationException ("The request URI must either be an absolute URI or BaseAddress must be set");
 
 				request.RequestUri = base_address;
+			} else if (!request.RequestUri.IsAbsoluteUri) {
+				if (base_address == null)
+					throw new InvalidOperationException ("The request URI must either be an absolute URI or BaseAddress must be set");
+
+				request.RequestUri = new Uri (base_address, request.RequestUri);
 			}
 
 			if (headers != null) {
@@ -291,38 +296,48 @@ namespace System.Net.Http
 
 		public async Task<byte[]> GetByteArrayAsync (string requestUri)
 		{
-			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
-			return await resp.Content.ReadAsByteArrayAsync ().ConfigureAwait (false);
+			using (var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false)) {
+				resp.EnsureSuccessStatusCode ();
+				return await resp.Content.ReadAsByteArrayAsync ().ConfigureAwait (false);
+			}
 		}
 
 		public async Task<byte[]> GetByteArrayAsync (Uri requestUri)
 		{
-			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
-			return await resp.Content.ReadAsByteArrayAsync ().ConfigureAwait (false);
+			using (var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false)) {
+				resp.EnsureSuccessStatusCode ();
+				return await resp.Content.ReadAsByteArrayAsync ().ConfigureAwait (false);
+			}
 		}
 
 		public async Task<Stream> GetStreamAsync (string requestUri)
 		{
 			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			resp.EnsureSuccessStatusCode ();
 			return await resp.Content.ReadAsStreamAsync ().ConfigureAwait (false);
 		}
 
 		public async Task<Stream> GetStreamAsync (Uri requestUri)
 		{
 			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
+			resp.EnsureSuccessStatusCode ();
 			return await resp.Content.ReadAsStreamAsync ().ConfigureAwait (false);
 		}
 
 		public async Task<string> GetStringAsync (string requestUri)
 		{
-			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
-			return await resp.Content.ReadAsStringAsync ().ConfigureAwait (false);
+			using (var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false)) {
+				resp.EnsureSuccessStatusCode ();
+				return await resp.Content.ReadAsStringAsync ().ConfigureAwait (false);
+			}
 		}
 
 		public async Task<string> GetStringAsync (Uri requestUri)
 		{
-			var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false);
-			return await resp.Content.ReadAsStringAsync ().ConfigureAwait (false);
+			using (var resp = await GetAsync (requestUri, HttpCompletionOption.ResponseContentRead).ConfigureAwait (false)) {
+				resp.EnsureSuccessStatusCode ();
+				return await resp.Content.ReadAsStringAsync ().ConfigureAwait (false);
+			}
 		}
 	}
 }

@@ -526,6 +526,13 @@ System.String except for the System.String:Concat method.
 	mono --trace=T:System.String,-M:System.String:Concat
 
 .fi
+You can trace managed to unmanaged transitions using
+the wrapper qualifier:
+.nf
+
+	mono --trace=wrapper app.exe
+
+.fi
 Finally, namespaces can be specified using the N: prefix:
 .nf
 
@@ -1089,6 +1096,29 @@ and leave them untouched. Precise marking reduces floating garbage
 and can speed up nursery collection and allocation rate, it has
 the downside of requiring a significant extra memory per compiled
 method. The right option, unfortunately, requires experimentation.
+.TP
+\fBsave-target-ratio=\fIratio\fR
+Specifies the target save ratio for the major collector. The collector
+lets a given amount of memory to be promoted from the nursery due to
+minor collections before it triggers a major collection. This amount
+is based on how much memory it expects to free. It is represented as
+a ratio of the size of the heap after a major collection.
+Valid values are between 0.1 and 2.0. The default is 0.5.
+Smaller values will keep the major heap size smaller but will trigger
+more major collections. Likewise, bigger values will use more memory
+and result in less frequent major collections.
+This option is EXPERIMENTAL, so it might disappear in later versions of mono.
+.TP
+\fBdefault-allowance-ratio=\fIratio\fR
+Specifies the default allocation allowance when the calculated size
+is too small. The allocation allowance is how much memory the collector
+let be promoted before triggered a major collection.
+It is a ratio of the nursery size.
+Valid values are between 1.0 and 10.0. The default is 4.0.
+Smaller values lead to smaller heaps and more frequent major collections.
+Likewise, bigger values will allow the heap to grow faster but use
+more memory when it reaches a stable size.
+This option is EXPERIMENTAL, so it might disappear in later versions of mono.
 .TP
 \fBminor=\fIminor-collector\fR
 Specifies which minor collector to use. Options are 'simple' which

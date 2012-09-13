@@ -16,8 +16,11 @@
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -52,6 +56,7 @@
    <Compile Include="Mono.Debugger.Soft\CustomAttributeDataMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\ThreadStartEvent.cs" />
    <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
+   <Compile Include="Mono.Debugger.Soft\ILExceptionHandler.cs" />
    <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\PrimitiveValue.cs" />
    <Compile Include="Mono.Debugger.Soft\PointerValue.cs" />

@@ -39,6 +39,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System {
 
@@ -55,7 +56,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 101;
+		private const int mono_corlib_version = 105;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -168,6 +169,14 @@ namespace System {
 				Directory.SetCurrentDirectory (value);
 			}
 		}
+		
+#if NET_4_5
+		public static int CurrentManagedThreadId {
+			get {
+				return Thread.CurrentThread.ManagedThreadId;
+			}
+		}
+#endif
 
 		/// <summary>
 		/// Gets or sets the exit code of this process
@@ -357,6 +366,7 @@ namespace System {
 				// If value not found, add %FOO to stream,
 				//  and use the closing % for the next iteration.
 				// If value found, expand it in place of %FOO%
+				int realOldOff2 = off2;
 				if (value == null) {
 					result.Append ('%');
 					result.Append (var);
@@ -380,7 +390,7 @@ namespace System {
 				// If value not found in current iteration, but a % was found for next iteration,
 				//  use text from current closing % to the next %.
 				else
-					textLen = off1 - oldOff2;
+					textLen = off1 - realOldOff2;
 				if(off1 >= oldOff2 || off1 == -1)
 					result.Append (name, oldOff2+1, textLen);
 			} while (off2 > -1 && off2 < len);

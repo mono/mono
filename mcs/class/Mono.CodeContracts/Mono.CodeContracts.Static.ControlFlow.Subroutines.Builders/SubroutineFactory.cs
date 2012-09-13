@@ -65,7 +65,8 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders {
 			Subroutine sub = BuildNewSubroutine (key);
 			this.cache.Add (key, sub);
 			if (sub != null)
-				sub.Initialize ();
+			        sub.Initialize ();
+
 			return sub;
 		}
 

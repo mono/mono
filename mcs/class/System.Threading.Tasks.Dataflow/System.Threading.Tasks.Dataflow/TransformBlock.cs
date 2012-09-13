@@ -1,6 +1,7 @@
 // TransformBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,81 +20,103 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
+namespace System.Threading.Tasks.Dataflow {
 	public sealed class TransformBlock<TInput, TOutput> :
-		IPropagatorBlock<TInput, TOutput>, ITargetBlock<TInput>, IDataflowBlock, ISourceBlock<TOutput>, IReceivableSourceBlock<TOutput>
-	{
-		static readonly ExecutionDataflowBlockOptions defaultOptions = new ExecutionDataflowBlockOptions ();
+		IPropagatorBlock<TInput, TOutput>, IReceivableSourceBlock<TOutput> {
+		readonly ExecutionDataflowBlockOptions dataflowBlockOptions;
+		readonly CompletionHelper compHelper;
+		readonly BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
+		readonly MessageBox<TInput> messageBox;
+		readonly OutgoingQueue<TOutput> outgoing;
+		readonly Func<TInput, TOutput> transform;
+		readonly Func<TInput, Task<TOutput>> asyncTransform;
 
-		ExecutionDataflowBlockOptions dataflowBlockOptions;
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
-		BlockingCollection<TInput> messageQueue = new BlockingCollection<TInput> ();
-		MessageBox<TInput> messageBox;
-		MessageVault<TOutput> vault;
-		MessageOutgoingQueue<TOutput> outgoing;
-		TargetBuffer<TOutput> targets = new TargetBuffer<TOutput> ();
-		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
-		readonly Func<TInput, TOutput> transformer;
-
-		public TransformBlock (Func<TInput, TOutput> transformer) : this (transformer, defaultOptions)
-		{
-
-		}
-
-		public TransformBlock (Func<TInput, TOutput> transformer, ExecutionDataflowBlockOptions dataflowBlockOptions)
+		TransformBlock (ExecutionDataflowBlockOptions dataflowBlockOptions)
 		{
 			if (dataflowBlockOptions == null)
 				throw new ArgumentNullException ("dataflowBlockOptions");
-
-			this.transformer = transformer;
+		
 			this.dataflowBlockOptions = dataflowBlockOptions;
-			this.messageBox = new ExecutingMessageBox<TInput> (messageQueue,
-			                                                   compHelper,
-			                                                   () => outgoing.IsCompleted,
-			                                                   TransformProcess,
-			                                                   dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<TOutput> (compHelper, () => messageQueue.IsCompleted);
-			this.vault = new MessageVault<TOutput> ();
+			this.compHelper = new CompletionHelper (dataflowBlockOptions);
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           TInput messageValue,
-		                                           ISourceBlock<TInput> source,
-		                                           bool consumeToAccept)
+		public TransformBlock (Func<TInput, TOutput> transform)
+			: this (transform, ExecutionDataflowBlockOptions.Default)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<TOutput> target, bool unlinkAfterOne)
+		public TransformBlock (Func<TInput, TOutput> transform,
+		                       ExecutionDataflowBlockOptions dataflowBlockOptions)
+			: this (dataflowBlockOptions)
 		{
-			var result = targets.AddTarget (target, unlinkAfterOne);
-			outgoing.ProcessForTarget (target, this, false, ref headers);
-			return result;
+			if (transform == null)
+				throw new ArgumentNullException("transform");
+
+			this.transform = transform;
+			this.messageBox = new ExecutingMessageBox<TInput> (
+				this, messageQueue, compHelper,
+				() => outgoing.IsCompleted, TransformProcess, () => outgoing.Complete (),
+				dataflowBlockOptions);
+			this.outgoing = new OutgoingQueue<TOutput> (this, compHelper,
+				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
+				dataflowBlockOptions);
 		}
 
-		public TOutput ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed)
+		public TransformBlock(Func<TInput, Task<TOutput>> transform)
+			: this(transform, ExecutionDataflowBlockOptions.Default)
 		{
-			return vault.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		public TransformBlock (Func<TInput, Task<TOutput>> transform,
+		                       ExecutionDataflowBlockOptions dataflowBlockOptions)
+			: this (dataflowBlockOptions)
 		{
-			vault.ReleaseReservation (messageHeader, target);
+			if (transform == null)
+				throw new ArgumentNullException("transform");
+
+			this.asyncTransform = transform;
+			this.messageBox = new AsyncExecutingMessageBox<TInput, Task<TOutput>> (
+				this, messageQueue, compHelper, () => outgoing.IsCompleted,
+				AsyncTransformProcess, AsyncProcessFinishedTask, () => outgoing.Complete (),
+				dataflowBlockOptions);
+			this.outgoing = new OutgoingQueue<TOutput> (this, compHelper,
+				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
+				dataflowBlockOptions);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		DataflowMessageStatus ITargetBlock<TInput>.OfferMessage (
+			DataflowMessageHeader messageHeader, TInput messageValue,
+			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
-			return vault.ReserveMessage (messageHeader, target);
+			return messageBox.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
+		}
+
+		public IDisposable LinkTo (ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions)
+		{
+			return outgoing.AddTarget (target, linkOptions);
+		}
+
+		TOutput ISourceBlock<TOutput>.ConsumeMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target,
+			out bool messageConsumed)
+		{
+			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
+		}
+
+		void ISourceBlock<TOutput>.ReleaseReservation (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		{
+			outgoing.ReleaseReservation (messageHeader, target);
+		}
+
+		bool ISourceBlock<TOutput>.ReserveMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		{
+			return outgoing.ReserveMessage (messageHeader, target);
 		}
 
 		public bool TryReceive (Predicate<TOutput> filter, out TOutput item)
@@ -106,22 +129,48 @@ namespace System.Threading.Tasks.Dataflow
 			return outgoing.TryReceiveAll (out items);
 		}
 
-		void TransformProcess ()
+		/// <summary>
+		/// Transforms one item from the queue if the transform delegate is synchronous.
+		/// </summary>
+		/// <returns>Returns whether an item was processed. Returns <c>false</c> if the queue is empty.</returns>
+		bool TransformProcess ()
 		{
-			ITargetBlock<TOutput> target;
 			TInput input;
 
-			while (messageQueue.TryTake (out input)) {
-				TOutput output = transformer (input);
+			var dequeued = messageQueue.TryTake (out input);
+			if (dequeued)
+				outgoing.AddData (transform (input));
 
-				if ((target = targets.Current) != null)
-					target.OfferMessage (headers.Increment (), output, this, false);
-				else
-					outgoing.AddData (output);
-			}
+			return dequeued;
+		}
 
-			if (!outgoing.IsEmpty && (target = targets.Current) != null)
-				outgoing.ProcessForTarget (target, this, false, ref headers);
+		/// <summary>
+		/// Processes one item from the queue if the transform delegate is asynchronous.
+		/// </summary>
+		/// <param name="task">The Task that was returned by the synchronous part of the delegate.</param>
+		/// <returns>Returns whether an item was processed. Returns <c>false</c> if the queue was empty.</returns>
+		bool AsyncTransformProcess (out Task<TOutput> task)
+		{
+			TInput input;
+
+			var dequeued = messageQueue.TryTake (out input);
+			if (dequeued)
+				task = asyncTransform (input);
+			else
+				task = null;
+
+			return dequeued;
+		}
+
+		/// <summary>
+		/// Process result of finished asynchronous transformation.
+		/// </summary>
+		void AsyncProcessFinishedTask (Task<TOutput> task)
+		{
+			if (task == null || task.IsCanceled)
+				messageBox.DecreaseCount ();
+			else
+				outgoing.AddData (task.Result);
 		}
 
 		public void Complete ()
@@ -129,28 +178,26 @@ namespace System.Threading.Tasks.Dataflow
 			messageBox.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		void IDataflowBlock.Fault (Exception exception)
 		{
-			compHelper.Fault (ex);
+			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {
-			get {
-				return compHelper.Completion;
-			}
+			get { return compHelper.Completion; }
 		}
 
 		public int OutputCount {
-			get {
-				return outgoing.Count;
-			}
+			get { return outgoing.Count; }
 		}
 
 		public int InputCount {
-			get {
-				return messageQueue.Count;
-			}
+			get { return messageQueue.Count; }
+		}
+
+		public override string ToString ()
+		{
+			return NameHelper.GetName (this, dataflowBlockOptions);
 		}
 	}
 }
-

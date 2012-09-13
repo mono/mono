@@ -418,7 +418,7 @@ namespace Mono.CSharp {
 			TypeSpec caller_type;
 
 			foreach (var attr in attributes.Attrs) {
-				var atype = attr.ResolveType ();
+				var atype = attr.ResolveTypeForComparison ();
 				if (atype == null)
 					continue;
 

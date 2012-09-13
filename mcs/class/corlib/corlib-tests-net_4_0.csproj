@@ -16,8 +16,11 @@
     <AssemblyName>corlib_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>612,618,1699,168,219,618,672</NoWarn>
@@ -28,6 +31,7 @@
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>612,618,1699,168,219,618,672</NoWarn>
     <Optimize>true</Optimize>
@@ -484,6 +488,7 @@
    <Compile Include="Test\System.Threading\MutexCas.cs" />
    <Compile Include="Test\System.Threading\ThreadCas.cs" />
    <Compile Include="Test\System.Threading\WaitHandleCas.cs" />
+   <Compile Include="Test\System.Threading.Tasks\ConcurrentExclusiveSchedulerPairTest.cs" />
    <Compile Include="Test\System.Threading.Tasks\TaskTest.cs" />
    <Compile Include="Test\System.Threading.Tasks\Task_T_Test.cs" />
    <Compile Include="Test\System.Threading.Tasks\TaskSchedulerTest.cs" />

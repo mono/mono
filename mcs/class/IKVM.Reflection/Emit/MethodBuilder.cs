@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2011 Jeroen Frijters
+  Copyright (C) 2008-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -325,13 +325,23 @@ namespace IKVM.Reflection.Emit
 			return pb;
 		}
 
+		private void CheckSig()
+		{
+			if (methodSignature != null)
+			{
+				throw new InvalidOperationException("The method signature can not be modified after it has been used.");
+			}
+		}
+
 		public void SetParameters(params Type[] parameterTypes)
 		{
+			CheckSig();
 			this.parameterTypes = Util.Copy(parameterTypes);
 		}
 
 		public void SetReturnType(Type returnType)
 		{
+			CheckSig();
 			this.returnType = returnType ?? this.Module.universe.System_Void;
 		}
 
@@ -348,6 +358,7 @@ namespace IKVM.Reflection.Emit
 
 		private void SetSignature(Type returnType, Type[] parameterTypes, PackedCustomModifiers customModifiers)
 		{
+			CheckSig();
 			this.returnType = returnType ?? this.Module.universe.System_Void;
 			this.parameterTypes = Util.Copy(parameterTypes);
 			this.customModifiers = customModifiers;
@@ -355,6 +366,7 @@ namespace IKVM.Reflection.Emit
 
 		public GenericTypeParameterBuilder[] DefineGenericParameters(params string[] names)
 		{
+			CheckSig();
 			gtpb = new GenericTypeParameterBuilder[names.Length];
 			for (int i = 0; i < names.Length; i++)
 			{
@@ -415,6 +427,7 @@ namespace IKVM.Reflection.Emit
 		public void __SetCallingConvention(CallingConventions callingConvention)
 		{
 			this.callingConvention = callingConvention;
+			this.methodSignature = null;
 		}
 
 		public override MethodImplAttributes GetMethodImplementationFlags()
@@ -500,6 +513,12 @@ namespace IKVM.Reflection.Emit
 			public override CustomModifiers __GetCustomModifiers()
 			{
 				return method.customModifiers.GetParameterCustomModifiers(parameter);
+			}
+
+			public override bool __TryGetFieldMarshal(out FieldMarshal fieldMarshal)
+			{
+				fieldMarshal = new FieldMarshal();
+				return false;
 			}
 
 			public override MemberInfo Member
@@ -679,23 +698,29 @@ namespace IKVM.Reflection.Emit
 
 		internal override int ImportTo(ModuleBuilder other)
 		{
-			if (typeBuilder.IsGenericTypeDefinition)
-			{
-				return other.ImportMember(TypeBuilder.GetMethod(typeBuilder, this));
-			}
-			else if (other == typeBuilder.ModuleBuilder)
-			{
-				return pseudoToken;
-			}
-			else
-			{
-				return other.ImportMethodOrField(typeBuilder, name, this.MethodSignature);
-			}
+			return other.ImportMethodOrField(typeBuilder, name, this.MethodSignature);
 		}
 
 		internal void CheckBaked()
 		{
 			typeBuilder.CheckBaked();
+		}
+
+		internal override int GetCurrentToken()
+		{
+			if (typeBuilder.ModuleBuilder.IsSaved)
+			{
+				return typeBuilder.ModuleBuilder.ResolvePseudoToken(pseudoToken);
+			}
+			else
+			{
+				return pseudoToken;
+			}
+		}
+
+		internal override bool IsBaked
+		{
+			get { return typeBuilder.IsBaked; }
 		}
 	}
 }

@@ -470,12 +470,14 @@ namespace Microsoft.Win32
 
 		public RegistrySecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			return GetAccessControl (AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 		}
 		
 		public RegistrySecurity GetAccessControl (AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			return new RegistrySecurity (Name, includeSections);
 		}
 		
 		
@@ -579,7 +581,10 @@ namespace Microsoft.Win32
 		
 		public void SetAccessControl (RegistrySecurity registrySecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == registrySecurity)
+				throw new ArgumentNullException ("registrySecurity");
+				
+			registrySecurity.PersistModifications (Name);
 		}
 		
 		

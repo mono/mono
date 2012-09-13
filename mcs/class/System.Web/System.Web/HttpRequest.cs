@@ -315,8 +315,12 @@ namespace System.Web
 		public HttpBrowserCapabilities Browser {
 			get {
 				if (browser_capabilities == null)
+#if NET_4_0
+					browser_capabilities = HttpCapabilitiesBase.BrowserCapabilitiesProvider.GetBrowserCapabilities (this);
+#else
 					browser_capabilities = (HttpBrowserCapabilities)
 						HttpCapabilitiesBase.GetConfigCapabilities (null, this);
+#endif
 
 				return browser_capabilities;
 			}

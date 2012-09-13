@@ -624,6 +624,19 @@ namespace MonoTests.System
 			{
 			}
 		}
+
+		[Test]
+		public void DomainLabelLength ()
+		{
+			UriHostNameType type = Uri.CheckHostName ("3.141592653589793238462643383279502884197169399375105820974944592.com");
+			Assert.AreEqual (UriHostNameType.Dns, type, "DomainLabelLength#1");
+			type = Uri.CheckHostName ("3141592653589793238462643383279502884197169399375105820974944592.com");
+			Assert.AreEqual (UriHostNameType.Unknown, type, "DomainLabelLength#2");
+			type = Uri.CheckHostName ("3.1415926535897932384626433832795028841971693993751058209749445923.com");
+			Assert.AreEqual (UriHostNameType.Unknown, type, "DomainLabelLength#2");
+			type = Uri.CheckHostName ("3.141592653589793238462643383279502884197169399375105820974944592._om");
+			Assert.AreEqual (UriHostNameType.Unknown, type, "DomainLabelLength#3");
+		}
 	}
 }
 

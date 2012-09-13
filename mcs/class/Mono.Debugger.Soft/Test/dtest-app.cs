@@ -512,6 +512,7 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	[StateMachine (typeof (int))]
 	public static void locals2<T> (string[] args, int arg, T t, ref string rs) {
 		long i = 42;
 		string s = "AB";
@@ -1069,6 +1070,7 @@ public class LineNumbers
 {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ln1 () {
+		// Column 3
 		ln2 ();
 		ln3 ();
 	}

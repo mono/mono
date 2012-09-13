@@ -34,21 +34,15 @@ namespace System.Security.AccessControl {
 	public sealed class SemaphoreAuditRule
 		: AuditRule
 	{
-		SemaphoreRights semaphoreRights;
-		
 		public SemaphoreAuditRule (IdentityReference identity,
 					   SemaphoreRights semaphoreRights,
 					   AuditFlags flags)
-			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, flags)
+			: base (identity, (int)semaphoreRights, false, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
-			this.semaphoreRights = semaphoreRights;
 		}
 		
-		public SemaphoreRights SemaphoreRights
-		{
-			get {
-				return(semaphoreRights);
-			}
+		public SemaphoreRights SemaphoreRights {
+			get { return (SemaphoreRights)AccessMask; }
 		}
 	}
 }

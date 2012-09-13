@@ -640,13 +640,42 @@ namespace Mono.Data.Sqlite
     {
       if (String.IsNullOrEmpty(Name)) return DbType.Object;
 
-      int x = _typeNames.Length;
-      for (int n = 0; n < x; n++)
+      string nameToCompare = Name;
+      int parenthesis = nameToCompare.IndexOf ('(');
+      if (parenthesis > 0)
+        nameToCompare = nameToCompare.Substring (0, parenthesis);
+        
+      for (int n = 0; n < _typeNames.Length; n++)
       {
-        if (String.Compare(Name, _typeNames[n].typeName, true, CultureInfo.InvariantCulture) == 0)
+        if (string.Compare(nameToCompare, _typeNames[n].typeName, true, CultureInfo.InvariantCulture) == 0)
           return _typeNames[n].dataType; 
       }
-      return DbType.Object;
+      
+      /* http://www.sqlite.org/datatype3.html
+       * 2.1 Determination Of Column Affinity
+       * The affinity of a column is determined by the declared type of the column, according to the following rules in the order shown:
+       *   1. If the declared type contains the string "INT" then it is assigned INTEGER affinity.
+       *   2. If the declared type of the column contains any of the strings "CHAR", "CLOB", or "TEXT" then that column has TEXT affinity. Notice that the type VARCHAR contains the string "CHAR" and is thus assigned TEXT affinity.
+       *   3. If the declared type for a column contains the string "BLOB" or if no type is specified then the column has affinity NONE.
+       *   4. If the declared type for a column contains any of the strings "REAL", "FLOA", or "DOUB" then the column has REAL affinity.
+       *   5. Otherwise, the affinity is NUMERIC.
+       */
+      
+      if (Name.IndexOf ("INT", StringComparison.OrdinalIgnoreCase) >= 0) {
+        return DbType.Int64;
+      } else if (Name.IndexOf ("CHAR", StringComparison.OrdinalIgnoreCase) >= 0
+              || Name.IndexOf ("CLOB", StringComparison.OrdinalIgnoreCase) >= 0
+              || Name.IndexOf ("TEXT", StringComparison.OrdinalIgnoreCase) >= 0) {
+        return DbType.String;
+      } else if (Name.IndexOf ("BLOB", StringComparison.OrdinalIgnoreCase) >= 0 /* || Name == string.Empty // handled at the top of this functin */) {
+        return DbType.Object;
+      } else if (Name.IndexOf ("REAL", StringComparison.OrdinalIgnoreCase) >= 0
+              || Name.IndexOf ("FLOA", StringComparison.OrdinalIgnoreCase) >= 0
+              || Name.IndexOf ("DOUB", StringComparison.OrdinalIgnoreCase) >= 0) {
+        return DbType.Double;
+      } else {
+        return DbType.Object; // This can be anything, so use Object instead of Decimal (which we use otherwise where the type affinity is NUMERIC)
+      }
     }
     #endregion
 
@@ -675,6 +704,7 @@ namespace Mono.Data.Sqlite
       new SQLiteTypeNames("YESNO", DbType.Boolean),
       new SQLiteTypeNames("LOGICAL", DbType.Boolean),
       new SQLiteTypeNames("BOOL", DbType.Boolean),
+      new SQLiteTypeNames("BOOLEAN", DbType.Boolean),
       new SQLiteTypeNames("NUMERIC", DbType.Decimal),
       new SQLiteTypeNames("DECIMAL", DbType.Decimal),
       new SQLiteTypeNames("MONEY", DbType.Decimal),
@@ -689,6 +719,7 @@ namespace Mono.Data.Sqlite
       new SQLiteTypeNames("GENERAL", DbType.Binary),
       new SQLiteTypeNames("OLEOBJECT", DbType.Binary),
       new SQLiteTypeNames("GUID", DbType.Guid),
+      new SQLiteTypeNames("GUIDBLOB", DbType.Guid),
       new SQLiteTypeNames("UNIQUEIDENTIFIER", DbType.Guid),
       new SQLiteTypeNames("MEMO", DbType.String),
       new SQLiteTypeNames("NOTE", DbType.String),

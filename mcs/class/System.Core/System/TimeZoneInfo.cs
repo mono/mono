@@ -65,9 +65,9 @@ namespace System
 		string daylightDisplayName;
 		public string DaylightName {
 			get { 
-				if (disableDaylightSavingTime)
-					return String.Empty;
-				return daylightDisplayName; 
+				return supportsDaylightSavingTime
+					? daylightDisplayName
+					: string.Empty;
 			}
 		}
 
@@ -122,9 +122,9 @@ namespace System
 			get { return standardDisplayName; }
 		}
 
-		bool disableDaylightSavingTime;
+		bool supportsDaylightSavingTime;
 		public bool SupportsDaylightSavingTime {
-			get  { return !disableDaylightSavingTime; }
+			get  { return supportsDaylightSavingTime; }
 		}
 
 		static TimeZoneInfo utc;
@@ -543,7 +543,7 @@ namespace System
 
 		public AdjustmentRule [] GetAdjustmentRules ()
 		{
-			if (disableDaylightSavingTime)
+			if (!supportsDaylightSavingTime)
 				return new AdjustmentRule [0];
 			else
 				return (AdjustmentRule []) adjustmentRules.Clone ();
@@ -605,7 +605,9 @@ namespace System
 #endif
 #if MONODROID
 			foreach (string id in ZoneInfoDB.GetAvailableIds ()) {
-				systemTimeZones.Add (ZoneInfoDB.GetTimeZone (id));
+				var tz = ZoneInfoDB.GetTimeZone (id);
+				if (tz != null)
+					systemTimeZones.Add (tz);
 			}
 #elif MONOTOUCH
 				if (systemTimeZones.Count == 0) {
@@ -801,6 +803,8 @@ namespace System
 				throw new ArgumentException ("id parameter shouldn't be longer than 32 characters");
 #endif
 
+			bool supportsDaylightSavingTime = !disableDaylightSavingTime;
+
 			if (adjustmentRules != null && adjustmentRules.Length != 0) {
 				AdjustmentRule prev = null;
 				foreach (AdjustmentRule current in adjustmentRules) {
@@ -822,6 +826,8 @@ namespace System
 
 					prev = current;
 				}
+			} else {
+				supportsDaylightSavingTime = false;
 			}
 			
 			this.id = id;
@@ -829,7 +835,7 @@ namespace System
 			this.displayName = displayName ?? id;
 			this.standardDisplayName = standardDisplayName ?? id;
 			this.daylightDisplayName = daylightDisplayName;
-			this.disableDaylightSavingTime = disableDaylightSavingTime;
+			this.supportsDaylightSavingTime = supportsDaylightSavingTime;
 			this.adjustmentRules = adjustmentRules;
 		}
 

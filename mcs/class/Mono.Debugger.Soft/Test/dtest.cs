@@ -1621,6 +1621,30 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void ColumnNumbers () {
+		Event e = run_until ("line_numbers");
+
+		// FIXME: Merge this with LineNumbers () when its fixed
+
+		step_req = vm.CreateStepRequest (e.Thread);
+		step_req.Depth = StepDepth.Into;
+		step_req.Enable ();
+
+		Location l;
+		
+		vm.Resume ();
+
+		e = GetNextEvent ();
+		Assert.IsTrue (e is StepEvent);
+
+		l = e.Thread.GetFrames ()[0].Location;
+
+		Assert.AreEqual (3, l.ColumnNumber);
+
+		step_req.Disable ();
+	}
+
+	[Test]
 	// Broken by mcs+runtime changes (#5438)
 	[Category("NotWorking")]
 	public void LineNumbers () {
@@ -2116,6 +2140,46 @@ public class DebuggerTests
 
 		e = GetNextEvent ();
 		Assert.AreEqual (EventType.TypeLoad, e.EventType);
+	}
+
+	List<Value> invoke_results;
+
+	[Test]
+	public void InvokeMultiple () {
+		Event e = run_until ("invoke1");
+
+		StackFrame frame = e.Thread.GetFrames () [0];
+
+		TypeMirror t = frame.Method.DeclaringType;
+		ObjectMirror this_obj = (ObjectMirror)frame.GetThis ();
+
+		TypeMirror t2 = frame.Method.GetParameters ()[0].ParameterType;
+
+		var methods = new MethodMirror [2];
+		methods [0] = t.GetMethod ("invoke_return_ref");
+		methods [1] = t.GetMethod ("invoke_return_primitive");
+
+		invoke_results = new List<Value> ();
+
+		var r = this_obj.BeginInvokeMultiple (e.Thread, methods, null, InvokeOptions.SingleThreaded, invoke_multiple_cb, this_obj);
+		WaitHandle.WaitAll (new WaitHandle[] { r.AsyncWaitHandle });
+		this_obj.EndInvokeMultiple (r);
+		// The callback might still be running
+		while (invoke_results.Count < 2) {
+			Thread.Sleep (100);
+		}
+		AssertValue ("ABC", invoke_results [0]);
+		AssertValue (42, invoke_results [1]);
+	}
+
+	void invoke_multiple_cb (IAsyncResult ar) {
+		ObjectMirror this_obj = (ObjectMirror)ar.AsyncState;
+
+		Console.WriteLine ("CB!");
+
+		var res = this_obj.EndInvokeMethod (ar);
+		lock (invoke_results)
+			invoke_results.Add (res);
 	}
 
 	[Test]
@@ -2995,6 +3059,10 @@ public class DebuggerTests
 		args = gmd.GetGenericArguments ();
 		Assert.AreEqual (1, args.Length);
 		Assert.AreEqual ("T", args [0].Name);
+
+		var attrs = m.GetCustomAttributes (true);
+		Assert.AreEqual (1, attrs.Length);
+		Assert.AreEqual ("StateMachineAttribute", attrs [0].Constructor.DeclaringType.Name);
 	}
 
 	[Test]
@@ -3010,7 +3078,7 @@ public class DebuggerTests
 		vm.Resume ();
 
 		var e2 = GetNextEvent ();
-		Console.WriteLine (e2);
+		Assert.IsTrue (e2 is ExceptionEvent);
 
 		vm.Exit (0);
 		vm = null;

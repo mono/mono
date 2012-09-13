@@ -1665,9 +1665,13 @@ namespace System.Windows.Forms
 		}
 
 		// XXX should this not manipulate base.Paint?
+#pragma warning disable 0067
+		[MonoTODO]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
+#pragma warning restore 0067
+
 		#endregion	// Events
 
 		#region Private Methods

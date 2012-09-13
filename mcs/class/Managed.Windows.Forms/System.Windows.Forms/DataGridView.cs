@@ -740,7 +740,7 @@ namespace System.Windows.Forms {
 					ClearBinding ();
 	
 	
-					// Do not set dataSource prior to te BindingContext check because there is some lazy initialization 
+					// Do not set dataSource prior to the BindingContext check because there is some lazy initialization 
 					// code which might result in double call to ReBind here and in OnBindingContextChanged
 					if (BindingContext != null) {
 						dataSource = value;
@@ -1036,8 +1036,14 @@ namespace System.Windows.Forms {
 				} else if (value > rows.Count) {
 					// If we need to add rows and don't have any columns,
 					// we create one column
-					if (ColumnCount == 0)
-						ColumnCount = 1;
+					if (ColumnCount == 0) {
+						System.Diagnostics.Debug.Assert (rows.Count == 0);
+						ColumnCount = 1; // this creates the edit row
+						if (VirtualMode) {
+							// update edit row height
+							UpdateRowHeightInfo (0, false);
+						}
+					}
 
 					List<DataGridViewRow> newRows = new List<DataGridViewRow> (value - rows.Count);
 					for (int i = rows.Count; i < value; i++)
@@ -1362,6 +1368,7 @@ namespace System.Windows.Forms {
 					} else {
 						Controls.Remove (editingControl);
 					}
+					editingControl.Dispose();
 				}
 				
 				
@@ -2320,8 +2327,8 @@ namespace System.Windows.Forms {
 				
 				// Call some functions that allows the editing control to get setup
 				DataGridViewCellStyle style = cell.RowIndex == -1 ? DefaultCellStyle : cell.InheritedStyle;
-				
 				cell.InitializeEditingControl (cell.RowIndex, cell.FormattedValue, style);
+				OnEditingControlShowing (new DataGridViewEditingControlShowingEventArgs (EditingControlInternal, style));
 				cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
 
 				// Show the editing control
@@ -2491,7 +2498,8 @@ namespace System.Windows.Forms {
 			currentCell.SetIsInEditMode (false);
 			currentCell.DetachEditingControl ();
 			OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
-			Focus ();
+			if (context != DataGridViewDataErrorContexts.LeaveControl)
+				Focus ();
 			if (currentCell.RowIndex == NewRowIndex) {
 				new_row_editing = false;
 				editing_row = null; // editing row becomes a real row
@@ -3379,6 +3387,18 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void Dispose (bool disposing) {
+			if (disposing) {
+				ClearSelection();
+				foreach (DataGridViewColumn column in Columns)
+					column.Dispose();
+				Columns.Clear();
+				foreach (DataGridViewRow row in Rows)
+					row.Dispose();
+				Rows.Clear();
+			}
+			editingControl = null;
+
+			base.Dispose(disposing);
 		}
 
 		protected override AccessibleObject GetAccessibilityObjectById (int objectId)
@@ -3984,6 +4004,10 @@ namespace System.Windows.Forms {
 
 		internal void OnColumnPreRemovedInternal (DataGridViewColumnEventArgs e)
 		{
+			// The removed column should be removed from the selection too.
+			if (selected_columns != null)
+				SetSelectedColumnCore (e.Column.Index, false);
+
 			if (Columns.Count - 1 == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				rows.ClearInternal ();
@@ -4009,7 +4033,6 @@ namespace System.Windows.Forms {
 			AutoResizeColumnsInternal ();
 			PrepareEditingRow (false, true);
 
-			OnSelectionChanged (EventArgs.Empty);
 			OnColumnRemoved (e);
 		}
 
@@ -4215,6 +4238,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnLeave (EventArgs e)
 		{
+			EndEdit (DataGridViewDataErrorContexts.LeaveControl);
 			base.OnLeave(e);
 		}
 
@@ -5074,6 +5098,11 @@ namespace System.Windows.Forms {
 				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, true);
 
 			AutoResizeColumnsInternal ();
+			if (VirtualMode) {
+				for (int i = 0; i < e.RowCount; i++)
+					UpdateRowHeightInfo (e.RowIndex + i, false);
+			}
+
 			Invalidate ();
 			OnRowsAdded (e);
 		}
@@ -5092,10 +5121,13 @@ namespace System.Windows.Forms {
 
 		internal void OnRowsPreRemovedInternal (DataGridViewRowsRemovedEventArgs e)
 		{
+			// All removed rows should be removed from the selection too.
 			if (selected_rows != null)
-				selected_rows.InternalClear ();
-			if (selected_columns != null)
-				selected_columns.InternalClear ();
+			{
+				int lastRowIndex = e.RowIndex + e.RowCount;
+				for (int rowIndex = e.RowIndex; rowIndex < lastRowIndex; ++rowIndex)
+					SetSelectedRowCore (rowIndex, false);
+			}
 
 			if (Rows.Count - e.RowCount <= 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
@@ -5117,7 +5149,6 @@ namespace System.Windows.Forms {
 		internal void OnRowsPostRemovedInternal (DataGridViewRowsRemovedEventArgs e)
 		{
 			Invalidate ();
-			OnSelectionChanged (EventArgs.Empty);
 			OnRowsRemoved (e);
 		}
 
@@ -5732,14 +5763,18 @@ namespace System.Windows.Forms {
 			
 			if (selected_columns == null)
 				selected_columns = new DataGridViewSelectedColumnCollection ();
-			
+
+			bool selectionChanged = false;
 			if (!selected && selected_columns.Contains (col)) {
 				selected_columns.InternalRemove (col);
+				selectionChanged = true;
 			} else if (selected && !selected_columns.Contains (col)) {
 				selected_columns.InternalAdd (col);
+				selectionChanged = true;
 			}
 
-			OnSelectionChanged (EventArgs.Empty);
+			if (selectionChanged)
+				OnSelectionChanged (EventArgs.Empty);
 
 			Invalidate();
 		}
@@ -5756,14 +5791,18 @@ namespace System.Windows.Forms {
 			
 			if (selected_rows == null)
 				selected_rows = new DataGridViewSelectedRowCollection (this);
-				
+
+			bool selectionChanged = false;
 			if (!selected && selected_rows.Contains (row)) {
 				selected_rows.InternalRemove (row);
+				selectionChanged = true;
 			} else if (selected && !selected_rows.Contains (row)) {
 				selected_rows.InternalAdd (row);
+				selectionChanged = true;
 			}
 
-			OnSelectionChanged (EventArgs.Empty);
+			if (selectionChanged)
+				OnSelectionChanged (EventArgs.Empty);
 
 			Invalidate();
 		}

@@ -69,6 +69,7 @@
 # if (defined(GC_DGUX386_THREADS) || defined(GC_OSF1_THREADS) || \
       defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)) || \
       defined(GC_NETBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC) || \
+      defined(GC_FREEBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC) || \
       defined(GC_OPENBSD_THREADS)
 #   define USE_PTHREAD_SPECIFIC
 # endif
@@ -182,6 +183,10 @@ static GC_bool parallel_initialized = FALSE;
 
 void GC_init_parallel();
 
+static pthread_t main_pthread_self;
+static void *main_stack, *main_altstack;
+static int main_stack_size, main_altstack_size;
+
 # if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
 
 /* We don't really support thread-local allocation with DBG_HDRS_ALL */
@@ -214,10 +219,6 @@ static int GC_setspecific (GC_key_t key, void *value) {
 #endif
 
 static GC_bool keys_initialized;
-
-static pthread_t main_pthread_self;
-static void *main_stack, *main_altstack;
-static int main_stack_size, main_altstack_size;
 
 #ifdef MONO_DEBUGGER_SUPPORTED
 #include "include/libgc-mono-debugger.h"

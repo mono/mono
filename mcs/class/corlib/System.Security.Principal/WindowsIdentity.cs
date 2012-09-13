@@ -76,7 +76,7 @@ namespace System.Security.Principal {
 			// last - as it can override some fields
 			SetToken (userToken);
 		}
-#if !NET_1_0
+
 		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (string sUserPrincipalName) 
 			: this (sUserPrincipalName, null)
@@ -107,7 +107,6 @@ namespace System.Security.Principal {
 		{
 			_info = info;
 		}
-#endif
 
 		[ComVisible (false)]
 		public void Dispose ()
@@ -252,7 +251,7 @@ namespace System.Security.Principal {
 			_account = (WindowsAccountType) _info.GetValue ("m_acctType", typeof (WindowsAccountType));
 			_authenticated = _info.GetBoolean ("m_isAuthenticated");
 		}
-#if !NET_1_0
+
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
 			info.AddValue ("m_userToken", _token);
@@ -262,7 +261,7 @@ namespace System.Security.Principal {
 			info.AddValue ("m_acctType", _account);
 			info.AddValue ("m_isAuthenticated", _authenticated);
 		}
-#endif
+
 		private void SetToken (IntPtr token) 
 		{
 			if (Environment.IsUnix) {

@@ -41,15 +41,14 @@ namespace System.Collections.Concurrent
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class ConcurrentBag<T> : IProducerConsumerCollection<T>, IEnumerable<T>, IEnumerable
 	{
-		const int hintThreshold = 20;
-		
+		// We store hints in a long
+		long hints;
+
 		int count;
-		
-		// We only use the add hints when number of slot is above hintThreshold
-		// so to not waste memory space and the CAS overhead
-		ConcurrentQueue<int> addHints = new ConcurrentQueue<int> ();
-		
+		// The container area is where bag are added foreach thread
 		ConcurrentDictionary<int, CyclicDeque<T>> container = new ConcurrentDictionary<int, CyclicDeque<T>> ();
+		// The staging area is where non-empty bag are located for fast iteration
+		ConcurrentDictionary<int, CyclicDeque<T>> staging = new ConcurrentDictionary<int, CyclicDeque<T>> ();
 		
 		public ConcurrentBag ()
 		{
@@ -66,11 +65,7 @@ namespace System.Collections.Concurrent
 			int index;
 			CyclicDeque<T> bag = GetBag (out index);
 			bag.PushBottom (item);
-			
-			// Cache operation ?
-			if (container.Count > hintThreshold)
-				addHints.Enqueue (index);
-
+			AddHint (index);
 			Interlocked.Increment (ref count);
 		}
 
@@ -88,35 +83,92 @@ namespace System.Collections.Concurrent
 				return false;
 
 			int hintIndex;
-			CyclicDeque<T> bag = GetBag (out hintIndex);
-			bool hintEnabled = container.Count > hintThreshold;
+			CyclicDeque<T> bag = GetBag (out hintIndex, false);
+			bool ret = true;
 			
 			if (bag == null || bag.PopBottom (out result) != PopResult.Succeed) {
-				foreach (var other in container) {
+				var self = bag;
+				foreach (var other in staging) {
 					// Try to retrieve something based on a hint
-					bool ret = hintEnabled && addHints.TryDequeue (out hintIndex) && container[hintIndex].PopTop (out result) == PopResult.Succeed;
+					ret = TryGetHint (out hintIndex) && (bag = container[hintIndex]).PopTop (out result) == PopResult.Succeed;
 
 					// We fall back to testing our slot
-					if (!ret && other.Value != bag)
-						ret = other.Value.PopTop (out result) == PopResult.Succeed;
+					if (!ret && other.Value != self) {
+						var status = other.Value.PopTop (out result);
+						while (status == PopResult.Abort)
+							status = other.Value.PopTop (out result);
+						ret = status == PopResult.Succeed;
+						hintIndex = other.Key;
+						bag = other.Value;
+					}
 					
 					// If we found something, stop
-					if (ret) {
-						Interlocked.Decrement (ref count);
-						return true;
-					}
+					if (ret)
+						break;
 				}
-			} else {
-				Interlocked.Decrement (ref count);
-				return true;
 			}
-			
-			return false;
+
+			if (ret) {
+				TidyBag (hintIndex, bag);
+				Interlocked.Decrement (ref count);
+			}
+
+			return ret;
 		}
 
 		public bool TryPeek (out T result)
 		{
-			throw new NotImplementedException ();
+			result = default (T);
+
+			if (count == 0)
+				return false;
+
+			int hintIndex;
+			CyclicDeque<T> bag = GetBag (out hintIndex, false);
+			bool ret = true;
+
+			if (bag == null || !bag.PeekBottom (out result)) {
+				var self = bag;
+				foreach (var other in staging) {
+					// Try to retrieve something based on a hint
+					ret = TryGetHint (out hintIndex) && container[hintIndex].PeekTop (out result);
+
+					// We fall back to testing our slot
+					if (!ret && other.Value != self)
+						ret = other.Value.PeekTop (out result);
+
+					// If we found something, stop
+					if (ret)
+						break;
+				}
+			}
+
+			return ret;
+		}
+
+		void AddHint (int index)
+		{
+			// We only take thread index that can be stored in 5 bits (i.e. thread ids 1-15)
+			if (index > 0xF)
+				return;
+			var hs = hints;
+			// If cas failed then we don't retry
+			Interlocked.CompareExchange (ref hints, (long)(((ulong)hs) << 4 | (uint)index), (long)hs);
+		}
+
+		bool TryGetHint (out int index)
+		{
+			/* Funny little thing to know, since hints is a long (because CAS has no ulong overload),
+			 * a shift-right operation is an arithmetic shift which might set high-order right bits
+			 * to 1 instead of 0 if the number turns negative.
+			 */
+			var hs = hints;
+			index = 0;
+
+			if (Interlocked.CompareExchange (ref hints, (long)(((ulong)hs) >> 4), hs) == hs)
+				index = (int)(hs & 0xF);
+
+			return index > 0;
 		}
 		
 		public int Count {
@@ -199,20 +251,31 @@ namespace System.Collections.Concurrent
 			
 			return temp;
 		}
-			
+
 		int GetIndex ()
 		{
 			return Thread.CurrentThread.ManagedThreadId;
 		}
 				
-		CyclicDeque<T> GetBag (out int index)
+		CyclicDeque<T> GetBag (out int index, bool createBag = true)
 		{
 			index = GetIndex ();
 			CyclicDeque<T> value;
 			if (container.TryGetValue (index, out value))
 				return value;
 
-			return container.GetOrAdd (index, new CyclicDeque<T> ());
+			var bag = createBag ? container.GetOrAdd (index, new CyclicDeque<T> ()) : null;
+			if (bag != null)
+				staging.TryAdd (index, bag);
+			return bag;
+		}
+
+		void TidyBag (int index, CyclicDeque<T> bag)
+		{
+			if (bag != null && bag.IsEmpty) {
+				if (staging.TryRemove (index, out bag) && !bag.IsEmpty)
+					staging.TryAdd (index, bag);
+			}
 		}
 	}
 }

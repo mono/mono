@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -36,21 +37,36 @@ namespace MonoTests.System.Xml.Linq
 	[TestFixture]
 	public class XAttributeTest
 	{
-
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorNameNull ()
+		public void Annotations_GetSubclass()
 		{
-			XAttribute a = new XAttribute (null, "v");
+			var x = new XAttribute("foo", "bar");
+			var annotation = new InvalidCastException();
+			x.AddAnnotation(annotation);
 			
+			Assert.AreSame(annotation, x.Annotation<InvalidCastException>(), "#1");
+			Assert.AreSame(annotation, x.Annotation<object>(), "#2");
+			Assert.AreSame(annotation, x.Annotations<object>().Single (), "#3");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorValueNull ()
+		public void Annotations_SameTypeTwice()
 		{
-			XAttribute a = new XAttribute (XName.Get ("a"), null);
-			
+			var x = new XAttribute("foo", "bar");
+			var first = new InvalidCastException();
+			var second = new InvalidCastException();
+			x.AddAnnotation(first);
+			x.AddAnnotation(second);
+			Assert.AreEqual(2, x.Annotations<object>().Count(), "#1");
+			Assert.AreSame(first, x.Annotation<object>(), "#2");
+		}
+
+		[Test]
+		public void Constructor_NullParameters ()
+		{
+			AssertThrows<ArgumentNullException>(() => new XAttribute(null, "v"), "#1");
+			AssertThrows<ArgumentNullException>(() => new XAttribute(XName.Get("a"), null), "#2");
+			AssertThrows<ArgumentNullException>(() => new XAttribute((XAttribute) null), "#3");
 		}
 
 		[Test]
@@ -96,6 +112,87 @@ namespace MonoTests.System.Xml.Linq
 			a.SetValue (new XDeclaration ("1.0", null, null));
 			// value object is converted to a string.
 			Assert.AreEqual ("<?xml version=\"1.0\"?>", a.Value, "#1");
+		}
+
+		[Test]
+		public void SetValue_Null()
+		{
+			var a = new XAttribute("foo", "bar");
+			AssertThrows<ArgumentNullException>(() => a.Value = null, "#1");
+			AssertThrows<ArgumentNullException>(() => a.SetValue (null), "#2");
+		}
+
+		[Test]
+		public void SetValue_ChangeTriggers()
+		{
+			bool changing = false;
+			bool changed = false;
+
+			var a = new XAttribute("foo", "bar");
+			a.Changing += (o, e) => {
+				Assert.IsFalse(changing, "#1");
+				Assert.IsFalse(changed, "#2");
+				Assert.AreSame(a, o, "#3");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#4");
+				changing = true;
+			};
+			a.Changed += (o, e) => {
+				Assert.IsTrue(changing, "#5");
+				Assert.IsFalse(changed, "#6");
+				Assert.AreSame(a, o, "#7");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#8");
+				changed = true;
+			};
+			a.Value = "foo";
+			Assert.IsTrue(changing, "changing");
+			Assert.IsTrue(changed, "changed");
+		}
+
+		[Test]
+		public void SetValue2_ChangeTriggers()
+		{
+			bool changing = false;
+			bool changed = false;
+			
+			var a = new XAttribute("foo", "bar");
+			a.Changing += (o, e) =>
+			{
+				Assert.IsFalse(changing, "#1");
+				Assert.IsFalse(changed, "#2");
+				Assert.AreSame(a, o, "#3");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#4");
+				changing = true;
+			};
+			a.Changed += (o, e) =>
+			{
+				Assert.IsTrue(changing, "#5");
+				Assert.IsFalse(changed, "#6");
+				Assert.AreSame(a, o, "#7");
+				Assert.AreEqual(XObjectChange.Value, e.ObjectChange, "#8");
+				changed = true;
+			};
+			a.SetValue("zap");
+			Assert.IsTrue(changing, "changing");
+			Assert.IsTrue(changed, "changed");
+		}
+
+		[Test]
+		public void SetValue_SameValue_ChangeTrigger()
+		{
+			int changed = 0;
+			int changing = 0;
+
+			var a = new XAttribute("foo", "bar");
+			a.Changed += (o, e) => changed++;
+			a.Changing += (o, e) => changing++;
+
+			a.SetValue("bar");
+			Assert.AreEqual(1, changed, "#1");
+			Assert.AreEqual(1, changing, "#2");
+
+			a.Value = "bar";
+			Assert.AreEqual(2, changed, "#3");
+			Assert.AreEqual(2, changing, "#4");
 		}
 
 		[Test]

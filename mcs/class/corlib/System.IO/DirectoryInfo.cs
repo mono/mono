@@ -357,24 +357,19 @@ namespace System.IO {
 			return CreateSubdirectory (path);
 		}
 
-		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public DirectorySecurity GetAccessControl ()
 		{
-			throw new UnauthorizedAccessException ();
+			return Directory.GetAccessControl (FullPath);
 		}
 
-		[MonoNotSupported ("DirectorySecurity isn't implemented")]
 		public DirectorySecurity GetAccessControl (AccessControlSections includeSections)
 		{
-			throw new UnauthorizedAccessException ();
+			return Directory.GetAccessControl (FullPath, includeSections);
 		}
 
-		[MonoLimitation ("DirectorySecurity isn't implemented")]
 		public void SetAccessControl (DirectorySecurity directorySecurity)
 		{
-			if (directorySecurity != null)
-				throw new ArgumentNullException ("directorySecurity");
-			throw new UnauthorizedAccessException ();
+			Directory.SetAccessControl (FullPath, directorySecurity);
 		}
 #endif
 

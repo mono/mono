@@ -84,10 +84,11 @@ namespace IKVM.Reflection
 			return !(m1 == m2);
 		}
 
-		internal virtual IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return this.Module.GetCustomAttributes(this.MetadataToken, attributeType);
-		}
+		internal abstract int GetCurrentToken();
+
+		internal abstract List<CustomAttributeData> GetPseudoCustomAttributes(Type attributeType);
+
+		internal abstract bool IsBaked { get; }
 
 		internal virtual bool BindingFlagsMatch(BindingFlags flags)
 		{

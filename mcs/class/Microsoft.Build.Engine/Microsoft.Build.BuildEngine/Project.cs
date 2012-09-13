@@ -957,8 +957,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
-			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
+			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.OrdinalIgnoreCase);
+			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.OrdinalIgnoreCase);
 			if (building && current_settings == BuildSettings.None)
 				RemoveBuiltTargets ();
 

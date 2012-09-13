@@ -27,11 +27,13 @@
 // 
 
 using Mono.CodeContracts.Static.ControlFlow;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Proving {
-	interface IFactBase<Variable> {
-		ProofOutcome IsNull (APC pc, Variable variable);
-		ProofOutcome IsNonNull (APC pc, Variable variable);
-		bool IsUnreachable (APC pc);
+	interface IFactBase<in Variable> {
+        bool IsUnreachable(APC pc);
+
+		FlatDomain<bool> IsNull (APC pc, Variable variable);
+        FlatDomain<bool> IsNonNull(APC pc, Variable variable);
 	}
 }
