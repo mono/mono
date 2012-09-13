@@ -117,7 +117,11 @@ namespace System.Net {
 					ExactDomain = true;
 				} else {
 					domain = value;
-					ExactDomain = (value [0] != '.');
+					IPAddress test;
+					if (IPAddress.TryParse (value, out test))
+						ExactDomain = true;
+					else
+						ExactDomain = false;
 				}
 			}
 		}
@@ -289,8 +293,6 @@ namespace System.Net {
 
 			if (!String.IsNullOrEmpty (path))
 				result.Append ("; $Path=").Append (path);
-			else if (uri != null)
-				result.Append ("; $Path=/").Append (path);
 
 			bool append_domain = (uri == null) || (uri.Host != domain);
 			if (append_domain && !String.IsNullOrEmpty (domain))

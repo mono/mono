@@ -350,8 +350,13 @@ namespace System.Net
 
 			var parser = new CookieParser (header);
 			foreach (var cookie in parser.Parse ()) {
-				if (cookie.Domain == "")
+				if (cookie.Domain == "") {
 					cookie.Domain = uri.Host;
+					cookie.ExactDomain = true;
+				}
+
+				if (!CookieContainer.CheckSameOrigin (uri, cookie.Domain))
+					continue;
 
 				cookieCollection.Add (cookie);
 				if (cookie_container != null)
