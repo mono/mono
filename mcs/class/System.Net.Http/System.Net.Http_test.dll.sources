@@ -2,6 +2,7 @@ System.Net.Http/ByteArrayContentTest.cs
 System.Net.Http/FormUrlEncodedContentTest.cs
 System.Net.Http/HttpClientHandlerTest.cs
 System.Net.Http/HttpClientTest.cs
+System.Net.Http/HttpContentTest.cs
 System.Net.Http/HttpMethodTest.cs
 System.Net.Http/HttpRequestMessageTest.cs
 System.Net.Http/HttpResponseMessageTest.cs
