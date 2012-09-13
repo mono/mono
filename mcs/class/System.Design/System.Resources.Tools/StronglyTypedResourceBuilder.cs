@@ -79,13 +79,11 @@ namespace System.Resources.Tools
 			// validate resxFile
 			if (resxFile == null)
 				throw new ArgumentNullException ("Parameter resxFile must not be null");
-			//FIXME: is this ok for an illegal char check? note im checking filename as well as path
-			char[] invalidPathChars = Path.GetInvalidPathChars ();
+
+			List<char> invalidPathChars = new List<char> (Path.GetInvalidPathChars ());
 			foreach (char c in resxFile.ToCharArray ()) {
-				foreach (char invalid in invalidPathChars) {
-					if (c == invalid)
-						throw new ArgumentException ("Invalid character in resxFileName");
-				}
+				if (invalidPathChars.Contains (c))
+					throw new ArgumentException ("Invalid character in resxFileName");
 			}
 
 			Dictionary<string,object> resourcesList = new Dictionary<string,object> ();
@@ -164,7 +162,6 @@ namespace System.Resources.Tools
 
 			// validate ResourceList IDictionary
 
-			//FIXME: is it correct to use OrdinalIgnoreCase here?
 			Dictionary<string,ResourceItem> resourceItemDict;
 			resourceItemDict = new Dictionary<string,ResourceItem> (StringComparer.OrdinalIgnoreCase);
 
@@ -219,7 +216,7 @@ namespace System.Resources.Tools
 		                                    	    string resourcesToUse, bool internalClass)
 		{
 			CodeCompileUnit ccu = new CodeCompileUnit ();
-			ccu.ReferencedAssemblies.Add (@"System.dll");
+			ccu.ReferencedAssemblies.Add ("System.dll");
 			CodeNamespace nsMain = new CodeNamespace (generatedCodeNamespaceToUse);
 			ccu.Namespaces.Add (nsMain);
 			nsMain.Imports.Add (new CodeNamespaceImport ("System"));
@@ -244,7 +241,7 @@ namespace System.Resources.Tools
 		{
 			foreach (KeyValuePair<string, ResourceItem> kvp in resourceItemDict) {
 				//deal with ignored keys
-				if (kvp.Key.StartsWith(">>") || kvp.Key.StartsWith ("$")) {
+				if (kvp.Key.StartsWith (">>") || kvp.Key.StartsWith ("$")) {
 					kvp.Value.toIgnore = true;
 					continue;
 				}
@@ -267,7 +264,8 @@ namespace System.Resources.Tools
 					    || item.Value.VerifiedKey == null)
 					    continue;
 					// if case insensitive dupe found mark both
-					if (item.Value.VerifiedKey.ToLower () == kvp.Value.VerifiedKey.ToLower ()) {
+					if (String.Equals (item.Value.VerifiedKey, kvp.Value.VerifiedKey, 
+					                   StringComparison.OrdinalIgnoreCase)) {
 						item.Value.isUnmatchable = true;
 						kvp.Value.isUnmatchable = true;
 					}
@@ -286,8 +284,6 @@ namespace System.Resources.Tools
 				resType.TypeAttributes =  TypeAttributes.Public;
 			
 			//class CustomAttributes
-
-			//FIXME: .net always returns 4.0.0.0? should i identifify tool as mono?
 			resType.CustomAttributes.Add (new CodeAttributeDeclaration (
 							"System.CodeDom.Compiler.GeneratedCodeAttribute",
 							new CodeAttributeArgument (
@@ -308,7 +304,7 @@ namespace System.Resources.Tools
 		static void GenerateFields (CodeTypeDeclaration resType)
 		{
 			//resourceMan field
-			CodeMemberField resourceManField = new CodeMemberField();
+			CodeMemberField resourceManField = new CodeMemberField ();
 			resourceManField.Attributes = (MemberAttributes.Abstract
 							| MemberAttributes.Final
 							| MemberAttributes.Assembly
@@ -318,7 +314,7 @@ namespace System.Resources.Tools
 			resType.Members.Add (resourceManField);
 			
 			//resourceCulture field
-			CodeMemberField resourceCultureField = new CodeMemberField();
+			CodeMemberField resourceCultureField = new CodeMemberField ();
 			resourceCultureField.Attributes = (MemberAttributes.Abstract
 							| MemberAttributes.Final
 							| MemberAttributes.Assembly
@@ -407,7 +403,7 @@ namespace System.Resources.Tools
 										new CodeTypeOfExpression (baseNameToUse),
 										"Assembly")));
 
-			trueStatements [1] = new CodeAssignStatement ( new CodeFieldReferenceExpression (null, "resourceMan"),
+			trueStatements [1] = new CodeAssignStatement (new CodeFieldReferenceExpression (null, "resourceMan"),
 			                                              new CodeVariableReferenceExpression ("temp"));
 			
 			resourceManagerProp.GetStatements.Add (new CodeConditionStatement (
@@ -515,7 +511,6 @@ namespace System.Resources.Tools
 				throw new ArgumentNullException ("Parameter: provider must not be null");
 
 			if (key == String.Empty) {
-				// replace "" key with "_", 
 				keyToUse = "_";
 			} else {
 				// replaces special chars
@@ -536,7 +531,7 @@ namespace System.Resources.Tools
 		static char VerifySpecialChar (char ch)
 		{
 			for (int i = 0; i < specialChars.Length; i++) {
-				if ( specialChars [i] == ch)
+				if (specialChars [i] == ch)
 					return '_';
 			}
 			return ch;
@@ -544,7 +539,7 @@ namespace System.Resources.Tools
 
 		static string CleanNamespaceChars (string name)
 		{
-			char[] nameChars = name.ToCharArray ();
+			char [] nameChars = name.ToCharArray ();
 			for (int i = 0; i < nameChars.Length ;i++) {
 				foreach (char c in specialCharsNameSpace) {
 					if (nameChars [i] == c)
