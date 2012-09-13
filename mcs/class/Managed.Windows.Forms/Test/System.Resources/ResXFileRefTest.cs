@@ -199,7 +199,7 @@ namespace MonoTests.System.Resources
 				_converter.ConvertFrom (fileRef);
 				Assert.Fail ("#B1");
 #if NET_2_0
-			} catch (ArgumentException ex) { //FIXME: GB: surely this should be Exception ex
+			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");

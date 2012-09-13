@@ -432,12 +432,12 @@ namespace System.Resources
 		{
 			writer.WriteStartElement ("data");
 			writer.WriteAttributeString ("name", node.Name);
-			if (!(node.type == null || node.type.Equals (String.Empty)))
-				writer.WriteAttributeString ("type", node.type);
-			if (!(node.mime_type == null || node.mime_type.Equals (String.Empty)))
-				writer.WriteAttributeString ("mimetype", node.mime_type);
+			if (!(node.Type == null || node.Type.Equals (String.Empty)))
+				writer.WriteAttributeString ("type", node.Type);
+			if (!(node.MimeType == null || node.MimeType.Equals (String.Empty)))
+				writer.WriteAttributeString ("mimetype", node.MimeType);
 			writer.WriteStartElement ("value");
-			writer.WriteString (node.dataString);
+			writer.WriteString (node.DataString);
 			writer.WriteEndElement ();
 			if (!(node.Comment == null || node.Comment.Equals (String.Empty))) {
 				writer.WriteStartElement ("comment");

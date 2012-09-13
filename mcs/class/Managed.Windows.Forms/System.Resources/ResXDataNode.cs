@@ -53,9 +53,7 @@ namespace System.Resources
 
 
 		public string Comment {
-			get { 
-				return (comment == null) ? "" : comment; 
-			}
+			get { return comment ?? String.Empty; }
 			set { this.comment = value; }
 		}
 		
@@ -64,9 +62,7 @@ namespace System.Resources
 		}
 
 		public string Name {
-			get { 
-				return name == null ? "" : this.name;
-			}
+			get { return name ?? String.Empty; }
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ("name");
@@ -83,10 +79,10 @@ namespace System.Resources
 			}
 		}
 
-		internal string mime_type { get; set; }
-		internal string type { get;set;}
+		internal string MimeType { get; set; }
+		internal string Type { get;set;}
 
-		internal string dataString {
+		internal string DataString {
 			get {
 				if (IsWritable)
 					return ((IWritableHandler) handler).DataString;
@@ -136,7 +132,7 @@ namespace System.Resources
 			handler = new InMemoryHandler (value);
 		}
 
-		internal ResXDataNode (string nameAtt, string mime_typeAtt, string typeAtt, 
+		internal ResXDataNode (string nameAtt, string mimeTypeAtt, string typeAtt, 
 		                       string dataString, string commentString, Point position, 
 		                       string basePath)
 		{
@@ -144,16 +140,16 @@ namespace System.Resources
 			name = nameAtt;
 			comment = commentString;
 			pos = position;
-			mime_type = mime_typeAtt;
-			type = typeAtt;
+			MimeType = mimeTypeAtt;
+			Type = typeAtt;
 
-			if (!String.IsNullOrEmpty (mime_typeAtt)) {
+			if (!String.IsNullOrEmpty (mimeTypeAtt)) {
 				if (!String.IsNullOrEmpty(typeAtt)) {
-					handler = new TypeConverterFromResXHandler (dataString, mime_typeAtt, typeAtt);
+					handler = new TypeConverterFromResXHandler (dataString, mimeTypeAtt, typeAtt);
 				} else {
-					handler = new SerializedFromResXHandler (dataString, mime_typeAtt);
+					handler = new SerializedFromResXHandler (dataString, mimeTypeAtt);
 				}
-			} else if (!String.IsNullOrEmpty (typeAtt)) { //FIXME: OK to use hard coded types here to avoid version mismatches?
+			} else if (!String.IsNullOrEmpty (typeAtt)) { //using hard coded types to avoid version mismatches
 				if (typeAtt.StartsWith ("System.Resources.ResXNullRef, System.Windows.Forms")) {
 					handler = new NullRefHandler (typeAtt);
 				} else if (typeAtt.StartsWith ("System.Byte[], mscorlib")) { 
@@ -163,7 +159,7 @@ namespace System.Resources
 					handler = new FileRefHandler (newFileRef);
 					this.fileRef = newFileRef;
 				} else {
-					handler = new TypeConverterFromResXHandler (dataString, mime_typeAtt, typeAtt);
+					handler = new TypeConverterFromResXHandler (dataString, mimeTypeAtt, typeAtt);
 				}
 			} else {
 				handler = new InMemoryHandler (dataString);
@@ -198,7 +194,7 @@ namespace System.Resources
 			return handler.GetValue (typeResolver);
 		}
 		//FIXME: .net doesnt instantiate encoding at this stage
-		private ResXFileRef BuildFileRef (string dataString, string basePath)
+		ResXFileRef BuildFileRef (string dataString, string basePath)
 		{
 			ResXFileRef fr;
 
