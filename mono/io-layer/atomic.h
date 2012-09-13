@@ -751,7 +751,7 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, tmp;
 	__asm__ __volatile__ (	"1:\n"
 				"dmb\n"
@@ -791,7 +791,7 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 ex
 
 static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gpointer ret, tmp;
 	__asm__ __volatile__ (
 				"dmb\n"
@@ -832,7 +832,7 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 
 static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, flag;
 	__asm__ __volatile__ (
 				"dmb\n"
@@ -868,7 +868,7 @@ static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 
 static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, flag;
 	__asm__ __volatile__ (
 				"dmb\n"
@@ -904,7 +904,7 @@ static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 
 static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, flag;
 	__asm__ __volatile__ (
 				  "dmb\n"
@@ -931,7 +931,7 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 
 static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpointer exch)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gpointer ret, flag;
 	__asm__ __volatile__ (
 				  "dmb\n"
@@ -958,7 +958,7 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpoin
 
 static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, tmp, flag;
 	__asm__ __volatile__ (
 				"dmb\n"
