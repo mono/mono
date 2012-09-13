@@ -85,6 +85,9 @@ namespace System.Net.Http
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 
+			if (buffer != null)
+				return buffer.CopyToAsync (stream);
+
 			return SerializeToStreamAsync (stream, context);
 		}
 
@@ -136,6 +139,9 @@ namespace System.Net.Http
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (buffer != null)
+				return new MemoryStream (buffer.GetBuffer (), 0, (int)buffer.Length, false);
 
 			if (stream == null)
 				stream = await CreateContentReadStreamAsync ().ConfigureAwait (false);
