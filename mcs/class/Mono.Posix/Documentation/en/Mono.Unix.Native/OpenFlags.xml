@@ -1,9 +1,11 @@
 <Type Name="OpenFlags" FullName="Mono.Unix.Native.OpenFlags">
   <TypeSignature Language="C#" Value="public enum OpenFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OpenFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -24,213 +26,243 @@
   <Members>
     <Member MemberName="O_APPEND">
       <MemberSignature Language="C#" Value="O_APPEND" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_APPEND = int32(1024)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Open for appending.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_ASYNC">
       <MemberSignature Language="C#" Value="O_ASYNC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_ASYNC = int32(8192)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_CREAT">
       <MemberSignature Language="C#" Value="O_CREAT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_CREAT = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Create.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_DIRECT">
       <MemberSignature Language="C#" Value="O_DIRECT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_DIRECT = int32(16384)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Eliminate or reduce cache effects.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_DIRECTORY">
       <MemberSignature Language="C#" Value="O_DIRECTORY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_DIRECTORY = int32(65536)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_EXCL">
       <MemberSignature Language="C#" Value="O_EXCL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_EXCL = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Open exclusive.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_LARGEFILE">
       <MemberSignature Language="C#" Value="O_LARGEFILE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_LARGEFILE = int32(32768)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Enable large-file support.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_NOCTTY">
       <MemberSignature Language="C#" Value="O_NOCTTY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_NOCTTY = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>No controlling terminal.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_NOFOLLOW">
       <MemberSignature Language="C#" Value="O_NOFOLLOW" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_NOFOLLOW = int32(131072)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Do not follow symlinks.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_NONBLOCK">
       <MemberSignature Language="C#" Value="O_NONBLOCK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_NONBLOCK = int32(2048)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Open in non-blocking mode if possible.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_RDONLY">
       <MemberSignature Language="C#" Value="O_RDONLY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_RDONLY = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Read-only.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_RDWR">
       <MemberSignature Language="C#" Value="O_RDWR" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_RDWR = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Read-Write.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_SYNC">
       <MemberSignature Language="C#" Value="O_SYNC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_SYNC = int32(4096)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Open for synchronous I/O.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_TRUNC">
       <MemberSignature Language="C#" Value="O_TRUNC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_TRUNC = int32(512)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Truncate on opening if necessary.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_WRONLY">
       <MemberSignature Language="C#" Value="O_WRONLY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.OpenFlags O_WRONLY = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Write-only.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

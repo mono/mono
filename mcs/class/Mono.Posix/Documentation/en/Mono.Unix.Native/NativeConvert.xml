@@ -1,9 +1,11 @@
 <Type Name="NativeConvert" FullName="Mono.Unix.Native.NativeConvert">
   <TypeSignature Language="C#" Value="public sealed class NativeConvert" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NativeConvert extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>
   All public static members of this type are safe for multithreaded operations. 
@@ -13,6 +15,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Performs conversions between managed and unmanaged enumeration
     values.</summary>
@@ -46,7 +53,13 @@
       -->
     <Member MemberName="FromAccessModes">
       <MemberSignature Language="C#" Value="public static int FromAccessModes (Mono.Unix.Native.AccessModes value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromAccessModes(valuetype Mono.Unix.Native.AccessModes value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -67,14 +80,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromAccessModes" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToAccessModes" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromConfstrName">
       <MemberSignature Language="C#" Value="public static int FromConfstrName (Mono.Unix.Native.ConfstrName value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromConfstrName(valuetype Mono.Unix.Native.ConfstrName value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -95,14 +110,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromConfstrName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToConfstrName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromDateTime">
       <MemberSignature Language="C#" Value="public static long FromDateTime (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 FromDateTime(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -119,14 +136,16 @@
         elapsed since Midnight of January 1, 1970, UTC.</remarks>
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToTimeT" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromDirectoryNotifyFlags">
       <MemberSignature Language="C#" Value="public static int FromDirectoryNotifyFlags (Mono.Unix.Native.DirectoryNotifyFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromDirectoryNotifyFlags(valuetype Mono.Unix.Native.DirectoryNotifyFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -147,14 +166,56 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromDirectoryNotifyFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToDirectoryNotifyFlags" />
       </Docs>
+    </Member>
+    <Member MemberName="FromEpollEvents">
+      <MemberSignature Language="C#" Value="public static uint FromEpollEvents (Mono.Unix.Native.EpollEvents value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int32 FromEpollEvents(valuetype Mono.Unix.Native.EpollEvents value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="Mono.Unix.Native.EpollEvents" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromEpollFlags">
+      <MemberSignature Language="C#" Value="public static int FromEpollFlags (Mono.Unix.Native.EpollFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromEpollFlags(valuetype Mono.Unix.Native.EpollFlags value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="Mono.Unix.Native.EpollFlags" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="FromErrno">
       <MemberSignature Language="C#" Value="public static int FromErrno (Mono.Unix.Native.Errno value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromErrno(valuetype Mono.Unix.Native.Errno value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -175,14 +236,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromErrno" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToErrno" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromFcntlCommand">
       <MemberSignature Language="C#" Value="public static int FromFcntlCommand (Mono.Unix.Native.FcntlCommand value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromFcntlCommand(valuetype Mono.Unix.Native.FcntlCommand value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -203,14 +266,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromFcntlCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToFcntlCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromFilePermissions">
       <MemberSignature Language="C#" Value="public static uint FromFilePermissions (Mono.Unix.Native.FilePermissions value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int32 FromFilePermissions(valuetype Mono.Unix.Native.FilePermissions value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -231,14 +296,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromFilePermissions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToFilePermissions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromLockfCommand">
       <MemberSignature Language="C#" Value="public static int FromLockfCommand (Mono.Unix.Native.LockfCommand value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromLockfCommand(valuetype Mono.Unix.Native.LockfCommand value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -259,14 +326,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromLockfCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToLockfCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromLockType">
       <MemberSignature Language="C#" Value="public static short FromLockType (Mono.Unix.Native.LockType value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 FromLockType(valuetype Mono.Unix.Native.LockType value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -287,14 +356,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromLockType" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToLockType" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromMlockallFlags">
       <MemberSignature Language="C#" Value="public static int FromMlockallFlags (Mono.Unix.Native.MlockallFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromMlockallFlags(valuetype Mono.Unix.Native.MlockallFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -315,14 +386,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMlockallFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMlockallFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromMmapFlags">
       <MemberSignature Language="C#" Value="public static int FromMmapFlags (Mono.Unix.Native.MmapFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromMmapFlags(valuetype Mono.Unix.Native.MmapFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -343,14 +416,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMmapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMmapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromMmapProts">
       <MemberSignature Language="C#" Value="public static int FromMmapProts (Mono.Unix.Native.MmapProts value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromMmapProts(valuetype Mono.Unix.Native.MmapProts value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -371,14 +446,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMmapProts" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMmapProts" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromMountFlags">
       <MemberSignature Language="C#" Value="public static ulong FromMountFlags (Mono.Unix.Native.MountFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 FromMountFlags(valuetype Mono.Unix.Native.MountFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -399,14 +476,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMountFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMountFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromMremapFlags">
       <MemberSignature Language="C#" Value="public static ulong FromMremapFlags (Mono.Unix.Native.MremapFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 FromMremapFlags(valuetype Mono.Unix.Native.MremapFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -427,14 +506,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMremapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMremapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromMsyncFlags">
       <MemberSignature Language="C#" Value="public static int FromMsyncFlags (Mono.Unix.Native.MsyncFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromMsyncFlags(valuetype Mono.Unix.Native.MsyncFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -455,14 +536,16 @@
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMsyncFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMsyncFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromOctalPermissionString">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.FilePermissions FromOctalPermissionString (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.FilePermissions FromOctalPermissionString(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
       </ReturnValue>
@@ -502,14 +585,16 @@ class Test
           </example>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromOpenFlags">
       <MemberSignature Language="C#" Value="public static int FromOpenFlags (Mono.Unix.Native.OpenFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromOpenFlags(valuetype Mono.Unix.Native.OpenFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -530,14 +615,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromOpenFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToOpenFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromPathconfName">
       <MemberSignature Language="C#" Value="public static int FromPathconfName (Mono.Unix.Native.PathconfName value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromPathconfName(valuetype Mono.Unix.Native.PathconfName value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -558,14 +645,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPathconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPathconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromPollEvents">
       <MemberSignature Language="C#" Value="public static short FromPollEvents (Mono.Unix.Native.PollEvents value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 FromPollEvents(valuetype Mono.Unix.Native.PollEvents value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -586,14 +675,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPollEvents" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPollEvents" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromPosixFadviseAdvice">
       <MemberSignature Language="C#" Value="public static int FromPosixFadviseAdvice (Mono.Unix.Native.PosixFadviseAdvice value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromPosixFadviseAdvice(valuetype Mono.Unix.Native.PosixFadviseAdvice value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -614,14 +705,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPosixFadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPosixFadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromPosixMadviseAdvice">
       <MemberSignature Language="C#" Value="public static int FromPosixMadviseAdvice (Mono.Unix.Native.PosixMadviseAdvice value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromPosixMadviseAdvice(valuetype Mono.Unix.Native.PosixMadviseAdvice value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -642,16 +735,14 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPosixMadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPosixMadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromRealTimeSignum">
       <MemberSignature Language="C#" Value="public static int FromRealTimeSignum (Mono.Unix.Native.RealTimeSignum sig);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromRealTimeSignum(valuetype Mono.Unix.Native.RealTimeSignum sig) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -664,12 +755,19 @@ class Test
         <summary>Converts a <see cref="T:Mono.Unix.Native.RealTimeSignum" /> 
           to an OS-specific value.</summary>
         <returns>The equivalent OS-specific value.</returns>
-        <remarks></remarks>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="FromSeekFlags">
       <MemberSignature Language="C#" Value="public static short FromSeekFlags (Mono.Unix.Native.SeekFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 FromSeekFlags(valuetype Mono.Unix.Native.SeekFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -690,14 +788,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSeekFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSeekFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromSignum">
       <MemberSignature Language="C#" Value="public static int FromSignum (Mono.Unix.Native.Signum value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromSignum(valuetype Mono.Unix.Native.Signum value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -718,14 +818,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSignum" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSignum" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromSysconfName">
       <MemberSignature Language="C#" Value="public static int FromSysconfName (Mono.Unix.Native.SysconfName value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromSysconfName(valuetype Mono.Unix.Native.SysconfName value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -746,14 +848,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSysconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSysconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromSyslogFacility">
       <MemberSignature Language="C#" Value="public static int FromSyslogFacility (Mono.Unix.Native.SyslogFacility value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromSyslogFacility(valuetype Mono.Unix.Native.SyslogFacility value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -774,14 +878,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogFacility" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogFacility" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromSyslogLevel">
       <MemberSignature Language="C#" Value="public static int FromSyslogLevel (Mono.Unix.Native.SyslogLevel value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromSyslogLevel(valuetype Mono.Unix.Native.SyslogLevel value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -802,14 +908,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogLevel" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogLevel" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromSyslogOptions">
       <MemberSignature Language="C#" Value="public static int FromSyslogOptions (Mono.Unix.Native.SyslogOptions value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromSyslogOptions(valuetype Mono.Unix.Native.SyslogOptions value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -830,14 +938,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromTimeT">
       <MemberSignature Language="C#" Value="public static DateTime FromTimeT (long time);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime FromTimeT(int64 time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -853,14 +963,16 @@ class Test
         elapsed since Midnight of January 1, 1970, UTC.</remarks>
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToDateTime" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromUnixPermissionString">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.FilePermissions FromUnixPermissionString (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.FilePermissions FromUnixPermissionString(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
       </ReturnValue>
@@ -916,14 +1028,16 @@ class Test
           </example>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromWaitOptions">
       <MemberSignature Language="C#" Value="public static int FromWaitOptions (Mono.Unix.Native.WaitOptions value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromWaitOptions(valuetype Mono.Unix.Native.WaitOptions value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -944,14 +1058,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromWaitOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToWaitOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromXattrFlags">
       <MemberSignature Language="C#" Value="public static int FromXattrFlags (Mono.Unix.Native.XattrFlags value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FromXattrFlags(valuetype Mono.Unix.Native.XattrFlags value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -972,14 +1088,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromXattrFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToXattrFlags" />
       </Docs>
+    </Member>
+    <Member MemberName="LocalUnixEpoch">
+      <MemberSignature Language="C#" Value="public static readonly DateTime LocalUnixEpoch;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.DateTime LocalUnixEpoch" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LocalUnixEpoch">
-      <MemberSignature Language="C#" Value="public static readonly DateTime LocalUnixEpoch = 1/1/1970 12:00:00 AM;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -989,14 +1107,16 @@ class Test
         <remarks>This <c>DateTime</c> corresponds to a 
         Unix <c>time_t</c> value of 0.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LocalUtcOffset">
       <MemberSignature Language="C#" Value="public static readonly TimeSpan LocalUtcOffset;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.TimeSpan LocalUtcOffset" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1004,14 +1124,16 @@ class Test
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToAccessModes">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.AccessModes ToAccessModes (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.AccessModes ToAccessModes(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.AccessModes</ReturnType>
       </ReturnValue>
@@ -1036,14 +1158,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromAccessModes" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToAccessModes" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToConfstrName">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.ConfstrName ToConfstrName (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.ConfstrName ToConfstrName(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.ConfstrName</ReturnType>
       </ReturnValue>
@@ -1064,14 +1188,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromConfstrName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToConfstrName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToDateTime">
       <MemberSignature Language="C#" Value="public static DateTime ToDateTime (long time);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime ToDateTime(int64 time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -1087,14 +1213,16 @@ class Test
         elapsed since Midnight of January 1, 1970, UTC.</remarks>
         <altmember cref="M:Mono.Unix.Native.NativeConvert.FromTimeT" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToDirectoryNotifyFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.DirectoryNotifyFlags ToDirectoryNotifyFlags (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.DirectoryNotifyFlags ToDirectoryNotifyFlags(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.DirectoryNotifyFlags</ReturnType>
       </ReturnValue>
@@ -1119,14 +1247,56 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromDirectoryNotifyFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToDirectoryNotifyFlags" />
       </Docs>
+    </Member>
+    <Member MemberName="ToEpollEvents">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.EpollEvents ToEpollEvents (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.EpollEvents ToEpollEvents(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.EpollEvents</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToEpollFlags">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.EpollFlags ToEpollFlags (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.EpollFlags ToEpollFlags(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.EpollFlags</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="ToErrno">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.Errno ToErrno (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.Errno ToErrno(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Errno</ReturnType>
       </ReturnValue>
@@ -1147,14 +1317,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromErrno" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToErrno" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToFcntlCommand">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.FcntlCommand ToFcntlCommand (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.FcntlCommand ToFcntlCommand(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
@@ -1175,14 +1347,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromFcntlCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToFcntlCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToFilePermissions">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.FilePermissions ToFilePermissions (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.FilePermissions ToFilePermissions(unsigned int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FilePermissions</ReturnType>
       </ReturnValue>
@@ -1207,14 +1381,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromFilePermissions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToFilePermissions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToFopenMode">
       <MemberSignature Language="C#" Value="public static string ToFopenMode (System.IO.FileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToFopenMode(valuetype System.IO.FileAccess access) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1233,14 +1409,16 @@ class Test
         Unix-specific API look like a <c>CLI</c> API, such as with 
         <see cref="T:Mono.Unix.StdioFileStream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToFopenMode">
       <MemberSignature Language="C#" Value="public static string ToFopenMode (System.IO.FileMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToFopenMode(valuetype System.IO.FileMode mode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1259,14 +1437,16 @@ class Test
         Unix-specific API look like a <c>CLI</c> API, such as with 
         <see cref="T:Mono.Unix.StdioFileStream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToFopenMode">
       <MemberSignature Language="C#" Value="public static string ToFopenMode (System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToFopenMode(valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1287,14 +1467,16 @@ class Test
         Unix-specific API look like a <c>CLI</c> API, such as with 
         <see cref="T:Mono.Unix.StdioFileStream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToLockfCommand">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.LockfCommand ToLockfCommand (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.LockfCommand ToLockfCommand(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.LockfCommand</ReturnType>
       </ReturnValue>
@@ -1315,14 +1497,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromLockfCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToLockfCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToLockType">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.LockType ToLockType (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.LockType ToLockType(int16 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.LockType</ReturnType>
       </ReturnValue>
@@ -1343,14 +1527,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromLockType" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToLockType" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToMlockallFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.MlockallFlags ToMlockallFlags (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.MlockallFlags ToMlockallFlags(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MlockallFlags</ReturnType>
       </ReturnValue>
@@ -1375,14 +1561,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMlockallFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMlockallFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToMmapFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.MmapFlags ToMmapFlags (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.MmapFlags ToMmapFlags(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
@@ -1407,14 +1595,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMmapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMmapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToMmapProts">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.MmapProts ToMmapProts (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.MmapProts ToMmapProts(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapProts</ReturnType>
       </ReturnValue>
@@ -1439,14 +1629,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMmapProts" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMmapProts" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToMountFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.MountFlags ToMountFlags (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.MountFlags ToMountFlags(unsigned int64 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MountFlags</ReturnType>
       </ReturnValue>
@@ -1471,14 +1663,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMountFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMountFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToMremapFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.MremapFlags ToMremapFlags (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.MremapFlags ToMremapFlags(unsigned int64 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MremapFlags</ReturnType>
       </ReturnValue>
@@ -1503,14 +1697,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMremapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMremapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToMsyncFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.MsyncFlags ToMsyncFlags (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.MsyncFlags ToMsyncFlags(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MsyncFlags</ReturnType>
       </ReturnValue>
@@ -1535,14 +1731,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMsyncFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMsyncFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToOctalPermissionString">
       <MemberSignature Language="C#" Value="public static string ToOctalPermissionString (Mono.Unix.Native.FilePermissions value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToOctalPermissionString(valuetype Mono.Unix.Native.FilePermissions value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1583,14 +1781,16 @@ class Test
           </example>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToOpenFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.OpenFlags ToOpenFlags (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.OpenFlags ToOpenFlags(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
@@ -1615,14 +1815,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromOpenFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToOpenFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToOpenFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.OpenFlags ToOpenFlags (System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.OpenFlags ToOpenFlags(valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.OpenFlags</ReturnType>
       </ReturnValue>
@@ -1641,14 +1843,16 @@ class Test
         Unix-specific API look like a <c>CLI</c> API, such as with 
         <see cref="T:Mono.Unix.UnixStream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToPathconfName">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.PathconfName ToPathconfName (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.PathconfName ToPathconfName(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PathconfName</ReturnType>
       </ReturnValue>
@@ -1669,14 +1873,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPathconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPathconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToPollEvents">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.PollEvents ToPollEvents (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.PollEvents ToPollEvents(int16 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PollEvents</ReturnType>
       </ReturnValue>
@@ -1701,14 +1907,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPollEvents" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPollEvents" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToPosixFadviseAdvice">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.PosixFadviseAdvice ToPosixFadviseAdvice (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.PosixFadviseAdvice ToPosixFadviseAdvice(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PosixFadviseAdvice</ReturnType>
       </ReturnValue>
@@ -1729,14 +1937,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPosixFadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPosixFadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToPosixMadviseAdvice">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.PosixMadviseAdvice ToPosixMadviseAdvice (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.PosixMadviseAdvice ToPosixMadviseAdvice(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PosixMadviseAdvice</ReturnType>
       </ReturnValue>
@@ -1757,16 +1967,14 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPosixMadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPosixMadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToRealTimeSignum">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.RealTimeSignum ToRealTimeSignum (int offset);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.RealTimeSignum ToRealTimeSignum(int32 offset) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.RealTimeSignum</ReturnType>
@@ -1783,7 +1991,13 @@ class Test
     </Member>
     <Member MemberName="ToSeekFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SeekFlags ToSeekFlags (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.SeekFlags ToSeekFlags(int16 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SeekFlags</ReturnType>
       </ReturnValue>
@@ -1804,14 +2018,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSeekFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSeekFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToSignum">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.Signum ToSignum (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.Signum ToSignum(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Signum</ReturnType>
       </ReturnValue>
@@ -1832,14 +2048,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSignum" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSignum" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToSysconfName">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SysconfName ToSysconfName (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.SysconfName ToSysconfName(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
@@ -1860,14 +2078,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSysconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSysconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToSyslogFacility">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SyslogFacility ToSyslogFacility (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.SyslogFacility ToSyslogFacility(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SyslogFacility</ReturnType>
       </ReturnValue>
@@ -1888,14 +2108,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogFacility" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogFacility" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToSyslogLevel">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SyslogLevel ToSyslogLevel (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.SyslogLevel ToSyslogLevel(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SyslogLevel</ReturnType>
       </ReturnValue>
@@ -1916,14 +2138,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogLevel" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogLevel" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToSyslogOptions">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SyslogOptions ToSyslogOptions (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.SyslogOptions ToSyslogOptions(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SyslogOptions</ReturnType>
       </ReturnValue>
@@ -1948,14 +2172,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToTimeT">
       <MemberSignature Language="C#" Value="public static long ToTimeT (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 ToTimeT(valuetype System.DateTime time) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1972,14 +2198,16 @@ class Test
         elapsed since Midnight of January 1, 1970, UTC.</remarks>
         <altmember cref="M:Mono.Unix.Native.NativeConvert.FromDateTime" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToUnixPermissionString">
       <MemberSignature Language="C#" Value="public static string ToUnixPermissionString (Mono.Unix.Native.FilePermissions value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ToUnixPermissionString(valuetype Mono.Unix.Native.FilePermissions value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2027,14 +2255,16 @@ class Test
           </example>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToWaitOptions">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.WaitOptions ToWaitOptions (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.WaitOptions ToWaitOptions(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.WaitOptions</ReturnType>
       </ReturnValue>
@@ -2059,14 +2289,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromWaitOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToWaitOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToXattrFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.XattrFlags ToXattrFlags (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.XattrFlags ToXattrFlags(int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.XattrFlags</ReturnType>
       </ReturnValue>
@@ -2091,16 +2323,14 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromXattrFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToXattrFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Flock source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Flock source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2119,7 +2349,13 @@ class Test
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Pollfd source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Pollfd source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2134,14 +2370,16 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Stat source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Stat source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2156,14 +2394,16 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Statvfs source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Statvfs source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2178,16 +2418,14 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Timespec source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Timespec source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2206,7 +2444,13 @@ class Test
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Timeval source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Timeval source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2221,14 +2465,16 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Timezone source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Timezone source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2243,17 +2489,15 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (ref Mono.Unix.Native.Utimbuf source, IntPtr destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(valuetype Mono.Unix.Native.Utimbuf source, native int destination) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2272,9 +2516,11 @@ class Test
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Flock destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Flock destination) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2293,7 +2539,13 @@ class Test
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Pollfd destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Pollfd destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2308,14 +2560,16 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Stat destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Stat destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2330,14 +2584,16 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Statvfs destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Statvfs destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2352,16 +2608,14 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Timespec destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Timespec destination) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2380,7 +2634,13 @@ class Test
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Timeval destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Timeval destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2395,14 +2655,16 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Timezone destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Timezone destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2417,17 +2679,15 @@ class Test
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryCopy">
       <MemberSignature Language="C#" Value="public static bool TryCopy (IntPtr source, out Mono.Unix.Native.Utimbuf destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryCopy(native int source, valuetype Mono.Unix.Native.Utimbuf destination) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2446,7 +2706,13 @@ class Test
     </Member>
     <Member MemberName="TryFromAccessModes">
       <MemberSignature Language="C#" Value="public static bool TryFromAccessModes (Mono.Unix.Native.AccessModes value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromAccessModes(valuetype Mono.Unix.Native.AccessModes value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2473,14 +2739,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToAccessModes" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToAccessModes" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromConfstrName">
       <MemberSignature Language="C#" Value="public static bool TryFromConfstrName (Mono.Unix.Native.ConfstrName value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromConfstrName(valuetype Mono.Unix.Native.ConfstrName value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2507,14 +2775,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToConfstrName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToConfstrName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromDirectoryNotifyFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromDirectoryNotifyFlags (Mono.Unix.Native.DirectoryNotifyFlags value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromDirectoryNotifyFlags(valuetype Mono.Unix.Native.DirectoryNotifyFlags value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2541,14 +2811,60 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToDirectoryNotifyFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToDirectoryNotifyFlags" />
       </Docs>
+    </Member>
+    <Member MemberName="TryFromEpollEvents">
+      <MemberSignature Language="C#" Value="public static bool TryFromEpollEvents (Mono.Unix.Native.EpollEvents value, out uint rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromEpollEvents(valuetype Mono.Unix.Native.EpollEvents value, unsigned int32 rval) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="Mono.Unix.Native.EpollEvents" />
+        <Parameter Name="rval" Type="System.UInt32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="rval">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryFromEpollFlags">
+      <MemberSignature Language="C#" Value="public static bool TryFromEpollFlags (Mono.Unix.Native.EpollFlags value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromEpollFlags(valuetype Mono.Unix.Native.EpollFlags value, int32 rval) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="Mono.Unix.Native.EpollFlags" />
+        <Parameter Name="rval" Type="System.Int32&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="rval">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="TryFromErrno">
       <MemberSignature Language="C#" Value="public static bool TryFromErrno (Mono.Unix.Native.Errno value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromErrno(valuetype Mono.Unix.Native.Errno value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2575,14 +2891,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToErrno" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToErrno" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromFcntlCommand">
       <MemberSignature Language="C#" Value="public static bool TryFromFcntlCommand (Mono.Unix.Native.FcntlCommand value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromFcntlCommand(valuetype Mono.Unix.Native.FcntlCommand value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2609,14 +2927,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToFcntlCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToFcntlCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromFilePermissions">
       <MemberSignature Language="C#" Value="public static bool TryFromFilePermissions (Mono.Unix.Native.FilePermissions value, out uint rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromFilePermissions(valuetype Mono.Unix.Native.FilePermissions value, unsigned int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2643,14 +2963,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToFilePermissions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToFilePermissions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromLockfCommand">
       <MemberSignature Language="C#" Value="public static bool TryFromLockfCommand (Mono.Unix.Native.LockfCommand value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromLockfCommand(valuetype Mono.Unix.Native.LockfCommand value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2677,14 +2999,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToLockfCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToLockfCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromLockType">
       <MemberSignature Language="C#" Value="public static bool TryFromLockType (Mono.Unix.Native.LockType value, out short rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromLockType(valuetype Mono.Unix.Native.LockType value, int16 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2711,14 +3035,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToLockType" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToLockType" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromMlockallFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromMlockallFlags (Mono.Unix.Native.MlockallFlags value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromMlockallFlags(valuetype Mono.Unix.Native.MlockallFlags value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2745,14 +3071,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMlockallFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMlockallFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromMmapFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromMmapFlags (Mono.Unix.Native.MmapFlags value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromMmapFlags(valuetype Mono.Unix.Native.MmapFlags value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2779,14 +3107,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMmapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMmapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromMmapProts">
       <MemberSignature Language="C#" Value="public static bool TryFromMmapProts (Mono.Unix.Native.MmapProts value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromMmapProts(valuetype Mono.Unix.Native.MmapProts value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2813,14 +3143,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMmapProts" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMmapProts" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromMountFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromMountFlags (Mono.Unix.Native.MountFlags value, out ulong rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromMountFlags(valuetype Mono.Unix.Native.MountFlags value, unsigned int64 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2847,14 +3179,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMountFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMountFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromMremapFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromMremapFlags (Mono.Unix.Native.MremapFlags value, out ulong rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromMremapFlags(valuetype Mono.Unix.Native.MremapFlags value, unsigned int64 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2881,14 +3215,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMremapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMremapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromMsyncFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromMsyncFlags (Mono.Unix.Native.MsyncFlags value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromMsyncFlags(valuetype Mono.Unix.Native.MsyncFlags value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2915,14 +3251,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMsyncFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToMsyncFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromOpenFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromOpenFlags (Mono.Unix.Native.OpenFlags value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromOpenFlags(valuetype Mono.Unix.Native.OpenFlags value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2949,14 +3287,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToOpenFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToOpenFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromPathconfName">
       <MemberSignature Language="C#" Value="public static bool TryFromPathconfName (Mono.Unix.Native.PathconfName value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromPathconfName(valuetype Mono.Unix.Native.PathconfName value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2983,14 +3323,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPathconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPathconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromPollEvents">
       <MemberSignature Language="C#" Value="public static bool TryFromPollEvents (Mono.Unix.Native.PollEvents value, out short rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromPollEvents(valuetype Mono.Unix.Native.PollEvents value, int16 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3017,14 +3359,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPollEvents" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPollEvents" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromPosixFadviseAdvice">
       <MemberSignature Language="C#" Value="public static bool TryFromPosixFadviseAdvice (Mono.Unix.Native.PosixFadviseAdvice value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromPosixFadviseAdvice(valuetype Mono.Unix.Native.PosixFadviseAdvice value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3051,14 +3395,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPosixFadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPosixFadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromPosixMadviseAdvice">
       <MemberSignature Language="C#" Value="public static bool TryFromPosixMadviseAdvice (Mono.Unix.Native.PosixMadviseAdvice value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromPosixMadviseAdvice(valuetype Mono.Unix.Native.PosixMadviseAdvice value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3085,14 +3431,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPosixMadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToPosixMadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromSeekFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromSeekFlags (Mono.Unix.Native.SeekFlags value, out short rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromSeekFlags(valuetype Mono.Unix.Native.SeekFlags value, int16 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3119,14 +3467,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSeekFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSeekFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromSignum">
       <MemberSignature Language="C#" Value="public static bool TryFromSignum (Mono.Unix.Native.Signum value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromSignum(valuetype Mono.Unix.Native.Signum value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3153,14 +3503,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSignum" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSignum" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromSysconfName">
       <MemberSignature Language="C#" Value="public static bool TryFromSysconfName (Mono.Unix.Native.SysconfName value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromSysconfName(valuetype Mono.Unix.Native.SysconfName value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3187,14 +3539,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSysconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSysconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromSyslogFacility">
       <MemberSignature Language="C#" Value="public static bool TryFromSyslogFacility (Mono.Unix.Native.SyslogFacility value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromSyslogFacility(valuetype Mono.Unix.Native.SyslogFacility value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3221,14 +3575,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSyslogFacility" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogFacility" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromSyslogLevel">
       <MemberSignature Language="C#" Value="public static bool TryFromSyslogLevel (Mono.Unix.Native.SyslogLevel value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromSyslogLevel(valuetype Mono.Unix.Native.SyslogLevel value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3255,14 +3611,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSyslogLevel" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogLevel" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromSyslogOptions">
       <MemberSignature Language="C#" Value="public static bool TryFromSyslogOptions (Mono.Unix.Native.SyslogOptions value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromSyslogOptions(valuetype Mono.Unix.Native.SyslogOptions value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3289,14 +3647,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSyslogOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToSyslogOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromWaitOptions">
       <MemberSignature Language="C#" Value="public static bool TryFromWaitOptions (Mono.Unix.Native.WaitOptions value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromWaitOptions(valuetype Mono.Unix.Native.WaitOptions value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3323,14 +3683,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToWaitOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToWaitOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryFromXattrFlags">
       <MemberSignature Language="C#" Value="public static bool TryFromXattrFlags (Mono.Unix.Native.XattrFlags value, out int rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryFromXattrFlags(valuetype Mono.Unix.Native.XattrFlags value, int32 rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3357,14 +3719,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToXattrFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryToXattrFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToAccessModes">
       <MemberSignature Language="C#" Value="public static bool TryToAccessModes (int value, out Mono.Unix.Native.AccessModes rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToAccessModes(int32 value, valuetype Mono.Unix.Native.AccessModes rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3399,14 +3763,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToAccessModes" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromAccessModes" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToConfstrName">
       <MemberSignature Language="C#" Value="public static bool TryToConfstrName (int value, out Mono.Unix.Native.ConfstrName rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToConfstrName(int32 value, valuetype Mono.Unix.Native.ConfstrName rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3434,14 +3800,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToConfstrName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromConfstrName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToDirectoryNotifyFlags">
       <MemberSignature Language="C#" Value="public static bool TryToDirectoryNotifyFlags (int value, out Mono.Unix.Native.DirectoryNotifyFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToDirectoryNotifyFlags(int32 value, valuetype Mono.Unix.Native.DirectoryNotifyFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3476,14 +3844,60 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToDirectoryNotifyFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromDirectoryNotifyFlags" />
       </Docs>
+    </Member>
+    <Member MemberName="TryToEpollEvents">
+      <MemberSignature Language="C#" Value="public static bool TryToEpollEvents (uint value, out Mono.Unix.Native.EpollEvents rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToEpollEvents(unsigned int32 value, valuetype Mono.Unix.Native.EpollEvents rval) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.UInt32" />
+        <Parameter Name="rval" Type="Mono.Unix.Native.EpollEvents&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="rval">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryToEpollFlags">
+      <MemberSignature Language="C#" Value="public static bool TryToEpollFlags (int value, out Mono.Unix.Native.EpollFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToEpollFlags(int32 value, valuetype Mono.Unix.Native.EpollFlags rval) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+        <Parameter Name="rval" Type="Mono.Unix.Native.EpollFlags&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="rval">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="TryToErrno">
       <MemberSignature Language="C#" Value="public static bool TryToErrno (int value, out Mono.Unix.Native.Errno rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToErrno(int32 value, valuetype Mono.Unix.Native.Errno rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3511,14 +3925,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToErrno" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromErrno" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToFcntlCommand">
       <MemberSignature Language="C#" Value="public static bool TryToFcntlCommand (int value, out Mono.Unix.Native.FcntlCommand rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToFcntlCommand(int32 value, valuetype Mono.Unix.Native.FcntlCommand rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3546,14 +3962,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToFcntlCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromFcntlCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToFilePermissions">
       <MemberSignature Language="C#" Value="public static bool TryToFilePermissions (uint value, out Mono.Unix.Native.FilePermissions rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToFilePermissions(unsigned int32 value, valuetype Mono.Unix.Native.FilePermissions rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3588,14 +4006,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToFilePermissions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromFilePermissions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToLockfCommand">
       <MemberSignature Language="C#" Value="public static bool TryToLockfCommand (int value, out Mono.Unix.Native.LockfCommand rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToLockfCommand(int32 value, valuetype Mono.Unix.Native.LockfCommand rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3623,14 +4043,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToLockfCommand" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromLockfCommand" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToLockType">
       <MemberSignature Language="C#" Value="public static bool TryToLockType (short value, out Mono.Unix.Native.LockType rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToLockType(int16 value, valuetype Mono.Unix.Native.LockType rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3658,14 +4080,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToLockType" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromLockType" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToMlockallFlags">
       <MemberSignature Language="C#" Value="public static bool TryToMlockallFlags (int value, out Mono.Unix.Native.MlockallFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToMlockallFlags(int32 value, valuetype Mono.Unix.Native.MlockallFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3700,14 +4124,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMlockallFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMlockallFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToMmapFlags">
       <MemberSignature Language="C#" Value="public static bool TryToMmapFlags (int value, out Mono.Unix.Native.MmapFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToMmapFlags(int32 value, valuetype Mono.Unix.Native.MmapFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3742,14 +4168,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMmapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMmapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToMmapProts">
       <MemberSignature Language="C#" Value="public static bool TryToMmapProts (int value, out Mono.Unix.Native.MmapProts rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToMmapProts(int32 value, valuetype Mono.Unix.Native.MmapProts rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3784,14 +4212,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMmapProts" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMmapProts" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToMountFlags">
       <MemberSignature Language="C#" Value="public static bool TryToMountFlags (ulong value, out Mono.Unix.Native.MountFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToMountFlags(unsigned int64 value, valuetype Mono.Unix.Native.MountFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3826,14 +4256,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMountFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMountFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToMremapFlags">
       <MemberSignature Language="C#" Value="public static bool TryToMremapFlags (ulong value, out Mono.Unix.Native.MremapFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToMremapFlags(unsigned int64 value, valuetype Mono.Unix.Native.MremapFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3868,14 +4300,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMremapFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMremapFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToMsyncFlags">
       <MemberSignature Language="C#" Value="public static bool TryToMsyncFlags (int value, out Mono.Unix.Native.MsyncFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToMsyncFlags(int32 value, valuetype Mono.Unix.Native.MsyncFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3910,14 +4344,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToMsyncFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromMsyncFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToOpenFlags">
       <MemberSignature Language="C#" Value="public static bool TryToOpenFlags (int value, out Mono.Unix.Native.OpenFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToOpenFlags(int32 value, valuetype Mono.Unix.Native.OpenFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3952,14 +4388,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToOpenFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromOpenFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToPathconfName">
       <MemberSignature Language="C#" Value="public static bool TryToPathconfName (int value, out Mono.Unix.Native.PathconfName rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToPathconfName(int32 value, valuetype Mono.Unix.Native.PathconfName rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3987,14 +4425,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPathconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPathconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToPollEvents">
       <MemberSignature Language="C#" Value="public static bool TryToPollEvents (short value, out Mono.Unix.Native.PollEvents rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToPollEvents(int16 value, valuetype Mono.Unix.Native.PollEvents rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4029,14 +4469,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPollEvents" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPollEvents" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToPosixFadviseAdvice">
       <MemberSignature Language="C#" Value="public static bool TryToPosixFadviseAdvice (int value, out Mono.Unix.Native.PosixFadviseAdvice rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToPosixFadviseAdvice(int32 value, valuetype Mono.Unix.Native.PosixFadviseAdvice rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4064,14 +4506,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPosixFadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPosixFadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToPosixMadviseAdvice">
       <MemberSignature Language="C#" Value="public static bool TryToPosixMadviseAdvice (int value, out Mono.Unix.Native.PosixMadviseAdvice rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToPosixMadviseAdvice(int32 value, valuetype Mono.Unix.Native.PosixMadviseAdvice rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4099,14 +4543,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToPosixMadviseAdvice" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromPosixMadviseAdvice" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToSeekFlags">
       <MemberSignature Language="C#" Value="public static bool TryToSeekFlags (short value, out Mono.Unix.Native.SeekFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToSeekFlags(int16 value, valuetype Mono.Unix.Native.SeekFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4134,14 +4580,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSeekFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSeekFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToSignum">
       <MemberSignature Language="C#" Value="public static bool TryToSignum (int value, out Mono.Unix.Native.Signum rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToSignum(int32 value, valuetype Mono.Unix.Native.Signum rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4169,14 +4617,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSignum" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSignum" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToSysconfName">
       <MemberSignature Language="C#" Value="public static bool TryToSysconfName (int value, out Mono.Unix.Native.SysconfName rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToSysconfName(int32 value, valuetype Mono.Unix.Native.SysconfName rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4204,14 +4654,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSysconfName" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSysconfName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToSyslogFacility">
       <MemberSignature Language="C#" Value="public static bool TryToSyslogFacility (int value, out Mono.Unix.Native.SyslogFacility rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToSyslogFacility(int32 value, valuetype Mono.Unix.Native.SyslogFacility rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4239,14 +4691,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSyslogFacility" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogFacility" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToSyslogLevel">
       <MemberSignature Language="C#" Value="public static bool TryToSyslogLevel (int value, out Mono.Unix.Native.SyslogLevel rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToSyslogLevel(int32 value, valuetype Mono.Unix.Native.SyslogLevel rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4274,14 +4728,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSyslogLevel" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogLevel" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToSyslogOptions">
       <MemberSignature Language="C#" Value="public static bool TryToSyslogOptions (int value, out Mono.Unix.Native.SyslogOptions rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToSyslogOptions(int32 value, valuetype Mono.Unix.Native.SyslogOptions rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4316,14 +4772,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToSyslogOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromSyslogOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToWaitOptions">
       <MemberSignature Language="C#" Value="public static bool TryToWaitOptions (int value, out Mono.Unix.Native.WaitOptions rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToWaitOptions(int32 value, valuetype Mono.Unix.Native.WaitOptions rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4358,14 +4816,16 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToWaitOptions" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromWaitOptions" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryToXattrFlags">
       <MemberSignature Language="C#" Value="public static bool TryToXattrFlags (int value, out Mono.Unix.Native.XattrFlags rval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryToXattrFlags(int32 value, valuetype Mono.Unix.Native.XattrFlags rval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4400,16 +4860,7 @@ class Test
         <altmember cref="M:Mono.Unix.Native.NativeConvert.ToXattrFlags" />
         <altmember cref="M:Mono.Unix.Native.NativeConvert.TryFromXattrFlags" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <!-- END GENERATED CONTENT -->
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.CLSCompliant(false)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

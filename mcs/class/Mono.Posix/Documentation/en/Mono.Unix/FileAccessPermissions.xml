@@ -1,9 +1,11 @@
 <Type Name="FileAccessPermissions" FullName="Mono.Unix.FileAccessPermissions">
   <TypeSignature Language="C#" Value="public enum FileAccessPermissions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed FileAccessPermissions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -29,7 +31,13 @@
   <Members>
     <Member MemberName="AllPermissions">
       <MemberSignature Language="C#" Value="AllPermissions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions AllPermissions = int32(511)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -40,14 +48,16 @@
         FileAccessPermissions.OtherReadWriteExecute</c>
         (the <c>777</c> permission).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultPermissions">
       <MemberSignature Language="C#" Value="DefaultPermissions" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions DefaultPermissions = int32(438)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -58,14 +68,16 @@
         FileAccessPermissions.OtherRead | FileAccessPermissions.OtherWrite</c> 
         (the <c>666</c> permission).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GroupExecute">
       <MemberSignature Language="C#" Value="GroupExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions GroupExecute = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -76,28 +88,32 @@
 					the directory.</para>
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GroupRead">
       <MemberSignature Language="C#" Value="GroupRead" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions GroupRead = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Is readable by group.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GroupReadWriteExecute">
       <MemberSignature Language="C#" Value="GroupReadWriteExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions GroupReadWriteExecute = int32(56)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -108,28 +124,32 @@
 					the directory.</para>
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GroupWrite">
       <MemberSignature Language="C#" Value="GroupWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions GroupWrite = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Is writable by group.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OtherExecute">
       <MemberSignature Language="C#" Value="OtherExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions OtherExecute = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -140,28 +160,32 @@
 					the directory.</para>
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OtherRead">
       <MemberSignature Language="C#" Value="OtherRead" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions OtherRead = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Is readable by others.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OtherReadWriteExecute">
       <MemberSignature Language="C#" Value="OtherReadWriteExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions OtherReadWriteExecute = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -172,28 +196,32 @@
 					the directory.</para>
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OtherWrite">
       <MemberSignature Language="C#" Value="OtherWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions OtherWrite = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Is writable by others.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserExecute">
       <MemberSignature Language="C#" Value="UserExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions UserExecute = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -204,28 +232,32 @@
 					the directory.</para>
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserRead">
       <MemberSignature Language="C#" Value="UserRead" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions UserRead = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Is readable by user (owner).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserReadWriteExecute">
       <MemberSignature Language="C#" Value="UserReadWriteExecute" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions UserReadWriteExecute = int32(448)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -236,24 +268,22 @@
 					the directory.</para>
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserWrite">
       <MemberSignature Language="C#" Value="UserWrite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPermissions UserWrite = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Is writable by user (owner).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

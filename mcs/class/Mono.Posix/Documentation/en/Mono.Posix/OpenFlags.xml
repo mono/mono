@@ -1,10 +1,12 @@
 <Type Name="OpenFlags" FullName="Mono.Posix.OpenFlags">
   <TypeSignature Language="C#" Value="public enum OpenFlags" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OpenFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
@@ -12,13 +14,13 @@
   </Base>
   <Attributes>
     <Attribute>
-      <AttributeName>System.Obsolete("Use Mono.Unix.Native.OpenFlags")</AttributeName>
-    </Attribute>
-    <Attribute>
       <AttributeName>System.CLSCompliant(false)</AttributeName>
     </Attribute>
     <Attribute>
       <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use Mono.Unix.Native.OpenFlags")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -33,7 +35,13 @@
   <Members>
     <Member MemberName="O_APPEND">
       <MemberSignature Language="C#" Value="O_APPEND" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_APPEND = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -43,14 +51,16 @@
         <summary>Open for appending</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_CREAT">
       <MemberSignature Language="C#" Value="O_CREAT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_CREAT = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -60,14 +70,16 @@
         <summary>Create</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_EXCL">
       <MemberSignature Language="C#" Value="O_EXCL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_EXCL = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -77,14 +89,16 @@
         <summary>Open exclusive</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_NOCTTY">
       <MemberSignature Language="C#" Value="O_NOCTTY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_NOCTTY = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -94,14 +108,16 @@
         <summary>No controlling terminal</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_NONBLOCK">
       <MemberSignature Language="C#" Value="O_NONBLOCK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_NONBLOCK = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -111,14 +127,16 @@
         <summary>Open in non-blocking mode if possible</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_RDONLY">
       <MemberSignature Language="C#" Value="O_RDONLY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_RDONLY = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -128,14 +146,16 @@
         <summary>Read-only</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_RDWR">
       <MemberSignature Language="C#" Value="O_RDWR" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_RDWR = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -145,14 +165,16 @@
         <summary>Read-Write</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_SYNC">
       <MemberSignature Language="C#" Value="O_SYNC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_SYNC = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -162,14 +184,16 @@
         <summary>Open for synchronous I/O</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_TRUNC">
       <MemberSignature Language="C#" Value="O_TRUNC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_TRUNC = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -179,14 +203,16 @@
         <summary>Truncate on opening if necessary.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="O_WRONLY">
       <MemberSignature Language="C#" Value="O_WRONLY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.OpenFlags O_WRONLY = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.OpenFlags</ReturnType>
       </ReturnValue>
@@ -196,10 +222,6 @@
         <summary>Write-only</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

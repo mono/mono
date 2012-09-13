@@ -2192,35 +2192,34 @@ namespace Mono.Unix.Native {
 		//
 		// TODO: putgrent(3), fgetgrent_r(), initgroups(3)
 
-        // getgrouplist(2) 
-        [DllImport (LIBC, SetLastError=true, EntryPoint="getgrouplist")]
-        public static extern int getgrouplist(string user, uint grp, uint [] groups,ref int ngroups);
+		// getgrouplist(2) 
+		[DllImport (LIBC, SetLastError=true, EntryPoint="getgrouplist")]
+		private static extern int sys_getgrouplist(string user, uint grp, uint [] groups,ref int ngroups);
         
-        public static Group[] getgrouplist (string username,int ngroups)
-        {
-            Group [] result = null;
-            int lngroups = ngroups;
-            // Syscall to getpwnam to retrieve user uid
-            Passwd pw = Syscall.getpwnam (username);
-            if (pw == null) 
-            {
-                return null;
-            }
-            // allocating buffer to store group uid's
-            uint[] groups = new uint[lngroups];
-            int res = getgrouplist(username, pw.pw_gid, groups,ref lngroups);
-            if (res > 0)
-            {
-                result = new Group[res];
-                for (int i = 0; i < res; i++)
-                {
-                    result[i] = Syscall.getgrgid(groups[i]);
-                }
-            }
-            return result;
-        }
+		public static Group [] getgrouplist (string username)
+		{
+			// Syscall to getpwnam to retrieve user uid
+			Passwd pw = Syscall.getpwnam (username);
+			if (pw == null) 
+				return new Group [0];
+			// initialising the lngroups by 1 to get the group count
+			int ngroups = 1;
+			// allocating buffer to store group uid's
+			uint [] groups = new uint [ngroups];
+			int res = sys_getgrouplist (username, pw.pw_gid, groups, ref ngroups);
+			if (res == -1) {
+				// using value ngroups to resize buffer.
+				Array.Resize(ref groups, ngroups);
+				res = sys_getgrouplist (username, pw.pw_gid, groups, ref ngroups);
+				if (res == -1) 
+					return new Group [0];
+			}
 
-
+			Group [] result = new Group [ngroups];
+			for (int i = 0; i < res; i++) 
+				result [i] = Syscall.getgrgid (groups [i]);
+			return result;
+		}
 
 		// setgroups(2)
 		//    int setgroups (size_t size, const gid_t *list);
