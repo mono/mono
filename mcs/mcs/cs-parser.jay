@@ -1663,7 +1663,7 @@ indexer_declaration
 	  {
 	  	valid_param_mod = ParameterModifierType.Params | ParameterModifierType.DefaultValue;
 	  }
-	  opt_formal_parameter_list CLOSE_BRACKET OPEN_BRACE
+	  opt_formal_parameter_list CLOSE_BRACKET 
 	  {
 		valid_param_mod = 0;
 		var type = (FullNamedExpression) $3;
@@ -1672,7 +1672,7 @@ indexer_declaration
 		current_property = indexer;
 
   		current_type.AddIndexer (indexer);
-		lbag.AddMember (current_property, mod_locations, GetLocation ($5), GetLocation ($8), GetLocation ($9));
+		lbag.AddMember (current_property, mod_locations, GetLocation ($5), GetLocation ($8));
   		
 		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			report.Error (620, GetLocation ($3), "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());  		
@@ -1688,7 +1688,7 @@ indexer_declaration
 
 		lexer.PropertyParsing = true;
 	  }
-	  accessor_declarations 
+	  OPEN_BRACE accessor_declarations 
 	  {
 		lexer.PropertyParsing = false;
 	  }
@@ -1700,7 +1700,7 @@ indexer_declaration
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
 			
-		lbag.AppendToMember (current_property, GetLocation ($12));
+		lbag.AppendToMember (current_property, GetLocation ($10), GetLocation ($13));
 		current_property = null;		
 	  }
 	;
