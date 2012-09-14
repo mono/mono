@@ -544,48 +544,48 @@ namespace System.IO
 				yield return path_with_pattern;
 				yield break;
 			}
-			
+
 			IntPtr handle;
 			MonoIOError error;
 			FileAttributes rattr;
-			bool subdirs = searchOption == SearchOption.AllDirectories;
 			
 			string s = MonoIO.FindFirst (path, path_with_pattern, out rattr, out error, out handle);
-			if (s == null)
-				yield break;
-			if (error != 0)
-				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
-
 			try {
-				//
-				// Convert any file specific flag to FileAttributes.Normal which is used as include files flag
-				//
-				if (((rattr & FileAttributes.Directory) == 0) && rattr != 0)
-					rattr |= FileAttributes.Normal;
+				while (s != null) {
+					// Convert any file specific flag to FileAttributes.Normal which is used as include files flag
+					if (((rattr & FileAttributes.Directory) == 0) && rattr != 0)
+						rattr |= FileAttributes.Normal;
 
-				bool first = true;
-				if (((rattr & FileAttributes.ReparsePoint) == 0) && ((rattr & kind) != 0))
-					yield return s;
-				
-				do {
-					if (((rattr & FileAttributes.Directory) != 0) && subdirs) {
-						foreach (string child in EnumerateKind (s, searchPattern, searchOption, kind))
-							yield return child;
-					}
-
-					if (first) {
-						first = false;
-						continue;
-					}
-					
-					if ((rattr & FileAttributes.ReparsePoint) != 0)
-						continue;
-
-					if ((rattr & kind) != 0)
+					if ((rattr & FileAttributes.ReparsePoint) == 0 && (rattr & kind) != 0)
 						yield return s;
-				} while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null);
+
+					s = MonoIO.FindNext (handle, out rattr, out error);
+				}
+
+				if (error != 0)
+					throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
 			} finally {
-				MonoIO.FindClose (handle);
+				if (handle != IntPtr.Zero)
+					MonoIO.FindClose (handle);
+			}
+
+			if (searchOption == SearchOption.AllDirectories) {
+				s = MonoIO.FindFirst (path, Path.Combine (path, "*"), out rattr, out error, out handle);
+
+				try {
+					while (s != null) {
+						if ((rattr & FileAttributes.Directory) != 0)
+							foreach (string child in EnumerateKind (s, searchPattern, searchOption, kind))
+								yield return child;
+						s = MonoIO.FindNext (handle, out rattr, out error);
+					}
+
+					if (error != 0)
+						throw MonoIO.GetException (path, (MonoIOError) error);
+				} finally {
+					if (handle != IntPtr.Zero)
+						MonoIO.FindClose (handle);
+				}
 			}
 		}
 
