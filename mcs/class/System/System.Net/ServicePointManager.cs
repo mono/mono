@@ -488,12 +488,15 @@ namespace System.Net
 						// to the .NET 2 callback for values like SecTrustResult.Confirm
 						result = (trustResult == MSX.OSX509Certificates.SecTrustResult.Proceed ||
 								  trustResult == MSX.OSX509Certificates.SecTrustResult.Unspecified);
-
 					} catch {
 						// Ignore
 					}
 					
-					if (!result) {
+					if (result) {
+						// TrustEvaluateSsl was successful so there's no trust error
+						// IOW we discard our own chain (since we trust OSX one instead)
+						errors = 0;
+					} else {
 						// callback and DefaultCertificatePolicy needs this since 'result' is not specified
 						status11 = (int) trustResult;
 						errors |= SslPolicyErrors.RemoteCertificateChainErrors;
