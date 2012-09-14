@@ -1702,7 +1702,7 @@ namespace Mono.CSharp
 			
 			Constant c = expr as Constant;
 			if (c != null) {
-				c = c.TryReduce (ec, type);
+				c = c.Reduce (ec, type);
 				if (c != null)
 					return c;
 			}
@@ -2661,7 +2661,7 @@ namespace Mono.CSharp
 					return left;
 				
 				if (left.IsZeroInteger)
-					return left.TryReduce (ec, right.Type);
+					return left.Reduce (ec, right.Type);
 				
 				break;
 				

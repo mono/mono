@@ -251,10 +251,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		/// <summary>
-		///   Attempts to do a compile-time folding of a constant cast.
-		/// </summary>
-		public Constant TryReduce (ResolveContext ec, TypeSpec target_type)
+		//
+		// Attempts to do a compile-time folding of a constant cast and handles
+		// error reporting for constant overlows only, on normal conversion
+		// errors returns null
+		// 
+		public Constant Reduce (ResolveContext ec, TypeSpec target_type)
 		{
 			try {
 				return TryReduceConstant (ec, target_type);
@@ -268,6 +270,15 @@ namespace Mono.CSharp {
 				}
 
 				return New.Constantify (target_type, loc);
+			}
+		}
+
+		public Constant TryReduce (ResolveContext rc, TypeSpec targetType)
+		{
+			try {
+				return TryReduceConstant (rc, targetType);
+			} catch (OverflowException) {
+				return null;
 			}
 		}
 

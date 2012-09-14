@@ -1196,7 +1196,7 @@ namespace Mono.CSharp {
 			if (s_x != source_type) {
 				var c = source as Constant;
 				if (c != null) {
-					source = c.TryReduce (ec, s_x);
+					source = c.Reduce (ec, s_x);
 					if (source == null)
 						c = null;
 				}
@@ -1990,21 +1990,28 @@ namespace Mono.CSharp {
 				if (expr_type == real_target)
 					return EmptyCast.Create (expr, target_type);
 
-				ne = ImplicitNumericConversion (expr, real_target);
-				if (ne != null)
-					return EmptyCast.Create (ne, target_type);
-
-				ne = ExplicitNumericConversion (ec, expr, real_target);
-				if (ne != null)
-					return EmptyCast.Create (ne, target_type);
-
-				//
-				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
-				//
-				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.IntPtr || expr_type.BuiltinType == BuiltinTypeSpec.Type.UIntPtr) {
-					ne = ExplicitUserConversion (ec, expr, real_target, loc);
+				Constant c = expr as Constant;
+				if (c != null) {
+					c = c.TryReduce (ec, real_target);
+					if (c != null)
+						return c;
+				} else {
+					ne = ImplicitNumericConversion (expr, real_target);
 					if (ne != null)
-						return ExplicitConversionCore (ec, ne, target_type, loc);
+						return EmptyCast.Create (ne, target_type);
+
+					ne = ExplicitNumericConversion (ec, expr, real_target);
+					if (ne != null)
+						return EmptyCast.Create (ne, target_type);
+
+					//
+					// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
+					//
+					if (expr_type.BuiltinType == BuiltinTypeSpec.Type.IntPtr || expr_type.BuiltinType == BuiltinTypeSpec.Type.UIntPtr) {
+						ne = ExplicitUserConversion (ec, expr, real_target, loc);
+						if (ne != null)
+							return ExplicitConversionCore (ec, ne, target_type, loc);
+					}
 				}
 			} else {
 				ne = ExplicitNumericConversion (ec, expr, target_type);

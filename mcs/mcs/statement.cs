@@ -1225,7 +1225,7 @@ namespace Mono.CSharp {
 				res = c;
 			} else {
 				TypeSpec type = ec.Switch.SwitchType;
-				res = c.TryReduce (ec, type);
+				res = c.Reduce (ec, type);
 				if (res == null) {
 					c.Error_ValueCannotBeConverted (ec, type, true);
 					return false;
