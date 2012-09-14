@@ -323,6 +323,13 @@ namespace System.Threading.Tasks
 		{
 			return new TaskAwaiter<TResult> (this);
 		}
+
+		internal static Task<TResult> FromException (Exception ex)
+		{
+			var tcs = new TaskCompletionSource<TResult>();
+			tcs.TrySetException (ex);
+			return tcs.Task;
+		}
 #endif
 	}
 }
