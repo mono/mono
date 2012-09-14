@@ -6756,6 +6756,10 @@ void Error_SyntaxError (int error_code, int token, string msg)
 	// An error message has been reported by tokenizer
 	if (token == Token.ERROR)
 		return;
+	
+	// Avoid duplicit error message after unterminated string literals
+	if (token == Token.LITERAL && lexer.Location.Column == 0)
+		return;
 
 	string symbol = GetSymbolName (token);
 	string expecting = GetExpecting ();

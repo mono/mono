@@ -2863,7 +2863,14 @@ namespace Mono.CSharp
 #endif
 
 			while (true){
-				c = get_char ();
+				// Cannot use get_char because of \r in quoted strings
+				if (putback_char != -1) {
+					c = putback_char;
+					putback_char = -1;
+				} else {
+					c = reader.Read ();
+				}
+
 				if (c == '"') {
 					if (quoted && peek_char () == '"') {
 						if (pos == value_builder.Length)
@@ -2896,9 +2903,18 @@ namespace Mono.CSharp
 				if (c == '\n') {
 					if (!quoted) {
 						Report.Error (1010, Location, "Newline in constant");
+
+						advance_line ();
+
+						// Don't add \r to string literal
+						if (pos > 1 && value_builder [pos - 1] == '\r')
+							--pos;
+
 						val = new StringLiteral (context.BuiltinTypes, new string (value_builder, 0, pos), start_location);
 						return Token.LITERAL;
 					}
+
+					advance_line ();
 				} else if (c == '\\' && !quoted) {
 					int surrogate;
 					c = escape (c, out surrogate);
@@ -2914,6 +2930,8 @@ namespace Mono.CSharp
 				} else if (c == -1) {
 					Report.Error (1039, Location, "Unterminated string literal");
 					return Token.EOF;
+				} else {
+					++col;
 				}
 
 				if (pos == value_builder.Length)
