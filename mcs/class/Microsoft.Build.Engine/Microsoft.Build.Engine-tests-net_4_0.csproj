@@ -83,26 +83,27 @@
     </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="nunit.framework" />
+    <Reference Include="System.Xml">
+      <HintPath>..\lib\net_4_0\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\lib\net_4_0\System.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib">
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="./../../class/lib/net_4_0/Microsoft.Build.Engine.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/Microsoft.Build.Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Framework.dll">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Build.Framework">
       <HintPath>Microsoft.Build.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Build.Utilities.v4.0.dll">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Build.Utilities.v4.0">
       <HintPath>Microsoft.Build.Utilities.v4.0.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Microsoft.Build.Engine-net_4_0.csproj">
+      <Project>{155AEF28-C81F-405D-9072-9D52780E3E70}</Project>
+      <Name>Microsoft.Build.Engine-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

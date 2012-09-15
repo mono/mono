@@ -122,34 +122,20 @@
     </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
+    <Reference Include="Microsoft.Build.Framework">
+      <HintPath>..\lib\net_4_0\Microsoft.Build.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
+    <Reference Include="Microsoft.Build.Utilities.v4.0">
+      <HintPath>..\lib\net_4_0\Microsoft.Build.Utilities.v4.0.dll</HintPath>
     </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
+    <Reference Include="System">
+      <HintPath>..\lib\net_4_0\System.dll</HintPath>
     </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
+    <Reference Include="mscorlib">
+      <HintPath>..\lib\net_4_0\mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Framework.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.Build.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Utilities.v4.0.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.Build.Utilities.v4.0.dll</HintPath>
+    <Reference Include="System.Xml">
+      <HintPath>..\lib\net_4_0\System.Xml.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
-
