@@ -151,8 +151,5 @@
       <HintPath>Microsoft.Build.Utilities.v4.0.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
 </Project>
 
