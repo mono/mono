@@ -10,9 +10,7 @@
     <NoWarn>1699</NoWarn>
     <OutputPath>.\</OutputPath>
     <NoStdLib>true</NoStdLib>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
     <AssemblyName>Microsoft.Build.Engine_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -21,20 +19,20 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,37 +40,36 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildChooseTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemGroupCollectionTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemGroupTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupCollectionTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\BuildTaskTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\ConsoleLoggerTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\Consts.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\EngineTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\ImportCollectionTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\ImportTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\InternalLoggerExceptionTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\InvalidProjectFileExceptionTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\ProjectTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\TargetCollectionTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\TargetTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\TestNamespaceManager.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\UsingTaskTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\UsingTaskCollectionTest.cs" />
-   <Compile Include="Test\Microsoft.Build.BuildEngine\UtilitiesTest.cs" />
-   <Compile Include="Test\various\Build.cs" />
-   <Compile Include="Test\various\Conditions.cs" />
-   <Compile Include="Test\various\DefaultTasks.cs" />
-   <Compile Include="Test\various\EvaluationOrder.cs" />
-   <Compile Include="Test\various\Items.cs" />
-   <Compile Include="Test\various\ProjectElement.cs" />
-   <Compile Include="Test\various\Properties.cs" />
-   <Compile Include="..\Microsoft.Build.Tasks\Test\Microsoft.Build.Tasks\TestMessageLogger.cs" />
-
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildChooseTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemGroupCollectionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemGroupTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupCollectionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildTaskTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\ConsoleLoggerTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\Consts.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\EngineTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\ImportCollectionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\ImportTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\InternalLoggerExceptionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\InvalidProjectFileExceptionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\ProjectTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\TargetCollectionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\TargetTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\TestNamespaceManager.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\UsingTaskTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\UsingTaskCollectionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\UtilitiesTest.cs" />
+    <Compile Include="Test\various\Build.cs" />
+    <Compile Include="Test\various\Conditions.cs" />
+    <Compile Include="Test\various\DefaultTasks.cs" />
+    <Compile Include="Test\various\EvaluationOrder.cs" />
+    <Compile Include="Test\various\Items.cs" />
+    <Compile Include="Test\various\ProjectElement.cs" />
+    <Compile Include="Test\various\Properties.cs" />
+    <Compile Include="..\Microsoft.Build.Tasks\Test\Microsoft.Build.Tasks\TestMessageLogger.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -82,7 +79,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib.dll">
@@ -106,11 +104,8 @@
       <HintPath>System.Xml.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
-
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-
