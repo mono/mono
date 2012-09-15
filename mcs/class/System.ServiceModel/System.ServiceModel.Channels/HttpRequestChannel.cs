@@ -164,8 +164,11 @@ namespace System.ServiceModel.Channels
 					suppressEntityBody = true;
 			}
 #if !NET_2_1
-			if (source.ClientCredentials.ClientCertificate.Certificate != null) 
-				((HttpWebRequest)web_request).ClientCertificates.Add (source.ClientCredentials.ClientCertificate.Certificate);
+			if (source.ClientCredentials != null) {
+				var cred = source.ClientCredentials;
+				if ((cred.ClientCertificate != null) && (cred.ClientCertificate.Certificate != null))
+					((HttpWebRequest)web_request).ClientCertificates.Add (cred.ClientCertificate.Certificate);
+			}
 #endif
 
 			if (!suppressEntityBody && String.Compare (web_request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0) {
