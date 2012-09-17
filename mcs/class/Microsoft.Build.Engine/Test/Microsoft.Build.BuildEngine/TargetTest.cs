@@ -348,6 +348,46 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 		}
 
+#if NET_3_5
+		[Test]
+		public void BuildProjectWithItemGroupInsideTarget()
+		{
+			var engine = new Engine(Consts.BinPath);
+			var project = engine.CreateNewProject();
+			var projectXml = GetProjectXmlWithItemGroupInsideATarget ();
+			project.LoadXml(projectXml);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			bool result = project.Build("Main");
+			if (!result)
+			{
+				logger.DumpMessages ();
+				Assert.Fail("Build failed");
+			}
+		}
+
+		private string GetProjectXmlWithItemGroupInsideATarget ()
+		{
+			return
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<fruit Include=""apple""/>
+						<fruit Include=""apricot""/>
+					</ItemGroup>
+
+					<Target Name=""Main"">
+						<ItemGroup>
+							<fruit Include=""raspberry"" />
+						</ItemGroup>
+						<Message Text=""%(fruit.Identity)""/>
+					</Target>
+				</Project>";
+		}
+#endif
+
 		[Test]
 		public void TestTargetOutputsIncludingMetadata ()
 		{

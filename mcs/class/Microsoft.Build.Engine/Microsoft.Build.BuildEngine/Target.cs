@@ -75,6 +75,12 @@ namespace Microsoft.Build.BuildEngine {
 					} else if (onErrorFound)
 						throw new InvalidProjectFileException (
 							"The element <OnError> must be last under element <Target>. Found element <Error> instead.");
+#if NET_3_5
+					else if (xe.Name == "ItemGroup") {
+						//allow ItemGroups inside Targets in >= 3.5
+						continue;
+					}
+#endif
 					else
 						buildTasks.Add (new BuildTask (xe, this));
 				}
