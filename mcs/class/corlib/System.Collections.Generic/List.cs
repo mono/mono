@@ -641,8 +641,7 @@ namespace System.Collections.Generic {
 				return _items [index];
 			}
 			set {
-				CheckIndex (index);
-				if ((uint) index == (uint) _size)
+				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
 				_items [index] = value;
 				_version++;
