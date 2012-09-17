@@ -92,8 +92,8 @@ namespace System.ServiceModel.Channels.Http
 			AbortConnections (timeout);
 			// FIXME: this wait is sort of hack (because it should not be required), but without it some tests are blocked.
 			// This hack even had better be moved to base.CancelAsync().
-			if (CurrentAsyncResult != null)
-				CurrentAsyncResult.AsyncWaitHandle.WaitOne (TimeSpan.FromMilliseconds (300));
+//			if (CurrentAsyncResult != null)
+//				CurrentAsyncResult.AsyncWaitHandle.WaitOne (TimeSpan.FromMilliseconds (300));
 			return base.CancelAsync (timeout);
 		}
 
