@@ -220,10 +220,10 @@ namespace System
 		public static DateTime ConvertTime (DateTime dateTime, TimeZoneInfo sourceTimeZone, TimeZoneInfo destinationTimeZone)
 		{
 			if (dateTime.Kind == DateTimeKind.Local && sourceTimeZone != TimeZoneInfo.Local)
-				throw new ArgumentException ("Kind propery of dateTime is Local but the sourceTimeZone does not equal TimeZoneInfo.Local");
+				throw new ArgumentException ("Kind property of dateTime is Local but the sourceTimeZone does not equal TimeZoneInfo.Local");
 
 			if (dateTime.Kind == DateTimeKind.Utc && sourceTimeZone != TimeZoneInfo.Utc)
-				throw new ArgumentException ("Kind propery of dateTime is Utc but the sourceTimeZone does not equal TimeZoneInfo.Utc");
+				throw new ArgumentException ("Kind property of dateTime is Utc but the sourceTimeZone does not equal TimeZoneInfo.Utc");
 
 			if (sourceTimeZone.IsInvalidTime (dateTime))
 				throw new ArgumentException ("dateTime parameter is an invalid time");
@@ -309,10 +309,10 @@ namespace System
 				throw new ArgumentNullException ("sourceTimeZone");
 
 			if (dateTime.Kind == DateTimeKind.Utc && sourceTimeZone != TimeZoneInfo.Utc)
-				throw new ArgumentException ("Kind propery of dateTime is Utc but the sourceTimeZone does not equal TimeZoneInfo.Utc");
+				throw new ArgumentException ("Kind property of dateTime is Utc but the sourceTimeZone does not equal TimeZoneInfo.Utc");
 
 			if (dateTime.Kind == DateTimeKind.Local && sourceTimeZone != TimeZoneInfo.Local)
-				throw new ArgumentException ("Kind propery of dateTime is Local but the sourceTimeZone does not equal TimeZoneInfo.Local");
+				throw new ArgumentException ("Kind property of dateTime is Local but the sourceTimeZone does not equal TimeZoneInfo.Local");
 
 			if (sourceTimeZone.IsInvalidTime (dateTime))
 				throw new ArgumentException ("dateTime parameter is an invalid time");
