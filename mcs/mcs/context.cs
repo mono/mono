@@ -105,6 +105,24 @@ namespace Mono.CSharp
 			get { return return_type; }
 		}
 
+		public bool IsUnreachable {
+			get {
+				return HasSet (Options.UnreachableScope);
+			}
+			set {
+				flags = value ? flags | Options.UnreachableScope : flags & ~Options.UnreachableScope;
+			}
+		}
+
+		public bool UnreachableReported {
+			get {
+				return HasSet (Options.UnreachableReported);
+			}
+			set {
+				flags = value ? flags | Options.UnreachableReported : flags & ~Options.UnreachableScope;
+			}
+		}
+
 		// <summary>
 		//   Starts a new code branching.  This inherits the state of all local
 		//   variables and parameters from the current branching.
@@ -256,6 +274,10 @@ namespace Mono.CSharp
 			UsingInitializerScope = 1 << 12,
 
 			LockScope = 1 << 13,
+
+			UnreachableScope = 1 << 14,
+
+			UnreachableReported = 1 << 15,
 
 			/// <summary>
 			///   Whether control flow analysis is enabled

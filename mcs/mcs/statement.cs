@@ -49,12 +49,20 @@ namespace Mono.CSharp {
 			// in unreachable code, for instance.
 			//
 
-			if (warn)
+			bool unreachable = false;
+			if (warn && !ec.UnreachableReported) {
+				ec.UnreachableReported = true;
+				unreachable = true;
 				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
+			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			bool ok = Resolve (ec);
 			ec.KillFlowBranching ();
+
+			if (unreachable) {
+				ec.UnreachableReported = false;
+			}
 
 			return ok;
 		}
@@ -2073,9 +2081,7 @@ namespace Mono.CSharp {
 #endif
 
 //		int assignable_slots;
-		bool unreachable_shown;
-		bool unreachable;
-		
+
 		public Block (Block parent, Location start, Location end)
 			: this (parent, 0, start, end)
 		{
@@ -2247,6 +2253,8 @@ namespace Mono.CSharp {
 
 			Block prev_block = ec.CurrentBlock;
 			bool ok = true;
+			bool unreachable = ec.IsUnreachable;
+			bool prev_unreachable = unreachable;
 
 			ec.CurrentBlock = this;
 			ec.StartFlowBranching (this);
@@ -2279,14 +2287,10 @@ namespace Mono.CSharp {
 					if (s is EmptyStatement)
 						continue;
 
-					if (!unreachable_shown && !(s is LabeledStatement)) {
+					if (!ec.UnreachableReported && !(s is LabeledStatement)) {
 						ec.Report.Warning (162, 2, s.loc, "Unreachable code detected");
-						unreachable_shown = true;
+						ec.UnreachableReported = true;
 					}
-
-					Block c_block = s as Block;
-					if (c_block != null)
-						c_block.unreachable = c_block.unreachable_shown = true;
 				}
 
 				//
@@ -2310,8 +2314,15 @@ namespace Mono.CSharp {
 					statements [ix] = new EmptyStatement (s.loc);
 
 				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
-				if (unreachable && s is LabeledStatement)
-					throw new InternalErrorException ("should not happen");
+				if (unreachable) {
+					ec.IsUnreachable = true;
+				} else if (ec.IsUnreachable)
+					ec.IsUnreachable = false;
+			}
+
+			if (unreachable != prev_unreachable) {
+				ec.IsUnreachable = prev_unreachable;
+				ec.UnreachableReported = false;
 			}
 
 			while (ec.CurrentBranching is FlowBranchingLabeled)
@@ -2335,16 +2346,20 @@ namespace Mono.CSharp {
 
 		public override bool ResolveUnreachable (BlockContext ec, bool warn)
 		{
-			unreachable_shown = true;
-			unreachable = true;
-
-			if (warn)
+			bool unreachable = false;
+			if (warn && !ec.UnreachableReported) {
+				ec.UnreachableReported = true;
+				unreachable = true;
 				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
+			}
 
 			var fb = ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			fb.CurrentUsageVector.IsUnreachable = true;
 			bool ok = Resolve (ec);
 			ec.KillFlowBranching ();
+
+			if (unreachable)
+				ec.UnreachableReported = false;
 
 			return ok;
 		}
