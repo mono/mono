@@ -179,6 +179,10 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 	restore_stack (sctx);
 }
 
+LONG CALLBACK seh_handler_dummy(EXCEPTION_POINTERS* ep)
+{
+	return EXCEPTION_CONTINUE_SEARCH;
+}
 /*
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
@@ -263,6 +267,7 @@ void win32_seh_init()
 	if (!restore_stack)
 		restore_stack = mono_win32_get_handle_stackoverflow ();
 
+	old_win32_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler_dummy);
 	AddVectoredExceptionHandler (1, seh_handler);
 	/* use the following instead of AddVectoredExceptionHandler for old behavior
 	 * old_win32_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler);
@@ -271,7 +276,7 @@ void win32_seh_init()
 
 void win32_seh_cleanup()
 {
-	/* if (old_win32_toplevel_exception_filter) SetUnhandledExceptionFilter(old_win32_toplevel_exception_filter); */
+	if (old_win32_toplevel_exception_filter) SetUnhandledExceptionFilter(old_win32_toplevel_exception_filter);
 	RemoveVectoredExceptionHandler (seh_handler);
 }
 
