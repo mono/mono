@@ -77,7 +77,8 @@ namespace Microsoft.Build.BuildEngine {
 							"The element <OnError> must be last under element <Target>. Found element <Error> instead.");
 #if NET_3_5
 					else if (xe.Name == "ItemGroup") {
-						//allow ItemGroups inside Targets in >= 3.5
+						//don't blow up for ItemGroups inside Targets in >= 3.5
+						// TODO: evaluate them (see https://bugzilla.xamarin.com/show_bug.cgi?id=1862 and test in TargetTest.cs )
 						continue;
 					}
 #endif

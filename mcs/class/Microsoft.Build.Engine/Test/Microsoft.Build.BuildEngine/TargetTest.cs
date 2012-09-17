@@ -352,6 +352,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void BuildProjectWithItemGroupInsideTarget()
 		{
+			ItemGroupInsideATarget ();
+		}
+
+		private MonoTests.Microsoft.Build.Tasks.TestMessageLogger ItemGroupInsideATarget() {
 			var engine = new Engine(Consts.BinPath);
 			var project = engine.CreateNewProject();
 			var projectXml = GetProjectXmlWithItemGroupInsideATarget ();
@@ -367,6 +371,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				Assert.Fail("Build failed");
 			}
+
+			return logger;
 		}
 
 		private string GetProjectXmlWithItemGroupInsideATarget ()
@@ -385,6 +391,33 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 						<Message Text=""%(fruit.Identity)""/>
 					</Target>
 				</Project>";
+		}
+
+		[Test]
+		[Category ("NotWorking")] //https://bugzilla.xamarin.com/show_bug.cgi?id=1862
+		public void BuildProjectOutputWithItemGroupInsideTarget()
+		{
+			var logger = ItemGroupInsideATarget ();
+
+			try
+			{
+				Assert.AreEqual(3, logger.NormalMessageCount, "Expected number of messages");
+				logger.CheckLoggedMessageHead("apple", "A1");
+				logger.CheckLoggedMessageHead("apricot", "A2");
+				logger.CheckLoggedMessageHead("raspberry", "A3");
+				Assert.AreEqual(0, logger.NormalMessageCount, "Extra messages found");
+
+				Assert.AreEqual(1, logger.TargetStarted, "TargetStarted count");
+				Assert.AreEqual(1, logger.TargetFinished, "TargetFinished count");
+				Assert.AreEqual(3, logger.TaskStarted, "TaskStarted count");
+				Assert.AreEqual(3, logger.TaskFinished, "TaskFinished count");
+
+			}
+			catch (AssertionException)
+			{
+				logger.DumpMessages();
+				throw;
+			}
 		}
 #endif
 
