@@ -89,7 +89,7 @@ namespace System
 					local = ZoneInfoDB.Default;
 #elif MONOTOUCH
 					using (Stream stream = GetMonoTouchDefault ()) {
-						return BuildFromStream ("Local", stream);
+						local = BuildFromStream ("Local", stream);
 					}
 #elif LIBC
 					try {
