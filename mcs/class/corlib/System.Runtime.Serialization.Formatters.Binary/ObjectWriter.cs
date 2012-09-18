@@ -507,7 +507,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			// Registers and writes the assembly of the array element type if needed
 
-			if (!elementType.IsArray)
+			var tag = GetTypeTag (elementType);
+			if ((tag != TypeTag.ArrayOfObject) && (tag != TypeTag.ArrayOfString) && (tag != TypeTag.ArrayOfPrimitiveType))
 				WriteAssembly (writer, elementType.Assembly);
 
 			// Writes the array
