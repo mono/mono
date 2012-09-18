@@ -56,8 +56,38 @@ namespace Mono.Debugger.Soft
 		static OpCode [] OneByteOpCode = new OpCode [0xe0 + 1];
 		static OpCode [] TwoBytesOpCode = new OpCode [0x1e + 1];
 
+		static string EscapeString (string text)
+		{
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < text.Length; i++) {
+				char c = text[i];
+				string txt;
+				switch (c) {
+				case '"': txt = "\\\""; break;
+				case '\0': txt = @"\0"; break;
+				case '\\': txt = @"\\"; break;
+				case '\a': txt = @"\a"; break;
+				case '\b': txt = @"\b"; break;
+				case '\f': txt = @"\f"; break;
+				case '\v': txt = @"\v"; break;
+				case '\n': txt = @"\n"; break;
+				case '\r': txt = @"\r"; break;
+				case '\t': txt = @"\t"; break;
+				default:
+					if (char.GetUnicodeCategory (c) == UnicodeCategory.OtherNotAssigned) {
+						sb.AppendFormat ("\\u{0:x4}", (int) c);
+					} else {
+						sb.Append (c);
+					}
+					continue;
+				}
+				sb.Append (txt);
+			}
+			return sb.ToString ();
+		}
+
 		// Adapted from Cecil
-	    List<ILInstruction> ReadCilBody (BinaryReader br, int code_size)
+		List<ILInstruction> ReadCilBody (BinaryReader br, int code_size)
 		{
 			long start = br.BaseStream.Position;
 			ILInstruction last = null;
@@ -153,7 +183,7 @@ namespace Mono.Debugger.Soft
 					token = br.ReadInt32 ();
 					t = vm.conn.Method_ResolveToken (Method.Id, token);
 					if (t.Type == TokenType.STRING)
-						instr.Operand = t.Str;
+						instr.Operand = EscapeString (t.Str);
 					break;
 				case OperandType.InlineField :
 				case OperandType.InlineMethod :
