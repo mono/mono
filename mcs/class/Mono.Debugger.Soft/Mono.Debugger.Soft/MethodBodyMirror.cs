@@ -60,6 +60,8 @@ namespace Mono.Debugger.Soft
 		static string EscapeString (string text)
 		{
 			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ('"');
 			for (int i = 0; i < text.Length; i++) {
 				char c = text[i];
 				string txt;
@@ -76,7 +78,7 @@ namespace Mono.Debugger.Soft
 				case '\t': txt = @"\t"; break;
 				default:
 					if (char.GetUnicodeCategory (c) == UnicodeCategory.OtherNotAssigned) {
-						sb.AppendFormat ("\\u{0:x4}", (int) c);
+						sb.AppendFormat ("\\u{0:X4}", (int) c);
 					} else {
 						sb.Append (c);
 					}
@@ -84,6 +86,8 @@ namespace Mono.Debugger.Soft
 				}
 				sb.Append (txt);
 			}
+			sb.Append ('"');
+
 			return sb.ToString ();
 		}
 
