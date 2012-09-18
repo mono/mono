@@ -186,14 +186,30 @@ namespace System.ServiceModel.Description
 			if (sca.HasProtectionLevel)
 				cd.ProtectionLevel = sca.ProtectionLevel;
 
-			foreach (var icd in cd.GetInheritedContracts ()) {
-				FillOperationsForInterface (icd, icd.ContractType, givenServiceType, false);
+			/*
+			 * Calling `FillOperationsForInterface(cd, X, null, false)' followed by
+			 * `FillOperationsForInterface(cd, X, Y, false)' would attempt to populate
+			 * the behavior list for 'X' twice (bug #6187).
+			 * 
+			 * Therefor, we manually iterate over the list of interfaces here instead of
+			 * using ContractDescription.GetInheritedContracts().
+			 * 
+			 */
+
+			var inherited = new Collection<ContractDescription> ();
+			foreach (var it in cd.ContractType.GetInterfaces ()) {
+				var icd = GetContractInternal (it, givenServiceType, null);
+				if (icd != null)
+					inherited.Add (icd);
+			}
+
+			foreach (var icd in inherited) {
 				foreach (var od in icd.Operations)
 					if (!cd.Operations.Any(o => o.Name == od.Name && o.SyncMethod == od.SyncMethod && 
 							       o.BeginMethod == od.BeginMethod && o.InCallbackContract == od.InCallbackContract))
 						cd.Operations.Add (od);
 			}
-			
+
 			FillOperationsForInterface (cd, cd.ContractType, givenServiceType, false);
 			
 			if (cd.CallbackContractType != null)
