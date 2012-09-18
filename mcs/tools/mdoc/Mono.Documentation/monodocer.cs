@@ -1947,7 +1947,7 @@ class MDocUpdater : MDocCommand
 					(from i in values.Keys
 					 where (c & i) != 0
 					 select typename + "." + values [i])
-					.ToArray ());
+					.DefaultIfEmpty (v.ToString ()).ToArray ());
 		}
 		return "(" + GetDocTypeFullName (valueType) + ") " + v.ToString ();
 	}
