@@ -34,6 +34,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 using NUnit.Framework;
 
 namespace MonoTests.System.ServiceModel.Description
@@ -948,5 +949,65 @@ namespace MonoTests.System.ServiceModel.Description
 		{
 		}
 
+		[Test]
+		public void TestInterfaceInheritance ()
+		{
+			var cd = ContractDescription.GetContract (typeof (InterfaceInheritance));
+			var inherited = cd.GetInheritedContracts ();
+			Assert.AreEqual (1, inherited.Count, "#1");
+		}
+
+		public class MyWebGetAttribute : Attribute, IOperationBehavior
+		{
+			void IOperationBehavior.AddBindingParameters (OperationDescription operation, BindingParameterCollection parameters)
+			{
+				;
+			}
+			
+			void IOperationBehavior.ApplyClientBehavior (OperationDescription operation, ClientOperation client)
+			{
+				;
+			}
+			
+			void IOperationBehavior.ApplyDispatchBehavior (OperationDescription operation, DispatchOperation service)
+			{
+				;
+			}
+			
+			void IOperationBehavior.Validate (OperationDescription operation)
+			{
+				;
+			}
+		}
+
+		[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+		public class InterfaceInheritance : IInterfaceInheritance
+		{
+			public string Get ()
+			{
+				throw new NotImplementedException ();
+			}
+			
+			public string Test ()
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[ServiceContract]
+		public interface IInterfaceInheritance: IBaseInterface
+		{
+			[OperationContract]
+			[MyWebGet]
+			string Test ();
+		}
+		
+		[ServiceContract]
+		public interface IBaseInterface
+		{
+			[OperationContract]
+			[MyWebGet]
+			string Get ();
+		}
 	}
 }
