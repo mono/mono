@@ -51,9 +51,7 @@
 #include "jit-icalls.h"
 
 extern LPTOP_LEVEL_EXCEPTION_FILTER old_win32_toplevel_exception_filter;
-extern guint64 win32_chained_exception_filter_result;
-extern gboolean win32_chained_exception_filter_didrun;
-extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
+extern gboolean win32_chained_exception_needs_run;
 
 void
 mono_runtime_install_handlers (void)
@@ -86,24 +84,8 @@ mono_runtime_cleanup_handlers (void)
 gboolean
 SIG_HANDLER_SIGNATURE (mono_chain_signal)
 {
-#ifndef MONO_CROSS_COMPILE
-	int signal = _dummy;
-	GET_CONTEXT;
-
-	if (old_win32_toplevel_exception_filter) {
-		win32_chained_exception_filter_didrun = TRUE;
-		win32_chained_exception_filter_result = (*old_win32_toplevel_exception_filter)(info);
-		return TRUE;
-	}
-	if (gUnhandledExceptionHandler)
-	{
-		win32_chained_exception_filter_didrun = TRUE;
-		win32_chained_exception_filter_result = (*gUnhandledExceptionHandler)(info);
-		return TRUE;
-	}
-#endif
-
-	return FALSE;
+	win32_chained_exception_needs_run = TRUE;
+	return TRUE;
 }
 
 static HANDLE win32_main_thread;
