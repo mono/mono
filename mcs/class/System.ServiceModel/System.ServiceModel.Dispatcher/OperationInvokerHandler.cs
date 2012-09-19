@@ -142,6 +142,22 @@ namespace System.ServiceModel.Dispatcher
 				h.ChannelFaulted (dcc);
 		}
 
+		bool IsGenericFaultException (Type type, out Type arg)
+		{
+			for (; type != null; type = type.BaseType) {
+				if (!type.IsGenericType)
+					continue;
+				var tdef = type.GetGenericTypeDefinition ();
+				if (!tdef.Equals (typeof (FaultException<>)))
+					continue;
+				arg = type.GetGenericArguments () [0];
+				return true;
+			}
+
+			arg = null;
+			return false;
+		}
+
 		Message BuildExceptionMessage (MessageProcessingContext mrc, Exception ex, bool includeDetailsInFault)
 		{
 			var dr = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
@@ -155,12 +171,13 @@ namespace System.ServiceModel.Dispatcher
 
 			var req = mrc.IncomingMessage;
 
+			Type gft;
 			var fe = ex as FaultException;
-			if (fe != null && fe.GetType ().IsGenericType) {
-				var t = fe.GetType ().GetGenericArguments () [0];
-				foreach (var fci in mrc.Operation.FaultContractInfos)
-					if (fci.Detail == t)
+			if (fe != null && IsGenericFaultException (fe.GetType (), out gft)) {
+				foreach (var fci in mrc.Operation.FaultContractInfos) {
+					if (fci.Detail == gft)
 						return Message.CreateMessage (req.Version, fe.CreateMessageFault (), fci.Action);
+				}
 			}
 
 			// FIXME: set correct name
