@@ -229,6 +229,21 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		public void AddServiceEndpoint7 ()
+		{
+			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
+			var a = host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "a");
+			Console.WriteLine (a.Address);
+			Assert.AreEqual ("http", a.Address.Uri.Scheme, "#1");
+			Assert.AreEqual ("http://localhost/echo/a", a.Address.Uri.AbsoluteUri, "#2");
+
+			var b = host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "/b");
+			Console.WriteLine (b.Address);
+			Assert.AreEqual ("http", b.Address.Uri.Scheme, "#3");
+			Assert.AreEqual ("http://localhost/echo/b", b.Address.Uri.AbsoluteUri, "#4");
+		}
+		
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AddServiceEndpointMexWithNoImpl ()
 		{
