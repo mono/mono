@@ -50,8 +50,7 @@
 
 #include "jit-icalls.h"
 
-extern LPTOP_LEVEL_EXCEPTION_FILTER old_win32_toplevel_exception_filter;
-extern gboolean win32_chained_exception_needs_run;
+gboolean win32_chained_exception_needs_run;
 
 void
 mono_runtime_install_handlers (void)
