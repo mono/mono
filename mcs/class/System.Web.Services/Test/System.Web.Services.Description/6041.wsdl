@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://example.domain.openengsb.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax21="http://event.example.domain.openengsb.org/xsd" xmlns:ax22="http://api.core.openengsb.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://example.domain.openengsb.org">
+    <wsdl:types>
+        <xs:schema xmlns:ax24="http://event.example.domain.openengsb.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://example.domain.openengsb.org">
+            <xs:import namespace="http://event.example.domain.openengsb.org/xsd"/>
+            <xs:element name="raiseEvent">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="args0" nillable="true" type="ax24:LogEvent"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://api.core.openengsb.org/xsd">
+            <xs:complexType name="Event">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="origin" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="processId" nillable="true" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax23="http://api.core.openengsb.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://event.example.domain.openengsb.org/xsd">
+            <xs:import namespace="http://api.core.openengsb.org/xsd"/>
+            <xs:complexType name="LogEvent">
+                <xs:complexContent>
+                    <xs:extension base="ax23:Event">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="level" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="message" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="raiseEventRequest">
+        <wsdl:part name="parameters" element="ns:raiseEvent"/>
+    </wsdl:message>
+    <wsdl:portType name="ExampleDomainEventsPortType">
+        <wsdl:operation name="raiseEvent">
+            <wsdl:input message="ns:raiseEventRequest" wsaw:Action="urn:raiseEvent"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ExampleDomainEventsSoap11Binding" type="ns:ExampleDomainEventsPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="raiseEvent">
+            <soap:operation soapAction="urn:raiseEvent" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ExampleDomainEventsSoap12Binding" type="ns:ExampleDomainEventsPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="raiseEvent">
+            <soap12:operation soapAction="urn:raiseEvent" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ExampleDomainEventsHttpBinding" type="ns:ExampleDomainEventsPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="raiseEvent">
+            <http:operation location="raiseEvent"/>
+            <wsdl:input>
+                <mime:content type="application/xml" part="parameters"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ExampleDomainEvents">
+        <wsdl:port name="ExampleDomainEventsHttpSoap11Endpoint" binding="ns:ExampleDomainEventsSoap11Binding">
+            <soap:address location="http://localhost:8080/axis2/services/ExampleDomainEvents"/>
+        </wsdl:port>
+        <wsdl:port name="ExampleDomainEventsHttpSoap12Endpoint" binding="ns:ExampleDomainEventsSoap12Binding">
+            <soap12:address location="http://localhost:8080/axis2/services/ExampleDomainEvents"/>
+        </wsdl:port>
+        <wsdl:port name="ExampleDomainEventsHttpEndpoint" binding="ns:ExampleDomainEventsHttpBinding">
+            <http:address location="http://localhost:8080/axis2/services/ExampleDomainEvents"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
