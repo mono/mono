@@ -466,7 +466,8 @@ namespace System.Net.NetworkInformation {
 							MacOsStructs.sockaddr_in sockaddrin = (MacOsStructs.sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in));
 							address = new IPAddress (sockaddrin.sin_addr);
 						} else if (sockaddr.sa_family == AF_LINK) {
-							MacOsStructs.sockaddr_dl sockaddrdl = (MacOsStructs.sockaddr_dl) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_dl));
+							MacOsStructs.sockaddr_dl sockaddrdl = new MacOsStructs.sockaddr_dl ();
+							sockaddrdl.Read (addr.ifa_addr);
 
 							macAddress = new byte [(int) sockaddrdl.sdl_alen];
 							Array.Copy (sockaddrdl.sdl_data, sockaddrdl.sdl_nlen, macAddress, 0, Math.Min (macAddress.Length, sockaddrdl.sdl_data.Length - sockaddrdl.sdl_nlen));
