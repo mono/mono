@@ -170,8 +170,6 @@ g_log (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, .
 	va_end (args);
 }
 
-<<<<<<< HEAD
-=======
 void
 g_assertion_message (const gchar *format, ...)
 {
@@ -183,4 +181,3 @@ g_assertion_message (const gchar *format, ...)
 	abort ();
 }
 
->>>>>>> 6334036... Fix the windows build
