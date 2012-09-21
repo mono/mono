@@ -285,7 +285,7 @@ add masterdoc support?
   </xs:simpleType>
 
   <xs:element name="related">
-    <xs:complexType>
+    <xs:complexType mixed="true">
       <xs:attribute name="type" type="relatedType" />
       <xs:attribute name="href" type="xs:anyURI" />
     </xs:complexType>
