@@ -21,6 +21,9 @@ provider mono {
 
 	probe gc__heap__alloc (void *addr, uintptr_t len);
 	probe gc__heap__free (void *addr, uintptr_t len);
+
+	probe gc__locked ();
+	probe gc__unlocked ();
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
