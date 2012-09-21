@@ -1110,7 +1110,7 @@ add masterdoc support?
         </xs:element>
         <xs:element name="members">
           <xs:complexType>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
               <xs:element name="member">
                 <xs:complexType>
                   <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -1127,7 +1127,7 @@ add masterdoc support?
                     <xs:element ref="typeparam" />
                     <xs:element ref="value" />
                   </xs:choice>
-                  <xs:attribute name="name" type="xs:type" />
+                  <xs:attribute name="name" type="xs:string" />
                 </xs:complexType>
               </xs:element>
             </xs:choice>
