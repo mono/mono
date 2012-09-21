@@ -27,6 +27,9 @@ provider mono {
 
 	probe gc__nursery__tlab__alloc (void *addr, uintptr_t len);
 	probe gc__nursery__obj__alloc (void *addr, uintptr_t size, char *class_name);
+
+	probe gc__major__obj__alloc__degraded (void *addr, uintptr_t size, char *class_name);
+	probe gc__major__obj__alloc__mature (void *addr, uintptr_t size, char *class_name);
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
