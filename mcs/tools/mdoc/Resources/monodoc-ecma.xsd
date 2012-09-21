@@ -270,24 +270,24 @@ add masterdoc support?
   </xs:element>
 
   <xs:simpleType name="relatedType">
-    <restriction base="string">
+    <xs:restriction base="xs:string">
       <!-- External code/application samples -->
-      <enumeration value="sample"/>
+      <xs:enumeration value="sample"/>
       <!-- e.g. ECMA, OPC, OData, ... specs -->
-      <enumeration value="specification"/>
+      <xs:enumeration value="specification"/>
       <!-- e.g. Apple/Android documentation -->
-      <enumeration value="externalDocumentation" />
+      <xs:enumeration value="externalDocumentation" />
       <!-- e.g. a more in-depth article at docs.xamarin.com -->
-      <enumeration value="article" />
+      <xs:enumeration value="article" />
 	  <!-- e.g. a small article describing succintly a feature -->
-	  <enumeration value="recipe" />
-    </restriction>
+	  <xs:enumeration value="recipe" />
+    </xs:restriction>
   </xs:simpleType>
 
   <xs:element name="related">
     <xs:complexType>
       <xs:attribute name="type" type="relatedType" />
-      <xs:attribute name="href" type="anyURI" />
+      <xs:attribute name="href" type="xs:anyURI" />
     </xs:complexType>
   </xs:element>
 
