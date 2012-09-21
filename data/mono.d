@@ -18,6 +18,9 @@ provider mono {
 	/* Garbage Collector (GC) */	
 	probe gc__begin (int generation);
 	probe gc__end (int generation);
+
+	probe gc__heap__alloc (void *addr, uintptr_t len);
+	probe gc__heap__free (void *addr, uintptr_t len);
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
