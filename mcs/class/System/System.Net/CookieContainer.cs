@@ -245,7 +245,7 @@ namespace System.Net
 				}
 			}
 
-			if (cookie.Port.Length == 0 && uri != null && !uri.IsDefaultPort) {
+			if (Cookie.Version == 1 && cookie.Port.Length == 0 && uri != null && !uri.IsDefaultPort) {
 				cookie.Port = "\"" + uri.Port.ToString () + "\"";
 			}
 		}
