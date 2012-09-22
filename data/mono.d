@@ -32,6 +32,7 @@ provider mono {
 	probe gc__major__obj__alloc__mature (void *addr, uintptr_t size, char *class_name);
 
 	probe gc__nursery__sweeped (void *addr, uintptr_t len);
+	probe gc__major__sweeped (void *addr, uintptr_t len);
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
