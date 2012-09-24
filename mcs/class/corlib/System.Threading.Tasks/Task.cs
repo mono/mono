@@ -953,7 +953,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants.Canceled;
 
-			return Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap ();
+			return TaskExtensions.Unwrap (Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default));
 		}
 
 		public static Task<TResult> Run<TResult> (Func<TResult> function)
@@ -979,7 +979,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants<TResult>.Canceled;
 
-			return Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap ();
+			return TaskExtensions.Unwrap (Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default));
 		}
 
 		public static Task WhenAll (params Task[] tasks)

@@ -40,7 +40,11 @@ namespace System.Threading.Tasks
 	{
 		const TaskContinuationOptions opt = TaskContinuationOptions.ExecuteSynchronously;
 
+#if INSIDE_SYSCORE
 		public static Task<TResult> Unwrap<TResult> (this Task<Task<TResult>> task)
+#else
+		internal static Task<TResult> Unwrap<TResult> (Task<Task<TResult>> task)
+#endif
 		{
 			if (task == null)
 				throw new ArgumentNullException ("task");
@@ -52,7 +56,11 @@ namespace System.Threading.Tasks
 			return src.Task;
 		}
 
+#if INSIDE_SYSCORE
 		public static Task Unwrap (this Task<Task> task)
+#else
+		internal static Task Unwrap (Task<Task> task)
+#endif
 		{
 			if (task == null)
 				throw new ArgumentNullException ("task");
