@@ -30,167 +30,154 @@ using System;
 using System.IO;
 
 namespace Mono.CodeContracts.Static.Lattices {
-	/// <summary>
-	/// Represents domain, where abstract values are disjunct, and their join/meet turns into Top/Bottom respectively
-	/// </summary>
-	/// <example>
-	///       Top
-	///      / | \
-	///    v1 v2 v3
-	///      \ | /
-	///       Bot
-	/// </example>
-	/// <typeparam name="T"></typeparam>
-	struct FlatDomain<T> : IAbstractDomain<FlatDomain<T>>, IEquatable<FlatDomain<T>>
-		where T : IEquatable<T> {
-		public static readonly FlatDomain<T> BottomValue = new FlatDomain<T> (Kind.Bottom);
-		public static readonly FlatDomain<T> TopValue = new FlatDomain<T> (Kind.Top);
+        /// <summary>
+        /// Represents domain, where abstract values are disjunct, and their join/meet turns into Top/Bottom respectively
+        /// </summary>
+        /// <example>
+        ///       Top
+        ///      / | \
+        ///    v1 v2 v3
+        ///      \ | /
+        ///       Bot
+        /// </example>
+        /// <typeparam name="T"></typeparam>
+        public struct FlatDomain<T> : IAbstractDomain<FlatDomain<T>>, IEquatable<FlatDomain<T>>
+                where T : IEquatable<T> {
+                public static readonly FlatDomain<T> BottomValue = new FlatDomain<T> (DomainKind.Bottom);
+                public static readonly FlatDomain<T> TopValue = new FlatDomain<T> (DomainKind.Top);
 
-		public readonly T Concrete;
-		private readonly Kind _kind;
+                public readonly T Value;
+                readonly DomainKind state;
 
-		private FlatDomain (Kind kind)
-		{
-			this._kind = kind;
-			this.Concrete = default(T);
-		}
+                FlatDomain (DomainKind state)
+                {
+                        this.state = state;
+                        Value = default(T);
+                }
 
-		public FlatDomain (T value)
-		{
-			this._kind = Kind.Concrete;
-			this.Concrete = value;
-		}
+                public FlatDomain (T value)
+                {
+                        state = DomainKind.Normal;
+                        Value = value;
+                }
 
-		public static implicit operator FlatDomain<T> (T value)
-		{
-			return new FlatDomain<T> (value);
-		}
+                public static implicit operator FlatDomain<T> (T value)
+                {
+                        return new FlatDomain<T> (value);
+                }
 
-		#region Implementation of IAbstractDomain<FlatDomain<T>>
-		public bool IsNormal
-		{
-			get { return this._kind == Kind.Concrete; }
-		}
+                #region Implementation of IAbstractDomain<FlatDomain<T>>
 
-		public FlatDomain<T> Top
-		{
-			get { return TopValue; }
-		}
+                public FlatDomain<T> Top { get { return TopValue; } }
 
-		public FlatDomain<T> Bottom
-		{
-			get { return BottomValue; }
-		}
+                public FlatDomain<T> Bottom { get { return BottomValue; } }
 
-		public bool IsTop
-		{
-			get { return this._kind == Kind.Top; }
-		}
+                public bool IsTop { get { return state == DomainKind.Top; } }
 
-		public bool IsBottom
-		{
-			get { return this._kind == Kind.Bottom; }
-		}
+                public bool IsBottom { get { return state == DomainKind.Bottom; } }
 
-		public FlatDomain<T> Join (FlatDomain<T> that, bool widening, out bool weaker)
-		{
-			if (IsTop || that.IsBottom) {
-				weaker = false;
-				return this;
-			}
-			if (that.IsTop) {
-				weaker = !IsTop;
-				return that;
-			}
-			if (IsBottom) {
-				weaker = !that.IsBottom;
-				return that;
-			}
-			if (this.Concrete.Equals (that.Concrete)) {
-				weaker = false;
-				return that;
-			}
+                public FlatDomain<T> Join (FlatDomain<T> that, bool widening, out bool weaker)
+                {
+                        if (IsTop || that.IsBottom) {
+                                weaker = false;
+                                return this;
+                        }
+                        if (that.IsTop) {
+                                weaker = !IsTop;
+                                return that;
+                        }
+                        if (IsBottom) {
+                                weaker = !that.IsBottom;
+                                return that;
+                        }
+                        if (Value.Equals (that.Value)) {
+                                weaker = false;
+                                return that;
+                        }
 
-			weaker = true;
-			return TopValue;
-		}
+                        weaker = true;
+                        return TopValue;
+                }
 
-		public FlatDomain<T> Meet (FlatDomain<T> that)
-		{
-			if (IsTop || that.IsBottom)
-				return that;
-			if (that.IsTop || IsBottom)
-				return this;
-			if (this.Concrete.Equals (that.Concrete))
-				return that;
+                public FlatDomain<T> Widen (FlatDomain<T> that)
+                {
+                        // no widening - it's finite lattice
 
-			return BottomValue;
-		}
+                        return Join (that);
+                }
 
-		public bool LessEqual (FlatDomain<T> that)
-		{
-			if (that.IsTop || IsBottom)
-				return true;
-			if (IsTop || that.IsBottom)
-				return false;
+                public FlatDomain<T> Join (FlatDomain<T> that)
+                {
+                        FlatDomain<T> result;
+                        if (this.TryTrivialJoin (that, out result))
+                                return result;
 
-			//less equal means equality of values
-			return this.Concrete.Equals (that.Concrete);
-		}
+                        // this and that must be normal here
+                        return Value.Equals (that.Value) ? this : TopValue;
+                }
 
-		public FlatDomain<T> ImmutableVersion ()
-		{
-			return this;
-		}
+                public FlatDomain<T> Meet (FlatDomain<T> that)
+                {
+                        FlatDomain<T> result;
+                        if (this.TryTrivialMeet (that, out result))
+                                return result;
 
-		public FlatDomain<T> Clone ()
-		{
-			return this;
-		}
+                        return Value.Equals (that.Value) ? this : BottomValue;
+                }
 
-		public void Dump (TextWriter tw)
-		{
-			if (IsTop)
-				tw.WriteLine ("Top");
-			else if (IsBottom)
-				tw.WriteLine ("Bot");
-			else
-				tw.WriteLine ("<{0}>", this.Concrete);
-		}
+                public bool LessEqual (FlatDomain<T> that)
+                {
+                        bool result;
+                        if (this.TryTrivialLessEqual (that, out result))
+                                return result;
 
-		public override string ToString ()
-		{
-			if (IsTop)
-				return "Top";
-			if (IsBottom)
-				return "Bot";
+                        return Value.Equals (that.Value);
+                }
 
-			return string.Format ("<{0}>", this.Concrete);
-		}
-		#endregion
+                public FlatDomain<T> ImmutableVersion ()
+                {
+                        return this;
+                }
 
-		#region Implementation of IEquatable<FlatDomain<T>>
-		public bool Equals (FlatDomain<T> that)
-		{
-			if (!this.IsNormal)
-				return this._kind == that._kind;
+                public FlatDomain<T> Clone ()
+                {
+                        return this;
+                }
 
-			if (!that.IsNormal)
-				return false;
+                public void Dump (TextWriter tw)
+                {
+                        if (IsTop)
+                                tw.WriteLine ("Top");
+                        else if (IsBottom)
+                                tw.WriteLine (this.BottomSymbolIfAny ());
+                        else
+                                tw.WriteLine ("<{0}>", Value);
+                }
 
-			if (this.Concrete.Equals (that.Concrete))
-				return true;
+                public override string ToString ()
+                {
+                        if (IsTop)
+                                return "Top";
+                        if (IsBottom)
+                                return this.BottomSymbolIfAny ();
 
-			return false;
-		}
-		#endregion
+                        return string.Format ("<{0}>", Value);
+                }
 
-		#region Nested type: Kind
-		private enum Kind : byte {
-			Top = 0,
-			Bottom,
-			Concrete
-		}
-		#endregion
-	}
+                #endregion
+
+                public bool Equals (FlatDomain<T> that)
+                {
+                        if (!this.IsNormal ())
+                                return state == that.state;
+
+                        return that.IsNormal () && Value.Equals (that.Value);
+                }
+                }
+
+        enum DomainKind {
+                Normal = 0,
+                Top,
+                Bottom
+        }
 }

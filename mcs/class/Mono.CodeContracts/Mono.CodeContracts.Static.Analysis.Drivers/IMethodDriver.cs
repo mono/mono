@@ -35,9 +35,9 @@ using Mono.CodeContracts.Static.Proving;
 
 namespace Mono.CodeContracts.Static.Analysis.Drivers {
 	interface IMethodDriver<Expression, Variable> : IBasicMethodDriver {
-		ICodeLayer<Variable, Variable, IValueContextProvider<Variable>, IImmutableMap<Variable, LispList<Variable>>> ValueLayer { get; }
-		ICodeLayer<Expression, Variable, IExpressionContextProvider<Expression, Variable>, IImmutableMap<Variable, LispList<Variable>>> ExpressionLayer { get; }
-		ICodeLayer<Variable, Variable, IValueContextProvider<Variable>, IImmutableMap<Variable, LispList<Variable>>> HybridLayer { get; }
+		ICodeLayer<Variable, Variable, IValueContextProvider<Variable>, IImmutableMap<Variable, Sequence<Variable>>> ValueLayer { get; }
+		ICodeLayer<Expression, Variable, IExpressionContextProvider<Expression, Variable>, IImmutableMap<Variable, Sequence<Variable>>> ExpressionLayer { get; }
+		ICodeLayer<Variable, Variable, IValueContextProvider<Variable>, IImmutableMap<Variable, Sequence<Variable>>> HybridLayer { get; }
 
 		IExpressionContextProvider<Expression, Variable> ContextProvider { get; }
 		IMetaDataProvider MetaDataProvider { get; }

@@ -29,7 +29,9 @@
 using System;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 using Mono.CodeContracts.Static.ControlFlow;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Proving {
 	class SimpleLogicInference<Expression, Variable> : BasicFacts<Expression, Variable> {
@@ -38,12 +40,12 @@ namespace Mono.CodeContracts.Static.Proving {
 		{
 		}
 
-		public override ProofOutcome IsNull (APC pc, BoxedExpression expr)
+        public override FlatDomain<bool> IsNull(APC pc, BoxedExpression expr)
 		{
 			Variable v;
 			if (TryVariable (expr, out v)) {
-				ProofOutcome proofOutcome = this.FactBase.IsNull (pc, v);
-				if (proofOutcome != ProofOutcome.Top)
+                FlatDomain<bool> proofOutcome = this.FactBase.IsNull(pc, v);
+				if (!proofOutcome.IsTop)
 					return proofOutcome;
 			}
 
@@ -53,34 +55,32 @@ namespace Mono.CodeContracts.Static.Proving {
 					return ProofOutcome.True;
 				if (constant is string)
 					return ProofOutcome.False;
-				var convertible = constant as IConvertible;
-				if (convertible != null) {
-					try {
-						return (convertible.ToInt64 (null) == 0) ? ProofOutcome.True : ProofOutcome.False;
-					} catch {
-						return ProofOutcome.Top;
-					}
-				}
+
+			    long? longValue = constant.ConvertToLong ();
+                if (longValue.HasValue)
+                    return longValue == 0 ? ProofOutcome.True : ProofOutcome.False;
+                
+                return ProofOutcome.Top;
 			}
 
 			BinaryOperator op;
 			BoxedExpression left;
 			BoxedExpression right;
 			if (expr.IsBinaryExpression (out op, out left, out right)) {
-				if ((op == BinaryOperator.Ceq || op == BinaryOperator.Cobjeq) && IsNull (pc, right) == ProofOutcome.True)
+				if ((op == BinaryOperator.Ceq || op == BinaryOperator.Cobjeq) && IsNull (pc, right).IsTrue ())
 					return IsNonNull (pc, left);
-				if (op == BinaryOperator.Cne_Un && IsNull (pc, right) == ProofOutcome.True)
+				if (op == BinaryOperator.Cne_Un && IsNull (pc, right).IsTrue ())
 					return IsNull (pc, left);
 			}
 			return ProofOutcome.Top;
 		}
 
-		public override ProofOutcome IsNonNull (APC pc, BoxedExpression expr)
+        public override FlatDomain<bool> IsNonNull(APC pc, BoxedExpression expr)
 		{
 			Variable v;
 			if (TryVariable (expr, out v)) {
-				ProofOutcome proofOutcome = this.FactBase.IsNonNull (pc, v);
-				if (proofOutcome != ProofOutcome.Top)
+                FlatDomain<bool> proofOutcome = this.FactBase.IsNonNull(pc, v);
+				if (!proofOutcome.IsTop)
 					return proofOutcome;
 			}
 
@@ -90,23 +90,21 @@ namespace Mono.CodeContracts.Static.Proving {
 					return ProofOutcome.False;
 				if (constant is string)
 					return ProofOutcome.True;
-				var convertible = constant as IConvertible;
-				if (convertible != null) {
-					try {
-						return (convertible.ToInt64 (null) == 0) ? ProofOutcome.False : ProofOutcome.True;
-					} catch {
-						return ProofOutcome.Top;
-					}
-				}
+                
+                long? longValue = constant.ConvertToLong();
+                if (longValue.HasValue)
+                    return longValue != 0 ? ProofOutcome.True : ProofOutcome.False;
+				
+                return ProofOutcome.Top;
 			}
 
 			BinaryOperator op;
 			BoxedExpression left;
 			BoxedExpression right;
 			if (expr.IsBinaryExpression (out op, out left, out right)) {
-				if ((op == BinaryOperator.Ceq || op == BinaryOperator.Cobjeq) && IsNull (pc, right) == ProofOutcome.True)
+				if ((op == BinaryOperator.Ceq || op == BinaryOperator.Cobjeq) && IsNull (pc, right).IsTrue ())
 					return IsNull (pc, left);
-				if (op == BinaryOperator.Cne_Un && IsNull (pc, right) == ProofOutcome.True)
+				if (op == BinaryOperator.Cne_Un && IsNull (pc, right).IsTrue ())
 					return IsNonNull (pc, left);
 			}
 			return ProofOutcome.Top;

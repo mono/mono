@@ -50,7 +50,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 
 		private DoubleImmutableMap<SymValue, SymValue, SymValue> mappings;
 		private IImmutableSet<SymValue> visited_key1;
-		private LispList<Tuple<SymValue, SymValue, SymValue>> merge_triples;
+		private Sequence<Tuple<SymValue, SymValue, SymValue>> merge_triples;
 
 		public MergeInfo (SymGraph<TFunc, TADomain> result,
 		                  SymGraph<TFunc, TADomain> g1,
@@ -79,12 +79,12 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			get { return this.merge_triples.AsEnumerable (); }
 		}
 
-		public IImmutableMap<SymValue, LispList<SymValue>> ForwardG1Map
+		public IImmutableMap<SymValue, Sequence<SymValue>> ForwardG1Map
 		{
 			get { return GetForwardGraphMap ((t) => t.Item1); }
 		}
 
-		public IImmutableMap<SymValue, LispList<SymValue>> ForwardG2Map
+		public IImmutableMap<SymValue, Sequence<SymValue>> ForwardG2Map
 		{
 			get { return GetForwardGraphMap ((t) => t.Item2); }
 		}
@@ -320,8 +320,8 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			if (!this.visited_multi_edges.Add (key))
 				return;
 
-			LispList<SymValue> list1 = this.Graph1.MultiEdgeMap [sv1, edge];
-			LispList<SymValue> list2 = this.Graph2.MultiEdgeMap [sv2, edge];
+			Sequence<SymValue> list1 = this.Graph1.MultiEdgeMap [sv1, edge];
+			Sequence<SymValue> list2 = this.Graph2.MultiEdgeMap [sv2, edge];
 			if (list2.IsEmpty ())
 				return;
 			foreach (SymValue v1 in list1.AsEnumerable ()) {
@@ -404,9 +404,9 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			}
 		}
 
-		private IImmutableMap<SymValue, LispList<SymValue>> GetForwardGraphMap (Func<Tuple<SymValue, SymValue, SymValue>, SymValue> sourceSelector)
+		private IImmutableMap<SymValue, Sequence<SymValue>> GetForwardGraphMap (Func<Tuple<SymValue, SymValue, SymValue>, SymValue> sourceSelector)
 		{
-			IImmutableMap<SymValue, LispList<SymValue>> res = ImmutableIntKeyMap<SymValue, LispList<SymValue>>.Empty (SymValue.GetUniqueKey);
+			IImmutableMap<SymValue, Sequence<SymValue>> res = ImmutableIntKeyMap<SymValue, Sequence<SymValue>>.Empty (SymValue.GetUniqueKey);
 			foreach (var tuple in this.merge_triples.AsEnumerable ()) {
 				SymValue sv = sourceSelector (tuple);
 				if (sv != null)
@@ -478,7 +478,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 
 		private void PrimeMapWithCommon ()
 		{
-			LispList<SymValue> rest = null;
+			Sequence<SymValue> rest = null;
 			foreach (SymValue sv in this.Graph1.EqualTermsMap.Keys) {
 				if (IsCommon (sv) && (this.Graph2.EqualTermsMap.ContainsKey (sv) || this.Graph2.EqualMultiTermsMap.ContainsKey (sv))) {
 					if (this.Graph1.MultiEdgeMap.ContainsKey1 (sv))
@@ -501,13 +501,13 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			}
 		}
 
-		private void Replay (LispList<Update<TFunc, TADomain>> updates, LispList<Update<TFunc, TADomain>> common)
+		private void Replay (Sequence<Update<TFunc, TADomain>> updates, Sequence<Update<TFunc, TADomain>> common)
 		{
 			for (Update<TFunc, TADomain> update = Update<TFunc, TADomain>.Reverse (updates, common); update != null; update = update.Next)
 				update.Replay (this);
 		}
 
-		private void ReplayEliminations (LispList<Update<TFunc, TADomain>> updates, LispList<Update<TFunc, TADomain>> common)
+		private void ReplayEliminations (Sequence<Update<TFunc, TADomain>> updates, Sequence<Update<TFunc, TADomain>> common)
 		{
 			for (Update<TFunc, TADomain> update = Update<TFunc, TADomain>.Reverse (updates, common); update != null; update = update.Next)
 				update.ReplayElimination (this);

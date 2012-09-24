@@ -28,130 +28,128 @@
 
 using System;
 using System.IO;
+
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Lattices {
-	struct SetDomain<T> : IAbstractDomain<SetDomain<T>>
-		where T : IEquatable<T> {
-		public static readonly SetDomain<T> TopValue = new SetDomain<T> (ImmutableSet<T>.Empty ());
-		public static readonly SetDomain<T> BottomValue = new SetDomain<T> ((IImmutableSet<T>) null);
+        struct SetDomain<T> : IAbstractDomain<SetDomain<T>>
+                where T : IEquatable<T> {
+                public static readonly SetDomain<T> TopValue = new SetDomain<T> (ImmutableSet<T>.Empty ());
+                public static readonly SetDomain<T> BottomValue = new SetDomain<T> ((IImmutableSet<T>) null);
 
-		private readonly IImmutableSet<T> set;
+                readonly IImmutableSet<T> set;
 
-		private SetDomain (IImmutableSet<T> set)
-		{
-			this.set = set;
-		}
+                SetDomain (IImmutableSet<T> set)
+                {
+                        this.set = set;
+                }
 
-		public SetDomain (Func<T, int> keyConverter)
-		{
-			this.set = ImmutableSet<T>.Empty (keyConverter);
-		}
+                public SetDomain (Func<T, int> keyConverter)
+                {
+                        set = ImmutableSet<T>.Empty (keyConverter);
+                }
 
-		public SetDomain<T> Top
-		{
-			get { return TopValue; }
-		}
+                public SetDomain<T> Top { get { return TopValue; } }
 
-		public SetDomain<T> Bottom
-		{
-			get { return BottomValue; }
-		}
+                public SetDomain<T> Bottom { get { return BottomValue; } }
 
-		public bool IsTop
-		{
-			get
-			{
-				if (this.set != null)
-					return this.set.Count == 0;
+                public bool IsTop { get { return set != null && set.Count == 0; } }
 
-				return false;
-			}
-		}
+                public bool IsBottom { get { return set == null; } }
 
-		public bool IsBottom
-		{
-			get { return this.set == null; }
-		}
+                public SetDomain<T> Join (SetDomain<T> that)
+                {
+                        SetDomain<T> result;
+                        if (this.TryTrivialJoin (that, out result))
+                                return result;
 
-		public SetDomain<T> Join (SetDomain<T> that, bool widening, out bool weaker)
-		{
-			if (this.set == that.set) {
-				weaker = false;
-				return this;
-			}
-			if (IsBottom) {
-				weaker = !that.IsBottom;
-				return that;
-			}
-			if (that.IsBottom || IsTop) {
-				weaker = false;
-				return this;
-			}
-			if (that.IsTop) {
-				weaker = !IsTop;
-				return that;
-			}
+                        return new SetDomain<T> (set.Intersect (that.set));
+                }
 
-			IImmutableSet<T> join = this.set.Intersect (that.set);
+                public SetDomain<T> Join (SetDomain<T> that, bool widening, out bool weaker)
+                {
+                        if (set == that.set) {
+                                weaker = false;
+                                return this;
+                        }
+                        if (IsBottom) {
+                                weaker = !that.IsBottom;
+                                return that;
+                        }
+                        if (that.IsBottom || IsTop) {
+                                weaker = false;
+                                return this;
+                        }
+                        if (that.IsTop) {
+                                weaker = !IsTop;
+                                return that;
+                        }
 
-			weaker = join.Count < this.set.Count;
-			return new SetDomain<T> (join);
-		}
+                        var join = set.Intersect (that.set);
 
-		public SetDomain<T> Meet (SetDomain<T> that)
-		{
-			if (this.set == that.set || IsBottom || that.IsTop)
-				return this;
-			if (that.IsBottom || IsTop)
-				return that;
+                        weaker = join.Count < set.Count;
+                        return new SetDomain<T> (join);
+                }
 
-			return new SetDomain<T> (this.set.Union (that.set));
-		}
+                public SetDomain<T> Widen (SetDomain<T> that)
+                {
+                        //no widening - finite lattice
 
-		public bool LessEqual (SetDomain<T> that)
-		{
-			if (IsBottom)
-				return true;
-			if (that.IsBottom)
-				return false;
+                        return Join (that);
+                }
 
-			return that.set.IsContainedIn (this.set);
-		}
+                public SetDomain<T> Meet (SetDomain<T> that)
+                {
+                        SetDomain<T> result;
+                        if (this.TryTrivialMeet (that, out result))
+                                return result;
 
-		public SetDomain<T> ImmutableVersion ()
-		{
-			return this;
-		}
+                        return new SetDomain<T> (set.Union (that.set));
+                }
 
-		public SetDomain<T> Clone ()
-		{
-			return this;
-		}
+                public bool LessEqual (SetDomain<T> that)
+                {
+                        if (IsBottom)
+                                return true;
+                        if (that.IsBottom)
+                                return false;
 
-		public SetDomain<T> Add (T elem)
-		{
-			return new SetDomain<T> (this.set.Add (elem));
-		}
+                        return that.set.IsContainedIn (set);
+                }
 
-		public SetDomain<T> Remove (T elem)
-		{
-			return new SetDomain<T> (this.set.Remove (elem));
-		}
+                public SetDomain<T> ImmutableVersion ()
+                {
+                        return this;
+                }
 
-		public bool Contains (T item)
-		{
-			return this.set.Contains (item);
-		}
+                public SetDomain<T> Clone ()
+                {
+                        return this;
+                }
 
-		public void Dump (TextWriter tw)
-		{
-			if (IsBottom)
-				tw.WriteLine ("Bot");
-			else if (IsTop)
-				tw.WriteLine ("Top");
-			else
-				this.set.Dump (tw);
-		}
-	}
+                public SetDomain<T> With (T elem)
+                {
+                        return new SetDomain<T> (set.Add (elem));
+                }
+
+                public SetDomain<T> Without (T elem)
+                {
+                        return new SetDomain<T> (set.Remove (elem));
+                }
+
+                public bool Contains (T item)
+                {
+                        return set.Contains (item);
+                }
+
+                public void Dump (TextWriter tw)
+                {
+                        if (IsBottom)
+                                tw.WriteLine ("Bot");
+                        else if (IsTop)
+                                tw.WriteLine ("Top");
+                        else
+                                set.Dump (tw);
+                }
+                }
 }

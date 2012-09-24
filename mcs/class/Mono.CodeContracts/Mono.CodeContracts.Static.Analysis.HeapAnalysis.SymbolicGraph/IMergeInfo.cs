@@ -35,8 +35,8 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 	interface IMergeInfo {
 		bool Changed { get; }
 		IEnumerable<Tuple<SymValue, SymValue, SymValue>> MergeTriples { get; }
-		IImmutableMap<SymValue, LispList<SymValue>> ForwardG1Map { get; }
-		IImmutableMap<SymValue, LispList<SymValue>> ForwardG2Map { get; }
+		IImmutableMap<SymValue, Sequence<SymValue>> ForwardG1Map { get; }
+		IImmutableMap<SymValue, Sequence<SymValue>> ForwardG2Map { get; }
 
 		bool IsResultGraph<TFunc, TAbstractDomain> (SymGraph<TFunc, TAbstractDomain> graph)
 			where TFunc : IEquatable<TFunc>, IConstantInfo

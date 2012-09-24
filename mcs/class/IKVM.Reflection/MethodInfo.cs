@@ -107,6 +107,22 @@ namespace IKVM.Reflection
 			throw new NotSupportedException();
 		}
 
+		public bool __TryGetImplMap(out ImplMapFlags mappingFlags, out string importName, out string importScope)
+		{
+			Module module = this.Module;
+			foreach (int i in module.ImplMap.Filter(GetCurrentToken()))
+			{
+				mappingFlags = (ImplMapFlags)(ushort)module.ImplMap.records[i].MappingFlags;
+				importName = module.GetString(module.ImplMap.records[i].ImportName);
+				importScope = module.GetString(module.ModuleRef.records[(module.ImplMap.records[i].ImportScope & 0xFFFFFF) - 1]);
+				return true;
+			}
+			mappingFlags = 0;
+			importName = null;
+			importScope = null;
+			return false;
+		}
+
 		Type IGenericContext.GetGenericTypeArgument(int index)
 		{
 			return this.DeclaringType.GetGenericTypeArgument(index);
@@ -158,6 +174,29 @@ namespace IKVM.Reflection
 		internal sealed override MemberInfo SetReflectedType(Type type)
 		{
 			return new MethodInfoWithReflectedType(type, this);
+		}
+
+		internal sealed override List<CustomAttributeData> GetPseudoCustomAttributes(Type attributeType)
+		{
+			Module module = this.Module;
+			List<CustomAttributeData> list = new List<CustomAttributeData>();
+			if ((this.Attributes & MethodAttributes.PinvokeImpl) != 0
+				&& (attributeType == null || attributeType.IsAssignableFrom(module.universe.System_Runtime_InteropServices_DllImportAttribute)))
+			{
+				ImplMapFlags flags;
+				string importName;
+				string importScope;
+				if (__TryGetImplMap(out flags, out importName, out importScope))
+				{
+					list.Add(CustomAttributeData.CreateDllImportPseudoCustomAttribute(module, flags, importName, importScope, GetMethodImplementationFlags()));
+				}
+			}
+			if ((GetMethodImplementationFlags() & MethodImplAttributes.PreserveSig) != 0
+				&& (attributeType == null || attributeType.IsAssignableFrom(module.universe.System_Runtime_InteropServices_PreserveSigAttribute)))
+			{
+				list.Add(CustomAttributeData.CreatePreserveSigPseudoCustomAttribute(module));
+			}
+			return list;
 		}
 	}
 
@@ -326,11 +365,6 @@ namespace IKVM.Reflection
 			get { return method.ContainsGenericParameters; }
 		}
 
-		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return method.GetCustomAttributesData(attributeType);
-		}
-
 		public override Type[] GetGenericArguments()
 		{
 			return method.GetGenericArguments();
@@ -349,6 +383,16 @@ namespace IKVM.Reflection
 		public override int MetadataToken
 		{
 			get { return method.MetadataToken; }
+		}
+
+		internal override int GetCurrentToken()
+		{
+			return method.GetCurrentToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return method.IsBaked; }
 		}
 	}
 }

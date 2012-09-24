@@ -32,25 +32,25 @@ namespace Mono.CodeContracts.Static.AST {
 		{
 		}
 
-		public BinaryExpression (NodeType nodeType, Expression operand1, Expression operand2) : base (nodeType)
+		public BinaryExpression (NodeType nodeType, Expression left, Expression right) : base (nodeType)
 		{
-			Operand1 = operand1;
-			Operand2 = operand2;
+			Left = left;
+			Right = right;
 		}
 
-		public BinaryExpression (NodeType nodeType, Expression operand1, Expression operand2, TypeNode type)
+		public BinaryExpression (NodeType nodeType, Expression left, Expression right, TypeNode type)
 			: base (nodeType, type)
 		{
-			Operand1 = operand1;
-			Operand2 = operand2;
+			Left = left;
+			Right = right;
 		}
 
-		public Expression Operand1 { get; set; }
-		public Expression Operand2 { get; set; }
+		public Expression Left { get; set; }
+		public Expression Right { get; set; }
 
 		public override string ToString ()
 		{
-			return string.Format ("({1} :{0}: {2})", NodeType, Operand1, Operand2);
+			return string.Format ("({1} :{0}: {2})", NodeType, Left, Right);
 		}
 	}
 }

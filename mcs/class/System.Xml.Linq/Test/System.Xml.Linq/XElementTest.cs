@@ -40,6 +40,20 @@ namespace MonoTests.System.Xml.Linq
 	[TestFixture]
 	public class XElementTest
 	{
+
+		[Test]
+		public void Constructor_NullParameters()
+		{
+			AssertThrows<ArgumentNullException>(() => new XElement((XName)null), "#1");
+			AssertThrows<ArgumentNullException>(() => new XElement((XElement)null), "#2");
+			AssertThrows<ArgumentNullException>(() => new XElement((XStreamingElement)null), "#3");
+			AssertThrows<ArgumentNullException>(() => new XElement((XName)null, null), "#4");
+			AssertThrows<ArgumentNullException>(() => new XElement((XName)null, null, null, null), "#5");
+
+			// This is acceptable though
+			new XElement(XName.Get("foo"), null);
+		}
+
 		[Test] // xml declaration is skipped.
 		public void LoadWithXmldecl ()
 		{

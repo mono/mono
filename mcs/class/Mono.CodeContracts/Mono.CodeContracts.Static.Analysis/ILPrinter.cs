@@ -29,5 +29,5 @@
 using System.IO;
 
 namespace Mono.CodeContracts.Static.Analysis {
-	delegate void ILPrinter<Label> (Label label, string prefix, TextWriter tw);
+	delegate void ILPrinter<TLabel> (TLabel label, string prefix, TextWriter tw);
 }

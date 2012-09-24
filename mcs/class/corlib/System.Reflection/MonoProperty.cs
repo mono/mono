@@ -298,8 +298,8 @@ namespace System.Reflection {
 				/*FIXME we should check if the number of arguments matches the expected one, otherwise the error message will be pretty criptic.*/
 #if !MONOTOUCH
 				if (cached_getter == null) {
-					if (!DeclaringType.IsValueType) { //FIXME find a way to build an invoke delegate for value types.
-						MethodInfo method = GetGetMethod (true);
+					MethodInfo method = GetGetMethod (true);
+					if (!DeclaringType.IsValueType && !method.ContainsGenericParameters) { //FIXME find a way to build an invoke delegate for value types.
 						if (method == null)
 							throw new ArgumentException ("Get Method not found for '" + Name + "'");
 						cached_getter = CreateGetterDelegate (method);

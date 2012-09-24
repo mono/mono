@@ -261,6 +261,7 @@ namespace System.Threading {
 
 				int stateCheck = isUpgradable ? RwWaitUpgrade + RwWait : RwWait;
 				long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
+				int registration = isUpgradable ? RwWaitUpgrade : RwWait;
 
 				do {
 					int state = rwlock;
@@ -268,7 +269,8 @@ namespace System.Threading {
 					if (state <= stateCheck) {
 						try {}
 						finally {
-							if (Interlocked.CompareExchange (ref rwlock, RwWrite, state) == state) {
+							var toWrite = state + RwWrite - (registered ? registration : 0);
+							if (Interlocked.CompareExchange (ref rwlock, toWrite, state) == state) {
 								writerDoneEvent.Reset ();
 								ctstate.LockState ^= LockState.Write;
 								++ctstate.WriterRecursiveCount;
@@ -452,7 +454,7 @@ namespace System.Threading {
 				return rwlock >= RwRead && CurrentThreadState.LockState.Has (LockState.Read);
 			}
 		}
-		
+
 		public bool IsWriteLockHeld {
 			get {
 				return (rwlock & RwWrite) > 0 && CurrentThreadState.LockState.Has (LockState.Write);

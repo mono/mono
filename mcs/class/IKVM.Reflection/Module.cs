@@ -297,7 +297,6 @@ namespace IKVM.Reflection
 		public abstract string FullyQualifiedName { get; }
 		public abstract string Name { get; }
 		public abstract Guid ModuleVersionId { get; }
-		public abstract Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);
 		public abstract MethodBase ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);
 		public abstract FieldInfo ResolveField(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);
 		public abstract MemberInfo ResolveMember(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments);
@@ -386,6 +385,42 @@ namespace IKVM.Reflection
 		{
 			return ResolveType(metadataToken, null, null);
 		}
+
+		internal sealed class GenericContext : IGenericContext
+		{
+			private readonly Type[] genericTypeArguments;
+			private readonly Type[] genericMethodArguments;
+
+			internal GenericContext(Type[] genericTypeArguments, Type[] genericMethodArguments)
+			{
+				this.genericTypeArguments = genericTypeArguments;
+				this.genericMethodArguments = genericMethodArguments;
+			}
+
+			public Type GetGenericTypeArgument(int index)
+			{
+				return genericTypeArguments[index];
+			}
+
+			public Type GetGenericMethodArgument(int index)
+			{
+				return genericMethodArguments[index];
+			}
+		}
+
+		public Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		{
+			if ((metadataToken >> 24) == TypeSpecTable.Index)
+			{
+				return ResolveType(metadataToken, new GenericContext(genericTypeArguments, genericMethodArguments));
+			}
+			else
+			{
+				return ResolveType(metadataToken, null);
+			}
+		}
+
+		internal abstract Type ResolveType(int metadataToken, IGenericContext context);
 
 		public MethodBase ResolveMethod(int metadataToken)
 		{
@@ -496,38 +531,12 @@ namespace IKVM.Reflection
 		[Obsolete]
 		public List<CustomAttributeData> __GetCustomAttributesFor(int token)
 		{
-			return GetCustomAttributes(token, null);
+			return CustomAttributeData.GetCustomAttributesImpl(new List<CustomAttributeData>(), this, token, null);
 		}
 
 		internal abstract Type GetModuleType();
 
 		internal abstract ByteReader GetBlob(int blobIndex);
-
-		internal virtual IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
-		{
-			return GetCustomAttributes(0x00000001, attributeType);
-		}
-
-		internal List<CustomAttributeData> GetCustomAttributes(int metadataToken, Type attributeType)
-		{
-			List<CustomAttributeData> list = new List<CustomAttributeData>();
-			foreach (int i in CustomAttribute.Filter(metadataToken))
-			{
-				if (attributeType == null)
-				{
-					list.Add(new CustomAttributeData(this, i));
-				}
-				else
-				{
-					ConstructorInfo constructor = (ConstructorInfo)ResolveMethod(CustomAttribute.records[i].Type);
-					if (attributeType.IsAssignableFrom(constructor.DeclaringType))
-					{
-						list.Add(new CustomAttributeData(this, i));
-					}
-				}
-			}
-			return list;
-		}
 
 		internal IList<CustomAttributeData> GetDeclarativeSecurity(int metadataToken)
 		{
@@ -545,6 +554,11 @@ namespace IKVM.Reflection
 
 		internal virtual void ExportTypes(int fileToken, IKVM.Reflection.Emit.ModuleBuilder manifestModule)
 		{
+		}
+
+		internal virtual string GetString(int index)
+		{
+			throw new NotSupportedException();
 		}
 	}
 
@@ -620,7 +634,7 @@ namespace IKVM.Reflection
 			throw NotSupportedException();
 		}
 
-		public sealed override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
+		internal sealed override Type ResolveType(int metadataToken, IGenericContext context)
 		{
 			throw ArgumentOutOfRangeException();
 		}

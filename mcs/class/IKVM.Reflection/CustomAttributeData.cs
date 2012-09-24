@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2011 Jeroen Frijters
+  Copyright (C) 2009-2012 Jeroen Frijters
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -224,7 +224,7 @@ namespace IKVM.Reflection
 			}
 			else
 			{
-				if (arg.ArgumentType != type)
+				if (arg.ArgumentType != type || (type.IsEnum && !arg.Value.Equals(0)))
 				{
 					sb.Append('(');
 					sb.Append(arg.ArgumentType.FullName);
@@ -513,7 +513,7 @@ namespace IKVM.Reflection
 			return type.Module.universe.GetMissingPropertyOrThrow(type, name, PropertySignature.Create(CallingConventions.Standard | CallingConventions.HasThis, propertyType, null, new PackedCustomModifiers()));
 		}
 
-		[Obsolete("Use Constructor.DeclaringType instead.")]
+		[Obsolete("Use AttributeType property instead.")]
 		internal bool __TryReadTypeName(out string ns, out string name)
 		{
 			if (Constructor.DeclaringType.IsNested)
@@ -553,6 +553,12 @@ namespace IKVM.Reflection
 						? module.DeclSecurity.records[declSecurityIndex].Parent
 						: 0;
 			}
+		}
+
+		// .NET 4.5 API
+		public Type AttributeType
+		{
+			get { return Constructor.DeclaringType; }
 		}
 
 		public ConstructorInfo Constructor
@@ -677,7 +683,7 @@ namespace IKVM.Reflection
 
 		public static IList<CustomAttributeData> GetCustomAttributes(MemberInfo member)
 		{
-			return member.GetCustomAttributesData(null);
+			return __GetCustomAttributes(member, null, false);
 		}
 
 		public static IList<CustomAttributeData> GetCustomAttributes(Assembly assembly)
@@ -687,12 +693,12 @@ namespace IKVM.Reflection
 
 		public static IList<CustomAttributeData> GetCustomAttributes(Module module)
 		{
-			return module.GetCustomAttributesData(null);
+			return __GetCustomAttributes(module, null, false);
 		}
 
 		public static IList<CustomAttributeData> GetCustomAttributes(ParameterInfo parameter)
 		{
-			return parameter.GetCustomAttributesData(null);
+			return __GetCustomAttributes(parameter, null, false);
 		}
 
 		public static IList<CustomAttributeData> __GetCustomAttributes(Assembly assembly, Type attributeType, bool inherit)
@@ -702,24 +708,56 @@ namespace IKVM.Reflection
 
 		public static IList<CustomAttributeData> __GetCustomAttributes(Module module, Type attributeType, bool inherit)
 		{
-			return module.GetCustomAttributesData(attributeType);
+			if (module.__IsMissing)
+			{
+				throw new MissingModuleException((MissingModule)module);
+			}
+			return GetCustomAttributesImpl(null, module, 0x00000001, attributeType) ?? EmptyList;
 		}
 
 		public static IList<CustomAttributeData> __GetCustomAttributes(ParameterInfo parameter, Type attributeType, bool inherit)
 		{
-			return parameter.GetCustomAttributesData(attributeType);
+			Module module = parameter.Module;
+			List<CustomAttributeData> list = null;
+			if (module.universe.ReturnPseudoCustomAttributes)
+			{
+				if (attributeType == null || attributeType.IsAssignableFrom(parameter.Module.universe.System_Runtime_InteropServices_MarshalAsAttribute))
+				{
+					FieldMarshal spec;
+					if (parameter.__TryGetFieldMarshal(out spec))
+					{
+						if (list == null)
+						{
+							list = new List<CustomAttributeData>();
+						}
+						list.Add(CustomAttributeData.CreateMarshalAsPseudoCustomAttribute(parameter.Module, spec));
+					}
+				}
+			}
+			ModuleBuilder mb = module as ModuleBuilder;
+			int token = parameter.MetadataToken;
+			if (mb != null && mb.IsSaved && mb.IsPseudoToken(token))
+			{
+				token = mb.ResolvePseudoToken(token);
+			}
+			return GetCustomAttributesImpl(list, module, token, attributeType) ?? EmptyList;
 		}
 
 		public static IList<CustomAttributeData> __GetCustomAttributes(MemberInfo member, Type attributeType, bool inherit)
 		{
+			if (!member.IsBaked)
+			{
+				// like .NET we we don't return custom attributes for unbaked members
+				throw new NotImplementedException();
+			}
 			if (!inherit || !IsInheritableAttribute(attributeType))
 			{
-				return member.GetCustomAttributesData(attributeType);
+				return GetCustomAttributesImpl(null, member, attributeType) ?? EmptyList;
 			}
 			List<CustomAttributeData> list = new List<CustomAttributeData>();
 			for (; ; )
 			{
-				list.AddRange(member.GetCustomAttributesData(attributeType));
+				GetCustomAttributesImpl(list, member, attributeType);
 				Type type = member as Type;
 				if (type != null)
 				{
@@ -747,9 +785,61 @@ namespace IKVM.Reflection
 			}
 		}
 
+		private static List<CustomAttributeData> GetCustomAttributesImpl(List<CustomAttributeData> list, MemberInfo member, Type attributeType)
+		{
+			if (member.Module.universe.ReturnPseudoCustomAttributes)
+			{
+				List<CustomAttributeData> pseudo = member.GetPseudoCustomAttributes(attributeType);
+				if (list == null)
+				{
+					list = pseudo;
+				}
+				else if (pseudo != null)
+				{
+					list.AddRange(pseudo);
+				}
+			}
+			return GetCustomAttributesImpl(list, member.Module, member.GetCurrentToken(), attributeType);
+		}
+
+		internal static List<CustomAttributeData> GetCustomAttributesImpl(List<CustomAttributeData> list, Module module, int token, Type attributeType)
+		{
+			foreach (int i in module.CustomAttribute.Filter(token))
+			{
+				if (attributeType == null)
+				{
+					if (list == null)
+					{
+						list = new List<CustomAttributeData>();
+					}
+					list.Add(new CustomAttributeData(module, i));
+				}
+				else
+				{
+					if (attributeType.IsAssignableFrom(module.ResolveMethod(module.CustomAttribute.records[i].Type).DeclaringType))
+					{
+						if (list == null)
+						{
+							list = new List<CustomAttributeData>();
+						}
+						list.Add(new CustomAttributeData(module, i));
+					}
+				}
+			}
+			return list;
+		}
+
 		public static IList<CustomAttributeData> __GetCustomAttributes(Type type, Type interfaceType, Type attributeType, bool inherit)
 		{
-			return type.GetInterfaceImplCustomAttributes(interfaceType, attributeType);
+			Module module = type.Module;
+			foreach (int i in module.InterfaceImpl.Filter(type.MetadataToken))
+			{
+				if (module.ResolveType(module.InterfaceImpl.records[i].Interface, type) == interfaceType)
+				{
+					return GetCustomAttributesImpl(null, module, (InterfaceImplTable.Index << 24) | (i + 1), attributeType) ?? EmptyList;
+				}
+			}
+			return EmptyList;
 		}
 
 		public static IList<CustomAttributeData> __GetDeclarativeSecurity(Assembly assembly)
@@ -788,7 +878,7 @@ namespace IKVM.Reflection
 		private static bool IsInheritableAttribute(Type attribute)
 		{
 			Type attributeUsageAttribute = attribute.Module.universe.System_AttributeUsageAttribute;
-			IList<CustomAttributeData> attr = attribute.GetCustomAttributesData(attributeUsageAttribute);
+			IList<CustomAttributeData> attr = __GetCustomAttributes(attribute, attributeUsageAttribute, false);
 			if (attr.Count != 0)
 			{
 				foreach (CustomAttributeNamedArgument named in attr[0].NamedArguments)
@@ -800,6 +890,127 @@ namespace IKVM.Reflection
 				}
 			}
 			return true;
+		}
+
+		internal static CustomAttributeData CreateDllImportPseudoCustomAttribute(Module module, ImplMapFlags flags, string entryPoint, string dllName, MethodImplAttributes attr)
+		{
+			Type type = module.universe.System_Runtime_InteropServices_DllImportAttribute;
+			ConstructorInfo constructor = type.GetPseudoCustomAttributeConstructor(module.universe.System_String);
+			List<CustomAttributeNamedArgument> list = new List<CustomAttributeNamedArgument>();
+			System.Runtime.InteropServices.CharSet charSet;
+			switch (flags & ImplMapFlags.CharSetMask)
+			{
+				case ImplMapFlags.CharSetAnsi:
+					charSet = System.Runtime.InteropServices.CharSet.Ansi;
+					break;
+				case ImplMapFlags.CharSetUnicode:
+					charSet = System.Runtime.InteropServices.CharSet.Unicode;
+					break;
+				case ImplMapFlags.CharSetAuto:
+					charSet = System.Runtime.InteropServices.CharSet.Auto;
+					break;
+				case ImplMapFlags.CharSetNotSpec:
+				default:
+					charSet = System.Runtime.InteropServices.CharSet.None;
+					break;
+			}
+			System.Runtime.InteropServices.CallingConvention callingConvention;
+			switch (flags & ImplMapFlags.CallConvMask)
+			{
+				case ImplMapFlags.CallConvCdecl:
+					callingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl;
+					break;
+				case ImplMapFlags.CallConvFastcall:
+					callingConvention = System.Runtime.InteropServices.CallingConvention.FastCall;
+					break;
+				case ImplMapFlags.CallConvStdcall:
+					callingConvention = System.Runtime.InteropServices.CallingConvention.StdCall;
+					break;
+				case ImplMapFlags.CallConvThiscall:
+					callingConvention = System.Runtime.InteropServices.CallingConvention.ThisCall;
+					break;
+				case ImplMapFlags.CallConvWinapi:
+					callingConvention = System.Runtime.InteropServices.CallingConvention.Winapi;
+					break;
+				default:
+					callingConvention = 0;
+					break;
+			}
+			AddNamedArgument(list, type, "EntryPoint", entryPoint);
+			AddNamedArgument(list, type, "CharSet", module.universe.System_Runtime_InteropServices_CharSet, (int)charSet);
+			AddNamedArgument(list, type, "ExactSpelling", (int)flags, (int)ImplMapFlags.NoMangle);
+			AddNamedArgument(list, type, "SetLastError", (int)flags, (int)ImplMapFlags.SupportsLastError);
+			AddNamedArgument(list, type, "PreserveSig", (int)attr, (int)MethodImplAttributes.PreserveSig);
+			AddNamedArgument(list, type, "CallingConvention", module.universe.System_Runtime_InteropServices_CallingConvention, (int)callingConvention);
+			AddNamedArgument(list, type, "BestFitMapping", (int)flags, (int)ImplMapFlags.BestFitOn);
+			AddNamedArgument(list, type, "ThrowOnUnmappableChar", (int)flags, (int)ImplMapFlags.CharMapErrorOn);
+			return new CustomAttributeData(module, constructor, new object[] { dllName }, list);
+		}
+
+		internal static CustomAttributeData CreateMarshalAsPseudoCustomAttribute(Module module, FieldMarshal fm)
+		{
+			Type typeofMarshalAs = module.universe.System_Runtime_InteropServices_MarshalAsAttribute;
+			Type typeofUnmanagedType = module.universe.System_Runtime_InteropServices_UnmanagedType;
+			Type typeofVarEnum = module.universe.System_Runtime_InteropServices_VarEnum;
+			Type typeofType = module.universe.System_Type;
+			List<CustomAttributeNamedArgument> named = new List<CustomAttributeNamedArgument>();
+			AddNamedArgument(named, typeofMarshalAs, "ArraySubType", typeofUnmanagedType, (int)(fm.ArraySubType ?? 0));
+			AddNamedArgument(named, typeofMarshalAs, "SizeParamIndex", module.universe.System_Int16, fm.SizeParamIndex ?? 0);
+			AddNamedArgument(named, typeofMarshalAs, "SizeConst", module.universe.System_Int32, fm.SizeConst ?? 0);
+			AddNamedArgument(named, typeofMarshalAs, "IidParameterIndex", module.universe.System_Int32, fm.IidParameterIndex ?? 0);
+			AddNamedArgument(named, typeofMarshalAs, "SafeArraySubType", typeofVarEnum, (int)(fm.SafeArraySubType ?? 0));
+			if (fm.SafeArrayUserDefinedSubType != null)
+			{
+				AddNamedArgument(named, typeofMarshalAs, "SafeArrayUserDefinedSubType", typeofType, fm.SafeArrayUserDefinedSubType);
+			}
+			if (fm.MarshalType != null)
+			{
+				AddNamedArgument(named, typeofMarshalAs, "MarshalType", module.universe.System_String, fm.MarshalType);
+			}
+			if (fm.MarshalTypeRef != null)
+			{
+				AddNamedArgument(named, typeofMarshalAs, "MarshalTypeRef", module.universe.System_Type, fm.MarshalTypeRef);
+			}
+			if (fm.MarshalCookie != null)
+			{
+				AddNamedArgument(named, typeofMarshalAs, "MarshalCookie", module.universe.System_String, fm.MarshalCookie);
+			}
+			ConstructorInfo constructor = typeofMarshalAs.GetPseudoCustomAttributeConstructor(typeofUnmanagedType);
+			return new CustomAttributeData(module, constructor, new object[] { (int)fm.UnmanagedType }, named);
+		}
+
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type type, string fieldName, string value)
+		{
+			AddNamedArgument(list, type, fieldName, type.Module.universe.System_String, value);
+		}
+
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type type, string fieldName, int flags, int flagMask)
+		{
+			AddNamedArgument(list, type, fieldName, type.Module.universe.System_Boolean, (flags & flagMask) != 0);
+		}
+
+		private static void AddNamedArgument(List<CustomAttributeNamedArgument> list, Type attributeType, string fieldName, Type valueType, object value)
+		{
+			// some fields are not available on the .NET Compact Framework version of DllImportAttribute/MarshalAsAttribute
+			FieldInfo field = attributeType.FindField(fieldName, FieldSignature.Create(valueType, new CustomModifiers()));
+			if (field != null)
+			{
+				list.Add(new CustomAttributeNamedArgument(field, new CustomAttributeTypedArgument(valueType, value)));
+			}
+		}
+
+		internal static CustomAttributeData CreateFieldOffsetPseudoCustomAttribute(Module module, int offset)
+		{
+			Type type = module.universe.System_Runtime_InteropServices_FieldOffsetAttribute;
+			ConstructorInfo constructor = type.GetPseudoCustomAttributeConstructor(module.universe.System_Int32);
+			return new CustomAttributeData(module, constructor, new object[] { offset }, null);
+		}
+
+		internal static CustomAttributeData CreatePreserveSigPseudoCustomAttribute(Module module)
+		{
+			Type type = module.universe.System_Runtime_InteropServices_PreserveSigAttribute;
+			ConstructorInfo constructor = type.GetPseudoCustomAttributeConstructor();
+			return new CustomAttributeData(module, constructor, Empty<object>.Array, null);
 		}
 	}
 }

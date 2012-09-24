@@ -280,24 +280,25 @@ namespace Mono.CodeContracts.Static.Providers {
 			if (method.Parameters == null || method.Parameters.Count == 0)
 				return true;
 			if (method.Parameters.Count == 1)
-				return method.Parameters [0].Type == CoreSystemTypes.Instance.TypeBoolean;
+				return Equal(method.Parameters [0].Type, CoreSystemTypes.Instance.TypeBoolean);
 
 			return false;
 		}
 		#endregion
 
 		#region Implementation of IMetaDataProvider<Local,Parameter,Method,FieldReference,PropertyReference,EventReference,TypeNode,Attribute,AssemblyNode>
-		public TypeNode System_Double
+
+	        public TypeNode System_Single
+	        {
+	                get { return CoreSystemTypes.Instance.TypeSingle; }
+	        }
+
+	        public TypeNode System_Double
 		{
 			get { return CoreSystemTypes.Instance.TypeDouble; }
 		}
 
-		public TypeNode System_Single
-		{
-			get { return CoreSystemTypes.Instance.TypeSingle; }
-		}
-
-		public TypeNode System_Type
+	        public TypeNode System_Type
 		{
 			get { return CoreSystemTypes.Instance.TypeSystemType; }
 		}

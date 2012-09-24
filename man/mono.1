@@ -526,6 +526,13 @@ System.String except for the System.String:Concat method.
 	mono --trace=T:System.String,-M:System.String:Concat
 
 .fi
+You can trace managed to unmanaged transitions using
+the wrapper qualifier:
+.nf
+
+	mono --trace=wrapper app.exe
+
+.fi
 Finally, namespaces can be specified using the N: prefix:
 .nf
 

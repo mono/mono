@@ -26,7 +26,6 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
 using System.Diagnostics;
-using IKVM.Reflection.Metadata;
 using IKVM.Reflection.Writer;
 
 namespace IKVM.Reflection.Emit

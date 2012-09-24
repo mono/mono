@@ -8540,11 +8540,6 @@ namespace Mono.CSharp
 			if (res == null)
 				return null;
 
-			bool lvalue_instance = rhs != null && type.IsStruct && (Expr is Invocation || Expr is PropertyExpr);
-			if (lvalue_instance) {
-				Expr.Error_ValueAssignment (ec, EmptyExpression.LValueMemberAccess);
-			}
-
 			return res.ResolveLValue (ec, rhs);
 		}
 		

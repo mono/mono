@@ -30,6 +30,6 @@ using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.ControlFlow {
 	interface IEdgeSubroutineAdaptor {
-		LispList<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutinesInternal (CFGBlock @from, CFGBlock to, LispList<Edge<CFGBlock, EdgeTag>> context);
+		Sequence<Pair<EdgeTag, Subroutine>> GetOrdinaryEdgeSubroutinesInternal (CFGBlock @from, CFGBlock to, Sequence<Edge<CFGBlock, EdgeTag>> context);
 	}
 }

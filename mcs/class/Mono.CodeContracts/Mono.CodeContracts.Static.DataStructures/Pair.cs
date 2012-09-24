@@ -68,4 +68,11 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			                      (!ValueIsReferenceType || ((object) this.Value) != null) ? this.Value.ToString () : "<null>");
 		}
 	}
+
+    static class Pair {
+        public static Pair<K,V> From<K,V>(K key, V value)
+        {
+            return new Pair<K, V> (key, value);
+        }
+    }
 }

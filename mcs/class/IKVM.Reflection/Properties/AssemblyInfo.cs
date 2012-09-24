@@ -22,7 +22,6 @@
   
 */
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("IKVM.NET Reflection")]
-[assembly: AssemblyDescription("Managed (partial) Reflection implementation for use by ikvmc")]
+[assembly: AssemblyTitle("IKVM.Reflection")]
+[assembly: AssemblyDescription("Alternative implementation of System.Reflection[.Emit]")]

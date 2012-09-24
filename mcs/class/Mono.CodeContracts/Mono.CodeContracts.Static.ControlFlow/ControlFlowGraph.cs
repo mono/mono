@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis;
 using Mono.CodeContracts.Static.ControlFlow.Subroutines;
@@ -36,159 +37,163 @@ using Mono.CodeContracts.Static.DataStructures;
 using Mono.CodeContracts.Static.Providers;
 
 namespace Mono.CodeContracts.Static.ControlFlow {
-	class ControlFlowGraph : ICFG {
-		private readonly object method_repository;
-		private readonly Subroutine method_subroutine;
+        class ControlFlowGraph : ICFG {
+                readonly SubroutineFacade method_repository;
+                readonly Subroutine method_subroutine;
 
-		public ControlFlowGraph (Subroutine subroutine, object methodRepository)
-		{
-			this.method_subroutine = subroutine;
-			this.method_repository = methodRepository;
-		}
+                public ControlFlowGraph (Subroutine subroutine, SubroutineFacade methodRepository)
+                {
+                        this.method_subroutine = subroutine;
+                        this.method_repository = methodRepository;
+                }
 
-		private CFGBlock EntryBlock
-		{
-			get { return this.method_subroutine.Entry; }
-		}
+                CFGBlock EntryBlock { get { return this.method_subroutine.Entry; } }
 
-		private CFGBlock ExitBlock
-		{
-			get { return this.method_subroutine.Exit; }
-		}
+                CFGBlock ExitBlock { get { return this.method_subroutine.Exit; } }
 
-		private CFGBlock ExceptionExitBlock
-		{
-			get { return this.method_subroutine.ExceptionExit; }
-		}
+                CFGBlock ExceptionExitBlock { get { return this.method_subroutine.ExceptionExit; } }
 
-		public Method CFGMethod
-		{
-			get
-			{
-				var methodInfo = this.method_subroutine as IMethodInfo;
-				if (methodInfo != null)
-					return methodInfo.Method;
-				throw new InvalidOperationException ("CFG has bad subroutine that is not a method");
-			}
-		}
+                public Method CFGMethod
+                {
+                        get
+                        {
+                                var methodInfo = this.method_subroutine as IMethodInfo;
+                                if (methodInfo != null)
+                                        return methodInfo.Method;
+                                throw new InvalidOperationException ("CFG has bad subroutine that is not a method");
+                        }
+                }
 
-		#region ICFG Members
-		public APC Entry
-		{
-			get { return new APC (EntryBlock, 0, null); }
-		}
+                #region ICFG Members
 
-		public APC EntryAfterRequires
-		{
-			get { return new APC (this.method_subroutine.EntryAfterRequires, 0, null); }
-		}
+                public APC Entry { get { return new APC (this.EntryBlock, 0, null); } }
 
-		public APC NormalExit
-		{
-			get { return new APC (ExitBlock, 0, null); }
-		}
+                public APC EntryAfterRequires { get { return new APC (this.method_subroutine.EntryAfterRequires, 0, null); } }
 
-		public APC ExceptionExit
-		{
-			get { return new APC (ExceptionExitBlock, 0, null); }
-		}
+                public APC NormalExit { get { return new APC (this.ExitBlock, 0, null); } }
 
-		public Subroutine Subroutine
-		{
-			get { return this.method_subroutine; }
-		}
+                public APC ExceptionExit { get { return new APC (this.ExceptionExitBlock, 0, null); } }
 
-		public APC Next (APC pc)
-		{
-			APC next;
+                public Subroutine Subroutine { get { return this.method_subroutine; } }
 
-			if (HasSingleSuccessor (pc, out next))
-				return next;
+                public APC Next (APC pc)
+                {
+                        APC next;
 
-			return pc;
-		}
+                        if (this.HasSingleSuccessor (pc, out next))
+                                return next;
 
-		public bool HasSingleSuccessor (APC pc, out APC ifFound)
-		{
-			return pc.Block.Subroutine.HasSingleSuccessor (pc, out ifFound);
-		}
+                        return pc;
+                }
 
-		public IEnumerable<APC> Successors (APC pc)
-		{
-			return pc.Block.Subroutine.Successors (pc);
-		}
+                public bool HasSingleSuccessor (APC pc, out APC ifFound)
+                {
+                        return pc.Block.Subroutine.HasSingleSuccessor (pc, out ifFound);
+                }
 
-		public bool HasSinglePredecessor (APC pc, out APC ifFound)
-		{
-			return pc.Block.Subroutine.HasSinglePredecessor (pc, out ifFound);
-		}
+                public IEnumerable<APC> Successors (APC pc)
+                {
+                        return pc.Block.Subroutine.Successors (pc);
+                }
 
-		public IEnumerable<APC> Predecessors (APC pc)
-		{
-			return pc.Block.Subroutine.Predecessors (pc);
-		}
+                public bool HasSinglePredecessor (APC pc, out APC ifFound)
+                {
+                        return pc.Block.Subroutine.HasSinglePredecessor (pc, out ifFound);
+                }
 
-		public bool IsJoinPoint (APC pc)
-		{
-			if (pc.Index != 0)
-				return false;
+                public IEnumerable<APC> Predecessors (APC pc)
+                {
+                        return pc.Block.Subroutine.Predecessors (pc);
+                }
 
-			return IsJoinPoint (pc.Block);
-		}
+                public bool IsJoinPoint (APC pc)
+                {
+                        if (pc.Index != 0)
+                                return false;
 
-		public bool IsSplitPoint (APC pc)
-		{
-			if (pc.Index != pc.Block.Count)
-				return false;
+                        return IsJoinPoint (pc.Block);
+                }
 
-			return IsSplitPoint (pc.Block);
-		}
+                public bool IsSplitPoint (APC pc)
+                {
+                        if (pc.Index != pc.Block.Count)
+                                return false;
 
-		public bool IsBlockStart (APC pc)
-		{
-			return pc.Index == 0;
-		}
+                        return IsSplitPoint (pc.Block);
+                }
 
-		public bool IsBlockEnd (APC pc)
-		{
-			return pc.Index == pc.Block.Count;
-		}
+                public bool IsBlockStart (APC pc)
+                {
+                        return pc.Index == 0;
+                }
 
-		public IILDecoder<APC, Dummy, Dummy, IMethodContextProvider, Dummy> GetDecoder (IMetaDataProvider metaDataProvider)
-		{
-			var methodRepository = this.method_repository as SubroutineFacade;
-			return new APCDecoder (this, metaDataProvider, methodRepository);
-		}
+                public bool IsBlockEnd (APC pc)
+                {
+                        return pc.Index == pc.Block.Count;
+                }
 
-		public void Print (TextWriter tw, ILPrinter<APC> printer,
-		                   Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                   LispList<Edge<CFGBlock, EdgeTag>> context)
-		{
-			var set = new HashSet<Pair<Subroutine, LispList<Edge<CFGBlock, EdgeTag>>>> ();
-			this.method_subroutine.Print (tw, printer, contextLookup, context, set);
-		}
-		#endregion
+                public IILDecoder<APC, Dummy, Dummy, IMethodContextProvider, Dummy> GetDecoder (
+                        IMetaDataProvider metaDataProvider)
+                {
+                        return new APCDecoder (this, metaDataProvider, this.method_repository);
+                }
 
-		private bool IsJoinPoint (CFGBlock block)
-		{
-			return block.Subroutine.IsJoinPoint (block);
-		}
+                public void Print (TextWriter tw, ILPrinter<APC> printer,
+                                   Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+                                   Sequence<Edge<CFGBlock, EdgeTag>> context)
+                {
+                        var set = new HashSet<Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>>> ();
+                        this.method_subroutine.Print (tw, printer, contextLookup, context, set);
+                }
 
-		private bool IsSplitPoint (CFGBlock block)
-		{
-			return block.Subroutine.IsSplitPoint (block);
-		}
+                public bool IsForwardBackEdge (APC @from, APC to)
+                {
+                        if (to.Index != 0)
+                                return false;
 
-		public IGraph<APC, Dummy> AsForwardGraph ()
-		{
-			return new GraphWrapper<APC, Dummy> (new APC[0], (pc) => SuccessorsEdges (pc));
-		}
+                        return this.IsForwardBackEdgeHelper (from, to);
+                }
 
-		private IEnumerable<Pair<Dummy, APC>> SuccessorsEdges (APC pc)
-		{
-			APC last = pc.LastInBlock ();
-			foreach (APC succ in Successors (last))
-				yield return new Pair<Dummy, APC> (Dummy.Value, succ);
-		}
-	}
+                public APC Post (APC pc)
+                {
+                        APC next;
+                        return this.HasSingleSuccessor (pc, out next) ? next : pc;
+                }
+
+                #endregion
+
+                bool IsForwardBackEdgeHelper (APC @from, APC to)
+                {
+                        if (to.Block.Subroutine.EdgeInfo.IsBackEdge (from.Block, Dummy.Value, to.Block))
+                                return true;
+
+                        if (from.SubroutineContext.IsEmpty () || from.SubroutineContext.Tail != to.SubroutineContext)
+                                return false;
+
+                        Edge<CFGBlock, EdgeTag> edge = @from.SubroutineContext.Head;
+                        return edge.To.Subroutine.EdgeInfo.IsBackEdge (edge.From, Dummy.Value, edge.To);
+                }
+
+                bool IsJoinPoint (CFGBlock block)
+                {
+                        return block.Subroutine.IsJoinPoint (block);
+                }
+
+                bool IsSplitPoint (CFGBlock block)
+                {
+                        return block.Subroutine.IsSplitPoint (block);
+                }
+
+                public IGraph<APC, Dummy> AsForwardGraph ()
+                {
+                        return new GraphWrapper<APC, Dummy> (new APC[0], (pc) => this.SuccessorsEdges (pc));
+                }
+
+                IEnumerable<Pair<Dummy, APC>> SuccessorsEdges (APC pc)
+                {
+                        APC last = pc.LastInBlock ();
+                        foreach (APC succ in this.Successors (last))
+                                yield return new Pair<Dummy, APC> (Dummy.Value, succ);
+                }
+        }
 }

@@ -32,6 +32,7 @@ using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.Analysis.Drivers;
 using Mono.CodeContracts.Static.Analysis.HeapAnalysis;
 using Mono.CodeContracts.Static.Analysis.NonNull;
+using Mono.CodeContracts.Static.Analysis.Numerical;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.Providers;
 using Mono.CodeContracts.Static.Proving;
@@ -60,7 +61,11 @@ namespace Mono.CodeContracts.Static {
 
 			DebugOptions.Debug = this.options.ShowDebug;
 
-			this.analyzers = new Dictionary<string, IMethodAnalysis> {{"non-null", new NonNullAnalysisFacade ()}};
+		        this.analyzers = new Dictionary<string, IMethodAnalysis> {
+		                {"non-null", new NonNullAnalysisFacade ()},
+		                {"arithmetic", new Analysers.Arithmetic ()}
+		        };
+
 			this.analysis_driver = new CodeContractsAnalysisDriver<IMethodResult<SymbolicValue>> (
 				new BasicAnalysisDriver (MetaDataProvider.Instance, CodeContractDecoder.Instance));
 

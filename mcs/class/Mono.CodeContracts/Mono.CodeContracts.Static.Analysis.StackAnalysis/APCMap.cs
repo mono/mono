@@ -38,7 +38,7 @@ namespace Mono.CodeContracts.Static.Analysis.StackAnalysis {
 		public APCMap (Subroutine parent)
 		{
 			this.block_map = new Dictionary<int, T>[parent.BlockCount];
-			this.call_on_this_map = ImmutableIntMap<bool>.Empty ();
+			this.call_on_this_map = ImmutableIntMap<bool>.Empty;
 		}
 
 		public T this [APC key]

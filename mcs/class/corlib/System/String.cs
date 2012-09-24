@@ -11,6 +11,7 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell (http://www.novell.com)
+// Copyright (c) 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -785,17 +786,15 @@ namespace System
 		internal static unsafe int CompareOrdinalUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
 		{
 			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
-			} else if (strB == null) {
+				return strB == null ? 0 : -1;
+			}
+			if (strB == null) {
 				return 1;
 			}
 			int lengthA = Math.Min (lenA, strA.Length - indexA);
 			int lengthB = Math.Min (lenB, strB.Length - indexB);
 
-			if (lengthA == lengthB && Object.ReferenceEquals (strA, strB))
+			if (lengthA == lengthB && indexA == indexB && Object.ReferenceEquals (strA, strB))
 				return 0;
 
 			fixed (char* aptr = strA, bptr = strB) {

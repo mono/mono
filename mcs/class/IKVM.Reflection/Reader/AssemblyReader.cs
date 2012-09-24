@@ -271,7 +271,7 @@ namespace IKVM.Reflection.Reader
 
 		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)
 		{
-			return manifestModule.GetCustomAttributes(0x20000001, attributeType);
+			return CustomAttributeData.GetCustomAttributesImpl(null, manifestModule, 0x20000001, attributeType) ?? CustomAttributeData.EmptyList;
 		}
 	}
 }

@@ -1637,7 +1637,7 @@ alloc_nursery (void)
 	section->size = alloc_size;
 	section->end_data = data + sgen_nursery_size;
 	scan_starts = (alloc_size + SCAN_START_SIZE - 1) / SCAN_START_SIZE;
-	section->scan_starts = sgen_alloc_internal_dynamic (sizeof (char*) * scan_starts, INTERNAL_MEM_SCAN_STARTS);
+	section->scan_starts = sgen_alloc_internal_dynamic (sizeof (char*) * scan_starts, INTERNAL_MEM_SCAN_STARTS, TRUE);
 	section->num_scan_start = scan_starts;
 	section->block.role = MEMORY_ROLE_GEN0;
 	section->block.next = NULL;
@@ -2400,7 +2400,7 @@ collect_nursery (void)
 	sgen_workers_init_distribute_gray_queue ();
 
 	stat_minor_gcs++;
-	mono_stats.minor_gc_count ++;
+	gc_stats.minor_gc_count ++;
 
 	if (remset.prepare_for_minor_collection)
 		remset.prepare_for_minor_collection ();
@@ -2542,7 +2542,7 @@ collect_nursery (void)
 	major_collector.finish_nursery_collection ();
 
 	TV_GETTIME (all_btv);
-	mono_stats.minor_gc_time_usecs += TV_ELAPSED (all_atv, all_btv);
+	gc_stats.minor_gc_time_usecs += TV_ELAPSED (all_atv, all_btv);
 
 	if (heap_dump_file)
 		dump_heap ("minor", stat_minor_gcs - 1, NULL);
@@ -2614,7 +2614,7 @@ major_do_collection (const char *reason)
 	degraded_mode = 0;
 	DEBUG (1, fprintf (gc_debug_file, "Start major collection %d\n", stat_major_gcs));
 	stat_major_gcs++;
-	mono_stats.major_gc_count ++;
+	gc_stats.major_gc_count ++;
 
 	/* world must be stopped already */
 	TV_GETTIME (all_atv);
@@ -2851,7 +2851,7 @@ major_do_collection (const char *reason)
 	time_major_fragment_creation += TV_ELAPSED (btv, atv);
 
 	TV_GETTIME (all_btv);
-	mono_stats.major_gc_time_usecs += TV_ELAPSED (all_atv, all_btv);
+	gc_stats.major_gc_time_usecs += TV_ELAPSED (all_atv, all_btv);
 
 	if (heap_dump_file)
 		dump_heap ("major", stat_major_gcs - 1, reason);
@@ -4599,6 +4599,9 @@ mono_gc_base_init (void)
 							fprintf (stderr, "The major collector does not support the cardtable write barrier.\n");
 						exit (1);
 					}
+				} else {
+					fprintf (stderr, "wbarrier must either be `remset' or `cardtable'.");
+					exit (1);
 				}
 				continue;
 			}

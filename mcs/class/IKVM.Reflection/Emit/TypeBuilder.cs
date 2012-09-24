@@ -140,15 +140,20 @@ namespace IKVM.Reflection.Emit
 		{
 			get
 			{
-				if (type != null)
-				{
-					type.CheckBaked();
-				}
-				else
-				{
-					method.CheckBaked();
-				}
+				CheckBaked();
 				return attr;
+			}
+		}
+
+		internal override void CheckBaked()
+		{
+			if (type != null)
+			{
+				type.CheckBaked();
+			}
+			else
+			{
+				method.CheckBaked();
 			}
 		}
 
@@ -191,6 +196,15 @@ namespace IKVM.Reflection.Emit
 			SetCustomAttribute(new CustomAttributeBuilder(con, binaryAttribute));
 		}
 
+		public override int MetadataToken
+		{
+			get
+			{
+				CheckBaked();
+				return (GenericParamTable.Index << 24) | paramPseudoIndex;
+			}
+		}
+
 		internal override int GetModuleBuilderToken()
 		{
 			if (typeToken == 0)
@@ -212,6 +226,23 @@ namespace IKVM.Reflection.Emit
 			{
 				return binder.BindMethodParameter(this);
 			}
+		}
+
+		internal override int GetCurrentToken()
+		{
+			if (this.ModuleBuilder.IsSaved)
+			{
+				return (GenericParamTable.Index << 24) | this.Module.GenericParam.GetIndexFixup()[paramPseudoIndex - 1] + 1;
+			}
+			else
+			{
+				return (GenericParamTable.Index << 24) | paramPseudoIndex;
+			}
+		}
+
+		internal override bool IsBaked
+		{
+			get { return ((MemberInfo)type ?? method).IsBaked; }
 		}
 	}
 
@@ -340,7 +371,7 @@ namespace IKVM.Reflection.Emit
 			MethodImplTable.Record rec = new MethodImplTable.Record();
 			rec.Class = token;
 			rec.MethodBody = this.ModuleBuilder.GetMethodToken(methodInfoBody).Token;
-			rec.MethodDeclaration = this.ModuleBuilder.GetMethodToken(methodInfoDeclaration).Token;
+			rec.MethodDeclaration = this.ModuleBuilder.GetMethodTokenWinRT(methodInfoDeclaration);
 			this.ModuleBuilder.MethodImpl.AddRecord(rec);
 		}
 
@@ -1057,6 +1088,11 @@ namespace IKVM.Reflection.Emit
 		{
 			get { return token == 0x02000001; }
 		}
+
+		internal override bool IsBaked
+		{
+			get { return IsCreated(); }
+		}
 	}
 
 	sealed class BakedType : Type
@@ -1190,6 +1226,11 @@ namespace IKVM.Reflection.Emit
 		internal override int GetModuleBuilderToken()
 		{
 			return underlyingType.GetModuleBuilderToken();
+		}
+
+		internal override bool IsBaked
+		{
+			get { return true; }
 		}
 	}
 }

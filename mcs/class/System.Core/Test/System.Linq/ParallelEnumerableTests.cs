@@ -612,6 +612,15 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		public void SmallJoinTest ()
+		{
+			var items = new [] { 1, 2, 3 };
+			var items2 = new [] { 1, 2, 3, 4 };
+			var actual = items.AsReallyParallel ().Join (items2.AsReallyParallel (), i => i, i => i, (e1, e2) => e1 + e2);
+			AreEquivalent (new[] { 2, 4, 6 }, actual, 1);
+		}
+
+		[Test]
 		[Category ("NotWorking")] // Deadlocks randomly
 		public void TestGroupBy ()
 		{
@@ -889,6 +898,35 @@ namespace MonoTests.System.Linq
 			Assert.IsTrue (data.AsReallyParallel ().All (x => true));
 			Assert.IsFalse (data.AsReallyParallel ().All (x => x != 1));
 			Assert.IsTrue (empty.AsReallyParallel ().All (x => false));
+		}
+
+		[Test]
+		public void SequenceEqualsTest ()
+		{
+			var data1 = new int[] { 1, 2, 3 };
+			var data2 = new int[] { 1, 2, 4 };
+			var data3 = new int[] { 1, 2, 3, 4 };
+
+			Assert.IsTrue (data1.AsReallyParallel ().SequenceEqual (data1.AsReallyParallel ()));
+			Assert.IsTrue (data2.AsReallyParallel ().SequenceEqual (data2.AsReallyParallel ()));
+			Assert.IsTrue (data3.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
+			Assert.IsFalse (data1.AsReallyParallel ().SequenceEqual (data2.AsReallyParallel ()));
+			Assert.IsFalse (data1.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
+			Assert.IsFalse (data2.AsReallyParallel ().SequenceEqual (data3.AsReallyParallel ()));
+		}
+
+		[Test]
+		public void ContainsTest ()
+		{
+			var data1 = new int[] { 1, 2, 3 };
+			var data2 = new int[] { 1, 2, 4 };
+			var data3 = new int[] { 1, 2, 3, 4 };
+
+			Assert.IsTrue (data1.AsReallyParallel ().Contains (3));
+			Assert.IsFalse (data2.AsReallyParallel ().Contains (3));
+			Assert.IsTrue (data3.AsReallyParallel ().Contains (3));
+			Assert.IsFalse (data3.AsReallyParallel ().Contains (5));
+			Assert.IsTrue (data2.AsReallyParallel ().Contains (2));
 		}
 	}
 }

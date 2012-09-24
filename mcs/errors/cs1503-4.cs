@@ -1,4 +1,4 @@
-// CS1503: Argument `#1' cannot convert `A' expression to type `B'
+// CS1503: Argument `#1' cannot convert `out A' expression to type `out B'
 // Line: 17
 
 class A { }

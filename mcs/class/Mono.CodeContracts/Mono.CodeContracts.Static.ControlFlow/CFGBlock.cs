@@ -74,7 +74,7 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			return APCs (null);
 		}
 
-		private IEnumerable<APC> APCs (LispList<Edge<CFGBlock, EdgeTag>> context)
+		private IEnumerable<APC> APCs (Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			for (int i = 0; i < Count; i++)
 				yield return new APC (this, i, context);

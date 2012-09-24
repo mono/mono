@@ -1947,17 +1947,23 @@ encode_klass_ref_inner (MonoAotCompile *acfg, MonoClass *klass, guint8 *buf, gui
 		}
 	} else if ((klass->byval_arg.type == MONO_TYPE_VAR) || (klass->byval_arg.type == MONO_TYPE_MVAR)) {
 		MonoGenericContainer *container = mono_type_get_generic_param_owner (&klass->byval_arg);
-		g_assert (container);
+		MonoGenericParam *par = klass->byval_arg.data.generic_param;
 
 		encode_value (MONO_AOT_TYPEREF_VAR, p, &p);
 		encode_value (klass->byval_arg.type, p, &p);
 		encode_value (mono_type_get_generic_param_num (&klass->byval_arg), p, &p);
-		
-		encode_value (container->is_method, p, &p);
-		if (container->is_method)
-			encode_method_ref (acfg, container->owner.method, p, &p);
-		else
-			encode_klass_ref (acfg, container->owner.klass, p, &p);
+
+		encode_value (container ? 1 : 0, p, &p);
+		if (container) {
+			encode_value (container->is_method, p, &p);
+			g_assert (par->serial == 0);
+			if (container->is_method)
+				encode_method_ref (acfg, container->owner.method, p, &p);
+			else
+				encode_klass_ref (acfg, container->owner.klass, p, &p);
+		} else {
+			encode_value (par->serial, p, &p);
+		}
 	} else if (klass->byval_arg.type == MONO_TYPE_PTR) {
 		encode_value (MONO_AOT_TYPEREF_PTR, p, &p);
 		encode_type (acfg, &klass->byval_arg, p, &p);
@@ -7334,7 +7340,7 @@ compile_asm (MonoAotCompile *acfg)
 	}
 
 	g_free (command);
-	unlink (objfile);
+
 	/*com = g_strdup_printf ("strip --strip-unneeded %s%s", acfg->image->name, SHARED_EXT);
 	printf ("Stripping the binary: %s\n", com);
 	system (com);
@@ -7357,6 +7363,17 @@ compile_asm (MonoAotCompile *acfg)
 #endif
 
 	rename (tmp_outfile_name, outfile_name);
+
+#if defined(__APPLE__)
+	command = g_strdup_printf ("dsymutil %s", outfile_name);
+	printf ("Generating debug symbols: %s\n", command);
+	if (system (command) != 0) {
+		return 1;
+	}
+#endif
+
+	if (!acfg->aot_opts.save_temps)
+		unlink (objfile);
 
 	g_free (tmp_outfile_name);
 	g_free (outfile_name);

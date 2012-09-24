@@ -60,6 +60,7 @@ namespace System.Security.Authentication.ExtendedProtection.Configuration
 		[ConfigurationProperty ("name")]
 		public string Name {
 			get { return (string) this [name]; }
+			set { this [name] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

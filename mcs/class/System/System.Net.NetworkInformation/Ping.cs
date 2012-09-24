@@ -150,13 +150,14 @@ namespace System.Net.NetworkInformation {
 
 		protected void OnPingCompleted (PingCompletedEventArgs e)
 		{
-			if (PingCompleted != null)
-				PingCompleted (this, e);
 			user_async_state = null;
 			worker = null;
 #if NET_4_5
 			cts = null;
 #endif
+
+			if (PingCompleted != null)
+				PingCompleted (this, e);
 		}
 
 		// Sync

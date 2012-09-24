@@ -19,33 +19,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	public sealed class BufferBlock<T> : IPropagatorBlock<T, T>, ITargetBlock<T>, IDataflowBlock, ISourceBlock<T>, IReceivableSourceBlock<T>
-	{
-		static readonly DataflowBlockOptions defaultOptions = new DataflowBlockOptions ();
+namespace System.Threading.Tasks.Dataflow {
+	public sealed class BufferBlock<T> : IPropagatorBlock<T, T>, IReceivableSourceBlock<T> {
+		readonly DataflowBlockOptions dataflowBlockOptions;
+		readonly CompletionHelper compHelper;
+		readonly MessageBox<T> messageBox;
+		readonly OutgoingQueue<T> outgoing;
+		readonly BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
 
-		DataflowBlockOptions dataflowBlockOptions;
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
-		MessageBox<T> messageBox;
-		MessageVault<T> vault;
-		MessageOutgoingQueue<T> outgoing;
-		BlockingCollection<T> messageQueue = new BlockingCollection<T> ();
-		TargetBuffer<T> targets = new TargetBuffer<T> ();
-		DataflowMessageHeader headers = DataflowMessageHeader.NewValid ();
-
-		public BufferBlock () : this (defaultOptions)
+		public BufferBlock () : this (DataflowBlockOptions.Default)
 		{
-			
 		}
 
 		public BufferBlock (DataflowBlockOptions dataflowBlockOptions)
@@ -54,40 +41,43 @@ namespace System.Threading.Tasks.Dataflow
 				throw new ArgumentNullException ("dataflowBlockOptions");
 
 			this.dataflowBlockOptions = dataflowBlockOptions;
-			this.messageBox = new PassingMessageBox<T> (messageQueue, compHelper, () => outgoing.IsCompleted, ProcessQueue, dataflowBlockOptions);
-			this.outgoing = new MessageOutgoingQueue<T> (compHelper, () => messageQueue.IsCompleted);
-			this.vault = new MessageVault<T> ();
+			this.compHelper = CompletionHelper.GetNew (dataflowBlockOptions);
+			this.messageBox = new PassingMessageBox<T> (this, messageQueue, compHelper,
+				() => outgoing.IsCompleted, _ => ProcessQueue (), dataflowBlockOptions);
+			this.outgoing = new OutgoingQueue<T> (this, compHelper,
+				() => messageQueue.IsCompleted, messageBox.DecreaseCount,
+				dataflowBlockOptions);
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           T messageValue,
-		                                           ISourceBlock<T> source,
-		                                           bool consumeToAccept)
+		DataflowMessageStatus ITargetBlock<T>.OfferMessage (
+			DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source,
+			bool consumeToAccept)
 		{
-			return messageBox.OfferMessage (this, messageHeader, messageValue, source, consumeToAccept);
+			return messageBox.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<T> target, bool unlinkAfterOne)
+		public IDisposable LinkTo (ITargetBlock<T> target, DataflowLinkOptions linkOptions)
 		{
-			var result = targets.AddTarget (target, unlinkAfterOne);
-			ProcessQueue ();
-
-			return result;
+			return outgoing.AddTarget (target, linkOptions);
 		}
 
-		public T ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> target, out bool messageConsumed)
+		T ISourceBlock<T>.ConsumeMessage (DataflowMessageHeader messageHeader,
+		                                  ITargetBlock<T> target,
+		                                  out bool messageConsumed)
 		{
-			return vault.ConsumeMessage (messageHeader, target, out messageConsumed);
+			return outgoing.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<T> target)
+		bool ISourceBlock<T>.ReserveMessage (DataflowMessageHeader messageHeader,
+		                                     ITargetBlock<T> target)
 		{
-			vault.ReleaseReservation (messageHeader, target);
+			return outgoing.ReserveMessage (messageHeader, target);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<T> target)
+		void ISourceBlock<T>.ReleaseReservation (DataflowMessageHeader messageHeader,
+		                                         ITargetBlock<T> target)
 		{
-			return vault.ReserveMessage (messageHeader, target);
+			outgoing.ReleaseReservation (messageHeader, target);
 		}
 
 		public bool TryReceive (Predicate<T> filter, out T item)
@@ -100,20 +90,14 @@ namespace System.Threading.Tasks.Dataflow
 			return outgoing.TryReceiveAll (out items);
 		}
 
+		/// <summary>
+		/// Moves items from the input queue to the output queue.
+		/// </summary>
 		void ProcessQueue ()
 		{
-			ITargetBlock<T> target;
-			T input;
-
-			while (messageQueue.TryTake (out input)) {
-				if ((target = targets.Current) != null)
-					target.OfferMessage (headers.Increment (), input, this, false);
-				else
-					outgoing.AddData (input);
-			}
-
-			if (!outgoing.IsEmpty && (target = targets.Current) != null)
-				outgoing.ProcessForTarget (target, this, false, ref headers);
+			T item;
+			while (messageQueue.TryTake (out item))
+				outgoing.AddData (item);
 		}
 
 		public void Complete ()
@@ -122,9 +106,9 @@ namespace System.Threading.Tasks.Dataflow
 			outgoing.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		void IDataflowBlock.Fault (Exception exception)
 		{
-			compHelper.Fault (ex);
+			compHelper.RequestFault (exception);
 		}
 
 		public Task Completion {
@@ -137,6 +121,11 @@ namespace System.Threading.Tasks.Dataflow
 			get {
 				return outgoing.Count;
 			}
+		}
+
+		public override string ToString ()
+		{
+			return NameHelper.GetName (this, dataflowBlockOptions);
 		}
 	}
 }

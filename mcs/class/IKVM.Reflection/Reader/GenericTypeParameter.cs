@@ -101,7 +101,7 @@ namespace IKVM.Reflection.Reader
 						{
 							return true;
 						}
-						else if (type.IsGenericTypeInstance || type.HasElementType || type.__IsFunctionPointer)
+						else if (type.IsConstructedGenericType || type.HasElementType || type.__IsFunctionPointer)
 						{
 							// if a constructed type contains generic parameters,
 							// it might contain this type parameter again and
@@ -295,6 +295,11 @@ namespace IKVM.Reflection.Reader
 		{
 			return binder.BindMethodParameter(this);
 		}
+
+		internal override bool IsBaked
+		{
+			get { throw new InvalidOperationException(); }
+		}
 	}
 
 	sealed class GenericTypeParameter : TypeParameterType
@@ -388,6 +393,11 @@ namespace IKVM.Reflection.Reader
 			{
 				return binder.BindTypeParameter(this);
 			}
+		}
+
+		internal override bool IsBaked
+		{
+			get { return true; }
 		}
 	}
 }

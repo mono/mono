@@ -408,19 +408,8 @@ namespace System.Net
 			static bool is_macosx = System.IO.File.Exists (MSX.OSX509Certificates.SecurityLibrary);
 			static X509RevocationMode revocation_mode;
 
-#if MONODROID
-			static readonly Converter<Mono.Security.X509.X509CertificateCollection, bool> monodroidCallback;
-#endif
-
 			static ChainValidationHelper ()
 			{
-#if MONODROID
-				monodroidCallback = (Converter<Mono.Security.X509.X509CertificateCollection, bool>)
-					Delegate.CreateDelegate (typeof(Converter<Mono.Security.X509.X509CertificateCollection, bool>), 
-							Type.GetType ("Android.Runtime.AndroidEnvironment, Mono.Android", true)
-							.GetMethod ("TrustEvaluateSsl", 
-								System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic));
-#endif
 #if !MONOTOUCH
 				revocation_mode = X509RevocationMode.NoCheck;
 				try {
@@ -464,6 +453,7 @@ namespace System.Net
 				int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 				SslPolicyErrors errors = 0;
 				X509Chain chain = null;
+				bool result = false;
 #if !MONOTOUCH
 				chain = new X509Chain ();
 				chain.ChainPolicy = new X509ChainPolicy ();
@@ -481,27 +471,25 @@ namespace System.Net
 					Console.Error.WriteLine ("Please, report this problem to the Mono team");
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 				}
-#endif
-				if (!CheckCertificateUsage (leaf)) {
-					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
-					status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
-				}
 
-				if (!CheckServerIdentity (certs [0], Host)) {
-					errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
-					status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
-				}
+				// for OSX and iOS we're using the native API to check for the SSL server policy and host names
+				if (!is_macosx) {
+					if (!CheckCertificateUsage (leaf)) {
+						errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+						status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
+					}
 
-				bool result = false;
-				// No certificate root found means no mozroots or monotouch
-#if !MONOTOUCH
-				if (is_macosx) {
+					if (!CheckServerIdentity (certs [0], Host)) {
+						errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
+						status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
+					}
+				} else {
 #endif
 					// Attempt to use OSX certificates
 					// Ideally we should return the SecTrustResult
 					MSX.OSX509Certificates.SecTrustResult trustResult = MSX.OSX509Certificates.SecTrustResult.Deny;
 					try {
-						trustResult = MSX.OSX509Certificates.TrustEvaluateSsl (certs);
+						trustResult = MSX.OSX509Certificates.TrustEvaluateSsl (certs, Host);
 						// We could use the other values of trustResult to pass this extra information
 						// to the .NET 2 callback for values like SecTrustResult.Confirm
 						result = (trustResult == MSX.OSX509Certificates.SecTrustResult.Proceed ||
@@ -510,11 +498,8 @@ namespace System.Net
 					} catch {
 						// Ignore
 					}
-					// Clear error status if the OS told us to trust the certificate
-					if (result) {
-						status11 = 0;
-						errors = 0;
-					} else {
+					
+					if (!result) {
 						// callback and DefaultCertificatePolicy needs this since 'result' is not specified
 						status11 = (int) trustResult;
 						errors |= SslPolicyErrors.RemoteCertificateChainErrors;
@@ -524,11 +509,7 @@ namespace System.Net
 #endif
 
 #if MONODROID
-				result = monodroidCallback (certs);
-				if (result) {
-					status11 = 0;
-					errors = 0;
-				}
+				result = AndroidPlatform.TrustEvaluateSsl (certs, sender, leaf, chain, errors);
 #endif
 
 				if (policy != null && (!(policy is DefaultCertificatePolicy) || cb == null)) {
@@ -609,7 +590,7 @@ namespace System.Net
 				}
 				return (int) result;
 			}
-
+#if !MONOTOUCH
 			static SslPolicyErrors GetErrorsFromChain (X509Chain chain)
 			{
 				SslPolicyErrors errors = SslPolicyErrors.None;
@@ -770,6 +751,7 @@ namespace System.Net
 				string start = pattern.Substring (0, index);
 				return (String.Compare (hostname, 0, start, 0, start.Length, true, CultureInfo.InvariantCulture) == 0);
 			}
+#endif
 		}
 #endif
 	}

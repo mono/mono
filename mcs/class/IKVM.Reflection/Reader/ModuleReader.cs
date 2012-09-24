@@ -279,7 +279,7 @@ namespace IKVM.Reflection.Reader
 			}
 		}
 
-		internal string GetString(int index)
+		internal override string GetString(int index)
 		{
 			if (index == 0)
 			{
@@ -356,7 +356,7 @@ namespace IKVM.Reflection.Reader
 			return str;
 		}
 
-		internal Type ResolveType(int metadataToken, IGenericContext context)
+		internal override Type ResolveType(int metadataToken, IGenericContext context)
 		{
 			int index = (metadataToken & 0xFFFFFF) - 1;
 			if (index < 0)
@@ -482,18 +482,6 @@ namespace IKVM.Reflection.Reader
 			{
 				used = true;
 				return context.GetGenericMethodArgument(index);
-			}
-		}
-
-		public override Type ResolveType(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-		{
-			if ((metadataToken >> 24) == TypeSpecTable.Index)
-			{
-				return ResolveType(metadataToken, new GenericContext(genericTypeArguments, genericMethodArguments));
-			}
-			else
-			{
-				return ResolveType(metadataToken, null);
 			}
 		}
 
@@ -704,28 +692,6 @@ namespace IKVM.Reflection.Reader
 			return methods[index];
 		}
 
-		private sealed class GenericContext : IGenericContext
-		{
-			private readonly Type[] genericTypeArguments;
-			private readonly Type[] genericMethodArguments;
-
-			internal GenericContext(Type[] genericTypeArguments, Type[] genericMethodArguments)
-			{
-				this.genericTypeArguments = genericTypeArguments;
-				this.genericMethodArguments = genericMethodArguments;
-			}
-
-			public Type GetGenericTypeArgument(int index)
-			{
-				return genericTypeArguments[index];
-			}
-
-			public Type GetGenericMethodArgument(int index)
-			{
-				return genericMethodArguments[index];
-			}
-		}
-
 		public override MethodBase ResolveMethod(int metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
 		{
 			int index = (metadataToken & 0xFFFFFF) - 1;
@@ -836,7 +802,7 @@ namespace IKVM.Reflection.Reader
 							return type.FindMethod(name, methodSig)
 								?? universe.GetMissingMethodOrThrow(type, name, methodSig);
 						}
-						else if (type.IsGenericTypeInstance)
+						else if (type.IsConstructedGenericType)
 						{
 							MemberInfo member = ResolveTypeMemberRef(type.GetGenericTypeDefinition(), name, ByteReader.FromBlob(blobHeap, sig));
 							MethodBase mb = member as MethodBase;

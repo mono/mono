@@ -39,12 +39,10 @@ build_profiles = moonlight_raw
 test_profiles = moonlight_raw
 else
 
-build_profiles = net_2_0 net_3_5
-test_profiles = $(build_profiles)
+build_profiles = 
 
 if MOONLIGHT
 build_profiles += moonlight_raw
-test_profiles += moonlight_raw
 
 moon-do-moonlight-raw: Makefile $(SUPPORT_FILES)
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' all-profiles
@@ -57,12 +55,19 @@ moon-do-clean: moon-do-moonlight-raw-clean moon-do-basic-clean
 
 endif
 
-if INSTALL_4_0
-build_profiles += net_4_0 net_4_5
-al_profile = net_4_5
-#test_profiles += net_4_0
-else
+if INSTALL_2_0
+build_profiles += net_2_0 net_3_5
 al_profile = net_2_0
+endif
+
+if INSTALL_4_0
+build_profiles += net_4_0
+al_profile = net_4_0
+endif
+
+if INSTALL_4_5
+build_profiles += net_4_5
+al_profile = net_4_5
 endif
 
 if INSTALL_MONODROID
@@ -76,6 +81,8 @@ endif
 if INSTALL_MOBILE
 build_profiles += mobile
 endif
+
+test_profiles = $(build_profiles)
 
 endif
 

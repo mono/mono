@@ -601,6 +601,35 @@ mono_tramp_info_free (MonoTrampInfo *info)
 	g_free (info);
 }
 
+G_GNUC_UNUSED static void
+break_count (void)
+{
+}
+
+/*
+ * Runtime debugging tool, use if (debug_count ()) <x> else <y> to do <x> the first COUNT times, then do <y> afterwards.
+ * Set a breakpoint in break_count () to break the last time <x> is done.
+ */
+G_GNUC_UNUSED gboolean
+mono_debug_count (void)
+{
+	static int count = 0;
+	count ++;
+
+	if (!getenv ("COUNT"))
+		return TRUE;
+
+	if (count == atoi (getenv ("COUNT"))) {
+		break_count ();
+	}
+
+	if (count > atoi (getenv ("COUNT"))) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 #define MONO_INIT_VARINFO(vi,id) do { \
 	(vi)->range.first_use.pos.bid = 0xffff; \
 	(vi)->reg = -1; \
@@ -3221,14 +3250,14 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 		switch (entry->data->type) {
 		case MONO_PATCH_INFO_CLASS:
-			slot = mono_method_lookup_or_register_other_info (entry->method, entry->in_mrgctx, &entry->data->data.klass->byval_arg, entry->info_type, mono_method_get_context (entry->method));
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, &entry->data->data.klass->byval_arg, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		case MONO_PATCH_INFO_METHOD:
 		case MONO_PATCH_INFO_METHODCONST:
-			slot = mono_method_lookup_or_register_other_info (entry->method, entry->in_mrgctx, entry->data->data.method, entry->info_type, mono_method_get_context (entry->method));
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, entry->data->data.method, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		case MONO_PATCH_INFO_FIELD:
-			slot = mono_method_lookup_or_register_other_info (entry->method, entry->in_mrgctx, entry->data->data.field, entry->info_type, mono_method_get_context (entry->method));
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, entry->data->data.field, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		default:
 			g_assert_not_reached ();
@@ -3903,7 +3932,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 		 * mono_arch_get_argument_info () is not signal safe.
 		 */
 		arg_info = g_newa (MonoJitArgumentInfo, sig->param_count + 1);
-		stack_size = mono_arch_get_argument_info (sig, sig->param_count, arg_info);
+		stack_size = mono_arch_get_argument_info (cfg->generic_sharing_context, sig, sig->param_count, arg_info);
 
 		if (stack_size)
 			arch_eh_info_size = sizeof (MonoArchEHJitInfo);
@@ -6817,10 +6846,6 @@ print_jit_stats (void)
 		g_print ("JIT info table lookups: %ld\n", mono_stats.jit_info_table_lookup_count);
 
 		g_print ("Hazardous pointers:     %ld\n", mono_stats.hazardous_pointer_count);
-		g_print ("Minor GC collections:   %ld\n", mono_stats.minor_gc_count);
-		g_print ("Major GC collections:   %ld\n", mono_stats.major_gc_count);
-		g_print ("Minor GC time in msecs: %lf\n", (double)mono_stats.minor_gc_time_usecs / 1000.0);
-		g_print ("Major GC time in msecs: %lf\n", (double)mono_stats.major_gc_time_usecs / 1000.0);
 		if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 			g_print ("\nDecl security check   : %ld\n", mono_jit_stats.cas_declsec_check);
 			g_print ("LinkDemand (user)     : %ld\n", mono_jit_stats.cas_linkdemand);

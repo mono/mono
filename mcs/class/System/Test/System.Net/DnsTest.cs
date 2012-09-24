@@ -44,7 +44,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.AreEqual ("www.mono-project.com", entry.HostName);
+			Assert.IsTrue (entry.HostName == "www.mono-project.com" || entry.HostName == "mono-project.com");
 		}
 
 		void GetHostByNameCallback (IAsyncResult ar)

@@ -38,8 +38,8 @@ using Mono.CodeContracts.Static.Providers;
 
 namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 	class HeapAnalysis : IAnalysis<APC, Domain, IILVisitor<APC, int, int, Domain, Domain>, Dummy> {
-		private readonly Dictionary<Pair<APC, APC>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> forwardRenamings =
-			new Dictionary<Pair<APC, APC>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> ();
+		private readonly Dictionary<Pair<APC, APC>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> forwardRenamings =
+			new Dictionary<Pair<APC, APC>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> ();
 
 		public readonly Dictionary<APC, IMergeInfo> MergeInfoCache = new Dictionary<APC, IMergeInfo> ();
 		public readonly DoubleDictionary<APC, APC, Dummy> RenamePoints = new DoubleDictionary<APC, APC, Dummy> ();
@@ -163,7 +163,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return new Domain (this);
 		}
 
-		public IILDecoder<APC, SymbolicValue, SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, LispList<SymbolicValue>>> 
+		public IILDecoder<APC, SymbolicValue, SymbolicValue, IValueContextProvider<SymbolicValue>, IImmutableMap<SymbolicValue, Sequence<SymbolicValue>>> 
 			GetDecoder<Context>(IILDecoder<APC, int, int, Context, Dummy> underlying)
 			where Context : IStackContextProvider
 		{
@@ -179,14 +179,14 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return false;
 		}
 
-		public IImmutableMap<SymbolicValue, LispList<SymbolicValue>> EdgeRenaming (Pair<APC, APC> edge, bool isJoinPoint)
+		public IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> EdgeRenaming (Pair<APC, APC> edge, bool isJoinPoint)
 		{
-			IImmutableMap<SymbolicValue, LispList<SymbolicValue>> forwardRenaming;
+			IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> forwardRenaming;
 
 			if (this.forwardRenamings.TryGetValue (edge, out forwardRenaming))
 				return forwardRenaming;
 
-			IImmutableMap<SymbolicValue, LispList<SymbolicValue>> renaming = null;
+			IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> renaming = null;
 			Domain afterBegin;
 			PostStateLookup (edge.Key, out afterBegin);
 			if (afterBegin == null || afterBegin.IsBottom)
@@ -194,7 +194,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			Domain beforeEnd;
 			PreStateLookup (edge.Value, out beforeEnd);
 			if (beforeEnd != null) {
-				IImmutableMap<SymValue, LispList<SymValue>> forward;
+				IImmutableMap<SymValue, Sequence<SymValue>> forward;
 				if (!TryComputeFromJoinCache (afterBegin, beforeEnd, edge.Value, out forward)) {
 					IImmutableMap<SymValue, SymValue> backward;
 					if (!afterBegin.LessEqual (beforeEnd, out forward, out backward))
@@ -203,9 +203,9 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 						forward = afterBegin.GetForwardIdentityMap ();
 				}
 				if (forward != null) {
-					renaming = ImmutableIntKeyMap<SymbolicValue, LispList<SymbolicValue>>.Empty (SymbolicValue.GetUniqueKey);
+					renaming = ImmutableIntKeyMap<SymbolicValue, Sequence<SymbolicValue>>.Empty (SymbolicValue.GetUniqueKey);
 					foreach (SymValue sv in forward.Keys) {
-						LispList<SymbolicValue> targets = null;
+						Sequence<SymbolicValue> targets = null;
 						foreach (SymValue target in forward [sv].AsEnumerable ())
 							targets = targets.Cons (new SymbolicValue (target));
 						if (targets != null)
@@ -217,7 +217,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return renaming;
 		}
 
-		private bool TryComputeFromJoinCache (Domain inDomain, Domain outDomain, APC joinPoint, out IImmutableMap<SymValue, LispList<SymValue>> forward)
+		private bool TryComputeFromJoinCache (Domain inDomain, Domain outDomain, APC joinPoint, out IImmutableMap<SymValue, Sequence<SymValue>> forward)
 		{
 			forward = null;
 			IMergeInfo mi;

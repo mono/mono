@@ -62,7 +62,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Expressions {
 			return visitor.Binary (pc, this.Operator, dest, this.Left, this.Right, data);
 		}
 
-		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, LispList<TSymbolicValue>> substitutions)
+		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, Sequence<TSymbolicValue>> substitutions)
 		{
 			if (substitutions.ContainsKey (this.Left) && substitutions.ContainsKey (this.Right))
 				return new BinaryExpr<TSymbolicValue> (substitutions [this.Left].Head, substitutions [this.Right].Head, this.Operator);

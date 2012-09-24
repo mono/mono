@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [2.11.3],
+AC_INIT(mono, [2.11.4],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README])
@@ -1125,19 +1125,18 @@ if test x$target_win32 = xno; then
 	AC_DEFUN([LARGE_FILES], [
 		large_CPPFLAGS=$CPPFLAGS
 		CPPFLAGS="$CPPFLAGS $1"
-		AC_TRY_RUN([
+		AC_TRY_COMPILE([
 			#include <sys/types.h>
+			#include <limits.h>
+		], [
+			/* Lifted this compile time assert method from: http://www.jaggersoft.com/pubs/CVu11_3.html */
+			#define COMPILE_TIME_ASSERT(pred) \
+				switch(0){case 0:case pred:;}
 
-			#define BIG_OFF_T (((off_t)1<<62)-1+((off_t)1<<62))
-
-			int main(void) {
-				int big_off_t=((BIG_OFF_T%2147483629==721) &&
-					       (BIG_OFF_T%2147483647==1));
-				if(big_off_t) {
-					exit(0);
-				} else {
-					exit(1);
-				}
+			int main(void)
+			{
+				COMPILE_TIME_ASSERT(sizeof(off_t) * CHAR_BIT == 64);
+				return 0;
 			}
 		], [
 			AC_MSG_RESULT(ok)
@@ -1146,7 +1145,7 @@ if test x$target_win32 = xno; then
 			large_offt=yes
 		], [
 			AC_MSG_RESULT(no)
-		], "")
+		])
 		CPPFLAGS=$large_CPPFLAGS
 	])
 
@@ -2818,11 +2817,12 @@ case "x$gc" in
 		;;
 esac
 
-#AC_ARG_WITH(profile2,  [  --with-profile2=yes,no          If you want to install the 2.0 FX (defaults to yes)],                 [], [with_profile2=yes])
-AC_ARG_WITH(profile4,  [  --with-profile4=yes,no          If you want to install the 4.x FX (defaults to yes)],                  [], [with_profile4=yes])
-AC_ARG_WITH(monodroid, [  --with-monodroid=yes,no         If you want to build the MonoDroid 2.1 assemblies (defaults to no)], [], [with_monodroid=no])
-AC_ARG_WITH(monotouch, [  --with-monotouch=yes,no         If you want to build the MonoTouch 2.1 assemblies (defaults to no)], [], [with_monotouch=no])
-AC_ARG_WITH(mobile,    [  --with-mobile=yes,no            If you want to build the Mobile 2.1 assemblies (defaults to no)], [], [with_mobile=no])
+AC_ARG_WITH(profile2,  [  --with-profile2=yes,no          If you want to install the 2.0/3.5 FX (defaults to yes)],            [], [with_profile2=yes])
+AC_ARG_WITH(profile4,  [  --with-profile4=yes,no          If you want to install the 4.0 FX (defaults to yes)],                [], [with_profile4=yes])
+AC_ARG_WITH(profile4_5,[  --with-profile4_5=yes,no        If you want to install the 4.5 FX (defaults to yes)],                [], [with_profile4_5=yes])
+AC_ARG_WITH(monodroid, [  --with-monodroid=yes,no         If you want to build the MonoDroid assemblies (defaults to no)],     [], [with_monodroid=no])
+AC_ARG_WITH(monotouch, [  --with-monotouch=yes,no         If you want to build the MonoTouch assemblies (defaults to no)],     [], [with_monotouch=no])
+AC_ARG_WITH(mobile,    [  --with-mobile=yes,no            If you want to build the Mobile assemblies (defaults to no)],        [], [with_mobile=no])
 
 OPROFILE=no
 AC_ARG_WITH(oprofile,[  --with-oprofile=no,<oprofile install dir>   Enable oprofile support (defaults to no)],[
@@ -2920,7 +2920,9 @@ AM_CONDITIONAL(ONLY_MOONLIGHT, [test "x$with_moonlight" = "xonly"])
 AM_CONDITIONAL(MOONLIGHT_BOEHM, [test "x$with_moon_gc" = "xboehm"])
 AM_CONDITIONAL(MOONLIGHT_SGEN, [test "x$with_moon_gc" = "xsgen"])
 
+AM_CONDITIONAL(INSTALL_2_0, [test "x$with_profile2" = xyes])
 AM_CONDITIONAL(INSTALL_4_0, [test "x$with_profile4" = xyes])
+AM_CONDITIONAL(INSTALL_4_5, [test "x$with_profile4_5" = xyes])
 AM_CONDITIONAL(INSTALL_MONODROID, [test "x$with_monodroid" = xyes])
 AM_CONDITIONAL(INSTALL_MONOTOUCH, [test "x$with_monotouch" = xyes])
 AM_CONDITIONAL(INSTALL_MOBILE, [test "x$with_mobile" = xyes])
@@ -3280,10 +3282,22 @@ fi
     if test x$with_moonlight != xno; then
       echo "MOONLIGHT = 1" >> $srcdir/$mcsdir/build/config.make
     fi
-    
-    if test x$with_profile4 != xyes; then
-      echo "DEFAULT_PROFILE = net_2_0" >> $srcdir/$mcsdir/build/config.make
+
+	default_profile=net_2_0
+    if test -z "$INSTALL_4_0_TRUE"; then :
+  		default_profile=net_4_0
     fi
+    if test -z "$INSTALL_MONODROID_TRUE"; then :
+  		default_profile=monodroid
+    fi
+    if test -z "$INSTALL_MONOTOUCH_TRUE"; then :
+  		default_profile=monotouch
+    fi
+    if test -z "$INSTALL_4_5_TRUE"; then :
+  		default_profile=net_4_5
+    fi
+    
+    echo "DEFAULT_PROFILE = $default_profile" >> $srcdir/$mcsdir/build/config.make
     
     if test "x$test_bcl_opt" = "xyes"; then    
       echo "BCL_OPTIMIZE = 1" >> $srcdir/$mcsdir/build/config.make
@@ -3313,7 +3327,6 @@ libgdiplus_msg=${libgdiplus_loc:-assumed to be installed}
 
 echo "
         mcs source:    $mcsdir
-        olive source:  $olive_topdir
 
    Engine:
 	GC:	       $gc_msg 
@@ -3325,8 +3338,10 @@ echo "
 	DTrace:        $enable_dtrace
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
 
-    Libraries:
-	Moon Profile:  $with_moonlight ($with_moon_gc)
+   Libraries:
+	.NET 2.0/3.5:  $with_profile2
+	.NET 4.0:      $with_profile4
+	.NET 4.5:      $with_profile4_5
 	MonoDroid:     $with_monodroid
 	MonoTouch:     $with_monotouch
 	Mobile:        $with_mobile
