@@ -33,7 +33,10 @@ using System.Threading.Tasks;
 
 namespace System.Threading.Tasks 
 {
-	public static class TaskExtensions
+#if INSIDE_SYSCORE
+	public
+#endif
+	static class TaskExtensions
 	{
 		const TaskContinuationOptions opt = TaskContinuationOptions.ExecuteSynchronously;
 

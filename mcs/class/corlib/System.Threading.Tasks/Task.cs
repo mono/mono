@@ -937,9 +937,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants.Canceled;
 
-			var t = new Task (action, cancellationToken, TaskCreationOptions.DenyChildAttach);
-			t.Start ();
-			return t;
+			return Task.Factory.StartNew (action, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 		}
 
 		public static Task Run (Func<Task> function)
@@ -952,9 +950,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants.Canceled;
 
-			var t = new Task<Task> (function, cancellationToken);
-			t.Start ();
-			return t;
+			return Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap ();
 		}
 
 		public static Task<TResult> Run<TResult> (Func<TResult> function)
@@ -967,9 +963,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants<TResult>.Canceled;
 
-			var t = new Task<TResult> (function, cancellationToken, TaskCreationOptions.DenyChildAttach);
-			t.Start ();
-			return t;
+			return Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 		}
 
 		public static Task<TResult> Run<TResult> (Func<Task<TResult>> function)
@@ -982,14 +976,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants<TResult>.Canceled;
 
-			var t = Task<Task<TResult>>.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
-			return GetTaskResult (t);
-		}
-
-		async static Task<TResult> GetTaskResult<TResult> (Task<Task<TResult>> task)
-		{
-			var r = await task.ConfigureAwait (false);
-			return r.Result;
+			return Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default).Unwrap ();
 		}
 
 		public static Task WhenAll (params Task[] tasks)

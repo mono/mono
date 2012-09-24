@@ -1632,9 +1632,11 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void Run ()
 		{
-			var t = Task.Run (delegate { });
+			bool ranOnDefaultScheduler = false;
+			var t = Task.Run (delegate { ranOnDefaultScheduler = Thread.CurrentThread.IsThreadPoolThread; });
 			Assert.AreEqual (TaskCreationOptions.DenyChildAttach, t.CreationOptions, "#1");
 			t.Wait ();
+			Assert.IsTrue (ranOnDefaultScheduler, "#2");
 		}
 
 		[Test]
@@ -1651,13 +1653,27 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		public void Run_ExistingTask ()
+		public void Run_ExistingTaskT ()
 		{
 			var t = new Task<int> (() => 5);
 			var t2 = Task.Run (() => { t.Start (); return t; });
 
 			Assert.IsTrue (t2.Wait (1000), "#1");
 			Assert.AreEqual (5, t2.Result, "#2");
+		}
+
+		[Test]
+		public void Run_ExistingTask ()
+		{
+			var t = new Task (delegate { throw new Exception ("Foo"); });
+			var t2 = Task.Run (() => { t.Start (); return t; });
+
+			try {
+				t2.Wait (1000);
+				Assert.Fail ();
+			} catch (Exception) {}
+
+			Assert.AreEqual (TaskStatus.Faulted, t.Status, "#2");
 		}
 #endif
 	}
