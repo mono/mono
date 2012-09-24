@@ -149,8 +149,12 @@ namespace System.Threading.Tasks
 			this.status          = cancellationToken.IsCancellationRequested && !ignoreCancellation ? TaskStatus.Canceled : TaskStatus.Created;
 
 			// Process creationOptions
+#if NET_4_5
 			if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent)
 			    && parent != null && !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
+#else
+			if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+#endif
 				parent.AddChild ();
 
 			if (token.CanBeCanceled && !ignoreCancellation)
@@ -252,7 +256,10 @@ namespace System.Threading.Tasks
 
 		internal Task ContinueWith (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
+			var lazyCancellation = false;
+#if NET_4_5
+			lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
+#endif
 			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), null, this, lazyCancellation);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
@@ -292,7 +299,10 @@ namespace System.Threading.Tasks
 
 		internal Task<TResult> ContinueWith<TResult> (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
+			var lazyCancellation = false;
+#if NET_4_5
+			lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
+#endif
 			var continuation = new Task<TResult> (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this, lazyCancellation);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
@@ -386,7 +396,11 @@ namespace System.Threading.Tasks
 			var saveScheduler = TaskScheduler.Current;
 
 			current = this;
+#if NET_4_5
 			TaskScheduler.Current = HasFlag (creationOptions, TaskCreationOptions.HideScheduler) ? TaskScheduler.Default : scheduler;
+#else
+			TaskScheduler.Current = scheduler;
+#endif
 			
 			if (!token.IsCancellationRequested) {
 				
