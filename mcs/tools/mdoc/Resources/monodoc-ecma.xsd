@@ -604,6 +604,7 @@ add masterdoc support?
   <xs:element name="returns">
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="c" />
         <xs:element ref="format" />
         <xs:element ref="geq" />
         <xs:element ref="leq" />
