@@ -149,7 +149,8 @@ namespace System.Threading.Tasks
 			this.contAncestor        = contAncestor;
 
 			// Process taskCreationOptions
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent)
+			    && parent != null && !CheckTaskOptions (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
 				parent.AddChild ();
 
 			if (token.CanBeCanceled)

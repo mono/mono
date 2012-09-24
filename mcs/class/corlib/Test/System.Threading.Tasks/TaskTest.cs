@@ -1675,6 +1675,17 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.AreEqual (TaskStatus.Faulted, t.Status, "#2");
 		}
+
+		[Test]
+		public void DenyChildAttachTest ()
+		{
+			var mre = new ManualResetEventSlim ();
+			Task parent = Task.Factory.StartNew (() => {
+				Task.Factory.StartNew (() => mre.Wait (2000), TaskCreationOptions.AttachedToParent);
+			}, TaskCreationOptions.DenyChildAttach);
+			Assert.IsTrue (parent.Wait (500), "#1");
+			mre.Set ();
+		}
 #endif
 	}
 }
