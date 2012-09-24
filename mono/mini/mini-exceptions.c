@@ -811,7 +811,8 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 		    ji->method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH ||
 		    ji->method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK ||
 		    ji->method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE ||
-			ji->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
+			ji->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED ||
+			ji->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
 			continue;
 
 		if (ji->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && ji->method == last_method) {

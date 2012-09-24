@@ -43,8 +43,9 @@ static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
 
 LPTOP_LEVEL_EXCEPTION_FILTER old_win32_toplevel_exception_filter;
-guint64 win32_chained_exception_filter_result;
-gboolean win32_chained_exception_filter_didrun;
+gpointer win32_vectored_exception_handle;
+extern gboolean win32_chained_exception_needs_run;
+extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 
 #ifndef PROCESS_CALLBACK_FILTER_ENABLED
 #	define PROCESS_CALLBACK_FILTER_ENABLED 1
@@ -179,18 +180,33 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 	restore_stack (sctx);
 }
 
+LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
+{
+#ifndef MONO_CROSS_COMPILE
+	if (old_win32_toplevel_exception_filter) {
+		return (*old_win32_toplevel_exception_filter)(ep);
+	}
+	if (gUnhandledExceptionHandler) {
+		return (*gUnhandledExceptionHandler)(ep);
+	}
+#endif
+
+	mono_handle_native_sigsegv (SIGSEGV, NULL);
+
+	return EXCEPTION_CONTINUE_SEARCH;
+}
 /*
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
  */
-LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
+LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
 	struct sigcontext* sctx;
 	LONG res;
 
-	win32_chained_exception_filter_didrun = FALSE;
+	win32_chained_exception_needs_run = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -231,11 +247,14 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 		break;
 	}
 
-	if (win32_chained_exception_filter_didrun) {
+	if (win32_chained_exception_needs_run) {
 		/* Don't copy context back if we chained exception
 		 * as the handler may have modfied the EXCEPTION_POINTERS
-		 * directly. We don't pass sigcontext to chained handlers. */
-		res = win32_chained_exception_filter_result;
+		 * directly. We don't pass sigcontext to chained handlers.
+		 * Return continue search so the UnhandledExceptionFilter
+		 * can correctly chain the exception.
+		 */
+		res = EXCEPTION_CONTINUE_SEARCH;
 	} else {
 		/* Copy context back */
 		ctx->Eax = sctx->eax;
@@ -263,15 +282,18 @@ void win32_seh_init()
 	if (!restore_stack)
 		restore_stack = mono_win32_get_handle_stackoverflow ();
 
-	old_win32_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler);
-	/* use the following instead of SetUnhandledExceptionFilter to debug SEH in Visual Studio
-	 * AddVectoredExceptionHandler (1, seh_handler);
-	 */
+	old_win32_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
+	win32_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
 }
 
 void win32_seh_cleanup()
 {
-	if (old_win32_toplevel_exception_filter) SetUnhandledExceptionFilter(old_win32_toplevel_exception_filter);
+	guint32 ret = 0;
+	if (old_win32_toplevel_exception_filter)
+		SetUnhandledExceptionFilter(old_win32_toplevel_exception_filter);
+
+	ret = RemoveVectoredExceptionHandler (win32_vectored_exception_handle);
+	g_assert (ret);
 }
 
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)

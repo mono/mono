@@ -64,11 +64,11 @@ FILE* unity_fopen( const char *name, const char *mode )
 	return _wfopen( wideName, wideMode );
 }
 
-LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
+extern LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep);
 LONG mono_unity_seh_handler(EXCEPTION_POINTERS* ep)
 {
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
-	return seh_handler(ep);
+	return seh_vectored_exception_handler(ep);
 #else
 	g_assert_not_reached();
 #endif
