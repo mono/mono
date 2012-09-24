@@ -1686,6 +1686,42 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (parent.Wait (500), "#1");
 			mre.Set ();
 		}
+
+		class SynchronousScheduler : TaskScheduler
+		{
+			protected override IEnumerable<Task> GetScheduledTasks ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			protected override void QueueTask (Task task)
+			{
+				TryExecuteTaskInline (task, false);
+			}
+
+			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
+			{
+				return base.TryExecuteTask (task);
+			}
+		}
+
+		[Test]
+		public void HideSchedulerTest ()
+		{
+			var mre = new ManualResetEventSlim ();
+			var ranOnDefault = false;
+			var scheduler = new SynchronousScheduler ();
+
+			Task parent = Task.Factory.StartNew (() => {
+				Task.Factory.StartNew (() => {
+					ranOnDefault = Thread.CurrentThread.IsThreadPoolThread;
+					mre.Set ();
+				});
+			}, CancellationToken.None, TaskCreationOptions.HideScheduler, scheduler);
+
+			Assert.IsTrue (mre.Wait (1000), "#1");
+			Assert.IsTrue (ranOnDefault, "#2");
+		}
 #endif
 	}
 }

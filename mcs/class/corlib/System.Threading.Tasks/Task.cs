@@ -384,7 +384,7 @@ namespace System.Threading.Tasks
 			var saveScheduler = TaskScheduler.Current;
 
 			current = this;
-			TaskScheduler.Current = scheduler;
+			TaskScheduler.Current = CheckTaskOptions (taskCreationOptions, TaskCreationOptions.HideScheduler) ? TaskScheduler.Default : scheduler;
 			
 			if (!token.IsCancellationRequested) {
 				
