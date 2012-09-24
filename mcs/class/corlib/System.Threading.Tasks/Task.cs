@@ -60,7 +60,7 @@ namespace System.Threading.Tasks
 		CountdownEvent childTasks;
 		
 		int                 taskId;
-		TaskCreationOptions taskCreationOptions;
+		TaskCreationOptions creationOptions;
 		
 		internal TaskScheduler       scheduler;
 
@@ -137,27 +137,27 @@ namespace System.Threading.Tasks
 		}
 
 		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken,
-		               TaskCreationOptions creationOptions, Task parent = null, Task contAncestor = null)
+		               TaskCreationOptions creationOptions, Task parent = null, Task contAncestor = null, bool ignoreCancellation = false)
 		{
-			this.invoker             = invoker;
-			this.taskCreationOptions = creationOptions;
-			this.state               = state;
-			this.taskId              = Interlocked.Increment (ref id);
-			this.status              = cancellationToken.IsCancellationRequested ? TaskStatus.Canceled : TaskStatus.Created;
-			this.token               = cancellationToken;
-			this.parent              = parent = parent == null ? current : parent;
-			this.contAncestor        = contAncestor;
+			this.invoker         = invoker;
+			this.creationOptions = creationOptions;
+			this.state           = state;
+			this.taskId          = Interlocked.Increment (ref id);
+			this.token           = cancellationToken;
+			this.parent          = parent = parent == null ? current : parent;
+			this.contAncestor    = contAncestor;
+			this.status          = cancellationToken.IsCancellationRequested && !ignoreCancellation ? TaskStatus.Canceled : TaskStatus.Created;
 
-			// Process taskCreationOptions
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent)
-			    && parent != null && !CheckTaskOptions (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
+			// Process creationOptions
+			if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent)
+			    && parent != null && !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
 				parent.AddChild ();
 
-			if (token.CanBeCanceled)
+			if (token.CanBeCanceled && !ignoreCancellation)
 				cancellationRegistration = token.Register (l => ((Task) l).CancelReal (), this);
 		}
 
-		static bool CheckTaskOptions (TaskCreationOptions opt, TaskCreationOptions member)
+		static bool HasFlag (TaskCreationOptions opt, TaskCreationOptions member)
 		{
 			return (opt & member) == member;
 		}
@@ -252,7 +252,8 @@ namespace System.Threading.Tasks
 
 		internal Task ContinueWith (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), null, this);
+			var lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
+			var continuation = new Task (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), null, this, lazyCancellation);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -291,7 +292,8 @@ namespace System.Threading.Tasks
 
 		internal Task<TResult> ContinueWith<TResult> (TaskActionInvoker invoker, CancellationToken cancellationToken, TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			var continuation = new Task<TResult> (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this);
+			var lazyCancellation = (continuationOptions & TaskContinuationOptions.LazyCancellation) > 0;
+			var continuation = new Task<TResult> (invoker, null, cancellationToken, GetCreationOptions (continuationOptions), parent, this, lazyCancellation);
 			ContinueWithCore (continuation, continuationOptions, scheduler);
 
 			return continuation;
@@ -353,7 +355,7 @@ namespace System.Threading.Tasks
 			
 			// If worker is null it means it is a local one, revert to the old behavior
 			// If TaskScheduler.Current is not being used, the scheduler was explicitly provided, so we must use that
-			if (scheduler != TaskScheduler.Current || childWorkAdder == null || CheckTaskOptions (taskCreationOptions, TaskCreationOptions.PreferFairness)) {
+			if (scheduler != TaskScheduler.Current || childWorkAdder == null || HasFlag (creationOptions, TaskCreationOptions.PreferFairness)) {
 				scheduler.QueueTask (this);
 			} else {
 				/* Like the semantic of the ABP paper describe it, we add ourselves to the bottom 
@@ -384,7 +386,7 @@ namespace System.Threading.Tasks
 			var saveScheduler = TaskScheduler.Current;
 
 			current = this;
-			TaskScheduler.Current = CheckTaskOptions (taskCreationOptions, TaskCreationOptions.HideScheduler) ? TaskScheduler.Default : scheduler;
+			TaskScheduler.Current = HasFlag (creationOptions, TaskCreationOptions.HideScheduler) ? TaskScheduler.Default : scheduler;
 			
 			if (!token.IsCancellationRequested) {
 				
@@ -469,7 +471,7 @@ namespace System.Threading.Tasks
 				ProcessChildExceptions ();
 				Status = exSlot == null ? TaskStatus.RanToCompletion : TaskStatus.Faulted;
 				ProcessCompleteDelegates ();
-				if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+				if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
 					parent.ChildCompleted (this.Exception);
 			}
 		}
@@ -513,7 +515,7 @@ namespace System.Threading.Tasks
 				cancellationRegistration.Value.Dispose ();
 			
 			// Tell parent that we are finished
-			if (CheckTaskOptions (taskCreationOptions, TaskCreationOptions.AttachedToParent) && parent != null && status != TaskStatus.WaitingForChildrenToComplete) {
+			if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) && parent != null && status != TaskStatus.WaitingForChildrenToComplete) {
 				parent.ChildCompleted (this.Exception);
 			}
 		}
@@ -1205,7 +1207,7 @@ namespace System.Threading.Tasks
 
 		public TaskCreationOptions CreationOptions {
 			get {
-				return taskCreationOptions & MaxTaskCreationOptions;
+				return creationOptions & MaxTaskCreationOptions;
 			}
 		}
 		

@@ -122,8 +122,8 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("function");
 		}
 
-		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions, Task parent, Task contAncestor = null)
-			: base (invoker, state, cancellationToken, creationOptions, parent, contAncestor)
+		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions, Task parent, Task contAncestor = null, bool ignoreCancellation = false)
+			: base (invoker, state, cancellationToken, creationOptions, parent, contAncestor, ignoreCancellation)
 		{
 		}
 

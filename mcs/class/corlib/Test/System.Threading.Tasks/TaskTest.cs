@@ -1722,6 +1722,24 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (mre.Wait (1000), "#1");
 			Assert.IsTrue (ranOnDefault, "#2");
 		}
+
+		[Test]
+		public void LazyCancelationTest ()
+		{
+			var source = new CancellationTokenSource ();
+			source.Cancel ();
+			var parent = new Task (delegate {});
+			var cont = parent.ContinueWith (delegate {}, source.Token, TaskContinuationOptions.LazyCancellation, TaskScheduler.Default);
+
+			Assert.AreNotEqual (TaskStatus.Canceled, cont.Status, "#1");
+			parent.Start ();
+			try {
+				Assert.IsTrue (cont.Wait (1000), "#2");
+				Assert.Fail ();
+			} catch (AggregateException ex) {
+				Assert.IsInstanceOfType (typeof (TaskCanceledException), ex.InnerException);
+			}
+		}
 #endif
 	}
 }
