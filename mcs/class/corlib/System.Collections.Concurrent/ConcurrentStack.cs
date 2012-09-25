@@ -47,21 +47,6 @@ namespace System.Collections.Concurrent
 		Node head = null;
 		
 		int count;
-
-		class NodeObjectPool : ObjectPool<Node> {
-			protected override Node Creator ()
-			{
-				return new Node ();
-			}
-		}
-		static readonly NodeObjectPool pool = new NodeObjectPool ();
-
-		static Node ZeroOut (Node node)
-		{
-			node.Value = default(T);
-			node.Next = null;
-			return node;
-		}
 		
 		public ConcurrentStack ()
 		{
@@ -81,7 +66,7 @@ namespace System.Collections.Concurrent
 		
 		public void Push (T item)
 		{
-			Node temp = pool.Take ();
+			Node temp = new Node ();
 			temp.Value = item;
 			do {
 			  temp.Next = head;
@@ -101,7 +86,7 @@ namespace System.Collections.Concurrent
 			Node first = null;
 			
 			for (int i = startIndex; i < count; i++) {
-				Node temp = pool.Take ();
+				Node temp = new Node ();
 				temp.Value = items[i];
 				temp.Next = insert;
 				insert = temp;
@@ -132,7 +117,6 @@ namespace System.Collections.Concurrent
 			Interlocked.Decrement (ref count);
 			
 			result = temp.Value;
-			pool.Release (ZeroOut (temp));
 
 			return true;
 		}
@@ -175,7 +159,6 @@ namespace System.Collections.Concurrent
 				items[i] = temp.Value;
 				end = temp;
 				temp = temp.Next;
-				pool.Release (ZeroOut (end));
 			}
 			Interlocked.Add (ref this.count, -(i - startIndex));
 			

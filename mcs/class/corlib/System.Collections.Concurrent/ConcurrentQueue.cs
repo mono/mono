@@ -48,21 +48,6 @@ namespace System.Collections.Concurrent
 		Node tail;
 		int count;
 
-		class NodeObjectPool : ObjectPool<Node> {
-			protected override Node Creator ()
-			{
-				return new Node ();
-			}
-		}
-		static readonly NodeObjectPool pool = new NodeObjectPool ();
-
-		static Node ZeroOut (Node node)
-		{
-			node.Value = default(T);
-			node.Next = null;
-			return node;
-		}
-
 		public ConcurrentQueue ()
 		{
 			tail = head;
@@ -76,7 +61,7 @@ namespace System.Collections.Concurrent
 		
 		public void Enqueue (T item)
 		{
-			Node node = pool.Take ();
+			Node node = new Node ();
 			node.Value = item;
 			
 			Node oldTail = null;
@@ -100,7 +85,6 @@ namespace System.Collections.Concurrent
 			}
 			// At this point we added correctly our node, now we have to update tail. If it fails then it will be done by another thread
 			Interlocked.CompareExchange (ref tail, node, oldTail);
-
 			Interlocked.Increment (ref count);
 		}
 		
@@ -133,8 +117,6 @@ namespace System.Collections.Concurrent
 					} else {
 						result = oldNext.Value;
 						advanced = Interlocked.CompareExchange (ref head, oldNext, oldHead) == oldHead;
-						if (advanced)
-							pool.Release (ZeroOut (oldHead));
 					}
 				}
 			}
