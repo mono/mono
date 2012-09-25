@@ -11,6 +11,7 @@ System.Runtime.Serialization/KnownTypeAttributeTest.cs
 System.Runtime.Serialization/XmlObjectSerializerTest.cs
 System.Runtime.Serialization/XsdDataContractExporterTest.cs
 System.Runtime.Serialization/XsdDataContractImporterTest.cs
+System.Runtime.Serialization/CollectionSerialization.cs
 System.Xml/UniqueIdTest.cs
 System.Xml/XmlBinaryDictionaryReaderTest.cs
 System.Xml/XmlBinaryDictionaryWriterTest.cs
