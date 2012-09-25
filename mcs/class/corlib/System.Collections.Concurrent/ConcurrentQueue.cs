@@ -106,11 +106,12 @@ namespace System.Collections.Concurrent
 				
 				if (oldHead == head) {
 					// Empty case ?
-					if (oldHead == oldTail) {	
+					if (oldHead == oldTail) {
 						// This should be false then
 						if (oldNext != null) {
 							// If not then the linked list is mal formed, update tail
 							Interlocked.CompareExchange (ref tail, oldNext, oldTail);
+							continue;
 						}
 						result = default (T);
 						return false;
