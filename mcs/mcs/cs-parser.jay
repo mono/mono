@@ -530,6 +530,14 @@ namespace_declaration
 	  
 		current_container = current_namespace = current_namespace.Parent;
 	  }
+	| opt_attributes NAMESPACE namespace_name
+	  {
+		report.Error (1514, lexer.Location, "Unexpected symbol `{0}', expecting `.' or `{{'", GetSymbolName (yyToken));
+
+		var name = (MemberName) $3;		
+		var ns = new NamespaceContainer (name, current_namespace);
+		current_namespace.AddTypeContainer (ns);
+	  }
 	;
 
 namespace_name
