@@ -46,7 +46,6 @@
    <Compile Include="..\..\build\common\Consts.cs" />
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="..\corlib\System.Collections.Concurrent\ObjectPool.cs" />
    <Compile Include="..\corlib\System.Collections.Concurrent\SplitOrderedList.cs" />
    <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXDataNode.cs" />
    <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXFileRef.cs" />
@@ -1240,6 +1239,7 @@
    <Compile Include="System.Web.Util\MachineKeySectionUtils.cs" />
    <Compile Include="System.Web.Util\RuntimeHelpers.cs" />
    <Compile Include="System.Web.Util\SearchPattern.cs" />
+   <Compile Include="System.Web.Util\SecureHashCodeProvider.cs" />
    <Compile Include="System.Web.Util\SerializationHelper.cs" />
    <Compile Include="System.Web.Util\StrUtils.cs" />
    <Compile Include="System.Web.Util\TimeUtil.cs" />

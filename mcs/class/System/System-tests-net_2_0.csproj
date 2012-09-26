@@ -249,6 +249,7 @@
    <Compile Include="Test\System.Net\CookieCollectionTest.cs" />
    <Compile Include="Test\System.Net\CookieContainerTest.cs" />
    <Compile Include="Test\System.Net\CookieTest.cs" />
+   <Compile Include="Test\System.Net\CookieParserTest.cs" />
    <Compile Include="Test\System.Net\CredentialCacheTest.cs" />
    <Compile Include="Test\System.Net\DnsPermissionAttributeTest.cs" />
    <Compile Include="Test\System.Net\DnsPermissionTest.cs" />
@@ -311,6 +312,7 @@
    <Compile Include="Test\System.Net.NetworkInformation\PhysicalAddressTest.cs" />
    <Compile Include="Test\System.Net.Security\SslStreamTest.cs" />
    <Compile Include="Test\System.Runtime.Versioning\FrameworkNameTest.cs" />
+   <Compile Include="Test\System.Security.AccessControl\SemaphoreSecurityTest.cs" />
    <Compile Include="Test\System.Security.Cryptography\AsnEncodedDataTest.cs" />
    <Compile Include="Test\System.Security.Cryptography\OidCollectionTest.cs" />
    <Compile Include="Test\System.Security.Cryptography\OidEnumeratorTest.cs" />

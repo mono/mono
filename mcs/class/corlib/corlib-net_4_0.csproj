@@ -1241,12 +1241,14 @@
    <Compile Include="System.Security.AccessControl\AccessControlSections.cs" />
    <Compile Include="System.Security.AccessControl\AccessControlType.cs" />
    <Compile Include="System.Security.AccessControl\AccessRule.cs" />
+   <Compile Include="System.Security.AccessControl\AccessRule_T.cs" />
    <Compile Include="System.Security.AccessControl\AceEnumerator.cs" />
    <Compile Include="System.Security.AccessControl\AceFlags.cs" />
    <Compile Include="System.Security.AccessControl\AceQualifier.cs" />
    <Compile Include="System.Security.AccessControl\AceType.cs" />
    <Compile Include="System.Security.AccessControl\AuditFlags.cs" />
    <Compile Include="System.Security.AccessControl\AuditRule.cs" />
+   <Compile Include="System.Security.AccessControl\AuditRule_T.cs" />
    <Compile Include="System.Security.AccessControl\AuthorizationRule.cs" />
    <Compile Include="System.Security.AccessControl\AuthorizationRuleCollection.cs" />
    <Compile Include="System.Security.AccessControl\CommonAce.cs" />
@@ -1458,6 +1460,7 @@
    <Compile Include="System.Security.Policy\CodeGroup.cs" />
    <Compile Include="System.Security.Policy\DefaultPolicies.cs" />
    <Compile Include="System.Security.Policy\Evidence.cs" />
+   <Compile Include="System.Security.Policy\EvidenceBase.cs" />
    <Compile Include="System.Security.Policy\FileCodeGroup.cs" />
    <Compile Include="System.Security.Policy\FirstMatchCodeGroup.cs" />
    <Compile Include="System.Security.Policy\Gac.cs" />
@@ -1664,8 +1667,8 @@
    <Compile Include="System.Threading.Tasks\SimpleConcurrentBag.cs" />
    <Compile Include="System.Threading.Tasks\SynchronizationContextScheduler.cs" />
    <Compile Include="System.Threading.Tasks\UnobservedTaskExceptionEventArgs.cs" />
-   <Compile Include="System.Collections.Concurrent\ObjectPool.cs" />
    <Compile Include="System.Threading.Tasks\TpScheduler.cs" />
+   <Compile Include="..\System.Core\System.Threading.Tasks\TaskExtensions.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

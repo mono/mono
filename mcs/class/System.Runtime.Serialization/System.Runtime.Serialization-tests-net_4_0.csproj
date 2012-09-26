@@ -55,6 +55,7 @@
    <Compile Include="Test\System.Runtime.Serialization\XmlObjectSerializerTest.cs" />
    <Compile Include="Test\System.Runtime.Serialization\XsdDataContractExporterTest.cs" />
    <Compile Include="Test\System.Runtime.Serialization\XsdDataContractImporterTest.cs" />
+   <Compile Include="Test\System.Runtime.Serialization\CollectionSerialization.cs" />
    <Compile Include="Test\System.Xml\UniqueIdTest.cs" />
    <Compile Include="Test\System.Xml\XmlBinaryDictionaryReaderTest.cs" />
    <Compile Include="Test\System.Xml\XmlBinaryDictionaryWriterTest.cs" />

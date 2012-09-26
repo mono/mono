@@ -47,6 +47,7 @@
    <Compile Include="Test\System\TimeZoneInfo.TransitionTimeTest.cs" />
    <Compile Include="Test\System.Collections.Generic\HashSetTest.cs" />
    <Compile Include="Test\System.IO.MemoryMappedFiles\MemoryMappedFileTest.cs" />
+   <Compile Include="Test\System.IO.Pipes\PipeSecurityTest.cs" />
    <Compile Include="Test\System.Linq\EnumerableFixture.cs" />
    <Compile Include="Test\System.Linq\EnumerableTest.cs" />
    <Compile Include="Test\System.Linq\EnumerableMoreTest.cs" />

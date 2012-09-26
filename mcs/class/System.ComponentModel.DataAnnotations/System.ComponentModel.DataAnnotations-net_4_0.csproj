@@ -60,6 +60,7 @@
    <Compile Include="System.ComponentModel.DataAnnotations\EditableAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\EnumDataTypeAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\IValidatableObject.cs" />
+   <Compile Include="System.ComponentModel.DataAnnotations\KeyAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\MetadataTypeAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\RangeAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\RegularExpressionAttribute.cs" />
@@ -67,6 +68,7 @@
    <Compile Include="System.ComponentModel.DataAnnotations\ScaffoldColumnAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\ScaffoldTableAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\StringLengthAttribute.cs" />
+   <Compile Include="System.ComponentModel.DataAnnotations\TimestampAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\UIHintAttribute.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\ValidationAttributeCollectionExtensions.cs" />
    <Compile Include="System.ComponentModel.DataAnnotations\ValidationAttribute.cs" />

@@ -336,6 +336,9 @@
     <EmbeddedResource Include="System.Net.Http.Properties.CommonWebApiResources.resources">
        <LogicalName>System.Net.Http.Properties.CommonWebApiResources.resources</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="System.Net.Http.Properties.Resources.resources">
+       <LogicalName>System.Net.Http.Properties.Resources.resources</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

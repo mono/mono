@@ -46,7 +46,6 @@
    <Compile Include="..\..\build\common\Consts.cs" />
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="..\corlib\System.Collections.Concurrent\ObjectPool.cs" />
    <Compile Include="..\corlib\System.Collections.Concurrent\SplitOrderedList.cs" />
    <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXDataNode.cs" />
    <Compile Include="..\Managed.Windows.Forms\System.Resources\ResXFileRef.cs" />
@@ -241,6 +240,8 @@
    <Compile Include="System.Web.Configuration_2.0\HealthMonitoringSection.cs" />
    <Compile Include="System.Web.Configuration_2.0\HostingEnvironmentSection.cs" />
    <Compile Include="System.Web.Configuration_2.0\HttpCapabilitiesBase.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpCapabilitiesDefaultProvider.cs" />
+   <Compile Include="System.Web.Configuration_2.0\HttpCapabilitiesProvider.cs" />
    <Compile Include="System.Web.Configuration_2.0\HttpConfigurationContext.cs" />
    <Compile Include="System.Web.Configuration_2.0\HttpConfigurationSystem.cs" />
    <Compile Include="System.Web.Configuration_2.0\HttpCookiesSection.cs" />
@@ -1308,6 +1309,7 @@
    <Compile Include="System.Web.Util\RequestValidator.cs" />
    <Compile Include="System.Web.Util\RuntimeHelpers.cs" />
    <Compile Include="System.Web.Util\SearchPattern.cs" />
+   <Compile Include="System.Web.Util\SecureHashCodeProvider.cs" />
    <Compile Include="System.Web.Util\SerializationHelper.cs" />
    <Compile Include="System.Web.Util\SimpleWebObjectFactory.cs" />
    <Compile Include="System.Web.Util\StrUtils.cs" />
