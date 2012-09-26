@@ -536,6 +536,7 @@ namespace_declaration
 
 		var name = (MemberName) $3;		
 		var ns = new NamespaceContainer (name, current_namespace);
+		lbag.AddLocation (ns, GetLocation ($2));
 		current_namespace.AddTypeContainer (ns);
 	  }
 	;
