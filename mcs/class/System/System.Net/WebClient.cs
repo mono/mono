@@ -1384,7 +1384,7 @@ namespace System.Net
 						OnUploadValuesCompleted (
 							new UploadValuesCompletedEventArgs (null, e, false, args [3]));
 					}});
-				object [] cb_args = new object [] { CreateUri (address), method, data,  userToken };
+				object [] cb_args = new object [] { CreateUri (address), method, values,  userToken };
 				async_thread.IsBackground = true;
 				async_thread.Start (cb_args);
 			}
