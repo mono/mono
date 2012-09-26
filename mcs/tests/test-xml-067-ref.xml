@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-067</name>
+    </assembly>
+    <members>
+        <member name="T:Testing.Test">
+            <summary>
+            description for class Test
+            </summary>
+        </member>
+        <member name="M:Testing.Test.#ctor">
+            test</member>
+        <member name="M:Testing.Test.Foo">
+            test</member>
+        <member name="M:Testing.Test.Foo">
+            test</member>
+    </members>
+</doc>
