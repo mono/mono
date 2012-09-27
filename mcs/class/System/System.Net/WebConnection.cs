@@ -721,8 +721,7 @@ namespace System.Net
 		{
 			lock (queue) {
 				if (queue.Count > 0) {
-					Data.request = (HttpWebRequest) queue.Dequeue ();
-					SendRequest (Data.request);
+					SendRequest ((HttpWebRequest) queue.Dequeue ());
 				}
 			}
 		}
