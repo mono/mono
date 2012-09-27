@@ -3,10 +3,11 @@
 //
 // Authors:
 //	Thomas Neidhart (tome@sbox.tugraz.at)
-//	Sebastien Pouliot <sebastien@ximian.com>
+//  Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2008 Novell, Inc (http://www.novell.com)
+// Copyright 2012 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -376,19 +377,20 @@ namespace Mono.Security.Cryptography {
 				// we need to add an extra block for padding
 				total += BlockSizeByte;
 				break;
+			case PaddingMode.None:
+				if ((rem != 0) && (algo.Mode != CipherMode.CFB))
+					throw new CryptographicException ("invalid block length");
+				goto default;
 			default:
 				if (inputCount == 0)
 					return new byte [0];
 				if (rem != 0) {
-					if (algo.Padding == PaddingMode.None)
-						throw new CryptographicException ("invalid block length");
 					// zero padding the input (by adding a block for the partial data)
 					byte[] paddedInput = new byte [full + BlockSizeByte];
 					Buffer.BlockCopy (inputBuffer, inputOffset, paddedInput, 0, inputCount);
 					inputBuffer = paddedInput;
 					inputOffset = 0;
-					inputCount = paddedInput.Length;
-					total = inputCount;
+					total = paddedInput.Length;
 				}
 				break;
 			}
@@ -438,8 +440,16 @@ namespace Mono.Security.Cryptography {
 				// the last padded block will be transformed in-place
 				InternalTransformBlock (res, full, BlockSizeByte, res, full);
 				break;
-			default:
+			case PaddingMode.Zeros:
 				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
+				break;
+			case PaddingMode.None:
+				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
+				if ((inputCount != total) && (algo.Mode == CipherMode.CFB)) {
+					byte[] part = new byte [inputCount];
+					Buffer.BlockCopy (res, 0, part, 0, inputCount);
+					res = part;
+				}
 				break;
 			}
 #endif // NET_2_1
@@ -448,21 +458,29 @@ namespace Mono.Security.Cryptography {
 
 		private byte[] FinalDecrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
-			if ((inputCount % BlockSizeByte) > 0)
-				throw new CryptographicException ("Invalid input block size.");
+			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
+			int rem = inputCount - full;
+			if (rem > 0) {
+				if (algo.Mode != CipherMode.CFB)
+					throw new CryptographicException ("Invalid input block size.");
+				full += BlockSizeByte;
+				byte[] paddedInput = new byte [full];
+				Buffer.BlockCopy (inputBuffer, 0, paddedInput, 0, inputCount);
+				inputBuffer = paddedInput;
+			}
 
-			int total = inputCount;
+			int total = full;
 			if (lastBlock)
 				total += BlockSizeByte;
 
 			byte[] res = new byte [total];
 			int outputOffset = 0;
 
-			while (inputCount > 0) {
+			while (full > 0) {
 				int len = InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
 				outputOffset += len;
-				inputCount -= BlockSizeByte;
+				full -= BlockSizeByte;
 			}
 
 			if (lastBlock) {
@@ -509,6 +527,9 @@ namespace Mono.Security.Cryptography {
 				total -= padding;
 				break;
 			case PaddingMode.None:	// nothing to do - it's a multiple of block size
+				if (algo.Mode == CipherMode.CFB)
+					total = inputCount;
+				break;
 			case PaddingMode.Zeros:	// nothing to do - user must unpad himself
 				break;
 			}
