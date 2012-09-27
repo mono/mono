@@ -352,10 +352,11 @@ namespace System.Net
 			foreach (var cookie in parser.Parse ()) {
 				if (cookie.Domain == "") {
 					cookie.Domain = uri.Host;
-					cookie.ExactDomain = true;
+					cookie.HasDomain = false;
 				}
 
-				if (!CookieContainer.CheckSameOrigin (uri, cookie.Domain))
+				if (cookie.HasDomain &&
+				    !CookieContainer.CheckSameOrigin (uri, cookie.Domain))
 					continue;
 
 				cookieCollection.Add (cookie);
