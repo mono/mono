@@ -145,7 +145,7 @@ namespace System.Net
 			if ((cookie.Version == 1) && (cookie.Domain[0] != '.'))
 				throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
 
-			if (!CheckPublicRoots (cookie.Domain))
+			if (cookie.HasDomain && !CheckPublicRoots (cookie.Domain))
 				throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
 
 			if (cookies == null)
@@ -164,7 +164,7 @@ namespace System.Net
 			Cookie c = new Cookie (cookie.Name, cookie.Value);
 			c.Path = cookie.Path;
 			c.Domain = cookie.Domain;
-			c.ExactDomain = cookie.ExactDomain;
+			c.HasDomain = cookie.HasDomain;
 			c.Version = cookie.Version;
 			c.Expires = cookie.Expires;
 			c.CommentUri = cookie.CommentUri;
@@ -233,9 +233,10 @@ namespace System.Net
 				throw new CookieException ("Invalid cookie: value");
 
 			if (uri != null) {
-				if (cookie.Domain.Length == 0)
+				if (cookie.Domain.Length == 0) {
 					cookie.Domain = uri.Host;
-				else if (!CheckSameOrigin (uri, cookie.Domain))
+					cookie.HasDomain = false;
+				} else if (cookie.HasDomain && !CheckSameOrigin (uri, cookie.Domain))
 					throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
 			}
 						
@@ -372,7 +373,7 @@ namespace System.Net
 			return (host [p] == '.');
 		}
 
-		static bool CheckDomain_RFC2109 (string domain, string host, bool exact)
+		static bool CheckDomain_RFC2109 (string domain, string host)
 		{
 			if (domain.Length == 0)
 				return false;
@@ -394,10 +395,10 @@ namespace System.Net
 			foreach (Cookie cookie in cookies) {
 				string domain = cookie.Domain;
 				if (cookie.Version == 1) {
-					if (!CheckDomain_RFC2109 (domain, uri.Host, true))
+					if (!CheckDomain_RFC2109 (domain, uri.Host))
 						continue;
 				} else {
-					if (!CheckDomain (domain, uri.Host, cookie.ExactDomain))
+					if (!CheckDomain (domain, uri.Host, !cookie.HasDomain))
 						continue;
 				}
 
@@ -472,8 +473,8 @@ namespace System.Net
 					if (c.Domain.Length == 0) {
 						c.Domain = uri.Host;
 						// don't consider domain "a.b.com" as ".a.b.com"
-						c.ExactDomain = true;
-					} else if (!CheckSameOrigin (uri, c.Domain))
+						c.HasDomain = false;
+					} else if (c.HasDomain && !CheckSameOrigin (uri, c.Domain))
 						throw new CookieException ("Invalid cookie domain: " + c.Domain);
 
 					AddCookie (c);
@@ -508,11 +509,8 @@ namespace System.Net
 					break;
 				case "domain":
 				case "$domain":
-					if (c.Domain.Length == 0) {
+					if (c.Domain.Length == 0)
 						c.Domain = value;
-						// here mono.com means "*.mono.com"
-						c.ExactDomain = false;
-					}
 					break;
 				case "expires":
 				case "$expires":

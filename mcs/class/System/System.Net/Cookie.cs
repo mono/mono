@@ -114,19 +114,28 @@ namespace System.Net {
 			set {
 				if (String.IsNullOrEmpty (value)) {
 					domain = String.Empty;
-					ExactDomain = true;
+					HasDomain = false;
 				} else {
 					domain = value;
 					IPAddress test;
 					if (IPAddress.TryParse (value, out test))
-						ExactDomain = true;
+						HasDomain = false;
 					else
-						ExactDomain = false;
+						HasDomain = true;
 				}
 			}
 		}
 
-		internal bool ExactDomain { get; set; }
+		/*
+		 * Set this to false to disable same-origin checks.
+		 * 
+		 * This should be done whenever the cookie does not actually
+		 * contain a domain and we fallback to the Uri's hostname.
+		 * 
+		 */
+		internal bool HasDomain {
+			get; set;
+		}
 
 		public bool Expired {
 			get { 
