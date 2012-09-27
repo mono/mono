@@ -49,12 +49,12 @@ tp_kqueue_modify (gpointer event_data, int fd, int operation, int events, gboole
 
 	memset (&evt, 0, sizeof (evt));
 	if ((events & MONO_POLLIN) != 0) {
-		EV_SET (&evt, fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
+		EV_SET (&evt, fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_CLEAR, 0, 0, 0);
 		kevent_change (data->fd, &evt, "ADD read");
 	}
 
 	if ((events & MONO_POLLOUT) != 0) {
-		EV_SET (&evt, fd, EVFILT_WRITE, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
+		EV_SET (&evt, fd, EVFILT_WRITE, EV_ADD | EV_ENABLE | EV_CLEAR, 0, 0, 0);
 		kevent_change (data->fd, &evt, "ADD write");
 	}
 }
@@ -143,12 +143,12 @@ tp_kqueue_wait (gpointer p)
 				mono_g_hash_table_replace (socket_io_data->sock_to_state, GINT_TO_POINTER (fd), list);
 				p = get_events_from_list (list);
 				if (evt->filter == EVFILT_READ && (p & MONO_POLLIN) != 0) {
-					EV_SET (evt, fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
+					EV_SET (evt, fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_CLEAR, 0, 0, 0);
 					kevent_change (kfd, evt, "READD read");
 				}
 
 				if (evt->filter == EVFILT_WRITE && (p & MONO_POLLOUT) != 0) {
-					EV_SET (evt, fd, EVFILT_WRITE, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
+					EV_SET (evt, fd, EVFILT_WRITE, EV_ADD | EV_ENABLE | EV_CLEAR, 0, 0, 0);
 					kevent_change (kfd, evt, "READD write");
 				}
 			} else {
