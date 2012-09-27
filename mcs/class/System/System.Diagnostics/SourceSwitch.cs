@@ -58,25 +58,7 @@ namespace System.Diagnostics
 
 		public bool ShouldTrace (TraceEventType eventType)
 		{
-			switch (eventType) {
-			case TraceEventType.Critical:
-				return (Level & SourceLevels.Critical) != 0;
-			case TraceEventType.Error:
-				return (Level & SourceLevels.Error) != 0;
-			case TraceEventType.Warning:
-				return (Level & SourceLevels.Warning) != 0;
-			case TraceEventType.Information:
-				return (Level & SourceLevels.Information) != 0;
-			case TraceEventType.Verbose:
-				return (Level & SourceLevels.Verbose) != 0;
-			case TraceEventType.Start:
-			case TraceEventType.Stop:
-			case TraceEventType.Suspend:
-			case TraceEventType.Resume:
-			case TraceEventType.Transfer:
-			default:
-				return (Level & SourceLevels.ActivityTracing) != 0;
-			}
+			return ((int)Level & (int)eventType) != 0;
 		}
 
 		protected override void OnValueChanged ()
