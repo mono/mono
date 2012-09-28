@@ -1,4 +1,4 @@
-// Compiler options: -doc:xml-067.xml -warnaserror
+// Compiler options: support-xml-067.cs -doc:xml-067.xml -warnaserror
 
 // Partial types can have documentation on one part only
 
@@ -19,7 +19,7 @@ namespace Testing
 
 	public partial class Test
 	{
-		/// test
+		/// test 2
 		public void Foo ()
 		{
 		}

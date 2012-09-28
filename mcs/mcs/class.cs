@@ -1008,6 +1008,9 @@ namespace Mono.CSharp
 
 		internal override void GenerateDocComment (DocumentationBuilder builder)
 		{
+			if (IsPartialPart)
+				return;
+
 			base.GenerateDocComment (builder);
 
 			foreach (var member in members)

@@ -838,17 +838,6 @@ namespace Mono.CSharp {
 		{
 			if (DocComment == null) {
 				if (IsExposedFromAssembly ()) {
-					var td = this as TypeDefinition;
-					if (td != null && td.PartialContainer != null) {
-						//
-						// This partial part does not have comment but some other part can have
-						//
-						foreach (var tc in Parent.Containers) {
-							if (tc.PartialContainer == td.PartialContainer && tc.DocComment != null)
-								return;
-						}
-					}
-
 					Constructor c = this as Constructor;
 					if (c == null || !c.IsDefault ())
 						Report.Warning (1591, 4, Location,
