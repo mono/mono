@@ -35,7 +35,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	}
 }
 
-my $platform = $build64 ? 'linux64' : $buildarm_armel ? 'linux-armel' : 'linux32' ;
+my $platform = $build64 ? 'linux64' : $build_armel ? 'linux-armel' : 'linux32' ;
 my $bintarget = "$root/builds/monodistribution/bin-$platform";
 my $libtarget = "$root/builds/embedruntimes/$platform";
 
