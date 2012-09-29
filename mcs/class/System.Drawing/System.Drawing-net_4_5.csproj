@@ -280,6 +280,9 @@
     <EmbeddedResource Include="Assembly/Question.ico">
        <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Assembly/Shield.ico">
+       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
