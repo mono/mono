@@ -19,27 +19,27 @@ provider mono {
 	probe gc__begin (int generation);
 	probe gc__end (int generation);
 
-	probe gc__heap__alloc (void *addr, uintptr_t len);
-	probe gc__heap__free (void *addr, uintptr_t len);
+	probe gc__heap__alloc (uintptr_t addr, uintptr_t len);
+	probe gc__heap__free (uintptr_t addr, uintptr_t len);
 
 	probe gc__locked ();
 	probe gc__unlocked ();
 
-	probe gc__nursery__tlab__alloc (void *addr, uintptr_t len);
-	probe gc__nursery__obj__alloc (void *addr, uintptr_t size, char *ns_name, char *class_name);
+	probe gc__nursery__tlab__alloc (uintptr_t addr, uintptr_t len);
+	probe gc__nursery__obj__alloc (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
 
-	probe gc__major__obj__alloc__large (void *addr, uintptr_t size, char *ns_name, char *class_name);
-	probe gc__major__obj__alloc__pinned (void *addr, uintptr_t size, char *ns_name, char *class_name);
-	probe gc__major__obj__alloc__degraded (void *addr, uintptr_t size, char *ns_name, char *class_name);
-	probe gc__major__obj__alloc__mature (void *addr, uintptr_t size, char *ns_name, char *class_name);
+	probe gc__major__obj__alloc__large (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
+	probe gc__major__obj__alloc__pinned (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
+	probe gc__major__obj__alloc__degraded (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
+	probe gc__major__obj__alloc__mature (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
 
 	/* Can be nursery->nursery, nursery->major or major->major */
-	probe gc__obj__moved (void *dest, void *src, int dest_gen, int src_gen, uintptr_t size, char *ns_name, char *class_name);
+	probe gc__obj__moved (uintptr_t dest, uintptr_t src, int dest_gen, int src_gen, uintptr_t size, char *ns_name, char *class_name);
 
-	probe gc__nursery__sweeped (void *addr, uintptr_t len);
-	probe gc__major__sweeped (void *addr, uintptr_t len);
+	probe gc__nursery__sweeped (uintptr_t addr, uintptr_t len);
+	probe gc__major__sweeped (uintptr_t addr, uintptr_t len);
 
-	probe gc__obj__pinned (void *addr, uintptr_t size, char *ns_name, char *class_name, int generation);
+	probe gc__obj__pinned (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name, int generation);
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
