@@ -281,6 +281,10 @@
        <LogicalName>Question.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+    <EmbeddedResource Include="Assembly/Shield.ico">
+       <LogicalName>Shield.ico</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>
 
