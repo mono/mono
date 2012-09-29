@@ -1,7 +1,3 @@
-2012-09-28 Chris Crutchfield <clcrutch@cox.net>
-	
-	* Makefile: Add Shield.ico
-
 2009-07-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* System.Drawing_test.dll.sources: Add PageSourceTest.cs and
