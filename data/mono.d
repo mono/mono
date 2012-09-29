@@ -36,8 +36,8 @@ provider mono {
 	/* Can be nursery->nursery, nursery->major or major->major */
 	probe gc__obj__moved (uintptr_t dest, uintptr_t src, int dest_gen, int src_gen, uintptr_t size, char *ns_name, char *class_name);
 
-	probe gc__nursery__sweeped (uintptr_t addr, uintptr_t len);
-	probe gc__major__sweeped (uintptr_t addr, uintptr_t len);
+	probe gc__nursery__swept (uintptr_t addr, uintptr_t len);
+	probe gc__major__swept (uintptr_t addr, uintptr_t len);
 
 	probe gc__obj__pinned (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name, int generation);
 };
