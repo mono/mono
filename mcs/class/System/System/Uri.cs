@@ -1038,6 +1038,13 @@ namespace System {
 				for (int i = k; i < segments2.Length; i++)
 					result += segments2 [i];
 				
+				// if there is more than 1 segment and if the last segment of segments
+				// ends with separator char, assume its a directory and prepend "../"
+				if (segments.Length > 1) {
+					var lastSegment = segments [segments.Length - 1];
+					if (lastSegment.EndsWith ("/"))
+						result = "../" + result;
+				}
 			}
 			uri.AppendQueryAndFragment (ref result);
 
