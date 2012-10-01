@@ -6157,7 +6157,7 @@ namespace Mono.CSharp
 				// We use this to store all the data values in the order in which we
 				// will need to store them in the byte blob later
 				//
-				array_data = new List<Expression> ();
+				array_data = new List<Expression> (probe.Count);
 				bounds = new Dictionary<int, int> ();
 			}
 
@@ -6463,12 +6463,12 @@ namespace Mono.CSharp
 					}
 					break;
 				case BuiltinTypeSpec.Type.Float:
-					element = BitConverter.GetBytes ((float) v);
+					var fval = SingleConverter.SingleToInt32Bits((float) v);
 
-					for (int j = 0; j < factor; ++j)
-						data[idx + j] = element[j];
-					if (!BitConverter.IsLittleEndian)
-						System.Array.Reverse (data, idx, 4);
+					data[idx] = (byte) (fval & 0xff);
+					data[idx + 1] = (byte) ((fval >> 8) & 0xff);
+					data[idx + 2] = (byte) ((fval >> 16) & 0xff);
+					data[idx + 3] = (byte) (fval >> 24);
 					break;
 				case BuiltinTypeSpec.Type.Double:
 					element = BitConverter.GetBytes ((double) v);

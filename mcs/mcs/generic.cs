@@ -2706,7 +2706,7 @@ namespace Mono.CSharp {
 			Upper	= 2
 		}
 
-		sealed class BoundInfo : IEquatable<BoundInfo>
+		struct BoundInfo : IEquatable<BoundInfo>
 		{
 			public readonly TypeSpec Type;
 			public readonly BoundKind Kind;
