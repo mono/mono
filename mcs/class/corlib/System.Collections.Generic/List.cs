@@ -33,6 +33,7 @@
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace System.Collections.Generic {
 	[Serializable]
@@ -632,13 +633,15 @@ namespace System.Collections.Generic {
 			get {
 				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
-				return _items [index];
+				return Array.UnsafeLoad (_items, index);
 			}
+
 			set {
 				CheckIndex (index);
 				if ((uint) index == (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
-				_items [index] = value;
+				Array.UnsafeStore (_items, index, value);
+				_version++;
 			}
 		}
 		
