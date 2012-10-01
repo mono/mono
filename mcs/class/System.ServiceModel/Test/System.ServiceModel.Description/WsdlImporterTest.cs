@@ -596,5 +596,21 @@ namespace MonoTests.System.ServiceModel.Description
 			
 			// FIXME: examine resulting operations.
 		}
+
+		[Test]
+		[Ignore ("FIXME: Using external source")]
+		public void ImportMethodWithDateTime ()
+		{
+			var ms = GetMetadataSetFromWsdl ("Test/Resources/DateTime.wsdl");
+			var imp = new WsdlImporter (ms);
+			var cg = new ServiceContractGenerator ();
+			var cd = imp.ImportAllContracts () [0];
+			cg.GenerateServiceContractType (cd);
+			var sw = new StringWriter ();
+			new CSharpCodeProvider ().GenerateCodeFromCompileUnit (
+				cg.TargetCompileUnit, sw, null);
+			// sort of hacky test
+			Assert.IsTrue (sw.ToString ().IndexOf ("System.DateTime GetDate") > 0, "#1");
+		}
 	}
 }

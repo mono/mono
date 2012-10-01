@@ -187,8 +187,17 @@ namespace System.ServiceModel.Description
 		bool IsOperationImported (PortType pt, Operation op)
 		{
 			foreach (OperationMessage opmsg in op.Messages) {
-				var parts = context.GetMessageDescription (opmsg).Body.Parts;
-				foreach (var part in parts)
+
+				var opdsc = context.GetMessageDescription (opmsg);
+
+				var parts = opdsc.Body.Parts;
+				var ret = opdsc.Body.ReturnValue;
+
+				if ((ret != null) &&
+				    (ret.DataContractImporter != null || ret.XmlSerializationImporter != null))
+					return true;
+
+				foreach (var part in opdsc.Body.Parts)
 					if (part.DataContractImporter != null || part.XmlSerializationImporter != null)
 						return true;
 			}
