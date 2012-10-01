@@ -2271,5 +2271,13 @@ namespace System
 		{
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
 		}
+
+		internal static T UnsafeLoad<T> (T[] array, int index) {
+			return array [index];
+		}
+
+		internal static void UnsafeStore<T> (T[] array, int index, T value) {
+			array [index] = value;
+		}
 	}
 }
