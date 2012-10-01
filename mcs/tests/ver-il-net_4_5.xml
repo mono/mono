@@ -21439,7 +21439,7 @@
   <test name="gtest-implicitarray-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">
-        <size>313</size>
+        <size>329</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

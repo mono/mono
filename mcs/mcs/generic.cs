@@ -2706,7 +2706,7 @@ namespace Mono.CSharp {
 			Upper	= 2
 		}
 
-		protected class BoundInfo : IEquatable<BoundInfo>
+		sealed class BoundInfo : IEquatable<BoundInfo>
 		{
 			public readonly TypeSpec Type;
 			public readonly BoundKind Kind;
@@ -2722,14 +2722,14 @@ namespace Mono.CSharp {
 				return Type.GetHashCode ();
 			}
 
-			public virtual Expression GetTypeExpression ()
+			public Expression GetTypeExpression ()
 			{
 				return new TypeExpression (Type, Location.Null);
 			}
 
 			#region IEquatable<BoundInfo> Members
 
-			public virtual bool Equals (BoundInfo other)
+			public bool Equals (BoundInfo other)
 			{
 				return Type == other.Type && Kind == other.Kind;
 			}
@@ -2785,7 +2785,7 @@ namespace Mono.CSharp {
 			AddToBounds (new BoundInfo (type, BoundKind.Lower), 0);
 		}
 
-		protected void AddToBounds (BoundInfo bound, int index)
+		void AddToBounds (BoundInfo bound, int index)
 		{
 			//
 			// Some types cannot be used as type arguments

@@ -6795,38 +6795,7 @@ namespace Mono.CSharp
 	//
 	class ImplicitlyTypedArrayCreation : ArrayCreation
 	{
-		sealed class InferenceContext : TypeInferenceContext
-		{
-			class ExpressionBoundInfo : BoundInfo
-			{
-				readonly Expression expr;
-
-				public ExpressionBoundInfo (Expression expr)
-					: base (expr.Type, BoundKind.Lower)
-				{
-					this.expr = expr;
-				}
-
-				public override bool Equals (BoundInfo other)
-				{
-					// We are using expression not type for conversion check
-					// no optimization based on types is possible
-					return false;
-				}
-
-				public override Expression GetTypeExpression ()
-				{
-					return expr;
-				}
-			}
-
-			public void AddExpression (Expression expr)
-			{
-				AddToBounds (new ExpressionBoundInfo (expr), 0);
-			}
-		}
-
-		InferenceContext best_type_inference;
+		TypeInferenceContext best_type_inference;
 
 		public ImplicitlyTypedArrayCreation (ComposedTypeSpecifier rank, ArrayInitializer initializers, Location loc)
 			: base (null, rank, initializers, loc)
@@ -6845,7 +6814,7 @@ namespace Mono.CSharp
 
 			dimensions = rank.Dimension;
 
-			best_type_inference = new InferenceContext ();
+			best_type_inference = new TypeInferenceContext ();
 
 			if (!ResolveInitializers (ec))
 				return null;
@@ -6890,7 +6859,7 @@ namespace Mono.CSharp
 		{
 			element = element.Resolve (ec);
 			if (element != null)
-				best_type_inference.AddExpression (element);
+				best_type_inference.AddCommonTypeBound (element.Type); //.AddExpression (element);
 
 			return element;
 		}
