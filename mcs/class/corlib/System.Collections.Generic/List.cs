@@ -636,12 +636,14 @@ namespace System.Collections.Generic {
 		}
 		
 		public T this [int index] {
+			[MethodImpl ((MethodImplOptions)256)]
 			get {
 				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
 				return Array.UnsafeLoad (_items, index);
 			}
 
+			[MethodImpl ((MethodImplOptions)256)]
 			set {
 				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
