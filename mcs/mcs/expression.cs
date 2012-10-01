@@ -6859,7 +6859,7 @@ namespace Mono.CSharp
 		{
 			element = element.Resolve (ec);
 			if (element != null)
-				best_type_inference.AddCommonTypeBound (element.Type); //.AddExpression (element);
+				best_type_inference.AddCommonTypeBound (element.Type);
 
 			return element;
 		}
