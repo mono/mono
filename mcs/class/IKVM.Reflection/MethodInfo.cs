@@ -123,6 +123,11 @@ namespace IKVM.Reflection
 			return false;
 		}
 
+		public ConstructorInfo __AsConstructorInfo()
+		{
+			return new ConstructorInfoImpl(this);
+		}
+
 		Type IGenericContext.GetGenericTypeArgument(int index)
 		{
 			return this.DeclaringType.GetGenericTypeArgument(index);

@@ -29,7 +29,7 @@ using IKVM.Reflection.Metadata;
 
 namespace IKVM.Reflection.Reader
 {
-	sealed class TypeDefImpl : Type
+	sealed class TypeDefImpl : TypeInfo
 	{
 		private readonly ModuleReader module;
 		private readonly int index;
@@ -291,7 +291,16 @@ namespace IKVM.Reflection.Reader
 
 		public override bool IsGenericTypeDefinition
 		{
-			get { return module.GenericParam.FindFirstByOwner(this.MetadataToken) != -1; }
+			get
+			{
+				if ((typeFlags & (TypeFlags.IsGenericTypeDefinition | TypeFlags.NotGenericTypeDefinition)) == 0)
+				{
+					typeFlags |= module.GenericParam.FindFirstByOwner(this.MetadataToken) == -1
+						? TypeFlags.NotGenericTypeDefinition
+						: TypeFlags.IsGenericTypeDefinition;
+				}
+				return (typeFlags & TypeFlags.IsGenericTypeDefinition) != 0;
+			}
 		}
 
 		public override Type GetGenericTypeDefinition()

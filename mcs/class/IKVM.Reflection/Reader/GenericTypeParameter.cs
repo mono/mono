@@ -28,7 +28,7 @@ using IKVM.Reflection.Metadata;
 
 namespace IKVM.Reflection.Reader
 {
-	abstract class TypeParameterType : Type
+	abstract class TypeParameterType : TypeInfo
 	{
 		public sealed override string AssemblyQualifiedName
 		{

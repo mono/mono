@@ -479,6 +479,7 @@ namespace IKVM.Reflection.Writer
 				idd.TimeDateStamp = peWriter.Headers.FileHeader.TimeDateStamp;
 				byte[] buf = SymbolSupport.GetDebugInfo(moduleBuilder.symbolWriter, ref idd);
 				idd.PointerToRawData = (DebugDirectoryRVA - BaseRVA) + DebugDirectoryLength + PointerToRawData;
+				idd.AddressOfRawData = DebugDirectoryRVA + DebugDirectoryLength;
 				mw.Write(idd.Characteristics);
 				mw.Write(idd.TimeDateStamp);
 				mw.Write(idd.MajorVersion);
