@@ -3407,6 +3407,39 @@ public class ArrayTest
 		array.Equals (array2, EqualityComparer<long>.Default);
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]	
+	public void IStructuralEquatable_GetHashCode_NullComparer ()
+	{
+		IStructuralEquatable a = new int[] { 1, 2 };
+		a.GetHashCode (null);
+	}
+
+	class TestComparer_GetHashCode : IEqualityComparer
+	{
+		public int Counter;
+
+		bool IEqualityComparer.Equals (object x, object y)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int GetHashCode (object obj)
+		{
+			return Counter++;
+		}
+	}
+
+	[Test]
+	public void IStructuralEquatable_GetHashCode ()
+	{
+		IStructuralEquatable a = new int[] { 1, 2, 9 };
+
+		var c = new TestComparer_GetHashCode ();
+		a.GetHashCode (c);
+		Assert.AreEqual (3, c.Counter);		
+	}
+
 #endif
 
 }

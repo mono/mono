@@ -490,7 +490,7 @@ namespace System
 
 			int hash = 0;
 			for (int i = 0; i < Length; i++)
-				hash = ((hash << 7) + hash) ^ GetValue (i).GetHashCode ();
+				hash = ((hash << 7) + hash) ^ comparer.GetHashCode (GetValueImpl (i));
 			return hash;
 		}
 #endif
