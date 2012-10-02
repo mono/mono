@@ -90,6 +90,34 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
+		class TestAsyncResultCompletedSynchronously : IAsyncResult
+		{
+			public object AsyncState {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public WaitHandle AsyncWaitHandle {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public bool CompletedSynchronously {
+				get {
+					return true;
+				}
+			}
+
+			public bool IsCompleted {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+		}
+		
+
 		[SetUp]
 		public void Setup ()
 		{
@@ -177,6 +205,26 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.IsTrue (task.Wait (1000), "#1");
 			Assert.AreEqual (5, task.Result, "#2");
+		}
+
+		IAsyncResult BeginGetTestAsyncResultCompletedSynchronously (AsyncCallback cb, object obj)
+		{
+			return new TestAsyncResultCompletedSynchronously ();
+		}
+
+		string EndGetTestAsyncResultCompletedSynchronously (IAsyncResult res)
+		{
+			return "1";
+		}
+
+		[Test]
+		public void FromAsync_CompletedSynchronously ()
+		{
+			var factory = new TaskFactory<string> ();
+			var task = factory.FromAsync (BeginGetTestAsyncResultCompletedSynchronously, EndGetTestAsyncResultCompletedSynchronously, null);
+
+			Assert.IsTrue (task.Wait (1000), "#1");
+			Assert.AreEqual ("1", task.Result, "#2");
 		}
 	}
 }

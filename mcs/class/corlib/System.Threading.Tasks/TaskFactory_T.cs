@@ -339,7 +339,10 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (l => InnerInvoke (tcs, endMethod, l), state);
+			var iar = beginMethod (l => InnerInvoke (tcs, endMethod, l), state);
+			if (iar != null && iar.CompletedSynchronously) {
+				InnerInvoke (tcs, endMethod, iar);
+			}
 
 			return tcs.Task;
 		}
@@ -370,7 +373,10 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (arg1, l => InnerInvoke (tcs, endMethod, l), state);
+			var iar = beginMethod (arg1, l => InnerInvoke (tcs, endMethod, l), state);
+			if (iar != null && iar.CompletedSynchronously) {
+				InnerInvoke (tcs, endMethod, iar);
+			}
 
 			return tcs.Task;
 		}
@@ -400,7 +406,10 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (arg1, arg2, l => InnerInvoke (tcs, endMethod, l), state);
+			var iar = beginMethod (arg1, arg2, l => InnerInvoke (tcs, endMethod, l), state);
+			if (iar != null && iar.CompletedSynchronously) {
+				InnerInvoke (tcs, endMethod, iar);
+			}
 
 			return tcs.Task;
 		}
@@ -431,7 +440,10 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			beginMethod (arg1, arg2, arg3, l => InnerInvoke (tcs, endMethod, l), state);
+			var iar = beginMethod (arg1, arg2, arg3, l => InnerInvoke (tcs, endMethod, l), state);
+			if (iar != null && iar.CompletedSynchronously) {
+				InnerInvoke (tcs, endMethod, iar);
+			}
 
 			return tcs.Task;
 		}
