@@ -1134,28 +1134,13 @@ namespace System
 			return lb - 1;
 		}
 
-		/* delegate used to swap array elements */
-		delegate void Swapper (int i, int j);
-
-		static Swapper get_swapper (Array array)
-		{
-			if (array is int[])
-				return new Swapper (array.int_swapper);
-			if (array is double[])
-				return new Swapper (array.double_swapper);
-			if (array is object[]) {
-				return new Swapper (array.obj_swapper);
-			}
-			return new Swapper (array.slow_swapper);
-		}
-
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Reverse (Array array)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			Reverse (array, array.GetLowerBound (0), array.GetLength (0));
+			Reverse (array, array.GetLowerBound (0), array.Length);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1175,45 +1160,120 @@ namespace System
 				throw new ArgumentException ();
 
 			int end = index + length - 1;
-			object[] oarray = array as object[];
-			if (oarray != null) {
+			var et = array.GetType ().GetElementType ();
+			switch (Type.GetTypeCode (et)) {
+			case TypeCode.Boolean:
 				while (index < end) {
-					object tmp = oarray [index];
-					oarray [index] = oarray [end];
-					oarray [end] = tmp;
+					bool a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
 					++index;
 					--end;
 				}
 				return;
-			}
-			int[] iarray = array as int[];
-			if (iarray != null) {
+
+			case TypeCode.Byte:
+			case TypeCode.SByte:
 				while (index < end) {
-					int tmp = iarray [index];
-					iarray [index] = iarray [end];
-					iarray [end] = tmp;
+					byte a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
 					++index;
 					--end;
 				}
 				return;
-			}
-			double[] darray = array as double[];
-			if (darray != null) {
+
+			case TypeCode.Int16:
+			case TypeCode.UInt16:
+			case TypeCode.Char:
 				while (index < end) {
-					double tmp = darray [index];
-					darray [index] = darray [end];
-					darray [end] = tmp;
+					short a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
 					++index;
 					--end;
 				}
 				return;
-			}
-			// fallback
-			Swapper swapper = get_swapper (array);
-			while (index < end) {
-				swapper (index, end);
-				++index;
-				--end;
+
+			case TypeCode.Int32:
+			case TypeCode.UInt32:
+			case TypeCode.Single:
+				while (index < end) {
+					int a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+
+			case TypeCode.Int64:
+			case TypeCode.UInt64:
+			case TypeCode.Double:
+				while (index < end) {
+					long a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+
+			case TypeCode.Decimal:
+				while (index < end) {
+					decimal a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+
+			case TypeCode.String:
+			case TypeCode.Object:
+				while (index < end) {
+					object a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+			default:
+				if (et.IsClass || et.IsInterface)
+					goto case TypeCode.Object;
+
+				// Very slow fallback
+				while (index < end) {
+					object val = array.GetValueImpl (index);
+					array.SetValueImpl (array.GetValueImpl (end), index);
+					array.SetValueImpl (val, end);
+					++index;
+					--end;
+				}
+
+				return;
 			}
 		}
 
@@ -1387,34 +1447,6 @@ namespace System
 			} catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
 			}
-		}
-
-		/* note, these are instance methods */
-		void int_swapper (int i, int j) {
-			int[] array = this as int[];
-			int val = array [i];
-			array [i] = array [j];
-			array [j] = val;
-		}
-
-		void obj_swapper (int i, int j) {
-			object[] array = this as object[];
-			object val = array [i];
-			array [i] = array [j];
-			array [j] = val;
-		}
-
-		void slow_swapper (int i, int j) {
-			object val = GetValueImpl (i);
-			SetValueImpl (GetValue (j), i);
-			SetValueImpl (val, j);
-		}
-
-		void double_swapper (int i, int j) {
-			double[] array = this as double[];
-			double val = array [i];
-			array [i] = array [j];
-			array [j] = val;
 		}
 		
 		struct QSortStack {
