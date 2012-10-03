@@ -7,7 +7,7 @@ lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
 	$(SUPPORT)
 
-INCLUDES =					\
+AM_CPPFLAGS =					\
 	$(GLIB_CFLAGS)				\
 	-I$(top_srcdir)
 

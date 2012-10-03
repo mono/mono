@@ -75,7 +75,7 @@ AC_ARG_ENABLE(cplusplus,
 [  --enable-cplusplus		install C++ support],
 )
 
-INCLUDES=-I${srcdir}/include
+AM_CPPFLAGS=-I${srcdir}/include
 THREADDLLIBS=
 ## Libraries needed to support dynamic loading and/or threads.
 case "$THREADS" in
@@ -115,7 +115,7 @@ case "$THREADS" in
       *-*-freebsd*)
 	AC_DEFINE(GC_FREEBSD_THREADS)
 	if test "x$PTHREAD_CFLAGS" != "x"; then
-		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
+		AM_CPPFLAGS="$AM_CPPFLAGS $PTHREAD_CFLAGS"
 	fi
 	if test "x$PTHREAD_LIBS" = "x"; then
 		THREADDLLIBS=-pthread
@@ -163,7 +163,7 @@ case "$THREADS" in
 	  # May want to enable it in other cases, too.
 	  # Measurements havent yet been done.
 	fi
-	INCLUDES="$INCLUDES -pthread"
+	AM_CPPFLAGS="$AM_CPPFLAGS -pthread"
 	THREADDLLIBS="-lpthread -lrt"
 	;;
       *)
@@ -191,7 +191,7 @@ case "$THREADS" in
     AC_DEFINE(GC_DGUX386_THREADS)
     AC_DEFINE(DGUX_THREADS)
     # Enable _POSIX4A_DRAFT10_SOURCE with flag -pthread
-    INCLUDES="-pthread $INCLUDES"
+    AM_CPPFLAGS="-pthread $AM_CPPFLAGS"
     ;;
  aix)
     THREADS=posix
@@ -256,7 +256,7 @@ addobjs=
 addlibs=
 addincludes=
 addtests=
-CXXINCLUDES=
+CXXAM_CPPFLAGS=
 case "$TARGET_ECOS" in
    no)
       ;;
@@ -276,7 +276,7 @@ AM_CONDITIONAL(CPLUSPLUS, test "${enable_cplusplus}" = yes)
 
 AC_SUBST(CXX)
 
-AC_SUBST(INCLUDES)
+AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(CXXINCLUDES)
 
 # Configuration of shared libraries
