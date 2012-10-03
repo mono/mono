@@ -4,9 +4,11 @@
 // Author:
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //	Hagit Yidov <hagity@mainsoft.com>
+//	Andres G. Aragoneses <andres.aragoneses@7digital.com>
 //
 // (C) 2003 Atsushi Enomoto
 // (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
+// (C) 2012 7digital Media Ltd (http://www.7digital.com)
 //
 //
 using System;
@@ -1552,6 +1554,72 @@ namespace MonoTests.System.XmlSerialization
 			XmlSerializer xs = new XmlSerializer (typeof (NotExactDateParseClass));
 			NotExactDateParseClass o = (NotExactDateParseClass) xs.Deserialize (new StringReader ("<NotExactDateParseClass xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SomeDate xsi:type=\"xsd:date\">2012-02-05-09:00</SomeDate></NotExactDateParseClass>"));
 			Assert.AreEqual (new DateTime (2012,2,5), o.SomeDate);
+		}
+
+
+		public class Foo
+		{
+			public DateTime? Baz { get; set; }
+		}
+
+		[Test]
+		public void CanDeserializeXsiNil()
+		{
+			var reader = new StringReader(
+@"<Foo xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+	<Baz xsi:nil=""true"" />
+</Foo>");
+
+			using (var xmlReader = new XmlTextReader(reader))
+			{
+				var serializer = new XmlSerializer(typeof(Foo));
+				var foo = (Foo)serializer.Deserialize(xmlReader);
+				Assert.IsNull(foo.Baz);
+			}
+		}
+
+		public class Bar
+		{
+			[XmlElement("baz")]
+			public DateTime? Baz { get; set; }
+		}
+
+		[Test]
+		public void CanDeserializeXsiNilToAPropertyWithXmlElementAttrib()
+		{
+			var reader = new StringReader(
+@"<Bar xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+	<baz xsi:nil=""true"" />
+</Bar>");
+
+			using (var xmlReader = new XmlTextReader(reader))
+			{
+				var serializer = new XmlSerializer(typeof(Bar));
+				var bar = (Bar)serializer.Deserialize(xmlReader);
+				Assert.IsNull(bar.Baz);
+			}
+		}
+
+		public class FooBar
+		{
+			[XmlElement("baz", IsNullable = true)]
+			public DateTime? Baz { get; set; }
+		}
+
+		[Test]
+		public void CanDeserializeXsiNilToAPropertyWithXmlElementAttribAndIsNullableTrue()
+		{
+			var reader = new StringReader(
+@"<FooBar xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+	<baz xsi:nil=""true"" />
+</FooBar>");
+
+			using (var xmlReader = new XmlTextReader(reader))
+			{
+				var serializer = new XmlSerializer(typeof(FooBar));
+				var foobar = (FooBar)serializer.Deserialize(xmlReader);
+				Assert.IsNull(foobar.Baz);
+			}
 		}
 	}
 }

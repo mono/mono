@@ -9,7 +9,6 @@
 // Copyright (C) Tim Coleman, 2002
 // (C) 2003 Erik LeBel
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1017,7 +1016,11 @@ namespace System.Xml.Serialization {
 				elem.Form = att.Form;
 				if (elem.Form != XmlSchemaForm.Unqualified)
 					elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
-				elem.IsNullable = att.IsNullable;
+
+				// elem may already be nullable, and IsNullable property in XmlElement is false by default
+				if (att.IsNullable && !elem.IsNullable)
+					elem.IsNullable = att.IsNullable;
+
 				elem.ExplicitOrder = att.Order;
 
 				if (elem.IsNullable && !elem.TypeData.IsNullable)
