@@ -48,8 +48,8 @@ namespace System
 		internal Hashtable name_hash;
 		[ThreadStatic]
 		static Hashtable cache;
-		static Hashtable global_cache;
-		static object global_cache_monitor;
+		static Hashtable global_cache = new Hashtable ();
+		static object global_cache_monitor = new object ();
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
@@ -144,12 +144,6 @@ namespace System
 					return -1;
 				return 1;
 			}
-		}
-			
-		static MonoEnumInfo ()
-		{
-			global_cache_monitor = new object ();
-			global_cache = new Hashtable ();
 		}
 
 		static Hashtable Cache {
@@ -512,8 +506,6 @@ namespace System
 			throw new ArgumentException ("typeCode is not a valid type code for an Enum");
 		}
 
-		private static char [] split_char = { ',' };
-
 		[ComVisible(true)]
 		public static object Parse (Type enumType, string value, bool ignoreCase)
 		{
@@ -537,6 +529,8 @@ namespace System
 			return result;
 		}
 
+		static char [] split_char;
+
 		static bool Parse<TEnum> (Type enumType, string value, bool ignoreCase, out TEnum result)
 		{
 			result = default (TEnum);
@@ -555,6 +549,8 @@ namespace System
 
 			// is 'value' a list of named constants?
 			if (value.IndexOf (',') != -1) {
+				if (split_char == null)
+					split_char = new [] { ',' };
 				string [] names = value.Split (split_char);
 				ulong retVal = 0;
 				for (int i = 0; i < names.Length; ++i) {

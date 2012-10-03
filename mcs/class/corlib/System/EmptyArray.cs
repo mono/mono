@@ -1,12 +1,10 @@
 //
-// EncoderFallback.cs
+// EmptyArray.cs
 //
-// Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
 //
-
-//
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -15,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,36 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Text
+namespace System
 {
-	[Serializable]
-	public abstract class EncoderFallback
+	static class EmptyArray<T>
 	{
-		static readonly EncoderFallback exception_fallback =
-			new EncoderExceptionFallback ();
-		static readonly EncoderFallback replacement_fallback =
-			new EncoderReplacementFallback ();
-		static readonly EncoderFallback standard_safe_fallback =
-			new EncoderReplacementFallback ("\uFFFD");
-
-		protected EncoderFallback ()
-		{
-		}
-
-		public static EncoderFallback ExceptionFallback {
-			get { return exception_fallback; }
-		}
-
-		public abstract int MaxCharCount { get; }
-
-		public static EncoderFallback ReplacementFallback {
-			get { return replacement_fallback; }
-		}
-
-		internal static EncoderFallback StandardSafeFallback {
-			get { return standard_safe_fallback; }
-		}
-
-		public abstract EncoderFallbackBuffer CreateFallbackBuffer ();
+		public static readonly T[] Value = new T [0];
 	}
 }

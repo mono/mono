@@ -39,14 +39,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly PropertyToken Empty;
-
-
-		static PropertyToken ()
-		{
-			Empty = new PropertyToken ();
-		}
-
+		public static readonly PropertyToken Empty = new PropertyToken ();
 
 		internal PropertyToken (int val)
 		{

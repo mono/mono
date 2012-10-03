@@ -143,6 +143,7 @@ System/DllNotFoundException.cs
 System/DomainManagerInitializationFlags.cs
 System/Double.cs
 System/DuplicateWaitObjectException.cs
+System/EmptyArray.cs
 System/EntryPointNotFoundException.cs
 System/Enum.cs
 System/Environment.cs

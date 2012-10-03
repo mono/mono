@@ -57,7 +57,7 @@ namespace System.Threading
 		int threadWhoTookLock;
 		readonly bool isThreadOwnerTrackingEnabled;
 
-		static Watch sw = Watch.StartNew ();
+		static readonly Watch sw = Watch.StartNew ();
 
 		ConcurrentOrderedList<int> stallTickets;
 

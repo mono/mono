@@ -41,10 +41,10 @@ using System.IO.IsolatedStorage;
 
 namespace System.IO
 {
-	unsafe internal sealed class MonoIO {
-		internal static int FileAlreadyExistsHResult = unchecked ((int) 0x80070000) | (int)MonoIOError.ERROR_FILE_EXISTS;
+	unsafe static class MonoIO {
+		public const int FileAlreadyExistsHResult = unchecked ((int) 0x80070000) | (int)MonoIOError.ERROR_FILE_EXISTS;
 
-		public static readonly FileAttributes
+		public const FileAttributes
 			InvalidFileAttributes = (FileAttributes)(-1);
 
 		public static readonly IntPtr

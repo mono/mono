@@ -207,7 +207,6 @@ namespace System.Reflection.Emit {
 			public int maxStack; 
 		}
 		
-		static readonly Type void_type = typeof (void);
 		#region Sync with reflection.h
 		private byte[] code;
 		private int code_len;
@@ -740,7 +739,7 @@ namespace System.Reflection.Emit {
 					add_token_fixup (meth);
 			}
 			emit_int (token);
-			if (meth.ReturnType != void_type)
+			if (meth.ReturnType != typeof (void))
 				cur_stack ++;
 
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
@@ -758,7 +757,7 @@ namespace System.Reflection.Emit {
 					add_token_fixup (method);
 			}
 			emit_int (token);
-			if (method.ReturnType != void_type)
+			if (method.ReturnType != typeof (void))
 				cur_stack ++;
 
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)

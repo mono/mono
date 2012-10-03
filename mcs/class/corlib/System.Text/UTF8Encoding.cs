@@ -879,7 +879,7 @@ fail_no_space:
 		if (emitIdentifier)
 			return new byte [] { 0xEF, 0xBB, 0xBF };
 
-		return empty;
+		return EmptyArray<byte>.Value;
 	}
 
 	// Determine if this object is equal to another.

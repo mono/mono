@@ -39,14 +39,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly FieldToken Empty;
-
-
-		static FieldToken ()
-		{
-			Empty = new FieldToken ();
-		}
-
+		public static readonly FieldToken Empty = new FieldToken ();
 
 		internal FieldToken (int val)
 		{

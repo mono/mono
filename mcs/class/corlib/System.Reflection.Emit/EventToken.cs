@@ -39,14 +39,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly EventToken Empty;
-
-
-		static EventToken ()
-		{
-			Empty = new EventToken ();
-		}
-
+		public static readonly EventToken Empty = new EventToken ();
 
 		internal EventToken (int val)
 		{

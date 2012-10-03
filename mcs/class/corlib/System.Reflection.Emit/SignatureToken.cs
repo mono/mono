@@ -38,14 +38,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly SignatureToken Empty;
-
-
-		static SignatureToken ()
-		{
-			Empty = new SignatureToken ();
-		}
-
+		public static readonly SignatureToken Empty = new SignatureToken ();
 
 		internal SignatureToken (int val)
 		{

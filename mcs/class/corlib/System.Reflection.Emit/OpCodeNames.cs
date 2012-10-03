@@ -1,5 +1,5 @@
 namespace System.Reflection.Emit {
-	internal class OpCodeNames {
+	static class OpCodeNames {
 		internal static readonly string [] names = {
 			"nop",
 			"break",

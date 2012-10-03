@@ -41,7 +41,7 @@ namespace System.Threading
 		: MarshalByRefObject, IDisposable
 #endif
 	{
-		static Scheduler scheduler = Scheduler.Instance;
+		static readonly Scheduler scheduler = Scheduler.Instance;
 #region Timer instance fields
 		TimerCallback callback;
 		object state;

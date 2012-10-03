@@ -39,14 +39,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly MethodToken Empty;
-
-
-		static MethodToken ()
-		{
-			Empty = new MethodToken ();
-		}
-
+		public static readonly MethodToken Empty = new MethodToken ();
 
 		internal MethodToken (int val)
 		{

@@ -402,8 +402,7 @@ namespace System
 				return new AttributeUsageAttribute (AttributeTargets.Class);
 
 			AttributeUsageAttribute usageAttribute = null;
-			object[] attribs = GetCustomAttributes (attributeType,
-				MonoCustomAttrs.AttributeUsageType, false);
+			object[] attribs = GetCustomAttributes (attributeType, typeof(AttributeUsageAttribute), false);
 			if (attribs.Length == 0)
 			{
 				// if no AttributeUsage was defined on the attribute level, then
@@ -435,7 +434,6 @@ namespace System
 			return ((AttributeUsageAttribute) attribs[0]);
 		}
 
-		private static readonly Type AttributeUsageType = typeof(AttributeUsageAttribute);
 		private static readonly AttributeUsageAttribute DefaultAttributeUsage =
 			new AttributeUsageAttribute (AttributeTargets.All);
 

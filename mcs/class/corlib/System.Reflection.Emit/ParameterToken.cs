@@ -39,14 +39,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly ParameterToken Empty;
-
-
-		static ParameterToken ()
-		{
-			Empty = new ParameterToken ();
-		}
-
+		public static readonly ParameterToken Empty = new ParameterToken ();
 
 		internal ParameterToken (int val)
 		{

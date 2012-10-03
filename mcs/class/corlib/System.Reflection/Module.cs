@@ -53,8 +53,8 @@ namespace System.Reflection {
 #else
 	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
 #endif
-		public static readonly TypeFilter FilterTypeName;
-		public static readonly TypeFilter FilterTypeNameIgnoreCase;
+		public static readonly TypeFilter FilterTypeName = new TypeFilter (filter_by_type_name);
+		public static readonly TypeFilter FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
 	
 #pragma warning disable 649	
 		internal IntPtr _impl; /* a pointer to a MonoImage */
@@ -68,12 +68,6 @@ namespace System.Reflection {
 	
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
-		
-		static Module () {
-			FilterTypeName = new TypeFilter (filter_by_type_name);
-			FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
-		}
-
 
 #if NET_4_0 || MOONLIGHT || MOBILE
 		protected

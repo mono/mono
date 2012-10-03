@@ -52,12 +52,7 @@ namespace System.Runtime.InteropServices
 	{
 		/* fields */
 		public static readonly int SystemMaxDBCSCharSize = 2; // don't know what this is
-		public static readonly int SystemDefaultCharSize;
-
-		static Marshal ()
-		{
-			SystemDefaultCharSize = Environment.OSVersion.Platform == PlatformID.Win32NT ? 2 : 1;
-		}
+		public static readonly int SystemDefaultCharSize = Environment.OSVersion.Platform == PlatformID.Win32NT ? 2 : 1;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int AddRefInternal (IntPtr pUnk);

@@ -39,14 +39,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly TypeToken Empty;
-
-
-		static TypeToken ()
-		{
-			Empty = new TypeToken ();
-		}
-
+		public static readonly TypeToken Empty = new TypeToken ();
 
 		internal TypeToken (int val)
 		{

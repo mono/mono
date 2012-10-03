@@ -39,11 +39,6 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		static StringToken ()
-		{
-		}
-
-
 		internal StringToken (int val)
 		{
 			tokValue = val;

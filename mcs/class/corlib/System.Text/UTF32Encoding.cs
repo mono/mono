@@ -316,7 +316,7 @@ public sealed class UTF32Encoding : Encoding
 			return preamble;
 		}
 		
-		return empty;
+		return EmptyArray<byte>.Value;
 	}
 
 	// Determine if this object is equal to another.

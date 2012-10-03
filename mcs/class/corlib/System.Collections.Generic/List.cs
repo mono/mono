@@ -50,12 +50,11 @@ namespace System.Collections.Generic {
 		int _size;
 		int _version;
 		
-		static readonly T [] EmptyArray = new T [0]; 
 		const int DefaultCapacity = 4;
 		
 		public List ()
 		{
-			_items = EmptyArray;
+			_items = EmptyArray<T>.Value;
 		}
 		
 		public List (IEnumerable <T> collection)
@@ -66,7 +65,7 @@ namespace System.Collections.Generic {
 			// initialize to needed size (if determinable)
 			ICollection <T> c = collection as ICollection <T>;
 			if (c == null) {
-				_items = EmptyArray;
+				_items = EmptyArray<T>.Value;;
 				AddEnumerable (collection);
 			} else {
 				_size = c.Count;

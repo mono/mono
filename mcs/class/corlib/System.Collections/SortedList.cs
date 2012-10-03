@@ -618,9 +618,9 @@ namespace System.Collections {
 			private int size;
 			private EnumeratorMode mode;
 
-			bool invalid = false;
+			bool invalid;
 
-			private readonly static string xstr = "SortedList.Enumerator: snapshot out of sync.";
+			const string xstr = "SortedList.Enumerator: snapshot out of sync.";
 
 			public Enumerator (SortedList host, EnumeratorMode mode)
 			{

@@ -50,7 +50,7 @@ namespace System.Reflection
 		public abstract MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers);
 		public abstract PropertyInfo SelectProperty( BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers);
 
-		static Binder default_binder = new Default ();
+		static readonly Binder default_binder = new Default ();
 
 		internal static Binder DefaultBinder {
 			get {
