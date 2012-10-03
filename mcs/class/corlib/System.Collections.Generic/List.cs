@@ -10,7 +10,7 @@
 //
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 David Waite
-// Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
+// Copyright (C) 2011,2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -93,7 +93,7 @@ namespace System.Collections.Generic {
 			// we can speed things up by 25%
 			if (_size == _items.Length)
 				GrowIfNeeded (1);
-			_items [_size ++] = item;
+			Array.UnsafeStore (_items, _size++, item);
 			_version++;
 		}
 		
@@ -766,9 +766,9 @@ namespace System.Collections.Generic {
 				
 		[Serializable]
 		public struct Enumerator : IEnumerator <T>, IDisposable {
-			List <T> l;
+			readonly List<T> l;
 			int next;
-			int ver;
+			readonly int ver;
 
 			T current;
 
@@ -783,42 +783,39 @@ namespace System.Collections.Generic {
 			{
 			}
 
-			void VerifyState ()
-			{
-				if (ver != l._version)
-					throw new InvalidOperationException (
-						"Collection was modified; enumeration operation may not execute.");
-			}
-			
 			public bool MoveNext ()
 			{
-				VerifyState ();
+				var list = l;
 
-				if (next < 0)
-					return false;
-
-				if (next < l._size) {
-					current = l._items [next++];
+				if ((uint)next < (uint)list._size && ver == list._version) {
+					current = list._items [next++];
 					return true;
 				}
+
+				if (ver != l._version)
+					throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
 
 				next = -1;
 				return false;
 			}
-			
+
 			public T Current {
 				get { return current; }
 			}
 			
 			void IEnumerator.Reset ()
 			{
-				VerifyState ();
+				if (ver != l._version)
+					throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
+
 				next = 0;
 			}
 			
 			object IEnumerator.Current {
 				get {
-					VerifyState ();
+					if (ver != l._version)
+						throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
+
 					if (next <= 0)
 						throw new InvalidOperationException ();
 					return current;
