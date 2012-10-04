@@ -144,7 +144,9 @@ namespace IKVM.Reflection.Reader
 						ReadTables(br);
 						break;
 					default:
-						throw new BadImageFormatException("Unsupported stream: " + sh.Name);
+						// we ignore unknown streams, because the CLR does so too
+						// (and some obfuscators add bogus streams)
+						break;
 				}
 			}
 		}
