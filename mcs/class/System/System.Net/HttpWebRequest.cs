@@ -765,6 +765,9 @@ namespace System.Net
 
 			lock (locker)
 			{
+				if (getResponseCalled)
+					throw new InvalidOperationException ("The operation cannot be performed once the request has been submitted.");
+
 				if (asyncWrite != null) {
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
 								"method while a previous call is still in progress.");
