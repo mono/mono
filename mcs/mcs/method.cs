@@ -243,6 +243,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsAsync {
+			get {
+				return (Modifiers & Modifiers.ASYNC) != 0;
+			}
+		}
+
 		public bool IsExtensionMethod {
 			get {
 				return IsStatic && parameters.HasExtensionMethodType;

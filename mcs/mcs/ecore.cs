@@ -3,11 +3,11 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
-//   Marek Safar (marek.safar@seznam.cz)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
-// Copyright 2011 Xamarin Inc.
+// Copyright 2011-2012 Xamarin Inc.
 //
 //
 
@@ -1024,13 +1024,28 @@ namespace Mono.CSharp {
 			if (es == null)
 				Error_InvalidExpressionStatement (ec);
 
-			if (ec.CurrentAnonymousMethod is AsyncInitializer && !(e is Assign) &&
-				(e.Type.IsGenericTask || e.Type == ec.Module.PredefinedTypes.Task.TypeSpec)) {
-				ec.Report.Warning (4014, 1, e.Location,
-					"The statement is not awaited and execution of current method continues before the call is completed. Consider using `await' operator");
+			if (!(e is Assign) && (e.Type.IsGenericTask || e.Type == ec.Module.PredefinedTypes.Task.TypeSpec)) {
+				WarningAsyncWithoutWait (ec, e);
 			}
 
 			return es;
+		}
+
+		static void WarningAsyncWithoutWait (BlockContext bc, Expression e)
+		{
+			if (bc.CurrentAnonymousMethod is AsyncInitializer) {
+				bc.Report.Warning (4014, 1, e.Location,
+					"The statement is not awaited and execution of current method continues before the call is completed. Consider using `await' operator");
+				return;
+			}
+
+			var inv = e as Invocation;
+			if (inv != null && inv.MethodGroup != null && inv.MethodGroup.BestCandidate.IsAsync) {
+				// The warning won't be reported for imported methods to maintain warning compatiblity with csc 
+				bc.Report.Warning (4014, 1, e.Location,
+					"The statement is not awaited and execution of current method continues before the call is completed. Consider using `await' operator or calling `Wait' method");
+				return;
+			}
 		}
 
 		/// <summary>
