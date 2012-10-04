@@ -1052,17 +1052,28 @@ namespace MonoTests.System.IO
 	}
 
 #if NET_4_5
-		[Test]
-		public void FlushAsync ()
-		{
-			ManualResetEvent mre = new ManualResetEvent (false);
-			var m = new MockStream(true, false, true);
-			var w = new StreamWriter (m);
-			w.Write(1);
-			Assert.AreEqual (0L, m.Length, "#1");
-			var t = w.WriteLineAsync ();
-			Assert.IsTrue (t.Wait (1000), "#2");
+	[Test]
+	public void FlushAsync ()
+	{
+		ManualResetEvent mre = new ManualResetEvent (false);
+		var m = new MockStream(true, false, true);
+		var w = new StreamWriter (m);
+		w.Write(1);
+		Assert.AreEqual (0L, m.Length, "#1");
+		var t = w.WriteLineAsync ();
+		Assert.IsTrue (t.Wait (1000), "#2");
+	}
+
+	[Test]
+	public void KeepOpenWithDispose ()
+	{
+		var ms = new MemoryStream ();
+		using (StreamWriter writer = new StreamWriter (ms, new UTF8Encoding (false), 4096, true)) {
+			writer.Write ('X');
 		}
+
+		Assert.AreEqual (1, ms.Length);
+	}
 
 #endif
 

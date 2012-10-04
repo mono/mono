@@ -56,7 +56,6 @@ namespace System.IO {
 		private int decode_pos;
 
 		private bool iflush;
-		private bool DisposedAlready;
 		private bool preamble_done;
 
 #if NET_4_5
@@ -172,28 +171,22 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing) 
 		{
-			Exception exc = null;
-			if (!DisposedAlready && disposing && internalStream != null && !leave_open) {
-				try {
-					Flush();
-				} catch (Exception e) {
-					exc = e;
-				}
-				DisposedAlready = true;
-				try {
-					internalStream.Close ();
-				} catch (Exception e) {
-					if (exc == null)
-						exc = e;
-				}
-			}
+			if (byte_buf == null || !disposing)
+				return;
 
-			internalStream = null;
-			byte_buf = null;
-			internalEncoding = null;
-			decode_buf = null;
-			if (exc != null)
-				throw exc;
+			try {
+				Flush ();
+			} finally {
+				byte_buf = null;
+				internalEncoding = null;
+				decode_buf = null;
+
+				if (!leave_open) {
+					internalStream.Close ();
+				}
+
+				internalStream = null;
+			}
 		}
 
 		public override void Flush ()
@@ -340,7 +333,7 @@ namespace System.IO {
 
 		void CheckState ()
 		{
-			if (DisposedAlready)
+			if (byte_buf == null)
 				throw new ObjectDisposedException ("StreamWriter");
 
 #if NET_4_5
