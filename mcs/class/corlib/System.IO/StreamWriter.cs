@@ -326,11 +326,6 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-		~StreamWriter ()
-		{
-			Dispose(false);
-		}
-
 		void CheckState ()
 		{
 			if (byte_buf == null)
