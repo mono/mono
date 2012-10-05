@@ -499,7 +499,7 @@ namespace Mono.CSharp {
 
 			// Copy constraint from resolved part to partial container
 			spec.SpecialConstraint = tp.spec.SpecialConstraint;
-			spec.InterfacesDefined = tp.spec.InterfacesDefined;
+			spec.Interfaces = tp.spec.Interfaces;
 			spec.TypeArguments = tp.spec.TypeArguments;
 			spec.BaseType = tp.spec.BaseType;
 			

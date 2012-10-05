@@ -26879,6 +26879,26 @@
       </method>
     </type>
   </test>
+  <test name="gtest-partial-03.cs">
+    <type name="Variable">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test`1[T]">
+      <method name="Void .ctor(T)" attrs="6278">
+        <size>22</size>
+      </method>
+    </type>
+    <type name="CC">
+      <method name="Void Main()" attrs="150">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">
