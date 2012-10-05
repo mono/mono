@@ -51,9 +51,7 @@ namespace System.Threading {
 		internal IntPtr system_thread_handle;
 
 		/* Note this is an opaque object (an array), not a CultureInfo */
-		private object cached_culture_info; /*FIXME remove this on the next corlib version bump*/
-		private IntPtr unused0;
-		internal bool threadpool_thread;
+		private object cached_culture_info;
 		/* accessed only from unmanaged code */
 		private IntPtr name;
 		private int name_len; 
@@ -74,41 +72,41 @@ namespace System.Threading {
 		/* current System.Runtime.Remoting.Contexts.Context instance
 		   keep as an object to avoid triggering its class constructor when not needed */
 		private object current_appcontext;
-		internal int stack_size;
+		private object pending_exception;
+		private object root_domain_thread;
+		internal byte[] _serialized_principal;
+		internal int _serialized_principal_version;
 		private IntPtr appdomain_refs;
 		private int interruption_requested;
 		private IntPtr suspend_event;
 		private IntPtr suspended_event;
 		private IntPtr resume_event;
 		private IntPtr synch_cs;
+		internal bool threadpool_thread;
 		private bool thread_dump_requested;
-		private IntPtr end_stack;
 		private bool thread_interrupt_requested;
+		private IntPtr end_stack;
+		/* These are used from managed code */
+		internal int stack_size;
 		internal byte apartment_state;
 		internal volatile int critical_region_level;
+		internal int managed_id;
 		private int small_id;
 		private IntPtr manage_callback;
-		private object pending_exception;
-		/* This is the ExecutionContext that will be set by
-		   start_wrapper() in the runtime. */
-		private ExecutionContext ec_to_set;
-
 		private IntPtr interrupt_on_stop;
-
+		private IntPtr flags;
+		private IntPtr android_tid;
+		private IntPtr thread_pinning_ref;
+		private int ignore_next_signal;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
-		private IntPtr unused3;
-		private IntPtr unused4;
-		private IntPtr unused5;
-		internal int managed_id;
-		int ignore_next_signal;
+		private IntPtr unused0;
+		private IntPtr unused1;
+		private IntPtr unused2;
 		#endregion
 #pragma warning restore 169, 414, 649
-
-		internal byte[] _serialized_principal;
-		internal int _serialized_principal_version;
 
 		// Closes the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
