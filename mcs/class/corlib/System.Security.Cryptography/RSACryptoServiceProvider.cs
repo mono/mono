@@ -118,7 +118,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		private static bool useMachineKeyStore = false;
+		private static bool useMachineKeyStore;
 
 		public static bool UseMachineKeyStore {
 			get { return useMachineKeyStore; }

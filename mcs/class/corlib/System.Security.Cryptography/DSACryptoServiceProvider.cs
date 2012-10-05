@@ -135,7 +135,7 @@ namespace System.Security.Cryptography {
 			get { return "http://www.w3.org/2000/09/xmldsig#dsa-sha1"; }
 		}
 
-		private static bool useMachineKeyStore = false;
+		private static bool useMachineKeyStore;
 
 		public static bool UseMachineKeyStore {
 			get { return useMachineKeyStore; }

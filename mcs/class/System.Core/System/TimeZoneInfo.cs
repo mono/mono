@@ -136,7 +136,7 @@ namespace System
 			}
 		}
 #if LIBC
-		static string timeZoneDirectory = null;
+		static string timeZoneDirectory;
 		static string TimeZoneDirectory {
 			get {
 				if (timeZoneDirectory == null)
@@ -176,7 +176,7 @@ namespace System
 			return str.Substring (Istart, Iend-Istart+1);
 		}
 		
-		static RegistryKey timeZoneKey = null;
+		static RegistryKey timeZoneKey;
 		static RegistryKey TimeZoneKey {
 			get {
 				if (timeZoneKey != null)
@@ -190,7 +190,7 @@ namespace System
 			}
 		}
 		
-		static RegistryKey localZoneKey = null;
+		static RegistryKey localZoneKey;
 		static RegistryKey LocalZoneKey {
 			get {
 				if (localZoneKey != null)
@@ -587,7 +587,7 @@ namespace System
 		}
 
 		//FIXME: change this to a generic Dictionary and allow caching for FindSystemTimeZoneById
-		private static List<TimeZoneInfo> systemTimeZones = null;
+		private static List<TimeZoneInfo> systemTimeZones;
 		public static ReadOnlyCollection<TimeZoneInfo> GetSystemTimeZones ()
 		{
 			if (systemTimeZones == null) {
