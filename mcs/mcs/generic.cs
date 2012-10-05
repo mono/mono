@@ -790,7 +790,7 @@ namespace Mono.CSharp {
 			set {
 				ifaces_defined = value;
 				if (value != null && value.Length != 0)
-					ifaces = value;
+					ifaces = value.ToList();
 			}
 		}
 
