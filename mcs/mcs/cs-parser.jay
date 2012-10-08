@@ -965,6 +965,14 @@ constant_declaration
 		lbag.AddMember (current_field, mod_locations, GetLocation ($3), GetLocation ($9));
 		current_field = null;
 	  }
+	| opt_attributes 
+	  opt_modifiers
+	  CONST type error
+	  {
+		Error_SyntaxError (yyToken);
+
+		current_type.AddMember (new Const (current_type, (FullNamedExpression) $4, (Modifiers) $2, MemberName.Null, (Attributes) $1));
+	  }	
 	;
 	
 opt_constant_declarators
@@ -1190,10 +1198,7 @@ method_declaration
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 
-		// Add it early in the case of body being eof for full ast
-		Method m = (Method) $1;
-		async_block = (m.ModFlags & Modifiers.ASYNC) != 0;
-		current_type.AddMember (m);
+		// Was added earlier in the case of body being eof for full ast
 	  }
 	  method_body
 	  {
@@ -1232,26 +1237,36 @@ method_header
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
-		lexer.ConstraintsParsing = true;
-	  }
-	  opt_type_parameter_constraints_clauses
-	  {
-		lexer.ConstraintsParsing = false;
 		valid_param_mod = 0;
 		MemberName name = (MemberName) $4;
 		current_local_parameters = (ParametersCompiled) $7;
 
 		var method = Method.Create (current_type, (FullNamedExpression) $3, (Modifiers) $2,
-				     name, current_local_parameters, (Attributes) $1, $10 != null);
+				     name, current_local_parameters, (Attributes) $1);
 
-		if ($10 != null)
-			method.SetConstraints ((List<Constraints>) $10);
-				     
+		current_type.AddMember (method);
+
+		async_block = (method.ModFlags & Modifiers.ASYNC) != 0;
+
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
 
 		lbag.AddMember (method, mod_locations, GetLocation ($5), GetLocation ($8));
+
 		$$ = method;
+
+		lexer.ConstraintsParsing = true;
+	  }
+	  opt_type_parameter_constraints_clauses
+	  {
+		lexer.ConstraintsParsing = false;
+
+		if ($10 != null) {
+			var method = (Method) $9;
+			method.SetConstraints ((List<Constraints>) $10);
+		}
+
+		$$ = $9;
 	  }
 	| opt_attributes
 	  opt_modifiers
@@ -1282,7 +1297,9 @@ method_header
 		modifiers |= Modifiers.PARTIAL;
 
 		var method = Method.Create (current_type, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)),
-				     modifiers, name, current_local_parameters, (Attributes) $1, $11 != null);
+				     modifiers, name, current_local_parameters, (Attributes) $1);
+
+		current_type.AddMember (method);
 
 		if ($11 != null)
 			method.SetConstraints ((List<Constraints>) $11);
@@ -1304,7 +1321,9 @@ method_header
 			"Member modifier `{0}' must precede the member type and name", ModifiersExtensions.Name ((Modifiers) $4));
 
 		var method = Method.Create (current_type, (FullNamedExpression) $3,
-					    0, name, (ParametersCompiled) $7, (Attributes) $1, false);
+					    0, name, (ParametersCompiled) $7, (Attributes) $1);
+
+		current_type.AddMember (method);
 
 		current_local_parameters = (ParametersCompiled) $7;
 
@@ -1323,7 +1342,9 @@ method_header
 
 		MemberName name = (MemberName) $4;
 		var method = Method.Create (current_type, (FullNamedExpression) $3, (Modifiers) $2,
-									name, current_local_parameters, (Attributes) $1, false);
+									name, current_local_parameters, (Attributes) $1);
+
+		current_type.AddMember (method);
 
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -2305,6 +2326,14 @@ event_declaration
 		lbag.AppendToMember (current_event, GetLocation ($9));
 	  	current_event = null;	
 		current_local_parameters = null;
+	  }
+	| opt_attributes
+	  opt_modifiers
+	  EVENT type error
+	  {
+		Error_SyntaxError (yyToken);
+
+		current_type.AddMember (new EventField (current_type, (FullNamedExpression) $4, (Modifiers) $2, MemberName.Null, (Attributes) $1));
 	  }
 	;
 	

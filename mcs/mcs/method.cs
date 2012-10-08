@@ -852,15 +852,9 @@ namespace Mono.CSharp {
 		}
 
 		public static Method Create (TypeDefinition parent, FullNamedExpression returnType, Modifiers mod,
-				   MemberName name, ParametersCompiled parameters, Attributes attrs, bool hasConstraints)
+				   MemberName name, ParametersCompiled parameters, Attributes attrs)
 		{
 			var m = new Method (parent, returnType, mod, name, parameters, attrs);
-
-			if (hasConstraints && ((mod & Modifiers.OVERRIDE) != 0 || m.IsExplicitImpl)) {
-				m.Report.Error (460, m.Location,
-					"`{0}': Cannot specify constraints for overrides and explicit interface implementation methods",
-					m.GetSignatureForError ());
-			}
 
 			if ((mod & Modifiers.PARTIAL) != 0) {
 				const Modifiers invalid_partial_mod = Modifiers.AccessibilityMask | Modifiers.ABSTRACT | Modifiers.EXTERN |

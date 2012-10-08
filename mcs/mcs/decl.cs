@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 			caching_flags |= Flags.IsAssigned;
 		}
 
-		public void SetConstraints (List<Constraints> constraints_list)
+		public virtual void SetConstraints (List<Constraints> constraints_list)
 		{
 			var tparams = member_name.TypeParameters;
 			if (tparams == null) {

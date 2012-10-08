@@ -3432,6 +3432,16 @@ namespace Mono.CSharp
 			get { return IsExplicitImpl || base.IsUsed; }
 		}
 
+		public override void SetConstraints (List<Constraints> constraints_list)
+		{
+			if (((ModFlags & Modifiers.OVERRIDE) != 0 || IsExplicitImpl)) {
+				Report.Error (460, Location,
+					"`{0}': Cannot specify constraints for overrides and explicit interface implementation methods",
+					GetSignatureForError ());
+			}
+
+			base.SetConstraints (constraints_list);
+		}
 	}
 
 	public abstract class MemberBase : MemberCore
