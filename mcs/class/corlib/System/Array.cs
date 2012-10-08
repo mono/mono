@@ -1261,7 +1261,7 @@ namespace System
 				}
 				return;
 			default:
-				if (et.IsClass || et.IsInterface)
+				if (array is object[])
 					goto case TypeCode.Object;
 
 				// Very slow fallback
