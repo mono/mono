@@ -5,6 +5,8 @@
 ../corlib/System.Collections/CollectionDebuggerView.cs
 ../corlib/Mono/DataConverter.cs
 ../corlib/System.Threading.Tasks/CyclicDeque.cs
+../corlib/System.Threading.Tasks/IConcurrentDeque.cs
+../corlib/System.Threading.Tasks/PopResult.cs
 ../corlib/System.Threading/AtomicBoolean.cs
 
 Assembly/AssemblyInfo.cs
