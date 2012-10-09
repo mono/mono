@@ -454,7 +454,14 @@ namespace System.Net
 				SslPolicyErrors errors = 0;
 				X509Chain chain = null;
 				bool result = false;
-#if !MONOTOUCH
+#if MONOTOUCH
+				// The X509Chain is not really usable with MonoTouch (since the decision is not based on this data)
+				// However if someone wants to override the results (good or bad) from iOS then they will want all
+				// the certificates that the server provided (which generally does not include the root) so, only  
+				// if there's a user callback, we'll create the X509Chain but won't build it
+				// ref: https://bugzilla.xamarin.com/show_bug.cgi?id=7245
+				if (cb != null) {
+#endif
 				chain = new X509Chain ();
 				chain.ChainPolicy = new X509ChainPolicy ();
 				chain.ChainPolicy.RevocationMode = revocation_mode;
@@ -462,7 +469,9 @@ namespace System.Net
 					X509Certificate2 c2 = new X509Certificate2 (certs [i].RawData);
 					chain.ChainPolicy.ExtraStore.Add (c2);
 				}
-
+#if MONOTOUCH
+				}
+#else
 				try {
 					if (!chain.Build (leaf))
 						errors |= GetErrorsFromChain (chain);
