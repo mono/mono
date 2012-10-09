@@ -106,7 +106,9 @@ namespace Mono.Security.X509 {
 			IntPtr certArray = IntPtr.Zero;
 			IntPtr sslsecpolicy = IntPtr.Zero;
 			IntPtr host = IntPtr.Zero;
-			
+			IntPtr sectrust = IntPtr.Zero;
+			SecTrustResult result = SecTrustResult.Deny;
+
 			try {
 				for (int i = 0; i < certCount; i++)
 					cfDataPtrs [i] = MakeCFData (certificates [i].RawData);
@@ -119,19 +121,11 @@ namespace Mono.Security.X509 {
 				certArray = FromIntPtrs (secCerts);
 				host = CFStringCreateWithCharacters (IntPtr.Zero, hostName, hostName.Length);
 				sslsecpolicy = SecPolicyCreateSSL (true, host);
-				IntPtr sectrust;
-				int code = SecTrustCreateWithCertificates (certArray, sslsecpolicy, out sectrust);
-				if (code == 0){
-					SecTrustResult result;
-					code = SecTrustEvaluate (sectrust, out result);
-					if (code != 0)
-						return SecTrustResult.Deny;
 
-					CFRelease (sectrust);
-					
-					return result;
-				}
-				return SecTrustResult.Deny;
+				int code = SecTrustCreateWithCertificates (certArray, sslsecpolicy, out sectrust);
+				if (code == 0)
+					code = SecTrustEvaluate (sectrust, out result);
+				return result;
 			} finally {
 				for (int i = 0; i < certCount; i++)
 					if (cfDataPtrs [i] != IntPtr.Zero)
@@ -148,6 +142,8 @@ namespace Mono.Security.X509 {
 					CFRelease (sslsecpolicy);
 				if (host != IntPtr.Zero)
 					CFRelease (host);
+				if (sectrust != IntPtr.Zero)
+					CFRelease (sectrust);
 			}
 		}
 	}
