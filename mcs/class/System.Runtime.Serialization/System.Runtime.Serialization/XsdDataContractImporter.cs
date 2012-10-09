@@ -1,10 +1,12 @@
 //
 // XsdDataContractImporter.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (C) 2010 Novell, Inc.  http://www.novell.com
+//               2012 Xamarin, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +31,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -458,6 +461,11 @@ namespace System.Runtime.Serialization
 				return qn;
 			}
 
+			if (element.ElementSchemaType != null) {
+				if (IsCollectionType (element.ElementSchemaType))
+					elname = element.ElementSchemaType.QualifiedName;
+			}
+
 			// FIXME: use element to fill nillable and arrays.
 			var qname =
 				elname != null && !elname.Equals (QName.Empty) ? elname :
@@ -657,6 +665,43 @@ namespace System.Runtime.Serialization
 		}
 
 		// Returns false if it should remove the imported type.
+		bool IsCollectionType (XmlSchemaType type)
+		{
+			var complex = type as XmlSchemaComplexType;
+			if (complex == null)
+				return false;
+
+			var seq = complex.Particle as XmlSchemaSequence;
+			if (seq == null)
+				return false;
+
+			if (seq.Items.Count == 1 && seq.Items [0] is XmlSchemaAny && complex.Parent is XmlSchemaElement)
+				return false;
+
+			if (type.Annotation != null) {
+				foreach (var ann in type.Annotation.Items) {
+					var ai = ann as XmlSchemaAppInfo;
+					if (ai != null && ai.Markup != null &&
+					    ai.Markup.Length > 0 &&
+					    ai.Markup [0].NodeType == XmlNodeType.Element &&
+					    ai.Markup [0].LocalName == "IsDictionary" &&
+					    ai.Markup [0].NamespaceURI == KnownTypeCollection.MSSimpleNamespace)
+						return true;
+				}
+			}
+					
+			if (seq.Items.Count != 1)
+				return false;
+
+			var pt = (XmlSchemaParticle) seq.Items [0];
+			var xe = pt as XmlSchemaElement;
+			if (pt.MaxOccursString != "unbounded")
+				return false;
+
+			return !(pt is XmlSchemaAny);
+		}
+
+		// Returns false if it should remove the imported type.
 		bool ImportComplexType (CodeTypeDeclaration td, XmlSchemaSet schemas, XmlSchemaComplexType type, XmlQualifiedName qname)
 		{
 			foreach (XmlSchemaAttribute att in type.AttributeUses.Values)
@@ -721,6 +766,33 @@ namespace System.Runtime.Serialization
 				}
 			}
 
+			/*
+			 * Collection Type Support:
+			 * 
+			 * We need to distinguish between normal array/dictionary collections and
+			 * custom collection types which use [CollectionDataContract].
+			 * 
+			 * The name of a normal collection type starts with "ArrayOf" and uses the
+			 * element type's namespace.  We use the collection type directly and don't
+			 * generate a proxy class for these.
+			 * 
+			 * The collection type (and the base class or a custom collection's proxy type)
+			 * is dermined by 'ImportOptions.ReferencedCollectionTypes'.  The default is to
+			 * use an array for list collections and Dictionary<,> for dictionaries.
+			 * 
+			 * Note that my implementation currently only checks for generic type definitions
+			 * in the 'ImportOptions.ReferencedCollectionTypes' - it looks for something that
+			 * implements IEnumerable<T> or IDictionary<K,V>.  This is not complete, but it's
+			 * all that's necessary to support different collection types in a GUI.
+			 * 
+			 * Simply use
+			 *     var options = new ImportOptions ();
+			 *     options.ReferencedCollectionTypes.Add (typeof (LinkedList<>));
+			 *     options.ReferencedCollectionTypes.Add (typeof (SortedList<,>));
+			 * to configure these; see XsdDataContractImportTest2.cs for some examples.
+			 * 
+			 */
+
 			if (seq.Items.Count == 1) {
 				var pt = (XmlSchemaParticle) seq.Items [0];
 				var xe = pt as XmlSchemaElement;
@@ -734,24 +806,9 @@ namespace System.Runtime.Serialization
 						var v = seq2 != null && seq2.Items.Count == 2 ? seq2.Items [1] as XmlSchemaElement : null;
 						if (k == null || v == null)
 							throw new InvalidDataContractException (String.Format ("Invalid Dictionary contract type '{0}'. A Dictionary schema type must have a sequence particle which contains exactly two schema elements for key and value.", type.QualifiedName));
-						Import (schemas, k.ElementSchemaType);
-						Import (schemas, v.ElementSchemaType);
-						td.BaseTypes.Add (new CodeTypeReference ("System.Collections.Generic.Dictionary", GetCodeTypeReference (k.ElementSchemaType.QualifiedName), GetCodeTypeReference (v.ElementSchemaType.QualifiedName)));
-						AddTypeAttributes (td, type, xe, k, v);
-						return true;
-					} else if (type.QualifiedName.Namespace == KnownTypeCollection.MSArraysNamespace &&
-						   IsPredefinedType (xe.ElementSchemaType.QualifiedName)) {
-						// then this CodeTypeDeclaration is to be removed, and CodeTypeReference to this type should be an array instead.
-						var cti = imported_types.First (i => i.XsdType == type);
-						cti.ClrType = new CodeTypeReference (GetCodeTypeReference (xe.ElementSchemaType.QualifiedName), 1);
-					
-						return false;
+						return ImportCollectionType (td, schemas, type, k, v);
 					}
-					else
-						Import (schemas, xe.ElementSchemaType);
-					td.BaseTypes.Add (new CodeTypeReference ("System.Collections.Generic.List", GetCodeTypeReference (xe.ElementSchemaType.QualifiedName)));
-					AddTypeAttributes (td, type, xe);
-					return true;
+					return ImportCollectionType (td, schemas, type, xe);
 				}
 			}
 			if (isDictionary)
@@ -781,6 +838,92 @@ namespace System.Runtime.Serialization
 			AddExtensionData (td);
 
 			return true;
+		}
+
+		bool ImportCollectionType (CodeTypeDeclaration td, XmlSchemaSet schemas,
+		                           XmlSchemaComplexType type,
+		                           XmlSchemaElement key, XmlSchemaElement value)
+		{
+			Import (schemas, key.ElementSchemaType);
+			Import (schemas, value.ElementSchemaType);
+			var keyType = GetCodeTypeReference (key.ElementSchemaType.QualifiedName);
+			var valueType = GetCodeTypeReference (value.ElementSchemaType.QualifiedName);
+
+			var collectionType = GetDictionaryCollectionType ();
+			var baseTypeName = collectionType != null ?
+				collectionType.FullName : "System.Collections.Generic.Dictionary";
+
+			if (type.QualifiedName.Name.StartsWith ("ArrayOf")) {
+				// Standard collection, use the collection type instead of
+				// creating a proxy class.
+				var cti = imported_types.First (i => i.XsdType == type);
+				cti.ClrType = new CodeTypeReference (baseTypeName, keyType, valueType);
+				return false;
+			}
+
+			td.BaseTypes.Add (new CodeTypeReference (baseTypeName, keyType, valueType));
+			AddTypeAttributes (td, type, key);
+			AddTypeAttributes (td, type, value);
+			return true;
+		}
+
+		bool ImportCollectionType (CodeTypeDeclaration td, XmlSchemaSet schemas,
+		                           XmlSchemaComplexType type, XmlSchemaElement xe)
+		{
+			Import (schemas, xe.ElementSchemaType);
+			var element = GetCodeTypeReference (xe.ElementSchemaType.QualifiedName);
+
+			var collectionType = GetListCollectionType ();
+
+			if (type.QualifiedName.Name.StartsWith ("ArrayOf")) {
+				// Standard collection, use the collection type instead of
+				// creating a proxy class.
+				var cti = imported_types.First (i => i.XsdType == type);
+				if (collectionType != null)
+					cti.ClrType = new CodeTypeReference (collectionType.FullName, element);
+				else
+					cti.ClrType = new CodeTypeReference (element, 1);
+				return false;
+			}
+
+			var baseTypeName = collectionType != null ?
+				collectionType.FullName : "System.Collections.Generic.List";
+
+			td.BaseTypes.Add (new CodeTypeReference (baseTypeName, element));
+			AddTypeAttributes (td, type, xe);
+			return true;
+		}
+
+		bool ImplementsInterface (Type type, Type iface)
+		{
+			foreach (var i in type.GetInterfaces ()) {
+				if (i.Equals (iface))
+					return true;
+				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (iface))
+					return true;
+			}
+
+			return false;
+		}
+
+		Type GetListCollectionType ()
+		{
+			if (import_options == null)
+				return null;
+			var listTypes = import_options.ReferencedCollectionTypes.Where (
+				t => t.IsGenericTypeDefinition && t.GetGenericArguments ().Length == 1 &&
+				ImplementsInterface (t, typeof (IEnumerable<>)));
+			return listTypes.FirstOrDefault ();
+		}
+
+		Type GetDictionaryCollectionType ()
+		{
+			if (import_options == null)
+				return null;
+			var dictTypes = import_options.ReferencedCollectionTypes.Where (
+				t => t.IsGenericTypeDefinition && t.GetGenericArguments ().Length == 2 &&
+				ImplementsInterface (t, typeof (IDictionary<,>)));
+			return dictTypes.FirstOrDefault ();
 		}
 
 		static readonly CodeExpression this_expr = new CodeThisReferenceExpression ();
@@ -868,7 +1011,8 @@ namespace System.Runtime.Serialization
 
 		TypeImportInfo GetTypeInfo (XmlQualifiedName typeName, bool throwError)
 		{
-			var info = imported_types.FirstOrDefault (i => i.XsdTypeName.Equals (typeName));
+			var info = imported_types.FirstOrDefault (
+				i => i.XsdTypeName.Equals (typeName) || i.XsdType.QualifiedName.Equals (typeName));
 			if (info == null) {
 				if (throwError)
 					throw new InvalidOperationException (String.Format ("schema type '{0}' has not been imported yet. Import it first.", typeName));
