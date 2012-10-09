@@ -5642,6 +5642,17 @@ catch_clause
 		
 		$$ = new Catch (null, GetLocation ($1));
 	  }
+	| CATCH open_parens_any type opt_identifier CLOSE_PARENS error
+	  {
+		Error_SyntaxError (yyToken);
+
+		var c = new Catch (null, GetLocation ($1));
+		c.TypeExpression = (FullNamedExpression) $3;
+
+		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
+
+		$$ = c;
+	  }
 	;
 
 checked_statement
