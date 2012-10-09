@@ -87,6 +87,7 @@ System.Linq.Parallel/RangeList.cs
 System.Linq.Parallel/RepeatList.cs
 System.Linq.Parallel/ReverseList.cs
 System.Linq.Parallel/StripPartitioner.cs
+System.Linq.Parallel/TemporaryArea.cs
 System.Linq/EnumerableExecutor.cs
 System.Linq/EnumerableExecutor_T.cs
 System.Linq/EnumerableQuery.cs
