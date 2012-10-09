@@ -88,6 +88,8 @@ namespace System.ServiceModel.Description
 
 	abstract class MessageContractImporterInternal : IWsdlImportExtension
 	{
+		protected abstract void Init (WsdlImporter importer);
+
 		public void ImportContract (WsdlImporter importer,
 			WsdlContractConversionContext context)
 		{
@@ -97,6 +99,8 @@ namespace System.ServiceModel.Description
 				throw new ArgumentNullException ("context");
 			if (this.importer != null || this.context != null)
 				throw new SystemException ("INTERNAL ERROR: unexpected recursion of ImportContract method call");
+
+			Init (importer);
 
 			schema_set_in_use = new XmlSchemaSet ();
 			schema_set_in_use.Add (importer.XmlSchemas);
@@ -237,8 +241,14 @@ namespace System.ServiceModel.Description
 
 	class DataContractMessageContractImporterInternal : MessageContractImporterInternal
 	{
-		XsdDataContractImporter dc_importer = new XsdDataContractImporter ();
+		XsdDataContractImporter dc_importer;
 		
+		protected override void Init (WsdlImporter importer)
+		{
+			if (dc_importer == null)
+				dc_importer = importer.GetState<XsdDataContractImporter> ();
+		}
+
 		protected override void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, Message msg, MessagePart part)
 		{
 			XmlSchemaElement element = (XmlSchemaElement) schema_set_in_use.GlobalElements [qname];
@@ -325,13 +335,19 @@ namespace System.ServiceModel.Description
 
 	class XmlSerializerMessageContractImporterInternal : MessageContractImporterInternal
 	{
-		CodeCompileUnit ccu = new CodeCompileUnit ();
+		CodeCompileUnit ccu;
 		XmlSchemaSet schema_set_cache;
 		XmlSchemaImporter schema_importer;
 		XmlCodeExporter code_exporter;
 		
 		public CodeCompileUnit CodeCompileUnit {
 			get { return ccu; }
+		}
+
+		protected override void Init (WsdlImporter importer)
+		{
+			if (ccu == null)
+				ccu = importer.GetState<CodeCompileUnit> ();
 		}
 		
 		protected override void ImportPartsBySchemaElement (QName qname, List<MessagePartDescription> parts, Message msg, MessagePart msgPart)
