@@ -5646,8 +5646,15 @@ catch_clause
 	  {
 		Error_SyntaxError (yyToken);
 
+		// Required otherwise missing block could not be detected because
+		// start_block is run early
 		var c = new Catch (null, GetLocation ($1));
 		c.TypeExpression = (FullNamedExpression) $3;
+
+		if ($4 != null) {
+			var lt = (Tokenizer.LocatedToken) $4;
+			c.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
+		}
 
 		lbag.AddLocation (c, GetLocation ($2), GetLocation ($5));
 
