@@ -24294,6 +24294,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-lambda-30.cs">
+    <type name="C">
+      <method name="System.Object Method[T](System.Object[])" attrs="145">
+        <size>27</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>38</size>
+      </method>
+      <method name="System.Func`2[T,System.Object] &lt;Method`1&gt;m__0[T](System.Object)" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Method&gt;c__AnonStorey0`1[T]">
+      <method name="System.Object &lt;&gt;m__1(T)" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void Main()" attrs="150">
