@@ -47,6 +47,7 @@ common_dirs := \
 	System.Data			\
 	Accessibility			\
 	Mono.WebBrowser			\
+	System.Runtime.Serialization.Formatters.Soap \
 	Managed.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
@@ -54,7 +55,6 @@ common_dirs := \
 	Mono.Web			\
 	System.Web.Services		\
 	System.Web			\
-	System.Runtime.Serialization.Formatters.Soap \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
