@@ -6913,7 +6913,8 @@ public void parse ()
 		}
 			
 		if (e is yyParser.yyException) {
-			report.Error (-25, lexer.Location, "Parsing error");
+			if (report.Errors == 0)
+				report.Error (-25, lexer.Location, "Parsing error");
 		} else {
 			// Used by compiler-tester to test internal errors
 			if (yacc_verbose_flag > 0 || e is FatalException)
