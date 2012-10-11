@@ -40,7 +40,7 @@ using System.Diagnostics;
 
 namespace System.Collections.Generic {
 
-	[Serializable, HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
+	[Serializable]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback
