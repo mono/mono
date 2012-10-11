@@ -9,6 +9,7 @@ LIB_MCS_FLAGS = /unsafe \
 	/r:System.Data.dll /r:Mono.Posix.dll \
 	/r:Mono.WebBrowser \
 	/r:System.Configuration.dll \
+	/r:System.Runtime.Serialization.Formatters.Soap \
 	@System.Windows.Forms.dll.resources \
 	-nowarn:618,612,809
 
@@ -100,7 +101,7 @@ EXTRA_DISTFILES = \
 	$(IMAGES_RESOURCES) \
 	$(TEST_DISTFILES)
 
-TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll -r:System.dll -r:System.Xml.dll \
+TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.Formatters.Soap\
 	-resource:Test/resources/a.cur,a.cur \
 	-resource:Test/resources/32x32.ico,32x32.ico \
 	-nowarn:618,612

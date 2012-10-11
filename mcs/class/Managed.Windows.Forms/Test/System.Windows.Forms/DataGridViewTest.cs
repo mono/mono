@@ -790,8 +790,8 @@ namespace MonoTests.System.Windows.Forms
 
 				// Make sure the combo-box has the list of allowed
 				// items from the column.
-				string items = string.Join (",", itemList);
-				string expectedItems = string.Join (",", expectedItemList);
+				string items = string.Join (",", itemList.ToArray ());
+				string expectedItems = string.Join (",", expectedItemList.ToArray ());
 				Assert.AreEqual (expectedItems, items, "1-1");
 
 				// Make sure the combo-box has the right selected item.
@@ -2476,11 +2476,17 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (dgvr3.DataGridView, "#3");
 
 			DataGridView dgv = new DataGridView ();
+			// dgv needs column and cell or throws error
+			DataGridViewColumn  dgvc1 = new DataGridViewColumn ();
+			DataGridViewCell cell = new DataGridViewTextBoxCell ();
+			dgvc1.CellTemplate = cell;
+			dgv.Columns.Add (dgvc1);
+			
 			dgv.Rows.Add (dgvr1);
 			dgv.Rows.Add (dgvr2);
 			dgv.Rows.Add (dgvr3);
-
-			dgv.Clear ();
+			// was dgv.Clear () and that caused test build to fail
+			dgv.Rows.Clear (); // presumbly this was the intention?
 
 			Assert.IsNull (dgvr1.DataGridView, "#4");
 			Assert.IsNull (dgvr2.DataGridView, "#5");

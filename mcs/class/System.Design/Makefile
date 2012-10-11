@@ -17,7 +17,7 @@ LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Web.dll \
 	-r:Accessibility.dll -r:System.Data.dll \
 	-r:System.Configuration.dll
 	
-TEST_MCS_FLAGS = /r:System.dll
+TEST_MCS_FLAGS = /r:System.dll -r:System.Drawing.dll -r:System.Windows.Forms
 
 ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
 NO_SIGN_ASSEMBLY = yes
