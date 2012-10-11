@@ -3147,7 +3147,13 @@ invocation_expression
 		$$ = new Invocation ((Expression) $1, (Arguments) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-	
+	| primary_expression open_parens_any error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Invocation ((Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }	
 	;
 
 opt_object_or_collection_initializer
@@ -3732,6 +3738,13 @@ sizeof_expression
 		$$ = new SizeOf ((Expression) $3, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| SIZEOF open_parens_any type error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new SizeOf ((Expression) $3, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	;
 
 checked_expression
@@ -3740,6 +3753,12 @@ checked_expression
 		$$ = new CheckedExpr ((Expression) $3, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| CHECKED error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new CheckedExpr (null, GetLocation ($1));
+	  }
 	;
 
 unchecked_expression
@@ -3747,6 +3766,12 @@ unchecked_expression
 	  {
 		$$ = new UnCheckedExpr ((Expression) $3, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	| UNCHECKED error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new UnCheckedExpr (null, GetLocation ($1));
 	  }
 	;
 
@@ -3842,6 +3867,31 @@ unary_expression
 		
 		$$ = new Await ((Expression) $2, GetLocation ($1));
 	  }
+	| BANG error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Unary (Unary.Operator.LogicalNot, null, GetLocation ($1));
+	  }
+	| TILDE error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Unary (Unary.Operator.OnesComplement, null, GetLocation ($1));
+	  }
+	| OPEN_PARENS_CAST type CLOSE_PARENS error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Cast ((FullNamedExpression) $2, null, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3));
+	  }
+	| AWAIT error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Await (null, GetLocation ($1));
+	  }
 	;
 
 	//
@@ -3874,6 +3924,42 @@ prefixed_unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, GetLocation ($1));
 	  }
+	| PLUS error
+	  { 
+		Error_SyntaxError (yyToken);
+
+	  	$$ = new Unary (Unary.Operator.UnaryPlus, null, GetLocation ($1));
+	  } 
+	| MINUS error 
+	  { 
+		Error_SyntaxError (yyToken);
+
+		$$ = new Unary (Unary.Operator.UnaryNegation, null, GetLocation ($1));
+	  }
+	| OP_INC error 
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement, null, GetLocation ($1));
+	  }
+	| OP_DEC error 
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement, null, GetLocation ($1));
+	  }
+	| STAR error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Indirection (null, GetLocation ($1));
+	  }
+	| BITWISE_AND error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Unary (Unary.Operator.AddressOf, null, GetLocation ($1));
+	  }
 	;
 
 multiplicative_expression
@@ -3891,6 +3977,27 @@ multiplicative_expression
 	| multiplicative_expression PERCENT prefixed_unary_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Modulus, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| multiplicative_expression STAR error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.Multiply, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| multiplicative_expression DIV error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.Division, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| multiplicative_expression PERCENT error 
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.Modulus, (Expression) $1, null);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
@@ -3915,6 +4022,32 @@ additive_expression
 	  {
 		$$ = new Is ((Expression) $1, (Expression) $3, GetLocation ($2));
 	  }	  
+	| additive_expression PLUS error 
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.Addition, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| additive_expression MINUS error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| additive_expression AS error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new As ((Expression) $1, null, GetLocation ($2));
+	  }
+	| additive_expression IS error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Is ((Expression) $1, null, GetLocation ($2));
+	  }
 	;
 
 shift_expression
@@ -3927,6 +4060,20 @@ shift_expression
 	| shift_expression OP_SHIFT_RIGHT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.RightShift, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| shift_expression OP_SHIFT_LEFT error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.LeftShift, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| shift_expression OP_SHIFT_RIGHT error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.RightShift, (Expression) $1, null);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	; 
@@ -3953,6 +4100,34 @@ relational_expression
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| relational_expression OP_LT error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.LessThan, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| relational_expression OP_GT error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.GreaterThan, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| relational_expression OP_LE error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.LessThanOrEqual, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| relational_expression OP_GE error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	;
 
 equality_expression
@@ -3967,6 +4142,20 @@ equality_expression
 		$$ = new Binary (Binary.Operator.Inequality, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| equality_expression OP_EQ error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.Equality, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| equality_expression OP_NE error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.Inequality, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	; 
 
 and_expression
@@ -3974,6 +4163,13 @@ and_expression
 	| and_expression BITWISE_AND equality_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| and_expression BITWISE_AND error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.BitwiseAnd, (Expression) $1, null);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
@@ -3985,6 +4181,13 @@ exclusive_or_expression
 		$$ = new Binary (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| exclusive_or_expression CARRET error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.ExclusiveOr, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	;
 
 inclusive_or_expression
@@ -3992,6 +4195,13 @@ inclusive_or_expression
 	| inclusive_or_expression BITWISE_OR exclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| inclusive_or_expression BITWISE_OR error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.BitwiseOr, (Expression) $1, null);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
@@ -4003,6 +4213,13 @@ conditional_and_expression
 		$$ = new Binary (Binary.Operator.LogicalAnd, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| conditional_and_expression OP_AND error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.LogicalAnd, (Expression) $1, null);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	;
 
 conditional_or_expression
@@ -4010,6 +4227,13 @@ conditional_or_expression
 	| conditional_or_expression OP_OR conditional_and_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	| conditional_or_expression OP_OR error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Binary (Binary.Operator.LogicalOr, (Expression) $1, null);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
@@ -4028,7 +4252,7 @@ null_coalescing_expression
 
 conditional_expression
 	: null_coalescing_expression
-	| null_coalescing_expression INTERR expression COLON expression_or_error
+	| null_coalescing_expression INTERR expression COLON expression
 	  {
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
@@ -4036,7 +4260,15 @@ conditional_expression
 	| null_coalescing_expression INTERR expression error
 	  {
 		Error_SyntaxError (yyToken);
+
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
+	  }
+	| null_coalescing_expression INTERR expression COLON error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
 	  }
 	;
 
@@ -4148,32 +4380,36 @@ opt_lambda_parameter_list
 	;
 
 lambda_expression_body
-	: lambda_expression_body_simple
-	| block
-	;
-	
-lambda_expression_body_simple
 	: {
 		start_block (Location.Null);
 	  }
-	  expression_or_error	// Have to close block when error occurs
+	  expression	// All expressions must handle error or current block won't be restored and breaking ast completely
 	  {
 		Block b = end_block (Location.Null);
 		b.IsCompilerGenerated = true;
 		b.AddStatement (new ContextualReturn ((Expression) $2));
 		$$ = b;
 	  } 
+	| block
+	| error
+	  {
+	  	// Handles only cases like foo = x.FirstOrDefault (l => );
+	  	// where we must restore current_variable
+
+		Error_SyntaxError (yyToken);
+		$$ = null;
+	  }
 	;
-	
+
 expression_or_error
 	: expression
 	| error
 	  {
-		Error_SyntaxError (yyToken);	
-		$$ = EmptyExpression.Null;
+		Error_SyntaxError (yyToken);
+		$$ = null;
 	  }
 	;
-
+	
 lambda_expression
 	: IDENTIFIER ARROW 
 	  {
