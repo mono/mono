@@ -139,10 +139,14 @@ namespace System.IO.Packaging {
 
 		public static Uri GetRelativeUri (Uri sourcePartUri, Uri targetPartUri)
 		{
-			//Check.SourcePartUri (sourcePartUri);
-			//Check.TargetPartUri (targetPartUri);
+			Check.SourcePartUri (sourcePartUri);
+			Check.TargetPartUri (targetPartUri);
 
-			return sourcePartUri;
+			Uri uri = new Uri ("http://fake.com");
+			Uri a = new Uri (uri, sourcePartUri.AbsolutePath);
+			Uri b = new Uri (uri, targetPartUri.AbsolutePath);
+
+			return a.MakeRelativeUri(b);
 		}
 
 		public static Uri GetSourcePartUriFromRelationshipPartUri (Uri relationshipPartUri)

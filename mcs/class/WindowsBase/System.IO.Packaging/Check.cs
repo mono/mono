@@ -135,6 +135,12 @@ namespace System.IO.Packaging
 		{
 			NotNull(sourcePartUri, "sourcePartUri");
 		}
+
+		public static void TargetPartUri (Uri targetPartUri)
+		{
+			NotNull(targetPartUri, "targetPartUri");
+		}
+
 		public static void SourceUri (Uri sourceUri)
 		{
 			if (sourceUri == null)

@@ -230,6 +230,21 @@ namespace System.IO.Packaging.Tests {
 
             dest = new Uri ("/1/2/", UriKind.Relative);
             Assert.AreEqual (new Uri ("", UriKind.Relative), PackUriHelper.GetRelativeUri (src, src), "#4");
+
+            // See: http://msdn.microsoft.com/en-us/library/system.io.packaging.packurihelper.getrelativeuri.aspx
+
+            src = new Uri("/mydoc/markup/page.xml", UriKind.Relative);
+            dest = new Uri("/mydoc/markup/picture.jpg", UriKind.Relative);
+            Assert.AreEqual (new Uri ("picture.jpg", UriKind.Relative), PackUriHelper.GetRelativeUri (src, dest), "#5");
+
+            src = new Uri("/mydoc/markup/page.xml", UriKind.Relative);
+            dest = new Uri("/mydoc/picture.jpg", UriKind.Relative);
+            Assert.AreEqual (new Uri ("../picture.jpg", UriKind.Relative), PackUriHelper.GetRelativeUri (src, dest), "#6");
+
+            src = new Uri("/mydoc/markup/page.xml", UriKind.Relative);
+            dest = new Uri("/mydoc/images/picture.jpg", UriKind.Relative);
+            Assert.AreEqual (new Uri ("../images/picture.jpg", UriKind.Relative), PackUriHelper.GetRelativeUri (src, dest), "#7");
+
         }
 
         [Test]
