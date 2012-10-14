@@ -165,7 +165,7 @@ namespace System.IO.Packaging {
 				if (node.Attributes["TargetMode"] != null)
 					mode = (TargetMode) Enum.Parse (typeof(TargetMode), node.Attributes ["TargetMode"].Value);
 				
-				CreateRelationship (new Uri ("/" + node.Attributes["Target"].Value.ToString(), UriKind.Relative),
+				CreateRelationship (new Uri (node.Attributes["Target"].Value.ToString(), UriKind.Relative),
 				                    mode,
 				                    node.Attributes["Type"].Value.ToString (),
 				                    node.Attributes["Id"].Value.ToString (),
