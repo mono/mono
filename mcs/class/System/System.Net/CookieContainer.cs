@@ -364,9 +364,6 @@ namespace System.Net
 			// check for allowed sub-domains - without string allocations
 			if (!host.EndsWith (withoutDot, StringComparison.InvariantCultureIgnoreCase))
 				return false;
-			// mono.com -> www.mono.com is OK but supermono.com NOT OK
-			if (false && domain [0] == '.')
-				return true;
 			int p = host.Length - withoutDot.Length - 1;
 			if (p < 0)
 				return true;
