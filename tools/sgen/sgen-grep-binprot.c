@@ -31,6 +31,7 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_PTR_UPDATE: size = sizeof (SGenProtocolPtrUpdate); break;
 	case SGEN_PROTOCOL_CLEANUP: size = sizeof (SGenProtocolCleanup); break;
 	case SGEN_PROTOCOL_EMPTY: size = sizeof (SGenProtocolEmpty); break;
+	case SGEN_PROTOCOL_THREAD_SUSPEND: size = sizeof (SGenProtocolThreadSuspend); break;
 	case SGEN_PROTOCOL_THREAD_RESTART: size = sizeof (SGenProtocolThreadRestart); break;
 	case SGEN_PROTOCOL_THREAD_REGISTER: size = sizeof (SGenProtocolThreadRegister); break;
 	case SGEN_PROTOCOL_THREAD_UNREGISTER: size = sizeof (SGenProtocolThreadUnregister); break;
@@ -51,7 +52,7 @@ print_entry (int type, void *data)
 	switch (type) {
 	case SGEN_PROTOCOL_COLLECTION: {
 		SGenProtocolCollection *entry = data;
-		printf ("collection generation %d\n", entry->generation);
+		printf ("collection %d generation %d\n", entry->index, entry->generation);
 		break;
 	}
 	case SGEN_PROTOCOL_ALLOC: {
@@ -110,6 +111,11 @@ print_entry (int type, void *data)
 		printf ("empty start %p size %d\n", entry->start, entry->size);
 		break;
 	}
+	case SGEN_PROTOCOL_THREAD_SUSPEND: {
+		SGenProtocolThreadSuspend *entry = data;
+		printf ("thread_suspend thread %p ip %p\n", entry->thread, entry->stopped_ip);
+		break;
+	}
 	case SGEN_PROTOCOL_THREAD_RESTART: {
 		SGenProtocolThreadRestart *entry = data;
 		printf ("thread_restart thread %p\n", entry->thread);
@@ -147,6 +153,7 @@ is_match (gpointer ptr, int type, void *data)
 {
 	switch (type) {
 	case SGEN_PROTOCOL_COLLECTION:
+	case SGEN_PROTOCOL_THREAD_SUSPEND:
 	case SGEN_PROTOCOL_THREAD_RESTART:
 	case SGEN_PROTOCOL_THREAD_REGISTER:
 	case SGEN_PROTOCOL_THREAD_UNREGISTER:
