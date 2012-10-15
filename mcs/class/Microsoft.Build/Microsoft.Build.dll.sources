@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+Microsoft.Build.Construction/ElementLocation.cs
 Microsoft.Build.Construction/ProjectChooseElement.cs
 Microsoft.Build.Construction/ProjectCommentElement.cs
 Microsoft.Build.Construction/ProjectElementContainer.cs
@@ -48,6 +49,7 @@ Microsoft.Build.Execution/HostServices.cs
 Microsoft.Build.Execution/ITargetResult.cs
 Microsoft.Build.Execution/NodeAffinity.cs
 Microsoft.Build.Execution/ProjectInstance.cs
+Microsoft.Build.Execution/ProjectItemDefinitionInstance.cs
 Microsoft.Build.Execution/ProjectItemInstance.cs
 Microsoft.Build.Execution/ProjectMetadataInstance.cs
 Microsoft.Build.Execution/ProjectPropertyInstance.cs
