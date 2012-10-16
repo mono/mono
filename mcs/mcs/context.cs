@@ -95,6 +95,18 @@ namespace Mono.CSharp
 
 			if (rc.HasSet (ResolveContext.Options.CheckedScope))
 				flags |= ResolveContext.Options.CheckedScope;
+
+			if (rc.IsInProbingMode)
+				flags |= ResolveContext.Options.ProbingMode;
+
+			if (rc.HasSet (ResolveContext.Options.FieldInitializerScope))
+				flags |= ResolveContext.Options.FieldInitializerScope;
+
+			if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
+				flags |= ResolveContext.Options.ExpressionTreeConversion;
+
+			if (rc.HasSet (ResolveContext.Options.BaseInitializer))
+				flags |= ResolveContext.Options.BaseInitializer;
 		}
 
 		public override FlowBranching CurrentBranching {

@@ -1485,27 +1485,11 @@ namespace Mono.CSharp {
 			BlockContext aec = new BlockContext (ec, block, ReturnType);
 			aec.CurrentAnonymousMethod = ae;
 
-			ResolveContext.Options flags = 0;
-
 			var am = this as AnonymousMethodBody;
 
 			if (ec.HasSet (ResolveContext.Options.InferReturnType) && am != null) {
 				am.ReturnTypeInference = new TypeInferenceContext ();
 			}
-
-			if (ec.IsInProbingMode)
-				flags |= ResolveContext.Options.ProbingMode;
-
-			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope))
-				flags |= ResolveContext.Options.FieldInitializerScope;
-
-			if (ec.HasSet (ResolveContext.Options.ExpressionTreeConversion))
-				flags |= ResolveContext.Options.ExpressionTreeConversion;
-
-			if (ec.HasSet (ResolveContext.Options.BaseInitializer))
-				flags |= ResolveContext.Options.BaseInitializer;
-
-			aec.Set (flags);
 
 			var bc = ec as BlockContext;
 			if (bc != null)
