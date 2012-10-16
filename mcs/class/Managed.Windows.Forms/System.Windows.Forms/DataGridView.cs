@@ -2240,10 +2240,20 @@ namespace System.Windows.Forms {
 			int new_width = 0;
 			
 			if (rowHeadersWidthSizeMode == DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders) {
-				foreach (DataGridViewRow row in Rows)
-					if (row.Displayed)
+				bool anyRowsDisplayed = false;
+				foreach(DataGridViewRow row in Rows)
+					if(row.Displayed) {
+						anyRowsDisplayed = true;
 						new_width = Math.Max (new_width, row.HeaderCell.PreferredSize.Width);
-						
+					}
+	
+			        // if there are no rows which are displayed, we still have to set new_width
+				// to a value >= 4 as RowHeadersWidth will throw an exception otherwise	
+				if(!anyRowsDisplayed) {
+					foreach (DataGridViewRow row in Rows)
+							new_width = Math.Max (new_width, row.HeaderCell.PreferredSize.Width);
+			        }		
+				
 				if (RowHeadersWidth != new_width)
 					RowHeadersWidth = new_width;
 					
