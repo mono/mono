@@ -74,7 +74,7 @@ namespace System.Linq {
 
 			sorter.PerformSort ();
 
-			for (int i = 0; i < sorter.indexes.Length; i++)
+			for (int i = 0; i < sorter.elements.Length; i++)
 				yield return sorter.elements [i];
 		}
 	}
