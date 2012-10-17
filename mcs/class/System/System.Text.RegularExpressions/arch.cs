@@ -72,12 +72,7 @@ namespace System.Text.RegularExpressions {
 
 		// miscellaneous
 		
-		Info,			// pattern information
-		
-		JumpTest		// Jump if we didn't already go
-					// through this path with an alternative
-					// option (an "or" path).. i.e. so we
-					// don't do short circuit or
+		Info			// pattern information
 	}
 
 	[Flags]
