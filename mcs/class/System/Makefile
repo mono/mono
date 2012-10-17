@@ -27,6 +27,7 @@ ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
 PROFILE_2_OR_4 := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
+PROFILE_ANY_MOBILE := $(filter monotouch monodroid, $(PROFILE))
 NOT_SL := $(filter net_2_0 net_4_0 net_4_5 monotouch monodroid mobile, $(PROFILE))
 endif
 ifeq (2.1, $(FRAMEWORK_VERSION))
@@ -34,6 +35,9 @@ LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
 ifeq (moonlight_raw, $(PROFILE))
 LIB_MCS_FLAGS += -d:SECURITY_DEP
 endif
+endif
+ifeq (monotouch, $(PROFILE))
+LIB_MCS_FLAGS += -d:FULL_AOT_RUNTIME
 endif
 
 EXTRA_DISTFILES = \
@@ -106,6 +110,7 @@ CYCLIC_DEP_FILES += $(FILE_SECURITY_DEP)
 LIB_MCS_FLAGS += -d:SECURITY_DEP -r:Mono.Security.dll
 endif
 
+ifndef PROFILE_ANY_MOBILE
 # $(eval $(call cyclic-dep,System.Configuration.dll,CONFIGURATION_DEP))
 CYCLIC_DEPS += System.Configuration.dll
 ifndef USE_BOOT_COMPILE
@@ -114,6 +119,7 @@ endif
 ifdef FILE_CONFIGURATION_DEP
 CYCLIC_DEP_FILES += $(FILE_CONFIGURATION_DEP)
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP -r:System.Configuration.dll
+endif
 endif
 
 endif
