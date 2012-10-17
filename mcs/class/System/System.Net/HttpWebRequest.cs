@@ -1462,7 +1462,7 @@ namespace System.Net
 			if (isProxy && (proxy == null || proxy.Credentials == null))
 				return false;
 
-			string [] authHeaders = response.Headers.GetValues ( (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate");
+			string [] authHeaders = response.Headers.GetValues_internal ( (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate", false);
 			if (authHeaders == null || authHeaders.Length == 0)
 				return false;
 
