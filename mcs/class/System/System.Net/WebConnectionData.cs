@@ -40,7 +40,7 @@ namespace System.Net
 		public WebHeaderCollection Headers;
 		public Version Version;
 		public Stream stream;
-		public string Challenge;
+		public string[] Challenge;
 
 		public WebConnectionData ()
 		{

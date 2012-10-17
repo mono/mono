@@ -262,20 +262,25 @@ namespace System.Net
 
 			sb.Append ("\r\nHost: ");
 			sb.Append (request.Address.Authority);
-			string challenge = Data.Challenge;
+			var challenge = Data.Challenge;
 			Data.Challenge = null;
 			bool have_auth = (request.Headers ["Proxy-Authorization"] != null);
 			if (have_auth) {
 				sb.Append ("\r\nProxy-Authorization: ");
 				sb.Append (request.Headers ["Proxy-Authorization"]);
 			} else if (challenge != null && Data.StatusCode == 407) {
-				have_auth = true;
 				ICredentials creds = request.Proxy.Credentials;
-				Authorization auth = AuthenticationManager.Authenticate (challenge, request, creds);
-				if (auth != null) {
-					sb.Append ("\r\nProxy-Authorization: ");
-					sb.Append (auth.Message);
+				have_auth = true;
+				var creq = HttpWebRequest.Create (request.RequestUri);
+				creq.Method = "CONNECT";
+				for (int i = 0; i < challenge.Length; i++) {
+					var auth = AuthenticationManager.Authenticate (challenge [i], creq, creds);
+					if (auth != null) {
+						sb.Append ("\r\nProxy-Authorization: ");
+						sb.Append (auth.Message);
+					}
 				}
+				sb.Append ("\r\nProxy-Connection: Keep-Alive");
 			}
 			sb.Append ("\r\n\r\n");
 
@@ -287,7 +292,7 @@ namespace System.Net
 			WebHeaderCollection result = ReadHeaders (request, stream, out buffer, out status);
 			if (!have_auth && result != null && status == 407) { // Needs proxy auth
 				Data.StatusCode = status;
-				Data.Challenge = result ["Proxy-Authenticate"];
+				Data.Challenge = result.GetValues_internal ("Proxy-Authenticate", false);
 				return false;
 			} else if (status != 200) {
 				string msg = String.Format ("The remote server returned a {0} status code.", status);
