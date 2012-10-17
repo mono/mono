@@ -111,6 +111,18 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			
 			// Compression methods ( 0 = none )
 			this.Write((byte)this.Context.CompressionMethod);
+
+			// http://www.ietf.org/rfc/rfc3546.txt
+			TlsStream extensions = new TlsStream ();
+			byte[] server_name = System.Text.Encoding.UTF8.GetBytes (Context.ClientSettings.TargetHost);
+			extensions.Write ((short) 0x0000);			// ExtensionType: server_name (0)
+			extensions.Write ((short) (server_name.Length + 5));	// ServerNameList (length)
+			extensions.Write ((short) (server_name.Length + 3));	// ServerName (length)
+			extensions.Write ((byte) 0x00);				// NameType: host_name (0)
+			extensions.Write ((short) server_name.Length);		// HostName (length)
+			extensions.Write (server_name);				// HostName (UTF8)
+			this.Write ((short) extensions.Length);
+			this.Write (extensions.ToArray ());
 		}
 
 		#endregion
