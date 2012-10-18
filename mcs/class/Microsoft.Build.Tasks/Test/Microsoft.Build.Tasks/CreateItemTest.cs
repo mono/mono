@@ -265,8 +265,8 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			string projectdir = Path.Combine ("Test", "resources");
 			string basedir = "dir";
 			string aaa = PathCombine (basedir, "a", "aa", "aaa");
-			string bb = Path.Combine (basedir, "b", "bb");
-			string c = Path.Combine (basedir, "c");
+			string bb = PathCombine (basedir, "b", "bb");
+			string c = PathCombine (basedir, "c");
 
 			string[] dirs = { aaa, bb, c };
 			string[] files = {
@@ -321,7 +321,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 								PathCombine (aaa, "foo.dll"),
 								PathCombine (bb, "bar.dll"),
 								PathCombine (bb, "sample.txt"),
-								Path.Combine ("xyz.dll")
+								PathCombine ("xyz.dll")
 							  };
 
 			string documentString = @"
