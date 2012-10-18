@@ -78,10 +78,6 @@ if INSTALL_MONOTOUCH
 build_profiles += monotouch
 endif
 
-if INSTALL_MOBILE
-build_profiles += mobile
-endif
-
 test_profiles = $(build_profiles)
 
 endif
