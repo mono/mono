@@ -84,10 +84,12 @@ endif
 
 if BUILD_MCS
 
+MAKE_FLAGS=$(if $(V),,-s)
+
 # The write check is to foil 'make distcheck'
 all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
+	cd $(mcs_topdir) && $(MAKE) $(MAKE_FLAGS) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
 # override automake
 install: install-exec install-data

@@ -68,8 +68,7 @@ SN = :
 else
 ifeq ("$(SN)","")
 sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
-SN = $(Q) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
-SNFLAGS = -q
+SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
 endif
 endif
 
@@ -242,12 +241,12 @@ $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
-	$(SN) $(SNFLAGS) -R $@ $(LIBRARY_SNK)
+	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)
 	$(Q) cp $(build_lib) $@
-	$(SN) $(SNFLAGS) -v $@
+	$(Q) $(SN) -v $@
 	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
 	$(Q) test ! -f $(build_lib:.dll=.pdb) || mv $(build_lib:.dll=.pdb) $(the_lib:.dll=.pdb)
 endif
@@ -255,7 +254,7 @@ endif
 library_CLEAN_FILES += $(PROFILE)_aot.log
 
 ifdef PLATFORM_AOT_SUFFIX
-Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
+Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] $(notdir $(@))";)
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version --debug $(the_lib)
 endif
