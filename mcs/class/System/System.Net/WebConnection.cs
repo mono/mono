@@ -69,11 +69,20 @@ namespace System.Net
 		Queue queue;
 		bool reused;
 		int position;
-		bool busy;
-		HttpWebRequest priority_request;
+		bool busy;		
+		HttpWebRequest priority_request;		
 		NetworkCredential ntlm_credentials;
 		bool ntlm_authenticated;
 		bool unsafe_sharing;
+
+		enum NtlmAuthState
+		{
+			None,
+			Challenge,
+			Response
+		}
+		NtlmAuthState connect_ntlm_auth_state;
+		HttpWebRequest connect_request;
 
 		bool ssl;
 		bool certsAvailable;
@@ -241,7 +250,7 @@ namespace System.Net
 			}
 		}
 
-		bool CreateTunnel (HttpWebRequest request, Stream stream, out byte [] buffer)
+		bool CreateTunnel (HttpWebRequest request, Stream stream, out byte[] buffer)
 		{
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("CONNECT ");
@@ -256,26 +265,42 @@ namespace System.Net
 
 			sb.Append ("\r\nHost: ");
 			sb.Append (request.Address.Authority);
+
+			bool ntlm = false;
 			var challenge = Data.Challenge;
 			Data.Challenge = null;
-			bool have_auth = (request.Headers ["Proxy-Authorization"] != null);
+			var auth_header = request.Headers ["Proxy-Authorization"];
+			bool have_auth = auth_header != null;
 			if (have_auth) {
 				sb.Append ("\r\nProxy-Authorization: ");
-				sb.Append (request.Headers ["Proxy-Authorization"]);
+				sb.Append (auth_header);
+				ntlm = auth_header.ToUpper ().Contains ("NTLM");
 			} else if (challenge != null && Data.StatusCode == 407) {
 				ICredentials creds = request.Proxy.Credentials;
 				have_auth = true;
-				var creq = HttpWebRequest.Create (request.RequestUri);
-				creq.Method = "CONNECT";
+
+				if (connect_request == null) {
+					// create a CONNECT request to use with Authenticate
+					connect_request = (HttpWebRequest)WebRequest.Create ("http://" + request.Address.Host + ":" + request.Address.Port + "/");
+					connect_request.Method = "CONNECT";
+					connect_request.Credentials = creds;
+				}
+
 				for (int i = 0; i < challenge.Length; i++) {
-					var auth = AuthenticationManager.Authenticate (challenge [i], creq, creds);
+					var auth = AuthenticationManager.Authenticate (challenge [i], connect_request, creds);
 					if (auth != null) {
+						ntlm = (auth.Module.AuthenticationType == "NTLM");
 						sb.Append ("\r\nProxy-Authorization: ");
 						sb.Append (auth.Message);
 					}
 				}
-				sb.Append ("\r\nProxy-Connection: Keep-Alive");
 			}
+
+			if (ntlm) {
+				sb.Append ("\r\nProxy-Connection: keep-alive");
+				connect_ntlm_auth_state++;
+			}
+
 			sb.Append ("\r\n\r\n");
 
 			Data.StatusCode = 0;
@@ -283,8 +308,9 @@ namespace System.Net
 			stream.Write (connectBytes, 0, connectBytes.Length);
 
 			int status;
-			WebHeaderCollection result = ReadHeaders (request, stream, out buffer, out status);
-			if (!have_auth && result != null && status == 407) { // Needs proxy auth
+			WebHeaderCollection result = ReadHeaders (stream, out buffer, out status);
+			if ((!have_auth || connect_ntlm_auth_state == NtlmAuthState.Challenge) &&
+			    result != null && status == 407) { // Needs proxy auth
 				Data.StatusCode = status;
 				Data.Challenge = result.GetValues ("Proxy-Authenticate");
 				return false;
@@ -297,7 +323,7 @@ namespace System.Net
 			return (result != null);
 		}
 
-		WebHeaderCollection ReadHeaders (HttpWebRequest request, Stream stream, out byte [] retBuffer, out int status)
+		WebHeaderCollection ReadHeaders (Stream stream, out byte [] retBuffer, out int status)
 		{
 			retBuffer = null;
 			status = 200;
@@ -320,10 +346,25 @@ namespace System.Net
 				headers = new WebHeaderCollection ();
 				while (ReadLine (ms.GetBuffer (), ref start, (int) ms.Length, ref str)) {
 					if (str == null) {
-						if (ms.Length - start > 0) {
-							retBuffer = new byte [ms.Length - start];
-							Buffer.BlockCopy (ms.GetBuffer (), start, retBuffer, 0, retBuffer.Length);
+						int contentLen = 0;
+						try	{
+							contentLen = int.Parse(headers["Content-Length"]);
 						}
+						catch {
+							contentLen = 0;
+						}
+
+						if (ms.Length - start - contentLen > 0)	{
+							// we've read more data than the response header and conents,
+							// give back extra data to the caller
+							retBuffer = new byte[ms.Length - start - contentLen];
+							Buffer.BlockCopy(ms.GetBuffer(), start + contentLen, retBuffer, 0, retBuffer.Length);
+						}
+						else {
+							// haven't read in some or all of the contents for the response, do so now
+							FlushContents(stream, contentLen - (int)(ms.Length - start));
+						}
+
 						return headers;
 					}
 
@@ -340,6 +381,20 @@ namespace System.Net
 
 					status = (int) UInt32.Parse (str.Substring (spaceidx + 1, 3));
 					gotStatus = true;
+				}
+			}
+		}
+
+		void FlushContents(Stream stream, int contentLength)
+		{
+			while (contentLength > 0) {
+				byte[] contentBuffer = new byte[contentLength];
+				int bytesRead = stream.Read(contentBuffer, 0, contentLength);
+				if (bytesRead > 0) {
+					contentLength -= bytesRead;
+				}
+				else {
+					break;
 				}
 			}
 		}
@@ -1092,6 +1147,9 @@ namespace System.Net
 				Data = new WebConnectionData ();
 				if (sendNext)
 					SendNext ();
+				
+				connect_request = null;
+				connect_ntlm_auth_state = NtlmAuthState.None;
 			}
 		}
 
