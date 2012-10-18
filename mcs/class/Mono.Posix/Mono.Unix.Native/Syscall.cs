@@ -2198,24 +2198,26 @@ namespace Mono.Unix.Native {
         
 		public static Group [] getgrouplist (string username)
 		{
+			if (String.IsNullOrEmpty(username))
+				return new Group[0];
 			// Syscall to getpwnam to retrieve user uid
 			Passwd pw = Syscall.getpwnam (username);
 			if (pw == null) 
 				return new Group [0];
-			// initialising the lngroups by 1 to get the group count
+			// initializing ngroups by 1 to get the group count
 			int ngroups = 1;
+			int res = -1;
 			// allocating buffer to store group uid's
 			uint [] groups = new uint [ngroups];
-			int res = sys_getgrouplist (username, pw.pw_gid, groups, ref ngroups);
-			if (res == -1) {
-				// using value ngroups to resize buffer.
-				Array.Resize(ref groups, ngroups);
+			do {
 				res = sys_getgrouplist (username, pw.pw_gid, groups, ref ngroups);
-				if (res == -1) 
-					return new Group [0];
+				if (res == -1) {
+					ngroups *=2;
+					Array.Resize(ref groups, ngroups);
+				}
 			}
-
-			Group [] result = new Group [ngroups];
+			while (res == -1);
+			Group [] result = new Group [res];
 			for (int i = 0; i < res; i++) 
 				result [i] = Syscall.getgrgid (groups [i]);
 			return result;
