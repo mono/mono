@@ -171,6 +171,9 @@ mcs-compileall: mono-wrapper etc/mono/config
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
+# Compile all mcs tests
+test: mcs-do-test-profiles
+
 CLEANFILES = etc/mono/config
 
 # depend on $(symlinks) to ensure 'etc/mono' directory exists
