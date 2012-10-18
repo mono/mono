@@ -1,9 +1,11 @@
 <Type Name="SysconfName" FullName="Mono.Unix.Native.SysconfName">
   <TypeSignature Language="C#" Value="public enum SysconfName" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SysconfName extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -20,2817 +22,3219 @@
   <Members>
     <Member MemberName="_SC_2_C_BIND">
       <MemberSignature Language="C#" Value="_SC_2_C_BIND" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_C_BIND = int32(47)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_C_DEV">
       <MemberSignature Language="C#" Value="_SC_2_C_DEV" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_C_DEV = int32(48)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_C_VERSION">
       <MemberSignature Language="C#" Value="_SC_2_C_VERSION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_C_VERSION = int32(96)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_CHAR_TERM">
       <MemberSignature Language="C#" Value="_SC_2_CHAR_TERM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_CHAR_TERM = int32(95)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_FORT_DEV">
       <MemberSignature Language="C#" Value="_SC_2_FORT_DEV" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_FORT_DEV = int32(49)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_FORT_RUN">
       <MemberSignature Language="C#" Value="_SC_2_FORT_RUN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_FORT_RUN = int32(50)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_LOCALEDEF">
       <MemberSignature Language="C#" Value="_SC_2_LOCALEDEF" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_LOCALEDEF = int32(52)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_PBS">
       <MemberSignature Language="C#" Value="_SC_2_PBS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_PBS = int32(168)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_PBS_ACCOUNTING">
       <MemberSignature Language="C#" Value="_SC_2_PBS_ACCOUNTING" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_PBS_ACCOUNTING = int32(169)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_PBS_CHECKPOINT">
       <MemberSignature Language="C#" Value="_SC_2_PBS_CHECKPOINT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_PBS_CHECKPOINT = int32(175)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_PBS_LOCATE">
       <MemberSignature Language="C#" Value="_SC_2_PBS_LOCATE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_PBS_LOCATE = int32(170)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_PBS_MESSAGE">
       <MemberSignature Language="C#" Value="_SC_2_PBS_MESSAGE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_PBS_MESSAGE = int32(171)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_PBS_TRACK">
       <MemberSignature Language="C#" Value="_SC_2_PBS_TRACK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_PBS_TRACK = int32(172)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_SW_DEV">
       <MemberSignature Language="C#" Value="_SC_2_SW_DEV" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_SW_DEV = int32(51)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_UPE">
       <MemberSignature Language="C#" Value="_SC_2_UPE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_UPE = int32(97)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_2_VERSION">
       <MemberSignature Language="C#" Value="_SC_2_VERSION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_2_VERSION = int32(46)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_ADVISORY_INFO">
       <MemberSignature Language="C#" Value="_SC_ADVISORY_INFO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_ADVISORY_INFO = int32(132)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_AIO_LISTIO_MAX">
       <MemberSignature Language="C#" Value="_SC_AIO_LISTIO_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_AIO_LISTIO_MAX = int32(23)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_AIO_MAX">
       <MemberSignature Language="C#" Value="_SC_AIO_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_AIO_MAX = int32(24)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_AIO_PRIO_DELTA_MAX">
       <MemberSignature Language="C#" Value="_SC_AIO_PRIO_DELTA_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_AIO_PRIO_DELTA_MAX = int32(25)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_ARG_MAX">
       <MemberSignature Language="C#" Value="_SC_ARG_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_ARG_MAX = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_ASYNCHRONOUS_IO">
       <MemberSignature Language="C#" Value="_SC_ASYNCHRONOUS_IO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_ASYNCHRONOUS_IO = int32(12)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_ATEXIT_MAX">
       <MemberSignature Language="C#" Value="_SC_ATEXIT_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_ATEXIT_MAX = int32(87)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_AVPHYS_PAGES">
       <MemberSignature Language="C#" Value="_SC_AVPHYS_PAGES" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_AVPHYS_PAGES = int32(86)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_BARRIERS">
       <MemberSignature Language="C#" Value="_SC_BARRIERS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_BARRIERS = int32(133)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_BASE">
       <MemberSignature Language="C#" Value="_SC_BASE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_BASE = int32(134)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_BC_BASE_MAX">
       <MemberSignature Language="C#" Value="_SC_BC_BASE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_BC_BASE_MAX = int32(36)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_BC_DIM_MAX">
       <MemberSignature Language="C#" Value="_SC_BC_DIM_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_BC_DIM_MAX = int32(37)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_BC_SCALE_MAX">
       <MemberSignature Language="C#" Value="_SC_BC_SCALE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_BC_SCALE_MAX = int32(38)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_BC_STRING_MAX">
       <MemberSignature Language="C#" Value="_SC_BC_STRING_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_BC_STRING_MAX = int32(39)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_C_LANG_SUPPORT">
       <MemberSignature Language="C#" Value="_SC_C_LANG_SUPPORT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_C_LANG_SUPPORT = int32(135)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_C_LANG_SUPPORT_R">
       <MemberSignature Language="C#" Value="_SC_C_LANG_SUPPORT_R" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_C_LANG_SUPPORT_R = int32(136)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CHAR_BIT">
       <MemberSignature Language="C#" Value="_SC_CHAR_BIT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CHAR_BIT = int32(101)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CHAR_MAX">
       <MemberSignature Language="C#" Value="_SC_CHAR_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CHAR_MAX = int32(102)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CHAR_MIN">
       <MemberSignature Language="C#" Value="_SC_CHAR_MIN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CHAR_MIN = int32(103)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CHARCLASS_NAME_MAX">
       <MemberSignature Language="C#" Value="_SC_CHARCLASS_NAME_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CHARCLASS_NAME_MAX = int32(45)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CHILD_MAX">
       <MemberSignature Language="C#" Value="_SC_CHILD_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CHILD_MAX = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CLK_TCK">
       <MemberSignature Language="C#" Value="_SC_CLK_TCK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CLK_TCK = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CLOCK_SELECTION">
       <MemberSignature Language="C#" Value="_SC_CLOCK_SELECTION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CLOCK_SELECTION = int32(137)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_COLL_WEIGHTS_MAX">
       <MemberSignature Language="C#" Value="_SC_COLL_WEIGHTS_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_COLL_WEIGHTS_MAX = int32(40)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_CPUTIME">
       <MemberSignature Language="C#" Value="_SC_CPUTIME" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_CPUTIME = int32(138)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_DELAYTIMER_MAX">
       <MemberSignature Language="C#" Value="_SC_DELAYTIMER_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_DELAYTIMER_MAX = int32(26)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_DEVICE_IO">
       <MemberSignature Language="C#" Value="_SC_DEVICE_IO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_DEVICE_IO = int32(140)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_DEVICE_SPECIFIC">
       <MemberSignature Language="C#" Value="_SC_DEVICE_SPECIFIC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_DEVICE_SPECIFIC = int32(141)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_DEVICE_SPECIFIC_R">
       <MemberSignature Language="C#" Value="_SC_DEVICE_SPECIFIC_R" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_DEVICE_SPECIFIC_R = int32(142)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_EQUIV_CLASS_MAX">
       <MemberSignature Language="C#" Value="_SC_EQUIV_CLASS_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_EQUIV_CLASS_MAX = int32(41)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_EXPR_NEST_MAX">
       <MemberSignature Language="C#" Value="_SC_EXPR_NEST_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_EXPR_NEST_MAX = int32(42)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_FD_MGMT">
       <MemberSignature Language="C#" Value="_SC_FD_MGMT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_FD_MGMT = int32(143)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_FIFO">
       <MemberSignature Language="C#" Value="_SC_FIFO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_FIFO = int32(144)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_FILE_ATTRIBUTES">
       <MemberSignature Language="C#" Value="_SC_FILE_ATTRIBUTES" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_FILE_ATTRIBUTES = int32(146)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_FILE_LOCKING">
       <MemberSignature Language="C#" Value="_SC_FILE_LOCKING" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_FILE_LOCKING = int32(147)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_FILE_SYSTEM">
       <MemberSignature Language="C#" Value="_SC_FILE_SYSTEM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_FILE_SYSTEM = int32(148)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_FSYNC">
       <MemberSignature Language="C#" Value="_SC_FSYNC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_FSYNC = int32(15)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_GETGR_R_SIZE_MAX">
       <MemberSignature Language="C#" Value="_SC_GETGR_R_SIZE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_GETGR_R_SIZE_MAX = int32(69)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_GETPW_R_SIZE_MAX">
       <MemberSignature Language="C#" Value="_SC_GETPW_R_SIZE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_GETPW_R_SIZE_MAX = int32(70)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_HOST_NAME_MAX">
       <MemberSignature Language="C#" Value="_SC_HOST_NAME_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_HOST_NAME_MAX = int32(180)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_INT_MAX">
       <MemberSignature Language="C#" Value="_SC_INT_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_INT_MAX = int32(104)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_INT_MIN">
       <MemberSignature Language="C#" Value="_SC_INT_MIN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_INT_MIN = int32(105)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_IOV_MAX">
       <MemberSignature Language="C#" Value="_SC_IOV_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_IOV_MAX = int32(60)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_JOB_CONTROL">
       <MemberSignature Language="C#" Value="_SC_JOB_CONTROL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_JOB_CONTROL = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL1_DCACHE_ASSOC">
       <MemberSignature Language="C#" Value="_SC_LEVEL1_DCACHE_ASSOC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL1_DCACHE_ASSOC = int32(189)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL1_DCACHE_LINESIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL1_DCACHE_LINESIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL1_DCACHE_LINESIZE = int32(190)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL1_DCACHE_SIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL1_DCACHE_SIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL1_DCACHE_SIZE = int32(188)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL1_ICACHE_ASSOC">
       <MemberSignature Language="C#" Value="_SC_LEVEL1_ICACHE_ASSOC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL1_ICACHE_ASSOC = int32(186)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL1_ICACHE_LINESIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL1_ICACHE_LINESIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL1_ICACHE_LINESIZE = int32(187)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL1_ICACHE_SIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL1_ICACHE_SIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL1_ICACHE_SIZE = int32(185)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL2_CACHE_ASSOC">
       <MemberSignature Language="C#" Value="_SC_LEVEL2_CACHE_ASSOC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL2_CACHE_ASSOC = int32(192)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL2_CACHE_LINESIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL2_CACHE_LINESIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL2_CACHE_LINESIZE = int32(193)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL2_CACHE_SIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL2_CACHE_SIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL2_CACHE_SIZE = int32(191)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL3_CACHE_ASSOC">
       <MemberSignature Language="C#" Value="_SC_LEVEL3_CACHE_ASSOC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL3_CACHE_ASSOC = int32(195)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL3_CACHE_LINESIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL3_CACHE_LINESIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL3_CACHE_LINESIZE = int32(196)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL3_CACHE_SIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL3_CACHE_SIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL3_CACHE_SIZE = int32(194)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL4_CACHE_ASSOC">
       <MemberSignature Language="C#" Value="_SC_LEVEL4_CACHE_ASSOC" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL4_CACHE_ASSOC = int32(198)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL4_CACHE_LINESIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL4_CACHE_LINESIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL4_CACHE_LINESIZE = int32(199)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LEVEL4_CACHE_SIZE">
       <MemberSignature Language="C#" Value="_SC_LEVEL4_CACHE_SIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LEVEL4_CACHE_SIZE = int32(197)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LINE_MAX">
       <MemberSignature Language="C#" Value="_SC_LINE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LINE_MAX = int32(43)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LOGIN_NAME_MAX">
       <MemberSignature Language="C#" Value="_SC_LOGIN_NAME_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LOGIN_NAME_MAX = int32(71)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_LONG_BIT">
       <MemberSignature Language="C#" Value="_SC_LONG_BIT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_LONG_BIT = int32(106)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MAPPED_FILES">
       <MemberSignature Language="C#" Value="_SC_MAPPED_FILES" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MAPPED_FILES = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MB_LEN_MAX">
       <MemberSignature Language="C#" Value="_SC_MB_LEN_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MB_LEN_MAX = int32(108)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MEMLOCK">
       <MemberSignature Language="C#" Value="_SC_MEMLOCK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MEMLOCK = int32(17)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MEMLOCK_RANGE">
       <MemberSignature Language="C#" Value="_SC_MEMLOCK_RANGE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MEMLOCK_RANGE = int32(18)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MEMORY_PROTECTION">
       <MemberSignature Language="C#" Value="_SC_MEMORY_PROTECTION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MEMORY_PROTECTION = int32(19)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MESSAGE_PASSING">
       <MemberSignature Language="C#" Value="_SC_MESSAGE_PASSING" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MESSAGE_PASSING = int32(20)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MONOTONIC_CLOCK">
       <MemberSignature Language="C#" Value="_SC_MONOTONIC_CLOCK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MONOTONIC_CLOCK = int32(149)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MQ_OPEN_MAX">
       <MemberSignature Language="C#" Value="_SC_MQ_OPEN_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MQ_OPEN_MAX = int32(27)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MQ_PRIO_MAX">
       <MemberSignature Language="C#" Value="_SC_MQ_PRIO_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MQ_PRIO_MAX = int32(28)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_MULTI_PROCESS">
       <MemberSignature Language="C#" Value="_SC_MULTI_PROCESS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_MULTI_PROCESS = int32(150)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NETWORKING">
       <MemberSignature Language="C#" Value="_SC_NETWORKING" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NETWORKING = int32(152)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NGROUPS_MAX">
       <MemberSignature Language="C#" Value="_SC_NGROUPS_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NGROUPS_MAX = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NL_ARGMAX">
       <MemberSignature Language="C#" Value="_SC_NL_ARGMAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NL_ARGMAX = int32(119)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NL_LANGMAX">
       <MemberSignature Language="C#" Value="_SC_NL_LANGMAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NL_LANGMAX = int32(120)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NL_MSGMAX">
       <MemberSignature Language="C#" Value="_SC_NL_MSGMAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NL_MSGMAX = int32(121)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NL_NMAX">
       <MemberSignature Language="C#" Value="_SC_NL_NMAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NL_NMAX = int32(122)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NL_SETMAX">
       <MemberSignature Language="C#" Value="_SC_NL_SETMAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NL_SETMAX = int32(123)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NL_TEXTMAX">
       <MemberSignature Language="C#" Value="_SC_NL_TEXTMAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NL_TEXTMAX = int32(124)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NPROCESSORS_CONF">
       <MemberSignature Language="C#" Value="_SC_NPROCESSORS_CONF" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NPROCESSORS_CONF = int32(83)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NPROCESSORS_ONLN">
       <MemberSignature Language="C#" Value="_SC_NPROCESSORS_ONLN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NPROCESSORS_ONLN = int32(84)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_NZERO">
       <MemberSignature Language="C#" Value="_SC_NZERO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_NZERO = int32(109)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_OPEN_MAX">
       <MemberSignature Language="C#" Value="_SC_OPEN_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_OPEN_MAX = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PAGESIZE">
       <MemberSignature Language="C#" Value="_SC_PAGESIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PAGESIZE = int32(30)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PASS_MAX">
       <MemberSignature Language="C#" Value="_SC_PASS_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PASS_MAX = int32(88)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PHYS_PAGES">
       <MemberSignature Language="C#" Value="_SC_PHYS_PAGES" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PHYS_PAGES = int32(85)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII">
       <MemberSignature Language="C#" Value="_SC_PII" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII = int32(53)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_INTERNET">
       <MemberSignature Language="C#" Value="_SC_PII_INTERNET" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_INTERNET = int32(56)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_INTERNET_DGRAM">
       <MemberSignature Language="C#" Value="_SC_PII_INTERNET_DGRAM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_INTERNET_DGRAM = int32(62)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_INTERNET_STREAM">
       <MemberSignature Language="C#" Value="_SC_PII_INTERNET_STREAM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_INTERNET_STREAM = int32(61)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_OSI">
       <MemberSignature Language="C#" Value="_SC_PII_OSI" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_OSI = int32(57)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_OSI_CLTS">
       <MemberSignature Language="C#" Value="_SC_PII_OSI_CLTS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_OSI_CLTS = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_OSI_COTS">
       <MemberSignature Language="C#" Value="_SC_PII_OSI_COTS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_OSI_COTS = int32(63)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_OSI_M">
       <MemberSignature Language="C#" Value="_SC_PII_OSI_M" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_OSI_M = int32(65)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_SOCKET">
       <MemberSignature Language="C#" Value="_SC_PII_SOCKET" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_SOCKET = int32(55)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PII_XTI">
       <MemberSignature Language="C#" Value="_SC_PII_XTI" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PII_XTI = int32(54)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PIPE">
       <MemberSignature Language="C#" Value="_SC_PIPE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PIPE = int32(145)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_POLL">
       <MemberSignature Language="C#" Value="_SC_POLL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_POLL = int32(58)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PRIORITIZED_IO">
       <MemberSignature Language="C#" Value="_SC_PRIORITIZED_IO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PRIORITIZED_IO = int32(13)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_PRIORITY_SCHEDULING">
       <MemberSignature Language="C#" Value="_SC_PRIORITY_SCHEDULING" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_PRIORITY_SCHEDULING = int32(10)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_RE_DUP_MAX">
       <MemberSignature Language="C#" Value="_SC_RE_DUP_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_RE_DUP_MAX = int32(44)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_READER_WRITER_LOCKS">
       <MemberSignature Language="C#" Value="_SC_READER_WRITER_LOCKS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_READER_WRITER_LOCKS = int32(153)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_REALTIME_SIGNALS">
       <MemberSignature Language="C#" Value="_SC_REALTIME_SIGNALS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_REALTIME_SIGNALS = int32(9)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_REGEX_VERSION">
       <MemberSignature Language="C#" Value="_SC_REGEX_VERSION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_REGEX_VERSION = int32(156)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_REGEXP">
       <MemberSignature Language="C#" Value="_SC_REGEXP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_REGEXP = int32(155)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_RTSIG_MAX">
       <MemberSignature Language="C#" Value="_SC_RTSIG_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_RTSIG_MAX = int32(31)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SAVED_IDS">
       <MemberSignature Language="C#" Value="_SC_SAVED_IDS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SAVED_IDS = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SCHAR_MAX">
       <MemberSignature Language="C#" Value="_SC_SCHAR_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SCHAR_MAX = int32(111)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SCHAR_MIN">
       <MemberSignature Language="C#" Value="_SC_SCHAR_MIN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SCHAR_MIN = int32(112)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SELECT">
       <MemberSignature Language="C#" Value="_SC_SELECT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SELECT = int32(59)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SEM_NSEMS_MAX">
       <MemberSignature Language="C#" Value="_SC_SEM_NSEMS_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SEM_NSEMS_MAX = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SEM_VALUE_MAX">
       <MemberSignature Language="C#" Value="_SC_SEM_VALUE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SEM_VALUE_MAX = int32(33)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SEMAPHORES">
       <MemberSignature Language="C#" Value="_SC_SEMAPHORES" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SEMAPHORES = int32(21)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SHARED_MEMORY_OBJECTS">
       <MemberSignature Language="C#" Value="_SC_SHARED_MEMORY_OBJECTS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SHARED_MEMORY_OBJECTS = int32(22)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SHELL">
       <MemberSignature Language="C#" Value="_SC_SHELL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SHELL = int32(157)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SHRT_MAX">
       <MemberSignature Language="C#" Value="_SC_SHRT_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SHRT_MAX = int32(113)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SHRT_MIN">
       <MemberSignature Language="C#" Value="_SC_SHRT_MIN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SHRT_MIN = int32(114)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SIGNALS">
       <MemberSignature Language="C#" Value="_SC_SIGNALS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SIGNALS = int32(158)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SIGQUEUE_MAX">
       <MemberSignature Language="C#" Value="_SC_SIGQUEUE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SIGQUEUE_MAX = int32(34)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SINGLE_PROCESS">
       <MemberSignature Language="C#" Value="_SC_SINGLE_PROCESS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SINGLE_PROCESS = int32(151)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SPAWN">
       <MemberSignature Language="C#" Value="_SC_SPAWN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SPAWN = int32(159)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SPIN_LOCKS">
       <MemberSignature Language="C#" Value="_SC_SPIN_LOCKS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SPIN_LOCKS = int32(154)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SPORADIC_SERVER">
       <MemberSignature Language="C#" Value="_SC_SPORADIC_SERVER" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SPORADIC_SERVER = int32(160)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SSIZE_MAX">
       <MemberSignature Language="C#" Value="_SC_SSIZE_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SSIZE_MAX = int32(110)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_STREAM_MAX">
       <MemberSignature Language="C#" Value="_SC_STREAM_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_STREAM_MAX = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_STREAMS">
       <MemberSignature Language="C#" Value="_SC_STREAMS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_STREAMS = int32(174)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SYMLOOP_MAX">
       <MemberSignature Language="C#" Value="_SC_SYMLOOP_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SYMLOOP_MAX = int32(173)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SYNCHRONIZED_IO">
       <MemberSignature Language="C#" Value="_SC_SYNCHRONIZED_IO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SYNCHRONIZED_IO = int32(14)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SYSTEM_DATABASE">
       <MemberSignature Language="C#" Value="_SC_SYSTEM_DATABASE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SYSTEM_DATABASE = int32(162)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_SYSTEM_DATABASE_R">
       <MemberSignature Language="C#" Value="_SC_SYSTEM_DATABASE_R" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_SYSTEM_DATABASE_R = int32(163)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_T_IOV_MAX">
       <MemberSignature Language="C#" Value="_SC_T_IOV_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_T_IOV_MAX = int32(66)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_ATTR_STACKADDR">
       <MemberSignature Language="C#" Value="_SC_THREAD_ATTR_STACKADDR" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_ATTR_STACKADDR = int32(77)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_ATTR_STACKSIZE">
       <MemberSignature Language="C#" Value="_SC_THREAD_ATTR_STACKSIZE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_ATTR_STACKSIZE = int32(78)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_CPUTIME">
       <MemberSignature Language="C#" Value="_SC_THREAD_CPUTIME" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_CPUTIME = int32(139)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_DESTRUCTOR_ITERATIONS">
       <MemberSignature Language="C#" Value="_SC_THREAD_DESTRUCTOR_ITERATIONS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_DESTRUCTOR_ITERATIONS = int32(73)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_KEYS_MAX">
       <MemberSignature Language="C#" Value="_SC_THREAD_KEYS_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_KEYS_MAX = int32(74)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_PRIO_INHERIT">
       <MemberSignature Language="C#" Value="_SC_THREAD_PRIO_INHERIT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_PRIO_INHERIT = int32(80)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_PRIO_PROTECT">
       <MemberSignature Language="C#" Value="_SC_THREAD_PRIO_PROTECT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_PRIO_PROTECT = int32(81)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_PRIORITY_SCHEDULING">
       <MemberSignature Language="C#" Value="_SC_THREAD_PRIORITY_SCHEDULING" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_PRIORITY_SCHEDULING = int32(79)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_PROCESS_SHARED">
       <MemberSignature Language="C#" Value="_SC_THREAD_PROCESS_SHARED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_PROCESS_SHARED = int32(82)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_SAFE_FUNCTIONS">
       <MemberSignature Language="C#" Value="_SC_THREAD_SAFE_FUNCTIONS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_SAFE_FUNCTIONS = int32(68)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_SPORADIC_SERVER">
       <MemberSignature Language="C#" Value="_SC_THREAD_SPORADIC_SERVER" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_SPORADIC_SERVER = int32(161)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_STACK_MIN">
       <MemberSignature Language="C#" Value="_SC_THREAD_STACK_MIN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_STACK_MIN = int32(75)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREAD_THREADS_MAX">
       <MemberSignature Language="C#" Value="_SC_THREAD_THREADS_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREAD_THREADS_MAX = int32(76)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_THREADS">
       <MemberSignature Language="C#" Value="_SC_THREADS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_THREADS = int32(67)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TIMEOUTS">
       <MemberSignature Language="C#" Value="_SC_TIMEOUTS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TIMEOUTS = int32(164)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TIMER_MAX">
       <MemberSignature Language="C#" Value="_SC_TIMER_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TIMER_MAX = int32(35)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TIMERS">
       <MemberSignature Language="C#" Value="_SC_TIMERS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TIMERS = int32(11)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TRACE">
       <MemberSignature Language="C#" Value="_SC_TRACE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TRACE = int32(181)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TRACE_EVENT_FILTER">
       <MemberSignature Language="C#" Value="_SC_TRACE_EVENT_FILTER" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TRACE_EVENT_FILTER = int32(182)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TRACE_INHERIT">
       <MemberSignature Language="C#" Value="_SC_TRACE_INHERIT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TRACE_INHERIT = int32(183)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TRACE_LOG">
       <MemberSignature Language="C#" Value="_SC_TRACE_LOG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TRACE_LOG = int32(184)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TTY_NAME_MAX">
       <MemberSignature Language="C#" Value="_SC_TTY_NAME_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TTY_NAME_MAX = int32(72)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TYPED_MEMORY_OBJECTS">
       <MemberSignature Language="C#" Value="_SC_TYPED_MEMORY_OBJECTS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TYPED_MEMORY_OBJECTS = int32(165)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_TZNAME_MAX">
       <MemberSignature Language="C#" Value="_SC_TZNAME_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_TZNAME_MAX = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_UCHAR_MAX">
       <MemberSignature Language="C#" Value="_SC_UCHAR_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_UCHAR_MAX = int32(115)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_UINT_MAX">
       <MemberSignature Language="C#" Value="_SC_UINT_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_UINT_MAX = int32(116)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_UIO_MAXIOV">
       <MemberSignature Language="C#" Value="_SC_UIO_MAXIOV" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_UIO_MAXIOV = int32(60)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_ULONG_MAX">
       <MemberSignature Language="C#" Value="_SC_ULONG_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_ULONG_MAX = int32(117)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_USER_GROUPS">
       <MemberSignature Language="C#" Value="_SC_USER_GROUPS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_USER_GROUPS = int32(166)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_USER_GROUPS_R">
       <MemberSignature Language="C#" Value="_SC_USER_GROUPS_R" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_USER_GROUPS_R = int32(167)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_USHRT_MAX">
       <MemberSignature Language="C#" Value="_SC_USHRT_MAX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_USHRT_MAX = int32(118)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_V6_ILP32_OFF32">
       <MemberSignature Language="C#" Value="_SC_V6_ILP32_OFF32" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_V6_ILP32_OFF32 = int32(176)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_V6_ILP32_OFFBIG">
       <MemberSignature Language="C#" Value="_SC_V6_ILP32_OFFBIG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_V6_ILP32_OFFBIG = int32(177)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_V6_LP64_OFF64">
       <MemberSignature Language="C#" Value="_SC_V6_LP64_OFF64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_V6_LP64_OFF64 = int32(178)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_V6_LPBIG_OFFBIG">
       <MemberSignature Language="C#" Value="_SC_V6_LPBIG_OFFBIG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_V6_LPBIG_OFFBIG = int32(179)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_VERSION">
       <MemberSignature Language="C#" Value="_SC_VERSION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_VERSION = int32(29)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_WORD_BIT">
       <MemberSignature Language="C#" Value="_SC_WORD_BIT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_WORD_BIT = int32(107)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XBS5_ILP32_OFF32">
       <MemberSignature Language="C#" Value="_SC_XBS5_ILP32_OFF32" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XBS5_ILP32_OFF32 = int32(125)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XBS5_ILP32_OFFBIG">
       <MemberSignature Language="C#" Value="_SC_XBS5_ILP32_OFFBIG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XBS5_ILP32_OFFBIG = int32(126)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XBS5_LP64_OFF64">
       <MemberSignature Language="C#" Value="_SC_XBS5_LP64_OFF64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XBS5_LP64_OFF64 = int32(127)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XBS5_LPBIG_OFFBIG">
       <MemberSignature Language="C#" Value="_SC_XBS5_LPBIG_OFFBIG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XBS5_LPBIG_OFFBIG = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_CRYPT">
       <MemberSignature Language="C#" Value="_SC_XOPEN_CRYPT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_CRYPT = int32(92)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_ENH_I18N">
       <MemberSignature Language="C#" Value="_SC_XOPEN_ENH_I18N" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_ENH_I18N = int32(93)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_LEGACY">
       <MemberSignature Language="C#" Value="_SC_XOPEN_LEGACY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_LEGACY = int32(129)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_REALTIME">
       <MemberSignature Language="C#" Value="_SC_XOPEN_REALTIME" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_REALTIME = int32(130)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_REALTIME_THREADS">
       <MemberSignature Language="C#" Value="_SC_XOPEN_REALTIME_THREADS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_REALTIME_THREADS = int32(131)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_SHM">
       <MemberSignature Language="C#" Value="_SC_XOPEN_SHM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_SHM = int32(94)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_UNIX">
       <MemberSignature Language="C#" Value="_SC_XOPEN_UNIX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_UNIX = int32(91)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_VERSION">
       <MemberSignature Language="C#" Value="_SC_XOPEN_VERSION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_VERSION = int32(89)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_XCU_VERSION">
       <MemberSignature Language="C#" Value="_SC_XOPEN_XCU_VERSION" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_XCU_VERSION = int32(90)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_XPG2">
       <MemberSignature Language="C#" Value="_SC_XOPEN_XPG2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_XPG2 = int32(98)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_XPG3">
       <MemberSignature Language="C#" Value="_SC_XOPEN_XPG3" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_XPG3 = int32(99)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="_SC_XOPEN_XPG4">
       <MemberSignature Language="C#" Value="_SC_XOPEN_XPG4" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.SysconfName _SC_XOPEN_XPG4 = int32(100)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SysconfName</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

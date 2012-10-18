@@ -1,9 +1,11 @@
 <Type Name="Timezone" FullName="Mono.Unix.Native.Timezone">
   <TypeSignature Language="C#" Value="public struct Timezone : IEquatable&lt;Mono.Unix.Native.Timezone&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit Timezone extends System.ValueType implements class System.IEquatable`1&lt;valuetype Mono.Unix.Native.Timezone&gt;" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>
   All public static members of this type are safe for multithreaded operations. 
@@ -36,7 +38,13 @@
   <Members>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (Mono.Unix.Native.Timezone value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(valuetype Mono.Unix.Native.Timezone value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -49,14 +57,16 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -69,14 +79,16 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -86,14 +98,16 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (Mono.Unix.Native.Timezone lhs, Mono.Unix.Native.Timezone rhs);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype Mono.Unix.Native.Timezone lhs, valuetype Mono.Unix.Native.Timezone rhs) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -108,14 +122,16 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (Mono.Unix.Native.Timezone lhs, Mono.Unix.Native.Timezone rhs);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype Mono.Unix.Native.Timezone lhs, valuetype Mono.Unix.Native.Timezone rhs) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -130,14 +146,16 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="tz_minuteswest">
       <MemberSignature Language="C#" Value="public int tz_minuteswest;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 tz_minuteswest" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -145,10 +163,6 @@
         <summary>Minutes west of Greenwich.</summary>
         <remarks />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

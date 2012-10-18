@@ -1,9 +1,11 @@
 <Type Name="MmapFlags" FullName="Mono.Unix.Native.MmapFlags">
   <TypeSignature Language="C#" Value="public enum MmapFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MmapFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -25,7 +27,13 @@
   <Members>
     <Member MemberName="MAP_ANON">
       <MemberSignature Language="C#" Value="MAP_ANON" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_ANON = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
@@ -35,70 +43,80 @@
         must be -1.  The <paramref name="offset" /> argument is ignored.
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_ANONYMOUS">
       <MemberSignature Language="C#" Value="MAP_ANONYMOUS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_ANONYMOUS = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_DENYWRITE">
       <MemberSignature Language="C#" Value="MAP_DENYWRITE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_DENYWRITE = int32(2048)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_EXECUTABLE">
       <MemberSignature Language="C#" Value="MAP_EXECUTABLE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_EXECUTABLE = int32(4096)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_FILE">
       <MemberSignature Language="C#" Value="MAP_FILE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_FILE = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_FIXED">
       <MemberSignature Language="C#" Value="MAP_FIXED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_FIXED = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
@@ -109,122 +127,134 @@
         <c>MAP_FIXED</c> is specified, <paramref name="addr" /> must be a
         multiple of the pagesize.  Use of this option is discouraged.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_GROWSDOWN">
       <MemberSignature Language="C#" Value="MAP_GROWSDOWN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_GROWSDOWN = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_LOCKED">
       <MemberSignature Language="C#" Value="MAP_LOCKED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_LOCKED = int32(8192)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_NONBLOCK">
       <MemberSignature Language="C#" Value="MAP_NONBLOCK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_NONBLOCK = int32(65536)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_NORESERVE">
       <MemberSignature Language="C#" Value="MAP_NORESERVE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_NORESERVE = int32(16384)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_POPULATE">
       <MemberSignature Language="C#" Value="MAP_POPULATE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_POPULATE = int32(32768)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_PRIVATE">
       <MemberSignature Language="C#" Value="MAP_PRIVATE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_PRIVATE = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Modifications are private.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_SHARED">
       <MemberSignature Language="C#" Value="MAP_SHARED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_SHARED = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Modifications are shared.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MAP_TYPE">
       <MemberSignature Language="C#" Value="MAP_TYPE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MmapFlags MAP_TYPE = int32(15)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MmapFlags</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

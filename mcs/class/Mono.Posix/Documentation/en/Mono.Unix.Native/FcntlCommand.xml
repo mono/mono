@@ -1,13 +1,20 @@
 <Type Name="FcntlCommand" FullName="Mono.Unix.Native.FcntlCommand">
   <TypeSignature Language="C#" Value="public enum FcntlCommand" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed FcntlCommand extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Possible <see cref="M:Mono.Unix.Native.Syscall.fcntl" /><paramref name="command" /> values.</summary>
     <remarks>
@@ -17,7 +24,13 @@
   <Members>
     <Member MemberName="F_DUPFD">
       <MemberSignature Language="C#" Value="F_DUPFD" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_DUPFD = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
@@ -26,211 +39,230 @@
 
 <list type="bullet"><item><term>Lowest numbered available descriptor greater than or equal to <paramref name="arg" />.</term></item><item><term>Same object references as the original descriptor.</term></item><item><term>New descriptor shares the same file offset if the object was a file.</term></item><item><term>Same access mode (read, write or read/write).</term></item><item><term>Same file status flags (i.e., both file descriptors share the same file status flags).</term></item><item><term>The close-on-exec flag associated with the new file descriptor is set to remain open across <see cref="M:Mono.Unix.Native.Syscall.execve" /> system calls.</term></item></list></summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_GETFD">
       <MemberSignature Language="C#" Value="F_GETFD" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_GETFD = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Get the close-on-exec flag associated with the file descriptor fd as FD_CLOEXEC.  If the returned value ANDed with FD_CLOEXEC is 0, the file will remain open across exec(), otherwise the file will be closed upon execution of exec() (arg is ignored).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_GETFL">
       <MemberSignature Language="C#" Value="F_GETFL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_GETFL = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Get descriptor status flags, as described below (<paramref name="arg" /> is ignored).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_GETLEASE">
       <MemberSignature Language="C#" Value="F_GETLEASE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_GETLEASE = int32(1025)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_GETLK">
       <MemberSignature Language="C#" Value="F_GETLK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_GETLK = int32(12)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Get the first lock that blocks the lock description pointed to by the third argument, <paramref name="arg" />, taken as a reference to a <see cref="T:Mono.Unix.Native.Flock" />.  The information retrieved overwrites the information passed to <see cref="M:Mono.Unix.Native.Syscall.fcntl" /> in the flock structure.  If no lock is found that would prevent this lock from being created, the structure is left unchanged by this system call except for the lock type which is set to <see cref="F:Mono.Unix.Native.LockType.F_UNLCK" />.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_GETOWN">
       <MemberSignature Language="C#" Value="F_GETOWN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_GETOWN = int32(9)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Get the process ID or process group currently receiving <see cref="F:Mono.Unix.Native.Signum.SIGIO" /> and <see cref="F:Mono.Unix.Native.Signum.SIGURG" /> signals; process groups are returned as negative values (<paramref name="arg" /> is ignored).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_GETSIG">
       <MemberSignature Language="C#" Value="F_GETSIG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_GETSIG = int32(11)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_NOTIFY">
       <MemberSignature Language="C#" Value="F_NOTIFY" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_NOTIFY = int32(1026)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_SETFD">
       <MemberSignature Language="C#" Value="F_SETFD" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_SETFD = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Set the close-on-exec flag associated with fd to arg, where arg is either 0 or FD_CLOEXEC, as described above.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_SETFL">
       <MemberSignature Language="C#" Value="F_SETFL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_SETFL = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Set descriptor status flags to <paramref name="arg" />.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_SETLEASE">
       <MemberSignature Language="C#" Value="F_SETLEASE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_SETLEASE = int32(1024)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_SETLK">
       <MemberSignature Language="C#" Value="F_SETLK" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_SETLK = int32(13)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Set or clear a file segment lock according to the lock description pointed to by the third argument, <paramref name="arg" />, taken as a pointer to a <see cref="T:Mono.Unix.Native.Flock" />. <see cref="F:Mono.Unix.Native.FcntlCommand.F_SETLK" /> is used to establish shared (or read) locks (<see cref="F:Mono.Unix.Native.LockType.F_RDLCK" />) or exclusive  (or write) locks, (<see cref="F:Mono.Unix.Native.LockType.F_WRLCK" />), as well as remove either type of lock (<see cref="F:Mono.Unix.Native.LockType.F_UNLCK" />).  If a shared or exclusive lock cannot be set, <see cref="M:Mono.Unix.Native.Syscall.fcntl" /> returns immediately with <see cref="F:Mono.Unix.Native.Error.EAGAIN" />.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_SETLKW">
       <MemberSignature Language="C#" Value="F_SETLKW" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_SETLKW = int32(14)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>This command is the same as <see cref="F:Mono.Unix.Native.FcntlCommand.F_SETLK" /> except that if a shared or exclusive lock is blocked by other locks, the process waits until the request can be satisfied.  If a signal that is to be caught is received while <see cref="M:Mono.Unix.Native.Syscall.fcntl" /> is waiting for a region, the <see cref="M:Mono.Unix.Native.Syscall.fcntl" /> will be interrupted if the signal handler has not specified the SA_RESTART (see <see cref="M:Mono.Unix.Native.Syscall.sigaction" />).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_SETOWN">
       <MemberSignature Language="C#" Value="F_SETOWN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_SETOWN = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Set the process or process group to receive <see cref="F:Mono.Unix.Native.Signum.SIGIO" /> and <see cref="F:Mono.Unix.Native.Signum.SIGURG" /> signals; process groups are specified by supplying arg as negative, otherwise arg is interpreted as a process ID.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="F_SETSIG">
       <MemberSignature Language="C#" Value="F_SETSIG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.FcntlCommand F_SETSIG = int32(10)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.FcntlCommand</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.CLSCompliant(false)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,9 +1,11 @@
 <Type Name="UnixSignal" FullName="Mono.Unix.UnixSignal">
   <TypeSignature Language="C#" Value="public class UnixSignal : System.Threading.WaitHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UnixSignal extends System.Threading.WaitHandle" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -123,9 +125,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UnixSignal (Mono.Unix.Native.RealTimeSignum rtsig);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype Mono.Unix.Native.RealTimeSignum rtsig) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="rtsig" Type="Mono.Unix.Native.RealTimeSignum" />
@@ -151,14 +155,14 @@
             <see cref="M:System.Threading.WaitHandle.Close" /> will be
             counted, updating the <see cref="M:Mono.Unix.UnixSignal.Count" />
             property.
-          </para>		
+          </para>
           <para>
             Realtime signal registration has the constraint that it cannot override signals
 			registered from outside of Mono.Posix.
 			This constraint exists because the underlying aplication and runtime can use some
 			signals to implement some specific feature.
           </para>
-		</remarks>
+        </remarks>
         <exception cref="T:System.ArgumentException">
           The internal signal handler could not be registered or the signal was registered outside of Mono.Posix.
         </exception>
@@ -169,10 +173,12 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UnixSignal (Mono.Unix.Native.Signum signum);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype Mono.Unix.Native.Signum signum) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="signum" Type="Mono.Unix.Native.Signum" />
@@ -209,11 +215,13 @@
       </Docs>
     </Member>
     <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public int Count { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Count { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -241,10 +249,12 @@
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -297,9 +307,11 @@
     </Member>
     <Member MemberName="IsRealTimeSignal">
       <MemberSignature Language="C#" Value="public bool IsRealTimeSignal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsRealTimeSignal" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -312,15 +324,18 @@
           A <see cref="T:System.Boolean" /> specifying whether or not the registered
           signal is realtime.
 		</value>
-        <remarks></remarks>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsSet">
       <MemberSignature Language="C#" Value="public bool IsSet { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSet" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -343,9 +358,11 @@
     </Member>
     <Member MemberName="RealTimeSignum">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.RealTimeSignum RealTimeSignum { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.Native.RealTimeSignum RealTimeSignum" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.RealTimeSignum</ReturnType>
@@ -375,10 +392,12 @@
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public bool Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Reset() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -414,10 +433,12 @@
     </Member>
     <Member MemberName="Signum">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.Signum Signum { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.Native.Signum Signum" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Signum</ReturnType>
@@ -445,10 +466,12 @@
     </Member>
     <Member MemberName="WaitAny">
       <MemberSignature Language="C#" Value="public static int WaitAny (Mono.Unix.UnixSignal[] signals);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class Mono.Unix.UnixSignal[] signals) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -489,10 +512,12 @@
     </Member>
     <Member MemberName="WaitAny">
       <MemberSignature Language="C#" Value="public static int WaitAny (Mono.Unix.UnixSignal[] signals, int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class Mono.Unix.UnixSignal[] signals, int32 millisecondsTimeout) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -540,10 +565,12 @@
     </Member>
     <Member MemberName="WaitAny">
       <MemberSignature Language="C#" Value="public static int WaitAny (Mono.Unix.UnixSignal[] signals, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class Mono.Unix.UnixSignal[] signals, valuetype System.TimeSpan timeout) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -600,10 +627,12 @@
     </Member>
     <Member MemberName="WaitOne">
       <MemberSignature Language="C#" Value="public override bool WaitOne ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool WaitOne() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -637,10 +666,12 @@
     </Member>
     <Member MemberName="WaitOne">
       <MemberSignature Language="C#" Value="public override bool WaitOne (int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool WaitOne(int32 millisecondsTimeout, bool exitContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -689,10 +720,12 @@
     </Member>
     <Member MemberName="WaitOne">
       <MemberSignature Language="C#" Value="public override bool WaitOne (TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool WaitOne(valuetype System.TimeSpan timeout, bool exitContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>

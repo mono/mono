@@ -2190,7 +2190,38 @@ namespace Mono.Unix.Native {
 		//
 		// <grp.h>
 		//
-		// TODO: putgrent(3), fgetgrent_r(), getgrouplist(2), initgroups(3)
+		// TODO: putgrent(3), fgetgrent_r(), initgroups(3)
+
+		// getgrouplist(2) 
+		[DllImport (LIBC, SetLastError=true, EntryPoint="getgrouplist")]
+		private static extern int sys_getgrouplist(string user, uint grp, uint [] groups,ref int ngroups);
+        
+		public static Group [] getgrouplist (string username)
+		{
+			if (String.IsNullOrEmpty(username))
+				return new Group[0];
+			// Syscall to getpwnam to retrieve user uid
+			Passwd pw = Syscall.getpwnam (username);
+			if (pw == null) 
+				return new Group [0];
+			// initializing ngroups by 1 to get the group count
+			int ngroups = 1;
+			int res = -1;
+			// allocating buffer to store group uid's
+			uint [] groups = new uint [ngroups];
+			do {
+				res = sys_getgrouplist (username, pw.pw_gid, groups, ref ngroups);
+				if (res == -1) {
+					ngroups *=2;
+					Array.Resize(ref groups, ngroups);
+				}
+			}
+			while (res == -1);
+			Group [] result = new Group [res];
+			for (int i = 0; i < res; i++) 
+				result [i] = Syscall.getgrgid (groups [i]);
+			return result;
+		}
 
 		// setgroups(2)
 		//    int setgroups (size_t size, const gid_t *list);

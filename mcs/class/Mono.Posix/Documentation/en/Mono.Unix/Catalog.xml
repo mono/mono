@@ -1,9 +1,11 @@
 <Type Name="Catalog" FullName="Mono.Unix.Catalog">
   <TypeSignature Language="C#" Value="public class Catalog" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Catalog extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -48,7 +50,13 @@ msgfmt es.po -o locale/es/LC_MESSAGES/i18n.mo</code>
   <Members>
     <Member MemberName="GetPluralString">
       <MemberSignature Language="C#" Value="public static string GetPluralString (string s, string p, int n);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetPluralString(string s, string p, int32 n) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -93,14 +101,16 @@ public class i18n
           </example>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetString">
       <MemberSignature Language="C#" Value="public static string GetString (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetString(string s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -135,14 +145,16 @@ public class i18n
           </example>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Init">
       <MemberSignature Language="C#" Value="public static void Init (string package, string localedir);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Init(string package, string localedir) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -157,10 +169,6 @@ public class i18n
         <remarks>The path to the message catalogs is constructed as follows <c>localedir/locale/category/package</c>. In this notation <c>locale</c> and <c>category</c> are, respectively, the locale name and the message category name, such as <c>LC_MESSAGES</c>. The object is initialized so that it translates the strings retrieved from the on-disk catalog into the UTF-8 encoding.
 </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,9 +1,11 @@
 <Type Name="MlockallFlags" FullName="Mono.Unix.Native.MlockallFlags">
   <TypeSignature Language="C#" Value="public enum MlockallFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MlockallFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -24,7 +26,13 @@
   <Members>
     <Member MemberName="MCL_CURRENT">
       <MemberSignature Language="C#" Value="MCL_CURRENT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MlockallFlags MCL_CURRENT = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MlockallFlags</ReturnType>
       </ReturnValue>
@@ -32,14 +40,16 @@
         <summary>Lock all pages currently mapped into the process's address
         space.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MCL_FUTURE">
       <MemberSignature Language="C#" Value="MCL_FUTURE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.MlockallFlags MCL_FUTURE = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.MlockallFlags</ReturnType>
       </ReturnValue>
@@ -49,10 +59,6 @@
         cause future mappings to fail if those mappings cause resource limits
         to be exceeded.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

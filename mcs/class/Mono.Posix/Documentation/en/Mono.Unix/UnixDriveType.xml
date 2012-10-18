@@ -1,9 +1,11 @@
 <Type Name="UnixDriveType" FullName="Mono.Unix.UnixDriveType">
   <TypeSignature Language="C#" Value="public enum UnixDriveType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed UnixDriveType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -17,21 +19,29 @@
   <Members>
     <Member MemberName="CDRom">
       <MemberSignature Language="C#" Value="CDRom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.UnixDriveType CDRom = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Drive is a CD-ROM drive.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fixed">
       <MemberSignature Language="C#" Value="Fixed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.UnixDriveType Fixed = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
       </ReturnValue>
@@ -39,80 +49,86 @@
         <summary>Drive is a non-removable drive, such as a built-in hard
         drive.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Network">
       <MemberSignature Language="C#" Value="Network" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.UnixDriveType Network = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Drive is a network-mounted drive, such as over NFS or SMB.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NoRootDirectory">
       <MemberSignature Language="C#" Value="NoRootDirectory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.UnixDriveType NoRootDirectory = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Ram">
       <MemberSignature Language="C#" Value="Ram" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.UnixDriveType Ram = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Drive is a RAM disk.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Removable">
       <MemberSignature Language="C#" Value="Removable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.UnixDriveType Removable = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Drive is a removable drive, such as a USB keydrive.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.UnixDriveType Unknown = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDriveType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Unknown drive type.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>
