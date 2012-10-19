@@ -155,7 +155,6 @@ EXTRA_DIST =			\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
-	patch-quiet.sh		\
 	get-cygwin-deps.sh	\
 	mono-configuration-crypto.in
 
