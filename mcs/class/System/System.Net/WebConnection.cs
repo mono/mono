@@ -256,7 +256,8 @@ namespace System.Net
 			}
 		}
 
-		bool CreateTunnel (HttpWebRequest request, Stream stream, out byte[] buffer)
+		bool CreateTunnel (HttpWebRequest request, Uri connectUri,
+		                   Stream stream, out byte[] buffer)
 		{
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("CONNECT ");
@@ -287,18 +288,20 @@ namespace System.Net
 
 				if (connect_request == null) {
 					// create a CONNECT request to use with Authenticate
-					connect_request = (HttpWebRequest)WebRequest.Create ("http://" + request.Address.Host + ":" + request.Address.Port + "/");
+					connect_request = (HttpWebRequest)WebRequest.Create (
+						connectUri.Scheme + "://" + connectUri.Host + ":" + connectUri.Port + "/");
 					connect_request.Method = "CONNECT";
 					connect_request.Credentials = creds;
 				}
 
 				for (int i = 0; i < challenge.Length; i++) {
 					var auth = AuthenticationManager.Authenticate (challenge [i], connect_request, creds);
-					if (auth != null) {
-						ntlm = (auth.Module.AuthenticationType == "NTLM");
-						sb.Append ("\r\nProxy-Authorization: ");
-						sb.Append (auth.Message);
-					}
+					if (auth == null)
+						continue;
+					ntlm = (auth.Module.AuthenticationType == "NTLM");
+					sb.Append ("\r\nProxy-Authorization: ");
+					sb.Append (auth.Message);
+					break;
 				}
 			}
 
@@ -416,7 +419,7 @@ namespace System.Net
 					if (!reused || nstream == null || nstream.GetType () != sslStream) {
 						byte [] buffer = null;
 						if (sPoint.UseConnect) {
-							bool ok = CreateTunnel (request, serverStream, out buffer);
+							bool ok = CreateTunnel (request, sPoint.Address, serverStream, out buffer);
 							if (!ok)
 								return false;
 						}
