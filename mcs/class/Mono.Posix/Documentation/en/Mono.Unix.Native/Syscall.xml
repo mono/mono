@@ -3564,6 +3564,26 @@
       </Docs>
     </Member>
     <Member MemberName="getgrouplist">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.Group[] getgrouplist (Mono.Unix.Native.Passwd passwd);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Unix.Native.Group[] getgrouplist(class Mono.Unix.Native.Passwd passwd) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.Group[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="passwd" Type="Mono.Unix.Native.Passwd" />
+      </Parameters>
+      <Docs>
+        <param name="passwd">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="getgrouplist">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.Group[] getgrouplist (string username);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Unix.Native.Group[] getgrouplist(string username) cil managed" />
       <MemberType>Method</MemberType>

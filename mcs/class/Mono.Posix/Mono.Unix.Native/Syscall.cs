@@ -2194,39 +2194,44 @@ namespace Mono.Unix.Native {
 
 		// getgrouplist(2) 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getgrouplist")]
-		private static extern int sys_getgrouplist(string user, uint grp, uint [] groups,ref int ngroups);
+		private static extern int sys_getgrouplist (string user, uint grp, uint [] groups,ref int ngroups);
         
 		public static Group [] getgrouplist (string username)
 		{
-			if (String.IsNullOrEmpty(username))
-				return new Group[0];
+            if (username == null)
+                throw new ArgumentNullException ("username");
+			if (username.Trim () == "")
+                throw new ArgumentException ("Username cannot be empty", "username");
 			// Syscall to getpwnam to retrieve user uid
 			Passwd pw = Syscall.getpwnam (username);
-			if (pw == null) 
-				return new Group [0];
-			// initializing ngroups by 1 to get the group count
-			int ngroups = 1;
-			int res = -1;
-			// allocating buffer to store group uid's
-			uint [] groups = new uint [ngroups];
-			do {
-				res = sys_getgrouplist (username, pw.pw_gid, groups, ref ngroups);
-				if (res == -1) {
-					ngroups *=2;
-					Array.Resize(ref groups, ngroups);
-				}
-			}
-			while (res == -1);
-			Group [] result = new Group [res];
-			for (int i = 0; i < res; i++) 
-				result [i] = Syscall.getgrgid (groups [i]);
-			return result;
+            if (pw == null)
+                throw new ArgumentException (string.Format ("User {0} does not exists",username), "username");
+			return getgrouplist (pw);
 		}
+
+        public static Group [] getgrouplist (Passwd passwd)
+        {
+            if (passwd == null)
+                throw new ArgumentNullException ("passwd");
+            // initializing ngroups by 1 to get the group count
+            int ngroups = 1;
+            int res = -1;
+            // allocating buffer to store group uid's
+            uint [] groups = new uint [ngroups];
+            do {
+                Array.Resize (ref groups, ngroups*=2);
+                res = sys_getgrouplist (passwd.pw_name, passwd.pw_gid, groups, ref ngroups);
+            }
+            while (res == -1);
+            Group [] result = new Group [res];
+            for (int i = 0; i < res; i++) 
+                result [i] = Syscall.getgrgid (groups [i]);
+            return result;
+        }
 
 		// setgroups(2)
 		//    int setgroups (size_t size, const gid_t *list);
-		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_setgroups")]
+		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Syscall_setgroups")]
 		public static extern int setgroups (ulong size, uint[] list);
 
 		public static int setgroups (uint [] list)
