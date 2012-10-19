@@ -84,7 +84,7 @@ endif
 
 if BUILD_MCS
 
-MAKE_FLAGS=$(if $(V),,-s)
+MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 
 # The write check is to foil 'make distcheck'
 all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
