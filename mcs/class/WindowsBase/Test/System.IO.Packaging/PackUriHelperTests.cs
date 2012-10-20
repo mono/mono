@@ -9,17 +9,14 @@ using System.IO.Packaging;
 using NUnit.Framework;
 
 namespace System.IO.Packaging.Tests {
-	
+
     [TestFixture]
-    [Category ("NotWorking")]
-    [Ignore ("This depends on a fix to System.Uri to support the UriParser API")]
     public class PackUriHelperTests {
         static void Main (string [] args)
         {
             PackUriHelperTests t = new PackUriHelperTests ();
             t.ResolvePartUri2 ();
         }
-
 
         Uri a;
         Uri b;
@@ -35,7 +32,7 @@ namespace System.IO.Packaging.Tests {
 			Console.WriteLine ("A is: {0}", a);
 			Console.WriteLine("B is: {0}", b);
 		}
-		
+
         [Test]
         public void ComparePackUriTest ()
         {
@@ -46,6 +43,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
+		[Category("NotWorking")]
         [ExpectedException(typeof(UriFormatException))]
         public void CompareInvalidTest ()
         {
@@ -54,6 +52,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
+		[Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void NonPackUriCompareTest ()
         {
@@ -61,6 +60,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
+		[Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void NonPackUriCompareRelativeTest ()
         {
@@ -68,6 +68,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
+		[Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void InvalidPartUriCompareTest ()
         {
@@ -96,6 +97,13 @@ namespace System.IO.Packaging.Tests {
                              PackUriHelper.Create (new Uri ("http://www.test.com/pack.pkg"),
 			                                       new Uri ("/main.html", UriKind.Relative), "#frag").ToString (), "#3");
         }
+
+		[Test]
+		public void CreateTest2()
+		{
+			Uri uri = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));
+			Assert.AreEqual("pack://pack:,,http:%2C%2Cwww.test.com%2Cpack1.pkg,/", PackUriHelper.Create(uri).ToString());
+		}
 
         [Test]
         [ExpectedException (typeof (ArgumentException))]
@@ -185,10 +193,16 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
+		[Category("NotWorking")]
         public void GetPartUriTest ()
         {
-            Assert.IsNull (PackUriHelper.GetPartUri (a), "#1");
-            Assert.AreEqual (main, PackUriHelper.GetPartUri (PackUriHelper.Create (a, main)), "#2");
+			var pack = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));
+			var part = new Uri("/main.html", UriKind.Relative);
+			var pack_part = new Uri(@"pack://pack:,,http:%2C%2Cwww.test.com%2Cpack1.pkg,/main.html");
+
+			Assert.IsNull(PackUriHelper.GetPartUri(pack), "#1");
+			Assert.AreEqual(pack_part, PackUriHelper.Create(pack, part), "#2");
+			Assert.AreEqual(part, PackUriHelper.GetPartUri(PackUriHelper.Create(pack, part)), "#3");
         }
 
         [Test]
@@ -312,6 +326,34 @@ namespace System.IO.Packaging.Tests {
             Uri result = PackUriHelper.ResolvePartUri (src, dest);
             Assert.IsFalse(result.IsAbsoluteUri, "#1");
             Assert.AreEqual ("/word/document.xml", result.ToString(), "#2");
+
+            // See: http://msdn.microsoft.com/en-us/library/system.io.packaging.packurihelper.resolveparturi.aspx
+
+            src = new Uri ("/mydoc/markup/page.xml", UriKind.Relative);
+            dest = new Uri("picture.jpg", UriKind.Relative);
+            result = PackUriHelper.ResolvePartUri (src, dest);
+            Assert.AreEqual ("/mydoc/markup/picture.jpg", result.ToString(), "#3");
+
+            dest = new Uri("images/picture.jpg", UriKind.Relative);
+            result = PackUriHelper.ResolvePartUri (src, dest);
+            Assert.AreEqual ("/mydoc/markup/images/picture.jpg", result.ToString(), "#4");
+
+            dest = new Uri("./picture.jpg", UriKind.Relative);
+            result = PackUriHelper.ResolvePartUri (src, dest);
+            Assert.AreEqual ("/mydoc/markup/picture.jpg", result.ToString(), "#5");
+
+            dest = new Uri("../picture.jpg", UriKind.Relative);
+            result = PackUriHelper.ResolvePartUri (src, dest);
+            Assert.AreEqual ("/mydoc/picture.jpg", result.ToString(), "#6");
+
+            dest = new Uri("../images/picture.jpg", UriKind.Relative);
+            result = PackUriHelper.ResolvePartUri (src, dest);
+            Assert.AreEqual ("/mydoc/images/picture.jpg", result.ToString(), "#7");
+
+            src = new Uri ("/", UriKind.Relative);
+            dest = new Uri("images/picture.jpg", UriKind.Relative);
+            result = PackUriHelper.ResolvePartUri (src, dest);
+            Assert.AreEqual ("/images/picture.jpg", result.ToString(), "#8");
         }
     }
 }
