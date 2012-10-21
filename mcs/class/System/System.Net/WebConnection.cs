@@ -320,6 +320,14 @@ namespace System.Net
 			WebHeaderCollection result = ReadHeaders (stream, out buffer, out status);
 			if ((!have_auth || connect_ntlm_auth_state == NtlmAuthState.Challenge) &&
 			    result != null && status == 407) { // Needs proxy auth
+				var connectionHeader = result ["Connection"];
+				if (socket != null && !string.IsNullOrEmpty (connectionHeader) &&
+				    connectionHeader.ToLower() == "close") {
+					// The server is requesting that this connection be closed
+					socket.Close();
+					socket = null;
+				}
+
 				Data.StatusCode = status;
 				Data.Challenge = result.GetValues_internal ("Proxy-Authenticate", false);
 				return false;
