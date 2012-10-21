@@ -303,6 +303,8 @@ namespace System.Net
 				throw new ArgumentNullException ("address");
 
 			RecycleServicePoints ();
+
+			var origAddress = new Uri (address.Scheme + "://" + address.Authority);
 			
 			bool usesProxy = false;
 			bool useConnect = false;
@@ -321,7 +323,7 @@ namespace System.Net
 			
 			ServicePoint sp = null;
 			lock (servicePoints) {
-				SPKey key = new SPKey (address, useConnect);
+				SPKey key = new SPKey (origAddress, useConnect);
 				sp = servicePoints [key] as ServicePoint;
 				if (sp != null)
 					return sp;
