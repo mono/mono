@@ -4,12 +4,11 @@
 // 	Sean MacIsaac (macisaac@ximian.com)
 // 	Paolo Molaro (lupus@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc. 2001 - 2003
 // (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -58,21 +57,39 @@ namespace System.Reflection
 			}
 		}
 		
-		internal static bool ConvertArgs (Binder binder, object[] args, ParameterInfo[] pinfo, CultureInfo culture) {
+		internal bool ConvertArgs (object[] args, ParameterInfo[] pinfo, CultureInfo culture, bool exactMatch)
+		{
 			if (args == null) {
-				if ( pinfo.Length == 0)
+				if (pinfo.Length == 0)
 					return true;
-				else
-					throw new TargetParameterCountException ();
+				
+				throw new TargetParameterCountException ();
 			}
+
 			if (pinfo.Length != args.Length)
 				throw new TargetParameterCountException ();
+			
 			for (int i = 0; i < args.Length; ++i) {
-				object v = binder.ChangeType (args [i], pinfo[i].ParameterType, culture);
-				if ((v == null) && (args [i] != null))
+				var arg = args [i];
+				var pi = pinfo [i];
+				if (arg == Type.Missing) {
+					args [i] = pi.DefaultValue;
+					continue;
+				}
+
+				if (arg != null && arg.GetType () == pi.ParameterType)
+					continue;
+
+				if (exactMatch)
 					return false;
+
+				object v = ChangeType (arg, pi.ParameterType, culture);
+				if (v == null && args [i] != null)
+					return false;
+	
 				args [i] = v;
 			}
+
 			return true;
 		}
 
@@ -148,9 +165,6 @@ namespace System.Reflection
 				return null;
 			}
 
-			//
-			// FIXME: There was a MonoTODO, but it does not explain what the problem is
-			// 
 			public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
 			{
 				Type[] types;

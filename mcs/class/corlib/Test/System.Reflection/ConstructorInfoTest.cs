@@ -79,6 +79,21 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		[Test]
+		public void InvokeOptionalArguments ()
+		{
+			var constructor = typeof (Optional).GetConstructors () [0];
+			try {
+				constructor.Invoke (BindingFlags.Default, null, null, null);
+				Assert.Fail ("#1");
+			} catch (TargetParameterCountException)	{
+			}
+
+			object[] parameters = new [] { Type.Missing, Type.Missing, Type.Missing };
+			var instance = constructor.Invoke (BindingFlags.InvokeMethod | BindingFlags.CreateInstance, null, parameters, null);
+			Assert.IsNotNull (instance, "#2a");
+		}
+
 		abstract class AbstractFoo
 		{
 		}
@@ -87,7 +102,6 @@ namespace MonoTests.System.Reflection
 		{
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (MemberAccessException))]
 		public void InvokeOpenGenericType () {
@@ -98,6 +112,12 @@ namespace MonoTests.System.Reflection
 			public Gen() {
 			}
 		}
-#endif			
+
+		class Optional
+		{
+			public Optional (string caption = null, string value = null, string layoutName = null)
+			{
+			}
+		}
 	}
 }

@@ -1,12 +1,13 @@
 //
-// System.Reflection/MonoMethod.cs
-// The class used to represent methods from the mono runtime.
+// MonoMethod.cs: The class used to represent methods from the mono runtime.
 //
-// Author:
+// Authors:
 //   Paolo Molaro (lupus@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -192,20 +193,11 @@ namespace System.Reflection {
 		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
+
 			/*Avoid allocating an array every time*/
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
-
-			if ((parameters == null && pinfo.Length != 0) || (parameters != null && parameters.Length != pinfo.Length))
-				throw new TargetParameterCountException ("parameters do not match signature");
-			
-			if ((invokeAttr & BindingFlags.ExactBinding) == 0) {
-				if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
-					throw new ArgumentException ("failed to convert parameters");
-			} else {
-				for (int i = 0; i < pinfo.Length; i++)
-					if (parameters[i].GetType() != pinfo[i].ParameterType)
-						throw new ArgumentException ("parameters do not match signature");
-			}
+			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
+				throw new ArgumentException ("failed to convert parameters");
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
@@ -498,19 +490,10 @@ namespace System.Reflection {
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 
-			ParameterInfo[] pinfo = GetParameters ();
+			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
-			if ((parameters == null && pinfo.Length != 0) || (parameters != null && parameters.Length != pinfo.Length))
-				throw new TargetParameterCountException ("parameters do not match signature");
-			
-			if ((invokeAttr & BindingFlags.ExactBinding) == 0) {
-				if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
-					throw new ArgumentException ("failed to convert parameters");
-			} else {
-				for (int i = 0; i < pinfo.Length; i++)
-					if (parameters[i].GetType() != pinfo[i].ParameterType)
-						throw new ArgumentException ("parameters do not match signature");
-			}
+			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
+				throw new ArgumentException ("failed to convert parameters");
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
