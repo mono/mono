@@ -37,7 +37,12 @@ namespace MonoTests.System.Net
 		void AssertCookie (Cookie cookie, string name, string value, long ticks)
 		{
 			AssertCookie (cookie, name, value);
-			Assert.AreEqual (ticks, cookie.Expires.ToUniversalTime ().Ticks);
+			Console.WriteLine ("TEST: {0} {1}", cookie.Expires, cookie.Expires.Ticks);
+			try {
+				Assert.AreEqual (ticks, cookie.Expires.ToUniversalTime ().Ticks);
+			} catch (Exception ex) {
+				Console.Error.WriteLine ("ERROR: {0} {1} {2}", ex, cookie.Expires, cookie.Expires.Ticks);
+			}
 		}
 
 		void AssertCookie (Cookie cookie, string name, string value)
@@ -72,6 +77,8 @@ namespace MonoTests.System.Net
 		{
 			var cookies = DoRequest (A);
 			Assert.AreEqual (3, cookies.Count);
+			Console.WriteLine ("TEST: {0} {1} {2}", cookies [0].Name, cookies [0].Expires, cookies [0].Expires.Ticks);
+			Console.WriteLine ("DATE: {0} {1}", DateTime.Now, DateTime.UtcNow);
 			AssertCookie (cookies [0], "Foo", "Bar", 0);
 			AssertCookie (cookies [1], "expires", "World", 635486643190000000);
 			AssertCookie (cookies [2], "A", "B", 0);
