@@ -17,12 +17,12 @@
 	</PropertyGroup>
 	
 	<PropertyGroup Condition = "Exists ('/Developer/MonoAndroid/License.rtf') And !Exists ('/Developer/MonoTouch/License.rtf')">
-		<TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
+		<TargetFrameworkIdentifier>MonoAndroid</TargetFrameworkIdentifier>
 		<CscToolPath>/Developer/MonoAndroid/usr/bin</CscToolPath>
 		<CscToolExe>smcs</CscToolExe>
 	</PropertyGroup>
 	
-	<Import Project="$(MSBuildToolsPath)\Novell\Novell.MonoDroid.CSharp.targets" Condition = "Exists ('/Developer/MonoAndroid/License.rtf') And !Exists ('/Developer/MonoTouch/License.rtf')"/>
+	<Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" Condition = "Exists ('/Developer/MonoAndroid/License.rtf') And !Exists ('/Developer/MonoTouch/License.rtf')"/>
 	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" Condition = "Exists ('/Developer/MonoTouch/License.rtf') Or !Exists ('/Developer/MonoAndroid/License.rtf')"/>
 	
 	<PropertyGroup>
