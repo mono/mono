@@ -11,7 +11,7 @@ void mono_unity_liveness_calculation_end (void);
 GPtrArray* mono_unity_liveness_calculation_from_root (MonoObject* root, MonoClass* filter);
 GPtrArray* mono_unity_liveness_calculation_from_statics (MonoClass* filter);
 
-static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filterClass, GPtrArray* objects)
+static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filter, GPtrArray* objects)
 {
 	int i = 0;
 	MonoObject* object = NULL;
@@ -45,13 +45,26 @@ static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filterClass,
 				} else {
 					MonoObject* val = NULL;
 					MonoVTable *vtable = NULL;
-					if (filterClass && !mono_class_is_subclass_of (mono_class_from_mono_type (field->type), filterClass, FALSE))
+					MonoClass* field_class = mono_class_from_mono_type (field->type);
+					if (filter && 
+						!mono_class_is_assignable_from (filter, field_class) && 
+						!mono_class_is_assignable_from (field_class, filter))
 						continue;
 
 					mono_field_get_value (object, field, &val);
 
 					if (val)
+					{
+						MonoClass* val_class = NULL;
+						if (((gsize)val->vtable) & 1)
+							continue;
+
+						val_class = mono_object_class (val);
+						if (filter && 
+							!mono_class_is_assignable_from (filter, val_class))
+							continue;
 						g_queue_push_tail (queue, val);
+					}
 				}
 			}
 		}
@@ -102,14 +115,23 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(MonoClass* filter)
 			} else {
 				MonoObject* val = NULL;
 				MonoVTable *vtable = NULL;
-				if (filter && !mono_class_is_subclass_of (mono_class_from_mono_type (field->type), filter, FALSE))
+				MonoClass* field_class = mono_class_from_mono_type (field->type);
+				if (filter && 
+					!mono_class_is_assignable_from (filter, field_class) && 
+					!mono_class_is_assignable_from (field_class, filter))
 					continue;
 
 				vtable = mono_class_vtable (domain, klass);
 				mono_field_static_get_value (vtable, field, &val);
 
 				if (val)
+				{
+					MonoClass* val_class = mono_object_class (val);
+					if (filter && 
+						!mono_class_is_assignable_from (filter, val_class))
+						continue;
 					g_queue_push_tail (queue, val);
+				}
 			}
 		}
 	}

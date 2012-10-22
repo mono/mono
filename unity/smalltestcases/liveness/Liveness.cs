@@ -8,7 +8,7 @@ namespace object_traversal
 {
     class Program2 : Program
     {
-        public static Node n;
+        public static Node d;
 
     }
     class Program
@@ -21,14 +21,31 @@ namespace object_traversal
 
         static void Main(string[] args)
         {
-            Test1();
-            Test2();
-            Test3();
-            Test4();
-            Test5();
-            Test6();
-            Test7();
-            Test8();
+            Action[] tests = new Action[] {
+                Test1,
+                Test2,
+                Test3,
+                Test4,
+                Test5,
+                Test6,
+                Test7,
+                Test8,
+                Test9,
+                Test10,
+                Test11,
+            };
+
+            foreach (var test in tests)
+            {
+                test();
+                Program.n1 = null;
+                Program.n2 = null;
+                Program.n3 = null;
+                Program.nnot = null;
+                Program.o = null;
+                Program.o2 = null;
+                Program2.d = null;
+            }
         }
 
         static void VerifyObjects( string label, int expectedCount)
@@ -74,17 +91,19 @@ namespace object_traversal
 
         static void Test1()
         {
-            b = "a" + 1.ToString();
-            n = new Node();
-            n2 = new Node(new Node(), n);
+            s = "a" + 1.ToString();
+            o = new Node();
+            o2 = new NodeNotDerived();
+            n1 = new Node();
+            n2 = new Node(new Node(), (Node)n1);
 
-            VerifyObjects("Test1", 3);
+            VerifyObjects("Test1", 4);
         }
 
         static void Test2()
         {
-            b = "a" + 1.ToString();
-            n = new Node();
+            s = "a" + 1.ToString();
+            n1 = new Node();
             n2 = new Node(new Node(), new Node());
 
             VerifyObjects("Test2", 4);
@@ -92,8 +111,8 @@ namespace object_traversal
 
         static void Test3()
         {
-            b = "a" + 1.ToString();
-            n = new NodeDerived();
+            s = "a" + 1.ToString();
+            n1 = new NodeDerived();
             n2 = new Node(new NodeDerived(), null);
             nnot = new NodeNotDerived();
 
@@ -132,25 +151,65 @@ namespace object_traversal
 
         static void Test8()
         {
-            Program.n = null;
+            Program.n1 = null;
             Program.n2 = null;
             Program.nnot = null;
-            Program2.n = new Node();
+            Program2.d = new Node();
 
             VerifyObjects("Test8", 1);
         }
 
-        static int a = 0;
-        static string b;
-        public static Node n;
+        static void Test9()
+        {
+            Node useMeTwice = new Node();
+            Node root = new NodeDerived(useMeTwice, useMeTwice, new Node());
+            root.o1 = new Node();
+            root.o2 = new NodeNotDerived();
+
+            VerifyObjects("Test9", 4, root);
+        }
+
+        static void Test10()
+        {
+            Node useMeTwice = new Node();
+            Node root = new NodeDerived(useMeTwice, useMeTwice, new Node());
+            root.o1 = new NodeBase();
+            root.o2 = new NodeDerived();
+
+            VerifyObjects("Test10", 4, root);
+        }
+
+        static void Test11()
+        {
+            Node useMeTwice = new Node();
+            Node root = new NodeDerived(useMeTwice, useMeTwice, new Node());
+            root.o1 = new Node();
+            root.o2 = root.o1;
+
+            VerifyObjects("Test11", 4, root);
+        }
+
+        static int i = 0;
+        static string s;
+        public static object o;
+        public static object o2;
+        public static NodeBase n1;
         public static Node n2;
+        public static NodeDerived n3;
         public static NodeNotDerived nnot;
     }
 
-    class Node
+    class NodeBase
+    {
+    }
+
+    class Node : NodeBase
     {
         Node left;
         Node right;
+
+        public object o1;
+        public object o2;
 
         public Node()
         {
