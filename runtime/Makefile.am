@@ -75,7 +75,7 @@ build_profiles += monodroid
 endif
 
 if INSTALL_MONOTOUCH
-build_profiles += monotouch
+build_profiles += monotouch monotouch_runtime
 endif
 
 test_profiles = $(build_profiles)

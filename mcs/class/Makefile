@@ -166,6 +166,34 @@ monodroid_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp
 
+monotouch_runtime_dirs := \
+	corlib \
+	System \
+	System.XML	\
+	Mono.Posix \
+	System.Core \
+	Mono.Security			\
+	System.Security			\
+	System.Configuration		\
+	System				\
+	System.XML			\
+	$(resgen_dir)			\
+	System.Drawing			\
+	System.Transactions		\
+	System.EnterpriseServices	\
+	Mono.Data.Tds			\
+	System.Data			\
+	Accessibility			\
+	Mono.WebBrowser			\
+	System.Runtime.Serialization.Formatters.Soap \
+	Managed.Windows.Forms		\
+	Mono.Data.Sqlite		\
+	System.Web.ApplicationServices	\
+	System.Web \
+	Mono.Web \
+	System.Web.Services \
+	System.Web
+
 net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
@@ -213,6 +241,7 @@ net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compi
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
+monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs)
