@@ -783,9 +783,6 @@
 				Name="VCALinkTool"
 			/>
 			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
 				Name="VCXDCMakeTool"
 			/>
 			<Tool
@@ -793,9 +790,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -9925,6 +9919,10 @@
 			</File>
 			<File
 				RelativePath="..\unity\unity_cross_utils.c"
+				>
+			</File>
+			<File
+				RelativePath="..\unity\unity_liveness.c"
 				>
 			</File>
 			<File
