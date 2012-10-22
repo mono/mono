@@ -11,6 +11,44 @@ void mono_unity_liveness_calculation_end (void);
 GPtrArray* mono_unity_liveness_calculation_from_root (MonoObject* root, MonoClass* filter);
 GPtrArray* mono_unity_liveness_calculation_from_statics (MonoClass* filter);
 
+/* TODO: Endian safe */
+#define MARK_OBJ(obj) \
+	do { \
+		(obj)->vtable = ((gsize)(obj)->vtable) | 1; \
+	} while (0)
+
+#define CLEAR_OBJ(obj) \
+	do { \
+		(obj)->vtable = ((gsize)(obj)->vtable) ^ 1; \
+	} while (0)
+
+#define IS_MARKED(obj) \
+	(((gsize)(obj)->vtable) & 1)
+
+static gboolean should_process_field (MonoClass* filter, MonoClass* field_class)
+{
+	if (filter && 
+		!mono_class_is_assignable_from (filter, field_class) && 
+		!mono_class_is_assignable_from (field_class, filter))
+		return FALSE;
+
+	return TRUE;
+}
+
+static gboolean should_process_value (MonoObject* val, MonoClass* filter)
+{
+	MonoClass* val_class = NULL;
+	if (IS_MARKED(val))
+		return FALSE;
+
+	val_class = mono_object_class (val);
+	if (filter && 
+		!mono_class_is_assignable_from (filter, val_class))
+		return FALSE;
+
+	return TRUE;
+}
+
 static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filter, GPtrArray* objects)
 {
 	int i = 0;
@@ -24,7 +62,7 @@ static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filter, GPtr
 
 		g_assert (object);
 
-		if (((gsize)object->vtable) & 1)
+		if (IS_MARKED(object))
 			continue;
 		
 		g_ptr_array_add (objects, object);
@@ -46,22 +84,14 @@ static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filter, GPtr
 					MonoObject* val = NULL;
 					MonoVTable *vtable = NULL;
 					MonoClass* field_class = mono_class_from_mono_type (field->type);
-					if (filter && 
-						!mono_class_is_assignable_from (filter, field_class) && 
-						!mono_class_is_assignable_from (field_class, filter))
+					if (!should_process_field(filter, field_class))
 						continue;
 
 					mono_field_get_value (object, field, &val);
 
 					if (val)
 					{
-						MonoClass* val_class = NULL;
-						if (((gsize)val->vtable) & 1)
-							continue;
-
-						val_class = mono_object_class (val);
-						if (filter && 
-							!mono_class_is_assignable_from (filter, val_class))
+						if (!should_process_value (val, filter))
 							continue;
 						g_queue_push_tail (queue, val);
 					}
@@ -69,13 +99,13 @@ static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filter, GPtr
 			}
 		}
 
-		object->vtable = ((gsize)object->vtable) | 1;
+		MARK_OBJ(object);
 	}
 
 	for (i = 0; i < objects->len; i++)
 	{
 		MonoObject* object = objects->pdata[i];
-		object->vtable = ((gsize)object->vtable) ^ 1;
+		CLEAR_OBJ(object);
 	}
 }
 
@@ -114,21 +144,15 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(MonoClass* filter)
 				g_assert_not_reached ();
 			} else {
 				MonoObject* val = NULL;
-				MonoVTable *vtable = NULL;
 				MonoClass* field_class = mono_class_from_mono_type (field->type);
-				if (filter && 
-					!mono_class_is_assignable_from (filter, field_class) && 
-					!mono_class_is_assignable_from (field_class, filter))
+				if (!should_process_field(filter, field_class))
 					continue;
 
-				vtable = mono_class_vtable (domain, klass);
-				mono_field_static_get_value (vtable, field, &val);
+				mono_field_static_get_value (mono_class_vtable (domain, klass), field, &val);
 
 				if (val)
 				{
-					MonoClass* val_class = mono_object_class (val);
-					if (filter && 
-						!mono_class_is_assignable_from (filter, val_class))
+					if (!should_process_value (val, filter))
 						continue;
 					g_queue_push_tail (queue, val);
 				}
