@@ -2872,6 +2872,8 @@ namespace Mono.CSharp
 				}
 
 				if (c == '"') {
+					++col;
+
 					if (quoted && peek_char () == '"') {
 						if (pos == value_builder.Length)
 							Array.Resize (ref value_builder, pos * 2);
