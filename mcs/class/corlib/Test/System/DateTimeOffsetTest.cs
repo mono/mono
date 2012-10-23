@@ -83,18 +83,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("Martin")]
-		public void MinValueToUniversal ()
-		{
-			DateTime dt = new DateTime (0);
-			var utc = dt.ToUniversalTime ();
-			var tz = TimeZone.CurrentTimeZone;
-			var text = string.Format ("TIME: {0} {1} - {2} {3} - {4} {5} {6}", dt.Ticks, dt.Kind,
-				DateTime.Now, DateTime.UtcNow, tz, tz.GetUtcOffset (dt), tz.GetUtcOffset (DateTime.Now));
-			Assert.AreEqual (0, utc.Ticks, text);
-		}
-
-		[Test]
 		public void CompareTwoDateInDiffTZ ()
 		{
 			DateTimeOffset dt1 = new DateTimeOffset (2007, 12, 16, 15, 06, 00, new TimeSpan (1, 0, 0));
