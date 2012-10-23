@@ -41,6 +41,10 @@ namespace MonoTests.System.Net
 			try {
 				Assert.AreEqual (ticks, cookie.Expires.ToUniversalTime ().Ticks);
 			} catch (Exception ex) {
+				var text = string.Format ("ERROR: {0} {1} {2} {3} - {4} {5}", ex,
+					cookie.Expires, cookie.Expires.Ticks, cookie.Expires.Kind,
+					DateTime.Now, DateTime.UtcNow);
+				Assert.Fail (text);
 				Console.Error.WriteLine ("ERROR: {0} {1} {2}", ex, cookie.Expires, cookie.Expires.Ticks);
 			}
 		}
