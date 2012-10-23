@@ -3564,8 +3564,8 @@
       </Docs>
     </Member>
     <Member MemberName="getgrouplist">
-      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.Group[] getgrouplist (Mono.Unix.Native.Passwd passwd);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Unix.Native.Group[] getgrouplist(class Mono.Unix.Native.Passwd passwd) cil managed" />
+      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.Group[] getgrouplist (Mono.Unix.Native.Passwd user);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Unix.Native.Group[] getgrouplist(class Mono.Unix.Native.Passwd user) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -3574,13 +3574,20 @@
         <ReturnType>Mono.Unix.Native.Group[]</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="passwd" Type="Mono.Unix.Native.Passwd" />
+        <Parameter Name="user" Type="Mono.Unix.Native.Passwd" />
       </Parameters>
       <Docs>
-        <param name="passwd">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="user"> <see cref="T:Mono.Unix.Native.Passwd" /> instance containing the user to get the groups for.</param>
+        <summary>Determine the group access list for a user.</summary>
+        <returns><see cref="T:Mono.Unix.Native.Group" /> array containing all of the Unix groups that <paramref name="user" /> belongs to.</returns>
+        <remarks>
+          <para>
+           Determines the group access list for <paramref name="user" /> by using the <c>getgrouplist(3)</c> system call.
+          </para>
+        </remarks>
+          <exception cref="T:System.ArgumentNullException">
+            <paramref name="user" /> <see langword="null" />
+          </exception>
       </Docs>
     </Member>
     <Member MemberName="getgrouplist">
@@ -3597,10 +3604,17 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="username"> <see cref="T:System.String" /> instance containing username to get the groups for. </param>
+        <summary>Determines the group access list for a user by username.</summary>
+        <returns><see cref="T:Mono.Unix.Native.Group" /> array containing all of the Unix groups that <paramref name="username" /> belongs to.</returns>
+        <remarks>
+          <exception cref="T:System.ArgumentNullException">
+            <paramref name="usermame" /> <see langword="null" />
+          </exception>
+          <exception cref="T:System.ArgumentException">
+            Throws when the <paramref name="username" /> is empty or not exists.
+          </exception>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="getgroups">

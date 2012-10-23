@@ -2195,39 +2195,39 @@ namespace Mono.Unix.Native {
 		// getgrouplist(2) 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getgrouplist")]
 		private static extern int sys_getgrouplist (string user, uint grp, uint [] groups,ref int ngroups);
-        
+
 		public static Group [] getgrouplist (string username)
 		{
-            if (username == null)
-                throw new ArgumentNullException ("username");
+			if (username == null)
+				throw new ArgumentNullException ("username");
 			if (username.Trim () == "")
-                throw new ArgumentException ("Username cannot be empty", "username");
+				throw new ArgumentException ("Username cannot be empty", "username");
 			// Syscall to getpwnam to retrieve user uid
 			Passwd pw = Syscall.getpwnam (username);
-            if (pw == null)
-                throw new ArgumentException (string.Format ("User {0} does not exists",username), "username");
+			if (pw == null)
+                		throw new ArgumentException (string.Format ("User {0} does not exists",username), "username");
 			return getgrouplist (pw);
 		}
 
-        public static Group [] getgrouplist (Passwd passwd)
-        {
-            if (passwd == null)
-                throw new ArgumentNullException ("passwd");
-            // initializing ngroups by 1 to get the group count
-            int ngroups = 1;
-            int res = -1;
-            // allocating buffer to store group uid's
-            uint [] groups = new uint [ngroups];
-            do {
-                Array.Resize (ref groups, ngroups*=2);
-                res = sys_getgrouplist (passwd.pw_name, passwd.pw_gid, groups, ref ngroups);
-            }
-            while (res == -1);
-            Group [] result = new Group [res];
-            for (int i = 0; i < res; i++) 
-                result [i] = Syscall.getgrgid (groups [i]);
-            return result;
-        }
+	        public static Group [] getgrouplist (Passwd user)
+		{
+			if (user == null)
+				throw new ArgumentNullException ("user");
+			// initializing ngroups by 16 to get the group count
+			int ngroups = 8;
+			int res = -1;
+			// allocating buffer to store group uid's
+			uint [] groups=null;
+			do {
+				Array.Resize (ref groups, ngroups*=2);
+				res = sys_getgrouplist (user.pw_name, user.pw_gid, groups, ref ngroups);
+			}
+			while (res == -1);
+			Group [] result = new Group [res];
+			for (int i = 0; i < res; i++) 
+				result [i] = Syscall.getgrgid (groups [i]);
+			return result;
+		}
 
 		// setgroups(2)
 		//    int setgroups (size_t size, const gid_t *list);
