@@ -17,12 +17,18 @@ namespace System.Transactions
 	{
 //		bool committed;
 		Transaction tx;
-		ISinglePhaseNotification enlisted;
+		object abortingEnlisted;
 		
-		internal SinglePhaseEnlistment (Transaction tx, ISinglePhaseNotification enlisted)
+		/// <summary>
+		/// The empty ctor is used only for enlistments passed to resource managers when rolling back a transaction that
+		///  has already been aborted by another resource manager; no need to retrigger (another) rollback.
+		/// </summary>
+		internal SinglePhaseEnlistment () {}
+
+		internal SinglePhaseEnlistment (Transaction tx, object abortingEnlisted)
 		{
 			this.tx = tx;
-			this.enlisted = enlisted;
+			this.abortingEnlisted = abortingEnlisted;
 		}
 
 		public void Aborted ()
@@ -32,7 +38,8 @@ namespace System.Transactions
 
 		public void Aborted (Exception e)
 		{
-			tx.Rollback (e, enlisted);
+			if (tx != null)
+				tx.Rollback (e, abortingEnlisted);
 		}
 
 		[MonoTODO]
