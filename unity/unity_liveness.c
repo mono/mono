@@ -27,10 +27,18 @@ GPtrArray* mono_unity_liveness_calculation_from_statics (MonoClass* filter);
 
 static gboolean should_process_field (MonoClass* filter, MonoClass* field_class)
 {
-	if (filter && 
-		!mono_class_is_assignable_from (filter, field_class) && 
-		!mono_class_is_assignable_from (field_class, filter))
+	return TRUE;
+	if (filter) 
+	{
+		if (MONO_CLASS_IS_ARRAY (field_class))
+		{
+			MonoClass* element_class = field_class->element_class;
+			field_class = element_class;
+		}
+		if (!mono_class_is_assignable_from (filter, field_class) && 
+			!mono_class_is_assignable_from (field_class, filter))
 		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -49,63 +57,107 @@ static gboolean should_process_value (MonoObject* val, MonoClass* filter)
 	return TRUE;
 }
 
-static void mono_add_and_traverse_object (GQueue* queue, MonoClass* filter, GPtrArray* objects)
+static void mono_traverse_array (MonoArray* array, GQueue* queue, MonoClass* filter, GPtrArray* objects);
+static void mono_traverse_object (MonoObject* object, GQueue* queue, MonoClass* filter, GPtrArray* objects);
+
+static void mono_traverse_array (MonoArray* array, GQueue* queue, MonoClass* filter, GPtrArray* objects)
 {
 	int i = 0;
-	MonoObject* object = NULL;
+	MonoObject* object = (MonoObject*)array;
+	MonoClass* element_class;
+	g_assert (object);
 
-	while (object = g_queue_pop_head (queue))
+	if (IS_MARKED(object))
+		return;
+
+	element_class = object->vtable->klass->element_class;
+
+	if (mono_class_is_valuetype (element_class))
+		return;
+
+	for (i = 0; i < mono_array_length (array); i++)
 	{
-		MonoClassField *field;
-		MonoClass* klass = NULL;
-		MonoClass *p;
+		MonoObject* val =  mono_array_get(array, MonoObject*, i);
+		if (val)
+			g_queue_push_tail (queue, val);
+	}
 
-		g_assert (object);
+	g_ptr_array_add (objects, object);
 
-		if (IS_MARKED(object))
-			continue;
-		
-		g_ptr_array_add (objects, object);
+	MARK_OBJ(object);
 
-		klass = mono_object_class (object);
-		
-		for (p = klass; p != NULL; p = p->parent) {
-			gpointer iter = NULL;
-			while (field = mono_class_get_fields (p, &iter)) 
-			{
-				if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+}
+
+static void mono_traverse_object (MonoObject* object, GQueue* queue, MonoClass* filter, GPtrArray* objects)
+{
+	MonoClassField *field;
+	MonoClass* klass = NULL;
+	MonoClass *p;
+
+	g_assert (object);
+
+	if (IS_MARKED(object))
+		return;
+
+	klass = mono_object_class (object);
+	
+	for (p = klass; p != NULL; p = p->parent) {
+		gpointer iter = NULL;
+		while (field = mono_class_get_fields (p, &iter)) 
+		{
+			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+				continue;
+			if (!MONO_TYPE_IS_REFERENCE(field->type))
+				continue;
+
+			if (field->offset == -1) {
+				g_assert_not_reached ();
+			} else {
+				MonoObject* val = NULL;
+				MonoVTable *vtable = NULL;
+				MonoClass* field_class = mono_class_from_mono_type (field->type);
+				if (!should_process_field(filter, field_class))
 					continue;
-				if (!MONO_TYPE_IS_REFERENCE(field->type))
-					continue;
 
-				if (field->offset == -1) {
-					g_assert_not_reached ();
-				} else {
-					MonoObject* val = NULL;
-					MonoVTable *vtable = NULL;
-					MonoClass* field_class = mono_class_from_mono_type (field->type);
-					if (!should_process_field(filter, field_class))
-						continue;
+				mono_field_get_value (object, field, &val);
 
-					mono_field_get_value (object, field, &val);
-
-					if (val)
-					{
-						if (!should_process_value (val, filter))
-							continue;
-						g_queue_push_tail (queue, val);
-					}
+				if (val)
+				{
+					g_queue_push_tail (queue, val);
 				}
 			}
 		}
-
-		MARK_OBJ(object);
 	}
 
-	for (i = 0; i < objects->len; i++)
+	g_ptr_array_add (objects, object);
+
+	MARK_OBJ(object);
+}
+
+static void mono_traverse_objects (GQueue* queue, MonoClass* filter, GPtrArray* objects)
+{
+	int i = 0;
+	MonoObject* object = NULL;
+	GPtrArray* all_objects = g_ptr_array_new ();
+
+	while (object = g_queue_pop_head (queue))
 	{
-		MonoObject* object = objects->pdata[i];
+		if (IS_MARKED(object))
+			continue;
+		if (mono_object_class(object)->rank)
+			mono_traverse_array (object, queue, filter, all_objects);
+		else if (0)
+			;
+		else
+			mono_traverse_object (object, queue, filter, all_objects);
+	}
+
+	for (i = 0; i < all_objects->len; i++)
+	{
+		MonoObject* object = all_objects->pdata[i];
 		CLEAR_OBJ(object);
+		if (should_process_value (object, filter))
+			g_ptr_array_add (objects, object);
 	}
 }
 
@@ -152,15 +204,13 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(MonoClass* filter)
 
 				if (val)
 				{
-					if (!should_process_value (val, filter))
-						continue;
 					g_queue_push_tail (queue, val);
 				}
 			}
 		}
 	}
 	
-	mono_add_and_traverse_object (queue, filter, objects);
+	mono_traverse_objects (queue, filter, objects);
 
 	g_queue_free (queue);
 	
@@ -211,7 +261,7 @@ GPtrArray* mono_unity_liveness_calculation_from_root (MonoObject* root, MonoClas
 
 	g_queue_push_head (queue, root);
 	/* GC_stop_world (); */
-	mono_add_and_traverse_object (queue, filter, objects);
+	mono_traverse_objects (queue, filter, objects);
 	/* GC_start_world (); */
 
 	return objects;

@@ -13,10 +13,10 @@ namespace object_traversal
     }
     class Program
     {
-        [DllImport("__Internal")]
+        [DllImport("__Internal", CallingConvention=CallingConvention.Cdecl)]
         static extern IntPtr mono_unity_liveness_calculation_from_statics_managed(IntPtr typeHandle);
 
-        [DllImport("__Internal")]
+        [DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
         static extern IntPtr mono_unity_liveness_calculation_from_root_managed(IntPtr rootHandle, IntPtr typeHandle);
 
         static void Main(string[] args)
@@ -33,6 +33,10 @@ namespace object_traversal
                 Test9,
                 Test10,
                 Test11,
+                Test12,
+                Test_Array1,
+                Test_Array2,
+                Test_Array3,
             };
 
             foreach (var test in tests)
@@ -45,6 +49,8 @@ namespace object_traversal
                 Program.o = null;
                 Program.o2 = null;
                 Program2.d = null;
+                Program.a1 = null;
+                Program.a2 = null;
             }
         }
 
@@ -53,7 +59,7 @@ namespace object_traversal
             IntPtr typeHandle = (IntPtr)GCHandle.Alloc(typeof(Node));
             IntPtr gchandle = mono_unity_liveness_calculation_from_statics_managed(typeHandle);
 
-            object[] vals = (object[])((GCHandle)gchandle).Target;
+            Node[] vals = (Node[])((GCHandle)gchandle).Target;
 
             ((GCHandle)typeHandle).Free();
             ((GCHandle)gchandle).Free();
@@ -73,7 +79,7 @@ namespace object_traversal
             IntPtr rootHandle = (IntPtr)GCHandle.Alloc(root);
             IntPtr gchandle = mono_unity_liveness_calculation_from_root_managed(rootHandle, typeHandle);
 
-            object[] vals = (object[])((GCHandle)gchandle).Target;
+            Node[] vals = (Node[])((GCHandle)gchandle).Target;
 
             if (typeHandle != IntPtr.Zero)
                 ((GCHandle)typeHandle).Free();
@@ -189,6 +195,32 @@ namespace object_traversal
             VerifyObjects("Test11", 4, root);
         }
 
+        static void Test12()
+        {
+            Foo f = new Foo();
+            f.foo = new Foo() { node = new Node() };
+
+            VerifyObjects("Test12", 1, f);
+        }
+
+        static void Test_Array1()
+        {
+            a1 = new Node[] { new Node(), new Node() };
+            VerifyObjects("Test_Array1", 2);
+        }
+
+        static void Test_Array2()
+        {
+            a1 = new Node[] { new Node(), new NodeDerived() };
+            VerifyObjects("Test_Array2", 2);
+        }
+
+        static void Test_Array3()
+        {
+            a2 = new object[] { new Node(), new NodeDerived(), new object[] { 10, 3.4, new Node()} };
+            VerifyObjects("Test_Array3", 3);
+        }
+
         static int i = 0;
         static string s;
         public static object o;
@@ -197,6 +229,8 @@ namespace object_traversal
         public static Node n2;
         public static NodeDerived n3;
         public static NodeNotDerived nnot;
+        public static Node[] a1;
+        public static object[] a2;
     }
 
     class NodeBase
@@ -220,6 +254,12 @@ namespace object_traversal
             this.left = l;
             this.right = r;
         }
+    }
+
+    class Foo
+    {
+        public Foo foo;
+        public Node node;
     }
 
     class NodeDerived : Node
