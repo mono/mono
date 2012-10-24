@@ -1600,6 +1600,23 @@ namespace MonoTests.System.Runtime.Serialization
 			string xml = "<ArrayOfguid xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.microsoft.com/2003/10/Serialization/Arrays'><guid>00000000-0000-0000-0000-000000000000</guid></ArrayOfguid>".Replace ('\'', '"');
 			Assert.AreEqual (xml, sw.ToString (), "#1");
 		}
+		
+		// bug #7957
+		[Test]
+		public void DeserializeEmptyDictionary ()
+		{
+			string whatItGets = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+				+ "<MyData xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://sickhead.com/types/Example\">"
+					+ "<Data xmlns:b=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\"/>"
+					+ "<FirstId>b8a7eb6f-f593-4668-8178-07be9f7266d1</FirstId>"
+					+ "<SecondId>ID-GOES-HERE</SecondId>"
+					+ "</MyData>";
+			var serializer = new DataContractSerializer (typeof (MyData));
+			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (whatItGets)))
+			{
+				var data = serializer.ReadObject (stream);
+			}
+		}
 	}
 	
 	[DataContract]
@@ -2182,6 +2199,25 @@ namespace SLProto5_Different
 	public class CashAmountDC : SLProto5.AmountDC
 	{
 	}
+}
+
+// bug #7957
+[DataContract(Namespace = "http://sickhead.com/types/Example")]
+public class MyData
+{
+	public MyData()
+	{
+		Data = new Dictionary<int, byte[]> ();
+	}
+
+	[DataMember]
+	public Guid FirstId { get; set; }
+
+	[DataMember]
+	public string SecondId { get; set; }
+
+	[DataMember]
+	public Dictionary<int, byte[]> Data { get; set; }
 }
 
 #endregion
