@@ -55,6 +55,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -2209,7 +2210,7 @@ namespace Mono.Unix.Native {
 			return getgrouplist (pw);
 		}
 
-	        public static Group [] getgrouplist (Passwd user)
+		public static Group [] getgrouplist (Passwd user)
 		{
 			if (user == null)
 				throw new ArgumentNullException ("user");
@@ -2223,14 +2224,14 @@ namespace Mono.Unix.Native {
 				res = sys_getgrouplist (user.pw_name, user.pw_gid, groups, ref ngroups);
 			}
 			while (res == -1);
-			Group [] result = new Group [res];
+			List<Group> result = new List<Group> ();
 			Group gr = null;
 			for (int i = 0; i < res; i++) {
 				gr = Syscall.getgrgid (groups [i]);
 				if (gr != null) 
-					result [i] = gr;
+					result.Add (gr);
 			}
-			return result;
+			return result.ToArray ();
 		}
 
 		// setgroups(2)
