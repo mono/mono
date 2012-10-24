@@ -78,7 +78,7 @@ static void mono_traverse_array (MonoArray* array, GQueue* queue, MonoClass* fil
 	for (i = 0; i < mono_array_length (array); i++)
 	{
 		MonoObject* val =  mono_array_get(array, MonoObject*, i);
-		if (val)
+		if (val && !IS_MARKED(val))
 			g_queue_push_tail (queue, val);
 	}
 
@@ -121,7 +121,7 @@ static void mono_traverse_object (MonoObject* object, GQueue* queue, MonoClass* 
 
 				mono_field_get_value (object, field, &val);
 
-				if (val)
+				if (val && !IS_MARKED(object))
 				{
 					g_queue_push_tail (queue, val);
 				}
