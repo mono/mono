@@ -37,6 +37,8 @@ namespace object_traversal
                 Test_Array1,
                 Test_Array2,
                 Test_Array3,
+                Test_BigObject1,
+                Test_BigObject2,
             };
 
             foreach (var test in tests)
@@ -75,11 +77,16 @@ namespace object_traversal
 
         static void VerifyObjects(string label, int expectedCount, object root)
         {
+            VerifyObjects(label, expectedCount, root, true);
+        }
+
+        static void VerifyObjects(string label, int expectedCount, object root, bool useFilter)
+        {
             IntPtr typeHandle = (IntPtr)GCHandle.Alloc(typeof(Node));
             IntPtr rootHandle = (IntPtr)GCHandle.Alloc(root);
-            IntPtr gchandle = mono_unity_liveness_calculation_from_root_managed(rootHandle, typeHandle);
+            IntPtr gchandle = mono_unity_liveness_calculation_from_root_managed(rootHandle, useFilter? typeHandle : IntPtr.Zero);
 
-            Node[] vals = (Node[])((GCHandle)gchandle).Target;
+            object[] vals = (object[])((GCHandle)gchandle).Target;
 
             if (typeHandle != IntPtr.Zero)
                 ((GCHandle)typeHandle).Free();
@@ -221,6 +228,18 @@ namespace object_traversal
             VerifyObjects("Test_Array3", 3);
         }
 
+        static void Test_BigObject1()
+        {
+            var b = new BigObject() { o1 = new BigObject(), o27 = new BigObject() };
+            VerifyObjects("Test_BigObject1", 3, b, false);
+        }
+
+        static void Test_BigObject2()
+        {
+            var b = new TooBigObject() { o1 = new BigObject(), o27 = new BigObject(), o28 = new BigObject() };
+            VerifyObjects("Test_BigObject2", 4, b, false);
+        }
+
         static int i = 0;
         static string s;
         public static object o;
@@ -278,5 +297,41 @@ namespace object_traversal
 
     class NodeNotDerived
     {
+    }
+
+    class BigObject
+    {
+        public BigObject o1;
+        BigObject o2;
+        BigObject o3;
+        BigObject o4;
+        BigObject o5;
+        BigObject o6;
+        BigObject o7;
+        BigObject o8;
+        BigObject o9;
+        BigObject o10;
+        BigObject o11;
+        BigObject o12;
+        BigObject o13;
+        BigObject o14;
+        BigObject o15;
+        BigObject o16;
+        BigObject o17;
+        BigObject o18;
+        BigObject o19;
+        BigObject o20;
+        BigObject o21;
+        BigObject o22;
+        BigObject o23;
+        BigObject o24;
+        BigObject o25;
+        BigObject o26;
+        public BigObject o27;
+    }
+
+    class TooBigObject : BigObject
+    {
+        public BigObject o28;
     }
 }
