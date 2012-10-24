@@ -34,7 +34,16 @@ Mono_Posix_Syscall_closelog (void)
 int
 Mono_Posix_Syscall_syslog (int priority, const char* message)
 {
+#ifdef __GNUC__
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wformat-security"
+#endif
+
 	syslog (priority, message);
+
+#ifdef __GNUC__
+	#pragma GCC diagnostic pop
+#endif
 	return 0;
 }
 
