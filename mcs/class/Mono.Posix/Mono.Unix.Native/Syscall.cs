@@ -2224,8 +2224,12 @@ namespace Mono.Unix.Native {
 			}
 			while (res == -1);
 			Group [] result = new Group [res];
-			for (int i = 0; i < res; i++) 
-				result [i] = Syscall.getgrgid (groups [i]);
+			Group gr = null;
+			for (int i = 0; i < res; i++) {
+				gr = Syscall.getgrgid (groups [i]);
+				if (gr != null) 
+					result [i] = gr;
+			}
 			return result;
 		}
 
