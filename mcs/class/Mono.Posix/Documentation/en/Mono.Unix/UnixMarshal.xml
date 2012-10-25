@@ -1,9 +1,11 @@
 <Type Name="UnixMarshal" FullName="Mono.Unix.UnixMarshal">
   <TypeSignature Language="C#" Value="public sealed class UnixMarshal" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit UnixMarshal extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>This type is safe for multithreaded operations.</ThreadingSafetyStatement>
   <Base>
@@ -67,7 +69,13 @@
   <Members>
     <Member MemberName="AllocHeap">
       <MemberSignature Language="C#" Value="public static IntPtr AllocHeap (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int AllocHeap(int64 size) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -104,14 +112,16 @@
         <altmember cref="M:Mono.Unix.UnixMarshal.FreeHeap" />
         <altmember cref="M:Mono.Unix.Native.Stdlib.malloc" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FreeHeap">
       <MemberSignature Language="C#" Value="public static void FreeHeap (IntPtr ptr);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void FreeHeap(native int ptr) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -141,14 +151,21 @@
         <altmember cref="M:Mono.Unix.UnixMarshal.ReAllocHeap" />
         <altmember cref="M:Mono.Unix.Native.Stdlib.free" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetErrorDescription">
       <MemberSignature Language="C#" Value="public static string GetErrorDescription (Mono.Unix.Native.Errno errno);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetErrorDescription(valuetype Mono.Unix.Native.Errno errno) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -176,19 +193,16 @@
         <altmember cref="M:Mono.Unix.Native.Stdlib.strerror" />
         <altmember cref="M:Mono.Unix.Native.Syscall.strerror_r" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="PtrToString">
       <MemberSignature Language="C#" Value="public static string PtrToString (IntPtr p);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string PtrToString(native int p) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -223,14 +237,16 @@
         </remarks>
         <altmember cref="M:Mono.Unix.UnixMarshal.PtrToStringUnix" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PtrToString">
       <MemberSignature Language="C#" Value="public static string PtrToString (IntPtr p, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string PtrToString(native int p, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -300,14 +316,16 @@
           <paramref name="encoding" /> is <see langword="null" />.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PtrToStringArray">
       <MemberSignature Language="C#" Value="public static string[] PtrToStringArray (IntPtr stringArray);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] PtrToStringArray(native int stringArray) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -339,14 +357,16 @@
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PtrToStringArray">
       <MemberSignature Language="C#" Value="public static string[] PtrToStringArray (int count, IntPtr stringArray);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] PtrToStringArray(int32 count, native int stringArray) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -383,14 +403,16 @@
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PtrToStringArray">
       <MemberSignature Language="C#" Value="public static string[] PtrToStringArray (IntPtr stringArray, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] PtrToStringArray(native int stringArray, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -444,14 +466,16 @@ stringArray[] = {
           <paramref name="encoding" /> is <see langword="null" />.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PtrToStringArray">
       <MemberSignature Language="C#" Value="public static string[] PtrToStringArray (int count, IntPtr stringArray, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] PtrToStringArray(int32 count, native int stringArray, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -504,14 +528,16 @@ stringArray[] = {
           <paramref name="encoding" /> is <see langword="null" />.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PtrToStringUnix">
       <MemberSignature Language="C#" Value="public static string PtrToStringUnix (IntPtr p);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string PtrToStringUnix(native int p) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -546,14 +572,16 @@ stringArray[] = {
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReAllocHeap">
       <MemberSignature Language="C#" Value="public static IntPtr ReAllocHeap (IntPtr ptr, long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int ReAllocHeap(native int ptr, int64 size) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -638,14 +666,16 @@ stringArray[] = {
         <altmember cref="M:Mono.Unix.UnixMarshal.FreeHeap" />
         <altmember cref="M:Mono.Unix.Native.Stdlib.realloc" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShouldRetrySyscall">
       <MemberSignature Language="C#" Value="public static bool ShouldRetrySyscall (int r);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ShouldRetrySyscall(int32 r) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -677,14 +707,21 @@ stringArray[] = {
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShouldRetrySyscall">
       <MemberSignature Language="C#" Value="public static bool ShouldRetrySyscall (int r, out Mono.Unix.Native.Errno errno);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ShouldRetrySyscall(int32 r, valuetype Mono.Unix.Native.Errno errno) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -731,19 +768,16 @@ stringArray[] = {
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="StringToHeap">
       <MemberSignature Language="C#" Value="public static IntPtr StringToHeap (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int StringToHeap(string s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -786,14 +820,16 @@ stringArray[] = {
         </exception>
         <altmember cref="M:Mono.Unix.UnixMarshal.FreeHeap" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StringToHeap">
       <MemberSignature Language="C#" Value="public static IntPtr StringToHeap (string s, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int StringToHeap(string s, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -844,14 +880,16 @@ stringArray[] = {
         </exception>
         <altmember cref="M:Mono.Unix.UnixMarshal.FreeHeap" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StringToHeap">
       <MemberSignature Language="C#" Value="public static IntPtr StringToHeap (string s, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int StringToHeap(string s, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -917,14 +955,16 @@ stringArray[] = {
         </exception>
         <altmember cref="M:Mono.Unix.UnixMarshal.FreeHeap" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StringToHeap">
       <MemberSignature Language="C#" Value="public static IntPtr StringToHeap (string s, int index, int count, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int StringToHeap(string s, int32 index, int32 count, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -992,14 +1032,21 @@ stringArray[] = {
         </exception>
         <altmember cref="M:Mono.Unix.UnixMarshal.FreeHeap" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ThrowExceptionForError">
       <MemberSignature Language="C#" Value="public static void ThrowExceptionForError (Mono.Unix.Native.Errno errno);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ThrowExceptionForError(valuetype Mono.Unix.Native.Errno errno) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1099,19 +1146,21 @@ stringArray[] = {
           <paramref name="errno" /> is not any of the above error values.
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="ThrowExceptionForErrorIf">
+      <MemberSignature Language="C#" Value="public static void ThrowExceptionForErrorIf (int retval, Mono.Unix.Native.Errno errno);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ThrowExceptionForErrorIf(int32 retval, valuetype Mono.Unix.Native.Errno errno) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ThrowExceptionForErrorIf">
-      <MemberSignature Language="C#" Value="public static void ThrowExceptionForErrorIf (int retval, Mono.Unix.Native.Errno errno);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1219,19 +1268,16 @@ stringArray[] = {
           <paramref name="errno" /> is not any of the above error values.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="ThrowExceptionForLastError">
       <MemberSignature Language="C#" Value="public static void ThrowExceptionForLastError ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ThrowExceptionForLastError() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1327,14 +1373,16 @@ stringArray[] = {
           is not any of the above error values.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ThrowExceptionForLastErrorIf">
       <MemberSignature Language="C#" Value="public static void ThrowExceptionForLastErrorIf (int retval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ThrowExceptionForLastErrorIf(int32 retval) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1439,10 +1487,6 @@ stringArray[] = {
           is not any of the above error values.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>
