@@ -1,13 +1,20 @@
 <Type Name="PosixMadviseAdvice" FullName="Mono.Unix.Native.PosixMadviseAdvice">
   <TypeSignature Language="C#" Value="public enum PosixMadviseAdvice" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PosixMadviseAdvice extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Possible <see cref="M:Mono.Unix.Native.Syscall.posix_madvise" /><paramref name="advice" /> values.</summary>
     <remarks />
@@ -16,78 +23,83 @@
   <Members>
     <Member MemberName="POSIX_MADV_DONTNEED">
       <MemberSignature Language="C#" Value="POSIX_MADV_DONTNEED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.PosixMadviseAdvice POSIX_MADV_DONTNEED = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PosixMadviseAdvice</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Allows the VM system to decrease the in-memory priority of pages in the specified range.  Additionally future references to this address range will incur a page fault.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="POSIX_MADV_NORMAL">
       <MemberSignature Language="C#" Value="POSIX_MADV_NORMAL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.PosixMadviseAdvice POSIX_MADV_NORMAL = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PosixMadviseAdvice</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Tells the system to revert to the default paging behavior.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="POSIX_MADV_RANDOM">
       <MemberSignature Language="C#" Value="POSIX_MADV_RANDOM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.PosixMadviseAdvice POSIX_MADV_RANDOM = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PosixMadviseAdvice</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Is a hint that pages will be accessed randomly, and prefetching is likely not advantageous.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="POSIX_MADV_SEQUENTIAL">
       <MemberSignature Language="C#" Value="POSIX_MADV_SEQUENTIAL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.PosixMadviseAdvice POSIX_MADV_SEQUENTIAL = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PosixMadviseAdvice</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Causes the VM system to depress the priority of pages immediately preceding a given page when it is faulted in.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="POSIX_MADV_WILLNEED">
       <MemberSignature Language="C#" Value="POSIX_MADV_WILLNEED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.Native.PosixMadviseAdvice POSIX_MADV_WILLNEED = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.PosixMadviseAdvice</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Causes pages that are in a given virtual address range to temporarily have higher priority, and if they are in memory, decrease the likelihood of them being freed.  Additionally, the pages that are already in memory will be immediately mapped into the process, thereby eliminating unnecessary overhead of going through the entire process of faulting the pages in.  This WILL NOT fault pages in from backing store, but quickly map the pages already in memory into the calling process.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.CLSCompliant(false)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

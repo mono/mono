@@ -1,15 +1,22 @@
 <Type Name="StatModeMasks" FullName="Mono.Posix.StatModeMasks">
   <TypeSignature Language="C#" Value="public enum StatModeMasks" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed StatModeMasks extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Bitmasks for various posix bit fields.</summary>
     <remarks>
@@ -21,7 +28,18 @@
   <Members>
     <Member MemberName="GroupMask">
       <MemberSignature Language="C#" Value="GroupMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.StatModeMasks GroupMask = int32(56)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_RWXG")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Mono.Posix.StatModeMasks</ReturnType>
       </ReturnValue>
@@ -31,19 +49,21 @@
         <summary>mask for group permissions</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_RWXG")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OthersMask">
       <MemberSignature Language="C#" Value="OthersMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.StatModeMasks OthersMask = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_RWXO")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Mono.Posix.StatModeMasks</ReturnType>
       </ReturnValue>
@@ -53,19 +73,21 @@
         <summary>mask for permissions for others (not in group)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_RWXO")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OwnerMask">
       <MemberSignature Language="C#" Value="OwnerMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.StatModeMasks OwnerMask = int32(448)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_RWXU")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Mono.Posix.StatModeMasks</ReturnType>
       </ReturnValue>
@@ -75,19 +97,21 @@
         <summary>mask for file owner permissions</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_RWXU")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TypeMask">
       <MemberSignature Language="C#" Value="TypeMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.StatModeMasks TypeMask = int32(61440)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_IFMT")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Mono.Posix.StatModeMasks</ReturnType>
       </ReturnValue>
@@ -97,20 +121,6 @@
         <summary>bitmask for the file type bitfields</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions.S_IFMT")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions")</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>
