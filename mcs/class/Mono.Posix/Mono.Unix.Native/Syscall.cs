@@ -2193,7 +2193,7 @@ namespace Mono.Unix.Native {
 		//
 		// TODO: putgrent(3), fgetgrent_r(), initgroups(3)
 
-		// getgrouplist(2) 
+		// getgrouplist(2)
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getgrouplist")]
 		private static extern int sys_getgrouplist (string user, uint grp, uint [] groups,ref int ngroups);
 
@@ -2206,7 +2206,7 @@ namespace Mono.Unix.Native {
 			// Syscall to getpwnam to retrieve user uid
 			Passwd pw = Syscall.getpwnam (username);
 			if (pw == null)
-                		throw new ArgumentException (string.Format ("User {0} does not exists",username), "username");
+				throw new ArgumentException (string.Format ("User {0} does not exists",username), "username");
 			return getgrouplist (pw);
 		}
 
@@ -2228,7 +2228,7 @@ namespace Mono.Unix.Native {
 			Group gr = null;
 			for (int i = 0; i < res; i++) {
 				gr = Syscall.getgrgid (groups [i]);
-				if (gr != null) 
+				if (gr != null)
 					result.Add (gr);
 			}
 			return result.ToArray ();
@@ -2236,7 +2236,8 @@ namespace Mono.Unix.Native {
 
 		// setgroups(2)
 		//    int setgroups (size_t size, const gid_t *list);
-		[DllImport (MPH, SetLastError=true, EntryPoint="Mono_Posix_Syscall_setgroups")]
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_setgroups")]
 		public static extern int setgroups (ulong size, uint[] list);
 
 		public static int setgroups (uint [] list)
