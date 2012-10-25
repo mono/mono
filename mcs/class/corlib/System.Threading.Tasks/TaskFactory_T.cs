@@ -339,8 +339,12 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			var iar = beginMethod (l => InnerInvoke (tcs, endMethod, l), state);
-			if (iar != null && iar.CompletedSynchronously) {
+			var alreadyInvoked = false;
+			var iar = beginMethod (l => {
+				alreadyInvoked = true;
+				InnerInvoke (tcs, endMethod, l);
+			}, state);
+			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
 				InnerInvoke (tcs, endMethod, iar);
 			}
 
@@ -373,8 +377,12 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			var iar = beginMethod (arg1, l => InnerInvoke (tcs, endMethod, l), state);
-			if (iar != null && iar.CompletedSynchronously) {
+			var alreadyInvoked = false;
+			var iar = beginMethod (arg1, l => {
+				alreadyInvoked = true;
+				InnerInvoke (tcs, endMethod, l);
+			}, state);
+			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
 				InnerInvoke (tcs, endMethod, iar);
 			}
 
@@ -406,8 +414,12 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			var iar = beginMethod (arg1, arg2, l => InnerInvoke (tcs, endMethod, l), state);
-			if (iar != null && iar.CompletedSynchronously) {
+			var alreadyInvoked = false;
+			var iar = beginMethod (arg1, arg2, l => {
+				alreadyInvoked = true;
+				InnerInvoke (tcs, endMethod, l);
+			}, state);
+			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
 				InnerInvoke (tcs, endMethod, iar);
 			}
 
@@ -440,8 +452,12 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			var iar = beginMethod (arg1, arg2, arg3, l => InnerInvoke (tcs, endMethod, l), state);
-			if (iar != null && iar.CompletedSynchronously) {
+			bool alreadyInvoked = false;
+			var iar = beginMethod (arg1, arg2, arg3, l => {
+				alreadyInvoked = true;
+				InnerInvoke (tcs, endMethod, l);
+			}, state);
+			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
 				InnerInvoke (tcs, endMethod, iar);
 			}
 

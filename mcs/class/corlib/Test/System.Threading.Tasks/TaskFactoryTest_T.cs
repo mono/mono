@@ -226,6 +226,29 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (task.Wait (1000), "#1");
 			Assert.AreEqual ("1", task.Result, "#2");
 		}
+
+		IAsyncResult BeginGetTestAsyncResultCompletedSynchronously2 (AsyncCallback cb, object obj)
+		{
+			var result = new TestAsyncResultCompletedSynchronously ();
+			cb (result);
+			return result;
+		}
+		
+		string EndGetTestAsyncResultCompletedSynchronously2 (IAsyncResult res)
+		{
+			return "1";
+		}
+		
+		[Test]
+		public void FromAsync_CompletedSynchronously_with_Callback ()
+		{
+			var factory = new TaskFactory<string> ();
+			var task = factory.FromAsync (BeginGetTestAsyncResultCompletedSynchronously2, EndGetTestAsyncResultCompletedSynchronously2, null);
+			
+			Assert.IsTrue (task.Wait (1000), "#1");
+			Assert.AreEqual ("1", task.Result, "#2");
+		}
+
 	}
 }
 
