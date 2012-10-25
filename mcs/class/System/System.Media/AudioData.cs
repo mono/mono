@@ -156,14 +156,28 @@ namespace Mono.Audio {
 		}
 
 		public override void Play (AudioDevice dev) {
-			int read;
-			int count = data_len;
-			byte[] buffer = new byte [buffer_size];
-			stream.Position = 0;
-			while (!IsStopped && count >= 0 && (read = stream.Read (buffer, 0, System.Math.Min (buffer.Length, count))) > 0) {
-				// FIXME: account for leftover bytes
-				dev.PlaySample (buffer, read/frame_divider);
-				count -= read;
+			int    fragment_played = 0;
+			int    total_data_played = 0;
+			int    chunk_size        = (int)dev.ChunkSize;
+			int    count             = data_len;
+			byte[] buffer            = new byte [data_len];
+			byte[] chunk_to_play     = new byte [chunk_size];
+
+			// Read only wave data, don't care about file header here !
+			stream.Position = data_offset;
+			stream.Read (buffer, 0, data_len); 
+
+			while (!IsStopped && count >= 0){
+				// Copy one chunk from buffer
+				Buffer.BlockCopy(buffer, total_data_played, chunk_to_play, 0, chunk_size);
+				// play that chunk, !!! the size pass to alsa the number of fragment, a fragment is a sample per channel !!!
+				fragment_played = dev.PlaySample (chunk_to_play, chunk_size / (frame_divider * channels));
+
+				// If alsa played something, inc the total data played and dec the data to be played
+				if (fragment_played > 0) {
+					total_data_played  += (fragment_played * frame_divider * channels);
+					count              -= (fragment_played * frame_divider * channels);
+				}
 			}
 		}
 
@@ -190,6 +204,7 @@ namespace Mono.Audio {
 		ushort frame_divider;
 		int sample_rate;
 		int data_len = 0;
+		int data_offset = 0;
 		AudioFormat format;
 
 		public AuData (Stream data) {
@@ -242,14 +257,28 @@ namespace Mono.Audio {
 		}
 
 		public override void Play (AudioDevice dev) {
-			int read;
-			int count = data_len;
-			byte[] buffer = new byte [buffer_size];
-			stream.Position = 0;
-			while (!IsStopped && count >= 0 && (read = stream.Read (buffer, 0, System.Math.Min (buffer.Length, count))) > 0) {
-				// FIXME: account for leftover bytes
-				dev.PlaySample (buffer, read/frame_divider);
-				count -= read;
+						int    fragment_played = 0;
+			int    total_data_played = 0;
+			int    chunk_size        = (int)dev.ChunkSize;
+			int    count             = data_len;
+			byte[] buffer            = new byte [data_len];
+			byte[] chunk_to_play     = new byte [chunk_size];
+			
+			// Read only Au data, don't care about file header here !
+			stream.Position = (long)data_offset;
+			stream.Read (buffer, 0, data_len); 
+			
+			while (!IsStopped && count >= 0){
+				// Copy one chunk from buffer
+				Buffer.BlockCopy(buffer, total_data_played, chunk_to_play, 0, chunk_size);
+				// play that chunk, !!! the size pass to alsa the number of fragment, a fragment is a sample per channel !!!
+				fragment_played = dev.PlaySample (chunk_to_play, chunk_size / (frame_divider * channels));
+				
+				// If alsa played something, inc the total data played and dec the data to be played
+				if (fragment_played > 0) {
+					total_data_played  += (fragment_played * frame_divider * channels);
+					count              -= (fragment_played * frame_divider * channels);
+				}
 			}
 		}
 
