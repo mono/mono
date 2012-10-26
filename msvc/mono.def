@@ -22,6 +22,8 @@ mono_assembly_loaded
 ;Unity Exports that add new functions created by Unity
 unity_mono_redirect_output
 unity_mono_close_output
+mono_unity_liveness_calculation_begin
+mono_unity_liveness_calculation_end
 mono_unity_liveness_calculation_from_statics
 mono_unity_liveness_calculation_from_statics_managed
 mono_unity_liveness_calculation_from_root

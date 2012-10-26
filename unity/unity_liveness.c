@@ -5,11 +5,26 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/domain-internals.h>
 
+typedef struct _LivenessState LivenessState;
+struct _LivenessState
+{
+	GPtrArray *all_objects;
+	GPtrArray *filtered_objects;
+	GPtrArray *process_array;
+};
+
 /* Liveness calculation */
-void mono_unity_liveness_calculation_begin (void);
-void mono_unity_liveness_calculation_end (void);
-GPtrArray* mono_unity_liveness_calculation_from_root (MonoObject* root, MonoClass* filter);
-GPtrArray* mono_unity_liveness_calculation_from_statics (MonoClass* filter);
+LivenessState* mono_unity_liveness_calculation_begin (void);
+void           mono_unity_liveness_calculation_end (LivenessState* state);
+GPtrArray*     mono_unity_liveness_calculation_from_root (MonoObject* root, MonoClass* filter, LivenessState* state);
+GPtrArray*     mono_unity_liveness_calculation_from_statics (MonoClass* filter, LivenessState* state);
+
+void mono_reset_state(LivenessState* state)
+{
+	state->all_objects->len = 0;
+	state->filtered_objects->len = 0;
+	state->process_array->len = 0;
+}
 
 /* TODO: Endian safe */
 #define MARK_OBJ(obj) \
@@ -57,10 +72,10 @@ static gboolean should_process_value (MonoObject* val, MonoClass* filter)
 	return TRUE;
 }
 
-static void mono_traverse_array (MonoArray* array, GQueue* queue, MonoClass* filter, GPtrArray* objects);
-static void mono_traverse_object (MonoObject* object, GQueue* queue, MonoClass* filter, GPtrArray* objects);
+static void mono_traverse_array (MonoArray* array, LivenessState* state, MonoClass* filter);
+static void mono_traverse_object (MonoObject* object, LivenessState* state, MonoClass* filter);
 
-static void mono_traverse_array (MonoArray* array, GQueue* queue, MonoClass* filter, GPtrArray* objects)
+static void mono_traverse_array (MonoArray* array, LivenessState* state, MonoClass* filter)
 {
 	int i = 0;
 	MonoObject* object = (MonoObject*)array;
@@ -79,15 +94,18 @@ static void mono_traverse_array (MonoArray* array, GQueue* queue, MonoClass* fil
 	{
 		MonoObject* val =  mono_array_get(array, MonoObject*, i);
 		if (val && !IS_MARKED(val))
-			g_queue_push_tail (queue, val);
+		{
+			//g_queue_push_tail (queue, val);
+			g_ptr_array_add(state->process_array,val);
+		}
 	}
 
-	g_ptr_array_add (objects, object);
+	g_ptr_array_add (state->all_objects, object);
 	MARK_OBJ(object);
 
 }
 
-static void mono_traverse_object (MonoObject* object, GQueue* queue, MonoClass* filter, GPtrArray* objects)
+static void mono_traverse_object (MonoObject* object, LivenessState* state, MonoClass* filter)
 {
 	MonoClassField *field;
 	MonoClass* klass = NULL;
@@ -122,18 +140,19 @@ static void mono_traverse_object (MonoObject* object, GQueue* queue, MonoClass* 
 
 				if (val && !IS_MARKED(val))
 				{
-					g_queue_push_tail (queue, val);
+					//g_queue_push_tail (queue, val);
+					g_ptr_array_add(state->process_array,val);
 				}
 			}
 		}
 	}
 
-	g_ptr_array_add (objects, object);
+	g_ptr_array_add (state->all_objects, object);
 
 	MARK_OBJ(object);
 }
 
-static void mono_traverse_gc_desc (MonoObject* object, GQueue* queue, MonoClass* filter, GPtrArray* objects)
+static void mono_traverse_gc_desc (MonoObject* object, LivenessState* state, MonoClass* filter)
 {
 	int i = 0;
 	int mask = 0;
@@ -149,46 +168,47 @@ static void mono_traverse_gc_desc (MonoObject* object, GQueue* queue, MonoClass*
 			MonoObject* val = *(MonoObject**)(((char*)object) + i * sizeof(void*));
 			if (val && !IS_MARKED(val))
 			{
-				g_queue_push_tail (queue, val);
+				//g_queue_push_tail (queue, val);
+				g_ptr_array_add(state->process_array,val);
 			}
 		}
 	}
-	g_ptr_array_add (objects, object);
+	g_ptr_array_add (state->all_objects, object);
 	MARK_OBJ(object);
 }
 
-static void mono_traverse_objects (GQueue* queue, MonoClass* filter, GPtrArray* objects)
+static void mono_traverse_objects (LivenessState* state, MonoClass* filter)
 {
 	int i = 0;
 	MonoObject* object = NULL;
-	GPtrArray* all_objects = g_ptr_array_new ();
 
-	while (object = g_queue_pop_head (queue))
+	while (state->process_array->len > 0)
 	{
 		int gc_desc = 0;
+		object = g_ptr_array_remove_index(state->process_array,state->process_array->len-1);
 		if (IS_MARKED(object))
 			continue;
 
 		gc_desc = (int)object->vtable->gc_descr;
 
 		if (gc_desc & 1)
-			mono_traverse_gc_desc (object, queue, filter, all_objects);
+			mono_traverse_gc_desc (object, state, filter);
 		else if (mono_object_class(object)->rank)
-			mono_traverse_array (object, queue, filter, all_objects);
+			mono_traverse_array (object, state, filter);
 		else if (mono_defaults.string_class == mono_object_class (object))
 			continue;
 		else if (!mono_object_class (object)->has_references)
 			continue;
 		else
-			mono_traverse_object (object, queue, filter, all_objects);
+			mono_traverse_object (object, state, filter);
 	}
 
-	for (i = 0; i < all_objects->len; i++)
+	for (i = 0; i < state->all_objects->len; i++)
 	{
-		MonoObject* object = all_objects->pdata[i];
+		MonoObject* object = state->all_objects->pdata[i];
 		CLEAR_OBJ(object);
 		if (should_process_value (object, filter))
-			g_ptr_array_add (objects, object);
+			g_ptr_array_add (state->filtered_objects, object);
 	}
 }
 
@@ -198,16 +218,14 @@ static void mono_traverse_objects (GQueue* queue, MonoClass* filter, GPtrArray* 
  * Returns an array of MonoObject* that are reachable from the static roots
  * in the current domain and derive from @filter (if not NULL).
  */
-GPtrArray* mono_unity_liveness_calculation_from_statics(MonoClass* filter)
+GPtrArray* mono_unity_liveness_calculation_from_statics(MonoClass* filter, LivenessState* liveness_state)
 {
 	int i = 0;
 	MonoDomain* domain = mono_domain_get();
-	GPtrArray *objects = g_ptr_array_new ();
-	GQueue* queue = g_queue_new ();
-
 	int size = GPOINTER_TO_INT (domain->static_data_array [1]);
 
-	objects = g_ptr_array_new ();
+	mono_reset_state(liveness_state);
+
 	for (i = 2; i < size; i++)
 	{
 		MonoClass* klass = domain->static_data_class_array[i];
@@ -235,17 +253,16 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(MonoClass* filter)
 
 				if (val)
 				{
-					g_queue_push_tail (queue, val);
+					g_ptr_array_add(liveness_state->process_array, val);
+//					g_queue_push_tail (liveness_state->queue, val);
 				}
 			}
 		}
 	}
 	
-	mono_traverse_objects (queue, filter, objects);
+	mono_traverse_objects (liveness_state, filter);
 
-	g_queue_free (queue);
-	
-	return objects;
+	return liveness_state->filtered_objects;
 }
 
 /**
@@ -262,12 +279,12 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
 
-	mono_unity_liveness_calculation_begin ();
+	LivenessState* liveness_state = mono_unity_liveness_calculation_begin ();
 
 	if (filter_type)
 		filter = mono_class_from_mono_type (filter_type->type);
 	
-	objects = mono_unity_liveness_calculation_from_statics (filter);
+	objects = mono_unity_liveness_calculation_from_statics (filter, liveness_state);
 
 	res = mono_array_new (mono_domain_get (), filter ? filter: mono_defaults.object_class, objects->len);
 	for (i = 0; i < objects->len; ++i) {
@@ -277,7 +294,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 
 	g_ptr_array_free (objects, TRUE);
 
-	mono_unity_liveness_calculation_end ();
+	mono_unity_liveness_calculation_end (liveness_state);
 
 	return mono_gchandle_new (res, FALSE);
 
@@ -289,17 +306,15 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
  * Returns an array of MonoObject* that are reachable from @root
  * in the current domain and derive from @filter (if not NULL).
  */
-GPtrArray* mono_unity_liveness_calculation_from_root (MonoObject* root, MonoClass* filter)
+GPtrArray* mono_unity_liveness_calculation_from_root (MonoObject* root, MonoClass* filter, LivenessState* liveness_state)
 {
-	GPtrArray* objects = g_ptr_array_new ();
-	GQueue* queue = g_queue_new ();
+	mono_reset_state(liveness_state);
 
-	g_queue_push_head (queue, root);
-	/* GC_stop_world (); */
-	mono_traverse_objects (queue, filter, objects);
-	/* GC_start_world (); */
+	g_ptr_array_add(liveness_state->process_array,root);
+//	g_queue_push_head (liveless_state->queue, root);
+	mono_traverse_objects (liveness_state, filter);
 
-	return objects;
+	return liveness_state->filtered_objects;
 }
 
 /**
@@ -317,12 +332,12 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
 
-	mono_unity_liveness_calculation_begin ();
+	LivenessState* liveness_state = mono_unity_liveness_calculation_begin ();
 
 	if (filter_type)
 		filter = mono_class_from_mono_type (filter_type->type);
 	
-	objects = mono_unity_liveness_calculation_from_root (root, filter);
+	objects = mono_unity_liveness_calculation_from_root (root, filter, liveness_state);
 
 	res = mono_array_new (mono_domain_get (), filter ? filter: mono_defaults.object_class, objects->len);
 	for (i = 0; i < objects->len; ++i) {
@@ -332,18 +347,33 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 
 	g_ptr_array_free (objects, TRUE);
 
-	mono_unity_liveness_calculation_end ();
+	mono_unity_liveness_calculation_end (liveness_state);
 
 	return mono_gchandle_new (res, FALSE);
 }
 
 
-void mono_unity_liveness_calculation_begin (void)
+LivenessState* mono_unity_liveness_calculation_begin (void)
 {
+	LivenessState* state = NULL;
 	GC_stop_world ();
+	//construct liveness_state;
+	
+	state = g_new(LivenessState, 1);
+	state->all_objects = g_ptr_array_new ();
+	state->filtered_objects = g_ptr_array_new ();
+	state->process_array = g_ptr_array_new ();
+
+	return state;
 }
 
-void mono_unity_liveness_calculation_end (void)
+void mono_unity_liveness_calculation_end (LivenessState* state)
 {
+	//cleanup the liveness_state
+	g_ptr_array_free(state->all_objects, TRUE);
+	g_ptr_array_free(state->filtered_objects, TRUE);
+	g_ptr_array_free(state->process_array, TRUE);
+	g_free(state);
+
 	GC_start_world ();
 }
