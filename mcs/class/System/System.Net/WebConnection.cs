@@ -46,7 +46,8 @@ namespace System.Net
 		None,
 		Status,
 		Headers,
-		Content
+		Content,
+		Aborted
 	}
 
 	class WebConnection
@@ -62,7 +63,6 @@ namespace System.Net
 		static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
 		EventHandler abortHandler;
 		AbortHelper abortHelper;
-		ReadState readState;
 		internal WebConnectionData Data;
 		bool chunkedRead;
 		ChunkStream chunkStream;
@@ -108,7 +108,6 @@ namespace System.Net
 		{
 			this.sPoint = sPoint;
 			buffer = new byte [4096];
-			readState = ReadState.None;
 			Data = new WebConnectionData ();
 			initConn = new WaitCallback (state => {
 				try {
@@ -493,7 +492,7 @@ namespace System.Net
 		
 		static void ReadDone (IAsyncResult result)
 		{
-			WebConnection cnc = (WebConnection) result.AsyncState;
+			WebConnection cnc = (WebConnection)result.AsyncState;
 			WebConnectionData data = cnc.Data;
 			Stream ns = cnc.nstream;
 			if (ns == null) {
@@ -526,10 +525,10 @@ namespace System.Net
 
 			int pos = -1;
 			nread += cnc.position;
-			if (cnc.readState == ReadState.None) { 
+			if (data.ReadState == ReadState.None) { 
 				Exception exc = null;
 				try {
-					pos = cnc.GetResponse (cnc.buffer, nread);
+					pos = GetResponse (data, cnc.sPoint, cnc.buffer, nread);
 				} catch (Exception e) {
 					exc = e;
 				}
@@ -540,14 +539,19 @@ namespace System.Net
 				}
 			}
 
-			if (cnc.readState != ReadState.Content) {
+			if (data.ReadState == ReadState.Aborted) {
+				cnc.HandleError (WebExceptionStatus.RequestCanceled, null, "ReadDone");
+				return;
+			}
+
+			if (data.ReadState != ReadState.Content) {
 				int est = nread * 2;
 				int max = (est < cnc.buffer.Length) ? cnc.buffer.Length : est;
 				byte [] newBuffer = new byte [max];
 				Buffer.BlockCopy (cnc.buffer, 0, newBuffer, 0, nread);
 				cnc.buffer = newBuffer;
 				cnc.position = nread;
-				cnc.readState = ReadState.None;
+				data.ReadState = ReadState.None;
 				InitRead (cnc);
 				return;
 			}
@@ -624,7 +628,8 @@ namespace System.Net
 			}
 		}
 		
-		int GetResponse (byte [] buffer, int max)
+		static int GetResponse (WebConnectionData data, ServicePoint sPoint,
+		                        byte [] buffer, int max)
 		{
 			int pos = 0;
 			string line = null;
@@ -632,7 +637,10 @@ namespace System.Net
 			bool isContinue = false;
 			bool emptyFirstLine = false;
 			do {
-				if (readState == ReadState.None) {
+				if (data.ReadState == ReadState.Aborted)
+					return -1;
+
+				if (data.ReadState == ReadState.None) {
 					lineok = ReadLine (buffer, ref pos, max, ref line);
 					if (!lineok)
 						return 0;
@@ -642,35 +650,34 @@ namespace System.Net
 						continue;
 					}
 					emptyFirstLine = false;
-
-					readState = ReadState.Status;
+					data.ReadState = ReadState.Status;
 
 					string [] parts = line.Split (' ');
 					if (parts.Length < 2)
 						return -1;
 
 					if (String.Compare (parts [0], "HTTP/1.1", true) == 0) {
-						Data.Version = HttpVersion.Version11;
+						data.Version = HttpVersion.Version11;
 						sPoint.SetVersion (HttpVersion.Version11);
 					} else {
-						Data.Version = HttpVersion.Version10;
+						data.Version = HttpVersion.Version10;
 						sPoint.SetVersion (HttpVersion.Version10);
 					}
 
-					Data.StatusCode = (int) UInt32.Parse (parts [1]);
+					data.StatusCode = (int) UInt32.Parse (parts [1]);
 					if (parts.Length >= 3)
-						Data.StatusDescription = String.Join (" ", parts, 2, parts.Length - 2);
+						data.StatusDescription = String.Join (" ", parts, 2, parts.Length - 2);
 					else
-						Data.StatusDescription = "";
+						data.StatusDescription = "";
 
 					if (pos >= max)
 						return pos;
 				}
 
 				emptyFirstLine = false;
-				if (readState == ReadState.Status) {
-					readState = ReadState.Headers;
-					Data.Headers = new WebHeaderCollection ();
+				if (data.ReadState == ReadState.Status) {
+					data.ReadState = ReadState.Headers;
+					data.Headers = new WebHeaderCollection ();
 					ArrayList headers = new ArrayList ();
 					bool finished = false;
 					while (!finished) {
@@ -699,25 +706,25 @@ namespace System.Net
 						return 0;
 
 					foreach (string s in headers)
-						Data.Headers.SetInternal (s);
+						data.Headers.SetInternal (s);
 
-					if (Data.StatusCode == (int) HttpStatusCode.Continue) {
+					if (data.StatusCode == (int) HttpStatusCode.Continue) {
 						sPoint.SendContinue = true;
 						if (pos >= max)
 							return pos;
 
-						if (Data.request.ExpectContinue) {
-							Data.request.DoContinueDelegate (Data.StatusCode, Data.Headers);
+						if (data.request.ExpectContinue) {
+							data.request.DoContinueDelegate (data.StatusCode, data.Headers);
 							// Prevent double calls when getting the
 							// headers in several packets.
-							Data.request.ExpectContinue = false;
+							data.request.ExpectContinue = false;
 						}
 
-						readState = ReadState.None;
+						data.ReadState = ReadState.None;
 						isContinue = true;
 					}
 					else {
-						readState = ReadState.Content;
+						data.ReadState = ReadState.Content;
 						return pos;
 					}
 				}
@@ -764,7 +771,6 @@ namespace System.Net
 				return;
 			}
 
-			readState = ReadState.None;
 			request.SetWriteStream (new WebConnectionStream (this, request));
 		}
 		
@@ -1160,6 +1166,11 @@ namespace System.Net
 
 				if (ntlm_authenticated)
 					ResetNtlm ();
+				if (Data != null) {
+					lock (Data) {
+						Data.ReadState = ReadState.Aborted;
+					}
+				}
 				busy = false;
 				Data = new WebConnectionData ();
 				if (sendNext)

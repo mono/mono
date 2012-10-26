@@ -41,9 +41,11 @@ namespace System.Net
 		public Version Version;
 		public Stream stream;
 		public string[] Challenge;
+		ReadState _readState;
 
 		public WebConnectionData ()
 		{
+			_readState = ReadState.None;
 		}
 
 		public WebConnectionData (HttpWebRequest request)
@@ -57,6 +59,19 @@ namespace System.Net
 			}
 			set {
 				_request = value;
+			}
+		}
+
+		public ReadState ReadState {
+			get {
+				return _readState;
+			}
+			set {
+				lock (this) {
+					if ((_readState == ReadState.Aborted) && (value != ReadState.Aborted))
+						throw new WebException ("Aborted", WebExceptionStatus.RequestCanceled);
+					_readState = value;
+				}
 			}
 		}
 	}
