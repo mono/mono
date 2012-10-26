@@ -58,7 +58,7 @@ namespace MonoTests.System.Transactions {
 				scope.Complete ();*/
 			}
 
-			irm.Check ( 0, 0, 0, 1, 0, "irm" );
+			irm.Check ( 0, 0, 0, 1, 0, 0, 0, "irm" );
 		}
 
 		[Test]
@@ -122,7 +122,7 @@ namespace MonoTests.System.Transactions {
 		public void Vol0_Dur1 ()
 		{
 			IntResourceManager irm = new IntResourceManager (1);
-			irm.Volatile = false;
+			irm.Type = ResourceManagerType.Durable;
 			irm.UseSingle = true;
 
 			using (TransactionScope scope = new TransactionScope ()) {
@@ -146,7 +146,7 @@ namespace MonoTests.System.Transactions {
 			/* Durable resource enlisted with a IEnlistedNotification
 			 * object
 			 */
-			irm.Volatile = false;
+			irm.Type = ResourceManagerType.Durable;
 
 			using (TransactionScope scope = new TransactionScope ()) {
 				irm.Value = 2;
@@ -163,7 +163,7 @@ namespace MonoTests.System.Transactions {
 			/* Durable resource enlisted with a IEnlistedNotification
 			 * object
 			 */
-			irm.Volatile = false;
+			irm.Type = ResourceManagerType.Durable;
 			irm.FailSPC = true;
 			irm.UseSingle = true;
 			try {
@@ -174,7 +174,7 @@ namespace MonoTests.System.Transactions {
 				}
 			}
 			catch (TransactionAbortedException) {
-				irm.Check ( 1, 0, 0, 0, 0, "irm" );
+				irm.Check ( 1, 0, 0, 0, 0, 0, 0, "irm" );
 				return;
 			}
 
@@ -193,7 +193,7 @@ namespace MonoTests.System.Transactions {
 			irm [2] = new IntResourceManager ( 5 );
 			irm [3] = new IntResourceManager ( 7 );
 
-			irm [0].Volatile = false;
+			irm [0].Type = ResourceManagerType.Durable;
 			for ( int i = 0; i < 4; i++ )
 				irm [i].UseSingle = true;
 
@@ -225,7 +225,7 @@ namespace MonoTests.System.Transactions {
 			irm [2] = new IntResourceManager (5);
 			irm [3] = new IntResourceManager (7);
 
-			irm [0].Volatile = false;
+			irm [0].Type = ResourceManagerType.Durable;
 			irm [0].FailSPC = true;
 
 			for ( int i = 0; i < 4; i++ )
@@ -247,7 +247,7 @@ namespace MonoTests.System.Transactions {
 				irm [0].CheckSPC ( "irm [0]" );
 				/* Volatile RMs get 2PC Prepare, and then get rolled back */
 				for (int i = 1; i < 4; i++)
-					irm [i].Check ( 0, 1, 0, 1, 0, "irm [" + i + "]" );
+					irm [i].Check ( 0, 1, 0, 1, 0, 0, 0, "irm [" + i + "]" );
 			}
 		}
 
@@ -265,7 +265,7 @@ namespace MonoTests.System.Transactions {
 			irm [2] = new IntResourceManager (5);
 			irm [3] = new IntResourceManager (7);
 
-			irm [0].Volatile = false;
+			irm [0].Type = ResourceManagerType.Durable;
 			irm [0].IgnoreSPC = true;
 
 			for ( int i = 0; i < 4; i++ )
@@ -288,7 +288,7 @@ namespace MonoTests.System.Transactions {
 
 				/* Volatile RMs get 2PC Prepare, and then get rolled back */
 				for (int i = 1; i < 4; i++)
-					irm [i].Check ( 0, 1, 0, 1, 0, "irm [" + i + "]" );
+					irm [i].Check ( 0, 1, 0, 1, 0, 0, 0, "irm [" + i + "]" );
 
 				exception = ex;
 			}
@@ -311,7 +311,7 @@ namespace MonoTests.System.Transactions {
 			irm[3] = new IntResourceManager(7);
 
 			irm[0].IgnoreSPC = true;
-			irm[1].Volatile = false;
+			irm[1].Type = ResourceManagerType.Durable;
 
 			for (int i = 0; i < 4; i++)
 				irm[i].UseSingle = true;
@@ -336,7 +336,7 @@ namespace MonoTests.System.Transactions {
 
 				/* Volatile RMs get 2PC Prepare, and then get rolled back */
 				for (int i = 1; i < 4; i++)
-					irm[i].Check(0, 1, 0, 1, 0, "irm [" + i + "]");
+					irm[i].Check(0, 1, 0, 1, 0, 0, 0, "irm [" + i + "]");
 
 				exception = ex;
 			}
@@ -358,7 +358,7 @@ namespace MonoTests.System.Transactions {
 			irm [2] = new IntResourceManager ( 5 );
 			irm [3] = new IntResourceManager ( 7 );
 
-			irm [0].Volatile = false;
+			irm [0].Type = ResourceManagerType.Durable;
 			irm [2].FailPrepare = true;
 
 			for ( int i = 0; i < 4; i++ )
@@ -377,15 +377,15 @@ namespace MonoTests.System.Transactions {
 				}
 			}
 			catch (TransactionAbortedException) {
-				irm [0].Check ( 0, 0, 0, 1, 0, "irm [0]");
+				irm [0].Check ( 0, 0, 0, 1, 0, 0, 0, "irm [0]");
 
 				/* irm [1] & [2] get prepare,
 				 * [2] -> ForceRollback,
 				 * [1] & [3] get rollback,
 				 * [0](durable) gets rollback */
-				irm [1].Check ( 0, 1, 0, 1, 0, "irm [1]" );
-				irm [2].Check ( 0, 1, 0, 0, 0, "irm [2]" );
-				irm [3].Check ( 0, 0, 0, 1, 0, "irm [3]" );
+				irm [1].Check ( 0, 1, 0, 1, 0, 0, 0, "irm [1]" );
+				irm [2].Check ( 0, 1, 0, 0, 0, 0, 0, "irm [2]" );
+				irm [3].Check ( 0, 0, 0, 1, 0, 0, 0, "irm [3]" );
 
 				return;
 			}
@@ -400,7 +400,7 @@ namespace MonoTests.System.Transactions {
 			irm [0] = new IntResourceManager ( 1 );
 			irm [1] = new IntResourceManager ( 3 );
 
-			irm [0].Volatile = false;
+			irm [0].Type = ResourceManagerType.Durable;
 			irm [0].FailSPC = true;
 			irm [0].FailWithException = true;
 
@@ -421,8 +421,8 @@ namespace MonoTests.System.Transactions {
 				Assert.IsNotNull ( e.InnerException, "Expected e.InnerException == NotSupportedException, but got None");
 				Assert.AreEqual ( typeof ( NotSupportedException ), e.InnerException.GetType (), "Expected e.InnerException == NotSupportedException, but got " + e.GetType () );
 
-				irm [0].Check ( 1, 0, 0, 0, 0, "irm [0]" );
-				irm [1].Check ( 0, 1, 0, 1, 0, "irm [1]" );
+				irm [0].Check ( 1, 0, 0, 0, 0, 0, 0, "irm [0]" );
+				irm [1].Check ( 0, 1, 0, 1, 0, 0, 0, "irm [1]" );
 				return;
 			}
 
@@ -438,7 +438,7 @@ namespace MonoTests.System.Transactions {
 			irm [1] = new IntResourceManager ( 3 );
 
 			Transaction.Current = ct;
-			irm [0].Volatile = false;
+			irm [0].Type = ResourceManagerType.Durable;
 			irm [0].FailSPC = true;
 			irm [0].FailWithException = true;
 
@@ -462,8 +462,8 @@ namespace MonoTests.System.Transactions {
 				Assert.IsNotNull ( e.InnerException, "Expected e.InnerException == NotSupportedException, but got None" );
 				Assert.AreEqual ( typeof ( NotSupportedException ), e.InnerException.GetType (), "Expected e.InnerException == NotSupportedException, but got " + e.GetType () );
 
-				irm [0].Check ( 1, 0, 0, 0, 0, "irm [0]" );
-				irm [1].Check ( 0, 1, 0, 1, 0, "irm [1]" );
+				irm [0].Check ( 1, 0, 0, 0, 0, 0, 0, "irm [0]" );
+				irm [1].Check ( 0, 1, 0, 1, 0, 0, 0, "irm [1]" );
 				try {
 					ct.Commit ();
 				}
@@ -480,6 +480,65 @@ namespace MonoTests.System.Transactions {
 
 		#endregion
 
+		#region Promotable Single Phase Enlistment
+		[Test]
+		public void Vol0_Dur0_Pspe1 ()
+		{
+			IntResourceManager irm = new IntResourceManager (1);
+			irm.Type = ResourceManagerType.Promotable;
+			using (TransactionScope scope = new TransactionScope ()) {
+				irm.Value = 2;
+
+				scope.Complete ();
+			}
+			irm.Check ( 1, 0, 0, 0, 0, 1, 0, "irm" );
+		}
+
+		[Test]
+		public void Vol1_Dur0_Pspe1 ()
+		{
+			IntResourceManager irm0 = new IntResourceManager (1);
+			IntResourceManager irm1 = new IntResourceManager (1);
+			irm1.Type = ResourceManagerType.Promotable;
+			using (TransactionScope scope = new TransactionScope ()) {
+				irm0.Value = 2;
+				irm1.Value = 8;
+
+				scope.Complete ();
+			}
+			irm1.Check ( 1, 0, 0, 0, 0, 1, 0, "irm1" );
+		}
+
+		[Test]
+		public void Vol0_Dur1_Pspe1 ()
+		{
+			IntResourceManager irm0 = new IntResourceManager (1);
+			IntResourceManager irm1 = new IntResourceManager (1);
+			irm0.Type = ResourceManagerType.Durable;
+			irm0.UseSingle = true;
+			irm1.Type = ResourceManagerType.Promotable;
+			using (TransactionScope scope = new TransactionScope ()) {
+				irm0.Value = 8;
+				irm1.Value = 2;
+				Assert.AreEqual(0, irm1.NumEnlistFailed, "PSPE enlist did not fail although durable RM was already enlisted");
+			}
+		}
+
+		[Test]
+		public void Vol0_Dur0_Pspe2 ()
+		{
+			IntResourceManager irm0 = new IntResourceManager (1);
+			IntResourceManager irm1 = new IntResourceManager (1);
+			irm0.Type = ResourceManagerType.Promotable;
+			irm1.Type = ResourceManagerType.Promotable;
+			using (TransactionScope scope = new TransactionScope ()) {
+				irm0.Value = 8;
+				irm1.Value = 2;
+				Assert.AreEqual(0, irm1.NumEnlistFailed, "PSPE enlist did not fail although PSPE RM was already enlisted");
+			}
+		}
+		#endregion
+
 		#region Others
 		/* >1vol  
 		 * > 1 durable, On .net this becomes a distributed transaction
@@ -493,8 +552,8 @@ namespace MonoTests.System.Transactions {
 			irm [0] = new IntResourceManager ( 1 );
 			irm [1] = new IntResourceManager ( 3 );
 
-			irm [0].Volatile = false;
-			irm [1].Volatile = false;
+			irm [0].Type = ResourceManagerType.Durable;
+			irm [1].Type = ResourceManagerType.Durable;
 
 			for ( int i = 0; i < 2; i++ )
 				irm [i].UseSingle = true;
@@ -512,7 +571,7 @@ namespace MonoTests.System.Transactions {
 		{
 			CommittableTransaction ct = new CommittableTransaction ();
 			IntResourceManager irm = new IntResourceManager (1);
-			irm.Volatile = false;
+			irm.Type = ResourceManagerType.Durable;
 
 			ct.Dispose ();
 			irm.Check  (0, 0, 0, 0, "Dispose transaction");
