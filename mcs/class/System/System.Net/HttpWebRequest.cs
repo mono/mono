@@ -778,10 +778,10 @@ namespace System.Net
 			if (writeStream == null || writeStream.RequestWritten || !InternalAllowBuffering)
 				return;
 #if NET_4_0
-			if (contentLength < 0 && writeStream.CanWrite == true && writeStream.WriteBufferLength <= 0)
+			if (contentLength < 0 && writeStream.CanWrite == true && writeStream.WriteBufferLength < 0)
 				return;
 
-			if (contentLength < 0 && writeStream.WriteBufferLength > 0)
+			if (contentLength < 0 && writeStream.WriteBufferLength >= 0)
 				InternalContentLength = writeStream.WriteBufferLength;
 #else
 			if (contentLength < 0 && writeStream.CanWrite == true)

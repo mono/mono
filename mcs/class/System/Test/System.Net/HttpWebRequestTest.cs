@@ -3131,6 +3131,18 @@ namespace MonoTests.System.Net
 			}
 		}
 #endif
+
+		[Test]
+		// Bug6737
+		public void Post_EmptyRequestStream ()
+		{
+			var wr = HttpWebRequest.Create ("http://google.com");
+			wr.Method = "POST";
+			wr.GetRequestStream ();
+			
+			var gr = wr.BeginGetResponse (delegate { }, null);
+			Assert.AreEqual (true, gr.AsyncWaitHandle.WaitOne (5000), "#1");
+		}
 	}
 
 #if NET_2_0
