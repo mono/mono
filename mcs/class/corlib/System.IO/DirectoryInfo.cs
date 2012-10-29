@@ -279,7 +279,7 @@ namespace System.IO {
 			DirectoryInfo[] infos = new DirectoryInfo [names.Length];
 			for (int i = 0; i<names.Length; ++i){
 				string name = names[i];
-				infos [i++] = new DirectoryInfo (name);
+				infos [i] = new DirectoryInfo (name);
 			}
 			return infos;
 		}	
