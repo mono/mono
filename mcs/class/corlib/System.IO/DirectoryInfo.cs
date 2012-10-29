@@ -284,7 +284,6 @@ namespace System.IO {
 				infos [i++] = new DirectoryInfo (name);
 
 			return infos;
-		    }
 		}	
 
 		internal int GetFilesSubdirs (ArrayList l, string pattern)
