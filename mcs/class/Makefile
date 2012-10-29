@@ -173,6 +173,7 @@ monotouch_runtime_dirs := \
 	Mono.Posix \
 	System.Core \
 	Mono.Security			\
+	System \
 	System.Security			\
 	System.Configuration		\
 	System				\
