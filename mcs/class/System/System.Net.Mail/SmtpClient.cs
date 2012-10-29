@@ -919,10 +919,12 @@ try {
 					
 					contentType.Parameters ["type"] = av.ContentType.ToString ();
 					StartSection (inner_boundary, contentType);
-					StartSection (alt_boundary, av.ContentType, av.TransferEncoding);
+						Console.WriteLine("One: " + av.ContentId);
+					StartSection (alt_boundary, av.ContentType, av);
 				} else {
 					contentType = new ContentType (av.ContentType.ToString ());
-					StartSection (inner_boundary, contentType, av.TransferEncoding);
+						Console.WriteLine("Two: " + av.ContentId);
+					StartSection (inner_boundary, contentType, av);
 				}
 
 				switch (av.TransferEncoding) {
@@ -967,7 +969,7 @@ try {
 		private void SendLinkedResources (MailMessage message, LinkedResourceCollection resources, string boundary)
 		{
 			foreach (LinkedResource lr in resources) {
-				StartSection (boundary, lr.ContentType, lr.TransferEncoding, lr);
+				StartSection (boundary, lr.ContentType, lr);
 
 				switch (lr.TransferEncoding) {
 				case TransferEncoding.Base64:
@@ -1003,7 +1005,7 @@ try {
 						contentType.CharSet = att.NameEncoding.HeaderName;
 					att.ContentDisposition.FileName = att.Name;
 				}
-				StartSection (boundary, contentType, att.TransferEncoding, att == body ? null : att.ContentDisposition);
+				StartSection (boundary, contentType, att, att != body);
 
 				byte [] content = new byte [att.ContentStream.Length];
 				att.ContentStream.Read (content, 0, content.Length);
@@ -1049,35 +1051,28 @@ try {
 			SendData (string.Empty);
 		}
 
-		private void StartSection (string section, ContentType sectionContentType,TransferEncoding transferEncoding)
+		private void StartSection (string section, ContentType sectionContentType, AttachmentBase att)
 		{
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
-			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
+			SendHeader ("content-transfer-encoding", GetTransferEncodingName (att.TransferEncoding));
+			Console.WriteLine("Weird: " + att.ContentId);
+			if (att.ContentId != null && att.ContentId.Length > 0)
+				SendHeader("content-ID", "<" + att.ContentId + ">");
 			SendData (string.Empty);
 		}
 
-		private void StartSection(string section, ContentType sectionContentType, TransferEncoding transferEncoding, LinkedResource lr)
-		{
-			SendData (String.Format("--{0}", section));
-			SendHeader ("content-type", sectionContentType.ToString ());
-			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
-
-			if (lr.ContentId != null && lr.ContentId.Length > 0)
-				SendHeader("content-ID", "<" + lr.ContentId + ">");
-
-			SendData (string.Empty);
-		}
-
-		private void StartSection (string section, ContentType sectionContentType, TransferEncoding transferEncoding, ContentDisposition contentDisposition) {
+		private void StartSection (string section, ContentType sectionContentType, Attachment att, bool sendDisposition) {
 			SendData (String.Format ("--{0}", section));
+			if (att.ContentId != null && att.ContentId.Length > 0)
+				SendHeader("content-ID", "<" + att.ContentId + ">");
 			SendHeader ("content-type", sectionContentType.ToString ());
-			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
-			if (contentDisposition != null)
-				SendHeader ("content-disposition", contentDisposition.ToString ());
+			SendHeader ("content-transfer-encoding", GetTransferEncodingName (att.TransferEncoding));
+			if (sendDisposition)
+				SendHeader ("content-disposition", att.ContentDisposition.ToString ());
 			SendData (string.Empty);
 		}
-
+		
 		// use proper encoding to escape input
 		private string ToQuotedPrintable (string input, Encoding enc)
 		{
