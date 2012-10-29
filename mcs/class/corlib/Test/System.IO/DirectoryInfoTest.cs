@@ -558,6 +558,18 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test] //GetDirectories (String, SearchOptions)
+		public void GetDirectiories_SearchOptionAllDirectories ()
+		{
+			string directoryToBeLookedFor = "lookforme";
+			DirectoryInfo baseDir = Directory.CreateDirectory(Path.Combine(TempFolder, "GetDirectiories_SearchOptionAllDirectories"));
+			DirectoryInfo subdir = baseDir.CreateSubdirectory("subdir");
+			DirectoryInfo subsubdir = subdir.CreateSubdirectory(directoryToBeLookedFor);
+			DirectoryInfo[] directoriesFound = baseDir.GetDirectories(directoryToBeLookedFor, SearchOption.AllDirectories);
+			Assert.AreEqual(1, directoriesFound.Length, "There should be exactly one directory with the specified name.");
+			Assert.AreEqual(directoryToBeLookedFor, directoriesFound[0].Name, "The name of the directory found should match the expected one.");
+		}
+
 #if NET_2_0
 		[Test] // GetDirectories (String, SearchOption)
 		public void GetDirectories3_SearchPattern_Null ()
