@@ -273,16 +273,14 @@ namespace System.IO {
 #if !MOONLIGHT
 		public DirectoryInfo[] GetDirectories (string searchPattern, SearchOption searchOption)
 		{
-		    if (searchPattern == null)
-				throw new ArgumentNullException ("searchPattern");
-
+		    //NULL-check of searchPattern is done in Directory.GetDirectories
 			string [] names = Directory.GetDirectories (FullPath, searchPattern, searchOption);
-
+			//Convert the names to DirectoryInfo instances
 			DirectoryInfo[] infos = new DirectoryInfo [names.Length];
-			int i = 0;
-			foreach (string name in names)
+			for (int i = 0; i<names.Length; ++i){
+				string name = names[i];
 				infos [i++] = new DirectoryInfo (name);
-
+			}
 			return infos;
 		}	
 
