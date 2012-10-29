@@ -3458,7 +3458,7 @@ namespace Mono.CSharp {
 					return label;
 
 				// TODO: Temporary workaround for the switch block implicit label block
-				if (label.Block.IsCompilerGenerated && label.Block.Parent == b.Original)
+				if (label.Block.IsCompilerGenerated && (label.Block.Parent == b.Original || label.Block == b.Original.Parent))
 					return label;
 			} else {
 				List<LabeledStatement> list = (List<LabeledStatement>) value;
@@ -3468,7 +3468,7 @@ namespace Mono.CSharp {
 						return label;
 
 					// TODO: Temporary workaround for the switch block implicit label block
-					if (label.Block.IsCompilerGenerated && label.Block.Parent == b.Original)
+					if (label.Block.IsCompilerGenerated && (label.Block.Parent == b.Original || label.Block == b.Original.Parent))
 						return label;
 				}
 			}
