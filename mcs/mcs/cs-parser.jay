@@ -2079,7 +2079,11 @@ conversion_operator_declarator
 
 		Location loc = GetLocation ($2);
 		current_local_parameters = (ParametersCompiled)$6;  
-		  
+
+		if (current_local_parameters.Count != 1) {
+			report.Error (1535, loc, "Overloaded unary operator `implicit' takes one parameter");
+		}
+
 		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
@@ -2098,7 +2102,11 @@ conversion_operator_declarator
 		
 		Location loc = GetLocation ($2);
 		current_local_parameters = (ParametersCompiled)$6;  
-		  
+
+		if (current_local_parameters.Count != 1) {
+			report.Error (1535, loc, "Overloaded unary operator `explicit' takes one parameter");
+		}
+
 		if (doc_support) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
