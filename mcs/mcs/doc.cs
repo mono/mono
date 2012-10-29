@@ -591,6 +591,9 @@ namespace Mono.CSharp {
 			if (cref.Length == 0)
 				Report.Warning (1001, 1, mc.Location, "Identifier expected");
 				// ... and continue until CS1584.
+			else
+				// Additional symbols for < and > are allowed for easier XML typing
+				cref = cref.Replace ('{', '<').Replace ('}', '>');
 
 			string signature; // "x:" are stripped
 			string name; // method invokation "(...)" are removed
