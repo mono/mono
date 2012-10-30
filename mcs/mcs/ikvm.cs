@@ -212,10 +212,10 @@ namespace Mono.CSharp
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 
-			var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
-			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
-
 			if (compiler.Settings.StdLib) {
+				var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
+				string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
+
 				string sdk_path = null;
 
 				string sdk_version = compiler.Settings.SdkVersion ?? "4.5";
