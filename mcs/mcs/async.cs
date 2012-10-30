@@ -7,7 +7,7 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2011 Novell, Inc.
-// Copyright 2011 Xamarin Inc.
+// Copyright 2011-2012 Xamarin Inc.
 //
 
 using System;
@@ -16,8 +16,10 @@ using System.Linq;
 using System.Collections;
 
 #if STATIC
+using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
+using System.Reflection;
 using System.Reflection.Emit;
 #endif
 
@@ -483,6 +485,12 @@ namespace Mono.CSharp
 		public PropertySpec Task {
 			get {
 				return task;
+			}
+		}
+
+		protected override TypeAttributes TypeAttr {
+			get {
+				return base.TypeAttr & ~TypeAttributes.SequentialLayout;
 			}
 		}
 
