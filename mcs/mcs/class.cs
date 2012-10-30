@@ -349,16 +349,13 @@ namespace Mono.CSharp
 		public string GetSignatureForMetadata ()
 		{
 #if STATIC
-			var name = TypeNameParser.Escape (MemberName.Basename);
-
 			if (Parent is TypeDefinition) {
-				return Parent.GetSignatureForMetadata () + "+" + name;
+				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (MemberName.Basename);
 			}
 
-			if (Parent != null && Parent.MemberName != null)
-				return Parent.GetSignatureForMetadata () + "." + name;
-
-			return name;
+			var sb = new StringBuilder ();
+			CreateMetadataName (sb);
+			return sb.ToString ();
 #else
 			throw new NotImplementedException ();
 #endif
