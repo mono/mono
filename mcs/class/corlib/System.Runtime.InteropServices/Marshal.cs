@@ -31,6 +31,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System;
 using System.Security;
@@ -272,10 +273,27 @@ namespace System.Runtime.InteropServices
 			return type.GUID;
 		}
 
-		[MonoTODO]
 		public static string GenerateProgIdForType (Type type)
 		{
-			throw new NotImplementedException ();
+			IList<CustomAttributeData> attrs = CustomAttributeData.GetCustomAttributes (type);
+
+			foreach (var a in attrs)
+			{
+				var dt = a.Constructor.DeclaringType;
+				string name = dt.Name;
+				if (name == "ProgIdAttribute")
+				{
+					var args = a.ConstructorArguments;
+					string text = a.ConstructorArguments[0].Value as string;
+					if (text == null)
+					{
+						text = string.Empty;
+					}
+					return text;
+				}
+			}
+
+			return type.FullName;
 		}
 
 		[MonoTODO]

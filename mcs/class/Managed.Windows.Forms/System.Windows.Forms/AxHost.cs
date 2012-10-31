@@ -187,6 +187,7 @@ namespace System.Windows.Forms {
 		//private int flags;
 		//private Guid clsid;
 		private AboutBoxDelegate aboutDelegate = null;
+		private AxHost.State ocxState = null;
 
 		#region Protected Constructors
 
@@ -351,11 +352,15 @@ namespace System.Windows.Forms {
 		[RefreshProperties (RefreshProperties.All)]
 		public AxHost.State OcxState {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return ocxState;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				if (ocxState == value || value == null)
+				{
+					return;
+				}
+				this.ocxState = value;
 			}
 		}
 		
