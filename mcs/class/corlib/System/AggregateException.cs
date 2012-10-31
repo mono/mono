@@ -150,7 +150,11 @@ namespace System
 
 		public override void GetObjectData (SerializationInfo info,	StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			if (info == null) {
+				throw new ArgumentNullException("info");
+			}
+			base.GetObjectData(info, context);
+			info.AddValue ("InnerExceptions", innerExceptions.ToArray(), typeof (Exception[]));
 		}
 
 		public override Exception GetBaseException ()
