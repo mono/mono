@@ -39,14 +39,15 @@ namespace System.Runtime.InteropServices
 	[ClassInterface (ClassInterfaceType.None)]
 	public class RegistrationServices : IRegistrationServices
 	{
+		private static Guid guidManagedCategory = new Guid("{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}");
+
 		public RegistrationServices ()
 		{
 		}
 
-		[MonoTODO ("implement")]
 		public virtual Guid GetManagedCategoryGuid ()
 		{
-			throw new NotImplementedException ();
+			return guidManagedCategory;
 		}
 
 		[MonoTODO ("implement")]
