@@ -277,6 +277,13 @@ namespace System.Data.SqlClient
 			set { statisticsEnabled = value; }
 		}
 #endif
+
+		protected internal override DbProviderFactory DbProviderFactory {
+			get {
+				return SqlClientFactory.Instance;
+			}
+		}
+
 		#endregion // Properties
 
 		#region Events

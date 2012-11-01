@@ -718,12 +718,10 @@ namespace System.Data.Common {
 			return dataTable;
 		}
 
-		protected virtual DbProviderFactory DbProviderFactory {
-#if MOBILE
-			get {throw new NotImplementedException();}
-#else
-			get { return DbProviderFactories.GetFactory (this.GetType (). ToString ()); }
-#endif
+		protected internal virtual DbProviderFactory DbProviderFactory {
+			get {
+				return null;
+			}
 		}
 #endif
 

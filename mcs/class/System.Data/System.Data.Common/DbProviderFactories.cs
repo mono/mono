@@ -39,7 +39,7 @@ using System.Configuration;
 namespace System.Data.Common {
 	public static class DbProviderFactories
 	{
-		private static object configEntries = null; // DataSet
+		private static object configEntries; // DataSet
 
 		internal const string CONFIG_SECTION_NAME        = "system.data";
 		internal const string CONFIG_SEC_TABLE_NAME      = "DbProviderFactories";
@@ -69,20 +69,26 @@ namespace System.Data.Common {
 
 		public static DbProviderFactory GetFactory (string providerInvariantName)
 		{
+			if (providerInvariantName == null)
+				throw new ArgumentNullException ("providerInvariantName");
+
 			DataTable table = GetFactoryClasses ();
 			if (table != null) {
 				DataRow row = table.Rows.Find (providerInvariantName);
 				if (row != null)
 					return GetFactory (row);
 			}
+
 			throw new ConfigurationErrorsException (String.Format("Failed to find or load the registered .Net Framework Data Provider '{0}'.", providerInvariantName));
 		}
 		
 #if NET_4_5
-		[MonoTODO]
 		public static DbProviderFactory GetFactory (DbConnection connection)
 		{
-			throw new NotImplementedException ();
+			if (connection == null)
+				throw new ArgumentNullException ("connection");
+
+			return connection.DbProviderFactory;
 		}
 #endif
 
