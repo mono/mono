@@ -19,7 +19,8 @@ read_entry (FILE *in, void **data)
 	if (fread (&type, 1, 1, in) != 1)
 		return SGEN_PROTOCOL_EOF;
 	switch (type) {
-	case SGEN_PROTOCOL_COLLECTION: size = sizeof (SGenProtocolCollection); break;
+	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollection); break;
+	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollection); break;
 	case SGEN_PROTOCOL_ALLOC: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
@@ -50,9 +51,14 @@ static void
 print_entry (int type, void *data)
 {
 	switch (type) {
-	case SGEN_PROTOCOL_COLLECTION: {
+	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
 		SGenProtocolCollection *entry = data;
-		printf ("collection %d generation %d\n", entry->index, entry->generation);
+		printf ("collection begin %d generation %d\n", entry->index, entry->generation);
+		break;
+	}
+	case SGEN_PROTOCOL_COLLECTION_END: {
+		SGenProtocolCollection *entry = data;
+		printf ("collection end %d generation %d\n", entry->index, entry->generation);
 		break;
 	}
 	case SGEN_PROTOCOL_ALLOC: {
@@ -152,7 +158,8 @@ static gboolean
 is_match (gpointer ptr, int type, void *data)
 {
 	switch (type) {
-	case SGEN_PROTOCOL_COLLECTION:
+	case SGEN_PROTOCOL_COLLECTION_BEGIN:
+	case SGEN_PROTOCOL_COLLECTION_END:
 	case SGEN_PROTOCOL_THREAD_SUSPEND:
 	case SGEN_PROTOCOL_THREAD_RESTART:
 	case SGEN_PROTOCOL_THREAD_REGISTER:
