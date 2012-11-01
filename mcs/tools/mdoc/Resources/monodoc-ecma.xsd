@@ -17,6 +17,7 @@ add masterdoc support?
   <xs:attribute name="Deprecated" type="xs:boolean" />
   <xs:attribute name="FullName" type="xs:string" />
   <xs:attribute name="FullNameSP" type="xs:string" />
+  <xs:attribute name="id" type="xs:string" />
   <xs:attribute name="inherited" type="xs:string" />
   <xs:attribute name="language" type="xs:string" />
   <xs:attribute name="Language" type="xs:string" />
@@ -38,6 +39,7 @@ add masterdoc support?
   <xs:attribute name="subset" type="xs:string" />
   <xs:attribute name="Value" type="xs:string" />
   <xs:attribute name="version" type="xs:string" />
+  <xs:attribute name="tool" type="xs:string" />
   <xs:attribute name="type" type="xs:string" />
   <xs:attribute name="Type" type="xs:string" />
   <xs:attribute name="TypeParamName" type="xs:string" />
@@ -328,6 +330,7 @@ add masterdoc support?
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
         <xs:element ref="format" />
+        <xs:element ref="list" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
@@ -534,6 +537,8 @@ add masterdoc support?
         <xs:element ref="whitespace" />
         <xs:element ref="img" />
       </xs:choice>
+      <xs:attribute ref="id" />
+      <xs:attribute ref="tool" />
     </xs:complexType>
   </xs:element>
 
