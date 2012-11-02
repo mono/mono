@@ -44,7 +44,9 @@ namespace MonoTests.System.Transactions
         public bool IgnoreSPC = false;
         public bool FailSPC = false;
         public bool FailCommit = false;
+		public bool FailRollback = false;
         public bool UseSingle = false;
+		public Exception ThrowThisException = null;
 
         Guid guid;
 
@@ -116,8 +118,8 @@ namespace MonoTests.System.Transactions
             Assert.AreEqual ( c, NumCommit, msg + ": NumCommit" );
             Assert.AreEqual ( r, NumRollback, msg + ": NumRollback" );
             Assert.AreEqual ( d, NumInDoubt, msg + ": NumInDoubt" );
-            Assert.AreEqual ( i, NumInitialize, msg + ": NumRollback" );
-            Assert.AreEqual ( pr, NumPromote, msg + ": NumInDoubt" );
+            Assert.AreEqual ( i, NumInitialize, msg + ": NumInitialize" );
+            Assert.AreEqual ( pr, NumPromote, msg + ": NumPromote" );
         }
        
         /* Used for volatile RMs */
@@ -143,7 +145,7 @@ namespace MonoTests.System.Transactions
 
             if ( resource.FailPrepare ) {
                 if (resource.FailWithException)
-                    preparingEnlistment.ForceRollback ( new NotSupportedException () );
+                    preparingEnlistment.ForceRollback ( resource.ThrowThisException ?? new NotSupportedException () );
                 else
                     preparingEnlistment.ForceRollback ();
             } else {
@@ -154,8 +156,13 @@ namespace MonoTests.System.Transactions
         public void Commit ( Enlistment enlistment )
         {
             resource.NumCommit++;
-            if ( resource.FailCommit )
-                return;
+			if (resource.FailCommit)
+			{
+				if (resource.FailWithException)
+					throw (resource.ThrowThisException ?? new NotSupportedException());
+				else
+					return;
+			}
 
             resource.Commit ();
             enlistment.Done ();
@@ -164,6 +171,14 @@ namespace MonoTests.System.Transactions
         public void Rollback ( Enlistment enlistment )
         {
             resource.NumRollback++;
+			if (resource.FailRollback)
+			{
+				if (resource.FailWithException)
+					throw (resource.ThrowThisException ?? new NotSupportedException());
+				else
+					return;
+			}
+
             resource.Rollback ();
         }
 
@@ -189,7 +204,7 @@ namespace MonoTests.System.Transactions
 
             if ( resource.FailSPC ) {
                 if ( resource.FailWithException )
-                    enlistment.Aborted ( new NotSupportedException () );
+                    enlistment.Aborted ( resource.ThrowThisException ?? new NotSupportedException () );
                 else
                     enlistment.Aborted ();
             }
