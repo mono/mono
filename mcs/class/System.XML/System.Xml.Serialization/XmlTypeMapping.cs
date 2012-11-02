@@ -400,6 +400,17 @@ namespace System.Xml.Serialization
 			if (_elements == null) return null;
 			return (XmlTypeMapElementInfo)_elements [BuildKey (name,ns, order)];
 		}
+
+		public XmlTypeMapElementInfo GetElement(string name, string ns)
+		{
+			if (_elements == null) return null;
+
+			foreach (XmlTypeMapElementInfo info in _elements.Values)
+				if (info.ElementName == name && info.Namespace == ns)
+					return info;
+
+			return null;
+		}
 		
 		public XmlTypeMapElementInfo GetElement (int index)
 		{
@@ -410,7 +421,7 @@ namespace System.Xml.Serialization
 				_elementsByIndex = new XmlTypeMapElementInfo [_elementMembers.Count];
 				foreach (XmlTypeMapMemberElement mem in _elementMembers)
 				{
-					if (mem.ElementInfo.Count != 1) 
+					if (mem.ElementInfo.Count != 1)
 						throw new InvalidOperationException ("Read by order only possible for encoded/bare format");
 						
 					_elementsByIndex [mem.Index] = (XmlTypeMapElementInfo) mem.ElementInfo [0];
