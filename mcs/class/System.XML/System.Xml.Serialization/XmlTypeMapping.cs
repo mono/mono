@@ -400,6 +400,17 @@ namespace System.Xml.Serialization
 			if (_elements == null) return null;
 			return (XmlTypeMapElementInfo)_elements [BuildKey (name,ns, order)];
 		}
+
+		public XmlTypeMapElementInfo GetElement(string name, string ns)
+		{
+			if (_elements == null) return null;
+
+			foreach (XmlTypeMapElementInfo info in _elements.Values)
+				if (info.ElementName == name && info.Namespace == ns)
+					return info;
+
+			return null;
+		}
 		
 		public XmlTypeMapElementInfo GetElement (int index)
 		{
