@@ -22,7 +22,10 @@ while (defined(my $file = readdir(DIR))) {
 }
 closedir(DIR);
 
-system("chmod +x collectedbuilds/monodistribution/bin/mono") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name mono -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name mono-sgen -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+system("find collectedbuilds -type f -name pedump -exec chmod +x {} \\;") eq 0 or die("Failed chmodding");
+
 chdir("collectedbuilds");
 
 rmove('versions-aggregated.txt', 'versions.txt');
