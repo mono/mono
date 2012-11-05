@@ -193,12 +193,6 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern UnmanagedMarshal GetUnmanagedMarshal ();
 
-		internal virtual UnmanagedMarshal UMarshal {
-			get {
-				return GetUnmanagedMarshal ();
-			}
-		}
-
 		internal object[] GetPseudoCustomAttributes ()
 		{
 			int count = 0;
