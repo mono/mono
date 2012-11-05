@@ -45,8 +45,7 @@ namespace System.Reflection
 		protected string NameImpl;
 		protected int PositionImpl;
 		protected ParameterAttributes AttrsImpl;
-		private UnmanagedMarshal marshalAs;
-		//ParameterInfo parent;
+		private MarshalAsAttribute marshalAs;
 
 		protected ParameterInfo () {
 		}
@@ -90,7 +89,7 @@ namespace System.Reflection
 		}
 
 		/* to build a ParameterInfo for the return type of a method */
-		internal ParameterInfo (Type type, MemberInfo member, UnmanagedMarshal marshalAs) {
+		internal ParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			this.NameImpl = "";
@@ -244,7 +243,7 @@ namespace System.Reflection
 				attrs [count ++] = new OutAttribute ();
 
 			if (marshalAs != null)
-				attrs [count ++] = marshalAs.ToMarshalAsAttribute ();
+				attrs [count ++] = marshalAs.Copy ();
 
 			return attrs;
 		}			
