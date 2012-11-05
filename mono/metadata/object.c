@@ -5927,8 +5927,12 @@ mono_print_unhandled_exception (MonoObject *exc)
 			message = mono_exception_get_native_backtrace ((MonoException*)exc);
 			free_message = TRUE;
 		} else {
-			str = mono_object_to_string (exc, NULL);
-			if (str) {
+			MonoObject *inner_ex = NULL;
+			str = mono_object_to_string (exc, &inner_ex);
+			if (inner_ex) {
+				message = g_strdup_printf ("recursive exception handling %s:%s", mono_object_get_class (exc)->name_space, mono_object_get_class (exc)->name);
+				free_message = TRUE;
+			} if (str) {
 				message = mono_string_to_utf8_checked (str, &error);
 				if (!mono_error_ok (&error)) {
 					mono_error_cleanup (&error);

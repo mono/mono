@@ -98,7 +98,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern UnmanagedMarshal get_retval_marshal (IntPtr handle);
+		static extern MarshalAsAttribute get_retval_marshal (IntPtr handle);
 
 		static internal ParameterInfo GetReturnParameterInfo (MonoMethod method)
 		{
