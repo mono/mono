@@ -919,11 +919,9 @@ try {
 					
 					contentType.Parameters ["type"] = av.ContentType.ToString ();
 					StartSection (inner_boundary, contentType);
-						Console.WriteLine("One: " + av.ContentId);
 					StartSection (alt_boundary, av.ContentType, av);
 				} else {
 					contentType = new ContentType (av.ContentType.ToString ());
-						Console.WriteLine("Two: " + av.ContentId);
 					StartSection (inner_boundary, contentType, av);
 				}
 
@@ -1056,15 +1054,14 @@ try {
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
 			SendHeader ("content-transfer-encoding", GetTransferEncodingName (att.TransferEncoding));
-			Console.WriteLine("Weird: " + att.ContentId);
-			if (att.ContentId != null && att.ContentId.Length > 0)
+			if (!string.IsNullOrEmpty (att.ContentId))
 				SendHeader("content-ID", "<" + att.ContentId + ">");
 			SendData (string.Empty);
 		}
 
 		private void StartSection (string section, ContentType sectionContentType, Attachment att, bool sendDisposition) {
 			SendData (String.Format ("--{0}", section));
-			if (att.ContentId != null && att.ContentId.Length > 0)
+			if (!string.IsNullOrEmpty (att.ContentId))
 				SendHeader("content-ID", "<" + att.ContentId + ">");
 			SendHeader ("content-type", sectionContentType.ToString ());
 			SendHeader ("content-transfer-encoding", GetTransferEncodingName (att.TransferEncoding));
