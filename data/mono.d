@@ -19,6 +19,11 @@ provider mono {
 	probe gc__begin (int generation);
 	probe gc__end (int generation);
 
+	probe gc__world__stop__begin ();
+	probe gc__world__stop__end ();
+	probe gc__world__restart__begin ();
+	probe gc__world__restart__end ();
+
 	probe gc__heap__alloc (uintptr_t addr, uintptr_t len);
 	probe gc__heap__free (uintptr_t addr, uintptr_t len);
 
