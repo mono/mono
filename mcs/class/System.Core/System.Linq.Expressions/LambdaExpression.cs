@@ -55,6 +55,7 @@ namespace System.Linq.Expressions {
 			this.parameters = parameters;
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitPopIfNeeded (EmitContext ec)
 		{
 			if (GetReturnType () == typeof (void) && body.Type != typeof (void))
@@ -72,6 +73,7 @@ namespace System.Linq.Expressions {
 			EmitPopIfNeeded (ec);
 			ec.ig.Emit (OpCodes.Ret);
 		}
+#endif
 
 		internal Type GetReturnType ()
 		{

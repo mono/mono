@@ -53,11 +53,13 @@ namespace System.Linq.Expressions {
 			this.initializers = initializers;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			var local = ec.EmitStored (new_expression);
 			ec.EmitCollection (initializers, local);
 			ec.EmitLoad (local);
 		}
+#endif
 	}
 }

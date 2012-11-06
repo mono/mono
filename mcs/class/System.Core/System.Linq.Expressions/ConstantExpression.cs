@@ -50,6 +50,7 @@ namespace System.Linq.Expressions {
 			this.value = value;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			if (Type.IsNullable ()) {
@@ -190,5 +191,6 @@ namespace System.Linq.Expressions {
 
 			emit (ec);
 		}
+#endif
 	}
 }

@@ -68,6 +68,7 @@ namespace System.Linq.Expressions {
 			this.is_lifted = is_lifted;
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitArrayLength (EmitContext ec)
 		{
 			operand.Emit (ec);
@@ -431,5 +432,6 @@ namespace System.Linq.Expressions {
 				throw new NotImplementedException (this.NodeType.ToString ());
 			}
 		}
+#endif
 	}
 }

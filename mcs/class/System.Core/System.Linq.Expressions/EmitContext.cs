@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -606,3 +607,4 @@ namespace System.Linq.Expressions {
 		}
 	}
 }
+#endif

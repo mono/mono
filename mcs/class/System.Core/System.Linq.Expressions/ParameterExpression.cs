@@ -46,6 +46,7 @@ namespace System.Linq.Expressions {
 			this.name = name;
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitLocalParameter (EmitContext ec, int position)
 		{
 			ec.ig.Emit (OpCodes.Ldarg, position);
@@ -82,5 +83,6 @@ namespace System.Linq.Expressions {
 
 			throw new InvalidOperationException ("Parameter out of scope");
 		}
+#endif
 	}
 }

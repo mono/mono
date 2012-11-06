@@ -47,6 +47,7 @@ namespace System.Linq.Expressions {
 			this.initializers = initializers;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
 			var member = EmitLoadMember (ec, local);
@@ -54,5 +55,6 @@ namespace System.Linq.Expressions {
 			foreach (var initializer in initializers)
 				initializer.Emit (ec, member);
 		}
+#endif
 	}
 }

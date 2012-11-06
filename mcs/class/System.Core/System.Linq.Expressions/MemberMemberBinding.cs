@@ -47,6 +47,7 @@ namespace System.Linq.Expressions {
 			this.bindings = bindings;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
 			var member = EmitLoadMember (ec, local);
@@ -54,5 +55,6 @@ namespace System.Linq.Expressions {
 			foreach (var binding in bindings)
 				binding.Emit (ec, member);
 		}
+#endif
 	}
 }
