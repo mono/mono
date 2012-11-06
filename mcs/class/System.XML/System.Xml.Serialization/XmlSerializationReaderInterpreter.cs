@@ -403,7 +403,7 @@ namespace System.Xml.Serialization
 							previousMember = info.Member;
 						}
 
-						if (info.ExplicitOrder != ind)
+						if (readBySoapOrder && info.ExplicitOrder != ind)
 							throw new InvalidOperationException(string.Format("Element '{0}' has wrong order in sequence (expected - {1}, actual - {2}", Reader.LocalName, info.ExplicitOrder, ind));
 
 
