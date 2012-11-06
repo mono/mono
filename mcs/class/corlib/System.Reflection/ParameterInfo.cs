@@ -25,7 +25,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
@@ -50,6 +52,7 @@ namespace System.Reflection
 		protected ParameterInfo () {
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal ParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
@@ -63,6 +66,7 @@ namespace System.Reflection
 				this.AttrsImpl = ParameterAttributes.None;
 			}
 		}
+#endif
 
 		/*FIXME this constructor looks very broken in the position parameter*/
 		internal ParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {

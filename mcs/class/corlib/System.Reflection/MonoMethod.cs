@@ -34,7 +34,9 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Security;
 using System.Threading;
 using System.Text;
@@ -392,8 +394,10 @@ namespace System.Reflection {
 					hasUserType = true;
 			}
 
+#if !FULL_AOT_RUNTIME
 			if (hasUserType)
 				return new MethodOnTypeBuilderInst (this, methodInstantiation);
+#endif
 
 			MethodInfo ret = MakeGenericMethod_impl (methodInstantiation);
 			if (ret == null)

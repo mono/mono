@@ -40,7 +40,9 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.ConstrainedExecution;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System
 {
@@ -673,8 +675,10 @@ namespace System
 				throw new NotSupportedException ("Array type can not be void");
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+#if !FULL_AOT_RUNTIME
 			if ((elementType is TypeBuilder) && !(elementType as TypeBuilder).IsCreated ())
 				throw new NotSupportedException ("Can't create an array of the unfinished type '" + elementType + "'.");
+#endif
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}

@@ -35,7 +35,10 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
+
 using System.Collections.Generic;
 
 namespace System
@@ -48,7 +51,11 @@ namespace System
 		static bool IsUserCattrProvider (object obj)
 		{
 			Type type = obj as Type;
+#if !FULL_AOT_RUNTIME
 			if ((type is MonoType) || (type is TypeBuilder))
+#else
+			if (type is MonoType)
+#endif
 				return false;
 			if ((obj is Type))
 				return true;

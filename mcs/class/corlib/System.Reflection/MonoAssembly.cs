@@ -30,7 +30,9 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Collections.Generic;
 
 namespace System.Reflection {
@@ -57,7 +59,7 @@ namespace System.Reflection {
 			throw new ArgumentException ("name", "Name cannot be empty");
 
 			res = InternalGetType (null, name, throwOnError, ignoreCase);
-#if !(NET_4_0 || MOONLIGHT || MOBILE)
+#if !(NET_4_0 || MOONLIGHT || MOBILE) && !FULL_AOT_RUNTIME
 			if (res is TypeBuilder) {
 				if (throwOnError)
 					throw new TypeLoadException (string.Format ("Could not load type '{0}' from assembly '{1}'", name, this));

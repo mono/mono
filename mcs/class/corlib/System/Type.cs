@@ -33,7 +33,9 @@
 
 using System.Diagnostics;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -708,8 +710,10 @@ namespace System {
 			Type type = this;
 			if (type is MonoType)
 				return GetTypeCodeInternal (type);
+#if !FULL_AOT_RUNTIME
 			if (type is TypeBuilder)
 				return ((TypeBuilder)type).GetTypeCodeInternal ();
+#endif
 
 			type = type.UnderlyingSystemType;
 
@@ -876,8 +880,10 @@ namespace System {
 			if (Equals (c))
 				return true;
 
+#if !FULL_AOT_RUNTIME
 			if (c is TypeBuilder)
 				return ((TypeBuilder)c).IsAssignableTo (this);
+#endif
 
 			/* Handle user defined type classes */
 			if (!IsSystemType) {
@@ -1436,9 +1442,11 @@ namespace System {
 				systemTypes [i] = t;
 			}
 
+#if !FULL_AOT_RUNTIME
 			if (hasUserType) {
 				return new MonoGenericClass (this, typeArguments);
 			}
+#endif
 
 			Type res = MakeGenericType (this, systemTypes);
 			if (res == null)
