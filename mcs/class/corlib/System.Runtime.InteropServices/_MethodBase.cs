@@ -14,7 +14,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("6240837A-707F-3181-8E98-A36AE086766B")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (MethodBase))]
+#endif
 	[ComVisible (true)]
 	public interface _MethodBase
 	{

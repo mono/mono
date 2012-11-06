@@ -555,6 +555,7 @@ namespace System.Reflection
 						var requiredType = methodArgs [j].ParameterType;
 						if (types [j] == requiredType)
 							continue;
+#if !MOBILE
 						if (types [j] == typeof (__ComObject) && requiredType.IsInterface) {
 							var iface = Marshal.GetComInterfaceForObject (parameters [j], requiredType);
 							if (iface != IntPtr.Zero) {
@@ -563,6 +564,7 @@ namespace System.Reflection
 								continue;
 							}
 						}
+#endif
 						break;
 					}
 

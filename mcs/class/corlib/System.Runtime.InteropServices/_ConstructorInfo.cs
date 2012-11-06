@@ -14,7 +14,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("E9A19478-9646-3679-9B10-8411AE1FD57D")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (ConstructorInfo))]
+#endif
 	[ComVisible (true)]
 	public interface _ConstructorInfo
 	{

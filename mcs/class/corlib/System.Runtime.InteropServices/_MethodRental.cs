@@ -27,14 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Runtime.InteropServices {
 	[ComVisible (true)]
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("C2323C25-F57F-3880-8A4D-12EBEA7A5852")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (MethodRental))]
+#endif
 	public interface _MethodRental {
 
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
