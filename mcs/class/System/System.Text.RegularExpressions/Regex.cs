@@ -45,7 +45,7 @@ namespace System.Text.RegularExpressions {
 	[Serializable]
 	public partial class Regex : ISerializable {
 
-#if !TARGET_JVM
+#if !TARGET_JVM && !FULL_AOT_RUNTIME
 		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname)
 		{
