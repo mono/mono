@@ -469,11 +469,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		
 		TypeMetadata CreateMemberTypeMetadata (Type type)
 		{
+#if !FULL_AOT_RUNTIME
 			if (!BinaryCommon.UseReflectionSerialization) {
 				Type metaType = CodeGenerator.GenerateMetadataType (type, _context);
 				return (TypeMetadata) Activator.CreateInstance (metaType);
 			}
 			else
+#endif
 				return new MemberTypeMetadata (type, _context);
 		}
 
