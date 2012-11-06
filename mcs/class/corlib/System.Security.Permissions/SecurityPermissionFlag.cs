@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Permissions {
 
-#if NET_2_1
+#if NET_2_1 && !MONOTOUCH
 	[Obsolete ("CAS support is not available with Silverlight applications.")]
 #endif
 	[ComVisible (true)]
