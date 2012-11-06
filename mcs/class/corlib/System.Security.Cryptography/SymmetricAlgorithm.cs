@@ -229,7 +229,11 @@ namespace System.Security.Cryptography {
 		// LAMESPEC: Default is Rijndael - not TripleDES
 		public static SymmetricAlgorithm Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RijndaelManaged ();
+#else
 			return Create ("System.Security.Cryptography.SymmetricAlgorithm");
+#endif
 		}
 
 		public static SymmetricAlgorithm Create (string algName) 

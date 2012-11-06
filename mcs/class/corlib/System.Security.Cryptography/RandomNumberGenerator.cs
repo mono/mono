@@ -46,8 +46,12 @@ namespace System.Security.Cryptography {
 
 		public static RandomNumberGenerator Create () 
 	        {
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RNGCryptoServiceProvider ();
+#else
 			// create the default random number generator
 			return Create ("System.Security.Cryptography.RandomNumberGenerator");
+#endif
 		}
 
 		public static RandomNumberGenerator Create (string rngName) 

@@ -171,7 +171,11 @@ namespace System.Security.Cryptography {
 
 		public static new HMAC Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.HMACSHA1 ();
+#else
 			return Create ("System.Security.Cryptography.HMAC");
+#endif
 		}
 
 		public static new HMAC Create (string algorithmName) 
