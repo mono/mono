@@ -557,7 +557,8 @@ namespace System.Windows.Forms {
 		
 		protected override void CreateHandle ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			if(!base.IsHandleCreated)
+				base.CreateHandle();
 		}
 
 		protected virtual object CreateInstanceCore (Guid clsid)
