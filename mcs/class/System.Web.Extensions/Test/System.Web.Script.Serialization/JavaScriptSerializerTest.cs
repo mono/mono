@@ -1341,5 +1341,29 @@ namespace MonoTests.System.Web.Script.Serialization
 			ser.Serialize(testUri, sb);
 			Assert.AreEqual ("\"/lala/123\"", sb.ToString ());
 		}
+		
+		[Test]
+		public void DeserializeDictionaryOfArrayList ()
+		{
+			var ser = new JavaScriptSerializer ();
+			string test1 = "{\"key\":{\"subkey\":\"subval\"}}";
+			string test2 = "{\"key\":[{\"subkey\":\"subval\"}]}";
+
+			var ret1 = ser.Deserialize<Dictionary<string, object>>(test1);
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret1.GetType (), "#1.1");
+			var ret1v = ret1 ["key"];
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret1v.GetType (), "#1.2");
+			var ret1vd = (IDictionary<string,object>) ret1v;
+			Assert.AreEqual ("subval", ret1vd ["subkey"], "#1.3");
+
+			var ret2 = ser.Deserialize<Dictionary<string, object>>(test2);
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret2.GetType (), "#2.1");
+			var ret2v = ret2 ["key"];
+			Assert.AreEqual (typeof (ArrayList), ret2v.GetType (), "#2.2");
+			var ret2va = (ArrayList) ret2v;
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret2va [0].GetType (), "#2.3");
+			var ret2vad = (IDictionary<string,object>) ret2va [0];
+			Assert.AreEqual ("subval", ret2vad ["subkey"], "#2.4");
+		}
 	}
 }

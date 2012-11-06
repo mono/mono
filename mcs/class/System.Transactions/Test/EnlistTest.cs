@@ -7,6 +7,12 @@
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
+// This define is needed when running this tests under MS.NET as right
+// now we always wrap thrown exceptions insde TransactionAbortedException.
+// However, MS implementation in some cases, directly relays the exception
+// thrown by RM without wrapping it. Not sure if this is a bug or a feature.
+//#define MS_EXCEPTIONS_BEHAVIOR
+
 using System;
 using System.Transactions;
 using NUnit.Framework;
@@ -248,7 +254,11 @@ namespace MonoTests.System.Transactions {
 				/* Volatile RMs get 2PC Prepare, and then get rolled back */
 				for (int i = 1; i < 4; i++)
 					irm [i].Check ( 0, 1, 0, 1, 0, 0, 0, "irm [" + i + "]" );
+
+				return;
 			}
+
+			Assert.Fail();
 		}
 
 		/* >1vol + 1 durable 
@@ -614,7 +624,9 @@ namespace MonoTests.System.Transactions {
 			irm.Check (1, 1, 0, 0, "Dispose transaction");
 			Assert.AreEqual (5, irm.Value);
 		}
+		#endregion
 
+		#region TransactionCompleted
 		[Test]
 		public void TransactionCompleted_Committed ()
 		{
@@ -642,6 +654,690 @@ namespace MonoTests.System.Transactions {
 
 			Assert.IsTrue (called, "TransactionCompleted event handler not called!");
 		}
+		#endregion
+
+		#region Success/Failure behavior tests
+		#region Success/Failure behavior Vol1_Dur0 Cases
+		[Test]
+		public void Vol1SPC_Committed()
+		{
+			bool called = false;
+			TransactionStatus status = TransactionStatus.Active;
+			var rm = new IntResourceManager(1)
+			{
+				UseSingle = true,
+				Type = ResourceManagerType.Volatile
+			};
+
+			using (var ts = new TransactionScope())
+			{
+				rm.Value = 2;
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+				ts.Complete();
+			}
+
+			rm.Check(1, 0, 0, 0, 0, 0, 0, "rm");
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.AreEqual(TransactionStatus.Committed, status, "TransactionStatus != Commited");
+		}
+
+		[Test]
+		public void Vol1_Committed()
+		{
+			bool called = false;
+			TransactionStatus status = TransactionStatus.Active;
+			var rm = new IntResourceManager(1)
+			{
+				Type = ResourceManagerType.Volatile,
+			};
+
+			using (var ts = new TransactionScope())
+			{
+				rm.Value = 2;
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+				ts.Complete();
+			}
+
+			rm.Check(0, 1, 1, 0, 0, 0, 0, "rm");
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.AreEqual(TransactionStatus.Committed, status, "TransactionStatus != Commited");
+		}
+
+		[Test]
+		public void Vol1_Rollback()
+		{
+			bool called = false;
+			TransactionStatus status = TransactionStatus.Active;
+			var rm = new IntResourceManager(1)
+			{
+				Type = ResourceManagerType.Volatile,
+			};
+
+			using (var ts = new TransactionScope())
+			{
+				rm.Value = 2;
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+				// Not calling ts.Complete() on purpose..
+			}
+
+			rm.Check(0, 0, 0, 1, 0, 0, 0, "rm");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
+		}
+
+		[Test]
+		public void Vol1SPC_Throwing_On_Commit()
+		{
+			bool called = false;
+			Exception ex = null;
+			TransactionStatus status = TransactionStatus.Active;
+			var rm = new IntResourceManager(1)
+			{
+				UseSingle = true,
+				FailSPC = true,
+				FailWithException = true,
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm.Value = 2;
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm.Check(1, 0, 0, 0, 0, 0, 0, "rm");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
+			Assert.IsNotNull(ex, "Exception not thrown");
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException is null");
+			Assert.IsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid inner exception thrown");
+		}
+
+		[Test]
+		public void Vol1_Throwing_On_Commit()
+		{
+			bool called = false;
+			TransactionStatus status = TransactionStatus.Active;
+			Exception ex = null;
+			var rm = new IntResourceManager(1)
+			{
+				FailCommit = true,
+				FailWithException = true,
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm.Value = 2;
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm.Check(0, 1, 1, 0, 0, 0, 0, "rm");
+
+			// MS.NET wont call TransactionCompleted event in this particular case.
+			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+#if MS_EXCEPTIONS_BEHAVIOR
+			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
+			Assert.IsInstanceOfType(typeof(NotSupportedException), ex, "Invalid exception thrown");
+#else
+			// Mono wrapps the exception into a TransactionAbortedException.
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
+			Assert.IsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid type of inner exception thrown");
+#endif
+		}
+
+		[Test]
+		public void Vol1_Throwing_On_Rollback()
+		{
+			bool called = false;
+			TransactionStatus status = TransactionStatus.Active;
+			Exception ex = null;
+			var rm = new IntResourceManager(1)
+			{
+				FailRollback = true,
+				FailWithException = true,
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm.Value = 2;
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					// Not calling ts.Complete() on purpose..
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm.Check(0, 0, 0, 1, 0, 0, 0, "rm");
+
+			// MS.NET wont call TransactionCompleted event in this particular case.
+			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
+			Assert.IsInstanceOfType(typeof(NotSupportedException), ex, "Invalid exception thrown");
+		}
+
+		[Test]
+		public void Vol1_Throwing_On_Prepare()
+		{
+			bool called = false;
+			TransactionStatus status = TransactionStatus.Active;
+			Exception ex = null;
+			var rm = new IntResourceManager(1)
+			{
+				FailPrepare = true,
+				FailWithException = true,
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm.Value = 2;
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm.Check(0, 1, 0, 0, 0, 0, 0, "rm");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException is null");
+			Assert.IsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid inner exception thrown");
+			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
+		}
+		#endregion
+
+		#region Success/Failure behavior Vol2_Dur0 Cases
+		[Test]
+		public void Vol2SPC_Committed()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			var rm1 = new IntResourceManager(1)
+			{
+				UseSingle = true,
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				UseSingle = true,
+				Type = ResourceManagerType.Volatile
+			};
+
+			using (var ts = new TransactionScope())
+			{
+				rm1.Value = 11;
+				rm2.Value = 22;
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+				ts.Complete();
+			}
+
+			// There can be only one *Single* PC enlistment,
+			// so TM will downgrade both to normal enlistments.
+			rm1.Check(0, 1, 1, 0, 0, 0, 0, "rm1");
+			rm2.Check(0, 1, 1, 0, 0, 0, 0, "rm2");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.AreEqual(TransactionStatus.Committed, status, "TransactionStatus != Committed");
+		}
+
+		[Test]
+		public void Vol2_Committed()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			var rm1 = new IntResourceManager(1)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(1)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+
+			using (var ts = new TransactionScope())
+			{
+				rm1.Value = 11;
+				rm2.Value = 22;
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+				ts.Complete();
+			}
+			rm1.Check(0, 1, 1, 0, 0, 0, 0, "rm1");
+			rm2.Check(0, 1, 1, 0, 0, 0, 0, "rm2");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.AreEqual(TransactionStatus.Committed, status, "TransactionStatus != Committed");
+		}
+
+		[Test]
+		public void Vol2_Rollback()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			var rm1 = new IntResourceManager(1)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(1)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+
+			using (var ts = new TransactionScope())
+			{
+				rm1.Value = 11;
+				rm2.Value = 22;
+				var tr = Transaction.Current;
+				tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+				// Not calling ts.Complete() on purpose..
+			}
+
+			rm1.Check(0, 0, 0, 1, 0, 0, 0, "rm1");
+			rm2.Check(0, 0, 0, 1, 0, 0, 0, "rm2");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
+		}
+
+		[Test]
+		public void Vol2SPC_Throwing_On_Commit()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			Exception ex = null;
+			var rm1 = new IntResourceManager(1)
+			{
+				UseSingle = true,
+				FailCommit = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm1"),
+				Type = ResourceManagerType.Volatile,
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				UseSingle = true,
+				Type = ResourceManagerType.Volatile,
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm1.Value = 11;
+					rm2.Value = 22;
+
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			// There can be only one *Single* PC enlistment,
+			// so TM will downgrade both to normal enlistments.
+			rm1.Check(0, 1, 1, 0, 0, 0, 0, "rm1");
+			rm2.Check(0, 1, 0, 0, 0, 0, 0, "rm2");
+
+			// MS.NET wont call TransactionCompleted event in this particular case.
+			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+#if MS_EXCEPTIONS_BEHAVIOR
+			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
+			Assert.AreEqual(rm1.ThrowThisException, ex, "Exception does not come from the expected RM");
+#else
+			// Mono wrapps the exception into a TransactionAbortedException.
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
+			Assert.AreEqual(rm1.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex);
+#endif
+		}
+
+		[Test]
+		public void Vol2_Throwing_On_Commit()
+		{
+			bool called = false;
+			Exception ex = null;
+			var rm1 = new IntResourceManager(1)
+			{
+				FailCommit = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm1"),
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm1.Value = 11;
+					rm2.Value = 22;
+
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => called = true;
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm1.Check(0, 1, 1, 0, 0, 0, 0, "rm1");
+			rm2.Check(0, 1, 0, 0, 0, 0, 0, "rm2");
+
+			// MS.NET wont call TransactionCompleted event in this particular case.
+			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+#if MS_EXCEPTIONS_BEHAVIOR
+			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
+			Assert.AreEqual(rm1.ThrowThisException, ex, "Exception does not come from the expected RM \n Ex: {0}", ex);
+#else
+			// Mono wrapps the exception into a TransactionAbortedException.
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
+			Assert.AreEqual(rm1.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex);
+#endif
+		}
+
+		[Test]
+		public void Vol2_Throwing_On_Rollback()
+		{
+			bool called = false;
+			Exception ex = null;
+			var rm1 = new IntResourceManager(1)
+			{
+				FailRollback = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm1"),
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm1.Value = 11;
+					rm2.Value = 22;
+
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => called = true;
+					// Not calling ts.Complete() on purpose..
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm1.Check(0, 0, 0, 1, 0, 0, 0, "rm1");
+			rm2.Check(0, 0, 0, 0, 0, 0, 0, "rm2");
+
+			// MS.NET wont call TransactionCompleted event in this particular case.
+			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
+			Assert.AreEqual(rm1.ThrowThisException, ex, "Exception does not come from the expected RM \n Ex: {0}", ex);
+
+		}
+
+		[Test]
+		public void Vol2_Throwing_On_First_Prepare()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			Exception ex = null;
+			var rm1 = new IntResourceManager(1)
+			{
+				FailPrepare = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm1"),
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm1.Value = 11;
+					rm2.Value = 22;
+
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm1.Check(0, 1, 0, 0, 0, 0, 0, "rm1");
+			rm2.Check(0, 0, 0, 1, 0, 0, 0, "rm2");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException is null");
+			Assert.IsInstanceOfType(typeof(InvalidOperationException), ex.InnerException, "Invalid inner exception thrown");
+			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
+		}
+
+		[Test]
+		public void Vol2_Throwing_On_Second_Prepare()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			Exception ex = null;
+			var rm1 = new IntResourceManager(1)
+			{
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				FailPrepare = true,
+				FailWithException = true,
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm1.Value = 11;
+					rm2.Value = 22;
+
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm1.Check(0, 1, 0, 1, 0, 0, 0, "rm1");
+			rm2.Check(0, 1, 0, 0, 0, 0, 0, "rm2");
+
+			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException is null");
+			Assert.IsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid inner exception thrown");
+			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
+		}
+
+		[Test]
+		public void Vol2_Throwing_On_First_Prepare_And_Second_Rollback()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			Exception ex = null;
+			var rm1 = new IntResourceManager(1)
+			{
+				FailPrepare = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm1"),
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				FailRollback = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm2"),
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm1.Value = 11;
+					rm2.Value = 22;
+
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm1.Check(0, 1, 0, 0, 0, 0, 0, "rm1");
+			rm2.Check(0, 0, 0, 1, 0, 0, 0, "rm2");
+
+			// MS.NET wont call TransactionCompleted event in this particular case.
+			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+#if MS_EXCEPTIONS_BEHAVIOR
+			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
+			Assert.AreEqual(rm2.ThrowThisException, ex, "Exception does not come from the expected RM");
+#else
+			// Mono wrapps the exception into a TransactionAbortedException.
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
+			Assert.AreEqual(rm2.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex.InnerException);
+#endif
+		}
+
+		[Test]
+		public void Vol2_Throwing_On_First_Rollback_And_Second_Prepare()
+		{
+			TransactionStatus status = TransactionStatus.Active;
+			bool called = false;
+			Exception ex = null;
+			var rm1 = new IntResourceManager(1)
+			{
+				FailRollback = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm1"),
+				Type = ResourceManagerType.Volatile
+			};
+			var rm2 = new IntResourceManager(2)
+			{
+				FailPrepare = true,
+				FailWithException = true,
+				ThrowThisException = new InvalidOperationException("rm2"),
+				Type = ResourceManagerType.Volatile
+			};
+
+			try
+			{
+				using (var ts = new TransactionScope())
+				{
+					rm1.Value = 11;
+					rm2.Value = 22;
+
+					var tr = Transaction.Current;
+					tr.TransactionCompleted += (s, e) => { called = true; status = e.Transaction.TransactionInformation.Status; };
+					ts.Complete();
+				}
+			}
+			catch (Exception _ex)
+			{
+				ex = _ex;
+			}
+
+			rm1.Check(0, 1, 0, 1, 0, 0, 0, "rm1");
+			rm2.Check(0, 1, 0, 0, 0, 0, 0, "rm2");
+
+			// MS.NET wont call TransactionCompleted event in this particular case.
+			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
+			Assert.IsNotNull(ex, "Exception not thrown");
+#if MS_EXCEPTIONS_BEHAVIOR
+			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
+			Assert.AreEqual(rm1.ThrowThisException, ex, "Exception does not come from the expected RM");
+#else
+			// Mono wrapps the exception into a TransactionAbortedException.
+			Assert.IsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
+			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
+			Assert.AreEqual(rm1.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex);
+#endif
+		}
+
+
+		#endregion
+
 		#endregion
 
 	}
