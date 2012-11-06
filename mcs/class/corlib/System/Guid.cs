@@ -464,12 +464,17 @@ namespace System {
 		}
 
 		private static object _rngAccess = new object ();
+#if !FULL_AOT_RUNTIME
 		private static RandomNumberGenerator _rng;
 		private static RandomNumberGenerator _fastRng;
+#else
+		private static object _fastRng;
+#endif
 
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
+#if !FULL_AOT_RUNTIME
 			byte[] b = new byte [16];
 
 			// thread-safe access to the prng
@@ -478,6 +483,10 @@ namespace System {
 					_rng = RandomNumberGenerator.Create ();
 				_rng.GetBytes (b);
 			}
+#else
+			byte[] b = FastNewGuidArray ();
+#endif
+
 
 			Guid res = new Guid (b);
 			// Mask in Variant 1-0 in Bit[7..6]
@@ -497,12 +506,18 @@ namespace System {
 			// thread-safe access to the prng
 			lock (_rngAccess) {
 				// if known, use preferred RNG
+#if FULL_AOT_RUNTIME
+				if (_fastRng == null)
+					_fastRng = new RNGCryptoServiceProvider ();
+				(_fastRng as RNGCryptoServiceProvider).GetBytes (guid);
+#else
 				if (_rng != null)
 					_fastRng = _rng;
 				// else use hardcoded default RNG (bypassing CryptoConfig)
 				if (_fastRng == null)
 					_fastRng = new RNGCryptoServiceProvider ();
 				_fastRng.GetBytes (guid);
+#endif
 			}
 
 			// Mask in Variant 1-0 in Bit[7..6]
