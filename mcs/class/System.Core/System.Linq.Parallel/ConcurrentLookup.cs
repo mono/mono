@@ -109,7 +109,7 @@ namespace System.Linq.Parallel
 
 		IEnumerator<IGrouping<TKey, TElement>> GetEnumeratorInternal ()
 		{
-			return dictionary.Select ((pair) => new ConcurrentGrouping<TKey, TElement> (pair.Key, pair.Value)).GetEnumerator ();
+			return (IEnumerator<System.Linq.IGrouping<TKey,TElement>>) dictionary.Select ((pair) => new ConcurrentGrouping<TKey, TElement> (pair.Key, pair.Value)).GetEnumerator ();
 		}
 	}
 }
