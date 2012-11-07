@@ -4,9 +4,11 @@
 // Authors:
 //  Jonathan Pryor <jpryor@novell.com>
 //  Federico Di Gregorio <fog@initd.org>
+//  Rolf Bjarne Kvinge <rolf@xamarin.com>
 //
 // Copyright (C) 2008 Novell (http://www.novell.com)
 // Copyright (C) 2009 Federico Di Gregorio.
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -372,13 +374,19 @@ namespace Mono.Options
 		OptionValueType type;
 		int count;
 		string[] separators;
+		bool hidden;
 
 		protected Option (string prototype, string description)
-			: this (prototype, description, 1)
+			: this (prototype, description, 1, false)
 		{
 		}
 
 		protected Option (string prototype, string description, int maxValueCount)
+			: this (prototype, description, maxValueCount, false)
+		{
+		}
+
+		protected Option (string prototype, string description, int maxValueCount, bool hidden)
 		{
 			if (prototype == null)
 				throw new ArgumentNullException ("prototype");
@@ -400,6 +408,7 @@ namespace Mono.Options
 				return;
 
 			this.type        = ParsePrototype ();
+			this.hidden      = hidden;
 
 			if (this.count == 0 && type != OptionValueType.None)
 				throw new ArgumentException (
@@ -422,6 +431,7 @@ namespace Mono.Options
 		public string           Description     {get {return description;}}
 		public OptionValueType  OptionValueType {get {return type;}}
 		public int              MaxValueCount   {get {return count;}}
+		public bool             Hidden          {get {return hidden;}}
 
 		public string[] GetNames ()
 		{
@@ -805,7 +815,12 @@ namespace Mono.Options
 			Action<OptionValueCollection> action;
 
 			public ActionOption (string prototype, string description, int count, Action<OptionValueCollection> action)
-				: base (prototype, description, count)
+				: this (prototype, description, count, action, false)
+			{
+			}
+
+			public ActionOption (string prototype, string description, int count, Action<OptionValueCollection> action, bool hidden)
+				: base (prototype, description, count, hidden)
 			{
 				if (action == null)
 					throw new ArgumentNullException ("action");
@@ -825,10 +840,15 @@ namespace Mono.Options
 
 		public OptionSet Add (string prototype, string description, Action<string> action)
 		{
+			return Add (prototype, description, action, false);
+		}
+
+		public OptionSet Add (string prototype, string description, Action<string> action, bool hidden)
+		{
 			if (action == null)
 				throw new ArgumentNullException ("action");
 			Option p = new ActionOption (prototype, description, 1, 
-					delegate (OptionValueCollection v) { action (v [0]); });
+					delegate (OptionValueCollection v) { action (v [0]); }, hidden);
 			base.Add (p);
 			return this;
 		}
@@ -840,10 +860,14 @@ namespace Mono.Options
 
 		public OptionSet Add (string prototype, string description, OptionAction<string, string> action)
 		{
+			return Add (prototype, description, action, false);
+		}
+
+		public OptionSet Add (string prototype, string description, OptionAction<string, string> action, bool hidden)	{
 			if (action == null)
 				throw new ArgumentNullException ("action");
 			Option p = new ActionOption (prototype, description, 2, 
-					delegate (OptionValueCollection v) {action (v [0], v [1]);});
+					delegate (OptionValueCollection v) {action (v [0], v [1]);}, hidden);
 			base.Add (p);
 			return this;
 		}
@@ -1149,6 +1173,9 @@ namespace Mono.Options
 		{
 			foreach (Option p in this) {
 				int written = 0;
+
+				if (p.Hidden)
+					continue;
 
 				Category c = p as Category;
 				if (c != null) {
