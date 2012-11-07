@@ -199,7 +199,7 @@ namespace System.IO.MemoryMappedFiles
 		}
 
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32", SetLastError = true)]
 		static extern bool SetHandleInformation (IntPtr hObject, int dwMask, int dwFlags);
 		static void ConfigureWindowsFD (IntPtr handle, HandleInheritability h)
 		{

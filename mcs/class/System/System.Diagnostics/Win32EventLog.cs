@@ -794,10 +794,10 @@ namespace System.Diagnostics
 			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern int DeregisterEventSource (IntPtr hEventLog);
 
-			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+			[DllImport ("kernel32", CharSet=CharSet.Auto, SetLastError=true)]
 			public static extern int FormatMessage (FormatMessageFlags dwFlags, IntPtr lpSource, uint dwMessageId, int dwLanguageId, ref IntPtr lpBuffer, int nSize, IntPtr [] arguments);
 
-			[DllImport ("kernel32.dll", SetLastError=true)]
+			[DllImport ("kernel32", SetLastError=true)]
 			public static extern bool FreeLibrary (IntPtr hModule);
 
 			[DllImport ("advapi32.dll", SetLastError=true)]
@@ -806,10 +806,10 @@ namespace System.Diagnostics
 			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern int GetOldestEventLogRecord (IntPtr hEventLog, ref int OldestRecord);
 
-			[DllImport ("kernel32.dll", SetLastError=true)]
+			[DllImport ("kernel32", SetLastError=true)]
 			public static extern IntPtr LoadLibraryEx (string lpFileName, IntPtr hFile, LoadFlags dwFlags);
 
-			[DllImport ("kernel32.dll", SetLastError=true)]
+			[DllImport ("kernel32", SetLastError=true)]
 			public static extern IntPtr LocalFree (IntPtr hMem);
 
 			[DllImport ("advapi32.dll", SetLastError=true)]
@@ -822,7 +822,7 @@ namespace System.Diagnostics
 				ref uint cchReferencedDomainName,
 				out SidNameUse peUse);
 
-			[DllImport ("Advapi32.dll", SetLastError = true)]
+			[DllImport ("advapi32.dll", SetLastError = true)]
 			public static extern int NotifyChangeEventLog (IntPtr hEventLog, IntPtr hEvent);
 
 			[DllImport ("advapi32.dll", SetLastError=true)]
@@ -831,7 +831,7 @@ namespace System.Diagnostics
 			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern IntPtr RegisterEventSource (string machineName, string sourceName);
 
-			[DllImport ("Advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern int ReportEvent (IntPtr hHandle, ushort wType,
 				ushort wCategory, uint dwEventID, IntPtr sid, ushort wNumStrings,
 				uint dwDataSize, string [] lpStrings, byte [] lpRawData);
