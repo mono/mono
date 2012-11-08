@@ -65,7 +65,7 @@ namespace System.Linq {
 
 			// Then sorts the elements according to the collected
 			// key values and the selected ordering
-			Array.Sort<int, TElement> (indexes, elements, context);
+			Array.Sort<int> (indexes, context);
 		}
 
 		public static IEnumerable<TElement> Sort (IEnumerable<TElement> source, SortContext<TElement> context)
@@ -75,7 +75,7 @@ namespace System.Linq {
 			sorter.PerformSort ();
 
 			for (int i = 0; i < sorter.elements.Length; i++)
-				yield return sorter.elements [i];
+				yield return sorter.elements [sorter.indexes [i]];
 		}
 	}
 }
