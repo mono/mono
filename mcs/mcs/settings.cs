@@ -572,13 +572,13 @@ namespace Mono.CSharp {
 				int id;
 				if(!String.IsNullOrEmpty(wid))
 				{
-				    if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
-					   report.Error (1904, "`{0}' is not a valid warning number", wid);
-					    valid = false;
-					    continue;
-				    }
+					if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
+						report.Error (1904, "`{0}' is not a valid warning number", wid);
+						valid = false;
+						continue;
+					}
 
-				    if (report.CheckWarningCode (id, Location.Null))
+					if (report.CheckWarningCode (id, Location.Null))
 						action (id);
 				}
 			}
