@@ -54,14 +54,20 @@ namespace System.Runtime.InteropServices
 		public static readonly int SystemMaxDBCSCharSize = 2; // don't know what this is
 		public static readonly int SystemDefaultCharSize = Environment.OSVersion.Platform == PlatformID.Win32NT ? 2 : 1;
 
+#if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int AddRefInternal (IntPtr pUnk);
+#endif
 
 		public static int AddRef (IntPtr pUnk)
 		{
+#if !MOBILE
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentException ("Value cannot be null.", "pUnk");
 			return AddRefInternal (pUnk);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -301,6 +307,7 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetCCW (object o, Type T);
 
@@ -311,12 +318,17 @@ namespace System.Runtime.InteropServices
 			else
 				return GetCCW (o, T);
 		}
+#endif
 
 		public static IntPtr GetComInterfaceForObject (object o, Type T)
 		{
+#if !MOBILE
 			IntPtr pItf = GetComInterfaceForObjectInternal (o, T);
 			AddRef (pItf);
 			return pItf;
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		[MonoTODO]
@@ -331,11 +343,14 @@ namespace System.Runtime.InteropServices
 			throw new NotSupportedException ("MSDN states user code should never need to call this method.");
 		}
 
+#if !MOBILE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int GetComSlotForMethodInfoInternal (MemberInfo m);
+#endif
 
 		public static int GetComSlotForMethodInfo (MemberInfo m)
 		{
+#if !MOBILE
 			if (m == null)
 				throw new ArgumentNullException ("m");
 			if (!(m is MethodInfo))
@@ -343,6 +358,9 @@ namespace System.Runtime.InteropServices
 			if (!m.DeclaringType.IsInterface)
 				throw new ArgumentException ("The MemberInfo must be an interface method.", "m");
 			return GetComSlotForMethodInfoInternal (m);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		[MonoTODO]
@@ -447,11 +465,14 @@ namespace System.Runtime.InteropServices
 			Marshal.StructureToPtr(vt, pDstNativeVariant, false);
 		}
 
+#if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern object GetObjectForCCW (IntPtr pUnk);
+#endif
 
 		public static object GetObjectForIUnknown (IntPtr pUnk)
 		{
+#if !MOBILE
 			object obj = GetObjectForCCW (pUnk);
 			// was not a CCW
 			if (obj == null) {
@@ -459,6 +480,9 @@ namespace System.Runtime.InteropServices
 				obj = proxy.GetTransparentProxy ();
 			}
 			return obj;
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		public static object GetObjectForNativeVariant (IntPtr pSrcNativeVariant)
@@ -587,8 +611,15 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool IsComObject (object o);
+#else
+		public static bool IsComObject (object o)
+		{
+			throw new NotImplementedException ();
+		}
+#endif		
 
 		[MonoTODO]
 		public static bool IsTypeVisibleFromCom (Type t)
@@ -641,8 +672,15 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringUni (IntPtr ptr, int len);
 
+#if !MOBILE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringBSTR (IntPtr ptr);
+#else
+		public static string PtrToStringBSTR (IntPtr ptr)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ComVisible (true)]
@@ -652,14 +690,20 @@ namespace System.Runtime.InteropServices
 		[ComVisible (true)]
 		public extern static object PtrToStructure (IntPtr ptr, Type structureType);
 
+#if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int QueryInterfaceInternal (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
+#endif
 
 		public static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv)
 		{
+#if !MOBILE
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentException ("Value cannot be null.", "pUnk");
 			return QueryInterfaceInternal (pUnk, ref iid, out ppv);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		public static byte ReadByte (IntPtr ptr)
@@ -750,16 +794,23 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr ReAllocHGlobal (IntPtr pv, IntPtr cb);
 
+#if !MOBILE
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseInternal (IntPtr pUnk);
+#endif
 
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int Release (IntPtr pUnk)
 		{
+#if !MOBILE
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentException ("Value cannot be null.", "pUnk");
+
 			return ReleaseInternal (pUnk);
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 #if !FULL_AOT_RUNTIME
