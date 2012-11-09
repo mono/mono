@@ -141,7 +141,33 @@ namespace System.Windows.Forms {
 		}
 
 		public static Screen FromRectangle(Rectangle rect) {
-			return Screen.FromPoint(new Point(rect.Left, rect.Top));
+			Screen bestScrn = null;
+			int closest = Int32.MaxValue;
+			foreach (Screen scrn in Screen.AllScreens) {
+				Rectangle rcBounds = scrn.Bounds;
+				int distance = 0;
+				if (rect.Left > rcBounds.Right)
+					distance += rect.Left - rcBounds.Right;
+				else if (rcBounds.Left > rect.Left)
+					distance += rcBounds.Left - rect.Left;
+				if (rcBounds.Left > rect.Right)
+					distance += rcBounds.Left - rect.Right;
+				else if (rect.Right > rcBounds.Right)
+					distance += rect.Right - rcBounds.Right;
+				if (rect.Top > rcBounds.Bottom)
+					distance += rect.Top - rcBounds.Bottom;
+				else if (rcBounds.Top > rect.Top)
+					distance += rcBounds.Top - rect.Top;
+				if (rcBounds.Top > rect.Bottom)
+					distance += rcBounds.Top - rect.Bottom;
+				else if (rect.Bottom > rcBounds.Bottom)
+					distance += rect.Bottom - rcBounds.Bottom;
+				if (distance < closest) {
+					bestScrn = scrn;
+					closest = distance;
+				}
+			}
+			return bestScrn;
 		}
 
 		public static Rectangle GetBounds(Control ctl) {

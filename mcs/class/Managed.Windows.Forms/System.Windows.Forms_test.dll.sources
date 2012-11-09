@@ -130,6 +130,7 @@ System.Windows.Forms/RichTextBoxTest.cs
 System.Windows.Forms/SaveFileDialogTest.cs
 System.Windows.Forms/ScrollableControlTest.cs
 System.Windows.Forms/ScrollBarTest.cs
+System.Windows.Forms/ScreenTest.cs
 System.Windows.Forms/SelectionRangeTest.cs
 System.Windows.Forms/SendKeysTest.cs
 System.Windows.Forms/SplitterTest.cs
