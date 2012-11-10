@@ -1056,6 +1056,23 @@ namespace Mono.CSharp
 				return true;
 			}
 
+			public static bool IsEqual (TypeSpec[] a, TypeSpec[] b)
+			{
+				if (a == b)
+					return true;
+
+				if (a.Length != b.Length)
+					return false;
+
+				for (int i = 0; i < a.Length; ++i) {
+					if (!IsEqual (a[i], b[i]))
+						return false;
+				}
+
+				return true;
+			}
+
+
 			//
 			// Compares unordered arrays
 			//

@@ -46112,6 +46112,27 @@
       </method>
     </type>
   </test>
+  <test name="test-855.cs">
+    <type name="Test.BaseClass">
+      <method name="System.String Get(System.String, System.String)" attrs="486">
+        <size>10</size>
+      </method>
+      <method name="Int32 Get(System.String, Int32)" attrs="486">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.Subclass">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-86.cs">
     <type name="T.T">
       <method name="Int32 method1(System.Type, Int32)" attrs="145">
