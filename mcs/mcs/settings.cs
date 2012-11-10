@@ -570,14 +570,17 @@ namespace Mono.CSharp {
 			bool valid = true;
 			foreach (string wid in text.Split (numeric_value_separator)) {
 				int id;
-				if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
-					report.Error (1904, "`{0}' is not a valid warning number", wid);
-					valid = false;
-					continue;
-				}
+				if(!String.IsNullOrEmpty(wid))
+				{
+					if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
+						report.Error (1904, "`{0}' is not a valid warning number", wid);
+						valid = false;
+						continue;
+					}
 
-				if (report.CheckWarningCode (id, Location.Null))
-					action (id);
+					if (report.CheckWarningCode (id, Location.Null))
+						action (id);
+				}
 			}
 
 			return valid;
