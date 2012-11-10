@@ -17656,6 +17656,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-571.cs">
+    <type name="A`1[T]">
+      <method name="A`1[MM] For[MM]()" attrs="1478">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B`3[U,X,V]">
+      <method name="A`1[PP] For[PP]()" attrs="198">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor(A`1)" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="A`1[QQ] For[QQ]()" attrs="198">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="145">

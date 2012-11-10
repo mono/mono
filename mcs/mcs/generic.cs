@@ -1250,6 +1250,22 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public bool HasDependencyOn (TypeSpec type)
+		{
+			if (TypeArguments != null) {
+				foreach (var targ in TypeArguments) {
+					if (TypeSpecComparer.Override.IsEqual (targ, type))
+						return true;
+
+					var tps = targ as TypeParameterSpec;
+					if (tps != null && tps.HasDependencyOn (type))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
 		public override TypeSpec Mutate (TypeParameterMutator mutator)
 		{
 			return mutator.Mutate (this);
@@ -2422,12 +2438,8 @@ namespace Mono.CSharp {
 
 			if (atype.IsGenericParameter) {
 				var tps = (TypeParameterSpec) atype;
-				if (tps.TypeArguments != null) {
-					foreach (var targ in tps.TypeArguments) {
-						if (TypeSpecComparer.Override.IsEqual (targ, ttype))
-							return true;
-					}
-				}
+				if (tps.HasDependencyOn (ttype))
+					return true;
 
 				if (Convert.ImplicitTypeParameterConversion (null, tps, ttype) != null)
 					return true;
