@@ -52,7 +52,6 @@ namespace Mono {
 // Disables the warning: CLS compliance checking will not be performed on
 //  `XXXX' because it is not visible from outside this assembly
 #pragma warning disable  3019
-#endif
 		static readonly DataConverter SwapConv = new SwapConverter ();
 		static readonly DataConverter CopyConv = new CopyConverter ();
 
