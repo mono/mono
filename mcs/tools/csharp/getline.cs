@@ -869,6 +869,13 @@ namespace Mono.Terminal {
 
 			return result;
 		}
+		
+		public void SaveHistory ()
+		{
+			if (history != null) {
+				history.Close ();
+			}
+		}
 
 		public bool TabAtStartCompletes { get; set; }
 			

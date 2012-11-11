@@ -314,7 +314,7 @@ namespace Mono {
 				expr = expr == null ? input : expr + "\n" + input;
 				
 				expr = Evaluate (expr);
-			} 
+			}
 		}
 
 		public int ReadEvalPrintLoop ()
@@ -326,17 +326,24 @@ namespace Mono {
 
 			LoadStartupFiles ();
 
-			if (startup_files != null && startup_files.Length != 0)
+			if (startup_files != null && startup_files.Length != 0) {
 				ExecuteSources (startup_files, false);
-			else if (Driver.StartupEvalExpression != null){
-				ReadEvalPrintLoopWith (p => {
-					var ret = Driver.StartupEvalExpression;
-					Driver.StartupEvalExpression = null;
-					return ret;
-					});
-			} else
-				ReadEvalPrintLoopWith (GetLine);
+			} else {
+				if (Driver.StartupEvalExpression != null){
+					ReadEvalPrintLoopWith (p => {
+						var ret = Driver.StartupEvalExpression;
+						Driver.StartupEvalExpression = null;
+						return ret;
+						});
+				} else {
+					ReadEvalPrintLoopWith (GetLine);
+				}
+				
+				editor.SaveHistory ();
+			}
 
+			Console.CancelKeyPress -= ConsoleInterrupt;
+			
 			return 0;
 		}
 
