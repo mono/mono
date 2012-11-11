@@ -302,7 +302,7 @@ namespace Mono.CSharp {
 				// rules (e.g. binary operators) by not setting the flag we hide them for
 				// user conversions
 				//
-				if (!BuiltinTypeSpec.IsPrimitiveType (dt)) {
+				if (!BuiltinTypeSpec.IsPrimitiveType (dt) || dt.BuiltinType == BuiltinTypeSpec.Type.Char) {
 					switch (dt.BuiltinType) {
 					case BuiltinTypeSpec.Type.String:
 					case BuiltinTypeSpec.Type.Delegate:
