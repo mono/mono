@@ -381,8 +381,10 @@ namespace Mono.CSharp
 						break;
 				}
 			}
-			
-#if NET_4_0
+
+#if NET_4_5			
+			args.Append("/sdk:4.5");
+#elif NET_4_0
 			args.Append("/sdk:4");
 #else
 			args.Append("/sdk:2");
