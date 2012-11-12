@@ -71,7 +71,7 @@ namespace Microsoft.Build.Tasks {
 			}
 
 			if (!String.IsNullOrEmpty (DisabledWarnings)) {
-				string [] defines = DisabledWarnings.Split (new char [] {';', ' '},
+				string [] defines = DisabledWarnings.Split (new char [] {';', ' ', ','},
 						StringSplitOptions.RemoveEmptyEntries);
 				if (defines.Length > 0)
 					commandLine.AppendSwitchIfNotNull ("/nowarn:",
