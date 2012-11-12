@@ -76,6 +76,7 @@ namespace Microsoft.Build.Tasks {
 				if (defines.Length > 0)
 					commandLine.AppendSwitchIfNotNull ("/nowarn:",
 							String.Join (";", defines));
+			}
 
 			commandLine.AppendSwitchIfNotNull ("/doc:", DocumentationFile);
 
