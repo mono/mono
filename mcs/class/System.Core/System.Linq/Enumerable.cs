@@ -813,7 +813,7 @@ namespace System.Linq
 					return element;
 
 			if (fallback == Fallback.Throw)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException (Locale.GetText ("Sequence contains no matching element"));
 
 			return default (TSource);
 		}
