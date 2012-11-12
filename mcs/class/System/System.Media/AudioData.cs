@@ -12,7 +12,7 @@ namespace Mono.Audio {
 #endif
 	abstract class AudioData {
 		protected const int buffer_size = 4096;
-		bool stopped = false;
+		bool stopped;
 
 		public abstract int Channels {
 			get;
@@ -58,8 +58,8 @@ namespace Mono.Audio {
 		short channels;
 		ushort frame_divider;
 		int sample_rate;
-		int data_len = 0;
-		long data_offset = 0;
+		int data_len;
+		long data_offset;
 		AudioFormat format;
 
 		public WavData (Stream data) {
@@ -100,7 +100,7 @@ namespace Mono.Audio {
 					byte_rate |= buffer [idx++] << 8;
 					byte_rate |= buffer [idx++] << 16;
 					byte_rate |= buffer [idx++] << 24;
-					int block_align = buffer [idx++] | (buffer [idx++] << 8);
+//					int block_align = buffer [idx++] | (buffer [idx++] << 8);
 					int sign_bits = buffer [idx++] | (buffer [idx++] << 8);
 
 					switch (sign_bits) {
@@ -203,8 +203,8 @@ namespace Mono.Audio {
 		short channels;
 		ushort frame_divider;
 		int sample_rate;
-		int data_len = 0;
-		int data_offset = 0;
+		int data_len ;
+//		int data_offset;
 		AudioFormat format;
 
 		public AuData (Stream data) {
@@ -265,7 +265,7 @@ namespace Mono.Audio {
 			byte[] chunk_to_play     = new byte [chunk_size];
 			
 			// Read only Au data, don't care about file header here !
-			stream.Position = (long)data_offset;
+			stream.Position = 0; //(long)data_offset;
 			stream.Read (buffer, 0, data_len); 
 			
 			while (!IsStopped && count >= 0){
