@@ -2,6 +2,10 @@
 
 # if defined(GC_DARWIN_THREADS)
 
+#if __APPLE__
+#include "TargetConditionals.h"
+#endif
+
 #include <AvailabilityMacros.h>
 #include "mono/utils/mono-compiler.h"
 
@@ -115,7 +119,7 @@ void GC_push_all_stacks() {
 	if(r != KERN_SUCCESS) continue;
 	
 #if defined(I386)
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if defined (TARGET_IPHONE_SIMULATOR) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 
 	lo = state.__esp;
 
