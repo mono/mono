@@ -119,7 +119,7 @@ void GC_push_all_stacks() {
 	if(r != KERN_SUCCESS) continue;
 	
 #if defined(I386)
-#if defined (TARGET_IPHONE_SIMULATOR) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
+#if TARGET_IPHONE_SIMULATOR == 1 || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 
 	lo = state.__esp;
 
