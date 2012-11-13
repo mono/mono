@@ -51,6 +51,13 @@ For comments, corrections and updates, please contact mono@xamarin.com
 	Contact mono@xamarin.com for details on obtaining the Mono
 	runtime under other terms.
 
+** mono/support: MonoPosixHelper and support code
+
+	This code is dual licensed under the LGPL or commercial licenses, with
+	the same guidelines as mono/mono code.
+
+	The ZLib files are included under a "new BSD"-style license.
+
 ** mono/eglib: Mono's X11 glib implementation
 
 	This is a minimal subset of glib that is to be licensed under
