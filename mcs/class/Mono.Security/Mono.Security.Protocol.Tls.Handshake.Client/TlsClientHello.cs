@@ -64,14 +64,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			this.ProcessAsTls1();
-		}
-
-		protected override void ProcessAsTls1()
-		{
 			// Client Version
 			this.Write(this.Context.Protocol);
-								
+
 			// Random bytes - Unix time + Radom bytes [28]
 			TlsStream clientRandom = new TlsStream();
 			clientRandom.Write(this.Context.GetUnixTime());
@@ -111,6 +106,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			
 			// Compression methods ( 0 = none )
 			this.Write((byte)this.Context.CompressionMethod);
+		}
+
+		protected override void ProcessAsTls1()
+		{
+			ProcessAsSsl3 ();
 
 			// http://www.ietf.org/rfc/rfc3546.txt
 			TlsStream extensions = new TlsStream ();
