@@ -1074,12 +1074,13 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				if (!IsMissingType (ct) && ct.IsClass) {
-					spec.BaseType = CreateType (ct);
+				var constraint_type = CreateType (ct);
+				if (constraint_type.IsClass) {
+					spec.BaseType = constraint_type;
 					continue;
 				}
 
-				spec.AddInterface (CreateType (ct));
+				spec.AddInterface (constraint_type);
 			}
 
 			if (spec.BaseType == null)
