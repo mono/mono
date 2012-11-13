@@ -73,7 +73,7 @@ namespace System.Linq
 			// if zero elements and treat the first element differently
 			using (var enumerator = source.GetEnumerator ()) {
 				if (!enumerator.MoveNext ())
-					throw new InvalidOperationException ("No elements in source list");
+					throw EmptySequence ();
 
 				TSource folded = enumerator.Current;
 				while (enumerator.MoveNext ())
@@ -173,7 +173,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / (double) count;
 		}
 
@@ -188,7 +188,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / (double) count;
 		}
 
@@ -203,7 +203,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / count;
 		}
 
@@ -218,7 +218,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / count;
 		}
 
@@ -233,7 +233,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / count;
 		}
 
@@ -381,7 +381,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / (double) count;
 		}
 
@@ -418,7 +418,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / (double) count;
 
 		}
@@ -456,7 +456,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / count;
 
 		}
@@ -495,7 +495,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / count;
 		}
 
@@ -532,7 +532,7 @@ namespace System.Linq
 				count++;
 			}
 			if (count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return total / count;
 		}
 
@@ -813,7 +813,7 @@ namespace System.Linq
 					return element;
 
 			if (fallback == Fallback.Throw)
-				throw new InvalidOperationException (Locale.GetText ("Sequence contains no matching element"));
+				throw NoMatchingElement ();
 
 			return default (TSource);
 		}
@@ -833,7 +833,7 @@ namespace System.Linq
 				}
 			}
 
-			throw new InvalidOperationException ("The source sequence is empty");
+			throw EmptySequence ();
 		}
 
 		public static TSource First<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -1201,7 +1201,7 @@ namespace System.Linq
 				return item;
 
 			if (fallback == Fallback.Throw)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 
 			return item;
 		}
@@ -1212,7 +1212,7 @@ namespace System.Linq
 
 			var collection = source as ICollection<TSource>;
 			if (collection != null && collection.Count == 0)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 
 			var list = source as IList<TSource>;
 			if (list != null)
@@ -1232,9 +1232,9 @@ namespace System.Linq
 			if (!empty)
 				return item;
 
-			throw new InvalidOperationException ();
+			throw EmptySequence ();
 #endif
-		}
+        }
 
 		public static TSource Last<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
@@ -1329,7 +1329,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence();
 			return max;
 		}
 
@@ -1344,7 +1344,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return max;
 		}
 
@@ -1359,7 +1359,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return max;
 		}
 
@@ -1374,7 +1374,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return max;
 		}
 
@@ -1389,7 +1389,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return max;
 		}
 
@@ -1527,7 +1527,7 @@ namespace System.Linq
 						max = element;
 				}
 				if (empty)
-					throw new InvalidOperationException ();
+					throw EmptySequence ();
 			}
 			return max;
 		}
@@ -1543,7 +1543,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return max;
 		}
 
@@ -1558,7 +1558,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return max;
 		}
 
@@ -1573,7 +1573,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return max;
 		}
 
@@ -1588,7 +1588,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return max;
 		}
 
@@ -1603,7 +1603,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return max;
 		}
 
@@ -1616,7 +1616,7 @@ namespace System.Linq
 			}
 
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 
 			return initValue;
 		}
@@ -1749,7 +1749,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return min;
 		}
 
@@ -1764,7 +1764,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return min;
 		}
 
@@ -1779,7 +1779,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return min;
 		}
 
@@ -1794,7 +1794,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return min;
 		}
 
@@ -1809,7 +1809,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw EmptySequence ();
 			return min;
 		}
 
@@ -1946,7 +1946,7 @@ namespace System.Linq
 						min = element;
 				}
 				if (empty)
-					throw new InvalidOperationException ();
+					throw EmptySequence ();
 			}
 			return min;
 		}
@@ -1962,7 +1962,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return min;
 		}
 
@@ -1977,7 +1977,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return min;
 		}
 
@@ -1992,7 +1992,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return min;
 		}
 
@@ -2007,7 +2007,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return min;
 		}
 
@@ -2022,7 +2022,7 @@ namespace System.Linq
 				empty = false;
 			}
 			if (empty)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 			return min;
 		}
 
@@ -2367,14 +2367,14 @@ namespace System.Linq
 					continue;
 
 				if (found)
-					throw new InvalidOperationException ();
+					throw MoreThanOneMatchingElement ();
 
 				found = true;
 				item = element;
 			}
 
 			if (!found && fallback == Fallback.Throw)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 
 			return item;
 		}
@@ -2391,18 +2391,18 @@ namespace System.Linq
 
 			foreach (var element in source) {
 				if (found)
-					throw new InvalidOperationException ();
+					throw MoreThanOneElement ();
 
 				found = true;
 				item = element;
 			}
 
 			if (!found)
-				throw new InvalidOperationException ();
+				throw NoMatchingElement ();
 
 			return item;
 #endif
-		}
+        }
 
 		public static TSource Single<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
@@ -2427,7 +2427,7 @@ namespace System.Linq
 
 			foreach (var element in source) {
 				if (found)
-					throw new InvalidOperationException ();
+					throw MoreThanOneMatchingElement ();
 
 				found = true;
 				item = element;
@@ -2435,7 +2435,7 @@ namespace System.Linq
 
 			return item;
 #endif
-		}
+        }
 
 		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
@@ -3145,5 +3145,26 @@ namespace System.Linq
 
 			return new ReadOnlyCollection<TSource> (source.ToArray<TSource> ());
 		}
+
+		#region Exception helpers
+
+		static Exception EmptySequence ()
+		{
+			return new InvalidOperationException (Locale.GetText ("Sequence contains no elements"));
+		}
+		static Exception NoMatchingElement ()
+		{
+			return new InvalidOperationException (Locale.GetText ("Sequence contains no matching element"));
+		}
+		static Exception MoreThanOneElement ()
+		{
+			return new InvalidOperationException (Locale.GetText ("Sequence contains more than one element"));
+		}
+		static Exception MoreThanOneMatchingElement ()
+		{
+			return new InvalidOperationException (Locale.GetText ("Sequence contains more than one matching element"));
+		}
+
+		#endregion
 	}
 }
