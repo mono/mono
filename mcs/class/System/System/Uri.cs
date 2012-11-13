@@ -1033,18 +1033,13 @@ namespace System {
 					if (segments [k] != segments2 [k]) 
 						break;
 				
-				for (int i = k + 1; i < segments.Length; i++)
+				for (int i = k; i < segments.Length && segments [i].EndsWith ("/"); i++)
 					result += "../";
 				for (int i = k; i < segments2.Length; i++)
 					result += segments2 [i];
 				
-				// if there is more than 1 segment and if the last segment of segments
-				// ends with separator char, assume its a directory and prepend "../"
-				if (segments.Length > 1) {
-					var lastSegment = segments [segments.Length - 1];
-					if (lastSegment.EndsWith ("/"))
-						result = "../" + result;
-				}
+				if (result == string.Empty)
+					result = "./";
 			}
 			uri.AppendQueryAndFragment (ref result);
 
