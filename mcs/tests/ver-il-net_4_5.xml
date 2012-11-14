@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--This file contains expected IL and metadata produced by compiler for each test-->
 <tests>
   <test name="dtest-001.cs">
@@ -46126,6 +46126,35 @@
     </type>
     <type name="Test.Subclass">
       <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-856.cs">
+    <type name="A">
+      <method name="Void Dispose()" attrs="454">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Dispose()" attrs="129">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>41</size>
+      </method>
+      <method name="Void Dispose()" attrs="198">
         <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
