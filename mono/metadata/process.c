@@ -68,10 +68,7 @@ void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *thi
 	CloseHandle (process);
 }
 
-#define STASH_SYS_ASS(this) \
-	if(system_assembly == NULL) { \
-		system_assembly=this->vtable->klass->image; \
-	}
+#define STASH_SYS_ASS(this) system_assembly=this->vtable->klass->image
 
 static MonoImage *system_assembly=NULL;
 
