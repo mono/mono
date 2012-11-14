@@ -34,6 +34,9 @@ moon-do-basic-clean:
 	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw clean
 endif
 
+if ONLY_MONOTOUCH
+build_profiles = monotouch
+else
 if ONLY_MOONLIGHT
 build_profiles = moonlight_raw
 test_profiles = moonlight_raw
@@ -80,6 +83,7 @@ endif
 
 test_profiles = $(build_profiles)
 
+endif
 endif
 
 if BUILD_MCS
