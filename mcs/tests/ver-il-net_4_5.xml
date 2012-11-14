@@ -46044,6 +46044,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Int32 Test(Boolean, Int16)" attrs="150">
+        <size>22</size>
+      </method>
     </type>
   </test>
   <test name="test-85.cs">

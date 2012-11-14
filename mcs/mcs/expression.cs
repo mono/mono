@@ -4643,7 +4643,7 @@ namespace Mono.CSharp
 						// ambiguous because 1 literal can be converted to short.
 						//
 						if (conv_false_expr != null) {
-							if (conv_false_expr is IntConstant && conv is Constant) {
+							if (conv_false_expr.Type.BuiltinType == BuiltinTypeSpec.Type.Int && conv is Constant) {
 								type = true_type;
 								conv_false_expr = null;
 							} else if (type.BuiltinType == BuiltinTypeSpec.Type.Int && conv_false_expr is Constant) {

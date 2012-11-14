@@ -2,6 +2,11 @@ using System;
 
 class ConditionalPromotions
 {
+	public static int Test (bool condition, short value)
+	{
+		return condition ? -1 : value;
+	}
+
 	public static int Main(string[] args)
 	{
 		var r1 = args.Length > 0 ? 1 : (short)1;
