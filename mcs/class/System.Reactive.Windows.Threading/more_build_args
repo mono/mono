@@ -1,0 +1,3 @@
+-d:SIGNED
+MonoAssemblyInfo.cs
+-resource:Strings_WindowsThreading.resources,System.Reactive.Strings_WindowsThreading.resources

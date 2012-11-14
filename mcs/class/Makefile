@@ -159,12 +159,19 @@ mobile_dirs := \
 	Mono.Cairo	\
 	Mono.Data.Sqlite	\
 	System.Numerics	\
-	System.Data.Services.Client
+	System.Data.Services.Client \
+	System.Reactive.Interfaces \
+	System.Reactive.Core \
+	System.Reactive.Linq \
+	System.Reactive.PlatformServices \
+	System.Reactive.Experimental \
+	System.Reactive.Debugger
 
 monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.CSharp	\
-	Microsoft.CSharp
+	Microsoft.CSharp \
+	System.Reactive.Providers
 
 monotouch_runtime_dirs := \
 	corlib \
@@ -208,6 +215,16 @@ net_4_0_dirs := \
 	System.Windows.Forms.DataVisualization	\
 	System.Xaml \
 	WindowsBase \
+	System.Reactive.Interfaces \
+	System.Reactive.Core \
+	System.Reactive.Linq \
+	System.Reactive.PlatformServices \
+	System.Reactive.Providers \
+	System.Reactive.Runtime.Remoting \
+	System.Reactive.Windows.Forms \
+	System.Reactive.Windows.Threading \
+	System.Reactive.Experimental \
+	System.Reactive.Debugger \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
