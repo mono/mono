@@ -11,6 +11,19 @@ LIB_MCS_FLAGS = \
 		-r:System.Reactive.Core.dll \
 		-r:System.Reactive.Linq.dll
 
+ifeq (true, $(GENERATE_RESOURCES))
+LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
+endif
+
+RESX_RESOURCES = \
+	Strings_PlatformServices.resources
+
+CLEAN_FILES += $(RESX_RESOURCES)
+
+RESOURCES = $(RESX_RESOURCES)
+
+PREBUILT = $(RESX_RESOURCES:=.prebuilt)
+
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NO_TASK_DELAY
 endif
@@ -27,7 +40,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:Mono.Reactive.Tests.dll
 
-EXTRA_DISTFILES = more_build_args
+EXTRA_DISTFILES = more_build_args $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
 
 VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
@@ -39,3 +52,14 @@ NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 
 include ../../build/library.make
+
+$(the_lib): $(RESOURCES)
+
+$(RESX_RESOURCES): %.resources: %.resx
+	$(RESGEN) $< || cp $@.prebuilt $@
+
+$(PREBUILT): %.prebuilt: %
+	cp $* $@
+
+dist-default: $(PREBUILT)
+

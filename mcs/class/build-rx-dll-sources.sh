@@ -74,8 +74,12 @@ using System.Reflection;
 			var res = path.Attribute ("Include").Value;
 			var resx = Path.Combine (basePath, ass, res);
 			var resFileName = res.Replace ("resx", "resources");
+			var resxDest = Path.Combine (monoass, res);
 			var resPath = Path.Combine (monoass, resFileName);
-			Process.Start ("resgen", String.Format ("{0} {1}", resx, resPath));
+			if (File.Exists (resxDest))
+				File.Delete (resxDest);
+			File.Copy (resx, resxDest);
+			//Process.Start ("resgen", String.Format ("{0} {1}", resx, resPath));
 			tw.WriteLine ("-resource:{0},{1}.{2}", resFileName, rootNS, resFileName);
 		}
 	}
