@@ -87,6 +87,7 @@ if grep "^AC_PROG_LIBTOOL" configure.in >/dev/null; then
   fi
 fi
 
+ACLOCAL_FLAGS="$ACLOCAL_FLAGS -Wnone"
 echo "Running aclocal $ACLOCAL_FLAGS ..."
 aclocal $ACLOCAL_FLAGS || {
   echo
@@ -104,7 +105,7 @@ if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then
 fi
 
 echo "Running automake --gnu $am_opt ..."
-automake --add-missing --gnu $am_opt ||
+automake --add-missing --gnu -Wno-obsolete $am_opt ||
   { echo "**Error**: automake failed."; exit 1; }
 echo "Running autoconf ..."
 autoconf || { echo "**Error**: autoconf failed."; exit 1; }
