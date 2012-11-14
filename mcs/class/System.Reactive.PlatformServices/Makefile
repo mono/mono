@@ -27,7 +27,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:Mono.Reactive.Tests.dll
 
-EXTRA_DISTFILES =
+EXTRA_DISTFILES = more_build_args
 
 VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
