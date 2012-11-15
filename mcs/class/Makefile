@@ -281,6 +281,7 @@ DISTFILES = \
 	mono.pub		\
 	msfinal.pub		\
 	silverlight.pub		\
+	reactive.pub		\
 	mono.snk		\
 	LICENSE 		\
 	README			\
