@@ -191,7 +191,9 @@ namespace Mono.CSharp
 			var definition = new ImportedMemberDefinition (fi, field_type, this);
 
 			if ((fa & FieldAttributes.Literal) != 0) {
-				var c = Constant.CreateConstantFromValue (field_type, fi.GetRawConstantValue (), Location.Null);
+				Constant c = field_type.Kind == MemberKind.MissingType ?
+					new NullConstant (InternalType.ErrorType, Location.Null) :
+					Constant.CreateConstantFromValue (field_type, fi.GetRawConstantValue (), Location.Null);
 				return new ConstSpec (declaringType, definition, field_type, fi, mod, c);
 			}
 

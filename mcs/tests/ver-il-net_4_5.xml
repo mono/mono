@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--This file contains expected IL and metadata produced by compiler for each test-->
 <tests>
   <test name="dtest-001.cs">
@@ -46159,6 +46159,27 @@
       </method>
       <method name="Void Dispose()" attrs="198">
         <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-857.cs">
+    <type name="Outer">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TypeHiding">
+      <method name="Boolean Test1(Outer)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Boolean Test2()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
