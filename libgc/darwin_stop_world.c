@@ -2,10 +2,6 @@
 
 # if defined(GC_DARWIN_THREADS)
 
-#if __APPLE__
-#include "TargetConditionals.h"
-#endif
-
 #include <AvailabilityMacros.h>
 #include "mono/utils/mono-compiler.h"
 
@@ -119,7 +115,7 @@ void GC_push_all_stacks() {
 	if(r != KERN_SUCCESS) continue;
 	
 #if defined(I386)
-#if TARGET_IPHONE_SIMULATOR == 1 || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
+#if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 
 	lo = state.__esp;
 
@@ -395,7 +391,7 @@ void GC_push_all_stacks() {
 			     (natural_t *)&info, &outCount);
 	if(r != KERN_SUCCESS) continue;
 
-#if TARGET_IPHONE_SIMULATOR == 1 || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
+#if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 	lo = (void*)info.__esp;
 	hi = (ptr_t)FindTopOfStack(info.__esp);
 
