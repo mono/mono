@@ -441,6 +441,15 @@ namespace System.Threading.Tasks
 			return true;
 		}
 
+		internal bool TrySetExceptionObserved ()
+		{
+			if (exSlot != null) {
+				exSlot.Observed = true;
+				return true;
+			}
+			return false;
+		}
+
 		internal void Execute ()
 		{
 			ThreadStart ();

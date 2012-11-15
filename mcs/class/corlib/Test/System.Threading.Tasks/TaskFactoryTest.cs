@@ -237,6 +237,20 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void ContinueWhenAll_WithExceptions ()
+		{
+			var t1 = Task.Factory.StartNew (() => { throw new ApplicationException ("Foo"); });
+			var t2 = Task.Factory.StartNew (() => { throw new ApplicationException ("Bar"); });
+
+			var cont = Task.Factory.ContinueWhenAll (new[] { t1, t2 }, delegate {});
+			cont.Wait (200);
+
+			Assert.IsTrue (t1.IsFaulted);
+			Assert.IsTrue (t2.IsFaulted);
+			Assert.AreEqual (TaskStatus.RanToCompletion, cont.Status);
+		}
+
+		[Test]
 		public void ContinueWhenAny_Simple ()
 		{
 			var t1 = new ManualResetEvent (false);
