@@ -1,4 +1,3 @@
-Assembly/MonoAssemblyInfo.cs
 ../../../external/rx/Rx.NET/System.Reactive.Linq/GlobalSuppressions.cs
 ../../../external/rx/Rx.NET/System.Reactive.Linq/NamespaceDocs.cs
 ../../../external/rx/Rx.NET/System.Reactive.Linq/Reactive/Concurrency/VirtualTimeScheduler.Extensions.cs

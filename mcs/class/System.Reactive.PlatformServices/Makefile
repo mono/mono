@@ -46,9 +46,9 @@ VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.System.Reactive.PlatformServices.dll
 NO_INSTALL = yes
+NO_SIGN_ASSEMBLY = yes
 endif
 
-NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 
 include ../../build/library.make

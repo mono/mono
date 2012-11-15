@@ -1,4 +1,3 @@
-Assembly/MonoAssemblyInfo.cs
 ../../../external/rx/Rx.NET/System.Reactive.Core/GlobalSuppressions.cs
 ../../../external/rx/Rx.NET/System.Reactive.Core/InternalsVisibleTo.cs
 ../../../external/rx/Rx.NET/System.Reactive.Core/NamespaceDocs.cs

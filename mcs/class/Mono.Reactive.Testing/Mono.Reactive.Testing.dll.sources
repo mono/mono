@@ -1,4 +1,3 @@
-Assembly/MonoAssemblyInfo.cs
 ../../../external/rx/Rx.NET/Microsoft.Reactive.Testing/ColdObservable.cs
 ../../../external/rx/Rx.NET/Microsoft.Reactive.Testing/GlobalSuppressions.cs
 ../../../external/rx/Rx.NET/Microsoft.Reactive.Testing/HotObservable.cs
