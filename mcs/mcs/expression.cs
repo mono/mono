@@ -8064,13 +8064,9 @@ namespace Mono.CSharp
 
 			TypeExpr texpr = member_lookup as TypeExpr;
 			if (texpr != null) {
-				if (!(expr is TypeExpr)) {
-					me = expr as MemberExpr;
-					if (me == null || me.ProbeIdenticalTypeName (rc, expr, sn) == expr) {
-						rc.Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
-							Name, member_lookup.GetSignatureForError ());
-						return null;
-					}
+				if (!(expr is TypeExpr) && (sn == null || expr.ProbeIdenticalTypeName (rc, expr, sn) == expr)) {
+					rc.Report.Error (572, loc, "`{0}': cannot reference a type through an expression. Consider using `{1}' instead",
+						Name, texpr.GetSignatureForError ());
 				}
 
 				if (!texpr.Type.IsAccessible (rc)) {

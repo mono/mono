@@ -360,6 +360,27 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// Implements identical simple name and type-name resolution
+		//
+		public Expression ProbeIdenticalTypeName (ResolveContext rc, Expression left, SimpleName name)
+		{
+			var t = left.Type;
+			if (t.Kind == MemberKind.InternalCompilerType || t is ElementTypeSpec || t.Arity > 0)
+				return left;
+
+			// In a member access of the form E.I, if E is a single identifier, and if the meaning of E as a simple-name is
+			// a constant, field, property, local variable, or parameter with the same type as the meaning of E as a type-name
+
+			if (left is MemberExpr || left is VariableReference) {
+				var identical_type = rc.LookupNamespaceOrType (name.Name, 0, LookupMode.Probing, loc) as TypeExpr;
+				if (identical_type != null && identical_type.Type == left.Type)
+					return identical_type;
+			}
+
+			return left;
+		}
+
 		public virtual string GetSignatureForError ()
 		{
 			return type.GetDefinition ().GetSignatureForError ();
@@ -2926,27 +2947,6 @@ namespace Mono.CSharp {
 			rc.Report.Error (1540, loc,
 				"Cannot access protected member `{0}' via a qualifier of type `{1}'. The qualifier must be of type `{2}' or derived from it",
 				member.GetSignatureForError (), qualifier.GetSignatureForError (), rc.CurrentType.GetSignatureForError ());
-		}
-
-		//
-		// Implements identicial simple name and type-name
-		//
-		public Expression ProbeIdenticalTypeName (ResolveContext rc, Expression left, SimpleName name)
-		{
-			var t = left.Type;
-			if (t.Kind == MemberKind.InternalCompilerType || t is ElementTypeSpec || t.Arity > 0)
-				return left;
-
-			// In a member access of the form E.I, if E is a single identifier, and if the meaning of E as a simple-name is
-			// a constant, field, property, local variable, or parameter with the same type as the meaning of E as a type-name
-
-			if (left is MemberExpr || left is VariableReference) {
-				var identical_type = rc.LookupNamespaceOrType (name.Name, 0, LookupMode.Probing, loc) as TypeExpr;
-				if (identical_type != null && identical_type.Type == left.Type)
-					return identical_type;
-			}
-
-			return left;
 		}
 
 		public bool ResolveInstanceExpression (ResolveContext rc, Expression rhs)
