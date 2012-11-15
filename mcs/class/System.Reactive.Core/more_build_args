@@ -1,3 +1,2 @@
 -d:SIGNED
-MonoAssemblyInfo.cs
 -resource:Strings_Core.resources,System.Reactive.Strings_Core.resources

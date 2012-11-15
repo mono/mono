@@ -50,6 +50,7 @@ foreach (var ass in asses) {
 	var doc = XDocument.Load (csproj);
 	var rootNS = doc.XPathSelectElement ("//*[local-name()='RootNamespace']").Value;
 	using (var tw = File.CreateText (sources)) {
+		tw.WriteLine ("Assembly/MonoAssemblyInfo.cs");
 		foreach (var path in doc.XPathSelectElements ("//*[local-name()='Compile']")
 			.Select (el => el.Attribute ("Include").Value)
 			.Select (s => s.Replace ("\\", "/")))
@@ -57,7 +58,7 @@ foreach (var ass in asses) {
 				tw.WriteLine (Path.Combine (pathPrefix, basePath, ass, path));
 	}
 
-	var monoAssInfo = Path.Combine (Path.GetDirectoryName (sources), "MonoAssemblyInfo.cs");
+	var monoAssInfo = Path.Combine (Path.GetDirectoryName (sources), "Assembly", "MonoAssemblyInfo.cs");
 	using (var tw = File.CreateText (monoAssInfo))
 		tw.WriteLine (@"
 using System.Reflection;
@@ -68,7 +69,6 @@ using System.Reflection;
 	var argsPath = Path.Combine (Path.GetDirectoryName (sources), "more_build_args");
 	using (var tw = File.CreateText (argsPath)) {
 		tw.WriteLine ("-d:SIGNED");
-		tw.WriteLine ("MonoAssemblyInfo.cs");
 
 		foreach (var path in doc.XPathSelectElements ("//*[local-name()='EmbeddedResource']")) {
 			var res = path.Attribute ("Include").Value;

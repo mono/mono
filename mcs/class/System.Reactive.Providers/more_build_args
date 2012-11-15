@@ -1,3 +1,2 @@
 -d:SIGNED
-MonoAssemblyInfo.cs
 -resource:Strings_Providers.resources,System.Reactive.Strings_Providers.resources

@@ -1,3 +1,4 @@
+Assembly/MonoAssemblyInfo.cs
 ../../../external/rx/Rx.NET/System.Reactive.Interfaces/AssemblyFileVersionAttribute.cs
 ../../../external/rx/Rx.NET/System.Reactive.Interfaces/DateTimeOffset.cs
 ../../../external/rx/Rx.NET/System.Reactive.Interfaces/GlobalSuppressions.cs

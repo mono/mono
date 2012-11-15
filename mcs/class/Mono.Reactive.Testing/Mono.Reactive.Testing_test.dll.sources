@@ -1,3 +1,4 @@
+Assembly/MonoAssemblyInfo.cs
 ../../../../external/rx/Rx.NET/Tests.System.Reactive/App.cs
 ../../../../external/rx/Rx.NET/Tests.System.Reactive/DispatcherHelpers.cs
 ../../../../external/rx/Rx.NET/Tests.System.Reactive/Semaphore.cs

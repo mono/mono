@@ -1,3 +1,4 @@
+Assembly/MonoAssemblyInfo.cs
 ../../../external/rx/Rx.NET/System.Reactive.Windows.Threading/GlobalSuppressions.cs
 ../../../external/rx/Rx.NET/System.Reactive.Windows.Threading/Reactive/Concurrency/CoreDispatcherScheduler.cs
 ../../../external/rx/Rx.NET/System.Reactive.Windows.Threading/Reactive/Internal/Constants.cs
