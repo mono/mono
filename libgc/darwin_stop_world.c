@@ -395,7 +395,7 @@ void GC_push_all_stacks() {
 			     (natural_t *)&info, &outCount);
 	if(r != KERN_SUCCESS) continue;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if TARGET_IPHONE_SIMULATOR == 1 || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 	lo = (void*)info.__esp;
 	hi = (ptr_t)FindTopOfStack(info.__esp);
 
