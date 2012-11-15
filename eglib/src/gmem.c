@@ -29,11 +29,53 @@
 #include <string.h>
 #include <glib.h>
 
+ static MonoMemoryCallbacks memory_callbacks =
+	{
+		malloc,
+		free,
+		calloc,
+		realloc
+	};
+
+void g_mem_set_callbacks (MonoMemoryCallbacks* callbacks)
+{
+	memcpy(&memory_callbacks, callbacks, sizeof(memory_callbacks));
+}
+
 void
 g_free (void *ptr)
 {
 	if (ptr != NULL)
-		free (ptr);
+		memory_callbacks.free_func (ptr);
+}
+
+gpointer
+g_realloc (gpointer obj, gsize size)
+{
+	if (!size) {
+		g_free (obj);
+		return 0;
+	}
+
+	return  memory_callbacks.realloc_func (obj, size);
+}
+
+gpointer
+g_malloc (gsize x)
+{
+	if (x)
+		return memory_callbacks.malloc_func (x);
+	else
+		return 0;
+}
+
+gpointer
+g_malloc0 (gsize x)
+{
+	if (x)
+		return memory_callbacks.calloc_func(1,x);
+	else
+		return 0;
 }
 
 gpointer
@@ -51,3 +93,9 @@ g_memdup (gconstpointer mem, guint byte_size)
 	return ptr;
 }
 
+gchar *g_strdup (const gchar *str)
+{
+	if (str)
+		return g_memdup (str, (guint)(strlen(str) + 1));
+	return NULL;
+}

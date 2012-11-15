@@ -20,6 +20,7 @@ mono_assembly_name_parse
 mono_assembly_loaded
 
 ;Unity Exports that add new functions created by Unity
+unity_mono_install_memory_callbacks
 unity_mono_redirect_output
 unity_mono_close_output
 mono_unity_set_embeddinghostname

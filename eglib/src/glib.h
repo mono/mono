@@ -106,13 +106,21 @@ typedef uint16_t       gunichar2;
  
 #define G_CONST_RETURN const
 
+ typedef struct {
+	void* (*malloc_func)(size_t size);
+	void (*free_func)(void *ptr);
+	void* (*calloc_func)(size_t nmemb, size_t size);
+	void* (*realloc_func)(void *ptr, size_t size);
+} MonoMemoryCallbacks;
+
 /*
  * Allocation
  */
+void g_mem_set_callbacks (MonoMemoryCallbacks* callbacks);
 void g_free (void *ptr);
-static inline gpointer g_realloc (gpointer obj, gsize size) { if (!size) {g_free (obj); return 0;} return  realloc (obj, size);}
-static inline gpointer g_malloc (gsize x) {if (x) return malloc (x); else return 0;}
-static inline gpointer g_malloc0 (gsize x) {if (x) return calloc(1,x); else return 0;}
+gpointer g_realloc (gpointer obj, gsize size);
+gpointer g_malloc (gsize x);
+gpointer g_malloc0 (gsize x);
 #define g_try_malloc(x)         g_malloc(x)
 #define g_try_realloc(obj,size) g_realloc((obj),(size))
 
@@ -125,7 +133,7 @@ static inline gpointer g_malloc0 (gsize x) {if (x) return calloc(1,x); else retu
 #define g_alloca(size)		alloca (size)
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
-static inline gchar   *g_strdup (const gchar *str) { if (str) {return strdup (str);} return NULL; }
+gchar   *g_strdup (const gchar *str);
 
 typedef struct {
 	gpointer (*malloc)      (gsize    n_bytes);
