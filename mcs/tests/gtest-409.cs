@@ -106,6 +106,11 @@ public class ConditionalParsing
 		return 1;
 	}
 
+	void Test_13 (object param)
+	{
+		if (param as bool? ?? false) {} else {}
+	}
+
 	public static void Main ()
 	{
 	}

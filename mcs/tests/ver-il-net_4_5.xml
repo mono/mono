@@ -14076,6 +14076,9 @@
       <method name="Int32 &lt;Test_12&gt;m__0()" attrs="145">
         <size>10</size>
       </method>
+      <method name="Void Test_13(System.Object)" attrs="129">
+        <size>53</size>
+      </method>
     </type>
   </test>
   <test name="gtest-410.cs">
