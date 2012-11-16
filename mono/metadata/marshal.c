@@ -9438,6 +9438,7 @@ mono_marshal_get_array_address (int rank, int elem_size)
 	int i, bounds, ind, realidx;
 	int branch_pos, *branch_positions;
 	int cached;
+	char *name;
 
 	ret = NULL;
 	mono_marshal_lock ();
@@ -9462,7 +9463,8 @@ mono_marshal_get_array_address (int rank, int elem_size)
 		sig->params [i + 1] = &mono_defaults.int32_class->byval_arg;
 	}
 
-	mb = mono_mb_new (mono_defaults.object_class, "ElementAddr", MONO_WRAPPER_MANAGED_TO_MANAGED);
+	name = g_strdup_printf ("ElementAddr_%d_%d", rank, elem_size);
+	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_MANAGED_TO_MANAGED);
 	
 	bounds = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	ind = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);

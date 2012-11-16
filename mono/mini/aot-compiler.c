@@ -1571,7 +1571,7 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			break;
 		}
 		case MONO_WRAPPER_MANAGED_TO_MANAGED:
-			if (!strcmp (method->name, "ElementAddr")) {
+			if (method->klass == mono_defaults.object_class && strstr (method->name, "ElementAddr")) {
 				ElementAddrWrapperInfo *info = mono_marshal_wrapper_info_from_wrapper (method);
 
 				g_assert (info);
@@ -3799,7 +3799,7 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 			case MONO_WRAPPER_UNKNOWN:
 				break;
 			case MONO_WRAPPER_MANAGED_TO_MANAGED:
-				if (!strcmp (method->name, "ElementAddr"))
+				if (strstr (method->name, "ElementAddr"))
 					return TRUE;
 				else
 					return FALSE;
@@ -4006,7 +4006,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 					}
 					add_generic_class_with_depth (acfg, m->klass, depth + 5);
 				}
-				if (m->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && !strcmp (m->name, "ElementAddr"))
+				if (m->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && strstr (m->name, "ElementAddr"))
 					add_extra_method_with_depth (acfg, m, depth + 1);
 				break;
 			}
