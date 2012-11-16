@@ -412,6 +412,16 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Match3 ()
+		{
+			var template = new UriTemplate ("test");
+			var match1 = template.Match (new Uri ("http://something"), new Uri ("http://something/test"));
+			var match2 = template.Match (new Uri ("http://something/something2"), new Uri ("http://something/something2/test"));
+			Assert.IsNotNull (match1, "#1");
+			Assert.IsNotNull (match2, "#2");
+		}
+		
+		[Test]
 		public void MatchWildcard ()
 		{
 			var t = new UriTemplate ("/hoge/*?p1={foo}");
