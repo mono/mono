@@ -107,12 +107,15 @@ namespace Mono.Security.Protocol.Ntlm {
 				else
 					_targetName = Encoding.Unicode.GetString (message, tname_off, tname_len);
 			}
-
-			var tinfo_len = BitConverterLE.ToUInt16 (message, 40);
-			var tinfo_off = BitConverterLE.ToUInt16 (message, 44);
-			if (tinfo_len > 0) {
-				_targetInfo = new byte [tinfo_len];
-				Buffer.BlockCopy (message, tinfo_off, _targetInfo, 0, tinfo_len);
+			
+			// The Target Info block is optional.
+			if (message.Length >= 48) {
+				var tinfo_len = BitConverterLE.ToUInt16 (message, 40);
+				var tinfo_off = BitConverterLE.ToUInt16 (message, 44);
+				if (tinfo_len > 0) {
+					_targetInfo = new byte [tinfo_len];
+					Buffer.BlockCopy (message, tinfo_off, _targetInfo, 0, tinfo_len);
+				}
 			}
 		}
 

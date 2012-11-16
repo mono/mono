@@ -50,9 +50,24 @@ namespace Mono.Security.Protocol.Ntlm {
 		private Type2Message _type2;
 		private byte[] _lm;
 		private byte[] _nt;
-
+		
+		internal const string LegacyAPIWarning = 
+			"Use of this API is highly discouraged, " +
+			"it selects legacy-mode LM/NTLM authentication, which sends " +
+			"your password in very weak encryption over the wire even if " +
+			"the server supports the more secure NTLMv2 / NTLMv2 Session. " +
+			"You need to use the new `Type3Message (Type2Message)' constructor " +
+			"to use the more secure NTLMv2 / NTLMv2 Session authentication modes. " +
+			"These require the Type 2 message from the server to compute the response.";
+		
+		[Obsolete (LegacyAPIWarning)]
 		public Type3Message () : base (3)
 		{
+			if (DefaultAuthLevel != NtlmAuthLevel.LM_and_NTLM)
+				throw new InvalidOperationException (
+					"Refusing to use legacy-mode LM/NTLM authentication " +
+					"unless explicitly enabled using DefaultAuthLevel.");
+
 			// default values
 			_domain = Environment.UserDomainName;
 			_host = Environment.MachineName;
@@ -112,13 +127,18 @@ namespace Mono.Security.Protocol.Ntlm {
 		
 		// properties
 
-		[Obsolete]
+		[Obsolete (LegacyAPIWarning)]
 		public byte[] Challenge {
 			get { 
 				if (_challenge == null)
 					return null;
 				return (byte[]) _challenge.Clone (); }
 			set { 
+				if ((_type2 != null) || (_level != NtlmAuthLevel.LM_and_NTLM))
+					throw new InvalidOperationException (
+						"Refusing to use legacy-mode LM/NTLM authentication " +
+							"unless explicitly enabled using DefaultAuthLevel.");
+				
 				if (value == null)
 					throw new ArgumentNullException ("Challenge");
 				if (value.Length != 8) {
@@ -218,9 +238,10 @@ namespace Mono.Security.Protocol.Ntlm {
 			int host_len = BitConverterLE.ToUInt16 (message, 44);
 			int host_off = BitConverterLE.ToUInt16 (message, 48);
 			_host = DecodeString (message, host_off, host_len);
-
-			int skey_len = BitConverterLE.ToUInt16 (message, 52);
-			int skey_off = BitConverterLE.ToUInt16 (message, 56);
+			
+			// Session key.  We don't use it yet.
+			// int skey_len = BitConverterLE.ToUInt16 (message, 52);
+			// int skey_off = BitConverterLE.ToUInt16 (message, 56);
 		}
 
 		string DecodeString (byte[] buffer, int offset, int len)
@@ -233,6 +254,8 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		byte[] EncodeString (string text)
 		{
+			if (text == null)
+				return new byte [0];
 			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
 				return Encoding.Unicode.GetBytes (text);
 			else
@@ -246,7 +269,19 @@ namespace Mono.Security.Protocol.Ntlm {
 			byte[] host = EncodeString (_host);
 
 			byte[] lm, ntlm;
-			ChallengeResponse2.Compute (_type2, _level, _username, _password, out lm, out ntlm);
+			if (_type2 == null) {
+				if (_level != NtlmAuthLevel.LM_and_NTLM)
+					throw new InvalidOperationException (
+						"Refusing to use legacy-mode LM/NTLM authentication " +
+							"unless explicitly enabled using DefaultAuthLevel.");
+				
+				using (var legacy = new ChallengeResponse (_password, _challenge)) {
+					lm = legacy.LM;
+					ntlm = legacy.NT;
+				}
+			} else {
+				ChallengeResponse2.Compute (_type2, _level, _username, _password, out lm, out ntlm);
+			}
 
 			var lmresp_len = lm != null ? lm.Length : 0;
 			var ntresp_len = ntlm != null ? ntlm.Length : 0;
