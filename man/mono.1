@@ -1081,6 +1081,12 @@ less than this percentage, it will do a copying collection for that block
 type in the next major collection, thereby restoring occupancy to close
 to 100 percent.  A value of 0 turns evacuation off.
 .TP
+\fB(no-)lazy-sweep\fR
+Enables or disables lazy sweep for the Mark&Sweep collector.  If
+enabled, the sweep phase of the garbage collection is done piecemeal
+whenever the need arises, typically during nursery collections.  Lazy
+sweeping is enabled by default.
+.TP
 \fBstack-mark=\fImark-mode\fR
 Specifies how application threads should be scanned. Options are
 `precise` and `conservative`. Precise marking allow the collector
