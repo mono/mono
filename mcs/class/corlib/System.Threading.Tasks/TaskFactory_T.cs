@@ -339,14 +339,13 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			var alreadyInvoked = false;
+			var alreadyInvoked = new AtomicBoolean ();
 			var iar = beginMethod (l => {
-				alreadyInvoked = true;
-				InnerInvoke (tcs, endMethod, l);
+				if (alreadyInvoked.TryRelaxedSet ())
+					InnerInvoke (tcs, endMethod, l);
 			}, state);
-			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
+			if (iar != null && iar.CompletedSynchronously && alreadyInvoked.TryRelaxedSet ())
 				InnerInvoke (tcs, endMethod, iar);
-			}
 
 			return tcs.Task;
 		}
@@ -377,14 +376,13 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			var alreadyInvoked = false;
+			var alreadyInvoked = new AtomicBoolean ();
 			var iar = beginMethod (arg1, l => {
-				alreadyInvoked = true;
-				InnerInvoke (tcs, endMethod, l);
+				if (alreadyInvoked.TryRelaxedSet ())
+					InnerInvoke (tcs, endMethod, l);
 			}, state);
-			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
+			if (iar != null && iar.CompletedSynchronously && alreadyInvoked.TryRelaxedSet ())
 				InnerInvoke (tcs, endMethod, iar);
-			}
 
 			return tcs.Task;
 		}
@@ -414,14 +412,13 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			var alreadyInvoked = false;
+			var alreadyInvoked = new AtomicBoolean ();
 			var iar = beginMethod (arg1, arg2, l => {
-				alreadyInvoked = true;
-				InnerInvoke (tcs, endMethod, l);
+				if (alreadyInvoked.TryRelaxedSet ())
+					InnerInvoke (tcs, endMethod, l);
 			}, state);
-			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
+			if (iar != null && iar.CompletedSynchronously && alreadyInvoked.TryRelaxedSet ())
 				InnerInvoke (tcs, endMethod, iar);
-			}
 
 			return tcs.Task;
 		}
@@ -452,14 +449,13 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("creationOptions");
 
 			var tcs = new TaskCompletionSource<TResult> (state, creationOptions);
-			bool alreadyInvoked = false;
+			var alreadyInvoked = new AtomicBoolean ();
 			var iar = beginMethod (arg1, arg2, arg3, l => {
-				alreadyInvoked = true;
-				InnerInvoke (tcs, endMethod, l);
+				if (alreadyInvoked.TryRelaxedSet ())
+					InnerInvoke (tcs, endMethod, l);
 			}, state);
-			if (iar != null && !alreadyInvoked && iar.CompletedSynchronously) {
+			if (iar != null && iar.CompletedSynchronously && alreadyInvoked.TryRelaxedSet ())
 				InnerInvoke (tcs, endMethod, iar);
-			}
 
 			return tcs.Task;
 		}
