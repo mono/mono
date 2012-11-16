@@ -25,13 +25,13 @@ provider mono {
 	probe gc__concurrent__update__end (int generation);
 	probe gc__concurrent__finish__end (int generation);
 
-	probe gc__sweep__begin (int generation);
-	probe gc__sweep__end (int generation);
+	probe gc__sweep__begin (int generation, int full_sweep);
+	probe gc__sweep__end (int generation, int full_sweep);
 
 	probe gc__world__stop__begin ();
 	probe gc__world__stop__end ();
-	probe gc__world__restart__begin ();
-	probe gc__world__restart__end ();
+	probe gc__world__restart__begin (int generation);
+	probe gc__world__restart__end (int generation);
 
 	probe gc__heap__alloc (uintptr_t addr, uintptr_t len);
 	probe gc__heap__free (uintptr_t addr, uintptr_t len);
