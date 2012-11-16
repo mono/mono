@@ -57070,6 +57070,50 @@
       </method>
     </type>
   </test>
+  <test name="test-async-41.cs">
+    <type name="AmbiguousGeneric">
+      <method name="Void NestedVoidTestSuccess()" attrs="134">
+        <size>35</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] ReturnOne()" attrs="145">
+        <size>43</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Run2(System.Func`1[System.Threading.Tasks.Task])" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Run2[T](System.Func`1[T])" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;ReturnOne&gt;m__0()" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AmbiguousGeneric+&lt;NestedVoidTestSuccess&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>191</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;&gt;m__1()" attrs="145">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="AmbiguousGeneric+&lt;NestedVoidTestSuccess&gt;c__async0+&lt;NestedVoidTestSuccess&gt;c__async4">
+      <method name="Void MoveNext()" attrs="486">
+        <size>162</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">

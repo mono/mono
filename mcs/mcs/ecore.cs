@@ -3822,11 +3822,7 @@ namespace Mono.CSharp {
 				// better conversion is performed between underlying types Y1 and Y2
 				//
 				if (p.IsGenericTask || q.IsGenericTask) {
-					if (am.Block.IsAsync) {
-						if (p.IsGenericTask != q.IsGenericTask) {
-							return 0;
-						}
-
+					if (am.Block.IsAsync && p.IsGenericTask && q.IsGenericTask) {
 						q = q.TypeArguments[0];
 						p = p.TypeArguments[0];
 					}
