@@ -723,7 +723,7 @@ namespace System.Windows.Forms {
 		
 		protected override void WndProc (ref Message m)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			this.DefWndProc(ref m);
 		}
 		#endregion	// Protected Instance Methods
 
