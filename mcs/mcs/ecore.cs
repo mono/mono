@@ -4398,34 +4398,8 @@ namespace Mono.CSharp {
 					// if the type matches
 					//
 					Expression e = fp.DefaultValue;
-					if (!(e is Constant) || e.Type != ptypes [i]) {
-						//
-						// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
-						//
-						var ptype = ptypes [i];
-						if (e == EmptyExpression.MissingValue && ptype.BuiltinType == BuiltinTypeSpec.Type.Object || ptype.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-							e = new MemberAccess (new MemberAccess (new MemberAccess (
-								new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
-						} else if (e is Constant) {
-							//
-							// Handles int to int? conversions
-							//
-							e = Convert.ImplicitConversionStandard (ec, e, ptype, loc);
-							
-							//
-							// When constant type paramter contains type argument
-							//
-							// Foo (T[] arg = null)
-							//
-							if (e == null) {
-								e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
-							}
-						} else {
-							e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
-						}
-					
-
-						e = e.Resolve (ec);
+					if (e != null) {
+						e = ResolveDefaultValueArgument (ec, ptypes[i], e, loc);
 					}
 
 					if ((fp.ModFlags & Parameter.Modifier.CallerMask) != 0) {
@@ -4516,6 +4490,39 @@ namespace Mono.CSharp {
 				arguments = orig_args;
 
 			return 0;
+		}
+
+		public static Expression ResolveDefaultValueArgument (ResolveContext ec, TypeSpec ptype, Expression e, Location loc)
+		{
+			if (e is Constant && e.Type == ptype)
+				return e;
+
+			//
+			// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
+			//
+			if (e == EmptyExpression.MissingValue && ptype.BuiltinType == BuiltinTypeSpec.Type.Object || ptype.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+				e = new MemberAccess (new MemberAccess (new MemberAccess (
+					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
+			} else if (e is Constant) {
+				//
+				// Handles int to int? conversions
+				//
+				e = Convert.ImplicitConversionStandard (ec, e, ptype, loc);
+
+				//
+				// When constant type paramter contains type argument
+				//
+				// Foo (T[] arg = null)
+				//
+				if (e == null) {
+					e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
+				}
+			} else {
+				e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
+			}
+
+
+			return e.Resolve (ec);
 		}
 
 		//
@@ -5808,6 +5815,8 @@ namespace Mono.CSharp {
 	//
 	sealed class PropertyExpr : PropertyOrIndexerExpr<PropertySpec>
 	{
+		Arguments arguments;
+
 		public PropertyExpr (PropertySpec spec, Location l)
 			: base (l)
 		{
@@ -5819,9 +5828,10 @@ namespace Mono.CSharp {
 
 		protected override Arguments Arguments {
 			get {
-				return null;
+				return arguments;
 			}
 			set {
+				arguments = value;
 			}
 		}
 
@@ -5978,7 +5988,7 @@ namespace Mono.CSharp {
 					}
 				}
 			} else {
-				args = new Arguments (1);
+				args = arguments == null ? new Arguments (1) : arguments;
 
 				if (leave_copy) {
 					source.Emit (ec);
@@ -6028,6 +6038,22 @@ namespace Mono.CSharp {
 			}
 
 			DoBestMemberChecks (rc, best_candidate);
+
+			// Handling of com-imported properties with any number of default property parameters
+			if (best_candidate.HasGet && !best_candidate.Get.Parameters.IsEmpty) {
+				var p = best_candidate.Get.Parameters;
+				arguments = new Arguments (p.Count);
+				for (int i = 0; i < p.Count; ++i) {
+					arguments.Add (new Argument (OverloadResolver.ResolveDefaultValueArgument (rc, p.Types [i], p.FixedParameters [i].DefaultValue, loc)));
+				}
+			} else if (best_candidate.HasSet && best_candidate.Set.Parameters.Count > 1) {
+				var p = best_candidate.Set.Parameters;
+				arguments = new Arguments (p.Count - 1);
+				for (int i = 0; i < p.Count - 1; ++i) {
+					arguments.Add (new Argument (OverloadResolver.ResolveDefaultValueArgument (rc, p.Types [i], p.FixedParameters [i].DefaultValue, loc)));
+				}
+			}
+
 			return this;
 		}
 

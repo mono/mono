@@ -416,6 +416,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool ITypeDefinition.IsComImport {
+			get {
+				return false;
+			}
+		}
+
 		bool ITypeDefinition.IsPartial {
 			get {
 				return false;

@@ -6,7 +6,7 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2009-2011 Novell, Inc
-// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
+// Copyright 2011-2012 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -620,26 +620,38 @@ namespace Mono.CSharp
 
 			PropertySpec spec = null;
 			if (!param.IsEmpty) {
-				var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
-				if (index_name == null) {
-					is_valid_property = false;
+				//
+				// Enables support for properties with parameters (must have default value) of COM-imported types
+				//
+				if (declaringType.MemberDefinition.IsComImport && param.FixedParameters[0].HasDefaultValue) {
+					for (int i = 0; i < param.FixedParameters.Length; ++i) {
+						if (!param.FixedParameters[i].HasDefaultValue) {
+							is_valid_property = false;
+							break;
+						}
+					}
 				} else {
-					if (get != null) {
-						if (get.IsStatic)
-							is_valid_property = false;
-						if (get.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
-							is_valid_property = false;
+					var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
+					if (index_name == null) {
+						is_valid_property = false;
+					} else {
+						if (get != null) {
+							if (get.IsStatic)
+								is_valid_property = false;
+							if (get.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
+								is_valid_property = false;
+						}
+						if (set != null) {
+							if (set.IsStatic)
+								is_valid_property = false;
+							if (set.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
+								is_valid_property = false;
+						}
 					}
-					if (set != null) {
-						if (set.IsStatic)
-							is_valid_property = false;
-						if (set.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
-							is_valid_property = false;
-					}
-				}
 
-				if (is_valid_property)
-					spec = new IndexerSpec (declaringType, new ImportedParameterMemberDefinition (pi, type, param, this), type, param, pi, mod);
+					if (is_valid_property)
+						spec = new IndexerSpec (declaringType, new ImportedParameterMemberDefinition (pi, type, param, this), type, param, pi, mod);
+				}
 			}
 
 			if (spec == null)
@@ -1780,6 +1792,13 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool ITypeDefinition.IsComImport {
+			get {
+				return ((MetaType) provider).IsImport;
+			}
+		}
+
+
 		bool ITypeDefinition.IsPartial {
 			get {
 				return false;
@@ -2122,6 +2141,12 @@ namespace Mono.CSharp
 		public IAssemblyDefinition DeclaringAssembly {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		bool ITypeDefinition.IsComImport {
+			get {
+				return false;
 			}
 		}
 

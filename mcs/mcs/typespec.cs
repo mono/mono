@@ -1354,6 +1354,7 @@ namespace Mono.CSharp
 		IAssemblyDefinition DeclaringAssembly { get; }
 		string Namespace { get; }
 		bool IsPartial { get; }
+		bool IsComImport { get; }
 		int TypeParametersCount { get; }
 		TypeParameterSpec[] TypeParameters { get; }
 
@@ -1398,6 +1399,12 @@ namespace Mono.CSharp
 		IAssemblyDefinition ITypeDefinition.DeclaringAssembly {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		bool ITypeDefinition.IsComImport {
+			get {
+				return false;
 			}
 		}
 
@@ -1524,6 +1531,12 @@ namespace Mono.CSharp
 		#region Properties
 
 		public TypeSpec Element { get; private set; }
+
+		bool ITypeDefinition.IsComImport {
+			get {
+				return false;
+			}
+		}
 
 		bool ITypeDefinition.IsPartial {
 			get {

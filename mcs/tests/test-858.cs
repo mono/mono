@@ -1,3 +1,5 @@
+// Compiler options: -r:test-858-lib.dll
+
 using System;
 
 class X
@@ -12,10 +14,10 @@ class X
 		if (foo.Message != "foo")
 			return 2;
 
-                C c = new C ();
-                c.get_Value ();
-                c.add_Arg (false);                
-                
+		C c = new C ();
+		c.get_Value ();
+		c.add_Arg (false);
+        
 		Console.WriteLine ("Test ok");
 		return 0;
 	}

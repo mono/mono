@@ -91,9 +91,5 @@ csproj-local:
 	$(ILASM) /dll /out:$@ $<
 
 setup:
-	$(ILASM) /dll property-il.il
-	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
-	$(TEST_RUNTIME) property-main.exe
-
 	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
 	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll

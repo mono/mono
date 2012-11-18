@@ -28819,16 +28819,6 @@
       </method>
     </type>
   </test>
-  <test name="test-146.cs">
-    <type name="Test">
-      <method name="Int32 Main()" attrs="150">
-        <size>352</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="test-147.cs">
     <type name="X">
       <method name="X Foo()" attrs="150">
@@ -46183,6 +46173,29 @@
       </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-858.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="145">
+        <size>108</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-859.cs">
+    <type name="X">
+      <method name="Void Test_PropertyOptionalParameters(C)" attrs="129">
+        <size>46</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>23</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
