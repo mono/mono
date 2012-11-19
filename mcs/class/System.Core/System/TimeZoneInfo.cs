@@ -374,7 +374,10 @@ namespace System
 			}
 #endif
 #if MONODROID
-			return ZoneInfoDB.GetTimeZone (id);
+			var timeZoneInfo = ZoneInfoDB.GetTimeZone (id);
+			if (timeZoneInfo != null)
+				throw new TimeZoneNotFoundException ();
+			return timeZoneInfo;
 #else
 			// Local requires special logic that already exists in the Local property (bug #326)
 			if (id == "Local")
