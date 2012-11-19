@@ -620,17 +620,7 @@ namespace Mono.CSharp
 
 			PropertySpec spec = null;
 			if (!param.IsEmpty) {
-				//
-				// Enables support for properties with parameters (must have default value) of COM-imported types
-				//
-				if (declaringType.MemberDefinition.IsComImport && param.FixedParameters[0].HasDefaultValue) {
-					for (int i = 0; i < param.FixedParameters.Length; ++i) {
-						if (!param.FixedParameters[i].HasDefaultValue) {
-							is_valid_property = false;
-							break;
-						}
-					}
-				} else {
+				if (is_valid_property) {
 					var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
 					if (index_name == null) {
 						is_valid_property = false;
@@ -649,8 +639,21 @@ namespace Mono.CSharp
 						}
 					}
 
-					if (is_valid_property)
+					if (is_valid_property) {
 						spec = new IndexerSpec (declaringType, new ImportedParameterMemberDefinition (pi, type, param, this), type, param, pi, mod);
+					} else if (declaringType.MemberDefinition.IsComImport && param.FixedParameters[0].HasDefaultValue) {
+						//
+						// Enables support for properties with parameters (must have default value) of COM-imported types
+						//
+						is_valid_property = true;
+
+						for (int i = 0; i < param.FixedParameters.Length; ++i) {
+							if (!param.FixedParameters[i].HasDefaultValue) {
+								is_valid_property = false;
+								break;
+							}
+						}
+					}
 				}
 			}
 
