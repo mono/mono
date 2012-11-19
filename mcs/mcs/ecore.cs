@@ -4196,6 +4196,9 @@ namespace Mono.CSharp {
 					} else if (arg_count > param_count) {
 						int args_gap = System.Math.Abs (arg_count - param_count);
 						return int.MaxValue - 10000 + args_gap;
+					} else if (arg_count < param_count - optional_count) {
+						int args_gap = System.Math.Abs (param_count - optional_count - arg_count);
+						return int.MaxValue - 10000 + args_gap;
 					}
 				} else if (arg_count != param_count) {
 					int args_gap = System.Math.Abs (arg_count - param_count);
