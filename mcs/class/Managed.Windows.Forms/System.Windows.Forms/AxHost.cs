@@ -574,7 +574,7 @@ namespace System.Windows.Forms {
 		
 		protected override void DestroyHandle ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			base.DestroyHandle();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -585,7 +585,7 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			base.Dispose(disposing);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
