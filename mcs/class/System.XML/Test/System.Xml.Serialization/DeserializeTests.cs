@@ -1553,5 +1553,48 @@ namespace MonoTests.System.XmlSerialization
 			NotExactDateParseClass o = (NotExactDateParseClass) xs.Deserialize (new StringReader ("<NotExactDateParseClass xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SomeDate xsi:type=\"xsd:date\">2012-02-05-09:00</SomeDate></NotExactDateParseClass>"));
 			Assert.AreEqual (new DateTime (2012,2,5), o.SomeDate);
 		}
+
+		[Test] // bug #8468
+		public void TestUseSubclassDefaultNamespace ()
+		{
+			XmlSerializer xs = new XmlSerializer (typeof (Bug8468Subclass));
+			string msg = "<Test xmlns=\"http://test-namespace\"><Base>BaseValue</Base><Mid>MidValue</Mid></Test>";
+			var res1 = (Bug8468Subclass)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res1);
+			Assert.AreEqual ("BaseValue", res1.Base);
+			Assert.AreEqual ("MidValue", res1.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassNoNamespace), "http://test-namespace");
+			var res2 = (Bug8468SubclassNoNamespace)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res2);
+			Assert.AreEqual ("BaseValue", res2.Base);
+			Assert.AreEqual ("MidValue", res2.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassV2));
+			var res3 = (Bug8468SubclassV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res3);
+			Assert.IsNull (res3.Base);
+			Assert.AreEqual ("MidValue", res3.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassNoNamespaceV2), "http://test-namespace");
+			var res4 = (Bug8468SubclassNoNamespaceV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res4);
+			Assert.IsNull (res4.Base);
+			Assert.AreEqual ("MidValue", res4.Mid);
+
+			msg = "<Test xmlns=\"http://test-namespace\"><Base xmlns=\"\">BaseValue</Base><Mid>MidValue</Mid></Test>";
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassV2));
+			var res5 = (Bug8468SubclassV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res5);
+			Assert.AreEqual ("BaseValue", res5.Base);
+			Assert.AreEqual ("MidValue", res5.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassNoNamespaceV2), "http://test-namespace");
+			var res6 = (Bug8468SubclassNoNamespaceV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res6);
+			Assert.AreEqual ("BaseValue", res6.Base);
+			Assert.AreEqual ("MidValue", res6.Mid);	
+		}
 	}
 }
