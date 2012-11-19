@@ -244,7 +244,8 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
 		{
-			string rootNamespace = defaultNamespace;
+			bool hasTypeNamespace = !string.IsNullOrEmpty (defaultNamespace);
+			string rootNamespace = null;
 			string typeNamespace = null;
 			string elementName;
 			bool includeInSchema = true;
@@ -270,8 +271,10 @@ namespace System.Xml.Serialization {
 
 			if (atts.XmlType != null)
 			{
-				if (atts.XmlType.Namespace != null)
+				if (atts.XmlType.Namespace != null) {
 					typeNamespace = atts.XmlType.Namespace;
+					hasTypeNamespace = true;
+				}
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
 					defaultXmlType = XmlConvert.EncodeLocalName (atts.XmlType.TypeName);
@@ -285,13 +288,15 @@ namespace System.Xml.Serialization {
 			{
 				if (root.ElementName.Length != 0)
 					elementName = XmlConvert.EncodeLocalName(root.ElementName);
-				if (root.Namespace != null)
+				if (root.Namespace != null) {
 					rootNamespace = root.Namespace;
+					hasTypeNamespace = true;
+				}
 				nullable = root.IsNullable;
 			}
 
-			if (rootNamespace == null) rootNamespace = "";
-			if (typeNamespace == null) typeNamespace = rootNamespace;
+			rootNamespace = rootNamespace ?? defaultNamespace ?? string.Empty;
+			typeNamespace = typeNamespace ?? rootNamespace;
 			
 			XmlTypeMapping map;
 			switch (typeData.SchemaType) {
@@ -307,7 +312,7 @@ namespace System.Xml.Serialization {
 							typeData, defaultXmlType, typeNamespace);
 					break;
 				default:
-					map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+					map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, hasTypeNamespace ? typeNamespace : null);
 					break;
 			}
 
@@ -365,7 +370,8 @@ namespace System.Xml.Serialization {
 				if (rmember.XmlAttributes.XmlIgnore) continue;
 				if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
 					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
-					ns = bmap.XmlTypeNamespace;
+					if (bmap.HasXmlTypeNamespace)
+						ns = bmap.XmlTypeNamespace;
 				}
 
 				try {
