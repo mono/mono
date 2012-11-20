@@ -97,6 +97,10 @@ namespace Mono.CSharp
 
 			var all_types = assembly.GetTypes ();
 			ImportTypes (all_types, targetNamespace, definition.HasExtensionMethod);
+
+			all_types = assembly.ManifestModule.__GetExportedTypes ();
+			if (all_types.Length != 0)
+				ImportForwardedTypes (all_types, targetNamespace);
 		}
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
@@ -108,6 +112,31 @@ namespace Mono.CSharp
 			ImportTypes (all_types, targetNamespace, false);
 
 			return module_definition;
+		}
+
+		void ImportForwardedTypes (MetaType[] types, Namespace targetNamespace)
+		{
+			Namespace ns = targetNamespace;
+			string prev_namespace = null;
+			foreach (var t in types) {
+				// IsMissing tells us the type has been forwarded and target assembly is missing 
+				if (!t.__IsMissing)
+					continue;
+
+				if (t.Name[0] == '<')
+					continue;
+
+				var it = CreateType (t, null, new DynamicTypeReader (t), true);
+				if (it == null)
+					continue;
+
+				if (prev_namespace != t.Namespace) {
+					ns = t.Namespace == null ? targetNamespace : targetNamespace.GetNamespace (t.Namespace, true);
+					prev_namespace = t.Namespace;
+				}
+
+				ns.AddType (module, it);
+			}
 		}
 
 		public void InitializeBuiltinTypes (BuiltinTypes builtin, Assembly corlib)

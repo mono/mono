@@ -1355,6 +1355,7 @@ namespace Mono.CSharp
 		string Namespace { get; }
 		bool IsPartial { get; }
 		bool IsComImport { get; }
+		bool IsTypeForwarder { get; }
 		int TypeParametersCount { get; }
 		TypeParameterSpec[] TypeParameters { get; }
 
@@ -1415,6 +1416,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsTypeForwarder {
 			get {
 				return false;
 			}
@@ -1539,6 +1546,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsTypeForwarder {
 			get {
 				return false;
 			}

@@ -670,6 +670,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
 		//
 		// Returns true for secondary partial containers
 		//

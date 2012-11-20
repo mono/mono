@@ -32,7 +32,7 @@ namespace Mono.CSharp
 		// Dynamic types reader with additional logic to reconstruct a dynamic
 		// type using DynamicAttribute values
 		//
-		struct DynamicTypeReader
+		protected struct DynamicTypeReader
 		{
 			static readonly bool[] single_attribute = { true };
 
@@ -120,7 +120,7 @@ namespace Mono.CSharp
 		protected readonly Dictionary<MetaType, TypeSpec> import_cache;
 		protected readonly Dictionary<MetaType, TypeSpec> compiled_types;
 		protected readonly Dictionary<Assembly, IAssemblyDefinition> assembly_2_definition;
-		readonly ModuleContainer module;
+		protected readonly ModuleContainer module;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
 
@@ -694,7 +694,7 @@ namespace Mono.CSharp
 			return CreateType (type, declaring_type, dtype, canImportBaseType);
 		}
 
-		TypeSpec CreateType (MetaType type, TypeSpec declaringType, DynamicTypeReader dtype, bool canImportBaseType)
+		protected TypeSpec CreateType (MetaType type, TypeSpec declaringType, DynamicTypeReader dtype, bool canImportBaseType)
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
@@ -1071,7 +1071,7 @@ namespace Mono.CSharp
 
 				ns.AddType (module, it);
 
-				if (it.IsStatic && hasExtensionTypes &&
+				if (hasExtensionTypes && it.IsStatic &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (t), "ExtensionAttribute", CompilerServicesNamespace)) {
 					it.SetExtensionMethodContainer ();
 				}
@@ -1808,6 +1808,16 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool ITypeDefinition.IsTypeForwarder {
+			get {
+#if STATIC
+				return ((MetaType) provider).__IsTypeForwarder;
+#else
+				return false;
+#endif
+			}
+		}
+
 		public override string Name {
 			get {
 				if (name == null) {
@@ -1870,9 +1880,15 @@ namespace Mono.CSharp
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
 				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
-					ctx.Module.Compiler.Report.Error (12, loc,
-						"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-						name, t.MemberDefinition.DeclaringAssembly.FullName);
+					if (t.MemberDefinition.IsTypeForwarder) {
+						ctx.Module.Compiler.Report.Error (1070, loc,
+							"The type `{0}' has been forwarded to an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
+							name, t.MemberDefinition.DeclaringAssembly.FullName);
+					} else {
+						ctx.Module.Compiler.Report.Error (12, loc,
+							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
+							name, t.MemberDefinition.DeclaringAssembly.FullName);
+					}
 				} else {
 					ctx.Module.Compiler.Report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
@@ -2154,6 +2170,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsTypeForwarder {
 			get {
 				return false;
 			}

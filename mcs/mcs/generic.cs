@@ -434,6 +434,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
 		public string Name {
 			get {
 				return MemberName.Name;
