@@ -61,6 +61,18 @@ namespace MonoTests.System.Configuration {
 			if (Directory.Exists (tempFolder))
 				Directory.Delete (tempFolder, true);
 		}
+		
+		static string DotNetVersion {
+			get {
+#if NET_4_5
+				return "net_4_5";
+#elif NET_4_0
+				return "net_4_0";
+#else
+				return "net_2_0";
+#endif
+			}
+		}
 
 		[Test] // OpenExeConfiguration (ConfigurationUserLevel)
 		[Category ("NotWorking")] // bug #323622
@@ -145,12 +157,8 @@ namespace MonoTests.System.Configuration {
 			FileInfo fi = new FileInfo (config.FilePath);
 #if TARGET_JVM
 			Assert.AreEqual ("nunit-console.jar.config", fi.Name);
-#elif NET_4_5
-			Assert.AreEqual ("System.Configuration_test_net_4_5.dll.config", fi.Name);
-#elif NET_4_0
-			Assert.AreEqual ("System.Configuration_test_net_4_0.dll.config", fi.Name);
 #else
-			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
+			Assert.AreEqual ("System.Configuration_test_" + DotNetVersion + ".dll.config", fi.Name);
 #endif
 		}
 
@@ -263,8 +271,9 @@ namespace MonoTests.System.Configuration {
 		public void exePath_UserLevelNone ()
 		{
 			string basedir = AppDomain.CurrentDomain.BaseDirectory;
-			SysConfig config = ConfigurationManager.OpenExeConfiguration("System.Configuration_test_net_2_0.dll.mdb");
-			Assert.AreEqual (Path.Combine (basedir, "System.Configuration_test_net_2_0.dll.mdb.config"), config.FilePath);
+			string name = "System.Configuration_test_" + DotNetVersion + ".dll";
+			SysConfig config = ConfigurationManager.OpenExeConfiguration (name);
+			Assert.AreEqual (Path.Combine (basedir, name + ".config"), config.FilePath);
 		}
 
 		[Test]
@@ -396,7 +405,7 @@ namespace MonoTests.System.Configuration {
 			Console.WriteLine("null exe application config path: {0}", config.FilePath);	
 
 			FileInfo fi = new FileInfo (config.FilePath);
-			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
+			Assert.AreEqual ("System.Configuration_test_" + DotNetVersion + ".dll.config", fi.Name);
 #endif
 		}
 
@@ -411,7 +420,7 @@ namespace MonoTests.System.Configuration {
 #if TARGET_JVM
 			Assert.AreEqual("System.Configuration.Test20.jar.config", fi.Name);
 #else
-			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
+			Assert.AreEqual ("System.Configuration_test_" + DotNetVersion + ".dll.config", fi.Name);
 #endif
 		}
 
