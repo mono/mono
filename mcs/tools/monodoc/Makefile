@@ -158,3 +158,6 @@ clean-local: cleanup
 cleanup:
 	-rm -f Test/man-provider-test.exe*
 
+push:
+	make PROFILE=net_4_0
+	scp ../../class/lib/net_4_0/monodoc.dll* SERVER
