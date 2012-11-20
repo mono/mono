@@ -33,7 +33,6 @@ namespace System.ComponentModel {
 	{
 		protected GroupDescription ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		public ObservableCollection<object> GroupNames {
@@ -54,7 +53,8 @@ namespace System.ComponentModel {
 
 		protected virtual void OnPropertyChanged (PropertyChangedEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (PropertyChanged != null)
+				PropertyChanged (this, e);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
