@@ -50,10 +50,9 @@ namespace System.Runtime.InteropServices
 			return guidManagedCategory;
 		}
 
-		[MonoTODO ("implement")]
 		public virtual string GetProgIdForType (Type type)
 		{
-			throw new NotImplementedException ();
+			return Marshal.GenerateProgIdForType(type);
 		}
 
 		[MonoTODO ("implement")]
