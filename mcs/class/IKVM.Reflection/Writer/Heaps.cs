@@ -235,7 +235,7 @@ namespace IKVM.Reflection.Writer
 			int offset;
 			if (!strings.TryGetValue(str, out offset))
 			{
-				int length = str.Length * 2 + 1 + MetadataWriter.GetCompressedIntLength(str.Length * 2 + 1);
+				int length = str.Length * 2 + 1 + MetadataWriter.GetCompressedUIntLength(str.Length * 2 + 1);
 				if (nextOffset + length > 0xFFFFFF)
 				{
 					throw new FileFormatLimitationExceededException("No logical space left to create more user strings.", FileFormatLimitationExceededException.META_E_STRINGSPACE_FULL);
@@ -258,7 +258,7 @@ namespace IKVM.Reflection.Writer
 			mw.Write((byte)0);
 			foreach (string str in list)
 			{
-				mw.WriteCompressedInt(str.Length * 2 + 1);
+				mw.WriteCompressedUInt(str.Length * 2 + 1);
 				byte hasSpecialChars = 0;
 				foreach (char ch in str)
 				{
@@ -335,7 +335,7 @@ namespace IKVM.Reflection.Writer
 			{
 				return 0;
 			}
-			int lenlen = MetadataWriter.GetCompressedIntLength(bblen);
+			int lenlen = MetadataWriter.GetCompressedUIntLength(bblen);
 			int hash = bb.Hash();
 			int index = (hash & 0x7FFFFFFF) % map.Length;
 			Key[] keys = map;
@@ -364,7 +364,7 @@ namespace IKVM.Reflection.Writer
 				index++;
 			}
 			int offset = buf.Position;
-			buf.WriteCompressedInt(bblen);
+			buf.WriteCompressedUInt(bblen);
 			buf.Write(bb);
 			keys[index].len = bblen;
 			keys[index].hash = hash;

@@ -86,6 +86,11 @@ namespace IKVM.Reflection.Emit
 			return typeBuilder.CreateType();
 		}
 
+		public TypeInfo CreateTypeInfo()
+		{
+			return typeBuilder.CreateTypeInfo();
+		}
+
 		public TypeToken TypeToken
 		{
 			get { return typeBuilder.TypeToken; }

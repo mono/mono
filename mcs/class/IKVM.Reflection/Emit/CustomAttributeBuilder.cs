@@ -377,7 +377,7 @@ namespace IKVM.Reflection.Emit
 
 			private void WritePackedLen(int len)
 			{
-				bb.WriteCompressedInt(len);
+				bb.WriteCompressedUInt(len);
 			}
 
 			private void WriteFieldOrPropType(Type type)

@@ -180,16 +180,26 @@ namespace IKVM.Reflection.Emit
 			this.hashAlgorithm = hashAlgorithm;
 		}
 
+		[Obsolete("Use __AssemblyFlags property instead.")]
 		public void __SetAssemblyFlags(AssemblyNameFlags flags)
 		{
-			AssemblyName oldName = GetName();
-			this.flags = flags;
-			Rename(oldName);
+			this.__AssemblyFlags = flags;
 		}
 
-		public override AssemblyNameFlags __AssemblyFlags
+		protected override AssemblyNameFlags GetAssemblyFlags()
+		{
+			return flags;
+		}
+
+		public new AssemblyNameFlags __AssemblyFlags
 		{
 			get { return flags; }
+			set
+			{
+				AssemblyName oldName = GetName();
+				this.flags = value;
+				Rename(oldName);
+			}
 		}
 
 		internal string Name
@@ -728,6 +738,11 @@ namespace IKVM.Reflection.Emit
 		public override Stream GetManifestResourceStream(string resourceName)
 		{
 			throw new NotSupportedException();
+		}
+
+		public override bool IsDynamic
+		{
+			get { return true; }
 		}
 
 		internal override IList<CustomAttributeData> GetCustomAttributesData(Type attributeType)

@@ -74,6 +74,16 @@ namespace IKVM.Reflection
 			return CustomAttributeData.__GetCustomAttributes(this, attributeType, inherit);
 		}
 
+		public IList<CustomAttributeData> GetCustomAttributesData()
+		{
+			return CustomAttributeData.GetCustomAttributes(this);
+		}
+
+		public IEnumerable<CustomAttributeData> CustomAttributes
+		{
+			get { return GetCustomAttributesData(); }
+		}
+
 		public static bool operator ==(MemberInfo m1, MemberInfo m2)
 		{
 			return ReferenceEquals(m1, m2) || (!ReferenceEquals(m1, null) && m1.Equals(m2));

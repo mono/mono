@@ -58,6 +58,16 @@ namespace IKVM.Reflection
 			get { return value; }
 		}
 
+		public bool IsField
+		{
+			get { return member.MemberType == MemberTypes.Field; }
+		}
+
+		public string MemberName
+		{
+			get { return member.Name; }
+		}
+
 		public static bool operator ==(CustomAttributeNamedArgument arg1, CustomAttributeNamedArgument arg2)
 		{
 			return arg1.member.Equals(arg2.member) && arg1.value == arg2.value;

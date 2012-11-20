@@ -1779,7 +1779,7 @@ namespace Mono.CSharp {
 			var token = ConstructorBuilder.GetToken ();
 			int t = token.Token;
 #if STATIC
-			if (token.IsPseudoToken)
+			if (ModuleBuilder.IsPseudoToken (t))
 				t = Module.Builder.ResolvePseudoToken (t);
 #endif
 
@@ -2120,7 +2120,7 @@ namespace Mono.CSharp {
 			var token = builder.GetToken ();
 			int t = token.Token;
 #if STATIC
-			if (token.IsPseudoToken)
+			if (ModuleBuilder.IsPseudoToken (t))
 				t = member.Module.Builder.ResolvePseudoToken (t);
 #endif
 

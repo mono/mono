@@ -302,6 +302,11 @@ namespace IKVM.Reflection
 			return ReferenceEquals(type, this) ? base.GetHashCode() : type.GetHashCode();
 		}
 
+		public Type[] GenericTypeArguments
+		{
+			get { return IsConstructedGenericType ? GetGenericArguments() : Type.EmptyTypes; }
+		}
+
 		public virtual Type[] GetGenericArguments()
 		{
 			return Type.EmptyTypes;
@@ -435,6 +440,87 @@ namespace IKVM.Reflection
 				}
 			}
 			throw new InvalidOperationException();
+		}
+
+		public string[] GetEnumNames()
+		{
+			if (!IsEnum)
+			{
+				throw new ArgumentException();
+			}
+			List<string> names = new List<string>();
+			foreach (FieldInfo field in __GetDeclaredFields())
+			{
+				if (field.IsLiteral)
+				{
+					names.Add(field.Name);
+				}
+			}
+			return names.ToArray();
+		}
+
+		public string GetEnumName(object value)
+		{
+			if (!IsEnum)
+			{
+				throw new ArgumentException();
+			}
+			if (value == null)
+			{
+				throw new ArgumentNullException();
+			}
+			try
+			{
+				value = Convert.ChangeType(value, GetTypeCode(GetEnumUnderlyingType()));
+			}
+			catch (FormatException)
+			{
+				throw new ArgumentException();
+			}
+			catch (OverflowException)
+			{
+				return null;
+			}
+			catch (InvalidCastException)
+			{
+				return null;
+			}
+			foreach (FieldInfo field in __GetDeclaredFields())
+			{
+				if (field.IsLiteral && field.GetRawConstantValue().Equals(value))
+				{
+					return field.Name;
+				}
+			}
+			return null;
+		}
+
+		public bool IsEnumDefined(object value)
+		{
+			if (value is string)
+			{
+				return Array.IndexOf(GetEnumNames(), value) != -1;
+			}
+			if (!IsEnum)
+			{
+				throw new ArgumentException();
+			}
+			if (value == null)
+			{
+				throw new ArgumentNullException();
+			}
+			if (System.Type.GetTypeCode(value.GetType()) != GetTypeCode(GetEnumUnderlyingType()))
+			{
+				throw new ArgumentException();
+			}
+			foreach (FieldInfo field in __GetDeclaredFields())
+			{
+				if (field.IsLiteral && field.GetRawConstantValue().Equals(value))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public override string ToString()
@@ -1884,7 +1970,7 @@ namespace IKVM.Reflection
 			return new MissingProperty(this, name, sig);
 		}
 
-		internal virtual Type SetMetadataTokenForMissing(int token)
+		internal virtual Type SetMetadataTokenForMissing(int token, int flags)
 		{
 			return this;
 		}
@@ -1961,6 +2047,11 @@ namespace IKVM.Reflection
 				throw new MissingMemberException(this);
 			}
 			return type;
+		}
+
+		public virtual bool __IsTypeForwarder
+		{
+			get { return false; }
 		}
 	}
 
@@ -2949,10 +3040,6 @@ namespace IKVM.Reflection
 
 	sealed class MarkerType : Type
 	{
-		// used by ILGenerator
-		internal static readonly Type Fault = new MarkerType();
-		internal static readonly Type Finally = new MarkerType();
-		internal static readonly Type Filter = new MarkerType();
 		// used by CustomModifiers and SignatureHelper
 		internal static readonly Type ModOpt = new MarkerType();
 		internal static readonly Type ModReq = new MarkerType();

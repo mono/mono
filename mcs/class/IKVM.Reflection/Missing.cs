@@ -236,9 +236,9 @@ namespace IKVM.Reflection
 
 	sealed class MissingModule : NonPEModule
 	{
-		private readonly MissingAssembly assembly;
+		private readonly Assembly assembly;
 
-		internal MissingModule(MissingAssembly assembly)
+		internal MissingModule(Assembly assembly)
 			: base(assembly.universe)
 		{
 			this.assembly = assembly;
@@ -353,6 +353,7 @@ namespace IKVM.Reflection
 		private readonly string name;
 		private Type[] typeArgs;
 		private int token;
+		private int flags;
 
 		internal MissingType(Module module, Type declaringType, string ns, string name)
 		{
@@ -545,15 +546,22 @@ namespace IKVM.Reflection
 			return this;
 		}
 
-		internal override Type SetMetadataTokenForMissing(int token)
+		internal override Type SetMetadataTokenForMissing(int token, int flags)
 		{
 			this.token = token;
+			this.flags = flags;
 			return this;
 		}
 
 		internal override bool IsBaked
 		{
 			get { throw new MissingMemberException(this); }
+		}
+
+		public override bool __IsTypeForwarder
+		{
+			// CorTypeAttr.tdForwarder
+			get { return (flags & 0x00200000) != 0; }
 		}
 	}
 

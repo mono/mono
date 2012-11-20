@@ -22,10 +22,27 @@
   
 */
 using System.IO;
-using IMAGE_DATA_DIRECTORY = IKVM.Reflection.Reader.IMAGE_DATA_DIRECTORY;
 
 namespace IKVM.Reflection.Metadata
 {
+	struct RvaSize
+	{
+		internal uint VirtualAddress;
+		internal uint Size;
+
+		internal void Read(BinaryReader br)
+		{
+			VirtualAddress = br.ReadUInt32();
+			Size = br.ReadUInt32();
+		}
+
+		internal void Write(IKVM.Reflection.Writer.MetadataWriter mw)
+		{
+			mw.Write(VirtualAddress);
+			mw.Write(Size);
+		}
+	}
+
 	sealed class CliHeader
 	{
 		internal const uint COMIMAGE_FLAGS_ILONLY = 0x00000001;
@@ -37,15 +54,15 @@ namespace IKVM.Reflection.Metadata
 		internal uint Cb = 0x48;
 		internal ushort MajorRuntimeVersion;
 		internal ushort MinorRuntimeVersion;
-		internal IMAGE_DATA_DIRECTORY MetaData;
+		internal RvaSize MetaData;
 		internal uint Flags;
 		internal uint EntryPointToken;
-		internal IMAGE_DATA_DIRECTORY Resources;
-		internal IMAGE_DATA_DIRECTORY StrongNameSignature;
-		internal IMAGE_DATA_DIRECTORY CodeManagerTable;
-		internal IMAGE_DATA_DIRECTORY VTableFixups;
-		internal IMAGE_DATA_DIRECTORY ExportAddressTableJumps;
-		internal IMAGE_DATA_DIRECTORY ManagedNativeHeader;
+		internal RvaSize Resources;
+		internal RvaSize StrongNameSignature;
+		internal RvaSize CodeManagerTable;
+		internal RvaSize VTableFixups;
+		internal RvaSize ExportAddressTableJumps;
+		internal RvaSize ManagedNativeHeader;
 
 		internal void Read(BinaryReader br)
 		{

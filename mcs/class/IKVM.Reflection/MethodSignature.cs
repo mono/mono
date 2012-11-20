@@ -115,10 +115,10 @@ namespace IKVM.Reflection
 			genericParamCount = 0;
 			if ((flags & GENERIC) != 0)
 			{
-				genericParamCount = br.ReadCompressedInt();
+				genericParamCount = br.ReadCompressedUInt();
 				context = new UnboundGenericMethodContext(context);
 			}
-			int paramCount = br.ReadCompressedInt();
+			int paramCount = br.ReadCompressedUInt();
 			CustomModifiers[] modifiers = null;
 			PackedCustomModifiers.Pack(ref modifiers, 0, CustomModifiers.Read(module, br, context), paramCount + 1);
 			returnType = ReadRetType(module, br, context);
@@ -187,7 +187,7 @@ namespace IKVM.Reflection
 			{
 				throw new BadImageFormatException();
 			}
-			int paramCount = br.ReadCompressedInt();
+			int paramCount = br.ReadCompressedUInt();
 			CustomModifiers[] customModifiers = null;
 			PackedCustomModifiers.Pack(ref customModifiers, 0, CustomModifiers.Read(module, br, context), paramCount + 1);
 			Type returnType = ReadRetType(module, br, context);
@@ -368,9 +368,9 @@ namespace IKVM.Reflection
 			bb.Write(first);
 			if (genericParamCount > 0)
 			{
-				bb.WriteCompressedInt(genericParamCount);
+				bb.WriteCompressedUInt(genericParamCount);
 			}
-			bb.WriteCompressedInt(parameterCount);
+			bb.WriteCompressedUInt(parameterCount);
 			// RetType
 			WriteCustomModifiers(module, bb, modifiers.GetReturnTypeCustomModifiers());
 			WriteType(module, bb, returnType);

@@ -119,7 +119,7 @@ namespace IKVM.Reflection
 				flags |= VARARG;
 			}
 			bb.Write(flags);
-			bb.WriteCompressedInt(parameterTypes == null ? 0 : parameterTypes.Length);
+			bb.WriteCompressedUInt(parameterTypes == null ? 0 : parameterTypes.Length);
 			WriteCustomModifiers(module, bb, customModifiers.GetReturnTypeCustomModifiers());
 			WriteType(module, bb, propertyType);
 			if (parameterTypes != null)
@@ -170,7 +170,7 @@ namespace IKVM.Reflection
 			}
 			Type returnType;
 			Type[] parameterTypes;
-			int paramCount = br.ReadCompressedInt();
+			int paramCount = br.ReadCompressedUInt();
 			CustomModifiers[] mods = null;
 			PackedCustomModifiers.Pack(ref mods, 0, CustomModifiers.Read(module, br, context), paramCount + 1);
 			returnType = ReadRetType(module, br, context);

@@ -75,11 +75,6 @@ namespace IKVM.Reflection.Emit
 			this.token = token;
 		}
 
-		internal bool IsPseudoToken
-		{
-			get { return token < 0; }
-		}
-
 		public int Token
 		{
 			get { return token; }
@@ -119,11 +114,6 @@ namespace IKVM.Reflection.Emit
 		internal MethodToken(int token)
 		{
 			this.token = token;
-		}
-
-		internal bool IsPseudoToken
-		{
-			get { return token < 0; }
 		}
 
 		public int Token

@@ -111,7 +111,7 @@ namespace IKVM.Reflection.Writer
 			stream.Write(buffer, 0, 8);
 		}
 
-		internal void WriteCompressedInt(int value)
+		internal void WriteCompressedUInt(int value)
 		{
 			if (value <= 0x7F)
 			{
@@ -131,7 +131,7 @@ namespace IKVM.Reflection.Writer
 			}
 		}
 
-		internal static int GetCompressedIntLength(int value)
+		internal static int GetCompressedUIntLength(int value)
 		{
 			if (value <= 0x7F)
 			{

@@ -243,13 +243,13 @@ namespace IKVM.Reflection
 			if (br.PeekByte() == '.')
 			{
 				br.ReadByte();
-				int count = br.ReadCompressedInt();
+				int count = br.ReadCompressedUInt();
 				for (int j = 0; j < count; j++)
 				{
 					Type type = ReadType(asm, br);
 					ConstructorInfo constructor = type.GetPseudoCustomAttributeConstructor(u.System_Security_Permissions_SecurityAction);
 					// LAMESPEC there is an additional length here (probably of the named argument list)
-					byte[] blob = br.ReadBytes(br.ReadCompressedInt());
+					byte[] blob = br.ReadBytes(br.ReadCompressedUInt());
 					list.Add(new CustomAttributeData(asm, constructor, action, blob, index));
 				}
 			}
@@ -601,7 +601,7 @@ namespace IKVM.Reflection
 						// 5) Unresolved declarative security
 						ByteReader br = new ByteReader(declSecurityBlob, 0, declSecurityBlob.Length);
 						// LAMESPEC the count of named arguments is a compressed integer (instead of UInt16 as NumNamed in custom attributes)
-						lazyNamedArguments = ReadNamedArguments(module.Assembly, br, br.ReadCompressedInt(), Constructor.DeclaringType);
+						lazyNamedArguments = ReadNamedArguments(module.Assembly, br, br.ReadCompressedUInt(), Constructor.DeclaringType);
 					}
 				}
 				return lazyNamedArguments;
@@ -736,7 +736,7 @@ namespace IKVM.Reflection
 			}
 			ModuleBuilder mb = module as ModuleBuilder;
 			int token = parameter.MetadataToken;
-			if (mb != null && mb.IsSaved && mb.IsPseudoToken(token))
+			if (mb != null && mb.IsSaved && ModuleBuilder.IsPseudoToken(token))
 			{
 				token = mb.ResolvePseudoToken(token);
 			}

@@ -99,6 +99,11 @@ namespace IKVM.Reflection
 			get { return (Attributes & ParameterAttributes.Optional) != 0; }
 		}
 
+		public bool HasDefaultValue
+		{
+			get { return (Attributes & ParameterAttributes.HasDefault) != 0; }
+		}
+
 		public bool IsDefined(Type attributeType, bool inherit)
 		{
 			return CustomAttributeData.__GetCustomAttributes(this, attributeType, inherit).Count != 0;
@@ -107,6 +112,16 @@ namespace IKVM.Reflection
 		public IList<CustomAttributeData> __GetCustomAttributes(Type attributeType, bool inherit)
 		{
 			return CustomAttributeData.__GetCustomAttributes(this, attributeType, inherit);
+		}
+
+		public IList<CustomAttributeData> GetCustomAttributesData()
+		{
+			return CustomAttributeData.GetCustomAttributes(this);
+		}
+
+		public IEnumerable<CustomAttributeData> CustomAttributes
+		{
+			get { return GetCustomAttributesData(); }
 		}
 	}
 

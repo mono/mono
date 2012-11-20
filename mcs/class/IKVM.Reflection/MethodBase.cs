@@ -114,6 +114,11 @@ namespace IKVM.Reflection
 			get { return (Attributes & MethodAttributes.HideBySig) != 0; }
 		}
 
+		public MethodImplAttributes MethodImplementationFlags
+		{
+			get { return GetMethodImplementationFlags(); }
+		}
+
 		public virtual Type[] GetGenericArguments()
 		{
 			return Type.EmptyTypes;

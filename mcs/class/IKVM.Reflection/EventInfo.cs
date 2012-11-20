@@ -74,6 +74,21 @@ namespace IKVM.Reflection
 			return GetOtherMethods(false);
 		}
 
+		public MethodInfo AddMethod
+		{
+			get { return GetAddMethod(true); }
+		}
+
+		public MethodInfo RaiseMethod
+		{
+			get { return GetRaiseMethod(true); }
+		}
+
+		public MethodInfo RemoveMethod
+		{
+			get { return GetRemoveMethod(true); }
+		}
+
 		internal virtual EventInfo BindTypeParameters(Type type)
 		{
 			return new GenericEventInfo(this.DeclaringType.BindTypeParameters(type), this);

@@ -165,7 +165,7 @@ namespace IKVM.Reflection.Writer
 			{
 				cliHeader.Flags |= CliHeader.COMIMAGE_FLAGS_STRONGNAMESIGNED;
 			}
-			if (moduleBuilder.IsPseudoToken(entryPointToken))
+			if (ModuleBuilder.IsPseudoToken(entryPointToken))
 			{
 				entryPointToken = moduleBuilder.ResolvePseudoToken(entryPointToken);
 			}

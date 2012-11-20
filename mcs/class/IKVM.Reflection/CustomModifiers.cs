@@ -293,7 +293,7 @@ namespace IKVM.Reflection
 			while (IsCustomModifier(b))
 			{
 				br.ReadByte();
-				br.ReadCompressedInt();
+				br.ReadCompressedUInt();
 				b = br.PeekByte();
 			}
 		}

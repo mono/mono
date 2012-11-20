@@ -510,14 +510,7 @@ namespace IKVM.Reflection
 				publicKeyToken = null;
 				return false;
 			}
-			// HACK use AssemblyName to convert PublicKey to PublicKeyToken
-			byte[] token = new System.Reflection.AssemblyName("Foo, PublicKey=" + str).GetPublicKeyToken();
-			StringBuilder sb = new StringBuilder(token.Length * 2);
-			for (int i = 0; i < token.Length; i++)
-			{
-				sb.AppendFormat("{0:x2}", token[i]);
-			}
-			publicKeyToken = sb.ToString();
+			publicKeyToken = AssemblyName.ComputePublicKeyToken(str);
 			return true;
 		}
 

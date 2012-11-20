@@ -397,6 +397,11 @@ namespace IKVM.Reflection.Emit
 			return DefineProperty(name, attributes, returnType, null, null, parameterTypes, null, null);
 		}
 
+		public PropertyBuilder DefineProperty(string name, PropertyAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
+		{
+			return DefineProperty(name, attributes, callingConvention, returnType, null, null, parameterTypes, null, null);
+		}
+
 		public PropertyBuilder DefineProperty(string name, PropertyAttributes attributes, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers,
 			Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
 		{
@@ -481,7 +486,7 @@ namespace IKVM.Reflection.Emit
 			return DefineNestedType(name, attr, parent, packSize, 0);
 		}
 
-		private TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, PackingSize packSize, int typeSize)
+		public TypeBuilder DefineNestedType(string name, TypeAttributes attr, Type parent, PackingSize packSize, int typeSize)
 		{
 			string ns = null;
 			int lastdot = name.LastIndexOf('.');
@@ -689,7 +694,7 @@ namespace IKVM.Reflection.Emit
 			return this;
 		}
 
-		public Type CreateType()
+		public TypeInfo CreateTypeInfo()
 		{
 			if ((typeFlags & TypeFlags.Baked) != 0)
 			{
@@ -711,7 +716,7 @@ namespace IKVM.Reflection.Emit
 				hasConstructor |= mb.IsSpecialName && mb.Name == ConstructorInfo.ConstructorName;
 				mb.Bake();
 			}
-			if (!hasConstructor && !IsModulePseudoType && !IsInterface && !IsValueType && !(IsAbstract && IsSealed))
+			if (!hasConstructor && !IsModulePseudoType && !IsInterface && !IsValueType && !(IsAbstract && IsSealed) && Universe.AutomaticallyProvideDefaultConstructor)
 			{
 				((MethodBuilder)DefineDefaultConstructor(MethodAttributes.Public).GetMethodInfo()).Bake();
 			}
@@ -738,6 +743,11 @@ namespace IKVM.Reflection.Emit
 				}
 			}
 			return new BakedType(this);
+		}
+
+		public Type CreateType()
+		{
+			return CreateTypeInfo();
 		}
 
 		internal void PopulatePropertyAndEventTables()

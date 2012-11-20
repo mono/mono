@@ -25,18 +25,23 @@ using System;
 
 namespace IKVM.Reflection
 {
-	public sealed class LocalVariableInfo
+	public class LocalVariableInfo
 	{
 		private readonly int index;
 		private readonly Type type;
 		private readonly bool pinned;
 		private readonly CustomModifiers customModifiers;
 
-		internal LocalVariableInfo(int index, Type type, bool pinned, CustomModifiers customModifiers)
+		internal LocalVariableInfo(int index, Type type, bool pinned)
 		{
 			this.index = index;
 			this.type = type;
 			this.pinned = pinned;
+		}
+
+		internal LocalVariableInfo(int index, Type type, bool pinned, CustomModifiers customModifiers)
+			: this(index, type, pinned)
+		{
 			this.customModifiers = customModifiers;
 		}
 
@@ -58,6 +63,11 @@ namespace IKVM.Reflection
 		public CustomModifiers __GetCustomModifiers()
 		{
 			return customModifiers;
+		}
+
+		public override string ToString()
+		{
+			return String.Format(pinned ? "{0} ({1}) (pinned)" : "{0} ({1})", type, index);
 		}
 	}
 }

@@ -367,6 +367,10 @@ namespace IKVM.Reflection.Emit
 		public GenericTypeParameterBuilder[] DefineGenericParameters(params string[] names)
 		{
 			CheckSig();
+			if (gtpb != null)
+			{
+				throw new InvalidOperationException("Generic parameters already defined.");
+			}
 			gtpb = new GenericTypeParameterBuilder[names.Length];
 			for (int i = 0; i < names.Length; i++)
 			{
@@ -620,6 +624,54 @@ namespace IKVM.Reflection.Emit
 		public void __AddUnmanagedExport(string name, int ordinal)
 		{
 			this.ModuleBuilder.AddUnmanagedExport(name, ordinal, this, new RelativeVirtualAddress(0xFFFFFFFF));
+		}
+
+		public void CreateMethodBody(byte[] il, int count)
+		{
+			if (il == null)
+			{
+				throw new NotSupportedException();
+			}
+			if (il.Length != count)
+			{
+				Array.Resize(ref il, count);
+			}
+			SetMethodBody(il, 16, null, null, null);
+		}
+
+		public void SetMethodBody(byte[] il, int maxStack, byte[] localSignature, IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
+		{
+			ByteBuffer bb = this.ModuleBuilder.methodBodies;
+
+			if (localSignature == null && exceptionHandlers == null && maxStack <= 8 && il.Length < 64)
+			{
+				rva = bb.Position;
+				ILGenerator.WriteTinyHeader(bb, il.Length);
+			}
+			else
+			{
+				// fat headers require 4-byte alignment
+				bb.Align(4);
+				rva = bb.Position;
+				ILGenerator.WriteFatHeader(bb, initLocals, exceptionHandlers != null, (ushort)maxStack, il.Length,
+					localSignature == null ? 0 : this.ModuleBuilder.GetSignatureToken(localSignature, localSignature.Length).Token);
+			}
+
+			if (tokenFixups != null)
+			{
+				ILGenerator.AddTokenFixups(bb.Position, this.ModuleBuilder.tokenFixupOffsets, tokenFixups);
+			}
+			bb.Write(il);
+
+			if (exceptionHandlers != null)
+			{
+				List<ILGenerator.ExceptionBlock> exceptions = new List<ILGenerator.ExceptionBlock>();
+				foreach (ExceptionHandler block in exceptionHandlers)
+				{
+					exceptions.Add(new ILGenerator.ExceptionBlock(block));
+				}
+				ILGenerator.WriteExceptionHandlers(bb, exceptions);
+			}
 		}
 
 		internal void Bake()

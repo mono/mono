@@ -115,8 +115,8 @@ namespace IKVM.Reflection.Emit
 				if (type != Signature.FIELD)
 				{
 					bb.Position = 1;
-					bb.Insert(MetadataWriter.GetCompressedIntLength(paramCount) - bb.GetCompressedIntLength());
-					bb.WriteCompressedInt(paramCount);
+					bb.Insert(MetadataWriter.GetCompressedUIntLength(paramCount) - bb.GetCompressedUIntLength());
+					bb.WriteCompressedUInt(paramCount);
 				}
 				return bb;
 			}

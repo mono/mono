@@ -148,6 +148,16 @@ namespace IKVM.Reflection
 			get { return (Attributes & PropertyAttributes.SpecialName) != 0; }
 		}
 
+		public MethodInfo GetMethod
+		{
+			get { return GetGetMethod(true); }
+		}
+
+		public MethodInfo SetMethod
+		{
+			get { return GetSetMethod(true); }
+		}
+
 		public MethodInfo GetGetMethod()
 		{
 			return GetGetMethod(false);

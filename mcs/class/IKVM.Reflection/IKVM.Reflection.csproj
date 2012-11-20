@@ -58,6 +58,7 @@
     <Compile Include="Emit\EnumBuilder.cs" />
     <Compile Include="Emit\Enums.cs" />
     <Compile Include="Emit\EventBuilder.cs" />
+    <Compile Include="Emit\ExceptionHandler.cs" />
     <Compile Include="Emit\FieldBuilder.cs" />
     <Compile Include="Emit\ILGenerator.cs" />
     <Compile Include="Emit\MethodBuilder.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="PropertyInfo.cs" />
     <Compile Include="PropertySignature.cs" />
     <Compile Include="Reader\AssemblyReader.cs" />
+    <Compile Include="Reader\Authenticode.cs" />
     <Compile Include="Reader\ByteReader.cs" />
     <Compile Include="Reader\EventInfoImpl.cs" />
     <Compile Include="Reader\Field.cs" />
@@ -116,6 +118,7 @@
     <Compile Include="StrongNameKeyPair.cs" />
     <Compile Include="Type.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeInfo.cs" />
     <Compile Include="TypeNameParser.cs" />
     <Compile Include="Universe.cs" />
     <Compile Include="Util.cs" />
@@ -130,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Security" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

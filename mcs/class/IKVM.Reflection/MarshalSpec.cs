@@ -52,21 +52,21 @@ namespace IKVM.Reflection
 			foreach (int i in module.FieldMarshal.Filter(token))
 			{
 				ByteReader blob = module.GetBlob(module.FieldMarshal.records[i].NativeType);
-				fm.UnmanagedType = (UnmanagedType)blob.ReadCompressedInt();
+				fm.UnmanagedType = (UnmanagedType)blob.ReadCompressedUInt();
 				if (fm.UnmanagedType == UnmanagedType.LPArray)
 				{
-					fm.ArraySubType = (UnmanagedType)blob.ReadCompressedInt();
+					fm.ArraySubType = (UnmanagedType)blob.ReadCompressedUInt();
 					if (fm.ArraySubType == NATIVE_TYPE_MAX)
 					{
 						fm.ArraySubType = null;
 					}
 					if (blob.Length != 0)
 					{
-						fm.SizeParamIndex = (short)blob.ReadCompressedInt();
+						fm.SizeParamIndex = (short)blob.ReadCompressedUInt();
 						if (blob.Length != 0)
 						{
-							fm.SizeConst = blob.ReadCompressedInt();
-							if (blob.Length != 0 && blob.ReadCompressedInt() == 0)
+							fm.SizeConst = blob.ReadCompressedUInt();
+							if (blob.Length != 0 && blob.ReadCompressedUInt() == 0)
 							{
 								fm.SizeParamIndex = null;
 							}
@@ -77,7 +77,7 @@ namespace IKVM.Reflection
 				{
 					if (blob.Length != 0)
 					{
-						fm.SafeArraySubType = (VarEnum)blob.ReadCompressedInt();
+						fm.SafeArraySubType = (VarEnum)blob.ReadCompressedUInt();
 						if (blob.Length != 0)
 						{
 							fm.SafeArrayUserDefinedSubType = ReadType(module, blob);
@@ -86,15 +86,15 @@ namespace IKVM.Reflection
 				}
 				else if (fm.UnmanagedType == UnmanagedType.ByValArray)
 				{
-					fm.SizeConst = blob.ReadCompressedInt();
+					fm.SizeConst = blob.ReadCompressedUInt();
 					if (blob.Length != 0)
 					{
-						fm.ArraySubType = (UnmanagedType)blob.ReadCompressedInt();
+						fm.ArraySubType = (UnmanagedType)blob.ReadCompressedUInt();
 					}
 				}
 				else if (fm.UnmanagedType == UnmanagedType.ByValTStr)
 				{
-					fm.SizeConst = blob.ReadCompressedInt();
+					fm.SizeConst = blob.ReadCompressedUInt();
 				}
 				else if (fm.UnmanagedType == UnmanagedType.Interface
 					|| fm.UnmanagedType == UnmanagedType.IDispatch
@@ -102,13 +102,13 @@ namespace IKVM.Reflection
 				{
 					if (blob.Length != 0)
 					{
-						fm.IidParameterIndex = blob.ReadCompressedInt();
+						fm.IidParameterIndex = blob.ReadCompressedUInt();
 					}
 				}
 				else if (fm.UnmanagedType == UnmanagedType.CustomMarshaler)
 				{
-					blob.ReadCompressedInt();
-					blob.ReadCompressedInt();
+					blob.ReadCompressedUInt();
+					blob.ReadCompressedUInt();
 					fm.MarshalType = ReadString(blob);
 					fm.MarshalCookie = ReadString(blob);
 
@@ -150,28 +150,28 @@ namespace IKVM.Reflection
 			}
 
 			ByteBuffer bb = new ByteBuffer(5);
-			bb.WriteCompressedInt((int)unmanagedType);
+			bb.WriteCompressedUInt((int)unmanagedType);
 
 			if (unmanagedType == UnmanagedType.LPArray)
 			{
 				UnmanagedType arraySubType = attribute.GetFieldValue<UnmanagedType>("ArraySubType") ?? NATIVE_TYPE_MAX;
-				bb.WriteCompressedInt((int)arraySubType);
+				bb.WriteCompressedUInt((int)arraySubType);
 				int? sizeParamIndex = attribute.GetFieldValue<short>("SizeParamIndex");
 				int? sizeConst = attribute.GetFieldValue<int>("SizeConst");
 				if (sizeParamIndex != null)
 				{
-					bb.WriteCompressedInt(sizeParamIndex.Value);
+					bb.WriteCompressedUInt(sizeParamIndex.Value);
 					if (sizeConst != null)
 					{
-						bb.WriteCompressedInt(sizeConst.Value);
-						bb.WriteCompressedInt(1); // flag that says that SizeParamIndex was specified
+						bb.WriteCompressedUInt(sizeConst.Value);
+						bb.WriteCompressedUInt(1); // flag that says that SizeParamIndex was specified
 					}
 				}
 				else if (sizeConst != null)
 				{
-					bb.WriteCompressedInt(0); // SizeParamIndex
-					bb.WriteCompressedInt(sizeConst.Value);
-					bb.WriteCompressedInt(0); // flag that says that SizeParamIndex was not specified
+					bb.WriteCompressedUInt(0); // SizeParamIndex
+					bb.WriteCompressedUInt(sizeConst.Value);
+					bb.WriteCompressedUInt(0); // flag that says that SizeParamIndex was not specified
 				}
 			}
 			else if (unmanagedType == UnmanagedType.SafeArray)
@@ -179,7 +179,7 @@ namespace IKVM.Reflection
 				VarEnum? safeArraySubType = attribute.GetFieldValue<VarEnum>("SafeArraySubType");
 				if (safeArraySubType != null)
 				{
-					bb.WriteCompressedInt((int)safeArraySubType);
+					bb.WriteCompressedUInt((int)safeArraySubType);
 					Type safeArrayUserDefinedSubType = (Type)attribute.GetFieldValue("SafeArrayUserDefinedSubType");
 					if (safeArrayUserDefinedSubType != null)
 					{
@@ -189,16 +189,16 @@ namespace IKVM.Reflection
 			}
 			else if (unmanagedType == UnmanagedType.ByValArray)
 			{
-				bb.WriteCompressedInt(attribute.GetFieldValue<int>("SizeConst") ?? 1);
+				bb.WriteCompressedUInt(attribute.GetFieldValue<int>("SizeConst") ?? 1);
 				UnmanagedType? arraySubType = attribute.GetFieldValue<UnmanagedType>("ArraySubType");
 				if (arraySubType != null)
 				{
-					bb.WriteCompressedInt((int)arraySubType);
+					bb.WriteCompressedUInt((int)arraySubType);
 				}
 			}
 			else if (unmanagedType == UnmanagedType.ByValTStr)
 			{
-				bb.WriteCompressedInt(attribute.GetFieldValue<int>("SizeConst").Value);
+				bb.WriteCompressedUInt(attribute.GetFieldValue<int>("SizeConst").Value);
 			}
 			else if (unmanagedType == UnmanagedType.Interface
 				|| unmanagedType == UnmanagedType.IDispatch
@@ -207,13 +207,13 @@ namespace IKVM.Reflection
 				int? iidParameterIndex = attribute.GetFieldValue<int>("IidParameterIndex");
 				if (iidParameterIndex != null)
 				{
-					bb.WriteCompressedInt(iidParameterIndex.Value);
+					bb.WriteCompressedUInt(iidParameterIndex.Value);
 				}
 			}
 			else if (unmanagedType == UnmanagedType.CustomMarshaler)
 			{
-				bb.WriteCompressedInt(0);
-				bb.WriteCompressedInt(0);
+				bb.WriteCompressedUInt(0);
+				bb.WriteCompressedUInt(0);
 				string marshalType = (string)attribute.GetFieldValue("MarshalType");
 				if (marshalType != null)
 				{
@@ -246,13 +246,13 @@ namespace IKVM.Reflection
 
 		private static string ReadString(ByteReader br)
 		{
-			return Encoding.UTF8.GetString(br.ReadBytes(br.ReadCompressedInt()));
+			return Encoding.UTF8.GetString(br.ReadBytes(br.ReadCompressedUInt()));
 		}
 
 		private static void WriteString(ByteBuffer bb, string str)
 		{
 			byte[] buf = Encoding.UTF8.GetBytes(str);
-			bb.WriteCompressedInt(buf.Length);
+			bb.WriteCompressedUInt(buf.Length);
 			bb.Write(buf);
 		}
 	}

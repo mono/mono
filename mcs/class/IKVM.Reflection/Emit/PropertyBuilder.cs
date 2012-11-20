@@ -275,7 +275,7 @@ namespace IKVM.Reflection.Emit
 
 		internal override int GetCurrentToken()
 		{
-			if (typeBuilder.ModuleBuilder.IsSaved && typeBuilder.ModuleBuilder.IsPseudoToken(lazyPseudoToken))
+			if (typeBuilder.ModuleBuilder.IsSaved && ModuleBuilder.IsPseudoToken(lazyPseudoToken))
 			{
 				return typeBuilder.ModuleBuilder.ResolvePseudoToken(lazyPseudoToken);
 			}

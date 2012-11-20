@@ -447,6 +447,16 @@ namespace IKVM.Reflection
 			return CustomAttributeData.__GetCustomAttributes(this, attributeType, inherit);
 		}
 
+		public IList<CustomAttributeData> GetCustomAttributesData()
+		{
+			return CustomAttributeData.GetCustomAttributes(this);
+		}
+
+		public IEnumerable<CustomAttributeData> CustomAttributes
+		{
+			get { return GetCustomAttributesData(); }
+		}
+
 		public virtual IList<CustomAttributeData> __GetPlaceholderAssemblyCustomAttributes(bool multiple, bool security)
 		{
 			return Empty<CustomAttributeData>.Array;
@@ -532,6 +542,11 @@ namespace IKVM.Reflection
 		public List<CustomAttributeData> __GetCustomAttributesFor(int token)
 		{
 			return CustomAttributeData.GetCustomAttributesImpl(new List<CustomAttributeData>(), this, token, null);
+		}
+
+		public virtual System.Security.Cryptography.X509Certificates.X509Certificate GetSignerCertificate()
+		{
+			return null;
 		}
 
 		internal abstract Type GetModuleType();

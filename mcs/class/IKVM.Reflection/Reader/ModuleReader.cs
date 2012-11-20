@@ -79,26 +79,17 @@ namespace IKVM.Reflection.Reader
 
 		private sealed class LazyForwardedType
 		{
-			private readonly int assemblyRef;
+			private readonly int index;
 			private Type type;
 
-			internal LazyForwardedType(int assemblyRef)
+			internal LazyForwardedType(int index)
 			{
-				this.assemblyRef = assemblyRef;
+				this.index = index;
 			}
 
-			internal Type GetType(ModuleReader module, TypeName typeName)
+			internal Type GetType(ModuleReader module)
 			{
-				if (type == null)
-				{
-					Assembly asm = module.ResolveAssemblyRef(assemblyRef);
-					type = asm.ResolveType(typeName);
-					if (type == null)
-					{
-						throw new TypeLoadException(typeName.ToString());
-					}
-				}
-				return type;
+				return type ?? (type = module.ResolveExportedType(index));
 			}
 		}
 
@@ -198,10 +189,6 @@ namespace IKVM.Reflection.Reader
 					tables[i].Sorted = (Sorted & (1UL << i)) != 0;
 					tables[i].RowCount = br.ReadInt32();
 				}
-				else if (tables[i] != null)
-				{
-					tables[i].RowCount = 0;
-				}
 			}
 			MetadataReader mr = new MetadataReader(this, br.BaseStream, HeapSizes);
 			for (int i = 0; i < 64; i++)
@@ -275,7 +262,7 @@ namespace IKVM.Reflection.Reader
 					if (implementation >> 24 == AssemblyRefTable.Index)
 					{
 						TypeName typeName = GetTypeName(ExportedType.records[i].TypeNamespace, ExportedType.records[i].TypeName);
-						forwardedTypes.Add(typeName, new LazyForwardedType((implementation & 0xFFFFFF) - 1));
+						forwardedTypes.Add(typeName, new LazyForwardedType(i));
 					}
 				}
 			}
@@ -301,7 +288,7 @@ namespace IKVM.Reflection.Reader
 			return str;
 		}
 
-		private static int ReadCompressedInt(byte[] buffer, ref int offset)
+		private static int ReadCompressedUInt(byte[] buffer, ref int offset)
 		{
 			byte b1 = buffer[offset++];
 			if (b1 <= 0x7F)
@@ -324,7 +311,7 @@ namespace IKVM.Reflection.Reader
 
 		internal byte[] GetBlobCopy(int blobIndex)
 		{
-			int len = ReadCompressedInt(blobHeap, ref blobIndex);
+			int len = ReadCompressedUInt(blobHeap, ref blobIndex);
 			byte[] buf = new byte[len];
 			Buffer.BlockCopy(blobHeap, blobIndex, buf, 0, len);
 			return buf;
@@ -345,7 +332,7 @@ namespace IKVM.Reflection.Reader
 					throw TokenOutOfRangeException(metadataToken);
 				}
 				int index = metadataToken & 0xFFFFFF;
-				int len = ReadCompressedInt(userStringHeap, ref index) & ~1;
+				int len = ReadCompressedUInt(userStringHeap, ref index) & ~1;
 				StringBuilder sb = new StringBuilder(len / 2);
 				for (int i = 0; i < len; i += 2)
 				{
@@ -573,7 +560,7 @@ namespace IKVM.Reflection.Reader
 				LazyForwardedType fw;
 				if (forwardedTypes.TryGetValue(typeName, out fw))
 				{
-					return fw.GetType(this, typeName);
+					return fw.GetType(this);
 				}
 			}
 			return type;
@@ -593,7 +580,7 @@ namespace IKVM.Reflection.Reader
 			{
 				if (name.ToLowerInvariant() == lowerCaseName)
 				{
-					return forwardedTypes[name].GetType(this, name);
+					return forwardedTypes[name].GetType(this);
 				}
 			}
 			return null;
@@ -620,6 +607,10 @@ namespace IKVM.Reflection.Reader
 				case MethodDefTable.Index:
 				case MethodSpecTable.Index:
 					return ResolveMethod(metadataToken, genericTypeArguments, genericMethodArguments);
+				case TypeRefTable.Index:
+				case TypeDefTable.Index:
+				case TypeSpecTable.Index:
+					return ResolveType(metadataToken, genericTypeArguments, genericMethodArguments);
 				default:
 					throw TokenOutOfRangeException(metadataToken);
 			}
@@ -1097,14 +1088,18 @@ namespace IKVM.Reflection.Reader
 			TypeName typeName = GetTypeName(ExportedType.records[index].TypeNamespace, ExportedType.records[index].TypeName);
 			int implementation = ExportedType.records[index].Implementation;
 			int token = ExportedType.records[index].TypeDefId;
+			int flags = ExportedType.records[index].Flags;
 			switch (implementation >> 24)
 			{
 				case AssemblyRefTable.Index:
-					return ResolveAssemblyRef((implementation & 0xFFFFFF) - 1).ResolveType(typeName).SetMetadataTokenForMissing(token);
+					return ResolveAssemblyRef((implementation & 0xFFFFFF) - 1).ResolveType(typeName).SetMetadataTokenForMissing(token, flags);
 				case ExportedTypeTable.Index:
-					return ResolveExportedType((implementation & 0xFFFFFF) - 1).ResolveNestedType(typeName).SetMetadataTokenForMissing(token);
+					return ResolveExportedType((implementation & 0xFFFFFF) - 1).ResolveNestedType(typeName).SetMetadataTokenForMissing(token, flags);
+				case FileTable.Index:
+					Module module = assembly.GetModule(GetString(File.records[(implementation & 0xFFFFFF) - 1].Name));
+					return module.FindType(typeName) ?? module.universe.GetMissingTypeOrThrow(module, null, typeName).SetMetadataTokenForMissing(token, flags);
 				default:
-					throw new NotImplementedException();
+					throw new BadImageFormatException();
 			}
 		}
 
@@ -1264,6 +1259,11 @@ namespace IKVM.Reflection.Reader
 		public override int __EntryPointToken
 		{
 			get { return (cliHeader.Flags & CliHeader.COMIMAGE_FLAGS_NATIVE_ENTRYPOINT) == 0 ? (int)cliHeader.EntryPointToken : 0; }
+		}
+
+		public override System.Security.Cryptography.X509Certificates.X509Certificate GetSignerCertificate()
+		{
+			return Authenticode.GetSignerCertificate(stream);
 		}
 	}
 }

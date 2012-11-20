@@ -388,7 +388,7 @@ namespace IKVM.Reflection.Metadata
 
 	abstract class Table<T> : Table
 	{
-		internal T[] records = new T[1];
+		internal T[] records = Empty<T>.Array;
 		protected int rowCount;
 
 		internal sealed override int RowCount
@@ -406,9 +406,7 @@ namespace IKVM.Reflection.Metadata
 		{
 			if (rowCount == records.Length)
 			{
-				T[] newarr = new T[records.Length * 2];
-				Array.Copy(records, newarr, records.Length);
-				records = newarr;
+				Array.Resize(ref records, Math.Max(16, records.Length * 2));
 			}
 			records[rowCount++] = newRecord;
 			return rowCount;

@@ -25,6 +25,7 @@ using System;
 using System.Globalization;
 using System.Configuration.Assemblies;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using IKVM.Reflection.Reader;
 
@@ -41,6 +42,7 @@ namespace IKVM.Reflection
 		private AssemblyNameFlags flags;
 		private AssemblyHashAlgorithm hashAlgorithm;
 		private AssemblyVersionCompatibility versionCompatibility = AssemblyVersionCompatibility.SameMachine;
+		private ProcessorArchitecture processorArchitecture;
 		private string codeBase;
 		internal byte[] hash;
 
@@ -62,9 +64,8 @@ namespace IKVM.Reflection
 			switch (Fusion.ParseAssemblyName(assemblyName, out parsed))
 			{
 				case ParseAssemblyResult.GenericError:
-					throw new FileLoadException();
 				case ParseAssemblyResult.DuplicateKey:
-					throw new System.Runtime.InteropServices.COMException();
+					throw new FileLoadException();
 			}
 			name = parsed.Name;
 			if (parsed.Culture != null)
@@ -99,12 +100,7 @@ namespace IKVM.Reflection
 				}
 				else
 				{
-					publicKeyToken = new byte[8];
-					for (int i = 0, pos = 0; i < publicKeyToken.Length; i++, pos += 2)
-					{
-						publicKeyToken[i] = (byte)("0123456789abcdef".IndexOf(char.ToLowerInvariant(parsed.PublicKeyToken[pos])) * 16
-							+ "0123456789abcdef".IndexOf(char.ToLowerInvariant(parsed.PublicKeyToken[pos + 1])));
-					}
+					publicKeyToken = ParseKey(parsed.PublicKeyToken);
 				}
 			}
 			if (parsed.Retargetable.HasValue)
@@ -125,6 +121,40 @@ namespace IKVM.Reflection
 			}
 		}
 
+		private static byte[] ParseKey(string key)
+		{
+			if ((key.Length & 1) != 0)
+			{
+				throw new FileLoadException();
+			}
+			byte[] buf = new byte[key.Length / 2];
+			for (int i = 0; i < buf.Length; i++)
+			{
+				buf[i] = (byte)(ParseHexDigit(key[i * 2]) * 16 + ParseHexDigit(key[i * 2 + 1]));
+			}
+			return buf;
+		}
+
+		private static int ParseHexDigit(char digit)
+		{
+			if (digit >= '0' && digit <= '9')
+			{
+				return digit - '0';
+			}
+			else
+			{
+				digit |= (char)0x20;
+				if (digit >= 'a' && digit <= 'f')
+				{
+					return 10 + digit - 'a';
+				}
+				else
+				{
+					throw new FileLoadException();
+				}
+			}
+		}
+
 		public override string ToString()
 		{
 			return FullName;
@@ -140,6 +170,11 @@ namespace IKVM.Reflection
 		{
 			get { return culture == null ? null : new CultureInfo(culture); }
 			set { culture = value == null ? null : value.Name; }
+		}
+
+		public string CultureName
+		{
+			get { return culture; }
 		}
 
 		internal string Culture
@@ -179,11 +214,12 @@ namespace IKVM.Reflection
 
 		public ProcessorArchitecture ProcessorArchitecture
 		{
-			get { return (ProcessorArchitecture)(((int)flags & 0x70) >> 4); }
+			get { return processorArchitecture; }
 			set
 			{
 				if (value >= ProcessorArchitecture.None && value <= ProcessorArchitecture.Arm)
 				{
+					processorArchitecture = value;
 					flags = (flags & ~(AssemblyNameFlags)0x70) | (AssemblyNameFlags)((int)value << 4);
 				}
 			}
@@ -351,17 +387,20 @@ namespace IKVM.Reflection
 			{
 				return publicKey;
 			}
-			// HACK use the real AssemblyName to convert PublicKey to PublicKeyToken
-			StringBuilder sb = new StringBuilder("Foo, PublicKey=", 20 + publicKey.Length * 2);
-			AppendPublicKey(sb, publicKey);
-			string str = sb.ToString();
-			if (str == "Foo, PublicKey=00000000000000000400000000000000")
+			byte[] hash = new SHA1Managed().ComputeHash(publicKey);
+			byte[] token = new byte[8];
+			for (int i = 0; i < token.Length; i++)
 			{
-				// MONOBUG workaround Mono 2.10 bug (fixed in 2.11)
-				// it does not return the correct public key token for the ECMA key
-				return new byte[] { 0xB7, 0x7A, 0x5C, 0x56, 0x19, 0x34, 0xE0, 0x89 };
+				token[i] = hash[hash.Length - 1 - i];
 			}
-			return new System.Reflection.AssemblyName(str).GetPublicKeyToken();
+			return token;
+		}
+
+		internal static string ComputePublicKeyToken(string publicKey)
+		{
+			StringBuilder sb = new StringBuilder(16);
+			AppendPublicKey(sb, ComputePublicKeyToken(ParseKey(publicKey)));
+			return sb.ToString();
 		}
 
 		private static void AppendPublicKey(StringBuilder sb, byte[] publicKey)
