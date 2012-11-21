@@ -495,6 +495,31 @@ namespace MonoTests.System.Configuration {
 			Assert.IsNotNull(section as TestSection);
 			config.Sections.Remove(name);
 		}
+		
+		[Test]
+		public void TestFileMap ()
+		{
+			var name = Path.GetRandomFileName () + ".config";
+			Assert.IsFalse (File.Exists (name));
+
+			try {
+				var map = new ExeConfigurationFileMap ();
+				map.ExeConfigFilename = name;
+			
+				var config = ConfigurationManager.OpenMappedExeConfiguration (
+					map, ConfigurationUserLevel.None);
+				
+				config.Sections.Add ("testsection", new TestSection ());
+			
+				config.Save ();
+			
+				Assert.IsTrue (File.Exists (name), "#1");
+				Assert.IsTrue (File.Exists (Path.GetFullPath (name)), "#2");
+			} finally {
+				File.Delete (name);
+			}
+		}
+		
 			
 		class TestSection : ConfigurationSection  {}
 
