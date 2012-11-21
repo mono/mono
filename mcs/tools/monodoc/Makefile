@@ -158,6 +158,9 @@ clean-local: cleanup
 cleanup:
 	-rm -f Test/man-provider-test.exe*
 
+API_SERVER = root@api.xamarin.com
+
 push:
-	make PROFILE=net_4_0
-	scp ../../class/lib/net_4_0/monodoc.dll* SERVER
+	make PROFILE=net_4_0 MCS_FLAGS=/debug
+	scp "../../class/lib/net_4_0/monodoc.dll*" $(API_SERVER):/srv/monodoc/
+	ssh $(API_SERVER) "/etc/init.d/apache2 reload"
