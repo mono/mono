@@ -16,9 +16,6 @@
 [submodule "external/rx"]
 	path = external/rx
 	url = git://github.com/mono/rx.git
-[submodule "extern/ikvm"]
-	path = extern/ikvm
-	url = git@github.com:mono/ikvm-fork.git
 [submodule "external/ikvm"]
 	path = external/ikvm
 	url = git@github.com:mono/ikvm-fork.git
