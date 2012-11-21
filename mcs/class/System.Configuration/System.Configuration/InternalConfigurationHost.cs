@@ -207,7 +207,7 @@ namespace System.Configuration
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext)
 		{
 			string dir = Path.GetDirectoryName (streamName);
-			if (!Directory.Exists (dir))
+			if (!String.IsNullOrEmpty (dir) && !Directory.Exists (dir))
 				Directory.CreateDirectory (dir);
 			return new FileStream (streamName, FileMode.Create, FileAccess.Write);
 		}

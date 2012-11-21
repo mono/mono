@@ -446,6 +446,33 @@ namespace MonoTests.System.Configuration {
 			Assert.IsTrue (e.Current is ConfigurationSection);
 		}
 
+		[Test]
+		public void TestFileMap ()
+		{
+			var name = Path.GetRandomFileName () + ".config";
+			Assert.IsFalse (File.Exists (name));
+
+			try {
+				var map = new ExeConfigurationFileMap ();
+				map.ExeConfigFilename = name;
+			
+				var config = ConfigurationManager.OpenMappedExeConfiguration (
+					map, ConfigurationUserLevel.None);
+				
+				config.Sections.Add ("testsection", new TestSection ());
+			
+				config.Save ();
+			
+				Assert.IsTrue (File.Exists (name), "#1");
+				Assert.IsTrue (File.Exists (Path.GetFullPath (name)), "#2");
+			} finally {
+				File.Delete (name);
+			}
+		}
+		
+			
+		class TestSection : ConfigurationSection  {}
+
 		class RemoteConfig : MarshalByRefObject
 		{
 			public static RemoteConfig GetInstance (AppDomain domain)
