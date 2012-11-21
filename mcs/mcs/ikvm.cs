@@ -574,7 +574,7 @@ namespace Mono.CSharp
 
 		public override void SetFlags (uint flags, Location loc)
 		{
-			builder.__SetAssemblyFlags ((AssemblyNameFlags) flags);
+			builder.__AssemblyFlags = (AssemblyNameFlags) flags;
 		}
 
 		public override void SetVersion (Version version, Location loc)

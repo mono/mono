@@ -22,7 +22,7 @@ the_libdir = $(topdir)/class/lib/build/
 LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build -debug
 endif
 
-LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER
+LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.5
 

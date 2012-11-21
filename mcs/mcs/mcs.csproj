@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>.</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>True</Optimize>
-    <DefineConstants>TRACE;NET_4_0;STATIC;NO_SYMBOL_WRITER</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,7 +35,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug - AST|AnyCPU'">
     <DebugSymbols>True</DebugSymbols>
     <OutputPath>.</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER;FULL_AST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;FULL_AST</DefineConstants>
     <DebugType>full</DebugType>
     <CodeAnalysisLogFile>mcs.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
@@ -158,25 +158,25 @@
     <Compile Include="visit.cs" />
   </ItemGroup>
   <ItemGroup Label="IKVM.Reflection">
-    <Compile Include="..\class\IKVM.Reflection\*.cs">
+    <Compile Include="..\..\external\ikvm\reflect\*.cs">
       <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Emit\*.cs">
+    <Compile Include="..\..\external\ikvm\reflect\Emit\*.cs">
       <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Metadata\*.cs">
+    <Compile Include="..\..\external\ikvm\reflect\Metadata\*.cs">
       <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Reader\*.cs">
+    <Compile Include="..\..\external\ikvm\reflect\Reader\*.cs">
       <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Writer\*.cs">
+    <Compile Include="..\..\external\ikvm\reflect\Writer\*.cs">
       <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Impl\ITypeOwner.cs">
+    <Compile Include="..\..\external\ikvm\reflect\Impl\ITypeOwner.cs">
       <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Impl\SymbolSupport.cs">
+    <Compile Include="..\..\external\ikvm\reflect\Impl\SymbolSupport.cs">
       <Visible>False</Visible>
     </Compile>
   </ItemGroup>
