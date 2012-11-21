@@ -470,6 +470,61 @@ namespace MonoTests.System.Configuration {
 			}
 		}
 		
+		[Test]
+		public void TestContext ()
+		{
+			var config = ConfigurationManager.OpenExeConfiguration (ConfigurationUserLevel.None);
+			const string name = "testsection";
+
+			// ensure not present
+			if (config.GetSection (name) != null)
+				config.Sections.Remove (name);
+
+			var section = new TestContextSection ();
+
+			// Can't access EvaluationContext ....
+			try {
+				section.TestContext (null);
+				Assert.Fail ("#1");
+			} catch (ConfigurationException) {
+				;
+			}
+
+			// ... until it's been added to a section.
+			config.Sections.Add (name, section);
+			section.TestContext ("#2");
+
+			// Remove ...
+			config.Sections.Remove (name);
+
+			// ... and it doesn't lose its context
+			section.TestContext (null);
+		}
+
+		[Test]
+		public void TestContext2 ()
+		{
+			var name = Path.GetRandomFileName () + ".config";
+			Assert.IsFalse (File.Exists (name));
+			
+			try {
+				var map = new ExeConfigurationFileMap ();
+				map.ExeConfigFilename = name;
+				
+				var config = ConfigurationManager.OpenMappedExeConfiguration (
+					map, ConfigurationUserLevel.None);
+				
+				config.Sections.Add ("testsection", new TestSection ());
+				config.Sections.Add ("testcontext", new TestContextSection ());
+				
+				config.Save ();
+				
+				Assert.IsTrue (File.Exists (name), "#1");
+			} finally {
+				File.Delete (name);
+			}
+		}
+
 			
 		class TestSection : ConfigurationSection  {}
 
@@ -515,6 +570,13 @@ namespace MonoTests.System.Configuration {
 			public string GetSettingValue (string key)
 			{
 				return ConfigurationManager.AppSettings [key];
+			}
+		}
+		
+		class TestContextSection : ConfigurationSection {
+			public void TestContext (string label)
+			{
+				Assert.That (EvaluationContext != null, label);
 			}
 		}
 	}

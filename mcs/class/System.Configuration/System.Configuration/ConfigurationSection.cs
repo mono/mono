@@ -134,6 +134,7 @@ namespace System.Configuration
 		{
 			ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (t);
 			elem.Init ();
+			elem.Configuration = Configuration;
 			if (IsReadOnly ())
 				elem.SetReadOnly ();
 			return elem;
