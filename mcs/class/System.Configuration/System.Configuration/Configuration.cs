@@ -356,6 +356,7 @@ namespace System.Configuration {
 			section.ConfigHost = system.Host;
 			group.AddChild (section);
 			elementData [section] = sec;
+			sec.Configuration = this;
 		}
 		
 		internal void CreateSectionGroup (SectionGroupInfo parentGroup, string name, ConfigurationSectionGroup sec)
