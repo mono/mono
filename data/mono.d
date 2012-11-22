@@ -20,10 +20,10 @@ provider mono {
 	probe gc__end (int generation);
 
 	probe gc__concurrent__start__begin (int generation);
-	probe gc__concurrent__start__end (int generation);
-	probe gc__concurrent__update__finish__begin (int generation);
-	probe gc__concurrent__update__end (int generation);
-	probe gc__concurrent__finish__end (int generation);
+	probe gc__concurrent__start__end (int generation, long long num_major_objects_marked);
+	probe gc__concurrent__update__finish__begin (int generation, long long num_major_objects_marked);
+	probe gc__concurrent__update__end (int generation, long long num_major_objects_marked);
+	probe gc__concurrent__finish__end (int generation, long long num_major_objects_marked);
 
 	probe gc__sweep__begin (int generation, int full_sweep);
 	probe gc__sweep__end (int generation, int full_sweep);
