@@ -80,9 +80,6 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 	MonoClass* element_class;
 	g_assert (object);
 
-	if (IS_MARKED(object))
-		return;
-
 	element_class = GET_VTABLE(object)->klass->element_class;
 
 	//TODO: This might contain object references. handle correctly
