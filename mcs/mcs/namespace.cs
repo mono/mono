@@ -648,6 +648,11 @@ namespace Mono.CSharp {
 					"Identifier `{0}' differing only in case is not CLS-compliant", compiled.GetSignatureForError ());
 			}
 		}
+
+		public override string ToString ()
+		{
+			return Name;
+		}
 	}
 
 	public class CompilationSourceFile : NamespaceContainer
@@ -1384,6 +1389,11 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 				}
 			}
+		}
+
+		public override string ToString()
+		{
+			return resolved.ToString();
 		}
 	}
 
