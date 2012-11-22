@@ -58,6 +58,7 @@
    <Compile Include="System.ComponentModel\ICollectionView.cs" />
    <Compile Include="System.ComponentModel\ICollectionViewFactory.cs" />
    <Compile Include="System.ComponentModel\IEditableCollectionView.cs" />
+   <Compile Include="System.ComponentModel\IEditableCollectionViewAddNewItem.cs" />
    <Compile Include="System.ComponentModel\IItemProperties.cs" />
    <Compile Include="System.ComponentModel\ItemPropertyInfo.cs" />
    <Compile Include="System.ComponentModel\NewItemPlaceholderPosition.cs" />

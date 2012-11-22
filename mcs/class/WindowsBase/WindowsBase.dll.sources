@@ -14,6 +14,7 @@ System.ComponentModel/GroupDescription.cs
 System.ComponentModel/ICollectionView.cs
 System.ComponentModel/ICollectionViewFactory.cs
 System.ComponentModel/IEditableCollectionView.cs
+System.ComponentModel/IEditableCollectionViewAddNewItem.cs
 System.ComponentModel/IItemProperties.cs
 System.ComponentModel/ItemPropertyInfo.cs
 System.ComponentModel/NewItemPlaceholderPosition.cs
