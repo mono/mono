@@ -18,4 +18,4 @@
 	url = git://github.com/mono/rx.git
 [submodule "external/ikvm"]
 	path = external/ikvm
-	url = git@github.com:mono/ikvm-fork.git
+	url = git://github.com/mono/ikvm-fork.git
