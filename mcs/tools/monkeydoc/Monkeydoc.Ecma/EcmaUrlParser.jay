@@ -36,34 +36,11 @@ namespace Monkeydoc.Ecma
             return true;
         }
 
-        EcmaDesc CopyFromEcmaDesc (EcmaDesc dest, EcmaDesc orig)
+        EcmaDesc SetEcmaDescType (object result, EcmaDesc.Kind kind)
         {
-            if (string.IsNullOrEmpty (dest.Namespace))
-               dest.Namespace = orig.Namespace;
-            if (string.IsNullOrEmpty (dest.TypeName))
-               dest.TypeName = orig.TypeName;
-            if (dest.GenericTypeArguments == null)
-               dest.GenericTypeArguments = orig.GenericTypeArguments;
-            if (dest.NestedType == null)
-               dest.NestedType = orig.NestedType;
-            if (dest.ArrayDimensions == null)
-               dest.ArrayDimensions = orig.ArrayDimensions;
-            if (string.IsNullOrEmpty (dest.MemberName))
-               dest.MemberName = orig.MemberName;
-            if (dest.GenericMemberArguments == null)
-               dest.GenericMemberArguments = orig.GenericMemberArguments;
-            if (dest.MemberArguments == null)
-               dest.MemberArguments = orig.MemberArguments;
-            if (orig.IsEtc) {
-               dest.Etc = orig.Etc;
-               dest.EtcFilter = orig.EtcFilter;
-            }
-            if (orig.DescModifier != EcmaDesc.Mod.Normal)
-               dest.DescModifier = orig.DescModifier;
-            if (orig.ExplicitImplMember != null)
-               dest.ExplicitImplMember = orig.ExplicitImplMember;
-
-            return dest;
+            var desc = result as EcmaDesc;
+            desc.DescKind = kind;
+            return desc;
         }
 
         List<T> SafeReverse<T> (List<T> input)
@@ -100,14 +77,14 @@ namespace Monkeydoc.Ecma
 %%
 
 expression
-        : 'T' COLON type_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Type }, (EcmaDesc)$3); }
-        | 'N' COLON namespace_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Namespace }, (EcmaDesc)$3); }
-        | 'M' COLON method_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Method }, (EcmaDesc)$3); }
-        | 'F' COLON simple_member_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Field }, (EcmaDesc)$3); }
-        | 'C' COLON constructor_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Constructor }, (EcmaDesc)$3); }
-        | 'P' COLON property_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Property }, (EcmaDesc)$3); }
-        | 'E' COLON simple_member_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Event }, (EcmaDesc)$3); }
-        | 'O' COLON operator_expression { $$ = CopyFromEcmaDesc (new EcmaDesc { DescKind = EcmaDesc.Kind.Operator }, (EcmaDesc)$3); }
+        : 'T' COLON type_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Type); }
+        | 'N' COLON namespace_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Namespace); }
+        | 'M' COLON method_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Method); }
+        | 'F' COLON simple_member_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Field); }
+        | 'C' COLON constructor_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Constructor); }
+        | 'P' COLON property_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Property); }
+        | 'E' COLON simple_member_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Event); }
+        | 'O' COLON operator_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Operator); }
 
 /* i.e. id.id.id or id */
 dot_expression
