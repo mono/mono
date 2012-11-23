@@ -164,3 +164,4 @@ push:
 	make PROFILE=net_4_0 MCS_FLAGS=/debug
 	scp "../../class/lib/net_4_0/monodoc.dll*" $(API_SERVER):/srv/monodoc/
 	ssh $(API_SERVER) "/etc/init.d/apache2 reload"
+	ssh $(API_SERVER) "echo On `date -u +"%F %R"` UTC by `whoami` based on revision: `git log -n1 --oneline` >> /srv/monodoc/Changelog"
