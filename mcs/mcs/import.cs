@@ -491,7 +491,7 @@ namespace Mono.CSharp
 					//
 					var el = p.ParameterType.GetElementType ();
 					types[i] = ImportType (el, new DynamicTypeReader (p));	// TODO: 1-based positio to be csc compatible
-				} else if (i == 0 && method.IsStatic && parent.IsStatic && parent.MemberDefinition.DeclaringAssembly.HasExtensionMethod &&
+				} else if (i == 0 && method.IsStatic && (parent.Modifiers & Modifiers.METHOD_EXTENSION) != 0 &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (method), "ExtensionAttribute", CompilerServicesNamespace)) {
 					mod = Parameter.Modifier.This;
 					types[i] = ImportType (p.ParameterType);
@@ -1045,7 +1045,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)
+		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool importExtensionTypes)
 		{
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
@@ -1069,12 +1069,14 @@ namespace Mono.CSharp
 					prev_namespace = t.Namespace;
 				}
 
-				ns.AddType (module, it);
-
-				if (hasExtensionTypes && it.IsStatic &&
+				// Cannot rely on assembly level Extension attribute or static modifier because they
+				// are not followed by other compilers (e.g. F#).
+				if (it.IsClass && it.Arity == 0 && importExtensionTypes &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (t), "ExtensionAttribute", CompilerServicesNamespace)) {
 					it.SetExtensionMethodContainer ();
 				}
+
+				ns.AddType (module, it);
 			}
 		}
 
@@ -1538,7 +1540,6 @@ namespace Mono.CSharp
 		readonly Assembly assembly;
 		readonly AssemblyName aname;
 		bool cls_compliant;
-		bool contains_extension_methods;
 
 		List<AssemblyName> internals_visible_to;
 		Dictionary<IAssemblyDefinition, AssemblyName> internals_visible_to_cache;
@@ -1560,12 +1561,6 @@ namespace Mono.CSharp
 		public string FullName {
 			get {
 				return aname.FullName;
-			}
-		}
-
-		public bool HasExtensionMethod {
-			get {
-				return contains_extension_methods;
 			}
 		}
 
@@ -1684,13 +1679,6 @@ namespace Mono.CSharp
 						internals_visible_to = new List<AssemblyName> ();
 
 					internals_visible_to.Add (an);
-					continue;
-				}
-
-				if (name == "ExtensionAttribute") {
-					if (dt.Namespace == MetadataImporter.CompilerServicesNamespace)
-						contains_extension_methods = true;
-
 					continue;
 				}
 			}

@@ -93,10 +93,11 @@ namespace Mono.CSharp
 		{
 			// It can be used more than once when importing same assembly
 			// into 2 or more global aliases
-			var definition = GetAssemblyDefinition (assembly);
+			// TODO: Should be just Add
+			GetAssemblyDefinition (assembly);
 
 			var all_types = assembly.GetTypes ();
-			ImportTypes (all_types, targetNamespace, definition.HasExtensionMethod);
+			ImportTypes (all_types, targetNamespace, true);
 
 			all_types = assembly.ManifestModule.__GetExportedTypes ();
 			if (all_types.Length != 0)

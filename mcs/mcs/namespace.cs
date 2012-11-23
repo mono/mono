@@ -498,12 +498,14 @@ namespace Mono.CSharp {
 				types = new Dictionary<string, IList<TypeSpec>> (64);
 			}
 
-			if ((ts.IsStatic || ts.MemberDefinition.IsPartial) && ts.Arity == 0 &&
-				(ts.MemberDefinition.DeclaringAssembly == null || ts.MemberDefinition.DeclaringAssembly.HasExtensionMethod)) {
-				if (extension_method_types == null)
-					extension_method_types = new List<TypeSpec> ();
+			if (ts.IsClass && ts.Arity == 0) {
+				var extension_method_allowed = ts.MemberDefinition.IsImported ? (ts.Modifiers & Modifiers.METHOD_EXTENSION) != 0 : (ts.IsStatic || ts.MemberDefinition.IsPartial);
+				if (extension_method_allowed) {
+					if (extension_method_types == null)
+						extension_method_types = new List<TypeSpec> ();
 
-				extension_method_types.Add (ts);
+					extension_method_types.Add (ts);
+				}
 			}
 
 			var name = ts.Name;

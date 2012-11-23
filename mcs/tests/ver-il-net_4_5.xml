@@ -21189,6 +21189,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-45.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-fixedbuffer-01.cs">
     <type name="TestNew">
       <method name="Void SetTest()" attrs="134">
@@ -28816,6 +28826,16 @@
       </method>
       <method name="Void .cctor()" attrs="6289">
         <size>25</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-146.cs">
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>352</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

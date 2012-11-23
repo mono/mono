@@ -36,7 +36,6 @@ namespace Mono.CSharp
 	public interface IAssemblyDefinition
 	{
 		string FullName { get; }
-		bool HasExtensionMethod { get; }
 		bool IsCLSCompliant { get; }
 		bool IsMissing { get; }
 		string Name { get; }
@@ -129,12 +128,6 @@ namespace Mono.CSharp
 		public string FullName {
 			get {
 				return Builder.FullName;
-			}
-		}
-
-		public bool HasExtensionMethod {
-			get {
-				return module.HasExtensionMethod;
 			}
 		}
 
