@@ -341,7 +341,7 @@ namespace MonkeyDoc
 			node = null;
 			internalId = null;
 
-			if (url.StartsWith ("root:/"))
+			if (url.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase))
 				return this.GetHelpSourceAndIdFromName (url.Substring ("root:/".Length), out internalId, out node);
 
 			HelpSource helpSource = null;
@@ -370,7 +370,7 @@ namespace MonkeyDoc
 
 		public Stream GetImage (string url)
 		{
-			if (url.StartsWith ("source-id:")) {
+			if (url.StartsWith ("source-id:", StringComparison.OrdinalIgnoreCase)) {
 				string text = url.Substring (10);
 				int num = text.IndexOf (":");
 				string text2 = text.Substring (0, num);

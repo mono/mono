@@ -296,7 +296,7 @@ namespace MonkeyDoc.Providers
 		int GetNodeLevel (Node node)
 		{
 			int i = 0;
-			for (; !node.Element.StartsWith ("root:/"); i++) {
+			for (; !node.Element.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase); i++) {
 				//Console.WriteLine ("\tLevel {0} : {1} {2}", i, node.Element, node.Caption);
 				node = node.Parent;
 			}
@@ -314,7 +314,7 @@ namespace MonkeyDoc.Providers
 		Node GetNodeTypeParent (Node node)
 		{
 			// Type nodes are always at level 2 so we just need to get there
-			while (node != null && node.Parent != null && !node.Parent.Parent.Element.StartsWith ("root:/"))
+			while (node != null && node.Parent != null && !node.Parent.Parent.Element.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase))
 				node = node.Parent;
 			return node;
 		}
@@ -335,16 +335,16 @@ namespace MonkeyDoc.Providers
 			var id = string.Empty;
 			node = null;
 
-			if (!url.StartsWith (EcmaPrefix)) {
+			if (!url.StartsWith (EcmaPrefix, StringComparison.OrdinalIgnoreCase)) {
 				node = MatchNode (url);
 				if (node == null)
 					return null;
 				id = node.GetInternalUrl ();
 			}
 
-			if (id.StartsWith (UriPrefix))
+			if (id.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase))
 				id = id.Substring (UriPrefix.Length);
-			else if (id.StartsWith ("N:"))
+			else if (id.StartsWith ("N:", StringComparison.OrdinalIgnoreCase))
 				id = "xml.summary." + id.Substring ("N:".Length);
 
 			var hashIndex = id.IndexOf ('#');

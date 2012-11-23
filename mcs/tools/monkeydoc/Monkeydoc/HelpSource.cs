@@ -213,7 +213,7 @@ namespace MonkeyDoc
 
 		public virtual bool CanHandleUrl (string url)
 		{
-			return url.StartsWith (UriPrefix);
+			return url.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public virtual string GetInternalIdForUrl (string url, out Node node)
@@ -231,7 +231,7 @@ namespace MonkeyDoc
 				return current;
 
 			current = Tree.RootNode;
-			var strippedUrl = url.StartsWith (UriPrefix) ? url.Substring (UriPrefix.Length) : url;
+			var strippedUrl = url.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase) ? url.Substring (UriPrefix.Length) : url;
 			var searchNode = new Node () { Element = strippedUrl };
 
 			do {
@@ -266,11 +266,11 @@ namespace MonkeyDoc
 			while (current != null) {
 				bool stop = true;
 				foreach (Node n in current.Nodes) {
-					var element = n.Element.StartsWith (UriPrefix) ? n.Element.Substring (UriPrefix.Length) : n.Element;
+					var element = n.Element.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase) ? n.Element.Substring (UriPrefix.Length) : n.Element;
 					if (url == element) {
 						cache.Put (url, n);
 						return n;
-					} else if (url.StartsWith (element + ".") && !n.IsLeaf) {
+					} else if (url.StartsWith (element + ".", StringComparison.OrdinalIgnoreCase) && !n.IsLeaf) {
 						current = n;
 						stop = false;
 						break;
@@ -295,7 +295,7 @@ namespace MonkeyDoc
 			string Cleanup (Node n)
 			{
 				var prefix = n.Tree != null && n.Tree.HelpSource != null ? n.Tree.HelpSource.UriPrefix : string.Empty;
-				var element = n.Element.StartsWith (prefix) ? n.Element.Substring (prefix.Length) : n.Element;
+				var element = n.Element.StartsWith (prefix, StringComparison.OrdinalIgnoreCase) ? n.Element.Substring (prefix.Length) : n.Element;
 				if (char.IsDigit (element, 0)) {
 					var count = element.TakeWhile (char.IsDigit).Count ();
 					element = element.PadLeft (Math.Max (0, 3 - count) + element.Length, '0');
