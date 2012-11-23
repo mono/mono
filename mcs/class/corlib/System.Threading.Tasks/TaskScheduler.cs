@@ -103,7 +103,7 @@ namespace System.Threading.Tasks
 		
 		public virtual int MaximumConcurrencyLevel {
 			get {
-				return Environment.ProcessorCount;
+				return int.MaxValue;
 			}
 		}
 
