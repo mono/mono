@@ -1,0 +1,56 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<p>The logical representation of a {@link Lucene.Net.Documents.Document} for indexing and searching.</p>
+<p>The document package provides the user level logical representation of content to be indexed and searched.  The
+package also provides utilities for working with {@link Lucene.Net.Documents.Document}s and {@link Lucene.Net.Documents.Fieldable}s.</p>
+<h2>Document and Fieldable</h2>
+<p>A {@link Lucene.Net.Documents.Document} is a collection of {@link Lucene.Net.Documents.Fieldable}s.  A
+  {@link Lucene.Net.Documents.Fieldable} is a logical representation of a user's content that needs to be indexed or stored.
+  {@link Lucene.Net.Documents.Fieldable}s have a number of properties that tell Lucene how to treat the content (like indexed, tokenized,
+  stored, etc.)  See the {@link Lucene.Net.Documents.Field} implementation of {@link Lucene.Net.Documents.Fieldable}
+  for specifics on these properties.
+</p>
+<p>Note: it is common to refer to {@link Lucene.Net.Documents.Document}s having {@link Lucene.Net.Documents.Field}s, even though technically they have
+{@link Lucene.Net.Documents.Fieldable}s.</p>
+<h2>Working with Documents</h2>
+<p>First and foremost, a {@link Lucene.Net.Documents.Document} is something created by the user application.  It is your job
+  to create Documents based on the content of the files you are working with in your application (Word, txt, PDF, Excel or any other format.)
+  How this is done is completely up to you.  That being said, there are many tools available in other projects that can make
+  the process of taking a file and converting it into a Lucene {@link Lucene.Net.Documents.Document}.  To see an example of this,
+  take a look at the Lucene <a href = "gettingstarted.html" target = "top">demo</a> and the associated source code
+  for extracting content from HTML.
+</p>
+<p>The {@link Lucene.Net.Documents.DateTools} is a utility class to make dates and times searchable
+(remember, Lucene only searches text). {@link Lucene.Net.Documents.NumericField} is a special helper class
+to simplify indexing of numeric values (and also dates) for fast range range queries with {@link Lucene.Net.Search.NumericRangeQuery}
+(using a special sortable string representation of numeric values).</p>
+<p>The {@link Lucene.Net.Documents.FieldSelector} class provides a mechanism to tell Lucene how to load Documents from
+storage.  If no FieldSelector is used, all Fieldables on a Document will be loaded.  As an example of the FieldSelector usage, consider
+  the common use case of
+displaying search results on a web page and then having users click through to see the full document.  In this scenario, it is often
+  the case that there are many small fields and one or two large fields (containing the contents of the original file). Before the FieldSelector,
+the full Document had to be loaded, including the large fields, in order to display the results.  Now, using the FieldSelector, one
+can {@link Lucene.Net.Documents.FieldSelectorResult#LAZY_LOAD} the large fields, thus only loading the large fields
+when a user clicks on the actual link to view the original content.</p>
+</body>
+</html>

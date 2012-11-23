@@ -1,0 +1,6 @@
+<config>
+        <appSettings>
+                <add key="docPath" value="@monodoc_refdir@" />
+                <add key="docExternalPath" value="" />
+        </appSettings>
+</config>

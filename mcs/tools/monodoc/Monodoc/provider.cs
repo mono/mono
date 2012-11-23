@@ -132,7 +132,6 @@ public class Node : IComparable {
 	Node parent;
 	protected ArrayList nodes;
 	protected internal int position;
-	string compare_key;
 
 	static ArrayList empty = ArrayList.ReadOnly(new ArrayList(0));
 
@@ -394,19 +393,25 @@ public class Node : IComparable {
 			LoadNode ();
 		if (other.position < 0)
 			other.LoadNode ();
-		if (compare_key == null || other.compare_key == null) {
-			Regex digits = new Regex (@"([\d]+)|([^\d]+)");
-			MatchEvaluator eval = delegate (Match m) {
-				return (m.Value.Length > 0 && char.IsDigit (m.Value [0]))
-				? m.Value.PadLeft (System.Math.Max (caption.Length, other.caption.Length)) 
-				: m.Value;
-			};
-			if (compare_key == null)
-				compare_key = digits.Replace (caption, eval);
-			if (other.compare_key == null)
-				other.compare_key = digits.Replace (other.caption, eval);
+
+		var cap1 = caption;
+		var cap2 = other.caption;
+
+		/* Some node (notably from ecmaspec) have number prepended to them
+		 * which we need to sort better by padding them to the same number
+		 * of digits
+		 */
+		if (char.IsDigit (cap1[0]) && char.IsDigit (cap2[0])) {
+			int c1 = cap1.TakeWhile (char.IsDigit).Count ();
+			int c2 = cap2.TakeWhile (char.IsDigit).Count ();
+
+			if (c1 != c2) {
+				cap1 = cap1.PadLeft (cap1.Length + Math.Max (0, c2 - c1), '0');
+				cap2 = cap2.PadLeft (cap2.Length + Math.Max (0, c1 - c2), '0');
+			}
 		}
-		return compare_key.CompareTo (other.compare_key);
+
+		return string.Compare (cap1, cap2, StringComparison.OrdinalIgnoreCase);
 	}
 }
 

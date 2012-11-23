@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Lucene.Net.Core</id>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners>The Apache Software Foundation</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>http://incubator.apache.org/lucene.net/</projectUrl>
+    <iconUrl>..\..\branding\logo\lucene-net-icon-128x128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+    	Lucene.Net Core: This contains only the core Lucene.Net assembly.
+    	Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</description>
+    <copyright>Copyright 2011</copyright>
+    <tags>Tag1 Tag2</tags>
+    <dependencies>
+      
+    </dependencies>
+  </metadata>
+</package>

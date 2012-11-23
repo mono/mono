@@ -1,0 +1,3961 @@
+﻿
+=================== 2.9.4 trunk (not yet released) =====================
+
+Bug fixes
+
+ * LUCENENET-355  [LUCENE-2387]: Don't hang onto Fieldables from the last doc indexed,
+   in IndexWriter, nor the Reader in Tokenizer after close is
+   called. (digy) [Ruben Laguna, Uwe Schindler, Mike McCandless]
+
+
+Change Log Copied from Lucene 
+======================= Release 2.9.2 2010-02-26 =======================
+
+Bug fixes
+
+ * LUCENE-2045: Fix silly FileNotFoundException hit if you enable
+   infoStream on IndexWriter and then add an empty document and commit
+   (Shai Erera via Mike McCandless)
+
+ * LUCENE-2088: addAttribute() should only accept interfaces that
+   extend Attribute. (Shai Erera, Uwe Schindler)
+
+ * LUCENE-2092: BooleanQuery was ignoring disableCoord in its hashCode
+   and equals methods, cause bad things to happen when caching
+   BooleanQueries.  (Chris Hostetter, Mike McCandless)
+
+ * LUCENE-2095: Fixes: when two threads call IndexWriter.commit() at
+   the same time, it's possible for commit to return control back to
+   one of the threads before all changes are actually committed.
+   (Sanne Grinovero via Mike McCandless)
+
+ * LUCENE-2166: Don't incorrectly keep warning about the same immense
+    term, when IndexWriter.infoStream is on.  (Mike McCandless)
+
+ * LUCENE-2158: At high indexing rates, NRT reader could temporarily
+   lose deletions.  (Mike McCandless)
+  
+ * LUCENE-2182: DEFAULT_ATTRIBUTE_FACTORY was failing to load
+   implementation class when interface was loaded by a different
+   class loader.  (Uwe Schindler, reported on java-user by Ahmed El-dawy)
+  
+ * LUCENE-2257: Increase max number of unique terms in one segment to
+   termIndexInterval (default 128) * ~2.1 billion = ~274 billion.
+   (Tom Burton-West via Mike McCandless)
+
+ * LUCENE-2260: Fixed AttributeSource to not hold a strong
+   reference to the Attribute/AttributeImpl classes which prevents
+   unloading of custom attributes loaded by other classloaders
+   (e.g. in Solr plugins).  (Uwe Schindler)
+ 
+ * LUCENE-1941: Fix Min/MaxPayloadFunction returns 0 when
+   only one payload is present.  (Erik Hatcher, Mike McCandless
+   via Uwe Schindler)
+
+ * LUCENE-2270: Queries consisting of all zero-boost clauses
+   (for example, text:foo^0) sorted incorrectly and produced
+   invalid docids. (yonik)
+
+ * LUCENE-2422: Don't reuse byte[] in IndexInput/Output -- it gains
+   little performance, and ties up possibly large amounts of memory
+   for apps that index large docs.  (Ross Woolf via Mike McCandless)
+
+API Changes
+
+ * LUCENE-2190: Added a new class CustomScoreProvider to function package
+   that can be subclassed to provide custom scoring to CustomScoreQuery.
+   The methods in CustomScoreQuery that did this before were deprecated
+   and replaced by a method getCustomScoreProvider(IndexReader) that
+   returns a custom score implementation using the above class. The change
+   is necessary with per-segment searching, as CustomScoreQuery is
+   a stateless class (like all other Queries) and does not know about
+   the currently searched segment. This API works similar to Filter's
+   getDocIdSet(IndexReader).  (Paul chez Jamespot via Mike McCandless,
+   Uwe Schindler)
+
+ * LUCENE-2080: Deprecate Version.LUCENE_CURRENT, as using this constant
+   will cause backwards compatibility problems when upgrading Lucene. See
+   the Version javadocs for additional information.
+   (Robert Muir)
+
+Optimizations
+
+ * LUCENE-2086: When resolving deleted terms, do so in term sort order
+   for better performance (Bogdan Ghidireac via Mike McCandless)
+
+ * LUCENE-2258: Remove unneeded synchronization in FuzzyTermEnum.
+   (Uwe Schindler, Robert Muir)
+
+Test Cases
+
+ * LUCENE-2114: Change TestFilteredSearch to test on multi-segment
+   index as well. (Simon Willnauer via Mike McCandless)
+
+ * LUCENE-2211: Improves BaseTokenStreamTestCase to use a fake attribute
+   that checks if clearAttributes() was called correctly.
+   (Uwe Schindler, Robert Muir)
+
+ * LUCENE-2207, LUCENE-2219: Improve BaseTokenStreamTestCase to check if
+   end() is implemented correctly.  (Koji Sekiguchi, Robert Muir)
+
+Documentation
+
+ * LUCENE-2114: Improve javadocs of Filter to call out that the
+   provided reader is per-segment (Simon Willnauer via Mike
+   McCandless)
+
+======================= Release 2.9.1 2009-11-06 =======================
+
+Changes in backwards compatibility policy
+
+ * LUCENE-2002: Add required Version matchVersion argument when
+   constructing QueryParser or MultiFieldQueryParser and, default (as
+   of 2.9) enablePositionIncrements to true to match
+   StandardAnalyzer's 2.9 default (Uwe Schindler, Mike McCandless)
+
+Bug fixes
+
+ * LUCENE-1974: Fixed nasty bug in BooleanQuery (when it used
+   BooleanScorer for scoring), whereby some matching documents fail to
+   be collected.  (Fulin Tang via Mike McCandless)
+
+ * LUCENE-1124: Make sure FuzzyQuery always matches the precise term.
+   (stefatwork@gmail.com via Mike McCandless)
+
+ * LUCENE-1976: Fix IndexReader.isCurrent() to return the right thing
+   when the reader is a near real-time reader.  (Jake Mannix via Mike
+   McCandless)
+
+ * LUCENE-1986: Fix NPE when scoring PayloadNearQuery (Peter Keegan,
+   Mark Miller via Mike McCandless)
+
+ * LUCENE-1992: Fix thread hazard if a merge is committing just as an
+   exception occurs during sync (Uwe Schindler, Mike McCandless)
+
+ * LUCENE-1995: Note in javadocs that IndexWriter.setRAMBufferSizeMB
+   cannot exceed 2048 MB, and throw IllegalArgumentException if it
+   does.  (Aaron McKee, Yonik Seeley, Mike McCandless)
+
+ * LUCENE-2004: Fix Constants.LUCENE_MAIN_VERSION to not be inlined
+   by client code.  (Uwe Schindler)
+
+ * LUCENE-2016: Replace illegal U+FFFF character with the replacement
+   char (U+FFFD) during indexing, to prevent silent index corruption.
+   (Peter Keegan, Mike McCandless)
+
+API Changes
+
+ * Un-deprecate search(Weight weight, Filter filter, int n) from
+   Searchable interface (deprecated by accident).  (Uwe Schindler)
+
+ * Un-deprecate o.a.l.util.Version constants.  (Mike McCandless)
+
+ * LUCENE-1987: Un-deprecate some ctors of Token, as they will not
+   be removed in 3.0 and are still useful. Also add some missing
+   o.a.l.util.Version constants for enabling invalid acronym
+   settings in StandardAnalyzer to be compatible with the coming
+   Lucene 3.0.  (Uwe Schindler)
+
+ * LUCENE-1973: Un-deprecate IndexSearcher.setDefaultFieldSortScoring,
+   to allow controlling per-IndexSearcher whether scores are computed
+   when sorting by field.  (Uwe Schindler, Mike McCandless)
+   
+Documentation
+
+ * LUCENE-1955: Fix Hits deprecation notice to point users in right
+   direction. (Mike McCandless, Mark Miller)
+   
+ * Fix javadoc about score tracking done by search methods in Searcher 
+   and IndexSearcher.  (Mike McCandless)
+
+ * LUCENE-2008: Javadoc improvements for TokenStream/Tokenizer/Token
+   (Luke Nezda via Mike McCandless)
+
+======================= Release 2.9.0 2009-09-23 =======================
+
+Changes in backwards compatibility policy
+
+ * LUCENE-1575: Searchable.search(Weight, Filter, int, Sort) no
+    longer computes a document score for each hit by default.  If
+    document score tracking is still needed, you can call
+    IndexSearcher.setDefaultFieldSortScoring(true, true) to enable
+    both per-hit and maxScore tracking; however, this is deprecated
+    and will be removed in 3.0.
+
+    Alternatively, use Searchable.search(Weight, Filter, Collector)
+    and pass in a TopFieldCollector instance, using the following code
+    sample:
+ 
+    <code>
+      TopFieldCollector tfc = TopFieldCollector.create(sort, numHits, fillFields, 
+                                                       true /* trackDocScores */,
+                                                       true /* trackMaxScore */,
+                                                       false /* docsInOrder */);
+      searcher.search(query, tfc);
+      TopDocs results = tfc.topDocs();
+    </code>
+
+    Note that your Sort object cannot use SortField.AUTO when you
+    directly instantiate TopFieldCollector.
+
+    Also, the method search(Weight, Filter, Collector) was added to
+    the Searchable interface and the Searcher abstract class to
+    replace the deprecated HitCollector versions.  If you either
+    implement Searchable or extend Searcher, you should change your
+    code to implement this method.  If you already extend
+    IndexSearcher, no further changes are needed to use Collector.
+    
+    Finally, the values Float.NaN and Float.NEGATIVE_INFINITY are not
+    valid scores.  Lucene uses these values internally in certain
+    places, so if you have hits with such scores, it will cause
+    problems. (Shai Erera via Mike McCandless)
+
+ * LUCENE-1687: All methods and parsers from the interface ExtendedFieldCache
+    have been moved into FieldCache. ExtendedFieldCache is now deprecated and
+    contains only a few declarations for binary backwards compatibility. 
+    ExtendedFieldCache will be removed in version 3.0. Users of FieldCache and 
+    ExtendedFieldCache will be able to plug in Lucene 2.9 without recompilation.
+    The auto cache (FieldCache.getAuto) is now deprecated. Due to the merge of
+    ExtendedFieldCache and FieldCache, FieldCache can now additionally return
+    long[] and double[] arrays in addition to int[] and float[] and StringIndex.
+    
+    The interface changes are only notable for users implementing the interfaces,
+    which was unlikely done, because there is no possibility to change
+    Lucene's FieldCache implementation.  (Grant Ingersoll, Uwe Schindler)
+    
+ * LUCENE-1630, LUCENE-1771: Weight, previously an interface, is now an abstract 
+    class. Some of the method signatures have changed, but it should be fairly
+    easy to see what adjustments must be made to existing code to sync up
+    with the new API. You can find more detail in the API Changes section.
+    
+    Going forward Searchable will be kept for convenience only and may
+    be changed between minor releases without any deprecation
+    process. It is not recommended that you implement it, but rather extend
+    Searcher.  
+    (Shai Erera, Chris Hostetter, Martin Ruckli, Mark Miller via Mike McCandless)
+
+ * LUCENE-1422, LUCENE-1693: The new Attribute based TokenStream API (see below)
+    has some backwards breaks in rare cases. We did our best to make the 
+    transition as easy as possible and you are not likely to run into any problems. 
+    If your tokenizers still implement next(Token) or next(), the calls are 
+    automatically wrapped. The indexer and query parser use the new API 
+    (eg use incrementToken() calls). All core TokenStreams are implemented using 
+    the new API. You can mix old and new API style TokenFilters/TokenStream. 
+    Problems only occur when you have done the following:
+    You have overridden next(Token) or next() in one of the non-abstract core
+    TokenStreams/-Filters. These classes should normally be final, but some
+    of them are not. In this case, next(Token)/next() would never be called.
+    To fail early with a hard compile/runtime error, the next(Token)/next()
+    methods in these TokenStreams/-Filters were made final in this release.
+    (Michael Busch, Uwe Schindler)
+
+ * LUCENE-1763: MergePolicy now requires an IndexWriter instance to
+    be passed upon instantiation. As a result, IndexWriter was removed
+    as a method argument from all MergePolicy methods. (Shai Erera via
+    Mike McCandless)
+    
+ * LUCENE-1748: LUCENE-1001 introduced PayloadSpans, but this was a back
+    compat break and caused custom SpanQuery implementations to fail at runtime
+    in a variety of ways. This issue attempts to remedy things by causing
+    a compile time break on custom SpanQuery implementations and removing 
+    the PayloadSpans class, with its functionality now moved to Spans. To
+    help in alleviating future back compat pain, Spans has been changed from
+    an interface to an abstract class.
+    (Hugh Cayless, Mark Miller)
+    
+ * LUCENE-1808: Query.createWeight has been changed from protected to
+    public. This will be a back compat break if you have overridden this
+    method - but you are likely already affected by the LUCENE-1693 (make Weight 
+    abstract rather than an interface) back compat break if you have overridden 
+    Query.creatWeight, so we have taken the opportunity to make this change.
+    (Tim Smith, Shai Erera via Mark Miller)
+
+ * LUCENE-1708 - IndexReader.document() no longer checks if the document is 
+    deleted. You can call IndexReader.isDeleted(n) prior to calling document(n).
+    (Shai Erera via Mike McCandless)
+
+ 
+Changes in runtime behavior
+
+ * LUCENE-1424: QueryParser now by default uses constant score auto
+    rewriting when it generates a WildcardQuery and PrefixQuery (it
+    already does so for TermRangeQuery, as well).  Call
+    setMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE)
+    to revert to slower BooleanQuery rewriting method.  (Mark Miller via Mike
+    McCandless)
+    
+ * LUCENE-1575: As of 2.9, the core collectors as well as
+    IndexSearcher's search methods that return top N results, no
+    longer filter documents with scores <= 0.0. If you rely on this
+    functionality you can use PositiveScoresOnlyCollector like this:
+
+    <code>
+      TopDocsCollector tdc = new TopScoreDocCollector(10);
+      Collector c = new PositiveScoresOnlyCollector(tdc);
+      searcher.search(query, c);
+      TopDocs hits = tdc.topDocs();
+      ...
+    </code>
+
+ * LUCENE-1604: IndexReader.norms(String field) is now allowed to
+    return null if the field has no norms, as long as you've
+    previously called IndexReader.setDisableFakeNorms(true).  This
+    setting now defaults to false (to preserve the fake norms back
+    compatible behavior) but in 3.0 will be hardwired to true.  (Shon
+    Vella via Mike McCandless).
+
+ * LUCENE-1624: If you open IndexWriter with create=true and
+    autoCommit=false on an existing index, IndexWriter no longer
+    writes an empty commit when it's created.  (Paul Taylor via Mike
+    McCandless)
+
+ * LUCENE-1593: When you call Sort() or Sort.setSort(String field,
+    boolean reverse), the resulting SortField array no longer ends
+    with SortField.FIELD_DOC (it was unnecessary as Lucene breaks ties
+    internally by docID). (Shai Erera via Michael McCandless)
+
+ * LUCENE-1542: When the first token(s) have 0 position increment,
+    IndexWriter used to incorrectly record the position as -1, if no
+    payload is present, or Integer.MAX_VALUE if a payload is present.
+    This causes positional queries to fail to match.  The bug is now
+    fixed, but if your app relies on the buggy behavior then you must
+    call IndexWriter.setAllowMinus1Position().  That API is deprecated
+    so you must fix your application, and rebuild your index, to not
+    rely on this behavior by the 3.0 release of Lucene. (Jonathan
+    Mamou, Mark Miller via Mike McCandless)
+
+
+ * LUCENE-1715: Finalizers have been removed from the 4 core classes
+    that still had them, since they will cause GC to take longer, thus
+    tying up memory for longer, and at best they mask buggy app code.
+    DirectoryReader (returned from IndexReader.open) & IndexWriter
+    previously released the write lock during finalize.
+    SimpleFSDirectory.FSIndexInput closed the descriptor in its
+    finalizer, and NativeFSLock released the lock.  It's possible
+    applications will be affected by this, but only if the application
+    is failing to close reader/writers.  (Brian Groose via Mike
+    McCandless)
+
+ * LUCENE-1717: Fixed IndexWriter to account for RAM usage of
+    buffered deletions.  (Mike McCandless)
+
+ * LUCENE-1727: Ensure that fields are stored & retrieved in the
+    exact order in which they were added to the document.  This was
+    true in all Lucene releases before 2.3, but was broken in 2.3 and
+    2.4, and is now fixed in 2.9.  (Mike McCandless)
+
+ * LUCENE-1678: The addition of Analyzer.reusableTokenStream
+    accidentally broke back compatibility of external analyzers that
+    subclassed core analyzers that implemented tokenStream but not
+    reusableTokenStream.  This is now fixed, such that if
+    reusableTokenStream is invoked on such a subclass, that method
+    will forcefully fallback to tokenStream.  (Mike McCandless)
+    
+ * LUCENE-1801: Token.clear() and Token.clearNoTermBuffer() now also clear
+    startOffset, endOffset and type. This is not likely to affect any
+    Tokenizer chains, as Tokenizers normally always set these three values.
+    This change was made to be conform to the new AttributeImpl.clear() and
+    AttributeSource.clearAttributes() to work identical for Token as one for all
+    AttributeImpl and the 6 separate AttributeImpls. (Uwe Schindler, Michael Busch)
+
+ * LUCENE-1483: When searching over multiple segments, a new Scorer is now created 
+    for each segment. Searching has been telescoped out a level and IndexSearcher now
+    operates much like MultiSearcher does. The Weight is created only once for the top 
+    level Searcher, but each Scorer is passed a per-segment IndexReader. This will 
+    result in doc ids in the Scorer being internal to the per-segment IndexReader. It 
+    has always been outside of the API to count on a given IndexReader to contain every 
+    doc id in the index - and if you have been ignoring MultiSearcher in your custom code 
+    and counting on this fact, you will find your code no longer works correctly. If a 
+    custom Scorer implementation uses any caches/filters that rely on being based on the 
+    top level IndexReader, it will need to be updated to correctly use contextless 
+    caches/filters eg you can't count on the IndexReader to contain any given doc id or 
+    all of the doc ids. (Mark Miller, Mike McCandless)
+
+ * LUCENE-1846: DateTools now uses the US locale to format the numbers in its
+    date/time strings instead of the default locale. For most locales there will
+    be no change in the index format, as DateFormatSymbols is using ASCII digits.
+    The usage of the US locale is important to guarantee correct ordering of
+    generated terms.  (Uwe Schindler)
+
+ * LUCENE-1860: MultiTermQuery now defaults to
+    CONSTANT_SCORE_AUTO_REWRITE_DEFAULT rewrite method (previously it
+    was SCORING_BOOLEAN_QUERY_REWRITE).  This means that PrefixQuery
+    and WildcardQuery will now produce constant score for all matching
+    docs, equal to the boost of the query.  (Mike McCandless)
+
+API Changes
+
+ * LUCENE-1419: Add expert API to set custom indexing chain. This API is 
+   package-protected for now, so we don't have to officially support it.
+   Yet, it will give us the possibility to try out different consumers
+   in the chain. (Michael Busch)
+
+ * LUCENE-1427: DocIdSet.iterator() is now allowed to throw
+   IOException.  (Paul Elschot, Mike McCandless)
+
+ * LUCENE-1422, LUCENE-1693: New TokenStream API that uses a new class called 
+   AttributeSource instead of the Token class, which is now a utility class that
+   holds common Token attributes. All attributes that the Token class had have 
+   been moved into separate classes: TermAttribute, OffsetAttribute, 
+   PositionIncrementAttribute, PayloadAttribute, TypeAttribute and FlagsAttribute. 
+   The new API is much more flexible; it allows to combine the Attributes 
+   arbitrarily and also to define custom Attributes. The new API has the same 
+   performance as the old next(Token) approach. For conformance with this new 
+   API Tee-/SinkTokenizer was deprecated and replaced by a new TeeSinkTokenFilter. 
+   (Michael Busch, Uwe Schindler; additional contributions and bug fixes by 
+   Daniel Shane, Doron Cohen)
+
+ * LUCENE-1467: Add nextDoc() and next(int) methods to OpenBitSetIterator.
+   These methods can be used to avoid additional calls to doc(). 
+   (Michael Busch)
+
+ * LUCENE-1468: Deprecate Directory.list(), which sometimes (in
+   FSDirectory) filters out files that don't look like index files, in
+   favor of new Directory.listAll(), which does no filtering.  Also,
+   listAll() will never return null; instead, it throws an IOException
+   (or subclass).  Specifically, FSDirectory.listAll() will throw the
+   newly added NoSuchDirectoryException if the directory does not
+   exist.  (Marcel Reutegger, Mike McCandless)
+
+ * LUCENE-1546: Add IndexReader.flush(Map commitUserData), allowing
+   you to record an opaque commitUserData (maps String -> String) into
+   the commit written by IndexReader.  This matches IndexWriter's
+   commit methods.  (Jason Rutherglen via Mike McCandless)
+
+ * LUCENE-652: Added org.apache.lucene.document.CompressionTools, to
+   enable compressing & decompressing binary content, external to
+   Lucene's indexing.  Deprecated Field.Store.COMPRESS.
+
+ * LUCENE-1561: Renamed Field.omitTf to Field.omitTermFreqAndPositions
+    (Otis Gospodnetic via Mike McCandless)
+  
+ * LUCENE-1500: Added new InvalidTokenOffsetsException to Highlighter methods
+    to denote issues when offsets in TokenStream tokens exceed the length of the
+    provided text.  (Mark Harwood)
+    
+ * LUCENE-1575, LUCENE-1483: HitCollector is now deprecated in favor of 
+    a new Collector abstract class. For easy migration, people can use
+    HitCollectorWrapper which translates (wraps) HitCollector into
+    Collector. Note that this class is also deprecated and will be
+    removed when HitCollector is removed.  Also TimeLimitedCollector
+    is deprecated in favor of the new TimeLimitingCollector which
+    extends Collector.  (Shai Erera, Mark Miller, Mike McCandless)
+
+ * LUCENE-1592: The method TermsEnum.skipTo() was deprecated, because
+    it is used nowhere in core/contrib and there is only a very ineffective
+    default implementation available. If you want to position a TermEnum
+    to another Term, create a new one using IndexReader.terms(Term).
+    (Uwe Schindler)
+
+ * LUCENE-1621: MultiTermQuery.getTerm() has been deprecated as it does
+    not make sense for all subclasses of MultiTermQuery. Check individual
+    subclasses to see if they support getTerm().  (Mark Miller)
+
+ * LUCENE-1636: Make TokenFilter.input final so it's set only
+    once. (Wouter Heijke, Uwe Schindler via Mike McCandless).
+
+ * LUCENE-1658, LUCENE-1451: Renamed FSDirectory to SimpleFSDirectory
+    (but left an FSDirectory base class).  Added an FSDirectory.open
+    static method to pick a good default FSDirectory implementation
+    given the OS. FSDirectories should now be instantiated using
+    FSDirectory.open or with public constructors rather than
+    FSDirectory.getDirectory(), which has been deprecated.
+    (Michael McCandless, Uwe Schindler, yonik)
+
+ * LUCENE-1665: Deprecate SortField.AUTO, to be removed in 3.0.
+    Instead, when sorting by field, the application should explicitly
+    state the type of the field.  (Mike McCandless)
+
+ * LUCENE-1660: StopFilter, StandardAnalyzer, StopAnalyzer now
+    require up front specification of enablePositionIncrement (Mike
+    McCandless)
+
+ * LUCENE-1614: DocIdSetIterator's next() and skipTo() were deprecated in favor
+    of the new nextDoc() and advance(). The new methods return the doc Id they 
+    landed on, saving an extra call to doc() in most cases.
+    For easy migration of the code, you can change the calls to next() to 
+    nextDoc() != DocIdSetIterator.NO_MORE_DOCS and similarly for skipTo(). 
+    However it is advised that you take advantage of the returned doc ID and not 
+    call doc() following those two.
+    Also, doc() was deprecated in favor of docID(). docID() should return -1 or 
+    NO_MORE_DOCS if nextDoc/advance were not called yet, or NO_MORE_DOCS if the 
+    iterator has exhausted. Otherwise it should return the current doc ID.
+    (Shai Erera via Mike McCandless)
+
+ * LUCENE-1672: All ctors/opens and other methods using String/File to
+    specify the directory in IndexReader, IndexWriter, and IndexSearcher
+    were deprecated. You should instantiate the Directory manually before
+    and pass it to these classes (LUCENE-1451, LUCENE-1658).
+    (Uwe Schindler)
+
+ * LUCENE-1407: Move RemoteSearchable, RemoteCachingWrapperFilter out
+    of Lucene's core into new contrib/remote package.  Searchable no
+    longer extends java.rmi.Remote (Simon Willnauer via Mike
+    McCandless)
+
+ * LUCENE-1677: The global property
+    org.apache.lucene.SegmentReader.class, and
+    ReadOnlySegmentReader.class are now deprecated, to be removed in
+    3.0.  src/gcj/* has been removed. (Earwin Burrfoot via Mike
+    McCandless)
+
+ * LUCENE-1673: Deprecated NumberTools in favour of the new
+    NumericRangeQuery and its new indexing format for numeric or
+    date values.  (Uwe Schindler)
+    
+ * LUCENE-1630, LUCENE-1771: Weight is now an abstract class, and adds
+    a scorer(IndexReader, boolean /* scoreDocsInOrder */, boolean /*
+    topScorer */) method instead of scorer(IndexReader). IndexSearcher uses 
+    this method to obtain a scorer matching the capabilities of the Collector 
+    wrt orderedness of docIDs. Some Scorers (like BooleanScorer) are much more
+    efficient if out-of-order documents scoring is allowed by a Collector.  
+    Collector must now implement acceptsDocsOutOfOrder. If you write a 
+    Collector which does not care about doc ID orderness, it is recommended 
+    that you return true.  Weight has a scoresDocsOutOfOrder method, which by 
+    default returns false.  If you create a Weight which will score documents 
+    out of order if requested, you should override that method to return true. 
+    BooleanQuery's setAllowDocsOutOfOrder and getAllowDocsOutOfOrder have been 
+    deprecated as they are not needed anymore. BooleanQuery will now score docs 
+    out of order when used with a Collector that can accept docs out of order.
+    Finally, Weight#explain now takes a sub-reader and sub-docID, rather than
+    a top level reader and docID.
+    (Shai Erera, Chris Hostetter, Martin Ruckli, Mark Miller via Mike McCandless)
+ 	
+ * LUCENE-1466, LUCENE-1906: Added CharFilter and MappingCharFilter, which allows
+    chaining & mapping of characters before tokenizers run. CharStream (subclass of
+    Reader) is the base class for custom java.io.Reader's, that support offset
+    correction. Tokenizers got an additional method correctOffset() that is passed
+    down to the underlying CharStream if input is a subclass of CharStream/-Filter.
+    (Koji Sekiguchi via Mike McCandless, Uwe Schindler)
+
+ * LUCENE-1703: Add IndexWriter.waitForMerges.  (Tim Smith via Mike
+    McCandless)
+
+ * LUCENE-1625: CheckIndex's programmatic API now returns separate
+    classes detailing the status of each component in the index, and
+    includes more detailed status than previously.  (Tim Smith via
+    Mike McCandless)
+
+ * LUCENE-1713: Deprecated RangeQuery and RangeFilter and renamed to
+    TermRangeQuery and TermRangeFilter. TermRangeQuery is in constant
+    score auto rewrite mode by default. The new classes also have new
+    ctors taking field and term ranges as Strings (see also
+    LUCENE-1424).  (Uwe Schindler)
+
+ * LUCENE-1609: The termInfosIndexDivisor must now be specified
+    up-front when opening the IndexReader.  Attempts to call
+    IndexReader.setTermInfosIndexDivisor will hit an
+    UnsupportedOperationException.  This was done to enable removal of
+    all synchronization in TermInfosReader, which previously could
+    cause threads to pile up in certain cases. (Dan Rosher via Mike
+    McCandless)
+    
+ * LUCENE-1688: Deprecate static final String stop word array in and 
+    StopAnalzyer and replace it with an immutable implementation of 
+    CharArraySet.  (Simon Willnauer via Mark Miller)
+
+ * LUCENE-1742: SegmentInfos, SegmentInfo and SegmentReader have been
+    made public as expert, experimental APIs.  These APIs may suddenly
+    change from release to release (Jason Rutherglen via Mike
+    McCandless).
+    
+ * LUCENE-1754: QueryWeight.scorer() can return null if no documents
+    are going to be matched by the query. Similarly,
+    Filter.getDocIdSet() can return null if no documents are going to
+    be accepted by the Filter. Note that these 'can' return null,
+    however they don't have to and can return a Scorer/DocIdSet which
+    does not match / reject all documents.  This is already the
+    behavior of some QueryWeight/Filter implementations, and is
+    documented here just for emphasis. (Shai Erera via Mike
+    McCandless)
+
+ * LUCENE-1705: Added IndexWriter.deleteAllDocuments.  (Tim Smith via
+    Mike McCandless)
+
+ * LUCENE-1460: Changed TokenStreams/TokenFilters in contrib to
+    use the new TokenStream API. (Robert Muir, Michael Busch)
+
+ * LUCENE-1748: LUCENE-1001 introduced PayloadSpans, but this was a back
+    compat break and caused custom SpanQuery implementations to fail at runtime
+    in a variety of ways. This issue attempts to remedy things by causing
+    a compile time break on custom SpanQuery implementations and removing 
+    the PayloadSpans class, with its functionality now moved to Spans. To
+    help in alleviating future back compat pain, Spans has been changed from
+    an interface to an abstract class.
+    (Hugh Cayless, Mark Miller)
+    
+ * LUCENE-1808: Query.createWeight has been changed from protected to
+    public. (Tim Smith, Shai Erera via Mark Miller)
+
+ * LUCENE-1826: Add constructors that take AttributeSource and
+    AttributeFactory to all Tokenizer implementations.
+    (Michael Busch)
+    
+ * LUCENE-1847: Similarity#idf for both a Term and Term Collection have
+    been deprecated. New versions that return an IDFExplanation have been
+    added.  (Yasoja Seneviratne, Mike McCandless, Mark Miller)
+    
+ * LUCENE-1877: Made NativeFSLockFactory the default for
+    the new FSDirectory API (open(), FSDirectory subclass ctors).
+    All FSDirectory system properties were deprecated and all lock
+    implementations use no lock prefix if the locks are stored inside
+    the index directory. Because the deprecated String/File ctors of
+    IndexWriter and IndexReader (LUCENE-1672) and FSDirectory.getDirectory()
+    still use the old SimpleFSLockFactory and the new API
+    NativeFSLockFactory, we strongly recommend not to mix deprecated
+    and new API. (Uwe Schindler, Mike McCandless)
+
+ * LUCENE-1911: Added a new method isCacheable() to DocIdSet. This method
+    should return true, if the underlying implementation does not use disk
+    I/O and is fast enough to be directly cached by CachingWrapperFilter.
+    OpenBitSet, SortedVIntList, and DocIdBitSet are such candidates.
+    The default implementation of the abstract DocIdSet class returns false.
+    In this case, CachingWrapperFilter copies the DocIdSetIterator into an
+    OpenBitSet for caching.  (Uwe Schindler, Thomas Becker)
+
+Bug fixes
+
+ * LUCENE-1415: MultiPhraseQuery has incorrect hashCode() and equals()
+   implementation - Leads to Solr Cache misses. 
+   (Todd Feak, Mark Miller via yonik)
+
+ * LUCENE-1327: Fix TermSpans#skipTo() to behave as specified in javadocs
+   of Terms#skipTo(). (Michael Busch)
+
+ * LUCENE-1573: Do not ignore InterruptedException (caused by
+   Thread.interrupt()) nor enter deadlock/spin loop. Now, an interrupt
+   will cause a RuntimeException to be thrown.  In 3.0 we will change
+   public APIs to throw InterruptedException.  (Jeremy Volkman via
+   Mike McCandless)
+
+ * LUCENE-1590: Fixed stored-only Field instances do not change the
+   value of omitNorms, omitTermFreqAndPositions in FieldInfo; when you
+   retrieve such fields they will now have omitNorms=true and
+   omitTermFreqAndPositions=false (though these values are unused).
+   (Uwe Schindler via Mike McCandless)
+
+ * LUCENE-1587: RangeQuery#equals() could consider a RangeQuery
+   without a collator equal to one with a collator.
+   (Mark Platvoet via Mark Miller) 
+
+ * LUCENE-1600: Don't call String.intern unnecessarily in some cases
+   when loading documents from the index.  (P Eger via Mike
+   McCandless)
+
+ * LUCENE-1611: Fix case where OutOfMemoryException in IndexWriter
+   could cause "infinite merging" to happen.  (Christiaan Fluit via
+   Mike McCandless)
+
+ * LUCENE-1623: Properly handle back-compatibility of 2.3.x indexes that
+   contain field names with non-ascii characters.  (Mike Streeton via
+   Mike McCandless)
+
+ * LUCENE-1593: MultiSearcher and ParallelMultiSearcher did not break ties (in 
+   sort) by doc Id in a consistent manner (i.e., if Sort.FIELD_DOC was used vs. 
+   when it wasn't). (Shai Erera via Michael McCandless)
+
+ * LUCENE-1647: Fix case where IndexReader.undeleteAll would cause
+    the segment's deletion count to be incorrect. (Mike McCandless)
+
+ * LUCENE-1542: When the first token(s) have 0 position increment,
+    IndexWriter used to incorrectly record the position as -1, if no
+    payload is present, or Integer.MAX_VALUE if a payload is present.
+    This causes positional queries to fail to match.  The bug is now
+    fixed, but if your app relies on the buggy behavior then you must
+    call IndexWriter.setAllowMinus1Position().  That API is deprecated
+    so you must fix your application, and rebuild your index, to not
+    rely on this behavior by the 3.0 release of Lucene. (Jonathan
+    Mamou, Mark Miller via Mike McCandless)
+
+ * LUCENE-1658: Fixed MMapDirectory to correctly throw IOExceptions
+    on EOF, removed numeric overflow possibilities and added support
+    for a hack to unmap the buffers on closing IndexInput.
+    (Uwe Schindler)
+    
+ * LUCENE-1681: Fix infinite loop caused by a call to DocValues methods 
+    getMinValue, getMaxValue, getAverageValue. (Simon Willnauer via Mark Miller)
+
+ * LUCENE-1599: Add clone support for SpanQuerys. SpanRegexQuery counts
+    on this functionality and does not work correctly without it.
+    (Billow Gao, Mark Miller)
+
+ * LUCENE-1718: Fix termInfosIndexDivisor to carry over to reopened
+    readers (Mike McCandless)
+    
+ * LUCENE-1583: SpanOrQuery skipTo() doesn't always move forwards as Spans
+	documentation indicates it should.  (Moti Nisenson via Mark Miller)
+
+ * LUCENE-1566: Sun JVM Bug
+    http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6478546 causes
+    invalid OutOfMemoryError when reading too many bytes at once from
+    a file on 32bit JVMs that have a large maximum heap size.  This
+    fix adds set/getReadChunkSize to FSDirectory so that large reads
+    are broken into chunks, to work around this JVM bug.  On 32bit
+    JVMs the default chunk size is 100 MB; on 64bit JVMs, which don't
+    show the bug, the default is Integer.MAX_VALUE. (Simon Willnauer
+    via Mike McCandless)
+    
+ * LUCENE-1448: Added TokenStream.end() to perform end-of-stream
+    operations (ie to return the end offset of the tokenization).  
+    This is important when multiple fields with the same name are added
+    to a document, to ensure offsets recorded in term vectors for all 
+    of the instances are correct.  
+    (Mike McCandless, Mark Miller, Michael Busch)
+
+ * LUCENE-1805: CloseableThreadLocal did not allow a null Object in get(), 
+    although it does allow it in set(Object). Fix get() to not assert the object
+    is not null. (Shai Erera via Mike McCandless)
+    
+ * LUCENE-1801: Changed all Tokenizers or TokenStreams in core/contrib)
+    that are the source of Tokens to always call
+    AttributeSource.clearAttributes() first. (Uwe Schindler)
+    
+ * LUCENE-1819: MatchAllDocsQuery.toString(field) should produce output
+    that is parsable by the QueryParser.  (John Wang, Mark Miller)
+
+ * LUCENE-1836: Fix localization bug in the new query parser and add 
+    new LocalizedTestCase as base class for localization junit tests.
+    (Robert Muir, Uwe Schindler via Michael Busch)
+
+ * LUCENE-1847: PhraseQuery/TermQuery/SpanQuery use IndexReader specific stats 
+    in their Weight#explain methods - these stats should be corpus wide.
+    (Yasoja Seneviratne, Mike McCandless, Mark Miller)
+
+ * LUCENE-1885: Fix the bug that NativeFSLock.isLocked() did not work,
+    if the lock was obtained by another NativeFSLock(Factory) instance.
+    Because of this IndexReader.isLocked() and IndexWriter.isLocked() did
+    not work correctly.  (Uwe Schindler)
+
+ * LUCENE-1899: Fix O(N^2) CPU cost when setting docIDs in order in an
+    OpenBitSet, due to an inefficiency in how the underlying storage is
+    reallocated.  (Nadav Har'El via Mike McCandless)
+
+ * LUCENE-1918: Fixed cases where a ParallelReader would
+   generate exceptions on being passed to
+   IndexWriter.addIndexes(IndexReader[]).  First case was when the
+   ParallelReader was empty.  Second case was when the ParallelReader
+   used to contain documents with TermVectors, but all such documents
+   have been deleted. (Christian Kohlschütter via Mike McCandless)
+
+New features
+
+ * LUCENE-1411: Added expert API to open an IndexWriter on a prior
+    commit, obtained from IndexReader.listCommits.  This makes it
+    possible to rollback changes to an index even after you've closed
+    the IndexWriter that made the changes, assuming you are using an
+    IndexDeletionPolicy that keeps past commits around.  This is useful
+    when building transactional support on top of Lucene.  (Mike
+    McCandless)
+
+ * LUCENE-1382: Add an optional arbitrary Map (String -> String)
+    "commitUserData" to IndexWriter.commit(), which is stored in the
+    segments file and is then retrievable via
+    IndexReader.getCommitUserData instance and static methods.
+    (Shalin Shekhar Mangar via Mike McCandless)
+
+ * LUCENE-1420: Similarity now has a computeNorm method that allows
+    custom Similarity classes to override how norm is computed.  It's
+    provided a FieldInvertState instance that contains details from
+    inverting the field.  The default impl is boost *
+    lengthNorm(numTerms), to be backwards compatible.  Also added
+    {set/get}DiscountOverlaps to DefaultSimilarity, to control whether
+    overlapping tokens (tokens with 0 position increment) should be
+    counted in lengthNorm.  (Andrzej Bialecki via Mike McCandless)
+
+ * LUCENE-1424: Moved constant score query rewrite capability into
+    MultiTermQuery, allowing TermRangeQuery, PrefixQuery and WildcardQuery
+    to switch between constant-score rewriting or BooleanQuery
+    expansion rewriting via a new setRewriteMethod method.
+    Deprecated ConstantScoreRangeQuery (Mark Miller via Mike
+    McCandless)
+
+ * LUCENE-1461: Added FieldCacheRangeFilter, a RangeFilter for
+    single-term fields that uses FieldCache to compute the filter.  If
+    your documents all have a single term for a given field, and you
+    need to create many RangeFilters with varying lower/upper bounds,
+    then this is likely a much faster way to create the filters than
+    RangeFilter.  FieldCacheRangeFilter allows ranges on all data types,
+    FieldCache supports (term ranges, byte, short, int, long, float, double).
+    However, it comes at the expense of added RAM consumption and slower
+    first-time usage due to populating the FieldCache.  It also does not
+    support collation  (Tim Sturge, Matt Ericson via Mike McCandless and
+    Uwe Schindler)
+
+ * LUCENE-1296: add protected method CachingWrapperFilter.docIdSetToCache 
+    to allow subclasses to choose which DocIdSet implementation to use
+    (Paul Elschot via Mike McCandless)
+    
+ * LUCENE-1390: Added ASCIIFoldingFilter, a Filter that converts 
+    alphabetic, numeric, and symbolic Unicode characters which are not in 
+    the first 127 ASCII characters (the "Basic Latin" Unicode block) into 
+    their ASCII equivalents, if one exists. ISOLatin1AccentFilter, which
+    handles a subset of this filter, has been deprecated.
+    (Andi Vajda, Steven Rowe via Mark Miller)
+
+ * LUCENE-1478: Added new SortField constructor allowing you to
+    specify a custom FieldCache parser to generate numeric values from
+    terms for a field.  (Uwe Schindler via Mike McCandless)
+
+ * LUCENE-1528: Add support for Ideographic Space to the queryparser.
+    (Luis Alves via Michael Busch)
+
+ * LUCENE-1487: Added FieldCacheTermsFilter, to filter by multiple
+    terms on single-valued fields.  The filter loads the FieldCache
+    for the field the first time it's called, and subsequent usage of
+    that field, even with different Terms in the filter, are fast.
+    (Tim Sturge, Shalin Shekhar Mangar via Mike McCandless).
+
+ * LUCENE-1314: Add clone(), clone(boolean readOnly) and
+    reopen(boolean readOnly) to IndexReader.  Cloning an IndexReader
+    gives you a new reader which you can make changes to (deletions,
+    norms) without affecting the original reader.  Now, with clone or
+    reopen you can change the readOnly of the original reader.  (Jason
+    Rutherglen, Mike McCandless)
+
+ * LUCENE-1506: Added FilteredDocIdSet, an abstract class which you
+    subclass to implement the "match" method to accept or reject each
+    docID.  Unlike ChainedFilter (under contrib/misc),
+    FilteredDocIdSet never requires you to materialize the full
+    bitset.  Instead, match() is called on demand per docID.  (John
+    Wang via Mike McCandless)
+
+ * LUCENE-1398: Add ReverseStringFilter to contrib/analyzers, a filter
+    to reverse the characters in each token.  (Koji Sekiguchi via yonik)
+
+ * LUCENE-1551: Add expert IndexReader.reopen(IndexCommit) to allow
+    efficiently opening a new reader on a specific commit, sharing
+    resources with the original reader.  (Torin Danil via Mike
+    McCandless)
+
+ * LUCENE-1434: Added org.apache.lucene.util.IndexableBinaryStringTools,
+    to encode byte[] as String values that are valid terms, and
+    maintain sort order of the original byte[] when the bytes are
+    interpreted as unsigned.  (Steven Rowe via Mike McCandless)
+
+ * LUCENE-1543: Allow MatchAllDocsQuery to optionally use norms from
+    a specific fields to set the score for a document.  (Karl Wettin
+    via Mike McCandless)
+
+ * LUCENE-1586: Add IndexReader.getUniqueTermCount().  (Mike
+    McCandless via Derek)
+
+ * LUCENE-1516: Added "near real-time search" to IndexWriter, via a
+    new expert getReader() method.  This method returns a reader that
+    searches the full index, including any uncommitted changes in the
+    current IndexWriter session.  This should result in a faster
+    turnaround than the normal approach of commiting the changes and
+    then reopening a reader.  (Jason Rutherglen via Mike McCandless)
+
+ * LUCENE-1603: Added new MultiTermQueryWrapperFilter, to wrap any
+    MultiTermQuery as a Filter.  Also made some improvements to
+    MultiTermQuery: return DocIdSet.EMPTY_DOCIDSET if there are no
+    terms in the enum; track the total number of terms it visited
+    during rewrite (getTotalNumberOfTerms).  FilteredTermEnum is also
+    more friendly to subclassing.  (Uwe Schindler via Mike McCandless)
+
+ * LUCENE-1605: Added BitVector.subset().  (Jeremy Volkman via Mike
+    McCandless)
+    
+ * LUCENE-1618: Added FileSwitchDirectory that enables files with
+    specified extensions to be stored in a primary directory and the
+    rest of the files to be stored in the secondary directory.  For
+    example, this can be useful for the large doc-store (stored
+    fields, term vectors) files in FSDirectory and the rest of the
+    index files in a RAMDirectory. (Jason Rutherglen via Mike
+    McCandless)
+
+ * LUCENE-1494: Added FieldMaskingSpanQuery which can be used to
+    cross-correlate Spans from different fields.
+    (Paul Cowan and Chris Hostetter)
+
+ * LUCENE-1634: Add calibrateSizeByDeletes to LogMergePolicy, to take
+    deletions into account when considering merges.  (Yasuhiro Matsuda
+    via Mike McCandless)
+
+ * LUCENE-1550: Added new n-gram based String distance measure for spell checking.
+    See the Javadocs for NGramDistance.java for a reference paper on why
+    this is helpful (Tom Morton via Grant Ingersoll)
+
+ * LUCENE-1470, LUCENE-1582, LUCENE-1602, LUCENE-1673, LUCENE-1701, LUCENE-1712:
+    Added NumericRangeQuery and NumericRangeFilter, a fast alternative to
+    RangeQuery/RangeFilter for numeric searches. They depend on a specific
+    structure of terms in the index that can be created by indexing
+    using the new NumericField or NumericTokenStream classes. NumericField
+    can only be used for indexing and optionally stores the values as
+    string representation in the doc store. Documents returned from
+    IndexReader/IndexSearcher will return only the String value using
+    the standard Fieldable interface. NumericFields can be sorted on
+    and loaded into the FieldCache.  (Uwe Schindler, Yonik Seeley,
+    Mike McCandless)
+
+ * LUCENE-1405: Added support for Ant resource collections in contrib/ant
+    <index> task.  (Przemyslaw Sztoch via Erik Hatcher)
+
+ * LUCENE-1699: Allow setting a TokenStream on Field/Fieldable for indexing
+    in conjunction with any other ways to specify stored field values,
+    currently binary or string values.  (yonik)
+    
+ * LUCENE-1701: Made the standard FieldCache.Parsers public and added
+    parsers for fields generated using NumericField/NumericTokenStream.
+    All standard parsers now also implement Serializable and enforce
+    their singleton status.  (Uwe Schindler, Mike McCandless)
+    
+ * LUCENE-1741: User configurable maximum chunk size in MMapDirectory.
+    On 32 bit platforms, the address space can be very fragmented, so
+    one big ByteBuffer for the whole file may not fit into address space.
+    (Eks Dev via Uwe Schindler)
+
+ * LUCENE-1644: Enable 4 rewrite modes for queries deriving from
+    MultiTermQuery (WildcardQuery, PrefixQuery, TermRangeQuery,
+    NumericRangeQuery): CONSTANT_SCORE_FILTER_REWRITE first creates a
+    filter and then assigns constant score (boost) to docs;
+    CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE create a BooleanQuery but
+    uses a constant score (boost); SCORING_BOOLEAN_QUERY_REWRITE also
+    creates a BooleanQuery but keeps the BooleanQuery's scores;
+    CONSTANT_SCORE_AUTO_REWRITE tries to pick the most performant
+    constant-score rewrite method.  (Mike McCandless)
+    
+ * LUCENE-1448: Added TokenStream.end(), to perform end-of-stream
+    operations.  This is currently used to fix offset problems when 
+    multiple fields with the same name are added to a document.
+    (Mike McCandless, Mark Miller, Michael Busch)
+ 
+ * LUCENE-1776: Add an option to not collect payloads for an ordered
+    SpanNearQuery. Payloads were not lazily loaded in this case as
+    the javadocs implied. If you have payloads and want to use an ordered
+    SpanNearQuery that does not need to use the payloads, you can
+    disable loading them with a new constructor switch.  (Mark Miller)
+
+ * LUCENE-1341: Added PayloadNearQuery to enable SpanNearQuery functionality
+    with payloads (Peter Keegan, Grant Ingersoll, Mark Miller)
+
+ * LUCENE-1790: Added PayloadTermQuery to enable scoring of payloads
+    based on the maximum payload seen for a document.
+    Slight refactoring of Similarity and other payload queries (Grant Ingersoll, Mark Miller)
+
+ * LUCENE-1749: Addition of FieldCacheSanityChecker utility, and
+    hooks to use it in all existing Lucene Tests.  This class can
+    be used by any application to inspect the FieldCache and provide
+    diagnostic information about the possibility of inconsistent
+    FieldCache usage.  Namely: FieldCache entries for the same field
+    with different datatypes or parsers; and FieldCache entries for
+    the same field in both a reader, and one of it's (descendant) sub
+    readers. 
+    (Chris Hostetter, Mark Miller)
+
+ * LUCENE-1789: Added utility class
+    oal.search.function.MultiValueSource to ease the transition to
+    segment based searching for any apps that directly call
+    oal.search.function.* APIs.  This class wraps any other
+    ValueSource, but takes care when composite (multi-segment) are
+    passed to not double RAM usage in the FieldCache.  (Chris
+    Hostetter, Mark Miller, Mike McCandless)
+   
+Optimizations
+
+ * LUCENE-1427: Fixed QueryWrapperFilter to not waste time computing
+    scores of the query, since they are just discarded.  Also, made it
+    more efficient (single pass) by not creating & populating an
+    intermediate OpenBitSet (Paul Elschot, Mike McCandless)
+
+ * LUCENE-1443: Performance improvement for OpenBitSetDISI.inPlaceAnd()
+    (Paul Elschot via yonik)
+
+ * LUCENE-1484: Remove synchronization of IndexReader.document() by
+    using CloseableThreadLocal internally.  (Jason Rutherglen via Mike
+    McCandless).
+    
+ * LUCENE-1124: Short circuit FuzzyQuery.rewrite when input token length 
+    is small compared to minSimilarity. (Timo Nentwig, Mark Miller)
+
+ * LUCENE-1316: MatchAllDocsQuery now avoids the synchronized
+    IndexReader.isDeleted() call per document, by directly accessing
+    the underlying deleteDocs BitVector.  This improves performance
+    with non-readOnly readers, especially in a multi-threaded
+    environment.  (Todd Feak, Yonik Seeley, Jason Rutherglen via Mike
+    McCandless)
+
+ * LUCENE-1483: When searching over multiple segments we now visit
+    each sub-reader one at a time.  This speeds up warming, since
+    FieldCache entries (if required) can be shared across reopens for
+    those segments that did not change, and also speeds up searches
+    that sort by relevance or by field values.  (Mark Miller, Mike
+    McCandless)
+    
+ * LUCENE-1575: The new Collector class decouples collect() from
+    score computation.  Collector.setScorer is called to establish the
+    current Scorer in-use per segment.  Collectors that require the
+    score should then call Scorer.score() per hit inside
+    collect(). (Shai Erera via Mike McCandless)
+
+ * LUCENE-1596: MultiTermDocs speedup when set with
+    MultiTermDocs.seek(MultiTermEnum) (yonik)
+    
+ * LUCENE-1653: Avoid creating a Calendar in every call to 
+    DateTools#dateToString, DateTools#timeToString and
+    DateTools#round.  (Shai Erera via Mark Miller)
+    
+ * LUCENE-1688: Deprecate static final String stop word array and 
+    replace it with an immutable implementation of CharArraySet.
+    Removes conversions between Set and array.
+    (Simon Willnauer via Mark Miller)
+
+ * LUCENE-1754: BooleanQuery.queryWeight.scorer() will return null if
+    it won't match any documents (e.g. if there are no required and
+    optional scorers, or not enough optional scorers to satisfy
+    minShouldMatch).  (Shai Erera via Mike McCandless)
+
+ * LUCENE-1607: To speed up string interning for commonly used
+    strings, the StringHelper.intern() interface was added with a
+    default implementation that uses a lockless cache.
+    (Earwin Burrfoot, yonik)
+
+ * LUCENE-1800: QueryParser should use reusable TokenStreams. (yonik)
+    
+
+Documentation
+
+ * LUCENE-1908: Scoring documentation imrovements in Similarity javadocs. 
+   (Mark Miller, Shai Erera, Ted Dunning, Jiri Kuhn, Marvin Humphrey, Doron Cohen)
+    
+ * LUCENE-1872: NumericField javadoc improvements
+    (Michael McCandless, Uwe Schindler)
+ 
+ * LUCENE-1875: Make TokenStream.end javadoc less confusing.
+    (Uwe Schindler)
+
+ * LUCENE-1862: Rectified duplicate package level javadocs for
+    o.a.l.queryParser and o.a.l.analysis.cn.
+    (Chris Hostetter)
+
+ * LUCENE-1886: Improved hyperlinking in key Analysis javadocs
+    (Bernd Fondermann via Chris Hostetter)
+
+ * LUCENE-1884: massive javadoc and comment cleanup, primarily dealing with
+    typos.
+    (Robert Muir via Chris Hostetter)
+    
+ * LUCENE-1898: Switch changes to use bullets rather than numbers and 
+    update changes-to-html script to handle the new format. 
+    (Steven Rowe, Mark Miller)
+    
+ * LUCENE-1900: Improve Searchable Javadoc.
+    (Nadav Har'El, Doron Cohen, Marvin Humphrey, Mark Miller)
+    
+ * LUCENE-1896: Improve Similarity#queryNorm javadocs.
+    (Jiri Kuhn, Mark Miller)
+
+Build
+
+ * LUCENE-1440: Add new targets to build.xml that allow downloading
+    and executing the junit testcases from an older release for
+    backwards-compatibility testing. (Michael Busch)
+
+ * LUCENE-1446: Add compatibility tag to common-build.xml and run 
+    backwards-compatibility tests in the nightly build. (Michael Busch)
+
+ * LUCENE-1529: Properly test "drop-in" replacement of jar with 
+    backwards-compatibility tests. (Mike McCandless, Michael Busch)
+
+ * LUCENE-1851: Change 'javacc' and 'clean-javacc' targets to build
+    and clean contrib/surround files. (Luis Alves via Michael Busch)
+
+ * LUCENE-1854: tar task should use longfile="gnu" to avoid false file
+    name length warnings.  (Mark Miller)
+
+Test Cases
+
+ * LUCENE-1791: Enhancements to the QueryUtils and CheckHits utility 
+    classes to wrap IndexReaders and Searchers in MultiReaders or 
+    MultiSearcher when possible to help exercise more edge cases.
+    (Chris Hostetter, Mark Miller)
+
+ * LUCENE-1852: Fix localization test failures. 
+    (Robert Muir via Michael Busch)
+    
+ * LUCENE-1843: Refactored all tests that use assertAnalyzesTo() & others
+    in core and contrib to use a new BaseTokenStreamTestCase
+    base class. Also rewrote some tests to use this general analysis assert
+    functions instead of own ones (e.g. TestMappingCharFilter).
+    The new base class also tests tokenization with the TokenStream.next()
+    backwards layer enabled (using Token/TokenWrapper as attribute
+    implementation) and disabled (default for Lucene 3.0)
+    (Uwe Schindler, Robert Muir)
+    
+ * LUCENE-1836: Added a new LocalizedTestCase as base class for localization
+    junit tests.  (Robert Muir, Uwe Schindler via Michael Busch)
+
+======================= Release 2.4.1 2009-03-09 =======================
+
+API Changes
+
+1. LUCENE-1186: Add Analyzer.close() to free internal ThreadLocal
+   resources.  (Christian Kohlschütter via Mike McCandless)
+
+Bug fixes
+
+1. LUCENE-1452: Fixed silent data-loss case whereby binary fields are
+   truncated to 0 bytes during merging if the segments being merged
+   are non-congruent (same field name maps to different field
+   numbers).  This bug was introduced with LUCENE-1219.  (Andrzej
+   Bialecki via Mike McCandless).
+
+2. LUCENE-1429: Don't throw incorrect IllegalStateException from
+   IndexWriter.close() if you've hit an OOM when autoCommit is true.
+   (Mike McCandless)
+
+3. LUCENE-1474: If IndexReader.flush() is called twice when there were
+   pending deletions, it could lead to later false AssertionError
+   during IndexReader.open.  (Mike McCandless)
+
+4. LUCENE-1430: Fix false AlreadyClosedException from IndexReader.open
+   (masking an actual IOException) that takes String or File path.
+   (Mike McCandless)
+
+5. LUCENE-1442: Multiple-valued NOT_ANALYZED fields can double-count
+   token offsets.  (Mike McCandless)
+
+6. LUCENE-1453: Ensure IndexReader.reopen()/clone() does not result in
+   incorrectly closing the shared FSDirectory. This bug would only
+   happen if you use IndexReader.open() with a File or String argument.
+   The returned readers are wrapped by a FilterIndexReader that
+   correctly handles closing of directory after reopen()/clone(). 
+   (Mark Miller, Uwe Schindler, Mike McCandless)
+
+7. LUCENE-1457: Fix possible overflow bugs during binary
+   searches. (Mark Miller via Mike McCandless)
+
+8. LUCENE-1459: Fix CachingWrapperFilter to not throw exception if
+   both bits() and getDocIdSet() methods are called. (Matt Jones via
+   Mike McCandless)
+
+9. LUCENE-1519: Fix int overflow bug during segment merging.  (Deepak
+   via Mike McCandless)
+
+10. LUCENE-1521: Fix int overflow bug when flushing segment.
+    (Shon Vella via Mike McCandless).
+
+11. LUCENE-1544: Fix deadlock in IndexWriter.addIndexes(IndexReader[]).
+    (Mike McCandless via Doug Sale)
+
+12. LUCENE-1547: Fix rare thread safety issue if two threads call
+    IndexWriter commit() at the same time.  (Mike McCandless)
+
+13. LUCENE-1465: NearSpansOrdered returns payloads from first possible match 
+    rather than the correct, shortest match; Payloads could be returned even
+    if the max slop was exceeded; The wrong payload could be returned in 
+    certain situations. (Jonathan Mamou, Greg Shackles, Mark Miller)
+
+14. LUCENE-1186: Add Analyzer.close() to free internal ThreadLocal
+    resources.  (Christian Kohlschütter via Mike McCandless)
+
+15. LUCENE-1552: Fix IndexWriter.addIndexes(IndexReader[]) to properly
+    rollback IndexWriter's internal state on hitting an
+    exception. (Scott Garland via Mike McCandless)
+
+======================= Release 2.4.0 2008-10-06 =======================
+
+Changes in backwards compatibility policy
+
+1. LUCENE-1340: In a minor change to Lucene's backward compatibility
+   policy, we are now allowing the Fieldable interface to have
+   changes, within reason, and made on a case-by-case basis.  If an
+   application implements it's own Fieldable, please be aware of
+   this.  Otherwise, no need to be concerned.  This is in effect for
+   all 2.X releases, starting with 2.4.  Also note, that in all
+   likelihood, Fieldable will be changed in 3.0.
+
+
+Changes in runtime behavior
+
+ 1. LUCENE-1151: Fix StandardAnalyzer to not mis-identify host names
+    (eg lucene.apache.org) as an ACRONYM.  To get back to the pre-2.4
+    backwards compatible, but buggy, behavior, you can either call
+    StandardAnalyzer.setDefaultReplaceInvalidAcronym(false) (static
+    method), or, set system property
+    org.apache.lucene.analysis.standard.StandardAnalyzer.replaceInvalidAcronym
+    to "false" on JVM startup.  All StandardAnalyzer instances created
+    after that will then show the pre-2.4 behavior.  Alternatively,
+    you can call setReplaceInvalidAcronym(false) to change the
+    behavior per instance of StandardAnalyzer.  This backwards
+    compatibility will be removed in 3.0 (hardwiring the value to
+    true).  (Mike McCandless)
+
+ 2. LUCENE-1044: IndexWriter with autoCommit=true now commits (such
+    that a reader can see the changes) far less often than it used to.
+    Previously, every flush was also a commit.  You can always force a
+    commit by calling IndexWriter.commit().  Furthermore, in 3.0,
+    autoCommit will be hardwired to false (IndexWriter constructors
+    that take an autoCommit argument have been deprecated) (Mike
+    McCandless)
+
+ 3. LUCENE-1335: IndexWriter.addIndexes(Directory[]) and
+    addIndexesNoOptimize no longer allow the same Directory instance
+    to be passed in more than once.  Internally, IndexWriter uses
+    Directory and segment name to uniquely identify segments, so
+    adding the same Directory more than once was causing duplicates
+    which led to problems (Mike McCandless)
+
+ 4. LUCENE-1396: Improve PhraseQuery.toString() so that gaps in the
+    positions are indicated with a ? and multiple terms at the same
+    position are joined with a |.  (Andrzej Bialecki via Mike
+    McCandless)
+
+API Changes
+
+ 1. LUCENE-1084: Changed all IndexWriter constructors to take an
+    explicit parameter for maximum field size.  Deprecated all the
+    pre-existing constructors; these will be removed in release 3.0.
+    NOTE: these new constructors set autoCommit to false.  (Steven
+    Rowe via Mike McCandless)
+
+ 2. LUCENE-584: Changed Filter API to return a DocIdSet instead of a
+    java.util.BitSet. This allows using more efficient data structures
+    for Filters and makes them more flexible. This deprecates
+    Filter.bits(), so all filters that implement this outside
+    the Lucene code base will need to be adapted. See also the javadocs
+    of the Filter class. (Paul Elschot, Michael Busch)
+
+ 3. LUCENE-1044: Added IndexWriter.commit() which flushes any buffered
+    adds/deletes and then commits a new segments file so readers will
+    see the changes.  Deprecate IndexWriter.flush() in favor of
+    IndexWriter.commit().  (Mike McCandless)
+
+ 4. LUCENE-325: Added IndexWriter.expungeDeletes methods, which
+    consult the MergePolicy to find merges necessary to merge away all
+    deletes from the index.  This should be a somewhat lower cost
+    operation than optimize.  (John Wang via Mike McCandless)
+
+ 5. LUCENE-1233: Return empty array instead of null when no fields
+    match the specified name in these methods in Document:
+    getFieldables, getFields, getValues, getBinaryValues.  (Stefan
+    Trcek vai Mike McCandless)
+
+ 6. LUCENE-1234: Make BoostingSpanScorer protected.  (Andi Vajda via Grant Ingersoll)
+
+ 7. LUCENE-510: The index now stores strings as true UTF-8 bytes
+    (previously it was Java's modified UTF-8).  If any text, either
+    stored fields or a token, has illegal UTF-16 surrogate characters,
+    these characters are now silently replaced with the Unicode
+    replacement character U+FFFD.  This is a change to the index file
+    format.  (Marvin Humphrey via Mike McCandless)
+
+ 8. LUCENE-852: Let the SpellChecker caller specify IndexWriter mergeFactor
+    and RAM buffer size.  (Otis Gospodnetic)
+	
+ 9. LUCENE-1290: Deprecate org.apache.lucene.search.Hits, Hit and HitIterator
+    and remove all references to these classes from the core. Also update demos
+    and tutorials. (Michael Busch)
+
+10. LUCENE-1288: Add getVersion() and getGeneration() to IndexCommit.
+    getVersion() returns the same value that IndexReader.getVersion()
+    returns when the reader is opened on the same commit.  (Jason
+    Rutherglen via Mike McCandless)
+
+11. LUCENE-1311: Added IndexReader.listCommits(Directory) static
+    method to list all commits in a Directory, plus IndexReader.open
+    methods that accept an IndexCommit and open the index as of that
+    commit.  These methods are only useful if you implement a custom
+    DeletionPolicy that keeps more than the last commit around.
+    (Jason Rutherglen via Mike McCandless)
+
+12. LUCENE-1325: Added IndexCommit.isOptimized().  (Shalin Shekhar
+    Mangar via Mike McCandless)
+
+13. LUCENE-1324: Added TokenFilter.reset(). (Shai Erera via Mike
+    McCandless)
+
+14. LUCENE-1340: Added Fieldable.omitTf() method to skip indexing term
+    frequency, positions and payloads.  This saves index space, and
+    indexing/searching time.  (Eks Dev via Mike McCandless)
+
+15. LUCENE-1219: Add basic reuse API to Fieldable for binary fields:
+    getBinaryValue/Offset/Length(); currently only lazy fields reuse
+    the provided byte[] result to getBinaryValue.  (Eks Dev via Mike
+    McCandless)
+
+16. LUCENE-1334: Add new constructor for Term: Term(String fieldName)
+    which defaults term text to "".  (DM Smith via Mike McCandless)
+
+17. LUCENE-1333: Added Token.reinit(*) APIs to re-initialize (reuse) a
+    Token.  Also added term() method to return a String, with a
+    performance penalty clearly documented.  Also implemented
+    hashCode() and equals() in Token, and fixed all core and contrib
+    analyzers to use the re-use APIs.  (DM Smith via Mike McCandless)
+
+18. LUCENE-1329: Add optional readOnly boolean when opening an
+    IndexReader.  A readOnly reader is not allowed to make changes
+    (deletions, norms) to the index; in exchanged, the isDeleted
+    method, often a bottleneck when searching with many threads, is
+    not synchronized.  The default for readOnly is still false, but in
+    3.0 the default will become true.  (Jason Rutherglen via Mike
+    McCandless)
+
+19. LUCENE-1367: Add IndexCommit.isDeleted().  (Shalin Shekhar Mangar
+    via Mike McCandless)
+
+20. LUCENE-1061: Factored out all "new XXXQuery(...)" in
+    QueryParser.java into protected methods newXXXQuery(...) so that
+    subclasses can create their own subclasses of each Query type.
+    (John Wang via Mike McCandless)
+
+21. LUCENE-753: Added new Directory implementation
+    org.apache.lucene.store.NIOFSDirectory, which uses java.nio's
+    FileChannel to do file reads.  On most non-Windows platforms, with
+    many threads sharing a single searcher, this may yield sizable
+    improvement to query throughput when compared to FSDirectory,
+    which only allows a single thread to read from an open file at a
+    time.  (Jason Rutherglen via Mike McCandless)
+
+22. LUCENE-1371: Added convenience method TopDocs Searcher.search(Query query, int n).
+    (Mike McCandless)
+    
+23. LUCENE-1356: Allow easy extensions of TopDocCollector by turning
+    constructor and fields from package to protected. (Shai Erera
+    via Doron Cohen) 
+
+24. LUCENE-1375: Added convenience method IndexCommit.getTimestamp,
+    which is equivalent to
+    getDirectory().fileModified(getSegmentsFileName()).  (Mike McCandless)
+
+23. LUCENE-1366: Rename Field.Index options to be more accurate:
+    TOKENIZED becomes ANALYZED;  UN_TOKENIZED becomes NOT_ANALYZED;
+    NO_NORMS becomes NOT_ANALYZED_NO_NORMS and a new ANALYZED_NO_NORMS
+    is added.  (Mike McCandless)
+
+24. LUCENE-1131: Added numDeletedDocs method to IndexReader (Otis Gospodnetic)
+
+Bug fixes
+    
+ 1. LUCENE-1134: Fixed BooleanQuery.rewrite to only optimize a single 
+    clause query if minNumShouldMatch<=0. (Shai Erera via Michael Busch)
+
+ 2. LUCENE-1169: Fixed bug in IndexSearcher.search(): searching with
+    a filter might miss some hits because scorer.skipTo() is called
+    without checking if the scorer is already at the right position.
+    scorer.skipTo(scorer.doc()) is not a NOOP, it behaves as 
+    scorer.next(). (Eks Dev, Michael Busch)
+
+ 3. LUCENE-1182: Added scorePayload to SimilarityDelegator (Andi Vajda via Grant Ingersoll)
+ 
+ 4. LUCENE-1213: MultiFieldQueryParser was ignoring slop in case
+    of a single field phrase. (Trejkaz via Doron Cohen)
+
+ 5. LUCENE-1228: IndexWriter.commit() was not updating the index version and as
+    result IndexReader.reopen() failed to sense index changes. (Doron Cohen)
+
+ 6. LUCENE-1267: Added numDocs() and maxDoc() to IndexWriter;
+    deprecated docCount().  (Mike McCandless)
+
+ 7. LUCENE-1274: Added new prepareCommit() method to IndexWriter,
+    which does phase 1 of a 2-phase commit (commit() does phase 2).
+    This is needed when you want to update an index as part of a
+    transaction involving external resources (eg a database).  Also
+    deprecated abort(), renaming it to rollback().  (Mike McCandless)
+
+ 8. LUCENE-1003: Stop RussianAnalyzer from removing numbers.
+    (TUSUR OpenTeam, Dmitry Lihachev via Otis Gospodnetic)
+
+ 9. LUCENE-1152: SpellChecker fix around clearIndex and indexDictionary
+    methods, plus removal of IndexReader reference.
+    (Naveen Belkale via Otis Gospodnetic)
+
+10. LUCENE-1046: Removed dead code in SpellChecker
+    (Daniel Naber via Otis Gospodnetic)
+	
+11. LUCENE-1189: Fixed the QueryParser to handle escaped characters within 
+    quoted terms correctly. (Tomer Gabel via Michael Busch)
+
+12. LUCENE-1299: Fixed NPE in SpellChecker when IndexReader is not null and field is (Grant Ingersoll)
+
+13. LUCENE-1303: Fixed BoostingTermQuery's explanation to be marked as a Match 
+    depending only upon the non-payload score part, regardless of the effect of 
+    the payload on the score. Prior to this, score of a query containing a BTQ 
+    differed from its explanation. (Doron Cohen)
+    
+14. LUCENE-1310: Fixed SloppyPhraseScorer to work also for terms repeating more 
+    than twice in the query. (Doron Cohen)
+
+15. LUCENE-1351: ISOLatin1AccentFilter now cleans additional ligatures (Cedrik Lime via Grant Ingersoll)
+
+16. LUCENE-1383: Workaround a nasty "leak" in Java's builtin
+    ThreadLocal, to prevent Lucene from causing unexpected
+    OutOfMemoryError in certain situations (notably J2EE
+    applications).  (Chris Lu via Mike McCandless)
+
+New features
+
+ 1. LUCENE-1137: Added Token.set/getFlags() accessors for passing more information about a Token through the analysis
+    process.  The flag is not indexed/stored and is thus only used by analysis.
+
+ 2. LUCENE-1147: Add -segment option to CheckIndex tool so you can
+    check only a specific segment or segments in your index.  (Mike
+    McCandless)
+
+ 3. LUCENE-1045: Reopened this issue to add support for short and bytes. 
+ 
+ 4. LUCENE-584: Added new data structures to o.a.l.util, such as 
+    OpenBitSet and SortedVIntList. These extend DocIdSet and can 
+    directly be used for Filters with the new Filter API. Also changed
+    the core Filters to use OpenBitSet instead of java.util.BitSet.
+    (Paul Elschot, Michael Busch)
+
+ 5. LUCENE-494: Added QueryAutoStopWordAnalyzer to allow for the automatic removal, from a query of frequently occurring terms.
+    This Analyzer is not intended for use during indexing. (Mark Harwood via Grant Ingersoll)
+
+ 6. LUCENE-1044: Change Lucene to properly "sync" files after
+    committing, to ensure on a machine or OS crash or power cut, even
+    with cached writes, the index remains consistent.  Also added
+    explicit commit() method to IndexWriter to force a commit without
+    having to close.  (Mike McCandless)
+    
+ 7. LUCENE-997: Add search timeout (partial) support.
+    A TimeLimitedCollector was added to allow limiting search time.
+    It is a partial solution since timeout is checked only when 
+    collecting a hit, and therefore a search for rare words in a 
+    huge index might not stop within the specified time.
+    (Sean Timm via Doron Cohen) 
+
+ 8. LUCENE-1184: Allow SnapshotDeletionPolicy to be re-used across
+    close/re-open of IndexWriter while still protecting an open
+    snapshot (Tim Brennan via Mike McCandless)
+
+ 9. LUCENE-1194: Added IndexWriter.deleteDocuments(Query) to delete
+    documents matching the specified query.  Also added static unlock
+    and isLocked methods (deprecating the ones in IndexReader).  (Mike
+    McCandless)
+
+10. LUCENE-1201: Add IndexReader.getIndexCommit() method. (Tim Brennan
+    via Mike McCandless)
+
+11. LUCENE-550:  Added InstantiatedIndex implementation.  Experimental 
+    Index store similar to MemoryIndex but allows for multiple documents 
+    in memory.  (Karl Wettin via Grant Ingersoll)
+
+12. LUCENE-400: Added word based n-gram filter (in contrib/analyzers) called ShingleFilter and an Analyzer wrapper
+    that wraps another Analyzer's token stream with a ShingleFilter (Sebastian Kirsch, Steve Rowe via Grant Ingersoll) 
+
+13. LUCENE-1166: Decomposition tokenfilter for languages like German and Swedish (Thomas Peuss via Grant Ingersoll)
+
+14. LUCENE-1187: ChainedFilter and BooleanFilter now work with new Filter API
+    and DocIdSetIterator-based filters. Backwards-compatibility with old 
+    BitSet-based filters is ensured. (Paul Elschot via Michael Busch)
+
+15. LUCENE-1295: Added new method to MoreLikeThis for retrieving interesting terms and made retrieveTerms(int) public. (Grant Ingersoll)
+
+16. LUCENE-1298: MoreLikeThis can now accept a custom Similarity (Grant Ingersoll)
+
+17. LUCENE-1297: Allow other string distance measures for the SpellChecker
+    (Thomas Morton via Otis Gospodnetic)
+
+18. LUCENE-1001: Provide access to Payloads via Spans.  All existing Span Query implementations in Lucene implement. (Mark Miller, Grant Ingersoll)
+
+19. LUCENE-1354: Provide programmatic access to CheckIndex (Grant Ingersoll, Mike McCandless)
+
+20. LUCENE-1279: Add support for Collators to RangeFilter/Query and Query Parser.  (Steve Rowe via Grant Ingersoll) 
+
+Optimizations
+
+ 1. LUCENE-705: When building a compound file, use
+    RandomAccessFile.setLength() to tell the OS/filesystem to
+    pre-allocate space for the file.  This may improve fragmentation
+    in how the CFS file is stored, and allows us to detect an upcoming
+    disk full situation before actually filling up the disk.  (Mike
+    McCandless)
+
+ 2. LUCENE-1120: Speed up merging of term vectors by bulk-copying the
+    raw bytes for each contiguous range of non-deleted documents.
+    (Mike McCandless)
+	
+ 3. LUCENE-1185: Avoid checking if the TermBuffer 'scratch' in 
+    SegmentTermEnum is null for every call of scanTo().
+    (Christian Kohlschuetter via Michael Busch)
+
+ 4. LUCENE-1217: Internal to Field.java, use isBinary instead of
+    runtime type checking for possible speedup of binaryValue().
+    (Eks Dev via Mike McCandless)
+
+ 5. LUCENE-1183: Optimized TRStringDistance class (in contrib/spell) that uses
+    less memory than the previous version.  (Cédrik LIME via Otis Gospodnetic)
+
+ 6. LUCENE-1195: Improve term lookup performance by adding a LRU cache to the
+    TermInfosReader. In performance experiments the speedup was about 25% on 
+    average on mid-size indexes with ~500,000 documents for queries with 3 
+    terms and about 7% on larger indexes with ~4.3M documents. (Michael Busch)
+
+Documentation
+
+  1. LUCENE-1236:  Added some clarifying remarks to EdgeNGram*.java (Hiroaki Kawai via Grant Ingersoll)
+  
+  2. LUCENE-1157 and LUCENE-1256: HTML changes log, created automatically 
+     from CHANGES.txt. This HTML file is currently visible only via developers page.     
+     (Steven Rowe via Doron Cohen)
+
+  3. LUCENE-1349: Fieldable can now be changed without breaking backward compatibility rules (within reason.  See the note at
+  the top of this file and also on Fieldable.java).  (Grant Ingersoll)
+  
+  4. LUCENE-1873: Update documentation to reflect current Contrib area status.
+     (Steven Rowe, Mark Miller)
+
+Build
+
+  1. LUCENE-1153: Added JUnit JAR to new lib directory.  Updated build to rely on local JUnit instead of ANT/lib.
+  
+  2. LUCENE-1202: Small fixes to the way Clover is used to work better
+     with contribs.  Of particular note: a single clover db is used
+     regardless of whether tests are run globally or in the specific
+     contrib directories. 
+     
+  3. LUCENE-1353: Javacc target in contrib/miscellaneous for 
+     generating the precedence query parser. 
+
+Test Cases
+
+ 1. LUCENE-1238: Fixed intermittent failures of TestTimeLimitedCollector.testTimeoutMultiThreaded.
+    Within this fix, "greedy" flag was added to TimeLimitedCollector, to allow the wrapped 
+    collector to collect also the last doc, after allowed-tTime passed. (Doron Cohen)   
+	
+ 2. LUCENE-1348: relax TestTimeLimitedCollector to not fail due to 
+    timeout exceeded (just because test machine is very busy).
+	
+======================= Release 2.3.2 2008-05-05 =======================
+
+Bug fixes
+
+ 1. LUCENE-1191: On hitting OutOfMemoryError in any index-modifying
+    methods in IndexWriter, do not commit any further changes to the
+    index to prevent risk of possible corruption.  (Mike McCandless)
+
+ 2. LUCENE-1197: Fixed issue whereby IndexWriter would flush by RAM
+    too early when TermVectors were in use.  (Mike McCandless)
+
+ 3. LUCENE-1198: Don't corrupt index if an exception happens inside
+    DocumentsWriter.init (Mike McCandless)
+
+ 4. LUCENE-1199: Added defensive check for null indexReader before
+    calling close in IndexModifier.close() (Mike McCandless)
+
+ 5. LUCENE-1200: Fix rare deadlock case in addIndexes* when
+    ConcurrentMergeScheduler is in use (Mike McCandless)
+
+ 6. LUCENE-1208: Fix deadlock case on hitting an exception while
+    processing a document that had triggered a flush (Mike McCandless)
+
+ 7. LUCENE-1210: Fix deadlock case on hitting an exception while
+    starting a merge when using ConcurrentMergeScheduler (Mike McCandless)
+
+ 8. LUCENE-1222: Fix IndexWriter.doAfterFlush to always be called on
+    flush (Mark Ferguson via Mike McCandless)
+	
+ 9. LUCENE-1226: Fixed IndexWriter.addIndexes(IndexReader[]) to commit
+    successfully created compound files. (Michael Busch)
+
+10. LUCENE-1150: Re-expose StandardTokenizer's constants publicly;
+    this was accidentally lost with LUCENE-966.  (Nicolas Lalevée via
+    Mike McCandless)
+
+11. LUCENE-1262: Fixed bug in BufferedIndexReader.refill whereby on
+    hitting an exception in readInternal, the buffer is incorrectly
+    filled with stale bytes such that subsequent calls to readByte()
+    return incorrect results.  (Trejkaz via Mike McCandless)
+
+12. LUCENE-1270: Fixed intermittent case where IndexWriter.close()
+    would hang after IndexWriter.addIndexesNoOptimize had been
+    called.  (Stu Hood via Mike McCandless)
+	
+Build
+
+ 1. LUCENE-1230: Include *pom.xml* in source release files. (Michael Busch)
+
+ 
+======================= Release 2.3.1 2008-02-22 =======================
+
+Bug fixes
+    
+ 1. LUCENE-1168: Fixed corruption cases when autoCommit=false and
+    documents have mixed term vectors (Suresh Guvvala via Mike
+    McCandless).
+
+ 2. LUCENE-1171: Fixed some cases where OOM errors could cause
+    deadlock in IndexWriter (Mike McCandless).
+
+ 3. LUCENE-1173: Fixed corruption case when autoCommit=false and bulk
+    merging of stored fields is used (Yonik via Mike McCandless).
+
+ 4. LUCENE-1163: Fixed bug in CharArraySet.contains(char[] buffer, int
+    offset, int len) that was ignoring offset and thus giving the
+    wrong answer.  (Thomas Peuss via Mike McCandless)
+	
+ 5. LUCENE-1177: Fix rare case where IndexWriter.optimize might do too
+    many merges at the end.  (Mike McCandless)
+	
+ 6. LUCENE-1176: Fix corruption case when documents with no term
+    vector fields are added before documents with term vector fields.
+    (Mike McCandless)
+	
+ 7. LUCENE-1179: Fixed assert statement that was incorrectly
+    preventing Fields with empty-string field name from working.
+    (Sergey Kabashnyuk via Mike McCandless)
+
+======================= Release 2.3.0 2008-01-21 =======================
+
+Changes in runtime behavior
+
+ 1. LUCENE-994: Defaults for IndexWriter have been changed to maximize
+    out-of-the-box indexing speed.  First, IndexWriter now flushes by
+    RAM usage (16 MB by default) instead of a fixed doc count (call
+    IndexWriter.setMaxBufferedDocs to get backwards compatible
+    behavior).  Second, ConcurrentMergeScheduler is used to run merges
+    using background threads (call IndexWriter.setMergeScheduler(new
+    SerialMergeScheduler()) to get backwards compatible behavior).
+    Third, merges are chosen based on size in bytes of each segment
+    rather than document count of each segment (call
+    IndexWriter.setMergePolicy(new LogDocMergePolicy()) to get
+    backwards compatible behavior).
+
+    NOTE: users of ParallelReader must change back all of these
+    defaults in order to ensure the docIDs "align" across all parallel
+    indices.
+
+    (Mike McCandless)
+
+ 2. LUCENE-1045: SortField.AUTO didn't work with long. When detecting
+    the field type for sorting automatically, numbers used to be
+    interpreted as int, then as float, if parsing the number as an int
+    failed. Now the detection checks for int, then for long,
+    then for float. (Daniel Naber)
+
+API Changes
+
+ 1. LUCENE-843: Added IndexWriter.setRAMBufferSizeMB(...) to have
+    IndexWriter flush whenever the buffered documents are using more
+    than the specified amount of RAM.  Also added new APIs to Token
+    that allow one to set a char[] plus offset and length to specify a
+    token (to avoid creating a new String() for each Token).  (Mike
+    McCandless)
+
+ 2. LUCENE-963: Add setters to Field to allow for re-using a single
+    Field instance during indexing.  This is a sizable performance
+    gain, especially for small documents.  (Mike McCandless)
+
+ 3. LUCENE-969: Add new APIs to Token, TokenStream and Analyzer to
+    permit re-using of Token and TokenStream instances during
+    indexing.  Changed Token to use a char[] as the store for the
+    termText instead of String.  This gives faster tokenization
+    performance (~10-15%).  (Mike McCandless)
+
+ 4. LUCENE-847: Factored MergePolicy, which determines which merges
+    should take place and when, as well as MergeScheduler, which
+    determines when the selected merges should actually run, out of
+    IndexWriter.  The default merge policy is now
+    LogByteSizeMergePolicy (see LUCENE-845) and the default merge
+    scheduler is now ConcurrentMergeScheduler (see
+    LUCENE-870). (Steven Parkes via Mike McCandless)
+
+ 5. LUCENE-1052: Add IndexReader.setTermInfosIndexDivisor(int) method
+    that allows you to reduce memory usage of the termInfos by further
+    sub-sampling (over the termIndexInterval that was used during
+    indexing) which terms are loaded into memory.  (Chuck Williams,
+    Doug Cutting via Mike McCandless)
+    
+ 6. LUCENE-743: Add IndexReader.reopen() method that re-opens an
+    existing IndexReader (see New features -> 8.) (Michael Busch)
+
+ 7. LUCENE-1062: Add setData(byte[] data), 
+    setData(byte[] data, int offset, int length), getData(), getOffset()
+    and clone() methods to o.a.l.index.Payload. Also add the field name 
+    as arg to Similarity.scorePayload(). (Michael Busch)
+
+ 8. LUCENE-982: Add IndexWriter.optimize(int maxNumSegments) method to
+    "partially optimize" an index down to maxNumSegments segments.
+    (Mike McCandless)
+
+ 9. LUCENE-1080: Changed Token.DEFAULT_TYPE to be public.
+
+10. LUCENE-1064: Changed TopDocs constructor to be public. 
+     (Shai Erera via Michael Busch)
+
+11. LUCENE-1079: DocValues cleanup: constructor now has no params,
+    and getInnerArray() now throws UnsupportedOperationException (Doron Cohen)
+
+12. LUCENE-1089: Added PriorityQueue.insertWithOverflow, which returns
+    the Object (if any) that was bumped from the queue to allow
+    re-use.  (Shai Erera via Mike McCandless)
+    
+13. LUCENE-1101: Token reuse 'contract' (defined LUCENE-969)
+    modified so it is token producer's responsibility
+    to call Token.clear(). (Doron Cohen)   
+
+14. LUCENE-1118: Changed StandardAnalyzer to skip too-long (default >
+    255 characters) tokens.  You can increase this limit by calling
+    StandardAnalyzer.setMaxTokenLength(...).  (Michael McCandless)
+
+
+Bug fixes
+
+ 1. LUCENE-933: QueryParser fixed to not produce empty sub 
+    BooleanQueries "()" even if the Analyzer produced no 
+    tokens for input. (Doron Cohen)
+
+ 2. LUCENE-955: Fixed SegmentTermPositions to work correctly with the
+    first term in the dictionary. (Michael Busch)
+
+ 3. LUCENE-951: Fixed NullPointerException in MultiLevelSkipListReader
+    that was thrown after a call of TermPositions.seek(). 
+    (Rich Johnson via Michael Busch)
+    
+ 4. LUCENE-938: Fixed cases where an unhandled exception in
+    IndexWriter's methods could cause deletes to be lost.
+    (Steven Parkes via Mike McCandless)
+      
+ 5. LUCENE-962: Fixed case where an unhandled exception in
+    IndexWriter.addDocument or IndexWriter.updateDocument could cause
+    unreferenced files in the index to not be deleted
+    (Steven Parkes via Mike McCandless)
+  
+ 6. LUCENE-957: RAMDirectory fixed to properly handle directories
+    larger than Integer.MAX_VALUE. (Doron Cohen)
+
+ 7. LUCENE-781: MultiReader fixed to not throw NPE if isCurrent(),
+    isOptimized() or getVersion() is called. Separated MultiReader
+    into two classes: MultiSegmentReader extends IndexReader, is
+    package-protected and is created automatically by IndexReader.open()
+    in case the index has multiple segments. The public MultiReader 
+    now extends MultiSegmentReader and is intended to be used by users
+    who want to add their own subreaders. (Daniel Naber, Michael Busch)
+
+ 8. LUCENE-970: FilterIndexReader now implements isOptimized(). Before
+    a call of isOptimized() would throw a NPE. (Michael Busch)
+
+ 9. LUCENE-832: ParallelReader fixed to not throw NPE if isCurrent(),
+    isOptimized() or getVersion() is called. (Michael Busch)
+      
+10. LUCENE-948: Fix FNFE exception caused by stale NFS client
+    directory listing caches when writers on different machines are
+    sharing an index over NFS and using a custom deletion policy (Mike
+    McCandless)
+
+11. LUCENE-978: Ensure TermInfosReader, FieldsReader, and FieldsReader
+    close any streams they had opened if an exception is hit in the
+    constructor.  (Ning Li via Mike McCandless)
+
+12. LUCENE-985: If an extremely long term is in a doc (> 16383 chars),
+    we now throw an IllegalArgumentException saying the term is too
+    long, instead of cryptic ArrayIndexOutOfBoundsException.  (Karl
+    Wettin via Mike McCandless)
+
+13. LUCENE-991: The explain() method of BoostingTermQuery had errors
+    when no payloads were present on a document.  (Peter Keegan via
+    Grant Ingersoll)
+
+14. LUCENE-992: Fixed IndexWriter.updateDocument to be atomic again
+    (this was broken by LUCENE-843).  (Ning Li via Mike McCandless)
+
+15. LUCENE-1008: Fixed corruption case when document with no term
+    vector fields is added after documents with term vector fields.
+    This bug was introduced with LUCENE-843.  (Grant Ingersoll via
+    Mike McCandless)
+
+16. LUCENE-1006: Fixed QueryParser to accept a "" field value (zero
+    length quoted string.)  (yonik)
+
+17. LUCENE-1010: Fixed corruption case when document with no term
+    vector fields is added after documents with term vector fields.
+    This case is hit during merge and would cause an EOFException.
+    This bug was introduced with LUCENE-984.  (Andi Vajda via Mike
+    McCandless)
+
+19. LUCENE-1009: Fix merge slowdown with LogByteSizeMergePolicy when
+    autoCommit=false and documents are using stored fields and/or term
+    vectors.  (Mark Miller via Mike McCandless)
+
+20. LUCENE-1011: Fixed corruption case when two or more machines,
+    sharing an index over NFS, can be writers in quick succession.
+    (Patrick Kimber via Mike McCandless)
+
+21. LUCENE-1028: Fixed Weight serialization for few queries:
+    DisjunctionMaxQuery, ValueSourceQuery, CustomScoreQuery.
+    Serialization check added for all queries.
+    (Kyle Maxwell via Doron Cohen)
+
+22. LUCENE-1048: Fixed incorrect behavior in Lock.obtain(...) when the
+    timeout argument is very large (eg Long.MAX_VALUE).  Also added
+    Lock.LOCK_OBTAIN_WAIT_FOREVER constant to never timeout.  (Nikolay
+    Diakov via Mike McCandless)
+
+23. LUCENE-1050: Throw LockReleaseFailedException in
+    Simple/NativeFSLockFactory if we fail to delete the lock file when
+    releasing the lock.  (Nikolay Diakov via Mike McCandless)
+
+24. LUCENE-1071: Fixed SegmentMerger to correctly set payload bit in 
+    the merged segment. (Michael Busch)
+
+25. LUCENE-1042: Remove throwing of IOException in getTermFreqVector(int, String, TermVectorMapper) to be consistent
+    with other getTermFreqVector calls.  Also removed the throwing of the other IOException in that method to be consistent.  (Karl Wettin via Grant Ingersoll)
+    
+26. LUCENE-1096: Fixed Hits behavior when hits' docs are deleted 
+    along with iterating the hits. Deleting docs already retrieved 
+    now works seamlessly. If docs not yet retrieved are deleted 
+    (e.g. from another thread), and then, relying on the initial 
+    Hits.length(), an application attempts to retrieve more hits 
+    than actually exist , a ConcurrentMidificationException 
+    is thrown.  (Doron Cohen)
+
+27. LUCENE-1068: Changed StandardTokenizer to fix an issue with it marking
+  the type of some tokens incorrectly.  This is done by adding a new flag named
+  replaceInvalidAcronym which defaults to false, the current, incorrect behavior.  Setting
+  this flag to true fixes the problem.  This flag is a temporary fix and is already
+  marked as being deprecated.  3.x will implement the correct approach.  (Shai Erera via Grant Ingersoll)
+  LUCENE-1140: Fixed NPE caused by 1068 (Alexei Dets via Grant Ingersoll)
+    
+28. LUCENE-749: ChainedFilter behavior fixed when logic of 
+    first filter is ANDNOT.  (Antonio Bruno via Doron Cohen)
+
+29. LUCENE-508: Make sure SegmentTermEnum.prev() is accurate (= last
+    term) after next() returns false.  (Steven Tamm via Mike
+    McCandless)
+
+    
+New features
+
+ 1. LUCENE-906: Elision filter for French.
+    (Mathieu Lecarme via Otis Gospodnetic)
+
+ 2. LUCENE-960: Added a SpanQueryFilter and related classes to allow for
+    not only filtering, but knowing where in a Document a Filter matches
+    (Grant Ingersoll)
+
+ 3. LUCENE-868: Added new Term Vector access features.  New callback
+    mechanism allows application to define how and where to read Term
+    Vectors from disk. This implementation contains several extensions
+    of the new abstract TermVectorMapper class.  The new API should be
+    back-compatible.  No changes in the actual storage of Term Vectors
+    has taken place.
+ 3.1 LUCENE-1038: Added setDocumentNumber() method to TermVectorMapper
+     to provide information about what document is being accessed.
+     (Karl Wettin via Grant Ingersoll)
+
+ 4. LUCENE-975: Added PositionBasedTermVectorMapper that allows for
+    position based lookup of term vector information.
+    See item #3 above (LUCENE-868).
+
+ 5. LUCENE-1011: Added simple tools (all in org.apache.lucene.store)
+    to verify that locking is working properly.  LockVerifyServer runs
+    a separate server to verify locks.  LockStressTest runs a simple
+    tool that rapidly obtains and releases locks.
+    VerifyingLockFactory is a LockFactory that wraps any other
+    LockFactory and consults the LockVerifyServer whenever a lock is
+    obtained or released, throwing an exception if an illegal lock
+    obtain occurred.  (Patrick Kimber via Mike McCandless)
+
+ 6. LUCENE-1015: Added FieldCache extension (ExtendedFieldCache) to
+    support doubles and longs.  Added support into SortField for sorting
+    on doubles and longs as well.  (Grant Ingersoll)
+
+ 7. LUCENE-1020: Created basic index checking & repair tool
+    (o.a.l.index.CheckIndex).  When run without -fix it does a
+    detailed test of all segments in the index and reports summary
+    information and any errors it hit.  With -fix it will remove
+    segments that had errors.  (Mike McCandless)
+
+ 8. LUCENE-743: Add IndexReader.reopen() method that re-opens an
+    existing IndexReader by only loading those portions of an index
+    that have changed since the reader was (re)opened. reopen() can
+    be significantly faster than open(), depending on the amount of
+    index changes. SegmentReader, MultiSegmentReader, MultiReader,
+    and ParallelReader implement reopen(). (Michael Busch) 
+
+ 9. LUCENE-1040: CharArraySet useful for efficiently checking
+    set membership of text specified by char[]. (yonik)
+
+10. LUCENE-1073: Created SnapshotDeletionPolicy to facilitate taking a
+    live backup of an index without pausing indexing.  (Mike
+    McCandless)
+    
+11. LUCENE-1019: CustomScoreQuery enhanced to support multiple 
+    ValueSource queries. (Kyle Maxwell via Doron Cohen)
+    
+12. LUCENE-1095: Added an option to StopFilter to increase 
+    positionIncrement of the token succeeding a stopped token.
+    Disabled by default. Similar option added to QueryParser 
+    to consider token positions when creating PhraseQuery 
+    and MultiPhraseQuery. Disabled by default (so by default
+    the query parser ignores position increments).
+    (Doron Cohen)
+
+13. LUCENE-1380: Added TokenFilter for setting position increment in special cases related to the ShingleFilter (Mck SembWever, Steve Rowe, Karl Wettin via Grant Ingersoll)
+
+
+
+Optimizations
+
+ 1. LUCENE-937: CachingTokenFilter now uses an iterator to access the 
+    Tokens that are cached in the LinkedList. This increases performance 
+    significantly, especially when the number of Tokens is large. 
+    (Mark Miller via Michael Busch)
+
+ 2. LUCENE-843: Substantial optimizations to improve how IndexWriter
+    uses RAM for buffering documents and to speed up indexing (2X-8X
+    faster).  A single shared hash table now records the in-memory
+    postings per unique term and is directly flushed into a single
+    segment.  (Mike McCandless)
+ 
+ 3. LUCENE-892: Fixed extra "buffer to buffer copy" that sometimes
+    takes place when using compound files.  (Mike McCandless)
+
+ 4. LUCENE-959: Remove synchronization in Document (yonik)
+
+ 5. LUCENE-963: Add setters to Field to allow for re-using a single
+    Field instance during indexing.  This is a sizable performance
+    gain, especially for small documents.  (Mike McCandless)
+
+ 6. LUCENE-939: Check explicitly for boundary conditions in FieldInfos
+    and don't rely on exceptions. (Michael Busch)
+
+ 7. LUCENE-966: Very substantial speedups (~6X faster) for
+    StandardTokenizer (StandardAnalyzer) by using JFlex instead of
+    JavaCC to generate the tokenizer.
+    (Stanislaw Osinski via Mike McCandless)
+
+ 8. LUCENE-969: Changed core tokenizers & filters to re-use Token and
+    TokenStream instances when possible to improve tokenization
+    performance (~10-15%). (Mike McCandless)
+
+ 9. LUCENE-871: Speedup ISOLatin1AccentFilter (Ian Boston via Mike
+    McCandless)
+
+10. LUCENE-986: Refactored SegmentInfos from IndexReader into the new
+    subclass DirectoryIndexReader. SegmentReader and MultiSegmentReader
+    now extend DirectoryIndexReader and are the only IndexReader 
+    implementations that use SegmentInfos to access an index and 
+    acquire a write lock for index modifications. (Michael Busch)
+
+11. LUCENE-1007: Allow flushing in IndexWriter to be triggered by
+    either RAM usage or document count or both (whichever comes
+    first), by adding symbolic constant DISABLE_AUTO_FLUSH to disable
+    one of the flush triggers.  (Ning Li via Mike McCandless)
+
+12. LUCENE-1043: Speed up merging of stored fields by bulk-copying the
+    raw bytes for each contiguous range of non-deleted documents.
+    (Robert Engels via Mike McCandless)
+
+13. LUCENE-693: Speed up nested conjunctions (~2x) that match many
+    documents, and a slight performance increase for top level
+    conjunctions.  (yonik)
+
+14. LUCENE-1098: Make inner class StandardAnalyzer.SavedStreams static 
+    and final. (Nathan Beyer via Michael Busch)
+
+Documentation
+
+ 1. LUCENE-1051: Generate separate javadocs for core, demo and contrib
+    classes, as well as an unified view. Also add an appropriate menu 
+    structure to the website. (Michael Busch)
+
+ 2. LUCENE-746: Fix error message in AnalyzingQueryParser.getPrefixQuery.
+    (Ronnie Kolehmainen via Michael Busch)
+
+Build
+
+ 1. LUCENE-908: Improvements and simplifications for how the MANIFEST
+    file and the META-INF dir are created. (Michael Busch)
+
+ 2. LUCENE-935: Various improvements for the maven artifacts. Now the
+    artifacts also include the sources as .jar files. (Michael Busch)
+
+ 3. Added apply-patch target to top-level build.  Defaults to looking for
+    a patch in ${basedir}/../patches with name specified by -Dpatch.name.
+    Can also specify any location by -Dpatch.file property on the command
+    line.  This should be helpful for easy application of patches, but it
+    is also a step towards integrating automatic patch application with
+    JIRA and Hudson, and is thus subject to change.  (Grant Ingersoll)
+ 
+ 4. LUCENE-935: Defined property "m2.repository.url" to allow setting
+    the url to a maven remote repository to deploy to. (Michael Busch)
+
+ 5. LUCENE-1051: Include javadocs in the maven artifacts. (Michael Busch)
+
+ 6. LUCENE-1055: Remove gdata-server from build files and its sources 
+    from trunk. (Michael Busch)
+
+ 7. LUCENE-935: Allow to deploy maven artifacts to a remote m2 repository
+    via scp and ssh authentication. (Michael Busch)
+	
+ 8. LUCENE-1123: Allow overriding the specification version for 
+    MANIFEST.MF (Michael Busch)
+
+Test Cases
+
+ 1. LUCENE-766: Test adding two fields with the same name but different 
+    term vector setting.  (Nicolas Lalevée via Doron Cohen)  
+    
+======================= Release 2.2.0 2007-06-19 =======================
+
+Changes in runtime behavior
+
+API Changes
+
+ 1. LUCENE-793: created new exceptions and added them to throws clause
+    for many methods (all subclasses of IOException for backwards
+    compatibility): index.StaleReaderException,
+    index.CorruptIndexException, store.LockObtainFailedException.
+    This was done to better call out the possible root causes of an
+    IOException from these methods.  (Mike McCandless)
+
+ 2. LUCENE-811: make SegmentInfos class, plus a few methods from related
+    classes, package-private again (they were unnecessarily made public
+    as part of LUCENE-701).  (Mike McCandless)
+
+ 3. LUCENE-710: added optional autoCommit boolean to IndexWriter
+    constructors.  When this is false, index changes are not committed
+    until the writer is closed.  This gives explicit control over when
+    a reader will see the changes.  Also added optional custom
+    deletion policy to explicitly control when prior commits are
+    removed from the index.  This is intended to allow applications to
+    share an index over NFS by customizing when prior commits are
+    deleted. (Mike McCandless)
+
+ 4. LUCENE-818: changed most public methods of IndexWriter,
+    IndexReader (and its subclasses), FieldsReader and RAMDirectory to
+    throw AlreadyClosedException if they are accessed after being
+    closed.  (Mike McCandless)
+
+ 5. LUCENE-834: Changed some access levels for certain Span classes to allow them
+    to be overridden.  They have been marked expert only and not for public
+    consumption. (Grant Ingersoll) 
+
+ 6. LUCENE-796: Removed calls to super.* from various get*Query methods in
+    MultiFieldQueryParser, in order to allow sub-classes to override them.
+    (Steven Parkes via Otis Gospodnetic)
+
+ 7. LUCENE-857: Removed caching from QueryFilter and deprecated QueryFilter
+    in favour of QueryWrapperFilter or QueryWrapperFilter + CachingWrapperFilter
+    combination when caching is desired.
+    (Chris Hostetter, Otis Gospodnetic)
+
+ 8. LUCENE-869: Changed FSIndexInput and FSIndexOutput to inner classes of FSDirectory
+    to enable extensibility of these classes. (Michael Busch)
+
+ 9. LUCENE-580: Added the public method reset() to TokenStream. This method does
+    nothing by default, but may be overwritten by subclasses to support consuming
+    the TokenStream more than once. (Michael Busch)
+
+10. LUCENE-580: Added a new constructor to Field that takes a TokenStream as
+    argument, available as tokenStreamValue(). This is useful to avoid the need of 
+    "dummy analyzers" for pre-analyzed fields. (Karl Wettin, Michael Busch)
+
+11. LUCENE-730: Added the new methods to BooleanQuery setAllowDocsOutOfOrder() and
+    getAllowDocsOutOfOrder(). Deprecated the methods setUseScorer14() and 
+    getUseScorer14(). The optimization patch LUCENE-730 (see Optimizations->3.) 
+    improves performance for certain queries but results in scoring out of docid 
+    order. This patch reverse this change, so now by default hit docs are scored
+    in docid order if not setAllowDocsOutOfOrder(true) is explicitly called.
+    This patch also enables the tests in QueryUtils again that check for docid
+    order. (Paul Elschot, Doron Cohen, Michael Busch)
+
+12. LUCENE-888: Added Directory.openInput(File path, int bufferSize)
+    to optionally specify the size of the read buffer.  Also added
+    BufferedIndexInput.setBufferSize(int) to change the buffer size.
+    (Mike McCandless)
+
+13. LUCENE-923: Make SegmentTermPositionVector package-private. It does not need
+    to be public because it implements the public interface TermPositionVector.
+    (Michael Busch)
+
+Bug fixes
+
+ 1. LUCENE-804: Fixed build.xml to pack a fully compilable src dist.  (Doron Cohen)
+
+ 2. LUCENE-813: Leading wildcard fixed to work with trailing wildcard.
+    Query parser modified to create a prefix query only for the case 
+    that there is a single trailing wildcard (and no additional wildcard 
+    or '?' in the query text).  (Doron Cohen)
+
+ 3. LUCENE-812: Add no-argument constructors to NativeFSLockFactory
+    and SimpleFSLockFactory.  This enables all 4 builtin LockFactory
+    implementations to be specified via the System property
+    org.apache.lucene.store.FSDirectoryLockFactoryClass.  (Mike McCandless)
+
+ 4. LUCENE-821: The new single-norm-file introduced by LUCENE-756
+    failed to reduce the number of open descriptors since it was still
+    opened once per field with norms. (yonik)
+
+ 5. LUCENE-823: Make sure internal file handles are closed when
+    hitting an exception (eg disk full) while flushing deletes in
+    IndexWriter's mergeSegments, and also during
+    IndexWriter.addIndexes.  (Mike McCandless)
+
+ 6. LUCENE-825: If directory is removed after
+    FSDirectory.getDirectory() but before IndexReader.open you now get
+    a FileNotFoundException like Lucene pre-2.1 (before this fix you
+    got an NPE).  (Mike McCandless)
+
+ 7. LUCENE-800: Removed backslash from the TERM_CHAR list in the queryparser, 
+    because the backslash is the escape character. Also changed the ESCAPED_CHAR
+    list to contain all possible characters, because every character that 
+    follows a backslash should be considered as escaped. (Michael Busch)
+
+ 8. LUCENE-372: QueryParser.parse() now ensures that the entire input string 
+    is consumed. Now a ParseException is thrown if a query contains too many
+    closing parentheses. (Andreas Neumann via Michael Busch)
+
+ 9. LUCENE-814: javacc build targets now fix line-end-style of generated files.
+    Now also deleting all javacc generated files before calling javacc.
+    (Steven Parkes, Doron Cohen)
+    
+10. LUCENE-829: close readers in contrib/benchmark. (Karl Wettin, Doron Cohen)
+
+11. LUCENE-828: Minor fix for Term's equal().
+    (Paul Cowan via Otis Gospodnetic)
+
+12. LUCENE-846: Fixed: if IndexWriter is opened with autoCommit=false,
+    and you call addIndexes, and hit an exception (eg disk full) then
+    when IndexWriter rolls back its internal state this could corrupt
+    the instance of IndexWriter (but, not the index itself) by
+    referencing already deleted segments.  This bug was only present
+    in 2.2 (trunk), ie was never released.  (Mike McCandless)
+    
+13. LUCENE-736: Sloppy phrase query with repeating terms matches wrong docs.
+    For example query "B C B"~2 matches the doc "A B C D E". (Doron Cohen)
+    
+14. LUCENE-789: Fixed: custom similarity is ignored when using MultiSearcher (problem reported 
+    by Alexey Lef). Now the similarity applied by MultiSearcer.setSimilarity(sim) is being used. 
+    Note that as before this fix, creating a multiSearcher from Searchers for whom custom similarity 
+    was set has no effect - it is masked by the similarity of the MultiSearcher. This is as 
+    designed, because MultiSearcher operates on Searchables (not Searchers). (Doron Cohen)
+
+15. LUCENE-880: Fixed DocumentWriter to close the TokenStreams after it
+    has written the postings. Then the resources associated with the 
+    TokenStreams can safely be released. (Michael Busch)
+
+16. LUCENE-883: consecutive calls to Spellchecker.indexDictionary()
+    won't insert terms twice anymore. (Daniel Naber)
+
+17. LUCENE-881: QueryParser.escape() now also escapes the characters
+    '|' and '&' which are part of the queryparser syntax. (Michael Busch)
+
+18. LUCENE-886: Spellchecker clean up: exceptions aren't printed to STDERR
+    anymore and ignored, but re-thrown. Some javadoc improvements.
+    (Daniel Naber)
+
+19. LUCENE-698: FilteredQuery now takes the query boost into account for 
+    scoring. (Michael Busch)
+
+20. LUCENE-763: Spellchecker: LuceneDictionary used to skip first word in 
+    enumeration. (Christian Mallwitz via Daniel Naber)
+    
+21. LUCENE-903: FilteredQuery explanation inaccuracy with boost.
+    Explanation tests now "deep" check the explanation details.
+    (Chris Hostetter, Doron Cohen)
+    
+22. LUCENE-912: DisjunctionMaxScorer first skipTo(target) call ignores the 
+    skip target param and ends up at the first match.
+    (Sudaakeran B. via Chris Hostetter & Doron Cohen)
+    
+23. LUCENE-913: Two consecutive score() calls return different 
+    scores for Boolean Queries. (Michael Busch, Doron Cohen)
+
+24. LUCENE-1013: Fix IndexWriter.setMaxMergeDocs to work "out of the
+    box", again, by moving set/getMaxMergeDocs up from
+    LogDocMergePolicy into LogMergePolicy.  This fixes the API
+    breakage (non backwards compatible change) caused by LUCENE-994.
+    (Yonik Seeley via Mike McCandless)
+
+New features
+
+ 1. LUCENE-759: Added two n-gram-producing TokenFilters.
+    (Otis Gospodnetic)
+
+ 2. LUCENE-822: Added FieldSelector capabilities to Searchable for use with
+    RemoteSearcher, and other Searchable implementations. (Mark Miller, Grant Ingersoll)
+
+ 3. LUCENE-755: Added the ability to store arbitrary binary metadata in the posting list.
+    These metadata are called Payloads. For every position of a Token one Payload in the form
+    of a variable length byte array can be stored in the prox file.
+    Remark: The APIs introduced with this feature are in experimental state and thus
+            contain appropriate warnings in the javadocs.
+    (Michael Busch)
+
+ 4. LUCENE-834: Added BoostingTermQuery which can boost scores based on the
+    values of a payload (see #3 above.) (Grant Ingersoll)
+
+ 5. LUCENE-834: Similarity has a new method for scoring payloads called
+    scorePayloads that can be overridden to take advantage of payload
+    storage (see #3 above)
+
+ 6. LUCENE-834: Added isPayloadAvailable() onto TermPositions interface and
+    implemented it in the appropriate places (Grant Ingersoll)
+
+ 7. LUCENE-853: Added RemoteCachingWrapperFilter to enable caching of Filters
+    on the remote side of the RMI connection.
+    (Matt Ericson via Otis Gospodnetic)
+
+ 8. LUCENE-446: Added Solr's search.function for scores based on field 
+    values, plus CustomScoreQuery for simple score (post) customization.
+    (Yonik Seeley, Doron Cohen)
+
+ 9. LUCENE-1058: Added new TeeTokenFilter (like the UNIX 'tee' command) and SinkTokenizer which can be used to share tokens between two or more
+    Fields such that the other Fields do not have to go through the whole Analysis process over again.  For instance, if you have two
+    Fields that share all the same analysis steps except one lowercases tokens and the other does not, you can coordinate the operations
+    between the two using the TeeTokenFilter and the SinkTokenizer.  See TeeSinkTokenTest.java for examples.
+    (Grant Ingersoll, Michael Busch, Yonik Seeley)
+ 
+Optimizations
+
+ 1. LUCENE-761: The proxStream is now cloned lazily in SegmentTermPositions
+    when nextPosition() is called for the first time. This allows using instances
+    of SegmentTermPositions instead of SegmentTermDocs without additional costs.
+    (Michael Busch)
+
+ 2. LUCENE-431: RAMInputStream and RAMOutputStream extend IndexInput and
+    IndexOutput directly now. This avoids further buffering and thus avoids 
+    unnecessary array copies. (Michael Busch)
+
+ 3. LUCENE-730: Updated BooleanScorer2 to make use of BooleanScorer in some
+    cases and possibly improve scoring performance.  Documents can now be
+    delivered out-of-order as they are scored (e.g. to HitCollector).
+    N.B. A bit of code had to be disabled in QueryUtils in order for
+    TestBoolean2 test to keep passing.
+    (Paul Elschot via Otis Gospodnetic)
+
+ 4. LUCENE-882: Spellchecker doesn't store the ngrams anymore but only indexes
+    them to keep the spell index small. (Daniel Naber)
+
+ 5. LUCENE-430: Delay allocation of the buffer after a clone of BufferedIndexInput.
+    Together with LUCENE-888 this will allow to adjust the buffer size
+    dynamically. (Paul Elschot, Michael Busch)
+ 
+ 6. LUCENE-888: Increase buffer sizes inside CompoundFileWriter and
+    BufferedIndexOutput.  Also increase buffer size in
+    BufferedIndexInput, but only when used during merging.  Together,
+    these increases yield 10-18% overall performance gain vs the
+    previous 1K defaults.  (Mike McCandless)
+
+ 7. LUCENE-866: Adds multi-level skip lists to the posting lists. This speeds 
+    up most queries that use skipTo(), especially on big indexes with large posting 
+    lists. For average AND queries the speedup is about 20%, for queries that 
+    contain very frequent and very unique terms the speedup can be over 80%.
+    (Michael Busch)
+
+Documentation
+
+ 1. LUCENE 791 && INFRA-1173: Infrastructure moved the Wiki to
+    http://wiki.apache.org/lucene-java/   Updated the links in the docs and
+    wherever else I found references.  (Grant Ingersoll, Joe Schaefer)
+
+ 2. LUCENE-807: Fixed the javadoc for ScoreDocComparator.compare() to be 
+    consistent with java.util.Comparator.compare(): Any integer is allowed to 
+    be returned instead of only -1/0/1.
+    (Paul Cowan via Michael Busch)
+ 
+ 3. LUCENE-875: Solved javadoc warnings & errors under jdk1.4. 
+    Solved javadoc errors under jdk5 (jars in path for gdata).
+    Made "javadocs" target depend on "build-contrib" for first downloading
+    contrib jars configured for dynamic downloaded. (Note: when running
+    behind firewall, a firewall prompt might pop up) (Doron Cohen)
+
+ 4. LUCENE-740: Added SNOWBALL-LICENSE.txt to the snowball package and a
+    remark about the license to NOTICE.TXT. (Steven Parkes via Michael Busch)
+
+ 5. LUCENE-925: Added analysis package javadocs. (Grant Ingersoll and Doron Cohen)
+
+ 6. LUCENE-926: Added document package javadocs. (Grant Ingersoll)
+
+Build
+
+ 1. LUCENE-802: Added LICENSE.TXT and NOTICE.TXT to Lucene jars.
+    (Steven Parkes via Michael Busch)
+
+ 2. LUCENE-885: "ant test" now includes all contrib tests.  The new
+    "ant test-core" target can be used to run only the Core (non
+    contrib) tests. 
+    (Chris Hostetter)
+    
+ 3. LUCENE-900: "ant test" now enables Java assertions (in Lucene packages).
+    (Doron Cohen)
+
+ 4. LUCENE-894: Add custom build file for binary distributions that includes
+    targets to build the demos. (Chris Hostetter, Michael Busch)
+
+ 5. LUCENE-904: The "package" targets in build.xml now also generate .md5
+    checksum files. (Chris Hostetter, Michael Busch)
+
+ 6. LUCENE-907: Include LICENSE.TXT and NOTICE.TXT in the META-INF dirs of
+    demo war, demo jar, and the contrib jars. (Michael Busch)
+    
+ 7. LUCENE-909: Demo targets for running the demo. (Doron Cohen)
+
+ 8. LUCENE-908: Improves content of MANIFEST file and makes it customizable
+    for the contribs. Adds SNOWBALL-LICENSE.txt to META-INF of the snowball
+    jar and makes sure that the lucli jar contains LICENSE.txt and NOTICE.txt.
+    (Chris Hostetter, Michael Busch)
+
+ 9. LUCENE-930: Various contrib building improvements to ensure contrib
+    dependencies are met, and test compilation errors fail the build.
+    (Steven Parkes, Chris Hostetter)
+
+10. LUCENE-622: Add ant target and pom.xml files for building maven artifacts 
+    of the Lucene core and the contrib modules. 
+    (Sami Siren, Karl Wettin, Michael Busch)
+
+======================= Release 2.1.0 2007-02-14 =======================
+
+Changes in runtime behavior
+
+ 1. 's' and 't' have been removed from the list of default stopwords
+    in StopAnalyzer (also used in by StandardAnalyzer). Having e.g. 's'
+    as a stopword meant that 's-class' led to the same results as 'class'.
+    Note that this problem still exists for 'a', e.g. in 'a-class' as
+    'a' continues to be a stopword.
+    (Daniel Naber)
+
+ 2. LUCENE-478: Updated the list of Unicode code point ranges for CJK
+    (now split into CJ and K) in StandardAnalyzer.  (John Wang and
+    Steven Rowe via Otis Gospodnetic)
+
+ 3. Modified some CJK Unicode code point ranges in StandardTokenizer.jj,
+    and added a few more of them to increase CJK character coverage.
+    Also documented some of the ranges.
+    (Otis Gospodnetic)
+
+ 4. LUCENE-489: Add support for leading wildcard characters (*, ?) to
+    QueryParser.  Default is to disallow them, as before.
+    (Steven Parkes via Otis Gospodnetic)
+
+ 5. LUCENE-703: QueryParser changed to default to use of ConstantScoreRangeQuery
+    for range queries. Added useOldRangeQuery property to QueryParser to allow
+    selection of old RangeQuery class if required.
+    (Mark Harwood)
+
+ 6. LUCENE-543: WildcardQuery now performs a TermQuery if the provided term
+    does not contain a wildcard character (? or *), when previously a
+    StringIndexOutOfBoundsException was thrown.
+    (Michael Busch via Erik Hatcher)
+
+ 7. LUCENE-726: Removed the use of deprecated doc.fields() method and
+    Enumeration.
+    (Michael Busch via Otis Gospodnetic)
+
+ 8. LUCENE-436: Removed finalize() in TermInfosReader and SegmentReader,
+    and added a call to enumerators.remove() in TermInfosReader.close().
+    The finalize() overrides were added to help with a pre-1.4.2 JVM bug
+    that has since been fixed, plus we no longer support pre-1.4.2 JVMs.
+    (Otis Gospodnetic)
+
+ 9. LUCENE-771: The default location of the write lock is now the
+    index directory, and is named simply "write.lock" (without a big
+    digest prefix).  The system properties "org.apache.lucene.lockDir"
+    nor "java.io.tmpdir" are no longer used as the global directory
+    for storing lock files, and the LOCK_DIR field of FSDirectory is
+    now deprecated.  (Mike McCandless)
+
+New features
+
+ 1. LUCENE-503: New ThaiAnalyzer and ThaiWordFilter in contrib/analyzers
+    (Samphan Raruenrom via Chris Hostetter)
+
+ 2. LUCENE-545: New FieldSelector API and associated changes to
+    IndexReader and implementations.  New Fieldable interface for use
+    with the lazy field loading mechanism.  (Grant Ingersoll and Chuck
+    Williams via Grant Ingersoll)
+
+ 3. LUCENE-676: Move Solr's PrefixFilter to Lucene core. (Yura
+    Smolsky, Yonik Seeley)
+
+ 4. LUCENE-678: Added NativeFSLockFactory, which implements locking
+    using OS native locking (via java.nio.*).  (Michael McCandless via
+    Yonik Seeley)
+
+ 5. LUCENE-544: Added the ability to specify different boosts for
+    different fields when using MultiFieldQueryParser (Matt Ericson
+    via Otis Gospodnetic)
+
+ 6. LUCENE-528: New IndexWriter.addIndexesNoOptimize() that doesn't
+    optimize the index when adding new segments, only performing
+    merges as needed.  (Ning Li via Yonik Seeley)
+
+ 7. LUCENE-573: QueryParser now allows backslash escaping in
+    quoted terms and phrases. (Michael Busch via Yonik Seeley)
+
+ 8. LUCENE-716: QueryParser now allows specification of Unicode
+    characters in terms via a unicode escape of the form \uXXXX
+    (Michael Busch via Yonik Seeley)
+
+ 9. LUCENE-709: Added RAMDirectory.sizeInBytes(), IndexWriter.ramSizeInBytes()
+    and IndexWriter.flushRamSegments(), allowing applications to
+    control the amount of memory used to buffer documents.
+    (Chuck Williams via Yonik Seeley)
+
+10. LUCENE-723: QueryParser now parses *:* as MatchAllDocsQuery
+    (Yonik Seeley)
+
+11. LUCENE-741: Command-line utility for modifying or removing norms
+    on fields in an existing index.  This is mostly based on LUCENE-496
+    and lives in contrib/miscellaneous.
+    (Chris Hostetter, Otis Gospodnetic)
+
+12. LUCENE-759: Added NGramTokenizer and EdgeNGramTokenizer classes and
+    their passing unit tests.
+    (Otis Gospodnetic)
+
+13. LUCENE-565: Added methods to IndexWriter to more efficiently
+    handle updating documents (the "delete then add" use case).  This
+    is intended to be an eventual replacement for the existing
+    IndexModifier.  Added IndexWriter.flush() (renamed from
+    flushRamSegments()) to flush all pending updates (held in RAM), to
+    the Directory.  (Ning Li via Mike McCandless)
+
+14. LUCENE-762: Added in SIZE and SIZE_AND_BREAK FieldSelectorResult options
+    which allow one to retrieve the size of a field without retrieving the
+    actual field. (Chuck Williams via Grant Ingersoll)
+
+15. LUCENE-799: Properly handle lazy, compressed fields.
+    (Mike Klaas via Grant Ingersoll)
+
+API Changes
+
+ 1. LUCENE-438: Remove "final" from Token, implement Cloneable, allow
+    changing of termText via setTermText().  (Yonik Seeley)
+
+ 2. org.apache.lucene.analysis.nl.WordlistLoader has been deprecated
+    and is supposed to be replaced with the WordlistLoader class in
+    package org.apache.lucene.analysis (Daniel Naber)
+
+ 3. LUCENE-609: Revert return type of Document.getField(s) to Field
+    for backward compatibility, added new Document.getFieldable(s)
+    for access to new lazy loaded fields. (Yonik Seeley)
+
+ 4. LUCENE-608: Document.fields() has been deprecated and a new method
+    Document.getFields() has been added that returns a List instead of
+    an Enumeration (Daniel Naber)
+
+ 5. LUCENE-605: New Explanation.isMatch() method and new ComplexExplanation
+    subclass allows explain methods to produce Explanations which model
+    "matching" independent of having a positive value.
+    (Chris Hostetter)
+
+ 6. LUCENE-621: New static methods IndexWriter.setDefaultWriteLockTimeout
+    and IndexWriter.setDefaultCommitLockTimeout for overriding default
+    timeout values for all future instances of IndexWriter (as well
+    as for any other classes that may reference the static values,
+    ie: IndexReader).
+    (Michael McCandless via Chris Hostetter)
+
+ 7. LUCENE-638: FSDirectory.list() now only returns the directory's
+    Lucene-related files. Thanks to this change one can now construct
+    a RAMDirectory from a file system directory that contains files
+    not related to Lucene.
+    (Simon Willnauer via Daniel Naber)
+
+ 8. LUCENE-635: Decoupling locking implementation from Directory
+    implementation.  Added set/getLockFactory to Directory and moved
+    all locking code into subclasses of abstract class LockFactory.
+    FSDirectory and RAMDirectory still default to their prior locking
+    implementations, but now you can mix & match, for example using
+    SingleInstanceLockFactory (ie, in memory locking) locking with an
+    FSDirectory.  Note that now you must call setDisableLocks before
+    the instantiation a FSDirectory if you wish to disable locking
+    for that Directory.
+    (Michael McCandless, Jeff Patterson via Yonik Seeley)
+
+ 9. LUCENE-657: Made FuzzyQuery non-final and inner ScoreTerm protected.
+    (Steven Parkes via Otis Gospodnetic)
+
+10. LUCENE-701: Lockless commits: a commit lock is no longer required
+    when a writer commits and a reader opens the index.  This includes
+    a change to the index file format (see docs/fileformats.html for
+    details).  It also removes all APIs associated with the commit
+    lock & its timeout.  Readers are now truly read-only and do not
+    block one another on startup.  This is the first step to getting
+    Lucene to work correctly over NFS (second step is
+    LUCENE-710). (Mike McCandless)
+
+11. LUCENE-722: DEFAULT_MIN_DOC_FREQ was misspelled DEFALT_MIN_DOC_FREQ
+    in Similarity's MoreLikeThis class. The misspelling has been
+    replaced by the correct spelling.
+    (Andi Vajda via Daniel Naber)
+
+12. LUCENE-738: Reduce the size of the file that keeps track of which
+    documents are deleted when the number of deleted documents is
+    small.  This changes the index file format and cannot be
+    read by previous versions of Lucene.  (Doron Cohen via Yonik Seeley)
+
+13. LUCENE-756: Maintain all norms in a single .nrm file to reduce the
+    number of open files and file descriptors for the non-compound index
+    format.  This changes the index file format, but maintains the
+    ability to read and update older indices. The first segment merge
+    on an older format index will create a single .nrm file for the new
+    segment.  (Doron Cohen via Yonik Seeley)
+
+14. LUCENE-732: DateTools support has been added to QueryParser, with
+    setters for both the default Resolution, and per-field Resolution.
+    For backwards compatibility, DateField is still used if no Resolutions
+    are specified. (Michael Busch via Chris Hostetter)
+
+15. Added isOptimized() method to IndexReader.
+    (Otis Gospodnetic)
+
+16. LUCENE-773: Deprecate the FSDirectory.getDirectory(*) methods that
+    take a boolean "create" argument.  Instead you should use
+    IndexWriter's "create" argument to create a new index.
+    (Mike McCandless)
+
+17. LUCENE-780: Add a static Directory.copy() method to copy files
+    from one Directory to another.  (Jiri Kuhn via Mike McCandless)
+
+18. LUCENE-773: Added Directory.clearLock(String name) to forcefully
+    remove an old lock.  The default implementation is to ask the
+    lockFactory (if non null) to clear the lock.  (Mike McCandless)
+
+19. LUCENE-795: Directory.renameFile() has been deprecated as it is
+    not used anymore inside Lucene.  (Daniel Naber)
+
+Bug fixes
+
+ 1. Fixed the web application demo (built with "ant war-demo") which
+    didn't work because it used a QueryParser method that had
+    been removed (Daniel Naber)
+
+ 2. LUCENE-583: ISOLatin1AccentFilter fails to preserve positionIncrement
+    (Yonik Seeley)
+
+ 3. LUCENE-575: SpellChecker min score is incorrectly changed by suggestSimilar
+    (Karl Wettin via Yonik Seeley)
+
+ 4. LUCENE-587: Explanation.toHtml was producing malformed HTML
+    (Chris Hostetter)
+
+ 5. Fix to allow MatchAllDocsQuery to be used with RemoteSearcher (Yonik Seeley)
+
+ 6. LUCENE-601: RAMDirectory and RAMFile made Serializable
+    (Karl Wettin via Otis Gospodnetic)
+
+ 7. LUCENE-557: Fixes to BooleanQuery and FilteredQuery so that the score
+    Explanations match up with the real scores.
+    (Chris Hostetter)
+
+ 8. LUCENE-607: ParallelReader's TermEnum fails to advance properly to
+    new fields (Chuck Williams, Christian Kohlschuetter via Yonik Seeley)
+
+ 9. LUCENE-610,LUCENE-611: Simple syntax changes to allow compilation with ecj:
+    disambiguate inner class scorer's use of doc() in BooleanScorer2,
+    other test code changes.  (DM Smith via Yonik Seeley)
+
+10. LUCENE-451: All core query types now use ComplexExplanations so that
+    boosts of zero don't confuse the BooleanWeight explain method.
+    (Chris Hostetter)
+
+11. LUCENE-593: Fixed LuceneDictionary's inner Iterator
+    (Kåre Fiedler Christiansen via Otis Gospodnetic)
+
+12. LUCENE-641: fixed an off-by-one bug with IndexWriter.setMaxFieldLength()
+    (Daniel Naber)
+
+13. LUCENE-659: Make PerFieldAnalyzerWrapper delegate getPositionIncrementGap()
+    to the correct analyzer for the field. (Chuck Williams via Yonik Seeley)
+
+14. LUCENE-650: Fixed NPE in Locale specific String Sort when Document
+    has no value.
+    (Oliver Hutchison via Chris Hostetter)
+
+15. LUCENE-683: Fixed data corruption when reading lazy loaded fields.
+    (Yonik Seeley)
+
+16. LUCENE-678: Fixed bug in NativeFSLockFactory which caused the same
+    lock to be shared between different directories.
+    (Michael McCandless via Yonik Seeley)
+
+17. LUCENE-690: Fixed thread unsafe use of IndexInput by lazy loaded fields.
+    (Yonik Seeley)
+
+18. LUCENE-696: Fix bug when scorer for DisjunctionMaxQuery has skipTo()
+    called on it before next().  (Yonik Seeley)
+
+19. LUCENE-569: Fixed SpanNearQuery bug, for 'inOrder' queries it would fail
+    to recognize ordered spans if they overlapped with unordered spans.
+    (Paul Elschot via Chris Hostetter)
+
+20. LUCENE-706: Updated fileformats.xml|html concerning the docdelta value
+    in the frequency file. (Johan Stuyts, Doron Cohen via Grant Ingersoll)
+
+21. LUCENE-715: Fixed private constructor in IndexWriter.java to
+    properly release the acquired write lock if there is an
+    IOException after acquiring the write lock but before finishing
+    instantiation. (Matthew Bogosian via Mike McCandless)
+
+22. LUCENE-651: Multiple different threads requesting the same
+    FieldCache entry (often for Sorting by a field) at the same
+    time caused multiple generations of that entry, which was
+    detrimental to performance and memory use.
+    (Oliver Hutchison via Otis Gospodnetic)
+
+23. LUCENE-717: Fixed build.xml not to fail when there is no lib dir.
+    (Doron Cohen via Otis Gospodnetic)
+
+24. LUCENE-728: Removed duplicate/old MoreLikeThis and SimilarityQueries
+    classes from contrib/similarity, as their new home is under
+    contrib/queries.
+    (Otis Gospodnetic)
+
+25. LUCENE-669: Do not double-close the RandomAccessFile in
+    FSIndexInput/Output during finalize().  Besides sending an
+    IOException up to the GC, this may also be the cause intermittent
+    "The handle is invalid" IOExceptions on Windows when trying to
+    close readers or writers. (Michael Busch via Mike McCandless)
+
+26. LUCENE-702: Fix IndexWriter.addIndexes(*) to not corrupt the index
+    on any exceptions (eg disk full).  The semantics of these methods
+    is now transactional: either all indices are merged or none are.
+    Also fixed IndexWriter.mergeSegments (called outside of
+    addIndexes(*) by addDocument, optimize, flushRamSegments) and
+    IndexReader.commit() (called by close) to clean up and keep the
+    instance state consistent to what's actually in the index (Mike
+    McCandless).
+
+27. LUCENE-129: Change finalizers to do "try {...} finally
+    {super.finalize();}" to make sure we don't miss finalizers in
+    classes above us. (Esmond Pitt via Mike McCandless)
+
+28. LUCENE-754: Fix a problem introduced by LUCENE-651, causing
+    IndexReaders to hang around forever, in addition to not
+    fixing the original FieldCache performance problem.
+    (Chris Hostetter, Yonik Seeley)
+
+29. LUCENE-140: Fix IndexReader.deleteDocument(int docNum) to
+    correctly raise ArrayIndexOutOfBoundsException when docNum is too
+    large.  Previously, if docNum was only slightly too large (within
+    the same multiple of 8, ie, up to 7 ints beyond maxDoc), no
+    exception would be raised and instead the index would become
+    silently corrupted.  The corruption then only appears much later,
+    in mergeSegments, when the corrupted segment is merged with
+    segment(s) after it. (Mike McCandless)
+
+30. LUCENE-768: Fix case where an Exception during deleteDocument,
+    undeleteAll or setNorm in IndexReader could leave the reader in a
+    state where close() fails to release the write lock.
+    (Mike McCandless)
+
+31. Remove "tvp" from known index file extensions because it is
+    never used. (Nicolas Lalevée via Bernhard Messer)
+    
+32. LUCENE-767: Change how SegmentReader.maxDoc() is computed to not
+    rely on file length check and instead use the SegmentInfo's
+    docCount that's already stored explicitly in the index.  This is a
+    defensive bug fix (ie, there is no known problem seen "in real
+    life" due to this, just a possible future problem).  (Chuck
+    Williams via Mike McCandless)
+
+Optimizations
+
+  1. LUCENE-586: TermDocs.skipTo() is now more efficient for
+     multi-segment indexes.  This will improve the performance of many
+     types of queries against a non-optimized index. (Andrew Hudson
+     via Yonik Seeley)
+
+  2. LUCENE-623: RAMDirectory.close now nulls out its reference to all
+     internal "files", allowing them to be GCed even if references to the
+     RAMDirectory itself still exist. (Nadav Har'El via Chris Hostetter)
+
+  3. LUCENE-629: Compressed fields are no longer uncompressed and
+     recompressed during segment merges (e.g. during indexing or
+     optimizing), thus improving performance . (Michael Busch via Otis
+     Gospodnetic)
+
+  4. LUCENE-388: Improve indexing performance when maxBufferedDocs is
+     large by keeping a count of buffered documents rather than
+     counting after each document addition.  (Doron Cohen, Paul Smith,
+     Yonik Seeley)
+
+  5. Modified TermScorer.explain to use TermDocs.skipTo() instead of
+     looping through docs. (Grant Ingersoll)
+
+  6. LUCENE-672: New indexing segment merge policy flushes all
+     buffered docs to their own segment and delays a merge until
+     mergeFactor segments of a certain level have been accumulated.
+     This increases indexing performance in the presence of deleted
+     docs or partially full segments as well as enabling future
+     optimizations.
+
+     NOTE: this also fixes an "under-merging" bug whereby it is
+     possible to get far too many segments in your index (which will
+     drastically slow down search, risks exhausting file descriptor
+     limit, etc.).  This can happen when the number of buffered docs
+     at close, plus the number of docs in the last non-ram segment is
+     greater than mergeFactor. (Ning Li, Yonik Seeley)
+
+  7. Lazy loaded fields unnecessarily retained an extra copy of loaded
+     String data.  (Yonik Seeley)
+
+  8. LUCENE-443: ConjunctionScorer performance increase.  Speed up
+     any BooleanQuery with more than one mandatory clause.
+     (Abdul Chaudhry, Paul Elschot via Yonik Seeley)
+
+  9. LUCENE-365: DisjunctionSumScorer performance increase of
+     ~30%. Speeds up queries with optional clauses. (Paul Elschot via
+     Yonik Seeley)
+
+ 10. LUCENE-695: Optimized BufferedIndexInput.readBytes() for medium
+     size buffers, which will speed up merging and retrieving binary
+     and compressed fields.  (Nadav Har'El via Yonik Seeley)
+
+ 11. LUCENE-687: Lazy skipping on proximity file speeds up most
+     queries involving term positions, including phrase queries.
+     (Michael Busch via Yonik Seeley)
+
+ 12. LUCENE-714: Replaced 2 cases of manual for-loop array copying
+     with calls to System.arraycopy instead, in DocumentWriter.java.
+     (Nicolas Lalevee via Mike McCandless)
+
+ 13. LUCENE-729: Non-recursive skipTo and next implementation of
+     TermDocs for a MultiReader.  The old implementation could
+     recurse up to the number of segments in the index. (Yonik Seeley)
+
+ 14. LUCENE-739: Improve segment merging performance by reusing
+     the norm array across different fields and doing bulk writes
+     of norms of segments with no deleted docs.
+    (Michael Busch via Yonik Seeley)
+
+ 15. LUCENE-745: Add BooleanQuery.clauses(), allowing direct access
+     to the List of clauses and replaced the internal synchronized Vector
+     with an unsynchronized List. (Yonik Seeley)
+
+ 16. LUCENE-750: Remove finalizers from FSIndexOutput and move the
+     FSIndexInput finalizer to the actual file so all clones don't
+     register a new finalizer. (Yonik Seeley)
+
+Test Cases
+
+  1. Added TestTermScorer.java (Grant Ingersoll)
+
+  2. Added TestWindowsMMap.java (Benson Margulies via Mike McCandless)
+
+  3. LUCENE-744 Append the user.name property onto the temporary directory 
+     that is created so it doesn't interfere with other users. (Grant Ingersoll)
+
+Documentation
+
+  1. Added style sheet to xdocs named lucene.css and included in the
+     Anakia VSL descriptor.  (Grant Ingersoll)
+
+  2. Added scoring.xml document into xdocs.  Updated Similarity.java
+     scoring formula.(Grant Ingersoll and Steve Rowe.  Updates from:
+     Michael McCandless, Doron Cohen, Chris Hostetter, Doug Cutting).
+     Issue 664.
+
+  3. Added javadocs for FieldSelectorResult.java. (Grant Ingersoll)
+
+  4. Moved xdocs directory to src/site/src/documentation/content/xdocs per
+     Issue 707.  Site now builds using Forrest, just like the other Lucene
+     siblings.  See http://wiki.apache.org/jakarta-lucene/HowToUpdateTheWebsite
+     for info on updating the website. (Grant Ingersoll with help from Steve Rowe,
+     Chris Hostetter, Doug Cutting, Otis Gospodnetic, Yonik Seeley)
+
+  5. Added in Developer and System Requirements sections under Resources (Grant Ingersoll)
+
+  6. LUCENE-713 Updated the Term Vector section of File Formats to include
+     documentation on how Offset and Position info are stored in the TVF file.
+     (Grant Ingersoll, Samir Abdou)
+
+  7. Added in link to Clover Test Code Coverage Reports under the Develop
+     section in Resources (Grant Ingersoll)
+
+  8. LUCENE-748: Added details for semantics of IndexWriter.close on
+     hitting an Exception.  (Jed Wesley-Smith via Mike McCandless)
+
+  9. Added some text about what is contained in releases.
+     (Eric Haszlakiewicz via Grant Ingersoll)
+
+  10. LUCENE-758: Fix javadoc to clarify that RAMDirectory(Directory)
+      makes a full copy of the starting Directory.  (Mike McCandless)
+
+  11. LUCENE-764: Fix javadocs to detail temporary space requirements
+      for IndexWriter's optimize(), addIndexes(*) and addDocument(...)
+      methods.  (Mike McCandless)
+
+Build
+
+  1. Added in clover test code coverage per http://issues.apache.org/jira/browse/LUCENE-721
+     To enable clover code coverage, you must have clover.jar in the ANT
+     classpath and specify -Drun.clover=true on the command line.
+     (Michael Busch and Grant Ingersoll)
+
+  2. Added a sysproperty in common-build.xml per Lucene 752 to map java.io.tmpdir to
+     ${build.dir}/test just like the tempDir sysproperty.
+
+  3. LUCENE-757 Added new target named init-dist that does setup for
+     distribution of both binary and source distributions.  Called by package 
+     and package-*-src
+
+======================= Release 2.0.0 2006-05-26 =======================
+
+API Changes
+
+ 1. All deprecated methods and fields have been removed, except
+    DateField, which will still be supported for some time
+    so Lucene can read its date fields from old indexes
+    (Yonik Seeley & Grant Ingersoll)
+
+ 2. DisjunctionSumScorer is no longer public.
+    (Paul Elschot via Otis Gospodnetic)
+
+ 3. Creating a Field with both an empty name and an empty value
+    now throws an IllegalArgumentException
+    (Daniel Naber)
+
+ 4. LUCENE-301: Added new IndexWriter({String,File,Directory},
+    Analyzer) constructors that do not take a boolean "create"
+    argument.  These new constructors will create a new index if
+    necessary, else append to the existing one.  (Dan Armbrust via
+    Mike McCandless)
+
+New features
+
+ 1. LUCENE-496: Command line tool for modifying the field norms of an
+    existing index; added to contrib/miscellaneous.  (Chris Hostetter)
+
+ 2. LUCENE-577: SweetSpotSimilarity added to contrib/miscellaneous.
+    (Chris Hostetter)
+    
+Bug fixes
+
+ 1. LUCENE-330: Fix issue of FilteredQuery not working properly within
+    BooleanQuery.  (Paul Elschot via Erik Hatcher)
+
+ 2. LUCENE-515: Make ConstantScoreRangeQuery and ConstantScoreQuery work
+    with RemoteSearchable.  (Philippe Laflamme via Yonik Seeley)
+
+ 3. Added methods to get/set writeLockTimeout and commitLockTimeout in
+    IndexWriter. These could be set in Lucene 1.4 using a system property.
+    This feature had been removed without adding the corresponding
+    getter/setter methods.  (Daniel Naber)
+
+ 4. LUCENE-413: Fixed ArrayIndexOutOfBoundsException exceptions
+    when using SpanQueries. (Paul Elschot via Yonik Seeley)
+
+ 5. Implemented FilterIndexReader.getVersion() and isCurrent()
+    (Yonik Seeley)
+
+ 6. LUCENE-540: Fixed a bug with IndexWriter.addIndexes(Directory[])
+    that sometimes caused the index order of documents to change.
+    (Yonik Seeley)
+
+ 7. LUCENE-526: Fixed a bug in FieldSortedHitQueue that caused
+    subsequent String sorts with different locales to sort identically.
+    (Paul Cowan via Yonik Seeley)
+
+ 8. LUCENE-541: Add missing extractTerms() to DisjunctionMaxQuery
+    (Stefan Will via Yonik Seeley)
+
+ 9. LUCENE-514: Added getTermArrays() and extractTerms() to
+    MultiPhraseQuery (Eric Jain & Yonik Seeley)
+
+10. LUCENE-512: Fixed ClassCastException in ParallelReader.getTermFreqVectors
+    (frederic via Yonik)
+
+11. LUCENE-352: Fixed bug in SpanNotQuery that manifested as
+    NullPointerException when "exclude" query was not a SpanTermQuery.
+    (Chris Hostetter)
+
+12. LUCENE-572: Fixed bug in SpanNotQuery hashCode, was ignoring exclude clause
+    (Chris Hostetter)
+
+13. LUCENE-561: Fixed some ParallelReader bugs. NullPointerException if the reader
+    didn't know about the field yet, reader didn't keep track if it had deletions,
+    and deleteDocument calls could circumvent synchronization on the subreaders.
+    (Chuck Williams via Yonik Seeley)
+
+14. LUCENE-556: Added empty extractTerms() implementation to MatchAllDocsQuery and
+    ConstantScoreQuery in order to allow their use with a MultiSearcher.
+    (Yonik Seeley)
+
+15. LUCENE-546: Removed 2GB file size limitations for RAMDirectory.
+    (Peter Royal, Michael Chan, Yonik Seeley)
+
+16. LUCENE-485: Don't hold commit lock while removing obsolete index
+    files.  (Luc Vanlerberghe via cutting)
+
+
+1.9.1
+
+Bug fixes
+
+ 1. LUCENE-511: Fix a bug in the BufferedIndexOutput optimization
+    introduced in 1.9-final.  (Shay Banon & Steven Tamm via cutting)
+
+1.9 final
+
+Note that this release is mostly but not 100% source compatible with
+the previous release of Lucene (1.4.3). In other words, you should
+make sure your application compiles with this version of Lucene before
+you replace the old Lucene JAR with the new one.  Many methods have
+been deprecated in anticipation of release 2.0, so deprecation
+warnings are to be expected when upgrading from 1.4.3 to 1.9.
+
+Bug fixes
+ 
+ 1. The fix that made IndexWriter.setMaxBufferedDocs(1) work had negative 
+    effects on indexing performance and has thus been reverted. The 
+    argument for setMaxBufferedDocs(int) must now at least be 2, otherwise
+    an exception is thrown. (Daniel Naber)
+ 
+Optimizations
+     
+ 1. Optimized BufferedIndexOutput.writeBytes() to use
+    System.arraycopy() in more cases, rather than copying byte-by-byte.
+    (Lukas Zapletal via Cutting)
+
+1.9 RC1
+
+Requirements
+
+ 1. To compile and use Lucene you now need Java 1.4 or later.
+
+Changes in runtime behavior
+
+ 1. FuzzyQuery can no longer throw a TooManyClauses exception. If a
+    FuzzyQuery expands to more than BooleanQuery.maxClauseCount
+    terms only the BooleanQuery.maxClauseCount most similar terms
+    go into the rewritten query and thus the exception is avoided.
+    (Christoph)
+
+ 2. Changed system property from "org.apache.lucene.lockdir" to
+    "org.apache.lucene.lockDir", so that its casing follows the existing
+    pattern used in other Lucene system properties. (Bernhard)
+
+ 3. The terms of RangeQueries and FuzzyQueries are now converted to
+    lowercase by default (as it has been the case for PrefixQueries
+    and WildcardQueries before). Use setLowercaseExpandedTerms(false)
+    to disable that behavior but note that this also affects
+    PrefixQueries and WildcardQueries. (Daniel Naber)
+
+ 4. Document frequency that is computed when MultiSearcher is used is now
+    computed correctly and "globally" across subsearchers and indices, while
+    before it used to be computed locally to each index, which caused
+    ranking across multiple indices not to be equivalent.
+    (Chuck Williams, Wolf Siberski via Otis, bug #31841)
+
+ 5. When opening an IndexWriter with create=true, Lucene now only deletes
+    its own files from the index directory (looking at the file name suffixes
+    to decide if a file belongs to Lucene). The old behavior was to delete
+    all files. (Daniel Naber and Bernhard Messer, bug #34695)
+
+ 6. The version of an IndexReader, as returned by getCurrentVersion()
+    and getVersion() doesn't start at 0 anymore for new indexes. Instead, it
+    is now initialized by the system time in milliseconds.
+    (Bernhard Messer via Daniel Naber)
+
+ 7. Several default values cannot be set via system properties anymore, as
+    this has been considered inappropriate for a library like Lucene. For
+    most properties there are set/get methods available in IndexWriter which
+    you should use instead. This affects the following properties:
+    See IndexWriter for getter/setter methods:
+      org.apache.lucene.writeLockTimeout, org.apache.lucene.commitLockTimeout,
+      org.apache.lucene.minMergeDocs, org.apache.lucene.maxMergeDocs,
+      org.apache.lucene.maxFieldLength, org.apache.lucene.termIndexInterval,
+      org.apache.lucene.mergeFactor,
+    See BooleanQuery for getter/setter methods:
+      org.apache.lucene.maxClauseCount
+    See FSDirectory for getter/setter methods:
+      disableLuceneLocks
+    (Daniel Naber)
+
+ 8. Fixed FieldCacheImpl to use user-provided IntParser and FloatParser,
+    instead of using Integer and Float classes for parsing.
+    (Yonik Seeley via Otis Gospodnetic)
+
+ 9. Expert level search routines returning TopDocs and TopFieldDocs
+    no longer normalize scores.  This also fixes bugs related to
+    MultiSearchers and score sorting/normalization.
+    (Luc Vanlerberghe via Yonik Seeley, LUCENE-469)
+
+New features
+
+ 1. Added support for stored compressed fields (patch #31149)
+    (Bernhard Messer via Christoph)
+
+ 2. Added support for binary stored fields (patch #29370)
+    (Drew Farris and Bernhard Messer via Christoph)
+
+ 3. Added support for position and offset information in term vectors
+    (patch #18927). (Grant Ingersoll & Christoph)
+
+ 4. A new class DateTools has been added. It allows you to format dates
+    in a readable format adequate for indexing. Unlike the existing
+    DateField class DateTools can cope with dates before 1970 and it
+    forces you to specify the desired date resolution (e.g. month, day,
+    second, ...) which can make RangeQuerys on those fields more efficient.
+    (Daniel Naber)
+
+ 5. QueryParser now correctly works with Analyzers that can return more
+    than one token per position. For example, a query "+fast +car"
+    would be parsed as "+fast +(car automobile)" if the Analyzer
+    returns "car" and "automobile" at the same position whenever it
+    finds "car" (Patch #23307).
+    (Pierrick Brihaye, Daniel Naber)
+
+ 6. Permit unbuffered Directory implementations (e.g., using mmap).
+    InputStream is replaced by the new classes IndexInput and
+    BufferedIndexInput.  OutputStream is replaced by the new classes
+    IndexOutput and BufferedIndexOutput.  InputStream and OutputStream
+    are now deprecated and FSDirectory is now subclassable. (cutting)
+
+ 7. Add native Directory and TermDocs implementations that work under
+    GCJ.  These require GCC 3.4.0 or later and have only been tested
+    on Linux.  Use 'ant gcj' to build demo applications. (cutting)
+
+ 8. Add MMapDirectory, which uses nio to mmap input files.  This is
+    still somewhat slower than FSDirectory.  However it uses less
+    memory per query term, since a new buffer is not allocated per
+    term, which may help applications which use, e.g., wildcard
+    queries.  It may also someday be faster. (cutting & Paul Elschot)
+
+ 9. Added javadocs-internal to build.xml - bug #30360
+    (Paul Elschot via Otis)
+
+10. Added RangeFilter, a more generically useful filter than DateFilter.
+    (Chris M Hostetter via Erik)
+
+11. Added NumberTools, a utility class indexing numeric fields.
+    (adapted from code contributed by Matt Quail; committed by Erik)
+
+12. Added public static IndexReader.main(String[] args) method.
+    IndexReader can now be used directly at command line level
+    to list and optionally extract the individual files from an existing
+    compound index file.
+    (adapted from code contributed by Garrett Rooney; committed by Bernhard)
+
+13. Add IndexWriter.setTermIndexInterval() method.  See javadocs.
+    (Doug Cutting)
+
+14. Added LucenePackage, whose static get() method returns java.util.Package,
+    which lets the caller get the Lucene version information specified in
+    the Lucene Jar.
+    (Doug Cutting via Otis)
+
+15. Added Hits.iterator() method and corresponding HitIterator and Hit objects.
+    This provides standard java.util.Iterator iteration over Hits.
+    Each call to the iterator's next() method returns a Hit object.
+    (Jeremy Rayner via Erik)
+
+16. Add ParallelReader, an IndexReader that combines separate indexes
+    over different fields into a single virtual index.  (Doug Cutting)
+
+17. Add IntParser and FloatParser interfaces to FieldCache, so that
+    fields in arbitrarily formats can be cached as ints and floats.
+    (Doug Cutting)
+
+18. Added class org.apache.lucene.index.IndexModifier which combines
+    IndexWriter and IndexReader, so you can add and delete documents without
+    worrying about synchronization/locking issues.
+    (Daniel Naber)
+
+19. Lucene can now be used inside an unsigned applet, as Lucene's access
+    to system properties will not cause a SecurityException anymore.
+    (Jon Schuster via Daniel Naber, bug #34359)
+
+20. Added a new class MatchAllDocsQuery that matches all documents.
+    (John Wang via Daniel Naber, bug #34946)
+
+21. Added ability to omit norms on a per field basis to decrease
+    index size and memory consumption when there are many indexed fields.
+    See Field.setOmitNorms()
+    (Yonik Seeley, LUCENE-448)
+
+22. Added NullFragmenter to contrib/highlighter, which is useful for
+    highlighting entire documents or fields.
+    (Erik Hatcher)
+
+23. Added regular expression queries, RegexQuery and SpanRegexQuery.
+    Note the same term enumeration caveats apply with these queries as
+    apply to WildcardQuery and other term expanding queries.
+    These two new queries are not currently supported via QueryParser.
+    (Erik Hatcher)
+
+24. Added ConstantScoreQuery which wraps a filter and produces a score
+    equal to the query boost for every matching document.
+    (Yonik Seeley, LUCENE-383)
+
+25. Added ConstantScoreRangeQuery which produces a constant score for
+    every document in the range.  One advantage over a normal RangeQuery
+    is that it doesn't expand to a BooleanQuery and thus doesn't have a maximum
+    number of terms the range can cover.  Both endpoints may also be open.
+    (Yonik Seeley, LUCENE-383)
+
+26. Added ability to specify a minimum number of optional clauses that
+    must match in a BooleanQuery.  See BooleanQuery.setMinimumNumberShouldMatch().
+    (Paul Elschot, Chris Hostetter via Yonik Seeley, LUCENE-395)
+
+27. Added DisjunctionMaxQuery which provides the maximum score across its clauses.
+    It's very useful for searching across multiple fields.
+    (Chuck Williams via Yonik Seeley, LUCENE-323)
+
+28. New class ISOLatin1AccentFilter that replaces accented characters in the ISO
+    Latin 1 character set by their unaccented equivalent.
+    (Sven Duzont via Erik Hatcher)
+
+29. New class KeywordAnalyzer. "Tokenizes" the entire stream as a single token.
+    This is useful for data like zip codes, ids, and some product names.
+    (Erik Hatcher)
+
+30. Copied LengthFilter from contrib area to core. Removes words that are too
+    long and too short from the stream.
+    (David Spencer via Otis and Daniel)
+
+31. Added getPositionIncrementGap(String fieldName) to Analyzer.  This allows
+    custom analyzers to put gaps between Field instances with the same field
+    name, preventing phrase or span queries crossing these boundaries.  The
+    default implementation issues a gap of 0, allowing the default token
+    position increment of 1 to put the next field's first token into a
+    successive position.
+    (Erik Hatcher, with advice from Yonik)
+
+32. StopFilter can now ignore case when checking for stop words.
+    (Grant Ingersoll via Yonik, LUCENE-248)
+
+33. Add TopDocCollector and TopFieldDocCollector.  These simplify the
+    implementation of hit collectors that collect only the
+    top-scoring or top-sorting hits.
+
+API Changes
+
+ 1. Several methods and fields have been deprecated. The API documentation
+    contains information about the recommended replacements. It is planned
+    that most of the deprecated methods and fields will be removed in
+    Lucene 2.0. (Daniel Naber)
+
+ 2. The Russian and the German analyzers have been moved to contrib/analyzers.
+    Also, the WordlistLoader class has been moved one level up in the
+    hierarchy and is now org.apache.lucene.analysis.WordlistLoader
+    (Daniel Naber)
+
+ 3. The API contained methods that declared to throw an IOException
+    but that never did this. These declarations have been removed. If
+    your code tries to catch these exceptions you might need to remove
+    those catch clauses to avoid compile errors. (Daniel Naber)
+
+ 4. Add a serializable Parameter Class to standardize parameter enum
+    classes in BooleanClause and Field. (Christoph)
+
+ 5. Added rewrite methods to all SpanQuery subclasses that nest other SpanQuerys.
+    This allows custom SpanQuery subclasses that rewrite (for term expansion, for
+    example) to nest within the built-in SpanQuery classes successfully.
+
+Bug fixes
+
+ 1. The JSP demo page (src/jsp/results.jsp) now properly closes the
+    IndexSearcher it opens. (Daniel Naber)
+
+ 2. Fixed a bug in IndexWriter.addIndexes(IndexReader[] readers) that
+    prevented deletion of obsolete segments. (Christoph Goller)
+
+ 3. Fix in FieldInfos to avoid the return of an extra blank field in
+    IndexReader.getFieldNames() (Patch #19058). (Mark Harwood via Bernhard)
+
+ 4. Some combinations of BooleanQuery and MultiPhraseQuery (formerly
+    PhrasePrefixQuery) could provoke UnsupportedOperationException
+    (bug #33161). (Rhett Sutphin via Daniel Naber)
+
+ 5. Small bug in skipTo of ConjunctionScorer that caused NullPointerException
+    if skipTo() was called without prior call to next() fixed. (Christoph)
+
+ 6. Disable Similiarty.coord() in the scoring of most automatically
+    generated boolean queries.  The coord() score factor is
+    appropriate when clauses are independently specified by a user,
+    but is usually not appropriate when clauses are generated
+    automatically, e.g., by a fuzzy, wildcard or range query.  Matches
+    on such automatically generated queries are no longer penalized
+    for not matching all terms.  (Doug Cutting, Patch #33472)
+
+ 7. Getting a lock file with Lock.obtain(long) was supposed to wait for
+    a given amount of milliseconds, but this didn't work.
+    (John Wang via Daniel Naber, Bug #33799)
+
+ 8. Fix FSDirectory.createOutput() to always create new files.
+    Previously, existing files were overwritten, and an index could be
+    corrupted when the old version of a file was longer than the new.
+    Now any existing file is first removed.  (Doug Cutting)
+
+ 9. Fix BooleanQuery containing nested SpanTermQuery's, which previously
+    could return an incorrect number of hits.
+    (Reece Wilton via Erik Hatcher, Bug #35157)
+
+10. Fix NullPointerException that could occur with a MultiPhraseQuery
+    inside a BooleanQuery.
+    (Hans Hjelm and Scotty Allen via Daniel Naber, Bug #35626)
+
+11. Fixed SnowballFilter to pass through the position increment from
+    the original token.
+    (Yonik Seeley via Erik Hatcher, LUCENE-437)
+
+12. Added Unicode range of Korean characters to StandardTokenizer,
+    grouping contiguous characters into a token rather than one token
+    per character.  This change also changes the token type to "<CJ>"
+    for Chinese and Japanese character tokens (previously it was "<CJK>").
+    (Cheolgoo Kang via Otis and Erik, LUCENE-444 and LUCENE-461)
+
+13. FieldsReader now looks at FieldInfo.storeOffsetWithTermVector and
+    FieldInfo.storePositionWithTermVector and creates the Field with
+    correct TermVector parameter.
+    (Frank Steinmann via Bernhard, LUCENE-455)
+
+14. Fixed WildcardQuery to prevent "cat" matching "ca??".
+    (Xiaozheng Ma via Bernhard, LUCENE-306)
+
+15. Fixed a bug where MultiSearcher and ParallelMultiSearcher could
+    change the sort order when sorting by string for documents without
+    a value for the sort field.
+    (Luc Vanlerberghe via Yonik, LUCENE-453)
+
+16. Fixed a sorting problem with MultiSearchers that can lead to
+    missing or duplicate docs due to equal docs sorting in an arbitrary order.
+    (Yonik Seeley, LUCENE-456)
+
+17. A single hit using the expert level sorted search methods
+    resulted in the score not being normalized.
+    (Yonik Seeley, LUCENE-462)
+
+18. Fixed inefficient memory usage when loading an index into RAMDirectory.
+    (Volodymyr Bychkoviak via Bernhard, LUCENE-475)
+
+19. Corrected term offsets returned by ChineseTokenizer.
+    (Ray Tsang via Erik Hatcher, LUCENE-324)
+
+20. Fixed MultiReader.undeleteAll() to correctly update numDocs.
+    (Robert Kirchgessner via Doug Cutting, LUCENE-479)
+
+21. Race condition in IndexReader.getCurrentVersion() and isCurrent()
+    fixed by acquiring the commit lock.
+    (Luc Vanlerberghe via Yonik Seeley, LUCENE-481)
+
+22. IndexWriter.setMaxBufferedDocs(1) didn't have the expected effect,
+    this has now been fixed. (Daniel Naber)
+
+23. Fixed QueryParser when called with a date in local form like 
+    "[1/16/2000 TO 1/18/2000]". This query did not include the documents
+    of 1/18/2000, i.e. the last day was not included. (Daniel Naber)
+
+24. Removed sorting constraint that threw an exception if there were
+    not yet any values for the sort field (Yonik Seeley, LUCENE-374)
+
+Optimizations
+     
+ 1. Disk usage (peak requirements during indexing and optimization)
+    in case of compound file format has been improved. 
+    (Bernhard, Dmitry, and Christoph)
+
+ 2. Optimize the performance of certain uses of BooleanScorer,
+    TermScorer and IndexSearcher.  In particular, a BooleanQuery
+    composed of TermQuery, with not all terms required, that returns a
+    TopDocs (e.g., through a Hits with no Sort specified) runs much
+    faster.  (cutting)
+    
+ 3. Removed synchronization from reading of term vectors with an
+    IndexReader (Patch #30736). (Bernhard Messer via Christoph)
+
+ 4. Optimize term-dictionary lookup to allocate far fewer terms when
+    scanning for the matching term.  This speeds searches involving
+    low-frequency terms, where the cost of dictionary lookup can be
+    significant. (cutting)
+
+ 5. Optimize fuzzy queries so the standard fuzzy queries with a prefix 
+    of 0 now run 20-50% faster (Patch #31882).
+    (Jonathan Hager via Daniel Naber)
+    
+ 6. A Version of BooleanScorer (BooleanScorer2) added that delivers
+    documents in increasing order and implements skipTo. For queries
+    with required or forbidden clauses it may be faster than the old
+    BooleanScorer, for BooleanQueries consisting only of optional
+    clauses it is probably slower. The new BooleanScorer is now the
+    default. (Patch 31785 by Paul Elschot via Christoph)
+
+ 7. Use uncached access to norms when merging to reduce RAM usage.
+    (Bug #32847).  (Doug Cutting)
+
+ 8. Don't read term index when random-access is not required.  This
+    reduces time to open IndexReaders and they use less memory when
+    random access is not required, e.g., when merging segments.  The
+    term index is now read into memory lazily at the first
+    random-access.  (Doug Cutting)
+
+ 9. Optimize IndexWriter.addIndexes(Directory[]) when the number of
+    added indexes is larger than mergeFactor.  Previously this could
+    result in quadratic performance.  Now performance is n log(n).
+    (Doug Cutting)
+
+10. Speed up the creation of TermEnum for indices with multiple
+    segments and deleted documents, and thus speed up PrefixQuery,
+    RangeQuery, WildcardQuery, FuzzyQuery, RangeFilter, DateFilter,
+    and sorting the first time on a field.
+    (Yonik Seeley, LUCENE-454)
+
+11. Optimized and generalized 32 bit floating point to byte
+    (custom 8 bit floating point) conversions.  Increased the speed of
+    Similarity.encodeNorm() anywhere from 10% to 250%, depending on the JVM.
+    (Yonik Seeley, LUCENE-467)
+
+Infrastructure
+
+ 1. Lucene's source code repository has converted from CVS to
+    Subversion.  The new repository is at
+    http://svn.apache.org/repos/asf/lucene/java/trunk
+
+ 2. Lucene's issue tracker has migrated from Bugzilla to JIRA.
+    Lucene's JIRA is at http://issues.apache.org/jira/browse/LUCENE
+    The old issues are still available at
+    http://issues.apache.org/bugzilla/show_bug.cgi?id=xxxx
+    (use the bug number instead of xxxx)
+
+
+1.4.3
+
+ 1. The JSP demo page (src/jsp/results.jsp) now properly escapes error
+    messages which might contain user input (e.g. error messages about 
+    query parsing). If you used that page as a starting point for your
+    own code please make sure your code also properly escapes HTML
+    characters from user input in order to avoid so-called cross site
+    scripting attacks. (Daniel Naber)
+  
+  2. QueryParser changes in 1.4.2 broke the QueryParser API. Now the old 
+     API is supported again. (Christoph)
+
+
+1.4.2
+
+ 1. Fixed bug #31241: Sorting could lead to incorrect results (documents
+    missing, others duplicated) if the sort keys were not unique and there
+    were more than 100 matches. (Daniel Naber)
+
+ 2. Memory leak in Sort code (bug #31240) eliminated.
+    (Rafal Krzewski via Christoph and Daniel)
+    
+ 3. FuzzyQuery now takes an additional parameter that specifies the
+    minimum similarity that is required for a term to match the query.
+    The QueryParser syntax for this is term~x, where x is a floating 
+    point number >= 0 and < 1 (a bigger number means that a higher
+    similarity is required). Furthermore, a prefix can be specified
+    for FuzzyQuerys so that only those terms are considered similar that 
+    start with this prefix. This can speed up FuzzyQuery greatly.
+    (Daniel Naber, Christoph Goller)
+    
+ 4. PhraseQuery and PhrasePrefixQuery now allow the explicit specification
+    of relative positions. (Christoph Goller)
+    
+ 5. QueryParser changes: Fix for ArrayIndexOutOfBoundsExceptions 
+    (patch #9110); some unused method parameters removed; The ability
+    to specify a minimum similarity for FuzzyQuery has been added.
+    (Christoph Goller)
+
+ 6. IndexSearcher optimization: a new ScoreDoc is no longer allocated
+    for every non-zero-scoring hit.  This makes 'OR' queries that
+    contain common terms substantially faster.  (cutting)
+
+
+1.4.1
+
+ 1. Fixed a performance bug in hit sorting code, where values were not
+    correctly cached.  (Aviran via cutting)
+
+ 2. Fixed errors in file format documentation. (Daniel Naber)
+
+
+1.4 final
+
+ 1. Added "an" to the list of stop words in StopAnalyzer, to complement
+    the existing "a" there.  Fix for bug 28960
+     (http://issues.apache.org/bugzilla/show_bug.cgi?id=28960). (Otis)
+
+ 2. Added new class FieldCache to manage in-memory caches of field term
+    values.  (Tim Jones)
+
+ 3. Added overloaded getFieldQuery method to QueryParser which
+    accepts the slop factor specified for the phrase (or the default
+    phrase slop for the QueryParser instance).  This allows overriding
+    methods to replace a PhraseQuery with a SpanNearQuery instead,
+    keeping the proper slop factor. (Erik Hatcher)
+
+ 4. Changed the encoding of GermanAnalyzer.java and GermanStemmer.java to
+    UTF-8 and changed the build encoding to UTF-8, to make changed files
+    compile. (Otis Gospodnetic)
+
+ 5. Removed synchronization from term lookup under IndexReader methods
+    termFreq(), termDocs() or termPositions() to improve
+    multi-threaded performance.  (cutting)
+
+ 6. Fix a bug where obsolete segment files were not deleted on Win32.
+
+
+1.4 RC3
+
+ 1. Fixed several search bugs introduced by the skipTo() changes in
+    release 1.4RC1.  The index file format was changed a bit, so
+    collections must be re-indexed to take advantage of the skipTo()
+    optimizations.  (Christoph Goller)
+
+ 2. Added new Document methods, removeField() and removeFields().
+    (Christoph Goller)
+
+ 3. Fixed inconsistencies with index closing.  Indexes and directories
+    are now only closed automatically by Lucene when Lucene opened
+    them automatically.  (Christoph Goller)
+
+ 4. Added new class: FilteredQuery.  (Tim Jones)
+
+ 5. Added a new SortField type for custom comparators.  (Tim Jones)
+
+ 6. Lock obtain timed out message now displays the full path to the lock
+    file. (Daniel Naber via Erik)
+
+ 7. Fixed a bug in SpanNearQuery when ordered. (Paul Elschot via cutting)
+
+ 8. Fixed so that FSDirectory's locks still work when the
+    java.io.tmpdir system property is null.  (cutting)
+
+ 9. Changed FilteredTermEnum's constructor to take no parameters,
+    as the parameters were ignored anyway (bug #28858)
+
+1.4 RC2
+
+ 1. GermanAnalyzer now throws an exception if the stopword file
+    cannot be found (bug #27987). It now uses LowerCaseFilter
+    (bug #18410) (Daniel Naber via Otis, Erik)
+
+ 2. Fixed a few bugs in the file format documentation. (cutting)
+
+
+1.4 RC1
+
+ 1. Changed the format of the .tis file, so that:
+
+    - it has a format version number, which makes it easier to
+      back-compatibly change file formats in the future.
+
+    - the term count is now stored as a long.  This was the one aspect
+      of the Lucene's file formats which limited index size.
+
+    - a few internal index parameters are now stored in the index, so
+      that they can (in theory) now be changed from index to index,
+      although there is not yet an API to do so.
+
+    These changes are back compatible.  The new code can read old
+    indexes.  But old code will not be able read new indexes. (cutting)
+
+ 2. Added an optimized implementation of TermDocs.skipTo().  A skip
+    table is now stored for each term in the .frq file.  This only
+    adds a percent or two to overall index size, but can substantially
+    speedup many searches.  (cutting)
+
+ 3. Restructured the Scorer API and all Scorer implementations to take
+    advantage of an optimized TermDocs.skipTo() implementation.  In
+    particular, PhraseQuerys and conjunctive BooleanQuerys are
+    faster when one clause has substantially fewer matches than the
+    others.  (A conjunctive BooleanQuery is a BooleanQuery where all
+    clauses are required.)  (cutting)
+
+ 4. Added new class ParallelMultiSearcher.  Combined with
+    RemoteSearchable this makes it easy to implement distributed
+    search systems.  (Jean-Francois Halleux via cutting)
+
+ 5. Added support for hit sorting.  Results may now be sorted by any
+    indexed field.  For details see the javadoc for
+    Searcher#search(Query, Sort).  (Tim Jones via Cutting)
+
+ 6. Changed FSDirectory to auto-create a full directory tree that it
+    needs by using mkdirs() instead of mkdir().  (Mladen Turk via Otis)
+
+ 7. Added a new span-based query API.  This implements, among other
+    things, nested phrases.  See javadocs for details.  (Doug Cutting)
+
+ 8. Added new method Query.getSimilarity(Searcher), and changed
+    scorers to use it.  This permits one to subclass a Query class so
+    that it can specify its own Similarity implementation, perhaps
+    one that delegates through that of the Searcher.  (Julien Nioche
+    via Cutting)
+
+ 9. Added MultiReader, an IndexReader that combines multiple other
+    IndexReaders.  (Cutting)
+
+10. Added support for term vectors.  See Field#isTermVectorStored().
+    (Grant Ingersoll, Cutting & Dmitry)
+
+11. Fixed the old bug with escaping of special characters in query
+    strings: http://issues.apache.org/bugzilla/show_bug.cgi?id=24665
+    (Jean-Francois Halleux via Otis)
+
+12. Added support for overriding default values for the following,
+    using system properties:
+      - default commit lock timeout
+      - default maxFieldLength
+      - default maxMergeDocs
+      - default mergeFactor
+      - default minMergeDocs
+      - default write lock timeout
+    (Otis)
+
+13. Changed QueryParser.jj to allow '-' and '+' within tokens:
+    http://issues.apache.org/bugzilla/show_bug.cgi?id=27491
+    (Morus Walter via Otis)
+
+14. Changed so that the compound index format is used by default.
+    This makes indexing a bit slower, but vastly reduces the chances
+    of file handle problems.  (Cutting)
+
+
+1.3 final
+
+ 1. Added catch of BooleanQuery$TooManyClauses in QueryParser to
+    throw ParseException instead. (Erik Hatcher)
+
+ 2. Fixed a NullPointerException in Query.explain(). (Doug Cutting)
+
+ 3. Added a new method IndexReader.setNorm(), that permits one to
+    alter the boosting of fields after an index is created.
+
+ 4. Distinguish between the final position and length when indexing a
+    field.  The length is now defined as the total number of tokens,
+    instead of the final position, as it was previously.  Length is
+    used for score normalization (Similarity.lengthNorm()) and for
+    controlling memory usage (IndexWriter.maxFieldLength).  In both of
+    these cases, the total number of tokens is a better value to use
+    than the final token position.  Position is used in phrase
+    searching (see PhraseQuery and Token.setPositionIncrement()).
+
+ 5. Fix StandardTokenizer's handling of CJK characters (Chinese,
+    Japanese and Korean ideograms).  Previously contiguous sequences
+    were combined in a single token, which is not very useful.  Now
+    each ideogram generates a separate token, which is more useful.
+
+
+1.3 RC3
+
+ 1. Added minMergeDocs in IndexWriter.  This can be raised to speed
+    indexing without altering the number of files, but only using more
+    memory.  (Julien Nioche via Otis)
+
+ 2. Fix bug #24786, in query rewriting. (bschneeman via Cutting)
+
+ 3. Fix bug #16952, in demo HTML parser, skip comments in
+    javascript. (Christoph Goller)
+
+ 4. Fix bug #19253, in demo HTML parser, add whitespace as needed to
+    output (Daniel Naber via Christoph Goller)
+
+ 5. Fix bug #24301, in demo HTML parser, long titles no longer
+    hang things. (Christoph Goller)
+
+ 6. Fix bug #23534, Replace use of file timestamp of segments file
+    with an index version number stored in the segments file.  This
+    resolves problems when running on file systems with low-resolution
+    timestamps, e.g., HFS under MacOS X.  (Christoph Goller)
+
+ 7. Fix QueryParser so that TokenMgrError is not thrown, only
+    ParseException.  (Erik Hatcher)
+
+ 8. Fix some bugs introduced by change 11 of RC2.  (Christoph Goller)
+
+ 9. Fixed a problem compiling TestRussianStem.  (Christoph Goller)
+
+10. Cleaned up some build stuff.  (Erik Hatcher)
+
+
+1.3 RC2
+
+ 1. Added getFieldNames(boolean) to IndexReader, SegmentReader, and
+    SegmentsReader. (Julien Nioche via otis)
+
+ 2. Changed file locking to place lock files in
+    System.getProperty("java.io.tmpdir"), where all users are
+    permitted to write files.  This way folks can open and correctly
+    lock indexes which are read-only to them.
+
+ 3. IndexWriter: added a new method, addDocument(Document, Analyzer),
+    permitting one to easily use different analyzers for different
+    documents in the same index.
+
+ 4. Minor enhancements to FuzzyTermEnum.
+    (Christoph Goller via Otis)
+
+ 5. PriorityQueue: added insert(Object) method and adjusted IndexSearcher
+    and MultiIndexSearcher to use it.
+    (Christoph Goller via Otis)
+
+ 6. Fixed a bug in IndexWriter that returned incorrect docCount().
+    (Christoph Goller via Otis)
+
+ 7. Fixed SegmentsReader to eliminate the confusing and slightly different
+    behaviour of TermEnum when dealing with an enumeration of all terms,
+    versus an enumeration starting from a specific term.
+    This patch also fixes incorrect term document frequencies when the same term
+    is present in multiple segments.
+    (Christoph Goller via Otis)
+
+ 8. Added CachingWrapperFilter and PerFieldAnalyzerWrapper. (Erik Hatcher)
+
+ 9. Added support for the new "compound file" index format (Dmitry
+    Serebrennikov)
+
+10. Added Locale setting to QueryParser, for use by date range parsing.
+
+11. Changed IndexReader so that it can be subclassed by classes
+    outside of its package.  Previously it had package-private
+    abstract methods.  Also modified the index merging code so that it
+    can work on an arbitrary IndexReader implementation, and added a
+    new method, IndexWriter.addIndexes(IndexReader[]), to take
+    advantage of this. (cutting)
+
+12. Added a limit to the number of clauses which may be added to a
+    BooleanQuery.  The default limit is 1024 clauses.  This should
+    stop most OutOfMemoryExceptions by prefix, wildcard and fuzzy
+    queries which run amok. (cutting)
+
+13. Add new method: IndexReader.undeleteAll().  This undeletes all
+    deleted documents which still remain in the index. (cutting)
+
+
+1.3 RC1
+
+ 1. Fixed PriorityQueue's clear() method.
+    Fix for bug 9454, http://nagoya.apache.org/bugzilla/show_bug.cgi?id=9454
+    (Matthijs Bomhoff via otis)
+
+ 2. Changed StandardTokenizer.jj grammar for EMAIL tokens.
+    Fix for bug 9015, http://nagoya.apache.org/bugzilla/show_bug.cgi?id=9015
+    (Dale Anson via otis)
+
+ 3. Added the ability to disable lock creation by using disableLuceneLocks
+    system property.  This is useful for read-only media, such as CD-ROMs.
+    (otis)
+
+ 4. Added id method to Hits to be able to access the index global id.
+    Required for sorting options.
+    (carlson)
+
+ 5. Added support for new range query syntax to QueryParser.jj.
+    (briangoetz)
+
+ 6. Added the ability to retrieve HTML documents' META tag values to
+    HTMLParser.jj.
+    (Mark Harwood via otis)
+
+ 7. Modified QueryParser to make it possible to programmatically specify the
+    default Boolean operator (OR or AND).
+    (Péter Halácsy via otis)
+
+ 8. Made many search methods and classes non-final, per requests.
+    This includes IndexWriter and IndexSearcher, among others.
+    (cutting)
+
+ 9. Added class RemoteSearchable, providing support for remote
+    searching via RMI.  The test class RemoteSearchableTest.java
+    provides an example of how this can be used.  (cutting)
+
+ 10. Added PhrasePrefixQuery (and supporting MultipleTermPositions).  The
+     test class TestPhrasePrefixQuery provides the usage example.
+     (Anders Nielsen via otis)
+
+ 11. Changed the German stemming algorithm to ignore case while
+     stripping. The new algorithm is faster and produces more equal
+     stems from nouns and verbs derived from the same word.
+     (gschwarz)
+
+ 12. Added support for boosting the score of documents and fields via
+     the new methods Document.setBoost(float) and Field.setBoost(float).
+
+     Note: This changes the encoding of an indexed value.  Indexes
+     should be re-created from scratch in order for search scores to
+     be correct.  With the new code and an old index, searches will
+     yield very large scores for shorter fields, and very small scores
+     for longer fields.  Once the index is re-created, scores will be
+     as before. (cutting)
+
+ 13. Added new method Token.setPositionIncrement().
+
+     This permits, for the purpose of phrase searching, placing
+     multiple terms in a single position.  This is useful with
+     stemmers that produce multiple possible stems for a word.
+
+     This also permits the introduction of gaps between terms, so that
+     terms which are adjacent in a token stream will not be matched by
+     and exact phrase query.  This makes it possible, e.g., to build
+     an analyzer where phrases are not matched over stop words which
+     have been removed.
+
+     Finally, repeating a token with an increment of zero can also be
+     used to boost scores of matches on that token.  (cutting)
+
+ 14. Added new Filter class, QueryFilter.  This constrains search
+     results to only match those which also match a provided query.
+     Results are cached, so that searches after the first on the same
+     index using this filter are very fast.
+
+     This could be used, for example, with a RangeQuery on a formatted
+     date field to implement date filtering.  One could re-use a
+     single QueryFilter that matches, e.g., only documents modified
+     within the last week.  The QueryFilter and RangeQuery would only
+     need to be reconstructed once per day. (cutting)
+
+ 15. Added a new IndexWriter method, getAnalyzer().  This returns the
+     analyzer used when adding documents to this index. (cutting)
+
+ 16. Fixed a bug with IndexReader.lastModified().  Before, document
+     deletion did not update this.  Now it does.  (cutting)
+
+ 17. Added Russian Analyzer.
+     (Boris Okner via otis)
+
+ 18. Added a public, extensible scoring API.  For details, see the
+     javadoc for org.apache.lucene.search.Similarity.
+
+ 19. Fixed return of Hits.id() from float to int. (Terry Steichen via Peter).
+
+ 20. Added getFieldNames() to IndexReader and Segment(s)Reader classes.
+     (Peter Mularien via otis)
+
+ 21. Added getFields(String) and getValues(String) methods.
+     Contributed by Rasik Pandey on 2002-10-09
+     (Rasik Pandey via otis)
+
+ 22. Revised internal search APIs.  Changes include:
+
+       a. Queries are no longer modified during a search.  This makes
+       it possible, e.g., to reuse the same query instance with
+       multiple indexes from multiple threads.
+
+       b. Term-expanding queries (e.g. PrefixQuery, WildcardQuery,
+       etc.)  now work correctly with MultiSearcher, fixing bugs 12619
+       and 12667.
+
+       c. Boosting BooleanQuery's now works, and is supported by the
+       query parser (problem reported by Lee Mallabone).  Thus a query
+       like "(+foo +bar)^2 +baz" is now supported and equivalent to
+       "(+foo^2 +bar^2) +baz".
+
+       d. New method: Query.rewrite(IndexReader).  This permits a
+       query to re-write itself as an alternate, more primitive query.
+       Most of the term-expanding query classes (PrefixQuery,
+       WildcardQuery, etc.) are now implemented using this method.
+
+       e. New method: Searchable.explain(Query q, int doc).  This
+       returns an Explanation instance that describes how a particular
+       document is scored against a query.  An explanation can be
+       displayed as either plain text, with the toString() method, or
+       as HTML, with the toHtml() method.  Note that computing an
+       explanation is as expensive as executing the query over the
+       entire index.  This is intended to be used in developing
+       Similarity implementations, and, for good performance, should
+       not be displayed with every hit.
+
+       f. Scorer and Weight are public, not package protected.  It now
+       possible for someone to write a Scorer implementation that is
+       not in the org.apache.lucene.search package.  This is still
+       fairly advanced programming, and I don't expect anyone to do
+       this anytime soon, but at least now it is possible.
+
+       g. Added public accessors to the primitive query classes
+       (TermQuery, PhraseQuery and BooleanQuery), permitting access to
+       their terms and clauses.
+
+     Caution: These are extensive changes and they have not yet been
+     tested extensively.  Bug reports are appreciated.
+     (cutting)
+
+ 23. Added convenience RAMDirectory constructors taking File and String
+     arguments, for easy FSDirectory to RAMDirectory conversion.
+     (otis)
+
+ 24. Added code for manual renaming of files in FSDirectory, since it
+     has been reported that java.io.File's renameTo(File) method sometimes
+     fails on Windows JVMs.
+     (Matt Tucker via otis)
+
+ 25. Refactored QueryParser to make it easier for people to extend it.
+     Added the ability to automatically lower-case Wildcard terms in
+     the QueryParser.
+     (Tatu Saloranta via otis)
+
+
+1.2 RC6
+
+ 1. Changed QueryParser.jj to have "?" be a special character which
+    allowed it to be used as a wildcard term. Updated TestWildcard
+    unit test also. (Ralf Hettesheimer via carlson)
+
+1.2 RC5
+
+ 1. Renamed build.properties to default.properties and updated
+    the BUILD.txt document to describe how to override the
+    default.property settings without having to edit the file. This
+    brings the build process closer to Scarab's build process.
+    (jon)
+
+ 2. Added MultiFieldQueryParser class. (Kelvin Tan, via otis)
+
+ 3. Updated "powered by" links. (otis)
+
+ 4. Fixed instruction for setting up JavaCC - Bug #7017 (otis)
+
+ 5. Added throwing exception if FSDirectory could not create directory
+    - Bug #6914 (Eugene Gluzberg via otis)
+
+ 6. Update MultiSearcher, MultiFieldParse, Constants, DateFilter,
+    LowerCaseTokenizer javadoc (otis)
+
+ 7. Added fix to avoid NullPointerException in results.jsp
+    (Mark Hayes via otis)
+
+ 8. Changed Wildcard search to find 0 or more char instead of 1 or more
+    (Lee Mallobone, via otis)
+
+ 9. Fixed error in offset issue in GermanStemFilter - Bug #7412
+    (Rodrigo Reyes, via otis)
+
+ 10. Added unit tests for wildcard search and DateFilter (otis)
+
+ 11. Allow co-existence of indexed and non-indexed fields with the same name
+     (cutting/casper, via otis)
+
+ 12. Add escape character to query parser.
+     (briangoetz)
+
+ 13. Applied a patch that ensures that searches that use DateFilter
+     don't throw an exception when no matches are found. (David Smiley, via
+     otis)
+
+ 14. Fixed bugs in DateFilter and wildcardquery unit tests. (cutting, otis, carlson)
+
+
+1.2 RC4
+
+ 1. Updated contributions section of website.
+    Add XML Document #3 implementation to Document Section.
+    Also added Term Highlighting to Misc Section. (carlson)
+
+ 2. Fixed NullPointerException for phrase searches containing
+    unindexed terms, introduced in 1.2RC3.  (cutting)
+
+ 3. Changed document deletion code to obtain the index write lock,
+    enforcing the fact that document addition and deletion cannot be
+    performed concurrently.  (cutting)
+
+ 4. Various documentation cleanups.  (otis, acoliver)
+
+ 5. Updated "powered by" links.  (cutting, jon)
+
+ 6. Fixed a bug in the GermanStemmer.  (Bernhard Messer, via otis)
+
+ 7. Changed Term and Query to implement Serializable.  (scottganyo)
+
+ 8. Fixed to never delete indexes added with IndexWriter.addIndexes().
+    (cutting)
+
+ 9. Upgraded to JUnit 3.7. (otis)
+
+1.2 RC3
+
+ 1. IndexWriter: fixed a bug where adding an optimized index to an
+    empty index failed.  This was encountered using addIndexes to copy
+    a RAMDirectory index to an FSDirectory.
+
+ 2. RAMDirectory: fixed a bug where RAMInputStream could not read
+    across more than across a single buffer boundary.
+
+ 3. Fix query parser so it accepts queries with unicode characters.
+    (briangoetz)
+
+ 4. Fix query parser so that PrefixQuery is used in preference to
+    WildcardQuery when there's only an asterisk at the end of the
+    term.  Previously PrefixQuery would never be used.
+
+ 5. Fix tests so they compile; fix ant file so it compiles tests
+    properly.  Added test cases for Analyzers and PriorityQueue.
+
+ 6. Updated demos, added Getting Started documentation. (acoliver)
+
+ 7. Added 'contributions' section to website & docs. (carlson)
+
+ 8. Removed JavaCC from source distribution for copyright reasons.
+    Folks must now download this separately from metamata in order to
+    compile Lucene.  (cutting)
+
+ 9. Substantially improved the performance of DateFilter by adding the
+    ability to reuse TermDocs objects.  (cutting)
+
+10. Added IndexReader methods:
+      public static boolean indexExists(String directory);
+      public static boolean indexExists(File directory);
+      public static boolean indexExists(Directory directory);
+      public static boolean isLocked(Directory directory);
+      public static void unlock(Directory directory);
+    (cutting, otis)
+
+11. Fixed bugs in GermanAnalyzer (gschwarz)
+
+
+1.2 RC2, 19 October 2001:
+ - added sources to distribution
+ - removed broken build scripts and libraries from distribution
+ - SegmentsReader: fixed potential race condition
+ - FSDirectory: fixed so that getDirectory(xxx,true) correctly
+   erases the directory contents, even when the directory
+   has already been accessed in this JVM.
+ - RangeQuery: Fix issue where an inclusive range query would
+   include the nearest term in the index above a non-existant
+   specified upper term.
+ - SegmentTermEnum: Fix NullPointerException in clone() method
+   when the Term is null.
+ - JDK 1.1 compatibility fix: disabled lock files for JDK 1.1,
+   since they rely on a feature added in JDK 1.2.
+
+1.2 RC1 (first Apache release), 2 October 2001:
+  - packages renamed from com.lucene to org.apache.lucene
+  - license switched from LGPL to Apache
+  - ant-only build -- no more makefiles
+  - addition of lock files--now fully thread & process safe
+  - addition of German stemmer
+  - MultiSearcher now supports low-level search API
+  - added RangeQuery, for term-range searching
+  - Analyzers can choose tokenizer based on field name
+  - misc bug fixes.
+
+1.01b (last Sourceforge release), 2 July 2001
+ . a few bug fixes
+ . new Query Parser
+ . new prefix query (search for "foo*" matches "food")
+
+1.0, 2000-10-04
+
+This release fixes a few serious bugs and also includes some
+performance optimizations, a stemmer, and a few other minor
+enhancements.
+
+0.04 2000-04-19
+
+Lucene now includes a grammar-based tokenizer, StandardTokenizer.
+
+The only tokenizer included in the previous release (LetterTokenizer)
+identified terms consisting entirely of alphabetic characters.  The
+new tokenizer uses a regular-expression grammar to identify more
+complex classes of terms, including numbers, acronyms, email
+addresses, etc.
+
+StandardTokenizer serves two purposes:
+
+ 1. It is a much better, general purpose tokenizer for use by
+    applications as is.
+
+    The easiest way for applications to start using
+    StandardTokenizer is to use StandardAnalyzer.
+
+ 2. It provides a good example of grammar-based tokenization.
+
+    If an application has special tokenization requirements, it can
+    implement a custom tokenizer by copying the directory containing
+    the new tokenizer into the application and modifying it
+    accordingly.
+
+0.01, 2000-03-30
+
+First open source release.
+
+The code has been re-organized into a new package and directory
+structure for this release.  It builds OK, but has not been tested
+beyond that since the re-organization.

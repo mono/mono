@@ -1,0 +1,419 @@
+Apache Lucene.Net History
+-------------------------
+
+17Feb10:
+	- Release: Apache Lucene.Net 2.9.2 build 001 "Beta"
+	- Port: Lucene core and test code 
+
+	
+17Feb10:
+	- Release: Apache Lucene.Net 2.9.1 build 002 "Final"
+		
+	
+16Nov09:
+	- Release: Apache Lucene.Net 2.9.1 build 001 "Beta"
+
+	
+03Nov09:
+	- Release: Apache Lucene.Net 2.9.0 build 001 "Alpha"
+	- Port: Test code
+	- Note: Not all test are passing, this is just a port release
+
+	
+25Oct09:
+	- Release: Apache Lucene.Net 2.9.0 build 000 "Alpha"
+	- Port: Core Lucene code and demo code
+
+	
+19Aug09:
+	- Release: Apache Lucene.Net 2.4.0 build 002 "Final"
+
+	
+19Mar09:
+   	- Release: Apache Lucene.Net.2.3.1 build 003 "Final"
+	- Fix: LUCENENET-106 (Lucene.NET is leaking memory)
+	- Fix: LUCENENET-116: Ambiguous name "text" in term class when in VB.NET
+	- Fix: LUCENENET-117: Bug in Lucene.Net.Index.DocumentsWriter.AppendPostings when compiled in release-mode
+	- Fix: LUCENENET-121: StopFilter  tries to access the i'th item of a hashtable as item[i] where i is not a key.
+	- Fix: LUCENENET-122: Bug in function "SupportClass.Number.ToString(long number)"
+	- Fix: LUCENENET-128: 2 bugs in BooleanScorer2
+	- Fix: LUCENENET-129 "Test case TestDateSort.TestReverseDateSort fails"
+	- Fix: LUCENENET-130 "bug in unit test helper class Lucene.Net.Search.CheckHits"
+	- Fix: LUCENENET-131 "bugs in TestIndexWriter test cases"
+	- Fix: LUCENENET-132 "bug in DocumentsWriter.BalanceRAM()"
+	- Fix: LUCENENET-133 "bug in IndexWriter.RegisterMerge()"
+	- Fix: LUCENENET-134 "broken test cases in unit test class TestIndexWriterDelete.cs"
+	- Fix: LUCENENET-138 "IndexReader.IndexExists() always returns false"
+	- Fix: LUCENENET-139 "Bugs in test codes (remote searching) stemming from opening the same port twice or registering an already registered http channel"
+	- Fix: LUCENENET-140 "System.Single.Parse --> SupportClass.Single.Parse"
+	- Fix: TestStressIndexing2.patch of LUCENENET-143 (NUnit test for Index/TestStressIndexing2)
+	- Fix: LUCENENET-146 (BUG in segmenttermpositionvector.cs (similar to LUCENENET-145))
+	- Fix: LUCENENET-150 (DocumentsWriter.ReusableStringReader does not implement some methods of StringReader)
+	- Fix: LUCENENET-151 (Bug in Lucene.Net.Search.MultiPhraseQuery.ExtractTerms(System.Collections.Hashtable terms))
+	- Fix: LUCENENET-152 (Nunit test for TestStressIndexAndSearching & TestStressLocks)
+	- Fix: LUCENENET-154 (Lucene.Net.Index.TestIndexWriterLockRelease: Unit test fails in tear down if directory does not exist)
+	- Fix: LUCENENET-155 (SetUp bug in 3 unit tests)
+	- Fix: LUCENENET-157 (SegmentMerger.AddIndexed expects *Reader.GetFieldNames to return a 1-dimensional ICollection)
+	- Fix: LUCENENET-158 (TestSpanNearOrdered02 - TestSpanNearOrdered05 fail)
+	- Fix: LUCENENET-159 (Lucene.Net.Search.Spans.SpanOrQuery)
+	- Fix: LUCENENET-160 (A small performance improvement in ExtendedFieldCacheImpl)
+	- Fix: LUCENENET-163 (Platform dependent path handling)
+	- Fix: LUCENENET-168 Sporadic failures in TestRemoteSearchable.cs
+	- Fix: LUCENENET-170 (BooleanClause serialization fails owing to issues with serializing Occur object)
+	- Fix: LUCENENET-174 RAMDirectory Not Correctly Serializing
+
+
+15Jul08:
+	- Release:  Apache Lucene.Net.2.3.1 build 002 "Beta"
+	- Port: Ported the "Test" code from Java to C#.
+	- Fix: A number of issues in Lucene.Net Core code -- Thanks to Doug Sale
+	- Fix: A number of issues in Lucene.Net Test code -- Thanks to Doug Sale
+
+
+24Jun08:
+	- Dev Release:  Apache Lucene.Net.2.3.1 build 001 "Alpha"
+	- Port: Prted the "Core" and "Demo" code from Java to C#.
+	- Issues: Test code is not released yet.
+	- Note: Requires Visual Studio 2005 or later and .NET 2.0 or later.
+	- Note: There is no 2.3.0 or 2.2 release (to correspond with the Java Lucene release).
+
+
+10Dec07:
+	- Release:  Apache Lucene.Net.2.1 build 003 "Release Candidate"
+	- Fix: LUCENENET-55 "Documents.DateTools has issue creating a Date in StringToDate()"
+	- Fix: LUCENENET-56 "Incorrect file in TestLockFactory.RmDir()"
+	- Fix: LUCENENET-57 "DocHelper in Tests not creating UTF8 Cleanly"
+	- Fix: LUCENENET-58 "Issue in CheckHits c# doesn't perform an Assert against a hashtable"
+	- Fix: LUCENENET-59 "QueryUtils has some invalid Asserts"
+	- Fix: LUCENENET-61 "Issue testing Backwards Compatibility"
+	- Fix: LUCENENET-62 "IndexReader.IndexExists() Fails if directory doesn't exists."
+	- Fix: LUCENENET-63 "FieldCacheImpl tries to parse a float in f format"
+	- Fix: LUCENENET-64 "TestDateFilter incorrectly gets total milliseconds"
+	- Fix: LUCENENET-65 "Test case "TestSerializable" uses the stream after closing"
+	- Fix: LUCENENET-66 "TestMergeAfterCopy fails in IndexFileDeleter"
+	- Fix: LUCENENET-67 "Bug in TestIndexWriter.TestAddIndexOnDiskFull"
+	- Fix: LUCENENET-68 "Bug in TestIndexWriterDelete.TestOperationsOnDiskFull"
+	- Fix: LUCENENET-69 "FSIndexInput.isFDValid() not ported correctly"
+	- Fix: LUCENENET-70 "TestParallelReader.TestDocument fails because of bug in "ParallelReader.Document(int n, FieldSelector fieldSelector)" method"
+	- Fix: LUCENENET-71 "TestParallelTermEnum.Test1 fails because of bug in "ParallelReader.Next" method"
+	- Fix: LUCENENET-72 "TestIndexReader bugs"
+	- Fix: LUCENENET-73 "TestDoc.cs --> access to a closed stream"
+	- Fix: LUCENENET-74 "SimpleFSLockFactory can not obtain lock correctly."
+	- Fix: LUCENENET-75 "FSDirectory does not correctly handle directory cache "DIRECTORIES""
+	- Fix: LUCENENET-76 "DisjunctionMaxQuery has unnecessary clone which causes it to fail unit tests"
+	- Fix: LUCENENET-77 "Bug in TestBinaryDocument.cs"
+	- Fix: LUCENENET-81 "TestTermVectorsWriter.cs bug"
+	- Fix: LUCENENET-82 "NUnite test for TestSimpleExplanations"
+	- Fix: LUCENENET-83 "NUnite test for TestComplexExplanations"
+	- Fix: LUCENENET-84 "Nunit test for TestMultiFieldQueryParser"
+	- Fix: LUCENENET-85 "SupportClass.Parse and System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator"
+	- Fix: LUCENENET-87 "NUnite test for TestQueryParser"
+	- Fix: LUCENENET-88 "NUnit test for TestQueryParser -2"
+	- Fix: LUCENENET-89 "NUnit test for TestQueryParser -3"
+	- Fix: LUCENENET-90 "Nunit test for TestIndexModifier.TestIndex"
+	- Fix: LUCENENET-91 "NUnit test for TestQueryParser.TestStarParsing"
+	- Fix: LUCENENET-92 "NUnite test for QueryParser.TestMultiAnalyzer."
+	- Fix: LUCENENET-93 "NUnite test for Search.TestRemoteSearchable"
+	- Fix: LUCENENET-94 "NUnit test for Search.TestSort (RemoteSearchable issues)" (only TestSort.patch applied)
+	- Fix: LUCENENET-96 "NUnit test for Lucene.Net.Store.TestLockFactory.TestLockClassProperty"
+	- Fix: LUCENENET-101 "Using incorrect base when opening index"
+	- Fix: LUCENENET-100 "Problem with remoting of IComparable[] in FieldDoc.cs"
+	- Fix: LUCENENET-104 "Name of first index segment is empty string"
+
+
+11Aug07:
+	- Release:  Apache Lucene.Net.2.1 build 002 "Beta"
+	- Port: Ported the "Test" code from Java to C#
+	- Fix: LUCENENET-47: "Make up for Constansts.cs"
+	- Fix: LUCENENET-48 "Clone method of SegmentInfos.cs does'nt copy local fields/variables."
+	- Fix: LUCENENET-50 "Improvement for FSDirectory."
+	- Fix: LUCENENET-52 "IndexFileDeleter in svn trunk"
+	- Fix: LUCENENET-53 "SegmentsInfos.GetCurrentSegmentGeneration works incorrectly"
+	- Issues: A number of NUnit tests are failing.
+
+
+01May07:
+	- Dev Release:  Apache Lucene.Net.2.1 build 001 "early-Alpha"
+	- Issues: Optimizing an index will cause an exception.
+	- Issues: The "Test" code has not yet be ported for this release.
+	- Issues: Code in "contrib" have not been validated to work with this release.
+
+
+30Apr07:
+	- Patch:  Apache Lucene.Net.2.0 build 005 "Final"
+	- Fix: LUCENENET-37 "Exception while search in Lucene.Net and Index prepared by Lucene Java"
+
+
+11Mar07:
+	- Release:  Apache Lucene.Net.2.0 build 004 "Final"
+	- Fix: LUCENENET-36 "Countries using "," as decimal separator gets an exception in QueryParser.cs with a query like color~0.5"
+	- Fix: LUCENENET-35 "Tokenizer.Close should check if input is null"
+	- Fix: LUCENENET-33 "Frequent exceptions at Single Parse(String s)" 
+	- Fix: LUCENENET-32 "Check hashtable in PhraseQuery.ExtractTerms for existing keys"
+	- Fix: LUCENENET-31 "elimate exception when casting TermFreqVector"
+	- Fix: LUCENENET-30 "Unnecessary boxing of bytes"
+
+
+27Dec06:
+	- Release:  Apache Lucene.Net.2.0 build 003 "Final"
+	- Fix: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test now passes
+	- Fix: Lucene.Net.Search.TestSort.TestInternationalSort -- NUnit test now passes
+
+
+27Nov06:
+	- Release:  Apache Lucene.Net.2.0 build 002 "Beta"
+	- Lucene.Net.Demo.SearchFiles.cs -- ported new code
+	- Lucene.Net.Index.SegmentReader.Get() -- changed Exception to SystemException
+	- Lucene.Net.Search.StringIndex.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.FieldCacheImpl.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.FieldSortHitQueue.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.IndexSearcher.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.MatchAllDocsQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Search.MultiPhraseQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Search.PrefixQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Search.RangeQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Index.FieldInfos.FieldName()/FieldInfo() -- avoid the use of exception throwing
+	- Issues: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test FAILS
+	- Issues: Lucene.Net.Search.TestSort.TestInternationalSort -- NUnit test FAILS
+
+
+17Aug06:
+	- Release:  Apache Lucene.Net.2.0 build 001 "Alpha"
+
+
+13Jul06:
+	- Release:  Apache Lucene.Net.1.9.1 build 001
+	- Port: Lucene.Net.Documents.TimeToString() -- re-based with the Java version
+	- Port: Lucene.Net.Index.IndexWriter.SetMaxBufferedDocs() -- re-based with the Java version
+	- Port: Lucene.Net.Store.BufferedIndexOutput.WriteBytes() -- re-based with the Java version
+	- Port: Lucene.Net.Store.RAMOutputStream.FlushBuffer() -- re-based with the Java version
+	- Port: Lucene.Net.Demo.* -- re-based with the Java version
+	- Port: Test.Lucene.Net.Index.TestCompoundFile.TestLargeWrites() -- new test case added
+	- Port: Test.Lucene.Net.StoreTest.Test() -- re-based with the Java version
+
+
+09Jul06:
+	- Release:  Apache Lucene.Net.1.9 RC1 build 005 "Final"
+	- Fix: Lucene.Net.Search.MultiPhraseQuery.ToString() -- was skipping one too many item during the iteration
+	- Fix: Lucene.Net.Index.ParallelReader.GetFieldNames() -- was adding the object instead of the dictionary value
+	- Fix: Lucene.Net.Index.ParallelReader.Add() -- was adding the object instead of the dictionary value
+	- Fix: Lucene.Net.Store.Obtain() -- changed name from obtain() to Obtain() (lower case to upper case)
+	- Fix: Lucene.Net.Index.SegmentReader.~SegmentReader() -- removed: System.Threading.Thread.SetData()
+	- Fix: Lucene.Net.Index.TermInfosReader.~TermInfosReader() -- removed: System.Threading.Thread.SetData()
+	- Fix: Lucene.Net.Documents.DateField.DATE_LEN -- must use SupportClass.Number.ToString() to get the length
+	- Fix: Lucene.Net.Util.ToStringUtils.Boost() -- wasn't adding ".0" when the value doesn't have a remainder
+	- Fix: Lucene.Net.Index.SegmentReader.CreateFakeNorms() -- was returning the wrong data member
+	- Fix: Lucene.Net.Documents.NumberTools -- value of MIN_STRING_VALUE and MAX_STRING_VALUE were wrong
+	- Fix: Test.Lucene.Net.Analysis.TestISOLatin1AccentFilter.TestU() -- file was not saved as unicode; thanks to Ben Tregenna
+	- Fix: Test.Lucene.Net.TestSearchForDuplicates.TestRun() -- wasn't using MemoryStream correctly
+	- Fix: Test.Lucene.Net.TestSearch.TestSearch_Renamed_Method() -- wasn't using MemoryStream correctly
+	- Fix: Test.Lucene.Net.* -- replaced "[TestFixtureSetUp]" to "[SetUp]" and "[FixtureTearDown]" to "[TearDown]"
+	- Fix: Test.Lucene.Net.Index.TestParallelReader -- was comparing objects instead of the dictionary value
+	- Fix: Test.Lucene.Net.Index.TestSegmentReader -- was comparing objects instead of the dictionary value
+	- Fix: Test.Lucene.Net.Index.TestTermVectorWriter -- was not calling InitBloc()
+	- Fix: Test.Lucene.Net.Analysis.Setup() -- was adding to the hash without checking if the key already exist
+	- Fix: Test.Lucene.Net.Index.TestMultiReader/TestSegmentReader/TestSegmentTermDoc.cs -- all those needed their class member variables re-initialized
+
+
+13Jun06:
+	- Release:  Apache Lucene.Net.1.9 RC1 build 004 Beta
+	- Fix: Lucene.Net.Search.FieldCacheImpl.GetFloats() -- must remove 'f" or "F" for System.Single.Parse() to work
+	- Fix: Lucene.Net.Index.GetFieldnames() -- was storing the object instead the value in the object
+	- Fix: Test.Lucene.Net.Index.CollectionContains() -- need to compare strings, not objects
+	- Fix: Test.Lucene.Net.Serch.TestKnownSetOfDocuments() -- don't fail if an item doesn't exist
+
+
+03Jun06:
+	- Release: Apache Lucene.Net.1.9 RC1 build 003 Alpha
+	- Note: This is the first release of Lucene.Net 1.9 to SVN
+	- Note: Added ZIP compression support via reflection.  Thanks to Eyal Post
+	- Note: Fixed bugs in the code which were expose via the NUnit "Test" code
+	- Note: NUnit "Test" code has been ported to Lucene.Net.  Out of 307 tests 58 are failing
+	- Note: There are still some remaining port work to be done; look for the text "Aroush" in the code
+	- Issue: There are still some code not fully ported; search for "Aroush" to find those codes
+	- Issue: The NUnit test code has not been ported yet
+	- Issue: Demo.IndexHtml won't work due to some bug in the area of in-memory stream porting
+
+
+07Feb06:
+	- Release: Lucene.Net.1.9 RC1 build 002 Alpha
+	- Note: This release is based on the current Java code release of 1.9 RC1
+	- Note: This release contains all the fixes currently implemented for 1.4.3 build 004
+	- Note: There are still some remaining port work to be done; look for the text "Aroush" in the code
+	- Issue: The NUnit test code has not been ported yet
+	- Issue: Demo.IndexHtml won't work due to some bug in the area of in-memory stream porting
+
+
+26May05:
+	- Release: Lucene.Net.1.9 RC1 build 001 Alpha
+	- Issue: There are still some code not fully ported; search for "Aroush" to find those codes.
+	- Issue: The NUnit test code has not been ported yet (the current code is still based on 1.4.3 final)
+
+
+15Dec05:
+	- Release: Lucene.Net.1.4.3 final build 004 to the Apache incubator site
+	- Clean-up: VS.Net project settings.
+
+
+21Nov05:
+	- Release: Lucene.Net.1.4.3 final build 004
+	- Fix: Fixed System.Object cast in Lucene.Net.Search.RangeQuery and Lucene.Net.Analysis.PorterStemFilter -- Thanks to Jason
+	- Note: Moved project to Apache at: http://svn.apache.org/repos/asf/incubator/lucene.net/
+
+
+23Oct05:
+	- Release: Lucene.Net.1.4.3 final build 003
+	- Fix: Memory leak -- Thanks to Marcus.
+	- Fix: Remoting class and other misused of System.Object cast -- Thanks to Jason
+
+
+26May05:
+	- Release: Lucene.Net.1.9 RC1 build 001 Alpha
+	- Issue: There are still some code not fully ported; search for "Aroush" to find those codes.
+	- Issue: The NUnit test code has not been ported yet (the current code is still based on 1.4.3 final)
+
+
+22Feb05:
+	- Release: Lucene.Net.1.4.3 final build 002
+	- Fix: Lucene.Net.Index.MultiReader.cs -- fixed GetIndexedFieldNames()
+
+
+13Feb05:
+	- Release: Lucene.Net.1.4.3 final build 001
+	- Fix: Lucene.Net.Search.TermQuery.Clone() -- was returning null, so removed it.
+	- Fix: Lucene.Net.Documents.Field.cs -- replaced StreamReader() to TextReader()
+	- Fix: Lucene.Net.Search.RemoteSearchable.cs -- added InitializeLifetimeService()
+	- Fix: Lucene.Net.Document.DateField.cs -- fixed StringToDate()
+	- Fix: Lucene.Net.Store.RAMDirectory.cs -- fixed RAMDirectory()
+	- Issue: Demo.IndexHtml won't work due to some bug in the area of in-memory stream porting
+
+
+05Jan05:
+	- Release: Lucene.Net.1.4.3 RC2 build 001
+	- Fix: Lucene.Net.Search.Query.MergeBooleanQueries(); cast type was wrong.
+	- Fix: Demo.IndexHtml; can index now but searching on the index file won't work, yet.
+
+
+21Dec04:
+	- Release: Lucene.Net.1.4.3 RC1 build 001
+	- Fix: Document.DateField.StringToTime() -- can't use System.Convert.ToInt64()
+
+
+06Dec04:
+	- Release: Lucene.Net.1.4.3 beta build 001
+
+
+22Nov04:
+	- Release: Lucene.Net.1.4.0 RC1 build 001
+	- Fix: Changed some data types from 'int' to 'long'
+	- Fix: changed some codes from base.Clone() to this.Clone()
+
+
+10Nov04:
+	- Release: Lucene.Net.1.4.0 beta build 002 (targeted for "final")
+	- Fix: Document.Fields() now returns an IEnumerable.  Thanks to Marcus.
+	- Fix: Use SupportClass.Single.Parse() to parse numbers ending with 'f'
+
+
+03Nov04:
+	- Release: Lucene.Net.1.4.0 beta build 001
+	- Release Note: 159 test run, 7 failed due to non-existing remote-Lucene setup
+	- Failed Test:
+	- Search.TestRemoteSearchable.*
+	- Search.TestSort.TestNormalizedScores/TestRemoteCustomSort/TestRemoteSort
+	- Fix: Removed 'ref' keyword usage from DateTime.
+	- Port: TestQueryParser.cs -- done. thanks to Radu.
+	- Fix: TestQueryParser.cs -- date-range formatting issues.
+	- Fix: Lucene.Net.QueryParsers.GetRangeQuery() -- date-range formatting issues.
+	- Fix: Use: System.IO.Path.Combine("path-1", "path-2") instead of "path-1" + "\\" + "path-2"
+
+
+29Oct04:
+	- Port: Ported "test" out of ~160 tests, only ~14 fail.
+	- Port: SupportClass.Character.ForDigit() -- done. thanks to Monsur
+	- Port: Lucene.Net.Documents.DateField.cs -- done. thanks to Monsur
+	- Fix: Lucene.Net.Search.BooleanScorer
+	- Fix: Lucene.Net.Search.FilteredQuery
+	- Fix: Lucene.Net.Search.SortScorers
+
+
+25Oct04:
+	- Port: Ported "test" more than 2/3 of the NUnit test now pass
+	- Fix: Fixed query (ToString()) formatting issue ("2" -> "2.0") to pass NUnit test
+	- Fix: Field items iteration
+
+
+19Oct04:
+	- Fix: TermInfoReader.get_Renamed() -> TermInfoReader.Get()
+	- Fix: Searching now works
+
+
+18Oct04:
+	- Fix: Indexing now works; indexing with Lucene.Net and searching on the same index via Jakarta Lucene
+	- Fix: System.IO.TextReader.Read() returns 0 not -1 so check for '<= 0'
+
+
+16Oct04:
+	- Port: QueryTermVector.cs -- done. thanks to Monsur
+
+
+14Oct04:
+	- Port: SpanNearQuery.cs -- done. thanks to Radu
+	- Port: SpanOrQuery.cs -- done. thanks to Radu
+	- Port: FSDirectory.cs -- done. thanks to Seth & Bill
+	- Port: IndexReader.cs -- done. thanks to Bill
+	- Port: IndexWriter.cs -- done. thanks to Bill
+
+
+13Oct04 Lucene.Net.1.4-alpha build 002
+	- Port: SpanNearQuery.cs & SpanOrQuery.cs -- thanks to Radu
+	- Fix: FSDirectory.cs, IndexReader.cs & IndexWriter.cs -- thanks to Seth and Bill
+	- Fix: FSDirectory.RenameFile()
+
+
+13Oct04 Lucene.Net.1.4-alpha build 002
+	- Note: First effort to port Jakarta Lucene 1.4-final to C#
+	- Note: Ported emements are: "src" and "demo"
+	- Note: There are still outstanding un-ported code (12 in all) which are being looked at
+	- Note: The code compiles and runs as is, but you can't index or search
+	- Fix: PriorityQueue.Out() -> PriorityQueue.Put()
+	- Port: MultiReader.cs & Document.cs -- thanks to Radu
+
+
+15Sep04 Lucene.Net.1.3-rc3 build 001
+	- Revival of Lucene by repackaging 1.3rc1-001 and 1.3rc3-001
+
+
+29Sep04 Lucene.Net 1.3-rc3 build 001
+	- initial release of jakarta lucene 1.3-rc3
+		for changes: http://cvs.apache.org/viewcvs.cgi/*checkout*/jakarta-lucene/CHANGES.txt?rev=1.58 
+	- fix: DateToString bug
+	 	for more info: https://sourceforge.net/tracker/?func=detail&atid=582307&aid=910832&group_id=87200 
+
+
+18Apr04	Lucene.Net 1.3-rc2 build 002
+	- add: demos, web demos and tests
+	- fix: add FileAccess.Read key with FileMode.Open when open 
+	       file stream for read
+	- fix: name style updated 
+	 		Document.cs:GetField()
+			QueryParser.cs: GenerateParseException()
+			Search/BooleanQuery.cs:GetMaxClauseCount(),SetMaxClauseCount()
+ 	- new: Lucene.Net National Language Support Pack (Lucene.Net.NLS Pack)
+ 		support: Brazilian, CJK, Chinese, Czech,  French and Dutch Analysers
+
+
+20Dec03 Lucene.Net 1.3-rc2 build 001
+	- initial release for 1.3-rc2
+	  only Lucene.Net without demo and tests
+
+
+09Jan03 Lucene.Net 1.3-rc1 build 002
+	- update: documentation and comments
+	- bug fixed: wildcard search crash lucene - fixed
+                 look TestQueryFSDirectory project for details
+	- bug fixed: all tests and demos work 
+
+
+08May03 Lucene.Net 1.3-rc1 build 001
+	- initial release

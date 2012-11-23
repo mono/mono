@@ -1,0 +1,195 @@
+<HTML>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<HEAD>
+  <TITLE>org.apache.lucene.search.function</TITLE>
+</HEAD>
+<BODY>
+<DIV>
+  Programmatic control over documents scores.
+</DIV>
+<DIV>
+  The <code>function</code> package provides tight control over documents scores.
+</DIV>
+<DIV>
+<font color="#FF0000">
+WARNING: The status of the <b>search.function</b> package is experimental. The APIs
+introduced here might change in the future and will not be supported anymore
+in such a case.
+</font>
+</DIV>
+<DIV>
+  Two types of queries are available in this package:
+</DIV>
+<DIV>
+  <ol>
+     <li>
+        <b>Custom Score queries</b> - allowing to set the score
+        of a matching document as a mathematical expression over scores
+        of that document by contained (sub) queries.
+     </li>
+     <li>
+        <b>Field score queries</b> - allowing to base the score of a
+        document on <b>numeric values</b> of <b>indexed fields</b>.
+     </li>
+  </ol>
+</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>
+  <b>Some possible uses of these queries:</b>
+</DIV>
+<DIV>
+  <ol>
+     <li>
+        Normalizing the document scores by values indexed in a special field -
+        for instance, experimenting with a different doc length normalization.
+     </li>
+     <li>
+        Introducing some static scoring element, to the score of a document, -
+        for instance using some topological attribute of the links to/from a document.
+     </li>
+     <li>
+        Computing the score of a matching document as an arbitrary odd function of
+        its score by a certain query.
+     </li>
+  </ol>
+</DIV>
+<DIV>
+  <b>Performance and Quality Considerations:</b>
+</DIV>
+<DIV>
+  <ol>
+     <li>
+       When scoring by values of indexed fields,
+       these values are loaded into memory.
+       Unlike the regular scoring, where the required information is read from
+       disk as necessary, here field values are loaded once and cached by Lucene in memory
+       for further use, anticipating reuse by further queries. While all this is carefully
+       cached with performance in mind, it is recommended to
+       use these features only when the default Lucene scoring does
+       not match your "special" application needs.
+     </li>
+     <li>
+        Use only with carefully selected fields, because in most cases,
+        search quality with regular Lucene scoring
+        would outperform that of scoring by field values.
+     </li>
+     <li>
+        Values of fields used for scoring should match.
+        Do not apply on a field containing arbitrary (long) text.
+        Do not mix values in the same field if that field is used for scoring.
+     </li>
+     <li>
+        Smaller (shorter) field tokens means less RAM (something always desired).
+        When using <a href = FieldScoreQuery.html>FieldScoreQuery</a>,
+        select the shortest <a href = FieldScoreQuery.html#Type>FieldScoreQuery.Type</a>
+        that is sufficient for the used field values.
+     </li>
+     <li>
+        Reusing IndexReaders/IndexSearchers is essential, because the caching of field tokens
+        is based on an IndexReader. Whenever a new IndexReader is used, values currently in the cache
+        cannot be used and new values must be loaded from disk. So replace/refresh readers/searchers in
+        a controlled manner.
+     </li>
+  </ol>
+</DIV>
+<DIV>
+  <b>History and Credits:</b>
+  <ul>
+    <li>
+       A large part of the code of this package was originated from Yonik's FunctionQuery code that was
+       imported from <a href = "http://lucene.apache.org//solr">Solr</a>
+       (see <a href = "http://issues.apache.org//jira/browse/LUCENE-446">LUCENE-446</a>).
+    </li>
+    <li>
+       The idea behind CustomScoreQurey is borrowed from
+       the "Easily create queries that transform sub-query scores arbitrarily" contribution by Mike Klaas
+       (see <a href = "http://issues.apache.org//jira/browse/LUCENE-850">LUCENE-850</a>)
+       though the implementation and API here are different.
+    </li>
+  </ul>
+</DIV>
+<DIV>
+ <b>Code sample:</b>
+ <P>
+ Note: code snippets here should work, but they were never really compiled... so,
+ tests sources under TestCustomScoreQuery, TestFieldScoreQuery and TestOrdValues
+ may also be useful.
+ <ol>
+  <li>
+    Using field (byte) values to as scores:
+    <p>
+    Indexing:
+    <pre>
+      f = new Field("score", "7", Field.Store.NO, Field.Index.UN_TOKENIZED);
+      f.setOmitNorms(true);
+      d1.add(f);
+    </pre>
+    <p>
+    Search:
+    <pre>
+      Query q = new FieldScoreQuery("score", FieldScoreQuery.Type.BYTE);
+    </pre>
+    Document d1 above would get a score of 7.
+  </li>
+  <p>
+  <li>
+    Manipulating scores
+    <p>
+    Dividing the original score of each document by a square root of its docid
+    (just to demonstrate what it takes to manipulate scores this way)
+    <pre>
+      Query q = queryParser.parse("my query text");
+      CustomScoreQuery customQ = new CustomScoreQuery(q) {
+        public float customScore(int doc, float subQueryScore, float valSrcScore) {
+          return subQueryScore / Math.sqrt(docid);
+        }
+      };
+    </pre>
+        <p>
+        For more informative debug info on the custom query, also override the name() method:
+        <pre>
+      CustomScoreQuery customQ = new CustomScoreQuery(q) {
+        public float customScore(int doc, float subQueryScore, float valSrcScore) {
+          return subQueryScore / Math.sqrt(docid);
+        }
+        public String name() {
+          return "1/sqrt(docid)";
+        }
+      };
+    </pre>
+        <p>
+        Taking the square root of the original score and multiplying it by a "short field driven score", ie, the
+        short value that was indexed for the scored doc in a certain field:
+        <pre>
+      Query q = queryParser.parse("my query text");
+      FieldScoreQuery qf = new FieldScoreQuery("shortScore", FieldScoreQuery.Type.SHORT);
+      CustomScoreQuery customQ = new CustomScoreQuery(q,qf) {
+        public float customScore(int doc, float subQueryScore, float valSrcScore) {
+          return Math.sqrt(subQueryScore) * valSrcScore;
+        }
+        public String name() {
+          return "shortVal*sqrt(score)";
+        }
+      };
+    </pre>
+
+  </li>
+ </ol>
+</DIV>
+</BODY>
+</HTML>

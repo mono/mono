@@ -845,7 +845,7 @@ public class EcmaHelpSource : HelpSource {
 		
 		if ((membername == "op_Implicit" || membername == "op_Explicit") && argtypes.Length == 2) {
 			isoperator = true;
-			membername = "Conversion";
+			membername = membername.EndsWith ("Implicit") ? "ImplicitConversion" : "ExplicitConversion";
 			member = argtypes[0] + " to " + argtypes[1];
 		} else if (membername.StartsWith("op_")) {
 			isoperator = true;
@@ -991,7 +991,7 @@ public class EcmaHelpSource : HelpSource {
 			// conversion operators: overloading based on parameter and return type [ECMA-335 §10.3.3]
 			case "op_Implicit":                    // static implicit operator R (T)
 			case "op_Explicit":                    // static explicit operator R (T)
-				nicename = "Conversion";
+				nicename = name.EndsWith ("Implicit") ? "ImplicitConversion" : "ExplicitConversion";
 				string arg = n.SelectSingleNode("Parameters/Parameter/@Type").InnerText;
 				string ret = n.SelectSingleNode("ReturnValue/ReturnType").InnerText;
 				sig = EcmaDoc.ConvertCTSName(arg) + " to " + EcmaDoc.ConvertCTSName(ret);
@@ -2183,8 +2183,8 @@ public class EcmaHelpSource : HelpSource {
 								.Concat (ncnodes.Where (n => n.Nodes.Count > 0).SelectMany (n => n.Nodes.Cast<Node> ()));
 						} else if (c.Caption == "Operators") {
 							ncnodes = ncnodes
-								.Where (n => n.Caption != "Conversion")
-								.Concat (ncnodes.Where (n => n.Caption == "Conversion").SelectMany (n => n.Nodes.Cast<Node> ()));
+								.Where (n => !n.Caption.EndsWith ("Conversion"))
+								.Concat (ncnodes.Where (n => n.Caption.EndsWith ("Conversion")).SelectMany (n => n.Nodes.Cast<Node> ()));
 						}
 						foreach (Node nc in ncnodes) {
 							//xpath to the docs xml node
