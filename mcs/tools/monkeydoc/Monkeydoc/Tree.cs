@@ -116,7 +116,7 @@ namespace MonkeyDoc
 	public class Node : IComparable<Node>, IComparable
 	{
 		readonly Tree tree;
-		string caption, element;
+		string caption, element, pubUrl;
 		public bool Documented;
 		bool loaded;
 		Node parent;
@@ -378,8 +378,10 @@ namespace MonkeyDoc
 		
 		public string PublicUrl {
 			get {
+				if (pubUrl != null)
+					return pubUrl;
 				var url = GetInternalUrl ();
-				return tree.HelpSource != null ? tree.HelpSource.GetPublicUrl (this) : url;
+				return pubUrl = tree.HelpSource != null ? tree.HelpSource.GetPublicUrl (this) : url;
 			}
 		}
 
