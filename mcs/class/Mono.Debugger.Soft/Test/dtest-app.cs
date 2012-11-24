@@ -219,6 +219,10 @@ public class Tests : TestsBase
 			unhandled_exception ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-user") {
+			unhandled_exception_user ();
+			return 0;
+		}
 		breakpoints ();
 		single_stepping ();
 		arguments ();
@@ -423,7 +427,7 @@ public class Tests : TestsBase
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void objects () {
-		Tests t = new Tests () { field_i = 42, field_bool1 = true, field_bool2 = false, field_char = 'A', field_byte = 129, field_sbyte = -33, field_short = Int16.MaxValue - 5, field_ushort = UInt16.MaxValue - 5, field_long = Int64.MaxValue - 5, field_ulong = UInt64.MaxValue - 5, field_float = 3.14f, field_double = 3.14f, field_s = "S", base_field_i = 43, base_field_s = "T", field_enum = AnEnum.B, field_class = null, field_intptr = new IntPtr (Int32.MaxValue - 5) };
+		Tests t = new Tests () { field_i = 42, field_bool1 = true, field_bool2 = false, field_char = 'A', field_byte = 129, field_sbyte = -33, field_short = Int16.MaxValue - 5, field_ushort = UInt16.MaxValue - 5, field_long = Int64.MaxValue - 5, field_ulong = UInt64.MaxValue - 5, field_float = 3.14f, field_double = 3.14f, field_s = "S", base_field_i = 43, base_field_s = "T", field_enum = AnEnum.B, field_class = null, field_intptr = new IntPtr (Int32.MaxValue - 5), field_nullable = null };
 		t.o1 (new Tests2 () { field_j = 43 }, new GClass <int> { field = 42 }, new GClass <string> { field = "FOO" });
 		o2 (new string [] { "BAR", "BAZ" }, new int[] { 42, 43 }, new int [,] { { 1, 2 }, { 3, 4 }}, (int[,])Array.CreateInstance (typeof (int), new int [] { 2, 2}, new int [] { 1, 3}), new int[] { 0 });
 	}
@@ -799,6 +803,21 @@ public class Tests : TestsBase
 				throw new InvalidOperationException ();
 			});
 		Thread.Sleep (10000);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_user () {
+#if NET_4_5
+		System.Threading.Tasks.Task.Factory.StartNew (() => {
+				Throw ();
+			});
+		Thread.Sleep (10000);
+#endif
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void Throw () {
+		throw new Exception ();
 	}
 
 	internal static Delegate create_filter_delegate (Delegate dlg, MethodInfo filter_method)

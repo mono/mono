@@ -2175,8 +2175,6 @@ public class DebuggerTests
 	void invoke_multiple_cb (IAsyncResult ar) {
 		ObjectMirror this_obj = (ObjectMirror)ar.AsyncState;
 
-		Console.WriteLine ("CB!");
-
 		var res = this_obj.EndInvokeMethod (ar);
 		lock (invoke_results)
 			invoke_results.Add (res);
@@ -3083,6 +3081,29 @@ public class DebuggerTests
 		vm.Exit (0);
 		vm = null;
 	}
+
+#if NET_4_5
+	[Test]
+	public void UnhandledExceptionUserCode () {
+		vm.Detach ();
+
+		// Exceptions caught in non-user code are treated as unhandled
+		Start (new string [] { "dtest-app.exe", "unhandled-exception-user" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_user");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is ExceptionEvent);
+
+		vm.Exit (0);
+		vm = null;
+	}
+#endif
 }
 
 }
