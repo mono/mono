@@ -46,14 +46,14 @@ namespace System.Threading.Tasks
 
 		internal static int GetBestWorkerNumber (TaskScheduler scheduler)
 		{
-			return (scheduler ?? TaskScheduler.Current).MaximumConcurrencyLevel;
+			return Math.Min (Environment.ProcessorCount, (scheduler ?? TaskScheduler.Current).MaximumConcurrencyLevel);
 		}
 
 		static int GetBestWorkerNumber (int from, int to, ParallelOptions options, out int step)
 		{
 			int num = GetBestWorkerNumber(options.TaskScheduler);
 			if (options != null && options.MaxDegreeOfParallelism != -1)
-				num = options.MaxDegreeOfParallelism;
+				num = Math.Min (options.MaxDegreeOfParallelism, num);
 			// Integer range that each task process
 			if ((step = (to - from) / num) < 5) {
 				step = 5;
