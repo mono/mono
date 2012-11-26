@@ -1402,6 +1402,136 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         </exception>
       </Docs>
     </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, string description, Mono.Options.OptionAction&lt;string,string&gt; action, bool hidden);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string prototype, string description, class Mono.Options.OptionAction`2&lt;string, string&gt; action, bool hidden) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;System.String,System.String&gt;" />
+        <Parameter Name="hidden" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing to used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:Mono.Options.OptionAction{System.String,System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <param name="hidden">
+          A <see cref="T:System.Boolean" /> specifying whether or not the
+          Option should be displayed in
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions" />.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, string description, Action&lt;string&gt; action, bool hidden);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(string prototype, string description, class System.Action`1&lt;string&gt; action, bool hidden) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="System.Action&lt;System.String&gt;" />
+        <Parameter Name="hidden" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing to used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:System.Action{System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <param name="hidden">
+          A <see cref="T:System.Boolean" /> specifying whether or not the
+          Option should be displayed in
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions" />.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Add&lt;T&gt;">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;T&gt; (string prototype, Action&lt;T&gt; action);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add&lt;T&gt;(string prototype, class System.Action`1&lt;!!T&gt; action) cil managed" />
@@ -2415,6 +2545,15 @@ class Test {
           <paramref name="o" />.
         </summary>
         <remarks>
+          <para>
+            Writes <see cref="T:Mono.Options.Option" /> documentation to
+            <paramref name="o" />.
+          </para>
+          <para>
+            If <see cref="P:Mono.Options.Option.Hidden" /> is
+            <see langword="true" />, then the Option will not be written to
+            <paramref name="o" />.
+          </para>
           <para>
             For each <see cref="T:Mono.Options.Option" /> previously added to
             the current instance, this method writes out a comma-separated
