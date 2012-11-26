@@ -450,9 +450,6 @@ namespace MonkeyDoc.Providers
 
 			public int Compare (Node n1, Node n2)
 			{
-				/*var result = string.Compare (n1.Caption, n2.Caption, StringComparison.OrdinalIgnoreCase);
-				Console.WriteLine ("{0} {2} {1}", n1.Caption, n2.Caption, result == 0 ? '=' : result < 0 ? '<' : '>');
-				return result;*/
 				return string.Compare (n1.Caption, n2.Caption, StringComparison.OrdinalIgnoreCase);
 			}
 		}
@@ -464,13 +461,16 @@ namespace MonkeyDoc.Providers
 
 			public int Compare (Node n1, Node n2)
 			{
-				return string.Compare (Clear (n1.Caption), Clear (n2.Caption), StringComparison.OrdinalIgnoreCase);
+				int length1 = CaptionLength (n1.Caption);
+				int length2 = CaptionLength (n2.Caption);
+
+				return string.Compare (n1.Caption, 0, n2.Caption, 0, Math.Max (length1, length2), StringComparison.OrdinalIgnoreCase);
 			}
 
-			string Clear (string caption)
+			int CaptionLength (string caption)
 			{
-				int lastSpace = caption.LastIndexOf (' ');
-				return lastSpace == -1 ? caption : caption.Substring (0, lastSpace);
+				var length = caption.LastIndexOf (' ');
+				return length == -1 ? caption.Length : length;
 			}
 		}
 
