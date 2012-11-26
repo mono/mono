@@ -46,7 +46,7 @@ namespace System.Threading.Tasks
 
 		internal static int GetBestWorkerNumber (TaskScheduler scheduler)
 		{
-			return scheduler.MaximumConcurrencyLevel;
+			return (scheduler ?? TaskScheduler.Current).MaximumConcurrencyLevel;
 		}
 
 		static int GetBestWorkerNumber (int from, int to, ParallelOptions options, out int step)
@@ -343,7 +343,7 @@ namespace System.Threading.Tasks
 			if (destruct == null)
 				throw new ArgumentNullException ("destruct");
 
-			int num = Math.Min (GetBestWorkerNumber (),
+			int num = Math.Min (GetBestWorkerNumber (options.TaskScheduler),
 			                    options != null && options.MaxDegreeOfParallelism != -1 ? options.MaxDegreeOfParallelism : int.MaxValue);
 
 			Task[] tasks = new Task[num];
