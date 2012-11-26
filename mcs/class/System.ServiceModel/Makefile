@@ -46,7 +46,8 @@ TEST_EXTRA_FILES = \
 	Test/config/* \
 	Test/Resources/* \
 	Test/XmlFiles/* \
-	Test/System.ServiceModel.Description/dump.xml
+	Test/System.ServiceModel.Description/dump.xml \
+	Test/MetadataTests/Resources/*
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_FILES)
 
