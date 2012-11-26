@@ -13,15 +13,13 @@ namespace Monkeydoc.Ecma
 
         public void IsValid (string input)
         {
-            var reader = new StringReader (input);
-			var lexer = new EcmaUrlTokenizer (reader);
+			var lexer = new EcmaUrlTokenizer (input);
 			this.yyparse (lexer);
         }
 
         public EcmaDesc Parse (string input)
         {
-            var reader = new StringReader (input);
-			var lexer = new EcmaUrlTokenizer (reader);
+			var lexer = new EcmaUrlTokenizer (input);
 			return (EcmaDesc)this.yyparse (lexer);
         }
 

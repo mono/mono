@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Text;
 using System.Globalization;
 
@@ -7,20 +6,22 @@ namespace Monkeydoc.Ecma
 {
 	public class EcmaUrlTokenizer : yyParser.yyInput
 	{
-		TextReader input;
+		const char EndOfStream = (char)0;
+		string input;
 		object val;
 		int current_token;
 		int current_pos;
-		StringBuilder ident = new StringBuilder (20);
+		int real_current_pos;
+		int identCount = 0;
 
-		public EcmaUrlTokenizer (TextReader input)
+		public EcmaUrlTokenizer (string input)
 		{
 			this.input = input;
 		}
 
-		static bool is_identifier_start_character (int c)
+		static bool is_identifier_start_character (char c)
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter ((char)c);
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter (c);
 		}
 
 		static bool is_identifier_part_character (char c)
@@ -42,7 +43,7 @@ namespace Monkeydoc.Ecma
 
 		public bool advance ()
 		{
-			return input.Peek () != -1;
+			return Peek () != EndOfStream;
 		}
 
 		public Object Value {
@@ -68,9 +69,9 @@ namespace Monkeydoc.Ecma
 
 		int xtoken ()
 		{
-			char next = (char)input.Read ();
+			char next = Read ();
 			while (char.IsWhiteSpace (next))
-				next = (char)input.Read ();
+				next = Read ();
 			current_pos++;
 			val = null;
 
@@ -121,23 +122,46 @@ namespace Monkeydoc.Ecma
 			}
 
 			if (is_identifier_start_character (current) || current == '*') {
-				ident.Clear ();
-				ident.Append (current);
-				int peek;
+				unsafe {
+					// identifier length is artificially limited to 1024 bytes by implementations
+					char* pIdent = stackalloc char[512];
+					*pIdent = current;
+					identCount = 1;
 
-				while ((peek = input.Peek ()) != -1 && is_identifier_part_character ((char)peek)) {
-					ident.Append ((char)input.Read ());
-					current_pos++;
+					char peek;
+					while ((peek = Peek ()) != EndOfStream && is_identifier_part_character (peek)) {
+						*(pIdent + identCount) = Read ();
+						++current_pos;
+						++identCount;
+					}
+
+					val = new string ((char*)pIdent, 0, identCount);
+					return Token.IDENTIFIER;
 				}
-
-				val = ident.ToString ();
-				return Token.IDENTIFIER;
 			} else if (char.IsDigit (current)) {
 				val = current - '0';
 				return Token.DIGIT;
 			} else {
 				val = null;
 				return Token.ERROR;
+			}
+		}
+
+		char Read ()
+		{
+			try {
+				return input[real_current_pos++];
+			} catch {
+				return EndOfStream;
+			}
+		}
+
+		char Peek ()
+		{
+			try {
+				return input[real_current_pos];
+			} catch {
+				return EndOfStream;
 			}
 		}
 	}

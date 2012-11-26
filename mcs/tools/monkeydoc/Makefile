@@ -80,8 +80,9 @@ EXTRA_DISTFILES = \
 	$(RESOURCE_FILES)
 
 LIB_MCS_FLAGS = \
+	/unsafe                                                           \
 	/codepage:utf8                                                    \
-	/nowarn:169,164,162,168,219,618,612                                      \
+	/nowarn:169,164,162,168,219,618,612                               \
 	/r:Commons.Xml.Relaxng                                            \
 	/resource:../../docs/monodoc.xml,monodoc.xml                      \
 	/resource:Resources/base.css,base.css                             \
@@ -101,13 +102,13 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/mono-ecma.css,mono-ecma.css                   \
 	/resource:Resources/mono-ecma.xsl,mono-ecma.xsl                   \
 	/resource:Resources/toc-html.xsl,toc-html.xsl                     \
-	$(IMAGE_RESOURCE_COMMAND)					  \
+	$(IMAGE_RESOURCE_COMMAND)					                      \
 	/r:ICSharpCode.SharpZipLib                                        \
 	/r:$(corlib)                                                      \
 	/r:System.dll                                                     \
 	/r:System.Core.dll                                                \
 	/r:System.Xml.dll                                                 \
-	/r:System.Xml.Linq.dll                                                 \
+	/r:System.Xml.Linq.dll                                            \
 	/r:System.Configuration.dll
 
 TEST_MCS_FLAGS = /r:System.Core.dll
