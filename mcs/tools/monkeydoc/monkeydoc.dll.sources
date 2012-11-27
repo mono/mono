@@ -10,6 +10,7 @@ Monkeydoc/providers/ecma-provider.cs
 Monkeydoc/providers/addins-provider.cs
 Monkeydoc/HelpSource.cs
 Monkeydoc/Tree.cs
+Monkeydoc/Node.cs
 Monkeydoc/generator.cs
 Monkeydoc/caches/NullCache.cs
 Monkeydoc/caches/FileCache.cs
