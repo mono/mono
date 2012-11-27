@@ -35,11 +35,23 @@ namespace MonkeyDoc.Providers
 
 	public class EcmaProvider : Provider
 	{
-		string baseDir;
+		HashSet<string> directories = new HashSet<string> ();
+
+		public EcmaProvider ()
+		{
+		}
 
 		public EcmaProvider (string baseDir)
 		{
-			this.baseDir = baseDir;
+			AddDirectory (baseDir);
+		}
+
+		public void AddDirectory (string directory)
+		{
+			if (string.IsNullOrEmpty (directory))
+				throw new ArgumentNullException ("directory");
+
+			directories.Add (directory);
 		}
 
 		public override void PopulateTree (Tree tree)
@@ -48,41 +60,43 @@ namespace MonkeyDoc.Providers
 			var storage = tree.HelpSource.Storage;
 			int resID = 0;
 
-			foreach (var asm in Directory.EnumerateDirectories (baseDir)) {
-				using (var reader = XmlReader.Create (File.OpenRead (Path.Combine (asm, "index.xml")))) {
-					reader.ReadToFollowing ("Types");
-					var types = XElement.Load (reader.ReadSubtree ());
+			foreach (var dir in directories) {
+				foreach (var asm in Directory.EnumerateDirectories (dir)) {
+					using (var reader = XmlReader.Create (File.OpenRead (Path.Combine (asm, "index.xml")))) {
+						reader.ReadToFollowing ("Types");
+						var types = XElement.Load (reader.ReadSubtree ());
 
-					foreach (var ns in types.Elements ("Namespace")) {
-						var nsNode = root.GetOrCreateNode (ns.Attribute ("Name").Value, "N:" + ns.Attribute ("Name").Value);
+						foreach (var ns in types.Elements ("Namespace")) {
+							var nsNode = root.GetOrCreateNode (ns.Attribute ("Name").Value, "N:" + ns.Attribute ("Name").Value);
 
-						foreach (var type in ns.Elements ("Type")) {
-							// Add the XML file corresponding to the type to our storage
-							var id = resID++;
-							using (var file = File.OpenRead (Path.Combine (asm, nsNode.Caption, type.Attribute ("Name").Value)))
-								storage.Store (id.ToString (), file);
+							foreach (var type in ns.Elements ("Type")) {
+								// Add the XML file corresponding to the type to our storage
+								var id = resID++;
+								using (var file = File.OpenRead (Path.Combine (asm, nsNode.Caption, type.Attribute ("Name").Value)))
+									storage.Store (id.ToString (), file);
 
-							var url = "ecma:" + id + type.Attribute ("Name").Value;
-							var typeNode = nsNode.CreateNode ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name")),
-							                                  url);
+								var url = "ecma:" + id + type.Attribute ("Name").Value;
+								var typeNode = nsNode.CreateNode ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name")),
+								                                  url);
 
-							// Add meta "Members" node
-							typeNode.CreateNode ("Members", "*");
-							var members = type.Element ("Members").Elements ("Member").ToLookup (m => m.Element ("MemberType").Value);
-							foreach (var memberType in members) {
-								// We pluralize the member type to get the caption and take the first letter as URL
-								var node = typeNode.CreateNode (memberType.Key + 's', memberType.Key[0].ToString ());
-								int memberIndex = 0;
-								// We do not escape much member name here
-								foreach (var member in memberType)
-									node.CreateNode (MakeMemberCaption (member), (memberIndex++).ToString ());
+								// Add meta "Members" node
+								typeNode.CreateNode ("Members", "*");
+								var members = type.Element ("Members").Elements ("Member").ToLookup (m => m.Element ("MemberType").Value);
+								foreach (var memberType in members) {
+									// We pluralize the member type to get the caption and take the first letter as URL
+									var node = typeNode.CreateNode (memberType.Key + 's', memberType.Key[0].ToString ());
+									int memberIndex = 0;
+									// We do not escape much member name here
+									foreach (var member in memberType)
+										node.CreateNode (MakeMemberCaption (member), (memberIndex++).ToString ());
+								}
 							}
+
+							nsNode.Sort ();
 						}
 
-						nsNode.Sort ();
+						root.Sort ();
 					}
-
-					root.Sort ();
 				}
 			}
 		}
@@ -110,7 +124,8 @@ namespace MonkeyDoc.Providers
 
 		void AddEcmaXml (HelpSource hs)
 		{
-			var xmls = Directory.EnumerateDirectories (baseDir) // Assemblies
+			var xmls = directories
+				.SelectMany (Directory.EnumerateDirectories) // Assemblies
 				.SelectMany (Directory.EnumerateDirectories) // Namespaces
 				.SelectMany (Directory.EnumerateFiles)
 				.Where (f => f.EndsWith (".xml")); // Type XML files
@@ -123,7 +138,8 @@ namespace MonkeyDoc.Providers
 
 		void AddImages (HelpSource hs)
 		{
-			var imgs = Directory.EnumerateDirectories (baseDir)
+			var imgs = directories
+				.SelectMany (Directory.EnumerateDirectories)
 				.Select (d => Path.Combine (d, "_images"))
 				.Where (Directory.Exists)
 				.SelectMany (Directory.EnumerateFiles);
@@ -135,7 +151,8 @@ namespace MonkeyDoc.Providers
 
 		void AddExtensionMethods (HelpSource hs)
 		{
-			var extensionMethods = Directory.EnumerateDirectories (baseDir)
+			var extensionMethods = directories
+				.SelectMany (Directory.EnumerateDirectories)
 				.Select (d => Path.Combine (d, "index.xml"))
 				.Where (File.Exists)
 				.Select (f => {
@@ -152,7 +169,8 @@ namespace MonkeyDoc.Providers
 
 		IEnumerable<string> GetEcmaXmls ()
 		{
-			return Directory.EnumerateDirectories (baseDir) // Assemblies
+			return directories
+				.SelectMany (Directory.EnumerateDirectories) // Assemblies
 				.SelectMany (Directory.EnumerateDirectories) // Namespaces
 				.SelectMany (Directory.EnumerateFiles)
 				.Where (f => f.EndsWith (".xml")); // Type XML files
@@ -187,7 +205,7 @@ namespace MonkeyDoc.Providers
 				case 'F':
 				case 'N':
 				case 'O':
-					return MatchNode (url) != null;
+					return true;
 				}
 			}
 			return base.CanHandleUrl (url);
