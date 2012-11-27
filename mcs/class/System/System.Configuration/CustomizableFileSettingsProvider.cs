@@ -792,21 +792,19 @@ namespace System.Configuration
 		{
 			CreateExeMap ();
 
-			if (values == null) {
-				values = new SettingsPropertyValueCollection ();
-				string groupName = context ["GroupName"] as string;
-				groupName = NormalizeInvalidXmlChars (groupName); // we likely saved the element removing the non valid xml chars.
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false, groupName);
+			values = new SettingsPropertyValueCollection ();
+			string groupName = context ["GroupName"] as string;
+			groupName = NormalizeInvalidXmlChars (groupName); // we likely saved the element removing the non valid xml chars.
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false, groupName);
 
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, "userSettings", true, groupName);
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, "userSettings", true, groupName);
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, "userSettings", true, groupName);
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, "userSettings", true, groupName);
 
-				// create default values if not exist
-				foreach (SettingsProperty p in collection)
-					if (values [p.Name] == null)
-						values.Add (new SettingsPropertyValue (p));
-			}
+			// create default values if not exist
+			foreach (SettingsProperty p in collection)
+				if (values [p.Name] == null)
+					values.Add (new SettingsPropertyValue (p));
 			return values;
 		}
 
@@ -859,13 +857,14 @@ namespace System.Configuration
 		public void Reset (SettingsContext context)
 		{
 			SettingsPropertyCollection coll = new SettingsPropertyCollection ();
-			GetPropertyValues (context, coll);
-			foreach (SettingsPropertyValue propertyValue in values) {
-				// Can't use propertyValue.Property.DefaultValue
-				// as it may cause InvalidCastException (see bug# 532180)
-				propertyValue.PropertyValue = propertyValue.Reset ();
+			// GetPropertyValues (context, coll);
+			if (values != null) {
+				foreach (SettingsPropertyValue propertyValue in values) {
+					// Can't use propertyValue.Property.DefaultValue
+					// as it may cause InvalidCastException (see bug# 532180)
+					values[propertyValue.Name].PropertyValue = propertyValue.Reset ();
+				}
 			}
-			SetPropertyValues (context, values);
 		}
 
 		// FIXME: implement

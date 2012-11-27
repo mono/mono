@@ -171,7 +171,7 @@ namespace System.Configuration
 		private object GetDeserializedDefaultValue ()
 		{
 			if (property.DefaultValue == null)
-				if (property.PropertyType.IsValueType)
+				if (property.PropertyType != null && property.PropertyType.IsValueType)
 					return Activator.CreateInstance (property.PropertyType);
 				else
 					return null;

@@ -379,14 +379,44 @@ namespace MonoTests.System.Configuration {
                 }
 
                 [Test] // bug #532180
-                public void DefaultSettingValueAsWithReload() {
+                public void DefaultSettingValueAsWithReload() 
+		{
                         Bug532180 settings = new Bug532180();
-                        Assert.AreEqual(10, settings.IntSetting, "A1");
+                        Assert.AreEqual (10, settings.IntSetting, "A1");
                         settings.IntSetting = 1;
-                        Assert.AreEqual(1, settings.IntSetting, "A2");
-                        settings.Reload();
-                        Assert.AreEqual(10, settings.IntSetting, "A3");
+                        Assert.AreEqual (1, settings.IntSetting, "A2");
+                        settings.Reload ();
+                        Assert.AreEqual (10, settings.IntSetting, "A3");
                 }                        
+		
+		class Bug8592ConfHolder : ApplicationSettingsBase {
+			[UserScopedSetting]
+			public string TestKey1OnHolder { 
+				get { return (string) this ["TestKey1OnHolder"] ?? ""; }
+				set { this ["TestKey1OnHolder"] = value; }
+			}
+		}
+
+		[Test]
+		public void TestBug8592BasicOperations ()
+		{
+			var holder = new Bug8592ConfHolder ();
+			holder.Reset ();
+			holder.Save ();
+			Assert.AreEqual ("", holder.TestKey1OnHolder);
+			holder.TestKey1OnHolder = "candy";
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Reload ();
+			Assert.AreEqual ("", holder.TestKey1OnHolder);
+			holder.TestKey1OnHolder = "candy";
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Save ();
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Reload ();
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Reset ();
+			Assert.AreEqual ("", holder.TestKey1OnHolder);
+		}
 	}
 }
 
