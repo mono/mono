@@ -94,7 +94,7 @@ namespace MonkeyDoc
 			get {
 				return rootTree;
 			}
-			internal set {
+			set {
 				rootTree = value;
 			}
 		}
