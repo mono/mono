@@ -659,6 +659,23 @@ public class StringTest
 	}
 
 	[Test]
+	public void CompareOrdinalSubstringWithNull ()
+	{
+		string lesser = "abc";
+		string greater = "xyz";
+
+		Assert.AreEqual (0, string.CompareOrdinal (null, 0, null, 0, 0), "substring both null");
+		Assert.AreEqual (-1, string.CompareOrdinal (null, 0, greater, 0, 0), "substring strA null");
+		Assert.AreEqual (-1, string.CompareOrdinal (null, 4, greater, 0, 0), "substring strA null; indexA greater than strA.Length");
+		Assert.AreEqual (-1, string.CompareOrdinal (null, 0, greater, 4, 0), "substring strA null; indexB greater than strB.Length");
+		Assert.AreEqual (-1, string.CompareOrdinal (null, -1, greater, -1, -1), "substring strA null; indexA, indexB, length negative");
+		Assert.AreEqual (1, string.CompareOrdinal (lesser, 0, null, 0, 0), "substring strB null");
+		Assert.AreEqual (1, string.CompareOrdinal (lesser, 4, null, 0, 0), "substring strB null; indexA greater than strA.Length");
+		Assert.AreEqual (1, string.CompareOrdinal (lesser, 0, null, 4, 0), "substring strB null; indexB greater than strB.Length");
+		Assert.AreEqual (1, string.CompareOrdinal (lesser, -1, null, -1, -1), "substring strB null; indexA, indexB, length negative");
+	}
+
+	[Test]
 	public void CompareTo ()
 	{
 		string lower = "abc";
