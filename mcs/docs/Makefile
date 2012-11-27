@@ -130,21 +130,21 @@ NUNIT_DIRS = \
 
 netdocs.zip : netdocs.tree
 netdocs.tree: Makefile
-	$(MDOC) assemble -o netdocs $(NETDOCS_DIRS)
+	$(MDOC) --debug assemble -o netdocs $(NETDOCS_DIRS)
 
 Mono.zip : Mono.tree
 Mono.tree: Makefile
-	$(MDOC) assemble -o Mono $(MONO_DIRS)
+	$(MDOC) --debug assemble -o Mono $(MONO_DIRS)
 
 Novell.zip : Novell.tree
 Novell.tree: Makefile
-	$(MDOC) assemble -o Novell $(NOVELL_DIRS)
+	$(MDOC) --debug assemble -o Novell $(NOVELL_DIRS)
 
 cs-errors.zip : cs-errors.tree
 cs-errors.tree: cs-errors.config Makefile
-	$(MDOC) assemble -o cs-errors -f error $<
+	$(MDOC) --debug assemble -o cs-errors -f error $<
 
 ecma334.zip : ecma334.tree
 ecma334.tree: Makefile
-	$(MDOC) assemble -o ecma334 -f ecmaspec ecma334
+	$(MDOC) --debug assemble -o ecma334 -f ecmaspec ecma334
 
