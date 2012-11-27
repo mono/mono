@@ -600,24 +600,7 @@ namespace Mono.CSharp {
 
 		static bool IsExternAliasValid (string identifier)
 		{
-			if (identifier.Length == 0)
-				return false;
-			if (identifier[0] != '_' && !char.IsLetter (identifier[0]))
-				return false;
-
-			for (int i = 1; i < identifier.Length; i++) {
-				char c = identifier[i];
-				if (char.IsLetter (c) || char.IsDigit (c))
-					continue;
-
-				UnicodeCategory category = char.GetUnicodeCategory (c);
-				if (category != UnicodeCategory.Format || category != UnicodeCategory.NonSpacingMark ||
-						category != UnicodeCategory.SpacingCombiningMark ||
-						category != UnicodeCategory.ConnectorPunctuation)
-					return false;
-			}
-
-			return true;
+			return Tokenizer.IsValidIdentifier (identifier);
 		}
 
 		static string[] LoadArgs (string file)
