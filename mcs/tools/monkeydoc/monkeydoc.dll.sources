@@ -7,6 +7,7 @@ Monkeydoc/providers/ecmaspec-provider.cs
 Monkeydoc/providers/error-provider.cs
 Monkeydoc/providers/xhtml-provider.cs
 Monkeydoc/providers/ecma-provider.cs
+Monkeydoc/providers/addins-provider.cs
 Monkeydoc/HelpSource.cs
 Monkeydoc/Tree.cs
 Monkeydoc/generator.cs
@@ -24,6 +25,7 @@ Monkeydoc/generators/html/Ecmaspec2Html.cs
 Monkeydoc/generators/html/Error2Html.cs
 Monkeydoc/generators/html/MonoBook2Html.cs
 Monkeydoc/generators/html/Ecma2Html.cs
+Monkeydoc/generators/html/Addin2Html.cs
 Monkeydoc/generators/html/Idem.cs
 Monkeydoc/generators/HtmlGenerator.cs
 Mono.Utilities/colorizer.cs

@@ -35,6 +35,7 @@ namespace MonkeyDoc.Generators
 				{ DocumentType.ErrorXml, new Error2Html () },
 				{ DocumentType.Html, new Idem () },
 				{ DocumentType.MonoBook, new MonoBook2Html () },
+				{ DocumentType.AddinXml, new Addin2Html () },
 				{ DocumentType.PlainText, new Idem () },
 			};
 		}
