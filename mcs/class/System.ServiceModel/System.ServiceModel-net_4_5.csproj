@@ -182,7 +182,8 @@
    <Compile Include="System.ServiceModel\AddressAccessDeniedException.cs" />
    <Compile Include="System.ServiceModel\AddressAlreadyInUseException.cs" />
    <Compile Include="System.ServiceModel\AllEnums.cs" />
-   <Compile Include="System.ServiceModel\BasicHttpBinding.cs" />
+   <Compile Include="System.ServiceModel\HttpBindingBase.cs" />
+   <Compile Include="System.ServiceModel\BasicHttpBinding_4_5.cs" />
    <Compile Include="System.ServiceModel\BasicHttpMessageSecurity.cs" />
    <Compile Include="System.ServiceModel\BasicHttpSecurity.cs" />
    <Compile Include="System.ServiceModel\CallbackBehaviorAttribute.cs" />

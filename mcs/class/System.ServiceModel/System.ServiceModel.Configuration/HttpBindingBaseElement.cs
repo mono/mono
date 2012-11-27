@@ -1,15 +1,16 @@
 //
-// BasicHttpBindingElement.cs
+// HttpBindingBaseElement.cs
 //
-// See BasicHttpBindingElement_4_5.cs and HttpBindingBaseElement.cs
-// for the .NET 4.5 version of this class, where most of the code has
-// been moved into the new abstract HttpBindingBaseElement class.
+// This is a .NET 4.5 addition and contains most of the code from
+// BasicHttpBindingElement.
 //
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_4_5
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,16 +60,16 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	public class BasicHttpBindingElement
+	public abstract class HttpBindingBaseElement
 		 : StandardBindingElement,  IBindingConfigurationElement
 	{
 		ConfigurationPropertyCollection _properties;
 
-		public BasicHttpBindingElement ()
+		public HttpBindingBaseElement ()
 		{
 		}
 
-		public BasicHttpBindingElement (string name) : base (name) { }
+		public HttpBindingBaseElement (string name) : base (name) { }
 
 		// Properties
 
@@ -79,10 +79,6 @@ namespace System.ServiceModel.Configuration
 		public bool AllowCookies {
 			get { return (bool) this ["allowCookies"]; }
 			set { this ["allowCookies"] = value; }
-		}
-
-		protected override Type BindingElementType {
-			get { return typeof (BasicHttpBinding); }
 		}
 
 		[ConfigurationProperty ("bypassProxyOnLocal",
@@ -134,14 +130,6 @@ namespace System.ServiceModel.Configuration
 			set { this ["maxReceivedMessageSize"] = value; }
 		}
 
-		[ConfigurationProperty ("messageEncoding",
-			 DefaultValue = "Text",
-			 Options = ConfigurationPropertyOptions.None)]
-		public WSMessageEncoding MessageEncoding {
-			get { return (WSMessageEncoding) this ["messageEncoding"]; }
-			set { this ["messageEncoding"] = value; }
-		}
-
 		protected override ConfigurationPropertyCollection Properties {
 			get {
 				if (_properties == null) {
@@ -152,10 +140,8 @@ namespace System.ServiceModel.Configuration
 					_properties.Add (new ConfigurationProperty ("maxBufferPoolSize", typeof (long), "524288", null, new LongValidator (0, 9223372036854775807, false), ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("maxBufferSize", typeof (int), "65536", null, new IntegerValidator (1, int.MaxValue, false), ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("maxReceivedMessageSize", typeof (long), "65536", null, new LongValidator (1, 9223372036854775807, false), ConfigurationPropertyOptions.None));
-					_properties.Add (new ConfigurationProperty ("messageEncoding", typeof (WSMessageEncoding), "Text", null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("proxyAddress", typeof (Uri), null, new UriTypeConverter (), null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("readerQuotas", typeof (XmlDictionaryReaderQuotasElement), null, null, null, ConfigurationPropertyOptions.None));
-					_properties.Add (new ConfigurationProperty ("security", typeof (BasicHttpSecurityElement), null, null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("textEncoding", typeof (Encoding), "utf-8", EncodingConverter.Instance, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("transferMode", typeof (TransferMode), "Buffered", null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("useDefaultWebProxy", typeof (bool), "true", new BooleanConverter (), null, ConfigurationPropertyOptions.None));
@@ -176,12 +162,6 @@ namespace System.ServiceModel.Configuration
 			 Options = ConfigurationPropertyOptions.None)]
 		public XmlDictionaryReaderQuotasElement ReaderQuotas {
 			get { return (XmlDictionaryReaderQuotasElement) this ["readerQuotas"]; }
-		}
-
-		[ConfigurationProperty ("security",
-			 Options = ConfigurationPropertyOptions.None)]
-		public BasicHttpSecurityElement Security {
-			get { return (BasicHttpSecurityElement) this ["security"]; }
 		}
 
 		[TypeConverter (typeof (EncodingConverter))]
@@ -211,7 +191,7 @@ namespace System.ServiceModel.Configuration
 
 		protected override void OnApplyConfiguration (Binding binding)
 		{
-			BasicHttpBinding basicHttpBinding = (BasicHttpBinding) binding;
+			HttpBindingBase basicHttpBinding = (HttpBindingBase) binding;
 			
 			basicHttpBinding.AllowCookies = AllowCookies;
 			basicHttpBinding.BypassProxyOnLocal = BypassProxyOnLocal;
@@ -219,13 +199,10 @@ namespace System.ServiceModel.Configuration
 			basicHttpBinding.MaxBufferPoolSize = MaxBufferPoolSize;
 			basicHttpBinding.MaxBufferSize = MaxBufferSize;
 			basicHttpBinding.MaxReceivedMessageSize = MaxReceivedMessageSize;
-			basicHttpBinding.MessageEncoding = MessageEncoding;
 			basicHttpBinding.ProxyAddress = ProxyAddress;
 
 			ReaderQuotas.ApplyConfiguration (basicHttpBinding.ReaderQuotas);
 
-			basicHttpBinding.Security.Mode = Security.Mode;
-			Security.Transport.ApplyConfiguration (basicHttpBinding.Security.Transport);
 			basicHttpBinding.TextEncoding = TextEncoding;
 			basicHttpBinding.TransferMode = TransferMode;
 			basicHttpBinding.UseDefaultWebProxy = UseDefaultWebProxy;
@@ -233,7 +210,7 @@ namespace System.ServiceModel.Configuration
 
 		protected internal override void InitializeFrom (Binding binding)
 		{
-			BasicHttpBinding b = (BasicHttpBinding) binding;
+			HttpBindingBase b = (HttpBindingBase) binding;
 			
 			base.InitializeFrom (binding);
 			AllowCookies = b.AllowCookies;
@@ -242,13 +219,10 @@ namespace System.ServiceModel.Configuration
 			MaxBufferPoolSize = b.MaxBufferPoolSize;
 			MaxBufferSize = b.MaxBufferSize;
 			MaxReceivedMessageSize = b.MaxReceivedMessageSize;
-			MessageEncoding = b.MessageEncoding;
 			ProxyAddress = b.ProxyAddress;
 
 			ReaderQuotas.ApplyConfiguration (b.ReaderQuotas);
 
-			Security.Mode = b.Security.Mode;
-			Security.Transport.ApplyConfiguration (b.Security.Transport);
 			TextEncoding = b.TextEncoding;
 			TransferMode = b.TransferMode;
 			UseDefaultWebProxy = b.UseDefaultWebProxy;
@@ -256,4 +230,3 @@ namespace System.ServiceModel.Configuration
 	}
 
 }
-#endif

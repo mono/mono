@@ -67,6 +67,14 @@ namespace System.ServiceModel.Configuration
 			get { return (BasicHttpBindingCollectionElement) this ["basicHttpBinding"]; }
 		}
 
+#if NET_4_5
+		[ConfigurationProperty ("basicHttpsBinding",
+		                        Options = ConfigurationPropertyOptions.None)]
+		public BasicHttpsBindingCollectionElement BasicHttpsBinding {
+			get { return (BasicHttpsBindingCollectionElement) this ["basicHttpsBinding"]; }
+		}
+#endif
+
 		[MonoTODO ("Not Implemented")]
 		public List<BindingCollectionElement> BindingCollections {
 			get { throw new NotImplementedException (); }

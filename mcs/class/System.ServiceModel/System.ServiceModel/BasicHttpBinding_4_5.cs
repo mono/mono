@@ -1,14 +1,12 @@
 //
-// BasicHttpBinding.cs
+// BasicHttpBinding_4_5.cs
 //
-// See BasicHttpBinding_4_5.cs and HttpBindingBase.cs for the .NET 4.5
-// version of this class.
-//
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (C) 2005-2006 Novell, Inc.  http://www.novell.com
-// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
+// Copyright 2011-2012 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if !NET_4_5
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -42,25 +39,10 @@ using System.ServiceModel.Configuration;
 
 namespace System.ServiceModel
 {
-	public class BasicHttpBinding : Binding,
+	public class BasicHttpBinding : HttpBindingBase,
 		IBindingRuntimePreferences
 	{
-		bool allow_cookies, bypass_proxy_on_local;
-		HostNameComparisonMode host_name_comparison_mode
-			= HostNameComparisonMode.StrongWildcard;
-		long max_buffer_pool_size = 0x80000;
-		int max_buffer_size = 0x10000;
-		long max_recv_message_size = 0x10000;
-		WSMessageEncoding message_encoding
-			= WSMessageEncoding.Text;
-		Uri proxy_address;
-		XmlDictionaryReaderQuotas reader_quotas
-			= new XmlDictionaryReaderQuotas ();
-		EnvelopeVersion env_version = EnvelopeVersion.Soap11;
-		Encoding text_encoding = new UTF8Encoding ();
-		TransferMode transfer_mode
-			 = TransferMode.Buffered;
-		bool use_default_web_proxy = true;
+		WSMessageEncoding message_encoding = WSMessageEncoding.Text;
 		BasicHttpSecurity security;
 
 		public BasicHttpBinding ()
@@ -68,7 +50,6 @@ namespace System.ServiceModel
 		{
 		}
 
-#if !NET_2_1
 		public BasicHttpBinding (string configurationName)
 			: this ()
 		{
@@ -78,7 +59,6 @@ namespace System.ServiceModel
 
 			el.ApplyConfiguration (this);
 		}
-#endif
 
 		public BasicHttpBinding (
 			BasicHttpSecurityMode securityMode)
@@ -86,65 +66,9 @@ namespace System.ServiceModel
 			security = new BasicHttpSecurity (securityMode);
 		}
 
-		public bool AllowCookies {
-			get { return allow_cookies; }
-			set { allow_cookies = value; }
-		}
-
-		public bool BypassProxyOnLocal {
-			get { return bypass_proxy_on_local; }
-			set { bypass_proxy_on_local = value; }
-		}
-
-#if NET_2_1
-		public bool EnableHttpCookieContainer { get; set; }
-#endif
-
-		public HostNameComparisonMode HostNameComparisonMode {
-			get { return host_name_comparison_mode; }
-			set { host_name_comparison_mode = value; }
-		}
-
-		public long MaxBufferPoolSize {
-			get { return max_buffer_pool_size; }
-			set {
-				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
-				max_buffer_pool_size = value;
-			}
-		}
-
-		public int MaxBufferSize {
-			get { return max_buffer_size; }
-			set {
-				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
-				max_buffer_size = value;
-			}
-		}
-
-		public long MaxReceivedMessageSize {
-			get { return max_recv_message_size; }
-			set {
-				if (value <= 0)
-					throw new ArgumentOutOfRangeException ();
-				max_recv_message_size = value;
-			}
-		}
-
 		public WSMessageEncoding MessageEncoding {
 			get { return message_encoding; }
 			set { message_encoding = value; }
-		}
-
-		public Uri ProxyAddress {
-			get { return proxy_address; }
-			set { proxy_address = value; }
-		}
-
-		public XmlDictionaryReaderQuotas ReaderQuotas {
-			get { return reader_quotas; }
-			set { reader_quotas = value; }
 		}
 
 		public override string Scheme {
@@ -163,25 +87,6 @@ namespace System.ServiceModel
 			get { return security; }
 		}
 
-		public EnvelopeVersion EnvelopeVersion {
-			get { return env_version; }
-		}
-
-		public Encoding TextEncoding {
-			get { return text_encoding; }
-			set { text_encoding = value; }
-		}
-
-		public TransferMode TransferMode {
-			get { return transfer_mode; }
-			set { transfer_mode = value; }
-		}
-
-		public bool UseDefaultWebProxy {
-			get { return use_default_web_proxy; }
-			set { use_default_web_proxy = value; }
-		}
-
 		public override BindingElementCollection
 			CreateBindingElements ()
 		{
@@ -191,11 +96,6 @@ namespace System.ServiceModel
 			if (security != null)
 				list.Add (security);
 
-#if NET_2_1
-			if (EnableHttpCookieContainer)
-				list.Add (new HttpCookieContainerBindingElement ());
-#endif
-
 			list.Add (BuildMessageEncodingBindingElement ());
 			list.Add (GetTransport ());
 
@@ -204,9 +104,8 @@ namespace System.ServiceModel
 		
 		SecurityBindingElement CreateSecurityBindingElement () 
 		{
-            SecurityBindingElement element;
+			SecurityBindingElement element;
 			switch (Security.Mode) {
-#if !NET_2_1
 			case BasicHttpSecurityMode.Message:
 				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
 					throw new InvalidOperationException ("When Message security is enabled in a BasicHttpBinding, the message security credential type must be BasicHttpMessageCredentialType.Certificate.");
@@ -221,15 +120,12 @@ namespace System.ServiceModel
 				else
 					element = new AsymmetricSecurityBindingElement ();
 				break;
-#endif
 			default: 
 				return null;
 			}
 
-#if !NET_2_1
 			element.SetKeyDerivation (false);
 			element.SecurityHeaderLayout = SecurityHeaderLayout.Lax;
-#endif
 			return element;
 		}
 
@@ -238,18 +134,12 @@ namespace System.ServiceModel
 			if (MessageEncoding == WSMessageEncoding.Text) {
 				TextMessageEncodingBindingElement tm = new TextMessageEncodingBindingElement (
 					MessageVersion.CreateVersion (EnvelopeVersion, AddressingVersion.None), TextEncoding);
-#if !NET_2_1
 				ReaderQuotas.CopyTo (tm.ReaderQuotas);
-#endif
 				return tm;
-			}
-			else
-#if NET_2_1
-				throw new SystemException ("INTERNAL ERROR: should not happen");
-#else
+			} else {
 				return new MtomMessageEncodingBindingElement (
 					MessageVersion.CreateVersion (EnvelopeVersion, AddressingVersion.None), TextEncoding);
-#endif
+			}
 		}
 
 		TransportBindingElement GetTransport ()
@@ -274,11 +164,8 @@ namespace System.ServiceModel
 			h.ProxyAddress = ProxyAddress;
 			h.UseDefaultWebProxy = UseDefaultWebProxy;
 			h.TransferMode = TransferMode;
-#if NET_4_0
 			h.ExtendedProtectionPolicy = Security.Transport.ExtendedProtectionPolicy;
-#endif
 
-#if !NET_2_1 || MOBILE
 			switch (Security.Transport.ClientCredentialType) {
 			case HttpClientCredentialType.Basic:
 				h.AuthenticationScheme = AuthenticationSchemes.Basic;
@@ -302,16 +189,8 @@ namespace System.ServiceModel
 				}
 				break;
 			}
-#endif
 
 			return h;
 		}
-
-		// explicit interface implementations
-
-		bool IBindingRuntimePreferences.ReceiveSynchronously {
-			get { return false; }
-		}
 	}
 }
-#endif
