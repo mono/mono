@@ -140,6 +140,10 @@ namespace MonkeyDoc
 		public Node CreateNode (string c_caption, string c_element)
 		{
 			EnsureNodes ();
+			if (string.IsNullOrEmpty (c_caption))
+				throw new ArgumentNullException ("c_caption");
+			if (string.IsNullOrEmpty (c_element))
+				throw new ArgumentNullException ("c_element");
 
 			Node t = new Node (this, c_caption, c_element);
 			nodes.Add (t);
