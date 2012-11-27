@@ -154,7 +154,7 @@ namespace Monkeydoc.Ecma
 			} else if (format == Format.WithArgs && DescKind == Kind.Operator && MemberName.EndsWith ("Conversion")) {
 				var type1 = MemberArguments[0].FormattedNamespace + MemberArguments[0].ToCompleteTypeName () + ModToString (MemberArguments[0]);
 				var type2 = MemberArguments[1].FormattedNamespace + MemberArguments[1].ToCompleteTypeName () + ModToString (MemberArguments[1]);
-				return string.Format ("{0} to {1}", type1, type2);
+				return type1 + " to " + type2;
 			}
 
 			var result = IsEtc && !string.IsNullOrEmpty (EtcFilter) ? EtcFilter : MemberName;

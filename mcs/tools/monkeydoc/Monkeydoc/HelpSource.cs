@@ -114,7 +114,7 @@ namespace MonkeyDoc
 		// A HelpSource may have a common prefix to its URL, give it here
 		protected virtual string UriPrefix {
 			get {
-				return "dummy";
+				return "dummy:";
 			}
 		}
 	

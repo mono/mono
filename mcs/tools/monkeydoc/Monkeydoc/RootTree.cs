@@ -321,8 +321,7 @@ namespace MonkeyDoc
 		public Node LookupEntryPoint (string name)
 		{
 			Node result = null;
-			if (!this.nameToNode.TryGetValue (name, out result))
-			{
+			if (!this.nameToNode.TryGetValue (name, out result)) {
 				result = null;
 			}
 			return result;
