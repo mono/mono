@@ -615,47 +615,49 @@ namespace System.Configuration
 			if (userGroup == null) {
 				userGroup = new UserSettingsGroup ();
 				config.SectionGroups.Add ("userSettings", userGroup);
-				ApplicationSettingsBase asb = context.CurrentSettings;
-				ClientSettingsSection cs = new ClientSettingsSection ();
-				string class_name = NormalizeInvalidXmlChars ((asb != null ? asb.GetType () : typeof (ApplicationSettingsBase)).FullName);
-				userGroup.Sections.Add (class_name, cs);
+			}
+			ApplicationSettingsBase asb = context.CurrentSettings;
+			string class_name = NormalizeInvalidXmlChars ((asb != null ? asb.GetType () : typeof (ApplicationSettingsBase)).FullName);
+			ClientSettingsSection userSection = null;
+			ConfigurationSection cnf = userGroup.Sections.Get (class_name);
+			userSection = cnf as ClientSettingsSection;
+			if (userSection == null) {
+				userSection = new ClientSettingsSection ();
+				userGroup.Sections.Add (class_name, userSection);
 			}
 
 			bool hasChanges = false;
 
-			foreach (ConfigurationSection section in userGroup.Sections) {
-				ClientSettingsSection userSection = section as ClientSettingsSection;
-				if (userSection == null)
+			if (userSection == null)
+				return;
+
+			foreach (SettingsPropertyValue value in collection) {
+				if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
+					continue;
+				// The default impl does not save the ApplicationScopedSetting properties
+				if (value.Property.Attributes.Contains (typeof (ApplicationScopedSettingAttribute)))
 					continue;
 
-				foreach (SettingsPropertyValue value in collection) {
-					if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
-						continue;
-					// The default impl does not save the ApplicationScopedSetting properties
-					if (value.Property.Attributes.Contains (typeof (ApplicationScopedSettingAttribute)))
-						continue;
-
-					hasChanges = true;
-					SettingElement element = userSection.Settings.Get (value.Name);
-					if (element == null) {
-						element = new SettingElement (value.Name, value.Property.SerializeAs);
-						userSection.Settings.Add (element);
-					}
-					if (element.Value.ValueXml == null)
-						element.Value.ValueXml = new XmlDocument ().CreateElement ("value");
-					switch (value.Property.SerializeAs) {
-					case SettingsSerializeAs.Xml:
-						element.Value.ValueXml.InnerXml = (value.SerializedValue as string) ?? string.Empty;
-						break;
-					case SettingsSerializeAs.String:
-						element.Value.ValueXml.InnerText = value.SerializedValue as string;
-						break;
-					case SettingsSerializeAs.Binary:
-						element.Value.ValueXml.InnerText = value.SerializedValue != null ? Convert.ToBase64String (value.SerializedValue as byte []) : string.Empty;
-						break;
-					default:
-						throw new NotImplementedException ();
-					}
+				hasChanges = true;
+				SettingElement element = userSection.Settings.Get (value.Name);
+				if (element == null) {
+					element = new SettingElement (value.Name, value.Property.SerializeAs);
+					userSection.Settings.Add (element);
+				}
+				if (element.Value.ValueXml == null)
+					element.Value.ValueXml = new XmlDocument ().CreateElement ("value");
+				switch (value.Property.SerializeAs) {
+				case SettingsSerializeAs.Xml:
+					element.Value.ValueXml.InnerXml = (value.SerializedValue as string) ?? string.Empty;
+					break;
+				case SettingsSerializeAs.String:
+					element.Value.ValueXml.InnerText = value.SerializedValue as string;
+					break;
+				case SettingsSerializeAs.Binary:
+					element.Value.ValueXml.InnerText = value.SerializedValue != null ? Convert.ToBase64String (value.SerializedValue as byte []) : string.Empty;
+					break;
+				default:
+					throw new NotImplementedException ();
 				}
 			}
 			if (hasChanges)

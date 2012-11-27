@@ -417,6 +417,59 @@ namespace MonoTests.System.Configuration {
 			holder.Reset ();
 			Assert.AreEqual ("", holder.TestKey1OnHolder);
 		}
+
+		class Bug8533ConfHolder1 : ApplicationSettingsBase {
+			[UserScopedSetting]
+			public string TestKey1OnHolder1 {
+				get { return (string) this ["TestKey1OnHolder1"] ?? ""; }
+				set { this ["TestKey1OnHolder1"] = value; }
+			}
+
+			[UserScopedSetting]
+			public string TestKey1OnHolder2 {
+				get { return (string) this ["TestKey1OnHolder2"] ?? ""; }
+				set { this ["TestKey1OnHolder2"] = value; }
+			}
+			
+			[UserScopedSetting]
+			public string TestKey {
+				get { return (string) this ["TestKey"] ?? ""; }
+				set { this ["TestKey"] = value; }
+			}
+		}
+
+		class Bug8533ConfHolder2 : ApplicationSettingsBase {
+			[UserScopedSetting]
+			public string TestKey1OnHolder2 {
+				get { return (string) this ["TestKey1OnHolder2"] ?? ""; }
+				set { this ["TestKey1OnHolder2"] = value; }
+			}
+
+			[UserScopedSetting]
+			public string TestKey {
+				get { return (string) this ["TestKey"] ?? ""; }
+				set { this ["TestKey"] = value; }
+			}
+		}
+
+		[Test]
+		public void TestBug8533ConfHandlerWronglyMixedUp ()
+		{
+			var holder1 = new Bug8533ConfHolder1 ();
+			var holder2 = new Bug8533ConfHolder2 ();
+			holder1.TestKey1OnHolder1 = "candy";
+			holder2.TestKey1OnHolder2 = "donut";
+			holder1.TestKey = "eclair";
+			holder1.Save ();
+			holder2.Save ();
+			holder1.Reload ();
+			holder2.Reload();
+			Assert.AreEqual ("", holder1.TestKey1OnHolder2);
+			Assert.AreEqual ("candy", holder1.TestKey1OnHolder1);
+			Assert.AreEqual ("donut", holder2.TestKey1OnHolder2);
+			Assert.AreEqual ("eclair", holder1.TestKey);
+			Assert.AreEqual ("", holder2.TestKey);
+		}
 	}
 }
 
