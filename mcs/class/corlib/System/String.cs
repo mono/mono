@@ -769,16 +769,30 @@ namespace System
 
 		public static int CompareOrdinal (String strA, int indexA, String strB, int indexB, int length)
 		{
-			if ((indexA > strA.Length) || (indexB > strB.Length) || (indexA < 0) || (indexB < 0) || (length < 0))
-				throw new ArgumentOutOfRangeException ();
+			if (strA != null && strB != null)
+			{
+				if (indexA > strA.Length || indexA < 0)
+					throw new ArgumentOutOfRangeException ("indexA");
+				if (indexB > strB.Length || indexB < 0)
+					throw new ArgumentOutOfRangeException ("indexB");
+				if (length < 0)
+					throw new ArgumentOutOfRangeException ("length");
+			}
 
 			return CompareOrdinalUnchecked (strA, indexA, length, strB, indexB, length);
 		}
 
 		internal static int CompareOrdinalCaseInsensitive (String strA, int indexA, String strB, int indexB, int length)
 		{
-			if ((indexA > strA.Length) || (indexB > strB.Length) || (indexA < 0) || (indexB < 0) || (length < 0))
-				throw new ArgumentOutOfRangeException ();
+			if (strA != null && strB != null)
+			{
+				if (indexA > strA.Length || indexA < 0)
+					throw new ArgumentOutOfRangeException ("indexA");
+				if (indexB > strB.Length || indexB < 0)
+					throw new ArgumentOutOfRangeException ("indexB");
+				if (length < 0)
+					throw new ArgumentOutOfRangeException ("length");
+			}
 
 			return CompareOrdinalCaseInsensitiveUnchecked (strA, indexA, length, strB, indexB, length);
 		}
@@ -815,11 +829,9 @@ namespace System
 		{
 			// Same as above, but checks versus uppercase characters
 			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
-			} else if (strB == null) {
+				return strB == null ? 0 : -1;
+			}
+			if (strB == null) {
 				return 1;
 			}
 			int lengthA = Math.Min (lenA, strA.Length - indexA);
