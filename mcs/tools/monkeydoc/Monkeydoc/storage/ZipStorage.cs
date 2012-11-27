@@ -11,15 +11,14 @@ namespace MonkeyDoc.Storage
 {
 	public class ZipStorage : IDocStorage
 	{
-		ZipOutputStream zipOutput;
 		string zipFileName;
-		ZipFile zipFile;
 		int code;
+		ZipOutputStream zipOutput;
+		ZipFile zipFile;
 
 		public ZipStorage (string zipFileName)
 		{
 			this.zipFileName = zipFileName;
-			this.zipFile = new ZipFile (zipFileName);
 		}
 
 		public bool SupportRevision {
@@ -42,7 +41,8 @@ namespace MonkeyDoc.Storage
 
 		public string Store (string id, string text)
 		{
-			SetupEntry (ref id);
+			EnsureOutput ();
+			SetupEntry (zipOutput, ref id);
 			using (var writer = new StreamWriter (zipOutput)) {
 				writer.Write (text);
 				writer.Flush ();
@@ -52,19 +52,21 @@ namespace MonkeyDoc.Storage
 
 		public string Store (string id, byte[] data)
 		{
-			SetupEntry (ref id);
+			EnsureOutput ();
+			SetupEntry (zipOutput, ref id);
 			zipOutput.Write (data, 0, data.Length);
 			return id;
 		}
 
 		public string Store (string id, Stream stream)
 		{
-			SetupEntry (ref id);
+			EnsureOutput ();
+			SetupEntry (zipOutput, ref id);
 			stream.CopyTo (zipOutput);
 			return id;
 		}
 
-		void SetupEntry (ref string id)
+		void SetupEntry (ZipOutputStream zipOutput, ref string id)
 		{
 			if (string.IsNullOrEmpty (id))
 				id = GetNewCode ();
@@ -75,6 +77,7 @@ namespace MonkeyDoc.Storage
 
 		public Stream Retrieve (string id)
 		{
+			EnsureInput ();
 			ZipEntry entry = zipFile.GetEntry (id);
 			if (entry != null)
 				return zipFile.GetInputStream (entry);
@@ -84,12 +87,34 @@ namespace MonkeyDoc.Storage
 
 		public IEnumerable<string> GetAvailableIds ()
 		{
+			EnsureInput ();
 			return zipFile.Cast<ZipEntry> ().Select (ze => ze.Name);
+		}
+
+		void EnsureOutput ()
+		{
+			if (zipFile != null)
+				throw new InvalidOperationException ("This ZipStorage instance is already used in read-mode");
+			if (zipOutput != null)
+				return;
+			zipOutput = new ZipOutputStream (File.Create (zipFileName));
+		}
+
+		void EnsureInput ()
+		{
+			if (zipOutput != null)
+				throw new InvalidOperationException ("This ZipStorage instance is already used in write-mode");
+			if (zipFile != null)
+				return;
+			zipFile = new ZipFile (zipFileName);
 		}
 
 		public void Dispose ()
 		{
-			zipOutput.Dispose ();
+			if (zipOutput != null)
+				zipOutput.Dispose ();
+			if (zipFile != null)
+				zipFile.Close ();
 		}
 
 		string GetNewCode ()
