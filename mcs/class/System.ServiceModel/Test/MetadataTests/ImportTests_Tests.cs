@@ -41,7 +41,6 @@ using WS = System.Web.Services.Description;
 namespace MonoTests.System.ServiceModel.MetadataTests {
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	[Category ("MetadataTests")]
 	public partial class ImportTests {
 
