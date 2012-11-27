@@ -97,7 +97,7 @@ namespace MonkeyDoc.Providers
 							var members = membersNode.Elements ("Member").ToLookup (m => m.Element ("MemberType").Value);
 							foreach (var memberType in members) {
 								// We pluralize the member type to get the caption and take the first letter as URL
-								var node = typeNode.CreateNode (memberType.Key + 's', memberType.Key[0].ToString ());
+								var node = typeNode.CreateNode (PluralizeMemberType (memberType.Key), memberType.Key[0].ToString ());
 								int memberIndex = 0;
 								// We do not escape much member name here
 								foreach (var member in memberType)
@@ -108,6 +108,16 @@ namespace MonkeyDoc.Providers
 					}
 					root.Sort ();
 				}
+			}
+		}
+
+		string PluralizeMemberType (string memberType)
+		{
+			switch (memberType) {
+			case "Property":
+				return "Properties";
+			default:
+				return memberType + "s";
 			}
 		}
 
