@@ -54,6 +54,11 @@ provider mono {
 	probe gc__major__swept (uintptr_t addr, uintptr_t len);
 
 	probe gc__obj__pinned (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name, int generation);
+
+	probe gc__finalize__enqueue (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name, int generation, int is_critical);
+	probe gc__finalize__invoke (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
+
+	probe gc__weak__update (uintptr_t ref_addr, uintptr_t old_addr, uintptr_t new_addr, uintptr_t size, char *ns_name, char *class_name, int track);
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
