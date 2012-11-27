@@ -60,43 +60,53 @@ namespace MonkeyDoc.Providers
 			var storage = tree.HelpSource.Storage;
 			int resID = 0;
 
-			foreach (var dir in directories) {
-				foreach (var asm in Directory.EnumerateDirectories (dir)) {
-					using (var reader = XmlReader.Create (File.OpenRead (Path.Combine (asm, "index.xml")))) {
-						reader.ReadToFollowing ("Types");
-						var types = XElement.Load (reader.ReadSubtree ());
+			foreach (var asm in directories) {
+				var indexFilePath = Path.Combine (asm, "index.xml");
+				if (!File.Exists (indexFilePath)) {
+					Console.Error.WriteLine ("Warning: couldn't process directory `{0}' as it has no index.xml file", asm);
+					continue;
+				}
+				using (var reader = XmlReader.Create (File.OpenRead (indexFilePath))) {
+					reader.ReadToFollowing ("Types");
+					var types = XElement.Load (reader.ReadSubtree ());
 
-						foreach (var ns in types.Elements ("Namespace")) {
-							var nsNode = root.GetOrCreateNode (ns.Attribute ("Name").Value, "N:" + ns.Attribute ("Name").Value);
+					foreach (var ns in types.Elements ("Namespace")) {
+						var nsName = (string)ns.Attribute ("Name");
+						var nsNode = root.GetOrCreateNode (!string.IsNullOrEmpty (nsName) ? nsName : "global::", "N:" + ns.Attribute ("Name").Value);
 
-							foreach (var type in ns.Elements ("Type")) {
-								// Add the XML file corresponding to the type to our storage
-								var id = resID++;
-								using (var file = File.OpenRead (Path.Combine (asm, nsNode.Caption, type.Attribute ("Name").Value)))
-									storage.Store (id.ToString (), file);
-
-								var url = "ecma:" + id + type.Attribute ("Name").Value;
-								var typeNode = nsNode.CreateNode ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name")),
-								                                  url);
-
-								// Add meta "Members" node
-								typeNode.CreateNode ("Members", "*");
-								var members = type.Element ("Members").Elements ("Member").ToLookup (m => m.Element ("MemberType").Value);
-								foreach (var memberType in members) {
-									// We pluralize the member type to get the caption and take the first letter as URL
-									var node = typeNode.CreateNode (memberType.Key + 's', memberType.Key[0].ToString ());
-									int memberIndex = 0;
-									// We do not escape much member name here
-									foreach (var member in memberType)
-										node.CreateNode (MakeMemberCaption (member), (memberIndex++).ToString ());
-								}
+						foreach (var type in ns.Elements ("Type")) {
+							// Add the XML file corresponding to the type to our storage
+							var id = resID++;
+							var typeFilePath = Path.Combine (asm, nsName, Path.ChangeExtension (type.Attribute ("Name").Value, ".xml"));
+							if (!File.Exists (typeFilePath)) {
+								Console.WriteLine ("Warning: couldn't process type file `{0}' as it doesn't exist", typeFilePath);
+								continue;
 							}
+							using (var file = File.OpenRead (typeFilePath))
+								storage.Store (id.ToString (), file);
 
-							nsNode.Sort ();
+							var url = "ecma:" + id + type.Attribute ("Name").Value;
+							var typeNode = nsNode.CreateNode ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name")), url);
+
+							// Add meta "Members" node
+							typeNode.CreateNode ("Members", "*");
+							var typeDocument = XDocument.Load (typeFilePath);
+							var membersNode = typeDocument.Root.Element ("Members");
+							if (membersNode == null || !membersNode.Elements ().Any ())
+								continue;
+							var members = membersNode.Elements ("Member").ToLookup (m => m.Element ("MemberType").Value);
+							foreach (var memberType in members) {
+								// We pluralize the member type to get the caption and take the first letter as URL
+								var node = typeNode.CreateNode (memberType.Key + 's', memberType.Key[0].ToString ());
+								int memberIndex = 0;
+								// We do not escape much member name here
+								foreach (var member in memberType)
+									node.CreateNode (MakeMemberCaption (member), (memberIndex++).ToString ());
+							}
 						}
-
-						root.Sort ();
+						nsNode.Sort ();
 					}
+					root.Sort ();
 				}
 			}
 		}
@@ -105,7 +115,7 @@ namespace MonkeyDoc.Providers
 		{
 			var caption = (string)member.Attribute ("MemberName");
 			var args = member.Element ("Parameters");
-			if (args != null) {
+			if (args != null && args.Elements ("Parameter").Any ()) {
 				caption += '(';
 				caption += args.Elements ("Parameter")
 				               .Select (p => (string)p.Attribute ("Type"))
@@ -161,7 +171,8 @@ namespace MonkeyDoc.Providers
 						reader.ReadToFollowing ("ExtensionMethods");
 						return reader.ReadInnerXml ();
 					}
-				});
+			    })
+			    .DefaultIfEmpty (string.Empty);
 
 			hs.Storage.Store ("ExtensionMethods.xml",
 			                  "<ExtensionMethods>" + extensionMethods.Aggregate (string.Concat) + "</ExtensionMethods>");
