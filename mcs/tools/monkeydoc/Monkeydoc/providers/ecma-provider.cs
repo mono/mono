@@ -410,12 +410,10 @@ namespace MonkeyDoc.Providers
 		public Node InternalMatchNode (string url)
 		{
 			Node result = null;
-			//Console.WriteLine ("Ecma-hs MatchNode with {0}", url);
 			EcmaDesc desc;
 			if (!parser.TryParse (url, out desc))
 				return null;
 
-			//Console.WriteLine ("EcmaDesc: {0}", desc.ToString ());
 			// Namespace search
 			Node currentNode = Tree.RootNode;
 			Node searchNode = new Node () { Caption = desc.Namespace };
@@ -425,20 +423,15 @@ namespace MonkeyDoc.Providers
 			if (desc.DescKind == EcmaDesc.Kind.Namespace || index < 0)
 				return result;
 
-			//Console.WriteLine ("Post NS");
-
 			// Type search
 			currentNode = result;
 			result = null;
 			searchNode.Caption = desc.ToCompleteTypeName ();
-			//Console.WriteLine ("Type search: {0}", searchNode.Caption);
 			index = currentNode.Nodes.BinarySearch (searchNode, EcmaTypeNodeComparer.Instance);
 			if (index >= 0)
 				result = currentNode.Nodes[index];
 			if ((desc.DescKind == EcmaDesc.Kind.Type && !desc.IsEtc) || index < 0)
 				return result;
-
-			//Console.WriteLine ("Post Type");
 
 			// Member selection
 			currentNode = result;
@@ -449,31 +442,20 @@ namespace MonkeyDoc.Providers
 			    || (desc.IsEtc && desc.DescKind == EcmaDesc.Kind.Type && string.IsNullOrEmpty (desc.EtcFilter)))
 				return currentNode;
 
-			//Console.WriteLine ("Post caption");
-
 			// Member search
 			result = null;
 			var format = desc.DescKind == EcmaDesc.Kind.Constructor ? EcmaDesc.Format.WithArgs : EcmaDesc.Format.WithoutArgs;
 			searchNode.Caption = desc.ToCompleteMemberName (format);
-			//Console.WriteLine ("Member caption {0}", searchNode.Caption);
 			index = currentNode.Nodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
-			if (index < 0) {
-				//foreach (var n in currentNode.Nodes)
-				//	Console.WriteLine (n.Caption);
+			if (index < 0)
 				return null;
-			}
 			result = currentNode.Nodes[index];
-			//Console.WriteLine ("Member result: {0} {1} {2}", result.Caption, result.Nodes.Count, desc.IsEtc);
 			if (result.Nodes.Count == 0 || desc.IsEtc)
 				return result;
-
-			//Console.WriteLine ("Post member");
 
 			// Overloads search
 			currentNode = result;
 			searchNode.Caption = desc.ToCompleteMemberName (EcmaDesc.Format.WithArgs);
-			//Console.WriteLine ("Overload caption: {0}", searchNode.Caption);
-			//Console.WriteLine ("Candidates: {0}", string.Join (", ", currentNode.Nodes.Select (n => n.Caption)));
 			index = currentNode.Nodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
 			if (index < 0)
 				return result;
