@@ -259,6 +259,14 @@ namespace Monkeydoc.Ecma
 				&& (ExplicitImplMember == null || ExplicitImplMember.Equals (other.ExplicitImplMember));
 		}
 
+		public override int GetHashCode ()
+		{
+			return DescKind.GetHashCode ()
+				^ TypeName.GetHashCode ()
+				^ Namespace.GetHashCode ()
+				^ MemberName.GetHashCode ();
+		}
+
 		bool What (bool input)
 		{
 			if (!input)
