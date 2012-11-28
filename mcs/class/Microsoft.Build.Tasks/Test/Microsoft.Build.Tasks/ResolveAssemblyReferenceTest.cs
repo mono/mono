@@ -69,7 +69,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.IsTrue (big [0].Include.EndsWith (".dll"), "A3");
 		}
 		
-		[Test]
+		[Test, Category("NotWorking")]
 		public void ResolveBinary_FancyStuff ()
 		{
 			engine = new Engine (Consts.BinPath);
@@ -86,7 +86,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("SimpleWrite.dll")), "A5");
 		}
 		
-		[Test]
+		[Test, Category("NotWorking")]
 		public void ResolveBinary_SimpleWrite ()
 		{
 			engine = new Engine (Consts.BinPath);
@@ -102,7 +102,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (0, big.Count, "A4");
 		}
 		
-		[Test]
+		[Test, Category("NotWorking")]
 		public void ResolveBinary_Testing ()
 		{
 			engine = new Engine (Consts.BinPath);
@@ -118,7 +118,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (0, big.Count, "A4");
 		}
 		
-		[Test]
+		[Test, Category("NotWorking")]
 		public void ResolveBinary_XbuildReferenceBugTest ()
 		{
 			engine = new Engine (Consts.BinPath);
@@ -137,7 +137,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("Testing.dll")), "A7");
 		}
 
-		[Test]
+		[Test, Category("NotWorking")]
 		public void ResolveBinary_FancyStuffAndXbuild ()
 		{
 			engine = new Engine (Consts.BinPath);
@@ -156,7 +156,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.IsTrue (big.Cast<BuildItem> ().Any (item => item.Include.EndsWith ("Testing.dll")), "A6");
 		}
 
-		[Test]
+		[Test, Category("NotWorking")]
 		public void ResolveBinary_SameAssemblyTwice ()
 		{
 			engine = new Engine (Consts.BinPath);
