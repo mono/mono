@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;USE_EMBEDDED_METADATA</DefineConstants>
+    <DefineConstants>DEBUG;USE_EMBEDDED_METADATA;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -41,11 +41,14 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BindingTestAssertions.cs" />
-    <Compile Include="ImportTests_Misc.cs" />
-    <Compile Include="ImportTests_Tests.cs" />
     <Compile Include="MetadataSamples.cs" />
     <Compile Include="TestContext.cs" />
     <Compile Include="TestLabel.cs" />
+    <Compile Include="MiscImportTests.cs" />
+    <Compile Include="ImportTests.cs" />
+    <Compile Include="ImportTests_LoadMetadata.cs" />
+    <Compile Include="ImportTests_CreateMetadata.cs" />
+    <Compile Include="ImportTests_RoundTrip.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

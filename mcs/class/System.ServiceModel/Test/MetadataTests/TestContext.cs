@@ -27,16 +27,58 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Text;
 using System.Reflection;
 using System.ServiceModel.Description;
 
 namespace MonoTests.System.ServiceModel.MetadataTests {
 
-	public static class TestContext {
+	public abstract class TestContext {
 
-		#region Public API
+		#region Abstract API
 
-		public static MetadataSet GetMetadata (string name)
+		public abstract MetadataSet GetMetadata (string name);
+
+		#endregion
+
+		#region Default Context
+
+		public static TestContext LoadMetadataContext = new _DefaultTestContext ();
+
+		public static TestContext CreateMetadataContext = new _CreateMetadataContext ();
+
+		public static TestContext RoundTripContext = new _RoundTripContext ();
+
+		#endregion
+
+		#region Implementations
+
+		class _DefaultTestContext : TestContext {
+			public override MetadataSet GetMetadata (string name)
+			{
+				return LoadMetadata (name);
+			}
+		}
+
+		class _CreateMetadataContext : TestContext {
+			public override MetadataSet GetMetadata (string name)
+			{
+				return MetadataSamples.GetMetadataByName (name);
+			}
+		}
+
+		class _RoundTripContext : TestContext {
+			public override MetadataSet GetMetadata (string name)
+			{
+				return RoundTrip (name);
+			}
+		}
+
+		#endregion
+
+		#region Public Static API
+
+		public static MetadataSet LoadMetadata (string name)
 		{
 #if USE_EMBEDDED_METADATA
 			return LoadMetadataFromResource (name);
@@ -50,9 +92,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			SaveMetadataToFile (name, metadata);
 		}
 
-		#endregion
-
-		internal static MetadataSet LoadMetadataFromFile (string name)
+		public static MetadataSet LoadMetadataFromFile (string name)
 		{
 			var asm = Assembly.GetExecutingAssembly ();
 			if (!name.EndsWith (".xml"))
@@ -69,7 +109,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			}
 		}
 
-		internal static MetadataSet LoadMetadataFromResource (string name)
+		public static MetadataSet LoadMetadataFromResource (string name)
 		{
 			var asm = Assembly.GetExecutingAssembly ();
 			if (!name.EndsWith (".xml"))
@@ -85,7 +125,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			}
 		}
 		
-		internal static void SaveMetadataToFile (string name, MetadataSet metadata)
+		public static void SaveMetadataToFile (string name, MetadataSet metadata)
 		{
 			var filename = name + ".xml";
 			if (File.Exists (filename))
@@ -99,6 +139,37 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 
 			Console.WriteLine ("Exported {0}.", filename);
 		}
+
+		internal static string SaveMetadataToString (MetadataSet metadata)
+		{
+			using (var ms = new MemoryStream ()) {
+				var writer = new XmlTextWriter (new StreamWriter (ms));
+				writer.Formatting = Formatting.Indented;
+				metadata.WriteTo (writer);
+				writer.Flush ();
+
+				return Encoding.UTF8.GetString (ms.GetBuffer (), 0, (int)ms.Position);
+			}
+		}
+
+		internal static MetadataSet LoadMetadataFromString (string doc)
+		{
+			var buffer = Encoding.UTF8.GetBytes (doc);
+			using (var ms = new MemoryStream (buffer)) {
+				var reader = new XmlTextReader (ms);
+				return MetadataSet.ReadFrom (reader);
+			}
+		}
+
+		public static MetadataSet RoundTrip (string name)
+		{
+			var metadata = MetadataSamples.GetMetadataByName (name);
+
+			var doc = SaveMetadataToString (metadata);
+			return LoadMetadataFromString (doc);
+		}
+
+		#endregion
 	}
 }
 
