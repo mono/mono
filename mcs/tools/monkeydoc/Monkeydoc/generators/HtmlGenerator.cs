@@ -29,6 +29,7 @@ namespace MonkeyDoc.Generators
 		static HtmlGenerator ()
 		{
 			converters = new Dictionary<DocumentType, IHtmlExporter> {
+				{ DocumentType.EcmaXml, new Ecma2Html () },
 				{ DocumentType.Man, new Man2Html () },
 				{ DocumentType.TocXml, new Toc2Html () },
 				{ DocumentType.EcmaSpecXml, new Ecmaspec2Html () },
