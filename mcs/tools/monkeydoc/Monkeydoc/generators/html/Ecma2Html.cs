@@ -17,13 +17,10 @@ namespace MonkeyDoc.Generators.Html
 		static string css_ecma;
 		static string js;
 		static XslCompiledTransform ecma_transform;
-		static XsltArgumentList args = new XsltArgumentList();
 		readonly ExtensionObject ExtObject = new ExtensionObject ();
 
 		public Ecma2Html ()
 		{
-			args.AddExtensionObject("monodoc:///extensions", ExtObject);
-			
 		}
 
 		public string CssCode {
@@ -48,8 +45,13 @@ namespace MonkeyDoc.Generators.Html
 			}
 		}
 		
-		public string Htmlize (XmlReader ecma_xml)
+		public string Htmlize (XmlReader ecma_xml, Dictionary<string, string> extraArgs)
 		{
+			var args = new XsltArgumentList ();
+			args.AddExtensionObject("monodoc:///extensions", ExtObject);
+			foreach (var kvp in extraArgs)
+				args.AddParam (kvp.Key, string.Empty, kvp.Value);
+
 			return Htmlize(ecma_xml, args);
 		}
 
@@ -64,11 +66,6 @@ namespace MonkeyDoc.Generators.Html
 			                          CreateDocumentResolver ());
 			return output.ToString ();
 		}
-
-		string GetViewMode (string url)
-		{
-			return "foo";
-		}
 		
 		protected virtual XmlResolver CreateDocumentResolver ()
 		{
@@ -78,12 +75,12 @@ namespace MonkeyDoc.Generators.Html
 
 		public string Export (Stream stream, Dictionary<string, string> extraArgs)
 		{
-			return Htmlize (XmlReader.Create (stream));
+			return Htmlize (XmlReader.Create (stream), extraArgs);
 		}
 
 		public string Export (string input, Dictionary<string, string> extraArgs)
 		{
-			return Htmlize (XmlReader.Create (new StringReader (input)));
+			return Htmlize (XmlReader.Create (new StringReader (input)), extraArgs);
 		}
 		
 		static void EnsureTransform ()
