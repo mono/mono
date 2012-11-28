@@ -73,7 +73,9 @@ namespace MonkeyDoc.Providers
 					foreach (var ns in types.Elements ("Namespace")) {
 						var nsName = (string)ns.Attribute ("Name");
 						var nsNode = root.GetOrCreateNode (!string.IsNullOrEmpty (nsName) ? nsName : "global::", "N:" + ns.Attribute ("Name").Value);
-
+						var nsElements = new XElement ("elements",
+						                               new XElement ("summary"),
+						                               new XElement ("remarks"));
 						foreach (var type in ns.Elements ("Type")) {
 							// Add the XML file corresponding to the type to our storage
 							var id = resID++;
@@ -84,6 +86,7 @@ namespace MonkeyDoc.Providers
 							}
 							using (var file = File.OpenRead (typeFilePath))
 								storage.Store (id.ToString (), file);
+							nsElements.Add (ExtractClassSummary (typeFilePath));
 
 							var url = "ecma:" + id + '#' + type.Attribute ("Name").Value + '/';
 							var typeNode = nsNode.CreateNode ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name")), url);
@@ -104,11 +107,19 @@ namespace MonkeyDoc.Providers
 									node.CreateNode (MakeMemberCaption (member), (memberIndex++).ToString ());
 							}
 						}
+
+						storage.Store ("xml.summary." + nsName, nsElements.ToString ());
 						nsNode.Sort ();
 					}
 					root.Sort ();
 				}
 			}
+
+			var masterSummary = new XElement ("elements",
+			                                  directories
+			                                  .SelectMany (d => Directory.EnumerateFiles (d, "ns-*.xml"))
+			                                  .Select (ExtractNamespaceSummary));
+			storage.Store ("mastersummary.xml", masterSummary.ToString ());
 		}
 
 		string PluralizeMemberType (string memberType)
@@ -134,6 +145,45 @@ namespace MonkeyDoc.Providers
 			}
 			
 			return caption;
+		}
+
+		XElement ExtractClassSummary (string typeFilePath)
+		{
+			using (var reader = XmlReader.Create (typeFilePath)) {
+				reader.ReadToFollowing ("Type");
+				var name = reader.GetAttribute ("Name");
+				var fullName = reader.GetAttribute ("FullName");
+				reader.ReadToFollowing ("AssemblyName");
+				var assemblyName = reader.ReadElementString ();
+				reader.ReadToFollowing ("summary");
+				var summary = reader.ReadInnerXml ();
+				reader.ReadToFollowing ("remarks");
+				var remarks = reader.ReadInnerXml ();
+
+				return new XElement ("class",
+				                     new XAttribute ("name", name ?? string.Empty),
+				                     new XAttribute ("fullname", fullName ?? string.Empty),
+				                     new XAttribute ("assembly", assemblyName ?? string.Empty),
+				                     new XElement ("summary", new XCData (summary)),
+				                     new XElement ("remarks", new XCData (remarks)));
+			}
+		}
+
+		XElement ExtractNamespaceSummary (string nsFile)
+		{
+			using (var reader = XmlReader.Create (nsFile)) {
+				reader.ReadToFollowing ("Namespace");
+				var name = reader.GetAttribute ("Name");
+				reader.ReadToFollowing ("summary");
+				var summary = reader.ReadInnerXml ();
+				reader.ReadToFollowing ("remarks");
+				var remarks = reader.ReadInnerXml ();
+
+				return new XElement ("namespace",
+				                     new XAttribute ("ns", name ?? string.Empty),
+				                     new XElement ("summary", new XCData (summary)),
+				                     new XElement ("remarks", new XCData (remarks)));
+			}
 		}
 
 		public override void CloseTree (HelpSource hs, Tree tree)
