@@ -232,6 +232,19 @@ namespace MonkeyDoc.Providers
 			return base.CanHandleUrl (url);
 		}
 
+		// Clean the extra paramers in the id
+		public override Stream GetHelpStream (string id)
+		{
+			var idParts = id.Split ('?');
+			return base.GetHelpStream (idParts[0]);
+		}
+
+		public override Stream GetCachedHelpStream (string id)
+		{
+			var idParts = id.Split ('?');
+			return base.GetHelpStream (idParts[0]);
+		}
+
 		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraParams)
 		{
 			extraParams = null;
