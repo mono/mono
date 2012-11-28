@@ -63,7 +63,8 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			TestLabel label;
 			var doc = GetMetadata ("BasicHttp", out label);
 
-			BindingTestAssertions.BasicHttpBinding (doc, BasicHttpSecurityMode.None, label);
+			BindingTestAssertions.BasicHttpBinding (
+				Context, doc, BasicHttpSecurityMode.None, label);
 		}
 		
 		[Test]
@@ -72,7 +73,8 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			TestLabel label;
 			var doc = GetMetadata ("BasicHttp_TransportSecurity", out label);
 
-			BindingTestAssertions.BasicHttpBinding (doc, BasicHttpSecurityMode.Transport, label);
+			BindingTestAssertions.BasicHttpBinding (
+				Context, doc, BasicHttpSecurityMode.Transport, label);
 		}
 		
 		[Test]
@@ -82,7 +84,8 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			TestLabel label;
 			var doc = GetMetadata ("BasicHttp_MessageSecurity", out label);
 
-			BindingTestAssertions.BasicHttpBinding (doc, BasicHttpSecurityMode.Message, label);
+			BindingTestAssertions.BasicHttpBinding (
+				Context, doc, BasicHttpSecurityMode.Message, label);
 		}
 		
 		[Test]
@@ -93,7 +96,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("BasicHttp_TransportWithMessageCredential", out label);
 
 			BindingTestAssertions.BasicHttpBinding (
-				doc, BasicHttpSecurityMode.TransportWithMessageCredential, label);
+				Context, doc, BasicHttpSecurityMode.TransportWithMessageCredential, label);
 		}
 		
 		[Test]
@@ -103,7 +106,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("BasicHttp_Mtom", out label);
 
 			BindingTestAssertions.BasicHttpBinding (
-				doc, WSMessageEncoding.Mtom, label);
+				Context, doc, WSMessageEncoding.Mtom, label);
 		}
 
 		[Test]
@@ -113,9 +116,9 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("BasicHttp_NtlmAuth", out label);
 
 			BindingTestAssertions.BasicHttpBinding (
-				doc, BasicHttpSecurityMode.TransportCredentialOnly, WSMessageEncoding.Text,
-				HttpClientCredentialType.Ntlm, AuthenticationSchemes.Ntlm,
-				label);
+				Context, doc, BasicHttpSecurityMode.TransportCredentialOnly,
+				WSMessageEncoding.Text, HttpClientCredentialType.Ntlm,
+				AuthenticationSchemes.Ntlm, label);
 		}
 
 		[Test]
@@ -125,7 +128,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("BasicHttps", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
-				doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
+				Context, doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
 				HttpClientCredentialType.None, AuthenticationSchemes.Anonymous,
 				label);
 		}
@@ -137,7 +140,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("BasicHttps_NtlmAuth", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
-				doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
+				Context, doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
 				HttpClientCredentialType.Ntlm, AuthenticationSchemes.Ntlm,
 				label);
 		}
@@ -150,7 +153,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("BasicHttps_Certificate", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
-				doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
+				Context, doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
 				HttpClientCredentialType.Certificate, AuthenticationSchemes.Anonymous,
 				label);
 		}
@@ -163,7 +166,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("BasicHttps_TransportWithMessageCredential", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
-				doc, BasicHttpSecurityMode.TransportWithMessageCredential,
+				Context, doc, BasicHttpSecurityMode.TransportWithMessageCredential,
 				WSMessageEncoding.Text, HttpClientCredentialType.None,
 				AuthenticationSchemes.Anonymous, label);
 		}
@@ -175,7 +178,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("NetTcp", out label);
 
 			BindingTestAssertions.NetTcpBinding (
-				doc, SecurityMode.None, false, TransferMode.Buffered, label);
+				Context, doc, SecurityMode.None, false, TransferMode.Buffered, label);
 		}
 
 		[Test]
@@ -185,7 +188,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("NetTcp_TransferMode", out label);
 
 			BindingTestAssertions.NetTcpBinding (
-				doc, SecurityMode.None, false,
+				Context, doc, SecurityMode.None, false,
 				TransferMode.Streamed, label);
 		}
 
@@ -196,7 +199,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("NetTcp_TransportSecurity", out label);
 
 			BindingTestAssertions.NetTcpBinding (
-				doc, SecurityMode.Transport, false,
+				Context, doc, SecurityMode.Transport, false,
 				TransferMode.Buffered, label);
 		}
 		
@@ -208,7 +211,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("NetTcp_MessageSecurity", out label);
 
 			BindingTestAssertions.NetTcpBinding (
-				doc, SecurityMode.Message, false,
+				Context, doc, SecurityMode.Message, false,
 				TransferMode.Buffered, label);
 		}
 		
@@ -220,7 +223,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("NetTcp_TransportWithMessageCredential", out label);
 
 			BindingTestAssertions.NetTcpBinding (
-				doc, SecurityMode.TransportWithMessageCredential, false,
+				Context, doc, SecurityMode.TransportWithMessageCredential, false,
 				TransferMode.Buffered, label);
 		}
 
@@ -264,7 +267,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("NetTcp_ReliableSession", out label);
 
 			BindingTestAssertions.NetTcpBinding (
-				doc, SecurityMode.None, true,
+				Context, doc, SecurityMode.None, true,
 				TransferMode.Buffered, label);
 		}
 	}

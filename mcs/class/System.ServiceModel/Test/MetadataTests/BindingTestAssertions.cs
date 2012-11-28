@@ -194,27 +194,27 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 
 		public static void BasicHttpBinding (
-			MetadataSet doc, WSMessageEncoding encoding, TestLabel label)
+			TestContext context, MetadataSet doc, WSMessageEncoding encoding, TestLabel label)
 		{
 			BasicHttpBinding (
-				doc, BasicHttpSecurityMode.None, encoding,
+				context, doc, BasicHttpSecurityMode.None, encoding,
 				HttpClientCredentialType.None, AuthenticationSchemes.Anonymous,
 				label);
 		}
 
 		public static void BasicHttpBinding (
-			MetadataSet doc, BasicHttpSecurityMode security, TestLabel label)
+			TestContext context, MetadataSet doc, BasicHttpSecurityMode security, TestLabel label)
 		{
 			BasicHttpBinding (
-				doc, security, WSMessageEncoding.Text,
+				context, doc, security, WSMessageEncoding.Text,
 				HttpClientCredentialType.None, AuthenticationSchemes.Anonymous,
 				label);
 		}
 		
 		public static void BasicHttpBinding (
-			MetadataSet doc, BasicHttpSecurityMode security, WSMessageEncoding encoding,
-			HttpClientCredentialType clientCred, AuthenticationSchemes authScheme,
-			TestLabel label)
+			TestContext context, MetadataSet doc, BasicHttpSecurityMode security,
+			WSMessageEncoding encoding, HttpClientCredentialType clientCred,
+			AuthenticationSchemes authScheme, TestLabel label)
 		{
 			label.EnterScope ("basicHttpBinding");
 
@@ -228,22 +228,21 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			Assert.That (binding.ExtensibleAttributes, Is.Null, label.Get ());
 			Assert.That (binding.Extensions, Is.Not.Null, label.Get ());
 
+			bool hasPolicyXml;
+
 			switch (security) {
 			case BasicHttpSecurityMode.None:
-				if (encoding == WSMessageEncoding.Mtom)
-					Assert.That (binding.Extensions.Count, Is.EqualTo (2), label.Get ());
-				else
-					Assert.That (binding.Extensions.Count, Is.EqualTo (1), label.Get ());
+				hasPolicyXml = encoding == WSMessageEncoding.Mtom;
 				break;
 			case BasicHttpSecurityMode.Message:
 			case BasicHttpSecurityMode.Transport:
 			case BasicHttpSecurityMode.TransportWithMessageCredential:
 				if (encoding == WSMessageEncoding.Mtom)
 					throw new InvalidOperationException ();
-				Assert.That (binding.Extensions.Count, Is.EqualTo (2), label.Get ());
+				hasPolicyXml = true;
 				break;
 			case BasicHttpSecurityMode.TransportCredentialOnly:
-				Assert.That (binding.Extensions.Count, Is.EqualTo (2), label.Get ());
+				hasPolicyXml = true;
 				break;
 			default:
 				throw new InvalidOperationException ();
@@ -263,16 +262,16 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			CheckSoapBinding (soap, WS.SoapBinding.HttpTransport, label);
 			label.LeaveScope ();
 
-			if (security != BasicHttpSecurityMode.None) {
-				label.EnterScope ("policy-xml");
-				
+			label.EnterScope ("policy-xml");
+			if (!hasPolicyXml)
+				Assert.That (xml, Is.Null, label.Get ());
+			else if (context.CheckPolicyXml) {
 				Assert.That (xml, Is.Not.Null, label.Get ());
 				
 				Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
 				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
-				
-				label.LeaveScope ();
 			}
+			label.LeaveScope ();
 
 			var importer = new WsdlImporter (doc);
 
@@ -309,9 +308,9 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 
 		public static void BasicHttpsBinding (
-			MetadataSet doc, BasicHttpSecurityMode security, WSMessageEncoding encoding,
-			HttpClientCredentialType clientCred, AuthenticationSchemes authScheme,
-			TestLabel label)
+			TestContext context, MetadataSet doc, BasicHttpSecurityMode security,
+			WSMessageEncoding encoding, HttpClientCredentialType clientCred,
+			AuthenticationSchemes authScheme, TestLabel label)
 		{
 			label.EnterScope ("basicHttpsBinding");
 
@@ -321,7 +320,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 
 			Assert.That (sd.Extensions, Is.Not.Null, label.Get ());
 			Assert.That (sd.Extensions.Count, Is.EqualTo (1), label.Get ());
-			Assert.That (sd.Extensions [0], Is.InstanceOfType (typeof (XmlElement)), label.Get ());
+			Assert.That (sd.Extensions [0], Is.InstanceOfType (typeof(XmlElement)), label.Get ());
 
 			label.EnterScope ("extensions");
 			var extension = (XmlElement)sd.Extensions [0];
@@ -334,7 +333,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var binding = sd.Bindings [0];
 			Assert.That (binding.ExtensibleAttributes, Is.Null, label.Get ());
 			Assert.That (binding.Extensions, Is.Not.Null, label.Get ());
-			Assert.That (binding.Extensions.Count, Is.EqualTo (2), label.Get ());
 			label.LeaveScope ();
 
 			WS.SoapBinding soap = null;
@@ -349,14 +347,14 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 
 			CheckSoapBinding (soap, WS.SoapBinding.HttpTransport, label);
 
-			label.EnterScope ("policy-xml");
+			if (context.CheckPolicyXml) {
+				label.EnterScope ("policy-xml");
+				Assert.That (xml, Is.Not.Null, label.Get ());
+				Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
+				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
+				label.LeaveScope ();
+			}
 
-			Assert.That (xml, Is.Not.Null, label.Get ());
-			
-			Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
-			Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
-
-			label.LeaveScope ();
 			label.LeaveScope (); // wsdl
 
 			var importer = new WsdlImporter (doc);
@@ -509,8 +507,8 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 
 		public static void NetTcpBinding (
-			MetadataSet doc, SecurityMode security, bool reliableSession,
-			TransferMode transferMode, TestLabel label)
+			TestContext context, MetadataSet doc, SecurityMode security,
+			bool reliableSession, TransferMode transferMode, TestLabel label)
 		{
 			label.EnterScope ("netTcpBinding");
 
@@ -533,7 +531,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var binding = sd.Bindings [0];
 			Assert.That (binding.ExtensibleAttributes, Is.Null, label.Get ());
 			Assert.That (binding.Extensions, Is.Not.Null, label.Get ());
-			Assert.That (binding.Extensions.Count, Is.EqualTo (2), label.Get ());
 
 			WS.SoapBinding soap = null;
 			XmlElement xml = null;
@@ -547,12 +544,14 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			
 			CheckSoapBinding (soap, "http://schemas.microsoft.com/soap/tcp", label);
 
-			label.EnterScope ("policy-xml");
-			Assert.That (xml, Is.Not.Null, label.Get ());
+			if (context.CheckPolicyXml) {
+				label.EnterScope ("policy-xml");
+				Assert.That (xml, Is.Not.Null, label.Get ());
 			
-			Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
-			Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
-			label.LeaveScope ();
+				Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
+				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
+				label.LeaveScope ();
+			}
 
 			label.LeaveScope (); // wsdl
 
