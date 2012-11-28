@@ -85,7 +85,7 @@ namespace MonkeyDoc.Providers
 							using (var file = File.OpenRead (typeFilePath))
 								storage.Store (id.ToString (), file);
 
-							var url = "ecma:" + id + type.Attribute ("Name").Value;
+							var url = "ecma:" + id + '#' + type.Attribute ("Name").Value + '/';
 							var typeNode = nsNode.CreateNode ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name")), url);
 
 							// Add meta "Members" node
