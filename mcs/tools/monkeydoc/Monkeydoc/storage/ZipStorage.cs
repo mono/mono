@@ -43,10 +43,10 @@ namespace MonkeyDoc.Storage
 		{
 			EnsureOutput ();
 			SetupEntry (zipOutput, ref id);
-			using (var writer = new StreamWriter (zipOutput)) {
-				writer.Write (text);
-				writer.Flush ();
-			}
+			var writer = new StreamWriter (zipOutput);
+			writer.Write (text);
+			writer.Flush ();
+			
 			return id;
 		}
 
