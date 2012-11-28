@@ -17,8 +17,8 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Collections.Generic;
 
-using Mono.Lucene.Net.Index;
-using Mono.Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Documents;
 
 using Monkeydoc.Ecma;
 using Mono.Utilities;

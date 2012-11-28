@@ -10,8 +10,8 @@ using System.Runtime.InteropServices;
 using System.Xml;
 
 using MonkeyDoc.Providers;
-using Mono.Lucene.Net.Analysis.Standard;
-using Mono.Lucene.Net.Index;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Index;
 
 namespace MonkeyDoc
 {
@@ -448,16 +448,19 @@ namespace MonkeyDoc
 			Console.WriteLine ("Loading the monodoc tree...");
 			string text = Path.Combine (this.basedir, "search_index");
 			IndexWriter indexWriter;
+			var analyzer = new StandardAnalyzer (Lucene.Net.Util.Version.LUCENE_CURRENT);
+			var directory = Lucene.Net.Store.FSDirectory.Open (text);
+
 			try {
 				if (!Directory.Exists (text))
 					Directory.CreateDirectory (text);
-				indexWriter = new IndexWriter (Mono.Lucene.Net.Store.FSDirectory.GetDirectory (text, true), new StandardAnalyzer (), true);
+				indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			} catch (UnauthorizedAccessException) {
 				try {
 					text = Path.Combine (ConfigurationManager.AppSettings["docDir"], "search_index");
 					if (!Directory.Exists (text))
 						Directory.CreateDirectory (text);
-					indexWriter = new IndexWriter (Mono.Lucene.Net.Store.FSDirectory.GetDirectory (text, true), new StandardAnalyzer (), true);
+					indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 				} catch (UnauthorizedAccessException) {
 					Console.WriteLine ("You don't have permissions to write on " + text);
 					return;

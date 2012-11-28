@@ -17,8 +17,8 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Xml;
 using System.Collections.Generic;
-using Mono.Lucene.Net.Index;
-using Mono.Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Documents;
 
 namespace MonkeyDoc.Providers
 {

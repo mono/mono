@@ -4,7 +4,7 @@
 //
 // Author: Mario Sopena
 //
-using Mono.Lucene.Net.Documents;
+using Lucene.Net.Documents;
 
 namespace MonkeyDoc
 {

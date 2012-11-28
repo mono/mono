@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 
 using Mono.Utilities;
-using Mono.Lucene.Net.Index;
+using Lucene.Net.Index;
 
 namespace MonkeyDoc
 {

@@ -9,12 +9,13 @@ using System;
 using System.IO;
 using System.Collections;
 // Lucene imports
-using Mono.Lucene.Net.Index;
-using Mono.Lucene.Net.Documents;
-using Mono.Lucene.Net.Analysis;
-using Mono.Lucene.Net.Analysis.Standard;
-using Mono.Lucene.Net.Search;
-using Mono.Lucene.Net.QueryParsers;
+using Lucene.Net.Index;
+using Lucene.Net.Documents;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Search;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Store;
 
 namespace MonkeyDoc
 {
@@ -38,7 +39,9 @@ namespace MonkeyDoc
 			s.dir = dir;
 			s.Results = new ArrayList (20);
 			try {
-				s.searcher = new IndexSearcher (dir);
+				//s.searcher = new IndexSearcher (dir);
+				// TODO: parametrize that depending if we run on the desktop (low footprint) or the server (use RAMDirectory for instance)
+				s.searcher = new IndexSearcher (FSDirectory.Open (dir));
 			} catch (IOException) {
 				Console.WriteLine ("Index nonexistent or in bad format");
 				return null;
@@ -66,17 +69,17 @@ namespace MonkeyDoc
 				Term htTerm = new Term ("hottext", term);
 				Query qq1 = new FuzzyQuery (htTerm);
 				Query qq2 = new TermQuery (htTerm);
-				qq2.SetBoost (10f);
+				qq2.Boost = 10f;
 				Query qq3 = new PrefixQuery (htTerm);
-				qq3.SetBoost (10f);
+				qq3.Boost = 10f;
 				DisjunctionMaxQuery q1 = new DisjunctionMaxQuery (0f);
 				q1.Add (qq1);
 				q1.Add (qq2);
 				q1.Add (qq3);
 				Query q2 = new TermQuery (new Term ("text", term));
-				q2.SetBoost (3f);
+				q2.Boost = 3f;
 				Query q3 = new TermQuery (new Term ("examples", term));
-				q3.SetBoost (3f);
+				q3.Boost = 3f;
 				DisjunctionMaxQuery q = new DisjunctionMaxQuery (0f);
 
 				q.Add (q1);
@@ -101,7 +104,7 @@ namespace MonkeyDoc
 				return searcher.Search (q, count);
 
 			var weight = searcher.CreateWeight (q); // TODO: reuse weight instead of query
-			var collector = TopScoreDocCollector.create (start + count + 1, weight.ScoresDocsOutOfOrder());
+			var collector = TopScoreDocCollector.Create (start + count + 1, false);
 			searcher.Search (q, collector);
 
 			return collector.TopDocs (start, count);
@@ -113,7 +116,7 @@ namespace MonkeyDoc
 				term = term.ToLower ();
 				Query q1 = new TermQuery (new Term ("hottext", term));
 				Query q2 = new PrefixQuery (new Term ("hottext", term));
-				q2.SetBoost (0.5f);
+				q2.Boost = 0.5f;
 				DisjunctionMaxQuery q = new DisjunctionMaxQuery (0f);
 				q.Add (q1);
 				q.Add (q2);
@@ -127,9 +130,9 @@ namespace MonkeyDoc
 	
 		Query Parse (string term, string field, bool fuzzy)
 		{
-			QueryParser parser = new QueryParser (Mono.Lucene.Net.Util.Version.LUCENE_CURRENT,
+			QueryParser parser = new QueryParser (Lucene.Net.Util.Version.LUCENE_CURRENT,
 			                                      field,
-			                                      new StandardAnalyzer (Mono.Lucene.Net.Util.Version.LUCENE_CURRENT));
+			                                      new StandardAnalyzer (Lucene.Net.Util.Version.LUCENE_CURRENT));
 			return parser.Parse (term);
 		}
 	}
@@ -150,7 +153,7 @@ namespace MonkeyDoc
 		}
 
 		public Document this [int i] {
-			get { return searcher.Doc (docs[i].doc); }
+			get { return searcher.Doc (docs[i].Doc); }
 		}
 	
 		public string GetTitle (int i) 
@@ -173,7 +176,7 @@ namespace MonkeyDoc
 
 		public float Score (int i)
 		{
-			return docs[i].score;
+			return docs[i].Score;
 		}
 
 		public Result (string Term, Searcher searcher, ScoreDoc[] docs) 

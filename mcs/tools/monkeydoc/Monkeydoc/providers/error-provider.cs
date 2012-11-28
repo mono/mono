@@ -16,8 +16,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Linq;
-using Mono.Lucene.Net.Index;
-using Mono.Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Documents;
 
 namespace MonkeyDoc.Providers
 {
