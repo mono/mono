@@ -40,14 +40,14 @@ using WS = System.Web.Services.Description;
 
 namespace MonoTests.System.ServiceModel.MetadataTests {
 
-	public partial class ImportTests {
+	public class MiscImportTests {
 
 		[Test]
 		public void BasicHttpBinding_ImportBinding ()
 		{
 			var label = new TestLabel ("BasicHttpBinding_ImportBinding");
 			
-			var doc = TestContext.GetMetadata ("BasicHttp");
+			var doc = TestContext.LoadMetadata ("BasicHttp");
 			var sd = (WS.ServiceDescription)doc.MetadataSections [0].Metadata;
 			var wsdlBinding = sd.Bindings [0];
 			
@@ -66,7 +66,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		{
 			var label = new TestLabel ("BasicHttpBinding_ImportEndpoint");
 			
-			var doc = TestContext.GetMetadata ("BasicHttp");
+			var doc = TestContext.LoadMetadata ("BasicHttp");
 			var sd = (WS.ServiceDescription)doc.MetadataSections [0].Metadata;
 			
 			label.EnterScope ("wsdl");
@@ -90,7 +90,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		{
 			var label = new TestLabel ("BasicHttpBinding_Error");
 			
-			var doc = TestContext.GetMetadata ("http-error.xml");
+			var doc = TestContext.LoadMetadata ("http-error.xml");
 			var sd = (WS.ServiceDescription)doc.MetadataSections [0].Metadata;
 			var wsdlBinding = sd.Bindings [0];
 			
@@ -156,7 +156,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		{
 			var label = new TestLabel ("BasicHttpBinding_Error2");
 			
-			var doc = TestContext.GetMetadata ("http-error.xml");
+			var doc = TestContext.LoadMetadata ("http-error.xml");
 			var sd = (WS.ServiceDescription)doc.MetadataSections [0].Metadata;
 			
 			label.EnterScope ("wsdl");
@@ -230,7 +230,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		{
 			var label = new TestLabel ("BasicHttpBinding_ImportEndpoints");
 			
-			var doc = TestContext.GetMetadata ("BasicHttp");
+			var doc = TestContext.LoadMetadata ("BasicHttp");
 			var sd = (WS.ServiceDescription)doc.MetadataSections [0].Metadata;
 			
 			label.EnterScope ("wsdl");

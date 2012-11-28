@@ -40,65 +40,78 @@ using WS = System.Web.Services.Description;
 
 namespace MonoTests.System.ServiceModel.MetadataTests {
 
-	[TestFixture]
+	/*
+	 * This class is abstract to allow it to be run multiple times with
+	 * different TestContexts.
+	 */
 	[Category ("MetadataTests")]
-	public partial class ImportTests {
+	public abstract class ImportTests {
+
+		public abstract TestContext Context {
+			get;
+		}
+
+		protected MetadataSet GetMetadata (string name, out TestLabel label)
+		{
+			label = new TestLabel (name);
+			return Context.GetMetadata (name);
+		}
 
 		[Test]
-		public void BasicHttp ()
+		public virtual void BasicHttp ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttp");
-			var label = new TestLabel ("BasicHttp");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp", out label);
 
 			BindingTestAssertions.BasicHttpBinding (doc, BasicHttpSecurityMode.None, label);
 		}
 		
 		[Test]
-		public void BasicHttp_TransportSecurity ()
+		public virtual void BasicHttp_TransportSecurity ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttp_TransportSecurity");
-			var label = new TestLabel ("BasicHttp_TransportSecurity");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp_TransportSecurity", out label);
 
 			BindingTestAssertions.BasicHttpBinding (doc, BasicHttpSecurityMode.Transport, label);
 		}
 		
 		[Test]
 		[Category ("NotWorking")]
-		public void BasicHttp_MessageSecurity ()
+		public virtual void BasicHttp_MessageSecurity ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttp_MessageSecurity");
-			var label = new TestLabel ("BasicHttp_MessageSecurity");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp_MessageSecurity", out label);
 
 			BindingTestAssertions.BasicHttpBinding (doc, BasicHttpSecurityMode.Message, label);
 		}
 		
 		[Test]
 		[Category ("NotWorking")]
-		public void BasicHttp_TransportWithMessageCredential ()
+		public virtual void BasicHttp_TransportWithMessageCredential ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttp_TransportWithMessageCredential");
-			var label = new TestLabel ("BasicHttp_TransportWithMessageCredential");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp_TransportWithMessageCredential", out label);
 
 			BindingTestAssertions.BasicHttpBinding (
 				doc, BasicHttpSecurityMode.TransportWithMessageCredential, label);
 		}
 		
 		[Test]
-		public void BasicHttp_Mtom ()
+		public virtual void BasicHttp_Mtom ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttp_Mtom");
-			var label = new TestLabel ("BasicHttp_Mtom");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp_Mtom", out label);
 
 			BindingTestAssertions.BasicHttpBinding (
 				doc, WSMessageEncoding.Mtom, label);
 		}
 
 		[Test]
-		public void BasicHttp_NtlmAuth ()
+		public virtual void BasicHttp_NtlmAuth ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttp_NtlmAuth");
-			var label = new TestLabel ("BasicHttp_NtlmAuth");
-			
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp_NtlmAuth", out label);
+
 			BindingTestAssertions.BasicHttpBinding (
 				doc, BasicHttpSecurityMode.TransportCredentialOnly, WSMessageEncoding.Text,
 				HttpClientCredentialType.Ntlm, AuthenticationSchemes.Ntlm,
@@ -106,10 +119,10 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 
 		[Test]
-		public void BasicHttps ()
+		public virtual void BasicHttps ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttps");
-			var label = new TestLabel ("BasicHttps");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttps", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
 				doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
@@ -118,10 +131,10 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 		
 		[Test]
-		public void BasicHttps_NtlmAuth ()
+		public virtual void BasicHttps_NtlmAuth ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttps_NtlmAuth");
-			var label = new TestLabel ("BasicHttps_NtlmAuth");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttps_NtlmAuth", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
 				doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
@@ -131,10 +144,10 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		
 		[Test]
 		[Category ("NotWorking")]
-		public void BasicHttps_Certificate ()
+		public virtual void BasicHttps_Certificate ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttps_Certificate");
-			var label = new TestLabel ("BasicHttps_Certificate");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttps_Certificate", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
 				doc, BasicHttpSecurityMode.Transport, WSMessageEncoding.Text,
@@ -144,10 +157,10 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		
 		[Test]
 		[Category ("NotWorking")]
-		public void BasicHttps_TransportWithMessageCredential ()
+		public virtual void BasicHttps_TransportWithMessageCredential ()
 		{
-			var doc = TestContext.GetMetadata ("BasicHttps_TransportWithMessageCredential");
-			var label = new TestLabel ("BasicHttps_TransportWithMessageCredential");
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttps_TransportWithMessageCredential", out label);
 
 			BindingTestAssertions.BasicHttpsBinding (
 				doc, BasicHttpSecurityMode.TransportWithMessageCredential,
@@ -156,30 +169,32 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 		
 		[Test]
-		public void NetTcp ()
+		public virtual void NetTcp ()
 		{
-			var doc = TestContext.GetMetadata ("NetTcp");
-			var label = new TestLabel ("NetTcp");
+			TestLabel label;
+			var doc = GetMetadata ("NetTcp", out label);
+
 			BindingTestAssertions.NetTcpBinding (
 				doc, SecurityMode.None, false, TransferMode.Buffered, label);
 		}
 
 		[Test]
-		public void NetTcp_TransferMode ()
+		public virtual void NetTcp_TransferMode ()
 		{
-			var doc = TestContext.GetMetadata ("NetTcp_TransferMode");
+			TestLabel label;
+			var doc = GetMetadata ("NetTcp_TransferMode", out label);
 
-			var label = new TestLabel ("NetTcp_TransferMode");
 			BindingTestAssertions.NetTcpBinding (
 				doc, SecurityMode.None, false,
 				TransferMode.Streamed, label);
 		}
 
 		[Test]
-		public void NetTcp_TransportSecurity ()
+		public virtual void NetTcp_TransportSecurity ()
 		{
-			var doc = TestContext.GetMetadata ("NetTcp_TransportSecurity");
-			var label = new TestLabel ("NetTcp_TransportSecurity");
+			TestLabel label;
+			var doc = GetMetadata ("NetTcp_TransportSecurity", out label);
+
 			BindingTestAssertions.NetTcpBinding (
 				doc, SecurityMode.Transport, false,
 				TransferMode.Buffered, label);
@@ -187,10 +202,11 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		
 		[Test]
 		[Category ("NotWorking")]
-		public void NetTcp_MessageSecurity ()
+		public virtual void NetTcp_MessageSecurity ()
 		{
-			var doc = TestContext.GetMetadata ("NetTcp_MessageSecurity");
-			var label = new TestLabel ("NetTcp_MessageSecurity");
+			TestLabel label;
+			var doc = GetMetadata ("NetTcp_MessageSecurity", out label);
+
 			BindingTestAssertions.NetTcpBinding (
 				doc, SecurityMode.Message, false,
 				TransferMode.Buffered, label);
@@ -198,10 +214,10 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		
 		[Test]
 		[Category ("NotWorking")]
-		public void NetTcp_TransportWithMessageCredential ()
+		public virtual void NetTcp_TransportWithMessageCredential ()
 		{
-			var doc = TestContext.GetMetadata ("NetTcp_TransportWithMessageCredential");
-			var label = new TestLabel ("NetTcp_TransportWithMessageCredential");
+			TestLabel label;
+			var doc = GetMetadata ("NetTcp_TransportWithMessageCredential", out label);
 
 			BindingTestAssertions.NetTcpBinding (
 				doc, SecurityMode.TransportWithMessageCredential, false,
@@ -209,7 +225,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 
 		[Test]
-		public void NetTcp_Binding ()
+		public virtual void NetTcp_Binding ()
 		{
 			var label = new TestLabel ("NetTcp_Binding");
 
@@ -228,7 +244,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 
 		[Test]
 		[Category ("NotWorking")]
-		public void NetTcp_Binding2 ()
+		public virtual void NetTcp_Binding2 ()
 		{
 			var label = new TestLabel ("NetTcp_Binding2");
 
@@ -242,10 +258,11 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		
 		[Test]
 		[Category ("NotWorking")]
-		public void NetTcp_ReliableSession ()
+		public virtual void NetTcp_ReliableSession ()
 		{
-			var doc = TestContext.GetMetadata ("NetTcp_ReliableSession");
-			var label = new TestLabel ("NetTcp_ReliableSession");
+			TestLabel label;
+			var doc = GetMetadata ("NetTcp_ReliableSession", out label);
+
 			BindingTestAssertions.NetTcpBinding (
 				doc, SecurityMode.None, true,
 				TransferMode.Buffered, label);

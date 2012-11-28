@@ -142,7 +142,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			return doc;
 		}
 		
-#if FIXME && NET_4_5
+#if NET_4_5
 		[MetadataSample]
 		public static MetadataSet BasicHttps ()
 		{

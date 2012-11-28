@@ -199,8 +199,11 @@ System.ServiceModel/UriSchemeKeyedCollectionTest.cs
 System.ServiceModel/WSFederationHttpBindingTest.cs
 System.ServiceModel/WSHttpBindingTest.cs
 MetadataTests/BindingTestAssertions.cs
-MetadataTests/ImportTests_Misc.cs
-MetadataTests/ImportTests_Tests.cs
+MetadataTests/MiscImportTests.cs
+MetadataTests/ImportTests.cs
+MetadataTests/ImportTests_CreateMetadata.cs
+MetadataTests/ImportTests_LoadMetadata.cs
+MetadataTests/ImportTests_RoundTrip.cs
 MetadataTests/MetadataSamples.cs
 MetadataTests/TestContext.cs
 MetadataTests/TestLabel.cs
