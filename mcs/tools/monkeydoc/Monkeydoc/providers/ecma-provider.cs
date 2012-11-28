@@ -257,7 +257,6 @@ namespace MonkeyDoc.Providers
 						return new { Key = nvp.Substring (0, eqIdx < 0 ? nvp.Length : eqIdx), Value = nvp.Substring (eqIdx + 1) };
 					})
 					.ToDictionary (kvp => kvp.Key, kvp => kvp.Value );
-
 			return DocumentType.EcmaXml;
 		}
 
@@ -358,9 +357,17 @@ namespace MonkeyDoc.Providers
 		char GetNodeMemberTypeChar (Node node)
 		{
 			int level = GetNodeLevel (node);
-			// Only methods/operators can be under a meta node, so in case the member level is
-			// deeper than normal (which indicate an overload meta), return 'M' directly
-			return level == 3 ? node.Parent.Element[0] : node.Parent.Parent.Element[0];
+			// We try to reach the member group node depending on node nested level
+			switch (level) {
+			case 2:
+				return node.Element[0];
+			case 3:
+				return node.Parent.Element[0];
+			case 4:
+				return node.Parent.Parent.Element[0];
+			default:
+				throw new ArgumentException ("node", "Couldn't determine member type of node `" + node.Caption + "'");
+			}
 		}
 
 		Node GetNodeTypeParent (Node node)
@@ -565,10 +572,51 @@ namespace MonkeyDoc.Providers
 			args["source-id"] = SourceID.ToString ();
 			
 			if (node != null) {
-				switch (GetNodeType (node)) {
+				var nodeType = GetNodeType (node);
+				switch (nodeType) {
 				case EcmaNodeType.Namespace:
 					args["show"] = "namespace";
-					args["namespace"] =  node.Element.Substring ("N:".Length);
+					args["namespace"] = node.Element.Substring ("N:".Length);
+					break;
+				case EcmaNodeType.Type:
+					args["show"] = "typeoverview";
+					break;
+				case EcmaNodeType.Member:
+				case EcmaNodeType.Meta:
+					switch (GetNodeMemberTypeChar (node)){
+					case 'C':
+						args["membertype"] = "Constructor";
+						break;
+					case 'M':
+						args["membertype"] = "Method";
+						break;
+					case 'P':
+						args["membertype"] = "Property";
+						break;
+					case 'F':
+						args["membertype"] = "Field";
+						break;
+					case 'E':
+						args["membertype"] = "Event";
+						break;
+					case 'O':
+						args["membertype"] = "Operator";
+						break;
+					case 'X':
+						args["membertype"] = "ExtensionMethod";
+						break;
+					case '*':
+						args["membertype"] = "All";
+						break;
+					}
+
+					if (nodeType == EcmaNodeType.Meta) {
+						args["show"] = "members";
+						args["index"] = "all";
+					} else {
+						args["show"] = "member";
+						args["index"] = node.Element;
+					}
 					break;
 				}
 			}
