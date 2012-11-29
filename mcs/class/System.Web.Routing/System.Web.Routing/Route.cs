@@ -102,7 +102,7 @@ namespace System.Web.Routing
 			if (values == null)
 				return null;
 
-			if (!ProcessConstraints(httpContext, values, RouteDirection.IncomingRequest))
+			if (!ProcessConstraints (httpContext, values, RouteDirection.IncomingRequest))
 				return null;
 			
 			var rd = new RouteData (this, RouteHandler);
@@ -138,7 +138,7 @@ namespace System.Web.Routing
 			if (resultUrl == null)
 				return null;
 
-			if (!ProcessConstraints(requestContext.HttpContext, usedValues, RouteDirection.UrlGeneration))
+			if (!ProcessConstraints (requestContext.HttpContext, usedValues, RouteDirection.UrlGeneration))
 				return null;
 
 			var result = new VirtualPathData (this, resultUrl);
@@ -249,8 +249,7 @@ namespace System.Web.Routing
 		{
 			var constraints = Constraints;
 
-			if (Constraints != null)
-			{
+			if (Constraints != null) {
 				foreach (var p in constraints)
 					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, routeDirection))
 						return false;

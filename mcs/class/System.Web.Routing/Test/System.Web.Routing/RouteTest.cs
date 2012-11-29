@@ -981,62 +981,58 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
-		public void GetRouteDataWithCatchAll()
+		public void GetRouteDataWithCatchAll ()
 		{
-			var r = new Route("{*path}", new StopRoutingHandler())
-			{
-				Defaults = new RouteValueDictionary(new
-				{
+			var r = new Route ("{*path}", new StopRoutingHandler ()) {
+				Defaults = new RouteValueDictionary (new {
 					controller = "Error",
 					action = "NotFound"
 				})
 			};
 
-			var hc = new HttpContextStub("~/", String.Empty);
-			var rd = r.GetRouteData(hc);
+			var hc = new HttpContextStub ("~/", String.Empty);
+			var rd = r.GetRouteData (hc);
 
-			Assert.IsNotNull(rd, "#1");
+			Assert.IsNotNull (rd, "#1");
 
-			hc = new HttpContextStub("~/Foo/x123", String.Empty);
-			rd = r.GetRouteData(hc);
+			hc = new HttpContextStub ("~/Foo/x123", String.Empty);
+			rd = r.GetRouteData (hc);
 
-			Assert.IsNotNull(rd, "#2");
+			Assert.IsNotNull (rd, "#2");
 		}
 
 		[Test]
-		public void GetRouteDataWithCatchAll2()
+		public void GetRouteDataWithCatchAll2 ()
 		{
-			var r = new Route("something/{*path}", new StopRoutingHandler())
-			{
-				Defaults = new RouteValueDictionary(new
-				{
+			var r = new Route ("something/{*path}", new StopRoutingHandler ()) {
+				Defaults = new RouteValueDictionary (new {
 					controller = "Error",
 					action = "NotFound"
 				})
 			};
 
-			var hc = new HttpContextStub("~/", String.Empty);
-			var rd = r.GetRouteData(hc);
+			var hc = new HttpContextStub ("~/", String.Empty);
+			var rd = r.GetRouteData (hc);
 
-			Assert.IsNull(rd, "#1");
+			Assert.IsNull (rd, "#1");
 
-			hc = new HttpContextStub("~/something", String.Empty);
-			rd = r.GetRouteData(hc);
+			hc = new HttpContextStub ("~/something", String.Empty);
+			rd = r.GetRouteData (hc);
 
-			Assert.IsNotNull(rd, "#2");
-			Assert.IsNull(rd.Values["path"], "#2.1");
+			Assert.IsNotNull (rd, "#2");
+			Assert.IsNull (rd.Values["path"], "#2.1");
 
-			hc = new HttpContextStub("~/something/", String.Empty);
-			rd = r.GetRouteData(hc);
+			hc = new HttpContextStub ("~/something/", String.Empty);
+			rd = r.GetRouteData (hc);
 
-			Assert.IsNotNull(rd, "#3");
-			Assert.IsNull(rd.Values["path"], "#3.1");
+			Assert.IsNotNull (rd, "#3");
+			Assert.IsNull (rd.Values["path"], "#3.1");
 
-			hc = new HttpContextStub("~/something/algo", String.Empty);
-			rd = r.GetRouteData(hc);
+			hc = new HttpContextStub ("~/something/algo", String.Empty);
+			rd = r.GetRouteData (hc);
 
-			Assert.IsNotNull(rd, "#4");
-			Assert.AreEqual("algo", rd.Values["path"], "#4.1");
+			Assert.IsNotNull (rd, "#4");
+			Assert.AreEqual ("algo", rd.Values["path"], "#4.1");
 
 		}
 

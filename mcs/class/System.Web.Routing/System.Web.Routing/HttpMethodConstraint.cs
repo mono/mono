@@ -68,24 +68,23 @@ namespace System.Web.Routing
 			if (values == null)
 				throw new ArgumentNullException ("values");
 
-			switch (routeDirection)
-			{
-				case RouteDirection.IncomingRequest:
-					// LAMESPEC: .NET allows case-insensitive comparison, which violates RFC 2616
-					return AllowedMethods.Contains(httpContext.Request.HttpMethod);
+			switch (routeDirection) {
+			case RouteDirection.IncomingRequest:
+				// LAMESPEC: .NET allows case-insensitive comparison, which violates RFC 2616
+				return AllowedMethods.Contains (httpContext.Request.HttpMethod);
 
-				case RouteDirection.UrlGeneration:
-					// See: aspnetwebstack's WebAPI equivalent for details.
-					object method;
+			case RouteDirection.UrlGeneration:
+				// See: aspnetwebstack's WebAPI equivalent for details.
+				object method;
 
-					if (!values.TryGetValue(parameterName, out method))
-						return true;
+				if (!values.TryGetValue (parameterName, out method))
+					return true;
 
-					// LAMESPEC: .NET allows case-insensitive comparison, which violates RFC 2616
-					return AllowedMethods.Contains(Convert.ToString(method));
+				// LAMESPEC: .NET allows case-insensitive comparison, which violates RFC 2616
+				return AllowedMethods.Contains (Convert.ToString (method));
 
-				default:
-					throw new ArgumentException("Invalid routeDirection: " + routeDirection);
+			default:
+				throw new ArgumentException ("Invalid routeDirection: " + routeDirection);
 			}
 		}
 	}

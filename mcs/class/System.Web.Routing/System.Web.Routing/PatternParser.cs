@@ -445,7 +445,7 @@ namespace System.Web.Routing
 
 			// We're a match, generate the URL
 			var ret = new StringBuilder ();
-			usedValues = new RouteValueDictionary();
+			usedValues = new RouteValueDictionary ();
 			bool canTrim = true;
 			
 			// Going in reverse order, so that we can trim without much ado
@@ -469,7 +469,7 @@ namespace System.Web.Routing
 #if SYSTEMCORE_DEP
 				if (userValues.GetValue (parameterName, out tokenValue)) {
 					if (tokenValue != null)
-						usedValues.Add(parameterName, tokenValue.ToString());
+						usedValues.Add (parameterName, tokenValue.ToString ());
 
 					if (!defaultValues.Has (parameterName, tokenValue)) {
 						canTrim = false;
@@ -479,7 +479,7 @@ namespace System.Web.Routing
 					}
 
 					if (!canTrim && tokenValue != null)
-						ret.Insert(0, tokenValue.ToString());
+						ret.Insert (0, tokenValue.ToString ());
 
 					continue;
 				}
@@ -492,7 +492,7 @@ namespace System.Web.Routing
 					if (!canTrim && tokenValue != null)
 						ret.Insert (0, tokenValue.ToString ());
 
-					usedValues.Add (parameterName, tokenValue.ToString());
+					usedValues.Add (parameterName, tokenValue.ToString ());
 					continue;
 				}
 
@@ -500,8 +500,8 @@ namespace System.Web.Routing
 				if (ambientValues.GetValue (parameterName, out tokenValue)) {
 					if (tokenValue != null)
 					{
-						ret.Insert (0, tokenValue.ToString());
-						usedValues.Add (parameterName, tokenValue.ToString());
+						ret.Insert (0, tokenValue.ToString ());
+						usedValues.Add (parameterName, tokenValue.ToString ());
 					}
 					continue;
 				}
@@ -541,7 +541,7 @@ namespace System.Web.Routing
 					if (parameterValue != null)
 						ret.Append (Uri.EscapeDataString (de.Value.ToString ()));
 
-					usedValues.Add (parameterName, de.Value.ToString());
+					usedValues.Add (parameterName, de.Value.ToString ());
 				}
 			}
 			

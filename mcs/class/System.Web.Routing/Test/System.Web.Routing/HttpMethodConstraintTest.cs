@@ -125,14 +125,14 @@ namespace MonoTests.System.Web.Routing
 		[Test]
 		public void UrlGeneration ()
 		{
-			var c = new HttpMethodConstraint(new string[] { "GET" }) as IRouteConstraint;
-			var req = new HttpContextStub("", "", "HEAD");
+			var c = new HttpMethodConstraint (new string[] { "GET" }) as IRouteConstraint;
+			var req = new HttpContextStub ("", "", "HEAD");
 
-			var values = new RouteValueDictionary() { { "httpMethod", "GET" } };
-			Assert.IsTrue(c.Match(req, new Route(null, null), "httpMethod", values, RouteDirection.UrlGeneration), "#1");
+			var values = new RouteValueDictionary () { { "httpMethod", "GET" } };
+			Assert.IsTrue (c.Match (req, new Route (null, null), "httpMethod", values, RouteDirection.UrlGeneration), "#1");
 
 			values = new RouteValueDictionary() { { "httpMethod", "POST" } };
-			Assert.IsFalse(c.Match(req, new Route(null, null), "httpMethod", values, RouteDirection.UrlGeneration), "#2");
+			Assert.IsFalse (c.Match (req, new Route (null, null), "httpMethod", values, RouteDirection.UrlGeneration), "#2");
 		}
 	}
 }
