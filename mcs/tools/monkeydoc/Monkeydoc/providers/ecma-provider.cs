@@ -59,6 +59,7 @@ namespace MonkeyDoc.Providers
 			var root = tree.RootNode;
 			var storage = tree.HelpSource.Storage;
 			int resID = 0;
+			var nsSummaries = new Dictionary<string, XElement> ();
 
 			foreach (var asm in directories) {
 				var indexFilePath = Path.Combine (asm, "index.xml");
@@ -72,24 +73,30 @@ namespace MonkeyDoc.Providers
 
 					foreach (var ns in types.Elements ("Namespace")) {
 						var nsName = (string)ns.Attribute ("Name");
-						var nsNode = root.GetOrCreateNode (!string.IsNullOrEmpty (nsName) ? nsName : "global::", "N:" + ns.Attribute ("Name").Value);
-						var nsElements = new XElement ("elements",
-						                               new XElement ("summary"),
-						                               new XElement ("remarks"));
+						nsName = !string.IsNullOrEmpty (nsName) ? nsName : "global";
+						var nsNode = root.GetOrCreateNode (nsName, "N:" + nsName);
+
+						XElement nsElements;
+						if (!nsSummaries.TryGetValue (nsName, out nsElements))
+							nsSummaries[nsName] = nsElements = new XElement ("elements",
+							                                                 new XElement ("summary"),
+							                                                 new XElement ("remarks"));
+
 						foreach (var type in ns.Elements ("Type")) {
 							// Add the XML file corresponding to the type to our storage
 							var id = resID++;
 							var typeFilePath = Path.Combine (asm, nsName, Path.ChangeExtension (type.Attribute ("Name").Value, ".xml"));
 							if (!File.Exists (typeFilePath)) {
-								Console.WriteLine ("Warning: couldn't process type file `{0}' as it doesn't exist", typeFilePath);
+								Console.Error.WriteLine ("Warning: couldn't process type file `{0}' as it doesn't exist", typeFilePath);
 								continue;
 							}
 							using (var file = File.OpenRead (typeFilePath))
 								storage.Store (id.ToString (), file);
 							nsElements.Add (ExtractClassSummary (typeFilePath));
 
-							var url = "ecma:" + id + '#' + type.Attribute ("Name").Value + '/';
-							var typeNode = nsNode.CreateNode ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name")), url);
+							var typeCaption = ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name"))).Replace ('+', '.');
+							var url = "ecma:" + id + '#' + typeCaption + '/';
+							var typeNode = nsNode.CreateNode (typeCaption, url);
 
 							// Add meta "Members" node
 							typeNode.CreateNode ("Members", "*");
@@ -97,23 +104,43 @@ namespace MonkeyDoc.Providers
 							var membersNode = typeDocument.Root.Element ("Members");
 							if (membersNode == null || !membersNode.Elements ().Any ())
 								continue;
-							var members = membersNode.Elements ("Member").ToLookup (m => m.Element ("MemberType").Value);
+							var members = membersNode
+								.Elements ("Member")
+								.ToLookup (m => m.Attribute ("MemberName").Value.StartsWith ("op_") ? "Operator" : m.Element ("MemberType").Value);
+
 							foreach (var memberType in members) {
 								// We pluralize the member type to get the caption and take the first letter as URL
 								var node = typeNode.CreateNode (PluralizeMemberType (memberType.Key), memberType.Key[0].ToString ());
-								int memberIndex = 0;
+								var memberIndex = 0;
+
+								var isCtors = memberType.Key[0] == 'C';
+
 								// We do not escape much member name here
-								foreach (var member in memberType)
-									node.CreateNode (MakeMemberCaption (member), (memberIndex++).ToString ());
+								foreach (var memberGroup in memberType.GroupBy (m => MakeMemberCaption (m, isCtors))) {
+									if (memberGroup.Count () > 1) {
+										// Generate overload
+										var overloadCaption = MakeMemberCaption (memberGroup.First (), false);
+										var overloadNode = node.CreateNode (overloadCaption, overloadCaption);
+										foreach (var member in memberGroup)
+											overloadNode.CreateNode (MakeMemberCaption (member, true), (memberIndex++).ToString ());
+										overloadNode.Sort ();
+									} else {
+										// We treat constructor differently by showing their argument list in all cases
+										node.CreateNode (MakeMemberCaption (memberGroup.First (), isCtors), (memberIndex++).ToString ());
+									}
+								}
+								node.Sort ();
 							}
 						}
 
-						storage.Store ("xml.summary." + nsName, nsElements.ToString ());
 						nsNode.Sort ();
 					}
 					root.Sort ();
 				}
 			}
+
+			foreach (var summary in nsSummaries)
+				storage.Store ("xml.summary." + summary.Key, summary.Value.ToString ());
 
 			var masterSummary = new XElement ("elements",
 			                                  directories
@@ -132,15 +159,31 @@ namespace MonkeyDoc.Providers
 			}
 		}
 
-		string MakeMemberCaption (XElement member)
+		string MakeMemberCaption (XElement member, bool withArguments)
 		{
 			var caption = (string)member.Attribute ("MemberName");
-			var args = member.Element ("Parameters");
-			if (args != null && args.Elements ("Parameter").Any ()) {
+			// Use type name instead of .ctor for cosmetic sake
+			if (caption == ".ctor") {
+				caption = (string)member.Ancestors ("Type").First ().Attribute ("Name");
+				// If this is an inner type ctor, strip the parent type reference
+				var plusIndex = caption.LastIndexOf ('+');
+				if (plusIndex != -1)
+					caption = caption.Substring (plusIndex + 1);
+			}
+			if (caption.StartsWith ("op_")) {
+				string sig;
+				caption = MakeOperatorSignature (member, out sig);
+				caption = withArguments ? sig : caption;
+				return caption;
+			}
+			if (withArguments) {
+				var args = member.Element ("Parameters");
 				caption += '(';
-				caption += args.Elements ("Parameter")
-				               .Select (p => (string)p.Attribute ("Type"))
-				               .Aggregate ((p1, p2) => p1 + "," + p2);
+				if (args != null && args.Elements ("Parameter").Any ()) {
+					caption += args.Elements ("Parameter")
+						.Select (p => (string)p.Attribute ("Type"))
+						.Aggregate ((p1, p2) => p1 + "," + p2);
+				}
 				caption += ')';
 			}
 			
@@ -245,6 +288,46 @@ namespace MonkeyDoc.Providers
 				.SelectMany (Directory.EnumerateDirectories) // Namespaces
 				.SelectMany (Directory.EnumerateFiles)
 				.Where (f => f.EndsWith (".xml")); // Type XML files
+		}
+
+		string MakeOperatorSignature (XElement member, out string memberSignature)
+		{
+			string name = (string)member.Attribute ("MemberName");
+			var nicename = name.Substring(3);
+			memberSignature = null;
+
+			switch (name) {
+			// unary operators: no overloading possible	[ECMA-335 §10.3.1]
+			case "op_UnaryPlus":                    // static     R operator+       (T)
+			case "op_UnaryNegation":                // static     R operator-       (T)
+			case "op_LogicalNot":                   // static     R operator!       (T)
+			case "op_OnesComplement":               // static     R operator~       (T)
+			case "op_Increment":                    // static     R operator++      (T)
+			case "op_Decrement":                    // static     R operator--      (T)
+			case "op_True":                         // static  bool operator true   (T)
+			case "op_False":                        // static  bool operator false  (T)
+			case "op_AddressOf":                    // static     R operator&       (T)
+			case "op_PointerDereference":           // static     R operator*       (T)
+				memberSignature = nicename;
+				break;
+			// conversion operators: overloading based on parameter and return type [ECMA-335 §10.3.3]
+			case "op_Implicit":                    // static implicit operator R (T)
+			case "op_Explicit":                    // static explicit operator R (T)
+				nicename = name.EndsWith ("Implicit") ? "ImplicitConversion" : "ExplicitConversion";
+				string arg = (string)member.Element ("Parameters").Element ("Parameter").Attribute ("Type");
+				string ret = (string)member.Element ("ReturnValue").Element ("ReturnType");
+				memberSignature = arg + " to " + ret;
+				break;
+			// binary operators: overloading is possible [ECMA-335 §10.3.2]
+			default:
+				memberSignature =
+					nicename + "("
+					+ string.Join (",", member.Element ("Parameters").Elements ("Parameter").Select (p => (string)p.Attribute ("Type")))
+					+ ")";
+				break;
+			}
+
+			return nicename;
 		}
 	}
 
