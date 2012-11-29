@@ -624,7 +624,7 @@ namespace MonkeyDoc.Providers
 
 			public int Compare (Node n1, Node n2)
 			{
-				return string.Compare (n1.Caption, n2.Caption, StringComparison.OrdinalIgnoreCase);
+				return string.Compare (n1.Caption, n2.Caption, StringComparison.Ordinal);
 			}
 		}
 
@@ -638,7 +638,7 @@ namespace MonkeyDoc.Providers
 				int length1 = CaptionLength (n1.Caption);
 				int length2 = CaptionLength (n2.Caption);
 
-				return string.Compare (n1.Caption, 0, n2.Caption, 0, Math.Max (length1, length2), StringComparison.OrdinalIgnoreCase);
+				return string.Compare (n1.Caption, 0, n2.Caption, 0, Math.Max (length1, length2), StringComparison.Ordinal);
 			}
 
 			int CaptionLength (string caption)
@@ -693,7 +693,7 @@ namespace MonkeyDoc.Providers
 		Node FindNodeForCaption (List<Node> nodes, string caption)
 		{
 			foreach (var node in nodes)
-				if (node.Caption.Equals (caption, StringComparison.Ordinal))
+				if (node.Caption.Equals (caption, StringComparison.OrdinalIgnoreCase))
 					return node;
 			return null;
 		}
