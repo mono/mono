@@ -226,8 +226,8 @@ namespace MonkeyDoc
 		{
 			Node current = null;
 
-			var cache = LRUCache<string, Node>.Default;
-			if ((current = cache.Get (url)) != null)
+			var matchCache = LRUCache<string, Node>.Default;
+			if ((current = matchCache.Get (url)) != null)
 				return current;
 
 			current = Tree.RootNode;
@@ -239,14 +239,14 @@ namespace MonkeyDoc
 				if (index >= 0) {
 					Node n = current.Nodes[index];
 					//Console.WriteLine ("Binarysearch success for {0} which fell on {1}", strippedUrl, n.Element);
-					cache.Put (url, n);
+					matchCache.Put (url, n);
 					return n;
 				}
 				index = ~index;
 				if (index == current.Nodes.Count) {
 					//Console.WriteLine ("Match fail for {0}", strippedUrl);
 					//Console.WriteLine (current.Nodes.Select (n => n.Element).Aggregate ((e1, e2) => e1 + ", " + e2));
-					return SlowMatchNode (Tree.RootNode, cache, strippedUrl);
+					return SlowMatchNode (Tree.RootNode, matchCache, strippedUrl);
 				}
 				current = current.Nodes [index - 1];
 				//Console.WriteLine ("Binarysearch failed for {0}, next node check is {1}", strippedUrl, current.Element);
@@ -260,7 +260,7 @@ namespace MonkeyDoc
 		 * parts but then it would be quite specific. Since in the case of ecmaspec the tree is well-formed enough
 		 * the "Slow" match should still be fast enough
 		 */
-		Node SlowMatchNode (Node current, LRUCache<string, Node> cache, string url)
+		Node SlowMatchNode (Node current, LRUCache<string, Node> matchCache, string url)
 		{
 			//Console.WriteLine ("Entering slow path for {0} starting from {1}", url, current.Element);
 			while (current != null) {
@@ -268,7 +268,7 @@ namespace MonkeyDoc
 				foreach (Node n in current.Nodes) {
 					var element = n.Element.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase) ? n.Element.Substring (UriPrefix.Length) : n.Element;
 					if (url == element) {
-						cache.Put (url, n);
+						matchCache.Put (url, n);
 						return n;
 					} else if (url.StartsWith (element + ".", StringComparison.OrdinalIgnoreCase) && !n.IsLeaf) {
 						current = n;
