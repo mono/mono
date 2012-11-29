@@ -160,8 +160,8 @@ namespace Monkeydoc.Ecma
 			var result = IsEtc && !string.IsNullOrEmpty (EtcFilter) ? EtcFilter : MemberName;
 
 			// Temporary hack for monodoc produced inner type ctor
-			if (DescKind == Kind.Constructor && NestedType != null)
-				result = ToCompleteTypeName ();
+			//if (DescKind == Kind.Constructor && NestedType != null)
+				//result = ToCompleteTypeName ();
 
 			if (GenericMemberArguments != null)
 				result += FormatGenericArgs (GenericMemberArguments);
