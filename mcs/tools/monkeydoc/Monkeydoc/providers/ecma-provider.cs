@@ -292,7 +292,7 @@ namespace MonkeyDoc.Providers
 		public override Stream GetCachedHelpStream (string id)
 		{
 			var idParts = id.Split ('?');
-			return base.GetHelpStream (idParts[0]);
+			return base.GetCachedHelpStream (idParts[0]);
 		}
 
 		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraParams)
