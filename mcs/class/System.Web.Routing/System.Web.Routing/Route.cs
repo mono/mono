@@ -252,7 +252,7 @@ namespace System.Web.Routing
 			if (Constraints != null)
 			{
 				foreach (var p in constraints)
-					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, RouteDirection.IncomingRequest))
+					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, routeDirection))
 						return false;
 			}
 
