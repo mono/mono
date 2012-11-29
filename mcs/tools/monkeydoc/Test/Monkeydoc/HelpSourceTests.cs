@@ -70,7 +70,7 @@ namespace MonoTests.MonkeyDoc
 
 			foreach (var leaf in GetLeaves (rootTree.RootNode)) {
 				if (!rootTree.RenderUrl (leaf.PublicUrl, generator, out result) || leaf != result) {
-					Console.WriteLine ("Error: " + leaf.PublicUrl);
+					Console.WriteLine ("Error: {0} with HelpSource {1} ", leaf.PublicUrl, leaf.Tree.HelpSource.Name);
 					errorCount++;
 				}
 				testCount++;
