@@ -278,8 +278,7 @@ namespace MonkeyDoc
 			get {
 				if (pubUrl != null)
 					return pubUrl;
-				var url = GetInternalUrl ();
-				return pubUrl = tree.HelpSource != null ? tree.HelpSource.GetPublicUrl (this) : url;
+				return pubUrl = tree.HelpSource != null ? tree.HelpSource.GetPublicUrl (this) : GetInternalUrl ();
 			}
 		}
 
