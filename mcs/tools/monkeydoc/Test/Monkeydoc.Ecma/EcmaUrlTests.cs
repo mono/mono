@@ -165,7 +165,7 @@ namespace MonoTests.MonkeyDoc.Ecma
 		{
 			AssertValidUrl ("P:System.ComponentModel.PropertyDescriptorCollection.Item(int)");
 			AssertValidUrl ("P:System.ComponentModel.AttributeCollection.Item(Type)");
-			AssertValidUrl ("P:System.Web.SessionState.HttpSessionStateContainer$System.Web.SessionState.IHttpSessionState.Item(int)");
+			AssertValidUrl ("P:System.Web.SessionState.HttpSessionStateContainer$System.Web.SessionState.IHttpSessionState.Item(System.Int32)");
 			AssertValidUrl ("P:System.Collections.Specialized.BitVector32.Item(System.Collections.Specialized.BitVector32+Section)");
 		}
 
@@ -211,6 +211,7 @@ namespace MonoTests.MonkeyDoc.Ecma
 			var generics = new[] {
 				new EcmaDesc {
 					DescKind = EcmaDesc.Kind.Type,
+					Namespace = string.Empty,
 					TypeName = "T"
 				}
 			};
@@ -229,7 +230,8 @@ namespace MonoTests.MonkeyDoc.Ecma
 			var generics = new[] {
 				new EcmaDesc {
 					DescKind = EcmaDesc.Kind.Type,
-					TypeName = "T"
+					TypeName = "T",
+					Namespace = string.Empty
 				},
 				new EcmaDesc {
 					DescKind = EcmaDesc.Kind.Type,
@@ -238,7 +240,8 @@ namespace MonoTests.MonkeyDoc.Ecma
 					GenericTypeArguments = new[] {
 						new EcmaDesc {
 							DescKind = EcmaDesc.Kind.Type,
-							TypeName = "V"
+							TypeName = "V",
+							Namespace = string.Empty
 						}
 					}
 				}
@@ -274,7 +277,8 @@ namespace MonoTests.MonkeyDoc.Ecma
 				},
 				new EcmaDesc {
 					DescKind = EcmaDesc.Kind.Type,
-					TypeName = "Int32"
+					TypeName = "Int32",
+					Namespace = string.Empty
 				}
 			};
 			var ast = new EcmaDesc () { DescKind = EcmaDesc.Kind.Method,
@@ -302,11 +306,13 @@ namespace MonoTests.MonkeyDoc.Ecma
 					GenericTypeArguments = new[] {
 						new EcmaDesc {
 							DescKind = EcmaDesc.Kind.Type,
-							TypeName = "K"
+							TypeName = "K",
+							Namespace = string.Empty
 						},
 						new EcmaDesc {
 							DescKind = EcmaDesc.Kind.Type,
-							TypeName = "V"
+							TypeName = "V",
+							Namespace = string.Empty
 						}
 					}
 				}
@@ -316,6 +322,7 @@ namespace MonoTests.MonkeyDoc.Ecma
 				new EcmaDesc {
 					DescKind = EcmaDesc.Kind.Type,
 					TypeName = "Action",
+					Namespace = string.Empty,
 					GenericTypeArguments = new[] {
 						new EcmaDesc {
 							DescKind = EcmaDesc.Kind.Type,
@@ -325,6 +332,7 @@ namespace MonoTests.MonkeyDoc.Ecma
 						new EcmaDesc {
 							DescKind = EcmaDesc.Kind.Type,
 							TypeName = "int",
+							Namespace = string.Empty
 						},
 					}
 				}
@@ -355,9 +363,6 @@ namespace MonoTests.MonkeyDoc.Ecma
 				ExplicitImplMember = inner
 			};
 			AssertUrlDesc (ast, "M:Microsoft.Win32.RegistryKey$System.IDisposable.Dispose");
-			var actual = parser.Parse ("M:Microsoft.Win32.RegistryKey$System.IDisposable.Dispose");
-			Assert.IsNotNull (actual.ExplicitImplMember);
-			Assert.AreEqual ("System.IDisposable.Dispose", ast.ToCompleteMemberName (EcmaDesc.Format.WithoutArgs));
 		}
 
 		[Test]
@@ -382,6 +387,24 @@ namespace MonoTests.MonkeyDoc.Ecma
 				ArrayDimensions = new int[] { 3, 1, 1 }
 			};
 			AssertUrlDesc (ast, "T:System.Int32[,,][][]");
+		}
+
+		[Test]
+		public void ExplicitIndexerImplementation ()
+		{
+			var explicitImpl = new EcmaDesc {
+				Namespace = "System.Web.SessionState",
+				TypeName = "IHttpSessionState",
+				MemberName = "Item",
+				MemberArguments = new [] { new EcmaDesc { DescKind = EcmaDesc.Kind.Type, Namespace = "System", TypeName = "Int32" } },
+			};
+			var ast = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Property,
+				TypeName = "HttpSessionStateContainer",
+				Namespace = "System.Web.SessionState",
+				ExplicitImplMember = explicitImpl,
+			};
+			AssertUrlDesc (ast, "P:System.Web.SessionState.HttpSessionStateContainer$System.Web.SessionState.IHttpSessionState.Item(System.Int32)");
 		}
 
 		/*		[Test]

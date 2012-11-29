@@ -119,7 +119,7 @@ type_expression_suffix
                          $$ = new EcmaDesc {
                             GenericTypeArguments = $1 as List<EcmaDesc>,
                             NestedType = nestedType,
-                            ArrayDimensions = $3 as IList<int>,
+                            ArrayDimensions = SafeReverse ($3 as List<int>),
                             Etc = $4 != null ? ((Tuple<char, string>)$4).Item1 : nestedDescHasEtc ? nestedType.Etc : (char)0,
                             EtcFilter = $4 != null ? ((Tuple<char, string>)$4).Item2 : nestedDescHasEtc ? nestedType.EtcFilter : null
                          };
@@ -242,7 +242,7 @@ operator_expression
 property_expression
         : simple_member_expression opt_property_indexer {
                  var desc = $1 as EcmaDesc;
-                 desc.MemberArguments = SafeReverse ($2 as List<EcmaDesc>);
+                 (desc.ExplicitImplMember ?? desc).MemberArguments = SafeReverse ($2 as List<EcmaDesc>);
                  $$ = desc;
              }
 

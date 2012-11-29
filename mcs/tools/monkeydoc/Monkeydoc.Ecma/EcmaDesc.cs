@@ -174,6 +174,7 @@ namespace Monkeydoc.Ecma
 				}
 				result += ')';
 			}
+
 			return result;
 		}
 
@@ -223,7 +224,7 @@ namespace Monkeydoc.Ecma
 
 		public override string ToString ()
 		{
-			return string.Format ("({8}) {0}::{1}{2}{3}{7} {4}{5}{6} {9}",
+			return string.Format ("({8}) {0}::{1}{2}{3}{7} {4}{5}{6} {9} {10}",
 			                      Namespace,
 			                      TypeName,
 			                      FormatGenericArgsFull (GenericTypeArguments),
@@ -233,7 +234,8 @@ namespace Monkeydoc.Ecma
 			                      MemberArguments != null ? "(" + string.Join (",", MemberArguments.Select (m => m.ToString ())) + ")" : string.Empty,
 			                      ArrayDimensions != null && ArrayDimensions.Count > 0 ? ArrayDimensions.Select (dim => "[" + new string (',', dim - 1) + "]").Aggregate (string.Concat) : string.Empty,
 			                      DescKind.ToString ()[0],
-			                      Etc != 0 ? '(' + Etc.ToString () + ')' : string.Empty);
+			                      Etc != 0 ? '(' + Etc.ToString () + ')' : string.Empty,
+			                      ExplicitImplMember != null ? "$" + ExplicitImplMember.ToString () : string.Empty);
 			                      
 		}
 
@@ -245,11 +247,23 @@ namespace Monkeydoc.Ecma
 
 		public bool Equals (EcmaDesc other)
 		{
-			return DescKind == other.DescKind
+			if (other == null)
+				return false;
+
+			if (NestedType == null ^ other.NestedType == null
+			    || ArrayDimensions == null ^ other.ArrayDimensions == null
+			    || GenericTypeArguments == null ^ other.GenericTypeArguments == null
+			    || GenericMemberArguments == null ^ other.GenericMemberArguments == null
+			    || MemberArguments == null ^ other.MemberArguments == null
+			    || ExplicitImplMember == null ^ other.ExplicitImplMember == null)
+				return false;
+
+			return other != null
+				&& DescKind == other.DescKind
 				&& TypeName == other.TypeName
 				&& Namespace == other.Namespace
 				&& MemberName == other.MemberName
-				&& NestedType == other.NestedType || NestedType.Equals (other.NestedType)
+				&& (NestedType == null || NestedType.Equals (other.NestedType))
 				&& (ArrayDimensions == null || ArrayDimensions.SequenceEqual (other.ArrayDimensions))
 				&& (GenericTypeArguments == null || GenericTypeArguments.SequenceEqual (other.GenericTypeArguments))
 				&& (GenericMemberArguments == null || GenericMemberArguments.SequenceEqual (other.GenericMemberArguments))
@@ -270,6 +284,13 @@ namespace Monkeydoc.Ecma
 		bool What (bool input)
 		{
 			if (!input)
+				throw new Exception ("Not equal");
+			return input;
+		}
+
+		bool WhatT (bool input)
+		{
+			if (input)
 				throw new Exception ("Not equal");
 			return input;
 		}
