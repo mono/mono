@@ -595,6 +595,10 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsNotNull(vpd, "#C1");
 			Assert.AreEqual("/", vpd.VirtualPath, "#C2");
 			Assert.AreEqual(0, vpd.DataTokens.Count, "#C3");
+
+			hc = new HttpContextStub2("~/", String.Empty, String.Empty);
+			rd = routes.GetRouteData(hc);
+			Assert.IsNotNull(rd, "#D1");
 		}
 
 		[Test]

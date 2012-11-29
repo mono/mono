@@ -352,6 +352,10 @@ namespace System.Web.Routing
 					if (tokens.Count != 1)
 						return null;
 
+					// if token is catch-all, we're done.
+					if (tokens [0].Type == PatternTokenType.CatchAll)
+						break;
+
 					if (!defaults.ContainsKey (tokens [0].Name))
 						return null;
 				}
