@@ -15,6 +15,8 @@ namespace MonkeyDoc.Storage
 		int code;
 		ZipOutputStream zipOutput;
 		ZipFile zipFile;
+		// SharpZipLib use linear search to map name to index, correct that a bit
+		Dictionary<string, int> entries = new Dictionary<string, int> ();
 
 		public ZipStorage (string zipFileName)
 		{
@@ -78,7 +80,10 @@ namespace MonkeyDoc.Storage
 		public Stream Retrieve (string id)
 		{
 			EnsureInput ();
-			ZipEntry entry = zipFile.GetEntry (id);
+			int index;
+			ZipEntry entry;
+			if (!entries.TryGetValue (id, out index) || (entry = zipFile[index]) == null)
+				entry = zipFile.GetEntry (id);
 			if (entry != null)
 				return zipFile.GetInputStream (entry);
 			else
@@ -107,6 +112,7 @@ namespace MonkeyDoc.Storage
 			if (zipFile != null)
 				return;
 			zipFile = new ZipFile (zipFileName);
+			entries = Enumerable.Range (0, zipFile.Size).ToDictionary (i => zipFile[i].Name, i => i);
 		}
 
 		public void Dispose ()
