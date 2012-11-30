@@ -25,7 +25,16 @@
 // THE SOFTWARE.
 
 using System;
+using System.Net;
+using System.Xml;
+using System.Text;
+using System.Collections.Generic;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
+using NUnit.Framework.SyntaxHelpers;
 
 namespace MonoTests.System.ServiceModel.MetadataTests {
 	
@@ -40,5 +49,14 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			get { return TestContext.LoadMetadataContext; }
 		}
 
+		[Test]
+		public virtual void BasicHttp_Mtom_EmbeddedPolicy ()
+		{
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp_Mtom_EmbeddedPolicy", out label);
+			
+			BindingTestAssertions.BasicHttpBinding (
+				Context, doc, WSMessageEncoding.Mtom, label);
+		}
 	}
 }

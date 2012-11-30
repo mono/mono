@@ -237,6 +237,10 @@ namespace System.ServiceModel.Description
 					continue;
 				if (!xml.NamespaceURI.Equals (Constants.WspNamespace))
 					continue;
+				if (xml.LocalName.Equals ("Policy")) {
+					context.AddPolicyAssertion (xml);
+					continue;
+				}
 				if (!xml.LocalName.Equals ("PolicyReference"))
 					continue;
 				var uri = xml.GetAttribute ("URI");
