@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Documents;
 
-using Monkeydoc.Ecma;
+using MonkeyDoc.Ecma;
 using Mono.Utilities;
 
 namespace MonkeyDoc.Providers

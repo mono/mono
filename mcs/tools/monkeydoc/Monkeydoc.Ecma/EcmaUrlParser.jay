@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Monkeydoc.Ecma
+namespace MonkeyDoc.Ecma
 {
 	public class EcmaUrlParser
 	{

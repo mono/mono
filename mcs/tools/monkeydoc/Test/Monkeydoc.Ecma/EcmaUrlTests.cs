@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using MonkeyDoc;
-using Monkeydoc.Ecma;
+using MonkeyDoc.Ecma;
 
 namespace MonoTests.MonkeyDoc.Ecma
 {
