@@ -269,7 +269,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				Assert.That (xml, Is.Not.Null, label.Get ());
 				
 				Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
-				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
+				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference") | Is.EqualTo ("Policy"), label.Get ());
 			}
 			label.LeaveScope ();
 
@@ -351,7 +351,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				label.EnterScope ("policy-xml");
 				Assert.That (xml, Is.Not.Null, label.Get ());
 				Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
-				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
+				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference") | Is.EqualTo ("Policy"), label.Get ());
 				label.LeaveScope ();
 			}
 
@@ -549,7 +549,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				Assert.That (xml, Is.Not.Null, label.Get ());
 			
 				Assert.That (xml.NamespaceURI, Is.EqualTo (WspNamespace), label.Get ());
-				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference"), label.Get ());
+				Assert.That (xml.LocalName, Is.EqualTo ("PolicyReference") | Is.EqualTo ("Policy"), label.Get ());
 				label.LeaveScope ();
 			}
 
