@@ -417,54 +417,59 @@ namespace Mono.CSharp
 				}
 
 				try {
-					using (RawModule module = domain.OpenRawModule (file)) {
-						if (!module.IsManifestModule) {
-							Error_AssemblyIsModule (fileName);
-							return null;
-						}
+					using (var stream = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+						using (RawModule module = domain.OpenRawModule (stream, file)) {
+							if (!module.IsManifestModule) {
+								Error_AssemblyIsModule (fileName);
+								return null;
+							}
 
-						//
-						// check whether the assembly can be actually imported without
-						// collision
-						//
-						var an = module.GetAssemblyName ();
-						foreach (var entry in loaded_names) {
-							var loaded_name = entry.Item1;
-							if (an.Name != loaded_name.Name)
-								continue;
+							//
+							// check whether the assembly can be actually imported without
+							// collision
+							//
+							var an = module.GetAssemblyName ();
+							foreach (var entry in loaded_names) {
+								var loaded_name = entry.Item1;
+								if (an.Name != loaded_name.Name)
+									continue;
 
-							if (module.ModuleVersionId == entry.Item3.ManifestModule.ModuleVersionId)
-								return entry.Item3;
+								if (module.ModuleVersionId == entry.Item3.ManifestModule.ModuleVersionId)
+									return entry.Item3;
 							
-							if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
-								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-								compiler.Report.SymbolRelatedToPreviousError (fileName);
-								compiler.Report.Error (1704,
-									"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
-									an.Name);
-								return null;
+								if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
+									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+									compiler.Report.SymbolRelatedToPreviousError (fileName);
+									compiler.Report.Error (1704,
+										"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
+										an.Name);
+									return null;
+								}
+
+								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
+									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+									compiler.Report.SymbolRelatedToPreviousError (fileName);
+									compiler.Report.Error (1703,
+										"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
+										an.FullName);
+									return null;
+								}
 							}
 
-							if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
-								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-								compiler.Report.SymbolRelatedToPreviousError (fileName);
-								compiler.Report.Error (1703,
-									"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
-									an.FullName);
-								return null;
-							}
+							if (compiler.Settings.DebugFlags > 0)
+								Console.WriteLine ("Loading assembly `{0}'", fileName);
+
+							var assembly = domain.LoadAssembly (module);
+							if (assembly != null)
+								loaded_names.Add (Tuple.Create (an, fileName, assembly));
+
+							return assembly;
 						}
-
-						if (compiler.Settings.DebugFlags > 0)
-							Console.WriteLine ("Loading assembly `{0}'", fileName);
-
-						var assembly = domain.LoadAssembly (module);
-						if (assembly != null)
-							loaded_names.Add (Tuple.Create (an, fileName, assembly));
-
-						return assembly;
 					}
-				} catch {
+				} catch (Exception e) {
+					if (compiler.Settings.DebugFlags > 0)
+						Console.WriteLine ("Exception during loading: {0}'", e.ToString ());
+
 					if (!isImplicitReference)
 						Error_FileCorrupted (file);
 
