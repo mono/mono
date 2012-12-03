@@ -811,7 +811,7 @@ namespace System.Net
 			
 			public Uri GetProxy (Uri targetUri)
 			{
-				NetworkCredentials credentials = null;
+				NetworkCredential credentials = null;
 				Uri proxy = null;
 				
 				if (targetUri == null)
@@ -873,13 +873,9 @@ namespace System.Net
 			}
 		}
 		
-		static CFWebProxy defaultWebProxy;
 		public static IWebProxy GetDefaultProxy ()
 		{
-			if (defaultWebProxy == null)
-				defaultWebProxy = new CFWebProxy ();
-			
-			return defaultWebProxy;
+			return new CFWebProxy ();
 		}
 	}
 }
