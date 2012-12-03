@@ -9,5 +9,5 @@ partial class Foo
 partial class Foo
 { }
 
-class B { static void Main () {} }
+class B { public static void Main () {} }
 

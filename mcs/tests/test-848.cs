@@ -10,7 +10,7 @@ class Program
 	{
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		A<string> pp = null;
 		Foo (pp, (object s, string e) => { });

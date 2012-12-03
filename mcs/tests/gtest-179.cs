@@ -9,7 +9,7 @@ public class X<T> {
 	}
 }
 public class Y {
-	static int Main ()
+	public static int Main ()
 	{
 		return X<Y>.myMain ();
 	}

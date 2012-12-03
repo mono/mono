@@ -18,7 +18,7 @@ namespace MyTest
                 {
                 }
 
-		static void Main ()
+		public static void Main ()
 		{ }
         }
 }

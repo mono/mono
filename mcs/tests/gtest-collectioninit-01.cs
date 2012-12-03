@@ -39,7 +39,7 @@ public class Test
 			Console.WriteLine (i);
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		ArrayList collection = new ArrayList { "Foo", null, 1 };
 		if (collection.Count != 3)

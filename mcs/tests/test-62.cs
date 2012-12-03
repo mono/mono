@@ -21,7 +21,7 @@ class X {
 		return (int [,,]) null;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		return 0;
 	}

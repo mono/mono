@@ -25,7 +25,7 @@ class Babar : Bar
 
 class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (typeof (Foo).GetProperty ("Bar") != null)
 			return 1;

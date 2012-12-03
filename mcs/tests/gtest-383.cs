@@ -77,7 +77,7 @@ struct MyTypeB
 
 class C
 {
-	static int Main ()
+	public static int Main ()
 	{
 		MyTypeA? mt = null;
 		mt = null + mt;

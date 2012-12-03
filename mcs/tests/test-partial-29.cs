@@ -7,7 +7,7 @@ static partial class C
 	[Obsolete]
 	static partial void Foo_2 (string s);
 
-	static void Main()
+	public static void Main()
 	{
 	}
 }

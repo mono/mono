@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class CompilerBug
 {
-	static void Main ()
+	public static void Main ()
 	{
 		foreach (string message in Foo ())
 			Console.WriteLine (message);

@@ -6,7 +6,7 @@ using System.Reflection;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Assembly a = Assembly.GetExecutingAssembly ();
 		string[] resourceNames = a.GetManifestResourceNames ();

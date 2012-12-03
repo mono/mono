@@ -20,7 +20,7 @@ class Program
 		var t = typeof (IMemberDelayed);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

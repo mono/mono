@@ -2,7 +2,7 @@ using System;
 
 class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		dynamic index = (uint) int.MaxValue + 1;
 		dynamic array = new int[] { 1, 2 };

@@ -30,7 +30,7 @@ class Foo<T> {
 
 class Program {
 
-	static int Main ()
+	public static int Main ()
 	{
 		var x = new Foo<int> ();
 		x.Handler += null;

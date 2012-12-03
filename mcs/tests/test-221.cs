@@ -75,7 +75,7 @@ class F : IBlah {
 }
 
 class Driver {
-	static int Main ()
+	public static int Main ()
 	{
 		if (! B.Test ()) return 1;
 		if (! E.Test ()) return 2;

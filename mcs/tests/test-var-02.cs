@@ -21,7 +21,7 @@ public class Test
 		}
 		public int Property = 42;
 	}	
-	static int Main ()
+	public static int Main ()
 	{
 		var class1 = new Class1 ();
 		

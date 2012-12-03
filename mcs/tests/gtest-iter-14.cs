@@ -45,7 +45,7 @@ class X : B
 		yield return base.BaseM++;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		foreach (var v in new X ().GetIt ())
 			Console.WriteLine (v);

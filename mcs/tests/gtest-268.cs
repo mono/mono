@@ -11,6 +11,6 @@ public class Test
                 public static G<T> Instance;
         }
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 public class CompilerBug
 {
-	static void Main ()
+	public static void Main ()
 	{
 		var res = Foo ().Result;
 		Console.WriteLine (res);

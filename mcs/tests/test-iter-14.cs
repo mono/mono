@@ -24,7 +24,7 @@ class XX {
 		yield return 0;
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		foreach (int a in X ()){
 		}

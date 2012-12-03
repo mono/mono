@@ -7,7 +7,7 @@ delegate void E (out int x);
 delegate void F (params int[] x);
 
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 		// This should create an AnonymousMethod with the implicit argument
 		D d1 = delegate {};

@@ -6,7 +6,7 @@ public class Foo<T> where T : class {
 }
 
 class Driver {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<SomeClass> f = new Foo<SomeClass> ();
 		f.Do ("something");

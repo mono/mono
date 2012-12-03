@@ -5,7 +5,7 @@ class Foo {
     set { if (!got || value != "A1B2") throw new System.Exception (); }
   }
 
-  static void Main ()
+  public static void Main ()
   {
     (new Foo ()).s += "A" + 1 + "B" + 2;
   }

@@ -13,7 +13,7 @@ namespace Foo
 	[C]
 	class Foo
 	{
-		static void Main ()
+		public static void Main ()
 		{
 		}
 	}

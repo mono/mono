@@ -14,5 +14,5 @@ class c : a
 		b d_var;
 	}
 
-	static void Main () {}
+	public static void Main () {}
 }

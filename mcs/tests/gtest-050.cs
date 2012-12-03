@@ -18,7 +18,7 @@ class X
 		throw new ArgumentException ();
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		D d1 = new D (F<int>);
 		D d2 = new D (F);

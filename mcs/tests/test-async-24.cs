@@ -22,7 +22,7 @@ struct Struct
 
 class C
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Struct s = new Struct ("1");
 		var t = s.AsyncMethod ();

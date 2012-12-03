@@ -21,7 +21,7 @@ namespace C5
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		C5.ArrayList<int> array = new C5.ArrayList<int> ();
 	}

@@ -5,7 +5,7 @@ class X {
 	X () {}
 	X (int x) {}
 	
-	static int Main () {
+	public static int Main () {
 		if (new X ().b != "static stringstring")
 			return 1;
 		

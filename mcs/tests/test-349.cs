@@ -46,7 +46,7 @@ class Test
 	static int a = b = 5;
 	static int b = 0;
 		
-	static int Main ()
+	public static int Main ()
 	{
 		if (a != 5 || b != 0)
 			return 1;

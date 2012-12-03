@@ -6,7 +6,7 @@ using System;
 delegate void S ();
 
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 		int a = 1;
 		Console.WriteLine ("A is = " + a);

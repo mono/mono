@@ -42,6 +42,6 @@ class T {
 	}
         void stuff_finally () {
         }
-        static void Main() {
+        public static void Main() {
         }
 }

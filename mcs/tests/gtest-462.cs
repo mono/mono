@@ -2,7 +2,7 @@ using System;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Tester<int> t = new Tester<int> ();
 		int r = t.Get (333);

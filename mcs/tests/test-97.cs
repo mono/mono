@@ -11,7 +11,7 @@ public enum FL {
 
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		return 0;
 	}

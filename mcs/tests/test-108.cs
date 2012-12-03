@@ -1,6 +1,6 @@
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		int i = 0;
 		

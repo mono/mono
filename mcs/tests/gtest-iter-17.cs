@@ -13,7 +13,7 @@ public class Test
 		yield break;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

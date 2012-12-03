@@ -20,7 +20,7 @@ class X : IA
 
 class Program
 {
-	static void Main ()
+	public static void Main ()
 	{
 		IA a = null;
 		IB b = null;

@@ -2,7 +2,7 @@ using System;
 
 class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		string s = "test me";
 		foreach (char c in s)

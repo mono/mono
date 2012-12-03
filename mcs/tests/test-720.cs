@@ -6,7 +6,7 @@ namespace N
 {
 	class Program
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			Parent pr = new Child();
 			((Child)pr).OnExample();

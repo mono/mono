@@ -2,7 +2,7 @@ using System;
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		SimpleStruct <string> s = new SimpleStruct <string> ();
 	}

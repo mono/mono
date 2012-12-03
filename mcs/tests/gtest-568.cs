@@ -2,7 +2,7 @@ using System;
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		object o = 10;
 		int? x = 3;

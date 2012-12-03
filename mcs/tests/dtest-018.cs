@@ -7,7 +7,7 @@ class A
 {
 	public dynamic X = new XValue ();
 	
-	static int Main()
+	public static int Main()
 	{
 		var v = new A { X = { Y = 467 } };
 		if (v.X.Y != 467)

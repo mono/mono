@@ -8,7 +8,7 @@ class Test
 		while (from <= to) yield return from++;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		IEnumerable<int> e = FromTo (1, 10);
 

@@ -27,7 +27,7 @@ public class Do {
 }
 
 public class User {
-        static void Main ()
+        public static void Main ()
         {
         }
 }

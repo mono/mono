@@ -23,6 +23,6 @@ namespace plj
 	
 	public class fromClass
 	{
-		static void Main () {}
+		public static void Main () {}
 	}
 }

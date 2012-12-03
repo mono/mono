@@ -7,7 +7,7 @@ public class Test
 
         public IFoo<T> GetFooGeneric<T> () { return default (IFoo<T>); }
 
-	static void Main ()
+	public static void Main ()
 	{
 		Test test = new Test ();
 		test.GetFoo ();

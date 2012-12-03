@@ -28,7 +28,7 @@ class Test {
 		//throw new NotImplementedException ();
 	}
 	
-	static int Main () {
+	public static int Main () {
 		SimpleDelegate d = new SimpleDelegate (F);
 		AsyncCallback ac = new AsyncCallback (async_callback);
 		

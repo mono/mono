@@ -10,6 +10,6 @@ class X
 		return o is Foo<int> ? true : false;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

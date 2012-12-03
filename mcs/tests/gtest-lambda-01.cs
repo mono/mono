@@ -12,7 +12,7 @@ class X {
 	static IntFunc func, increment;
 	static VoidFunc nothing;
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int y = 0;
 		int r;

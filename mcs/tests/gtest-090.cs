@@ -19,6 +19,6 @@ public class Bar<T> : Foo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

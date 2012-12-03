@@ -3,7 +3,7 @@ using System.Collections;
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		foreach (var i in GetAll ()) {
 		}

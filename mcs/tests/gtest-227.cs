@@ -25,6 +25,6 @@ public class Foo<G>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

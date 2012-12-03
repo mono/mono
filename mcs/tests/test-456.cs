@@ -12,7 +12,7 @@ struct Foo {
 }
 
 class Test {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo x = new Foo ();
 		x.foo ();

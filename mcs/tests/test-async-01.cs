@@ -10,7 +10,7 @@ class Program
 
 	static int pos;
 
-	static int Main ()
+	public static int Main ()
 	{
 		pos = 0;
 		TestAsync ();

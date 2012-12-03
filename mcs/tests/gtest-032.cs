@@ -18,6 +18,6 @@ class X
 		bar.Test (7, "Hello");
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

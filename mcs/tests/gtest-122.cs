@@ -1,6 +1,6 @@
     class Test
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             A<int> a = new A<int>(new A<int>.B(D), 3);
             a.Run();

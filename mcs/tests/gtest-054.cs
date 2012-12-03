@@ -70,6 +70,6 @@ class Test
 		t = (T []) a;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

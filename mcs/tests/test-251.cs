@@ -27,5 +27,5 @@ class X {
 	volatile IntPtr ip;
 	volatile UIntPtr uip;
 
-	static void Main () {}
+	public static void Main () {}
 }

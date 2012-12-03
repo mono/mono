@@ -13,7 +13,7 @@ public class MyClass
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string Hello = "World";
 		MyClass mc = new MyClass();

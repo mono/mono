@@ -5,7 +5,7 @@ delegate int Foo ();
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test ("Hello World", 8);
 	}

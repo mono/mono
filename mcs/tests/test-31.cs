@@ -21,7 +21,7 @@ class Derived :Base {
 }
 
 class Test {
-	static int Main ()
+	public static int Main ()
 	{
 		Derived d = new Derived ();
 

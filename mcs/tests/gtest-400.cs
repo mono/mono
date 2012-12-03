@@ -16,7 +16,7 @@ class Program
 		return o is T;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		if (Foo<bool> ())
 			return 1;

@@ -3,7 +3,7 @@
 using System;
 
 unsafe class X {
-	static int Main () {
+	public static int Main () {
 		int y = 20;
 		byte* x = (byte*)0;
 		x += (long)y;

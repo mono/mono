@@ -7,7 +7,7 @@ class X {
         {
         }
 
-        static void Main ()
+        public static void Main ()
         {
                 object o = null;
                 double [] d = null;

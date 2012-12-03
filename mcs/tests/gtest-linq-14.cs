@@ -30,7 +30,7 @@ public interface IMarker<T> : IEnumerable<T> {}
 
 public class Program {
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 	

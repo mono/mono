@@ -5,7 +5,7 @@ public class X
 		hello = true;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }
 

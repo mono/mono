@@ -1,7 +1,7 @@
 // test for bug #56774
 
 class T {
-	static int Main () {
+	public static int Main () {
 		return X (1);
 	}
   

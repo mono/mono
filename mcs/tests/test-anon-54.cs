@@ -35,7 +35,7 @@ struct Foo
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo foo = new Foo (3);
 		foo.Test (new Foo (8));

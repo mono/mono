@@ -3,7 +3,7 @@ class Stack < type > {
 }
 
 class Boot {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

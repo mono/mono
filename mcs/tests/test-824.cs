@@ -15,7 +15,7 @@ class Context : IZZZ
 
 class Test : IAAA, IBBB
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test cmd = new Test ();
 		IZZZ context = new Context ();

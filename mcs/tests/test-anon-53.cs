@@ -24,7 +24,7 @@ class Test
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test test = new Test (9);
 		Console.WriteLine (test);

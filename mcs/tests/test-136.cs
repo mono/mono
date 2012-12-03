@@ -37,7 +37,7 @@ public class MyCar: IAutomobile, IDiagnostic {
 }
 
 class TestConflict {
-	static int Main ()
+	public static int Main ()
 	{
 		MyCar car1 = new MyCar();
 		car1.Stop(); // calls the IAutomobile.Stop implementation

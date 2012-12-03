@@ -20,7 +20,7 @@ class Tester
 	{
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		Assert (10, new MyType (10));
 	}

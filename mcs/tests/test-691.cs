@@ -10,7 +10,7 @@ namespace ConsoleApplication6
 		static int* the_ptr = (int*) 0xdeadbeaf;
 		static int** the_pptr = (int**) 0xdeadbeaf;
 
-		static void Main ()
+		public static void Main ()
 		{
 			Console.WriteLine ("TEST: {0:x}", new IntPtr (the_pptr).ToInt64 ());
 

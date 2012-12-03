@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 public class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Expression<Action<IHelper>> e = (helper => helper.DoIt (null));
 		var mce = e.Body as MethodCallExpression;

@@ -27,7 +27,7 @@ struct Foo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		MyList<Foo<int>> list = new MyList <Foo<int>> ();
 		foreach (Foo<int> foo in list)

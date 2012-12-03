@@ -16,7 +16,7 @@ public class B : FriendClass
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		var b = new B ();
 		b.Test_2 ();

@@ -4,7 +4,7 @@ class Foo {}
 
 class Repro {
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 

@@ -4,7 +4,7 @@ using System;
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Bar bar = new Bar ();
 		if (bar.Message != "bar")

@@ -16,7 +16,7 @@ public class Test {
 	public void f5 ([System.Runtime.InteropServices.DefaultParameterValue ((short) 1)] short x) {}
 	public void f6 ([DefaultParameterValue (ParamEnum.Foo)] ParamEnum n) {}
 
-	static void Main ()
+	public static void Main ()
 	{
 		string problems = "";
 		Type t = typeof (Test);

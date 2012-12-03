@@ -1,5 +1,5 @@
 class T {
-	static int Main ()
+	public static int Main ()
 	{
 		switch (1) {
 		case 1:

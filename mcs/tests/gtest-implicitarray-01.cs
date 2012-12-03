@@ -3,7 +3,7 @@
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string[] array = new [] { "Foo", "Bar", "Baz" };
 		foreach (string s in array)

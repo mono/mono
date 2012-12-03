@@ -2,7 +2,7 @@ using System;
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		X x = new X ();
 		return x.Do ("a", "b", "c");

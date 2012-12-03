@@ -5,7 +5,7 @@ using System.Diagnostics;
 [module: DebuggableAttribute (false, false)] 
 
 class TestClass {
-        static int Main()
+        public static int Main()
         {
             Module[] moduleArray;
             moduleArray = Assembly.GetExecutingAssembly().GetModules(false);

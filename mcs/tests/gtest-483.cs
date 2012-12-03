@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Int32Collection src = new Int32Collection ();
 		Int32Collection dest = new Int32Collection ();

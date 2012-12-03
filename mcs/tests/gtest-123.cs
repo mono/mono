@@ -6,6 +6,6 @@ class A<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

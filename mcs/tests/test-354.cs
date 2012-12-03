@@ -3,7 +3,7 @@ class MYAttr : System.Attribute {
 
 [MYAttr]
 partial class A {
-  static void Main () {
+  public static void Main () {
   }
 }
 

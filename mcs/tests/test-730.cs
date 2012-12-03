@@ -17,7 +17,7 @@ class Demo
 		return d (55);
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		int r = new Demo ().GetPhones ();
 		if (r != 55)

@@ -34,7 +34,7 @@ class M {
     return result;
   }
  
-  static void Main () {
+  public static void Main () {
        MyFilter m = new MyFilter ();
         System.Console.WriteLine (foo1 <K> (m).Count);
         MyBFilter mb = new MyBFilter ();

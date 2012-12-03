@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var mre_l = new ManualResetEvent (false);
 		var mre = new ManualResetEvent (false);

@@ -66,7 +66,7 @@ class Stress {
 
 	static void generate_main ()
 	{
-		wl ("\tstatic void Main ()\n\t{");
+		wl ("\tpublic static void Main ()\n\t{");
 
 		foreach (string t in types){
 			w ("\t\tprobe_" + t + " ();\n");
@@ -74,7 +74,7 @@ class Stress {
 		wl ("\t}");
 	}
 	
-	static void Main (string [] args)
+	public static void Main (string [] args)
 	{
 		foreach (string arg in args){
 			if (arg == "-h" || arg == "--help"){

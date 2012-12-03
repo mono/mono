@@ -7,7 +7,7 @@ using SameNamespace = MyAssembly_01;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		SameNamespace.GlobalClass.StaticMethod ();
 		return 0;

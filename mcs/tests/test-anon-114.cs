@@ -6,6 +6,6 @@ class T{
                 SomeMethod (delegate (Int32 a) { return a; });
         }
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

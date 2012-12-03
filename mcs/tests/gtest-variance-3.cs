@@ -2,7 +2,7 @@ delegate T Foo<out T> ();
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string message = "Hello World!";
 		Foo<string> foo = () => message;

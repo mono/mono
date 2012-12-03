@@ -15,7 +15,7 @@ public class Test
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Test test = new Test ();
 

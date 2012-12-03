@@ -14,7 +14,7 @@ class Program
 		return 2;
 	}
 	
-	static int Main()
+	public static int Main()
 	{
 		if (Test (() => (dynamic) 1) != 1)
 			return 1;

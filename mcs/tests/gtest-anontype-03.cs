@@ -13,7 +13,7 @@ public class MyClass
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		MyClass mc = new MyClass();
 		var v = new { mc.Foo, mc.Baz };

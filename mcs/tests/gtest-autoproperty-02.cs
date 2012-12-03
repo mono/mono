@@ -17,7 +17,7 @@ public class Test
 	public static string Foo { get; set; }
 	public static int Answer { get; private set; }
 	
-	static int Main ()
+	public static int Main ()
 	{
 		Foo = "Bar";
 		if (Foo != "Bar")

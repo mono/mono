@@ -22,6 +22,6 @@ class Source {
             };
 
         }
-        static void Main () {}
+        public static void Main () {}
 
 }

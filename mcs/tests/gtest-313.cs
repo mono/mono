@@ -14,7 +14,7 @@ class Foo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<int>.TestEnum e = Foo<int>.TestEnum.One;
 		Console.WriteLine (e);

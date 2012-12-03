@@ -8,7 +8,7 @@ class X
 		return b ?? a;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		A a = new A ();
 		B b = new B ();

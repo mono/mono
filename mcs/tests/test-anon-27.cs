@@ -4,7 +4,7 @@ delegate void D ();
 
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		X x = new X();
 		x.M (10);

@@ -14,7 +14,7 @@ public class X {
 		return Address;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Resolve (Address);
 	}

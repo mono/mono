@@ -14,7 +14,7 @@ namespace N.M
 			return 0;
 		}
 
-		static int Main ()
+		public static int Main ()
 		{
 			var m = typeof (C).GetMethod ("AsyncMethod");
 			var attr = m.GetCustomAttribute<AsyncStateMachineAttribute> ();

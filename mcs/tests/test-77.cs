@@ -8,7 +8,7 @@ class XX {
 		A = 1
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int one = 1;
 		int two = 2;

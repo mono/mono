@@ -25,6 +25,6 @@ public class SingleSteppingEngine
 
 class X
 {
-        static void Main ()
+        public static void Main ()
         { }
 }

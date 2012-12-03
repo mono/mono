@@ -2,7 +2,7 @@ using System;
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		int? a = null;
 		int b = 3;

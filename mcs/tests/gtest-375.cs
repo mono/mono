@@ -11,7 +11,7 @@ public class X {
 		return x != null;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		if (Compute (1) != false)
 			return 1;

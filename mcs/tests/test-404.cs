@@ -13,7 +13,7 @@ unsafe class X {
 		}
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		if ((*get_v ())++ != 0)
 			return 1;

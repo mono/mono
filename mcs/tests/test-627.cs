@@ -26,7 +26,7 @@ class M {
 		object x = (N.B) N;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

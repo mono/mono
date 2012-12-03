@@ -15,7 +15,7 @@ namespace Test
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Console.WriteLine (typeof (Foo<>));
 		Console.WriteLine (typeof (Foo<>.Bar<>));

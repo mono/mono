@@ -23,7 +23,7 @@ class X {
 		value = new B (1);
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		A o;
 		Foo (out o);

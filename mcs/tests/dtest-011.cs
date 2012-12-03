@@ -34,7 +34,7 @@ class C
 		foo_static (d);
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		new C ().test ();
 		

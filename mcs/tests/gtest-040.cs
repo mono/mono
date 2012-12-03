@@ -122,7 +122,7 @@ class A<U>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Stack<int> stack = new Stack<int> (1);
 		INode<int> node = stack.GetNode ();

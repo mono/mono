@@ -2,7 +2,7 @@
 // on captured params.
 
 class Z {
-	static void Main ()
+	public static void Main ()
 	{
 		TestPreinc (1);
 		TestPostinc (1);

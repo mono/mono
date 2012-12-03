@@ -5,7 +5,7 @@ using System;
 
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		short a = -32768;
 		int b = -2147483648;

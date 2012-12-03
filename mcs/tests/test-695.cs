@@ -9,7 +9,7 @@ using Mono.Cecil;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string basedir = BaseDirectory;
 
