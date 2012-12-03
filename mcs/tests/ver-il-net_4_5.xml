@@ -4752,13 +4752,8 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
-    </type>
-    <type name="TestLog+MyTest">
       <method name="Void Main(System.String[])" attrs="150">
         <size>207</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
       </method>
     </type>
   </test>
@@ -5170,20 +5165,17 @@
         <size>7</size>
       </method>
     </type>
-    <type name="TestLog+MyTest">
+    <type name="Pair`2[T,U]">
+      <method name="Void .ctor(T, U)" attrs="6278">
+        <size>16</size>
+      </method>
+    </type>
+    <type name="TestLog">
       <method name="Void Main(System.String[])" attrs="150">
         <size>212</size>
       </method>
       <method name="Void TestPairLog()" attrs="150">
         <size>186</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Pair`2[T,U]">
-      <method name="Void .ctor(T, U)" attrs="6278">
-        <size>16</size>
       </method>
     </type>
   </test>
@@ -14622,7 +14614,7 @@
       </method>
     </type>
     <type name="testcase.Program">
-      <method name="Int32 Main()" attrs="145">
+      <method name="Int32 Main()" attrs="150">
         <size>88</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
@@ -27950,7 +27942,7 @@
       </method>
     </type>
     <type name="Test.Test">
-      <method name="Int32 Main()" attrs="145">
+      <method name="Int32 Main()" attrs="150">
         <size>114</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
@@ -28704,7 +28696,7 @@
       <method name="Int32 GetHashCode()" attrs="198">
         <size>26</size>
       </method>
-      <method name="Int32 Main()" attrs="145">
+      <method name="Int32 Main()" attrs="150">
         <size>39</size>
       </method>
     </type>
@@ -36902,7 +36894,7 @@
   </test>
   <test name="test-442.cs">
     <type name="ConsoleApplication1.Program">
-      <method name="Void Main(System.String[])" attrs="145">
+      <method name="Void Main(System.String[])" attrs="150">
         <size>73</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
@@ -42734,7 +42726,7 @@
       <method name="Void ArglistMethod(...)" attrs="145">
         <size>52</size>
       </method>
-      <method name="Void Main(System.String[])" attrs="145">
+      <method name="Void Main(System.String[])" attrs="150">
         <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
