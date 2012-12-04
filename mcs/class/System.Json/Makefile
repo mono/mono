@@ -2,7 +2,7 @@ thisdir = class/System.Json
 SUBDIRS = 
 include ../../build/rules.make
 
-System.Json.Properties.Resources.resources: ../../../external/aspnetwebstack/src/System.Json/Properties/Resources.resx
+System.Json.Properties.Resources.resources: System.Json/Properties/Resources.resx
 	$(RESGEN) "$<" "$@"
 
 LIBRARY = System.Json.dll
@@ -15,7 +15,11 @@ LIB_MCS_FLAGS = /d:ASPNETMVC -keyfile:../winfx.pub -delaysign \
 		/resource:System.Json.Properties.Resources.resources
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += /r:Microsoft.CSharp.dll
+LIB_MCS_FLAGS += /r:Microsoft.CSharp.dll -d:FEATURE_DYNAMIC
+endif
+
+ifeq (monodroid, $(PROFILE))
+LIB_MCS_FLAGS += -d:FEATURE_DYNAMIC
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
