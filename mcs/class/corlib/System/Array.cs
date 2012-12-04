@@ -1715,7 +1715,7 @@ namespace System
 			if (index + length > array.Length)
 				throw new ArgumentException ();
 				
-			SortImpl<T, T> (array, null, index, length, comparer);
+			SortImpl<T> (array, index, length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
