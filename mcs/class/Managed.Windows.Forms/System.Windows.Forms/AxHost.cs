@@ -196,23 +196,23 @@ namespace System.Windows.Forms {
 		#endregion	// AxHost Subclasses
 
 		//private int flags;
-		//private Guid clsid;
+		private Guid clsid;
+		private object mInstance;
 		private AboutBoxDelegate aboutDelegate = null;
 		private AxHost.State ocxState = null;
 
 		#region Protected Constructors
 
-		[MonoTODO]
 		protected AxHost (string clsid) : this(clsid, 0)
 		{
 
 		}
 
-		[MonoTODO]
 		protected AxHost (string clsid, int flags)
 		{
-			//this.clsid = new Guid(clsid);
+			this.clsid = new Guid(clsid);
 			//this.flags = flags;
+			this.mInstance = null;
 		}
 		#endregion	// Public Instance Properties
 
@@ -518,7 +518,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public object GetOcx ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			return mInstance;
 		}
 		
 		public bool HasPropertyPages ()
@@ -563,13 +563,28 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected virtual void AttachInterfaces ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+
 		}
 		
 		protected override void CreateHandle ()
 		{
 			if(!base.IsHandleCreated)
+			{
+				GetActiveXInstance();
+				AttachInterfaces ();
+
 				base.CreateHandle();
+			}
+		}
+
+		private void GetActiveXInstance()
+		{
+			if (this.mInstance == null)
+			{
+				object obj;
+				CoCreateInstance(ref clsid, null, 1, ref IID_IUnknown, out obj);
+				this.mInstance = obj;
+			}
 		}
 
 		protected virtual object CreateInstanceCore (Guid clsid)
@@ -596,6 +611,12 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing)
 		{
+			if(disposing)
+			{
+				if(this.mInstance != null)
+					Marshal.ReleaseComObject (this.mInstance);
+				this.mInstance = null;
+			}
 			base.Dispose(disposing);
 		}
 
@@ -1083,5 +1104,16 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Interfaces
+
+		static Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
+
+		[DllImport("ole32.dll")]
+		static extern int CoCreateInstance (
+			[In] ref Guid rclsid,
+			[In, MarshalAs (UnmanagedType.IUnknown)] object pUnkOuter,
+			[In] uint dwClsContext,
+			[In] ref Guid riid,
+			[Out, MarshalAs (UnmanagedType.Interface)] out object ppv);
+
 	}
 }
