@@ -15,8 +15,8 @@ System.CodeDom.Compiler/GeneratedCodeAttribute.cs
 System.Collections.Generic/ISet.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs
-System.Collections.Generic/Queue.cs
 System.Collections.Generic/RBTree.cs
+System.Collections.Generic/Queue.cs
 System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
 System.Collections.Generic/SortedSet.cs
@@ -130,6 +130,7 @@ System.ComponentModel/ICustomTypeDescriptor.cs
 System.ComponentModel/IDataErrorInfo.cs
 System.ComponentModel/IDataErrorInfo.cs
 System.ComponentModel/IEditableObject.cs
+System.ComponentModel/IExtenderProvider.cs
 System.ComponentModel/IListSource.cs
 System.ComponentModel/INotifyPropertyChanged.cs
 System.ComponentModel/INotifyPropertyChanging.cs
@@ -344,6 +345,7 @@ System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
 System.Net.Sockets/TransmitFileOptions.cs
 System.Net.Sockets/UdpClient.cs
+System.Net.Sockets/UdpReceiveResult.cs
 System.Net/AuthenticationManager.cs
 System.Net/AuthenticationSchemeSelector.cs
 System.Net/AuthenticationSchemes.cs
@@ -363,6 +365,7 @@ System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
+System.Net/DnsEndPoint.cs
 System.Net/DownloadDataCompletedEventArgs.cs
 System.Net/DownloadDataCompletedEventHandler.cs
 System.Net/DownloadProgressChangedEventArgs.cs
@@ -434,6 +437,7 @@ System.Net/SecurityProtocolType.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/SocketAddress.cs
+System.Net/TransportContext.cs
 System.Net/TransportType.cs
 System.Net/UploadDataCompletedEventArgs.cs
 System.Net/UploadDataCompletedEventHandler.cs
@@ -469,8 +473,19 @@ System.Security.Authentication/AuthenticationException.cs
 System.Security.Authentication/CipherAlgorithmType.cs
 System.Security.Authentication/ExchangeAlgorithmType.cs
 System.Security.Authentication/HashAlgorithmType.cs
-System.Security.Authentication/InvalidCredentialException.cs
 System.Security.Authentication/SslProtocols.cs
+System.Security.Authentication/InvalidCredentialException.cs
+System.Security.Authentication.ExtendedProtection/ChannelBinding.cs
+System.Security.Authentication.ExtendedProtection/ChannelBindingKind.cs
+System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicy.cs
+System.Security.Authentication.ExtendedProtection/ExtendedProtectionPolicyTypeConverter.cs
+System.Security.Authentication.ExtendedProtection/PolicyEnforcement.cs
+System.Security.Authentication.ExtendedProtection/ProtectionScenario.cs
+System.Security.Authentication.ExtendedProtection/ServiceNameCollection.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ConfigUtil.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtectionPolicyElement.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
+System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElementCollection.cs
 System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
 System.Security.Cryptography.X509Certificates/OpenFlags.cs
 System.Security.Cryptography.X509Certificates/PublicKey.cs

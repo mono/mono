@@ -149,6 +149,8 @@ System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
 System.Collections.Generic/SortedSet.cs
 System.Collections.Generic/Stack.cs
+System.Collections.Concurrent/BlockingCollection.cs
+System.Collections.Concurrent/ConcurrentBag.cs
 System.Collections.ObjectModel/ObservableCollection.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
 System.Collections.Specialized/BitVector32.cs
@@ -1047,8 +1049,6 @@ System.Runtime.InteropServices.ComTypes/STGMEDIUM.cs
 System.Runtime.InteropServices.ComTypes/TYMED.cs
 System/IUriData.cs
 System/UriData.cs
-System.Collections.Concurrent/BlockingCollection.cs
-System.Collections.Concurrent/ConcurrentBag.cs
 
 ../corlib/System.Threading.Tasks/CyclicDeque.cs
 ../corlib/System.Threading.Tasks/PopResult.cs
