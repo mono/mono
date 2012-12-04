@@ -37403,24 +37403,6 @@
       </method>
     </type>
   </test>
-  <test name="test-468.cs">
-    <type name="CorMetaDataDispenserExClass">
-      <method name="Void .ctor()" attrs="6278">
-        <size>0</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void XXX()" attrs="150">
-        <size>13</size>
-      </method>
-      <method name="Void Main()" attrs="150">
-        <size>2</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="test-469.cs">
     <type name="Del">
       <method name="Void Invoke(Int32)" attrs="454">
@@ -57697,6 +57679,24 @@
         <size>2</size>
       </method>
       <method name="Void Method3(UInt32)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-com-01.cs">
+    <type name="CorMetaDataDispenserExClass">
+      <method name="Void .ctor()" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void XXX()" attrs="150">
+        <size>13</size>
+      </method>
+      <method name="Void Main()" attrs="150">
         <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
