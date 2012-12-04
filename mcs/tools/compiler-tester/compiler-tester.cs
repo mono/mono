@@ -189,7 +189,7 @@ namespace TestRunner {
 				if (param.Length == 0)
 					return declaring + "." + mi.Name + " ()";
 
-				return declaring + "." + mi.Name + " (null)";
+				return declaring + "." + mi.Name + " (new string[0])";
 			}
 
 			public string GetTestFixture ()
