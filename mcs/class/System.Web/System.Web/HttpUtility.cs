@@ -552,10 +552,12 @@ namespace System.Web {
 			if (value == null)
 				return null;
 
+#if !MOBILE
 			IHtmlString htmlString = value as IHtmlString;
 			if (htmlString != null)
 				return htmlString.ToHtmlString ();
-			
+#endif
+
 			return HtmlEncode (value.ToString ());
 		}
 

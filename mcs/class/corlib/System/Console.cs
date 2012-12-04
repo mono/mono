@@ -217,26 +217,6 @@ namespace System
 			}
 		}
 
-#if NET_4_5
-		public static bool IsErrorRedirected {
-			get {
-				return stderr != console_stderr || ConsoleDriver.IsErrorRedirected;
-			}
-		}
-
-		public static bool IsOutputRedirected {
-			get {
-				return stdout != console_stdout || ConsoleDriver.IsOutputRedirected;
-			}
-		}
-
-		public static bool IsInputRedirected {
-			get {
-				return stdin != console_stdin || ConsoleDriver.IsInputRedirected;
-			}
-		}
-#endif
-
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
 #if MOONLIGHT
@@ -694,6 +674,26 @@ namespace System
 			get { return ConsoleDriver.WindowWidth; }
 			set { ConsoleDriver.WindowWidth = value; }
 		}
+
+#if NET_4_5
+		public static bool IsErrorRedirected {
+			get {
+				return stderr != console_stderr || ConsoleDriver.IsErrorRedirected;
+			}
+		}
+
+		public static bool IsOutputRedirected {
+			get {
+				return stdout != console_stdout || ConsoleDriver.IsOutputRedirected;
+			}
+		}
+
+		public static bool IsInputRedirected {
+			get {
+				return stdin != console_stdin || ConsoleDriver.IsInputRedirected;
+			}
+		}
+#endif
 
 		public static void Beep ()
 		{

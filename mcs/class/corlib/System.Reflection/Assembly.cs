@@ -889,7 +889,6 @@ namespace System.Reflection {
 				}
 			}
 		}
-#endif
 		
 #if NET_4_0
 		public virtual PermissionSet PermissionSet {
@@ -899,6 +898,8 @@ namespace System.Reflection {
 		public virtual SecurityRuleSet SecurityRuleSet {
 			get { throw CreateNIE (); }
 		}
+#endif
+
 #endif
 
 #if NET_4_0 || MOONLIGHT || MOBILE
