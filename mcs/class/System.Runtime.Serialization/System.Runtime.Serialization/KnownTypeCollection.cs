@@ -74,14 +74,16 @@ namespace System.Runtime.Serialization
 	  exists (and raises InvalidOperationException if required).
 
 */
+
 	internal static class TypeExtensions
 	{
+#if !NET_4_5
 		public static T GetCustomAttribute<T> (this MemberInfo type, bool inherit)
 		{
 			var arr = type.GetCustomAttributes (typeof (T), inherit);
 			return arr != null && arr.Length == 1 ? (T) arr [0] : default (T);
 		}
-
+#endif
 		public static IEnumerable<Type> GetInterfacesOrSelfInterface (this Type type)
 		{
 			if (type.IsInterface)
