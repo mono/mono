@@ -101,19 +101,30 @@ namespace System.Windows.Forms {
 		
 		#region AxHost.InvalidActiveXStateException  Class
 		public class InvalidActiveXStateException : Exception {
+			private string mName;
+			private ActiveXInvokeKind mKind;
+
 			public InvalidActiveXStateException ()
 			{
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+
 			}
 
 			public InvalidActiveXStateException (string name, ActiveXInvokeKind kind)
 			{
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				mName = name;
+				mKind = kind;
 			}
 
 			public override string ToString ()
 			{
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				if(mKind == ActiveXInvokeKind.MethodInvoke)
+					return "Invoke:" + mName;
+				else if(mKind == ActiveXInvokeKind.PropertyGet)
+					return "PropertyGet:" + mName;
+				else if(mKind == ActiveXInvokeKind.PropertySet)
+					return "PropertySet:" + mName;
+
+				return base.ToString();
 			}
 		}
 		#endregion	// AxHost.InvalidActiveXStateException  Class
