@@ -1753,6 +1753,8 @@ namespace System
 			// Check for value types which can be sorted without Compare () method
 			//
 			if (comparer == null) {
+				/* Avoid this when using full-aot to prevent the generation of many unused qsort<K,T> instantiations */
+#if FULL_AOT_RUNTIME
 #if !BOOTSTRAP_BASIC
 				switch (Type.GetTypeCode (typeof (TKey))) {
 				case TypeCode.Int32:
@@ -1795,6 +1797,7 @@ namespace System
 					qsort (keys as UInt64[], items, low, high);
 					return;
 				}
+#endif
 #endif
 				// Using Comparer<TKey> adds a small overload, but with value types it
 				// helps us to not box them.
@@ -2664,6 +2667,7 @@ namespace System
 			}
 		}
 
+		[MethodImpl ((MethodImplOptions)256)]
 		private static void swap<K, V> (K [] keys, V [] items, int i, int j)
 		{
 			K tmp;
@@ -2680,6 +2684,7 @@ namespace System
 			}
 		}
 
+		[MethodImpl ((MethodImplOptions)256)]
 		private static void swap<T> (T [] array, int i, int j)
 		{
 			T tmp = array [i];
