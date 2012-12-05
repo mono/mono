@@ -383,7 +383,7 @@ namespace System
 #endif
 #if MONODROID
 			var timeZoneInfo = ZoneInfoDB.GetTimeZone (id);
-			if (timeZoneInfo != null)
+			if (timeZoneInfo == null)
 				throw new TimeZoneNotFoundException ();
 			return timeZoneInfo;
 #else
