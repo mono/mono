@@ -138,18 +138,18 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		void IWsdlExportExtension.ExportEndpoint (WsdlExporter exporter,
 			WsdlEndpointConversionContext context)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter,
 			PolicyConversionContext context)
 		{
-			throw new NotImplementedException ();
+			PolicyAssertionCollection assertions = context.GetBindingAssertions ();
+			XmlDocument doc = new XmlDocument ();
+
+			assertions.Add (doc.CreateElement ("msb", "BinaryEncoding", "http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1"));
 		}
 #endif
 	}

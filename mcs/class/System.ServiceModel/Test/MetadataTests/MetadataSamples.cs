@@ -52,8 +52,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, new BasicHttpBinding (), new EndpointAddress (HttpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 
 		[MetadataSample]
@@ -69,8 +68,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 
 		[MetadataSample]
@@ -87,8 +85,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -104,8 +101,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -121,8 +117,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 
 		[MetadataSample]
@@ -138,8 +133,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 #if NET_4_5
@@ -153,8 +147,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, new BasicHttpsBinding (), new EndpointAddress (HttpsUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -171,8 +164,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpsUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -188,8 +180,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpsUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -204,8 +195,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (HttpsUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 #endif
 		
@@ -220,8 +210,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				cd, new NetTcpBinding (SecurityMode.None, false),
 				new EndpointAddress (NetTcpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -235,8 +224,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				cd, new NetTcpBinding (SecurityMode.Transport, false),
 				new EndpointAddress (NetTcpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -250,8 +238,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				cd, new NetTcpBinding (SecurityMode.Message, false),
 				new EndpointAddress (NetTcpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -265,8 +252,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				cd, new NetTcpBinding (SecurityMode.TransportWithMessageCredential, false),
 				new EndpointAddress (NetTcpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 
 		[MetadataSample]
@@ -281,8 +267,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (NetTcpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
 		
 		[MetadataSample]
@@ -298,9 +283,45 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			exporter.ExportEndpoint (new ServiceEndpoint (
 				cd, binding, new EndpointAddress (NetTcpUri)));
 			
-			var doc = exporter.GetGeneratedMetadata ();
-			return doc;
+			return exporter.GetGeneratedMetadata ();
 		}
+
+		[ServiceContract]
+		public interface IMyContract {
+			[OperationContract]
+			void Hello ();
+		}
+
+		[MetadataSample]
+		public static MetadataSet BasicHttp_Operation ()
+		{
+			var exporter = new WsdlExporter ();
+
+			var cd = ContractDescription.GetContract (typeof (IMyContract));
+
+			var binding = new BasicHttpBinding ();
+
+			exporter.ExportEndpoint (new ServiceEndpoint (
+				cd, binding, new EndpointAddress (HttpUri)));
+
+			return exporter.GetGeneratedMetadata ();
+		}
+
+		[MetadataSample]
+		public static MetadataSet NetTcp_Operation ()
+		{
+			var exporter = new WsdlExporter ();
+			
+			var cd = ContractDescription.GetContract (typeof (IMyContract));
+			
+			exporter.ExportEndpoint (new ServiceEndpoint (
+				cd, new NetTcpBinding (SecurityMode.None, false),
+				new EndpointAddress (NetTcpUri)));
+			
+			return exporter.GetGeneratedMetadata ();
+		}
+
+		#region Helper API
 
 		public static void Export ()
 		{
@@ -368,5 +389,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			}
 			
 		}
+
+		#endregion
 	}
 }

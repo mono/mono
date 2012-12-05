@@ -63,9 +63,7 @@ namespace System.ServiceModel.Description {
 		}
 
 		public override BindingElementCollection BindingElements {
-			get {
-				return binding_elements;
-			}
+			get { return binding_elements; }
 		}
 
 		#endregion
@@ -76,6 +74,13 @@ namespace System.ServiceModel.Description {
 			this.binding = binding;
 			assertions = new PolicyAssertionCollection ();
 			binding_elements = ((CustomBinding)endpoint.Binding).Elements;
+		}
+
+		public CustomPolicyConversionContext (ServiceEndpoint endpoint)
+			: base (endpoint)
+		{
+			assertions = new PolicyAssertionCollection ();
+			binding_elements = endpoint.Binding.CreateBindingElements ();
 		}
 
 		public void AddPolicyAssertion (XmlElement element)

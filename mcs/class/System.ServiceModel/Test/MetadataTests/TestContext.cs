@@ -39,17 +39,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 
 		public abstract MetadataSet GetMetadata (string name);
 
-		/*
-		 * Whether or not to check whether the `WS.Binding.Extensions'
-		 * contains the policy XmlElement.
-		 * 
-		 * We only check when importing from XML, not when generating
-		 * the MetadataSet programmatically.
-		 */
-		public abstract bool CheckPolicyXml {
-			get;
-		}
-
 		#endregion
 
 		#region Default Context
@@ -69,12 +58,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			{
 				return LoadMetadata (name);
 			}
-
-			public override bool CheckPolicyXml {
-				get {
-					return true;
-				}
-			}
 		}
 
 		class _CreateMetadataContext : TestContext {
@@ -82,26 +65,12 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			{
 				return MetadataSamples.GetMetadataByName (name);
 			}
-
-			public override bool CheckPolicyXml {
-				get {
-					// FIXME: Not supported yet.
-					return false;
-				}
-			}
 		}
 
 		class _RoundTripContext : TestContext {
 			public override MetadataSet GetMetadata (string name)
 			{
 				return RoundTrip (name);
-			}
-
-			public override bool CheckPolicyXml {
-				get {
-					// FIXME: Not supported yet.
-					return false;
-				}
 			}
 		}
 

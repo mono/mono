@@ -270,6 +270,24 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				Context, doc, SecurityMode.None, true,
 				TransferMode.Buffered, label);
 		}
+
+		[Test]
+		public virtual void BasicHttp_Operation ()
+		{
+			TestLabel label;
+			var doc = GetMetadata ("BasicHttp_Operation", out label);
+
+			BindingTestAssertions.TestOperation (doc, false, label);
+		}
+
+		[Test]
+		public virtual void NetTcp_Operation ()
+		{
+			TestLabel label;
+			var doc = GetMetadata ("NetTcp_Operation", out label);
+
+			BindingTestAssertions.TestOperation (doc, true, label);
+		}
 	}
 
 }
