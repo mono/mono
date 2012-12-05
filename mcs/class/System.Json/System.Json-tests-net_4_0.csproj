@@ -16,26 +16,22 @@
     <AssemblyName>System.Json_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;ASPNETMVC</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;ASPNETMVC</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
@@ -56,7 +52,7 @@
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
+        <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mscorlib.dll</HintPath>
     </Reference>
@@ -76,17 +72,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.Serialization.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Runtime.Serialization.dll</HintPath>
-    </Reference>
     <Reference Include="System.ServiceModel.Web.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>System.ServiceModel.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework" />
 
@@ -94,11 +82,6 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
-    <EmbeddedResource Include="System.Json.Properties.Resources.resources">
-       <LogicalName>System.Json.Properties.Resources.resources</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
-
+  
 </Project>
 

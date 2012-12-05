@@ -37,22 +37,6 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Json assembly
 
-[assembly: AssemblyTitle ("System.Json.dll")]
-[assembly: AssemblyDescription ("System.Json.dll")]
-[assembly: AssemblyDefaultAlias ("System.Json.dll")]
+[assembly: AssemblyDefaultAlias ("System.Json.Microsoft.dll")]
 
-[assembly: AssemblyCompany (Consts.MonoCompany)]
-[assembly: AssemblyProduct (Consts.MonoProduct)]
-[assembly: AssemblyCopyright (Consts.MonoCopyright)]
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-
-[assembly: NeutralResourcesLanguage ("en-US")]
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../winfx.pub")]
-
-[assembly: ComVisible (false)]
-
-[assembly: SecurityCritical]

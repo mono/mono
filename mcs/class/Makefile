@@ -115,7 +115,8 @@ net_2_0_dirs := \
 	System.Dynamic			\
 	Mono.CSharp			\
 	Moonlight.Build.Tasks		\
-	System.Net
+	System.Net				\
+	System.Json
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
@@ -233,8 +234,8 @@ net_4_0_dirs := \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data \
 	System.Data.Services.Client	\
-	System.Data.Services	\
-	System.Json
+	System.Data.Services \
+	System.Json.Microsoft
 	
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
