@@ -1,10 +1,12 @@
 //
 // ConnectionOrientedTransportBindingElement.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,12 +33,13 @@ using System.Net;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Xml;
+using WS = System.Web.Services.Description;
 
 namespace System.ServiceModel.Channels
 {
 	[MonoTODO]
 	public abstract class ConnectionOrientedTransportBindingElement
-		: TransportBindingElement, IPolicyExportExtension
+		: TransportBindingElement, IPolicyExportExtension, IWsdlExportExtension
 	{
 		int connection_buf_size = 0x2000, max_buf_size = 0x10000,
 			max_pending_conn = 10, max_pending_accepts = 1;
@@ -138,6 +141,37 @@ namespace System.ServiceModel.Channels
 			return base.GetProperty<T> (context);
 		}
 
+		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,
+		                                          WsdlContractConversionContext context)
+		{
+			;
+		}
+		
+		void IWsdlExportExtension.ExportEndpoint (WsdlExporter exporter,
+		                                          WsdlEndpointConversionContext context)
+		{
+			var soap_binding = new WS.Soap12Binding ();
+			soap_binding.Transport = "http://schemas.microsoft.com/soap/tcp";
+			soap_binding.Style = WS.SoapBindingStyle.Document;
+			context.WsdlBinding.Extensions.Add (soap_binding);
+
+			var address = context.Endpoint.Address;
+			var uri = address.Uri.AbsoluteUri;
+
+			var soap_address = new WS.Soap12AddressBinding ();
+			soap_address.Location = uri;
+			context.WsdlPort.Extensions.Add (soap_address);
+
+			var doc = new XmlDocument ();
+			var endpoint_ref = doc.CreateElement (
+				"EndpointReference", AddressingVersion.WSAddressing10.Namespace);
+			var endpoint_addr = doc.CreateElement (
+				"Address", AddressingVersion.WSAddressing10.Namespace);
+			endpoint_addr.InnerText = uri;
+			endpoint_ref.AppendChild (endpoint_addr);
+			context.WsdlPort.Extensions.Add (endpoint_ref);
+		}
+
 		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter, PolicyConversionContext context)
 		{
 			if (exporter == null)
@@ -148,8 +182,11 @@ namespace System.ServiceModel.Channels
 			PolicyAssertionCollection assertions = context.GetBindingAssertions ();
 			XmlDocument doc = new XmlDocument ();
 
-			assertions.Add (doc.CreateElement ("wsaw", "UsingAddressing", "http://www.w3.org/2006/05/addressing/wsdl"));
-			assertions.Add (doc.CreateElement ("msb", "BinaryEncoding", "http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1"));
+			var messageEncodingElement = ExportAddressingPolicy (context);
+			if (messageEncodingElement == null)
+				assertions.Add (doc.CreateElement (
+					"msb", "BinaryEncoding",
+					"http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1"));
 
 			if (transfer_mode == TransferMode.Streamed || transfer_mode == TransferMode.StreamedRequest ||
 				transfer_mode == TransferMode.StreamedResponse)

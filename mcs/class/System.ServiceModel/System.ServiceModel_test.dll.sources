@@ -207,3 +207,4 @@ MetadataTests/ImportTests_RoundTrip.cs
 MetadataTests/MetadataSamples.cs
 MetadataTests/TestContext.cs
 MetadataTests/TestLabel.cs
+MetadataTests/ExportTests.cs

@@ -42,6 +42,8 @@ namespace System.ServiceModel.Channels {
 		internal const string FramingPolicyNS = "http://schemas.microsoft.com/ws/2006/05/framing/policy";
 		internal const string NetBinaryEncodingNS = "http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1";
 
+		internal const string WSSecurityNS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+
 		internal static XmlElement GetTransportBindingPolicy (PolicyAssertionCollection collection)
 		{
 			return FindAndRemove (collection, "TransportBinding", SecurityPolicyNS);
@@ -218,6 +220,43 @@ namespace System.ServiceModel.Channels {
 			if (required && (element == null))
 				importer.AddWarning ("Did not find required policy element `{0}'", name);
 			return element;
+		}
+
+		internal static XmlElement WrapPolicy (XmlElement element)
+		{
+			var policy = element.OwnerDocument.CreateElement ("wsp", "Policy", PolicyNS);
+			policy.AppendChild (element);
+			return policy;
+		}
+
+		//
+		// Add a single element, wrapping it inside <wsp:Policy>
+		//
+		internal static void AddWrappedPolicyElement (XmlElement root, XmlElement element)
+		{
+			if (root.OwnerDocument != element.OwnerDocument)
+				element = (XmlElement)root.OwnerDocument.ImportNode (element, true);
+			if (!element.NamespaceURI.Equals (PolicyNS) || !element.LocalName.Equals ("Policy"))
+				element = WrapPolicy (element);
+			root.AppendChild (element);
+		}
+
+		//
+		// Add multiple elements, wrapping them inside a single <wsp:Policy>
+		//
+		internal static void AddWrappedPolicyElements (XmlElement root, params XmlElement[] elements)
+		{
+			var policy = root.OwnerDocument.CreateElement ("wsp", "Policy", PolicyNS);
+			root.AppendChild (policy);
+
+			foreach (var element in elements) {
+				XmlElement imported;
+				if (root.OwnerDocument != element.OwnerDocument)
+					imported = (XmlElement)root.OwnerDocument.ImportNode (element, true);
+				else
+					imported = element;
+				policy.AppendChild (element);
+			}
 		}
 	}
 }

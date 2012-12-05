@@ -159,18 +159,14 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		void IWsdlExportExtension.ExportEndpoint (WsdlExporter exporter,
 			WsdlEndpointConversionContext context)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter,
 			PolicyConversionContext context)
 		{
-			throw new NotImplementedException ();
 		}
 #endif
 	}

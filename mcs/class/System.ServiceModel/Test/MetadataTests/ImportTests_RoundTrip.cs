@@ -37,59 +37,11 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 	 * 
 	 */
 	[TestFixture]
-	//[Category ("NotWorking")]
 	public class ImportTests_RoundTrip : ImportTests {
 		
 		public override TestContext Context {
 			get { return TestContext.RoundTripContext; }
 		}
 
-		[Category ("NotWorking")]
-		public override void BasicHttp_Mtom ()
-		{
-			base.BasicHttp_Mtom ();
-		}
-		
-		[Category ("NotWorking")]
-		public override void BasicHttp_NtlmAuth ()
-		{
-			base.BasicHttp_NtlmAuth ();
-		}
-		
-		[Category ("NotWorking")]
-		public override void BasicHttp_TransportSecurity ()
-		{
-			base.BasicHttp_TransportSecurity ();
-		}
-		
-		[Category ("NotWorking")]
-		public override void BasicHttps ()
-		{
-			base.BasicHttps ();
-		}
-		
-		[Category ("NotWorking")]
-		public override void BasicHttps_NtlmAuth ()
-		{
-			base.BasicHttps_NtlmAuth ();
-		}
-		
-		[Category ("NotWorking")]
-		public override void NetTcp ()
-		{
-			base.NetTcp_Binding ();
-		}
-		
-		[Category ("NotWorking")]
-		public override void NetTcp_TransferMode ()
-		{
-			base.NetTcp_TransferMode ();
-		}
-		
-		[Category ("NotWorking")]
-		public override void NetTcp_TransportSecurity ()
-		{
-			base.NetTcp_TransportSecurity ();
-		}
 	}
 }
