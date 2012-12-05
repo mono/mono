@@ -514,6 +514,10 @@ libmonosgen_2_0_la_SOURCES = $(libmono_2_0_la_SOURCES)
 libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS)
 libmonosgen_2_0_la_LIBADD = $(sgen_libs) $(LIBMONO_DTRACE_OBJECT)
 
+if PLATFORM_ANDROID
+libmonosgen_2_0_la_LDFLAGS = -avoid-version
+endif
+
 if MOONLIGHT
 libmono_moon_la_SOURCES = $(libmono_2_0_la_SOURCES)
 if MOONLIGHT_BOEHM
