@@ -45,12 +45,12 @@ namespace Mono.Data.Tds.Protocol {
 		#region Constructors
 
 		public Tds80 (string server, int port)
-			: this (server, port, 512, 15)
+			: this (server, port, 512, 15, 0)
 		{
 		}
 
-		public Tds80 (string server, int port, int packetSize, int timeout)
-			: base (server, port, packetSize, timeout, Version)
+		public Tds80 (string server, int port, int packetSize, int timeout, int lifeTime)
+			: base (server, port, packetSize, timeout, lifeTime, Version)
 		{
 		}
 

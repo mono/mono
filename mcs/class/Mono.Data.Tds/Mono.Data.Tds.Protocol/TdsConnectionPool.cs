@@ -72,9 +72,9 @@ namespace Mono.Data.Tds.Protocol
 				case TdsVersion.tds50:
 					return new Tds50 (info.DataSource, info.Port, info.PacketSize, info.Timeout);
 				case TdsVersion.tds70:
-					return new Tds70 (info.DataSource, info.Port, info.PacketSize, info.Timeout);
+					return new Tds70 (info.DataSource, info.Port, info.PacketSize, info.Timeout, info.LifeTime);
 				case TdsVersion.tds80:
-					return new Tds80 (info.DataSource, info.Port, info.PacketSize, info.Timeout);
+					return new Tds80 (info.DataSource, info.Port, info.PacketSize, info.Timeout, info.LifeTime);
 			}
 			throw new NotSupportedException ();
 		}
@@ -87,7 +87,7 @@ namespace Mono.Data.Tds.Protocol
 	
 	public class TdsConnectionInfo
 	{
-		public TdsConnectionInfo (string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize)
+		public TdsConnectionInfo (string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize, int lifeTime)
 		{
 			DataSource = dataSource;
 			Port = port;
@@ -95,12 +95,14 @@ namespace Mono.Data.Tds.Protocol
 			Timeout = timeout;
 			PoolMinSize = minSize;
 			PoolMaxSize = maxSize;
+			LifeTime = lifeTime;
 		}
 		
 		public string DataSource;
 		public int Port;
 		public int PacketSize;
 		public int Timeout;
+		public int LifeTime;
 		public int PoolMinSize;
 		public int PoolMaxSize;
 
@@ -239,7 +241,7 @@ retry:
 				return;
 			}
 
-			if (connection.poolStatus == 2) {
+			if (connection.poolStatus == 2 || connection.Expired) {
 				lock (conns)
 					conns.Remove (connection);
 				connection.Disconnect ();

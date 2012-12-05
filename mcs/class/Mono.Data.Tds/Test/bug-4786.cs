@@ -73,7 +73,7 @@ namespace bug4786test
 	TdsConnectionInfo info=
 		new TdsConnectionInfo(SERVER/*dummyhost*/,1433/*port*/,
 		8192/*pktsize*/,15/*timeout*/,0/*minpoolsize*/,
-		100/*maxpoolsize*/);
+		100/*maxpoolsize*/, 0/*lifetime*/);
 	pool=sqlConnectionPools.GetConnectionPool("test",info);
 	Tds tds=null;
 
@@ -93,7 +93,7 @@ namespace bug4786test
 
 	info=new TdsConnectionInfo(SERVER/*dummyhost*/,1433/*port*/,
 		8192/*pktsize*/,15/*timeout*/,0/*minpoolsize*/,
-		100/*maxpoolsize*/);
+		100/*maxpoolsize*/, 0/*lifetime*/);
 
 	pool=sqlConnectionPools.GetConnectionPool("test",info);
 
