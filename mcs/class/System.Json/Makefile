@@ -13,6 +13,9 @@ LIB_MCS_FLAGS = /d:ASPNETMVC -keyfile:../winfx.pub -delaysign \
 		/r:System.Runtime.Serialization.dll \
 		/r:System.ServiceModel.Web.dll \
 		/resource:System.Json.Properties.Resources.resources
+		
+
+EXTRA_DISTFILES = System.Json/Properties/Resources.resx
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += /r:Microsoft.CSharp.dll -d:FEATURE_DYNAMIC
