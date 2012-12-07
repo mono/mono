@@ -121,6 +121,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				AuthenticationSchemes.Ntlm, label);
 		}
 
+#if NET_4_5
 		[Test]
 		public virtual void BasicHttps ()
 		{
@@ -170,6 +171,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				WSMessageEncoding.Text, HttpClientCredentialType.None,
 				AuthenticationSchemes.Anonymous, label);
 		}
+#endif
 		
 		[Test]
 		public virtual void NetTcp ()
