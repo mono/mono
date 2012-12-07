@@ -246,9 +246,21 @@ namespace System
 
 		}
 
-		public static DateTimeOffset ConvertTime (DateTimeOffset dateTimeOffset, TimeZoneInfo destinationTimeZone)
+		public static DateTimeOffset ConvertTime(DateTimeOffset dateTimeOffset, TimeZoneInfo destinationTimeZone) 
 		{
-			throw new NotImplementedException ();
+			if (destinationTimeZone == null) 
+				throw new ArgumentNullException("destinationTimeZone");
+		
+			var utcDateTime = dateTimeOffset.UtcDateTime;
+			AdjustmentRule rule = GetApplicableRule (utcDateTime);
+		
+			if (rule != null && destinationTimeZone.IsDaylightSavingTime(utcDateTime)) {
+				var offset = destinationTimeZone.BaseUtcOffset + rule.DaylightDelta;
+				return new DateTimeOffset(DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified) + offset, offset);
+			}
+			else {
+				return new DateTimeOffset(DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified) + destinationTimeZone.BaseUtcOffset, destinationTimeZone.BaseUtcOffset);
+			}
 		}
 
 		public static DateTime ConvertTimeBySystemTimeZoneId (DateTime dateTime, string destinationTimeZoneId)
