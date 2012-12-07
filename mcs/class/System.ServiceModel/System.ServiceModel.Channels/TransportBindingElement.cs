@@ -92,6 +92,7 @@ namespace System.ServiceModel.Channels
 			return context.GetInnerProperty<T> ();
 		}
 
+#if !NET_2_1
 		internal static XmlElement CreateTransportBinding (XmlElement transportToken)
 		{
 			var doc = new XmlDocument ();
@@ -154,5 +155,6 @@ namespace System.ServiceModel.Channels
 
 			return messageEncodingElement;
 		}
+#endif
 	}
 }
