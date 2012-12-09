@@ -1045,11 +1045,11 @@ program but will obviously use more memory.  The default nursery size
 .TP
 \fBmajor=\fIcollector\fR
 Specifies which major collector to use.  Options are `marksweep' for
-the Mark&Sweep collector, `marksweep-par' for parallel Mark&Sweep,
-`marksweep-fixed' for Mark&Sweep with a fixed heap,
-`marksweep-fixed-par' for parallel Mark&Sweep with a fixed heap and
-`copying' for the copying collector. The Mark&Sweep collector is the
-default.
+the Mark&Sweep collector, `marksweep-conc' for concurrent Mark&Sweep,
+`marksweep-par' for parallel Mark&Sweep, `marksweep-fixed' for
+Mark&Sweep with a fixed heap, `marksweep-fixed-par' for parallel
+Mark&Sweep with a fixed heap and `copying' for the copying
+collector. The Mark&Sweep collector is the default.
 .TP
 \fBmajor-heap-size=\fIsize\fR
 Sets the size of the major heap (not including the large object space)
