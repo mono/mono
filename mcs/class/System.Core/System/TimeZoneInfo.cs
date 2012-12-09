@@ -248,14 +248,11 @@ namespace System
 
 		public static DateTimeOffset ConvertTime(DateTimeOffset dateTimeOffset, TimeZoneInfo destinationTimeZone) 
 		{
-#if BOOTSTRAP_BASIC
-			throw new NotImplementedException ();
-#else
 			if (destinationTimeZone == null) 
 				throw new ArgumentNullException("destinationTimeZone");
 		
 			var utcDateTime = dateTimeOffset.UtcDateTime;
-			AdjustmentRule rule = GetApplicableRule (utcDateTime);
+			AdjustmentRule rule = destinationTimeZone.GetApplicableRule (utcDateTime);
 		
 			if (rule != null && destinationTimeZone.IsDaylightSavingTime(utcDateTime)) {
 				var offset = destinationTimeZone.BaseUtcOffset + rule.DaylightDelta;
@@ -264,7 +261,6 @@ namespace System
 			else {
 				return new DateTimeOffset(DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified) + destinationTimeZone.BaseUtcOffset, destinationTimeZone.BaseUtcOffset);
 			}
-#endif
 		}
 
 		public static DateTime ConvertTimeBySystemTimeZoneId (DateTime dateTime, string destinationTimeZoneId)
