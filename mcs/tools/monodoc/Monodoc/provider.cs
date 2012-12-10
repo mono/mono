@@ -916,14 +916,21 @@ public class RootTree : Tree {
 		string layout = Path.Combine (basedir, "monodoc.xml");
 		doc.Load (layout);
 
-		string osxExternalDir = "/Library/Frameworks/Mono.framework/External/monodoc";
-		string[] osxExternalSources = Directory.Exists (osxExternalDir)
-			? Directory.GetFiles (osxExternalDir, "*.source")
-			: new string[0];
+		string[] sourceDirs = new[]{
+			Path.Combine (basedir, "sources"),
+			"/Library/Frameworks/Mono.framework/External/monodoc",
+			Path.Combine (
+					Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
+					"monodoc"),
+		};
+		var sources = new List<string> ();
+		foreach (var dir in sourceDirs) {
+			if (!Directory.Exists (dir))
+				continue;
+			sources.AddRange (Directory.GetFiles (dir, "*.source"));
+		}
 
-		return LoadTree (basedir, doc, 
-				Directory.GetFiles (Path.Combine (basedir, "sources"), "*.source")
-				.Concat (osxExternalSources));
+		return LoadTree (basedir, doc, sources);
 	}
 
 	// Compatibility shim w/ Mono 2.6
