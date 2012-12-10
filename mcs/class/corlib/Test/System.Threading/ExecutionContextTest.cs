@@ -47,11 +47,10 @@ namespace MonoTests.System.Threading {
 			success = (bool)o;
 		}
 
-		public class CallContextValue : ILogicalThreadAffinative
-		{
+		public class CallContextValue : ILogicalThreadAffinative {
 			public object Value { get; set; }
 
-			public CallContextValue(object value)
+			public CallContextValue (object value)
 			{
 				this.Value = value;
 			}
@@ -73,22 +72,22 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void CaptureCallContext ()
 		{
-			var value = new CallContextValue(true);
+			var value = new CallContextValue (true);
 			object capturedValue = null;
 
-			CallContext.SetData("testlc", value);
+			CallContext.SetData ("testlc", value);
 
 			ExecutionContext ec = ExecutionContext.Capture ();
 			Assert.IsNotNull (ec, "Capture");
-			Assert.AreEqual(value, CallContext.GetData("testlc")); 
-			CallContext.SetData("testlc", null);
+			Assert.AreEqual (value, CallContext.GetData ("testlc")); 
+			CallContext.SetData ("testlc", null);
 
-			ExecutionContext.Run(ec, new ContextCallback(new Action<object>((data) => {
-				capturedValue = CallContext.GetData("testlc");
+			ExecutionContext.Run (ec, new ContextCallback (new Action<object> ((data) => {
+				capturedValue = CallContext.GetData ("testlc");
 			})), null);
 
-			Assert.AreEqual(value, capturedValue); 
-			Assert.AreNotEqual(value, CallContext.GetData("testlc"));
+			Assert.AreEqual (value, capturedValue); 
+			Assert.AreNotEqual (value, CallContext.GetData ("testlc"));
 		}
 
 		[Test]

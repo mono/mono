@@ -170,16 +170,12 @@ namespace System.Threading {
 
 			// FIXME: supporting more than one context should be done with executionContextSwitcher
 			// and will requires a rewrite of this method
-			var callContextCallBack = new ContextCallback (new Action<object> ((ostate) =>
-			{
+			var callContextCallBack = new ContextCallback (new Action<object> ((ostate) => {
 				var originalCallContext = CallContext.CreateLogicalCallContext (true);
-				try
-				{
+				try {
 					CallContext.SetCurrentCallContext (executionContext.LogicalCallContext);
 					callback (ostate);
-				}
-				finally
-				{
+				} finally {
 					CallContext.SetCurrentCallContext (originalCallContext);
 				}
 			}));
