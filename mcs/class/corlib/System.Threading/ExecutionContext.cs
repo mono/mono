@@ -69,7 +69,7 @@ namespace System.Threading {
 
 		public static ExecutionContext Capture ()
 		{
-			return Capture(true);
+			return Capture (true);
 		}
 		
 		internal static ExecutionContext Capture (bool captureSyncContext)
@@ -83,7 +83,7 @@ namespace System.Threading {
 			if (SecurityManager.SecurityEnabled)
 				capture.SecurityContext = SecurityContext.Capture ();
 #endif
-			capture.LogicalCallContext = CallContext.CreateLogicalCallContext(false);
+			capture.LogicalCallContext = CallContext.CreateLogicalCallContext (false);
 			return capture;
 		}
 		
@@ -117,7 +117,7 @@ namespace System.Threading {
 		internal LogicalCallContext LogicalCallContext {
 			get {
 				if (_lcc == null)
-					return new System.Runtime.Remoting.Messaging.LogicalCallContext();
+					return new LogicalCallContext ();
 				return _lcc;
 			}
 			set {
@@ -170,17 +170,17 @@ namespace System.Threading {
 
 			// FIXME: supporting more than one context should be done with executionContextSwitcher
 			// and will requires a rewrite of this method
-			var callContextCallBack = new ContextCallback(new Action<object>((ostate) =>
+			var callContextCallBack = new ContextCallback (new Action<object> ((ostate) =>
 			{
-				var originalCallContext = CallContext.CreateLogicalCallContext(true);
+				var originalCallContext = CallContext.CreateLogicalCallContext (true);
 				try
 				{
-					CallContext.SetCurrentCallContext(executionContext.LogicalCallContext);
-					callback(ostate);
+					CallContext.SetCurrentCallContext (executionContext.LogicalCallContext);
+					callback (ostate);
 				}
 				finally
 				{
-					CallContext.SetCurrentCallContext(originalCallContext);
+					CallContext.SetCurrentCallContext (originalCallContext);
 				}
 			}));
 			SecurityContext.Run (executionContext.SecurityContext, callContextCallBack, state);
