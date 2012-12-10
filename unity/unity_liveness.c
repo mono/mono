@@ -224,8 +224,15 @@ static void mono_traverse_object_internal (MonoObject* object, MonoClass* klass,
 			if (MONO_TYPE_ISSTRUCT(field->type))
 			{
 				char* offseted = (char*)object;
-				offseted += field->offset;
-				mono_traverse_object_internal((MonoObject*)offseted, field->type->data.klass, state);
+				// subtract the added offset for the vtable. This is added to the offset even though it is a struct
+				offseted += field->offset - sizeof (MonoObject);
+				if (field->type->type == MONO_TYPE_GENERICINST)
+				{
+					g_assert(field->type->data.generic_class->cached_class);
+					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.generic_class->cached_class, state);
+				}
+				else
+					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.klass, state);
 				continue;
 			}
 
@@ -326,7 +333,15 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(LivenessState* liveness_
 			{
 				char* offseted = (char*)mono_class_vtable (domain, klass)->data;
 				offseted += field->offset;
-				mono_traverse_object_internal((MonoObject*)offseted, field->type->data.klass, liveness_state);
+				if (field->type->type == MONO_TYPE_GENERICINST)
+				{
+					g_assert(field->type->data.generic_class->cached_class);
+					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.generic_class->cached_class, liveness_state);
+				}
+				else
+				{
+					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.klass, liveness_state);
+				}
 				continue;
 			}
 
