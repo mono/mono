@@ -34,6 +34,12 @@ namespace MonkeyDoc
 			get; set;
 		}
 
+		public SearchableDocument Reset ()
+		{
+			Title = Url = FullTitle = HotText = Text = Examples = null;
+			return this;
+		}
+
 		public Document LuceneDoc {
 			get {
 				Document doc = new Document ();

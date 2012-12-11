@@ -773,6 +773,8 @@ namespace MonkeyDoc.Providers
 		public override void PopulateSearchableIndex (IndexWriter writer)
 		{
 			StringBuilder text = new StringBuilder ();
+			SearchableDocument searchDoc = new SearchableDocument ();
+
 			foreach (Node ns_node in Tree.RootNode.Nodes) {
 				foreach (Node type_node in ns_node.Nodes) {
 					string typename = type_node.Caption.Substring (0, type_node.Caption.IndexOf (' '));
@@ -784,12 +786,17 @@ namespace MonkeyDoc.Providers
 					var xdoc = XDocument.Load (GetHelpStream (id));
 					if (xdoc == null)
 						continue;
+					if (string.IsNullOrEmpty (doc_tag)) {
+						Console.WriteLine (type_node.Caption);
+						continue;
+					}	
 
 					// For classes, structures or interfaces add a doc for the overview and
 					// add a doc for every constructor, method, event, ...
-					if (doc_tag == "Class" || doc_tag == "Structure" || doc_tag == "Interface") {
+					// doc_tag == "Class" || doc_tag == "Structure" || doc_tag == "Interface"
+					if (doc_tag[0] == 'C' || doc_tag[0] == 'S' || doc_tag[0] == 'I') {
 						// Adds a doc for every overview of every type
-						SearchableDocument doc = new SearchableDocument ();
+						SearchableDocument doc = searchDoc.Reset ();
 						doc.Title = type_node.Caption;
 						doc.HotText = typename;
 						doc.Url = url;
@@ -805,7 +812,7 @@ namespace MonkeyDoc.Providers
 						doc.Examples = text.ToString ();
 
 						writer.AddDocument (doc.LuceneDoc);
-						var exportParsable = doc_tag == "Class" && (ns_node.Caption.StartsWith ("MonoTouch") || ns_node.Caption.StartsWith ("MonoMac"));
+						var exportParsable = doc_tag[0] == 'C' && (ns_node.Caption.StartsWith ("MonoTouch") || ns_node.Caption.StartsWith ("MonoMac"));
 
 						//Add docs for contructors, methods, etc.
 						foreach (Node c in type_node.Nodes) { // c = Constructors || Fields || Events || Properties || Methods || Operators
@@ -827,12 +834,11 @@ namespace MonkeyDoc.Providers
 							}
 
 							foreach (Node nc in ncnodes) {
-								Console.WriteLine ("\t" + nc.Caption);
 								var docsNode = GetDocsFromCaption (xdoc, c.Caption[0] == 'C' ? ".ctor" : nc.Caption, c.Caption[0] == 'O');
 
-								SearchableDocument doc_nod = new SearchableDocument ();
+								SearchableDocument doc_nod = searchDoc.Reset ();
 								doc_nod.Title = LargeName (nc) + " " + EtcKindToCaption (c.Caption[0]);
-								doc_nod.FullTitle = string.Format ("{0}.{1}::{2}", ns_node.Caption, typename, nc.Caption);
+								doc_nod.FullTitle = ns_node.Caption + '.' + typename + "::" + nc.Caption;
 								doc_nod.HotText = string.Empty;
 
 								/* Disable constructors hottext indexing as it's often "polluting" search queries
@@ -894,7 +900,8 @@ namespace MonkeyDoc.Providers
 								}*/
 							}
 						}
-					} else if (doc_tag == "Enumeration"){
+					// doc_tag == "Enumeration"
+					} else if (doc_tag[0] == 'E'){
 						var members = xdoc.Root.Element ("Members").Elements ("Member");
 						if (members == null)
 							continue;
@@ -908,7 +915,7 @@ namespace MonkeyDoc.Providers
 							text.AppendLine ();
 						}
 
-						SearchableDocument doc = new SearchableDocument ();
+						SearchableDocument doc = searchDoc.Reset ();
 
 						text.Clear ();
 						GetExamples (xdoc.Root.Element ("Docs"), text);
@@ -920,8 +927,9 @@ namespace MonkeyDoc.Providers
 						doc.Url = url;
 						doc.Text = text.ToString();
 						writer.AddDocument (doc.LuceneDoc);
-					} else if (doc_tag == "Delegate"){
-						SearchableDocument doc = new SearchableDocument ();
+					// doc_tag == "Delegate"
+					} else if (doc_tag[0] == 'D'){
+						SearchableDocument doc = searchDoc.Reset ();
 						doc.Title = type_node.Caption;
 						doc.HotText = (string)xdoc.Root.Attribute ("Name");
 						doc.FullTitle = full;
@@ -958,7 +966,8 @@ namespace MonkeyDoc.Providers
 			sb.AppendLine (n.Value);
 			foreach (var tag in n.Descendants ())
 				//include the url to which points the see tag and the name of the parameter
-				if ((tag.Name == "see" || tag.Name == "paramref") && tag.HasAttributes)
+				if ((tag.Name.LocalName.Equals ("see", StringComparison.Ordinal) || tag.Name.LocalName.Equals ("paramref", StringComparison.Ordinal))
+				    && tag.HasAttributes)
 					sb.AppendLine ((string)tag.Attributes ().First ());
 		}
 
@@ -992,19 +1001,19 @@ namespace MonkeyDoc.Providers
 				if (caption.IndexOf (" to ") != -1) {
 					var convArgs = caption.Split (new[] { " to " }, StringSplitOptions.None);
 					return doc
-						.First (n => (((string)n.Attribute ("MemberName")) == "op_Explicit" || ((string)n.Attribute ("MemberName")) == "op_Implicit")
-						        && ((string)n.Element ("ReturnValue").Element ("ReturnType")) == convArgs[1]
-						        && ((string)n.Element ("Parameters").Element ("Parameter").Attribute ("Type")) == convArgs[0])
+						.First (n => (AttrEq (n, "MemberName", "op_Explicit") || AttrEq (n, "MemberName", "op_Implicit"))
+						        && ((string)n.Element ("ReturnValue").Element ("ReturnType")).Equals (convArgs[1], StringComparison.Ordinal)
+						        && AttrEq (n.Element ("Parameters").Element ("Parameter"), "Type", convArgs[0]))
 						.Element ("Docs");
 				} else {
-					return doc.First (m => ((string)m.Attribute ("MemberName")) == "op_" + caption).Element ("Docs");
+					return doc.First (m => AttrEq (m, "MemberName", "op_" + caption)).Element ("Docs");
 				}
 			}
 
 			TryParseCaption (caption, out name, out args);
 
 			if (!string.IsNullOrEmpty (name)) // Filter member by name
-				doc = doc.Where (m => ((string)m.Attribute ("MemberName")) == name);
+				doc = doc.Where (m => AttrEq (m, "MemberName", name));
 			if (args != null && args.Count > 0) // Filter member by its argument list
 				doc = doc.Where (m => m.Element ("Parameters").Elements ("Parameter").Attributes ("Type").Select (a => (string)a).SequenceEqual (args));
 
@@ -1064,6 +1073,11 @@ namespace MonkeyDoc.Providers
 				return;
 
 			argList = ExtractArguments (rawArgList).Select (arg => arg.Trim ()).ToList ();
+		}
+
+		bool AttrEq (XElement element, string attributeName, string expectedValue)
+		{
+			return ((string)element.Attribute (attributeName)).Equals (expectedValue, StringComparison.Ordinal);
 		}
 	}
 }
