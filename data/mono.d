@@ -19,6 +19,16 @@ provider mono {
 	probe gc__begin (int generation);
 	probe gc__end (int generation);
 
+	probe gc__checkpoint__1 (int generation);
+	probe gc__checkpoint__2 (int generation);
+	probe gc__checkpoint__3 (int generation);
+	probe gc__checkpoint__4 (int generation);
+	probe gc__checkpoint__5 (int generation);
+	probe gc__checkpoint__6 (int generation);
+	probe gc__checkpoint__7 (int generation);
+	probe gc__checkpoint__8 (int generation);
+	probe gc__checkpoint__9 (int generation);
+
 	probe gc__concurrent__start__begin (int generation);
 	probe gc__concurrent__start__end (int generation, long long num_major_objects_marked);
 	probe gc__concurrent__update__finish__begin (int generation, long long num_major_objects_marked);
@@ -59,6 +69,8 @@ provider mono {
 	probe gc__finalize__invoke (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
 
 	probe gc__weak__update (uintptr_t ref_addr, uintptr_t old_addr, uintptr_t new_addr, uintptr_t size, char *ns_name, char *class_name, int track);
+
+	probe gc__global__remset__add (uintptr_t ref_addr, uintptr_t obj_addr, uintptr_t size, char *ns_name, char *class_name);
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
