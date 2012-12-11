@@ -132,9 +132,9 @@ namespace MonkeyDoc
 				throw new ArgumentNullException ("id");
 			if (!cache.CanCache (DocEntity.Text))
 				return GetHelpStream (id);
-			if (!cache.IsCached (id))
-				cache.CacheText (id, GetHelpStream (id));
-			return cache.GetCachedStream (id);
+			if (!cache.IsCached (Name + id))
+				cache.CacheText (Name + id, GetHelpStream (id));
+			return cache.GetCachedStream (Name + id);
 		}
 
 		public XmlReader GetHelpXml (string id)
