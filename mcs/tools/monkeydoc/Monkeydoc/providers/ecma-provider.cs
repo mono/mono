@@ -535,19 +535,28 @@ namespace MonkeyDoc.Providers
 				id = node.GetInternalUrl ();
 			}
 
+			string hash;
+			id = GetInternalIdForInternalUrl (id, out hash);
+
+			return id + GetArgs (hash, node);
+		}
+
+		public string GetInternalIdForInternalUrl (string internalUrl, out string hash)
+		{
+			var id = internalUrl;
 			if (id.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase))
 				id = id.Substring (UriPrefix.Length);
 			else if (id.StartsWith ("N:", StringComparison.OrdinalIgnoreCase))
 				id = "xml.summary." + id.Substring ("N:".Length);
 
 			var hashIndex = id.IndexOf ('#');
-			var hash = string.Empty;
+			hash = string.Empty;
 			if (hashIndex != -1) {
 				hash = id.Substring (hashIndex + 1);
 				id = id.Substring (0, hashIndex);
 			}
 
-			return id + GetArgs (hash, node);
+			return id;
 		}
 
 		public override Node MatchNode (string url)
