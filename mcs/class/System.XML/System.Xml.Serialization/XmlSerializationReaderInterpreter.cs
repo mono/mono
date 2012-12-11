@@ -329,12 +329,12 @@ namespace System.Xml.Serialization
 			object[] flatLists = null;
 			object[] flatListsChoices = null;
 			Fixup fixup = null;
-			int ind = -1;
+			int ind = 0;
 			int maxInd;
 
 			if (readBySoapOrder) {
 				if (map.ElementMembers != null) maxInd = map.ElementMembers.Count;
-				else maxInd = -1;
+				else maxInd = 0;
 			}
 			else
 				maxInd = int.MaxValue;
@@ -373,15 +373,14 @@ namespace System.Xml.Serialization
 				AddFixup (fixup);
 			}
 
-			XmlTypeMapMember previousMember = null;
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd - 1))
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd)) 
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
 					XmlTypeMapElementInfo info;
 					
 					if (readBySoapOrder) {
-						info = map.GetElement (Reader.LocalName, Reader.NamespaceURI);
+						info = map.GetElement (ind++);
 					}
 					else if (hasAnyReturnMember) {
 						info = (XmlTypeMapElementInfo) ((XmlTypeMapMemberElement)map.ReturnMember).ElementInfo[0];
@@ -389,7 +388,9 @@ namespace System.Xml.Serialization
 					}
 					else {
 						if (map.IsOrderDependentMap) {
-							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI);
+							while ((info = map.GetElement (ind++)) != null)
+								if (info.ElementName == Reader.LocalName && info.Namespace == Reader.NamespaceURI)
+									break;
 						}
 						else
 							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, -1);
@@ -397,16 +398,6 @@ namespace System.Xml.Serialization
 
 					if (info != null && !readFlag[info.Member.Index] )
 					{
-						if (info.Member != previousMember)
-						{
-							ind++;
-							previousMember = info.Member;
-						}
-
-						if (readBySoapOrder && info.ExplicitOrder != ind)
-							throw new InvalidOperationException(string.Format("Element '{0}' has wrong order in sequence (expected - {1}, actual - {2}", Reader.LocalName, info.ExplicitOrder, ind));
-
-
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))
 						{
 							if (_format == SerializationFormat.Encoded && info.MultiReferenceType)
