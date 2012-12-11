@@ -150,11 +150,11 @@ namespace MonkeyDoc.Providers
 
 			//Write to the Lucene Index all the parts
 			SearchableDocument doc = new SearchableDocument ();
-			doc.title = title;
-			doc.hottext = title.Substring (title.IndexOf (':')); 
-			doc.url = url;
-			doc.text = text;
-			doc.examples = examples;
+			doc.Title = title;
+			doc.HotText = title.Substring (title.IndexOf (':')); 
+			doc.Url = url;
+			doc.Text = text;
+			doc.Examples = examples;
 			writer.AddDocument (doc.LuceneDoc);
 		
 			if (node.IsLeaf)

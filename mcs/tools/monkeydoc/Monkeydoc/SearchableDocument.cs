@@ -10,22 +10,39 @@ namespace MonkeyDoc
 {
 	struct SearchableDocument
 	{
-		public string title;
-		public string url;
-		public string fulltitle;
-		public string hottext;
-		public string text;
-		public string examples;
+		public string Title {
+			get; set;
+		}
+
+		public string Url {
+			get; set;
+		}
+
+		public string FullTitle {
+			get; set;
+		}
+
+		public string HotText {
+			get; set;
+		}
+
+		public string Text {
+			get; set;
+		}
+
+		public string Examples {
+			get; set;
+		}
 
 		public Document LuceneDoc {
 			get {
 				Document doc = new Document ();
-				doc.Add (UnIndexed ("title", title));
-				doc.Add (UnIndexed ("url", url));
-				doc.Add (UnIndexed ("fulltitle", fulltitle ?? string.Empty));
-				doc.Add (UnStored ("hottext", hottext));
-				doc.Add (UnStored ("text", text));
-				doc.Add (UnStored ("examples", examples));
+				doc.Add (UnIndexed ("title", Title));
+				doc.Add (UnIndexed ("url", Url));
+				doc.Add (UnIndexed ("fulltitle", FullTitle ?? string.Empty));
+				doc.Add (UnStored ("hottext", HotText));
+				doc.Add (UnStored ("text", Text));
+				doc.Add (UnStored ("examples", Examples));
 				return doc;
 			}
 		}

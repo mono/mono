@@ -189,11 +189,11 @@ namespace MonkeyDoc.Providers
 				XmlSerializer reader = new XmlSerializer (typeof (ErrorDocumentation));
 				ErrorDocumentation d = (ErrorDocumentation)reader.Deserialize (GetHelpStream (n.Element.Substring (6)));
 				SearchableDocument doc = new SearchableDocument ();
-				doc.title = d.ErrorName;
-				doc.url = n.Element;
-				doc.text = d.Details != null ? d.Details.ToString () : string.Empty;
-				doc.examples = d.Examples.Cast<string> ().Aggregate ((e1, e2) => e1 + Environment.NewLine + e2);
-				doc.hottext = d.ErrorName;
+				doc.Title = d.ErrorName;
+				doc.Url = n.Element;
+				doc.Text = d.Details != null ? d.Details.ToString () : string.Empty;
+				doc.Examples = d.Examples.Cast<string> ().Aggregate ((e1, e2) => e1 + Environment.NewLine + e2);
+				doc.HotText = d.ErrorName;
 				writer.AddDocument (doc.LuceneDoc);
 			}
 		}
