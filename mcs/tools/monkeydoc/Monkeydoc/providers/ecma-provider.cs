@@ -769,5 +769,301 @@ namespace MonkeyDoc.Providers
 
 			return "?" + string.Join ("&", args.Select (kvp => kvp.Key == kvp.Value ? kvp.Key : kvp.Key + '=' + kvp.Value));
 		}
+
+		public override void PopulateSearchableIndex (IndexWriter writer)
+		{
+			StringBuilder text = new StringBuilder ();
+			foreach (Node ns_node in Tree.RootNode.Nodes) {
+				foreach (Node type_node in ns_node.Nodes) {
+					string typename = type_node.Caption.Substring (0, type_node.Caption.IndexOf (' '));
+					string full = ns_node.Caption + "." + typename;
+					string doc_tag = GetKindFromCaption (type_node.Caption);
+					string url = "T:" + full;
+					string rest, hash;
+					var id = GetInternalIdForInternalUrl (type_node.GetInternalUrl (), out hash);
+					var xdoc = XDocument.Load (GetHelpStream (id));
+					if (xdoc == null)
+						continue;
+
+					// For classes, structures or interfaces add a doc for the overview and
+					// add a doc for every constructor, method, event, ...
+					if (doc_tag == "Class" || doc_tag == "Structure" || doc_tag == "Interface") {
+						// Adds a doc for every overview of every type
+						SearchableDocument doc = new SearchableDocument ();
+						doc.Title = type_node.Caption;
+						doc.HotText = typename;
+						doc.Url = url;
+						doc.FullTitle = full;
+
+						var node_sel = xdoc.Root.Element ("Docs");
+						text.Clear ();
+						GetTextFromNode (node_sel, text);
+						doc.Text = text.ToString ();
+
+						text.Clear ();
+						GetExamples (node_sel, text);
+						doc.Examples = text.ToString ();
+
+						writer.AddDocument (doc.LuceneDoc);
+						var exportParsable = doc_tag == "Class" && (ns_node.Caption.StartsWith ("MonoTouch") || ns_node.Caption.StartsWith ("MonoMac"));
+
+						//Add docs for contructors, methods, etc.
+						foreach (Node c in type_node.Nodes) { // c = Constructors || Fields || Events || Properties || Methods || Operators
+							if (c.Element == "*")
+								continue;
+							const float innerTypeBoost = 0.2f;
+
+							IEnumerable<Node> ncnodes = c.Nodes;
+							// The rationale is that we need to properly handle method overloads
+							// so for those method node which have children, flatten them
+							if (c.Caption == "Methods") {
+								ncnodes = ncnodes
+									.Where (n => n.Nodes == null || n.Nodes.Count == 0)
+									.Concat (ncnodes.Where (n => n.Nodes.Count > 0).SelectMany (n => n.Nodes));
+							} else if (c.Caption == "Operators") {
+								ncnodes = ncnodes
+									.Where (n => !n.Caption.EndsWith ("Conversion"))
+									.Concat (ncnodes.Where (n => n.Caption.EndsWith ("Conversion")).SelectMany (n => n.Nodes));
+							}
+
+							foreach (Node nc in ncnodes) {
+								Console.WriteLine ("\t" + nc.Caption);
+								var docsNode = GetDocsFromCaption (xdoc, c.Caption[0] == 'C' ? ".ctor" : nc.Caption, c.Caption[0] == 'O');
+
+								SearchableDocument doc_nod = new SearchableDocument ();
+								doc_nod.Title = LargeName (nc) + " " + EtcKindToCaption (c.Caption[0]);
+								doc_nod.FullTitle = string.Format ("{0}.{1}::{2}", ns_node.Caption, typename, nc.Caption);
+								doc_nod.HotText = string.Empty;
+
+								/* Disable constructors hottext indexing as it's often "polluting" search queries
+								   because it has the same hottext than standard types */
+								if (c.Caption != "Constructors") {
+									//dont add the parameters to the hottext
+									int ppos = nc.Caption.IndexOf ('(');
+									doc_nod.HotText = ppos != -1 ? nc.Caption.Substring (0, ppos) : nc.Caption;
+								}
+
+								var urlnc = nc.PublicUrl;
+								doc_nod.Url = urlnc;
+
+								if (docsNode == null) {
+									Console.Error.WriteLine ("Problem: {0}", urlnc);
+									continue;
+								}
+
+								text.Clear ();
+								GetTextFromNode (docsNode, text);
+								doc_nod.Text = text.ToString ();
+
+								text.Clear ();
+								GetExamples (docsNode, text);
+								doc_nod.Examples = text.ToString ();
+
+								Document lucene_doc = doc_nod.LuceneDoc;
+								lucene_doc.Boost = innerTypeBoost;
+								writer.AddDocument (lucene_doc);
+
+								// MonoTouch/Monomac specific parsing of [Export] attributes
+								/*if (exportParsable) {
+									try {
+										var exports =
+											xdoc.SelectNodes (string.Format ("/Type/Members/Member[@MemberName='{0}']/Attributes/Attribute/AttributeName[contains(text(), 'Foundation.Export')]", nc.Caption));
+										foreach (XmlNode exportNode in exports) {
+											var inner = exportNode.InnerText;
+											var parts = inner.Split ('"');
+											if (parts.Length != 3) {
+												Console.WriteLine ("Export attribute not found or not usable in {0}", inner);
+												continue;
+											}
+
+											var export = parts[1];
+											var export_node = new SearchableDocument ();
+											export_node.Title = export + " Export";
+											export_node.FullTitle = string.Format ("{0}.{1}::{2}", ns_node.Caption, typename, export);
+											export_node.Url = urlnc;
+											export_node.HotText = export + ":";
+											export_node.Text = string.Empty;
+											export_node.Examples = string.Empty;
+											lucene_doc = export_node.LuceneDoc;
+											lucene_doc.SetBoost (innerTypeBoost);
+											writer.AddDocument (lucene_doc);
+										}
+									} catch (Exception e){
+										Console.WriteLine ("Problem processing {0} for MonoTouch/MonoMac exports\n\n{0}", e);
+									}
+								}*/
+							}
+						}
+					} else if (doc_tag == "Enumeration"){
+						var members = xdoc.Root.Element ("Members").Elements ("Member");
+						if (members == null)
+							continue;
+
+						text.Clear ();
+						foreach (var member_node in members) {
+							string enum_value = (string)member_node.Attribute ("MemberName");
+							text.Append (enum_value);
+							text.Append (" ");
+							GetTextFromNode (member_node.Element ("Docs"), text);
+							text.AppendLine ();
+						}
+
+						SearchableDocument doc = new SearchableDocument ();
+
+						text.Clear ();
+						GetExamples (xdoc.Root.Element ("Docs"), text);
+						doc.Examples = text.ToString ();
+
+						doc.Title = type_node.Caption;
+						doc.HotText = (string)xdoc.Root.Attribute ("Name");
+						doc.FullTitle = full;
+						doc.Url = url;
+						doc.Text = text.ToString();
+						writer.AddDocument (doc.LuceneDoc);
+					} else if (doc_tag == "Delegate"){
+						SearchableDocument doc = new SearchableDocument ();
+						doc.Title = type_node.Caption;
+						doc.HotText = (string)xdoc.Root.Attribute ("Name");
+						doc.FullTitle = full;
+						doc.Url = url;
+
+						var node_sel = xdoc.Root.Element ("Docs");
+
+						text.Clear ();
+						GetTextFromNode (node_sel, text);
+						doc.Text = text.ToString();
+
+						text.Clear ();
+						GetExamples (node_sel, text);
+						doc.Examples = text.ToString();
+
+						writer.AddDocument (doc.LuceneDoc);
+					}
+				}
+			}
+		}
+
+		string GetKindFromCaption (string s)
+		{
+			int p = s.LastIndexOf (' ');
+			if (p > 0)
+				return s.Substring (p + 1);
+			return null;
+		}
+
+		// Extract the interesting text from the docs node
+		void GetTextFromNode (XElement n, StringBuilder sb)
+		{
+			// Include the text content of the docs
+			sb.AppendLine (n.Value);
+			foreach (var tag in n.Descendants ())
+				//include the url to which points the see tag and the name of the parameter
+				if ((tag.Name == "see" || tag.Name == "paramref") && tag.HasAttributes)
+					sb.AppendLine ((string)tag.Attributes ().First ());
+		}
+
+		// Extract the code nodes from the docs
+		void GetExamples (XElement n, StringBuilder sb)
+		{
+			foreach (var code in n.Descendants ("code"))
+				sb.Append ((string)code);
+		}
+
+		// Extract a large name for the Node
+		static string LargeName (Node matched_node)
+		{
+			string[] parts = matched_node.GetInternalUrl ().Split('/', '#');
+			if (parts.Length == 3 && parts[2] != String.Empty) //List of Members, properties, events, ...
+				return parts[1] + ": " + matched_node.Caption;
+			else if(parts.Length >= 4) //Showing a concrete Member, property, ...
+				return parts[1] + "." + matched_node.Caption;
+			else
+				return matched_node.Caption;
+		}
+
+		XElement GetDocsFromCaption (XDocument xdoc, string caption, bool isOperator)
+		{
+			string name;
+			IList<string> args;
+			var doc = xdoc.Root.Element ("Members").Elements ("Member");
+
+			if (isOperator) {
+				// The first case are explicit and implicit conversion operators which are grouped specifically
+				if (caption.IndexOf (" to ") != -1) {
+					var convArgs = caption.Split (new[] { " to " }, StringSplitOptions.None);
+					return doc
+						.First (n => (((string)n.Attribute ("MemberName")) == "op_Explicit" || ((string)n.Attribute ("MemberName")) == "op_Implicit")
+						        && ((string)n.Element ("ReturnValue").Element ("ReturnType")) == convArgs[1]
+						        && ((string)n.Element ("Parameters").Element ("Parameter").Attribute ("Type")) == convArgs[0])
+						.Element ("Docs");
+				} else {
+					return doc.First (m => ((string)m.Attribute ("MemberName")) == "op_" + caption).Element ("Docs");
+				}
+			}
+
+			TryParseCaption (caption, out name, out args);
+
+			if (!string.IsNullOrEmpty (name)) // Filter member by name
+				doc = doc.Where (m => ((string)m.Attribute ("MemberName")) == name);
+			if (args != null && args.Count > 0) // Filter member by its argument list
+				doc = doc.Where (m => m.Element ("Parameters").Elements ("Parameter").Attributes ("Type").Select (a => (string)a).SequenceEqual (args));
+
+			return doc.First ().Element ("Docs");
+		}
+
+		// A simple stack-based parser to detect single type definition separated by commas
+		IEnumerable<string> ExtractArguments (string rawArgList)
+		{
+			var sb = new System.Text.StringBuilder ();
+			int genericDepth = 0;
+			int arrayDepth = 0;
+
+			for (int i = 0; i < rawArgList.Length; i++) {
+				char c = rawArgList[i];
+				switch (c) {
+				case ',':
+					if (genericDepth == 0 && arrayDepth == 0) {
+						yield return sb.ToString ();
+						sb.Clear ();
+						continue;
+					}
+					break;
+				case '<':
+					genericDepth++;
+					break;
+				case '>':
+					genericDepth--;
+					break;
+				case '[':
+					arrayDepth++;
+					break;
+				case ']':
+					arrayDepth--;
+					break;
+				}
+				sb.Append (c);
+			}
+			if (sb.Length > 0)
+				yield return sb.ToString ();
+		}
+
+		void TryParseCaption (string caption, out string name, out IList<string> argList)
+		{
+			name = null;
+			argList = null;
+			int parenIdx = caption.IndexOf ('(');
+			// In case of simple name, there is no need for processing
+			if (parenIdx == -1) {
+				name = caption;
+				return;
+			}
+			name = caption.Substring (0, parenIdx);
+			// Now we gather the argument list if there is any
+			var rawArgList = caption.Substring (parenIdx + 1, caption.Length - parenIdx - 2); // Only take what's inside the parens
+			if (string.IsNullOrEmpty (rawArgList))
+				return;
+
+			argList = ExtractArguments (rawArgList).Select (arg => arg.Trim ()).ToList ();
+		}
 	}
 }
