@@ -216,6 +216,11 @@ net_4_0_dirs := \
 	System.Windows.Forms.DataVisualization	\
 	System.Xaml \
 	WindowsBase \
+	System.ServiceModel.Routing \
+	System.ServiceModel.Discovery \
+	System.Runtime.Caching \
+	System.Runtime.DurableInstancing \
+	Mono.Parallel \
 	System.Reactive.Interfaces \
 	System.Reactive.Core \
 	System.Reactive.Linq \
@@ -226,11 +231,6 @@ net_4_0_dirs := \
 	System.Reactive.Windows.Threading \
 	System.Reactive.Experimental \
 	System.Reactive.Debugger \
-	System.ServiceModel.Routing \
-	System.ServiceModel.Discovery \
-	System.Runtime.Caching \
-	System.Runtime.DurableInstancing \
-	Mono.Parallel \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data \
 	System.Data.Services.Client	\

@@ -42,14 +42,29 @@ foreach (var ass in asses) {
 	var pathPrefix = ass == "Tests.System.Reactive" ? "../../" : "../";
 
 	// tests are built under Mono.Reactive.Testing directory.
+	
 	var sources =
 		monoass == "Tests.System.Reactive" ?
 		Path.Combine ("Mono.Reactive.Testing", "Mono.Reactive.Testing_test.dll.sources") :
 		Path.Combine (monoass, monoass + ".dll.sources");
 
+	var assdir = Path.Combine (monoass, "Assembly");
+	var assinfo = Path.Combine (monoass, "Assembly", "AssemblyInfo.cs");
+
+	if (monoass != "Tests.System.Reactive") {
+		if (!Directory.Exists (assdir))
+			Directory.CreateDirectory (assdir);
+		using (var tw = File.CreateText (assinfo)) {
+			tw.WriteLine ("// Due to InternalsVisibleTo issue we don't add versions so far...");
+			tw.WriteLine ("// [assembly:System.Reflection.AssemblyVersion (\"0.0.0.0\")]");
+		}
+	}
+
 	var doc = XDocument.Load (csproj);
 	var rootNS = doc.XPathSelectElement ("//*[local-name()='RootNamespace']").Value;
 	using (var tw = File.CreateText (sources)) {
+		//if (monoass != "Tests.System.Reactive")
+		//	tw.WriteLine ("Assembly/AssemblyInfo.cs");
 		foreach (var path in doc.XPathSelectElements ("//*[local-name()='Compile']")
 			.Select (el => el.Attribute ("Include").Value)
 			.Select (s => s.Replace ("\\", "/")))

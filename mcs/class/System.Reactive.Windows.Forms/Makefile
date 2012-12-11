@@ -25,13 +25,17 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = more_build_args
 
-VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
+VALID_PROFILE := $(filter net_4_0 net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.System.Reactive.Windows.Forms.dll
 NO_SIGN_ASSEMBLY = yes
 endif
 
+INSTALL_PROFILE := $(filter net_4_5, $(PROFILE))
+ifndef INSTALL_PROFILE
 NO_INSTALL = yes
+endif
+
 NO_TEST = yes
 
 include ../../build/library.make
