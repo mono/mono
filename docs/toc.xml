@@ -133,12 +133,14 @@
 	    <param name="Local" value="deploy/mono-api-threads.html"/>
 	  </object>
 	</li>
+<!--
 	<li>
 	  <object type="text/sitemap">
 	    <param name="Name" value="Tracing"/>
 	    <param name="Local" value="deploy/mono-api-trace.html"/>
 	  </object>
 	</li>
+-->
 	<li>
 	  <object type="text/sitemap">
 	    <param name="Name" value="JIT Counters"/>
