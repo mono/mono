@@ -93,14 +93,15 @@ namespace MonkeyDoc.Providers
 							using (var file = File.OpenRead (typeFilePath))
 								storage.Store (id.ToString (), file);
 							nsElements.Add (ExtractClassSummary (typeFilePath));
+							var typeDocument = XDocument.Load (typeFilePath);
 
 							var typeCaption = ((string)(type.Attribute ("DisplayName") ?? type.Attribute ("Name"))).Replace ('+', '.');
 							var url = "ecma:" + id + '#' + typeCaption + '/';
+							typeCaption += " " + (string)type.Attribute ("Kind");
 							var typeNode = nsNode.CreateNode (typeCaption, url);
 
 							// Add meta "Members" node
 							typeNode.CreateNode ("Members", "*");
-							var typeDocument = XDocument.Load (typeFilePath);
 							var membersNode = typeDocument.Root.Element ("Members");
 							if (membersNode == null || !membersNode.Elements ().Any ())
 								continue;
