@@ -21,4 +21,4 @@
 	url = git://github.com/mono/ikvm-fork.git
 [submodule "external/Lucene.Net"]
 	path = external/Lucene.Net
-	url = git://github.com/apache/lucene.net.git
+	url = git://github.com/mono/lucene.net.git
