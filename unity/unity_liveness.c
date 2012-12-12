@@ -45,25 +45,27 @@ void array_clear(non_growable_array* array)
 	array->len = 0;
 }
 
-
+typedef void (*register_object_callback)(gpointer* arr, int size, void* callback_userdata);
 struct _LivenessState
 {
 	gint                first_index_in_all_objects;
 	non_growable_array* all_objects;
-	
-	gboolean            clear_filter_objects_on_reset;
+
 	MonoClass*          filter;
-	non_growable_array* filtered_objects;
-	
+
 	non_growable_array* process_array;
 	guint               initial_alloc_count;
+
+	void*               callback_userdata;
+
+	register_object_callback filter_callback;
 };
 
 /* Liveness calculation */
-LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count);
+LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata);
 void           mono_unity_liveness_calculation_end (LivenessState* state);
-GPtrArray*     mono_unity_liveness_calculation_from_root (MonoObject* root, LivenessState* state);
-GPtrArray*     mono_unity_liveness_calculation_from_statics (LivenessState* state);
+void           mono_unity_liveness_calculation_from_root (MonoObject* root, LivenessState* state);
+void           mono_unity_liveness_calculation_from_statics (LivenessState* state);
 
 #define MARK_OBJ(obj) \
 	do { \
@@ -86,36 +88,17 @@ void mono_filter_objects(LivenessState* state);
 
 void mono_reset_state(LivenessState* state)
 {
-	int i;
-	if(state->clear_filter_objects_on_reset)
-	{
-		for (i = 0; i < state->filtered_objects->len; i++)
-		{
-			MonoObject* object = array_at_index(state->filtered_objects,i);
-			CLEAR_OBJ(object);
-		}
-		state->clear_filter_objects_on_reset = FALSE;
-	}
 	state->first_index_in_all_objects = state->all_objects->len;
-	array_clear(state->filtered_objects);
 	array_clear(state->process_array);
 }
 
 void mono_cleanup_all_objects_and_continue(LivenessState* state)
 {
-	// if all_objects run out of space, run through list, add objects that match the filter, clear bit in vtable and then clear the array.
-	// mark objects in the filter list again and continue traversal.
-	// when clearing bits, both clear from all_objects and filtered_objects
+	// if all_objects run out of space, run through list, add objects that match the filter,
+	// clear bit in vtable and then clear the array.
 	int i;
-	if(state->clear_filter_objects_on_reset )
-	{
-		for (i = 0; i < state->filtered_objects->len; i++)
-		{
-			MonoObject* object = array_at_index(state->filtered_objects,i);
-			CLEAR_OBJ(object);
-		}
-	}
 	mono_filter_objects(state);
+	
 	for (i = 0; i < state->all_objects->len; i++)
 	{
 		MonoObject* object = array_at_index(state->all_objects,i);
@@ -125,16 +108,6 @@ void mono_cleanup_all_objects_and_continue(LivenessState* state)
 	// reset the all_object list
 	array_clear(state->all_objects);
 	state->first_index_in_all_objects = 0;
-	
-	// mark objects in filtered_objects to prevent duplicates
-	state->clear_filter_objects_on_reset = TRUE;
-	for (i = 0; i < state->filtered_objects->len; i++)
-	{
-		MonoObject* object = g_ptr_array_index(state->filtered_objects,i);
-		MARK_OBJ(object);
-	}
-
-
 }
 
 static gboolean should_process_value (MonoObject* val, MonoClass* filter)
@@ -206,13 +179,16 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 
 }
 
-static void mono_traverse_object_internal (MonoObject* object, MonoClass* klass, LivenessState* state)
+static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct, MonoClass* klass, LivenessState* state)
 {
 	MonoClassField *field;
 	MonoClass *p;
 
 	g_assert (object);
 	
+	if(isStruct)
+		object--;
+
 	for (p = klass; p != NULL; p = p->parent)
 	{
 		gpointer iter = NULL;
@@ -225,14 +201,14 @@ static void mono_traverse_object_internal (MonoObject* object, MonoClass* klass,
 			{
 				char* offseted = (char*)object;
 				// subtract the added offset for the vtable. This is added to the offset even though it is a struct
-				offseted += field->offset - sizeof (MonoObject);
+				offseted += field->offset;// - sizeof (MonoObject);
 				if (field->type->type == MONO_TYPE_GENERICINST)
 				{
 					g_assert(field->type->data.generic_class->cached_class);
-					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.generic_class->cached_class, state);
+					mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.generic_class->cached_class, state);
 				}
 				else
-					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.klass, state);
+					mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.klass, state);
 				continue;
 			}
 
@@ -256,7 +232,7 @@ static void mono_traverse_object_internal (MonoObject* object, MonoClass* klass,
 
 static void mono_traverse_object (MonoObject* object, LivenessState* state)
 {
-	mono_traverse_object_internal (object, GET_VTABLE(object)->klass, state);
+	mono_traverse_object_internal (object, FALSE, GET_VTABLE(object)->klass, state);
 }
 
 static void mono_traverse_gc_desc (MonoObject* object, LivenessState* state)
@@ -292,13 +268,24 @@ static void mono_traverse_objects (LivenessState* state)
 
 void mono_filter_objects(LivenessState* state)
 {
+	gpointer filtered_objects[64];
+	gint num_objects = 0;
+
 	int i = state->first_index_in_all_objects;
 	for ( ; i < state->all_objects->len; i++)
 	{
 		MonoObject* object = state->all_objects->pdata[i];
 		if (should_process_value (object, state->filter))
-			array_push_back (state->filtered_objects, object);
+			filtered_objects[num_objects++] = object;
+		if (num_objects == 64)
+		{
+			state->filter_callback(filtered_objects, 64, state->callback_userdata);
+			num_objects = 0;
+		}
 	}
+
+	if (num_objects != 0)
+		state->filter_callback(filtered_objects, num_objects, state->callback_userdata);
 }
 
 /**
@@ -307,7 +294,7 @@ void mono_filter_objects(LivenessState* state)
  * Returns an array of MonoObject* that are reachable from the static roots
  * in the current domain and derive from @filter (if not NULL).
  */
-GPtrArray* mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
+void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 {
 	int i = 0;
 	MonoDomain* domain = mono_domain_get();
@@ -336,11 +323,11 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(LivenessState* liveness_
 				if (field->type->type == MONO_TYPE_GENERICINST)
 				{
 					g_assert(field->type->data.generic_class->cached_class);
-					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.generic_class->cached_class, liveness_state);
+					mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.generic_class->cached_class, liveness_state);
 				}
 				else
 				{
-					mono_traverse_object_internal((MonoObject*)offseted, field->type->data.klass, liveness_state);
+					mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.klass, liveness_state);
 				}
 				continue;
 			}
@@ -372,9 +359,8 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(LivenessState* liveness_
 	
 	mono_traverse_objects (liveness_state);
 
+	//Filter objects and call callback to register found objects
 	mono_filter_objects(liveness_state);
-
-	return liveness_state->filtered_objects;
 }
 
 /**
@@ -383,6 +369,17 @@ GPtrArray* mono_unity_liveness_calculation_from_statics(LivenessState* liveness_
  * Returns a gchandle to an array of MonoObject* that are reachable from the static roots
  * in the current domain and derive from type retrieved from @filter_handle (if not NULL).
  */
+void mono_unity_liveness_add_object_callback(gpointer* objs, gint count, void* arr)
+{
+	int i;
+	GPtrArray* objects = (GPtrArray*)arr;
+	for (i = 0; i < count; i++)
+	{
+		if (g_ptr_array_reserved_size(objects) > objects->len)
+			objects->pdata[objects->len++] = objs[i];
+	}
+}
+
 gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_handle)
 {
 	int i = 0;
@@ -395,20 +392,23 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 	if (filter_type)
 		filter = mono_class_from_mono_type (filter_type->type);
 
-	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000);
+	objects = g_ptr_array_sized_new(1000);
+	objects->len = 0;
 
-	objects = mono_unity_liveness_calculation_from_statics (liveness_state);
+	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects);
+
+	mono_unity_liveness_calculation_from_statics (liveness_state);
+
+	mono_unity_liveness_calculation_end (liveness_state);
 
 	res = mono_array_new (mono_domain_get (), filter ? filter: mono_defaults.object_class, objects->len);
 	for (i = 0; i < objects->len; ++i) {
 		MonoObject* o = g_ptr_array_index (objects, i);
 		mono_array_setref (res, i, o);
 	}
-
 	g_ptr_array_free (objects, TRUE);
 
-	mono_unity_liveness_calculation_end (liveness_state);
-
+	
 	return mono_gchandle_new (res, FALSE);
 
 }
@@ -419,16 +419,16 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
  * Returns an array of MonoObject* that are reachable from @root
  * in the current domain and derive from @filter (if not NULL).
  */
-GPtrArray* mono_unity_liveness_calculation_from_root (MonoObject* root, LivenessState* liveness_state)
+void mono_unity_liveness_calculation_from_root (MonoObject* root, LivenessState* liveness_state)
 {
 	mono_reset_state (liveness_state);
 
 	array_push_back (liveness_state->process_array,root);
 
 	mono_traverse_objects (liveness_state);
-	mono_filter_objects (liveness_state);
 
-	return liveness_state->filtered_objects;
+	//Filter objects and call callback to register found objects
+	mono_filter_objects (liveness_state);
 }
 
 /**
@@ -447,11 +447,15 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 	GPtrArray* objects = NULL;
 	LivenessState* liveness_state = NULL;
 
+	objects = g_ptr_array_sized_new(1000);
+	objects->len = 0;
+
 	if (filter_type)
 		filter = mono_class_from_mono_type (filter_type->type);
-	
-	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000);
-	objects = mono_unity_liveness_calculation_from_root (root, liveness_state);
+
+	liveness_state = mono_unity_liveness_calculation_begin (filter, 1000, mono_unity_liveness_add_object_callback, (void*)objects);
+	mono_unity_liveness_calculation_from_root (root, liveness_state);
+	mono_unity_liveness_calculation_end (liveness_state);
 
 	res = mono_array_new (mono_domain_get (), filter ? filter: mono_defaults.object_class, objects->len);
 	for (i = 0; i < objects->len; ++i) {
@@ -461,33 +465,29 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 
 	g_ptr_array_free (objects, TRUE);
 
-	mono_unity_liveness_calculation_end (liveness_state);
-
 	return mono_gchandle_new (res, FALSE);
 }
 
-
-LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count)
+LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
 {
 	LivenessState* state = NULL;
 	
 	// construct liveness_state;
 	// allocate memory for the following structs
 	// all_objects: contains a list of all referenced objects to be able to clean the vtable bits after the traversal
-	// filtered_objects: the resulting MonoObjects after the filter has been applied
 	// process_array. array that contains the objcets that should be processed. this should run depth first to reduce memory usage
 	// if all_objects run out of space, run through list, add objects that match the filter, clear bit in vtable and then clear the array.
-	// mark objects in the filter list again and continue traversal.
-	// when clearing bits, both clear from all_objects and filtered_objects
-
+	
 	state = g_new(LivenessState, 1);
+	max_count = max_count < 1000 ? 1000 : max_count;
 	state->all_objects = array_create_and_initialize(max_count*4);
-	state->filtered_objects = array_create_and_initialize (max_count);
 	state->process_array = array_create_and_initialize (max_count);
 
 	state->first_index_in_all_objects = 0; 
-	state->clear_filter_objects_on_reset = FALSE;
 	state->filter = filter;
+
+	state->callback_userdata = callback_userdata;
+	state->filter_callback = callback;
 
 	GC_stop_world ();
 	// no allocations can happen beyond this point
@@ -503,17 +503,10 @@ void mono_unity_liveness_calculation_end (LivenessState* state)
 		MonoObject* object = g_ptr_array_index(state->all_objects,i);
 		CLEAR_OBJ(object);
 	}
-	for (i = 0; i < state->filtered_objects->len; i++)
-	{
-		MonoObject* object = g_ptr_array_index(state->filtered_objects,i);
-		CLEAR_OBJ(object);
-	}
-
 	GC_start_world ();
 
 	//cleanup the liveness_state
 	array_destroy(state->all_objects);
-	array_destroy(state->filtered_objects);
 	array_destroy(state->process_array);
 	g_free(state);
 }
