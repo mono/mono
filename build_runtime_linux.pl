@@ -38,6 +38,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 my $platform = $build64 ? 'linux64' : $build_armel ? 'linux-armel' : 'linux32' ;
 my $bintarget = "$root/builds/monodistribution/bin-$platform";
 my $libtarget = "$root/builds/embedruntimes/$platform";
+my $etctarget = "$root/builds/monodistribution/etc-$platform";
 
 if ($minimal)
 {
@@ -125,6 +126,7 @@ if (not $skipbuild)
 
 mkpath($bintarget);
 mkpath($libtarget);
+mkpath("$etctarget/mono");
 
 print "Copying libmono.so\n";
 system("cp", "$root/mono/mini/.libs/libmono.so.0","$libtarget/libmono.so") eq 0 or die ("failed copying libmono.so.0");
@@ -140,4 +142,5 @@ if ($ENV{"UNITY_THISISABUILDMACHINE"})
 
 system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
 system("ln","-f","$root/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
+system('cp',"$root/data/config","$etctarget/mono/config");
 system("chmod","-R","755",$bintarget);
