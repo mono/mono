@@ -31,12 +31,12 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace MonkeyDoc
 {
-
-	public class Topic  {
+	public class Topic
+	{
 		public readonly string Caption;
 		public readonly string SortKey;
 		public readonly string Url;
@@ -49,37 +49,37 @@ namespace MonkeyDoc
 		}
 	}
 
-	public class IndexEntry {
-		public int Position;
-		public object topics;
-		public int Count;
+	public class IndexEntry
+	{
+		List<Topic> topics;
+
+		public int Position {
+			get;
+			private set;
+		}
+
+		public IList<Topic> Topics {
+			get {
+				return topics.AsReadOnly ();
+			}
+		}
+
+		public int Count {
+			get;
+			private set;
+		}
 		
 		public void Add (Topic t)
 		{
 			Count++;
-			if (topics == null)
-				topics = t;
-			else {
-				if (!(topics is ArrayList)){
-					Topic temp = (Topic) topics;
-
-					topics = new ArrayList ();
-					((ArrayList)topics).Add (temp);
-				}
-				((ArrayList)topics).Add (t);
-			}
+			topics.Add (t);
 		}
 
 		public Topic this [int idx] {
 			get {
-				if (topics is Topic){
-					if (idx == 0)
-						return (Topic) topics;
-					else
-						throw new Exception ("Out of range index");
-				} else {
-					return (Topic) (((ArrayList)topics) [idx]);
-				}
+				if (idx < 0 || idx > topics.Count)
+					throw new ArgumentOutOfRangeException ("idx");
+				return topics[idx];
 			}
 		}
 
@@ -91,53 +91,27 @@ namespace MonkeyDoc
 			Count = reader.ReadInt32 ();
 			int caption_offset = reader.ReadInt32 ();
 			string caption;
-		
-			if (Count == 1){
-				int url_offset = reader.ReadInt32 ();
-				fs.Position = caption_offset;
-				caption = reader.ReadString ();
-				fs.Position = url_offset;
+			topics = new List<Topic> (Count);
+
+			int [] offsets = new int [Count];
+			for (int i = 0; i < Count; i++)
+				offsets [i] = reader.ReadInt32 ();
+
+			fs.Position = caption_offset;
+			caption = reader.ReadString ();
+			for (int i = 0; i < Count; i++){
+				fs.Position = offsets [i];
 				string url = reader.ReadString ();
-				topics = new Topic (caption, "", url);
-			} else {
-				ArrayList l = new ArrayList (Count);
-				topics = l;
-				int [] offsets = new int [Count];
-				for (int i = 0; i < Count; i++){
-					offsets [i] = reader.ReadInt32 ();
-				}
-				fs.Position = caption_offset;
-				caption = reader.ReadString ();
-				for (int i = 0; i < Count; i++){
-					fs.Position = offsets [i];
-					string url = reader.ReadString ();
-					l.Add (new Topic (caption, "", url));
-				}
+				topics.Add (new Topic (caption, string.Empty, url));
 			}
 		}
 
-		// 	Topic ReadTopic (FileStream fs, BinaryReader reader, ref string caption)
-		// 	{
-		// 		int caption_offset = -1;
-		// 		if (caption == null)
-		// 			caption_offset = reader.ReadInt32 ();
-		// 		int url_offset = reader.ReadInt32 ();
-		//
-		// 		if (caption == null){
-		// 			fs.Position = caption_offset;
-		// 			caption = reader.ReadString ();
-		// 		}
-		// 		fs.Position = url_offset;
-		// 		string url = reader.ReadString ();
-		//
-		// 		return new Topic (caption, "", url);
-		// 	}
-	
 		//
 		// Regular constructor
 	
 		public IndexEntry ()
 		{
+			topics = new List<Topic> ();
 		}
 
 		public void WriteTopics (IndexMaker maker, Stream stream, BinaryWriter writer)
@@ -148,46 +122,38 @@ namespace MonkeyDoc
 			Position = (int) stream.Position;
 			writer.Write (Count);
 
-			if (topics is ArrayList){
-				bool first = true;
-				foreach (Topic t in (ArrayList) topics){
-					if (first){
-						writer.Write (maker.GetCode (t.Caption));
-						first = false;
-					}
-					writer.Write (maker.GetCode (t.Url));
-				}
-			} else {
-				Topic t = (Topic) topics;
+			if (Count == 0)
+				return;
 
-				writer.Write (maker.GetCode (t.Caption));
+			writer.Write (maker.GetCode (topics[0].Caption));
+			foreach (Topic t in topics)
 				writer.Write (maker.GetCode (t.Url));
-			}
 		}
 	}
 
-	public class IndexMaker {
-		Hashtable entries = new Hashtable ();
-		Hashtable all_strings = new Hashtable ();
+	public class IndexMaker
+	{
+		Dictionary<string, IndexEntry> entries = new Dictionary<string, IndexEntry> ();
+		Dictionary<string, int> all_strings = new Dictionary<string, int> ();
+		int index_position;
 
-		void add_string (string s)
+		void AddString (string str)
 		{
-			if (all_strings.Contains (s))
-				return;
-			all_strings [s] = 0;
+			if (!all_strings.ContainsKey (str))
+				all_strings.Add (str, 0);
 		}
-	
+
 		public void AddTopic (Topic topic)
 		{
 			IndexEntry entry = (IndexEntry) entries [topic.SortKey];
-			if (entry == null){
+			if (entry == null) {
 				entry = new IndexEntry ();
 				entries [topic.SortKey] = entry;
 			}
 
-			add_string (topic.SortKey);
-			add_string (topic.Caption);
-			add_string (topic.Url);
+			AddString (topic.SortKey);
+			AddString (topic.Caption);
+			AddString (topic.Url);
 			entry.Add (topic);
 		}
 
@@ -199,11 +165,7 @@ namespace MonkeyDoc
 	
 		void SaveStringTable (Stream stream, BinaryWriter writer)
 		{
-			ICollection k = all_strings.Keys;
-			string [] ks = new string [k.Count];
-			k.CopyTo (ks, 0);
-		
-			foreach (string s in ks){
+			foreach (string s in all_strings.Keys) {
 				int pos = (int) stream.Position;
 				writer.Write (s);
 				all_strings [s] = pos;
@@ -212,11 +174,9 @@ namespace MonkeyDoc
 
 		public int GetCode (string s)
 		{
-			return (int) all_strings [s];
+			return all_strings [s];
 		}
 
-		int index_position;
-	
 		void SaveTopics (Stream stream, BinaryWriter writer)
 		{
 			//
@@ -230,34 +190,21 @@ namespace MonkeyDoc
 		{
 			index_position = (int) stream.Position;
 			writer.Write (entries.Count);
-			ICollection keys = entries.Keys;
-			string [] keys_name = new string [keys.Count];
-			keys.CopyTo (keys_name, 0);
-			Array.Sort (keys_name, new NameSort ());
+			var keys = new List<string> (entries.Keys);
+			keys.Sort (StringComparer.OrdinalIgnoreCase);
 		
-			foreach (string s in keys_name){
-				IndexEntry e = (IndexEntry) entries [s];
+			foreach (string s in keys){
+				IndexEntry e = entries [s];
 				writer.Write (e.Position);
 			}
 		}
 
-		class NameSort : IComparer {
-			public int Compare (object a, object b)
-			{
-				string sa = (string) a;
-				string sb = (string) b;
-
-				return String.Compare (sa, sb, StringComparison.OrdinalIgnoreCase);
-			}
-		}
-	
 		public void Save (string filename)
 		{
 			Encoding utf8 = new UTF8Encoding (false, true);
 
 			using (FileStream fs = File.OpenWrite (filename)){
-				BinaryWriter writer = 
-					new BinaryWriter (fs, utf8);
+				BinaryWriter writer = new BinaryWriter (fs, utf8);
 				writer.Write (new byte [] { (byte) 'M', 
 				                            (byte) 'o', (byte) 'i', 
 				                            (byte) 'x'});
@@ -278,13 +225,15 @@ namespace MonkeyDoc
 		}
 	}
 
-	public interface IListModel {
-		int Rows {get; }
+	public interface IListModel
+	{
+		int Rows { get; }
 		string GetValue (int row);
 		string GetDescription (int row);
 	}
 
-	public class IndexReader : IListModel {
+	public class IndexReader : IListModel
+	{
 		Encoding utf8 = new UTF8Encoding (false, true);
 		FileStream fs;
 		BinaryReader reader;

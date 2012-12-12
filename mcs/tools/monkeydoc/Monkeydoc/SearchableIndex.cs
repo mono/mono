@@ -7,7 +7,7 @@
 
 using System;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 // Lucene imports
 using Lucene.Net.Index;
 using Lucene.Net.Documents;
@@ -25,19 +25,20 @@ namespace MonkeyDoc
 
 		IndexSearcher searcher;
 		string dir;
+
 		public string Dir {
 			get { 
-				if (dir == null) dir = "search_index";
+				if (dir == null)
+					dir = "search_index";
 				return dir;
 			}
 			set { dir = value; }
 		}
-		public ArrayList Results;
-	
-		public static SearchableIndex Load (string dir) {
+
+		public static SearchableIndex Load (string dir)
+		{
 			SearchableIndex s = new SearchableIndex ();
 			s.dir = dir;
-			s.Results = new ArrayList (20);
 			try {
 				//s.searcher = new IndexSearcher (dir);
 				// TODO: parametrize that depending if we run on the desktop (low footprint) or the server (use RAMDirectory for instance)
@@ -49,10 +50,6 @@ namespace MonkeyDoc
 			return s;
 		}
 		
-		//
-		// Search the index with term
-		//
-
 		public Result Search (string term)
 		{
 			return Search (term, maxSearchCount);
@@ -88,7 +85,6 @@ namespace MonkeyDoc
 			
 				TopDocs top = SearchInternal (q, count, start);
 				Result r = new Result (term, searcher, top.ScoreDocs);
-				Results.Add (r);
 				return r;
 			} catch (IOException) {
 				Console.WriteLine ("No index in {0}", dir);
@@ -127,15 +123,8 @@ namespace MonkeyDoc
 				return null;
 			}
 		}
-	
-		Query Parse (string term, string field, bool fuzzy)
-		{
-			QueryParser parser = new QueryParser (Lucene.Net.Util.Version.LUCENE_CURRENT,
-			                                      field,
-			                                      new StandardAnalyzer (Lucene.Net.Util.Version.LUCENE_CURRENT));
-			return parser.Parse (term);
-		}
 	}
+
 	//
 	// An object representing the search term with the results
 	// 
