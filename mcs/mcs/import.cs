@@ -518,6 +518,21 @@ namespace Mono.CSharp
 									default_value = new EnumConstant ((Constant) default_value, ptype);
 								}
 							}
+
+							var attrs = CustomAttributeData.GetCustomAttributes (p);
+							for (int ii = 0; ii < attrs.Count; ++ii) {
+								var attr = attrs[ii];
+								var dt = attr.Constructor.DeclaringType;
+								if (dt.Namespace != CompilerServicesNamespace)
+									continue;
+
+								if (dt.Name == "CallerLineNumberAttribute" && (ptype.BuiltinType == BuiltinTypeSpec.Type.Int || Convert.ImplicitNumericConversionExists (module.Compiler.BuiltinTypes.Int, ptype)))
+									mod |= Parameter.Modifier.CallerLineNumber;
+								else if (dt.Name == "CallerFilePathAttribute" && Convert.ImplicitReferenceConversionExists (module.Compiler.BuiltinTypes.String, ptype))
+									mod |= Parameter.Modifier.CallerFilePath;
+								else if (dt.Name == "CallerMemberNameAttribute" && Convert.ImplicitReferenceConversionExists (module.Compiler.BuiltinTypes.String, ptype))
+									mod |= Parameter.Modifier.CallerMemberName;
+							}
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
 						} else if (value == null) {
