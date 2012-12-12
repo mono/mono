@@ -358,7 +358,6 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> IEnumerableGetEnumerator;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange_T;
-		public readonly PredefinedMember<MethodSpec> IteratorStateMachineAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> FixedBufferAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle2;
@@ -630,10 +629,6 @@ namespace Mono.CSharp
 								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
 							}, false),
 					null));
-
-			IteratorStateMachineAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.IteratorStateMachine,
-				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
-					btypes.Type)));
 
 			MethodInfoGetMethodFromHandle = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle);

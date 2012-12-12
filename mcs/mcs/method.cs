@@ -1304,10 +1304,8 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (block != null && block.StateMachine != null) {
-					var psm = block.StateMachine is IteratorStorey ?
-						Module.PredefinedAttributes.IteratorStateMachine :
-						Module.PredefinedAttributes.AsyncStateMachine;
+				if (block != null && block.StateMachine is AsyncTaskStorey) {
+					var psm = Module.PredefinedAttributes.AsyncStateMachine;
 					
 					psm.EmitAttribute (MethodBuilder, block.StateMachine);
 				}

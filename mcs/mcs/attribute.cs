@@ -1640,7 +1640,6 @@ namespace Mono.CSharp {
 
 		// New in .NET 4.5
 		public readonly PredefinedStateMachineAttribute AsyncStateMachine;
-		public readonly PredefinedStateMachineAttribute IteratorStateMachine;
 
 		//
 		// Optional types which are used as types and for member lookup
@@ -1704,9 +1703,6 @@ namespace Mono.CSharp {
 			FieldOffset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "FieldOffsetAttribute");
 
 			AsyncStateMachine = new PredefinedStateMachineAttribute (module, "System.Runtime.CompilerServices", "AsyncStateMachineAttribute");
-			IteratorStateMachine = new PredefinedStateMachineAttribute (module, "System.Runtime.CompilerServices", "IteratorStateMachineAttribute") {
-				IsIterator = true
-			};
 
 			CallerMemberNameAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerMemberNameAttribute");
 			CallerLineNumberAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerLineNumberAttribute");
@@ -1902,13 +1898,9 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public bool IsIterator { get; set; }
-
 		public void EmitAttribute (MethodBuilder builder, StateMachine type)
 		{
-			var predefined_ctor = IsIterator ?
-				module.PredefinedMembers.IteratorStateMachineAttributeCtor :
-				module.PredefinedMembers.AsyncStateMachineAttributeCtor;
+			var predefined_ctor = module.PredefinedMembers.AsyncStateMachineAttributeCtor;
 
 			var ctor = predefined_ctor.Get ();
 
