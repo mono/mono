@@ -869,35 +869,35 @@ namespace MonkeyDoc.Providers
 								lucene_doc.Boost = innerTypeBoost;
 								writer.AddDocument (lucene_doc);
 
-								// MonoTouch/Monomac specific parsing of [Export] attributes
-								/*if (exportParsable) {
+								// Objective-C binding specific parsing of [Export] attributes
+								if (exportParsable) {
 									try {
-										var exports =
-											xdoc.SelectNodes (string.Format ("/Type/Members/Member[@MemberName='{0}']/Attributes/Attribute/AttributeName[contains(text(), 'Foundation.Export')]", nc.Caption));
-										foreach (XmlNode exportNode in exports) {
-											var inner = exportNode.InnerText;
-											var parts = inner.Split ('"');
+										var exports = docsNode.Parent.Elements ("Attributes").Elements ("Attribute").Elements ("AttributeName")
+											.Select (a => (string)a).Where (txt => txt.Contains ("Foundation.Export"));
+
+										foreach (var exportNode in exports) {
+											var parts = exportNode.Split ('"');
 											if (parts.Length != 3) {
-												Console.WriteLine ("Export attribute not found or not usable in {0}", inner);
+												Console.WriteLine ("Export attribute not found or not usable in {0}", exportNode);
 												continue;
 											}
 
 											var export = parts[1];
-											var export_node = new SearchableDocument ();
+											var export_node = searchDoc.Reset ();
 											export_node.Title = export + " Export";
-											export_node.FullTitle = string.Format ("{0}.{1}::{2}", ns_node.Caption, typename, export);
+											export_node.FullTitle = ns_node.Caption + '.' + typename + "::" + export;
 											export_node.Url = urlnc;
-											export_node.HotText = export + ":";
+											export_node.HotText = export;
 											export_node.Text = string.Empty;
 											export_node.Examples = string.Empty;
 											lucene_doc = export_node.LuceneDoc;
-											lucene_doc.SetBoost (innerTypeBoost);
+											lucene_doc.Boost = innerTypeBoost;
 											writer.AddDocument (lucene_doc);
 										}
 									} catch (Exception e){
 										Console.WriteLine ("Problem processing {0} for MonoTouch/MonoMac exports\n\n{0}", e);
 									}
-								}*/
+								}
 							}
 						}
 					// doc_tag == "Enumeration"
