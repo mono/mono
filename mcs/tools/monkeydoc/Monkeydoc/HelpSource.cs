@@ -33,7 +33,7 @@ namespace MonkeyDoc
 		string treeFilePath;
 		RootTree rootTree;
 
-		IDocCache cache = new MonkeyDoc.Caches.FileCache (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "monkeydoc", "cache"));
+		IDocCache cache;
 		IDocStorage storage;
 
 		public HelpSource (string base_filename, bool create)
@@ -42,6 +42,7 @@ namespace MonkeyDoc
 			this.basePath = Path.GetDirectoryName (base_filename);
 			this.treeFilePath = base_filename + ".tree";
 			this.storage = new MonkeyDoc.Storage.ZipStorage (base_filename + ".zip");
+			this.cache = DocCacheHelper.GetDefaultCache (Name);
 
 			tree = create ? new Tree (this, string.Empty, string.Empty) : new Tree (this, treeFilePath);
 
@@ -132,9 +133,9 @@ namespace MonkeyDoc
 				throw new ArgumentNullException ("id");
 			if (!cache.CanCache (DocEntity.Text))
 				return GetHelpStream (id);
-			if (!cache.IsCached (Name + id))
-				cache.CacheText (Name + id, GetHelpStream (id));
-			return cache.GetCachedStream (Name + id);
+			if (!cache.IsCached (id))
+				cache.CacheText (id, GetHelpStream (id));
+			return cache.GetCachedStream (id);
 		}
 
 		public XmlReader GetHelpXml (string id)
