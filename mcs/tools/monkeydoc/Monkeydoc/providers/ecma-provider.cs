@@ -770,6 +770,155 @@ namespace MonkeyDoc.Providers
 			return "?" + string.Join ("&", args.Select (kvp => kvp.Key == kvp.Value ? kvp.Key : kvp.Key + '=' + kvp.Value));
 		}
 
+		public override void PopulateIndex (IndexMaker index_maker)
+		{
+			foreach (Node ns_node in Tree.RootNode.Nodes){
+				foreach (Node type_node in ns_node.Nodes){
+					string typename = type_node.Caption.Substring (0, type_node.Caption.IndexOf (' '));
+					string full = ns_node.Caption + "." + typename;
+
+					string doc_tag = GetKindFromCaption (type_node.Caption);
+					string url = type_node.PublicUrl;
+
+					//
+					// Add MonoMac/MonoTouch [Export] attributes, those live only in classes
+					//
+					XDocument type_doc = null;
+					ILookup<string, XElement> prematchedMembers = null;
+					bool hasExports = doc_tag == "Class" && (ns_node.Caption.StartsWith ("MonoTouch") || ns_node.Caption.StartsWith ("MonoMac"));
+					if (hasExports) {
+						try {
+							string rest, hash;
+							var id = GetInternalIdForInternalUrl (type_node.GetInternalUrl (), out hash);
+							type_doc = XDocument.Load (GetHelpStream (id));
+							prematchedMembers = type_doc.Root.Element ("Members").Elements ("Member").ToLookup (n => (string)n.Attribute ("MemberName"), n => n);
+						} catch (Exception e) {
+							Console.WriteLine ("Problem processing {0} for MonoTouch/MonoMac exports\n\n{0}", e);
+							hasExports = false;
+						}
+					}
+
+					if (doc_tag == "Class" || doc_tag == "Structure" || doc_tag == "Interface"){
+						index_maker.Add (type_node.Caption, typename, url);
+						index_maker.Add (full + " " + doc_tag, full, url);
+
+						foreach (Node c in type_node.Nodes){
+							switch (c.Caption){
+							case "Constructors":
+								index_maker.Add ("  constructors", typename+"0", url + "/C");
+								break;
+							case "Fields":
+								index_maker.Add ("  fields", typename+"1", url + "/F");
+								break;
+							case "Events":
+								index_maker.Add ("  events", typename+"2", url + "/E");
+								break;
+							case "Properties":
+								index_maker.Add ("  properties", typename+"3", url + "/P");
+								break;
+							case "Methods":
+								index_maker.Add ("  methods", typename+"4", url + "/M");
+								break;
+							case "Operators":
+								index_maker.Add ("  operators", typename+"5", url + "/O");
+								break;
+							}
+						}
+
+						//
+						// Now repeat, but use a different sort key, to make sure we come after
+						// the summary data above, start the counter at 6
+						//
+						string keybase = typename + "6.";
+
+						foreach (Node c in type_node.Nodes){
+							var type = c.Caption[0];
+
+							foreach (Node nc in c.Nodes) {
+								string res = nc.Caption;
+								string nurl = nc.PublicUrl;
+
+								// Process exports
+								if (hasExports && (type == 'C' || type == 'M' || type == 'P')) {
+									try {
+										var member = GetMemberFromCaption (type_doc, type == 'C' ? ".ctor" : res, false, prematchedMembers);
+										var exports = member.Descendants ("AttributeName").Where (a => a.Value.Contains ("Foundation.Export"));
+										foreach (var exportNode in exports) {
+											var parts = exportNode.Value.Split ('"');
+											if (parts.Length != 3) {
+												Console.WriteLine ("Export attribute not found or not usable in {0}", exportNode);
+											} else {
+												var export = parts[1];
+												index_maker.Add (export + " selector", export, nurl);
+											}
+										}
+									} catch (Exception e) {
+										Console.WriteLine ("Problem processing {0}/{1} for MonoTouch/MonoMac exports\n\n{2}", nurl, res, e);
+									}
+								}
+
+								switch (type){
+								case 'C':
+									break;
+								case 'F':
+									index_maker.Add (String.Format ("{0}.{1} field", typename, res),
+									                 keybase + res, nurl);
+									index_maker.Add (String.Format ("{0} field", res), res, nurl);
+									break;
+								case 'E':
+									index_maker.Add (String.Format ("{0}.{1} event", typename, res),
+									                 keybase + res, nurl);
+									index_maker.Add (String.Format ("{0} event", res), res, nurl);
+									break;
+								case 'P':
+									index_maker.Add (String.Format ("{0}.{1} property", typename, res),
+									                 keybase + res, nurl);
+									index_maker.Add (String.Format ("{0} property", res), res, nurl);
+									break;
+								case 'M':
+									index_maker.Add (String.Format ("{0}.{1} method", typename, res),
+									                 keybase + res, nurl);
+									index_maker.Add (String.Format ("{0} method", res), res, nurl);
+									break;
+								case 'O':
+									index_maker.Add (String.Format ("{0}.{1} operator", typename, res),
+									                 keybase + res, nurl);
+									break;
+								}
+							}
+						}
+					} else if (doc_tag == "Enumeration"){
+						//
+						// Enumerations: add the enumeration values
+						//
+						index_maker.Add (type_node.Caption, typename, url);
+						index_maker.Add (full + " " + doc_tag, full, url);
+
+						// Now, pull the values.
+						string rest, hash;
+						var id = GetInternalIdForInternalUrl (type_node.GetInternalUrl (), out hash);
+						var xdoc = XDocument.Load (GetHelpStream (id));
+						if (xdoc == null)
+							continue;
+
+						var members = xdoc.Root.Element ("Members").Elements ("Members");
+						if (members == null)
+							continue;
+
+						foreach (var member_node in members){
+							string enum_value = member_node.Attribute ("MemberName").Value;
+							string caption = enum_value + " value";
+							index_maker.Add (caption, caption, url);
+						}
+					} else if (doc_tag == "Delegate"){
+						index_maker.Add (type_node.Caption, typename, url);
+						index_maker.Add (full + " " + doc_tag, full, url);
+					}
+				}
+			}
+		}
+
+
 		public override void PopulateSearchableIndex (IndexWriter writer)
 		{
 			StringBuilder text = new StringBuilder ();

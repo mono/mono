@@ -145,10 +145,10 @@ namespace MonkeyDoc
 
 		public void AddTopic (Topic topic)
 		{
-			IndexEntry entry = (IndexEntry) entries [topic.SortKey];
-			if (entry == null) {
+			IndexEntry entry;
+			if (!entries.TryGetValue (topic.SortKey, out entry)) {
 				entry = new IndexEntry ();
-				entries [topic.SortKey] = entry;
+				entries[topic.SortKey] = entry;
 			}
 
 			AddString (topic.SortKey);
@@ -165,7 +165,8 @@ namespace MonkeyDoc
 	
 		void SaveStringTable (Stream stream, BinaryWriter writer)
 		{
-			foreach (string s in all_strings.Keys) {
+			var keys = new List<string> (all_strings.Keys);
+			foreach (string s in keys) {
 				int pos = (int) stream.Position;
 				writer.Write (s);
 				all_strings [s] = pos;
