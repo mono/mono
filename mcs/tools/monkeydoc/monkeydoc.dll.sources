@@ -18,6 +18,7 @@ Monkeydoc/storage.cs
 Monkeydoc/Provider.cs
 Monkeydoc/cache.cs
 Monkeydoc/index.cs
+Monkeydoc/settings.cs
 Monkeydoc/RootTree.cs
 Monkeydoc/TypeUtils.cs
 Monkeydoc/generators/html/Man2Html.cs

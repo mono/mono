@@ -1,2 +1,3 @@
-Monkeydoc/HelpSourceTests.cs
-Monkeydoc.Ecma/EcmaUrlTests.cs
+MonkeyDoc/HelpSourceTests.cs
+MonkeyDoc.Ecma/EcmaUrlTests.cs
+MonkeyDoc/SettingsTest.cs

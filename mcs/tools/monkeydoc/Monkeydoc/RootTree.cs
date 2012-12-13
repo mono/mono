@@ -57,13 +57,11 @@ namespace MonkeyDoc
 
 		static string ProbeBaseDirectories ()
 		{
-			string result;
+			string result = ".";
 			try {
-				NameValueCollection appSettings = ConfigurationManager.AppSettings;
-				result = appSettings["docPath"];
-			} catch {
-				result = ".";
-			}
+				result = Settings.Get ("docPath") ?? ".";
+			} catch {}
+
 			return result;
 		}
 
@@ -87,7 +85,7 @@ namespace MonkeyDoc
 		{
 			IEnumerable<string> enumerable = Enumerable.Empty<string> ();
 			try {
-				string path = ConfigurationManager.AppSettings["docExternalPath"];
+				string path = Settings.Get ("docExternalPath");
 				enumerable = enumerable.Concat (System.IO.Directory.EnumerateFiles (path, "*.source"));
 			}
 			catch {}
@@ -391,10 +389,9 @@ namespace MonkeyDoc
 		{
 			string text = Path.Combine (this.basedir, "monodoc.index");
 			if (File.Exists (text))
-			{
 				return IndexReader.Load (text);
-			}
-			text = Path.Combine (ConfigurationManager.AppSettings["monodocIndexDirectory"], "monodoc.index");
+
+			text = Path.Combine (Settings.Get ("monodocIndexDirectory"), "monodoc.index");
 			return IndexReader.Load (text);
 		}
 
@@ -413,11 +410,11 @@ namespace MonkeyDoc
 			try {
 				indexMaker.Save (text);
 			} catch (UnauthorizedAccessException) {
-				text = Path.Combine (ConfigurationManager.AppSettings["docDir"], "monodoc.index");
+				text = Path.Combine (Settings.Get ("docDir"), "monodoc.index");
 				try {
 					indexMaker.Save (text);
 				} catch (UnauthorizedAccessException) {
-					Console.WriteLine ("Unable to write index file in {0}", Path.Combine (ConfigurationManager.AppSettings["docDir"], "monodoc.index"));
+					Console.WriteLine ("Unable to write index file in {0}", Path.Combine (Settings.Get ("docDir"), "monodoc.index"));
 					return;
 				}
 			}
@@ -433,7 +430,7 @@ namespace MonkeyDoc
 			if (System.IO.Directory.Exists (text)) {
 				return SearchableIndex.Load (text);
 			}
-			text = Path.Combine (ConfigurationManager.AppSettings["docDir"], "search_index");
+			text = Path.Combine (Settings.Get ("docDir"), "search_index");
 			return SearchableIndex.Load (text);
 		}
 
@@ -457,7 +454,7 @@ namespace MonkeyDoc
 				indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			} catch (UnauthorizedAccessException) {
 				try {
-					text = Path.Combine (ConfigurationManager.AppSettings["docDir"], "search_index");
+					text = Path.Combine (Settings.Get ("docDir"), "search_index");
 					if (!Directory.Exists (text))
 						Directory.CreateDirectory (text);
 					indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
