@@ -127,7 +127,7 @@ all-local: $(the_lib).config Monkeydoc.Ecma/EcmaUrlParser.cs
 
 test-local: setup-doc-sources
 
-$(the_lib).config: Makefile
+$(the_lib).config: Makefile monkeydoc.dll.config.in
 	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monkeydoc.dll.config.in > $@
 
 Monkeydoc.Ecma/EcmaUrlParser.cs: Monkeydoc.Ecma/EcmaUrlParser.jay $(topdir)/jay/skeleton.cs
