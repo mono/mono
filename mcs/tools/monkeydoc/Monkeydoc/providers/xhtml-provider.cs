@@ -186,15 +186,12 @@ namespace MonkeyDoc.Providers
 
 		void PopulateIndexFromNodes (Node start)
 		{
-			var nodes = start.Nodes;
+			/*var nodes = start.Nodes;
 		
-			if (nodes == null)
-				Console.WriteLine ("Leaf: " + start.Caption);
-			else {
-				Console.WriteLine ("Root: " + start.Caption);
+			if (nodes != null) {
 				foreach (Node n in nodes)
 					PopulateIndexFromNodes (n);
-			}
+			}*/
 		}
 	}
 }
