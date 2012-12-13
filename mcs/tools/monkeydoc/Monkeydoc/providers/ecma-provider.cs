@@ -779,8 +779,8 @@ namespace MonkeyDoc.Providers
 				foreach (Node type_node in ns_node.Nodes) {
 					string typename = type_node.Caption.Substring (0, type_node.Caption.IndexOf (' '));
 					string full = ns_node.Caption + "." + typename;
+					string url = type_node.PublicUrl;
 					string doc_tag = GetKindFromCaption (type_node.Caption);
-					string url = "T:" + full;
 					string rest, hash;
 					var id = GetInternalIdForInternalUrl (type_node.GetInternalUrl (), out hash);
 					var xdoc = XDocument.Load (GetHelpStream (id));
@@ -833,8 +833,14 @@ namespace MonkeyDoc.Providers
 									.Concat (ncnodes.Where (n => n.Caption.EndsWith ("Conversion")).SelectMany (n => n.Nodes));
 							}
 
+							var prematchedMembers = xdoc.Root.Element ("Members").Elements ("Member").ToLookup (n => (string)n.Attribute ("MemberName"), n => n);
+
 							foreach (Node nc in ncnodes) {
-								var docsNode = GetDocsFromCaption (xdoc, c.Caption[0] == 'C' ? ".ctor" : nc.Caption, c.Caption[0] == 'O');
+								var docsNode = GetDocsFromCaption (xdoc, c.Caption[0] == 'C' ? ".ctor" : nc.Caption, c.Caption[0] == 'O', prematchedMembers);
+								if (docsNode == null) {
+									Console.Error.WriteLine ("Problem: {0}", nc.PublicUrl);
+									continue;
+								}
 
 								SearchableDocument doc_nod = searchDoc.Reset ();
 								doc_nod.Title = LargeName (nc) + " " + EtcKindToCaption (c.Caption[0]);
@@ -851,11 +857,6 @@ namespace MonkeyDoc.Providers
 
 								var urlnc = nc.PublicUrl;
 								doc_nod.Url = urlnc;
-
-								if (docsNode == null) {
-									Console.Error.WriteLine ("Problem: {0}", urlnc);
-									continue;
-								}
 
 								text.Clear ();
 								GetTextFromNode (docsNode, text);
@@ -990,7 +991,7 @@ namespace MonkeyDoc.Providers
 				return matched_node.Caption;
 		}
 
-		XElement GetDocsFromCaption (XDocument xdoc, string caption, bool isOperator)
+		XElement GetMemberFromCaption (XDocument xdoc, string caption, bool isOperator, ILookup<string, XElement> prematchedMembers)
 		{
 			string name;
 			IList<string> args;
@@ -1003,21 +1004,27 @@ namespace MonkeyDoc.Providers
 					return doc
 						.First (n => (AttrEq (n, "MemberName", "op_Explicit") || AttrEq (n, "MemberName", "op_Implicit"))
 						        && ((string)n.Element ("ReturnValue").Element ("ReturnType")).Equals (convArgs[1], StringComparison.Ordinal)
-						        && AttrEq (n.Element ("Parameters").Element ("Parameter"), "Type", convArgs[0]))
-						.Element ("Docs");
+						        && AttrEq (n.Element ("Parameters").Element ("Parameter"), "Type", convArgs[0]));
 				} else {
-					return doc.First (m => AttrEq (m, "MemberName", "op_" + caption)).Element ("Docs");
+					return doc.First (m => AttrEq (m, "MemberName", "op_" + caption));
 				}
 			}
 
 			TryParseCaption (caption, out name, out args);
 
-			if (!string.IsNullOrEmpty (name)) // Filter member by name
-				doc = doc.Where (m => AttrEq (m, "MemberName", name));
+			if (!string.IsNullOrEmpty (name)) { // Filter member by name
+				var prematched = prematchedMembers[name];
+				doc = prematched.Any () ? prematched : doc.Where (m => AttrEq (m, "MemberName", name));
+			}
 			if (args != null && args.Count > 0) // Filter member by its argument list
 				doc = doc.Where (m => m.Element ("Parameters").Elements ("Parameter").Attributes ("Type").Select (a => (string)a).SequenceEqual (args));
 
-			return doc.First ().Element ("Docs");
+			return doc.First ();
+		}
+
+		XElement GetDocsFromCaption (XDocument xdoc, string caption, bool isOperator, ILookup<string, XElement> prematchedMembers)
+		{
+			return GetMemberFromCaption (xdoc, caption, isOperator, prematchedMembers).Element ("Docs");
 		}
 
 		// A simple stack-based parser to detect single type definition separated by commas
