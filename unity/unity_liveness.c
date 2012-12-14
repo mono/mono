@@ -158,17 +158,35 @@ static void mono_add_process_object (MonoObject* object, LivenessState* state)
 	}
 }
 
+static gboolean mono_field_can_contain_references(MonoClassField* field)
+{
+	if (MONO_TYPE_ISSTRUCT(field->type))
+		return TRUE;
+	if (field->type->attrs & FIELD_ATTRIBUTE_LITERAL)
+		return FALSE;
+	if (field->type->type == MONO_TYPE_STRING)
+		return FALSE;
+	return MONO_TYPE_IS_REFERENCE(field->type);
+}
+
 static void mono_traverse_array (MonoArray* array, LivenessState* state)
 {
 	int i = 0;
+	gboolean has_references = FALSE;
+	gpointer iter = NULL;
 	MonoObject* object = (MonoObject*)array;
 	MonoClass* element_class;
+	MonoClassField *field;
 	g_assert (object);
 
 	element_class = GET_VTABLE(object)->klass->element_class;
 
-	//TODO: This might contain object references. handle correctly
-	if (mono_class_is_valuetype (element_class))
+	while (field = mono_class_get_fields (element_class, &iter)) 
+	{
+		has_references |= mono_field_can_contain_references(field);
+	}
+
+	if (!has_references)
 		return;
 
 	for (i = 0; i < mono_array_length (array); i++)
@@ -197,11 +215,14 @@ static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 
+			if(!mono_field_can_contain_references(field))
+				continue;
+
 			if (MONO_TYPE_ISSTRUCT(field->type))
 			{
 				char* offseted = (char*)object;
 				// subtract the added offset for the vtable. This is added to the offset even though it is a struct
-				offseted += field->offset;// - sizeof (MonoObject);
+				offseted += field->offset;
 				if (field->type->type == MONO_TYPE_GENERICINST)
 				{
 					g_assert(field->type->data.generic_class->cached_class);
@@ -212,17 +233,11 @@ static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct
 				continue;
 			}
 
-			if (!MONO_TYPE_IS_REFERENCE(field->type))
-				continue;
-
 			if (field->offset == -1) {
 				g_assert_not_reached ();
 			} else {
 				MonoObject* val = NULL;
 				MonoVTable *vtable = NULL;
-				if (field->type == MONO_TYPE_STRING)
-					continue;
-
 				mono_field_get_value (object, field, &val);
 				mono_add_process_object (val, state);
 			}
@@ -314,8 +329,9 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 		while (field = mono_class_get_fields (klass, &iter)) {
 			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 				continue;
-			
-			
+			if(!mono_field_can_contain_references(field))
+				continue;
+
 			if (MONO_TYPE_ISSTRUCT(field->type))
 			{
 				char* offseted = (char*)mono_class_vtable (domain, klass)->data;
@@ -332,10 +348,6 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 				continue;
 			}
 
-			//TODO: We should handle value types as static variables (eg. struct with reference types)
-			if (!MONO_TYPE_IS_REFERENCE(field->type))
-				continue;
-
 			if (field->offset == -1)
 			{
 				//TODO: This triggers on all runtime tests. Ask jon what this means???
@@ -344,8 +356,6 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 			else
 			{
 				MonoObject* val = NULL;
-				if (field->type->attrs & FIELD_ATTRIBUTE_LITERAL)
-					continue;
 
 				mono_field_static_get_value (mono_class_vtable (domain, klass), field, &val);
 
