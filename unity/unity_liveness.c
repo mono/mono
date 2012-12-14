@@ -172,7 +172,7 @@ static gboolean mono_field_can_contain_references(MonoClassField* field)
 static void mono_traverse_array (MonoArray* array, LivenessState* state)
 {
 	int i = 0;
-	gboolean has_references = FALSE;
+	gboolean has_references;
 	gpointer iter = NULL;
 	MonoObject* object = (MonoObject*)array;
 	MonoClass* element_class;
@@ -180,7 +180,7 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 	g_assert (object);
 
 	element_class = GET_VTABLE(object)->klass->element_class;
-
+	has_references = !mono_class_is_valuetype(element_class);
 	while (field = mono_class_get_fields (element_class, &iter)) 
 	{
 		has_references |= mono_field_can_contain_references(field);
