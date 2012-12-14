@@ -2,12 +2,16 @@ Assembly/AssemblyInfo.cs
 Monkeydoc/SearchableIndex.cs
 Monkeydoc/SearchableDocument.cs
 Monkeydoc/storage/ZipStorage.cs
+Monkeydoc/storage/NullStorage.cs
+Monkeydoc/storage/UncompiledDocStorage.cs
 Monkeydoc/providers/man-provider.cs
 Monkeydoc/providers/ecmaspec-provider.cs
 Monkeydoc/providers/error-provider.cs
 Monkeydoc/providers/xhtml-provider.cs
 Monkeydoc/providers/ecma-provider.cs
 Monkeydoc/providers/addins-provider.cs
+Monkeydoc/providers/ecmauncompiled-provider.cs
+Monkeydoc/providers/EcmaDoc.cs
 Monkeydoc/HelpSource.cs
 Monkeydoc/Tree.cs
 Monkeydoc/Node.cs

@@ -20,7 +20,7 @@ namespace MonkeyDoc
 		public const int MonodocVersion = 2;
 		const string RootNamespace = "root:/";
 		string basedir;
-		List<string> uncompiledHelpSourcePaths = new List<string>();
+		static List<string> uncompiledHelpSourcePaths = new List<string>();
 		HashSet<string> loadedSourceFiles = new HashSet<string>();
 		List<HelpSource> helpSources = new List<HelpSource>();
 		Dictionary<string, Node> nameToNode = new Dictionary<string, Node>();
@@ -119,6 +119,18 @@ namespace MonkeyDoc
 
 			foreach (string current in sourceFiles)
 				rootTree.AddSourceFile (current);
+
+			foreach (string path in uncompiledHelpSourcePaths) {
+				var hs = new Providers.EcmaUncompiledHelpSource (path);
+				hs.RootTree = rootTree;
+				rootTree.helpSources.Add (hs);
+				string epath = "extra-help-source-" + hs.Name;
+				Node hsn = rootTree.RootNode.CreateNode (hs.Name, "root:/" + epath);
+				rootTree.nameToHelpSource [epath] = hs;
+				hsn.EnsureNodes ();
+				foreach (Node n in hs.Tree.RootNode.Nodes)
+					hsn.AddNode (n);
+			}
 
 			RootTree.PurgeNode (rootTree.RootNode);
 			rootTree.RootNode.Sort ();

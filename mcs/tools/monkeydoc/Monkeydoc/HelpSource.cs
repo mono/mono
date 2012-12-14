@@ -110,6 +110,9 @@ namespace MonkeyDoc
 			get {
 				return storage;
 			}
+			protected set {
+				storage = value;
+			}
 		}
 
 		// A HelpSource may have a common prefix to its URL, give it here
