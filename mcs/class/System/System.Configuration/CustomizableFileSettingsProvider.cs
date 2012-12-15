@@ -858,8 +858,6 @@ namespace System.Configuration
 
 		public void Reset (SettingsContext context)
 		{
-			SettingsPropertyCollection coll = new SettingsPropertyCollection ();
-			// GetPropertyValues (context, coll);
 			if (values != null) {
 				foreach (SettingsPropertyValue propertyValue in values) {
 					// Can't use propertyValue.Property.DefaultValue

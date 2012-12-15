@@ -83,7 +83,7 @@ namespace System.Configuration {
 		{
 #if (CONFIGURATION_DEP)
 			foreach (SettingsProvider provider in Providers) {
-				IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
+//				IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
 				CacheValuesByProvider(provider);
 			}
 #endif
