@@ -2786,13 +2786,14 @@ namespace System
 				return;
 			}
 
-			int length = array.Length;
+			var arr = array;
+			int length = arr.Length;
 			if (length == newSize)
 				return;
 			
 			T [] a = new T [newSize];
 			if (length != 0)
-				FastCopy (array, 0, a, 0, Math.Min (newSize, length));
+				FastCopy (arr, 0, a, 0, Math.Min (newSize, length));
 			array = a;
 		}
 		
