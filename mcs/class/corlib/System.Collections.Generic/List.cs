@@ -93,7 +93,7 @@ namespace System.Collections.Generic {
 			// we can speed things up by 25%
 			if (_size == _items.Length)
 				GrowIfNeeded (1);
-			Array.UnsafeStore (_items, _size++, item);
+			_items [_size++] = item;
 			_version++;
 		}
 		
@@ -646,7 +646,7 @@ namespace System.Collections.Generic {
 			set {
 				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
-				Array.UnsafeStore (_items, index, value);
+				_items [index] = value;
 				_version++;
 			}
 		}
