@@ -640,7 +640,7 @@ namespace System.Collections.Generic {
 				CheckIndex (index);
 				if ((uint) index == (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
-				Array.UnsafeStore (_items, index, value);
+				_items [index] = value;
 				_version++;
 			}
 		}
