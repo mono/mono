@@ -1696,6 +1696,25 @@ public class ArrayTest
 	}
 
 	[Test]
+	// #8904
+	public void ReverseStruct () {
+		BStruct[] c3 = new BStruct[2];
+		c3 [0] = new BStruct () { i1 = 1, i2 = 2, i3 = 3 };
+		c3 [1] = new BStruct () { i1 = 4, i2 = 5, i3 = 6 };
+		Array.Reverse (c3);
+		Assert.AreEqual (4, c3 [0].i1);
+		Assert.AreEqual (5, c3 [0].i2);
+		Assert.AreEqual (6, c3 [0].i3);
+		Assert.AreEqual (1, c3 [1].i1);
+		Assert.AreEqual (2, c3 [1].i2);
+		Assert.AreEqual (3, c3 [1].i3);
+	}
+
+	struct BStruct {
+		public int i1, i2, i3;
+	}
+
+	[Test]
 	public void TestSetValue1() {
 		{
 			bool errorThrown = false;

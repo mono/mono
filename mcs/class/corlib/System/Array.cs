@@ -1252,7 +1252,6 @@ namespace System
 				return;
 
 			case TypeCode.String:
-			case TypeCode.Object:
 				while (index < end) {
 					object a, b;
 
@@ -1266,7 +1265,7 @@ namespace System
 				return;
 			default:
 				if (array is object[])
-					goto case TypeCode.Object;
+					goto case TypeCode.String;
 
 				// Very slow fallback
 				while (index < end) {
