@@ -52,7 +52,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-	[Category("NotWorking")]
+        [Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void NonPackUriCompareTest ()
         {
@@ -60,7 +60,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-	[Category("NotWorking")]
+        [Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void NonPackUriCompareRelativeTest ()
         {
@@ -68,7 +68,7 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-	[Category("NotWorking")]
+        [Category("NotWorking")]
         [ExpectedException (typeof (ArgumentException))]
         public void InvalidPartUriCompareTest ()
         {
@@ -98,12 +98,12 @@ namespace System.IO.Packaging.Tests {
 			                                       new Uri ("/main.html", UriKind.Relative), "#frag").ToString (), "#3");
         }
 
-	[Test]
-	public void CreateTest2()
-	{
-		Uri uri = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));
-		Assert.AreEqual("pack://pack:,,http:%2C%2Cwww.test.com%2Cpack1.pkg,/", PackUriHelper.Create(uri).ToString());
-	}
+        [Test]
+        public void CreateTest2()
+        {
+                Uri uri = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));
+                Assert.AreEqual("pack://pack:,,http:%2C%2Cwww.test.com%2Cpack1.pkg,/", PackUriHelper.Create(uri).ToString());
+        }
 
         [Test]
         [ExpectedException (typeof (ArgumentException))]
@@ -196,13 +196,13 @@ namespace System.IO.Packaging.Tests {
         [Category("NotWorking")]
         public void GetPartUriTest ()
         {
-		var pack = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));
-		var part = new Uri("/main.html", UriKind.Relative);
-		var pack_part = new Uri(@"pack://pack:,,http:%2C%2Cwww.test.com%2Cpack1.pkg,/main.html");
+                var pack = PackUriHelper.Create(new Uri("http://www.test.com/pack1.pkg"));
+                var part = new Uri("/main.html", UriKind.Relative);
+                var pack_part = new Uri(@"pack://pack:,,http:%2C%2Cwww.test.com%2Cpack1.pkg,/main.html");
 
-		Assert.IsNull(PackUriHelper.GetPartUri(pack), "#1");
-		Assert.AreEqual(pack_part, PackUriHelper.Create(pack, part), "#2");
-		Assert.AreEqual(part, PackUriHelper.GetPartUri(PackUriHelper.Create(pack, part)), "#3");
+                Assert.IsNull(PackUriHelper.GetPartUri(pack), "#1");
+                Assert.AreEqual(pack_part, PackUriHelper.Create(pack, part), "#2");
+                Assert.AreEqual(part, PackUriHelper.GetPartUri(PackUriHelper.Create(pack, part)), "#3");
         }
 
         [Test]
