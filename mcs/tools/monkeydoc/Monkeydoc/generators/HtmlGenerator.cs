@@ -49,7 +49,8 @@ namespace MonkeyDoc.Generators
 		public string Generate (HelpSource hs, string id)
 		{
 			if (hs == null || string.IsNullOrEmpty (id))
-				return MakeHtmlError ("Your request has found no candidate provider");
+				return MakeHtmlError (string.Format ("Your request has found no candidate provider [hs=\"{0}\", id=\"{1}\"]",
+				                                     hs == null ? "(null)" : hs.Name, id ?? "(null)"));
 			var cache = defaultCache ?? hs.Cache;
 			if (cache != null && cache.IsCached (MakeCacheKey (hs, id, null)))
 				return cache.GetCachedString (MakeCacheKey (hs, id, null));
