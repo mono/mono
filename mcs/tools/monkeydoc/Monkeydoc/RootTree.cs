@@ -404,12 +404,16 @@ namespace MonkeyDoc
 
 		public IndexReader GetIndex ()
 		{
-			string text = Path.Combine (this.basedir, "monodoc.index");
-			if (File.Exists (text))
-				return IndexReader.Load (text);
+			try {
+				string text = Path.Combine (this.basedir, "monodoc.index");
+				if (File.Exists (text))
+					return IndexReader.Load (text);
 
-			text = Path.Combine (Settings.Get ("monodocIndexDirectory"), "monodoc.index");
-			return IndexReader.Load (text);
+				text = Path.Combine (Settings.Get ("monodocIndexDirectory"), "monodoc.index");
+				return IndexReader.Load (text);
+			} catch {
+				return null;
+			}
 		}
 
 		public static void MakeIndex ()
@@ -443,12 +447,15 @@ namespace MonkeyDoc
 
 		public SearchableIndex GetSearchIndex ()
 		{
-			string text = Path.Combine (this.basedir, "search_index");
-			if (System.IO.Directory.Exists (text)) {
+			try {
+				string text = Path.Combine (this.basedir, "search_index");
+				if (System.IO.Directory.Exists (text))
+					return SearchableIndex.Load (text);
+				text = Path.Combine (Settings.Get ("docPath"), "search_index");
 				return SearchableIndex.Load (text);
+			} catch {
+				return null;
 			}
-			text = Path.Combine (Settings.Get ("docDir"), "search_index");
-			return SearchableIndex.Load (text);
 		}
 
 		public static void MakeSearchIndex ()
