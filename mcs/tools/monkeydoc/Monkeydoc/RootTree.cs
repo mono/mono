@@ -50,6 +50,11 @@ namespace MonkeyDoc
 			this.LastHelpSourceTime = DateTime.Now;
 		}
 
+		public static void AddUncompiledSource (string path)
+		{
+			uncompiledHelpSourcePaths.Add (path);
+		}
+
 		public static RootTree LoadTree ()
 		{
 			return RootTree.LoadTree (RootTree.ProbeBaseDirectories ());
