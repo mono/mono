@@ -427,11 +427,11 @@ namespace MonkeyDoc
 			try {
 				indexMaker.Save (text);
 			} catch (UnauthorizedAccessException) {
-				text = Path.Combine (Settings.Get ("docDir"), "monodoc.index");
+				text = Path.Combine (Settings.Get ("docPath"), "monodoc.index");
 				try {
 					indexMaker.Save (text);
 				} catch (UnauthorizedAccessException) {
-					Console.WriteLine ("Unable to write index file in {0}", Path.Combine (Settings.Get ("docDir"), "monodoc.index"));
+					Console.WriteLine ("Unable to write index file in {0}", Path.Combine (Settings.Get ("docPath"), "monodoc.index"));
 					return;
 				}
 			}
@@ -471,7 +471,7 @@ namespace MonkeyDoc
 				indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			} catch (UnauthorizedAccessException) {
 				try {
-					text = Path.Combine (Settings.Get ("docDir"), "search_index");
+					text = Path.Combine (Settings.Get ("docPath"), "search_index");
 					if (!Directory.Exists (text))
 						Directory.CreateDirectory (text);
 					indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
