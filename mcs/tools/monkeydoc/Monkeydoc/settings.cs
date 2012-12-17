@@ -14,9 +14,11 @@ namespace MonkeyDoc
 			try {
 				var config = ConfigurationManager.OpenExeConfiguration (System.Reflection.Assembly.GetExecutingAssembly ().Location);
 				libConfig = config.AppSettings.Settings;
-			} catch {
+			} catch {}
+
+			try {
 				exeConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
-			}
+			} catch {}
 		}
 
 		public static string Get (string key) {
