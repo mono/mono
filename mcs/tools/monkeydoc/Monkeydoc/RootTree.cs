@@ -342,15 +342,15 @@ namespace MonkeyDoc
 			return result;
 		}
 
-		public TOutput RenderUrl<TOutput> (string url, IDocGenerator<TOutput> generator, out Node node)
+		public TOutput RenderUrl<TOutput> (string url, IDocGenerator<TOutput> generator, out Node node, HelpSource hintSource = null)
 		{
 			node = null;
 			string internalId = null;
-			HelpSource hs = GetHelpSourceAndIdForUrl (url, out internalId, out node);
+			HelpSource hs = GetHelpSourceAndIdForUrl (url, hintSource, out internalId, out node);
 			return generator.Generate (hs, internalId);
 		}
 
-		public HelpSource GetHelpSourceAndIdForUrl (string url, out string internalId, out Node node)
+		public HelpSource GetHelpSourceAndIdForUrl (string url, HelpSource hintSource, out string internalId, out Node node)
 		{
 			node = null;
 			internalId = null;
@@ -358,11 +358,13 @@ namespace MonkeyDoc
 			if (url.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase))
 				return this.GetHelpSourceAndIdFromName (url.Substring ("root:/".Length), out internalId, out node);
 
-			HelpSource helpSource = null;
-			foreach (var hs in helpSources.Where (h => h.CanHandleUrl (url))) {
-				if (!string.IsNullOrEmpty (internalId = hs.GetInternalIdForUrl (url, out node))) {
-					helpSource = hs;
-					break;
+			HelpSource helpSource = hintSource;
+			if (helpSource == null || string.IsNullOrEmpty (internalId = helpSource.GetInternalIdForUrl (url, out node))) {
+				foreach (var hs in helpSources.Where (h => h.CanHandleUrl (url))) {
+					if (!string.IsNullOrEmpty (internalId = hs.GetInternalIdForUrl (url, out node))) {
+						helpSource = hs;
+						break;
+					}
 				}
 			}
 
