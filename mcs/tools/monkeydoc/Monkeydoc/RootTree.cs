@@ -342,6 +342,12 @@ namespace MonkeyDoc
 			return result;
 		}
 
+		public TOutput RenderUrl<TOutput> (string url, IDocGenerator<TOutput> generator, HelpSource hintSource = null)
+		{
+			Node dummy;
+			return RenderUrl<TOutput> (url, generator, out dummy, hintSource);
+		}
+
 		public TOutput RenderUrl<TOutput> (string url, IDocGenerator<TOutput> generator, out Node node, HelpSource hintSource = null)
 		{
 			node = null;
