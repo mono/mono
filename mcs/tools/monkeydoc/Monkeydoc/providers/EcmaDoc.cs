@@ -47,6 +47,8 @@ namespace MonkeyDoc.Providers
 						var id = indexGenerator (type);
 						string typeFilePath;
 						var typeDocument = EcmaDoc.LoadTypeDocument (asm, nsName, type.Attribute ("Name").Value, out typeFilePath);
+						if (typeDocument == null)
+							continue;
 						using (var file = File.OpenRead (typeFilePath))
 							storage.Store (id, file);
 						nsElements.Add (ExtractClassSummary (typeFilePath));
