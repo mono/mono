@@ -111,7 +111,7 @@ LIB_MCS_FLAGS = \
 	/r:System.Xml.Linq.dll                                            \
 	/r:System.Configuration.dll
 
-TEST_MCS_FLAGS = /r:System.Core.dll
+TEST_MCS_FLAGS = /r:System.Core.dll /r:System.Xml.dll
 
 DOC_SOURCE_DIRS = \
 	../../docs \
