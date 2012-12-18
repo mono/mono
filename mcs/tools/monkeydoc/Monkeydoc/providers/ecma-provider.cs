@@ -58,6 +58,7 @@ namespace MonkeyDoc.Providers
 		{
 			var storage = tree.HelpSource.Storage;
 			var nsSummaries = new Dictionary<string, XElement> ();
+			int resID = 0;
 
 			foreach (var asm in directories) {
 				var indexFilePath = Path.Combine (asm, "index.xml");
@@ -66,7 +67,7 @@ namespace MonkeyDoc.Providers
 					continue;
 				}
 
-				EcmaDoc.PopulateTreeFromIndexFile (indexFilePath, tree, storage, nsSummaries);
+				EcmaDoc.PopulateTreeFromIndexFile (indexFilePath, tree, storage, nsSummaries, _ => resID++.ToString ());
 			}
 
 			foreach (var summary in nsSummaries)
