@@ -34,6 +34,7 @@ Monkeydoc/generators/html/Ecma2Html.cs
 Monkeydoc/generators/html/Addin2Html.cs
 Monkeydoc/generators/html/Idem.cs
 Monkeydoc/generators/HtmlGenerator.cs
+Monkeydoc/generators/RawGenerator.cs
 Mono.Utilities/colorizer.cs
 Mono.Utilities/LRUCache.cs
 Monkeydoc.Ecma/EcmaUrlParser.cs
