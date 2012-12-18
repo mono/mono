@@ -350,6 +350,17 @@ namespace MonkeyDoc
 			return generator.Generate (hs, internalId);
 		}
 
+		public HelpSource GetHelpSourceAndIdForUrl (string url, out string internalId)
+		{
+			Node dummy;
+			return GetHelpSourceAndIdForUrl (url, out internalId, out dummy);
+		}
+
+		public HelpSource GetHelpSourceAndIdForUrl (string url, out string internalId, out Node node)
+		{
+			return GetHelpSourceAndIdForUrl (url, null, out internalId, out node);
+		}
+
 		public HelpSource GetHelpSourceAndIdForUrl (string url, HelpSource hintSource, out string internalId, out Node node)
 		{
 			node = null;
