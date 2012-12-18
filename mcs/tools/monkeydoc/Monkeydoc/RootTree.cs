@@ -360,6 +360,7 @@ namespace MonkeyDoc
 
 			HelpSource helpSource = hintSource;
 			if (helpSource == null || string.IsNullOrEmpty (internalId = helpSource.GetInternalIdForUrl (url, out node))) {
+				helpSource = null;
 				foreach (var hs in helpSources.Where (h => h.CanHandleUrl (url))) {
 					if (!string.IsNullOrEmpty (internalId = hs.GetInternalIdForUrl (url, out node))) {
 						helpSource = hs;
