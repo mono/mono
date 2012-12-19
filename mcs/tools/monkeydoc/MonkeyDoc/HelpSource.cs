@@ -271,7 +271,7 @@ namespace MonkeyDoc
 				bool stop = true;
 				foreach (Node n in current.Nodes) {
 					var element = n.Element.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase) ? n.Element.Substring (UriPrefix.Length) : n.Element;
-					if (url == element) {
+					if (url.Equals (element, StringComparison.Ordinal)) {
 						matchCache.Put (url, n);
 						return n;
 					} else if (url.StartsWith (element + ".", StringComparison.OrdinalIgnoreCase) && !n.IsLeaf) {
