@@ -123,7 +123,7 @@ static gboolean should_process_value (MonoObject* val, MonoClass* filter)
 {
 	MonoClass* val_class = GET_VTABLE(val)->klass;
 	if (filter && 
-		!mono_class_is_assignable_from (filter, val_class))
+		!mono_class_has_parent (val_class, filter))
 		return FALSE;
 
 	return TRUE;
@@ -152,13 +152,16 @@ static void mono_add_process_object (MonoObject* object, LivenessState* state)
 {
 	if (object && !IS_MARKED(object))
 	{
-		if (array_is_full(state->all_objects))
-			array_safe_grow(state, state->all_objects);
-		array_push_back(state->all_objects, object);
-		MARK_OBJ(object);
-
+		gboolean has_references = GET_VTABLE(object)->klass->has_references;
+		if(has_references || should_process_value(object,state->filter))
+		{
+			if (array_is_full(state->all_objects))
+				array_safe_grow(state, state->all_objects);
+			array_push_back(state->all_objects, object);
+			MARK_OBJ(object);
+		}
 		// Check if klass has further references - if not skip adding
-		if (GET_VTABLE(object)->klass->has_references)
+		if (has_references)
 		{
 			if(array_is_full(state->process_array))
 				array_safe_grow(state, state->process_array);
