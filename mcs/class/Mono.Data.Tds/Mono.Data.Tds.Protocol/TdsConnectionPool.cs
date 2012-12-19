@@ -87,6 +87,12 @@ namespace Mono.Data.Tds.Protocol
 	
 	public class TdsConnectionInfo
 	{
+		[Obsolete ("Use the constructor that receives a lifetime parameter")]
+		public TdsConnectionInfo (string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize)
+			: this (dataSource, port, packetSize, timeout, minSize, maxSize, 0)
+		{
+		}
+
 		public TdsConnectionInfo (string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize, int lifeTime)
 		{
 			DataSource = dataSource;

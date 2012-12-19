@@ -44,8 +44,20 @@ namespace Mono.Data.Tds.Protocol {
 
 		#region Constructors
 
+		[Obsolete ("Use the constructor that receives a lifetime parameter")]
 		public Tds80 (string server, int port)
 			: this (server, port, 512, 15, 0)
+		{
+		}
+
+		[Obsolete ("Use the constructor that receives a lifetime parameter")]
+		public Tds80 (string server, int port, int packetSize, int timeout)
+			: base (server, port, packetSize, timeout, 0, Version)
+		{
+		}
+
+		public Tds80 (string server, int port, int lifetime)
+			: this (server, port, 512, 15, lifetime)
 		{
 		}
 
