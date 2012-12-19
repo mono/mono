@@ -242,18 +242,18 @@ namespace MonkeyDoc
 				int index = current.Nodes.BinarySearch (searchNode, NodeElementComparer.Instance);
 				if (index >= 0) {
 					Node n = current.Nodes[index];
-					//Console.WriteLine ("Binarysearch success for {0} which fell on {1}", strippedUrl, n.Element);
 					matchCache.Put (url, n);
 					return n;
 				}
 				index = ~index;
 				if (index == current.Nodes.Count) {
-					//Console.WriteLine ("Match fail for {0}", strippedUrl);
-					//Console.WriteLine (current.Nodes.Select (n => n.Element).Aggregate ((e1, e2) => e1 + ", " + e2));
 					return SlowMatchNode (Tree.RootNode, matchCache, strippedUrl);
 				}
+
+				if (index == 0)
+					return null;
+
 				current = current.Nodes [index - 1];
-				//Console.WriteLine ("Binarysearch failed for {0}, next node check is {1}", strippedUrl, current.Element);
 			} while (true);
 
 			return null;
