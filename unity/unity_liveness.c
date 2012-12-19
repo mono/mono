@@ -182,17 +182,16 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 {
 	int i = 0;
 	gboolean has_references;
-	gpointer iter = NULL;
 	MonoObject* object = (MonoObject*)array;
 	MonoClass* element_class;
-	MonoClassField *field;
 	g_assert (object);
 
 	element_class = GET_VTABLE(object)->klass->element_class;
 	has_references = !mono_class_is_valuetype(element_class);
-	while (field = mono_class_get_fields (element_class, &iter)) 
+	g_assert(element_class->size_inited);
+	for (i = 0; i < element_class->field.count; i++)
 	{
-		has_references |= mono_field_can_contain_references(field);
+		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
 	}
 
 	if (!has_references)
@@ -211,6 +210,7 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 
 static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct, MonoClass* klass, LivenessState* state)
 {
+	int i;
 	MonoClassField *field;
 	MonoClass *p;
 
@@ -222,9 +222,10 @@ static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct
 
 	for (p = klass; p != NULL; p = p->parent)
 	{
-		gpointer iter = NULL;
-		while (field = mono_class_get_fields (p, &iter)) 
+		g_assert(p->size_inited);
+		for (i = 0; i < p->field.count; i++)
 		{
+			field = &p->fields[i];
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 
@@ -323,7 +324,7 @@ void mono_filter_objects(LivenessState* state)
  */
 void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 {
-	int i = 0;
+	int i, j;
 	MonoDomain* domain = mono_domain_get();
 	int size = GPOINTER_TO_INT (domain->static_data_array [1]);
 
@@ -332,13 +333,14 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 	for (i = 2; i < size; i++)
 	{
 		MonoClass* klass = domain->static_data_class_array[i];
-		gpointer iter = NULL;
 		MonoClassField *field;
 		if (!klass)
 			continue;
 		if (klass->image == mono_defaults.corlib)
 			continue;
-		while (field = mono_class_get_fields (klass, &iter)) {
+		for (j = 0; j < klass->field.count; j++)
+		{
+			field = &klass->fields[j];
 			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 				continue;
 			if(!mono_field_can_contain_references(field))
@@ -362,7 +364,7 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 
 			if (field->offset == -1)
 			{
-				g_assert_not_reached ();
+				//g_assert_not_reached ();
 			}
 			else
 			{
