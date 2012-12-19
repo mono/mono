@@ -18,6 +18,7 @@ namespace MonkeyDoc
 	 */
 	public class Tree
 	{
+		const long CurrentVersionNumber = 1;
 		public readonly HelpSource HelpSource;
 	
 		FileStream InputStream;
@@ -31,6 +32,7 @@ namespace MonkeyDoc
 		/// </summary>
 		public Tree (HelpSource hs, string filename)
 		{
+			HelpSource = hs;
 			Encoding utf8 = new UTF8Encoding (false, true);
 
 			if (!File.Exists (filename)){
@@ -45,11 +47,15 @@ namespace MonkeyDoc
 				throw new Exception ("Invalid file format");
 		
 			InputStream.Position = 4;
+			// Try to read version information
+			if (InputReader.ReadInt32 () == -(int)'v')
+				VersionNumber = InputReader.ReadInt64 ();
+			else
+				InputStream.Position -= 4;
+
 			var position = InputReader.ReadInt32 ();
 			rootNode = new Node (this, position);
 			InflateNode (rootNode);
-
-			HelpSource = hs;
 		}
 
 		/// <summary>
@@ -73,7 +79,7 @@ namespace MonkeyDoc
 			Encoding utf8 = new UTF8Encoding (false, true);
 			using (FileStream output = File.OpenWrite (file)){
 				// Skip over the pointer to the first node.
-				output.Position = 8;
+				output.Position = 4 + 4 + 8 + 4;
 			
 				using (BinaryWriter writer = new BinaryWriter (output, utf8)) {
 					// Recursively dump
@@ -81,6 +87,8 @@ namespace MonkeyDoc
 
 					output.Position = 0;
 					writer.Write (new byte [] { (byte) 'M', (byte) 'o', (byte) 'H', (byte) 'P' });
+					writer.Write (-(int)'v');
+					writer.Write (CurrentVersionNumber);
 					writer.Write (rootNode.Address);
 				}
 			}
@@ -90,6 +98,11 @@ namespace MonkeyDoc
 			get {
 				return rootNode;
 			}
+		}
+
+		public long VersionNumber {
+			get;
+			private set;
 		}
 
 		static bool GoodSig (byte [] sig)
