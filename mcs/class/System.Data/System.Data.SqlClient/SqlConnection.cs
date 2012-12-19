@@ -765,6 +765,7 @@ namespace System.Data.SqlClient
 				parms.Reset ();
 			dataSource = string.Empty;
 			connectionTimeout = DEFAULT_CONNECTIONTIMEOUT;
+			connectionLifeTime = DEFAULT_CONNECTIONLIFETIME;
 			connectionReset = true;
 			pooling = true;
 			maxPoolSize = DEFAULT_MAXPOOLSIZE;
@@ -799,7 +800,7 @@ namespace System.Data.SqlClient
 					connectionTimeout = tmpTimeout;
 				break;
 			case "connection lifetime" :
-				connectionLifeTime = ConvertToInt32 ("connection lifetime", value, 0);
+				connectionLifeTime = ConvertToInt32 ("connection lifetime", value, DEFAULT_CONNECTIONLIFETIME);
 				break;
 			case "connection reset" :
 				connectionReset = ConvertToBoolean ("connection reset", value, true);
