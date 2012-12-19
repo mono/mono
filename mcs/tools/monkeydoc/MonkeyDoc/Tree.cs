@@ -124,6 +124,14 @@ namespace MonkeyDoc
 			InputStream.Position = address;
 			baseNode.Deserialize (InputReader);
 		}
+
+		// Nodes use this value to know if they should manually re-sort their child
+		// if they come from an older generator version
+		internal bool ForceResort {
+			get {
+				return VersionNumber == 0;
+			}
+		}
 	}
 
 	public static class TreeDumper

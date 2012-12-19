@@ -236,10 +236,13 @@ namespace MonkeyDoc
 			nodes = new List<Node> (count);
 			for (int i = 0; i < count; i++) {
 				int child_address = DecodeInt (reader);
-							      
+
 				Node t = new Node (this, -child_address);
 				nodes.Add (t);
 			}
+
+			if (tree.ForceResort)
+				nodes.Sort ();
 		}
 
 		internal void Serialize (FileStream output, BinaryWriter writer)
