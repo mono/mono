@@ -582,7 +582,7 @@ namespace System.Collections.Generic {
 			info.AddValue("Comparer", comparer, typeof(IEqualityComparer<T>));
 			info.AddValue("Capacity", (table == null) ? 0 : table.Length);
 			if (table != null) {
-				T[] tableArray = new T[table.Length];
+				T[] tableArray = new T[count];
 				CopyTo(tableArray);
 				info.AddValue("Elements", tableArray, typeof(T[]));
 			}
