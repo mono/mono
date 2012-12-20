@@ -136,10 +136,9 @@ static void mono_traverse_objects (LivenessState* state);
 
 static void mono_traverse_generic_object( MonoObject* object, LivenessState* state ) 
 {
-	gsize gc_desc;
-	gc_desc = (gsize)GET_VTABLE(object)->gc_descr;
+	gsize gc_desc = (gsize)(GET_VTABLE(object)->gc_descr);
 
-	if (gc_desc & 1)
+	if (gc_desc & (gsize)1)
 		mono_traverse_gc_desc (object, state);
 	else if (GET_VTABLE(object)->klass->rank)
 		mono_traverse_array (object, state);
@@ -266,18 +265,17 @@ static void mono_traverse_object (MonoObject* object, LivenessState* state)
 	mono_traverse_object_internal (object, FALSE, GET_VTABLE(object)->klass, state);
 }
 
-#define LIVENESS_GC_DESC_NUM_BITS (sizeof(gsize)*8 - 2)
-
 static void mono_traverse_gc_desc (MonoObject* object, LivenessState* state)
 {
+#define WORDSIZE ((int)sizeof(gsize))
 	int i = 0;
-	gsize mask = (gsize)GET_VTABLE(object)->gc_descr;
+	gsize mask = (gsize)(GET_VTABLE(object)->gc_descr);
 
-	g_assert (mask & 1);
+	g_assert (mask & (gsize)1);
 
-	for (i = 0; i < LIVENESS_GC_DESC_NUM_BITS; i++)
+	for (i = 0; i < WORDSIZE-2; i++)
 	{
-		gsize offset = (1 << (LIVENESS_GC_DESC_NUM_BITS + 1 - i));
+		gsize offset = ((gsize)1 << (WORDSIZE - 1 - i));
 		if (mask & offset)
 		{
 			MonoObject* val = *(MonoObject**)(((char*)object) + i * sizeof(void*));
