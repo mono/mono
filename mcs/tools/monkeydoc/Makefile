@@ -5,7 +5,8 @@ include ../../build/rules.make
 LIBRARY = monkeydoc.dll
 LIBRARY_PACKAGE = monkeydoc
 # Remove a bunch of "obsolete"-type warning for Lucene.NET
-LOCAL_MCS_FLAGS = /nowarn:618,612,672,809
+# also activate legacy mode to compile old monodoc.dll api
+LOCAL_MCS_FLAGS = /nowarn:618,612,672,809 /define:LEGACY_MODE
 
 JAY_FLAGS = -ct
 

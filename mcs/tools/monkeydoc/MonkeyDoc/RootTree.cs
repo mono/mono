@@ -15,7 +15,11 @@ using Lucene.Net.Index;
 
 namespace MonkeyDoc
 {
-	public class RootTree : Tree
+	public
+#if LEGACY_MODE
+	partial
+#endif
+	class RootTree : Tree
 	{
 		public const int MonodocVersion = 2;
 		const string RootNamespace = "root:/";

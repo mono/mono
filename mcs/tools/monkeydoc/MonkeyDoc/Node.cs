@@ -7,9 +7,13 @@ using System.Collections.Generic;
 
 namespace MonkeyDoc
 {
-	public class Node : IComparable<Node>, IComparable
+	public
+#if LEGACY_MODE
+	partial
+#endif
+	class Node : IComparable<Node>, IComparable
 	{
-		readonly Tree tree;
+		readonly Tree parentTree;
 		string caption, element, pubUrl;
 		public bool Documented;
 		bool loaded;
@@ -31,10 +35,10 @@ namespace MonkeyDoc
 
 		internal Node (Tree tree, string caption, string element)
 		{
-			this.tree = tree;
+			this.parentTree = tree;
 			this.caption = caption;
 			this.element = element;
-			this.elementSort = tree.HelpSource != null && tree.HelpSource.SortType == SortType.Element;
+			this.elementSort = parentTree.HelpSource != null && parentTree.HelpSource.SortType == SortType.Element;
 		}
 	
 		/// <summary>
@@ -48,8 +52,8 @@ namespace MonkeyDoc
 		internal Node (Tree tree, int address)
 		{
 			this.address = address;
-			this.tree = tree;
-			this.elementSort = tree.HelpSource != null && tree.HelpSource.SortType == SortType.Element;
+			this.parentTree = tree;
+			this.elementSort = parentTree.HelpSource != null && parentTree.HelpSource.SortType == SortType.Element;
 			if (address > 0)
 				LoadNode ();
 		}
@@ -61,7 +65,7 @@ namespace MonkeyDoc
 
 		void LoadNode ()
 		{
-			tree.InflateNode (this);
+			parentTree.InflateNode (this);
 			if (parent != null)
 				parent.RegisterFullNode (this);
 		}
@@ -244,7 +248,7 @@ namespace MonkeyDoc
 				nodes.Add (t);
 			}
 
-			if (tree.ForceResort)
+			if (parentTree.ForceResort)
 				nodes.Sort ();
 		}
 
@@ -284,7 +288,7 @@ namespace MonkeyDoc
 			get {
 				if (pubUrl != null)
 					return pubUrl;
-				return pubUrl = tree.HelpSource != null ? tree.HelpSource.GetPublicUrl (this) : GetInternalUrl ();
+				return pubUrl = parentTree.HelpSource != null ? parentTree.HelpSource.GetPublicUrl (this) : GetInternalUrl ();
 			}
 		}
 

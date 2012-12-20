@@ -19,7 +19,11 @@ namespace MonkeyDoc
 	// The HelpSource class keeps track of the archived data, and its
 	// tree
 	//
-	public class HelpSource
+	public
+#if LEGACY_MODE
+	partial
+#endif
+	class HelpSource
 	{
 		static int id;
 

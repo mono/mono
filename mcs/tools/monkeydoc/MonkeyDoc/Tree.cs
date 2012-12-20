@@ -16,7 +16,11 @@ namespace MonkeyDoc
 	/* Ideally this class should also be abstracted to let user have something
 	 * else than a file as a backing store, a database for instance
 	 */
-	public class Tree
+	public
+#if LEGACY_MODE
+	partial
+#endif
+	class Tree
 	{
 		const long CurrentVersionNumber = 1;
 		public readonly HelpSource HelpSource;
