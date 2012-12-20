@@ -44,7 +44,7 @@ namespace MonkeyDoc
 		/// <summary>
 		///    Creates a node from an on-disk representation
 		/// </summary>
-		internal Node (Node parent, int address) : this (parent.tree, address)
+		internal Node (Node parent, int address) : this (parent.parentTree, address)
 		{
 			this.parent = parent;
 		}
@@ -130,7 +130,7 @@ namespace MonkeyDoc
 
 		public Tree Tree {
 			get {
-				return tree;
+				return parentTree;
 			}
 		}
 
