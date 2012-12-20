@@ -1,11 +1,14 @@
-thisdir = tools/monodoc
+thisdir = tools/monkeydoc
 SUBDIRS = 
 include ../../build/rules.make
 
-LIBRARY = monodoc.dll
-LIBRARY_PACKAGE = monodoc
+LIBRARY = monkeydoc.dll
+LIBRARY_PACKAGE = monkeydoc
 # Remove a bunch of "obsolete"-type warning for Lucene.NET
-LOCAL_MCS_FLAGS = /nowarn:618,612,672,809
+# also activate legacy mode to compile old monodoc.dll api
+LOCAL_MCS_FLAGS = /nowarn:618,612,672,809 /define:LEGACY_MODE
+
+JAY_FLAGS = -ct
 
 IMAGES = \
 	Resources/images/bc_bg.png		\
@@ -69,28 +72,18 @@ RESOURCE_FILES = \
 	Resources/mono-ecma-css.xsl       \
 	Resources/mono-ecma-impl.xsl      \
 	Resources/mono-ecma.css           \
-	Resources/mono-ecma.xsl		\
+	Resources/mono-ecma.xsl			\
+	Resources/toc-html.xsl           \
 	$(IMAGES)
 
-MAN_TEST_FILES = \
-	Test/man-provider-test.cs   \
-	Test/man-test1.1            \
-	Test/man-test1.html         \
-	Test/man-test2.1            \
-	Test/man-test2.html         \
-	Test/man-test3.1            \
-	Test/man-test3.html         \
-	Test/man-test4.1            \
-	Test/man-test4.html
-
 EXTRA_DISTFILES = \
-	monodoc.dll.config.in   \
-	$(RESOURCE_FILES)       \
-	$(MAN_TEST_FILES)
+	monkeydoc.dll.config.in   \
+	$(RESOURCE_FILES)
 
 LIB_MCS_FLAGS = \
+	/unsafe                                                           \
 	/codepage:utf8                                                    \
-	/nowarn:169,164,162,168,219,618,612                                      \
+	/nowarn:169,164,162,168,219,618,612                               \
 	/r:Commons.Xml.Relaxng                                            \
 	/resource:../../docs/monodoc.xml,monodoc.xml                      \
 	/resource:Resources/base.css,base.css                             \
@@ -109,59 +102,41 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/mono-ecma-impl.xsl,mono-ecma-impl.xsl         \
 	/resource:Resources/mono-ecma.css,mono-ecma.css                   \
 	/resource:Resources/mono-ecma.xsl,mono-ecma.xsl                   \
-	$(IMAGE_RESOURCE_COMMAND)					  \
+	/resource:Resources/toc-html.xsl,toc-html.xsl                     \
+	$(IMAGE_RESOURCE_COMMAND)					                      \
 	/r:ICSharpCode.SharpZipLib                                        \
 	/r:$(corlib)                                                      \
 	/r:System.dll                                                     \
 	/r:System.Core.dll                                                \
-	/r:System.Configuration.dll                                       \
-	/r:System.Web.Services.dll                                        \
-	/r:System.Xml.dll
+	/r:System.Xml.dll                                                 \
+	/r:System.Xml.Linq.dll                                            \
+	/r:System.Configuration.dll
+
+TEST_MCS_FLAGS = /r:System.Core.dll /r:System.Xml.dll
+
+DOC_SOURCE_DIRS = \
+	../../docs \
+	../../../docs
+
+DOC_SOURCES = $(foreach dir,$(DOC_SOURCE_DIRS),$(wildcard $(dir)/*.source $(dir)/*.tree $(dir)/*.zip))
 
 include ../../build/library.make
 
 $(the_lib): Makefile $(RESOURCE_FILES)
 
-all-local: $(the_lib).config
+all-local: $(the_lib).config Monkeydoc.Ecma/EcmaUrlParser.cs
 
-$(the_lib).config: Makefile
-	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monodoc.dll.config.in > $@
+test-local: setup-doc-sources
 
-test: Test/man-provider-test.exe
+$(the_lib).config: Makefile monkeydoc.dll.config.in
+	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monkeydoc.dll.config.in > $@
 
-run-test-local: check-man-provider
+Monkeydoc.Ecma/EcmaUrlParser.cs: Monkeydoc.Ecma/EcmaUrlParser.jay $(topdir)/jay/skeleton.cs
+	$(topdir)/jay/jay $(JAY_FLAGS) < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
-run-test-update: check-man-provider-update
+parser.exe: Monkeydoc.Ecma/EcmaUrlParser.cs Monkeydoc.Ecma/EcmaUrlTokenizer.cs Monkeydoc.Ecma/EcmaUrlParserDriver.cs Monkeydoc.Ecma/EcmaDesc.cs
+	mcs /out:$@ /debug $^
 
-Test/man-provider-test.exe: Test/man-provider-test.cs $(the_lib)
-	$(CSCOMPILE) -target:exe -out:$@ $< /r:$(the_lib)
-
-my_mono = \
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" \
-	$(TEST_RUNTIME) \
-	$(RUNTIME_FLAGS)
-
-check-man-provider: Test/man-provider-test.exe
-	$(my_mono) $< Test/man-test1.1 | diff - Test/man-test1.html
-	$(my_mono) $< Test/man-test2.1 | diff - Test/man-test2.html
-	$(my_mono) $< Test/man-test3.1 | diff - Test/man-test3.html
-	$(my_mono) $< Test/man-test4.1 | diff - Test/man-test4.html
-
-check-man-provider-update: Test/man-provider-test.exe
-	$(my_mono) $< Test/man-test1.1 > Test/man-test1.html
-	$(my_mono) $< Test/man-test2.1 > Test/man-test2.html
-	$(my_mono) $< Test/man-test3.1 > Test/man-test3.html
-	$(my_mono) $< Test/man-test4.1 > Test/man-test4.html
-
-clean-local: cleanup
-
-cleanup:
-	-rm -f Test/man-provider-test.exe*
-
-API_SERVER = root@api.xamarin.com
-
-push:
-	make PROFILE=net_4_0 MCS_FLAGS=/debug
-	scp "../../class/lib/net_4_0/monodoc.dll*" $(API_SERVER):/srv/monodoc/
-	ssh $(API_SERVER) "/etc/init.d/apache2 reload"
-	ssh $(API_SERVER) "echo On `date -u +"%F %R"` UTC by `whoami` based on revision: `git log -n1 --oneline` >> /srv/monodoc/Changelog"
+setup-doc-sources: $(DOC_SOURCES)
+	mkdir -p ./Test/monodoc/sources/
+	cp $(DOC_SOURCES) ./Test/monodoc/sources/
