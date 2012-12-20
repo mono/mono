@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Documents;
 
-using MonkeyDoc.Ecma;
+using Monodoc.Ecma;
 using Mono.Utilities;
 
-namespace MonkeyDoc.Providers
+namespace Monodoc.Providers
 {
 	public enum EcmaNodeType {
 		Invalid,

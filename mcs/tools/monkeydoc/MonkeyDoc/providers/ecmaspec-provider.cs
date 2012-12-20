@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Documents;
 
-namespace MonkeyDoc.Providers
+namespace Monodoc.Providers
 {
 	public class EcmaSpecProvider : Provider
 	{

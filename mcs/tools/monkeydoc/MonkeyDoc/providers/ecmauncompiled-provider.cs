@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using Lucene.Net.Index;
 using Lucene.Net.Documents;
 
-using MonkeyDoc.Ecma;
-using MonkeyDoc.Storage;
+using Monodoc.Ecma;
+using Monodoc.Storage;
 using Mono.Utilities;
 
-namespace MonkeyDoc.Providers
+namespace Monodoc.Providers
 {
 	public class EcmaUncompiledHelpSource : EcmaHelpSource
 	{

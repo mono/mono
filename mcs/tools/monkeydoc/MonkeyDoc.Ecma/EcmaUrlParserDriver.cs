@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MonkeyDoc.Ecma
+namespace Monodoc.Ecma
 {
 	public class EcmaUrlParserDriver
 	{

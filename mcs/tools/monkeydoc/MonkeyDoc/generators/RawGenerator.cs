@@ -4,9 +4,9 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-using MonkeyDoc;
+using Monodoc;
 
-namespace MonkeyDoc.Generators
+namespace Monodoc.Generators
 {
 	/// <summary>
 	/// This generators returns the raw content of the HelpSource without any transformation

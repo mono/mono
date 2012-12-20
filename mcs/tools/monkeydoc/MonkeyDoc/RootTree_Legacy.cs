@@ -10,7 +10,7 @@ using Lucene.Net.Index;
 
 #if LEGACY_MODE
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	using Generators;
 

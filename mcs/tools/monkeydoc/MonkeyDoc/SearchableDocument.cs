@@ -6,7 +6,7 @@
 //
 using Lucene.Net.Documents;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	struct SearchableDocument
 	{

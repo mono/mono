@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MonkeyDoc.Caches
+namespace Monodoc.Caches
 {
 	public class FileCache : IDocCache
 	{

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Mono.Utilities;
 using Lucene.Net.Index;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public enum SortType {
 		Caption,
@@ -50,7 +50,7 @@ namespace MonkeyDoc
 			this.name = Path.GetFileName (base_filename);
 			this.basePath = Path.GetDirectoryName (base_filename);
 			this.treeFilePath = base_filename + ".tree";
-			this.storage = new MonkeyDoc.Storage.ZipStorage (base_filename + ".zip");
+			this.storage = new Monodoc.Storage.ZipStorage (base_filename + ".zip");
 			this.cache = DocCacheHelper.GetDefaultCache (Name);
 
 			tree = create ? new Tree (this, string.Empty, string.Empty) : new Tree (this, treeFilePath);

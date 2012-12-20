@@ -3,9 +3,9 @@ using System.Linq;
 using System.IO;
 using System.Configuration;
 using System.Collections.Specialized;
-using MonkeyDoc.Caches;
+using Monodoc.Caches;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public enum DocEntity
 	{

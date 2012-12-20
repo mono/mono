@@ -4,7 +4,7 @@ using System.Xml;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Storage
+namespace Monodoc.Storage
 {
 	// A storage that doesn't store
 	public class NullStorage : IDocStorage

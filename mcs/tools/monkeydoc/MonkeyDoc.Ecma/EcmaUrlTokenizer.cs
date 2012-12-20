@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Globalization;
 
-namespace MonkeyDoc.Ecma
+namespace Monodoc.Ecma
 {
 	public class EcmaUrlTokenizer : yyParser.yyInput
 	{

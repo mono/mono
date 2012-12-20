@@ -6,7 +6,7 @@ using System.Xml.XPath;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Generators.Html
+namespace Monodoc.Generators.Html
 {
 	public class Toc2Html : IHtmlExporter
 	{

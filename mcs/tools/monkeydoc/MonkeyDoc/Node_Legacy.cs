@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 #if LEGACY_MODE
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public partial class Node
 	{

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using MonkeyDoc;
+using Monodoc;
 
-namespace MonoTests.MonkeyDoc
+namespace MonoTests.Monodoc
 {
 	[TestFixture]
 	public class SettingsTest

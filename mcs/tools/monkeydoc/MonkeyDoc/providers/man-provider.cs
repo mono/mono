@@ -14,7 +14,7 @@ using System.Xml;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Providers
+namespace Monodoc.Providers
 {
 	public class ManProvider : Provider
 	{

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using Mono.Documentation;
 using BF = System.Reflection.BindingFlags;
 
-namespace MonkeyDoc.Generators.Html
+namespace Monodoc.Generators.Html
 {
 	public class Ecma2Html : IHtmlExporter
 	{

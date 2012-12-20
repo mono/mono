@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Ecma
+namespace Monodoc.Ecma
 {
 	/* Some properties might not be filled/meaningful depending on kind
 	 * like a namespace EcmaUrl won't have a valid TypeName

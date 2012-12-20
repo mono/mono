@@ -10,7 +10,7 @@ using Lucene.Net.Index;
 
 #if LEGACY_MODE
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	using Generators;
 
@@ -25,9 +25,9 @@ namespace MonkeyDoc
 		[Obsolete]
 		public static bool UseWebdocCache;
 
-		[Obsolete ("Use MonkeyDoc.Providers.HtmlGenerator.InlineCss")]
+		[Obsolete ("Use Monodoc.Providers.HtmlGenerator.InlineCss")]
 		public string InlineCss {
-			get { return MonkeyDoc.Generators.HtmlGenerator.InlineCss; }
+			get { return Monodoc.Generators.HtmlGenerator.InlineCss; }
 		}
 
 		[Obsolete]

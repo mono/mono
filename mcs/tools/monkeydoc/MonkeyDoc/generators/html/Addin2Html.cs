@@ -6,7 +6,7 @@ using System.Xml.Xsl;
 using System.Xml.XPath;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Generators.Html
+namespace Monodoc.Generators.Html
 {
 	public class Addin2Html : IHtmlExporter
 	{
@@ -45,11 +45,11 @@ namespace MonkeyDoc.Generators.Html
 
 		public string Htmlize (XmlElement addin, string urlType, string addinId, string fileId, string path)
 		{
-			if (urlType == MonkeyDoc.Providers.AddinsHelpSource.AddinPrefix)
+			if (urlType == Monodoc.Providers.AddinsHelpSource.AddinPrefix)
 				return GetAddinTextFromUrl (addin, addinId, fileId);
-			else if (urlType == MonkeyDoc.Providers.AddinsHelpSource.ExtensionPrefix)
+			else if (urlType == Monodoc.Providers.AddinsHelpSource.ExtensionPrefix)
 				return GetExtensionTextFromUrl (addin, addinId, fileId, path);
-			else if (urlType == MonkeyDoc.Providers.AddinsHelpSource.ExtensionNodePrefix)
+			else if (urlType == Monodoc.Providers.AddinsHelpSource.ExtensionNodePrefix)
 				return GetExtensionNodeTextFromUrl (addin, addinId, fileId, path);
 
 			return null;

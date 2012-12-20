@@ -17,7 +17,7 @@ using Lucene.Net.Search;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Store;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public class SearchableIndex 
 	{

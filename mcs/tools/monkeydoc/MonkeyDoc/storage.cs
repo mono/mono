@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	// Define a storage mechanism for a help source
 	public interface IDocStorage : IDisposable

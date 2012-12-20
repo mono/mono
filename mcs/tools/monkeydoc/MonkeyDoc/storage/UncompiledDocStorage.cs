@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Storage
+namespace Monodoc.Storage
 {
 	// A read-only storage to access ecma XML document based on a standard directory layout
 	// id are relative path inside the base doc directory

@@ -4,9 +4,9 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-using MonkeyDoc;
+using Monodoc;
 
-namespace MonkeyDoc.Generators
+namespace Monodoc.Generators
 {
 	using Html;
 

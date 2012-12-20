@@ -1,6 +1,6 @@
 using System;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	// All type of documents that a generator may find as input
 	public enum DocumentType {

@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace MonkeyDoc.Providers
+namespace Monodoc.Providers
 {
 	public class XhtmlProvider : Provider
 	{

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace MonkeyDoc.Caches
+namespace Monodoc.Caches
 {
 	// This is basically a no-cache implementation
 	public class NullCache : IDocCache

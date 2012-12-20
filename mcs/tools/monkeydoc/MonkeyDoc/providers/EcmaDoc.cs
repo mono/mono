@@ -6,7 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Providers
+namespace Monodoc.Providers
 {
 	// Common functionality between ecma-provider and ecmauncompiled-provider
 	internal class EcmaDoc

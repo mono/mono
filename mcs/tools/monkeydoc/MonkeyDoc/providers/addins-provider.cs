@@ -35,7 +35,7 @@ using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Providers
+namespace Monodoc.Providers
 {
 	public class AddinsProvider : Provider
 	{

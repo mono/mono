@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 using ICSharpCode.SharpZipLib.Zip;
 
-namespace MonkeyDoc.Storage
+namespace Monodoc.Storage
 {
 	public class ZipStorage : IDocStorage
 	{

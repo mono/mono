@@ -9,11 +9,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml;
 
-using MonkeyDoc.Providers;
+using Monodoc.Providers;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public
 #if LEGACY_MODE

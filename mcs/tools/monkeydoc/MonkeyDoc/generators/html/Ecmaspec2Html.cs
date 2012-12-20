@@ -5,7 +5,7 @@ using System.Xml.Xsl;
 using System.Xml.XPath;
 using System.Collections.Generic;
 
-namespace MonkeyDoc.Generators.Html
+namespace Monodoc.Generators.Html
 {
 	public class Ecmaspec2Html : IHtmlExporter
 	{

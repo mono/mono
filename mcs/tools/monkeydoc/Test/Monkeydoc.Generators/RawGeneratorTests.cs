@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using MonkeyDoc;
-using MonkeyDoc.Generators;
+using Monodoc;
+using Monodoc.Generators;
 
-namespace MonoTests.MonkeyDoc.Generators
+namespace MonoTests.Monodoc.Generators
 {
 	[TestFixture]
 	public class RawGeneratorTests

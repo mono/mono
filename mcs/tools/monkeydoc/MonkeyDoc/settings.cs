@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using System.Collections.Specialized;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public static class Settings
 	{

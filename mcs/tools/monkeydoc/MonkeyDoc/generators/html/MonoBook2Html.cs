@@ -4,10 +4,10 @@ using System.Text;
 using System.Xml;
 using System.Collections.Generic;
 
-using MonkeyDoc;
-using MonkeyDoc.Generators;
+using Monodoc;
+using Monodoc.Generators;
 
-namespace MonkeyDoc.Generators.Html
+namespace Monodoc.Generators.Html
 {
 	// Input is expected to be already HTML so just return it
 	public class MonoBook2Html : IHtmlExporter

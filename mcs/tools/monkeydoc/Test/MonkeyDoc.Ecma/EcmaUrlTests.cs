@@ -5,10 +5,10 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-using MonkeyDoc;
-using MonkeyDoc.Ecma;
+using Monodoc;
+using Monodoc.Ecma;
 
-namespace MonoTests.MonkeyDoc.Ecma
+namespace MonoTests.Monodoc.Ecma
 {
 	[TestFixture]
 	public class EcmaUrlTests

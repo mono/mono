@@ -1,6 +1,6 @@
 using System;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public abstract class Provider
 	{

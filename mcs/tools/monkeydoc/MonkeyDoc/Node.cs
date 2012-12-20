@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Collections.Generic;
 
-namespace MonkeyDoc
+namespace Monodoc
 {
 	public
 #if LEGACY_MODE
