@@ -128,6 +128,8 @@ all-local: $(the_lib).config Monodoc.Ecma/EcmaUrlParser.cs
 
 test-local: setup-doc-sources
 
+dist-local: Monodoc.Ecma/EcmaUrlParser.cs
+
 $(the_lib).config: Makefile monodoc.dll.config.in
 	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monodoc.dll.config.in > $@
 
