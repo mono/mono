@@ -12,7 +12,7 @@ namespace MonoTests.Monodoc
 	[TestFixture]
 	public class HelpSourceTest
 	{
-		const string BaseDir = "../../tools/monkeydoc/Test/monodoc/";
+		const string BaseDir = "../../tools/monodoc/Test/monodoc_test/";
 
 		class CheckGenerator : IDocGenerator<bool>
 		{

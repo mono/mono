@@ -1,9 +1,9 @@
-thisdir = tools/monkeydoc
+thisdir = tools/monodoc
 SUBDIRS = 
 include ../../build/rules.make
 
-LIBRARY = monkeydoc.dll
-LIBRARY_PACKAGE = monkeydoc
+LIBRARY = monodoc.dll
+LIBRARY_PACKAGE = monodoc
 # Remove a bunch of "obsolete"-type warning for Lucene.NET
 # also activate legacy mode to compile old monodoc.dll api
 LOCAL_MCS_FLAGS = /nowarn:618,612,672,809 /define:LEGACY_MODE
@@ -77,7 +77,7 @@ RESOURCE_FILES = \
 	$(IMAGES)
 
 EXTRA_DISTFILES = \
-	monkeydoc.dll.config.in   \
+	monodoc.dll.config.in   \
 	$(RESOURCE_FILES)
 
 LIB_MCS_FLAGS = \
@@ -124,17 +124,17 @@ include ../../build/library.make
 
 $(the_lib): Makefile $(RESOURCE_FILES)
 
-all-local: $(the_lib).config Monkeydoc.Ecma/EcmaUrlParser.cs
+all-local: $(the_lib).config Monodoc.Ecma/EcmaUrlParser.cs
 
 test-local: setup-doc-sources
 
-$(the_lib).config: Makefile monkeydoc.dll.config.in
-	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monkeydoc.dll.config.in > $@
+$(the_lib).config: Makefile monodoc.dll.config.in
+	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monodoc.dll.config.in > $@
 
-Monkeydoc.Ecma/EcmaUrlParser.cs: Monkeydoc.Ecma/EcmaUrlParser.jay $(topdir)/jay/skeleton.cs
+Monodoc.Ecma/EcmaUrlParser.cs: Monodoc.Ecma/EcmaUrlParser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay $(JAY_FLAGS) < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
-parser.exe: Monkeydoc.Ecma/EcmaUrlParser.cs Monkeydoc.Ecma/EcmaUrlTokenizer.cs Monkeydoc.Ecma/EcmaUrlParserDriver.cs Monkeydoc.Ecma/EcmaDesc.cs
+parser.exe: Monodoc.Ecma/EcmaUrlParser.cs Monodoc.Ecma/EcmaUrlTokenizer.cs Monodoc.Ecma/EcmaUrlParserDriver.cs Monodoc.Ecma/EcmaDesc.cs
 	mcs /out:$@ /debug $^
 
 setup-doc-sources: $(DOC_SOURCES)
