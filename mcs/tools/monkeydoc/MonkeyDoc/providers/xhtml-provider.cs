@@ -9,16 +9,19 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace MonkeyDoc.Providers
 {
 	public class XhtmlProvider : Provider
 	{
 		string tocFile;
+		readonly XNamespace ns = "http://www.w3.org/1999/xhtml";
 	
 		public XhtmlProvider (string handbookTocFile)
 		{
@@ -29,8 +32,46 @@ namespace MonkeyDoc.Providers
 
 		public override void PopulateTree (Tree tree)
 		{
-			//new SimpleHandbookTOCParser(tree, tocFile);
-			// TODO: port it
+			var doc = XDocument.Load (tocFile);
+			var uls = doc.Descendants (ns + "body").First ().Elements (ns + "ul");
+			foreach (var ul in uls)
+				ParseUl (tree, tree.RootNode, ul);
+		}
+
+		void ParseUl (Tree tree, Node parent, XElement ul)
+		{
+			var storage = tree.HelpSource.Storage;
+			foreach (var e in ul.Elements (ns + "li")) {
+				var inner = e.Element (ns + "object");
+				if (inner == null)
+					continue;
+				string caption, element;
+				ObjectEntryToParams (inner, out caption, out element);
+				// Don't add if the backing file doesn't exist
+				if (!File.Exists (element)) {
+					Console.Error.WriteLine ("File `{0}' referenced in TOC but it doesn't exist.", element);
+					continue;
+				}
+				using (var file = File.OpenRead (element))
+					storage.Store (element, file);
+				parent.CreateNode (caption, XhtmlHelpSource.XhtmlPrefix + element);
+			}
+		}
+
+		void ObjectEntryToParams (XElement obj, out string caption, out string element)
+		{
+			var ps = obj.Elements (ns + "param");
+			caption = ps
+				.Where (p => p.Attribute ("name").Value == "Name")
+				.Select (p => (string)p.Attribute ("value"))
+				.FirstOrDefault ();
+			caption = caption ?? string.Empty;
+
+			element = ps
+				.Where (p => p.Attribute ("name").Value == "Local")
+				.Select (p => (string)p.Attribute ("value"))
+				.FirstOrDefault ();
+			element = element ?? string.Empty;
 		}
 
 		public override void CloseTree (HelpSource hs, Tree tree)
@@ -45,7 +86,7 @@ namespace MonkeyDoc.Providers
 
 		}
 
-		const string XhtmlPrefix = "xhtml:";
+		internal const string XhtmlPrefix = "xhtml:";
 
 		protected override string UriPrefix {
 			get {
@@ -77,7 +118,6 @@ namespace MonkeyDoc.Providers
 
 		public static string GetAbsoluteLink(string target, string url)
 		{
-			
 			string value = null;
 		
 			if (target.StartsWith ("#") ||
