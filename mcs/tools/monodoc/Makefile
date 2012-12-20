@@ -78,7 +78,8 @@ RESOURCE_FILES = \
 
 EXTRA_DISTFILES = \
 	monodoc.dll.config.in   \
-	$(RESOURCE_FILES)
+	$(RESOURCE_FILES)   \
+	Monodoc.Ecma/EcmaUrlParser.jay
 
 LIB_MCS_FLAGS = \
 	/unsafe                                                           \
