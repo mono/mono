@@ -53,7 +53,8 @@ namespace MonkeyDoc.Providers
 					nodeToAddChildrenTo.CreateNode (name.Value, target);
 
 					if (File.Exists (page.Value))
-						storage.Store (name.Value, File.OpenRead (page.Value));
+						using (var file = File.OpenRead (page.Value))
+							storage.Store (name.Value, file);
 				}
 			}
 		}
