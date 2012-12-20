@@ -76,19 +76,19 @@ void           mono_unity_liveness_calculation_from_statics (LivenessState* stat
 
 #define MARK_OBJ(obj) \
 	do { \
-		(obj)->vtable = ((gsize)(obj)->vtable) | 1; \
+		(obj)->vtable = (MonoVTable*)(((gsize)(obj)->vtable) | (gsize)1); \
 	} while (0)
 
 #define CLEAR_OBJ(obj) \
 	do { \
-		(obj)->vtable = ((gsize)(obj)->vtable) & ~1; \
+		(obj)->vtable = (MonoVTable*)(((gsize)(obj)->vtable) & ~(gsize)1); \
 	} while (0)
 
 #define IS_MARKED(obj) \
-	(((gsize)(obj)->vtable) & 1)
+	(((gsize)(obj)->vtable) & (gsize)1)
 
 #define GET_VTABLE(obj) \
-	((MonoVTable*)(((gsize)(obj)->vtable) & ~1))
+	((MonoVTable*)(((gsize)(obj)->vtable) & ~(gsize)1))
 
 
 void mono_filter_objects(LivenessState* state);
@@ -141,7 +141,7 @@ static void mono_traverse_generic_object( MonoObject* object, LivenessState* sta
 	if (gc_desc & (gsize)1)
 		mono_traverse_gc_desc (object, state);
 	else if (GET_VTABLE(object)->klass->rank)
-		mono_traverse_array (object, state);
+		mono_traverse_array ((MonoArray*)object, state);
 	else
 		mono_traverse_object (object, state);
 }
@@ -267,7 +267,7 @@ static void mono_traverse_object (MonoObject* object, LivenessState* state)
 
 static void mono_traverse_gc_desc (MonoObject* object, LivenessState* state)
 {
-#define WORDSIZE ((int)sizeof(gsize))
+#define WORDSIZE ((int)sizeof(gsize)*8)
 	int i = 0;
 	gsize mask = (gsize)(GET_VTABLE(object)->gc_descr);
 
@@ -410,7 +410,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 {
 	int i = 0;
 	MonoArray *res = NULL;
-	MonoReflectionType* filter_type = mono_gchandle_get_target (GPOINTER_TO_UINT(filter_handle));
+	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target (GPOINTER_TO_UINT(filter_handle));
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
 	LivenessState* liveness_state = NULL;
@@ -435,7 +435,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 	g_ptr_array_free (objects, TRUE);
 
 	
-	return mono_gchandle_new (res, FALSE);
+	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
 
 }
 
@@ -467,7 +467,7 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 {
 	int i = 0;
 	MonoArray *res = NULL;
-	MonoReflectionType* filter_type = mono_gchandle_get_target (GPOINTER_TO_UINT(filter_handle));
+	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target (GPOINTER_TO_UINT(filter_handle));
 	MonoObject* root = mono_gchandle_get_target (GPOINTER_TO_UINT(root_handle));
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
@@ -491,7 +491,7 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 
 	g_ptr_array_free (objects, TRUE);
 
-	return mono_gchandle_new (res, FALSE);
+	return (gpointer)mono_gchandle_new ((MonoObject*)res, FALSE);
 }
 
 LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
