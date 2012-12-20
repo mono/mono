@@ -54,10 +54,10 @@ namespace Mono.Documentation {
 			foreach (var action in extra) {
 				switch (action) {
 				case "tree":
-					RootTree.MakeIndex (root);
+					root.GenerateIndex ();
 					break;
 				case "search":
-					RootTree.MakeSearchIndex (root);
+					root.GenerateSearchIndex ();
 					break;
 				}
 			}

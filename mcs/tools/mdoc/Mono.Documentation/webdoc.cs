@@ -36,6 +36,8 @@ using System.Web;
 using System.Xml.Linq;
 
 using Monodoc;
+using Monodoc.Generators;
+using Monodoc.Caches;
 using Mono.Documentation;
 
 using Mono.Options;
@@ -92,9 +94,6 @@ namespace Mono.Documentation
 			if (opts.Formats.Values.All (files => files.Count == 0))
 				Error ("No files specified.");
 			ProcessSources (opts);
-			HelpSource.use_css = true;
-			HelpSource.FullHtml = false;
-			SettingsHandler.Settings.EnableEditing = false;
 			foreach (var p in opts.Formats)
 				ProcessFiles (opts, p.Key, p.Value);
 		}
@@ -196,15 +195,16 @@ namespace Mono.Documentation
 					docRoot.AddSourceFile (source);
 			}
 			hs.RootTree = docRoot;
-			foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
-				var url = node.URL;
+			var generator = new HtmlGenerator (new NullCache ());
+			foreach (Node node in tree.RootNode.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes)) {
+				var url = node.PublicUrl;
 				Message (TraceLevel.Info, "\tProcessing URL: {0}", url);
 				if (string.IsNullOrEmpty (url))
 					continue;
 				var file = XmlDocUtils.GetCachedFileName (outDir, url);
 				using (var o = File.AppendText (file)) {
 					Node _;
-					string contents = hs.GetText (url, out _) ?? hs.RenderNamespaceLookup (url, out _);
+					string contents = docRoot.RenderUrl (url, generator, out _);
 					o.Write (contents);
 				}
 			}

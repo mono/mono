@@ -119,10 +119,12 @@ public class MDocToMSXDocConverter : MDocCommand {
 				XmlElement members = outputfiles [assemblyname];
 				if (members == null) continue; // assembly is strangely not listed in the index
 				
-				CreateMember(EcmaDoc.GetCref (type.DocumentElement), type.DocumentElement, members);
+				//CreateMember(EcmaDoc.GetCref (type.DocumentElement), type.DocumentElement, members);
 					
 				foreach (XmlElement memberdoc in type.SelectNodes("Type/Members/Member")) {
-					string name = EcmaDoc.GetCref (memberdoc);
+					//string name = EcmaDoc.GetCref (memberdoc);
+					// FIXME
+					string name = ns + "." + typename + "." + memberdoc.GetAttribute ("MemberName");
 					CreateMember(name, memberdoc, members);
 				}
 			}
