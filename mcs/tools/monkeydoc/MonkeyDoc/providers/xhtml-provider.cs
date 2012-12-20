@@ -52,6 +52,12 @@ namespace MonkeyDoc.Providers
 				return XhtmlPrefix;
 			}
 		}
+
+		public override SortType SortType {
+			get {
+				return SortType.Element;
+			}
+		}
 		
 		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraArgs)
 		{

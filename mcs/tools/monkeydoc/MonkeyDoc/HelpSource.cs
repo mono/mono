@@ -10,6 +10,11 @@ using Lucene.Net.Index;
 
 namespace MonkeyDoc
 {
+	public enum SortType {
+		Caption,
+		Element
+	}
+
 	//
 	// The HelpSource class keeps track of the archived data, and its
 	// tree
@@ -119,6 +124,12 @@ namespace MonkeyDoc
 		protected virtual string UriPrefix {
 			get {
 				return "dummy:";
+			}
+		}
+
+		public virtual SortType SortType {
+			get {
+				return SortType.Caption;
 			}
 		}
 	

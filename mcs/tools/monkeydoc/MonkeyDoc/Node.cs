@@ -16,6 +16,7 @@ namespace MonkeyDoc
 		Node parent;
 		List<Node> nodes;
 		Dictionary<string, Node> childrenLookup;
+		bool elementSort;
 		/* Address has three types of value, 
 		 *   _ 0 is for no on-disk representation
 		 *   _ >0 is a valid address that is loaded immediately
@@ -33,6 +34,7 @@ namespace MonkeyDoc
 			this.tree = tree;
 			this.caption = caption;
 			this.element = element;
+			this.elementSort = tree.HelpSource != null && tree.HelpSource.SortType == SortType.Element;
 		}
 	
 		/// <summary>
@@ -47,6 +49,7 @@ namespace MonkeyDoc
 		{
 			this.address = address;
 			this.tree = tree;
+			this.elementSort = tree.HelpSource != null && tree.HelpSource.SortType == SortType.Element;
 			if (address > 0)
 				LoadNode ();
 		}
@@ -303,8 +306,8 @@ namespace MonkeyDoc
 			EnsureLoaded ();
 			other.EnsureLoaded ();
 
-			var cap1 = caption;
-			var cap2 = other.caption;
+			var cap1 = elementSort ? element : caption;
+			var cap2 = elementSort ? other.element : other.caption;
 
 			/* Some node (notably from ecmaspec) have number prepended to them
 			 * which we need to sort better by padding them to the same number
