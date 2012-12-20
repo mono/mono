@@ -9,10 +9,17 @@ namespace MonkeyDoc
 {
 	public partial class Tree
 	{
+		[Obsolete ("Proxy to RootNode")]
 		public List<Node> Nodes {
 			get {
 				return RootNode.Nodes;
 			}
+		}
+
+		[Obsolete ("Proxy to RootNode")]
+		public void Sort ()
+		{
+			RootNode.Sort ();
 		}
 	}
 }

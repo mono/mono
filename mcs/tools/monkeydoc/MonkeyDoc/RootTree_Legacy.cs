@@ -32,6 +32,18 @@ namespace MonkeyDoc
 		{
 			return RenderUrl (url, htmlGenerator, out n);
 		}
+
+		[Obsolete ("Use GenerateIndex")]
+		public static void MakeIndex (RootTree root)
+		{
+			root.GenerateIndex ();
+		}
+
+		[Obsolete ("Use GenerateSearchIndex")]
+		public static void MakeSearchIndex (RootTree root)
+		{
+			root.GenerateSearchIndex ();
+		}
 	}
 }
 

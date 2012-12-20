@@ -17,6 +17,14 @@ namespace MonkeyDoc
 				return this.Tree;
 			}
 		}
+
+		[Obsolete ("Use TreeDumper")]
+		public static void PrintTree (Tree t)
+		{
+			TreeDumper.PrintTree (t.RootNode);
+		}
+
+		
 	}
 }
 

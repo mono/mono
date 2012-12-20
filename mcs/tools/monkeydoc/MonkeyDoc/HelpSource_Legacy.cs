@@ -12,8 +12,12 @@ using Lucene.Net.Index;
 
 namespace MonkeyDoc
 {
+	using Generators;
+
 	public partial class HelpSource
 	{
+		static HtmlGenerator htmlGenerator = new HtmlGenerator (null);
+
 		[Obsolete]
 		public static bool use_css;
 		[Obsolete]
@@ -29,6 +33,18 @@ namespace MonkeyDoc
 		[Obsolete]
 		public string InlineJavaScript {
 			get { return null; }
+		}
+
+		[Obsolete ("Use RenderUrl")]
+		public string GetText (string url, out Node node)
+		{
+			return rootTree.RenderUrl (url, htmlGenerator, out node, this);
+		}
+
+		[Obsolete ("Use RenderUrl")]
+		public string RenderNamespaceLookup (string url, out Node node)
+		{
+			return rootTree.RenderUrl (url, htmlGenerator, out node, this);
 		}
 	}
 }
