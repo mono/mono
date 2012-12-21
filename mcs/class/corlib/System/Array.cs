@@ -2778,7 +2778,7 @@ namespace System
 		public static void Resize<T> (ref T [] array, int newSize)
 		{
 			if (newSize < 0)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("newSize");
 			
 			if (array == null) {
 				array = new T [newSize];
