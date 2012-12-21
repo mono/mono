@@ -1,4 +1,3 @@
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -101,6 +100,7 @@ namespace Mono.Audio {
 					byte_rate |= buffer [idx++] << 16;
 					byte_rate |= buffer [idx++] << 24;
 //					int block_align = buffer [idx++] | (buffer [idx++] << 8);
+					idx += 2; //because, the above line is commented out
 					int sign_bits = buffer [idx++] | (buffer [idx++] << 8);
 
 					switch (sign_bits) {
