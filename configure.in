@@ -2096,6 +2096,7 @@ case "$host" in
 			# foo.c:6: warning: visibility attribute not supported in this configuration; ignored
 			# ld: fatal: relocation error: R_386_GOTOFF: file /var/tmp//ccxYR96k.o: symbol astruct: relocation must bind locally
 			have_visibility_hidden=no
+			;;
 		  darwin*|openbsd*|freebsd*)
 			if test "x$ac_cv_sizeof_void_p" = "x8"; then
 				TARGET=AMD64
@@ -2410,7 +2411,9 @@ if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86" -o "x$TARGET" = "xALPHA"; t
 			mono_debugger_supported=yes
 			;;
 		*86-apple-darwin*)
-			mono_debugger_supported=yes
+			if not test "x$TARGET" = "xAMD64"; then
+				mono_debugger_supported=yes
+			fi
 			;;		
 		esac
 	fi
