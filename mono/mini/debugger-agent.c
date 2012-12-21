@@ -2910,7 +2910,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 	Buffer buf;
 	GSList *l;
 	MonoDomain *domain = mono_domain_get ();
-	MonoThread *thread = mono_thread_current (),
+	MonoThread *thread = NULL,
 	           *main_thread = mono_thread_get_main ();
 	gboolean send_success = FALSE;
 	gsize current_thread_id = GetCurrentThreadId ();
@@ -2948,6 +2948,8 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 	
 	if (debugger_thread_id == current_thread_id)
 		thread = main_thread;
+	else
+		thread = mono_thread_current ();
 
 	buffer_init (&buf, 128);
 	buffer_add_byte (&buf, suspend_policy);
