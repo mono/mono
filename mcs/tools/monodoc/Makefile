@@ -141,5 +141,5 @@ parser.exe: Monodoc.Ecma/EcmaUrlParser.cs Monodoc.Ecma/EcmaUrlTokenizer.cs Monod
 	mcs /out:$@ /debug $^
 
 setup-doc-sources: $(DOC_SOURCES)
-	mkdir -p ./Test/monodoc/sources/
-	cp $(DOC_SOURCES) ./Test/monodoc/sources/
+	mkdir -p ./Test/monodoc_test/sources/
+	cp $(DOC_SOURCES) ./Test/monodoc_test/sources/
