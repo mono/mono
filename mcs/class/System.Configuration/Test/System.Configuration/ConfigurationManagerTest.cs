@@ -39,6 +39,8 @@ using SysConfig = System.Configuration.Configuration;
 using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Configuration {
+	using Util;
+
 	[TestFixture]
 	public class ConfigurationManagerTest
 	{
@@ -62,18 +64,6 @@ namespace MonoTests.System.Configuration {
 				Directory.Delete (tempFolder, true);
 		}
 		
-		static string DotNetVersion {
-			get {
-#if NET_4_5
-				return "net_4_5";
-#elif NET_4_0
-				return "net_4_0";
-#else
-				return "net_2_0";
-#endif
-			}
-		}
-
 		[Test] // OpenExeConfiguration (ConfigurationUserLevel)
 		[Category ("NotWorking")] // bug #323622
 		public void OpenExeConfiguration1_Remote ()
@@ -155,11 +145,7 @@ namespace MonoTests.System.Configuration {
 
 			Console.WriteLine("application config path: {0}", config.FilePath);
 			FileInfo fi = new FileInfo (config.FilePath);
-#if TARGET_JVM
-			Assert.AreEqual ("nunit-console.jar.config", fi.Name);
-#else
-			Assert.AreEqual ("System.Configuration_test_" + DotNetVersion + ".dll.config", fi.Name);
-#endif
+			Assert.AreEqual (TestUtil.ThisConfigFileName, fi.Name);
 		}
 
 		[Test]
@@ -271,7 +257,7 @@ namespace MonoTests.System.Configuration {
 		public void exePath_UserLevelNone ()
 		{
 			string basedir = AppDomain.CurrentDomain.BaseDirectory;
-			string name = "System.Configuration_test_" + DotNetVersion + ".dll";
+			string name = TestUtil.ThisDllName;
 			SysConfig config = ConfigurationManager.OpenExeConfiguration (name);
 			Assert.AreEqual (Path.Combine (basedir, name + ".config"), config.FilePath);
 		}
@@ -400,12 +386,12 @@ namespace MonoTests.System.Configuration {
 		[Test]
 		public void exePath_UserLevelNone_null ()
 		{
-			SysConfig config = ConfigurationManager.OpenExeConfiguration (null);
 #if false
+			SysConfig config = ConfigurationManager.OpenExeConfiguration (null);
 			Console.WriteLine("null exe application config path: {0}", config.FilePath);	
 
 			FileInfo fi = new FileInfo (config.FilePath);
-			Assert.AreEqual ("System.Configuration_test_" + DotNetVersion + ".dll.config", fi.Name);
+			Assert.AreEqual (TestUtil.ThisConfigFileName, fi.Name);
 #endif
 		}
 
@@ -414,14 +400,10 @@ namespace MonoTests.System.Configuration {
 		public void mapped_ExeConfiguration_null ()
 		{
 			SysConfig config = ConfigurationManager.OpenMappedExeConfiguration(null, ConfigurationUserLevel.None);
-			Console.WriteLine("null mapped application config path: {0}", config.FilePath);	
+			Console.WriteLine("null mapped application config path: {0}", config.FilePath);
 
 			FileInfo fi = new FileInfo (config.FilePath);
-#if TARGET_JVM
-			Assert.AreEqual("System.Configuration.Test20.jar.config", fi.Name);
-#else
-			Assert.AreEqual ("System.Configuration_test_" + DotNetVersion + ".dll.config", fi.Name);
-#endif
+			Assert.AreEqual (TestUtil.ThisConfigFileName, fi.Name);
 		}
 
 		[Test]

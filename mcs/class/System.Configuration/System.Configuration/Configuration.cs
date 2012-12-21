@@ -391,6 +391,11 @@ namespace System.Configuration {
 		
 		public void Save (ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
+			if (!forceUpdateAll && (mode != ConfigurationSaveMode.Full) && !HasValues (mode)) {
+				ResetModified ();
+				return;
+			}
+
 			ConfigurationSaveEventHandler saveStart = SaveStart;
 			ConfigurationSaveEventHandler saveEnd = SaveEnd;
 			
@@ -427,6 +432,11 @@ namespace System.Configuration {
 		[MonoInternalNote ("Detect if file has changed")]
 		public void SaveAs (string filename, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
+			if (!forceUpdateAll && (mode != ConfigurationSaveMode.Full) && !HasValues (mode)) {
+				ResetModified ();
+				return;
+			}
+			
 			string dir = Path.GetDirectoryName (Path.GetFullPath (filename));
 			if (!Directory.Exists (dir))
 				Directory.CreateDirectory (dir);
@@ -464,6 +474,7 @@ namespace System.Configuration {
 				
 				SaveData (tw, mode, forceUpdateAll);
 				tw.WriteEndElement ();
+				ResetModified ();
 			}
 			finally {
 				tw.Flush ();
@@ -474,6 +485,29 @@ namespace System.Configuration {
 		void SaveData (XmlTextWriter tw, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
 			rootGroup.WriteRootData (tw, this, mode);
+		}
+
+		bool HasValues (ConfigurationSaveMode mode)
+		{
+			foreach (ConfigurationLocation loc in Locations) {
+				if (loc.OpenedConfiguration == null)
+					continue;
+				if (loc.OpenedConfiguration.HasValues (mode))
+					return true;
+			}
+
+			return rootGroup.HasValues (this, mode);
+		}
+
+		void ResetModified ()
+		{
+			foreach (ConfigurationLocation loc in Locations) {
+				if (loc.OpenedConfiguration == null)
+					continue;
+				loc.OpenedConfiguration.ResetModified ();
+			}
+			
+			rootGroup.ResetModified (this);
 		}
 		
 		bool Load ()
@@ -493,6 +527,7 @@ namespace System.Configuration {
 			using (XmlTextReader reader = new ConfigXmlTextReader (stream, streamName)) {
 				ReadConfigFile (reader, streamName);
 			}
+			ResetModified ();
 			return true;
 		}
 
