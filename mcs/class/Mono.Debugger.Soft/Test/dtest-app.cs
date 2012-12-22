@@ -241,6 +241,7 @@ public class Tests : TestsBase
 		user ();
 		type_load ();
 		regress ();
+		gc_suspend ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -248,7 +249,7 @@ public class Tests : TestsBase
 			ref_emit ();
 		if (args.Length > 0 && args [0] == "frames-in-native")
 			frames_in_native ();
-		if (args.Length >0 && args [0] == "invoke-single-threaded")
+		if (args.Length > 0 && args [0] == "invoke-single-threaded")
 			new Tests ().invoke_single_threaded ();
 		return 3;
 	}
@@ -1055,6 +1056,37 @@ public class Tests : TestsBase
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void regress_2755_3 (int sum) {
+	}
+
+	static object gc_suspend_field;
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static unsafe void set_gc_suspend_field () {
+		set_gc_suspend_field_2 ();
+		// Clear stack
+		int* buffer = stackalloc int [4096];
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void set_gc_suspend_field_2 () {
+		gc_suspend_field = new object ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void gc_suspend_1 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void gc_suspend_invoke () {
+		gc_suspend_field = null;
+		GC.Collect ();
+		GC.WaitForPendingFinalizers ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void gc_suspend () {
+		set_gc_suspend_field ();
+		gc_suspend_1 ();
 	}
 }
 
