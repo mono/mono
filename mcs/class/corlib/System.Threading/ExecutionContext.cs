@@ -83,7 +83,9 @@ namespace System.Threading {
 			if (SecurityManager.SecurityEnabled)
 				capture.SecurityContext = SecurityContext.Capture ();
 #endif
+#if !MONOTOUCH
 			capture.LogicalCallContext = CallContext.CreateLogicalCallContext (false);
+#endif
 			return capture;
 		}
 		
