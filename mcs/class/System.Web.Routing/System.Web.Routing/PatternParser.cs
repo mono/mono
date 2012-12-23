@@ -437,7 +437,8 @@ namespace System.Web.Routing
 						if (defaultValue is string && parameterValue is string) {
 							if (String.Compare ((string)defaultValue, (string)parameterValue, StringComparison.Ordinal) != 0)
 								return null; // different value => no match
-						} else if (defaultValue != parameterValue)
+						// Parameter may be a boxed value type, need to use .Equals() for comparison
+						} else if (!object.Equals (parameterValue, defaultValue))
 							return null; // different value => no match
 					}
 				}
