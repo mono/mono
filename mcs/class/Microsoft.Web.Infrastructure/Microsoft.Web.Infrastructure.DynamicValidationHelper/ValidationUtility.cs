@@ -45,11 +45,11 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 			if (req == null)
 				return;
 
-			// We migth get called more than once.. (weird, isnt it?)
+			// We might get called more than once.. (weird, isnt it?)
 			if (context.Items [UNVALIDATED_DATA_KEY] != null)
 				return;
 
-			// Store unvalidated values at context so we can get access them later.
+			// Store unvalidated values at context so we can access them later.
 			context.Items [UNVALIDATED_DATA_KEY] = new object [] { req.FormUnvalidated, req.QueryStringUnvalidated };
 
 			// Just to be safe, make sure it's on
