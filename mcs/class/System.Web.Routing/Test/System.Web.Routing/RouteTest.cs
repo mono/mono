@@ -1451,6 +1451,46 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("/Posts/Unpublished", unpublishedResult.VirtualPath, "#A2");
 		}
 
+		[Test (Description="Routes should be case insensitive - Xamarin bug #9133")]
+		public void GetVirtualPath19 ()
+		{
+			var context = new HttpContextWrapper (
+				new HttpContext (new HttpRequest ("filename", "http://localhost/filename", String.Empty),
+						 new HttpResponse (new StringWriter())
+				)
+			);
+			var rc = new RequestContext (context, new RouteData ());
+
+			var route = new Route ("HelloWorld", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "HelloWorld"})
+			};
+
+			var lowercase = route.GetVirtualPath (rc, new RouteValueDictionary
+			{
+				{"controller", "home"},
+				{"action", "helloworld"}
+			});
+			var standardCase = route.GetVirtualPath (rc, new RouteValueDictionary
+			{
+				{"controller", "Home"},
+				{"action", "HelloWorld"}
+			});
+			var uppercase = route.GetVirtualPath (rc, new RouteValueDictionary
+			{
+				{"controller", "HOME"},
+				{"action", "HELLOWORLD"}
+			});
+
+			Assert.IsNotNull(lowercase, "#A1");
+			Assert.AreEqual ("HelloWorld", lowercase.VirtualPath, "#A2");
+
+			Assert.IsNotNull(standardCase, "#A3");
+			Assert.AreEqual ("HelloWorld", standardCase.VirtualPath, "#A4");
+
+			Assert.IsNotNull(uppercase, "#A5");
+			Assert.AreEqual ("HelloWorld", uppercase.VirtualPath, "#A6");
+		}
+
 		// Bug #500739
 		[Test]
 		public void RouteGetRequiredStringWithDefaults ()

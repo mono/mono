@@ -435,7 +435,7 @@ namespace System.Web.Routing
 					if (userValues != null && userValues.TryGetValue (parameterName, out parameterValue)) {
 						object defaultValue = de.Value;
 						if (defaultValue is string && parameterValue is string) {
-							if (String.Compare ((string)defaultValue, (string)parameterValue, StringComparison.Ordinal) != 0)
+							if (String.Compare ((string)defaultValue, (string)parameterValue, StringComparison.OrdinalIgnoreCase) != 0)
 								return null; // different value => no match
 						// Parameter may be a boxed value type, need to use .Equals() for comparison
 						} else if (!object.Equals (parameterValue, defaultValue))
