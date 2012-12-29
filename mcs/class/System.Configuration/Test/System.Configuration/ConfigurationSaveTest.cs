@@ -144,6 +144,33 @@ namespace MonoTests.System.Configuration {
 			}
 		}
 
+		class DefaultMachineConfig2 : MachineConfigProvider {
+			protected override void WriteSections (XmlWriter writer)
+			{
+				writer.WriteStartElement ("section");
+				writer.WriteAttributeString ("name", "my2");
+				writer.WriteAttributeString ("type", typeof (MySection2).AssemblyQualifiedName);
+				writer.WriteAttributeString ("allowLocation", "true");
+				writer.WriteAttributeString ("allowDefinition", "Everywhere");
+				writer.WriteAttributeString ("allowExeDefinition", "MachineToRoamingUser");
+				writer.WriteAttributeString ("restartOnExternalChanges", "true");
+				writer.WriteAttributeString ("requirePermission", "true");
+				writer.WriteEndElement ();
+			}
+			
+			internal static void WriteConfigSections (XmlWriter writer)
+			{
+				var provider = new DefaultMachineConfig2 ();
+				writer.WriteStartElement ("configSections");
+				provider.WriteSections (writer);
+				writer.WriteEndElement ();
+			}
+			
+			protected override void WriteValues (XmlWriter writer)
+			{
+			}
+		}
+
 		abstract class ParentProvider : ConfigProvider {
 			protected override void WriteXml (XmlWriter writer)
 			{
@@ -592,6 +619,131 @@ namespace MonoTests.System.Configuration {
 			});
 		}
 
+		[Test]
+		public void TestElementWithCollection ()
+		{
+			Run<DefaultMachineConfig2> ("TestElementWithCollection", (config,label) => {
+				label.EnterScope ("section");
+				var my2 = config.Sections ["my2"] as MySection2;
+				Assert.That (my2, Is.Not.Null, label.Get ());
+
+				Assert.That (my2.Test, Is.Not.Null, label.Get ());
+				Assert.That (my2.Test.DefaultCollection, Is.Not.Null, label.Get ());
+				Assert.That (my2.Test.DefaultCollection.Count, Is.EqualTo (0), label.Get ());
+				label.LeaveScope ();
+
+				my2.Test.DefaultCollection.AddElement ();
+
+				my2.Element.Hello = 29;
+
+				label.EnterScope ("file");
+				Assert.That (File.Exists (config.FilePath), Is.False, label.Get ());
+				
+				config.Save (ConfigurationSaveMode.Minimal);
+				Assert.That (File.Exists (config.FilePath), Is.True, label.Get ());
+				label.LeaveScope ();
+			}, (nav,label) => {
+				Console.WriteLine (nav.OuterXml);
+				Assert.That (nav.HasChildren, Is.True, label.Get ());
+				var iter = nav.SelectChildren (XPathNodeType.Element);
+				
+				Assert.That (iter.Count, Is.EqualTo (1), label.Get ());
+				Assert.That (iter.MoveNext (), Is.True, label.Get ());
+				
+				var my = iter.Current;
+				label.EnterScope ("my2");
+				Assert.That (my.Name, Is.EqualTo ("my2"), label.Get ());
+				Assert.That (my.HasAttributes, Is.False, label.Get ());
+				Assert.That (my.HasChildren, Is.True, label.Get ());
+				
+				label.EnterScope ("children");
+				var iter2 = my.SelectChildren (XPathNodeType.Element);
+				Assert.That (iter2.Count, Is.EqualTo (1), label.Get ());
+				Assert.That (iter2.MoveNext (), Is.True, label.Get ());
+
+				var element = iter2.Current;
+				label.EnterScope ("element");
+				Assert.That (element.Name, Is.EqualTo ("element"), label.Get ());
+				Assert.That (element.HasChildren, Is.False, label.Get ());
+				Assert.That (element.HasAttributes, Is.True, label.Get ());
+				
+				var attr = element.GetAttribute ("Hello", string.Empty);
+				Assert.That (attr, Is.EqualTo ("29"), label.Get ());
+				label.LeaveScope ();
+				label.LeaveScope ();
+				label.LeaveScope ();
+			});
+		}
+
+		[Test]
+		public void TestElementWithCollection2 ()
+		{
+			Run<DefaultMachineConfig2> ("TestElementWithCollection2", (config,label) => {
+				label.EnterScope ("section");
+				var my2 = config.Sections ["my2"] as MySection2;
+				Assert.That (my2, Is.Not.Null, label.Get ());
+				
+				Assert.That (my2.Test, Is.Not.Null, label.Get ());
+				Assert.That (my2.Test.DefaultCollection, Is.Not.Null, label.Get ());
+				Assert.That (my2.Test.DefaultCollection.Count, Is.EqualTo (0), label.Get ());
+				label.LeaveScope ();
+				
+				var element = my2.Test.DefaultCollection.AddElement ();
+				var element2 = element.Test.DefaultCollection.AddElement ();
+				element2.Hello = 1;
+
+				label.EnterScope ("file");
+				Assert.That (File.Exists (config.FilePath), Is.False, label.Get ());
+				
+				config.Save (ConfigurationSaveMode.Minimal);
+				Assert.That (File.Exists (config.FilePath), Is.True, label.Get ());
+				label.LeaveScope ();
+			}, (nav,label) => {
+				Console.WriteLine (nav.OuterXml);
+				Assert.That (nav.HasChildren, Is.True, label.Get ());
+				var iter = nav.SelectChildren (XPathNodeType.Element);
+				
+				Assert.That (iter.Count, Is.EqualTo (1), label.Get ());
+				Assert.That (iter.MoveNext (), Is.True, label.Get ());
+				
+				var my = iter.Current;
+				label.EnterScope ("my2");
+				Assert.That (my.Name, Is.EqualTo ("my2"), label.Get ());
+				Assert.That (my.HasAttributes, Is.False, label.Get ());
+				Assert.That (my.HasChildren, Is.True, label.Get ());
+				
+				label.EnterScope ("children");
+				var iter2 = my.SelectChildren (XPathNodeType.Element);
+				Assert.That (iter2.Count, Is.EqualTo (1), label.Get ());
+				Assert.That (iter2.MoveNext (), Is.True, label.Get ());
+				
+				var collection = iter2.Current;
+				label.EnterScope ("collection");
+				Assert.That (collection.Name, Is.EqualTo ("collection"), label.Get ());
+				Assert.That (collection.HasChildren, Is.True, label.Get ());
+				Assert.That (collection.HasAttributes, Is.False, label.Get ());
+
+				label.EnterScope ("children");
+				var iter3 = collection.SelectChildren (XPathNodeType.Element);
+				Assert.That (iter3.Count, Is.EqualTo (1), label.Get ());
+				Assert.That (iter3.MoveNext (), Is.True, label.Get ());
+
+				var element = iter3.Current;
+				label.EnterScope ("element");
+				Assert.That (element.Name, Is.EqualTo ("test"), label.Get ());
+				Assert.That (element.HasChildren, Is.False, label.Get ());
+				Assert.That (element.HasAttributes, Is.True, label.Get ());
+
+				var attr = element.GetAttribute ("Hello", string.Empty);
+				Assert.That (attr, Is.EqualTo ("1"), label.Get ());
+				label.LeaveScope ();
+				label.LeaveScope ();
+				label.LeaveScope ();
+				label.LeaveScope ();
+				label.LeaveScope ();
+			});
+		}
+		
 		#endregion
 
 		#region Configuration Classes
@@ -686,6 +838,32 @@ namespace MonoTests.System.Configuration {
 
 			new public bool IsModified {
 				get { return base.IsModified (); }
+			}
+		}
+
+
+		public class MyElementWithCollection : ConfigurationElement {
+			[ConfigurationProperty ("test")]
+			public MyCollectionElement<MyElement> Test {
+				get { return (MyCollectionElement<MyElement>) this ["test"]; }
+			}
+		}
+
+		public class MySection2 : ConfigurationSection {
+			[ConfigurationProperty ("collection", Options = ConfigurationPropertyOptions.None)]
+			public MyCollectionElement<MyElementWithCollection> Test {
+				get { return (MyCollectionElement<MyElementWithCollection>) this ["collection"]; }
+			}
+
+			[ConfigurationProperty ("element", Options = ConfigurationPropertyOptions.None)]
+			public MyElement Element {
+				get { return (MyElement)this ["element"]; }
+			}
+		}
+
+		public class MySectionGroup : ConfigurationSectionGroup {
+			public MySection2 My2 {
+				get { return (MySection2)Sections ["my2"]; }
 			}
 		}
 

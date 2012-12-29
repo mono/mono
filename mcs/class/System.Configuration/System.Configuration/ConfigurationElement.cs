@@ -675,8 +675,8 @@ namespace System.Configuration
 			
 			var hasParentValue = parent != null && parent.HasValue (prop.Name);
 			var parentOrDefault = hasParentValue ? parent [prop.Name] : prop.DefaultValue;
-			
-			if (!prop.IsElement || !hasParentValue)
+
+			if (!prop.IsElement)
 				return !object.Equals (prop.Value, parentOrDefault);
 
 			/*
