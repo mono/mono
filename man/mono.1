@@ -1134,6 +1134,11 @@ Specifies the required age of an object must reach inside the nursery before
 been promoted to the old generation. This only can only be used with the
 split minor collector.
 Valid values are integers between 1 and 14. Default is 2.
+.TP
+\fB(no-)cementing\fR
+Enables or disables cementing.  This can dramatically shorten nursery
+collection times on some benchmarks where pinned objects are referred
+to from the major heap.
 .ne
 .RE
 .TP
