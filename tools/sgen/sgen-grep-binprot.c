@@ -38,12 +38,18 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_THREAD_UNREGISTER: size = sizeof (SGenProtocolThreadUnregister); break;
 	case SGEN_PROTOCOL_MISSING_REMSET: size = sizeof (SGenProtocolMissingRemset); break;
 	case SGEN_PROTOCOL_CARD_SCAN: size = sizeof (SGenProtocolCardScan); break;
+	case SGEN_PROTOCOL_CEMENT: size = sizeof (SGenProtocolCement); break;
+	case SGEN_PROTOCOL_CEMENT_RESET: size = 0; break;
 	default: assert (0);
 	}
 
-	*data = malloc (size);
-	if (fread (*data, size, 1, in) != 1)
-		assert (0);
+	if (size) {
+		*data = malloc (size);
+		if (fread (*data, size, 1, in) != 1)
+			assert (0);
+	} else {
+		*data = NULL;
+	}
 
 	return (int)type;
 }
@@ -149,6 +155,15 @@ print_entry (int type, void *data)
 		printf ("card_scan start %p size %d\n", entry->start, entry->size);
 		break;
 	}
+	case SGEN_PROTOCOL_CEMENT: {
+		SGenProtocolCement *entry = data;
+		printf ("cement obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_CEMENT_RESET: {
+		printf ("cement_reset\n");
+		break;
+	}
 	default:
 		assert (0);
 	}
@@ -170,6 +185,7 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_THREAD_RESTART:
 	case SGEN_PROTOCOL_THREAD_REGISTER:
 	case SGEN_PROTOCOL_THREAD_UNREGISTER:
+	case SGEN_PROTOCOL_CEMENT_RESET:
 		return TRUE;
 	case SGEN_PROTOCOL_ALLOC:
 	case SGEN_PROTOCOL_ALLOC_PINNED:
@@ -218,6 +234,10 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_CARD_SCAN: {
 		SGenProtocolCardScan *entry = data;
 		return matches_interval (ptr, entry->start, entry->size);
+	}
+	case SGEN_PROTOCOL_CEMENT: {
+		SGenProtocolCement *entry = data;
+		return matches_interval (ptr, entry->obj, entry->size);
 	}
 	default:
 		assert (0);
