@@ -222,7 +222,7 @@ sub BuildUnityScriptForUnity
 	
 	cp("$booCheckout/ide-build/Boo.Lang*.dll $monoprefixUnity/");
 	cp("$booCheckout/ide-build/booc.exe $monoprefixUnity/");
-	UnityBooc("-out:$monoprefixUnity/Boo.Lang.Extensions.dll -noconfig -nostdlib -srcdir:$booCheckout/src/Boo.Lang.Extensions -r:System.dll -r:System.Core.dll -r:mscorlib.dll -r:Boo.Lang.dll");
+	UnityBooc("-out:$monoprefixUnity/Boo.Lang.Extensions.dll -noconfig -nostdlib -srcdir:$booCheckout/src/Boo.Lang.Extensions -r:System.dll -r:System.Core.dll -r:mscorlib.dll -r:Boo.Lang.dll -r:Boo.Lang.Compiler.dll");
 	UnityBooc("-out:$monoprefixUnity/Boo.Lang.Useful.dll -srcdir:$booCheckout/src/Boo.Lang.Useful -r:Boo.Lang.Parser");
 	UnityBooc("-out:$monoprefixUnity/Boo.Lang.PatternMatching.dll -srcdir:$booCheckout/src/Boo.Lang.PatternMatching");
 	

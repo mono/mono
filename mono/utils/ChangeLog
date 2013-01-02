@@ -75,6 +75,12 @@
 	which is the documented way of testing for the existence of a PID.
 	Thanks to Cal Page.
 
+Wed Feb 24 15:50:55 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mono-publib.h, mono-publib.c: new public header file to allow
+	the removal of gli from the other public headers.
+	* Makefile.am: install only the public header mono-publib.h.
+
 2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-error-internals.h: Add mono_error_set_not_verifiable.

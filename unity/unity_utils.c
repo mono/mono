@@ -137,3 +137,9 @@ mono_unity_class_is_abstract (MonoClass* klass)
 {
 	return (klass->flags & TYPE_ATTRIBUTE_ABSTRACT);
 }
+
+void
+unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks)
+{
+	g_mem_set_callbacks (callbacks);
+}

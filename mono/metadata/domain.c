@@ -1958,6 +1958,10 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		mono_gc_free_fixed (domain->static_data_array);
 		domain->static_data_array = NULL;
 	}
+	if (domain->static_data_class_array) {
+		g_free (domain->static_data_class_array);
+		domain->static_data_class_array = NULL;
+	}
 	mono_internal_hash_table_destroy (&domain->jit_code_hash);
 
 	/*
@@ -2178,11 +2182,15 @@ mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointe
 		next = GPOINTER_TO_INT (domain->static_data_array [0]);
 		if (next >= size) {
 			gpointer *new_array = mono_gc_alloc_fixed (sizeof (gpointer) * (size * 2), NULL);
+			gpointer *new_class_array =  g_malloc0(sizeof (gpointer) * size * 2);
 			memcpy (new_array, domain->static_data_array, sizeof (gpointer) * size);
+			memcpy (new_class_array, domain->static_data_class_array, sizeof (gpointer) * size);
 			size *= 2;
 			new_array [1] = GINT_TO_POINTER (size);
 			mono_gc_free_fixed (domain->static_data_array);
+			g_free(domain->static_data_class_array);
 			domain->static_data_array = new_array;
+			domain->static_data_class_array = new_class_array;
 		}
 	} else {
 		int size = 32;
@@ -2191,7 +2199,9 @@ mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointe
 		new_array [0] = GINT_TO_POINTER (next);
 		new_array [1] = GINT_TO_POINTER (size);
 		domain->static_data_array = new_array;
+		domain->static_data_class_array = g_malloc0(sizeof (gpointer) * size);
 	}
+	domain->static_data_class_array[next] = klass;
 	domain->static_data_array [next++] = data;
 	domain->static_data_array [0] = GINT_TO_POINTER (next);
 }

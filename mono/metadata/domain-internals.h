@@ -274,6 +274,10 @@ struct _MonoDomain {
 	MonoImage *socket_assembly;
 	MonoClass *sockaddr_class;
 	MonoClassField *sockaddr_data_field;
+
+	/* unity specific, cache the class for each static field */
+	/* a GC-tracked array to keep references to the static fields of types */
+	MonoClass           **static_data_class_array;
 };
 
 typedef struct  {
