@@ -846,6 +846,8 @@ void
 mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
 #if defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
+	/* declare this here for extra robustness */
+	void* pthread_get_stackaddr_np (pthread_t);
 	*staddr = (guint8*)pthread_get_stackaddr_np (pthread_self ());
 	*stsize = pthread_get_stacksize_np (pthread_self ());
 
