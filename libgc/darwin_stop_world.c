@@ -89,6 +89,9 @@ void GC_push_all_stacks() {
 #elif defined(ARM)
   arm_thread_state_t state;
   mach_msg_type_number_t thread_state_count = ARM_THREAD_STATE_COUNT;
+#elif defined(X86_64)
+  x86_thread_state64_t state;
+  mach_msg_type_number_t thread_state_count = x86_THREAD_STATE64_COUNT;
 #else
 # error FIXME for non-x86 || ppc architectures
   mach_msg_type_number_t thread_state_count = MACHINE_THREAD_STATE_COUNT;
@@ -109,7 +112,7 @@ void GC_push_all_stacks() {
 			     GC_MACH_THREAD_STATE_FLAVOR,
 			     (natural_t*)&state,
 			     &thread_state_count);
-	if(r != KERN_SUCCESS) ABORT("thread_get_state failed");
+	if(r != KERN_SUCCESS) continue;
 	
 #if defined(I386)
 #if (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5) || defined(TARGET_IPHONE_SIMULATOR)
@@ -134,6 +137,29 @@ void GC_push_all_stacks() {
 	GC_push_one(state.esi); 
 	GC_push_one(state.ebp); 
 #endif
+#elif defined(X86_64)
+          lo = state.__rsp;
+          GC_push_one(state.__rax);
+          GC_push_one(state.__rbx);
+          GC_push_one(state.__rcx);
+          GC_push_one(state.__rdx);
+          GC_push_one(state.__rdi);
+          GC_push_one(state.__rsi);
+          GC_push_one(state.__rbp);
+          GC_push_one(state.__rsp);
+          GC_push_one(state.__r8);
+          GC_push_one(state.__r9);
+          GC_push_one(state.__r10);
+          GC_push_one(state.__r11);
+          GC_push_one(state.__r12);
+          GC_push_one(state.__r13);
+          GC_push_one(state.__r14);
+          GC_push_one(state.__r15);
+          GC_push_one(state.__rip);
+          GC_push_one(state.__rflags);
+          GC_push_one(state.__cs);
+          GC_push_one(state.__fs);
+          GC_push_one(state.__gs);
 #elif defined(POWERPC)
 #if defined(_STRUCT_PPC_EXCEPTION_STATE)
 	lo = (void*)(state.__r1 - PPC_RED_ZONE_SIZE);

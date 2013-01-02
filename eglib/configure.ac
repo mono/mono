@@ -23,6 +23,7 @@ AC_SUBST(GNUC_PRETTY)
 AC_SUBST(GNUC_UNUSED)
 AC_SUBST(GNUC_NORETURN)
 AC_SUBST(BREAKPOINT)
+WANT_ICONV=1
 
 # We use a separate variable to pass down CPPFLAGS and CFLAGS from the main mono 
 # configure, because of autoconf brokeness
@@ -55,6 +56,9 @@ arm*-darwin*)
     ;;
 i*86-*-darwin*)
     ORDER=G_LITTLE_ENDIAN
+    if test "x$ac_cv_sizeof_void_p" = "x8"; then
+        WANT_ICONV=0
+    fi
     ;;
 esac
 
@@ -75,7 +79,9 @@ AM_CONDITIONAL(NEEDS_LIBGCC, test x$needs_libgcc = xyes)
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(void *)
 AC_CHECK_FUNCS(strndup strlcpy getpwent_r strtok_r rewinddir)
-AC_CHECK_LIB(iconv, libiconv_open, LIBS="$LIBS -liconv")
+if test "x$WANT_ICONV" = "x1"; then
+    AC_CHECK_LIB(iconv, libiconv_open, LIBS="$LIBS -liconv")
+fi
 old_ldflags="${LDFLAGS}"
 LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
 AC_TRY_LINK(, [int i;], found_export_dynamic=yes, found_export_dynamic=no)
@@ -83,7 +89,10 @@ if test $found_export_dynamic = no; then
 	LDFLAGS="${old_ldflags}"
 fi
 
-AC_CHECK_HEADERS(getopt.h sys/time.h sys/wait.h pwd.h langinfo.h iconv.h)
+AC_CHECK_HEADERS(getopt.h sys/time.h sys/wait.h pwd.h langinfo.h)
+if test "x$WANT_ICONV" = "x1"; then
+    AC_CHECK_HEADERS(iconv.h)
+fi
 
 if test $ac_cv_sizeof_void_p != $ac_cv_sizeof_int; then
    GPOINTER_TO_INT="((gint)(long) (ptr))"
