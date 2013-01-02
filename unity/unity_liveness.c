@@ -389,12 +389,6 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 	mono_filter_objects(liveness_state);
 }
 
-/**
- * mono_unity_liveness_calculation_from_statics_managed:
- *
- * Returns a gchandle to an array of MonoObject* that are reachable from the static roots
- * in the current domain and derive from type retrieved from @filter_handle (if not NULL).
- */
 void mono_unity_liveness_add_object_callback(gpointer* objs, gint count, void* arr)
 {
 	int i;
@@ -406,6 +400,12 @@ void mono_unity_liveness_add_object_callback(gpointer* objs, gint count, void* a
 	}
 }
 
+/**
+ * mono_unity_liveness_calculation_from_statics_managed:
+ *
+ * Returns a gchandle to an array of MonoObject* that are reachable from the static roots
+ * in the current domain and derive from type retrieved from @filter_handle (if not NULL).
+ */
 gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_handle)
 {
 	int i = 0;
