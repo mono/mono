@@ -7,6 +7,7 @@
 //	Atsushi Enomoto (atsushi@ximian.com)
 //	Miguel de Icaza (miguel@ximian.com)
 //      Martin Baulig (martin.baulig@googlemail.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright 2006, 2010 Novell, Inc. (http://www.novell.com)
@@ -1525,9 +1526,9 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address);
-				response = await GetWebResponseTaskAsync (request, cts.Token);
-				var result = await ReadAllTaskAsync (request, response, cts.Token);
+				request = await SetupRequestAsync (address).ConfigureAwait (false);
+				response = await GetWebResponseTaskAsync (request, cts.Token).ConfigureAwait (false);
+				var result = await ReadAllTaskAsync (request, response, cts.Token).ConfigureAwait (false);
 				OnDownloadDataCompleted (new DownloadDataCompletedEventArgs (result, null, false, null));
 				return result;
 			} catch (WebException ex) {
@@ -1554,7 +1555,7 @@ namespace System.Net
 
 		async Task<WebRequest> SetupRequestAsync (Uri address, string method, bool is_upload)
 		{
-			WebRequest request = await SetupRequestAsync (address);
+			WebRequest request = await SetupRequestAsync (address).ConfigureAwait (false);
 			request.Method = DetermineMethod (address, method, is_upload);
 			return request;
 		}
@@ -1562,7 +1563,7 @@ namespace System.Net
 		async Task<WebResponse> GetWebResponseTaskAsync (WebRequest request, CancellationToken token)
 		{
 			token.ThrowIfCancellationRequested ();
-			WebResponse response = await request.GetResponseAsync ();
+			WebResponse response = await request.GetResponseAsync ().ConfigureAwait (false);
 			token.ThrowIfCancellationRequested ();
 			responseHeaders = response.Headers;
 			return response;
@@ -1592,7 +1593,7 @@ namespace System.Net
 			int offset = 0;
 			byte [] buffer = new byte [size];
 			token.ThrowIfCancellationRequested ();
-			while ((nread = await stream.ReadAsync (buffer, offset, size, token)) != 0) {
+			while ((nread = await stream.ReadAsync (buffer, offset, size, token).ConfigureAwait (false)) != 0) {
 				if (nolength) {
 					ms.Write (buffer, 0, nread);
 				} else {
@@ -1630,9 +1631,9 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address);
-				response = await GetWebResponseTaskAsync (request, cts.Token);
-				await DownloadFileTaskAsyncCore (request, response, fileName, cts.Token);
+				request = await SetupRequestAsync (address).ConfigureAwait (false);
+				response = await GetWebResponseTaskAsync (request, cts.Token).ConfigureAwait (false);
+				await DownloadFileTaskAsyncCore (request, response, fileName, cts.Token).ConfigureAwait (false);
 				OnDownloadFileCompleted (new AsyncCompletedEventArgs (null, false, null));
 			} catch (WebException ex) {
 				OnDownloadFileCompleted (new AsyncCompletedEventArgs (ex, false, null));
@@ -1665,12 +1666,12 @@ namespace System.Net
 				int nread = 0;
 				long notify_total = 0;
 				token.ThrowIfCancellationRequested ();
-				while ((nread = await st.ReadAsync (buffer, 0, length, token)) != 0) {
+				while ((nread = await st.ReadAsync (buffer, 0, length, token).ConfigureAwait (false)) != 0) {
 					notify_total += nread;
 					OnDownloadProgressChanged (
 						new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, null));
 					token.ThrowIfCancellationRequested ();
-					await f.WriteAsync (buffer, 0, nread, token);
+					await f.WriteAsync (buffer, 0, nread, token).ConfigureAwait (false);
 					token.ThrowIfCancellationRequested ();
 				}
 			}
@@ -1694,8 +1695,8 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address);
-				WebResponse response = await GetWebResponseTaskAsync (request, cts.Token);
+				request = await SetupRequestAsync (address).ConfigureAwait (false);
+				WebResponse response = await GetWebResponseTaskAsync (request, cts.Token).ConfigureAwait (false);
 				var result = response.GetResponseStream ();
 				cts.Token.ThrowIfCancellationRequested ();
 				OnOpenReadCompleted (new OpenReadCompletedEventArgs (result, null, false, null));
@@ -1736,9 +1737,9 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address);
-				response = await GetWebResponseTaskAsync (request, cts.Token);
-				var data = await ReadAllTaskAsync (request, response, cts.Token);
+				request = await SetupRequestAsync (address).ConfigureAwait (false);
+				response = await GetWebResponseTaskAsync (request, cts.Token).ConfigureAwait (false);
+				var data = await ReadAllTaskAsync (request, response, cts.Token).ConfigureAwait (false);
 				cts.Token.ThrowIfCancellationRequested ();
 				var text = encoding.GetString (data);
 				OnDownloadStringCompleted (new DownloadStringCompletedEventArgs (text, null, false, null));
@@ -1793,7 +1794,7 @@ namespace System.Net
 				SetBusy ();
 				cts = new CancellationTokenSource ();
 				request = SetupRequest (address);
-				return await request.GetRequestStreamAsync ();
+				return await request.GetRequestStreamAsync ().ConfigureAwait (false);
 			} catch (WebException) {
 				throw;
 			} catch (OperationCanceledException) {
@@ -1842,8 +1843,8 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address, method, true);
-				var result = await UploadDataTaskAsyncCore (request, data, cts.Token);
+				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
+				var result = await UploadDataTaskAsyncCore (request, data, cts.Token).ConfigureAwait (false);
 				OnUploadDataCompleted (new UploadDataCompletedEventArgs (result, null, false, null));
 				return result;
 			} catch (WebException ex) {
@@ -1866,17 +1867,17 @@ namespace System.Net
 
 			int contentLength = data.Length;
 			request.ContentLength = contentLength;
-			using (Stream stream = await request.GetRequestStreamAsync ()) {
+			using (Stream stream = await request.GetRequestStreamAsync ().ConfigureAwait (false)) {
 				token.ThrowIfCancellationRequested ();
-				await stream.WriteAsync (data, 0, contentLength, token);
+				await stream.WriteAsync (data, 0, contentLength, token).ConfigureAwait (false);
 				token.ThrowIfCancellationRequested ();
 			}
 
 			WebResponse response = null;
 
 			try {
-				response = await GetWebResponseTaskAsync (request, token);
-				return await ReadAllTaskAsync (request, response, token);
+				response = await GetWebResponseTaskAsync (request, token).ConfigureAwait (false);
+				return await ReadAllTaskAsync (request, response, token).ConfigureAwait (false);
 			} finally {
 				if (response != null)
 					response.Close ();
@@ -1914,8 +1915,8 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address, method, true);
-				var result = await UploadFileTaskAsyncCore (request, method, fileName, cts.Token);
+				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
+				var result = await UploadFileTaskAsyncCore (request, method, fileName, cts.Token).ConfigureAwait (false);
 				OnUploadFileCompleted (new UploadFileCompletedEventArgs (result, null, false, null));
 				return result;
 			} catch (WebException ex) {
@@ -1962,7 +1963,7 @@ namespace System.Net
 			try {
 				fStream = File.OpenRead (fileName);
 				token.ThrowIfCancellationRequested ();
-				reqStream = await request.GetRequestStreamAsync ();
+				reqStream = await request.GetRequestStreamAsync ().ConfigureAwait (false);
 				token.ThrowIfCancellationRequested ();
 				byte [] bytes_boundary = null;
 				if (needs_boundary) {
@@ -1980,7 +1981,7 @@ namespace System.Net
 							Path.GetFileName (fileName), fileCType);
 						byte [] partHeadersBytes = Encoding.UTF8.GetBytes (partHeaders);
 						ms.Write (partHeadersBytes, 0, partHeadersBytes.Length);
-						await ms.CopyToAsync (reqStream, (int)ms.Position, token);
+						await ms.CopyToAsync (reqStream, (int)ms.Position, token).ConfigureAwait (false);
 					}
 				}
 				int nread;
@@ -1996,9 +1997,9 @@ namespace System.Net
 				byte [] buffer = new byte [4096];
 				long sum = 0;
 				token.ThrowIfCancellationRequested ();
-				while ((nread = await fStream.ReadAsync (buffer, 0, 4096, token)) > 0) {
+				while ((nread = await fStream.ReadAsync (buffer, 0, 4096, token).ConfigureAwait (false)) > 0) {
 					token.ThrowIfCancellationRequested ();
-					await reqStream.WriteAsync (buffer, 0, nread, token);
+					await reqStream.WriteAsync (buffer, 0, nread, token).ConfigureAwait (false);
 					bytes_sent += nread;
 					sum += nread;
 					if (sum >= step || nread < 4096) {
@@ -2022,14 +2023,14 @@ namespace System.Net
 						ms.WriteByte ((byte) '-');
 						ms.WriteByte ((byte) '\r');
 						ms.WriteByte ((byte) '\n');
-						await ms.CopyToAsync (reqStream, (int)ms.Position, token);
+						await ms.CopyToAsync (reqStream, (int)ms.Position, token).ConfigureAwait (false);
 					}
 				}
 				reqStream.Close ();
 				reqStream = null;
 
-				response = await GetWebResponseTaskAsync (request, token);
-				return await ReadAllTaskAsync (request, response, token);
+				response = await GetWebResponseTaskAsync (request, token).ConfigureAwait (false);
+				return await ReadAllTaskAsync (request, response, token).ConfigureAwait (false);
 			} finally {
 				if (fStream != null)
 					fStream.Close ();
@@ -2085,8 +2086,8 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address, method, true);
-				var result = await UploadDataTaskAsyncCore (request, encoding.GetBytes (data), cts.Token);
+				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
+				var result = await UploadDataTaskAsyncCore (request, encoding.GetBytes (data), cts.Token).ConfigureAwait (false);
 				var result_str = encoding.GetString (result);
 				OnUploadStringCompleted (new UploadStringCompletedEventArgs (result_str, null, false, null));
 				return result_str;
@@ -2138,8 +2139,8 @@ namespace System.Net
 			try {
 				SetBusy ();
 				cts = new CancellationTokenSource ();
-				request = await SetupRequestAsync (address, method, true);
-				var result = await UploadValuesTaskAsyncCore (request, data, cts.Token);
+				request = await SetupRequestAsync (address, method, true).ConfigureAwait (false);
+				var result = await UploadValuesTaskAsyncCore (request, data, cts.Token).ConfigureAwait (false);
 				OnUploadValuesCompleted (new UploadValuesCompletedEventArgs (result, null, false, null));
 				return result;
 			} catch (WebException ex) {
@@ -2187,13 +2188,13 @@ namespace System.Net
 				
 				byte [] buf = tmpStream.GetBuffer ();
 				request.ContentLength = length;
-				using (Stream rqStream = await request.GetRequestStreamAsync ()) {
-					await rqStream.WriteAsync (buf, 0, length, token);
+				using (Stream rqStream = await request.GetRequestStreamAsync ().ConfigureAwait (false)) {
+					await rqStream.WriteAsync (buf, 0, length, token).ConfigureAwait (false);
 				}
 				tmpStream.Close ();
 
-				response = await GetWebResponseTaskAsync (request, token);
-				return await ReadAllTaskAsync (request, response, token);
+				response = await GetWebResponseTaskAsync (request, token).ConfigureAwait (false);
+				return await ReadAllTaskAsync (request, response, token).ConfigureAwait (false);
 			} finally {
 				if (response != null)
 					response.Close ();
