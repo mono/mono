@@ -16,12 +16,19 @@ test-616.cs SKIP
 test-695.cs SKIP
 test-707.cs SKIP
 test-814.cs SKIP
+gtest-186.cs SKIP
 test-com-01.cs SKIP
 
 #reflection
+test-19.cs SKIP
 test-295.cs SKIP
 test-555.cs SKIP
 
+#app domain
+test-795.cs SKIP
+
+# Tests without ConfigureAwait (false)
+test-async-13.cs SKIP
 
 # MT bugs
 

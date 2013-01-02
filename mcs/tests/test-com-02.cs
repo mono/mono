@@ -1,4 +1,4 @@
-// Compiler options: -r:test-443-lib.dll
+// Compiler options: -r:test-com-02-lib.dll
 
 using Test;
 
