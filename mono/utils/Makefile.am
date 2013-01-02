@@ -42,6 +42,7 @@ libmonoutils_la_SOURCES = \
 	mono-networkinterfaces.h		\
 	mono-proclib.c		\
 	mono-proclib.h		\
+	mono-publib.c		\
 	mono-semaphore.h	\
 	mono-semaphore.c	\
 	mono-string.h		\
@@ -86,6 +87,8 @@ libmonoutilsinclude_HEADERS = \
 	mono-path.h	\
 	mono-poll.h	\
 	mono-uri.h	\
-	mono-stdlib.h
+	mono-stdlib.h \
+	mono-dl-fallback.h \
+	mono-publib.h
 
 EXTRA_DIST = ChangeLog mono-hash.c mono-hash.h mono-ehash.c
