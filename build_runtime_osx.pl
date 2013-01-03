@@ -201,4 +201,12 @@ if (!$iphone_simulator)
 		# Don't add 64bit executables for now...
 		# system ('lipo', "$root/builds/monodistribution/bin-i386/$file", "$root/builds/monodistribution/bin-x86_64/$file", '-create', '-output', "$root/builds/monodistribution/bin/$file");
 	}
+	
+	if ($ENV{"UNITY_THISISABUILDMACHINE"}) {
+		# Clean up temporary arch-specific directories
+		rmtree("$root/builds/embedruntimes/osx-i386");
+		rmtree("$root/builds/embedruntimes/osx-x86_64");
+		rmtree("$root/builds/monodistribution/bin-i386");
+		rmtree("$root/builds/monodistribution/bin-x86_64");
+	}
 }
