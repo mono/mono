@@ -208,7 +208,8 @@ namespace Microsoft.Build.Tasks {
 				// Ensure that we delete the destination file first so that if the file is already
 				// opened via mmap we do not screw up the data for the process which has the file open
 				// Fixes https://bugzilla.xamarin.com/show_bug.cgi?id=9146
-				File.Delete (dest);
+				if (!HasReadOnlyAttribute (dest))
+					File.Delete (dest);
 				File.Copy (source, dest, true);
 			}
 			ClearReadOnlyAttribute (dest);
@@ -218,6 +219,11 @@ namespace Microsoft.Build.Tasks {
 		{
 			if (File.Exists (name) && ((File.GetAttributes (name) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
 				File.SetAttributes (name, FileAttributes.Normal);
+		}
+
+		bool HasReadOnlyAttribute (string name)
+		{
+			return File.Exists (name) && (File.GetAttributes (name) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
 		}
 
 		bool HasFileChanged (string source, string dest)
