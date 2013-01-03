@@ -222,7 +222,6 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
-		[Category ("NotWorking")] // data is bad but no exception is thrown
 		public void CreateDecryptor_KeyNull ()
 		{
 			ICryptoTransform encryptor = aes.CreateEncryptor (aes.Key, aes.IV);
@@ -309,7 +308,6 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
 		// this behaviour for IV that are too large
-		[Category ("NotWorking")]
 		public void CreateEncryptor_IV_TooBig ()
 		{
 			int size = aes.BlockSize; // 8 times too big
@@ -357,7 +355,6 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
 		// this behaviour for IV that are too large
-		[Category ("NotWorking")]
 		public void CreateDecryptor_IV_TooBig ()
 		{
 			int size = aes.BlockSize; // 8 times too big
