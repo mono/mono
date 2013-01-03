@@ -826,6 +826,29 @@ namespace System.Threading.Tasks
 			}
 		}
 		#endregion
+
+#if NET_4_5
+		public
+#else
+		internal
+#endif
+		Task ContinueWith (Action<Task, object> continuationAction, object state, CancellationToken cancellationToken,
+								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationAction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			Task continuation = new Task (TaskActionInvoker.Create (continuationAction),
+										  state, cancellationToken,
+										  GetCreationOptions (continuationOptions),
+			                              parent,
+			                              this);
+			ContinueWithCore (continuation, continuationOptions, scheduler);
+
+			return continuation;
+		}
 		
 #if NET_4_5
 
@@ -852,24 +875,6 @@ namespace System.Threading.Tasks
 		public Task ContinueWith (Action<Task, object> continuationAction, object state, TaskScheduler scheduler)
 		{
 			return ContinueWith (continuationAction, state, CancellationToken.None, TaskContinuationOptions.None, scheduler);
-		}
-
-		public Task ContinueWith (Action<Task, object> continuationAction, object state, CancellationToken cancellationToken,
-								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
-		{
-			if (continuationAction == null)
-				throw new ArgumentNullException ("continuationAction");
-			if (scheduler == null)
-				throw new ArgumentNullException ("scheduler");
-
-			Task continuation = new Task (TaskActionInvoker.Create (continuationAction),
-										  state, cancellationToken,
-										  GetCreationOptions (continuationOptions),
-			                              parent,
-			                              this);
-			ContinueWithCore (continuation, continuationOptions, scheduler);
-
-			return continuation;
 		}
 
 		public Task<TResult> ContinueWith<TResult> (Func<Task, object, TResult> continuationFunction, object state)
@@ -976,7 +981,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants.Canceled;
 
-			return TaskExtensions.Unwrap (Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default));
+			return TaskExtensionsImpl.Unwrap (Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default));
 		}
 
 		public static Task<TResult> Run<TResult> (Func<TResult> function)
@@ -1002,7 +1007,7 @@ namespace System.Threading.Tasks
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants<TResult>.Canceled;
 
-			return TaskExtensions.Unwrap (Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default));
+			return TaskExtensionsImpl.Unwrap (Task.Factory.StartNew (function, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default));
 		}
 
 		public static Task WhenAll (params Task[] tasks)
