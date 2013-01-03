@@ -114,6 +114,10 @@ namespace System.Security.Cryptography {
 					throw new CryptographicException (
 						Locale.GetText ("feedback size larger than block size"));
 				}
+				if ((value & 3) != 0) {
+					throw new CryptographicException (
+						Locale.GetText ("feedback size must be a multiple of 8 (bits)"));
+				}
 				this.FeedbackSizeValue = value;
 			}
 		}
