@@ -109,7 +109,8 @@ namespace System.IO.Pipes
 				WriteUnlock ();
 			}
 		}
-		
+
+#if BOOTSTRAP_BASIC		
 		AccessControlSections AccessControlSectionsModified {
 			get {
 				return (AccessRulesModified ? AccessControlSections.Access : 0) |
@@ -118,7 +119,7 @@ namespace System.IO.Pipes
 				       (GroupModified       ? AccessControlSections.Group  : 0);
 			}
 		}
-		
+#endif
 		public bool RemoveAccessRule (PipeAccessRule rule)
 		{
 			return RemoveAccessRule ((AccessRule)rule);

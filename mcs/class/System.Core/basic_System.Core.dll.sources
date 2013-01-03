@@ -1,0 +1,9 @@
+#include System.Core.dll.sources
+
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
+../corlib/Mono.Security.Cryptography/CryptoTools.cs
+../corlib/Mono.Security.Cryptography/SymmetricTransform.cs
+../corlib/System.Threading/AtomicBoolean.cs
+../corlib/System.Collections.Generic/CollectionDebuggerView.cs

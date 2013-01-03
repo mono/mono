@@ -1,8 +1,3 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
-../corlib/Mono.Security.Cryptography/CryptoTools.cs
-../corlib/Mono.Security.Cryptography/SymmetricTransform.cs
 Assembly/AssemblyInfo.cs
 System/Actions.cs
 System/Funcs.cs
@@ -49,7 +44,6 @@ System.Linq/SortDirection.cs
 System.Linq/SortSequenceContext.cs
 System.Linq/IQueryProvider.cs
 System.Collections.Generic/HashSet.cs
-../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesCryptoServiceProvider.cs
 System.Security.Cryptography/AesTransform.cs
@@ -260,5 +254,3 @@ System.Linq.Parallel/IVisitableNode.cs
 System.Linq.Parallel/QueryCheckerVisitor.cs
 System.Linq.Parallel/QueryIsOrderedVisitor.cs
 System.Linq.Parallel/QueryOptions.cs
-../corlib/System.Collections.Concurrent.Partitioners/EnumerablePartitioner.cs
-../corlib/System.Threading/AtomicBoolean.cs
