@@ -31,6 +31,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.ExceptionServices;
 
 namespace System.Runtime.CompilerServices
 {
@@ -51,8 +52,10 @@ namespace System.Runtime.CompilerServices
 
 		public void GetResult ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion)
-				throw HandleUnexpectedTaskResult (task);
+			if (task.Status != TaskStatus.RanToCompletion) {
+				// Merge current and dispatched stack traces if there is any
+				ExceptionDispatchInfo.Capture (HandleUnexpectedTaskResult (task)).Throw ();
+			}
 		}
 
 		internal static Exception HandleUnexpectedTaskResult (Task task)

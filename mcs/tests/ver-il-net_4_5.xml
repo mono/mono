@@ -28841,6 +28841,16 @@
       </method>
     </type>
   </test>
+  <test name="test-146.cs">
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>352</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-147.cs">
     <type name="X">
       <method name="X Foo()" attrs="150">
@@ -56007,14 +56017,6 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async6">
-      <method name="Void MoveNext()" attrs="486">
-        <size>203</size>
-      </method>
-      <method name="Void &lt;&gt;m__7()" attrs="145">
-        <size>7</size>
-      </method>
-    </type>
     <type name="Tester+&lt;TestException_1&gt;c__async0">
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -56045,9 +56047,31 @@
         <size>13</size>
       </method>
     </type>
-    <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async6">
+    <type name="Tester">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestException_7()" attrs="129">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;TestException_7&gt;c__async6">
+      <method name="Void MoveNext()" attrs="486">
+        <size>272</size>
+      </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+      <method name="Void &lt;&gt;m__B()" attrs="145">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;TestException_3&gt;c__async2+&lt;TestException_3&gt;c__async7">
+      <method name="Void MoveNext()" attrs="486">
+        <size>203</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;&gt;m__7()" attrs="145">
+        <size>7</size>
       </method>
     </type>
   </test>

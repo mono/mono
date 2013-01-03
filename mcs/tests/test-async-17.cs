@@ -1,5 +1,3 @@
-// Compiler options: -langversion:future
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -56,6 +54,18 @@ class Tester
 			await Task.Factory.StartNew (() => { throw new ArgumentException (); }).ConfigureAwait (false);
 		} catch (ArgumentException) {
 			throw new ApplicationException ();	
+		}
+		
+		return 1;
+	}
+
+	async Task<int> TestException_7 ()
+	{
+		try {
+			await Task.Factory.StartNew (() => { throw new ArgumentException (); }).ConfigureAwait (false);
+		} catch (ArgumentException e) {
+			if (e.StackTrace.Contains (".MoveNext"))
+				throw new ApplicationException ();	
 		}
 		
 		return 1;

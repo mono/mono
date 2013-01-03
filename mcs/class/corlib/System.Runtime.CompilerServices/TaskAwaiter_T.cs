@@ -30,6 +30,7 @@
 #if NET_4_5
 
 using System.Threading.Tasks;
+using System.Runtime.ExceptionServices;
 
 namespace System.Runtime.CompilerServices
 {
@@ -51,7 +52,7 @@ namespace System.Runtime.CompilerServices
 		public TResult GetResult ()
 		{
 			if (task.Status != TaskStatus.RanToCompletion)
-				throw TaskAwaiter.HandleUnexpectedTaskResult (task);
+				ExceptionDispatchInfo.Capture (TaskAwaiter.HandleUnexpectedTaskResult (task)).Throw ();
 
 			return task.Result;
 		}
