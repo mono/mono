@@ -262,6 +262,8 @@ typedef struct {
 
 #if defined (__APPLE__)
 
+/* Not working on osx64 */
+#undef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 #define MONO_ARCH_NOMAP32BIT
 
 #elif defined (__NetBSD__)
