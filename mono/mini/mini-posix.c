@@ -341,18 +341,19 @@ add_signal_handler (int signo, gpointer handler)
 	struct sigaction sa;
 	struct sigaction previous_sa;
 
+	/*Apple likes to deliver SIGBUS for *0 */
+	int is_segv = (signo == SIGSEGV
+#ifdef __APPLE__
+	               || signo == SIGBUS
+#endif
+	              );
+
 #ifdef MONO_ARCH_USE_SIGACTION
 	sa.sa_sigaction = handler;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-
-/*Apple likes to deliver SIGBUS for *0 */
-#ifdef __APPLE__
-	if (signo == SIGSEGV || signo == SIGBUS) {
-#else
-	if (signo == SIGSEGV) {
-#endif
+	if (is_segv) {
 		sa.sa_flags |= SA_ONSTACK;
 
 		/* 
@@ -364,7 +365,7 @@ add_signal_handler (int signo, gpointer handler)
 			sigaddset (&sa.sa_mask, GC_get_suspend_signal ());
 	}
 #endif
-	if (signo == SIGSEGV) {
+	if (is_segv) {
 		/* 
 		 * Delay abort signals while handling SIGSEGVs since they could go unnoticed.
 		 */
