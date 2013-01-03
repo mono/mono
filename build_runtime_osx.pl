@@ -166,9 +166,10 @@ for my $arch (@arches)
 		print "Symlinking libmono.a\n";
 		system("ln", "-f", "$root/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
 
-		if (($arch eq 'i386') and (not $ENV{"UNITY_THISISABUILDMACHINE"}))
+		if (not $ENV{"UNITY_THISISABUILDMACHINE"})
 		{
-			system("ln","-fs", "$root/mono/mini/.libs/libmono.0.dylib.dSYM","$libtarget/libmono.0.dylib.dSYM") eq 0 or die ("failed symlinking libmono.0.dylib.dSYM");
+			rmtree ("$libtarget/libmono.0.dylib.dSYM");
+			system ('cp', '-R', "$root/mono/mini/.libs/libmono.0.dylib.dSYM","$libtarget/libmono.0.dylib.dSYM") eq 0 or die ("Failed copying libmono.0.dylib.dSYM");
 		}
 	 
 		if ($ENV{"UNITY_THISISABUILDMACHINE"})
