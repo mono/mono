@@ -306,35 +306,6 @@ namespace System.Threading.Tasks
 		}
 	}
 
-	sealed class DelayContinuation : IContinuation, IDisposable
-	{
-		readonly ManualResetEventSlim evt;
-
-		public DelayContinuation ()
-		{
-			this.evt = new ManualResetEventSlim ();
-		}
-
-		public ManualResetEventSlim Event
-		{
-			get
-			{
-				return evt;
-			}
-		}
-
-		public void Dispose ()
-		{
-			evt.Dispose ();
-		}
-
-		public void Execute ()
-		{
-			Console.WriteLine ("execute");
-			evt.Set ();
-		}
-	}
-
 	sealed class CountdownContinuation : IContinuation, IDisposable
 	{
 		readonly CountdownEvent evt;
