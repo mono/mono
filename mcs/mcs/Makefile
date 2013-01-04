@@ -48,6 +48,7 @@ csproj-local:
 	echo $(PROGRAM); \
 	echo $(BUILT_SOURCES); \
 	echo $(PROGRAM); \
+	echo $(PROFILE); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 #
