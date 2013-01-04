@@ -932,9 +932,14 @@ namespace Mono.CSharp {
 					if (inflated_param == types[i])
 						continue;
 
-					default_value |= FixedParameters[i] is DefaultValueExpression;
+					default_value |= FixedParameters[i].HasDefaultValue;
 					inflated_types = new TypeSpec[types.Length];
-					Array.Copy (types, inflated_types, types.Length);	
+					Array.Copy (types, inflated_types, types.Length);
+				} else {
+					if (inflated_param == types[i])
+						continue;
+
+					default_value |= FixedParameters[i].HasDefaultValue;
 				}
 
 				inflated_types[i] = inflated_param;
@@ -945,13 +950,34 @@ namespace Mono.CSharp {
 
 			var clone = (AParametersCollection) MemberwiseClone ();
 			clone.types = inflated_types;
+
+			//
+			// Default expression is original expression from the parameter
+			// declaration context which can be of nested enum in generic class type.
+			// In such case we end up with expression type of G<T>.E and e.g. parameter
+			// type of G<int>.E and conversion would fail without inflate in this
+			// context.
+			//
 			if (default_value) {
+				clone.parameters = new IParameterData[Count];
 				for (int i = 0; i < Count; ++i) {
-					var dve = clone.FixedParameters[i] as DefaultValueExpression;
-					if (dve != null) {
-						throw new NotImplementedException ("net");
-						//	clone.FixedParameters [i].DefaultValue = new DefaultValueExpression ();
-					}
+					var fp = FixedParameters[i];
+					clone.FixedParameters[i] = fp;
+
+					if (!fp.HasDefaultValue)
+						continue;
+
+					var expr = fp.DefaultValue;
+
+					if (inflated_types[i] == expr.Type)
+						continue;
+
+					if (expr is DefaultValueExpression)
+						expr = new DefaultValueExpression (new TypeExpression (inflated_types[i], expr.Location), expr.Location);
+					else if (expr is Constant)
+						expr = Constant.CreateConstantFromValue (inflated_types[i], ((Constant) expr).GetValue (), expr.Location);
+
+					clone.FixedParameters[i] = new ParameterData (fp.Name, fp.ModFlags, expr);
 				}
 			}
 

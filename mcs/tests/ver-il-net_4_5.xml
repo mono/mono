@@ -26903,6 +26903,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-27.cs">
+    <type name="EnumWrapperCtor`1[T]">
+      <method name="Test getValue()" attrs="134">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor(Test)" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">
@@ -46212,6 +46230,24 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-860.cs">
+    <type name="ConditionalAttributeTesting.MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Int32 HelloWorld()" attrs="150">
+        <size>52</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ConditionalAttributeTesting.SomeAttribute">
+      <method name="Void .ctor(String)" attrs="6278">
+        <size>8</size>
       </method>
     </type>
   </test>

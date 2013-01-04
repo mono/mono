@@ -4373,7 +4373,8 @@ namespace Mono.CSharp {
 				}
 
 				candidate = ms;
-				ptypes = ms.Parameters.Types;
+				pd = ms.Parameters;
+				ptypes = pd.Types;
 			} else {
 				if (type_arguments != null)
 					return int.MaxValue - 15000;
@@ -4511,19 +4512,9 @@ namespace Mono.CSharp {
 				// Handles int to int? conversions
 				//
 				e = Convert.ImplicitConversionStandard (ec, e, ptype, loc);
-
-				//
-				// When constant type paramter contains type argument
-				//
-				// Foo (T[] arg = null)
-				//
-				if (e == null) {
-					e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
-				}
 			} else {
 				e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
 			}
-
 
 			return e.Resolve (ec);
 		}
