@@ -5254,7 +5254,7 @@ namespace Mono.CSharp {
 			var c = constant.GetConstant (rc);
 
 			// Creates reference expression to the constant value
-			return Constant.CreateConstant (constant.MemberType, c.GetValue (), loc);
+			return Constant.CreateConstantFromValue (constant.MemberType, c.GetValue (), loc);
 		}
 
 		public override void Emit (EmitContext ec)

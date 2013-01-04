@@ -173,7 +173,7 @@ namespace Mono.CSharp {
 			if (NamedArguments == null)
 				named_args = new Arguments (1);
 
-			var value = Constant.CreateConstant (rc.Module.PredefinedTypes.CharSet.TypeSpec, rc.Module.DefaultCharSet, Location);
+			var value = Constant.CreateConstantFromValue (rc.Module.PredefinedTypes.CharSet.TypeSpec, rc.Module.DefaultCharSet, Location);
 			NamedArguments.Add (new NamedArgument (dll_import_char_set, loc, value));
 		}
 

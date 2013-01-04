@@ -103,17 +103,12 @@ namespace Mono.CSharp {
 				  TypeManager.CSharpName (Type), TypeManager.CSharpName (type));
 			}
 
-			return CreateConstant (type, constant_value, loc);
+			return CreateConstantFromValue (type, constant_value, loc);
 		}
 
 		//
 		//  Returns a constant instance based on Type
 		//
-		public static Constant CreateConstant (TypeSpec t, object v, Location loc)
-		{
-			return CreateConstantFromValue (t, v, loc);
-		}
-
 		public static Constant CreateConstantFromValue (TypeSpec t, object v, Location loc)
 		{
 			switch (t.BuiltinType) {
