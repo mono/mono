@@ -35,19 +35,20 @@ namespace System.Security.Cryptography {
 
 	// Notes: This class is "publicly" new in Fx 2.0 but was already 
 	// existing in Fx 1.0. So this new class is only calling the old
-	// (and more general) one (RijndaelTransform) located in 
-	// RijndaelManaged.cs.
+	// (and more general) one (RijndaelTransform)
 
 	[ComVisible (true)]
 	public sealed class RijndaelManagedTransform: ICryptoTransform, IDisposable {
 
 		private RijndaelTransform _st;
 		private int _bs;
+		private int _ts;
 
 		internal RijndaelManagedTransform (Rijndael algo, bool encryption, byte[] key, byte[] iv)
 		{
 			_st = new RijndaelTransform (algo, encryption, key, iv);
 			_bs = algo.BlockSize;
+			_ts = algo.Mode == CipherMode.CFB ? algo.FeedbackSize >> 3 : _st.InputBlockSize;
 		}
 
 		public int BlockSizeValue {
@@ -63,11 +64,11 @@ namespace System.Security.Cryptography {
 		}
 
 		public int InputBlockSize {
-			get { return _st.InputBlockSize; }
+			get { return _ts; }
 		}
 
 		public int OutputBlockSize {
-			get { return _st.OutputBlockSize; }
+			get { return _ts; }
 		}
 
 		public void Clear ()
@@ -100,10 +101,9 @@ namespace System.Security.Cryptography {
 		}
 	}
 
-	internal class RijndaelTransform : SymmetricTransform
-	{
+	class RijndaelTransform : SymmetricTransform {
 		private uint[] expandedKey;
-	
+		private int FeedBackIter;
 		private int Nb;
 		private int Nk;
 		private int Nr;
@@ -126,6 +126,7 @@ namespace System.Security.Cryptography {
 			}
 			keySize <<= 3; // bytes -> bits
 			int blockSize = algo.BlockSize;
+			FeedBackIter = (int) BlockSizeByte / FeedBackByte;	// for CFB
 
 			this.Nb = (blockSize >> 5); // div 32
 			this.Nk = (keySize >> 5); // div 32
@@ -213,6 +214,37 @@ namespace System.Security.Cryptography {
 					case 8:
 						Decrypt256 (input, output, expandedKey);
 						return;
+				}
+			}
+		}
+
+		// RijndaelManaged does not implement CFB like any *CryptoServiceProvider does
+		// not even AesCryptoServiceProvider, while AesManaged does not support CFB at all
+		protected override void CFB (byte[] input, byte[] output) 
+		{
+			if (encrypt) {
+				for (int x = 0; x < FeedBackIter; x++) {
+					// temp is first initialized with the IV
+					ECB (temp, temp2);
+					
+					for (int i = 0; i < FeedBackByte; i++)
+						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
+					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+					Buffer.BlockCopy (output, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+				}
+			}
+			else {
+				for (int x = 0; x < FeedBackIter; x++) {
+					// we do not really decrypt this data!
+					encrypt = true;
+					// temp is first initialized with the IV
+					ECB (temp, temp2);
+					encrypt = false;
+					
+					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+					Buffer.BlockCopy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+					for (int i = 0; i < FeedBackByte; i++)
+						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
 				}
 			}
 		}

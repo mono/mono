@@ -45,15 +45,14 @@ namespace Mono.Security.Cryptography {
 	internal abstract class SymmetricTransform : ICryptoTransform {
 		protected SymmetricAlgorithm algo;
 		protected bool encrypt;
-		private int BlockSizeByte;
-		private byte[] temp;
-		private byte[] temp2;
+		protected int BlockSizeByte;
+		protected byte[] temp;
+		protected byte[] temp2;
 		private byte[] workBuff;
 		private byte[] workout;
 #if !MOONLIGHT
 		// Silverlight 2.0 does not support any feedback mode
-		private int FeedBackByte;
-		private int FeedBackIter;
+		protected int FeedBackByte;
 #endif
 		private bool m_disposed = false;
 		private bool lastBlock;
@@ -81,8 +80,6 @@ namespace Mono.Security.Cryptography {
 			temp2 = new byte [BlockSizeByte];
 #if !MOONLIGHT
 			FeedBackByte = (algo.FeedbackSize >> 3);
-			if (FeedBackByte != 0)
-				FeedBackIter = (int) BlockSizeByte / FeedBackByte;
 #endif
 			// transform buffers
 			workBuff = new byte [BlockSizeByte];
@@ -185,30 +182,33 @@ namespace Mono.Security.Cryptography {
 
 #if !MOONLIGHT
 		// Cipher-FeedBack (CFB)
+		// this is how *CryptoServiceProvider implements CFB
+		// only AesCryptoServiceProvider support CFB > 8
+		// RijndaelManaged is incompatible with this implementation (and overrides it in it's own transform)
 		protected virtual void CFB (byte[] input, byte[] output) 
 		{
 			if (encrypt) {
-				for (int x = 0; x < FeedBackIter; x++) {
+				for (int x = 0; x < BlockSizeByte; x++) {
 					// temp is first initialized with the IV
 					ECB (temp, temp2);
 
-					for (int i = 0; i < FeedBackByte; i++)
+					for (int i = 0; i < 1; i++)
 						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
-					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Buffer.BlockCopy (output, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+					Buffer.BlockCopy (temp, 1, temp, 0, BlockSizeByte - 1);
+					Buffer.BlockCopy (output, x, temp, BlockSizeByte - 1, 1);
 				}
 			}
 			else {
-				for (int x = 0; x < FeedBackIter; x++) {
+				for (int x = 0; x < BlockSizeByte; x++) {
 					// we do not really decrypt this data!
 					encrypt = true;
 					// temp is first initialized with the IV
 					ECB (temp, temp2);
 					encrypt = false;
 
-					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Buffer.BlockCopy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
-					for (int i = 0; i < FeedBackByte; i++)
+					Buffer.BlockCopy (temp, 1, temp, 0, BlockSizeByte - 1);
+					Buffer.BlockCopy (input, x, temp, BlockSizeByte - 1, 1);
+					for (int i = 0; i < 1; i++)
 						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
 				}
 			}
