@@ -4404,6 +4404,13 @@ namespace Mono.CSharp {
 					Expression e = fp.DefaultValue;
 					if (e != null) {
 						e = ResolveDefaultValueArgument (ec, ptypes[i], e, loc);
+						if (e == null) {
+							// Restore for possible error reporting
+							for (int ii = i; ii < arg_count; ++ii)
+								arguments.RemoveAt (i);
+
+							return (arg_count - i) * 2 + 1;
+						}
 					}
 
 					if ((fp.ModFlags & Parameter.Modifier.CallerMask) != 0) {
@@ -4509,9 +4516,11 @@ namespace Mono.CSharp {
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
 			} else if (e is Constant) {
 				//
-				// Handles int to int? conversions
+				// Handles int to int? conversions, DefaultParameterValue check
 				//
 				e = Convert.ImplicitConversionStandard (ec, e, ptype, loc);
+				if (e == null)
+					return null;
 			} else {
 				e = new DefaultValueExpression (new TypeExpression (ptype, loc), loc);
 			}
