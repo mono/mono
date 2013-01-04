@@ -1055,15 +1055,17 @@ namespace Mono.CSharp {
 				cdata = encoder.ToArray ();
 			}
 
-			try {
-				foreach (Attributable target in targets)
-					target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
-			} catch (Exception e) {
-				if (e is BadImageFormat && Report.Errors > 0)
-					return;
+			if (!ctor.DeclaringType.IsConditionallyExcluded (context, Location)) {
+				try {
+					foreach (Attributable target in targets)
+						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
+				} catch (Exception e) {
+					if (e is BadImageFormat && Report.Errors > 0)
+						return;
 
-				Error_AttributeEmitError (e.Message);
-				return;
+					Error_AttributeEmitError (e.Message);
+					return;
+				}
 			}
 
 			if (!usage_attr.AllowMultiple && allEmitted != null) {
