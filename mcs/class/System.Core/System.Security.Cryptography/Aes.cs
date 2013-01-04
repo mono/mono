@@ -60,12 +60,8 @@ namespace System.Security.Cryptography {
 			// The Aes base class was moved from System.Core to mscorlib - so we can't just return a new AesCryptoServiceProvider instance
 			// note: the linker is aware of this condition
 			return (Aes) Activator.CreateInstance (Type.GetType ("System.Security.Cryptography.AesManaged, " + Consts.AssemblySystem_Core));
-#elif MOBILE
-			// there was a mixup in the MOBILE profile, to be compatible with Silverlight it's
-			// AesManaged that should have been provided, not AesCryptoServiceProvider
-			return Create ("System.Security.Cryptography.AesCryptoServiceProvider, " + Consts.AssemblySystem_Core);
 #else
-			return Create ("System.Security.Cryptography.AesManaged, " + Consts.AssemblySystem_Core);
+			return Create ("System.Security.Cryptography.AesCryptoServiceProvider, " + Consts.AssemblySystem_Core);
 #endif
 		}
 
