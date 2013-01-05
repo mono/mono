@@ -140,6 +140,23 @@ namespace System
 			Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
 		}
 
+#if NET_4_5
+		internal T InternalArray__IReadOnlyList_get_Item<T> (int index)
+		{
+			if (unchecked ((uint) index) >= unchecked ((uint) Length))
+				throw new ArgumentOutOfRangeException ("index");
+
+			T value;
+			GetGenericValueImpl (index, out value);
+			return value;
+		}
+
+		internal int InternalArray__IReadOnlyCollection_get_Count ()
+		{
+			return Length;
+		}
+#endif
+
 		internal void InternalArray__Insert<T> (int index, T item)
 		{
 			throw new NotSupportedException ("Collection is of a fixed size");
