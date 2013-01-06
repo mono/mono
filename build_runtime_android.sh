@@ -45,8 +45,8 @@ if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 fi
 
 PATH="$TOOLCHAIN/bin:$PATH"
-CC="$TOOLCHAIN/bin/${GCC_PREFIX}gcc -nostdlib"
-CXX="$TOOLCHAIN/bin/${GCC_PREFIX}g++ -nostdlib"
+CC="$TOOLCHAIN/bin/${GCC_PREFIX}gcc --sysroot=$PLATFORM_ROOT"
+CXX="$TOOLCHAIN/bin/${GCC_PREFIX}g++ --sysroot=$PLATFORM_ROOT"
 CPP="$TOOLCHAIN/bin/${GCC_PREFIX}cpp"
 CXXCPP="$TOOLCHAIN/bin/${GCC_PREFIX}cpp"
 CPATH="$PLATFORM_ROOT/usr/include"
@@ -60,12 +60,11 @@ CFLAGS="\
 -DHAVE_USR_INCLUDE_MALLOC_H -DPAGE_SIZE=0x1000 \
 -D_POSIX_PATH_MAX=256 -DS_IWRITE=S_IWUSR \
 -DHAVE_PTHREAD_MUTEX_TIMEDLOCK \
--fpic -g -I$PLATFORM_ROOT/usr/include \
+-fpic -g -funwind-tables \
 -ffunction-sections -fdata-sections"
 CXXFLAGS=$CFLAGS
 LDFLAGS="\
 -Wl,--no-undefined \
--L$PLATFORM_ROOT/usr/lib \
 -Wl,-rpath-link=$PLATFORM_ROOT/usr/lib \
 -ldl -lm -llog -lc"
 
