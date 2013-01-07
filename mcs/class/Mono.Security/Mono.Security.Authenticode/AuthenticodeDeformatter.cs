@@ -351,7 +351,7 @@ namespace Mono.Security.Authenticode {
 		{
 			// SEQUENCE {
 			//   INTEGER 1
-			if (cs.Version != 1)
+			if (cs.Version > 1)
 				return false;
 			//   SEQUENCE {
 			//      SEQUENCE {
