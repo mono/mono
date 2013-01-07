@@ -225,11 +225,14 @@ System.Security.AccessControl/RawSecurityDescriptorTest.cs
 System.Security.AccessControl/RegistrySecurityTest.cs
 System.Security.AccessControl/SystemAclTest.cs
 System.Security.Cryptography/AllTests2.cs
+System.Security.Cryptography/AesCfbTest.cs
 System.Security.Cryptography/AsymmetricAlgorithmTest.cs
 System.Security.Cryptography/CipherModeTest.cs
+System.Security.Cryptography/CfbTest.cs
 System.Security.Cryptography/CryptoConfigTest.cs
 System.Security.Cryptography/CryptoStreamTest.cs
 System.Security.Cryptography/CspProviderFlagsTest.cs
+System.Security.Cryptography/DesCfbTest.cs
 System.Security.Cryptography/DESCryptoServiceProviderTest.cs
 System.Security.Cryptography/DESTest.cs
 System.Security.Cryptography/DSACryptoServiceProviderTest.cs
@@ -251,9 +254,11 @@ System.Security.Cryptography/PaddingModeTest.cs
 System.Security.Cryptography/PasswordDeriveBytesTest.cs
 System.Security.Cryptography/PKCS1MaskGenerationMethodTest.cs
 System.Security.Cryptography/RandomNumberGeneratorTest.cs
+System.Security.Cryptography/Rc2CfbTest.cs
 System.Security.Cryptography/RC2CryptoServiceProviderTest.cs
 System.Security.Cryptography/RC2Test.cs
 System.Security.Cryptography/Rfc2898DeriveBytesTest.cs
+System.Security.Cryptography/RijndaelCfbTest.cs
 System.Security.Cryptography/RijndaelManagedTest.cs
 System.Security.Cryptography/RijndaelTest.cs
 System.Security.Cryptography/RIPEMD160ManagedTest.cs
@@ -281,6 +286,7 @@ System.Security.Cryptography/SymmetricAlgorithm2Test.cs
 System.Security.Cryptography/SymmetricAlgorithmTransformTest.cs
 System.Security.Cryptography/ToBase64TransformTest.cs
 System.Security.Cryptography/TripleDESCryptoServiceProviderTest.cs
+System.Security.Cryptography/TripleDesCfbTest.cs
 System.Security.Cryptography/TripleDESTest.cs
 System.Security.Cryptography.X509Certificates/X509CapiTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateTest.cs
