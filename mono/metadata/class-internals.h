@@ -316,6 +316,7 @@ struct _MonoClass {
 	 * to 1, because we know the instance size now. After that we 
 	 * initialise all static fields.
 	 */
+	/* size_inited is accessed without locks, so it needs a memory barrier */
 	guint size_inited     : 1;
 	guint valuetype       : 1; /* derives from System.ValueType */
 	guint enumtype        : 1; /* derives from System.Enum */
@@ -352,6 +353,7 @@ struct _MonoClass {
 	guint is_inflated : 1; /* class is a generic instance */
 	/* next byte */
 	guint has_finalize_inited    : 1; /* has_finalize is initialized */
+	guint setup_fields_called : 1; /* to prevent infinite loops in setup_fields */
 
 	guint8     exception_type;	/* MONO_EXCEPTION_* */
 
