@@ -5,7 +5,7 @@ AC_CANONICAL_SYSTEM
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(mono,2.10.11)
 AM_MAINTAINER_MODE
 
@@ -337,7 +337,6 @@ AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
 AC_PROG_CXX
 AM_PROG_AS
-AM_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_AWK
 dnl We should use AM_PROG_AS, but it's not available on automake/aclocal 1.4
