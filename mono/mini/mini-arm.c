@@ -2942,10 +2942,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
 	MonoCallInst *call;
-	guint offset;
+	int offset;
 	guint8 *code = cfg->native_code + cfg->code_len;
 	MonoInst *last_ins = NULL;
-	guint last_offset = 0;
+	int last_offset = 0;
 	int max_len, cpos;
 	int imm8, rot_amount;
 
