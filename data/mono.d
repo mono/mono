@@ -19,6 +19,8 @@ provider mono {
 	probe gc__begin (int generation);
 	probe gc__end (int generation);
 
+	probe gc__requested (int generation, uintptr_t requested_size, int wait_to_finish);
+
 	probe gc__checkpoint__1 (int generation);
 	probe gc__checkpoint__2 (int generation);
 	probe gc__checkpoint__3 (int generation);
