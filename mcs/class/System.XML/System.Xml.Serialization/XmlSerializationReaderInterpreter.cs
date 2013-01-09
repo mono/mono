@@ -400,6 +400,10 @@ namespace System.Xml.Serialization
 						if (info.Member != previousMember)
 						{
 							ind = info.ExplicitOrder + 1;
+							// If the member is a flat list don't increase the index, since the next element may
+							// be another item of the list. This is a fix for Xamarin bug #9193.
+							if (info.Member is XmlTypeMapMemberFlatList)
+								ind--;
 							previousMember = info.Member;
 						}
 
