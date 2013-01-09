@@ -2,13 +2,13 @@
 {
 }
 
-.assembly 'test-859-lib'
+.assembly 'test-com-03-lib'
 {
   .hash algorithm 0x00008004
   .ver  0:0:0:0
 }
 
-.module 'test-859-lib.dll'
+.module 'test-com-03-lib.dll'
 
 // Import flag enables more magic
 

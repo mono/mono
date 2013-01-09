@@ -194,6 +194,13 @@ public class RijndaelTest {
 			}
 		}
 	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void FeedbackSize_NotMultipleOf8 ()
+	{
+		aes.FeedbackSize = 9;
+	}
 }
 
 }

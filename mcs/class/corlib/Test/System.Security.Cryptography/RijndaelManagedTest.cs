@@ -222,7 +222,6 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
-		[Category ("NotWorking")] // data is bad but no exception is thrown
 		public void CreateDecryptor_KeyNull ()
 		{
 			ICryptoTransform encryptor = aes.CreateEncryptor (aes.Key, aes.IV);
@@ -309,7 +308,6 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
 		// this behaviour for IV that are too large
-		[Category ("NotWorking")]
 		public void CreateEncryptor_IV_TooBig ()
 		{
 			int size = aes.BlockSize; // 8 times too big
@@ -357,7 +355,6 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
 		// this behaviour for IV that are too large
-		[Category ("NotWorking")]
 		public void CreateDecryptor_IV_TooBig ()
 		{
 			int size = aes.BlockSize; // 8 times too big
@@ -380,11 +377,11 @@ namespace MonoTests.System.Security.Cryptography {
 				aes.IV = new byte [16];
 				using (ICryptoTransform encryptor = aes.CreateEncryptor ())
 					encdata = encryptor.TransformFinalBlock (original, 0, original.Length);
-				Assert.AreEqual (encdata.Length, size, "enc.Length");
-				Assert.AreEqual (encdata, expected, "encrypted");
+				Assert.AreEqual (size, encdata.Length, "enc.Length");
+				Assert.AreEqual (BitConverter.ToString (expected), BitConverter.ToString (encdata), "encrypted");
 				using (ICryptoTransform decryptor = aes.CreateDecryptor ())
 					decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
-				Assert.AreEqual (decdata, original, "roundtrip");
+				Assert.AreEqual (original, decdata, "roundtrip");
 			}
 		}
 	}

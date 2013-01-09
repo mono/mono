@@ -1,6 +1,8 @@
 .assembly extern mscorlib { }
 
-.assembly 'test-443-lib' { }
+.assembly 'test-com-02-lib' { }
+
+.module 'test-com-02-lib.dll'
 
 .namespace Test {
 

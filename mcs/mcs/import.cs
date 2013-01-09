@@ -510,7 +510,7 @@ namespace Mono.CSharp
 						var ptype = types[i];
 						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeSpec.IsReferenceType (ptype))) {
 							if (value == null) {
-								default_value = Constant.CreateConstant (ptype, null, Location.Null);
+								default_value = Constant.CreateConstantFromValue (ptype, null, Location.Null);
 							} else {
 								default_value = ImportParameterConstant (value);
 

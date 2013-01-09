@@ -68,6 +68,9 @@ namespace Mono.CSharp.Nullable
 				MemberFilter.Method ("GetValueOrDefault", 0, ParametersCompiled.EmptyReadOnlyParameters, null), BindingRestriction.None);
 		}
 
+		//
+		// Don't use unless really required for correctness, see Unwrap::Emit
+		//
 		public static MethodSpec GetValue (TypeSpec nullableType)
 		{
 			return (MethodSpec) MemberCache.FindMember (nullableType,
@@ -142,6 +145,11 @@ namespace Mono.CSharp.Nullable
 			var call = new CallEmitter ();
 			call.InstanceExpression = this;
 
+			//
+			// Using GetGetValueOrDefault is prefered because JIT can possibly
+			// inline it whereas Value property contains a throw which is very
+			// unlikely to be inlined
+			//
 			if (useDefaultValue)
 				call.EmitPredefined (ec, NullableInfo.GetGetValueOrDefault (expr.Type), null);
 			else
@@ -1256,7 +1264,7 @@ namespace Mono.CSharp.Nullable
 
 			call = new CallEmitter ();
 			call.InstanceExpression = lt;
-			call.EmitPredefined (ec, NullableInfo.GetValue (expr.Type), null);
+			call.EmitPredefined (ec, NullableInfo.GetGetValueOrDefault (expr.Type), null);
 
 			lt.Release (ec);
 

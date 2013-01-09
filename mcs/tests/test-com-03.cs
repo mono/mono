@@ -1,4 +1,4 @@
-// Compiler options: -r:test-859-lib.dll
+// Compiler options: -r:test-com-03-lib.dll
 
 using System;
 

@@ -173,7 +173,7 @@ namespace Mono.CSharp {
 			if (NamedArguments == null)
 				named_args = new Arguments (1);
 
-			var value = Constant.CreateConstant (rc.Module.PredefinedTypes.CharSet.TypeSpec, rc.Module.DefaultCharSet, Location);
+			var value = Constant.CreateConstantFromValue (rc.Module.PredefinedTypes.CharSet.TypeSpec, rc.Module.DefaultCharSet, Location);
 			NamedArguments.Add (new NamedArgument (dll_import_char_set, loc, value));
 		}
 
@@ -1055,15 +1055,17 @@ namespace Mono.CSharp {
 				cdata = encoder.ToArray ();
 			}
 
-			try {
-				foreach (Attributable target in targets)
-					target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
-			} catch (Exception e) {
-				if (e is BadImageFormat && Report.Errors > 0)
-					return;
+			if (!ctor.DeclaringType.IsConditionallyExcluded (context, Location)) {
+				try {
+					foreach (Attributable target in targets)
+						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
+				} catch (Exception e) {
+					if (e is BadImageFormat && Report.Errors > 0)
+						return;
 
-				Error_AttributeEmitError (e.Message);
-				return;
+					Error_AttributeEmitError (e.Message);
+					return;
+				}
 			}
 
 			if (!usage_attr.AllowMultiple && allEmitted != null) {

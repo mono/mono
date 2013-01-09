@@ -1,3 +1,4 @@
+../../build/common/Consts.cs
 Assembly/AssemblyInfo.cs
 System/Actions.cs
 System/Funcs.cs

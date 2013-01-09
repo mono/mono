@@ -27,6 +27,11 @@ test-555.cs SKIP
 #app domain
 test-795.cs SKIP
 
+#com test
+test-com-01.cs SKIP
+test-com-02.cs SKIP
+test-com-03.cs SKIP
+
 # Tests without ConfigureAwait (false)
 test-async-13.cs SKIP
 
