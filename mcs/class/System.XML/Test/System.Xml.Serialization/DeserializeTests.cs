@@ -1596,5 +1596,20 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("BaseValue", res6.Base);
 			Assert.AreEqual ("MidValue", res6.Mid);	
 		}
+		
+		[Test] // bug #9193
+		public void TestOrderedMapWithFlatList ()
+		{
+			var d = (Bug9193Class) Deserialize (typeof(Bug9193Class), "<Test><Data>One</Data><Data>Two</Data><Data>Three</Data><Extra>a</Extra><Extra>b</Extra></Test>");
+			Assert.IsNotNull (d);
+			Assert.AreEqual (3, d.Data.Length);
+			Assert.AreEqual ("One", d.Data[0]);
+			Assert.AreEqual ("Two", d.Data[1]);
+			Assert.AreEqual ("Three", d.Data[2]);
+
+			Assert.AreEqual (2, d.Extra.Length);
+			Assert.AreEqual ("a", d.Extra[0]);
+			Assert.AreEqual ("b", d.Extra[1]);
+		}
 	}
 }

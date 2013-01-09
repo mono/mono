@@ -379,6 +379,10 @@ namespace System.Xml.Serialization
 							while ((info = map.GetElement (ind++)) != null)
 								if (info.ElementName == Reader.LocalName && info.Namespace == Reader.NamespaceURI)
 									break;
+							// If the member is a flat list don't increase the index, since the next element may
+							// be another item of the list. This is a fix for Xamarin bug #9193.
+							if (info != null && info.Member is XmlTypeMapMemberFlatList)
+								ind--;
 						}
 						else
 							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, -1);
