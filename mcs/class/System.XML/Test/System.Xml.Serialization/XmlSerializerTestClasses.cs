@@ -1094,5 +1094,14 @@ namespace MonoTests.System.Xml.TestClasses
 	public class Bug8468SubclassNoNamespaceV2: Bug8468MidClassV2
 	{
 	}
+	
+	[XmlRoot("Test")]
+	public class Bug9193Class
+	{
+		[XmlElement ("Data", Order=0)]
+		public string[] Data;
+		[XmlElement ("Extra", Order=1)]
+		public string[] Extra;
+	}
 }
 
