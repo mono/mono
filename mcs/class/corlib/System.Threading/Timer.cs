@@ -372,10 +372,14 @@ namespace System.Threading
 						//PrintList ();
 						ms_wait = -1;
 						if (min_next_run != Int64.MaxValue) {
-							long diff = min_next_run - DateTime.GetTimeMonotonic (); 
-							ms_wait = (int)(diff / TimeSpan.TicksPerMillisecond);
-							if (ms_wait < 0)
-								ms_wait = 0;
+							long diff = (min_next_run - DateTime.GetTimeMonotonic ())  / TimeSpan.TicksPerMillisecond;
+							if (diff > Int32.MaxValue)
+								ms_wait = Int32.MaxValue - 1;
+							else {
+								ms_wait = (int)(diff);
+								if (ms_wait < 0)
+									ms_wait = 0;
+							}
 						}
 					}
 					// Wait until due time or a timer is changed and moves from/to the first place in the list.
