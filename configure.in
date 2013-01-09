@@ -246,8 +246,9 @@ case "$host" in
 		dnl its gcc defaults to 64-bit mode.  They have also deprecated the usage of ucontext
 		dnl we need to set some flags to build our 32-bit binaries on 10.6 properly
 		case "$host" in
-			i*86-*-darwin10*)
-				BROKEN_DARWIN_FLAGS="-arch i386 -D_XOPEN_SOURCE"
+			dnl Snow Leopard and newer config.guess reports as this
+			i*86-*-darwin*)
+				# BROKEN_DARWIN_FLAGS="-arch i386"
 				CPPFLAGS="$CPPFLAGS $BROKEN_DARWIN_FLAGS"
 				CFLAGS="$CFLAGS $BROKEN_DARWIN_FLAGS"
 				CXXFLAGS="$CXXFLAGS $BROKEN_DARWIN_FLAGS"
@@ -2095,7 +2096,13 @@ case "$host" in
 			# foo.c:6: warning: visibility attribute not supported in this configuration; ignored
 			# ld: fatal: relocation error: R_386_GOTOFF: file /var/tmp//ccxYR96k.o: symbol astruct: relocation must bind locally
 			have_visibility_hidden=no
-
+			;;
+		  darwin*|openbsd*|freebsd*)
+			if test "x$ac_cv_sizeof_void_p" = "x8"; then
+				TARGET=AMD64
+				arch_target=amd64
+			fi
+		        ;;
 		esac
 		;;
 	x86_64-*-* | amd64-*-*)
@@ -2404,7 +2411,9 @@ if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86" -o "x$TARGET" = "xALPHA"; t
 			mono_debugger_supported=yes
 			;;
 		*86-apple-darwin*)
-			mono_debugger_supported=yes
+			if not test "x$TARGET" = "xAMD64"; then
+				mono_debugger_supported=yes
+			fi
 			;;		
 		esac
 	fi

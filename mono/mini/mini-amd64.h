@@ -260,7 +260,13 @@ typedef struct {
 
 #endif /* PLATFORM_WIN32 */
 
-#if defined (__NetBSD__)
+#if defined (__APPLE__)
+
+/* Not working on osx64 */
+#undef MONO_ARCH_SIGSEGV_ON_ALTSTACK
+#define MONO_ARCH_NOMAP32BIT
+
+#elif defined (__NetBSD__)
 
 #define REG_RAX 14
 #define REG_RCX 3

@@ -628,7 +628,17 @@ mono_walk_stack (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoContext *start
 	gboolean managed;
 	MonoContext ctx, new_ctx;
 
-	ctx = *start_ctx;
+	if (!jit_tls)
+		jit_tls = TlsGetValue (mono_jit_tls_id);
+	if (start_ctx) {
+		ctx = *start_ctx;
+	} else {
+#ifdef MONO_INIT_CONTEXT_FROM_CURRENT
+		MONO_INIT_CONTEXT_FROM_CURRENT (&ctx);
+#else
+		MONO_INIT_CONTEXT_FROM_FUNC (&ctx, mono_walk_stack);
+#endif
+	}
 
 	while (MONO_CONTEXT_GET_SP (&ctx) < jit_tls->end_of_stack) {
 		/* 
