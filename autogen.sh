@@ -113,7 +113,7 @@ aclocal -I . $ACLOCAL_FLAGS || {
   exit 1
 }
 
-if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then
+if grep "^AC_CONFIG_HEADERS" configure.in >/dev/null; then
   echo "Running autoheader..."
   autoheader || { echo "**Error**: autoheader failed."; exit 1; }
 fi
