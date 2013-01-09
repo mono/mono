@@ -1884,7 +1884,7 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 	
 	offset = code - cfg->native_code;
 	/* we need about 16 instructions */
-	if (offset > (cfg->code_size - 16 * 4)) {
+	while (cfg->code_size < offset + 16 * 4) {
 		cfg->code_size *= 2;
 		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 		code = cfg->native_code + offset;
@@ -2942,10 +2942,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
 	MonoCallInst *call;
-	int offset;
+	guint offset;
 	guint8 *code = cfg->native_code + cfg->code_len;
 	MonoInst *last_ins = NULL;
-	int last_offset = 0;
+	guint last_offset = 0;
 	int max_len, cpos;
 	int imm8, rot_amount;
 
@@ -2977,8 +2977,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		offset = code - cfg->native_code;
 
 		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-
-		if (offset > (cfg->code_size - max_len - 16)) {
+		while (cfg->code_size < offset + max_len + 16) {
 			cfg->code_size *= 2;
 			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 			code = cfg->native_code + offset;
@@ -3706,7 +3705,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_SWITCH, ins->inst_p0);
 			max_len += 4 * GPOINTER_TO_INT (ins->klass);
-			if (offset > (cfg->code_size - max_len - 16)) {
+			while (cfg->code_size < offset + max_len + 16) {
 				cfg->code_size += max_len;
 				cfg->code_size *= 2;
 				cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
