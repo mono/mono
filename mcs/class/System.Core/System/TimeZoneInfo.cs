@@ -49,10 +49,10 @@ using Microsoft.Win32;
 
 namespace System
 {
-#if NET_4_0
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOONLIGHT || MOBILE
+#if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	[SerializableAttribute]
 	public sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>, ISerializable, IDeserializationCallback

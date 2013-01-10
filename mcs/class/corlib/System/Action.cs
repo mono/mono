@@ -32,33 +32,33 @@ using System.Runtime.CompilerServices;
 namespace System
 {
 #if NET_4_0 || MOBILE
-#if NET_4_0
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOBILE
+#if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	public delegate void Action ();
 	
 	public delegate void Action <in T> (T obj);
 	
-#if NET_4_0
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOBILE
+#if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	public delegate void Action <in T1, in T2> (T1 arg1, T2 arg2);
 	
-#if NET_4_0
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOBILE
+#if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	public delegate void Action <in T1, in T2, in T3> (T1 arg1, T2 arg2, T3 arg3);
 	
-#if NET_4_0
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOBILE
+#if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	public delegate void Action <in T1, in T2, in T3, in T4> (T1 arg1, T2 arg2, T3 arg3, T4 arg4);
 	

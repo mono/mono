@@ -30,7 +30,9 @@
 
 namespace System.Runtime.CompilerServices
 {
+#if !MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
+#endif
 	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Assembly)]
 	public sealed class ExtensionAttribute : Attribute
 	{
