@@ -2392,6 +2392,7 @@ namespace Mono.CSharp {
 							return false;
 
 						ok = false;
+						break;
 					}
 				}
 			}
@@ -2406,6 +2407,7 @@ namespace Mono.CSharp {
 							return false;
 
 						ok = false;
+						break;
 					}
 				}
 			}
