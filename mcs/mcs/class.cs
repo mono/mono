@@ -1466,12 +1466,14 @@ namespace Mono.CSharp
 					    GetSignatureForError (), cycle.GetSignatureForError ());
 
 					iface_exprs = null;
+					PartialContainer.iface_exprs = null;
 				} else {
 					Report.Error (146, Location,
 						"Circular base class dependency involving `{0}' and `{1}'",
 						GetSignatureForError (), cycle.GetSignatureForError ());
 
 					base_type = null;
+					PartialContainer.base_type = null;
 				}
 			}
 
