@@ -200,8 +200,13 @@ namespace System.Windows.Forms {
 		private object mInstance;
 		private AboutBoxDelegate aboutDelegate = null;
 		private AxHost.State ocxState = null;
+		static bool runningOnWindows;
 
 		#region Protected Constructors
+
+		internal static bool IsRunningOnWindows {
+                        get { return runningOnWindows; }
+                }
 
 		protected AxHost (string clsid) : this(clsid, 0)
 		{
@@ -213,6 +218,9 @@ namespace System.Windows.Forms {
 			this.clsid = new Guid(clsid);
 			//this.flags = flags;
 			this.mInstance = null;
+
+			PlatformID pid = Environment.OSVersion.Platform;
+			runningOnWindows = ((int) pid != 128 && (int) pid != 4 && (int) pid != 6);		
 		}
 		#endregion	// Public Instance Properties
 
@@ -579,11 +587,15 @@ namespace System.Windows.Forms {
 
 		private void GetActiveXInstance()
 		{
-			if (this.mInstance == null)
+			if (IsRunningOnWindows && this.mInstance == null)
 			{
 				object obj;
 				CoCreateInstance(ref clsid, null, 1, ref IID_IUnknown, out obj);
 				this.mInstance = obj;
+			}
+			else
+			{
+				throw new NotSupportedException ();
 			}
 		}
 
