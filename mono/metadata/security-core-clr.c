@@ -482,7 +482,8 @@ mono_security_core_clr_class_level_no_platform_check (MonoClass *class)
 
 	if (cinfo) {
 		level = mono_security_core_clr_level_from_cinfo (cinfo, class->image);
-		mono_custom_attrs_free (cinfo);
+		if (!cinfo->cached)
+			mono_custom_attrs_free (cinfo);
 	}
 
 	if (level == MONO_SECURITY_CORE_CLR_TRANSPARENT && class->nested_in)
@@ -558,7 +559,8 @@ mono_security_core_clr_method_level (MonoMethod *method, gboolean with_class_lev
 	cinfo = mono_custom_attrs_from_method (method);
 	if (cinfo) {
 		level = mono_security_core_clr_level_from_cinfo (cinfo, method->klass->image);
-		mono_custom_attrs_free (cinfo);
+		if (!cinfo->cached)
+			mono_custom_attrs_free (cinfo);
 	}
 
 	if (with_class_level && level == MONO_SECURITY_CORE_CLR_TRANSPARENT)

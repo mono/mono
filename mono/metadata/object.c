@@ -971,16 +971,19 @@ field_is_special_static (MonoClass *fklass, MonoClassField *field)
 		MonoClass *klass = ainfo->attrs [i].ctor->klass;
 		if (klass->image == mono_defaults.corlib) {
 			if (strcmp (klass->name, "ThreadStaticAttribute") == 0) {
-				mono_custom_attrs_free (ainfo);
+				if (!ainfo->cached)
+					mono_custom_attrs_free (ainfo);
 				return SPECIAL_STATIC_THREAD;
 			}
 			else if (strcmp (klass->name, "ContextStaticAttribute") == 0) {
-				mono_custom_attrs_free (ainfo);
+				if (!ainfo->cached)
+					mono_custom_attrs_free (ainfo);
 				return SPECIAL_STATIC_CONTEXT;
 			}
 		}
 	}
-	mono_custom_attrs_free (ainfo);
+	if (!ainfo->cached)
+		mono_custom_attrs_free (ainfo);
 	return SPECIAL_STATIC_NONE;
 }
 
