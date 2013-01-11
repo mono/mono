@@ -37,6 +37,7 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_THREAD_REGISTER: size = sizeof (SGenProtocolThreadRegister); break;
 	case SGEN_PROTOCOL_THREAD_UNREGISTER: size = sizeof (SGenProtocolThreadUnregister); break;
 	case SGEN_PROTOCOL_MISSING_REMSET: size = sizeof (SGenProtocolMissingRemset); break;
+	case SGEN_PROTOCOL_CARD_SCAN: size = sizeof (SGenProtocolCardScan); break;
 	default: assert (0);
 	}
 
@@ -143,6 +144,11 @@ print_entry (int type, void *data)
 				entry->obj, entry->obj_vtable, entry->offset, entry->value, entry->value_vtable, entry->value_pinned);
 		break;
 	}
+	case SGEN_PROTOCOL_CARD_SCAN: {
+		SGenProtocolCardScan *entry = data;
+		printf ("card_scan start %p size %d\n", entry->start, entry->size);
+		break;
+	}
 	default:
 		assert (0);
 	}
@@ -208,6 +214,10 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_MISSING_REMSET: {
 		SGenProtocolMissingRemset *entry = data;
 		return ptr == entry->obj || ptr == entry->value || ptr == (char*)entry->obj + entry->offset;
+	}
+	case SGEN_PROTOCOL_CARD_SCAN: {
+		SGenProtocolCardScan *entry = data;
+		return matches_interval (ptr, entry->start, entry->size);
 	}
 	default:
 		assert (0);
