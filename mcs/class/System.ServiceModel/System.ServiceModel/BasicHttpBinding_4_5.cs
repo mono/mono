@@ -49,7 +49,8 @@ namespace System.ServiceModel
 			: this (BasicHttpSecurityMode.None)
 		{
 		}
-
+		
+#if !NET_2_1
 		public BasicHttpBinding (string configurationName)
 			: this ()
 		{
@@ -59,6 +60,7 @@ namespace System.ServiceModel
 
 			el.ApplyConfiguration (this);
 		}
+#endif
 
 		public BasicHttpBinding (
 			BasicHttpSecurityMode securityMode)
@@ -107,25 +109,35 @@ namespace System.ServiceModel
 			SecurityBindingElement element;
 			switch (Security.Mode) {
 			case BasicHttpSecurityMode.Message:
+#if NET_2_1
+				throw new NotImplementedException ();
+#else
 				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
 					throw new InvalidOperationException ("When Message security is enabled in a BasicHttpBinding, the message security credential type must be BasicHttpMessageCredentialType.Certificate.");
 				element = SecurityBindingElement.CreateMutualCertificateBindingElement (
 				    MessageSecurityVersion.WSSecurity10WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11BasicSecurityProfile10);
 				break;
+#endif
 
 			case BasicHttpSecurityMode.TransportWithMessageCredential:
+#if NET_2_1
+				throw new NotImplementedException ();
+#else
 				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
 					// FIXME: pass proper security token parameters.
 					element = SecurityBindingElement.CreateCertificateOverTransportBindingElement ();
 				else
 					element = new AsymmetricSecurityBindingElement ();
 				break;
+#endif
 			default: 
 				return null;
 			}
-
+			
+#if !NET_2_1
 			element.SetKeyDerivation (false);
 			element.SecurityHeaderLayout = SecurityHeaderLayout.Lax;
+#endif
 			return element;
 		}
 
@@ -137,8 +149,12 @@ namespace System.ServiceModel
 				ReaderQuotas.CopyTo (tm.ReaderQuotas);
 				return tm;
 			} else {
+#if NET_2_1
+				throw new NotImplementedException ();
+#else
 				return new MtomMessageEncodingBindingElement (
 					MessageVersion.CreateVersion (EnvelopeVersion, AddressingVersion.None), TextEncoding);
+#endif
 			}
 		}
 
@@ -164,7 +180,9 @@ namespace System.ServiceModel
 			h.ProxyAddress = ProxyAddress;
 			h.UseDefaultWebProxy = UseDefaultWebProxy;
 			h.TransferMode = TransferMode;
+#if NET_4_0
 			h.ExtendedProtectionPolicy = Security.Transport.ExtendedProtectionPolicy;
+#endif
 
 			switch (Security.Transport.ClientCredentialType) {
 			case HttpClientCredentialType.Basic:

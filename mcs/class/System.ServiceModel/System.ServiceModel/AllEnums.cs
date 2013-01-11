@@ -74,7 +74,7 @@ namespace System.ServiceModel
 		TransportCredentialOnly,
 	}
 
-#if NET_4_5
+#if NET_4_5 || MOBILE
 	public enum BasicHttpsSecurityMode
 	{
 		Transport,
