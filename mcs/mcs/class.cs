@@ -1712,9 +1712,6 @@ namespace Mono.CSharp
 					if (compiled_iface != null)
 						compiled_iface.Define ();
 
-					if (Kind == MemberKind.Interface)
-						MemberCache.AddInterface (iface_type);
-
 					ObsoleteAttribute oa = iface_type.GetAttributeObsolete ();
 					if (oa != null && !IsObsolete)
 						AttributeTester.Report_ObsoleteMessage (oa, iface_type.GetSignatureForError (), Location, Report);
@@ -1745,6 +1742,12 @@ namespace Mono.CSharp
 									GetSignatureForError (), prev_iface.GetSignatureForError (), iface_type.GetSignatureForError ());
 							}
 						}
+					}
+				}
+
+				if (Kind == MemberKind.Interface) {
+					foreach (var iface in spec.Interfaces) {
+						MemberCache.AddInterface (iface);
 					}
 				}
 			}

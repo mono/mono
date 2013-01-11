@@ -240,6 +240,8 @@ namespace Mono.CSharp {
 		// contain all base interface members, so the Lookup code
 		// can use simple inheritance rules.
 		//
+		// Does not work recursively because of generic interfaces
+		//
 		public void AddInterface (TypeSpec iface)
 		{
 			var cache = iface.MemberCache;
@@ -258,18 +260,19 @@ namespace Mono.CSharp {
 				}
 
 				foreach (var ce in entry.Value) {
+					//
+					// When two or more different base interfaces implemenent common
+					// interface
+					//
+					// I : IA, IFoo
+					// IA : IFoo
+					//
 					if (list.Contains (ce))
 						continue;
 
 					if (AddInterfaceMember (ce, ref list))
 						member_hash[entry.Key] = list;
 				}
-			}
-
-			// Add also all base interfaces
-			if (iface.Interfaces != null) {
-				foreach (var base_iface in iface.Interfaces)
-					AddInterface (base_iface);
 			}
 		}
 
