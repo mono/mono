@@ -1169,6 +1169,11 @@ are allocated (clear-at-gc).   The consistency check ensures that
 there are no major to minor references that are not on the remembered
 sets. 
 .TP
+\fBcheck-mark-bits\fR
+Checks that mark bits in the major heap are consistent at the end of
+each major collection.  Consistent mark bits mean that if an object is
+marked, all objects that it had references to must also be marked.
+.TP
 \fBxdomain-checks\fR
 Performs a check to make sure that no references are left to an
 unloaded AppDomain.
