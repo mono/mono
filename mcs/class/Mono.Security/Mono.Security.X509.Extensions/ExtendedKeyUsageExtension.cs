@@ -44,11 +44,7 @@ namespace Mono.Security.X509.Extensions {
 	 * KeyPurposeId ::= OBJECT IDENTIFIER
 	 */
 
-#if MOONLIGHT
-	internal
-#else
 	public 
-#endif
 	class ExtendedKeyUsageExtension : X509Extension {
 
 		private ArrayList keyPurpose;

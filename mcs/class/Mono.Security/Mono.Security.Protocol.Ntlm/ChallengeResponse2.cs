@@ -62,11 +62,7 @@ namespace Mono.Security.Protocol.Ntlm {
 			var buffer = new byte [21];
 
 			// create Lan Manager password
-#if MOONLIGHT
-			DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
-#else
 			DES des = DES.Create ();
-#endif
 			des.Mode = CipherMode.ECB;
 			ICryptoTransform ct = null;
 				
@@ -99,11 +95,7 @@ namespace Mono.Security.Protocol.Ntlm {
 			var buffer = new byte [21];
 
 			// create NT password
-#if MOONLIGHT
-			MD4Managed md4 = new MD4Managed ();
-#else
 			MD4 md4 = MD4.Create ();
-#endif
 			byte[] data = ((password == null) ? (new byte [0]) : (Encoding.Unicode.GetBytes (password)));
 			byte[] hash = md4.ComputeHash (data);
 			Buffer.BlockCopy (hash, 0, buffer, 0, 16);
@@ -135,11 +127,7 @@ namespace Mono.Security.Protocol.Ntlm {
 			lm = new byte [24];
 			nonce.CopyTo (lm, 0);
 
-#if MOONLIGHT
-			MD5Managed md5 = new MD5Managed ();
-#else
 			MD5 md5 = MD5.Create ();
-#endif
 			
 			var hash = md5.ComputeHash (sessionNonce);
 			var newChallenge = new byte [8];
@@ -248,11 +236,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		static byte[] GetResponse (byte[] challenge, byte[] pwd) 
 		{
 			byte[] response = new byte [24];
-#if MOONLIGHT
-			DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
-#else
 			DES des = DES.Create ();
-#endif
 			des.Mode = CipherMode.ECB;
 			des.Key = PrepareDESKey (pwd, 0);
 			ICryptoTransform ct = des.CreateEncryptor ();
