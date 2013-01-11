@@ -87,6 +87,7 @@ namespace System.ServiceModel
 
 		public BasicHttpSecurity Security {
 			get { return security; }
+			set { security = value; }
 		}
 
 		public override BindingElementCollection

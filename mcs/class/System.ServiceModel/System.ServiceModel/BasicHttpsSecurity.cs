@@ -35,6 +35,13 @@ namespace System.ServiceModel
 {
 	public sealed class BasicHttpsSecurity
 	{
+		public BasicHttpsSecurity ()
+		{
+			this.mode = BasicHttpsSecurityMode.Transport;
+			this.message = new BasicHttpMessageSecurity ();
+			this.transport = new HttpTransportSecurity ();
+		}
+
 		internal BasicHttpsSecurity (BasicHttpsSecurityMode mode)
 		{
 			this.mode = mode;
