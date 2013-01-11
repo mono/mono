@@ -1558,7 +1558,7 @@ namespace Microsoft.Build.BuildEngine {
 				return xmlDocument != null && xmlDocument.DocumentElement.HasAttribute ("ToolsVersion");
 			}
 		}
-		
+
 		public string ToolsVersion {
 			get; internal set;
 		}
@@ -1567,6 +1567,11 @@ namespace Microsoft.Build.BuildEngine {
 			get { return last_item_group_containing; }
 		}
 		
+		internal ProjectLoadSettings ProjectLoadSettings {
+			get { return project_load_settings; }
+			set { project_load_settings = value; }
+		}
+
 		internal static XmlNamespaceManager XmlNamespaceManager {
 			get {
 				if (manager == null) {

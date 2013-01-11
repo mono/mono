@@ -161,40 +161,45 @@ namespace Microsoft.Build.BuildEngine {
 
 			IEnumerable<string> extn_paths = has_extn_ref ? GetExtensionPaths (project) : new string [] {null};
 			bool import_needed = false;
+			var currentLoadSettings = project.ProjectLoadSettings;
 			
 			try {
-				foreach (string path in extn_paths) {
-					string extn_msg = null;
-					if (has_extn_ref) {
-						project.SetExtensionsPathProperties (path);
-						extn_msg = "from extension path " + path;
-					}
-
-					// do this after setting new Extension properties, as condition might
-					// reference it
-					if (!ConditionParser.ParseAndEvaluate (condition_attribute, project))
-						continue;
-
-					import_needed = true;
-
-					// We stop if atleast one file got imported.
-					// Remaining extension paths are *not* tried
-					bool atleast_one = false;
-					foreach (string importPath in GetImportPathsFromString (project_attribute, project, base_dir_info)) {
-						try {
-							if (func (importPath, extn_msg))
-								atleast_one = true;
-						} catch (Exception e) {
-							throw new InvalidProjectFileException (String.Format (
-										"{0}: Project file could not be imported, it was being imported by " +
-										"{1}: {2}", importPath, importingFile, e.Message), e);
+				foreach (var settings in new ProjectLoadSettings [] { ProjectLoadSettings.None, currentLoadSettings}) {
+					foreach (string path in extn_paths) {
+						string extn_msg = null;
+						if (has_extn_ref) {
+							project.SetExtensionsPathProperties (path);
+							extn_msg = "from extension path " + path;
 						}
-					}
 
-					if (atleast_one)
-						return;
+						// do this after setting new Extension properties, as condition might
+						// reference it
+						if (!ConditionParser.ParseAndEvaluate (condition_attribute, project))
+							continue;
+
+						import_needed = true;
+						project.ProjectLoadSettings = settings;
+
+						// We stop if atleast one file got imported.
+						// Remaining extension paths are *not* tried
+						bool atleast_one = false;
+						foreach (string importPath in GetImportPathsFromString (project_attribute, project, base_dir_info)) {
+							try {
+								if (func (importPath, extn_msg))
+									atleast_one = true;
+							} catch (Exception e) {
+								throw new InvalidProjectFileException (String.Format (
+											"{0}: Project file could not be imported, it was being imported by " +
+											"{1}: {2}", importPath, importingFile, e.Message), e);
+							}
+						}
+
+						if (atleast_one)
+							return;
+					}
 				}
 			} finally {
+				project.ProjectLoadSettings = currentLoadSettings;
 				if (has_extn_ref)
 					project.SetExtensionsPathProperties (Project.DefaultExtensionsPath);
 			}
