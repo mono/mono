@@ -192,17 +192,17 @@ namespace Mono.CSharp {
 		static MissingInterfacesInfo [] GetMissingInterfaces (TypeDefinition container)
 		{
 			//
-			// Notice that Interfaces will only return the interfaces that the Type
-			// is supposed to implement, not all the interfaces that the type implements.
+			// Interfaces will return all interfaces that the container
+			// implements including any inherited interfaces
 			//
 			var impl = container.Definition.Interfaces;
 
 			if (impl == null || impl.Count == 0)
 				return EmptyMissingInterfacesInfo;
 
-			MissingInterfacesInfo[] ret = new MissingInterfacesInfo[impl.Count];
+			var ret = new MissingInterfacesInfo[impl.Count];
 
-			for (int i = 0; i < impl.Count; i++)
+			for (int i = 0; i < ret.Length; i++)
 				ret [i] = new MissingInterfacesInfo (impl [i]);
 
 			// we really should not get here because Object doesnt implement any
