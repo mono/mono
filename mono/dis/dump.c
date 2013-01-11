@@ -24,7 +24,9 @@
 #ifndef HAVE_ISINF
 
 #ifdef HAVE_IEEEFP_H
+#ifndef __QNXNTO__
 extern int isinf (double);
+#endif
 #endif
 
 #endif

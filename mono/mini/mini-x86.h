@@ -45,7 +45,7 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 #endif /* PLATFORM_WIN32 */
 
 #if defined( __linux__) && !defined(ANDROID) || defined(__sun) || defined(__APPLE__) || defined(__NetBSD__) || \
-       defined(__FreeBSD__) || defined(__OpenBSD__)
+       defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNXNTO__)
 #define MONO_ARCH_USE_SIGACTION
 #endif
 

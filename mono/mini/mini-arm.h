@@ -197,6 +197,10 @@ typedef struct MonoCompileArch {
 	#define UCONTEXT_REG_PC(ctx) ((ctx)->uc_mcontext->__ss.__pc)
 	#define UCONTEXT_REG_SP(ctx) ((ctx)->uc_mcontext->__ss.__sp)
 	#define UCONTEXT_REG_R0(ctx) ((ctx)->uc_mcontext->__ss.__r[0])
+#elif __QNXNTO__
+    #define UCONTEXT_REG_PC(ctx) ((ctx)->uc_mcontext.cpu.gpr[ARM_REG_PC])
+    #define UCONTEXT_REG_SP(ctx) ((ctx)->uc_mcontext.cpu.gpr[ARM_REG_SP])
+    #define UCONTEXT_REG_R0(ctx) ((ctx)->uc_mcontext.cpu.gpr[ARM_REG_R0])
 #else
 	#define UCONTEXT_REG_PC(ctx) ((ctx)->sig_ctx.arm_pc)
 	#define UCONTEXT_REG_SP(ctx) ((ctx)->sig_ctx.arm_sp)

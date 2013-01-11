@@ -8,7 +8,9 @@
  */
 
 #include <stdarg.h>
+#ifndef __QNXNTO__
 #include <syslog.h>
+#endif
 #include <errno.h>
 
 #include "map.h"
@@ -20,21 +22,27 @@ G_BEGIN_DECLS
 int
 Mono_Posix_Syscall_openlog (void* ident, int option, int facility)
 {
+#ifndef __QNXNTO__
 	openlog ((const char*) ident, option, facility);
+#endif
 	return 0;
 }
 
 int
 Mono_Posix_Syscall_closelog (void)
 {
+#ifndef __QNXNTO__
 	closelog ();
+#endif
 	return 0;
 }
 
 int
 Mono_Posix_Syscall_syslog (int priority, const char* message)
 {
+#ifndef __QNXNTO__
 	syslog (priority, message);
+#endif
 	return 0;
 }
 
@@ -42,11 +50,13 @@ Mono_Posix_Syscall_syslog (int priority, const char* message)
 gint32
 Mono_Posix_Syscall_syslog2 (int priority, const char *format, ...)
 {
+#ifndef __QNXNTO__
 	va_list ap;
 
 	va_start (ap, format);
 	vsyslog (priority, format, ap);
 	va_end (ap);
+#endif
 
 	return 0;
 }
