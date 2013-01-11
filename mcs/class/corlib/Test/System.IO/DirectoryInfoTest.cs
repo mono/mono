@@ -878,6 +878,32 @@ namespace MonoTests.System.IO
 				DeleteDir (path);
 			}
 		}
+		
+		[Test]
+		public void MoveTo_UpdateProperties ()
+		{
+			string path = TempFolder + DSC + "DIT.MoveToUpdateProperties.Test";
+			string path2 = TempFolder + DSC + "DIT.MoveToUpdateProperties2.Test";
+			string path3 = path2 + DSC + "DIT.MoveToUpdateProperties3.Test";
+			DeleteDir (path);
+			Directory.CreateDirectory (path);
+			Directory.CreateDirectory (path2);
+
+			DirectoryInfo info = new DirectoryInfo(path);
+			
+			Assert.IsTrue (Directory.Exists(info.FullName));
+			Assert.AreEqual (path, info.FullName);
+			Assert.AreEqual ("DIT.MoveToUpdateProperties.Test", info.Name);
+			Assert.AreEqual (TempFolder, info.Parent.FullName);
+			Assert.AreEqual (path, info.ToString ());
+
+			info.MoveTo (path3);
+			Assert.IsTrue (Directory.Exists(info.FullName));
+			Assert.AreEqual (path3, info.FullName);
+			Assert.AreEqual ("DIT.MoveToUpdateProperties3.Test", info.Name);
+			Assert.AreEqual (path2, info.Parent.FullName);
+			Assert.AreEqual (path3, info.ToString ());
+		}
 
 		[Test]
 		public void DirectoryNameWithSpace ()

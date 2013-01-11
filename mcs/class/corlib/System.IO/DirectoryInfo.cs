@@ -263,6 +263,8 @@ namespace System.IO {
 				throw new ArgumentException ("An empty file name is not valid.", "destDirName");
 
 			Directory.Move (FullPath, Path.GetFullPath (destDirName));
+			FullPath = OriginalPath = destDirName;
+			Initialize ();
 		}
 
 		public override string ToString ()
