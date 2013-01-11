@@ -12,6 +12,9 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __QNXNTO__
+#include <time.h>
+#endif
 
 #include "misc-private.h"
 

@@ -64,10 +64,15 @@
 #   define DARWIN
 # endif
 
+/* And one for QNX: */
+# if defined(__QNXNTO__)
+#   define QNX
+# endif
+
 /* Determine the machine type: */
 # if defined(__arm__) || defined(__thumb__)
 #    define ARM32
-#    if !defined(LINUX) && !defined(NETBSD) && !defined(DARWIN)
+#    if !defined(LINUX) && !defined(NETBSD) && !defined(DARWIN) && !defined(QNX)
 #      define NOSYS
 #      define mach_type_known
 #    endif
@@ -368,6 +373,14 @@
 # if defined(__OpenBSD__) && (defined(i386) || defined(__i386__))
 #   define I386
 #   define OPENBSD
+#   define mach_type_known
+# endif
+# if defined(QNX) && (defined(i386) || defined(__i386__))
+#   define I386
+#   define mach_type_known
+# endif
+# if defined(QNX) && defined(__arm__)
+#   define ARM32
 #   define mach_type_known
 # endif
 # if defined(FREEBSD) && (defined(i386) || defined(__i386__))
@@ -1329,6 +1342,11 @@
 #       define STACKBOTTOM ((ptr_t)((word) __djgpp_stack_limit + _stklen))
 		/* This may not be right.  */
 #   endif
+#   ifdef QNX 
+#	define OS_TYPE "QNX"
+        extern int etext[];
+#       define DATASTART ((ptr_t)((((word) (etext)) + 0x1ff) & ~0x1ff))
+#   endif
 #   ifdef OPENBSD
 #	define OS_TYPE "OPENBSD"
 #   endif
@@ -1954,6 +1972,11 @@
 #     ifndef __arm__
 #         define USE_MUNMAP
 #     endif
+#   endif
+#   ifdef QNX 
+#	define OS_TYPE "QNX"
+        extern int etext[];
+#       define DATASTART ((ptr_t)((((word) (etext)) + 0x1ff) & ~0x1ff))
 #   endif
 #   ifdef NOSYS
       /* __data_start is usually defined in the target linker script.  */

@@ -688,6 +688,11 @@ mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
 #define __GNUC_PREREQ(maj, min) (0)
 #endif
 
+#if defined(__QNXNTO__)
+# include <sys/mman.h>
+# define CLEAR_CACHE(__beg, __end) msync(__beg, (__end) - (__beg), MS_INVALIDATE_ICACHE)
+#endif
+
 void
 mono_arch_flush_icache (guint8 *code, gint size)
 {
@@ -711,6 +716,8 @@ mono_arch_flush_icache (guint8 *code, gint size)
 		:	"r" (code), "r" (code + size), "r" (syscall)
 		:	"r0", "r1", "r7", "r2"
 		);
+#elif __QNXNTO__
+       CLEAR_CACHE(code, code + size);
 #else
 	__asm __volatile ("mov r0, %0\n"
 			"mov r1, %1\n"

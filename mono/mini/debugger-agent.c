@@ -49,6 +49,10 @@
 #define TARGET_WIN32
 #endif
 
+#ifdef __QNXNTO__
+#include <sys/select.h>
+#endif
+
 #ifdef HOST_WIN32
 #include <ws2tcpip.h>
 #ifdef __GNUC__

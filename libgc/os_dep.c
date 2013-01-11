@@ -64,6 +64,10 @@
 # include <ctype.h>
 #endif
 
+#if defined(__QNXNTO__)
+#include <fcntl.h>
+#endif
+
 /* Blatantly OS dependent routines, except for those that are related 	*/
 /* to dynamic loading.							*/
 
@@ -1028,7 +1032,8 @@ void *GC_set_stackbottom = NULL;
 ptr_t GC_get_stack_base()
 {
 #   if defined(HEURISTIC1) || defined(HEURISTIC2) || \
-       defined(LINUX_STACKBOTTOM) || defined(FREEBSD_STACKBOTTOM)
+       defined(LINUX_STACKBOTTOM) || defined(FREEBSD_STACKBOTTOM) || \
+       defined(QNX)
     word dummy;
     ptr_t result;
 #   endif

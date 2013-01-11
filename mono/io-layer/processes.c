@@ -35,6 +35,10 @@
 #include <sys/resource.h>
 #endif
 
+#ifdef __QNXNTO__
+#include <sys/netmgr.h>
+#endif
+
 #if defined(PLATFORM_MACOSX) || defined(__OpenBSD__)
 #include <sys/proc.h>
 #include <sys/sysctl.h>
@@ -1886,7 +1890,11 @@ static GSList *load_modules (void)
 		mod->address_end = GINT_TO_POINTER (sec->addr+sec->size);
 		mod->perms = g_strdup ("r--p");
 		mod->address_offset = 0;
+#ifndef __QNXNTO__
 		mod->device = makedev (0, 0);
+#else
+		mod->device = makedev (ND_LOCAL_NODE, 0, 0);
+#endif
 		mod->inode = (ino_t) i;
 		mod->filename = g_strdup (name); 
 		
@@ -2052,7 +2060,11 @@ static GSList *load_modules (FILE *fp)
 			continue;
 		}
 
+#ifndef __QNXNTO__
 		device = makedev ((int)maj_dev, (int)min_dev);
+#else
+		device = makedev (ND_LOCAL_NODE, (int)maj_dev, (int)min_dev);
+#endif
 		if ((device == 0) &&
 		    (inode == 0)) {
 			continue;

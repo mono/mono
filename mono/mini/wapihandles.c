@@ -3,7 +3,7 @@
 
 #include "mini.h"
 
-#if defined(PLATFORM_WIN32) || !defined(HAVE_SYS_IPC_H) || !defined(HAVE_SYS_SEM_H)
+#if defined(PLATFORM_WIN32) || !defined(HAVE_SYS_IPC_H) || !defined(HAVE_SYS_SEM_H) || defined(__QNXNTO__)
 
 int mini_wapi_hps (int argc, char **argv)
 {
