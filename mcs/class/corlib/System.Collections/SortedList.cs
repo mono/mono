@@ -588,7 +588,7 @@ namespace System.Collections {
 			int right = len-1;
 
 			while (left <= right) {
-				int guess = (left + right) >> 1;
+				int guess = (int)((uint)(left + right) >> 1);
 
 				int cmp = comparer.Compare (table[guess].key, key);
 				if (cmp == 0) return guess;
