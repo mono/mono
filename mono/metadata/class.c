@@ -6429,7 +6429,7 @@ find_nocase (gpointer key, gpointer value, gpointer user_data)
 	char *name = (char*)key;
 	FindUserData *data = (FindUserData*)user_data;
 
-	if (!data->value && (mono_utf8_strcasecmp (name, (char*)data->key) == 0))
+	if (!data->value && (NULL == data->key || (mono_utf8_strcasecmp (name, (char*)data->key) == 0)))
 		data->value = value;
 }
 
@@ -6498,7 +6498,7 @@ mono_class_from_name_case (MonoImage *image, const char* name_space, const char 
 			continue;
 		n = mono_metadata_string_heap (image, cols [MONO_TYPEDEF_NAME]);
 		nspace = mono_metadata_string_heap (image, cols [MONO_TYPEDEF_NAMESPACE]);
-		if (mono_utf8_strcasecmp (n, name) == 0 && mono_utf8_strcasecmp (nspace, name_space) == 0)
+		if (mono_utf8_strcasecmp (n, name) == 0 && (NULL == name_space || (mono_utf8_strcasecmp (nspace, name_space) == 0)))
 			return mono_class_get (image, MONO_TOKEN_TYPE_DEF | i);
 	}
 	return NULL;
