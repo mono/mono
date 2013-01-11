@@ -470,7 +470,7 @@ namespace System
 				long now = GetNow ();
 				DateTime dt = new DateTime (now);
 
-				if ((now - last_now) > TimeSpan.TicksPerMinute){
+				if (Math.Abs (now - last_now) > TimeSpan.TicksPerMinute){
 					to_local_time_span_object = TimeZone.CurrentTimeZone.GetLocalTimeDiff (dt);
 					last_now = now;
 

@@ -72,7 +72,7 @@ namespace System
 				TimeZone tz;
 				
 				lock (tz_lock) {
-					if (currentTimeZone == null || (now - timezone_check) > TimeSpan.TicksPerMinute) {
+					if (currentTimeZone == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
 						currentTimeZone = new CurrentSystemTimeZone (now);
 						timezone_check = now;
 					}
