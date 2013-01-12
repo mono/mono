@@ -1173,6 +1173,12 @@ Checks that mark bits in the major heap are consistent at the end of
 each major collection.  Consistent mark bits mean that if an object is
 marked, all objects that it had references to must also be marked.
 .TP
+\fBcheck-nursery-pinned\fR
+After nursery collections, and before starting concurrent collections,
+check whether all nursery objects are pinned, or not pinned -
+depending on context.  Does nothing when the split nursery collector
+is used.
+.TP
 \fBxdomain-checks\fR
 Performs a check to make sure that no references are left to an
 unloaded AppDomain.
