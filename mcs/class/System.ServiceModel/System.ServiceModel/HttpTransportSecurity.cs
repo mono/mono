@@ -39,7 +39,7 @@ namespace System.ServiceModel
 		HttpProxyCredentialType proxy;
 		string realm = String.Empty;
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		public
 #else
 		internal
