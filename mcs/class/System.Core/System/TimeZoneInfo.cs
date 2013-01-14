@@ -29,11 +29,11 @@
 using System;
 using System.Runtime.CompilerServices;
 
-#if !INSIDE_CORLIB && (NET_4_0 || MOONLIGHT || MOBILE)
+#if !INSIDE_CORLIB && (NET_4_0 || MOBILE)
 
 [assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
 
-#elif (INSIDE_CORLIB && (NET_4_0 || MOONLIGHT || MOBILE)) || (!INSIDE_CORLIB && (NET_3_5 && !NET_4_0 && !MOBILE))
+#elif (INSIDE_CORLIB && (NET_4_0 || MOBILE)) || (!INSIDE_CORLIB && (NET_3_5 && !NET_4_0 && !MOBILE))
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
