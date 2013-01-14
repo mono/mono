@@ -686,7 +686,6 @@ namespace System.Runtime.Serialization
 
 		static QName GetSerializableQName (Type type)
 		{
-#if !MOONLIGHT
 			// First, check XmlSchemaProviderAttribute and try GetSchema() to see if it returns a schema in the expected format.
 			var xpa = type.GetCustomAttribute<XmlSchemaProviderAttribute> (true);
 			if (xpa != null) {
@@ -700,7 +699,6 @@ namespace System.Runtime.Serialization
 					}
 				}
 			}
-#endif
 
 			string xmlName = type.Name;
 			if (type.IsGenericType) {
@@ -725,11 +723,9 @@ namespace System.Runtime.Serialization
 				return true;
 			if (type == typeof (Guid) || type == typeof (object) || type == typeof(TimeSpan) || type == typeof(byte[]) || type == typeof(Uri) || type == typeof(DateTimeOffset)) // special primitives
 				return true;
-#if !MOONLIGHT
 			// DOM nodes
 			if (type == typeof (XmlElement) || type == typeof (XmlNode []))
 				return true;
-#endif
 			// nullable
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>))
 				return IsPrimitiveNotEnum (type.GetGenericArguments () [0]);
