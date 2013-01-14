@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
 
 using System.Collections;
 using Mono.Security;
@@ -55,9 +55,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (cert.Extensions.Count == 0)
 				return;
 
-#if !MOONLIGHT
 			object[] parameters = new object [2];
-#endif
 			foreach (MX.X509Extension ext in cert.Extensions) {
 				bool critical = ext.Critical;
 				string oid = ext.Oid;
@@ -68,7 +66,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					raw_data = value [0].GetBytes ();
 
 				X509Extension newt = null;
-#if MOONLIGHT || FULL_AOT_RUNTIME
+#if FULL_AOT_RUNTIME
 				// non-extensible
 				switch (oid) {
 				case "2.5.29.14":

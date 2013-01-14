@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
 
 using System.Collections;
 using System.Globalization;
@@ -124,22 +124,18 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			switch (contentType) {
 			case X509ContentType.Cert:
-#if !MOONLIGHT
 			case X509ContentType.Pfx: // this includes Pkcs12
 			case X509ContentType.SerializedCert:
-#endif
 				// if multiple certificates are present we only export the last one
 				if (Count > 0)
 					return this [Count - 1].Export (contentType, password);
 				break;
-#if !MOONLIGHT
 			case X509ContentType.Pkcs7:
 				// TODO
 				break;
 			case X509ContentType.SerializedStore:
 				// TODO
 				break;
-#endif
 			default:
 				// this includes Authenticode, Unknown and bad values
 				string msg = Locale.GetText ("Cannot export certificate(s) to the '{0}' format", contentType);

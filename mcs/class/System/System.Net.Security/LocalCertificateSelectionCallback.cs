@@ -31,11 +31,9 @@
 
 #if SECURITY_DEP
 
-#if !MOONLIGHT
 extern alias PrebuiltSystem;
 
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
 
 using System.Security.Cryptography.X509Certificates;
 

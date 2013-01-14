@@ -53,12 +53,8 @@ namespace System.Net.Configuration {
 
 namespace System.Net 
 {
-#if MOONLIGHT
-	internal abstract class WebRequest : ISerializable {
-#else
 	[Serializable]
 	public abstract class WebRequest : MarshalByRefObject, ISerializable {
-#endif
 		static HybridDictionary prefixes = new HybridDictionary ();
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
@@ -160,12 +156,11 @@ namespace System.Net
 			set { throw GetMustImplement (); }
 		}
 		
-#if !MOONLIGHT
 		public TokenImpersonationLevel ImpersonationLevel {
 			get { throw GetMustImplement (); }
 			set { throw GetMustImplement (); }
 		}
-#endif
+
 		public virtual string Method { 
 			get { throw GetMustImplement (); }
 			set { throw GetMustImplement (); }

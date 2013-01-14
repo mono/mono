@@ -32,12 +32,8 @@ using System.Runtime.Serialization;
 
 namespace System.Net 
 {
-#if MOONLIGHT
-	internal abstract class WebResponse : MarshalByRefObject, ISerializable, IDisposable {
-#else
 	[Serializable]
 	public abstract class WebResponse : MarshalByRefObject, ISerializable, IDisposable {
-#endif
 		// Constructors
 		
 		protected WebResponse () { }

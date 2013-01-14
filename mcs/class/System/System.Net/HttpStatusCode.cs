@@ -32,11 +32,7 @@
 
 
 namespace System.Net {
-#if MOONLIGHT && INSIDE_SYSTEM
-	internal enum HttpStatusCode {
-#else
 	public enum HttpStatusCode {
-#endif
 		Continue = 100,
 		SwitchingProtocols = 101,
 		OK = 200,

@@ -42,7 +42,7 @@ namespace System.Net.Sockets
 		int in_progress;
 		internal Socket.Worker Worker;
 		EndPoint remote_ep;
-#if MOONLIGHT || NET_4_0
+#if NET_4_0
 		public Exception ConnectByNameError { get; internal set; }
 #endif
 
@@ -81,20 +81,6 @@ namespace System.Net.Sockets
 		public SocketError SocketError { get; set; }
 		public SocketFlags SocketFlags { get; set; }
 		public object UserToken { get; set; }
-
-#if MOONLIGHT && !INSIDE_SYSTEM
-		private SocketClientAccessPolicyProtocol policy_protocol;
-
-		public SocketClientAccessPolicyProtocol SocketClientAccessPolicyProtocol {
-			get { return policy_protocol; }
-			set {
-				if ((value != SocketClientAccessPolicyProtocol.Tcp) && (value != SocketClientAccessPolicyProtocol.Http))
-					throw new ArgumentException ("Invalid value");
-				policy_protocol = value;
-			}
-		}
-#endif
-
 		internal Socket curSocket;
 #if NET_2_1
 		public Socket ConnectSocket {
@@ -137,10 +123,6 @@ namespace System.Net.Sockets
 			SocketError = SocketError.Success;
 			SocketFlags = SocketFlags.None;
 			UserToken = null;
-
-#if MOONLIGHT && !INSIDE_SYSTEM
-			policy_protocol = SocketClientAccessPolicyProtocol.Tcp;
-#endif
 		}
 
 		~SocketAsyncEventArgs ()
@@ -240,7 +222,6 @@ namespace System.Net.Sockets
 				args.ReceiveCallback (ares);
 			else if (op == SocketAsyncOperation.Send)
 				args.SendCallback (ares);
-#if !MOONLIGHT
 			else if (op == SocketAsyncOperation.ReceiveFrom)
 				args.ReceiveFromCallback (ares);
 			else if (op == SocketAsyncOperation.SendTo)
@@ -249,7 +230,6 @@ namespace System.Net.Sockets
 				args.AcceptCallback (ares);
 			else if (op == SocketAsyncOperation.Disconnect)
 				args.DisconnectCallback (ares);
-#endif
 			else if (op == SocketAsyncOperation.Connect)
 				args.ConnectCallback ();
 			/*
@@ -296,7 +276,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if !MOONLIGHT
 		internal void AcceptCallback (IAsyncResult ares)
 		{
 			try {
@@ -350,8 +329,6 @@ namespace System.Net.Sockets
 				OnCompleted (this);
 			}
 		}
-
-#endif
 #endregion
 	}
 }

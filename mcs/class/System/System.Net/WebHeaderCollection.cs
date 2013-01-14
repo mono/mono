@@ -44,13 +44,9 @@ using System.Text;
     
 namespace System.Net 
 {
-#if MOONLIGHT
-	internal class WebHeaderCollection : NameValueCollection, ISerializable {
-#else
 	[Serializable]
 	[ComVisible(true)]
 	public class WebHeaderCollection : NameValueCollection, ISerializable {
-#endif
 		[Flags]
 		internal enum HeaderInfo
 		{

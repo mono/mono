@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
 
 using System.Collections;
 using System.Text;

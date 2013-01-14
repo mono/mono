@@ -45,9 +45,7 @@ using System.IO;
 using System.Net.Configuration;
 using System.Text;
 using System.Timers;
-#if !MOONLIGHT
 using System.Net.NetworkInformation;
-#endif
 
 namespace System.Net.Sockets 
 {
@@ -499,7 +497,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if !MOONLIGHT
 		public bool AcceptAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -533,7 +530,6 @@ namespace System.Net.Sockets
 				socket_pool_queue (Worker.Dispatcher, w.result);
 			return true;
 		}
-#endif
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr Accept_internal(IntPtr sock, out int error, bool blocking);
@@ -1173,7 +1169,6 @@ namespace System.Net.Sockets
 			Connect (addresses, port);
 		}
 
-#if !MOONLIGHT
 		public bool DisconnectAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -1185,7 +1180,6 @@ namespace System.Net.Sockets
 			socket_pool_queue (Worker.Dispatcher, e.Worker.result);
 			return true;
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void Disconnect_internal(IntPtr sock, bool reuse, out int error);
@@ -1296,7 +1290,6 @@ namespace System.Net.Sockets
 			req.CheckIfThrowDelayedException();
 		}
 
-#if !MOONLIGHT
 		public void EndDisconnect (IAsyncResult asyncResult)
 		{
 			if (disposed && closed)
@@ -1316,7 +1309,6 @@ namespace System.Net.Sockets
 
 			req.CheckIfThrowDelayedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public int EndReceiveMessageFrom (IAsyncResult asyncResult,
@@ -1357,7 +1349,6 @@ namespace System.Net.Sockets
 			ares.Delegate.EndInvoke (ares.Original);
 		}
 
-#if !MOONLIGHT
 		public int EndSendTo (IAsyncResult result)
 		{
 			if (disposed && closed)
@@ -1378,7 +1369,6 @@ namespace System.Net.Sockets
 			req.CheckIfThrowDelayedException();
 			return req.Total;
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void GetSocketOption_arr_internal(IntPtr socket,
@@ -1597,7 +1587,6 @@ namespace System.Net.Sockets
 			return Receive_nochecks (buffer, offset, size, flags, out error);
 		}
 
-#if !MOONLIGHT
 		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
 		{
 			if (disposed && closed)
@@ -1626,7 +1615,6 @@ namespace System.Net.Sockets
 				socket_pool_queue (Worker.Dispatcher, res);
 			return true;
 		}
-#endif
 
 		public int ReceiveFrom (byte [] buffer, ref EndPoint remoteEP)
 		{
@@ -1917,7 +1905,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if !MOONLIGHT
 		public bool SendToAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -1946,7 +1933,6 @@ namespace System.Net.Sockets
 				socket_pool_queue (Worker.Dispatcher, res);
 			return true;
 		}
-#endif
 		
 		public int SendTo (byte [] buffer, EndPoint remote_end)
 		{

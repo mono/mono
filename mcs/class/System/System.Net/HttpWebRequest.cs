@@ -46,12 +46,8 @@ using System.Threading;
 
 namespace System.Net 
 {
-#if MOONLIGHT
-	internal class HttpWebRequest : WebRequest, ISerializable {
-#else
 	[Serializable]
 	public class HttpWebRequest : WebRequest, ISerializable {
-#endif
 		Uri requestUri;
 		Uri actualUri;
 		bool hostChanged;

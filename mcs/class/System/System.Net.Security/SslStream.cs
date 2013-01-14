@@ -34,10 +34,8 @@
 
 #if SECURITY_DEP
 
-#if !MOONLIGHT
 extern alias PrebuiltSystem;
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-#endif
 
 using System;
 using System.IO;
@@ -146,11 +144,7 @@ namespace System.Net.Security
 		}
 
 		public override bool IsServer { 
-#if MOONLIGHT
-			get { return false; }
-#else
 			get { return ssl_stream is SslServerStream; }
-#endif
 		}
 
 		public override bool IsSigned { 
@@ -284,11 +278,7 @@ namespace System.Net.Security
 		public virtual X509Certificate RemoteCertificate {
 			get {
 				CheckConnectionAuthenticated ();
-#if MOONLIGHT
-				return ssl_stream.ServerCertificate;
-#else
 				return !IsServer ? ssl_stream.ServerCertificate : ((SslServerStream) ssl_stream).ClientCertificate;
-#endif
 			}
 		}
 
@@ -415,7 +405,7 @@ namespace System.Net.Security
 
 			return ssl_stream.BeginRead (buffer, offset, count, asyncCallback, asyncState);
 		}
-#if !MOONLIGHT
+
 		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
 		{
 			return BeginAuthenticateAsServer (serverCertificate, false, SslProtocols.Tls, false, asyncCallback, asyncState);
@@ -455,7 +445,7 @@ namespace System.Net.Security
 
 			return BeginWrite (new byte[0], 0, 0, asyncCallback, asyncState);
 		}
-#endif
+
 		MonoSecurityProtocolType GetMonoSslProtocol (SslProtocols ms)
 		{
 			switch (ms) {
@@ -487,7 +477,7 @@ namespace System.Net.Security
 			EndAuthenticateAsClient (BeginAuthenticateAsClient (
 				targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, null, null));
 		}
-#if !MOONLIGHT
+
 		public virtual void AuthenticateAsServer (X509Certificate serverCertificate)
 		{
 			AuthenticateAsServer (serverCertificate, false, SslProtocols.Tls, false);
@@ -498,7 +488,7 @@ namespace System.Net.Security
 			EndAuthenticateAsServer (BeginAuthenticateAsServer (
 				serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, null, null));
 		}
-#endif
+
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {
@@ -518,7 +508,7 @@ namespace System.Net.Security
 			else
 				ssl_stream.EndWrite (asyncResult);
 		}
-#if !MOONLIGHT
+
 		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
 		{
 			CheckConnectionAuthenticated ();
@@ -528,7 +518,7 @@ namespace System.Net.Security
 			else
 				ssl_stream.EndWrite (asyncResult);
 		}
-#endif
+
 		public override int EndRead (IAsyncResult asyncResult)
 		{
 			CheckConnectionAuthenticated ();

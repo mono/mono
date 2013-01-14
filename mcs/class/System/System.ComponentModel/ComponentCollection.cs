@@ -38,12 +38,6 @@ using System.Reflection;
 
 namespace System.ComponentModel {
 
-#if MOONLIGHT
-	public class ComponentCollection
-	{
-	}
-#else
-
 	[ComVisible (true)]
 	public class ComponentCollection : ReadOnlyCollectionBase
 	{
@@ -85,5 +79,4 @@ namespace System.ComponentModel {
 		#endregion // Methods
 		
 	}
-#endif
 }

@@ -74,9 +74,6 @@ namespace System.Net {
 		}
 #endif
 
-#if !MOONLIGHT // global remove of async methods
-
-
 		private delegate IPHostEntry GetHostByNameCallback (string hostName);
 		private delegate IPHostEntry ResolveCallback (string hostName);
 		private delegate IPHostEntry GetHostEntryNameCallback (string hostName);
@@ -283,8 +280,7 @@ namespace System.Net {
 			GetHostEntryNameCallback cb = (GetHostEntryNameCallback) async.AsyncDelegate;
 			return cb.EndInvoke(asyncResult);
 		}
-		
-#endif // !MOONLIGHT: global remove of async methods
+
 
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

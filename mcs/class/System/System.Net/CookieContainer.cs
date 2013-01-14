@@ -43,15 +43,7 @@ using System.Text.RegularExpressions;
 namespace System.Net 
 {
 	[Serializable]
-#if MOONLIGHT
-	#if INSIDE_SYSTEM
-	internal sealed class CookieContainer {
-	#else 
-	public sealed class CookieContainer {
-	#endif
-#else
 	public class CookieContainer {
-#endif
 		public const int DefaultCookieLengthLimit = 4096;
 		public const int DefaultCookieLimit = 300;
 		public const int DefaultPerDomainCookieLimit = 20;

@@ -35,13 +35,9 @@ using System.Threading;
 
 namespace System.Timers
 {
-#if MOONLIGHT
-	internal class Timer {
-#else
 	[DefaultEventAttribute("Elapsed")]
 	[DefaultProperty("Interval")]
 	public class Timer : Component, ISupportInitialize {
-#endif
 		double interval;
 		bool autoReset;
 		System.Threading.Timer timer;
@@ -120,13 +116,12 @@ namespace System.Timers
 			}
 		}
 
-#if !MOONLIGHT
 		public override ISite Site
 		{
 			get { return base.Site; }
 			set { base.Site = value; }
 		}
-#endif
+
 		[DefaultValue(null)]
 		[TimersDescriptionAttribute("The object used to marshal the event handler calls issued " +
 					    "when an interval has elapsed.")]
@@ -162,18 +157,11 @@ namespace System.Timers
 			Enabled = false;
 		}
 
-#if MOONLIGHT
-		protected void Dispose (bool disposing)
-		{
-			Close ();
-		}
-#else
 		protected override void Dispose (bool disposing)
 		{
 			Close ();
 			base.Dispose (disposing);
 		}
-#endif
 
 		static void Callback (object state)
 		{

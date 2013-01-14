@@ -36,11 +36,7 @@ using System.Net.Configuration;
 
 namespace System.Net
 {
-#if MOONLIGHT
-	internal class AuthenticationManager {
-#else
 	public class AuthenticationManager {
-#endif
 		static ArrayList modules;
 		static object locker = new object ();
 

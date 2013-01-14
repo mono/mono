@@ -385,11 +385,6 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress address)
 		{
-#if MOONLIGHT
-			// even 4.0 throws an NRE
-			if (address == null)
-				throw new ArgumentNullException ("address");
-#endif
 			if(address.m_Family == AddressFamily.InterNetwork)
 				return (address.m_Address & 0xFF) == 127;
 			else {

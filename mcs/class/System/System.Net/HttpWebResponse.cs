@@ -43,12 +43,8 @@ using System.Text;
 
 namespace System.Net 
 {
-#if MOONLIGHT
-	internal class HttpWebResponse : WebResponse, ISerializable, IDisposable {
-#else
 	[Serializable]
 	public class HttpWebResponse : WebResponse, ISerializable, IDisposable {
-#endif
 		Uri uri;
 		WebHeaderCollection webHeaders;
 		CookieCollection cookieCollection;

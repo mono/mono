@@ -36,9 +36,6 @@ using System.Reflection;
 namespace System {
 
 	public
-#if MOONLIGHT
-	sealed
-#endif
 	class UriTypeConverter : TypeConverter {
 
 		public UriTypeConverter ()

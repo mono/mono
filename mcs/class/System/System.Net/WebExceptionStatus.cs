@@ -29,11 +29,7 @@
 
 namespace System.Net 
 {
-#if MOONLIGHT && INSIDE_SYSTEM
-	internal
-#else
 	public
-#endif
 	enum WebExceptionStatus 
 	{
 		Success = 0,

@@ -125,15 +125,10 @@ namespace System {
 
 		// Constructors		
 
-#if MOONLIGHT
-		public Uri (string uriString) : this (uriString, UriKind.Absolute) 
-		{
-		}
-#else
 		public Uri (string uriString) : this (uriString, false) 
 		{
 		}
-#endif
+
 		protected Uri (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			string uri = serializationInfo.GetString ("AbsoluteUri");
@@ -339,7 +334,7 @@ namespace System {
 				query = relativeUri.Substring (pos);
 				if (!userEscaped)
 					query = EscapeString (query);
-#if !NET_4_0 && !MOONLIGHT && !MOBILE
+#if !NET_4_0 && !MOBILE
 				consider_query = query.Length > 0;
 #endif
 				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
@@ -1015,7 +1010,7 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -1124,12 +1119,8 @@ namespace System {
 			path = EscapeString (path);
 		}
 
-#if MOONLIGHT
-		static string EscapeString (string str)
-#else
 		[Obsolete]
 		protected static string EscapeString (string str) 
-#endif
 		{
 			return EscapeString (str, Uri.EscapeCommonHexBrackets);
 		}
@@ -1225,12 +1216,8 @@ namespace System {
 				path = EscapeString (path);
 		}
 
-#if MOONLIGHT
-		string Unescape (string path)
-#else
 		[Obsolete]
 		protected virtual string Unescape (string path)
-#endif
 		{
 			return Unescape (path, false, false);
 		}
@@ -1393,12 +1380,8 @@ namespace System {
 			if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
 				//Unix Path
 				ParseAsUnixAbsoluteFilePath (uriString);
-#if MOONLIGHT
-				isAbsoluteUri = false;
-#else
 				if (kind == UriKind.Relative)
 					isAbsoluteUri = false;
-#endif
 				return null;
 			} else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\') {
 				//Windows UNC
@@ -2036,7 +2019,7 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2230,7 +2213,7 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 			if (relativeUri == null)
 				return false;
 #endif
