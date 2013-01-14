@@ -194,7 +194,6 @@ System.ComponentModel/ToolboxItemFilterAttribute.cs
 System.ComponentModel/ToolboxItemFilterType.cs
 System.ComponentModel/TypeConverter.cs
 System.ComponentModel/TypeConverterAttribute.cs
-System.ComponentModel/TypeConverter_2_1.cs
 System.ComponentModel/TypeDescriptionProvider.cs
 System.ComponentModel/TypeDescriptor.cs
 System.ComponentModel/TypeListConverter.cs
