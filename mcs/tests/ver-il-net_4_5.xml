@@ -17814,6 +17814,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-576.cs">
+    <type name="A">
+      <method name="Void IA.f[T1](IParam`1)" attrs="481">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

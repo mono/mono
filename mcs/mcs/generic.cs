@@ -760,7 +760,8 @@ namespace Mono.CSharp {
 			get {
 				if ((state & StateFlags.InterfacesExpanded) == 0) {
 					if (ifaces != null) {
-						ifaces_defined = ifaces.ToArray ();
+						if (ifaces_defined == null)
+							ifaces_defined = ifaces.ToArray ();
 
 						for (int i = 0; i < ifaces_defined.Length; ++i ) {
 							var iface_type = ifaces_defined[i];
@@ -819,7 +820,7 @@ namespace Mono.CSharp {
 			set {
 				ifaces_defined = value;
 				if (value != null && value.Length != 0)
-					ifaces = value;
+					ifaces = new List<TypeSpec> (value);
 			}
 		}
 
@@ -1179,6 +1180,15 @@ namespace Mono.CSharp {
 		public void InflateConstraints (TypeParameterInflator inflator, TypeParameterSpec tps)
 		{
 			tps.BaseType = inflator.Inflate (BaseType);
+
+			var defined = InterfacesDefined;
+			if (defined != null) {
+				tps.ifaces_defined = new TypeSpec[defined.Length];
+				for (int i = 0; i < defined.Length; ++i)
+					tps.ifaces_defined [i] = inflator.Inflate (defined[i]);
+			}
+
+			var ifaces = Interfaces;
 			if (ifaces != null) {
 				tps.ifaces = new List<TypeSpec> (ifaces.Count);
 				for (int i = 0; i < ifaces.Count; ++i)

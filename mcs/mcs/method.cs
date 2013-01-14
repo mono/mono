@@ -1016,21 +1016,32 @@ namespace Mono.CSharp {
 			TypeParameterSpec[] base_decl_tparams = TypeParameterSpec.EmptyTypes;
 			TypeSpec[] base_targs = TypeSpec.EmptyTypes;
 			if (((ModFlags & Modifiers.OVERRIDE) != 0 || IsExplicitImpl)) {
-				if (base_method != null) {
-					base_tparams = base_method.GenericDefinition.TypeParameters;
-				
-					if (base_method.DeclaringType.IsGeneric) {
-						base_decl_tparams = base_method.DeclaringType.MemberDefinition.TypeParameters;
+				MethodSpec base_override = base_method ?? MethodData.implementing;
 
-						var base_type_parent = CurrentType;
-						while (base_type_parent.BaseType != base_method.DeclaringType) {
-							base_type_parent = base_type_parent.BaseType;
+				if (base_override != null) {
+					base_tparams = base_override.GenericDefinition.TypeParameters;
+
+					if (base_override.DeclaringType.IsGeneric) {
+						base_decl_tparams = base_override.DeclaringType.MemberDefinition.TypeParameters;
+
+						if (base_method != null) {
+							var base_type_parent = CurrentType;
+							while (base_type_parent.BaseType != base_override.DeclaringType) {
+								base_type_parent = base_type_parent.BaseType;
+							}
+
+							base_targs = base_type_parent.BaseType.TypeArguments;
+						} else {
+							foreach (var iface in Parent.CurrentType.Interfaces) {
+								if (iface == base_override.DeclaringType) {
+									base_targs = iface.TypeArguments;
+									break;
+								}
+							}
 						}
-
-						base_targs = base_type_parent.BaseType.TypeArguments;
 					}
 
-					if (base_method.IsGeneric) {
+					if (base_override.IsGeneric) {
 						ObsoleteAttribute oa;
 						foreach (var base_tp in base_tparams) {
 							oa = base_tp.BaseType.GetAttributeObsolete ();
@@ -1054,17 +1065,6 @@ namespace Mono.CSharp {
 						} else {
 							base_decl_tparams = base_tparams;
 							base_targs = tparams.Types;
-						}
-					}
-				} else if (MethodData.implementing != null) {
-					base_tparams = MethodData.implementing.GenericDefinition.TypeParameters;
-					if (MethodData.implementing.DeclaringType.IsGeneric) {
-						base_decl_tparams = MethodData.implementing.DeclaringType.MemberDefinition.TypeParameters;
-						foreach (var iface in Parent.CurrentType.Interfaces) {
-							if (iface == MethodData.implementing.DeclaringType) {
-								base_targs = iface.TypeArguments;
-								break;
-							}
 						}
 					}
 				}
@@ -1127,8 +1127,6 @@ namespace Mono.CSharp {
 							Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
 						}
 					}
-
-					continue;
 				}
 			}
 
