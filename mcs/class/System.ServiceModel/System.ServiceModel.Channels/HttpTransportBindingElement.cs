@@ -57,12 +57,10 @@ namespace System.ServiceModel.Channels
 		string realm = String.Empty;
 		TransferMode transfer_mode;
 		IDefaultCommunicationTimeouts timeouts;
-#if !MOONLIGHT
 		AuthenticationSchemes auth_scheme =
 			AuthenticationSchemes.Anonymous;
 		AuthenticationSchemes proxy_auth_scheme =
 			AuthenticationSchemes.Anonymous;
-#endif
 		// If you add fields, do not forget them in copy constructor.
 
 		public HttpTransportBindingElement ()
@@ -85,10 +83,8 @@ namespace System.ServiceModel.Channels
 			transfer_mode = other.transfer_mode;
 			// FIXME: it does not look safe
 			timeouts = other.timeouts;
-#if !MOONLIGHT
 			auth_scheme = other.auth_scheme;
 			proxy_auth_scheme = other.proxy_auth_scheme;
-#endif
 
 #if NET_4_0
 			DecompressionEnabled = other.DecompressionEnabled;
@@ -97,7 +93,6 @@ namespace System.ServiceModel.Channels
 #endif
 		}
 
-#if !MOONLIGHT
 #if NET_4_0
 		[DefaultValue (AuthenticationSchemes.Anonymous)]
 #endif
@@ -113,7 +108,6 @@ namespace System.ServiceModel.Channels
 			get { return proxy_auth_scheme; }
 			set { proxy_auth_scheme = value; }
 		}
-#endif
 
 #if NET_4_0
 		[DefaultValue (false)]

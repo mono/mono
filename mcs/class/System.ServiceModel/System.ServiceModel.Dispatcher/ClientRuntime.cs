@@ -84,11 +84,7 @@ namespace System.ServiceModel.Dispatcher
 		public DispatchRuntime CallbackDispatchRuntime { get; internal set; }
 #endif
 
-#if MOONLIGHT
-		public IList<IClientMessageInspector> MessageInspectors {
-#else
 		public SynchronizedCollection<IClientMessageInspector> MessageInspectors {
-#endif
 			get { return inspectors; }
 		}
 

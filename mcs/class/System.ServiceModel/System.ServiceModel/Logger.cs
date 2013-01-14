@@ -35,9 +35,7 @@ using System.ServiceModel.Configuration;
 using System.ServiceModel.Diagnostics;
 using System.Threading;
 using System.Xml;
-#if !MOONLIGHT
 using System.Xml.XPath;
-#endif
 
 namespace System.ServiceModel
 {
@@ -278,18 +276,12 @@ namespace System.ServiceModel
 			foreach (object o in data) {
 				if (wrapData)
 					w.WriteStartElement ("DataItem", e2e_ns);
-#if MOONLIGHT
-				// in moonlight we don't have XPathNavigator, so just use raw string...
-				if (o != null)
-					w.WriteString (o.ToString ());
-#else
 				if (o is XPathNavigator)
 					// the output ignores xmlns difference between the parent (E2ETraceEvent and the content node).
 					// To clone such behavior, I took this approach.
 					w.WriteRaw (XPathNavigatorToString ((XPathNavigator) o));
 				else if (o != null)
 					w.WriteString (o.ToString ());
-#endif
 				if (wrapData)
 					w.WriteEndElement ();
 			}
@@ -305,7 +297,6 @@ namespace System.ServiceModel
 
 		static readonly XmlWriterSettings xml_writer_settings = new XmlWriterSettings () { OmitXmlDeclaration = true };
 
-#if !MOONLIGHT
 		// I avoided OuterXml which includes indentation.
 		static string XPathNavigatorToString (XPathNavigator nav)
 		{
@@ -314,7 +305,6 @@ namespace System.ServiceModel
 				nav.WriteSubtree (xw);
 			return sw.ToString ();
 		}
-#endif
 
 		static readonly string e2e_ns = "http://schemas.microsoft.com/2004/06/E2ETraceEvent";
 		static readonly string sys_ns = "http://schemas.microsoft.com/2004/06/windows/eventlog/system";

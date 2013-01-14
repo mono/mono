@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System;
 using System.Net.Security;
 using System.ServiceModel.Security;
@@ -58,5 +56,3 @@ namespace System.ServiceModel
 		}
 	}
 }
-
-#endif
