@@ -1,4 +1,4 @@
-thisdir = tools/monodoc
+thisdir = class/monodoc
 SUBDIRS = 
 include ../../build/rules.make
 
@@ -86,7 +86,6 @@ LIB_MCS_FLAGS = \
 	/unsafe                                                           \
 	/codepage:utf8                                                    \
 	/nowarn:169,164,162,168,219,618,612                               \
-	/r:Commons.Xml.Relaxng                                            \
 	/resource:../../docs/monodoc.xml,monodoc.xml                      \
 	/resource:Resources/base.css,base.css                             \
 	/resource:Resources/ecmaspec-html-css.xsl,ecmaspec-html-css.xsl   \

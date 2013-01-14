@@ -38,7 +38,6 @@ net_4_0_dirs := \
 	macpack		\
 	dtd2rng		\
 	dtd2xsd		\
-	monodoc		\
 	mdoc		\
 	mod		\
 	installvst	\

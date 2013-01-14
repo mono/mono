@@ -237,7 +237,8 @@ net_4_0_dirs := \
 	WebMatrix.Data \
 	System.Data.Services.Client	\
 	System.Data.Services \
-	System.Json.Microsoft
+	System.Json.Microsoft \
+	monodoc
 	
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
