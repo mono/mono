@@ -66,10 +66,6 @@ namespace System.Runtime.Serialization.Json
 			if (IsPrimitiveType (type))
 				return null;
 
-#if MOONLIGHT
-			if (ExternalTypeMap.HasType (type))
-				return new ExternalTypeMap (type);
-#endif
 			return CreateDefaultTypeMap (type);
 		}
 

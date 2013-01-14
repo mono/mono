@@ -213,11 +213,7 @@ namespace System.ServiceModel.Dispatcher
 			case WebContentFormat.Json:
 				// FIXME: after name argument they are hack
 				if (json_serializer == null)
-#if MOONLIGHT
-					json_serializer = new DataContractJsonSerializer (part.Type);
-#else
 					json_serializer = isWrapped ? new DataContractJsonSerializer (part.Type, BodyName ?? part.Name, null, 0x100000, false, null, true) : new DataContractJsonSerializer (part.Type);
-#endif
 				return json_serializer;
 			default:
 				throw new NotImplementedException (msgfmt.ToString ());
