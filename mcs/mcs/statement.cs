@@ -6138,39 +6138,31 @@ namespace Mono.CSharp {
 				if (!gen_ienumerable.Define ())
 					gen_ienumerable = null;
 
-				do {
-					var ifaces = t.Interfaces;
-					if (ifaces != null) {
-						foreach (var iface in ifaces) {
-							if (gen_ienumerable != null && iface.MemberDefinition == gen_ienumerable.TypeSpec.MemberDefinition) {
-								if (iface_candidate != null && iface_candidate != rc.Module.PredefinedMembers.IEnumerableGetEnumerator) {
-									rc.Report.SymbolRelatedToPreviousError (expr.Type);
-									rc.Report.Error (1640, loc,
-										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
-										expr.Type.GetSignatureForError (), gen_ienumerable.TypeSpec.GetSignatureForError ());
+				var ifaces = t.Interfaces;
+				if (ifaces != null) {
+					foreach (var iface in ifaces) {
+						if (gen_ienumerable != null && iface.MemberDefinition == gen_ienumerable.TypeSpec.MemberDefinition) {
+							if (iface_candidate != null && iface_candidate != rc.Module.PredefinedMembers.IEnumerableGetEnumerator) {
+								rc.Report.SymbolRelatedToPreviousError (expr.Type);
+								rc.Report.Error (1640, loc,
+									"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
+									expr.Type.GetSignatureForError (), gen_ienumerable.TypeSpec.GetSignatureForError ());
 
-									return null;
-								}
-
-								// TODO: Cache this somehow
-								iface_candidate = new PredefinedMember<MethodSpec> (rc.Module, iface,
-									MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null));
-
-								continue;
+								return null;
 							}
 
-							if (iface.BuiltinType == BuiltinTypeSpec.Type.IEnumerable && iface_candidate == null) {
-								iface_candidate = rc.Module.PredefinedMembers.IEnumerableGetEnumerator;
-							}
+							// TODO: Cache this somehow
+							iface_candidate = new PredefinedMember<MethodSpec> (rc.Module, iface,
+								MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+							continue;
+						}
+
+						if (iface.BuiltinType == BuiltinTypeSpec.Type.IEnumerable && iface_candidate == null) {
+							iface_candidate = rc.Module.PredefinedMembers.IEnumerableGetEnumerator;
 						}
 					}
-
-					if (t.IsGenericParameter)
-						t = t.BaseType;
-					else
-						t = null;
-
-				} while (t != null);
+				}
 
 				if (iface_candidate == null) {
 					if (expr.Type != InternalType.ErrorType) {

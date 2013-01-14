@@ -294,7 +294,8 @@ namespace Mono.CSharp {
 			HasStructLayout	= 1 << 15,			// Has StructLayoutAttribute
 			HasInstanceConstructor = 1 << 16,
 			HasUserOperators = 1 << 17,
-			CanBeReused = 1 << 18
+			CanBeReused = 1 << 18,
+			InterfacesExpanded = 1 << 19
 		}
 
 		/// <summary>

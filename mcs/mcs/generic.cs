@@ -760,17 +760,34 @@ namespace Mono.CSharp {
 			get {
 				if ((state & StateFlags.InterfacesExpanded) == 0) {
 					if (ifaces != null) {
-						for (int i = 0; i < ifaces.Count; ++i ) {
-							var iface_type = ifaces[i];
-							if (iface_type.Interfaces != null) {
-								if (ifaces_defined == null)
-									ifaces_defined = ifaces.ToArray ();
+						ifaces_defined = ifaces.ToArray ();
 
+						for (int i = 0; i < ifaces_defined.Length; ++i ) {
+							var iface_type = ifaces_defined[i];
+							var td = iface_type.MemberDefinition as TypeDefinition;
+							if (td != null)
+								td.DoExpandBaseInterfaces ();
+
+							if (iface_type.Interfaces != null) {
 								for (int ii = 0; ii < iface_type.Interfaces.Count; ++ii) {
 									var ii_iface_type = iface_type.Interfaces [ii];
-
 									AddInterface (ii_iface_type);
 								}
+							}
+						}
+					}
+
+					//
+					// Include all base type interfaces too, see ImportTypeBase for details
+					//
+					if (BaseType != null) {
+						var td = BaseType.MemberDefinition as TypeDefinition;
+						if (td != null)
+							td.DoExpandBaseInterfaces ();
+
+						if (BaseType.Interfaces != null) {
+							foreach (var iface in BaseType.Interfaces) {
+								AddInterface (iface);
 							}
 						}
 					}
@@ -1198,8 +1215,8 @@ namespace Mono.CSharp {
 			if (BaseType.BuiltinType != BuiltinTypeSpec.Type.Object && BaseType.BuiltinType != BuiltinTypeSpec.Type.ValueType)
 				cache.AddBaseType (BaseType);
 
-			if (ifaces != null) {
-				foreach (var iface_type in Interfaces) {
+			if (InterfacesDefined != null) {
+				foreach (var iface_type in InterfacesDefined) {
 					cache.AddInterface (iface_type);
 				}
 			}
@@ -1210,8 +1227,11 @@ namespace Mono.CSharp {
 					if (b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
 						cache.AddBaseType (b_type);
 
-					if (ta.Interfaces != null) {
-						foreach (var iface_type in ta.Interfaces) {
+					var tps = ta as TypeParameterSpec;
+					var ifaces = tps != null ? tps.InterfacesDefined : ta.Interfaces;
+
+					if (ifaces != null) {
+						foreach (var iface_type in ifaces) {
 							cache.AddInterface (iface_type);
 						}
 					}
@@ -1641,6 +1661,16 @@ namespace Mono.CSharp {
 
 		#endregion
 
+		public override bool AddInterface (TypeSpec iface)
+		{
+			var inflator = CreateLocalInflator (context);
+			iface = inflator.Inflate (iface);
+			if (iface == null)
+				return false;
+
+			return base.AddInterface (iface);
+		}
+
 		public static bool ContainsTypeParameter (TypeSpec type)
 		{
 			if (type.Kind == MemberKind.TypeParameter)
@@ -1850,7 +1880,7 @@ namespace Mono.CSharp {
 						if (iface_inflated == null)
 							continue;
 
-						AddInterface (iface_inflated);
+						base.AddInterface (iface_inflated);
 					}
 				}
 
@@ -3269,12 +3299,12 @@ namespace Mono.CSharp {
 					//
 					if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 						u_candidates.Add (t);
+				}
 
-					if (t.Interfaces != null) {
-						foreach (var iface in t.Interfaces) {
-							if (open_v == iface.MemberDefinition)
-								u_candidates.Add (iface);
-						}
+				if (u.Interfaces != null) {
+					foreach (var iface in u.Interfaces) {
+						if (open_v == iface.MemberDefinition)
+							u_candidates.Add (iface);
 					}
 				}
 

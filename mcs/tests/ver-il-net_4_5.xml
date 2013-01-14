@@ -17680,6 +17680,140 @@
       </method>
     </type>
   </test>
+  <test name="gtest-572.cs">
+    <type name="C">
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 GetEnumerator()" attrs="486">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-573.cs">
+    <type name="CB`1[T]">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CA`1[T]">
+      <method name="IB`1 IB&lt;T&gt;.Backwards()" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="IA`1 Backwards()" attrs="1478">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-574.cs">
+    <type name="TestClass`1[T1]">
+      <method name="Void Test()" attrs="129">
+        <size>11</size>
+      </method>
+      <method name="Void Foo[U](IEnumerable`1)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestClass`1+Nested[T1]">
+      <method name="System.Object Clone()" attrs="486">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="SequencedBase`1[T2]">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="DirectedCollectionBase`1[T3]">
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T3&gt;.GetEnumerator()" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CollectionBase`1[T4]">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CollectionValueBase`1[T5]">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="EnumerableBase`1[T6]">
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T6&gt;.GetEnumerator()" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-575.cs">
+    <type name="C`1[T1]">
+      <method name="Void Test()" attrs="134">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B`1[T2]">
+      <method name="Void System.IDisposable.Dispose()" attrs="481">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -26989,6 +27123,19 @@
     <type name="C">
       <method name="Void Main()" attrs="150">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-partial-05.cs">
+    <type name="Driver">
+      <method name="Void Foo[T](T)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

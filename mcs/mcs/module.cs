@@ -398,6 +398,8 @@ namespace Mono.CSharp
 		{
 			DefineContainer ();
 
+			ExpandBaseInterfaces ();
+
 			base.Define ();
 
 			HasTypesFullyDefined = true;

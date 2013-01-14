@@ -1027,6 +1027,11 @@ namespace Mono.CSharp
 				}
 			}
 
+			//
+			// It's impossible to get declared interfaces only using System.Reflection
+			// hence we need to mimic the behavior with ikvm-reflection too to keep
+			// our type look-up logic same
+			//
 			if (spec.BaseType != null) {
 				var bifaces = spec.BaseType.Interfaces;
 				if (bifaces != null) {

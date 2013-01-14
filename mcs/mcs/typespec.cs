@@ -91,6 +91,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// Returns a list of all interfaces including
+		// interfaces from base type or base interfaces
+		//
 		public virtual IList<TypeSpec> Interfaces {
 			get {
 				return ifaces;
@@ -350,7 +354,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public bool AddInterface (TypeSpec iface)
+		public virtual bool AddInterface (TypeSpec iface)
 		{
 			if ((state & StateFlags.InterfacesExpanded) != 0)
 				throw new InternalErrorException ("Modifying expanded interface list");
@@ -549,22 +553,16 @@ namespace Mono.CSharp
 
 		public bool ImplementsInterface (TypeSpec iface, bool variantly)
 		{
-			var t = this;
-			do {
-				var ifaces = t.Interfaces;
-				if (ifaces != null) {
-					for (int i = 0; i < ifaces.Count; ++i) {
-						if (TypeSpecComparer.IsEqual (ifaces[i], iface))
-							return true;
+			var ifaces = Interfaces;
+			if (ifaces != null) {
+				for (int i = 0; i < ifaces.Count; ++i) {
+					if (TypeSpecComparer.IsEqual (ifaces[i], iface))
+						return true;
 
-						if (variantly && TypeSpecComparer.Variant.IsEqual (ifaces[i], iface))
-							return true;
-					}
+					if (variantly && TypeSpecComparer.Variant.IsEqual (ifaces[i], iface))
+						return true;
 				}
-
-				// TODO: Why is it needed when we do it during import
-				t = t.BaseType;
-			} while (t != null);
+			}
 
 			return false;
 		}
@@ -1845,9 +1843,9 @@ namespace Mono.CSharp
 			ArrayContainer ac;
 			var key = new TypeRankPair (element, rank);
 			if (!module.ArrayTypesCache.TryGetValue (key, out ac)) {
-				ac = new ArrayContainer (module, element, rank) {
-					BaseType = module.Compiler.BuiltinTypes.Array
-				};
+				ac = new ArrayContainer (module, element, rank);
+				ac.BaseType = module.Compiler.BuiltinTypes.Array;
+				ac.Interfaces = ac.BaseType.Interfaces;
 
 				module.ArrayTypesCache.Add (key, ac);
 			}
