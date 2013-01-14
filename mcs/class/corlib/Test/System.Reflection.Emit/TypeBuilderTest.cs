@@ -10983,5 +10983,45 @@ namespace MonoTests.System.Reflection.Emit
 
 	        Assert.AreEqual (42, res[0]);
 	    }
+
+
+		[Test]
+		public void Ldfld_Regress_9531 () {
+			Build<Example<int>> ();
+		}
+
+		void Build<T> () {
+            var base_class = typeof(T);
+
+            var builder = module.DefineType(genTypeName (),
+                TypeAttributes.Class | TypeAttributes.Sealed | TypeAttributes.Public,
+                base_class);
+
+            var field = builder.BaseType.GetField("Field", BindingFlags.Instance | BindingFlags.Public);
+            
+            var cb = builder.DefineConstructor(
+                MethodAttributes.Public | MethodAttributes.SpecialName,
+                CallingConventions.HasThis,
+                new[] { typeof(string) });
+            
+            var il = cb.GetILGenerator();
+            
+            if (field == null)
+            {
+                throw new InvalidOperationException("wtf");
+            }
+            
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Stfld, field);
+            il.Emit(OpCodes.Ret);
+            
+            builder.CreateType();
+		}
+
+		public class Example<T> {
+			public string Field;
+		}
+
 	}
 }
