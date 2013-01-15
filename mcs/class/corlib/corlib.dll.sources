@@ -452,9 +452,6 @@ System.IO/UnexceptionalStreamWriter.cs
 System.IO/UnmanagedMemoryAccessor.cs
 System.IO/UnmanagedMemoryStream.cs
 System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
-System.IO.IsolatedStorage/MoonIsolatedStorage.cs
-System.IO.IsolatedStorage/MoonIsolatedStorageFile.cs
-System.IO.IsolatedStorage/MoonIsolatedStorageFileStream.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
 System.IO.IsolatedStorage/IsolatedStorageFile.cs
@@ -1180,7 +1177,6 @@ System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
-System.Security/SecurityManager_2_1.cs
 System.Security/SecurityManager_mobile.cs
 System.Security/SecurityRuleSet.cs
 System.Security/SecurityRulesAttribute.cs
@@ -1436,7 +1432,6 @@ System.Security.Policy/NetCodeGroup.cs
 System.Security.Policy/PermissionRequestEvidence.cs
 System.Security.Policy/PolicyException.cs
 System.Security.Policy/PolicyLevel.cs
-System.Security.Policy/PolicyLevel_2_1.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
 System.Security.Policy/Publisher.cs
