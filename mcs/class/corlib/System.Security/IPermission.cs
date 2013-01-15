@@ -32,11 +32,7 @@ using System.Runtime.InteropServices;
 namespace System.Security {
 
 	[ComVisible (true)]
-#if MOONLIGHT
-	public interface IPermission {
-#else
 	public interface IPermission : ISecurityEncodable {
-#endif
 		IPermission Copy ();
 
 		void Demand ();

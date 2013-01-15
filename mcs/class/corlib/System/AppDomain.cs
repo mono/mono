@@ -60,14 +60,12 @@ using System.Text;
 namespace System {
 
 	[ComVisible (true)]
-#if !NET_2_1 || MOONLIGHT
+#if !NET_2_1
 	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-#if MOONLIGHT
-	public sealed class AppDomain : _AppDomain {
-#elif NET_2_1
+#if NET_2_1
 	public sealed class AppDomain : MarshalByRefObject, _AppDomain {
 #else
 	public sealed class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
@@ -87,7 +85,6 @@ namespace System {
 
 		[ThreadStatic]
 		static Hashtable assembly_resolve_in_progress_refonly;
-#if !MOONLIGHT
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
@@ -97,7 +94,7 @@ namespace System {
 
 		[ThreadStatic]
 		private static IPrincipal _principal;
-#endif
+
 		static AppDomain default_domain;
 
 		private AppDomain ()
@@ -127,7 +124,6 @@ namespace System {
 			get { throw new NotImplementedException (); }
 		}
 #endif
-#if !MOONLIGHT
 		public string BaseDirectory {
 			get {
 				string path = SetupInformationNoCopy.ApplicationBase;
@@ -176,7 +172,6 @@ namespace System {
 				return (SetupInformationNoCopy.ShadowCopyFiles == "true");
 			}
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string getFriendlyName ();
@@ -186,7 +181,7 @@ namespace System {
 				return getFriendlyName ();
 			}
 		}
-#if !MOONLIGHT
+
 		public Evidence Evidence {
 			get {
 				// if the host (runtime) hasn't provided it's own evidence...
@@ -234,7 +229,6 @@ namespace System {
 		internal PermissionSet GrantedPermissionSet {
 			get { return _granted; }
 		}
-#endif
 
 #if NET_4_0
 		public PermissionSet PermissionSet {
@@ -266,8 +260,6 @@ namespace System {
 				return default_domain;
 			}
 		}
-
-#if !MOONLIGHT
 
 		[Obsolete ("AppDomain.AppendPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")]
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
@@ -316,7 +308,6 @@ namespace System {
 		{
 			return Activator.CreateComInstanceFrom (assemblyFile, typeName, hashValue ,hashAlgorithm);
 		}
-#endif
 #endif
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
@@ -692,12 +683,10 @@ namespace System {
 			return base.GetType ();
 		}
 
-#if !MOONLIGHT
 		public override object InitializeLifetimeService ()
 		{
 			return null;
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence, bool refOnly);
@@ -829,7 +818,6 @@ namespace System {
 			assembly.FromByteArray = true;
 			return assembly;
 		}
-#if !MOONLIGHT
 #if NET_4_0
 		[Obsolete ("AppDomain policy levels are obsolete")]
 #endif
@@ -892,7 +880,7 @@ namespace System {
 
 			_principal = principal;
 		}
-#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain InternalSetDomainByID (int domain_id);
  
@@ -980,8 +968,6 @@ namespace System {
 			}
 			return _process_guid;
 		}
-
-#if !MOONLIGHT
 
 		public static AppDomain CreateDomain (string friendlyName)
 		{
@@ -1130,8 +1116,7 @@ namespace System {
 
 			return info;
 		}
-#endif // !NET_2_1
-
+		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern bool InternalIsFinalizingForUnload (int domain_id);
 
@@ -1191,14 +1176,7 @@ namespace System {
 
 		public override string ToString ()
 		{
-#if !MOONLIGHT
 			return getFriendlyName ();
-#else
-			StringBuilder sb = new StringBuilder ("Name:");
-			sb.AppendLine (FriendlyName);
-			sb.AppendLine ("There are no context policies.");
-			return sb.ToString ();
-#endif
 		}
 
 		private static void ValidateAssemblyName (string name)
@@ -1430,8 +1408,6 @@ namespace System {
 			get { return _domain_manager; }
 		}
 
-#if (!MOONLIGHT)
-
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 
         #pragma warning disable 649
@@ -1539,15 +1515,6 @@ namespace System {
 			return GetAssemblies (true);
 		}
 
-#else // MOONLIGHT
-
-		public int ExecuteAssemblyByName (string assemblyName)
-		{
-			// critical code in SL that we're not calling in ML
-			throw new NotImplementedException ();
-		}
-#endif
-
 #if !NET_2_1
 		void _AppDomain.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
@@ -1571,7 +1538,7 @@ namespace System {
 		}
 #endif
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		List<string> compatibility_switch;
 
 		public bool? IsCompatibilitySwitchSet (string value)

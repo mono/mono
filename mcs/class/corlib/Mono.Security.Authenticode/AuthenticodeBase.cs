@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -281,6 +279,3 @@ namespace Mono.Security.Authenticode {
 		}
 	}
 }
-
-#endif
-

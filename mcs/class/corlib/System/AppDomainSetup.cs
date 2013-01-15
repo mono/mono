@@ -38,10 +38,8 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Runtime.Serialization.Formatters.Binary;
 
-#if(!MOONLIGHT)
 using System.Runtime.Hosting;
 using System.Security.Policy;
-#endif
 
 namespace System
 {
@@ -71,19 +69,12 @@ namespace System
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
-#if (!MOONLIGHT)
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
 		ApplicationTrust application_trust;
 		string [] domain_initializer_args;
-#else
-		object _activationArguments;
-		object domain_initializer; // always null
-		[NonSerialized]
-		object application_trust;  // dummy, always null
-		object domain_initializer_args;
-#endif
+
 		bool disallow_appbase_probe;
 		byte [] configuration_bytes;
 
@@ -118,7 +109,6 @@ namespace System
 			configuration_bytes = setup.configuration_bytes;
 		}
 
-#if (!MOONLIGHT)
 		public AppDomainSetup (ActivationArguments activationArguments)
 		{
 			_activationArguments = activationArguments;
@@ -128,7 +118,6 @@ namespace System
 		{
 			_activationArguments = new ActivationArguments (activationContext);
 		}
-#endif
 
 		static string GetAppBase (string appBase)
 		{
@@ -164,7 +153,7 @@ namespace System
 				application_name = value;
 			}
 		}
-#if !MOONLIGHT
+
 		public string CachePath {
 			get {
 				return cache_path;
@@ -227,7 +216,7 @@ namespace System
 				license_file = value;
 			}
 		}
-#endif
+
 		[MonoLimitation ("In Mono this is controlled by the --share-code flag")]
 		public LoaderOptimization LoaderOptimization {
 			get {
@@ -237,7 +226,7 @@ namespace System
 				loader_optimization = value;
 			}
 		}
-#if !MOONLIGHT
+
 		public string PrivateBinPath {
 			get {
 				return private_bin_path;
@@ -386,8 +375,8 @@ namespace System
 
 			serialized_non_primitives = ms.ToArray ();
 		}
-#endif // !NET_2_1
-#if NET_4_0 || MOONLIGHT || MOBILE
+
+#if NET_4_0 || MOBILE
 		[MonoTODO ("not implemented, does not throw because it's used in testing moonlight")]
 		public void SetCompatibilitySwitches (IEnumerable<string> switches)
 		{

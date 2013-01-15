@@ -545,9 +545,6 @@ namespace System.Runtime.Remoting
 	
 		internal static object CreateClientProxy (Type objectType, string url, object[] activationAttributes)
 		{
-#if MOONLIGHT
-			throw new NotSupportedException ();
-#else
 			string activationUrl = url;
 			if (!activationUrl.EndsWith ("/"))
 				activationUrl += "/";
@@ -558,7 +555,6 @@ namespace System.Runtime.Remoting
 
 			RemotingProxy proxy = new RemotingProxy (objectType, activationUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
-#endif
 		}
 	
 		internal static object CreateClientProxy (WellKnownClientTypeEntry entry)
@@ -575,12 +571,8 @@ namespace System.Runtime.Remoting
 				if (att != null)
 					return att.CreateInstance (type);
 			}
-#if MOONLIGHT
-			throw new NotSupportedException ();
-#else
 			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
-#endif
 		}
 #if !NET_2_1
 		internal static object CreateClientProxyForComInterop (Type type)
@@ -672,7 +664,6 @@ namespace System.Runtime.Remoting
 
 				// Registers the identity
 				uri_hash [uri] = identity;
-#if !MOONLIGHT
 				if (proxyType != null)
 				{
 					RemotingProxy proxy = new RemotingProxy (proxyType, identity);
@@ -683,7 +674,6 @@ namespace System.Runtime.Remoting
 					clientProxy = proxy.GetTransparentProxy();
 					identity.ClientProxy = (MarshalByRefObject) clientProxy;
 				}
-#endif
 				return identity;
 			}
 		}

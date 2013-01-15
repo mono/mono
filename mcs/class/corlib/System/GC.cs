@@ -145,7 +145,7 @@ namespace System
 		}
 #endif
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void register_ephemeron_array (Ephemeron[] array);
 

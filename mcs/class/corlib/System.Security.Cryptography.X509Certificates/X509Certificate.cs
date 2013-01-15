@@ -36,9 +36,7 @@ using Mono.Security;
 using Mono.Security.X509;
 
 using System.Runtime.Serialization;
-#if !MOONLIGHT
 using Mono.Security.Authenticode;
-#endif
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -100,7 +98,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			return new X509Certificate (data);
 		}
 
-#if !MOONLIGHT
 		[MonoTODO ("Incomplete - minimal validation in this version")]
 		public static X509Certificate CreateFromSignedFile (string filename)
 		{
@@ -120,8 +117,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 			throw new CryptographicException (Locale.GetText ("{0} isn't signed.", filename));
 		}
-
-#endif // NET_2_1
 
 		// constructors
 	
@@ -152,7 +147,6 @@ namespace System.Security.Cryptography.X509Certificates {
 #endif
 		}
 
-#if !MOONLIGHT
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		private void InitFromHandle (IntPtr handle)
 		{
@@ -165,7 +159,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 			// for 1.x IntPtr.Zero results in an "empty" certificate instance
 		}
-#endif
 	
 		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
 		{

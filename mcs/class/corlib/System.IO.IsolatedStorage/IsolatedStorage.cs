@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -192,5 +191,3 @@ namespace System.IO.IsolatedStorage {
 #endif
 	}
 }
-/* MOONLIGHT */
-#endif 

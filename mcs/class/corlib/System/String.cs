@@ -312,7 +312,7 @@ namespace System
 		}
 
 		// .NET 2.0 compatibility only
-#if !NET_4_0 && !MOONLIGHT && !MOBILE
+#if !NET_4_0 && !MOBILE
 		static readonly char[] WhiteChars = {
 			(char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
 			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
@@ -324,7 +324,7 @@ namespace System
 
 		unsafe string[] SplitByCharacters (char[] sep, int count, bool removeEmpty)
 		{
-#if !NET_4_0 && !MOONLIGHT && !MOBILE
+#if !NET_4_0 && !MOBILE
 			if (sep == null || sep.Length == 0)
 				sep = WhiteChars;
 #endif
@@ -1511,7 +1511,6 @@ namespace System
 			return (value == null) || (value.Length == 0);
 		}
 
-#if !MOONLIGHT
 		public string Normalize ()
 		{
 			return Normalization.Normalize (this, 0);
@@ -1549,7 +1548,6 @@ namespace System
 				return Normalization.IsNormalized (this, 3);
 			}
 		}
-#endif
 
 		public string Remove (int startIndex)
 		{
@@ -2335,7 +2333,7 @@ namespace System
 			return InternalIsInterned (str);
 		}
 	
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		public static string Join (string separator, params string [] value)
 #else
 		public static string Join (string separator, string [] value)
@@ -2643,7 +2641,7 @@ namespace System
 			}
 		}
 
-#if MOONLIGHT || MOBILE || NET_4_0
+#if MOBILE || NET_4_0
 		[ComVisible(false)]
 		public static string Concat (IEnumerable<string> values)
 		{

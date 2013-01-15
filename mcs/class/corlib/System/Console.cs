@@ -219,10 +219,6 @@ namespace System
 
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
-#if MOONLIGHT
-			if (SecurityManager.SecurityEnabled && !Debugger.IsAttached && Environment.GetEnvironmentVariable ("MOONLIGHT_ENABLE_CONSOLE") == null)
-				return new NullStream ();
-#endif
 			try {
 				return new FileStream (handle, access, false, bufferSize, false, bufferSize == 0);
 			} catch (IOException) {

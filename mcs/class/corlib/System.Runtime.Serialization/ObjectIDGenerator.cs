@@ -61,11 +61,7 @@ namespace System.Runtime.Serialization
 
 			int IHashCodeProvider.GetHashCode (object o)
 			{
-#if !INSIDE_CORLIB && MOONLIGHT
-				return o == null ? 0 : o .GetHashCode ();
-#else
 				return object.InternalGetHashCode (o);
-#endif
 			}
 		}
 		

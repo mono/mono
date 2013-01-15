@@ -44,7 +44,7 @@ namespace Mono.Security.X509 {
 	// b.	ITU ASN.1 standards (free download)
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-#if INSIDE_CORLIB && !MOONLIGHT
+#if INSIDE_CORLIB
 	internal class X509Certificate : ISerializable {
 #else
 	public class X509Certificate : ISerializable {
@@ -265,12 +265,8 @@ namespace Mono.Security.X509 {
 					// BUG: MS BCL 1.0 can't import a key which 
 					// isn't the same size as the one present in
 					// the container.
-#if MOONLIGHT
-					_dsa = new DSAManaged (dsaParams.Y.Length << 3);
-#else
 					_dsa = (DSA) new DSACryptoServiceProvider (dsaParams.Y.Length << 3);
 					_dsa.ImportParameters (dsaParams);
-#endif
 				}
 				return _dsa; 
 			}
@@ -365,12 +361,8 @@ namespace Mono.Security.X509 {
 					// isn't the same size as the one present in
 					// the container.
 					int keySize = (rsaParams.Modulus.Length << 3);
-#if MOONLIGHT
-					_rsa = new RSAManaged (keySize);
-#else
 					_rsa = (RSA) new RSACryptoServiceProvider (keySize);
 					_rsa.ImportParameters (rsaParams);
-#endif
 				}
 				return _rsa; 
 			}
@@ -542,14 +534,8 @@ namespace Mono.Security.X509 {
 
 		public bool CheckSignature (byte[] hash, string hashAlgorithm, byte[] signature) 
 		{
-#if MOONLIGHT
-			string hashName = GetHashNameFromOID (hashAlgorithm);
-			HashAlgorithm algo = HashAlgorithm.Create (hashName);
-			return PKCS1.Verify_v15 (RSA, algo, hash, signature);
-#else
 			RSACryptoServiceProvider r = (RSACryptoServiceProvider) RSA;
 			return r.VerifyHash (hash, hashAlgorithm, signature);
-#endif
 		}
 
 		public bool IsSelfSigned {

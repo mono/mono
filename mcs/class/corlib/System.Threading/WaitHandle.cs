@@ -42,11 +42,7 @@ namespace System.Threading
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class WaitHandle
-#if MOONLIGHT
-		: IDisposable
-#else
 		: MarshalByRefObject, IDisposable
-#endif
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
@@ -243,7 +239,7 @@ namespace System.Threading
 			Dispose(true);
 		}
 
-#if NET_4_0 || MOBILE || MOONLIGHT
+#if NET_4_0 || MOBILE
 		public void Dispose ()
 #else		
 		void IDisposable.Dispose ()

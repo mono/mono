@@ -37,10 +37,8 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using System.Configuration.Assemblies;
 using System.Text;
-#if !MOONLIGHT
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
-#endif
 
 namespace System 
 {
@@ -58,7 +56,6 @@ namespace System
 		{
 		}
 
-#if !MOONLIGHT
 		[MonoTODO ("No COM support")]
 		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
 		{
@@ -212,7 +209,6 @@ namespace System
 				throw new ArgumentNullException ("domain");
 			return domain.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
 		}
-#endif // !NET_2_1
 
 		public static T CreateInstance <T> ()
 		{
@@ -282,7 +278,6 @@ namespace System
 			}
 
 			CheckAbstractType (type);
-#if !MOONLIGHT
 			if (activationAttributes != null && activationAttributes.Length > 0) {
 				if (!type.IsMarshalByRef) {
 					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
@@ -295,7 +290,6 @@ namespace System
 					return newOb;
 				}
 			}
-#endif
 			return ctor.Invoke (bindingAttr, binder, args, culture);
 		}
 
@@ -353,7 +347,6 @@ namespace System
 			}
 		}
 
-#if !MOONLIGHT
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
 		public static object GetObject (Type type, string url)
 		{
@@ -371,7 +364,7 @@ namespace System
 
 			return RemotingServices.Connect (type, url, state);
 		}
-#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object CreateInstanceInternal (Type type);
 

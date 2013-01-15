@@ -37,9 +37,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Text;
-#if !MOONLIGHT
 using System.Security.AccessControl;
-#endif
 
 namespace System.IO {
 	
@@ -50,11 +48,6 @@ namespace System.IO {
 		private string current;
 		private string parent;
 	
-#if MOONLIGHT
-		internal DirectoryInfo ()
-		{
-		}
-#endif
 		public DirectoryInfo (string path) : this (path, false)
 		{
 		}
@@ -272,7 +265,6 @@ namespace System.IO {
 			return OriginalPath;
 		}
 
-#if !MOONLIGHT
 		public DirectoryInfo[] GetDirectories (string searchPattern, SearchOption searchOption)
 		{
 		    //NULL-check of searchPattern is done in Directory.GetDirectories
@@ -361,9 +353,8 @@ namespace System.IO {
 		{
 			Directory.SetAccessControl (FullPath, directorySecurity);
 		}
-#endif
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 
 		public IEnumerable<DirectoryInfo> EnumerateDirectories ()
 		{

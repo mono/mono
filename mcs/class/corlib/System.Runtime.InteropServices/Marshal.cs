@@ -39,11 +39,9 @@ using System.Reflection;
 using System.Threading;
 
 using System.Runtime.ConstrainedExecution;
-#if !MOONLIGHT
 #if !FULL_AOT_RUNTIME
 using System.Runtime.InteropServices.ComTypes;
 using Mono.Interop;
-#endif
 #endif
 
 namespace System.Runtime.InteropServices
@@ -189,7 +187,7 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-#if !FULL_AOT_RUNTIME && !MOONLIGHT
+#if !FULL_AOT_RUNTIME
 		public static object CreateWrapperOfType (object o, Type t)
 		{
 			__ComObject co = o as __ComObject;
@@ -272,7 +270,7 @@ namespace System.Runtime.InteropServices
 			FreeHGlobal (s);
 		}
 
-#if !FULL_AOT_RUNTIME && !MOONLIGHT
+#if !FULL_AOT_RUNTIME
 		public static Guid GenerateGuidForType (Type type)
 		{
 			return type.GUID;
@@ -389,7 +387,7 @@ namespace System.Runtime.InteropServices
 
 			return m.GetHINSTANCE ();
 		}
-#endif // !MOONLIGHT
+#endif // !FULL_AOT_RUNTIME
 
 #if !FULL_AOT_RUNTIME
 		[MonoTODO ("SetErrorInfo")]
@@ -404,7 +402,7 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
-#if !MOONLIGHT
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetIDispatchForObjectInternal (object o);
 
@@ -632,7 +630,6 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
-#endif // !NET_2_1
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -814,7 +811,6 @@ namespace System.Runtime.InteropServices
 		}
 
 #if !FULL_AOT_RUNTIME
-#if !MOONLIGHT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseComObjectInternal (object co);
 
@@ -839,7 +835,6 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotSupportedException ("MSDN states user code should never need to call this method.");
 		}
-#endif // !NET_2_1
 #endif
 
 		[ComVisible (true)]
@@ -904,7 +899,6 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToHGlobalUni (string s);
 
-#if !MOONLIGHT
 		public static IntPtr SecureStringToBSTR (SecureString s)
 		{
 			if (s == null)
@@ -992,7 +986,6 @@ namespace System.Runtime.InteropServices
 				throw new ArgumentNullException ("s");
 			return SecureStringToCoTaskMemUnicode (s);
 		}
-#endif
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		[ComVisible (true)]
@@ -1125,13 +1118,11 @@ namespace System.Runtime.InteropServices
 		}
 
 #if !FULL_AOT_RUNTIME
-#if !MOONLIGHT
 		public static int FinalReleaseComObject (object o)
 		{
 			while (ReleaseComObject (o) != 0);
 			return 0;
 		}
-#endif
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -304,11 +304,7 @@ namespace System
 			info.AddValue ("RemoteStackTraceString", _remoteStackTraceString);
 			info.AddValue ("RemoteStackIndex", remote_stack_index);
 			info.AddValue ("HResult", hresult);
-#if !MOONLIGHT
 			info.AddValue ("Source", Source);
-#else
-			info.AddValue ("Source", null);
-#endif
 			info.AddValue ("ExceptionMethod", null);
 			info.AddValue ("Data", _data, typeof (IDictionary));
 		}

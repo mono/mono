@@ -49,11 +49,7 @@ namespace System.Runtime.InteropServices {
 
 		private UnmanagedType utype;
 		public UnmanagedType ArraySubType;		
-#if !MOONLIGHT
 		public VarEnum SafeArraySubType;
-#else
-		private int SafeArraySubType;
-#endif
 		public int SizeConst;
 		public int IidParameterIndex;
 		public short SizeParamIndex;

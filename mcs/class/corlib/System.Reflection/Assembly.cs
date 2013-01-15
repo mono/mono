@@ -51,8 +51,6 @@ namespace System.Reflection {
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
 	public partial class Assembly : ICustomAttributeProvider, _Assembly {
-#elif MOONLIGHT
-	public abstract class Assembly : ICustomAttributeProvider, _Assembly {
 #elif NET_4_0
 	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #else
@@ -77,7 +75,7 @@ namespace System.Reflection {
 		private bool fromByteArray;
 		private string assemblyName;
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		protected
 #else
 		internal
@@ -152,7 +150,7 @@ namespace System.Reflection {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
-#if !MOONLIGHT
+
 		public virtual Evidence Evidence {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
 			get { return UnprotectedGetEvidence (); }
@@ -178,7 +176,6 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern bool get_global_assembly_cache ();
 
-#endif
 		internal bool FromByteArray {
 			set { fromByteArray = value; }
 		}
@@ -302,12 +299,6 @@ namespace System.Reflection {
 
 				string location = Path.GetDirectoryName (Location);
 				string filename = Path.Combine (location, info.FileName);
-#if MOONLIGHT
-				// we don't control the content of 'info.FileName' so we want to make sure we keep to ourselves
-				filename = Path.GetFullPath (filename);
-				if (!filename.StartsWith (location))
-					throw new SecurityException ("non-rooted access to manifest resource");
-#endif
 				return new FileStream (filename, FileMode.Open, FileAccess.Read);
 			}
 
@@ -459,15 +450,6 @@ namespace System.Reflection {
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, aname.Name + ".dll"));
-#if MOONLIGHT
-			// it's unlikely that culture.Name or aname.Name could contain stuff like ".." but...
-			fullName = Path.GetFullPath (fullName);
-			if (!fullName.StartsWith (location)) {
-				if (throwOnError)
-					throw new SecurityException ("non-rooted access to satellite assembly");
-				return null;
-			}
-#endif
 			if (!throwOnError && !File.Exists (fullName))
 				return null;
 
@@ -631,7 +613,7 @@ namespace System.Reflection {
 
 		[MonoTODO ("Not implemented")]
 		public
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		virtual
 #endif
 		Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
@@ -686,7 +668,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		virtual
 #endif
 		Object CreateInstance (String typeName, Boolean ignoreCase,
@@ -776,7 +758,7 @@ namespace System.Reflection {
 		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
 		public
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		virtual
 #endif
 		long HostContext {
@@ -908,7 +890,7 @@ namespace System.Reflection {
 
 #endif
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		static Exception CreateNIE ()
 		{
 			return new NotImplementedException ("Derived classes must implement it");

@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -408,6 +406,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-
-#endif
-

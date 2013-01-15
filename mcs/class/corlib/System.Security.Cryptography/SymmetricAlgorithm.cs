@@ -42,16 +42,9 @@ namespace System.Security.Cryptography {
 		protected byte[] KeyValue; 
 		protected KeySizes[] LegalBlockSizesValue; 
 		protected KeySizes[] LegalKeySizesValue; 
-#if MOONLIGHT
-		// Silverlight 2.0 only supports CBC
-		internal int FeedbackSizeValue;
-		internal CipherMode ModeValue;
-		internal PaddingMode PaddingValue;
-#else
 		protected int FeedbackSizeValue;
 		protected CipherMode ModeValue;
 		protected PaddingMode PaddingValue;
-#endif
 		private bool m_disposed;
 
 		protected SymmetricAlgorithm ()

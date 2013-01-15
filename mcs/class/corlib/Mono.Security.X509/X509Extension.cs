@@ -41,7 +41,7 @@ namespace Mono.Security.X509 {
 	 *	extnValue   OCTET STRING  
 	 * }
 	 */
-#if INSIDE_CORLIB && !MOONLIGHT
+#if INSIDE_CORLIB
 	internal
 #else
 	public 

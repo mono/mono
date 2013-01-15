@@ -353,7 +353,6 @@ namespace System.Runtime.Remoting.Contexts {
 			callback_object.DoCallBack (deleg);
 		}
 		
-#if !MOONLIGHT
 		public static LocalDataStoreSlot AllocateDataSlot ()
 		{
 			return new LocalDataStoreSlot (false);
@@ -414,7 +413,6 @@ namespace System.Runtime.Remoting.Contexts {
 				ctx.datastore [slot.slot] = data;
 			}
 		}
-#endif
 	}
 
 	class DynamicPropertyCollection

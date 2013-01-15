@@ -189,7 +189,7 @@ namespace System.Reflection
 		extern int GetMetadataToken ();
 
 		public
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0
 		virtual
 #endif
 		int MetadataToken {

@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if  !MOONLIGHT
-
 using Mono.Security.Cryptography;
 using System.Runtime.InteropServices;
 
@@ -1569,5 +1567,3 @@ namespace System.Security.Cryptography {
 		#endregion
 	}
 }
-
-#endif

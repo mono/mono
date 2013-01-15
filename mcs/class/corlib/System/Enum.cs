@@ -621,7 +621,7 @@ namespace System
 			return true;
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);
@@ -1014,7 +1014,7 @@ namespace System
 			}
 			return retVal;
 		}
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0 || MOBILE
 		public bool HasFlag (Enum flag)
 		{
 			var val = get_value ();

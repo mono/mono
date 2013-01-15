@@ -71,7 +71,7 @@ namespace System.Security.Cryptography {
 #endif
 		
 		
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0
 		public void Dispose ()
 		{
 			Dispose (true);

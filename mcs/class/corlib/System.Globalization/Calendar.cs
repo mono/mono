@@ -128,14 +128,12 @@ public abstract class Calendar : ICloneable
 	[NonSerialized]
 	bool m_isReadOnly;
 
-#if !MOONLIGHT
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual CalendarAlgorithmType AlgorithmType {
 		get {
 			return CalendarAlgorithmType.Unknown;
 		}
 	}
-#endif
 
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual DateTime MaxSupportedDateTime {

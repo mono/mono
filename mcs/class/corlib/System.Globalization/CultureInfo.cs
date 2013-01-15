@@ -237,12 +237,6 @@ namespace System.Globalization
 
 		public virtual string Name {
 			get {
-#if MOONLIGHT
-				if (m_name == "zh-CHS")
-					return "zh-Hans";
-				if (m_name == "zh-CHT")
-					return "zh-Hant";
-#endif
 				return(m_name);
 			}
 		}
@@ -372,7 +366,6 @@ namespace System.Globalization
 			return false;
 		}
 
-#if !MOONLIGHT
 		public static CultureInfo[] GetCultures(CultureTypes types)
 		{
 			bool neutral=((types & CultureTypes.NeutralCultures)!=0);
@@ -389,7 +382,6 @@ namespace System.Globalization
 
 			return infos;
 		}
-#endif
 
 		public override int GetHashCode ()
 		{
@@ -452,7 +444,7 @@ namespace System.Globalization
 
 		internal void CheckNeutral ()
 		{
-#if !MOONLIGHT && !NET_4_0
+#if !NET_4_0
 			if (IsNeutralCulture) {
 				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
 						"a neutral culture. It can not be used in formatting " +
