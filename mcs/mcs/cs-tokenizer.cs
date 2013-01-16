@@ -1546,13 +1546,13 @@ namespace Mono.CSharp
 		//
 		// Invoked if we know we have .digits or digits
 		//
-		int is_number (int c)
+		int is_number (int c, bool dotLead)
 		{
 			ILiteralConstant res;
 
 #if FULL_AST
 			int read_start = reader.Position - 1;
-			if (c == '.') {
+			if (dotLead) {
 				//
 				// Caller did peek_char
 				//
@@ -1562,7 +1562,7 @@ namespace Mono.CSharp
 			number_pos = 0;
 			var loc = Location;
 
-			if (c >= '0' && c <= '9'){
+			if (!dotLead){
 				if (c == '0'){
 					int peek = peek_char ();
 
@@ -1576,7 +1576,7 @@ namespace Mono.CSharp
 					}
 				}
 				decimal_digits (c);
-				c = get_char ();
+				c = peek_char ();
 			}
 
 			//
@@ -1585,9 +1585,12 @@ namespace Mono.CSharp
 			//
 			bool is_real = false;
 			if (c == '.'){
+				if (!dotLead)
+					get_char ();
+
 				if (decimal_digits ('.')){
 					is_real = true;
-					c = get_char ();
+					c = peek_char ();
 				} else {
 					putback ('.');
 					number_pos--;
@@ -1602,6 +1605,7 @@ namespace Mono.CSharp
 			
 			if (c == 'e' || c == 'E'){
 				is_real = true;
+				get_char ();
 				if (number_pos == MaxNumberLength)
 					Error_NumericConstantTooLong ();
 				number_builder [number_pos++] = (char) c;
@@ -1624,18 +1628,17 @@ namespace Mono.CSharp
 				}
 					
 				decimal_digits (c);
-				c = get_char ();
+				c = peek_char ();
 			}
 
 			var type = real_type_suffix (c);
 			if (type == TypeCode.Empty && !is_real) {
-				putback (c);
 				res = adjust_int (c, loc);
 			} else {
 				is_real = true;
 
-				if (type == TypeCode.Empty) {
-					putback (c);
+				if (type != TypeCode.Empty) {
+					get_char ();
 				}
 
 				res = adjust_real (type, loc);
@@ -3427,7 +3430,7 @@ namespace Mono.CSharp
 				case '0': case '1': case '2': case '3': case '4':
 				case '5': case '6': case '7': case '8': case '9':
 					tokens_seen = true;
-					return is_number (c);
+					return is_number (c, false);
 
 				case '\n': // white space
 					any_token_seen |= tokens_seen;
@@ -3439,7 +3442,7 @@ namespace Mono.CSharp
 					tokens_seen = true;
 					d = peek_char ();
 					if (d >= '0' && d <= '9')
-						return is_number (c);
+						return is_number (c, true);
 
 					ltb.CreateOptional (current_source, ref_line, col, ref val);
 					return Token.DOT;
