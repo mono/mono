@@ -237,8 +237,7 @@ net_4_0_dirs := \
 	WebMatrix.Data \
 	System.Data.Services.Client	\
 	System.Data.Services \
-	System.Json.Microsoft \
-	monodoc
+	System.Json.Microsoft
 	
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
@@ -257,7 +256,8 @@ net_4_5_dirs := \
 	System.Web.Http.SelfHost \
 	EntityFramework	\
 	EntityFramework.SqlServer	\
-	Mono.CodeContracts
+	Mono.CodeContracts \
+	monodoc
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
