@@ -7382,10 +7382,10 @@ mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 }
 
 void
-mono_gc_weak_link_remove (void **link_addr)
+mono_gc_weak_link_remove (void **link_addr, gboolean track)
 {
 	LOCK_GC;
-	mono_gc_register_disappearing_link (NULL, link_addr, FALSE);
+	mono_gc_register_disappearing_link (NULL, link_addr, track);
 	UNLOCK_GC;
 }
 
