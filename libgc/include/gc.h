@@ -600,6 +600,8 @@ GC_API GC_PTR GC_debug_realloc_replacement
 #   define GC_END_STUBBORN_CHANGE(p) GC_debug_end_stubborn_change(p)
 #   define GC_GENERAL_REGISTER_DISAPPEARING_LINK(link, obj) \
 	GC_general_register_disappearing_link(link, GC_base(obj))
+#   define GC_REGISTER_LONG_LINK(link, obj) \
+	GC_register_long_link(link, GC_base(obj))
 #   define GC_REGISTER_DISPLACEMENT(n) GC_debug_register_displacement(n)
 # else
 #   define GC_MALLOC(sz) GC_malloc(sz)
@@ -622,6 +624,8 @@ GC_API GC_PTR GC_debug_realloc_replacement
 #   define GC_END_STUBBORN_CHANGE(p) GC_end_stubborn_change(p)
 #   define GC_GENERAL_REGISTER_DISAPPEARING_LINK(link, obj) \
 	GC_general_register_disappearing_link(link, obj)
+#   define GC_REGISTER_LONG_LINK(link, obj) \
+	GC_register_long_link(link, obj)
 #   define GC_REGISTER_DISPLACEMENT(n) GC_register_displacement(n)
 # endif
 /* The following are included because they are often convenient, and	*/
@@ -760,6 +764,9 @@ GC_API int GC_unregister_disappearing_link GC_PROTO((GC_PTR * /* link */));
 	/* Returns 0 if link was not actually registered.	*/
 	/* Undoes a registration by either of the above two	*/
 	/* routines.						*/
+
+GC_API int GC_register_long_link GC_PROTO((GC_PTR * /* link */, GC_PTR obj));
+GC_API int GC_unregister_long_link GC_PROTO((GC_PTR * /* link */));
 
 /* Returns !=0  if GC_invoke_finalizers has something to do. 		*/
 GC_API int GC_should_invoke_finalizers GC_PROTO((void));
