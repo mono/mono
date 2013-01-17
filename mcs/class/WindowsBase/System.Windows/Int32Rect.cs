@@ -50,12 +50,12 @@ namespace System.Windows {
 
 		public static bool operator != (Int32Rect int32Rect1, Int32Rect int32Rect2)
 		{
-			throw new NotImplementedException ();
+			return !int32Rect1.Equals(int32Rect2);
 		}
 
 		public static bool operator == (Int32Rect int32Rect1, Int32Rect int32Rect2)
 		{
-			throw new NotImplementedException ();
+			return int32Rect1.Equals(int32Rect2);
 		}
 
 		public static Int32Rect Empty {
