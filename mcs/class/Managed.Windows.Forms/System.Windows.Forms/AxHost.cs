@@ -200,6 +200,7 @@ namespace System.Windows.Forms {
 		private object instance;
 		private AboutBoxDelegate aboutDelegate = null;
 		private AxHost.State ocxState = null;
+		static bool runningOnWindows;
 
 		#region Protected Constructors
 
@@ -213,6 +214,9 @@ namespace System.Windows.Forms {
 			this.clsid = new Guid(clsid);
 			//this.flags = flags;
 			this.instance = null;
+
+			PlatformID pid = Environment.OSVersion.Platform;
+			runningOnWindows = ((int) pid != 128 && (int) pid != 4 && (int) pid != 6);
 		}
 		#endregion	// Public Instance Properties
 
@@ -568,11 +572,13 @@ namespace System.Windows.Forms {
 		
 		protected override void CreateHandle ()
 		{
-			if(!base.IsHandleCreated) {
+			if(IsRunningOnWindows && !base.IsHandleCreated) {
 				GetActiveXInstance ();
 				AttachInterfaces ();
 
 				base.CreateHandle ();
+			} else {
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -1102,6 +1108,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Interfaces
+
+		internal static bool IsRunningOnWindows {
+                        get { return runningOnWindows; }
+                }
 
 		static Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
 
