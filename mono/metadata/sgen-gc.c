@@ -4645,7 +4645,7 @@ null_link_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int 
 			 * a finalizer or the finalizer has already run,
 			 * so we must null a tracking reference.
 			 */
-			if (track == before_finalization) {
+			if (!*entry->link || track == before_finalization) {
 				prev = entry;
 				entry = entry->next;
 				continue;
@@ -4725,7 +4725,7 @@ null_links_for_domain (MonoDomain *domain, int generation)
 		prev = NULL;
 		for (entry = disappearing_link_hash [i]; entry; ) {
 			char *object = DISLINK_OBJECT (entry);
-			if (object && !((MonoObject*)object)->vtable) {
+			if (*entry->link && object && !((MonoObject*)object)->vtable) {
 				DisappearingLink *next = entry->next;
 
 				if (prev)
