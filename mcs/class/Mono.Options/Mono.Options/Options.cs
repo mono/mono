@@ -1060,29 +1060,34 @@ namespace Mono.Options
 			if (!GetOptionParts (argument, out f, out n, out s, out v))
 				return false;
 
-			Option p;
-			if (Contains (n)) {
-				p = this [n];
-				c.OptionName = f + n;
-				c.Option     = p;
-				switch (p.OptionValueType) {
-					case OptionValueType.None:
-						c.OptionValues.Add (n);
-						c.Option.Invoke (c);
-						break;
-					case OptionValueType.Optional:
-					case OptionValueType.Required: 
-						ParseValue (v, c);
-						break;
+			try {
+				Option p;
+				if (Contains (n)) {
+					p = this [n];
+					c.OptionName = f + n;
+					c.Option     = p;
+					switch (p.OptionValueType) {
+						case OptionValueType.None:
+							c.OptionValues.Add (n);
+							c.Option.Invoke (c);
+							break;
+						case OptionValueType.Optional:
+						case OptionValueType.Required: 
+							ParseValue (v, c);
+							break;
+					}
+					return true;
 				}
-				return true;
+				// no match; is it a bool option?
+				if (ParseBool (argument, n, c))
+					return true;
+				// is it a bundled option?
+				if (ParseBundledValue (f, string.Concat (n + s + v), c))
+					return true;
 			}
-			// no match; is it a bool option?
-			if (ParseBool (argument, n, c))
-				return true;
-			// is it a bundled option?
-			if (ParseBundledValue (f, string.Concat (n + s + v), c))
-				return true;
+			catch (Exception ex) {
+				throw new OptionException(ex.Message, c.OptionName, ex);
+			}
 
 			return false;
 		}
