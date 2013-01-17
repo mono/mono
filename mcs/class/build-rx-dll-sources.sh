@@ -7,6 +7,9 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
+var template_android = File.ReadAllText ("project_template_android.txt");
+var template_ios = File.ReadAllText ("project_template_ios.txt");
+
 var asses = new string [] {
 	"System.Reactive.Interfaces",
 	"System.Reactive.Core",
@@ -33,6 +36,9 @@ var blacklist = new string [] {
 	"ObservableConcurrencyTest.cs",
 	};
 
+var dstAndroid = "../../external/rx/Rx.NET/Rx_Xamarin/android";
+var dstIOS = "../../external/rx/Rx.NET/Rx_Xamarin/iOS";
+
 foreach (var ass in asses) {
 
 	var monoass = ass == "Microsoft.Reactive.Testing" ?
@@ -40,6 +46,15 @@ foreach (var ass in asses) {
 	var basePath = "../../external/rx/Rx.NET";
 	var csproj = Path.Combine (basePath, ass, ass + ".csproj");
 	var pathPrefix = ass == "Tests.System.Reactive" ? "../../" : "../";
+
+	var android_dir = Path.GetFullPath (Path.Combine (csproj, "..", "..", "Rx_Xamarin", "android", monoass));
+	var ios_dir = Path.GetFullPath (Path.Combine (csproj, "..", "..", "Rx_Xamarin", "iOS", monoass));
+	var android_proj = Path.Combine (android_dir, monoass + ".csproj");
+	var ios_proj = Path.Combine (ios_dir, monoass + ".csproj");
+	if (!Directory.Exists (android_dir))
+		Directory.CreateDirectory (android_dir);
+	if (!Directory.Exists (ios_dir))
+		Directory.CreateDirectory (ios_dir);
 
 	// tests are built under Mono.Reactive.Testing directory.
 	
@@ -51,6 +66,9 @@ foreach (var ass in asses) {
 	var assdir = Path.Combine (monoass, "Assembly");
 	var assinfo = Path.Combine (monoass, "Assembly", "AssemblyInfo.cs");
 
+	var projectRefs = "";
+	
+
 	if (monoass != "Tests.System.Reactive") {
 		if (!Directory.Exists (assdir))
 			Directory.CreateDirectory (assdir);
@@ -60,18 +78,33 @@ foreach (var ass in asses) {
 		}
 	}
 
+	var sourcesXml = "";
+	var projectRefsXml = "";
+	var resourcesXml = "";
+	
 	var doc = XDocument.Load (csproj);
 	var rootNS = doc.XPathSelectElement ("//*[local-name()='RootNamespace']").Value;
+	var guid = doc.XPathSelectElement ("//*[local-name()='ProjectGuid']").Value;
+
+	foreach (var e in doc.XPathSelectElements ("//*[local-name()='ProjectReference']"))
+		projectRefsXml += e;
+
+	Console.WriteLine ("Writing " + sources + " ...");
 	using (var tw = File.CreateText (sources)) {
 		//if (monoass != "Tests.System.Reactive")
 		//	tw.WriteLine ("Assembly/AssemblyInfo.cs");
 		foreach (var path in doc.XPathSelectElements ("//*[local-name()='Compile']")
 			.Select (el => el.Attribute ("Include").Value)
-			.Select (s => s.Replace ("\\", "/")))
-			if (!blacklist.Any (b => path.Contains (b)))
-				tw.WriteLine (Path.Combine (pathPrefix, basePath, ass, path));
+			.Select (s => s.Replace ("\\", "/"))) {
+			if (!blacklist.Any (b => path.Contains (b))) {
+				var p = Path.Combine (pathPrefix, basePath, ass, path);
+				tw.WriteLine (p);
+				sourcesXml += "    <Compile Include='..\\..\\..\\" + p.Replace ('/', '\\') + "'>\n      <Link>" + path + "</Link>\n    </Compile>\n";
+			}
+		}
 	}
 
+	Console.WriteLine ("Writing more_build_args...");
 	var argsPath = Path.Combine (Path.GetDirectoryName (sources), "more_build_args");
 	using (var tw = File.CreateText (argsPath)) {
 		tw.WriteLine ("-d:SIGNED");
@@ -89,6 +122,18 @@ foreach (var ass in asses) {
 			File.Copy (resx, resxDest);
 			//Process.Start ("resgen", String.Format ("{0} {1}", resx, resPath));
 			tw.WriteLine ("-resource:{0},{1}.{2}", resFileName, rootNS, resFileName);
+			var p = Path.Combine (pathPrefix, basePath, ass, res);
+			resourcesXml += "    <EmbeddedResource Include='..\\..\\..\\" + p.Replace ('/', '\\') + "'>\n      <Link>" + res + "</Link>\n    </EmbeddedResource>\n";
+		}
+	}
+	foreach (var f in new string [] { android_proj, ios_proj}) {
+		using (var tw = File.CreateText (f)) {
+			tw.Write (template_android
+				.Replace ("PROJECT_GUID_GOES_HERE", guid)
+				.Replace ("ASSEMBLY_NAME_GOES_HERE", monoass)
+				.Replace ("PROJECT_REFERENCES_GO_HERE", projectRefsXml)
+				.Replace ("RESOURCES_GO_HERE", sourcesXml)
+				.Replace ("SOURCES_GO_HERE", resourcesXml));
 		}
 	}
 }
