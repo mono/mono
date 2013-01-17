@@ -3,8 +3,10 @@
 //
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
+//   Rolf Bjarne Kvinge (rolf@xamarin.com)
 //
 // (C) 2011 Leszek Ciesielski
+// Copyright (C) 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,7 +29,9 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+
 using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Evaluation
@@ -40,6 +44,73 @@ namespace Microsoft.Build.Evaluation
                         Xml = xml;
                 }
 
+                public ProjectMetadata GetMetadata (string name)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public string GetMetadataValue (string name)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public bool HasMetadata (string name)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public bool RemoveMetadata (string name)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public void Rename (string name)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public void SetMetadataValue (string name, string unevaluatedValue)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                public IEnumerable<ProjectMetadata> DirectMetadata {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public int DirectMetadataCount {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public string EvaluatedInclude {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public bool IsImported {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public string ItemType {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public ICollection<ProjectMetadata> Metadata {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public int MetadataCount {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public Project Project {
+                        get { throw new NotImplementedException (); }
+                }
+
+                public string UnevaluatedInclude {
+                        get { throw new NotImplementedException (); }
+                }
+
                 public ProjectItemElement Xml { get; private set; }
+
         }
 }

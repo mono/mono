@@ -41,13 +41,11 @@ namespace System.Diagnostics {
 
 		private Trace () {}
 
-#if NET_2_0
 		[MonoNotSupported ("")]
 		public static void Refresh ()
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public static bool AutoFlush {
 			get {return TraceImpl.AutoFlush;}
@@ -68,16 +66,11 @@ namespace System.Diagnostics {
 			get {return TraceImpl.Listeners;}
 		}
 
-#if NET_2_0
 		public static CorrelationManager CorrelationManager {
 			get { return TraceImpl.CorrelationManager; }
 		}
 
-		public
-#else
-		internal
-#endif
-		static bool UseGlobalLock {
+		public static bool UseGlobalLock {
 			get { return TraceImpl.UseGlobalLock; }
 			set { TraceImpl.UseGlobalLock = value; }
 		}
@@ -237,7 +230,6 @@ namespace System.Diagnostics {
 			TraceImpl.WriteLineIf (condition, message, category);
 		}
 
-#if NET_2_0
 		static void DoTrace (string kind, Assembly report, string message)
 		{
 			TraceImpl.WriteLine (String.Format ("{0} {1} : 0 : {2}", report.Location, kind, message));
@@ -278,7 +270,6 @@ namespace System.Diagnostics {
 		{
 			DoTrace ("Warning", Assembly.GetCallingAssembly (), String.Format (message, args));
 		}
-#endif
 	}
 }
 

@@ -303,6 +303,8 @@ public sealed class Handlers
 		aliases.Add ("x-ms-cp932", "shift_jis");
 		aliases.Add ("x-sjis", "shift_jis");
 
+		aliases.Add ("iso_2022_kr", "euc_kr");
+
 		aliases.Add ("csISOLatin3", "iso_8859_3");
 		aliases.Add ("ISO_8859_3:1988", "iso_8859_3");
 		aliases.Add ("iso_ir_109", "iso_8859_3");

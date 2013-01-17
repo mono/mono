@@ -45,7 +45,7 @@ namespace System.Text.RegularExpressions {
 	[Serializable]
 	public partial class Regex : ISerializable {
 
-#if !TARGET_JVM
+#if !TARGET_JVM && !FULL_AOT_RUNTIME
 		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname)
 		{
@@ -177,7 +177,6 @@ namespace System.Text.RegularExpressions {
 			return re.Split (input);
 		}
 
-#if NET_2_0
 		static FactoryCache cache = new FactoryCache (15);
 		public static int CacheSize {
 			get { return cache.Capacity; }
@@ -188,9 +187,6 @@ namespace System.Text.RegularExpressions {
 				cache.Capacity = value;	
 			}
 		}
-#else
-		static FactoryCache cache = new FactoryCache (200);
-#endif
 
 		// private
 
@@ -224,7 +220,7 @@ namespace System.Text.RegularExpressions {
 				RegexOptions.IgnoreCase |
 				RegexOptions.Multiline |
 				RegexOptions.ExplicitCapture |
-#if !NET_2_1
+#if MOBILE || !NET_2_1
 				RegexOptions.Compiled |
 #endif
 				RegexOptions.Singleline |
@@ -236,7 +232,7 @@ namespace System.Text.RegularExpressions {
 			const RegexOptions ecmaopts =
 				RegexOptions.IgnoreCase |
 				RegexOptions.Multiline |
-#if !NET_2_1
+#if MOBILE || !NET_2_1
 				RegexOptions.Compiled |
 #endif
 				RegexOptions.ECMAScript;
@@ -311,23 +307,12 @@ namespace System.Text.RegularExpressions {
 			return machineFactory;
 		}
 
-#if NET_2_0
-		protected
-#else
-		private
-#endif
-		Regex (SerializationInfo info, StreamingContext context) :
+		protected Regex (SerializationInfo info, StreamingContext context) :
 			this (info.GetString ("pattern"), 
 			      (RegexOptions) info.GetValue ("options", typeof (RegexOptions)))
 		{
 		}
 
-#if ONLY_1_1 && !TARGET_JVM
-		// fixes public API signature
-		~Regex ()
-		{
-		}
-#endif
 		// public instance properties
 		
 		public RegexOptions Options {

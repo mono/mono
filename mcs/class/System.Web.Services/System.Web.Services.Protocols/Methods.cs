@@ -442,8 +442,6 @@ namespace System.Web.Services.Protocols {
 	//
 	internal class SoapTypeStubInfo : TypeStubInfo
 	{
-		Hashtable[] header_serializers = new Hashtable [3];
-		Hashtable[] header_serializers_byname = new Hashtable [3];
 		Hashtable methods_byaction = new Hashtable (); 
 
 		// Precomputed
@@ -476,8 +474,6 @@ namespace System.Web.Services.Protocols {
 			} else {
 				o = Type.GetCustomAttributes (typeof (SoapRpcServiceAttribute), false);
 				if (o.Length == 1){
-					SoapRpcServiceAttribute srs = (SoapRpcServiceAttribute) o [0];
-					
 					ParameterStyle = SoapParameterStyle.Wrapped;
 					SoapBindingStyle = SoapBindingStyle.Rpc;
 				} else {

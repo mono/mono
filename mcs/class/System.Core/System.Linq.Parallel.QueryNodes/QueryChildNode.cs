@@ -24,12 +24,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 
 namespace System.Linq.Parallel.QueryNodes
 {
-	internal abstract class QueryChildNode<T, TParent> : QueryBaseNode<T>
+	internal interface QueryChildNode : IVisitableNode {
+		QueryBaseNode Parent { get; }
+	}
+
+	internal abstract class QueryChildNode<T, TParent> : QueryBaseNode<T>, QueryChildNode
 	{
 		QueryBaseNode<TParent> parent;
 
@@ -37,6 +41,10 @@ namespace System.Linq.Parallel.QueryNodes
 		//	: base (isOrdered, true)
 		{
 			this.parent = parent;
+		}
+
+		QueryBaseNode QueryChildNode.Parent {
+			get { return parent; }
 		}
 
 		internal QueryBaseNode<TParent> Parent {
@@ -47,7 +55,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		public override void Visit (INodeVisitor visitor)
 		{
-			visitor.Visit<T, TParent> (this);
+			visitor.Visit ((QueryChildNode)this);
 		}
 	}
 }

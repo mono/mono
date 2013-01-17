@@ -3,8 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Atsushi Enomoto  <atsushi@xamarin.com>
 //
 // Copyright (C) 2008,2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin, Inc (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,6 +47,24 @@ using XmlObjectSerializer = System.Object;
 
 namespace System.ServiceModel.Dispatcher
 {
+	// This set of classes is to work as message formatters for 
+	// WebHttpBehavior. There are couple of aspects to differentiate
+	// implementations:
+	// - request/reply and client/server
+	//   by WebMessageFormatter hierarchy
+	//   - WebClientMessageFormatter - for client
+	//     - RequestClientFormatter - for request
+	//     - ReplyClientFormatter - for response
+	//   - WebDispatchMessageFormatter - for server
+	//     - RequestDispatchFormatter - for request
+	//     - ReplyDispatchFormatter - for response
+	//
+	// FIXME: below items need more work
+	// - HTTP method differences
+	//  - GET (WebGet)
+	//  - POST (other way)
+	// - output format: Stream, JSON, XML ...
+
 	internal abstract class WebMessageFormatter
 	{
 		OperationDescription operation;
@@ -182,6 +202,9 @@ namespace System.ServiceModel.Dispatcher
 
 		protected XmlObjectSerializer GetSerializer (WebContentFormat msgfmt, bool isWrapped, MessagePartDescription part)
 		{
+			if (part.Type == typeof (void))
+				return null; // no serialization should be done.
+
 			switch (msgfmt) {
 			case WebContentFormat.Xml:
 				if (xml_serializer == null)
@@ -208,6 +231,9 @@ namespace System.ServiceModel.Dispatcher
 			// FIXME: handle ref/out parameters
 
 			var reader = message.GetReaderAtBodyContents ();
+			reader.MoveToContent ();
+
+			bool wasEmptyElement = reader.IsEmptyElement;
 
 			if (isWrapped) {
 				if (fmt == WebContentFormat.Json)
@@ -216,9 +242,9 @@ namespace System.ServiceModel.Dispatcher
 					reader.ReadStartElement (md.Body.WrapperName, md.Body.WrapperNamespace);
 			}
 
-			var ret = ReadObjectBody (serializer, reader);
+			var ret = (serializer == null) ? null : ReadObjectBody (serializer, reader);
 
-			if (isWrapped)
+			if (isWrapped && !wasEmptyElement)
 				reader.ReadEndElement ();
 
 			return ret;
@@ -291,6 +317,8 @@ namespace System.ServiceModel.Dispatcher
 
 		internal abstract class WebClientMessageFormatter : WebMessageFormatter, IClientMessageFormatter
 		{
+			IClientMessageFormatter default_formatter;
+
 			protected WebClientMessageFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
 				: base (operation, endpoint, converter, behavior)
 			{
@@ -306,10 +334,10 @@ namespace System.ServiceModel.Dispatcher
 
 				MessageDescription md = GetMessageDescription (MessageDirection.Input);
 
-				if (parameters.Length != md.Body.Parts.Count)
-					throw new ArgumentException ("Parameter array length does not match the number of message body parts");
-
+				Message ret;
+				Uri to;
 				object msgpart = null;
+
 
 				for (int i = 0; i < parameters.Length; i++) {
 					var p = md.Body.Parts [i];
@@ -325,10 +353,9 @@ namespace System.ServiceModel.Dispatcher
 							throw new  NotImplementedException (String.Format ("More than one parameters including {0} that are not contained in the URI template {1} was found.", p.Name, UriTemplate));
 					}
 				}
+				ret = Message.CreateMessage (messageVersion, (string) null, msgpart);
 
-				Uri to = UriTemplate.BindByName (Endpoint.Address.Uri, c);
-
-				Message ret = Message.CreateMessage (messageVersion, (string) null, msgpart);
+				to = UriTemplate.BindByName (Endpoint.Address.Uri, c);
 				ret.Headers.To = to;
 
 				var hp = new HttpRequestMessageProperty ();
@@ -358,6 +385,13 @@ namespace System.ServiceModel.Dispatcher
 				if (parameters == null)
 					throw new ArgumentNullException ("parameters");
 				CheckMessageVersion (message.Version);
+
+#if !NET_2_1
+				if (OperationContext.Current != null) {
+					// Set response in the context
+					OperationContext.Current.IncomingMessage = message;
+				}
+#endif
 
 				if (message.IsEmpty)
 					return null; // empty message, could be returned by HttpReplyChannel.
@@ -546,11 +580,8 @@ namespace System.ServiceModel.Dispatcher
 				var fmt = wp != null ? wp.Format : WebContentFormat.Xml;
 
 				Uri to = message.Headers.To;
-				UriTemplateMatch match = UriTemplate.Match (Endpoint.Address.Uri, to);
-				if (match == null)
-					// not sure if it could happen
-					throw new SystemException (String.Format ("INTERNAL ERROR: UriTemplate does not match with the request: {0} / {1}", UriTemplate, to));
-				if (iwc != null)
+				UriTemplateMatch match = to == null ? null : UriTemplate.Match (Endpoint.Address.Uri, to);
+				if (match != null && iwc != null)
 					iwc.UriTemplateMatch = match;
 
 				MessageDescription md = GetMessageDescription (MessageDirection.Input);
@@ -558,15 +589,20 @@ namespace System.ServiceModel.Dispatcher
 				for (int i = 0; i < parameters.Length; i++) {
 					var p = md.Body.Parts [i];
 					string name = p.Name.ToUpperInvariant ();
-					var str = match.BoundVariables [name];
-					if (str != null)
-						parameters [i] = Converter.ConvertStringToValue (str, p.Type);
-					else if (fmt == WebContentFormat.Raw && p.Type == typeof (Stream)) {
+					if (fmt == WebContentFormat.Raw && p.Type == typeof (Stream)) {
 						var rmsg = (RawMessage) message;
 						parameters [i] = rmsg.Stream;
 					} else {
-						var serializer = GetSerializer (fmt, IsRequestBodyWrapped, p);
-						parameters [i] = DeserializeObject (serializer, message, md, IsRequestBodyWrapped, fmt);
+						var str = match.BoundVariables [name];
+						if (str != null)
+							parameters [i] = Converter.ConvertStringToValue (str, p.Type);
+						else {
+							if (info.Method != "GET") {
+								var serializer = GetSerializer (fmt, IsRequestBodyWrapped, p);
+								parameters [i] = DeserializeObject (serializer, message, md, IsRequestBodyWrapped, fmt);
+							}
+							// for GET Uri template parameters, there is no <anyType xsi:nil='true' />. So just skip the member.
+						}
 					}
 				}
 			}

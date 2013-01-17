@@ -35,8 +35,5 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 {
-#if NET_1_0
-	[Serializable]
-#endif
 	public delegate void OdbcInfoMessageEventHandler (object sender, OdbcInfoMessageEventArgs e);
 }

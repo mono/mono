@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -13,15 +13,13 @@
  *
  * ***************************************************************************/
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 using Microsoft.Scripting.Ast;
 #else
 using System.Linq.Expressions;
 #endif
 
-#if SILVERLIGHT
-using System.Core;
-#else
+#if FEATURE_REMOTING
 using System.Runtime.Remoting;
 #endif
 
@@ -311,7 +309,7 @@ namespace System.Dynamic {
             ContractUtils.RequiresNotNull(expression, "expression");
 
             IDynamicMetaObjectProvider ido = value as IDynamicMetaObjectProvider;
-#if !SILVERLIGHT
+#if FEATURE_REMOTING
             if (ido != null && !RemotingServices.IsObjectOutOfAppDomain(value)) {
 #else
             if (ido != null) {

@@ -1,14 +1,13 @@
 //
 // System.Threading.NativeOverlapped.cs
 //
-// Author:
+// Authors:
 //   Dick Porter (dick@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2012 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,25 +34,13 @@ using System.Runtime.InteropServices;
 namespace System.Threading
 {
 	[ComVisible (true)]
-	public struct NativeOverlapped {
-		public IntPtr EventHandle;
-		public IntPtr InternalHigh;
+	public struct NativeOverlapped
+	{
 		public IntPtr InternalLow;
-		public int OffsetHigh;
+		public IntPtr InternalHigh;
 		public int OffsetLow;
-
-		// (fields disappeared beta2 -> 1.0)
-		// public GCHandle ReservedClassLib;
-		// public int ReservedCOR1;
-		// public GCHandle ReservedCOR2;
-
-		// P.S. (Gonzalo): try this:
-                //	Console.WriteLine (Marshal.SizeOf (typeof (NativeOverlapped)));
-		//
-		// And you'll get a nice 36. So probably those fields are out there but are not public.
-		// So I'm adding some internal fields that are used in the runtime
-		internal int Handle1;
-		internal int Handle2;
+		public int OffsetHigh;
+		public IntPtr EventHandle;
 	}
 }
 

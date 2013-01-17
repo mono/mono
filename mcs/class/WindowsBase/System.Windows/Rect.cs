@@ -88,12 +88,12 @@ namespace System.Windows {
 			height = size.Height;
 		}
 
-		public bool Equals (Rect rect)
+		public bool Equals (Rect value)
 		{
-			return (x == rect.X &&
-				y == rect.Y &&
-				width == rect.Width &&
-				height == rect.Height);
+			return (x == value.X &&
+				y == value.Y &&
+				width == value.Width &&
+				height == value.Height);
 		}
 
 		public static bool operator != (Rect rect1, Rect rect2)
@@ -147,9 +147,9 @@ namespace System.Windows {
 			return true;
 		}
 
-		public bool Contains (Point p)
+		public bool Contains (Point point)
 		{
-			return Contains (p.X, p.Y);
+			return Contains (point.X, point.Y);
 		}
 
 		public static Rect Inflate (Rect rect, double width, double height)
@@ -278,10 +278,15 @@ namespace System.Windows {
 		
 		public void Union(Rect rect)
 		{
-			x = Math.Min (x, rect.x);
-			y = Math.Min (y, rect.y);
-			width = Math.Max (Right, rect.Right) - x;
-			height = Math.Max (Bottom, rect.Bottom) - y;
+			var left = Math.Min (Left, rect.Left);
+			var top = Math.Min (Top, rect.Top);
+			var right = Math.Max (Right, rect.Right);
+			var bottom = Math.Max (Bottom, rect.Bottom);
+			
+			x = left;
+			y = top;
+			width = right - left;
+			height = bottom - top;
 		}
 
 		public void Union(Point point)

@@ -71,6 +71,7 @@ namespace System.Security.AccessControl {
 				Array.Copy(binaryForm,
 				           offset + 8 + SecurityIdentifier.BinaryLength,
 				           opaque, 0, opaqueLen);
+				SetOpaque (opaque);
 			}
 		}
 

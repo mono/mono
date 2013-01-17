@@ -81,6 +81,7 @@ namespace System.Data.SqlClient
 #endif
 		const int MIN_PACKETSIZE = 512;
 		const int DEFAULT_CONNECTIONTIMEOUT = 15;
+		const int DEFAULT_CONNECTIONLIFETIME = 0;
 		const int DEFAULT_MAXPOOLSIZE = 100;
 		const int MIN_MAXPOOLSIZE = 1;
 		const int DEFAULT_MINPOOLSIZE = 0;
@@ -99,6 +100,7 @@ namespace System.Data.SqlClient
 		
 		TdsConnectionParameters parms;
 		bool connectionReset;
+		int connectionLifeTime;
 		bool pooling;
 		string dataSource;
 		int connectionTimeout;
@@ -135,18 +137,11 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-#if NET_1_0 || ONLY_1_1
-		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
-#endif
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]
 		[RefreshProperties (RefreshProperties.All)]
-		public
-#if NET_2_0
-		override
-#endif // NET_2_0
-		string ConnectionString {
+		public override string ConnectionString {
 			get {
 				if (connectionString == null)
 					return string.Empty;
@@ -284,6 +279,13 @@ namespace System.Data.SqlClient
 			set { statisticsEnabled = value; }
 		}
 #endif
+
+		protected internal override DbProviderFactory DbProviderFactory {
+			get {
+				return SqlClientFactory.Instance;
+			}
+		}
+
 		#endregion // Properties
 
 		#region Events
@@ -539,14 +541,14 @@ namespace System.Data.SqlClient
 				if (!pooling) {
 					if(!ParseDataSource (dataSource, out port, out serverName))
 						throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
-					tds = new Tds80 (serverName, port, PacketSize, ConnectionTimeout);
+					tds = new Tds80 (serverName, port, PacketSize, ConnectionTimeout, 0);
 					tds.Pooling = false;
 				}
 				else {
 					if(!ParseDataSource (dataSource, out port, out serverName))
 						throw new SqlException(20, 0, "SQL Server does not exist or access denied.",  17, "ConnectionOpen (Connect()).", dataSource, parms.ApplicationName, 0);
 					
- 					TdsConnectionInfo info = new TdsConnectionInfo (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+					TdsConnectionInfo info = new TdsConnectionInfo (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize, connectionLifeTime);
 					pool = sqlConnectionPools.GetConnectionPool (connectionString, info);
 					tds = pool.GetConnection ();
 				}
@@ -763,6 +765,7 @@ namespace System.Data.SqlClient
 				parms.Reset ();
 			dataSource = string.Empty;
 			connectionTimeout = DEFAULT_CONNECTIONTIMEOUT;
+			connectionLifeTime = DEFAULT_CONNECTIONLIFETIME;
 			connectionReset = true;
 			pooling = true;
 			maxPoolSize = DEFAULT_MAXPOOLSIZE;
@@ -797,6 +800,7 @@ namespace System.Data.SqlClient
 					connectionTimeout = tmpTimeout;
 				break;
 			case "connection lifetime" :
+				connectionLifeTime = ConvertToInt32 ("connection lifetime", value, DEFAULT_CONNECTIONLIFETIME);
 				break;
 			case "connection reset" :
 				connectionReset = ConvertToBoolean ("connection reset", value, true);
@@ -1103,15 +1107,16 @@ namespace System.Data.SqlClient
 				get {
 					if (instance == null) {
 						DataRow row = null;
-						instance = new DataTable ("ReservedWords");
-						instance.Columns.Add ("ReservedWord", typeof(string));
+						var newInstance = new DataTable ("ReservedWords");
+						newInstance.Columns.Add ("ReservedWord", typeof(string));
 						foreach (string reservedWord in reservedWords)
 						{
-							row = instance.NewRow();
+							row = newInstance.NewRow();
 
 							row["ReservedWord"] = reservedWord;
-							instance.Rows.Add(row);
+							newInstance.Rows.Add(row);
 						}
+						instance = newInstance;
 					}
 					return instance;
 				}
@@ -1151,11 +1156,12 @@ namespace System.Data.SqlClient
 			static public DataTable Instance {
 				get {
 					if (instance == null) {
-						instance = new DataTable ("MetaDataCollections");
+						var newInstance = new DataTable ("MetaDataCollections");
 						foreach (ColumnInfo c in columns)
-							instance.Columns.Add (c.name, c.type);
+							newInstance.Columns.Add (c.name, c.type);
 						foreach (object [] row in rows)
-							instance.LoadDataRow (row, true);
+							newInstance.LoadDataRow (row, true);
+						instance = newInstance;
 					}
 					return instance;
 				}
@@ -1735,9 +1741,6 @@ namespace System.Data.SqlClient
 
 		#region Properties Net 2
 
-#if NET_1_0
-		[DataSysDescription ("Enable Asynchronous processing, 'Asynchrouse Processing=true/false' in the ConnectionString.")]	
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		internal bool AsyncProcessing  {
 			get { return async; }

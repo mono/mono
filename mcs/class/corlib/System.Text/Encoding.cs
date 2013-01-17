@@ -244,10 +244,10 @@ public abstract class Encoding : ICloneable
 			throw new ArgumentNullException ("s");
 
 		if (s.Length == 0)
-			return new byte [0];
+			return EmptyArray<byte>.Value;
 		int byteCount = GetByteCount (s);
 		if (byteCount == 0)
-			return new byte [0];
+			return EmptyArray<byte>.Value;
 		unsafe {
 			fixed (char* cptr = s) {
 				byte [] bytes = new byte [byteCount];
@@ -695,7 +695,7 @@ public abstract class Encoding : ICloneable
 	// Get the identifying preamble for this encoding.
 	public virtual byte[] GetPreamble ()
 	{
-		return new byte [0];
+		return EmptyArray<byte>.Value;
 	}
 
 	// Decode a buffer of bytes into a string.

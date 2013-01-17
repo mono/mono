@@ -31,6 +31,10 @@
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Security.Cryptography {
 
@@ -75,11 +79,6 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		~CryptoStream () 
-		{
-			Dispose (false);
-		}
-		
 		public override bool CanRead {
 			get { return (_mode == CryptoStreamMode.Read); }
 		}
@@ -357,9 +356,27 @@ namespace System.Security.Cryptography {
 				}
 			}
 		}
+		
 #if NET_4_0
 		public bool HasFlushedFinalBlock {
 			get { return _flushedFinalBlock; }
+		}
+#endif
+		
+#if NET_4_5
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			return base.FlushAsync (cancellationToken);
+		}
+		
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return base.ReadAsync (buffer, offset, count, cancellationToken);
+		}
+		
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return base.WriteAsync (buffer, offset, count, cancellationToken);
 		}
 #endif
 	}

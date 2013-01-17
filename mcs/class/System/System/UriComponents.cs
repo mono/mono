@@ -29,10 +29,7 @@
 namespace System {
 
 	[Flags]
-#if NET_2_0
-	public
-#endif
-	enum UriComponents {
+	public enum UriComponents {
 
 		Scheme = 1,
 		UserInfo = 2,

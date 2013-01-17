@@ -2268,9 +2268,11 @@ namespace System.Linq.Expressions {
 		// This method must be overwritten by derived classes to
 		// compile the expression
 		//
+#if !FULL_AOT_RUNTIME
 		internal virtual void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException (String.Format ("Emit method is not implemented in expression type {0}", GetType ()));
 		}
+#endif
 	}
 }

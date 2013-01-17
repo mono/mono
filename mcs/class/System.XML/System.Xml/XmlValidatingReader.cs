@@ -377,9 +377,9 @@ namespace System.Xml
 			return validatingReader == null ? null : validatingReader [name];
 		}
 
-		public override string GetAttribute (string localName, string namespaceName)
+		public override string GetAttribute (string localName, string namespaceURI)
 		{
-			return validatingReader == null ? null : validatingReader [localName, namespaceName];
+			return validatingReader == null ? null : validatingReader [localName, namespaceURI];
 		}
 
 		XmlParserContext IHasXmlParserContext.ParserContext {
@@ -446,11 +446,11 @@ namespace System.Xml
 			return validatingReader.MoveToAttribute (name);
 		}
 
-		public override bool MoveToAttribute (string localName, string namespaceName)
+		public override bool MoveToAttribute (string localName, string namespaceURI)
 		{
 			if (validatingReader == null)
 				return false;
-			return validatingReader.MoveToAttribute (localName, namespaceName);
+			return validatingReader.MoveToAttribute (localName, namespaceURI);
 		}
 
 		public override bool MoveToElement ()
@@ -579,39 +579,39 @@ namespace System.Xml
 
 #if NET_2_0
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadContentAsBase64 (byte [] buffer, int offset, int length)
+		public override int ReadContentAsBase64 (byte [] buffer, int index, int count)
 		{
 			if (validatingReader != null)
-				return validatingReader.ReadContentAsBase64 (buffer, offset, length);
+				return validatingReader.ReadContentAsBase64 (buffer, index, count);
 			else
-				return sourceReader.ReadContentAsBase64 (buffer, offset, length);
+				return sourceReader.ReadContentAsBase64 (buffer, index, count);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadContentAsBinHex (byte [] buffer, int offset, int length)
+		public override int ReadContentAsBinHex (byte [] buffer, int index, int count)
 		{
 			if (validatingReader != null)
-				return validatingReader.ReadContentAsBinHex (buffer, offset, length);
+				return validatingReader.ReadContentAsBinHex (buffer, index, count);
 			else
-				return sourceReader.ReadContentAsBinHex (buffer, offset, length);
+				return sourceReader.ReadContentAsBinHex (buffer, index, count);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadElementContentAsBase64 (byte [] buffer, int offset, int length)
+		public override int ReadElementContentAsBase64 (byte [] buffer, int index, int count)
 		{
 			if (validatingReader != null)
-				return validatingReader.ReadElementContentAsBase64 (buffer, offset, length);
+				return validatingReader.ReadElementContentAsBase64 (buffer, index, count);
 			else
-				return sourceReader.ReadElementContentAsBase64 (buffer, offset, length);
+				return sourceReader.ReadElementContentAsBase64 (buffer, index, count);
 		}
 
 		[MonoTODO] // FIXME: Check how expanded entity is handled here.
-		public override int ReadElementContentAsBinHex (byte [] buffer, int offset, int length)
+		public override int ReadElementContentAsBinHex (byte [] buffer, int index, int count)
 		{
 			if (validatingReader != null)
-				return validatingReader.ReadElementContentAsBinHex (buffer, offset, length);
+				return validatingReader.ReadElementContentAsBinHex (buffer, index, count);
 			else
-				return sourceReader.ReadElementContentAsBinHex (buffer, offset, length);
+				return sourceReader.ReadElementContentAsBinHex (buffer, index, count);
 		}
 #endif
 		#endregion // Methods

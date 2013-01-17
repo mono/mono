@@ -1,6 +1,5 @@
 // CS1988: Async methods cannot have ref or out parameters
 // Line: 12
-// Compiler options: -langversion:future
 
 using System;
 

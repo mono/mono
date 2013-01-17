@@ -36,9 +36,7 @@ namespace System.Diagnostics
 	/// Provides a simple on/off switch that controls debugging
 	/// and tracing output
 	/// </summary>
-#if NET_2_0
 	[SwitchLevel (typeof (bool))]
-#endif
 	public class BooleanSwitch : Switch
 	{
 		/// <summary>
@@ -49,7 +47,6 @@ namespace System.Diagnostics
 		{
 		}
 
-#if NET_2_0
 		/// <summary>
 		/// Initializes a new instance
 		/// </summary>
@@ -57,7 +54,6 @@ namespace System.Diagnostics
 			: base(displayName, description, defaultSwitchValue)
 		{
 		}
-#endif
 
 		/// <summary>
 		/// Specifies whether the switch is enabled or disabled
@@ -70,7 +66,6 @@ namespace System.Diagnostics
 			}
 		}
 
-#if NET_2_0
 		protected override void OnValueChanged ()
 		{
 			int i;
@@ -79,7 +74,6 @@ namespace System.Diagnostics
 			else
 				Enabled = Convert.ToBoolean (Value);
 		}
-#endif
 	}
 }
 

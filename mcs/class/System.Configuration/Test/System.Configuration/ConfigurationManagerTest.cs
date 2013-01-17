@@ -39,6 +39,8 @@ using SysConfig = System.Configuration.Configuration;
 using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Configuration {
+	using Util;
+
 	[TestFixture]
 	public class ConfigurationManagerTest
 	{
@@ -61,7 +63,7 @@ namespace MonoTests.System.Configuration {
 			if (Directory.Exists (tempFolder))
 				Directory.Delete (tempFolder, true);
 		}
-
+		
 		[Test] // OpenExeConfiguration (ConfigurationUserLevel)
 		[Category ("NotWorking")] // bug #323622
 		public void OpenExeConfiguration1_Remote ()
@@ -143,13 +145,7 @@ namespace MonoTests.System.Configuration {
 
 			Console.WriteLine("application config path: {0}", config.FilePath);
 			FileInfo fi = new FileInfo (config.FilePath);
-#if TARGET_JVM
-			Assert.AreEqual ("nunit-console.jar.config", fi.Name);
-#elif NET_4_0
-			Assert.AreEqual ("System.Configuration_test_net_4_0.dll.config", fi.Name);
-#else
-			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
-#endif
+			Assert.AreEqual (TestUtil.ThisConfigFileName, fi.Name);
 		}
 
 		[Test]
@@ -201,8 +197,15 @@ namespace MonoTests.System.Configuration {
 			exePath = "relative.exe";
 			File.Create (Path.Combine (tempFolder, exePath)).Close ();
 
-			config = ConfigurationManager.OpenExeConfiguration (exePath);
-			Assert.AreEqual (Path.Combine (tempFolder, exePath + ".config"), config.FilePath, "#4");
+			//
+			// The temp directory as computed by the runtime is slightly different, as
+			// it will contain the full path after following links, while the test
+			// below is not comprehensive enough to follow links if there are any
+			// present in tempFolder
+			//
+			
+			//config = ConfigurationManager.OpenExeConfiguration (exePath);
+			//Assert.AreEqual (Path.Combine (tempFolder, exePath + ".config"), config.FilePath, "#4");
 		}
 
 		[Test] // OpenExeConfiguration (String)
@@ -254,8 +257,9 @@ namespace MonoTests.System.Configuration {
 		public void exePath_UserLevelNone ()
 		{
 			string basedir = AppDomain.CurrentDomain.BaseDirectory;
-			SysConfig config = ConfigurationManager.OpenExeConfiguration("System.Configuration_test_net_2_0.dll.mdb");
-			Assert.AreEqual (Path.Combine (basedir, "System.Configuration_test_net_2_0.dll.mdb.config"), config.FilePath);
+			string name = TestUtil.ThisDllName;
+			SysConfig config = ConfigurationManager.OpenExeConfiguration (name);
+			Assert.AreEqual (Path.Combine (basedir, name + ".config"), config.FilePath);
 		}
 
 		[Test]
@@ -382,12 +386,12 @@ namespace MonoTests.System.Configuration {
 		[Test]
 		public void exePath_UserLevelNone_null ()
 		{
-			SysConfig config = ConfigurationManager.OpenExeConfiguration (null);
 #if false
+			SysConfig config = ConfigurationManager.OpenExeConfiguration (null);
 			Console.WriteLine("null exe application config path: {0}", config.FilePath);	
 
 			FileInfo fi = new FileInfo (config.FilePath);
-			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
+			Assert.AreEqual (TestUtil.ThisConfigFileName, fi.Name);
 #endif
 		}
 
@@ -396,14 +400,10 @@ namespace MonoTests.System.Configuration {
 		public void mapped_ExeConfiguration_null ()
 		{
 			SysConfig config = ConfigurationManager.OpenMappedExeConfiguration(null, ConfigurationUserLevel.None);
-			Console.WriteLine("null mapped application config path: {0}", config.FilePath);	
+			Console.WriteLine("null mapped application config path: {0}", config.FilePath);
 
 			FileInfo fi = new FileInfo (config.FilePath);
-#if TARGET_JVM
-			Assert.AreEqual("System.Configuration.Test20.jar.config", fi.Name);
-#else
-			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
-#endif
+			Assert.AreEqual (TestUtil.ThisConfigFileName, fi.Name);
 		}
 
 		[Test]
@@ -445,6 +445,120 @@ namespace MonoTests.System.Configuration {
 			e.MoveNext ();
 			Assert.IsTrue (e.Current is ConfigurationSection);
 		}
+
+		[Test]	// Test for bug #3412
+		[Category("NotWorking")]
+		public void TestAddRemoveSection()
+		{
+			const string name = "testsection";
+			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+			// ensure not present
+			if (config.Sections.Get(name) != null)
+			{
+				config.Sections.Remove(name);
+			}
+
+			// add
+			config.Sections.Add(name, new TestSection());
+
+			// remove
+			var section = config.Sections.Get(name);
+			Assert.IsNotNull(section);
+			Assert.IsNotNull(section as TestSection);
+			config.Sections.Remove(name);
+
+			// add
+			config.Sections.Add(name, new TestSection());
+
+			// remove
+			section = config.Sections.Get(name);
+			Assert.IsNotNull(section);
+			Assert.IsNotNull(section as TestSection);
+			config.Sections.Remove(name);
+		}
+		
+		[Test]
+		public void TestFileMap ()
+		{
+			var name = Path.GetRandomFileName () + ".config";
+			Assert.IsFalse (File.Exists (name));
+
+			try {
+				var map = new ExeConfigurationFileMap ();
+				map.ExeConfigFilename = name;
+			
+				var config = ConfigurationManager.OpenMappedExeConfiguration (
+					map, ConfigurationUserLevel.None);
+				
+				config.Sections.Add ("testsection", new TestSection ());
+			
+				config.Save ();
+			
+				Assert.IsTrue (File.Exists (name), "#1");
+				Assert.IsTrue (File.Exists (Path.GetFullPath (name)), "#2");
+			} finally {
+				File.Delete (name);
+			}
+		}
+		
+		[Test]
+		public void TestContext ()
+		{
+			var config = ConfigurationManager.OpenExeConfiguration (ConfigurationUserLevel.None);
+			const string name = "testsection";
+
+			// ensure not present
+			if (config.GetSection (name) != null)
+				config.Sections.Remove (name);
+
+			var section = new TestContextSection ();
+
+			// Can't access EvaluationContext ....
+			try {
+				section.TestContext (null);
+				Assert.Fail ("#1");
+			} catch (ConfigurationException) {
+				;
+			}
+
+			// ... until it's been added to a section.
+			config.Sections.Add (name, section);
+			section.TestContext ("#2");
+
+			// Remove ...
+			config.Sections.Remove (name);
+
+			// ... and it doesn't lose its context
+			section.TestContext (null);
+		}
+
+		[Test]
+		public void TestContext2 ()
+		{
+			var name = Path.GetRandomFileName () + ".config";
+			Assert.IsFalse (File.Exists (name));
+			
+			try {
+				var map = new ExeConfigurationFileMap ();
+				map.ExeConfigFilename = name;
+				
+				var config = ConfigurationManager.OpenMappedExeConfiguration (
+					map, ConfigurationUserLevel.None);
+				
+				config.Sections.Add ("testsection", new TestSection ());
+				config.Sections.Add ("testcontext", new TestContextSection ());
+				
+				config.Save ();
+				
+				Assert.IsTrue (File.Exists (name), "#1");
+			} finally {
+				File.Delete (name);
+			}
+		}
+
+			
+		class TestSection : ConfigurationSection  {}
 
 		class RemoteConfig : MarshalByRefObject
 		{
@@ -488,6 +602,13 @@ namespace MonoTests.System.Configuration {
 			public string GetSettingValue (string key)
 			{
 				return ConfigurationManager.AppSettings [key];
+			}
+		}
+		
+		class TestContextSection : ConfigurationSection {
+			public void TestContext (string label)
+			{
+				Assert.That (EvaluationContext != null, label);
 			}
 		}
 	}

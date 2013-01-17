@@ -1,10 +1,12 @@
 //
 // TaskExtensions.cs
 //
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2010 Jérémie "Garuma" Laval
+// Copyright (C) 2013 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,27 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
-
-using System;
-using System.Threading.Tasks;
+#if NET_4_0 || MOBILE
 
 namespace System.Threading.Tasks 
 {
 	public static class TaskExtensions
 	{
-		const TaskContinuationOptions opt = TaskContinuationOptions.ExecuteSynchronously;
-
 		public static Task<TResult> Unwrap<TResult> (this Task<Task<TResult>> task)
 		{
 			if (task == null)
 				throw new ArgumentNullException ("task");
 
-			TaskCompletionSource<TResult> src = new TaskCompletionSource<TResult> ();
-
-			task.ContinueWith (t1 => CopyCat (t1, src, () => t1.Result.ContinueWith (t2 => CopyCat (t2, src, () => src.SetResult (t2.Result)), opt)), opt);
-
-			return src.Task;
+			return TaskExtensionsImpl.Unwrap (task);
 		}
 
 		public static Task Unwrap (this Task<Task> task)
@@ -54,23 +47,7 @@ namespace System.Threading.Tasks
 			if (task == null)
 				throw new ArgumentNullException ("task");
 
-			TaskCompletionSource<object> src = new TaskCompletionSource<object> ();
-
-			task.ContinueWith (t1 => CopyCat (t1, src, () => t1.Result.ContinueWith (t2 => CopyCat (t2, src, () => src.SetResult (null)), opt)), opt);
-
-			return src.Task;
-		}
-
-		static void CopyCat<TResult> (Task source,
-		                              TaskCompletionSource<TResult> dest,
-		                              Action normalAction)
-		{
-			if (source.IsCanceled)
-				dest.SetCanceled ();
-			else if (source.IsFaulted)
-				dest.SetException (source.Exception.InnerExceptions);
-			else
-				normalAction ();
+			return TaskExtensionsImpl.Unwrap (task);
 		}
 	}
 }

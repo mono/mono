@@ -58,7 +58,7 @@ namespace Delegates
       Console.WriteLine(s.Value);
     }
 
-    static void Main(string[] args)
+    public static void Main(string[] args)
     { SpaceLeak();
     }
   }

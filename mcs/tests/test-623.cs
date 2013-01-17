@@ -15,7 +15,7 @@ class Y : X {
 		return;
 	}
 
-	static void Main () {
+	public static void Main () {
 		Y y = new Y ();
 
 		((I) y ).a ();

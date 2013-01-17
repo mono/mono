@@ -8,7 +8,7 @@ class C
 {
 	public async Task<int> TestResult ()
 	{
-		if (await Task.Factory.StartNew (() => 8) != 9) {
+		if (await Task.Factory.StartNew (() => 8).ConfigureAwait (false) != 9) {
 			return 2;
 		}
 		
@@ -30,7 +30,7 @@ class C
 			return 3;
 		
 		Func<Task<int>> f = async () => {
-			var tr = await Task.Factory.StartNew (() => 1);
+			var tr = await Task.Factory.StartNew (() => 1).ConfigureAwait (false);
 			if (tr == 1)
 				return 3;
 

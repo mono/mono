@@ -1,9 +1,11 @@
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Metadata;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Mono.Debugger.Soft
@@ -11,11 +13,11 @@ namespace Mono.Debugger.Soft
 	public class MethodBodyMirror : Mirror
 	{
 		MethodMirror method;
-		byte[] il;
+		MethodBodyInfo info;
 
-		internal MethodBodyMirror (VirtualMachine vm, MethodMirror method, byte[] il) : base (vm, 0) {
+		internal MethodBodyMirror (VirtualMachine vm, MethodMirror method, MethodBodyInfo info) : base (vm, 0) {
 			this.method = method;
-			this.il = il;
+			this.info = info;
 		}
 
 		public MethodMirror Method {
@@ -24,13 +26,29 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public List<ILExceptionHandler> ExceptionHandlers {
+			get {
+				vm.CheckProtocolVersion (2, 18);
+				return info.clauses.Select (c =>
+				{
+					var handler = new ILExceptionHandler (c.try_offset, c.try_length, (ILExceptionHandlerType) c.flags, c.handler_offset, c.handler_length);
+					if (c.flags == ExceptionClauseFlags.None)
+						handler.CatchType = vm.GetType (c.catch_type_id);
+					else if (c.flags == ExceptionClauseFlags.Filter)
+						handler.FilterOffset = c.filter_offset;
+
+					return handler;
+				}).ToList ();
+			}
+		}
+
 		public byte[] GetILAsByteArray () {
-			return il;
+			return info.il;
 		}
 
 		public List<ILInstruction> Instructions {
 			get {
-				return ReadCilBody (new BinaryReader (new MemoryStream (il)), il.Length);
+				return ReadCilBody (new BinaryReader (new MemoryStream (info.il)), info.il.Length);
 			}
 		}
 
@@ -40,7 +58,7 @@ namespace Mono.Debugger.Soft
 		static OpCode [] TwoBytesOpCode = new OpCode [0x1e + 1];
 
 		// Adapted from Cecil
-	    List<ILInstruction> ReadCilBody (BinaryReader br, int code_size)
+		List<ILInstruction> ReadCilBody (BinaryReader br, int code_size)
 		{
 			long start = br.BaseStream.Position;
 			ILInstruction last = null;

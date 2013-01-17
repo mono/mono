@@ -24,10 +24,9 @@
 #include <windows.h>
 
 typedef DWORD MonoNativeThreadId;
-typedef HANDLE MonoNativeThreadHandle;
+typedef HANDLE MonoNativeThreadHandle; /* unused */
 
-#define mono_native_thread_id_get GetCurrentThreadId
-#define mono_native_thread_id_equals(a,b) ((a) == ((b))
+typedef DWORD mono_native_thread_return_t;
 
 #else
 
@@ -39,45 +38,77 @@ typedef HANDLE MonoNativeThreadHandle;
 typedef thread_port_t MonoNativeThreadHandle;
 
 #else
-/*FIXME this should be pid_t on posix - to handle android borken signaling */
-typedef pthread_t MonoNativeThreadHandle;
+
+#include <unistd.h>
+
+typedef pid_t MonoNativeThreadHandle;
 
 #endif /* defined(__MACH__) */
 
 typedef pthread_t MonoNativeThreadId;
 
-#define mono_native_thread_id_get pthread_self
-#define mono_native_thread_id_equals(a,b) pthread_equal((a),(b))
+typedef void* mono_native_thread_return_t;
 
 #endif /* #ifdef HOST_WIN32 */
 
+/*
+THREAD_INFO_TYPE is a way to make the mono-threads module parametric - or sort of.
+The GC using mono-threads might extend the MonoThreadInfo struct to add its own
+data, this avoid a pointer indirection on what is on a lot of hot paths.
+
+But extending MonoThreadInfo has de disavantage that all functions here return type
+would require a cast, something like the following:
+
+typedef struct {
+	MonoThreadInfo info;
+	int stuff;
+}  MyThreadInfo;
+
+...
+((MyThreadInfo*)mono_thread_info_current ())->stuff = 1;
+
+While porting sgen to use mono-threads, the number of casts required was too much and
+code ended up looking horrible. So we use this cute little hack. The idea is that
+whomever is including this header can set the expected type to be used by functions here
+and reduce the number of casts drastically.
+
+*/
 #ifndef THREAD_INFO_TYPE
 #define THREAD_INFO_TYPE MonoThreadInfo
 #endif
 
 enum {
-	STATE_STARTING,
-	STATE_RUNNING,
-	STATE_SHUTTING_DOWN,
-	STATE_DEAD
+	STATE_STARTING			= 0x01,
+	STATE_RUNNING			= 0x02,
+	STATE_SHUTTING_DOWN		= 0x03,
+	STATE_DEAD				= 0x04,
+	RUN_STATE_MASK			= 0x0F,
+
+	STATE_SUSPENDED			= 0x10,
+	STATE_SELF_SUSPENDED	= 0x20,
+	SUSPEND_STATE_MASK		= 0xF0,
 };
+
+#define mono_thread_info_run_state(info) ((info)->thread_state & RUN_STATE_MASK)
+#define mono_thread_info_suspend_state(info) ((info)->thread_state & SUSPEND_STATE_MASK)
 
 typedef struct {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
-	MonoNativeThreadHandle native_handle;
+	MonoNativeThreadHandle native_handle; /* Valid on mach and android */
 	int thread_state;
 
 	/* suspend machinery, fields protected by the suspend_lock */
 	CRITICAL_SECTION suspend_lock;
 	int suspend_count;
 
+	MonoSemType finish_resume_semaphore;
+	MonoSemType resume_semaphore; 
+
 	/* only needed by the posix backend */ 
 #if (defined(_POSIX_VERSION) || defined(__native_client__)) && !defined (__MACH__)
 	MonoSemType suspend_semaphore;
-	MonoSemType resume_semaphore; 
-	MonoSemType finish_resume_semaphore;
-	gboolean self_suspend;
+	gboolean syscall_break_signal;
 #endif
 
 	/*In theory, only the posix backend needs this, but having it on mach/win32 simplifies things a lot.*/
@@ -111,13 +142,13 @@ typedef struct {
 /*
 Requires the world to be stoped
 */
-#define FOREACH_THREAD(thread) MONO_LLS_FOREACH (mono_thread_info_list_head (), thread)
+#define FOREACH_THREAD(thread) MONO_LLS_FOREACH (mono_thread_info_list_head (), thread, SgenThreadInfo*)
 #define END_FOREACH_THREAD MONO_LLS_END_FOREACH
 
 /*
 Snapshot iteration.
 */
-#define FOREACH_THREAD_SAFE(thread) MONO_LLS_FOREACH_SAFE (mono_thread_info_list_head (), thread)
+#define FOREACH_THREAD_SAFE(thread) MONO_LLS_FOREACH_SAFE (mono_thread_info_list_head (), thread, SgenThreadInfo*)
 #define END_FOREACH_THREAD_SAFE MONO_LLS_END_FOREACH_SAFE
 
 #define mono_thread_info_get_tid(info) ((MonoNativeThreadId)((MonoThreadInfo*)info)->node.key)
@@ -187,11 +218,25 @@ mono_threads_unregister_current_thread (THREAD_INFO_TYPE *info) MONO_INTERNAL;
 void
 mono_thread_info_disable_new_interrupt (gboolean disable) MONO_INTERNAL;
 
+void
+mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid) MONO_INTERNAL;
 
 #if !defined(HOST_WIN32)
 
 int
 mono_threads_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg) MONO_INTERNAL;
+
+#if !defined(__MACH__)
+/*Use this instead of pthread_kill */
+int
+mono_threads_pthread_kill (THREAD_INFO_TYPE *info, int signum) MONO_INTERNAL;
+#endif
+
+#else  /* !defined(HOST_WIN32) */
+
+HANDLE
+	mono_threads_CreateThread (LPSECURITY_ATTRIBUTES attributes, SIZE_T stack_size, LPTHREAD_START_ROUTINE start_routine, LPVOID arg, DWORD creation_flags, LPDWORD thread_id);
+
 
 #endif /* !defined(HOST_WIN32) */
 
@@ -201,7 +246,15 @@ gboolean mono_threads_core_suspend (MonoThreadInfo *info) MONO_INTERNAL;
 gboolean mono_threads_core_resume (MonoThreadInfo *info) MONO_INTERNAL;
 void mono_threads_platform_register (MonoThreadInfo *info) MONO_INTERNAL; //ok
 void mono_threads_platform_free (MonoThreadInfo *info) MONO_INTERNAL;
-void mono_threads_core_self_suspend (MonoThreadInfo *info) MONO_INTERNAL;
 void mono_threads_core_interrupt (MonoThreadInfo *info) MONO_INTERNAL;
+void mono_threads_core_abort_syscall (MonoThreadInfo *info) MONO_INTERNAL;
+gboolean mono_threads_core_needs_abort_syscall (void) MONO_INTERNAL;
+
+MonoNativeThreadId mono_native_thread_id_get (void) MONO_INTERNAL;
+
+gboolean mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2) MONO_INTERNAL;
+
+gboolean
+mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg) MONO_INTERNAL;
 
 #endif /* __MONO_THREADS_H__ */

@@ -1361,8 +1361,6 @@ namespace System.Data
 		
 		private void ProcessDbSource (XmlElement el)
 		{
-			
-			string cmdType;
 			string tmp = null;
 			XmlElement e;
 			

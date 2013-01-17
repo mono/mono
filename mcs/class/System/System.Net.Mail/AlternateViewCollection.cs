@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections.ObjectModel;
 using System.Net.Mime;
 
@@ -82,4 +80,3 @@ namespace System.Net.Mail {
 	}
 }
 
-#endif // NET_2_0

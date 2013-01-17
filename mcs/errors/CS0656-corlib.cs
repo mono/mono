@@ -4,54 +4,54 @@
 
 namespace System
 {
-	public class Object {}
-		
-	public struct Byte {}
-	public struct Int16 {}
-	public struct Int32 {}
-	public struct Int64 {}
-	public struct Single {}
-	public struct Double{}
-	public struct Char {}
-	public struct Boolean {}
-	public struct SByte {}
-	public struct UInt16 {}
-	public struct UInt32 {}
-	public struct UInt64 {}
-	public struct IntPtr {}
-	public struct UIntPtr {}
-	public struct Decimal { }
-	public class String { }
-	public class Delegate {}
-	public class MulticastDelegate {}
-	public class Array {}
-	public class Exception {}
-	public class Type {}
-	public class ValueType {}
-	public class Enum {}
-	public class Attribute {}
-	public struct Void {}
-	public class ParamArrayAttribute {}
-	public class DefaultMemberAttribute {}
-	public struct RuntimeTypeHandle {}
-	public struct RuntimeFieldHandle {}
-		
-	public interface IDisposable {}
+	public partial class Object {}
+
+	public partial struct Byte {}
+	public partial struct Int16 {}
+	public partial struct Int32 {}
+	public partial struct Int64 {}
+	public partial struct Single {}
+	public partial struct Double{}
+	public partial struct Char {}
+	public partial struct Boolean {}
+	public partial struct SByte {}
+	public partial struct UInt16 {}
+	public partial struct UInt32 {}
+	public partial struct UInt64 {}
+	public partial struct IntPtr {}
+	public partial struct UIntPtr {}
+	public partial struct Decimal { }
+	public partial class String { }
+	public partial class Delegate {}
+	public partial class MulticastDelegate {}
+	public partial class Array {}
+	public partial class Exception {}
+	public partial class Type {}
+	public partial class ValueType {}
+	public partial class Enum {}
+	public partial class Attribute {}
+	public partial struct Void {}
+	public partial class ParamArrayAttribute {}
+	public partial class DefaultMemberAttribute {}
+	public partial struct RuntimeTypeHandle {}
+	public partial struct RuntimeFieldHandle {}
+
+	public partial interface IDisposable {}
 }
 	
 namespace System.Runtime.InteropServices
 {
-	public class OutAttribute {}
+	public partial class OutAttribute {}
 }
 		
 
 namespace System.Collections
 {
-	public interface IEnumerable {}
-	public interface IEnumerator {}
+	public partial interface IEnumerable {}
+	public partial interface IEnumerator {}
 }
 
 namespace System.Reflection
 {
-	public class DefaultMemberAttribute {}
+	public partial class DefaultMemberAttribute {}
 }

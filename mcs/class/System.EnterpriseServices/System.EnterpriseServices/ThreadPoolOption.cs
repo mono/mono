@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[Serializable]
 	[ComVisible(false)]
 	public enum ThreadPoolOption {
@@ -41,5 +40,4 @@ namespace System.EnterpriseServices {
 		STA,
 		MTA
 	}
-#endif
 }

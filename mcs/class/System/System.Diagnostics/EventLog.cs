@@ -44,11 +44,7 @@ namespace System.Diagnostics
 {
 	[DefaultEvent ("EntryWritten")]
 	[InstallerType (typeof (EventLogInstaller))]
-#if NET_2_0
 	[MonitoringDescription ("Represents an event log")]
-#else
-	[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
-#endif
 	public class EventLog : Component, ISupportInitialize 
 	{
 		private string source;
@@ -85,15 +81,9 @@ namespace System.Diagnostics
 				throw new ArgumentNullException ("logName");
 			}
 			if (machineName == null || machineName.Trim ().Length == 0)
-#if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
 					+ " parameter 'machineName'.", machineName));
-#else
-				throw new ArgumentException (string.Format (
-					CultureInfo.InvariantCulture, "Invalid value {0} for"
-					+ " parameter MachineName.", machineName));
-#endif
 
 			this.source = source;
 			this.machineName = machineName;
@@ -194,7 +184,6 @@ namespace System.Diagnostics
 			set {synchronizingObject = value;}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		[ComVisibleAttribute (false)]
 		[Browsable (false)]
@@ -231,7 +220,6 @@ namespace System.Diagnostics
 		{
 			Impl.RegisterDisplayName (resourceFile, resourceId);
 		}
-#endif
 
 		public void BeginInit ()
 		{
@@ -272,9 +260,7 @@ namespace System.Diagnostics
 			CreateEventSource (source, logName, ".");
 		}
 
-#if NET_2_0
 		[Obsolete ("use CreateEventSource(EventSourceCreationData) instead")]
-#endif
 		public static void CreateEventSource (string source, 
 			string logName, 
 			string machineName)
@@ -283,13 +269,8 @@ namespace System.Diagnostics
 				machineName));
 		}
 
-#if NET_2_0
 		[MonoNotSupported ("remote machine is not supported")]
-		public
-#else
-		private
-#endif
-		static void CreateEventSource (EventSourceCreationData sourceData)
+		public static void CreateEventSource (EventSourceCreationData sourceData)
 		{
 			if (sourceData.Source == null || sourceData.Source.Length == 0)
 				throw new ArgumentException ("Source property value has not been specified.");
@@ -336,15 +317,9 @@ namespace System.Diagnostics
 		public static void DeleteEventSource (string source, string machineName)
 		{
 			if (machineName == null || machineName.Trim ().Length == 0)
-#if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
 					+ " parameter 'machineName'.", machineName));
-#else
-				throw new ArgumentException (string.Format (
-					CultureInfo.InvariantCulture, "Invalid value {0} for"
-					+ " parameter machineName.", machineName));
-#endif
 
 			EventLogImpl impl = CreateEventLogImpl (string.Empty, machineName,
 				source);
@@ -397,15 +372,9 @@ namespace System.Diagnostics
 		public static string LogNameFromSourceName (string source, string machineName)
 		{
 			if (machineName == null || machineName.Trim ().Length == 0)
-#if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
 					+ " parameter 'MachineName'.", machineName));
-#else
-				throw new ArgumentException (string.Format (
-					CultureInfo.InvariantCulture, "Invalid value {0} for"
-					+ " parameter MachineName.", machineName));
-#endif
 
 			EventLogImpl impl = CreateEventLogImpl (string.Empty, machineName,
 				source);
@@ -421,15 +390,9 @@ namespace System.Diagnostics
 		public static bool SourceExists (string source, string machineName)
 		{
 			if (machineName == null || machineName.Trim ().Length == 0)
-#if NET_2_0
 				throw new ArgumentException (string.Format (
 					CultureInfo.InvariantCulture, "Invalid value '{0}' for"
 					+ " parameter 'machineName'.", machineName));
-#else
-				throw new ArgumentException (string.Format (
-					CultureInfo.InvariantCulture, "Invalid value {0} for"
-					+ " parameter machineName.", machineName));
-#endif
 
 			EventLogImpl impl = CreateEventLogImpl (string.Empty, machineName,
 				source);
@@ -500,7 +463,6 @@ namespace System.Diagnostics
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public void WriteEvent (EventInstance instance, params object [] values)
 		{
@@ -543,7 +505,6 @@ namespace System.Diagnostics
 				eventLog.WriteEvent (instance, data, values);
 			}
 		}
-#endif
 
 		internal void OnEntryWritten (EventLogEntry newEntry)
 		{
@@ -627,9 +588,7 @@ namespace System.Diagnostics
 				throw new InvalidEnumArgumentException ("type", (int) type,
 					typeof (EventLogEntryType));
 
-#if NET_2_0
 			ValidateEventID (instanceID);
-#endif
 
 			if (!SourceExists (Source, MachineName)) {
 				if (Log == null || Log.Length == 0) {
@@ -637,13 +596,7 @@ namespace System.Diagnostics
 				}
 				CreateEventSource (Source, Log, MachineName);
 
-#if ONLY_1_1
-				ValidateEventID (instanceID);
-#endif
 			} else if (logName != null && logName.Length != 0) {
-#if ONLY_1_1
-				ValidateEventID (instanceID);
-#endif
 				string actualLog = LogNameFromSourceName (Source, MachineName);
 				if (string.Compare (logName, actualLog, true, CultureInfo.InvariantCulture) != 0)
 					throw new ArgumentException (string.Format (
@@ -655,9 +608,6 @@ namespace System.Diagnostics
 						+ " property.", Source, logName, actualLog));
 			}
 
-#if ONLY_1_1
-			ValidateEventID (instanceID);
-#endif
 
 			if (rawData == null)
 				rawData = new byte [0];

@@ -94,9 +94,9 @@ namespace System.Xml.Schema
 		}
 
 		// Never use it. It actually does nothing even on MS.NET 2.0.
-		protected internal void SetSourceObject (object o)
+		protected internal void SetSourceObject (object sourceObject)
 		{
-			source_object = o;
+			this.source_object = sourceObject;
 		}
 
 		public object SourceObject {

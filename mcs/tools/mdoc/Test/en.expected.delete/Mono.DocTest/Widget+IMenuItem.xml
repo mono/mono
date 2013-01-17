@@ -1,0 +1,40 @@
+<Type Name="Widget+IMenuItem" FullName="Mono.DocTest.Widget+IMenuItem">
+  <TypeSignature Language="C#" Value="public interface Widget.IMenuItem" />
+  <TypeSignature Language="ILAsm" Value=".class nested public interface auto ansi abstract Widget/IMenuItem" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="A">
+      <MemberSignature Language="C#" Value="public void A ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void A() cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="B">
+      <MemberSignature Language="C#" Value="public int B { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 B" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

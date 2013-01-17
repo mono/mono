@@ -5,6 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -3236,6 +3237,21 @@ namespace MonoTests.System
 			Assembly asm = Assembly.ReflectionOnlyLoad(Assembly.LoadWithPartialName("System").FullName);
 			asm.GetTypes();
 		}
+
+        [Test]
+		public void ResourceResolve ()
+		{
+			bool called = false;
+
+			ResolveEventHandler del = delegate (object sender, ResolveEventArgs args) { 
+					called = true; 
+					return null;
+			};
+			AppDomain.CurrentDomain.ResourceResolve += del;
+			Stream st = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("NOT_EXISTING");
+			Assert.IsTrue (called);
+			AppDomain.CurrentDomain.ResourceResolve -= del;
+		}			
 
 		private static Assembly CurrentDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
 		{

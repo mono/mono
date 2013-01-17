@@ -36,9 +36,7 @@ namespace System.Diagnostics {
 	[Serializable]
 	public class PerformanceCounterPermissionEntry {
 
-#if NET_2_0
 		private const PerformanceCounterPermissionAccess All = (PerformanceCounterPermissionAccess) 0x07;
-#endif
 		private PerformanceCounterPermissionAccess permissionAccess;
 		private string machineName;
 		private string categoryName;
@@ -46,12 +44,10 @@ namespace System.Diagnostics {
 		public PerformanceCounterPermissionEntry (PerformanceCounterPermissionAccess permissionAccess,
 			string machineName, string categoryName)
 		{
-#if NET_2_0
 			if (machineName == null)
 				throw new ArgumentNullException ("machineName");
 			if ((permissionAccess | All) != All)
 				throw new ArgumentException ("permissionAccess");
-#endif
 			ResourcePermissionBase.ValidateMachineName (machineName);
 			if (categoryName == null)
 				throw new ArgumentNullException ("categoryName");

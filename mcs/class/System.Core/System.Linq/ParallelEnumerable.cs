@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Threading;
 using System.Collections;
@@ -524,7 +524,7 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			return Any<TSource> (source, (e) => comparer.Equals (value));
+			return Any<TSource> (source, (e) => comparer.Equals (value, e));
 		}
 		#endregion
 
@@ -551,17 +551,24 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			CancellationTokenSource source = new CancellationTokenSource ();
-			ParallelQuery<bool> innerQuery
-				= first.Zip (second, (e1, e2) => comparer.Equals (e1, e2)).Where ((e) => !e).WithImplementerToken (source);
+			var source = new CancellationTokenSource ();
+			var zip = new QueryZipNode<TSource, TSource, bool> (comparer.Equals, first.Node, second.Node) {	Strict = true };
+			var innerQuery = new ParallelQuery<bool> (zip).WithImplementerToken (source);
 
 			bool result = true;
 
 			try {
-				innerQuery.ForAll ((value) => {
+				innerQuery.ForAll (value => {
+					if (!value) {
 						result = false;
 						source.Cancel ();
-					});
+					}
+				});
+			} catch (AggregateException ex) {
+				if (ex.InnerException is QueryZipException)
+					return false;
+				else
+					throw ex;
 			} catch (OperationCanceledException e) {
 				if (e.CancellationToken != source.Token)
 					throw e;
@@ -601,7 +608,7 @@ namespace System.Linq
 		                                                                              Func<TSource, TKey> keySelector,
 		                                                                              IEqualityComparer<TKey> comparer)
 		{
-			return source.GroupBy (keySelector, (e) => e, comparer);
+			return source.GroupBy (keySelector, new Identity<TSource> ().Apply, comparer);
 		}
 		
 		public static ParallelQuery<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement> (this ParallelQuery<TSource> source,
@@ -1079,10 +1086,11 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return source.Aggregate<TSource, int, int> (() => 0,
-			                                           (acc, e) => acc + 1,
-			                                           (acc1, acc2) => acc1 + acc2,
-			                                           (result) => result);
+			var helper = new CountAggregateHelper<TSource> ();
+			return source.Aggregate<TSource, int, int> (helper.Seed,
+			                                            helper.Intermediate,
+			                                            helper.Reducer,
+			                                            helper.Final);
 		}
 
 		public static int Count<TSource> (this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
@@ -1095,15 +1103,39 @@ namespace System.Linq
 			return source.Where (predicate).Count ();
 		}
 
+		class CountAggregateHelper<TSource>
+		{
+			public int Seed ()
+			{
+				return 0;
+			}
+
+			public int Intermediate (int acc, TSource e)
+			{
+				return acc + 1;
+			}
+
+			public int Reducer (int acc1, int acc2)
+			{
+				return acc1 + acc2;
+			}
+
+			public int Final (int acc)
+			{
+				return acc;
+			}
+		}
+
 		public static long LongCount<TSource> (this ParallelQuery<TSource> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			return source.Aggregate<TSource, long, long> (() => 0,
-			                                              (acc, e) => acc + 1,
-			                                              (acc1, acc2) => acc1 + acc2,
-			                                              (result) => result);
+			var helper = new LongCountAggregateHelper<TSource> ();
+			return source.Aggregate<TSource, long, long> (helper.Seed,
+			                                              helper.Intermediate,
+			                                              helper.Reducer,
+			                                              helper.Final);
 		}
 
 		public static long LongCount<TSource> (this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
@@ -1114,6 +1146,29 @@ namespace System.Linq
 				throw new ArgumentNullException ("predicate");
 
 			return source.Where (predicate).LongCount ();
+		}
+
+		class LongCountAggregateHelper<TSource>
+		{
+			public long Seed ()
+			{
+				return 0;
+			}
+
+			public long Intermediate (long acc, TSource e)
+			{
+				return acc + 1;
+			}
+
+			public long Reducer (long acc1, long acc2)
+			{
+				return acc1 + acc2;
+			}
+
+			public long Final (long acc)
+			{
+				return acc;
+			}
 		}
 		#endregion
 
@@ -1496,50 +1551,76 @@ namespace System.Linq
 		#endregion
 
 		#region Min-Max
-		static T BestOrder<T> (ParallelQuery<T> source, Func<T, T, bool> bestSelector, T seed)
+		static T BestOrder<T> (ParallelQuery<T> source, BestOrderComparer<T> bestOrderComparer)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			T best = seed;
-
-			best = source.Aggregate (() => seed,
-			                        (first, second) => (bestSelector(first, second)) ? first : second,
-			                        (first, second) => (bestSelector(first, second)) ? first : second,
-			                        (e) => e);
+			T best = source.Aggregate (bestOrderComparer.Seed,
+			                           bestOrderComparer.Intermediate,
+			                           bestOrderComparer.Intermediate,
+			                           new Identity<T> ().Apply);
 			return best;
+		}
+
+		class BestOrderComparer<T>
+		{
+			IComparer<T> comparer;
+			int inverter;
+			T seed;
+
+			public BestOrderComparer (IComparer<T> comparer, int inverter, T seed)
+			{
+				this.comparer = comparer;
+				this.inverter = inverter;
+				this.seed = seed;
+			}
+
+			public T Seed ()
+			{
+				return seed;
+			}
+
+			public T Intermediate (T first, T second)
+			{
+				return Better (first, second) ? first : second;
+			}
+
+			bool Better (T first, T second)
+			{
+				return (inverter * comparer.Compare (first, second)) > 0;
+			}
 		}
 
 		public static int Min (this ParallelQuery<int> source)
 		{
-			return BestOrder (source, (first, second) => first < second, int.MaxValue);
+			return BestOrder (source, new BestOrderComparer<int> (Comparer<int>.Default, -1, int.MaxValue));
 		}
 
 		public static long Min (this ParallelQuery<long> source)
 		{
-			return BestOrder (source, (first, second) => first < second, long.MaxValue);
+			return BestOrder (source, new BestOrderComparer<long> (Comparer<long>.Default, -1, long.MaxValue));
 		}
 
 		public static float Min (this ParallelQuery<float> source)
 		{
-			return BestOrder (source, (first, second) => first < second, float.MaxValue);
+			return BestOrder (source, new BestOrderComparer<float> (Comparer<float>.Default, -1, float.MaxValue));
 		}
 
 		public static double Min (this ParallelQuery<double> source)
 		{
-			return BestOrder (source, (first, second) => first < second, double.MaxValue);
+			return BestOrder (source, new BestOrderComparer<double> (Comparer<double>.Default, -1, double.MaxValue));
 		}
 
 		public static decimal Min (this ParallelQuery<decimal> source)
 		{
-			return BestOrder (source, (first, second) => first < second, decimal.MaxValue);
+			return BestOrder (source, new BestOrderComparer<decimal> (Comparer<decimal>.Default, -1, decimal.MaxValue));
 		}
 
 		public static TSource Min<TSource> (this ParallelQuery<TSource> source)
 		{
 			IComparer<TSource> comparer = Comparer<TSource>.Default;
-
-			return BestOrder (source, (first, second) => comparer.Compare (first, second) < 0, default (TSource));
+			return BestOrder (source, new BestOrderComparer<TSource> (comparer, -1, default (TSource)));
 		}
 
 		public static TResult Min<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> selector)
@@ -1694,34 +1775,33 @@ namespace System.Linq
 
 		public static int Max (this ParallelQuery<int> source)
 		{
-			return BestOrder (source, (first, second) => first > second, int.MinValue);
+			return BestOrder (source, new BestOrderComparer<int> (Comparer<int>.Default, 1, int.MinValue));
 		}
 
-		public static long Max(this ParallelQuery<long> source)
+		public static long Max (this ParallelQuery<long> source)
 		{
-			return BestOrder(source, (first, second) => first > second, long.MinValue);
+			return BestOrder (source, new BestOrderComparer<long> (Comparer<long>.Default, 1, long.MinValue));
 		}
 
 		public static float Max (this ParallelQuery<float> source)
 		{
-			return BestOrder(source, (first, second) => first > second, float.MinValue);
+			return BestOrder (source, new BestOrderComparer<float> (Comparer<float>.Default, 1, float.MinValue));
 		}
 
 		public static double Max (this ParallelQuery<double> source)
 		{
-			return BestOrder(source, (first, second) => first > second, double.MinValue);
+			return BestOrder (source, new BestOrderComparer<double> (Comparer<double>.Default, 1, double.MinValue));
 		}
 
 		public static decimal Max (this ParallelQuery<decimal> source)
 		{
-			return BestOrder(source, (first, second) => first > second, decimal.MinValue);
+			return BestOrder (source, new BestOrderComparer<decimal> (Comparer<decimal>.Default, 1, decimal.MinValue));
 		}
 
 		public static TSource Max<TSource> (this ParallelQuery<TSource> source)
 		{
 			IComparer<TSource> comparer = Comparer<TSource>.Default;
-
-			return BestOrder (source, (first, second) => comparer.Compare (first, second) > 0, default (TSource));
+			return BestOrder (source, new BestOrderComparer<TSource> (comparer, 1, default (TSource)));
 		}
 
 		public static TResult Max<TSource, TResult> (this ParallelQuery<TSource> source, Func<TSource, TResult> selector)
@@ -1912,11 +1992,37 @@ namespace System.Linq
 			if (source.Node.IsOrdered ())
 				return ToListOrdered (source);
 
-			List<TSource> temp = source.Aggregate (() => new List<TSource>(50),
-			                                       (list, e) => { list.Add (e); return list; },
-			                                       (list, list2) => { list.AddRange (list2); return list; },
-			                                       (list) => list);
+			var helper = new ListAggregateHelper<TSource> ();
+			List<TSource> temp = source.Aggregate (helper.Seed,
+			                                       helper.Intermediate,
+			                                       helper.Reducer,
+			                                       helper.Final);
 			return temp;
+		}
+
+		class ListAggregateHelper<TSource>
+		{
+			public List<TSource> Seed ()
+			{
+				return new List<TSource> (50);
+			}
+
+			public List<TSource> Intermediate (List<TSource> list, TSource e)
+			{
+				list.Add (e);
+				return list;
+			}
+
+			public List<TSource> Reducer (List<TSource> list, List<TSource> list2)
+			{
+				list.AddRange (list2);
+				return list;
+			}
+
+			public List<TSource> Final (List<TSource> list)
+			{
+				return list;
+			}
 		}
 
 		internal static List<TSource> ToListOrdered<TSource> (this ParallelQuery<TSource> source)
@@ -1937,32 +2043,50 @@ namespace System.Linq
 			if (source.Node.IsOrdered ())
 				return ToListOrdered (source).ToArray ();
 
-			TSource[] result = null;
+			var helper = new ArrayAggregateHelper<TSource> ();
+			ParallelExecuter.ProcessAndAggregate<TSource, List<TSource>> (source.Node,
+			                                                              helper.Seed,
+			                                                              helper.Intermediate,
+			                                                              helper.Final);
 
-			Func<List<TSource>, TSource, List<TSource>> intermediate = (list, e) => {
-				list.Add (e); return list;
-			};
+			return helper.Result;
+		}
 
-			Action<IList<List<TSource>>> final = (list) => {
+		class ArrayAggregateHelper<TSource>
+		{
+			TSource[] result;
+
+			public TSource[] Result {
+				get {
+					return result;
+				}
+			}
+
+			internal List<TSource> Seed ()
+			{
+				return new List<TSource> ();
+			}
+
+			internal List<TSource> Intermediate (List<TSource> list, TSource e)
+			{
+				list.Add (e);
+				return list;
+			}
+
+			internal void Final (IList<List<TSource>> list)
+			{
 				int count = 0;
 
 				for (int i = 0; i < list.Count; i++)
-				  count += list[i].Count;
+					count += list[i].Count;
 
 				result = new TSource[count];
 				int insertIndex = -1;
 
 				for (int i = 0; i < list.Count; i++)
-				  for (int j = 0; j < list[i].Count; j++)
-				    result [++insertIndex] = list[i][j];
-			};
-
-			ParallelExecuter.ProcessAndAggregate<TSource, List<TSource>> (source.Node,
-			                                                              () => new List<TSource> (),
-			                                                              intermediate,
-			                                                              final);
-
-			return result;
+					for (int j = 0; j < list[i].Count; j++)
+						result [++insertIndex] = list[i][j];
+			}
 		}
 
 		public static Dictionary<TKey, TSource> ToDictionary<TSource, TKey> (this ParallelQuery<TSource> source,
@@ -1999,10 +2123,49 @@ namespace System.Linq
 			if (elementSelector == null)
 				throw new ArgumentNullException ("elementSelector");
 
-			return source.Aggregate (() => new Dictionary<TKey, TElement> (comparer),
-			                          (d, e) => { d.Add (keySelector (e), elementSelector (e)); return d; },
-			                          (d1, d2) => { foreach (var couple in d2) d1.Add (couple.Key, couple.Value); return d1; },
-			                          (d) => d);
+			var helper = new DictionaryAggregateHelper<TSource, TKey, TElement> (comparer, keySelector, elementSelector);
+			return source.Aggregate (helper.Seed,
+			                         helper.Intermediate,
+			                         helper.Reducer,
+			                         helper.Final);
+		}
+
+		class DictionaryAggregateHelper<TSource, TKey, TElement>
+		{
+			IEqualityComparer<TKey> comparer;
+			Func<TSource, TKey> keySelector;
+			Func<TSource, TElement> elementSelector;
+
+			public DictionaryAggregateHelper (IEqualityComparer<TKey> comparer,
+			                                  Func<TSource, TKey> keySelector,
+			                                  Func<TSource, TElement> elementSelector)
+			{
+				this.comparer = comparer;
+				this.keySelector = keySelector;
+				this.elementSelector = elementSelector;
+			}
+
+			public Dictionary<TKey, TElement> Seed ()
+			{
+				return new Dictionary<TKey, TElement> (comparer);
+			}
+
+			public Dictionary<TKey, TElement> Intermediate (Dictionary<TKey, TElement> d, TSource e)
+			{
+				d.Add (keySelector (e), elementSelector (e));
+				return d;
+			}
+
+			public Dictionary<TKey, TElement> Reducer (Dictionary<TKey, TElement> d1, Dictionary<TKey, TElement> d2)
+			{
+				foreach (var couple in d2) d1.Add (couple.Key, couple.Value);
+				return d1;
+			}
+
+			public Dictionary<TKey, TElement> Final (Dictionary<TKey, TElement> d)
+			{
+				return d;
+			}
 		}
 
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this ParallelQuery<TSource> source,
@@ -2151,6 +2314,17 @@ namespace System.Linq
 		                                                                      Func<TFirst, TSecond, TResult> resultSelector)
 		{
 			throw new NotSupportedException ();
+		}
+		#endregion
+
+		#region Helpers
+
+		class Identity<T>
+		{
+			public T Apply (T input)
+			{
+				return input;
+			}
 		}
 		#endregion
 	}

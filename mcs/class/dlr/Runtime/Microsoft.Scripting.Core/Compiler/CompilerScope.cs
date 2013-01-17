@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -21,12 +21,9 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Dynamic;
 using System.Dynamic.Utils;
+using Microsoft.Scripting.Utils;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast.Compiler {
 #else
 namespace System.Linq.Expressions.Compiler {
@@ -205,7 +202,7 @@ namespace System.Linq.Expressions.Compiler {
             }
 
             // No visible variables
-            lc.IL.Emit(OpCodes.Call, typeof(RuntimeOps).GetMethod("CreateRuntimeVariables", Type.EmptyTypes));
+            lc.IL.Emit(OpCodes.Call, typeof(RuntimeOps).GetMethod("CreateRuntimeVariables", ReflectionUtils.EmptyTypes));
             return;
         }
 
@@ -321,13 +318,13 @@ namespace System.Linq.Expressions.Compiler {
                     ResolveVariable(v, _closureHoistedLocals).EmitLoad();
                     lc.IL.Emit(OpCodes.Newobj, boxType.GetConstructor(new Type[] { v.Type }));
                 } else {
-#if CLR2
+#if !FEATURE_CORE_DLR
                     // array[i] = new StrongBox<T>(default(T));
                     lc.IL.EmitDefault(v.Type);
                     lc.IL.Emit(OpCodes.Newobj, boxType.GetConstructor(new Type[] { v.Type }));
 #else
                     // array[i] = new StrongBox<T>();
-                    lc.IL.Emit(OpCodes.Newobj, boxType.GetConstructor(Type.EmptyTypes));
+                    lc.IL.Emit(OpCodes.Newobj, boxType.GetConstructor(ReflectionUtils.EmptyTypes));
 #endif
                 }
                 // if we want to cache this into a local, do it now

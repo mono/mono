@@ -54,11 +54,6 @@ namespace System.Threading
 			this.handle = new ManualResetEvent (initialCount == 0);
 		}
 
-		~SemaphoreSlim ()
-		{
-			Dispose(false);
-		}
-
 		public void Dispose ()
 		{
 			Dispose(true);

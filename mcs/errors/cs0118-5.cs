@@ -1,8 +1,16 @@
-// CS0118: `bar.foo' is a `field' but a `type' was expected
-// Line: 6
-// This is from bug #70758
+// CS0118: `A.s' is a `field' but a `type' was expected
+// Line: 11
 
-struct bar {
-        foo foo;
+class A
+{
+	public string s;
 }
 
+class X : A
+{
+	s MyProperty {
+		get {
+			return s;
+		}
+	}
+}

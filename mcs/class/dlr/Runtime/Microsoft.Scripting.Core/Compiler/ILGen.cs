@@ -20,17 +20,14 @@ using System.Dynamic.Utils;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using Microsoft.Scripting.Utils;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast.Compiler {
 #else
 namespace System.Linq.Expressions.Compiler {
 #endif
-#if CLR2 || SILVERLIGHT
+#if !FEATURE_CORE_DLR || SILVERLIGHT
     using ILGenerator = OffsetTrackingILGenerator;
 #endif
 
@@ -526,7 +523,12 @@ namespace System.Linq.Expressions.Compiler {
         }
 
         internal static bool ShouldLdtoken(Type t) {
-            return t is TypeBuilder || t.IsGenericParameter || t.IsVisible;
+#if FEATURE_REFEMIT
+            if (t is TypeBuilder) {
+                return true;
+            }
+#endif
+            return t.IsGenericParameter || t.IsVisible;
         }
 
         internal static bool ShouldLdtoken(MethodBase mb) {
@@ -878,7 +880,7 @@ namespace System.Linq.Expressions.Compiler {
 
 
         internal static void EmitGetValueOrDefault(this ILGenerator il, Type nullableType) {
-            MethodInfo mi = nullableType.GetMethod("GetValueOrDefault", System.Type.EmptyTypes);
+            MethodInfo mi = nullableType.GetMethod("GetValueOrDefault", ReflectionUtils.EmptyTypes);
             Debug.Assert(nullableType.IsValueType);
             il.Emit(OpCodes.Call, mi);
         }

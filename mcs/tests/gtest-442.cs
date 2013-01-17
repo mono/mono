@@ -16,5 +16,5 @@ public abstract class GenericBase<T> : NonGenericBase
 
 public class EntryPoint
 {
-	static void Main () { }
+	public static void Main () { }
 }

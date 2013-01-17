@@ -31,7 +31,7 @@ public class Test<T> : IComparable<Test<T>>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<X,Test<X>> foo = new Foo<X,Test<X>> ();
 		foreach (Test<X> test in foo)

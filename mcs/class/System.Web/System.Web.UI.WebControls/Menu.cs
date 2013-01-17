@@ -77,8 +77,6 @@ namespace System.Web.UI.WebControls
 		Hashtable _menuItemControls;
 		bool _requiresChildControlsDataBinding;
 		SiteMapNode _currSiteMapNode;
-		List<Style> levelSelectedLinkStyles;
-		List<Style> levelMenuItemLinkStyles;
 		Style popOutBoxStyle;
 		Style controlLinkStyle;
 		Style dynamicMenuItemLinkStyle;
@@ -530,7 +528,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		internal List<Style> LevelMenuItemLinkStyles {
-			get { return levelMenuItemLinkStyles; }
+			get { return null; }
 		}
 
 		internal SubMenuStyleCollection LevelSubMenuStylesInternal {
@@ -550,7 +548,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		internal List<Style> LevelSelectedLinkStyles {
-			get { return levelSelectedLinkStyles; }
+			get { return null; }
 		}
 
 		internal Style StaticHoverStyleInternal {

@@ -390,7 +390,6 @@ namespace System.Xaml
 			foreach (var p in l)
 				members.Remove (p);
 
-			XamlType xt;
 			IList<XamlTypeName> typeArgs = typeArgNames == null ? null : XamlTypeName.ParseList (typeArgNames, xaml_namespace_resolver);
 			var xtn = new XamlTypeName (ns, name, typeArgs);
 			return new StartTagInfo () { Name = name, Namespace = ns, TypeName = xtn, Members = members, Attributes = atts};
@@ -595,7 +594,7 @@ namespace System.Xaml
 		IEnumerable<XamlXmlNodeInfo> ReadCollectionItems (XamlType parentType, XamlMember xm)
 		{
 			for (r.MoveToContent (); r.NodeType != XmlNodeType.EndElement; r.MoveToContent ()) {
-var obj = new object ();
+
 				foreach (var ni in ReadObjectElement (parentType, xm)) {
 					if (ni.NodeType == XamlNodeType.None)
 						yield break;

@@ -5,10 +5,12 @@
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//  Marek Safar (marek.safar@gmail.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // (c) Copyright 2004 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -129,26 +131,23 @@ namespace System.Net
 			if (cookie == null)
 				throw new ArgumentNullException ("cookie");
 
-			if (cookie.Domain.Length == 0)
-				throw new ArgumentException ("Cookie domain not set.", "cookie.Domain");
-
-			if (cookie.Value.Length > maxCookieSize)
-				throw new CookieException ("value is larger than MaxCookieSize.");
-
-			// .NET's Add (Cookie) is fundamentally broken and does not copy properties
-			// like Secure, HttpOnly and Expires so we clone the parts that .NET
-			// does keep before calling AddCookie
-			Cookie c = new Cookie (cookie.Name, cookie.Value);
-			c.Path = (cookie.Path.Length == 0) ? "/" : cookie.Path;
-			c.Domain = cookie.Domain;
-			c.ExactDomain = cookie.ExactDomain;
-			c.Version = cookie.Version;
-			
-			AddCookie (c);
+			AddCookie (cookie);
 		}
 
 		void AddCookie (Cookie cookie)
 		{
+			if (cookie.Domain.Length == 0)
+				throw new ArgumentException ("Cookie domain not set.", "cookie.Domain");
+					
+			if (cookie.Value.Length > maxCookieSize)
+				throw new CookieException ("value is larger than MaxCookieSize.");
+					
+			if ((cookie.Version == 1) && (cookie.Domain[0] != '.'))
+				throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
+
+			if (cookie.HasDomain && !CheckPublicRoots (cookie.Domain))
+				throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
+
 			if (cookies == null)
 				cookies = new CookieCollection ();
 
@@ -163,9 +162,9 @@ namespace System.Net
 
 			// clone the important parts of the cookie
 			Cookie c = new Cookie (cookie.Name, cookie.Value);
-			c.Path = (cookie.Path.Length == 0) ? "/" : cookie.Path;
+			c.Path = cookie.Path;
 			c.Domain = cookie.Domain;
-			c.ExactDomain = cookie.ExactDomain;
+			c.HasDomain = cookie.HasDomain;
 			c.Version = cookie.Version;
 			c.Expires = cookie.Expires;
 			c.CommentUri = cookie.CommentUri;
@@ -233,9 +232,14 @@ namespace System.Net
 			if (cookie.Value == null)
 				throw new CookieException ("Invalid cookie: value");
 
-			if (uri != null && cookie.Domain.Length == 0)
-				cookie.Domain = uri.Host;
-
+			if (uri != null) {
+				if (cookie.Domain.Length == 0) {
+					cookie.Domain = uri.Host;
+					cookie.HasDomain = false;
+				} else if (cookie.HasDomain && !CheckSameOrigin (uri, cookie.Domain))
+					throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
+			}
+						
 			if (cookie.Version == 0 && String.IsNullOrEmpty (cookie.Path)) {
 				if (uri != null) {
 					cookie.Path = uri.AbsolutePath;
@@ -244,8 +248,8 @@ namespace System.Net
 				}
 			}
 
-			if (cookie.Port.Length == 0 && uri != null && !uri.IsDefaultPort) {
-				cookie.Port = "\"" + uri.Port.ToString () + "\"";
+			if (cookie.Version == 1 && cookie.Port.Length == 0 && uri != null && !uri.IsDefaultPort) {
+				cookie.Ports = new [] { uri.Port };
 			}
 		}
 
@@ -277,7 +281,7 @@ namespace System.Net
 					AddCookie (cookie);
 				}
 			}
-		}		
+		}
 
 		public string GetCookieHeader (Uri uri)
 		{
@@ -302,24 +306,77 @@ namespace System.Net
 			return result.ToString ();
 		}
 
+		internal static bool CheckPublicRoots (string domain)
+		{
+			if (string.IsNullOrEmpty (domain))
+				return true;
+
+			IPAddress address;
+			if (IPAddress.TryParse (domain, out address))
+				return domain[0] != '.';
+
+			if (domain[0] == '.')
+				domain = domain.Substring (1);
+
+			if (string.Equals (domain, "localhost", StringComparison.InvariantCultureIgnoreCase))
+				return true;
+
+			var parts = domain.Split ('.');
+			// Disallow TLDs
+			if (parts.Length < 2)
+				return false;
+
+			// FIXME: Should probably use the public suffix list at
+			//        http://publicsuffix.org/list/ or something similar.
+			return true;
+		}
+
+		internal static bool CheckSameOrigin (Uri uri, string domain)
+		{
+			if (!CheckPublicRoots (domain))
+				return false;
+
+			IPAddress address;
+			if (IPAddress.TryParse (domain, out address)) {
+				if (domain [0] == '.')
+					return false;
+
+				foreach (var ip in Dns.GetHostAddresses (uri.DnsSafeHost)) {
+					if (address.Equals (ip))
+						return true;
+				}
+				return false;
+			}
+
+			return CheckDomain (domain, uri.Host, false);
+		}
+
 		static bool CheckDomain (string domain, string host, bool exact)
 		{
 			if (domain.Length == 0)
 				return false;
 
+			var withoutDot = domain[0] == '.' ? domain.Substring (1) : domain;
+
 			if (exact)
-				return (String.Compare (host, domain, StringComparison.InvariantCultureIgnoreCase) == 0);
+				return (String.Compare (host, withoutDot, StringComparison.InvariantCultureIgnoreCase) == 0);
 
 			// check for allowed sub-domains - without string allocations
-			if (!host.EndsWith (domain, StringComparison.InvariantCultureIgnoreCase))
+			if (!host.EndsWith (withoutDot, StringComparison.InvariantCultureIgnoreCase))
 				return false;
-			// mono.com -> www.mono.com is OK but supermono.com NOT OK
-			if (domain [0] == '.')
-				return true;
-			int p = host.Length - domain.Length - 1;
+			int p = host.Length - withoutDot.Length - 1;
 			if (p < 0)
-				return false;
+				return true;
 			return (host [p] == '.');
+		}
+
+		static bool CheckDomain_RFC2109 (string domain, string host)
+		{
+			if (domain.Length == 0)
+				return false;
+
+			var withoutDot = domain[0] == '.' ? domain.Substring (1) : domain;
+			return (String.Compare (host, withoutDot, StringComparison.InvariantCultureIgnoreCase) == 0);
 		}
 
 		public CookieCollection GetCookies (Uri uri)
@@ -334,8 +391,13 @@ namespace System.Net
 
 			foreach (Cookie cookie in cookies) {
 				string domain = cookie.Domain;
-				if (!CheckDomain (domain, uri.Host, cookie.ExactDomain))
-					continue;
+				if (cookie.Version == 1) {
+					if (!CheckDomain_RFC2109 (domain, uri.Host))
+						continue;
+				} else {
+					if (!CheckDomain (domain, uri.Host, !cookie.HasDomain))
+						continue;
+				}
 
 				if (cookie.Port.Length > 0 && cookie.Ports != null && uri.Port != -1) {
 					if (Array.IndexOf (cookie.Ports, uri.Port) == -1)
@@ -408,8 +470,9 @@ namespace System.Net
 					if (c.Domain.Length == 0) {
 						c.Domain = uri.Host;
 						// don't consider domain "a.b.com" as ".a.b.com"
-						c.ExactDomain = true;
-					}
+						c.HasDomain = false;
+					} else if (c.HasDomain && !CheckSameOrigin (uri, c.Domain))
+						throw new CookieException ("Invalid cookie domain: " + c.Domain);
 
 					AddCookie (c);
 				}
@@ -443,11 +506,8 @@ namespace System.Net
 					break;
 				case "domain":
 				case "$domain":
-					if (c.Domain.Length == 0) {
+					if (c.Domain.Length == 0)
 						c.Domain = value;
-						// here mono.com means "*.mono.com"
-						c.ExactDomain = false;
-					}
 					break;
 				case "expires":
 				case "$expires":

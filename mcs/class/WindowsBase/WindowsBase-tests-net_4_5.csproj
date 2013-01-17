@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>.\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>WindowsBase_test_net_4_5</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Test\System.Collections.ObjectModel\ObservableCollectionTest.cs" />
+   <Compile Include="Test\System.Collections.ObjectModel\ReadOnlyObservableCollectionTest.cs" />
+   <Compile Include="Test\System.Collections.Specialized\NotifyCollectionChangedEventArgsTest.cs" />
+   <Compile Include="Test\System.Collections.Specialized\CollectionChangedEventValidators.cs" />
+   <Compile Include="Test\System.ComponentModel\CurrentChangingEventArgsTest.cs" />
+   <Compile Include="Test\System.ComponentModel\PropertyFilterAttributeTest.cs" />
+   <Compile Include="Test\System.ComponentModel\SortDescriptionCollectionTest.cs" />
+   <Compile Include="Test\System.ComponentModel\SortDescriptionTest.cs" />
+   <Compile Include="Test\System.IO.Packaging\FakePackage.cs" />
+   <Compile Include="Test\System.IO.Packaging\FakePackagePart.cs" />
+   <Compile Include="Test\System.IO.Packaging\FakePackagePartTests.cs" />
+   <Compile Include="Test\System.IO.Packaging\FakePackageTests.cs" />
+   <Compile Include="Test\System.IO.Packaging\FakeStream.cs" />
+   <Compile Include="Test\System.IO.Packaging\PackagePartFileTests.cs" />
+   <Compile Include="Test\System.IO.Packaging\PackagePartStreamTests.cs" />
+   <Compile Include="Test\System.IO.Packaging\PackagePartTest.cs" />
+   <Compile Include="Test\System.IO.Packaging\PackageRelationshipTests.cs" />
+   <Compile Include="Test\System.IO.Packaging\PackageTest.cs" />
+   <Compile Include="Test\System.IO.Packaging\PackUriHelperTests.cs" />
+   <Compile Include="Test\System.IO.Packaging\TestBase.cs" />
+   <Compile Include="Test\System.Windows\DependencyObjectTest.cs" />
+   <Compile Include="Test\System.Windows\DependencyObjectTypeTest.cs" />
+   <Compile Include="Test\System.Windows\DependencyPropertyTest.cs" />
+   <Compile Include="Test\System.Windows\Int32RectTest.cs" />
+   <Compile Include="Test\System.Windows\Int32RectConverterTest.cs" />
+   <Compile Include="Test\System.Windows\PointTest.cs" />
+   <Compile Include="Test\System.Windows\PointConverterTest.cs" />
+   <Compile Include="Test\System.Windows\PropertyMetadataTest.cs" />
+   <Compile Include="Test\System.Windows\RectTest.cs" />
+   <Compile Include="Test\System.Windows\RectConverterTest.cs" />
+   <Compile Include="Test\System.Windows\SizeTest.cs" />
+   <Compile Include="Test\System.Windows\SizeConverterTest.cs" />
+   <Compile Include="Test\System.Windows\VectorTest.cs" />
+   <Compile Include="Test\System.Windows\VectorConverterTest.cs" />
+   <Compile Include="Test\System.Windows.Markup\ConstructorArgumentAttributeTest.cs" />
+   <Compile Include="Test\System.Windows.Markup\ContentPropertyAttributeTest.cs" />
+   <Compile Include="Test\System.Windows.Markup\ContentWrapperAttributeTest.cs" />
+   <Compile Include="Test\System.Windows.Markup\DateTimeValueSerializerTest.cs" />
+   <Compile Include="Test\System.Windows.Markup\DependsOnAttributeTest.cs" />
+   <Compile Include="Test\System.Windows.Markup\MarkupExtensionReturnTypeAttributeTest.cs" />
+   <Compile Include="Test\System.Windows.Markup\ValueSerializerTest.cs" />
+   <Compile Include="Test\System.Windows.Media\MatrixTest.cs" />
+   <Compile Include="Test\System.Windows.Threading\DispatcherTest.cs" />
+   <Compile Include="Test\System.Windows.Threading\DispatcherTimerTest.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="./../../class/lib/net_4_5/WindowsBase.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../class/lib/net_4_5/WindowsBase.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>WindowsBase.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

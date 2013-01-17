@@ -14,7 +14,7 @@ class Program
 		return (uint) ptr;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		if (IntPtr.Size < 8) {
 			if (CastUIntPtrToInt64 (new UIntPtr (uint.MaxValue)) != uint.MaxValue)

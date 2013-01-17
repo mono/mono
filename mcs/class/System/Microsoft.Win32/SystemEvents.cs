@@ -108,11 +108,9 @@ namespace Microsoft.Win32 {
 		}
 
 		[MonoTODO("Currently does nothing on Mono")]
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Obsolete ("")]
-#endif
 		public static event System.EventHandler LowMemory 
 		{
 			add 	{ }
@@ -146,13 +144,12 @@ namespace Microsoft.Win32 {
 			add 	{ }
 			remove 	{ }
 		}
-#if NET_2_0
 		[MonoTODO("Currently does nothing on Mono")]
 		public static event SessionSwitchEventHandler SessionSwitch {
 			add    { }
 			remove { }
 		}
-#endif
+
 		[MonoTODO("Currently does nothing on Mono")]
 		public static event System.EventHandler TimeChanged 
 		{

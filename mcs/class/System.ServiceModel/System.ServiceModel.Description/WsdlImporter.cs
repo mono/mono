@@ -1,11 +1,13 @@
 //
 // WsdlImporter.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //	Ankit Jain <jankit@novell.com>	
+//	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +38,7 @@ using System.Xml;
 using System.Xml.Schema;
 
 using SMBinding = System.ServiceModel.Channels.Binding;
+using WS = System.Web.Services.Description;
 using WSServiceDescription = System.Web.Services.Description.ServiceDescription;
 using WSBinding = System.Web.Services.Description.Binding;
 using WSMessage = System.Web.Services.Description.Message;
@@ -50,12 +53,20 @@ namespace System.ServiceModel.Description
 		XmlSchemaSet xmlschemas;
 		List<XmlElement> policies; /* ?? */
 		MetadataSet metadata;
+		bool beforeImportCalled;
 
 		KeyedByTypeCollection<IWsdlImportExtension> wsdl_extensions;
 			
 		//Imported
 		Collection<ContractDescription> contracts = null;
 		ServiceEndpointCollection endpoint_colln = null;
+
+		// Contract by PortType
+		Dictionary<PortType, ContractDescription> contractHash = null;
+		// ServiceEndpoint by WSBinding
+		Dictionary<WSBinding, ServiceEndpoint> bindingHash = null;
+		// ServiceEndpoint by Port
+		Dictionary<Port, ServiceEndpoint> endpointHash = null;
 
 		public WsdlImporter (
 			MetadataSet metadata,
@@ -71,7 +82,7 @@ namespace System.ServiceModel.Description
 
 				wsdl_extensions.Add (new DataContractSerializerMessageContractImporter ());
 				wsdl_extensions.Add (new XmlSerializerMessageContractImporter ());
-				//wsdl_extensions.Add (new MessageEncodingBindingElementImporter ());
+				wsdl_extensions.Add (new MessageEncodingBindingElementImporter ());
 				wsdl_extensions.Add (new TransportBindingElementImporter ());
 				wsdl_extensions.Add (new StandardBindingImporter ());
 			} else {
@@ -84,6 +95,9 @@ namespace System.ServiceModel.Description
 			this.wsdl_documents = new ServiceDescriptionCollection ();
 			this.xmlschemas = new XmlSchemaSet ();
 			this.policies = new List<XmlElement> ();
+			this.contractHash = new Dictionary<PortType, ContractDescription> ();
+			this.bindingHash = new Dictionary<WSBinding, ServiceEndpoint> ();
+			this.endpointHash = new Dictionary<Port, ServiceEndpoint> ();
 
 			foreach (MetadataSection ms in metadata.MetadataSections) {
 				if (ms.Dialect == MetadataSection.ServiceDescriptionDialect &&
@@ -117,43 +131,168 @@ namespace System.ServiceModel.Description
 		{
 			Collection<SMBinding> bindings = new Collection<SMBinding> ();
 
-			foreach (WSServiceDescription sd in wsdl_documents)
-				foreach (WSBinding binding in sd.Bindings)
-					bindings.Add (ImportBinding (binding));
+			foreach (WSServiceDescription sd in wsdl_documents) {
+				foreach (WSBinding binding in sd.Bindings) {
+					var endpoint = ImportBinding (binding, false);
+					if (endpoint != null)
+						bindings.Add (endpoint.Binding);
+				}
+			}
 
 			return bindings;
 		}
 
-		public SMBinding ImportBinding (WSBinding binding)
+		void BeforeImport ()
 		{
-			/* Default, CustomBinding.. */
-			CustomBinding smbinding = new CustomBinding ();
+			if (beforeImportCalled)
+				return;
 
 			foreach (IWsdlImportExtension extension in wsdl_extensions)
 				extension.BeforeImport (wsdl_documents, xmlschemas, policies);
-
-			smbinding.Name = binding.Name;
-			smbinding.Namespace = binding.ServiceDescription.TargetNamespace;
-
-			//FIXME: Added by MessageEncodingBindingElementConverter.ImportPolicy
-			smbinding.Elements.Add (new TextMessageEncodingBindingElement ());
-
-			/*ImportContract
-			PortType portType = null;
-			foreach (WSServiceDescription sd in wsdl_documents) {
-				portType = sd.PortTypes [binding.Type.Name];
-				if (portType != null)
-					break;
-			}
-
-			//FIXME: if portType == null
-			*/
 			
-			// FIXME: ImportContract here..
-
-			return smbinding;
+			beforeImportCalled = true;
 		}
 
+		public SMBinding ImportBinding (WSBinding binding)
+		{
+			return ImportBinding (binding, true).Binding;
+		}
+
+		ServiceEndpoint ImportBinding (WSBinding binding, bool throwOnError)
+		{
+			if (bindingHash.ContainsKey (binding)) {
+				var sep = bindingHash [binding];
+				if (sep != null)
+					return sep;
+
+				if (!throwOnError)
+					return null;
+				
+				throw new InvalidOperationException (String.Format (
+					"Failed to import binding {0}, an error has " +
+					"already been reported before.", binding.Name));
+			}
+
+			try {
+				var port_type = GetPortTypeFromBinding (binding);
+				var contract = ImportContract (port_type);
+				var contract_context = new WsdlContractConversionContext (contract, port_type);
+			
+				var sep = ImportBinding (binding, contract_context);
+				bindingHash.Add (binding, sep);
+				return sep;
+			} catch (MetadataImportException) {
+				bindingHash.Add (binding, null);
+				if (throwOnError)
+					throw;
+				return null;
+			} catch (Exception ex) {
+				bindingHash.Add (binding, null);
+				var error = AddError (
+					"Failed to import binding `{0}': {1}", binding.Name, ex.Message);
+				if (throwOnError)
+					throw new MetadataImportException (error, ex);
+				return null;
+			}
+		}
+
+		ServiceEndpoint ImportBinding (WSBinding binding,
+		                               WsdlContractConversionContext contract_context)
+		{
+			BeforeImport ();
+
+			var sep = new ServiceEndpoint (contract_context.Contract);
+			
+			var custom = new CustomBinding ();
+			custom.Name = binding.Name;
+			custom.Namespace = binding.ServiceDescription.TargetNamespace;
+			
+			sep.Binding = custom;
+
+			try {
+				ImportPolicy (binding, sep);
+			} catch (Exception ex) {
+				// FIXME: Policy import is still experimental.
+				AddWarning ("Exception while trying to import policy for " +
+				            "binding `{0}': {1}", binding.Name, ex.Message);
+			}
+			
+			var endpoint_context = new WsdlEndpointConversionContext (
+				contract_context, sep, null, binding);
+			
+			foreach (IWsdlImportExtension extension in wsdl_extensions)
+				extension.ImportEndpoint (this, endpoint_context);
+			
+			return sep;
+		}
+
+		void ImportPolicy (WSBinding binding, ServiceEndpoint endpoint)
+		{
+			var context = new Description.CustomPolicyConversionContext (binding, endpoint);
+			var assertions = context.GetBindingAssertions ();
+
+			foreach (var ext in binding.Extensions) {
+				var xml = ext as XmlElement;
+				if (xml == null)
+					continue;
+				if (!xml.NamespaceURI.Equals (Constants.WspNamespace))
+					continue;
+				if (xml.LocalName.Equals ("Policy")) {
+					context.AddPolicyAssertion (xml);
+					continue;
+				}
+				if (!xml.LocalName.Equals ("PolicyReference"))
+					continue;
+				var uri = xml.GetAttribute ("URI");
+
+				if (!uri.StartsWith ("#")) {
+					// FIXME
+					AddWarning (
+						"Failed to resolve unknown policy reference `{0}' for " +
+						"binding `{1}'.", uri, binding.Name);
+					continue;
+				}
+
+				foreach (var sext in binding.ServiceDescription.Extensions) {
+					var sxml = sext as XmlElement;
+					if (sxml == null)
+						continue;
+					if (!sxml.NamespaceURI.Equals (Constants.WspNamespace))
+						continue;
+					if (!sxml.LocalName.Equals ("Policy"))
+						continue;
+					var id = sxml.GetAttribute ("Id", Constants.WsuNamespace);
+					if (!uri.Substring (1).Equals (id))
+						continue;
+					context.AddPolicyAssertion (sxml);
+				}
+			}
+
+			foreach (IPolicyImportExtension extension in PolicyImportExtensions) {
+				try {
+					extension.ImportPolicy (this, context);
+				} catch (Exception ex) {
+					AddWarning (
+						"PolicyImportException `{0}' threw an exception while " +
+						"trying to import policy references for endpoint `{1}': {2}",
+						extension.GetType ().Name, endpoint.Name, ex.Message);
+				}
+			}
+		}
+
+		PortType GetPortTypeFromBinding (WSBinding binding)
+		{
+			foreach (WSServiceDescription sd in wsdl_documents) {
+				var port_type = sd.PortTypes [binding.Type.Name];
+				if (port_type != null)
+					return port_type;
+			}
+			
+			throw new MetadataImportException (AddError (
+				"PortType named {0} not found in namespace {1}.",
+				binding.Type.Name, binding.Type.Namespace));
+		}
+		
 		public override Collection<ContractDescription> ImportAllContracts ()
 		{
 			if (contracts != null)
@@ -162,8 +301,11 @@ namespace System.ServiceModel.Description
 			contracts = new Collection<ContractDescription> ();
 
 			foreach (WSServiceDescription sd in wsdl_documents) {
-				foreach (PortType pt in sd.PortTypes)
-					contracts.Add (ImportContract (pt));
+				foreach (PortType pt in sd.PortTypes) {
+					var cd = ImportContract (pt, false);
+					if (cd != null)
+						contracts.Add (cd);
+				}
 			}
 
 			return contracts;
@@ -176,23 +318,62 @@ namespace System.ServiceModel.Description
 
 			endpoint_colln = new ServiceEndpointCollection ();
 
-			foreach (IWsdlImportExtension extension in wsdl_extensions) {
-				extension.BeforeImport (wsdl_documents, xmlschemas, policies);
+			foreach (WSServiceDescription wsd in wsdl_documents) {
+				foreach (Service service in wsd.Services) {
+					foreach (Port port in service.Ports) {
+						var sep = ImportEndpoint (port, false);
+						if (sep != null)
+							endpoint_colln.Add (sep);
+					}
+				}
 			}
-
-			foreach (WSServiceDescription wsd in wsdl_documents)
-				foreach (Service service in wsd.Services)
-					foreach (Port port in service.Ports)
-						endpoint_colln.Add (ImportEndpoint (port));
 
 			return endpoint_colln;
 		}
 
 		public ContractDescription ImportContract (PortType wsdlPortType)
 		{
-			foreach (IWsdlImportExtension extension in wsdl_extensions) {
-				extension.BeforeImport (wsdl_documents, xmlschemas, policies);
+			return ImportContract (wsdlPortType, true);
+		}
+
+		ContractDescription ImportContract (PortType portType, bool throwOnError)
+		{
+			if (contractHash.ContainsKey (portType)) {
+				var cd = contractHash [portType];
+				if (cd != null)
+					return cd;
+
+				if (!throwOnError)
+					return null;
+
+				throw new InvalidOperationException (String.Format (
+					"Failed to import contract for port type `{0}', " +
+					"an error has already been reported.", portType.Name));
 			}
+
+			try {
+				var cd = DoImportContract (portType);
+				contractHash.Add (portType, cd);
+				return cd;
+			} catch (MetadataImportException) {
+				contractHash.Add (portType, null);
+				if (throwOnError)
+					throw;
+				return null;
+			} catch (Exception ex) {
+				contractHash.Add (portType, null);
+				var error = AddError (
+					"Failed to import contract for port type `{0}': {1}",
+					portType.Name, ex.Message);
+				if (throwOnError)
+					throw new MetadataImportException (error, ex);
+				return null;
+			}
+		}
+
+		ContractDescription DoImportContract (PortType wsdlPortType)
+		{
+			BeforeImport ();
 
 			ContractDescription cd = new ContractDescription (wsdlPortType.Name, wsdlPortType.ServiceDescription.TargetNamespace);
 
@@ -265,61 +446,140 @@ namespace System.ServiceModel.Description
 
 		public ServiceEndpoint ImportEndpoint (Port wsdlPort)
 		{
-			foreach (IWsdlImportExtension extension in wsdl_extensions) {
-				extension.BeforeImport (wsdl_documents, xmlschemas, policies);
+			return ImportEndpoint (wsdlPort, true);
+		}
+
+		ServiceEndpoint ImportEndpoint (Port port, bool throwOnError)
+		{
+			ServiceEndpoint endpoint;
+			if (endpointHash.ContainsKey (port)) {
+				endpoint = endpointHash [port];
+				if (endpoint != null)
+					return endpoint;
+				
+				if (!throwOnError)
+					return null;
+				
+				throw new InvalidOperationException (String.Format (
+					"Failed to import port `{0}', an error has " +
+					"already been reported before.", port.Name));
 			}
 
-			//Get the corresponding contract
-			//via the PortType
-			WSBinding wsb = wsdlPort.Service.ServiceDescription.Bindings [wsdlPort.Binding.Name];
-			if (wsb == null)
-				//FIXME
-				throw new Exception (String.Format ("Binding named {0} not found.", wsdlPort.Binding.Name));
-
-			SMBinding binding = ImportBinding (wsb);
-
-			PortType port_type = null;
-			foreach (WSServiceDescription sd in wsdl_documents) {
-				port_type = sd.PortTypes [wsb.Type.Name];
-				if (port_type != null)
-					break;
+			var binding = port.Service.ServiceDescription.Bindings [port.Binding.Name];
+			if (binding == null) {
+				endpointHash.Add (port, null);
+				var error = AddError (
+					"Failed to import port `{0}': cannot find binding `{1}' that " +
+					"this port depends on.", port.Name, port.Binding.Name);
+				if (throwOnError)
+					throw new MetadataImportException (error);
+				return null;
 			}
 
-			if (port_type == null)
-				//FIXME
-				throw new Exception (String.Format ("PortType named {0} not found.", wsb.Type.Name));
+			try {
+				endpoint = ImportBinding (binding, throwOnError);
+			} catch (Exception ex) {
+				endpointHash.Add (port, null);
+				var error = AddError (
+					"Failed to import port `{0}': error while trying to import " +
+					"binding `{1}' that this port depends on: {2}",
+					port.Name, port.Binding.Name, ex.Message);
+				if (throwOnError)
+					throw new MetadataImportException (error, ex);
+				return null;
+			}
 
-			ContractDescription contract = ImportContract (port_type);
-			ServiceEndpoint sep = new ServiceEndpoint (contract);
+			if (endpoint == null) {
+				endpointHash.Add (port, null);
+				AddError (
+					"Failed to import port `{0}': error while trying to import " +
+					"binding `{1}' that this port depends on.",
+					port.Name, port.Binding.Name);
+				return null;
+			}
 
-			sep.Binding = binding;
+			try {
+				ImportEndpoint (port, binding, endpoint, throwOnError);
+				endpointHash.Add (port, endpoint);
+				return endpoint;
+			} catch (MetadataImportException) {
+				endpointHash.Add (port, null);
+				if (throwOnError)
+					throw;
+				return null;
+			} catch (Exception ex) {
+				endpointHash.Add (port, null);
+				var error = AddError (
+					"Failed to import port `{0}': {1}", port.Name, ex.Message);
+				if (throwOnError)
+					throw new MetadataImportException (error, ex);
+				return null;
+			}
+		}
 
-			WsdlContractConversionContext contract_context = new WsdlContractConversionContext (contract, port_type);
+		void ImportEndpoint (Port port, WSBinding wsb, ServiceEndpoint sep, bool throwOnError)
+		{
+			BeforeImport ();
+
+			var port_type = GetPortTypeFromBinding (wsb);
+
+			var contract_context = new WsdlContractConversionContext (sep.Contract, port_type);
 			WsdlEndpointConversionContext endpoint_context = new WsdlEndpointConversionContext (
-					contract_context, sep, wsdlPort, wsb);
+					contract_context, sep, port, wsb);
 
 			foreach (IWsdlImportExtension extension in wsdl_extensions)
 				extension.ImportEndpoint (this, endpoint_context);
-
-			return sep;
 		}
 
-		public ServiceEndpointCollection ImportEndpoints (
-			WSBinding binding)
+		void ImportEndpoints (ServiceEndpointCollection coll, WSBinding binding)
 		{
-			throw new NotImplementedException ();
+			foreach (WSServiceDescription wsd in wsdl_documents) {
+				foreach (WS.Service service in wsd.Services) {
+					foreach (WS.Port port in service.Ports) {
+						if (!binding.Name.Equals (port.Binding.Name))
+							continue;
+						var sep = ImportEndpoint (port, false);
+						if (sep != null)
+							coll.Add (sep);
+					}
+				}
+			}
 		}
 
-		public ServiceEndpointCollection ImportEndpoints (
-			PortType portType)
+		public ServiceEndpointCollection ImportEndpoints (WSBinding binding)
 		{
-			throw new NotImplementedException ();
+			var coll = new ServiceEndpointCollection ();
+			ImportEndpoints (coll, binding);
+			return coll;
 		}
 
-		public ServiceEndpointCollection ImportEndpoints (
-			Service service)
+		public ServiceEndpointCollection ImportEndpoints (PortType portType)
 		{
-			throw new NotImplementedException ();
+			var coll = new ServiceEndpointCollection ();
+
+			foreach (WSServiceDescription wsd in wsdl_documents) {
+				foreach (WS.Binding binding in wsd.Bindings) {
+					if (!binding.Type.Name.Equals (portType.Name))
+						continue;
+
+					ImportEndpoints (coll, binding);
+				}
+			}
+
+			return coll;
+		}
+
+		public ServiceEndpointCollection ImportEndpoints (Service service)
+		{
+			var coll = new ServiceEndpointCollection ();
+			
+			foreach (Port port in service.Ports) {
+				var sep = ImportEndpoint (port, false);
+				if (sep != null)
+					coll.Add (sep);
+			}
+
+			return coll;
 		}
 	}
 }

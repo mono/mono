@@ -147,7 +147,7 @@ namespace System.ComponentModel {
 		{
 			throw new NotImplementedException ();
 		}
-		public static DependencyPropertyDescriptor FromProperty (PropertyDescriptor Property)
+		public static DependencyPropertyDescriptor FromProperty (PropertyDescriptor property)
 		{
 			throw new NotImplementedException ();
 		}

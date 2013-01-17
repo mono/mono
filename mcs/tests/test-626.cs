@@ -9,7 +9,7 @@ class X {
 	{
 	}
 				
-	static void Main ()
+	public static void Main ()
 	{
 		int loop = 0;
 		

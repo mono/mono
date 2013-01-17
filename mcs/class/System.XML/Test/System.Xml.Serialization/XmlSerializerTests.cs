@@ -31,6 +31,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Data;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 #if NET_2_0
@@ -2843,6 +2844,39 @@ namespace MonoTests.System.XmlSerialization
 		public void XmlAnyElementForObjects2 () // bug #553032-2
 		{
 			new XmlSerializer (typeof (XmlAnyElementForObjectsType)).Serialize (TextWriter.Null, new XmlAnyElementForObjectsType ());
+		}
+
+
+		public class Bug2893 {
+			public Bug2893 ()
+			{			
+				Contents = new XmlDataDocument();
+			}
+			
+			[XmlAnyElement("Contents")]
+			public XmlNode Contents;
+		}
+
+		// Bug Xamarin #2893
+		[Test]
+		public void XmlAnyElementForXmlNode ()
+		{
+			var obj = new Bug2893 ();
+			XmlSerializer mySerializer = new XmlSerializer(typeof(Bug2893));
+			XmlWriterSettings settings = new XmlWriterSettings();
+
+			var xsn = new XmlSerializerNamespaces();
+			xsn.Add(string.Empty, string.Empty);
+
+			byte[] buffer = new byte[2048];
+			var ms = new MemoryStream(buffer);
+			using (var xw = XmlWriter.Create(ms, settings))
+			{
+				mySerializer.Serialize(xw, obj, xsn);
+				xw.Flush();
+			}
+
+			mySerializer.Serialize(ms, obj);
 		}
 
 		[Test]

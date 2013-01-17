@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal {
 
-#if NET_1_1
 	[Guid("d8013ef0-730b-45e2-ba24-874b7242c425")]
 	public interface IComSoapIISVRoot {
 		[DispId(1)]
@@ -39,5 +38,4 @@ namespace System.EnterpriseServices.Internal {
 		[DispId(2)]
 		void Delete ([MarshalAs(UnmanagedType.BStr)] string RootWeb, [MarshalAs(UnmanagedType.BStr)] string PhysicalDirectory, [MarshalAs(UnmanagedType.BStr)] string VirtualDirectory, [MarshalAs(UnmanagedType.BStr)] out string Error);
 	}
-#endif
 }

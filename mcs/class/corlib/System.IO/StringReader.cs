@@ -1,13 +1,13 @@
 //
 // System.IO.StringReader
 //
-// Author: Marcin Szczepanski (marcins@zipworld.com.au)
-//
-// Copyright (C) 2004 Novell (http://www.novell.com)
-// 
-
+// Authors:
+//   Marcin Szczepanski (marcins@zipworld.com.au)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,9 @@
 using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO {
 	[Serializable]
@@ -41,6 +44,7 @@ namespace System.IO {
 		string source;
 		int nextChar;
 		int sourceLength;
+		static char[] cr_lf;
 
 		public StringReader (string s)
 		{
@@ -115,8 +119,6 @@ namespace System.IO {
 			return charsToRead;
 		}
 
-		static char [] cr_lf;
-		
 		public override string ReadLine ()
 		{
 			// Reads until next \r or \n or \r\n, otherwise return null
@@ -144,16 +146,42 @@ namespace System.IO {
 			return nextLine;
 		}
 
-                public override string ReadToEnd ()
+		public override string ReadToEnd ()
 		{
 			if (source == null)
 				ObjectDisposedException ();
-                        string toEnd = source.Substring (nextChar, sourceLength - nextChar);
-                        nextChar = sourceLength;
-                        return toEnd;
-                }
+			string toEnd = source.Substring (nextChar, sourceLength - nextChar);
+			nextChar = sourceLength;
+			return toEnd;
+		}
 
-		private void ObjectDisposedException ()
+#if NET_4_5
+		//
+		// All async methods return finished task with a result as it's faster
+		// than setting up async call
+		//
+		public override Task<int> ReadAsync (char[] buffer, int index, int count)
+		{
+			return Task.FromResult (Read (buffer, index, count));
+		}
+
+		public override Task<int> ReadBlockAsync (char[] buffer, int index, int count)
+		{
+			return Task.FromResult (ReadBlock (buffer, index, count));
+		}
+
+		public override Task<string> ReadLineAsync ()
+		{
+			return Task.FromResult (ReadLine ());
+		}
+
+		public override Task<string> ReadToEndAsync ()
+		{
+			return Task.FromResult (ReadToEnd ());
+		}
+#endif
+
+		static void ObjectDisposedException ()
 		{
 			throw new ObjectDisposedException ("StringReader", 
 							   Locale.GetText ("Cannot read from a closed StringReader"));

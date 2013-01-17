@@ -30,12 +30,7 @@
 
 namespace System.Net.Sockets
 {
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	enum SocketError
+	public enum SocketError
 	{
 		AccessDenied = 10013,
 		AddressAlreadyInUse = 10048,

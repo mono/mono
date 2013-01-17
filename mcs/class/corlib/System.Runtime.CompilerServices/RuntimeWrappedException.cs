@@ -28,10 +28,12 @@
 
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class RuntimeWrappedException : Exception
 	{
 #pragma warning disable 649

@@ -5,10 +5,11 @@
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //      Miguel de Icaza (miguel@novell.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright 2007 Novell, Inc. (http://www.novell.com)
-//
+// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -50,77 +51,79 @@ namespace System.Net
 	[ComVisible(true)]
 	public class WebHeaderCollection : NameValueCollection, ISerializable {
 #endif
-		private static readonly Hashtable restricted;
-		private static readonly Hashtable multiValue;
-		static readonly Dictionary<string, bool> restricted_response;
-		private bool internallyCreated = false;
-		
-		// Static Initializer
+		[Flags]
+		internal enum HeaderInfo
+		{
+			Request = 1,
+			Response = 1 << 1,
+			MultiValue = 1 << 10
+		}
+
+		static readonly bool[] allowed_chars = {
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+			false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
+			true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
+			false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+			false, true, false
+		};
+
+		static readonly Dictionary<string, HeaderInfo> headers;
+		HeaderInfo? headerRestriction;
+		HeaderInfo? headerConsistency;
 		
 		static WebHeaderCollection () 
 		{
-			// the list of restricted header names as defined 
-			// by the ms.net spec
-			restricted = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						    CaseInsensitiveComparer.DefaultInvariant);
-
-			restricted.Add ("accept", true);
-			restricted.Add ("connection", true);
-			restricted.Add ("content-length", true);
-			restricted.Add ("content-type", true);
-			restricted.Add ("date", true);
-			restricted.Add ("expect", true);
-			restricted.Add ("host", true);
-			restricted.Add ("if-modified-since", true);
-			restricted.Add ("range", true);
-			restricted.Add ("referer", true);
-			restricted.Add ("transfer-encoding", true);
-			restricted.Add ("user-agent", true);			
-			restricted.Add ("proxy-connection", true);			
-
-			//
-			restricted_response = new Dictionary<string, bool> (StringComparer.InvariantCultureIgnoreCase);
-			restricted_response.Add ("Content-Length", true);
-			restricted_response.Add ("Transfer-Encoding", true);
-			restricted_response.Add ("WWW-Authenticate", true);
-
-			// see par 14 of RFC 2068 to see which header names
-			// accept multiple values each separated by a comma
-			multiValue = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						    CaseInsensitiveComparer.DefaultInvariant);
-
-			multiValue.Add ("accept", true);
-			multiValue.Add ("accept-charset", true);
-			multiValue.Add ("accept-encoding", true);
-			multiValue.Add ("accept-language", true);
-			multiValue.Add ("accept-ranges", true);
-			multiValue.Add ("allow", true);
-			multiValue.Add ("authorization", true);
-			multiValue.Add ("cache-control", true);
-			multiValue.Add ("connection", true);
-			multiValue.Add ("content-encoding", true);
-			multiValue.Add ("content-language", true);			
-			multiValue.Add ("expect", true);		
-			multiValue.Add ("if-match", true);
-			multiValue.Add ("if-none-match", true);
-			multiValue.Add ("proxy-authenticate", true);
-			multiValue.Add ("public", true);			
-			multiValue.Add ("range", true);
-			multiValue.Add ("transfer-encoding", true);
-			multiValue.Add ("upgrade", true);
-			multiValue.Add ("vary", true);
-			multiValue.Add ("via", true);
-			multiValue.Add ("warning", true);
-			multiValue.Add ("www-authenticate", true);
-
-			// Extra
-			multiValue.Add ("set-cookie", true);
-			multiValue.Add ("set-cookie2", true);
+			headers = new Dictionary<string, HeaderInfo> (StringComparer.OrdinalIgnoreCase) {
+				{ "Allow", HeaderInfo.MultiValue },
+				{ "Accept", HeaderInfo.Request | HeaderInfo.MultiValue },
+				{ "Accept-Charset", HeaderInfo.MultiValue },
+				{ "Accept-Encoding", HeaderInfo.MultiValue },
+				{ "Accept-Language", HeaderInfo.MultiValue },
+				{ "Accept-Ranges", HeaderInfo.MultiValue },
+				{ "Authorization", HeaderInfo.MultiValue },
+				{ "Cache-Control", HeaderInfo.MultiValue },
+				{ "Cookie", HeaderInfo.MultiValue },
+				{ "Connection", HeaderInfo.Request | HeaderInfo.MultiValue },
+				{ "Content-Encoding", HeaderInfo.MultiValue },
+				{ "Content-Length", HeaderInfo.Request | HeaderInfo.Response },
+				{ "Content-Type", HeaderInfo.Request },
+				{ "Content-Language", HeaderInfo.MultiValue },
+				{ "Date", HeaderInfo.Request },
+				{ "Expect", HeaderInfo.Request | HeaderInfo.MultiValue},
+				{ "Host", HeaderInfo.Request },
+				{ "If-Match", HeaderInfo.MultiValue },
+				{ "If-Modified-Since", HeaderInfo.Request },
+				{ "If-None-Match", HeaderInfo.MultiValue },
+				{ "Keep-Alive", HeaderInfo.Response },
+				{ "Pragma", HeaderInfo.MultiValue },
+				{ "Proxy-Authenticate", HeaderInfo.MultiValue },
+				{ "Proxy-Authorization", HeaderInfo.MultiValue },
+				{ "Proxy-Connection", HeaderInfo.Request | HeaderInfo.MultiValue },
+				{ "Range", HeaderInfo.Request | HeaderInfo.MultiValue },
+				{ "Referer", HeaderInfo.Request },
+				{ "Set-Cookie", HeaderInfo.MultiValue },
+				{ "Set-Cookie2", HeaderInfo.MultiValue },
+				{ "TE", HeaderInfo.MultiValue },
+				{ "Trailer", HeaderInfo.MultiValue },
+				{ "Transfer-Encoding", HeaderInfo.Request | HeaderInfo.Response | HeaderInfo.MultiValue },
+				{ "Upgrade", HeaderInfo.MultiValue },
+				{ "User-Agent", HeaderInfo.Request },
+				{ "Vary", HeaderInfo.MultiValue },
+				{ "Via", HeaderInfo.MultiValue },
+				{ "Warning", HeaderInfo.MultiValue },
+				{ "WWW-Authenticate", HeaderInfo.Response | HeaderInfo. MultiValue }
+			};
 		}
 		
 		// Constructors
 		
-		public WebHeaderCollection () {	}	
+		public WebHeaderCollection ()
+		{
+		}
 		
 		protected WebHeaderCollection (SerializationInfo serializationInfo, 
 					       StreamingContext streamingContext)
@@ -140,10 +143,10 @@ namespace System.Net
 			}
 			
 		}
-		
-		internal WebHeaderCollection (bool internallyCreated)
-		{	
-			this.internallyCreated = internallyCreated;
+
+		internal WebHeaderCollection (HeaderInfo headerRestriction)
+		{
+			this.headerRestriction = headerRestriction;
 		}		
 		
 		// Methods
@@ -154,17 +157,17 @@ namespace System.Net
 				throw new ArgumentNullException ("header");
 			int pos = header.IndexOf (':');
 			if (pos == -1)
-				throw new ArgumentException ("no colon found", "header");				
-			this.Add (header.Substring (0, pos), 
-				  header.Substring (pos + 1));
+				throw new ArgumentException ("no colon found", "header");
+
+			this.Add (header.Substring (0, pos), header.Substring (pos + 1));
 		}
 		
 		public override void Add (string name, string value)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (internallyCreated && IsRestricted (name))
-				throw new ArgumentException ("This header must be modified with the appropiate property.");
+
+			CheckRestrictedHeader (name);
 			this.AddWithoutValidate (name, value);
 		}
 
@@ -178,10 +181,16 @@ namespace System.Net
 				headerValue = headerValue.Trim ();
 			if (!IsHeaderValue (headerValue))
 				throw new ArgumentException ("invalid header value: " + headerValue, "headerValue");
+			
+			AddValue (headerName, headerValue);
+		}
+			
+		internal void AddValue (string headerName, string headerValue)
+		{
 			base.Add (headerName, headerValue);			
 		}
 
-		public override string [] GetValues (string header)
+		internal string [] GetValues_internal (string header, bool split)
 		{
 			if (header == null)
 				throw new ArgumentNullException ("header");
@@ -190,89 +199,77 @@ namespace System.Net
 			if (values == null || values.Length == 0)
 				return null;
 
-			/*
-			if (IsMultiValue (header)) {
-				values = GetMultipleValues (values);
+			if (split && IsMultiValue (header)) {
+				List<string> separated = null;
+				foreach (var value in values) {
+					if (value.IndexOf (',') < 0)
+						continue;
+
+					if (separated == null) {
+						separated = new List<string> (values.Length + 1);
+						foreach (var v in values) {
+							if (v == value)
+								break;
+
+							separated.Add (v);
+						}
+					}
+
+					var slices = value.Split (',');
+					var slices_length = slices.Length;
+					if (value[value.Length - 1] == ',')
+						--slices_length;
+
+					for (int i = 0; i < slices_length; ++i ) {
+						separated.Add (slices[i].Trim ());
+					}
+				}
+
+				if (separated != null)
+					return separated.ToArray ();
 			}
-			*/
 
 			return values;
+		}
+
+		public override string [] GetValues (string header)
+		{
+			return GetValues_internal (header, true);
 		}
 
 		public override string[] GetValues (int index)
 		{
 			string[] values = base.GetValues (index);
+
 			if (values == null || values.Length == 0) {
-				return(null);
+				return null;
 			}
 			
-			return(values);
+			return values;
 		}
-
-		/* Now i wonder why this is here...
-		static string [] GetMultipleValues (string [] values)
-		{
-			ArrayList mvalues = new ArrayList (values.Length);
-			StringBuilder sb = null;
-			for (int i = 0; i < values.Length; ++i) {
-				string val = values [i];
-				if (val.IndexOf (',') == -1) {
-					mvalues.Add (val);
-					continue;
-				}
-
-				if (sb == null)
-					sb = new StringBuilder ();
-
-				bool quote = false;
-				for (int k = 0; k < val.Length; k++) {
-					char c = val [k];
-					if (c == '"') {
-						quote = !quote;
-					} else if (!quote && c == ',') {
-						mvalues.Add (sb.ToString ().Trim ());
-						sb.Length = 0;
-						continue;
-					}
-					sb.Append (c);
-				}
-
-				if (sb.Length > 0) {
-					mvalues.Add (sb.ToString ().Trim ());
-					sb.Length = 0;
-				}
-			}
-
-			return (string []) mvalues.ToArray (typeof (string));
-		}
-		*/
 
 		public static bool IsRestricted (string headerName)
+		{
+			return IsRestricted (headerName, false);
+		}
+
+		public static bool IsRestricted (string headerName, bool response)
 		{
 			if (headerName == null)
 				throw new ArgumentNullException ("headerName");
 
-			if (headerName == "") // MS throw nullexception here!
+			if (headerName.Length == 0)
 				throw new ArgumentException ("empty string", "headerName");
 
 			if (!IsHeaderName (headerName))
 				throw new ArgumentException ("Invalid character in header");
 
-			return restricted.ContainsKey (headerName);
-		}
+			HeaderInfo info;
+			if (!headers.TryGetValue (headerName, out info))
+				return false;
 
-		public static bool IsRestricted (string headerName, bool response)
-		{
-			if (String.IsNullOrEmpty (headerName))
-				throw new ArgumentNullException ("headerName");
-
-			if (!IsHeaderName (headerName))
-				throw new ArgumentException ("Invalid character in header");
-
-
-			if (response)
-				return restricted_response.ContainsKey (headerName);
-			return restricted.ContainsKey (headerName);
+			var flag = response ? HeaderInfo.Response : HeaderInfo.Request;
+			return (info & flag) != 0;
 		}
 
 		public override void OnDeserialization (object sender)
@@ -283,8 +280,8 @@ namespace System.Net
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (internallyCreated && IsRestricted (name))
-				throw new ArgumentException ("restricted header");
+
+			CheckRestrictedHeader (name);
 			base.Remove (name);
 		}
 
@@ -292,8 +289,6 @@ namespace System.Net
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (internallyCreated && IsRestricted (name))
-				throw new ArgumentException ("restricted header");
 			if (!IsHeaderName (name))
 				throw new ArgumentException ("invalid header name");
 			if (value == null)
@@ -302,6 +297,8 @@ namespace System.Net
 				value = value.Trim ();
 			if (!IsHeaderValue (value))
 				throw new ArgumentException ("invalid header value");
+
+			CheckRestrictedHeader (name);
 			base.Set (name, value);			
 		}
 
@@ -364,40 +361,37 @@ namespace System.Net
 			}
 		}
 
-		public override string[] AllKeys
-		{
+		public override string[] AllKeys {
 			get {
-				return(base.AllKeys);
+				return base.AllKeys;
 			}
 		}
 		
-		public override int Count 
-		{
+		public override int Count {
 			get {
-				return(base.Count);
+				return base.Count;
 			}
 		}
 
-		public override KeysCollection Keys
-		{
+		public override KeysCollection Keys {
 			get {
-				return(base.Keys);
+				return base.Keys;
 			}
 		}
 
 		public override string Get (int index)
 		{
-			return(base.Get (index));
+			return base.Get (index);
 		}
 		
 		public override string Get (string name)
 		{
-			return(base.Get (name));
+			return base.Get (name);
 		}
 		
 		public override string GetKey (int index)
 		{
-			return(base.GetKey (index));
+			return base.GetKey (index);
 		}
 
 		public void Add (HttpRequestHeader header, string value)
@@ -430,9 +424,90 @@ namespace System.Net
 			Set (ResponseHeaderToString (header), value);
 		}
 
-		static string RequestHeaderToString (HttpRequestHeader value)
+		public string this [HttpRequestHeader header] {
+			get {
+				return Get (RequestHeaderToString (header));
+			}
+			
+			set {
+				Set (header, value);
+			}
+		}
+
+		public string this [HttpResponseHeader header] {
+			get {
+				return Get (ResponseHeaderToString (header));
+			}
+
+			set {
+				Set (header, value);
+			}
+		}
+
+		public override void Clear ()
 		{
-			switch (value){
+			base.Clear ();
+		}
+
+		public override IEnumerator GetEnumerator ()
+		{
+			return base.GetEnumerator ();
+		}
+
+		// Internal Methods
+		
+		// With this we don't check for invalid characters in header. See bug #55994.
+		internal void SetInternal (string header)
+		{
+			int pos = header.IndexOf (':');
+			if (pos == -1)
+				throw new ArgumentException ("no colon found", "header");				
+
+			SetInternal (header.Substring (0, pos), header.Substring (pos + 1));
+		}
+
+		internal void SetInternal (string name, string value)
+		{
+			if (value == null)
+				value = String.Empty;
+			else
+				value = value.Trim ();
+			if (!IsHeaderValue (value))
+				throw new ArgumentException ("invalid header value");
+
+			if (IsMultiValue (name)) {
+				base.Add (name, value);
+			} else {
+				base.Remove (name);
+				base.Set (name, value);	
+			}
+		}
+
+		internal void RemoveAndAdd (string name, string value)
+		{
+			if (value == null)
+				value = String.Empty;
+			else
+				value = value.Trim ();
+
+			base.Remove (name);
+			base.Set (name, value);
+		}
+
+		internal void RemoveInternal (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			base.Remove (name);
+		}		
+		
+		// Private Methods
+
+		string RequestHeaderToString (HttpRequestHeader value)
+		{
+			CheckHeaderConsistency (HeaderInfo.Request);
+
+			switch (value) {
 			case HttpRequestHeader.CacheControl:
 				return "Cache-Control";
 			case HttpRequestHeader.Connection:
@@ -519,22 +594,12 @@ namespace System.Net
 				throw new InvalidOperationException ();
 			}
 		}
-		
-		
-		public string this[HttpRequestHeader hrh]
-		{
-			get {
-				return Get (RequestHeaderToString (hrh));
-			}
-			
-			set {
-				Add (RequestHeaderToString (hrh), value);
-			}
-		}
 
 		string ResponseHeaderToString (HttpResponseHeader value)
 		{
-			switch (value){
+			CheckHeaderConsistency (HeaderInfo.Response);
+
+			switch (value) {
 			case HttpResponseHeader.CacheControl:
 				return "Cache-Control";
 			case HttpResponseHeader.Connection:
@@ -599,85 +664,38 @@ namespace System.Net
 				throw new InvalidOperationException ();
 			}
 		}
-		public string this[HttpResponseHeader hrh]
+
+		void CheckRestrictedHeader (string headerName)
 		{
-			get
-			{
-				return Get (ResponseHeaderToString (hrh));
+			if (!headerRestriction.HasValue)
+				return;
+
+			HeaderInfo info;
+			if (!headers.TryGetValue (headerName, out info))
+				return;
+
+			if ((info & headerRestriction.Value) != 0)
+				throw new ArgumentException ("This header must be modified with the appropiate property.");
+		}
+
+		void CheckHeaderConsistency (HeaderInfo value)
+		{
+			if (!headerConsistency.HasValue) {
+				headerConsistency = value;
+				return;
 			}
 
-			set
-			{
-				Add (ResponseHeaderToString (hrh), value);
-			}
+			if ((headerConsistency & value) == 0)
+				throw new InvalidOperationException ();
 		}
-
-		public override void Clear ()
-		{
-			base.Clear ();
-		}
-
-
-		public override IEnumerator GetEnumerator ()
-		{
-			return(base.GetEnumerator ());
-		}
-
-		// Internal Methods
-		
-		// With this we don't check for invalid characters in header. See bug #55994.
-		internal void SetInternal (string header)
-		{
-			int pos = header.IndexOf (':');
-			if (pos == -1)
-				throw new ArgumentException ("no colon found", "header");				
-
-			SetInternal (header.Substring (0, pos), header.Substring (pos + 1));
-		}
-
-		internal void SetInternal (string name, string value)
-		{
-			if (value == null)
-				value = String.Empty;
-			else
-				value = value.Trim ();
-			if (!IsHeaderValue (value))
-				throw new ArgumentException ("invalid header value");
-
-			if (IsMultiValue (name)) {
-				base.Add (name, value);
-			} else {
-				base.Remove (name);
-				base.Set (name, value);	
-			}
-		}
-
-		internal void RemoveAndAdd (string name, string value)
-		{
-			if (value == null)
-				value = String.Empty;
-			else
-				value = value.Trim ();
-
-			base.Remove (name);
-			base.Set (name, value);
-		}
-
-		internal void RemoveInternal (string name)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			base.Remove (name);
-		}		
-		
-		// Private Methods
 		
 		internal static bool IsMultiValue (string headerName)
 		{
-			if (headerName == null || headerName == "")
+			if (headerName == null)
 				return false;
 
-			return multiValue.ContainsKey (headerName);
+			HeaderInfo info;
+			return headers.TryGetValue (headerName, out info) && (info & HeaderInfo.MultiValue) != 0;
 		}		
 		
 		internal static bool IsHeaderValue (string value)
@@ -712,25 +730,11 @@ namespace System.Net
 			int len = name.Length;
 			for (int i = 0; i < len; i++) {			
 				char c = name [i];
-				if (c > 126 || !allowed_chars [(int) c])
+				if (c > 126 || !allowed_chars [c])
 					return false;
 			}
 			
 			return true;
 		}
-
-		static bool [] allowed_chars = new bool [126] {
-			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, true, false, true, true, true, true, false, false, false, true,
-			true, false, true, true, false, true, true, true, true, true, true, true, true, true, true, false,
-			false, false, false, false, false, false, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-			false, true, false
-			};
 	}
 }
-
-

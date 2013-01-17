@@ -32,7 +32,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace System {
-	class ConsoleDriver {
+	static class ConsoleDriver {
 		internal static IConsoleDriver driver;
 		static bool is_console;
 		static bool called_isatty;
@@ -175,6 +175,24 @@ namespace System {
 		public static int WindowWidth {
 			get { return driver.WindowWidth; }
 			set { driver.WindowWidth = value; }
+		}
+
+		public static bool IsErrorRedirected {
+			get {
+				return !Isatty (MonoIO.ConsoleError);
+			}
+		}
+
+		public static bool IsOutputRedirected {
+			get {
+				return !Isatty (MonoIO.ConsoleOutput);
+			}
+		}
+
+		public static bool IsInputRedirected {
+			get {
+				return !Isatty (MonoIO.ConsoleInput);
+			}
 		}
 
 		public static void Beep (int frequency, int duration)

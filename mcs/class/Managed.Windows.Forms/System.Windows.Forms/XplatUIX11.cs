@@ -1270,9 +1270,20 @@ namespace System.Windows.Forms {
 
 			if ((long)nitems > 0) {
 				if (property == (IntPtr)Atom.XA_STRING) {
+					// Xamarin-5116: PtrToStringAnsi expects to get UTF-8, but we might have
+					// Latin-1 instead.
+					var s = Marshal.PtrToStringAnsi (prop);
+					if (string.IsNullOrEmpty (s)) {
+						var sb = new StringBuilder ();
+						for (int i = 0; i < (int)nitems; i++) {
+							var b = Marshal.ReadByte (prop, i);
+							sb.Append ((char)b);
+						}
+						s = sb.ToString ();
+					}
 					// Some X managers/apps pass unicode chars as escaped strings, so
 					// we may need to unescape them.
-					Clipboard.Item = UnescapeUnicodeFromAnsi (Marshal.PtrToStringAnsi(prop));
+					Clipboard.Item = UnescapeUnicodeFromAnsi (s);
 				} else if (property == (IntPtr)Atom.XA_BITMAP) {
 					// FIXME - convert bitmap to image
 				} else if (property == (IntPtr)Atom.XA_PIXMAP) {
@@ -1325,7 +1336,7 @@ namespace System.Windows.Forms {
 
 				int length = 0;
 				while (pos < value.Length) {
-					if (!Char.IsLetterOrDigit (value [pos]))
+					if (!ValidHexDigit (value [pos]))
 						break;
 					length++;
 					pos++;
@@ -1345,6 +1356,11 @@ namespace System.Windows.Forms {
 				sb.Append (value, start, value.Length - start);
 
 			return sb.ToString ();
+		}
+
+		private static bool ValidHexDigit (char e)
+		{
+			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
 
 		void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
@@ -2772,17 +2788,36 @@ namespace System.Windows.Forms {
 			return Clipboard.Item;
 		}
 
-		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter)
+		internal override void ClipboardStore (IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy)
 		{
 			Clipboard.Converter = converter;
 
 			if (obj != null) {
 				Clipboard.AddSource (type, obj);
-				XSetSelectionOwner(DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
+				XSetSelectionOwner (DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
+
+				if (copy) {
+					try {
+						var clipboardAtom = gdk_atom_intern ("CLIPBOARD", true);
+						var clipboard = gtk_clipboard_get (clipboardAtom);
+						if (clipboard != null) {
+							// for now we only store text
+							var text = Clipboard.GetRtfText ();
+							if (string.IsNullOrEmpty (text))
+								text = Clipboard.GetPlainText ();
+							if (!string.IsNullOrEmpty (text)) {
+								gtk_clipboard_set_text (clipboard, text, text.Length);
+								gtk_clipboard_store (clipboard);
+							}
+						}
+					} catch {
+						// ignore any errors - most likely because gtk isn't installed?
+					}
+				}
 			} else {
 				// Clearing the selection
 				Clipboard.ClearSources ();
-				XSetSelectionOwner(DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
+				XSetSelectionOwner (DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
@@ -3768,6 +3803,10 @@ namespace System.Windows.Forms {
 			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 				active = (IntPtr)Marshal.ReadInt32(prop);
 				XFree(prop);
+			} else {
+				// The window manager does not support _NET_ACTIVE_WINDOW.  Fall back to XGetInputFocus.
+				IntPtr	revert_to = IntPtr.Zero;
+				XGetInputFocus(DisplayHandle, out active, out revert_to);
 			}
 
 			if (active != IntPtr.Zero) {
@@ -7526,7 +7565,24 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XIfEvent")]
 		internal extern static void XIfEvent (IntPtr display, ref XEvent xevent, Delegate event_predicate, IntPtr arg);
+
+		[DllImport ("libX11", EntryPoint="XGetInputFocus")]
+		internal extern static void XGetInputFocus (IntPtr display, out IntPtr focus, out IntPtr revert_to);
 		#endregion
+#region Gtk/Gdk imports
+		[DllImport("libgdk-x11-2.0")]
+		internal extern static IntPtr gdk_atom_intern (string atomName, bool onlyIfExists);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static IntPtr gtk_clipboard_get (IntPtr atom);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_store (IntPtr clipboard);
+
+		[DllImport("libgtk-x11-2.0")]
+		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
+#endregion
+
 #endif
 	}
 }

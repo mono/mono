@@ -228,7 +228,6 @@ namespace System.Web.Mail {
 	    get { return message.UrlContentLocation; } 
 	}
 
-#if NET_1_1
 		public MailHeader Fields {
 			get {
 					MailHeader bodyHeaders = new MailHeader();
@@ -240,6 +239,5 @@ namespace System.Web.Mail {
 			}
 			
 		}
-#endif
     }	 
 }

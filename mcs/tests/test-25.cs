@@ -7,7 +7,7 @@ using System;
 
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		int i, j, t, k;
 		

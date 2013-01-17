@@ -17,4 +17,11 @@ public unsafe struct TestStruct
 	public TestStruct (string a)
 	{
 	}
+	
+	public static TestStruct Default {
+		get {
+			TestStruct h;
+			return h;
+		}
+	}
 }

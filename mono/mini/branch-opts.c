@@ -5,6 +5,7 @@
  *   Patrik Torstensson (Patrik.Torstesson at gmail.com)
  *
  * (C) 2005 Ximian, Inc.  http://www.ximian.com
+ * Copyright 2011 Xamarin Inc.  http://www.xamarin.com
  */
  #include "mini.h"
 
@@ -134,7 +135,7 @@ static const int long_cmov_opcodes [] = {
 	OP_CMOV_LGT_UN
 };
 
-static int
+static G_GNUC_UNUSED int
 br_to_br_un (int opcode)
 {
 	switch (opcode) {

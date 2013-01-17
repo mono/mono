@@ -8,8 +8,6 @@
 // (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
-#if NET_2_0
-
 namespace System.IO.Compression {
 	public enum CompressionMode {
 		Decompress=0,	// Decompress the given stream.
@@ -17,4 +15,3 @@ namespace System.IO.Compression {
 	};
 }
 
-#endif

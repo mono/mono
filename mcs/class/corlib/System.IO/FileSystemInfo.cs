@@ -3,6 +3,7 @@
 // System.IO.FileSystemInfo.cs 
 //
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
 //                 Dan Lewis (dihlewis@yahoo.co.uk)
@@ -256,6 +257,11 @@ namespace System.IO {
 				throw new ArgumentException ("An empty file name is not valid.");
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path.");
+			if (Environment.IsRunningOnWindows) {
+				int idx = path.IndexOf (':');
+				if (idx >= 0 && idx != 1)
+					throw new ArgumentException ("path");
+			}
 		}
 
 		internal MonoIOStat stat;

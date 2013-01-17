@@ -16,7 +16,7 @@ class X {
 		return true;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		return 0;
 	}		

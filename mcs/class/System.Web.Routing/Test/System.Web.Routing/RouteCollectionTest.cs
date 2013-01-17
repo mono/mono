@@ -538,6 +538,63 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		public void GetVirtualPath8 ()
+		{
+			var routes = new RouteCollection();
+
+			routes.Add (new MyRoute ("login", new MyRouteHandler ()) {
+				Defaults = new RouteValueDictionary (new { controller = "Home", action = "LogOn" })
+			});
+
+			routes.Add (new MyRoute ("{site}/{controller}/{action}", new MyRouteHandler ())	{
+				Defaults = new RouteValueDictionary (new { site = "_", controller = "Home", action = "Index" }),
+				Constraints = new RouteValueDictionary ( new { site = "_?[0-9A-Za-z-]*" })
+			});
+
+			routes.Add (new MyRoute ("{*path}", new MyRouteHandler ()) {
+				Defaults = new RouteValueDictionary (new { controller = "Error", action = "NotFound" }),
+			});
+
+			var hc = new HttpContextStub2 ("~/login", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = routes.GetRouteData (hc);
+			var rvs = new RouteValueDictionary () {
+				{ "controller", "Home" },
+				{ "action" , "Index" }
+			};
+			var vpd = routes.GetVirtualPath (new RequestContext (hc, rd), rvs);
+			Assert.IsNotNull (vpd, "#A1");
+			Assert.AreEqual ("/", vpd.VirtualPath, "#A2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#A3");
+
+			hc = new HttpContextStub2 ("~/login", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			rd = routes.GetRouteData (hc);
+			rvs = new RouteValueDictionary () {
+				{ "controller", "Home" }
+			};
+			vpd = routes.GetVirtualPath (new RequestContext (hc, rd), rvs);
+			Assert.IsNotNull (vpd, "#B1");
+			Assert.AreEqual ("/login", vpd.VirtualPath, "#B2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#B3");
+
+			hc = new HttpContextStub2 ("~/login", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			rd = routes.GetRouteData (hc);
+			rvs = new RouteValueDictionary () {
+				{ "action" , "Index" }
+			};
+			vpd = routes.GetVirtualPath (new RequestContext (hc, rd), rvs);
+			Assert.IsNotNull (vpd, "#C1");
+			Assert.AreEqual ("/", vpd.VirtualPath, "#C2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#C3");
+
+			hc = new HttpContextStub2 ("~/", String.Empty, String.Empty);
+			rd = routes.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#D1");
+		}
+
+		[Test]
 		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
 		public void GetVirtualPathToExistingFile ()
 		{

@@ -111,7 +111,7 @@ namespace System.ServiceModel.Web
 			// do nothing
 		}
 
-#if NET_4_0
+#if NET_4_0 && !MOBILE
 		static readonly XmlWriterSettings settings = new XmlWriterSettings () { OmitXmlDeclaration = true, Indent = false };
 		XmlSerializer document_serializer, feed_serializer, item_serializer;
 

@@ -983,6 +983,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void ByRefOfAttriburesUnderCompilerContext ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -1297,6 +1299,8 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void AttributeValuesUnderCompilerContext ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);

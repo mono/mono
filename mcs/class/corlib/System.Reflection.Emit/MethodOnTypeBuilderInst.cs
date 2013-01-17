@@ -27,16 +27,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using System.Runtime.InteropServices;
+
 
 namespace System.Reflection.Emit
 {
 	/*
 	 * This class represents a method of an instantiation of a generic type builder.
 	 */
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MethodOnTypeBuilderInst : MethodInfo
 	{
 		#region Keep in sync with object-internals.h
@@ -45,7 +49,6 @@ namespace System.Reflection.Emit
 		Type[] method_arguments;
 		#endregion
 		MethodInfo generic_method_definition;
-		int is_compiler_context = -1;
 
 		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodInfo base_method)
 		{
@@ -97,21 +100,6 @@ namespace System.Reflection.Emit
 			return instantiation.GetGenericArguments ();
 		}
 
-		internal bool IsCompilerContext {
-			get {
-				if (is_compiler_context == -1) {
-					bool is_cc = false;
-					is_cc |= instantiation.IsCompilerContext;
-					if (!is_cc && method_arguments != null) {
-						foreach (Type t in method_arguments)
-							is_cc |= t.IsCompilerContext;
-					}
-					is_compiler_context = is_cc ? 1 : 0;
-				}
-				return is_compiler_context == 1;
-			}
-		}
-
 		//
 		// MemberInfo members
 		//
@@ -136,31 +124,23 @@ namespace System.Reflection.Emit
 
 		public override Type ReturnType {
 			get { 
-				if (!IsCompilerContext)
-					return base_method.ReturnType;
-				return MonoGenericClass.InflateType (base_method.ReturnType, GetTypeArgs (), method_arguments);
+				return base_method.ReturnType;
 			}
 		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			return base_method.IsDefined (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (bool inherit)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			return base_method.GetCustomAttributes (inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-			return base_method.GetCustomAttributes (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override string ToString ()
@@ -170,14 +150,6 @@ namespace System.Reflection.Emit
 			 sb.Append (" ");
 			 sb.Append (base_method.Name);
 			 sb.Append ("(");
-			 if (IsCompilerContext) {
-				 ParameterInfo [] par = GetParameters ();
-				 for (int i = 0; i < par.Length; ++i) {
-				 	if (i > 0)
-				 		sb.Append (", ");
-				 	sb.Append (par [i].ParameterType);
-				 }
-			}
 			 sb.Append (")");
 			 return sb.ToString ();
 		}
@@ -192,33 +164,12 @@ namespace System.Reflection.Emit
 
 		public override ParameterInfo [] GetParameters ()
 		{
-			ParameterInfo [] res = null;
-			if (!IsCompilerContext)
-				throw new NotSupportedException ();
-
-			if (base_method is MethodBuilder) {
-				MethodBuilder mb = (MethodBuilder)base_method;
-				res = new ParameterInfo [mb.parameters.Length];
-				for (int i = 0; i < mb.parameters.Length; i++) {
-					Type type = MonoGenericClass.InflateType (mb.parameters [i], GetTypeArgs (), method_arguments);
-					res [i] = new ParameterInfo (mb.pinfo == null ? null : mb.pinfo [i + 1], type, this, i + 1);
-				}
-			} else {
-				ParameterInfo[] base_params = base_method.GetParameters ();
-				res = new ParameterInfo [base_params.Length];
-				for (int i = 0; i < base_params.Length; i++) {
-					Type type = MonoGenericClass.InflateType (base_params [i].ParameterType, GetTypeArgs (), method_arguments);
-					res [i] = new ParameterInfo (base_params [i], type, this, i + 1);
-				}
-			}
-			return res;
+			throw new NotSupportedException ();
 		}
 
 		public override int MetadataToken {
 			get {
-				if (!IsCompilerContext)
-					return base.MetadataToken;
-				return base_method.MetadataToken;
+				return base.MetadataToken;
 			}
 		}
 
@@ -252,7 +203,7 @@ namespace System.Reflection.Emit
 
 		public override MethodInfo MakeGenericMethod (params Type [] methodInstantiation)
 		{
-			if (!base_method.IsGenericMethodDefinition || (method_arguments != null && !IsCompilerContext))
+			if (!base_method.IsGenericMethodDefinition || (method_arguments != null))
 				throw new InvalidOperationException ("Method is not a generic method definition");
 
 			if (methodInstantiation == null)
@@ -329,3 +280,4 @@ namespace System.Reflection.Emit
 	}
 }
 
+#endif

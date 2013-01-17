@@ -48,9 +48,9 @@ namespace System.Xml.Linq
 			Add (content);
 		}
 
-		public XDocument (XDeclaration xmldecl, params object [] content)
+		public XDocument (XDeclaration declaration, params object [] content)
 		{
-			Declaration = xmldecl;
+			Declaration = declaration;
 			Add (content);
 		}
 
@@ -114,19 +114,19 @@ namespace System.Xml.Linq
 			return Load (new StreamReader (stream), options);
 		}
 
-		public static XDocument Load (TextReader reader)
+		public static XDocument Load (TextReader textReader)
 		{
-			return Load (reader, LoadOptions.None);
+			return Load (textReader, LoadOptions.None);
 		}
 
-		public static XDocument Load (TextReader reader, LoadOptions options)
+		public static XDocument Load (TextReader textReader, LoadOptions options)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
 #if !MOONLIGHT
 			s.ProhibitDtd = false; // see XNodeNavigatorTest.MoveToId().
 #endif
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
-			using (XmlReader r = XmlReader.Create (reader, s)) {
+			using (XmlReader r = XmlReader.Create (textReader, s)) {
 				return LoadCore (r, options);
 			}
 		}
@@ -156,6 +156,7 @@ namespace System.Xml.Linq
 		{
 			if (reader.ReadState == ReadState.Initial)
 				reader.Read ();
+			this.FillLineInfoAndBaseUri (reader, options);
 			if (reader.NodeType == XmlNodeType.XmlDeclaration) {
 				Declaration = new XDeclaration (
 					reader.GetAttribute ("version"),
@@ -179,22 +180,22 @@ namespace System.Xml.Linq
 				}
 		}
 
-		public static XDocument Parse (string s)
+		public static XDocument Parse (string text)
 		{
-			return Parse (s, LoadOptions.None);
+			return Parse (text, LoadOptions.None);
 		}
 
-		public static XDocument Parse (string s, LoadOptions options)
+		public static XDocument Parse (string text, LoadOptions options)
 		{
-			return Load (new StringReader (s), options);
+			return Load (new StringReader (text), options);
 		}
 
-		public void Save (string filename)
+		public void Save (string fileName)
 		{
-			Save (filename, SaveOptions.None);
+			Save (fileName, SaveOptions.None);
 		}
 
-		public void Save (string filename, SaveOptions options)
+		public void Save (string fileName, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
@@ -204,17 +205,17 @@ namespace System.Xml.Linq
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
 			
-			using (XmlWriter w = XmlWriter.Create (filename, s)) {
+			using (XmlWriter w = XmlWriter.Create (fileName, s)) {
 				Save (w);
 			}
 		}
 
-		public void Save (TextWriter tw)
+		public void Save (TextWriter textWriter)
 		{
-			Save (tw, SaveOptions.None);
+			Save (textWriter, SaveOptions.None);
 		}
 
-		public void Save (TextWriter tw, SaveOptions options)
+		public void Save (TextWriter textWriter, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
@@ -223,26 +224,24 @@ namespace System.Xml.Linq
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
-			using (XmlWriter w = XmlWriter.Create (tw, s)) {
+			using (XmlWriter w = XmlWriter.Create (textWriter, s)) {
 				Save (w);
 			}
 		}
 
-		public void Save (XmlWriter w)
+		public void Save (XmlWriter writer)
 		{
-			WriteTo (w);
+			WriteTo (writer);
 		}
 
-		public override void WriteTo (XmlWriter w)
+		public override void WriteTo (XmlWriter writer)
 		{
-			if (xmldecl != null) {
-				if (xmldecl.Standalone != null)
-					w.WriteStartDocument (xmldecl.Standalone == "yes");
-				else
-					w.WriteStartDocument ();
-			}
+			if (xmldecl != null && xmldecl.Standalone != null)
+				writer.WriteStartDocument (xmldecl.Standalone == "yes");
+			else
+				writer.WriteStartDocument ();
 			foreach (XNode node in Nodes ())
-				node.WriteTo (w);
+				node.WriteTo (writer);
 		}
 
 		internal override bool OnAddingObject (object obj, bool rejectAttribute, XNode refNode, bool addFirst)

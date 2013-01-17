@@ -1,0 +1,119 @@
+<Type Name="CollationSequence" FullName="Mono.Data.Sqlite.CollationSequence">
+  <TypeSignature Language="C#" Value="public struct CollationSequence" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit CollationSequence extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A struct describing the collating sequence a function is executing in
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public int Compare (char[] c1, char[] c2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Compare(char[] c1, char[] c2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="c1" Type="System.Char[]" />
+        <Parameter Name="c2" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="c1">The first array to compare</param>
+        <param name="c2">The second array to compare</param>
+        <summary>
+            Calls the base collating sequence to compare two character arrays
+            </summary>
+        <returns>-1 if c1 is less than c2, 0 if c1 is equal to c2, and 1 if c1 is greater than c2</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public int Compare (string s1, string s2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Compare(string s1, string s2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s1" Type="System.String" />
+        <Parameter Name="s2" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s1">The first string to compare</param>
+        <param name="s2">The second string to compare</param>
+        <summary>
+            Calls the base collating sequence to compare two strings
+            </summary>
+        <returns>-1 if s1 is less than s2, 0 if s1 is equal to s2, and 1 if s1 is greater than s2</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encoding">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.CollationEncodingEnum Encoding;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype Mono.Data.Sqlite.CollationEncodingEnum Encoding" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationEncodingEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The text encoding of the collation sequence
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name;" />
+      <MemberSignature Language="ILAsm" Value=".field public string Name" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The name of the collating sequence
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.CollationTypeEnum Type;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype Mono.Data.Sqlite.CollationTypeEnum Type" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The type of collating sequence
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

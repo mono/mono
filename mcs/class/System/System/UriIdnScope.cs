@@ -27,8 +27,6 @@
 //
 
 // Net 3.5 type
-#if NET_2_0 || NET_2_1
-
 namespace System
 {
 	public enum UriIdnScope
@@ -39,4 +37,3 @@ namespace System
 	}
 }
 
-#endif

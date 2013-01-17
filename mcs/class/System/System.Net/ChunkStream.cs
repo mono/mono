@@ -130,7 +130,8 @@ namespace System.Net
 		
 		public void Write (byte [] buffer, int offset, int size)
 		{
-			InternalWrite (buffer, ref offset, size);
+			if (offset < size)
+				InternalWrite (buffer, ref offset, size);
 		}
 		
 		void InternalWrite (byte [] buffer, ref int offset, int size)
@@ -177,6 +178,20 @@ namespace System.Net
 			get { return (chunkRead != chunkSize || chunkSize != 0 || state != State.None); }
 		}
 
+		public bool DataAvailable {
+			get {
+				int count = chunks.Count;
+				for (int i = 0; i < count; i++) {
+					Chunk ch = (Chunk) chunks [i];
+					if (ch == null || ch.Bytes == null)
+						continue;
+					if (ch.Bytes.Length > 0 && ch.Offset < ch.Bytes.Length)
+						return (state != State.Body);
+				}
+				return false;
+			}
+		}
+
 		public int ChunkLeft {
 			get { return chunkSize - chunkRead; }
 		}
@@ -201,6 +216,8 @@ namespace System.Net
 		
 		State GetChunkSize (byte [] buffer, ref int offset, int size)
 		{
+			chunkRead = 0;
+			chunkSize = 0;
 			char c = '\0';
 			while (offset < size) {
 				c = (char) buffer [offset++];
@@ -246,7 +263,7 @@ namespace System.Net
 			} catch (Exception) {
 				ThrowProtocolViolation ("Cannot parse chunk size.");
 			}
-			
+
 			if (chunkSize == 0) {
 				trailerState = 2;
 				return State.Trailer;

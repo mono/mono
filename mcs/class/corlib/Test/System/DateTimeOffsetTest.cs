@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Stephane Delcroix  (sdelcroix@novell.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System.Globalization;
@@ -231,7 +233,10 @@ namespace MonoTests.System {
 				"M/d/yyyy H:m zzz",    "MM/d/yyyy H:m zzz",
 				"M/dd/yy H:m zzz",     "MM/dd/yy H:m zzz",
 				"M/d/yy H:m zzz",      "M/d/yy H:m zzz",
-				"ddd dd MMM yyyy h:mm tt zzz", 
+				"ddd dd MMM yyyy h:mm tt zzz",
+				"o", "O",
+				"r", "R",
+				"u",
 			};
 
 			foreach (DateTimeOffset dto in dtos)
@@ -251,6 +256,13 @@ namespace MonoTests.System {
 		public void ParseExactWithKFormat ()
 		{
 			DateTimeOffset o = DateTimeOffset.ParseExact ("Wed Mar 17 22:25:08 +0000 2010", "ddd MMM d H:m:ss K yyyy", CultureInfo.InvariantCulture);
+		}
+
+		[Test]
+		public void ParseExactCustomFormat ()
+		{
+			var dt = DateTimeOffset.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", "dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
+			Assert.AreEqual (new DateTimeOffset (1994, 11, 6, 8, 49, 37, TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now)), dt);
 		}
 		
 		[Test]
@@ -351,6 +363,16 @@ namespace MonoTests.System {
 			string format = "ddd dd MMM yyyy h:mm tt zzz";
 			string date = "Mon 14 Jan 2008 2:56 PM +01: 00";
 			DateTimeOffset.ParseExact(date, format, fp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactFormatException5 ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			string format = "U";
+			string date = "Mon 14 Jan 2008 2:56 PM +01: 00";
+			DateTimeOffset.ParseExact (date, format, fp);
 		}
 
 		[Test]

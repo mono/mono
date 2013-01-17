@@ -71,9 +71,9 @@ namespace System.Windows {
 			return dot;
 		}
 
-		public bool IsInstanceOfType(DependencyObject d)
+		public bool IsInstanceOfType(DependencyObject dependencyObject)
 		{
-			return systemType.IsInstanceOfType (d);
+			return systemType.IsInstanceOfType (dependencyObject);
 		}
 
 		public bool IsSubclassOf(DependencyObjectType dependencyObjectType)

@@ -40,7 +40,7 @@ public class UInt32Test
 	
 	private CultureInfo old_culture;
 
-	[TestFixtureSetUp]
+	[SetUp]
 	public void SetUp () 
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
@@ -62,19 +62,21 @@ public class UInt32Test
 		Results2 [6] = perPattern.Replace ("n","429,496,729,500.00000");
 	}
 
-	[TestFixtureTearDown]
+	[TearDown]
 	public void TearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
+	[Test]
 	public void TestMinMax()
 	{
 		
 		Assert.AreEqual(UInt32.MinValue, MyUInt32_2);
 		Assert.AreEqual(UInt32.MaxValue, MyUInt32_3);
 	}
-	
+
+	[Test]
 	public void TestCompareTo()
 	{
 		Assert.IsTrue(MyUInt32_3.CompareTo(MyUInt32_2) > 0);
@@ -109,6 +111,7 @@ public class UInt32Test
 		}
 	}
 
+	[Test]
 	public void TestEquals()
 	{
 		Assert.IsTrue(MyUInt32_1.Equals(MyUInt32_1));
@@ -116,7 +119,8 @@ public class UInt32Test
 		Assert.IsTrue(MyUInt32_1.Equals((object)(SByte)(42)) == false);
 		Assert.IsTrue(MyUInt32_1.Equals(MyUInt32_2) == false);
 	}
-	
+
+	[Test]
 	public void TestGetHashCode()
 	{
 		try {
@@ -128,7 +132,8 @@ public class UInt32Test
 			Assert.Fail("GetHashCode should not raise an exception here");
 		}
 	}
-	
+
+	[Test]
 	public void TestParse()
 	{
 		//test Parse(string s)
@@ -191,8 +196,76 @@ public class UInt32Test
 		// numbers, but we should not crash
 		
 		UInt32.Parse ("123", new DateTimeFormatInfo ());
+
+		Assert.AreEqual (734561, UInt32.Parse ("734561\0"), "C#43");
+		Assert.AreEqual (734561, UInt32.Parse ("734561\0\0\0    \0"), "C#44");
+		Assert.AreEqual (734561, UInt32.Parse ("734561\0\0\0    "), "C#45");
+		Assert.AreEqual (734561, UInt32.Parse ("734561\0\0\0"), "C#46");
+
+		Assert.AreEqual (0, UInt32.Parse ("0+", NumberStyles.Any), "#50");
 	}
-	
+
+	[Test]
+	public void TestParseExponent ()
+	{
+		Assert.AreEqual (2, uint.Parse ("2E0", NumberStyles.AllowExponent), "A#1");
+		Assert.AreEqual (20, uint.Parse ("2E1", NumberStyles.AllowExponent), "A#2");
+		Assert.AreEqual (200, uint.Parse ("2E2", NumberStyles.AllowExponent), "A#3");
+		Assert.AreEqual (2000000, uint.Parse ("2E6", NumberStyles.AllowExponent), "A#4");
+		Assert.AreEqual (200, uint.Parse ("2E+2", NumberStyles.AllowExponent), "A#5");
+		Assert.AreEqual (2, uint.Parse ("2", NumberStyles.AllowExponent), "A#6");
+
+		try {
+			uint.Parse ("2E");
+			Assert.Fail ("B#1");
+		} catch (FormatException) {
+		}
+
+		try {
+			uint.Parse ("2E3.0", NumberStyles.AllowExponent); // decimal notation for the exponent
+			Assert.Fail ("B#2");
+		} catch (FormatException) {
+		}
+
+		try {
+			uint.Parse ("2E 2", NumberStyles.AllowExponent);
+			Assert.Fail ("B#3");
+		} catch (FormatException) {
+		}
+
+		try {
+			uint.Parse ("2E2 ", NumberStyles.AllowExponent);
+			Assert.Fail ("B#4");
+		} catch (FormatException) {
+		}
+
+		try {
+			uint.Parse ("2E66", NumberStyles.AllowExponent); // final result overflow
+			Assert.Fail ("B#5");
+		} catch (OverflowException) {
+		}
+
+		try {
+			long exponent = (long) Int32.MaxValue + 10;
+			uint.Parse ("2E" + exponent.ToString (), NumberStyles.AllowExponent);
+			Assert.Fail ("B#6");
+		} catch (OverflowException) {
+		}
+
+		try {
+			uint.Parse ("2E-1", NumberStyles.AllowExponent); // negative exponent
+			Assert.Fail ("B#7");
+		} catch (OverflowException) {
+		}
+		
+		try {
+			uint.Parse ("2 math e1", NumberStyles.AllowExponent);
+			Assert.Fail ("B#8");
+		} catch (FormatException) {
+		}
+	}
+
+	[Test]
 	public void TestToString()
 	{
 		int TestNumber = 1;

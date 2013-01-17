@@ -15,6 +15,10 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 using NUnit.Framework;
 
@@ -2265,6 +2269,57 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (arr [0], ret [0], "#2");
 			Assert.AreEqual (arr [1], ret [1], "#3");
 		}
+
+#if NET_4_5
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void MustSetAsyncFlag ()
+		{
+			var r = XmlReader.Create (new StringReader ("<root/>"));
+			r.ReadAsync ();
+		}
+
+		Exception RunAsync (Action action)
+		{
+			var task = Task<Exception>.Run (async () => {
+				try {
+					action ();
+					return null;
+				} catch (Exception ex) {
+					return ex;
+				}
+			});
+			task.Wait ();
+			Assert.That (task.IsCompleted);
+			return task.Result;
+		}
+
+		[Test]
+		public void SimpleAsync ()
+		{
+			var xml = "<root test=\"monkey\"/>";
+			var task = Task<Exception>.Run (async () => {
+				try {
+					var s = new XmlReaderSettings ();
+					s.Async = true;
+					var r = XmlReader.Create (new StringReader (xml), s);
+
+					Assert.That (await r.ReadAsync ());
+					Assert.That (r.MoveToFirstAttribute ());
+
+					Assert.AreEqual (await r.GetValueAsync (), "monkey");
+					r.Close ();
+					return null;
+				} catch (Exception ex) {
+					return ex;
+				}
+			});
+			task.Wait ();
+			Assert.That (task.IsCompleted);
+			if (task.Result != null)
+				throw task.Result;
+		}
+#endif
 #endif
 	}
 }

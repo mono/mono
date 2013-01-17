@@ -102,8 +102,6 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 						return this.il.Create (OpCodes.Ldarg, index);
 					}
 				}
-				// Required due to bug in compiler
-				throw new NotSupportedException();
 			});
 			
 			return e;
@@ -149,8 +147,6 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 							return this.il.Create (OpCodes.Ldc_I4, value);
 						}
 					}
-					// Required due to bug in compiler
-					throw new NotSupportedException();
 				case TypeCode.Single:
 					return this.il.Create (OpCodes.Ldc_R4, (float) v);
 				case TypeCode.Double:
@@ -160,8 +156,6 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 				default:
 					throw new NotSupportedException ("Cannot handle constant: " + vTypeCode);
 				}
-				// Required due to bug in compiler
-				throw new NotSupportedException();
 			});
 
 			return e;

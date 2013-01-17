@@ -12,6 +12,7 @@
 //     Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (c)copyright 2003 Ville Palo
+// Copyright 2011 Xamarin Inc.
 //
 
 //
@@ -351,6 +352,7 @@ namespace System.Data {
 
 		DataTable GetTable (string name)
 		{
+			name = XmlConvert.DecodeName (name);
 			if (DSet != null) 
 				return DSet.Tables [name];
 			else if (name == table.TableName) 

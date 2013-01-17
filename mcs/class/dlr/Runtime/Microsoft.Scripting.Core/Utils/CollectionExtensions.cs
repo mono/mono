@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -13,7 +13,7 @@
  *
  * ***************************************************************************/
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 using Microsoft.Scripting.Utils;
 using Microsoft.Scripting.Ast;
 #else
@@ -35,9 +35,6 @@ namespace System.Dynamic.Utils {
         /// changed after creation. The exception is if the enumerable is
         /// already a ReadOnlyCollection{T}, in which case we just return it.
         /// </summary>
-#if !CLR2
-        [Pure]
-#endif
         internal static ReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> enumerable) {
             if (enumerable == null) {
                 return EmptyReadOnlyCollection<T>.Instance;
@@ -90,9 +87,6 @@ namespace System.Dynamic.Utils {
             return h;
         }
 
-#if !CLR2
-        [Pure]
-#endif
         internal static bool ListEquals<T>(this ICollection<T> first, ICollection<T> second) {
             if (first.Count != second.Count) {
                 return false;

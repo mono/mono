@@ -448,7 +448,7 @@ namespace System.Web.SessionState
 			DbProviderFactory factory = ProviderFactory;
 			DbConnection conn = CreateConnection (factory);
 			DbCommand cmd = CreateCommand (factory, conn,
-						       "DELETE * FROM Sessions WHERE SessionId = @SessionId AND ApplicationName = @ApplicationName AND LockId = @LockId");
+						       "DELETE FROM Sessions WHERE SessionId = @SessionId AND ApplicationName = @ApplicationName AND LockId = @LockId");
 
 			DbParameterCollection parameters = cmd.Parameters;
 			parameters.Add (CreateParameter <string> (factory, "@SessionId", id, 80));

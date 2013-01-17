@@ -14,7 +14,7 @@ class TestVararg
 		F (__arglist);
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int result = Vararg.AddABunchOfInts (__arglist ( 2, 3, 4 ));
 		Console.WriteLine ("Answer: {0}", result);

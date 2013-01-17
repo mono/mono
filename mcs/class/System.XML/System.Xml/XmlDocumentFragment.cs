@@ -41,8 +41,8 @@ namespace System.Xml
 
 		#region Constructor
 
-		protected internal XmlDocumentFragment (XmlDocument doc)
-			: base (doc)
+		protected internal XmlDocumentFragment (XmlDocument ownerDocument)
+			: base (ownerDocument)
 		{
 		}
 		

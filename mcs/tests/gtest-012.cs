@@ -23,6 +23,6 @@ class X
 		test.Hello (3);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

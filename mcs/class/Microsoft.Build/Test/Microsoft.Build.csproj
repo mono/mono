@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B2012E7F-8F8D-4908-8045-413F2BD1022D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Build</RootNamespace>
+    <AssemblyName>Microsoft.Build</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags />
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Microsoft.Build.Construction\ProjectExtensionsElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectWhenElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectOtherwiseElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectOutputElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectTaskElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectOnErrorElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskParameterElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskBodyElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\UsingTaskParameterGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectTargetElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemDefinitionElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemDefinitionGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectChooseElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectElementContainer.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectImportElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectImportGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectMetadataElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectPropertyElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectPropertyGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectRootElement.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectCollection.cs" />
+    <Compile Include="Microsoft.Build.Exceptions\InvalidProjectFileException.cs" />
+    <Compile Include="Microsoft.Build.Internal\CollectionFromEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\Project.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectLoadSettings.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectItem.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectCommentElement.cs" />
+    <Compile Include="Microsoft.Build.Internal\ReverseEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\ITargetResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\TargetResultCode.cs" />
+    <Compile Include="Microsoft.Build.Execution\TargetResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildResultCode.cs" />
+    <Compile Include="Microsoft.Build.Logging\FileLogger.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectProperty.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ToolsetDefinitionLocations.cs" />
+    <Compile Include="Microsoft.Build.Logging\ForwardingLoggerRecord.cs" />
+    <Compile Include="Microsoft.Build.Logging\LoggerDescription.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildRequestData.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildRequestDataFlags.cs" />
+    <Compile Include="Microsoft.Build.Execution\HostServices.cs" />
+    <Compile Include="Microsoft.Build.Execution\NodeAffinity.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectItemInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectPropertyInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectMetadataInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildParameters.cs" />
+    <Compile Include="Microsoft.Build.Logging\ConsoleLogger.cs" />
+    <Compile Include="Microsoft.Build.Logging\ColorResetter.cs" />
+    <Compile Include="Microsoft.Build.Logging\ColorSetter.cs" />
+    <Compile Include="Microsoft.Build.Logging\WriteHandler.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\Toolset.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectMetadata.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTargetInstance.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectItemDefinition.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ResolvedImport.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildManager.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildSubmission.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

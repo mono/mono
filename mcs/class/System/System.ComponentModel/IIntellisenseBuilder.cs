@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.ComponentModel
 {
 	public interface IIntellisenseBuilder
@@ -38,5 +36,3 @@ namespace System.ComponentModel
 		bool Show (string language, string value, ref string newValue);
 	}
 }
-
-#endif

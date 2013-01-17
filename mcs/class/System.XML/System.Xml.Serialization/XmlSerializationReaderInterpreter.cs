@@ -329,12 +329,12 @@ namespace System.Xml.Serialization
 			object[] flatLists = null;
 			object[] flatListsChoices = null;
 			Fixup fixup = null;
-			int ind = 0;
+			int ind = -1;
 			int maxInd;
 
 			if (readBySoapOrder) {
 				if (map.ElementMembers != null) maxInd = map.ElementMembers.Count;
-				else maxInd = 0;
+				else maxInd = -1;
 			}
 			else
 				maxInd = int.MaxValue;
@@ -373,14 +373,15 @@ namespace System.Xml.Serialization
 				AddFixup (fixup);
 			}
 
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd)) 
+			XmlTypeMapMember previousMember = null;
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd - 1))
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
 					XmlTypeMapElementInfo info;
 					
 					if (readBySoapOrder) {
-						info = map.GetElement (ind++);
+						info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, ind);
 					}
 					else if (hasAnyReturnMember) {
 						info = (XmlTypeMapElementInfo) ((XmlTypeMapMemberElement)map.ReturnMember).ElementInfo[0];
@@ -388,16 +389,24 @@ namespace System.Xml.Serialization
 					}
 					else {
 						if (map.IsOrderDependentMap) {
-							while ((info = map.GetElement (ind++)) != null)
-								if (info.ElementName == Reader.LocalName && info.Namespace == Reader.NamespaceURI)
-									break;
+							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, ind);
 						}
 						else
-							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, -1);
+							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI);
 					}
 
 					if (info != null && !readFlag[info.Member.Index] )
 					{
+						if (info.Member != previousMember)
+						{
+							ind = info.ExplicitOrder + 1;
+							// If the member is a flat list don't increase the index, since the next element may
+							// be another item of the list. This is a fix for Xamarin bug #9193.
+							if (info.Member is XmlTypeMapMemberFlatList)
+								ind--;
+							previousMember = info.Member;
+						}
+
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))
 						{
 							if (_format == SerializationFormat.Encoded && info.MultiReferenceType)

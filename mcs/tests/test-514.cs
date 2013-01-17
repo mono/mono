@@ -1,4 +1,4 @@
-// Compiler options: -warnaserror -warn:2
+// Compiler options: -warnaserror -w:2
 
 using System;
 class X {
@@ -13,7 +13,7 @@ class X {
 		throw new Exception ();
 	}
 
-        static int Main ()
+        public static int Main ()
 	{
 		int ret = 1;
 		try { HandleConflict (1); }

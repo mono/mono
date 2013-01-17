@@ -133,8 +133,6 @@ namespace System.Web.UI.WebControls
 				if (SelectedFlag) {
 					if (value != null)
 						value.SetSelectedNode (this, false);
-					if (tree != null)
-						tree.SetSelectedNode (null, false);
 				}
 				tree = value;
 				if (nodes != null)

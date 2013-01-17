@@ -34,15 +34,7 @@ using System;
 
 namespace System.Diagnostics {
 
-#if NET_2_0
 	public static class CounterSampleCalculator {
-#else
-	public sealed class CounterSampleCalculator {
-
-		private CounterSampleCalculator ()
-		{
-		}
-#endif
 
 		public static float ComputeCounterValue (CounterSample newSample)
 		{

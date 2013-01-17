@@ -83,8 +83,7 @@ mono_win32_get_handle_stackoverflow (void)
 	/* get stack overflow exception from domain object */
 	x86_mov_reg_membase (code, X86_EAX, X86_EAX, G_STRUCT_OFFSET (MonoDomain, stack_overflow_ex), 4);
 
-	/* call mono_arch_handle_exception (sctx, stack_overflow_exception_obj, FALSE) */
-	x86_push_imm (code, 0);
+	/* call mono_arch_handle_exception (sctx, stack_overflow_exception_obj) */
 	x86_push_reg (code, X86_EAX);
 	x86_push_reg (code, X86_EBX);
 	x86_call_code (code, mono_arch_handle_exception);
@@ -463,7 +462,7 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 	/* adjust eip so that it point into the call instruction */
 	ctx.eip -= 1;
 
-	mono_handle_exception (&ctx, exc, (gpointer)eip, FALSE);
+	mono_handle_exception (&ctx, exc);
 
 	restore_context (&ctx);
 
@@ -628,7 +627,7 @@ get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolea
 		code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, corlib ? "mono_x86_throw_corlib_exception" : "mono_x86_throw_exception");
 		x86_call_reg (code, X86_EAX);
 	} else {
-		x86_call_code (code, resume_unwind ? (mono_x86_resume_unwind) : (corlib ? (gpointer)mono_x86_throw_corlib_exception : (gpointer)mono_x86_throw_exception));
+		x86_call_code (code, resume_unwind ? (gpointer)(mono_x86_resume_unwind) : (corlib ? (gpointer)mono_x86_throw_corlib_exception : (gpointer)mono_x86_throw_exception));
 	}
 	x86_breakpoint (code);
 
@@ -810,15 +809,11 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		/* Pop arguments off the stack */
 		/* 
 		 * FIXME: LLVM doesn't push these, we can't use ji->from_llvm as it describes
-		 * the caller.
+		 * the callee.
 		 */
 #ifndef ENABLE_LLVM
-		{
-			MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, mono_method_signature (ji->method)->param_count + 1);
-
-			guint32 stack_to_pop = mono_arch_get_argument_info (mono_method_signature (ji->method), mono_method_signature (ji->method)->param_count, arg_info);
-			new_ctx->esp += stack_to_pop;
-		}
+		if (ji->has_arch_eh_info)
+			new_ctx->esp += mono_jit_info_get_arch_eh_info (ji)->stack_size;
 #endif
 
 		return TRUE;
@@ -872,14 +867,16 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			/* Pop arguments off the stack */
 			/* FIXME: Handle the delegate case too ((*lmf)->method == NULL) */
 			/* FIXME: Handle the IMT/vtable case too */
+#if 0
 #ifndef ENABLE_LLVM
 			if ((*lmf)->method) {
 				MonoMethod *method = (*lmf)->method;
 				MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, mono_method_signature (method)->param_count + 1);
 
-				guint32 stack_to_pop = mono_arch_get_argument_info (mono_method_signature (method), mono_method_signature (method)->param_count, arg_info);
+				guint32 stack_to_pop = mono_arch_get_argument_info (NULL, mono_method_signature (method), mono_method_signature (method)->param_count, arg_info);
 				new_ctx->esp += stack_to_pop;
 			}
+#endif
 #endif
 		}
 		else
@@ -944,7 +941,7 @@ handle_signal_exception (gpointer obj)
 	if (mono_debugger_handle_exception (&ctx, (MonoObject *)obj))
 		return;
 
-	mono_handle_exception (&ctx, obj, MONO_CONTEXT_GET_IP (&ctx), FALSE);
+	mono_handle_exception (&ctx, obj);
 
 	restore_context (&ctx);
 }
@@ -1016,7 +1013,7 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 }
 
 gboolean
-mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
+mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoContext mctx;
@@ -1032,7 +1029,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	/* Pass the ctx parameter in TLS */
 	mono_arch_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
 
-	g_assert (!test_only);
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
 	mono_monoctx_to_sigctx (&mctx, sigctx);
@@ -1045,7 +1041,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 
 	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
-	g_assert (!test_only);
 	mctx = jit_tls->ex_ctx;
 	mono_setup_async_callback (&mctx, handle_signal_exception, obj);
 	mono_monoctx_to_sigctx (&mctx, sigctx);
@@ -1059,7 +1054,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj))
 		return TRUE;
 
-	mono_handle_exception (&mctx, obj, (gpointer)mctx.eip, test_only);
+	mono_handle_exception (&mctx, obj);
 
 	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
 
@@ -1108,7 +1103,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 		restore_context (&mctx);
 	}
 
-	mono_handle_exception (&mctx, obj, (gpointer)mctx.eip, FALSE);
+	mono_handle_exception (&mctx, obj);
 	if (stack_ovf)
 		prepare_for_guard_pages (&mctx);
 	restore_context (&mctx);
@@ -1149,6 +1144,7 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	 *   ctx arg
 	 *   return ip
 	 */
+	// FIXME: test_only is no more.
  	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 4;
 	frame_size += 15;
 	frame_size &= ~15;
@@ -1184,6 +1180,9 @@ mono_tasklets_arch_restore (void)
 	/* the signature is: restore (MonoContinuation *cont, int state, MonoLMF **lmf_addr) */
 	/* put cont in edx */
 	x86_mov_reg_membase (code, X86_EDX, X86_ESP, 4, 4);
+        /* state in eax, so it's setup as the return value */
+        x86_mov_reg_membase (code, X86_EAX, X86_ESP, 8, 4);
+
 	/* setup the copy of the stack */
 	x86_mov_reg_membase (code, X86_ECX, X86_EDX, G_STRUCT_OFFSET (MonoContinuation, stack_used_size), 4);
 	x86_shift_reg_imm (code, X86_SHR, X86_ECX, 2);
@@ -1204,8 +1203,6 @@ mono_tasklets_arch_restore (void)
 	/*x86_mov_reg_membase (code, X86_ECX, X86_ESP, 12, 4);
 	x86_mov_membase_reg (code, X86_ECX, 0, X86_EDX, 4);*/
 
-	/* state in eax, so it's setup as the return value */
-	x86_mov_reg_membase (code, X86_EAX, X86_ESP, 8, 4);
 	x86_jump_membase (code, X86_EDX, G_STRUCT_OFFSET (MonoContinuation, return_ip));
 	g_assert ((code - start) <= 48);
 	saved = start;

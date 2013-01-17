@@ -47,6 +47,7 @@ namespace Mono.Documentation {
 				{ "update",           new MDocUpdater () },
 				{ "update-ecma-xml",  new MDocUpdateEcmaXml () },
 				{ "validate",         new MDocValidator () },
+				{ "index",            new MDocIndex () },
 			};
 
 			bool showVersion = false;

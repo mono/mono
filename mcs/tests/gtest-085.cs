@@ -24,7 +24,7 @@ public class ArrayList<T>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		ArrayList<int> list = new ArrayList<int> ();
 		return list.AddAll (null);

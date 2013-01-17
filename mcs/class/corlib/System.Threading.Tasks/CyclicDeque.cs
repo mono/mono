@@ -39,26 +39,6 @@ namespace System.Threading.Tasks
 #if INSIDE_MONO_PARALLEL
 	public
 #endif
-	enum PopResult	{
-		Succeed,
-		Empty,
-		Abort
-	}
-
-#if INSIDE_MONO_PARALLEL
-	public
-#endif
-	interface IConcurrentDeque<T>
-	{
-		void PushBottom (T obj);
-		PopResult PopBottom (out T obj);
-		PopResult PopTop (out T obj);
-		IEnumerable<T> GetEnumerable ();
-	}
-
-#if INSIDE_MONO_PARALLEL
-	public
-#endif
 	class CyclicDeque<T> : IConcurrentDeque<T>
 	{
 		const int BaseSize = 11;
@@ -113,6 +93,22 @@ namespace System.Threading.Tasks
 			
 			return PopResult.Succeed;
 		}
+
+		public bool PeekBottom (out T obj)
+		{
+			obj = default (T);
+
+			long b = Interlocked.Decrement (ref bottom);
+			var a = array;
+			long t = Interlocked.Read (ref top);
+			long size = b - t;
+
+			if (size < 0)
+				return false;
+
+			obj = a.segment[b % a.size];
+			return true;
+		}
 		
 		public PopResult PopTop (out T obj)
 		{
@@ -132,11 +128,35 @@ namespace System.Threading.Tasks
 			
 			return PopResult.Succeed;
 		}
+
+		internal bool PeekTop (out T obj)
+		{
+			obj = default (T);
+
+			long t = Interlocked.Read (ref top);
+			long b = Interlocked.Read (ref bottom);
+
+			if (b - t <= 0)
+				return false;
+
+			var a = array;
+			obj = a.segment[t % a.size];
+
+			return true;
+		}
 		
 		public IEnumerable<T> GetEnumerable ()
 		{
 			var a = array;
 			return a.GetEnumerable (bottom, ref top);
+		}
+
+		public bool IsEmpty {
+			get {
+				long t = Interlocked.Read (ref top);
+				long b = Interlocked.Read (ref bottom);
+				return b - t <= 0;
+			}
 		}
 	}
 	

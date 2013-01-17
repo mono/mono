@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Net.Mail {
 	public enum SmtpAccess
 	{
@@ -39,4 +37,3 @@ namespace System.Net.Mail {
 	}
 }
 
-#endif // NET_2_0

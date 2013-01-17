@@ -78,25 +78,21 @@ namespace System.Configuration
 		{
 		}
 
-#if NET_2_0
 		[Obsolete ("This method is obsolete, it has been replaced by System.Configuration!System.Configuration.ConfigurationManager.GetSection")]
-#endif
 		public static object GetConfig (string sectionName)
 		{
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 			return ConfigurationManager.GetSection (sectionName);
 #else
 			return config.GetConfig (sectionName);
 #endif
 		}
 
-#if NET_2_0
 		[Obsolete ("This property is obsolete.  Please use System.Configuration.ConfigurationManager.AppSettings")]
-#endif
 		public static NameValueCollection AppSettings
 		{
 			get {
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 				object appSettings = ConfigurationManager.GetSection ("appSettings");
 #else
 				object appSettings = GetConfig ("appSettings");
@@ -155,9 +151,7 @@ namespace System.Configuration
 			return instance;
 		}
 
-#if NET_2_0
 		[Obsolete ("This method is obsolete.  Please use System.Configuration.ConfigurationManager.GetConfig")]
-#endif
 		public object GetConfig (string sectionName)
 		{
 			Init ();
@@ -662,9 +656,7 @@ namespace System.Configuration
 					value = reader.Value;
 				}
 				else
-#if NET_2_0
 				if (reader.Name != "type")
-#endif
 					ThrowException ("Unrecognized attribute.", reader);
 			} while (reader.MoveToNextAttribute ());
 

@@ -550,31 +550,31 @@ namespace System.Net.NetworkInformation {
 
 		// PInvokes
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetTcpTable (byte [] pTcpTable, ref int pdwSize, bool bOrder);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetTcp6Table (byte [] TcpTable, ref int SizePointer, bool Order);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetUdpTable (byte [] pUdpTable, ref int pdwSize, bool bOrder);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetUdp6Table (byte [] Udp6Table, ref int SizePointer, bool Order);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetTcpStatisticsEx (out Win32_MIB_TCPSTATS pStats, int dwFamily);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetUdpStatisticsEx (out Win32_MIB_UDPSTATS pStats, int dwFamily);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetIcmpStatistics (out Win32_MIBICMPINFO pStats, int dwFamily);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetIcmpStatisticsEx (out Win32_MIB_ICMP_EX pStats, int dwFamily);
 
-		[DllImport ("Iphlpapi.dll")]
+		[DllImport ("iphlpapi.dll")]
 		static extern int GetIpStatisticsEx (out Win32_MIB_IPSTATS pStats, int dwFamily);
 
 		// Win32 structures
@@ -583,7 +583,7 @@ namespace System.Net.NetworkInformation {
 		struct Win32_IN6_ADDR
 		{
 			[FieldOffset (0)]
-			[MarshalAs ((short) UnmanagedType.U1, SizeConst = 16)]
+			[MarshalAs ( UnmanagedType.ByValArray, SizeConst = 16)]
 			public byte [] Bytes;
 		}
 

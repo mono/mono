@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -159,7 +158,7 @@ namespace System.Net {
 				ares.Count = count;
 				ares.Callback = cback;
 				ares.State = state;
-				ares.SynchRead = nread;
+				ares.SynchRead = Math.Max (0, nread);
 				ares.Complete ();
 				return ares;
 			}
@@ -220,5 +219,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

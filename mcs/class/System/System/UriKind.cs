@@ -28,12 +28,7 @@
 
 namespace System {
 
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	enum UriKind {
+	public enum UriKind {
 
 		RelativeOrAbsolute,
 		Absolute,

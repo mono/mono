@@ -34,31 +34,31 @@ namespace System.Runtime.Serialization.Json
 {
 	public static class JsonReaderWriterFactory
 	{
-		public static XmlDictionaryReader CreateJsonReader (byte [] source, XmlDictionaryReaderQuotas quotas)
+		public static XmlDictionaryReader CreateJsonReader (byte [] buffer, XmlDictionaryReaderQuotas quotas)
 		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-			return CreateJsonReader (source, 0, source.Length, quotas);
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			return CreateJsonReader (buffer, 0, buffer.Length, quotas);
 		}
 
-		public static XmlDictionaryReader CreateJsonReader (byte [] source, int offset, int length, XmlDictionaryReaderQuotas quotas)
+		public static XmlDictionaryReader CreateJsonReader (byte [] buffer, int offset, int count, XmlDictionaryReaderQuotas quotas)
 		{
-			return CreateJsonReader (source, offset, length, null, quotas, null);
+			return CreateJsonReader (buffer, offset, count, null, quotas, null);
 		}
 
-		public static XmlDictionaryReader CreateJsonReader (byte [] source, int offset, int length, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose readerClose)
+		public static XmlDictionaryReader CreateJsonReader (byte [] buffer, int offset, int count, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose onClose)
 		{
-			return new JsonReader (source, offset, length, encoding, quotas, readerClose);
+			return new JsonReader (buffer, offset, count, encoding, quotas, onClose);
 		}
 
-		public static XmlDictionaryReader CreateJsonReader (Stream source, XmlDictionaryReaderQuotas quotas)
+		public static XmlDictionaryReader CreateJsonReader (Stream stream, XmlDictionaryReaderQuotas quotas)
 		{
-			return CreateJsonReader (source, null, quotas, null);
+			return CreateJsonReader (stream, null, quotas, null);
 		}
 
-		public static XmlDictionaryReader CreateJsonReader (Stream source, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose readerClose)
+		public static XmlDictionaryReader CreateJsonReader (Stream stream, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose onClose)
 		{
-			return new JsonReader (source, encoding, quotas, readerClose);
+			return new JsonReader (stream, encoding, quotas, onClose);
 		}
 
 		public static XmlDictionaryWriter CreateJsonWriter (Stream stream)
@@ -71,9 +71,9 @@ namespace System.Runtime.Serialization.Json
 			return CreateJsonWriter (stream, encoding, false);
 		}
 
-		public static XmlDictionaryWriter CreateJsonWriter (Stream stream, Encoding encoding, bool closeOutput)
+		public static XmlDictionaryWriter CreateJsonWriter (Stream stream, Encoding encoding, bool ownsStream)
 		{
-			return new JsonWriter (stream, encoding, closeOutput);
+			return new JsonWriter (stream, encoding, ownsStream);
 		}
 	}
 }

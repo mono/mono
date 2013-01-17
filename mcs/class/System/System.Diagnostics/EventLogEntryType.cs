@@ -32,9 +32,6 @@ using System;
 using System.Diagnostics;
 
 namespace System.Diagnostics {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum EventLogEntryType {
 		Error = 0x01,
 		Warning = 0x02,

@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Globalization;
@@ -199,4 +197,3 @@ namespace System.ComponentModel
 	}
 }
 
-#endif

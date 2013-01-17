@@ -11,7 +11,8 @@
     <RootNamespace>Mono.CSharp.Tests</RootNamespace>
     <AssemblyName>Mono.CSharp.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -51,6 +52,7 @@
     <Compile Include="Evaluator\BuildinCommands.cs" />
     <Compile Include="Evaluator\CompletionTest.cs" />
     <Compile Include="Evaluator\EvaluatorFixture.cs" />
+    <Compile Include="Evaluator\EvaluatorTest.cs" />
     <Compile Include="Evaluator\ExpressionsTest.cs" />
     <Compile Include="Evaluator\TypesTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

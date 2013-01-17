@@ -74,12 +74,18 @@ namespace Pdb2Mdb {
 
 		void ConvertSequencePoints (PdbFunction function, SourceFile file, SourceMethodBuilder builder)
 		{
-			foreach (var line in function.lines.SelectMany (lines => lines.lines))
+			int last_line = 0;
+			foreach (var line in function.lines.SelectMany (lines => lines.lines)) {
+				// 0xfeefee is an MS convention, we can't pass it into mdb files, so we use the last non-hidden line
+				bool is_hidden = line.lineBegin == 0xfeefee;
 				builder.MarkSequencePoint (
 					(int) line.offset,
 					file.CompilationUnit.SourceFile,
-					(int) line.lineBegin,
-					(int) line.colBegin, line.lineBegin == 0xfeefee);
+					is_hidden ? last_line : (int) line.lineBegin,
+					(int) line.colBegin, is_hidden);
+				if (!is_hidden)
+					last_line = (int) line.lineBegin;
+			}
 		}
 
 		void ConvertVariables (PdbFunction function)

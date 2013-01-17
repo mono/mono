@@ -114,15 +114,28 @@ namespace System.Net {
 			set {
 				if (String.IsNullOrEmpty (value)) {
 					domain = String.Empty;
-					ExactDomain = true;
+					HasDomain = false;
 				} else {
 					domain = value;
-					ExactDomain = (value [0] != '.');
+					IPAddress test;
+					if (IPAddress.TryParse (value, out test))
+						HasDomain = false;
+					else
+						HasDomain = true;
 				}
 			}
 		}
 
-		internal bool ExactDomain { get; set; }
+		/*
+		 * Set this to false to disable same-origin checks.
+		 * 
+		 * This should be done whenever the cookie does not actually
+		 * contain a domain and we fallback to the Uri's hostname.
+		 * 
+		 */
+		internal bool HasDomain {
+			get; set;
+		}
 
 		public bool Expired {
 			get { 
@@ -196,6 +209,7 @@ namespace System.Net {
 
 		internal int [] Ports {
 			get { return ports; }
+			set { ports = value; }
 		}
 
 		public bool Secure {
@@ -289,8 +303,6 @@ namespace System.Net {
 
 			if (!String.IsNullOrEmpty (path))
 				result.Append ("; $Path=").Append (path);
-			else if (uri != null)
-				result.Append ("; $Path=/").Append (path);
 
 			bool append_domain = (uri == null) || (uri.Host != domain);
 			if (append_domain && !String.IsNullOrEmpty (domain))

@@ -2,6 +2,7 @@
 .\" mono manual page.
 .\" Copyright 2003 Ximian, Inc. 
 .\" Copyright 2004-2011 Novell, Inc. 
+.\" Copyright 2011-2012 Xamarin Inc
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
@@ -102,6 +103,15 @@ than one can be specified:
 .RS
 .ne 8
 .TP
+.I autoreg
+The AOT compiler will emit a (ELF only) library initializer to automatically
+register the aot compiled module with the runtime.  This is only useful in static
+mode
+.TP
+.I asmonly
+Instructs the AOT compiler to output assembly code instead of an
+object file.
+.TP
 .I bind-to-runtime-version
 .Sp
 If specified, forces the generated AOT files to be bound to the
@@ -112,48 +122,61 @@ This is currently an experimental feature as it is not complete.
 This instructs Mono to precompile code that has historically not been
 precompiled with AOT.   
 .TP
-.I outfile=[filename]
-Instructs the AOT compiler to save the output to the specified file.
+.I direct-pinvoke
+.Sp
+When this option is specified, P/Invoke methods are invoked directly
+instead of going through the operating system symbol lookup operation.
 .TP
-.I write-symbols
-Instructs the AOT compiler to emit debug symbol information.
+.I llvm-path=<PREFIX>
+Same for the llvm tools 'opt' and 'llc'.
 .TP
-.I save-temps,keep-temps
-Instructs the AOT compiler to keep temporary files.
-.TP
-.I threads=[number]
-This is an experimental option for the AOT compiler to use multiple threads
-when compiling the methods.
-.TP
-.I nodebug
-Instructs the AOT compiler to not output any debugging information.
-.TP
-.I ntrampolines=[number]
-When compiling in full aot mode, the method trampolines must be precreated
-in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 1024.
-.TP
-.I nrgctx-trampolines=[number]
-When compiling in full aot mode, the generic sharing trampolines must be precreated
-in the AOT image.  You can add additional method trampolines with this argument.
-Defaults to 1024.
+.I mtriple=<TRIPLE>
+Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.
+--mtriple=armv7-linux-gnueabi will generate code that targets ARMv7. This is currently
+only supported by the ARM backend. In LLVM mode, this triple is passed on to the LLVM
+llc compiler.
 .TP
 .I nimt-trampolines=[number]
 When compiling in full aot mode, the IMT trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
 Defaults to 128.
 .TP
+.I nodebug
+Instructs the AOT compiler to not output any debugging information.
+.TP
+.I nrgctx-trampolines=[number]
+When compiling in full aot mode, the generic sharing trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 1024.
+.TP
+.I ntrampolines=[number]
+When compiling in full aot mode, the method trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 1024.
+.TP
+.I outfile=[filename]
+Instructs the AOT compiler to save the output to the specified file.
+.TP
 .I print-skipped-methods
 If the AOT compiler cannot compile a method for any reason, enabling this flag
 will output the skipped methods to the console.
 .TP
-.I autoreg
-The AOT compiler will emit a (ELF only) library initializer to automatically
-register the aot compiled module with the runtime.  This is only useful in static
-mode
+.I readonly-value=namespace.typename.fieldname=type/value
+Override the value of a static readonly field. Usually, during JIT
+compilation, the static constructor is ran eagerly, so the value of
+a static readonly field is known at compilation time and the compiler
+can do a number of optimizations based on it. During AOT, instead, the static
+constructor can't be ran, so this option can be used to set the value of such
+a field and enable the same set of optimizations.
+Type can be any of i1, i2, i4 for integers of the respective sizes (in bytes).
+Note that signed/unsigned numbers do not matter here, just the storage size.
+This option can be specified multiple times and it doesn't prevent the static
+constructor for the type defining the field to execute with the usual rules
+at runtime (hence possibly computing a different value for the field).
+
 .TP
-.I asmonly
-Instructs the AOT compiler to output assembly code instead of an object file.
+.I save-temps,keep-temps
+Instructs the AOT compiler to keep temporary files.
 .TP
 .I soft-debug
 This instructs the compiler to generate sequence point checks that
@@ -176,36 +199,20 @@ mono_aot_register_module (mono_aot_module_hello_info);
 .fi
 .ne
 .TP
-.I mtriple=<TRIPLE>
-Use the GNU style target triple <TRIPLE> to determine some code generation options, i.e.
---mtriple=armv7-linux-gnueabi will generate code that targets ARMv7. This is currently
-only supported by the ARM backend. In LLVM mode, this triple is passed on to the LLVM
-llc compiler.
+.I stats
+Print various stats collected during AOT compilation.
+.TP
+.I threads=[number]
+This is an experimental option for the AOT compiler to use multiple threads
+when compiling the methods.
 .TP
 .I tool-prefix=<PREFIX>
 Prepends <PREFIX> to the name of tools ran by the AOT compiler, i.e. 'as'/'ld'. For
 example, --tool=prefix=arm-linux-gnueabi- will make the AOT compiler run
 'arm-linux-gnueabi-as' instead of 'as'.
 .TP
-.I llvm-path=<PREFIX>
-Same for the llvm tools 'opt' and 'llc'.
-.TP
-.I stats
-Print various stats collected during AOT compilation.
-.TP
-.I readonly-value=namespace.typename.fieldname=type/value
-Override the value of a static readonly field. Usually, during JIT
-compilation, the static constructor is ran eagerly, so the value of
-a static readonly field is known at compilation time and the compiler
-can do a number of optimizations based on it. During AOT, instead, the static
-constructor can't be ran, so this option can be used to set the value of such
-a field and enable the same set of optimizations.
-Type can be any of i1, i2, i4 for integers of the respective sizes (in bytes).
-Note that signed/unsigned numbers do not matter here, just the storage size.
-This option can be specified multiple times and it doesn't prevent the static
-constructor for the type defining the field to execute with the usual rules
-at runtime (hence possibly computing a different value for the field).
-
+.I write-symbols
+Instructs the AOT compiler to emit debug symbol information.
 .PP
 For more information about AOT, see: http://www.mono-project.com/AOT
 .RE
@@ -226,16 +233,9 @@ start a debugging agent inside the Mono runtime and connect it to a
 client user interface will control the Mono process.
 This option is typically used by IDEs, like the MonoDevelop IDE.
 .PP
-The
-configuration is specified using one of more of the following options:
+The configuration is specified using one of more of the following options:
 .RS
 .ne 8
-.TP
-.I transport=transport_name
-.Sp
-This is used to specify the transport that the debugger will use to
-communicate.   It must be specified and currently requires this to
-be 'dt_socket'. 
 .TP
 .I address=host:port
 .Sp
@@ -262,7 +262,13 @@ Mono will print out to stdout the IP address and port where it is listening.
 Defaults to yes, with the default option Mono will suspend the vm on startup 
 until it connects successfully to a debugger front end.  If you set it to 'n', in 
 conjunction with \fBserver=y\fR, it instructs the Mono runtime to run as normal, 
-while caching metadata to send to the debugger front end on connection.
+while caching metadata to send to the debugger front end on connection..
+.TP
+.I transport=transport_name
+.Sp
+This is used to specify the transport that the debugger will use to
+communicate.   It must be specified and currently requires this to
+be 'dt_socket'. 
 .ne
 .RE
 .TP
@@ -518,6 +524,13 @@ System.String except for the System.String:Concat method.
 .nf
 
 	mono --trace=T:System.String,-M:System.String:Concat
+
+.fi
+You can trace managed to unmanaged transitions using
+the wrapper qualifier:
+.nf
+
+	mono --trace=wrapper app.exe
 
 .fi
 Finally, namespaces can be specified using the N: prefix:
@@ -933,6 +946,13 @@ This is can also be enabled by default by passing the
 .Sp
 This is the default from mono 2.8 onwards.
 .TP
+\fBMONO_DNS\fR
+When set, enables the use of a fully managed DNS resolver instead of the
+regular libc functions. This resolver performs much better when multiple
+queries are run in parallel.
+
+Note that /etc/nsswitch.conf will be ignored.
+.TP
 \fBMONO_EGD_SOCKET\fR
 For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
@@ -948,6 +968,10 @@ This environment variable allows you to pass command line arguments to
 a Mono process through the environment.   This is useful for example
 to force all of your Mono processes to use LLVM or SGEN without having
 to modify any launch scripts.
+.TP
+\fBMONO_ENV_OPTIONS\fR
+Used to pass extra options to the debugger agent in the runtime, as they were passed
+using --debugger-agent=.
 .TP
 \fBMONO_EVENTLOG_TYPE\fR
 Sets the type of event log provider to use (for System.Diagnostics.EventLog).
@@ -1021,11 +1045,10 @@ program but will obviously use more memory.  The default nursery size
 .TP
 \fBmajor=\fIcollector\fR
 Specifies which major collector to use.  Options are `marksweep' for
-the Mark&Sweep collector, `marksweep-par' for parallel Mark&Sweep,
-`marksweep-fixed' for Mark&Sweep with a fixed heap,
-`marksweep-fixed-par' for parallel Mark&Sweep with a fixed heap and
-`copying' for the copying collector. The Mark&Sweep collector is the
-default.
+the Mark&Sweep collector, `marksweep-conc' for concurrent Mark&Sweep,
+`marksweep-par' for parallel Mark&Sweep, `marksweep-fixed' for
+Mark&Sweep with a fixed heap, and `marksweep-fixed-par' for parallel
+Mark&Sweep with a fixed heap. The Mark&Sweep collector is the default.
 .TP
 \fBmajor-heap-size=\fIsize\fR
 Sets the size of the major heap (not including the large object space)
@@ -1057,11 +1080,11 @@ less than this percentage, it will do a copying collection for that block
 type in the next major collection, thereby restoring occupancy to close
 to 100 percent.  A value of 0 turns evacuation off.
 .TP
-\fB(no-)concurrent-sweep\fR
-Enables or disables concurrent sweep for the Mark&Sweep collector.  If
-enabled, the sweep phase of the garbage collection is done in a thread
-concurrently with the application.  Concurrent sweep is disabled by
-default.
+\fB(no-)lazy-sweep\fR
+Enables or disables lazy sweep for the Mark&Sweep collector.  If
+enabled, the sweep phase of the garbage collection is done piecemeal
+whenever the need arises, typically during nursery collections.  Lazy
+sweeping is enabled by default.
 .TP
 \fBstack-mark=\fImark-mode\fR
 Specifies how application threads should be scanned. Options are
@@ -1072,6 +1095,45 @@ and leave them untouched. Precise marking reduces floating garbage
 and can speed up nursery collection and allocation rate, it has
 the downside of requiring a significant extra memory per compiled
 method. The right option, unfortunately, requires experimentation.
+.TP
+\fBsave-target-ratio=\fIratio\fR
+Specifies the target save ratio for the major collector. The collector
+lets a given amount of memory to be promoted from the nursery due to
+minor collections before it triggers a major collection. This amount
+is based on how much memory it expects to free. It is represented as
+a ratio of the size of the heap after a major collection.
+Valid values are between 0.1 and 2.0. The default is 0.5.
+Smaller values will keep the major heap size smaller but will trigger
+more major collections. Likewise, bigger values will use more memory
+and result in less frequent major collections.
+This option is EXPERIMENTAL, so it might disappear in later versions of mono.
+.TP
+\fBdefault-allowance-ratio=\fIratio\fR
+Specifies the default allocation allowance when the calculated size
+is too small. The allocation allowance is how much memory the collector
+let be promoted before triggered a major collection.
+It is a ratio of the nursery size.
+Valid values are between 1.0 and 10.0. The default is 4.0.
+Smaller values lead to smaller heaps and more frequent major collections.
+Likewise, bigger values will allow the heap to grow faster but use
+more memory when it reaches a stable size.
+This option is EXPERIMENTAL, so it might disappear in later versions of mono.
+.TP
+\fBminor=\fIminor-collector\fR
+Specifies which minor collector to use. Options are 'simple' which
+promotes all objects from the nursery directly to the old generation
+and 'split' which lets object stay longer on the nursery before promoting.
+.TP
+\fBalloc-ratio=\fIratio\fR
+Specifies the ratio of memory from the nursery to be use by the alloc space.
+This only can only be used with the split minor collector.
+Valid values are integers between 1 and 100. Default is 60.
+.TP
+\fBpromotion-age=\fIage\fR
+Specifies the required age of an object must reach inside the nursery before
+been promoted to the old generation. This only can only be used with the
+split minor collector.
+Valid values are integers between 1 and 14. Default is 2.
 .ne
 .RE
 .TP
@@ -1092,6 +1154,11 @@ after the collection and the allowance for the minor collector, i.e. how
 much the heap is allowed to grow from minor collections before the next
 major collection is triggered.
 .TP
+\fBprint-pinning\fR
+Gathers statistics on the classes whose objects are pinned in the
+nursery and for which global remset entries are added.  Prints those
+statistics when shutting down.
+.TP
 \fBcollect-before-allocs\fR
 .TP
 \fBcheck-at-minor-collections\fR
@@ -1100,6 +1167,11 @@ the nursery at collection time, instead of the default, when buffers
 are allocated (clear-at-gc).   The consistency check ensures that
 there are no major to minor references that are not on the remembered
 sets. 
+.TP
+\fBcheck-mark-bits\fR
+Checks that mark bits in the major heap are consistent at the end of
+each major collection.  Consistent mark bits mean that if an object is
+marked, all objects that it had references to must also be marked.
 .TP
 \fBxdomain-checks\fR
 Performs a check to make sure that no references are left to an
@@ -1121,8 +1193,18 @@ Don't do major collections.
 Forces the GC to scan the stack conservatively, even if precise
 scanning is available.
 .TP
+\fBno-managed-allocator\fR
+Disables the managed allocator.
+.TP
 \fBcheck-scan-starts\fR
 If set, does a plausibility check on the scan_starts before and after each collection
+.TP
+\fBverify-nursery-at-minor-gc\fR
+If set, does a complete object walk of the nursery at the start of each minor collection.
+.TP
+\fBdump-nursery-at-minor-gc\fR
+If set, dumps the contents of the nursery at the start of each minor collection. Requires 
+verify-nursery-at-minor-gc to be set.
 .TP
 \fBheap-dump=\fIfile\fR
 Dumps the heap contents to the specified file.   To visualize the

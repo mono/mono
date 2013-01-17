@@ -41,6 +41,10 @@ using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml.Schema; // only required for NET_2_0
 #endif
 using Mono.Xml; // only required for NET_2_0
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Xml
 {
@@ -123,7 +127,26 @@ namespace System.Xml
 			get { return AttributeCount > 0; }
 		}
 
+#if NET_4_0
+		public virtual bool HasValue {
+			get {
+				switch (NodeType) {
+				case XmlNodeType.Attribute:
+				case XmlNodeType.Comment:
+				case XmlNodeType.ProcessingInstruction:
+				case XmlNodeType.SignificantWhitespace:
+				case XmlNodeType.CDATA:
+				case XmlNodeType.Text:
+				case XmlNodeType.Whitespace:
+				case XmlNodeType.XmlDeclaration:
+					return true;
+				}
+				return false;
+			}
+		}
+#else
 		public abstract bool HasValue { get; }
+#endif
 
 		public abstract bool IsEmptyElement { get; }
 
@@ -217,7 +240,15 @@ namespace System.Xml
 
 		#region Methods
 
+#if NET_4_5
+		public virtual void Close ()
+		{
+			if (asyncRunning)
+				throw new InvalidOperationException ("An asynchronous operation is already in progress.");
+		}
+#else
 		public abstract void Close ();
+#endif
 
 #if NET_2_0
 		private static XmlNameTable PopulateNameTable (
@@ -255,75 +286,95 @@ namespace System.Xml
 				XmlNodeType.Document;
 		}
 
-		public static XmlReader Create (Stream stream)
+		public static XmlReader Create (Stream input)
 		{
-			return Create (stream, null);
+			return Create (input, null);
 		}
 
-		public static XmlReader Create (string url)
+		public static XmlReader Create (string inputUri)
 		{
-			return Create (url, null);
+			return Create (inputUri, null);
 		}
 
-		public static XmlReader Create (TextReader reader)
+		public static XmlReader Create (TextReader input)
 		{
-			return Create (reader, null);
+			return Create (input, null);
 		}
 
-		public static XmlReader Create (string url, XmlReaderSettings settings)
+		public static XmlReader Create (string inputUri, XmlReaderSettings settings)
 		{
-			return Create (url, settings, null);
+			return Create (inputUri, settings, null);
 		}
 
-		public static XmlReader Create (Stream stream, XmlReaderSettings settings)
+		public static XmlReader Create (Stream input, XmlReaderSettings settings)
 		{
-			return Create (stream, settings, String.Empty);
+			return Create (input, settings, String.Empty);
 		}
 
-		public static XmlReader Create (TextReader reader, XmlReaderSettings settings)
+		public static XmlReader Create (TextReader input, XmlReaderSettings settings)
 		{
-			return Create (reader, settings, String.Empty);
+			return Create (input, settings, String.Empty);
 		}
 
 		static XmlReaderSettings PopulateSettings (XmlReaderSettings src)
 		{
+			XmlReaderSettings copy;
 			if (src == null)
-				return new XmlReaderSettings ();
+				copy = new XmlReaderSettings ();
 			else
-				return src.Clone ();
+				copy = src.Clone ();
+#if NET_4_5
+			copy.SetReadOnly ();
+#endif
+			return copy;
 		}
 
-		public static XmlReader Create (Stream stream, XmlReaderSettings settings, string baseUri)
+		static XmlReaderSettings PopulateSettings (XmlReader reader, XmlReaderSettings src)
+		{
+			XmlReaderSettings copy;
+			if (src == null)
+				copy = new XmlReaderSettings ();
+			else
+				copy = src.Clone ();
+#if NET_4_5
+			if (reader.Settings != null)
+				copy.Async = reader.Settings.Async;
+			copy.SetReadOnly ();
+#endif
+			return copy;
+		}
+
+		public static XmlReader Create (Stream input, XmlReaderSettings settings, string baseUri)
 		{
 			settings = PopulateSettings (settings);
-			return Create (stream, settings,
+			return Create (input, settings,
 				PopulateParserContext (settings, baseUri));
 		}
 
-		public static XmlReader Create (TextReader reader, XmlReaderSettings settings, string baseUri)
+		public static XmlReader Create (TextReader input, XmlReaderSettings settings, string baseUri)
 		{
 			settings = PopulateSettings (settings);
-			return Create (reader, settings,
+			return Create (input, settings,
 				PopulateParserContext (settings, baseUri));
 		}
 
 		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
 		{
-			settings = PopulateSettings (settings);
+			settings = PopulateSettings (reader, settings);
 			XmlReader r = CreateFilteredXmlReader (reader, settings);
 			r.settings = settings;
 			return r;
 		}
 
-		public static XmlReader Create (string url, XmlReaderSettings settings, XmlParserContext context)
+		public static XmlReader Create (string inputUri, XmlReaderSettings settings, XmlParserContext inputContext)
 		{
 			settings = PopulateSettings (settings);
 			bool closeInputBak = settings.CloseInput;
 			try {
 				settings.CloseInput = true; // forced. See XmlReaderCommonTests.CreateFromUrlClose().
-				if (context == null)
-					context = PopulateParserContext (settings, url);
-				XmlTextReader xtr = new XmlTextReader (false, settings.XmlResolver, url, GetNodeType (settings), context);
+				if (inputContext == null)
+					inputContext = PopulateParserContext (settings, inputUri);
+				XmlTextReader xtr = new XmlTextReader (false, settings.XmlResolver, inputUri, GetNodeType (settings), inputContext);
 				XmlReader ret = CreateCustomizedTextReader (xtr, settings);
 				return ret;
 			} finally {
@@ -331,20 +382,20 @@ namespace System.Xml
 			}
 		}
 
-		public static XmlReader Create (Stream stream, XmlReaderSettings settings, XmlParserContext context)
+		public static XmlReader Create (Stream input, XmlReaderSettings settings, XmlParserContext inputContext)
 		{
 			settings = PopulateSettings (settings);
-			if (context == null)
-				context = PopulateParserContext (settings, String.Empty);
-			return CreateCustomizedTextReader (new XmlTextReader (stream, GetNodeType (settings), context), settings);
+			if (inputContext == null)
+				inputContext = PopulateParserContext (settings, String.Empty);
+			return CreateCustomizedTextReader (new XmlTextReader (input, GetNodeType (settings), inputContext), settings);
 		}
 
-		public static XmlReader Create (TextReader reader, XmlReaderSettings settings, XmlParserContext context)
+		public static XmlReader Create (TextReader input, XmlReaderSettings settings, XmlParserContext inputContext)
 		{
 			settings = PopulateSettings (settings);
-			if (context == null)
-				context = PopulateParserContext (settings, String.Empty);
-			return CreateCustomizedTextReader (new XmlTextReader (context.BaseURI, reader, GetNodeType (settings), context), settings);
+			if (inputContext == null)
+				inputContext = PopulateParserContext (settings, String.Empty);
+			return CreateCustomizedTextReader (new XmlTextReader (inputContext.BaseURI, input, GetNodeType (settings), inputContext), settings);
 		}
 
 		private static XmlReader CreateCustomizedTextReader (XmlTextReader reader, XmlReaderSettings settings)
@@ -445,7 +496,11 @@ namespace System.Xml
 #endif
 		}
 
-		void IDisposable.Dispose ()
+#if NET_4_0 || MOBILE
+		public void Dispose ()
+#else
+		void IDisposable.Dispose() 
+#endif
 		{
 			Dispose (false);
 		}
@@ -461,18 +516,16 @@ namespace System.Xml
 
 		public abstract string GetAttribute (string name);
 
-		public abstract string GetAttribute (
-			string localName,
-			string namespaceName);
+		public abstract string GetAttribute (string name, string namespaceURI);
 
-		public static bool IsName (string s)
+		public static bool IsName (string str)
 		{
-			return s != null && XmlChar.IsName (s);
+			return str != null && XmlChar.IsName (str);
 		}
 
-		public static bool IsNameToken (string s)
+		public static bool IsNameToken (string str)
 		{
-			return s != null && XmlChar.IsNmToken (s);
+			return str != null && XmlChar.IsNmToken (str);
 		}
 
 		public virtual bool IsStartElement ()
@@ -488,12 +541,12 @@ namespace System.Xml
 			return (Name == name);
 		}
 
-		public virtual bool IsStartElement (string localName, string namespaceName)
+		public virtual bool IsStartElement (string localname, string ns)
 		{
 			if (!IsStartElement ())
 				return false;
 
-			return (LocalName == localName && NamespaceURI == namespaceName);
+			return (LocalName == localname && NamespaceURI == ns);
 		}
 
 		public abstract string LookupNamespace (string prefix);
@@ -513,9 +566,7 @@ namespace System.Xml
 
 		public abstract bool MoveToAttribute (string name);
 
-		public abstract bool MoveToAttribute (
-			string localName,
-			string namespaceName);
+		public abstract bool MoveToAttribute (string name, string ns);
 
 		private bool IsContent (XmlNodeType nodeType)
 		{
@@ -623,7 +674,7 @@ namespace System.Xml
 			return result;
 		}
 
-		public virtual string ReadElementString (string localName, string namespaceName)
+		public virtual string ReadElementString (string localname, string ns)
 		{
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
@@ -631,7 +682,7 @@ namespace System.Xml
 				throw XmlError (error);
 			}
 
-			if (localName != LocalName || NamespaceURI != namespaceName) {
+			if (localname != LocalName || NamespaceURI != ns) {
 				string error = String.Format ("The {0} tag from namespace {1} is expected.",
 							      LocalName, NamespaceURI);
 				throw XmlError (error);
@@ -737,7 +788,7 @@ namespace System.Xml
 			Read ();
 		}
 
-		public virtual void ReadStartElement (string localName, string namespaceName)
+		public virtual void ReadStartElement (string localname, string ns)
 		{
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
@@ -745,9 +796,9 @@ namespace System.Xml
 				throw XmlError (error);
 			}
 
-			if (localName != LocalName || NamespaceURI != namespaceName) {
+			if (localname != LocalName || NamespaceURI != ns) {
 				string error = String.Format ("Expecting {0} tag from namespace {1}, got {2} and {3} instead",
-							      localName, namespaceName,
+							      localname, ns,
 							      LocalName, NamespaceURI);
 				throw XmlError (error);
 			}
@@ -960,30 +1011,37 @@ namespace System.Xml
 			return ReadContentAs (ValueType, null);
 		}
 
-		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver)
+#if NET_4_5
+		public virtual DateTimeOffset ReadContentAsDateTimeOffset ()
+		{
+			return XmlConvert.ToDateTimeOffset (ReadContentString ());
+		}
+#endif
+
+		public virtual object ReadElementContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver)
 		{
 			bool isEmpty = IsEmptyElement;
 			ReadStartElement ();
-			object obj = ValueAs (isEmpty ? String.Empty : ReadContentString (false), type, resolver, false);
+			object obj = ValueAs (isEmpty ? String.Empty : ReadContentString (false), returnType, namespaceResolver, false);
 			if (!isEmpty)
 				ReadEndElement ();
 			return obj;
 		}
 
-		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver, string localName, string namespaceURI)
+		public virtual object ReadElementContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver, string localName, string namespaceURI)
 		{
 			bool isEmpty = IsEmptyElement;
 			ReadStartElement (localName, namespaceURI);
 			if (isEmpty)
-				return ValueAs (String.Empty, type, resolver, false);
-			object obj = ReadContentAs (type, resolver);
+				return ValueAs (String.Empty, returnType, namespaceResolver, false);
+			object obj = ReadContentAs (returnType, namespaceResolver);
 			ReadEndElement ();
 			return obj;
 		}
 
-		public virtual object ReadContentAs (Type type, IXmlNamespaceResolver resolver)
+		public virtual object ReadContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver)
 		{
-			return ValueAs (ReadContentString (), type, resolver, false);
+			return ValueAs (ReadContentString (), returnType, namespaceResolver, false);
 		}
 
 		private object ValueAs (string text, Type type, IXmlNamespaceResolver resolver, bool isArrayItem)
@@ -1260,35 +1318,35 @@ namespace System.Xml
 		}
 
 		public virtual int ReadContentAsBase64 (
-			byte [] buffer, int offset, int length)
+			byte [] buffer, int index, int count)
 		{
 			CheckSupport ();
 			return binary.ReadContentAsBase64 (
-				buffer, offset, length);
+				buffer, index, count);
 		}
 
 		public virtual int ReadContentAsBinHex (
-			byte [] buffer, int offset, int length)
+			byte [] buffer, int index, int count)
 		{
 			CheckSupport ();
 			return binary.ReadContentAsBinHex (
-				buffer, offset, length);
+				buffer, index, count);
 		}
 
 		public virtual int ReadElementContentAsBase64 (
-			byte [] buffer, int offset, int length)
+			byte [] buffer, int index, int count)
 		{
 			CheckSupport ();
 			return binary.ReadElementContentAsBase64 (
-				buffer, offset, length);
+				buffer, index, count);
 		}
 
 		public virtual int ReadElementContentAsBinHex (
-			byte [] buffer, int offset, int length)
+			byte [] buffer, int index, int count)
 		{
 			CheckSupport ();
 			return binary.ReadElementContentAsBinHex (
-				buffer, offset, length);
+				buffer, index, count);
 		}
 
 		private void CheckSupport ()
@@ -1302,19 +1360,13 @@ namespace System.Xml
 		
 #endif
 
-#if NET_2_0
-		public virtual int ReadValueChunk (
-			char [] buffer, int offset, int length)
-#else
-		internal virtual int ReadValueChunk (
-			char [] buffer, int offset, int length)
-#endif
+		public virtual int ReadValueChunk (char [] buffer, int index, int count)
 		{
 			if (!CanReadValueChunk)
 				throw new NotSupportedException ();
 			if (binary == null)
 				binary = new XmlReaderBinarySupport (this);
-			return binary.ReadValueChunk (buffer, offset, length);
+			return binary.ReadValueChunk (buffer, index, count);
 		}
 
 		public abstract void ResolveEntity ();
@@ -1348,5 +1400,228 @@ namespace System.Xml
 		}
 #endif
 		#endregion
+
+#if NET_4_5
+		#region .NET 4.5 Async Methods
+
+		bool asyncRunning;
+
+		void StartAsync ()
+		{
+			if (!settings.Async)
+				throw new InvalidOperationException ("Set XmlReaderSettings.Async to true if you want to use Async Methods.");
+			lock (this) {
+				if (asyncRunning)
+					throw new InvalidOperationException ("An asynchronous operation is already in progress.");
+				asyncRunning = true;
+			}
+		}
+
+		public virtual Task<bool> ReadAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return Read ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> GetValueAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return Value;
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadInnerXmlAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadInnerXml ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadOuterXmlAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadOuterXml ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadContentAsStringAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsString ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadContentAsBase64Async (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsBase64 (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadContentAsBinHexAsync (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsBinHex (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadElementContentAsBase64Async (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsBase64 (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadElementContentAsBinHexAsync (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsBinHex (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<int> ReadValueChunkAsync (char[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadValueChunk (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadContentAsAsync (Type returnType, IXmlNamespaceResolver namespaceResolver)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAs (returnType, namespaceResolver);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadContentAsObjectAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadContentAsObject ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadElementContentAsAsync (Type returnType, IXmlNamespaceResolver namespaceResolver)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAs (returnType, namespaceResolver);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<object> ReadElementContentAsObjectAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsObject ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<string> ReadElementContentAsStringAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return ReadElementContentAsString ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task<XmlNodeType> MoveToContentAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					return MoveToContent ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task SkipAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					Skip ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		#endregion
+#endif
 	}
 }

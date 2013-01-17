@@ -61,8 +61,4 @@ using System.Runtime.InteropServices;
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: AllowPartiallyTrustedCallers]
 
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]

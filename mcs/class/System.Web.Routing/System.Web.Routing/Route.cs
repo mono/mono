@@ -102,11 +102,8 @@ namespace System.Web.Routing
 			if (values == null)
 				return null;
 
-			RouteValueDictionary constraints = Constraints;
-			if (constraints != null)
-				foreach (var p in constraints)
-					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, RouteDirection.IncomingRequest))
-						return null;
+			if (!ProcessConstraints (httpContext, values, RouteDirection.IncomingRequest))
+				return null;
 			
 			var rd = new RouteData (this, RouteHandler);
 			RouteValueDictionary rdValues = rd.Values;
@@ -135,14 +132,27 @@ namespace System.Web.Routing
 			// if (values == null)
 			// 	values = requestContext.RouteData.Values;
 
-			string s;
-			if (!url.BuildUrl (this, requestContext, values, out s))
+			RouteValueDictionary usedValues;
+			string resultUrl = url.BuildUrl (this, requestContext, values, Constraints, out usedValues);
+
+			if (resultUrl == null)
 				return null;
 
-			return new VirtualPathData (this, s);
+			if (!ProcessConstraints (requestContext.HttpContext, usedValues, RouteDirection.UrlGeneration))
+				return null;
+
+			var result = new VirtualPathData (this, resultUrl);
+
+			RouteValueDictionary dataTokens = DataTokens;
+			if (dataTokens != null) {
+				foreach (var item in dataTokens)
+					result.DataTokens[item.Key] = item.Value;
+			}
+
+			return result;
 		}
 
-		internal static bool ProcessConstraintInternal (HttpContextBase httpContext, Route route, object constraint, string parameterName,
+		private bool ProcessConstraintInternal (HttpContextBase httpContext, Route route, object constraint, string parameterName,
 								RouteValueDictionary values, RouteDirection routeDirection, RequestContext reqContext,
 								out bool invalidConstraint)
 		{
@@ -188,22 +198,22 @@ namespace System.Web.Routing
 			return false;
 		}
 
-		static bool MatchConstraintRegex (string rx, string constraint)
+		static bool MatchConstraintRegex (string value, string constraint)
 		{
-			int rxlen = rx.Length;
-			if (rxlen > 0) {
+			int len = constraint.Length;
+			if (len > 0) {
 				// Bug #651966 - regexp constraints must be treated
 				// as absolute expressions
-				if (rx [0] != '^') {
-					rx = "^" + rx;
-					rxlen++;
+				if (constraint [0] != '^') {
+					constraint = "^" + constraint;
+					len++;
 				}
 
-				if (rx [rxlen - 1] != '$')
-					rx += "$";
+				if (constraint [len - 1] != '$')
+					constraint += "$";
 			}
 
-			return Regex.Match (rx, constraint).Success;
+			return Regex.IsMatch (value, constraint, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		}
 		
 		protected virtual bool ProcessConstraint (HttpContextBase httpContext, object constraint, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
@@ -234,6 +244,20 @@ namespace System.Web.Routing
 
 			return ret;
 		}
+
+		private bool ProcessConstraints (HttpContextBase httpContext, RouteValueDictionary values, RouteDirection routeDirection)
+		{
+			var constraints = Constraints;
+
+			if (Constraints != null) {
+				foreach (var p in constraints)
+					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, routeDirection))
+						return false;
+			}
+
+			return true;
+		}
+
 #if NET_4_0
 		RequestContext SafeGetContext (HttpRequestBase req)
 		{

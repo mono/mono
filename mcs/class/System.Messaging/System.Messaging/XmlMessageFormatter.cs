@@ -109,7 +109,6 @@ namespace System.Messaging
 		public object Read(Message message)
 		{
 			message.BodyStream.Seek (0, SeekOrigin.Begin);
-			object result = null;
 			foreach (Type t in targetTypes) {
 				XmlSerializer serializer = new XmlSerializer (t);
 				try {

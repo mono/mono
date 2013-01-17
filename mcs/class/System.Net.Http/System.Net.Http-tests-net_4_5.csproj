@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>.\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>System.Net.Http_test_net_4_5</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Test\System.Net.Http\ByteArrayContentTest.cs" />
+   <Compile Include="Test\System.Net.Http\FormUrlEncodedContentTest.cs" />
+   <Compile Include="Test\System.Net.Http\HttpClientHandlerTest.cs" />
+   <Compile Include="Test\System.Net.Http\HttpClientTest.cs" />
+   <Compile Include="Test\System.Net.Http\HttpMethodTest.cs" />
+   <Compile Include="Test\System.Net.Http\HttpRequestMessageTest.cs" />
+   <Compile Include="Test\System.Net.Http\HttpResponseMessageTest.cs" />
+   <Compile Include="Test\System.Net.Http\MultipartContentTest.cs" />
+   <Compile Include="Test\System.Net.Http\MultipartFormDataContentTest.cs" />
+   <Compile Include="Test\System.Net.Http\StreamContentTest.cs" />
+   <Compile Include="Test\System.Net.Http\StringContentTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\AuthenticationHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\CacheControlHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\ContentDispositionHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\ContentRangeHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\EntityTagHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\HttpHeadersTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\HttpHeaderValueCollection.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\MediaTypeHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\MediaTypeWithQualityHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\NameValueHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\NameValueWithParametersHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\ProductHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\ProductInfoHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\RangeConditionHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\RangeHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\RangeItemHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\RetryConditionHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\StringWithQualityHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\TransferCodingHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\TransferCodingWithQualityHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\ViaHeaderValueTest.cs" />
+   <Compile Include="Test\System.Net.Http.Headers\WarningHeaderValueTest.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="./../../class/lib/net_4_5/System.Net.Http.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../class/lib/net_4_5/System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

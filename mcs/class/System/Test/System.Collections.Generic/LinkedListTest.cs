@@ -84,8 +84,13 @@ namespace MonoTests.System.Collections.Generic
 		[Test]
 		public void ClearTest ()
 		{
+			LinkedListNode <int> node = intlist.First;
 			intlist.Clear ();
+
 			Assert.AreEqual (0, intlist.Count);
+			Assert.AreEqual (2, node.Value);
+			Assert.IsNull (node.Next);
+			Assert.IsNull (node.Previous);
 		}
 
 		[Test]

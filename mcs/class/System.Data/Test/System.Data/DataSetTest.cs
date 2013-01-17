@@ -9,7 +9,7 @@
 // (C) Copyright 2002 Ville Palo
 // (C) Copyright 2003 Martin Willemoes Hansen
 // (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
-
+// Copyright 2011 Xamarin Inc.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -283,11 +283,12 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			Assert.AreEqual ("              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring, "test#16");
-#if NET_2_0
+#if NET_4_0
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
+#elif NET_2_0
 			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 #else
-			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
+			#error "Unknown profile"
 #endif
 			if (substring.IndexOf ("<xs:element") < 0)
 				Assert.Fail ("test#16: " + substring);
@@ -2569,6 +2570,30 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Third", dsLoad.Tables[2].TableName, "T3-Name");
 			Assert.AreEqual (3, dsLoad.Tables[2].Rows.Count, "T3-Rows");
 			Assert.AreEqual (2, dsLoad.Tables[2].Columns.Count, "T3-Columns");
+		}
+
+		[Test]
+		public void ReadDiff ()
+		{
+			DataSet dsTest = new DataSet ("MonoTouchTest");
+			var dt = new DataTable ("123");
+			dt.Columns.Add (new DataColumn ("Value1"));
+			dt.Columns.Add (new DataColumn ("Value2"));
+			dsTest.Tables.Add (dt);
+			dsTest.ReadXml (new StringReader (@"
+<diffgr:diffgram
+   xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'
+   xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1'>
+  <MonoTouchTest>
+    <_x0031_23 diffgr:id='1231' msdata:rowOrder='0'>
+      <Value1>Row1Value1</Value1>
+      <Value2>Row1Value2</Value2>
+    </_x0031_23>
+  </MonoTouchTest>
+</diffgr:diffgram>
+"));
+			Assert.AreEqual ("123", dsTest.Tables [0].TableName, "#1");
+			Assert.AreEqual (1, dsTest.Tables [0].Rows.Count, "#2");
 		}
 
 		private void CompareTables (DataSet dsLoad) {

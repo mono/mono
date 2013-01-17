@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 using System.Security;
 using System.Security.Permissions;
 
@@ -67,5 +65,3 @@ namespace System.Web {
 		}
 	}
 }
-
-#endif

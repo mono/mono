@@ -1,10 +1,12 @@
 //
 // CancellationToken.cs
 //
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,31 +26,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0 || MOBILE
+
 using System;
 using System.Threading;
+using System.Diagnostics;
 
-#if NET_4_0 || MOBILE
 namespace System.Threading
 {
-	[System.Diagnostics.DebuggerDisplay ("IsCancellationRequested = {IsCancellationRequested}")]
+	[DebuggerDisplay ("IsCancellationRequested = {IsCancellationRequested}")]
 	public struct CancellationToken
 	{
-		bool canBeCanceled;
-		bool initialized;
-		CancellationTokenSource source;
+		readonly CancellationTokenSource source;
 
 		public CancellationToken (bool canceled)
-			: this ()
+			: this (canceled ? CancellationTokenSource.CanceledSource : null)
 		{
-			initialized = true;
-			canBeCanceled = canceled;
-			// This is correctly set later if token originates from a Source
-			source = canceled ? CancellationTokenSource.CanceledSource : CancellationTokenSource.NoneSource;
+		}
+
+		internal CancellationToken (CancellationTokenSource source)
+		{
+			this.source = source;
 		}
 
 		public static CancellationToken None {
 			get {
-				return CancellationTokenSource.NoneSource.Token;
+				// simply return new struct value, it's the fastest option
+				// and we don't have to bother with reseting source
+				return new CancellationToken ();
 			}
 		}
 
@@ -80,7 +85,7 @@ namespace System.Threading
 
 		public void ThrowIfCancellationRequested ()
 		{
-			if (initialized && Source.IsCancellationRequested)
+			if (Source.IsCancellationRequested)
 				throw new OperationCanceledException (this);
 		}
 
@@ -111,13 +116,13 @@ namespace System.Threading
 
 		public bool CanBeCanceled {
 			get {
-				return canBeCanceled;
+				return source != null;
 			}
 		}
 
 		public bool IsCancellationRequested {
 			get {
-				return initialized && Source.IsCancellationRequested;
+				return Source.IsCancellationRequested;
 			}
 		}
 
@@ -127,21 +132,10 @@ namespace System.Threading
 			}
 		}
 
-		internal CancellationTokenSource Source {
+		CancellationTokenSource Source {
 			get {
-				if (!initialized)
-					CorrectlyInitialize ();
-				return source;
+				return source ?? CancellationTokenSource.NoneSource;
 			}
-			set {
-				source = value;
-			}
-		}
-
-		void CorrectlyInitialize ()
-		{
-			Source = CancellationTokenSource.NoneSource;
-			initialized = true;
 		}
 	}
 }

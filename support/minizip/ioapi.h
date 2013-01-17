@@ -23,12 +23,16 @@
 
 
 #ifndef ZCALLBACK
-
-#if (defined(WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
-#define ZCALLBACK CALLBACK
-#else
+// Nothing defines 'CALLBACK' anyway so to avoid accidentally changing
+// the calling convention by including a header which defines this, just
+// define ZCALLBACK as empty so we always get cdecl and our P/Invokes don't break.
 #define ZCALLBACK
-#endif
+
+//#if (defined(WIN32) || defined (WINDOWS) || defined (_WINDOWS)) && defined(CALLBACK) && defined (USEWINDOWS_CALLBACK)
+//#define ZCALLBACK CALLBACK
+//#else
+//#define ZCALLBACK
+//#endif
 #endif
 
 #ifdef __cplusplus

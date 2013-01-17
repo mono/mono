@@ -16,7 +16,7 @@ class X {
 		int a = Location.Null;
 	}
 
-	static void Main () {}
+	public static void Main () {}
 }
 	
 	

@@ -80,6 +80,7 @@ Mono.Xml/XmlNodeWriter.cs
 System.Xml/ConformanceLevel.cs
 System.Xml/DTDAutomata.cs
 System.Xml/DTDObjectModel.cs
+System.Xml/DtdProcessing.cs
 System.Xml/DTDReader.cs
 System.Xml/DTDValidatingReader2.cs
 System.Xml/DefaultXmlWriter.cs
@@ -280,6 +281,7 @@ System.Xml.Schema/XmlSchemaUtil.cs
 System.Xml.Schema/XmlSchemaReader.cs
 System.Xml.Schema/XmlSchemaValidationFlags.cs
 System.Xml.Schema/XmlTypeCode.cs
+System.Xml.Schema/XmlValueConverter.cs
 System.Xml.Schema/XmlValueGetter.cs
 System.Xml.Serialization/IXmlTextParser.cs
 System.Xml.Serialization/CodeGenerationOptions.cs

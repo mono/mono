@@ -1,6 +1,13 @@
+//
 // TpScheduler.cs
 //
+// Authors:
+//    Jérémie Laval <jeremie dot laval at xamarin dot com>
+//    Marek Safar  <marek.safar@gmail.com>
+//
 // Copyright (c) 2011 Jérémie "Garuma" Laval
+// Copyright 2012 Xamarin Inc (http://www.xamarin.com).
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,47 +30,52 @@
 //
 
 #if NET_4_0 || MOBILE
-using System;
-using System.Collections.Concurrent;
+
+using System.Collections.Generic;
 
 namespace System.Threading.Tasks
 {
-	internal class TpScheduler: TaskScheduler
+	sealed class TpScheduler: TaskScheduler
 	{
 		static readonly WaitCallback callback = TaskExecuterCallback;
 
 		protected internal override void QueueTask (Task task)
 		{
-			ThreadPool.QueueUserWorkItem (callback, task);
+			if ((task.CreationOptions & TaskCreationOptions.LongRunning) != 0) {
+				var thread = new Thread (l => ((Task)l).Execute ()) {
+					IsBackground = true
+				};
+
+				thread.Start (task);
+				return;
+			}
+
+			ThreadPool.UnsafeQueueUserWorkItem (callback, task);
 		}
 
 		static void TaskExecuterCallback (object obj)
 		{
-			Task task = obj as Task;
-			if (task == null)
-				return;
-			task.Execute (null);
+			Task task = (Task)obj;
+			task.Execute ();
 		}
 
-		protected override System.Collections.Generic.IEnumerable<Task> GetScheduledTasks ()
+		protected override IEnumerable<Task> GetScheduledTasks ()
 		{
-			throw new System.NotImplementedException();
+			throw new NotImplementedException();
 		}
 
+		[MonoTODO ("Tasks cannot be dequeued")]
 		protected internal override bool TryDequeue (Task task)
 		{
-			throw new System.NotImplementedException();
+			return false;
 		}
 
 		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 		{
-		    return TryExecuteTask(task);
-		}
+			if (taskWasPreviouslyQueued && !TryDequeue (task))
+				return false;
 
-		public override int MaximumConcurrencyLevel {
-			get {
-				return base.MaximumConcurrencyLevel;
-			}
+		    return TryExecuteTask(task);
 		}
 	}
 }

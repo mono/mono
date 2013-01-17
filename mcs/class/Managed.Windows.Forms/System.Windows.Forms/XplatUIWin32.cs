@@ -2908,7 +2908,8 @@ namespace System.Windows.Forms {
 
 		}
 
-		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
+		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy)
+		{
 			byte[]	data = null;
 
 			if (handle != clip_magic) {

@@ -36,16 +36,11 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-#if NET_2_0
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System.Diagnostics {
 
 	// must be safe for multithreaded operations
-#if !NET_2_0
-	[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
-#endif
 	[InstallerType (typeof (PerformanceCounterInstaller))]
 	public sealed class PerformanceCounter : Component, ISupportInitialize 
 	{
@@ -61,13 +56,9 @@ namespace System.Diagnostics {
 		bool valid_old;
 		bool changed;
 		bool is_custom;
-#if NET_2_0
 		private PerformanceCounterInstanceLifetime lifetime;
-#endif
 
-#if NET_2_0
 		[Obsolete]
-#endif
 		public static int DefaultFileMappingSize = 524288;
 
 		// set catname, countname, instname to "", machname to "."
@@ -214,14 +205,12 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		[DefaultValue (PerformanceCounterInstanceLifetime.Global)]
 		public PerformanceCounterInstanceLifetime InstanceLifetime {
 			get { return lifetime; }
 			set { lifetime = value; }
 		}
-#endif
 
 		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
 		[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, " + Consts.AssemblySystem_Design)]
@@ -323,9 +312,7 @@ namespace System.Diagnostics {
 		}
 
 		// may throw InvalidOperationException, Win32Exception
-#if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-#endif
 		public long IncrementBy (long value)
 		{
 			if (changed)
@@ -369,9 +356,7 @@ namespace System.Diagnostics {
 
 		// may throw InvalidOperationException, Win32Exception
 		[MonoTODO]
-#if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-#endif
 		public void RemoveInstance ()
 		{
 			throw new NotImplementedException ();

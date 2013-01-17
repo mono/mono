@@ -885,4 +885,132 @@ class Tests {
 		else
 			return 0;
 	}
+
+	enum DocType {
+		One,
+		Two,
+		Three
+	}
+
+	class Doc {
+		public string Name {
+			get; set;
+		}
+
+		public DocType Type {
+			get; set;
+		}
+	}
+
+	// #2155
+	public static int test_0_fullaot_sflda_cctor () {
+		List<Doc> documents = new List<Doc>();
+		documents.Add(new Doc { Name = "Doc1", Type = DocType.One } );
+		documents.Add(new Doc { Name = "Doc2", Type = DocType.Two } );
+		documents.Add(new Doc { Name = "Doc3", Type = DocType.Three } );
+		documents.Add(new Doc { Name = "Doc4", Type = DocType.One } );
+		documents.Add(new Doc { Name = "Doc5", Type = DocType.Two } );
+		documents.Add(new Doc { Name = "Doc6", Type = DocType.Three } );
+		documents.Add(new Doc { Name = "Doc7", Type = DocType.One } );
+		documents.Add(new Doc { Name = "Doc8", Type = DocType.Two } );
+		documents.Add(new Doc { Name = "Doc9", Type = DocType.Three } );
+
+		List<DocType> categories = documents.Select(d=>d.Type).Distinct().ToList<DocType>().OrderBy(d => d).ToList();
+		foreach(DocType cat in categories) {
+			List<Doc> catDocs = documents.Where(d => d.Type == cat).OrderBy(d => d.Name).ToList<Doc>();
+		}
+		return 0;
+	}
+
+	class A { }
+
+    static List<A> sources = new List<A>();
+
+	// #6112
+    public static int test_0_fullaot_imt () {
+        sources.Add(null);
+        sources.Add(null);
+
+        int a = sources.Count;
+        var enumerator = sources.GetEnumerator() as IEnumerator<object>;
+
+        while (enumerator.MoveNext())
+        {
+            object o = enumerator.Current;
+        }
+
+		return 0;
+	}
+
+	struct Record : Foo2<Record>.IRecord {
+		int counter;
+		int Foo2<Record>.IRecord.DoSomething () {
+			return counter++;
+		}
+	}
+
+	class Foo2<T> where T : Foo2<T>.IRecord {
+		public interface IRecord {
+			int DoSomething ();
+		}
+
+		public static int Extract (T[] t) {
+			return t[0].DoSomething ();
+		}
+	}
+
+	class Foo3<T> where T : IComparable {
+		public static int CompareTo (T[] t) {
+			// This is a constrained call to Enum.CompareTo ()
+			return t[0].CompareTo (t [0]);
+		}
+	}
+
+	public static int test_1_regress_constrained_iface_call_7571 () {
+        var r = new Record [10];
+        Foo2<Record>.Extract (r);
+		return Foo2<Record>.Extract (r);
+	}
+
+	enum ConstrainedEnum {
+		Val = 1
+	}
+
+	public static int test_0_regress_constrained_iface_call_enum () {
+		var r = new ConstrainedEnum [10];
+		return Foo3<ConstrainedEnum>.CompareTo (r);
+	}
+
+	public interface IFoo2 {
+		void MoveNext ();
+	}
+
+	public struct Foo2 : IFoo2 {
+		public void MoveNext () {
+		}
+	}
+
+	public static Action Dingus (ref Foo2 f) {
+		return new Action (f.MoveNext);
+	}
+
+	public static int test_0_delegate_unbox_full_aot () {
+		Foo2 foo = new Foo2 ();
+		Dingus (ref foo) ();
+		return 0;
+	}
+
+	public static int test_0_arrays_ireadonly () {
+		int[] arr = new int [10];
+		for (int i = 0; i < 10; ++i)
+			arr [i] = i;
+		IReadOnlyList<int> a = (IReadOnlyList<int>)(object)arr;
+		if (a.Count != 10)
+			return 1;
+		if (a [0] != 0)
+			return 2;
+		if (a [1] != 1)
+			return 3;
+		return 0;
+	}
 }

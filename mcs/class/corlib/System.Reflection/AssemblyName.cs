@@ -53,6 +53,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
 
 #pragma warning disable 169
@@ -247,6 +248,9 @@ namespace System.Reflection {
 
 		private bool IsPublicKeyValid {
 			get {
+#if FULL_AOT_RUNTIME
+				return true;
+#else
 				// check for ECMA key
 				if (publicKey.Length == 16) {
 					int i = 0;
@@ -280,6 +284,7 @@ namespace System.Reflection {
 				}
 
 				return false;
+#endif
 			}
 		}
 
@@ -302,6 +307,9 @@ namespace System.Reflection {
 
 		private byte [] ComputePublicKeyToken ()
 		{
+#if FULL_AOT_RUNTIME
+			return new byte [0];
+#else
 			HashAlgorithm ha = SHA1.Create ();
 			byte [] hash = ha.ComputeHash (publicKey);
 			// we need the last 8 bytes in reverse order
@@ -309,6 +317,7 @@ namespace System.Reflection {
 			Array.Copy (hash, (hash.Length - 8), token, 0, 8);
 			Array.Reverse (token, 0, 8);
 			return token;
+#endif
 		}
 
 		[MonoTODO]

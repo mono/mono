@@ -3,3 +3,10 @@ System.ComponentModel.Design/DesignerActionMethodItemTest.cs
 System.ComponentModel.Design/DesignerActionPropertyItemTest.cs
 System.Diagnostics.Design/StringValueConverterTest.cs
 System.Windows.Forms.Design/MenuCommandsTest.cs
+System.Resources.Tools/StronglyTypedResourceBuilderCodeDomTest.cs
+System.Resources.Tools/StronglyTypedResourceBuilderBaseNameTests.cs
+System.Resources.Tools/StronglyTypedResourceBuilderNamespaceTests.cs
+System.Resources.Tools/StronglyTypedResourceBuilderOtherTests.cs
+System.Resources.Tools/StronglyTypedResourceBuilderResourceNameTests.cs
+System.Resources.Tools/StronglyTypedResourceBuilderResxFileTests.cs
+System.Resources.Tools/StronglyTypedResourceBuilderVerifyResourceNameTests.cs

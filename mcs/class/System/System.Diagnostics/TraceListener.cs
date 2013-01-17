@@ -70,16 +70,17 @@ namespace System.Diagnostics {
 			set { System.Threading.Thread.SetData (_indentSizeStore, value); }
 		}
 
-#if NET_2_0
 		private StringDictionary attributes {
 			get { return (StringDictionary) System.Threading.Thread.GetData (_attributesStore); }
 			set { System.Threading.Thread.SetData (_attributesStore, value); }
 		}
 
+#if !MOBILE
 		private TraceFilter filter {
 			get { return (TraceFilter) System.Threading.Thread.GetData (_filterStore); }
 			set { System.Threading.Thread.SetData (_filterStore, value); }
 		}
+#endif
 
 		private TraceOptions options {
 			get {
@@ -90,7 +91,6 @@ namespace System.Diagnostics {
 			}
 			set { System.Threading.Thread.SetData (_optionsStore, value); }
 		}
-#endif
 #else
 		[ThreadStatic]
 		private int indentLevel = 0;
@@ -98,14 +98,14 @@ namespace System.Diagnostics {
 		[ThreadStatic]
 		private int indentSize = 4;
 
-#if NET_2_0
 		[ThreadStatic]
 		private StringDictionary attributes = new StringDictionary ();
+#if !MOBILE
 		[ThreadStatic]
 		private TraceFilter filter;
+#endif
 		[ThreadStatic]
 		private TraceOptions options;
-#endif
 #endif
 
 		private string name;
@@ -140,12 +140,10 @@ namespace System.Diagnostics {
 			set {needIndent = value;}
 		}
 
-#if NET_2_0
 		[MonoLimitation ("This property exists but is never considered.")]
 		public virtual bool IsThreadSafe {
 			get { return false; }
 		}
-#endif
 
 		public virtual void Close ()
 		{
@@ -224,7 +222,6 @@ namespace System.Diagnostics {
 			WriteLine (category + ": " + message);
 		}
 
-#if NET_2_0
 		internal static string FormatArray (ICollection list, string joiner)
 		{
 			string [] arr = new string [list.Count];
@@ -234,6 +231,7 @@ namespace System.Diagnostics {
 			return String.Join (joiner, arr);
 		}
 
+#if !MOBILE
 		[ComVisible (false)]
 		public virtual void TraceData (TraceEventCache eventCache, string source,
 			TraceEventType eventType, int id, object data)
@@ -298,6 +296,7 @@ namespace System.Diagnostics {
 		{
 			TraceEvent (eventCache, source, TraceEventType.Transfer, id, String.Format ("{0}, relatedActivityId={1}", message, relatedActivityId));
 		}
+#endif
 
 		protected internal virtual string [] GetSupportedAttributes ()
 		{
@@ -308,18 +307,19 @@ namespace System.Diagnostics {
 			get { return attributes; }
 		}
 
+#if !MOBILE
 		[ComVisibleAttribute (false)]
 		public TraceFilter Filter {
 			get { return filter; }
 			set { filter = value; }
 		}
+#endif
 
 		[ComVisibleAttribute (false)]
 		public TraceOptions TraceOutputOptions {
 			get { return options; }
 			set { options = value; }
 		}
-#endif
 	}
 }
 

@@ -62,9 +62,9 @@ namespace System.Xml.XPath
 		{
 		}
 
-		public XPathDocument (TextReader reader)
+		public XPathDocument (TextReader textReader)
 		{
-			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (reader));
+			XmlValidatingReader vr = new XmlValidatingReader (new XmlTextReader (textReader));
 			vr.ValidationType = ValidationType.None;
 			Initialize (vr, XmlSpace.None);
 		}

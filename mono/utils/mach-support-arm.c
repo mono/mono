@@ -41,7 +41,7 @@ mono_mach_arch_get_mcontext_size ()
 }
 
 void
-mono_mach_arch_thread_state_to_mcontext (thread_state_t state, mcontext_t context)
+mono_mach_arch_thread_state_to_mcontext (thread_state_t state, void *context)
 {
 	arm_thread_state_t *arch_state = (arm_thread_state_t *) state;
 	struct __darwin_mcontext *ctx = (struct __darwin_mcontext *) context;
@@ -50,7 +50,7 @@ mono_mach_arch_thread_state_to_mcontext (thread_state_t state, mcontext_t contex
 }
 
 void
-mono_mach_arch_mcontext_to_thread_state (mcontext_t context, thread_state_t state)
+mono_mach_arch_mcontext_to_thread_state (void *context, thread_state_t state)
 {
 	arm_thread_state_t *arch_state = (arm_thread_state_t *) state;
 	struct __darwin_mcontext *ctx = (struct __darwin_mcontext *) context;
@@ -72,7 +72,7 @@ mono_mach_arch_get_thread_state (thread_port_t thread, thread_state_t state, mac
 
 	*count = ARM_THREAD_STATE_COUNT;
 
-	ret = thread_get_state (thread, ARM_THREAD_STATE_COUNT, (thread_state_t) arch_state, count);
+	ret = thread_get_state (thread, ARM_THREAD_STATE, (thread_state_t) arch_state, count);
 
 	return ret;
 }
@@ -84,7 +84,7 @@ mono_mach_arch_set_thread_state (thread_port_t thread, thread_state_t state, mac
 }
 
 void *
-mono_mach_arch_get_tls_value_from_thread (pthread_t thread, guint32 key)
+mono_mach_get_tls_address_from_thread (pthread_t thread, pthread_key_t key)
 {
 	/* OSX stores TLS values in a hidden array inside the pthread_t structure
 	 * They are keyed off a giant array offset 0x48 into the pointer.  This value
@@ -93,6 +93,13 @@ mono_mach_arch_get_tls_value_from_thread (pthread_t thread, guint32 key)
 	intptr_t *p = (intptr_t *) thread;
 	intptr_t **tsd = (intptr_t **) ((char*)p + 0x48 + (key << 2));
 
-	return (void *) *tsd;
+	return (void *)tsd;
 }
+
+void *
+mono_mach_arch_get_tls_value_from_thread (pthread_t thread, guint32 key)
+{
+	return *(void**)mono_mach_get_tls_address_from_thread (thread, key);
+}
+
 #endif

@@ -1,5 +1,5 @@
 // CS0128: A local variable named `x' is already defined in this scope
-// Line:
+// Line: 8
 
 class x {
 	static int y ()

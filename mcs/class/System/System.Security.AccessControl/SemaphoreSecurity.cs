@@ -4,8 +4,10 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //	Dick Porter <dick@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012       James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,111 +29,122 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	[ComVisible (false)]
-	public sealed class SemaphoreSecurity : NativeObjectSecurity {
-
+	public sealed class SemaphoreSecurity : NativeObjectSecurity
+	{
 		public SemaphoreSecurity ()
-			: base (false, ResourceType.Unknown)
+			: base (false, ResourceType.KernelObject)
 		{
 		}
 
-		public SemaphoreSecurity (string name, AccessControlSections includesections)
-			: base (false, ResourceType.Unknown, name, includesections)
+		public SemaphoreSecurity (string name, AccessControlSections includeSections)
+			: base (false, ResourceType.KernelObject, name, includeSections)
 		{
 		}
 		
-		public override Type AccessRightType
+		internal SemaphoreSecurity (SafeHandle handle, AccessControlSections includeSections)
+			: base (false, ResourceType.KernelObject, handle, includeSections)
 		{
-			get {
-				throw new NotImplementedException ();
-			}
 		}
 		
-		public override Type AccessRuleType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AccessRightType {
+			get { return typeof (SemaphoreRights); }
+		}
+		
+		public override Type AccessRuleType {
+			get { return typeof (SemaphoreAccessRule); }
 		}
 
-		public override Type AuditRuleType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AuditRuleType {
+			get { return typeof (SemaphoreAuditRule); }
 		}
 		
-		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask,
+							      bool isInherited, InheritanceFlags inheritanceFlags,
+							      PropagationFlags propagationFlags, AccessControlType type)
 		{
-			throw new NotImplementedException ();
+			return new SemaphoreAccessRule (identityReference, (SemaphoreRights)accessMask, type);
 		}
 		
 		public void AddAccessRule (SemaphoreAccessRule rule)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		public void AddAuditRule (SemaphoreAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
-		{
-			throw new NotImplementedException ();
+			AddAccessRule ((AccessRule)rule);
 		}
 		
 		public bool RemoveAccessRule (SemaphoreAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAccessRule ((AccessRule)rule);
 		}
 		
 		public void RemoveAccessRuleAll (SemaphoreAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleAll ((AccessRule)rule);
 		}
 		
 		public void RemoveAccessRuleSpecific (SemaphoreAccessRule rule)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		public bool RemoveAuditRule (SemaphoreAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public void RemoveAuditRuleAll (SemaphoreAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public void RemoveAuditRuleSpecific (SemaphoreAuditRule rule)
-		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleSpecific ((AccessRule)rule);
 		}
 		
 		public void ResetAccessRule (SemaphoreAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			ResetAccessRule ((AccessRule)rule);
 		}
 		
 		public void SetAccessRule (SemaphoreAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAccessRule ((AccessRule)rule);
+		}
+		
+		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited,
+							    InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags,
+							    AuditFlags flags)
+		{
+			return new SemaphoreAuditRule (identityReference, (SemaphoreRights)accessMask, flags);
+		}
+		
+		public void AddAuditRule (SemaphoreAuditRule rule)
+		{
+			AddAuditRule ((AuditRule)rule);
+		}
+		
+		public bool RemoveAuditRule (SemaphoreAuditRule rule)
+		{
+			return RemoveAuditRule((AuditRule)rule);
+		}
+		
+		public void RemoveAuditRuleAll (SemaphoreAuditRule rule)
+		{
+			RemoveAuditRuleAll((AuditRule)rule);
+		}
+		
+		public void RemoveAuditRuleSpecific (SemaphoreAuditRule rule)
+		{
+			RemoveAuditRuleSpecific((AuditRule)rule);
 		}
 		
 		public void SetAuditRule (SemaphoreAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAuditRule((AuditRule)rule);
+		}
+		
+		internal void PersistModifications (SafeHandle handle)
+		{
+			WriteLock();
+			try {
+				Persist (handle, (AccessRulesModified ? AccessControlSections.Access : 0) |
+						 (AuditRulesModified  ? AccessControlSections.Audit  : 0) |
+						 (OwnerModified       ? AccessControlSections.Owner  : 0) |
+						 (GroupModified       ? AccessControlSections.Group  : 0), null);
+			} finally {
+				WriteUnlock ();
+			}
 		}
 	}
 }
 
-#endif

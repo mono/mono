@@ -37,7 +37,6 @@ public class Log<T> {
 }
 
 class TestLog {
-  class MyTest {
     public static void Main(String[] args) {
       Log<String> log1 = new Log<String>();
       log1.Add("Reboot");
@@ -65,7 +64,6 @@ class TestLog {
       foreach (Pair<DateTime,String> p in allMsgs) 
 	Console.WriteLine("At {0}: {1}", p.Fst, p.Snd);
     }
-  }
 }
 
 public struct Pair<T,U> {

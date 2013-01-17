@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,7 +39,7 @@ namespace Microsoft.Build.BuildEngine {
 	
 		internal TargetCollection (Project project)
 		{
-			this.targetsByName = new Dictionary <string, Target> (StringComparer.InvariantCultureIgnoreCase);
+			this.targetsByName = new Dictionary <string, Target> (StringComparer.OrdinalIgnoreCase);
 			this.parentProject = project;
 		}
 
@@ -128,5 +126,3 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	}
 }
-
-#endif

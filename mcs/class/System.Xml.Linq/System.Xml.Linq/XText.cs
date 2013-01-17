@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -58,9 +59,12 @@ namespace System.Xml.Linq
 			}
 		}
 
-		public override void WriteTo (XmlWriter w)
+		public override void WriteTo (XmlWriter writer)
 		{
-			w.WriteString (value);
+			if (Value.Length > 0 && Value.All (c => c == ' ' || c == '\t' || c == '\r' || c == '\n'))
+				writer.WriteWhitespace (value);
+			else
+				writer.WriteString (value);
 		}
 	}
 }

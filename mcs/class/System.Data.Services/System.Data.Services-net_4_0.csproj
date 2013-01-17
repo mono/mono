@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,28 +9,29 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_0</OutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5</DefineConstants>
     <NoStdLib>true</NoStdLib>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>System.Data.Services</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -41,33 +42,81 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+   <Compile Include=".\Assembly\AssemblyInfo.cs" />
    <Compile Include="..\..\build\common\Consts.cs" />
    <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include=".\Assembly\AssemblyInfo.cs" />
-   <Compile Include=".\System.Data.Services\IUpdatable.cs" />
-   <Compile Include=".\System.Data.Services\ETagAttribute.cs" />
-   <Compile Include=".\System.Data.Services\UpdateOperations.cs" />
-   <Compile Include=".\System.Data.Services\HandleExceptionArgs.cs" />
-   <Compile Include=".\System.Data.Services\DataServiceHostFactory.cs" />
-   <Compile Include=".\System.Data.Services\ExpandSegment.cs" />
-   <Compile Include=".\System.Data.Services\IExpandedResult.cs" />
    <Compile Include=".\System.Data.Services\ChangeInterceptorAttribute.cs" />
+   <Compile Include="System.Data.Services\DataServiceBehavior.cs" />
+   <Compile Include="System.Data.Services\DataServiceConfiguration.cs" />
    <Compile Include=".\System.Data.Services\DataService.cs" />
-   <Compile Include=".\System.Data.Services\QueryInterceptorAttribute.cs" />
-   <Compile Include=".\System.Data.Services\ExpandSegmentCollection.cs" />
-   <Compile Include=".\System.Data.Services\IDataServiceConfiguration.cs" />
-   <Compile Include=".\System.Data.Services\IExpandProvider.cs" />
-   <Compile Include=".\System.Data.Services\IRequestHandler.cs" />
+   <Compile Include=".\System.Data.Services\DataServiceException.cs" />
    <Compile Include=".\System.Data.Services\DataServiceHost.cs" />
-   <Compile Include=".\System.Data.Services\SingleResultAttribute.cs" />
+   <Compile Include=".\System.Data.Services\DataServiceHostFactory.cs" />
+   <Compile Include="System.Data.Services\DataServiceOperationContext.cs" />
+   <Compile Include="System.Data.Services\DataServiceProcessingPipeline.cs" />
+   <Compile Include="System.Data.Services\DataServiceProcessingPipelineEventArgs.cs" />
    <Compile Include=".\System.Data.Services\EntitySetRights.cs" />
-   <Compile Include=".\System.Data.Services\ServiceOperationRights.cs" />
-   <Compile Include=".\System.Data.Services\IgnorePropertiesAttribute.cs" />
+   <Compile Include=".\System.Data.Services\ETagAttribute.cs" />
+   <Compile Include=".\System.Data.Services\ExpandSegmentCollection.cs" />
+   <Compile Include=".\System.Data.Services\ExpandSegment.cs" />
+   <Compile Include=".\System.Data.Services\HandleExceptionArgs.cs" />
+   <Compile Include=".\System.Data.Services\IDataServiceConfiguration.cs" />
+   <Compile Include="System.Data.Services\IDataServiceHost2.cs" />
    <Compile Include=".\System.Data.Services\IDataServiceHost.cs" />
+   <Compile Include=".\System.Data.Services\IExpandedResult.cs" />
+   <Compile Include=".\System.Data.Services\IExpandProvider.cs" />
+   <Compile Include=".\System.Data.Services\IgnorePropertiesAttribute.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`10.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`11.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`12.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`13.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`1.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`2.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`3.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`4.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`5.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`6.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`7.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`8.cs" />
+   <Compile Include="System.Data.Services.Internal\ExpandedWrapper`9.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper0.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper1.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper2.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper3.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper4.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper5.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper6.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper7.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper8.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapper.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapperMany.cs" />
+   <Compile Include="System.Data.Services.Internal\ProjectedWrapperManyEnd.cs" />
+   <Compile Include=".\System.Data.Services\IRequestHandler.cs" />
+   <Compile Include=".\System.Data.Services\IUpdatable.cs" />
    <Compile Include=".\System.Data.Services\MimeTypeAttribute.cs" />
    <Compile Include=".\System.Data.Services\ProcessRequestArgs.cs" />
-   <Compile Include=".\System.Data.Services\DataServiceException.cs" />
+   <Compile Include="System.Data.Services.Providers\DataServiceProviderMethods.cs" />
+   <Compile Include="System.Data.Services.Providers\IDataServiceMetadataProvider.cs" />
+   <Compile Include="System.Data.Services.Providers\IDataServicePagingProvider.cs" />
+   <Compile Include="System.Data.Services.Providers\IDataServiceQueryProvider.cs" />
+   <Compile Include="System.Data.Services.Providers\IDataServiceStreamProvider.cs" />
+   <Compile Include="System.Data.Services.Providers\IDataServiceUpdateProvider.cs" />
+   <Compile Include="System.Data.Services.Providers\OpenTypeMethods.cs" />
+   <Compile Include="System.Data.Services.Providers\ResourceAssociationSet.cs" />
+   <Compile Include="System.Data.Services.Providers\ResourceAssociationSetEnd.cs" />
+   <Compile Include="System.Data.Services.Providers\ResourceProperty.cs" />
+   <Compile Include="System.Data.Services.Providers\ResourcePropertyKind.cs" />
+   <Compile Include="System.Data.Services.Providers\ResourceSet.cs" />
+   <Compile Include="System.Data.Services.Providers\ResourceType.cs" />
+   <Compile Include="System.Data.Services.Providers\ResourceTypeKind.cs" />
+   <Compile Include="System.Data.Services.Providers\ServiceOperation.cs" />
+   <Compile Include="System.Data.Services.Providers\ServiceOperationParameter.cs" />
+   <Compile Include="System.Data.Services.Providers\ServiceOperationResultKind.cs" />
+   <Compile Include=".\System.Data.Services\QueryInterceptorAttribute.cs" />
+   <Compile Include=".\System.Data.Services\ServiceOperationRights.cs" />
+   <Compile Include=".\System.Data.Services\SingleResultAttribute.cs" />
+   <Compile Include=".\System.Data.Services\UpdateOperations.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -83,26 +132,30 @@
   <ItemGroup>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.dll</HintPath>
+      <HintPath>System.dll</HintPath>
     </Reference>
     <Reference Include="System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.ServiceModel.dll</HintPath>
+      <HintPath>System.ServiceModel.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel.Web.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.ServiceModel.Web.dll</HintPath>
+      <HintPath>System.ServiceModel.Web.dll</HintPath>
     </Reference>
-  </ItemGroup>
+    <Reference Include="System.Data.Services.Client.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Data.Services.Client.dll</HintPath>
+    </Reference>
 
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

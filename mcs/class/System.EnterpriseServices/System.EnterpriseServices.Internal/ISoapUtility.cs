@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal {
 
-#if NET_1_1
 	[Guid("5AC4CB7E-F89F-429b-926B-C7F940936BF4")]
 	public interface ISoapUtility {
 		[DispId(2)]
@@ -51,5 +50,4 @@ namespace System.EnterpriseServices.Internal {
 		[DispId(3)]
 		void Present ();
 	}
-#endif
 }

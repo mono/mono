@@ -59,8 +59,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyKeyFile ("../ecma.pub")]
 
 [assembly: ComVisible (false)]
-
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]

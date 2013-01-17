@@ -21,7 +21,8 @@ PROFILES = \
 	net_2_0 \
 	moonlight_raw \
 	net_3_5	\
-	net_4_0	
+	net_4_0	\
+	net_4_5
 
 COMMON_SRCS = \
 	Consts.cs.in			\

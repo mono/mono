@@ -2,7 +2,7 @@ public class TestClass
 {
 	delegate void OneDelegate (int i);
 
-	static void Main()
+	public static void Main()
 	{
 		OneDelegate d = new OneDelegate (TestMethod);
 		d.Invoke (1);

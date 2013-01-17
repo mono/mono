@@ -3,7 +3,6 @@
 # The rules for building a program.
 
 base_prog = $(notdir $(PROGRAM))
-prog_dir := $(filter-out . ./, $(dir $(PROGRAM)))
 ifndef sourcefile
 sourcefile := $(base_prog).sources
 endif
@@ -11,31 +10,36 @@ base_prog_config := $(wildcard $(base_prog).config.$(PROFILE))
 ifndef base_prog_config
 base_prog_config := $(wildcard $(base_prog).config)
 endif
-ifdef base_prog_config
-PROGRAM_config := $(PROGRAM).config
-endif
-
-executable_CLEAN_FILES = *.exe $(PROGRAM) $(PROGRAM).mdb $(BUILT_SOURCES)
 
 ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
 response = $(sourcefile)
 else
-response = $(depsdir)/$(base_prog).response
+response = $(depsdir)/$(sourcefile).response
 executable_CLEAN_FILES += $(response)
 endif
 
-ifdef KEEP_OUTPUT_FILE_COPY
-	COPY_CMD = cp
+ifndef the_libdir
+the_libdir = $(topdir)/class/lib/$(PROFILE)/
+ifdef PROGRAM_USE_INTERMEDIATE_FILE
+build_libdir = $(the_libdir)tmp/
 else
-	COPY_CMD = mv
+build_libdir = $(the_libdir)
+endif
 endif
 
-makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
-pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
-mdb = $(patsubst %.exe,%.mdb,$(PROGRAM))
-executable_CLEAN_FILES += $(makefrag) $(pdb) $(mdb)
+ifdef base_prog_config
+PROGRAM_config := $(build_libdir)$(PROGRAM).config
+endif
 
-all-local: $(PROGRAM) $(PROGRAM_config)
+the_lib = $(the_libdir)$(base_prog)
+build_lib = $(build_libdir)$(base_prog)
+
+executable_CLEAN_FILES += $(the_lib)   $(the_lib).so   $(the_lib).mdb   $(the_lib:.exe=.pdb)
+executable_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_lib:.exe=.pdb)
+
+makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
+
+all-local: $(the_lib) $(PROGRAM_config)
 
 install-local: all-local
 test-local: all-local
@@ -50,10 +54,10 @@ ifndef PROGRAM_INSTALL_DIR
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 endif
 
-install-local: $(PROGRAM) $(PROGRAM_config)
+install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	test ! -f $(PROGRAM).mdb || $(INSTALL_BIN) $(PROGRAM).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	$(INSTALL_BIN) $(the_lib) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	test ! -f $(the_lib).mdb || $(INSTALL_BIN) $(the_lib).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 ifdef PROGRAM_config
 	$(INSTALL_DATA) $(PROGRAM_config) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 endif
@@ -103,11 +107,16 @@ ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-$(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(prog_dir:=/.stamp)
-	$(PROGRAM_COMPILE) -target:exe -out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
-ifneq ($(base_prog),$(PROGRAM))
-	$(COPY_CMD) $(base_prog) $(PROGRAM)
-	test ! -f $(base_prog).mdb || $(COPY_CMD) $(base_prog).mdb $(PROGRAM).mdb
+$(the_lib): $(the_libdir)/.stamp
+
+$(build_lib): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(build_libdir:=/.stamp)
+	$(PROGRAM_COMPILE) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+
+ifdef PROGRAM_USE_INTERMEDIATE_FILE
+$(the_lib): $(build_lib)
+	$(Q) cp $(build_lib) $@
+	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
+	$(Q) test ! -f $(build_lib:.exe=.pdb) || mv $(build_lib:.exe=.pdb) $(the_lib:.exe=.pdb)
 endif
 
 ifdef PROGRAM_config
@@ -119,13 +128,17 @@ endif
 endif
 
 $(makefrag): $(sourcefile)
-	@echo Creating $@ ...
-	@sed 's,^,$(PROGRAM): ,' $< > $@
+#	@echo Creating $@ ...
+	@sed 's,^,$(build_lib): ,' $< >$@
+	@if test ! -f $(sourcefile).makefrag; then :; else \
+	   cat $(sourcefile).makefrag >> $@ ; \
+	   echo '$@: $(sourcefile).makefrag' >> $@; \
+	   echo '$(sourcefile).makefrag:' >> $@; fi
 
 ifneq ($(response),$(sourcefile))
 $(response): $(sourcefile)
-	@echo Creating $@ ...
-	@( $(PLATFORM_CHANGE_SEPARATOR_CMD) ) <$< >$@
+	@echo Converting $(sourcefile) to $@ ...
+	@cat $(sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 endif
 
 -include $(makefrag)
@@ -141,6 +154,7 @@ csproj-local:
 	echo $(PROGRAM); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
+	echo $(FRAMEWORK_VERSION); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 

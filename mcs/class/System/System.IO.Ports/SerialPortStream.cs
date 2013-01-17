@@ -10,8 +10,6 @@
 // Slightly modified by Konrad M. Kruczynski (added baud rate value checking)
 
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -330,7 +328,5 @@ namespace System.IO.Ports
 		}
 	}
 }
-
-#endif
 
 

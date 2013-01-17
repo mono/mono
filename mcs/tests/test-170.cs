@@ -46,7 +46,7 @@ class Y : X {
 	}
 
 
-	static int Main ()
+	public static int Main ()
 	{
 		Y y = new Y ();
 

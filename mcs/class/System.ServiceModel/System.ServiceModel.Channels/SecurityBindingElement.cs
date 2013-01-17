@@ -419,13 +419,16 @@ namespace System.ServiceModel.Channels
 				var sym = new SymmetricSecurityBindingElement () {
 					MessageSecurityVersion = version,
 					RequireSignatureConfirmation = true
-                };
+			};
 				
+				X509SecurityTokenParameters p2 = new X509SecurityTokenParameters (X509KeyIdentifierClauseType.Thumbprint);
+				p2.ReferenceStyle = SecurityTokenReferenceStyle.External;
+				sym.ProtectionTokenParameters = p2;
 				sym.EndpointSupportingTokenParameters.Endorsing.Add (p);
 				return sym;
 			}
 			
-		}
+		}		
 
 		[MonoTODO]
 		public static AsymmetricSecurityBindingElement 

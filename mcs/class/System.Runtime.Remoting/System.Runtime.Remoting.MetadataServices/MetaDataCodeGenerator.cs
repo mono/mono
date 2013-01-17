@@ -551,9 +551,7 @@ namespace System.Runtime.Remoting.MetadataServices
 		Hashtable namespaces = new Hashtable ();
 		public StringWriter writer;
 		int indent;
-		
-		string currentNamespace;
-		
+
 		public CodeFile (string directory)
 		{
 			Directory = directory;

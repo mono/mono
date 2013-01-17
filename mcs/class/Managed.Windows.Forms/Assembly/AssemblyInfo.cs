@@ -38,7 +38,6 @@ using System.Diagnostics;
 [assembly: AssemblyKeyFile("../ecma.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Dependency ("System.Drawing,", LoadHint.Always)]
 [assembly: Dependency ("System,", LoadHint.Always)]

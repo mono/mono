@@ -11,7 +11,7 @@ namespace testcase
 
 	public class Program
 	{
-		private static int Main ()
+		public static int Main ()
 		{
 			var t = typeof (Init);
 			var m = t.GetMethod ("testcase.IInitializationExpression.AddRegistry", BindingFlags.NonPublic | BindingFlags.Instance);

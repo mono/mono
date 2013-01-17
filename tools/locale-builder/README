@@ -5,14 +5,16 @@
 
 * input resources
 
-	There is only an external resource: unicode CLDR. I used version 1.7, the latest one as of
-	May, 2009:
-	http://unicode.org/Public/cldr/1.7.0/core.zip
+	There is only an external resource: unicode CLDR. It can be downloaded from
+	http://www.unicode.org/Public/cldr/
 
-	There is a couple of extra mono resources included in this directory:
-	- lcids.xml for LCIDs.
-	- textinfos.xml for TextInfo.
-	- supplementalData.xml and supp/*.xml for .NET(Windows)-ism fixup.
+	CLDR specificatin can be found at http://www.unicode.org/reports/tr35/
+
+	All content has to me extracted into CLDR folder. The latest version used is 21.
+
+	There is an extra mono resource included in this directory called lcids.xml for LCIDs. It's
+	extracted from National Language Support (NLS) API Reference.
+	http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx
 
 * generated file
 
@@ -38,11 +40,14 @@
 
 * updating the data
 
-	Currently, when we need to fix or update data, we need to modify or
-	add the proper file in the supp directory (if it's a new file it must be added
-	in Makefile.am as well to supp_data_files).
+	Update Makefile.am to get the latest CLDR data. However, CLDR is not complete and
+	it's missing data for many rarely used cultures. In such cases we provide empty value
+	but when someone has the knowleadge what the values should be it's recommended to
+	use online CLDR tool to fill the data gap.
+
 	To create the files used by the runtime after an update, run:
 		make culture-table
 		make install-culture-table
+
 	At the start of Makefile.am there are additional instructions for specific builds.
 

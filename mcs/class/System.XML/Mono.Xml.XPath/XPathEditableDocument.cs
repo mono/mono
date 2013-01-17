@@ -529,7 +529,7 @@ namespace Mono.Xml.XPath
 
 		public override XPathNavigator CreateNavigator ()
 		{
-			return navigator.Clone ();
+			return Clone ();
 		}
 
 		public XmlNode GetNode ()

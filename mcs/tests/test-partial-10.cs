@@ -36,7 +36,7 @@ namespace Test3
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (Test2.Foo.f != 10)
 			return 1;

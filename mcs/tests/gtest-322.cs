@@ -12,6 +12,6 @@ public class X : MyBase<string, int>
 		: base (cb)
 	{ }
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

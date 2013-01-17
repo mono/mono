@@ -38,6 +38,14 @@
             <remarks>
                 <c>F:Mono.DocTest.Color.Red</c>.</remarks>
         </member>
+        <member name="T:Mono.DocTest.D">
+            <param name="value">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>
+                <c>T:Mono.DocTest.D</c>
+            </remarks>
+        </member>
         <member name="T:Mono.DocTest.DocAttribute">
             <summary>To be added.</summary>
             <remarks>
@@ -250,10 +258,79 @@ class Example {
             <remarks>
                 <c>F:Mono.DocTest.Widget.classCtorError</c>.</remarks>
         </member>
+        <member name="M:Mono.DocTest.Widget.Default(System.Int32,System.Int32)">
+            <param name="a">To be added.</param>
+            <param name="b">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.Default(System.Int32,System.Int32)</c>
+            </remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.Default(System.String,System.Char)">
+            <param name="a">To be added.</param>
+            <param name="b">To be added.</param>
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.Default(System.String,System.Char)</c>
+            </remarks>
+        </member>
         <member name="F:Mono.DocTest.Widget.defaultColor">
             <summary>To be added.</summary>
             <remarks>
                 <c>F:Mono.DocTest.Widget.defaultColor</c>.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.Dynamic0(System.Object,System.Object)">
+            <param name="a">To be added.</param>
+            <param name="b">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
+        </member>
+        <member name="M:Mono.DocTest.Widget.Dynamic1(System.Collections.Generic.Dictionary{System.Object,System.String})">
+            <param name="value">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.Dynamic2(System.Func{System.String,System.Object})">
+            <param name="value">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="M:Mono.DocTest.Widget.Dynamic3(System.Func{System.Func{System.String,System.Object},System.Func{System.Object,System.String}})">
+            <param name="value">To be added.</param>
+            <summary>To be added.</summary>
+            <returns>To be added.</returns>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="E:Mono.DocTest.Widget.DynamicE1">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>E:Mono.DocTest.Widget.DynamicE1</c>
+            </remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+        </member>
+        <member name="E:Mono.DocTest.Widget.DynamicE2">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>E:Mono.DocTest.Widget.DynamicE2</c>
+            </remarks>
+        </member>
+        <member name="F:Mono.DocTest.Widget.DynamicF">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.Widget.DynamicF</c>
+            </remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget.DynamicP">
+            <summary>To be added.</summary>
+            <value>To be added.</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.DynamicP</c>
+            </remarks>
         </member>
         <member name="P:Mono.DocTest.Widget.Height">
             <summary>To be added.</summary>

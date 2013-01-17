@@ -7,7 +7,7 @@ class Program
 		return t == this;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		var p = new Program ();
 

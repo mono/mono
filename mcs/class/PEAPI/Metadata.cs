@@ -55,6 +55,7 @@ namespace PEAPI {
 		PublicSealed = 0x101, SpecialName = 0x400, RTSpecialName = 0x800, 
 		Import = 0x1000, Serializable = 0x2000, UnicodeClass = 0x10000,
 		AutoClass = 0x20000, HasSecurity = 0x40000, BeforeFieldInit = 0x100000,
+		Forwarder = 0x200000,
 		VisibilityMask = 0x07 }
 
 	/// <summary>
@@ -428,7 +429,6 @@ namespace PEAPI {
 
 	public class CustomAttribute : MetaDataElement {
 
-		private static readonly ushort prolog = 0x0001;
 		MetaDataElement parent;
 		Method type;
 		uint valIx;
@@ -672,7 +672,6 @@ namespace PEAPI {
 	{
 		PEAPI.SecurityAction sec_action;
 		ArrayList permissions;
-		PEAPI.PermissionSet ps;
 
 		public PermissionSet (PEAPI.SecurityAction sec_action)
 		{
@@ -1580,8 +1579,6 @@ namespace PEAPI {
 	/// 
 	public class ClassDef : Class {
 
-		private static readonly byte ElementType_Class = 0x12;
-
 		Class superType;
 		ArrayList fields = new ArrayList();
 		ArrayList methods = new ArrayList();
@@ -1589,7 +1586,6 @@ namespace PEAPI {
 		ArrayList properties;
 		bool typeIndexChecked = true;
 		uint fieldIx = 0, methodIx = 0;
-		byte[] securityActions;
 		uint flags;
 		ClassLayout layout;
 		ClassDef parentClass;
@@ -1959,7 +1955,6 @@ namespace PEAPI {
 	public class ClassRef : Class, IExternRef, IResolutionScope {
 
 		protected IResolutionScope parent;
-		ExternClass externClass;
 		protected MetaData metaData;
 
 		internal ClassRef(string nsName, string name, MetaData md) : base(nsName, name, md) 
@@ -2096,9 +2091,9 @@ namespace PEAPI {
 		ExternClass externClass;
 
 		internal ExternClassRef(TypeAttr attrs, string nsName, string name,
-				FileRef declFile, MetaData md) : base(nsName,name,md) 
+				MetaDataElement declRef, MetaData md) : base(nsName,name,md) 
 		{
-			externClass = new ExternClass(attrs,nameSpaceIx,nameIx,declFile);
+			externClass = new ExternClass(attrs,nameSpaceIx,nameIx,declRef);
 			metaData.AddToTable(MDTable.ExportedType,externClass);
 		}
 
@@ -3825,7 +3820,6 @@ namespace PEAPI {
 
 		MetaData metaData;
 		CILInstructions code;
-		ArrayList securityActions = new ArrayList();
 		Param[] parList;
 		Local[] locals;
 		bool initLocals;
@@ -4332,7 +4326,6 @@ namespace PEAPI {
 
 	public class FixedArray : NativeType  {
 
-		NativeType elemType;
 		uint numElem;
 
 		//public FixedArray(NativeType elemType, int numElems) : base(0x1E) {
@@ -4723,7 +4716,7 @@ namespace PEAPI {
 		private readonly string systemName = "System";
 		private Class[] systemClasses = new Class[valueTypeIx+2];
 		private PrimitiveType[] systemTypes = new PrimitiveType[valueTypeIx];
-		private TypeSpec[] specialTypeSpecs = new TypeSpec[valueTypeIx];
+
 		private static int[] specialNames = {
 			PrimitiveType.Void.GetName().GetHashCode(),
 			PrimitiveType.Boolean.GetName().GetHashCode(),
@@ -4950,7 +4943,6 @@ namespace PEAPI {
 		private static readonly uint TildeHeaderSize = 24;
 		private static readonly uint StreamHeaderSize = 8;
 		private static readonly uint numMetaDataTables = (int)MDTable.GenericParamConstraint + 1;
-		private static readonly uint tildeHeaderSize = 8 + (uint)tildeName.Length;
 
 		MetaDataStream strings, us, guid, blob;
 
@@ -5343,7 +5335,7 @@ namespace PEAPI {
 
 		internal void WriteTildeStream(FileImage output) 
 		{
-			long startTilde = output.Seek(0,SeekOrigin.Current);
+			output.Seek(0,SeekOrigin.Current);
 			output.Write((uint)0); // Reserved
 #if NET_2_0
 			output.Write((byte)2); // MajorVersion
@@ -5356,13 +5348,15 @@ namespace PEAPI {
 			output.Write((byte)1); // Reserved
 			output.Write(valid);
 			output.Write(sorted);
+			
 			for (int i=0; i < numMetaDataTables; i++) {
 				if (metaDataTables[i] != null) {
 					uint count = (uint)metaDataTables[i].Count;
 					output.Write(count);
 				}
 			}
-			long tabStart = output.Seek(0,SeekOrigin.Current);
+			
+			output.Seek(0,SeekOrigin.Current);
 			// Console.WriteLine("Starting metaData tables at " + tabStart);
 			for (int i=0; i < numMetaDataTables; i++) {
 				if (metaDataTables[i] != null) {

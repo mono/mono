@@ -10,7 +10,7 @@ using System.Threading;
 
 class X {
 
-	static void Main () 
+	public static void Main () 
 	{
 	}
 	

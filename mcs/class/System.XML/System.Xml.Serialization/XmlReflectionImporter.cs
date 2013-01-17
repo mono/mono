@@ -9,7 +9,6 @@
 // Copyright (C) Tim Coleman, 2002
 // (C) 2003 Erik LeBel
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -118,9 +117,9 @@ namespace System.Xml.Serialization {
 			string ns, 
 			XmlReflectionMember[] members, 
 			bool hasWrapperElement, 
-			bool writeAccessors)
+			bool rpc)
 		{
-			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, writeAccessors, true);
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, rpc, true);
 		}
 
 #if NET_2_0
@@ -131,10 +130,10 @@ namespace System.Xml.Serialization {
 			string ns, 
 			XmlReflectionMember[] members, 
 			bool hasWrapperElement, 
-			bool writeAccessors, 
-			bool validate)
+			bool rpc, 
+			bool openModel)
 		{
-			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, writeAccessors, validate, XmlMappingAccess.Read | XmlMappingAccess.Write);
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, rpc, openModel, XmlMappingAccess.Read | XmlMappingAccess.Write);
 		}
 
 #if NET_2_0
@@ -145,8 +144,8 @@ namespace System.Xml.Serialization {
 			string ns, 
 			XmlReflectionMember[] members, 
 			bool hasWrapperElement, 
-			bool writeAccessors, 
-			bool validate,
+			bool rpc, 
+			bool openModel,
 			XmlMappingAccess access)
 		{
 //			Reset ();	Disabled. See ChangeLog
@@ -154,7 +153,6 @@ namespace System.Xml.Serialization {
 			ArrayList mapping = new ArrayList ();
 			for (int n=0; n<members.Length; n++)
 			{
-				if (members[n].XmlAttributes.XmlIgnore) continue;
 				XmlTypeMapMember mapMem = CreateMapMember (null, members[n], ns);
 				mapMem.GlobalIndex = n;
 				mapMem.CheckOptionalValueType (members);
@@ -182,9 +180,9 @@ namespace System.Xml.Serialization {
 			return ImportTypeMapping (type, null, defaultNamespace);
 		}
 
-		public XmlTypeMapping ImportTypeMapping (Type type, XmlRootAttribute group)
+		public XmlTypeMapping ImportTypeMapping (Type type, XmlRootAttribute root)
 		{
-			return ImportTypeMapping (type, group, null);
+			return ImportTypeMapping (type, root, null);
 		}
 
 		public XmlTypeMapping ImportTypeMapping (Type type, XmlRootAttribute root, string defaultNamespace)
@@ -249,7 +247,8 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
 		{
-			string rootNamespace = defaultNamespace;
+			bool hasTypeNamespace = !string.IsNullOrEmpty (defaultNamespace);
+			string rootNamespace = null;
 			string typeNamespace = null;
 			string elementName;
 			bool includeInSchema = true;
@@ -275,8 +274,10 @@ namespace System.Xml.Serialization {
 
 			if (atts.XmlType != null)
 			{
-				if (atts.XmlType.Namespace != null)
+				if (atts.XmlType.Namespace != null) {
 					typeNamespace = atts.XmlType.Namespace;
+					hasTypeNamespace = true;
+				}
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
 					defaultXmlType = XmlConvert.EncodeLocalName (atts.XmlType.TypeName);
@@ -290,13 +291,15 @@ namespace System.Xml.Serialization {
 			{
 				if (root.ElementName.Length != 0)
 					elementName = XmlConvert.EncodeLocalName(root.ElementName);
-				if (root.Namespace != null)
+				if (root.Namespace != null) {
 					rootNamespace = root.Namespace;
+					hasTypeNamespace = true;
+				}
 				nullable = root.IsNullable;
 			}
 
-			if (rootNamespace == null) rootNamespace = "";
-			if (typeNamespace == null) typeNamespace = rootNamespace;
+			rootNamespace = rootNamespace ?? defaultNamespace ?? string.Empty;
+			typeNamespace = typeNamespace ?? rootNamespace;
 			
 			XmlTypeMapping map;
 			switch (typeData.SchemaType) {
@@ -312,7 +315,7 @@ namespace System.Xml.Serialization {
 							typeData, defaultXmlType, typeNamespace);
 					break;
 				default:
-					map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+					map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, hasTypeNamespace ? typeNamespace : null);
 					break;
 			}
 
@@ -352,13 +355,17 @@ namespace System.Xml.Serialization {
 			bool? isOrderExplicit = null;
 			foreach (XmlReflectionMember rmember in members)
 			{
+				int? order = rmember.XmlAttributes.Order;
 				if (isOrderExplicit == null)
-					isOrderExplicit = rmember.XmlAttributes.Order >= 0;
-				else if (isOrderExplicit != (rmember.XmlAttributes.Order >= 0))
+				{
+					if (order != null)
+						isOrderExplicit = (int) order >= 0;
+				}
+				else if (order != null && isOrderExplicit != ((int) order >= 0))
 					throw new InvalidOperationException ("Inconsistent XML sequence was detected. If there are XmlElement/XmlArray/XmlAnyElement attributes with explicit Order, then every other member must have an explicit order too.");
 			}
 			if (isOrderExplicit == true)
-				members.Sort ((m1, m2) => m1.XmlAttributes.Order - m2.XmlAttributes.Order);
+				members.Sort ((m1, m2) => (int) m1.XmlAttributes.SortableOrder - (int) m2.XmlAttributes.SortableOrder);
 
 			foreach (XmlReflectionMember rmember in members)
 			{
@@ -366,7 +373,8 @@ namespace System.Xml.Serialization {
 				if (rmember.XmlAttributes.XmlIgnore) continue;
 				if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
 					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
-					ns = bmap.XmlTypeNamespace;
+					if (bmap.HasXmlTypeNamespace)
+						ns = bmap.XmlTypeNamespace;
 				}
 
 				try {
@@ -1014,7 +1022,11 @@ namespace System.Xml.Serialization {
 				elem.Form = att.Form;
 				if (elem.Form != XmlSchemaForm.Unqualified)
 					elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
-				elem.IsNullable = att.IsNullable;
+
+				// elem may already be nullable, and IsNullable property in XmlElement is false by default
+				if (att.IsNullable && !elem.IsNullable)
+					elem.IsNullable = att.IsNullable;
+
 				elem.ExplicitOrder = att.Order;
 
 				if (elem.IsNullable && !elem.TypeData.IsNullable)

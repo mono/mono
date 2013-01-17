@@ -854,6 +854,59 @@ namespace MonoTests.System.Windows.Forms
 			}
 			Assert.AreEqual ((Array)expectedAddPositions, (Array)addedAtList.ToArray (typeof (int)), "addedAtList");
 		}
+
+		[Test]
+		public void SelectedIndexUpdated () // Xamarin bug 4921
+		{
+			using (Form f = new Form ()) {
+				f.ShowInTaskbar = false;
+
+				ListBox l = new ListBox ();
+				l.Sorted = true;
+				f.Controls.Add (l);
+
+				l.Items.Add ("B");
+				l.SelectedIndex = 0;
+
+				Assert.AreEqual (0, l.SelectedIndex);
+
+				l.Items.Add ("A");
+				Assert.AreEqual (1, l.SelectedIndex);
+			}
+		}
+
+		[Test]
+		public void SelectedIndexUpdated_MultiSelect () // Xamarin bug 4921
+		{
+			using (Form f = new Form ()) {
+				f.ShowInTaskbar = false;
+
+				ListBox l = new ListBox ();
+				l.Sorted = true;
+				l.SelectionMode = SelectionMode.MultiSimple;
+				f.Controls.Add (l);
+
+				l.Items.Add ("B");
+				l.Items.Add ("C");
+				l.SelectedIndex = 0;
+				l.SelectedIndex = 1;
+
+				Assert.AreEqual (2, l.SelectedIndices.Count);
+				Assert.AreEqual (0, l.SelectedIndices [0]);
+				Assert.AreEqual (1, l.SelectedIndices [1]);
+				Assert.AreEqual (2, l.SelectedItems.Count);
+				Assert.AreEqual ("B", l.SelectedItems [0]);
+				Assert.AreEqual ("C", l.SelectedItems [1]);
+
+				l.Items.Add ("A");
+				Assert.AreEqual (2, l.SelectedIndices.Count);
+				Assert.AreEqual (1, l.SelectedIndices[0]);
+				Assert.AreEqual (2, l.SelectedIndices[1]);
+				Assert.AreEqual (2, l.SelectedItems.Count);
+				Assert.AreEqual ("B", l.SelectedItems [0]);
+				Assert.AreEqual ("C", l.SelectedItems [1]);
+			}
+		}
 	}
 
 	[TestFixture]

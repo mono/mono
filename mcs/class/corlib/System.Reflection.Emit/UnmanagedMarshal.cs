@@ -31,6 +31,7 @@
 // (C) 2001-2002 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System;
@@ -40,6 +41,7 @@ namespace System.Reflection.Emit {
 	[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
 	[ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class UnmanagedMarshal {
 #pragma warning disable 169, 414
 		private int count;
@@ -104,8 +106,7 @@ namespace System.Reflection.Emit {
 			return new UnmanagedMarshal (unmanagedType, unmanagedType);
 		}
 
-		/* this one is missing from the MS implementation */
-		public static UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id) {
+		internal static UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id) {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.CustomMarshaler, UnmanagedType.CustomMarshaler);
 			res.mcookie = cookie;
 			res.marshaltype = mtype;
@@ -116,7 +117,7 @@ namespace System.Reflection.Emit {
 				res.guid = id.ToString ();
 			return res;
 		}
-
+		
 		// sizeConst and sizeParamIndex can be -1 meaning they are not specified
 		internal static UnmanagedMarshal DefineLPArrayInternal (UnmanagedType elemType, int sizeConst, int sizeParamIndex) {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.LPArray, elemType);
@@ -126,22 +127,6 @@ namespace System.Reflection.Emit {
 
 			return res;
 		}
-
-		internal MarshalAsAttribute ToMarshalAsAttribute () {
-			MarshalAsAttribute attr = new MarshalAsAttribute (t);
-			attr.ArraySubType = tbase;
-			attr.MarshalCookie = mcookie;
-			attr.MarshalType = marshaltype;
-			attr.MarshalTypeRef = marshaltyperef;
-			if (count == -1)
-				attr.SizeConst = 0;
-			else
-				attr.SizeConst = count;
-			if (param_num == -1)
-				attr.SizeParamIndex = 0;
-			else
-				attr.SizeParamIndex = (short)param_num;
-			return attr;
-		}
 	}
 }
+#endif

@@ -266,9 +266,9 @@ namespace System.Web.UI.HtmlControls
 					if (appVPathLen > 1) {
 						if (cookieless) {
 							if (StrUtils.StartsWith (file_path, appVPath, true))
-								file_path = file_path.Substring (appVPathLen);
+								file_path = file_path.Substring (appVPathLen + 1);
 						} else if (StrUtils.StartsWith (current_path, appVPath, true))
-							current_path = current_path.Substring (appVPathLen);
+							current_path = current_path.Substring (appVPathLen + 1);
 					}
 					
 					if (cookieless) {

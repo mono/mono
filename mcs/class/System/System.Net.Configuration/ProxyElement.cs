@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 
 using System;
 using System.Configuration;
@@ -58,7 +58,7 @@ namespace System.Net.Configuration
 			bypassOnLocalProp = new ConfigurationProperty ("bypassonlocal", typeof (BypassOnLocalValues), BypassOnLocalValues.Unspecified);
 			proxyAddressProp = new ConfigurationProperty ("proxyaddress", typeof (Uri), null);
 			scriptLocationProp = new ConfigurationProperty ("scriptLocation", typeof (Uri), null);
-			useSystemDefaultProp = new ConfigurationProperty ("UseSystemDefault", typeof (UseSystemDefaultValues), UseSystemDefaultValues.Unspecified);
+			useSystemDefaultProp = new ConfigurationProperty ("usesystemdefault", typeof (UseSystemDefaultValues), UseSystemDefaultValues.Unspecified);
 
 			properties = new ConfigurationPropertyCollection ();
 								    

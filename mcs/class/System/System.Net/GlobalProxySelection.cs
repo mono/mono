@@ -31,15 +31,11 @@ using System.Collections;
 using System.Configuration;
 using System.IO;
 using System.Runtime.Serialization;
-#if NET_2_0
 using System.Net.Configuration;
-#endif
 
 namespace System.Net 
 {
-#if NET_2_0
 	[ObsoleteAttribute("Use WebRequest.DefaultProxy instead")]
-#endif
 	public class GlobalProxySelection
 	{
 		// Constructors
@@ -47,39 +43,9 @@ namespace System.Net
 		
 		// Properties
 
-#if !NET_2_0
-		volatile static IWebProxy proxy;
-		static readonly object lockobj = new object ();
-		
-		static IWebProxy GetProxy ()
-		{
-			lock (lockobj) {
-				if (proxy != null)
-					return proxy;
-
-				object p = ConfigurationSettings.GetConfig ("system.net/defaultProxy");
-				if (p == null)
-					p = new EmptyWebProxy ();
-				proxy = (IWebProxy) p;
-			}
-
-			return proxy;
-		}
-#endif
-		
 		public static IWebProxy Select {
-#if NET_2_0
 			get { return WebRequest.DefaultWebProxy; }
 			set { WebRequest.DefaultWebProxy = value; }
-#else
-			get { return GetProxy (); }
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("GlobalProxySelection.Select",
-							"null IWebProxy not allowed. Use GetEmptyWebProxy ()");
-				proxy = value; 
-			}
-#endif
 		}
 		
 		// Methods

@@ -107,7 +107,7 @@ namespace MonoTests.Mono.Security.X509 {
 			Assert.AreEqual ("<DSAKeyValue><P>3+URPtrptm4Q1uqd4p06sEe9RADHVsjMbtAzhFZHNT32VMjjwq27unXzLzMMpvkx7Gfj5Zlt/CluqleIcjTijgCQ4KOsZI7A9jwdj7TISkgwXn+qnHYmC9sTczODl8DFs+Y39T7/FQ3UoS66Mfirh9gLzHeYQm6sk5jCvS57NAs=</P><Q>zwYE2P+L6wDp9lwHlnP9lmU6Lwc=</Q><G>zOF8sM6SX2PsOLtEut2SNLZevmV72HF3BJ3sZnw7BM6281L+D5JVAu9OEqtdmi4vblbzcOxq7ZsiuKgTywycFurBCo4hJkSlDPmg7GLgcDHMaPULhaRKG2559MH5Nlo4b07vhFPfZ/3M91lij5yczRCPXKQPnLcH7GDzvq9+OZg=</G><Y>EfK52L5CK8WEvpECHPyMMnKLqGwh14iKFLowZXXAHD2CaWWnrJB6FB2Fe+VTwmD8sc9nr8HyLggyajjHkU47vDwJ0PlxbQjfJ0mNBXTYvUbQ21GlU7qH8/pdJYNPfwp15anjiadBd2NAXysshNLBcXgK22tXGeHnFAyexPYyOQ4=</Y></DSAKeyValue>", ca.DSA.ToXmlString (false), "DSA");
 			Assert.AreEqual (5, ca.Extensions.Count, "Extensions");
 			Assert.AreEqual ("20-98-19-23-3C-FC-D9-C9-02-BA-BE-C6-42-BF-87-15-54-A1-7A-39", BitConverter.ToString (ca.Hash), "Hash");
-			Assert.IsTrue (ca.IsCurrent, "IsCurrent"); // true until 2011
+			Assert.IsFalse (ca.IsCurrent, "IsCurrent"); // true until 2011
 			Assert.IsFalse (ca.IsSelfSigned, "IsSelfSigned");
 			Assert.AreEqual ("C=US, O=Test Certificates, CN=Trust Anchor", ca.IssuerName, "IssuerName");
 			Assert.AreEqual ("1.2.840.10040.4.1", ca.KeyAlgorithm, "KeyAlgorithm");
@@ -131,7 +131,7 @@ namespace MonoTests.Mono.Security.X509 {
 			X509Certificate ca = new X509Certificate (DSAParametersInheritedCACert_crt);
 			Assert.AreEqual (5, ca.Extensions.Count, "Extensions");
 			Assert.AreEqual ("F5-F0-0D-21-1E-87-B9-F6-E1-85-AB-04-5F-43-2A-FD-EA-96-BC-D9", BitConverter.ToString (ca.Hash), "Hash");
-			Assert.IsTrue (ca.IsCurrent, "IsCurrent"); // true until 2011
+			Assert.IsFalse (ca.IsCurrent, "IsCurrent"); // true until 2011
 			Assert.IsFalse (ca.IsSelfSigned, "IsSelfSigned");
 			Assert.AreEqual ("C=US, O=Test Certificates, CN=DSA CA", ca.IssuerName, "IssuerName");
 			Assert.AreEqual ("1.2.840.10040.4.1", ca.KeyAlgorithm, "KeyAlgorithm");

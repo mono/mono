@@ -35,9 +35,7 @@ using System.Security.Permissions;
 
 namespace System.ComponentModel
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public class InvalidEnumArgumentException : ArgumentException
 	{
 
@@ -50,19 +48,13 @@ namespace System.ComponentModel
 		}
 
 		public InvalidEnumArgumentException (string argumentName, int invalidValue, Type enumClass) :
-#if NET_2_0
 			base (string.Format (CultureInfo.CurrentCulture, "The value "
 					+ "of argument '{0}' ({1}) is invalid for "
 					+ "Enum type '{2}'.", argumentName, invalidValue,
 					enumClass.Name), argumentName)
-#else
-			base (string.Format (CultureInfo.CurrentCulture, "Enum argument value"
-					+ " {0} is not valid for {1}. {1} should be a value from {2}.", 
-					invalidValue, argumentName, enumClass.Name), argumentName)
-#endif
 		{
 		}
-#if NET_2_0
+
 		public InvalidEnumArgumentException (string message, Exception innerException)
 			: base (message, innerException)
 		{
@@ -72,6 +64,5 @@ namespace System.ComponentModel
 			: base (info, context)
 		{
 		}
-#endif
 	}
 }

@@ -102,6 +102,9 @@ namespace System.Reflection {
 		/// <summary>
 		/// </summary>
 		MaxMethodImplVal = 65535,
-	} // MethodImplAttributes
-
-} // System.Reflection
+		
+#if NET_4_5
+		AggressiveInlining = 256
+#endif
+	}
+}

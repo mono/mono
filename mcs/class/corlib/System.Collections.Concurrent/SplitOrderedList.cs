@@ -81,14 +81,6 @@ namespace System.Collections.Concurrent
 			}
 		}
 
-		class NodeObjectPool : ObjectPool<Node> {
-			protected override Node Creator ()
-			{
-				return new Node ();
-			}
-		}
-		static readonly NodeObjectPool pool = new NodeObjectPool ();
-
 		const int MaxLoad = 5;
 		const uint BucketSize = 512;
 
@@ -155,7 +147,7 @@ namespace System.Collections.Concurrent
 
 		bool InsertInternal (uint key, TKey subKey, T data, Func<T> dataCreator, out Node current)
 		{
-			Node node = pool.Take ().Init (ComputeRegularKey (key), subKey, data);
+			Node node = new Node ().Init (ComputeRegularKey (key), subKey, data);
 
 			uint b = key % (uint)size;
 			Node bucket;
@@ -252,7 +244,7 @@ namespace System.Collections.Concurrent
 			if ((bucket = GetBucket (parent)) == null)
 				bucket = InitializeBucket (parent);
 
-			Node dummy = pool.Take ().Init (ComputeDummyKey (b));
+			Node dummy = new Node ().Init (ComputeDummyKey (b));
 			if (!ListInsert (dummy, bucket, out current, null))
 				return current;
 
@@ -356,7 +348,6 @@ namespace System.Collections.Concurrent
 				}
 				
 				if (Interlocked.CompareExchange (ref left.Next, rightNode, leftNodeNext) == leftNodeNext) {
-					pool.Release (leftNodeNext);
 					if (rightNode != tail && rightNode.Next.Marked)
 						continue;
 					else
@@ -373,7 +364,7 @@ namespace System.Collections.Concurrent
 			
 			do {
 				rightNode = ListSearch (key, subKey, ref leftNode, startPoint);
-				if (rightNode == tail || rightNode.Key != key)
+				if (rightNode == tail || rightNode.Key != key || !comparer.Equals (subKey, rightNode.SubKey))
 					return false;
 
 				data = rightNode.Data;
@@ -381,7 +372,7 @@ namespace System.Collections.Concurrent
 
 				if (!rightNodeNext.Marked) {
 					if (markedNode == null)
-						markedNode = pool.Take ();
+						markedNode = new Node ();
 					markedNode.Init (rightNodeNext);
 
 					if (Interlocked.CompareExchange (ref rightNode.Next, markedNode, rightNodeNext) == rightNodeNext)
@@ -391,8 +382,6 @@ namespace System.Collections.Concurrent
 			
 			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNode)
 				ListSearch (rightNode.Key, subKey, ref leftNode, startPoint);
-			else
-				pool.Release (rightNode);
 			
 			return true;
 		}
@@ -423,7 +412,7 @@ namespace System.Collections.Concurrent
 			rightNode = ListSearch (key, subKey, ref leftNode, startPoint);
 			data = rightNode;
 			
-			return rightNode != tail && rightNode.Key == key;
+			return rightNode != tail && rightNode.Key == key && comparer.Equals (subKey, rightNode.SubKey);
 		}
 
 		static readonly byte[] reverseTable = {

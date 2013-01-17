@@ -48,21 +48,6 @@ namespace System.Collections.Concurrent
 		Node tail;
 		int count;
 
-		class NodeObjectPool : ObjectPool<Node> {
-			protected override Node Creator ()
-			{
-				return new Node ();
-			}
-		}
-		static readonly NodeObjectPool pool = new NodeObjectPool ();
-
-		static Node ZeroOut (Node node)
-		{
-			node.Value = default(T);
-			node.Next = null;
-			return node;
-		}
-
 		public ConcurrentQueue ()
 		{
 			tail = head;
@@ -76,7 +61,7 @@ namespace System.Collections.Concurrent
 		
 		public void Enqueue (T item)
 		{
-			Node node = pool.Take ();
+			Node node = new Node ();
 			node.Value = item;
 			
 			Node oldTail = null;
@@ -100,7 +85,6 @@ namespace System.Collections.Concurrent
 			}
 			// At this point we added correctly our node, now we have to update tail. If it fails then it will be done by another thread
 			Interlocked.CompareExchange (ref tail, node, oldTail);
-
 			Interlocked.Increment (ref count);
 		}
 		
@@ -122,19 +106,18 @@ namespace System.Collections.Concurrent
 				
 				if (oldHead == head) {
 					// Empty case ?
-					if (oldHead == oldTail) {	
+					if (oldHead == oldTail) {
 						// This should be false then
 						if (oldNext != null) {
 							// If not then the linked list is mal formed, update tail
 							Interlocked.CompareExchange (ref tail, oldNext, oldTail);
+							continue;
 						}
 						result = default (T);
 						return false;
 					} else {
 						result = oldNext.Value;
 						advanced = Interlocked.CompareExchange (ref head, oldNext, oldHead) == oldHead;
-						if (advanced)
-							pool.Release (ZeroOut (oldHead));
 					}
 				}
 			}
@@ -182,26 +165,40 @@ namespace System.Collections.Concurrent
 		
 		void ICollection.CopyTo (Array array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (array.Rank > 1)
+				throw new ArgumentException ("The array can't be multidimensional");
+			if (array.GetLowerBound (0) != 0)
+				throw new ArgumentException ("The array needs to be 0-based");
+
 			T[] dest = array as T[];
 			if (dest == null)
-				return;
+				throw new ArgumentException ("The array cannot be cast to the collection element type", "array");
 			CopyTo (dest, index);
 		}
 		
 		public void CopyTo (T[] array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			if (index >= array.Length)
+				throw new ArgumentException ("index is equals or greather than array length", "index");
+
 			IEnumerator<T> e = InternalGetEnumerator ();
 			int i = index;
 			while (e.MoveNext ()) {
-				array [i++] = e.Current;
+				if (i == array.Length - index)
+					throw new ArgumentException ("The number of elememts in the collection exceeds the capacity of array", "array");
+				array[i++] = e.Current;
 			}
 		}
 		
 		public T[] ToArray ()
 		{
-			T[] dest = new T [count];
-			CopyTo (dest, 0);
-			return dest;
+			return new List<T> (this).ToArray ();
 		}
 		
 		bool ICollection.IsSynchronized {

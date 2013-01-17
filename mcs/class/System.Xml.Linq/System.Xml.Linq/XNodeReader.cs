@@ -3,6 +3,7 @@
 //   Atsushi Enomoto
 //
 // Copyright 2007 Novell (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +32,7 @@ using XPI = System.Xml.Linq.XProcessingInstruction;
 
 namespace System.Xml.Linq
 {
-	internal class XNodeReader : XmlReader
+	internal class XNodeReader : XmlReader, IXmlLineInfo
 	{
 		ReadState state = ReadState.Initial;
 		XNode node, start;
@@ -45,7 +46,29 @@ namespace System.Xml.Linq
 			this.node = node;
 			start = node;
 		}
+		
+#if NET_4_0
+		internal bool OmitDuplicateNamespaces { get; set; }
+#endif
 
+		int IXmlLineInfo.LineNumber {
+			get {
+				var o = (XObject) GetCurrentAttribute () ?? node;
+				return o != null ? o.LineNumber : 0;
+			}
+		}
+		int IXmlLineInfo.LinePosition {
+			get {
+				var o = (XObject) GetCurrentAttribute () ?? node;
+				return o != null ? o.LinePosition : 0;
+			}
+		}
+		bool IXmlLineInfo.HasLineInfo ()
+		{
+				var o = (XObject) GetCurrentAttribute () ?? node;
+				return o != null ? ((IXmlLineInfo) o).HasLineInfo () : false;
+		}
+	
 		public override int AttributeCount {
 			get {
 				if (state != ReadState.Interactive || end_element)

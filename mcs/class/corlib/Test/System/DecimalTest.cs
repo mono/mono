@@ -629,6 +629,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void TestConstructDouble ()
 		{
 			Decimal d;
@@ -1067,6 +1068,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void ToString_Defaults ()
 		{
 			Decimal d = 254.9m;
@@ -1110,8 +1112,23 @@ namespace MonoTests.System
 			decimal d = Decimal.Parse ("9223372036854775808.0000000009", CultureInfo.InvariantCulture);
 			long l = (long) d;
 		}
-
-#if NET_2_0
+/* Not yet fixed
+		[Test]
+		public void ParseEmptyNumberGroupSeparator ()
+		{
+			CultureInfo originalCulture = CultureInfo.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+			try {
+				var nf = new NumberFormatInfo ();
+				nf.NumberDecimalSeparator = ".";
+				nf.NumberGroupSeparator = "";
+				decimal d = decimal.Parse ("4.5", nf);
+				Assert.AreEqual (4.5, d);
+			} finally {
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
+		}
+*/
 		[Test]
 		[Category ("TargetJvmNotWorking")]
 		public void TryParse ()
@@ -1130,7 +1147,6 @@ namespace MonoTests.System
 					NumberFormatInfo.InvariantInfo, out r));
 			}
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (DivideByZeroException))]
@@ -1156,17 +1172,11 @@ namespace MonoTests.System
 			Assert.AreEqual (-12.1m, Decimal.Remainder (n2, p1), "-12.1 % 254.9");
 			Assert.AreEqual (12.1m, Decimal.Remainder (p2, n1), "12.1 % -254.9");
 			Assert.AreEqual (-12.1m, Decimal.Remainder (n2, n1), "-12.1 % -254.9");
-#if NET_2_0
+
 			Assert.AreEqual (0.0m, Decimal.Remainder (p1, p1), "12.1 % 12.1");
 			Assert.AreEqual (0.0m, Decimal.Remainder (n1, p1), "-12.1 % 12.1");
 			Assert.AreEqual (0.0m, Decimal.Remainder (p1, n1), "12.1 % -12.1");
 			Assert.AreEqual (0.0m, Decimal.Remainder (n1, n1), "-12.1 % -12.1");
-#else
-			Assert.AreEqual (0, Decimal.Remainder (p1, p1), "12.1 % 12.1");
-			Assert.AreEqual (0, Decimal.Remainder (n1, p1), "-12.1 % 12.1");
-			Assert.AreEqual (0, Decimal.Remainder (p1, n1), "12.1 % -12.1");
-			Assert.AreEqual (0, Decimal.Remainder (n1, n1), "-12.1 % -12.1");
-#endif
 		}
 
 		[Test]
@@ -1367,6 +1377,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #59425
+		[SetCulture("en-US")]
 		public void ParseAndKeepPrecision ()
 		{
 			string value = "5";
@@ -1387,6 +1398,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void ToString_G ()
 		{
 			Assert.AreEqual ("1.0", (1.0m).ToString (), "00");
@@ -1420,7 +1432,6 @@ namespace MonoTests.System
 			Assert.AreEqual ("0.0000000000000000000000000001", (0.0000000000000000000000000001m).ToString (), "28");
 		}
 
-#if NET_2_0
 		[Test]
 		public void MidpointRoundingAwayFromZero ()
 		{
@@ -1443,6 +1454,102 @@ namespace MonoTests.System
 			Assert.AreEqual (-2.1M, Math.Round (-2.08M, 1, m), "#15");
 			Assert.AreEqual (-3.1M, Math.Round (-3.05M, 1, m), "#16");
 		}
-#endif
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_NumberGroupSeparatorIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.NumberGroupSeparator = "";
+			Decimal.Parse ("1.5", nf);
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_CurrencyGroupSeparatorIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.CurrencyGroupSeparator = "";
+			Decimal.Parse ("\u00A41.5", NumberStyles.Currency, nf);
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_LeadingSign_PositiveSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.PositiveSign = "";
+			try {
+				Decimal.Parse ("+15", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_LeadingSign_NegativeSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.NegativeSign = "";
+			try {
+				Decimal.Parse ("-15", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_TrailingSign_PositiveSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.PositiveSign = "";
+			try {
+				Decimal.Parse ("15+", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test] // bug #4814
+		[SetCulture("")]
+		public void Parse_TrailingSign_NegativeSignIsEmpty_DoNotThrowIndexOutOfRangeException ()
+		{
+			NumberFormatInfo nf = new NumberFormatInfo ();
+			nf.NegativeSign = "";
+			try {
+				Decimal.Parse ("15-", nf);
+			} catch (FormatException) {
+				return;
+			}
+
+			Assert.Fail ("Expected FormatException");
+		}
+
+		[Test]
+		[SetCulture("en-US")]
+		public void ParseZeros ()
+		{
+			var d = Decimal.Parse ("0.000");
+			var bits = Decimal.GetBits (d);
+			Assert.AreEqual (0, bits[0], "#1");
+			Assert.AreEqual (0, bits[1], "#2");
+			Assert.AreEqual (0, bits[2], "#3");
+			Assert.AreEqual (196608, bits[3], "#4");
+			Assert.AreEqual ("0.000", d.ToString (), "#5");
+
+			d = Decimal.Parse("0.000000000000000000000000000000000000000000000000000000000000000000");
+			Assert.AreEqual ("0.0000000000000000000000000000", d.ToString (), "#10");
+
+			d = Decimal.Parse ("0.");
+			Assert.AreEqual ("0", d.ToString (), "#11");
+		}
 	}
 }

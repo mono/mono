@@ -32,7 +32,7 @@ namespace System.Runtime.Caching
 {
 	public sealed class SqlChangeMonitor : ChangeMonitor
 	{
-		string uniqueId;
+		const string uniqueId = null;
 		
 		public override string UniqueId {
 			get { return uniqueId; }

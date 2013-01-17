@@ -1,5 +1,4 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<UsingTask TaskName="Microsoft.Build.Tasks.CreateCSharpManifestResourceName" AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
 	<PropertyGroup>
 		<DefaultLanguageSourceExtension>.cs</DefaultLanguageSourceExtension>
 		<Language>C#</Language>
@@ -99,9 +98,12 @@
 	<Import Project="Microsoft.Common.targets" />
 
 	<PropertyGroup>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(OS)' != 'Windows_NT'">gmcs</CscToolExe>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(OS)' == 'Windows_NT'">gmcs.bat</CscToolExe>
+		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v4.5' and '$(OS)' != 'Windows_NT'">gmcs</CscToolExe>
+		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v4.5' and '$(OS)' == 'Windows_NT'">gmcs.bat</CscToolExe>
 
+		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.5' and '$(OS)' != 'Windows_NT'">mcs</CscToolExe>
+		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.5' and '$(OS)' == 'Windows_NT'">mcs.bat</CscToolExe>
+		
 		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' != 'Windows_NT'">dmcs</CscToolExe>
 		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' == 'Windows_NT'">dmcs.bat</CscToolExe>
 	</PropertyGroup>

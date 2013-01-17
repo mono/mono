@@ -116,6 +116,11 @@ namespace System.Collections.Concurrent
 			return false;
 		}
 
+		public bool TryPop (out T data)
+		{
+			return ListPop (out data);
+		}
+
 		public bool Contains (T data)
 		{
 			return ContainsHash (comparer.GetHashCode (data));
@@ -236,6 +241,30 @@ namespace System.Collections.Concurrent
 			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNodeNext)
 				ListSearch (rightNode.Key, ref leftNode);
 			
+			return true;
+		}
+
+		bool ListPop (out T data)
+		{
+			Node rightNode = null, rightNodeNext = null, leftNode = head;
+			data = default (T);
+
+			do {
+				rightNode = head.Next;
+				if (rightNode == tail)
+					return false;
+
+				data = rightNode.Data;
+
+				rightNodeNext = rightNode.Next;
+				if (!rightNodeNext.Marked)
+					if (Interlocked.CompareExchange (ref rightNode.Next, new Node (rightNodeNext), rightNodeNext) == rightNodeNext)
+						break;
+			} while (true);
+
+			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNodeNext)
+				ListSearch (rightNode.Key, ref leftNode);
+
 			return true;
 		}
 		

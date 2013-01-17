@@ -38,6 +38,7 @@ namespace System
 {
 	[Serializable]
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ArgumentException : SystemException
 	{
 		const int Result = unchecked ((int)0x80070057);

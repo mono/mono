@@ -1,14 +1,13 @@
-// System.Globalization.DateTimeFormatInfo
 //
-// Some useful functions are missing in the ECMA specs.
-// They have been added following MS SDK Beta2
+// System.Globalization.DateTimeFormatInfo.cs
 //
-// Martin Weindel (martin.weindel@t-online.de)
+// Authors:
+//   Martin Weindel (martin.weindel@t-online.de)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Martin Weindel (martin.weindel@t-online.de)
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,24 +47,22 @@ namespace System.Globalization
 
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider {
-		private static readonly string MSG_READONLY = "This instance is read only";
-		private static readonly string MSG_ARRAYSIZE_MONTH = "An array with exactly 13 elements is needed";
-		private static readonly string MSG_ARRAYSIZE_DAY = "An array with exactly 7 elements is needed";
+	[StructLayout (LayoutKind.Sequential)]
+	public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider
+	{
+		const string MSG_READONLY = "This instance is read only";
 		private static readonly string[] INVARIANT_ABBREVIATED_DAY_NAMES
-			= new string[7] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+			= new string[7] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 		private static readonly string[] INVARIANT_DAY_NAMES
-			= new string[7] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+			= new string[7] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 		private static readonly string[] INVARIANT_ABBREVIATED_MONTH_NAMES
-			= new string[13] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", ""};
+			= new string[13] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "" };
 		private static readonly string[] INVARIANT_MONTH_NAMES
-			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ""};
+			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "" };
 //		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
-		static readonly string [] INVARIANT_SHORT_DAY_NAMES =
-			new string [7] {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
+		static readonly string[] INVARIANT_SHORT_DAY_NAMES =
+			new string[7] { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" };
 		private static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
-
-		private const string _RoundtripPattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK";
 
 #pragma warning disable 169
 		#region Sync with object-internals.h
@@ -80,29 +77,29 @@ namespace System.Globalization
 		private string longTimePattern;
 		private string monthDayPattern;
 		private string yearMonthPattern;
-		private string fullDateTimePattern;
-		private string _RFC1123Pattern;
-		private string _SortableDateTimePattern;
-		private string _UniversalSortableDateTimePattern;
 		private int firstDayOfWeek;
-		private Calendar calendar;
 		private int calendarWeekRule;
 		private string[] abbreviatedDayNames;
 		private string[] dayNames;
 		private string[] monthNames;
+		private string[] genitiveMonthNames;
 		private string[] abbreviatedMonthNames;
+		private string[] m_genitiveAbbreviatedMonthNames;
 
-		// FIXME: not supported other than invariant
-		private string [] allShortDatePatterns;
-		private string [] allLongDatePatterns;
-		private string [] allShortTimePatterns;
-		private string [] allLongTimePatterns;
-		private string [] monthDayPatterns;
-		private string [] yearMonthPatterns;
-		private string [] shortDayNames;
+		private string[] allShortDatePatterns;
+		private string[] allLongDatePatterns;
+		private string[] allShortTimePatterns;
+		private string[] allLongTimePatterns;
+		private string[] monthDayPatterns;
+		private string[] yearMonthPatterns;
+		private string[] shortestDayNames;
 		#endregion
 
+		internal readonly CultureInfo culture;
+		Calendar calendar;
+
 		// MS Serialization needs this
+		private string fullDateTimePattern;
 		private int nDataItem;
 		private bool m_useUserOverride;
 		private bool m_isDefaultCalendar;
@@ -115,17 +112,19 @@ namespace System.Globalization
 		private string[] m_abbrevEnglishEraNames;
 		private string[] m_dateWords;
 		private int[] optionalCalendars;
-		private string[] m_superShortDayNames;
-		private string[] genitiveMonthNames;
-		private string[] m_genitiveAbbreviatedMonthNames;
 		private string[] leapYearMonthNames;
 		private DateTimeFormatFlags formatFlags;
 		private string m_name; // Unused, but MS.NET serializes this
 #pragma warning restore 169
 
-		internal DateTimeFormatInfo(bool read_only)
+		internal DateTimeFormatInfo (CultureInfo culture, bool read_only)
 		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+
+			this.culture = culture;
 			m_isReadOnly = read_only;
+
 			amDesignator = "AM";
 			pmDesignator = "PM";
 			dateSeparator = "/";
@@ -136,24 +135,9 @@ namespace System.Globalization
 			longTimePattern = "HH:mm:ss";
 			monthDayPattern = "MMMM dd";
 			yearMonthPattern = "yyyy MMMM";
-			fullDateTimePattern = "dddd, dd MMMM yyyy HH:mm:ss";
 
-			// FIXME: for the following three pattern: "The
-			// default value of this property is derived
-			// from the calendar that is set for
-			// CultureInfo.CurrentCulture or the default
-			// calendar of CultureInfo.CurrentCulture."
-
-			// Actually, no predefined culture has different values
-			// than those default values.
-
-			_RFC1123Pattern = "ddd, dd MMM yyyy HH':'mm':'ss 'GMT'"; 
-			_SortableDateTimePattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss";
-			_UniversalSortableDateTimePattern = "yyyy'-'MM'-'dd HH':'mm':'ss'Z'";
-
-			firstDayOfWeek = (int)DayOfWeek.Sunday;
-			calendar = new GregorianCalendar();
-			calendarWeekRule = (int)CalendarWeekRule.FirstDay;
+			firstDayOfWeek = (int) DayOfWeek.Sunday;
+			calendarWeekRule = (int) CalendarWeekRule.FirstDay;
 
 			abbreviatedDayNames = INVARIANT_ABBREVIATED_DAY_NAMES;
 			dayNames = INVARIANT_DAY_NAMES;
@@ -161,10 +145,11 @@ namespace System.Globalization
 			monthNames = INVARIANT_MONTH_NAMES;
 			m_genitiveAbbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
 			genitiveMonthNames = INVARIANT_MONTH_NAMES;
-			shortDayNames = INVARIANT_SHORT_DAY_NAMES;
+			shortestDayNames = INVARIANT_SHORT_DAY_NAMES;
 		}
 
-		public DateTimeFormatInfo() : this (false)
+		public DateTimeFormatInfo ()
+			: this (CultureInfo.InvariantCulture, false)
 		{
 		}
 				
@@ -208,9 +193,9 @@ namespace System.Globalization
 
 		public string GetAbbreviatedEraName (int era)
 		{
-			if (era < 0 || era >= calendar.AbbreviatedEraNames.Length)
+			if (era < 0 || era >= Calendar.AbbreviatedEraNames.Length)
 				throw new ArgumentOutOfRangeException ("era", era.ToString ());
-			return calendar.AbbreviatedEraNames [era];
+			return Calendar.AbbreviatedEraNames [era];
 		}
 
 		public string GetAbbreviatedMonthName(int month)
@@ -223,34 +208,39 @@ namespace System.Globalization
 		{
 			if (eraName == null)
 				throw new ArgumentNullException ();
-			string [] eras = calendar.EraNames;
+			string [] eras = Calendar.EraNames;
 			for (int i = 0; i < eras.Length; i++)
 				if (CultureInfo.InvariantCulture.CompareInfo
 					.Compare (eraName, eras [i],
 					CompareOptions.IgnoreCase) == 0)
-					return calendar.Eras [i];
+					return Calendar.Eras [i];
 			
-			eras = calendar.AbbreviatedEraNames;
+			eras = Calendar.AbbreviatedEraNames;
 			for (int i = 0; i < eras.Length; i++)
 				if (CultureInfo.InvariantCulture.CompareInfo
 					.Compare (eraName, eras [i],
 					CompareOptions.IgnoreCase) == 0)
-					return calendar.Eras [i];
+					return Calendar.Eras [i];
 			
 			return -1;
 		}
 
 		public string GetEraName (int era)
 		{
-			if (era < 0 || era > calendar.EraNames.Length)
+			if (era < 0 || era > Calendar.EraNames.Length)
 				throw new ArgumentOutOfRangeException ("era", era.ToString ());
-			return calendar.EraNames [era - 1];
+			return Calendar.EraNames [era - 1];
 		}
 
 		public string GetMonthName(int month)
 		{
 			if (month < 1 || month > 13) throw new ArgumentOutOfRangeException();
 			return monthNames[month-1];
+		}
+		
+		internal string GetMonthGenitiveName (int month)
+		{
+			return genitiveMonthNames [month - 1];
 		}
 
 		public string[] AbbreviatedDayNames
@@ -265,11 +255,8 @@ namespace System.Globalization
 			{
 				return abbreviatedDayNames;
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 7) throw new ArgumentException(MSG_ARRAYSIZE_DAY);
+			set {
+				CheckDaysValue (value);
 				abbreviatedDayNames = (string[]) value.Clone();
 			}
 		}
@@ -286,79 +273,105 @@ namespace System.Globalization
 			{
 				return abbreviatedMonthNames;
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 13) throw new ArgumentException(MSG_ARRAYSIZE_MONTH);
+			set {
+				CheckMonthsValue (value);
 				abbreviatedMonthNames = (string[]) value.Clone();
 			}
 		}
 
-		public string[] DayNames
-		{
-			get { return (string[]) RawDayNames.Clone (); }
-			set { RawDayNames = value; }
-		}
-
-		internal string[] RawDayNames
-		{
-			get
-			{
-				return dayNames;
+		public string[] DayNames {
+			get {
+				return (string[]) dayNames.Clone ();
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 7) throw new ArgumentException(MSG_ARRAYSIZE_DAY);
+			set {
+				CheckDaysValue (value);
 				dayNames = (string[]) value.Clone();
 			}
 		}
 
-		public string[] MonthNames
-		{
-			get { return (string[]) RawMonthNames.Clone (); }
-			set { RawMonthNames = value; }
+		internal string[] RawDayNames  {
+			get {
+				return dayNames;
+			}
 		}
 
-		internal string[] RawMonthNames
-		{
-			get
-			{
-				return monthNames;
+		public string[] MonthNames {
+			get {
+				return (string[]) monthNames.Clone ();
 			}
-			set
-			{
-				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
-				if (value == null) throw new ArgumentNullException();
-				if (value.GetLength(0) != 13) throw new ArgumentException(MSG_ARRAYSIZE_MONTH);
+			set {
+				CheckMonthsValue (value);
 				monthNames = (string[]) value.Clone();
 			}
 		}
 
-		public string AMDesignator
-		{
-			get
-			{
+		internal string[] RawMonthNames {
+			get {
+				return monthNames;
+			}
+		}
+		
+		[ComVisible (false)]
+		public string[] AbbreviatedMonthGenitiveNames {
+			get {
+				return (string[]) m_genitiveAbbreviatedMonthNames.Clone ();
+			}
+			set {
+				CheckMonthsValue (value);
+				m_genitiveAbbreviatedMonthNames = value;
+			}
+		}
+
+		[ComVisible (false)]
+		public string[] MonthGenitiveNames {
+			get {
+				return (string[]) genitiveMonthNames.Clone ();
+			}
+			set {
+				CheckMonthsValue (value);
+				genitiveMonthNames = value;
+			}
+		}
+		
+		[MonoLimitation ("Only default calendar is supported")]
+		[ComVisible (false)]
+		public string NativeCalendarName {
+			get {
+				if (Calendar != culture.Calendar)
+					return "";
+
+				return culture.NativeCalendarName;
+			}
+		}
+
+		[ComVisible (false)]
+		public string[] ShortestDayNames {
+			get {
+				return (string[]) shortestDayNames.Clone ();
+			}
+
+			set {
+				CheckDaysValue (value);
+				shortestDayNames = value;
+			}
+		}
+
+		public string AMDesignator {
+			get {
 				return amDesignator;
 			}
-			set
-			{
+			set {
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				amDesignator = value;
 			}
 		}
 
-		public string PMDesignator
-		{
-			get
-			{
+		public string PMDesignator {
+			get {
 				return pmDesignator;
 			}
-			set
-			{
+			set {
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				pmDesignator = value;
@@ -479,13 +492,8 @@ namespace System.Globalization
 
 		public string FullDateTimePattern
 		{
-			get
-			{
-				if(fullDateTimePattern!=null) {
-					return fullDateTimePattern;
-				} else {
-					return(longDatePattern + " " + longTimePattern);
-				}
+			get {
+				return fullDateTimePattern ?? (longDatePattern + " " + longTimePattern);
 			}
 			set
 			{
@@ -505,13 +513,13 @@ namespace System.Globalization
 
 		public static DateTimeFormatInfo InvariantInfo
 		{
-			get
-			{
+			get {
 				if (theInvariantDateTimeFormatInfo == null) {
-					theInvariantDateTimeFormatInfo = 
-						DateTimeFormatInfo.ReadOnly(new DateTimeFormatInfo());
-					theInvariantDateTimeFormatInfo.FillInvariantPatterns ();
+					var tmp = new DateTimeFormatInfo (CultureInfo.InvariantCulture, true);
+					tmp.FillInvariantPatterns ();
+					theInvariantDateTimeFormatInfo = tmp;
 				}
+
 				return theInvariantDateTimeFormatInfo;
 			}
 		}
@@ -530,14 +538,13 @@ namespace System.Globalization
 			}
 		}
 
-		public Calendar Calendar
-		{
-			get
-			{
-				return calendar;
+		public Calendar Calendar {
+			get {
+				return calendar ?? culture.Calendar;
 			}
-			set
-			{
+
+			[MonoLimitation ("Only default calendar specific data are available")]
+			set {
 				if (IsReadOnly) throw new InvalidOperationException(MSG_READONLY);
 				if (value == null) throw new ArgumentNullException();
 				calendar = value;
@@ -557,35 +564,27 @@ namespace System.Globalization
 			}
 		}
 
-		public string RFC1123Pattern
-		{
-			get
-			{
-				return _RFC1123Pattern;
+		public string RFC1123Pattern {
+			get {
+				return "ddd, dd MMM yyyy HH':'mm':'ss 'GMT'";
 			}
 		}
 
-		internal string RoundtripPattern
-		{
-			get
-			{
-				return _RoundtripPattern;
+		internal string RoundtripPattern {
+			get {
+				return "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK";
 			}
 		}
 
-		public string SortableDateTimePattern
-		{
-			get
-			{
-				return _SortableDateTimePattern;
+		public string SortableDateTimePattern {
+			get {
+				return "yyyy'-'MM'-'dd'T'HH':'mm':'ss";
 			}
 		}
 
-		public string UniversalSortableDateTimePattern
-		{
-			get
-			{
-				return _UniversalSortableDateTimePattern;
+		public string UniversalSortableDateTimePattern {
+			get {
+				return "yyyy'-'MM'-'dd HH':'mm':'ss'Z'";
 			}
 		}
 		
@@ -611,20 +610,17 @@ namespace System.Globalization
 			if (all_date_time_patterns != null)
 				return;
 			
-			var al = new List<string> ();
+			var al = new List<string> (16);
 			al.AddRange (GetAllRawDateTimePatterns ('d'));
 			al.AddRange (GetAllRawDateTimePatterns ('D'));
-			al.AddRange (GetAllRawDateTimePatterns ('g'));
-			al.AddRange (GetAllRawDateTimePatterns ('G'));
 			al.AddRange (GetAllRawDateTimePatterns ('f'));
 			al.AddRange (GetAllRawDateTimePatterns ('F'));
-			// Yes, that is very meaningless, but that is what MS
-			// is doing (LAMESPEC: Since it is documented that
-			// 'M' and 'm' are equal, they should not cosider
-			// that there is a possibility that 'M' and 'm' are
-			// different.)
+			al.AddRange (GetAllRawDateTimePatterns ('g'));
+			al.AddRange (GetAllRawDateTimePatterns ('G'));
 			al.AddRange (GetAllRawDateTimePatterns ('m'));
 			al.AddRange (GetAllRawDateTimePatterns ('M'));
+			al.AddRange (GetAllRawDateTimePatterns ('o'));
+			al.AddRange (GetAllRawDateTimePatterns ('O'));
 			al.AddRange (GetAllRawDateTimePatterns ('r'));
 			al.AddRange (GetAllRawDateTimePatterns ('R'));
 			al.AddRange (GetAllRawDateTimePatterns ('s'));
@@ -651,7 +647,6 @@ namespace System.Globalization
 
 		internal string[] GetAllRawDateTimePatterns (char format)
 		{
-			string [] list;
 			switch (format) {
 			// Date
 			case 'D':
@@ -671,52 +666,50 @@ namespace System.Globalization
 				if (allShortTimePatterns != null && allShortTimePatterns.Length > 0)
 					return allShortTimePatterns;
 				return new string [] {ShortTimePattern};
-			// {Short|Long}Date + {Short|Long}Time
-			// FIXME: they should be the agglegation of the
-			// combination of the Date patterns and Time patterns.
-			case 'G':
-				list = PopulateCombinedList (allShortDatePatterns, allLongTimePatterns);
-				if (list != null && list.Length > 0)
-					return list;
-				return new string [] {ShortDatePattern + " " + LongTimePattern};
-			case 'g':
-				list = PopulateCombinedList (allShortDatePatterns, allShortTimePatterns);
-				if (list != null && list.Length > 0)
-					return list;
-				return new string [] {ShortDatePattern + " " + ShortTimePattern};
-			// The 'U' pattern strings are always the same as 'F'.
-			// (only differs in assuming UTC or not.)
-			case 'U':
-			case 'F':
-				list = PopulateCombinedList (allLongDatePatterns, allLongTimePatterns);
-				if (list != null && list.Length > 0)
-					return list;
-				return new string [] {LongDatePattern + " " + LongTimePattern};
-			case 'f':
-				list = PopulateCombinedList (allLongDatePatterns, allShortTimePatterns);
-				if (list != null && list.Length > 0)
-					return list;
-				return new string [] {LongDatePattern + " " + ShortTimePattern};
 			// MonthDay
 			case 'm':
 			case 'M':
 				if (monthDayPatterns != null && monthDayPatterns.Length > 0)
 					return monthDayPatterns;
-				return new string [] {MonthDayPattern};
+				return new string[] { MonthDayPattern };
 			// YearMonth
 			case 'Y':
 			case 'y':
 				if (yearMonthPatterns != null && yearMonthPatterns.Length > 0)
 					return yearMonthPatterns;
-				return new string [] {YearMonthPattern};
-			// RFC1123
+				return new string[] { YearMonthPattern };
 			case 'r':
 			case 'R':
-				return new string [] {RFC1123Pattern};
+				return new string[] { RFC1123Pattern };
+			case 'O':
+			case 'o':
+				return new string[] { RoundtripPattern };
 			case 's':
-				return new string [] {SortableDateTimePattern};
+				return new string[] { SortableDateTimePattern };
 			case 'u':
-				return new string [] {UniversalSortableDateTimePattern};
+				return new string[] { UniversalSortableDateTimePattern };
+
+			//
+			// Following patterns are combinations of {Short|Long}Date + {Short|Long}Time. Patters can
+			// be null for non-readonly invariant culture
+			//
+			case 'G':
+				return allShortDatePatterns == null ?
+					new string [] { ShortDatePattern + " " + LongTimePattern } :
+					PopulateCombinedList (allShortDatePatterns, allLongTimePatterns);
+			case 'g':
+				return allShortDatePatterns == null ?
+					new string [] { ShortDatePattern + " " + ShortTimePattern } :
+					PopulateCombinedList (allShortDatePatterns, allShortTimePatterns);
+			case 'U': // The 'U' pattern strings are always the same as 'F' (only differs in assuming UTC or not.)
+			case 'F':
+				return allLongDatePatterns == null ?
+					new string [] { LongDatePattern + " " + ShortTimePattern } :
+					PopulateCombinedList (allLongDatePatterns, allLongTimePatterns);
+			case 'f':
+				return allLongDatePatterns == null ?
+					new string [] { LongDatePattern + " " + ShortTimePattern } :
+					PopulateCombinedList (allLongDatePatterns, allShortTimePatterns);
 			}
 			throw new ArgumentException ("Format specifier was invalid.");
 		}
@@ -735,7 +728,7 @@ namespace System.Globalization
 			return abbreviatedDayNames[index];
 		}
 
-		private void FillInvariantPatterns ()
+		void FillInvariantPatterns ()
 		{
 			allShortDatePatterns = new string [] {"MM/dd/yyyy"};
 			allLongDatePatterns = new string [] {"dddd, dd MMMM yyyy"};
@@ -748,60 +741,18 @@ namespace System.Globalization
 			};
 			monthDayPatterns = new string [] {"MMMM dd"};
 			yearMonthPatterns = new string [] {"yyyy MMMM"};
+
+			fullDateTimePattern = "dddd, dd MMMM yyyy HH:mm:ss";
 		}
 
-		private string [] PopulateCombinedList (string [] dates, string [] times)
+		static string [] PopulateCombinedList (string [] dates, string [] times)
 		{
-			if (dates != null && times != null) {
-				string [] list = new string [dates.Length * times.Length];
-				int i = 0;
-				foreach (string d in dates)
-					foreach (string t in times)
-						list [i++] = d + " " + t;
-				return list;
-			}
-			return null;
-		}
-
-		[MonoLimitation ("Returns only the English month abbreviated names")]
-		[ComVisible (false)]
-		public string [] AbbreviatedMonthGenitiveNames {
-			get { return m_genitiveAbbreviatedMonthNames; }
-			set { m_genitiveAbbreviatedMonthNames = value; }
-		}
-
-		[MonoLimitation ("Returns only the English month names")]
-		[ComVisible (false)]
-		public string [] MonthGenitiveNames {
-			get { return genitiveMonthNames; }
-			set { genitiveMonthNames = value; }
-		}
-
-		[MonoLimitation ("Returns an empty string as if the calendar name wasn't available")]
-		[ComVisible (false)]
-		public string NativeCalendarName {
-			get { return String.Empty; }
-		}
-
-		[ComVisible (false)]
-		public string [] ShortestDayNames {
-			get {
-				return shortDayNames;
-			}
-
-			set {
-				if (value == null)
-					throw new ArgumentNullException ();
-
-				if (value.Length != 7)
-					throw new ArgumentException ("Array must have 7 entries");
-				
-				for (int i = 0; i < 7; i++)
-					if (value [i] == null)
-						throw new ArgumentNullException (String.Format ("Element {0} is null", i));
-				
-				shortDayNames = value;
-			}
+			string[] list = new string[dates.Length * times.Length];
+			int i = 0;
+			foreach (string d in dates)
+				foreach (string t in times)
+					list[i++] = d + " " + t;
+			return list;
 		}
 
 		[ComVisible (false)]
@@ -809,9 +760,9 @@ namespace System.Globalization
 		{
 			int index = (int) dayOfWeek;
 			if (index < 0 || index > 6)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException ("dayOfWeek");
 
-			return shortDayNames [index];
+			return shortestDayNames [index];
 		}
 
 		[ComVisible (false)]
@@ -852,5 +803,37 @@ namespace System.Globalization
 				throw new ArgumentException ("format", "Format specifier is invalid");
 			}
 		}
+		
+		void CheckDaysValue (string[] value)
+		{
+			if (IsReadOnly)
+				throw new InvalidOperationException (MSG_READONLY);
+				
+			if (value == null)
+				throw new ArgumentNullException ();
+
+			if (value.Length != 7)
+				throw new ArgumentException ("An array with exactly 7 elements is required");
+
+			int ni = Array.IndexOf (value, null);
+			if (ni >= 0)
+				throw new ArgumentNullException (string.Format ("Element at index {0} is null", ni));
+		}
+		
+		void CheckMonthsValue (string[] value)
+		{
+			if (IsReadOnly)
+				throw new InvalidOperationException (MSG_READONLY);
+				
+			if (value == null)
+				throw new ArgumentNullException ();
+
+			if (value.Length != 13)
+				throw new ArgumentException ("An array with exactly 13 elements is required");
+
+			int ni = Array.IndexOf (value, null);
+			if (ni >= 0)
+				throw new ArgumentNullException (string.Format ("Element at index {0} is null", ni));
+		}		
 	}
 }

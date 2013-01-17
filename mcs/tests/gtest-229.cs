@@ -11,7 +11,7 @@ public class B : IComparable<B> {
 
 public class Tester
 {
-	static int Main ()
+	public static int Main ()
 	{
 		B b = new B ();
 

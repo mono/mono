@@ -1,5 +1,5 @@
 class Test {
-        static int Main ()
+        public static int Main ()
         {
                 int i = 5;
                 switch (i) {

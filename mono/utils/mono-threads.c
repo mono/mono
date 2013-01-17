@@ -4,7 +4,8 @@
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
  *
- * (C) 2011 Novell, Inc
+ * Copyright 2011 Novell, Inc (http://www.novell.com)
+ * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 
 #include <mono/utils/mono-compiler.h>
@@ -41,6 +42,7 @@ static MonoThreadInfoRuntimeCallbacks runtime_callbacks;
 static MonoNativeTlsKey thread_info_key, small_id_key;
 static MonoLinkedListSet thread_list;
 static gboolean disable_new_interrupt = FALSE;
+static gboolean mono_threads_inited = FALSE;
 
 static inline void
 mono_hazard_pointer_clear_all (MonoThreadHazardPointers *hp, int retain)
@@ -102,6 +104,8 @@ free_thread_info (gpointer mem)
 	MonoThreadInfo *info = mem;
 
 	DeleteCriticalSection (&info->suspend_lock);
+	MONO_SEM_DESTROY (&info->resume_semaphore);
+	MONO_SEM_DESTROY (&info->finish_resume_semaphore);
 	mono_threads_platform_free (info);
 
 	g_free (info);
@@ -124,6 +128,8 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 	info->small_id = small_id;
 
 	InitializeCriticalSection (&info->suspend_lock);
+	MONO_SEM_INIT (&info->resume_semaphore, 0);
+	MONO_SEM_INIT (&info->finish_resume_semaphore, 0);
 
 	/*set TLS early so SMR works */
 	mono_native_tls_set_value (thread_info_key, info);
@@ -214,7 +220,15 @@ mono_thread_info_list_head (void)
 MonoThreadInfo*
 mono_thread_info_attach (void *baseptr)
 {
-	MonoThreadInfo *info = mono_native_tls_get_value (thread_info_key);
+	MonoThreadInfo *info;
+	if (!mono_threads_inited)
+	{
+		/* This can happen from DllMain(DLL_THREAD_ATTACH) on Windows, if a
+		 * thread is created before an embedding API user initialized Mono. */
+		THREADS_DEBUG ("mono_thread_info_attach called before mono_threads_init\n");
+		return NULL;
+	}
+	info = mono_native_tls_get_value (thread_info_key);
 	if (!info) {
 		info = g_malloc0 (thread_info_size);
 		THREADS_DEBUG ("attaching %p\n", info);
@@ -229,7 +243,15 @@ mono_thread_info_attach (void *baseptr)
 void
 mono_thread_info_dettach (void)
 {
-	MonoThreadInfo *info = mono_native_tls_get_value (thread_info_key);
+	MonoThreadInfo *info;
+	if (!mono_threads_inited)
+	{
+		/* This can happen from DllMain(THREAD_DETACH) on Windows, if a thread
+		 * is created before an embedding API user initialized Mono. */
+		THREADS_DEBUG ("mono_thread_info_dettach called before mono_threads_init\n");
+		return;
+	}
+	info = mono_native_tls_get_value (thread_info_key);
 	if (info) {
 		THREADS_DEBUG ("detaching %p\n", info);
 		unregister_thread (info);
@@ -243,13 +265,13 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	threads_callbacks = *callbacks;
 	thread_info_size = info_size;
 #ifdef HOST_WIN32
-	res = mono_native_tls_alloc (thread_info_key, NULL);
+	res = mono_native_tls_alloc (&thread_info_key, NULL);
 #else
-	res = mono_native_tls_alloc (thread_info_key, unregister_thread);
+	res = mono_native_tls_alloc (&thread_info_key, unregister_thread);
 #endif
 	g_assert (res);
 
-	res = mono_native_tls_alloc (small_id_key, NULL);
+	res = mono_native_tls_alloc (&small_id_key, NULL);
 	g_assert (res);
 
 	InitializeCriticalSection (&global_suspend_lock);
@@ -257,6 +279,8 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	mono_lls_init (&thread_list, NULL);
 	mono_thread_smr_init ();
 	mono_threads_init_platform ();
+
+	mono_threads_inited = TRUE;
 
 	g_assert (sizeof (MonoNativeThreadId) <= sizeof (uintptr_t));
 }
@@ -293,7 +317,7 @@ mono_thread_info_suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel
 	EnterCriticalSection (&info->suspend_lock);
 
 	/*thread is on the process of detaching*/
-	if (info->thread_state > STATE_RUNNING) {
+	if (mono_thread_info_run_state (info) > STATE_RUNNING) {
 		mono_hazard_pointer_clear (hp, 1);
 		return NULL;
 	}
@@ -317,6 +341,7 @@ mono_thread_info_suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel
 		mono_threads_core_interrupt (info);
 
 	++info->suspend_count;
+	info->thread_state |= STATE_SUSPENDED;
 	LeaveCriticalSection (&info->suspend_lock);
 	mono_hazard_pointer_clear (hp, 1);
 
@@ -324,8 +349,9 @@ mono_thread_info_suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel
 }
 
 void
-mono_thread_info_self_suspend ()
+mono_thread_info_self_suspend (void)
 {
+	gboolean ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
 	if (!info)
 		return;
@@ -337,12 +363,36 @@ mono_thread_info_self_suspend ()
 	g_assert (info->suspend_count == 0);
 	++info->suspend_count;
 
-	/*
-	The internal API contract with this function is a bit out of the ordinary.
-	mono_threads_core_self_suspend executes with suspend_lock taken and must
-	release it after capturing the current context.
-	*/
-	mono_threads_core_self_suspend (info);
+	info->thread_state |= STATE_SELF_SUSPENDED;
+
+	ret = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&info->suspend_state, NULL);
+	g_assert (ret);
+
+	LeaveCriticalSection (&info->suspend_lock);
+
+	while (MONO_SEM_WAIT (&info->resume_semaphore) != 0) {
+		/*if (EINTR != errno) ABORT("sem_wait failed"); */
+	}
+
+	g_assert (!info->async_target); /*FIXME this should happen normally for suspend. */
+	MONO_SEM_POST (&info->finish_resume_semaphore);
+}
+
+static gboolean
+mono_thread_info_resume_internal (MonoThreadInfo *info)
+{
+	gboolean result;
+	if (mono_thread_info_suspend_state (info) == STATE_SELF_SUSPENDED) {
+		MONO_SEM_POST (&info->resume_semaphore);
+		while (MONO_SEM_WAIT (&info->finish_resume_semaphore) != 0) {
+			/* g_assert (errno == EINTR); */
+		}
+		result = TRUE;
+	} else {
+		result = mono_threads_core_resume (info);
+	}
+	info->thread_state &= ~SUSPEND_STATE_MASK;
+	return result;
 }
 
 gboolean
@@ -371,7 +421,7 @@ mono_thread_info_resume (MonoNativeThreadId tid)
 	g_assert (mono_thread_info_get_tid (info));
 
 	if (--info->suspend_count == 0)
-		result = mono_threads_core_resume (info);
+		result = mono_thread_info_resume_internal (info);
 
 	LeaveCriticalSection (&info->suspend_lock);
 	mono_hazard_pointer_clear (hp, 1);
@@ -490,6 +540,44 @@ mono_thread_info_disable_new_interrupt (gboolean disable)
 {
 	disable_new_interrupt = disable;
 }
+
+/*
+ * This is a very specific function whose only purpose is to
+ * break a given thread from socket syscalls.
+ *
+ * This only exists because linux won't fail a call to connect
+ * if the underlying is closed.
+ *
+ * TODO We should cleanup and unify this with the other syscall abort
+ * facility.
+ */
+void
+mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid)
+{
+	MonoThreadHazardPointers *hp;
+	MonoThreadInfo *info;
+	
+	if (tid == mono_native_thread_id_get () || !mono_threads_core_needs_abort_syscall ())
+		return;
+
+	hp = mono_hazard_pointer_get ();	
+	info = mono_thread_info_lookup (tid); /*info on HP1*/
+	if (!info)
+		return;
+
+	if (mono_thread_info_run_state (info) > STATE_RUNNING) {
+		mono_hazard_pointer_clear (hp, 1);
+		return;
+	}
+
+	mono_thread_info_suspend_lock ();
+
+	mono_threads_core_abort_syscall (info);
+
+	mono_hazard_pointer_clear (hp, 1);
+	mono_thread_info_suspend_unlock ();
+}
+
 /*
 Disabled by default for now.
 To enable this we need mini to implement the callbacks by MonoThreadInfoRuntimeCallbacks

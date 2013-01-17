@@ -35,13 +35,11 @@ namespace System.ComponentModel
 	/// <summary>
 	/// Provides functionality to an object to return a list that can be bound to a data source.
 	/// </summary>
-#if NET_2_0
 	[MergableProperty (false)]
 	[TypeConverter ("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
 	// disable it until winforms guys have this internal class or some alternatives implemented.
 //	[Editor (EditorTypeName = "System.Windows.Forms.Design.DataSourceListEditor, " + AssemblySystem_Design,
 //	         EditorBaseTypeName = "System.Drawing.Design.UITypeEditor, " + AssemblySystem_Drawing)]
-#endif
 	public interface IListSource
 	{
 		IList GetList ();

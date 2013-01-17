@@ -20,7 +20,7 @@ class T {
 		return 0;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		T t = new T ();
 		int result = Test (t);

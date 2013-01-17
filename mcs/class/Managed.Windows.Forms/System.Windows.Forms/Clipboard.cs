@@ -66,7 +66,7 @@ namespace System.Windows.Forms {
 			IntPtr clipboard_handle;
 
 			clipboard_handle = XplatUI.ClipboardOpen (false);
-			XplatUI.ClipboardStore (clipboard_handle, null, 0, null);
+			XplatUI.ClipboardStore (clipboard_handle, null, 0, null, false);
 		}
 
 		public static bool ContainsAudio ()
@@ -240,7 +240,7 @@ namespace System.Windows.Forms {
 			converter = new XplatUI.ObjectToClipboard(ConvertToClipboardData);
 
 			clipboard_handle = XplatUI.ClipboardOpen(false);
-			XplatUI.ClipboardStore(clipboard_handle, null, 0, null);	// Empty clipboard
+			XplatUI.ClipboardStore(clipboard_handle, null, 0, null, copy);	// Empty clipboard
 
 			native_format = -1;
 
@@ -261,7 +261,7 @@ namespace System.Windows.Forms {
 					if (IsDataSerializable (obj))
 						item_format.is_serializable = true;
 
-					XplatUI.ClipboardStore(clipboard_handle, obj, native_format, converter);
+					XplatUI.ClipboardStore(clipboard_handle, obj, native_format, converter, copy);
 				}
 			} else {
 				item_format = DataFormats.Format.Find(data.GetType().FullName);
@@ -269,7 +269,7 @@ namespace System.Windows.Forms {
 					native_format = item_format.Id;
 				}
 
-				XplatUI.ClipboardStore(clipboard_handle, data, native_format, converter);
+				XplatUI.ClipboardStore(clipboard_handle, data, native_format, converter, copy);
 			}
 			XplatUI.ClipboardClose(clipboard_handle);
 		}

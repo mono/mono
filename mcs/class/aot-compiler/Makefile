@@ -28,7 +28,7 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 ifndef SKIP_AOT
 
 ifdef PLATFORM_AOT_SUFFIX
-Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
+Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] $(notdir $(@))";)
 $(mcs_aot_image): $(mcs_exe) $(mscorlib_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version,outfile=$(mcs_aot_image) --debug $(mcs_exe) || cat $(PROFILE)_aot.log || (cat $(PROFILE)_aot.log; exit 1)
 
@@ -46,7 +46,7 @@ all-local: $(mscorlib_aot_image) $(mcs_aot_image)
 install-local:
 endif
 
-ifeq ($(PROFILE),net_4_0)
+ifeq ($(PROFILE), $(DEFAULT_PROFILE))
 all-local: $(mscorlib_aot_image) $(mcs_aot_image)
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
@@ -55,7 +55,8 @@ install-local:
 endif
 
 # No mcs in net 2.0
-ifeq ($(PROFILE),net_2_0)
+MSCORLIB_PROFILE := $(filter net_2_0, $(PROFILE))
+ifdef MSCORLIB_PROFILE
 all-local: $(mscorlib_aot_image)
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)

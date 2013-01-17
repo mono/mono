@@ -1,10 +1,12 @@
 //
 // System.Reflection.ProcessorArchitecture flag
 //
-// Author:
+// Authors:
 //   Zoltan Varga (vargaz@gmail.com)
+//   Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,7 +39,10 @@ namespace System.Reflection {
 		MSIL = 1,
 		X86 = 2,
 		IA64 = 3,
-		Amd64 = 4
+		Amd64 = 4,
+#if NET_4_5
+		Arm = 5
+#endif
 	}
 }
 

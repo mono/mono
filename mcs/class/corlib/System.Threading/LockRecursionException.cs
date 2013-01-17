@@ -4,6 +4,8 @@
  * Author(s)
  * 	Marek Safar <marek.safar@gmail.com>
  *
+ * Copyright 2011 Xamarin Inc (http://www.xamarin.com).
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -25,7 +27,7 @@
  */
 
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 using System.Runtime.Serialization;
@@ -34,7 +36,9 @@ using System.Runtime.CompilerServices;
 namespace System.Threading
 {
 	[Serializable]
+#if !MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
+#endif
 	public class LockRecursionException : Exception
 	{
 		public LockRecursionException () 

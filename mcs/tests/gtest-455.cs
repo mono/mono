@@ -4,7 +4,7 @@ namespace ConsoleApplication1
 {
 	class Program
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			object o = new object ();
 			Inner<object>.Compare (o, o);

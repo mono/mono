@@ -125,10 +125,10 @@
 #  define MONO_THREAD_VAR_OFFSET(var,offset) do { guint64 foo;  				\
 						__asm__ ("basr	%%r1,0\n\t"			\
 							 "j	0f\n\t"				\
-							 ".quad " #var "@INDNTPOFF\n\t"		\
+							 ".quad " #var "@TLSGD\n\t"		\
 							 "0:\n\t"				\
 							 "lg	%%r2,4(%%r1)\n\t"		\
-							 "brasl	%%r14,__tls_get_offset@PLT\n\t" \
+							 "brasl	%%r14,__tls_get_offset@PLT:tls_gdcall:"#var"\n\t" \
 							 "lgr	%0,%%r2\n\t"			\
 							: "=r" (foo) : 				\
 							: "1", "2", "14", "cc");		\
@@ -157,11 +157,12 @@
 #define MONO_THREAD_VAR_OFFSET(var,offset) (offset) = -1
 #endif
 
-#elif defined(__APPLE__) && defined(__i386__) 
+#elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
 
 #define MONO_HAVE_FAST_TLS
 #define MONO_FAST_TLS_SET(x,y) pthread_setspecific(x, y)
 #define MONO_FAST_TLS_GET(x) pthread_getspecific(x)
+#define MONO_FAST_TLS_ADDR(x) (mono_mach_get_tls_address_from_thread (pthread_self (), x))
 #define MONO_FAST_TLS_INIT(x) pthread_key_create(&x, NULL)
 #define MONO_FAST_TLS_DECLARE(x) static pthread_key_t x;
 
@@ -177,6 +178,11 @@
 /*Macros to facilitate user code*/
 #define MONO_FAST_TLS_INIT(x)
 #endif
+
+#if defined(MONO_HAVE_FAST_TLS) && !defined(MONO_FAST_TLS_ADDR)
+#define MONO_FAST_TLS_ADDR(x) (&(x))
+#endif
+
 
 /* Deal with Microsoft C compiler differences */
 #ifdef _MSC_VER
@@ -216,6 +222,12 @@
 #define MONO_DEPRECATED __attribute__ ((deprecated))
 #else
 #define MONO_DEPRECATED 
+#endif
+
+#ifdef __GNUC__
+#define MONO_ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define MONO_ALWAYS_INLINE
 #endif
 
 #endif /* __UTILS_MONO_COMPILER_H__*/

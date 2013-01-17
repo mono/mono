@@ -5,9 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Text.RegularExpressions {
 
@@ -23,7 +21,6 @@ namespace System.Text.RegularExpressions {
 	// matching opcodes
 	//
 
-#if NET_2_0
 	class CILCompiler : RxCompiler, ICompiler {
 		DynamicMethod[] eval_methods;
 		bool[] eval_methods_defined;
@@ -1861,10 +1858,6 @@ namespace System.Text.RegularExpressions {
 			return m;
 		}
 	}
-#else
-	class CILCompiler : RxCompiler {
-	}
-#endif
 
 }
 

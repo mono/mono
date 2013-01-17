@@ -114,16 +114,16 @@ namespace System.Xml.Serialization
 			AddMappingMetadata (metadata, member, ns, false);
 		}
 
-		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlTypeMapping member, string ns)
+		public void AddMappingMetadata (CodeAttributeDeclarationCollection metadata, XmlTypeMapping mapping, string ns)
 		{
-			if ( (member.TypeData.SchemaType == SchemaTypes.Primitive ||
-			      member.TypeData.SchemaType == SchemaTypes.Array) 
-				&& member.Namespace != XmlSchema.Namespace)
+			if ( (mapping.TypeData.SchemaType == SchemaTypes.Primitive ||
+			      mapping.TypeData.SchemaType == SchemaTypes.Array) 
+				&& mapping.Namespace != XmlSchema.Namespace)
 			{
 				CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
-				ratt.Arguments.Add (MapCodeGenerator.GetArg (member.ElementName));
-				ratt.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));
-				ratt.Arguments.Add (MapCodeGenerator.GetArg ("IsNullable", member.IsNullable));
+				ratt.Arguments.Add (MapCodeGenerator.GetArg (mapping.ElementName));
+				ratt.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", mapping.Namespace));
+				ratt.Arguments.Add (MapCodeGenerator.GetArg ("IsNullable", mapping.IsNullable));
 				metadata.Add (ratt);
 			}
 		}

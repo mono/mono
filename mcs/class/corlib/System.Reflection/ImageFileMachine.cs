@@ -1,10 +1,12 @@
 //
 // System.Reflection.ImageFileMachine enumeration
 //
-// Author:
+// Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,5 +38,8 @@ namespace System.Reflection {
 		I386 = 332,
 		IA64 = 512,
 		AMD64 = 34404,
+#if NET_4_5
+		ARM = 452,
+#endif
 	}
 }

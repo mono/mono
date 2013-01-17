@@ -86,7 +86,7 @@ namespace System.Runtime.Serialization
 		public void Serialize (Type type, object graph)
 		{
 			if (graph == null)
-				writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
+				writer.WriteAttributeString ("i", "nil", XmlSchema.InstanceNamespace, "true");
 #if !MOONLIGHT
 			else if (type == typeof (XmlElement))
 				((XmlElement) graph).WriteTo (Writer);
@@ -119,8 +119,18 @@ namespace System.Runtime.Serialization
 					types.Add (actualType);
 					map = types.FindUserMap (actualType);
 				}
+				
+				bool explicityType = false;
+				if(type != actualType)
+				{
+					// Check if underlying type of Nullable, mismatch the current type.
+					if(type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>))
+						explicityType = (type.GetGenericArguments () [0] != actualType);
+					else
+						explicityType = true;
+				}
 
-				if (actualType != type && (map == null || map.OutputXsiType)) {
+				if (explicityType && (map == null || map.OutputXsiType)) {
 					QName qname = resolvedQName ?? types.GetXmlName (actualType);
 					string name = qname.Name;
 					string ns = qname.Namespace;
@@ -151,12 +161,14 @@ namespace System.Runtime.Serialization
 			if (label != null)
 				Writer.WriteAttributeString ("z", "Id", KnownTypeCollection.MSSimpleNamespace, label);
 
-//			writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
-//			writer.WriteQualifiedName (qname.Name, qname.Namespace);
-//			writer.WriteEndAttribute ();
-
+			bool isDateTimeOffset = false;
+			// Handle DateTimeOffset type and DateTimeOffset?
+			if (type == typeof (DateTimeOffset))
+				isDateTimeOffset = true;
+			else if(type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) 
+				isDateTimeOffset = type.GetGenericArguments () [0] == typeof (DateTimeOffset);	
 			// It is the only exceptional type that does not serialize to string but serializes into complex element.
-			if (type == typeof (DateTimeOffset)) {
+			if (isDateTimeOffset) {
 				var v = (DateTimeOffset) graph;
 				writer.WriteStartElement ("DateTime", KnownTypeCollection.DefaultClrNamespaceSystem);
 				SerializePrimitive (typeof (DateTime), DateTime.SpecifyKind (v.DateTime.Subtract (v.Offset), DateTimeKind.Utc), KnownTypeCollection.GetPredefinedTypeName (typeof (DateTime)));

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-066</name>
+    </assembly>
+    <members>
+        <member name="M:C.Foo2``1(System.Int32,``0)">
+            <seealso cref="M:C.Foo``2(System.Int32,``0,``1[])" /></member>
+    </members>
+</doc>

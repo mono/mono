@@ -1257,7 +1257,6 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (DataColumn column, DataRowVersion version)
 		{
-			object o = this [column, version];
 			return column.DataContainer.IsNull (IndexFromVersion (version));
 		}
 

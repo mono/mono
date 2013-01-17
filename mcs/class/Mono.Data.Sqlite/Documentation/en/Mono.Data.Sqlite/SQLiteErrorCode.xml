@@ -1,0 +1,483 @@
+<Type Name="SQLiteErrorCode" FullName="Mono.Data.Sqlite.SQLiteErrorCode">
+  <TypeSignature Language="C#" Value="public enum SQLiteErrorCode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SQLiteErrorCode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            SQLite error codes
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Abort">
+      <MemberSignature Language="C#" Value="Abort" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Abort = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Callback routine requested an abort
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Auth">
+      <MemberSignature Language="C#" Value="Auth" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Auth = int32(23)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Authorization denied
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Busy">
+      <MemberSignature Language="C#" Value="Busy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Busy = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The database file is locked
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CantOpen">
+      <MemberSignature Language="C#" Value="CantOpen" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode CantOpen = int32(14)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Unable to open the database file
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Constraint">
+      <MemberSignature Language="C#" Value="Constraint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Constraint = int32(19)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Abort due to constraint violation
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Corrupt">
+      <MemberSignature Language="C#" Value="Corrupt" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Corrupt = int32(11)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The database disk image is malformed
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Done">
+      <MemberSignature Language="C#" Value="Done" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Done = int32(101)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            sqlite3_step() has finished executing
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Empty">
+      <MemberSignature Language="C#" Value="Empty" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Empty = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Database is empty
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="C#" Value="Error" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Error = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            SQL error or missing database
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="C#" Value="Format" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Format = int32(24)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Auxiliary database format error
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Full">
+      <MemberSignature Language="C#" Value="Full" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Full = int32(13)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Insertion failed because database is full
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Internal">
+      <MemberSignature Language="C#" Value="Internal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Internal = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Internal logic error in SQLite
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Interrupt">
+      <MemberSignature Language="C#" Value="Interrupt" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Interrupt = int32(9)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Operation terminated by sqlite3_interrupt()
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IOErr">
+      <MemberSignature Language="C#" Value="IOErr" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode IOErr = int32(10)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Some kind of disk I/O error occurred
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Locked">
+      <MemberSignature Language="C#" Value="Locked" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Locked = int32(6)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            A table in the database is locked
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Mismatch">
+      <MemberSignature Language="C#" Value="Mismatch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Mismatch = int32(20)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Data type mismatch
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Misuse">
+      <MemberSignature Language="C#" Value="Misuse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Misuse = int32(21)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Library used incorrectly
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NOLFS">
+      <MemberSignature Language="C#" Value="NOLFS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode NOLFS = int32(22)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Uses OS features not supported on host
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NoMem">
+      <MemberSignature Language="C#" Value="NoMem" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode NoMem = int32(7)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            malloc() failed
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotADatabase">
+      <MemberSignature Language="C#" Value="NotADatabase" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode NotADatabase = int32(26)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            File opened that is not a database file
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NotFound">
+      <MemberSignature Language="C#" Value="NotFound" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode NotFound = int32(12)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Table or record not found
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Ok">
+      <MemberSignature Language="C#" Value="Ok" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Ok = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Success
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Perm">
+      <MemberSignature Language="C#" Value="Perm" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Perm = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Access permission denied
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Protocol">
+      <MemberSignature Language="C#" Value="Protocol" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Protocol = int32(15)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Database lock protocol error
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Range">
+      <MemberSignature Language="C#" Value="Range" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Range = int32(25)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            2nd parameter to sqlite3_bind out of range
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadOnly">
+      <MemberSignature Language="C#" Value="ReadOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode ReadOnly = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Attempt to write a read-only database
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Row">
+      <MemberSignature Language="C#" Value="Row" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Row = int32(100)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            sqlite3_step() has another row ready
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Schema">
+      <MemberSignature Language="C#" Value="Schema" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode Schema = int32(17)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The database schema changed
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TooBig">
+      <MemberSignature Language="C#" Value="TooBig" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteErrorCode TooBig = int32(18)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Too much data for one row of a table
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

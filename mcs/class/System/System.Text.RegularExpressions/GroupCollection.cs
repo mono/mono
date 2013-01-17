@@ -60,13 +60,13 @@ namespace System.Text.RegularExpressions
 			get { return false; }
 		}
 
-		public Group this [int i] {
+		public Group this [int groupnum] {
 			get {
-				if (i >= gap) {
+				if (groupnum >= gap) {
 					Match m = (Match) list [0];
-					i = m == Match.Empty ? -1 : m.Regex.GetGroupIndex (i);
+					groupnum = m == Match.Empty ? -1 : m.Regex.GetGroupIndex (groupnum);
 				}
-				return i < 0 ? Group.Fail : list [i];
+				return groupnum < 0 ? Group.Fail : list [groupnum];
 			}
 		}
 

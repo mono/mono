@@ -31,25 +31,18 @@ mono_threads_init_platform (void)
 void
 mono_threads_core_interrupt (MonoThreadInfo *info)
 {
-	thread_abort_safely (info->native_handle);
+	thread_abort (info->native_handle);
 }
 
 void
-mono_threads_core_self_suspend (MonoThreadInfo *info)
+mono_threads_core_abort_syscall (MonoThreadInfo *info)
 {
-	kern_return_t kern_ret;
-	gboolean ret;
+}
 
-	g_assert (info);
-
-	ret = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&info->suspend_state, NULL);
-	g_assert (ret);
-
-	/* we must unlock only after context is captured. */
-	LeaveCriticalSection (&info->suspend_lock);
-
-	kern_ret = thread_suspend (info->native_handle);
-	g_assert (kern_ret == KERN_SUCCESS);
+gboolean
+mono_threads_core_needs_abort_syscall (void)
+{
+	return FALSE;
 }
 
 gboolean
@@ -113,6 +106,29 @@ void
 mono_threads_platform_free (MonoThreadInfo *info)
 {
 	mach_port_deallocate (current_task (), info->native_handle);
+}
+
+MonoNativeThreadId
+mono_native_thread_id_get (void)
+{
+	return pthread_self ();
+}
+
+gboolean
+mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2)
+{
+	return pthread_equal (id1, id2);
+}
+
+/*
+ * mono_native_thread_create:
+ *
+ *   Low level thread creation function without any GC wrappers.
+ */
+gboolean
+mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
+{
+	return pthread_create (tid, NULL, func, arg) == 0;
 }
 
 #endif

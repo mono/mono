@@ -11,6 +11,7 @@
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,7 +37,9 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -61,6 +64,7 @@ namespace System {
 	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 #if MOONLIGHT
 	public sealed class AppDomain : _AppDomain {
 #elif NET_2_1
@@ -313,6 +317,7 @@ namespace System {
 			return Activator.CreateComInstanceFrom (assemblyFile, typeName, hashValue ,hashAlgorithm);
 		}
 #endif
+#endif
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
@@ -465,8 +470,7 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-#endif // !NET_2_1
-
+#if !FULL_AOT_RUNTIME
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false);
@@ -604,6 +608,7 @@ namespace System {
 		{
 			return new AssemblyBuilder (name, null, access, true);
 		}
+#endif
 
 		//
 		// AppDomain.DoCallBack works because AppDomain is a MarshalByRefObject
@@ -1295,9 +1300,11 @@ namespace System {
 
 			string name;
 
+#if !FULL_AOT_RUNTIME
 			if (name_or_tb is TypeBuilder)
 				name = ((TypeBuilder) name_or_tb).FullName;
 			else
+#endif
 				name = (string) name_or_tb;
 
 			/* Prevent infinite recursion */
@@ -1326,19 +1333,37 @@ namespace System {
 			}
 		}
 
+		internal Assembly DoResourceResolve (string name, Assembly requesting) {
+			if (ResourceResolve == null)
+				return null;
+
+			Delegate[] invocation_list = ResourceResolve.GetInvocationList ();
+
+			foreach (Delegate eh in invocation_list) {
+				ResolveEventHandler handler = (ResolveEventHandler) eh;
+#if NET_4_0
+				Assembly assembly = handler (this, new ResolveEventArgs (name, requesting));
+#else
+				Assembly assembly = handler (this, new ResolveEventArgs (name));
+#endif
+				if (assembly != null)
+					return assembly;
+			}
+			return null;
+		}
+
 		private void DoDomainUnload ()
 		{
 			if (DomainUnload != null)
 				DomainUnload(this, null);
 		}
 
-#if !NET_2_1
 		internal byte[] GetMarshalledDomainObjRef ()
 		{
 			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
 			return CADSerializer.SerializeObject (oref).GetBuffer();
 		}
-#endif
+
 		internal void ProcessMessageInDomain (byte[] arrRequest, CADMethodCallMessage cadMsg,
 		                                      out byte[] arrResponse, out CADMethodReturnMessage cadMrm)
 		{

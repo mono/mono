@@ -180,10 +180,8 @@ namespace MonoTests.System.Security.Principal {
 
 			IDeserializationCallback dc = (id as IDeserializationCallback);
 			Assert.IsNotNull (dc, "IDeserializationCallback");
-#if NET_1_1
 			ISerializable s = (id as ISerializable);
 			Assert.IsNotNull (s, "ISerializable");
-#endif
 		}
 
 		// This is clearly a hack - but I've seen it too many times so I think we 

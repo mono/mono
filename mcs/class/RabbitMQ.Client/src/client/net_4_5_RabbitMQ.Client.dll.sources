@@ -1,0 +1,4 @@
+#include RabbitMQ.Client.dll.sources
+../../docs/specs/net_4_5-api-0-9.cs
+../../docs/specs/net_4_5-api-0-8.cs
+../../docs/specs/net_4_5-api-qpid-0-8.cs

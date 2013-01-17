@@ -10,7 +10,7 @@
 
 class Ghost {
 
-	static int Main ()
+	public static int Main ()
 	{
 		int Ghost = 0;
 		

@@ -661,6 +661,18 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public void TestGenerateProgIdForType()
+		{
+			string output;
+			
+			output = Marshal.GenerateProgIdForType(typeof(TestCoClass));
+			Assert.AreEqual ("MonoTests.System.Runtime.InteropServices.TestCoClass", output, "#1");
+			
+			output = Marshal.GenerateProgIdForType(typeof(TestCoClassWithProgId));
+			Assert.AreEqual ("CoClassWithProgId", output, "#2");
+		}
+
+		[Test]
 		public void TestGlobalAlloc ()
 		{
 			IntPtr mem = Marshal.AllocHGlobal (100);
@@ -749,6 +761,14 @@ namespace MonoTests.System.Runtime.InteropServices
 	}
 
 	public class TestCoClass : ITestDispatch
+	{
+		public void DoNothing ()
+		{
+		}
+	}
+
+	[ProgId("CoClassWithProgId")]
+	public class TestCoClassWithProgId : ITestDispatch
 	{
 		public void DoNothing ()
 		{

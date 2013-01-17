@@ -31,7 +31,9 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using System.Security.Principal;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Globalization;
 using System.Runtime.Remoting;
 using System.Runtime.InteropServices;
@@ -77,6 +79,8 @@ namespace System
 			BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 			object[] activationAttributes, Evidence securityAttributes);
 #endif
+
+#if !FULL_AOT_RUNTIME
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir);
@@ -94,6 +98,7 @@ namespace System
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 			Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
 			PermissionSet refusedPermissions, bool isSynchronized);
+#endif
 
 		void DoCallBack (CrossAppDomainDelegate theDelegate);
 		bool Equals (object other);

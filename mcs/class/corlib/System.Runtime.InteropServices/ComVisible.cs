@@ -40,6 +40,7 @@ namespace System.Runtime.InteropServices {
 		AttributeTargets.Field | AttributeTargets.Interface |
 		AttributeTargets.Delegate, Inherited=false)]
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class ComVisibleAttribute : Attribute {
 
 		private bool Visible = false;

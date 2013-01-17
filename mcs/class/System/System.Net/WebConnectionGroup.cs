@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
 //
@@ -109,18 +110,22 @@ namespace System.Net
 
 			bool needs_reset = false;
 			NetworkCredential cnc_cred = cnc.NtlmCredential;
-			NetworkCredential req_cred = request.Credentials.GetCredential (request.RequestUri, "NTLM");
-			if (cnc_cred.Domain != req_cred.Domain || cnc_cred.UserName != req_cred.UserName ||
+
+			bool isProxy = (request.Proxy != null && !request.Proxy.IsBypassed (request.RequestUri));
+			ICredentials req_icreds = (!isProxy) ? request.Credentials : request.Proxy.Credentials;
+			NetworkCredential req_cred = (req_icreds != null) ? req_icreds.GetCredential (request.RequestUri, "NTLM") : null;
+
+			if (cnc_cred == null || req_cred == null ||
+				cnc_cred.Domain != req_cred.Domain || cnc_cred.UserName != req_cred.UserName ||
 				cnc_cred.Password != req_cred.Password) {
 				needs_reset = true;
 			}
-#if NET_1_1
+
 			if (!needs_reset) {
 				bool req_sharing = request.UnsafeAuthenticatedConnectionSharing;
 				bool cnc_sharing = cnc.UnsafeAuthenticatedConnectionSharing;
 				needs_reset = (req_sharing == false || req_sharing != cnc_sharing);
 			}
-#endif
 			if (needs_reset) {
 				cnc.Close (false); // closes the authenticated connection
 				cnc.ResetNtlm ();
@@ -160,7 +165,7 @@ namespace System.Net
 			if (rnd == null)
 				rnd = new Random ();
 
-			int idx = (count > 1) ? rnd.Next (0, count - 1) : 0;
+			int idx = (count > 1) ? rnd.Next (0, count) : 0;
 			cncRef = (WeakReference) connections [idx];
 			cnc = cncRef.Target as WebConnection;
 			if (cnc == null) {

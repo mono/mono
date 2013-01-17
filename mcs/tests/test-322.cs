@@ -20,7 +20,7 @@ class Y {
 }
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		Y y = new Y (1);
 

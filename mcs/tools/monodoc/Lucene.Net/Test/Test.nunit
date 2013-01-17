@@ -1,6 +1,0 @@
-﻿<NUnitProject>
-  <Settings activeconfig="Default" />
-  <Config name="Default" binpathtype="Auto">
-    <assembly path="bin\Debug\Lucene.Net.Test.dll" />
-  </Config>
-</NUnitProject>

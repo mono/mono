@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://www.mono-project.com/Bugs\n"
-"POT-Creation-Date: 2011-02-15 12:49+0000\n"
+"POT-Creation-Date: 2012-12-05 09:29+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Atsushi Eno <atsushi@ximian.com>\n"
 "Language-Team: \n"
@@ -12,49 +12,54 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Japanese\n"
 
-#: mcs/mcs/anonymous.cs:880
+#: mcs/mcs/anonymous.cs:998
 #, csharp-format
 msgid "Cannot convert `{0}' to an expression tree of non-delegate type `{1}'"
 msgstr "`{0}' をデリゲートでない型 `{1}' の式ツリーに変換できません"
 
-#: mcs/mcs/anonymous.cs:885
+#: mcs/mcs/anonymous.cs:1003
 #, csharp-format
 msgid "Cannot convert `{0}' to non-delegate type `{1}'"
 msgstr "`{0}' をデリゲートでない型 `{1}'に変換できません"
 
-#: mcs/mcs/anonymous.cs:897
+#: mcs/mcs/anonymous.cs:1015
 #, csharp-format
 msgid ""
 "Cannot convert `{0}' to delegate type `{1}' since there is a parameter "
 "mismatch"
 msgstr "パラメータ不一致のため、`{0}' をデリゲート型 `{1}'に変換できません"
 
-#: mcs/mcs/anonymous.cs:909 mcs/mcs/ecore.cs:4518
+#: mcs/mcs/anonymous.cs:1027 mcs/mcs/ecore.cs:5056
 #, csharp-format
 msgid "Delegate `{0}' does not take `{1}' arguments"
 msgstr "デリゲート `{0}' は `{1}' 個の引数をもちません"
 
-#: mcs/mcs/anonymous.cs:924
+#: mcs/mcs/anonymous.cs:1042
 #, csharp-format
 msgid "Parameter `{0}' should not be declared with the `{1}' keyword"
 msgstr "パラメータ `{0}' は `{1}' キーワードで宣言されるべきではありません"
 
-#: mcs/mcs/anonymous.cs:927
+#: mcs/mcs/anonymous.cs:1045
 #, csharp-format
 msgid "Parameter `{0}' must be declared with the `{1}' keyword"
 msgstr "パラメータ `{0}' は `{1}' キーワードで宣言されなければなりません"
 
-#: mcs/mcs/anonymous.cs:948
+#: mcs/mcs/anonymous.cs:1066
 #, csharp-format
 msgid "Parameter `{0}' is declared as type `{1}' but should be `{2}'"
 msgstr ""
 "パラメータ `{0}' は型 `{1}' として宣言されていますが、 `{2}' であるはずです"
 
-#: mcs/mcs/anonymous.cs:1103
+#: mcs/mcs/anonymous.cs:1212
+#, fuzzy
+msgid "Async lambda expressions cannot be converted to expression trees"
+msgstr "匿名メソッドを式ツリーに変換することはできません"
+
+#: mcs/mcs/anonymous.cs:1250
 msgid "An anonymous method cannot be converted to an expression tree"
 msgstr "匿名メソッドを式ツリーに変換することはできません"
 
-#: mcs/mcs/anonymous.cs:1122
+#: mcs/mcs/anonymous.cs:1269
 #, fuzzy, csharp-format
 msgid ""
 "Cannot convert anonymous method block without a parameter list to delegate "
@@ -63,67 +68,275 @@ msgstr ""
 "デリゲート型 `{0}' には引数に`out'パラメータがあるので、パラメータリスト無し"
 "では匿名メソッドのブロックから変換できません"
 
-#: mcs/mcs/anonymous.cs:1146
+#: mcs/mcs/anonymous.cs:1293
 msgid ""
 "Anonymous methods and lambda expressions cannot be used in the current "
 "context"
 msgstr "匿名メソッドとラムダ式は現在の文脈では使用できません"
 
-#: mcs/mcs/anonymous.cs:1188
-#, csharp-format
+#: mcs/mcs/anonymous.cs:1336
+#, fuzzy, csharp-format
 msgid ""
 "Local variable or parameter `{0}' cannot have their address taken and be "
-"used inside an anonymous method or lambda expression"
+"used inside an anonymous method, lambda expression or query expression"
 msgstr ""
 "ローカル変数またはパラメータである `{0}' は、そのアドレスを取得して匿名メソッ"
 "ドあるいはラムダ式の中で使用することができません"
 
-#: mcs/mcs/anonymous.cs:1438
+#: mcs/mcs/anonymous.cs:1356
+#, fuzzy, csharp-format
+msgid "Cannot convert async {0} to delegate type `{1}'"
+msgstr "`{0}' をデリゲートでない型 `{1}'に変換できません"
+
+#: mcs/mcs/anonymous.cs:1594
 msgid "An expression tree cannot contain an anonymous method expression"
 msgstr "式ツリーに匿名メソッド式を含むことはできません"
 
-#: mcs/mcs/argument.cs:101
+#: mcs/mcs/anonymous.cs:1877
+#, csharp-format
+msgid ""
+"`{0}': An anonymous type cannot have multiple properties with the same name"
+msgstr "`{0}': 匿名型は同一の名前で複数のプロパティをもつことができません"
+
+#: mcs/mcs/argument.cs:102
 #, fuzzy
 msgid ""
 "An expression tree cannot contain an invocation which uses optional parameter"
 msgstr "式ツリーは代入オペレータを含むことができません"
 
-#: mcs/mcs/argument.cs:184
+#: mcs/mcs/argument.cs:234
 #, fuzzy
 msgid "An expression tree cannot contain named argument"
 msgstr "式ツリーは代入オペレータを含むことができません"
 
-#: mcs/mcs/argument.cs:303
+#: mcs/mcs/argument.cs:345
 #, csharp-format
 msgid ""
 "The method group `{0}' cannot be used as an argument of dynamic operation. "
 "Consider using parentheses to invoke the method"
 msgstr ""
 
-#: mcs/mcs/argument.cs:307
+#: mcs/mcs/argument.cs:349
 #, fuzzy
 msgid ""
 "An anonymous method or lambda expression cannot be used as an argument of "
 "dynamic operation. Consider using a cast"
 msgstr "匿名メソッドとラムダ式は現在の文脈では使用できません"
 
-#: mcs/mcs/argument.cs:310
+#: mcs/mcs/argument.cs:352
 #, fuzzy, csharp-format
 msgid ""
 "An expression of type `{0}' cannot be used as an argument of dynamic "
 "operation"
 msgstr "式ツリーは代入オペレータを含むことができません"
 
-#: mcs/mcs/assign.cs:299
+#: mcs/mcs/assign.cs:320
 msgid "An expression tree cannot contain an assignment operator"
 msgstr "式ツリーは代入オペレータを含むことができません"
 
-#: mcs/mcs/assign.cs:627
+#: mcs/mcs/assign.cs:687
 #, csharp-format
 msgid "Cannot assign to `{0}' because it is a `{1}'"
 msgstr ""
 
-#: mcs/mcs/attribute.cs:201
+#: mcs/mcs/assembly.cs:279
+msgid "Invalid type specified as an argument for TypeForwardedTo attribute"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:287
+#, fuzzy, csharp-format
+msgid "A duplicate type forward of type `{0}'"
+msgstr "属性の引数名 '{0}' が重複しています"
+
+#: mcs/mcs/assembly.cs:296
+#, csharp-format
+msgid "Cannot forward type `{0}' because it is defined in this assembly"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:302
+#, fuzzy, csharp-format
+msgid "Cannot forward type `{0}' because it is a nested type"
+msgstr "`{0}' は型パラメータであるため、ここから派生することはできません"
+
+#: mcs/mcs/assembly.cs:331
+#, csharp-format
+msgid ""
+"Friend assembly reference `{0}' is invalid. InternalsVisibleTo declarations "
+"cannot have a version, culture or processor architecture specified"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:339
+#, csharp-format
+msgid ""
+"Friend assembly reference `{0}' is invalid. Strong named assemblies must "
+"specify a public key in their InternalsVisibleTo declarations"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:374
+#, csharp-format
+msgid "Referenced assembly `{0}' does not have a strong name"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:380
+#, csharp-format
+msgid "Referenced assembly `{0}' has different culture setting of `{1}'"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:395
+#, csharp-format
+msgid ""
+"Friend access was granted to `{0}', but the output assembly is named `{1}'. "
+"Try adding a reference to `{0}' or change the output assembly name to match "
+"it"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:409
+msgid ""
+"Could not sign the assembly. ECMA key can only be used to delay-sign "
+"assemblies"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:650
+msgid ""
+"Added modules must be marked with the CLSCompliant attribute to match the "
+"assembly"
+msgstr ""
+"追加されるモジュールは、アセンブリに適合するCLSCompliant属性でマークされなけ"
+"ればなりません"
+
+#: mcs/mcs/assembly.cs:685 mcs/mcs/assembly.cs:700
+#, csharp-format
+msgid ""
+"Option `{0}' overrides attribute `{1}' given in a source file or added module"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:735
+msgid "Delay signing was requested but no key file was given"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:756
+msgid "Cannot link resource file when building a module"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:761
+#, csharp-format
+msgid "Error reading resource file `{0}'"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:831
+msgid "Could not write to file `"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:875
+#, fuzzy
+msgid "Cannot specify -main if building a module or library"
+msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
+
+#: mcs/mcs/assembly.cs:901
+#, csharp-format
+msgid "Could not find `{0}' specified for Main method"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:907
+#, fuzzy, csharp-format
+msgid "`{0}' specified for Main method must be a valid class or struct"
+msgstr "`{0}': 拡張メソッドはstaticで宣言されなければなりません"
+
+#: mcs/mcs/assembly.cs:911
+#, fuzzy, csharp-format
+msgid "`{0}' does not have a suitable static Main method"
+msgstr "キーワード `new' は名前空間要素で認められていません"
+
+#: mcs/mcs/assembly.cs:914
+#, csharp-format
+msgid ""
+"Program `{0}' does not contain a static `Main' method suitable for an entry "
+"point"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:933
+msgid "Error during assembly signing. "
+msgstr ""
+
+#: mcs/mcs/assembly.cs:1118
+#, csharp-format
+msgid "Metadata file `{0}' could not be found"
+msgstr ""
+
+#: mcs/mcs/assembly.cs:1123
+#, fuzzy, csharp-format
+msgid "Metadata file `{0}' does not contain valid metadata"
+msgstr "デリゲート `{0}' は `{1}' 個の引数をもちません"
+
+#: mcs/mcs/assembly.cs:1129
+#, fuzzy, csharp-format
+msgid ""
+"Referenced assembly file `{0}' is a module. Consider using `-addmodule' "
+"option to add the module"
+msgstr ""
+"参照ファイル `{0}' はアセンブリではありません。代わりに`-addmodule' オプショ"
+"ンを使用してみてください"
+
+#: mcs/mcs/assembly.cs:1136
+#, fuzzy, csharp-format
+msgid ""
+"Added module file `{0}' is an assembly. Consider using `-r' option to "
+"reference the file"
+msgstr ""
+"参照ファイル `{0}' はアセンブリではありません。代わりに`-addmodule' オプショ"
+"ンを使用してみてください"
+
+#: mcs/mcs/async.cs:72
+msgid "The `await' operator cannot be used in the body of a lock statement"
+msgstr ""
+
+#: mcs/mcs/async.cs:77
+msgid "The `await' operator cannot be used in an unsafe context"
+msgstr ""
+
+#: mcs/mcs/async.cs:142
+#, csharp-format
+msgid ""
+"Cannot await void method `{0}'. Consider changing method return type to "
+"`Task'"
+msgstr ""
+
+#: mcs/mcs/async.cs:145
+#, csharp-format
+msgid "Cannot await `{0}' expression"
+msgstr ""
+
+#: mcs/mcs/async.cs:291
+#, csharp-format
+msgid ""
+"The awaiter type `{0}' must have suitable IsCompleted and GetResult members"
+msgstr ""
+
+#: mcs/mcs/async.cs:299
+msgid ""
+"The `await' operator may only be used in a query expression within the first "
+"collection expression of the initial `from' clause or within the collection "
+"expression of a `join' clause"
+msgstr ""
+
+#: mcs/mcs/async.cs:333
+#, csharp-format
+msgid "The `await' operand type `{0}' must have suitable GetAwaiter method"
+msgstr ""
+
+#: mcs/mcs/async.cs:372
+#, fuzzy, csharp-format
+msgid "The awaiter type `{0}' must implement interface `{1}'"
+msgstr ""
+"Conditionalメンバ `{0}' はインターフェースメンバ `{1}' を実装できません"
+
+#: mcs/mcs/async.cs:605
+msgid ""
+"Cannot find compiler required types for asynchronous functions support. Are "
+"you targeting the wrong framework version?"
+msgstr ""
+
+#: mcs/mcs/attribute.cs:228
 #, csharp-format
 msgid ""
 "`{0}' is not a valid named attribute argument. Named attribute arguments "
@@ -134,7 +347,7 @@ msgstr ""
 "み専用ではなくstaticでも定数でもないフィールドか、またはpublicでstaticではな"
 "い読み書き可能なプロパティでなければなりません"
 
-#: mcs/mcs/attribute.cs:210
+#: mcs/mcs/attribute.cs:237
 #, csharp-format
 msgid ""
 "`{0}' is not a valid named attribute argument because it is not a valid "
@@ -143,38 +356,33 @@ msgstr ""
 "`{0}' は、有効な属性パラメータ型ではないため、有効な名前付き属性の引数ではあ"
 "りません"
 
-#: mcs/mcs/attribute.cs:216
+#: mcs/mcs/attribute.cs:243
 #, fuzzy
 msgid "An attribute argument cannot be dynamic expression"
 msgstr "匿名メソッドを式ツリーに変換することはできません"
 
-#: mcs/mcs/attribute.cs:221
+#: mcs/mcs/attribute.cs:248
 msgid "The Guid attribute must be specified with the ComImport attribute"
 msgstr "Guid属性はComImport属性とともに指定されなければなりません"
 
-#: mcs/mcs/attribute.cs:226
+#: mcs/mcs/attribute.cs:253
 #, csharp-format
 msgid "Do not use `{0}' directly. Use parameter modifier `this' instead"
 msgstr ""
 "`{0}' を直接使用せず、代わりにパラメータ修飾子 `this' を使用してください"
 
-#: mcs/mcs/attribute.cs:231
+#: mcs/mcs/attribute.cs:258
 #, fuzzy, csharp-format
 msgid "Do not use `{0}' directly. Use `dynamic' keyword instead"
 msgstr ""
 "`{0}' を直接使用せず、代わりにパラメータ修飾子 `this' を使用してください"
 
-#: mcs/mcs/attribute.cs:240
+#: mcs/mcs/attribute.cs:267
 #, csharp-format
 msgid "Error during emitting `{0}' attribute. The reason is `{1}'"
 msgstr "`{0}' の属性の出力中にエラーが発生しました。理由: '{1}'"
 
-#: mcs/mcs/attribute.cs:271
-#, csharp-format
-msgid "`{0}': is not an attribute class"
-msgstr "`{0}' は属性クラスではありません"
-
-#: mcs/mcs/attribute.cs:307
+#: mcs/mcs/attribute.cs:321
 #, fuzzy, csharp-format
 msgid ""
 "`{0}' is ambiguous between `{1}' and `{2}'. Use either `@{0}' or `{0}"
@@ -183,533 +391,49 @@ msgstr ""
 "`{0} は `{0}' と `{0}Attribute' の間で曖昧です。`@{0}' または `{0}Attribute' "
 "を使用してください"
 
-#: mcs/mcs/attribute.cs:390
+#: mcs/mcs/attribute.cs:348 mcs/mcs/attribute.cs:354
+#, csharp-format
+msgid "`{0}': is not an attribute class"
+msgstr "`{0}' は属性クラスではありません"
+
+#: mcs/mcs/attribute.cs:446
 #, csharp-format
 msgid "Cannot apply attribute class `{0}' because it is abstract"
 msgstr "属性クラス `{0}' はabstractなので適用できません"
 
-#: mcs/mcs/attribute.cs:454
+#: mcs/mcs/attribute.cs:517
 #, fuzzy, csharp-format
 msgid "Duplicate named attribute `{0}' argument"
 msgstr "属性の引数名 '{0}' が重複しています"
 
-#: mcs/mcs/attribute.cs:731
-#, csharp-format
-msgid ""
-"`{0}' is not a valid attribute location for this declaration. Valid "
-"attribute locations for this declaration are `{1}'"
-msgstr ""
-"`{0}' の属性の位置はその宣言からは有効ではありません。宣言されている有効な属"
-"性の位置は `{1}' です"
-
-#: mcs/mcs/attribute.cs:1002
+#: mcs/mcs/attribute.cs:976
 #, csharp-format
 msgid ""
 "The attribute `{0}' is not valid on this declaration type. It is valid on `"
 "{1}' declarations only"
 msgstr "属性 `{0}' はこの宣言型では無効です。 `{1}' の宣言でのみ有効です"
 
-#: mcs/mcs/attribute.cs:1024
+#: mcs/mcs/attribute.cs:998
 #, csharp-format
 msgid "The argument to the `{0}' attribute must be a valid identifier"
 msgstr "`{0}' 属性への引数は有効な識別子である必要があります"
 
-#: mcs/mcs/attribute.cs:1037
+#: mcs/mcs/attribute.cs:1012
 #, fuzzy, csharp-format
 msgid "Invalid value for argument to `{0}' attribute"
 msgstr "`System.AttributeUsage' 属性への無効な引数値です"
 
-#: mcs/mcs/attribute.cs:1344
+#: mcs/mcs/attribute.cs:1274
 #, csharp-format
 msgid "The attribute `{0}' cannot be applied multiple times"
 msgstr "属性 `{0}' は複数回指定することができません"
 
-#: mcs/mcs/attribute.cs:1672
+#: mcs/mcs/attribute.cs:1580
 #, csharp-format
 msgid "`{0}' is obsolete: `{1}'"
 msgstr "`{0}'は廃止されています: `{1}'"
 
-#: mcs/mcs/cs-parser.jay:471
-msgid "A namespace declaration cannot have modifiers or attributes"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:567
-msgid ""
-"Namespace elements cannot be explicitly declared as private, protected or "
-"protected internal"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:610
-msgid ""
-"Assembly and module attributes must precede all other elements except using "
-"clauses and extern alias declarations"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:749
-msgid "'<' unexpected: attributes cannot be generic"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:797
-msgid "Named attribute arguments must appear after the positional arguments"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:889
-#, csharp-format
-msgid ""
-"Unexpected symbol `{0}' in class, struct, or interface member declaration"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:989
-#, fuzzy, csharp-format
-msgid "The constant `{0}' cannot be marked static"
-msgstr "abstractメソッド `{0}' はvirtualとすることはできません"
-
-#: mcs/mcs/cs-parser.jay:1044 mcs/mcs/cs-parser.jay:4798
-msgid "A const field requires a value to be provided"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1063
-msgid "Fields cannot have void type"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1113
-msgid ""
-"A fixed size buffer field must have the array size specifier after the field "
-"name"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1208
-msgid "Value or constant expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1239 mcs/mcs/cs-parser.jay:1800
-#: mcs/mcs/cs-parser.jay:1848 mcs/mcs/cs-parser.jay:2433
-#: mcs/mcs/cs-parser.jay:2461
-#, fuzzy, csharp-format
-msgid "`{0}': interface members cannot have a definition"
-msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
-
-#: mcs/mcs/cs-parser.jay:1276 mcs/mcs/cs-parser.jay:1316 mcs/mcs/decl.cs:1410
-msgid "Constraints are not allowed on non-generic declarations"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1284
-#, csharp-format
-msgid ""
-"`{0}': Cannot specify constraints for overrides and explicit interface "
-"implementation methods"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1335
-msgid ""
-"A partial method cannot define access modifier or any of abstract, extern, "
-"new, override, sealed, or virtual modifiers"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1341
-msgid ""
-"A partial method must be declared within a partial class or partial struct"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1365
-#, csharp-format
-msgid "Member modifier `{0}' must precede the member type and name"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1411 mcs/mcs/cs-parser.jay:1418
-msgid ""
-"A params parameter must be the last parameter in a formal parameter list"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1427 mcs/mcs/cs-parser.jay:1433
-msgid ""
-"An __arglist parameter must be the last parameter in a formal parameter list"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1471
-msgid "The parameter modifier `this' can only be used on the first parameter"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1473
-msgid "Optional parameter cannot precede required parameters"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1500
-msgid "Array type specifier, [], must appear before parameter name"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1532 mcs/mcs/cs-parser.jay:1537
-#, fuzzy, csharp-format
-msgid "Cannot specify a default value for the `{0}' parameter"
-msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
-
-#: mcs/mcs/cs-parser.jay:1548
-msgid "Optional parameter is not valid in this context"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1578
-msgid "The parameter modifiers `this' and `ref' cannot be used altogether"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1581
-msgid "The parameter modifiers `this' and `out' cannot be used altogether"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1584
-msgid "A parameter cannot have specified more than one modifier"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1627
-#, fuzzy
-msgid "Cannot specify a default value for a parameter array"
-msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
-
-#: mcs/mcs/cs-parser.jay:1643
-#, fuzzy
-msgid "The `params' modifier is not allowed in current context"
-msgstr "キーワード `new' は名前空間要素で認められていません"
-
-#: mcs/mcs/cs-parser.jay:1649
-msgid "The parameter modifiers `this' and `params' cannot be used altogether"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1651
-#, fuzzy
-msgid "The params parameter cannot be declared as ref or out"
-msgstr "abstractメソッド `{0}' はvirtualとすることはできません"
-
-#: mcs/mcs/cs-parser.jay:1664
-msgid "__arglist is not valid in this context"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1683
-#, fuzzy, csharp-format
-msgid "`{0}': property or indexer cannot have void type"
-msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
-
-#: mcs/mcs/cs-parser.jay:1724
-#, csharp-format
-msgid "`{0}': indexer return type cannot be `void'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1727
-msgid "Indexers must have at least one parameter"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1760
-#, fuzzy, csharp-format
-msgid "`{0}': property or indexer must have at least one accessor"
-msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
-
-#: mcs/mcs/cs-parser.jay:1763
-msgid "Semicolon after method or accessor block is not valid"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1765
-msgid "A get or set accessor expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1778 mcs/mcs/cs-parser.jay:1821
-msgid "Property accessor already defined"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1931 mcs/mcs/cs-parser.jay:1935
-msgid "Interfaces cannot contain fields or constants"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1943
-#, fuzzy
-msgid "Interfaces cannot contain operators"
-msgstr "`{0}': staticクラスにはユーザー定義の演算子を含むことはできません"
-
-#: mcs/mcs/cs-parser.jay:1947
-#, fuzzy
-msgid "Interfaces cannot contain contructors"
-msgstr "`{0}': staticクラスではデストラクタを定義できません"
-
-#: mcs/mcs/cs-parser.jay:1951
-msgid ""
-"Interfaces cannot declare classes, structs, interfaces, delegates, or "
-"enumerations"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:1992
-msgid "User-defined operators cannot return void"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2020
-msgid "Overloadable binary operator expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2022
-#, fuzzy, csharp-format
-msgid "Overloaded unary operator `{0}' takes one parameter"
-msgstr "Conditionalメソッド `{0}' ではoutパラメータを指定できません"
-
-#: mcs/mcs/cs-parser.jay:2027
-#, csharp-format
-msgid "Overloaded binary operator `{0}' takes two parameters"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2030
-msgid "Overloadable unary operator expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2177
-msgid "Class, struct, or interface method must have a return type"
-msgstr "クラス、構造体、インターフェースのメソッドには戻り値型が必要です"
-
-#: mcs/mcs/cs-parser.jay:2181
-#, fuzzy, csharp-format
-msgid "`{0}': static constructor cannot have an access modifier"
-msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
-
-#: mcs/mcs/cs-parser.jay:2186
-#, fuzzy, csharp-format
-msgid ""
-"`{0}': static constructor cannot have an explicit `this' or `base' "
-"constructor call"
-msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
-
-#: mcs/mcs/cs-parser.jay:2249
-msgid "Name of destructor must match name of class"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2251
-#, fuzzy
-msgid "Only class types can contain destructor"
-msgstr "`{0}': staticクラスではデストラクタを定義できません"
-
-#: mcs/mcs/cs-parser.jay:2276
-#, fuzzy, csharp-format
-msgid ""
-"`{0}': An explicit interface implementation of an event must use property "
-"syntax"
-msgstr ""
-"明示的なインターフェースの宣言で記述された `{0}' は、インターフェースではあり"
-"ません"
-
-#: mcs/mcs/cs-parser.jay:2308
-msgid "Event in interface cannot have add or remove accessors"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2377
-#, fuzzy, csharp-format
-msgid "`{0}': event in interface cannot have an initializer"
-msgstr "`{0}': 構造体ではインスタンス フィールドを初期化できません"
-
-#: mcs/mcs/cs-parser.jay:2382
-#, fuzzy, csharp-format
-msgid "`{0}': abstract event cannot have an initializer"
-msgstr "`{0}': 構造体ではインスタンス フィールドを初期化できません"
-
-#: mcs/mcs/cs-parser.jay:2397 mcs/mcs/cs-parser.jay:2402
-#, fuzzy, csharp-format
-msgid "`{0}': event property must have both add and remove accessors"
-msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
-
-#: mcs/mcs/cs-parser.jay:2407
-msgid "An add or remove accessor expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2416 mcs/mcs/cs-parser.jay:2444
-msgid "Modifiers cannot be placed on event accessor declarations"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2471
-msgid "An add or remove accessor must have a body"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2493
-#, fuzzy
-msgid "Enums cannot have type parameters"
-msgstr "`{0}': staticクラス '{1}' から派生することはできません"
-
-#: mcs/mcs/cs-parser.jay:2824
-msgid "Type parameter declaration must be an identifier not a type"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2875
-msgid "Invalid parameter type `void'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:2940
-#, csharp-format
-msgid "Invalid base type `{0}'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:3189
-msgid "An element initializer cannot be empty"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:3227
-#, fuzzy, csharp-format
-msgid "Named argument `{0}' specified multiple times"
-msgstr "属性 `{0}' は複数回指定することができません"
-
-#: mcs/mcs/cs-parser.jay:3236 mcs/mcs/cs-parser.jay:3241
-msgid "An argument is missing"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:3410
-msgid "Array creation must have array size or array initializer"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:3423
-msgid "Invalid rank specifier, expecting `,' or `]'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:3503
-msgid ""
-"Invalid anonymous type member declarator. Anonymous type members must be a "
-"member assignment, simple name or member access expression"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4033
-msgid "All lambda parameters must be typed either explicitly or implicitly"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4219
-#, csharp-format
-msgid "Duplicate `{0}' modifier"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4223
-msgid "More than one protection modifier specified"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4237
-#, fuzzy
-msgid "Keyword `new' is not allowed on namespace elements"
-msgstr "キーワード `new' は名前空間要素で認められていません"
-
-#: mcs/mcs/cs-parser.jay:4349
-#, csharp-format
-msgid "A constraint clause has already been specified for type parameter `{0}'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4379
-msgid "The `new()' constraint must be the last constraint specified"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4385
-msgid ""
-"The `class' or `struct' constraint must be the first constraint specified"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4389
-msgid "The `new()' constraint cannot be used with the `struct' constraint"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4403
-#, csharp-format
-msgid "Invalid constraint type `{0}'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4585 mcs/mcs/cs-parser.jay:4590
-msgid "An embedded statement may not be a declaration or labeled statement"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4757
-msgid ""
-"Syntax error, bad array declarator. To declare a managed array the rank "
-"specifier precedes the variable's identifier. To declare a fixed size buffer "
-"field, use the fixed keyword before the field type"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:4837
-msgid "A stackalloc expression requires [] after type"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:5119
-msgid "Type and identifier are both required in a foreach statement"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:5211 mcs/mcs/cs-parser.jay:5227
-msgid "; expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:5213
-msgid "Expression expected after yield return"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:5260
-msgid "Expected catch or finally"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:5279
-msgid "Try statement already has an empty catch block"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:5324
-msgid ""
-"A type that derives from `System.Exception', `object', or `string' expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:5434
-msgid ""
-"You must provide an initializer in a fixed or using statement declaration"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6018
-msgid "Expecting `;'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6026
-#, csharp-format
-msgid "The parameter modifier `{0}' is not valid in this context"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6032
-#, fuzzy, csharp-format
-msgid "Duplicate parameter modifier `{0}'"
-msgstr "属性の引数名 '{0}' が重複しています"
-
-#: mcs/mcs/cs-parser.jay:6038
-msgid "Type expected"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6043
-msgid "Unsafe code requires the `unsafe' command line option to be specified"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6053
-msgid "Named arguments must appear after the positional arguments"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6144
-msgid "Syntax error, "
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6203
-msgid "Parsing error"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6209
-msgid "Internal compiler error during parsing"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6220
-#, csharp-format
-msgid "{0}: `{1}' is a keyword"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6347
-#, fuzzy, csharp-format
-msgid "Identifier expected, `{0}' is a keyword"
-msgstr "識別子が必要です: {0}"
-
-#: mcs/mcs/cs-parser.jay:6361
-#, csharp-format
-msgid "{1} `{0}'"
-msgstr ""
-
-#: mcs/mcs/cs-parser.jay:6363
-#, csharp-format
-msgid "{2} `{0}', expecting {1}"
-msgstr ""
-
-#: mcs/mcs/cs-tokenizer.cs:760
+#: mcs/mcs/cs-tokenizer.cs:803
 msgid ""
 "The `partial' modifier can be used only immediately before `class', "
 "`struct', `interface', or `void' keyword"
@@ -717,51 +441,56 @@ msgstr ""
 "`partial' 修飾子は `class'、`struct'、`interface'、`void' キーワードの直前で"
 "のみ使用できます"
 
-#: mcs/mcs/cs-tokenizer.cs:1395 mcs/mcs/cs-tokenizer.cs:1462
+#: mcs/mcs/cs-tokenizer.cs:1478 mcs/mcs/cs-tokenizer.cs:1541
 msgid "Invalid number"
 msgstr "無効な数値です"
 
-#: mcs/mcs/cs-tokenizer.cs:1647
+#: mcs/mcs/cs-tokenizer.cs:1753
 #, csharp-format
 msgid "Unrecognized escape sequence `\\{0}'"
 msgstr "認識できないエスケープシーケンス `\\{0}' です"
 
-#: mcs/mcs/cs-tokenizer.cs:1666
+#: mcs/mcs/cs-tokenizer.cs:1772
 msgid "Unrecognized escape sequence"
 msgstr "認識できないエスケープシーケンスです"
 
-#: mcs/mcs/cs-tokenizer.cs:1887
+#: mcs/mcs/cs-tokenizer.cs:2041
+#, fuzzy
+msgid "Filename, single-line comment or end-of-line expected"
+msgstr "1行コメントまたは行末が必要です"
+
+#: mcs/mcs/cs-tokenizer.cs:2090
 #, fuzzy
 msgid "Missing identifier to pre-processor directive"
 msgstr "プリプロセッサ指令の識別子がありません"
 
-#: mcs/mcs/cs-tokenizer.cs:1897 mcs/mcs/cs-tokenizer.cs:1901
+#: mcs/mcs/cs-tokenizer.cs:2100 mcs/mcs/cs-tokenizer.cs:2104
 #, csharp-format
 msgid "Identifier expected: {0}"
 msgstr "識別子が必要です: {0}"
 
-#: mcs/mcs/cs-tokenizer.cs:2373
+#: mcs/mcs/cs-tokenizer.cs:2610
 #, fuzzy
 msgid "Integral constant is too large"
 msgstr "数値定数が長すぎます"
 
-#: mcs/mcs/cs-tokenizer.cs:2378
+#: mcs/mcs/cs-tokenizer.cs:2615
 msgid "Invalid preprocessor directive"
 msgstr "無効なプリプロセッサ指令です"
 
-#: mcs/mcs/cs-tokenizer.cs:2385
+#: mcs/mcs/cs-tokenizer.cs:2622
 #, csharp-format
 msgid "Unexpected processor directive ({0})"
 msgstr "予期しないプリプロセッサ指令です（{0}）"
 
-#: mcs/mcs/cs-tokenizer.cs:2391
+#: mcs/mcs/cs-tokenizer.cs:2628
 msgid ""
 "Cannot define or undefine preprocessor symbols after first token in file"
 msgstr ""
 "ファイル中の最初のトークンの出現後は、プリプロセッサシンボルを定義または定義"
 "解除することはできません"
 
-#: mcs/mcs/cs-tokenizer.cs:2397
+#: mcs/mcs/cs-tokenizer.cs:2634
 msgid ""
 "Preprocessor directives must appear as the first non-whitespace character on "
 "a line"
@@ -769,74 +498,74 @@ msgstr ""
 "プリプロセッサ指令は、1行の中で、最初の空白でない文字として出現しなければなり"
 "ません"
 
-#: mcs/mcs/cs-tokenizer.cs:2402
+#: mcs/mcs/cs-tokenizer.cs:2639
 msgid "Single-line comment or end-of-line expected"
 msgstr "1行コメントまたは行末が必要です"
 
-#: mcs/mcs/cs-tokenizer.cs:2435 mcs/mcs/cs-tokenizer.cs:3431
+#: mcs/mcs/cs-tokenizer.cs:2684 mcs/mcs/cs-tokenizer.cs:3719
 msgid "Expected `#endif' directive"
 msgstr "`#endif' 指令が必要です"
 
-#: mcs/mcs/cs-tokenizer.cs:2468 mcs/mcs/cs-tokenizer.cs:2489
-#: mcs/mcs/cs-tokenizer.cs:2520 mcs/mcs/cs-tokenizer.cs:3429
+#: mcs/mcs/cs-tokenizer.cs:2717 mcs/mcs/cs-tokenizer.cs:2738
+#: mcs/mcs/cs-tokenizer.cs:2769 mcs/mcs/cs-tokenizer.cs:3717
 msgid "#endregion directive expected"
 msgstr "#endregion指令が必要です"
 
-#: mcs/mcs/cs-tokenizer.cs:2567
+#: mcs/mcs/cs-tokenizer.cs:2816
 msgid "Wrong preprocessor directive"
 msgstr "正しくないプリプロセッサ指令です"
 
-#: mcs/mcs/cs-tokenizer.cs:2579
+#: mcs/mcs/cs-tokenizer.cs:2828
 #, csharp-format
 msgid "#error: '{0}'"
 msgstr "#error: `{0}'"
 
-#: mcs/mcs/cs-tokenizer.cs:2598
+#: mcs/mcs/cs-tokenizer.cs:2846
 msgid "The line number specified for #line directive is missing or invalid"
 msgstr "#line指令で指定される行番号が無いか、または無効です"
 
-#: mcs/mcs/cs-tokenizer.cs:2625 mcs/mcs/cs-tokenizer.cs:3243
+#: mcs/mcs/cs-tokenizer.cs:2908 mcs/mcs/cs-tokenizer.cs:3554
 msgid "Newline in constant"
 msgstr "定数の中に改行文字が含まれています"
 
-#: mcs/mcs/cs-tokenizer.cs:2636
+#: mcs/mcs/cs-tokenizer.cs:2934
 msgid "Unterminated string literal"
 msgstr "文字列に終端がありません"
 
-#: mcs/mcs/cs-tokenizer.cs:2705
+#: mcs/mcs/cs-tokenizer.cs:3011
 msgid "Identifier too long (limit is 512 chars)"
 msgstr "識別子が長すぎます（最大512文字）"
 
-#: mcs/mcs/cs-tokenizer.cs:3092
+#: mcs/mcs/cs-tokenizer.cs:3394
 msgid "End-of-file found, '*/' expected"
 msgstr "ファイルの終端に到達しましたが、 '*/' が必要です"
 
-#: mcs/mcs/cs-tokenizer.cs:3201
+#: mcs/mcs/cs-tokenizer.cs:3503
 msgid "Keyword, identifier, or string expected after verbatim specifier: @"
 msgstr "厳密指定子@の直後には、キーワード、識別子または文字列が必要です"
 
-#: mcs/mcs/cs-tokenizer.cs:3217
+#: mcs/mcs/cs-tokenizer.cs:3524
 #, fuzzy, csharp-format
 msgid "Unexpected character `{0}'"
 msgstr "`{0}' が必要です"
 
-#: mcs/mcs/cs-tokenizer.cs:3238
+#: mcs/mcs/cs-tokenizer.cs:3549
 msgid "Empty character literal"
 msgstr ""
 
-#: mcs/mcs/cs-tokenizer.cs:3258
+#: mcs/mcs/cs-tokenizer.cs:3570
 msgid "Too many characters in character literal"
 msgstr ""
 
-#: mcs/mcs/cfold.cs:84
+#: mcs/mcs/cfold.cs:73
 msgid "The operation overflows at compile time in checked mode"
 msgstr "チェックモードでコンパイル時オーバーフロー演算を発見しました"
 
-#: mcs/mcs/cfold.cs:764 mcs/mcs/cfold.cs:849
+#: mcs/mcs/cfold.cs:756 mcs/mcs/cfold.cs:842
 msgid "Division by constant zero"
 msgstr "定数0による除算があります"
 
-#: mcs/mcs/class.cs:371
+#: mcs/mcs/class.cs:138
 #, csharp-format
 msgid ""
 "Partial declarations of `{0}' must be all classes, all structs or all "
@@ -845,112 +574,12 @@ msgstr ""
 "部分的な `{0}' の宣言は全てが、クラス、構造体、インターフェースのいずれかであ"
 "ることが必要です"
 
-#: mcs/mcs/class.cs:380
+#: mcs/mcs/class.cs:147
 #, csharp-format
 msgid "Partial declarations of `{0}' have conflicting accessibility modifiers"
 msgstr "部分的な `{0}' の宣言に、矛盾するアクセス修飾子が含まれています"
 
-#: mcs/mcs/class.cs:433
-#, csharp-format
-msgid ""
-"`{0}': explicit interface declaration can only be declared in a class or "
-"struct"
-msgstr ""
-"`{0}': インターフェースの明示的な実装は、クラスまたは構造体でのみ宣言できます"
-
-#: mcs/mcs/class.cs:470 mcs/mcs/membercache.cs:1380
-#, csharp-format
-msgid ""
-"A member `{0}' is already defined. Rename this member or use different "
-"parameter types"
-msgstr ""
-"メンバ `{0}' が既に定義されています。このメンバの名前を変更するか、別のパラ"
-"メータ型を使用してください"
-
-#: mcs/mcs/class.cs:578
-msgid ""
-"Cannot specify the `DefaultMember' attribute on type containing an indexer"
-msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
-
-#: mcs/mcs/class.cs:584
-msgid "The RequiredAttribute attribute is not permitted on C# types"
-msgstr ""
-
-#: mcs/mcs/class.cs:855
-#, fuzzy, csharp-format
-msgid "Class `{0}' cannot derive from the dynamic type"
-msgstr "`{0}' は特別なクラス `{1}' から派生することはできません"
-
-#: mcs/mcs/class.cs:872
-#, csharp-format
-msgid "`{0}' is already listed in interface list"
-msgstr "`{0}'は既にインターフェースのリストに含まれています"
-
-#: mcs/mcs/class.cs:880
-#, csharp-format
-msgid ""
-"Inconsistent accessibility: base interface `{0}' is less accessible than "
-"interface `{1}'"
-msgstr ""
-"一貫性の無いアクセス修飾子です: 基底インターフェース `{0}' はインターフェー"
-"ス `{1}' よりもアクセスが限定的です"
-
-#: mcs/mcs/class.cs:886
-#, csharp-format
-msgid "Type `{0}' in interface list is not an interface"
-msgstr ""
-"インターフェースリストに含まれる型 `{0}' はインターフェースではありません"
-
-#: mcs/mcs/class.cs:888
-#, csharp-format
-msgid "`{0}': Classes cannot have multiple base classes (`{1}' and `{2}')"
-msgstr ""
-"`{0}': クラスには複数の基底クラスを指定することはできません（`{1}' と `{2}'）"
-
-#: mcs/mcs/class.cs:891
-#, csharp-format
-msgid "`{0}': Base class `{1}' must be specified as first"
-msgstr "`{0}': 基底クラス `{1}' が先に指定されなければなりません"
-
-#: mcs/mcs/class.cs:915
-#, csharp-format
-msgid "Partial declarations of `{0}' must not specify different base classes"
-msgstr "`{0}' の部分的な宣言の間で、別々の基底クラスを指定することはできません"
-
-#: mcs/mcs/class.cs:996
-#, csharp-format
-msgid ""
-"The operator `{0}' requires a matching operator `{1}' to also be defined"
-msgstr "演算子 `{0}' は対応する演算子 `{1}' の定義も必要とします"
-
-#: mcs/mcs/class.cs:1021
-#, csharp-format
-msgid "`{0}' clashes with a predefined namespace"
-msgstr ""
-
-#: mcs/mcs/class.cs:1153
-#, csharp-format
-msgid ""
-"Inherited interface `{0}' causes a cycle in the interface hierarchy of `{1}'"
-msgstr ""
-"継承されたインターフェース `{0}' で、`{1}' のインターフェース階層構造の循環定"
-"義が生じています"
-
-#: mcs/mcs/class.cs:1159
-#, csharp-format
-msgid "Circular base class dependency involving `{0}' and `{1}'"
-msgstr "`{0}' と `{1}' の間で基底クラスの循環依存が生じています"
-
-#: mcs/mcs/class.cs:1186
-#, csharp-format
-msgid ""
-"`{0}' cannot implement both `{1}' and `{2}' because they may unify for some "
-"type parameter substitutions"
-msgstr ""
-"`{0}' は `{1}' と `{2}' が型パラメータ置換後に重複する可能性があるため、これ"
-"らの両方を実装することはできません"
-
-#: mcs/mcs/class.cs:1334
+#: mcs/mcs/class.cs:157
 #, csharp-format
 msgid ""
 "Partial declarations of `{0}' must have the same type parameter names in the "
@@ -959,7 +588,7 @@ msgstr ""
 "`{0}' の部分的な宣言では、同一の型パラメータ名を同一の順序で定義しなければな"
 "りません"
 
-#: mcs/mcs/class.cs:1341
+#: mcs/mcs/class.cs:164
 #, fuzzy, csharp-format
 msgid ""
 "Partial declarations of `{0}' must have the same type parameter variance "
@@ -968,7 +597,101 @@ msgstr ""
 "`{0}' の部分的な宣言では、同一の型パラメータ名を同一の順序で定義しなければな"
 "りません"
 
-#: mcs/mcs/class.cs:1379
+#: mcs/mcs/class.cs:329
+#, csharp-format
+msgid ""
+"Missing partial modifier on declaration of type `{0}'. Another partial "
+"declaration of this type exists"
+msgstr ""
+
+#: mcs/mcs/class.cs:734
+#, csharp-format
+msgid ""
+"`{0}': explicit interface declaration can only be declared in a class or "
+"struct"
+msgstr ""
+"`{0}': インターフェースの明示的な実装は、クラスまたは構造体でのみ宣言できます"
+
+#: mcs/mcs/class.cs:793
+#, csharp-format
+msgid "Duplicate type parameter `{0}'"
+msgstr ""
+
+#: mcs/mcs/class.cs:796
+#, csharp-format
+msgid "The type `{0}' already contains a definition for `{1}'"
+msgstr ""
+
+#: mcs/mcs/class.cs:862
+msgid ""
+"Cannot specify the `DefaultMember' attribute on type containing an indexer"
+msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
+
+#: mcs/mcs/class.cs:867
+msgid "The RequiredAttribute attribute is not permitted on C# types"
+msgstr ""
+
+#: mcs/mcs/class.cs:1093
+#, fuzzy, csharp-format
+msgid "Class `{0}' cannot derive from the dynamic type"
+msgstr "`{0}' は特別なクラス `{1}' から派生することはできません"
+
+#: mcs/mcs/class.cs:1110
+#, csharp-format
+msgid "`{0}' is already listed in interface list"
+msgstr "`{0}'は既にインターフェースのリストに含まれています"
+
+#: mcs/mcs/class.cs:1118
+#, csharp-format
+msgid ""
+"Inconsistent accessibility: base interface `{0}' is less accessible than "
+"interface `{1}'"
+msgstr ""
+"一貫性の無いアクセス修飾子です: 基底インターフェース `{0}' はインターフェー"
+"ス `{1}' よりもアクセスが限定的です"
+
+#: mcs/mcs/class.cs:1124
+#, csharp-format
+msgid "Type `{0}' in interface list is not an interface"
+msgstr ""
+"インターフェースリストに含まれる型 `{0}' はインターフェースではありません"
+
+#: mcs/mcs/class.cs:1126
+#, csharp-format
+msgid "`{0}': Classes cannot have multiple base classes (`{1}' and `{2}')"
+msgstr ""
+"`{0}': クラスには複数の基底クラスを指定することはできません（`{1}' と `{2}'）"
+
+#: mcs/mcs/class.cs:1129
+#, csharp-format
+msgid "`{0}': Base class `{1}' must be specified as first"
+msgstr "`{0}': 基底クラス `{1}' が先に指定されなければなりません"
+
+#: mcs/mcs/class.cs:1190
+#, csharp-format
+msgid ""
+"The operator `{0}' requires a matching operator `{1}' to also be defined"
+msgstr "演算子 `{0}' は対応する演算子 `{1}' の定義も必要とします"
+
+#: mcs/mcs/class.cs:1421
+#, csharp-format
+msgid "Partial declarations of `{0}' must not specify different base classes"
+msgstr "`{0}' の部分的な宣言の間で、別々の基底クラスを指定することはできません"
+
+#: mcs/mcs/class.cs:1465
+#, csharp-format
+msgid ""
+"Inherited interface `{0}' causes a cycle in the interface hierarchy of `{1}'"
+msgstr ""
+"継承されたインターフェース `{0}' で、`{1}' のインターフェース階層構造の循環定"
+"義が生じています"
+
+#: mcs/mcs/class.cs:1471
+#, csharp-format
+msgid "Circular base class dependency involving `{0}' and `{1}'"
+msgstr "`{0}' と `{1}' の間で基底クラスの循環依存が生じています"
+
+#: mcs/mcs/class.cs:1617
 #, csharp-format
 msgid ""
 "Partial declarations of `{0}' have inconsistent constraints for type "
@@ -977,12 +700,28 @@ msgstr ""
 "`{0}' の部分的な宣言の間で、型パラメータ `{1}' について一貫性のない制約が含ま"
 "れています"
 
-#: mcs/mcs/class.cs:1518
+#: mcs/mcs/class.cs:1726
 #, fuzzy, csharp-format
 msgid "`{0}': cannot implement a dynamic interface `{1}'"
 msgstr "`{0}' を含む型はインターフェース `{1}' を実装しません"
 
-#: mcs/mcs/class.cs:1640
+#: mcs/mcs/class.cs:1742
+#, csharp-format
+msgid ""
+"`{0}' cannot implement both `{1}' and `{2}' because they may unify for some "
+"type parameter substitutions"
+msgstr ""
+"`{0}' は `{1}' と `{2}' が型パラメータ置換後に重複する可能性があるため、これ"
+"らの両方を実装することはできません"
+
+#: mcs/mcs/class.cs:1761
+#, csharp-format
+msgid ""
+"A generic type cannot derive from `{0}' because it is an attribute class"
+msgstr ""
+"`{0}' は属性クラスなので、ここからジェネリック型を派生することはできません"
+
+#: mcs/mcs/class.cs:1870
 msgid ""
 "Two indexers have different names; the IndexerName attribute must be used "
 "with the same name on every indexer within a type"
@@ -990,79 +729,79 @@ msgstr ""
 "2つのインデクサ間で別々の名前が定義されています; 1つの型において、IndexerName"
 "属性は全てのインデクサにおいて同一の名前をもたなければなりません"
 
-#: mcs/mcs/class.cs:1979
+#: mcs/mcs/class.cs:2120
 #, csharp-format
 msgid "A static member `{0}' cannot be marked as override, virtual or abstract"
 msgstr ""
 "staticメンバ `{0}' はoverride, virtual, abstractとして宣言することはできませ"
 "ん"
 
-#: mcs/mcs/class.cs:1986
+#: mcs/mcs/class.cs:2127
 #, csharp-format
 msgid "A member `{0}' marked as override cannot be marked as new or virtual"
 msgstr ""
 "overrideとして宣言されたメンバ `{0}' にはnewおよびvirtualを指定できません"
 
-#: mcs/mcs/class.cs:1998
+#: mcs/mcs/class.cs:2139
 #, csharp-format
 msgid "`{0}' cannot be both extern and abstract"
 msgstr "`{0}' はexternかつabstractとすることはできません"
 
-#: mcs/mcs/class.cs:2003
+#: mcs/mcs/class.cs:2144
 #, csharp-format
 msgid "`{0}' cannot be both abstract and sealed"
 msgstr "`{0}' はabstractかつsealedとすることはできません"
 
-#: mcs/mcs/class.cs:2008
+#: mcs/mcs/class.cs:2149
 #, csharp-format
 msgid "The abstract method `{0}' cannot be marked virtual"
 msgstr "abstractメソッド `{0}' はvirtualとすることはできません"
 
-#: mcs/mcs/class.cs:2014
+#: mcs/mcs/class.cs:2155
 #, csharp-format
 msgid "`{0}' is abstract but it is declared in the non-abstract class `{1}'"
 msgstr ""
 "`{0}' はabstractですが、abstractでないクラス `{1}' の中で宣言されています"
 
-#: mcs/mcs/class.cs:2022
+#: mcs/mcs/class.cs:2163
 #, csharp-format
 msgid "`{0}': virtual or abstract members cannot be private"
 msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
 
-#: mcs/mcs/class.cs:2029
+#: mcs/mcs/class.cs:2170
 #, csharp-format
 msgid "`{0}' cannot be sealed because it is not an override"
 msgstr "`{0}' はoverrideではないため、sealedとすることはできません"
 
-#: mcs/mcs/class.cs:2076
+#: mcs/mcs/class.cs:2210
 #, csharp-format
 msgid "`{0}': containing type does not implement interface `{1}'"
 msgstr "`{0}' を含む型はインターフェース `{1}' を実装しません"
 
-#: mcs/mcs/class.cs:2252
+#: mcs/mcs/class.cs:2400
 #, csharp-format
 msgid "Type parameter `{0}' has same name as containing type, or method"
 msgstr ""
 "型パラメータ `{0}' が、その宣言型あるいはメソッドと同じ名前になっています"
 
-#: mcs/mcs/class.cs:2260
+#: mcs/mcs/class.cs:2408
 #, csharp-format
 msgid "`{0}': member names cannot be the same as their enclosing type"
 msgstr "`{0}': メンバ名はその宣言型と同一にはできません"
 
-#: mcs/mcs/class.cs:2426
+#: mcs/mcs/class.cs:2527
 msgid ""
 "The class System.Object cannot have a base class or implement an interface."
 msgstr ""
 "クラス System.Object には基底クラスやインターフェースを指定することはできませ"
 "ん"
 
-#: mcs/mcs/class.cs:2434
+#: mcs/mcs/class.cs:2536
 #, csharp-format
 msgid "Attribute `{0}' is only valid on classes derived from System.Attribute"
 msgstr "属性 `{0}' はSystem.Attribute から派生したクラスでのみ有効です"
 
-#: mcs/mcs/class.cs:2439
+#: mcs/mcs/class.cs:2541
 msgid ""
 "Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods "
 "or attribute classes"
@@ -1070,69 +809,57 @@ msgstr ""
 "属性 `System.Diagnostics.ConditionalAttribute' はメソッドまたは属性クラスでの"
 "み有効です"
 
-#: mcs/mcs/class.cs:2477
-#, csharp-format
-msgid "`{0}': Static classes cannot contain user-defined operators"
-msgstr "`{0}': staticクラスにはユーザー定義の演算子を含むことはできません"
-
-#: mcs/mcs/class.cs:2482
-#, csharp-format
-msgid "`{0}': Static classes cannot contain destructor"
-msgstr "`{0}': staticクラスではデストラクタを定義できません"
-
-#: mcs/mcs/class.cs:2487
-#, csharp-format
-msgid "`{0}': cannot declare indexers in a static class"
-msgstr "`{0}': staticクラスではインデクサを宣言できません"
-
-#: mcs/mcs/class.cs:2495
-#, csharp-format
-msgid "`{0}': Static classes cannot have instance constructors"
-msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
-
-#: mcs/mcs/class.cs:2501
-#, csharp-format
-msgid "`{0}': Extension methods must be declared static"
-msgstr "`{0}': 拡張メソッドはstaticで宣言されなければなりません"
-
-#: mcs/mcs/class.cs:2505
-#, csharp-format
-msgid "`{0}': cannot declare instance members in a static class"
-msgstr "`{0}': インスタンス メンバをstaticクラスで宣言することはできません"
-
-#: mcs/mcs/class.cs:2514
+#: mcs/mcs/class.cs:2570
 #, csharp-format
 msgid "`{0}': an abstract class cannot be sealed or static"
 msgstr "`{0}': abstractクラスはsealedまたはstaticにはできません"
 
-#: mcs/mcs/class.cs:2518
+#: mcs/mcs/class.cs:2574
 #, csharp-format
 msgid "`{0}': a class cannot be both static and sealed"
 msgstr "`{0}': クラスはstaticかつsealedとすることはできません"
 
-#: mcs/mcs/class.cs:2548
+#: mcs/mcs/class.cs:2580
+#, csharp-format
+msgid "`{0}': Static classes cannot contain user-defined operators"
+msgstr "`{0}': staticクラスにはユーザー定義の演算子を含むことはできません"
+
+#: mcs/mcs/class.cs:2585
+#, csharp-format
+msgid "`{0}': Static classes cannot contain destructor"
+msgstr "`{0}': staticクラスではデストラクタを定義できません"
+
+#: mcs/mcs/class.cs:2590
+#, csharp-format
+msgid "`{0}': cannot declare indexers in a static class"
+msgstr "`{0}': staticクラスではインデクサを宣言できません"
+
+#: mcs/mcs/class.cs:2598
+#, csharp-format
+msgid "`{0}': Static classes cannot have instance constructors"
+msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
+
+#: mcs/mcs/class.cs:2602
+#, csharp-format
+msgid "`{0}': cannot declare instance members in a static class"
+msgstr "`{0}': インスタンス メンバをstaticクラスで宣言することはできません"
+
+#: mcs/mcs/class.cs:2633
 #, fuzzy, csharp-format
 msgid "`{0}': Cannot derive from type parameter `{1}'"
 msgstr "`{0}': staticクラス '{1}' から派生することはできません"
 
-#: mcs/mcs/class.cs:2552
-#, csharp-format
-msgid ""
-"A generic type cannot derive from `{0}' because it is an attribute class"
-msgstr ""
-"`{0}' は属性クラスなので、ここからジェネリック型を派生することはできません"
-
-#: mcs/mcs/class.cs:2556
+#: mcs/mcs/class.cs:2637
 #, csharp-format
 msgid "`{0}': Cannot derive from static class `{1}'"
 msgstr "`{0}': staticクラス '{1}' から派生することはできません"
 
-#: mcs/mcs/class.cs:2560
+#: mcs/mcs/class.cs:2641
 #, fuzzy, csharp-format
 msgid "`{0}': cannot derive from sealed type `{1}'"
 msgstr "`{0}': sealedクラス `{1}' から派生することはできません"
 
-#: mcs/mcs/class.cs:2563
+#: mcs/mcs/class.cs:2644
 #, csharp-format
 msgid ""
 "Static class `{0}' cannot derive from type `{1}'. Static classes must derive "
@@ -1141,12 +868,12 @@ msgstr ""
 "staticクラス `{0}' は型 `{1}' から派生できません。staticクラスはobjectから派"
 "生しなければなりません"
 
-#: mcs/mcs/class.cs:2570
+#: mcs/mcs/class.cs:2655
 #, csharp-format
 msgid "`{0}' cannot derive from special class `{1}'"
 msgstr "`{0}' は特別なクラス `{1}' から派生することはできません"
 
-#: mcs/mcs/class.cs:2578
+#: mcs/mcs/class.cs:2665
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: base class `{0}' is less accessible than class `"
@@ -1155,55 +882,64 @@ msgstr ""
 "一貫性の無いアクセス修飾子: 基底クラス `{0}' はクラス `{1}' よりもアクセスが"
 "限定的です"
 
-#: mcs/mcs/class.cs:2586
+#: mcs/mcs/class.cs:2673
 #, csharp-format
 msgid "Static class `{0}' cannot implement interfaces"
 msgstr "staticクラス `{0}' はインターフェースを実装できません"
 
-#: mcs/mcs/class.cs:2705 mcs/mcs/class.cs:2716
+#: mcs/mcs/class.cs:2784 mcs/mcs/class.cs:2798
 #, csharp-format
 msgid "Struct member `{0}' of type `{1}' causes a cycle in the struct layout"
 msgstr ""
 
-#: mcs/mcs/class.cs:2806
+#: mcs/mcs/class.cs:2880
 #, csharp-format
 msgid "`{0}': Structs cannot have instance field initializers"
 msgstr "`{0}': 構造体ではインスタンス フィールドを初期化できません"
 
-#: mcs/mcs/class.cs:2987
+#: mcs/mcs/class.cs:3068
 #, fuzzy, csharp-format
 msgid "Do not override `{0}'. Use destructor syntax instead"
 msgstr ""
 "`{0}' を直接使用せず、代わりにパラメータ修飾子 `this' を使用してください"
 
-#: mcs/mcs/class.cs:2990
+#: mcs/mcs/class.cs:3071
 #, csharp-format
 msgid "`{0}' is marked as an override but no suitable {1} found to override"
 msgstr ""
 "`{0}' はoverrideとして宣言されていますが、オーバーライドすべき{1}が見つかりま"
 "せん"
 
-#: mcs/mcs/class.cs:2996
+#: mcs/mcs/class.cs:3077
 #, csharp-format
 msgid "`{0}': cannot override because `{1}' is not an event"
 msgstr "`{0}': `{1}' はイベントではないため、オーバーライドできません"
 
-#: mcs/mcs/class.cs:2999
+#: mcs/mcs/class.cs:3080
 #, csharp-format
 msgid "`{0}': cannot override because `{1}' is not a property"
 msgstr "`{0}': `{1}' はプロパティではないため、オーバーライドできません"
 
-#: mcs/mcs/class.cs:3002
+#: mcs/mcs/class.cs:3083
 #, csharp-format
 msgid "`{0}': cannot override because `{1}' is not a method"
 msgstr "`{0}': `{1}' はメソッドではないため、オーバーライドできません"
 
-#: mcs/mcs/class.cs:3058 mcs/mcs/field.cs:187
+#: mcs/mcs/class.cs:3102
+#, fuzzy, csharp-format
+msgid ""
+"`{0}' cannot override inherited members `{1}' and `{2}' because they have "
+"the same signature when used in type `{3}'"
+msgstr ""
+"`{0}': 継承しようとするメンバ `{1}' はsealedであるため、オーバーライドできま"
+"せん"
+
+#: mcs/mcs/class.cs:3155 mcs/mcs/field.cs:198
 #, csharp-format
 msgid "`{0}' hides inherited abstract member `{1}'"
 msgstr "`{0}' は継承されるabstractメンバ `{1}' を隠蔽してしまいます"
 
-#: mcs/mcs/class.cs:3082
+#: mcs/mcs/class.cs:3179
 #, csharp-format
 msgid ""
 "`{0}': cannot override inherited member `{1}' because it is not marked "
@@ -1212,40 +948,40 @@ msgstr ""
 "`{0}': 継承しようとするメンバ `{1}' は、virtual, abstractあるいはoverrideとし"
 "て宣言されていないので、オーバーライドすることはできません"
 
-#: mcs/mcs/class.cs:3090
+#: mcs/mcs/class.cs:3187
 #, csharp-format
 msgid "`{0}': cannot override inherited member `{1}' because it is sealed"
 msgstr ""
 "`{0}': 継承しようとするメンバ `{1}' はsealedであるため、オーバーライドできま"
 "せん"
 
-#: mcs/mcs/class.cs:3099
+#: mcs/mcs/class.cs:3196
 #, csharp-format
 msgid "`{0}': type must be `{1}' to match overridden member `{2}'"
 msgstr ""
 "`{0}': オーバーライドされたメンバ `{2}' に適合するためには、型が `{1}' でなけ"
 "ればなりません"
 
-#: mcs/mcs/class.cs:3102
+#: mcs/mcs/class.cs:3199
 #, csharp-format
 msgid "`{0}': return type must be `{1}' to match overridden member `{2}'"
 msgstr ""
 "`{0}': オーバーライドされたメンバ `{2}' に適合するには、戻り値型は `{1}' でな"
 "ければなりません"
 
-#: mcs/mcs/class.cs:3170
+#: mcs/mcs/class.cs:3267
 #, csharp-format
 msgid "A partial method `{0}' cannot explicitly implement an interface"
 msgstr "部分メソッド `{0}' はインターフェースを明示的に実装できません"
 
-#: mcs/mcs/class.cs:3178
+#: mcs/mcs/class.cs:3273
 #, fuzzy, csharp-format
 msgid "The type `{0}' in explicit interface declaration is not an interface"
 msgstr ""
 "明示的なインターフェース実装で記述された `{0}' は、インターフェースではありま"
 "せん"
 
-#: mcs/mcs/class.cs:3209
+#: mcs/mcs/class.cs:3304
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: parameter type `{0}' is less accessible than "
@@ -1254,7 +990,7 @@ msgstr ""
 "一貫性の無いアクセス制限: パラメータ型 `{0}' はインデクサ '{1}' よりもアクセ"
 "スが限られています"
 
-#: mcs/mcs/class.cs:3213
+#: mcs/mcs/class.cs:3308
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: parameter type `{0}' is less accessible than "
@@ -1263,7 +999,7 @@ msgstr ""
 "一貫性の無いアクセス制限: パラメータ型 `{0}' は演算子 '{1}' よりもアクセスが"
 "限られています"
 
-#: mcs/mcs/class.cs:3217
+#: mcs/mcs/class.cs:3312
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: parameter type `{0}' is less accessible than "
@@ -1272,7 +1008,7 @@ msgstr ""
 "一貫性の無いアクセス制限: パラメータ型 `{0}' はメソッド '{1}' よりもアクセス"
 "が限られています"
 
-#: mcs/mcs/class.cs:3270
+#: mcs/mcs/class.cs:3372
 #, csharp-format
 msgid ""
 "`{0}': cannot change access modifiers when overriding `{1}' inherited member "
@@ -1281,33 +1017,56 @@ msgstr ""
 "`{0}': `{1}' の継承されたメンバー `{2}' をオーバーライドするとき、アクセス修"
 "飾子は変更できません"
 
-#: mcs/mcs/class.cs:3279
+#: mcs/mcs/class.cs:3381
 #, fuzzy, csharp-format
 msgid "`{0}': static types cannot be used as return types"
 msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
 
-#: mcs/mcs/class.cs:3404
+#: mcs/mcs/class.cs:3442
+#, csharp-format
+msgid ""
+"`{0}': Cannot specify constraints for overrides and explicit interface "
+"implementation methods"
+msgstr ""
+
+#: mcs/mcs/class.cs:3504
 #, csharp-format
 msgid "New virtual member `{0}' is declared in a sealed class `{1}'"
 msgstr ""
 
-#: mcs/mcs/class.cs:3419
+#: mcs/mcs/class.cs:3519
 msgid "Inconsistent accessibility: property type `"
 msgstr ""
 
-#: mcs/mcs/class.cs:3424
+#: mcs/mcs/class.cs:3524
 msgid "Inconsistent accessibility: indexer return type `"
 msgstr ""
 
-#: mcs/mcs/class.cs:3430 mcs/mcs/class.cs:3435 mcs/mcs/delegate.cs:159
+#: mcs/mcs/class.cs:3530 mcs/mcs/class.cs:3535 mcs/mcs/delegate.cs:171
 msgid "Inconsistent accessibility: return type `"
 msgstr ""
 
-#: mcs/mcs/class.cs:3440
+#: mcs/mcs/class.cs:3540
 msgid "Inconsistent accessibility: field type `"
 msgstr ""
 
-#: mcs/mcs/class.cs:3453
+#: mcs/mcs/class.cs:3552
+#, csharp-format
+msgid ""
+"Parameters or local variables of type `{0}' cannot be declared in async "
+"methods or iterators"
+msgstr ""
+
+#: mcs/mcs/class.cs:3556
+#, fuzzy, csharp-format
+msgid ""
+"Local variables of type `{0}' cannot be used inside anonymous methods, "
+"lambda expressions or query expressions"
+msgstr ""
+"ローカル変数またはパラメータである `{0}' は、そのアドレスを取得して匿名メソッ"
+"ドあるいはラムダ式の中で使用することができません"
+
+#: mcs/mcs/class.cs:3560
 #, csharp-format
 msgid "Field or property cannot be of type `{0}'"
 msgstr ""
@@ -1328,586 +1087,389 @@ msgid ""
 "The evaluation of the constant value for `{0}' involves a circular definition"
 msgstr ""
 
-#: mcs/mcs/constant.cs:60 mcs/mcs/constant.cs:312
+#: mcs/mcs/constant.cs:66 mcs/mcs/constant.cs:403
 #, csharp-format
 msgid "Constant value `{0}' cannot be converted to a `{1}'"
 msgstr ""
 
-#: mcs/mcs/constant.cs:180
+#: mcs/mcs/constant.cs:266
 #, csharp-format
 msgid ""
 "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax "
 "to override)"
 msgstr ""
 
-#: mcs/mcs/convert.cs:1158
+#: mcs/mcs/convert.cs:1185
 #, csharp-format
 msgid ""
 "Ambiguous user defined operators `{0}' and `{1}' when converting from `{2}' "
 "to `{3}'"
 msgstr ""
 
-#: mcs/mcs/decl.cs:376
+#: mcs/mcs/decl.cs:330
 #, csharp-format
 msgid "`{0}' cannot declare a body because it is marked extern"
 msgstr ""
 
-#: mcs/mcs/decl.cs:382
+#: mcs/mcs/decl.cs:336
 #, csharp-format
 msgid "`{0}' cannot declare a body because it is marked abstract"
 msgstr ""
 
-#: mcs/mcs/decl.cs:395
+#: mcs/mcs/decl.cs:349
 #, csharp-format
 msgid ""
 "`{0}' must have a body because it is not marked abstract or extern. The "
 "property can be automatically implemented when you define both accessors"
 msgstr ""
 
-#: mcs/mcs/decl.cs:401
+#: mcs/mcs/decl.cs:355
 #, csharp-format
 msgid ""
 "`{0}' must have a body because it is not marked abstract, extern, or partial"
 msgstr ""
 
-#: mcs/mcs/decl.cs:416
+#: mcs/mcs/decl.cs:370
 #, csharp-format
 msgid "`{0}': Structs cannot contain protected members"
 msgstr ""
 
-#: mcs/mcs/decl.cs:422
+#: mcs/mcs/decl.cs:376
 #, csharp-format
 msgid "`{0}': Static classes cannot contain protected members"
 msgstr ""
 
-#: mcs/mcs/decl.cs:1303
-#, csharp-format
-msgid "The namespace `{0}' already contains a definition for `{1}'"
+#: mcs/mcs/decl.cs:473
+msgid "Constraints are not allowed on non-generic declarations"
 msgstr ""
 
-#: mcs/mcs/decl.cs:1307
-#, csharp-format
-msgid "Duplicate type parameter `{0}'"
-msgstr ""
-
-#: mcs/mcs/decl.cs:1310
-#, csharp-format
-msgid "The type `{0}' already contains a definition for `{1}'"
-msgstr ""
-
-#: mcs/mcs/decl.cs:1358
-#, csharp-format
-msgid ""
-"Missing partial modifier on declaration of type `{0}'. Another partial "
-"declaration of this type exists"
-msgstr ""
-
-#: mcs/mcs/decl.cs:1447
-msgid "Variant type parameters can only be used with interfaces and delegates"
-msgstr ""
-
-#: mcs/mcs/decl.cs:1459
+#: mcs/mcs/decl.cs:480
 #, csharp-format
 msgid "`{0}': A constraint references nonexistent type parameter `{1}'"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:141
+#: mcs/mcs/delegate.cs:155
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: parameter type `{0}' is less accessible than "
 "delegate `{1}'"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:487
+#: mcs/mcs/delegate.cs:505
 #, csharp-format
 msgid ""
 "Cannot create delegate from method `{0}' because it is a member of System."
 "Nullable<T> type"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:499
+#: mcs/mcs/delegate.cs:517
 #, csharp-format
 msgid ""
 "Extension method `{0}' of value type `{1}' cannot be used to create delegates"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:514
+#: mcs/mcs/delegate.cs:535
 #, csharp-format
 msgid "Cannot create delegate from partial method declaration `{0}'"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:517
+#: mcs/mcs/delegate.cs:538
 #, csharp-format
 msgid ""
 "Cannot create delegate with `{0}' because it has a Conditional attribute"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:560
+#: mcs/mcs/delegate.cs:581
 #, csharp-format
 msgid ""
 "A method or delegate `{0} {1}' parameters and return type must be same as "
 "delegate `{2} {3}' parameters and return type"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:567
+#: mcs/mcs/delegate.cs:588
 #, csharp-format
 msgid ""
 "A method or delegate `{0}' parameters do not match delegate `{1}' parameters"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:572
+#: mcs/mcs/delegate.cs:593
 #, csharp-format
 msgid ""
 "A method or delegate `{0} {1}' return type does not match delegate `{2} {3}' "
 "return type"
 msgstr ""
 
-#: mcs/mcs/delegate.cs:655
+#: mcs/mcs/delegate.cs:676
 msgid "Method name expected"
 msgstr ""
 
-#: mcs/mcs/doc.cs:914
+#: mcs/mcs/doc.cs:621
 #, csharp-format
 msgid "Error generating XML documentation file `{0}' (`{1}')"
 msgstr ""
 
-#: mcs/mcs/driver.cs:64 mcs/mcs/driver.cs:442 mcs/mcs/driver.cs:445
+#: mcs/mcs/driver.cs:52
 msgid "Source file `"
 msgstr ""
 
-#: mcs/mcs/driver.cs:91
-#, csharp-format
-msgid "Source file `{0}' could not be found"
-msgstr ""
-
-#: mcs/mcs/driver.cs:97
-#, csharp-format
-msgid "Source file `{0}' is a binary file and not a text file"
-msgstr ""
-
-#: mcs/mcs/driver.cs:183
-msgid ""
-"Invalid target type for -target. Valid options are `exe', `winexe', "
-"`library' or `module'"
-msgstr ""
-
-#: mcs/mcs/driver.cs:330
-msgid "Response file `"
-msgstr "レスポンスファイル `"
-
-#: mcs/mcs/driver.cs:339
-msgid "Unable to open response file: "
-msgstr "レスポンスファイルが開けません"
-
-#: mcs/mcs/driver.cs:397 mcs/mcs/driver.cs:407
+#: mcs/mcs/driver.cs:258
 msgid "No files to compile were specified"
 msgstr "コンパイルするファイルが指定されていません"
 
-#: mcs/mcs/driver.cs:479
-msgid "Warning level must be in the range 0-4"
+#: mcs/mcs/driver.cs:263
+msgid "Platform option `anycpu32bitpreferred' is valid only for executables"
 msgstr ""
 
-#: mcs/mcs/driver.cs:513
-msgid "Compatibility: Use -main:CLASS instead of --main CLASS or -m CLASS"
-msgstr ""
-
-#: mcs/mcs/driver.cs:522
-msgid "Compatibility: Use -unsafe instead of --unsafe"
-msgstr ""
-
-#: mcs/mcs/driver.cs:533
-msgid "Compatibility: Use -d:SYMBOL instead of --define SYMBOL"
-msgstr ""
-
-#: mcs/mcs/driver.cs:547
-msgid "Compatibility: Use -out:FILE instead of --output FILE or -o FILE"
-msgstr ""
-
-#: mcs/mcs/driver.cs:556
-msgid "Compatibility: Use -checked instead of --checked"
-msgstr ""
-
-#: mcs/mcs/driver.cs:566
-msgid "Compatibility: Use -linkres:VALUE instead of --linkres VALUE"
-msgstr ""
-
-#: mcs/mcs/driver.cs:569
-msgid "Missing argument to --linkres"
-msgstr ""
-
-#: mcs/mcs/driver.cs:578
-msgid "Compatibility: Use -res:VALUE instead of --res VALUE"
-msgstr ""
-
-#: mcs/mcs/driver.cs:581
-msgid "Missing argument to --resource"
-msgstr ""
-
-#: mcs/mcs/driver.cs:589
-msgid "Compatibility: Use -target:KIND instead of --target KIND"
-msgstr ""
-
-#: mcs/mcs/driver.cs:621
-msgid "Compatibility: Use -r:LIBRARY instead of -r library"
-msgstr ""
-
-#: mcs/mcs/driver.cs:640
-msgid "Compatibility: Use -lib:ARG instead of --L arg"
-msgstr ""
-
-#: mcs/mcs/driver.cs:653
-msgid "Compatibility: Use -nostdlib instead of --nostdlib"
-msgstr ""
-
-#: mcs/mcs/driver.cs:658
-msgid "Compatibility: Use -nowarn instead of --nowarn"
-msgstr ""
-
-#: mcs/mcs/driver.cs:675
-msgid "Compatibility: Use -warn:LEVEL instead of --wlevel LEVEL"
-msgstr ""
-
-#: mcs/mcs/driver.cs:679
-msgid "--wlevel requires a value from 0 to 4"
-msgstr ""
-
-#: mcs/mcs/driver.cs:688
-msgid "--mcs-debug requires an argument"
-msgstr ""
-
-#: mcs/mcs/driver.cs:695
-msgid "Invalid argument to --mcs-debug"
-msgstr ""
-
-#: mcs/mcs/driver.cs:705
-msgid "Compatibility: Use -recurse:PATTERN option instead --recurse PATTERN"
-msgstr ""
-
-#: mcs/mcs/driver.cs:707
-msgid "--recurse requires an argument"
-msgstr ""
-
-#: mcs/mcs/driver.cs:718
-msgid "Compatibility: Use -debug option instead of -g or --debug"
-msgstr ""
-
-#: mcs/mcs/driver.cs:723
-msgid "Compatibility: Use -noconfig option instead of --noconfig"
-msgstr ""
-
-#: mcs/mcs/driver.cs:885
-#, csharp-format
-msgid "Invalid conditional define symbol `{0}'"
-msgstr ""
-
-#: mcs/mcs/driver.cs:936
-#, csharp-format
-msgid ""
-"Invalid resource visibility option `{0}'. Use either `public' or `private' "
-"instead"
-msgstr ""
-
-#: mcs/mcs/driver.cs:942
-#, csharp-format
-msgid "Wrong number of arguments for option `{0}'"
-msgstr ""
-
-#: mcs/mcs/driver.cs:980
-msgid "Cannot specify multiple aliases using single /reference option"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1008 mcs/mcs/driver.cs:1020
-msgid ""
-"Cannot specify the `win32res' and the `win32ico' compiler option at the same "
-"time"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1135
-#, csharp-format
-msgid "`{0}' is not a valid warning number"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1165
-msgid ""
-"Invalid platform type for -platform. Valid options are `anycpu', `x86', "
-"`x64' or `itanium'"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1273
-#, csharp-format
-msgid ""
-"Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', `3' or "
-"`Default'"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1293
-#, csharp-format
-msgid "Code page `{0}' is invalid or not installed"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1308
-#, csharp-format
-msgid "Unrecognized command-line option: `{0}'"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1313
-#, csharp-format
-msgid "Missing file specification for `{0}' option"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1318
-#, csharp-format
-msgid "Missing argument for `{0}' option"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1353
-#, csharp-format
-msgid "Invalid reference alias `{0}='. Missing filename"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1358
-#, csharp-format
-msgid ""
-"Invalid extern alias for -reference. Alias `{0}' is not a valid identifier"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1374
-#, csharp-format
-msgid "The resource identifier `{0}' has already been used in this assembly"
-msgstr ""
-
-#: mcs/mcs/driver.cs:1435
+#: mcs/mcs/driver.cs:293
 msgid ""
 "If no source files are specified you must specify the output file with -out:"
 msgstr ""
 
-#: mcs/mcs/dynamic.cs:272
+#: mcs/mcs/driver.cs:310
+msgid "Output file name is not valid"
+msgstr ""
+
+#: mcs/mcs/dynamic.cs:278
 #, fuzzy
 msgid "An expression tree cannot contain a dynamic operation"
 msgstr "式ツリーは代入オペレータを含むことができません"
 
-#: mcs/mcs/dynamic.cs:302
+#: mcs/mcs/dynamic.cs:311
 msgid ""
 "Dynamic operation cannot be compiled without `Microsoft.CSharp.dll' assembly "
 "reference"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:248
+#: mcs/mcs/ecore.cs:214
 #, csharp-format
 msgid "`{0}' is inaccessible due to its protection level"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:253
+#: mcs/mcs/ecore.cs:219
 #, csharp-format
 msgid "The expression being assigned to `{0}' must be constant"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:258
+#: mcs/mcs/ecore.cs:224
 #, csharp-format
 msgid ""
 "A constant `{0}' of reference type `{1}' can only be initialized with null"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:264
+#: mcs/mcs/ecore.cs:230
 msgid ""
-"Only assignment, call, increment, decrement, and new object expressions can "
-"be used as a statement"
+"Only assignment, call, increment, decrement, await, and new object "
+"expressions can be used as a statement"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:275
+#: mcs/mcs/ecore.cs:240
 msgid "Keyword `void' cannot be used in this context"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:297
+#: mcs/mcs/ecore.cs:262
 #, csharp-format
 msgid "Cannot convert type `{0}' to `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:308
+#: mcs/mcs/ecore.cs:273
 #, csharp-format
 msgid ""
 "Cannot implicitly convert type `{0}' to `{1}'. An explicit conversion exists "
 "(are you missing a cast?)"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:311
+#: mcs/mcs/ecore.cs:276
 #, csharp-format
 msgid "Cannot implicitly convert type `{0}' to `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:353
+#: mcs/mcs/ecore.cs:307
+#, fuzzy, csharp-format
+msgid "The {0} `{1}' cannot be used with type arguments"
+msgstr "属性 `{0}' は複数回指定することができません"
+
+#: mcs/mcs/ecore.cs:319
 #, csharp-format
 msgid "`{0}' does not contain a definition for `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:359
+#: mcs/mcs/ecore.cs:328
 msgid ""
 "The left-hand side of an assignment must be a variable, a property or an "
 "indexer"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:364
+#: mcs/mcs/ecore.cs:334
 msgid "The operation in question is undefined on void pointers"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:426 mcs/mcs/statement.cs:2559 mcs/mcs/statement.cs:2561
+#: mcs/mcs/ecore.cs:422 mcs/mcs/statement.cs:3038 mcs/mcs/statement.cs:3040
 #, csharp-format
 msgid "Internal compiler error: {0}"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:466
+#: mcs/mcs/ecore.cs:462
 msgid "A ref or out argument must be an assignable variable"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:485
+#: mcs/mcs/ecore.cs:481
 msgid ""
 "An attribute argument must be a constant expression, typeof expression or "
 "array creation expression"
 msgstr "属性の引数は定数、typeof式または配列生成式でなければなりません"
 
-#: mcs/mcs/ecore.cs:556
+#: mcs/mcs/ecore.cs:655
 #, csharp-format
 msgid "The class `{0}' has no constructors defined"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:641
+#: mcs/mcs/ecore.cs:777
 #, csharp-format
-msgid "Ambiguity between `{0}' and `{1}'"
+msgid "The `{0}' operator cannot be applied to operand of type `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:668
+#: mcs/mcs/ecore.cs:783
 msgid "An expression tree cannot contain an unsafe pointer operation"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:789
+#: mcs/mcs/ecore.cs:861
+#, csharp-format
+msgid "`{0}' is a `{1}' but a `{2}' was expected"
+msgstr ""
+
+#: mcs/mcs/ecore.cs:894
 #, csharp-format
 msgid "Expression denotes a `{0}', where a `{1}' was expected"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:799
+#: mcs/mcs/ecore.cs:904
 msgid "Pointers and fixed size buffers may only be used in an unsafe context"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:834
-#, csharp-format
-msgid ""
-"Members of value type `{0}' cannot be assigned using a property `{1}' object "
-"initializer"
-msgstr ""
-
-#: mcs/mcs/ecore.cs:837
-#, csharp-format
-msgid ""
-"Cannot modify a value type return value of `{0}'. Consider storing the value "
-"in a temporary variable"
-msgstr ""
-
-#: mcs/mcs/ecore.cs:2271
+#: mcs/mcs/ecore.cs:2364
 #, csharp-format
 msgid ""
 "Dynamic keyword requires `{0}' to be defined. Are you missing System.Core."
 "dll assembly reference?"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2345
+#: mcs/mcs/ecore.cs:2440
 #, csharp-format
 msgid ""
 "A local variable `{0}' cannot be used before it is declared. Consider "
 "renaming the local variable when it hides the member `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2360 mcs/mcs/ecore.cs:2404
+#: mcs/mcs/ecore.cs:2455 mcs/mcs/ecore.cs:2498
 #, csharp-format
 msgid "`{0}' conflicts with a declaration in a child block"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2413
+#: mcs/mcs/ecore.cs:2507
 #, csharp-format
 msgid "A local variable `{0}' cannot be used before it is declared"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2415
+#: mcs/mcs/ecore.cs:2561
 #, csharp-format
 msgid "The name `{0}' does not exist in the current context"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2665
+#: mcs/mcs/ecore.cs:2657
+msgid "System.Void cannot be used from C#. Consider using `void'"
+msgstr ""
+
+#: mcs/mcs/ecore.cs:2941
+#, csharp-format
+msgid "Cannot call an abstract base member `{0}'"
+msgstr ""
+
+#: mcs/mcs/ecore.cs:2948
 #, csharp-format
 msgid ""
 "Cannot access protected member `{0}' via a qualifier of type `{1}'. The "
 "qualifier must be of type `{2}' or derived from it"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2714
+#: mcs/mcs/ecore.cs:2964
 #, csharp-format
-msgid "Cannot call an abstract base member `{0}'"
+msgid ""
+"Members of value type `{0}' cannot be assigned using a property `{1}' object "
+"initializer"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2758
+#: mcs/mcs/ecore.cs:2968
+#, csharp-format
+msgid ""
+"Cannot modify a value type return value of `{0}'. Consider storing the value "
+"in a temporary variable"
+msgstr ""
+
+#: mcs/mcs/ecore.cs:2994
 #, csharp-format
 msgid ""
 "Static member `{0}' cannot be accessed with an instance reference, qualify "
 "it with a type name instead"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2773
+#: mcs/mcs/ecore.cs:3009
 #, csharp-format
 msgid ""
 "A field initializer cannot reference the nonstatic field, method, or "
 "property `{0}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2777
+#: mcs/mcs/ecore.cs:3013
 #, csharp-format
 msgid "An object reference is required to access non-static member `{0}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2785
+#: mcs/mcs/ecore.cs:3022
 #, csharp-format
 msgid ""
 "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2833
+#: mcs/mcs/ecore.cs:3070
 msgid "Cannot modify the result of an unboxing conversion"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2954
+#: mcs/mcs/ecore.cs:3240
 #, csharp-format
 msgid ""
 "Type `{0}' does not contain a member `{1}' and the best extension method "
 "overload `{2}' has some invalid arguments"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:2959
+#: mcs/mcs/ecore.cs:3245
 #, csharp-format
 msgid "Extension method instance type `{0}' cannot be converted to `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:3083
+#: mcs/mcs/ecore.cs:3379
 msgid "An expression tree cannot contain an expression with method group"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:3089
+#: mcs/mcs/ecore.cs:3385
 msgid ""
 "Partial methods with only a defining declaration or removed conditional "
 "methods cannot be used in an expression tree"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:3119
+#: mcs/mcs/ecore.cs:3417
 #, csharp-format
 msgid ""
 "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using "
 "parentheses to invoke the method"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:3715
+#: mcs/mcs/ecore.cs:4150
 #, csharp-format
 msgid ""
 "The type `{0}' does not contain a constructor that takes `{1}' arguments"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4328
+#: mcs/mcs/ecore.cs:4837
 #, csharp-format
 msgid ""
 "Type `{0}' does not contain a member `{1}' and the best extension method "
@@ -1915,472 +1477,478 @@ msgid ""
 "without the extension method syntax"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4349
+#: mcs/mcs/ecore.cs:4876
 #, csharp-format
 msgid ""
 "The call is ambiguous between the following methods or properties: `{0}' and "
 "`{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4409
+#: mcs/mcs/ecore.cs:4939
 #, csharp-format
 msgid ""
-"The best overloaded collection initalizer method `{0}' cannot have 'ref', or "
+"The best overloaded collection initalizer method `{0}' cannot have `ref' or "
 "`out' modifier"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4413
+#: mcs/mcs/ecore.cs:4943
 #, csharp-format
 msgid ""
 "The best overloaded collection initalizer method `{0}' has some invalid "
 "arguments"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4416
+#: mcs/mcs/ecore.cs:4946
 #, csharp-format
 msgid "Delegate `{0}' has some invalid arguments"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4420
+#: mcs/mcs/ecore.cs:4950
 #, csharp-format
 msgid "The best overloaded method match for `{0}' has some invalid arguments"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4430
+#: mcs/mcs/ecore.cs:4959
 #, csharp-format
 msgid ""
 "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' "
 "modifier"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4433
+#: mcs/mcs/ecore.cs:4962
 #, csharp-format
 msgid "Argument `#{0}' is missing `{1}' modifier"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4446
+#: mcs/mcs/ecore.cs:4979
 #, csharp-format
 msgid "Argument `#{0}' cannot convert `{1}' expression to type `{2}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4494
+#: mcs/mcs/ecore.cs:5032
 #, csharp-format
 msgid ""
 "The type arguments for method `{0}' cannot be inferred from the usage. Try "
 "specifying the type arguments explicitly"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4523
+#: mcs/mcs/ecore.cs:5061
 #, csharp-format
 msgid "No overload for method `{0}' takes `{1}' arguments"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4576
+#: mcs/mcs/ecore.cs:5114
 #, fuzzy, csharp-format
 msgid "The delegate `{0}' does not contain a parameter named `{1}'"
 msgstr "デリゲート `{0}' は `{1}' 個の引数をもちません"
 
-#: mcs/mcs/ecore.cs:4581
+#: mcs/mcs/ecore.cs:5119
 #, csharp-format
 msgid ""
 "The best overloaded method match for `{0}' does not contain a parameter "
 "named `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4591
+#: mcs/mcs/ecore.cs:5129
 #, csharp-format
 msgid ""
 "Named argument `{0}' cannot be used for a parameter which has positional "
 "argument specified"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4904
+#: mcs/mcs/ecore.cs:5467
 msgid ""
 "You cannot use fixed size buffers contained in unfixed expressions. Try "
 "using the fixed statement"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:4909
+#: mcs/mcs/ecore.cs:5472
 #, csharp-format
 msgid "`{0}': Fixed size buffers can only be accessed through locals or fields"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5304
+#: mcs/mcs/ecore.cs:5508
+#, csharp-format
+msgid "Use of possibly unassigned field `{0}'"
+msgstr ""
+
+#: mcs/mcs/ecore.cs:5935
 #, csharp-format
 msgid "Property or event `{0}' is not supported by the C# language"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5465
+#: mcs/mcs/ecore.cs:6131
 #, csharp-format
 msgid "A range variable `{0}' may not be passes as `ref' or `out' parameter"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5513
+#: mcs/mcs/ecore.cs:6204
 #, csharp-format
 msgid ""
 "The property or indexer `{0}' cannot be used in this context because it "
 "lacks the `get' accessor"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5520
+#: mcs/mcs/ecore.cs:6211
 #, csharp-format
 msgid ""
 "The property or indexer `{0}' cannot be used in this context because the get "
 "accessor is inaccessible"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5539
+#: mcs/mcs/ecore.cs:6230
 #, csharp-format
 msgid "Property or indexer `{0}' cannot be assigned to (it is read-only)"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5547
+#: mcs/mcs/ecore.cs:6238
 #, csharp-format
 msgid ""
 "The property or indexer `{0}' cannot be used in this context because the set "
 "accessor is inaccessible"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5708
+#: mcs/mcs/ecore.cs:6406
 #, csharp-format
 msgid ""
 "The event `{0}' can only appear on the left hand side of `+=' or `-=' "
 "operator"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5712
+#: mcs/mcs/ecore.cs:6410
 #, csharp-format
 msgid ""
 "The event `{0}' can only appear on the left hand side of += or -= when used "
 "outside of the type `{1}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5876
+#: mcs/mcs/ecore.cs:6580
 #, csharp-format
 msgid ""
 "An implicitly typed local variable declaration cannot be initialized with `"
 "{0}'"
 msgstr ""
 
-#: mcs/mcs/ecore.cs:5890
+#: mcs/mcs/ecore.cs:6594
 msgid ""
 "The contextual keyword `var' may only appear within a local variable "
 "declaration"
 msgstr ""
 
-#: mcs/mcs/enum.cs:125
+#: mcs/mcs/enum.cs:143
 #, csharp-format
 msgid ""
 "The enumerator value `{0}' is outside the range of enumerator underlying "
 "type `{1}'"
 msgstr ""
 
-#: mcs/mcs/enum.cs:189
+#: mcs/mcs/enum.cs:212
 #, csharp-format
 msgid "An item in an enumeration cannot have an identifier `{0}'"
 msgstr ""
 
-#: mcs/mcs/enum.cs:200
+#: mcs/mcs/enum.cs:223
 msgid "Type byte, sbyte, short, ushort, int, uint, long or ulong expected"
 msgstr ""
 
-#: mcs/mcs/eval.cs:630
+#: mcs/mcs/eval.cs:563
 msgid "Detection Parsing Error"
 msgstr ""
 
-#: mcs/mcs/expression.cs:542
-#, csharp-format
-msgid "The `{0}' operator cannot be applied to operand of type `{1}'"
-msgstr ""
-
-#: mcs/mcs/expression.cs:622
+#: mcs/mcs/expression.cs:646
 msgid "Cannot take the address of the given expression"
 msgstr ""
 
-#: mcs/mcs/expression.cs:656
+#: mcs/mcs/expression.cs:669
 msgid ""
 "You can only take the address of unfixed expression inside of a fixed "
 "statement initializer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:745
+#: mcs/mcs/expression.cs:760
 #, csharp-format
 msgid "Operator `{0}' is ambiguous on an operand of type `{1}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:868
+#: mcs/mcs/expression.cs:908
 msgid "The * or -> operator must be applied to a pointer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1070
+#: mcs/mcs/expression.cs:1125
 msgid ""
 "The operand of an increment or decrement operator must be a variable, "
 "property or indexer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1260
+#: mcs/mcs/expression.cs:1339
 #, csharp-format
 msgid "The `{0}' operator cannot be applied to an operand of a static type"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1265
+#: mcs/mcs/expression.cs:1344
 #, csharp-format
 msgid "The `{0}' operator cannot be applied to an operand of pointer type"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1271
+#: mcs/mcs/expression.cs:1350
 #, csharp-format
 msgid ""
 "The `{0}' operator cannot be applied to a lambda expression or anonymous "
 "method"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1505
+#: mcs/mcs/expression.cs:1616
 #, csharp-format
 msgid ""
 "The `as' operator cannot be used with a non-reference type parameter `{0}'. "
 "Consider adding `class' or a reference type constraint"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1509
+#: mcs/mcs/expression.cs:1620
 #, csharp-format
 msgid "The `as' operator cannot be used with a non-nullable value type `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1542
+#: mcs/mcs/expression.cs:1653
 #, csharp-format
 msgid "Cannot convert type `{0}' to `{1}' via a built-in conversion"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1583
+#: mcs/mcs/expression.cs:1693
 #, csharp-format
 msgid "Cannot convert to static type `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:1673
+#: mcs/mcs/expression.cs:1803
 msgid ""
 "The `default value' operator cannot be applied to an operand of a static type"
 msgstr ""
 
-#: mcs/mcs/expression.cs:2178
+#: mcs/mcs/expression.cs:2334
 #, csharp-format
 msgid "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:2741
+#: mcs/mcs/expression.cs:2904
 msgid "To cast a negative value, you must enclose the value in parentheses"
 msgstr ""
 
-#: mcs/mcs/expression.cs:3394
+#: mcs/mcs/expression.cs:3547
 #, csharp-format
 msgid "Operator `{0}' is ambiguous on operands of type `{1}' and `{2}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:4146
+#: mcs/mcs/expression.cs:4247
 #, csharp-format
 msgid ""
 "A user-defined operator `{0}' must have parameters and return values of the "
 "same type in order to be applicable as a short circuit operator"
 msgstr ""
 
-#: mcs/mcs/expression.cs:4156
+#: mcs/mcs/expression.cs:4257
 #, csharp-format
 msgid ""
 "The type `{0}' must have operator `true' and operator `false' defined when `"
 "{1}' is used as a short circuit operator"
 msgstr ""
 
-#: mcs/mcs/expression.cs:4466
+#: mcs/mcs/expression.cs:4656
 #, csharp-format
 msgid ""
 "Type of conditional expression cannot be determined as `{0}' and `{1}' "
 "convert implicitly to each other"
 msgstr ""
 
-#: mcs/mcs/expression.cs:4476
+#: mcs/mcs/expression.cs:4666
 #, csharp-format
 msgid ""
 "Type of conditional expression cannot be determined because there is no "
 "implicit conversion between `{0}' and `{1}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:4930
+#: mcs/mcs/expression.cs:4964
 #, csharp-format
-msgid "Use of unassigned out parameter `{0}'"
+msgid "Use of unassigned local variable `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:4960
+#: mcs/mcs/expression.cs:4984
+#, csharp-format
+msgid ""
+"Cannot use fixed local `{0}' inside an anonymous method, lambda expression "
+"or query expression"
+msgstr ""
+
+#: mcs/mcs/expression.cs:5177
 #, csharp-format
 msgid ""
 "Parameter `{0}' cannot be used inside `{1}' when using `ref' or `out' "
 "modifier"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5161
+#: mcs/mcs/expression.cs:5256
+#, csharp-format
+msgid "Use of unassigned out parameter `{0}'"
+msgstr ""
+
+#: mcs/mcs/expression.cs:5368
 #, fuzzy, csharp-format
 msgid "Cannot invoke a non-delegate type `{0}'"
 msgstr "`{0}' をデリゲートでない型 `{1}'に変換できません"
 
-#: mcs/mcs/expression.cs:5172
+#: mcs/mcs/expression.cs:5379
 #, csharp-format
 msgid "The member `{0}' cannot be used as method or delegate"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5192
+#: mcs/mcs/expression.cs:5399
 msgid ""
 "Do not directly call your base class Finalize method. It is called "
 "automatically from your destructor"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5194
+#: mcs/mcs/expression.cs:5401
 msgid ""
 "Destructors and object.Finalize cannot be called directly. Consider calling "
 "IDisposable.Dispose if available"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5223
+#: mcs/mcs/expression.cs:5430
 #, csharp-format
 msgid ""
 "The base call to method `{0}' cannot be dynamically dispatched. Consider "
 "casting the dynamic arguments or eliminating the base access"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5300
+#: mcs/mcs/expression.cs:5503
 #, csharp-format
 msgid "`{0}': cannot explicitly call operator or accessor"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5627
+#: mcs/mcs/expression.cs:5687
 #, csharp-format
 msgid "Unsafe type `{0}' cannot be used in an object creation expression"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5650
+#: mcs/mcs/expression.cs:5710
 #, csharp-format
 msgid ""
 "Cannot create an instance of the variable type `{0}' because it does not "
 "have the new() constraint"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5656
+#: mcs/mcs/expression.cs:5716
 #, csharp-format
 msgid ""
 "`{0}': cannot provide arguments when creating an instance of a variable type"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5665
+#: mcs/mcs/expression.cs:5725
 #, csharp-format
 msgid "Cannot create an instance of the static class `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5677
+#: mcs/mcs/expression.cs:5737
 #, csharp-format
 msgid "Cannot create an instance of the abstract class or interface `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:5973
+#: mcs/mcs/expression.cs:6038
 msgid ""
 "An implicitly typed local variable declarator cannot use an array initializer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6066
-msgid "Cannot create an array with a negative size"
-msgstr ""
-
-#: mcs/mcs/expression.cs:6098 mcs/mcs/expression.cs:6106
-#: mcs/mcs/statement.cs:1002 mcs/mcs/statement.cs:3056
+#: mcs/mcs/expression.cs:6182 mcs/mcs/expression.cs:6190
+#: mcs/mcs/statement.cs:1227 mcs/mcs/statement.cs:3619
 msgid "A constant value is expected"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6112
+#: mcs/mcs/expression.cs:6196 mcs/mcs/expression.cs:6221
 #, csharp-format
 msgid "An array initializer of length `{0}' was expected"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6128
+#: mcs/mcs/expression.cs:6212
 msgid ""
 "Array initializers can only be used in a variable or field initializer. Try "
 "using a new expression instead"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6136
+#: mcs/mcs/expression.cs:6229
 msgid "A nested array initializer was expected"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6173
+#: mcs/mcs/expression.cs:6276
 msgid "An expression tree cannot contain a multidimensional array initializer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6275
+#: mcs/mcs/expression.cs:6312
+msgid "Cannot create an array with a negative size"
+msgstr ""
+
+#: mcs/mcs/expression.cs:6393
 msgid ""
 "Can only use array initializer expressions to assign to array types. Try "
 "using a new expression instead"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6716
+#: mcs/mcs/expression.cs:6830
 msgid ""
 "The type of an implicitly typed array cannot be inferred from the "
 "initializer. Try specifying array type explicitly"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6853
+#: mcs/mcs/expression.cs:6973
 msgid ""
 "The `this' object cannot be used before all of its fields are assigned to"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6860
+#: mcs/mcs/expression.cs:6980
 msgid ""
 "Keyword `this' is not valid in a static property, static method, or static "
 "field initializer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6863
+#: mcs/mcs/expression.cs:6983
 msgid ""
 "Anonymous methods inside structs cannot access instance members of `this'. "
 "Consider copying `this' to a local variable outside the anonymous method and "
 "using the local instead"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6866
+#: mcs/mcs/expression.cs:6986
 msgid "Keyword `this' is not available in the current context"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6953
+#: mcs/mcs/expression.cs:7063
 msgid "Cannot take the address of `this' because it is read-only"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6955
+#: mcs/mcs/expression.cs:7065
 msgid "Cannot pass `this' as a ref or out argument because it is read-only"
 msgstr ""
 
-#: mcs/mcs/expression.cs:6957
+#: mcs/mcs/expression.cs:7067
 msgid "Cannot assign to `this' because it is read-only"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7010
+#: mcs/mcs/expression.cs:7139
 msgid "The __arglist construct is valid only within a variable argument method"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7060
+#: mcs/mcs/expression.cs:7200
 msgid "An expression tree cannot contain a method with variable arguments"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7144
-msgid ""
-"System.Void cannot be used from C#. Use typeof (void) to get the void type "
-"object"
-msgstr ""
-
-#: mcs/mcs/expression.cs:7147
+#: mcs/mcs/expression.cs:7437
 msgid "The typeof operator cannot be used on the dynamic type"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7198
+#: mcs/mcs/expression.cs:7478
 #, csharp-format
 msgid "`{0}': an attribute argument cannot use type parameters"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7452
+#: mcs/mcs/expression.cs:7693
 #, csharp-format
 msgid ""
 "`{0}' does not have a predefined size, therefore sizeof can only be used in "
@@ -2388,272 +1956,281 @@ msgid ""
 "SizeOf)"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7508
+#: mcs/mcs/expression.cs:7760
 #, csharp-format
 msgid "Alias `{0}' not found"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7519
-#, csharp-format
+#: mcs/mcs/expression.cs:7786
 msgid ""
-"Alias `{0}' cannot be used with '::' since it denotes a type. Consider "
-"replacing '::' with '.'"
+"The namespace alias qualifier `::' cannot be used to invoke a method. "
+"Consider using `.' instead"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7535
-#, csharp-format
-msgid ""
-"A namespace alias qualifier `{0}' did not resolve to a namespace or a type"
-msgstr ""
-
-#: mcs/mcs/expression.cs:7692
+#: mcs/mcs/expression.cs:7895
 msgid "Cannot perform member binding on `null' value"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7759
+#: mcs/mcs/expression.cs:8068
 #, csharp-format
-msgid "`{0}': cannot reference a type through an expression; try `{1}' instead"
+msgid ""
+"`{0}': cannot reference a type through an expression. Consider using `{1}' "
+"instead"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7835
+#: mcs/mcs/expression.cs:8147
 #, csharp-format
 msgid "A nested type cannot be specified through a type parameter `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7894
+#: mcs/mcs/expression.cs:8155
+#, csharp-format
+msgid ""
+"Alias `{0}' cannot be used with `::' since it denotes a type. Consider "
+"replacing `::' with `.'"
+msgstr ""
+
+#: mcs/mcs/expression.cs:8220
 #, csharp-format
 msgid "The nested type `{0}' does not exist in the type `{1}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:7903
+#: mcs/mcs/expression.cs:8239
 #, csharp-format
 msgid ""
 "Type `{0}' does not contain a definition for `{1}' and no extension method `"
-"{1}' of type `{0}' could be found (are you missing a using directive or an "
-"assembly reference?)"
+"{1}' of type `{0}' could be found. Are you missing {2}?"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8083
+#: mcs/mcs/expression.cs:8451
 #, csharp-format
 msgid "Cannot apply indexing with [] to an expression of type `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8099
+#: mcs/mcs/expression.cs:8469
 msgid "A pointer must be indexed by only one value"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8148
+#: mcs/mcs/expression.cs:8518
 msgid "An element access expression cannot use named argument"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8204
+#: mcs/mcs/expression.cs:8596
 #, csharp-format
 msgid "Wrong number of indexes `{0}' inside [], expected `{1}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8540
+#: mcs/mcs/expression.cs:8984
 msgid ""
 "The indexer base access cannot be dynamically dispatched. Consider casting "
 "the dynamic arguments or eliminating the base access"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8621
+#: mcs/mcs/expression.cs:9069
 msgid "An expression tree may not contain a base access"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8639
+#: mcs/mcs/expression.cs:9087
 #, fuzzy
 msgid "Keyword `base' is not available in a static method"
 msgstr "キーワード `new' は名前空間要素で認められていません"
 
-#: mcs/mcs/expression.cs:8641
+#: mcs/mcs/expression.cs:9089
 #, fuzzy
 msgid "Keyword `base' is not available in the current context"
 msgstr "キーワード `new' は名前空間要素で認められていません"
 
-#: mcs/mcs/expression.cs:8672
+#: mcs/mcs/expression.cs:9127
 msgid ""
 "A property, indexer or dynamic member access may not be passed as `ref' or "
 "`out' parameter"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8949
+#: mcs/mcs/expression.cs:9455
 #, csharp-format
 msgid "Array elements cannot be of type `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:8952
+#: mcs/mcs/expression.cs:9458
 #, csharp-format
 msgid "Array elements cannot be of static type `{0}'"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9102
+#: mcs/mcs/expression.cs:9634
 msgid "Cannot use a negative size with stackalloc"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9106
+#: mcs/mcs/expression.cs:9638
 msgid "Cannot use stackalloc in finally or catch"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9211
+#: mcs/mcs/expression.cs:9755
 #, csharp-format
 msgid ""
 "Member `{0}' cannot be initialized. An object initializer may only be used "
 "for fields, or properties"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9220
+#: mcs/mcs/expression.cs:9764
 #, csharp-format
 msgid ""
 "Static field or property `{0}' cannot be assigned in an object initializer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9395
+#: mcs/mcs/expression.cs:9963
 #, csharp-format
 msgid ""
 "A field or property `{0}' cannot be initialized with a collection object "
 "initializer because type `{1}' does not implement `{2}' interface"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9406
+#: mcs/mcs/expression.cs:9974
 #, csharp-format
 msgid "Inconsistent `{0}' member declaration"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9414
+#: mcs/mcs/expression.cs:9982
 #, csharp-format
 msgid ""
 "An object initializer includes more than one member `{0}' initialization"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9432
+#: mcs/mcs/expression.cs:10000
 #, csharp-format
 msgid "Cannot initialize object of type `{0}' with a collection initializer"
 msgstr ""
 
-#: mcs/mcs/expression.cs:9669
+#: mcs/mcs/expression.cs:10285
 #, fuzzy
 msgid "Anonymous types cannot be used in this expression"
 msgstr "匿名メソッドを式ツリーに変換することはできません"
 
-#: mcs/mcs/expression.cs:9757
+#: mcs/mcs/expression.cs:10384
 #, csharp-format
 msgid "An anonymous type property `{0}' cannot be initialized with `{1}'"
 msgstr ""
 
-#: mcs/mcs/field.cs:70
+#: mcs/mcs/field.cs:69
 msgid ""
 "The modifier 'abstract' is not valid on fields. Try using a property instead"
 msgstr ""
 
-#: mcs/mcs/field.cs:121
+#: mcs/mcs/field.cs:131
 msgid ""
 "The FieldOffset attribute can only be placed on members of types marked with "
 "the StructLayout(LayoutKind.Explicit)"
 msgstr ""
 
-#: mcs/mcs/field.cs:126
+#: mcs/mcs/field.cs:136
 msgid "The FieldOffset attribute is not allowed on static or const fields"
 msgstr ""
 
-#: mcs/mcs/field.cs:132
+#: mcs/mcs/field.cs:142
 msgid ""
 "Do not use 'System.Runtime.CompilerServices.FixedBuffer' attribute. Use the "
 "'fixed' field modifier instead"
 msgstr ""
 
-#: mcs/mcs/field.cs:237
+#: mcs/mcs/field.cs:250
 #, csharp-format
 msgid ""
 "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) "
 "must have a FieldOffset attribute"
 msgstr ""
 
-#: mcs/mcs/field.cs:246
+#: mcs/mcs/field.cs:261
 #, fuzzy, csharp-format
 msgid "`{0}': cannot declare variables of static types"
 msgstr "`{0}': staticクラスではインデクサを宣言できません"
 
-#: mcs/mcs/field.cs:393
+#: mcs/mcs/field.cs:408
 #, csharp-format
 msgid ""
 "`{0}': Fixed size buffers type must be one of the following: bool, byte, "
 "short, int, long, char, sbyte, ushort, uint, ulong, float or double"
 msgstr ""
 
-#: mcs/mcs/field.cs:429
+#: mcs/mcs/field.cs:446
 #, csharp-format
 msgid "`{0}': Fixed size buffer fields may only be members of structs"
 msgstr ""
 
-#: mcs/mcs/field.cs:444
+#: mcs/mcs/field.cs:461
 #, csharp-format
 msgid "`{0}': Fixed size buffers must have a length greater than zero"
 msgstr ""
 
-#: mcs/mcs/field.cs:451
+#: mcs/mcs/field.cs:484
 #, csharp-format
 msgid ""
 "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit"
 msgstr ""
 
-#: mcs/mcs/field.cs:638
+#: mcs/mcs/field.cs:666
 #, fuzzy, csharp-format
 msgid "`{0}': A volatile field cannot be of the type `{1}'"
 msgstr "`{0}': sealedクラス `{1}' から派生することはできません"
 
-#: mcs/mcs/field.cs:643
+#: mcs/mcs/field.cs:671
 #, fuzzy, csharp-format
 msgid "`{0}': A field cannot be both volatile and readonly"
 msgstr "`{0}': クラスはstaticかつsealedとすることはできません"
 
-#: mcs/mcs/flowanalysis.cs:307
+#: mcs/mcs/flowanalysis.cs:314
 msgid "Control cannot fall through from one case label to another"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:536
+#: mcs/mcs/flowanalysis.cs:543
 #, csharp-format
 msgid ""
 "The label `{0}:' could not be found within the scope of the goto statement"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:664
+#: mcs/mcs/flowanalysis.cs:672
 msgid ""
 "A throw statement with no arguments is not allowed outside of a catch clause"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:675 mcs/mcs/flowanalysis.cs:681
+#: mcs/mcs/flowanalysis.cs:683 mcs/mcs/flowanalysis.cs:689
 msgid "No enclosing loop out of which to break or continue"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:709
+#: mcs/mcs/flowanalysis.cs:717
 msgid "Control cannot leave the body of an anonymous method"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:750
+#: mcs/mcs/flowanalysis.cs:760
+msgid "The `await' operator cannot be used in the body of a catch clause"
+msgstr ""
+
+#: mcs/mcs/flowanalysis.cs:766
 msgid "Cannot yield a value in the body of a try block with a catch clause"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:752
+#: mcs/mcs/flowanalysis.cs:768
 msgid "Cannot yield a value in the body of a catch clause"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:904
+#: mcs/mcs/flowanalysis.cs:968
 msgid ""
 "A throw statement with no arguments is not allowed inside of a finally "
 "clause nested inside of the innermost catch clause"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:916 mcs/mcs/iterators.cs:102
+#: mcs/mcs/flowanalysis.cs:981
+msgid "The `await' operator cannot be used in the body of a finally clause"
+msgstr ""
+
+#: mcs/mcs/flowanalysis.cs:983 mcs/mcs/iterators.cs:122
 msgid "Cannot yield in the body of a finally clause"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:927 mcs/mcs/flowanalysis.cs:943
-#: mcs/mcs/flowanalysis.cs:979 mcs/mcs/statement.cs:687
+#: mcs/mcs/flowanalysis.cs:996 mcs/mcs/flowanalysis.cs:1012
+#: mcs/mcs/flowanalysis.cs:1048 mcs/mcs/statement.cs:795
 msgid "Control cannot leave the body of a finally clause"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:1130
+#: mcs/mcs/flowanalysis.cs:1194
 #, csharp-format
 msgid ""
 "An automatically implemented property `{0}' must be fully assigned before "
@@ -2661,143 +2238,125 @@ msgid ""
 "contructor from a constructor initializer"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:1134
+#: mcs/mcs/flowanalysis.cs:1198
 #, csharp-format
 msgid ""
 "Field `{0}' must be fully assigned before control leaves the constructor"
 msgstr ""
 
-#: mcs/mcs/flowanalysis.cs:1376
-msgid "Use of unassigned local variable `"
-msgstr ""
-
-#: mcs/mcs/flowanalysis.cs:1446
-msgid "Use of possibly unassigned field `"
-msgstr ""
-
-#: mcs/mcs/generic.cs:102 mcs/mcs/generic.cs:120
+#: mcs/mcs/generic.cs:115 mcs/mcs/generic.cs:139
 #, csharp-format
 msgid "Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:173
+#: mcs/mcs/generic.cs:201
 #, csharp-format
 msgid "A constraint cannot be the dynamic type `{0}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:182
+#: mcs/mcs/generic.cs:208
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: constraint type `{0}' is less accessible than `"
 "{1}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:189 mcs/mcs/generic.cs:203
+#: mcs/mcs/generic.cs:215 mcs/mcs/generic.cs:229
 #, fuzzy, csharp-format
 msgid "Duplicate constraint `{0}' for type parameter `{1}'"
 msgstr ""
 "`{0}' の部分的な宣言の間で、型パラメータ `{1}' について一貫性のない制約が含ま"
 "れています"
 
-#: mcs/mcs/generic.cs:218
+#: mcs/mcs/generic.cs:244
 #, csharp-format
 msgid "Circular constraint dependency involving `{0}' and `{1}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:249
+#: mcs/mcs/generic.cs:275
 #, csharp-format
 msgid ""
 "Type parameter `{0}' has the `struct' constraint, so it cannot be used as a "
 "constraint for `{1}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:260
+#: mcs/mcs/generic.cs:286
 #, csharp-format
 msgid ""
 "The class type constraint `{0}' must be listed before any other constraints. "
 "Consider moving type constraint to the beginning of the constraint list"
 msgstr ""
 
-#: mcs/mcs/generic.cs:266
+#: mcs/mcs/generic.cs:292
 #, csharp-format
 msgid ""
 "`{0}': cannot specify both a constraint class and the `class' or `struct' "
 "constraint"
 msgstr ""
 
-#: mcs/mcs/generic.cs:271
+#: mcs/mcs/generic.cs:304
+#, csharp-format
+msgid "A constraint cannot be special class `{0}'"
+msgstr ""
+
+#: mcs/mcs/generic.cs:308
 msgid "A constraint cannot be the dynamic type"
 msgstr ""
 
-#: mcs/mcs/generic.cs:277
+#: mcs/mcs/generic.cs:314
 #, csharp-format
 msgid ""
 "`{0}' is not a valid constraint. A constraint must be an interface, a non-"
 "sealed class or a type parameter"
 msgstr ""
 
-#: mcs/mcs/generic.cs:284
+#: mcs/mcs/generic.cs:321
 #, csharp-format
 msgid ""
 "`{0}' is not a valid constraint. Static classes cannot be used as constraints"
 msgstr ""
 
-#: mcs/mcs/generic.cs:290
-#, csharp-format
-msgid "A constraint cannot be special class `{0}'"
-msgstr ""
-
-#: mcs/mcs/generic.cs:538
+#: mcs/mcs/generic.cs:613
 #, csharp-format
 msgid "The {2} type parameter `{0}' must be {3} valid on `{1}{4}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:1741
+#: mcs/mcs/generic.cs:2032
 #, csharp-format
 msgid "`{0}': static classes cannot be used as generic arguments"
 msgstr ""
 
-#: mcs/mcs/generic.cs:1748
+#: mcs/mcs/generic.cs:2039
 #, csharp-format
 msgid "The type `{0}' may not be used as a type argument"
 msgstr ""
 
-#: mcs/mcs/generic.cs:2003
+#: mcs/mcs/generic.cs:2133
+msgid "Variant type parameters can only be used with interfaces and delegates"
+msgstr ""
+
+#: mcs/mcs/generic.cs:2354
 #, csharp-format
 msgid ""
 "The type `{0}' must be a reference type in order to use it as type parameter "
 "`{1}' in the generic type or method `{2}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:2013
+#: mcs/mcs/generic.cs:2364
 #, csharp-format
 msgid ""
 "The type `{0}' must be a non-nullable value type in order to use it as type "
 "parameter `{1}' in the generic type or method `{2}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:2052
-#, csharp-format
-msgid ""
-"The type `{0}' cannot be used as type parameter `{1}' in the generic type or "
-"method `{2}'. The nullable type `{0}' never satisfies interface constraint"
-msgstr ""
-
-#: mcs/mcs/generic.cs:2104
+#: mcs/mcs/generic.cs:2423
 #, csharp-format
 msgid ""
 "The type `{0}' must have a public parameterless constructor in order to use "
 "it as parameter `{1}' in the generic type or method `{2}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:2156
-#, csharp-format
-msgid ""
-"The type `{0}' cannot be used as type parameter `{1}' in the generic type or "
-"method `{2}'. There is no boxing conversion from `{0}' to `{3}'"
-msgstr ""
-
-#: mcs/mcs/generic.cs:2160
+#: mcs/mcs/generic.cs:2479
 #, csharp-format
 msgid ""
 "The type `{0}' cannot be used as type parameter `{1}' in the generic type or "
@@ -2805,62 +2364,123 @@ msgid ""
 "{3}'"
 msgstr ""
 
-#: mcs/mcs/generic.cs:2164
+#: mcs/mcs/generic.cs:2485
+#, csharp-format
+msgid ""
+"The type `{0}' cannot be used as type parameter `{1}' in the generic type or "
+"method `{2}'. The nullable type `{0}' never satisfies interface constraint `"
+"{3}'"
+msgstr ""
+
+#: mcs/mcs/generic.cs:2489
+#, csharp-format
+msgid ""
+"The type `{0}' cannot be used as type parameter `{1}' in the generic type or "
+"method `{2}'. The nullable type `{0}' does not satisfy constraint `{3}'"
+msgstr ""
+
+#: mcs/mcs/generic.cs:2494
+#, csharp-format
+msgid ""
+"The type `{0}' cannot be used as type parameter `{1}' in the generic type or "
+"method `{2}'. There is no boxing conversion from `{0}' to `{3}'"
+msgstr ""
+
+#: mcs/mcs/generic.cs:2499
 #, csharp-format
 msgid ""
 "The type `{0}' cannot be used as type parameter `{1}' in the generic type or "
 "method `{2}'. There is no implicit reference conversion from `{0}' to `{3}'"
 msgstr ""
 
-#: mcs/mcs/import.cs:1758
+#: mcs/mcs/import.cs:1868
 #, csharp-format
 msgid ""
 "Reference to type `{0}' claims it is defined in this assembly, but it is not "
 "defined in source or any added modules"
 msgstr ""
 
-#: mcs/mcs/import.cs:1762
+#: mcs/mcs/import.cs:1873
+#, csharp-format
+msgid ""
+"The type `{0}' has been forwarded to an assembly that is not referenced. "
+"Consider adding a reference to assembly `{1}'"
+msgstr ""
+
+#: mcs/mcs/import.cs:1877
 #, csharp-format
 msgid ""
 "The type `{0}' is defined in an assembly that is not referenced. Consider "
 "adding a reference to assembly `{1}'"
 msgstr ""
 
-#: mcs/mcs/import.cs:1766
+#: mcs/mcs/import.cs:1882
 #, csharp-format
 msgid ""
 "Reference to type `{0}' claims it is defined assembly `{1}', but it could "
 "not be found"
 msgstr ""
 
-#: mcs/mcs/iterators.cs:44
+#: mcs/mcs/iterators.cs:80
 msgid "The yield statement cannot be used inside anonymous method blocks"
 msgstr ""
 
-#: mcs/mcs/iterators.cs:856
+#: mcs/mcs/iterators.cs:1101
 #, csharp-format
 msgid ""
 "The body of `{0}' cannot be an iterator block because `{1}' is not an "
 "iterator interface type"
 msgstr ""
 
-#: mcs/mcs/iterators.cs:869
+#: mcs/mcs/iterators.cs:1114
 msgid "Iterators cannot have ref or out parameters"
 msgstr ""
 
-#: mcs/mcs/iterators.cs:875
+#: mcs/mcs/iterators.cs:1120
 msgid "__arglist is not allowed in parameter list of iterators"
 msgstr ""
 
-#: mcs/mcs/iterators.cs:881
+#: mcs/mcs/iterators.cs:1126
 msgid "Iterators cannot have unsafe parameters or yield types"
 msgstr ""
 
-#: mcs/mcs/iterators.cs:888 mcs/mcs/statement.cs:4325
+#: mcs/mcs/iterators.cs:1132 mcs/mcs/statement.cs:4987
 msgid "Unsafe code may not appear in iterators"
 msgstr ""
 
-#: mcs/mcs/linq.cs:68
+#: mcs/mcs/ikvm.cs:266
+msgid "SDK path could not be resolved"
+msgstr ""
+
+#: mcs/mcs/ikvm.cs:344
+#, csharp-format
+msgid ""
+"Assembly `{0}' references `{1}' which has a higher version number than "
+"imported assembly `{2}'"
+msgstr ""
+
+#: mcs/mcs/ikvm.cs:353 mcs/mcs/ikvm.cs:357
+#, csharp-format
+msgid ""
+"Assuming assembly reference `{0}' matches assembly `{1}'. You may need to "
+"supply runtime policy"
+msgstr ""
+
+#: mcs/mcs/ikvm.cs:444
+#, csharp-format
+msgid ""
+"An assembly with the same name `{0}' has already been imported. Consider "
+"removing one of the references or sign the assembly"
+msgstr ""
+
+#: mcs/mcs/ikvm.cs:453
+#, csharp-format
+msgid ""
+"An assembly with the same identity `{0}' has already been imported. Consider "
+"removing one of the references"
+msgstr ""
+
+#: mcs/mcs/linq.cs:69
 #, csharp-format
 msgid ""
 "An implementation of `{0}' query expression pattern could not be found. Are "
@@ -2868,136 +2488,156 @@ msgid ""
 "reference?"
 msgstr ""
 
-#: mcs/mcs/linq.cs:93
+#: mcs/mcs/linq.cs:91
+msgid ""
+"Query expressions with a source or join sequence of type `dynamic' are not "
+"allowed"
+msgstr ""
+
+#: mcs/mcs/linq.cs:101
 #, csharp-format
 msgid ""
 "Ambiguous implementation of the query pattern `{0}' for source type `{1}'"
 msgstr ""
 
-#: mcs/mcs/linq.cs:124
+#: mcs/mcs/linq.cs:132
 #, csharp-format
 msgid ""
 "An implementation of `{0}' query expression pattern for source type `{1}' "
 "could not be found"
 msgstr ""
 
-#: mcs/mcs/linq.cs:132
+#: mcs/mcs/linq.cs:140
 #, csharp-format
 msgid ""
 "An expression type is incorrect in a subsequent `from' clause in a query "
 "expression with source type `{0}'"
 msgstr ""
 
-#: mcs/mcs/linq.cs:136
+#: mcs/mcs/linq.cs:144
 #, csharp-format
 msgid ""
 "An expression type in `{0}' clause is incorrect. Type inference failed in "
 "the call to `{1}'"
 msgstr ""
 
-#: mcs/mcs/linq.cs:248
+#: mcs/mcs/linq.cs:256
 #, csharp-format
 msgid "A range variable `{0}' cannot be initialized with `{1}'"
 msgstr ""
 
-#: mcs/mcs/linq.cs:747
+#: mcs/mcs/linq.cs:828
 #, csharp-format
 msgid "A range variable `{0}' conflicts with a previous declaration of `{0}'"
 msgstr ""
 
-#: mcs/mcs/linq.cs:754
+#: mcs/mcs/linq.cs:835
 #, csharp-format
 msgid "A range variable `{0}' has already been declared in this scope"
 msgstr ""
 
-#: mcs/mcs/linq.cs:761
+#: mcs/mcs/linq.cs:842
 #, csharp-format
 msgid "A range variable `{0}' conflicts with a method type parameter"
 msgstr ""
 
-#: mcs/mcs/linq.cs:793
+#: mcs/mcs/linq.cs:874
 #, csharp-format
 msgid ""
 "A range variable `{0}' cannot be assigned to. Consider using `let' clause to "
 "store the value"
 msgstr ""
 
-#: mcs/mcs/literal.cs:49
+#: mcs/mcs/literal.cs:57
 #, csharp-format
 msgid ""
 "Cannot convert null to the type parameter `{0}' because it could be a value "
 "type. Consider using `default ({0})' instead"
 msgstr ""
 
-#: mcs/mcs/literal.cs:55
+#: mcs/mcs/literal.cs:63
 #, csharp-format
 msgid "Cannot convert null to `{0}' because it is a value type"
 msgstr ""
 
-#: mcs/mcs/literal.cs:209
+#: mcs/mcs/literal.cs:274
 #, csharp-format
 msgid ""
 "Literal of type double cannot be implicitly converted to type `{0}'. Add "
 "suffix `{1}' to create a literal of this type"
 msgstr ""
 
-#: mcs/mcs/membercache.cs:1294
+#: mcs/mcs/membercache.cs:1391
 msgid ""
 "A partial method declaration and partial method implementation cannot differ "
 "on use of `params' modifier"
 msgstr ""
 
-#: mcs/mcs/membercache.cs:1297
+#: mcs/mcs/membercache.cs:1394
 msgid ""
 "A partial method declaration and partial method implementation must be both "
 "an extension method or neither"
 msgstr ""
 
-#: mcs/mcs/membercache.cs:1301
+#: mcs/mcs/membercache.cs:1398
 #, csharp-format
 msgid ""
 "Overloaded contructor `{0}' cannot differ on use of parameter modifiers only"
 msgstr ""
 
-#: mcs/mcs/membercache.cs:1305
+#: mcs/mcs/membercache.cs:1402
 #, fuzzy, csharp-format
 msgid ""
 "Overloaded method `{0}' cannot differ on use of parameter modifiers only"
 msgstr "Conditionalメソッド `{0}' ではoutパラメータを指定できません"
 
-#: mcs/mcs/membercache.cs:1337
+#: mcs/mcs/membercache.cs:1434
 msgid ""
 "A partial method declaration and partial method implementation must be both "
 "`static' or neither"
 msgstr ""
 
-#: mcs/mcs/membercache.cs:1342
+#: mcs/mcs/membercache.cs:1439
 msgid ""
 "A partial method declaration and partial method implementation must be both "
 "`unsafe' or neither"
 msgstr ""
 
-#: mcs/mcs/membercache.cs:1348
+#: mcs/mcs/membercache.cs:1445
 #, fuzzy, csharp-format
 msgid "A partial method `{0}' declaration is already defined"
 msgstr "部分メソッド `{0}' はインターフェースを明示的に実装できません"
 
-#: mcs/mcs/membercache.cs:1352
+#: mcs/mcs/membercache.cs:1449
 #, fuzzy, csharp-format
 msgid "A partial method `{0}' implementation is already defined"
 msgstr "部分メソッド `{0}' はインターフェースを明示的に実装できません"
 
-#: mcs/mcs/membercache.cs:1363 mcs/mcs/property.cs:81
+#: mcs/mcs/membercache.cs:1460 mcs/mcs/property.cs:81
 #, csharp-format
 msgid "A member `{0}' is already reserved"
 msgstr ""
 
-#: mcs/mcs/membercache.cs:1374
+#: mcs/mcs/membercache.cs:1471
 #, csharp-format
 msgid "Duplicate user-defined conversion in type `{0}'"
 msgstr ""
 
-#: mcs/mcs/method.cs:512
+#: mcs/mcs/membercache.cs:1477
+#, csharp-format
+msgid ""
+"A member `{0}' is already defined. Rename this member or use different "
+"parameter types"
+msgstr ""
+"メンバ `{0}' が既に定義されています。このメンバの名前を変更するか、別のパラ"
+"メータ型を使用してください"
+
+#: mcs/mcs/method.cs:558
+#, csharp-format
+msgid "`{0}': Async methods cannot use `MethodImplOptions.Synchronized'"
+msgstr ""
+
+#: mcs/mcs/method.cs:566
 msgid ""
 "The DllImport attribute must be specified on a method marked `static' and "
 "`extern'"
@@ -3005,12 +2645,12 @@ msgstr ""
 "`static'かつ`extern'で宣言されたメソッドには、DllImport属性が指定されなければ"
 "なりません"
 
-#: mcs/mcs/method.cs:600
+#: mcs/mcs/method.cs:661
 #, csharp-format
 msgid "`{0}': A partial method parameters cannot use `out' modifier"
 msgstr "`{0}': 部分メソッドのパラメータで`out'修飾子は使用できません"
 
-#: mcs/mcs/method.cs:659
+#: mcs/mcs/method.cs:722
 #, csharp-format
 msgid ""
 "Conditional not valid on `{0}' because it is a constructor, destructor, "
@@ -3019,37 +2659,53 @@ msgstr ""
 "Conditionalは コンストラクタ、デストラクタ、演算子または明示的なインター"
 "フェースの実装である `{0}'  では無効です"
 
-#: mcs/mcs/method.cs:877
+#: mcs/mcs/method.cs:865
+msgid ""
+"A partial method cannot define access modifier or any of abstract, extern, "
+"new, override, sealed, or virtual modifiers"
+msgstr ""
+
+#: mcs/mcs/method.cs:871
+msgid ""
+"A partial method must be declared within a partial class or partial struct"
+msgstr ""
+
+#: mcs/mcs/method.cs:876
+#, csharp-format
+msgid "`{0}': Extension methods must be declared static"
+msgstr "`{0}': 拡張メソッドはstaticで宣言されなければなりません"
+
+#: mcs/mcs/method.cs:892
 #, csharp-format
 msgid "Program `{0}' has more than one entry point defined: `{1}'"
 msgstr "プログラム `{0}' には複数のエントリポイントが定義されています: `{1}'"
 
-#: mcs/mcs/method.cs:921
+#: mcs/mcs/method.cs:935
 #, csharp-format
 msgid "Conditional not valid on `{0}' because it is an override method"
 msgstr "Conditionalはオーバーライドメソッドである `{0}' では無効です"
 
-#: mcs/mcs/method.cs:926
+#: mcs/mcs/method.cs:940
 #, csharp-format
 msgid "Conditional not valid on `{0}' because its return type is not void"
 msgstr "Conditionalは戻り値型がvoidでない `{0}' では無効です"
 
-#: mcs/mcs/method.cs:931
+#: mcs/mcs/method.cs:945
 msgid "Conditional not valid on interface members"
 msgstr "Conditionalはインターフェースメンバでは無効です"
 
-#: mcs/mcs/method.cs:937
+#: mcs/mcs/method.cs:951
 #, csharp-format
 msgid "Conditional member `{0}' cannot implement interface member `{1}'"
 msgstr ""
 "Conditionalメンバ `{0}' はインターフェースメンバ `{1}' を実装できません"
 
-#: mcs/mcs/method.cs:944
+#: mcs/mcs/method.cs:958
 #, csharp-format
 msgid "Conditional method `{0}' cannot have an out parameter"
 msgstr "Conditionalメソッド `{0}' ではoutパラメータを指定できません"
 
-#: mcs/mcs/method.cs:1067
+#: mcs/mcs/method.cs:1152
 #, csharp-format
 msgid ""
 "The constraints for type parameter `{0}' of method `{1}' must match the "
@@ -3057,76 +2713,82 @@ msgid ""
 "using an explicit interface implementation instead"
 msgstr ""
 
-#: mcs/mcs/method.cs:1121
+#: mcs/mcs/method.cs:1210
+msgid "The return type of an async method must be void, Task, or Task<T>"
+msgstr ""
+
+#: mcs/mcs/method.cs:1227
 #, fuzzy, csharp-format
 msgid "`{0}': Extension methods cannot be defined in a nested class"
 msgstr "`{0}': 拡張メソッドはstaticで宣言されなければなりません"
 
-#: mcs/mcs/method.cs:1127
+#: mcs/mcs/method.cs:1233
 #, csharp-format
 msgid ""
-"`{0}': Extension methods cannot be declared without a reference to System."
-"Core.dll assembly. Add the assembly reference or remove `this' modifer from "
-"the first parameter"
+"`{0}': Extension methods require `System.Runtime.CompilerServices."
+"ExtensionAttribute' type to be available. Are you missing an assembly "
+"reference?"
 msgstr ""
-"`{0}': 拡張メソッドはSystem.Core.dllアセンブリへの参照なしでは宣言できませ"
-"ん。アセンブリ参照を追加するか、または最初のパラメータから `this' 修飾子を取"
-"り除いてください。"
 
-#: mcs/mcs/method.cs:1136
+#: mcs/mcs/method.cs:1242
 #, fuzzy, csharp-format
 msgid "`{0}': Extension methods must be defined in a non-generic static class"
 msgstr "`{0}': 拡張メソッドはstaticで宣言されなければなりません"
 
-#: mcs/mcs/method.cs:1189
+#: mcs/mcs/method.cs:1258
+#, fuzzy, csharp-format
+msgid "`{0}': an entry point cannot be async method"
+msgstr "`{0}': `{1}' はメソッドではないため、オーバーライドできません"
+
+#: mcs/mcs/method.cs:1295
 #, csharp-format
 msgid ""
 "A partial method `{0}' implementation is missing a partial method declaration"
 msgstr ""
 
-#: mcs/mcs/method.cs:1236
+#: mcs/mcs/method.cs:1336
 #, csharp-format
 msgid "Method or delegate cannot return type `{0}'"
 msgstr ""
 
-#: mcs/mcs/method.cs:1311
+#: mcs/mcs/method.cs:1415
 msgid ""
 "The constructor call cannot be dynamically dispatched within constructor "
 "initializer"
 msgstr ""
 
-#: mcs/mcs/method.cs:1325
+#: mcs/mcs/method.cs:1429
 #, fuzzy, csharp-format
 msgid "`{0}': Struct constructors cannot call base constructors"
 msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
 
-#: mcs/mcs/method.cs:1344
+#: mcs/mcs/method.cs:1447
 #, csharp-format
 msgid "Constructor `{0}' cannot call itself"
 msgstr ""
 
-#: mcs/mcs/method.cs:1463
+#: mcs/mcs/method.cs:1576
 #, csharp-format
 msgid "`{0}': The static constructor must be parameterless"
 msgstr ""
 
-#: mcs/mcs/method.cs:1481
+#: mcs/mcs/method.cs:1597
 msgid "Structs cannot contain explicit parameterless constructors"
 msgstr ""
 
-#: mcs/mcs/method.cs:1537
+#: mcs/mcs/method.cs:1652
 #, fuzzy, csharp-format
 msgid ""
 "`{0}': A class with the ComImport attribute cannot have a user-defined "
 "constructor"
 msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
 
-#: mcs/mcs/method.cs:1780
+#: mcs/mcs/method.cs:1902
 #, fuzzy, csharp-format
 msgid "`{0}' is an accessor not found in interface member `{1}{2}'"
 msgstr "`{0}' は継承されるabstractメンバ `{1}' を隠蔽してしまいます"
 
-#: mcs/mcs/method.cs:1786
+#: mcs/mcs/method.cs:1908
 #, fuzzy, csharp-format
 msgid ""
 "`{0}.{1}' in explicit interface declaration is not a member of interface"
@@ -3134,34 +2796,34 @@ msgstr ""
 "明示的なインターフェースの宣言で記述された `{0}' は、インターフェースではあり"
 "ません"
 
-#: mcs/mcs/method.cs:1793
+#: mcs/mcs/method.cs:1916
 #, csharp-format
 msgid ""
 "`{0}' explicit method implementation cannot implement `{1}' because it is an "
 "accessor"
 msgstr ""
 
-#: mcs/mcs/method.cs:1803
+#: mcs/mcs/method.cs:1926
 #, fuzzy, csharp-format
 msgid "Method `{0}' cannot implement interface accessor `{1}'"
 msgstr ""
 "Conditionalメンバ `{0}' はインターフェースメンバ `{1}' を実装できません"
 
-#: mcs/mcs/method.cs:1809
+#: mcs/mcs/method.cs:1933
 #, csharp-format
 msgid ""
 "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use "
 "an explicit interface implementation"
 msgstr ""
 
-#: mcs/mcs/method.cs:1815
+#: mcs/mcs/method.cs:1940
 #, fuzzy, csharp-format
 msgid ""
 "Accessor `{0}' must be declared public to implement interface member `{1}'"
 msgstr ""
 "Conditionalメンバ `{0}' はインターフェースメンバ `{1}' を実装できません"
 
-#: mcs/mcs/method.cs:1839
+#: mcs/mcs/method.cs:1960
 #, fuzzy, csharp-format
 msgid ""
 "`{0}': the explicit interface implementation cannot introduce the params "
@@ -3170,263 +2832,292 @@ msgstr ""
 "明示的なインターフェースの宣言で記述された `{0}' は、インターフェースではあり"
 "ません"
 
-#: mcs/mcs/method.cs:2157
+#: mcs/mcs/method.cs:2308
 #, fuzzy, csharp-format
 msgid ""
 "Attribute `{0}' is not valid on property or event accessors. It is valid on `"
 "{1}' declarations only"
 msgstr "属性 `{0}' はこの宣言型では無効です。 `{1}' の宣言でのみ有効です"
 
-#: mcs/mcs/method.cs:2368
+#: mcs/mcs/method.cs:2536
 #, csharp-format
 msgid "User-defined operator `{0}' must be declared static and public"
 msgstr ""
 
-#: mcs/mcs/method.cs:2407
+#: mcs/mcs/method.cs:2580
 msgid ""
 "User-defined operator cannot take an object of the enclosing type and "
 "convert to an object of the enclosing type"
 msgstr ""
 
-#: mcs/mcs/method.cs:2418
+#: mcs/mcs/method.cs:2591
 msgid "User-defined conversion must convert to or from the enclosing type"
 msgstr ""
 
-#: mcs/mcs/method.cs:2424
+#: mcs/mcs/method.cs:2597
 #, fuzzy, csharp-format
 msgid ""
 "User-defined conversion `{0}' cannot convert to or from the dynamic type"
 msgstr "`{0}' は特別なクラス `{1}' から派生することはできません"
 
-#: mcs/mcs/method.cs:2431
+#: mcs/mcs/method.cs:2604
 #, csharp-format
 msgid ""
 "User-defined conversion `{0}' cannot convert to or from an interface type"
 msgstr ""
 
-#: mcs/mcs/method.cs:2438
+#: mcs/mcs/method.cs:2611
 #, csharp-format
 msgid "User-defined conversion `{0}' cannot convert to or from a base class"
 msgstr ""
 
-#: mcs/mcs/method.cs:2444
+#: mcs/mcs/method.cs:2617
 #, csharp-format
 msgid "User-defined conversion `{0}' cannot convert to or from a derived class"
 msgstr ""
 
-#: mcs/mcs/method.cs:2451
+#: mcs/mcs/method.cs:2624
 msgid ""
 "Overloaded shift operator must have the type of the first operand be the "
 "containing type, and the type of the second operand must be int"
 msgstr ""
 
-#: mcs/mcs/method.cs:2460
+#: mcs/mcs/method.cs:2633
 msgid ""
 "The return type for ++ or -- operator must be the containing type or derived "
 "from the containing type"
 msgstr ""
 
-#: mcs/mcs/method.cs:2465
+#: mcs/mcs/method.cs:2638
 msgid "The parameter type for ++ or -- operator must be the containing type"
 msgstr ""
 
-#: mcs/mcs/method.cs:2472
+#: mcs/mcs/method.cs:2645
 msgid "The parameter type of a unary operator must be the containing type"
 msgstr ""
 
-#: mcs/mcs/method.cs:2480
+#: mcs/mcs/method.cs:2653
 msgid "The return type of operator True or False must be bool"
 msgstr ""
 
-#: mcs/mcs/method.cs:2495
+#: mcs/mcs/method.cs:2668
 msgid "One of the parameters of a binary operator must be the containing type"
 msgstr ""
 
-#: mcs/mcs/modifiers.cs:275
+#: mcs/mcs/modifiers.cs:277
 #, csharp-format
 msgid "The modifier `{0}' is not valid for this item"
 msgstr ""
 
-#: mcs/mcs/namespace.cs:70
+#: mcs/mcs/namespace.cs:263
 #, csharp-format
 msgid ""
-"The type or namespace name `{0}' could not be found in the global namespace "
-"(are you missing an assembly reference?)"
+"The type or namespace name `{0}' could not be found in the global namespace. "
+"Are you missing {1} assembly reference?"
 msgstr ""
 
-#: mcs/mcs/namespace.cs:177
+#: mcs/mcs/namespace.cs:267
 #, csharp-format
 msgid ""
 "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are "
-"you missing an assembly reference?"
+"you missing {2} assembly reference?"
 msgstr ""
 
-#: mcs/mcs/namespace.cs:256
+#: mcs/mcs/namespace.cs:367
 #, csharp-format
 msgid "The imported type `{0}' is defined multiple times"
 msgstr ""
 
-#: mcs/mcs/namespace.cs:583
+#: mcs/mcs/namespace.cs:839 mcs/mcs/namespace.cs:851
+msgid ""
+"A using clause must precede all other namespace elements except extern alias "
+"declarations"
+msgstr ""
+
+#: mcs/mcs/namespace.cs:867
+#, csharp-format
+msgid "The using alias `{0}' appeared previously in this namespace"
+msgstr ""
+
+#: mcs/mcs/namespace.cs:905 mcs/mcs/namespace.cs:928
+#, csharp-format
+msgid "The namespace `{0}' already contains a definition for `{1}'"
+msgstr ""
+
+#: mcs/mcs/namespace.cs:1147
+#, csharp-format
+msgid "Namespace `{0}' contains a definition with same name as alias `{1}'"
+msgstr ""
+
+#: mcs/mcs/namespace.cs:1199
+#, csharp-format
+msgid "`{0}' is an ambiguous reference between `{1}' and `{2}'"
+msgstr ""
+
+#: mcs/mcs/namespace.cs:1390
 #, csharp-format
 msgid ""
 "`{0}' is a type not a namespace. A using namespace directive can only be "
 "applied to namespaces"
 msgstr ""
 
-#: mcs/mcs/namespace.cs:610
+#: mcs/mcs/namespace.cs:1414
 #, csharp-format
 msgid "The extern alias `{0}' was not specified in -reference option"
 msgstr ""
 
-#: mcs/mcs/namespace.cs:805 mcs/mcs/namespace.cs:827
-msgid ""
-"A using clause must precede all other namespace elements except extern alias "
-"declarations"
-msgstr ""
-
-#: mcs/mcs/namespace.cs:851
-msgid "An extern alias declaration must precede all other elements"
-msgstr ""
-
-#: mcs/mcs/namespace.cs:869
-#, csharp-format
-msgid "The using alias `{0}' appeared previously in this namespace"
-msgstr ""
-
-#: mcs/mcs/namespace.cs:990
-#, csharp-format
-msgid "Namespace `{0}' contains a definition with same name as alias `{1}'"
-msgstr ""
-
-#: mcs/mcs/namespace.cs:1044
-#, csharp-format
-msgid "`{0}' is an ambiguous reference between `{1}' and `{2}'"
-msgstr ""
-
-#: mcs/mcs/namespace.cs:1112
-msgid "The global extern alias cannot be redefined"
-msgstr ""
-
-#: mcs/mcs/namespace.cs:1117
-#, csharp-format
-msgid ""
-"The type or namespace name `{0}' could not be found. Are you missing a using "
-"directive or an assembly reference?"
-msgstr ""
-
-#: mcs/mcs/nullable.cs:1036
+#: mcs/mcs/nullable.cs:1026
 msgid ""
 "An expression tree cannot contain a coalescing operator with null left side"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:156
+#: mcs/mcs/parameter.cs:157
 msgid "The params parameter must be a single dimensional array"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:301
+#: mcs/mcs/parameter.cs:319
 msgid "An out parameter cannot have the `In' attribute"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:306
+#: mcs/mcs/parameter.cs:324
 msgid ""
 "Do not use `System.ParamArrayAttribute'. Use the `params' keyword instead"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:313
+#: mcs/mcs/parameter.cs:331
 msgid ""
 "Cannot specify only `Out' attribute on a ref parameter. Use both `In' and "
 "`Out' attributes or neither"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:324
+#: mcs/mcs/parameter.cs:340
 #, fuzzy, csharp-format
 msgid "Cannot specify `{0}' attribute on optional parameter `{1}'"
 msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
 
-#: mcs/mcs/parameter.cs:369
+#: mcs/mcs/parameter.cs:349
+msgid ""
+"The CallerMemberName attribute can only be applied to parameters with "
+"default value"
+msgstr ""
+
+#: mcs/mcs/parameter.cs:354
+msgid ""
+"The CallerLineNumber attribute can only be applied to parameters with "
+"default value"
+msgstr ""
+
+#: mcs/mcs/parameter.cs:359
+msgid ""
+"The CallerFilePath attribute can only be applied to parameters with default "
+"value"
+msgstr ""
+
+#: mcs/mcs/parameter.cs:392
 #, csharp-format
 msgid "Method or delegate parameter cannot be of type `{0}'"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:379
+#: mcs/mcs/parameter.cs:402
 #, csharp-format
 msgid "`{0}': static types cannot be used as parameters"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:385
+#: mcs/mcs/parameter.cs:408
 #, fuzzy, csharp-format
 msgid "The extension method cannot be of type `{0}'"
 msgstr "`{0}': 拡張メソッドはネストしたクラスの中では定義できません"
 
-#: mcs/mcs/parameter.cs:425
+#: mcs/mcs/parameter.cs:429 mcs/mcs/parameter.cs:441
+#, csharp-format
+msgid ""
+"The CallerMemberName attribute cannot be applied because there is no "
+"standard conversion from `{0}' to `{1}'"
+msgstr ""
+
+#: mcs/mcs/parameter.cs:453
+#, csharp-format
+msgid ""
+"The CallerFilePath attribute cannot be applied because there is no standard "
+"conversion from `{0}' to `{1}'"
+msgstr ""
+
+#: mcs/mcs/parameter.cs:499
 #, csharp-format
 msgid ""
 "Argument of type `{0}' is not applicable for the DefaultParameterValue "
 "attribute"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:429
+#: mcs/mcs/parameter.cs:503
 #, csharp-format
 msgid ""
 "The DefaultParameterValue attribute is not applicable on parameters of type `"
 "{0}'"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:457
+#: mcs/mcs/parameter.cs:531
 msgid "The type of the default value should match the type of the parameter"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:602
+#: mcs/mcs/parameter.cs:682
 msgid "An expression tree parameter cannot use `ref' or `out' modifier"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:1074
+#: mcs/mcs/parameter.cs:1157
 #, csharp-format
 msgid "The parameter name `{0}' conflicts with a compiler generated name"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:1220
+#: mcs/mcs/parameter.cs:1317
 #, csharp-format
 msgid ""
 "The expression being assigned to optional parameter `{0}' must be a constant "
 "or default value"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:1237
+#: mcs/mcs/parameter.cs:1334
 #, csharp-format
 msgid ""
 "The expression being assigned to nullable optional parameter `{0}' must be "
 "default value"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:1245
+#: mcs/mcs/parameter.cs:1342
 #, csharp-format
 msgid ""
 "Optional parameter `{0}' of type `{1}' can only be initialized with `null'"
 msgstr ""
 
-#: mcs/mcs/parameter.cs:1256
+#: mcs/mcs/parameter.cs:1353
 #, csharp-format
 msgid ""
 "Optional parameter expression of type `{0}' cannot be converted to parameter "
 "type `{1}'"
 msgstr ""
 
-#: mcs/mcs/pending.cs:443
+#: mcs/mcs/pending.cs:326
+#, csharp-format
+msgid ""
+"Cannot implement interface `{0}' with the specified type parameters because "
+"it causes method `{1}' to differ on parameter modifiers only"
+msgstr ""
+
+#: mcs/mcs/pending.cs:691
 #, csharp-format
 msgid ""
 "`{0}' does not implement interface member `{1}' and the best implementing "
 "candidate `{2}' is static"
 msgstr ""
 
-#: mcs/mcs/pending.cs:447
+#: mcs/mcs/pending.cs:695
 #, csharp-format
 msgid ""
 "`{0}' does not implement interface member `{1}' and the best implementing "
-"candidate `{2}' in not public"
+"candidate `{2}' is not public"
 msgstr ""
 
-#: mcs/mcs/pending.cs:451
+#: mcs/mcs/pending.cs:699
 #, csharp-format
 msgid ""
 "`{0}' does not implement interface member `{1}' and the best implementing "
@@ -3434,160 +3125,177 @@ msgid ""
 "type `{4}'"
 msgstr ""
 
-#: mcs/mcs/pending.cs:456
+#: mcs/mcs/pending.cs:704
 #, csharp-format
 msgid "`{0}' does not implement interface member `{1}'"
 msgstr ""
 
-#: mcs/mcs/pending.cs:461
+#: mcs/mcs/pending.cs:709
 #, csharp-format
 msgid "`{0}' does not implement inherited abstract member `{1}'"
 msgstr ""
 
-#: mcs/mcs/property.cs:357
+#: mcs/mcs/property.cs:349
 #, csharp-format
 msgid ""
 "`{0}': accessibility modifiers may not be used on accessors in an interface"
 msgstr ""
 
-#: mcs/mcs/property.cs:361
+#: mcs/mcs/property.cs:352
 #, fuzzy, csharp-format
 msgid "`{0}': abstract properties cannot have private accessors"
 msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
 
-#: mcs/mcs/property.cs:406
+#: mcs/mcs/property.cs:402
 #, csharp-format
 msgid ""
 "The accessibility modifier of the `{0}' accessor must be more restrictive "
 "than the modifier of the property or indexer `{1}'"
 msgstr ""
 
-#: mcs/mcs/property.cs:507
+#: mcs/mcs/property.cs:511
 #, csharp-format
 msgid "Explicit interface implementation `{0}' is missing accessor `{1}'"
 msgstr ""
 
-#: mcs/mcs/property.cs:526
+#: mcs/mcs/property.cs:530
 #, fuzzy, csharp-format
 msgid ""
 "`{0}': cannot override because `{1}' does not have an overridable get "
 "accessor"
 msgstr "`{0}': `{1}' はイベントではないため、オーバーライドできません"
 
-#: mcs/mcs/property.cs:543
+#: mcs/mcs/property.cs:547
 #, fuzzy, csharp-format
 msgid ""
 "`{0}': cannot override because `{1}' does not have an overridable set "
 "accessor"
 msgstr "`{0}': `{1}' はイベントではないため、オーバーライドできません"
 
-#: mcs/mcs/property.cs:584
+#: mcs/mcs/property.cs:588
 #, csharp-format
 msgid ""
 "`{0}': Cannot specify accessibility modifiers for both accessors of the "
 "property or indexer"
 msgstr ""
 
-#: mcs/mcs/property.cs:591
+#: mcs/mcs/property.cs:595
 #, csharp-format
 msgid ""
 "`{0}': accessibility modifiers on accessors may only be used if the property "
 "or indexer has both a get and a set accessor"
 msgstr ""
 
-#: mcs/mcs/property.cs:788
+#: mcs/mcs/property.cs:823
 #, csharp-format
 msgid ""
 "Automatically implemented property `{0}' cannot be used inside a type with "
 "an explicit StructLayout attribute"
 msgstr ""
 
-#: mcs/mcs/property.cs:1279
+#: mcs/mcs/property.cs:1312
 #, csharp-format
 msgid "`{0}': event must be of a delegate type"
 msgstr ""
 
-#: mcs/mcs/property.cs:1492
+#: mcs/mcs/property.cs:1588
 #, csharp-format
 msgid ""
 "The `{0}' attribute is valid only on an indexer that is not an explicit "
 "interface member declaration"
 msgstr ""
 
-#: mcs/mcs/property.cs:1526
+#: mcs/mcs/property.cs:1592
 #, fuzzy
 msgid "Cannot set the `IndexerName' attribute on an indexer marked override"
 msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
 
-#: mcs/mcs/reflection.cs:238
-msgid "Could not access the key inside the container `"
-msgstr ""
-
-#: mcs/mcs/roottypes.cs:282
+#: mcs/mcs/module.cs:336
 #, csharp-format
 msgid "Value specified for the argument to `{0}' is not valid"
 msgstr ""
 
-#: mcs/mcs/statement.cs:87
+#: mcs/mcs/statement.cs:100
 msgid ""
 "A lambda expression with statement body cannot be converted to an expresion "
 "tree"
 msgstr ""
 
-#: mcs/mcs/statement.cs:733
+#: mcs/mcs/statement.cs:858
 #, csharp-format
 msgid ""
 "An object of a type convertible to `{0}' is required for the return statement"
 msgstr ""
 
-#: mcs/mcs/statement.cs:746
+#: mcs/mcs/statement.cs:872 mcs/mcs/statement.cs:896
 #, csharp-format
 msgid ""
 "`{0}': A return keyword must not be followed by any expression when method "
 "returns void"
 msgstr ""
 
-#: mcs/mcs/statement.cs:771
+#: mcs/mcs/statement.cs:907
+#, csharp-format
+msgid ""
+"`{0}': A return keyword must not be followed by an expression when async "
+"method returns `Task'. Consider using `Task<T>' return type"
+msgstr ""
+
+#: mcs/mcs/statement.cs:917
+#, csharp-format
+msgid ""
+"`{0}': The return expression type of async method must be `{1}' rather than "
+"`Task<{1}>'"
+msgstr ""
+
+#: mcs/mcs/statement.cs:927
+#, csharp-format
+msgid ""
+"`{0}': A return keyword must not be followed by any expression when delegate "
+"returns void"
+msgstr ""
+
+#: mcs/mcs/statement.cs:950
 #, csharp-format
 msgid ""
 "Cannot convert `{0}' to delegate type `{1}' because some of the return types "
 "in the block are not implicitly convertible to the delegate return type"
 msgstr ""
 
-#: mcs/mcs/statement.cs:799
+#: mcs/mcs/statement.cs:998
 msgid ""
 "Cannot return a value from iterators. Use the yield return statement to "
 "return a value, or yield break to end the iteration"
 msgstr ""
 
-#: mcs/mcs/statement.cs:956 mcs/mcs/statement.cs:990
+#: mcs/mcs/statement.cs:1170 mcs/mcs/statement.cs:1215
 msgid "A goto case is only valid inside a switch statement"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1069 mcs/mcs/statement.cs:4727
+#: mcs/mcs/statement.cs:1303 mcs/mcs/statement.cs:5388
 msgid "The type caught or thrown must be derived from System.Exception"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1291
+#: mcs/mcs/statement.cs:1548
 msgid "A fixed statement cannot use an implicitly typed local variable"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1296
+#: mcs/mcs/statement.cs:1553
 msgid "An implicitly typed local variable cannot be a constant"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1301
+#: mcs/mcs/statement.cs:1558
 msgid ""
 "An implicitly typed local variable declarator must include an initializer"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1306
+#: mcs/mcs/statement.cs:1563
 msgid ""
 "An implicitly typed local variable declaration cannot include multiple "
 "declarators"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1876
+#: mcs/mcs/statement.cs:2185
 #, csharp-format
 msgid ""
 "A local variable named `{0}' cannot be declared in this scope because it "
@@ -3595,112 +3303,115 @@ msgid ""
 "scope to denote something else"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1887
-#, csharp-format
-msgid ""
-"`{0}': An anonymous type cannot have multiple properties with the same name"
-msgstr "`{0}': 匿名型は同一の名前で複数のプロパティをもつことができません"
-
-#: mcs/mcs/statement.cs:1890
-#, csharp-format
-msgid "The parameter name `{0}' is a duplicate"
-msgstr ""
-
-#: mcs/mcs/statement.cs:1897
+#: mcs/mcs/statement.cs:2197
 #, csharp-format
 msgid "A local variable named `{0}' is already defined in this scope"
 msgstr ""
 
-#: mcs/mcs/statement.cs:1903
+#: mcs/mcs/statement.cs:2204
 #, fuzzy, csharp-format
 msgid ""
 "The type parameter name `{0}' is the same as local variable or parameter name"
 msgstr ""
 "型パラメータ `{0}' が、その宣言型あるいはメソッドと同じ名前になっています"
 
-#: mcs/mcs/statement.cs:2477
+#: mcs/mcs/statement.cs:2935
 #, csharp-format
 msgid ""
 "The out parameter `{0}' must be assigned to before control leaves the "
 "current method"
 msgstr ""
 
-#: mcs/mcs/statement.cs:2574
+#: mcs/mcs/statement.cs:3053
 #, csharp-format
 msgid "`{0}': not all code paths return a value"
 msgstr ""
 
-#: mcs/mcs/statement.cs:2578
+#: mcs/mcs/statement.cs:3070
 #, csharp-format
 msgid "Not all code paths return a value in anonymous method of type `{0}'"
 msgstr ""
 
-#: mcs/mcs/statement.cs:2749
+#: mcs/mcs/statement.cs:3118
+#, fuzzy
+msgid "Async methods cannot have ref or out parameters"
+msgstr "Conditionalメソッド `{0}' ではoutパラメータを指定できません"
+
+#: mcs/mcs/statement.cs:3124
+msgid "__arglist is not allowed in parameter list of async methods"
+msgstr ""
+
+#: mcs/mcs/statement.cs:3130
+#, fuzzy
+msgid "Async methods cannot have unsafe parameters"
+msgstr "`{0}': staticクラス '{1}' から派生することはできません"
+
+#: mcs/mcs/statement.cs:3325
 #, csharp-format
 msgid "The label `{0}' is a duplicate"
 msgstr ""
 
-#: mcs/mcs/statement.cs:2758 mcs/mcs/statement.cs:2769
+#: mcs/mcs/statement.cs:3334 mcs/mcs/statement.cs:3345
 #, csharp-format
 msgid ""
 "The label `{0}' shadows another label by the same name in a contained scope"
 msgstr ""
 
-#: mcs/mcs/statement.cs:3089
+#: mcs/mcs/statement.cs:3641
 #, csharp-format
 msgid "The label `case {0}:' already occurs in this switch statement"
 msgstr ""
 
-#: mcs/mcs/statement.cs:3630
+#: mcs/mcs/statement.cs:4160
 #, csharp-format
 msgid ""
 "A switch expression of type `{0}' cannot be converted to an integral type, "
 "bool, char, string, enum or nullable type"
 msgstr ""
 
-#: mcs/mcs/statement.cs:4115
+#: mcs/mcs/statement.cs:4771
 #, csharp-format
 msgid "`{0}' is not a reference type as required by the lock statement"
 msgstr ""
 
-#: mcs/mcs/statement.cs:4456
+#: mcs/mcs/statement.cs:5118
 msgid "The type of locals declared in a fixed statement must be a pointer type"
 msgstr ""
 
-#: mcs/mcs/statement.cs:4472
+#: mcs/mcs/statement.cs:5134
 msgid ""
 "The right hand side of a fixed statement assignment may not be a cast "
 "expression"
 msgstr ""
 
-#: mcs/mcs/statement.cs:4543
+#: mcs/mcs/statement.cs:5204
 msgid ""
 "You cannot use the fixed statement to take the address of an already fixed "
 "expression"
 msgstr ""
 
-#: mcs/mcs/statement.cs:4857
+#: mcs/mcs/statement.cs:5560
 #, csharp-format
 msgid ""
 "A previous catch clause already catches all exceptions of this or a super "
 "type `{0}'"
 msgstr ""
 
-#: mcs/mcs/statement.cs:5030
+#: mcs/mcs/statement.cs:5700
 #, csharp-format
 msgid ""
 "`{0}': type used in a using statement must be implicitly convertible to "
 "`System.IDisposable'"
 msgstr ""
 
-#: mcs/mcs/statement.cs:5452
+#: mcs/mcs/statement.cs:6104
 #, csharp-format
 msgid ""
 "foreach statement requires that the return type `{0}' of `{1}' must have a "
 "suitable public MoveNext method and public Current property"
 msgstr ""
 
-#: mcs/mcs/statement.cs:5492
+#: mcs/mcs/statement.cs:6149
 #, csharp-format
 msgid ""
 "foreach statement cannot operate on variables of type `{0}' because it "
@@ -3708,45 +3419,167 @@ msgid ""
 "implementation"
 msgstr ""
 
-#: mcs/mcs/statement.cs:5517
+#: mcs/mcs/statement.cs:6178
 #, csharp-format
 msgid ""
 "foreach statement cannot operate on variables of type `{0}' because it does "
 "not contain a definition for `{1}' or is inaccessible"
 msgstr ""
 
-#: mcs/mcs/statement.cs:5723
+#: mcs/mcs/statement.cs:6409
 msgid "Use of null is not valid in this context"
 msgstr ""
 
-#: mcs/mcs/statement.cs:5733
+#: mcs/mcs/statement.cs:6421
 #, csharp-format
 msgid "Foreach statement cannot operate on a `{0}'"
 msgstr ""
 
-#: mcs/mcs/typemanager.cs:396
+#: mcs/mcs/typemanager.cs:785
 #, csharp-format
 msgid "The predefined type `{0}.{1}' is not defined or imported"
 msgstr ""
 
-#: mcs/mcs/typemanager.cs:402
+#: mcs/mcs/typemanager.cs:830
+#, csharp-format
+msgid ""
+"The predefined type `{0}.{1}' is defined multiple times. Using definition "
+"from `{2}'"
+msgstr ""
+
+#: mcs/mcs/typemanager.cs:845
 #, csharp-format
 msgid "The predefined type `{0}.{1}' is not declared correctly"
 msgstr ""
 
-#: mcs/mcs/typemanager.cs:581
+#: mcs/mcs/typemanager.cs:970
 #, csharp-format
 msgid ""
 "The compiler required member `{0}.{1}{2}' could not be found or is "
 "inaccessible"
 msgstr ""
 
-#: mcs/mcs/typemanager.cs:889
+#: mcs/mcs/typemanager.cs:1084
 #, csharp-format
 msgid ""
 "Cannot take the address of, get the size of, or declare a pointer to a "
 "managed type `{0}'"
 msgstr ""
+
+#, fuzzy
+#~ msgid "An expression tree cannot contain an await operator"
+#~ msgstr "式ツリーは代入オペレータを含むことができません"
+
+#~ msgid ""
+#~ "`{0}': Extension methods cannot be declared without a reference to System."
+#~ "Core.dll assembly. Add the assembly reference or remove `this' modifer "
+#~ "from the first parameter"
+#~ msgstr ""
+#~ "`{0}': 拡張メソッドはSystem.Core.dllアセンブリへの参照なしでは宣言できませ"
+#~ "ん。アセンブリ参照を追加するか、または最初のパラメータから `this' 修飾子を"
+#~ "取り除いてください。"
+
+#~ msgid ""
+#~ "`{0}' is not a valid attribute location for this declaration. Valid "
+#~ "attribute locations for this declaration are `{1}'"
+#~ msgstr ""
+#~ "`{0}' の属性の位置はその宣言からは有効ではありません。宣言されている有効な"
+#~ "属性の位置は `{1}' です"
+
+#, fuzzy
+#~ msgid "The constant `{0}' cannot be marked static"
+#~ msgstr "abstractメソッド `{0}' はvirtualとすることはできません"
+
+#, fuzzy
+#~ msgid "`{0}': interface members cannot have a definition"
+#~ msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
+
+#, fuzzy
+#~ msgid "Cannot specify a default value for the `{0}' parameter"
+#~ msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
+
+#, fuzzy
+#~ msgid "The `params' modifier is not allowed in current context"
+#~ msgstr "キーワード `new' は名前空間要素で認められていません"
+
+#, fuzzy
+#~ msgid "The params parameter cannot be declared as ref or out"
+#~ msgstr "abstractメソッド `{0}' はvirtualとすることはできません"
+
+#, fuzzy
+#~ msgid "`{0}': property or indexer cannot have void type"
+#~ msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
+
+#, fuzzy
+#~ msgid "`{0}': property or indexer must have at least one accessor"
+#~ msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
+
+#, fuzzy
+#~ msgid "Interfaces cannot contain operators"
+#~ msgstr "`{0}': staticクラスにはユーザー定義の演算子を含むことはできません"
+
+#, fuzzy
+#~ msgid "Interfaces cannot contain contructors"
+#~ msgstr "`{0}': staticクラスではデストラクタを定義できません"
+
+#, fuzzy
+#~ msgid "Overloaded unary operator `{0}' takes one parameter"
+#~ msgstr "Conditionalメソッド `{0}' ではoutパラメータを指定できません"
+
+#~ msgid "Class, struct, or interface method must have a return type"
+#~ msgstr "クラス、構造体、インターフェースのメソッドには戻り値型が必要です"
+
+#, fuzzy
+#~ msgid "`{0}': static constructor cannot have an access modifier"
+#~ msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
+
+#, fuzzy
+#~ msgid ""
+#~ "`{0}': static constructor cannot have an explicit `this' or `base' "
+#~ "constructor call"
+#~ msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
+
+#, fuzzy
+#~ msgid "Only class types can contain destructor"
+#~ msgstr "`{0}': staticクラスではデストラクタを定義できません"
+
+#, fuzzy
+#~ msgid ""
+#~ "`{0}': An explicit interface implementation of an event must use property "
+#~ "syntax"
+#~ msgstr ""
+#~ "明示的なインターフェースの宣言で記述された `{0}' は、インターフェースでは"
+#~ "ありません"
+
+#, fuzzy
+#~ msgid "`{0}': event in interface cannot have an initializer"
+#~ msgstr "`{0}': 構造体ではインスタンス フィールドを初期化できません"
+
+#, fuzzy
+#~ msgid "`{0}': abstract event cannot have an initializer"
+#~ msgstr "`{0}': 構造体ではインスタンス フィールドを初期化できません"
+
+#, fuzzy
+#~ msgid "`{0}': event property must have both add and remove accessors"
+#~ msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
+
+#, fuzzy
+#~ msgid "Named argument `{0}' specified multiple times"
+#~ msgstr "属性 `{0}' は複数回指定することができません"
+
+#, fuzzy
+#~ msgid "Keyword `new' is not allowed on namespace elements"
+#~ msgstr "キーワード `new' は名前空間要素で認められていません"
+
+#, fuzzy
+#~ msgid "Identifier expected, `{0}' is a keyword"
+#~ msgstr "識別子が必要です: {0}"
+
+#~ msgid "Response file `"
+#~ msgstr "レスポンスファイル `"
+
+#~ msgid "Unable to open response file: "
+#~ msgstr "レスポンスファイルが開けません"
 
 #~ msgid ""
 #~ "`{0}' is marked as an external but has no DllImport attribute. Consider "
@@ -3759,30 +3592,13 @@ msgstr ""
 #~ msgstr "属性の中で型パラメータを使用することはできません"
 
 #~ msgid ""
-#~ "Added modules must be marked with the CLSCompliant attribute to match the "
-#~ "assembly"
-#~ msgstr ""
-#~ "追加されるモジュールは、アセンブリに適合するCLSCompliant属性でマークされな"
-#~ "ければなりません"
-
-#~ msgid ""
 #~ "`{0}': Any identifier with double underscores cannot be used when ISO "
 #~ "language version mode is specified"
 #~ msgstr ""
 #~ "`{0}': ISO言語バージョンモードが指定されている場合は、2文字のアンダーライ"
 #~ "ンで始まる識別子は使用できません"
 
-#~ msgid "Cannot derive from `{0}' because it is a type parameter"
-#~ msgstr "`{0}' は型パラメータであるため、ここから派生することはできません"
-
 #~ msgid "Do not override object.Finalize. Instead, provide a destructor"
 #~ msgstr ""
 #~ "object.Finalizeをオーバーライドせず、代わりにデストラクタを提供してくださ"
 #~ "い"
-
-#~ msgid ""
-#~ "Referenced file `{0}' is not an assembly. Consider using `-addmodule' "
-#~ "option instead"
-#~ msgstr ""
-#~ "参照ファイル `{0}' はアセンブリではありません。代わりに`-addmodule' オプ"
-#~ "ションを使用してみてください"

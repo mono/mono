@@ -223,7 +223,6 @@ namespace System.Web.Mail {
 			MailHeader partHeader = new MailHeader ();
 			partHeader.ContentType = bodyContentType;		
 
-#if NET_1_1
 			// Add all the custom headers to body part as specified in 
 			//Fields property of MailMessageWrapper
 
@@ -240,7 +239,6 @@ namespace System.Web.Mail {
 			if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendpassword"] != null)
 				msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/sendpassword");
 			partHeader.Data.Add (msg.Fields.Data);
-#endif
 
 			smtp.WriteHeader (partHeader);
 	  

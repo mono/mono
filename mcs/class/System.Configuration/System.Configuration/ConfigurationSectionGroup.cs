@@ -34,7 +34,7 @@ namespace System.Configuration
 {
 	public class ConfigurationSectionGroup
 	{
-		bool require_declaration, declared;
+		bool require_declaration;
 		string name, type_name;
 
 		ConfigurationSectionCollection sections;
@@ -81,8 +81,9 @@ namespace System.Configuration
 			ForceDeclaration (true);
 		}
 		
+		[MonoTODO]
 		public bool IsDeclared {
-			get { return declared; }
+			get { return false; }
 		}
 
 		[MonoTODO]

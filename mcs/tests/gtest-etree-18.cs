@@ -11,7 +11,7 @@ public interface IHelper
 
 public class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Expression<Action<IHelper>> e = (helper => helper.DoIt (new Foo ()));
 		var mce = e.Body as MethodCallExpression;

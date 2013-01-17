@@ -125,8 +125,14 @@ namespace Mono.Data.Sqlite
             finally
             {
               // If the datareader's behavior includes closing the connection, then do so here.
-              if ((_commandBehavior & CommandBehavior.CloseConnection) != 0 && _command.Connection != null)
-                _command.Connection.Close();
+              if ((_commandBehavior & CommandBehavior.CloseConnection) != 0 && _command.Connection != null) {
+                // We need to call Dispose on the command before we call Dispose on the Connection,
+                // otherwise we'll get a SQLITE_LOCKED exception.
+                var conn = _command.Connection;
+                _command.Dispose ();
+                conn.Close();
+                _disposeCommand = false;
+              }
             }
           }
           finally
@@ -373,7 +379,6 @@ namespace Mono.Data.Sqlite
         return _keyInfo.GetDataTypeName(i - VisibleFieldCount);
 
       SQLiteType typ = GetSQLiteType(i);
-      if (typ.Type == DbType.Object) return SqliteConvert.SQLiteTypeToType(typ).Name;
       return _activeStatement._sql.ColumnType(_activeStatement, i, out typ.Affinity);
     }
 
@@ -402,7 +407,7 @@ namespace Mono.Data.Sqlite
         return _keyInfo.GetDecimal(i - VisibleFieldCount);
 
       VerifyType(i, DbType.Decimal);
-      return Decimal.Parse(_activeStatement._sql.GetText(_activeStatement, i), NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture);
+      return Decimal.Parse(_activeStatement._sql.GetText(_activeStatement, i), NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent  | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
     }
 
     /// <summary>

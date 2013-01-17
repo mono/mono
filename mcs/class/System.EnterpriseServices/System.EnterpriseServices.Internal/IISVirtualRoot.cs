@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("d8013ef1-730b-45e2-ba24-874b7242c425")]
 	public class IISVirtualRoot : IComSoapIISVRoot {
 
@@ -53,5 +52,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

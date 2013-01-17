@@ -20,11 +20,7 @@ using System.Diagnostics;
 using System.Dynamic.Utils;
 using System.Reflection;
 
-#if SILVERLIGHT
-using System.Core;
-#endif
-
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -32,9 +28,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents a control expression that handles multiple selections by passing control to a <see cref="SwitchCase"/>.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.SwitchExpressionProxy))]
-#endif
     public sealed class SwitchExpression : Expression {
         private readonly Type _type;
         private readonly Expression _switchValue;

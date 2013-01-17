@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class RNGCryptoServiceProviderTest : Assertion {
+	public class RNGCryptoServiceProviderTest {
 
 		private RNGCryptoServiceProvider _algo;
 		
@@ -25,14 +25,14 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			_algo = new RNGCryptoServiceProvider ();
 		}
-
+#if !NET_2_1
 		[Test]
 		public void ConstructorByteArray () 
 		{
 			byte[] array = new byte [16];
 			byte[] seed = (byte[]) array.Clone ();
 			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider (seed);
-			AssertEquals ("Seed", BitConverter.ToString (array), BitConverter.ToString (seed));
+			Assert.AreEqual (BitConverter.ToString (array), BitConverter.ToString (seed), "Seed");
 		}
 
 		[Test]
@@ -54,7 +54,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			string s = "Mono seed";
 			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider (s);
-			AssertEquals ("Seed", "Mono seed", s);
 		}
 
 		[Test]
@@ -63,7 +62,7 @@ namespace MonoTests.System.Security.Cryptography {
 			string s = null;
 			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider (s);
 		}
-
+#endif
 		[Test]
 		public void GetBytes () 
 		{
@@ -80,7 +79,7 @@ namespace MonoTests.System.Security.Cryptography {
 			_algo.GetNonZeroBytes (random);
 			
 			foreach (Byte rnd_byte in random) {
-				Assert("Properties (2)", rnd_byte != 0);
+				Assert.IsTrue(rnd_byte != 0);
 			}
 		}
 

@@ -18,9 +18,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2008 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2011 Xamarin Inc. (http://www.xamarin.com)
 //
 // Authors:
 //    Alan McGovern (amcgovern@novell.com)
+//    Rolf Bjarne Kvinge (rolf@xamarin.com)
 //
 
 
@@ -76,6 +78,7 @@ namespace System.IO.Packaging.Tests {
             Assert.AreEqual (package, r.Package, "#5");
             Assert.IsTrue (package == r.Package, "#6");
             Assert.IsTrue (!string.IsNullOrEmpty (r.Id), "#7");
+            Assert.IsTrue (char.IsLetter (r.Id [0]), "#8");
         }
 
         [Test]

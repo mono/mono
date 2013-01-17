@@ -3165,14 +3165,14 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 		ILStackDesc copy;
 
 		if (mono_method_is_constructor (method) && !method->klass->valuetype) {
-			if (!mono_method_is_constructor (ctx->method))
+			if (IS_STRICT_MODE (ctx) && !mono_method_is_constructor (ctx->method))
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot call a constructor outside one at 0x%04x", ctx->ip_offset));
-			if (method->klass != ctx->method->klass->parent && method->klass != ctx->method->klass)
+			if (IS_STRICT_MODE (ctx) && method->klass != ctx->method->klass->parent && method->klass != ctx->method->klass)
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot call a constructor of a type different from this or super at 0x%04x", ctx->ip_offset));
 
 			ctx->super_ctor_called = TRUE;
 			value = stack_pop_safe (ctx);
-			if ((value->stype & THIS_POINTER_MASK) != THIS_POINTER_MASK)
+			if (IS_STRICT_MODE (ctx) && (value->stype & THIS_POINTER_MASK) != THIS_POINTER_MASK)
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid 'this ptr' argument for constructor at 0x%04x", ctx->ip_offset));
 		} else {
 			value = stack_pop (ctx);
@@ -4558,7 +4558,10 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 			&& !mono_class_from_mono_type (new_type)->valuetype
 			&& !stack_slot_is_managed_pointer (old_slot)
 			&& !stack_slot_is_managed_pointer (new_slot)) {
-			
+
+			mono_class_setup_supertypes (old_class);
+			mono_class_setup_supertypes (new_class);
+
 			for (j = MIN (old_class->idepth, new_class->idepth) - 1; j > 0; --j) {
 				if (mono_metadata_type_equal (&old_class->supertypes [j]->byval_arg, &new_class->supertypes [j]->byval_arg)) {
 					match_class = old_class->supertypes [j];
@@ -4572,11 +4575,45 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 				mono_error_cleanup (&error);
 				goto end_verify;
 			}
+			mono_class_setup_interfaces (new_class, &error);
+			if (!mono_error_ok (&error)) {
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot merge stacks due to a TypeLoadException %s at 0x%04x", mono_error_get_message (&error), ctx->ip_offset));
+				mono_error_cleanup (&error);
+				goto end_verify;
+			}
+
 			for (j = 0; j < old_class->interface_count; ++j) {
 				for (k = 0; k < new_class->interface_count; ++k) {
 					if (mono_metadata_type_equal (&old_class->interfaces [j]->byval_arg, &new_class->interfaces [k]->byval_arg)) {
 						match_class = old_class->interfaces [j];
 						goto match_found;
+					}
+				}
+			}
+
+			/* if old class is an interface that new class implements */
+			if (old_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
+				if (verifier_class_is_assignable_from (old_class, new_class)) {
+					match_class = old_class;
+					goto match_found;	
+				}
+				for (j = 0; j < old_class->interface_count; ++j) {
+					if (verifier_class_is_assignable_from (old_class->interfaces [j], new_class)) {
+						match_class = old_class->interfaces [j];
+						goto match_found;	
+					}
+				}
+			}
+
+			if (new_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
+				if (verifier_class_is_assignable_from (new_class, old_class)) {
+					match_class = new_class;
+					goto match_found;	
+				}
+				for (j = 0; j < new_class->interface_count; ++j) {
+					if (verifier_class_is_assignable_from (new_class->interfaces [j], old_class)) {
+						match_class = new_class->interfaces [j];
+						goto match_found;	
 					}
 				}
 			}

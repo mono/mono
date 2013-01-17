@@ -163,10 +163,79 @@ public class Int16Test
 			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
 
-		Assert.AreEqual (7345, Int64.Parse ("7345\0"), "#1");
-		Assert.AreEqual (7345, Int64.Parse ("7345\0\0\0    \0"), "#2");
-		Assert.AreEqual (7345, Int64.Parse ("7345\0\0\0    "), "#3");
-		Assert.AreEqual (7345, Int64.Parse ("7345\0\0\0"), "#4");
+		Assert.AreEqual (7345, Int16.Parse ("7345\0"), "#1");
+		Assert.AreEqual (7345, Int16.Parse ("7345\0\0\0    \0"), "#2");
+		Assert.AreEqual (7345, Int16.Parse ("7345\0\0\0    "), "#3");
+		Assert.AreEqual (7345, Int16.Parse ("7345\0\0\0"), "#4");
+
+		Assert.AreEqual (0, Int16.Parse ("0+", NumberStyles.Any), "#5");
+	}
+
+	[Test]
+	public void TestParseExponent ()
+	{
+		Assert.AreEqual (2, Int16.Parse ("2E0", NumberStyles.AllowExponent), "A#1");
+		Assert.AreEqual (20, Int16.Parse ("2E1", NumberStyles.AllowExponent), "A#2");
+		Assert.AreEqual (200, Int16.Parse ("2E2", NumberStyles.AllowExponent), "A#3");
+		Assert.AreEqual (200, Int16.Parse ("2E+2", NumberStyles.AllowExponent), "A#4");
+		Assert.AreEqual (2, Int16.Parse ("2", NumberStyles.AllowExponent), "A#5");
+
+		try {
+			Int16.Parse ("2E");
+			Assert.Fail ("B#1");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int16.Parse ("2E3.0", NumberStyles.AllowExponent); // decimal notation for the exponent
+			Assert.Fail ("B#2");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int16.Parse ("2E 2", NumberStyles.AllowExponent);
+			Assert.Fail ("B#3");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int16.Parse ("2E2 ", NumberStyles.AllowExponent);
+			Assert.Fail ("B#4");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int16.Parse ("2E66", NumberStyles.AllowExponent); // final result overflow
+			Assert.Fail ("B#5");
+		} catch (OverflowException) {
+		}
+
+		try {
+			long exponent = (long) Int32.MaxValue + 10;
+			Int16.Parse ("2E" + exponent.ToString (), NumberStyles.AllowExponent);
+			Assert.Fail ("B#6");
+		} catch (OverflowException) {
+		}
+
+		try {
+			Int16.Parse ("2E-1", NumberStyles.AllowExponent); // negative exponent
+			Assert.Fail ("B#7");
+		} catch (OverflowException) {
+		}
+		
+		try {
+			Int16.Parse ("2 math e1", NumberStyles.AllowExponent);
+			Assert.Fail ("B#8");
+		} catch (FormatException) {
+		}
+	}
+
+	[Test]
+	public void Parse_MinMax ()
+	{
+		Assert.AreEqual (Int16.MinValue, Int16.Parse ("-32768"), "MinValue");
+		Assert.AreEqual (Int16.MaxValue, Int16.Parse ("32767"), "MaxValue");
+		Assert.AreEqual (-1, Int16.Parse ("FFFF", NumberStyles.HexNumber), "MaxHex");
 	}
 
 	[Test]	
@@ -213,6 +282,12 @@ public class Int16Test
 		Assert.AreEqual (def, i.ToString (String.Empty, null), "ToString(empty,null)");
 
 		Assert.AreEqual ("254", def, "ToString(G)");
+	}
+
+	[Test]
+	public void Bug3677 ()
+	{
+		Assert.AreEqual (-7197, short.Parse("E3E3", NumberStyles.HexNumber), "HexNumber");
 	}
 }
 

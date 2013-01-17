@@ -30,9 +30,6 @@ using System.Xml.XPath;
 
 namespace System.Xml.Xsl
 {
-#if !NET_2_0
-	sealed
-#endif
 	public class XsltArgumentList
 	{
 		#region Fields
@@ -53,11 +50,12 @@ namespace System.Xml.Xsl
 		#endregion
 
 		#region Event
-#if NET_2_0
 
+#pragma warning disable 67
+		[MonoTODO]
 		public event XsltMessageEncounteredEventHandler XsltMessageEncountered;
+#pragma warning restore 67
 
-#endif
 		#endregion
 
 		#region Methods

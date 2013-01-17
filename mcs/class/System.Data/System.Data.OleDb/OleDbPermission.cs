@@ -48,9 +48,7 @@ namespace System.Data.OleDb
 
 		#region Constructors
 
-#if NET_1_1
 		[Obsolete ("use OleDbPermission(PermissionState.None)", true)]
-#endif
 		public OleDbPermission ()
 			: base (PermissionState.None)
 		{
@@ -61,9 +59,7 @@ namespace System.Data.OleDb
 		{
 		}
 
-#if NET_1_1
 		[Obsolete ("use OleDbPermission(PermissionState.None)", true)]
-#endif
 		public OleDbPermission (PermissionState state, bool allowBlankPassword)
 			: base (state)
 		{
@@ -86,11 +82,9 @@ namespace System.Data.OleDb
 
 		#region Properties
 
-#if NET_2_0
 		[Obsolete ()]
 		[BrowsableAttribute (false)]
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-#endif
 		public string Provider {
 			get {
 				if (_provider == null)
@@ -108,36 +102,6 @@ namespace System.Data.OleDb
 		{
 			return new OleDbPermission (this);
 		}
-
-#if !NET_2_0
-		// methods required to support Provider were removed in Fx 2.0
-		// i.e. Provider isn't included in the XML output
-
-		public override void FromXml (SecurityElement securityElement)
-		{
-			base.FromXml (securityElement);
-			// Provider
-		}
-
-		[MonoTODO ("is it worth to implement as it is being removed ?")]
-		public override IPermission Intersect (IPermission target)
-		{
-			return base.Intersect (target);
-		}
-
-		public override SecurityElement ToXml ()
-		{
-			SecurityElement se = base.ToXml ();
-			// add Provider
-			return se;
-		}
-
-		[MonoTODO ("is it worth to implement as it is being removed ?")]
-		public override IPermission Union (IPermission target)
-		{
-			return base.Union (target);
-		}
-#endif
 		#endregion
 	}
 }

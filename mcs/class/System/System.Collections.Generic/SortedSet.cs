@@ -37,7 +37,7 @@ using System.Diagnostics;
 
 // SortedSet is basically implemented as a reduction of SortedDictionary<K, V>
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 namespace System.Collections.Generic {
 
@@ -542,12 +542,7 @@ namespace System.Collections.Generic {
 		{
 			Add (item);
 		}
-
-		void ICollection<T>.CopyTo (T [] array, int index)
-		{
-			CopyTo (array, index, Count);
-		}
-
+		
 		bool ICollection<T>.IsReadOnly {
 			get { return false; }
 		}

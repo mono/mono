@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string[] strings = new string[] { "Foo", "Bar", "Baz" };
 		

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 class B<U>
 {
@@ -28,7 +29,7 @@ class DynamicAssignments
 	{
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		dynamic d1 = null;
 		dynamic d2 = null;
@@ -74,6 +75,9 @@ class DynamicAssignments
 		
 		I<dynamic>[] a20 = null;
 		I<object>[] b20 = a20;
+		
+		dynamic[] d40 = null;
+		IEnumerable<object> d41 = d40;
 
 		return 0;
 	}

@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 #if !MOONLIGHT
 extern alias PrebuiltSystem;
@@ -48,5 +48,4 @@ namespace System.Net.Security
 		X509Certificate remoteCertificate,
 		string [] acceptableIssuers);
 }
-
 #endif

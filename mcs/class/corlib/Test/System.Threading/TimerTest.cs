@@ -57,11 +57,12 @@ namespace MonoTests.System.Threading {
 		public void TestChange ()
 		{
 			Bucket bucket = new Bucket();
-			Timer t = new Timer (new TimerCallback (Callback), bucket, 1, 1);
+			Timer t = new Timer (new TimerCallback (Callback), bucket, 10, 10);
 			Thread.Sleep (500);
 			int c = bucket.count;
 			Assert.IsTrue(c > 20, "#1");
 			t.Change (100, 100);
+			c = bucket.count;
 			Thread.Sleep (500);
 			Assert.IsTrue(bucket.count <= c + 20, "#2");
 			t.Dispose ();

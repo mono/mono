@@ -1658,6 +1658,7 @@ namespace System.Windows.Forms {
 			bool		confined;
 			IntPtr		capture_window;
 
+			IWin32Window original_owner = owner;
 			Form owner_to_be = null;
 
 			if ((owner == null) && (Application.MWFThread.Current.Context != null)) {
@@ -1674,7 +1675,15 @@ namespace System.Windows.Forms {
 			}
 
 			if (owner_to_be == this) {
-				throw new ArgumentException ("Forms cannot own themselves or their owners.", "owner");
+				// Don't let a null owner become self-referential.  This has been observed,
+				// but the circumstances are unclear.
+				if (original_owner == null) {
+					owner = null;
+					owner_to_be = null;
+				}
+				else {
+					throw new ArgumentException ("Forms cannot own themselves or their owners.", "owner");
+				}
 			}
 
 			if (is_modal) {

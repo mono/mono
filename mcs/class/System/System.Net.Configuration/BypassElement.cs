@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && CONFIGURATION_DEP
+#if CONFIGURATION_DEP
 
 using System.Configuration;
 
@@ -49,7 +49,7 @@ namespace System.Net.Configuration
 
 		static BypassElement ()
 		{
-			addressProp = new ConfigurationProperty ("Address", typeof (string),
+			addressProp = new ConfigurationProperty ("address", typeof (string),
 								 null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 
 			properties = new ConfigurationPropertyCollection ();

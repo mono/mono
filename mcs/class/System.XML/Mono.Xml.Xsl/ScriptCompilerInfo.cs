@@ -167,7 +167,7 @@ namespace Mono.Xml.Xsl
 #if MS_NET
 			this.CompilerCommand = "csc.exe";
 #endif
-			this.DefaultCompilerOptions = "/t:library /r:System.dll /r:System.Xml.dll /r:Microsoft.VisualBasic.dll";
+			this.DefaultCompilerOptions = "/t:library /r:System.dll /r:System.Xml.dll";
 		}
 
 		public override CodeDomProvider CodeDomProvider {
@@ -271,7 +271,7 @@ end namespace
 #if MS_NET
 			this.CompilerCommand = "jsc.exe";
 #endif
-			this.DefaultCompilerOptions = "/t:library /r:Microsoft.VisualBasic.dll";
+			this.DefaultCompilerOptions = "/t:library";
 		}
 
 		public override CodeDomProvider CodeDomProvider {

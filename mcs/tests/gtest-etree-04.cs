@@ -26,7 +26,7 @@ struct Foo
 
 class C
 {
-	static int Main()
+	public static int Main()
 	{
 		Foo f;
 		Expression<Func<bool>> e = () => f > null;

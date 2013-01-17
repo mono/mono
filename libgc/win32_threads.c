@@ -85,6 +85,10 @@ int GC_thread_is_registered (void)
 #endif
 }
 
+void GC_register_altstack (void *stack, int stack_size, void *altstack, int altstack_size)
+{
+}
+
 /*
  * This may be called from DllMain, and hence operates under unusual
  * constraints.

@@ -40,7 +40,7 @@ namespace System.Windows.Markup
 #if !NET_2_1
 		// really? I doubt it should be overriden.
 		public override Object TypeId {
-			get { return base.TypeId; }
+			get { return this; }
 		}
 #endif
 	}

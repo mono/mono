@@ -45,9 +45,7 @@ namespace System.Diagnostics {
 		}
 
 		// may throw ArgumentNullException
-#if NET_2_0
 		[Obsolete ("Use InstanceDataCollectionCollection indexer instead.")]
-#endif
 		public InstanceDataCollection (string counterName)
 		{
 			CheckNull (counterName, "counterName");

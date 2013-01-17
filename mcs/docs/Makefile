@@ -32,11 +32,13 @@ MONODOC_SOURCES_INSTALL_FILES = \
 
 CLEAN_FILES += $(ASSEMBLED_DOCS)
 
-ifeq (net_4_0, $(PROFILE))
-all-local: build-documentation
+ifndef DISABLE_MCS_DOCS
+ifneq ($(PROFILE), $(DEFAULT_PROFILE))
+DISABLE_MCS_DOCS = yes
+endif
 endif
 
-all-local csproj-local test-local run-test-local run-test-ondotnet-local doc-update:
+csproj-local test-local run-test-local run-test-ondotnet-local doc-update:
 
 clean-local:
 	-rm -f $(CLEAN_FILES)
@@ -47,11 +49,15 @@ dist-local: dist-default
 MONODOC_INSTALL_DIR = $(DESTDIR)$(mono_libdir)/monodoc
 
 ifdef DISABLE_MCS_DOCS
+all-local:
+
 install-local:
 
 uninstall-local:
 
 else
+all-local: $(ASSEMBLED_DOCS)
+
 install-local:
 	$(MKINSTALLDIRS) $(MONODOC_INSTALL_DIR) $(MONODOC_INSTALL_DIR)/sources
 	$(INSTALL_DATA) $(MONODOC_SOURCES_INSTALL_FILES) $(MONODOC_INSTALL_DIR)/sources
@@ -69,6 +75,7 @@ doc_en   = Documentation/en
 
 NETDOCS_DIRS = \
 	$(classdir)/corlib/$(doc_en)                                        \
+	$(classdir)/Managed.Windows.Forms/$(doc_en)			    \
 	$(classdir)/Microsoft.Build.Engine/$(doc_en)                        \
 	$(classdir)/Microsoft.Build.Framework/$(doc_en)                     \
 	$(classdir)/Microsoft.Build.Utilities/$(doc_en)                     \
@@ -84,20 +91,21 @@ NETDOCS_DIRS = \
 	$(classdir)/System.Web.Services/$(doc_en)                           \
 	$(classdir)/System.Web/$(doc_en)                                    \
 	$(classdir)/System.XML/$(doc_en)                                    \
-	$(classdir)/System/$(doc_en)                                        \
+	$(classdir)/System/$(doc_en) 
 
 MONO_DIRS = \
 	$(classdir)/Commons.Xml.Relaxng/$(doc_en)          \
 	$(classdir)/Mono.Cairo/$(doc_en)                   \
+	$(classdir)/Mono.CSharp/$(doc_en)                  \
+	$(classdir)/Mono.Data.Sqlite/$(doc_en)		   \
+	$(classdir)/Mono.Debugger.Soft/$(doc_en)           \
 	$(classdir)/Mono.Options/$(doc_en)                 \
+	$(classdir)/Mono.Parallel/$(doc_en)		   \
 	$(classdir)/Mono.Posix/$(doc_en)                   \
 	$(classdir)/Mono.Security.Win32/$(doc_en)          \
 	$(classdir)/Mono.Security/$(doc_en)                \
 	$(classdir)/Mono.Simd/$(doc_en)                    \
-	$(classdir)/Mono.CSharp/$(doc_en)                  \
-	$(classdir)/Npgsql/$(doc_en)                       \
-	$(classdir)/Mono.Debugger.Soft/$(doc_en)           \
-	$(classdir)/Mono.Parallel/$(doc_en)
+	$(classdir)/Npgsql/$(doc_en)
 
 NOVELL_DIRS = \
 	$(topdir)/class/Novell.Directory.Ldap/Documentation/en
@@ -107,12 +115,6 @@ NUNIT_DIRS = \
 	$(topdir)/nunit20/framework/$(doc_en)  \
 	$(topdir)/nunit20/mocks/$(doc_en)      \
 	$(topdir)/nunit20/util/$(doc_en)
-
-ifdef DISABLE_MCS_DOCS
-build-documentation:
-else
-build-documentation: $(ASSEMBLED_DOCS)
-endif
 
 # To support `make -jN`, we can't mention multiple targets in the same rule;
 # DO NOT DO THIS:
@@ -128,21 +130,21 @@ endif
 
 netdocs.zip : netdocs.tree
 netdocs.tree: Makefile
-	$(MDOC) assemble -o netdocs $(NETDOCS_DIRS)
+	$(MDOC) --debug assemble -o netdocs $(NETDOCS_DIRS)
 
 Mono.zip : Mono.tree
 Mono.tree: Makefile
-	$(MDOC) assemble -o Mono $(MONO_DIRS)
+	$(MDOC) --debug assemble -o Mono $(MONO_DIRS)
 
 Novell.zip : Novell.tree
 Novell.tree: Makefile
-	$(MDOC) assemble -o Novell $(NOVELL_DIRS)
+	$(MDOC) --debug assemble -o Novell $(NOVELL_DIRS)
 
 cs-errors.zip : cs-errors.tree
 cs-errors.tree: cs-errors.config Makefile
-	$(MDOC) assemble -o cs-errors -f error $<
+	$(MDOC) --debug assemble -o cs-errors -f error $<
 
 ecma334.zip : ecma334.tree
 ecma334.tree: Makefile
-	$(MDOC) assemble -o ecma334 -f ecmaspec ecma334
+	$(MDOC) --debug assemble -o ecma334 -f ecmaspec ecma334
 

@@ -33,7 +33,9 @@
 
 using System.Diagnostics;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -46,6 +48,7 @@ namespace System {
 	[ClassInterface (ClassInterfaceType.None)]
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Type))]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class Type : MemberInfo, IReflect, _Type {
 		
 		internal RuntimeTypeHandle _impl;
@@ -220,6 +223,14 @@ namespace System {
 				return IsCOMObjectImpl ();
 			}
 		}
+		
+#if NET_4_5
+		public virtual bool IsConstructedGenericType {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 
 		public bool IsContextful {
 			get {
@@ -502,11 +513,19 @@ namespace System {
 
 			var fields = GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
-			string [] result = new string [fields.Length];
-			for (int i = 0; i < fields.Length; ++i)
-				result [i] = fields [i].Name;
+			string [] names = new string [fields.Length];
+			if (0 != names.Length) {
+				for (int i = 0; i < fields.Length; ++i)
+					names [i] = fields [i].Name;
+					
+				var et = GetEnumUnderlyingType ();
+				var values = Array.CreateInstance (et, names.Length);
+				for (int i = 0; i < fields.Length; ++i)
+					values.SetValue (fields [i].GetValue (null), i);
+				MonoEnumInfo.SortEnums (et, values, names);
+			}
 
-			return result;
+			return names;
 		}
 
 		static NotImplementedException CreateNIE () {
@@ -691,8 +710,10 @@ namespace System {
 			Type type = this;
 			if (type is MonoType)
 				return GetTypeCodeInternal (type);
+#if !FULL_AOT_RUNTIME
 			if (type is TypeBuilder)
 				return ((TypeBuilder)type).GetTypeCodeInternal ();
+#endif
 
 			type = type.UnderlyingSystemType;
 
@@ -831,11 +852,11 @@ namespace System {
 		public virtual InterfaceMapping GetInterfaceMap (Type interfaceType) {
 			if (!IsSystemType)
 				throw new NotSupportedException ("Derived classes must provide an implementation.");
+			if (interfaceType == null)
+				throw new ArgumentNullException ("interfaceType");
 			if (!interfaceType.IsSystemType)
 				throw new ArgumentException ("interfaceType", "Type is an user type");
 			InterfaceMapping res;
-			if (interfaceType == null)
-				throw new ArgumentNullException ("interfaceType");
 			if (!interfaceType.IsInterface)
 				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "interfaceType");
 			if (IsInterface)
@@ -859,8 +880,10 @@ namespace System {
 			if (Equals (c))
 				return true;
 
+#if !FULL_AOT_RUNTIME
 			if (c is TypeBuilder)
 				return ((TypeBuilder)c).IsAssignableTo (this);
+#endif
 
 			/* Handle user defined type classes */
 			if (!IsSystemType) {
@@ -1346,13 +1369,6 @@ namespace System {
 			return FullName;
 		}
 
-		internal virtual bool IsCompilerContext {
-			get {
-				AssemblyBuilder builder = Assembly as AssemblyBuilder;
-				return builder != null && builder.IsCompilerContext;
-			}
-		}
-
 		internal virtual Type InternalResolve ()
 		{
 			return UnderlyingSystemType;
@@ -1363,6 +1379,14 @@ namespace System {
 				return _impl.Value != IntPtr.Zero;
 			}
 		}
+		
+#if NET_4_5
+		public virtual Type[] GenericTypeArguments {
+			get {
+				return IsGenericType ? GetGenericArguments () : EmptyTypes;
+			}
+		}
+#endif
 
 		public virtual Type[] GetGenericArguments ()
 		{
@@ -1390,28 +1414,9 @@ namespace System {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
-
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
-
-		static AssemblyBuilder PeelAssemblyBuilder (Type type)
-		{
-			if (type.Assembly is AssemblyBuilder)
-				return (AssemblyBuilder)type.Assembly;
-
-			if (type.HasElementType)
-				return PeelAssemblyBuilder (type.GetElementType ());
-
-			if (!type.IsGenericType || type.IsGenericParameter || type.IsGenericTypeDefinition)
-				return null;
-
-			foreach (Type arg in type.GetGenericArguments ()) {
-				AssemblyBuilder ab = PeelAssemblyBuilder (arg);
-				if (ab != null)
-					return ab;
-			}
-			return null;
-		}
 
 		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
@@ -1425,7 +1430,6 @@ namespace System {
 				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", GetGenericArguments ().Length, typeArguments.Length), "typeArguments");
 
 			bool hasUserType = false;
-			AssemblyBuilder compilerContext = null;
 
 			Type[] systemTypes = new Type[typeArguments.Length];
 			for (int i = 0; i < typeArguments.Length; ++i) {
@@ -1435,16 +1439,14 @@ namespace System {
 
 				if (!(t is MonoType))
 					hasUserType = true;
-				if (t.IsCompilerContext)
-					compilerContext = PeelAssemblyBuilder (t);
 				systemTypes [i] = t;
 			}
 
+#if !FULL_AOT_RUNTIME
 			if (hasUserType) {
-				if (compilerContext != null)
-					return compilerContext.MakeGenericType (this, typeArguments);
 				return new MonoGenericClass (this, typeArguments);
 			}
+#endif
 
 			Type res = MakeGenericType (this, systemTypes);
 			if (res == null)
@@ -1660,15 +1662,12 @@ namespace System {
 		/* 
 		 * Return whenever this object is an instance of a user defined subclass
 		 * of System.Type or an instance of TypeDelegator.
+		 * A user defined type is not simply the opposite of a system type.
+		 * It's any class that's neither a SRE or runtime baked type.
 		 */
-		internal bool IsUserType {
+		internal virtual bool IsUserType {
 			get {
-				/* 
-				 * subclasses cannot modify _impl so if it is zero, it means the
-				 * type is not created by the runtime.
-				 */
-				return _impl.Value == IntPtr.Zero &&
-					(GetType ().Assembly != typeof (Type).Assembly || GetType () == typeof (TypeDelegator));
+				return true;
 			}
 		}
 

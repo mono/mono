@@ -22,10 +22,11 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \
 	Test/Resources/test.cer \
+	Test/Resources/test_neg_serial.cer \
 	Test/Resources/test.pfx \
 	Test/Resources/test2.pfx
 
-VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.IdentityModel.dll
 NO_INSTALL = yes

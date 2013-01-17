@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -113,5 +114,20 @@ namespace MonoTests.System.XmlSerialization
 			} catch (InvalidOperationException ex) {
 			}
 		}
+		
+		[Test]
+		public void XmlIgnore ()
+		{
+			FieldInfo field = GetType ().GetField ("XmlIgnoreField");
+			XmlAttributes atts = new XmlAttributes (field);
+			Assert.AreEqual (true, atts.XmlIgnore, "#1");
+			Assert.AreEqual (0, atts.XmlElements.Count, "#2");
+			Assert.AreEqual (0, atts.XmlAnyElements.Count, "#3");
+		}
+		
+		[XmlIgnore]
+		[XmlElement (IsNullable = true)]
+		[XmlAnyElement]
+		public int XmlIgnoreField;
 	}
 }

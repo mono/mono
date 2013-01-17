@@ -70,7 +70,12 @@ namespace Microsoft.Build.Tasks {
 							String.Join (";", defines));
 			}
 
-			commandLine.AppendSwitchIfNotNull ("/nowarn:", DisabledWarnings);
+			if (!String.IsNullOrEmpty (DisabledWarnings)) {
+				string [] defines = DisabledWarnings.Split (new char [] {';', ' ', ','},
+						StringSplitOptions.RemoveEmptyEntries);
+				if (defines.Length > 0)
+				    commandLine.AppendSwitchIfNotNull ("/nowarn:", defines, ";");
+			}
 
 			commandLine.AppendSwitchIfNotNull ("/doc:", DocumentationFile);
 

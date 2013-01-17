@@ -2,7 +2,7 @@ using System;
 
 class Program
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Action action = () => Console.WriteLine (1);
 		action += null;

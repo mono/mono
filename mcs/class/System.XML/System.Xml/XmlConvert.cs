@@ -367,22 +367,22 @@ namespace System.Xml {
 		}
 		
 #if NET_2_0
-		public static DateTime ToDateTime (string value, XmlDateTimeSerializationMode mode)
+		public static DateTime ToDateTime (string s, XmlDateTimeSerializationMode dateTimeOption)
 		{
 			DateTime dt;
-			switch (mode) {
+			switch (dateTimeOption) {
 			case XmlDateTimeSerializationMode.Local:
-				dt = ToDateTime (value, localDateTimeFormats);
+				dt = ToDateTime (s, localDateTimeFormats);
 				return new DateTime (dt.Ticks, DateTimeKind.Local);
 			case XmlDateTimeSerializationMode.RoundtripKind:
-				return ToDateTime (value, roundtripDateTimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind);
+				return ToDateTime (s, roundtripDateTimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind);
 			case XmlDateTimeSerializationMode.Utc:
-				dt = ToDateTime (value, utcDateTimeFormats);
+				dt = ToDateTime (s, utcDateTimeFormats);
 				return new DateTime (dt.Ticks, DateTimeKind.Utc);
 			case XmlDateTimeSerializationMode.Unspecified:
-				return ToDateTime (value, unspecifiedDateTimeFormats);
+				return ToDateTime (s, unspecifiedDateTimeFormats);
 			default:
-				return ToDateTime (value, defaultDateTimeFormats);
+				return ToDateTime (s, defaultDateTimeFormats);
 			}
 		}
 #endif
@@ -568,7 +568,7 @@ namespace System.Xml {
 			if (value.Days > 0)
 				builder.Append (value.Days).Append ('D');
 			long ticks = value.Ticks % TimeSpan.TicksPerMillisecond;
-			if (value.Days > 0 || value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
+			if (value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
 				builder.Append('T');
 				if (value.Hours > 0)
 					builder.Append (value.Hours).Append ('H');
@@ -630,11 +630,11 @@ namespace System.Xml {
 		}
 
 #if NET_2_0
-		public static string ToString (DateTime value, XmlDateTimeSerializationMode mode)
+		public static string ToString (DateTime value, XmlDateTimeSerializationMode dateTimeOption)
 		{
 			// Unlike usual DateTime formatting, it preserves
 			// MaxValue/MinValue as is.
-			switch (mode) {
+			switch (dateTimeOption) {
 			case XmlDateTimeSerializationMode.Local:
 				return (value == DateTime.MinValue ? DateTime.MinValue : value == DateTime.MaxValue ? value : value.ToLocalTime ()).ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
@@ -808,37 +808,33 @@ namespace System.Xml {
 			
 		}
 
-		public static string VerifyNCName (string ncname)
+		public static string VerifyNCName (string name)
 		{
-			if (ncname == null || ncname.Length == 0)
-				throw new ArgumentNullException("ncname");
-
-			if (!XmlChar.IsNCName (ncname))
-				throw new XmlException ("'" + ncname + "' is not a valid XML NCName");
-			return ncname;
-		}
-
-#if NET_2_0
-		public static string VerifyTOKEN (string name)
-#else
-		internal static string VerifyTOKEN (string name)
-#endif
-		{
-			if (name == null)
+			if (name == null || name.Length == 0)
 				throw new ArgumentNullException("name");
 
-			if (name.Length == 0)
-				return name;
+			if (!XmlChar.IsNCName (name))
+				throw new XmlException ("'" + name + "' is not a valid XML NCName");
+			return name;
+		}
 
-			if (XmlChar.IsWhitespace (name [0]) ||
-				XmlChar.IsWhitespace (name [name.Length - 1]))
+		public static string VerifyTOKEN (string token)
+		{
+			if (token == null)
+				throw new ArgumentNullException("token");
+
+			if (token.Length == 0)
+				return token;
+
+			if (XmlChar.IsWhitespace (token [0]) ||
+				XmlChar.IsWhitespace (token [token.Length - 1]))
 				throw new XmlException ("Whitespace characters (#xA, #xD, #x9, #x20) are not allowed as leading or trailing whitespaces of xs:token.");
 
-			for (int i = 0; i < name.Length; i++)
-				if (XmlChar.IsWhitespace (name [i]) && name [i] != ' ')
-				throw new XmlException ("Either #xA, #xD or #x9 are not allowed inside xs:token.");
+			for (int i = 0; i < token.Length; i++)
+				if (XmlChar.IsWhitespace (token [i]) && token [i] != ' ')
+					throw new XmlException ("Either #xA, #xD or #x9 are not allowed inside xs:token.");
 
-			return name;
+			return token;
 		}
 
 #if NET_2_0

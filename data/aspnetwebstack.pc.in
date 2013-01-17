@@ -1,0 +1,4 @@
+Name: AspNetWebStack
+Description: References Microsoft ASP.NET Web Stack
+Version: @VERSION@
+Libs: -r:System.Web.Razor.dll -r:System.Web.Http.dll -r:System.Web.WebPages -r:System.Web.WebPages.Razor -r:System.Web.WebPages.Deployment

@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Threading;
 using MonoTests.System.Threading.Tasks;
 using System.Collections.Generic;
@@ -259,6 +260,86 @@ namespace MonoTests.System.Collections.Concurrent
 
 			Assert.AreEqual ("class1", classMap[class1], "class 1 check");
 			Assert.AreEqual ("class2", classMap[class2], "class 2 check");
+		}
+
+		[Test]
+		public void InitWithEnumerableTest ()
+		{
+			int[] data = {1,2,3,4,5,6,7,8,9,10};
+			var ndic = data.ToDictionary (x => x);
+			var cdic = new ConcurrentDictionary<int, int> (ndic);
+
+			foreach (var index in data) {
+				Assert.IsTrue (cdic.ContainsKey (index));
+				int val;
+				Assert.IsTrue (cdic.TryGetValue (index, out val));
+				Assert.AreEqual (index, val);
+			}
+		}
+
+		[Test]
+		public void QueryWithSameHashCodeTest ()
+		{
+			var ids = new long[] {
+				34359738370, 
+				34359738371, 
+				34359738372, 
+				34359738373, 
+				34359738374, 
+				34359738375, 
+				34359738376, 
+				34359738377, 
+				34359738420
+			};
+
+			var dict = new ConcurrentDictionary<long, long>();
+			long result;
+
+			for (var i = 0; i < 20; i++)
+				dict[-i] = -i * 1000;
+
+			foreach (var id in ids)
+				Assert.IsFalse (dict.TryGetValue (id, out result), id.ToString ());
+
+			foreach (var id in ids) {
+				Assert.IsTrue (dict.TryAdd (id, id));
+				Assert.AreEqual (id, dict[id]);
+			}
+
+			foreach (var id in ids) {
+				Assert.IsTrue (dict.TryRemove (id, out result));
+				Assert.AreEqual (id, result);
+			}
+
+			foreach (var id in ids)
+				Assert.IsFalse (dict.TryGetValue (id, out result), id.ToString () + " (second)");
+		}
+
+		[Test]
+		public void NullArgumentsTest ()
+		{
+			AssertThrowsArgumentNullException (() => { var x = map[null]; });
+			AssertThrowsArgumentNullException (() => map[null] = 0);
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate (null, k => 0, (k, v) => v));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate ("", null, (k, v) => v));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate ("", k => 0, null));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate (null, 0, (k, v) => v));
+			AssertThrowsArgumentNullException (() => map.AddOrUpdate ("", 0, null));
+			AssertThrowsArgumentNullException (() => map.ContainsKey (null));
+			AssertThrowsArgumentNullException (() => map.GetOrAdd (null, 0));
+			int value;
+			AssertThrowsArgumentNullException (() => map.TryGetValue (null, out value));
+			AssertThrowsArgumentNullException (() => map.TryRemove (null, out value));
+			AssertThrowsArgumentNullException (() => map.TryUpdate (null, 0, 0));
+		} 
+
+		void AssertThrowsArgumentNullException (Action action)
+		{
+			try {
+				action ();
+				Assert.Fail ("Expected ArgumentNullException.");
+			} catch (ArgumentNullException ex) {
+			}
 		}
 	}
 }

@@ -6,6 +6,7 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +30,9 @@
 
 using System.Diagnostics;
 using System.Globalization;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -180,6 +183,7 @@ namespace System.Reflection {
 		}
 
 		internal virtual int get_next_table_index (object obj, int table, bool inc) {
+#if !FULL_AOT_RUNTIME
 			if (this is MethodBuilder) {
 				MethodBuilder mb = (MethodBuilder)this;
 				return mb.get_next_table_index (obj, table, inc);
@@ -188,6 +192,7 @@ namespace System.Reflection {
 				ConstructorBuilder mb = (ConstructorBuilder)this;
 				return mb.get_next_table_index (obj, table, inc);
 			}
+#endif
 			throw new Exception ("Method is not a builder method");
 		}
 
@@ -253,6 +258,24 @@ namespace System.Reflection {
 			if ((object)left == null ^ (object)right == null)
 				return true;
 			return !left.Equals (right);
+		}
+		
+		public virtual bool IsSecurityCritical {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public virtual bool IsSecuritySafeCritical {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public virtual bool IsSecurityTransparent {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 #endif
 

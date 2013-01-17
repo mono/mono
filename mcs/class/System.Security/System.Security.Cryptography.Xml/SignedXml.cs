@@ -38,10 +38,7 @@ using System.Security.Policy;
 using System.Net;
 using System.Text;
 using System.Xml;
-
-#if NET_2_0
 using System.Security.Cryptography.X509Certificates;
-#endif
 
 namespace System.Security.Cryptography.Xml {
 
@@ -56,7 +53,6 @@ namespace System.Security.Cryptography.Xml {
 		public const string XmlDsigRSASHA1Url				= XmlDsigNamespaceUrl + "rsa-sha1";
 		public const string XmlDsigSHA1Url				= XmlDsigNamespaceUrl + "sha1";
 
-#if NET_2_0
 		public const string XmlDecryptionTransformUrl			= "http://www.w3.org/2002/07/decrypt#XML";
 		public const string XmlDsigBase64TransformUrl			= XmlDsigNamespaceUrl + "base64";
 		public const string XmlDsigC14NTransformUrl			= XmlDsigCanonicalizationUrl;
@@ -69,7 +65,6 @@ namespace System.Security.Cryptography.Xml {
 		public const string XmlLicenseTransformUrl			= "urn:mpeg:mpeg21:2003:01-REL-R-NS:licenseTransform";
 
 		private EncryptedXml encryptedXml;
-#endif
 
 		protected Signature m_signature;
 		private AsymmetricAlgorithm key;
@@ -79,15 +74,9 @@ namespace System.Security.Cryptography.Xml {
 		private XmlElement signatureElement;
 		private Hashtable hashes;
 		// FIXME: enable it after CAS implementation
-#if false //NET_1_1
-		private XmlResolver xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), new Evidence ());
-#else
 		private XmlResolver xmlResolver = new XmlUrlResolver ();
-#endif
 		private ArrayList manifests;
-#if NET_2_0
 		private IEnumerator _x509Enumerator;
-#endif
 
 		private static readonly char [] whitespaceChars = new char [] {' ', '\r', '\n', '\t'};
 
@@ -113,20 +102,16 @@ namespace System.Security.Cryptography.Xml {
 			envdoc.LoadXml (elem.OuterXml);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public EncryptedXml EncryptedXml {
 			get { return encryptedXml; }
 			set { encryptedXml = value; }
 		}
-#endif
 
 		public KeyInfo KeyInfo {
 			get {
-#if NET_2_0
 				if (m_signature.KeyInfo == null)
 					m_signature.KeyInfo = new KeyInfo ();
-#endif
 				return m_signature.KeyInfo;
 			}
 			set { m_signature.KeyInfo = value; }
@@ -170,10 +155,8 @@ namespace System.Security.Cryptography.Xml {
 
 		public void AddReference (Reference reference) 
 		{
-#if NET_2_0
 			if (reference == null)
 				throw new ArgumentNullException ("reference");
-#endif
 			m_signature.SignedInfo.AddReference (reference);
 		}
 
@@ -183,9 +166,7 @@ namespace System.Security.Cryptography.Xml {
 			// not affect to the input itself.
 			if (t is XmlDsigXPathTransform 
 				|| t is XmlDsigEnvelopedSignatureTransform
-#if NET_2_0
 				|| t is XmlDecryptionTransform
-#endif
 			)
 				input = (XmlDocument) input.Clone ();
 
@@ -503,13 +484,8 @@ namespace System.Security.Cryptography.Xml {
 				if (!CheckSignatureWithKey (key))
 					return null;
 			} else {
-#if NET_2_0
 				if (Signature.KeyInfo == null)
 					return null;
-#else
-				if (Signature.KeyInfo == null)
-					throw new CryptographicException ("At least one KeyInfo is required.");
-#endif
 				// no supplied key, iterates all KeyInfo
 				while ((key = GetPublicKey ()) != null) {
 					if (CheckSignatureWithKey (key)) {
@@ -633,14 +609,12 @@ namespace System.Security.Cryptography.Xml {
 			return false;
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		[ComVisible (false)]
 		public bool CheckSignature (X509Certificate2 certificate, bool verifySignatureOnly)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public bool CheckSignatureReturningKey (out AsymmetricAlgorithm signingKey) 
 		{
@@ -689,7 +663,6 @@ namespace System.Security.Cryptography.Xml {
 
 			if (macAlg is HMACSHA1) {
 				method = XmlDsigHMACSHA1Url;
-#if NET_2_0
 			} else if (macAlg is HMACSHA256) {
 				method = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256";
 			} else if (macAlg is HMACSHA384) {
@@ -698,7 +671,6 @@ namespace System.Security.Cryptography.Xml {
 				method = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
 			} else if (macAlg is HMACRIPEMD160) {
 				method = "http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160";
-#endif
 			}
 
 			if (method == null)
@@ -734,7 +706,7 @@ namespace System.Security.Cryptography.Xml {
 				pkEnumerator = m_signature.KeyInfo.GetEnumerator ();
 			}
 			
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 			if (_x509Enumerator != null) {
 				if (_x509Enumerator.MoveNext ()) {
 					X509Certificate cert = (X509Certificate) _x509Enumerator.Current;
@@ -758,7 +730,7 @@ namespace System.Security.Cryptography.Xml {
 					return key;
 				}
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 				if (kic is KeyInfoX509Data) {
 					_x509Enumerator = ((KeyInfoX509Data) kic).Certificates.GetEnumerator ();
 					if (_x509Enumerator.MoveNext ()) {
@@ -783,7 +755,6 @@ namespace System.Security.Cryptography.Xml {
 
 			signatureElement = value;
 			m_signature.LoadXml (value);
-#if NET_2_0
 			// Need to give the EncryptedXml object to the 
 			// XmlDecryptionTransform to give it a fighting 
 			// chance at decrypting the document.
@@ -793,14 +764,11 @@ namespace System.Security.Cryptography.Xml {
 						((XmlDecryptionTransform) t).EncryptedXml = EncryptedXml;
 				}
 			}
-#endif
 		}
 
-#if NET_1_1
 		[ComVisible (false)]
 		public XmlResolver Resolver {
 			set { xmlResolver = value; }
 		}
-#endif
 	}
 }

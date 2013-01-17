@@ -71,7 +71,7 @@
 		Code to do semantic analysis and emit the attributes
 		is here.
 
-	    rootcontext.cs:
+	    module.cs:
 
 		Keeps track of the types defined in the source code,
 		as well as the assemblies loaded.  
@@ -263,6 +263,26 @@
 	top of the stack as a number of values `TAKING',
 	`TAKEN_BEFORE', `ELSE_SEEN', `PARENT_TAKING'.
 
+	To debug problems in your grammar, you need to edit the
+	Makefile and make sure that the -ct options are passed to
+	jay.   The current incarnation says:
+
+	./../jay/jay -c < ./../jay/skeleton.cs cs-parser.jay
+
+	During debugging, you want to change this to:
+
+	./../jay/jay -cvt < ./../jay/skeleton.cs cs-parser.jay
+
+	This generates a parser with debugging information and allows
+	you to activate verbose parser output in both the csharp
+	command and the mcs command by passing the "-v -v" flag (-v
+	twice).
+
+	When you do this, standard output will have a dump of the
+	tokens parsed and how the parser reacted to those.   You can
+	look up the states with the y.output file that contains the
+	entire parser state diagram in human readable form.
+
 ** Locations
 
 	Locations are encoded as a 32-bit number (the Location
@@ -280,11 +300,6 @@
 
 	The token 0 is reserved for ``anonymous'' locations, ie. if we
 	don't know the location (Location.Null).
-
-	The tokenizer also tracks the column number for a token, but
-	this is currently not being used or encoded.  It could
-	probably be encoded in the low 9 bits, allowing for columns
-	from 1 to 512 to be encoded.
 
 * The Parser
 
@@ -325,7 +340,7 @@
 
 	During parsing, the compiler will create the various trees of
 	expressions.  These expressions have to be resolved before they
-	are can be used.    The semantic analysis is implemented by
+	can be used.    The semantic analysis is implemented by
 	resolving each of the expressions created during parsing and
 	creating fully resolved expressions.
 
@@ -473,6 +488,28 @@
 
 	a [i++]++ 
 	a [i++] += 5;
+	
+** Optimalizations
+
+	Compiler does some limited high-level optimalizations when
+	-optimize option is used
+
+*** Instance field initializer to default value
+
+	Code to optimize:
+
+	class C
+	{
+		enum E
+		{
+			Test
+		}
+    
+		int i = 0;  // Field will not be redundantly assigned
+		int i2 = new int (); // This will be also completely optimized out
+    
+		E e = E.Test; // Even this will go out.
+	}
 
 ** Statements
 
@@ -542,6 +579,49 @@
 
 		* Elements that contain code are now invoked to
 		  perform semantic analysis and code generation.
+		  
+* References loading
+
+	Most programs use external references (assemblies and modules).
+	Compiler loads all referenced top-level types from referenced
+	assemblies into import cached. It imports initialy only C#
+	valid top-level types all other members are imported on demand
+	when needed.
+
+* Namespaces definition
+
+	Before any type resolution can be done we define all compiled
+	namespaces. This is mainly done to prepare using clauses of each
+	namespace block before any type resolution takes a place.
+
+* Types definition
+
+	The first step of type definition is to resolve base class or
+	base interfaces to correctly setup type hierarchy before any
+	member is defined.
+	
+	At this point we do some error checking and verify that the
+	members inheritance is correct and some other members
+	oriented checks.
+
+	By the time we are done, all classes, structs and interfaces
+	have been defined and all their members have been defined as
+	well.
+	
+* MemberCache
+
+	MemberCache is one of core compiler components. It maintains information
+	about types and their members. It tries to be as fast as possible
+	because almost all resolve operations end up querying members info in
+	some way.
+	
+	MemberCache is not definition but specification oriented to maintain
+	differences between inflated versions of generic types. This makes usage
+	of MemberCache simple because consumer does not need to care how to inflate
+	current member and returned type information will always give correctly
+	inflated type. However setting MemberCache up is one of the most complicated
+	parts of the compiler due to possible dependencies when types are defined
+	and complexity of nested types.
 
 * Output Generation
 
@@ -810,6 +890,40 @@
 	If the delegate return type is void, the above will basically turn
 	into an empty operation.   Otherwise the above will become
 	a return statement that can infer return types.
+
+* Debugger support
+
+	Compiler produces .mdb symbol file for better debugging experience. The
+	process is quite straightforward. For every statement or a block there
+	is an entry in symbol file. Each entry includes of start location of
+	the statement and it's starting IL offset in the method. For most statements
+	this is easy but few need special handling (e.g. do, while).
+	
+	When sequence point is needed to represent original location and no IL
+	entry is written for the line we emit `nop' instruction. This is done only
+	for very few constructs (e.g. block opening brace).
+	
+	Captured variables are not treated differently at the moment. Debugger has
+	internal knowledge of their mangled names and how to decode them.
+
+* IKVM.Reflection vs System.Reflection
+
+	Mono compiler can be compiled using different reflection backends. At the
+	moment we support System.Reflection and IKVM.Reflection they both use same
+	API as official System.Reflection.Emit API which allows us to maintain only
+	single version of compiler with few using aliases to specialise.
+	
+	The backends are not plug-able but require compiler to be compiled with
+	specific STATIC define when targeting IKVM.Reflection.
+	
+	IKVM.Reflection is used for static compilation. This means the compiler runs
+	in batch mode like most compilers do. It can target any runtime version and
+	use any mscorlib. The mcs.exe is using IKVM.Reflection.
+	
+	System.Reflection is used for dynamic compilation. This mode is used by
+	our REPL and Evaluator API. Produced IL code is not written to disc but
+	executed by runtime (JIT). Mono.CSharp.dll is using System.Reflection and
+	System.Reflection.Emit.
 
 * Evaluation API
 

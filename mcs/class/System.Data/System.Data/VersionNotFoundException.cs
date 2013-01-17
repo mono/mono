@@ -53,8 +53,8 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		public VersionNotFoundException (string message, Exception inner)
-			: base (message, inner)
+		public VersionNotFoundException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 #endif

@@ -46,14 +46,17 @@ TEST_EXTRA_FILES = \
 	Test/config/* \
 	Test/Resources/* \
 	Test/XmlFiles/* \
-	Test/System.ServiceModel.Description/dump.xml
+	Test/System.ServiceModel.Channels/soap-fault*.xml \
+	Test/System.ServiceModel.Channels/binary-message.raw \
+	Test/System.ServiceModel.Description/dump.xml \
+	Test/MetadataTests/Resources/*
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_FILES)
 
 # Useful for debugging under Visual Studio 2005
 # NO_SIGN_ASSEMBLY = yes
 
-VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))
+VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ServiceModel.dll
 NO_INSTALL = yes

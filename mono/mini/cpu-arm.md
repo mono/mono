@@ -1,3 +1,5 @@
+# Copyright 2003-2011 Novell, Inc (http://www.novell.com)
+# Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 # arm cpu description file
 # this file is read by genmdesc to pruduce a table with all the relevant information
 # about the cpu instructions that may be used by the regsiter allocator, the scheduler
@@ -53,7 +55,9 @@ break: len:4
 jmp: len:92
 br: len:4
 switch: src1:i len:8
-seq_point: len:38
+# See the comment in resume_from_signal_handler, we can't copy the fp regs from sigctx to MonoContext on linux,
+# since the corresponding sigctx structures are not well defined.
+seq_point: len:38 clob:c
 
 throw: src1:i len:24
 rethrow: src1:i len:20
@@ -77,19 +81,19 @@ setlret: src1:i src2:i len:12
 checkthis: src1:b len:4
 call: dest:a clob:c len:20
 call_reg: dest:a src1:i len:8 clob:c
-call_membase: dest:a src1:b len:12 clob:c
+call_membase: dest:a src1:b len:16 clob:c
 voidcall: len:20 clob:c
 voidcall_reg: src1:i len:8 clob:c
-voidcall_membase: src1:b len:12 clob:c
+voidcall_membase: src1:b len:16 clob:c
 fcall: dest:g len:28 clob:c
 fcall_reg: dest:g src1:i len:16 clob:c
-fcall_membase: dest:g src1:b len:20 clob:c
+fcall_membase: dest:g src1:b len:24 clob:c
 lcall: dest:l len:20 clob:c
 lcall_reg: dest:l src1:i len:8 clob:c
-lcall_membase: dest:l src1:b len:12 clob:c
+lcall_membase: dest:l src1:b len:16 clob:c
 vcall: len:20 clob:c
 vcall_reg: src1:i len:8 clob:c
-vcall_membase: src1:b len:12 clob:c
+vcall_membase: src1:b len:16 clob:c
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -322,3 +326,10 @@ float_bge: len:20
 float_bge_un: len:20
 float_ble: len:20
 float_ble_un: len:20
+
+liverange_start: len:0
+liverange_end: len:0
+gc_liveness_def: len:0
+gc_liveness_use: len:0
+gc_spill_slot_liveness_def: len:0
+gc_param_slot_liveness_def: len:0

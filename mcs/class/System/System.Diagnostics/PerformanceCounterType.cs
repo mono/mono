@@ -32,9 +32,6 @@ using System;
 using System.ComponentModel;
 
 namespace System.Diagnostics {
-#if !NET_2_0
-	[Serializable]
-#endif
 	[TypeConverter (typeof (AlphabeticalEnumConverter))]
 	public enum PerformanceCounterType {
 		NumberOfItemsHEX32=0x00000000,

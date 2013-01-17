@@ -16,6 +16,7 @@
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,6 +46,7 @@ namespace System.Text {
 	[Serializable]
 	[ComVisible (true)]
         [MonoLimitation ("Serialization format not compatible with .NET")]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class StringBuilder : ISerializable
 	{
 		private int _length;
@@ -506,7 +508,7 @@ namespace System.Text {
 #if NET_4_0 || MOONLIGHT || MOBILE
 		public StringBuilder Clear ()
 		{
-			_length = 0;
+			Length = 0;
 			return this;
 		}
 #endif

@@ -107,11 +107,7 @@ namespace System.Collections
 #endif
 		}
 
-#if NET_1_1
 		public
-#else
-		internal
-#endif
 		static CaseInsensitiveHashCodeProvider DefaultInvariant {
 			get {
 				return singletonInvariant;

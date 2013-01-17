@@ -29,6 +29,7 @@ using System;
 using System.IO;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
+using System.Text;
 
 namespace MonoTests.Microsoft.Build.Tasks {
 
@@ -57,7 +58,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			Engine engine;
 			Project project;
-			string file_path = Path.Combine(source_path, "copy.txt");
+			string file_path = Path.Combine (source_path, "copy.txt");
 			string target_file = Path.Combine (target_path, "copy.txt");
 
 			using (File.CreateText (file_path)) { }
@@ -88,8 +89,9 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			project.LoadXml (documentString);
 
 			if (!project.Build ("1")) {
-				testLogger.DumpMessages ();
-				Assert.Fail ("Build failed");
+				var sb = new StringBuilder ();
+				testLogger.DumpMessages (sb);
+				Assert.Fail ("Build failed " + sb.ToString ());
 			}
 			Assert.IsTrue (File.Exists (target_file), "A2");
 
@@ -242,6 +244,144 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				Assert.Fail ("Build should have failed");
 			}
 		}
+
+		[Test]
+		public void TestCopy_ReadOnlyUpdate ()
+		{
+			Engine engine;
+			Project project;
+			string file_path = Path.Combine (source_path, "copyro.txt");
+			string target_file = Path.Combine (target_path, "copyro.txt");			
+
+			using (File.CreateText (file_path)) { }
+			
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup><DestFile>" + target_file + @"</DestFile></PropertyGroup>
+					<ItemGroup>
+						<SFiles Include='" + file_path + @"'><Md>1</Md></SFiles>
+						<DFiles Include='$(DestFile)'><Mde>2</Mde></DFiles>
+					</ItemGroup>
+					<Target Name='1'>
+						<Copy SourceFiles='@(SFiles)' DestinationFiles='@(DFiles)' >
+							<Output TaskParameter='CopiedFiles' ItemName='I0'/>
+							<Output TaskParameter='DestinationFiles' ItemName='I1'/>
+						</Copy>
+						<Message Text=""I0 : @(I0), I1: @(I1)""/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (documentString);
+
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+			Assert.IsTrue (File.Exists (target_file), "A2");
+			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					
+		}
+
+#if NET_3_5
+		[Test]
+		public void TestCopy_OverwriteReadOnlyTrue ()
+		{
+			Engine engine;
+			Project project;
+			string file_path = Path.Combine (source_path, "copyro1.txt");
+			string target_file = Path.Combine (target_path, "copyro1.txt");			
+
+			using (File.CreateText (file_path)) { }
+			using (File.CreateText (target_file)) { }
+
+			File.SetAttributes (target_file, FileAttributes.ReadOnly);
+			Assert.AreEqual (FileAttributes.ReadOnly, File.GetAttributes (target_file), "A1");
+			
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+					<PropertyGroup><DestFile>" + target_file + @"</DestFile></PropertyGroup>
+					<ItemGroup>
+						<SFiles Include='" + file_path + @"'><Md>1</Md></SFiles>
+						<DFiles Include='$(DestFile)'><Mde>2</Mde></DFiles>
+					</ItemGroup>
+					<Target Name='1'>
+						<Copy SourceFiles='@(SFiles)' DestinationFiles='@(DFiles)' OverwriteReadOnlyFiles='true'>
+							<Output TaskParameter='CopiedFiles' ItemName='I0'/>
+							<Output TaskParameter='DestinationFiles' ItemName='I1'/>
+						</Copy>
+						<Message Text=""I0 : @(I0), I1: @(I1)""/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (documentString);
+
+			if (!project.Build ("1")) {
+				var sb = new StringBuilder ();
+				testLogger.DumpMessages (sb);
+				Assert.Fail ("Build failed " + sb.ToString ());
+			}
+			Assert.IsTrue (File.Exists (target_file), "A2");
+			Assert.AreEqual (FileAttributes.Normal, File.GetAttributes (target_file), "A3");					
+		}
+
+		[Test]
+		public void TestCopy_OverwriteReadOnlyFalse ()
+		{
+			Engine engine;
+			Project project;
+			string file_path = Path.Combine (source_path, "copyro2.txt");
+			string target_file = Path.Combine (target_path, "copyro2.txt");			
+
+			using (File.CreateText (file_path)) { }
+			using (File.CreateText (target_file)) { }
+
+			File.SetAttributes (target_file, FileAttributes.ReadOnly);
+			Assert.AreEqual (FileAttributes.ReadOnly, File.GetAttributes (target_file), "A1");
+			
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup><DestFile>" + target_file + @"</DestFile></PropertyGroup>
+					<ItemGroup>
+						<SFiles Include='" + file_path + @"'><Md>1</Md></SFiles>
+						<DFiles Include='$(DestFile)'><Mde>2</Mde></DFiles>
+					</ItemGroup>
+					<Target Name='1'>
+						<Copy SourceFiles='@(SFiles)' DestinationFiles='@(DFiles)'>
+							<Output TaskParameter='CopiedFiles' ItemName='I0'/>
+							<Output TaskParameter='DestinationFiles' ItemName='I1'/>
+						</Copy>
+						<Message Text=""I0 : @(I0), I1: @(I1)""/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (documentString);
+
+			// build should fail because of the readonly target file
+			Assert.IsFalse (project.Build ("1"));
+			
+			File.SetAttributes (target_file, FileAttributes.Normal);
+		}
+#endif
 
 		void CheckCopyBuildItems (Project project, string [] source_files, string destination_folder, string prefix)
 		{

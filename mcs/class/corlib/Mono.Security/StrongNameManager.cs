@@ -101,10 +101,6 @@ namespace Mono.Security {
 		static private Hashtable mappings;
 		static private Hashtable tokens;
 
-		static StrongNameManager () 
-		{
-		}
-
 		// note: more than one configuration file can be loaded at the 
 		// same time (e.g. user specific and machine specific config).
 		static public void LoadConfig (string filename) 

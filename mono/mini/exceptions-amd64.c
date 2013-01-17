@@ -5,6 +5,7 @@
  *   Dietmar Maurer (dietmar@ximian.com)
  *
  * (C) 2001 Ximian, Inc.
+ * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 
 #include <config.h>
@@ -355,7 +356,7 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 	/* adjust eip so that it point into the call instruction */
 	ctx.rip -= 1;
 
-	mono_handle_exception (&ctx, exc, (gpointer)rip, FALSE);
+	mono_handle_exception (&ctx, exc);
 	restore_context (&ctx);
 
 	g_assert_not_reached ();
@@ -632,12 +633,8 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 #ifndef MONO_AMD64_NO_PUSHES
 		/* Pop arguments off the stack */
-		{
-			MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, mono_method_signature (ji->method)->param_count + 1);
-
-			guint32 stack_to_pop = mono_arch_get_argument_info (mono_method_signature (ji->method), mono_method_signature (ji->method)->param_count, arg_info);
-			new_ctx->rsp += stack_to_pop;
-		}
+		if (ji->has_arch_eh_info)
+			new_ctx->rsp += mono_jit_info_get_arch_eh_info (ji)->stack_size;
 #endif
 
 		return TRUE;
@@ -720,7 +717,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
  *   Called by resuming from a signal handler.
  */
 static void
-handle_signal_exception (gpointer obj, gboolean test_only)
+handle_signal_exception (gpointer obj)
 {
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoContext ctx;
@@ -734,9 +731,25 @@ handle_signal_exception (gpointer obj, gboolean test_only)
 	if (mono_debugger_handle_exception (&ctx, (MonoObject *)obj))
 		return;
 
-	mono_handle_exception (&ctx, obj, MONO_CONTEXT_GET_IP (&ctx), test_only);
+	mono_handle_exception (&ctx, obj);
 
 	restore_context (&ctx);
+}
+
+void
+mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
+{
+	guint64 sp = ctx->rsp;
+
+	ctx->rdi = (guint64)user_data;
+
+	/* Allocate a stack frame below the red zone */
+	sp -= 128;
+	/* The stack should be unaligned */
+	if ((sp % 16) == 0)
+		sp -= 8;
+	ctx->rsp = sp;
+	ctx->rip = (guint64)async_cb;
 }
 
 /**
@@ -746,10 +759,10 @@ handle_signal_exception (gpointer obj, gboolean test_only)
  * @obj: the exception object
  */
 gboolean
-mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
+mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
 #if defined(MONO_ARCH_USE_SIGACTION)
-	ucontext_t *ctx = (ucontext_t*)sigctx;
+	MonoContext mctx;
 
 	/*
 	 * Handling the exception in the signal handler is problematic, since the original
@@ -757,22 +770,13 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	 * resume into the normal stack and do most work there if possible.
 	 */
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
-	guint64 sp = UCONTEXT_REG_RSP (ctx);
 
 	/* Pass the ctx parameter in TLS */
-	mono_arch_sigctx_to_monoctx (ctx, &jit_tls->ex_ctx);
-	/* The others in registers */
-	UCONTEXT_REG_RDI (ctx) = (guint64)obj;
-	UCONTEXT_REG_RSI (ctx) = test_only;
+	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
-	/* Allocate a stack frame below the red zone */
-	sp -= 128;
-	/* The stack should be unaligned */
-	if (sp % 8 == 0)
-		sp -= 8;
-	UCONTEXT_REG_RSP (ctx) = sp;
-
-	UCONTEXT_REG_RIP (ctx) = (guint64)handle_signal_exception;
+	mctx = jit_tls->ex_ctx;
+	mono_arch_setup_async_callback (&mctx, handle_signal_exception, obj);
+	mono_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
 #else
@@ -783,7 +787,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj))
 		return TRUE;
 
-	mono_handle_exception (&mctx, obj, MONO_CONTEXT_GET_IP (&mctx), test_only);
+	mono_handle_exception (&mctx, obj);
 
 	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
 
@@ -794,85 +798,13 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 void
 mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
-#if defined(__native_client_codegen__) || defined(__native_client__)
-	printf("WARNING: mono_arch_sigctx_to_monoctx() called!\n");
-#endif
-
-#if defined(MONO_ARCH_USE_SIGACTION)
-	ucontext_t *ctx = (ucontext_t*)sigctx;
-
-	mctx->rax = UCONTEXT_REG_RAX (ctx);
-	mctx->rbx = UCONTEXT_REG_RBX (ctx);
-	mctx->rcx = UCONTEXT_REG_RCX (ctx);
-	mctx->rdx = UCONTEXT_REG_RDX (ctx);
-	mctx->rbp = UCONTEXT_REG_RBP (ctx);
-	mctx->rsp = UCONTEXT_REG_RSP (ctx);
-	mctx->rsi = UCONTEXT_REG_RSI (ctx);
-	mctx->rdi = UCONTEXT_REG_RDI (ctx);
-	mctx->rip = UCONTEXT_REG_RIP (ctx);
-	mctx->r12 = UCONTEXT_REG_R12 (ctx);
-	mctx->r13 = UCONTEXT_REG_R13 (ctx);
-	mctx->r14 = UCONTEXT_REG_R14 (ctx);
-	mctx->r15 = UCONTEXT_REG_R15 (ctx);
-#else
-	MonoContext *ctx = (MonoContext *)sigctx;
-
-	mctx->rax = ctx->rax;
-	mctx->rbx = ctx->rbx;
-	mctx->rcx = ctx->rcx;
-	mctx->rdx = ctx->rdx;
-	mctx->rbp = ctx->rbp;
-	mctx->rsp = ctx->rsp;
-	mctx->rsi = ctx->rsi;
-	mctx->rdi = ctx->rdi;
-	mctx->rip = ctx->rip;
-	mctx->r12 = ctx->r12;
-	mctx->r13 = ctx->r13;
-	mctx->r14 = ctx->r14;
-	mctx->r15 = ctx->r15;
-#endif
+	mono_sigctx_to_monoctx (sigctx, mctx);
 }
 
 void
 mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 {
-#if defined(__native_client__) || defined(__native_client_codegen__)
-  printf("WARNING: mono_arch_monoctx_to_sigctx() called!\n");
-#endif
-
-#if defined(MONO_ARCH_USE_SIGACTION)
-	ucontext_t *ctx = (ucontext_t*)sigctx;
-
-	UCONTEXT_REG_RAX (ctx) = mctx->rax;
-	UCONTEXT_REG_RBX (ctx) = mctx->rbx;
-	UCONTEXT_REG_RCX (ctx) = mctx->rcx;
-	UCONTEXT_REG_RDX (ctx) = mctx->rdx;
-	UCONTEXT_REG_RBP (ctx) = mctx->rbp;
-	UCONTEXT_REG_RSP (ctx) = mctx->rsp;
-	UCONTEXT_REG_RSI (ctx) = mctx->rsi;
-	UCONTEXT_REG_RDI (ctx) = mctx->rdi;
-	UCONTEXT_REG_RIP (ctx) = mctx->rip;
-	UCONTEXT_REG_R12 (ctx) = mctx->r12;
-	UCONTEXT_REG_R13 (ctx) = mctx->r13;
-	UCONTEXT_REG_R14 (ctx) = mctx->r14;
-	UCONTEXT_REG_R15 (ctx) = mctx->r15;
-#else
-	MonoContext *ctx = (MonoContext *)sigctx;
-
-	ctx->rax = mctx->rax;
-	ctx->rbx = mctx->rbx;
-	ctx->rcx = mctx->rcx;
-	ctx->rdx = mctx->rdx;
-	ctx->rbp = mctx->rbp;
-	ctx->rsp = mctx->rsp;
-	ctx->rsi = mctx->rsi;
-	ctx->rdi = mctx->rdi;
-	ctx->rip = mctx->rip;
-	ctx->r12 = mctx->r12;
-	ctx->r13 = mctx->r13;
-	ctx->r14 = mctx->r14;
-	ctx->r15 = mctx->r15;
-#endif
+	mono_monoctx_to_sigctx (mctx, sigctx);
 }
 
 gpointer
@@ -929,7 +861,7 @@ altstack_handle_and_restore (void *sigctx, gpointer obj, gboolean stack_ovf)
 		restore_context (&mctx);
 	}
 
-	mono_handle_exception (&mctx, obj, MONO_CONTEXT_GET_IP (&mctx), FALSE);
+	mono_handle_exception (&mctx, obj);
 	if (stack_ovf)
 		prepare_for_guard_pages (&mctx);
 	restore_context (&mctx);
@@ -938,12 +870,13 @@ altstack_handle_and_restore (void *sigctx, gpointer obj, gboolean stack_ovf)
 void
 mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean stack_ovf)
 {
-#if defined(MONO_ARCH_USE_SIGACTION) && defined(UCONTEXT_GREGS)
+#if defined(MONO_ARCH_USE_SIGACTION)
 	MonoException *exc = NULL;
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (gpointer)UCONTEXT_REG_RIP (sigctx), NULL);
 	gpointer *sp;
 	int frame_size;
+	ucontext_t *copied_ctx;
 
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
@@ -959,18 +892,30 @@ mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean
 	 * 128 is the size of the red zone
 	 */
 	frame_size = sizeof (ucontext_t) + sizeof (gpointer) * 4 + 128;
+#ifdef __APPLE__
+	frame_size += sizeof (*ctx->uc_mcontext);
+#endif
 	frame_size += 15;
 	frame_size &= ~15;
 	sp = (gpointer)(UCONTEXT_REG_RSP (sigctx) & ~15);
 	sp = (gpointer)((char*)sp - frame_size);
+	copied_ctx = (ucontext_t*)(sp + 4);
 	/* the arguments must be aligned */
 	sp [-1] = (gpointer)UCONTEXT_REG_RIP (sigctx);
 	/* may need to adjust pointers in the new struct copy, depending on the OS */
-	memcpy (sp + 4, ctx, sizeof (ucontext_t));
+	memcpy (copied_ctx, ctx, sizeof (ucontext_t));
+#ifdef __APPLE__
+	{
+		guint8 * copied_mcontext = (guint8*)copied_ctx + sizeof (ucontext_t);
+		/* uc_mcontext is a pointer, so make a copy which is stored after the ctx */
+		memcpy (copied_mcontext, ctx->uc_mcontext, sizeof (*ctx->uc_mcontext));
+		copied_ctx->uc_mcontext = (void*)copied_mcontext;
+	}
+#endif
 	/* at the return form the signal handler execution starts in altstack_handle_and_restore() */
 	UCONTEXT_REG_RIP (sigctx) = (unsigned long)altstack_handle_and_restore;
 	UCONTEXT_REG_RSP (sigctx) = (unsigned long)(sp - 1);
-	UCONTEXT_REG_RDI (sigctx) = (unsigned long)(sp + 4);
+	UCONTEXT_REG_RDI (sigctx) = (unsigned long)(copied_ctx);
 	UCONTEXT_REG_RSI (sigctx) = (guint64)exc;
 	UCONTEXT_REG_RDX (sigctx) = stack_ovf;
 #endif

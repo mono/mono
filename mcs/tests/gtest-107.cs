@@ -35,7 +35,7 @@ class X
 		tree.Map (new Mapper<int,string> (themap));
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		X x = new X ();
 		x.Test ();

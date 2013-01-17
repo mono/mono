@@ -57,8 +57,9 @@ namespace CorCompare
 							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
 							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
 						}
+					} else {
+						TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
 					}
-
 				}
 			}
 
@@ -797,9 +798,11 @@ namespace CorCompare
 				return;
 			}
 
-			string parms = Parameters.GetSignature (methods [0].Parameters);
-			if (!string.IsNullOrEmpty (parms))
-				AddAttribute (p, "params", parms);
+			if (haveGet || _set.Parameters.Count > 1) {
+				string parms = Parameters.GetSignature (methods [0].Parameters);
+				if (!string.IsNullOrEmpty (parms))
+					AddAttribute (p, "params", parms);
+			}
 
 			MethodData data = new MethodData (document, p, methods);
 			//data.NoMemberAttributes = true;
@@ -1045,6 +1048,7 @@ namespace CorCompare
 						AddAttribute (n, "value", "null");
 						continue;
 					}
+					
 					string value = o.ToString ();
 					if (attName.EndsWith ("GuidAttribute"))
 						value = value.ToUpper ();
@@ -1074,8 +1078,12 @@ namespace CorCompare
 		{
 			foreach (var named_argument in attribute.Properties) {
 				var name = named_argument.Name;
+				var arg = named_argument.Argument;
 
-				mapping.Add (name, GetArgumentValue (named_argument.Argument.Type, named_argument.Argument.Value));
+				if (arg.Value is CustomAttributeArgument)
+					arg = (CustomAttributeArgument) arg.Value;
+
+				mapping.Add (name, GetArgumentValue (arg.Type, arg.Value));
 			}
 		}
 
@@ -1151,6 +1159,29 @@ namespace CorCompare
 			if (!constructor.HasBody)
 				return;
 
+			// Custom handling for attributes with arguments which cannot be easily extracted
+			var ca = attribute.ConstructorArguments;
+			switch (constructor.DeclaringType.FullName) {
+			case "System.Runtime.CompilerServices.DecimalConstantAttribute":
+				var dca = constructor.Parameters[2].ParameterType == constructor.Module.TypeSystem.Int32 ?
+					new DecimalConstantAttribute ((byte) ca[0].Value, (byte) ca[1].Value, (int) ca[2].Value, (int) ca[3].Value, (int) ca[4].Value) :
+					new DecimalConstantAttribute ((byte) ca[0].Value, (byte) ca[1].Value, (uint) ca[2].Value, (uint) ca[3].Value, (uint) ca[4].Value);
+
+				mapping.Add ("Value", dca.Value);
+				return;
+			case "System.ComponentModel.BindableAttribute":
+				if (ca.Count != 1)
+					break;
+
+				if (constructor.Parameters[0].ParameterType == constructor.Module.TypeSystem.Boolean) {
+					mapping.Add ("Bindable", ca[0].Value);
+				} else {
+					throw new NotImplementedException ();
+				}
+
+				return;
+			}
+
 			var field_mapping = CreateArgumentFieldMapping (constructor);
 			var property_mapping = CreatePropertyFieldMapping ((TypeDefinition) constructor.DeclaringType);
 
@@ -1159,7 +1190,10 @@ namespace CorCompare
 				if (!field_mapping.TryGetValue (pair.Value, out argument))
 					continue;
 
-				var ca_arg = attribute.ConstructorArguments [argument];
+				var ca_arg = ca [argument];
+				if (ca_arg.Value is CustomAttributeArgument)
+					ca_arg = (CustomAttributeArgument) ca_arg.Value;
+
 				mapping.Add (pair.Key.Name, GetArgumentValue (ca_arg.Type, ca_arg.Value));
 			}
 		}

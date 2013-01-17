@@ -31,6 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -42,6 +43,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_SignatureHelper))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class SignatureHelper : _SignatureHelper {
 		internal enum SignatureHelperType {
 			HELPER_FIELD,
@@ -429,3 +431,4 @@ namespace System.Reflection.Emit {
                 }
 	}
 }
+#endif

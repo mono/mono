@@ -1,2 +1,5 @@
-rsync -r /home/marek/svn/dlr/svn/DLR_Main/Runtime/Microsoft.Dynamic/ Runtime/Microsoft.Dynamic --exclude=".*/" --exclude="*.snk"
-rsync -r /home/marek/svn/dlr/svn/DLR_Main/Runtime/Microsoft.Scripting.Core/ Runtime/Microsoft.Scripting.Core --exclude=".*/" --exclude="*.snk"
+
+# git clone git://github.com/IronLanguages/main.git
+
+rsync -r /home/marek/git/dlr/main/Runtime/Microsoft.Dynamic/ Runtime/Microsoft.Dynamic --exclude=".*/" --exclude="*.snk"
+rsync -r /home/marek/git/dlr/main/Runtime/Microsoft.Scripting.Core/ Runtime/Microsoft.Scripting.Core --exclude=".*/" --exclude="*.snk"

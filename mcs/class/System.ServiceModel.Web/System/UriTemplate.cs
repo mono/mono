@@ -5,6 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -163,6 +164,15 @@ namespace System
 
 		void BindByName (ref int src, StringBuilder sb, ReadOnlyCollection<string> names, NameValueCollection nvc, IDictionary<string,string> dic, bool omitDefaults, bool query)
 		{
+			if (query) {
+				int idx = template.IndexOf ('?', src);
+				if (idx > 0) {
+					sb.Append (template.Substring (src, idx - src));
+					src = idx;
+					// note that it doesn't append '?'. It is added only when there is actual parameter binding.
+				}
+			}
+
 			foreach (string name in names) {
 				int s = template.IndexOf ('{', src);
 				int e = template.IndexOf ('}', s + 1);
@@ -173,18 +183,19 @@ namespace System
 #endif
 				if (dic != null)
 					dic.TryGetValue (name, out value);
+
 				if (query) {
 					if (value != null || (!omitDefaults && Defaults.TryGetValue (name, out value))) {
 						sb.Append (template.Substring (src, s - src));
 						sb.Append (value);
 					}
-				} else
-					if (value == null && (omitDefaults || !Defaults.TryGetValue(name, out value)))
-						throw new ArgumentException(string.Format("The argument name value collection does not contain non-nul vaalue for '{0}'", name), "parameters");
-					else {
-						sb.Append (template.Substring (src, s - src));
-						sb.Append (value);
-					}
+				} else {
+					if (value == null && (omitDefaults || !Defaults.TryGetValue (name, out value)))
+						throw new ArgumentException (string.Format("The argument name value collection does not contain non-null value for '{0}'", name), "parameters");
+
+					sb.Append (template.Substring (src, s - src));
+					sb.Append (value);
+				}
 				src = e + 1;
 			}
 		}
@@ -239,11 +250,17 @@ namespace System
 
 			var us = baseAddress.LocalPath;
 			if (us [us.Length - 1] != '/')
-				baseAddress = new Uri (baseAddress.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + baseAddress.Query, baseAddress.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+				baseAddress = new Uri (
+					baseAddress.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped) + '/' + baseAddress.Query,
+					baseAddress.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute
+				);
 			if (IgnoreTrailingSlash) {
 				us = candidate.LocalPath;
 				if (us.Length > 0 && us [us.Length - 1] != '/')
-					candidate = new Uri(candidate.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) + '/' + candidate.Query, candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute);
+					candidate = new Uri (
+						candidate.GetComponents (UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.UriEscaped) + '/' + candidate.Query,
+						candidate.IsAbsoluteUri ? UriKind.Absolute : UriKind.RelativeOrAbsolute
+					);
 			}
 
 			int i = 0, c = 0;
@@ -253,7 +270,11 @@ namespace System
 			m.RequestUri = candidate;
 			var vc = m.BoundVariables;
 
-			string cp = Uri.UnescapeDataString (baseAddress.MakeRelativeUri (new Uri (baseAddress, candidate.GetComponents (UriComponents.PathAndQuery, UriFormat.Unescaped))).ToString ());
+			string cp = baseAddress.MakeRelativeUri (new Uri (
+				baseAddress,
+				candidate.GetComponents (UriComponents.PathAndQuery, UriFormat.UriEscaped)
+			))
+				.ToString ();
 			if (IgnoreTrailingSlash && cp [cp.Length - 1] == '/')
 				cp = cp.Substring (0, cp.Length - 1);
 
@@ -268,7 +289,7 @@ namespace System
 
 			foreach (string name in path) {
 				if (name == wild_path_name) {
-					vc [name] = cp.Substring (c); // all remaining paths.
+					vc [name] = Uri.UnescapeDataString (cp.Substring (c)); // all remaining paths.
 					continue;
 				}
 				int n = StringIndexOf (template, '{' + name + '}', i);
@@ -280,10 +301,11 @@ namespace System
 				if (ce < 0)
 					ce = cp.Length;
 				string value = cp.Substring (c, ce - c);
+				string unescapedVaule = Uri.UnescapeDataString (value);
 				if (value.Length == 0)
 					return null; // empty => mismatch
-				vc [name] = value;
-				m.RelativePathSegments.Add (value);
+				vc [name] = unescapedVaule;
+				m.RelativePathSegments.Add (unescapedVaule);
 				c += value.Length;
 			}
 			int tEnd = template.IndexOf ('?');
@@ -292,7 +314,7 @@ namespace System
 			if (tEnd < 0)
 				tEnd = template.Length;
 			if (wild)
-				tEnd = wildIdx - 1;
+				tEnd = Math.Max (wildIdx - 1, 0);
 			if (!wild && (cp.Length - c) != (tEnd - i) ||
 			    String.CompareOrdinal (cp, c, template, i, tEnd - i) != 0)
 				return null; // suffix doesn't match

@@ -47,7 +47,7 @@ public struct Baz
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		int a = 3;
 		int? b = a;

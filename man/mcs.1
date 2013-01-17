@@ -94,10 +94,10 @@ or can be used by methods that have been tagged with the Conditional
 attribute. 
 .TP
 .I \-debug, \-debug+
-Generate debugging information.  To obtain stack traces with debugging
+Generate debugging information. To obtain stack traces with debugging
 information, you need to invoke the mono runtime with the `--debug'
-flag.  This debugging information is stored inside the assembly as a
-resource.
+flag. The debugging information is stored in a MDB file located in
+same output folder as produced assembly.
 .TP
 .I \-debug-
 Do not generate debugging information.
@@ -163,7 +163,7 @@ The possible values are:
 .TP
 .I "Default"
 Instruct compiler to use the latest version. Equivalent is to omit the
-switch (this currently defaults to the C# 3.0 language specification).
+switch (this currently defaults to the C# 4.0 language specification).
 .TP
 .I "ISO-1"
 Restrict compiler to use only first ISO standardized features.
@@ -178,6 +178,10 @@ anonymous methods for example.
 .I "3"
 Restrict the compiler to use only the features available in C# 3.0
 (a superset of ISO-1 and ISO-2).
+.TP
+.I "4"
+Restrict the compiler to use only the features available in C# 4.0
+specification.
 .TP
 .I "future"
 Enables unstable features from upcoming versions of the language.
@@ -214,9 +218,10 @@ Makes the compiler ignore warnings specified in the comma-separated
 list WARNLIST>
 .TP
 .I -optimize, -optimize+, -optimize-
-Controls whether to perform optimizations on the code.   -optimize and
+Controls compiler code generation optimizations on the code. Using -optimize or
 -optimize+ will turn on optimizations, -optimize- will turn it off.
-The default in mcs is to optimize+.
+The default in mcs is to optimize-. The option can be mixed with -debug
+but for the best debugging experience it is recommended leave the options off.
 .TP
 .I -out:FNAME, -o FNAME
 Names the output file to be generated.
@@ -272,8 +277,8 @@ For more details see the PACKAGE section in this document
 .TP
 .I \-platform:ARCH
 Used to specify the target platform. The possible values are: anycpu,
-x86, x64 or itanium. As of June 2009, the Mono runtime only have support
-to emit anycpu and x86 assemblies.
+anycpu32bitpreferred, arm, x86, x64 or itanium. The default option is
+anycpu.
 .TP
 .I -resource:RESOURCE[,ID]
 Embeds to the given resource file.  The optional ID can be used to
@@ -525,7 +530,7 @@ funded by Ximian, Novell and Marek Safar.
 .SH LICENSE
 The Mono Compiler Suite is released under the terms of the GNU GPL or
 the MIT X11.  Please read the accompanying `COPYING' file for details.
-Alternative licensing for the compiler is available from Novell.
+Alternative licensing for the compiler is available from Xamarin.
 .PP
 .SH SEE ALSO
 csharp(1), mdb(1), mono(1), mopen(1), pkg-config(1), sn(1)
@@ -538,7 +543,7 @@ http://www.mono-project.com/Bugs
 The Mono Mailing lists are listed at http://www.mono-project.com/Mailing_Lists
 .SH MORE INFORMATION
 The Mono C# compiler was developed by Novell, Inc
-(http://www.novell.com, http) and is based on the
+(http://www.novell.com) and Xamarin Inc (http://www.xamarin.com) is based on the
 ECMA C# language standard available here:
 http://www.ecma.ch/ecma1/STAND/ecma-334.htm
 .PP

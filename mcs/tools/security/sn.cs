@@ -157,7 +157,7 @@ namespace Mono.Tools {
 			return false;
 		}
 #endif
-		static bool ReSign (string assemblyName, RSA key) 
+		static bool ReSign (string assemblyName, RSA key, bool quiet) 
 		{
 			// this doesn't load the assembly (well it unloads it ;)
 			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
@@ -188,8 +188,10 @@ namespace Mono.Tools {
 
 			if (same) {
 				bool signed = sign.Sign (assemblyName);
-				Console.WriteLine (signed ? "Assembly {0} signed." : "Couldn't sign the assembly {0}.", 
-						   assemblyName);
+				if (!quiet || !signed) {
+					Console.WriteLine (signed ? "Assembly {0} signed." : "Couldn't sign the assembly {0}.", 
+							   assemblyName);
+				}
 				return signed;
 			}
 			
@@ -197,7 +199,7 @@ namespace Mono.Tools {
 			return false;
 		}
 
-		static int Verify (string assemblyName, bool forceVerification) 
+		static int Verify (string assemblyName, bool forceVerification, bool quiet) 
 		{
 			// this doesn't load the assembly (well it unloads it ;)
 			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
@@ -228,7 +230,8 @@ namespace Mono.Tools {
 				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey, 12);
 				StrongName sn = new StrongName (rsa);
 				if (sn.Verify (assemblyName)) {
-					Console.WriteLine ("Assembly {0} is strongnamed.", assemblyName);
+					if (!quiet)
+						Console.WriteLine ("Assembly {0} is strongnamed.", assemblyName);
 					return 0;
 				}
 				else {
@@ -416,14 +419,14 @@ namespace Mono.Tools {
 					break;
 				case "-R":
 					string filename = args [i++];
-					if (! ReSign (filename, GetKeyFromFile (args [i])))
+					if (! ReSign (filename, GetKeyFromFile (args [i]), quiet))
 						return 1;
 					break;
 				case "-Rc":
 					filename = args [i++];
 					csp.KeyContainerName = args [i];
 					rsa = new RSACryptoServiceProvider (csp);
-					if (! ReSign (filename, rsa))
+					if (! ReSign (filename, rsa, quiet))
 						return 1;
 					break;
 				case "-t":
@@ -463,10 +466,10 @@ namespace Mono.Tools {
 					break;
 				case "-v":
 					filename = args [i++];
-					return Verify (filename, false);
+					return Verify (filename, false, quiet);
 				case "-vf":
 					filename = args [i++];
-					return Verify (filename, true);	// force verification
+					return Verify (filename, true, quiet);	// force verification
 				case "-Vl":
 					Console.WriteLine (new StrongNameManager ().ToString ());
 					break;

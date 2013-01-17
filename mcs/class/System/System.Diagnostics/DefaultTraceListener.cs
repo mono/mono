@@ -43,10 +43,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace System.Diagnostics {
-#if NET_2_0
-#else
-	[ComVisible(false)]
-#endif
 	public class DefaultTraceListener : TraceListener {
 
 		private static readonly bool OnWin32;
@@ -75,6 +71,11 @@ namespace System.Diagnostics {
 				// Instead, send output to...wherever the MONO_TRACE_LISTENER environment
 				// variables says to.
 				String trace = Environment.GetEnvironmentVariable("MONO_TRACE_LISTENER");
+#endif
+
+#if MOBILE
+				if (trace == null)
+					trace = ConsoleOutTrace;
 #endif
 
 				if (trace != null) {

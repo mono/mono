@@ -1329,7 +1329,6 @@ namespace System.Data
 
 			SplitColumns (table, out atts, out elements, out simple);
 			//sort out the namespacing
-			int relationCount = table.ParentRelations.Count;
 
 			foreach (DataRow row in rows) {
 				if (skipIfNested) {
@@ -1553,7 +1552,7 @@ namespace System.Data
 		private bool dataSetInitialized = true;
 		public event EventHandler Initialized;
 
-		protected DataSet (SerializationInfo info, StreamingContext context, bool constructSchema)
+		protected DataSet (SerializationInfo info, StreamingContext context, bool ConstructSchema)
 			: this ()
 		{
 			if (DetermineSchemaSerializationMode (info, context) == SchemaSerializationMode.ExcludeSchema) {
@@ -1565,7 +1564,7 @@ namespace System.Data
 				return;
 			}
 			
-			if (constructSchema) {
+			if (ConstructSchema) {
 				string s = info.GetValue ("XmlSchema", typeof (String)) as String;
 				XmlTextReader reader = new XmlTextReader (new StringReader (s));
 				ReadXmlSchema (reader);

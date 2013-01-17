@@ -5,6 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -55,6 +56,9 @@ namespace MonoTests.System.Runtime.InteropServices {
 		}
 
 		[Test]
+#if NET_2_1
+		[Ignore ("There's no GAC for the NET_2_1 based profiles (Moonlight, MonoTouch and Mono for Android")]
+#endif
 		public void FromGlobalAccessCache ()
 		{
 			Assembly corlib = typeof (int).Assembly;

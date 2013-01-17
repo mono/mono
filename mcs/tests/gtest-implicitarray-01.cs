@@ -3,7 +3,7 @@
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string[] array = new [] { "Foo", "Bar", "Baz" };
 		foreach (string s in array)
@@ -21,9 +21,11 @@ public class Test
 		var a6 = new[] { new [] { 1, 2, 3 }, new [] { 4, 5, 6 } };
 		
 		const byte b = 100;
-		var a7 = new[] { b, 10, b, 999, b };
+		int[] a7 = new[] { b, 10, b, 999, b };
 		
 		var a8 = new[] { new Test (), 22,  new object(), string.Empty, null };
+
+		int[] a9 = new [] { 1, (byte) 1 };
 		
 		return 0;
 	}

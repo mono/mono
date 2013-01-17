@@ -49,11 +49,12 @@ namespace System.Net
 			{
 				if (x == null || y == null)
 					return 0;
-				
-				int c1 = x.Name.Length + x.Value.Length;
-				int c2 = y.Name.Length + y.Value.Length;
 
-				return (c1 - c2);
+				var ydomain = y.Domain.Length - (y.Domain[0] == '.' ? 1 : 0);
+				var xdomain = x.Domain.Length - (x.Domain[0] == '.' ? 1 : 0);
+
+				int result = ydomain - xdomain;
+				return result == 0 ? y.Path.Length - x.Path.Length : result;
 			}
 		}
 

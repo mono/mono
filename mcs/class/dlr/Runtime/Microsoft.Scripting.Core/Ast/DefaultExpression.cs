@@ -16,7 +16,7 @@
 using System;
 using System.Diagnostics;
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
 #else
 namespace System.Linq.Expressions {
@@ -24,9 +24,7 @@ namespace System.Linq.Expressions {
     /// <summary>
     /// Represents the default value of a type or an empty expression.
     /// </summary>
-#if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.DefaultExpressionProxy))]
-#endif
     public sealed class DefaultExpression : Expression {
         private readonly Type _type;
 

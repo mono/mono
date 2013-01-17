@@ -276,14 +276,12 @@ public class AssemblyBuilderTest
 		Assert.IsNull (ab.GetDynamicModule ("FOO4"));
 	}
 
-#if NET_1_1
 	[Test]
 	public void TestImageRuntimeVersion ()
 	{
 		string version = ab.ImageRuntimeVersion;
 		Assert.IsTrue (version.Length > 0);
 	}
-#endif
 
 	[Test]
 	public void TestAddResourceFile_Name_Null ()

@@ -304,6 +304,9 @@ namespace Mono.Data.Sqlite
     {
       base.Dispose(disposing);
 
+      if (_sql != null)
+        _sql.Dispose ();
+
       if (disposing)
         Close();
     }
@@ -865,14 +868,23 @@ namespace Mono.Data.Sqlite
 
         SQLiteOpenFlagsEnum flags = SQLiteOpenFlagsEnum.None;
 
-        if (SqliteConvert.ToBoolean(FindKey(opts, "FailIfMissing", Boolean.FalseString)) == false)
-          flags |= SQLiteOpenFlagsEnum.Create;
-
         if (SqliteConvert.ToBoolean(FindKey(opts, "Read Only", Boolean.FalseString)) == true)
           flags |= SQLiteOpenFlagsEnum.ReadOnly;
-        else
+        else {
           flags |= SQLiteOpenFlagsEnum.ReadWrite;
-
+          if (SqliteConvert.ToBoolean(FindKey(opts, "FailIfMissing", Boolean.FalseString)) == false)
+            flags |= SQLiteOpenFlagsEnum.Create;
+        }
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionComplete", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionComplete;
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionCompleteUnlessOpen", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionCompleteUnlessOpen;
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionCompleteUntilFirstUserAuthentication", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionCompleteUntilFirstUserAuthentication;
+	if (SqliteConvert.ToBoolean (FindKey (opts, "FileProtectionNone", Boolean.FalseString)))
+		flags |= SQLiteOpenFlagsEnum.FileProtectionNone;
+	
+				
         _sql.Open(fileName, flags, maxPoolSize, usePooling);
 
         _binaryGuid = (SqliteConvert.ToBoolean(FindKey(opts, "BinaryGUID", Boolean.TrueString)) == true);
@@ -2286,6 +2298,13 @@ namespace Mono.Data.Sqlite
     private void RollbackCallback(IntPtr parg)
     {
       _rollbackHandler(this, EventArgs.Empty);
+    }
+
+    // http://www.sqlite.org/c3ref/config.html
+    public static void SetConfig (SQLiteConfig config)
+    {
+      int n = UnsafeNativeMethods.sqlite3_config (config);
+      if (n > 0) throw new SqliteException (n, null);
     }
   }
 

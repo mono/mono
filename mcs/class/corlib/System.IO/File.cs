@@ -188,12 +188,16 @@ namespace System.IO
 #if !NET_2_1
 		public static FileSecurity GetAccessControl (string path)
 		{
-			throw new NotImplementedException ();
+			// AccessControlSections.Audit requires special permissions.
+			return GetAccessControl (path,
+						 AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 		}
 		
 		public static FileSecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			return new FileSecurity (path, includeSections);
 		}
 #endif
 
@@ -412,7 +416,10 @@ namespace System.IO
 		public static void SetAccessControl (string path,
 						     FileSecurity fileSecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == fileSecurity)
+				throw new ArgumentNullException ("fileSecurity");
+
+			fileSecurity.PersistModifications (path);
 		}
 #endif
 

@@ -99,8 +99,10 @@ namespace System.Web.Services.Description
 				checker.Check (ctx, oper.Input);
 				CheckExtensions (ctx, checker, oper.Input.Extensions);
 
-				checker.Check (ctx, oper.Output);
-				CheckExtensions (ctx, checker, oper.Output.Extensions);
+				if (oper.Output != null) {
+					checker.Check (ctx, oper.Output);
+					CheckExtensions (ctx, checker, oper.Output.Extensions);
+				}
 			}
 		}
 		

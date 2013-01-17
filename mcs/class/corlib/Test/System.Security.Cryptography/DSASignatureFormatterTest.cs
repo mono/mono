@@ -40,8 +40,7 @@ public class DSASignatureFormatterTest {
 	protected static DSA dsa;
 	protected static RSA rsa;
 
-	[TestFixtureSetUp]
-	public void FixtureSetUp () 
+	public DSASignatureFormatterTest () 
 	{
 		// key generation is VERY long so one time is enough
 		dsa = DSA.Create ();

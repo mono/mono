@@ -4,9 +4,11 @@
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) Tim Coleman, 2004
 // (c) 2004,2007 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 
 //
@@ -30,7 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 #if !MOONLIGHT
 extern alias PrebuiltSystem;
@@ -55,6 +57,10 @@ using MonoHashAlgorithmType = Mono.Security.Protocol.Tls.HashAlgorithmType;
 using MonoExchangeAlgorithmType = Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
 using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType;
 
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
+
 namespace System.Net.Security 
 {
 	[MonoTODO ("Non-X509Certificate2 certificate is not supported")]
@@ -75,24 +81,24 @@ namespace System.Net.Security
 		{
 		}
 
-		public SslStream (Stream innerStream, bool leaveStreamOpen)
-			: base (innerStream, leaveStreamOpen)
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen)
+			: base (innerStream, leaveInnerStreamOpen)
 		{
 		}
 
-		[MonoTODO ("certValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
-		public SslStream (Stream innerStream, bool leaveStreamOpen, RemoteCertificateValidationCallback certValidationCallback)
-			: this (innerStream, leaveStreamOpen, certValidationCallback, null)
+		[MonoTODO ("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
+			: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, null)
 		{
 		}
 
-		[MonoTODO ("certValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
-		public SslStream (Stream innerStream, bool leaveStreamOpen, RemoteCertificateValidationCallback certValidationCallback, LocalCertificateSelectionCallback certSelectionCallback)
-			: base (innerStream, leaveStreamOpen)
+		[MonoTODO ("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
+		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
+			: base (innerStream, leaveInnerStreamOpen)
 		{
 			// they are nullable.
-			validation_callback = certValidationCallback;
-			selection_callback = certSelectionCallback;
+			validation_callback = userCertificateValidationCallback;
+			selection_callback = userCertificateSelectionCallback;
 		}
 		#endregion // Constructors
 
@@ -329,12 +335,12 @@ namespace System.Net.Security
 			return BeginAuthenticateAsClient (targetHost, new X509CertificateCollection (), SslProtocols.Tls, false, asyncCallback, asyncState);
 		}
 
-		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("This SslStream is already authenticated");
 
-			SslClientStream s = new SslClientStream (InnerStream,  targetHost, !LeaveInnerStreamOpen, GetMonoSslProtocol (sslProtocolType), clientCertificates);
+			SslClientStream s = new SslClientStream (InnerStream, targetHost, !LeaveInnerStreamOpen, GetMonoSslProtocol (enabledSslProtocols), clientCertificates);
 			s.CheckCertRevocationStatus = checkCertificateRevocation;
 
 			// Due to the Mono.Security internal, it cannot reuse
@@ -410,17 +416,17 @@ namespace System.Net.Security
 			return ssl_stream.BeginRead (buffer, offset, count, asyncCallback, asyncState);
 		}
 #if !MOONLIGHT
-		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
 		{
-			return BeginAuthenticateAsServer (serverCertificate, false, SslProtocols.Tls, false, callback, asyncState);
+			return BeginAuthenticateAsServer (serverCertificate, false, SslProtocols.Tls, false, asyncCallback, asyncState);
 		}
 
-		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols sslProtocolType, bool checkCertificateRevocation, AsyncCallback callback, object asyncState)
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("This SslStream is already authenticated");
 
-			SslServerStream s = new SslServerStream (InnerStream, serverCertificate, clientCertificateRequired, !LeaveInnerStreamOpen, GetMonoSslProtocol (sslProtocolType));
+			SslServerStream s = new SslServerStream (InnerStream, serverCertificate, clientCertificateRequired, !LeaveInnerStreamOpen, GetMonoSslProtocol (enabledSslProtocols));
 			s.CheckCertRevocationStatus = checkCertificateRevocation;
 			// Due to the Mono.Security internal, it cannot reuse
 			// the delegated argument, as Mono.Security creates 
@@ -447,7 +453,7 @@ namespace System.Net.Security
 
 			ssl_stream = s;
 
-			return BeginRead (new byte [0], 0, 0, callback, asyncState);
+			return BeginWrite (new byte[0], 0, 0, asyncCallback, asyncState);
 		}
 #endif
 		MonoSecurityProtocolType GetMonoSslProtocol (SslProtocols ms)
@@ -476,10 +482,10 @@ namespace System.Net.Security
 			AuthenticateAsClient (targetHost, new X509CertificateCollection (), SslProtocols.Tls, false);
 		}
 
-		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols sslProtocolType, bool checkCertificateRevocation)
+		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
 			EndAuthenticateAsClient (BeginAuthenticateAsClient (
-				targetHost, clientCertificates, sslProtocolType, checkCertificateRevocation, null, null));
+				targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, null, null));
 		}
 #if !MOONLIGHT
 		public virtual void AuthenticateAsServer (X509Certificate serverCertificate)
@@ -487,10 +493,10 @@ namespace System.Net.Security
 			AuthenticateAsServer (serverCertificate, false, SslProtocols.Tls, false);
 		}
 
-		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols sslProtocolType, bool checkCertificateRevocation)
+		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
 			EndAuthenticateAsServer (BeginAuthenticateAsServer (
-				serverCertificate, clientCertificateRequired, sslProtocolType, checkCertificateRevocation, null, null));
+				serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, null, null));
 		}
 #endif
 		protected override void Dispose (bool disposing)
@@ -574,6 +580,38 @@ namespace System.Net.Security
 			if (!IsAuthenticated)
 				throw new InvalidOperationException ("This operation is invalid until it is successfully authenticated");
 		}
+
+#if NET_4_5
+		public virtual Task AuthenticateAsClientAsync (string targetHost)
+		{
+			return Task.Factory.FromAsync (BeginAuthenticateAsClient, EndAuthenticateAsClient, targetHost, null);
+		}
+
+		public virtual Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			var t = Tuple.Create (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, this);
+
+			return Task.Factory.FromAsync ((callback, state) => {
+				var d = (Tuple<string, X509CertificateCollection, SslProtocols, bool, SslStream>) state;
+				return d.Item5.BeginAuthenticateAsClient (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
+			}, EndAuthenticateAsClient, t);
+		}
+
+		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
+		{
+			return Task.Factory.FromAsync (BeginAuthenticateAsServer, EndAuthenticateAsServer, serverCertificate, null);
+		}
+
+		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			var t = Tuple.Create (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, this);
+
+			return Task.Factory.FromAsync ((callback, state) => {
+				var d = (Tuple<X509Certificate, bool, SslProtocols, bool, SslStream>) state;
+				return d.Item5.BeginAuthenticateAsServer (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
+			}, EndAuthenticateAsServer, t);
+		}
+#endif
 
 		#endregion // Methods
 	}

@@ -68,14 +68,16 @@ namespace Mono.Globalization.Unicode
 	//
 	internal class Contraction
 	{
+		public int Index;
 		public readonly char [] Source;
 		// only either of them is used.
 		public readonly string Replacement;
 		public readonly byte [] SortKey;
 
-		public Contraction (char [] source,
+		public Contraction (int index, char [] source,
 			string replacement, byte [] sortkey)
 		{
+			Index = index;
 			Source = source;
 			Replacement = replacement;
 			SortKey = sortkey;
@@ -98,7 +100,11 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0; i < min; i++)
 				if (a1 [i] != a2 [i])
 					return a1 [i] - a2 [i];
-			return a1.Length - a2.Length;
+			if (a1.Length != a2.Length)
+				return a1.Length - a2.Length;
+			// This makes the sorting stable, since we are using Array.Sort () which is
+			// not stable
+			return c1.Index - c2.Index;
 		}
 	}
 
@@ -170,6 +176,7 @@ namespace Mono.Globalization.Unicode
 			// collect tailoring entries.
 			ArrayList cmaps = new ArrayList ();
 			ArrayList dmaps = new ArrayList ();
+			int iindex = 0;
 			fixed (char* tarr = tailoringArr){
 				int idx = t.TailoringIndex;
 				int end = idx + t.TailoringCount;
@@ -187,10 +194,11 @@ namespace Mono.Globalization.Unicode
 						byte [] sortkey = new byte [4];
 						for (int i = 0; i < 4; i++)
 							sortkey [i] = (byte) tarr [ss + 1 + i];
-						cmaps.Add (new Contraction (
+						cmaps.Add (new Contraction (iindex,
 									    src, null, sortkey));
 						// it ends with 0
 						idx = ss + 6;
+						iindex ++;
 						break;
 					case '\x2': // DiacriticalMap
 						dmaps.Add (new Level2Map (
@@ -210,9 +218,10 @@ namespace Mono.Globalization.Unicode
 						while (tarr [l] != 0)
 							l++;
 						string r = new string (tarr, ss, l - ss);
-						cmaps.Add (new Contraction (
+						cmaps.Add (new Contraction (iindex,
 									    src, r, null));
 						idx = l + 1;
+						iindex ++;
 						break;
 					default:
 						throw new NotImplementedException (String.Format ("Mono INTERNAL ERROR (Should not happen): Collation tailoring table is broken for culture {0} ({1}) at 0x{2:X}", culture.LCID, culture.Name, idx));

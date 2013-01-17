@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Threading;
 using System.Collections;
@@ -37,7 +37,7 @@ namespace System.Linq.Parallel
 	{
 		internal class SlotBucket
 		{
-			readonly ConcurrentDictionary<long, T> temporaryArea = new ConcurrentDictionary<long, T> ();
+			readonly TemporaryArea<long, T> temporaryArea = new TemporaryArea<long, T> ();
 			readonly KeyValuePair<long, T>[] stagingArea;
 			
 			long currentIndex;

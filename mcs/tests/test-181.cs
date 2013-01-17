@@ -14,7 +14,7 @@ class Test
 	{
 	}
 
-	static public int Main ()
+	public static int Main ()
 	{
 		MethodImplAttributes iflags = typeof (Test).GetMethod ("test").GetMethodImplementationFlags ();
 		return ((iflags & MethodImplAttributes.Synchronized) != 0 ? 0 : 1);

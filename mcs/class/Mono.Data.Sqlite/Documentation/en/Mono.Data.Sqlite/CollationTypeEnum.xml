@@ -1,0 +1,83 @@
+<Type Name="CollationTypeEnum" FullName="Mono.Data.Sqlite.CollationTypeEnum">
+  <TypeSignature Language="C#" Value="public enum CollationTypeEnum" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CollationTypeEnum extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            The type of collating sequence
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Binary">
+      <MemberSignature Language="C#" Value="Binary" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.CollationTypeEnum Binary = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The built-in BINARY collating sequence
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Custom">
+      <MemberSignature Language="C#" Value="Custom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.CollationTypeEnum Custom = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            A custom user-defined collating sequence
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NoCase">
+      <MemberSignature Language="C#" Value="NoCase" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.CollationTypeEnum NoCase = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The built-in NOCASE collating sequence
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Reverse">
+      <MemberSignature Language="C#" Value="Reverse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.CollationTypeEnum Reverse = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationTypeEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The built-in REVERSE collating sequence
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -33,6 +33,7 @@
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -45,6 +46,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_LocalBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class LocalBuilder : LocalVariableInfo, _LocalBuilder {
 
 		// Some fields are already defined in LocalVariableInfo
@@ -128,3 +130,4 @@ namespace System.Reflection.Emit {
 		}
 	}
 }
+#endif

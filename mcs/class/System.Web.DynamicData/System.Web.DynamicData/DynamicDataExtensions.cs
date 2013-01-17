@@ -73,7 +73,6 @@ namespace System.Web.DynamicData
 		public static void ExpandDynamicWhereParameters (this IDynamicDataSource dataSource)
 		{
 			// http://forums.asp.net/p/1396453/3005197.aspx#3005197
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

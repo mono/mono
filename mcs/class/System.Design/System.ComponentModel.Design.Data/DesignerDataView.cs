@@ -37,8 +37,6 @@ namespace System.ComponentModel.Design.Data
 {
 	public abstract class DesignerDataView : DesignerDataTableBase
 	{
-		string name, owner;
-
 		protected DesignerDataView (string name)
 			: base (name)
 		{

@@ -876,6 +876,32 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("Hello\nExtra\nWorld\n", sw.ToString ());
 		}
 
+		[Test] // #1321
+		public void BindToMethodNamedArgs_2 ()
+		{
+			StringWriter sw = new StringWriter ();
+			sw.NewLine = "\n";
+
+			object[] argValues = new object [] {5, "AB", sw};
+			string [] argNames = new string [] {"second", "first", "output"};
+
+			typeof (BinderTest).InvokeMember ("TestMethod",
+					BindingFlags.InvokeMethod,
+					null,
+					null,
+					argValues,
+					null,
+					null,
+					argNames);
+
+			Assert.AreEqual ("AB\n5\n", sw.ToString ());
+		}
+
+		public static void TestMethod (string first, int second, TextWriter output) {
+			output.WriteLine (first);
+			output.WriteLine (second);
+		}
+
 		public class Bug41691
 		{
 			public static void PrintName (string lastName, string firstName, string extra, TextWriter output)

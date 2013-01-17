@@ -1,0 +1,5 @@
+*.log
+*.netmodule
+xml-*.xml
+*.exe.mdb.xml
+data.xml

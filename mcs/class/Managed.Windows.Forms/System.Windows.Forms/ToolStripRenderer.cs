@@ -192,12 +192,18 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderItemBackground (ToolStripItemRenderEventArgs e)
 		{
-			if (e.Item.BackgroundImage != null) {
+			if (e.Item.BackColor != Control.DefaultBackColor) {
+				// Only paint the BackColor if it's not the default one,
+				// to avoid painting a solid background color over the parent ToolStrip gradient.
 				Rectangle item_bounds = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (e.Item.BackColor), item_bounds);
+			}
+
+			if (e.Item.BackgroundImage != null) {
+				Rectangle item_bounds = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
 				DrawBackground (e.Graphics, item_bounds, e.Item.BackgroundImage, e.Item.BackgroundImageLayout);
 			}
-				
+
 			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderItemBackgroundEvent];
 			if (eh != null)
 				eh (this, e);

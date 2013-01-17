@@ -273,6 +273,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Data.dll		\
 	-r:System.Xml.dll		\
 	-r:System.EnterpriseServices.dll \
+	-r:System.Runtime.Serialization.Formatters.Soap \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
@@ -321,6 +322,7 @@ EXTRA_DISTFILES = \
 	$(shell find Test/tools/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
 	System.Web_standalone_test.dll.sources \
 	standalone-runner-support.dll.sources \
+	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
 	ASPState.sql
 
 BUILT_SOURCES = System.Web/UplevelHelper.cs 

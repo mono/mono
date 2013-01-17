@@ -17,7 +17,7 @@ EXTRA_DISTFILES = $(RESOURCE_FILES) \
 	Test/config/webHttpBinding \
 	Test/config/webHttpBinding.config
 
-VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))
+VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ServiceModel.Web.dll
 NO_INSTALL = yes

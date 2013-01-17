@@ -58,7 +58,7 @@ namespace System.Web.DynamicData
 
 		public MetaModel Model { get; set; }
 
-		public DynamicDataRouteHandler RouteHandler { 
+		public new DynamicDataRouteHandler RouteHandler { 
 			get { return base.RouteHandler as DynamicDataRouteHandler; }
 			set { base.RouteHandler = value; }
 		}

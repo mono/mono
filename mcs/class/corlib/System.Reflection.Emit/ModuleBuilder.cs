@@ -31,6 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Collections;
@@ -46,6 +47,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ModuleBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ModuleBuilder : Module, _ModuleBuilder {
 
 #pragma warning disable 169, 414
@@ -993,3 +995,4 @@ namespace System.Reflection.Emit {
 	}
 }
 
+#endif

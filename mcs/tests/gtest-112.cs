@@ -57,7 +57,7 @@ public class Sorting
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		List<Foo<int>> list = new List<Foo<int>> ();
 		Foo<int> foo = new Foo<int> (3);

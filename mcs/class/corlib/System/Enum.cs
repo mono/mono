@@ -48,8 +48,8 @@ namespace System
 		internal Hashtable name_hash;
 		[ThreadStatic]
 		static Hashtable cache;
-		static Hashtable global_cache;
-		static object global_cache_monitor;
+		static Hashtable global_cache = new Hashtable ();
+		static object global_cache_monitor = new object ();
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
@@ -145,12 +145,6 @@ namespace System
 				return 1;
 			}
 		}
-			
-		static MonoEnumInfo ()
-		{
-			global_cache_monitor = new object ();
-			global_cache = new Hashtable ();
-		}
 
 		static Hashtable Cache {
 			get {
@@ -167,7 +161,7 @@ namespace System
 			names = other.names;
 			name_hash = other.name_hash;
 		}
-
+		
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
 			/* First check the thread-local cache without locking */
@@ -187,18 +181,9 @@ namespace System
 
 			get_enum_info (enumType, out info);
 
-			IComparer ic = null;
 			Type et = Enum.GetUnderlyingType (enumType);
-			if (et == typeof (int))
-				ic = int_comparer;
-			else if (et == typeof (short))
-				ic = short_comparer;
-			else if (et == typeof (sbyte))
-				ic = sbyte_comparer;
-			else if (et == typeof (long))
-				ic = long_comparer;
+			SortEnums (et, info.values, info.names);
 			
-			Array.Sort (info.values, info.names, ic);
 			if (info.names.Length > 50) {
 				info.name_hash = new Hashtable (info.names.Length);
 				for (int i = 0; i <  info.names.Length; ++i)
@@ -208,6 +193,21 @@ namespace System
 			lock (global_cache_monitor) {
 				global_cache [enumType] = cached;
 			}
+		}
+		
+		internal static void SortEnums (Type et, Array values, Array names)
+		{
+			IComparer ic = null;
+			if (et == typeof (int))
+				ic = int_comparer;
+			else if (et == typeof (short))
+				ic = short_comparer;
+			else if (et == typeof (sbyte))
+				ic = sbyte_comparer;
+			else if (et == typeof (long))
+				ic = long_comparer;
+			
+			Array.Sort (values, names, ic);
 		}
 	};
 
@@ -506,8 +506,6 @@ namespace System
 			throw new ArgumentException ("typeCode is not a valid type code for an Enum");
 		}
 
-		private static char [] split_char = { ',' };
-
 		[ComVisible(true)]
 		public static object Parse (Type enumType, string value, bool ignoreCase)
 		{
@@ -531,6 +529,8 @@ namespace System
 			return result;
 		}
 
+		static char [] split_char;
+
 		static bool Parse<TEnum> (Type enumType, string value, bool ignoreCase, out TEnum result)
 		{
 			result = default (TEnum);
@@ -549,6 +549,8 @@ namespace System
 
 			// is 'value' a list of named constants?
 			if (value.IndexOf (',') != -1) {
+				if (split_char == null)
+					split_char = new [] { ',' };
 				string [] names = value.Split (split_char);
 				ulong retVal = 0;
 				for (int i = 0; i < names.Length; ++i) {

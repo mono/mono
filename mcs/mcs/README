@@ -1,18 +1,4 @@
-Completion support
-==================
 
-	Supported:
-	
-		a.<TAB> to complete members of type `a'
-		a<TAB> for types and namespaces
-		a.W<TAB>
-		a<TAB> for local variables
-
-	Unsupported:
-	
-		delegate { FOO.<TAB>
-		using statement autocompletion
-	
 These are the sources to the Mono C# compiler 
 ---------------------------------------------
 

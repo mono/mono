@@ -53,16 +53,16 @@ namespace System.Collections.Specialized {
 			public short Offset {
 				get { return offset; }
 			}
-			public static bool operator == (Section v1, Section v2)
+			public static bool operator == (Section a, Section b)
 			{
-				return v1.mask == v2.mask &&
-				       v1.offset == v2.offset;
+				return a.mask == b.mask &&
+				       a.offset == b.offset;
 			}
 
-			public static bool operator != (Section v1, Section v2)
+			public static bool operator != (Section a, Section b)
 			{
-				return v1.mask != v2.mask ||
-				       v1.offset != v2.offset;
+				return a.mask != b.mask ||
+				       a.offset != b.offset;
 			}
 
 			public bool Equals (Section obj)
@@ -106,14 +106,14 @@ namespace System.Collections.Specialized {
 		
 		// Constructors
 		
-		public BitVector32 (BitVector32 source)
+		public BitVector32 (BitVector32 value)
 		{
-			bits = source.bits;
+			bits = value.bits;
 		}
 
-		public BitVector32 (int init)
+		public BitVector32 (int data)
 		{
-			bits = init;
+			bits = data;
 		}
 		
 		// Properties
@@ -137,16 +137,16 @@ namespace System.Collections.Specialized {
 			}
 		}
 		
-		public bool this [int mask] {
+		public bool this [int bit] {
 			get {
-				return (bits & mask) == mask;
+				return (bits & bit) == bit;
 			}
 			
 			set { 
 				if (value)
-					bits |= mask;
+					bits |= bit;
 				else
-					bits &= ~mask;
+					bits &= ~bit;
 			}
 		}
 		
@@ -157,13 +157,13 @@ namespace System.Collections.Specialized {
 			return 1;
 		}
 
-		public static int CreateMask (int prev)
+		public static int CreateMask (int previous)
 		{
-			if (prev == 0)
+			if (previous == 0)
 				return 1;
-			if (prev == Int32.MinValue) 
+			if (previous == Int32.MinValue) 
 				throw new InvalidOperationException ("all bits set");
-			return prev << 1;
+			return previous << 1;
 		}
 
 		public static Section CreateSection (short maxValue)

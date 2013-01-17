@@ -5,8 +5,6 @@
 //   Kazuki Oikawa  (kazuki@panicode.com)
 //
 
-#if NET_1_1
-
 using System;
 using System.Reflection;
 
@@ -15,7 +13,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("f7102fa9-cabb-3a74-a6da-b4567ef1b079")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (MemberInfo))]
+#endif
 	[ComVisible (true)]
 	public interface _MemberInfo
 	{
@@ -51,4 +51,3 @@ namespace System.Runtime.InteropServices
 			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
 	}
 }
-#endif

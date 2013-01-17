@@ -8,7 +8,7 @@ namespace TestCase
 
 	class CTest : ITest
 	{
-		static void Main()
+		public static void Main()
 		{
 		}
 

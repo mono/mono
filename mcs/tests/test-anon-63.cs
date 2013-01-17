@@ -17,7 +17,7 @@ class X {
                 }
         }
  
-        static int Main ()
+        public static int Main ()
         {
                 IEnumerator enumerator = GetIt (new int [] { 4, 8, 9});
 		enumerator.MoveNext ();

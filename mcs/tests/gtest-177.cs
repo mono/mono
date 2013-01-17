@@ -5,7 +5,7 @@ class X
 {
 	static int[] x = new int[] {100, 200};
 
-	static int Main ()
+	public static int Main ()
 	{
 		IEnumerator<int> enumerator = X<int>.Y (x);
 		int sum = 0;

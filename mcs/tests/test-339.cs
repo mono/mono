@@ -10,7 +10,7 @@ public class C
 {
 	public static int[] field = new int [] { 66 };
 
-	static int Main()
+	public static int Main()
 	{
 		unsafe {
 			SS* ss = stackalloc SS [10];

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,28 +9,29 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_2_0</OutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;CECIL</DefineConstants>
     <NoStdLib>true</NoStdLib>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>Mono.Cecil.Mdb</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;CECIL</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;CECIL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -41,12 +42,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include=".\Mono.Cecil.Mdb\AssemblyInfo.cs" />
-   <Compile Include=".\Mono.Cecil.Mdb\MdbReader.cs" />
-   <Compile Include=".\Mono.Cecil.Mdb\MdbWriter.cs" />
-   <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
-   <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
-   <Compile Include="..\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\AssemblyInfo.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbReader.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbWriter.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
+   <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\SymbolWriterImpl.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -62,22 +64,22 @@
   <ItemGroup>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.dll</HintPath>
+      <HintPath>System.dll</HintPath>
     </Reference>
-    <Reference Include="./../../class/lib/net_2_0/Mono.Cecil.dll">
+    <Reference Include="Mono.Cecil.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\./../../class/lib/net_2_0/Mono.Cecil.dll</HintPath>
+      <HintPath>Mono.Cecil.dll</HintPath>
     </Reference>
-  </ItemGroup>
 
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

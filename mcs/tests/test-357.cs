@@ -16,7 +16,7 @@ namespace Foo {
 	partial class Bar
 	{
 		public Bar () {}
-		static void Main ()
+		public static void Main ()
 		{
 			if (new Bar ().f == null)
 				throw new System.Exception ("Didn't resolve Sd.F?");

@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace Mono.Debugger.Soft
 {
@@ -10,18 +11,24 @@ namespace Mono.Debugger.Soft
 		internal ThreadMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
 
+		internal ThreadMirror (VirtualMachine vm, long id, TypeMirror type, AppDomainMirror domain) : base (vm, id, type, domain) {
+		}
+
 		// FIXME: Cache, invalidate when the thread/runtime is resumed
 		public StackFrame[] GetFrames () {
 			FrameInfo[] frame_info = vm.conn.Thread_GetFrameInfo (id, 0, -1);
 
-			StackFrame[] frames = new StackFrame [frame_info.Length];
+			var frames = new List<StackFrame> ();
+
 			for (int i = 0; i < frame_info.Length; ++i) {
 				FrameInfo info = (FrameInfo)frame_info [i];
 				MethodMirror method = vm.GetMethod (info.method);
-				frames [i] = new StackFrame (vm, info.id, this, method, info.il_offset, info.flags);
+				var f = new StackFrame (vm, info.id, this, method, info.il_offset, info.flags);
+				if (!(f.IsNativeTransition && !NativeTransitions))
+					frames.Add (f);
 			}
 
-			return frames;
+			return frames.ToArray ();
 	    }
 
 		public string Name {
@@ -52,13 +59,16 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		long? thread_id;
 		/*
 		 * Return a unique identifier for this thread, multiple ThreadMirror objects
 		 * may have the same ThreadId because of appdomains.
 		 */
 		public long ThreadId {
 			get {
-				return vm.conn.Thread_GetId (id);
+				if (thread_id == null)
+				 	thread_id = vm.conn.Thread_GetId (id);
+				return (long)thread_id;
 			}
 		}
 
@@ -70,6 +80,16 @@ namespace Mono.Debugger.Soft
 			get {
 				return vm.conn.Thread_GetTID (id);
 			}
+		}
+
+		/*
+		 * Get/set whenever GetFrames () should return frames for managed-to-native
+		 * transitions, i.e frames whose IsNativeTransition property is set.
+		 * This is needed because some clients might not be able to deal with those
+		 * frames.
+		 */
+		public static bool NativeTransitions {
+			get; set;
 		}
     }
 }

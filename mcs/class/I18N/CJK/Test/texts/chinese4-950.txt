@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="imagetoolbar" content="no"/>
+<meta name="description" content="FreeBSD 6.x + Netatalk 2.0.3 CJK patched + Samba 3.0.22 交叉測試... @.@a 一些注意事項： 1. 在 smb.conf 當中設定 \"unix charset\" 與 \"display charset\" 時最好相同， ?? 否則很容易出現亂馬的情況。（參考下面解說，並請參考： ??? http://phorum.vb..." />
+<meta name="medium" content="blog" />
+<link rel="image_src" type="image/jpeg" href="http://l.yimg.com/f/i/tw/wretch/social/facebook_icon_blog.gif" />
+<title>FreeBSD 6.x + Netatalk + Samba 交叉測試... - 痕跡... - 無名小站</title>
+<link rel="shortcut icon" type="image/x-icon" href="http://l.yimg.com/e/serv/common/favicon.ico" />
+<meta name="keywords" content="">
+<meta property="og:type" content="article" />
+<meta property="og:title" content="FreeBSD 6.x + Netatalk + Samba 交叉測試... - 痕跡... - 無名小站" />
+<meta property="og:description" content="FreeBSD 6.x + Netatalk 2.0.3 CJK patched + Samba 3.0.22 交叉測試... @.@a 一些注意事項： 1. 在 smb.conf 當中設定 \"unix charset\" 與 \"display charset\" 時最好相同， ?? 否則很容易出現亂馬的情況。（參考下面解說，並請參考： ??? http://phorum.vb..." />
+<meta property="og:url" content="http://www.wretch.cc/blog/fsj/3269525" />
+<meta property="og:site_name" content="無名小站網誌" />
+<meta property="og:image" content="http://l.yimg.com/e/cover/fsj_90.jpg?2" />
+ 
+<link rel="canonical" href="http://www.wretch.cc/blog/fsj/3269525" />
+<link rel="stylesheet" href="http://l.yimg.com/e/serv/blog/css/top.css" type="text/css" />
+<link rel="stylesheet" href="http://f7.wretch.yimg.com/fsj/files/blog.css?1221572096" type="text/css">
+<link rel="stylesheet" href="http://l.yimg.com/e/serv/common/css/sharing.css?20110808" type="text/css">
+<link rel="stylesheet" href="http://l.yimg.com/e/serv/blog/css/font.css?20110209" type="text/css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/container/assets/skins/sam/container.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/button/assets/skins/sam/button.css">
+<link rel="stylesheet" type="text/css" href="http://l.yimg.com/e/serv/blog/css/antiPhishing.css">
+<link rel="stylesheet" type="text/css" href="http://l.yimg.com/e/serv/blog/css/trackback.css?20111123">
+
+
+<link rel="stylesheet" href="http://l.yimg.com/e/serv/blog/css/friend_picker.css" type="text/css">
+
+<script type="text/javascript" src="http://l.yimg.com/e/serv/blog/js/func_blog.js?20100908"></script>
+<script type="text/javascript" src="http://l.yimg.com/e/serv/common/js/swfobject.js"></script>
+<script type="text/javascript" src="http://l.yimg.com/e/serv/common/js/jwplayer.js"></script>
+<script type="text/javascript" src="http://l.yimg.com/qo/widget/kplizer_loader.js"></script>
+
+
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yahoo-dom-event/yahoo-dom-event.js&2.5.2/build/imageloader/imageloader-min.js&2.5.2/build/get/get-min.js"></script>
+<script type="text/javascript">
+var YUD = YAHOO.util.Dom, YUE = YAHOO.util.Event, YUG = YAHOO.util.Get, $ = YAHOO.util.Dom.get;
+</script>
+<style>
+</style>
+</head>
+
+<body id="blog_main" class="yui-skin-sam">
+<!-- nv hugewrepper --><div id="hugewrapper"><input id="wretch-crumb" type="hidden" value="&.c=Lp3GCObMNHg&.t=1322178371">
+<input id="static-path" type="hidden" value="http://l.yimg.com/e/serv/common/">
+<link rel="stylesheet" href="http://l.yimg.com/e/serv/common/css/kukubar.css?20111123" type="text/css">
+<style>
+.kukubar-customized {
+    background:#EEEDDD; /* old browsers */
+    background: -moz-linear-gradient(top, #FFFFFF 0%, #EEEDDD 100%); /* firefox */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#EEEDDD)); /* webkit */
+
+}
+</style>
+<div id="kukubar-upper" class="font-black kukubar-customized kukubar-bar">
+    <div class="left-side">
+        <div id="wretch-logo" class="bar-block bar-block-click">
+        <h1><a class="bar-link" tabindex="1" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/logo/*http://www.wretch.cc/">無名小站</a></h1>
+        </div>
+        <div id="wretch-service" class="bar-block bar-block-click">
+                        <a class="current-service bar-link theme" tabindex="2" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/B_FP/*http://www.wretch.cc/blog"/>Blog</a>
+            <span class="bar-block-btn" tabindex="3">展開</span>
+            <ul class="dropdown blog-service">
+                <li class="album-index"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/A_FP/*http://www.wretch.cc/album">Album</a></li>
+                <li class="blog-index"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/B_FP/*http://www.wretch.cc/blog">Blog</a></li>
+                <li class="video-index"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/V_FP/*http://www.wretch.cc/video">Video</a></li>
+                <li class="digu-index"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/D_FP/*http://www.wretch.cc/digu">Digu</a></li>
+                <li class="join-index"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/J_FP/*http://www.wretch.cc/join">Join</a></li>
+                <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/Y/*http://tw.yahoo.com/">Yahoo!</a></li>
+                <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/help/*http://tw.help.cc.yahoo.com/help_cp.html?product=53">Help</a></li>
+                <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/vip/*http://bill.wretch.cc/">Premium</a></li>
+            </ul>
+        </div>
+        <div id="infozone">
+             <ul>
+                            <li><a href="http://www.wretch.cc/?cid=1145" class="theme">今日主題：摩人來推薦 平價享五星</a></li>
+                            <li><a href="http://www.wretch.cc/?cid=1146" class="theme">今日主題：冬天怎穿？ 教你醬搞定</a></li>
+                        </ul>
+        </div>
+    </div>
+    
+    
+    <div class="right-side">
+        <div id="wretch-search" class="bar-block">
+            <form method="get" action="http://tw.blog.search.yahoo.com/search" name="searchForm">
+                            <fieldset>
+                    <legend>Article<span>選擇服務</span></legend>
+                    <div class="service-list dropdown">
+                        <input type="radio" id="srch-blog" name="type" value="article" checked="checked" data="checked">
+                        <label for="srch-blog" _target="Article Search">Article</label>
+                        <input type="radio" id="srch-album" name="type" value="photo" checked="false" data="false">
+                        <label for="srch-album" _target="Album Search">Album</label>
+                        <input type="radio" id="srch-video" name="type" value="video" checked="false" data="false">
+                        <label for="srch-video" _target="Video Search">Video</label>
+                    </div>
+                    <div class="search-field">
+                        <label for="wretch-search-text" class="hidden">搜尋</label>
+                        <input id="wretch-search-text" type="text" name="p" title="Article Search" value="Article Search" class="blur">
+                        <input type="hidden" value="wretch" name="provider">
+                        <input type="hidden" value="cb-wretch" name="fr">
+                        <input id="wretch-search-btn" type="submit" value="送出">
+                    </div>
+                </fieldset>
+            </form>
+        </div>        
+                <div id="wretch-login" class="bar-block bar-block-click bar-link no-hover">
+                            <ul class="login-links">
+                <li class="link-item first"><a class="bar-link theme" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/login/*http://www.wretch.cc/IDintegration/?ref=%2525252Fblog%2525252Ffsj%2525252F3269525">Login</a></li>
+                <li class="link-item"><a class="bar-link theme" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/haha/activate/*http://www.wretch.cc/IDintegration/">Register</a></li>
+            </ul>
+                        </div>
+ 
+    </div>
+</div>
+<div id="bigcontainer" style="position: relative !important; zoom:1 !important;" >
+<div id="container1">
+<div id="container2">
+
+  <div id="banner">
+  <div id="pageheader">
+    <h1>
+      <a href="/blog/fsj">痕跡...</a>
+      <span class="description">
+        FreeBSD 6.x + Netatalk + Samba 交叉測試...      </span>
+    </h1>
+
+    <div id="description2">
+    <script>
+    var desc_iframeW=65535, tmpW=0;
+    tmpW = document.getElementById('container1').clientWidth;
+    if(tmpW > 0)
+      desc_iframeW = Math.min(desc_iframeW, tmpW);
+    tmpW = document.getElementById('container2').clientWidth;
+    if(tmpW > 0)
+      desc_iframeW = Math.min(desc_iframeW, tmpW);
+    tmpW = document.getElementById('banner').clientWidth;
+    if(tmpW > 0)
+      desc_iframeW = Math.min(desc_iframeW, tmpW);
+    tmpW = document.getElementById('pageheader').clientWidth;
+    if(tmpW > 0)
+      desc_iframeW = Math.min(desc_iframeW, tmpW);
+    tmpW = document.getElementById('description2').clientWidth;
+    if(tmpW > 0)
+      desc_iframeW = Math.min(desc_iframeW, tmpW);
+    function desc_autoWidth(iframe)
+    {
+      if(desc_iframeW > 0 && desc_iframeW < 65535)
+      {
+        iframe.width = desc_iframeW;
+      }
+    }
+    </script>
+      <span class="description">
+        There is no truth.  There is only perception.  ~Gustave Flaubert      </span>
+    </div>
+  </div>
+</div>
+
+
+<div id="main2">
+
+<div id="content">
+<input type="hidden" name="check_url" value="on">
+<div class="blog" >
+    
+          <div class="date">
+        <div class="datediv">
+          April 14, 2006        </div>
+      </div>
+
+      <div class="blogbody">
+        <div class="blogbody2">
+            <div class="articletext">
+            <a name="3269525"></a>
+            <h3 class="title">FreeBSD 6.x + Netatalk + Samba 交叉測試...</h3>
+                          <div class="social-wrapper">
+<div class="social-widget">
+  <div class="bd">  
+      <a class="fb" title="分享在我的Facebook" target="_blank" href="http://tw.rd.yahoo.com/referurl/wretch/shareout/blog/facebook/SIG=17veajg8v/*http%3A//www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.wretch.cc%2Frd%2Fblog%2Ffacebook%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525&t=FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...-fsj%E7%9A%84%E7%84%A1%E5%90%8D%E5%B0%8F%E7%AB%99">分享在我的Facebook</a>
+      <a class="plurk" title="分享在我的Plurk" target="_blank" href="http://tw.rd.yahoo.com/referurl/wretch/shareout/blog/plurk/SIG=189j25oqs/*http%3A//www.plurk.com/?qualifier=shares&status=http%3A%2F%2Fwww.wretch.cc%2Frd%2Fblog%2Fplurk%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525+%28FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...-fsj%E7%9A%84%E7%84%A1%E5%90%8D%E5%B0%8F%E7%AB%99%29">分享在我的Plurk</a>
+      <a class="yim" title="分享在我的即時通" href="ymsgr:customstatus?FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...-fsj%E7%9A%84%E7%84%A1%E5%90%8D%E5%B0%8F%E7%AB%99+http%3A%2F%2Fwww.wretch.cc%2Frd%2Fblog%2Fyim%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525">分享在我的即時通</a>
+  </div>
+</div>
+<div class="wretch-reblog fixinline">
+    <div class="bd bubble-none">  
+        <a class="wretch" href="http://www.wretch.cc/blog/post.php?rtype=article&t=FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...&tl=http%3A%2F%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525&d=FreeBSD+6.x+%2B+Netatalk+2.0.3+CJK+patched+%2B+Samba+3.0.22+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...+%40.%40a%0D%0A%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85%EF%BC%9A%0D%0A1.+%E5%9C%A8+smb.conf+%E7%95%B6%E4%B8%AD%E8%A8%AD%E5%AE%9A+%22unix+charset%22+%E8%88%87+%22display+charset%22+%E6%99%82%E6%9C%80%E5%A5%BD%E7%9B%B8%E5%90%8C%E2%80%A6&a=fsj&al=http%3A%2F%2Fwww.wretch.cc%2Fuser%2Ffsj" target="_blank" title="發文至無名">發文
+                </a>
+    </div>
+</div>
+
+<iframe class="fixinline" src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525&amp;layout=button_count&amp;show_faces=false&amp;width=92&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="overflow:hidden; width:92px; height:21px;" allowTransparency="true"></iframe>
+</div>
+                        
+
+            <div class="innertext">
+              <p><p>FreeBSD 6.x + Netatalk 2.0.3 CJK patched + Samba 3.0.22 交叉測試... @.@a</p>
+<p>一些注意事項：</p>
+<p>1. 在 smb.conf 當中設定 "unix charset" 與 "display charset" 時最好相同，<br/>
+?? 否則很容易出現亂馬的情況。（參考下面解說，並請參考：<br/>
+??? <a href="http://phorum.vbird.org/viewtopic.php?t=22001" target="_blank">http://phorum.vbird.org/viewtopic.php?t=22001</a>）</p>
+<p>2. Write/Read OK 或 Write/Read Mangled 代表從 PC 或 Mac 拷貝檔案到分享出<br/>
+?? 來的卷宗的結果，netatalk 與 samba 都設定在 /home/share</p>
+<p>3. 每測試不同的設定，我會將相關服務停止，然後清除 /home/share 裡面所有東<br/>
+?? 西。</p>
+<p>4. PC 有使用 Unicode 補完計畫 (<a href="http://uao.cpatch.org/" target="_blank">http://uao.cpatch.org/</a>) 修補過。</p>
+<p>5. 測試檔案包括日文檔名，例如："竹井詩織里 - 世界止??.mp3" <br/>
+?? （當然，那是我從 <a href="http://www.shinkong-being.com.tw" target="_blank">http://www.shinkong-being.com.tw</a> 買的 CD 轉出來的 XD）</p>
+<p>6. 我只設定 setenv LC_CTYPE=zh_TW.Big5 與 LC_CTYPE=en_US.ISO8859-1 以及<br/>
+??? LC_CTYPE=UTF8, LANG 則維持 en_US.ISO8859-1 感覺沒差ㄟ... 包括用 mc 來看<br/>
+?? （包括用 SecureNetTerm 透過 ssh2 連線或直接在 console 底下...）<br/>
+?? 似乎要在 X 底下才能區分差別...</p>
+<p>7. 沒空整理成表格，自己看看吧... :p</p>
+<code>
+<p>===========================================================================<br/>
+smb.conf<br/>
+[global]<br/>
+??? dos charset = CP950<br/>
+??? unix charset = CP950<br/>
+??? display charset = CP950<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage ISO-8859-1 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:CP950 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read OK (in FreeBSD Mac OK, PC OK, but NOT Japanese file name, <br/>
+PC Japanese file name mangled, Mac Japanese file OK.)<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage ISO-8859-1 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:zh_TW.Big5 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:01:24 bad afpd[1778]: Required conversion from zh_TW.Big5 to UCS-2 not supported<br/>
+Apr 14 15:01:24 bad afpd[1778]: Setting codepage zh_TW.Big5 as volume codepage failed</p>
+<p>Connection Failed<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage ISO-8859-1 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:BIG5 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:17:58 bad afpd[1993]: WARNING: volume encoding BIG5 is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage ISO-8859-1 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:MAC_CHINESE_TRAD maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:20:03 bad afpd[2051]: WARNING: volume encoding MAC_CHINESE_TRAD is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage ISO-8859-1 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:FOOBAR maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:21:38 bad afpd[2087]: Required conversion from FOOBAR to UCS-2 not supported<br/>
+Apr 14 15:21:38 bad afpd[2087]: Setting codepage FOOBAR as volume codepage failed</p>
+<p>Connection Failed<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage ISO-8859-1 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:UTF8 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read Mangled<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage CP950 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:CP950 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage CP950 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:zh_TW.Big5 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:26:13 bad afpd[2176]: Required conversion from zh_TW.Big5 to UCS-2 notsupported<br/>
+Apr 14 15:26:13 bad afpd[2176]: Setting codepage zh_TW.Big5 as volume codepage failed</p>
+<p>Connection Failed<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage CP950 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:BIG5 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:27:50 bad afpd[2210]: WARNING: volume encoding BIG5 is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage CP950 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:MAC_CHINESE_TRAD maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:29:37 bad afpd[2260]: WARNING: volume encoding MAC_CHINESE_TRAD is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage CP950 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:UTF8 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage CP950 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:FOOBAR maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:23:43 bad afpd[2138]: Required conversion from FOOBAR to UCS-2 not supported<br/>
+Apr 14 15:23:43 bad afpd[2138]: Setting codepage FOOBAR as volume codepage failed</p>
+<p>Connection Failed<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:CP950 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:zh_TW.Big5 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:35:33 bad afpd[2383]: Required conversion from zh_TW.Big5 to UCS-2 not supported<br/>
+Apr 14 15:35:33 bad afpd[2383]: Setting codepage zh_TW.Big5 as volume codepage failed</p>
+<p>Connection Failed<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:BIG5 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:37:24 bad afpd[2426]: WARNING: volume encoding BIG5 is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:MAC_CHINESE_TRAD maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:32:12 bad afpd[2311]: WARNING: volume encoding MAC_CHINESE_TRAD is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:UTF8 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read Mangled<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage zh_TW.Big5 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:CP950 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 14:55:07 bad afpd[1688]: Loading ConfigFile<br/>
+Apr 14 14:55:07 bad afpd[1688]: Required conversion from zh_TW.Big5 to UCS-2 not supported<br/>
+Apr 14 14:55:07 bad afpd[1688]: setting Unix codepage to 'zh_TW.Big5' failed</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage BIG5 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:CP950 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:48:10 bad afpd[2571]: WARNING: volume encoding CP950 is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage MAC_CHINESE_TRAD -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:CP950 maccharset:MAC_CHINESE_TRAD</p>
+<p>Apr 14 15:50:47 bad afpd[2628]: WARNING: volume encoding CP950 is *not* supported by netatalk, expect problems !!!!</p>
+<p>Write/Read OK<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+smb.conf<br/>
+[global]<br/>
+??? dos charset = CP950<br/>
+??? unix charset = UTF8<br/>
+??? display charset = UTF8<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:UTF8 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read OK incluse Japanese file name (in FreeBSD Mangled)<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+smb.conf<br/>
+[global]<br/>
+??? dos charset = CP950<br/>
+??? unix charset = CP950<br/>
+??? display charset = UTF8<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:UTF8 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read Mangled (in FreeBSD Mac Mangled PC OK)<br/>
+===========================================================================<br/>
+===========================================================================<br/>
+smb.conf<br/>
+[global]<br/>
+??? dos charset = UTF8<br/>
+??? unix charset = CP950<br/>
+??? display charset = UTF8<br/>
+===========================================================================<br/>
+afpd.conf<br/>
+??? -unixcodepage UTF8 -maccodepage MAC_CHINESE_TRAD</p>
+<p>AppleVolumes.default<br/>
+??? volcharset:UTF8 maccharset:MAC_CHINESE_TRAD</p>
+<p>Write/Read Mangled (in FreeBSD Mac Mangled PC OK, but NOT Japanese file name)<br/>
+===========================================================================<br/>
+<br/></code>
+※ 相關報導：<br/>
+<br/>
+＊ <a href="http://www.wretch.cc/blog/fsj&article_id=4757068">Netatalk 2.x CJK 支援公開測試</a>?<br/>
+＊ <a href="http://www.wretch.cc/blog/fsj&article_id=3150183">Netatalk 2.0.3 + FreeBSD 4.x 中文字碼的支援</a>?<br/>
+</p>
+</p>
+                        <div class="clearfix">
+                              <div id="push">
+                  <span id="recommendcount">0</span>推薦此文章
+                  <a href="javascript:void(0)" id="pushbtn" class="push">推</a>
+                  <a href="javascript:void(0)" id="collectbtn" class="pull">收</a>
+                </div>
+                                          <div class="social-wrapper">
+<div class="social-widget">
+  <div class="bd">  
+      <a class="fb" title="分享在我的Facebook" target="_blank" href="http://tw.rd.yahoo.com/referurl/wretch/shareout/blog/facebook/SIG=17veajg8v/*http%3A//www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.wretch.cc%2Frd%2Fblog%2Ffacebook%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525&t=FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...-fsj%E7%9A%84%E7%84%A1%E5%90%8D%E5%B0%8F%E7%AB%99">分享在我的Facebook</a>
+      <a class="plurk" title="分享在我的Plurk" target="_blank" href="http://tw.rd.yahoo.com/referurl/wretch/shareout/blog/plurk/SIG=189j25oqs/*http%3A//www.plurk.com/?qualifier=shares&status=http%3A%2F%2Fwww.wretch.cc%2Frd%2Fblog%2Fplurk%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525+%28FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...-fsj%E7%9A%84%E7%84%A1%E5%90%8D%E5%B0%8F%E7%AB%99%29">分享在我的Plurk</a>
+      <a class="yim" title="分享在我的即時通" href="ymsgr:customstatus?FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...-fsj%E7%9A%84%E7%84%A1%E5%90%8D%E5%B0%8F%E7%AB%99+http%3A%2F%2Fwww.wretch.cc%2Frd%2Fblog%2Fyim%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525">分享在我的即時通</a>
+  </div>
+</div>
+<div class="wretch-reblog fixinline">
+    <div class="bd bubble-none">  
+        <a class="wretch" href="http://www.wretch.cc/blog/post.php?rtype=article&t=FreeBSD+6.x+%2B+Netatalk+%2B+Samba+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...&tl=http%3A%2F%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525&d=FreeBSD+6.x+%2B+Netatalk+2.0.3+CJK+patched+%2B+Samba+3.0.22+%E4%BA%A4%E5%8F%89%E6%B8%AC%E8%A9%A6...+%40.%40a%0D%0A%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85%EF%BC%9A%0D%0A1.+%E5%9C%A8+smb.conf+%E7%95%B6%E4%B8%AD%E8%A8%AD%E5%AE%9A+%22unix+charset%22+%E8%88%87+%22display+charset%22+%E6%99%82%E6%9C%80%E5%A5%BD%E7%9B%B8%E5%90%8C%E2%80%A6&a=fsj&al=http%3A%2F%2Fwww.wretch.cc%2Fuser%2Ffsj" target="_blank" title="發文至無名">發文
+                </a>
+    </div>
+</div>
+
+<iframe class="fixinline" src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.wretch.cc%2Fblog%2Ffsj%2F3269525&amp;layout=button_count&amp;show_faces=false&amp;width=92&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="overflow:hidden; width:92px; height:21px;" allowTransparency="true"></iframe>
+</div>
+                          </div>
+            
+                        <div id="article_counter" align="right">
+              Today's Visitors: 0 Total Visitors: 272            </div>
+          
+            
+      <div id="collection_comments" style="visibility:hidden">
+    <span><strong><nobr>You can leave comment to this collection</nobr></strong></span>
+    <img class="icon" src="http://l.yimg.com/e/serv/blog/img/close.gif" onclick="$('collection_comments').style.visibility = 'hidden'">
+    <form action="../do_collect.php" method="post" name='ajax_favorites_pop' id="word_form_pop">
+            <input type=hidden name=".c" value="Lp3GCObMNHg">
+        <input type=hidden name=".t" value="1322178371">    <p id="postContentPop">
+      <nobr>Collection Category:<select name="category">
+        <option value="0">未分類(0)</option>
+              </select>
+      <a href="/admin/blog/?func=collection&col=folder" target="_blank">Add Collection Category</a></nobr><br/>
+      <nobr>Collection Comment:<input type="text" class="text" name="comments_text_pop" value='' maxlength='100'></nobr>
+    </p>
+    <p id="submitPost">
+      <nobr>
+      <span class="head"></span>
+        <input name="owner" type="hidden" value="fsj" />
+        <input name="aid" type="hidden" value="3269525" />
+        <input name="viewer_id" type="hidden" value="">
+        <input name="title" type="hidden" value="FreeBSD 6.x + Netatalk + Samba 交叉測試..." />
+        <input name="save" type="submit" value="Confirm Collection" onclick="$('collection_comments').style.visibility = 'hidden'"/>
+        <input name="cancel" type="reset" value="Cancel" onclick="$('collection_comments').style.visibility='hidden'"/>
+      </nobr>
+    </p>
+    </form>
+  </div><!--end of div id=comments -->
+
+              </div>
+
+                        <div class="extended">
+              Personal Category: <a href="http://www.wretch.cc/blog/fsj&category_id=0">Uncategorized Articles</a>
+
+              <span>Topic:  <a href="/blog" target="_blank">未分類</a></span>
+              <br />
+              
+                          </div>
+                                    </div> <!-- end of articletext -->
+
+
+            <div class="posted">
+            <a href="/blog/fsj">fsj</a> at <a href="/blog/">無名小站</a> at 07:17 PM post            | <a href="/blog/fsj/3269525#postComments">Reply(0)</a>
+            | <a href="/blog/fsj/3269525#trackbacks">Trackback(0)</a>
+            | <a href="javascript:void(0)" id="showCollector">Collection(0)</a>
+                                                | <a href="http://cc.wretch.cc/help/prosecute.php?badid=fsj&aid=3269525&cs=YTo0OntpOjA7TjtpOjE7czozOiJmc2oiO2k6MjtzOjA6IiI7aTozO2k6MzY1NzM7fQ--" target="_blank">prosecute</a>
+                      </div>
+
+  
+                      
+            <div class="total-comments-div">
+                                <div class="trackback-url">
+                  [Trackback URL]
+                  <input type="text" id="trackback_url" value='http://www.wretch.cc/blog/trackback.php?blog_id=fsj&article_id=3269525'>
+                  <input type="button" value="Copy Trackback Url" onClick="copy_to_clipborad('trackback_url'); alert('Already copy to the clipboard')">
+                                  </div>
+                                          
+              <br />
+
+              
+                      <br /><a href="http://www.wretch.cc/IDintegration/?ref=%2525252Fblog%2525252Ffsj%2525252F3269525">Only friends can post a comment, Login first</a>
+            </div> <!--  end of total-comments-div -->
+          
+        </div> <!-- end of blogbody2 -->
+
+      </div> <!-- end of blogbody -->
+
+                
+</div> <!-- end of class=blog -->
+</div> <!-- end of content -->
+
+
+<div id="links">
+
+  <div id="links2">
+
+  <div id="boxMySpace">
+ <div class="boxMySpace0">
+  <div class="sidetitle">
+   <a target="_blank" href="http://tw.rd.yahoo.com/referurl/wretch/vip/insidepage/evt=47619/*http://bill.wretch.cc/">
+    <img align="middle" border="0" class="vip_icon" src="http://l.yimg.com/e/serv/common/img/isAuth_silver.gif" alt="vip_icon"/>
+   </a>
+   fsj's Home  </div>
+ </div>
+ <div class="boxMySpace1">
+  <div class="side">
+   <div class="boxMySpaceImg">
+    <a href="/user/fsj">
+     <img border="0" src="http://l.yimg.com/e/cover/fsj_90.jpg?2"/>
+    </a>
+   </div>
+
+   <div id="blogCategory">
+    <span>Topic:</span>
+    <a href="http://www.wretch.cc//blog/?tab=hot&class_id=9">Political Affairs</a>
+   </div>
+
+   <div id="service">
+    <ul id="serviceList">
+     <li><a class="mySpaceLink" id="linkMypage" href="http://tw.rd.yahoo.com/referurl/wretch/index/mprd/*http://www.wretch.cc/">Mypage</a></li>
+     <li><a class="mySpaceLink" id="linkAlbum" href="/album/fsj">album</a></li>
+     <li><a class="mySpaceLink" id="linkBlog" href="/blog/fsj">blog</a></li>
+     <li><a class="mySpaceLink" id="linkGbook" href="/guestbook/fsj">guestbook</a></li>
+     <li><a class="mySpaceLink" id="linkUser" href="/user/fsj">User</a></li>
+     <li><a class="mySpaceLink" id="linkFriend" href="/friend/fsj">Friend</a></li>
+     <li><a class="mySpaceLink" id="linkVideo" href="/video/fsj">Video</a></li>
+    </ul>
+
+    <ul id="interactionList">
+     <li class="boxAddFriendLink"><a class="mySpaceLink" href="/album/addfriend.php?uid=fsj" id="link_addfriend">Add to Friend List</a></li>
+    </ul>
+   </div>
+    <select id="friendlist" name="friendlist" onChange="MeetFriend('http://www.wretch.cc/blog/', this);">
+  <option>- Friends' Blog -</option>
+    <option value=angela5247>angela5247</option>
+    <option value=brightpu>brightpu</option>
+    <option value=cry555666>cry555666</option>
+    <option value=cwwany>cwwany</option>
+    <option value=ipeggyhsu>ipeggyhsu</option>
+    <option value=mrock>mrock</option>
+    <option value=poyee221>poyee221</option>
+    <option value=sesther88>sesther88</option>
+    <option value=SHE911>SHE911</option>
+    <option value=skymirage>skymirage</option>
+    <option value=sweetyjoan>sweetyjoan</option>
+    <option value=thebz1>thebz1</option>
+</select>
+  </div>
+ </div>
+</div>
+
+      <div id="boxCategory">
+      <div class="boxCategory0">
+        <div class="sidetitle">
+          Categories        </div>
+      </div>
+      <div class="boxCategory1">
+        <div class="side">
+                              <a href="/blog/fsj&category_id=0">Uncategorized Articles</a><br />
+                  </div>
+      </div>
+      <br />
+    </div>
+
+      <div id="boxDate">
+      <div class="boxDate0">
+        <div class="sidetitle">
+          Monthly Archives        </div>
+      </div>
+      <div class="boxDate1">
+        <div class="side">
+          <a href="http://www.wretch.cc/blog/fsj&list=1">All Articles</a>
+          <br />
+          <select onChange="goMonthly(this);">
+            <option value="-1">- Monthly Archives -</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=8">August 2007(161)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=7">July 2007(429)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=6">June 2007(447)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=5">May 2007(432)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=4">April 2007(323)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=3">March 2007(154)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=2">February 2007(185)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2007&month=1">January 2007(393)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=12">December 2006(238)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=11">November 2006(420)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=10">October 2006(426)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=9">September 2006(368)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=8">August 2006(410)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=7">July 2006(423)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=6">June 2006(476)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=5">May 2006(493)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=4">April 2006(441)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=3">March 2006(422)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=2">February 2006(329)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2006&month=1">January 2006(301)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=12">December 2005(259)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=11">November 2005(204)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=10">October 2005(220)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=9">September 2005(168)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=8">August 2005(102)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=7">July 2005(73)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=6">June 2005(38)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=5">May 2005(35)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=4">April 2005(49)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=3">March 2005(28)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=2">February 2005(20)</option>
+                        <option value="http://www.wretch.cc/blog/fsj&schedule=1&year=2005&month=1">January 2005(11)</option>
+                      </select>
+          <br />
+        </div>
+      </div>
+      <br />
+    </div>
+
+      <div id="boxSearch">
+      <div class="boxSearch0">
+        <div class="sidetitle">
+          Search This Blog        </div>
+      </div>
+      <div class="boxSearch1">
+        <div class="side">
+          <br />
+          <form action="http://www.wretch.cc/blog/blog.php" method="get" >
+            <input type="hidden" name="id" value='fsj'>
+            <input type="text" name="search" id="blog_search_key" size="12" maxlength="12">
+            <input type="submit" id="blog_search_submit" value="Search">
+            <br />
+
+            <input type="checkbox" name="search_title" class="blog_search_filter" value="1" checked>Title</input>
+            <input type="checkbox" name="search_content" class="blog_search_filter" value="1">Contents</input>
+          </form>
+        </div>
+      </div>
+      <br />
+    </div>
+
+    <div id="divThird">
+    <div id="divThird2">
+        <script>
+      var iframeW=65535, tmpW=0;
+      tmpW = document.getElementById('links').clientWidth;
+      if(tmpW > 0)
+        iframeW = Math.min(iframeW, tmpW);
+      tmpW = document.getElementById('links2').clientWidth;
+      if(tmpW > 0)
+        iframeW = Math.min(iframeW, tmpW);
+      tmpW = document.getElementById('divThird').clientWidth;
+      if(tmpW > 0)
+        iframeW = Math.min(iframeW, tmpW);
+      tmpW = document.getElementById('divThird2').clientWidth;
+      if(tmpW > 0)
+        iframeW = Math.min(iframeW, tmpW);
+      function autoWidth(iframe)
+      {
+        if(iframeW > 0 && iframeW < 65535)
+          iframe.width = iframeW;
+      }
+      </script>
+          <div id="boxFolder">
+        <div class="boxFolder0">
+          <div class="sidetitle">
+                        推薦連結，新網誌請看下面          </div>
+        </div>
+        <div class="boxFolder1">
+        <div class="side" style=" ">
+                           
+                <a target="_blank" href="http://only-perception.blogspot.com" title="新家...">
+                                    Only Perception                </a><br />
+                                         
+                <a target="_blank" href="http://www.npo.org.tw/Bulletin/index.asp" title="台灣NPO大本營">
+                                    公益活動佈告欄                </a><br />
+                                         
+                <a target="_blank" href="http://www.thefreedictionary.com/" title="Free oline dctionary, free access">
+                                    TheFreeDictionary                </a><br />
+                                         
+                <a target="_blank" href="http://www.tvcr.org.tw/" title="不給媒體牽著鼻子走">
+                                    媒體識讀推廣中心                </a><br />
+                                         
+                <a target="_blank" href="http://digg.com/" title="挖新聞">
+                                    Digg                </a><br />
+                                         
+                <a target="_blank" href="http://boingboing.net/" title="什麼鬼東西都有的 blog 集團...">
+                                    BoingBoing                </a><br />
+                                         
+                <a target="_blank" href="http://www.shoutcast.com/" title="Free internet radio!">
+                                    SHOUTcast                </a><br />
+                                         
+                <a target="_blank" href="http://tw.myblog.yahoo.com/jw!NIohvKaLExS1bKAMroNE" title="意思是說賠錢別找他">
+                                    無責任投資論壇                </a><br />
+                                         
+                <a target="_blank" href="http://www.chromasia.com/" title="好特別的攝影手法">
+                                    c h r o m a s i a                </a><br />
+                                         
+                <a target="_blank" href="http://www.cambridgeincolour.com/" title="數位攝影教程">
+                                    Cambridge in Colour                </a><br />
+                                         
+                <a target="_blank" href="http://findbook.tw/" title="書籍比價來這裡">
+                                    Findbook.tw                </a><br />
+                                         
+                <a target="_blank" href="http://www.librarything.com/" title="ctalog your books online">
+                                    LibraryThing                </a><br />
+                                         
+                <a target="_blank" href="http://www.keko.com.cn/" title="全球最大中文食譜搜索平台">
+                                    可口網                </a><br />
+                                         
+                <a target="_blank" href="http://www.eol.org/" title="生物大百科">
+                                    Encyclopedia of Life                </a><br />
+                                                </div>
+        </div>
+        <br />
+      </div>
+          <div id="boxFolder">
+        <div class="boxFolder0">
+          <div class="sidetitle">
+                        本人文章採用下列方式授權          </div>
+        </div>
+        <div class="boxFolder1">
+        <div class="side" style=" ">
+                           
+                <a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/" title="">
+                                    Creative Commons Attribution-Share Alike 3.0 Unported                </a><br />
+                                                </div>
+        </div>
+        <br />
+      </div>
+    
+        <div id="boxCounter">
+        <div class="boxCounter0">
+          <div class="sidetitle">
+            Visitors Counter          </div>
+        </div>
+        <div class="boxCounter1">
+          <div class="side">
+            Today's Visitors: 11<br />
+            Total Visitors: 1691735          </div>
+        </div>
+      </div>
+
+    </div> <!-- end of divThird2 -->
+    </div> <!-- end of divThird -->
+    
+  </div> <!-- end of links2 -->
+
+</div> <!-- end of links -->
+
+
+</div> <!-- end of main2 -->
+
+<div id="extraDiv1"><span></span></div>
+<div id="extraDiv2"><span></span></div>
+
+
+</div> <!-- end of container2 -->
+
+<div id="footer"></div>
+
+<div id="extraDiv3"><span></span></div>
+<div id="extraDiv4"><span></span></div>
+
+</div> <!-- end of container1 -->
+
+<br clear="all" />
+
+<div id="extraDiv5"><span></span></div>
+<div id="extraDiv6"><span></span></div>
+
+
+  <div id="friend-picker">
+    <div id="friend-picker-container">
+      <div id="friend-picker-hd">
+        <span>誰來收藏</span>
+        <div id="loading">Loading ...</div>
+        <a id="friend-picker-closebtn"><img height="15" width="15" src="http://l.yimg.com/e/serv/blog/img/close.gif"></a>
+      </div>
+      <div id="friend-picker-pagination"></div>
+      <div id="friend-picker-bd"></div>
+    </div><!-- div#friend-picker-container -->
+  </div><!-- div#friend-picker-->
+
+      <script>
+  var ownerid= 'fsj';
+  var aid = '3269525';
+  var ajax_crumb = '&.c=Lp3GCObMNHg&.t=1322178371';
+  var ajax_server_name = 'http://www.wretch.cc/ajax/';
+</script>
+<script type="text/javascript" src="http://l.yimg.com/e/serv/blog/js/friend_picker.js"></script>
+      
+<script id="bcw" type="text/javascript">var random_num=Math.random();document.write("<img style=\"display:none;\" width=1 height=1 src=\"http://geo.yahoo.com/b?s=2022137480&make=yahoo&type=wretch&t="+random_num+"&r="+escape(document.referrer)+"\">");</script><!-- START Nielsen Online SiteCensus V5.3 Compact --><script type="text/javascript">var _rsCI="tw-yahoo";var _rsCG="0";var _rsIMG=new Image(1,1);_rsIMG.src="//secure-yt.imrworldwide.com/cgi-bin/m?rn="+(new Date()).getTime()+"&ci="+_rsCI+"&cg="+_rsCG+"&si="+escape(window.location.href)+"&rp="+escape(document.referrer);</script><noscript><div><img src="//secure-yt.imrworldwide.com/cgi-bin/m?ci=tw-yahoo&amp;cg=0" alt=""/></div></noscript><!-- END Nielsen Online SiteCensus V5.3 Compact --><script language="JavaScript" type="text/javascript" charset="big5" src="http://global.adserver.yahoo.com/a?f=2022137480&p=tw_kwretch&l=FOOT9&c=r"></script><noscript><iframe src="http://global.adserver.yahoo.com/a?f=2022137480&p=tw_kwretch&l=FOOT9&c=h&bg=white" width=1 height=1 marginwidth=0 marginheight=0 hspace=0 vspace=0 frameborder=0 scrolling=no></iframe></noscript><script language="JavaScript" src="http://l.yimg.com/e/serv/blog/js/smart_address.js"></script>
+</div>
+</div><!-- nv hugewrepper --><div id="kukubar-lower" class="kukubar-bar  ">
+        <div class="login-request dropdown">
+        <div class="login-btn">
+            <a class="footer-ok-btn" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/V_C/login/*http://www.wretch.cc/IDintegration/?ref=%2525252Fblog%2525252Ffsj%2525252F3269525">登入</a>
+        </div>
+        <div class="login-msg login-msg-vitality">
+            登入無名小站瀏覽推薦朋友動態
+        </div>
+        <div class="login-msg login-msg-subscription">
+            登入無名小站瀏覽主題訂閱
+        </div>
+    </div>
+        <div class="left-side">
+        <div id="footer-feedback" class="bar-block">
+            <a class="" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/AD/*http://tw.help.cc.yahoo.com/?product=53" target="_blank">
+            <img src="http://l.yimg.com/e/serv/common/img/footer_left.png" alt="我有建議" __href="http://tw.help.cc.yahoo.com/?product=53">
+            </a>
+        </div>
+                <div id="footer-fb" class="bar-block bar-block-click">
+            <a class="footer-fb-btn" href="#">近期動態 <span class="bar-block-btn">展開</span></a>
+            <iframe src="http://www.facebook.com/plugins/activity.php?site=www.wretch.cc&amp;width=300&amp;height=267&amp;header=false&amp;colorscheme=light&amp;recommendations=true" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:267px;" allowTransparency="false"></iframe>
+        </div>
+        <div id="footer-subscription" class="bar-block bar-block-click">
+            <a class="footer-subscription-btn" href="#">主題訂閱<span class="bar-block-btn">展開</span></a>
+                <div id="scrb-panel" class="dropdown ">
+                <div class="hd panel-block">
+                </div>
+                <div class="bd panel-block">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="right-side">
+        <ul id="footer-ugc-compose">
+            <li class="bar-block bar-block-click blog-service"><em>網誌</em>
+                <ul class="dropdown">
+                    <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/blog/post/*http://www.wretch.cc/blog/post.php?blog_id=">Post Article</a></li>
+                    <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/blog/css/*http://www.wretch.cc/admin/style/?func=template_new&source=B">Blog Style</a></li>
+                    <li class="last"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/blog/mgr/*http://www.wretch.cc/admin/blog/">Blog Setting</a></li>
+                </ul>
+            </li>
+            <li class="bar-block bar-block-click album-service"><em>相簿</em>
+                <ul class="dropdown">
+                    <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/album/upload/*http://www.wretch.cc/album/yuiuploader.php">Upload Photo</a></li>
+                    <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/album/css/*http://www.wretch.cc/admin/style/?func=template_new&source=A">Album Style</a></li>
+                    <li class="last"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/album/mgr/*http://www.wretch.cc/admin/album/">Album Setting</a></li>
+                </ul>
+            </li>
+            <li class="bar-block bar-block-click video-service"><em>影音</em>
+                <ul class="dropdown">
+                    <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/video/upload/*http://www.wretch.cc/video/yuiuploader.php">Upload Video</a></li>
+                    <li><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/video/css/*http://www.wretch.cc/admin/style/?func=template_new&source=V">Video Style</a></li>
+                    <li class="last"><a class="bar-link" href="http://tw.rd.yahoo.com/referurl/wretch/kk/u/PF/sc/video/mgr/*http://www.wretch.cc/video/_manage/?func=set">Video Setting</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="footer-switch" class=" ">
+<button>關閉工具列</button>
+</div>
+<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script><script src="http://l.yimg.com/e/serv/common/js/kukubar.js?20111123"></script>
+<link rel="stylesheet" href="http://l.yimg.com/e/serv/common/css/promotion.css" type="text/css" />
+<script src="http://l.yimg.com/e/serv/common/js/promotion.js"></script></body>
+<script src="http://yui.yahooapis.com/combo?2.8.1/build/connection/connection-min.js&2.8.1/build/container/container-min.js&2.8.1/build/element/element-min.js&2.8.1/build/button/button-min.js&2.8.1/build/json/json-min.js"></script>
+<script src="http://l.yimg.com/e/serv/blog/js/antiPhishing.js"></script>
+<script src="http://l.yimg.com/e/serv/blog/js/trackback.js?20110808"></script>
+<script>
+window.onload = function () {
+    var flash = document.getElementsByTagName('embed');
+    for (var i = 0; i < flash.length; i++) {
+        var newFlash = flash[i].cloneNode(true);
+        newFlash.src = flash[i].src;
+        newFlash.setAttribute('type', flash[i].getAttribute('type'));
+        newFlash.setAttribute('wmode', 'transparent');
+        flash[i].parentNode.replaceChild(newFlash, flash[i]);
+    }
+}
+</script>
+</html>
+<!-- w366.wretch.tp2.yahoo.com compressed/chunked Fri Nov 25 07:46:11 CST 2011 -->

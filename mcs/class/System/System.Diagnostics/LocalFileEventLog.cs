@@ -299,11 +299,7 @@ namespace System.Diagnostics
 				string logPath = Path.Combine (logDir, index.ToString (CultureInfo.InvariantCulture) + ".log");
 				try {
 					using (TextWriter w = File.CreateText (logPath)) {
-#if NET_2_0
 						w.WriteLine ("InstanceID: {0}", instanceID.ToString (CultureInfo.InvariantCulture));
-#else
-						w.WriteLine ("InstanceID: {0}", instanceID.ToString (CultureInfo.InvariantCulture));
-#endif
 						w.WriteLine ("EntryType: {0}", (int) type);
 						w.WriteLine ("Source: {0}", CoreEventLog.Source);
 						w.WriteLine ("Category: {0}", category.ToString (CultureInfo.InvariantCulture));
@@ -432,7 +428,6 @@ namespace System.Diagnostics
 			p.Close ();
 		}
 
-#if NET_2_0
 		public override OverflowAction OverflowAction {
 			get { return OverflowAction.DoNotOverwrite; }
 		}
@@ -455,6 +450,5 @@ namespace System.Diagnostics
 		{
 			throw new NotSupportedException ("This EventLog implementation does not support registering display name");
 		}
-#endif
 	}
 }

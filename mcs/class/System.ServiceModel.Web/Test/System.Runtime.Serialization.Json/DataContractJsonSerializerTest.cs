@@ -1362,6 +1362,40 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.AreEqual (query.StartDate, q.StartDate, "#2");
 			Assert.AreEqual (query.EndDate, q.EndDate, "#3");
 		}
+
+		[DataContract(Name = "DateTest")]
+		public class DateTest
+		{
+			[DataMember(Name = "should_have_value")]
+			public DateTime? ShouldHaveValue { get; set; }
+		}
+
+		//
+		// This tests both the extended format "number-0500" as well
+		// as the nullable field in the structure
+		[Test]
+		public void BugXamarin163 ()
+		{
+			string json = @"{""should_have_value"":""\/Date(1277355600000-0500)\/""}";
+
+			byte[] bytes = global::System.Text.Encoding.UTF8.GetBytes(json);
+			Stream inputStream = new MemoryStream(bytes);
+			
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DateTest));
+			DateTest t = serializer.ReadObject(inputStream) as DateTest;
+			Assert.AreEqual (634129344000000000, t.ShouldHaveValue.Value.Ticks, "#1");
+		}
+
+		[Test]
+		public void NullableFieldsShouldSupportNullValue ()
+		{
+			string json = @"{""should_have_value"":null}";
+			var inputStream = new MemoryStream (Encoding.UTF8.GetBytes (json));
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DateTest));
+			Console.WriteLine ("# serializer assembly: {0}", serializer.GetType ().Assembly.Location);
+			DateTest t = serializer.ReadObject (inputStream) as DateTest;
+			Assert.AreEqual (false, t.ShouldHaveValue.HasValue, "#2");
+		}
 		
 		[Test]
 		public void DeserializeNullMember ()

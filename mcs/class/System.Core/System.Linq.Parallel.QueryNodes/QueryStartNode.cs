@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,7 +34,11 @@ using System.Threading.Tasks;
 
 namespace System.Linq.Parallel.QueryNodes
 {
-	internal class QueryStartNode<T> : QueryBaseNode<T>
+	internal interface QueryStartNode : IVisitableNode {
+		int Count { get; }
+	}
+
+	internal class QueryStartNode<T> : QueryBaseNode<T>, QueryStartNode
 	{
 		readonly IEnumerable<T> source;
 		readonly Partitioner<T> customPartitioner;
@@ -58,7 +62,7 @@ namespace System.Linq.Parallel.QueryNodes
 		// If possible, this property will return the number of element the query
 		// is going to process. If that number if pretty low, executing the query
 		// sequentially is better
-		internal int Count {
+		public int Count {
 			get {
 				if (source == null)
 					return -1;
@@ -70,7 +74,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		public override void Visit (INodeVisitor visitor)
 		{
-			visitor.Visit<T> (this);
+			visitor.Visit ((QueryStartNode)this);
 		}
 
 		internal override IEnumerable<T> GetSequential ()

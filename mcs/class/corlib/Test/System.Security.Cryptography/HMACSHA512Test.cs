@@ -8,8 +8,6 @@
 // Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -48,7 +46,7 @@ namespace MonoTests.System.Security.Cryptography {
 		private bool legacy;
 
 		[SetUp]
-		protected override void SetUp () 
+		public override void SetUp () 
 		{
 			algo = new HMACSHA512 ();
 			algo.Key = new byte [8];
@@ -389,7 +387,31 @@ namespace MonoTests.System.Security.Cryptography {
 			HMAC hmac = new SelectableHmacSha512 (key, true);
 			Check ("HMACSHA512-L-RFC4231-TC7", hmac, data, digest);
 		}
+
+		[Test]
+		public void Bug6510a ()
+		{
+			byte[] key = Encoding.UTF8.GetBytes ("CA61A777DC1041B2FDCC354820F7F83CE0530C0E019A29BF576F175D314A6D891B35F");
+			byte[] data = Encoding.UTF8.GetBytes ("123456789");
+			byte[] digest = { 147, 50, 79, 211, 70, 90, 205, 252, 100, 25, 50, 209, 254, 157,
+				154, 12, 132, 205, 113, 59, 97, 216, 252, 94, 43, 126, 207, 140, 137, 60, 227,
+				82, 82, 240, 9, 15, 166, 167, 110, 85, 217, 245, 250, 169, 189, 138, 55, 197,
+				146, 192, 96, 20, 249, 95, 130, 163, 147, 82, 71, 244, 139, 76, 45, 75 };
+			HMAC hmac = new SelectableHmacSha512 (key, false);
+			Check ("HMACSHA512-BUG-6510", hmac, data, digest);
+		}
+
+		[Test]
+		public void Bug6510b ()
+		{
+			byte[] key = Encoding.UTF8.GetBytes ("CA61A777DC1041B2FDCC354820F7F83CE0530C0E019A29BF576F175D314A6D891");
+			byte[] data = Encoding.UTF8.GetBytes ("123456789");
+			byte[] digest = { 254, 159, 56, 218, 66, 110, 74, 135, 209, 81, 166, 150, 241, 194,
+				171, 228, 143, 228, 16, 198, 171, 53, 40, 211, 229, 160, 158, 2, 102, 99, 11,
+				49, 70, 53, 70, 32, 32, 219, 119, 14, 2, 149, 197, 220, 166, 38, 128, 25, 255,
+				227, 25, 20, 229, 54, 217, 57, 143, 224, 251, 1, 202, 24, 245, 133 };
+			HMAC hmac = new SelectableHmacSha512 (key, false);
+			Check ("HMACSHA512-BUG-6510", hmac, data, digest);
+		}
 	}
 }
-
-#endif

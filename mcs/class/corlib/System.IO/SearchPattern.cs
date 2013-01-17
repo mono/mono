@@ -38,7 +38,9 @@ namespace System.IO {
 	// the pattern '*.*' matches all files (i think . matches the extension),
 	// whereas under UNIX it should only match files containing the '.' character.
 
-	class SearchPattern {
+	class SearchPattern
+	{
+/*		
 		public SearchPattern (string pattern) : this (pattern, false) { }
 
 		public SearchPattern (string pattern, bool ignore)
@@ -164,8 +166,9 @@ namespace System.IO {
 		}
 
 		// private static
-
+*/
 		internal static readonly char [] WildcardChars = { '*', '?' };
+/*		
 		internal static readonly char [] InvalidChars = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
 
 		private class Op {
@@ -188,5 +191,6 @@ namespace System.IO {
 			End,			// end of pattern
 			True			// always succeeds
 		};
+*/
 	}
 }

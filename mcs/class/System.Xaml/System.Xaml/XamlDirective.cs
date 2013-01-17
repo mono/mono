@@ -33,8 +33,6 @@ namespace System.Xaml
 	{
 		class DirectiveMemberInvoker : XamlMemberInvoker
 		{
-			XamlDirective directive;
-
 			public DirectiveMemberInvoker (XamlDirective directive)
 				: base (directive)
 			{

@@ -5,6 +5,7 @@
 //     Ben Maurer <bmaurer@andrew.cmu.edu>
 //
 // Copyright (C) 2005 Novell (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -98,6 +99,28 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual ("dddd, dd' de 'MMMM' de 'yyyy H:mm:ss", di.FullDateTimePattern, "#3");
 			Assert.AreEqual ("MMMM' de 'yyyy", di.YearMonthPattern, "#4");
 			Assert.AreEqual ("dd MMMM", di.MonthDayPattern, "#5");
+		}
+
+		[Test]
+		public void Clone ()
+		{
+			DateTimeFormatInfo dfi = (DateTimeFormatInfo) DateTimeFormatInfo.InvariantInfo.Clone ();
+			dfi.MonthNames[0] = "foo";
+			dfi.AbbreviatedDayNames[0] = "b1";
+			dfi.AbbreviatedMonthGenitiveNames[0] = "b2";
+
+
+			Assert.IsFalse (dfi.IsReadOnly, "#0");
+			Assert.AreEqual ("January", DateTimeFormatInfo.InvariantInfo.MonthNames [0], "#1");
+			Assert.AreEqual ("Sun", DateTimeFormatInfo.InvariantInfo.AbbreviatedDayNames[0], "#2");
+			Assert.AreEqual ("Jan", DateTimeFormatInfo.InvariantInfo.AbbreviatedMonthGenitiveNames[0], "#3");
+		}
+
+		[Test]
+		public void MonthGenitiveNames ()
+		{
+			var dfi = new CultureInfo ("cs-CZ").DateTimeFormat;
+			Assert.AreEqual ("ledna", dfi.MonthGenitiveNames[0], "#1");
 		}
 
 #if !TARGET_JVM

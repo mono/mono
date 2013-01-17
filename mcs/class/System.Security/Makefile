@@ -13,7 +13,7 @@ LIB_MCS_FLAGS += -r:Mono.Security.dll -nowarn:414
 TEST_MCS_FLAGS += -nowarn:168,183,414
 endif
 
-VALID_PROFILE := $(filter net_1_1 net_2_0 moonlight_raw net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_1_1 net_2_0 moonlight_raw net_4_0 net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 # @echo "** Warning: System.Security.dll built without parts that depend on: Mono.Security.dll "
 else

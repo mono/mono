@@ -3,8 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (C) 2005, 2007 Novell, Inc.  http://www.novell.com
+// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -89,5 +91,70 @@ namespace System.ServiceModel.Channels
 				return (T) (object) MessageVersion.Soap12WSAddressing10;
 			return context.GetInnerProperty<T> ();
 		}
+
+#if !NET_2_1
+		internal static XmlElement CreateTransportBinding (XmlElement transportToken)
+		{
+			var doc = new XmlDocument ();
+			var transportBinding = doc.CreateElement (
+				"sp", "TransportBinding", PolicyImportHelper.SecurityPolicyNS);
+			
+			var token = doc.CreateElement (
+				"sp", "TransportToken", PolicyImportHelper.SecurityPolicyNS);
+			PolicyImportHelper.AddWrappedPolicyElement (token, transportToken);
+			
+			var algorithmSuite = doc.CreateElement (
+				"sp", "AlgorithmSuite", PolicyImportHelper.SecurityPolicyNS);
+			var basic256 = doc.CreateElement (
+				"sp", "Basic256", PolicyImportHelper.SecurityPolicyNS);
+			PolicyImportHelper.AddWrappedPolicyElement (algorithmSuite, basic256);
+			
+			var layout = doc.CreateElement (
+				"sp", "Layout", PolicyImportHelper.SecurityPolicyNS);
+			var strict = doc.CreateElement (
+				"sp", "Strict", PolicyImportHelper.SecurityPolicyNS);
+			PolicyImportHelper.AddWrappedPolicyElement (layout, strict);
+			
+			PolicyImportHelper.AddWrappedPolicyElements (
+				transportBinding, token, algorithmSuite, layout);
+			
+			return transportBinding;
+		}
+
+		internal static MessageEncodingBindingElement ExportAddressingPolicy (
+			PolicyConversionContext context)
+		{
+			MessageEncodingBindingElement messageEncodingElement = null;
+			foreach (var element in context.BindingElements) {
+				var check = element as MessageEncodingBindingElement;
+				if (check == null)
+					continue;
+				messageEncodingElement = check;
+				break;
+			}
+
+			var doc = new XmlDocument ();
+			var assertions = context.GetBindingAssertions ();
+			
+			if (messageEncodingElement == null) {
+				assertions.Add (doc.CreateElement (
+					"wsaw", "UsingAddressing",
+					"http://www.w3.org/2006/05/addressing/wsdl"));
+				return null;
+			}
+
+			var addressing = messageEncodingElement.MessageVersion.Addressing;
+			if (addressing == AddressingVersion.WSAddressingAugust2004)
+				assertions.Add (doc.CreateElement (
+					"wsaw", "UsingAddressing",
+					"http://schemas.xmlsoap.org/ws/2004/08/addressing/policy"));
+			else if (addressing != AddressingVersion.None)
+				assertions.Add (doc.CreateElement (
+					"wsaw", "UsingAddressing",
+					"http://www.w3.org/2006/05/addressing/wsdl"));
+
+			return messageEncodingElement;
+		}
+#endif
 	}
 }

@@ -7,7 +7,7 @@ namespace A {
 		using Y;
 		class Tester {
 			internal static Z z = Z.x;
-			static void Main() { }
+			public static void Main() { }
 		}
 	}
 }

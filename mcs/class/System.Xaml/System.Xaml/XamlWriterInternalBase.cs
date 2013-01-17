@@ -1,5 +1,6 @@
 //
 // Copyright (C) 2010 Novell Inc. http://novell.com
+// Copyright (C) 2012 Xamarin Inc. http://xamarin.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -55,6 +56,7 @@ namespace System.Xaml
 
 		internal IValueSerializerContext service_provider;
 
+		internal ObjectState root_state;
 		internal Stack<ObjectState> object_states = new Stack<ObjectState> ();
 		internal PrefixLookup prefix_lookup {
 			get { return (PrefixLookup) service_provider.GetService (typeof (INamespacePrefixLookup)); }
@@ -79,6 +81,7 @@ namespace System.Xaml
 			public object KeyValue;
 			public List<MemberAndValue> WrittenProperties = new List<MemberAndValue> ();
 			public bool IsInstantiated;
+			public bool IsXamlWriterCreated; // affects AfterProperties() calls.
 		}
 		
 		internal class MemberAndValue

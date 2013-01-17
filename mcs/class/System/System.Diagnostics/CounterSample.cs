@@ -125,7 +125,6 @@ namespace System.Diagnostics {
 			return CounterSampleCalculator.ComputeCounterValue (counterSample, nextCounterSample);
 		}
 
-#if NET_2_0
 		public override bool Equals (object obj)
 		{
 			if (!(obj is CounterSample))
@@ -167,7 +166,6 @@ namespace System.Diagnostics {
 				(counterTimeStamp ^
 				(int) counterType)))))));
 		}
-#endif
 	}
 }
 

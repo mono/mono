@@ -173,14 +173,15 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (!IsDisposed) {
-				if (this.HasDropDownItems)
-					foreach (ToolStripItem tsi in this.DropDownItems)
-						if (tsi is ToolStripMenuItem)
-							ToolStripManager.RemoveToolStripMenuItem ((ToolStripMenuItem)tsi);
-					
-				if (drop_down != null)
-					ToolStripManager.RemoveToolStrip (drop_down);
-				
+				if(disposing) {
+					if (this.HasDropDownItems)
+						foreach (ToolStripItem tsi in this.DropDownItems)
+							if (tsi is ToolStripMenuItem)
+								ToolStripManager.RemoveToolStripMenuItem ((ToolStripMenuItem)tsi);
+
+					if (drop_down != null)
+						ToolStripManager.RemoveToolStrip (drop_down);
+				}
 				base.Dispose (disposing);
 			}
 		}

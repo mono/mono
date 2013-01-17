@@ -196,7 +196,7 @@ namespace Mono.WebServices
 				{
 					if (!hasWarnings) {
 						WriteText ("", 0, 0);
-						WriteText ("There where some warnings while generating the code:", 0, 0);
+						WriteText ("There were some warnings while generating the code:", 0, 0);
 					}
 					
 					WriteText ("", 0, 0);

@@ -34,25 +34,26 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	
+#if !MOBILE	
 	[ComVisible(true)]
 	[Guid ("475e398f-8afa-43a7-a3be-f4ef8d6787c9")]
 	[ClassInterface (ClassInterfaceType.None)]
 	public class RegistrationServices : IRegistrationServices
 	{
+		private static Guid guidManagedCategory = new Guid("{62C8FE65-4EBB-45e7-B440-6E39B2CDBF29}");
+
 		public RegistrationServices ()
 		{
 		}
 
-		[MonoTODO ("implement")]
 		public virtual Guid GetManagedCategoryGuid ()
 		{
-			throw new NotImplementedException ();
+			return guidManagedCategory;
 		}
 
-		[MonoTODO ("implement")]
 		public virtual string GetProgIdForType (Type type)
 		{
-			throw new NotImplementedException ();
+			return Marshal.GenerateProgIdForType(type);
 		}
 
 		[MonoTODO ("implement")]
@@ -106,4 +107,5 @@ namespace System.Runtime.InteropServices
 		}
 		
 	}
+#endif
 }

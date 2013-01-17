@@ -48,8 +48,8 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		public MissingPrimaryKeyException (string message, Exception inner)
-			: base (message, inner)
+		public MissingPrimaryKeyException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 #endif

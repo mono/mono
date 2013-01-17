@@ -9,7 +9,7 @@ LOCAL_MCS_FLAGS= \
 	/resource:Transform.resources,NUnit.Util.Transform.resources \
 	-r:nunit.core.dll -r:nunit.core.interfaces.dll -r:System.dll \
 	-r:System.Xml.dll -r:System.Runtime.Remoting.dll \
-	/d:MONO /d:StronglyNamedAssembly
+	/d:MONO /d:StronglyNamedAssembly -warn:1
 NO_TEST = yo
 
 RESX_RES = Transform.resources

@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -67,6 +68,9 @@ namespace Mono.CSharp.Nullable
 				MemberFilter.Method ("GetValueOrDefault", 0, ParametersCompiled.EmptyReadOnlyParameters, null), BindingRestriction.None);
 		}
 
+		//
+		// Don't use unless really required for correctness, see Unwrap::Emit
+		//
 		public static MethodSpec GetValue (TypeSpec nullableType)
 		{
 			return (MethodSpec) MemberCache.FindMember (nullableType,
@@ -141,6 +145,11 @@ namespace Mono.CSharp.Nullable
 			var call = new CallEmitter ();
 			call.InstanceExpression = this;
 
+			//
+			// Using GetGetValueOrDefault is prefered because JIT can possibly
+			// inline it whereas Value property contains a throw which is very
+			// unlikely to be inlined
+			//
 			if (useDefaultValue)
 				call.EmitPredefined (ec, NullableInfo.GetGetValueOrDefault (expr.Type), null);
 			else
@@ -493,7 +502,7 @@ namespace Mono.CSharp.Nullable
 			ec.MarkLabel (end_label);
 		}
 
-		Expression LiftExpression (ResolveContext ec, Expression expr)
+		static Expression LiftExpression (ResolveContext ec, Expression expr)
 		{
 			var lifted_type = new NullableType (expr.Type, expr.Location);
 			if (lifted_type.ResolveAsType (ec) == null)
@@ -538,8 +547,8 @@ namespace Mono.CSharp.Nullable
 		Expression user_operator;
 		MethodSpec wrap_ctor;
 
-		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right, Location loc)
-			: base (op, left, right, loc)
+		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right)
+			: base (op, left, right)
 		{
 		}
 
@@ -582,7 +591,7 @@ namespace Mono.CSharp.Nullable
 			Constant c = new BoolConstant (ec.BuiltinTypes, Oper == Operator.Inequality, loc);
 
 			if ((Oper & Operator.EqualityMask) != 0) {
-				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
+				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is always `{1}'",
 					TypeManager.CSharpName (expr.Type), c.GetValueAsLiteral ());
 			} else {
 				ec.Report.Warning (464, 2, loc, "The result of comparing type `{0}' with null is always `{1}'",
@@ -859,7 +868,7 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				if (left is UserCast || left is TypeCast)
+				if (left is UserCast || left is EmptyCast || left is OpcodeCast)
 					left.Type = lifted_type;
 				else
 					left = EmptyCast.Create (left, lifted_type);
@@ -874,7 +883,7 @@ namespace Mono.CSharp.Nullable
 				if (r is ReducedExpression)
 					r = ((ReducedExpression) r).OriginalExpression;
 
-				if (r is UserCast || r is TypeCast)
+				if (r is UserCast || r is EmptyCast || r is OpcodeCast)
 					r.Type = lifted_type;
 				else
 					right = EmptyCast.Create (right, lifted_type);
@@ -1000,11 +1009,23 @@ namespace Mono.CSharp.Nullable
 		Expression left, right;
 		Unwrap unwrap;
 
-		public NullCoalescingOperator (Expression left, Expression right, Location loc)
+		public NullCoalescingOperator (Expression left, Expression right)
 		{
 			this.left = left;
 			this.right = right;
-			this.loc = loc;
+			this.loc = left.Location;
+		}
+
+		public Expression LeftExpression {
+			get {
+ 				return left;
+ 			}
+		}
+
+		public Expression RightExpression {
+			get {
+ 				return right;
+ 			}
 		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -1197,6 +1218,11 @@ namespace Mono.CSharp.Nullable
 			target.left = left.Clone (clonectx);
 			target.right = right.Clone (clonectx);
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	class LiftedUnaryMutator : UnaryMutator
@@ -1238,7 +1264,7 @@ namespace Mono.CSharp.Nullable
 
 			call = new CallEmitter ();
 			call.InstanceExpression = lt;
-			call.EmitPredefined (ec, NullableInfo.GetValue (expr.Type), null);
+			call.EmitPredefined (ec, NullableInfo.GetGetValueOrDefault (expr.Type), null);
 
 			lt.Release (ec);
 

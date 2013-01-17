@@ -248,19 +248,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-#if NET_1_1
 			Assert.AreEqual (c14xml3, output, "XmlDocument");
-#else
-			// .NET 1.0 keeps the \r\n (0x0D, 0x0A) - bug
-			Assert.AreEqual (c14xml1, output, "XmlDocument");
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")]
 		// see LoadInputAsXmlNodeList2 description
-#endif
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();

@@ -24,7 +24,6 @@
 //
 //
 
-#if NET_2_0
 namespace System.ComponentModel {
 	public enum MaskedTextResultHint {
 	      PositionOutOfRange = -55,
@@ -44,4 +43,3 @@ namespace System.ComponentModel {
 	      Success = 4
 	}
 }
-#endif

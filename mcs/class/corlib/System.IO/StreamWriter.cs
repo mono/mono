@@ -4,12 +4,11 @@
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Paolo Molaro (lupus@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,9 +31,10 @@
 //
 
 using System.Text;
-using System;
-
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO {
 	
@@ -56,8 +56,12 @@ namespace System.IO {
 		private int decode_pos;
 
 		private bool iflush;
-		private bool DisposedAlready;
 		private bool preamble_done;
+
+#if NET_4_5
+		readonly bool leave_open;
+		Task async_task;
+#endif
 
 		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 1);
 
@@ -79,7 +83,19 @@ namespace System.IO {
 				preamble_done = true;
 		}
 
-		public StreamWriter (Stream stream, Encoding encoding, int bufferSize) {
+#if NET_4_5
+		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
+			: this (stream, encoding, bufferSize, false)
+		{
+		}
+		
+		public StreamWriter (Stream stream, Encoding encoding, int bufferSize, bool leaveOpen)
+#else
+		const bool leave_open = false;
+
+		public StreamWriter (Stream stream, Encoding encoding, int bufferSize)
+#endif
+		{
 			if (null == stream)
 				throw new ArgumentNullException("stream");
 			if (null == encoding)
@@ -89,6 +105,9 @@ namespace System.IO {
 			if (!stream.CanWrite)
 				throw new ArgumentException ("Can not write to stream");
 
+#if NET_4_5
+			leave_open = leaveOpen;
+#endif
 			internalStream = stream;
 
 			Initialize(encoding, bufferSize);
@@ -102,8 +121,9 @@ namespace System.IO {
 
 		public StreamWriter (string path, bool append, Encoding encoding)
 			: this (path, append, encoding, DefaultFileBufferSize) {}
-		
-		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize) {
+
+		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize)
+		{
 			if (null == encoding)
 				throw new ArgumentNullException("encoding");
 			if (bufferSize <= 0)
@@ -151,34 +171,27 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing) 
 		{
-			Exception exc = null;
-			if (!DisposedAlready && disposing && internalStream != null) {
-				try {
-					Flush();
-				} catch (Exception e) {
-					exc = e;
-				}
-				DisposedAlready = true;
-				try {
-					internalStream.Close ();
-				} catch (Exception e) {
-					if (exc == null)
-						exc = e;
-				}
-			}
+			if (byte_buf == null || !disposing)
+				return;
 
-			internalStream = null;
-			byte_buf = null;
-			internalEncoding = null;
-			decode_buf = null;
-			if (exc != null)
-				throw exc;
+			try {
+				Flush ();
+			} finally {
+				byte_buf = null;
+				internalEncoding = null;
+				decode_buf = null;
+
+				if (!leave_open) {
+					internalStream.Close ();
+				}
+
+				internalStream = null;
+			}
 		}
 
 		public override void Flush ()
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
+			CheckState ();
 
 			Decode ();
 			if (byte_pos > 0) {
@@ -218,8 +231,6 @@ namespace System.IO {
 		
 		public override void Write (char[] buffer, int index, int count) 
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (index < 0)
@@ -229,6 +240,8 @@ namespace System.IO {
 			// re-ordered to avoid possible integer overflow
 			if (index > buffer.Length - count)
 				throw new ArgumentException ("index + count > buffer.Length");
+
+			CheckState ();
 
 			LowLevelWrite (buffer, index, count);
 			if (iflush)
@@ -276,8 +289,7 @@ namespace System.IO {
 
 		public override void Write (char value)
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
+			CheckState ();
 
 			// the size of decode_buf is always > 0 and
 			// we check for overflow right away
@@ -290,8 +302,7 @@ namespace System.IO {
 
 		public override void Write (char[] buffer)
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException ("StreamWriter");
+			CheckState ();
 
 			if (buffer != null)
 				LowLevelWrite (buffer, 0, buffer.Length);
@@ -301,8 +312,7 @@ namespace System.IO {
 
 		public override void Write (string value) 
 		{
-			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
+			CheckState ();
 
 			if (value != null)
 				LowLevelWrite (value);
@@ -316,9 +326,65 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-		~StreamWriter ()
+		void CheckState ()
 		{
-			Dispose(false);
+			if (byte_buf == null)
+				throw new ObjectDisposedException ("StreamWriter");
+
+#if NET_4_5
+			if (async_task != null && async_task.IsCompleted)
+				throw new InvalidOperationException ();
+#endif
 		}
+
+#if NET_4_5
+		public override Task FlushAsync ()
+		{
+			CheckState ();
+			return async_task = base.FlushAsync ();
+		}
+
+		public override Task WriteAsync (char value)
+		{
+			CheckState ();
+			return async_task = base.WriteAsync (value);
+		}
+
+		public override Task WriteAsync (char[] buffer, int index, int count)
+		{
+			CheckState ();
+			return async_task = base.WriteAsync (buffer, index, count);
+		}
+
+		public override Task WriteAsync (string value)
+		{
+			CheckState ();
+			return async_task = base.WriteAsync (value);
+		}
+
+		public override Task WriteLineAsync ()
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync ();
+		}
+
+		public override Task WriteLineAsync (char value)
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync (value);
+		}
+
+		public override Task WriteLineAsync (char[] buffer, int index, int count)
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync (buffer, index, count);
+		}
+
+		public override Task WriteLineAsync (string value)
+		{
+			CheckState ();
+			return async_task = base.WriteLineAsync (value);
+		}
+#endif
 	}
 }

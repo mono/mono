@@ -36,6 +36,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_EventInfo))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class EventInfo : MemberInfo, _EventInfo {
 		AddEventAdapter cached_add_event;
 
@@ -83,6 +84,16 @@ namespace System.Reflection {
 #endif
 		void AddEventHandler (object target, Delegate handler)
 		{
+// this optimization cause problems with full AOT
+// see bug https://bugzilla.xamarin.com/show_bug.cgi?id=3682
+#if FULL_AOT_RUNTIME
+			MethodInfo add = GetAddMethod ();
+			if (add == null)
+				throw new InvalidOperationException ("Cannot add a handler to an event that doesn't have a visible add method");
+			if (target == null && !add.IsStatic)
+				throw new TargetException ("Cannot add a handler to a non static event with a null target");
+			add.Invoke (target, new object [] {handler});
+#else
 			if (cached_add_event == null) {
 				MethodInfo add = GetAddMethod ();
 				if (add == null)
@@ -98,6 +109,7 @@ namespace System.Reflection {
 			//if (target == null && is_instance)
 			//	throw new TargetException ("Cannot add a handler to a non static event with a null target");
 			cached_add_event (target, handler);
+#endif
 		}
 
 		public MethodInfo GetAddMethod() {
@@ -186,7 +198,13 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+
 		delegate void AddEventAdapter (object _this, Delegate dele);
+
+// this optimization cause problems with full AOT
+// see bug https://bugzilla.xamarin.com/show_bug.cgi?id=3682
+// do not revove the above delegate or it's field since it's required by the runtime!
+#if !FULL_AOT_RUNTIME
 		delegate void AddEvent<T, D> (T _this, D dele);
 		delegate void StaticAddEvent<D> (D dele);
 
@@ -245,5 +263,6 @@ namespace System.Reflection {
 			adapterFrame = adapterFrame.MakeGenericMethod (typeVector);
 			return (AddEventAdapter)Delegate.CreateDelegate (typeof (AddEventAdapter), addHandlerDelegate, adapterFrame, true);
 		}
+#endif
 	}
 }

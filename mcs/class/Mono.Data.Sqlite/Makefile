@@ -7,6 +7,8 @@ OTHER_RESOURCES = $(wildcard resources/*.bmp)
 
 RESOURCES = $(RESX_RESOURCES) $(OTHER_RESOURCES)
 
+PREBUILT = $(RESX_RESOURCES:=.prebuilt)
+
 LIBRARY = Mono.Data.Sqlite.dll
 LIB_MCS_FLAGS = /unsafe /r:System.dll /r:System.Data.dll /r:System.Transactions.dll /r:System.Xml.dll \
 	$(RESOURCES:%=-resource:%) -d:SQLITE_STANDARD
@@ -19,9 +21,12 @@ EXTRA_DISTFILES = Test/SqliteTest.cs \
 	resources/ChangeLog	\
 	resources/DataTypes.xml	\
 	resources/MetaDataCollections.xml \
+	$(PREBUILT) \
 	$(wildcard resources/*.bmp)
 	
 CLEAN_FILES += $(RESX_RESOURCES)
+
+CLEAN_FILES = $(RESX_RESOURCES)
 
 test-local: test.db 
 
@@ -33,5 +38,9 @@ include ../../build/library.make
 
 $(the_lib): $(RESOURCES)
 
+$(PREBUILT): %.prebuilt: %
+	cp $* $@
+
 $(RESX_RESOURCES): %.resources: %.resx
-	$(RESGEN) $<
+	$(RESGEN) $< || cp $@.prebuilt $@
+

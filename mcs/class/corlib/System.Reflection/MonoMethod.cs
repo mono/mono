@@ -1,12 +1,13 @@
 //
-// System.Reflection/MonoMethod.cs
-// The class used to represent methods from the mono runtime.
+// MonoMethod.cs: The class used to represent methods from the mono runtime.
 //
-// Author:
+// Authors:
 //   Paolo Molaro (lupus@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,11 +34,13 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Security;
 using System.Threading;
 using System.Text;
-
+using System.Diagnostics;
 
 namespace System.Reflection {
 	
@@ -98,7 +101,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern UnmanagedMarshal get_retval_marshal (IntPtr handle);
+		static extern MarshalAsAttribute get_retval_marshal (IntPtr handle);
 
 		static internal ParameterInfo GetReturnParameterInfo (MonoMethod method)
 		{
@@ -111,6 +114,7 @@ namespace System.Reflection {
 	 * the .NET reflection class hierarchy is so broken.
 	 */
 	[Serializable()]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoMethod : MethodInfo, ISerializable
 	{
 #pragma warning disable 649
@@ -185,24 +189,17 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters, out Exception exc);
 
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
+
 			/*Avoid allocating an array every time*/
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
-
-			if ((parameters == null && pinfo.Length != 0) || (parameters != null && parameters.Length != pinfo.Length))
-				throw new TargetParameterCountException ("parameters do not match signature");
-			
-			if ((invokeAttr & BindingFlags.ExactBinding) == 0) {
-				if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
-					throw new ArgumentException ("failed to convert parameters");
-			} else {
-				for (int i = 0; i < pinfo.Length; i++)
-					if (parameters[i].GetType() != pinfo[i].ParameterType)
-						throw new ArgumentException ("parameters do not match signature");
-			}
+			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
+				throw new ArgumentException ("failed to convert parameters");
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
@@ -240,8 +237,11 @@ namespace System.Reflection {
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
-			get {return new RuntimeMethodHandle (mhandle);} 
+			get {
+				return new RuntimeMethodHandle (mhandle);
+			} 
 		}
+		
 		public override MethodAttributes Attributes { 
 			get {
 				return MonoMethodInfo.GetAttributes (mhandle);
@@ -394,8 +394,10 @@ namespace System.Reflection {
 					hasUserType = true;
 			}
 
+#if !FULL_AOT_RUNTIME
 			if (hasUserType)
 				return new MethodOnTypeBuilderInst (this, methodInstantiation);
+#endif
 
 			MethodInfo ret = MakeGenericMethod_impl (methodInstantiation);
 			if (ret == null)
@@ -453,6 +455,7 @@ namespace System.Reflection {
 #endif
 	}
 	
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoCMethod : ConstructorInfo, ISerializable
 	{
 #pragma warning disable 649		
@@ -484,24 +487,17 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern Object InternalInvoke (Object obj, Object[] parameters, out Exception exc);
 
+		[DebuggerHidden]
+		[DebuggerStepThrough]
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 
-			ParameterInfo[] pinfo = GetParameters ();
+			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
-			if ((parameters == null && pinfo.Length != 0) || (parameters != null && parameters.Length != pinfo.Length))
-				throw new TargetParameterCountException ("parameters do not match signature");
-			
-			if ((invokeAttr & BindingFlags.ExactBinding) == 0) {
-				if (!Binder.ConvertArgs (binder, parameters, pinfo, culture))
-					throw new ArgumentException ("failed to convert parameters");
-			} else {
-				for (int i = 0; i < pinfo.Length; i++)
-					if (parameters[i].GetType() != pinfo[i].ParameterType)
-						throw new ArgumentException ("parameters do not match signature");
-			}
+			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
+				throw new ArgumentException ("failed to convert parameters");
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
@@ -537,13 +533,19 @@ namespace System.Reflection {
 			return (obj == null) ? o : null;
 		}
 
-		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
+		[DebuggerHidden]
+		[DebuggerStepThrough]
+		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+		{
 			return Invoke (null, invokeAttr, binder, parameters, culture);
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
-			get {return new RuntimeMethodHandle (mhandle);} 
+			get {
+				return new RuntimeMethodHandle (mhandle);
+			} 
 		}
+		
 		public override MethodAttributes Attributes { 
 			get {
 				return MonoMethodInfo.GetAttributes (mhandle);

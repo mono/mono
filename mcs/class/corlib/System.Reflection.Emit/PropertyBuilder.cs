@@ -31,6 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -42,6 +43,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_PropertyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class PropertyBuilder : PropertyInfo, _PropertyBuilder {
 
 // Managed version of MonoReflectionPropertyBuilder
@@ -203,3 +205,4 @@ namespace System.Reflection.Emit {
 	}
 }
 
+#endif

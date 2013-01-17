@@ -9,7 +9,7 @@
 // You do not need to add suppressions to this file manually. 
 
 //UnhandledExpressionType is used by System.Linq.Expressions.OldExpressionVisitor 
-#if CLR2
+#if !FEATURE_CORE_DLR
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Error.#UnhandledExpressionType(System.Object)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Strings.#UnhandledExpressionType(System.Object)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Scripting.Ast.Error.#InvalidNullValue(System.Object)")]

@@ -274,7 +274,7 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
  * Returns the size of the activation frame.
  */
 int
-mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
+mono_arch_get_argument_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
 {
 #ifdef __mono_ppc64__
 	NOT_IMPLEMENTED;
@@ -659,13 +659,26 @@ mono_arch_cleanup (void)
  * This function returns the optimizations supported on this cpu.
  */
 guint32
-mono_arch_cpu_optimizazions (guint32 *exclude_mask)
+mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
 	guint32 opts = 0;
 
 	/* no ppc-specific optimizations yet */
 	*exclude_mask = 0;
 	return opts;
+}
+
+/*
+ * This function test for all SIMD functions supported.
+ *
+ * Returns a bitmask corresponding to all supported versions.
+ *
+ */
+guint32
+mono_arch_cpu_enumerate_simd_versions (void)
+{
+	/* SIMD is currently unimplemented */
+	return 0;
 }
 
 #ifdef __mono_ppc64__
@@ -1264,31 +1277,6 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 	return cinfo;
 }
 
-G_GNUC_UNUSED static void
-break_count (void)
-{
-}
-
-G_GNUC_UNUSED static gboolean
-debug_count (void)
-{
-	static int count = 0;
-	count ++;
-
-	if (!getenv ("COUNT"))
-		return TRUE;
-
-	if (count == atoi (getenv ("COUNT"))) {
-		break_count ();
-	}
-
-	if (count > atoi (getenv ("COUNT"))) {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
 gboolean
 mono_ppc_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
@@ -1309,7 +1297,7 @@ mono_ppc_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignatu
 	}
 
 	/*
-	if (!debug_count ())
+	if (!mono_debug_count ())
 		res = FALSE;
 	*/
 
@@ -5069,22 +5057,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		pos++;
 	}
 
-	if (method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
-		if (cfg->compile_aot)
-			/* AOT code is only used in the root domain */
-			ppc_load_ptr (code, ppc_r3, 0);
-		else
-			ppc_load_ptr (code, ppc_r3, cfg->domain);
-		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_jit_thread_attach");
-		if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
-			ppc_load_func (code, ppc_r0, 0);
-			ppc_mtlr (code, ppc_r0);
-			ppc_blrl (code);
-		} else {
-			ppc_bl (code, 0);
-		}
-	}
-
 	if (method->save_lmf) {
 		if (lmf_pthread_key != -1) {
 			emit_tls_access (code, ppc_r3, lmf_pthread_key);
@@ -5569,6 +5541,8 @@ setup_tls_access (void)
 	if ((lmf_pthread_key == -1) && (tls_mode == TLS_MODE_NPTL)) {
 		lmf_pthread_key = mono_get_lmf_addr_tls_offset();
 	}
+
+#if 0
 	/* if not TLS_MODE_NPTL or local dynamic (as indicated by
 	   mono_get_lmf_addr_tls_offset returning -1) then use keyed access. */
 	if (lmf_pthread_key == -1) {
@@ -5583,10 +5557,12 @@ setup_tls_access (void)
 		}
 	}
 #endif
+
+#endif
 }
 
 void
-mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
+mono_arch_finish_init (void)
 {
 	setup_tls_access ();
 }
@@ -5926,28 +5902,12 @@ mono_arch_is_breakpoint_event (void *info, void *sigctx)
 }
 
 /*
- * mono_arch_get_ip_for_breakpoint:
- *
- *   See mini-amd64.c for docs.
- */
-guint8*
-mono_arch_get_ip_for_breakpoint (MonoJitInfo *ji, MonoContext *ctx)
-{
-	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
-
-	/* ip points at the ldptr instruction */
-	ip -= PPC_LOAD_SEQUENCE_LENGTH;
-
-	return ip;
-}
-
-/*
  * mono_arch_skip_breakpoint:
  *
  *   See mini-amd64.c for docs.
  */
 void
-mono_arch_skip_breakpoint (MonoContext *ctx)
+mono_arch_skip_breakpoint (MonoContext *ctx, MonoJitInfo *ji)
 {
 	/* skip the ldptr */
 	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + 4);
@@ -5993,20 +5953,6 @@ mono_arch_is_single_step_event (void *info, void *sigctx)
 		return TRUE;
 	else
 		return FALSE;
-}
-
-/*
- * mono_arch_get_ip_for_single_step:
- *
- *   See mini-amd64.c for docs.
- */
-guint8*
-mono_arch_get_ip_for_single_step (MonoJitInfo *ji, MonoContext *ctx)
-{
-	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
-
-	/* ip points after the ldptr instruction */
-	return ip;
 }
 
 /*

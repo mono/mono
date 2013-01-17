@@ -16,10 +16,16 @@
  * This is a platform-independent interface for unwinding through stack frames 
  * based on the Dwarf unwinding interface.
  * See http://dwarfstd.org/Dwarf3.pdf, section "Call Frame Information".
- * Currently, this is only used for emitting unwind info in AOT files.
  */
 
-/* CFA = Canonical Frame Address */
+/*
+ * CFA = Canonical Frame Address. By convention, this is the value of the stack pointer
+ * prior to the execution of the call instruction in the caller. I.e. on x86, it is
+ * esp + 4 on entry to a function. The value of the CFA does not change during execution
+ * of a function. There are two kinds of unwind directives:
+ * - those that describe how to compute the CFA at a given pc offset inside a function
+ * - those that describe where a given register is saved relative to the CFA.
+ */
 
 /* Unwind ops */
 
@@ -85,6 +91,24 @@ typedef struct {
 #define mono_add_unwind_op_def_cfa_offset(op_list,code,buf,offset) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_def_cfa_offset, 0, (offset))); } while (0)
 #define mono_add_unwind_op_same_value(op_list,code,buf,reg) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_same_value, (reg), 0)); } while (0)
 #define mono_add_unwind_op_offset(op_list,code,buf,reg,offset) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_offset, (reg), (offset))); } while (0)
+
+/* Pointer Encoding in the .eh_frame */
+enum {
+	DW_EH_PE_absptr = 0x00,
+	DW_EH_PE_omit = 0xff,
+
+	DW_EH_PE_udata4 = 0x03,
+	DW_EH_PE_sdata4 = 0x0b,
+	DW_EH_PE_sdata8 = 0x0c,
+
+	DW_EH_PE_pcrel = 0x10,
+	DW_EH_PE_textrel = 0x20,
+	DW_EH_PE_datarel = 0x30,
+	DW_EH_PE_funcrel = 0x40,
+	DW_EH_PE_aligned = 0x50,
+
+	DW_EH_PE_indirect = 0x80
+};
 
 int
 mono_hw_reg_to_dwarf_reg (int reg) MONO_INTERNAL;

@@ -33,7 +33,6 @@ using System.Net;
 
 namespace System.Net.Sockets
 {
-#if NET_1_1
 	// <remarks>
 	//   Encapsulates a multicast option
 	// </remarks>
@@ -80,5 +79,4 @@ namespace System.Net.Sockets
 			}
 		}
 	}
-#endif
 }

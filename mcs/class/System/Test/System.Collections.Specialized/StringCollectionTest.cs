@@ -41,26 +41,26 @@ namespace MonoTests.System.Collections.Specialized {
 		[Test]
 		public void SimpleCount() 
 		{
-			Assertion.Assert(sc.Count == 7);
+			Assert.AreEqual(7, sc.Count);
 		}
 		
 		[Test]
 		public void SimpleIsReadOnly() 
 		{
-			Assertion.Assert(!sc.IsReadOnly);
+			Assert.IsFalse(sc.IsReadOnly);
 		}
 		
 		[Test]
 		public void SimpleIsSynchronized() 
 		{
-			Assertion.Assert(!sc.IsSynchronized);
+			Assert.IsFalse(sc.IsSynchronized);
 		}
 		
 		[Test]
 		public void SimpleItemGet() 
 		{
 			for(int i = 0; i < strings.Length; i++) {
-				Assertion.Assert(strings[i].Equals(sc[i]));
+				Assert.AreEqual(strings[i], sc[i]);
 			}
 		}
 		
@@ -68,24 +68,21 @@ namespace MonoTests.System.Collections.Specialized {
 		public void SimpleItemSet() 
 		{
 			sc[0] = "bob";
-			Assertion.Assert(sc[0].Equals("bob"));
+			Assert.AreEqual("bob", sc[0]);
 		}
 		
 		[Test]
-#if NET_2_0
-		[Category ("NotDotNet")] // SyncRoot != this on 2.0
-#endif
 		public void SimpleSyncRoot() 
 		{
-			Assertion.Assert(sc.Equals(sc.SyncRoot));
+			Assert.AreEqual(sc, sc.SyncRoot);
 		}
 		
 		[Test]
 		public void SimpleAdd() 
 		{
 			int index = sc.Add("chuck");
-			Assertion.Assert(index == strings.Length);
-			Assertion.Assert(sc[strings.Length].Equals("chuck"));
+			Assert.AreEqual(strings.Length, index);
+			Assert.AreEqual("chuck", sc[strings.Length]);
 		}
 		
 		[Test]
@@ -100,10 +97,10 @@ namespace MonoTests.System.Collections.Specialized {
 			int index = sc.Count;
 			sc.AddRange(newStrings);
 			
-			Assertion.Assert(sc.Count == index + newStrings.Length);
+			Assert.AreEqual(index + newStrings.Length, sc.Count);
 			
 			for (int i = 0; i+index <= sc.Count-1; i++) {
-				Assertion.Assert(newStrings[i].Equals(sc[i+index]));
+				Assert.AreEqual(newStrings[i], sc[i+index]);
 			}
 		}
 		
@@ -111,14 +108,14 @@ namespace MonoTests.System.Collections.Specialized {
 		public void SimpleClear() 
 		{
 			sc.Clear();
-			Assertion.Assert(sc.Count == 0);
+			Assert.AreEqual(0, sc.Count);
 		}
 		
 		[Test]
 		public void SimpleContains() 
 		{
-			Assertion.Assert(sc.Contains(strings[0]));
-			Assertion.Assert(!sc.Contains("NOT CONTAINED"));
+			Assert.IsTrue(sc.Contains(strings[0]));
+			Assert.IsFalse(sc.Contains("NOT CONTAINED"));
 		}
 		
 		[Test]
@@ -127,7 +124,7 @@ namespace MonoTests.System.Collections.Specialized {
 			string[] copyArray = new string[sc.Count];
 			sc.CopyTo(copyArray, 0);
 			for (int i = 0; i < copyArray.Length; i++) {
-				Assertion.Assert(copyArray[i] == sc[i]);
+				Assert.AreEqual(copyArray[i], sc[i]);
 			}
 		}
 		
@@ -136,7 +133,7 @@ namespace MonoTests.System.Collections.Specialized {
 		{
 			int index = 0;
 			foreach(string s in sc) {
-				Assertion.Assert(s.Equals(strings[index]));
+				Assert.AreEqual(s, strings[index]);
 				index++;
 			}
 		}
@@ -144,7 +141,7 @@ namespace MonoTests.System.Collections.Specialized {
 		[Test]
 		public void SimpleIndexOf() 
 		{
-			Assertion.Assert(sc.IndexOf(strings[0]) == 0);
+			Assert.AreEqual(0, sc.IndexOf(strings[0]));
 		}
 		
 		[Test]
@@ -159,11 +156,11 @@ namespace MonoTests.System.Collections.Specialized {
 			
 			sc.Insert(index, newStr);
 			
-			Assertion.Assert(sc.Count == oldCount + 1);
-			Assertion.Assert(sc[index].Equals(newStr));
-			Assertion.Assert(sc[index-1].Equals(before));
-			Assertion.Assert(sc[index+1].Equals(current));
-			Assertion.Assert(sc[index+2].Equals(after));
+			Assert.AreEqual(oldCount + 1, sc.Count);
+			Assert.AreEqual(newStr, sc[index]);
+			Assert.AreEqual(before, sc[index-1]);
+			Assert.AreEqual(current, sc[index+1]);
+			Assert.AreEqual(after, sc[index+2]);
 		}
 		
 		[Test]
@@ -171,8 +168,8 @@ namespace MonoTests.System.Collections.Specialized {
 		{
 			int oldCount = sc.Count;
 			sc.Remove(strings[0]);
-			Assertion.Assert(oldCount == sc.Count + 1);
-			Assertion.Assert(!sc.Contains(strings[0]));
+			Assert.AreEqual(sc.Count + 1, oldCount);
+			Assert.IsFalse(sc.Contains(strings[0]));
 		}
 		
 		[Test]
@@ -183,8 +180,8 @@ namespace MonoTests.System.Collections.Specialized {
 			string after = sc[index+1];
 			
 			sc.RemoveAt(index);
-			Assertion.Assert(oldCount == sc.Count + 1);
-			Assertion.Assert(sc[index].Equals(after));
+			Assert.AreEqual(sc.Count + 1, oldCount);
+			Assert.AreEqual(after, sc[index]);
 		}
 
 		[Test]

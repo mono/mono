@@ -5,6 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // (C)2004 Novell Inc.
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
 //
@@ -578,6 +579,10 @@ namespace Mono.Xml.XPath
 			namespaces [nsIndex].Name = name;
 			namespaces [nsIndex].Namespace = ns;
 			namespaces [nsIndex].NextNamespace = nextNs;
+			if (lineInfo != null && lineInfo.HasLineInfo ()) {
+				namespaces [nsIndex].LineNumber = lineInfo.LineNumber;
+				namespaces [nsIndex].LinePosition = lineInfo.LinePosition;
+			}
 		}
 	}
 }

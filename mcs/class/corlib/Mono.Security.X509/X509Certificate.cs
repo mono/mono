@@ -49,6 +49,7 @@ namespace Mono.Security.X509 {
 #else
 	public class X509Certificate : ISerializable {
 #endif
+		const string encoding_error = "Input data cannot be coded as a valid certificate.";
 
 		private ASN1 decoder;
 
@@ -96,9 +97,6 @@ namespace Mono.Security.X509 {
 		private byte[] issuerUniqueID;
 		private byte[] subjectUniqueID;
 		private X509ExtensionCollection extensions;
-
-		private static string encoding_error = Locale.GetText ("Input data cannot be coded as a valid certificate.");
-
 
 		// that's were the real job is!
 		private void Parse (byte[] data) 

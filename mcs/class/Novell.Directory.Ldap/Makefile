@@ -14,7 +14,7 @@ LIB_MCS_FLAGS = \
 	$(RESX_RES:%=/res:%)
 else
 LIB_MCS_FLAGS = \
-	/nowarn:649 /nowarn:169 /nowarn:219 /nowarn:168 \
+	-warn:1 -nowarn:612 \
 	-r:$(corlib)				\
 	-r:System.dll			 	\
 	-r:Mono.Security.dll			\

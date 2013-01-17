@@ -93,7 +93,7 @@ run-test-ondotnet-lib: test-local
 	ok=:; \
 	$(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(TEST_HARNESS_OUTPUT_ONDOTNET) -xml=TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
 	$(TEST_HARNESS_POSTPROC_ONDOTNET) ; $$ok
-	
+
 
 endif # test_assemblies
 
@@ -106,7 +106,7 @@ endif
 ifdef HAVE_CS_TESTS
 
 $(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
-	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 $(test_response): $(test_sourcefile)
 #	@echo Creating $@ ...

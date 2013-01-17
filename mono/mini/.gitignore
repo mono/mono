@@ -1,5 +1,6 @@
 /Makefile
 /Makefile.in
+/Makefile.am
 /*.o
 /*.so
 /*.exe
@@ -32,4 +33,5 @@
 /buildver.h
 /TAGS
 /mono-sgen
+/buildver-sgen.h
 

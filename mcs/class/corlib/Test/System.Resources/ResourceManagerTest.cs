@@ -184,7 +184,6 @@ namespace MonoTests.System.Resources
 		[Test] // ResourceManager (String, Assembly)
 		public void Constructor2_BaseName_Resources ()
 		{
-#if NET_2_0
 			MockResourceManager rm = new MockResourceManager (
 				"mono.resources",
 				Assembly.GetExecutingAssembly ());
@@ -201,24 +200,6 @@ namespace MonoTests.System.Resources
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#11");
 			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
 			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "#13");
-#else
-			try {
-				new ResourceManager ("mono.resources",
-					Assembly.GetExecutingAssembly ());
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// ResourceManager base name should not end in
-				// .resources. It should be similar to MyResources,
-				// which the ResourceManager can convert into
-				// MyResources.<culture>.resources; for example,
-				// MyResources.en-US.resources
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (" .resources") != -1, "#5");
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test] // ResourceManager (String, Assembly)
@@ -293,7 +274,6 @@ namespace MonoTests.System.Resources
 		[Test] // ResourceManager (String, Assembly, Type)
 		public void Constructor3_BaseName_Resources ()
 		{
-#if NET_2_0
 			MockResourceManager rm = new MockResourceManager (
 				"mono.resources",
 				Assembly.GetExecutingAssembly (),
@@ -309,25 +289,6 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (0, rm.ResourceSets.Count, "#9");
 			Assert.IsNotNull (rm.ResourceSetType, "#10");
 			Assert.AreEqual (typeof (ResourceSet), rm.ResourceSetType, "#11");
-#else
-			try {
-				new ResourceManager ("mono.resources", 
-					Assembly.GetExecutingAssembly (),
-					typeof (ResourceSet));
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// ResourceManager base name should not end in
-				// .resources. It should be similar to MyResources,
-				// which the ResourceManager can convert into
-				// MyResources.<culture>.resources; for example,
-				// MyResources.en-US.resources
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (" .resources") != -1, "#5");
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test] // ResourceManager (String, Assembly, Type)
@@ -404,12 +365,9 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void CreateFileBasedResourceManager_BaseName_Resources ()
 		{
-#if NET_2_0
 			ResourceManager rm = ResourceManager.CreateFileBasedResourceManager (
 				"MyResources.resources", "Test/resources", null);
 			try {
@@ -423,25 +381,6 @@ namespace MonoTests.System.Resources
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
-#else
-			try {
-				ResourceManager.CreateFileBasedResourceManager (
-					"MyResources.resources", "Test/resources",
-					null);
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// ResourceManager base name should not end in
-				// .resources. It should be similar to MyResources,
-				// which the ResourceManager can convert into
-				// MyResources.<culture>.resources; for example,
-				// MyResources.en-US.resources
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (" .resources") != -1, "#5");
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]
@@ -560,19 +499,11 @@ namespace MonoTests.System.Resources
 			try {
 				rm.GetObject ("deHelloWorld");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ObjectDisposedException ex) {
 				// Cannot access a closed resource set
 				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot access a closed resource set
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-#endif
 			} finally {
 				rm.ReleaseAllResources ();
 			}
@@ -699,25 +630,16 @@ namespace MonoTests.System.Resources
 			try {
 				rm.GetString ("deHelloWorld");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ObjectDisposedException ex) {
 				// Cannot access a closed resource set
 				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#else
-			} catch (InvalidOperationException ex) {
-				// ResourceSet is closed
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-#endif
 			} finally {
 				rm.ReleaseAllResources ();
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetStream ()
 		{
@@ -864,7 +786,6 @@ namespace MonoTests.System.Resources
 				rm.ReleaseAllResources ();
 			}
 		}
-#endif
 
 		[Test]
 		public void IgnoreCase ()
@@ -975,19 +896,11 @@ namespace MonoTests.System.Resources
 			try {
 				rm.GetString ("HelloWorld");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ObjectDisposedException ex) {
 				// ResourceSet is closed
 				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#else
-			} catch (InvalidOperationException ex) {
-				// ResourceSet is closed
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-#endif
 			} finally {
 				rm.ReleaseAllResources ();
 			}
@@ -1013,15 +926,15 @@ namespace MonoTests.System.Resources
 			{
 			}
 
-			public string BaseNameField {
+			public new string BaseNameField {
 				get { return base.BaseNameField; }
 			}
 
-			public Assembly MainAssembly {
+			public new Assembly MainAssembly {
 				get { return base.MainAssembly; }
 			}
 
-			public Hashtable ResourceSets {
+			public new Hashtable ResourceSets {
 				get { return base.ResourceSets; }
 			}
 

@@ -404,7 +404,6 @@ namespace IBM.Data.DB2
 
 		#region Read
 
-#if !NET_1_0
 		public bool HasRows
 		{
 			get
@@ -418,7 +417,6 @@ namespace IBM.Data.DB2
 				return hasRows;
 			}
 		}
-#endif
 
 		public bool Read()
 		{
@@ -588,19 +586,11 @@ namespace IBM.Data.DB2
 			// TODO: need better implementation for big BLOBs
 
 			byte[] sourceArray = (byte[])this[col];
-#if NET_1_0
-			if(buffer == null)
-			{
-				Array.Copy(sourceArray, (int)fieldOffset, buffer, bufferOffset, length);
-			}
-			return sourceArray.Length;
-#else
 			if(buffer == null)
 			{
 				Array.Copy(sourceArray, fieldOffset, buffer, bufferOffset, length);
 			}
 			return sourceArray.LongLength;
-#endif
 		}
 		#endregion
 

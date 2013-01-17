@@ -1,3 +1,5 @@
+// Compiler options: -optimize
+
 using System;
 using System.Reflection;
 

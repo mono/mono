@@ -10,7 +10,7 @@ struct X {
 
 class Test { 
 
-	static public int Main ()
+	public static int Main ()
 	{
 		X x = new X ();
 		Console.WriteLine (x);

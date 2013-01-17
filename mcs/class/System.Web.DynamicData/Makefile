@@ -171,11 +171,13 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/Site.master,MonoTests.WebPages.Site.master	\
 	Test/WebPages/Site.master.cs,MonoTests.WebPages.Site.master.cs	\
 	Test/WebPages/web.config.2.0,MonoTests.WebPages.web.config.2.0 \
-	Test/WebPages/web.config.4.0,MonoTests.WebPages.web.config.4.0
+	Test/WebPages/web.config.4.0,MonoTests.WebPages.web.config.4.0 \
+	Test/WebPages/web.config.4.5,MonoTests.WebPages.web.config.4.5
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll \
+	$(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll -r:System.Xml.dll
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 TEST_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
@@ -184,7 +186,7 @@ endif
 EXTRA_DISTFILES = $(foreach resource,$(TEST_RESOURCE_FILES), $(shell echo $(subst \`,\\\`,$(resource)) | cut -d ',' -f 1))
 
 # This is a .NET 3.5+ assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Web.DynamicData.dll
 NO_INSTALL = yes

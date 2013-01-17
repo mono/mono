@@ -33,7 +33,7 @@ namespace System.Data.Common
 		DataColumn _column;
 
 		// implementing class protocol
-		protected abstract object GetValue (int index);
+		protected internal abstract object GetValue (int index);
 		internal abstract long GetInt64 (int index);
 
 		// used to set the array value to something neutral when the corresponding item is null (in the database sense)
@@ -158,7 +158,10 @@ namespace System.Data.Common
 		{
 			object obj; 
 			TypeCode tc;
-
+			
+			if (value == null)
+				return null;
+			
 			if (_type.IsInstanceOfType (value)) {
 				return value;
 			} else if ((tc = Type.GetTypeCode (_type)) == TypeCode.String) {
@@ -190,11 +193,13 @@ namespace System.Data.Common
 					case TypeCode.UInt64:
 						return (Convert.ToUInt64 (value));
 					case TypeCode.DateTime:
+						if (value == DBNull.Value)
+							return DBNull.Value;
 						return (Convert.ToDateTime (value));
 					case TypeCode.Decimal:
 						return (Convert.ToDecimal (value));
 					default:
-						throw new InvalidCastException ();
+						throw new InvalidCastException (string.Format ("Cannot convert from {0} to {1}", value.GetType ().FullName, _type.FullName));
 				}
 			} else if ((obj = GetExplicitValue (value)) != null) {
 				return (obj);
@@ -249,7 +254,7 @@ namespace System.Data.Common
 	sealed class BitDataContainer : DataContainer {
 		BitArray _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -271,7 +276,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((BitDataContainer) from)._values [from_index];
+			_values [to_index] = (bool) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -298,7 +303,7 @@ namespace System.Data.Common
 	sealed class CharDataContainer : DataContainer {
 		char [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -320,7 +325,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((CharDataContainer) from)._values [from_index];
+			_values [to_index] = (char) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -351,7 +356,7 @@ namespace System.Data.Common
 	sealed class ByteDataContainer : DataContainer {
 		byte [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -373,7 +378,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((ByteDataContainer) from)._values [from_index];
+			_values [to_index] = (byte) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -404,7 +409,7 @@ namespace System.Data.Common
 	sealed class SByteDataContainer : DataContainer {
 		sbyte [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -426,7 +431,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((SByteDataContainer) from)._values [from_index];
+			_values [to_index] = (sbyte) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -457,7 +462,7 @@ namespace System.Data.Common
 	sealed class Int16DataContainer : DataContainer {
 		short [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -479,7 +484,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((Int16DataContainer) from)._values [from_index];
+			_values [to_index] = (short) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -510,7 +515,7 @@ namespace System.Data.Common
 	sealed class UInt16DataContainer : DataContainer {
 		ushort [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -532,7 +537,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((UInt16DataContainer) from)._values [from_index];
+			_values [to_index] = (ushort) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -563,7 +568,7 @@ namespace System.Data.Common
 	sealed class Int32DataContainer : DataContainer {
 		int [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -585,7 +590,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((Int32DataContainer) from)._values [from_index];
+			_values [to_index] = (int) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -616,7 +621,7 @@ namespace System.Data.Common
 	sealed class UInt32DataContainer : DataContainer {
 		uint [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -638,7 +643,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((UInt32DataContainer) from)._values [from_index];
+			_values [to_index] = (uint) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -669,7 +674,7 @@ namespace System.Data.Common
 	sealed class Int64DataContainer : DataContainer {
 		long [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -691,7 +696,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((Int64DataContainer) from)._values [from_index];
+			_values [to_index] = (long) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -722,7 +727,7 @@ namespace System.Data.Common
 	sealed class UInt64DataContainer : DataContainer {
 		ulong [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -744,7 +749,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((UInt64DataContainer) from)._values [from_index];
+			_values [to_index] = (ulong) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -775,7 +780,7 @@ namespace System.Data.Common
 	sealed class SingleDataContainer : DataContainer {
 		float [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -797,7 +802,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((SingleDataContainer) from)._values [from_index];
+			_values [to_index] = (float) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -828,7 +833,7 @@ namespace System.Data.Common
 	sealed class DoubleDataContainer : DataContainer {
 		double [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -850,7 +855,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((DoubleDataContainer) from)._values [from_index];
+			_values [to_index] = (double) GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -881,7 +886,7 @@ namespace System.Data.Common
 	class ObjectDataContainer : DataContainer {
 		object [] _values;
 
-		protected override object GetValue (int index)
+		protected internal override object GetValue (int index)
 		{
 			return _values [index];
 		}
@@ -903,7 +908,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((ObjectDataContainer) from)._values [from_index];
+			_values [to_index] = GetContainerData (from.GetValue (from_index));
 		}
 
 		protected override int DoCompareValues (int index1, int index2)

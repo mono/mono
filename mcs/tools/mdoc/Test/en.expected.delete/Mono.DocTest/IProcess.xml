@@ -1,0 +1,13 @@
+<Type Name="IProcess" FullName="Mono.DocTest.IProcess">
+  <TypeSignature Language="C#" Value="public interface IProcess" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IProcess" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

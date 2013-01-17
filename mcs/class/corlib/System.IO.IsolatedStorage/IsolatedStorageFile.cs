@@ -56,7 +56,7 @@ namespace System.IO.IsolatedStorage {
 		private ulong _maxSize;
 #endif
 		private Evidence _fullEvidences;
-		private static Mutex mutex = new Mutex ();
+		private static readonly Mutex mutex = new Mutex ();
 #if NET_4_0 || MOBILE
 		private bool closed;
 		private bool disposed;
@@ -579,7 +579,7 @@ namespace System.IO.IsolatedStorage {
 #endif
 				directory.CreateSubdirectory (dir);
 			} else {
-				string[] dirs = dir.Split (Path.PathSeparatorChars);
+				string[] dirs = dir.Split (Path.PathSeparatorChars, StringSplitOptions.RemoveEmptyEntries);
 				DirectoryInfo dinfo = directory;
 
 				for (int i = 0; i < dirs.Length; i++) {
@@ -646,6 +646,8 @@ namespace System.IO.IsolatedStorage {
 		public void DeleteDirectory (string dir)
 		{
 			try {
+				if (Path.IsPathRooted (dir))
+					dir = dir.Substring (1);
 				DirectoryInfo subdir = directory.CreateSubdirectory (dir);
 				subdir.Delete ();
 			}
@@ -764,7 +766,7 @@ namespace System.IO.IsolatedStorage {
 			return Directory.GetLastWriteTime (full_path);
 		}
 #endif
-
+		
 		public string[] GetDirectoryNames (string searchPattern)
 		{
 			if (searchPattern == null)
@@ -782,16 +784,25 @@ namespace System.IO.IsolatedStorage {
 			if (path == null || path.Length == 0) {
 				adi = directory.GetDirectories (searchPattern);
 			} else {
-				DirectoryInfo[] subdirs = directory.GetDirectories (path);
 				// we're looking for a single result, identical to path (no pattern here)
+				DirectoryInfo[] subdirs = directory.GetDirectories (path);
+				DirectoryInfo di = subdirs [0];
 				// we're also looking for something under the current path (not outside isolated storage)
-				if ((subdirs.Length == 1) && (subdirs [0].Name == path) && (subdirs [0].FullName.IndexOf (directory.FullName) >= 0)) {
-					adi = subdirs [0].GetDirectories (pattern);
-				} else {
-					// CAS, even in FullTrust, normally enforce IsolatedStorage
-					throw new SecurityException ();
+				if (di.FullName.IndexOf (directory.FullName) >= 0) {
+					adi = di.GetDirectories (pattern);
+					string[] segments = path.Split (new char [] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+					for (int i = segments.Length - 1; i >= 0; i--) {
+						if (di.Name != segments [i]) {
+							adi = null;
+							break;
+						}
+						di = di.Parent;
+					}
 				}
 			}
+			// CAS, even in FullTrust, normally enforce IsolatedStorage
+			if (adi == null)
+				throw new SecurityException ();
 			 
 			return GetNames (adi);
 		}
@@ -989,7 +1000,7 @@ namespace System.IO.IsolatedStorage {
 			return Path.GetFullPath (path).StartsWith (directory.FullName);
 		}
 #endif
-		
+
 #if !MOBILE
 		private string GetNameFromIdentity (object identity)
 		{

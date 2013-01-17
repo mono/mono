@@ -13,7 +13,7 @@ namespace TestDebug
 			throw new ApplicationException ("1");
 		}
 
-		static int Main ()
+		public static int Main ()
 		{
 			C.Method (); // Only checks that DEBUG is defined in second file
 			

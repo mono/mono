@@ -314,12 +314,12 @@ namespace System.Data
    							reader.Skip ();
 						}						
 						row [col] = obj;
-					} catch (XmlException e) {
+					} catch (XmlException) {
 #endif
 						// XML is not in accordance to expected standards, try reading the content as an xml doc
 						row [col] = reader.ReadInnerXml ();
 #if NET_2_0
-					} catch (InvalidOperationException e) {
+					} catch (InvalidOperationException) {
 
 						row [col] = reader.ReadInnerXml ();
 					}

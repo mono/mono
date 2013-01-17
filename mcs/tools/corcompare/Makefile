@@ -4,8 +4,6 @@ include ../../build/rules.make
 
 ALL_PROGRAMS = mono-api-info.exe
 
-CECIL = ../../class/lib/net_2_0/Mono.Cecil.dll
-
 COMMON_SOURCES = \
 	AssemblyResolver.cs	\
 	Util.cs	\
@@ -42,4 +40,4 @@ clean-local:
 dist-local: dist-default
 
 mono-api-info.exe: $(APIINFO_SOURCES)
-	$(CSCOMPILE) -r:$(CECIL) -out:$@ $^
+	$(CSCOMPILE) -r:Mono.Cecil.dll -out:$@ $^

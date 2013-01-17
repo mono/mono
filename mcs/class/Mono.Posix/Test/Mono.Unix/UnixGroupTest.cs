@@ -10,9 +10,9 @@
 
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.Xml;
 
 using Mono.Unix;
 
@@ -41,13 +41,13 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
-		// According to bug 72293, this may not work:
-		// On systems with NIS, it is possible to have multiple users in the passwd
-		// file with the same name, so the assertion above no longer holds.
-		[Category ("NotWorking")]
 		public void ReentrantConstructors ()
 		{
+			var seen = new Dictionary<string, object> ();
 			foreach (UnixGroupInfo group in UnixGroupInfo.GetLocalGroups ()) {
+				if (seen.ContainsKey (group.GroupName))
+					continue;
+				seen.Add (group.GroupName, null);
 				try {
 					UnixGroupInfo byName = new UnixGroupInfo (group.GroupName);
 					UnixGroupInfo byId   = new UnixGroupInfo (group.GroupId);
@@ -67,7 +67,11 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void NonReentrantSyscalls ()
 		{
+			var seen = new Dictionary<string, object> ();
 			foreach (UnixGroupInfo group in UnixGroupInfo.GetLocalGroups ()) {
+				if (seen.ContainsKey (group.GroupName))
+					continue;
+				seen.Add (group.GroupName, null);
 				try {
 					Group byName = Syscall.getgrnam (group.GroupName);
 					Group byId   = Syscall.getgrgid ((uint) group.GroupId);

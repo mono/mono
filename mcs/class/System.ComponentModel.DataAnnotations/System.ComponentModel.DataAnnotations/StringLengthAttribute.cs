@@ -33,7 +33,11 @@ using System.ComponentModel;
 
 namespace System.ComponentModel.DataAnnotations
 {
+#if NET_4_0
+	[AttributeUsage (AttributeTargets.Parameter|AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
+#else
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
+#endif
 	public class StringLengthAttribute : ValidationAttribute
 	{
 		public int MaximumLength { get; private set; }
@@ -57,7 +61,11 @@ namespace System.ComponentModel.DataAnnotations
 
 		public override string FormatErrorMessage (string name)
 		{
+#if NET_4_0
+			return String.Format (ErrorMessageString, name, MaximumLength, MinimumLength);
+#else
 			return String.Format (ErrorMessageString, name, MaximumLength);
+#endif
 		}
 
 		public override bool IsValid (object value)

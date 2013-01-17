@@ -168,7 +168,8 @@ namespace System.Xml.Linq
 
 		public static void Remove<T> (this IEnumerable<T> source) where T : XNode
 		{
-			foreach (T item in source)
+			var l = new List<T> (source);
+			foreach (T item in l)
 				item.Remove ();
 		}
 	}

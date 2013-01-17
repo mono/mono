@@ -180,7 +180,7 @@ namespace MonoTests.System {
 			Assert.IsFalse (g1.Equals ((object)"This is not a Guid!"), "A5");
 		}
 
-#if NET_2_0
+
 		[Test]
 		public void EqualsGuid ()
 		{
@@ -194,7 +194,6 @@ namespace MonoTests.System {
 			Assert.IsFalse (g1.Equals (null), "A4");
 			Assert.IsFalse (g1.Equals ("This is not a Guid!"), "A5");
 		}
-#endif
 
 		[Test]
 		public void CompareToObject ()
@@ -221,7 +220,6 @@ namespace MonoTests.System {
 			Guid.Empty.CompareTo ("Say what?");
 		}
 
-#if NET_2_0
 		[Test]
 		public void CompareToGuid ()
 		{
@@ -238,7 +236,18 @@ namespace MonoTests.System {
 			Assert.IsTrue (g4.CompareTo (g1) > 0, "A6");
 			Assert.IsTrue (g1.CompareTo (g1) == 0, "A7");
 		}
-#endif
+
+		[Test]
+		public void CompareToGuid_2 ()
+		{
+			var g1 = new Guid ("d1c5088bc188464fb77b0fd2be2d005e");
+			var g2 = new Guid ("d2c5088bc188464fb77b0fd2be2d005e");
+			var g3 = new Guid ("00c5088bc188464fb77b0fd2be2d005e");
+
+			Assert.AreEqual (-1, g1.CompareTo (g2), "#1");
+			Assert.AreEqual (1, g1.CompareTo (g3), "#2");
+			Assert.AreEqual (1, g1.CompareTo (Guid.Empty), "#3");
+		}
 
 		[Test]
 		public void GetHashCode_Same ()
@@ -274,14 +283,20 @@ namespace MonoTests.System {
 			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString (""), "A6");
 			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ((string)null), "A7");
 			Assert.AreEqual ("{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString ("B", null), "A10");
+#if NET_4_0
+			Assert.AreEqual ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", g.ToString ("x"), "A11");
+			Assert.AreEqual ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", g.ToString ("X"), "A11");
+#endif
 		}
 
+#if !NET_4_0
 		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void ToString_UnsupportedFormat ()
 		{
 			new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f).ToString ("X");
 		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
@@ -348,7 +363,13 @@ namespace MonoTests.System {
 			guid = Guid.ParseExact ("00010203-0405-0607-0809-0a0b0c0d0e0f", "D");
 			Assert.AreEqual (expected, guid.ToString ());
 
+			guid = Guid.ParseExact ("00010203-0405-0607-0809-0a0b0c0d0e0f", "d");
+			Assert.AreEqual (expected, guid.ToString ());
+
 			guid = Guid.ParseExact ("{00010203-0405-0607-0809-0A0B0C0D0E0F}", "B");
+			Assert.AreEqual (expected, guid.ToString ());
+
+			guid = Guid.ParseExact ("{00010203-0405-0607-0809-0A0B0C0D0E0F}", "b");
 			Assert.AreEqual (expected, guid.ToString ());
 
 			guid = Guid.ParseExact ("(00010203-0405-0607-0809-0A0B0C0D0E0F)", "P");
@@ -370,6 +391,30 @@ namespace MonoTests.System {
 		public void ParseExactD ()
 		{
 			Guid.ParseExact ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", "D");
+		}
+
+		[Test]
+		public void TryParse()
+		{
+			Guid guid;
+			Assert.IsFalse (Guid.TryParse(null, out guid), "A1");
+			Assert.AreEqual (Guid.Empty, guid, "A2");
+			Assert.IsFalse (Guid.TryParse("", out guid), "A3");
+			Assert.AreEqual (Guid.Empty, guid, "A4");
+			Assert.IsFalse (Guid.TryParse("foobar", out guid), "A5");
+			Assert.AreEqual (Guid.Empty, guid, "A6");
+		}
+
+		[Test]
+		public void TryParseExact()
+		{
+			Guid guid;
+			Assert.IsFalse (Guid.TryParseExact(null, null, out guid), "A1");
+			Assert.AreEqual (Guid.Empty, guid, "A2");
+			Assert.IsFalse (Guid.TryParseExact("", null, out guid), "A3");
+			Assert.AreEqual (Guid.Empty, guid, "A4");
+			Assert.IsFalse (Guid.TryParseExact("foobar", null, out guid), "A5");
+			Assert.AreEqual (Guid.Empty, guid, "A6");
 		}
 #endif
 	}

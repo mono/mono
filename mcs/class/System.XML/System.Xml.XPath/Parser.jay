@@ -53,7 +53,10 @@ namespace Mono.Xml.XPath
 				throw new XPathException ("Error during parse of " + xpath, e);
 			}
 		}
-		static int yacc_verbose_flag;
+		
+#pragma warning disable 649
+		static readonly int yacc_verbose_flag;
+#pragma warning restore 649
 
 		private NodeSet CreateNodeTest (Axes axis, object nodeTest, ArrayList plist)
 		{

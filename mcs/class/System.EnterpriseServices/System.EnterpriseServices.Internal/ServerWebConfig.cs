@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	public class ServerWebConfig : IServerWebConfig {
 
 		[MonoTODO]
@@ -52,5 +51,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

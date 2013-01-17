@@ -10,7 +10,7 @@ class Test
 
         int prop = 0;
 
-        static int Main()
+        public static int Main()
         {
                 MethodInfo mi = typeof (Test).GetMethod ("set_Prop");
                 if (mi.GetParameters ().Length != 1)

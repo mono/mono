@@ -5,14 +5,10 @@ include ../../build/rules.make
 LIBRARY = Moonlight.Build.Tasks.dll
 LIBRARY_NAME = Moonlight.Build.Tasks.dll
 
-ifeq (1.0, $(FRAMEWORK_VERSION))
-LIBRARY_NAME = dummy-Moonlight.Build.Tasks.dll
-endif
-
 ifeq (3.5, $(FRAMEWORK_VERSION))
 NAME_SUFFIX = .v3.5
 else
-ifeq (4.0, $(FRAMEWORK_VERSION))
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 NAME_SUFFIX = .v4.0
 endif
 endif

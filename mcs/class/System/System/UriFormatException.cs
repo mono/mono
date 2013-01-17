@@ -55,9 +55,9 @@ namespace System {
 		{
 		}
 #endif
-		protected UriFormatException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{			
+		protected UriFormatException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
+		{
 		}
 
 		// Methods

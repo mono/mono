@@ -234,8 +234,6 @@ namespace Mono.Security.Protocol.Tls
 				this.protocol.SendRecord(HandshakeType.ServerKeyExchange);
 			}
 
-			bool certRequested = false;
-
 			// If the negotiated cipher is a KeyEx cipher or
 			// the client certificate is required send the CertificateRequest message
 			if (this.context.Negotiating.Cipher.IsExportable ||
@@ -243,7 +241,6 @@ namespace Mono.Security.Protocol.Tls
 				((ServerContext)this.context).RequestClientCertificate)
 			{
 				this.protocol.SendRecord(HandshakeType.CertificateRequest);
-				certRequested = true;
 			}
 
 			// Send ServerHelloDone message
@@ -261,15 +258,6 @@ namespace Mono.Security.Protocol.Tls
 						AlertDescription.HandshakeFailiure,
 						"The client stopped the handshake.");
 				}
-			}
-
-			if (certRequested) {
-				X509Certificate client_cert = this.context.ClientSettings.ClientCertificate;
-				if (client_cert == null && ((ServerContext)this.context).ClientCertificateRequired)
-					throw new TlsException (AlertDescription.BadCertificate, "No certificate received from client.");
-
-				if (!RaiseClientCertificateValidation (client_cert, new int[0]))
-					throw new TlsException (AlertDescription.BadCertificate, "Client certificate not accepted.");
 			}
 
 			// Send ChangeCipherSpec and ServerFinished messages

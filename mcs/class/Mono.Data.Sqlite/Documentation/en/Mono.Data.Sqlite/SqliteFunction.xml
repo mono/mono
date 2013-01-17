@@ -1,0 +1,241 @@
+<Type Name="SqliteFunction" FullName="Mono.Data.Sqlite.SqliteFunction">
+  <TypeSignature Language="C#" Value="public abstract class SqliteFunction : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract SqliteFunction extends System.Object implements class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            This abstract class is designed to handle user-defined functions easily.  An instance of the derived class is made for each
+            connection to the database.
+            </summary>
+    <remarks>
+            Although there is one instance of a class derived from SqliteFunction per database connection, the derived class has no access
+            to the underlying connection.  This is necessary to deter implementers from thinking it would be a good idea to make database
+            calls during processing.
+            It is important to distinguish between a per-connection instance, and a per-SQL statement context.  One instance of this class
+            services all SQL statements being stepped through on that connection, and there can be many.  One should never store per-statement
+            information in member variables of user-defined function classes.
+            For aggregate functions, always create and store your per-statement data in the contextData object on the 1st step.  This data will
+            be automatically freed for you (and Dispose() called if the item supports IDisposable) when the statement completes.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SqliteFunction ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Internal constructor, initializes the function's internal variables.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="C#" Value="public virtual int Compare (string param1, string param2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Compare(string param1, string param2) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="param1" Type="System.String" />
+        <Parameter Name="param2" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="param1">The first string to compare</param>
+        <param name="param2">The second strnig to compare</param>
+        <summary>
+            User-defined collation sequences override this method to provide a custom string sorting algorithm.
+            </summary>
+        <returns>1 if param1 is greater than param2, 0 if they are equal, or -1 if param1 is less than param2</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Disposes of any active contextData variables that were not automatically cleaned up.  Sometimes this can happen if
+            someone closes the connection while a DataReader is open.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">True if the object is being disposed explicitly</param>
+        <summary>
+            Placeholder for a user-defined disposal routine
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Final">
+      <MemberSignature Language="C#" Value="public virtual object Final (object contextData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Final(object contextData) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contextData" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="contextData">Your own assigned contextData, provided for you so you can return your final results.</param>
+        <summary>
+            Aggregate functions override this method to finish their aggregate processing.
+            </summary>
+        <returns>You may return most simple types as a return value, null or DBNull.Value to return null, DateTime, or
+            you may return an Exception-derived class if you wish to return an error to SQLite.  Do not actually throw the error,
+            just return it!
+            </returns>
+        <remarks>
+            If you implemented your aggregate function properly,
+            you've been recording and keeping track of your data in the contextData object provided, and now at this stage you should have
+            all the information you need in there to figure out what to return.
+            NOTE:  It is possible to arrive here without receiving a previous call to Step(), in which case the contextData will
+            be null.  This can happen when no rows were returned.  You can either return null, or 0 or some other custom return value
+            if that is the case.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public virtual object Invoke (object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Invoke(object[] args) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="args">The arguments for the command to process</param>
+        <summary>
+            Scalar functions override this method to do their magic.
+            </summary>
+        <returns>You may return most simple types as a return value, null or DBNull.Value to return null, DateTime, or
+            you may return an Exception-derived class if you wish to return an error to SQLite.  Do not actually throw the error,
+            just return it!</returns>
+        <remarks>
+            Parameters passed to functions have only an affinity for a certain data type, there is no underlying schema available
+            to force them into a certain type.  Therefore the only types you will ever see as parameters are
+            DBNull.Value, Int64, Double, String or byte[] array.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RegisterFunction">
+      <MemberSignature Language="C#" Value="public static void RegisterFunction (Type typ);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterFunction(class System.Type typ) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="typ" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="typ">The type of the function to register</param>
+        <summary>
+            Manual method of registering a function.  The type must still have the SqliteFunctionAttributes in order to work
+            properly, but this is a workaround for the Compact Framework where enumerating assemblies is not currently supported.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SqliteConvert">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.SqliteConvert SqliteConvert { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Data.Sqlite.SqliteConvert SqliteConvert" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SqliteConvert</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns a reference to the underlying connection's SqliteConvert class, which can be used to convert
+            strings and DateTime's into the current connection's encoding schema.
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Step">
+      <MemberSignature Language="C#" Value="public virtual void Step (object[] args, int stepNumber, ref object contextData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Step(object[] args, int32 stepNumber, object contextData) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="stepNumber" Type="System.Int32" />
+        <Parameter Name="contextData" Type="System.Object&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="args">The arguments for the command to process</param>
+        <param name="stepNumber">The 1-based step number.  This is incrememted each time the step method is called.</param>
+        <param name="contextData">A placeholder for implementers to store contextual data pertaining to the current context.</param>
+        <summary>
+            Aggregate functions override this method to do their magic.
+            </summary>
+        <remarks>
+            Typically you'll be updating whatever you've placed in the contextData field and returning as quickly as possible.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

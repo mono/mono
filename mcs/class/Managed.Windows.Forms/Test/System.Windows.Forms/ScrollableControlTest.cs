@@ -344,5 +344,40 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, scrollable.VerticalScroll.Visible, "#C0");
 		}
 #endif
+
+		// Tests Xamarin-2562
+		[Test]
+		public void DisplayRectangle_SamePadding ()
+		{
+			using (var c = new ScrollableControl ())
+			{
+				c.Size = new Size (100, 100);
+				c.Padding = new Padding (4);
+				Assert.AreEqual (new Rectangle (0, 0, 100, 100), c.ClientRectangle);
+				Assert.AreEqual (new Rectangle (4, 4, 92, 92), c.DisplayRectangle);
+			}
+		}
+
+		[Test]
+		public void DisplayRectangle_DifferentPadding ()
+		{
+			using (var c = new ScrollableControl ())
+			{
+				c.Size = new Size (100, 100);
+				c.Padding = new Padding (1, 2, 3, 4);
+				Assert.AreEqual (new Rectangle (0, 0, 100, 100), c.ClientRectangle);
+				Assert.AreEqual (new Rectangle (1, 2, 96, 94), c.DisplayRectangle);
+			}
+		}
+
+		[Test]
+		public void DockPadding()
+		{
+			using (var c = new ScrollableControl ())
+			{
+				c.Padding = new Padding(4);
+				Assert.AreEqual (4, c.DockPadding.All);
+			}
+		}
 	}
 }

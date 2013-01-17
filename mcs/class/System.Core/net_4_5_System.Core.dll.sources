@@ -1,0 +1,3 @@
+#include net_4_0_System.Core.dll.sources
+
+../dlr/Runtime/Microsoft.Scripting.Core/Ast/DynamicExpression.cs

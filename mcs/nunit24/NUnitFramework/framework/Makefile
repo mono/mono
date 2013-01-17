@@ -6,7 +6,7 @@ LIBRARY = NUnit.Framework.dll
 LIBRARY_NAME = nunit.framework.dll
 LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LIB_MCS_FLAGS = -debug /r:System.Xml.dll /r:System.dll /d:StronglyNamedAssembly
+LIB_MCS_FLAGS = /r:System.Xml.dll /r:System.dll /d:StronglyNamedAssembly -warn:1
 NO_TEST = yo
 
 ifneq (net_2_0, $(PROFILE))

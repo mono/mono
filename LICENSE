@@ -2,14 +2,14 @@
 Mono is made up of many pieces of code, all of them open source, but
 different pieces of Mono use different licensing terms.
 
-For comments, corrections and updates, please contact mono@novell.com
+For comments, corrections and updates, please contact mono@xamarin.com
 
 * Dual Licensing
 
 	Parts of Mono are dual licensed, they are available to the
 	public in GPL or LGPL forms, but we also offer those pieces
-	under commercial terms from Novell for when the GPL and the
-	LGPL are not suitable.
+	under commercial terms from Xamarin for the cases wher the GPL
+	and the LGPL are not suitable.
 
 	We have tried to pick the licenses that will maximize adoption
 	of Mono, so we tend to use the MIT X11 or LGPL liceses.
@@ -22,7 +22,10 @@ For comments, corrections and updates, please contact mono@novell.com
 	Contributions for other modules should be under the same license
 	terms as the rest of the module, or under MIT X11 terms. 
 
-	If you need further information, please contact mono@novell.com
+	For the actual license links in the Mono distribution see the
+	bottom of this file.
+
+	If you need further information, please contact mono@xamarin.com
 
 * The Modules
 
@@ -31,7 +34,7 @@ For comments, corrections and updates, please contact mono@novell.com
 	This code is dual licensed under the LGPL or commercial licenses. 
 
 	The LGPL ensures that Mono can be used in most scenarios, but
-	gives Novell the flexibility to relicense the code for
+	gives Xamarin the flexibility to relicense the code for
 	embedded systems, static linking or commercial settings where
 	the LGPL can not be used.
 
@@ -39,14 +42,21 @@ For comments, corrections and updates, please contact mono@novell.com
 	embedded system where the end user is not able to upgrade the
 	Mono VM or Moonlight installation or distribution that is part
 	of your product (Section 6 and 7), you would have to obtain a
-	commercial license from Novell (consider software burned into
+	commercial license from Xamarin (consider software burned into
 	a ROM, systems where end users would not be able to upgrade,
 	an embedded console, a game console that imposes limitations
 	on the distribution and access to the code, a phone platform
 	that prevents end users from upgrading Moonlight).
 	
-	Contact mono@novell.com for details on obtaining the Mono
+	Contact mono@xamarin.com for details on obtaining the Mono
 	runtime under other terms.
+
+** mono/support: MonoPosixHelper and support code
+
+	This code is dual licensed under the LGPL or commercial licenses, with
+	the same guidelines as mono/mono code.
+
+	The ZLib files are included under a "new BSD"-style license.
 
 ** mono/eglib: Mono's X11 glib implementation
 

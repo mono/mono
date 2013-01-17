@@ -10,7 +10,7 @@ class A
 	{
 	}
 
-	class C
+	public class C
 	{
 		Func<int> MA;
 		int F;

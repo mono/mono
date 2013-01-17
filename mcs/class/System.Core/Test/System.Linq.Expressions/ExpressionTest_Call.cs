@@ -505,5 +505,17 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual ("Boolean", lambda ());
 		}
+
+		public static void AcceptsIEnumerable(IEnumerable<object> o)
+		{
+		}
+
+		[Test]
+		public void CallIQueryableMethodWithNewArrayBoundExpression () // #2304
+		{
+			Expression.Call (
+				GetType ().GetMethod ("AcceptsIEnumerable", BindingFlags.Public | BindingFlags.Static),
+				Expression.NewArrayBounds (typeof (object), Expression.Constant (0)));
+		}
 	}
 }

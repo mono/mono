@@ -6,6 +6,7 @@
 //       Marek Safar <marek.safar@gmail.com>
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,32 +37,32 @@ namespace System.Threading.Tasks
 		readonly Task<TResult> source;
 
 		public TaskCompletionSource ()
+			: this (null, TaskCreationOptions.None)
 		{
-			source = new Task<TResult> (null);
-			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state)
+			: this (state, TaskCreationOptions.None)
 		{
-			source = new Task<TResult> (null, state);
-			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (TaskCreationOptions creationOptions)
+			: this (null, creationOptions)
 		{
-			source = new Task<TResult> (null, creationOptions);
-			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public TaskCompletionSource (object state, TaskCreationOptions creationOptions)
 		{
-			source = new Task<TResult> (null, state, creationOptions);
+			if ((creationOptions & System.Threading.Tasks.Task.WorkerTaskNotSupportedOptions) != 0)
+				throw new ArgumentOutOfRangeException ("creationOptions");
+
+			source = new Task<TResult> (TaskActionInvoker.Empty, state, CancellationToken.None, creationOptions, null);
 			source.SetupScheduler (TaskScheduler.Current);
 		}
 		
 		public void SetCanceled ()
 		{
-			if (!ApplyOperation (source.CancelReal))
+			if (!TrySetCanceled ())
 				ThrowInvalidException ();
 		}
 		
@@ -75,16 +76,13 @@ namespace System.Threading.Tasks
 		
 		public void SetException (IEnumerable<Exception> exceptions)
 		{
-			if (exceptions == null)
-				throw new ArgumentNullException ("exceptions");
-			
-			if (!ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions))))
+			if (!TrySetException (exceptions))
 				ThrowInvalidException ();
 		}
 		
 		public void SetResult (TResult result)
 		{
-			if (!ApplyOperation (() => source.Result = result))
+			if (!TrySetResult (result))
 				ThrowInvalidException ();
 		}
 				
@@ -95,7 +93,7 @@ namespace System.Threading.Tasks
 		
 		public bool TrySetCanceled ()
 		{
-			return ApplyOperation (source.CancelReal);
+			return source.TrySetCanceled ();
 		}
 		
 		public bool TrySetException (Exception exception)
@@ -110,38 +108,19 @@ namespace System.Threading.Tasks
 		{
 			if (exceptions == null)
 				throw new ArgumentNullException ("exceptions");
-			
-			return ApplyOperation (() => source.HandleGenericException (new AggregateException (exceptions)));
+
+			var aggregate = new AggregateException (exceptions);
+			if (aggregate.InnerExceptions.Count == 0)
+				throw new ArgumentNullException ("exceptions");
+
+			return source.TrySetException (aggregate);
 		}
 		
 		public bool TrySetResult (TResult result)
 		{
-			return ApplyOperation (() => source.Result = result);
+			return source.TrySetResult (result);
 		}
-				
-		bool ApplyOperation (Action action)
-		{
-			if (CheckInvalidState ())
-				return false;
-			
-			source.Status = TaskStatus.Running;
 
-			if (action != null)
-				action ();
-
-			source.Finish ();
-			
-			return true;
-		}
-		
-		bool CheckInvalidState ()
-		{
-			return source.Status == TaskStatus.RanToCompletion ||
-				   source.Status == TaskStatus.Faulted || 
-				   source.Status == TaskStatus.Canceled;
-					
-		}
-		
 		public Task<TResult> Task {
 			get {
 				return source;

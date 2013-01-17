@@ -51,6 +51,7 @@ namespace System.Linq.Expressions {
 			this.type_operand = type_operand;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			if (expression.Type == typeof (void)) {
@@ -63,5 +64,6 @@ namespace System.Linq.Expressions {
 			ec.ig.Emit (OpCodes.Ldnull);
 			ec.ig.Emit (OpCodes.Cgt_Un);
 		}
+#endif
 	}
 }

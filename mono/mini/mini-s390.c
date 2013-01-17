@@ -335,8 +335,6 @@ int mono_exc_esp_offset = 0;
 
 static int indent_level = 0;
 
-static gboolean tls_offset_inited = FALSE;
-
 static int appdomain_tls_offset = -1,
            thread_tls_offset = -1;
 
@@ -423,7 +421,7 @@ mono_arch_fregname (int reg) {
 /*------------------------------------------------------------------*/
 
 int
-mono_arch_get_argument_info (MonoMethodSignature *csig, 
+mono_arch_get_argument_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *csig, 
 			     int param_count, 
 			     MonoJitArgumentInfo *arg_info)
 {
@@ -1078,14 +1076,14 @@ mono_arch_cleanup (void)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_cpu_optimizazions                       */
+/* Name		- mono_arch_cpu_optimizations                       */
 /*                                                                  */
 /* Function	- Returns the optimizations supported on this CPU   */
 /*		                               			    */
 /*------------------------------------------------------------------*/
 
 guint32
-mono_arch_cpu_optimizazions (guint32 *exclude_mask)
+mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
 	guint32 opts = 0;
 
@@ -1097,6 +1095,21 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	return opts;
 }
 
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
+/* Name         - mono_arch_cpu_enumerate_simd_versions             */
+/*                                                                  */
+/* Function     - Returns the SIMD instruction sets on this CPU     */
+/*                                                                  */
+/*------------------------------------------------------------------*/
+guint32
+mono_arch_cpu_enumerate_simd_versions (void)
+{
+	/* SIMD is currently unimplemented */
+	return 0;
+}
 /*========================= End of Function ========================*/
 
 /*------------------------------------------------------------------*/
@@ -4921,19 +4934,15 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_setup_jit_tls_data                      */
+/* Name		- mono_arch_finish_init                                 */
 /*                                                                  */
 /* Function	- Setup the JIT's Thread Level Specific Data.       */
 /*		                               			    */
 /*------------------------------------------------------------------*/
 
 void
-mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
+mono_arch_finish_init (void)
 {
-
-	if (!tls_offset_inited) {
-		tls_offset_inited = TRUE;
-
 #if HAVE_KW_THREAD
 # if 0
 	__asm__ ("\tear\t%r1,0\n"
@@ -4952,7 +4961,6 @@ mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 		 : "1", "cc");
 # endif
 #endif
-	}		
 
 	if (!lmf_addr_key_inited) {
 		lmf_addr_key_inited = TRUE;

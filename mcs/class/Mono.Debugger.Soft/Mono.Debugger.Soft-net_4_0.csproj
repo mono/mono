@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,28 +9,29 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>./../../class/lib/net_4_0</OutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>Mono.Debugger.Soft</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
@@ -41,6 +42,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+   <Compile Include=".\Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="..\..\build\common\Locale.cs" />
    <Compile Include="Mono.Debugger.Soft\CustomAttributeTypedArgumentMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\ExceptionEvent.cs" />
    <Compile Include="Mono.Debugger.Soft\ModuleMirror.cs" />
@@ -52,7 +56,10 @@
    <Compile Include="Mono.Debugger.Soft\CustomAttributeDataMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\ThreadStartEvent.cs" />
    <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
+   <Compile Include="Mono.Debugger.Soft\ILExceptionHandler.cs" />
+   <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\PrimitiveValue.cs" />
+   <Compile Include="Mono.Debugger.Soft\PointerValue.cs" />
    <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
    <Compile Include="Mono.Debugger.Soft\Mirror.cs" />
    <Compile Include="Mono.Debugger.Soft\EnumMirror.cs" />
@@ -102,11 +109,14 @@
    <Compile Include="Mono.Debugger.Soft\Connection.cs" />
    <Compile Include="Mono.Debugger.Soft\ThreadMirror.cs" />
    <Compile Include="Mono.Debugger.Soft\TypeLoadEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\TypeLoadEventRequest.cs" />
    <Compile Include="Mono.Debugger.Soft\VMDisconnectEvent.cs" />
    <Compile Include="Mono.Debugger.Soft\InvokeOptions.cs" />
    <Compile Include="Mono.Debugger.Soft\IInvokeAsyncResult.cs" />
    <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
    <Compile Include="Mono.Debugger.Soft\AbsentInformationException.cs" />
+   <Compile Include="Mono.Debugger.Soft\UserBreakEvent.cs" />
+   <Compile Include="Mono.Debugger.Soft\UserLogEvent.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -122,26 +132,26 @@
   <ItemGroup>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.dll</HintPath>
+      <HintPath>System.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\Mono.Cecil.dll</HintPath>
+      <HintPath>Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
-  </ItemGroup>
 
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

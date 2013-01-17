@@ -23,13 +23,9 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-
-#if NET_2_0
-
 namespace System.ComponentModel {
 
 	public delegate void HandledEventHandler (object sender, HandledEventArgs e);
 
 }
 
-#endif

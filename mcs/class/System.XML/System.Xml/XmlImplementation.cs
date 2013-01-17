@@ -38,14 +38,9 @@ namespace System.Xml
 		{
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		XmlImplementation (XmlNameTable nameTable)
+		public XmlImplementation (XmlNameTable nt)
 		{
-			InternalNameTable = nameTable;
+			InternalNameTable = nt;
 		}
 		#endregion
 

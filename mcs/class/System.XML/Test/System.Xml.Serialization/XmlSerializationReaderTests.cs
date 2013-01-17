@@ -188,6 +188,22 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("World", result.Child2, "#2");
 			Assert.IsNull (result.Child0, "#3"); // not "test"
 		}
+
+		[Test]
+		public void ExplicitlyOrderedMembers4 ()
+		{
+			var xs = new XmlSerializer (typeof (ExplicitlyOrderedMembersType4));
+			//Would result in an Inconsistent XML sequence error , see Bug 707434
+			var result = (ExplicitlyOrderedMembersType4) xs.Deserialize(new StringReader (@"
+<root>
+	<child>Hello</child>
+	<child>World</child>
+	<child0>test</child0>
+</root>"));
+			Assert.AreEqual ("Hello", result.Child1, "#1");
+			Assert.AreEqual ("World", result.Child2, "#2");
+			Assert.IsNull (result.Child0, "#3"); // not "test"
+		}
 	}
 
 	public class XmlSerializarionReaderTester : XmlSerializationReader

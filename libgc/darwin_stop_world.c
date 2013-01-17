@@ -79,7 +79,7 @@ void GC_push_all_stacks() {
   kern_return_t r;
   GC_thread p;
   pthread_t me;
-  ptr_t lo, hi;
+  ptr_t lo, hi, altstack_lo, altstack_hi;
 #if defined(POWERPC)
   ppc_thread_state_t state;
   mach_msg_type_number_t thread_state_count = PPC_THREAD_STATE_COUNT;
@@ -115,7 +115,7 @@ void GC_push_all_stacks() {
 	if(r != KERN_SUCCESS) continue;
 	
 #if defined(I386)
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 
 	lo = state.__esp;
 
@@ -252,6 +252,16 @@ void GC_push_all_stacks() {
 	hi = GC_stackbottom;
       else
 	hi = p->stack_end;
+
+	  if (p->altstack && lo >= p->altstack && lo <= p->altstack + p->altstack_size) {
+		  altstack_lo = lo;
+		  altstack_hi = p->altstack + p->altstack_size;
+		  lo = (char*)p->stack;
+		  hi = (char*)p->stack + p->stack_size;
+	  }	else {
+		  altstack_lo = NULL;
+	  }
+
 #if DEBUG_THREADS
       GC_printf3("Darwin: Stack for thread 0x%lx = [%lx,%lx)\n",
 		 (unsigned long) p -> id,
@@ -259,7 +269,10 @@ void GC_push_all_stacks() {
 		 (unsigned long) hi
 		 );
 #endif
-      GC_push_all_stack(lo,hi);
+	  if (lo)
+		  GC_push_all_stack(lo,hi);
+	  if (altstack_lo)
+		  GC_push_all_stack(altstack_lo,altstack_hi);
     } /* for(p=GC_threads[i]...) */
   } /* for(i=0;i<THREAD_TABLE_SZ...) */
 }
@@ -378,7 +391,7 @@ void GC_push_all_stacks() {
 			     (natural_t *)&info, &outCount);
 	if(r != KERN_SUCCESS) continue;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 	lo = (void*)info.__esp;
 	hi = (ptr_t)FindTopOfStack(info.__esp);
 

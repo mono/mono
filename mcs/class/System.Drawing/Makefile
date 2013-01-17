@@ -7,7 +7,7 @@ LIBRARY = System.Drawing.dll
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll \
 	-resource:Assembly/Mono.ico,Mono.ico -resource:Assembly/Information.ico,Information.ico \
 	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
-	-resource:Assembly/Question.ico,Question.ico
+	-resource:Assembly/Question.ico,Question.ico -resource:Assembly/Shield.ico,Shield.ico
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -define:TEST -resource:Test/resources/indexed.png,indexed.png \
 	 -r:System.Drawing.dll -r:System.Runtime.Serialization.Formatters.Soap.dll -r:System.Xml.dll \
@@ -64,4 +64,5 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Assembly/Warning.ico		\
 	Assembly/WinLogo.ico		\
 	Assembly/Mono.ico		\
+	Assembly/Shield.ico		\
 	nunit-host-ignore-list

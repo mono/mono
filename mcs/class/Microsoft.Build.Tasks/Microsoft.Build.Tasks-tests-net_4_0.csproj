@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>.\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>Microsoft.Build.Tasks_test_net_4_0</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Test\Microsoft.Build.Tasks\ALTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\AssignCultureTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\AssignProjectConfigurationTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\AssignTargetPathTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\CombinePathTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\CopyTest.cs" />
+   <Compile Include="..\Microsoft.Build.Engine\Test\Microsoft.Build.BuildEngine\Consts.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\CreateCSharpManifestResourceNameTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\CreateVisualBasicManifestResourceNameTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\CreateItemTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\CreatePropertyTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\CscTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\DeleteTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\ErrorTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\FindAppConfigFileTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\GetFrameworkPathTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\GetFrameworkSdkPathTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\LCTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\MakeDirTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\ManagedCompilerTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\MessageTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\RemoveDuplicatesTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\RemoveDirTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\ResolveAssemblyReferenceTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\TestEngine.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\TestMessageLogger.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\TaskBatchingTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\WarningTest.cs" />
+   <Compile Include="Test\Microsoft.Build.Tasks\WriteLinesToFileTest.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="./../../class/lib/net_4_0/Microsoft.Build.Tasks.v4.0.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../class/lib/net_4_0/Microsoft.Build.Tasks.v4.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Engine.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.Build.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.Build.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.v4.0.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.Build.Utilities.v4.0.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

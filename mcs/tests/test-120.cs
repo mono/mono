@@ -29,7 +29,7 @@ struct MyAuto
 class test
 {
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int errors = 0;
 		Type t = typeof (MyUnicode);

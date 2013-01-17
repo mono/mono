@@ -218,6 +218,7 @@ namespace System
 		{
 			return m_value;
 		}
+
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);

@@ -974,12 +974,68 @@ namespace MonoTests.System.Web.Routing
 				})
 			};
 			
-			var hc = new HttpContextStub ("/Foo/x123", String.Empty);
+			var hc = new HttpContextStub ("~/Foo/x123", String.Empty);
 			var rd = r.GetRouteData (hc);
 
 			Assert.IsNull (rd, "#1");
 		}
-		
+
+		[Test]
+		public void GetRouteDataWithCatchAll ()
+		{
+			var r = new Route ("{*path}", new StopRoutingHandler ()) {
+				Defaults = new RouteValueDictionary (new {
+					controller = "Error",
+					action = "NotFound"
+				})
+			};
+
+			var hc = new HttpContextStub ("~/", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+
+			hc = new HttpContextStub ("~/Foo/x123", String.Empty);
+			rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#2");
+		}
+
+		[Test]
+		public void GetRouteDataWithCatchAll2 ()
+		{
+			var r = new Route ("something/{*path}", new StopRoutingHandler ()) {
+				Defaults = new RouteValueDictionary (new {
+					controller = "Error",
+					action = "NotFound"
+				})
+			};
+
+			var hc = new HttpContextStub ("~/", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1");
+
+			hc = new HttpContextStub ("~/something", String.Empty);
+			rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#2");
+			Assert.IsNull (rd.Values["path"], "#2.1");
+
+			hc = new HttpContextStub ("~/something/", String.Empty);
+			rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#3");
+			Assert.IsNull (rd.Values["path"], "#3.1");
+
+			hc = new HttpContextStub ("~/something/algo", String.Empty);
+			rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#4");
+			Assert.AreEqual ("algo", rd.Values["path"], "#4.1");
+
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetVirtualPathNullContext ()
@@ -1294,6 +1350,146 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsNotNull (RouteTable.Routes.GetVirtualPath (rc, "TestRoute", null), "#A4");
 		}
 #endif
+
+		[Test (Description="Xamarin Bug #9116")]
+		public void GetVirtualPath16 ()
+		{
+			var context = new HttpContextWrapper (
+				new HttpContext (new HttpRequest ("filename", "http://localhost/filename", String.Empty),
+						 new HttpResponse (new StringWriter())
+				)
+			);
+			var rc = new RequestContext (context, new RouteData ());
+
+			var route = new Route ("Hello", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "Hello", page = 1})
+			};
+
+			var routeValues = new RouteValueDictionary
+			{
+				{"controller", "Home"},
+				{"action", "Hello"},
+				{"page", 1}
+			};
+
+			var result = route.GetVirtualPath(rc, routeValues);
+			Assert.IsNotNull(result, "#A1");
+			Assert.AreEqual("Hello", result.VirtualPath, "#A2");
+		}
+
+		[Test (Description="Xamarin Bug #9116")]
+		public void GetVirtualPath17 () 
+		{
+			var context = new HttpContextWrapper (
+				new HttpContext (new HttpRequest ("filename", "http://localhost/filename", String.Empty),
+						 new HttpResponse (new StringWriter())
+				)
+			);
+			var rc = new RequestContext (context, new RouteData ());
+
+			RouteTable.Routes.Add("FirstPage", new Route ("Hello/FirstPage", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "Hello", page = 1})
+			});
+			RouteTable.Routes.Add("OtherPages", new Route ("Hello/Page-{page}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "Hello"})
+			});
+
+			var firstPageRouteValues = new RouteValueDictionary
+			{
+				{"controller", "Home"},
+				{"action", "Hello"},
+				{"page", 1}
+			};
+			var secondPageRouteValues = new RouteValueDictionary
+			{
+				{"controller", "Home"},
+				{"action", "Hello"},
+				{"page", 2}
+			};
+
+			var firstPageResult = RouteTable.Routes.GetVirtualPath (rc, firstPageRouteValues);
+			var secondPageResult = RouteTable.Routes.GetVirtualPath (rc, secondPageRouteValues);
+
+			Assert.AreEqual ("/Hello/FirstPage", firstPageResult.VirtualPath, "#A1");
+			Assert.AreEqual ("/Hello/Page-2", secondPageResult.VirtualPath, "#A2");
+		}
+
+		[Test (Description="Xamarin Bug #9116")]
+		public void GetVirtualPath18 () 
+		{
+			var context = new HttpContextWrapper (
+				new HttpContext (new HttpRequest ("filename", "http://localhost/filename", String.Empty),
+						 new HttpResponse (new StringWriter())
+				)
+			);
+			var rc = new RequestContext (context, new RouteData ());
+
+			RouteTable.Routes.Add("Published", new Route ("Posts/Published", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "Posts", published = true})
+			});
+			RouteTable.Routes.Add("Unpublished", new Route ("Posts/Unpublished", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "Posts", published = false})
+			});
+
+			var publishedRouteValues = new RouteValueDictionary
+			{
+				{"controller", "Home"},
+				{"action", "Posts"},
+				{"published", true}
+			};
+			var unpublishedRouteValues = new RouteValueDictionary
+			{
+				{"controller", "Home"},
+				{"action", "Posts"},
+				{"published", false}
+			};
+
+			var publishedResult = RouteTable.Routes.GetVirtualPath (rc, publishedRouteValues);
+			var unpublishedResult = RouteTable.Routes.GetVirtualPath (rc, unpublishedRouteValues);
+
+			Assert.AreEqual ("/Posts/Published", publishedResult.VirtualPath, "#A1");
+			Assert.AreEqual ("/Posts/Unpublished", unpublishedResult.VirtualPath, "#A2");
+		}
+
+		[Test (Description="Routes should be case insensitive - Xamarin bug #9133")]
+		public void GetVirtualPath19 ()
+		{
+			var context = new HttpContextWrapper (
+				new HttpContext (new HttpRequest ("filename", "http://localhost/filename", String.Empty),
+						 new HttpResponse (new StringWriter())
+				)
+			);
+			var rc = new RequestContext (context, new RouteData ());
+
+			var route = new Route ("HelloWorld", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "HelloWorld"})
+			};
+
+			var lowercase = route.GetVirtualPath (rc, new RouteValueDictionary
+			{
+				{"controller", "home"},
+				{"action", "helloworld"}
+			});
+			var standardCase = route.GetVirtualPath (rc, new RouteValueDictionary
+			{
+				{"controller", "Home"},
+				{"action", "HelloWorld"}
+			});
+			var uppercase = route.GetVirtualPath (rc, new RouteValueDictionary
+			{
+				{"controller", "HOME"},
+				{"action", "HELLOWORLD"}
+			});
+
+			Assert.IsNotNull(lowercase, "#A1");
+			Assert.AreEqual ("HelloWorld", lowercase.VirtualPath, "#A2");
+
+			Assert.IsNotNull(standardCase, "#A3");
+			Assert.AreEqual ("HelloWorld", standardCase.VirtualPath, "#A4");
+
+			Assert.IsNotNull(uppercase, "#A5");
+			Assert.AreEqual ("HelloWorld", uppercase.VirtualPath, "#A6");
+		}
 
 		// Bug #500739
 		[Test]

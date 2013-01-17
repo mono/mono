@@ -388,18 +388,39 @@ namespace Mono.Unix {
 
 		public static UnixFileSystemInfo GetFileSystemEntry (string path)
 		{
+			UnixFileSystemInfo info;
+			if (TryGetFileSystemEntry (path, out info))
+				return info;
+
+			UnixMarshal.ThrowExceptionForLastError ();
+
+			// Throw DirectoryNotFoundException because lstat(2) probably failed
+			// because of ENOTDIR (e.g. "/path/to/file/wtf"), so
+			// DirectoryNotFoundException is what would have been thrown anyway.
+			throw new DirectoryNotFoundException ("UnixMarshal.ThrowExceptionForLastError didn't throw?!");
+		}
+
+		public static bool TryGetFileSystemEntry (string path, out UnixFileSystemInfo entry)
+		{
 			Native.Stat stat;
 			int r = Native.Syscall.lstat (path, out stat);
-			if (r == -1 && Native.Stdlib.GetLastError() == Native.Errno.ENOENT) {
-				return new UnixFileInfo (path);
+			if (r == -1) {
+				if (Native.Stdlib.GetLastError() == Native.Errno.ENOENT) {
+					entry = new UnixFileInfo (path);
+					return true;
+				}
+				entry = null;
+				return false;
 			}
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
 			if (IsFileType (stat.st_mode, Native.FilePermissions.S_IFDIR))
-				return new UnixDirectoryInfo (path, stat);
+				entry = new UnixDirectoryInfo (path, stat);
 			else if (IsFileType (stat.st_mode, Native.FilePermissions.S_IFLNK))
-				return new UnixSymbolicLinkInfo (path, stat);
-			return new UnixFileInfo (path, stat);
+				entry = new UnixSymbolicLinkInfo (path, stat);
+			else
+				entry = new UnixFileInfo (path, stat);
+
+			return true;
 		}
 	}
 }

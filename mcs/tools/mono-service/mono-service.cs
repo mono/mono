@@ -240,7 +240,7 @@ class MonoServiceRunner : MarshalByRefObject
 				service = services [0];
 			}
 	
-			call (service, "OnStart", new string [0]);
+			call (service, "OnStart", args);
 			info (logname, "Service {0} started", service.ServiceName);
 	
 			UnixSignal intr = new UnixSignal (Signum.SIGINT);

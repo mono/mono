@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // TaskCompletionSourceTests.cs
 //  
@@ -25,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,14 +44,30 @@ namespace MonoTests.System.Threading.Tasks
 		public void Setup ()
 		{
 			state = new object ();
-			completionSource = new TaskCompletionSource<int> (state, TaskCreationOptions.LongRunning);
+			completionSource = new TaskCompletionSource<int> (state, TaskCreationOptions.None);
 		}
 		
 		[Test]
 		public void CreationCheckTest ()
 		{
 			Assert.IsNotNull (completionSource.Task, "#1");
-			Assert.AreEqual (TaskCreationOptions.LongRunning, completionSource.Task.CreationOptions, "#2");
+			Assert.AreEqual (TaskCreationOptions.None, completionSource.Task.CreationOptions, "#2");
+		}
+
+		[Test]
+		public void CtorInvalidOptions ()
+		{
+			try {
+				new TaskCompletionSource<long> (TaskCreationOptions.LongRunning);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				new TaskCompletionSource<long> (TaskCreationOptions.PreferFairness);
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 		
 		[Test]
@@ -75,8 +92,17 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.Canceled, completionSource.Task.Status, "#3");
 			Assert.IsFalse (completionSource.TrySetResult (42), "#4");
 			Assert.AreEqual (TaskStatus.Canceled, completionSource.Task.Status, "#5");
+
+			try {
+				Console.WriteLine (completionSource.Task.Result);
+				Assert.Fail ("#6");
+			} catch (AggregateException e) {
+				var details = (TaskCanceledException) e.InnerException;
+				Assert.AreEqual (completionSource.Task, details.Task, "#6e");
+				Assert.IsNull (details.Task.Exception, "#6e2");
+			}
 		}
-		
+
 		[Test]
 		public void SetExceptionTest ()
 		{
@@ -95,6 +121,24 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#6");
 			Assert.IsFalse (completionSource.TrySetCanceled (), "#8");
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#9");
+		}
+
+		[Test]
+		public void SetExceptionInvalid ()
+		{
+			try {
+				completionSource.TrySetException (new ApplicationException[0]);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				completionSource.TrySetException (new [] { new ApplicationException (), null });
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+			Assert.AreEqual (TaskStatus.WaitingForActivation, completionSource.Task.Status, "r1");
 		}
 		
 		[Test, ExpectedException (typeof (InvalidOperationException))]
@@ -151,6 +195,44 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.Faulted, f.Status);
 			Assert.AreEqual (thrown, f.Exception.InnerException);
 			Assert.AreEqual (thrown, ex.InnerException);
+		}
+
+		[Test]
+		[Ignore ("#4550, Mono GC is lame")]
+		public void SetExceptionAndUnobservedEvent ()
+		{
+			bool notFromMainThread = false;
+			var mre = new ManualResetEvent (false);
+			int mainThreadId = Thread.CurrentThread.ManagedThreadId;
+			TaskScheduler.UnobservedTaskException += (o, args) => {
+				notFromMainThread = Thread.CurrentThread.ManagedThreadId != mainThreadId;
+				args.SetObserved ();
+				mre.Set ();
+			};
+			var inner = new ApplicationException ();
+			CreateFaultedTaskCompletionSource (inner);
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
+
+			Assert.IsTrue (mre.WaitOne (5000), "#1");
+			Assert.IsTrue (notFromMainThread, "#2");
+		}
+
+		void CreateFaultedTaskCompletionSource (Exception inner)
+		{
+			var tcs = new TaskCompletionSource<int> ();
+			tcs.SetException (inner);
+			tcs = null;
+		}
+
+		[Test]
+		public void WaitingTest ()
+		{
+			var tcs = new TaskCompletionSource<int> ();
+			var task = tcs.Task;
+			bool result = task.Wait (50);
+
+			Assert.IsFalse (result);
 		}
 	}
 }

@@ -1,8 +1,9 @@
 //
 // HttpListenerRequestTest.cs - Unit tests for System.Net.HttpListenerRequest
 //
-// Author:
+// Authors:
 //	Gert Driesen (drieseng@users.sourceforge.net)
+//	David Straw
 //
 // Copyright (C) 2007 Gert Driesen
 //
@@ -26,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Net;
@@ -45,6 +44,7 @@ namespace MonoTests.System.Net
 	public class HttpListenerRequestTest
 	{
 		[Test]
+		[Category ("NotWorking")] // Bug #5742 
 		public void HasEntityBody ()
 		{
 			HttpListenerContext ctx;
@@ -160,21 +160,32 @@ namespace MonoTests.System.Net
 			Assert.AreEqual ("pOsT", request.HttpMethod);
 			listener.Close ();
 		}
-		
+
 		[Test]
-        	public void HttpBasicAuthScheme()
-        	{
-        		HttpListener listener = HttpListener2Test.CreateAndStartListener("http://*:9000/authTest/", AuthenticationSchemes.Basic);
-        	    	//dummy-wait for context
-            		listener.BeginGetContext(null, listener);
-            		NetworkStream ns = HttpListener2Test.CreateNS(9000);
-            		HttpListener2Test.Send(ns, "GET /authTest/ HTTP/1.0\r\n\r\n");
-            		String response = HttpListener2Test.Receive(ns, 512);
-            		Assert.IsTrue(response.Contains("WWW-Authenticate: Basic realm"), "#A");
-            		ns.Close();
-            		listener.Close();
-        	}
+		public void HttpBasicAuthScheme ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://*:9000/authTest/", AuthenticationSchemes.Basic);
+			//dummy-wait for context
+			listener.BeginGetContext (null, listener);
+			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "GET /authTest/ HTTP/1.0\r\n\r\n");
+			String response = HttpListener2Test.Receive (ns, 512);
+			Assert.IsTrue (response.Contains ("WWW-Authenticate: Basic realm"), "#A");
+			ns.Close ();
+			listener.Close ();
+		}
+
+		[Test]
+		public void HttpRequestUriIsNotDecoded ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener (
+				"http://127.0.0.1:9000/RequestUriDecodeTest/");
+			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "GET /RequestUriDecodeTest/?a=b&c=d%26e HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
+			HttpListenerContext ctx = listener.GetContext ();
+			HttpListenerRequest request = ctx.Request;
+			Assert.AreEqual ("/RequestUriDecodeTest/?a=b&c=d%26e", request.Url.PathAndQuery);
+			listener.Close ();
+		}
 	}
 }
-
-#endif

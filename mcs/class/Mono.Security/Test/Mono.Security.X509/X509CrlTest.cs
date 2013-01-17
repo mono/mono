@@ -71,7 +71,7 @@ namespace MonoTests.Mono.Security.X509 {
 			X509Crl crl = new X509Crl (basicConstraintsCriticalcAFalseCACRL_crl);
 			Assert.AreEqual (0, crl.Entries.Count, "Entries.Count");
 			Assert.AreEqual (2, crl.Extensions.Count, "Extensions.Count");
-			Assert.IsTrue (crl.IsCurrent, "IsCurrent"); // true till 2011
+			Assert.IsFalse (crl.IsCurrent, "IsCurrent"); // true till 2011
 			Assert.AreEqual ("C=US, O=Test Certificates, CN=basicConstraints Critical cA False CA", crl.IssuerName, "IssuerName");
 			Assert.AreEqual (634388218400000000, crl.NextUpdate.ToUniversalTime ().Ticks, "NextUpdate");
 			Assert.AreEqual ("32-BC-12-1F-84-D0-B6-3E-72-A0-FB-D9-75-99-CA-E5-2A-05-09-E6-C8-27-74-47-1C-DC-0C-D4-9F-BC-9F-B2-62-25-B4-6D-5B-E5-0B-E8-2A-8E-07-EB-3E-6B-C5-1E-9A-D2-14-FD-89-5B-C3-10-BF-19-77-67-0A-33-45-1B-BC-6C-ED-AF-84-30-59-FB-7C-71-95-63-60-31-9B-9B-0A-EA-77-F1-70-F1-B9-2E-D1-A9-04-42-66-94-B9-54-48-DB-44-56-56-1A-57-5A-01-0E-7C-4D-D7-C0-1F-5C-6F-13-F5-A3-57-88-6A-9A-71-CD-D5-AE-C3-00-B1-28", BitConverter.ToString (crl.Signature), "Signature");

@@ -128,11 +128,11 @@ namespace System.Xml.Schema
 #endif
 		}
 
-		public XmlSchema Add (string targetNamespace, string url)
+		public XmlSchema Add (string targetNamespace, string schemaUri)
 		{
 			XmlTextReader r = null;
 			try {
-				r = new XmlTextReader (url, nameTable);
+				r = new XmlTextReader (schemaUri, nameTable);
 				return Add (targetNamespace, r);
 			} finally {
 				if (r != null)
@@ -140,9 +140,9 @@ namespace System.Xml.Schema
 			}
 		}
 
-		public XmlSchema Add (string targetNamespace, XmlReader reader)
+		public XmlSchema Add (string targetNamespace, XmlReader schemaDocument)
 		{
-			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
+			XmlSchema schema = XmlSchema.Read (schemaDocument, ValidationEventHandler);
 			if (schema.TargetNamespace == null)
 				schema.TargetNamespace = targetNamespace == String.Empty ? null : targetNamespace; // this weirdness is due to bug #571660.
 			else if (targetNamespace != null && schema.TargetNamespace != targetNamespace)
@@ -153,11 +153,11 @@ namespace System.Xml.Schema
 
 		[MonoTODO]
 		// FIXME: Check the exact behavior when namespaces are in conflict (but it would be preferable to wait for 2.0 RTM)
-		public void Add (XmlSchemaSet schemaSet)
+		public void Add (XmlSchemaSet schemas)
 		{
 			ArrayList al = new ArrayList ();
-			foreach (XmlSchema schema in schemaSet.schemas) {
-				if (!schemas.Contains (schema))
+			foreach (XmlSchema schema in schemas.schemas) {
+				if (!this.schemas.Contains (schema))
 					al.Add (schema);
 			}
 			foreach (XmlSchema schema in al)
@@ -246,17 +246,17 @@ namespace System.Xml.Schema
 			return false;
 		}
 
-		public bool Contains (XmlSchema targetNamespace)
+		public bool Contains (XmlSchema schema)
 		{
-			foreach (XmlSchema schema in schemas)
-				if (schema == targetNamespace)
+			foreach (XmlSchema s in schemas)
+				if (s == schema)
 					return true;
 			return false;
 		}
 
-		public void CopyTo (XmlSchema [] array, int index)
+		public void CopyTo (XmlSchema [] schemas, int index)
 		{
-			schemas.CopyTo (array, index);
+			this.schemas.CopyTo (schemas, index);
 		}
 
 		internal void CopyTo (Array array, int index)
@@ -294,16 +294,16 @@ namespace System.Xml.Schema
 			ClearGlobalComponents ();
 		}
 
-		public bool RemoveRecursive (XmlSchema schema)
+		public bool RemoveRecursive (XmlSchema schemaToRemove)
 		{
-			if (schema == null)
+			if (schemaToRemove == null)
 				throw new ArgumentNullException ("schema");
 			ArrayList al = new ArrayList ();
 			al.AddRange (schemas);
-			if (!al.Contains (schema))
+			if (!al.Contains (schemaToRemove))
 				return false;
-			al.Remove (schema);
-			schemas.Remove (schema);
+			al.Remove (schemaToRemove);
+			schemas.Remove (schemaToRemove);
 
 			if (!IsCompiled)
 				return true;
@@ -311,7 +311,7 @@ namespace System.Xml.Schema
 			ClearGlobalComponents ();
 			foreach (XmlSchema s in al) {
 				if (s.IsCompiled)
-					AddGlobalComponents (schema);
+					AddGlobalComponents (schemaToRemove);
 			}
 			return true;
 		}

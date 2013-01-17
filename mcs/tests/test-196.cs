@@ -16,7 +16,7 @@ class X {
 		long ll = (b & (l << r));
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		const byte b = 255;
 		const int i = b << int.MaxValue;

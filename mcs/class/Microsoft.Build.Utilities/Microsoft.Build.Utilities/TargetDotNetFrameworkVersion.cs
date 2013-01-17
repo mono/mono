@@ -1,10 +1,12 @@
 //
 // TargetDotNetFrameworkVersion.cs: Represents framework version.
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2005 Marek Sieradzki
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 namespace Microsoft.Build.Utilities
 {
 	// If changing something here then update
@@ -39,11 +39,17 @@ namespace Microsoft.Build.Utilities
 		Version35,
 #if NET_4_0
 		Version40,
+#endif
+#if NET_4_5
+		Version45,
+#endif
+
+#if NET_4_5
+		VersionLatest = Version45
+#elif NET_4_0
 		VersionLatest = Version40
 #else
 		VersionLatest = Version35
 #endif
 	}
 }
-
-#endif

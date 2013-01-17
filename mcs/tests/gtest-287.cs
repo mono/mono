@@ -7,7 +7,7 @@ interface I {
 
 class X : I
 {
-        static void Main ()
+        public static void Main ()
         {
 		List<object> l = new List<object> ();
 		List<I> i = new List<I> ();

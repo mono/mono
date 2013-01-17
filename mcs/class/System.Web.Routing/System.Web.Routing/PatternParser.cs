@@ -352,6 +352,10 @@ namespace System.Web.Routing
 					if (tokens.Count != 1)
 						return null;
 
+					// if token is catch-all, we're done.
+					if (tokens [0].Type == PatternTokenType.CatchAll)
+						break;
+
 					if (!defaults.ContainsKey (tokens [0].Name))
 						return null;
 				}
@@ -361,11 +365,12 @@ namespace System.Web.Routing
 			return AddDefaults (ret, defaults);
 		}
 		
-		public bool BuildUrl (Route route, RequestContext requestContext, RouteValueDictionary userValues, out string value)
+		public string BuildUrl (Route route, RequestContext requestContext, RouteValueDictionary userValues, RouteValueDictionary constraints, out RouteValueDictionary usedValues)
 		{
-			value = null;
+			usedValues = null;
+
 			if (requestContext == null)
-				return false;
+				return null;
 
 			RouteData routeData = requestContext.RouteData;
 			RouteValueDictionary defaultValues = route != null ? route.Defaults : null;
@@ -407,10 +412,10 @@ namespace System.Web.Routing
 					// Has the user provided value for it?
 					if (userValues == null || !userValues.ContainsKey (parameterName)) {
 						if (allMustBeInUserValues)
-							return false; // partial override => no match
+							return null; // partial override => no match
 						
 						if (!canTakeFromAmbient || ambientValues == null || !ambientValues.ContainsKey (parameterName))
-							return false; // no value provided => no match
+							return null; // no value provided => no match
 					} else if (canTakeFromAmbient)
 						allMustBeInUserValues = true;
 				}
@@ -430,29 +435,18 @@ namespace System.Web.Routing
 					if (userValues != null && userValues.TryGetValue (parameterName, out parameterValue)) {
 						object defaultValue = de.Value;
 						if (defaultValue is string && parameterValue is string) {
-							if (String.Compare ((string)defaultValue, (string)parameterValue, StringComparison.Ordinal) != 0)
-								return false; // different value => no match
-						} else if (defaultValue != parameterValue)
-							return false; // different value => no match
+							if (String.Compare ((string)defaultValue, (string)parameterValue, StringComparison.OrdinalIgnoreCase) != 0)
+								return null; // different value => no match
+						// Parameter may be a boxed value type, need to use .Equals() for comparison
+						} else if (!object.Equals (parameterValue, defaultValue))
+							return null; // different value => no match
 					}
-				}
-			}
-
-			// Check the constraints
-			RouteValueDictionary constraints = route != null ? route.Constraints : null;
-			if (constraints != null && constraints.Count > 0) {
-				HttpContextBase context = requestContext.HttpContext;
-				bool invalidConstraint;
-				
-				foreach (var de in constraints) {
-					if (!Route.ProcessConstraintInternal (context, route, de.Value, de.Key, userValues, RouteDirection.UrlGeneration, requestContext, out invalidConstraint) ||
-					    invalidConstraint)
-						return false; // constraint not met => no match
 				}
 			}
 
 			// We're a match, generate the URL
 			var ret = new StringBuilder ();
+			usedValues = new RouteValueDictionary ();
 			bool canTrim = true;
 			
 			// Going in reverse order, so that we can trim without much ado
@@ -475,6 +469,9 @@ namespace System.Web.Routing
 
 #if SYSTEMCORE_DEP
 				if (userValues.GetValue (parameterName, out tokenValue)) {
+					if (tokenValue != null)
+						usedValues.Add (parameterName, tokenValue.ToString ());
+
 					if (!defaultValues.Has (parameterName, tokenValue)) {
 						canTrim = false;
 						if (tokenValue != null)
@@ -484,6 +481,7 @@ namespace System.Web.Routing
 
 					if (!canTrim && tokenValue != null)
 						ret.Insert (0, tokenValue.ToString ());
+
 					continue;
 				}
 
@@ -491,16 +489,21 @@ namespace System.Web.Routing
 					object ambientTokenValue;
 					if (ambientValues.GetValue (parameterName, out ambientTokenValue))
 						tokenValue = ambientTokenValue;
-					
+
 					if (!canTrim && tokenValue != null)
 						ret.Insert (0, tokenValue.ToString ());
+
+					usedValues.Add (parameterName, tokenValue.ToString ());
 					continue;
 				}
 
 				canTrim = false;
 				if (ambientValues.GetValue (parameterName, out tokenValue)) {
 					if (tokenValue != null)
+					{
 						ret.Insert (0, tokenValue.ToString ());
+						usedValues.Add (parameterName, tokenValue.ToString ());
+					}
 					continue;
 				}
 #endif
@@ -538,11 +541,12 @@ namespace System.Web.Routing
 					ret.Append ('=');
 					if (parameterValue != null)
 						ret.Append (Uri.EscapeDataString (de.Value.ToString ()));
+
+					usedValues.Add (parameterName, de.Value.ToString ());
 				}
 			}
 			
-			value = ret.ToString ();
-			return true;
+			return ret.ToString ();
 		}
 	}
 }

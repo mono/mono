@@ -60,4 +60,3 @@ using System.Security;
     Justification = "Assembly is delay-signed.")]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../winfx.pub")]

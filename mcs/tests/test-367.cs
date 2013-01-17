@@ -9,7 +9,7 @@ public interface ITest {
 }
 
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 		return typeof (ITest).GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).Length;
 	}

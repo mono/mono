@@ -259,11 +259,7 @@ namespace Mono.Util {
 				} else {
 					typename = param.Substring (0, comma);
 					string asmName = param.Substring (comma + 1);
-#if NET_1_1
 					Assembly asm = Assembly.LoadFile (asmName);
-#else
-					Assembly asm = Assembly.LoadFrom (asmName);
-#endif
 					if (asm == null)
 						Error (generatorAssemblyNotFound, asmName);
 					generatorType = asm.GetType (typename);

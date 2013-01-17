@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal {
 
-#if NET_1_1
 	[Guid("A31B6577-71D2-4344-AEDF-ADC1B0DC5347")]
 	public interface ISoapServerVRoot {
 		[DispId(1)]
@@ -69,5 +68,4 @@ namespace System.EnterpriseServices.Internal {
 			[MarshalAs(UnmanagedType.BStr)] out string baseUrl,
 			[MarshalAs(UnmanagedType.BStr)] out string virtualRoot);
 	}
-#endif
 }

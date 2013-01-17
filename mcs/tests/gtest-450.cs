@@ -5,7 +5,7 @@ using System.Reflection;
 
 class Program {
 
-	static int Main ()
+	public static int Main ()
 	{
 		PortableExecutableKinds pekind;
 		ImageFileMachine machine;

@@ -1,9 +1,11 @@
 <Type Name="FileTypes" FullName="Mono.Unix.FileTypes">
   <TypeSignature Language="C#" Value="public enum FileTypes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed FileTypes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -18,7 +20,13 @@
   <Members>
     <Member MemberName="BlockDevice">
       <MemberSignature Language="C#" Value="BlockDevice" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileTypes BlockDevice = int32(24576)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
@@ -26,84 +34,96 @@
         <summary>File is a block devices, such as a hard disk 
           (<c>/dev/hda1</c>, etc.).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CharacterDevice">
       <MemberSignature Language="C#" Value="CharacterDevice" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileTypes CharacterDevice = int32(8192)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>File is a character device (such as a TTY).</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Directory">
       <MemberSignature Language="C#" Value="Directory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileTypes Directory = int32(16384)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>File is a directory.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Fifo">
       <MemberSignature Language="C#" Value="Fifo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileTypes Fifo = int32(4096)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>File is a first-in first-out queue.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RegularFile">
       <MemberSignature Language="C#" Value="RegularFile" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileTypes RegularFile = int32(32768)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>File is a regular file.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Socket">
       <MemberSignature Language="C#" Value="Socket" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileTypes Socket = int32(49152)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>File is a Unix socket.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SymbolicLink">
       <MemberSignature Language="C#" Value="SymbolicLink" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileTypes SymbolicLink = int32(40960)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
@@ -113,10 +133,6 @@
           <see cref="P:Mono.Unix.UnixSymbolicLinkInfo.ContentsPath" /> or
           <see cref="M:Mono.Unix.Native.Syscall.readlink" />.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

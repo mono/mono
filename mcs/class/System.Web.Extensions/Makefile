@@ -30,6 +30,7 @@ RESOURCE_FILES_DIST= \
 
 NUNIT_RESOURCE_FILES= \
 	Test/resources/Web.mono.config \
+	Test/resources/profile.config.4.5 \
 	Test/resources/profile.config.4.0 \
 	Test/resources/profile.config.2.0 \
 	$(wildcard Test/resources/*.as?x) \
@@ -76,11 +77,15 @@ LIB_MCS_FLAGS = \
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll -define:SYSTEM_WEB_EXTENSIONS
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_DIST) $(NUNIT_RESOURCE_FILES) \
-	System.Web.Extensions_standalone_test.dll.sources
+	System.Web.Extensions_standalone_test.dll.sources \
+	Test/standalone-tests/Consts.cs.in \
+	Test/standalone-tests/DataPager_NumericPagerField_Bug615315.cs
 
-run-standalone-test: $(STANDALONE_TEST_MAKEFRAG) $(STANDALONE_RUNNER_SUPPORT_MAKEFRAG) $(STANDALONE_TEST_ASSEMBLY)
+build-standalone-runner-support:
 	$(MAKE) -C ../System.Web/ standalone-runner-support
 	$(MAKE) -C ../System.Web/Test/tools/ STANDALONE_SUPPORT_BUILT=1 standalone-runner.exe
+
+run-standalone-test: build-standalone-runner-support $(STANDALONE_RUNNER_SUPPORT_MAKEFRAG) $(STANDALONE_TEST_MAKEFRAG) $(STANDALONE_TEST_ASSEMBLY)
 	$(RUN_STANDALONE) $(STANDALONE_TEST_ASSEMBLY)
 
 $(STANDALONE_TEST_MAKEFRAG): System.Web.Extensions_standalone_test.dll.sources

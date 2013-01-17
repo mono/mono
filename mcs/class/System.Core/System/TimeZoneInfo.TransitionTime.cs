@@ -34,10 +34,10 @@ namespace System
 	public sealed partial class TimeZoneInfo 
 	{
 		[SerializableAttribute]
-#if NET_4_0
-		[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOONLIGHT || MOBILE
-		[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#if MOBILE
+	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 		public struct TransitionTime : IEquatable<TimeZoneInfo.TransitionTime>, ISerializable, IDeserializationCallback
 		{

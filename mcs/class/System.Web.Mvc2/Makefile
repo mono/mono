@@ -9,8 +9,7 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 RESX_DIST =  System.Web.Mvc/Resources/MvcResources.resx
 
 LIB_MCS_FLAGS = \
-		/warnaserror- \
-		/noconfig \
+		/warn:1 \
 		/keyfile:../winfx.pub \
 	        /r:System.dll \
 	        /r:System.Core.dll \

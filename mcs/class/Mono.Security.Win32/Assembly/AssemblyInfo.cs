@@ -31,8 +31,5 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 
-[assembly:SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode=true)]
-
-
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../mono.pub")]

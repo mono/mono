@@ -36,14 +36,21 @@ namespace System.ServiceModel.Description
 {
 	public abstract class PolicyConversionContext
 	{
+		ServiceEndpoint endpoint;
+
 		protected PolicyConversionContext (ServiceEndpoint endpoint)
 		{
+			this.endpoint = endpoint;
+		}
+
+		internal ServiceEndpoint Endpoint {
+			get { return endpoint; }
 		}
 
 		public abstract BindingElementCollection BindingElements { get; }
 
 		public ContractDescription Contract {
-			get { throw new NotImplementedException (); }
+			get { return endpoint.Contract; }
 		}
 
 		public abstract PolicyAssertionCollection GetBindingAssertions ();

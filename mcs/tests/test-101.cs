@@ -27,7 +27,7 @@ namespace Test {
 	[My("testclass")]
 	[My2("testclass", 22)]
 	public class Test {
-		static public int Main() {
+		public static int Main() {
 			System.Reflection.MemberInfo info = typeof (Test);
 			object[] attributes = info.GetCustomAttributes (false);
 			for (int i = 0; i < attributes.Length; i ++) {

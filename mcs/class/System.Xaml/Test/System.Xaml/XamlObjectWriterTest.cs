@@ -705,6 +705,83 @@ namespace MonoTests.System.Xaml
 
 			Assert.AreEqual ("Test", result.Property, "#1");
 		}
+		
+		[Test]
+		public void OnSetValueAndHandledFalse () // part of bug #3003
+		{
+#if NET_4_5
+			string ver = "net_4_5";
+#else
+			string ver = "net_4_0";
+#endif
+
+			/*
+			var obj = new TestClass3 ();
+			obj.Nested = new TestClass3 ();
+			var sw = new StringWriter ();
+			var xxw = new XamlXmlWriter (XmlWriter.Create (sw), new XamlSchemaContext ());
+			XamlServices.Transform (new XamlObjectReader (obj), xxw);
+			Console.Error.WriteLine (sw);
+			*/
+			var xml = "<TestClass3 xmlns='clr-namespace:MonoTests.System.Xaml;assembly=System.Xaml_test_net_4_0' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'><TestClass3.Nested><TestClass3 Nested='{x:Null}' /></TestClass3.Nested></TestClass3>".Replace ("net_4_0", ver);
+			var settings = new XamlObjectWriterSettings ();
+			bool invoked = false;
+			settings.XamlSetValueHandler = (sender, e) => {
+				invoked = true;
+				Assert.IsNotNull (sender, "#1");
+				Assert.AreEqual (typeof (TestClass3), sender.GetType (), "#2");
+				Assert.AreEqual ("Nested", e.Member.Name, "#3");
+				Assert.IsTrue (sender != e.Member.Invoker.GetValue (sender), "#4");
+				Assert.IsFalse (e.Handled, "#5");
+				// ... and leave Handled as false, to invoke the actual setter
+			};
+			var xow = new XamlObjectWriter (new XamlSchemaContext (), settings);
+			var xxr = new XamlXmlReader (XmlReader.Create (new StringReader (xml)));
+			XamlServices.Transform (xxr, xow);
+			Assert.IsTrue (invoked, "#6");
+			Assert.IsNotNull (xow.Result, "#7");
+			var ret = xow.Result as TestClass3;
+			Assert.IsNotNull (ret.Nested, "#8");
+		}
+		
+		[Test] // bug #3003 repro
+		public void EventsAndProcessingOrder ()
+		{
+			var asm = Assembly.GetExecutingAssembly ();
+			var context = new XamlSchemaContext (new Assembly [] { asm });
+			var output = XamarinBug3003.TestContext.Writer;
+			output.WriteLine ();
+
+			var reader = new XamlXmlReader (XmlReader.Create (new StringReader (XamarinBug3003.TestContext.XmlInput)), context);
+
+			var writerSettings = new XamlObjectWriterSettings ();
+			writerSettings.AfterBeginInitHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.AfterBeginInit: {0}", e.Instance);
+			};
+			writerSettings.AfterEndInitHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.AfterEndInit: {0}", e.Instance);
+			};
+
+			writerSettings.BeforePropertiesHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.BeforeProperties: {0}", e.Instance);
+			};
+			writerSettings.AfterPropertiesHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.AfterProperties: {0}", e.Instance);
+			};
+			writerSettings.XamlSetValueHandler = (sender, e) => {
+				output.WriteLine ("XamlObjectWriterSettings.XamlSetValue: {0}, Member: {1}", e.Value, e.Member.Name);
+			};
+
+			var writer = new XamlObjectWriter (context, writerSettings);
+			XamlServices.Transform (reader, writer);
+			var obj = writer.Result as XamarinBug3003.Parent;
+
+			output.WriteLine ("Loaded {0}", obj);
+
+			Assert.AreEqual (XamarinBug3003.TestContext.ExpectedResult.Replace ("\r\n", "\n"), output.ToString ().Replace ("\r\n", "\n"), "#1");
+
+			Assert.AreEqual (2, obj.Children.Count, "#2");
+		}
 
 		// extra use case based tests.
 
@@ -733,12 +810,41 @@ namespace MonoTests.System.Xaml
 			ow.Close ();
 			Assert.AreEqual (typeof (int), ow.Result, "#1");
 		}
+
+		[Test]
+		public void LookupCorrectEventBoundMethod ()
+		{
+			var o = (XamarinBug2927.MyRootClass) XamlServices.Load (GetReader ("LookupCorrectEvent.xml"));
+			o.Child.Descendant.Work ();
+			Assert.IsTrue (o.Invoked, "#1");
+			Assert.IsFalse (o.Child.Invoked, "#2");
+			Assert.IsFalse (o.Child.Descendant.Invoked, "#3");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (XamlObjectWriterException))]
+		public void LookupCorrectEventBoundMethod2 ()
+		{
+			XamlServices.Load (GetReader ("LookupCorrectEvent2.xml"));
+		}
+		
+		[Test]
+		public void LookupCorrectEventBoundMethod3 ()
+		{
+			XamlServices.Load (GetReader ("LookupCorrectEvent3.xml"));
+		}
 		
 		// common use case based tests (to other readers/writers).
 
 		XamlReader GetReader (string filename)
 		{
-			return new XamlXmlReader (XmlReader.Create (Path.Combine ("Test/XmlFiles", filename), new XmlReaderSettings () { CloseInput =true }));
+#if NET_4_5
+			string ver = "net_4_5";
+#else
+			string ver = "net_4_0";
+#endif
+			string xml = File.ReadAllText (Path.Combine ("Test/XmlFiles", filename)).Replace ("net_4_0", ver);
+			return new XamlXmlReader (XmlReader.Create (new StringReader (xml)));
 		}
 
 		[Test]

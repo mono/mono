@@ -5,6 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2004-2005 Novell (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
 using System;
@@ -119,6 +120,15 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		// Bug #5169
+		public void ExpandEnvironmentVariables_ExpandMultiple ()
+		{
+			string path = Environment.GetEnvironmentVariable ("PATH");
+			var expected = "%TEST123" + path + "TEST456%";
+			ExpandEquals ("%TEST123%PATH%TEST456%", expected);
+		}
+
+		[Test]
 		public void GetEnvironmentVariables ()
 		{
 			IDictionary d = Environment.GetEnvironmentVariables ();
@@ -128,7 +138,7 @@ namespace MonoTests.System
 			Assert.IsFalse (d.IsSynchronized, "IsSynchronized");
 		}
 
-#if NET_2_0 && !TARGET_JVM
+#if NET_2_0 && !TARGET_JVM && !NET_2_1
 		[Test] // bug #333740
 		public void GetEnvironmentVariables_NewlySet ()
 		{
@@ -151,7 +161,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (args [0], "application");
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetEnvironmentVariable_Target_Invalid ()

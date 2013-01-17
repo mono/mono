@@ -53,6 +53,7 @@ namespace System.Globalization {
 			public int ebcdic;
 			public int mac;
 			public int oem;
+			public bool right_to_left;
 			public byte list_sep;
 		}
 
@@ -162,7 +163,7 @@ namespace System.Globalization {
 		public string CultureName {
 			get {
 				if (customCultureName == null)
-					customCultureName = ci.Name;
+					customCultureName = ci == null ? String.Empty : ci.Name;
 				return customCultureName;
 			}
 		}
@@ -175,39 +176,7 @@ namespace System.Globalization {
 		[ComVisible (false)]
 		public bool IsRightToLeft {
 			get {
-				// hardcoded
-				switch (m_win32LangID) {
-				case 1:		// ar
-				case 13:	// he
-				case 32:	// ur
-				case 41:	// fa
-				case 90:	// syr
-				case 101:	// div
-				case 1025:	// ar-SA
-				case 1037:	// he-IL
-				case 1056:	// ur-PK
-				case 1065:	// ra-IR
-				case 1114:	// syr-SY
-				case 1125:	// div-MV
-				case 2049:	// ar-IQ
-				case 3073:	// ar-EG
-				case 4097:	// ar-LY
-				case 5121:	// ar-DZ
-				case 6145:	// ar-MA
-				case 7169:	// ar-TN
-				case 8193:	// ar-OM
-				case 9217:	// ar-YE
-				case 10241:	// ar-SY
-				case 11265:	// ar-JO
-				case 12289:	// ar-LB
-				case 13313:	// ar-KW
-				case 14337:	// ar-AE
-				case 15361:	// ar-BH
-				case 16385:	// ar-QA
-					return true;
-				default:
-					return false;
-				}
+				return data.right_to_left;
 			}
 		}
 

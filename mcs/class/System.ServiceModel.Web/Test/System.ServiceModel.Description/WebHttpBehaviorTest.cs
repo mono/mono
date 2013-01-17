@@ -241,7 +241,6 @@ namespace MonoTests.System.ServiceModel.Description
 			var se = new ServiceEndpoint (cd, new WebHttpBinding (), new EndpointAddress ("http://localhost:8080/"));
 			var wmebe = new WebMessageEncodingBindingElement ();
 			var wme = wmebe.CreateMessageEncoderFactory ().Encoder;
-	Console.WriteLine (wme.MediaType);
 			var msg = wme.ReadMessage (ms, 100, null); // "application/xml" causes error.
 			var formatter = new WebHttpBehaviorExt ().DoGetRequestDispatchFormatter (od, se);
 			object [] pars = new object [1];

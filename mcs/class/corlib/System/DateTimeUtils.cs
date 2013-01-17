@@ -56,7 +56,7 @@ namespace System {
 			output.Append (new string (buffer, pos, 16 - pos));
 		}
 
-		public static int ParseQuotedString (string fmt, int pos, StringBuilder output)
+		static int ParseQuotedString (string fmt, int pos, StringBuilder output)
 		{
 			// pos == position of " or '
 			
@@ -75,9 +75,11 @@ namespace System {
 					if (pos >= len)
 						throw new FormatException("Un-ended quote");
 	
-					output.Append (fmt [pos++]);
+					if (output != null)
+						output.Append (fmt [pos++]);
 				} else {
-					output.Append (ch);
+					if (output != null)
+						output.Append (ch);
 				}
 			}
 
@@ -190,6 +192,7 @@ namespace System {
 				dfi = inv;
 
 			int i = 0;
+			bool saw_day_specifier = false;
 
 			while (i < format.Length) {
 				int tokLen;
@@ -320,6 +323,7 @@ namespace System {
 					else
 						result.Append (dfi.GetDayName (dfi.Calendar.GetDayOfWeek (dt)));
 
+					saw_day_specifier = true;
 					break;
 				case 'M':
 					// Month.m(m?) = month # (with leading 0 if two mm)
@@ -331,8 +335,26 @@ namespace System {
 						DateTimeUtils.ZeroPad (result, month, tokLen);
 					else if (tokLen == 3)
 						result.Append (dfi.GetAbbreviatedMonthName (month));
-					else
-						result.Append (dfi.GetMonthName (month));
+					else {
+						// Handles MMMM dd format
+						if (!saw_day_specifier) {
+							for (int ii = i + 1; ii < format.Length; ++ii) {
+								ch = format [ii];
+								if (ch == 'd') {
+									saw_day_specifier = true;
+									break;
+								}
+
+								if (ch == '\'' || ch == '"') {
+									ii += ParseQuotedString (format, ii, null) - 1;
+								}
+							}
+						}
+
+						// NOTE: .NET ignores quoted 'd' and reads it as day specifier but I think 
+						// that's wrong
+						result.Append (saw_day_specifier ? dfi.GetMonthGenitiveName (month) : dfi.GetMonthName (month));
+					}
 
 					break;
 				case 'y':
@@ -364,7 +386,7 @@ namespace System {
 					tokLen = 1;
 					break;
 				case '\'': case '"':
-					tokLen = DateTimeUtils.ParseQuotedString (format, i, result);
+					tokLen = ParseQuotedString (format, i, result);
 					break;
 				case '%':
 					if (i >= format.Length - 1)

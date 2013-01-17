@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,32 +9,33 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,1720</NoWarn>
     <OutputPath>./../../class/lib/net_4_0</OutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>System.Core</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,1720</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;CODEPLEX_40</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
@@ -153,6 +154,7 @@
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\StackSpiller.Generated.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\StackSpiller.Temps.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\SymbolDocumentGenerator.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\SymbolGuids.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Compiler\VariableBinder.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\CacheDict.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\CollectionExtensions.cs" />
@@ -163,6 +165,7 @@
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ReadOnlyCollectionBuilder.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ReadOnlyDictionary.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ReferenceEqualityComparer.cs" />
+   <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\ReflectionUtils.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\TrueReadOnlyCollection.cs" />
    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Utils\TypeExtensions.cs" />
    <Compile Include="Microsoft.Win32.SafeHandles\SafeMemoryMappedFileHandle.cs" />
@@ -261,6 +264,7 @@
    <Compile Include="System.Linq.Parallel\RepeatList.cs" />
    <Compile Include="System.Linq.Parallel\ReverseList.cs" />
    <Compile Include="System.Linq.Parallel\StripPartitioner.cs" />
+   <Compile Include="System.Linq.Parallel\TemporaryArea.cs" />
    <Compile Include="System.Linq\Queryable.cs" />
    <Compile Include="System.Linq\QueryableEnumerable.cs" />
    <Compile Include="System.Linq\QueryableTransformer.cs" />
@@ -311,22 +315,22 @@
   <ItemGroup>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.dll</HintPath>
+      <HintPath>System.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Posix.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\Mono.Posix.dll</HintPath>
+      <HintPath>Mono.Posix.dll</HintPath>
     </Reference>
-  </ItemGroup>
 
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

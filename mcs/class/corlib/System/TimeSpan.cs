@@ -309,7 +309,7 @@ namespace System
 				value = (value * (tickMultiplicator / TicksPerMillisecond));
 
 				checked {
-					long val = (long) Math.Round(value);
+					long val = (long) Math.Round(value, MidpointRounding.AwayFromZero);
 					return new TimeSpan (val * TicksPerMillisecond);
 				}
 			}
@@ -863,19 +863,6 @@ namespace System
 				return (int)res;
 			}
 
-			// Parse optional dot
-			private bool ParseOptDot ()
-			{
-				if (AtEnd)
-					return false;
-
-				if (_src[_cur] == '.') {
-					_cur++;
-					return true;
-				}
-				return false;
-			}	
-
 #if NET_4_0 || MOONLIGHT || MOBILE
 			// This behaves pretty much like ParseOptDot, but we need to have it
 			// as a separated routine for both days and decimal separators.
@@ -935,6 +922,18 @@ namespace System
 				return false;
 			}
 #endif
+			// Parse optional dot
+			private bool ParseOptDot ()
+			{
+				if (AtEnd)
+					return false;
+
+				if (_src[_cur] == '.') {
+					_cur++;
+					return true;
+				}
+				return false;
+			}	
 
 			private void ParseColon (bool optional)
 			{

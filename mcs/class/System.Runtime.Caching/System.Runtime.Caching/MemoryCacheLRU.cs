@@ -33,14 +33,14 @@ namespace System.Runtime.Caching
 	// NOTE: all the public methods in this assume that the owner's write lock is held
 	sealed class MemoryCacheLRU
 	{
-		int trimLowerBound;
+//		int trimLowerBound;
 		Dictionary <int, LinkedListNode <MemoryCacheEntry>> index;
 		LinkedList <MemoryCacheEntry> lru;
 		MemoryCacheContainer owner;
 		
 		public MemoryCacheLRU (MemoryCacheContainer owner, int trimLowerBound)
 		{
-			this.trimLowerBound = trimLowerBound;
+//			this.trimLowerBound = trimLowerBound;
 			index = new Dictionary <int, LinkedListNode <MemoryCacheEntry>> ();
 			lru = new LinkedList <MemoryCacheEntry> ();
 			this.owner = owner;

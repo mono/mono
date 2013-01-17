@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 	{
 		public ToolStripSeparator () : base ()
 		{
+			Dock = DockStyle.Fill;
 		}
 
 		#region Public Properties

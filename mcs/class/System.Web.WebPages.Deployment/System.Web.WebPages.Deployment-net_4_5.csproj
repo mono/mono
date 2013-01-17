@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>System.Web.WebPages.Deployment</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;ASPNETWEBPAGES</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;ASPNETWEBPAGES</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="..\..\build\common\Consts.cs" />
+   <Compile Include="Assembly\AssemblyInfo.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\CommonResources.Designer.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\ExceptionHelper.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\GlobalSuppressions.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\AppDomainHelper.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\AssemblyUtils.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\BuildManagerWrapper.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\Common\IFileSystem.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\Common\PhysicalFileSystem.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\GlobalSuppressions.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\IBuildManager.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\PreApplicationStartCode.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\Properties\AssemblyInfo.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\Resources\ConfigurationResources.Designer.cs" />
+   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages.Deployment\WebPagesDeployment.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+    <ItemGroup>
+    <EmbeddedResource Include="System.Web.WebPages.Deployment.Common.CommonResources.resources">
+       <LogicalName>System.Web.WebPages.Deployment.Common.CommonResources.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources">
+       <LogicalName>System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
+

@@ -50,7 +50,7 @@
   .method private hidebysig specialname
           instance void  PrivateMissing(class ['missing-lib']XX p) cil managed
   {
-    IL_0000:  ret
+    ret
   }
 }
 
@@ -131,5 +131,32 @@
           Working(class G`1<class MembersDelayed> arg) cil managed
   {
   } 
+}
+
+.class public auto ansi beforefieldinit Overload
+       extends [mscorlib]System.Object
+{
+  .method public hidebysig static void  Test(object o) cil managed
+  {
+    ret
+  }
+
+  .method public hidebysig static void  Test(object o, class ['missing-lib']XX arg) cil managed
+  {
+    ret
+  }
+
+  .method public hidebysig static void  Test(object o, class ['missing-lib']XX o2, [opt] object o3) cil managed
+  {
+    .param [2] = nullref  
+    ret
+  }
+
+  .method public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  {
+    ret
+  }
+
 }
 

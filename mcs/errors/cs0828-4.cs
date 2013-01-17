@@ -1,6 +1,5 @@
-// CS0828: An anonymous type property `Value' cannot be initialized with `lambda expression'
-// Line: 9
-
+// CS0828: An anonymous type property `Value' cannot be initialized with `anonymous method'
+// Line: 8
 
 public class Test
 {

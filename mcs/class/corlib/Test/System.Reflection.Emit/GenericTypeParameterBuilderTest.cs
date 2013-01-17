@@ -355,6 +355,8 @@ namespace MonoTests.System.Reflection.Emit
 		[Category ("NotDotNet")]
 #endif
 		[Test]
+		// CompilerContext no longer supported
+		[Category ("NotWorking")]
 		public void GetAttributeFlagsImpl ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave  | (AssemblyBuilderAccess)0x800);

@@ -88,11 +88,6 @@ namespace System.Security.Cryptography {
 			mac = new MACAlgorithm (tdes);
 			m_disposed = false;
 		}
-	
-		~MACTripleDES () 
-		{
-			Dispose (false);
-		}
 
 		[ComVisible (false)]
 		public PaddingMode Padding {

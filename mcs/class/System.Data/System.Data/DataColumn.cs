@@ -17,6 +17,7 @@
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -475,43 +476,53 @@ namespace System.Data {
 				if (value == null)
 					value = String.Empty;
 
-				if (value != String.Empty) {
-					if (AutoIncrement || Unique)
-						throw new ArgumentException ("Cannot create an expression on a column that has AutoIncrement or Unique.");
+				CompileExpression (value);
+				_expression = value;
+			}
+		}
 
-					if (Table != null) {
-						for (int i = 0; i < Table.Constraints.Count; i++) {
-							if (Table.Constraints [i].IsColumnContained (this))
-								throw new ArgumentException (
-									String.Format (
-										"Cannot set Expression property on column {0}, because it is a part of a constraint.",
-										ColumnName));
-						}
-					}
+		internal void CompileExpression ()
+		{
+			CompileExpression (_expression);
+		}
 
-					Parser parser = new Parser ();
-					IExpression compiledExpression = parser.Compile (value);
+		internal void CompileExpression (string expression)
+		{
+			if (expression != String.Empty) {
+				if (AutoIncrement || Unique)
+					throw new ArgumentException ("Cannot create an expression on a column that has AutoIncrement or Unique.");
 
-					if (Table != null) {
-						if (compiledExpression.DependsOn (this))
-							throw new ArgumentException ("Cannot set Expression property due to circular reference in the expression.");
-						// Check if expression is ok
-						if (Table.Rows.Count == 0)
-							compiledExpression.Eval (Table.NewRow ());
-						else
-							compiledExpression.Eval (Table.Rows [0]);
-					}
-					ReadOnly = true;
-					_compiledExpression = compiledExpression;
-				} else {
-					_compiledExpression = null;
-					if (Table != null) {
-						int defaultValuesRowIndex = Table.DefaultValuesRowIndex;
-						if (defaultValuesRowIndex != -1)
-							DataContainer.FillValues (defaultValuesRowIndex);
+				if (Table != null) {
+					for (int i = 0; i < Table.Constraints.Count; i++) {
+						if (Table.Constraints [i].IsColumnContained (this))
+							throw new ArgumentException (
+								String.Format (
+									"Cannot set Expression property on column {0}, because it is a part of a constraint.",
+									ColumnName));
 					}
 				}
-				_expression = value;
+
+				Parser parser = new Parser ();
+				IExpression compiledExpression = parser.Compile (expression);
+
+				if (Table != null) {
+					if (compiledExpression.DependsOn (this))
+						throw new ArgumentException ("Cannot set Expression property due to circular reference in the expression.");
+					// Check if expression is ok
+					if (Table.Rows.Count == 0)
+						compiledExpression.Eval (Table.NewRow ());
+					else
+						compiledExpression.Eval (Table.Rows [0]);
+				}
+				ReadOnly = true;
+				_compiledExpression = compiledExpression;
+			} else {
+				_compiledExpression = null;
+				if (Table != null) {
+					int defaultValuesRowIndex = Table.DefaultValuesRowIndex;
+					if (defaultValuesRowIndex != -1)
+						DataContainer.FillValues (defaultValuesRowIndex);
+				}
 			}
 		}
 
@@ -701,16 +712,12 @@ namespace System.Data {
 			//Copy.Container
 			copy.DataType = DataType;
 			copy._defaultValue = _defaultValue;
-			// Use the property to set the expression as it updates compiledExpression, if any.
-			copy.Expression = _expression;
+			// Do not use the Expression property to set the expression, the caller of Clone 
+			// must explicitly call CompileExpression on the returned DataColumn to update compiledExpression (if any).
+			copy._expression = _expression;
 			//Copy.ExtendedProperties
-			if (_extendedProperties.Count > 0) {
-				Array extPropArray = Array.CreateInstance (typeof (object), _extendedProperties.Count);
-				_extendedProperties.CopyTo (extPropArray, 0);
-				for (var i = 0; i < _extendedProperties.Count; i++)
-					copy.ExtendedProperties.Add (extPropArray.GetValue(i), 
-					                             ExtendedProperties[extPropArray.GetValue(i)]);
-			}
+			foreach (object key in _extendedProperties.Keys)
+				copy.ExtendedProperties.Add (key, ExtendedProperties[key]);
 			copy._maxLength = _maxLength;
 			copy._nameSpace = _nameSpace;
 			copy._prefix = _prefix;

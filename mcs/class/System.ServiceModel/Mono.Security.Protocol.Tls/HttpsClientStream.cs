@@ -55,10 +55,8 @@ namespace Mono.Security.Protocol.Tls {
 			_status = 0;
 			if (buffer != null)
 				InputBuffer.Write (buffer, 0, buffer.Length);
-#if !NET_1_0
                         // also saved from reflection
                         base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
-#endif
 			ClientCertSelection += delegate (X509CertificateCollection clientCerts, X509Certificate serverCertificate,
 				string targetHost, X509CertificateCollection serverRequestedCertificates) {
 				return ((clientCerts == null) || (clientCerts.Count == 0)) ? null : clientCerts [0];

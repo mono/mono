@@ -1,3 +1,15 @@
+2010-05-14  Damien Diederen  <dd@crosstwine.com>
+
+	* IdnMappingTest.cs: U+0221 is not unassigned anymore, use U+18B0
+
+	U+0221 is LATIN SMALL LETTER D WITH CURL in Unicode 4.0,
+	and is recognized as a valid letter in recent versions of the
+	.NET framework.  This causes GetAsciiInvalid to (unexpectedly)
+	succeed, and the test to fail.
+
+	Use U+18B0 instead, which is unassigned as of Unicode 5.2 and
+	.NET 3.5 SP1.
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* StringInfoTest.cs: test the default constructor.

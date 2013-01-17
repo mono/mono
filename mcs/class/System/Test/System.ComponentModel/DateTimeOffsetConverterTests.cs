@@ -165,6 +165,7 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		[SetCulture("en-US")]
 		public void ConvertToString ()
 		{
 			CultureInfo ciUS = new CultureInfo("en-US");
@@ -172,7 +173,7 @@ namespace MonoTests.System.ComponentModel
 			CultureInfo ciDE = new CultureInfo("de-DE");
 
 			DateTimeOffset dateOffset = new DateTimeOffset (2008, 12, 31, 23, 59, 58, 5, new TimeSpan (3, 6, 0));
-			DoTestToString ("12/31/2008 11:59 p.m. +03:06", dateOffset, ciUS);
+			DoTestToString ("12/31/2008 11:59 PM +03:06", dateOffset, ciUS);
 			DoTestToString ("31/12/2008 23:59 +03:06", dateOffset, ciGB);
 			DoTestToString ("31.12.2008 23:59 +03:06", dateOffset, ciDE);
 			DoTestToString ("12/31/2008 23:59:58 +03:06", dateOffset, CultureInfo.InvariantCulture);

@@ -54,10 +54,8 @@ namespace System.ComponentModel
 			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 
-#if NET_2_0
 			if (destinationType == typeof (Enum[]))
 				return true;
-#endif
 
 			return base.CanConvertTo (context, destinationType);
 		}
@@ -97,7 +95,6 @@ namespace System.ComponentModel
 					if (f != null)
 						return new InstanceDescriptor (f, null);
 				}
-#if NET_2_0
 			} else if (destinationType == typeof (Enum[]) && value != null) {
 				if (!IsFlags) {
 					return new Enum[] { (Enum) Enum.ToObject (type, value) };
@@ -132,7 +129,6 @@ namespace System.ComponentModel
 
 					return enums.ToArray (typeof(Enum));
 				}
-#endif
 			}
 			
 			return base.ConvertTo (context, culture, value, destinationType);
@@ -143,10 +139,8 @@ namespace System.ComponentModel
 			if (sourceType == typeof (string))
 				return true;
 
-#if NET_2_0
 			if (sourceType == typeof (Enum[]))
 				return true;
-#endif
 
 			return base.CanConvertFrom (context, sourceType);
 		}
@@ -157,9 +151,7 @@ namespace System.ComponentModel
 		{
 			if (value is string) {
 				string name = value as string;
-#if NET_2_0
 				try {
-#endif
 					if (name.IndexOf (',') == -1)
 						return Enum.Parse (type, name, true);
 
@@ -170,20 +162,16 @@ namespace System.ComponentModel
 						val |= Convert.ToInt64 (e, culture);
 					}
 					return Enum.ToObject (type, val);
-#if NET_2_0
 				} catch (Exception ex) {
 					throw new FormatException (name + " is " +
 						"not a valid value for " +
 						type.Name, ex);
 				}
-#endif
-#if NET_2_0
 			} else if (value is Enum[]) {
 				long val = 0;
 				foreach (Enum e in (Enum[])value)
 					val |= Convert.ToInt64 (e, culture);
 				return Enum.ToObject (type, val);
-#endif
 			}
 
 			return base.ConvertFrom (context, culture, value);

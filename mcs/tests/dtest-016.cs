@@ -89,7 +89,7 @@ class Program
 		c.Method_B (d);	
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		object o;
 		DynOut (out o);

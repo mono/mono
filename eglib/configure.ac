@@ -1,5 +1,8 @@
+#
+# Copyright 2012 Xamarin Inc
+#
 AC_INIT(eglib, [0.3],
-        [http://bugzilla.novell.com/enter_bug.cgi?product=mono])
+        [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README])
 AC_CONFIG_MACRO_DIR([m4])
@@ -7,8 +10,10 @@ AC_CANONICAL_SYSTEM
 AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign])
-AM_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
+
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_PROG_CC
 AM_PROG_LIBTOOL
@@ -62,6 +67,7 @@ case $host in
     ;;
 *-*-linux-android*)
     platform_android=yes
+	AC_DEFINE(PLATFORM_ANDROID,1,[Targeting the Android platform])
     PATHSEP='/'
     SEARCHSEP=':'
     OS="UNIX"
@@ -94,6 +100,25 @@ i*86-*-darwin*)
     ;;
 esac
 
+target_osx=no
+target_ios=no
+
+if test "x$platform_darwin" = "xyes"; then
+	AC_TRY_COMPILE([#include "TargetConditionals.h"],[
+	#if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
+	#error fail this for ios
+	#endif
+	return 0;
+	], [
+		AC_DEFINE(TARGET_OSX,1,[The JIT/AOT targets OSX])
+		target_osx=yes
+	], [
+		AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
+		target_ios=yes
+	])
+   AC_DEFINE(TARGET_MACH,1,[The JIT/AOT targets Apple platforms])
+fi
+
 AC_SUBST(ORDER)
 AC_SUBST(CFLAGS)
 AC_SUBST(PATHSEP)
@@ -109,7 +134,15 @@ AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(void *)
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
-AC_CHECK_FUNCS(strndup strlcpy stpcpy getpwuid_r strtok_r rewinddir vasprintf)
+AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf)
+
+#
+# iOS detection of strndup and getpwuid_r is faulty for some reason so let's simply avoid it
+#
+if test x$target_ios = xno; then
+AC_CHECK_FUNCS(strndup getpwuid_r)
+fi
+
 AM_CONDITIONAL(NEED_VASPRINTF, test x$have_vasprintf = x )
 AM_ICONV()
 AC_SEARCH_LIBS(sqrtf, m)
@@ -209,7 +242,6 @@ if test "x$PKG_CONFIG" != "xno"; then
 fi
 AM_CONDITIONAL(HAVE_GLIB, $have_glib)
 
-AC_ARG_ENABLE(quiet-build, [  --enable-quiet-build  Enable quiet runtime build (on by default)], enable_quiet_build=$enableval, enable_quiet_build=yes)
 AC_SUBST(GPOINTER_TO_INT)
 AC_SUBST(GPOINTER_TO_UINT)
 AC_SUBST(GINT_TO_POINTER)
@@ -220,11 +252,6 @@ AC_SUBST(G_GUINT64_FORMAT)
 AC_SUBST(G_GINT64_FORMAT)
 AC_SUBST(G_GUINT32_FORMAT)
 AC_SUBST(G_GINT32_FORMAT)
-
-if test x$enable_quiet_build = xyes; then
-   AC_CONFIG_COMMANDS([quiet], [for i in `find src test -name Makefile.in | sed -e 's/Makefile.in/Makefile/g'`; do if test -f $i; then $srcdir/../scripts/patch-quiet.sh $i; fi; done], [shell=$SHELL])
-   AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/$echo "copying selected/$show "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
-fi
 
 AC_OUTPUT([
 Makefile

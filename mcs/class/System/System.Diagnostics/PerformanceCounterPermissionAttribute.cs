@@ -54,11 +54,7 @@ namespace System.Diagnostics {
 		{
 			categoryName = ResourcePermissionBase.Any;
 			machineName = ResourcePermissionBase.Local;
-#if NET_2_0
 			permissionAccess = PerformanceCounterPermissionAccess.Write;
-#else
-			permissionAccess = PerformanceCounterPermissionAccess.Browse;
-#endif
 		}
 
 		public string CategoryName {

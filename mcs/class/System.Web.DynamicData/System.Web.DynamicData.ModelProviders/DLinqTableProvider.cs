@@ -58,7 +58,6 @@ namespace System.Web.DynamicData.ModelProviders
 			columns = new ReadOnlyCollection<ColumnProvider> (l);
 		}
 
-		MetaTable table;
 		ReadOnlyCollection<ColumnProvider> columns;
 
 		public override ReadOnlyCollection<ColumnProvider> Columns {

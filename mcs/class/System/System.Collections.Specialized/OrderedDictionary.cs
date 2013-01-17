@@ -53,19 +53,19 @@ namespace System.Collections.Specialized
 			hash = new Hashtable (initialCapacity);
 		}
 		
-		public OrderedDictionary (IEqualityComparer equalityComparer)
+		public OrderedDictionary (IEqualityComparer comparer)
 		{
 			list = new ArrayList ();
-			hash = new Hashtable (equalityComparer);
-			comparer = equalityComparer;
+			hash = new Hashtable (comparer);
+			this.comparer = comparer;
 		}
 
-		public OrderedDictionary (int capacity, IEqualityComparer equalityComparer)
+		public OrderedDictionary (int capacity, IEqualityComparer comparer)
 		{
 			initialCapacity = (capacity < 0) ? 0 : capacity;
 			list = new ArrayList (initialCapacity);
-			hash = new Hashtable (initialCapacity, equalityComparer);
-			comparer = equalityComparer;
+			hash = new Hashtable (initialCapacity, comparer);
+			this.comparer = comparer;
 		}
 
 		protected OrderedDictionary (SerializationInfo info, StreamingContext context)

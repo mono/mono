@@ -46,7 +46,7 @@ using System.Runtime.Versioning;
 #if NET_4_0
 [assembly: System.Security.SecurityCritical]
 [assembly: ComVisible(false)]
-[assembly: CLSCompliant(false)]
+[assembly: CLSCompliant(true)]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: AssemblyTitle("System.Data.Services.Client.dll")]
 [assembly: AssemblyDescription("System.Data.Services.Client.dll")]
@@ -59,7 +59,6 @@ using System.Runtime.Versioning;
 [assembly: AssemblyInformationalVersion(Consts.FxFileVersion)]
 [assembly: AssemblyFileVersion(Consts.FxFileVersion)]
 
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: SecurityRules (SecurityRuleSet.Level1, SkipVerificationInFullTrust=true)]

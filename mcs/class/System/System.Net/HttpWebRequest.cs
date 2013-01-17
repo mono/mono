@@ -66,7 +66,7 @@ namespace System.Net
 		bool haveResponse;		
 		bool haveRequest;
 		bool requestSent;
-		WebHeaderCollection webHeaders = new WebHeaderCollection (true);
+		WebHeaderCollection webHeaders;
 		bool keepAlive = true;
 		int maxAutoRedirect = 50;
 		string mediaType = String.Empty;
@@ -139,7 +139,9 @@ namespace System.Net
 			this.requestUri = uri;
 			this.actualUri = uri;
 			this.proxy = GlobalProxySelection.Select;
-		}		
+			this.webHeaders = new WebHeaderCollection (WebHeaderCollection.HeaderInfo.Request);
+			ThrowOnError = true;
+		}
 		
 		[Obsolete ("Serialization is obsoleted for this type", false)]
 		protected HttpWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
@@ -234,19 +236,17 @@ namespace System.Net
 			get { return webHeaders ["Connection"]; }
 			set {
 				CheckRequestStarted ();
-				string val = value;
-				if (val != null) 
-					val = val.Trim ().ToLower ();
 
-				if (val == null || val.Length == 0) {
+				if (string.IsNullOrEmpty (value)) {
 					webHeaders.RemoveInternal ("Connection");
 					return;
 				}
 
-				if (val == "keep-alive" || val == "close") 
+				string val = value.ToLowerInvariant ();
+				if (val.Contains ("keep-alive") || val.Contains ("close"))
 					throw new ArgumentException ("Keep-Alive and Close may not be set with this property");
 
-				if (keepAlive && val.IndexOf ("keep-alive", StringComparison.Ordinal) == -1)
+				if (keepAlive)
 					value = value + ", Keep-Alive";
 				
 				webHeaders.RemoveAndAdd ("Connection", value);
@@ -272,6 +272,8 @@ namespace System.Net
 		internal long InternalContentLength {
 			set { contentLength = value; }
 		}
+			
+		internal bool ThrowOnError { get; set; }
 		
 		public override string ContentType { 
 			get { return webHeaders ["Content-Type"]; }
@@ -307,11 +309,10 @@ namespace System.Net
 				return DateTime.ParseExact (date, "r", CultureInfo.InvariantCulture).ToLocalTime ();
 			}
 			set {
-				if (value == null) {
+				if (value.Equals (DateTime.MinValue))
 					webHeaders.RemoveInternal ("Date");
-				} else {
+				else
 					webHeaders.RemoveAndAdd ("Date", value.ToUniversalTime ().ToString ("r", CultureInfo.InvariantCulture));
-				}
 			}
 		}
 #endif
@@ -365,7 +366,7 @@ namespace System.Net
 			get { return webHeaders; }
 			set {
 				CheckRequestStarted ();
-				WebHeaderCollection newHeaders = new WebHeaderCollection (true);
+				WebHeaderCollection newHeaders = new WebHeaderCollection (WebHeaderCollection.HeaderInfo.Request);
 				int count = value.Count;
 				for (int i = 0; i < count; i++) 
 					newHeaders.Add (value.GetKey (i), value.Get (i));
@@ -373,6 +374,7 @@ namespace System.Net
 				webHeaders = newHeaders;
 			}
 		}
+		
 #if NET_4_0
 		public
 #else
@@ -397,9 +399,6 @@ namespace System.Net
 
 		static bool CheckValidHost (string scheme, string val)
 		{
-			if (val == null)
-				throw new ArgumentNullException ("value");
-
 			if (val.Length == 0)
 				return false;
 
@@ -557,7 +556,18 @@ namespace System.Net
 		public ServicePoint ServicePoint {
 			get { return GetServicePoint (); }
 		}
-		
+
+		internal ServicePoint ServicePointNoLock {
+			get { return servicePoint; }
+		}
+#if NET_4_5 || MOBILE
+		[MonoTODO ("for portable library support")]
+		public bool SupportsCookieContainer { 
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		public override int Timeout { 
 			get { return timeout; }
 			set {
@@ -755,6 +765,9 @@ namespace System.Net
 
 			lock (locker)
 			{
+				if (getResponseCalled)
+					throw new InvalidOperationException ("The operation cannot be performed once the request has been submitted.");
+
 				if (asyncWrite != null) {
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
 								"method while a previous call is still in progress.");
@@ -819,12 +832,24 @@ namespace System.Net
 
 		void CheckIfForceWrite ()
 		{
-			if (writeStream == null || writeStream.RequestWritten|| contentLength < 0 || !InternalAllowBuffering)
+			if (writeStream == null || writeStream.RequestWritten || !InternalAllowBuffering)
+				return;
+#if NET_4_0
+			if (contentLength < 0 && writeStream.CanWrite == true && writeStream.WriteBufferLength < 0)
 				return;
 
+			if (contentLength < 0 && writeStream.WriteBufferLength >= 0)
+				InternalContentLength = writeStream.WriteBufferLength;
+#else
+			if (contentLength < 0 && writeStream.CanWrite == true)
+				return;
+#endif
+
 			// This will write the POST/PUT if the write stream already has the expected
-			// amount of bytes in it (ContentLength) (bug #77753).
-			if (writeStream.WriteBufferLength == contentLength)
+			// amount of bytes in it (ContentLength) (bug #77753) or if the write stream
+			// contains data and it has been closed already (xamarin bug #1512).
+
+			if (writeStream.WriteBufferLength == contentLength || (contentLength == -1 && writeStream.CanWrite == false))
 				writeStream.WriteRequest ();
 		}
 
@@ -1123,7 +1148,9 @@ namespace System.Net
 			if (cookieContainer != null) {
 				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
 				if (cookieHeader != "")
-					webHeaders.SetInternal ("Cookie", cookieHeader);
+					webHeaders.RemoveAndAdd ("Cookie", cookieHeader);
+				else
+					webHeaders.RemoveInternal ("Cookie");
 			}
 
 			string accept_encoding = null;
@@ -1435,7 +1462,7 @@ namespace System.Net
 			if (isProxy && (proxy == null || proxy.Credentials == null))
 				return false;
 
-			string [] authHeaders = response.Headers.GetValues ( (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate");
+			string [] authHeaders = response.Headers.GetValues_internal ( (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate", false);
 			if (authHeaders == null || authHeaders.Length == 0)
 				return false;
 
@@ -1489,13 +1516,16 @@ namespace System.Net
 							bodyBuffer = null;
 							return true;
 						}
-						
+
+						if (!ThrowOnError)
+							return false;
+							
 						writeStream.InternalClose ();
 						writeStream = null;
 						webResponse.Close ();
 						webResponse = null;
 						bodyBuffer = null;
-
+							
 						throw new WebException ("This request requires buffering " +
 									"of data for authentication or " +
 									"redirection to be sucessful.");
@@ -1529,6 +1559,8 @@ namespace System.Net
 						bodyBufferLength = writeStream.WriteBufferLength;
 					}
 					b = Redirect (result, code);
+					if (b && ntlm_auth_state != 0)
+						ntlm_auth_state = 0;
 				}
 
 				if (resp != null && c >= 300 && c != 304)
@@ -1536,6 +1568,9 @@ namespace System.Net
 
 				return b;
 			}
+				
+			if (!ThrowOnError)
+				return false;
 
 			if (writeStream != null) {
 				writeStream.InternalClose ();

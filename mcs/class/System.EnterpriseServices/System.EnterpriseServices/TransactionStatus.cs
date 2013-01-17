@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[Serializable]
 	[ComVisible(false)]
 	public enum TransactionStatus {
@@ -42,5 +41,4 @@ namespace System.EnterpriseServices {
 		Aborting,
 		Aborted
 	}
-#endif
 }

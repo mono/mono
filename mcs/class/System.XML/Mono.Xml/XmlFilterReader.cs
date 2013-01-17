@@ -256,19 +256,6 @@ namespace Mono.Xml
 			return reader.ReadString ();
 		}
 
-#if NET_1_1
-#else
-		public override string ReadInnerXml ()
-		{
-			return ReadInnerXmlInternal ();
-		}
-
-		public override string ReadOuterXml ()
-		{
-			return ReadOuterXmlInternal ();
-		}
-#endif
-
 		public override string LookupNamespace (string prefix)
 		{
 			return reader.LookupNamespace (prefix);

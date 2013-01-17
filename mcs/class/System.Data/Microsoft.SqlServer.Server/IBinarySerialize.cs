@@ -40,7 +40,7 @@ namespace Microsoft.SqlServer.Server {
 		#region Methods
 
 		void Read (BinaryReader r);
-		void Write (BinaryWriter r);
+		void Write (BinaryWriter w);
 
 		#endregion // Methods
 	}

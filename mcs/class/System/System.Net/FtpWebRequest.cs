@@ -6,7 +6,6 @@
 //
 // (c) Copyright 2006 Novell, Inc. (http://www.novell.com)
 //
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -248,9 +247,6 @@ namespace System.Net
 			}
 			set {
 				CheckRequestStarted ();
-				if (value == null)
-					throw new ArgumentNullException ();
-
 				proxy = value;
 			}
 		}
@@ -996,7 +992,7 @@ namespace System.Net
 				}
 
 				s.Close ();
-				origDataStream = new NetworkStream (s, true);
+				origDataStream = new NetworkStream (incoming, true);
 				dataStream = origDataStream;
 				if (EnableSsl)
 					ChangeToSSLSocket (ref dataStream);
@@ -1197,5 +1193,4 @@ namespace System.Net
 	}
 }
 
-#endif
 

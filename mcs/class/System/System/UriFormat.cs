@@ -28,10 +28,7 @@
 
 namespace System {
 
-#if NET_2_0
-	public
-#endif
-	enum UriFormat {
+	public 	enum UriFormat {
 
 		UriEscaped = 1,
 		Unescaped,

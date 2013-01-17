@@ -21,20 +21,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data.OracleClient {
 	[Serializable]
-	public sealed class OracleException
-#if NET_2_0
-		: System.Data.Common.DbException
-#else
-		: SystemException
-#endif //NET_1_1	
+	public sealed class OracleException : System.Data.Common.DbException
 	{
-		#region Fields
-
-		private int code;
-
-		#endregion // Fields
-
-		#region Constructors
+		int code;
 
 		internal OracleException (int code, string message) : base (message)
 		{
@@ -45,25 +34,13 @@ namespace System.Data.OracleClient {
 		{
 			code = si.GetInt32 ("code");
 		}
-
-		#endregion // Constructors
-
-		#region Properties
-
 		public int Code {
 			get { return code; }
 		}
-
-		#endregion // Properties
-
-		#region Override implementation of Exception
-
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			si.AddValue ("code", code, typeof(int));
 			base.GetObjectData (si, context);
 		}
-
-		#endregion Override implementation of Exception
 	}
 }

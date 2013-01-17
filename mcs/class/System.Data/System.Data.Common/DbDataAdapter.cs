@@ -866,6 +866,28 @@ namespace System.Data.Common
 			if (dataTable == null)
 				throw new ArgumentException (String.Format ("Missing table {0}",
 									    srcTable));
+
+			/** Copied from another Update function **/
+			if (tableMapping != null) {
+				foreach (DataColumn col in dataTable.Columns) {
+					if (tableMapping.ColumnMappings.IndexOf (col.ColumnName) >= 0)
+						continue;
+					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction (tableMapping.ColumnMappings, col.ColumnName, MissingMappingAction);
+					if (columnMapping == null)
+						columnMapping = new DataColumnMapping (col.ColumnName, col.ColumnName);
+					tableMapping.ColumnMappings.Add (columnMapping);
+				}
+			} else {
+				ArrayList cmc = new ArrayList ();
+				foreach (DataColumn col in dataTable.Columns)
+					cmc.Add (new DataColumnMapping (col.ColumnName, col.ColumnName));
+				tableMapping =
+					new DataTableMapping (
+							      dataTable.TableName,
+							      dataTable.TableName,
+							      cmc.ToArray (typeof (DataColumnMapping)) as DataColumnMapping []);
+			}
+			/**end insert from another update**/
 			return Update (dataTable, tableMapping);
 		}
 

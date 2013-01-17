@@ -5,7 +5,7 @@ class M {
     System.Console.WriteLine (x);
   }
 
-  static void Main () {
+  public static void Main () {
     string[] arr = new string[] { "a", "b", "c" };
     System.Array.ForEach (arr, p);
   }

@@ -24,7 +24,7 @@ class C : IBar
 		action (null);
 	}
 	
-    static int Main ()
+    public static int Main ()
     {
 		var foo = new Foo ();
 

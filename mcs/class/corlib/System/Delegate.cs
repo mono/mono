@@ -49,6 +49,7 @@ namespace System
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public abstract class Delegate : ICloneable, ISerializable
 	{
 		#region Sync with object-internals.h
@@ -130,6 +131,11 @@ namespace System
 			// Delegate contravariance
 			if (!match) {
 				if (!argType.IsValueType && argType.IsAssignableFrom (delArgType))
+					match = true;
+			}
+			// enum basetypes
+			if (!match) {
+				if (delArgType.IsEnum && Enum.GetUnderlyingType (delArgType) == argType)
 					match = true;
 			}
 
@@ -481,7 +487,7 @@ namespace System
 					return a;
 
 			if (a.GetType () != b.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types."));
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
 			
 			return a.CombineImpl (b);
 		}
@@ -559,7 +565,11 @@ namespace System
 
 		internal bool IsTransparentProxy ()
 		{
+#if MONOTOUCH
+			return false;
+#else
 			return RemotingServices.IsTransparentProxy (m_target);
+#endif
 		}
 	}
 }

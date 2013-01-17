@@ -477,7 +477,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // on MS, ThreadState is immediately Stopped after Abort
 		public void TestIsBackground2 ()
 		{
 			C2Test test1 = new C2Test();
@@ -488,7 +487,14 @@ namespace MonoTests.System.Threading
 			} finally {
 				TestThread.Abort();
 			}
-			Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
+			
+			if (TestThread.IsAlive) {
+				try {
+					Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
+				} catch (ThreadStateException) {
+					// Ignore if thread died meantime
+				}
+			}
 		}
 
 		[Test]
@@ -1113,6 +1119,26 @@ namespace MonoTests.System.Threading
 				exception_occured = true;
 			}
 			Assert.IsTrue (exception_occured, "Thread1 Started Invalid Exception Occured");
+		}
+
+		[Test]
+		public void Volatile () {
+			double v3 = 55667;
+			Thread.VolatileWrite (ref v3, double.MaxValue);
+			Assert.AreEqual (v3, double.MaxValue);
+
+			float v4 = 1;
+			Thread.VolatileWrite (ref v4, float.MaxValue);
+			Assert.AreEqual (v4, float.MaxValue);
+		}
+
+		[Test]
+		public void SetNameTpThread () {
+			ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadProc));
+		}
+
+		static void ThreadProc(Object stateInfo) {
+			Thread.CurrentThread.Name = "My Worker";
 		}
 	}
 

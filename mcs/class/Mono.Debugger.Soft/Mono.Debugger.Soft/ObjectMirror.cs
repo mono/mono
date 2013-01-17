@@ -6,19 +6,44 @@ using System.Threading;
 namespace Mono.Debugger.Soft
 {
 	public class ObjectMirror : Value {
+		TypeMirror type;
+		AppDomainMirror domain;
 	
 		internal ObjectMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
 	
+		internal ObjectMirror (VirtualMachine vm, long id, TypeMirror type, AppDomainMirror domain) : base (vm, id) {
+			this.type = type;
+			this.domain = domain;
+		}
+
+		void GetInfo () {
+			var info = vm.conn.Object_GetInfo (id);
+			type = vm.GetType (info.type_id);
+			domain = vm.GetDomain (info.domain_id);
+		}
+
 		public TypeMirror Type {
 			get {
-				return vm.GetType (vm.conn.Object_GetType (id));
+				if (type == null) {
+					if (vm.conn.Version.AtLeast (2, 5))
+						GetInfo ();
+					else
+				 		type = vm.GetType (vm.conn.Object_GetType (id));
+				}
+				return type;
 			}
 		}
 
 		public AppDomainMirror Domain {
 			get {
-				return vm.GetDomain (vm.conn.Object_GetDomain (id));
+				if (domain == null) {
+					if (vm.conn.Version.AtLeast (2, 5))
+						GetInfo ();
+					else
+						domain = vm.GetDomain (vm.conn.Object_GetDomain (id));
+				}
+				return domain;
 			}
 		}
 
@@ -119,6 +144,19 @@ namespace Mono.Debugger.Soft
 			return EndInvokeMethodInternal (asyncResult);
 		}
 
+		//
+		// Invoke the members of METHODS one-by-one, calling CALLBACK after each invoke was finished. The IAsyncResult will be marked as completed after all invokes have
+		// finished. The callback will be called with a different IAsyncResult that represents one method invocation.
+		// From protocol version 2.22.
+		//
+		public IAsyncResult BeginInvokeMultiple (ThreadMirror thread, MethodMirror[] methods, IList<IList<Value>> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			return BeginInvokeMultiple (vm, thread, methods, this, arguments, options, callback, state);
+		}
+
+		public void EndInvokeMultiple (IAsyncResult asyncResult) {
+			EndInvokeMultipleInternal (asyncResult);
+		}
+
 		/*
 		 * Common implementation for invokes
 		 */
@@ -170,6 +208,12 @@ namespace Mono.Debugger.Soft
 			public int ID {
 				get; set;
 			}
+
+			public bool IsMultiple {
+				get; set;
+			}
+			   
+			public int NumPending;
 
 			public void Abort ()
 			{
@@ -247,6 +291,16 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+	    internal static void EndInvokeMultipleInternal (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			InvokeAsyncResult r = (InvokeAsyncResult)asyncResult;
+
+			if (!r.IsCompleted)
+				r.AsyncWaitHandle.WaitOne ();
+		}
+
 		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
 			return EndInvokeMethodInternal (BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
 		}
@@ -254,6 +308,73 @@ namespace Mono.Debugger.Soft
 		internal static void AbortInvoke (VirtualMachine vm, ThreadMirror thread, int id)
 		{
 			vm.conn.VM_AbortInvoke (thread.Id, id);
+		}
+
+		//
+		// Implementation of InvokeMultiple
+		//
+
+		internal static IInvokeAsyncResult BeginInvokeMultiple (VirtualMachine vm, ThreadMirror thread, MethodMirror[] methods, Value this_obj, IList<IList<Value>> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			if (thread == null)
+				throw new ArgumentNullException ("thread");
+			if (methods == null)
+				throw new ArgumentNullException ("methods");
+			foreach (var m in methods)
+				if (m == null)
+					throw new ArgumentNullException ("method");
+			if (arguments == null) {
+				arguments = new List<IList<Value>> ();
+				for (int i = 0; i < methods.Length; ++i)
+					arguments.Add (new Value [0]);
+			} else {
+				// FIXME: Not needed for property evaluation
+				throw new NotImplementedException ();
+			}
+			if (callback == null)
+				throw new ArgumentException ("A callback argument is required for this method.", "callback");
+
+			InvokeFlags f = InvokeFlags.NONE;
+
+			if ((options & InvokeOptions.DisableBreakpoints) != 0)
+				f |= InvokeFlags.DISABLE_BREAKPOINTS;
+			if ((options & InvokeOptions.SingleThreaded) != 0)
+				f |= InvokeFlags.SINGLE_THREADED;
+
+			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Thread = thread, Callback = callback, NumPending = methods.Length, IsMultiple = true };
+
+			var mids = new long [methods.Length];
+			for (int i = 0; i < methods.Length; ++i)
+				mids [i] = methods [i].Id;
+			var args = new List<ValueImpl[]> ();
+			for (int i = 0; i < methods.Length; ++i)
+				args.Add (vm.EncodeValues (arguments [i]));
+			r.ID = vm.conn.VM_BeginInvokeMethods (thread.Id, mids, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), args, f, InvokeMultipleCB, r);
+
+			return r;
+		}
+
+		// This is called when the result of an invoke is received
+		static void InvokeMultipleCB (ValueImpl v, ValueImpl exc, ErrorCode error, object state) {
+			var r = (InvokeAsyncResult)state;
+
+			Interlocked.Decrement (ref r.NumPending);
+
+			if (r.NumPending == 0) {
+				r.IsCompleted = true;
+				((ManualResetEvent)r.AsyncWaitHandle).Set ();
+			}
+
+			// Have to pass another asyncresult to the callback since multiple threads can execute it concurrently with results of multiple invocations
+			var r2 = new InvokeAsyncResult { AsyncState = r.AsyncState, AsyncWaitHandle = null, VM = r.VM, Thread = r.Thread, Callback = r.Callback, IsCompleted = true };
+
+			if (error != 0) {
+				r2.ErrorCode = error;
+			} else {
+				r2.Value = v;
+				r2.Exception = exc;
+			}
+
+			r.Callback.BeginInvoke (r2, null, null);
 		}
 	}
 }

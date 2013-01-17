@@ -8,7 +8,7 @@ class X {
 		}
 	}
 	
-	static int Main () {
+	public static int Main () {
 		Nested n = new Nested ();
 		return n.D() == MyEnum.V ? 0 : 1;
 	}

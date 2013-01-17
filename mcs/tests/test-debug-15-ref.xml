@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<symbols>
+  <files>
+    <file id="1" name="test-debug-15.cs" checksum="0484d256a6c3e37692cb758a5b203300" />
+  </files>
+  <methods>
+    <method token="0x6000001">
+      <sequencepoints>
+        <entry il="0x0" row="6" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="7" col="3" file_ref="1" hidden="false" />
+        <entry il="0x1c" row="8" col="5" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes>
+        <entry index="0" start="0x1" end="0x10" />
+        <entry index="1" start="0x15" end="0x1b" />
+      </scopes>
+    </method>
+    <method token="0x6000002">
+      <sequencepoints>
+        <entry il="0x0" row="11" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="12" col="3" file_ref="1" hidden="false" />
+        <entry il="0x7" row="13" col="2" file_ref="1" hidden="false" />
+      </sequencepoints>
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000003">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+  </methods>
+</symbols>

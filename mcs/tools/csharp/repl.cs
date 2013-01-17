@@ -38,12 +38,11 @@ namespace Mono {
 		
 		static int Main (string [] args)
 		{
-			var r = new Report (new ConsoleReportPrinter ());
-			var cmd = new CommandLineParser (r);
+			var cmd = new CommandLineParser (Console.Out);
 			cmd.UnknownOptionHandler += HandleExtraArguments;
 
 			var settings = cmd.ParseArguments (args);
-			if (settings == null || r.Errors > 0)
+			if (settings == null)
 				return 1;
 			var startup_files = new string [settings.SourceFiles.Count];
 			int i = 0;
@@ -51,7 +50,16 @@ namespace Mono {
 				startup_files [i++] = source.FullPathName;
 			settings.SourceFiles.Clear ();
 
-			var eval = new Evaluator (settings, r);
+			TextWriter agent_stderr = null;
+			ReportPrinter printer;
+			if (agent != null) {
+				agent_stderr = new StringWriter ();
+				printer = new StreamReportPrinter (agent_stderr);
+			} else {
+				printer = new ConsoleReportPrinter ();
+			}
+
+			var eval = new Evaluator (new CompilerContext (settings, printer));
 
 			eval.InteractiveBaseClass = typeof (InteractiveBaseShell);
 			eval.DescribeTypeExpressions = true;
@@ -61,7 +69,7 @@ namespace Mono {
 			if (attach.HasValue) {
 				shell = new ClientCSharpShell (eval, attach.Value);
 			} else if (agent != null) {
-				new CSharpAgent (eval, agent).Run (startup_files);
+				new CSharpAgent (eval, agent, agent_stderr).Run (startup_files);
 				return 0;
 			} else
 #endif
@@ -86,9 +94,13 @@ namespace Mono {
 					return pos + 1;
 				}
 				break;
-			case "--agent:":
-				agent = args[pos];
-				return pos + 1;
+			default:
+				if (args [pos].StartsWith ("--agent:")) {
+					agent = args[pos];
+					return pos + 1;
+				} else {
+					return -1;
+				}
 			}
 			return -1;
 		}
@@ -127,7 +139,7 @@ namespace Mono {
 	
 	public class CSharpShell {
 		static bool isatty = true, is_unix = false;
-		string [] startup_files;
+		protected string [] startup_files;
 		
 		Mono.Terminal.LineEditor editor;
 		bool dumb;
@@ -212,17 +224,13 @@ namespace Mono {
 
 		void InitTerminal (bool show_banner)
 		{
-#if ON_DOTNET
-			is_unix = false;
-			isatty = true;
-#else
 			int p = (int) Environment.OSVersion.Platform;
 			is_unix = (p == 4) || (p == 128);
 
-			if (is_unix)
-				isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
-			else
-				isatty = true;
+#if NET_4_5
+			isatty = !Console.IsInputRedirected && !Console.IsOutputRedirected;
+#else
+			isatty = true;
 #endif
 
 			// Work around, since Console is not accounting for
@@ -306,7 +314,7 @@ namespace Mono {
 				expr = expr == null ? input : expr + "\n" + input;
 				
 				expr = Evaluate (expr);
-			} 
+			}
 		}
 
 		public int ReadEvalPrintLoop ()
@@ -318,17 +326,24 @@ namespace Mono {
 
 			LoadStartupFiles ();
 
-			if (startup_files.Length != 0)
+			if (startup_files != null && startup_files.Length != 0) {
 				ExecuteSources (startup_files, false);
-			else if (Driver.StartupEvalExpression != null){
-				ReadEvalPrintLoopWith (p => {
-					var ret = Driver.StartupEvalExpression;
-					Driver.StartupEvalExpression = null;
-					return ret;
-					});
-			} else
-				ReadEvalPrintLoopWith (GetLine);
+			} else {
+				if (Driver.StartupEvalExpression != null){
+					ReadEvalPrintLoopWith (p => {
+						var ret = Driver.StartupEvalExpression;
+						Driver.StartupEvalExpression = null;
+						return ret;
+						});
+				} else {
+					ReadEvalPrintLoopWith (GetLine);
+				}
+				
+				editor.SaveHistory ();
+			}
 
+			Console.CancelKeyPress -= ConsoleInterrupt;
+			
 			return 0;
 		}
 
@@ -406,6 +421,24 @@ namespace Mono {
 				break;
 			}
 		}
+
+		// Some types (System.Json.JsonPrimitive) implement
+		// IEnumerator and yet, throw an exception when we
+		// try to use them, helper function to check for that
+		// condition
+		static internal bool WorksAsEnumerable (object obj)
+		{
+			IEnumerable enumerable = obj as IEnumerable;
+			if (enumerable != null){
+				try {
+					enumerable.GetEnumerator ();
+					return true;
+				} catch {
+					// nothing, we return false below
+				}
+			}
+			return false;
+		}
 		
 		internal static void PrettyPrint (TextWriter output, object result)
 		{
@@ -449,7 +482,7 @@ namespace Mono {
 						p (output, " }");
 				}
 				p (output, "}");
-			} else if (result is IEnumerable) {
+			} else if (WorksAsEnumerable (result)) {
 				int i = 0;
 				p (output, "{ ");
 				foreach (object item in (IEnumerable) result) {
@@ -542,6 +575,7 @@ namespace Mono {
 		public override int Run (string [] startup_files)
 		{
 			// The difference is that we do not call Evaluator.Init, that is done on the target
+			this.startup_files = startup_files;
 			return ReadEvalPrintLoop ();
 		}
 	
@@ -616,10 +650,12 @@ namespace Mono {
 	{
 		NetworkStream interrupt_stream;
 		readonly Evaluator evaluator;
+		TextWriter stderr;
 		
-		public CSharpAgent (Evaluator evaluator, String arg)
+		public CSharpAgent (Evaluator evaluator, String arg, TextWriter stderr)
 		{
 			this.evaluator = evaluator;
+			this.stderr = stderr;
 			new Thread (new ParameterizedThreadStart (Run)).Start (arg);
 		}
 
@@ -657,8 +693,11 @@ namespace Mono {
 				AppDomain.CurrentDomain.AssemblyLoad += AssemblyLoaded;
 	
 				// Add all currently loaded assemblies
-				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
-					evaluator.ReferenceAssembly (a);
+				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
+					// Some assemblies seem to be already loaded, and loading them again causes 'defined multiple times' errors
+					if (a.GetName ().Name != "mscorlib" && a.GetName ().Name != "System.Core" && a.GetName ().Name != "System")
+						evaluator.ReferenceAssembly (a);
+				}
 	
 				RunRepl (s);
 			} finally {
@@ -681,9 +720,8 @@ namespace Mono {
 			while (!InteractiveBase.QuitRequested) {
 				try {
 					string error_string;
-					StringWriter error_output = new StringWriter ();
-//					Report.Stderr = error_output;
-					
+					StringWriter error_output = (StringWriter)stderr;
+
 					string line = s.GetString ();
 	
 					bool result_set;
@@ -713,6 +751,7 @@ namespace Mono {
 					if (error_string.Length != 0){
 						s.WriteByte ((byte) AgentStatus.ERROR);
 						s.WriteString (error_output.ToString ());
+						error_output.GetStringBuilder ().Clear ();
 					}
 	
 					if (result_set){

@@ -35,7 +35,10 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
+
 using System.Collections.Generic;
 
 namespace System
@@ -48,7 +51,11 @@ namespace System
 		static bool IsUserCattrProvider (object obj)
 		{
 			Type type = obj as Type;
+#if !FULL_AOT_RUNTIME
 			if ((type is MonoType) || (type is TypeBuilder))
+#else
+			if (type is MonoType)
+#endif
 				return false;
 			if ((obj is Type))
 				return true;
@@ -282,41 +289,32 @@ namespace System
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
 
-			if (IsUserCattrProvider (obj))
-				return obj.IsDefined (attributeType, inherit);
+			AttributeUsageAttribute usage = null;
+			do {
+				if (IsUserCattrProvider (obj))
+					return obj.IsDefined (attributeType, inherit);
 
-			if (IsDefinedInternal (obj, attributeType))
-				return true;
+				if (IsDefinedInternal (obj, attributeType))
+					return true;
 
-			object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
-			if (pseudoAttrs != null) {
-				for (int i = 0; i < pseudoAttrs.Length; ++i)
-					if (attributeType.IsAssignableFrom (pseudoAttrs [i].GetType ()))
-						return true;
-			}
+				object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
+				if (pseudoAttrs != null) {
+					for (int i = 0; i < pseudoAttrs.Length; ++i)
+						if (attributeType.IsAssignableFrom (pseudoAttrs[i].GetType ()))
+							return true;
+				}
 
-#if ONLY_1_1
-			if (inherit) {
-				AttributeUsageAttribute usage = RetrieveAttributeUsage (attributeType);
-				if (!usage.Inherited)
-					inherit = false;
-			}
-#endif
+				if (usage == null) {
+					if (!inherit)
+						return false;
 
-			// FIXME (bug #82431):
-			// on 2.0 profile we should always walk the inheritance
-			// chain and base the behavior on the inheritance level:
-			//
-			// 0  : return true if "attributeType" is assignable from
-			// any of the custom attributes
-			//
-			// > 0: return true if "attributeType" is assignable from
-			// any of the custom attributes and AttributeUsageAttribute
-			// .Inherited of the assignable attribute is true
+					usage = RetrieveAttributeUsage (attributeType);
+					if (!usage.Inherited)
+						return false;
+				}
 
-			ICustomAttributeProvider btype;
-			if (inherit && ((btype = GetBase (obj)) != null))
-				return IsDefined (btype, attributeType, inherit);
+				obj = GetBase (obj);
+			} while (obj != null);
 
 			return false;
 		}
@@ -411,8 +409,7 @@ namespace System
 				return new AttributeUsageAttribute (AttributeTargets.Class);
 
 			AttributeUsageAttribute usageAttribute = null;
-			object[] attribs = GetCustomAttributes (attributeType,
-				MonoCustomAttrs.AttributeUsageType, false);
+			object[] attribs = GetCustomAttributes (attributeType, typeof(AttributeUsageAttribute), false);
 			if (attribs.Length == 0)
 			{
 				// if no AttributeUsage was defined on the attribute level, then
@@ -444,7 +441,6 @@ namespace System
 			return ((AttributeUsageAttribute) attribs[0]);
 		}
 
-		private static readonly Type AttributeUsageType = typeof(AttributeUsageAttribute);
 		private static readonly AttributeUsageAttribute DefaultAttributeUsage =
 			new AttributeUsageAttribute (AttributeTargets.All);
 

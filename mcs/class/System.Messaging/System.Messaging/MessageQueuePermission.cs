@@ -110,14 +110,14 @@ namespace System.Messaging {
 		[MonoTODO]
 		public override IPermission Intersect (IPermission target)
 		{
-			MessageQueuePermission mqp = Cast (target);
+			Cast (target);
 			return null;
 		}
 		
 		[MonoTODO]
 		public override bool IsSubsetOf (IPermission target)
 		{
-			MessageQueuePermission mqp = Cast (target);
+			Cast (target);
 			return false;
 		}
 		
@@ -136,7 +136,7 @@ namespace System.Messaging {
 		[MonoTODO]
 		public override IPermission Union (IPermission target)
 		{
-			MessageQueuePermission mqp = Cast (target);
+			Cast (target);
 			return null;
 		}
 

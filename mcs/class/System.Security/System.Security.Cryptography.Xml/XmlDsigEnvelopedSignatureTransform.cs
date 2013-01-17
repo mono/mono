@@ -95,9 +95,7 @@ namespace System.Security.Cryptography.Xml {
 			if (inputObj is Stream) {
 				doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;
-#if NET_1_1
 				doc.XmlResolver = GetResolver ();
-#endif
 				doc.Load (new XmlSignatureStreamReader (
 					new StreamReader (inputObj as Stream)));
 				return GetOutputFromNode (doc, GetNamespaceManager (doc), true);

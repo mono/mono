@@ -20,9 +20,12 @@ namespace Mono.Debugger.Soft
 		FieldInfoMirror[] fields;
 		PropertyInfoMirror[] properties;
 		TypeInfo info;
-		TypeMirror base_type, element_type;
+		TypeMirror base_type, element_type, gtd;
 		TypeMirror[] nested;
 		CustomAttributeDataMirror[] cattrs;
+		TypeMirror[] ifaces;
+		Dictionary<TypeMirror, InterfaceMappingMirror> iface_map;
+		TypeMirror[] type_args;
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -34,13 +37,13 @@ namespace Mono.Debugger.Soft
 			get {
 				return GetInfo ().name;
 			}
-	    }
+		}
 
 		public string Namespace {
 			get {
 				return GetInfo ().ns;
 			}
-	    }
+		}
 
 		public AssemblyMirror Assembly {
 			get {
@@ -284,11 +287,49 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		// Since protocol version 2.12
+		public bool IsGenericTypeDefinition {
+			get {
+				vm.CheckProtocolVersion (2, 12);
+				GetInfo ();
+				return info.is_gtd;
+			}
+		}
+
+		public bool IsGenericType {
+			get {
+				if (vm.Version.AtLeast (2, 12)) {
+					return GetInfo ().is_generic_type;
+				} else {
+					return Name.IndexOf ('`') != -1;
+				}
+			}
+		}
+
 		public TypeMirror GetElementType () {
 			GetInfo ();
 			if (element_type == null && info.element_type != 0)
 				element_type = vm.GetType (info.element_type);
 			return element_type;
+		}
+
+		public TypeMirror GetGenericTypeDefinition () {
+			vm.CheckProtocolVersion (2, 12);
+			GetInfo ();
+			if (gtd == null) {
+				if (info.gtd == 0)
+					throw new InvalidOperationException ();
+				gtd = vm.GetType (info.gtd);
+			}
+			return gtd;
+		}
+
+		// Since protocol version 2.15
+		public TypeMirror[] GetGenericArguments () {
+			vm.CheckProtocolVersion (2, 15);
+			if (type_args == null)
+				type_args = vm.GetTypes (GetInfo ().type_args);
+			return type_args;
 		}
 
 		public string FullName {
@@ -525,8 +566,18 @@ namespace Mono.Debugger.Soft
 			return GetSourceFiles (false);
 		}
 
+		string[] source_files;
+		string[] source_files_full_path;
 		public string[] GetSourceFiles (bool return_full_paths) {
-			return vm.conn.Type_GetSourceFiles (id, return_full_paths);
+			string[] res = return_full_paths ? source_files_full_path : source_files;
+			if (res == null) {
+				res = vm.conn.Type_GetSourceFiles (id, return_full_paths);
+				if (return_full_paths)
+					source_files_full_path = res;
+				else
+					source_files = res;
+			}
+			return res;
 		}
 
 		public C.TypeDefinition Metadata {
@@ -620,6 +671,9 @@ namespace Mono.Debugger.Soft
 		}
 
 		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
+				cattrs = new CustomAttributeDataMirror [0];
+
 			// FIXME: Handle inherit
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);
@@ -630,6 +684,61 @@ namespace Mono.Debugger.Soft
 				if (type == null || attr.Constructor.DeclaringType == type)
 					res.Add (attr);
 			return res.ToArray ();
+		}
+
+		public MethodMirror[] GetMethodsByNameFlags (string name, BindingFlags flags, bool ignoreCase) {
+			if (vm.conn.Version.AtLeast (2, 6)) {
+				long[] ids = vm.conn.Type_GetMethodsByNameFlags (id, name, (int)flags, ignoreCase);
+				MethodMirror[] m = new MethodMirror [ids.Length];
+				for (int i = 0; i < ids.Length; ++i)
+					m [i] = vm.GetMethod (ids [i]);
+				return m;
+			} else {
+				if ((flags & BindingFlags.IgnoreCase) != 0) {
+					flags &= ~BindingFlags.IgnoreCase;
+					ignoreCase = true;
+				}
+				
+				if (flags == BindingFlags.Default)
+					flags = BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.Static;
+				
+				MethodAttributes access = (MethodAttributes) 0;
+				bool matchInstance = false;
+				bool matchStatic = false;
+				
+				if ((flags & BindingFlags.NonPublic) != 0) {
+					access |= MethodAttributes.Private;
+					flags &= ~BindingFlags.NonPublic;
+				}
+				if ((flags & BindingFlags.Public) != 0) {
+					access |= MethodAttributes.Public;
+					flags &= ~BindingFlags.Public;
+				}
+				if ((flags & BindingFlags.Instance) != 0) {
+					flags &= ~BindingFlags.Instance;
+					matchInstance = true;
+				}
+				if ((flags & BindingFlags.Static) != 0) {
+					flags &= ~BindingFlags.Static;
+					matchStatic = true;
+				}
+				
+				if ((int) flags != 0)
+					throw new NotImplementedException ();
+				
+				var res = new List<MethodMirror> ();
+				foreach (MethodMirror m in GetMethods ()) {
+					if ((m.Attributes & access) == (MethodAttributes) 0)
+						continue;
+					
+					if (!((matchStatic && m.IsStatic) || (matchInstance && !m.IsStatic)))
+						continue;
+					
+					if ((!ignoreCase && m.Name == name) || (ignoreCase && m.Name.Equals (name, StringComparison.CurrentCultureIgnoreCase)))
+						res.Add (m);
+				}
+				return res.ToArray ();
+			}
 		}
 
 		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
@@ -659,6 +768,58 @@ namespace Mono.Debugger.Soft
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, options);
-		}			
+		}
+
+		// Since protocol version 2.11
+		public TypeMirror[] GetInterfaces () {
+			if (ifaces == null)
+				ifaces = vm.GetTypes (vm.conn.Type_GetInterfaces (id));
+			return ifaces;
+		}
+
+		// Since protocol version 2.11
+		public InterfaceMappingMirror GetInterfaceMap (TypeMirror interfaceType) {
+			if (interfaceType == null)
+				throw new ArgumentNullException ("interfaceType");
+			if (!interfaceType.IsInterface)
+				throw new ArgumentException ("Argument must be an interface.", "interfaceType");
+			if (IsInterface)
+				throw new ArgumentException ("'this' type cannot be an interface itself");
+
+			if (iface_map == null) {
+				// Query the info in bulk
+				GetInterfaces ();
+				var ids = new long [ifaces.Length];
+				for (int i = 0; i < ifaces.Length; ++i)
+					ids [i] = ifaces [i].Id;
+
+				var ifacemap = vm.conn.Type_GetInterfaceMap (id, ids);
+
+				var imap = new Dictionary<TypeMirror, InterfaceMappingMirror> ();
+				for (int i = 0; i < ifacemap.Length; ++i) {
+					IfaceMapInfo info = ifacemap [i];
+
+					MethodMirror[] imethods = new MethodMirror [info.iface_methods.Length];
+					for (int j = 0; j < info.iface_methods.Length; ++j)
+						imethods [j] = vm.GetMethod (info.iface_methods [j]);
+
+					MethodMirror[] tmethods = new MethodMirror [info.iface_methods.Length];
+					for (int j = 0; j < info.target_methods.Length; ++j)
+						tmethods [j] = vm.GetMethod (info.target_methods [j]);
+
+					InterfaceMappingMirror map = new InterfaceMappingMirror (vm, this, vm.GetType (info.iface_id), imethods, tmethods);
+
+					imap [map.InterfaceType] = map;
+				}
+
+				iface_map = imap;
+			}
+
+			InterfaceMappingMirror res;
+			if (!iface_map.TryGetValue (interfaceType, out res))
+				throw new ArgumentException ("Interface not found", "interfaceType");
+			return res;
+		}
+
     }
 }

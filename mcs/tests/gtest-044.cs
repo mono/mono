@@ -18,7 +18,7 @@ class X<T>
 
 class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		X<long> x = new X<long> (5);
 		Console.WriteLine (x.Count);

@@ -34,7 +34,7 @@ using System.Security.Cryptography.Xml;
 
 namespace System.IO.Packaging {
 
-	public class PackageDigitalSignatureManager
+	public sealed class PackageDigitalSignatureManager
 	{
 		public static string DefaultHashAlgorithm {
 			get { throw new NotImplementedException (); }

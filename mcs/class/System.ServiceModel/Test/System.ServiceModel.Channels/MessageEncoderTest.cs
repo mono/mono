@@ -33,6 +33,8 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Text;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
+using NUnit.Framework.SyntaxHelpers;
 
 using TextElement = System.ServiceModel.Channels.TextMessageEncodingBindingElement;
 using BinaryElement = System.ServiceModel.Channels.BinaryMessageEncodingBindingElement;
@@ -116,5 +118,21 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.AreEqual ("application/soap+msbinsession1", new BinaryMessageEncodingBindingElement ().CreateMessageEncoderFactory ().CreateSessionEncoder ().MediaType, "#2"); // different from application/soap+msbin1
 			Assert.AreEqual ("multipart/related", new MtomMessageEncodingBindingElement ().CreateMessageEncoderFactory ().CreateSessionEncoder ().MediaType, "#3");
 		}
+
+		[Test]
+		public void TestContentType ()
+		{
+			var element = new TextMessageEncodingBindingElement ();
+			element.WriteEncoding = Encoding.UTF8;
+			element.MessageVersion = MessageVersion.Soap11;
+			var factory = element.CreateMessageEncoderFactory ();
+			var encoder = factory.CreateSessionEncoder ();
+			
+			Assert.That (encoder.IsContentTypeSupported ("text/xmL;chaRset=uTf-8"), Is.True, "#1");
+			Assert.That (encoder.IsContentTypeSupported ("text/xMl"), Is.True, "#2");
+			Assert.That (encoder.IsContentTypeSupported ("teXt/xml;foo=bar;charset=utf-8"), Is.True, "#3");
+			Assert.That (encoder.IsContentTypeSupported ("teXt/xml;charset=ascii"), Is.False, "#4");
+		}
+
 	}
 }

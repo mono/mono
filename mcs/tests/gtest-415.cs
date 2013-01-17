@@ -2,7 +2,7 @@ using System;
 
 class Foo
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (Bar (1))
 			return 1;

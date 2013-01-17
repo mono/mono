@@ -45,7 +45,11 @@ namespace System.Security.Cryptography {
 
 		public static new SHA512 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.SHA512Managed ();
+#else
 			return Create ("System.Security.Cryptography.SHA512");
+#endif
 		}
 	
 		public static new SHA512 Create (string hashName) 

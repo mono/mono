@@ -265,7 +265,7 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		static private int recommendedIterationCount = 2000;
+		const int recommendedIterationCount = 2000;
 
 		//private int _version;
 		private byte[] _password;

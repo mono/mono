@@ -1,5 +1,7 @@
 #include System.ComponentModel.DataAnnotations.dll.sources
 
+System.ComponentModel.DataAnnotations/KeyAttribute.cs
+System.ComponentModel.DataAnnotations/TimestampAttribute.cs
 System.ComponentModel.DataAnnotations/ValidationAttributeCollectionExtensions.cs
 System.ComponentModel.DataAnnotations/ValidationContext.cs
 System.ComponentModel.DataAnnotations/ValidationResult.cs

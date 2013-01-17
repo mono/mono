@@ -30,10 +30,13 @@
 
 void sgen_card_table_reset_region (mword start, mword end) MONO_INTERNAL;
 void* sgen_card_table_align_pointer (void *ptr) MONO_INTERNAL;
-void sgen_card_table_mark_address (mword address) MONO_INTERNAL;
 void sgen_card_table_mark_range (mword address, mword size) MONO_INTERNAL;
-void sgen_cardtable_scan_object (char *obj, mword obj_size, guint8 *cards, SgenGrayQueue *queue) MONO_INTERNAL;
+void sgen_cardtable_scan_object (char *obj, mword obj_size, guint8 *cards,
+		gboolean always_copy_or_mark, SgenGrayQueue *queue) MONO_INTERNAL;
+
 gboolean sgen_card_table_get_card_data (guint8 *dest, mword address, mword cards) MONO_INTERNAL;
+
+void sgen_card_table_init (SgenRemeberedSet *remset) MONO_INTERNAL;
 
 /*How many bytes a single card covers*/
 #define CARD_BITS 9
@@ -65,7 +68,7 @@ sgen_card_table_get_card_address (mword address)
 
 extern guint8 *sgen_shadow_cardtable MONO_INTERNAL;
 
-static inline  guint8*
+static inline guint8*
 sgen_card_table_get_shadow_card_address (mword address)
 {
 	return sgen_shadow_cardtable + ((address >> CARD_BITS) & CARD_MASK);
@@ -111,8 +114,41 @@ sgen_card_table_prepare_card_for_scanning (guint8 *card)
 
 #endif
 
+static inline gboolean
+sgen_card_table_address_is_marked (mword address)
+{
+	return *sgen_card_table_get_card_address (address) != 0;
+}
+
+static inline void
+sgen_card_table_mark_address (mword address)
+{
+	*sgen_card_table_get_card_address (address) = 1;
+}
+
+#else /*if SGEN_HAVE_CARDTABLE */
+
+static inline void
+sgen_card_table_mark_address (mword address)
+{
+	g_assert_not_reached ();
+}
+
+static inline void
+sgen_card_table_mark_range (mword address, mword size)
+{
+	g_assert_not_reached ();
+}
+
+#define sgen_card_table_address_is_marked(p)	FALSE
+#define sgen_card_table_init(p)
+
+guint8*
+mono_gc_get_card_table (int *shift_bits, gpointer *mask)
+{
+	return NULL;
+}
+
 #endif
-
-
 
 #endif

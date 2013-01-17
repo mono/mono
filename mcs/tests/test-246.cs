@@ -7,7 +7,7 @@ struct Blah : System.IDisposable {
 }
 
 class B  {
-	static void Main () {
+	public static void Main () {
 		using (Blah b = new Blah ()) {
 			Console.WriteLine ("...");
 		}

@@ -4,12 +4,11 @@
 // 	Sean MacIsaac (macisaac@ximian.com)
 // 	Paolo Molaro (lupus@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc. 2001 - 2003
 // (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -50,7 +49,7 @@ namespace System.Reflection
 		public abstract MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers);
 		public abstract PropertyInfo SelectProperty( BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers);
 
-		static Binder default_binder = new Default ();
+		static readonly Binder default_binder = new Default ();
 
 		internal static Binder DefaultBinder {
 			get {
@@ -58,21 +57,39 @@ namespace System.Reflection
 			}
 		}
 		
-		internal static bool ConvertArgs (Binder binder, object[] args, ParameterInfo[] pinfo, CultureInfo culture) {
+		internal bool ConvertArgs (object[] args, ParameterInfo[] pinfo, CultureInfo culture, bool exactMatch)
+		{
 			if (args == null) {
-				if ( pinfo.Length == 0)
+				if (pinfo.Length == 0)
 					return true;
-				else
-					throw new TargetParameterCountException ();
+				
+				throw new TargetParameterCountException ();
 			}
+
 			if (pinfo.Length != args.Length)
 				throw new TargetParameterCountException ();
+			
 			for (int i = 0; i < args.Length; ++i) {
-				object v = binder.ChangeType (args [i], pinfo[i].ParameterType, culture);
-				if ((v == null) && (args [i] != null))
+				var arg = args [i];
+				var pi = pinfo [i];
+				if (arg == Type.Missing) {
+					args [i] = pi.DefaultValue;
+					continue;
+				}
+
+				if (arg != null && arg.GetType () == pi.ParameterType)
+					continue;
+
+				if (exactMatch)
 					return false;
+
+				object v = ChangeType (arg, pi.ParameterType, culture);
+				if (v == null && args [i] != null)
+					return false;
+	
 				args [i] = v;
 			}
+
 			return true;
 		}
 
@@ -148,9 +165,6 @@ namespace System.Reflection
 				return null;
 			}
 
-			//
-			// FIXME: There was a MonoTODO, but it does not explain what the problem is
-			// 
 			public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
 			{
 				Type[] types;
@@ -163,9 +177,48 @@ namespace System.Reflection
 							types [i] = args [i].GetType ();
 					}
 				}
-				MethodBase selected = SelectMethod (bindingAttr, match, types, modifiers, true);
+
+				MethodBase selected = null;
+				if (names != null) {
+					foreach (var m in match) {
+						var parameters = m.GetParameters ();
+						int i;
+
+						/*
+						 * Find the corresponding parameter for each parameter name,
+						 * reorder types/modifiers array during the search.
+						 */
+						Type[] newTypes = (Type[])types.Clone ();
+						ParameterModifier[] newModifiers = modifiers != null ? (ParameterModifier[])modifiers.Clone () : null;
+						for (i = 0; i < names.Length; ++i) {
+							/* Find the corresponding parameter */
+							int nindex = -1;
+							for (int j = 0; j < parameters.Length; ++j) {
+								if (parameters [j].Name == names [i]) {
+									nindex = j;
+									break;
+								}
+							}
+							if (nindex == -1)
+								break;
+							if (i < newTypes.Length && nindex < types.Length)
+								newTypes [i] = types [nindex];
+							if (modifiers != null && i < newModifiers.Length && nindex < modifiers.Length)
+								newModifiers [i] = modifiers [nindex];
+						}
+						if (i < names.Length)
+							continue;
+
+						selected = SelectMethod (bindingAttr, new MethodBase [] { m }, newTypes, newModifiers, true, args);
+						if (selected != null)
+							break;
+					}
+				} else {
+					selected = SelectMethod (bindingAttr, match, types, modifiers, true, args);
+				}
+
 				state = null;
-				if (names != null)
+				if (selected != null && names != null)
 					ReorderParameters (names, ref args, selected);
 
 				if (selected != null) {
@@ -412,10 +465,10 @@ namespace System.Reflection
 			public override MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase [] match, Type [] types, ParameterModifier [] modifiers)
 			{
 				return SelectMethod (bindingAttr, match, types, modifiers,
-					false);
+					false, null);
 			}
 
-			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch)
+			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch, object[] parameters)
 			{
 				MethodBase m;
 				int i, j;
@@ -488,7 +541,37 @@ namespace System.Reflection
 						result = m;
 				}
 
-				return result;
+				if (result != null || parameters == null || types.Length != parameters.Length)
+					return result;
+
+				// Xamarin-5278: try with parameters that are COM objects
+				// REVIEW: do we also need to implement best method match?
+				for (i = 0; i < match.Length; ++i) {
+					m = match [i];
+					ParameterInfo[] methodArgs = m.GetParameters ();
+					if (methodArgs.Length != types.Length)
+						continue;
+					for (j = 0; j < types.Length; ++j) {
+						var requiredType = methodArgs [j].ParameterType;
+						if (types [j] == requiredType)
+							continue;
+#if !MOBILE
+						if (types [j] == typeof (__ComObject) && requiredType.IsInterface) {
+							var iface = Marshal.GetComInterfaceForObject (parameters [j], requiredType);
+							if (iface != IntPtr.Zero) {
+								// the COM object implements the desired interface
+								Marshal.Release (iface);
+								continue;
+							}
+						}
+#endif
+						break;
+					}
+
+					if (j == types.Length)
+						return m;
+				}
+				return null;
 			}
 
 			MethodBase GetBetterMethod (MethodBase m1, MethodBase m2, Type [] types)

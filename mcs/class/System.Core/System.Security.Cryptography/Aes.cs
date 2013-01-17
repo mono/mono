@@ -56,7 +56,13 @@ namespace System.Security.Cryptography {
 
 		public static new Aes Create () 
 		{
-			return Create ("System.Security.Cryptography.AesManaged, " + Consts.AssemblySystem_Core);
+#if FULL_AOT_RUNTIME
+			// The Aes base class was moved from System.Core to mscorlib - so we can't just return a new AesCryptoServiceProvider instance
+			// note: the linker is aware of this condition
+			return (Aes) Activator.CreateInstance (Type.GetType ("System.Security.Cryptography.AesManaged, " + Consts.AssemblySystem_Core));
+#else
+			return Create ("System.Security.Cryptography.AesCryptoServiceProvider, " + Consts.AssemblySystem_Core);
+#endif
 		}
 
 		public static new Aes Create (string algorithmName) 
@@ -68,7 +74,7 @@ namespace System.Security.Cryptography {
 		{
 			KeySizeValue = 256;
 			BlockSizeValue = 128;
-#if !NET_2_1
+#if !MOONLIGHT
 			// Silverlight 2.0 only supports CBC mode (i.e. no feedback)
 			FeedbackSizeValue = 128;
 #endif

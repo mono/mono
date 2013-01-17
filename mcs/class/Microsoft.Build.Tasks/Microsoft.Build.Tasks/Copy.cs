@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,6 +40,7 @@ namespace Microsoft.Build.Tasks {
 		ITaskItem	destinationFolder;
 		bool		skipUnchangedFiles;
 		ITaskItem[]	sourceFiles;
+		bool		overwriteReadOnlyFiles;
 		
 		public Copy ()
 		{
@@ -164,6 +163,17 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+#if NET_3_5
+		public bool OverwriteReadOnlyFiles {
+			get {
+				return overwriteReadOnlyFiles;
+			}
+			set {
+				overwriteReadOnlyFiles = value;
+			}
+		}
+#endif
+
 		[Required]
 		public ITaskItem[] SourceFiles {
 			get {
@@ -189,9 +199,29 @@ namespace Microsoft.Build.Tasks {
 		{
 			if (create_dir)
 				CreateDirectoryIfRequired (Path.GetDirectoryName (dest));
+			if (overwriteReadOnlyFiles)
+				ClearReadOnlyAttribute (dest);
 			Log.LogMessage ("Copying file from '{0}' to '{1}'", source, dest);
-			if (String.Compare (source, dest) != 0)
+			if (String.Compare (source, dest) != 0) {
+				// Ensure that we delete the destination file first so that if the file is already
+				// opened via mmap we do not screw up the data for the process which has the file open
+				// Fixes https://bugzilla.xamarin.com/show_bug.cgi?id=9146
+				if (!HasReadOnlyAttribute (dest))
+					File.Delete (dest);
 				File.Copy (source, dest, true);
+			}
+			ClearReadOnlyAttribute (dest);
+		}
+
+		void ClearReadOnlyAttribute (string name)
+		{
+			if (File.Exists (name) && ((File.GetAttributes (name) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
+				File.SetAttributes (name, FileAttributes.Normal);
+		}
+
+		bool HasReadOnlyAttribute (string name)
+		{
+			return File.Exists (name) && (File.GetAttributes (name) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
 		}
 
 		bool HasFileChanged (string source, string dest)
@@ -203,10 +233,8 @@ namespace Microsoft.Build.Tasks {
 			FileInfo destinationInfo = new FileInfo (dest);
 
 			return !(sourceInfo.Length == destinationInfo.Length &&
-					File.GetLastWriteTime(source) <= File.GetLastWriteTime (dest));
+					File.GetLastWriteTime (source) <= File.GetLastWriteTime (dest));
 		}
 
 	}
 }
-
-#endif

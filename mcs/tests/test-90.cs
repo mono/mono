@@ -29,7 +29,7 @@ namespace N1
 	}
 
 	public class Blah {
-		static int Main  ()
+		public static int Main  ()
 		{
 			return 0;
 		}

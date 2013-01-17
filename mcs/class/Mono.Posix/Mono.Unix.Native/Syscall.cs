@@ -55,6 +55,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -2190,11 +2191,52 @@ namespace Mono.Unix.Native {
 		//
 		// <grp.h>
 		//
-		// TODO: putgrent(3), fgetgrent_r(), getgrouplist(2), initgroups(3)
+		// TODO: putgrent(3), fgetgrent_r(), initgroups(3)
+
+		// getgrouplist(2)
+		[DllImport (LIBC, SetLastError=true, EntryPoint="getgrouplist")]
+		private static extern int sys_getgrouplist (string user, uint grp, uint [] groups,ref int ngroups);
+
+		public static Group [] getgrouplist (string username)
+		{
+			if (username == null)
+				throw new ArgumentNullException ("username");
+			if (username.Trim () == "")
+				throw new ArgumentException ("Username cannot be empty", "username");
+			// Syscall to getpwnam to retrieve user uid
+			Passwd pw = Syscall.getpwnam (username);
+			if (pw == null)
+				throw new ArgumentException (string.Format ("User {0} does not exists",username), "username");
+			return getgrouplist (pw);
+		}
+
+		public static Group [] getgrouplist (Passwd user)
+		{
+			if (user == null)
+				throw new ArgumentNullException ("user");
+			// initializing ngroups by 16 to get the group count
+			int ngroups = 8;
+			int res = -1;
+			// allocating buffer to store group uid's
+			uint [] groups=null;
+			do {
+				Array.Resize (ref groups, ngroups*=2);
+				res = sys_getgrouplist (user.pw_name, user.pw_gid, groups, ref ngroups);
+			}
+			while (res == -1);
+			List<Group> result = new List<Group> ();
+			Group gr = null;
+			for (int i = 0; i < res; i++) {
+				gr = Syscall.getgrgid (groups [i]);
+				if (gr != null)
+					result.Add (gr);
+			}
+			return result.ToArray ();
+		}
 
 		// setgroups(2)
 		//    int setgroups (size_t size, const gid_t *list);
-		[DllImport (MPH, SetLastError=true, 
+		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_setgroups")]
 		public static extern int setgroups (ulong size, uint[] list);
 

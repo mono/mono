@@ -212,6 +212,8 @@ namespace Commons.Xml.Relaxng.XmlSchema
 			// simple-type based validation (since there is no
 			// other way, because of sucky XmlSchemaSimpleType
 			// design).
+			if (value != null)
+				value = value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 			XmlValidatingReader v = new XmlValidatingReader (
 				new XmlTextReader (
 					String.Concat ("<root>", value, "</root>"),

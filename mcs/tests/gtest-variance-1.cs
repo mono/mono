@@ -15,7 +15,7 @@ class Foo : IFoo<string>
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string bar = "Who is John Galt?";
 		IFoo<string> foo = new Foo(bar);

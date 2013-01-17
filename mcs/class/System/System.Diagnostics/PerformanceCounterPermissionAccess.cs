@@ -35,7 +35,6 @@ namespace System.Diagnostics {
 	[Flags]
 	public enum PerformanceCounterPermissionAccess {
 		None=0x00,
-#if NET_2_0
 		[Obsolete ()]
 		Browse=1,
 		Read=1,
@@ -43,11 +42,6 @@ namespace System.Diagnostics {
 		[Obsolete ()]
 		Instrument=3,
 		Administer=7,
-#else
-		Browse=0x02,
-		Instrument=0x06,
-		Administer=0x0E,
-#endif
 	}
 }
 

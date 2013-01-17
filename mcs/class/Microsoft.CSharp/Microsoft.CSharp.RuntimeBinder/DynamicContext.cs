@@ -70,21 +70,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (dc != null)
 					return dc;
 
-				var reporter = new Compiler.Report (ErrorPrinter.Instance) {
+				var settings = new Compiler.CompilerSettings () {
 					WarningLevel = 0
 				};
 
-				var settings = new Compiler.CompilerSettings ();
-
-				var cc = new Compiler.CompilerContext (settings, reporter) {
+				var cc = new Compiler.CompilerContext (settings, ErrorPrinter.Instance) {
 					IsRuntimeBinder = true
 				};
-
-				//IList<Compiler.PredefinedTypeSpec> core_types = null;
-				//// HACK: To avoid re-initializing static TypeManager types, like string_type
-				//if (!Compiler.RootContext.EvalMode) {
-				//    core_types = Compiler.TypeManager.InitCoreTypes ();
-				//}
 
 				//
 				// Any later loaded assemblies are handled internally by GetAssemblyDefinition
@@ -95,17 +87,19 @@ namespace Microsoft.CSharp.RuntimeBinder
 				//
 				var module = new Compiler.ModuleContainer (cc);
 				module.HasTypesFullyDefined = true;
+				
+				// Setup fake assembly, it's used mostly to simplify checks like friend-access
 				var temp = new Compiler.AssemblyDefinitionDynamic (module, "dynamic");
 				module.SetDeclaringAssembly (temp);
 
-				// Import all currently loaded assemblies
-				var domain = AppDomain.CurrentDomain;
-
-				temp.Create (domain, System.Reflection.Emit.AssemblyBuilderAccess.Run);
 				var importer = new Compiler.ReflectionImporter (module, cc.BuiltinTypes) {
 					IgnorePrivateMembers = false
 				};
 
+				// Import all currently loaded assemblies
+				// TODO: Rewrite this to populate type cache on-demand, that should greatly
+				// reduce our start-up cost
+				var domain = AppDomain.CurrentDomain;
 				foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
 					importer.ImportAssembly (a, module.GlobalRootNamespace);
 				}
@@ -152,8 +146,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 			Type value_type = (info.Flags & CSharpArgumentInfoFlags.UseCompileTimeType) != 0 ? value.Expression.Type : value.LimitType;
 			var type = ImportType (value_type);
 
-			if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0)
-				return Compiler.Constant.CreateConstantFromValue (type, value.Value, Compiler.Location.Null);
+			if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0) {
+				var c = Compiler.Constant.CreateConstantFromValue (type, value.Value, Compiler.Location.Null);
+				//
+				// It can be null for misused Constant flag
+				//
+				if (c != null)
+					return c;
+			}
 
 			return new Compiler.RuntimeValueExpression (value, type);
 		}

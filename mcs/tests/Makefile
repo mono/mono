@@ -19,7 +19,7 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_4_5, $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
@@ -46,9 +46,9 @@ test-casts: boot-casts.out mcs-casts.out
 
 TEST_PATTERN = 'v2'
 
-ifeq (net_4_0, $(PROFILE))
+ifeq (net_4_5, $(PROFILE))
 TEST_PATTERN = 'v4'
-DEFINES = -compiler-options:"-d:NET_4_0 -sdk:4"
+DEFINES = -compiler-options:"-d:NET_4_0;NET_4_5"
 endif
 
 LOCAL_RUNTIME_FLAGS = --verify-all
@@ -64,6 +64,9 @@ qcheck: build-compiler-lib qcheck2
 	
 qcheck2:
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
+
+gen-mt-tests:
+	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
 
 test-local:
 	@:
@@ -91,9 +94,5 @@ csproj-local:
 	$(ILASM) /dll /out:$@ $<
 
 setup:
-	$(ILASM) /dll property-il.il
-	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
-	$(TEST_RUNTIME) property-main.exe
-
 	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
 	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll

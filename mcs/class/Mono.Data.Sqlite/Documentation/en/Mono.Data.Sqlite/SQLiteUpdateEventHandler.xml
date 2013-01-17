@@ -1,0 +1,26 @@
+<Type Name="SQLiteUpdateEventHandler" FullName="Mono.Data.Sqlite.SQLiteUpdateEventHandler">
+  <TypeSignature Language="C#" Value="public delegate void SQLiteUpdateEventHandler(object sender, UpdateEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SQLiteUpdateEventHandler extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="Mono.Data.Sqlite.UpdateEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sender">The connection committing the transaction</param>
+    <param name="e">The event parameters which triggered the event</param>
+    <summary>
+            Raised when data is inserted, updated and deleted on a given connection
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

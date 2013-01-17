@@ -31,6 +31,10 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 
+/*--For Bug 853 Test Begin--*/
+using Mono.Data.Sqlite;
+/*--For Bug 853 Test End--*/
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Data.Common
@@ -180,6 +184,44 @@ namespace MonoTests.System.Data.Common
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
+		
+		[Test]
+		[Category ("NotWorking")] // Requires newer sqlite than is on wrench
+		public void XimarinBugzillaBug853Test()
+                {
+                        const string connectionString = "URI = file:./SqliteTest.db; Version = 3";//will be in System.Data directory
+                        SqliteConnection dbConnection = new SqliteConnection(connectionString);
+                        dbConnection.Open();
+			SqliteCommand ClearTableEntry=new SqliteCommand("DELETE FROM Primus;",dbConnection);
+			ClearTableEntry.ExecuteNonQuery();
+
+                        SqliteDataAdapter sqliteDataAdapter = new SqliteDataAdapter("SELECT * FROM primus", dbConnection);
+                        SqliteCommandBuilder builder = new SqliteCommandBuilder(sqliteDataAdapter);
+			sqliteDataAdapter.InsertCommand = builder.GetInsertCommand();
+                        sqliteDataAdapter.DeleteCommand = builder.GetDeleteCommand();
+			
+                        DataSet dataSet = new DataSet();
+
+                        sqliteDataAdapter.Fill(dataSet, "Primus");//reset
+
+                        DataRow rowToBeAdded = dataSet.Tables["Primus"].NewRow();
+                        rowToBeAdded["id"] = 123;
+                        rowToBeAdded["name"] = "Name";//not null primary key
+                        rowToBeAdded["value"] = 777;
+
+                        dataSet.Tables["Primus"].Rows.Add(rowToBeAdded);
+sqliteDataAdapter.Update (dataSet, "Primus");
+
+			//This would fail with NULL constraint violation in bug
+			//report.  Because before the patch, it would create
+			//a new record with all fields being null-- if the
+			//exception rises, test fails
+                        sqliteDataAdapter.Update (dataSet, "Primus");
+
+                        dbConnection.Close();
+                        dbConnection = null;
+		}
+
 #endif
 
 		class MyAdapter : DbDataAdapter

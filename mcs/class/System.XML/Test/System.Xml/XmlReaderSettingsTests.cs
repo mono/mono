@@ -419,6 +419,33 @@ namespace MonoTests.System.Xml
 			XmlReader r = XmlReader.Create (new StringReader ("<x/>"), new XmlReaderSettings (), "urn:foo");
 			Assert.AreEqual ("urn:foo", r.BaseURI);
 		}
+
+#if NET_4_5
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadonlyAsync ()
+		{
+			var s = new XmlReaderSettings ();
+			var r = XmlReader.Create (new StringReader ("<root/>"), s);
+			r.Settings.Async = true;
+		}
+
+		[Test]
+		public void AsyncPropagation ()
+		{
+			var s = new XmlReaderSettings ();
+			s.Async = true;
+			var r = XmlReader.Create (new StringReader ("<root/>"), s);
+
+			var c = s.Clone ();
+			Assert.IsTrue (c.Async);
+			c.Reset ();
+			Assert.IsFalse (c.Async);
+
+			var r2 = XmlReader.Create (r, c);
+			Assert.IsTrue (r2.Settings.Async);
+		}
+#endif
 	}
 }
 #endif

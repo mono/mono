@@ -1,176 +1,355 @@
 <lcids>
-  <lcid name="ar" id="0x0001" parent="0x007F" specific="0x0401" iso2="ar" iso3="ara" win="ARA" icu_name="Arabic" />
-  <lcid name="bg" id="0x0002" parent="0x007F" specific="0x0402" iso2="bg" iso3="bul" win="BGR" icu_name="Bulgarian" />
-  <lcid name="ca" id="0x0003" parent="0x007F" specific="0x0403" iso2="ca" iso3="cat" win="CAT" icu_name="Catalan" />
-  <lcid name="zh-CHS" id="0x0004" parent="0x007F" specific="0x0000" iso2="zh" iso3="zho" win="CHS" icu_name="Chinese" />
-  <lcid name="cs" id="0x0005" parent="0x007F" specific="0x0405" iso2="cs" iso3="ces" win="CSY" icu_name="Czech" />
-  <lcid name="da" id="0x0006" parent="0x007F" specific="0x0406" iso2="da" iso3="dan" win="DAN" icu_name="Danish" />
-  <lcid name="de" id="0x0007" parent="0x007F" specific="0x0407" iso2="de" iso3="deu" win="DEU" icu_name="German" />
-  <lcid name="el" id="0x0008" parent="0x007F" specific="0x0408" iso2="el" iso3="ell" win="ELL" icu_name="Greek" />
-  <lcid name="en" id="0x0009" parent="0x007F" specific="0x0409" iso2="en" iso3="eng" win="ENU" icu_name="English" />
-  <lcid name="ar-KW" id="0x3401" parent="0x0001" specific="0x3401" iso2="ar" iso3="ara" win="ARK" icu_name="Arabic (Kuwait)" />
-  <lcid name="fi" id="0x000B" parent="0x007F" specific="0x040B" iso2="fi" iso3="fin" win="FIN" icu_name="Finnish" />
-  <lcid name="fr" id="0x000C" parent="0x007F" specific="0x040C" iso2="fr" iso3="fra" win="FRA" icu_name="French" />
-  <lcid name="he" id="0x000D" parent="0x007F" specific="0x040D" iso2="he" iso3="heb" win="HEB" icu_name="Hebrew" />
-  <lcid name="hu" id="0x000E" parent="0x007F" specific="0x040E" iso2="hu" iso3="hun" win="HUN" icu_name="Hungarian" />
-  <lcid name="is" id="0x000F" parent="0x007F" specific="0x040F" iso2="is" iso3="isl" win="ISL" icu_name="Icelandic" />
-  <lcid name="it" id="0x0010" parent="0x007F" specific="0x0410" iso2="it" iso3="ita" win="ITA" icu_name="Italian" />
-  <lcid name="ja" id="0x0011" parent="0x007F" specific="0x0411" iso2="ja" iso3="jpn" win="JPN" icu_name="Japanese" />
-  <lcid name="en-PH" id="0x3409" parent="0x0009" specific="0x3409" iso2="en" iso3="eng" win="ENP" icu_name="English (Philippines)" />
-  <lcid name="nl" id="0x0013" parent="0x007F" specific="0x0413" iso2="nl" iso3="nld" win="NLD" icu_name="Dutch" />
-  <lcid name="ka" id="0x0037" parent="0x007F" specific="0x0437" iso2="ka" iso3="kat" win="KAT" icu_name="Georgian" />
-  <lcid name="ko" id="0x0012" parent="0x007F" specific="0x0412" iso2="ko" iso3="kor" win="KOR" icu_name="Korean" />
-  <lcid name="ar-SA" id="0x0401" parent="0x0001" specific="0x0401" iso2="ar" iso3="ara" win="ARA" icu_name="Arabic (Saudi Arabia)" />
-  <lcid name="bg-BG" id="0x0402" parent="0x0002" specific="0x0402" iso2="bg" iso3="bul" win="BGR" icu_name="Bulgarian (Bulgaria)" />
-  <lcid name="ca-ES" id="0x0403" parent="0x0003" specific="0x0403" iso2="ca" iso3="cat" win="CAT" icu_name="Catalan (Spain)" />
-  <lcid name="zh-TW" id="0x0404" parent="0x7C04" specific="0x0404" iso2="zh" iso3="zho" win="CHT" icu_name="Chinese (Taiwan)" />
-  <lcid name="cs-CZ" id="0x0405" parent="0x0005" specific="0x0405" iso2="cs" iso3="ces" win="CSY" icu_name="Czech (Czech Republic)" />
-  <lcid name="hr" id="0x001A" parent="0x007F" specific="0x041A" iso2="hr" iso3="hrv" win="HRV" icu_name="Croatian" />
-  <lcid name="de-DE" id="0x0407" parent="0x0007" specific="0x0407" iso2="de" iso3="deu" win="DEU" icu_name="German (Germany)" />
-  <lcid name="sq" id="0x001C" parent="0x007F" specific="0x041C" iso2="sq" iso3="sqi" win="SQI" icu_name="Albanian" />
-  <lcid name="en-US" id="0x0409" parent="0x0009" specific="0x0409" iso2="en" iso3="eng" win="ENU" icu_name="English (United States)" />
-  <lcid name="ar-AE" id="0x3801" parent="0x0001" specific="0x3801" iso2="ar" iso3="ara" win="ARU" icu_name="Arabic (United Arab Emirates)" />
-  <lcid name="fi-FI" id="0x040B" parent="0x000B" specific="0x040B" iso2="fi" iso3="fin" win="FIN" icu_name="Finnish (Finland)" />
-  <lcid name="fr-FR" id="0x040C" parent="0x000C" specific="0x040C" iso2="fr" iso3="fra" win="FRA" icu_name="French (France)" />
-  <lcid name="he-IL" id="0x040D" parent="0x000D" specific="0x040D" iso2="he" iso3="heb" win="HEB" icu_name="Hebrew (Israel)" />
-  <lcid name="hu-HU" id="0x040E" parent="0x000E" specific="0x040E" iso2="hu" iso3="hun" win="HUN" icu_name="Hungarian (Hungary)" />
-  <lcid name="be" id="0x0023" parent="0x007F" specific="0x0423" iso2="be" iso3="bel" win="BEL" icu_name="Belarusian" />
-  <lcid name="id" id="0x0021" parent="0x007F" specific="0x0421" iso2="id" iso3="ind" win="IND" icu_name="Indonesian" />
-  <lcid name="et" id="0x0025" parent="0x007F" specific="0x0425" iso2="et" iso3="est" win="ETI" icu_name="Estonian" />
-  <lcid name="ka-GE" id="0x0437" parent="0x0037" specific="0x0437" iso2="ka" iso3="kat" win="KAT" icu_name="Georgian (Georgia)" />
-  <lcid name="ko-KR" id="0x0412" parent="0x0012" specific="0x0412" iso2="ko" iso3="kor" win="KOR" icu_name="Korean (South Korea)" />
-  <lcid name="nl-NL" id="0x0413" parent="0x0013" specific="0x0413" iso2="nl" iso3="nld" win="NLD" icu_name="Dutch (Netherlands)" />
-  <lcid name="no" id="0x0014" parent="0x007F" specific="0x0414" iso2="no" iso3="nor" win="NOR" icu_name="Norwegian" />
-  <lcid name="fa" id="0x0029" parent="0x007F" specific="0x0429" iso2="fa" iso3="fas" win="FAR" icu_name="Persian" />
-  <lcid name="lt" id="0x0027" parent="0x007F" specific="0x0427" iso2="lt" iso3="lit" win="LTH" icu_name="Lithuanian" />
-  <lcid name="hy" id="0x002B" parent="0x007F" specific="0x042B" iso2="hy" iso3="hye" win="HYE" icu_name="Armenian" />
-  <lcid name="zh-CN" id="0x0804" parent="0x0004" specific="0x0804" iso2="zh" iso3="zho" win="CHS" icu_name="Chinese (China)" />
-  <lcid name="eu" id="0x002D" parent="0x007F" specific="0x042D" iso2="eu" iso3="eus" win="EUQ" icu_name="Basque" />
-  <lcid name="hr-HR" id="0x041A" parent="0x001A" specific="0x041A" iso2="hr" iso3="hrv" win="HRV" icu_name="Croatian (Croatia)" />
-  <lcid name="de-CH" id="0x0807" parent="0x0007" specific="0x0807" iso2="de" iso3="deu" win="DES" icu_name="German (Switzerland)" />
-  <lcid name="sq-AL" id="0x041C" parent="0x001C" specific="0x041C" iso2="sq" iso3="sqi" win="SQI" icu_name="Albanian (Albania)" />
-  <lcid name="en-GB" id="0x0809" parent="0x0009" specific="0x0809" iso2="en" iso3="eng" win="ENG" icu_name="English (United Kingdom)" />
-  <lcid name="ar-BH" id="0x3C01" parent="0x0001" specific="0x3C01" iso2="ar" iso3="ara" win="ARH" icu_name="Arabic (Bahrain)" />
-  <lcid name="pl" id="0x0015" parent="0x007F" specific="0x0415" iso2="pl" iso3="pol" win="PLK" icu_name="Polish" />
-  <lcid name="fr-BE" id="0x080C" parent="0x000C" specific="0x080C" iso2="fr" iso3="fra" win="FRB" icu_name="French (Belgium)" />
-  <lcid name="id-ID" id="0x0421" parent="0x0021" specific="0x0421" iso2="id" iso3="ind" win="IND" icu_name="Indonesian (Indonesia)" />
-  <lcid name="af" id="0x0036" parent="0x007F" specific="0x0436" iso2="af" iso3="afr" win="AFK" icu_name="Afrikaans" />
-  <lcid name="be-BY" id="0x0423" parent="0x0023" specific="0x0423" iso2="be" iso3="bel" win="BEL" icu_name="Belarusian (Belarus)" />
-  <lcid name="fo" id="0x0038" parent="0x007F" specific="0x0438" iso2="fo" iso3="fao" win="FOS" icu_name="Faroese" />
-  <lcid name="et-EE" id="0x0425" parent="0x0025" specific="0x0425" iso2="et" iso3="est" win="ETI" icu_name="Estonian (Estonia)" />
-  <lcid name="lv-LV" id="0x0426" parent="0x0026" specific="0x0426" iso2="lv" iso3="lav" win="LVI" icu_name="Latvian (Latvia)" />
-  <lcid name="nl-BE" id="0x0813" parent="0x0013" specific="0x0813" iso2="nl" iso3="nld" win="NLB" icu_name="Dutch (Belgium)" />
-  <lcid name="da-DK" id="0x0406" parent="0x0006" specific="0x0406" iso2="da" iso3="dan" win="DAN" icu_name="Danish (Denmark)" />
-  <lcid name="fa-IR" id="0x0429" parent="0x0029" specific="0x0429" iso2="fa" iso3="fas" win="FAR" icu_name="Persian (Iran)" />
-  <lcid name="el-GR" id="0x0408" parent="0x0008" specific="0x0408" iso2="el" iso3="ell" win="ELL" icu_name="Greek (Greece)" />
-  <lcid name="hy-AM" id="0x042B" parent="0x002B" specific="0x042B" iso2="hy" iso3="hye" win="HYE" icu_name="Armenian (Armenia)" />
-  <lcid name="zh-HK" id="0x0C04" parent="0x7C04" specific="0x0C04" iso2="zh" iso3="zho" win="ZHH" icu_name="Chinese (Hong Kong S.A.R., China)" />
-  <lcid name="eu-ES" id="0x042D" parent="0x002D" specific="0x042D" iso2="eu" iso3="eus" win="EUQ" icu_name="Basque (Spain)" />
-  <lcid name="hi" id="0x0039" parent="0x007F" specific="0x0439" iso2="hi" iso3="hin" win="HIN" icu_name="Hindi" />
-  <lcid name="de-AT" id="0x0C07" parent="0x0007" specific="0x0C07" iso2="de" iso3="deu" win="DEA" icu_name="German (Austria)" />
-  <lcid name="lv" id="0x0026" parent="0x007F" specific="0x0426" iso2="lv" iso3="lav" win="LVI" icu_name="Latvian" />
-  <lcid name="en-AU" id="0x0C09" parent="0x0009" specific="0x0C09" iso2="en" iso3="eng" win="ENA" icu_name="English (Australia)" />
-  <lcid name="ar-QA" id="0x4001" parent="0x0001" specific="0x4001" iso2="ar" iso3="ara" win="ARQ" icu_name="Arabic (Qatar)" />
-  <lcid name="gu" id="0x0047" parent="0x007F" specific="0x0447" iso2="gu" iso3="guj" win="GUJ" icu_name="Gujarati" />
-  <lcid name="fr-CA" id="0x0C0C" parent="0x000C" specific="0x0C0C" iso2="fr" iso3="fra" win="FRC" icu_name="French (Canada)" />
-  <lcid name="ru" id="0x0019" parent="0x007F" specific="0x0419" iso2="ru" iso3="rus" win="RUS" icu_name="Russian" />
-  <lcid name="af-ZA" id="0x0436" parent="0x0036" specific="0x0436" iso2="af" iso3="afr" win="AFK" icu_name="Afrikaans (South Africa)" />
-  <lcid name="kn" id="0x004B" parent="0x007F" specific="0x044B" iso2="kn" iso3="kan" win="KAN" icu_name="Kannada" />
-  <lcid name="fo-FO" id="0x0438" parent="0x0038" specific="0x0438" iso2="fo" iso3="fao" win="FOS" icu_name="Faroese (Faroe Islands)" />
-  <lcid name="hi-IN" id="0x0439" parent="0x0039" specific="0x0439" iso2="hi" iso3="hin" win="HIN" icu_name="Hindi (India)" />
-  <lcid name="mr" id="0x004E" parent="0x007F" specific="0x044E" iso2="mr" iso3="mar" win="MAR" icu_name="Marathi" />
-  <lcid name="ru-RU" id="0x0419" parent="0x0019" specific="0x0419" iso2="ru" iso3="rus" win="RUS" icu_name="Russian (Russia)" />
-  <lcid name="mk" id="0x002F" parent="0x007F" specific="0x042F" iso2="mk" iso3="mkd" win="MKI" icu_name="Macedonian" />
-  <lcid name="ar-LY" id="0x1001" parent="0x0001" specific="0x1001" iso2="ar" iso3="ara" win="ARL" icu_name="Arabic (Libya)" />
-  <lcid name="pt" id="0x0016" parent="0x007F" specific="0x0416" iso2="pt" iso3="por" win="PTB" icu_name="Portuguese" />
-  <lcid name="sk" id="0x001B" parent="0x007F" specific="0x041B" iso2="sk" iso3="slk" win="SKY" icu_name="Slovak" />
-  <lcid name="zh-SG" id="0x1004" parent="0x0004" specific="0x1004" iso2="zh" iso3="zho" win="ZHI" icu_name="Chinese (Singapore)" />
-  <lcid name="sw" id="0x0041" parent="0x007F" specific="0x0441" iso2="sw" iso3="swa" win="SWK" icu_name="Swahili" />
-  <lcid name="gl" id="0x0056" parent="0x007F" specific="0x0456" iso2="gl" iso3="glg" win="GLC" icu_name="Gallegan" />
-  <lcid name="de-LU" id="0x1007" parent="0x0007" specific="0x1007" iso2="de" iso3="deu" win="DEL" icu_name="German (Luxembourg)" />
-  <lcid name="ro" id="0x0018" parent="0x007F" specific="0x0418" iso2="ro" iso3="ron" win="ROM" icu_name="Romanian" />
-  <lcid name="en-CA" id="0x1009" parent="0x0009" specific="0x1009" iso2="en" iso3="eng" win="ENC" icu_name="English (Canada)" />
-  <lcid name="sl" id="0x0024" parent="0x007F" specific="0x0424" iso2="sl" iso3="slv" win="SLV" icu_name="Slovenian" />
-  <lcid name="gu-IN" id="0x0447" parent="0x0047" specific="0x0447" iso2="gu" iso3="guj" win="GUJ" icu_name="Gujarati (India)" />
-  <lcid name="fr-CH" id="0x100C" parent="0x000C" specific="0x100C" iso2="fr" iso3="fra" win="FRS" icu_name="French (Switzerland)" />
-  <lcid name="es-BO" id="0x400A" parent="0x000A" specific="0x400A" iso2="es" iso3="spa" win="ESB" icu_name="Spanish (Bolivia)" />
-  <lcid name="lt-LT" id="0x0427" parent="0x0027" specific="0x0427" iso2="lt" iso3="lit" win="LTH" icu_name="Lithuanian (Lithuania)" />
-  <lcid name="kn-IN" id="0x044B" parent="0x004B" specific="0x044B" iso2="kn" iso3="kan" win="KAN" icu_name="Kannada (India)" />
-  <lcid name="es" id="0x000A" parent="0x007F" specific="0x0C0A" iso2="es" iso3="spa" win="ESP" icu_name="Spanish" />
-  <lcid name="sv" id="0x001D" parent="0x007F" specific="0x041D" iso2="sv" iso3="swe" win="SVE" icu_name="Swedish" />
-  <lcid name="mr-IN" id="0x044E" parent="0x004E" specific="0x044E" iso2="mr" iso3="mar" win="MAR" icu_name="Marathi (India)" />
-  <lcid name="kok" id="0x0057" parent="0x007F" specific="0x0457" iso2="hi" iso3="kok" win="KNK" icu_name="Konkani" />
-  <lcid name="th" id="0x001E" parent="0x007F" specific="0x041E" iso2="th" iso3="tha" win="THA" icu_name="Thai" />
-  <lcid name="ar-DZ" id="0x1401" parent="0x0001" specific="0x1401" iso2="ar" iso3="ara" win="ARG" icu_name="Arabic (Algeria)" />
-  <lcid name="mk-MK" id="0x042F" parent="0x002F" specific="0x042F" iso2="mk" iso3="mkd" win="MKI" icu_name="Macedonian (Macedonia)" />
-  <lcid name="is-IS" id="0x040F" parent="0x000F" specific="0x040F" iso2="is" iso3="isl" win="ISL" icu_name="Icelandic (Iceland)" />
-  <lcid name="zh-MO" id="0x1404" parent="0x0004" specific="0x1404" iso2="zh" iso3="zho" win="ZHM" icu_name="Chinese (Macao S.A.R. China)" />
-  <lcid name="ja-JP" id="0x0411" parent="0x0011" specific="0x0411" iso2="ja" iso3="jpn" win="JPN" icu_name="Japanese (Japan)" />
-  <lcid name="gl-ES" id="0x0456" parent="0x0056" specific="0x0456" iso2="gl" iso3="glg" win="GLC" icu_name="Gallegan (Spain)" />
-  <lcid name="ar-IQ" id="0x0801" parent="0x0001" specific="0x0801" iso2="ar" iso3="ara" win="ARI" icu_name="Arabic (Iraq)" />
-  <lcid name="nb-NO" id="0x0414" parent="0x0014" specific="0x0414" iso2="nb" iso3="nob" win="NOR" icu_name="Norwegian Bokm?l (Norway)" />
-  <lcid name="en-NZ" id="0x1409" parent="0x0009" specific="0x1409" iso2="en" iso3="eng" win="ENZ" icu_name="English (New Zealand)" />
-  <lcid name="pt-BR" id="0x0416" parent="0x0016" specific="0x0416" iso2="pt" iso3="por" win="PTB" icu_name="Portuguese (Brazil)" />
-  <lcid name="tr" id="0x001F" parent="0x007F" specific="0x041F" iso2="tr" iso3="tur" win="TRK" icu_name="Turkish" />
-  <lcid name="fr-LU" id="0x140C" parent="0x000C" specific="0x140C" iso2="fr" iso3="fra" win="FRL" icu_name="French (Luxembourg)" />
-  <lcid name="ta" id="0x0049" parent="0x007F" specific="0x0449" iso2="ta" iso3="tam" win="TAM" icu_name="Tamil" />
-  <lcid name="te" id="0x004A" parent="0x007F" specific="0x044A" iso2="te" iso3="tel" win="TEL" icu_name="Telugu" />
-  <lcid name="sk-SK" id="0x041B" parent="0x001B" specific="0x041B" iso2="sk" iso3="slk" win="SKY" icu_name="Slovak (Slovakia)" />
-  <lcid name="es-MX" id="0x080A" parent="0x000A" specific="0x080A" iso2="es" iso3="spa" win="ESM" icu_name="Spanish (Mexico)" />
-  <lcid name="sv-SE" id="0x041D" parent="0x001D" specific="0x041D" iso2="sv" iso3="swe" win="SVE" icu_name="Swedish (Sweden)" />
-  <lcid name="th-TH" id="0x041E" parent="0x001E" specific="0x041E" iso2="th" iso3="tha" win="THA" icu_name="Thai (Thailand)" />
-  <lcid name="es-HN" id="0x480A" parent="0x000A" specific="0x480A" iso2="es" iso3="spa" win="ESH" icu_name="Spanish (Honduras)" />
-  <lcid name="vi" id="0x002A" parent="0x007F" specific="0x042A" iso2="vi" iso3="vie" win="VIT" icu_name="Vietnamese" />
-  <lcid name="ar-MA" id="0x1801" parent="0x0001" specific="0x1801" iso2="ar" iso3="ara" win="ARM" icu_name="Arabic (Morocco)" />
-  <lcid name="zh-CHT" id="0x7C04" parent="0x007F" specific="0x0000" iso2="zh" iso3="zho" win="CHT" icu_name="Chinese (Taiwan)" />
-  <lcid name="uk" id="0x0022" parent="0x007F" specific="0x0422" iso2="uk" iso3="ukr" win="UKR" icu_name="Ukrainian" />
-  <lcid name="nn-NO" id="0x0814" parent="0x0014" specific="0x0814" iso2="nn" iso3="nno" win="NON" icu_name="Norwegian Nynorsk (Norway)" />
-  <lcid name="pt-PT" id="0x0816" parent="0x0016" specific="0x0816" iso2="pt" iso3="por" win="PTG" icu_name="Portuguese (Portugal)" />
-  <lcid name="en-IE" id="0x1809" parent="0x0009" specific="0x1809" iso2="en" iso3="eng" win="ENI" icu_name="English (Ireland)" />
-  <lcid name="es-PA" id="0x180A" parent="0x000A" specific="0x180A" iso2="es" iso3="spa" win="ESA" icu_name="Spanish (Panama)" />
-  <lcid name="fr-MC" id="0x180C" parent="0x000C" specific="0x180C" iso2="fr" iso3="fra" win="FRM" icu_name="French (Monaco)" />
-  <lcid name="sv-FI" id="0x081D" parent="0x001D" specific="0x081D" iso2="sv" iso3="swe" win="SVF" icu_name="Swedish (Finland)" />
-  <lcid name="it-IT" id="0x0410" parent="0x0010" specific="0x0410" iso2="it" iso3="ita" win="ITA" icu_name="Italian (Italy)" />
-  <lcid name="es-NI" id="0x4C0A" parent="0x000A" specific="0x4C0A" iso2="es" iso3="spa" win="ESI" icu_name="Spanish (Nicaragua)" />
-  <lcid name="ar-TN" id="0x1C01" parent="0x0001" specific="0x1C01" iso2="ar" iso3="ara" win="ART" icu_name="Arabic (Tunisia)" />
-  <lcid name="kok-IN" id="0x0457" parent="0x0057" specific="0x0457" iso2="kok" iso3="kok" win="KNK" icu_name="Konkani (India)" />
-  <lcid name="es-SV" id="0x440A" parent="0x000A" specific="0x440A" iso2="es" iso3="spa" win="ESE" icu_name="Spanish (El Salvador)" />
-  <lcid name="ro-RO" id="0x0418" parent="0x0018" specific="0x0418" iso2="ro" iso3="ron" win="ROM" icu_name="Romanian (Romania)" />
-  <lcid name="en-ZA" id="0x1C09" parent="0x0009" specific="0x1C09" iso2="en" iso3="eng" win="ENS" icu_name="English (South Africa)" />
-  <lcid name="es-DO" id="0x1C0A" parent="0x000A" specific="0x1C0A" iso2="es" iso3="spa" win="ESD" icu_name="Spanish (Dominican Republic)" />
-  <lcid name="tr-TR" id="0x041F" parent="0x001F" specific="0x041F" iso2="tr" iso3="tur" win="TRK" icu_name="Turkish (Turkey)" />
-  <lcid name="sw-KE" id="0x0441" parent="0x0041" specific="0x0441" iso2="sw" iso3="swa" win="SWK" icu_name="Swahili (Kenya)" />
-  <lcid name="ar-EG" id="0x0C01" parent="0x0001" specific="0x0C01" iso2="ar" iso3="ara" win="ARE" icu_name="Arabic (Egypt)" />
-  <lcid name="ar-OM" id="0x2001" parent="0x0001" specific="0x2001" iso2="ar" iso3="ara" win="ARO" icu_name="Arabic (Oman)" />
-  <lcid name="ta-IN" id="0x0449" parent="0x0049" specific="0x0449" iso2="ta" iso3="tam" win="TAM" icu_name="Tamil (India)" />
-  <lcid name="te-IN" id="0x044A" parent="0x004A" specific="0x044A" iso2="te" iso3="tel" win="TEL" icu_name="Telugu (India)" />
-  <lcid name="vi-VN" id="0x042A" parent="0x002A" specific="0x042A" iso2="vi" iso3="vie" win="VIT" icu_name="Vietnamese (Vietnam)" />
-  <lcid name="es-ES" id="0x0C0A" parent="0x000A" specific="0x0C0A" iso2="es" iso3="spa" win="ESN" icu_name="Spanish (Spain)" />
-  <lcid name="en-JM" id="0x2009" parent="0x0009" specific="0x2009" iso2="en" iso3="eng" win="ENJ" icu_name="English (Jamaica)" />
-  <lcid name="es-VE" id="0x200A" parent="0x000A" specific="0x200A" iso2="es" iso3="spa" win="ESV" icu_name="Spanish (Venezuela)" />
-  <lcid name="pl-PL" id="0x0415" parent="0x0015" specific="0x0415" iso2="pl" iso3="pol" win="PLK" icu_name="Polish (Poland)" />
-  <lcid name="de-LI" id="0x1407" parent="0x0007" specific="0x1407" iso2="de" iso3="deu" win="DEC" icu_name="German (Liechtenstein)" />
-  <lcid name="ar-YE" id="0x2401" parent="0x0001" specific="0x2401" iso2="ar" iso3="ara" win="ARY" icu_name="Arabic (Yemen)" />
-  <lcid name="es-CR" id="0x140A" parent="0x000A" specific="0x140A" iso2="es" iso3="spa" win="ESC" icu_name="Spanish (Costa Rica)" />
-  <lcid name="Cy-sr-SP" id="0x0C1A" parent="0x001A" specific="0x0C1A" iso2="sr" iso3="srp" win="SRB" icu_name="Serbian" />
-  <lcid name="es-CL" id="0x340A" parent="0x000A" specific="0x340A" iso2="es" iso3="spa" win="ESL" icu_name="Spanish (Chile)" />
-  <lcid name="it-CH" id="0x0810" parent="0x0010" specific="0x0810" iso2="it" iso3="ita" win="ITS" icu_name="Italian (Switzerland)" />
-  <lcid name="en-CB" id="0x2409" parent="0x0009" specific="0x2409" iso2="en" iso3="eng" win="ENB" icu_name="English (U.S. Virgin Islands)" />
-  <lcid name="es-CO" id="0x240A" parent="0x000A" specific="0x240A" iso2="es" iso3="spa" win="ESO" icu_name="Spanish (Colombia)" />
-  <lcid name="es-PR" id="0x500A" parent="0x000A" specific="0x500A" iso2="es" iso3="spa" win="ESU" icu_name="Spanish (Puerto Rico)" />
-  <lcid name="uk-UA" id="0x0422" parent="0x0022" specific="0x0422" iso2="uk" iso3="ukr" win="UKR" icu_name="Ukrainian (Ukraine)" />
-  <lcid name="sl-SI" id="0x0424" parent="0x0024" specific="0x0424" iso2="sl" iso3="slv" win="SLV" icu_name="Slovenian (Slovenia)" />
-  <lcid name="Lt-sr-SP" id="0x081A" parent="0x001A" specific="0x081A" iso2="sr" iso3="srp" win="SRL" icu_name="Serbo-Croatian" />
-  <lcid name="ar-SY" id="0x2801" parent="0x0001" specific="0x2801" iso2="ar" iso3="ara" win="ARS" icu_name="Arabic (Syria)" />
-  <lcid name="en-BZ" id="0x2809" parent="0x0009" specific="0x2809" iso2="en" iso3="eng" win="ENL" icu_name="English (Belize)" />
-  <lcid name="es-PE" id="0x280A" parent="0x000A" specific="0x280A" iso2="es" iso3="spa" win="ESR" icu_name="Spanish (Peru)" />
-  <lcid name="es-GT" id="0x100A" parent="0x000A" specific="0x100A" iso2="es" iso3="spa" win="ESG" icu_name="Spanish (Guatemala)" />
-  <lcid name="ar-JO" id="0x2C01" parent="0x0001" specific="0x2C01" iso2="ar" iso3="ara" win="ARJ" icu_name="Arabic (Jordan)" />
-  <lcid name="en-TT" id="0x2C09" parent="0x0009" specific="0x2C09" iso2="en" iso3="eng" win="ENT" icu_name="English (Trinidad and Tobago)" />
-  <lcid name="es-AR" id="0x2C0A" parent="0x000A" specific="0x2C0A" iso2="es" iso3="spa" win="ESS" icu_name="Spanish (Argentina)" />
-  <lcid name="es-PY" id="0x3C0A" parent="0x000A" specific="0x3C0A" iso2="es" iso3="spa" win="ESZ" icu_name="Spanish (Paraguay)" />
-  <lcid name="es-UY" id="0x380A" parent="0x000A" specific="0x380A" iso2="es" iso3="spa" win="ESY" icu_name="Spanish (Uruguay)" />
-  <lcid name="ar-LB" id="0x3001" parent="0x0001" specific="0x3001" iso2="ar" iso3="ara" win="ARB" icu_name="Arabic (Lebanon)" />
-  <lcid name="en-ZW" id="0x3009" parent="0x0009" specific="0x3009" iso2="en" iso3="eng" win="ENW" icu_name="English (Zimbabwe)" />
-  <lcid name="es-EC" id="0x300A" parent="0x000A" specific="0x300A" iso2="es" iso3="spa" win="ESF" icu_name="Spanish (Ecuador)" />
+  <lcid name="ar" id="0x0001" parent="0x007F" iso2="ar" iso3="ara" win="ARA" />
+  <lcid name="bg" id="0x0002" parent="0x007F" iso2="bg" iso3="bul" win="BGR" />
+  <lcid name="ca" id="0x0003" parent="0x007F" iso2="ca" iso3="cat" win="CAT" />
+  <lcid name="zh_Hans" id="0x0004" parent="0x7804" iso2="zh" iso3="zho" win="CHS" />
+  <lcid name="zh_CHS" id="0x0004" parent="0x0004" iso2="zh" iso3="zho" win="CHS" />
+  <lcid name="cs" id="0x0005" parent="0x007F" iso2="cs" iso3="ces" win="CSY" />
+  <lcid name="da" id="0x0006" parent="0x007F" iso2="da" iso3="dan" win="DAN" />
+  <lcid name="de" id="0x0007" parent="0x007F" iso2="de" iso3="deu" win="DEU" />
+  <lcid name="el" id="0x0008" parent="0x007F" iso2="el" iso3="ell" win="ELL" />
+  <lcid name="en" id="0x0009" parent="0x007F" iso2="en" iso3="eng" win="ENU" />
+  <lcid name="es" id="0x000A" parent="0x007F" iso2="es" iso3="spa" win="ESP" />
+  <lcid name="fi" id="0x000B" parent="0x007F" iso2="fi" iso3="fin" win="FIN" />
+  <lcid name="fr" id="0x000C" parent="0x007F" iso2="fr" iso3="fra" win="FRA" />
+  <lcid name="he" id="0x000D" parent="0x007F" iso2="he" iso3="heb" win="HEB" />
+  <lcid name="hu" id="0x000E" parent="0x007F" iso2="hu" iso3="hun" win="HUN" />
+  <lcid name="is" id="0x000F" parent="0x007F" iso2="is" iso3="isl" win="ISL" />
+  <lcid name="it" id="0x0010" parent="0x007F" iso2="it" iso3="ita" win="ITA" />
+  <lcid name="ja" id="0x0011" parent="0x007F" iso2="ja" iso3="jpn" win="JPN" />
+  <lcid name="ko" id="0x0012" parent="0x007F" iso2="ko" iso3="kor" win="KOR" />
+  <lcid name="nl" id="0x0013" parent="0x007F" iso2="nl" iso3="nld" win="NLD" />
+  <lcid name="no" id="0x0014" parent="0x007F" iso2="nb" iso3="nob" win="NOR" />
+  <lcid name="pl" id="0x0015" parent="0x007F" iso2="pl" iso3="pol" win="PLK" />
+  <lcid name="pt" id="0x0016" parent="0x007F" iso2="pt" iso3="por" win="PTB" />
+  <lcid name="rm" id="0x0017" parent="0x007F" iso2="rm" iso3="roh" win="RMC" />
+  <lcid name="ro" id="0x0018" parent="0x007F" iso2="ro" iso3="ron" win="ROM" />
+  <lcid name="ru" id="0x0019" parent="0x007F" iso2="ru" iso3="rus" win="RUS" />
+  <lcid name="hr" id="0x001A" parent="0x007F" iso2="hr" iso3="hrv" win="HRV" />
+  <lcid name="sk" id="0x001B" parent="0x007F" iso2="sk" iso3="slk" win="SKY" />
+  <lcid name="sq" id="0x001C" parent="0x007F" iso2="sq" iso3="sqi" win="SQI" />
+  <lcid name="sv" id="0x001D" parent="0x007F" iso2="sv" iso3="swe" win="SVE" />
+  <lcid name="th" id="0x001E" parent="0x007F" iso2="th" iso3="tha" win="THA" />
+  <lcid name="tr" id="0x001F" parent="0x007F" iso2="tr" iso3="tur" win="TRK" />
+  <lcid name="ur" id="0x0020" parent="0x007F" iso2="ur" iso3="urd" win="URD" />
+  <lcid name="id" id="0x0021" parent="0x007F" iso2="id" iso3="ind" win="IND" />
+  <lcid name="uk" id="0x0022" parent="0x007F" iso2="uk" iso3="ukr" win="UKR" />
+  <lcid name="be" id="0x0023" parent="0x007F" iso2="be" iso3="bel" win="BEL" />
+  <lcid name="sl" id="0x0024" parent="0x007F" iso2="sl" iso3="slv" win="SLV" />
+  <lcid name="et" id="0x0025" parent="0x007F" iso2="et" iso3="est" win="ETI" />
+  <lcid name="lv" id="0x0026" parent="0x007F" iso2="lv" iso3="lav" win="LVI" />
+  <lcid name="lt" id="0x0027" parent="0x007F" iso2="lt" iso3="lit" win="LTH" />
+  <lcid name="tg" id="0x0028" parent="0x007F" iso2="tg" iso3="tgk" win="TAJ" />
+  <lcid name="fa" id="0x0029" parent="0x007F" iso2="fa" iso3="fas" win="FAR" />
+  <lcid name="vi" id="0x002A" parent="0x007F" iso2="vi" iso3="vie" win="VIT" />
+  <lcid name="hy" id="0x002B" parent="0x007F" iso2="hy" iso3="hye" win="HYE" />
+  <lcid name="az" id="0x002C" parent="0x007F" iso2="az" iso3="aze" win="AZE" />
+  <lcid name="eu" id="0x002D" parent="0x007F" iso2="eu" iso3="eus" win="EUQ" />
+  <lcid name="hsb" id="0x002E" parent="0x007F" iso2="hsb" iso3="hsb" win="HSB" />
+  <lcid name="mk" id="0x002F" parent="0x007F" iso2="mk" iso3="mkd" win="MKI" />
+  <lcid name="tn" id="0x0032" parent="0x007F" iso2="tn" iso3="tsn" win="TSN" />
+  <lcid name="xh" id="0x0034" parent="0x007F" iso2="xh" iso3="xho" win="XHO" />
+  <lcid name="zu" id="0x0035" parent="0x007F" iso2="zu" iso3="zul" win="ZUL" />
+  <lcid name="af" id="0x0036" parent="0x007F" iso2="af" iso3="afr" win="AFK" />
+  <lcid name="ka" id="0x0037" parent="0x007F" iso2="ka" iso3="kat" win="KAT" />
+  <lcid name="fo" id="0x0038" parent="0x007F" iso2="fo" iso3="fao" win="FOS" />
+  <lcid name="hi" id="0x0039" parent="0x007F" iso2="hi" iso3="hin" win="HIN" />
+  <lcid name="mt" id="0x003A" parent="0x007F" iso2="mt" iso3="mlt" win="MLT" />
+  <lcid name="se" id="0x003B" parent="0x007F" iso2="se" iso3="sme" win="SME" />
+  <lcid name="ga" id="0x003C" parent="0x007F" iso2="ga" iso3="gle" win="IRE" />
+  <lcid name="ms" id="0x003E" parent="0x007F" iso2="ms" iso3="msa" win="MSL" />
+  <lcid name="kk" id="0x003F" parent="0x007F" iso2="kk" iso3="kaz" win="KKZ" />
+  <lcid name="ky" id="0x0040" parent="0x007F" iso2="ky" iso3="kir" win="KYR" />
+  <lcid name="sw" id="0x0041" parent="0x007F" iso2="sw" iso3="swa" win="SWK" />
+  <lcid name="tk" id="0x0042" parent="0x007F" iso2="tk" iso3="tuk" win="TUK" />
+  <lcid name="uz" id="0x0043" parent="0x007F" iso2="uz" iso3="uzb" win="UZB" />
+  <lcid name="tt" id="0x0044" parent="0x007F" iso2="tt" iso3="tat" win="TTT" />
+  <lcid name="bn" id="0x0045" parent="0x007F" iso2="bn" iso3="bng" win="BNG" />
+  <lcid name="pa" id="0x0046" parent="0x007F" iso2="pa" iso3="pan" win="PAN" />
+  <lcid name="gu" id="0x0047" parent="0x007F" iso2="gu" iso3="guj" win="GUJ" />
+  <lcid name="or" id="0x0048" parent="0x007F" iso2="or" iso3="ori" win="ORI" />
+  <lcid name="ta" id="0x0049" parent="0x007F" iso2="ta" iso3="tam" win="TAM" />
+  <lcid name="te" id="0x004A" parent="0x007F" iso2="te" iso3="tel" win="TEL" />
+  <lcid name="kn" id="0x004B" parent="0x007F" iso2="kn" iso3="kan" win="KDI" />
+  <lcid name="ml" id="0x004C" parent="0x007F" iso2="ml" iso3="mym" win="MYM" />
+  <lcid name="as" id="0x004D" parent="0x007F" iso2="as" iso3="asm" win="ASM" />
+  <lcid name="mr" id="0x004E" parent="0x007F" iso2="mr" iso3="mar" win="MAR" />
+  <lcid name="sa" id="0x004F" parent="0x007F" iso2="sa" iso3="san" win="SAN" />
+  <lcid name="mn" id="0x0050" parent="0x007F" iso2="mn" iso3="mon" win="MON" />
+  <lcid name="bo" id="0x0051" parent="0x007F" iso2="bo" iso3="bod" win="BOB" />
+  <lcid name="cy" id="0x0052" parent="0x007F" iso2="cy" iso3="cym" win="CYM" />
+  <lcid name="km" id="0x0053" parent="0x007F" iso2="km" iso3="khm" win="KHM" />
+  <lcid name="lo" id="0x0054" parent="0x007F" iso2="lo" iso3="lao" win="LAO" />
+  <lcid name="gl" id="0x0056" parent="0x007F" iso2="gl" iso3="glg" win="GLC" />
+  <lcid name="kok" id="0x0057" parent="0x007F" iso2="kok" iso3="kok" win="KNK" />
+  <lcid name="syr" id="0x005A" parent="0x007F" iso2="syr" iso3="syr" win="SYR" />
+  <lcid name="si" id="0x005B" parent="0x007F" iso2="si" iso3="sin" win="SIN" />
+  <lcid name="iu" id="0x005D" parent="0x007F" iso2="iu" iso3="iku" win="IUK" />
+  <lcid name="am" id="0x005E" parent="0x007F" iso2="am" iso3="amh" win="AMH" />
+  <lcid name="tzm" id="0x005F" parent="0x007F" iso2="tzm" iso3="tzm" win="TZM" />
+  <lcid name="ne" id="0x0061" parent="0x007F" iso2="ne" iso3="nep" win="NEP" />
+  <lcid name="fy" id="0x0062" parent="0x007F" iso2="fy" iso3="fry" win="FYN" />
+  <lcid name="ps" id="0x0063" parent="0x007F" iso2="ps" iso3="pus" win="PAS" />
+  <lcid name="fil" id="0x0064" parent="0x007F" iso2="fil" iso3="fil" win="FPO" />
+  <lcid name="dv" id="0x0065" parent="0x007F" iso2="dv" iso3="div" win="DIV" />
+  <lcid name="ha" id="0x0068" parent="0x007F" iso2="ha" iso3="hau" win="HAU" />
+  <lcid name="yo" id="0x006A" parent="0x007F" iso2="yo" iso3="yor" win="YOR" />
+  <lcid name="quz" id="0x006B" parent="0x007F" iso2="quz" iso3="qub" win="QUB" />
+  <lcid name="nso" id="0x006C" parent="0x007F" iso2="nso" iso3="nso" win="NSO" />
+  <lcid name="ba" id="0x006D" parent="0x007F" iso2="ba" iso3="bak" win="BAS" />
+  <lcid name="lb" id="0x006E" parent="0x007F" iso2="lb" iso3="ltz" win="LBX" />
+  <lcid name="kl" id="0x006F" parent="0x007F" iso2="kl" iso3="kal" win="KAL" />
+  <lcid name="ig" id="0x0070" parent="0x007F" iso2="ig" iso3="ibo" win="IBO" />
+  <lcid name="ii" id="0x0078" parent="0x007F" iso2="ii" iso3="iii" win="III" />
+  <lcid name="arn" id="0x007A" parent="0x007F" iso2="arn" iso3="arn" win="MPD" />
+  <lcid name="moh" id="0x007C" parent="0x007F" iso2="moh" iso3="moh" win="MWK" />
+  <lcid name="br" id="0x007E" parent="0x007F" iso2="br" iso3="bre" win="BRE" />
+  <lcid name="ug" id="0x0080" parent="0x007F" iso2="ug" iso3="uig" win="UIG" />
+  <lcid name="mi" id="0x0081" parent="0x007F" iso2="mi" iso3="mri" win="MRI" />
+  <lcid name="oc" id="0x0082" parent="0x007F" iso2="oc" iso3="oci" win="OCI" />
+  <lcid name="co" id="0x0083" parent="0x007F" iso2="co" iso3="cos" win="COS" />
+  <lcid name="gsw" id="0x0084" parent="0x007F" iso2="gsw" iso3="gsw" win="GSW" />
+  <lcid name="sah" id="0x0085" parent="0x007F" iso2="sah" iso3="sah" win="SAH" />
+  <lcid name="qut" id="0x0086" parent="0x007F" iso2="qut" iso3="qut" win="QUT" />
+  <lcid name="rw" id="0x0087" parent="0x007F" iso2="rw" iso3="kin" win="KIN" />
+  <lcid name="wo" id="0x0088" parent="0x007F" iso2="wo" iso3="wol" win="WOL" />
+  <lcid name="prs" id="0x008C" parent="0x007F" iso2="prs" iso3="prs" win="PRS" />
+  <lcid name="gd" id="0x0091" parent="0x007F" iso2="gd" iso3="gla" win="GLA" />
+  <lcid name="ar_SA" id="0x0401" parent="0x0001" iso2="ar" iso3="ara" win="ARA" />
+  <lcid name="bg_BG" id="0x0402" parent="0x0002" iso2="bg" iso3="bul" win="BGR" />
+  <lcid name="ca_ES" id="0x0403" parent="0x0003" iso2="ca" iso3="cat" win="CAT" />
+  <lcid name="zh_TW" id="0x0404" parent="0x7C04" iso2="zh" iso3="zho" win="CHT" />
+  <lcid name="cs_CZ" id="0x0405" parent="0x0005" iso2="cs" iso3="ces" win="CSY" />
+  <lcid name="da_DK" id="0x0406" parent="0x0006" iso2="da" iso3="dan" win="DAN" />
+  <lcid name="de_DE" id="0x0407" parent="0x0007" iso2="de" iso3="deu" win="DEU" />
+  <lcid name="el_GR" id="0x0408" parent="0x0008" iso2="el" iso3="ell" win="ELL" />
+  <lcid name="en_US" id="0x0409" parent="0x0009" iso2="en" iso3="eng" win="ENU" />
+  <lcid name="fi_FI" id="0x040B" parent="0x000B" iso2="fi" iso3="fin" win="FIN" />
+  <lcid name="fr_FR" id="0x040C" parent="0x000C" iso2="fr" iso3="fra" win="FRA" />
+  <lcid name="he_IL" id="0x040D" parent="0x000D" iso2="he" iso3="heb" win="HEB" />
+  <lcid name="hu_HU" id="0x040E" parent="0x000E" iso2="hu" iso3="hun" win="HUN" />
+  <lcid name="is_IS" id="0x040F" parent="0x000F" iso2="is" iso3="isl" win="ISL" />
+  <lcid name="it_IT" id="0x0410" parent="0x0010" iso2="it" iso3="ita" win="ITA" />
+  <lcid name="ja_JP" id="0x0411" parent="0x0011" iso2="ja" iso3="jpn" win="JPN" />
+  <lcid name="ko_KR" id="0x0412" parent="0x0012" iso2="ko" iso3="kor" win="KOR" />
+  <lcid name="nl_NL" id="0x0413" parent="0x0013" iso2="nl" iso3="nld" win="NLD" />
+  <lcid name="nb_NO" id="0x0414" parent="0x7C14" iso2="nb" iso3="nob" win="NOR" />
+  <lcid name="pl_PL" id="0x0415" parent="0x0015" iso2="pl" iso3="pol" win="PLK" />
+  <lcid name="pt_BR" id="0x0416" parent="0x0016" iso2="pt" iso3="por" win="PTB" />
+  <lcid name="rm_CH" id="0x0417" parent="0x0017" iso2="rm" iso3="roh" win="RMC" />
+  <lcid name="ro_RO" id="0x0418" parent="0x0018" iso2="ro" iso3="ron" win="ROM" />
+  <lcid name="ru_RU" id="0x0419" parent="0x0019" iso2="ru" iso3="rus" win="RUS" />
+  <lcid name="hr_HR" id="0x041A" parent="0x001A" iso2="hr" iso3="hrv" win="HRV" />
+  <lcid name="sk_SK" id="0x041B" parent="0x001B" iso2="sk" iso3="slk" win="SKY" />
+  <lcid name="sq_AL" id="0x041C" parent="0x001C" iso2="sq" iso3="sqi" win="SQI" />
+  <lcid name="sv_SE" id="0x041D" parent="0x001D" iso2="sv" iso3="swe" win="SVE" />
+  <lcid name="th_TH" id="0x041E" parent="0x001E" iso2="th" iso3="tha" win="THA" />
+  <lcid name="tr_TR" id="0x041F" parent="0x001F" iso2="tr" iso3="tur" win="TRK" />
+  <lcid name="ur_PK" id="0x0420" parent="0x0020" iso2="ur" iso3="urd" win="URD" />
+  <lcid name="id_ID" id="0x0421" parent="0x0021" iso2="id" iso3="ind" win="IND" />
+  <lcid name="uk_UA" id="0x0422" parent="0x0022" iso2="uk" iso3="ukr" win="UKR" />
+  <lcid name="be_BY" id="0x0423" parent="0x0023" iso2="be" iso3="bel" win="BEL" />
+  <lcid name="sl_SI" id="0x0424" parent="0x0024" iso2="sl" iso3="slv" win="SLV" />
+  <lcid name="et_EE" id="0x0425" parent="0x0025" iso2="et" iso3="est" win="ETI" />
+  <lcid name="lv_LV" id="0x0426" parent="0x0026" iso2="lv" iso3="lav" win="LVI" />
+  <lcid name="lt_LT" id="0x0427" parent="0x0027" iso2="lt" iso3="lit" win="LTH" />
+  <lcid name="tg_Cyrl_TJ" id="0x0428" parent="0x7C28" iso2="tg" iso3="tgk" win="TAJ" />
+  <lcid name="fa_IR" id="0x0429" parent="0x0029" iso2="fa" iso3="fas" win="FAR" />
+  <lcid name="vi_VN" id="0x042A" parent="0x002A" iso2="vi" iso3="vie" win="VIT" />
+  <lcid name="hy_AM" id="0x042B" parent="0x002B" iso2="hy" iso3="hye" win="HYE" />
+  <lcid name="az_Latn_AZ" id="0x042C" parent="0x782C" iso2="az" iso3="aze" win="AZE" />
+  <lcid name="eu_ES" id="0x042D" parent="0x002D" iso2="eu" iso3="eus" win="EUQ" />
+  <lcid name="hsb_DE" id="0x042E" parent="0x002E" iso2="hsb" iso3="hsb" win="HSB" />
+  <lcid name="mk_MK" id="0x042F" parent="0x002F" iso2="mk" iso3="mkd" win="MKI" />
+  <lcid name="tn_ZA" id="0x0432" parent="0x0032" iso2="tn" iso3="tsn" win="TSN" />
+  <lcid name="xh_ZA" id="0x0434" parent="0x0034" iso2="xh" iso3="xho" win="XHO" />
+  <lcid name="zu_ZA" id="0x0435" parent="0x0035" iso2="zu" iso3="zul" win="ZUL" />
+  <lcid name="af_ZA" id="0x0436" parent="0x0036" iso2="af" iso3="afr" win="AFK" />
+  <lcid name="ka_GE" id="0x0437" parent="0x0037" iso2="ka" iso3="kat" win="KAT" />
+  <lcid name="fo_FO" id="0x0438" parent="0x0038" iso2="fo" iso3="fao" win="FOS" />
+  <lcid name="hi_IN" id="0x0439" parent="0x0039" iso2="hi" iso3="hin" win="HIN" />
+  <lcid name="mt_MT" id="0x043A" parent="0x003A" iso2="mt" iso3="mlt" win="MLT" />
+  <lcid name="se_NO" id="0x043B" parent="0x003B" iso2="se" iso3="sme" win="SME" />
+  <lcid name="ms_MY" id="0x043E" parent="0x003E" iso2="ms" iso3="msa" win="MSL" />
+  <lcid name="kk_KZ" id="0x043F" parent="0x003F" iso2="kk" iso3="kaz" win="KKZ" />
+  <lcid name="ky_KG" id="0x0440" parent="0x0040" iso2="ky" iso3="kir" win="KYR" />
+  <lcid name="sw_KE" id="0x0441" parent="0x0041" iso2="sw" iso3="swa" win="SWK" />
+  <lcid name="tk_TM" id="0x0442" parent="0x0042" iso2="tk" iso3="tuk" win="TUK" />
+  <lcid name="uz_Latn_UZ" id="0x0443" parent="0x7C43" iso2="uz" iso3="uzb" win="UZB" />
+  <lcid name="tt_RU" id="0x0444" parent="0x0044" iso2="tt" iso3="tat" win="TTT" />
+  <lcid name="bn_IN" id="0x0445" parent="0x0045" iso2="bn" iso3="bng" win="BNG" />
+  <lcid name="pa_IN" id="0x0446" parent="0x0046" iso2="pa" iso3="pan" win="PAN" />
+  <lcid name="gu_IN" id="0x0447" parent="0x0047" iso2="gu" iso3="guj" win="GUJ" />
+  <lcid name="or_IN" id="0x0448" parent="0x0048" iso2="or" iso3="ori" win="ORI" />
+  <lcid name="ta_IN" id="0x0449" parent="0x0049" iso2="ta" iso3="tam" win="TAM" />
+  <lcid name="te_IN" id="0x044A" parent="0x004A" iso2="te" iso3="tel" win="TEL" />
+  <lcid name="kn_IN" id="0x044B" parent="0x004B" iso2="kn" iso3="kan" win="KDI" />
+  <lcid name="ml_IN" id="0x044C" parent="0x004C" iso2="ml" iso3="mym" win="MYM" />
+  <lcid name="as_IN" id="0x044D" parent="0x004D" iso2="as" iso3="asm" win="ASM" />
+  <lcid name="mr_IN" id="0x044E" parent="0x004E" iso2="mr" iso3="mar" win="MAR" />
+  <lcid name="sa_IN" id="0x044F" parent="0x004F" iso2="sa" iso3="san" win="SAN" />
+  <lcid name="mn_MN" id="0x0450" parent="0x7850" iso2="mn" iso3="mon" win="MNN" />
+  <lcid name="bo_CN" id="0x0451" parent="0x0051" iso2="bo" iso3="bod" win="BOB" />
+  <lcid name="cy_GB" id="0x0452" parent="0x0052" iso2="cy" iso3="cym" win="CYM" />
+  <lcid name="km_KH" id="0x0453" parent="0x0053" iso2="km" iso3="khm" win="KHM" />
+  <lcid name="lo_LA" id="0x0454" parent="0x0054" iso2="lo" iso3="lao" win="LAO" />
+  <lcid name="gl_ES" id="0x0456" parent="0x0056" iso2="gl" iso3="glg" win="GLC" />
+  <lcid name="kok_IN" id="0x0457" parent="0x0057" iso2="kok" iso3="kok" win="KNK" />
+  <lcid name="syr_SY" id="0x045A" parent="0x005A" iso2="syr" iso3="syr" win="SYR" />
+  <lcid name="si_LK" id="0x045B" parent="0x005B" iso2="si" iso3="sin" win="SIN" />
+  <lcid name="iu_Cans_CA" id="0x045D" parent="0x785D" iso2="iu" iso3="iku" win="IUS" />
+  <lcid name="am_ET" id="0x045E" parent="0x005E" iso2="am" iso3="amh" win="AMH" />
+  <lcid name="ne_NP" id="0x0461" parent="0x0061" iso2="ne" iso3="nep" win="NEP" />
+  <lcid name="fy_NL" id="0x0462" parent="0x0062" iso2="fy" iso3="fry" win="FYN" />
+  <lcid name="ps_AF" id="0x0463" parent="0x0063" iso2="ps" iso3="pus" win="PAS" />
+  <lcid name="fil_PH" id="0x0464" parent="0x0064" iso2="fil" iso3="fil" win="FPO" />
+  <lcid name="dv_MV" id="0x0465" parent="0x0065" iso2="dv" iso3="div" win="DIV" />
+  <lcid name="ha_Latn_NG" id="0x0468" parent="0x7C68" iso2="ha" iso3="hau" win="HAU" />
+  <lcid name="yo_NG" id="0x046A" parent="0x006A" iso2="yo" iso3="yor" win="YOR" />
+  <lcid name="quz_BO" id="0x046B" parent="0x006B" iso2="quz" iso3="qub" win="QUB" />
+  <lcid name="nso_ZA" id="0x046C" parent="0x006C" iso2="nso" iso3="nso" win="NSO" />
+  <lcid name="ba_RU" id="0x046D" parent="0x006D" iso2="ba" iso3="bak" win="BAS" />
+  <lcid name="lb_LU" id="0x046E" parent="0x006E" iso2="lb" iso3="ltz" win="LBX" />
+  <lcid name="kl_GL" id="0x046F" parent="0x006F" iso2="kl" iso3="kal" win="KAL" />
+  <lcid name="ig_NG" id="0x0470" parent="0x0070" iso2="ig" iso3="ibo" win="IBO" />
+  <lcid name="ii_CN" id="0x0478" parent="0x0078" iso2="ii" iso3="iii" win="III" />
+  <lcid name="arn_CL" id="0x047A" parent="0x007A" iso2="arn" iso3="arn" win="MPD" />
+  <lcid name="moh_CA" id="0x047C" parent="0x007C" iso2="moh" iso3="moh" win="MWK" />
+  <lcid name="br_FR" id="0x047E" parent="0x007E" iso2="br" iso3="bre" win="BRE" />
+  <lcid name="ug_CN" id="0x0480" parent="0x0080" iso2="ug" iso3="uig" win="UIG" />
+  <lcid name="mi_NZ" id="0x0481" parent="0x0081" iso2="mi" iso3="mri" win="MRI" />
+  <lcid name="oc_FR" id="0x0482" parent="0x0082" iso2="oc" iso3="oci" win="OCI" />
+  <lcid name="co_FR" id="0x0483" parent="0x0083" iso2="co" iso3="cos" win="COS" />
+  <lcid name="gsw_FR" id="0x0484" parent="0x0084" iso2="gsw" iso3="gsw" win="GSW" />
+  <lcid name="sah_RU" id="0x0485" parent="0x0085" iso2="sah" iso3="sah" win="SAH" />
+  <lcid name="qut_GT" id="0x0486" parent="0x0086" iso2="qut" iso3="qut" win="QUT" />
+  <lcid name="rw_RW" id="0x0487" parent="0x0087" iso2="rw" iso3="kin" win="KIN" />
+  <lcid name="wo_SN" id="0x0488" parent="0x0088" iso2="wo" iso3="wol" win="WOL" />
+  <lcid name="prs_AF" id="0x048C" parent="0x008C" iso2="prs" iso3="prs" win="PRS" />
+  <lcid name="gd_GB" id="0x0491" parent="0x0091" iso2="gd" iso3="gla" win="GLA" />
+  <lcid name="ar_IQ" id="0x0801" parent="0x0001" iso2="ar" iso3="ara" win="ARI" />
+  <lcid name="zh_CN" id="0x0804" parent="0x0004" iso2="zh" iso3="zho" win="CHS" />
+  <lcid name="de_CH" id="0x0807" parent="0x0007" iso2="de" iso3="deu" win="DES" />
+  <lcid name="en_GB" id="0x0809" parent="0x0009" iso2="en" iso3="eng" win="ENG" />
+  <lcid name="es_MX" id="0x080A" parent="0x000A" iso2="es" iso3="spa" win="ESM" />
+  <lcid name="fr_BE" id="0x080C" parent="0x000C" iso2="fr" iso3="fra" win="FRB" />
+  <lcid name="it_CH" id="0x0810" parent="0x0010" iso2="it" iso3="ita" win="ITS" />
+  <lcid name="nl_BE" id="0x0813" parent="0x0013" iso2="nl" iso3="nld" win="NLB" />
+  <lcid name="nn_NO" id="0x0814" parent="0x7814" iso2="nn" iso3="nno" win="NON" />
+  <lcid name="pt_PT" id="0x0816" parent="0x0016" iso2="pt" iso3="por" win="PTG" />
+  <lcid name="sr_Latn_CS" id="0x081A" parent="0x701A" iso2="sr" iso3="srp" win="SRL" />
+  <lcid name="sv_FI" id="0x081D" parent="0x001D" iso2="sv" iso3="swe" win="SVF" />
+  <lcid name="az_Cyrl_AZ" id="0x082C" parent="0x742C" iso2="az" iso3="aze" win="AZC" />
+  <lcid name="dsb_DE" id="0x082E" parent="0x7C2E" iso2="dsb" iso3="dsb" win="DSB" />
+  <lcid name="se_SE" id="0x083B" parent="0x003B" iso2="se" iso3="smf" win="SMF" />
+  <lcid name="ga_IE" id="0x083C" parent="0x003C" iso2="ga" iso3="gle" win="IRE" />
+  <lcid name="ms_BN" id="0x083E" parent="0x003E" iso2="ms" iso3="msa" win="MSB" />
+  <lcid name="uz_Cyrl_UZ" id="0x0843" parent="0x7843" iso2="uz" iso3="uzb" win="UZB" />
+  <lcid name="bn_BD" id="0x0845" parent="0x0045" iso2="bn" iso3="bng" win="BNB" />
+  <lcid name="mn_Mong_CN" id="0x0850" parent="0x7C50" iso2="mn" iso3="mon" win="MNG" />
+  <lcid name="iu_Latn_CA" id="0x085D" parent="0x7C5D" iso2="iu" iso3="iku" win="IUK" />
+  <lcid name="tzm_Latn_DZ" id="0x085F" parent="0x7C5F" iso2="tzm" iso3="tzm" win="TZM" />
+  <lcid name="quz_EC" id="0x086B" parent="0x006B" iso2="quz" iso3="que" win="QUE" />
+  <lcid name="ar_EG" id="0x0C01" parent="0x0001" iso2="ar" iso3="ara" win="ARE" />
+  <lcid name="zh_HK" id="0x0C04" parent="0x7C04" iso2="zh" iso3="zho" win="ZHH" />
+  <lcid name="de_AT" id="0x0C07" parent="0x0007" iso2="de" iso3="deu" win="DEA" />
+  <lcid name="en_AU" id="0x0C09" parent="0x0009" iso2="en" iso3="eng" win="ENA" />
+  <lcid name="es_ES" id="0x0C0A" parent="0x000A" iso2="es" iso3="spa" win="ESN" />
+  <lcid name="fr_CA" id="0x0C0C" parent="0x000C" iso2="fr" iso3="fra" win="FRC" />
+  <lcid name="sr_Cyrl_CS" id="0x0C1A" parent="0x6C1A" iso2="sr" iso3="srp" win="SRB" />
+  <lcid name="se_FI" id="0x0C3B" parent="0x003B" iso2="se" iso3="smg" win="SMG" />
+  <lcid name="quz_PE" id="0x0C6B" parent="0x006B" iso2="quz" iso3="qup" win="QUP" />
+  <lcid name="ar_LY" id="0x1001" parent="0x0001" iso2="ar" iso3="ara" win="ARL" />
+  <lcid name="zh_SG" id="0x1004" parent="0x0004" iso2="zh" iso3="zho" win="ZHI" />
+  <lcid name="de_LU" id="0x1007" parent="0x0007" iso2="de" iso3="deu" win="DEL" />
+  <lcid name="en_CA" id="0x1009" parent="0x0009" iso2="en" iso3="eng" win="ENC" />
+  <lcid name="es_GT" id="0x100A" parent="0x000A" iso2="es" iso3="spa" win="ESG" />
+  <lcid name="fr_CH" id="0x100C" parent="0x000C" iso2="fr" iso3="fra" win="FRS" />
+  <lcid name="hr_BA" id="0x101A" parent="0x001A" iso2="hr" iso3="hrb" win="HRB" />
+  <lcid name="smj_NO" id="0x103B" parent="0x7C3B" iso2="smj" iso3="smj" win="SMJ" />
+  <lcid name="ar_DZ" id="0x1401" parent="0x0001" iso2="ar" iso3="ara" win="ARG" />
+  <lcid name="zh_MO" id="0x1404" parent="0x7C04" iso2="zh" iso3="zho" win="ZHM" />
+  <lcid name="de_LI" id="0x1407" parent="0x0007" iso2="de" iso3="deu" win="DEC" />
+  <lcid name="en_NZ" id="0x1409" parent="0x0009" iso2="en" iso3="eng" win="ENZ" />
+  <lcid name="es_CR" id="0x140A" parent="0x000A" iso2="es" iso3="spa" win="ESC" />
+  <lcid name="fr_LU" id="0x140C" parent="0x000C" iso2="fr" iso3="fra" win="FRL" />
+  <lcid name="bs_Latn_BA" id="0x141A" parent="0x681A" iso2="bs" iso3="bsb" win="BSB" />
+  <lcid name="smj_SE" id="0x143B" parent="0x7C3B" iso2="smj" iso3="smk" win="SMK" />
+  <lcid name="ar_MA" id="0x1801" parent="0x0001" iso2="ar" iso3="ara" win="ARM" />
+  <lcid name="en_IE" id="0x1809" parent="0x0009" iso2="en" iso3="eng" win="ENI" />
+  <lcid name="es_PA" id="0x180A" parent="0x000A" iso2="es" iso3="spa" win="ESA" />
+  <lcid name="fr_MC" id="0x180C" parent="0x000C" iso2="fr" iso3="fra" win="FRM" />
+  <lcid name="sr_Latn_BA" id="0x181A" parent="0x701A" iso2="sr" iso3="srs" win="SRS" />
+  <lcid name="sma_NO" id="0x183B" parent="0x783B" iso2="sma" iso3="sma" win="SMA" />
+  <lcid name="ar_TN" id="0x1C01" parent="0x0001" iso2="ar" iso3="ara" win="ART" />
+  <lcid name="en_ZA" id="0x1C09" parent="0x0009" iso2="en" iso3="eng" win="ENS" />
+  <lcid name="es_DO" id="0x1C0A" parent="0x000A" iso2="es" iso3="spa" win="ESD" />
+  <lcid name="sr_Cyrl_BA" id="0x1C1A" parent="0x6C1A" iso2="sr" iso3="srn" win="SRN" />
+  <lcid name="sma_SE" id="0x1C3B" parent="0x783B" iso2="sma" iso3="smb" win="SMB" />
+  <lcid name="ar_OM" id="0x2001" parent="0x0001" iso2="ar" iso3="ara" win="ARO" />
+  <lcid name="en_JM" id="0x2009" parent="0x0009" iso2="en" iso3="eng" win="ENJ" />
+  <lcid name="es_VE" id="0x200A" parent="0x000A" iso2="es" iso3="spa" win="ESV" />
+  <lcid name="bs_Cyrl_BA" id="0x201A" parent="0x641A" iso2="bs" iso3="bsc" win="BSC" />
+  <lcid name="sms_FI" id="0x203B" parent="0x743B" iso2="sms" iso3="sms" win="SMS" />
+  <lcid name="ar_YE" id="0x2401" parent="0x0001" iso2="ar" iso3="ara" win="ARY" />
+  <lcid name="en_029" id="0x2409" parent="0x0009" iso2="en" iso3="eng" win="ENB" />
+  <lcid name="es_CO" id="0x240A" parent="0x000A" iso2="es" iso3="spa" win="ESO" />
+  <lcid name="sr_Latn_RS" id="0x241A" parent="0x701A" iso2="sr" iso3="srp" win="SRM" />
+  <lcid name="smn_FI" id="0x243B" parent="0x703B" iso2="smn" iso3="smn" win="SMN" />
+  <lcid name="ar_SY" id="0x2801" parent="0x0001" iso2="ar" iso3="ara" win="ARS" />
+  <lcid name="en_BZ" id="0x2809" parent="0x0009" iso2="en" iso3="eng" win="ENL" />
+  <lcid name="es_PE" id="0x280A" parent="0x000A" iso2="es" iso3="spa" win="ESR" />
+  <lcid name="sr_Cyrl_RS" id="0x281A" parent="0x6C1A" iso2="sr" iso3="srp" win="SRO" />
+  <lcid name="ar_JO" id="0x2C01" parent="0x0001" iso2="ar" iso3="ara" win="ARJ" />
+  <lcid name="en_TT" id="0x2C09" parent="0x0009" iso2="en" iso3="eng" win="ENT" />
+  <lcid name="es_AR" id="0x2C0A" parent="0x000A" iso2="es" iso3="spa" win="ESS"  />
+  <lcid name="sr_Latn_ME" id="0x2C1A" parent="0x701A" iso2="sr" iso3="srp" win="SRP" />
+  <lcid name="ar_LB" id="0x3001" parent="0x0001" iso2="ar" iso3="ara" win="ARB" />
+  <lcid name="en_ZW" id="0x3009" parent="0x0009" iso2="en" iso3="eng" win="ENW" />
+  <lcid name="es_EC" id="0x300A" parent="0x000A" iso2="es" iso3="spa" win="ESF" />
+  <lcid name="sr_Cyrl_ME" id="0x301A" parent="0x6C1A" iso2="sr" iso3="srp" win="SRQ" />
+  <lcid name="ar_KW" id="0x3401" parent="0x0001" iso2="ar" iso3="ara" win="ARK" />
+  <lcid name="en_PH" id="0x3409" parent="0x0009" iso2="en" iso3="eng" win="ENP" />
+  <lcid name="es_CL" id="0x340A" parent="0x000A" iso2="es" iso3="spa" win="ESL" />
+  <lcid name="ar_AE" id="0x3801" parent="0x0001" iso2="ar" iso3="ara" win="ARU" />
+  <lcid name="es_UY" id="0x380A" parent="0x000A" iso2="es" iso3="spa" win="ESY" />
+  <lcid name="ar_BH" id="0x3C01" parent="0x0001" iso2="ar" iso3="ara" win="ARH" />
+  <lcid name="es_PY" id="0x3C0A" parent="0x000A" iso2="es" iso3="spa" win="ESZ" />
+  <lcid name="ar_QA" id="0x4001" parent="0x0001" iso2="ar" iso3="ara" win="ARQ" />
+  <lcid name="en_IN" id="0x4009" parent="0x0009" iso2="en" iso3="eng" win="ENN" />
+  <lcid name="es_BO" id="0x400A" parent="0x000A" iso2="es" iso3="spa" win="ESB" />
+  <lcid name="en_MY" id="0x4409" parent="0x0009" iso2="en" iso3="eng" win="ENM" />
+  <lcid name="es_SV" id="0x440A" parent="0x000A" iso2="es" iso3="spa" win="ESE" />
+  <lcid name="en_SG" id="0x4809" parent="0x0009" iso2="en" iso3="eng" win="ENE" />
+  <lcid name="es_HN" id="0x480A" parent="0x000A" iso2="es" iso3="spa" win="ESH" />
+  <lcid name="es_NI" id="0x4C0A" parent="0x000A" iso2="es" iso3="spa" win="ESI" />
+  <lcid name="es_PR" id="0x500A" parent="0x000A" iso2="es" iso3="spa" win="ESU" />
+  <lcid name="es_US" id="0x540A" parent="0x000A" iso2="es" iso3="spa" win="EST" />
+  <lcid name="bs_Cyrl" id="0x641A" parent="0x781A" iso2="bs" iso3="bsc" win="BSC" />
+  <lcid name="bs_Latn" id="0x681A" parent="0x781A" iso2="bs" iso3="bsb" win="BSB" />
+  <lcid name="sr_Cyrl" id="0x6C1A" parent="0x7C1A" iso2="sr" iso3="srp" win="SRO" />
+  <lcid name="sr_Latn" id="0x701A" parent="0x7C1A" iso2="sr" iso3="srp" win="SRM" />
+  <lcid name="smn" id="0x703B" parent="0x003B" iso2="smn" iso3="smn" win="SMN"  />
+  <lcid name="az_Cyrl" id="0x742C" parent="0x002C" iso2="az" iso3="aze" win="AZC" />
+  <lcid name="sms" id="0x743B" parent="0x003B" iso2="sms" iso3="sms" win="SMS" />
+  <lcid name="zh" id="0x7804" parent="0x007F" iso2="zh" iso3="zho" win="CHS" />
+  <lcid name="nn" id="0x7814" parent="0x0014" iso2="nn" iso3="nno" win="NON" />
+  <lcid name="bs" id="0x781A" parent="0x007F" iso2="bs" iso3="bsb" win="BSB" />
+  <lcid name="az_Latn" id="0x782C" parent="0x002C" iso2="az" iso3="aze" win="AZE" />
+  <lcid name="sma" id="0x783B" parent="0x003B" iso2="sma" iso3="smb" win="SMB" />
+  <lcid name="uz_Cyrl" id="0x7843" parent="0x0043" iso2="uz" iso3="uzb" win="UZB" />
+  <lcid name="mn_Cyrl" id="0x7850" parent="0x0050" iso2="mn" iso3="mon" win="MNN" />
+  <lcid name="iu_Cans" id="0x785D" parent="0x005D" iso2="iu" iso3="iku" win="IUS" />
+  <lcid name="zh_Hant" id="0x7C04" parent="0x7804" iso2="zh" iso3="zho" win="CHT" />
+  <lcid name="zh_CHT" id="0x7C04" parent="0x7C04" iso2="zh" iso3="zho" win="CHT" />
+  <lcid name="nb" id="0x7C14" parent="0x0014" iso2="nb" iso3="nob" win="NOR" />
+  <lcid name="sr" id="0x7C1A" parent="0x007F" iso2="sr" iso3="srp" win="SRB" />
+  <lcid name="tg_Cyrl" id="0x7C28" parent="0x0028" iso2="tg" iso3="tgk" win="TAJ" />
+  <lcid name="dsb" id="0x7C2E" parent="0x002E" iso2="dsb" iso3="dsb" win="DSB" />
+  <lcid name="smj" id="0x7C3B" parent="0x003B" iso2="smj" iso3="smk" win="SMK" />
+  <lcid name="uz_Latn" id="0x7C43" parent="0x0043" iso2="uz" iso3="uzb" win="UZB" />
+  <lcid name="mn_Mong" id="0x7C50" parent="0x0050" iso2="mn" iso3="mon" win="MNG" />
+  <lcid name="iu_Latn" id="0x7C5D" parent="0x005D" iso2="iu" iso3="iku" win="IUK" />
+  <lcid name="tzm_Latn" id="0x7C5F" parent="0x005F" iso2="tzm" iso3="tzm" win="TZM" />
+  <lcid name="ha_Latn" id="0x7C68" parent="0x0068" iso2="ha" iso3="hau" win="HAU" />
 </lcids>

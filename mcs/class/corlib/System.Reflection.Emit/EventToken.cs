@@ -25,6 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -39,14 +40,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly EventToken Empty;
-
-
-		static EventToken ()
-		{
-			Empty = new EventToken ();
-		}
-
+		public static readonly EventToken Empty = new EventToken ();
 
 		internal EventToken (int val)
 		{
@@ -107,3 +101,4 @@ namespace System.Reflection.Emit {
 
 }
 
+#endif

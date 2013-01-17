@@ -83,7 +83,6 @@ namespace System.Configuration
 			get { return property.IsRequired; }
 		}
 		
-		[MonoTODO]
 		public int LineNumber {
 			get { return lineNumber; }
 			internal set { lineNumber = value; }
@@ -93,7 +92,6 @@ namespace System.Configuration
 			get { return property.Name; }
 		}
 		
-		[MonoTODO]
 		public string Source {
 			get { return source; }
 			internal set { source = value; }

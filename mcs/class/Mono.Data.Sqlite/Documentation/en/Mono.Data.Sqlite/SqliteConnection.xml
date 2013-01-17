@@ -1,0 +1,1179 @@
+<Type Name="SqliteConnection" FullName="Mono.Data.Sqlite.SqliteConnection">
+  <TypeSignature Language="C#" Value="public sealed class SqliteConnection : System.Data.Common.DbConnection, ICloneable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SqliteConnection extends System.Data.Common.DbConnection implements class System.ICloneable" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Data.Common.DbConnection</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>SQLite implentation of DbConnection.</summary>
+    <remarks>
+      The <see cref="P:Mono.Data.Sqlite.SqliteConnection.ConnectionString">ConnectionString</see> property of the SqliteConnection class can contain the following parameter(s), delimited with a semi-colon:
+      <list type="table">
+	<listheader>
+	  <term>Parameter</term>
+	  <term>Values</term>
+	  <term>Required</term>
+	  <term>Default</term>
+	</listheader>
+	<item>
+	  <description>Data Source</description>
+	  <description>{filename}</description>
+	  <description>Y</description>
+	  <description />
+	</item>
+	<item>
+	  <description>Version</description>
+	  <description>3</description>
+	  <description>N</description>
+	  <description>3</description>
+	</item>
+	<item>
+	  <description>UseUTF16Encoding</description>
+	  <description>
+	    <b>True</b>
+	    <br />
+	    <b>False</b>
+	  </description>
+	  <description>N</description>
+	  <description>False</description>
+	</item>
+	<item>
+	  <description>DateTimeFormat</description>
+	  <description>
+	    <b>Ticks</b> - Use DateTime.Ticks<br />
+	    <b>ISO8601</b> - Use ISO8601 DateTime format</description>
+	    <description>N</description>
+	    <description>ISO8601</description>
+	  </item>
+	  <item>
+	    <description>BinaryGUID</description>
+	    <description>
+	      <b>True</b> - Store GUID columns in binary form<br />
+	      <b>False</b> - Store GUID columns as text
+	    </description>
+	    <description>N</description>
+	    <description>True</description>
+	  </item>
+	  <item>
+	    <description>Cache Size</description>
+	    <description>{size in bytes}</description>
+	    <description>N</description>
+	    <description>2000</description>
+	  </item>
+	  <item>
+	    <description>Synchronous</description>
+	    <description>
+	      <b>Normal</b> - Normal file flushing behavior<br />
+	      <b>Full</b> - Full flushing after all writes<br />
+	      <b>Off</b> - Underlying OS flushes I/O's
+	    </description>
+	    <description>N</description>
+	    <description>Normal</description>
+	  </item>
+	  <item>
+	    <description>Page Size</description>
+	    <description>{size in bytes}</description>
+	    <description>N</description>
+	    <description>1024</description>
+	  </item>
+	  <item>
+	    <description>Password</description>
+	    <description>{password}</description>
+	    <description>N</description>
+	    <description />
+	  </item>
+	  <item>
+	    <description>Enlist</description>
+	    <description>
+	      <b>Y</b> - Automatically enlist in distributed transactions<br />
+	      <b>N</b> - No automatic enlistment
+	    </description>
+	    <description>N</description>
+	    <description>Y</description>
+	  </item>
+	  <item>
+	    <description>Pooling</description>
+	    <description>
+	      <b>True</b> - Use connection pooling<br />
+	      <b>False</b> - Do not use connection pooling
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FailIfMissing</description>
+	    <description>
+	      <b>True</b> - Don't create the database if it does not exist, throw an error instead<br />
+	      <b>False</b> - Automatically create the database if it does not exist
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>Max Page Count</description>
+	    <description>{size in pages} - Limits the maximum number of pages (limits the size) of the database</description>
+	    <description>N</description>
+	    <description>0</description>
+	  </item>
+	  <item>
+	    <description>Legacy Format</description>
+	    <description>
+	      <b>True</b> - Use the more compatible legacy 3.x database format<br />
+	      <b>False</b> - Use the newer 3.3x database format which compresses numbers more effectively
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>Default Timeout</description>
+	    <description>{time in seconds}<br />The default command timeout</description>
+	    <description>N</description>
+	    <description>30</description>
+	  </item>
+	  <item>
+	    <description>Journal Mode</description>
+	    <description>
+	      <b>Delete</b> - Delete the journal file after a commit<br />
+	      <b>Persist</b> - Zero out and leave the journal file on disk after a commit<br />
+	      <b>Off</b> - Disable the rollback journal entirely
+	    </description>
+	    <description>N</description>
+	    <description>Delete</description>
+	  </item>
+	  <item>
+	    <description>Read Only</description>
+	    <description>
+	      <b>True</b> - Open the database for read only access<br />
+	      <b>False</b> - Open the database for normal read/write access
+	    </description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>Max Pool Size</description>
+	    <description>The maximum number of connections for the given connection string that can be in the connection pool</description>
+	    <description>N</description>
+	    <description>100</description>
+	  </item>
+	  <item>
+	    <description>Default IsolationLevel</description>
+	    <description>The default transaciton isolation level</description>
+	    <description>N</description>
+	    <description>Serializable</description>
+	  </item>
+	  <item>
+	    <description>FileProtectionComplete</description>
+	    <description>iOS only - Sets the SQLite file protection level to Complete, requires the "DataProtectionClass" entitlement in your application.   The data will only be available when the device is unlocked, and the safety is only as gooas the device passcode.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FileProtectionCompleteUnlessOpen</description>
+	    <description>iOS only - Sets the SQLite file protection level to CompleteUNlessOpen, requries the "DataProtectionClass" entitlement in your application.   You can access the data even if the device is locked and you can also create these files if the device is unlocked.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FileProtectionCompleteUntilFirstUserAuthentication</description>
+	    <description>iOS only - Sets the SQLite file protection level to CompleteUnlessOpen, requries the "DataProtectionClass" entitlement in your application.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	  <item>
+	    <description>FileProtectioNone</description>
+	    <description>iOS only - forces the file to not have any file protection.   Useful if the containing directory has been flagged to be protected, this overrides the behavior.</description>
+	    <description>N</description>
+	    <description>False</description>
+	  </item>
+	</list>
+      </remarks>
+    </Docs>
+    <Members>
+      <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SqliteConnection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Default constructor
+            </summary>
+        <remarks>To be added.</remarks>
+        <overloads>
+            Constructs a new SqliteConnection object
+            </overloads>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SqliteConnection (Mono.Data.Sqlite.SqliteConnection connection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.Data.Sqlite.SqliteConnection connection) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="connection" Type="Mono.Data.Sqlite.SqliteConnection" />
+      </Parameters>
+      <Docs>
+        <param name="connection">
+        </param>
+        <summary>
+            Clones the settings and connection string from an existing connection.  If the existing connection is already open, this
+            function will open its own connection, enumerate any attached databases of the original connection, and automatically
+            attach to them.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SqliteConnection (string connectionString);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string connectionString) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="connectionString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="connectionString">The connection string to use on the connection</param>
+        <summary>
+            Initializes the connection with the specified connection string
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginDbTransaction">
+      <MemberSignature Language="C#" Value="protected override System.Data.Common.DbTransaction BeginDbTransaction (System.Data.IsolationLevel isolationLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.Data.Common.DbTransaction BeginDbTransaction(valuetype System.Data.IsolationLevel isolationLevel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.Common.DbTransaction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="isolationLevel" Type="System.Data.IsolationLevel" />
+      </Parameters>
+      <Docs>
+        <param name="isolationLevel">Supported isolation levels are Unspecified, Serializable, and ReadCommitted</param>
+        <summary>
+            Forwards to the local BeginTransaction() function
+            </summary>
+        <returns />
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginTransaction">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.SqliteTransaction BeginTransaction ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Data.Sqlite.SqliteTransaction BeginTransaction() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SqliteTransaction</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Creates a new SqliteTransaction if one isn't already active on the connection.
+            </summary>
+        <returns>Returns a SqliteTransaction object.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginTransaction">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.SqliteTransaction BeginTransaction (bool deferredLock);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Data.Sqlite.SqliteTransaction BeginTransaction(bool deferredLock) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use one of the standard BeginTransaction methods, this one will be removed soon")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SqliteTransaction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="deferredLock" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
+            When FALSE, a writelock is obtained immediately.  The default is false, but in a multi-threaded multi-writer
+            environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
+        <summary>
+            OBSOLETE.  Creates a new SqliteTransaction if one isn't already active on the connection.
+            </summary>
+        <returns>Returns a SqliteTransaction object.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginTransaction">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.SqliteTransaction BeginTransaction (System.Data.IsolationLevel isolationLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Data.Sqlite.SqliteTransaction BeginTransaction(valuetype System.Data.IsolationLevel isolationLevel) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SqliteTransaction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="isolationLevel" Type="System.Data.IsolationLevel" />
+      </Parameters>
+      <Docs>
+        <param name="isolationLevel">Supported isolation levels are Serializable, ReadCommitted and Unspecified.</param>
+        <summary>
+            Creates a new SqliteTransaction if one isn't already active on the connection.
+            </summary>
+        <returns>Returns a SqliteTransaction object.</returns>
+        <remarks>
+            Unspecified will use the default isolation level specified in the connection string.  If no isolation level is specified in the
+            connection string, Serializable is used.
+            Serializable transactions are the default.  In this mode, the engine gets an immediate lock on the database, and no other threads
+            may begin a transaction.  Other threads may read from the database, but not write.
+            With a ReadCommitted isolation level, locks are deferred and elevated as needed.  It is possible for multiple threads to start
+            a transaction in ReadCommitted mode, but if a thread attempts to commit a transaction while another thread
+            has a ReadCommitted lock, it may timeout or cause a deadlock on both threads until both threads' CommandTimeout's are reached.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginTransaction">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.SqliteTransaction BeginTransaction (System.Data.IsolationLevel isolationLevel, bool deferredLock);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Data.Sqlite.SqliteTransaction BeginTransaction(valuetype System.Data.IsolationLevel isolationLevel, bool deferredLock) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use one of the standard BeginTransaction methods, this one will be removed soon")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SqliteTransaction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="isolationLevel" Type="System.Data.IsolationLevel" />
+        <Parameter Name="deferredLock" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="isolationLevel">This parameter is ignored.</param>
+        <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
+            When FALSE, a writelock is obtained immediately.  The default is TRUE, but in a multi-threaded multi-writer
+            environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
+        <summary>
+            OBSOLETE.  Creates a new SqliteTransaction if one isn't already active on the connection.
+            </summary>
+        <returns>Returns a SqliteTransaction object.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangeDatabase">
+      <MemberSignature Language="C#" Value="public override void ChangeDatabase (string databaseName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void ChangeDatabase(string databaseName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="databaseName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="databaseName">
+        </param>
+        <summary>
+            Not implemented
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangePassword">
+      <MemberSignature Language="C#" Value="public void ChangePassword (byte[] newPassword);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ChangePassword(unsigned int8[] newPassword) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="newPassword" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="newPassword">The new password to assign to the database</param>
+        <summary>
+            Change the password (or assign a password) to an open database.
+            </summary>
+        <remarks>
+            No readers or writers may be active for this process.  The database must already be open
+            and if it already was password protected, the existing password must already have been supplied.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangePassword">
+      <MemberSignature Language="C#" Value="public void ChangePassword (string newPassword);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ChangePassword(string newPassword) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="newPassword" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="newPassword">The new password to assign to the database</param>
+        <summary>
+            Change the password (or assign a password) to an open database.
+            </summary>
+        <remarks>
+            No readers or writers may be active for this process.  The database must already be open
+            and if it already was password protected, the existing password must already have been supplied.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClearAllPools">
+      <MemberSignature Language="C#" Value="public static void ClearAllPools ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ClearAllPools() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Clears all connection pools.  Any active connections will be discarded instead of sent to the pool when they are closed.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClearPool">
+      <MemberSignature Language="C#" Value="public static void ClearPool (Mono.Data.Sqlite.SqliteConnection connection);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ClearPool(class Mono.Data.Sqlite.SqliteConnection connection) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="connection" Type="Mono.Data.Sqlite.SqliteConnection" />
+      </Parameters>
+      <Docs>
+        <param name="connection">
+        </param>
+        <summary>
+            Clears the connection pool associated with the connection.  Any other active connections using the same database file
+            will be discarded instead of returned to the pool when they are closed.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Creates a clone of the connection.  All attached databases and user-defined functions are cloned.  If the existing connection is open, the cloned connection
+            will also be opened.
+            </summary>
+        <returns />
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            When the database connection is closed, all commands linked to this connection are automatically reset.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Commit">
+      <MemberSignature Language="C#" Value="public event Mono.Data.Sqlite.SQLiteCommitHandler Commit;" />
+      <MemberSignature Language="ILAsm" Value=".event class Mono.Data.Sqlite.SQLiteCommitHandler Commit" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteCommitHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            This event is raised whenever SQLite is committing a transaction.
+            Return non-zero to trigger a rollback
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectionString">
+      <MemberSignature Language="C#" Value="public override string ConnectionString { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConnectionString" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Editor("SQLite.Designer.SqliteConnectionStringEditor, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.RefreshProperties(System.ComponentModel.RefreshProperties.All)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The connection string containing the parameters for the connection
+            </summary>
+        <value>To be added.</value>
+        <remarks>
+          <list type="table">
+            <listheader>
+              <term>Parameter</term>
+              <term>Values</term>
+              <term>Required</term>
+              <term>Default</term>
+            </listheader>
+            <item>
+              <description>Data Source</description>
+              <description>{filename}</description>
+              <description>Y</description>
+              <description />
+            </item>
+            <item>
+              <description>Version</description>
+              <description>3</description>
+              <description>N</description>
+              <description>3</description>
+            </item>
+            <item>
+              <description>UseUTF16Encoding</description>
+              <description>
+                <b>True</b>
+                <br />
+                <b>False</b>
+              </description>
+              <description>N</description>
+              <description>False</description>
+            </item>
+            <item>
+              <description>DateTimeFormat</description>
+              <description>
+                <b>Ticks</b> - Use DateTime.Ticks<br /><b>ISO8601</b> - Use ISO8601 DateTime format<br /><b>JulianDay</b> - Use JulianDay format</description>
+              <description>N</description>
+              <description>ISO8601</description>
+            </item>
+            <item>
+              <description>BinaryGUID</description>
+              <description>
+                <b>Yes/On/1</b> - Store GUID columns in binary form<br /><b>No/Off/0</b> - Store GUID columns as text</description>
+              <description>N</description>
+              <description>On</description>
+            </item>
+            <item>
+              <description>Cache Size</description>
+              <description>{size in bytes}</description>
+              <description>N</description>
+              <description>2000</description>
+            </item>
+            <item>
+              <description>Synchronous</description>
+              <description>
+                <b>Normal</b> - Normal file flushing behavior<br /><b>Full</b> - Full flushing after all writes<br /><b>Off</b> - Underlying OS flushes I/O's</description>
+              <description>N</description>
+              <description>Normal</description>
+            </item>
+            <item>
+              <description>Page Size</description>
+              <description>{size in bytes}</description>
+              <description>N</description>
+              <description>1024</description>
+            </item>
+            <item>
+              <description>Password</description>
+              <description>{password}</description>
+              <description>N</description>
+              <description />
+            </item>
+            <item>
+              <description>Enlist</description>
+              <description>
+                <B>Y</B> - Automatically enlist in distributed transactions<br /><b>N</b> - No automatic enlistment</description>
+              <description>N</description>
+              <description>Y</description>
+            </item>
+            <item>
+              <description>Pooling</description>
+              <description>
+                <b>True</b> - Use connection pooling<br /><b>False</b> - Do not use connection pooling</description>
+              <description>N</description>
+              <description>False</description>
+            </item>
+            <item>
+              <description>FailIfMissing</description>
+              <description>
+                <b>True</b> - Don't create the database if it does not exist, throw an error instead<br /><b>False</b> - Automatically create the database if it does not exist</description>
+              <description>N</description>
+              <description>False</description>
+            </item>
+            <item>
+              <description>Max Page Count</description>
+              <description>{size in pages} - Limits the maximum number of pages (limits the size) of the database</description>
+              <description>N</description>
+              <description>0</description>
+            </item>
+            <item>
+              <description>Legacy Format</description>
+              <description>
+                <b>True</b> - Use the more compatible legacy 3.x database format<br /><b>False</b> - Use the newer 3.3x database format which compresses numbers more effectively</description>
+              <description>N</description>
+              <description>False</description>
+            </item>
+            <item>
+              <description>Default Timeout</description>
+              <description>{time in seconds}<br />The default command timeout</description>
+              <description>N</description>
+              <description>30</description>
+            </item>
+            <item>
+              <description>Journal Mode</description>
+              <description>
+                <b>Delete</b> - Delete the journal file after a commit<br /><b>Persist</b> - Zero out and leave the journal file on disk after a commit<br /><b>Off</b> - Disable the rollback journal entirely</description>
+              <description>N</description>
+              <description>Delete</description>
+            </item>
+            <item>
+              <description>Read Only</description>
+              <description>
+                <b>True</b> - Open the database for read only access<br /><b>False</b> - Open the database for normal read/write access</description>
+              <description>N</description>
+              <description>False</description>
+            </item>
+            <item>
+              <description>Max Pool Size</description>
+              <description>The maximum number of connections for the given connection string that can be in the connection pool</description>
+              <description>N</description>
+              <description>100</description>
+            </item>
+            <item>
+              <description>Default IsolationLevel</description>
+              <description>The default transaciton isolation level</description>
+              <description>N</description>
+              <description>Serializable</description>
+            </item>
+          </list>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateCommand">
+      <MemberSignature Language="C#" Value="public Mono.Data.Sqlite.SqliteCommand CreateCommand ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Data.Sqlite.SqliteCommand CreateCommand() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SqliteCommand</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Create a new SqliteCommand and associate it with this connection.
+            </summary>
+        <returns>Returns an instantiated SqliteCommand object already assigned to this connection.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateDbCommand">
+      <MemberSignature Language="C#" Value="protected override System.Data.Common.DbCommand CreateDbCommand ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.Data.Common.DbCommand CreateDbCommand() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.Common.DbCommand</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Forwards to the local CreateCommand() function
+            </summary>
+        <returns />
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFile">
+      <MemberSignature Language="C#" Value="public static void CreateFile (string databaseFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void CreateFile(string databaseFileName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="databaseFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="databaseFileName">The file to create</param>
+        <summary>
+            Creates a database file.  This just creates a zero-byte file which SQLite
+            will turn into a database when the file is opened properly.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Database">
+      <MemberSignature Language="C#" Value="public override string Database { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Database" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns an empty string
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DataSource">
+      <MemberSignature Language="C#" Value="public override string DataSource { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DataSource" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns the filename without extension or path
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DbProviderFactory">
+      <MemberSignature Language="C#" Value="protected override System.Data.Common.DbProviderFactory DbProviderFactory { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Data.Common.DbProviderFactory DbProviderFactory" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.Common.DbProviderFactory</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns a SQLiteProviderFactory object.
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultTimeout">
+      <MemberSignature Language="C#" Value="public int DefaultTimeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 DefaultTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets/sets the default command timeout for newly-created commands.  This is especially useful for
+            commands used internally such as inside a SqliteTransaction, where setting the timeout is not possible.
+            This can also be set in the ConnectionString with "Default Timeout"
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">True if the connection is being explicitly closed.</param>
+        <summary>
+            Disposes of the SqliteConnection, closing it if it is active.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnlistTransaction">
+      <MemberSignature Language="C#" Value="public override void EnlistTransaction (System.Transactions.Transaction transaction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void EnlistTransaction(class System.Transactions.Transaction transaction) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="transaction" Type="System.Transactions.Transaction" />
+      </Parameters>
+      <Docs>
+        <param name="transaction">The distributed transaction to enlist in</param>
+        <summary>
+            Manual distributed transaction enlistment support
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchema">
+      <MemberSignature Language="C#" Value="public override System.Data.DataTable GetSchema ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Data.DataTable GetSchema() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.DataTable</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Returns the MetaDataCollections schema
+            </summary>
+        <returns>A DataTable of the MetaDataCollections schema</returns>
+        <remarks>To be added.</remarks>
+        <overloads>
+            The following commands are used to extract schema information out of the database.  Valid schema types are:
+            <list type="bullet"><item><description>MetaDataCollections</description></item><item><description>DataSourceInformation</description></item><item><description>Catalogs</description></item><item><description>Columns</description></item><item><description>ForeignKeys</description></item><item><description>Indexes</description></item><item><description>IndexColumns</description></item><item><description>Tables</description></item><item><description>Views</description></item><item><description>ViewColumns</description></item></list></overloads>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchema">
+      <MemberSignature Language="C#" Value="public override System.Data.DataTable GetSchema (string collectionName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Data.DataTable GetSchema(string collectionName) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.DataTable</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="collectionName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="collectionName">The schema collection to retrieve</param>
+        <summary>
+            Returns schema information of the specified collection
+            </summary>
+        <returns>A DataTable of the specified collection</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchema">
+      <MemberSignature Language="C#" Value="public override System.Data.DataTable GetSchema (string collectionName, string[] restrictionValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Data.DataTable GetSchema(string collectionName, string[] restrictionValues) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.DataTable</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="collectionName" Type="System.String" />
+        <Parameter Name="restrictionValues" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <param name="collectionName">The collection to retrieve</param>
+        <param name="restrictionValues">The restrictions to impose</param>
+        <summary>
+            Retrieves schema information using the specified constraint(s) for the specified collection
+            </summary>
+        <returns>A DataTable of the specified collection</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public override void Open ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Open() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Opens the connection using the parameters found in the <see cref="P:Mono.Data.Sqlite.SqliteConnection.ConnectionString">ConnectionString</see></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RollBack">
+      <MemberSignature Language="C#" Value="public event EventHandler RollBack;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler RollBack" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            This event is raised whenever SQLite is committing a transaction.
+            Return non-zero to trigger a rollback
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ServerVersion">
+      <MemberSignature Language="C#" Value="public override string ServerVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ServerVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns the version of the underlying SQLite database engine
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetConfig">
+      <MemberSignature Language="C#" Value="public static void SetConfig (Mono.Data.Sqlite.SQLiteConfig config);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetConfig(valuetype Mono.Data.Sqlite.SQLiteConfig config) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="config" Type="Mono.Data.Sqlite.SQLiteConfig" />
+      </Parameters>
+      <Docs>
+        <param name="config">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetPassword">
+      <MemberSignature Language="C#" Value="public void SetPassword (byte[] databasePassword);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetPassword(unsigned int8[] databasePassword) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="databasePassword" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="databasePassword">The password for the database</param>
+        <summary>
+            Sets the password for a password-protected database.  A password-protected database is
+            unusable for any operation until the password has been set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetPassword">
+      <MemberSignature Language="C#" Value="public void SetPassword (string databasePassword);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetPassword(string databasePassword) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="databasePassword" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="databasePassword">The password for the database</param>
+        <summary>
+            Sets the password for a password-protected database.  A password-protected database is
+            unusable for any operation until the password has been set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SQLiteVersion">
+      <MemberSignature Language="C#" Value="public static string SQLiteVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string SQLiteVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns the version of the underlying SQLite database engine
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="State">
+      <MemberSignature Language="C#" Value="public override System.Data.ConnectionState State { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Data.ConnectionState State" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.ConnectionState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Returns the state of the connection.
+            </summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="StateChange">
+      <MemberSignature Language="C#" Value="public override event System.Data.StateChangeEventHandler StateChange;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Data.StateChangeEventHandler StateChange" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.StateChangeEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            This event is raised whenever the database is opened or closed.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public event Mono.Data.Sqlite.SQLiteUpdateEventHandler Update;" />
+      <MemberSignature Language="ILAsm" Value=".event class Mono.Data.Sqlite.SQLiteUpdateEventHandler Update" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteUpdateEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            This event is raised whenever SQLite makes an update/delete/insert into the database on
+            this connection.  It only applies to the given connection.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

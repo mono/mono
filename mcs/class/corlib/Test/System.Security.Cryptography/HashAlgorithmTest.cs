@@ -44,7 +44,7 @@ public class HashAlgorithmTest {
 	protected HashAlgorithm hash;
 
 	[SetUp]
-	protected virtual void SetUp () 
+	public virtual void SetUp () 
 	{
 		hash = HashAlgorithm.Create ();
 	}
@@ -356,7 +356,7 @@ public class HashAlgorithmTest {
 	public virtual bool ManagedHashImplementation {
 		get { return false; }
 	}
-
+#if !NET_2_1
 	[Test]
 	[Category ("NotWorking")] // Mono nevers throws an exception (and we're all managed ;-)
 	public void TransformFinalBlock_Twice ()
@@ -394,7 +394,7 @@ public class HashAlgorithmTest {
 		if (!ManagedHashImplementation && !exception)
 			Assert.Fail ("Expected CryptographicException from non *Managed classes");
 	}
-
+#endif
 	[Test]
 	public void TransformFinalBlock_Twice_Initialize ()
 	{
@@ -435,7 +435,7 @@ public class HashAlgorithmTest {
 	{
 		Assert.AreEqual (HashBuffer (false), HashBuffer (true), "Intersect");
 	}
-
+#if !NET_2_1
 	[Test]
 	[ExpectedException (typeof (NullReferenceException))]
 	[Category ("NotWorking")] // initialization problem ? fx2.0 only ?
@@ -445,7 +445,7 @@ public class HashAlgorithmTest {
 		// getting the property throws
 		Assert.IsNull (hash.Hash);
 	}
-
+#endif
 	[Test]
 	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
 	public void Hash_AfterInitialize_SecondTime ()

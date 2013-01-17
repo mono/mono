@@ -6,6 +6,7 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2007-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -82,6 +83,13 @@ namespace Mono.CSharp.Linq
 			{
 				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.None);
 				return rmg;
+			}
+
+			protected override Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)
+			{
+				ec.Report.Error (1979, loc,
+					"Query expressions with a source or join sequence of type `dynamic' are not allowed");
+				return null;
 			}
 
 			#region IErrorHandler Members
@@ -275,6 +283,12 @@ namespace Mono.CSharp.Linq
 			this.identifier = identifier;
 		}
 
+		public RangeVariable Identifier {
+			get {
+				return identifier;
+			}
+		}
+
 		public FullNamedExpression IdentifierType { get; set; }
 
 		protected Invocation CreateCastExpression (Expression lSide)
@@ -341,6 +355,12 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
+		public bool IsParameter {
+			get {
+				return false;
+			}
+		}
+
 		public Location Location { get; private set; }
 
 		public string Name { get; private set; }
@@ -388,7 +408,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class QueryStartClause : ARangeVariableQueryClause
+	public class QueryStartClause : ARangeVariableQueryClause
 	{
 		public QueryStartClause (QueryBlock block, Expression expr, RangeVariable identifier, Location loc)
 			: base (block, identifier, expr, loc)
@@ -398,19 +418,6 @@ namespace Mono.CSharp.Linq
 
 		public override Expression BuildQueryClause (ResolveContext ec, Expression lSide, Parameter parameter)
 		{
-/*
-			expr = expr.Resolve (ec);
-			if (expr == null)
-				return null;
-
-			if (expr.Type == InternalType.Dynamic || expr.Type == TypeManager.void_type) {
-				ec.Report.Error (1979, expr.Location,
-					"Query expression with a source or join sequence of type `{0}' is not allowed",
-					TypeManager.CSharpName (expr.Type));
-				return null;
-			}
-*/
-
 			if (IdentifierType != null)
 				expr = CreateCastExpression (expr);
 
@@ -448,6 +455,12 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
+		public Expression SelectorExpression {
+			get {
+ 				return element_selector;
+			}
+		}
+
 		protected override void CreateArguments (ResolveContext ec, Parameter parameter, ref Arguments args)
 		{
 			base.CreateArguments (ec, parameter, ref args);
@@ -476,6 +489,11 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { return "GroupBy"; }
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Join : SelectMany
@@ -487,6 +505,18 @@ namespace Mono.CSharp.Linq
 		{
 			this.outer_selector = outerSelector;
 			this.inner_selector = innerSelector;
+		}
+
+		public QueryBlock InnerSelector {
+			get {
+				return inner_selector;
+			}
+		}
+		
+		public QueryBlock OuterSelector {
+			get {
+				return outer_selector;
+			}
 		}
 
 		protected override void CreateArguments (ResolveContext ec, Parameter parameter, ref Arguments args)
@@ -522,6 +552,11 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { return "Join"; }
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class GroupJoin : Join
@@ -543,6 +578,11 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { return "GroupJoin"; }
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Let : ARangeVariableQueryClause
@@ -560,6 +600,11 @@ namespace Mono.CSharp.Linq
 
 		protected override string MethodName {
 			get { return "Select"; }
+		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -586,6 +631,12 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { return "Select"; }
 		}
+		
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
+
 	}
 
 	public class SelectMany : ARangeVariableQueryClause
@@ -637,6 +688,11 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { return "SelectMany"; }
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class Where : AQueryClause
@@ -648,6 +704,11 @@ namespace Mono.CSharp.Linq
 
 		protected override string MethodName {
 			get { return "Where"; }
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -661,6 +722,11 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { return "OrderBy"; }
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class OrderByDescending : AQueryClause
@@ -672,6 +738,11 @@ namespace Mono.CSharp.Linq
 
 		protected override string MethodName {
 			get { return "OrderByDescending"; }
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -685,6 +756,11 @@ namespace Mono.CSharp.Linq
 		protected override string MethodName {
 			get { return "ThenBy"; }
 		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
+		}
 	}
 
 	public class ThenByDescending : OrderByDescending
@@ -696,6 +772,11 @@ namespace Mono.CSharp.Linq
 
 		protected override string MethodName {
 			get { return "ThenByDescending"; }
+		}
+
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
@@ -738,7 +819,7 @@ namespace Mono.CSharp.Linq
 		public void AddRangeVariable (RangeVariable variable)
 		{
 			variable.Block = this;
-			AddLocalName (variable.Name, variable);
+			TopBlock.AddLocalName (variable.Name, variable, true);
 		}
 
 		public override void Error_AlreadyDeclared (string name, INamedBlockVariable variable, string reason)

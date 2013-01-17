@@ -37,8 +37,18 @@ using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 
 namespace System.Data.SqlClient {
+	/// <summary>Efficient way to bulk load SQL Server table with several data rows at once</summary>
 	public sealed class SqlBulkCopy : IDisposable 
 	{
+		#region Constants
+		private const string transConflictMessage = "Must not specify SqlBulkCopyOptions.UseInternalTransaction " +
+			"and pass an external Transaction at the same time.";
+		
+		private const SqlBulkCopyOptions insertModifiers =
+			SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock |
+			SqlBulkCopyOptions.KeepNulls | SqlBulkCopyOptions.FireTriggers;
+		#endregion
+		
 		#region Fields
 
 		private int _batchSize = 0;
@@ -47,22 +57,30 @@ namespace System.Data.SqlClient {
 		private SqlBulkCopyColumnMappingCollection _columnMappingCollection = new SqlBulkCopyColumnMappingCollection ();
 		private string _destinationTableName = null;
 		private bool ordinalMapping = false;
-		bool sqlRowsCopied = false;
-		bool identityInsert = false;
-		bool isLocalConnection = false;
-		SqlConnection connection;
-		SqlBulkCopyOptions copyOptions = SqlBulkCopyOptions.Default;
+		private bool sqlRowsCopied = false;
+		private bool isLocalConnection = false;
+		private SqlConnection connection;
+		private SqlTransaction externalTransaction;
+		private SqlBulkCopyOptions copyOptions = SqlBulkCopyOptions.Default;
 
 		#endregion
 
 		#region Constructors
 		public SqlBulkCopy (SqlConnection connection)
 		{
+			if (connection == null) {
+				throw new ArgumentNullException("connection");
+			}
+			
 			this.connection = connection;
 		}
 
 		public SqlBulkCopy (string connectionString)
 		{
+			if (connectionString == null) {
+				throw new ArgumentNullException("connectionString");
+			}
+			
 			this.connection = new SqlConnection (connectionString);
 			isLocalConnection = true;
 		}
@@ -70,18 +88,40 @@ namespace System.Data.SqlClient {
 		[MonoTODO]
 		public SqlBulkCopy (string connectionString, SqlBulkCopyOptions copyOptions)
 		{
+			if (connectionString == null) {
+				throw new ArgumentNullException ("connectionString");
+			}
+			
 			this.connection = new SqlConnection (connectionString);
-			this.copyOptions = copyOptions;
 			isLocalConnection = true;
-			throw new NotImplementedException ();
+			
+			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction)
+				throw new NotImplementedException ("We don't know how to process UseInternalTransaction option.");
+			
+			this.copyOptions = copyOptions;
 		}
 
 		[MonoTODO]
 		public SqlBulkCopy (SqlConnection connection, SqlBulkCopyOptions copyOptions, SqlTransaction externalTransaction)
 		{
+			if (connection == null) {
+				throw new ArgumentNullException ("connection");
+			}
+			
 			this.connection = connection;
 			this.copyOptions = copyOptions;
-			throw new NotImplementedException ();
+			
+			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction) {
+				if (externalTransaction != null)
+					throw new ArgumentException (transConflictMessage);
+			}
+			else
+				this.externalTransaction = externalTransaction;
+			
+			if ((copyOptions & SqlBulkCopyOptions.UseInternalTransaction) == SqlBulkCopyOptions.UseInternalTransaction)
+				throw new NotImplementedException ("We don't know how to process UseInternalTransaction option.");
+			
+			this.copyOptions = copyOptions;
 		}
 
 		#endregion
@@ -309,7 +349,10 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("This method should not be called on a closed connection");
 			if (_destinationTableName == null)
 				throw new ArgumentNullException ("DestinationTableName");
-			if (identityInsert) {
+			if (isLocalConnection && connection.State != ConnectionState.Open)
+				connection.Open();
+			
+			if ((copyOptions & SqlBulkCopyOptions.KeepIdentity) == SqlBulkCopyOptions.KeepIdentity) {
 				SqlCommand cmd = new SqlCommand ("set identity_insert " +
 								 table.TableName + " on",
 								 connection);
@@ -331,6 +374,44 @@ namespace System.Data.SqlClient {
 				string statement = "insert bulk " + DestinationTableName + " (";
 				statement += GenerateColumnMetaData (tmpCmd, colMetaData, tableCollations);
 				statement += ")";
+				
+				#region Check requested options and add corresponding modifiers to the statement
+				if ((copyOptions & insertModifiers) != SqlBulkCopyOptions.Default) {
+					statement += " WITH (";
+					bool commaRequired = false;
+					
+					if ((copyOptions & SqlBulkCopyOptions.CheckConstraints) == SqlBulkCopyOptions.CheckConstraints) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "CHECK_CONSTRAINTS";
+						commaRequired = true;
+					}
+					
+					if ((copyOptions & SqlBulkCopyOptions.TableLock) == SqlBulkCopyOptions.TableLock) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "TABLOCK";
+						commaRequired = true;
+					}
+					
+					if ((copyOptions & SqlBulkCopyOptions.KeepNulls) == SqlBulkCopyOptions.KeepNulls) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "KEEP_NULLS";
+						commaRequired = true;
+					}
+					
+					if ((copyOptions & SqlBulkCopyOptions.FireTriggers) == SqlBulkCopyOptions.FireTriggers) {
+						if (commaRequired)
+							statement += ", ";
+						statement += "FIRE_TRIGGERS";
+						commaRequired = true;
+					}
+					
+					statement += ")";
+				}
+				#endregion Check requested options and add corresponding modifiers to the statement
+				
 				blkCopy.SendColumnMetaData (statement);
 			}
 			blkCopy.BulkCopyStart (tmpCmd.Parameters.MetaParameters);
@@ -428,6 +509,8 @@ namespace System.Data.SqlClient {
 		{
 			if (rows == null)
 				throw new ArgumentNullException ("rows");
+			if (rows.Length == 0)
+				return;
 			DataTable table = new DataTable (rows [0].Table.TableName);
 			foreach (DataColumn col in rows [0].Table.Columns) {
 				DataColumn tmpCol = new DataColumn (col.ColumnName, col.DataType);

@@ -28,6 +28,43 @@
 	* StringTest.cs: Add tests for #601772 (i.e. take SplitStringChars(),
 	  change all the chars to Strings, and things should work).
 
+2010-06-04  Damien Diederen  <dd@crosstwine.com>
+
+	* CharTest.cs: Add tests for astral plane characters/surrogate
+	pairs.
+
+	  - Show that Char.GetUnicodeCategory(string,int) results in a
+	    lookup into the higher planes of the Unicode database when invoked
+	    on a valid surrogate pair, and returns the "normal" category code
+	    otherwise.
+
+	  - Perform a few sanity checks on the results of ConvertFromUtf32
+	    and GetUnicodeCategory when invoked on codepoints from the
+	    higher planes.
+
+2010-06-04  Damien Diederen  <dd@crosstwine.com>
+
+	* CharCategoryTest.cs, CharTest.cs: Update category dumps to match
+	MS .NET.
+
+	The category codes in newer versions of Microsoft's framework are
+	not compatible with the ones encoded in this class, causing tests
+	to fail.  Fix that by using new sets of dumps generated under
+	v3.5.21022 and v4.0.30319.
+
+	Also, drop CharTest.IsWhiteSpace_Complete as the same checks
+	are performed by CharCategoryTest.IsWhiteSpace.
+
+	While we are at it, improve the generator so that:
+
+	  - common code is shared between the generator and the test;
+
+	  - a number of test cases can be generated at once via
+	    command-line arguments;
+
+	  - the dumps are word-wrapped, enhancing legibility and avoiding
+	    line length limitations in some compilers.
+
 2010-05-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* LazyTest.cs: Add a test that actually test something.

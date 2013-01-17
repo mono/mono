@@ -31,6 +31,7 @@ using System;
 namespace System.Runtime.InteropServices {
 
 	[AttributeUsage (AttributeTargets.Delegate, Inherited = false,AllowMultiple=false),ComVisible(true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class UnmanagedFunctionPointerAttribute: Attribute {
 		#region Sync with object-internals.h
 		private CallingConvention call_conv;

@@ -29,7 +29,7 @@ using System.Globalization;
 
 namespace System.Windows.Media {
 
-	public class MatrixConverter : TypeConverter
+	public sealed class MatrixConverter : TypeConverter
 	{
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{

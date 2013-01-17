@@ -43,7 +43,7 @@ public partial class Test
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Test test = new Test ();
 		if (test.TestFoo () != 1)

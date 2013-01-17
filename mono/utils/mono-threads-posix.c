@@ -17,6 +17,10 @@
 
 #include <errno.h>
 
+#if defined(PLATFORM_ANDROID)
+extern int tkill (pid_t tid, int signal);
+#endif
+
 #if defined(_POSIX_VERSION) || defined(__native_client__)
 #include <signal.h>
 
@@ -80,14 +84,18 @@ static void
 suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 {
 	MonoThreadInfo *current = mono_thread_info_current ();
-	gboolean ret = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&current->suspend_state, context);
+	gboolean ret;
+	
+	if (current->syscall_break_signal) {
+		current->syscall_break_signal = FALSE;
+		return;
+	}
+
+	ret = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&current->suspend_state, context);
 
 	g_assert (ret);
 
-	if (current->self_suspend)
-		LeaveCriticalSection (&current->suspend_lock);
-	else
-		MONO_SEM_POST (&current->suspend_semaphore);
+	MONO_SEM_POST (&current->suspend_semaphore);
 		
 	while (MONO_SEM_WAIT (&current->resume_semaphore) != 0) {
 		/*if (EINTR != errno) ABORT("sem_wait failed"); */
@@ -145,30 +153,48 @@ mono_threads_core_interrupt (MonoThreadInfo *info)
 {
 }
 
-/*
-We self suspend using signals since thread_state_init_from_sigctx only supports
-a null context on a few targets.
-*/
-void
-mono_threads_core_self_suspend (MonoThreadInfo *info)
+int
+mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {
-	/*FIXME, check return value*/
-	info->self_suspend = TRUE;
-#if !defined(__native_client__)
-	/* Workaround pthread_kill abort() in NaCl glibc. */
-	pthread_kill (mono_thread_info_get_tid (info), mono_thread_get_abort_signal ());
+#if defined (PLATFORM_ANDROID)
+	int result, old_errno = errno;
+	result = tkill (info->native_handle, signum);
+	if (result < 0) {
+		result = errno;
+		errno = old_errno;
+	}
+	return result;
+#elif defined(__native_client__)
+  /* Workaround ptherad_kill abort() in NaCl glibc. */
+  return 0;
+#else
+	return pthread_kill (mono_thread_info_get_tid (info), signum);
 #endif
+
+}
+
+void
+mono_threads_core_abort_syscall (MonoThreadInfo *info)
+{
+	/*
+	We signal a thread to break it from the urrent syscall.
+	This signal should not be interpreted as a suspend request.
+	*/
+	info->syscall_break_signal = TRUE;
+	mono_threads_pthread_kill (info, mono_thread_get_abort_signal ());
+}
+
+gboolean
+mono_threads_core_needs_abort_syscall (void)
+{
+	return TRUE;
 }
 
 gboolean
 mono_threads_core_suspend (MonoThreadInfo *info)
 {
 	/*FIXME, check return value*/
-	info->self_suspend = FALSE;
-#if !defined(__native_client__)
-	/* Workaround pthread_kill abort() in NaCl glibc. */
-	pthread_kill (mono_thread_info_get_tid (info), mono_thread_get_abort_signal ());
-#endif
+	mono_threads_pthread_kill (info, mono_thread_get_abort_signal ());
 	while (MONO_SEM_WAIT (&info->suspend_semaphore) != 0) {
 		/* g_assert (errno == EINTR); */
 	}
@@ -190,16 +216,39 @@ void
 mono_threads_platform_register (MonoThreadInfo *info)
 {
 	MONO_SEM_INIT (&info->suspend_semaphore, 0);
-	MONO_SEM_INIT (&info->resume_semaphore, 0);
-	MONO_SEM_INIT (&info->finish_resume_semaphore, 0);
+
+#if defined (PLATFORM_ANDROID)
+	info->native_handle = (gpointer) gettid ();
+#endif
 }
 
 void
 mono_threads_platform_free (MonoThreadInfo *info)
 {
 	MONO_SEM_DESTROY (&info->suspend_semaphore);
-	MONO_SEM_DESTROY (&info->resume_semaphore);
-	MONO_SEM_DESTROY (&info->finish_resume_semaphore);
+}
+
+MonoNativeThreadId
+mono_native_thread_id_get (void)
+{
+	return pthread_self ();
+}
+
+gboolean
+mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2)
+{
+	return pthread_equal (id1, id2);
+}
+
+/*
+ * mono_native_thread_create:
+ *
+ *   Low level thread creation function without any GC wrappers.
+ */
+gboolean
+mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
+{
+	return pthread_create (tid, NULL, func, arg) == 0;
 }
 
 #endif /*!defined (__MACH__)*/

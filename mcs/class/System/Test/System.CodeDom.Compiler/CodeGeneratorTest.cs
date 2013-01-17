@@ -14,7 +14,7 @@ using System.IO;
 
 using NUnit.Framework;
 
-namespace CodeGeneratorTest
+namespace MonoTests.System.CodeDom.Compiler
 {
 	[TestFixture]
 	public class MockCodeGenerator : CodeGenerator

@@ -111,14 +111,14 @@ typedef struct _MonoLockFreeAllocDescriptor Descriptor;
 struct _MonoLockFreeAllocDescriptor {
 	MonoLockFreeQueueNode node;
 	MonoLockFreeAllocator *heap;
-	Anchor anchor;
+	volatile Anchor anchor;
 	unsigned int slot_size;
 	unsigned int max_count;
 	gpointer sb;
 #ifndef DESC_AVAIL_DUMMY
-	Descriptor *next;
+	Descriptor * volatile next;
 #endif
-	gboolean in_use;
+	gboolean in_use;	/* used for debugging only */
 };
 
 #define NUM_DESC_BATCH	64
@@ -374,7 +374,7 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
 	do {
 		unsigned int next;
 
-		new_anchor = old_anchor = (Anchor)*(volatile gint32*)&desc->anchor.value;
+		new_anchor = old_anchor = *(volatile Anchor*)&desc->anchor.value;
 		if (old_anchor.data.state == STATE_EMPTY) {
 			/* We must free it because we own it. */
 			desc_retire (desc);
@@ -477,7 +477,7 @@ mono_lock_free_free (gpointer ptr)
 	g_assert (SB_HEADER_FOR_ADDR (ptr) == SB_HEADER_FOR_ADDR (sb));
 
 	do {
-		new_anchor = old_anchor = (Anchor)*(volatile gint32*)&desc->anchor.value;
+		new_anchor = old_anchor = *(volatile Anchor*)&desc->anchor.value;
 		*(unsigned int*)ptr = old_anchor.data.avail;
 		new_anchor.data.avail = ((char*)ptr - (char*)sb) / desc->slot_size;
 		g_assert (new_anchor.data.avail < SB_USABLE_SIZE / desc->slot_size);
@@ -531,7 +531,11 @@ descriptor_check_consistency (Descriptor *desc, gboolean print)
 {
 	int count = desc->anchor.data.count;
 	int max_count = SB_USABLE_SIZE / desc->slot_size;
+#if _MSC_VER
+	gboolean* linked = alloca(max_count*sizeof(gboolean));
+#else
 	gboolean linked [max_count];
+#endif
 	int i, last;
 	unsigned int index;
 

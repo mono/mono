@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Reflection;
 using System.Resources;
@@ -64,8 +62,4 @@ using System.Security.Permissions;
 #endif
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 [assembly: BestFitMapping (false)]
-
-#endif

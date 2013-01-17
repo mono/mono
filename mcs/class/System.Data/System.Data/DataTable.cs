@@ -77,7 +77,6 @@ namespace System.Data {
 
 		private string _displayExpression;
 		private PropertyCollection _extendedProperties;
-		private bool _hasErrors;
 		private CultureInfo _locale;
 		private int _minimumCapacity;
 		private string _nameSpace;
@@ -88,12 +87,9 @@ namespace System.Data {
 		private DataRowCollection _rows;
 		private ISite _site;
 		private string _tableName;
-		private bool _containsListCollection;
-		private string _encodedTableName;
 		internal bool _duringDataLoad;
 		internal bool _nullConstraintViolationDuringDataLoad;
 		private bool dataSetPrevEnforceConstraints;
-		private bool dataTablePrevEnforceConstraints;
 		private bool enforceConstraints = true;
 		private DataRowBuilder _rowBuilder;
 		private ArrayList _indexes;
@@ -880,6 +876,8 @@ namespace System.Data {
 				if (isEmpty || !Copy.Columns.Contains (column.ColumnName))
 					Copy.Columns.Add (column.Clone ());
 			}
+			foreach (DataColumn column in Copy.Columns)
+				column.CompileExpression ();
 
 			CopyConstraints (Copy);
 			// add primary key to the copy
@@ -2370,10 +2368,10 @@ namespace System.Data {
 	}
 
 	partial class DataTable {
-		public DataTable (string tableName, string tbNamespace)
+		public DataTable (string tableName, string tableNamespace)
 			: this (tableName)
 		{
-			_nameSpace = tbNamespace;
+			_nameSpace = tableNamespace;
 		}
 
 		SerializationFormat remotingFormat = SerializationFormat.Xml;

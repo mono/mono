@@ -408,7 +408,7 @@ namespace Mono.Security.Cryptography {
 				Buffer.BlockCopy (C, 0, toBeHashed, mgfSeedLength, 4);
 				byte[] output = hash.ComputeHash (toBeHashed);
 				Buffer.BlockCopy (output, 0, T, pos, hLen);
-				pos += mgfSeedLength;
+				pos += hLen;
 			}
 			
 			// 4. Output the leading maskLen octets of T as the octet string mask.

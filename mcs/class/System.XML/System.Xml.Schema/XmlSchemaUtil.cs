@@ -584,7 +584,7 @@ namespace System.Xml.Schema
 						else if (!skipEquivalent || !AreAttributesEqual (attr, attributesResolved [attr.QualifiedName] as XmlSchemaAttribute))
 							AddToTable (attributesResolved, attr, attr.QualifiedName, h);
 					} else {
-						if (anyAttribute == null) {
+						if (anyAttribute != null) {
 							anyAttributeUse = (XmlSchemaAnyAttribute) xsobj;
 							anyAttribute.Validate (h, schema);
 						}

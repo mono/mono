@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
@@ -82,7 +80,7 @@ namespace System.Threading {
 		{
 		}
 
-		[MonoTODO ("Does not support access control, semaphoreSecurity is ignored")]
+		[MonoTODO ("CreateSemaphore_internal does not support access control, semaphoreSecurity is ignored")]
 		public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew, 
 			SemaphoreSecurity semaphoreSecurity)
 		{
@@ -98,10 +96,12 @@ namespace System.Threading {
 							   out createdNew);
 		}
 
-		[MonoTODO]
 		public SemaphoreSecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			return new SemaphoreSecurity (SafeWaitHandle,
+						      AccessControlSections.Owner |
+						      AccessControlSections.Group |
+						      AccessControlSections.Access);
 		}
 
 		[PrePrepareMethod]
@@ -130,13 +130,12 @@ namespace System.Threading {
 			return (ret);
 		}
 
-		[MonoTODO]
 		public void SetAccessControl (SemaphoreSecurity semaphoreSecurity)
 		{
 			if (semaphoreSecurity == null)
 				throw new ArgumentNullException ("semaphoreSecurity");
-
-			throw new NotImplementedException ();
+				
+			semaphoreSecurity.PersistModifications (SafeWaitHandle);
 		}
 
 		// static methods
@@ -171,4 +170,3 @@ namespace System.Threading {
 	}
 }
 
-#endif

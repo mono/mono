@@ -38,11 +38,6 @@ using System.Resources;
 [assembly: SatelliteContractVersion (Consts.VsVersion)]
 #endif
 
-#if (ONLY_1_1)
-[assembly: ComCompatibleVersion (7, 0, 3300, 0)]
-[assembly: TypeLibVersion (7, 1)]
-#endif
-
 /* TODO COMPLETE INFORMATION
 
 [assembly: AssemblyTitle ("")]

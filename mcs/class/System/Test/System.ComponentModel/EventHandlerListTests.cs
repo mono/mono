@@ -45,61 +45,61 @@ namespace MonoTests.System.ComponentModel
 			EventHandler two = new EventHandler (Deleg2);
 			EventHandler d;
 
-			Assertion.AssertEquals ("All #01", null, list [i1]);
-			Assertion.AssertEquals ("All #02", null, list [i2]);
+			Assert.IsNull (list [i1], "All #01");
+			Assert.IsNull (list [i2], "All #02");
 
 			list.AddHandler (i1, one);
 			d = list [i1] as EventHandler;
-			Assertion.Assert ("All #03", d != null);
+			Assert.IsNotNull (d, "All #03");
 
 			d (this, EventArgs.Empty);
-			Assertion.AssertEquals ("All #04", 1, calls);
+			Assert.AreEqual (1, calls, "All #04");
 
 			list.AddHandler (i2, two);
 			d = list [i1] as EventHandler;
-			Assertion.Assert ("All #05", d != null);
+			Assert.IsNotNull (d, "All #05");
 
 			d (this, EventArgs.Empty);
-			Assertion.AssertEquals ("All #06", 2, calls);
+			Assert.AreEqual (2, calls, "All #06");
 
 			d = list [i2] as EventHandler;
-			Assertion.Assert ("All #07", d != null);
+			Assert.IsNotNull (d, "All #07");
 
 			d (this, EventArgs.Empty);
-			Assertion.AssertEquals ("All #08", 4, calls);
+			Assert.AreEqual (4, calls, "All #08");
 
 			list.AddHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assertion.Assert ("All #08", d != null);
+			Assert.IsNotNull (d, "All #08");
 
 			d (this, EventArgs.Empty);
-			Assertion.AssertEquals ("All #09", 16, calls);
+			Assert.AreEqual (16, calls, "All #09");
 
 			list.RemoveHandler (i1, one);
 			d = list [i1] as EventHandler;
-			Assertion.Assert ("All #10", d == null);
+			Assert.IsNull (d, "All #10");
 
 			list.RemoveHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assertion.Assert ("All #11", d != null);
+			Assert.IsNotNull (d, "All #11");
 
 			list.RemoveHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assertion.Assert ("All #12", d == null);
+			Assert.IsNull (d, "All #12");
 
 			list.AddHandler (i1, one);
 			d = list [i1] as EventHandler;
-			Assertion.Assert ("All #13", d != null);
+			Assert.IsNotNull (d, "All #13");
 
 			list.AddHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assertion.Assert ("All #14", d != null);
+			Assert.IsNotNull (d, "All #14");
 
 			list.AddHandler (i1, null);
-			Assertion.Assert ("All #15", list [i1] != null);
+			Assert.IsNotNull (list [i1], "All #15");
 
 			list.AddHandler (i2, null);
-			Assertion.Assert ("All #16", list [i2] != null);
+			Assert.IsNotNull (list [i2], "All #16");
 
 			list.Dispose ();
 		}
@@ -112,11 +112,11 @@ namespace MonoTests.System.ComponentModel
 			
 			list.AddHandler (null, one);
 			EventHandler d = list [null] as EventHandler;
-			Assertion.Assert ("NullKey #01", d != null);
+			Assert.IsNotNull (d, "NullKey #01");
 			
 			list.RemoveHandler (null, one);
 			d = list [null] as EventHandler;
-			Assertion.Assert ("NullKey #02", d == null);
+			Assert.IsNull (d, "NullKey #02");
 		}
 	}
 }

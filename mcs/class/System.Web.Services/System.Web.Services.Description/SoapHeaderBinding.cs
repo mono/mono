@@ -104,7 +104,6 @@ namespace System.Web.Services.Description {
 			set { use = value; }
 		}
 
-#if NET_1_1
 		[MonoTODO]
 		[XmlElement ("headerfault")]
 		public SoapHeaderFaultBinding Fault 
@@ -112,7 +111,6 @@ namespace System.Web.Services.Description {
 			get { return null; }
 			set { ; }
 		}
-#endif
 
 		#endregion // Properties
 	}

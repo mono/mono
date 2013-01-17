@@ -24,7 +24,7 @@ public class S
 		const decimal dec = c;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		long i = 1;
 		int i2 = 0xA0;

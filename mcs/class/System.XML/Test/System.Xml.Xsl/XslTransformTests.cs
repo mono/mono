@@ -414,9 +414,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 
 		// http://support.microsoft.com/default.aspx?scid=kb;en-us;834667
 		[Test]
-#if NET_1_1
 		[Category ("NotDotNet")]
-#endif
 		public void LocalParameter ()
 		{
 			string xsltFragment = @"<?xml version=""1.0"" encoding=""UTF-8"" ?>

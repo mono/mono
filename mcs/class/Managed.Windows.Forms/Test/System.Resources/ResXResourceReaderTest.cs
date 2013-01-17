@@ -4,7 +4,7 @@
 // Authors:
 //     Gert Driesen <drieseng@users.sourceforge.net>
 //     Olivier Dufour <olivier.duff@gmail.com>
-//
+//     Gary Barnett <gary.barnett.mono@gmail.com>
 
 using System;
 using System.Collections;
@@ -15,12 +15,12 @@ using System.Resources;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Runtime.Serialization;
 
 using NUnit.Framework;
 using System.Reflection;
 
-namespace MonoTests.System.Resources
-{
+namespace MonoTests.System.Resources {
 	[TestFixture]
 	public class ResXResourceReaderTest : MonoTests.System.Windows.Forms.TestHelper
 	{
@@ -1301,6 +1301,72 @@ namespace MonoTests.System.Resources
 			}
 		}
 
+        static string resXWithEmptyName =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="""">
+	<value>a resource with no name</value>
+  </data>
+</root>";
+
+		static string resxWithNullRef =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""NullRef"" type=""System.Resources.ResXNullRef, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"">
+	<value></value>
+  </data>
+</root>";
+
+		[Test]
+		public void ResName_Empty ()
+		{
+			using (StringReader sr = new StringReader (resXWithEmptyName)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					enumerator.MoveNext ();
+					Assert.AreEqual ("", enumerator.Key, "#A1");
+					Assert.AreEqual ("a resource with no name", (string) enumerator.Value, "#A2");
+				}
+			}
+		}
+
+		[Test]
+		public void ResXNullRef ()
+		{
+			using (StringReader sr = new StringReader (resxWithNullRef)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					enumerator.MoveNext ();
+					Assert.AreEqual ("NullRef", enumerator.Key, "#A1");
+					Assert.IsNull (enumerator.Value, "#A2");
+				}
+			}
+		}
+
 		[Test]
 		public void ResValue ()
 		{
@@ -1656,13 +1722,13 @@ namespace MonoTests.System.Resources
 				"	<data name=\"Data\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
 				"		<value>Random Thoughts</value>" +
 				"	</data>" +
-				"	<data name=\"Foo\" type=\"System.Windows.Forms.Application, {1}\">" +
+				/*s*/"	<data name=\"Foo\" type=\"System.Windows.Forms.Application, {1}\">" +
 				"		<value>A B C</value>" +
 				"	</data>" +
 				"	<data name=\"Image\" type=\"{2}\">" +
 				"		<value>Summer.jpg</value>" +
 				"	</data>" +
-				"	<data name=\"Text\">" +
+				/*e*/"	<data name=\"Text\">" +
 				"		<value>OK</value>" +
 				"	</data>" +
 				"	<data name=\"Unknown\" mimetype=\"application/xxx\">" +
@@ -1671,10 +1737,10 @@ namespace MonoTests.System.Resources
 				"	<data name=\"Wrong\" typeof=\"{2}\" mimetype=\"application/xxx\">" +
 				"		<value>SuperUnknown</value>" +
 				"	</data>" +
-				"	<data name=\"Xtra\" type=\"System.Windows.Forms.AnchorStyles, {1}\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
+				/*s*/"	<data name=\"Xtra\" type=\"System.Windows.Forms.AnchorStyles, {1}\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
 				"		<value>LeftRight</value>" +
 				"	</data>" +
-				"</root>",
+				/*e*/"</root>",
 				ResXResourceWriter.ResMimeType, Consts.AssemblySystem_Windows_Forms,
 				typeof (Bitmap).AssemblyQualifiedName, typeof (byte []).AssemblyQualifiedName);
 
@@ -1758,6 +1824,177 @@ namespace MonoTests.System.Resources
 				}
 			}
 		}
+
+		[Test, ExpectedException (typeof (SerializationException))]
+		public void DeSerializationErrorBubbles ()
+		{
+			using (StringReader sr = new StringReader (serializedResXCorruped)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					// should throw exception
+				}
+			}
+		}
+
+		[Test, ExpectedException (typeof (TargetInvocationException))]
+		public void FileRef_DeserializationFails ()
+		{
+			string corruptFile = Path.GetTempFileName ();
+			ResXFileRef fileRef = new ResXFileRef (corruptFile, typeof (serializable).AssemblyQualifiedName);
+
+			File.AppendAllText (corruptFile,"corrupt");
+
+			StringBuilder sb = new StringBuilder();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource ("test", fileRef);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				using (ResXResourceReader reader = new ResXResourceReader (sr)) {
+					reader.GetEnumerator ();
+				}
+			}
+		}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void FileRef_TypeCantBeResolved ()
+		{
+			string aFile = Path.GetTempFileName ();
+			ResXFileRef fileRef = new ResXFileRef (aFile, "a.type.doesnt.exist");
+
+			StringBuilder sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource ("test", fileRef);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				using (ResXResourceReader reader = new ResXResourceReader (sr)) {
+					reader.GetEnumerator ();
+				}
+			}
+		}
+
+		[Test]
+		public void TypeConverter_AssemblyNamesUsed ()
+		{
+			string aName = "DummyAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+			AssemblyName [] assemblyNames = new AssemblyName [] { new AssemblyName (aName) };
+
+			StringReader sr = new StringReader (convertableResXWithoutAssemblyName);
+
+			using (ResXResourceReader rr = new ResXResourceReader (sr, assemblyNames)) {
+				IDictionaryEnumerator en = rr.GetEnumerator ();
+				en.MoveNext ();
+
+				object obj = ((DictionaryEntry) en.Current).Value;
+				Assert.IsNotNull (obj, "#A1");
+				Assert.AreEqual ("DummyAssembly.Convertable, " + aName, obj.GetType ().AssemblyQualifiedName, "#A2");
+			}
+
+		}
+
+		[Test]
+		public void TypeConverter_ITRSUsed ()
+		{
+			ResXDataNode dn = new ResXDataNode ("test", 34L);
+
+			StringBuilder sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource (dn);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				ResXResourceReader rr = new ResXResourceReader (sr, new ReturnIntITRS ());
+	 			IDictionaryEnumerator en = rr.GetEnumerator ();
+				en.MoveNext ();
+
+				object o = ((DictionaryEntry) en.Current).Value;
+				Assert.IsNotNull (o, "#A1");
+				Assert.IsInstanceOfType (typeof (int), o,"#A2");
+				Assert.AreEqual (34, o,"#A3");
+				rr.Close ();
+			}
+		}
+
+		[Test]
+		public void Serializable_ITRSUsed ()
+		{
+			serializable ser = new serializable ("aaaaa", "bbbbb");
+			ResXDataNode dn = new ResXDataNode ("test", ser);
+
+			StringBuilder sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				using (ResXResourceWriter writer = new ResXResourceWriter (sw)) {
+					writer.AddResource (dn);
+				}
+			}
+
+			using (StringReader sr = new StringReader (sb.ToString ())) {
+				ResXResourceReader rr = new ResXResourceReader (sr, new ReturnSerializableSubClassITRS ());
+	 			
+				IDictionaryEnumerator en = rr.GetEnumerator ();
+				en.MoveNext ();
+
+				object o = ((DictionaryEntry) en.Current).Value;
+				Assert.IsNotNull (o, "#A1");
+				Assert.IsInstanceOfType (typeof (serializableSubClass), o,"#A2");
+				rr.Close ();
+			}
+		}
+
+		static string convertableResXWithoutAssemblyName =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <data name=""test"" type=""DummyAssembly.Convertable"">
+	<value>im a name	im a value</value>
+  </data>
+</root>";
+
+		static string serializedResXCorruped =
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<root>
+  
+  <resheader name=""resmimetype"">
+	<value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name=""version"">
+	<value>2.0</value>
+  </resheader>
+  <resheader name=""reader"">
+	<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name=""writer"">
+	<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=""test"" mimetype=""application/x-microsoft.net.object.binary.base64"">
+	<value>
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+</value>
+  </data>
+</root>";
 
 		private static void WriteEmbeddedResource (string name, string filename)
 		{

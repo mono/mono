@@ -61,7 +61,10 @@ namespace Mono.Debugger.Soft
 
 		public EndPoint EndPoint {
 			get {
-				return conn.EndPoint;
+				var tcpConn = conn as TcpConnection;
+				if (tcpConn != null)
+					return tcpConn.EndPoint;
+				return null;
 			}
 		}
 
@@ -131,10 +134,21 @@ namespace Mono.Debugger.Soft
 			conn.VM_Exit (exitCode);
 		}
 
-		public void Dispose () {
+		public void Detach () {
 			conn.VM_Dispose ();
 			conn.Close ();
 			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
+		}
+
+		[Obsolete ("This method was poorly named; use the Detach() method instead")]
+		public void Dispose ()
+		{
+			Detach ();
+		}
+
+		public void ForceDisconnect ()
+		{
+			conn.ForceDisconnect ();
 		}
 
 		public IList<ThreadMirror> GetThreads () {
@@ -208,6 +222,10 @@ namespace Mono.Debugger.Soft
 			return new AssemblyLoadEventRequest (this);
 		}
 
+		public TypeLoadEventRequest CreateTypeLoadRequest () {
+			return new TypeLoadEventRequest (this);
+		}
+
 		public void EnableEvents (params EventType[] events) {
 			foreach (EventType etype in events) {
 				if (etype == EventType.Breakpoint)
@@ -230,6 +248,32 @@ namespace Mono.Debugger.Soft
 		
 		public void Disconnect () {
 			conn.Close ();
+		}
+
+		//
+		// Return a list of TypeMirror objects for all loaded types which reference the
+		// source file FNAME. Might return false positives.
+		// Since protocol version 2.7.
+		//
+		public IList<TypeMirror> GetTypesForSourceFile (string fname, bool ignoreCase) {
+			long[] ids = conn.VM_GetTypesForSourceFile (fname, ignoreCase);
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
+
+		//
+		// Return a list of TypeMirror objects for all loaded types named 'NAME'.
+		// NAME should be in the the same for as with Assembly.GetType ().
+		// Since protocol version 2.9.
+		//
+		public IList<TypeMirror> GetTypes (string name, bool ignoreCase) {
+			long[] ids = conn.VM_GetTypes (name, ignoreCase);
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
 		}
 		
 		internal void queue_event_set (EventSet es) {
@@ -412,6 +456,13 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
+		internal TypeMirror[] GetTypes (long[] ids) {
+			var res = new TypeMirror [ids.Length];
+			for (int i = 0; i < ids.Length; ++i)
+				res [i] = GetType (ids [i]);
+			return res;
+		}
+
 		Dictionary <long, ObjectMirror> objects;
 		object objects_lock = new object ();
 
@@ -425,22 +476,29 @@ namespace Mono.Debugger.Soft
 					 * Obtain the domain/type of the object to determine the type of
 					 * object we need to create.
 					 */
-					if (domain_id == 0)
-						domain_id = conn.Object_GetDomain (id);
+					if (domain_id == 0 || type_id == 0) {
+						if (conn.Version.AtLeast (2, 5)) {
+							var info = conn.Object_GetInfo (id);
+							domain_id = info.domain_id;
+							type_id = info.type_id;
+						} else {
+							if (domain_id == 0)
+								domain_id = conn.Object_GetDomain (id);
+							if (type_id == 0)
+								type_id = conn.Object_GetType (id);
+						}
+					}
 					AppDomainMirror d = GetDomain (domain_id);
-
-					if (type_id == 0)
-						type_id = conn.Object_GetType (id);
 					TypeMirror t = GetType (type_id);
 
 					if (t.Assembly == d.Corlib && t.Namespace == "System.Threading" && t.Name == "Thread")
-						obj = new ThreadMirror (this, id);
+						obj = new ThreadMirror (this, id, t, d);
 					else if (t.Assembly == d.Corlib && t.Namespace == "System" && t.Name == "String")
-						obj = new StringMirror (this, id);
+						obj = new StringMirror (this, id, t, d);
 					else if (typeof (T) == typeof (ArrayMirror))
-						obj = new ArrayMirror (this, id);
+						obj = new ArrayMirror (this, id, t, d);
 					else
-						obj = new ObjectMirror (this, id);
+						obj = new ObjectMirror (this, id, t, d);
 					objects [id] = obj;
 				}
 				return (T)obj;
@@ -534,6 +592,11 @@ namespace Mono.Debugger.Soft
 			for (int i = 0; i < values.Count; ++i)
 				res [i] = EncodeValue (values [i]);
 			return res;
+		}
+
+		internal void CheckProtocolVersion (int major, int minor) {
+			if (!conn.Version.AtLeast (major, minor))
+				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 		}
     }
 

@@ -97,44 +97,6 @@ namespace MonoTests.System.Data.Common {
 				Assert.AreEqual (count, dbdp.ToXml ().Children.Count, msg + ".Count");
 		}
 
-#if !NET_2_0
-		[Test]
-		public void Constructor_Empty ()
-		{
-			NonAbstractDBDataPermission dbdp = new NonAbstractDBDataPermission ();
-			Check ("Empty", dbdp, false, false, 0);
-		}
-#elif !NET_1_1
-		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		public void Constructor_PermissionStateBoolean_Invalid ()
-		{
-			PermissionState ps = (PermissionState) Int32.MinValue;
-			NonAbstractDBDataPermission dbdp = new NonAbstractDBDataPermission (ps, false);
-		}
-
-		[Test]
-		public void Constructor_PermissionStateBoolean_None ()
-		{
-			PermissionState ps = PermissionState.None;
-			NonAbstractDBDataPermission dbdp = new NonAbstractDBDataPermission (ps, false);
-			Check ("None,False", dbdp, false, false, 0);
-
-			dbdp = new NonAbstractDBDataPermission (ps, true);
-			Check ("None,True", dbdp, true, false, 0);
-		}
-
-		[Test]
-		public void Constructor_PermissionStateBoolean_Unrestricted ()
-		{
-			PermissionState ps = PermissionState.Unrestricted;
-			NonAbstractDBDataPermission dbdp = new NonAbstractDBDataPermission (ps, false);
-			Check ("Unrestricted,False", dbdp, false, true, 0);
-
-			dbdp = new NonAbstractDBDataPermission (ps, true);
-			Check ("Unrestricted,True", dbdp, true, true, 0);
-		}
-#endif
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_DBDataPermission_Null ()

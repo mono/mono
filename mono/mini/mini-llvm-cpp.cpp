@@ -1,7 +1,8 @@
 //
 // mini-llvm-cpp.cpp: C++ support classes for the mono LLVM integration
 //
-// (C) 2009 Novell, Inc.
+// (C) 2009-2011 Novell, Inc.
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 //
 
 //
@@ -19,6 +20,14 @@
 // possible
 //
 
+#include "config.h"
+//undef those as llvm defines them on its own config.h as well.
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+
 #include <stdint.h>
 
 #include <llvm/Support/raw_ostream.h>
@@ -30,6 +39,7 @@
 #include <llvm/Target/TargetData.h>
 #include <llvm/Target/TargetRegisterInfo.h>
 #include <llvm/Analysis/Verifier.h>
+#include <llvm/Analysis/Passes.h>
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Support/CommandLine.h>
 #include "llvm/Support/PassNameParser.h"
@@ -38,7 +48,6 @@
 #include <llvm/CodeGen/MachineFunctionPass.h>
 #include <llvm/CodeGen/MachineFunction.h>
 #include <llvm/CodeGen/MachineFrameInfo.h>
-#include <llvm/Support/PassManagerBuilder.h>
 //#include <llvm/LinkAllPasses.h>
 
 #include "llvm-c/Core.h"
@@ -50,7 +59,9 @@
 	((LLVM_MAJOR_VERSION > (major)) ||									\
 	 ((LLVM_MAJOR_VERSION == (major)) && (LLVM_MINOR_VERSION >= (minor))))
 
-extern "C" void LLVMInitializeX86TargetInfo();
+// extern "C" void LLVMInitializeARMTargetInfo();
+// extern "C" void LLVMInitializeARMTarget ();
+// extern "C" void LLVMInitializeARMTargetMC ();
 
 using namespace llvm;
 
@@ -62,6 +73,7 @@ private:
 public:
 	/* Callbacks installed by mono */
 	AllocCodeMemoryCb *alloc_cb;
+	DlSymCb *dlsym_cb;
 
 	MonoJITMemoryManager ();
 	~MonoJITMemoryManager ();
@@ -105,6 +117,33 @@ public:
 	}
 
 	virtual void deallocateExceptionTable(void*) {
+	}
+
+	virtual uint8_t *allocateCodeSection(uintptr_t Size, unsigned Alignment,
+										 unsigned SectionID) {
+		// FIXME:
+		assert(0);
+		return NULL;
+	}
+
+	virtual uint8_t *allocateDataSection(uintptr_t Size, unsigned Alignment,
+										 unsigned SectionID) {
+		// FIXME:
+		assert(0);
+		return NULL;
+	}
+
+	virtual void* getPointerToNamedFunction(const std::string &Name, bool AbortOnFailure) {
+		void *res;
+		char *err;
+
+		err = dlsym_cb (Name.c_str (), &res);
+		if (err) {
+			outs () << "Unable to resolve: " << Name << ": " << err << "\n";
+			assert(0);
+			return NULL;
+		}
+		return res;
 	}
 };
 
@@ -294,6 +333,46 @@ mono_llvm_build_aligned_store (LLVMBuilderRef builder, LLVMValueRef Val, LLVMVal
 	return wrap (ins);
 }
 
+LLVMValueRef
+mono_llvm_build_cmpxchg (LLVMBuilderRef builder, LLVMValueRef ptr, LLVMValueRef cmp, LLVMValueRef val)
+{
+	AtomicCmpXchgInst *ins;
+
+	ins = unwrap(builder)->CreateAtomicCmpXchg (unwrap(ptr), unwrap (cmp), unwrap (val), SequentiallyConsistent);
+	return wrap (ins);
+}
+
+LLVMValueRef
+mono_llvm_build_atomic_rmw (LLVMBuilderRef builder, AtomicRMWOp op, LLVMValueRef ptr, LLVMValueRef val)
+{
+	AtomicRMWInst::BinOp aop = AtomicRMWInst::Xchg;
+	AtomicRMWInst *ins;
+
+	switch (op) {
+	case LLVM_ATOMICRMW_OP_XCHG:
+		aop = AtomicRMWInst::Xchg;
+		break;
+	case LLVM_ATOMICRMW_OP_ADD:
+		aop = AtomicRMWInst::Add;
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+
+	ins = unwrap (builder)->CreateAtomicRMW (aop, unwrap (ptr), unwrap (val), AcquireRelease);
+	return wrap (ins);
+}
+
+LLVMValueRef
+mono_llvm_build_fence (LLVMBuilderRef builder)
+{
+	FenceInst *ins;
+
+	ins = unwrap (builder)->CreateFence (AcquireRelease);
+	return wrap (ins);
+}
+
 void
 mono_llvm_replace_uses_of (LLVMValueRef var, LLVMValueRef v)
 {
@@ -433,27 +512,55 @@ force_pass_linking (void)
 }
 
 LLVMExecutionEngineRef
-mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb)
+mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, DlSymCb *dlsym_cb)
 {
   std::string Error;
 
   force_pass_linking ();
 
+#ifdef TARGET_ARM
+  LLVMInitializeARMTarget ();
+  LLVMInitializeARMTargetInfo ();
+  LLVMInitializeARMTargetMC ();
+#else
   LLVMInitializeX86Target ();
   LLVMInitializeX86TargetInfo ();
+  LLVMInitializeX86TargetMC ();
+#endif
 
   mono_mm = new MonoJITMemoryManager ();
   mono_mm->alloc_cb = alloc_cb;
+  mono_mm->dlsym_cb = dlsym_cb;
 
-  JITExceptionHandling = true;
+  //JITExceptionHandling = true;
   // PrettyStackTrace installs signal handlers which trip up libgc
   DisablePrettyStackTrace = true;
 
-  ExecutionEngine *EE = ExecutionEngine::createJIT (unwrap (MP), &Error, mono_mm, CodeGenOpt::Default);
+  /*
+   * The Default code model doesn't seem to work on amd64,
+   * test_0_fields_with_big_offsets (among others) crashes, because LLVM tries to call
+   * memset using a normal pcrel code which is in 32bit memory, while memset isn't.
+   */
+
+  TargetOptions opts;
+  opts.JITExceptionHandling = 1;
+
+  EngineBuilder b (unwrap (MP));
+#ifdef TARGET_AMD64
+  ExecutionEngine *EE = b.setJITMemoryManager (mono_mm).setTargetOptions (opts).setCodeModel (CodeModel::Large).setAllocateGVsWithCode (true).create ();
+#else
+  ExecutionEngine *EE = b.setJITMemoryManager (mono_mm).setTargetOptions (opts).setAllocateGVsWithCode (true).create ();
+#endif
+  g_assert (EE);
+
+#if 0
+  ExecutionEngine *EE = ExecutionEngine::createJIT (unwrap (MP), &Error, mono_mm, CodeGenOpt::Default, true, Reloc::Default, CodeModel::Large);
   if (!EE) {
 	  errs () << "Unable to create LLVM ExecutionEngine: " << Error << "\n";
 	  g_assert_not_reached ();
   }
+#endif
+
   EE->InstallExceptionTableRegister (exception_cb);
   mono_event_listener = new MonoJITEventListener (emitted_cb);
   EE->RegisterJITEventListener (mono_event_listener);

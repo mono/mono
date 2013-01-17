@@ -198,11 +198,9 @@ namespace System.Net.Sockets {
 		/// </summary>
 		ChecksumCoverage = 20,
 
-#if NET_2_0
 		HopLimit = 21,
 		UpdateAcceptContext = 28683,
 		UpdateConnectContext = 28688,
-#endif
 
 	} // SocketOptionName
 

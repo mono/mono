@@ -83,7 +83,7 @@ namespace Microsoft.CSharp {
 		}
 		
 		[MonoTODO]
-		public override TypeConverter GetConverter( Type Type )
+		public override TypeConverter GetConverter (Type type)
 		{
 			throw new NotImplementedException();
 		}

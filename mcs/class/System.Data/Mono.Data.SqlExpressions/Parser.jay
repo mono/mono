@@ -6,6 +6,7 @@
 //   Juraj Skripsky (juraj@hotfeet.ch)
 //
 // (C) 2004 HotFeet GmbH (http://www.hotfeet.ch)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -190,6 +191,7 @@ LiteralValue
 	| NumberLiteral	{ $$ = new Literal ($1); }
 	| DateLiteral		{ $$ = new Literal ($1); }
 	| BoolLiteral
+	| NULL          { $$ = new Literal (null); }
 	;
 
 BoolLiteral
@@ -271,27 +273,19 @@ AggFunctionName
 	;
 
 StringExpr
-	: PAROPEN StringExpr PARCLOSE
-	{
-		$$ = (IExpression)$2;
-	}
-	| SingleColumnValue
+	: SingleColumnValue
 	| StringLiteral { $$ = new Literal ($1); }
-	| StringFunction
+	| Function
 	;
 
 StringFunction
-	: TRIM PAROPEN StringExpr PARCLOSE
+	: TRIM PAROPEN ArithExpr PARCLOSE
 	{
 		$$ = new TrimFunction ((IExpression)$3);
 	}
-	| SUBSTRING PAROPEN StringExpr COMMA ArithExpr COMMA ArithExpr PARCLOSE
+	| SUBSTRING PAROPEN ArithExpr COMMA ArithExpr COMMA ArithExpr PARCLOSE
 	{
 		$$ = new SubstringFunction ((IExpression)$3, (IExpression)$5, (IExpression)$7);
-	}
-	| StringExpr PLUS StringExpr
-	{
-		$$ = new ConcatFunction ((IExpression)$1, (IExpression)$3);
 	}
 	;
 

@@ -5,5 +5,5 @@ class X {
 	static void Concat (params string [] ss) {
 		throw new Exception ("Overload resolution failed");
 	}
-	static void Main () { Concat ("a", "b", "c"); }
+	public static void Main () { Concat ("a", "b", "c"); }
 }

@@ -63,9 +63,7 @@ namespace System.Web.Mail
 			attachments = new ArrayList (8);
 			headers = new ListDictionary ();
 			bodyEncoding = Encoding.Default;
-#if NET_1_1
 			fields = new Hashtable ();
-#endif
 		}		
 	
 		// Properties
@@ -132,7 +130,6 @@ namespace System.Web.Mail
 			set { urlContentLocation = value; }
 		}
 
-#if NET_1_1
 		Hashtable fields;
 		
 		public IDictionary Fields {
@@ -140,6 +137,5 @@ namespace System.Web.Mail
 				return (IDictionary) fields;
 			}
 		}
-#endif
 	}
 }

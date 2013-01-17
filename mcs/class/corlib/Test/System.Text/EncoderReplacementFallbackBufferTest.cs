@@ -2,9 +2,11 @@
 // EncoderReplacementFallbackBuffer.cs
 //
 // Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com> <atsushi@xamarin.com>
 //
 // Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2011 Xamain, Inc.  http://xamarin.com
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
 #if NET_2_0
@@ -84,6 +86,13 @@ namespace MonoTests.System.Text
 //			Assert.AreEqual (1, b.Remaining, "#7");
 			Assert.IsFalse (b.MovePrevious (), "#8");
 //			Assert.AreEqual ('?', b.GetNextChar (), "#9");
+		}
+
+		[Test]
+		public void Reset ()
+		{
+			// Xamarin bug #545
+			Encoding.UTF8.GetBytes ("\uDE7E\uDE7E");
 		}
 	}
 }

@@ -218,7 +218,7 @@ namespace Mono.Data.Tds {
 				}
 				
 				if (size > 8000) {
-					typeName = "image";
+					typeName = "varbinary(max)";
 				}
 			}
 			
@@ -246,7 +246,7 @@ namespace Mono.Data.Tds {
 				break;
 			case "nvarchar":
 			case "xml":
-				int paramSize = GetActualSize () / 2;
+				int paramSize = Size < 0 ? GetActualSize () / 2 : Size;
 				result.Append (paramSize > 0 ? (paramSize > 4000 ? "(max)" : String.Format ("({0})", paramSize)) : "(4000)");
 				break;
 			case "char":

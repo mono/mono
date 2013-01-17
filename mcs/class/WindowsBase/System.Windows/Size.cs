@@ -79,7 +79,7 @@ namespace System.Windows {
 			return String.Format ("{0},{1}", width, height);
 		}
 
-		public string ToString (IFormatProvider formatProvider)
+		public string ToString (IFormatProvider provider)
 		{
 			throw new NotImplementedException ();
 		}

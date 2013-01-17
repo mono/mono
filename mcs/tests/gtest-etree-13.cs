@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		foreach (int o in Test<bool> (1)) {
 		}

@@ -3,7 +3,7 @@ using System;
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		new Derived ().Method<Foo> ();
 		return 0;

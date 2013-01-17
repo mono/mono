@@ -10,6 +10,7 @@
 
 //
 // Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2011-2012 Xamarin, Inc (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -314,8 +315,12 @@ namespace System.Web
 		public HttpBrowserCapabilities Browser {
 			get {
 				if (browser_capabilities == null)
+#if NET_4_0
+					browser_capabilities = HttpCapabilitiesBase.BrowserCapabilitiesProvider.GetBrowserCapabilities (this);
+#else
 					browser_capabilities = (HttpBrowserCapabilities)
 						HttpCapabilitiesBase.GetConfigCapabilities (null, this);
+#endif
 
 				return browser_capabilities;
 			}
@@ -1057,7 +1062,7 @@ namespace System.Web
 		public string Path {
 			get {
 				if (unescaped_path == null) {
-					unescaped_path = Uri.UnescapeDataString (PathNoValidation);
+					unescaped_path = PathNoValidation;
 #if NET_4_0
 					if (validateRequestNewMode) {
 						RequestValidator validator = RequestValidator.Current;
@@ -1172,8 +1177,10 @@ namespace System.Web
 				} else
 #endif
 					if (validate_query_string && !checked_query_string) {
-						ValidateNameValueCollection ("QueryString", query_string_nvc);
+						// Setting this before calling the validator prevents
+						// possible endless recursion
 						checked_query_string = true;
+						ValidateNameValueCollection ("QueryString", query_string_nvc);
 					}
 				
 				return query_string_nvc;

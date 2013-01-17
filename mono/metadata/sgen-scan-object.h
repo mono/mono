@@ -67,7 +67,14 @@
 		SCAN_OBJECT_ACTION;
 #undef SCAN
 		break;
-	case DESC_TYPE_ARRAY:
+	case DESC_TYPE_SMALL_BITMAP:
+#define SCAN OBJ_BITMAP_FOREACH_PTR (desc, start)
+#ifndef SCAN_OBJECT_NOSCAN
+		SCAN;
+#endif
+		SCAN_OBJECT_ACTION;
+#undef SCAN
+		break;
 	case DESC_TYPE_VECTOR:
 #define SCAN OBJ_VECTOR_FOREACH_PTR (desc, start)
 #ifndef SCAN_OBJECT_NOSCAN
@@ -104,6 +111,10 @@
 #undef SCAN
 		break;
 #endif
+	case DESC_TYPE_COMPLEX_PTRFREE:
+		/*Nothing to do*/
+		SCAN_OBJECT_ACTION;
+		break;
 	default:
 		g_assert_not_reached ();
 	}

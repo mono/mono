@@ -4,6 +4,7 @@
 // Author:
 //   Daniel Stodden (stodden@in.tum.de)
 //   Marek Safar (marek.safar@seznam.cz)
+//   Ilker Cetinkaya (mail@ilker.de)
 //
 // (C) 2002 Ximian, Inc.
 //
@@ -171,16 +172,34 @@ namespace Mono.CSharp
 		{
 			GenerateCompileUnitStart (compileUnit);
 
+			GenerateGlobalNamespace (compileUnit);
+
 			if (compileUnit.AssemblyCustomAttributes.Count > 0) {
 				OutputAttributes (compileUnit.AssemblyCustomAttributes, 
 					"assembly: ", false);
 				Output.WriteLine ("");
 			}
 
-			foreach (CodeNamespace ns in compileUnit.Namespaces)
-				GenerateNamespace (ns);
+			GenerateLocalNamespaces (compileUnit);
 
 			GenerateCompileUnitEnd (compileUnit);
+		}
+
+		private void GenerateGlobalNamespace (CodeCompileUnit compileUnit) {
+			CodeNamespace globalNamespace = null;
+
+			foreach (CodeNamespace codeNamespace in compileUnit.Namespaces)
+				if (string.IsNullOrEmpty (codeNamespace.Name)) 
+					globalNamespace = codeNamespace;
+  
+			if (globalNamespace != null)
+				GenerateNamespace (globalNamespace);
+		}
+
+		private void GenerateLocalNamespaces (CodeCompileUnit compileUnit) {
+			foreach (CodeNamespace codeNamespace in compileUnit.Namespaces)
+				if (!string.IsNullOrEmpty (codeNamespace.Name))
+					GenerateNamespace (codeNamespace);
 		}
 
 		protected override void GenerateDefaultValueExpression (CodeDefaultValueExpression e)
@@ -1002,9 +1021,6 @@ namespace Mono.CSharp
 		protected override void OutputFieldScopeModifier (MemberAttributes attributes)
 		{
 			switch (attributes & MemberAttributes.ScopeMask) {
-				case MemberAttributes.Final:
-					Output.Write ("readonly ");
-					break;
 				case MemberAttributes.Static:
 					Output.Write ("static ");
 					break;
@@ -1388,14 +1404,14 @@ namespace Mono.CSharp
 		}
 
 		static bool is_identifier_start_character (char c)
-                {
-                        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '@' || Char.IsLetter (c);
-                }
+		{
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '@' || Char.IsLetter (c);
+		}
 
-                static bool is_identifier_part_character (char c)
-                {
-                        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
-                }
+		static bool is_identifier_part_character (char c)
+		{
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
+		}
 		
 		protected override bool IsValidIdentifier (string identifier)
 		{
@@ -1409,13 +1425,13 @@ namespace Mono.CSharp
 				return false;
 
 			if (!is_identifier_start_character (identifier [0]))
-                                return false;
-                        
-                        for (int i = 1; i < identifier.Length; i ++)
-                                if (! is_identifier_part_character (identifier [i]))
-                                        return false;
-                        
-                        return true;
+				return false;
+
+			for (int i = 1; i < identifier.Length; i ++)
+				if (! is_identifier_part_character (identifier [i]))
+					return false;
+
+			return true;
 		}
 
 		protected override bool Supports (GeneratorSupport supports)

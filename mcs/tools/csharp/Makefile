@@ -8,7 +8,7 @@ include ../../build/rules.make
 NOWARNS = -nowarn:3021
 LOCAL_MCS_FLAGS = -r:$(topdir)/class/lib/$(PROFILE)/Mono.CSharp.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -r:Mono.Management.dll -unsafe $(NOWARNS)
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/csharp.exe
+PROGRAM = csharp.exe
 
 DISTFILES = repl.txt
 

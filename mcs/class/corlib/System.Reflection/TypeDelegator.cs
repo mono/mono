@@ -36,7 +36,13 @@ namespace System.Reflection {
 
 	[ComVisible (true)]
 	[Serializable]
-	public class TypeDelegator : Type {
+	public class TypeDelegator : 
+#if NET_4_5
+		TypeInfo, IReflectableType
+#else
+		Type
+#endif
+	{
 		protected Type typeImpl;
 	
 		protected TypeDelegator () {

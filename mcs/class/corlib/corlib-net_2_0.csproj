@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,28 +9,29 @@
     <OutputType>Library</OutputType>
     <NoWarn>612,618,1699</NoWarn>
     <OutputPath>./../../class/lib/net_2_0/tmp</OutputPath>
-    <DefineConstants>INSIDE_CORLIB;LIBC;NET_1_1;NET_2_0</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>mscorlib</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>612,618,1699</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>INSIDE_CORLIB;LIBC;NET_1_1;NET_2_0</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;INSIDE_CORLIB;LIBC;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>612,618,1699</NoWarn>
     <Optimize>true</Optimize>
@@ -122,6 +123,7 @@
    <Compile Include="System\AccessViolationException.cs" />
    <Compile Include="System\ActivationContext.cs" />
    <Compile Include="System\Activator.cs" />
+   <Compile Include="System\AndroidPlatform.cs" />
    <Compile Include="System\AppDomain.cs" />
    <Compile Include="System\AppDomainInitializer.cs" />
    <Compile Include="System\AppDomainManager.cs" />
@@ -225,6 +227,7 @@
    <Compile Include="System\InvalidOperationException.cs" />
    <Compile Include="System\InvalidProgramException.cs" />
    <Compile Include="System\InvalidTimeZoneException.cs" />
+   <Compile Include="System\IProgress.cs" />
    <Compile Include="System\IServiceProvider.cs" />
    <Compile Include="System\KnownTerminals.cs" />
    <Compile Include="System\Lazy.cs" />
@@ -296,6 +299,7 @@
    <Compile Include="..\System.Core\System\TimeZoneInfo.cs" />
    <Compile Include="..\System.Core\System\TimeZoneInfo.AdjustmentRule.cs" />
    <Compile Include="..\System.Core\System\TimeZoneInfo.Android.cs" />
+   <Compile Include="..\System.Core\System\TimeZoneInfo.MonoTouch.cs" />
    <Compile Include="..\System.Core\System\TimeZoneInfo.TransitionTime.cs" />
    <Compile Include="System\TimeZoneNotFoundException.cs" />
    <Compile Include="System\TimeoutException.cs" />
@@ -374,6 +378,8 @@
    <Compile Include="System.Diagnostics\StackTrace.cs" />
    <Compile Include="System.Diagnostics.CodeAnalysis\SuppressMessageAttribute.cs" />
    <Compile Include="System.Diagnostics.Contracts\Contract.cs" />
+   <Compile Include="System.Diagnostics.Contracts\ContractAbbreviatorAttribute.cs" />
+   <Compile Include="System.Diagnostics.Contracts\ContractArgumentValidatorAttribute.cs" />
    <Compile Include="System.Diagnostics.Contracts\ContractClassAttribute.cs" />
    <Compile Include="System.Diagnostics.Contracts\ContractClassForAttribute.cs" />
    <Compile Include="System.Diagnostics.Contracts\ContractException.cs" />
@@ -433,6 +439,7 @@
    <Compile Include="System.Globalization\NumberStyles.cs" />
    <Compile Include="System.Globalization\PersianCalendar.cs" />
    <Compile Include="System.Globalization\RegionInfo.cs" />
+   <Compile Include="System.Globalization\RegionInfo.MonoTouch.cs" />
    <Compile Include="System.Globalization\StringInfo.cs" />
    <Compile Include="System.Globalization\TaiwanCalendar.cs" />
    <Compile Include="System.Globalization\TaiwanLunisolarCalendar.cs" />
@@ -465,6 +472,7 @@
    <Compile Include="System.IO\FileStreamAsyncResult.cs" />
    <Compile Include="System.IO\FileSystemInfo.cs" />
    <Compile Include="System.IO\IOException.cs" />
+   <Compile Include="System.IO\LogcatTextWriter.cs" />
    <Compile Include="System.IO\MemoryStream.cs" />
    <Compile Include="System.IO\MonoIO.cs" />
    <Compile Include="System.IO\MonoIOError.cs" />
@@ -476,7 +484,6 @@
    <Compile Include="System.IO\SearchPattern.cs" />
    <Compile Include="System.IO\SeekOrigin.cs" />
    <Compile Include="System.IO\Stream.cs" />
-   <Compile Include="System.IO\StreamAsyncResult.cs" />
    <Compile Include="System.IO\StreamReader.cs" />
    <Compile Include="System.IO\StreamWriter.cs" />
    <Compile Include="System.IO\StringReader.cs" />
@@ -514,10 +521,12 @@
    <Compile Include="System.Reflection\AssemblyInformationalVersionAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyKeyFileAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyKeyNameAttribute.cs" />
+   <Compile Include="System.Reflection\AssemblyMetadataAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyName.cs" />
    <Compile Include="System.Reflection\AssemblyNameFlags.cs" />
    <Compile Include="System.Reflection\AssemblyNameProxy.cs" />
    <Compile Include="System.Reflection\AssemblyProductAttribute.cs" />
+   <Compile Include="System.Reflection\AssemblySignatureKeyAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyTitleAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyTradeMarkAttribute.cs" />
    <Compile Include="System.Reflection\AssemblyVersionAttribute.cs" />
@@ -526,6 +535,7 @@
    <Compile Include="System.Reflection\CallingConventions.cs" />
    <Compile Include="System.Reflection\ConstructorInfo.cs" />
    <Compile Include="System.Reflection\CustomAttributeData.cs" />
+   <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
    <Compile Include="System.Reflection\CustomAttributeFormatException.cs" />
    <Compile Include="System.Reflection\CustomAttributeNamedArgument.cs" />
    <Compile Include="System.Reflection\CustomAttributeTypedArgument.cs" />
@@ -540,8 +550,10 @@
    <Compile Include="System.Reflection\ICustomAttributeProvider.cs" />
    <Compile Include="System.Reflection\ImageFileMachine.cs" />
    <Compile Include="System.Reflection\InterfaceMapping.cs" />
+   <Compile Include="System.Reflection\IntrospectionExtensions.cs" />
    <Compile Include="System.Reflection\InvalidFilterCriteriaException.cs" />
    <Compile Include="System.Reflection\IReflect.cs" />
+   <Compile Include="System.Reflection\IReflectableType.cs" />
    <Compile Include="System.Reflection\LocalVariableInfo.cs" />
    <Compile Include="System.Reflection\ManifestResourceInfo.cs" />
    <Compile Include="System.Reflection\MemberFilter.cs" />
@@ -574,6 +586,7 @@
    <Compile Include="System.Reflection\ProcessorArchitecture.cs" />
    <Compile Include="System.Reflection\PropertyAttributes.cs" />
    <Compile Include="System.Reflection\PropertyInfo.cs" />
+   <Compile Include="System.Reflection\ReflectionContext.cs" />
    <Compile Include="System.Reflection\ReflectionTypeLoadException.cs" />
    <Compile Include="System.Reflection\ResourceAttributes.cs" />
    <Compile Include="System.Reflection\ResourceLocation.cs" />
@@ -584,6 +597,7 @@
    <Compile Include="System.Reflection\TypeAttributes.cs" />
    <Compile Include="System.Reflection\TypeDelegator.cs" />
    <Compile Include="System.Reflection\TypeFilter.cs" />
+   <Compile Include="System.Reflection\TypeInfo.cs" />
    <Compile Include="System.Reflection.Emit\AssemblyBuilder.cs" />
    <Compile Include="System.Reflection.Emit\AssemblyBuilderAccess.cs" />
    <Compile Include="System.Reflection.Emit\ConstructorBuilder.cs" />
@@ -648,29 +662,43 @@
    <Compile Include="System.Runtime\MemoryFailPoint.cs" />
    <Compile Include="System.Runtime\TargetedPatchingOptOutAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\AccessedThroughPropertyAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\AsyncStateMachineAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\AsyncVoidMethodBuilder.cs" />
+   <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilder.cs" />
+   <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilder_T.cs" />
    <Compile Include="System.Runtime.CompilerServices\ReferenceAssemblyAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\CallConvCdecl.cs" />
    <Compile Include="System.Runtime.CompilerServices\CallConvFastcall.cs" />
    <Compile Include="System.Runtime.CompilerServices\CallConvThiscall.cs" />
    <Compile Include="System.Runtime.CompilerServices\CallConvStdcall.cs" />
+   <Compile Include="System.Runtime.CompilerServices\CallerFilePathAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\CallerLineNumberAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\CallerMemberNameAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\CompilationRelaxations.cs" />
    <Compile Include="System.Runtime.CompilerServices\CompilationRelaxationsAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\CompilerGeneratedAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\CompilerGlobalScopeAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\CompilerMarshalOverride.cs" />
    <Compile Include="System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
+   <Compile Include="System.Runtime.CompilerServices\ConfiguredTaskAwaitable.cs" />
+   <Compile Include="System.Runtime.CompilerServices\ConfiguredTaskAwaitable_T.cs" />
+   <Compile Include="System.Runtime.CompilerServices\ContractHelper.cs" />
    <Compile Include="System.Runtime.CompilerServices\CustomConstantAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\DateTimeConstantAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\DecimalConstantAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\DefaultDependencyAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\DependencyAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\DiscardableAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\ExtensionAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\FixedAddressValueTypeAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\FixedBufferAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\HasCopySemanticsAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\IAsyncStateMachine.cs" />
+   <Compile Include="System.Runtime.CompilerServices\ICriticalNotifyCompletion.cs" />
    <Compile Include="System.Runtime.CompilerServices\IDispatchConstantAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\IUnknownConstantAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\IndexerNameAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\INotifyCompletion.cs" />
    <Compile Include="System.Runtime.CompilerServices\InternalsVisibleToAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\IsBoxed.cs" />
    <Compile Include="System.Runtime.CompilerServices\IsByValue.cs" />
@@ -684,6 +712,7 @@
    <Compile Include="System.Runtime.CompilerServices\IsSignUnspecifiedByte.cs" />
    <Compile Include="System.Runtime.CompilerServices\IsUdtReturn.cs" />
    <Compile Include="System.Runtime.CompilerServices\IsVolatile.cs" />
+   <Compile Include="System.Runtime.CompilerServices\IteratorStateMachineAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\LoadHint.cs" />
    <Compile Include="System.Runtime.CompilerServices\MethodCodeType.cs" />
    <Compile Include="System.Runtime.CompilerServices\MethodImplAttribute.cs" />
@@ -696,15 +725,20 @@
    <Compile Include="System.Runtime.CompilerServices\SpecialNameAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\ScopelessEnumAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\SuppressIldasmAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\StateMachineAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\StringFreezingAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\UnsafeValueTypeAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\TaskAwaiter.cs" />
+   <Compile Include="System.Runtime.CompilerServices\TaskAwaiter_T.cs" />
    <Compile Include="System.Runtime.CompilerServices\TypeForwardedFromAttribute.cs" />
    <Compile Include="System.Runtime.CompilerServices\TypeForwardedToAttribute.cs" />
+   <Compile Include="System.Runtime.CompilerServices\YieldAwaitable.cs" />
    <Compile Include="System.Runtime.ConstrainedExecution\CriticialFinalizerObject.cs" />
    <Compile Include="System.Runtime.ConstrainedExecution\CER.cs" />
    <Compile Include="System.Runtime.ConstrainedExecution\Consistency.cs" />
    <Compile Include="System.Runtime.ConstrainedExecution\PrePrepareMethodAttribute.cs" />
    <Compile Include="System.Runtime.ConstrainedExecution\ReliabilityContractAttribute.cs" />
+   <Compile Include="System.Runtime.ExceptionServices\ExceptionDispatchInfo.cs" />
    <Compile Include="System.Runtime.ExceptionServices\FirstChanceExceptionEventArgs.cs" />
    <Compile Include="System.Runtime.ExceptionServices\HandleProcessCorruptedStateExceptionsAttribute.cs" />
    <Compile Include="System.Runtime.Hosting\ActivationArguments.cs" />
@@ -1190,6 +1224,7 @@
    <Compile Include="System.Security\SecurityException.cs" />
    <Compile Include="System.Security\SecurityManager.cs" />
    <Compile Include="System.Security\SecurityManager_2_1.cs" />
+   <Compile Include="System.Security\SecurityManager_mobile.cs" />
    <Compile Include="System.Security\SecurityRuleSet.cs" />
    <Compile Include="System.Security\SecurityRulesAttribute.cs" />
    <Compile Include="System.Security\SecuritySafeCriticalAttribute.cs" />
@@ -1206,12 +1241,14 @@
    <Compile Include="System.Security.AccessControl\AccessControlSections.cs" />
    <Compile Include="System.Security.AccessControl\AccessControlType.cs" />
    <Compile Include="System.Security.AccessControl\AccessRule.cs" />
+   <Compile Include="System.Security.AccessControl\AccessRule_T.cs" />
    <Compile Include="System.Security.AccessControl\AceEnumerator.cs" />
    <Compile Include="System.Security.AccessControl\AceFlags.cs" />
    <Compile Include="System.Security.AccessControl\AceQualifier.cs" />
    <Compile Include="System.Security.AccessControl\AceType.cs" />
    <Compile Include="System.Security.AccessControl\AuditFlags.cs" />
    <Compile Include="System.Security.AccessControl\AuditRule.cs" />
+   <Compile Include="System.Security.AccessControl\AuditRule_T.cs" />
    <Compile Include="System.Security.AccessControl\AuthorizationRule.cs" />
    <Compile Include="System.Security.AccessControl\AuthorizationRuleCollection.cs" />
    <Compile Include="System.Security.AccessControl\CommonAce.cs" />
@@ -1423,6 +1460,7 @@
    <Compile Include="System.Security.Policy\CodeGroup.cs" />
    <Compile Include="System.Security.Policy\DefaultPolicies.cs" />
    <Compile Include="System.Security.Policy\Evidence.cs" />
+   <Compile Include="System.Security.Policy\EvidenceBase.cs" />
    <Compile Include="System.Security.Policy\FileCodeGroup.cs" />
    <Compile Include="System.Security.Policy\FirstMatchCodeGroup.cs" />
    <Compile Include="System.Security.Policy\Gac.cs" />
@@ -1546,6 +1584,7 @@
    <Compile Include="System.Threading\Timeout.cs" />
    <Compile Include="System.Threading\Timer.cs" />
    <Compile Include="System.Threading\TimerCallback.cs" />
+   <Compile Include="System.Threading\Volatile.cs" />
    <Compile Include="System.Threading\WaitCallback.cs" />
    <Compile Include="System.Threading\WaitHandle.cs" />
    <Compile Include="System.Threading\WaitHandleCannotBeOpenedException.cs" />
@@ -1559,6 +1598,9 @@
    <Compile Include="System.Collections.Generic\IComparer.cs" />
    <Compile Include="System.Collections.Generic\IEqualityComparer.cs" />
    <Compile Include="System.Collections.Generic\IDictionary.cs" />
+   <Compile Include="System.Collections.Generic\IReadOnlyCollection.cs" />
+   <Compile Include="System.Collections.Generic\IReadOnlyList.cs" />
+   <Compile Include="System.Collections.Generic\IReadOnlyDictionary.cs" />
    <Compile Include="System.Collections.Generic\KeyValuePair.cs" />
    <Compile Include="System.Collections.Generic\EqualityComparer.cs" />
    <Compile Include="System.Collections.Generic\KeyNotFoundException.cs" />
@@ -1572,21 +1614,28 @@
    <Compile Include="System\Converter.cs" />
    <Compile Include="System\Predicate.cs" />
    <Compile Include="System.Collections.Generic\Comparer.cs" />
+   <Compile Include="System.Threading.Tasks\ConcurrentExclusiveSchedulerPair.cs" />
    <Compile Include="System.Threading.Tasks\TaskFactory.cs" />
+   <Compile Include="System.Threading.Tasks\TaskFactory_T.cs" />
    <Compile Include="System.Threading.Tasks\TaskStatus.cs" />
    <Compile Include="System.Threading.Tasks\TaskCreationOptions.cs" />
-   <Compile Include="System.Threading.Tasks\ThreadWorker.cs" />
-   <Compile Include="System.Threading.Tasks\SchedulerProxy.cs" />
-   <Compile Include="System.Threading.Tasks\Scheduler.cs" />
-   <Compile Include="System.Threading.Tasks\IScheduler.cs" />
    <Compile Include="System.Threading.Tasks\CyclicDeque.cs" />
+   <Compile Include="System.Threading.Tasks\IConcurrentDeque.cs" />
+   <Compile Include="System.Threading.Tasks\PopResult.cs" />
    <Compile Include="System.Threading.Tasks\TaskScheduler.cs" />
    <Compile Include="System.Threading.Tasks\TaskContinuationOptions.cs" />
    <Compile Include="System.Threading.Tasks\TaskCanceledException.cs" />
-   <Compile Include="System.Threading.Tasks\Future.cs" />
+   <Compile Include="System.Threading.Tasks\Task_T.cs" />
    <Compile Include="System.Threading.Tasks\Task.cs" />
+   <Compile Include="System.Threading.Tasks\TaskCompletionQueue.cs" />
+   <Compile Include="System.Threading.Tasks\TaskExceptionSlot.cs" />
+   <Compile Include="System.Threading.Tasks\TaskActionInvoker.cs" />
+   <Compile Include="System.Threading.Tasks\TaskDebuggerView.cs" />
    <Compile Include="System.Threading.Tasks\TaskCompletionSource.cs" />
+   <Compile Include="System.Threading.Tasks\TaskContinuation.cs" />
    <Compile Include="System.Threading.Tasks\TaskSchedulerException.cs" />
+   <Compile Include="System.Threading.Tasks\TaskConstants.cs" />
+   <Compile Include="System.Threading.Tasks\TaskConstants_T.cs" />
    <Compile Include="System.Collections.Concurrent\OrderablePartitioner.cs" />
    <Compile Include="System.Collections.Concurrent\ConcurrentDictionary.cs" />
    <Compile Include="System.Collections.Concurrent\Partitioner.cs" />
@@ -1616,7 +1665,10 @@
    <Compile Include="System.Threading.Tasks\ParallelLoopState.cs" />
    <Compile Include="System\AggregateException.cs" />
    <Compile Include="System.Threading.Tasks\SimpleConcurrentBag.cs" />
+   <Compile Include="System.Threading.Tasks\SynchronizationContextScheduler.cs" />
    <Compile Include="System.Threading.Tasks\UnobservedTaskExceptionEventArgs.cs" />
+   <Compile Include="System.Threading.Tasks\TpScheduler.cs" />
+   <Compile Include="..\System.Core\System.Threading.Tasks\TaskExtensions.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -1629,7 +1681,9 @@
   <PropertyGroup>
     <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
-  
+  <ItemGroup>
+
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

@@ -207,6 +207,10 @@ namespace System.CodeDom.Compiler {
 		{
 			GenerateCompileUnitStart (compileUnit);
 
+			foreach (CodeNamespace ns in compileUnit.Namespaces)
+				if (string.IsNullOrEmpty(ns.Name))
+					GenerateNamespace (ns);
+				      
 			CodeAttributeDeclarationCollection attributes = compileUnit.AssemblyCustomAttributes;
 			if (attributes.Count != 0) {
 				foreach (CodeAttributeDeclaration att in attributes) {
@@ -219,7 +223,8 @@ namespace System.CodeDom.Compiler {
 			}
 
 			foreach (CodeNamespace ns in compileUnit.Namespaces)
-				GenerateNamespace (ns);
+				if (!string.IsNullOrEmpty(ns.Name))
+					GenerateNamespace (ns);
 
 			GenerateCompileUnitEnd (compileUnit);
 		}
@@ -910,6 +915,8 @@ namespace System.CodeDom.Compiler {
 						GenerateLinePragmaEnd (prevMember.LinePragma);
 					if (prevMember.EndDirectives.Count > 0)
 						GenerateDirectives (prevMember.EndDirectives);
+					if (!Options.VerbatimOrder && prevMember is CodeSnippetTypeMember && !(member is CodeSnippetTypeMember))
+						output.WriteLine ();
 				}
 
 				if (options.BlankLinesBetweenMembers)
@@ -943,6 +950,8 @@ namespace System.CodeDom.Compiler {
 					GenerateLinePragmaEnd (currentMember.LinePragma);
 				if (currentMember.EndDirectives.Count > 0)
 					GenerateDirectives (currentMember.EndDirectives);
+				if (!Options.VerbatimOrder && currentMember is CodeSnippetTypeMember)
+					output.WriteLine ();
 			}
 
 			this.currentType = type;
@@ -1037,7 +1046,7 @@ namespace System.CodeDom.Compiler {
 
 		// The position in the array determines the order in which those
 		// kind of CodeTypeMembers are generated. Less is more ;-)
-		static Type [] memberTypes = {	typeof (CodeMemberField),
+		static readonly Type [] memberTypes = {	typeof (CodeMemberField),
 						typeof (CodeSnippetTypeMember),
 						typeof (CodeTypeConstructor),
 						typeof (CodeConstructor),
@@ -1288,7 +1297,14 @@ namespace System.CodeDom.Compiler {
 	
 			public void Visit (CodeSnippetTypeMember o)
 			{
+				var indent = g.Indent;
+				g.Indent = 0;
 				g.GenerateSnippetMember (o);
+
+				if (g.Options.VerbatimOrder)
+					g.Output.WriteLine ();
+
+				g.Indent = indent;
 			}
 	
 			public void Visit (CodeTypeConstructor o)

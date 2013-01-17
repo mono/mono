@@ -64,6 +64,7 @@ namespace System.Xml.Xsl {
 		}
 	}
 
+	[Obsolete]
 	public sealed class XslTransform {
 
 		internal static readonly bool TemplateStackFrameError;
@@ -111,10 +112,6 @@ namespace System.Xml.Xsl {
 		XmlResolver xmlResolver = new XmlUrlResolver ();
 
 		[MonoTODO] // FIXME: audit security check
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public XmlResolver XmlResolver {
 			set {
 				 xmlResolver = value;
@@ -122,37 +119,22 @@ namespace System.Xml.Xsl {
 		}
 		
 		#region Transform
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args)
 		{
 			return Transform (input.CreateNavigator (), args, xmlResolver);
 		}
 
-#if NET_1_1
 		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args, XmlResolver resolver)
-#else
-		XmlReader Transform (IXPathNavigable input, XsltArgumentList args, XmlResolver resolver)
-#endif
 		{
 			return Transform (input.CreateNavigator (), args, resolver);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
 		{
 			return Transform (input, args, xmlResolver);
 		}
-#if NET_1_1
+
 		public XmlReader Transform (XPathNavigator input, XsltArgumentList args, XmlResolver resolver)
-#else
-		XmlReader Transform (XPathNavigator input, XsltArgumentList args, XmlResolver resolver)
-#endif
 		{
 			// todo: is this right?
 			MemoryStream stream = new MemoryStream ();
@@ -161,70 +143,41 @@ namespace System.Xml.Xsl {
 			return new XmlTextReader (stream, XmlNodeType.Element, null);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
 		{
 			Transform (input.CreateNavigator (), args, output, xmlResolver);
 		}
-#if NET_1_1
+
 		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
-#else
-		void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
-#endif
 		{
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
 		{
 			Transform (input.CreateNavigator (), args, output, xmlResolver);
 		}
-#if NET_1_1
 		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output, XmlResolver resolver)
-#else
-		void Transform (IXPathNavigable input, XsltArgumentList args, Stream output, XmlResolver resolver)
-#endif
 		{
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 		
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
 		{
 			Transform (input.CreateNavigator (), args, output, xmlResolver);
 		}
-#if NET_1_1
+
 		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
-#else
-		void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
-#endif
 		{
 			Transform (input.CreateNavigator (), args, output, resolver);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
 		{
 			Transform (input, args, output, xmlResolver);
 		}
-#if NET_1_1
+
 		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
-#else
-		void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
-#endif
 		{
 			if (s == null)
 				throw new XsltException ("No stylesheet was loaded.", null);
@@ -234,37 +187,22 @@ namespace System.Xml.Xsl {
 			output.Flush ();
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
 		{
 			Transform (input, args, output, xmlResolver);		
 		}
-#if NET_1_1
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
-#else
-		void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
-#endif
 		{
 			XslOutput xslOutput = (XslOutput)s.Outputs[String.Empty];
 			Transform (input, args, new StreamWriter (output, xslOutput.Encoding), resolver);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
 			Transform (input, args, output, xmlResolver);
 		}
-#if NET_1_1
+
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
-#else
-		void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
-#endif
 		{
 			if (s == null)
 				throw new XsltException ("No stylesheet was loaded.", null);
@@ -275,20 +213,12 @@ namespace System.Xml.Xsl {
 			output.Flush ();
 		}
 		
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
-#endif
 		public void Transform (string inputfile, string outputfile)
 		{ 
 			Transform (inputfile, outputfile, xmlResolver);
 		}
 
-#if NET_1_1
 		public void Transform (string inputfile, string outputfile, XmlResolver resolver)
-#else
-		void Transform (string inputfile, string outputfile, XmlResolver resolver)
-#endif
 		{
 			using (Stream s = new FileStream (outputfile, FileMode.Create, FileAccess.ReadWrite)) {
 				Transform(new XPathDocument (inputfile).CreateNavigator (), null, s, resolver);
@@ -318,84 +248,48 @@ namespace System.Xml.Xsl {
 			}
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete("You should pass evidence.", false)]
-#endif
 		public void Load (XmlReader stylesheet)
 		{
 			Load (stylesheet, null, null);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete("You should pass evidence.", false)]
-#endif
 		public void Load (XmlReader stylesheet, XmlResolver resolver)
 		{
 			Load (stylesheet, resolver, null);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete("You should pass evidence.", false)]
-#endif
 		public void Load (XPathNavigator stylesheet)
 		{
 			Load (stylesheet, null, null);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete("You should pass evidence.", false)]
-#endif
 		public void Load (XPathNavigator stylesheet, XmlResolver resolver)
 		{
 			Load (stylesheet, resolver, null);
 		}
 		
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete("You should pass evidence.", false)]
-#endif
 		public void Load (IXPathNavigable stylesheet)
 		{
 			Load (stylesheet.CreateNavigator(), null);
 		}
 
-#if NET_2_0
-#elif NET_1_1
-		[Obsolete("You should pass evidence.", false)]
-#endif
 		public void Load (IXPathNavigable stylesheet, XmlResolver resolver)
 		{
 			Load (stylesheet.CreateNavigator(), resolver);
 		}
 
 		// Introduced in .NET 1.1
-#if NET_1_1
 		public void Load (IXPathNavigable stylesheet, XmlResolver resolver, Evidence evidence)
-#else
-		internal void Load (IXPathNavigable stylesheet, XmlResolver resolver, Evidence evidence)
-#endif
 		{
 			Load (stylesheet.CreateNavigator(), resolver, evidence);
 		}
 
-#if NET_1_1
 		public void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
-#else
-		internal void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
-#endif
 		{
 			s = new Compiler (debugger).Compile (stylesheet, resolver, evidence);
 		}
 
-#if NET_1_1
 		public void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
-#else
-		internal void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
-#endif
 		{
 			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), resolver, evidence);
 		}

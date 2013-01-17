@@ -42,7 +42,11 @@ namespace System.Security.Cryptography {
 
 		public static new RSA Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RSACryptoServiceProvider ();
+#else
 			return Create ("System.Security.Cryptography.RSA");
+#endif
 		}
 
 		public static new RSA Create (string algName)

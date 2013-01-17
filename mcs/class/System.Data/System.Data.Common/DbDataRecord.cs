@@ -53,9 +53,6 @@ namespace System.Data.Common
 		public abstract char GetChar (int i);
 		public abstract long GetChars (int i, long dataIndex, char [] buffer, int bufferIndex, int length);
 		public abstract string GetDataTypeName (int i);
-#if NET_2_0
-		protected abstract DbDataReader GetDbDataReader (int i);
-#endif
 		public abstract DateTime GetDateTime (int i);
 		public abstract decimal GetDecimal (int i);
 		public abstract double GetDouble (int i);
@@ -75,6 +72,11 @@ namespace System.Data.Common
 		public IDataReader GetData (int i)
 		{
 			return (IDataReader) GetValue (i);
+		}
+		
+		protected virtual DbDataReader GetDbDataReader (int i)
+		{
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]

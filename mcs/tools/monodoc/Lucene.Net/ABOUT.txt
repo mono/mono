@@ -1,1 +1,0 @@
-dotLucene is a port of Jakarta Lucene to C#.  The port from Java to C# of version 1.4.0 and 1.4.3 is done primary by George Aroush.  To contact George Aroush please visit http://www.aroush.net/

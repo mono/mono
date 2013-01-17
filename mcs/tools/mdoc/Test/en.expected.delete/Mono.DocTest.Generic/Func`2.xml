@@ -1,0 +1,63 @@
+<Type Name="Func&lt;TArg,TRet&gt;" FullName="Mono.DocTest.Generic.Func&lt;TArg,TRet&gt;">
+  <TypeSignature Language="C#" Value="public delegate TRet Func&lt;in TArg,out TRet&gt;(TArg a) where TArg : Exception;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Func`2&lt;(class System.Exception) - TArg, + TRet&gt; extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TArg">
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("arg!")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Constraints>
+        <ParameterAttribute>Contravariant</ParameterAttribute>
+        <BaseTypeName>System.Exception</BaseTypeName>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="TRet">
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("ret!")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>Mono.DocTest.Doc("method")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Parameters>
+    <Parameter Name="a" Type="TArg">
+      <Attributes>
+        <Attribute>
+          <AttributeName>Mono.DocTest.Doc("arg-actual")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Parameter>
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>TRet</ReturnType>
+    <Attributes>
+      <Attribute>
+        <AttributeName>Mono.DocTest.Doc("return", Field=false)</AttributeName>
+      </Attribute>
+    </Attributes>
+  </ReturnValue>
+  <Docs>
+    <typeparam name="TArg">To be added.</typeparam>
+    <typeparam name="TRet">To be added.</typeparam>
+    <param name="a">To be added.</param>
+    <summary>To be added.</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

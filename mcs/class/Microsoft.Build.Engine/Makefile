@@ -10,7 +10,7 @@ ifeq (3.5, $(FRAMEWORK_VERSION))
 NAME_SUFFIX = .v3.5
 BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
 else
-ifeq (4.0, $(FRAMEWORK_VERSION))
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 NAME_SUFFIX = .v4.0
 endif
 endif
@@ -25,11 +25,13 @@ LIB_MCS_FLAGS = \
 
 TEST_MCS_FLAGS = \
 	/r:$(BUILD_FRAMEWORK)	\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll
+	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll \
+	/r:System.Xml.dll
 
 EXTRA_DISTFILES = \
 	Test/resources/TestTasks.cs		\
 	Test/resources/*.*proj	\
+	Test/resources/*.csproj \
 	Test/test-config-file*
 
 Test/resources/TestTasks.dll: Test/resources/TestTasks.cs

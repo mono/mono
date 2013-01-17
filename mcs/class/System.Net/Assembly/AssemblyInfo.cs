@@ -38,7 +38,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Net assembly
-// v3.5 Assembly
 
 [assembly: AssemblyTitle ("System.Net.dll")]
 [assembly: AssemblyDescription ("System.Net.dll")]
@@ -60,21 +59,10 @@ using System.Runtime.InteropServices;
 	[assembly: InternalsVisibleTo ("System.Windows, PublicKey=00240000048000009400000006020000002400005253413100040000010001008D56C76F9E8649383049F383C44BE0EC204181822A6C31CF5EB7EF486944D032188EA1D3920763712CCB12D75FB77E9811149E6148E5D32FBAAB37611C1878DDC19E20EF135D0CB2CFF2BFEC3D115810C3D9069638FE4BE215DBF795861920E5AB6F7DB2E2CEEF136AC23D5DD2BF031700AEC232F6C6B1C785B4305C123B37AB")]
 	[assembly: InternalsVisibleTo ("System.Windows.Browser, PublicKey=00240000048000009400000006020000002400005253413100040000010001008D56C76F9E8649383049F383C44BE0EC204181822A6C31CF5EB7EF486944D032188EA1D3920763712CCB12D75FB77E9811149E6148E5D32FBAAB37611C1878DDC19E20EF135D0CB2CFF2BFEC3D115810C3D9069638FE4BE215DBF795861920E5AB6F7DB2E2CEEF136AC23D5DD2BF031700AEC232F6C6B1C785B4305C123B37AB")]
 	[assembly: InternalsVisibleTo ("System.Xml, PublicKey=00240000048000009400000006020000002400005253413100040000010001008D56C76F9E8649383049F383C44BE0EC204181822A6C31CF5EB7EF486944D032188EA1D3920763712CCB12D75FB77E9811149E6148E5D32FBAAB37611C1878DDC19E20EF135D0CB2CFF2BFEC3D115810C3D9069638FE4BE215DBF795861920E5AB6F7DB2E2CEEF136AC23D5DD2BF031700AEC232F6C6B1C785B4305C123B37AB")]
-#if MOONLIGHT
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-#endif
 #else
 	[assembly: AssemblyKeyFile ("../ecma.pub")]
 	[assembly: AllowPartiallyTrustedCallers]
 	[assembly: SecurityCritical]
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.DisableOptimizations | 
-	                       DebuggableAttribute.DebuggingModes.EnableEditAndContinue | 
-	                       DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 #endif
 
 [assembly: ComVisible (false)]
-
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, Execution = true)]
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]

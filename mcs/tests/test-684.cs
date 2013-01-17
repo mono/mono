@@ -4,7 +4,7 @@ namespace mono_bug
 {
 	class Program
 	{
-		static void Main ()
+		public static void Main ()
 		{
 
 			// initialise so no null errors

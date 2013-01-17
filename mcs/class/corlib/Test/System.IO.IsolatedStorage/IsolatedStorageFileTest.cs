@@ -6,6 +6,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2005 Novell Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -127,12 +128,14 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
 			string codebase = Assembly.GetExecutingAssembly ().CodeBase.ToUpper ().Substring (8);
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().ToUpper ().IndexOf (codebase) > 0), "Url");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().ToUpper ().IndexOf (codebase) > 0), "Url");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -160,6 +163,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForDomain ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
@@ -170,6 +174,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			// so we're using the first parameter to GetCommandLineArgs
 			string exe = Environment.GetCommandLineArgs ()[0].Replace ("\\", "/").ToUpper ();
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().ToUpper ().IndexOf (exe) > 0), exe + "\n" + isf.DomainIdentity.ToString ().ToUpper ()); //"Url - Domain");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -196,12 +201,15 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
+#if !NET_2_1
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf (Assembly.GetExecutingAssembly ().CodeBase) > 0), "Url");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
-
+		
+#if !NET_2_1
 		[Test]
 		[ExpectedException (typeof (IsolatedStorageException))]
 		public void GetUserStoreForApplication_AssemblyIdentity ()
@@ -217,6 +225,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
 			object o = isf.DomainIdentity;
 		}
+#endif
 #endif
 
 #if NET_4_0
@@ -235,11 +244,13 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, typeof (Zone), typeof (Zone));
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
+#if !NET_2_1
 			Assert.AreEqual (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly, isf.Scope, "Scope");
 			Assert.IsTrue ((isf.AssemblyIdentity is Zone), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf ("MyComputer") > 0), "Zone - Assembly");
 			Assert.IsTrue ((isf.DomainIdentity is Zone), "DomainIdentity");
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().IndexOf ("MyComputer") > 0), "Zone - Domain");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -258,12 +269,14 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, typeof (StrongName), typeof (Url));
 			Assert.AreEqual (Int64.MaxValue, isf.MaximumSize, "MaximumSize");
 			Assert.AreEqual (scope, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Url), "AssemblyIdentity");
 			// note: mono transforms the CodeBase into uppercase
 			// for net 1.1 which uses file:// and not file:///
 			string codebase = Assembly.GetExecutingAssembly ().CodeBase.ToUpper ().Substring (8);
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().ToUpper ().IndexOf (codebase) > 0), "Url");
 			// DomainIdentity throws a InvalidOperationException
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -348,10 +361,12 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 
 			// Maximum size for Internet isn't (by default) Int64.MaxValue
 			Assert.AreEqual (scope, isf.Scope, "Scope");
+#if !NET_2_1
 			Assert.IsTrue ((isf.AssemblyIdentity is Zone), "AssemblyIdentity");
 			Assert.IsTrue ((isf.AssemblyIdentity.ToString ().IndexOf ("Intranet") > 0), "Zone - Assembly");
 			Assert.IsTrue ((isf.DomainIdentity is Zone), "DomainIdentity");
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().IndexOf ("Internet") > 0), isf.DomainIdentity.ToString ()); //"Zone - Domain");
+#endif
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
@@ -439,7 +454,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				try {
 					isf.CreateDirectory (path);
 				}
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 				catch (IsolatedStorageException ex) {
 					Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "Message");
 					Assert.IsNull (ex.InnerException, "InnerException");
@@ -480,7 +495,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
-#if NET_4_0
+#if NET_4_0 || NET_2_1
 		[ExpectedException (typeof (ArgumentException))]
 #else
 		[ExpectedException (typeof (SecurityException))]
@@ -580,8 +595,10 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Roaming | IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain;
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, null, null);
+#if !NET_2_1
 			Assert.AreEqual (typeof (Url), isf.AssemblyIdentity.GetType (), "AssemblyIdentity");
 			Assert.AreEqual (typeof (Url), isf.DomainIdentity.GetType (), "DomainIdentity");
+#endif
 		}
 
 		[Test]
@@ -1070,6 +1087,57 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			isf.Close ();
 			isf.Dispose ();
 		}
+
+		[Test]
+		public void MultiLevel ()
+		{
+			// see bug #4101
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			try {
+				isf.CreateDirectory ("dir1");
+				string [] dirs = isf.GetDirectoryNames ("*");
+				Assert.AreEqual (dirs.Length, 1, "1a");
+				Assert.AreEqual (dirs [0], "dir1", "1b");
+	
+				isf.CreateDirectory ("dir1/test");
+				dirs = isf.GetDirectoryNames ("dir1/*");
+				Assert.AreEqual (dirs.Length, 1, "2a");
+				Assert.AreEqual (dirs [0], "test", "2b");
+	
+				isf.CreateDirectory ("dir1/test/test2a");
+				isf.CreateDirectory ("dir1/test/test2b");
+				dirs = isf.GetDirectoryNames ("dir1/test/*");
+				Assert.AreEqual (dirs.Length, 2, "3a");
+				Assert.AreEqual (dirs [0], "test2a", "3b");
+				Assert.AreEqual (dirs [1], "test2b", "3c");
+			}
+			finally {
+				isf.DeleteDirectory ("dir1/test/test2a");
+				isf.DeleteDirectory ("dir1/test/test2b");
+				isf.DeleteDirectory ("dir1/test");
+				isf.DeleteDirectory ("dir1");
+			}
+		}
 #endif
+		[Test]
+		public void RootedDirectory ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			try {
+				isf.CreateDirectory ("test/nested/directory/structure/without/root");
+				isf.CreateDirectory ("/test/nested/directory/structure/with/root");
+			}
+			finally {
+				isf.DeleteDirectory ("test/nested/directory/structure/without/root");
+				isf.DeleteDirectory ("test/nested/directory/structure/without");
+
+				isf.DeleteDirectory ("/test/nested/directory/structure/with/root");
+				isf.DeleteDirectory ("/test/nested/directory/structure/with");
+				isf.DeleteDirectory ("/test/nested/directory/structure");
+				isf.DeleteDirectory ("/test/nested/directory");
+				isf.DeleteDirectory ("/test/nested");
+				isf.DeleteDirectory ("/test");
+			}
+		}
 	}
 }

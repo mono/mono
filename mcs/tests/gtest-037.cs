@@ -36,6 +36,6 @@ public class Baz<T> : Foo<T,string>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

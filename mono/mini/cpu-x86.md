@@ -67,7 +67,7 @@ jmp: len:32 clob:c
 call: dest:a clob:c len:17
 tailcall: len:120 clob:c
 br: len:5
-seq_point: len:16
+seq_point: len:17
 
 int_beq: len:6
 int_bge: len:6
@@ -379,7 +379,7 @@ cmov_ilt_un: dest:i src1:i src2:i len:16 clob:1
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:30
 long_conv_to_r8_2: dest:f src1:i src2:i len:14 
 long_conv_to_r4_2: dest:f src1:i src2:i len:14
-long_conv_to_r_un_2: dest:f src1:i src2:i len:26 
+long_conv_to_r_un_2: dest:f src1:i src2:i len:40
 
 fmove: dest:f src1:f
 float_conv_to_r4: dest:f src1:f  len:12

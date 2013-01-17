@@ -48,9 +48,9 @@ namespace System.Xml.Serialization
 		{
 		}
 
-		public SoapAttributeAttribute (string attrName) 
+		public SoapAttributeAttribute (string attributeName) 
 		{
-			this.attrName = attrName;
+			this.attrName = attributeName;
 		}
 
 		public string AttributeName {

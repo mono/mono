@@ -76,14 +76,98 @@ typedef enum {
 	MARSHAL_ACTION_MANAGED_CONV_RESULT
 } MarshalAction;
 
+/*
+ * This is an extension of the MONO_WRAPPER_ enum to avoid adding more elements to that
+ * enum.
+ */
+typedef enum {
+	WRAPPER_SUBTYPE_NONE,
+	/* Subtypes of MONO_WRAPPER_MANAGED_TO_MANAGED */
+	WRAPPER_SUBTYPE_ELEMENT_ADDR,
+	WRAPPER_SUBTYPE_STRING_CTOR,
+	/* Subtypes of MONO_WRAPPER_STELEMREF */
+	WRAPPER_SUBTYPE_VIRTUAL_STELEMREF,
+	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	WRAPPER_SUBTYPE_FAST_MONITOR_ENTER,
+	WRAPPER_SUBTYPE_FAST_MONITOR_ENTER_V4,
+	WRAPPER_SUBTYPE_FAST_MONITOR_EXIT,
+	WRAPPER_SUBTYPE_PTR_TO_STRUCTURE,
+	WRAPPER_SUBTYPE_STRUCTURE_TO_PTR,
+	/* Subtypes of MONO_WRAPPER_CASTCLASS */
+	WRAPPER_SUBTYPE_CASTCLASS_WITH_CACHE,
+	WRAPPER_SUBTYPE_ISINST_WITH_CACHE,
+	/* Subtypes of MONO_WRAPPER_RUNTIME_INVOKE */
+	WRAPPER_SUBTYPE_RUNTIME_INVOKE_DYNAMIC,
+	WRAPPER_SUBTYPE_RUNTIME_INVOKE_DIRECT,
+	WRAPPER_SUBTYPE_RUNTIME_INVOKE_VIRTUAL,
+	/* Subtypes of MONO_WRAPPER_MANAGED_TO_NATIVE */
+	WRAPPER_SUBTYPE_ICALL_WRAPPER,
+	WRAPPER_SUBTYPE_NATIVE_FUNC_AOT,
+	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	WRAPPER_SUBTYPE_SYNCHRONIZED_INNER,
+	/* Subtypes of MONO_WRAPPER_MANAGED_TO_MANAGED */
+	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER
+} WrapperSubtype;
+
+typedef struct {
+	MonoMethod *method;
+	MonoClass *klass;
+} NativeToManagedWrapperInfo;
+
+typedef struct {
+	MonoMethod *method;
+} StringCtorWrapperInfo;
+
+typedef struct {
+	int kind;
+} VirtualStelemrefWrapperInfo;
+
 typedef struct {
 	guint32 rank, elem_size;
 } ElementAddrWrapperInfo;
 
 typedef struct {
 	MonoMethod *method;
-	MonoClass *klass;
-} NativeToManagedWrapperInfo;
+} RuntimeInvokeWrapperInfo;
+
+typedef struct {
+	MonoMethod *method;
+} ManagedToNativeWrapperInfo;
+
+typedef struct {
+	MonoMethod *method;
+} SynchronizedInnerWrapperInfo;
+
+typedef struct {
+	MonoMethod *method;
+} GenericArrayHelperWrapperInfo;
+
+/*
+ * This structure contains additional information to uniquely identify a given wrapper
+ * method. It can be retrieved by mono_marshal_get_wrapper_info () for certain types
+ * of wrappers, i.e. ones which do not have a 1-1 association with a method/class.
+ */
+typedef struct {
+	WrapperSubtype subtype;
+	union {
+		/* RUNTIME_INVOKE_... */
+		RuntimeInvokeWrapperInfo runtime_invoke;
+		/* STRING_CTOR */
+		StringCtorWrapperInfo string_ctor;
+		/* ELEMENT_ADDR */
+		ElementAddrWrapperInfo element_addr;
+		/* VIRTUAL_STELEMREF */
+		VirtualStelemrefWrapperInfo virtual_stelemref;
+		/* MONO_WRAPPER_NATIVE_TO_MANAGED */
+		NativeToManagedWrapperInfo native_to_managed;
+		/* MONO_WRAPPER_MANAGED_TO_NATIVE */
+		ManagedToNativeWrapperInfo managed_to_native;
+		/* SYNCHRONIZED_INNER */
+		SynchronizedInnerWrapperInfo synchronized_inner;
+		/* GENERIC_ARRAY_HELPER */
+		GenericArrayHelperWrapperInfo generic_array_helper;
+	} d;
+} WrapperInfo;
 
 G_BEGIN_DECLS
 
@@ -225,6 +309,9 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 MonoMethod *
 mono_marshal_get_native_func_wrapper (MonoImage *image, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func) MONO_INTERNAL;
 
+MonoMethod*
+mono_marshal_get_native_func_wrapper_aot (MonoClass *klass) MONO_INTERNAL;
+
 MonoMethod *
 mono_marshal_get_struct_to_ptr (MonoClass *klass) MONO_INTERNAL;
 
@@ -248,6 +335,9 @@ mono_marshal_get_stfld_remote_wrapper (MonoClass *klass) MONO_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_synchronized_wrapper (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_synchronized_inner_wrapper (MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_unbox_wrapper (MonoMethod *method) MONO_INTERNAL;
@@ -485,7 +575,7 @@ mono_signature_no_pinvoke (MonoMethod *method) MONO_INTERNAL;
 /* Called from cominterop.c */
 
 void
-mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func, gboolean aot, gboolean check_exceptions) MONO_INTERNAL;
+mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func, gboolean aot, gboolean check_exceptions, gboolean func_param) MONO_INTERNAL;
 
 void
 mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle) MONO_INTERNAL;
@@ -502,6 +592,9 @@ mono_mb_create_and_cache (GHashTable *cache, gpointer key,
 						  int max_stack) MONO_INTERNAL;
 void
 mono_marshal_emit_thread_interrupt_checkpoint (MonoMethodBuilder *mb) MONO_INTERNAL;
+
+void
+mono_marshal_use_aot_wrappers (gboolean use) MONO_INTERNAL;
 
 G_END_DECLS
 

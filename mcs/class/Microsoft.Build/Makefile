@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.Build.dll
 
-ifneq (4.0, $(FRAMEWORK_VERSION))
+ifneq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIBRARY_NAME = dummy-Microsoft.Build.dll
 NO_INSTALL = yes
 NO_TEST = yes
@@ -18,6 +18,14 @@ LIB_MCS_FLAGS = \
 	/r:System.Xml.dll			\
 	/r:Microsoft.Build.Engine.dll		\
 	/r:Microsoft.Build.Framework.dll
+	
+TEST_MCS_FLAGS = /r:System.Core.dll
+
+EXTRA_DISTFILES = \
+	Test/FunctionalTestReferenceProject.csproj	\
+	Test/FunctionalTestReferenceProject3.csproj	\
+	Test/Microsoft.Build.Test.csproj	\
+	Test/Microsoft.Build.csproj
 
 include ../../build/library.make
 

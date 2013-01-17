@@ -35,7 +35,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 [TestFixture]
-public class DSACryptoServiceProviderTest : Assertion {
+public class DSACryptoServiceProviderTest {
 
 	protected DSACryptoServiceProvider dsa;
 	protected DSACryptoServiceProvider disposed;
@@ -48,8 +48,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	private bool machineKeyStore;
 
-	[TestFixtureSetUp]
-	public void FixtureSetUp () 
+	public DSACryptoServiceProviderTest () 
 	{
 		disposed = new DSACryptoServiceProvider (minKeySize);
 		// FX 2.0 beta 1 bug - we must use the key before clearing it
@@ -80,7 +79,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	// may also help for DSA descendants
 	public void AssertEquals (string message, DSAParameters expectedKey, DSAParameters actualKey, bool checkPrivateKey) 
 	{
-		AssertEquals (message + " Counter", expectedKey.Counter, actualKey.Counter);
+		Assert.AreEqual (expectedKey.Counter, actualKey.Counter, message + " Counter");
 		AssertEquals (message + " G", expectedKey.G, actualKey.G);
 		AssertEquals (message + " J", expectedKey.J, actualKey.J);
 		AssertEquals (message + " P", expectedKey.P, actualKey.P);
@@ -97,11 +96,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 		// under Mono:: a new key pair isn't generated
 		dsa = new DSACryptoServiceProvider ();
 		// test default key size
-		AssertEquals ("DSA ConstructorEmpty", 1024, dsa.KeySize);
-		Assert ("PersistKeyInCsp", !dsa.PersistKeyInCsp);
-#if NET_2_0
-		Assert ("PublicOnly", !dsa.PublicOnly);
-#endif
+		Assert.AreEqual (1024, dsa.KeySize, "DSA ConstructorEmpty");
+		Assert.IsFalse (dsa.PersistKeyInCsp, "PersistKeyInCsp");
+		Assert.IsFalse (dsa.PublicOnly, "PublicOnly");
 	}
 
 	[Test]
@@ -109,11 +106,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
 		// test default key size
-		AssertEquals ("DSA ConstructorKeySize", minKeySize, dsa.KeySize);
-		Assert ("PersistKeyInCsp", !dsa.PersistKeyInCsp);
-#if NET_2_0
-		Assert ("PublicOnly", !dsa.PublicOnly);
-#endif
+		Assert.AreEqual (minKeySize, dsa.KeySize, "DSA ConstructorKeySize");
+		Assert.IsFalse (dsa.PersistKeyInCsp, "PersistKeyInCsp");
+		Assert.IsFalse (dsa.PublicOnly, "PublicOnly");
 	}
 
 	[Test]
@@ -124,11 +119,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 		// under MS a new keypair will only be generated the first time
 		dsa = new DSACryptoServiceProvider (csp);
 		// test default key size
-		AssertEquals ("DSA ConstructorCspParameters", 1024, dsa.KeySize);
-		Assert ("PersistKeyInCsp", dsa.PersistKeyInCsp);
-#if NET_2_0
-		Assert ("PublicOnly", !dsa.PublicOnly);
-#endif
+		Assert.AreEqual (1024, dsa.KeySize, "DSA ConstructorCspParameters");
+		Assert.IsTrue (dsa.PersistKeyInCsp, "PersistKeyInCsp");
+		Assert.IsFalse (dsa.PublicOnly, "PublicOnly");
 	}
 
 	[Test]
@@ -137,11 +130,9 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		CspParameters csp = new CspParameters (13, null, "Mono512");
 		dsa = new DSACryptoServiceProvider (minKeySize, csp);
-		AssertEquals ("DSA ConstructorCspParameters", minKeySize, dsa.KeySize);
-		Assert ("PersistKeyInCsp", dsa.PersistKeyInCsp);
-#if NET_2_0
-		Assert ("PublicOnly", !dsa.PublicOnly);
-#endif
+		Assert.AreEqual (minKeySize, dsa.KeySize, "DSA ConstructorCspParameters");
+		Assert.IsTrue (dsa.PersistKeyInCsp, "PersistKeyInCsp");
+		Assert.IsFalse (dsa.PublicOnly, "PublicOnly");
 	}
 
 	[Test]
@@ -152,10 +143,8 @@ public class DSACryptoServiceProviderTest : Assertion {
 		KeySizes LegalKeySize = dsa.LegalKeySizes [0];
 		for (int i = LegalKeySize.MinSize; i <= LegalKeySize.MaxSize; i += LegalKeySize.SkipSize) {
 			dsa = new DSACryptoServiceProvider (i);
-			AssertEquals ("DSA.KeySize", i, dsa.KeySize);
-#if NET_2_0
-			Assert ("PublicOnly", !dsa.PublicOnly);
-#endif
+			Assert.AreEqual (i, dsa.KeySize, "DSA.KeySize");
+			Assert.IsFalse (dsa.PublicOnly, "PublicOnly");
 		}
 	}
 
@@ -164,13 +153,11 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		// Test smallest valid key size (performance issue)
 		using (dsa = new DSACryptoServiceProvider (minKeySize)) {	// MS generates keypair here
-			AssertEquals ("BeforeMonoKeyGeneration.KeySize", minKeySize, dsa.KeySize);
+			Assert.AreEqual (minKeySize, dsa.KeySize, "BeforeMonoKeyGeneration.KeySize");
 			byte[] hash = new byte [20];
 			dsa.CreateSignature (hash);				// mono generates keypair here
-			AssertEquals ("AfterMonoKeyGeneration.KeySize", minKeySize, dsa.KeySize);
-#if NET_2_0
-			Assert ("PublicOnly", !dsa.PublicOnly);
-#endif
+			Assert.AreEqual (minKeySize, dsa.KeySize, "AfterMonoKeyGeneration.KeySize");
+			Assert.IsFalse (dsa.PublicOnly, "PublicOnly");
 		}
 		// here Dispose is called (with true)
 	}
@@ -180,13 +167,12 @@ public class DSACryptoServiceProviderTest : Assertion {
 	public void TooSmallKeyPair () 
 	{
 		dsa = new DSACryptoServiceProvider (384);
-#if NET_2_0
+
 		// in 2.0 MS delay the creation of the key pair until it is required
 		// (same trick that Mono almost always used ;-) but they also delay
 		// the parameter validation (what Mono didn't). So here we must "get"
 		// the key (export) to trigger the exception
 		dsa.ToXmlString (true);
-#endif
 	}
 
 	[Test]
@@ -194,32 +180,31 @@ public class DSACryptoServiceProviderTest : Assertion {
 	public void TooBigKeyPair () 
 	{
 		dsa = new DSACryptoServiceProvider (2048);
-#if NET_2_0
+
 		// in 2.0 MS delay the creation of the key pair until it is required
 		// (same trick that Mono almost always used ;-) but they also delay
 		// the parameter validation (what Mono didn't). So here we must "get"
 		// the key (export) to trigger the exception
 		dsa.ToXmlString (true);
-#endif
 	}
 
 	[Test]
 	public void Properties () 
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
-		AssertEquals ("LegalKeySize", 1, dsa.LegalKeySizes.Length);
-		AssertEquals ("LegalKeySize.MinSize", minKeySize, dsa.LegalKeySizes [0].MinSize);
-		AssertEquals ("LegalKeySize.MaxSize", 1024, dsa.LegalKeySizes [0].MaxSize);
-		AssertEquals ("LegalKeySize.SkipSize", 64, dsa.LegalKeySizes [0].SkipSize);
-		AssertNull ("KeyExchangeAlgorithm", dsa.KeyExchangeAlgorithm);
-		AssertEquals ("SignatureAlgorithm", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", dsa.SignatureAlgorithm);
+		Assert.AreEqual (1, dsa.LegalKeySizes.Length, "LegalKeySize");
+		Assert.AreEqual (minKeySize, dsa.LegalKeySizes[0].MinSize, "LegalKeySize.MinSize");
+		Assert.AreEqual (1024, dsa.LegalKeySizes[0].MaxSize, "LegalKeySize.MaxSize");
+		Assert.AreEqual (64, dsa.LegalKeySizes[0].SkipSize, "LegalKeySize.SkipSize");
+		Assert.IsNull (dsa.KeyExchangeAlgorithm, "KeyExchangeAlgorithm");
+		Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", dsa.SignatureAlgorithm);
 		dsa.Clear ();
-		AssertEquals ("LegalKeySize(disposed)", 1, dsa.LegalKeySizes.Length);
-		AssertEquals ("LegalKeySize.MinSize(disposed)", minKeySize, dsa.LegalKeySizes [0].MinSize);
-		AssertEquals ("LegalKeySize.MaxSize(disposed)", 1024, dsa.LegalKeySizes [0].MaxSize);
-		AssertEquals ("LegalKeySize.SkipSize(disposed)", 64, dsa.LegalKeySizes [0].SkipSize);
-		AssertNull ("KeyExchangeAlgorithm(disposed)", dsa.KeyExchangeAlgorithm);
-		AssertEquals ("SignatureAlgorithm(disposed)", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", dsa.SignatureAlgorithm);
+		Assert.AreEqual (1, dsa.LegalKeySizes.Length, "LegalKeySize(disposed)");
+		Assert.AreEqual (minKeySize, dsa.LegalKeySizes[0].MinSize, "LegalKeySize.MinSize(disposed)");
+		Assert.AreEqual (1024, dsa.LegalKeySizes[0].MaxSize, "LegalKeySize.MaxSize(disposed)");
+		Assert.AreEqual (64, dsa.LegalKeySizes[0].SkipSize, "LegalKeySize.SkipSize(disposed)");
+		Assert.IsNull (dsa.KeyExchangeAlgorithm, "KeyExchangeAlgorithm(disposed)");
+		Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", dsa.SignatureAlgorithm);
 	}
 
 	[Test]
@@ -251,7 +236,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		byte[] data = new byte [128];
 		byte[] signature = smallDsa.SignData (data);
-		Assert ("SignData", smallDsa.VerifyData (data, signature));
+		Assert.IsTrue (smallDsa.VerifyData (data, signature), "SignData");
 	}
 
 	[Test]
@@ -333,9 +318,6 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
-#if ! NET_2_0
-	[Category ("NotDotNet")] // Running this test breaks all further DSA tests on MS runtime!
-#endif
 	public void VerifySignatureWithoutKey () 
 	{
 		byte[] hash = new byte [20];
@@ -343,10 +325,10 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSACryptoServiceProvider emptyDSA = new DSACryptoServiceProvider (minKeySize); 
 		// Mono hasn't generated a keypair - but it's impossible to 
 		// verify a signature based on a new just generated keypair
-		Assert ("VerifySignature(WithoutKey)", !emptyDSA.VerifySignature (hash, sign));
+		Assert.IsFalse (emptyDSA.VerifySignature (hash, sign));
 	}
-
-#if NET_2_0
+		
+#if !NET_2_1
 	[Test]
 	[Category ("NotWorking")]
 	public void ImportDisposed ()
@@ -355,13 +337,6 @@ public class DSACryptoServiceProviderTest : Assertion {
 		import.Clear ();
 		import.ImportParameters (AllTests.GetKey (false));
 		// no exception from Fx 2.0 +
-	}
-#else
-	[Test]
-	[ExpectedException (typeof (ObjectDisposedException))]
-	public void ImportDisposed () 
-	{
-		disposed.ImportParameters (AllTests.GetKey (false));
 	}
 #endif
 
@@ -404,9 +379,6 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	[Test]
 	[ExpectedException (typeof (CryptographicException))]
-#if ! NET_2_0
-	[Category ("NotDotNet")] // MS runtime throws a System.ExecutionEngineException then exit the application
-#endif
 	public void DSAImportMissingY () 
 	{
 		DSAParameters input = AllTests.GetKey (false);
@@ -422,7 +394,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		input.J = null;
 		dsa = new DSACryptoServiceProvider (1024);
 		dsa.ImportParameters (input);
-		AssertEquals ("MissingJ.KeySize", 1024, dsa.KeySize);
+		Assert.AreEqual (1024, dsa.KeySize, "MissingJ.KeySize");
 	}
 
 	[Test]
@@ -432,7 +404,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		input.Seed = null;
 		dsa = new DSACryptoServiceProvider (1024);
 		dsa.ImportParameters (input);
-		AssertEquals ("MissingSeed.KeySize", 1024, dsa.KeySize);
+		Assert.AreEqual (1024, dsa.KeySize, "MissingSeed.KeySize");
 	}
 
 	// all keypairs generated by CryptoAPI on Windows
@@ -454,31 +426,31 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
 
 		dsa.FromXmlString (CapiXml512);
-		AssertEquals ("Capi-Xml512", CapiXml512, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml512, dsa.ToXmlString (true), "Capi-Xml512");
 
 		dsa.FromXmlString (CapiXml576);
-		AssertEquals ("Capi-Xml576", CapiXml576, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml576, dsa.ToXmlString (true), "Capi-Xml576");
 
 		dsa.FromXmlString (CapiXml640);
-		AssertEquals ("Capi-Xml640", CapiXml640, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml640, dsa.ToXmlString (true), "Capi-Xml640");
 
 		dsa.FromXmlString (CapiXml704);
-		AssertEquals ("Capi-Xml704", CapiXml704, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml704, dsa.ToXmlString (true), "Capi-Xml704");
 
 		dsa.FromXmlString (CapiXml768);
-		AssertEquals ("Capi-Xml768", CapiXml768, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml768, dsa.ToXmlString (true), "Capi-Xml768");
 
 		dsa.FromXmlString (CapiXml832);
-		AssertEquals ("Capi-Xml832", CapiXml832, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml832, dsa.ToXmlString (true), "Capi-Xml832");
 
 		dsa.FromXmlString (CapiXml896);
-		AssertEquals ("Capi-Xml896", CapiXml896, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml896, dsa.ToXmlString (true), "Capi-Xml896");
 
 		dsa.FromXmlString (CapiXml960);
-		AssertEquals ("Capi-Xml960", CapiXml960, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml960, dsa.ToXmlString (true), "Capi-Xml960");
 
 		dsa.FromXmlString (CapiXml1024);
-		AssertEquals ("Capi-Xml1024", CapiXml1024, dsa.ToXmlString (true));
+		Assert.AreEqual (CapiXml1024, dsa.ToXmlString (true), "Capi-Xml1024");
 	}
 
 	private void SignAndVerify (string msg, DSACryptoServiceProvider dsa)
@@ -495,16 +467,16 @@ public class DSACryptoServiceProviderTest : Assertion {
 		// the signature is never the same so the only way to know if 
 		// it worked is to verify it ourselve (i.e. can't compare)
 		bool ok = key.VerifySignature (hash, sign1);
-		Assert (msg + "-CreateSignature-VerifySignature", ok);
+		Assert.IsTrue (ok, msg + "-CreateSignature-VerifySignature");
 
 		ok = key.VerifyHash (hash, null, sign1);
-		Assert (msg + "-CreateSignature-VerifyHash", ok);
+		Assert.IsTrue (ok, msg + "-CreateSignature-VerifyHash");
 
 		ok = key.VerifyData (hash, sign2);
-		Assert (msg + "-SignData(byte[])-VerifyData", ok);
+		Assert.IsTrue (ok, msg + "-SignData(byte[])-VerifyData");
 
 		ok = key.VerifyData (hash, sign3);
-		Assert (msg + "-SignData(Stream)-VerifyData", ok);
+		Assert.IsTrue (ok, msg + "-SignData(Stream)-VerifyData");
 	}
 
 	// Validate that we can sign with every keypair and verify the signature
@@ -554,57 +526,57 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 		dsa.FromXmlString (CapiXml512);
 		byte[] sign512 = { 0xCA, 0x11, 0xA4, 0xCD, 0x5B, 0xBA, 0xA1, 0xC9, 0x8C, 0xEF, 0x9A, 0xB8, 0x84, 0x09, 0x96, 0xD0, 0x1B, 0x39, 0x6D, 0x1C, 0xE1, 0xB2, 0x0E, 0xD3, 0xCE, 0xCF, 0x6A, 0x48, 0xDC, 0x22, 0x40, 0xDC, 0xCD, 0x61, 0x25, 0x7F, 0x9E, 0x1B, 0x79, 0x89 };
-		Assert ("Capi-512-Verify", dsa.VerifySignature (hash, sign512));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign512), "Capi-512-Verify");
 		sign512[0] = 0x00;
-		Assert ("Capi-512-VerBad", !dsa.VerifySignature (hash, sign512));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign512), "Capi-512-VerBad");
 
 		dsa.FromXmlString (CapiXml576);
 		byte[] sign576 = { 0x10, 0x77, 0xE9, 0x4C, 0x29, 0xB0, 0xF4, 0x0E, 0x3B, 0xB7, 0x8E, 0x3A, 0x40, 0x22, 0x63, 0x70, 0xF3, 0xA5, 0xB7, 0x4A, 0x5C, 0x85, 0xB5, 0xF3, 0x4B, 0x1C, 0x4A, 0x92, 0xDD, 0x1D, 0xED, 0x63, 0x26, 0xC2, 0x42, 0x20, 0xBE, 0x33, 0x55, 0x57 };
-		Assert ("Capi-576-Verify", dsa.VerifySignature (hash, sign576));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign576), "Capi-576-Verify");
 		sign576[0] = 0x00;
-		Assert ("Capi-576-VerBad", !dsa.VerifySignature (hash, sign576));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign576), "Capi-576-VerBad");
 
 		dsa.FromXmlString (CapiXml640);
 		byte[] sign640 = { 0x4C, 0x04, 0xAC, 0xE0, 0x84, 0x04, 0x5A, 0x1D, 0x9D, 0x61, 0xA1, 0x62, 0xBE, 0x11, 0xEA, 0x0D, 0x1C, 0x21, 0xC7, 0x55, 0x2C, 0x7C, 0x84, 0x4F, 0x22, 0xE9, 0xA1, 0xF1, 0x2C, 0x83, 0x13, 0x90, 0xAE, 0x36, 0xFD, 0x59, 0x32, 0x21, 0xAE, 0x0F };
-		Assert ("Capi-640-Verify", dsa.VerifySignature (hash, sign640));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign640), "Capi-640-Verify");
 		sign640[0] = 0x00;
-		Assert ("Capi-640-VerBad", !dsa.VerifySignature (hash, sign640));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign640), "Capi-640-VerBad");
 
 		dsa.FromXmlString (CapiXml704);
 		byte[] sign704 = { 0xA2, 0x75, 0x32, 0xE0, 0x4B, 0xCA, 0x92, 0x51, 0x84, 0xAC, 0x7C, 0xDE, 0x97, 0xB8, 0xC3, 0x25, 0xD7, 0xF8, 0xA7, 0xE0, 0x76, 0x42, 0x7E, 0x5E, 0x5E, 0x3F, 0x82, 0xDB, 0x87, 0xBF, 0xC9, 0xCC, 0xD9, 0xA2, 0x8E, 0xA2, 0xFE, 0xD3, 0x48, 0x30 };
-		Assert ("Capi-704-Verify", dsa.VerifySignature (hash, sign704));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign704), "Capi-704-Verify");
 		sign704[0] = 0x00;
-		Assert ("Capi-704-VerBad", !dsa.VerifySignature (hash, sign704));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign704), "Capi-704-VerBad");
 
 		dsa.FromXmlString (CapiXml768);
 		byte[] sign768 = { 0x92, 0x27, 0x89, 0x4B, 0xB2, 0xDF, 0xE9, 0x98, 0x5A, 0xC5, 0x78, 0x5E, 0xBD, 0x51, 0x6D, 0x10, 0x30, 0xEC, 0x14, 0x95, 0x6E, 0xEB, 0xA6, 0x5F, 0x3E, 0x47, 0x47, 0x86, 0x19, 0xD0, 0xF2, 0x9B, 0x70, 0x98, 0x97, 0x07, 0x04, 0x0C, 0x13, 0xC6 };
-		Assert ("Capi-768-Verify", dsa.VerifySignature (hash, sign768));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign768), "Capi-768-Verify");
 		sign768[0] = 0x00;
-		Assert ("Capi-768-VerBad", !dsa.VerifySignature (hash, sign768));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign768), "Capi-768-VerBad");
 
 		dsa.FromXmlString (CapiXml832);
 		byte[] sign832 = { 0xC7, 0x10, 0x86, 0x86, 0x4A, 0x19, 0xBC, 0x8E, 0xC5, 0x0E, 0x53, 0xC0, 0x9E, 0x70, 0x2C, 0xFD, 0x4B, 0x9B, 0xBD, 0x79, 0x46, 0x8E, 0x9F, 0x64, 0x41, 0xF9, 0xBB, 0xDD, 0x3B, 0x93, 0x63, 0x82, 0x7B, 0x9B, 0x5B, 0x12, 0x9B, 0xAA, 0x90, 0xAD };
-		Assert ("Capi-832-Verify", dsa.VerifySignature (hash, sign832));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign832), "Capi-832-Verify");
 		sign832[0] = 0x00;
-		Assert ("Capi-832-VerBad", !dsa.VerifySignature (hash, sign832));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign832), "Capi-832-VerBad");
 
 		dsa.FromXmlString (CapiXml896);
 		byte[] sign896 = { 0x7F, 0x0F, 0x5F, 0xC4, 0x44, 0x38, 0x65, 0xD7, 0x0B, 0x03, 0xD1, 0xAC, 0x77, 0xA2, 0xA2, 0x47, 0x37, 0x37, 0x42, 0xA2, 0x97, 0x23, 0xDA, 0x7F, 0xEC, 0xD5, 0x78, 0x3D, 0x5E, 0xDA, 0xA0, 0x02, 0xD6, 0x2D, 0x4B, 0xFA, 0x79, 0x7B, 0x7A, 0x87 };
-		Assert ("Capi-896-Verify", dsa.VerifySignature (hash, sign896));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign896), "Capi-896-Verify");
 		sign896[0] = 0x00;
-		Assert ("Capi-896-VerBad", !dsa.VerifySignature (hash, sign896));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign896), "Capi-896-VerBad");
 
 		dsa.FromXmlString (CapiXml960);
 		byte[] sign960 = { 0x63, 0x77, 0x39, 0xE5, 0x03, 0xD2, 0x33, 0xF5, 0xFE, 0x16, 0xE4, 0x7E, 0x49, 0x4E, 0x72, 0xA0, 0x1B, 0x8D, 0x4D, 0xEC, 0x55, 0x15, 0x72, 0x1C, 0x22, 0x37, 0x4B, 0x64, 0xEB, 0x02, 0x3E, 0xC5, 0xCF, 0x32, 0x07, 0xC5, 0xD3, 0xA2, 0x02, 0x0A };
-		Assert ("Capi-960-Verify", dsa.VerifySignature (hash, sign960));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign960), "Capi-960-Verify");
 		sign960[0] = 0x00;
-		Assert ("Capi-960-VerBad", !dsa.VerifySignature (hash, sign960));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign960), "Capi-960-VerBad");
 
 		dsa.FromXmlString (CapiXml1024);
 		byte[] sign1024 = { 0x1C, 0x5A, 0x9D, 0x82, 0xDD, 0xE0, 0xF5, 0x65, 0x74, 0x48, 0xFB, 0xD6, 0x27, 0x92, 0x98, 0xEA, 0xC6, 0x7F, 0x4F, 0x7C, 0x49, 0xFC, 0xCF, 0x46, 0xEB, 0x62, 0x27, 0x05, 0xFC, 0x9C, 0x40, 0x74, 0x5B, 0x13, 0x7E, 0x76, 0x9C, 0xE4, 0xF6, 0x53 };
-		Assert ("Capi-1024-Verify", dsa.VerifySignature (hash, sign1024));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign1024), "Capi-1024-Verify");
 		sign1024[0] = 0x00;
-		Assert ("Capi-1024-VerBad", !dsa.VerifySignature (hash, sign1024));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign1024), "Capi-1024-VerBad");
 	}
 
 	// all keypairs generated by Mono on Windows
@@ -626,31 +598,31 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
 
 		dsa.FromXmlString (MonoXml512);
-		AssertEquals ("Mono-Xml512", MonoXml512, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml512, dsa.ToXmlString (true), "Mono-Xml512");
 
 		dsa.FromXmlString (MonoXml576);
-		AssertEquals ("Mono-Xml576", MonoXml576, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml576, dsa.ToXmlString (true), "Mono-Xml576");
 
 		dsa.FromXmlString (MonoXml640);
-		AssertEquals ("Mono-Xml640", MonoXml640, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml640, dsa.ToXmlString (true), "Mono-Xml640");
 
 		dsa.FromXmlString (MonoXml704);
-		AssertEquals ("Mono-Xml704", MonoXml704, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml704, dsa.ToXmlString (true), "Mono-Xml704");
 
 		dsa.FromXmlString (MonoXml768);
-		AssertEquals ("Mono-Xml768", MonoXml768, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml768, dsa.ToXmlString (true), "Mono-Xml768");
 
 		dsa.FromXmlString (MonoXml832);
-		AssertEquals ("Mono-Xml832", MonoXml832, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml832, dsa.ToXmlString (true), "Mono-Xml832");
 
 		dsa.FromXmlString (MonoXml896);
-		AssertEquals ("Mono-Xml896", MonoXml896, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml896, dsa.ToXmlString (true), "Mono-Xml896");
 
 		dsa.FromXmlString (MonoXml960);
-		AssertEquals ("Mono-Xml960", MonoXml960, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml960, dsa.ToXmlString (true), "Mono-Xml960");
 
 		dsa.FromXmlString (MonoXml1024);
-		AssertEquals ("Mono-Xml1024", MonoXml1024, dsa.ToXmlString (true));
+		Assert.AreEqual (MonoXml1024, dsa.ToXmlString (true), "Mono-Xml1024");
 	}
 
 	// Validate that we can sign with every keypair and verify the signature
@@ -700,57 +672,57 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 		dsa.FromXmlString (MonoXml512);
 		byte[] sign512 = { 0x53, 0x44, 0x0A, 0xD7, 0x43, 0x3C, 0x1F, 0xC7, 0xCE, 0x9C, 0xAE, 0xDC, 0xFC, 0x61, 0xD5, 0xCE, 0xC9, 0x5C, 0x8D, 0x13, 0x0F, 0x66, 0x15, 0xCB, 0x9F, 0x94, 0x19, 0x18, 0x63, 0x40, 0x6D, 0x3E, 0x16, 0xA8, 0x3E, 0x9B, 0x8A, 0xC2, 0xA5, 0x38 };
-		Assert ("Mono-512-Verify", dsa.VerifySignature (hash, sign512));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign512), "Mono-512-Verify");
 		sign512[0] = 0x00;
-		Assert ("Mono-512-VerBad", !dsa.VerifySignature (hash, sign512));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign512), "Mono-512-VerBad");
 
 		dsa.FromXmlString (MonoXml576);
 		byte[] sign576 = { 0xAC, 0xC8, 0xA3, 0x22, 0x3D, 0x77, 0xE1, 0x13, 0xFD, 0x65, 0x72, 0xE0, 0xA5, 0xF5, 0x94, 0xD6, 0x70, 0x70, 0x40, 0xA9, 0x10, 0x1E, 0x1D, 0xEA, 0x51, 0x68, 0x32, 0x2A, 0x24, 0x47, 0x22, 0x8D, 0xC0, 0xD0, 0x8A, 0x5A, 0x0E, 0x98, 0x5F, 0x2C };
-		Assert ("Mono-576-Verify", dsa.VerifySignature (hash, sign576));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign576), "Mono-576-Verify");
 		sign576[0] = 0x00;
-		Assert ("Mono-576-VerBad", !dsa.VerifySignature (hash, sign576));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign576), "Mono-576-VerBad");
 
 		dsa.FromXmlString (MonoXml640);
 		byte[] sign640 = { 0x5E, 0x6E, 0x1F, 0x38, 0xCA, 0x0D, 0x01, 0x01, 0xBE, 0x5E, 0x8B, 0xAB, 0xCE, 0xD2, 0x42, 0x80, 0x4A, 0xBD, 0x74, 0x60, 0x56, 0x4B, 0x16, 0x4A, 0x71, 0xBC, 0xC3, 0x82, 0xE1, 0x54, 0x0D, 0xB0, 0x67, 0xB6, 0xB6, 0x71, 0x46, 0xA9, 0x01, 0x44 };
-		Assert ("Mono-640-Verify", dsa.VerifySignature (hash, sign640));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign640), "Mono-640-Verify");
 		sign640[0] = 0x00;
-		Assert ("Mono-640-VerBad", !dsa.VerifySignature (hash, sign640));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign640), "Mono-640-VerBad");
 
 		dsa.FromXmlString (MonoXml704);
 		byte[] sign704 = { 0x27, 0x33, 0x45, 0xC5, 0x41, 0xC7, 0xD6, 0x5D, 0x68, 0x32, 0x50, 0x4C, 0xB3, 0x4B, 0x59, 0xCF, 0x49, 0xD1, 0x61, 0x82, 0xCF, 0x73, 0x20, 0x20, 0x3E, 0x09, 0xA3, 0x49, 0xAA, 0x22, 0x1D, 0x1D, 0x27, 0xBA, 0x9F, 0xDD, 0xE2, 0x7D, 0xCD, 0x82 };
-		Assert ("Mono-704-Verify", dsa.VerifySignature (hash, sign704));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign704), "Mono-704-Verify");
 		sign704[0] = 0x00;
-		Assert ("Mono-704-VerBad", !dsa.VerifySignature (hash, sign704));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign704), "Mono-704-VerBad");
 
 		dsa.FromXmlString (MonoXml768);
 		byte[] sign768 = { 0xCA, 0x53, 0x91, 0x99, 0xAE, 0x1B, 0x97, 0xE5, 0x3B, 0x08, 0x78, 0x92, 0xD1, 0x2E, 0x0D, 0xAC, 0xB7, 0x82, 0xFB, 0xA3, 0x84, 0xEE, 0x9B, 0x5E, 0x12, 0x6C, 0x16, 0x6D, 0x97, 0xC1, 0xCF, 0x9A, 0xA9, 0xCF, 0x6A, 0x6E, 0x08, 0x45, 0xA7, 0x19 };
-		Assert ("Mono-768-Verify", dsa.VerifySignature (hash, sign768));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign768), "Mono-768-Verify");
 		sign768[0] = 0x00;
-		Assert ("Mono-768-VerBad", !dsa.VerifySignature (hash, sign768));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign768), "Mono-768-VerBad");
 
 		dsa.FromXmlString (MonoXml832);
 		byte[] sign832 = { 0x7F, 0x1C, 0xC5, 0xA4, 0xDB, 0x95, 0x27, 0xD3, 0x23, 0x6E, 0xCE, 0xBC, 0xC0, 0x9D, 0x82, 0x02, 0x6E, 0xA0, 0x80, 0x5D, 0x53, 0x54, 0x3D, 0x1B, 0x1C, 0x54, 0xDD, 0x1F, 0xD5, 0x7E, 0x07, 0x60, 0xDD, 0x2A, 0xB2, 0x96, 0x3C, 0x36, 0xB3, 0x60 };
-		Assert ("Mono-832-Verify", dsa.VerifySignature (hash, sign832));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign832), "Mono-832-Verify");
 		sign832[0] = 0x00;
-		Assert ("Mono-832-VerBad", !dsa.VerifySignature (hash, sign832));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign832), "Mono-832-VerBad");
 
 		dsa.FromXmlString (MonoXml896);
 		byte[] sign896 = { 0x36, 0x90, 0xA2, 0x4C, 0xDA, 0xDC, 0x6C, 0xF3, 0x83, 0xFE, 0xA8, 0x14, 0xFB, 0x01, 0x69, 0x5F, 0xFA, 0xFA, 0x71, 0xA6, 0x6F, 0xBE, 0x96, 0xB7, 0x11, 0xE7, 0xDE, 0xC7, 0x71, 0x10, 0x83, 0xEE, 0x34, 0x18, 0x4E, 0x88, 0xC1, 0xE0, 0xF9, 0x0A };
-		Assert ("Mono-896-Verify", dsa.VerifySignature (hash, sign896));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign896), "Mono-896-Verify");
 		sign896[0] = 0x00;
-		Assert ("Mono-896-VerBad", !dsa.VerifySignature (hash, sign896));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign896), "Mono-896-VerBad");
 
 		dsa.FromXmlString (MonoXml960);
 		byte[] sign960 = { 0xCE, 0xE8, 0x52, 0x32, 0x9B, 0x30, 0xB5, 0x22, 0x6C, 0x21, 0x34, 0xC6, 0x09, 0xD8, 0xA8, 0x6D, 0x00, 0x87, 0x0F, 0x87, 0x21, 0x50, 0x18, 0x99, 0xED, 0x2A, 0xD3, 0xA5, 0x82, 0x8D, 0x38, 0x63, 0x21, 0xDA, 0xE1, 0x94, 0x65, 0xE1, 0x6E, 0x72 };
-		Assert ("Mono-960-Verify", dsa.VerifySignature (hash, sign960));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign960), "Mono-960-Verify");
 		sign960[0] = 0x00;
-		Assert ("Mono-960-VerBad", !dsa.VerifySignature (hash, sign960));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign960), "Mono-960-VerBad");
 
 		dsa.FromXmlString (MonoXml1024);
 		byte[] sign1024 = { 0x67, 0x73, 0x4D, 0x6C, 0x0E, 0xB2, 0x85, 0xC6, 0x97, 0x5F, 0x09, 0x42, 0xEA, 0xDB, 0xC6, 0xE1, 0x6D, 0x84, 0xA0, 0x15, 0x63, 0x6C, 0xE3, 0x83, 0xA5, 0xCB, 0x58, 0xC6, 0x51, 0x3C, 0xB4, 0xD2, 0x6B, 0xA0, 0x70, 0xCE, 0xD9, 0x8D, 0x96, 0xCA };
-		Assert ("Mono-1024-Verify", dsa.VerifySignature (hash, sign1024));
+		Assert.IsTrue (dsa.VerifySignature (hash, sign1024), "Mono-1024-Verify");
 		sign1024[0] = 0x00;
-		Assert ("Mono-1024-VerBad", !dsa.VerifySignature (hash, sign1024));
+		Assert.IsFalse (dsa.VerifySignature (hash, sign1024), "Mono-1024-VerBad");
 	}
 
 	// Key Pair Persistence Tests
@@ -772,17 +744,17 @@ public class DSACryptoServiceProviderTest : Assertion {
 		string first = dsa1.ToXmlString (true);
 
 		// persistance is "on" by default when a CspParameters is supplied
-		Assert ("PersistKeyInCsp", dsa1.PersistKeyInCsp);
+		Assert.IsTrue (dsa1.PersistKeyInCsp, "PersistKeyInCsp");
 
 		// this means nothing if we don't call Clear !!!
 		dsa1.PersistKeyInCsp = false;
-		Assert ("PersistKeyInCsp", !dsa1.PersistKeyInCsp);
+		Assert.IsFalse (dsa1.PersistKeyInCsp, "PersistKeyInCsp");
 
 		// reload using the same container name
 		DSACryptoServiceProvider dsa2 = new DSACryptoServiceProvider (minKeySize, csp);
 		string second = dsa2.ToXmlString (true);
 
-		AssertEquals ("Key Pair Same Container", first, second);
+		Assert.AreEqual (first, second, "Key Pair Same Container");
 	}
 
 	[Test]
@@ -797,13 +769,13 @@ public class DSACryptoServiceProviderTest : Assertion {
 		string first = dsa1.ToXmlString (true);
 
 		// persistance is "on" by default
-		Assert ("PersistKeyInCsp", dsa1.PersistKeyInCsp);
+		Assert.IsTrue (dsa1.PersistKeyInCsp, "PersistKeyInCsp");
 
 		// reload using the same container name
 		DSACryptoServiceProvider dsa2 = new DSACryptoServiceProvider (minKeySize, csp);
 		string second = dsa2.ToXmlString (true);
 
-		AssertEquals ("Key Pair Same Container", first, second);
+		Assert.AreEqual (first, second, "Key Pair Same Container");
 	}
 
 	[Test]
@@ -826,7 +798,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSACryptoServiceProvider dsa2 = new DSACryptoServiceProvider (minKeySize, csp);
 		string newKeyPair = dsa2.ToXmlString (true);
 
-		Assert ("Key Pair Deleted", (original != newKeyPair));
+		Assert.IsTrue (original != newKeyPair, "Key Pair Deleted");
 	}
 
 	[Test]
@@ -835,7 +807,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (minKeySize);
 		string key = dsa.ToXmlString (true);
 		dsa.PersistKeyInCsp = true;
-		AssertEquals ("PersistKeyInCsp-True", key, dsa.ToXmlString (true));
+		Assert.AreEqual (key, dsa.ToXmlString (true), "PersistKeyInCsp-True");
 	}
 
 	[Test]
@@ -844,7 +816,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (minKeySize);
 		string key = dsa.ToXmlString (true);
 		dsa.PersistKeyInCsp = false;
-		AssertEquals ("PersistKeyInCsp-False", key, dsa.ToXmlString (true));
+		Assert.AreEqual (key, dsa.ToXmlString (true), "PersistKeyInCsp-False");
 	}
 
 	[Test]
@@ -854,14 +826,13 @@ public class DSACryptoServiceProviderTest : Assertion {
 		string key = dsa.ToXmlString (true);
 		dsa.PersistKeyInCsp = false;
 		dsa.PersistKeyInCsp = true;
-		AssertEquals ("PersistKeyInCsp-FalseTrue", key, dsa.ToXmlString (true));
+		Assert.AreEqual (key, dsa.ToXmlString (true), "PersistKeyInCsp-FalseTrue");
 	}
 
-#if NET_1_1
 	[Test]
 	public void UseMachineKeyStore_Default () 
 	{
-		Assert ("UseMachineKeyStore(Default)", !DSACryptoServiceProvider.UseMachineKeyStore);
+		Assert.IsFalse (DSACryptoServiceProvider.UseMachineKeyStore);
 	}
 
 	[Test]
@@ -883,7 +854,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 			csp.Flags |= CspProviderFlags.UseMachineKeyStore;
 			dsa = new DSACryptoServiceProvider (csp);
 
-			Assert ("UseMachineKeyStore", machineKeyPair != dsa.ToXmlString (true));
+			Assert.IsTrue (machineKeyPair != dsa.ToXmlString (true), "UseMachineKeyStore");
 		}
 		catch (CryptographicException ce) {
 			// only root can create the required directory (if inexistant)
@@ -894,28 +865,27 @@ public class DSACryptoServiceProviderTest : Assertion {
 		catch (UnauthorizedAccessException) {
 		}
 	}
-#endif
-
-#if NET_2_0
+		
+#if !NET_2_1
 	[Test]
 	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_NewKeypair ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
 		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
-		Assert ("Accessible", info.Accessible);
-// FIXME	AssertNotNull ("CryptoKeySecurity", info.CryptoKeySecurity);
-		Assert ("Exportable", info.Exportable);
-		Assert ("HardwareDevice", !info.HardwareDevice);
-		AssertNotNull ("KeyContainerName", info.KeyContainerName);
-		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
-		Assert ("MachineKeyStore", !info.MachineKeyStore);
-		Assert ("Protected", !info.Protected);
-		AssertNotNull ("ProviderName", info.ProviderName);
-		AssertEquals ("ProviderType", 13, info.ProviderType);
-		Assert ("RandomlyGenerated", info.RandomlyGenerated);
-		Assert ("Removable", !info.Removable);
-		AssertNotNull ("UniqueKeyContainerName", info.UniqueKeyContainerName);
+		Assert.IsTrue (info.Accessible, "Accessible");
+		// FIXME	AssertNotNull ("CryptoKeySecurity", info.CryptoKeySecurity);
+		Assert.IsTrue (info.Exportable, "Exportable");
+		Assert.IsFalse (info.HardwareDevice, "HardwareDevice");
+		Assert.IsNotNull (info.KeyContainerName, "KeyContainerName");
+		Assert.AreEqual (KeyNumber.Signature, info.KeyNumber, "KeyNumber");
+		Assert.IsFalse (info.MachineKeyStore, "MachineKeyStore");
+		Assert.IsFalse (info.Protected, "Protected");
+		Assert.IsNotNull (info.ProviderName, "ProviderName");
+		Assert.AreEqual (13, info.ProviderType, "ProviderType");
+		Assert.IsTrue (info.RandomlyGenerated, "RandomlyGenerated");
+		Assert.IsFalse (info.Removable, "Removable");
+		Assert.IsNotNull (info.UniqueKeyContainerName, "UniqueKeyContainerName");
 	}
 
 	[Test]
@@ -926,19 +896,19 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSAParameters rsap = AllTests.GetKey (true);
 		dsa.ImportParameters (rsap);
 		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
-		Assert ("Accessible", info.Accessible);
+		Assert.IsTrue (info.Accessible, "Accessible");
 // FIXME	AssertNotNull ("CryptoKeySecurity", info.CryptoKeySecurity);
-		Assert ("Exportable", info.Exportable);
-		Assert ("HardwareDevice", !info.HardwareDevice);
-		AssertNotNull ("KeyContainerName", info.KeyContainerName);
-		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
-		Assert ("MachineKeyStore", !info.MachineKeyStore);
-		Assert ("Protected", !info.Protected);
-		AssertNotNull ("ProviderName", info.ProviderName);
-		AssertEquals ("ProviderType", 13, info.ProviderType);
-		Assert ("RandomlyGenerated", info.RandomlyGenerated);
-		Assert ("Removable", !info.Removable);
-		AssertNotNull ("UniqueKeyContainerName", info.UniqueKeyContainerName);
+		Assert.IsTrue (info.Exportable, "Exportable");
+		Assert.IsFalse (info.HardwareDevice, "HardwareDevice");
+		Assert.IsNotNull (info.KeyContainerName, "KeyContainerName");
+		Assert.AreEqual (KeyNumber.Signature, info.KeyNumber, "KeyNumber");
+		Assert.IsFalse (info.MachineKeyStore, "MachineKeyStore");
+		Assert.IsFalse (info.Protected, "Protected");
+		Assert.IsNotNull (info.ProviderName, "ProviderName");
+		Assert.AreEqual (13, info.ProviderType, "ProviderType");
+		Assert.IsTrue (info.RandomlyGenerated, "RandomlyGenerated");
+		Assert.IsFalse (info.Removable, "Removable");
+		Assert.IsNotNull (info.UniqueKeyContainerName, "UniqueKeyContainerName");
 	}
 
 	[Test]
@@ -950,20 +920,21 @@ public class DSACryptoServiceProviderTest : Assertion {
 		DSAParameters rsap = AllTests.GetKey (false);
 		dsa.ImportParameters (rsap);
 		CspKeyContainerInfo info = dsa.CspKeyContainerInfo;
-		Assert ("Accessible", !info.Accessible);
+		Assert.IsFalse (info.Accessible, "Accessible");
 		// info.CryptoKeySecurity throws a CryptographicException at this stage
 		// info.Exportable throws a CryptographicException at this stage
-		Assert ("HardwareDevice", !info.HardwareDevice);
-		AssertNotNull ("KeyContainerName", info.KeyContainerName);
-		AssertEquals ("KeyNumber", KeyNumber.Signature, info.KeyNumber);
-		Assert ("MachineKeyStore", !info.MachineKeyStore);
+		Assert.IsFalse (info.HardwareDevice, "HardwareDevice");
+		Assert.IsNotNull (info.KeyContainerName, "KeyContainerName");
+		Assert.AreEqual (KeyNumber.Signature, info.KeyNumber, "KeyNumber");
+		Assert.IsFalse (info.MachineKeyStore, "MachineKeyStore");
 		// info.Protected throws a CryptographicException at this stage
-		AssertNotNull ("ProviderName", info.ProviderName);
-		AssertEquals ("ProviderType", 13, info.ProviderType);
-		Assert ("RandomlyGenerated", info.RandomlyGenerated);
-		Assert ("Removable", !info.Removable);
+		Assert.IsNotNull (info.ProviderName, "ProviderName");
+		Assert.AreEqual (13, info.ProviderType, "ProviderType");
+		Assert.IsTrue (info.RandomlyGenerated, "RandomlyGenerated");
+		Assert.IsFalse (info.Removable, "Removable");
 		// info.UniqueKeyContainerName throws a CryptographicException at this stage
 	}
+#endif
 
 	[Test]
 	public void ExportCspBlob_Full ()
@@ -973,7 +944,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa.ImportParameters (dsap);
 
 		byte[] keypair = dsa.ExportCspBlob (true);
-		AssertEquals ("07-02-00-00-00-22-00-00-44-53-53-32-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-B1-2F-0A-F6-9A-A7-18-C1-2F-F0-B7-73-91-51-6D-9B-B5-B2-03-7C-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (keypair));
+		Assert.AreEqual ("07-02-00-00-00-22-00-00-44-53-53-32-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-B1-2F-0A-F6-9A-A7-18-C1-2F-F0-B7-73-91-51-6D-9B-B5-B2-03-7C-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (keypair));
 	}
 
 	[Test]
@@ -984,7 +955,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa.ImportParameters (dsap);
 
 		byte[] pubkey = dsa.ExportCspBlob (false);
-		AssertEquals ("06-02-00-00-00-22-00-00-44-53-53-31-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-BB-C7-03-89-C4-0B-66-86-80-D5-AA-34-E8-14-71-F9-29-BE-B9-EE-34-B1-5F-A2-C8-4D-CD-CF-0E-8E-A4-2E-D4-65-8C-27-FF-C1-41-26-F9-0E-E5-11-C9-CC-3E-45-87-EC-49-BA-7C-83-91-DE-70-E8-27-1C-47-EB-1D-E2-37-62-2F-AA-5B-30-80-8B-80-00-55-F4-64-C2-BE-5A-D3-54-4A-E7-0B-95-00-F4-BA-72-CD-F8-22-E6-30-4E-F6-BD-BE-3F-00-52-7F-E2-57-5F-C0-BE-82-C0-50-07-1C-7D-89-56-49-CE-28-52-8C-11-B1-D1-51-51-12-B2-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (pubkey));
+		Assert.AreEqual ("06-02-00-00-00-22-00-00-44-53-53-31-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-BB-C7-03-89-C4-0B-66-86-80-D5-AA-34-E8-14-71-F9-29-BE-B9-EE-34-B1-5F-A2-C8-4D-CD-CF-0E-8E-A4-2E-D4-65-8C-27-FF-C1-41-26-F9-0E-E5-11-C9-CC-3E-45-87-EC-49-BA-7C-83-91-DE-70-E8-27-1C-47-EB-1D-E2-37-62-2F-AA-5B-30-80-8B-80-00-55-F4-64-C2-BE-5A-D3-54-4A-E7-0B-95-00-F4-BA-72-CD-F8-22-E6-30-4E-F6-BD-BE-3F-00-52-7F-E2-57-5F-C0-BE-82-C0-50-07-1C-7D-89-56-49-CE-28-52-8C-11-B1-D1-51-51-12-B2-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (pubkey));
 	}
 
 	[Test]
@@ -1006,7 +977,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa.ImportParameters (dsap);
 
 		byte[] pubkey = dsa.ExportCspBlob (false);
-		AssertEquals ("06-02-00-00-00-22-00-00-44-53-53-31-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-BB-C7-03-89-C4-0B-66-86-80-D5-AA-34-E8-14-71-F9-29-BE-B9-EE-34-B1-5F-A2-C8-4D-CD-CF-0E-8E-A4-2E-D4-65-8C-27-FF-C1-41-26-F9-0E-E5-11-C9-CC-3E-45-87-EC-49-BA-7C-83-91-DE-70-E8-27-1C-47-EB-1D-E2-37-62-2F-AA-5B-30-80-8B-80-00-55-F4-64-C2-BE-5A-D3-54-4A-E7-0B-95-00-F4-BA-72-CD-F8-22-E6-30-4E-F6-BD-BE-3F-00-52-7F-E2-57-5F-C0-BE-82-C0-50-07-1C-7D-89-56-49-CE-28-52-8C-11-B1-D1-51-51-12-B2-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (pubkey));
+		Assert.AreEqual ("06-02-00-00-00-22-00-00-44-53-53-31-00-04-00-00-D3-7B-C6-ED-3F-72-44-BD-22-7D-F2-D4-62-FE-7C-E3-75-8F-9C-DE-69-C0-3A-0C-E6-26-5A-46-3D-EF-0D-90-20-C6-F6-45-7C-73-E8-B9-7D-86-27-F7-97-76-C8-1C-8E-8B-CE-26-93-E6-21-53-20-93-58-25-45-1C-46-66-17-10-98-03-96-D0-E5-C8-30-80-72-B6-49-B3-82-95-B3-8D-3A-A5-E5-60-C6-42-3A-33-70-67-30-C5-1C-32-D9-EB-CF-C1-36-B3-F3-24-07-39-86-0D-E9-12-80-73-26-A7-8C-8B-8A-40-AA-51-43-8F-20-DE-D2-9C-F3-B3-51-73-83-62-A0-11-C9-50-93-E1-F0-64-BE-D0-9E-E0-5B-13-47-AA-56-65-62-47-FD-3A-94-B7-1B-E5-35-95-86-14-64-C0-D6-07-96-4C-55-1E-0A-4C-10-C2-B5-E6-FB-74-F9-A5-72-E0-42-96-62-0B-EF-B7-52-36-7D-E3-01-12-85-E6-FE-92-75-40-C2-A6-D0-9D-16-6F-C1-C7-A7-DF-48-80-A2-5D-A0-FD-84-BE-06-AC-CB-32-22-82-D2-D7-7C-69-FC-BC-94-78-2B-11-5B-1C-1E-AF-DB-7A-AA-31-F3-D8-74-84-00-3F-9D-B9-4B-B2-68-7E-F4-1B-C2-83-73-21-78-0F-D5-0F-B0-EB-76-41-F1-23-7A-6A-78-CC-4F-3D-BB-C7-03-89-C4-0B-66-86-80-D5-AA-34-E8-14-71-F9-29-BE-B9-EE-34-B1-5F-A2-C8-4D-CD-CF-0E-8E-A4-2E-D4-65-8C-27-FF-C1-41-26-F9-0E-E5-11-C9-CC-3E-45-87-EC-49-BA-7C-83-91-DE-70-E8-27-1C-47-EB-1D-E2-37-62-2F-AA-5B-30-80-8B-80-00-55-F4-64-C2-BE-5A-D3-54-4A-E7-0B-95-00-F4-BA-72-CD-F8-22-E6-30-4E-F6-BD-BE-3F-00-52-7F-E2-57-5F-C0-BE-82-C0-50-07-1C-7D-89-56-49-CE-28-52-8C-11-B1-D1-51-51-12-B2-E0-00-00-00-9B-AF-1B-E9-C1-C7-35-F5-E2-EB-C9-EE-F6-BA-25-6D-6F-39-83-B9", BitConverter.ToString (pubkey));
 	}
 
 	[Test]
@@ -1033,7 +1004,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 		byte[] keypair = dsa.ExportCspBlob (true);
 		for (int i = 0; i < blob.Length; i++)
-			AssertEquals (i.ToString (), blob [i], keypair [i]);
+			Assert.AreEqual (blob[i], keypair[i], i.ToString ());
 	}
 
 	[Test]
@@ -1065,7 +1036,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 		byte[] pubkey = dsa.ExportCspBlob (false);
 		for (int i = 0; i < blob.Length; i++)
-			AssertEquals (i.ToString (), blob [i], pubkey [i]);
+			Assert.AreEqual (blob[i], pubkey[i], i.ToString ());
 	}
 
 	[Test]
@@ -1084,7 +1055,6 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa = new DSACryptoServiceProvider (minKeySize);
 		dsa.ImportCspBlob (blob);
 	}
-#endif
 }
 
 }

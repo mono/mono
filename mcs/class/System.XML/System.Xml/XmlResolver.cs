@@ -33,19 +33,25 @@
 using System.IO;
 using System.Net;
 using System.Security.Permissions;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Xml
 {
 	public abstract class XmlResolver
 	{
 #if !MOONLIGHT
+#if NET_4_5
+		public virtual ICredentials Credentials {
+			set { throw new NotImplementedException (); }
+		}
+#else
 		public abstract ICredentials Credentials { set; }
 #endif
+#endif
 
-		public abstract object GetEntity (
-			Uri absoluteUri,
-			string role,
-			Type type);
+		public abstract object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn);
 
 		[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 		public virtual Uri ResolveUri (Uri baseUri, string relativeUri)
@@ -57,10 +63,8 @@ namespace System.Xml
 				return new Uri (relativeUri, UriKind.RelativeOrAbsolute);
 #else
 				// Don't ignore such case that relativeUri is in fact absolute uri (e.g. ResolveUri (null, "http://foo.com")).
-				if (relativeUri.StartsWith ("http:") ||
-					relativeUri.StartsWith ("https:") ||
-					relativeUri.StartsWith ("ftp:") ||
-					relativeUri.StartsWith ("file:"))
+				int idx = relativeUri.IndexOf (':');
+				if (idx > 0 && Uri.CheckSchemeName (relativeUri.Substring (0, idx)))
 					return new Uri (relativeUri);
 				else
 					return new Uri (Path.GetFullPath (relativeUri));
@@ -82,12 +86,19 @@ namespace System.Xml
 				.Replace ("%", "%25")
 				.Replace ("\"", "%22");
 		}
-#if MOONLIGHT
+#if MOONLIGHT || NET_4_5
 		public virtual bool SupportsType (Uri absoluteUri, Type type)
 		{
 			if (absoluteUri == null)
 				throw new ArgumentNullException ("absoluteUri");
 			return ((type == null) || (type == typeof (Stream)));
+		}
+#endif
+
+#if NET_4_5
+		public virtual Task<object> GetEntityAsync (Uri absoluteUri, string role, Type ofObjectToReturn)
+		{
+			throw new NotImplementedException ();
 		}
 #endif
 	}

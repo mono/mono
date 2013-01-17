@@ -59,12 +59,24 @@ namespace Mono.Http
 			string password = cred.Password;
 			if (userName == null || userName == "")
 				return null;
-			domain = domain != null && domain.Length > 0 ? domain : request.Headers ["Host"];
+
+			if (String.IsNullOrEmpty (domain)) {
+				int idx = userName.IndexOf ('\\');
+				if (idx == -1) {
+					idx = userName.IndexOf ('/');
+				}
+				if (idx >= 0) {
+					domain = userName.Substring (0, idx);
+					userName = userName.Substring (idx + 1);
+				}
+			}
 
 			bool completed = false;
 			if (message == null) {
 				Type1Message type1 = new Type1Message ();
 				type1.Domain = domain;
+				type1.Host = ""; // MS does not send it
+				type1.Flags |= NtlmFlags.NegotiateNtlm2Key;
 				message = type1;
 			} else if (message.Type == 1) {
 				// Should I check the credentials?
@@ -77,10 +89,8 @@ namespace Mono.Http
 				if (password == null)
 					password = "";
 
-				Type3Message type3 = new Type3Message ();
-				type3.Domain = domain;
+				Type3Message type3 = new Type3Message (type2);
 				type3.Username = userName;
-				type3.Challenge = type2.Nonce;
 				type3.Password = password;
 				message = type3;
 				completed = true;
@@ -90,6 +100,7 @@ namespace Mono.Http
 				if (challenge == null || challenge == String.Empty) {
 					Type1Message type1 = new Type1Message ();
 					type1.Domain = domain;
+					type1.Host = ""; // MS does not send it
 					message = type1;
 				} else {
 					completed = true;

@@ -23,7 +23,7 @@ class Item
 
 class Program
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

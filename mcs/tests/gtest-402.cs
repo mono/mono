@@ -1,5 +1,5 @@
 class X {
-        static void Main ()
+        public static void Main ()
         {
                 int h = 1, o = 2;
 

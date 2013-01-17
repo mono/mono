@@ -2,7 +2,7 @@ using System;
 
 class C
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Execute (() => {
 			  int a, b;

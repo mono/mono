@@ -6,6 +6,7 @@
  *
  * Copyright 2001-2003 Ximian, Inc.
  * Copyright 2003-2008 Ximian, Inc.
+ * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  *
  * See LICENSE for licensing information.
  */
@@ -218,10 +219,17 @@ SIG_HANDLER_SIGNATURE (sigusr1_signal_handler)
 	
 	GET_CONTEXT;
 
-	if (!thread || !domain)
+	if (!thread || !domain) {
 		/* The thread might not have started up yet */
 		/* FIXME: Specify the synchronization with start_wrapper () in threads.c */
+		mono_debugger_agent_thread_interrupt (ctx, NULL);
 		return;
+	}
+
+	if (thread->ignore_next_signal) {
+		thread->ignore_next_signal = FALSE;
+		return;
+	}
 
 	if (thread->thread_dump_requested) {
 		thread->thread_dump_requested = FALSE;
@@ -271,7 +279,7 @@ SIG_HANDLER_SIGNATURE (sigusr1_signal_handler)
 	if (!exc)
 		return;
 
-	mono_arch_handle_exception (ctx, exc, FALSE);
+	mono_arch_handle_exception (ctx, exc);
 }
 
 #if defined(__i386__) || defined(__x86_64__)
@@ -661,19 +669,19 @@ mono_runtime_syscall_fork ()
 #endif
 }
 
-gboolean
-mono_gdb_render_native_backtraces ()
+void
+mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
 	const char *argv [9];
 	char buf1 [128];
 
 	argv [0] = g_find_program_in_path ("gdb");
 	if (argv [0] == NULL) {
-		return FALSE;
+		return;
 	}
 
 	argv [1] = "-ex";
-	sprintf (buf1, "attach %ld", (long)getpid ());
+	sprintf (buf1, "attach %ld", (long) crashed_pid);
 	argv [2] = buf1;
 	argv [3] = "--ex";
 	argv [4] = "info threads";
@@ -683,8 +691,6 @@ mono_gdb_render_native_backtraces ()
 	argv [8] = 0;
 
 	execv (argv [0], (char**)argv);
-
-	return TRUE;
 }
 #endif
 #endif /* __native_client__ */

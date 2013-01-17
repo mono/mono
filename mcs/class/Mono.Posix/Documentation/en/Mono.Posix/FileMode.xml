@@ -1,10 +1,12 @@
 <Type Name="FileMode" FullName="Mono.Posix.FileMode">
   <TypeSignature Language="C#" Value="public enum FileMode" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed FileMode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
@@ -12,13 +14,13 @@
   </Base>
   <Attributes>
     <Attribute>
-      <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions")</AttributeName>
-    </Attribute>
-    <Attribute>
       <AttributeName>System.CLSCompliant(false)</AttributeName>
     </Attribute>
     <Attribute>
       <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use Mono.Unix.Native.FilePermissions")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -32,7 +34,13 @@
   <Members>
     <Member MemberName="S_IRGRP">
       <MemberSignature Language="C#" Value="S_IRGRP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IRGRP = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -42,14 +50,16 @@
         <summary>Is readable for group</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IROTH">
       <MemberSignature Language="C#" Value="S_IROTH" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IROTH = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -59,14 +69,16 @@
         <summary>Is readable for others (everyone)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IRUSR">
       <MemberSignature Language="C#" Value="S_IRUSR" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IRUSR = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -76,14 +88,16 @@
         <summary>Is readable by user (owner)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_ISGID">
       <MemberSignature Language="C#" Value="S_ISGID" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_ISGID = int32(1024)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -93,14 +107,16 @@
         <summary>Set-group-id mode, indicating that the effective group ID of any user executing the file should be made the same as the group of the file. </summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_ISUID">
       <MemberSignature Language="C#" Value="S_ISUID" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_ISUID = int32(2048)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -110,14 +126,16 @@
         <summary>Set-user-id mode, indicating that the effective user ID of any user executing the file should be made the same as that of the owner of the file.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_ISVTX">
       <MemberSignature Language="C#" Value="S_ISVTX" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_ISVTX = int32(512)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -127,14 +145,16 @@
         <summary>Is sticky bit set</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IWGRP">
       <MemberSignature Language="C#" Value="S_IWGRP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IWGRP = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -144,14 +164,16 @@
         <summary>Is writable for group</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IWOTH">
       <MemberSignature Language="C#" Value="S_IWOTH" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IWOTH = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -161,14 +183,16 @@
         <summary>Is writable for others (everyone)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IWUSR">
       <MemberSignature Language="C#" Value="S_IWUSR" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IWUSR = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -178,14 +202,16 @@
         <summary>Is writable by user (owner)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IXGRP">
       <MemberSignature Language="C#" Value="S_IXGRP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IXGRP = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -195,14 +221,16 @@
         <summary>Is executable for group</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IXOTH">
       <MemberSignature Language="C#" Value="S_IXOTH" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IXOTH = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -212,14 +240,16 @@
         <summary>Is executable for others (everyone)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="S_IXUSR">
       <MemberSignature Language="C#" Value="S_IXUSR" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.FileMode S_IXUSR = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.FileMode</ReturnType>
       </ReturnValue>
@@ -229,10 +259,6 @@
         <summary>Is executable for user (owner)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

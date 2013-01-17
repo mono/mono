@@ -413,13 +413,16 @@ namespace System.Net
 			if (request == null)
 				return null;
 
-			int hashcode = request.Address.GetHashCode () ^ credentials.GetHashCode ();
+			DigestSession currDS = new DigestSession();
+			if (!currDS.Parse (challenge))
+				return null;
+
+			int hashcode = request.Address.GetHashCode () ^ credentials.GetHashCode () ^ currDS.Nonce.GetHashCode ();
 			DigestSession ds = (DigestSession) Cache [hashcode];
 			bool addDS = (ds == null);
 			if (addDS)
-				ds = new DigestSession ();
-
-			if (!ds.Parse (challenge))
+				ds = currDS;
+			else if (!ds.Parse (challenge))
 				return null;
 
 			if (addDS)

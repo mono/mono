@@ -32,7 +32,7 @@ using System.Security;
 
 using NUnit.Framework;
 
-namespace MonoTest.System {
+namespace MonoTests.System {
 
 	[TestFixture]
 	public class AppDomainManagerTest {

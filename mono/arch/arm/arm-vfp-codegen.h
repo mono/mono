@@ -1,3 +1,7 @@
+//
+// Copyright 2011 Xamarin Inc
+//
+
 #ifndef __MONO_ARM_VFP_CODEGEN_H__
 #define __MONO_ARM_VFP_CODEGEN_H__
 
@@ -156,7 +160,19 @@ enum {
 #define ARM_FSTD(p,freg,base,offset)	\
 	ARM_FSTD_COND(p,freg,base,offset,ARMCOND_AL)
 
-#include "arm_vfpmacros.h"
+#define ARM_FLDMD_COND(p,first_reg,nregs,base,cond)							\
+	ARM_EMIT((p), ARM_DEF_VFP_LSF((cond),ARM_VFP_COPROC_DOUBLE,0,ARMOP_LDR,0,(base),(first_reg),((nregs) * 2) << 2))
+
+#define ARM_FLDMD(p,first_reg,nregs,base)		\
+	ARM_FLDMD_COND(p,first_reg,nregs,base,ARMCOND_AL)
+
+#define ARM_FSTMD_COND(p,first_reg,nregs,base,cond)							\
+	ARM_EMIT((p), ARM_DEF_VFP_LSF((cond),ARM_VFP_COPROC_DOUBLE,0,ARMOP_STR,0,(base),(first_reg),((nregs) * 2) << 2))
+
+#define ARM_FSTMD(p,first_reg,nregs,base)		\
+	ARM_FSTMD_COND(p,first_reg,nregs,base,ARMCOND_AL)
+
+#include <mono/arch/arm/arm_vfpmacros.h>
 
 /* coprocessor register transfer */
 #define ARM_FMSR(p,freg,reg)	\

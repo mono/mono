@@ -32,9 +32,7 @@ using System;
 
 namespace System.ComponentModel
 {
-#if NET_2_0
 	[Obsolete ("Use TypeDescriptionProvider and TypeDescriptor.ComObjectType instead")]
-#endif
 	public interface IComNativeDescriptorHandler
 	{
 		AttributeCollection GetAttributes(object component);

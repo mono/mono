@@ -67,13 +67,6 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-// Extension attribute should be added by compiler
-
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
-
 #if NET_4_0 || MOONLIGHT || MOBILE
 [assembly: TypeForwardedTo (typeof (System.Security.Cryptography.Aes))]
 #endif

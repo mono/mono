@@ -1,10 +1,12 @@
 //
 // GetFrameworkPath.cs: Task that gets path to framework.
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2005 Marek Sieradzki
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,8 +26,6 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-#if NET_2_0
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -96,7 +96,15 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 #endif
+		
+#if NET_4_5
+		[Output]
+		public string FrameworkVersion45Path {
+			get {
+				return ToolLocationHelper.GetPathToDotNetFramework (
+						TargetDotNetFrameworkVersion.Version45);
+			}
+		}
+#endif
 	}
 }
-
-#endif

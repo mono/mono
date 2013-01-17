@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Threading;
 using System.Collections;
@@ -109,7 +109,7 @@ namespace System.Linq.Parallel
 
 		IEnumerator<IGrouping<TKey, TElement>> GetEnumeratorInternal ()
 		{
-			return dictionary.Select ((pair) => new ConcurrentGrouping<TKey, TElement> (pair.Key, pair.Value)).GetEnumerator ();
+			return (IEnumerator<System.Linq.IGrouping<TKey,TElement>>) dictionary.Select ((pair) => new ConcurrentGrouping<TKey, TElement> (pair.Key, pair.Value)).GetEnumerator ();
 		}
 	}
 }

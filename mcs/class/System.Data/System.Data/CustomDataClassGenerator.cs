@@ -1818,10 +1818,6 @@ namespace System.Data
 		
 		private CodeTypeDeclaration GenerateTableAdapterType (TableAdapterSchemaInfo taInfo)
 		{
-			string qualifiedBaseClassName;
-			Type type = null;
-			int fIndex = -1;
-			
 			CodeTypeDeclaration t = new CodeTypeDeclaration ();
 			t.Name = opts.TableAdapterName (taInfo.Name);
 			t.BaseTypes.Add (TypeRef (taInfo.BaseClass));
@@ -2326,7 +2322,7 @@ namespace System.Data
 			CodeExpression expr1;
 			int idx = 0;
 			string tmp;
-			DbType dbType = DbType.DateTime;
+
 			foreach (DbParameter param in cmd.Parameters) {
 				if (param.Direction != ParameterDirection.ReturnValue) {
 					if (param.ParameterName[0] == '@')

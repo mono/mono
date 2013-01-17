@@ -1680,28 +1680,10 @@ namespace Mono.Xml.Schema
 			return true;
 		}
 
-#if NET_1_0
-		public override string ReadInnerXml ()
-		{
-			// MS.NET 1.0 has a serious bug here. It skips validation.
-			return reader.ReadInnerXml ();
-		}
-
-		public override string ReadOuterXml ()
-		{
-			// MS.NET 1.0 has a serious bug here. It skips validation.
-			return reader.ReadOuterXml ();
-		}
-#endif
-
 		// XmlReader.ReadString() should call derived this.Read().
 		public override string ReadString ()
 		{
-#if NET_1_0
-			return reader.ReadString ();
-#else
 			return base.ReadString ();
-#endif
 		}
 
 		// This class itself does not have this feature.

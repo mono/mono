@@ -8,7 +8,7 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 ifeq ($(PROFILE),atomic)
 SCARY_LIB=
 else
-SCARY_LIB=/lib:$(prefix)/lib /noconfig
+SCARY_LIB=/lib:$(prefix)/lib
 endif
 
 LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll /r:System.Xml.dll
@@ -28,13 +28,13 @@ Mono.Xml.XPath2/XQueryParser.jay: Mono.Xml.XPath2/ParserBase.jay $(SKELETON)
 Mono.Xml.XPath2/XPath2Parser.cs: Mono.Xml.XPath2/XPath2Parser.jay
 	echo "#define XPATH2_PARSER" > $@
 	echo "#if NET_2_0" >> $@
-	$(topdir)/jay/jay -ct < $(SKELETON) $< >>$@
+	$(topdir)/jay/jay -ct < $(SKELETON) $(CURDIR)/$< >>$@
 	echo "#endif" >> $@
 
 Mono.Xml.XPath2/XQueryParser.cs: Mono.Xml.XPath2/XQueryParser.jay $(SKELETON)
 	echo "#define XQUERY_PARSER" > $@
 	echo "#if NET_2_0" >> $@
-	$(topdir)/jay/jay -ct < $(SKELETON) $< >>$@
+	$(topdir)/jay/jay -ct < $(SKELETON) $(CURDIR)/$< >>$@
 	echo "#endif" >> $@
 
 Mono.Xml.XPath2/XPath2Tokenizer.cs: Mono.Xml.XPath2/TokenizerBase.cs

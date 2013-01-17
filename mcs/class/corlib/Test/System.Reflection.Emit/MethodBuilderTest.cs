@@ -658,7 +658,7 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual ("FOO", ((ObsoleteAttribute) attrs [0]).Message, "#B3");
 			}
 		}
-
+#if !NET_2_1
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestAddDeclarativeSecurityAlreadyCreated ()
@@ -717,7 +717,7 @@ namespace MonoTests.System.Reflection.Emit
 			mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 			mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 		}
-
+#endif
 		[AttributeUsage (AttributeTargets.Parameter)]
 		class ParamAttribute : Attribute
 		{
@@ -1138,6 +1138,43 @@ namespace MonoTests.System.Reflection.Emit
 			var mb = tb.DefineMethod ("foo", MethodAttributes.Public, typeof (void), new Type [] { typeof (decimal) });
 			ParameterBuilder pb = mb.DefineParameter (1, ParameterAttributes.In, "foo");
 			pb.SetConstant (5m);
+		}
+
+		public interface ITest
+		{
+			T[] Method<T>(T[] value);
+		}
+
+		[Test]
+		// #7964
+		public void ArrayOfGenericParam ()
+		{
+			var tb = module.DefineType ("Base");
+
+            tb.AddInterfaceImplementation (typeof (ITest));
+
+            var testMethod = tb.DefineMethod ("Method", MethodAttributes.Public | MethodAttributes.NewSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig, CallingConventions.HasThis);
+
+            var testParameters = Array.ConvertAll (testMethod.DefineGenericParameters("T"), b => (Type)b);
+
+            var returnType = testParameters[0].MakeArrayType();
+
+            testMethod.SetParameters (testParameters[0].MakeArrayType());
+            testMethod.SetReturnType (returnType);
+
+            var testIl = testMethod.GetILGenerator ();
+			testIl.Emit (OpCodes.Ldarg_1);
+			testIl.Emit (OpCodes.Castclass, returnType);
+			testIl.Emit (OpCodes.Ret);
+
+            var t = tb.CreateType ();
+
+            var test = (ITest) Activator.CreateInstance (t);
+
+			var o = new int[0];
+            var returnValue = test.Method (o);
+
+			Assert.AreEqual (o, returnValue);
 		}
 	}
 }

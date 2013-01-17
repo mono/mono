@@ -153,7 +153,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			RuntimeHelpers.InitializeArray (new Fielder ().array, rfh);
 		}
 
-#if NET_1_1
 		public void TestGetHashCode ()
 		{
 			Assert.AreEqual (0, RuntimeHelpers.GetHashCode (null));
@@ -182,6 +181,5 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			Assert.IsTrue (RuntimeHelpers.Equals (o1, o3));
 			Assert.IsTrue (!RuntimeHelpers.Equals (o1, o4));
 		}
-#endif
 	}
 }

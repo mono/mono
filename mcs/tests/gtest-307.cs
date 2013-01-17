@@ -5,7 +5,7 @@ partial class Foo<T> {
 
 class Bar {
 	static int g () { return 0; }
-	static int Main ()
+	public static int Main ()
 	{
 		Foo<int>.F f = g;
 		return f ();

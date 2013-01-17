@@ -1,9 +1,15 @@
+/*
+ * Copyright 2008-2011 Novell Inc
+ * Copyright 2011 Xamarin Inc
+ */
+
 #include "config.h"
 #include "utils/mono-proclib.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -131,7 +137,7 @@ mono_process_list (int *size)
 #endif
 }
 
-static char*
+static G_GNUC_UNUSED char*
 get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoProcessError *error)
 {
 	char buf [256];
@@ -265,27 +271,24 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 #if defined(__APPLE__) 
 	double process_user_time = 0, process_system_time = 0;//, process_percent = 0;
 	task_t task;
+	struct task_basic_info t_info;
+	mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT, th_count;
+	thread_array_t th_array;
+	size_t i;
 
 	if (task_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
 		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
-	
-	struct task_basic_info t_info;
-	mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT, th_count;
 
 	if (task_info(task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
 		mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 	
-	thread_array_t th_array;
-
 	if (task_threads(task, &th_array, &th_count) != KERN_SUCCESS) {
 		mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 		
-	size_t i;
-
 	for (i = 0; i < th_count; i++) {
 		double thread_user_time, thread_system_time;//, thread_percent;
 		
@@ -401,11 +404,11 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	
 	gint64 ret;
 	task_t task;
-	if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
-		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
-
 	struct task_basic_info t_info;
 	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+
+	if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
 	
 	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count) != KERN_SUCCESS) {
 		mach_port_deallocate (mach_task_self (), task);
@@ -428,7 +431,7 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 
 	s = get_pid_status_item_buf (pid, item, buf, sizeof (buf), error);
 	if (s)
-		return atoi (s) * multiplier;
+		return ((gint64) atol (s)) * multiplier;
 	return 0;
 #endif
 }
@@ -504,7 +507,26 @@ mono_process_get_data (gpointer pid, MonoProcessData data)
 int
 mono_cpu_count (void)
 {
-	int count;
+	int count = 0;
+#ifdef PLATFORM_ANDROID
+	/* Android tries really hard to save power by powering off CPUs on SMP phones which
+	 * means the normal way to query cpu count returns a wrong value with userspace API.
+	 * Instead we use /sys entries to query the actual hardware CPU count.
+	 */
+	char buffer[8] = {'\0'};
+	int present = open ("/sys/devices/system/cpu/present", O_RDONLY);
+	/* Format of the /sys entry is a cpulist of indexes which in the case
+	 * of present is always of the form "0-(n-1)" when there is more than
+	 * 1 core, n being the number of CPU cores in the system. Otherwise
+	 * the value is simply 0
+	 */
+	if (present != -1 && read (present, (char*)buffer, sizeof (buffer)) > 3)
+		count = strtol (((char*)buffer) + 2, NULL, 10);
+	if (present != -1)
+		close (present);
+	if (count > 0)
+		return count + 1;
+#endif
 #ifdef _SC_NPROCESSORS_ONLN
 	count = sysconf (_SC_NPROCESSORS_ONLN);
 	if (count > 0)

@@ -7,6 +7,7 @@
  *
  * Copyright 2002-2003 Ximian, Inc.
  * Copyright 2003-2010 Novell, Inc.
+ * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 
 #define MONO_LLVM_IN_MINI 1
@@ -87,7 +88,6 @@ MONO_FAST_TLS_DECLARE(mono_jit_tls);
 #endif
 
 MonoTraceSpec *mono_jit_trace_calls = NULL;
-gboolean mono_break_on_exc = FALSE;
 gboolean mono_compile_aot = FALSE;
 /* If this is set, no code is generated dynamically, everything is taken from AOT files */
 gboolean mono_aot_only = FALSE;
@@ -293,7 +293,10 @@ get_method_from_ip (void *ip)
 	MonoDomain *domain = mono_domain_get ();
 	MonoDebugSourceLocation *location;
 	FindTrampUserData user_data;
-	
+
+	if (!domain)
+		domain = mono_get_root_domain ();
+
 	ji = mono_jit_info_table_find (domain, ip);
 	if (!ji) {
 		user_data.ip = ip;
@@ -604,6 +607,35 @@ mono_tramp_info_free (MonoTrampInfo *info)
 		g_free (l->data);
 	g_slist_free (info->unwind_ops);
 	g_free (info);
+}
+
+G_GNUC_UNUSED static void
+break_count (void)
+{
+}
+
+/*
+ * Runtime debugging tool, use if (debug_count ()) <x> else <y> to do <x> the first COUNT times, then do <y> afterwards.
+ * Set a breakpoint in break_count () to break the last time <x> is done.
+ */
+G_GNUC_UNUSED gboolean
+mono_debug_count (void)
+{
+	static int count = 0;
+	count ++;
+
+	if (!getenv ("COUNT"))
+		return TRUE;
+
+	if (count == atoi (getenv ("COUNT"))) {
+		break_count ();
+	}
+
+	if (count > atoi (getenv ("COUNT"))) {
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 #define MONO_INIT_VARINFO(vi,id) do { \
@@ -2579,10 +2611,17 @@ mono_set_lmf_addr (gpointer lmf_addr)
 #endif
 }
 
-/* Called by native->managed wrappers */
-void
+/*
+ * mono_jit_thread_attach:
+ *
+ * Called by native->managed wrappers. Returns the original domain which needs to be
+ * restored, or NULL.
+ */
+MonoDomain*
 mono_jit_thread_attach (MonoDomain *domain)
 {
+	MonoDomain *orig;
+
 	if (!domain)
 		/* 
 		 * Happens when called from AOTed code which is only used in the root
@@ -2602,9 +2641,20 @@ mono_jit_thread_attach (MonoDomain *domain)
 		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
 	}
 #endif
-	if (mono_domain_get () != domain)
-		mono_domain_set (domain, TRUE);
+	orig = mono_domain_get ();
+	if (orig != domain)
+ 		mono_domain_set (domain, TRUE);
+
+	return orig != domain ? orig : NULL;
 }	
+
+/* Called by native->managed wrappers */
+void
+mono_jit_set_domain (MonoDomain *domain)
+{
+	if (domain)
+		mono_domain_set (domain, TRUE);
+}
 
 /**
  * mono_thread_abort:
@@ -2624,16 +2674,7 @@ mono_thread_abort (MonoObject *obj)
 			(obj->vtable->klass == mono_defaults.threadabortexception_class)) {
 		mono_thread_exit ();
 	} else {
-		MonoObject *other = NULL;
-		MonoString *str = mono_object_to_string (obj, &other);
-		if (str) {
-			char *msg = mono_string_to_utf8 (str);
-			fprintf (stderr, "[ERROR] FATAL UNHANDLED EXCEPTION: %s\n", msg);
-			fflush (stderr);
-			g_free (msg);
-		}
-
-		exit (mono_environment_exitcode_get ());
+		mono_invoke_unhandled_exception_hook (obj);
 	}
 }
 
@@ -2662,14 +2703,13 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 #if defined(MONO_HAVE_FAST_TLS) && defined(MONO_ARCH_ENABLE_MONO_LMF_VAR)
 	/* jit_tls->lmf is unused */
 	MONO_FAST_TLS_SET (mono_lmf, lmf);
-	mono_set_lmf_addr (&mono_lmf);
+	mono_set_lmf_addr (MONO_FAST_TLS_ADDR (mono_lmf));
 #else
 	mono_set_lmf_addr (&jit_tls->lmf);
 
 	jit_tls->lmf = lmf;
 #endif
 
-	mono_arch_setup_jit_tls_data (jit_tls);
 	mono_setup_altstack (jit_tls);
 
 	return jit_tls;
@@ -2788,6 +2828,12 @@ MonoInst*
 mono_get_thread_intrinsic (MonoCompile* cfg)
 {
 	return mono_create_tls_get (cfg, mono_thread_get_tls_offset ());
+}
+
+MonoInst*
+mono_get_lmf_intrinsic (MonoCompile* cfg)
+{
+	return mono_create_tls_get (cfg, mono_get_lmf_tls_offset ());
 }
 
 void
@@ -3005,7 +3051,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			target = code;
 		} else {
 			/* get the trampoline to the method from the domain */
-			target = mono_create_jit_trampoline (patch_info->data.method);
+			target = mono_create_jit_trampoline_in_domain (domain, patch_info->data.method);
 		}
 		break;
 	case MONO_PATCH_INFO_SWITCH: {
@@ -3053,6 +3099,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IMAGE:
 	case MONO_PATCH_INFO_FIELD:
+	case MONO_PATCH_INFO_SIGNATURE:
 		target = patch_info->data.target;
 		break;
 	case MONO_PATCH_INFO_IID:
@@ -3075,7 +3122,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	}
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		target = mono_create_delegate_trampoline (patch_info->data.klass);
+		target = mono_create_delegate_trampoline (domain, patch_info->data.klass);
 		break;
 	case MONO_PATCH_INFO_SFLDA: {
 		MonoVTable *vtable = mono_class_vtable (domain, patch_info->data.field->parent);
@@ -3152,10 +3199,16 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_ICALL_ADDR:
 		/* run_cctors == 0 -> AOT */
 		if (patch_info->data.method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
+			const char *exc_class;
+			const char *exc_arg;
+
 			if (run_cctors) {
-				target = mono_lookup_pinvoke_call (patch_info->data.method, NULL, NULL);
-				if (!target)
+				target = mono_lookup_pinvoke_call (patch_info->data.method, &exc_class, &exc_arg);
+				if (!target) {
+					if (mono_aot_only)
+						mono_raise_exception (mono_exception_from_name_msg (mono_defaults.corlib, "System", exc_class, exc_arg));
 					g_error ("Unable to resolve pinvoke method '%s' Re-run with MONO_LOG_LEVEL=debug for more information.\n", mono_method_full_name (patch_info->data.method, TRUE));
+				}
 			} else {
 				target = NULL;
 			}
@@ -3196,14 +3249,14 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 		switch (entry->data->type) {
 		case MONO_PATCH_INFO_CLASS:
-			slot = mono_method_lookup_or_register_other_info (entry->method, entry->in_mrgctx, &entry->data->data.klass->byval_arg, entry->info_type, mono_method_get_context (entry->method));
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, &entry->data->data.klass->byval_arg, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		case MONO_PATCH_INFO_METHOD:
 		case MONO_PATCH_INFO_METHODCONST:
-			slot = mono_method_lookup_or_register_other_info (entry->method, entry->in_mrgctx, entry->data->data.method, entry->info_type, mono_method_get_context (entry->method));
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, entry->data->data.method, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		case MONO_PATCH_INFO_FIELD:
-			slot = mono_method_lookup_or_register_other_info (entry->method, entry->in_mrgctx, entry->data->data.field, entry->info_type, mono_method_get_context (entry->method));
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, entry->data->data.field, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		default:
 			g_assert_not_reached ();
@@ -3264,6 +3317,26 @@ mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int nat
 	g_ptr_array_add (cfg->seq_points, ins);
 	bb->seq_points = g_slist_prepend_mempool (cfg->mempool, bb->seq_points, ins);
 	bb->last_seq_point = ins;
+}
+
+void
+mono_add_var_location (MonoCompile *cfg, MonoInst *var, gboolean is_reg, int reg, int offset, int from, int to)
+{
+	MonoDwarfLocListEntry *entry = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoDwarfLocListEntry));
+
+	if (is_reg)
+		g_assert (offset == 0);
+
+	entry->is_reg = is_reg;
+	entry->reg = reg;
+	entry->offset = offset;
+	entry->from = from;
+	entry->to = to;
+
+	if (var == cfg->args [0])
+		cfg->this_loclist = g_slist_append_mempool (cfg->mempool, cfg->this_loclist, entry);
+	else if (var == cfg->rgctx_var)
+		cfg->rgctx_loclist = g_slist_append_mempool (cfg->mempool, cfg->rgctx_loclist, entry);
 }
 
 #ifndef DISABLE_JIT
@@ -3454,12 +3527,21 @@ collect_pred_seq_points (MonoBasicBlock *bb, MonoInst *ins, GSList **next, int d
 {
 	int i;
 	MonoBasicBlock *in_bb;
+	GSList *l;
 
 	for (i = 0; i < bb->in_count; ++i) {
 		in_bb = bb->in_bb [i];
 
 		if (in_bb->last_seq_point) {
-			next [in_bb->last_seq_point->backend.size] = g_slist_append (next [in_bb->last_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+			int src_index = in_bb->last_seq_point->backend.size;
+			int dst_index = ins->backend.size;
+
+			/* bb->in_bb might contain duplicates */
+			for (l = next [src_index]; l; l = l->next)
+				if (GPOINTER_TO_UINT (l->data) == dst_index)
+					break;
+			if (!l)
+				next [src_index] = g_slist_append (next [src_index], GUINT_TO_POINTER (dst_index));
 		} else {
 			/* Have to look at its predecessors */
 			if (depth < 5)
@@ -3506,7 +3588,8 @@ mono_save_seq_point_info (MonoCompile *cfg)
 		for (l = bb_seq_points; l; l = l->next) {
 			MonoInst *ins = l->data;
 
-			if (!(ins->flags & MONO_INST_SINGLE_STEP_LOC))
+			if (ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET)
+				/* Used to implement method entry/exit events */
 				continue;
 
 			if (last != NULL) {
@@ -3518,6 +3601,29 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			}
 
 			last = ins;
+		}
+
+		if (bb->last_ins && bb->last_ins->opcode == OP_ENDFINALLY) {
+			MonoBasicBlock *bb2;
+			MonoInst *endfinally_seq_point = NULL;
+
+			/*
+			 * The ENDFINALLY branches are not represented in the cfg, so link it with all seq points starting bbs.
+			 */
+			l = g_slist_last (bb->seq_points);
+			g_assert (l);
+			endfinally_seq_point = l->data;
+
+			for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
+				GSList *l = g_slist_last (bb2->seq_points);
+
+				if (l) {
+					MonoInst *ins = l->data;
+
+					if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
+						next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+				}
+			}
 		}
 	}
 
@@ -3534,10 +3640,10 @@ mono_save_seq_point_info (MonoCompile *cfg)
 		sp->next = g_new (int, sp->next_len);
 		j = 0;
 		if (cfg->verbose_level > 2 && next [i]) {
-			printf ("\t0x%x ->", sp->il_offset);
+			printf ("\tIL0x%x ->", sp->il_offset);
 			for (l = next [i]; l; l = l->next) {
 				next_index = GPOINTER_TO_UINT (l->data);
-				printf (" 0x%x", info->seq_points [next_index].il_offset);
+				printf (" IL0x%x", info->seq_points [next_index].il_offset);
 			}
 			printf ("\n");
 		}
@@ -3804,8 +3910,9 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	MonoMethodHeader *header;
 	MonoJitInfo *jinfo;
 	int num_clauses;
-	int generic_info_size;
-	int holes_size = 0, num_holes = 0;
+	int generic_info_size, arch_eh_info_size = 0;
+	int holes_size = 0, num_holes = 0, cas_size = 0;
+	guint32 stack_size = 0;
 
 	g_assert (method_to_compile == cfg->method);
 	header = cfg->header;
@@ -3815,6 +3922,21 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	else
 		generic_info_size = 0;
 
+	if (cfg->arch_eh_jit_info) {
+		MonoJitArgumentInfo *arg_info;
+		MonoMethodSignature *sig = mono_method_signature (cfg->method_to_register);
+
+		/*
+		 * This cannot be computed during stack walking, as
+		 * mono_arch_get_argument_info () is not signal safe.
+		 */
+		arg_info = g_newa (MonoJitArgumentInfo, sig->param_count + 1);
+		stack_size = mono_arch_get_argument_info (cfg->generic_sharing_context, sig, sig->param_count, arg_info);
+
+		if (stack_size)
+			arch_eh_info_size = sizeof (MonoArchEHJitInfo);
+	}
+		
 	if (cfg->try_block_holes) {
 		for (tmp = cfg->try_block_holes; tmp; tmp = tmp->next) {
 			TryBlockHole *hole = tmp->data;
@@ -3833,6 +3955,10 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 			printf ("Number of try block holes %d\n", num_holes);
 	}
 
+	if (mono_method_has_declsec (cfg->method_to_register)) {
+		cas_size = sizeof (MonoMethodCasInfo);
+	}
+
 	if (COMPILE_LLVM (cfg))
 		num_clauses = cfg->llvm_ex_info_len;
 	else
@@ -3840,11 +3966,11 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 
 	if (cfg->method->dynamic) {
 		jinfo = g_malloc0 (MONO_SIZEOF_JIT_INFO + (num_clauses * sizeof (MonoJitExceptionInfo)) +
-				generic_info_size + holes_size);
+				generic_info_size + holes_size + arch_eh_info_size + cas_size);
 	} else {
 		jinfo = mono_domain_alloc0 (cfg->domain, MONO_SIZEOF_JIT_INFO +
 				(num_clauses * sizeof (MonoJitExceptionInfo)) +
-				generic_info_size + holes_size);
+				generic_info_size + holes_size + arch_eh_info_size + cas_size);
 	}
 
 	jinfo->method = cfg->method_to_register;
@@ -3852,14 +3978,15 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	jinfo->code_size = cfg->code_len;
 	jinfo->used_regs = cfg->used_int_regs;
 	jinfo->domain_neutral = (cfg->opt & MONO_OPT_SHARED) != 0;
-	jinfo->cas_inited = FALSE; /* initialization delayed at the first stalk walk using this method */
 	jinfo->num_clauses = num_clauses;
+
 	if (COMPILE_LLVM (cfg))
 		jinfo->from_llvm = TRUE;
 
 	if (cfg->generic_sharing_context) {
 		MonoInst *inst;
 		MonoGenericJitInfo *gi;
+		GSList *loclist = NULL;
 
 		jinfo->has_generic_jit_info = 1;
 
@@ -3882,8 +4009,27 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 			inst = cfg->rgctx_var;
 			if (!COMPILE_LLVM (cfg))
 				g_assert (inst->opcode == OP_REGOFFSET);
+			loclist = cfg->rgctx_loclist;
 		} else {
 			inst = cfg->args [0];
+			loclist = cfg->this_loclist;
+		}
+
+		if (loclist) {
+			/* Needed to handle async exceptions */
+			GSList *l;
+			int i;
+
+			gi->nlocs = g_slist_length (loclist);
+			if (cfg->method->dynamic)
+				gi->locations = g_malloc0 (gi->nlocs * sizeof (MonoDwarfLocListEntry));
+			else
+				gi->locations = mono_domain_alloc0 (cfg->domain, gi->nlocs * sizeof (MonoDwarfLocListEntry));
+			i = 0;
+			for (l = loclist; l; l = l->next) {
+				memcpy (&(gi->locations [i]), l->data, sizeof (MonoDwarfLocListEntry));
+				i ++;
+			}
 		}
 
 		if (COMPILE_LLVM (cfg)) {
@@ -3940,6 +4086,19 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 				printf ("\tTry block hole at eh clause %d offset %x length %x\n", hole->clause, hole->offset, hole->length);
 		}
 		g_assert (i == num_holes);
+	}
+
+	if (arch_eh_info_size) {
+		MonoArchEHJitInfo *info;
+
+		jinfo->has_arch_eh_info = 1;
+		info = mono_jit_info_get_arch_eh_info (jinfo);
+
+		info->stack_size = stack_size;
+	}
+
+	if (cas_size) {
+		jinfo->has_cas_info = 1;
 	}
 
 	if (COMPILE_LLVM (cfg)) {
@@ -4155,7 +4314,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	InterlockedIncrement (&mono_jit_stats.methods_compiled);
 	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
 		mono_profiler_method_jit (method);
-	if (MONO_PROBE_METHOD_COMPILE_BEGIN_ENABLED ())
+	if (MONO_METHOD_COMPILE_BEGIN_ENABLED ())
 		MONO_PROBE_METHOD_COMPILE_BEGIN (method);
 
 	if (compile_aot)
@@ -4231,7 +4390,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
 		cfg->exception_message = g_strdup (mono_error_get_message (&err));
 		mono_error_cleanup (&err);
-		if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		return cfg;
 	}
@@ -4246,7 +4405,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
 			cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
 		}
-		if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		return cfg;
 	}
@@ -4293,7 +4452,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		/* Temporarily disable this when running in the debugger until we have support
 		 * for this in the debugger. */
-		cfg->disable_omit_fp = TRUE;
+		/* This is no longer needed with sdb */
+		//cfg->disable_omit_fp = TRUE;
 
 		/* The debugger needs all locals to be on the stack or in a global register */
 		cfg->disable_vreg_to_lvreg = TRUE;
@@ -4307,7 +4467,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->opt &= ~MONO_OPT_INLINE;
 		cfg->opt &= ~MONO_OPT_COPYPROP;
 		cfg->opt &= ~MONO_OPT_CONSPROP;
-		cfg->opt &= ~MONO_OPT_GSHARED;
+		/* This is no longer needed with sdb */
+		//cfg->opt &= ~MONO_OPT_GSHARED;
 
 		/* This is needed for the soft debugger, which doesn't like code after the epilog */
 		cfg->disable_out_of_line_bblocks = TRUE;
@@ -4448,7 +4609,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (i < 0) {
 		if (try_generic_shared && cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
 			if (compile_aot) {
-				if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+				if (MONO_METHOD_COMPILE_END_ENABLED ())
 					MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 				return cfg;
 			}
@@ -4458,7 +4619,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		}
 		g_assert (cfg->exception_type != MONO_EXCEPTION_GENERIC_SHARING_FAILED);
 
-		if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		/* cfg contains the details of the failure, so let the caller cleanup */
 		return cfg;
@@ -4581,7 +4742,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	/* after method_to_ir */
 	if (parts == 1) {
-		if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, TRUE);
 		return cfg;
 	}
@@ -4618,7 +4779,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	/* after SSA translation */
 	if (parts == 2) {
-		if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, TRUE);
 		return cfg;
 	}
@@ -4685,7 +4846,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	/* after SSA removal */
 	if (parts == 3) {
-		if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, TRUE);
 		return cfg;
 	}
@@ -4907,8 +5068,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	}
 
 	/* collect statistics */
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->jit_methods++;
 	mono_perfcounters->jit_bytes += header->code_size;
+#endif
 	mono_jit_stats.allocated_code_size += cfg->code_len;
 	code_size_ratio = cfg->code_len;
 	if (code_size_ratio > mono_jit_stats.biggest_method_size && mono_jit_stats.enabled) {
@@ -4924,7 +5087,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	}
 	mono_jit_stats.native_code_size += cfg->code_len;
 
-	if (MONO_PROBE_METHOD_COMPILE_END_ENABLED ())
+	if (MONO_METHOD_COMPILE_END_ENABLED ())
 		MONO_PROBE_METHOD_COMPILE_END (method, TRUE);
 
 	return cfg;
@@ -5113,7 +5276,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 				return mono_get_addr_from_ftnptr ((gpointer)mono_icall_get_wrapper_full (mi, TRUE));
 			} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-				return mono_create_delegate_trampoline (method->klass);
+				return mono_create_delegate_trampoline (target_domain, method->klass);
 #else
 				nm = mono_marshal_get_delegate_invoke (method, NULL);
 				return mono_get_addr_from_ftnptr (mono_compile_method (nm));
@@ -5137,7 +5300,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	if (mono_aot_only) {
 		char *fullname = mono_method_full_name (method, TRUE);
-		char *msg = g_strdup_printf ("Attempting to JIT compile method '%s' while running with --aot-only.\n", fullname);
+		char *msg = g_strdup_printf ("Attempting to JIT compile method '%s' while running with --aot-only. See http://docs.xamarin.com/ios/about/limitations for more information.\n", fullname);
 
 		*jit_ex = mono_get_exception_execution_engine (msg);
 		g_free (fullname);
@@ -5370,10 +5533,25 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 		opt |= MONO_OPT_SHARED;
 	}
 
+	if (method->dynamic)
+		opt &= ~MONO_OPT_SHARED;
+
+	/* These methods can become invalid when a domain is unloaded */
+	if (method->klass->image != mono_get_corlib () || method->is_inflated)
+		opt &= ~MONO_OPT_SHARED;
+
 	if (opt & MONO_OPT_SHARED)
 		target_domain = mono_get_root_domain ();
 	else 
 		target_domain = domain;
+
+	if (method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+
+		g_assert (info);
+		if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER)
+			method = info->d.synchronized_inner.method;
+	}
 
 	info = lookup_method (target_domain, method);
 	if (info) {
@@ -5401,6 +5579,8 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 	p = mono_create_ftnptr (target_domain, code);
 
 	if (callinfo) {
+		/*mono_register_jit_icall_wrapper takes the loader lock, so we take it on the outside. */
+		mono_loader_lock ();
 		mono_jit_lock ();
 		if (!callinfo->wrapper) {
 			callinfo->wrapper = p;
@@ -5408,6 +5588,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 			mono_debug_add_icall_wrapper (method, callinfo);
 		}
 		mono_jit_unlock ();
+		mono_loader_unlock ();
 	}
 
 	return p;
@@ -5433,7 +5614,7 @@ static void
 invalidated_delegate_trampoline (char *desc)
 {
 	g_error ("Unmanaged code called delegate of type %s which was already garbage collected.\n"
-		 "See http://www.go-mono.com/delegate.html for an explanation and ways to fix this.",
+		 "See http://www.mono-project.com/Diagnostic:Delegate for an explanation and ways to fix this.",
 		 desc);
 }
 #endif
@@ -5459,6 +5640,8 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 
 	if (!ji)
 		return;
+
+	mono_debug_remove_method (method, domain);
 
 	mono_domain_lock (domain);
 	g_hash_table_remove (domain_jit_info (domain)->dynamic_code_hash, method);
@@ -5814,7 +5997,7 @@ SIG_HANDLER_SIGNATURE (mono_sigfpe_signal_handler)
 		mono_handle_native_sigsegv (SIGSEGV, ctx);
 	}
 	
-	mono_arch_handle_exception (ctx, exc, FALSE);
+	mono_arch_handle_exception (ctx, exc);
 }
 
 void
@@ -5825,7 +6008,7 @@ SIG_HANDLER_SIGNATURE (mono_sigill_signal_handler)
 
 	exc = mono_get_exception_execution_engine ("SIGILL");
 	
-	mono_arch_handle_exception (ctx, exc, FALSE);
+	mono_arch_handle_exception (ctx, exc);
 }
 
 #if defined(MONO_ARCH_USE_SIGACTION) || defined(HOST_WIN32)
@@ -5908,7 +6091,7 @@ SIG_HANDLER_SIGNATURE (mono_sigsegv_signal_handler)
 		mono_handle_native_sigsegv (SIGSEGV, ctx);
 	}
 			
-	mono_arch_handle_exception (ctx, NULL, FALSE);
+	mono_arch_handle_exception (ctx, NULL);
 #endif
 }
 
@@ -5920,7 +6103,7 @@ SIG_HANDLER_SIGNATURE (mono_sigint_signal_handler)
 
 	exc = mono_get_exception_execution_engine ("Interrupted (SIGINT).");
 	
-	mono_arch_handle_exception (ctx, exc, FALSE);
+	mono_arch_handle_exception (ctx, exc);
 }
 
 /* mono_jit_create_remoting_trampoline:
@@ -6206,7 +6389,7 @@ mini_init (const char *filename, const char *runtime_version)
 	MonoRuntimeCallbacks callbacks;
 	MonoThreadInfoRuntimeCallbacks ticallbacks;
 
-	MONO_PROBE_VES_INIT_BEGIN ();
+	MONO_VES_INIT_BEGIN ();
 
 #if defined(__linux__) && !defined(__native_client__)
 	if (access ("/proc/self/maps", F_OK) != 0) {
@@ -6306,8 +6489,7 @@ mini_init (const char *filename, const char *runtime_version)
 	if (!g_thread_supported ())
 		g_thread_init (NULL);
 
-	mono_native_tls_alloc (mono_jit_tls_id, NULL);
-	setup_jit_tls_data ((gpointer)-1, mono_thread_abort);
+	mono_native_tls_alloc (&mono_jit_tls_id, NULL);
 
 	if (default_opt & MONO_OPT_AOT)
 		mono_aot_init ();
@@ -6364,6 +6546,7 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mono_aot_only) {
 		/* This helps catch code allocation requests */
 		mono_code_manager_set_read_only (domain->code_mp);
+		mono_marshal_use_aot_wrappers (TRUE);
 	}
 
 #ifdef MONO_ARCH_HAVE_IMT
@@ -6374,6 +6557,9 @@ mini_init (const char *filename, const char *runtime_version)
 			mono_install_imt_thunk_builder (mono_arch_build_imt_thunk);
 	}
 #endif
+	/*Init arch tls information only after the metadata side is inited to make sure we see dynamic appdomain tls keys*/
+	mono_arch_finish_init ();
+	
 
 	/* This must come after mono_init () in the aot-only case */
 	mono_exceptions_init ();
@@ -6396,6 +6582,11 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_install_handlers", 
 				mono_runtime_install_handlers);
 
+#ifdef PLATFORM_ANDROID
+	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",
+				mono_debugger_agent_unhandled_exception);
+#endif
+
 	mono_create_helper_signatures ();
 
 	register_jit_stats ();
@@ -6411,7 +6602,8 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_trace_enter_method, "mono_trace_enter_method", NULL, TRUE);
 	register_icall (mono_trace_leave_method, "mono_trace_leave_method", NULL, TRUE);
 	register_icall (mono_get_lmf_addr, "mono_get_lmf_addr", "ptr", TRUE);
-	register_icall (mono_jit_thread_attach, "mono_jit_thread_attach", "void", TRUE);
+	register_icall (mono_jit_thread_attach, "mono_jit_thread_attach", "ptr ptr", TRUE);
+	register_icall (mono_jit_set_domain, "mono_jit_set_domain", "void ptr", TRUE);
 	register_icall (mono_domain_get, "mono_domain_get", "ptr", TRUE);
 
 	register_icall (mono_get_throw_exception (), "mono_arch_throw_exception", "void object", TRUE);
@@ -6613,7 +6805,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_profiler_runtime_initialized ();
 
-	MONO_PROBE_VES_INIT_END ();
+	MONO_VES_INIT_END ();
 	
 	return domain;
 }
@@ -6666,10 +6858,6 @@ print_jit_stats (void)
 		g_print ("JIT info table lookups: %ld\n", mono_stats.jit_info_table_lookup_count);
 
 		g_print ("Hazardous pointers:     %ld\n", mono_stats.hazardous_pointer_count);
-		g_print ("Minor GC collections:   %ld\n", mono_stats.minor_gc_count);
-		g_print ("Major GC collections:   %ld\n", mono_stats.major_gc_count);
-		g_print ("Minor GC time in msecs: %lf\n", (double)mono_stats.minor_gc_time_usecs / 1000.0);
-		g_print ("Major GC time in msecs: %lf\n", (double)mono_stats.major_gc_time_usecs / 1000.0);
 		if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 			g_print ("\nDecl security check   : %ld\n", mono_jit_stats.cas_declsec_check);
 			g_print ("LinkDemand (user)     : %ld\n", mono_jit_stats.cas_linkdemand);
@@ -6777,11 +6965,25 @@ mono_disable_optimizations (guint32 opts)
 	default_opt &= ~opts;
 }
 
-/*
+void
+mono_set_optimizations (guint32 opts)
+{
+	default_opt = opts;
+	default_opt_set = TRUE;
+}
+
+void
+mono_set_verbose_level (guint32 level)
+{
+	mini_verbose = level;
+}
+
+/**
  * mono_get_runtime_build_info:
  *
- *   Return the runtime version + build date in string format.
- * The returned string is owned by the caller.
+ * Return the runtime version + build date in string format.
+ * The returned string is owned by the caller. The returned string
+ * format is "VERSION (FULL_VERSION BUILD_DATE)" and build date is optional.
  */
 char*
 mono_get_runtime_build_info (void)

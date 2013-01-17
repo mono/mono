@@ -78,14 +78,15 @@ tp_poll_modify (gpointer event_data, int fd, int operation, int events, gboolean
 {
 	tp_poll_data *data = event_data;
 	char msg [1];
+	int unused;
 
 	MONO_SEM_WAIT (&data->new_sem);
 	INIT_POLLFD (&data->newpfd, GPOINTER_TO_INT (fd), events);
 	*msg = (char) operation;
 #ifndef HOST_WIN32
-	if (write (data->pipe [1], msg, 1));
+	unused = write (data->pipe [1], msg, 1);
 #else
-	send ((SOCKET) data->pipe [1], msg, 1, 0);
+	unused = send ((SOCKET) data->pipe [1], msg, 1, 0);
 #endif
 }
 
@@ -172,6 +173,8 @@ tp_poll_wait (gpointer p)
 		MonoMList *list;
 		MonoObject *ares;
 
+		mono_gc_set_skip_thread (TRUE);
+
 		do {
 			if (nsock == -1) {
 				if (THREAD_WANTS_A_BREAK (thread))
@@ -180,6 +183,8 @@ tp_poll_wait (gpointer p)
 
 			nsock = mono_poll (pfds, maxfd, -1);
 		} while (nsock == -1 && errno == EINTR);
+
+		mono_gc_set_skip_thread (FALSE);
 
 		/* 
 		 * Apart from EINTR, we only check EBADF, for the rest:
@@ -211,11 +216,22 @@ tp_poll_wait (gpointer p)
 		/* Got a new socket */
 		if ((pfds->revents & MONO_POLLIN) != 0) {
 			int nread;
+			gboolean found = FALSE;
 
 			for (i = 1; i < allocated; i++) {
 				pfd = &pfds [i];
-				if (pfd->fd == -1 || pfd->fd == data->newpfd.fd)
+				if (pfd->fd == data->newpfd.fd) {
+					found = TRUE;
 					break;
+				}
+			}
+
+			if (!found) {
+				for (i = 1; i < allocated; i++) {
+					pfd = &pfds [i];
+					if (pfd->fd == -1)
+						break;
+				}
 			}
 
 			if (i == allocated) {

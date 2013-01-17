@@ -590,8 +590,6 @@ namespace PEAPI {
 		private static readonly string mscorlibName = "mscorlib";
 		private Module thisMod;
 		private ClassDef moduleClass;
-		private ArrayList classRefList = new ArrayList();
-		private ArrayList classDefList = new ArrayList();
 		private ArrayList resources = new ArrayList ();
 		private Assembly thisAssembly;
 		private static bool isMSCorlib;
@@ -755,6 +753,11 @@ namespace PEAPI {
 			return modRef;
 		}
 
+		public ClassRef AddExternClass(string name, TypeAttr attrs, MetaDataElement declRef) 
+		{
+			return new ExternClassRef (attrs, null, name, declRef, metaData);
+		}
+		
 		/// <summary>
 		/// Add a "global" method to this module
 		/// </summary>

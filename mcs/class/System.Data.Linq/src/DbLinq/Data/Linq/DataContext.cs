@@ -294,7 +294,11 @@ namespace DbLinq.Data.Linq
             _VendorProvider = ObjectFactory.Get<IVendorProvider>();
             Vendor = vendor ?? 
                 (connectionString != null ? GetVendor(ref connectionString) : null) ??
+#if MOBILE
+                _VendorProvider.FindVendorByProviderType(typeof(DbLinq.Sqlite.SqliteSqlProvider));
+#else
                 _VendorProvider.FindVendorByProviderType(typeof(SqlClient.Sql2005Provider));
+#endif
             
             DatabaseContext = databaseContext;
 

@@ -8,6 +8,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -198,7 +199,7 @@ namespace Mono.CSharp {
 			return ImplicitReferenceConversionExists (expr_type, target_type, true);
 		}
 
-		static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type, bool refOnlyTypeParameter)
+		public static bool ImplicitReferenceConversionExists (TypeSpec expr_type, TypeSpec target_type, bool refOnlyTypeParameter)
 		{
 			// It's here only to speed things up
 			if (target_type.IsStruct)
@@ -329,17 +330,40 @@ namespace Mono.CSharp {
 					return TypeSpecComparer.Variant.IsEqual (expr_type, target_type) || expr_type.ImplementsInterface (target_type, true);
 
 				return target_type.BuiltinType == BuiltinTypeSpec.Type.Object || target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
-			}
 
-			//
-			// from the null literal to any reference-type.
-			//
-			if (expr_type == InternalType.NullLiteral) {
-				// Exlude internal compiler types
-				if (target_type.Kind == MemberKind.InternalCompilerType)
-					return target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+			case MemberKind.InternalCompilerType:
+				//
+				// from the null literal to any reference-type.
+				//
+				if (expr_type == InternalType.NullLiteral) {
+					// Exlude internal compiler types
+					if (target_type.Kind == MemberKind.InternalCompilerType)
+						return target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 
-				return TypeSpec.IsReferenceType (target_type);
+					return TypeSpec.IsReferenceType (target_type);
+				}
+
+				//
+				// Implicit dynamic conversion
+				//
+				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+					switch (target_type.Kind) {
+					case MemberKind.ArrayType:
+					case MemberKind.Class:
+					case MemberKind.Delegate:
+					case MemberKind.Interface:
+					case MemberKind.TypeParameter:
+						return true;
+					}
+
+					// dynamic to __arglist
+					if (target_type == InternalType.Arglist)
+						return true;
+
+					return false;
+				}
+
+				break;
 			}
 
 			return false;
@@ -469,6 +493,11 @@ namespace Mono.CSharp {
 		public static Expression ImplicitNumericConversion (Expression expr, TypeSpec target_type)
 		{
 			return ImplicitNumericConversion (expr, expr.Type, target_type);
+		}
+
+		public static bool ImplicitNumericConversionExists (TypeSpec expr_type, TypeSpec target_type)
+		{
+			return ImplicitNumericConversion (null, expr_type, target_type) != null;
 		}
 
 		static Expression ImplicitNumericConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
@@ -772,22 +801,16 @@ namespace Mono.CSharp {
 				return i.IsZeroInteger;
 			}
 
-			// Implicit dynamic conversion
+			//
+			// Implicit dynamic conversion for remaining value types. It should probably
+			// go somewhere else
+			//
 			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				switch (target_type.Kind) {
-				case MemberKind.ArrayType:
-				case MemberKind.Class:
 				case MemberKind.Struct:
-				case MemberKind.Delegate:
 				case MemberKind.Enum:
-				case MemberKind.Interface:
-				case MemberKind.TypeParameter:
 					return true;
 				}
-
-				// dynamic to __arglist
-				if (target_type == InternalType.Arglist)
-					return true;
 
 				return false;
 			}
@@ -817,7 +840,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassed type" according to the spec (13.4.2)
 		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		public static TypeSpec FindMostEncompassedType (IEnumerable<TypeSpec> types)
+		public static TypeSpec FindMostEncompassedType (IList<TypeSpec> types)
 		{
 			TypeSpec best = null;
 			EmptyExpression expr;
@@ -1067,12 +1090,13 @@ namespace Mono.CSharp {
 			Expression source_type_expr;
 
 			if (source_type.IsNullableType) {
-				// No implicit conversion S? -> T for non-reference types
-				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType)
-					return null;
-
-				source_type_expr = Nullable.Unwrap.Create (source);
-				source_type = source_type_expr.Type;
+				// No unwrapping conversion S? -> T for non-reference types
+				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType) {
+					source_type_expr = source;
+				} else {
+					source_type_expr = Nullable.Unwrap.Create (source);
+					source_type = source_type_expr.Type;
+				}
 			} else {
 				source_type_expr = source;
 			}
@@ -1172,8 +1196,12 @@ namespace Mono.CSharp {
 			if (s_x != source_type) {
 				var c = source as Constant;
 				if (c != null) {
-					source = c.TryReduce (ec, s_x, loc);
-				} else {
+					source = c.Reduce (ec, s_x);
+					if (source == null)
+						c = null;
+				}
+
+				if (c == null) {
 					source = implicitOnly ?
 						ImplicitConversionStandard (ec, source_type_expr, s_x, loc) :
 						ExplicitConversionStandard (ec, source_type_expr, s_x, loc);
@@ -1258,7 +1286,7 @@ namespace Mono.CSharp {
 		static Expression ImplicitConversionStandard (ResolveContext ec, Expression expr, TypeSpec target_type, Location loc, bool explicit_cast)
 		{
 			if (expr.eclass == ExprClass.MethodGroup){
-				if (!TypeManager.IsDelegateType (target_type)){
+				if (!target_type.IsDelegate){
 					return null;
 				}
 
@@ -1314,8 +1342,7 @@ namespace Mono.CSharp {
 				try {
 					c = c.ConvertImplicitly (target_type);
 				} catch {
-					Console.WriteLine ("Conversion error happened in line {0}", loc);
-					throw;
+					throw new InternalErrorException ("Conversion error", loc);
 				}
 				if (c != null)
 					return c;
@@ -1333,7 +1360,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)){
+			if (expr is IntegralConstant && target_type.IsEnum){
 				var i = (IntegralConstant) expr;
 				//
 				// LAMESPEC: csc allows any constant like 0 values to be converted, including const float f = 0.0
@@ -1400,7 +1427,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
+			source.Error_ValueCannotBeConverted (ec, target_type, false);
 			return null;
 		}
 
@@ -1870,7 +1897,7 @@ namespace Mono.CSharp {
 			//
 			// From System delegate to any delegate-type
 			//
-			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Delegate && TypeManager.IsDelegateType (target_type))
+			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Delegate && target_type.IsDelegate)
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			//
@@ -1930,8 +1957,8 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (TypeManager.IsEnumType (expr_type)) {
-				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
+			if (expr_type.IsEnum) {
+				TypeSpec real_target = target_type.IsEnum ? EnumSpec.GetUnderlyingType (target_type) : target_type;
 				Expression underlying = EmptyCast.Create (expr, EnumSpec.GetUnderlyingType (expr_type));
 				if (underlying.Type == real_target)
 					ne = underlying;
@@ -1951,33 +1978,40 @@ namespace Mono.CSharp {
 				return ne != null ? EmptyCast.Create (ne, target_type) : null;
 			}
 
-			if (TypeManager.IsEnumType (target_type)) {
+			if (target_type.IsEnum) {
 				//
 				// System.Enum can be unboxed to any enum-type
 				//
 				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Enum)
 					return new UnboxCast (expr, target_type);
 
-				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
+				TypeSpec real_target = target_type.IsEnum ? EnumSpec.GetUnderlyingType (target_type) : target_type;
 
 				if (expr_type == real_target)
 					return EmptyCast.Create (expr, target_type);
 
-				ne = ImplicitNumericConversion (expr, real_target);
-				if (ne != null)
-					return EmptyCast.Create (ne, target_type);
-
-				ne = ExplicitNumericConversion (ec, expr, real_target);
-				if (ne != null)
-					return EmptyCast.Create (ne, target_type);
-
-				//
-				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
-				//
-				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.IntPtr || expr_type.BuiltinType == BuiltinTypeSpec.Type.UIntPtr) {
-					ne = ExplicitUserConversion (ec, expr, real_target, loc);
+				Constant c = expr as Constant;
+				if (c != null) {
+					c = c.TryReduce (ec, real_target);
+					if (c != null)
+						return c;
+				} else {
+					ne = ImplicitNumericConversion (expr, real_target);
 					if (ne != null)
-						return ExplicitConversionCore (ec, ne, target_type, loc);
+						return EmptyCast.Create (ne, target_type);
+
+					ne = ExplicitNumericConversion (ec, expr, real_target);
+					if (ne != null)
+						return EmptyCast.Create (ne, target_type);
+
+					//
+					// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
+					//
+					if (expr_type.BuiltinType == BuiltinTypeSpec.Type.IntPtr || expr_type.BuiltinType == BuiltinTypeSpec.Type.UIntPtr) {
+						ne = ExplicitUserConversion (ec, expr, real_target, loc);
+						if (ne != null)
+							return ExplicitConversionCore (ec, ne, target_type, loc);
+					}
 				}
 			} else {
 				ne = ExplicitNumericConversion (ec, expr, target_type);
@@ -2080,7 +2114,7 @@ namespace Mono.CSharp {
 			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.Kind == MemberKind.Void)
 				return EmptyCast.Create (expr, target_type);
 
-			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);
+			expr.Error_ValueCannotBeConverted (ec, target_type, true);
 			return null;
 		}
 
@@ -2143,7 +2177,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;			
 
-			expr.Error_ValueCannotBeConverted (ec, loc, target_type, true);
+			expr.Error_ValueCannotBeConverted (ec, target_type, true);
 			return null;
 		}
 	}

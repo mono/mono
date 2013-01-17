@@ -90,5 +90,5 @@ namespace System.CodeDom.Compiler
                 }
 	}
 }
-#endif // NET_2_0
+#endif
 

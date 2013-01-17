@@ -35,6 +35,7 @@ static CRITICAL_SECTION unwind_mutex;
 
 static MonoUnwindInfo **cached_info;
 static int cached_info_next, cached_info_size;
+static GSList *cached_info_list;
 /* Statistics */
 static int unwind_info_size;
 
@@ -53,7 +54,16 @@ static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
 #define DWARF_DATA_ALIGN (-4)
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (ARMREG_LR))
 #elif defined (TARGET_X86)
+#ifdef __APPLE__
+/*
+ * LLVM seems to generate unwind info where esp is encoded as 5, and ebp as 4, ie see this line:
+ *   def ESP : RegisterWithSubRegs<"esp", [SP]>, DwarfRegNum<[-2, 5, 4]>;
+ * in lib/Target/X86/X86RegisterInfo.td in the llvm sources.
+ */
+static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 5, 4, 6, 7, 8 };
+#else
 static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+#endif
 /* + 1 is for IP */
 #define NUM_REGS X86_NREG + 1
 #define DWARF_DATA_ALIGN (-4)
@@ -72,6 +82,17 @@ static int map_hw_reg_to_dwarf_reg [] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
 #define NUM_REGS 16
 #define DWARF_DATA_ALIGN (-8)
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (14))
+#elif defined (TARGET_MIPS)
+/* FIXME: */
+static int map_hw_reg_to_dwarf_reg [32] = {
+	0, 1, 2, 3, 4, 5, 6, 7,
+	8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23,
+	24, 25, 26, 27, 28, 29, 30, 31
+};
+#define NUM_REGS 32
+#define DWARF_DATA_ALIGN (-(gint32)sizeof (mgreg_t))
+#define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (mips_ra))
 #else
 static int map_hw_reg_to_dwarf_reg [16];
 #define NUM_REGS 16
@@ -482,8 +503,8 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 		MonoUnwindInfo **old_table, **new_table;
 
 		/*
-		 * Have to resize the table, while synchronizing with 
-		 * mono_get_cached_unwind_info () using hazard pointers.
+		 * Avoid freeing the old table so mono_get_cached_unwind_info ()
+		 * doesn't need locks/hazard pointers.
 		 */
 
 		old_table = cached_info;
@@ -495,9 +516,7 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 
 		cached_info = new_table;
 
-		mono_memory_barrier ();
-
-		mono_thread_hazardous_free_or_queue (old_table, g_free);
+		cached_info_list = g_slist_prepend (cached_info_list, cached_info);
 
 		cached_info_size *= 2;
 	}
@@ -519,16 +538,17 @@ mono_get_cached_unwind_info (guint32 index, guint32 *unwind_info_len)
 	MonoUnwindInfo **table;
 	MonoUnwindInfo *info;
 	guint8 *data;
-	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
 
-	table = get_hazardous_pointer ((gpointer volatile*)&cached_info, hp, 0);
+	/*
+	 * This doesn't need any locks/hazard pointers,
+	 * since new tables are copies of the old ones.
+	 */
+	table = cached_info;
 
 	info = table [index];
 
 	*unwind_info_len = info->len;
 	data = info->info;
-
-	mono_hazard_pointer_clear (hp, 0);
 
 	return data;
 }
@@ -601,24 +621,6 @@ decode_cie_op (guint8 *p, guint8 **endp)
 
 	*endp = p;
 }
-
-/* Pointer Encoding in the .eh_frame */
-enum {
-	DW_EH_PE_absptr = 0x00,
-	DW_EH_PE_omit = 0xff,
-
-	DW_EH_PE_udata4 = 0x03,
-	DW_EH_PE_sdata4 = 0x0b,
-	DW_EH_PE_sdata8 = 0x0c,
-
-	DW_EH_PE_pcrel = 0x10,
-	DW_EH_PE_textrel = 0x20,
-	DW_EH_PE_datarel = 0x30,
-	DW_EH_PE_funcrel = 0x40,
-	DW_EH_PE_aligned = 0x50,
-
-	DW_EH_PE_indirect = 0x80
-};
 
 static gint64
 read_encoded_val (guint32 encoding, guint8 *p, guint8 **endp)
@@ -745,6 +747,9 @@ decode_lsda (guint8 *lsda, guint8 *code, MonoJitExceptionInfo **ex_info, guint32
 		landing_pad = read32 (p);
 		p += sizeof (gint32);
 		action_offset = decode_uleb128 (p, &p);
+
+		if (!action_offset)
+			continue;
 
 		action = action_table + action_offset - 1;
 

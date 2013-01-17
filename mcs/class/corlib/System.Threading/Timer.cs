@@ -41,7 +41,7 @@ namespace System.Threading
 		: MarshalByRefObject, IDisposable
 #endif
 	{
-		static Scheduler scheduler = Scheduler.Instance;
+		static readonly Scheduler scheduler = Scheduler.Instance;
 #region Timer instance fields
 		TimerCallback callback;
 		object state;
@@ -128,10 +128,10 @@ namespace System.Threading
 		bool Change (long dueTime, long period, bool first)
 		{
 			if (dueTime > MaxValue)
-				throw new ArgumentOutOfRangeException ("Due time too large");
+				throw new ArgumentOutOfRangeException ("dueTime", "Due time too large");
 
 			if (period > MaxValue)
-				throw new ArgumentOutOfRangeException ("Period too large");
+				throw new ArgumentOutOfRangeException ("period", "Period too large");
 
 			// Timeout.Infinite == -1, so this accept everything greater than -1
 			if (dueTime < Timeout.Infinite)
@@ -381,10 +381,14 @@ namespace System.Threading
 						//PrintList ();
 						ms_wait = -1;
 						if (min_next_run != Int64.MaxValue) {
-							long diff = min_next_run - DateTime.GetTimeMonotonic (); 
-							ms_wait = (int)(diff / TimeSpan.TicksPerMillisecond);
-							if (ms_wait < 0)
-								ms_wait = 0;
+							long diff = (min_next_run - DateTime.GetTimeMonotonic ())  / TimeSpan.TicksPerMillisecond;
+							if (diff > Int32.MaxValue)
+								ms_wait = Int32.MaxValue - 1;
+							else {
+								ms_wait = (int)(diff);
+								if (ms_wait < 0)
+									ms_wait = 0;
+							}
 						}
 					}
 					// Wait until due time or a timer is changed and moves from/to the first place in the list.

@@ -41,7 +41,6 @@ if pkg-config --modversion mono >& /dev/null; then
 	    echo "       than the Mono found:"
 	    echo "       Mono on PATH: $monocmd"
 	    echo "       Mono from pkg-config: $pkg_config_mono"
-	    exit 1
 	fi
 else 
         echo "Warning: pkg-config could not find mono installed on this system"

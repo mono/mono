@@ -133,7 +133,7 @@ namespace Mono.Debugger.Soft {
 					if (named_args [j] == null)
 						throw new NotImplementedException ();
 				}
-				res [i] = new CustomAttributeDataMirror (vm.GetMethod (attr.ctor_id), ctor_args, named_args);
+				res [i] = new CustomAttributeDataMirror (ctor, ctor_args, named_args);
 			}
 
 			return res;

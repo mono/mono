@@ -19,7 +19,7 @@ class X
 		throw new NotImplementedException();
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

@@ -1,3 +1,7 @@
+//
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
+//
+
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -275,6 +279,9 @@ public class Tests {
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder")]
 	public static extern void mono_test_marshal_stringbuilder (StringBuilder sb, int len);
 
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder2")]
+	public static extern void mono_test_marshal_stringbuilder2 (StringBuilder sb, int len);
+
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_default")]
 	public static extern void mono_test_marshal_stringbuilder_default (StringBuilder sb, int len);
 
@@ -283,6 +290,9 @@ public class Tests {
 
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_out")]
 	public static extern void mono_test_marshal_stringbuilder_out (out StringBuilder sb);
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_ref")]
+	public static extern int mono_test_marshal_stringbuilder_ref (ref StringBuilder sb);
 
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_out_unicode", CharSet=CharSet.Unicode)]
 	public static extern void mono_test_marshal_stringbuilder_out_unicode (out StringBuilder sb);
@@ -768,11 +778,17 @@ public class Tests {
 		if (res != "This is my message.  Isn't it nice?")
 			return 1;  
 
+		// Test that cached_str is cleared
+		mono_test_marshal_stringbuilder2 (sb, sb.Capacity);
+		res = sb.ToString();
+		if (res != "EFGH")
+			return 2;
+
 		// Test StringBuilder with default capacity (16)
 		StringBuilder sb2 = new StringBuilder();
 		mono_test_marshal_stringbuilder_default (sb2, sb2.Capacity);
 		if (sb2.ToString () != "This is my messa")
-			return 2;
+			return 3;
 
 		return 0;
 	}
@@ -809,6 +825,18 @@ public class Tests {
 
 		if (sb.ToString () != "This is my message.  Isn't it nice?")
 			return 1;  
+		return 0;
+	}
+
+	public static int test_0_marshal_stringbuilder_ref () {
+		StringBuilder sb = new StringBuilder ();
+		sb.Append ("ABC");
+		int res = mono_test_marshal_stringbuilder_ref (ref sb);
+		if (res != 0)
+			return 1;
+		
+		if (sb.ToString () != "This is my message.  Isn't it nice?")
+			return 2;  
 		return 0;
 	}
 
@@ -1271,7 +1299,12 @@ public class Tests {
 	public static int test_0_marshal_byref_string () {
 		string res = "TEST1";
 
-		return string_marshal_test2 (ref res);
+		int r = string_marshal_test2 (ref res);
+		if (r != 0)
+			return 1;
+		if (res != "TEST2")
+			return 2;
+		return 0;
 	}
 
 	public static int test_0_marshal_null_string () {
@@ -1300,6 +1333,8 @@ public class Tests {
 	 * Pointers to structures can not be passed
 	 */
 
+	/* This seems to be allowed by MS in some cases */
+	/*
 	public struct CharInfo {
 		public char Character;
 		public short Attributes;
@@ -1321,6 +1356,7 @@ public class Tests {
 		}
 		return 1;
 	}
+	*/
 
 	/*
 	 * LPWStr marshalling
@@ -1639,5 +1675,55 @@ public class Tests {
 		else
 			return 2;
 	}
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_lpstr")]
+	public static extern int mono_test_marshal_lpstr ([MarshalAs(UnmanagedType.LPStr)] string str);
+
+	public static int test_0_mono_test_marshal_lpstr () {
+		string str = "ABC";
+
+		if (mono_test_marshal_lpstr (str) != 0)
+			return 1;
+
+		return 0;
+	}
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_lpwstr")]
+	public static extern int mono_test_marshal_lpwstr ([MarshalAs(UnmanagedType.LPWStr)] string str);
+
+	public static int test_0_mono_test_marshal_lpwstr () {
+		string str = "ABC";
+
+		if (mono_test_marshal_lpwstr (str) != 0)
+			return 1;
+
+		return 0;
+	}
+
+
+	[method: DllImport ("libtest", EntryPoint="mono_test_marshal_return_lpstr")]
+	[return: MarshalAs(UnmanagedType.LPStr)]
+	public static extern string mono_test_marshal_return_lpstr ();
+
+	public static int test_0_mono_test_marshal_return_lpstr () {
+		string str = mono_test_marshal_return_lpstr ();
+		if ("XYZ" == str)
+			return 0;
+
+		return 1;
+	}
+
+	[method: DllImport ("libtest", EntryPoint="mono_test_marshal_return_lpwstr")]
+	[return: MarshalAs(UnmanagedType.LPWStr)]
+	public static extern string mono_test_marshal_return_lpwstr ();
+
+	public static int test_0_mono_test_marshal_return_lpwstr () {
+		string str = mono_test_marshal_return_lpwstr ();
+		if ("XYZ" == str)
+			return 0;
+
+		return 1;
+	}
+
 }
 

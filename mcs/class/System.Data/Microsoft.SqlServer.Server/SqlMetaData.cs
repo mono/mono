@@ -44,87 +44,87 @@ namespace Microsoft.SqlServer.Server {
 
 		SqlCompareOptions compareOptions = SqlCompareOptions.None;
 		string databaseName = null;
-		long localeId = 0L;
+		long _localeId = 0L;
 		long maxLength = 0L;
 		string name;
 		byte precision = 10;
 		byte scale = 0;
 		string owningSchema = null;
 		string objectName = null;
-		SqlDbType sqlDbType = SqlDbType.NVarChar;
-		DbType dbType = DbType.String;
+		SqlDbType _sqlDbType = SqlDbType.NVarChar;
+		DbType _dbType = DbType.String;
 		Type type = typeof (string);
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public SqlMetaData (string name, SqlDbType sqlDbType)
+		public SqlMetaData (string name, SqlDbType dbType)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name can not be null");
-			switch (sqlDbType) {
+			switch (dbType) {
 			case SqlDbType.Bit:
 				maxLength = 1;
 				precision = 1;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Boolean;
+				_dbType = DbType.Boolean;
 				type = typeof (bool);
 				break;
 			case SqlDbType.BigInt:
 				maxLength = 8;
 				precision = 19;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int64;
+				_dbType = DbType.Int64;
 				type = typeof (long);
 				break;
 			case SqlDbType.DateTime:
 				maxLength = 8;
 				precision = 23;
 				scale = 3;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.DateTime;
+				_dbType = DbType.DateTime;
 				type = typeof (DateTime);
 				break;
 			case SqlDbType.Decimal:
 				maxLength = 9;
 				precision = 18;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Decimal;
+				_dbType = DbType.Decimal;
 				type = typeof (decimal);
 				break;
 			case SqlDbType.Float:
 				maxLength = 8;
 				precision = 53;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Double;
+				_dbType = DbType.Double;
 				type = typeof (float);
 				break;
 			case SqlDbType.Int:
 				maxLength = 4;
 				precision = 10;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int32;
+				_dbType = DbType.Int32;
 				type = typeof (int);
 				break;
 			case SqlDbType.Money:
 				maxLength = 8;
 				precision = 19;
 				scale = 4;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Currency;
+				_dbType = DbType.Currency;
 				type = typeof (double);
 				break;
 			  /*
@@ -140,139 +140,139 @@ namespace Microsoft.SqlServer.Server {
 				maxLength = 4;
 				precision = 16;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.DateTime;
+				_dbType = DbType.DateTime;
 				type = typeof (DateTime);
 				break;
 			case SqlDbType.SmallInt:
 				maxLength = 2;
 				precision = 5;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int16;
+				_dbType = DbType.Int16;
 				type = typeof (short);
 				break;
 			case SqlDbType.SmallMoney:
 				maxLength = 4;
 				precision = 10;
 				scale = 4;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Currency;
+				_dbType = DbType.Currency;
 				type = typeof (double);
 				break;
 			case SqlDbType.Timestamp:
 				maxLength = 8;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.DateTime;
+				_dbType = DbType.DateTime;
 				type = typeof (DateTime);
 				break;
 			case SqlDbType.TinyInt:
 				maxLength = 1;
 				precision = 3;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int16;
+				_dbType = DbType.Int16;
 				type = typeof (short);
 				break;
 			case SqlDbType.UniqueIdentifier:
 				maxLength = 16;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Guid;
+				_dbType = DbType.Guid;
 				type = typeof (Guid);
 				break;
 			case SqlDbType.Xml:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.Xml;
+				_dbType = DbType.Xml;
 				type = typeof (string);
 				break;
 			default:
 				throw new ArgumentException ("SqlDbType not supported");
 			}
 			this.name = name;
-			this.sqlDbType = sqlDbType;
+			this._sqlDbType = dbType;
 		}
 
-		public SqlMetaData (string name, SqlDbType sqlDbType, long maxLength)
+		public SqlMetaData (string name, SqlDbType dbType, long maxLength)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name can not be null");
-			switch (sqlDbType) {
+			switch (dbType) {
 			case SqlDbType.Binary:
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.Binary;
+				_dbType = DbType.Binary;
 				type = typeof (byte []);
 				break;
 			case SqlDbType.Char:
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				_localeId = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.AnsiStringFixedLength;
+				_dbType = DbType.AnsiStringFixedLength;
 				type = typeof (string);
 				break;
 			case SqlDbType.Image:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Binary;
+				_dbType = DbType.Binary;
 				type = typeof (byte []);
 				break;
 			case SqlDbType.NChar:
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				_localeId = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (string);
 				break;
 			case SqlDbType.NText:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				_localeId = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (string);
 				break;
 			case SqlDbType.NVarChar:
 				maxLength = -1;
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				_localeId = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (string);
 				break;
 			case SqlDbType.Text:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				_localeId = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (char []);
 				break;
 			case SqlDbType.VarBinary:
 				maxLength = -1;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.Binary;
+				_dbType = DbType.Binary;
 				type = typeof (byte []);
 				break;
 			case SqlDbType.VarChar:
 				maxLength = -1;
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				_localeId = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (char []);
 				break;
 			default:
@@ -280,22 +280,22 @@ namespace Microsoft.SqlServer.Server {
 			}
 			this.maxLength = maxLength;
 			this.name = name;
-			this.sqlDbType = sqlDbType;
+			this._sqlDbType = dbType;
 		}
 
 		[MonoTODO]
-		public SqlMetaData (string name, SqlDbType sqlDbType, Type userDefinedType)
+		public SqlMetaData (string name, SqlDbType dbType, Type userDefinedType)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name can not be null");
-			switch (sqlDbType) {
+			switch (dbType) {
 			case SqlDbType.Udt:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Guid;
+				_dbType = DbType.Guid;
 				type = typeof (Guid);
 				break;
 			default:
@@ -307,175 +307,175 @@ namespace Microsoft.SqlServer.Server {
 			throw new NotImplementedException ();
 		}
 
-		public SqlMetaData (string name, SqlDbType sqlDbType, byte precision, byte scale)
+		public SqlMetaData (string name, SqlDbType dbType, byte precision, byte scale)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name can not be null");
-			switch (sqlDbType) {
+			switch (dbType) {
 			case SqlDbType.Decimal:
 				maxLength = 9;
 				this.precision = precision;
 				this.scale = scale;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Decimal;
+				_dbType = DbType.Decimal;
 				type = typeof (decimal);
 				break;
 			default:
 				throw new ArgumentException ("SqlDbType not supported");
 			}
 			this.name = name;
-			this.sqlDbType = sqlDbType;
+			this._sqlDbType = dbType;
 		}
 
-		public SqlMetaData (string name, SqlDbType sqlDbType, long maxLength, long locale, SqlCompareOptions compareOptions)
+		public SqlMetaData (string name, SqlDbType dbType, long maxLength, long locale, SqlCompareOptions compareOptions)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name can not be null");
-			switch (sqlDbType) {
+			switch (dbType) {
 			case SqlDbType.Char:
-				dbType = DbType.AnsiStringFixedLength;
+				_dbType = DbType.AnsiStringFixedLength;
 				type = typeof (char []);
 				break;
 			case SqlDbType.NChar:
-				dbType = DbType.StringFixedLength;
+				_dbType = DbType.StringFixedLength;
 				type = typeof (char []);
 				break;
 			case SqlDbType.NText:
 			case SqlDbType.NVarChar:
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (string);
 				break;
 			case SqlDbType.Text:
 			case SqlDbType.VarChar:
-				dbType = DbType.AnsiString;
+				_dbType = DbType.AnsiString;
 				type = typeof (char []);
 				break;
 			default:
 				throw new ArgumentException ("SqlDbType not supported");
 			}
 			this.compareOptions = compareOptions;
-			this.localeId = locale;
+			this._localeId = locale;
 			this.maxLength = maxLength;
 			this.name = name;
-			this.sqlDbType = sqlDbType;
+			this._sqlDbType = dbType;
 		}
 
-		public SqlMetaData (string name, SqlDbType sqlDbType, string database, string owningSchema, string objectName)
+		public SqlMetaData (string name, SqlDbType dbType, string database, string owningSchema, string objectName)
 		{
 			if ((name == null || objectName == null) && database != null && owningSchema != null)
 				throw new ArgumentNullException ("name can not be null");
-			switch (sqlDbType) {
+			switch (dbType) {
 			case SqlDbType.Xml:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				_localeId = 0;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (string);
 				break;
 			default:
 				throw new ArgumentException ("SqlDbType not supported");
 			}
 			this.name = name;
-			this.sqlDbType = sqlDbType;
+			this._sqlDbType = dbType;
 			databaseName = database;
 			this.owningSchema = owningSchema;
 			this.objectName = objectName;
 		}
 
-		public SqlMetaData (string name, SqlDbType sqlDbType, long maxLength, byte precision,
-				    byte scale, long localeId, SqlCompareOptions compareOptions,
+		public SqlMetaData (string name, SqlDbType dbType, long maxLength, byte precision,
+				    byte scale, long locale, SqlCompareOptions compareOptions,
 				    Type userDefinedType)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name can not be null");
 			this.compareOptions = compareOptions;
-			this.localeId = localeId;
+			this._localeId = locale;
 			this.maxLength = maxLength;
 			this.precision = precision;
 			this.scale = scale;
-			switch (sqlDbType) {
+			switch (dbType) {
 			case SqlDbType.Bit:
 				maxLength = 1;
 				precision = 1;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Boolean;
+				_dbType = DbType.Boolean;
 				type = typeof (bool);
 				break;
 			case SqlDbType.BigInt:
 				maxLength = 8;
 				precision = 19;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int64;
+				_dbType = DbType.Int64;
 				type = typeof (long);
 				break;
 			case SqlDbType.DateTime:
 				maxLength = 8;
 				precision = 23;
 				scale = 3;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.DateTime;
+				_dbType = DbType.DateTime;
 				type = typeof (DateTime);
 				break;
 			case SqlDbType.Decimal:
 				maxLength = 9;
 				precision = 18;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Decimal;
+				_dbType = DbType.Decimal;
 				type = typeof (decimal);
 				break;
 			case SqlDbType.Float:
 				maxLength = 8;
 				precision = 53;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Decimal;
+				_dbType = DbType.Decimal;
 				type = typeof (float);
 				break;
 			case SqlDbType.Image:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Binary;
+				_dbType = DbType.Binary;
 				type = typeof (byte []);
 				break;
 			case SqlDbType.Int:
 				maxLength = 4;
 				precision = 10;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int32;
+				_dbType = DbType.Int32;
 				type = typeof (int);
 				break;
 			case SqlDbType.Money:
 				maxLength = 8;
 				precision = 19;
 				scale = 4;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Currency;
+				_dbType = DbType.Currency;
 				type = typeof (decimal);
 				break;
 			case SqlDbType.NText:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				locale = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.String;
+				_dbType = DbType.String;
 				type = typeof (string);
 				break;
 			  /*
@@ -491,99 +491,99 @@ namespace Microsoft.SqlServer.Server {
 				maxLength = 4;
 				precision = 24;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Single;
+				_dbType = DbType.Single;
 				type = typeof (Single);
 				break;
 			case SqlDbType.SmallDateTime:
 				maxLength = 4;
 				precision = 16;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.DateTime;
+				_dbType = DbType.DateTime;
 				type = typeof (DateTime);
 				break;
 			case SqlDbType.SmallInt:
 				maxLength = 2;
 				precision = 5;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int16;
+				_dbType = DbType.Int16;
 				type = typeof (short);
 				break;
 			case SqlDbType.SmallMoney:
 				maxLength = 4;
 				precision = 10;
 				scale = 4;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Currency;
+				_dbType = DbType.Currency;
 				type = typeof (decimal);
 				break;
 			case SqlDbType.Text:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				locale = Thread.CurrentThread.CurrentCulture.LCID;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.AnsiString;
+				_dbType = DbType.AnsiString;
 				type = typeof (char []);
 				break;
 			case SqlDbType.Timestamp:
 				maxLength = 8;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Byte;
+				_dbType = DbType.Byte;
 				type = typeof (byte []);
 				break;
 			case SqlDbType.TinyInt:
 				maxLength = 1;
 				precision = 3;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Int16;
+				_dbType = DbType.Int16;
 				type = typeof (short);
 				break;
 			case SqlDbType.UniqueIdentifier:
 				maxLength = 16;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Guid;
+				_dbType = DbType.Guid;
 				type = typeof (Guid);
 				break;
 			case SqlDbType.Udt:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Object;
+				_dbType = DbType.Object;
 				type = typeof (object);
 				break;
 			case SqlDbType.Variant:
 				maxLength = 8016;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.None;
-				dbType = DbType.Object;
+				_dbType = DbType.Object;
 				type = typeof (object);
 				break;
 			case SqlDbType.Xml:
 				maxLength = -1;
 				precision = 0;
 				scale = 0;
-				localeId = 0;
+				locale = 0;
 				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
-				dbType = DbType.Xml;
+				_dbType = DbType.Xml;
 				type = typeof (string);
 				break;
 			default:
@@ -600,7 +600,7 @@ namespace Microsoft.SqlServer.Server {
 					throw new ArgumentException ("SqlDbType not supported");
 			}
 			this.name = name;
-			this.sqlDbType = sqlDbType;
+			this._sqlDbType = dbType;
 		}
 
 		#endregion // Constructors
@@ -612,11 +612,11 @@ namespace Microsoft.SqlServer.Server {
 		}
 
 		public DbType DbType {
-			get { return dbType; }
+			get { return _dbType; }
 		}
 
 		public long LocaleId {
-			get { return localeId; }
+			get { return _localeId; }
 		}
 
 		public static long Max {
@@ -640,7 +640,7 @@ namespace Microsoft.SqlServer.Server {
 		}
 
 		public SqlDbType SqlDbType {
-			get { return sqlDbType; }
+			get { return _sqlDbType; }
 		}
 
 		public string XmlSchemaCollectionDatabase {

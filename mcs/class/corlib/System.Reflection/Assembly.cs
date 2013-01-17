@@ -6,6 +6,7 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,6 +48,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
 	public partial class Assembly : ICustomAttributeProvider, _Assembly {
 #elif MOONLIGHT
@@ -284,8 +286,13 @@ namespace System.Reflection {
 					"name");
 
 			ManifestResourceInfo info = GetManifestResourceInfo (name);
-			if (info == null)
-				return null;
+			if (info == null) {
+				Assembly a = AppDomain.CurrentDomain.DoResourceResolve (name, this);
+				if (a != null && a != this)
+					return a.GetManifestResourceStream (name);
+				else
+					return null;
+			}
 
 			if (info.ReferencedAssembly != null)
 				return info.ReferencedAssembly.GetManifestResourceStream (name);
@@ -882,12 +889,17 @@ namespace System.Reflection {
 				}
 			}
 		}
-#endif
 		
 #if NET_4_0
-		public PermissionSet PermissionSet {
+		public virtual PermissionSet PermissionSet {
 			get { return this.GrantedPermissionSet; }
 		}
+		
+		public virtual SecurityRuleSet SecurityRuleSet {
+			get { throw CreateNIE (); }
+		}
+#endif
+
 #endif
 
 #if NET_4_0 || MOONLIGHT || MOBILE

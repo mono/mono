@@ -1,0 +1,30 @@
+<Type Name="GenericBase&lt;U&gt;+FooEventArgs" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;+FooEventArgs">
+  <TypeSignature Language="C#" Value="public class GenericBase&lt;U&gt;.FooEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit GenericBase`1/FooEventArgs&lt;U&gt; extends System.EventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="U" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.EventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FooEventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

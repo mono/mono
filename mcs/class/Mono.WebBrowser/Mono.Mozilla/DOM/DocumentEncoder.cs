@@ -48,7 +48,7 @@ namespace Mono.Mozilla {
 
 			try {
 				docEncoder = (nsIDocumentEncoder)Marshal.GetObjectForIUnknown (docEncoderServicePtr);
-			} catch (System.Exception ex) {
+			} catch (System.Exception) {
 				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.DocumentEncoderService);
 			}
 

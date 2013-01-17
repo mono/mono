@@ -18,10 +18,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2007 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Authors:
 //	Chris Toshok (toshok@novell.com)
 //	Brian O'Keefe (zer0keefie@gmail.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 
 #if NET_4_0
@@ -36,7 +38,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace System.Collections.ObjectModel {
+namespace System.Collections.ObjectModel
+{
 	[Serializable]
 	public class ObservableCollection<T> : Collection<T>, INotifyCollectionChanged, INotifyPropertyChanged {
 		
@@ -71,11 +74,15 @@ namespace System.Collections.ObjectModel {
 
 		public ObservableCollection(IEnumerable<T> collection)
 		{
-			throw new NotImplementedException ();
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+
+			foreach (var item in collection)
+				Add (item);
 		}
 
 		public ObservableCollection(List<T> list)
-			: base (list)
+			: base (list != null ? new List<T> (list) : null)
 		{
 		}
 

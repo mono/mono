@@ -86,7 +86,6 @@ namespace System.Runtime.Remoting.Channels {
 			}
 		}
 
-#if NET_1_1
 		[ComVisible(false)]
 		public TypeFilterLevel TypeFilterLevel
 		{
@@ -98,7 +97,6 @@ namespace System.Runtime.Remoting.Channels {
 				_soapCore = new SoapCore (this, props, SoapServerFormatterSinkProvider.AllowedProperties);
 			}
 		}
-#endif
 
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
 						  IMessage msg, ITransportHeaders headers, Stream stream)

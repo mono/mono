@@ -5,7 +5,7 @@ include ../../../build/rules.make
 LIBRARY = nunit.core.dll
 LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LOCAL_MCS_FLAGS= -debug -r:nunit.framework.dll -r:nunit.core.interfaces.dll -r:System.dll /d:StronglyNamedAssembly
+LOCAL_MCS_FLAGS= -r:nunit.framework.dll -r:nunit.core.interfaces.dll -r:System.dll /d:StronglyNamedAssembly -warn:1
 NO_TEST = yo
 
 ifneq (net_2_0, $(PROFILE))

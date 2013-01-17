@@ -29,12 +29,10 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
-using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 using NUnit;
-using NUnit.Core;
 using NUnit.Framework;
 
 namespace MonoTests.System.Threading.Tasks
@@ -88,8 +86,8 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void ParallelForNestedTest ()
 		{
-			bool[] launched = new bool[100 * 20 * 10];
-			Parallel.For (0, 100, delegate (int i) {
+			bool[] launched = new bool[6 * 20 * 10];
+			Parallel.For (0, 6, delegate (int i) {
 				Parallel.For (0, 20, delegate (int j) {
 					Parallel.For (0, 10, delegate (int k) {
 							launched[i * 20 * 10 + j * 10 + k] = true;
@@ -121,6 +119,68 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			IEnumerable<int> e = Enumerable.Repeat (1, 10);
 			Parallel.ForEach (e, delegate (int element) { throw new Exception ("foo"); });
+		}
+
+		[Test]
+		public void BasicInvokeTest ()
+		{
+			int val1 = 0, val2 = 0;
+
+			Parallel.Invoke (() => Interlocked.Increment (ref val1), () => Interlocked.Increment (ref val2));
+			Assert.AreEqual (1, val1, "#1");
+			Assert.AreEqual (1, val2, "#2");
+		}
+
+		[Test]
+		public void InvokeWithOneNullActionTest ()
+		{
+			int val1 = 0, val2 = 0;
+
+			try {
+				Parallel.Invoke (() => Interlocked.Increment (ref val1), null, () => Interlocked.Increment (ref val2));
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (0, val1, "#1");
+				Assert.AreEqual (0, val2, "#2");
+				return;
+			}
+			Assert.Fail ("Shouldn't be there");
+		}
+
+		[Test]
+		public void OneActionInvokeTest ()
+		{
+			int val = 0;
+
+			Parallel.Invoke (() => Interlocked.Increment (ref val));
+			Assert.AreEqual (1, val, "#1");
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void InvokeWithNullActions ()
+		{
+			Parallel.Invoke ((Action[])null);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void InvokeWithNullOptions ()
+		{
+			Parallel.Invoke ((ParallelOptions)null, () => Thread.Sleep (100));
+		}
+
+		[Test]
+		public void InvokeWithExceptions ()
+		{
+			try {
+				Parallel.Invoke (() => { throw new ApplicationException ("foo"); }, () => { throw new IOException ("foo"); });
+			} catch (AggregateException ex) {
+				Assert.AreEqual (2, ex.InnerExceptions.Count);
+				foreach (var e in ex.InnerExceptions)
+					Console.WriteLine (e.GetType ());
+				Assert.IsTrue (ex.InnerExceptions.Any (e => e.GetType () == typeof (ApplicationException)));
+				Assert.IsTrue (ex.InnerExceptions.Any (e => e.GetType () == typeof (IOException)));
+				return;
+			}
+			Assert.Fail ("Shouldn't go there");
 		}
 	}
 }

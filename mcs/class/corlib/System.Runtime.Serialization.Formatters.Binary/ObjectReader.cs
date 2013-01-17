@@ -46,9 +46,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		StreamingContext _context;
 		SerializationBinder _binder;
 		
-#if NET_1_1
 		TypeFilterLevel _filterLevel;
-#endif
 
 		ObjectManager _manager;
 		Hashtable _registeredAssemblies = new Hashtable();
@@ -84,9 +82,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_binder = formatter.Binder;
 			_manager = new ObjectManager (_surrogateSelector, _context);
 			
-#if NET_1_1
 			_filterLevel = formatter.FilterLevel;
-#endif
 		}
 
 		public void ReadObjectGraph (BinaryReader reader, bool readHeaders, out object result, out Header[] headers)
@@ -701,10 +697,6 @@ namespace System.Runtime.Serialization.Formatters.Binary
 							
 						if (field != null)
 							metadata.MemberInfos [n] = field;
-#if ONLY_1_1
-						else
-							throw new SerializationException ("Field \"" + names[n] + "\" not found in class " + metadata.Type.FullName);
-#endif
 						
 						if (!hasTypeInfo) {
 							types [n] = field.FieldType;

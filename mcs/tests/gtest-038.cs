@@ -53,7 +53,7 @@ class Queue<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Queue<int> queue = new Queue<int> (5, 9);
 		queue.Test ();

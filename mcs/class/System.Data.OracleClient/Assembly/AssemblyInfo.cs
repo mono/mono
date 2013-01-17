@@ -34,22 +34,11 @@ using System.Runtime.InteropServices;
 
 #if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
-	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile ("../ecma.pub")]
 #endif
 
-#if NET_2_0
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: AllowPartiallyTrustedCallers]
-	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-	[assembly: Dependency ("System.Data,", LoadHint.Always)]
-#elif NET_1_1
-	[assembly: AssemblyTrademark ("")]
-	[assembly: AssemblyConfiguration ("")]
-	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-	[assembly: TypeLibVersion (1, 10)]
-#elif NET_1_0
-	[assembly: AssemblyTrademark ("")]
-	[assembly: AssemblyConfiguration ("")]
-#endif
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+[assembly: Dependency ("System.Data,", LoadHint.Always)]

@@ -1,29 +1,32 @@
 /*
+ * sgen-protocol.c: Binary protocol of internal activity, to aid
+ * debugging.
+ *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifdef HAVE_SGEN_GC
+
 #include "config.h"
+#include "sgen-gc.h"
 #include "sgen-protocol.h"
+#include "sgen-memory-governor.h"
+#include "utils/mono-mmap.h"
 
 #ifdef SGEN_BINARY_PROTOCOL
 
@@ -42,7 +45,6 @@ struct _BinaryProtocolBuffer {
 };
 
 static BinaryProtocolBuffer *binary_protocol_buffers = NULL;
-LOCK_DECLARE (binary_protocol_mutex);
 
 void
 binary_protocol_init (const char *filename)
@@ -67,7 +69,7 @@ binary_protocol_flush_buffers_rec (BinaryProtocolBuffer *buffer)
 	g_assert (buffer->index > 0);
 	fwrite (buffer->buffer, 1, buffer->index, binary_protocol_file);
 
-	mono_sgen_free_os_memory (buffer, sizeof (BinaryProtocolBuffer));
+	sgen_free_os_memory (buffer, sizeof (BinaryProtocolBuffer), SGEN_ALLOC_INTERNAL);
 }
 
 void
@@ -95,12 +97,12 @@ binary_protocol_get_buffer (int length)
 	if (buffer && buffer->index + length <= BINARY_PROTOCOL_BUFFER_SIZE)
 		return buffer;
 
-	new_buffer = mono_sgen_alloc_os_memory (sizeof (BinaryProtocolBuffer), TRUE);
+	new_buffer = sgen_alloc_os_memory (sizeof (BinaryProtocolBuffer), SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE, "debugging memory");
 	new_buffer->next = buffer;
 	new_buffer->index = 0;
 
 	if (InterlockedCompareExchangePointer ((void**)&binary_protocol_buffers, new_buffer, buffer) != buffer) {
-		mono_sgen_free_os_memory (new_buffer, sizeof (BinaryProtocolBuffer));
+		sgen_free_os_memory (new_buffer, sizeof (BinaryProtocolBuffer), SGEN_ALLOC_INTERNAL);
 		goto retry;
 	}
 
@@ -149,11 +151,19 @@ protocol_entry (unsigned char type, gpointer data, int size)
 }
 
 void
-binary_protocol_collection (int generation)
+binary_protocol_collection_begin (int index, int generation)
 {
-	SGenProtocolCollection entry = { generation };
+	SGenProtocolCollection entry = { index, generation };
 	binary_protocol_flush_buffers (FALSE);
-	protocol_entry (SGEN_PROTOCOL_COLLECTION, &entry, sizeof (SGenProtocolCollection));
+	protocol_entry (SGEN_PROTOCOL_COLLECTION_BEGIN, &entry, sizeof (SGenProtocolCollection));
+}
+
+void
+binary_protocol_collection_end (int index, int generation)
+{
+	SGenProtocolCollection entry = { index, generation };
+	binary_protocol_flush_buffers (FALSE);
+	protocol_entry (SGEN_PROTOCOL_COLLECTION_END, &entry, sizeof (SGenProtocolCollection));
 }
 
 void
@@ -234,11 +244,17 @@ binary_protocol_empty (gpointer start, int size)
 }
 
 void
+binary_protocol_thread_suspend (gpointer thread, gpointer stopped_ip)
+{
+	SGenProtocolThreadSuspend entry = { thread, stopped_ip };
+	protocol_entry (SGEN_PROTOCOL_THREAD_SUSPEND, &entry, sizeof (SGenProtocolThreadSuspend));
+}
+
+void
 binary_protocol_thread_restart (gpointer thread)
 {
 	SGenProtocolThreadRestart entry = { thread };
 	protocol_entry (SGEN_PROTOCOL_THREAD_RESTART, &entry, sizeof (SGenProtocolThreadRestart));
-
 }
 
 void
@@ -265,4 +281,13 @@ binary_protocol_missing_remset (gpointer obj, gpointer obj_vtable, int offset, g
 
 }
 
+void
+binary_protocol_card_scan (gpointer start, int size)
+{
+	SGenProtocolCardScan entry = { start, size };
+	protocol_entry (SGEN_PROTOCOL_CARD_SCAN, &entry, sizeof (SGenProtocolCardScan));
+}
+
 #endif
+
+#endif /* HAVE_SGEN_GC */

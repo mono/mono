@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../../../build/rules.make
 
 LOCAL_MCS_FLAGS = /nowarn:0168 /nowarn:0162 /unsafe \
- /noconfig /r:System.dll /r:System.Web.dll \
+ /r:System.dll /r:System.Web.dll \
  /r:System.Drawing.dll /r:System.Xml.dll
 
 all-local install-local uninstall-local doc-update-local csproj-local:

@@ -1038,6 +1038,16 @@ mono_test_marshal_stringbuilder (char *s, int n)
 }
 
 LIBTEST_API int STDCALL  
+mono_test_marshal_stringbuilder2 (char *s, int n)
+{
+	const char m[] = "EFGH";
+
+	strncpy(s, m, n);
+	s [n] = '\0';
+	return 0;
+}
+
+LIBTEST_API int STDCALL  
 mono_test_marshal_stringbuilder_default (char *s, int n)
 {
 	const char m[] = "This is my message.  Isn't it nice?";
@@ -1093,6 +1103,22 @@ mono_test_marshal_stringbuilder_out_unicode (gunichar2 **s)
 
 	g_free (s2);
 
+	return 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_stringbuilder_ref (char **s)
+{
+	const char m[] = "This is my message.  Isn't it nice?";
+	char *str;
+
+	if (strcmp (*s, "ABC"))
+		return 1;
+
+	str = marshal_alloc (strlen (m) + 1);
+	memcpy (str, m, strlen (m) + 1);
+	
+	*s = str;
 	return 0;
 }
 
@@ -1407,6 +1433,8 @@ string_marshal_test2 (char **str)
 
 	if (strcmp (*str, "TEST1"))
 		return -1;
+
+	*str = marshal_strdup ("TEST2");
 
 	return 0;
 }
@@ -3146,9 +3174,12 @@ ITestOut(MonoComObject* pUnk, MonoComObject* *ppUnk)
 	return S_OK;
 }
 
+static void create_com_object (MonoComObject** pOut);
+
 LIBTEST_API int STDCALL 
 get_ITest(MonoComObject* pUnk, MonoComObject* *ppUnk)
 {
+	create_com_object (ppUnk);
 	return S_OK;
 }
 
@@ -3276,7 +3307,7 @@ mono_test_marshal_ccw_itest (MonoComObject *pUnk)
 /* thunks.cs:TestStruct */
 typedef struct _TestStruct {
 	int A;
-	double B ALIGN(8);  /* align according to  mono's struct layout */
+	double B;
 } TestStruct;
 
 /* Searches for mono symbols in all loaded modules */
@@ -5058,4 +5089,60 @@ mono_test_marshal_thread_attach (SimpleDelegate del)
 
 	return call_managed_res;
 #endif
+}
+
+typedef int (STDCALL *Callback) (void);
+
+static Callback callback;
+
+LIBTEST_API void STDCALL 
+mono_test_marshal_set_callback (Callback cb)
+{
+	callback = cb;
+}
+
+LIBTEST_API int STDCALL 
+mono_test_marshal_call_callback (void)
+{
+	return callback ();
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_lpstr (char *str)
+{
+	return strcmp ("ABC", str);
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_lpwstr (gunichar2 *str)
+{
+	char *s;
+	int res;
+
+	s = g_utf16_to_utf8 (str, -1, NULL, NULL, NULL);
+	res = strcmp ("ABC", s);
+	g_free (s);
+
+	return res;
+}
+
+LIBTEST_API char* STDCALL
+mono_test_marshal_return_lpstr (void)
+{
+	char *res = marshal_alloc (4);
+	strcpy (res, "XYZ");
+	return res;
+}
+
+
+LIBTEST_API gunichar2* STDCALL
+mono_test_marshal_return_lpwstr (void)
+{
+	gunichar2 *res = marshal_alloc (8);
+	gunichar2* tmp = g_utf8_to_utf16 ("XYZ", -1, NULL, NULL, NULL);
+
+	memcpy (res, tmp, 8);
+	g_free (tmp);
+
+	return res;
 }

@@ -1324,10 +1324,15 @@ namespace System.Windows.Forms {
 		{
 			object oldValue = this.Value;
 
-			if (DataProperty != null && !DataProperty.IsReadOnly)
+			if (DataProperty != null && !DataProperty.IsReadOnly) {
 				DataProperty.SetValue (OwningRow.DataBoundItem, value);
-			else
+			} else if (DataGridView != null && DataGridView.VirtualMode) {
+				DataGridViewCellValueEventArgs ea = new DataGridViewCellValueEventArgs(ColumnIndex, RowIndex);
+				ea.Value = value;
+				DataGridView.OnCellValuePushed(ea);
+			} else {
 				valuex = value;
+			}
 
 			if (!Object.ReferenceEquals (oldValue, value) || !Object.Equals (oldValue, value)) {
 				RaiseCellValueChanged (new DataGridViewCellEventArgs (ColumnIndex, RowIndex));

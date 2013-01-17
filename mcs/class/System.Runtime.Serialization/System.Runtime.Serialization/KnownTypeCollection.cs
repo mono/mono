@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -74,20 +74,36 @@ namespace System.Runtime.Serialization
 	  exists (and raises InvalidOperationException if required).
 
 */
+
 	internal static class TypeExtensions
 	{
+#if !NET_4_5
 		public static T GetCustomAttribute<T> (this MemberInfo type, bool inherit)
 		{
 			var arr = type.GetCustomAttributes (typeof (T), inherit);
 			return arr != null && arr.Length == 1 ? (T) arr [0] : default (T);
 		}
-
+#endif
 		public static IEnumerable<Type> GetInterfacesOrSelfInterface (this Type type)
 		{
 			if (type.IsInterface)
 				yield return type;
 			foreach (var t in type.GetInterfaces ())
 				yield return t;
+		}
+
+		public static bool ImplementsInterface (this Type type, Type iface)
+		{
+			foreach (var t in type.GetInterfacesOrSelfInterface ()) {
+				if (t == iface)
+					return true;
+			}
+
+			var baseType = type.BaseType;
+			if (baseType != null)
+				return baseType.ImplementsInterface (iface);
+			
+			return false;
 		}
 	}
 
@@ -213,8 +229,6 @@ namespace System.Runtime.Serialization
 				return name;
 			if (type == typeof (DBNull))
 				return dbnull_type;
-			if (type == typeof (DateTimeOffset))
-				return date_time_offset_type;
 			return QName.Empty;
 		}
 
@@ -241,6 +255,8 @@ namespace System.Runtime.Serialization
 					return base64_type;
 				if (type == typeof (Uri))
 					return any_uri_type;
+				if (type == typeof (DateTimeOffset))
+					return date_time_offset_type;
 				return QName.Empty;
 			case TypeCode.Boolean:
 				return bool_type;
@@ -504,26 +520,6 @@ namespace System.Runtime.Serialization
 				base.InsertItem (index - 1, type);
 		}
 
-		internal SerializationMap FindUserMap (QName qname)
-		{
-			lock (this)
-				return contracts.FirstOrDefault (c => c.XmlName == qname);
-		}
-
-		internal Type GetSerializedType (Type type)
-		{
-			if (IsPrimitiveNotEnum (type))
-				return type;
-			Type element = GetCollectionElementType (type);
-			if (element == null)
-				return type;
-			QName name = GetQName (type);
-			var map = FindUserMap (name);
-			if (map != null)
-				return map.RuntimeType;
-			return type;
-		}
-
 		internal SerializationMap FindUserMap (Type type)
 		{
 			lock (this) {
@@ -534,12 +530,38 @@ namespace System.Runtime.Serialization
 			}
 		}
 
+		internal SerializationMap FindUserMap (QName qname)
+		{
+			lock (this)
+				return contracts.FirstOrDefault (c => c.XmlName == qname);
+		}
+
+		internal SerializationMap FindUserMap (QName qname, Type type)
+		{
+			lock (this)
+				return contracts.FirstOrDefault (c => c.XmlName == qname && c.RuntimeType == type);
+		}
+
+		internal Type GetSerializedType (Type type)
+		{
+			if (IsPrimitiveNotEnum (type))
+				return type;
+			Type element = GetCollectionElementType (type);
+			if (element == null)
+				return type;
+			QName name = GetQName (type);
+			var map = FindUserMap (name, type);
+			if (map != null)
+				return map.RuntimeType;
+			return type;
+		}
+
 		internal QName GetQName (Type type)
 		{
 			SerializationMap map = FindUserMap (type);
 			if (map != null)
 				// already mapped.
-				return map.XmlName; 
+				return map.XmlName;
 			return GetStaticQName (type);
 		}
 
@@ -556,7 +578,7 @@ namespace System.Runtime.Serialization
 				return qname;
 
 			if (type.GetInterface ("System.Xml.Serialization.IXmlSerializable") != null)
-				//FIXME: Reusing GetSerializableQName here, since we just 
+				//FIXME: Reusing GetSerializableQName here, since we just
 				//need name of the type..
 				return GetSerializableQName (type);
 
@@ -565,8 +587,10 @@ namespace System.Runtime.Serialization
 				return qname;
 
 			Type element = GetCollectionElementType (type);
-			if (element != null)
-				return GetCollectionQName (element);
+			if (element != null) {
+				if (type.IsInterface || IsCustomCollectionType (type, element))
+					return GetCollectionQName (element);
+			}
 
 			if (GetAttribute<SerializableAttribute> (type) != null)
 				return GetSerializableQName (type);
@@ -596,7 +620,7 @@ namespace System.Runtime.Serialization
 				for (int i = 0; i < args.Length; i++)
 					name = name.Replace ("{" + i + "}", GetStaticQName (args [i]).Name);
 			}
-			
+
 			if (ns == null)
 				ns = GetDefaultNamespace (type);
 			return new QName (name, ns);
@@ -627,7 +651,7 @@ namespace System.Runtime.Serialization
 
 		internal static string GetDefaultName (Type type)
 		{
-			// FIXME: there could be decent ways to get 
+			// FIXME: there could be decent ways to get
 			// the same result...
 			string name = type.Namespace == null || type.Namespace.Length == 0 ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
 			if (type.IsGenericType) {
@@ -649,7 +673,7 @@ namespace System.Runtime.Serialization
 		static QName GetCollectionQName (Type element)
 		{
 			QName eqname = GetStaticQName (element);
-			
+
 			string ns = eqname.Namespace;
 			if (eqname.Namespace == MSSimpleNamespace)
 				//Arrays of Primitive types
@@ -699,7 +723,7 @@ namespace System.Runtime.Serialization
 				return false;
 			if (Type.GetTypeCode (type) != TypeCode.Object) // explicitly primitive
 				return true;
-			if (type == typeof (Guid) || type == typeof (object) || type == typeof(TimeSpan) || type == typeof(byte[]) || type==typeof(Uri)) // special primitives
+			if (type == typeof (Guid) || type == typeof (object) || type == typeof(TimeSpan) || type == typeof(byte[]) || type == typeof(Uri) || type == typeof(DateTimeOffset)) // special primitives
 				return true;
 #if !MOONLIGHT
 			// DOM nodes
@@ -769,7 +793,7 @@ namespace System.Runtime.Serialization
 				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (IEnumerable<>)))
 					return i.GetGenericArguments () [0];
 			foreach (Type i in ifaces)
-				if (i == typeof (IList))
+				if (i == typeof (IEnumerable))
 					return typeof (object);
 			return null;
 		}
@@ -788,13 +812,15 @@ namespace System.Runtime.Serialization
 
 			Type element = GetCollectionElementType (type);
 			if (element == null)
-				throw new InvalidOperationException (String.Format ("Type '{0}' is marked as collection contract, but it is not a collection", type));
+				throw new InvalidDataContractException (String.Format ("Type '{0}' is marked as collection contract, but it is not a collection", type));
+			if (type.GetMethod ("Add", new Type[] { element }) == null)
+				throw new InvalidDataContractException (String.Format ("Type '{0}' is marked as collection contract, but missing a public \"Add\" method", type));
 
 			TryRegister (element); // must be registered before the name conflict check.
 
 			QName qname = GetCollectionContractQName (type);
 			CheckStandardQName (qname);
-			var map = FindUserMap (qname);
+			var map = FindUserMap (qname, type);
 			if (map != null) {
 				var cmap = map as CollectionContractTypeMap;
 				if (cmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
@@ -814,9 +840,20 @@ namespace System.Runtime.Serialization
 
 			TryRegister (element);
 
+			/*
+			 * To qualify as a custom collection type, a type must have
+			 * a public parameterless constructor and an "Add" method
+			 * with the correct parameter type in addition to implementing
+			 * one of the collection interfaces.
+			 * 
+			 */
+
+			if (!type.IsArray && type.IsClass && !IsCustomCollectionType (type, element))
+				return null;
+
 			QName qname = GetCollectionQName (element);
 
-			var map = FindUserMap (qname);
+			var map = FindUserMap (qname, element);
 			if (map != null) {
 				var cmap = map as CollectionTypeMap;
 				if (cmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
@@ -828,6 +865,86 @@ namespace System.Runtime.Serialization
 				new CollectionTypeMap (type, element, qname, this);
 			contracts.Add (ret);
 			return ret;
+		}
+
+		static bool IsCustomCollectionType (Type type, Type elementType)
+		{
+			if (!type.IsClass)
+				return false;
+			if (type.GetConstructor (new Type [0]) == null)
+				return false;
+			if (type.GetMethod ("Add", new Type[] { elementType }) == null)
+				return false;
+
+			return true;
+		}
+
+		internal static bool IsInterchangeableCollectionType (Type contractType, Type graphType,
+		                                                      out QName collectionQName)
+		{
+			collectionQName = null;
+			if (GetAttribute<CollectionDataContractAttribute> (contractType) != null)
+				return false;
+
+			var type = contractType;
+			if (type.IsGenericType)
+				type = type.GetGenericTypeDefinition ();
+
+			var elementType = GetCollectionElementType (contractType);
+			if (elementType == null)
+				return false;
+			
+			if (contractType.IsArray) {
+				if (!graphType.IsArray || !elementType.Equals (graphType.GetElementType ()))
+					throw new InvalidCastException (String.Format ("Type '{0}' cannot be converted into '{1}'.", graphType.GetElementType (), elementType));
+			} else if (!contractType.IsInterface) {
+				if (GetAttribute<SerializableAttribute> (contractType) == null)
+					return false;
+
+				var graphElementType = GetCollectionElementType (graphType);
+				if (elementType != graphElementType)
+					return false;
+
+				if (!IsCustomCollectionType (contractType, elementType))
+					return false;
+			} else if (type.Equals (typeof (IEnumerable)) || type.Equals (typeof (IList)) ||
+			           type.Equals (typeof (ICollection))) {
+				if (!graphType.ImplementsInterface (contractType))
+					return false;
+			} else if (type.Equals (typeof (IEnumerable<>)) || type.Equals (typeof (IList<>)) ||
+			           type.Equals (typeof (ICollection<>))) {
+				var graphElementType = GetCollectionElementType (graphType);
+				if (graphElementType != elementType)
+					throw new InvalidCastException (String.Format (
+						"Cannot convert type '{0}' into '{1}'.", graphType, contractType));
+
+				if (!graphType.ImplementsInterface (contractType))
+					return false;
+			} else {
+				return false;
+			}
+
+			collectionQName = GetCollectionQName (elementType);
+			return true;
+		}
+
+		static bool ImplementsInterface (Type type, Type iface)
+		{
+			foreach (var i in type.GetInterfacesOrSelfInterface ())
+				if (iface == i)
+					return true;
+					
+			return false;
+		}
+
+
+		static bool TypeImplementsIEnumerable (Type type)
+		{
+			foreach (var iface in type.GetInterfacesOrSelfInterface ())
+				if (iface == typeof (IEnumerable) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IEnumerable<>)))
+					return true;
+			
+			return false;
 		}
 
 		static bool TypeImplementsIDictionary (Type type)
@@ -853,7 +970,7 @@ namespace System.Runtime.Serialization
 			TryRegister (ret.KeyType);
 			TryRegister (ret.ValueType);
 
-			var map = FindUserMap (ret.XmlName);
+			var map = FindUserMap (ret.XmlName, type);
 			if (map != null) {
 				var dmap = map as DictionaryTypeMap;
 				if (dmap == null) // The runtime type may still differ (between array and other IList; see bug #670560)
@@ -868,7 +985,7 @@ namespace System.Runtime.Serialization
 		{
 			QName qname = GetSerializableQName (type);
 
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			SharedTypeMap ret = new SharedTypeMap (type, qname, this);
@@ -884,7 +1001,7 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetSerializableQName (type);
 
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			XmlSerializableMap ret = new XmlSerializableMap (type, qname, this);
@@ -911,7 +1028,7 @@ namespace System.Runtime.Serialization
 			if (qname == null)
 				return null;
 			CheckStandardQName (qname);
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			SharedContractMap ret = new SharedContractMap (type, qname, this);
@@ -948,7 +1065,7 @@ namespace System.Runtime.Serialization
 			if (qname == null)
 				return null;
 
-			if (FindUserMap (qname) != null)
+			if (FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			EnumMap ret =

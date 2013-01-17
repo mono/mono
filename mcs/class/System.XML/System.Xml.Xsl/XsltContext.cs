@@ -33,22 +33,12 @@ namespace System.Xml.Xsl
 	public abstract class XsltContext : XmlNamespaceManager
 	{
 		#region Constructors
-#if NET_2_0
-		protected
-#else
-		public
-#endif
-		XsltContext ()
+		protected 	XsltContext ()
 			: base (new NameTable ())
 		{
 		}
 
-#if NET_2_0
-		protected
-#else
-		public
-#endif
-		XsltContext (NameTable table)
+		protected XsltContext (NameTable table)
 			: base (table)
 		{
 		}
@@ -58,14 +48,14 @@ namespace System.Xml.Xsl
 		#region Properties
 
 		public abstract bool Whitespace { get; }
-		public abstract bool PreserveWhitespace (XPathNavigator nav);
+		public abstract bool PreserveWhitespace (XPathNavigator node);
 
 		#endregion
 
 		#region Methods
 
 		public abstract int CompareDocument (string baseUri, string nextbaseUri);
-		public abstract IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] argTypes);
+		public abstract IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] ArgTypes);
 		public abstract IXsltContextVariable ResolveVariable (string prefix, string name);
 
 		#endregion

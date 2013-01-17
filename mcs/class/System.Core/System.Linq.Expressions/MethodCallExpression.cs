@@ -66,9 +66,11 @@ namespace System.Linq.Expressions {
 			this.arguments = arguments;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			ec.EmitCall (obj, arguments, method);
 		}
+#endif
 	}
 }

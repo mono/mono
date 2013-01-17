@@ -33,8 +33,13 @@ namespace I18N.CJK
 	using System.Text;
 	using I18N.Common;
 
+#if DISABLE_UNSAFE
+	using MonoEncoder = I18N.Common.MonoSafeEncoder;
+	using MonoEncoding = I18N.Common.MonoSafeEncoding;
+#endif
+
 	[Serializable]
-	public unsafe class CP932 : MonoEncoding
+	public class CP932 : MonoEncoding
 	{
 		// Magic number used by Windows for the Shift-JIS code page.
 		private const int SHIFTJIS_CODE_PAGE = 932;
@@ -44,6 +49,7 @@ namespace I18N.CJK
 		{
 		}
 
+#if !DISABLE_UNSAFE
 		// Get the number of bytes needed to encode a character buffer.
 		public unsafe override int GetByteCountImpl (char* chars, int count)
 		{
@@ -130,6 +136,7 @@ namespace I18N.CJK
 
 			// Convert the characters into their byte form.
 			int posn = byteIndex;
+			int end = charCount;
 			int byteLength = byteCount;
 			int ch, value;
 #if __PNET__
@@ -141,10 +148,9 @@ namespace I18N.CJK
 			byte[] greekToJis = JISConvert.Convert.greekToJis;
 			byte[] extraToJis = JISConvert.Convert.extraToJis;
 #endif
-			while(charCount > 0)
+			for (int i = charIndex; i < end; i++, charCount--)
 			{
-				ch = chars[charIndex++];
-				--charCount;
+				ch = chars[i];
 				if(posn >= byteLength)
 				{
 					throw new ArgumentException
@@ -240,7 +246,7 @@ namespace I18N.CJK
 #if NET_2_0
 						HandleFallback (ref buffer,
 							chars, ref charIndex, ref charCount,
-							bytes, ref posn, ref byteCount);
+							bytes, ref posn, ref byteCount, null);
 #else
 						// Invalid character.
 						bytes[posn++] = (byte)'?';
@@ -292,7 +298,7 @@ namespace I18N.CJK
 #if NET_2_0
 					HandleFallback (ref buffer,
 						chars, ref charIndex, ref charCount,
-						bytes, ref posn, ref byteCount);
+						bytes, ref posn, ref byteCount, null);
 #else
 					bytes[posn++] = (byte)'?';
 #endif
@@ -345,6 +351,295 @@ namespace I18N.CJK
 			// Return the final length to the caller.
 			return posn - byteIndex;
 		}
+#else
+		// Get the number of bytes needed to encode a character buffer.
+		public override int GetByteCount(char[] chars, int index, int count)
+		{
+			// Determine the length of the final output.
+			int length = 0;
+			int ch, value;
+			byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+			byte[] extraToJis = JISConvert.Convert.extraToJis;
+
+			while (count > 0)
+			{
+				ch = chars[index++];
+				--count;
+				++length;
+				if (ch < 0x0080)
+				{
+					// Character maps to itself.
+					continue;
+				}
+				else if (ch < 0x0100)
+				{
+					// Check for special Latin 1 characters that
+					// can be mapped to double-byte code points.
+					if (ch == 0x00A2 || ch == 0x00A3 || ch == 0x00A7 ||
+					   ch == 0x00A8 || ch == 0x00AC || ch == 0x00B0 ||
+					   ch == 0x00B1 || ch == 0x00B4 || ch == 0x00B6 ||
+					   ch == 0x00D7 || ch == 0x00F7)
+					{
+						++length;
+					}
+				}
+				else if (ch >= 0x0391 && ch <= 0x0451)
+				{
+					// Greek subset characters.
+					++length;
+				}
+				else if (ch >= 0x2010 && ch <= 0x9FA5)
+				{
+					// This range contains the bulk of the CJK set.
+					value = (ch - 0x2010) * 2;
+					value = ((int)(cjkToJis[value])) |
+							(((int)(cjkToJis[value + 1])) << 8);
+					if (value >= 0x0100)
+					{
+						++length;
+					}
+				}
+				else if (ch >= 0xE000 && ch <= 0xE757)
+					// PrivateUse
+					++length;
+				else if (ch >= 0xFF01 && ch <= 0xFFEF)
+				{
+					// This range contains extra characters,
+					// including half-width katakana.
+					value = (ch - 0xFF01) * 2;
+					value = ((int)(extraToJis[value])) |
+							(((int)(extraToJis[value + 1])) << 8);
+					if (value >= 0x0100)
+					{
+						++length;
+					}
+				}
+			}
+
+			// Return the length to the caller.
+			return length;
+		}
+
+		// Get the bytes that result from encoding a character buffer.
+		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
+		{
+			int byteCount = bytes.Length;
+#if NET_2_0
+			EncoderFallbackBuffer buffer = null;
+#endif
+
+			// Convert the characters into their byte form.
+			int posn = byteIndex;
+			int end = charIndex + charCount;
+			int byteLength = byteCount;
+			int /*ch,*/ value;
+			byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+			byte[] greekToJis = JISConvert.Convert.greekToJis;
+			byte[] extraToJis = JISConvert.Convert.extraToJis;
+
+			for (int i = charIndex; i < end; i++, charCount--)
+			{
+				int ch = chars[i];
+
+				if (posn >= byteLength)
+				{
+					throw new ArgumentException
+						(Strings.GetString("Arg_InsufficientSpace"),
+						 "bytes");
+				}
+				if (ch < 0x0080)
+				{
+					// Character maps to itself.
+					bytes[posn++] = (byte)ch;
+					continue;
+				}
+				else if (ch < 0x0100)
+				{
+					// Check for special Latin 1 characters that
+					// can be mapped to double-byte code points.
+					if (ch == 0x00A2 || ch == 0x00A3 || ch == 0x00A7 ||
+					   ch == 0x00A8 || ch == 0x00AC || ch == 0x00B0 ||
+					   ch == 0x00B1 || ch == 0x00B4 || ch == 0x00B6 ||
+					   ch == 0x00D7 || ch == 0x00F7)
+					{
+						if ((posn + 1) >= byteLength)
+						{
+							throw new ArgumentException
+								(Strings.GetString
+									("Arg_InsufficientSpace"), "bytes");
+						}
+						switch (ch)
+						{
+							case 0x00A2:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x91;
+								break;
+
+							case 0x00A3:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x92;
+								break;
+
+							case 0x00A7:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x98;
+								break;
+
+							case 0x00A8:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x4E;
+								break;
+
+							case 0x00AC:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0xCA;
+								break;
+
+							case 0x00B0:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x8B;
+								break;
+
+							case 0x00B1:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x7D;
+								break;
+
+							case 0x00B4:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x4C;
+								break;
+
+							case 0x00B6:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0xF7;
+								break;
+
+							case 0x00D7:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x7E;
+								break;
+
+							case 0x00F7:
+								bytes[posn++] = (byte)0x81;
+								bytes[posn++] = (byte)0x80;
+								break;
+						}
+					}
+					else if (ch == 0x00A5)
+					{
+						// Yen sign.
+						bytes[posn++] = (byte)0x5C;
+					}
+					else
+					{
+#if NET_2_0
+						HandleFallback (ref buffer, chars, ref i, ref charCount, bytes, 
+							ref byteIndex, ref byteCount, null);
+#else
+						// Invalid character.
+						bytes[posn++] = (byte)'?';
+#endif
+					}
+					continue;
+				}
+				else if (ch >= 0x0391 && ch <= 0x0451)
+				{
+					// Greek subset characters.
+					value = (ch - 0x0391) * 2;
+					value = ((int)(greekToJis[value])) |
+							(((int)(greekToJis[value + 1])) << 8);
+				}
+				else if (ch >= 0x2010 && ch <= 0x9FA5)
+				{
+					// This range contains the bulk of the CJK set.
+					value = (ch - 0x2010) * 2;
+					value = ((int)(cjkToJis[value])) |
+							(((int)(cjkToJis[value + 1])) << 8);
+				}
+				else if (ch >= 0xE000 && ch <= 0xE757)
+				{
+					// PrivateUse
+					int diff = ch - 0xE000;
+					value = ((int)(diff / 0xBC) << 8)
+						+ (diff % 0xBC)
+						+ 0xF040;
+					if (value % 0x100 >= 0x7F)
+						value++;
+				}
+				else if (ch >= 0xFF01 && ch <= 0xFF60)
+				{
+					value = (ch - 0xFF01) * 2;
+					value = ((int)(extraToJis[value])) |
+							(((int)(extraToJis[value + 1])) << 8);
+				}
+				else if (ch >= 0xFF60 && ch <= 0xFFA0)
+				{
+					value = ch - 0xFF60 + 0xA0;
+				}
+				else
+				{
+					// Invalid character.
+					value = 0;
+				}
+				if (value == 0)
+				{
+#if NET_2_0
+					HandleFallback (ref buffer, chars, ref charIndex, ref charCount,
+						bytes, ref posn, ref byteCount, null);
+#else
+					bytes[posn++] = (byte)'?';
+#endif
+				}
+				else if (value < 0x0100)
+				{
+					bytes[posn++] = (byte)value;
+				}
+				else if ((posn + 1) >= byteLength)
+				{
+					throw new ArgumentException
+						(Strings.GetString("Arg_InsufficientSpace"),
+						 "bytes");
+				}
+				else if (value < 0x8000)
+				{
+					// JIS X 0208 character.
+					value -= 0x0100;
+					ch = (value / 0xBC);
+					value = (value % 0xBC) + 0x40;
+					if (value >= 0x7F)
+					{
+						++value;
+					}
+					if (ch < (0x9F - 0x80))
+					{
+						bytes[posn++] = (byte)(ch + 0x81);
+					}
+					else
+					{
+						bytes[posn++] = (byte)(ch - (0x9F - 0x80) + 0xE0);
+					}
+					bytes[posn++] = (byte)value;
+				}
+				else if (value >= 0xF040 && value <= 0xF9FC)
+				{
+					// PrivateUse
+					bytes[posn++] = (byte)(value / 0x100);
+					bytes[posn++] = (byte)(value % 0x100);
+				}
+				else
+				{
+					// JIS X 0212 character, which Shift-JIS doesn't
+					// support, but we've already allocated two slots.
+					bytes[posn++] = (byte)'?';
+					bytes[posn++] = (byte)'?';
+				}
+			}
+
+			// Return the final length to the caller.
+			return posn - byteIndex;
+		}
+#endif
 
 		public override int GetCharCount (byte [] bytes, int index, int count)
 		{

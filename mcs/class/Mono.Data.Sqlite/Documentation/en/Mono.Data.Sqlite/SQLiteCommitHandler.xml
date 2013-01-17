@@ -1,0 +1,27 @@
+<Type Name="SQLiteCommitHandler" FullName="Mono.Data.Sqlite.SQLiteCommitHandler">
+  <TypeSignature Language="C#" Value="public delegate void SQLiteCommitHandler(object sender, CommitEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SQLiteCommitHandler extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="Mono.Data.Sqlite.CommitEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="sender">The connection committing the transaction</param>
+    <param name="e">Event arguments on the transaction</param>
+    <summary>
+            Raised when a transaction is about to be committed.  To roll back a transaction, set the
+            rollbackTrans boolean value to true.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

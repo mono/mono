@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Text;
@@ -112,7 +110,7 @@ namespace Mono.XBuild.Utilities {
 						sb.Append ('"');
 						break;
 					default:
-						throw new FormatException ("Unrecogised XML entity '&" + entity + ";'.");
+						throw new FormatException ("Unrecognized XML entity '&" + entity + ";'.");
 					}
 					i = end;
 				} else
@@ -227,5 +225,3 @@ namespace Mono.XBuild.Utilities {
 	}
 
 }
-
-#endif

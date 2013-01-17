@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 
-#if NET_1_1
 	[Serializable]
 	[ComVisible(false)]
 	public enum SxsOption {
@@ -40,5 +39,4 @@ namespace System.EnterpriseServices {
 		Inherit,
 		New
 	}
-#endif
 }

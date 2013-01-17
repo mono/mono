@@ -41,7 +41,7 @@ namespace Mono.Messaging {
 		int appSpecific;
 		DateTime arrivedTime;
 		bool attachSenderId = true;
-		bool authenticated;
+		const bool authenticated = false;
 		string authenticationProviderName = "Microsoft Base Cryptographic Provider, Ver. 1.0";
 		CryptographicProviderType authenticationProviderType 
 			= CryptographicProviderType.RsaFull;

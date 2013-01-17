@@ -35,6 +35,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Security.Principal;
+using System.Runtime.InteropServices;
 
 namespace System.IO.Pipes
 {
@@ -131,7 +132,9 @@ namespace System.IO.Pipes
 				if (!IsConnected)
 					throw new InvalidOperationException ("Pipe is not connected");
 				if (stream == null)
-					stream = new FileStream (handle.DangerousGetHandle (), CanRead ? (CanWrite ? FileAccess.ReadWrite : FileAccess.Read) : FileAccess.Write, true, buffer_size, IsAsync);
+					stream = new FileStream (handle.DangerousGetHandle (),
+								 CanRead ? (CanWrite ? FileAccess.ReadWrite : FileAccess.Read)
+								 	 : FileAccess.Write, true, buffer_size, IsAsync);
 				return stream;
 			}
 			set { stream = value; }
@@ -192,7 +195,7 @@ namespace System.IO.Pipes
 		protected internal void CheckWriteOperations ()
 		{
 			if (!IsConnected)
-				throw new InvalidOperationException ("Pipe us not connected");
+				throw new InvalidOperationException ("Pipe is not connected");
 			if (!CanWrite)
 				throw new NotSupportedException ("The pipe stream does not support write operations");
 		}
@@ -231,16 +234,20 @@ namespace System.IO.Pipes
 			throw new NotSupportedException ();
 		}
 
-		[MonoNotSupported ("ACL is not supported in Mono")]
 		public PipeSecurity GetAccessControl ()
 		{
-			throw ThrowACLException ();
+			return new PipeSecurity (SafePipeHandle,
+						 AccessControlSections.Owner |
+						 AccessControlSections.Group |
+						 AccessControlSections.Access);
 		}
 
-		[MonoNotSupported ("ACL is not supported in Mono")]
 		public void SetAccessControl (PipeSecurity pipeSecurity)
 		{
-			throw ThrowACLException ();
+			if (pipeSecurity == null)
+				throw new ArgumentNullException ("pipeSecurity");
+				
+			pipeSecurity.Persist (SafePipeHandle);
 		}
 
 		// pipe I/O
@@ -250,7 +257,7 @@ namespace System.IO.Pipes
 		}
 
 		[MonoTODO]
-		public override int Read (byte [] buffer, int offset, int count)
+		public override int Read ([In] byte [] buffer, int offset, int count)
 		{
 			CheckReadOperations ();
 

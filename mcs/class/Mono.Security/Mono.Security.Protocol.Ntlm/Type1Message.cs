@@ -61,12 +61,30 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		public string Domain {
 			get { return _domain; }
-			set { _domain = value; }
+			set {
+				if (value == null)
+					value = "";
+				if (value == "")
+					Flags &= ~NtlmFlags.NegotiateDomainSupplied;
+				else
+					Flags |= NtlmFlags.NegotiateDomainSupplied;
+
+				_domain = value;
+			}
 		}
 
 		public string Host {
 			get { return _host; }
-			set { _host = value; }
+			set {
+				if (value == null)
+					value = "";
+				if (value == "")
+					Flags &= ~NtlmFlags.NegotiateWorkstationSupplied;
+				else
+					Flags |= NtlmFlags.NegotiateWorkstationSupplied;
+
+				_host = value;
+			}
 		}
 
 		// methods

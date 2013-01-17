@@ -2,7 +2,7 @@ using System;
 
 class C
 {
-	static int Main ()
+	public static int Main ()
 	{
 		return Bar (null) ? 1 : 0;
 	}

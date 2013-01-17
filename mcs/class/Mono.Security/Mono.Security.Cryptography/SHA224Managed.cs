@@ -41,11 +41,13 @@ namespace Mono.Security.Cryptography {
 		private ulong count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
+		private uint[] buff;
 
 		public SHA224Managed ()
 		{
 			_H = new uint [8];
 			_ProcessingBuffer = new byte [BLOCK_SIZE_BYTES];
+			buff = new uint[64];
 			Initialize ();
 		}
 
@@ -155,22 +157,26 @@ namespace Mono.Security.Cryptography {
 			uint a, b, c, d, e, f, g, h;
 			uint t1, t2;
 			int i;
-			uint[] buff;
+			uint[] K1 = SHAConstants.K1;
+			uint[] buff = this.buff;
 		
 			count += BLOCK_SIZE_BYTES;
 		
-			buff = new uint[64];
-
 			for (i=0; i<16; i++) {
-				buff[i] = ((uint)(inputBuffer[inputOffset+4*i]) << 24)
-					| ((uint)(inputBuffer[inputOffset+4*i+1]) << 16)
-					| ((uint)(inputBuffer[inputOffset+4*i+2]) <<  8)
-					| ((uint)(inputBuffer[inputOffset+4*i+3]));
+				buff[i] = (uint)(((inputBuffer[inputOffset+4*i]) << 24)
+					| ((inputBuffer[inputOffset+4*i+1]) << 16)
+					| ((inputBuffer[inputOffset+4*i+2]) <<  8)
+					| ((inputBuffer[inputOffset+4*i+3])));
 			}
 
 		
 			for (i=16; i<64; i++) {
-				buff[i] = Ro1(buff[i-2]) + buff[i-7] + Ro0(buff[i-15]) + buff[i-16];
+				t1 = buff[i - 15];
+				t1 = (((t1 >> 7) | (t1 << 25)) ^ ((t1 >> 18) | (t1 << 14)) ^ (t1 >> 3));
+
+				t2 = buff[i - 2];
+				t2 = (((t2 >> 17) | (t2 << 15)) ^ ((t2 >> 19) | (t2 << 13)) ^ (t2 >> 10));
+				buff[i] = t2 + buff[i - 7] + t1 + buff[i - 16];
 			}
 
 			a = _H[0];
@@ -183,8 +189,10 @@ namespace Mono.Security.Cryptography {
 			h = _H[7];
 
 			for (i=0; i<64; i++) {
-				t1 = h + Sig1(e) + Ch(e,f,g) + SHAConstants.K1 [i] + buff[i];
-				t2 = Sig0(a) + Maj(a,b,c);
+				t1 = h + (((e >> 6) | (e << 26)) ^ ((e >> 11) | (e << 21)) ^ ((e >> 25) | (e << 7))) + ((e & f) ^ (~e & g)) + K1[i] + buff[i];
+
+				t2 = (((a >> 2) | (a << 30)) ^ ((a >> 13) | (a << 19)) ^ ((a >> 22) | (a << 10)));
+				t2 = t2 + ((a & b) ^ (a & c) ^ (b & c));
 				h = g;
 				g = f;
 				f = e;

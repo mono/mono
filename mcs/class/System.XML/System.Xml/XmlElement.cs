@@ -36,9 +36,7 @@ using System.Xml.XPath;
 using System.IO;
 using System.Text;
 using Mono.Xml;
-#if NET_2_0
 using System.Xml.Schema;
-#endif
 
 namespace System.Xml
 {
@@ -51,9 +49,7 @@ namespace System.Xml
 		XmlLinkedNode lastLinkedChild;
 
 		private bool isNotEmpty;
-#if NET_2_0
 		IXmlSchemaInfo schemaInfo;
-#endif
 
 		#endregion
 
@@ -218,11 +214,7 @@ namespace System.Xml
 				if (IsReadOnly)
 					throw new ArgumentException ("This node is readonly.");
 				if (value == null) {
-#if NET_2_0
 					value = string.Empty;
-#else
-					throw new ArgumentNullException ("Prefix value is null.");
-#endif
 				}
 				if ((!String.Empty.Equals(value))&&(!XmlChar.IsNCName (value)))
 					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
@@ -233,7 +225,6 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public override XmlNode ParentNode {
 			get { return base.ParentNode; }
 		}
@@ -242,7 +233,6 @@ namespace System.Xml
 			get { return schemaInfo; }
 			internal set { schemaInfo = value; }
 		}
-#endif
 
 		#endregion
 

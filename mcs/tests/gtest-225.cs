@@ -23,7 +23,7 @@ public class Set<Element>
 
 static class SetTest
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

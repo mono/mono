@@ -33,12 +33,6 @@ namespace System.Threading.Tasks
 {
 	public static class Parallel
 	{
-#if MOONLIGHT || MOBILE
-		static readonly bool sixtyfour = IntPtr.Size == 8;
-#else
-		static readonly bool sixtyfour = Environment.Is64BitProcess;
-#endif
-
 		internal static int GetBestWorkerNumber ()
 		{
 			return GetBestWorkerNumber (TaskScheduler.Current);
@@ -46,14 +40,14 @@ namespace System.Threading.Tasks
 
 		internal static int GetBestWorkerNumber (TaskScheduler scheduler)
 		{
-			return scheduler.MaximumConcurrencyLevel;
+			return Math.Min (Environment.ProcessorCount, (scheduler ?? TaskScheduler.Current).MaximumConcurrencyLevel);
 		}
 
 		static int GetBestWorkerNumber (int from, int to, ParallelOptions options, out int step)
 		{
 			int num = GetBestWorkerNumber(options.TaskScheduler);
 			if (options != null && options.MaxDegreeOfParallelism != -1)
-				num = options.MaxDegreeOfParallelism;
+				num = Math.Min (options.MaxDegreeOfParallelism, num);
 			// Integer range that each task process
 			if ((step = (to - from) / num) < 5) {
 				step = 5;
@@ -82,7 +76,7 @@ namespace System.Threading.Tasks
 				if (infos != null)
 					infos.IsExceptional = true;
 
-				throw new AggregateException (exs);
+				throw new AggregateException (exs).Flatten ();
 			}
 		}
 
@@ -193,6 +187,8 @@ namespace System.Threading.Tasks
 						range.V64.Actual = ++i;
 					}
 
+					 bool sixtyfour = Environment.Is64BitProcess;
+					
 					// Try toExclusive steal fromInclusive our right neighbor (cyclic)
 					int len = num + localWorker;
 					for (int sIndex = localWorker + 1; sIndex < len; ++sIndex) {
@@ -343,7 +339,7 @@ namespace System.Threading.Tasks
 			if (destruct == null)
 				throw new ArgumentNullException ("destruct");
 
-			int num = Math.Min (GetBestWorkerNumber (),
+			int num = Math.Min (GetBestWorkerNumber (options.TaskScheduler),
 			                    options != null && options.MaxDegreeOfParallelism != -1 ? options.MaxDegreeOfParallelism : int.MaxValue);
 
 			Task[] tasks = new Task[num];
@@ -678,7 +674,7 @@ namespace System.Threading.Tasks
 			if (actions == null)
 				throw new ArgumentNullException ("actions");
 
-			Invoke (actions, (Action a) => Task.Factory.StartNew (a));
+			Invoke (ParallelOptions.Default, actions);
 		}
 
 		public static void Invoke (ParallelOptions parallelOptions, params Action[] actions)
@@ -687,34 +683,25 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("parallelOptions");
 			if (actions == null)
 				throw new ArgumentNullException ("actions");
-
-			Invoke (actions, (Action a) => Task.Factory.StartNew (a, parallelOptions.CancellationToken, TaskCreationOptions.None, parallelOptions.TaskScheduler));
-		}
-
-		static void Invoke (Action[] actions, Func<Action, Task> taskCreator)
-		{
 			if (actions.Length == 0)
 				throw new ArgumentException ("actions is empty");
-
-			// Execute it directly
-			if (actions.Length == 1 && actions[0] != null)
+			foreach (var a in actions)
+				if (a == null)
+					throw new ArgumentException ("One action in actions is null", "actions");
+			if (actions.Length == 1) {
 				actions[0] ();
+				return;
+			}
 
-			bool shouldThrow = false;
-			Task[] ts = Array.ConvertAll (actions, delegate (Action a) {
-				if (a == null) {
-					shouldThrow = true;
-					return null;
-				}
-
-				return taskCreator (a);
-			});
-
-			if (shouldThrow)
-				throw new ArgumentException ("One action in actions is null", "actions");
+			Task[] ts = new Task[actions.Length];
+			for (int i = 0; i < ts.Length; i++)
+				ts[i] = Task.Factory.StartNew (actions[i],
+				                               parallelOptions.CancellationToken,
+				                               TaskCreationOptions.None,
+				                               parallelOptions.TaskScheduler);
 
 			try {
-				Task.WaitAll (ts);
+				Task.WaitAll (ts, parallelOptions.CancellationToken);
 			} catch {
 				HandleExceptions (ts);
 			}

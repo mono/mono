@@ -18,7 +18,7 @@ TEST_EXTRA_DISTFILES = \
 	Test/XmlFiles/*.xml \
 	Test/XmlFiles/*.xaml
 
-VALID_PROFILE := $(filter 4.0, $(FRAMEWORK_VERSION))
+VALID_PROFILE := $(filter 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Xaml.dll
 NO_INSTALL = yes

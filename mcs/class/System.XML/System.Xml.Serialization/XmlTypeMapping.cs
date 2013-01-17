@@ -107,8 +107,13 @@ namespace System.Xml.Serialization
 
 		internal string XmlTypeNamespace
 		{
-			get { return xmlTypeNamespace; }
+			get { return xmlTypeNamespace ?? string.Empty; }
 			set { xmlTypeNamespace = value; }
+		}
+
+		internal bool HasXmlTypeNamespace
+		{
+			get { return xmlTypeNamespace != null; }
 		}
 
 		internal ArrayList DerivedTypes
@@ -170,9 +175,9 @@ namespace System.Xml.Serialization
 
 		internal XmlTypeMapping GetRealElementMap (string name, string ens)
 		{
-			if (xmlType == name && xmlTypeNamespace == ens) return this;
+			if (xmlType == name && XmlTypeNamespace == ens) return this;
 			foreach (XmlTypeMapping map in _derivedTypes)
-				if (map.xmlType == name && map.xmlTypeNamespace == ens) return map;
+				if (map.xmlType == name && map.XmlTypeNamespace == ens) return map;
 			
 			return null;
 		}
@@ -395,10 +400,26 @@ namespace System.Xml.Serialization
 			return (XmlTypeMapMemberAttribute)_attributeMembers [BuildKey (name,ns, -1)];
 		}
 
-		public XmlTypeMapElementInfo GetElement (string name, string ns, int order)
+		public XmlTypeMapElementInfo GetElement(string name, string ns, int minimalOrder)
 		{
 			if (_elements == null) return null;
-			return (XmlTypeMapElementInfo)_elements [BuildKey (name,ns, order)];
+
+			foreach (XmlTypeMapElementInfo info in _elements.Values)
+				if (info.ElementName == name && info.Namespace == ns && info.ExplicitOrder >= minimalOrder)
+					return info;
+
+			return null;
+		}
+
+		public XmlTypeMapElementInfo GetElement(string name, string ns)
+		{
+			if (_elements == null) return null;
+
+			foreach (XmlTypeMapElementInfo info in _elements.Values)
+				if (info.ElementName == name && info.Namespace == ns)
+					return info;
+
+			return null;
 		}
 		
 		public XmlTypeMapElementInfo GetElement (int index)

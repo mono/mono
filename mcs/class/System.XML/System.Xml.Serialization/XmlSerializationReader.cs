@@ -757,9 +757,9 @@ namespace System.Xml.Serialization
 			return (value + reader.ReadString ());
 		}
 
-		protected object ReadTypedPrimitive (XmlQualifiedName qname)
+		protected object ReadTypedPrimitive (XmlQualifiedName type)
 		{
-			return ReadTypedPrimitive (qname, false);
+			return ReadTypedPrimitive (type, false);
 		}
 		
 		object ReadTypedPrimitive (XmlQualifiedName qname, bool reportUnknown)
@@ -1188,10 +1188,9 @@ namespace System.Xml.Serialization
 			set { throw new NotImplementedException(); }
 		}
 
-		[MonoTODO]
 		protected string CollapseWhitespace (string value)
 		{
-			throw new NotImplementedException ();
+			return value == null ? null : value.Trim ();
 		}
 				
 		[MonoTODO]

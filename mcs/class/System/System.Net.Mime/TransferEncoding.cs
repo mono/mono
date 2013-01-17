@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Net.Mime {
 	public enum TransferEncoding
 	{
@@ -40,4 +38,3 @@ namespace System.Net.Mime {
 	}
 }
 
-#endif // NET_2_0

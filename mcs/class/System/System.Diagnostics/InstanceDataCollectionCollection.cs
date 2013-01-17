@@ -43,9 +43,7 @@ namespace System.Diagnostics {
 		}
 
 		// may throw ArgumentNullException
-#if NET_2_0
 		[Obsolete ("Use PerformanceCounterCategory.ReadCategory()")]
-#endif
 		public InstanceDataCollectionCollection ()
 		{
 		}

@@ -83,7 +83,7 @@ namespace System.Security.Cryptography {
 		public override byte[] Key { 
 			get { return (byte[]) base.Key.Clone (); }
 			set { 
-				if ((value != null) && (value.Length > 64))
+				if ((value != null) && (value.Length > BlockSizeValue))
 					base.Key = _algo.ComputeHash (value);
 				else
 					base.Key = (byte[]) value.Clone();
@@ -171,7 +171,11 @@ namespace System.Security.Cryptography {
 
 		public static new HMAC Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.HMACSHA1 ();
+#else
 			return Create ("System.Security.Cryptography.HMAC");
+#endif
 		}
 
 		public static new HMAC Create (string algorithmName) 

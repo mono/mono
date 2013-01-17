@@ -7,7 +7,7 @@ class Repro
   public int fc;
   private int sp;
 
-  static int Main()
+  public static int Main()
   {
     Repro r = new Repro();
     r.foo();

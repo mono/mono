@@ -29,11 +29,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Runtime.InteropServices;
 
 namespace System.Globalization {
 
 	[System.Runtime.InteropServices.ComVisible(true)]
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	public class SortKey {
 		private string str;
 		private CompareOptions options;

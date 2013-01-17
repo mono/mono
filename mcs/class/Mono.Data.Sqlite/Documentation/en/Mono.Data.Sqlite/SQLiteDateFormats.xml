@@ -1,0 +1,75 @@
+<Type Name="SQLiteDateFormats" FullName="Mono.Data.Sqlite.SQLiteDateFormats">
+  <TypeSignature Language="C#" Value="public enum SQLiteDateFormats" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SQLiteDateFormats extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            This implementation of SQLite for ADO.NET can process date/time fields in databases in only one of three formats.  Ticks, ISO8601
+            and JulianDay.
+            </summary>
+    <remarks>
+            ISO8601 is more compatible, readable, fully-processable, but less accurate as it doesn't provide time down to fractions of a second.
+            JulianDay is the numeric format the SQLite uses internally and is arguably the most compatible with 3rd party tools.  It is
+            not readable as text without post-processing.
+            Ticks less compatible with 3rd party tools that query the database, and renders the DateTime field unreadable as text without post-processing.
+            The preferred order of choosing a datetime format is JulianDay, ISO8601, and then Ticks.  Ticks is mainly present for legacy
+            code support.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ISO8601">
+      <MemberSignature Language="C#" Value="ISO8601" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteDateFormats ISO8601 = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteDateFormats</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The default format for this provider.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="JulianDay">
+      <MemberSignature Language="C#" Value="JulianDay" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteDateFormats JulianDay = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteDateFormats</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            JulianDay format, which is what SQLite uses internally
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Ticks">
+      <MemberSignature Language="C#" Value="Ticks" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.SQLiteDateFormats Ticks = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.SQLiteDateFormats</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Using ticks is not recommended and is not well supported with LINQ.
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

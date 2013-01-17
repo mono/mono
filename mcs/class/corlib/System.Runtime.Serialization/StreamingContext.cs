@@ -30,10 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Runtime.Serialization {
 
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public struct StreamingContext {
 		StreamingContextStates state;
 		object additional;

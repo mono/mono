@@ -1,5 +1,3 @@
-
-#if NET_2_0
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -13,7 +11,7 @@ namespace Mono.Audio {
 #endif
 	abstract class AudioData {
 		protected const int buffer_size = 4096;
-		bool stopped = false;
+		bool stopped;
 
 		public abstract int Channels {
 			get;
@@ -59,76 +57,127 @@ namespace Mono.Audio {
 		short channels;
 		ushort frame_divider;
 		int sample_rate;
-		int data_len = 0;
+		int data_len;
+		long data_offset;
 		AudioFormat format;
 
 		public WavData (Stream data) {
 			stream = data;
-			byte[] buffer = new byte [12+32];
-			int c = stream.Read (buffer, 0, 12 + 32);
-			if (c != (12 + 32) || 
-					buffer [0] != 'R' || buffer [1] != 'I' || buffer [2] != 'F' || buffer [3] != 'F' ||
-					buffer [8] != 'W' || buffer [9] != 'A' || buffer [10] != 'V' || buffer [11] != 'E') {
+			byte[] buffer = new byte [12 + 32];
+			int idx;
+			
+			// Read Chunk ID + Format
+			int c = stream.Read (buffer, 0, 12);
+			if (c != 12 ||
+				buffer [0] != 'R' || buffer [1] != 'I' || buffer [2] != 'F' || buffer [3] != 'F' ||
+				buffer [8] != 'W' || buffer [9] != 'A' || buffer [10] != 'V' || buffer [11] != 'E') {
 				throw new Exception ("incorrect format" + c);
 			}
-			if (buffer [12] != 'f' || buffer [13] != 'm' || buffer [14] != 't' || buffer [15] != ' ') {
+
+			// Read SubChunk 1 ID + Size => Must be 'fmt ' !
+			c = stream.Read (buffer, 0, 8);
+			if (c == 8 && buffer [0] == 'f' && buffer [1] == 'm' && buffer [2] == 't' && buffer [3] == ' ') {
+				int sub_chunk_1_size = buffer [4];
+				sub_chunk_1_size |= buffer [5] << 8;
+				sub_chunk_1_size |= buffer [6] << 16;
+				sub_chunk_1_size |= buffer [7] << 24;
+
+				// Read SubChunk 1 Data
+				c = stream.Read (buffer, 0, sub_chunk_1_size);
+				if (sub_chunk_1_size == c)
+				{
+					idx = 0;
+					int compression = buffer [idx++] | (buffer [idx++] << 8);
+					if (compression != 1)
+						throw new Exception ("incorrect format (not PCM)");
+					channels = (short)(buffer [idx++] | (buffer [idx++] << 8));
+					sample_rate = buffer [idx++];
+					sample_rate |= buffer [idx++] << 8;
+					sample_rate |= buffer [idx++] << 16;
+					sample_rate |= buffer [idx++] << 24;
+					int byte_rate = buffer [idx++];
+					byte_rate |= buffer [idx++] << 8;
+					byte_rate |= buffer [idx++] << 16;
+					byte_rate |= buffer [idx++] << 24;
+//					int block_align = buffer [idx++] | (buffer [idx++] << 8);
+					idx += 2; //because, the above line is commented out
+					int sign_bits = buffer [idx++] | (buffer [idx++] << 8);
+
+					switch (sign_bits) {
+					case 8:
+						frame_divider = 1;
+						format = AudioFormat.U8; break;
+					case 16:
+						frame_divider = 2;
+						format = AudioFormat.S16_LE; break;
+					default:
+						throw new Exception ("bits per sample");
+					}
+
+				} else {
+					throw new Exception ("Error: Can't Read "+sub_chunk_1_size+" bytes from stream ("+c+" bytes read");
+				}
+			} else {
 				throw new Exception ("incorrect format (fmt)");
 			}
-			int extra_size = buffer [16];
-			extra_size |= buffer [17] << 8;
-			extra_size |= buffer [18] << 16;
-			extra_size |= buffer [19] << 24;
-			int compression = buffer [20] | (buffer [21] << 8);
-			if (compression != 1)
-				throw new Exception ("incorrect format (not PCM)");
-			channels = (short)(buffer [22] | (buffer [23] << 8));
-			sample_rate = buffer [24];
-			sample_rate |= buffer [25] << 8;
-			sample_rate |= buffer [26] << 16;
-			sample_rate |= buffer [27] << 24;
-			int avg_bytes = buffer [28];
-			avg_bytes |= buffer [29] << 8;
-			avg_bytes |= buffer [30] << 16;
-			avg_bytes |= buffer [31] << 24;
-			//int block_align = buffer [32] | (buffer [33] << 8);
-			int sign_bits = buffer [34] | (buffer [35] << 8);
-			/*Console.WriteLine (extra_size);
-			Console.WriteLine (compression);
-			Console.WriteLine (channels);
-			Console.WriteLine (sample_rate);
-			Console.WriteLine (avg_bytes);
-			Console.WriteLine (block_align);
-			Console.WriteLine (sign_bits);*/
-			if (buffer [36] != 'd' || buffer [37] != 'a' || buffer [38] != 't' || buffer [39] != 'a') {
-				throw new Exception ("incorrect format (data)");
-			}
-			int sample_size = buffer [40];
-			sample_size |= buffer [41] << 8;
-			sample_size |= buffer [42] << 16;
-			sample_size |= buffer [43] << 24;
-			data_len = sample_size;
-			//Console.WriteLine (sample_size);
-			switch (sign_bits) {
-			case 8:
-				frame_divider = 1;
-				format = AudioFormat.U8; break;
-			case 16:
-				frame_divider = 2;
-				format = AudioFormat.S16_LE; break;
-			default:
-				throw new Exception ("bits per sample");
+
+			// Read SubChunk 2 ID + Size => Could be 'fact' or 'data' !
+			c = stream.Read (buffer, 0, 8);
+			if (c == 8) {
+				// If SubChunk 2 ID = fact
+				if (buffer [0] == 'f' && buffer [1] == 'a' && buffer [2] == 'c' && buffer [3] == 't') {
+					// Read Data
+					int sub_chunk_2_size = buffer [4];
+					sub_chunk_2_size |= buffer [5] << 8;
+					sub_chunk_2_size |= buffer [6] << 16;
+					sub_chunk_2_size |= buffer [7] << 24;
+
+					c = stream.Read (buffer, 0, sub_chunk_2_size);
+
+					// Don't care about this data !
+
+					// If there is a fact Chunck, read the next subChunk Id and size (should be data !)
+					c = stream.Read (buffer, 0, 8);
+				}
+
+				if (buffer [0] == 'd' && buffer [1] == 'a' && buffer [2] == 't' && buffer [3] == 'a') {
+					// Read Data
+					int sub_chunk_2_size = buffer [4];
+					sub_chunk_2_size |= buffer [5] << 8;
+					sub_chunk_2_size |= buffer [6] << 16;
+					sub_chunk_2_size |= buffer [7] << 24;
+
+					data_len = sub_chunk_2_size;
+					data_offset = stream.Position;
+				} else { 
+					throw new Exception ("incorrect format (data/fact chunck)");
+				}
 			}
 		}
 
 		public override void Play (AudioDevice dev) {
-			int read;
-			int count = data_len;
-			byte[] buffer = new byte [buffer_size];
-			stream.Position = 0;
-			while (!IsStopped && count >= 0 && (read = stream.Read (buffer, 0, System.Math.Min (buffer.Length, count))) > 0) {
-				// FIXME: account for leftover bytes
-				dev.PlaySample (buffer, read/frame_divider);
-				count -= read;
+			int    fragment_played = 0;
+			int    total_data_played = 0;
+			int    chunk_size        = (int)dev.ChunkSize;
+			int    count             = data_len;
+			byte[] buffer            = new byte [data_len];
+			byte[] chunk_to_play     = new byte [chunk_size];
+
+			// Read only wave data, don't care about file header here !
+			stream.Position = data_offset;
+			stream.Read (buffer, 0, data_len); 
+
+			while (!IsStopped && count >= 0){
+				// Copy one chunk from buffer
+				Buffer.BlockCopy(buffer, total_data_played, chunk_to_play, 0, chunk_size);
+				// play that chunk, !!! the size pass to alsa the number of fragment, a fragment is a sample per channel !!!
+				fragment_played = dev.PlaySample (chunk_to_play, chunk_size / (frame_divider * channels));
+
+				// If alsa played something, inc the total data played and dec the data to be played
+				if (fragment_played > 0) {
+					total_data_played  += (fragment_played * frame_divider * channels);
+					count              -= (fragment_played * frame_divider * channels);
+				}
 			}
 		}
 
@@ -154,7 +203,8 @@ namespace Mono.Audio {
 		short channels;
 		ushort frame_divider;
 		int sample_rate;
-		int data_len = 0;
+		int data_len ;
+//		int data_offset;
 		AudioFormat format;
 
 		public AuData (Stream data) {
@@ -207,14 +257,28 @@ namespace Mono.Audio {
 		}
 
 		public override void Play (AudioDevice dev) {
-			int read;
-			int count = data_len;
-			byte[] buffer = new byte [buffer_size];
-			stream.Position = 0;
-			while (!IsStopped && count >= 0 && (read = stream.Read (buffer, 0, System.Math.Min (buffer.Length, count))) > 0) {
-				// FIXME: account for leftover bytes
-				dev.PlaySample (buffer, read/frame_divider);
-				count -= read;
+						int    fragment_played = 0;
+			int    total_data_played = 0;
+			int    chunk_size        = (int)dev.ChunkSize;
+			int    count             = data_len;
+			byte[] buffer            = new byte [data_len];
+			byte[] chunk_to_play     = new byte [chunk_size];
+			
+			// Read only Au data, don't care about file header here !
+			stream.Position = 0; //(long)data_offset;
+			stream.Read (buffer, 0, data_len); 
+			
+			while (!IsStopped && count >= 0){
+				// Copy one chunk from buffer
+				Buffer.BlockCopy(buffer, total_data_played, chunk_to_play, 0, chunk_size);
+				// play that chunk, !!! the size pass to alsa the number of fragment, a fragment is a sample per channel !!!
+				fragment_played = dev.PlaySample (chunk_to_play, chunk_size / (frame_divider * channels));
+				
+				// If alsa played something, inc the total data played and dec the data to be played
+				if (fragment_played > 0) {
+					total_data_played  += (fragment_played * frame_divider * channels);
+					count              -= (fragment_played * frame_divider * channels);
+				}
 			}
 		}
 
@@ -231,5 +295,4 @@ namespace Mono.Audio {
 
 }
 
-#endif
 

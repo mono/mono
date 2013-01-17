@@ -26,12 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Diagnostics
 {
 	public delegate void DataReceivedEventHandler (
 		object sender, DataReceivedEventArgs e);
 }
 
-#endif

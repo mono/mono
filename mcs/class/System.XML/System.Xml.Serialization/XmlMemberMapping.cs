@@ -122,7 +122,6 @@ namespace System.Xml.Serialization
 			get { return _form; }
 		}
 		
-#if NET_2_0
 		public string XsdElementName
 		{
 			get { return _mapMember.Name; }
@@ -135,15 +134,11 @@ namespace System.Xml.Serialization
 				"System.Nullable`1[" + ret + "]" : ret;
 		}
 #endif
-#endif
 
-#if NET_1_1
 		public bool CheckSpecified
 		{
 			get { return _mapMember.IsOptionalValueType; }
 		}
-#endif
-
 		#endregion // Properties
 	}
 }

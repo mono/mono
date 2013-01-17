@@ -37,11 +37,14 @@ namespace System
 	[Serializable, ComVisible(true)]
 	public abstract class StringComparer : IComparer, IEqualityComparer, IComparer<string>, IEqualityComparer<string>
 	{
-		static StringComparer invariantCultureIgnoreCase = new CultureAwareComparer (CultureInfo.InvariantCulture, true);
-		static StringComparer invariantCulture = new CultureAwareComparer (CultureInfo.InvariantCulture, false);
-		static StringComparer ordinalIgnoreCase = new OrdinalComparer (true);
-		static StringComparer ordinal = new OrdinalComparer (false);
-
+		static class Predefined
+		{
+			public static readonly StringComparer invariantCultureIgnoreCase = new CultureAwareComparer (CultureInfo.InvariantCulture, true);
+			public static readonly StringComparer invariantCulture = new CultureAwareComparer (CultureInfo.InvariantCulture, false);
+			public static readonly StringComparer ordinalIgnoreCase = new OrdinalComparer (true);
+			public static readonly StringComparer ordinal = new OrdinalComparer (false);
+		}
+		
 		// Constructors
 		protected StringComparer ()
 		{
@@ -62,22 +65,22 @@ namespace System
 
 		public static StringComparer InvariantCulture {
 			get {
-				return invariantCulture;
+				return Predefined.invariantCulture;
 			}
 		}
 
 		public static StringComparer InvariantCultureIgnoreCase {
 			get {
-				return invariantCultureIgnoreCase;
+				return Predefined.invariantCultureIgnoreCase;
 			}
 		}
 
 		public static StringComparer Ordinal {
-			get { return ordinal; }
+			get { return Predefined.ordinal; }
 		}
 
 		public static StringComparer OrdinalIgnoreCase {
-			get { return ordinalIgnoreCase; }
+			get { return Predefined.ordinalIgnoreCase; }
 		}
 
 		// Methods

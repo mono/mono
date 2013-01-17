@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
@@ -81,76 +79,76 @@ namespace System.Xml.Xsl
 
 		#region Transform
 
-		public void Transform (string inputfile, string outputfile)
+		public void Transform (string inputUri, string resultsFile)
 		{
-			using (Stream outStream = File.Create (outputfile)) {
-				Transform (new XPathDocument (inputfile, XmlSpace.Preserve), null, outStream);
+			using (Stream outStream = File.Create (resultsFile)) {
+				Transform (new XPathDocument (inputUri, XmlSpace.Preserve), null, outStream);
 			}
 		}
 
-		public void Transform (string inputfile, XmlWriter output)
+		public void Transform (string inputUri, XmlWriter results)
 		{
-			Transform (inputfile, null, output);
+			Transform (inputUri, null, results);
 		}
 
-		public void Transform (string inputfile, XsltArgumentList args, Stream output)
+		public void Transform (string inputUri, XsltArgumentList arguments, Stream results)
 		{
-			Transform (new XPathDocument (inputfile, XmlSpace.Preserve), args, output);
+			Transform (new XPathDocument (inputUri, XmlSpace.Preserve), arguments, results);
 		}
 
-		public void Transform (string inputfile, XsltArgumentList args, TextWriter output)
+		public void Transform (string inputUri, XsltArgumentList arguments, TextWriter results)
 		{
-			Transform (new XPathDocument (inputfile, XmlSpace.Preserve), args, output);
+			Transform (new XPathDocument (inputUri, XmlSpace.Preserve), arguments, results);
 		}
 
-		public void Transform (string inputfile, XsltArgumentList args, XmlWriter output)
+		public void Transform (string inputUri, XsltArgumentList arguments, XmlWriter results)
 		{
-			Transform (new XPathDocument (inputfile, XmlSpace.Preserve), args, output);
+			Transform (new XPathDocument (inputUri, XmlSpace.Preserve), arguments, results);
 		}
 
-		public void Transform (XmlReader reader, XmlWriter output)
+		public void Transform (XmlReader input, XmlWriter results)
 		{
-			Transform (reader, null, output);
+			Transform (input, null, results);
 		}
 
-		public void Transform (XmlReader reader, XsltArgumentList args, Stream output)
+		public void Transform (XmlReader input, XsltArgumentList arguments, Stream results)
 		{
-			Transform (new XPathDocument (reader, XmlSpace.Preserve), args, output);
+			Transform (new XPathDocument (input, XmlSpace.Preserve), arguments, results);
 		}
 
-		public void Transform (XmlReader reader, XsltArgumentList args, TextWriter output)
+		public void Transform (XmlReader input, XsltArgumentList arguments, TextWriter results)
 		{
-			Transform (new XPathDocument (reader, XmlSpace.Preserve), args, output);
+			Transform (new XPathDocument (input, XmlSpace.Preserve), arguments, results);
 		}
 
-		public void Transform (XmlReader reader, XsltArgumentList args, XmlWriter output)
+		public void Transform (XmlReader input, XsltArgumentList arguments, XmlWriter results)
 		{
-			Transform (reader, args, output, null);
+			Transform (input, arguments, results, null);
 		}
 
-		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
+		public void Transform (IXPathNavigable input, XsltArgumentList arguments, TextWriter results)
 		{
-			Transform (input.CreateNavigator (), args, output);
+			Transform (input.CreateNavigator (), arguments, results);
 		}
 
-		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
+		public void Transform (IXPathNavigable input, XsltArgumentList arguments, Stream results)
 		{
-			Transform (input.CreateNavigator (), args, output);
+			Transform (input.CreateNavigator (), arguments, results);
 		}
 
-		public void Transform (IXPathNavigable input, XmlWriter output)
+		public void Transform (IXPathNavigable input, XmlWriter results)
 		{
-			Transform (input, null, output);
+			Transform (input, null, results);
 		}
 
-		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
+		public void Transform (IXPathNavigable input, XsltArgumentList arguments, XmlWriter results)
 		{
-			Transform (input.CreateNavigator (), args, output, null);
+			Transform (input.CreateNavigator (), arguments, results, null);
 		}
 
-		public void Transform (XmlReader input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
+		public void Transform (XmlReader input, XsltArgumentList arguments, XmlWriter results, XmlResolver documentResolver)
 		{
-			Transform (new XPathDocument (input, XmlSpace.Preserve).CreateNavigator (), args, output, resolver);
+			Transform (new XPathDocument (input, XmlSpace.Preserve).CreateNavigator (), arguments, results, documentResolver);
 		}
 
 		void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
@@ -197,9 +195,9 @@ namespace System.Xml.Xsl
 			return xvr;
 		}
 
-		public void Load (string url)
+		public void Load (string stylesheetUri)
 		{
-			using (XmlReader r = GetXmlReader (url)) {
+			using (XmlReader r = GetXmlReader (stylesheetUri)) {
 				Load (r);
 			}
 		}
@@ -214,25 +212,25 @@ namespace System.Xml.Xsl
 			Load (stylesheet.CreateNavigator(), null, null);
 		}
 
-		public void Load (IXPathNavigable stylesheet, XsltSettings settings, XmlResolver resolver)
+		public void Load (IXPathNavigable stylesheet, XsltSettings settings, XmlResolver stylesheetResolver)
 		{
-			Load (stylesheet.CreateNavigator(), settings, resolver);
+			Load (stylesheet.CreateNavigator(), settings, stylesheetResolver);
 		}
 
-		public void Load (XmlReader stylesheet, XsltSettings settings, XmlResolver resolver)
+		public void Load (XmlReader stylesheet, XsltSettings settings, XmlResolver stylesheetResolver)
 		{
-			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), settings, resolver);
+			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), settings, stylesheetResolver);
 		}
 
-		public void Load (string stylesheet, XsltSettings settings, XmlResolver resolver)
+		public void Load (string stylesheetUri, XsltSettings settings, XmlResolver stylesheetResolver)
 		{
-			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), settings, resolver);
+			Load (new XPathDocument (stylesheetUri, XmlSpace.Preserve).CreateNavigator (), settings, stylesheetResolver);
 		}
 
 		private void Load (XPathNavigator stylesheet,
-			XsltSettings settings, XmlResolver resolver)
+			XsltSettings settings, XmlResolver stylesheetResolver)
 		{
-			s = new Compiler (debugger).Compile (stylesheet, resolver, null);
+			s = new Compiler (debugger).Compile (stylesheet, stylesheetResolver, null);
 		}
 
 		#endregion
@@ -257,4 +255,3 @@ namespace System.Xml.Xsl
 */
 		}
 }
-#endif

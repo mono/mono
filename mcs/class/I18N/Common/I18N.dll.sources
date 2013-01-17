@@ -1,7 +1,9 @@
 ../Assembly/AssemblyInfo.cs
 ../../../build/common/Consts.cs
 ByteEncoding.cs
+ByteSafeEncoding.cs
 Handlers.cs
 Manager.cs
 MonoEncoding.cs
+MonoSafeEncoding.cs
 Strings.cs

@@ -1,0 +1,65 @@
+<Type Name="Widget+Direction" FullName="Mono.DocTest.Widget+Direction">
+  <TypeSignature Language="C#" Value="protected enum Widget.Direction" />
+  <TypeSignature Language="ILAsm" Value=".class nested protected auto ansi sealed Widget/Direction extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="East">
+      <MemberSignature Language="C#" Value="East" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction East = int32(2)" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Widget+Direction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="North">
+      <MemberSignature Language="C#" Value="North" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction North = int32(0)" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Widget+Direction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="South">
+      <MemberSignature Language="C#" Value="South" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction South = int32(1)" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Widget+Direction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="West">
+      <MemberSignature Language="C#" Value="West" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.DocTest.Widget/Direction West = int32(3)" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Widget+Direction</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

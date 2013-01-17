@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Configuration
 {
 	public interface IPersistComponentSettings
@@ -42,5 +40,3 @@ namespace System.Configuration
 		void SaveComponentSettings ();
 	}
 }
-
-#endif

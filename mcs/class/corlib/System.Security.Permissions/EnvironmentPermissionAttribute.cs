@@ -51,9 +51,7 @@ namespace System.Security.Permissions {
 		
 		// Properties
 		public string All {
-#if NET_1_1
 			get { throw new NotSupportedException ("All"); }
-#endif
 			set { 
 				read = value; 
 				write = value;

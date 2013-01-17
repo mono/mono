@@ -31,6 +31,7 @@
 using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -152,6 +153,19 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 					handle.ReleasePointer ();
 				}
 
+				Assert.AreEqual ("Hello", s);
+			}
+		}
+
+		[Test]
+		public unsafe void ViewReadArray () {
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
+
+			using (var v = file.CreateViewAccessor ()) {
+				var a = new byte [5];
+				var n = v.ReadArray (0, a, 0, 5);
+				Assert.AreEqual (5, n);
+				var s = new string (Array.ConvertAll (a, b => (char)b));
 				Assert.AreEqual ("Hello", s);
 			}
 		}

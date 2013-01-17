@@ -1,0 +1,70 @@
+<Type Name="FunctionType" FullName="Mono.Data.Sqlite.FunctionType">
+  <TypeSignature Language="C#" Value="public enum FunctionType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed FunctionType extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            The type of user-defined function to declare
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Aggregate">
+      <MemberSignature Language="C#" Value="Aggregate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.FunctionType Aggregate = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.FunctionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Aggregate functions are designed to accumulate data until the end of a call and then return a result gleaned from the accumulated data.
+            Examples include SUM(), COUNT(), AVG(), etc.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Collation">
+      <MemberSignature Language="C#" Value="Collation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.FunctionType Collation = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.FunctionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Collation sequences are used to sort textual data in a custom manner, and appear in an ORDER BY clause.  Typically text in an ORDER BY is
+            sorted using a straight case-insensitive comparison function.  Custom collating sequences can be used to alter the behavior of text sorting
+            in a user-defined manner.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Scalar">
+      <MemberSignature Language="C#" Value="Scalar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.FunctionType Scalar = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.FunctionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Scalar functions are designed to be called and return a result immediately.  Examples include ABS(), Upper(), Lower(), etc.
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

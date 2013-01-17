@@ -37,6 +37,7 @@ namespace System.Runtime.InteropServices {
 
 	[ComVisible(true)]
 	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class DllImportAttribute: Attribute {
 		#region Sync with reflection.h
 		public CallingConvention CallingConvention;
@@ -47,13 +48,8 @@ namespace System.Runtime.InteropServices {
 		public bool PreserveSig;
 		public bool SetLastError;
 
-#if NET_1_1
 		public bool BestFitMapping;
 		public bool ThrowOnUnmappableChar;
-#else
-		private bool BestFitMapping;
-		private bool ThrowOnUnmappableChar;
-#endif
 		#endregion
 
 		public string Value {

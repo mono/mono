@@ -168,6 +168,7 @@ namespace System
 				vt = (short)VarEnum.VT_BSTR;
 				bstrVal = Marshal.StringToBSTR(((BStrWrapper)obj).WrappedObject);
 			}
+#if !FULL_AOT_RUNTIME
 			else if (t == typeof (UnknownWrapper))
 			{
 				vt = (short)VarEnum.VT_UNKNOWN;
@@ -178,8 +179,12 @@ namespace System
 				vt = (short)VarEnum.VT_DISPATCH;
 				pdispVal = Marshal.GetIDispatchForObject(((DispatchWrapper)obj).WrappedObject);
 			}
+#endif
 			else
 			{
+#if FULL_AOT_RUNTIME
+				throw new NotImplementedException(string.Format("Variant couldn't handle object of type {0}", obj.GetType()));
+#else
 				try 
 				{
 					pdispVal = Marshal.GetIDispatchForObject(obj);
@@ -196,6 +201,7 @@ namespace System
 				{
 					throw new NotImplementedException(string.Format("Variant couldn't handle object of type {0}", obj.GetType()), ex);
 				}
+#endif
 			}
 		}
 
@@ -239,11 +245,13 @@ namespace System
 			case VarEnum.VT_BSTR:
 				obj = Marshal.PtrToStringBSTR(bstrVal);
 				break;
+#if !FULL_AOT_RUNTIME
 			case VarEnum.VT_UNKNOWN:
 			case VarEnum.VT_DISPATCH:
 				if (pdispVal != IntPtr.Zero)
 					obj = Marshal.GetObjectForIUnknown(pdispVal);
 				break;
+#endif
 			}
 			return obj;
 		}

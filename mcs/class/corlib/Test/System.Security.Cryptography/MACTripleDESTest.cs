@@ -35,7 +35,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 [TestFixture]
-public class MACTripleDESTest : Assertion {
+public class MACTripleDESTest {
 
 	protected MACTripleDES algo;
 
@@ -64,7 +64,6 @@ public class MACTripleDESTest : Assertion {
 	public void ConstructorEmpty () 
 	{
 		algo = new MACTripleDES ();
-		AssertNotNull ("MACTripleDES ()", algo);
 	}
 
 	[Test]
@@ -72,7 +71,6 @@ public class MACTripleDESTest : Assertion {
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
 		algo = new MACTripleDES (key);
-		AssertNotNull ("MACTripleDES (key)", algo);
 	}
 
 	[Test]
@@ -87,7 +85,6 @@ public class MACTripleDESTest : Assertion {
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
 		algo = new MACTripleDES ("TripleDES", key);
-		AssertNotNull ("MACTripleDES ('TripleDES',key)", algo);
 	}
 
 	[Test]
@@ -97,7 +94,6 @@ public class MACTripleDESTest : Assertion {
 		byte[] key = CombineKeys (key1, key2, key3);
 		// funny null is a valid name!
 		algo = new MACTripleDES (null, key);
-		AssertNotNull ("MACTripleDES (null,key)", algo);
 	}
 
 	[Test]
@@ -111,13 +107,13 @@ public class MACTripleDESTest : Assertion {
 	public void Invariants () 
 	{
 		algo = new MACTripleDES ();
-		AssertEquals ("MACTripleDES.CanReuseTransform", true, algo.CanReuseTransform);
-		AssertEquals ("MACTripleDES.CanTransformMultipleBlocks", true, algo.CanTransformMultipleBlocks);
-		AssertEquals ("MACTripleDES.HashSize", 64, algo.HashSize);
-		AssertEquals ("MACTripleDES.InputBlockSize", 1, algo.InputBlockSize);
-		AssertEquals ("MACTripleDES.OutputBlockSize", 1, algo.OutputBlockSize);
-		AssertEquals ("MACTripleDES.ToString()", "System.Security.Cryptography.MACTripleDES", algo.ToString ()); 
-		AssertNotNull ("MACTripleDES.Key", algo.Key);
+		Assert.IsTrue (algo.CanReuseTransform, "MACTripleDES.CanReuseTransform");
+		Assert.IsTrue (algo.CanTransformMultipleBlocks, "MACTripleDES.CanTransformMultipleBlocks");
+		Assert.AreEqual (64, algo.HashSize, "MACTripleDES.HashSize");
+		Assert.AreEqual (1, algo.InputBlockSize, "MACTripleDES.InputBlockSize");
+		Assert.AreEqual (1, algo.OutputBlockSize, "MACTripleDES.OutputBlockSize");
+		Assert.AreEqual ("System.Security.Cryptography.MACTripleDES", algo.ToString (), "MACTripleDES.ToString()");
+		Assert.IsNotNull (algo.Key, "MACTripleDES.Key");
 	}
 
 	[Test]
@@ -219,12 +215,7 @@ public class MACTripleDESTest : Assertion {
 	public void ExactlyOneBlockSize () 
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
-#if NET_1_1
 		byte [] expected = { 0x86, 0xE9, 0x65, 0xBD, 0x1E, 0xC4, 0x44, 0x61 };
-#else
-		// Believe it or not, MACTripleDES returns different values in 1.1
-		byte[] expected = { 0x23, 0xD6, 0x92, 0xA0, 0x80, 0x6E, 0xC9, 0x30 };
-#endif
 		byte[] data = new byte [8];
 		Check ("3DESMAC-A2", key, data, expected);
 	}
@@ -246,12 +237,7 @@ public class MACTripleDESTest : Assertion {
 	public void ExactMultipleBlockSize () 
 	{
 		byte[] key = CombineKeys (key1, key2, key3);
-#if NET_1_1
 		byte [] expected = { 0xA3, 0x0E, 0x34, 0x26, 0x8B, 0x49, 0xEF, 0x49 };
-#else
-		// Believe it or not, MACTripleDES returns different values in 1.1
-		byte[] expected = { 0xD6, 0x6D, 0x75, 0xD4, 0x75, 0xF1, 0x01, 0x71 };
-#endif
 		byte[] data = new byte [48];
 		Check ("3DESMAC-A4", key, data, expected);
 	}

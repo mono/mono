@@ -6,6 +6,7 @@
  *   Paolo Molaro (lupus@ximian.com)
  *
  * (C) 2003 Ximian, Inc.
+ * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 #include <string.h>
 #include <mono/metadata/debug-helpers.h>
@@ -34,7 +35,6 @@ static void
 compute_dominators (MonoCompile *cfg)
 {
 	int bindex, i, bitsize;
-	char* mem;
 	MonoBasicBlock *entry;
 	MonoBasicBlock **doms;
 	gboolean changed;
@@ -42,8 +42,6 @@ compute_dominators (MonoCompile *cfg)
 	g_assert (!(cfg->comp_done & MONO_COMP_DOM));
 
 	bitsize = mono_bitset_alloc_size (cfg->num_bblocks, 0);
-
-	mem = mono_mempool_alloc0 (cfg->mempool, bitsize * cfg->num_bblocks);
 
 	entry = cfg->bblocks [0];
 
@@ -118,6 +116,9 @@ compute_dominators (MonoCompile *cfg)
 		MonoBasicBlock *bb = cfg->bblocks [i];
 		MonoBasicBlock *cbb;
 		MonoBitSet *dominators;
+		char *mem;
+
+		mem = mono_mempool_alloc0 (cfg->mempool, bitsize);
 
 		bb->dominators = dominators = mono_bitset_mem_new (mem, cfg->num_bblocks, 0);
 		mem += bitsize;

@@ -1,28 +1,30 @@
+# To produce a debugging parser, use the version that says "-cvt"
+JAY_FLAGS=-c
+# JAY_FLAGS=-cvt
+
 thisdir := mcs
 SUBDIRS := 
 include ../build/rules.make
 
 EXTRA_DISTFILES = \
 	mcs.csproj		\
-	compiler.doc		\
 	mcs.sln		\
 	cs-parser.jay		\
-	mcs.exe.sources		\
-	NOTES			\
-	TODO			\
-	ikvm.cs
+	mcs.exe.sources
 
 ifeq (basic, $(PROFILE))
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/basic.exe
+PROGRAM = basic.exe
 sourcefile = mcs.exe.sources
 else
-PROGRAM = $(topdir)/class/lib/build/mcs.exe
-LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build
+PROGRAM_USE_INTERMEDIATE_FILE = true
+PROGRAM = mcs.exe
+the_libdir = $(topdir)/class/lib/build/
+LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build -debug
 endif
 
-LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER
+LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE
 
-PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.0
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.5
 
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
@@ -30,10 +32,8 @@ BUILT_SOURCES = cs-parser.cs
 
 CLEAN_FILES += y.output
 
-# Use -cvt for parser debug version
 %-parser.cs: %-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -cv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
-
+	$(topdir)/jay/jay $(JAY_FLAGS) < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 KEEP_OUTPUT_FILE_COPY = yes
 
@@ -97,6 +97,10 @@ do-gettext:
 
 profile : $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:mcs2.exe $(BUILT_SOURCES) @$(response)
+
+debug-parser:
+	rm cs-parser.cs
+	$(MAKE) JAY_FLAGS=-cvt
 
 #
 # quick hack target, to quickly develop the gmcs compiler

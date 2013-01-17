@@ -4,8 +4,10 @@
 // Authors:
 //  Ben Maurer (bmaurer@ximian.com)
 //  Jensen Somers <jensen.somers@gmail.com>
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2004 Novell
+// Copyright (C) 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,11 +28,20 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace System {
+
+using System.Collections;
+using System.Collections.Generic;
+
+namespace System
+{
 	[Serializable]
-	public struct ArraySegment <T> {
+	public struct ArraySegment<T>
+#if NET_4_5
+		: IList<T>, IReadOnlyList<T>
+#endif
+	{
 		T [] array;
-		int offset, count;
+		readonly int offset, count;
 		
 		public ArraySegment (T [] array, int offset, int count)
 		{
@@ -107,5 +118,87 @@ namespace System {
 		{
 			return !(a.Equals(b));
 		}
+
+#if NET_4_5
+		bool ICollection<T>.IsReadOnly {
+			get {
+				return true;
+			}
+		}
+
+		T IReadOnlyList<T>.this[int index] {
+			get {
+				return ((IList<T>) this)[index];
+			}
+		}
+
+		T IList<T>.this[int index] {
+			get {
+				if (index < 0 || count < index)
+					throw new ArgumentOutOfRangeException ("index");
+
+				return array[offset + index];
+			}
+			set {
+				if (index < 0 || count < index)
+					throw new ArgumentOutOfRangeException ("index");
+
+				array[offset + index] = value;
+			}
+		}
+
+		void ICollection<T>.Add (T item)
+		{
+			throw new NotSupportedException ();
+		}
+
+		void ICollection<T>.Clear ()
+		{
+			throw new NotSupportedException ();
+		}
+		
+		bool ICollection<T>.Remove (T item)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		void IList<T>.Insert (int index, T item)
+		{
+			throw new NotSupportedException ();
+		}
+
+		void IList<T>.RemoveAt (int index)
+		{
+			throw new NotSupportedException ();
+		}
+
+		bool ICollection<T>.Contains (T item)
+		{
+			return System.Array.IndexOf (array, item, offset, count) >= 0;
+		}
+
+		void ICollection<T>.CopyTo (T[] array, int arrayIndex)
+		{
+			System.Array.Copy (this.array, offset, array, arrayIndex, count);
+		}
+
+		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
+		{
+			for (int i = 0; i < count; ++i)
+				yield return array[offset + i];
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return ((IEnumerable<T>) this).GetEnumerator ();
+		}
+
+		int IList<T>.IndexOf (T item)
+		{
+			var res = System.Array.IndexOf (array, item, offset, count);
+			return res < 0 ? -1 : res - offset;
+		}
+
+#endif
 	}
 }

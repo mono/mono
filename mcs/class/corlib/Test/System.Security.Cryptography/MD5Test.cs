@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography
 {
 	[TestFixture]
-	public class MD5Test : Assertion
+	public class MD5Test
 	{
 		[Test]
 		public void ComputeHashNull () 
@@ -28,7 +28,7 @@ namespace MonoTests.System.Security.Cryptography
 			foreach(byte i in result)
 				result_str += Convert.ToInt32 (i).ToString ("x2");
 
-			AssertEquals ("#01 MD5 Of {} is wrong", result_str, MD5_dato_vacio);
+			Assert.AreEqual (result_str, MD5_dato_vacio);
 		}
 
 		[Test]
@@ -42,7 +42,7 @@ namespace MonoTests.System.Security.Cryptography
 			foreach (byte i in result)
 				result_str += Convert.ToInt32 (i).ToString ("x2");
 
-			AssertEquals ("#02 MD5 Of 'a' is wrong", result_str, MD5_dato_a);
+			Assert.AreEqual (result_str, MD5_dato_a);
 		}
 
 		[Test]
@@ -57,7 +57,7 @@ namespace MonoTests.System.Security.Cryptography
 			foreach(byte i in result)
 				result_str += Convert.ToInt32 (i).ToString ("x2");
 
-			AssertEquals ("#03 MD5 Of '\u00F1' is wrong", result_str, MD5_dato_b);
+			Assert.AreEqual (result_str, MD5_dato_b);
 		}
 	}
 }

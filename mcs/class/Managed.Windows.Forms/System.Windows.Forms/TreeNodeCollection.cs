@@ -353,6 +353,8 @@ namespace System.Windows.Forms {
 				tree_view.RecalculateVisibleOrder (prev);
 
 				if (removed == tree_view.SelectedNode) {
+					if (removed.IsExpanded)
+						removed.Collapse();	// Fix Xamarin Bugzilla 5010.
 					re_set_selected = true;
 					OpenTreeNodeEnumerator oe = new OpenTreeNodeEnumerator (removed);
 					if (oe.MoveNext () && oe.MoveNext ()) {

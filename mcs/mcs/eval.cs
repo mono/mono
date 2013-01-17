@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2011 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -55,7 +56,9 @@ namespace Mono.CSharp
 		static object evaluator_lock = new object ();
 		static volatile bool invoking;
 		
+#if !STATIC
 		static int count;
+#endif
 		static Thread invoke_thread;
 
 		readonly Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields;
@@ -69,18 +72,17 @@ namespace Mono.CSharp
 		readonly ReflectionImporter importer;
 		readonly CompilationSourceFile source_file;
 		
-		public Evaluator (CompilerSettings settings, Report report)
+		public Evaluator (CompilerContext ctx)
 		{
-			ctx = new CompilerContext (settings, report);
+			this.ctx = ctx;
 
 			module = new ModuleContainer (ctx);
 			module.Evaluator = this;
 
-			source_file = new CompilationSourceFile ("{interactive}", "", 1);
- 			source_file.NamespaceContainer = new NamespaceContainer (null, module, null, source_file);
+			source_file = new CompilationSourceFile (module, null);
+			module.AddTypeContainer (source_file);
 
 			startup_files = ctx.SourceFiles.Count;
-			ctx.SourceFiles.Add (source_file);
 
 			// FIXME: Importer needs this assembly for internalsvisibleto
 			module.SetDeclaringAssembly (new AssemblyDefinitionDynamic (module, "evaluator"));
@@ -114,9 +116,10 @@ namespace Mono.CSharp
 
 			Location.Initialize (ctx.SourceFiles);
 
+			var parser_session = new ParserSession ();
 			for (int i = 0; i < startup_files; ++i) {
-				var sf = ctx.Settings.SourceFiles [i];
-				d.Parse (sf, module);
+				var sf = ctx.SourceFiles [i];
+				d.Parse (sf, module, parser_session, ctx.Report);
 			}
 		}
 
@@ -133,6 +136,11 @@ namespace Mono.CSharp
 		///   and calls the describe method on it
 		/// </summary>
 		public bool DescribeTypeExpressions;
+
+		/// <summary>
+		///   Whether the evaluator will use terse syntax, and the semicolons at the end are optional
+		/// </summary>
+		public bool Terse = true;
 
 		/// <summary>
 		///   The base class for the classes that host the user generated code
@@ -200,7 +208,7 @@ namespace Mono.CSharp
 		///   compiled parameter will be set to the delegate
 		///   that can be invoked to execute the code.
 		///
-	    /// </remarks>
+		/// </remarks>
 		public string Compile (string input, out CompiledMethod compiled)
 		{
 			if (input == null || input.Length == 0){
@@ -218,6 +226,10 @@ namespace Mono.CSharp
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
+				if (parser == null && Terse && partial_input){
+					bool ignore;
+					parser = ParseString (ParseMode.Silent, input + ";", out ignore);
+				}
 				if (parser == null){
 					compiled = null;
 					if (partial_input)
@@ -343,8 +355,6 @@ namespace Mono.CSharp
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.GetCompletions, input, out partial_input);
 				if (parser == null){
-					if (CSharpParser.yacc_verbose_flag != 0)
-						Console.WriteLine ("DEBUG: No completions available");
 					return null;
 				}
 				
@@ -360,9 +370,9 @@ namespace Mono.CSharp
 				module.SetDeclaringAssembly (a);
 
 				// Need to setup MemberCache
-				parser_result.CreateType ();
+				parser_result.CreateContainer ();
 
-				var method = parser_result.Methods[0] as Method;
+				var method = parser_result.Members[0] as Method;
 				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
 
 				try {
@@ -436,7 +446,7 @@ namespace Mono.CSharp
 		//
 		InputKind ToplevelOrStatement (SeekableStreamReader seekable)
 		{
-			Tokenizer tokenizer = new Tokenizer (seekable, source_file, ctx);
+			Tokenizer tokenizer = new Tokenizer (seekable, source_file, new ParserSession ());
 			
 			int t = tokenizer.token ();
 			switch (t){
@@ -542,7 +552,6 @@ namespace Mono.CSharp
 		{
 			partial_input = false;
 			Reset ();
-			Tokenizer.LocatedToken.Initialize ();
 
 			var enc = ctx.Settings.Encoding;
 			var s = new MemoryStream (enc.GetBytes (input));
@@ -565,8 +574,8 @@ namespace Mono.CSharp
 			}
 			seekable.Position = 0;
 
-			source_file.NamespaceContainer.DeclarationFound = false;
-			CSharpParser parser = new CSharpParser (seekable, source_file);
+			source_file.DeclarationFound = false;
+			CSharpParser parser = new CSharpParser (seekable, source_file, new ParserSession ());
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
@@ -580,7 +589,7 @@ namespace Mono.CSharp
 				parser.Lexer.CompleteOnEOF = true;
 
 			ReportPrinter old_printer = null;
-			if ((mode == ParseMode.Silent || mode == ParseMode.GetCompletions) && CSharpParser.yacc_verbose_flag == 0)
+			if ((mode == ParseMode.Silent || mode == ParseMode.GetCompletions))
 				old_printer = ctx.Report.SetPrinter (new StreamReportPrinter (TextWriter.Null));
 
 			try {
@@ -604,11 +613,12 @@ namespace Mono.CSharp
 
 		CompiledMethod CompileBlock (Class host, Undo undo, Report Report)
 		{
-			string current_debug_name = "eval-" + count + ".dll";
-			++count;
 #if STATIC
 			throw new NotSupportedException ();
 #else
+			string current_debug_name = "eval-" + count + ".dll";
+			++count;
+
 			AssemblyDefinitionDynamic assembly;
 			AssemblyBuilderAccess access;
 
@@ -634,18 +644,23 @@ namespace Mono.CSharp
 					new TypeExpression (base_class_imported, host.Location)
 				};
 
-				host.AddBasesForPart (host, baseclass_list);
+				host.AddBasesForPart (baseclass_list);
 
-				host.CreateType ();
-				host.DefineType ();
+				host.CreateContainer ();
+				host.DefineContainer ();
 				host.Define ();
 
-				expression_method = (Method) host.Methods[0];
+				expression_method = (Method) host.Members[0];
 			} else {
 				expression_method = null;
 			}
 
-			module.CreateType ();
+			module.CreateContainer ();
+
+			// Disable module and source file re-definition checks
+			module.EnableRedefinition ();
+			source_file.EnableRedefinition ();
+
 			module.Define ();
 
 			if (Report.Errors != 0){
@@ -656,19 +671,19 @@ namespace Mono.CSharp
 			}
 
 			if (host != null){
-				host.EmitType ();
+				host.EmitContainer ();
 			}
 			
-			module.Emit ();
+			module.EmitContainer ();
 			if (Report.Errors != 0){
 				if (undo != null)
 					undo.ExecuteUndo ();
 				return null;
 			}
 
-			module.CloseType ();
+			module.CloseContainer ();
 			if (host != null)
-				host.CloseType ();
+				host.CloseContainer ();
 
 			if (access == AssemblyBuilderAccess.RunAndSave)
 				assembly.Save ();
@@ -681,36 +696,38 @@ namespace Mono.CSharp
 			// work from MethodBuilders.   Retarded, I know.
 			//
 			var tt = assembly.Builder.GetType (host.TypeBuilder.Name);
-			var mi = tt.GetMethod (expression_method.Name);
+			var mi = tt.GetMethod (expression_method.MemberName.Name);
 
-			if (host.Fields != null) {
-				//
-				// We need to then go from FieldBuilder to FieldInfo
-				// or reflection gets confused (it basically gets confused, and variables override each
-				// other).
-				//
-				foreach (Field field in host.Fields) {
-					var fi = tt.GetField (field.Name);
+			//
+			// We need to then go from FieldBuilder to FieldInfo
+			// or reflection gets confused (it basically gets confused, and variables override each
+			// other).
+			//
+			foreach (var member in host.Members) {
+				var field = member as Field;
+				if (field == null)
+					continue;
 
-					Tuple<FieldSpec, FieldInfo> old;
+				var fi = tt.GetField (field.Name);
 
-					// If a previous value was set, nullify it, so that we do
-					// not leak memory
-					if (fields.TryGetValue (field.Name, out old)) {
-						if (old.Item1.MemberType.IsStruct) {
-							//
-							// TODO: Clear fields for structs
-							//
-						} else {
-							try {
-								old.Item2.SetValue (null, null);
-							} catch {
-							}
+				Tuple<FieldSpec, FieldInfo> old;
+
+				// If a previous value was set, nullify it, so that we do
+				// not leak memory
+				if (fields.TryGetValue (field.Name, out old)) {
+					if (old.Item1.MemberType.IsStruct) {
+						//
+						// TODO: Clear fields for structs
+						//
+					} else {
+						try {
+							old.Item2.SetValue (null, null);
+						} catch {
 						}
 					}
-
-					fields[field.Name] = Tuple.Create (field.Spec, fi);
 				}
+
+				fields[field.Name] = Tuple.Create (field.Spec, fi);
 			}
 			
 			return (CompiledMethod) System.Delegate.CreateDelegate (typeof (CompiledMethod), mi);
@@ -747,7 +764,7 @@ namespace Mono.CSharp
 			//foreach (object x in ns.using_alias_list)
 			//    sb.AppendFormat ("using {0};\n", x);
 
-			foreach (var ue in source_file.NamespaceContainer.Usings) {
+			foreach (var ue in source_file.Usings) {
 				sb.AppendFormat ("using {0};", ue.ToString ());
 				sb.Append (Environment.NewLine);
 			}
@@ -755,12 +772,17 @@ namespace Mono.CSharp
 			return sb.ToString ();
 		}
 
-		internal ICollection<string> GetUsingList ()
+		internal List<string> GetUsingList ()
 		{
 			var res = new List<string> ();
 
-			foreach (var ue in source_file.NamespaceContainer.Usings)
-				res.Add (ue.Name);
+			foreach (var ue in source_file.Usings) {
+				if (ue.Alias != null || ue.ResolvedExpression == null)
+					continue;
+
+				res.Add (ue.NamespaceExpression.Name);
+			}
+
 			return res;
 		}
 		
@@ -801,7 +823,7 @@ namespace Mono.CSharp
 		public void LoadAssembly (string file)
 		{
 			var loader = new DynamicLoader (importer, ctx);
-			var assembly = loader.LoadAssemblyFile (file);
+			var assembly = loader.LoadAssemblyFile (file, false);
 			if (assembly == null)
 				return;
 
@@ -962,7 +984,9 @@ namespace Mono.CSharp
 		static public string help {
 			get {
 				return "Static methods:\n" +
+#if !NET_2_1
 					"  Describe (object);       - Describes the object's type\n" +
+#endif
 					"  LoadPackage (package);   - Loads the given Package (like -pkg:FILE)\n" +
 					"  LoadAssembly (assembly); - Loads the given assembly (like -r:ASSEMBLY)\n" +
 					"  ShowVars ();             - Shows defined local variables.\n" +
@@ -986,6 +1010,13 @@ namespace Mono.CSharp
 				// To avoid print null at the exit
 				return typeof (Evaluator.QuitValue);
 			}
+		}
+
+		/// <summary>
+		///   Same as quit - useful in script scenerios
+		/// </summary>
+		static public void Quit () {
+			QuitRequested = true;
 		}
 
 #if !NET_2_1
@@ -1017,10 +1048,6 @@ namespace Mono.CSharp
 	{
 		public HoistedEvaluatorVariable (Field field)
 			: base (null, field)
-		{
-		}
-
-		public override void EmitSymbolInfo ()
 		{
 		}
 
@@ -1067,7 +1094,7 @@ namespace Mono.CSharp
 					ec.Report.SetPrinter (old_printer);
 				}
 
-				if (tclone != null) {
+				if (tclone is TypeExpr) {
 					Arguments args = new Arguments (1);
 					args.Add (new Argument (new TypeOf ((TypeExpr) clone, Location)));
 					return new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);
@@ -1092,7 +1119,7 @@ namespace Mono.CSharp
 		{
 		}
 
-		public void AddTypeContainer (TypeContainer current_container, TypeContainer tc)
+		public void AddTypeContainer (TypeContainer current_container, TypeDefinition tc)
 		{
 			if (current_container == tc){
 				Console.Error.WriteLine ("Internal error: inserting container into itself");
@@ -1102,14 +1129,13 @@ namespace Mono.CSharp
 			if (undo_actions == null)
 				undo_actions = new List<Action> ();
 
-			var existing = current_container.Types.FirstOrDefault (l => l.MemberName.Basename == tc.MemberName.Basename);
+			var existing = current_container.Containers.FirstOrDefault (l => l.Basename == tc.Basename);
 			if (existing != null) {
-				current_container.RemoveTypeContainer (existing);
-				existing.NamespaceEntry.SlaveDeclSpace.RemoveTypeContainer (existing);
+				current_container.RemoveContainer (existing);
 				undo_actions.Add (() => current_container.AddTypeContainer (existing));
 			}
 
-			undo_actions.Add (() => current_container.RemoveTypeContainer (tc));
+			undo_actions.Add (() => current_container.RemoveContainer (tc));
 		}
 
 		public void ExecuteUndo ()

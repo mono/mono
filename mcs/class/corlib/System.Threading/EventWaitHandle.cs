@@ -43,7 +43,7 @@ namespace System.Threading
 			Handle = handle;
 		}
 
-		private bool IsManualReset (EventResetMode mode)
+		static bool IsManualReset (EventResetMode mode)
 		{
 			if ((mode < EventResetMode.AutoReset) || (mode > EventResetMode.ManualReset))
 				throw new ArgumentException ("mode");
@@ -72,7 +72,7 @@ namespace System.Threading
 			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out createdNew);
 		}
 #if !NET_2_1
-		[MonoTODO ("Implement access control")]
+		[MonoTODO ("Use access control in CreateEvent_internal")]
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name, out bool createdNew,
 					EventWaitHandleSecurity eventSecurity)
@@ -81,10 +81,13 @@ namespace System.Threading
 			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out createdNew);
 		}
 		
-		[MonoTODO]
 		public EventWaitHandleSecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			return new EventWaitHandleSecurity (SafeWaitHandle,
+							    AccessControlSections.Owner |
+							    AccessControlSections.Group |
+							    AccessControlSections.Access);
+
 		}
 
 		public static EventWaitHandle OpenExisting (string name)
@@ -119,22 +122,30 @@ namespace System.Threading
 #endif
 		public bool Reset ()
 		{
-			CheckDisposed ();
+			/* This needs locking since another thread could dispose the handle */
+			lock (this) {
+				CheckDisposed ();
 			
-			return (NativeEventCalls.ResetEvent_internal (Handle));
+				return (NativeEventCalls.ResetEvent_internal (Handle));
+			}
 		}
 		
 		public bool Set ()
 		{
-			CheckDisposed ();
+			lock (this) {
+				CheckDisposed ();
 			
-			return (NativeEventCalls.SetEvent_internal (Handle));
+				return (NativeEventCalls.SetEvent_internal (Handle));
+			}
 		}
 #if !NET_2_1
-		[MonoTODO]
 		public void SetAccessControl (EventWaitHandleSecurity eventSecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == eventSecurity)
+				throw new ArgumentNullException ("eventSecurity");
+				
+			eventSecurity.PersistModifications (SafeWaitHandle);
+
 		}
 #endif
 	}

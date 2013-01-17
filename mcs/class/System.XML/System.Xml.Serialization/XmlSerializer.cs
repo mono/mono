@@ -397,11 +397,11 @@ namespace System.Xml.Serialization
 			return sers;
 		}
 
-		public static XmlSerializer [] FromTypes (Type [] mappings)
+		public static XmlSerializer [] FromTypes (Type [] types)
 		{
-			XmlSerializer [] sers = new XmlSerializer [mappings.Length];
-			for (int n=0; n<mappings.Length; n++)
-				sers[n] = new XmlSerializer (mappings[n]);
+			XmlSerializer [] sers = new XmlSerializer [types.Length];
+			for (int n=0; n<types.Length; n++)
+				sers[n] = new XmlSerializer (types[n]);
 			return sers;
 		}
 
@@ -462,7 +462,7 @@ namespace System.Xml.Serialization
 			xmlWriter.Flush();
 		}
 
-		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
+		public void Serialize (XmlWriter xmlWriter, object o, XmlSerializerNamespaces namespaces)
 		{
 			XmlSerializationWriter xsWriter;
 
@@ -483,9 +483,9 @@ namespace System.Xml.Serialization
 #endif
 				}
 
-				xsWriter.Initialize (writer, namespaces);
+				xsWriter.Initialize (xmlWriter, namespaces);
 				Serialize (o, xsWriter);
-				writer.Flush ();
+				xmlWriter.Flush ();
 			} catch (Exception ex) {
 				if (ex is TargetInvocationException)
 					ex = ex.InnerException;

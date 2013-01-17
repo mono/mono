@@ -40,9 +40,7 @@ using System.Threading;
 
 namespace System.IO {
 	[DefaultEvent("Changed")]
-#if NET_2_0
 	[IODescription ("")]
-#endif
 	public class FileSystemWatcher : Component, ISupportInitialize {
 
 		#region Fields
@@ -333,9 +331,7 @@ namespace System.IO {
 
 		[DefaultValue(null)]
 		[IODescription("The object used to marshal the event handler calls resulting from a directory change")]
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public ISynchronizeInvoke SynchronizingObject {
 			get { return synchronizingObject; }
 			set { synchronizingObject = value; }

@@ -1,1 +1,3 @@
 #include mobile_System.dll.sources
+System/AndroidPlatform.cs
+System.CodeDom.Compiler/IndentedTextWriter.cs

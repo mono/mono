@@ -1,13 +1,14 @@
-// System.Net.Sockets.TcpClient.cs
+// TcpClient.cs
 //
 // Author:
 // 	Phillip Pearson (pp@myelin.co.nz)
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Sridhar Kulkarni (sridharkulkarni@gmail.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2001, Phillip Pearson
-//    http://www.myelin.co.nz
+// Copyright (C) 2001, Phillip Pearson http://www.myelin.co.nz
 // Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 
 //
@@ -33,6 +34,9 @@
 
 using System;
 using System.Net;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.Net.Sockets
 {
@@ -75,7 +79,6 @@ namespace System.Net.Sockets
 			client.Bind(new IPEndPoint(IPAddress.Any, 0));
 		}
 	
-#if NET_1_1
 		public TcpClient (AddressFamily family)
 		{
 			if (family != AddressFamily.InterNetwork &&
@@ -89,12 +92,11 @@ namespace System.Net.Sockets
 				any = IPAddress.IPv6Any;
 			client.Bind (new IPEndPoint (any, 0));
 		}
-#endif
-		
-		public TcpClient (IPEndPoint local_end_point)
+
+		public TcpClient (IPEndPoint localEP)
 		{
-			Init(local_end_point.AddressFamily);
-			client.Bind(local_end_point);
+			Init (localEP.AddressFamily);
+			client.Bind (localEP);
 		}
 		
 		public TcpClient (string hostname, int port)
@@ -107,11 +109,7 @@ namespace System.Net.Sockets
 			set { active = value; }
 		}
 		
-#if NET_2_0
 		public Socket Client {
-#else
-		protected Socket Client {
-#endif
 			get { return client; }
 			set {
 				client = value;
@@ -119,7 +117,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if NET_2_0
 		public int Available {
 			get { return client.Available; }
 		}
@@ -139,7 +136,7 @@ namespace System.Net.Sockets
 				client.ExclusiveAddressUse = value;
 			}
 		}
-#endif
+
 		internal void SetTcpClient (Socket s) 
 		{
 			Client = s;
@@ -277,11 +274,11 @@ namespace System.Net.Sockets
 		{
 			((IDisposable) this).Dispose ();
 		}
-		
-		public void Connect (IPEndPoint remote_end_point)
+
+		public void Connect (IPEndPoint remoteEP)
 		{
 			try {
-				client.Connect(remote_end_point);
+				client.Connect (remoteEP);
 				active = true;
 			} finally {
 				CheckDisposed ();
@@ -318,12 +315,7 @@ namespace System.Net.Sockets
 			Connect (addresses, port);
 		}
 
-#if NET_2_0
-		public
-#else
-		private
-#endif
-		void Connect (IPAddress[] ipAddresses, int port)
+		public void Connect (IPAddress[] ipAddresses, int port)
 		{
 			CheckDisposed ();
 			
@@ -344,10 +336,8 @@ namespace System.Net.Sockets
 					
 					if (address.AddressFamily == AddressFamily.InterNetwork) {
 						client.Bind (new IPEndPoint (IPAddress.Any, 0));
-#if NET_1_1
 					} else if (address.AddressFamily == AddressFamily.InterNetworkV6) {
 						client.Bind (new IPEndPoint (IPAddress.IPv6Any, 0));
-#endif
 					} else {
 						throw new NotSupportedException ("This method is only valid for sockets in the InterNetwork and InterNetworkV6 families");
 					}
@@ -377,7 +367,6 @@ namespace System.Net.Sockets
 			}
 		}
 		
-#if NET_2_0		
 		public void EndConnect (IAsyncResult asyncResult)
 		{
 			client.EndConnect (asyncResult);
@@ -386,37 +375,26 @@ namespace System.Net.Sockets
 #if TARGET_JVM
 		[MonoNotSupported ("Not supported as Socket.BeginConnect is not supported")]
 #endif
-		public IAsyncResult BeginConnect (IPAddress address, int port,
-						  AsyncCallback callback,
-						  object state)
+		public IAsyncResult BeginConnect (IPAddress address, int port, AsyncCallback requestCallback, object state)
 		{
-			return(client.BeginConnect (address, port, callback,
-						    state));
+			return client.BeginConnect (address, port, requestCallback, state);
 		}
 		
 #if TARGET_JVM
 		[MonoNotSupported ("Not supported as Socket.BeginConnect is not supported")]
 #endif
-		public IAsyncResult BeginConnect (IPAddress[] addresses,
-						  int port,
-						  AsyncCallback callback,
-						  object state)
+		public IAsyncResult BeginConnect (IPAddress[] addresses, int port, AsyncCallback requestCallback, object state)
 		{
-			return(client.BeginConnect (addresses, port, callback,
-						    state));
+			return client.BeginConnect (addresses, port, requestCallback, state);
 		}
 		
 #if TARGET_JVM
 		[MonoNotSupported ("Not supported as Socket.BeginConnect is not supported")]
 #endif
-		public IAsyncResult BeginConnect (string host, int port,
-						  AsyncCallback callback,
-						  object state)
+		public IAsyncResult BeginConnect (string host, int port, AsyncCallback requestCallback, object state)
 		{
-			return(client.BeginConnect (host, port, callback,
-						    state));
+			return client.BeginConnect (host, port, requestCallback, state);
 		}
-#endif
 		
 		void IDisposable.Dispose ()
 		{
@@ -461,7 +439,23 @@ namespace System.Net.Sockets
 			}
 			finally { CheckDisposed (); }
 		}
-		
+
+#if NET_4_5
+		public Task ConnectAsync (IPAddress address, int port)
+		{
+			return Task.Factory.FromAsync (BeginConnect, EndConnect, address, port, null);
+		}
+
+		public Task ConnectAsync (IPAddress[] addresses, int port)
+		{
+			return Task.Factory.FromAsync (BeginConnect, EndConnect, addresses, port, null);
+		}
+
+		public Task ConnectAsync (string host, int port)
+		{
+			return Task.Factory.FromAsync (BeginConnect, EndConnect, host, port, null);
+		}
+#endif
 		private void CheckDisposed ()
 		{
 			if (disposed)

@@ -864,7 +864,7 @@ namespace System.Collections {
 			private int size;
 			private EnumeratorMode mode;
 
-			private readonly static string xstr = "Hashtable.Enumerator: snapshot out of sync.";
+			const string xstr = "Hashtable.Enumerator: snapshot out of sync.";
 
 			public Enumerator (Hashtable host, EnumeratorMode mode) {
 				this.host = host;
@@ -873,10 +873,6 @@ namespace System.Collections {
 				this.mode = mode;
 				Reset ();
 			}
-
-			public Enumerator (Hashtable host)
-			           : this (host, EnumeratorMode.KEY_MODE) {}
-
 
 			private void FailFast ()
 			{

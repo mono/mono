@@ -70,9 +70,15 @@ namespace Mono.Security.Cryptography {
 		}
 
 		public override byte[] Key {
-			get { return (byte[]) key.Clone (); }
+			get {
+				if (KeyValue == null)
+					GenerateKey ();
+				return (byte[]) KeyValue.Clone (); 
+			}
 			set { 
-				key = (byte[]) value.Clone ();
+				if (value == null)
+					throw new ArgumentNullException ("Key");
+				KeyValue = key = (byte[]) value.Clone ();
 				KeySetup (key);
 			}
 		}
@@ -101,7 +107,7 @@ namespace Mono.Security.Cryptography {
 
 		public override void GenerateKey () 
 		{
-			Key = KeyBuilder.Key (KeySizeValue >> 3);
+			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 		}
 
 		public bool CanTransformMultipleBlocks {

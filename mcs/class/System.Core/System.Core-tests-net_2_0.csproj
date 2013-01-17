@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699,1720</NoWarn>
+    <OutputPath>.\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>System.Core_test_net_2_0</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699,1720</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;INSIDE_SYSCORE;LIBC;NET_3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699,1720</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;INSIDE_SYSCORE;LIBC;NET_3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Test\System\TimeZoneInfoTest.cs" />
+   <Compile Include="Test\System\TimeZoneInfo.AdjustmentRuleTest.cs" />
+   <Compile Include="Test\System\TimeZoneInfo.TransitionTimeTest.cs" />
+   <Compile Include="Test\System.Collections.Generic\HashSetTest.cs" />
+   <Compile Include="Test\System.IO.MemoryMappedFiles\MemoryMappedFileTest.cs" />
+   <Compile Include="Test\System.IO.Pipes\PipeSecurityTest.cs" />
+   <Compile Include="Test\System.Linq\EnumerableFixture.cs" />
+   <Compile Include="Test\System.Linq\EnumerableTest.cs" />
+   <Compile Include="Test\System.Linq\EnumerableMoreTest.cs" />
+   <Compile Include="Test\System.Linq\EnumerableAsQueryableTest.cs" />
+   <Compile Include="Test\System.Linq\LookupTest.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Add.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_AddChecked.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_And.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_AndAlso.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_ArrayIndex.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_ArrayLength.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Bind.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Call.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Coalesce.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Condition.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Constant.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Convert.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Divide.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_ElementInit.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Equal.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_ExclusiveOr.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Field.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_GreaterThan.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_GreaterThanOrEqual.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Invoke.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Lambda.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_LessThan.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_LessThanOrEqual.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_LeftShift.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Lift.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_ListBind.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_ListInit.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_MakeBinary.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_MemberBind.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_MemberInit.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Modulo.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_MultiplyChecked.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Multiply.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Negate.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_New.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_NewArrayBounds.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_NewArrayInit.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Not.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_NotEqual.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Or.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_OrElse.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Power.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Property.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_PropertyOrField.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Quote.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_RightShift.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_SubtractChecked.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Subtract.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_TypeAs.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_TypeIs.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_UnaryPlus.cs" />
+   <Compile Include="Test\System.Linq.Expressions\ExpressionTest_Utils.cs" />
+   <Compile Include="Test\System.Threading\ReaderWriterLockSlimTest.cs" />
+   <Compile Include="..\corlib\Test\System.Security.Cryptography\HashAlgorithmTest.cs" />
+   <Compile Include="..\corlib\Test\System.Security.Cryptography\SHA1Test.cs" />
+   <Compile Include="..\corlib\Test\System.Security.Cryptography\SHA256Test.cs" />
+   <Compile Include="..\corlib\Test\System.Security.Cryptography\SHA384Test.cs" />
+   <Compile Include="..\corlib\Test\System.Security.Cryptography\SHA512Test.cs" />
+   <Compile Include="Test\System.Security.Cryptography\CngAlgorithmTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\CngAlgorithmGroupTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\MD5CngTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\SHA1CngTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\SHA256CngTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\SHA256CryptoServiceProviderTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\SHA384CngTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\SHA384CryptoServiceProviderTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\SHA512CngTest.cs" />
+   <Compile Include="Test\System.Security.Cryptography\SHA512CryptoServiceProviderTest.cs" />
+   <Compile Include="Test\System.Runtime.CompilerServices\DynamicAttributeTest.cs" />
+   <Compile Include="Test\System.Linq\ParallelEnumerableTests.cs" />
+   <Compile Include="Test\System.Linq\ParallelTestHelper.cs" />
+   <Compile Include="Test\System.Threading.Tasks\TaskExtensionsTests.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="./../../class/lib/net_2_0/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../class/lib/net_2_0/System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Posix.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

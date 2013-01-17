@@ -9,6 +9,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
+// Copyright 2011 Xamarin Inc
 //
 
 using System;
@@ -61,10 +62,8 @@ namespace Mono.CSharp
 
 		static readonly string[] attribute_targets = new string [] { "field" };
 
-		protected FieldBase (DeclSpace parent, FullNamedExpression type, Modifiers mod,
-				     Modifiers allowed_mod, MemberName name, Attributes attrs)
-			: base (parent, null, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE,
-				name, attrs)
+		protected FieldBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE, name, attrs)
 		{
 			if ((mod & Modifiers.ABSTRACT) != 0)
 				Report.Error (681, Location, "The modifier 'abstract' is not valid on fields. Try using a property instead");
@@ -78,12 +77,24 @@ namespace Mono.CSharp
 			}
 		}
 
+		public List<FieldDeclarator> Declarators {
+			get {
+				return this.declarators;
+			}
+		}
+
 		public Expression Initializer {
 			get {
 				return initializer;
 			}
 			set {
 				this.initializer = value;
+			}
+		}
+
+		public string Name {
+			get {
+				return MemberName.Name;
 			}
 		}
 
@@ -108,8 +119,7 @@ namespace Mono.CSharp
 
 			declarators.Add (declarator);
 
-			// TODO: This will probably break
-			Parent.AddMember (this, declarator.Name.Value);
+			Parent.AddNameToContainer (this, declarator.Name.Value);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -223,12 +233,14 @@ namespace Mono.CSharp
 		{
 			if (member_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
-			} else if (!(Parent is CompilerGeneratedClass) && member_type.HasDynamicElement) {
+			} else if (!Parent.IsCompilerGenerated && member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type, Location);
 			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (FieldBuilder);
+			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
+				Module.PredefinedAttributes.DebuggerBrowsable.EmitAttribute (FieldBuilder, System.Diagnostics.DebuggerBrowsableState.Never);
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();
@@ -365,7 +377,7 @@ namespace Mono.CSharp
 			Modifiers.PRIVATE |
 			Modifiers.UNSAFE;
 
-		public FixedField (DeclSpace parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
+		public FixedField (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, AllowedModifiers, name, attrs)
 		{
 		}
@@ -397,12 +409,12 @@ namespace Mono.CSharp
 					GetSignatureForError ());
 			} else if (declarators != null) {
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
-				int index = Parent.PartialContainer.Fields.IndexOf (this);
 				foreach (var d in declarators) {
 					var f = new FixedField (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					f.initializer = d.Initializer;
 					((ConstInitializer) f.initializer).Name = d.Name.Value;
-					Parent.PartialContainer.Fields.Insert (++index, f);
+					f.Define ();
+					Parent.PartialContainer.Members.Add (f);
 				}
 			}
 			
@@ -562,8 +574,7 @@ namespace Mono.CSharp
 			Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (DeclSpace parent, FullNamedExpression type, Modifiers mod, MemberName name,
-			      Attributes attrs)
+		public Field (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, AllowedModifiers, name, attrs)
 		{
 		}
@@ -594,6 +605,11 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
+		
 		public override bool Define ()
 		{
 			if (!base.Define ())
@@ -611,32 +627,30 @@ namespace Mono.CSharp
 
 			spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 
-			// Don't cache inaccessible fields
-			if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
+			//
+			// Don't cache inaccessible fields except for struct where we
+			// need them for definitive assignment checks
+			//
+			if ((ModFlags & Modifiers.BACKING_FIELD) == 0 || Parent.Kind == MemberKind.Struct) {
 				Parent.MemberCache.AddMember (spec);
 			}
 
 			if (initializer != null) {
-				((TypeContainer) Parent).RegisterFieldForInitialization (this,
-					new FieldInitializer (spec, initializer, this));
+				Parent.RegisterFieldForInitialization (this, new FieldInitializer (this, initializer, TypeExpression.Location));
 			}
 
 			if (declarators != null) {
-				var t = new TypeExpression (MemberType, TypeExpression.Location);
-				int index = Parent.PartialContainer.Fields.IndexOf (this);
 				foreach (var d in declarators) {
+					var t = new TypeExpression (MemberType, d.Name.Location);
 					var f = new Field (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					if (d.Initializer != null)
 						f.initializer = d.Initializer;
 
-					Parent.PartialContainer.Fields.Insert (++index, f);
+					f.Define ();
+					Parent.PartialContainer.Members.Add (f);
 				}
 			}
 
-/*
-			if ((ModFlags & (Modifiers.STATIC | Modifiers.READONLY | Modifiers.COMPILER_GENERATED)) == Modifiers.STATIC)
-				Console.WriteLine ("{0}: {1}", Location.ToString (), GetSignatureForError ());
-*/
 			return true;
 		}
 

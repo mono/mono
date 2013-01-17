@@ -45,16 +45,15 @@ using System.Text;
 namespace Mono {
 
 #if MONO_DATACONVERTER_PUBLIC
-	unsafe public abstract class DataConverter {
-#else
-	unsafe internal abstract class DataConverter {
+	public
+#endif
+	unsafe abstract class DataConverter {
 
 // Disables the warning: CLS compliance checking will not be performed on
 //  `XXXX' because it is not visible from outside this assembly
 #pragma warning disable  3019
-#endif
-		static DataConverter SwapConv = new SwapConverter ();
-		static DataConverter CopyConv = new CopyConverter ();
+		static readonly DataConverter SwapConv = new SwapConverter ();
+		static readonly DataConverter CopyConv = new CopyConverter ();
 
 		public static readonly bool IsLittleEndian = BitConverter.IsLittleEndian;
 			

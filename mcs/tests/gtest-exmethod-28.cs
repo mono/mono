@@ -22,7 +22,7 @@ partial class Extensions
 
 class Program
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

@@ -76,17 +76,10 @@ namespace System.Data.OleDb
 		
 		[DataCategory ("Data")]
 		[DefaultValue ("")]
-#if NET_1_0 || ONLY_1_1
-		[DataSysDescriptionAttribute ("Information used to connect to a Data Source.")]
-#endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-		public
-#if NET_2_0
-		override
-#endif
-		string ConnectionString {
+		public override string ConnectionString {
 			get {
 				if (connectionString == null)
 					return string.Empty;
@@ -98,27 +91,14 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]
-#endif
-		public
-#if NET_2_0
-		override
-#endif
-		int ConnectionTimeout {
+		public override int ConnectionTimeout {
 			get {
 				return connectionTimeout;
 			}
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("Current data source catalog value, 'Initial Catalog=X' in the connection string.")]
-#endif
-		public
-#if NET_2_0
-		override
-#endif
+		public override 
 		string Database {
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -130,17 +110,8 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if NET_2_0
 		[BrowsableAttribute (true)]
-#else
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[DataSysDescriptionAttribute ("Current data source, 'Data Source=X' in the connection string.")]
-#endif
-		public
-#if NET_2_0
-		override
-#endif
-		string DataSource {
+		public override string DataSource {
 			get {
 				if (gdaConnection != IntPtr.Zero
 					&& libgda.gda_connection_is_open (gdaConnection)) {
@@ -152,11 +123,7 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[BrowsableAttribute (true)]
-#else
-		[DataSysDescriptionAttribute ("Current OLE DB provider progid, 'Provider=X' in the connection string.")]
-#endif
 		public string Provider {
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -168,16 +135,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("Version of the product accessed by the OLE DB Provider.")]
-		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
-#endif
-		public
-#if NET_2_0
-		override
-#endif
-		string ServerVersion {
+		public override string ServerVersion {
 			get {
 				if (State == ConnectionState.Closed)
 					throw ExceptionHelper.ConnectionClosed ();
@@ -186,15 +144,8 @@ namespace System.Data.OleDb
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if !NET_2_0
-		[DataSysDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed.")]
-#endif
 		[BrowsableAttribute (false)]
-		public
-#if NET_2_0
-		override
-#endif
-		ConnectionState State {
+		public override ConnectionState State {
 			get {
 				if (gdaConnection != IntPtr.Zero) {
 					if (libgda.gda_connection_is_open (gdaConnection))
@@ -229,7 +180,6 @@ namespace System.Data.OleDb
 			return new OleDbTransaction (this, isolationLevel);
 		}
 
-#if NET_2_0
 		protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
 		{
 			return BeginTransaction (isolationLevel);
@@ -239,28 +189,8 @@ namespace System.Data.OleDb
 		{
 			return CreateCommand ();
 		}
-#else
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			return BeginTransaction ();
-		}
 
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel isolationLevel)
-		{
-			return BeginTransaction (isolationLevel);
-		}
-
-		IDbCommand IDbConnection.CreateCommand ()
-		{
-			return CreateCommand ();
-		}
-#endif
-
-		public
-#if NET_2_0
-		override
-#endif
-		void ChangeDatabase (string value)
+		public override void ChangeDatabase (string value)
 		{
 			if (State != ConnectionState.Open)
 				throw new InvalidOperationException ();
@@ -269,11 +199,7 @@ namespace System.Data.OleDb
 				throw new OleDbException (this);
 		}
 
-		public
-#if NET_2_0
-		override
-#endif
-		void Close ()
+		public override void Close ()
 		{
 			if (State == ConnectionState.Open) {
 				libgda.gda_connection_close (gdaConnection);

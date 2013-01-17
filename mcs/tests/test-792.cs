@@ -10,6 +10,8 @@ class Program
 		
 		var s = new MultipleSameNames ();
 		s.AA = "1";
+		
+		Overload.Test (1);
 	}
 	
 	void Test2 (IMemberDelayed md)
@@ -18,7 +20,7 @@ class Program
 		var t = typeof (IMemberDelayed);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

@@ -25,8 +25,6 @@
 //
 
 
-#if NET_2_0
-
 using System.Collections;
 
 namespace System.ComponentModel {
@@ -114,5 +112,3 @@ namespace System.ComponentModel {
 	}
 
 }
-
-#endif

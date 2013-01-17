@@ -18,7 +18,7 @@ public class ZipEntry
 		}
 	}
 
-	static int Main () {
+	public static int Main () {
 		// Compilation only test.
 		return 0;
 	}

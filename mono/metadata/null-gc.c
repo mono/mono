@@ -2,7 +2,8 @@
  * null-gc.c: GC implementation using malloc: will leak everything, just for testing.
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
- * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
+ * Copyright 2004-2011 Novell, Inc (http://www.novell.com)
+ * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 
 #include "config.h"
@@ -124,7 +125,7 @@ mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 }
 
 void
-mono_gc_weak_link_remove (void **link_addr)
+mono_gc_weak_link_remove (void **link_addr, gboolean track)
 {
 	*link_addr = NULL;
 }
@@ -337,10 +338,22 @@ mono_gc_get_card_table (int *shift_bits, gpointer *card_mask)
 	return NULL;
 }
 
+gboolean
+mono_gc_card_table_nursery_check (void)
+{
+	g_assert_not_reached ();
+	return TRUE;
+}
+
 void*
 mono_gc_get_nursery (int *shift_bits, size_t *size)
 {
 	return NULL;
+}
+
+void
+mono_gc_set_current_thread_appdomain (MonoDomain *domain)
+{
 }
 
 gboolean
@@ -380,6 +393,30 @@ mono_gc_set_gc_callbacks (MonoGCCallbacks *callbacks)
 {
 }
 
+void
+mono_gc_set_stack_end (void *stack_end)
+{
+}
+
+int
+mono_gc_get_los_limit (void)
+{
+	return G_MAXINT;
+}
+
+gboolean
+mono_gc_user_markers_supported (void)
+{
+	return FALSE;
+}
+
+void *
+mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
 #ifndef HOST_WIN32
 
 int
@@ -406,6 +443,9 @@ mono_gc_pthread_exit (void *retval)
 	pthread_exit (retval);
 }
 
+void mono_gc_set_skip_thread (gboolean value)
+{
+}
 #endif
 
 #ifdef HOST_WIN32
@@ -414,5 +454,16 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 	return TRUE;
 }
 #endif
+
+guint
+mono_gc_get_vtable_bits (MonoClass *class)
+{
+	return 0;
+}
+
+void
+mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size)
+{
+}
 
 #endif

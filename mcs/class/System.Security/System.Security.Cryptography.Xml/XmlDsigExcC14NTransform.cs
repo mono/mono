@@ -140,9 +140,7 @@ namespace System.Security.Cryptography.Xml {
 			if (stream != null) {
 				XmlDocument doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;	// REALLY IMPORTANT
-#if NET_1_1
 				doc.XmlResolver = GetResolver ();
-#endif
 				doc.Load (new XmlSignatureStreamReader (new StreamReader (stream)));
 //				doc.Load ((Stream) obj);
 				s = canonicalizer.Canonicalize (doc);

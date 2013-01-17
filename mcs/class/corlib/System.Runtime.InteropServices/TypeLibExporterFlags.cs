@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 namespace System.Runtime.InteropServices
 {
 	[ComVisible(true)]
@@ -43,3 +44,4 @@ namespace System.Runtime.InteropServices
 		ExportAs64Bit = 32
 	}
 }
+#endif

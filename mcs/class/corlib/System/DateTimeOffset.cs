@@ -6,6 +6,7 @@
  *	Marek Safar (marek.safar@gmail.com)
  *
  *  Copyright (C) 2007 Novell, Inc (http://www.novell.com) 
+ *  Copyright 2012 Xamarin, Inc (http://www.xamarin.com) 
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -388,9 +389,14 @@ namespace System
 			if ((styles & DateTimeStyles.AllowInnerWhite) != 0)
 				allow_white_spaces = true;
 
+			result = DateTimeOffset.MinValue;
+			
 			bool useutc = false, use_invariants = false;
-			if (format.Length == 1)
+			if (format.Length == 1) {
 				format = DateTimeUtils.GetStandardPattern (format[0], dfi, out useutc, out use_invariants, true);
+				if (format == null)
+					return false;
+			}
 
 			int year = -1;
 			int month = -1;
@@ -402,8 +408,6 @@ namespace System
 			double fraction = -1;
 			int temp_int = -1;
 			TimeSpan offset = TimeSpan.MinValue;
-
-			result = DateTimeOffset.MinValue;
 
 			int fi = 0; //format iterator
 			int ii = 0; //input iterator
@@ -513,7 +517,7 @@ namespace System
 					if (tokLen <= 2) {
 						ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out year);
 						if (year != -1)
-							year += DateTime.Now.Year - DateTime.Now.Year % 100;
+							year = dfi.Calendar.ToFourDigitYear (year);
 					} else if (tokLen <= 4) { // yyy and yyyy accept up to 5 digits with leading 0
 						int digit_parsed;
 						ii += ParseNumber (input, ii, 5, false, allow_white_spaces, out year, out digit_parsed);
@@ -588,6 +592,25 @@ namespace System
 					if (temp_int == -1)
 						return false;
 					break;
+				case '\'':
+				case '"':
+					tokLen = 1;
+					while (ii < input.Length) {
+						var ftoken = format [fi + tokLen];
+						++tokLen;
+						if (ftoken == format [fi]) {
+							if (useutc && tokLen == 5 && input [ii - 3] == 'G' && input [ii - 2] == 'M' && input [ii - 1] == 'T') {
+								offset = TimeSpan.Zero;
+							}
+
+							break;
+						}
+
+						if (ftoken != input [ii++])
+							return false;
+					}
+
+					break;
 				default:
 					//Console.WriteLine ("un-parsed character: {0}", ch);
 					tokLen = 1;
@@ -600,11 +623,16 @@ namespace System
 			}
 
 			//Console.WriteLine ("{0}-{1}-{2} {3}:{4} {5}", year, month, day, hour, minute, offset);
-			if (offset == TimeSpan.MinValue && (styles & DateTimeStyles.AssumeLocal) != 0)
-				offset = TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now);
+			if (offset == TimeSpan.MinValue) {
+				if ((styles & DateTimeStyles.AssumeUniversal) != 0) {
+					offset = TimeSpan.Zero;
+				} else if ((styles & DateTimeStyles.AssumeLocal) != 0) {
+					offset = use_invariants ?
+						TimeSpan.Zero :
+						TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now);
+				}
+			}
 
-			if (offset == TimeSpan.MinValue && (styles & DateTimeStyles.AssumeUniversal) != 0)
-				offset = TimeSpan.Zero;
 
 			if (hour < 0)		hour = 0;
 			if (minute < 0)		minute = 0;

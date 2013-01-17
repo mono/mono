@@ -10,28 +10,46 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Mono.CSharp</RootNamespace>
     <AssemblyName>mcs</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>.\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER</DefineConstants>
+    <Optimize>False</Optimize>
+    <OutputPath>.</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE;NET_4_0;STATIC;NO_SYMBOL_WRITER</DefineConstants>
+    <Optimize>True</Optimize>
+    <DefineConstants>TRACE;NET_4_0;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <OutputPath>.\</OutputPath>
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug - AST|AnyCPU'">
+    <DebugSymbols>True</DebugSymbols>
+    <OutputPath>.</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_4_0;STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;FULL_AST</DefineConstants>
+    <DebugType>full</DebugType>
+    <CodeAnalysisLogFile>mcs.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,8 +67,8 @@
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs">
       <Link>MonoSymbolTable.cs</Link>
     </Compile>
-    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs">
-      <Link>MonoSymbolWriter.cs</Link>
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs">
+      <Link>SourceMethodBuilder.cs</Link>
     </Compile>
     <Compile Include="argument.cs" />
     <Compile Include="assembly.cs" />
@@ -124,15 +142,13 @@
     <Compile Include="property.cs" />
     <Compile Include="reflection.cs" />
     <Compile Include="report.cs" />
-    <Compile Include="rootcontext.cs">
+    <Compile Include="settings.cs">
     </Compile>
-    <Compile Include="roottypes.cs">
+    <Compile Include="module.cs">
     </Compile>
     <Compile Include="statement.cs">
     </Compile>
     <Compile Include="support.cs">
-    </Compile>
-    <Compile Include="symbolwriter.cs">
     </Compile>
     <Compile Include="typemanager.cs">
     </Compile>
@@ -142,29 +158,26 @@
     <Compile Include="visit.cs" />
   </ItemGroup>
   <ItemGroup Label="IKVM.Reflection">
-    <Compile Include="..\class\IKVM.Reflection\*.cs">
-      <Visible>false</Visible>
+    <Compile Include="..\..\external\ikvm\reflect\*.cs">
+      <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Emit\*.cs">
-      <Visible>false</Visible>
+    <Compile Include="..\..\external\ikvm\reflect\Emit\*.cs">
+      <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Metadata\*.cs">
-      <Visible>false</Visible>
+    <Compile Include="..\..\external\ikvm\reflect\Metadata\*.cs">
+      <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Reader\*.cs">
-      <Visible>false</Visible>
+    <Compile Include="..\..\external\ikvm\reflect\Reader\*.cs">
+      <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Writer\*.cs">
-      <Visible>false</Visible>
+    <Compile Include="..\..\external\ikvm\reflect\Writer\*.cs">
+      <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Impl\CryptoHack.cs">
-      <Visible>false</Visible>
+    <Compile Include="..\..\external\ikvm\reflect\Impl\ITypeOwner.cs">
+      <Visible>False</Visible>
     </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Impl\ITypeOwner.cs">
-      <Visible>false</Visible>
-    </Compile>
-    <Compile Include="..\class\IKVM.Reflection\Impl\SymbolSupport.cs">
-      <Visible>false</Visible>
+    <Compile Include="..\..\external\ikvm\reflect\Impl\SymbolSupport.cs">
+      <Visible>False</Visible>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

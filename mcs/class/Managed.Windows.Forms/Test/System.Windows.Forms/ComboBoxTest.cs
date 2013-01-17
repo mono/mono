@@ -847,6 +847,47 @@ namespace MonoTests.System.Windows.Forms
 			ComboBox cmbbox = new ComboBox ();
 			cmbbox.SelectedIndex = -2;
 		}
+		
+		//Bug 2234 (Xamarin) : Test 1
+		[Test]
+		public void VerifyNoExceptions2234()
+		{
+			using (Form form = new Form ()){
+				ComboBox cmb = new ComboBox();
+				form.Controls.Add (cmb);
+				form.Show ();
+				eventFired=false;  //for sanity
+                        
+				//Primary failure: if exception is raised when
+				//   DataSource changes.  We should "eat" the 
+				//   exception under this circumstance before 
+				//   it gets here.
+				cmb.SelectedIndexChanged += 
+					new EventHandler(GenericHandlerWithException);
+				cmb.DataSource=new string[]{"One","Two","Three"};
+				Assert.IsTrue(eventFired);
+			}
+		}
+		
+		//Bug 2234 (Xamarin) : Test 2
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void VerifyException2234()
+		{
+			using (Form form = new Form ())
+			{
+				ComboBox cmb = new ComboBox();
+				form.Controls.Add (cmb);
+				form.Show ();
+				cmb.SelectedIndexChanged += 	
+					new EventHandler(GenericHandlerWithException);
+				cmb.DataSource=new string[]{"One","Two","Three"};
+                        
+				//Here's where Exception Should raise normally
+				cmb.SelectedIndex=2;
+			}       
+		}
+
 
 		//
 		// Events
@@ -863,6 +904,13 @@ namespace MonoTests.System.Windows.Forms
 		{
 			eventFired = true;
 		}
+
+		private void GenericHandlerWithException (object sender,  EventArgs e)
+		{
+			eventFired = true;
+			throw new Exception("Crash!");
+		}
+
 
 		[Ignore ("Bugs in X11 prevent this test to run properly")]
 		public void DrawItemEventTest ()
@@ -951,6 +999,69 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		// Xamarin bug 5595
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=5595
+		public void SelectionWithDeletion()
+		{
+			Form form = null;
+
+			try
+			{
+				// Create a form with a combo box.
+				form = new Form ();
+				form.ShowInTaskbar = false;
+				ComboBox cb = new ComboBox ();
+				cb.DropDownStyle = ComboBoxStyle.DropDownList;
+				cb.Parent = form;
+				form.Show ();
+
+				// Add some items to the combo box.
+				cb.Items.Add ("Item 0");
+				cb.Items.Add ("Item 1");
+				cb.Items.Add ("Item 2");
+
+				// Select the last item.
+				cb.SelectedIndex = 2;
+				Assert.AreEqual(2, cb.SelectedIndex, "SWD1");
+
+				// Show the combo box's dropdown.
+				cb.DroppedDown = true;
+
+				// Display the results.
+				Application.DoEvents();
+
+				// Hide the combo box's dropdown.
+				cb.DroppedDown = false;
+
+				// Display the results.
+				Application.DoEvents();
+
+				// Delete an item before the selection.
+				// That should move the selection down.
+				// Before the bug fix, it would remain 2.
+				cb.Items.RemoveAt (1);
+				Assert.AreEqual(1, cb.SelectedIndex, "SWD2");
+
+				// Show the combo box's dropdown.
+				// Before the bug fix, this would throw an
+				// ArgumentOutOfRangeException, because the
+				// selected index was still 2, and hence
+				// invalid.)
+				cb.DroppedDown = true;
+				Assert.AreEqual(1, cb.SelectedIndex, "SWD3");
+
+				// Display the results.
+				Application.DoEvents();
+			}
+			finally
+			{
+				// Get rid of the form.
+				if (form != null)
+					form.Dispose ();
+			}
+		}
+
+		[Test]
 		public void SelectionWithClear()
 		{
 			ComboBox cb = new ComboBox();
@@ -961,6 +1072,36 @@ namespace MonoTests.System.Windows.Forms
 			cb.Items.Clear();
 			Assert.AreEqual(-1, cb.SelectedIndex, "SWC1");
 			Assert.AreEqual(false, eventFired, "SWC2");
+		}
+
+		[Test]
+		public void SelectionWithModification()
+		{
+			// ComboBox's this[int].set() was dealing with the
+			// current index badly.  This reproduces the old bug and
+			// makes sure it's fixed.
+			ComboBox cb = new ComboBox ();
+			cb.DropDownStyle = ComboBoxStyle.DropDown;
+
+			// Add a menu item.
+			string strItemText = "Item text";
+			cb.Items.Add (strItemText);
+
+			// Select the menu item.
+			cb.SelectedIndex = 0;
+
+			// Move the selection to the end of the text.
+			cb.SelectionLength = 0;
+			cb.SelectionStart = strItemText.Length;
+
+			// Now set the menu item's text to the empty string and
+			// back again.
+			cb.Items[0] = string.Empty;
+			cb.Items[0] = strItemText;
+
+			// Make sure the text didn't get duplicated (i.e. the
+			// bugged code would produce "Item textItem text").
+			Assert.AreEqual (strItemText, cb.Text, "A1");
 		}
 
 		// Bug #333750 - DisplayMember assignation 
@@ -1120,6 +1261,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (cmbbox.Text, "#J1");
 			Assert.AreEqual ("BAD", cmbbox.Text, "#J2");
 			Assert.AreEqual (4, cmbbox.SelectedIndex, "#J3");
+
+			cmbbox.Text = "Something";
+			Assert.IsNotNull (cmbbox.Text, "#T1");
+			Assert.AreEqual ("Something", cmbbox.Text, "#T2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#T3");
+
+			cmbbox.Text = "BAD";
+			Assert.IsNotNull (cmbbox.Text, "#U1");
+			Assert.AreEqual ("BAD", cmbbox.Text, "#U2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#U3");
 
 			cmbbox.Text = "baD";
 			Assert.IsNotNull (cmbbox.Text, "#K1");
@@ -1545,6 +1696,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, col.Count, "#1");
 			col.Remove (null);
 			Assert.AreEqual (1, col.Count, "#2");
+			col.Remove ("Item3");
+			Assert.AreEqual (1, col.Count, "#3");
 		}
 
 		[Test]

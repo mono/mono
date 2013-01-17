@@ -39,7 +39,7 @@ namespace System.Net {
 		// but) expired certificates.
 		public bool CheckValidationResult (ServicePoint point, X509Certificate certificate, WebRequest request, int certificateProblem)
 		{
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 			// If using default policy and the new callback is there, ignore this
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return true;

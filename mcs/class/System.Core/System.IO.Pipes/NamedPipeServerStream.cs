@@ -42,8 +42,7 @@ namespace System.IO.Pipes
 	[HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	public sealed class NamedPipeServerStream : PipeStream
 	{
-		[MonoTODO]
-		public const int MaxAllowedServerInstances = 1;
+		public const int MaxAllowedServerInstances = -1;
 
 		public NamedPipeServerStream (string pipeName)
 			: this (pipeName, PipeDirection.InOut)
@@ -89,15 +88,16 @@ namespace System.IO.Pipes
 		public NamedPipeServerStream (string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity, HandleInheritability inheritability, PipeAccessRights additionalAccessRights)
 			: base (direction, transmissionMode, outBufferSize)
 		{
-			if (pipeSecurity != null)
-				throw ThrowACLException ();
 			var rights = ToAccessRights (direction) | additionalAccessRights;
 			// FIXME: reject some rights declarations (for ACL).
 
 			if (IsWindows)
-				impl = new Win32NamedPipeServer (this, pipeName, maxNumberOfServerInstances, transmissionMode, rights, options, inBufferSize, outBufferSize, inheritability);
+				impl = new Win32NamedPipeServer (this, pipeName, maxNumberOfServerInstances, transmissionMode,
+								 rights, options, inBufferSize, outBufferSize,
+								 pipeSecurity, inheritability);
 			else
-				impl = new UnixNamedPipeServer (this, pipeName, maxNumberOfServerInstances, transmissionMode, rights, options, inBufferSize, outBufferSize, inheritability);
+				impl = new UnixNamedPipeServer (this, pipeName, maxNumberOfServerInstances, transmissionMode,
+								rights, options, inBufferSize, outBufferSize, inheritability);
 
 			InitializeHandle (impl.Handle, false, (options & PipeOptions.Asynchronous) != PipeOptions.None);
 		}

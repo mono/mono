@@ -5,3 +5,4 @@ System.Json/JsonObject.cs
 System.Json/JsonPrimitive.cs
 System.Json/JsonType.cs
 System.Json/JsonValue.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/JavaScriptReader.cs

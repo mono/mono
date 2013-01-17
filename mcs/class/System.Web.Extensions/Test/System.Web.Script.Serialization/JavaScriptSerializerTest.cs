@@ -418,7 +418,9 @@ namespace MonoTests.System.Web.Script.Serialization
 		[Test]
 		public void TestDeserializeTypeResolver () 
 		{
-#if NET_4_0
+#if NET_4_5
+			string expected = "{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+X, System.Web.Extensions_test_net_4_5, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"z\":8,\"ch\":\"ｖ\",\"ch_null\":null,\"str\":\"ｖｗF59g\",\"b\":253,\"sb\":-48,\"sh\":-32740,\"ush\":65511,\"i\":-234235453,\"ui\":4294733061,\"l\":-9223372036854775780,\"ul\":18446744073709551612,\"f\":NaN,\"f1\":-Infinity,\"f2\":Infinity,\"f3\":-3.40282347E+38,\"f4\":3.40282347E+38,\"d\":NaN,\"d1\":-Infinity,\"d2\":Infinity,\"d3\":-1.7976931348623157E+308,\"d4\":1.7976931348623157E+308,\"de\":-1,\"de1\":0,\"de2\":1,\"de3\":-79228162514264337593543950335,\"de4\":79228162514264337593543950335,\"g\":\"000000ea-0002-0162-0102-030405060708\",\"nb\":null,\"dbn\":null,\"uri\":\"http://kostat@mainsoft/adfasdf/asdfasdf.aspx/asda/ads?a=b&c=d\",\"hash\":{\"mykey\":{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_5, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}},\"point\":{\"__type\":\"System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\",\"IsEmpty\":false,\"X\":150,\"Y\":150},\"MyEnum\":[1,10,345],\"MyEnum1\":[1,10,345],\"AA\":5,\"AA1\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_5, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_5, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}],\"BB\":18446744073709551610,\"YY\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_5, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_5, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}]}";
+#elif NET_4_0
 			string expected = "{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+X, System.Web.Extensions_test_net_4_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"z\":8,\"ch\":\"ｖ\",\"ch_null\":null,\"str\":\"ｖｗF59g\",\"b\":253,\"sb\":-48,\"sh\":-32740,\"ush\":65511,\"i\":-234235453,\"ui\":4294733061,\"l\":-9223372036854775780,\"ul\":18446744073709551612,\"f\":NaN,\"f1\":-Infinity,\"f2\":Infinity,\"f3\":-3.40282347E+38,\"f4\":3.40282347E+38,\"d\":NaN,\"d1\":-Infinity,\"d2\":Infinity,\"d3\":-1.7976931348623157E+308,\"d4\":1.7976931348623157E+308,\"de\":-1,\"de1\":0,\"de2\":1,\"de3\":-79228162514264337593543950335,\"de4\":79228162514264337593543950335,\"g\":\"000000ea-0002-0162-0102-030405060708\",\"nb\":null,\"dbn\":null,\"uri\":\"http://kostat@mainsoft/adfasdf/asdfasdf.aspx/asda/ads?a=b&c=d\",\"hash\":{\"mykey\":{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}},\"point\":{\"__type\":\"System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\",\"IsEmpty\":false,\"X\":150,\"Y\":150},\"MyEnum\":[1,10,345],\"MyEnum1\":[1,10,345],\"AA\":5,\"AA1\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}],\"BB\":18446744073709551610,\"YY\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_4_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}]}";
 #else
 			string expected = "{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+X, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"z\":8,\"ch\":\"ｖ\",\"ch_null\":null,\"str\":\"ｖｗF59g\",\"b\":253,\"sb\":-48,\"sh\":-32740,\"ush\":65511,\"i\":-234235453,\"ui\":4294733061,\"l\":-9223372036854775780,\"ul\":18446744073709551612,\"f\":NaN,\"f1\":-Infinity,\"f2\":Infinity,\"f3\":-3.40282347E+38,\"f4\":3.40282347E+38,\"d\":NaN,\"d1\":-Infinity,\"d2\":Infinity,\"d3\":-1.7976931348623157E+308,\"d4\":1.7976931348623157E+308,\"de\":-1,\"de1\":0,\"de2\":1,\"de3\":-79228162514264337593543950335,\"de4\":79228162514264337593543950335,\"g\":\"000000ea-0002-0162-0102-030405060708\",\"nb\":null,\"dbn\":null,\"uri\":\"http://kostat@mainsoft/adfasdf/asdfasdf.aspx/asda/ads?a=b&c=d\",\"hash\":{\"mykey\":{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}},\"point\":{\"__type\":\"System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\",\"IsEmpty\":false,\"X\":150,\"Y\":150},\"MyEnum\":[1,10,345],\"MyEnum1\":[1,10,345],\"AA\":5,\"AA1\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}],\"BB\":18446744073709551610,\"YY\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}]}";
@@ -505,6 +507,7 @@ namespace MonoTests.System.Web.Script.Serialization
 		}
 
 		[Test]
+		[SetCulture ("en-US")]
 		public void TestDeserializeConverter () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			List<JavaScriptConverter> list = new List<JavaScriptConverter> ();
@@ -1337,6 +1340,30 @@ namespace MonoTests.System.Web.Script.Serialization
 
 			ser.Serialize(testUri, sb);
 			Assert.AreEqual ("\"/lala/123\"", sb.ToString ());
+		}
+		
+		[Test]
+		public void DeserializeDictionaryOfArrayList ()
+		{
+			var ser = new JavaScriptSerializer ();
+			string test1 = "{\"key\":{\"subkey\":\"subval\"}}";
+			string test2 = "{\"key\":[{\"subkey\":\"subval\"}]}";
+
+			var ret1 = ser.Deserialize<Dictionary<string, object>>(test1);
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret1.GetType (), "#1.1");
+			var ret1v = ret1 ["key"];
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret1v.GetType (), "#1.2");
+			var ret1vd = (IDictionary<string,object>) ret1v;
+			Assert.AreEqual ("subval", ret1vd ["subkey"], "#1.3");
+
+			var ret2 = ser.Deserialize<Dictionary<string, object>>(test2);
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret2.GetType (), "#2.1");
+			var ret2v = ret2 ["key"];
+			Assert.AreEqual (typeof (ArrayList), ret2v.GetType (), "#2.2");
+			var ret2va = (ArrayList) ret2v;
+			Assert.AreEqual (typeof (Dictionary<string, object>), ret2va [0].GetType (), "#2.3");
+			var ret2vad = (IDictionary<string,object>) ret2va [0];
+			Assert.AreEqual ("subval", ret2vad ["subkey"], "#2.4");
 		}
 	}
 }

@@ -39,6 +39,8 @@ namespace System.Transactions
 		 */
 		List <ISinglePhaseNotification> durables;
 
+		IPromotableSinglePhaseNotification pspe = null;
+
 		delegate void AsyncCommit ();
 		
 		AsyncCommit asyncCommit = null;
@@ -46,11 +48,11 @@ namespace System.Transactions
 		bool committed = false;
 		bool aborted = false;
 		TransactionScope scope = null;
-		
+
 		Exception innerException;
 		Guid tag = Guid.NewGuid ();
 
-		List <IEnlistmentNotification> Volatiles {
+		internal List <IEnlistmentNotification> Volatiles {
 			get {
 				if (volatiles == null)
 					volatiles = new List <IEnlistmentNotification> ();
@@ -58,14 +60,16 @@ namespace System.Transactions
 			}
 		}
 
-		List <ISinglePhaseNotification> Durables {
+		internal List <ISinglePhaseNotification> Durables {
 			get {
 				if (durables == null)
 					durables = new List <ISinglePhaseNotification> ();
 				return durables;
 			}
 		}
-		
+
+		internal IPromotableSinglePhaseNotification Pspe { get { return pspe; } }
+
 		internal Transaction ()
 		{
 			info = new TransactionInformation ();
@@ -79,6 +83,7 @@ namespace System.Transactions
 			dependents = other.dependents;
 			volatiles = other.Volatiles;
 			durables = other.Durables;
+			pspe = other.Pspe;
 		}
 
 		[MonoTODO]
@@ -147,7 +152,7 @@ namespace System.Transactions
 			IEnlistmentNotification notification,
 			EnlistmentOptions options)
 		{
-			throw new NotImplementedException ("Only SinglePhase commit supported for durable resource managers.");
+			throw new NotImplementedException ("DTC unsupported, only SinglePhase commit supported for durable resource managers.");
 		}
 
 		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction. Only EnlistmentOptions.None supported yet.")]
@@ -156,26 +161,33 @@ namespace System.Transactions
 			ISinglePhaseNotification notification,
 			EnlistmentOptions options)
 		{
-			var durables = Durables;
-			if (durables.Count == 1)
-				throw new NotImplementedException ("Only LTM supported. Cannot have more than 1 durable resource per transaction.");
-
 			EnsureIncompleteCurrentScope ();
+			if (pspe != null || Durables.Count > 0)
+				throw new NotImplementedException ("DTC unsupported, multiple durable resource managers aren't supported.");
 
 			if (options != EnlistmentOptions.None)
-				throw new NotImplementedException ("Implement me");
+				throw new NotImplementedException ("EnlistmentOptions other than None aren't supported");
 
-			durables.Add (notification);
+			Durables.Add (notification);
 
 			/* FIXME: Enlistment ?? */
 			return new Enlistment ();
 		}
 
-		[MonoTODO]
 		public bool EnlistPromotableSinglePhase (
 			IPromotableSinglePhaseNotification notification)
 		{
-			throw new NotImplementedException ();
+			EnsureIncompleteCurrentScope ();
+
+			// The specs aren't entirely clear on whether we can have volatile RMs along with a PSPE, but
+			// I'm assuming that yes based on: http://social.msdn.microsoft.com/Forums/br/windowstransactionsprogramming/thread/3df6d4d3-0d82-47c4-951a-cd31140950b3
+			if (pspe != null || Durables.Count > 0)
+				return false;
+
+			pspe = notification;
+			pspe.Initialize();
+
+			return true;
 		}
 
 		[MonoTODO ("EnlistmentOptions being ignored")]
@@ -251,7 +263,7 @@ namespace System.Transactions
 			Rollback (ex, null);
 		}
 
-		internal void Rollback (Exception ex, IEnlistmentNotification enlisted)
+		internal void Rollback (Exception ex, object abortingEnlisted)
 		{
 			if (aborted)
 			{
@@ -263,15 +275,20 @@ namespace System.Transactions
 			if (info.Status == TransactionStatus.Committed)
 				throw new TransactionException ("Transaction has already been committed. Cannot accept any new work.");
 
+			// Save thrown exception as 'reason' of transaction's abort.
 			innerException = ex;
-			Enlistment e = new Enlistment ();
+
+			SinglePhaseEnlistment e = new SinglePhaseEnlistment();
 			foreach (IEnlistmentNotification prep in Volatiles)
-				if (prep != enlisted)
+				if (prep != abortingEnlisted)
 					prep.Rollback (e);
 
 			var durables = Durables;
-			if (durables.Count > 0 && durables [0] != enlisted)
+			if (durables.Count > 0 && durables [0] != abortingEnlisted)
 				durables [0].Rollback (e);
+
+			if (pspe != null && pspe != abortingEnlisted)
+				pspe.Rollback (e);
 
 			Aborted = true;
 
@@ -316,7 +333,7 @@ namespace System.Transactions
 			this.committing = true;
 
 			try {
-				DoCommit ();	
+				DoCommit ();
 			}
 			catch (TransactionException)
 			{
@@ -357,6 +374,9 @@ namespace System.Transactions
 			if (durables.Count > 0)
 				DoSingleCommit(durables[0]);
 
+			if (pspe != null)
+				DoSingleCommit(pspe);
+
 			if (volatiles.Count > 0)
 				DoCommitPhase();
 			
@@ -389,7 +409,26 @@ namespace System.Transactions
 		static void PrepareCallbackWrapper(object state)
 		{
 			PreparingEnlistment enlist = state as PreparingEnlistment;
-			enlist.EnlistmentNotification.Prepare(enlist);
+
+			try
+			{
+				enlist.EnlistmentNotification.Prepare(enlist);
+			}
+			catch (Exception ex)
+			{
+				// Oops! Unhandled exception.. we should notify
+				// to our caller thread that preparing has failed.
+				// This usually happends when an exception is
+				// thrown by code enlistment.Rollback() methods
+				// executed inside prepare.ForceRollback(ex).
+				enlist.Exception = ex;
+
+				// Just in case enlistment did not call Prepared()
+				// we need to manually set WH to avoid transaction
+				// from failing due to transaction timeout.
+				if (!enlist.IsPrepared)
+					((ManualResetEvent)enlist.WaitHandle).Set();
+			}
 		}
 
 		void DoPreparePhase ()
@@ -408,6 +447,13 @@ namespace System.Transactions
 				{
 					this.Aborted = true;
 					throw new TimeoutException("Transaction timedout");
+				}
+
+				if (pe.Exception != null)
+				{
+					innerException = pe.Exception;
+					Aborted = true;
+					break;
 				}
 
 				if (!pe.IsPrepared)
@@ -438,8 +484,16 @@ namespace System.Transactions
 			if (single == null)
 				return;
 
-			SinglePhaseEnlistment enlistment = new SinglePhaseEnlistment (this, single);
-			single.SinglePhaseCommit (enlistment);
+			single.SinglePhaseCommit (new SinglePhaseEnlistment (this, single));
+			CheckAborted ();
+		}
+
+		void DoSingleCommit (IPromotableSinglePhaseNotification single)
+		{
+			if (single == null)
+				return;
+
+			single.SinglePhaseCommit (new SinglePhaseEnlistment (this, single));
 			CheckAborted ();
 		}
 
@@ -462,7 +516,7 @@ namespace System.Transactions
 			if (CurrentInternal.Scope != null && CurrentInternal.Scope.IsComplete)
 				throw new InvalidOperationException ("The current TransactionScope is already complete");
 		}
-	}
+  }
 }
 
 #endif

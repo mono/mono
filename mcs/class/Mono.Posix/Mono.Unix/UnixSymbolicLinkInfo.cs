@@ -68,7 +68,7 @@ namespace Mono.Unix {
 
 		public UnixFileSystemInfo GetContents ()
 		{
-			string path = ReadLink ();
+			ReadLink ();
 			return UnixFileSystemInfo.GetFileSystemEntry (
 						UnixPath.Combine (UnixPath.GetDirectoryName (FullPath), 
 							ContentsPath));

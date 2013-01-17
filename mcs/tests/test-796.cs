@@ -8,6 +8,17 @@ struct S
 {
 }
 
+class C2
+{
+	S s;
+	
+	void Foo ()
+	{
+		Func<string> f = s.ToString;
+		Console.WriteLine (f);
+	}
+}
+
 [Foo (Product = "Mono")]
 class Program
 {

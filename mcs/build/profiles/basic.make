@@ -10,7 +10,7 @@ MONOLITE_MCS = $(topdir)/class/lib/monolite/basic.exe
 
 ifdef use_monolite
 PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
-BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(MONOLITE_MCS)
+BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(MONOLITE_MCS) -sdk:2
 else
 PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
@@ -60,8 +60,7 @@ do-profile-check: $(depsdir)/.stamp
 	@ok=:; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
 	$(MAKE) $(MAKE_Q) $(PROFILE_OUT) || ok=false; \
-	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
-	if $$ok; then :; else \
+	if $$ok; then rm -f $(PROFILE_EXE) $(PROFILE_OUT); else \
 	    if test -f $(MONOLITE_MCS); then \
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \

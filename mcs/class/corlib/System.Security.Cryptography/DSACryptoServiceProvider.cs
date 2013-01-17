@@ -92,10 +92,8 @@ namespace System.Security.Cryptography {
 			persistKey = (parameters != null);
 			if (parameters == null) {
 				parameters = new CspParameters (PROV_DSS_DH);
-#if NET_1_1
 				if (useMachineKeyStore)
 					parameters.Flags |= CspProviderFlags.UseMachineKeyStore;
-#endif
 				store = new KeyPairPersistence (parameters);
 				// no need to load - it cannot exists
 			}
@@ -137,14 +135,12 @@ namespace System.Security.Cryptography {
 			get { return "http://www.w3.org/2000/09/xmldsig#dsa-sha1"; }
 		}
 
-#if NET_1_1
-		private static bool useMachineKeyStore = false;
+		private static bool useMachineKeyStore;
 
 		public static bool UseMachineKeyStore {
 			get { return useMachineKeyStore; }
 			set { useMachineKeyStore = value; }
 		}
-#endif
 
 		public override DSAParameters ExportParameters (bool includePrivateParameters) 
 		{

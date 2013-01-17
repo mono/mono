@@ -70,7 +70,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			}
 		}
 
-		public Compiler.TypeParameter[] CurrentTypeParameters {
+		public Compiler.TypeParameters CurrentTypeParameters {
 			get { throw new NotImplementedException (); }
 		}
 

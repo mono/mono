@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,32 +9,33 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <OutputPath>./../../class/lib/net_2_0</OutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>System.ServiceModel</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;TRACE;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;TRACE;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
@@ -171,6 +172,7 @@
    <Compile Include="System.Collections.Generic\SynchronizedCollection.cs" />
    <Compile Include="System.Collections.Generic\SynchronizedKeyedCollection.cs" />
    <Compile Include="System.Collections.Generic\SynchronizedReadOnlyCollection.cs" />
+   <Compile Include="System.IO\PipeException.cs" />
    <Compile Include="System.ServiceModel.Activation\AspNetIntegrationRequirementsAttribute.cs" />
    <Compile Include="System.ServiceModel.Activation\IServiceHostFactory.cs" />
    <Compile Include="System.ServiceModel.Activation\ServiceHostFactory.cs" />
@@ -203,6 +205,7 @@
    <Compile Include="System.ServiceModel.Channels\CompositeDuplexBindingElement.cs" />
    <Compile Include="System.ServiceModel.Channels\CompositeDuplexBindingElementImporter.cs" />
    <Compile Include="System.ServiceModel.Channels\ConnectionOrientedTransportBindingElement.cs" />
+   <Compile Include="System.ServiceModel.Channels\ContentType.cs" />
    <Compile Include="System.ServiceModel.Channels\CustomBinding.cs" />
    <Compile Include="System.ServiceModel.Channels\DeliveryFailure.cs" />
    <Compile Include="System.ServiceModel.Channels\DeliveryStatus.cs" />
@@ -280,6 +283,13 @@
    <Compile Include="System.ServiceModel.Channels\NamedPipeReplyChannel.cs" />
    <Compile Include="System.ServiceModel.Channels\NamedPipeRequestChannel.cs" />
    <Compile Include="System.ServiceModel.Channels\NamedPipetransportBindingElement.cs" />
+   <Compile Include="System.ServiceModel.Channels.NetTcp\PeerDuplexChannel.cs" />
+   <Compile Include="System.ServiceModel.Channels.NetTcp\TcpBinaryFrameManager.cs" />
+   <Compile Include="System.ServiceModel.Channels.NetTcp\TcpChannelFactory.cs" />
+   <Compile Include="System.ServiceModel.Channels.NetTcp\TcpChannelListener.cs" />
+   <Compile Include="System.ServiceModel.Channels.NetTcp\TcpDuplexSessionChannel.cs" />
+   <Compile Include="System.ServiceModel.Channels.NetTcp\TcpReplyChannel.cs" />
+   <Compile Include="System.ServiceModel.Channels.NetTcp\TcpRequestChannel.cs" />
    <Compile Include="System.ServiceModel.Channels\OneWayBindingElement.cs" />
    <Compile Include="System.ServiceModel.Channels\OneWayBindingElementImporter.cs" />
    <Compile Include="System.ServiceModel.Channels\OutputChannelBase.cs" />
@@ -287,7 +297,6 @@
    <Compile Include="System.ServiceModel.Channels\PeerChannelFactory.cs" />
    <Compile Include="System.ServiceModel.Channels\PeerChannelListener.cs" />
    <Compile Include="System.ServiceModel.Channels\PeerCustomResolverBindingElement.cs" />
-   <Compile Include="System.ServiceModel.Channels\PeerDuplexChannel.cs" />
    <Compile Include="System.ServiceModel.Channels\PeerInputChannel.cs" />
    <Compile Include="System.ServiceModel.Channels\PeerOutputChannel.cs" />
    <Compile Include="System.ServiceModel.Channels\PeerTransportBindingElement.cs" />
@@ -316,13 +325,7 @@
    <Compile Include="System.ServiceModel.Channels\SvcHttpHandler.cs" />
    <Compile Include="System.ServiceModel.Channels\SvcHttpHandlerFactory.cs" />
    <Compile Include="System.ServiceModel.Channels\SymmetricSecurityBindingElement.cs" />
-   <Compile Include="System.ServiceModel.Channels\TcpChannelFactory.cs" />
-   <Compile Include="System.ServiceModel.Channels\TcpChannelListener.cs" />
    <Compile Include="System.ServiceModel.Channels\TcpConnectionPoolSettings.cs" />
-   <Compile Include="System.ServiceModel.Channels\TcpBinaryFrameManager.cs" />
-   <Compile Include="System.ServiceModel.Channels\TcpDuplexSessionChannel.cs" />
-   <Compile Include="System.ServiceModel.Channels\TcpReplyChannel.cs" />
-   <Compile Include="System.ServiceModel.Channels\TcpRequestChannel.cs" />
    <Compile Include="System.ServiceModel.Channels\TcpTransportBindingElement.cs" />
    <Compile Include="System.ServiceModel.Channels\TextMessageEncoder.cs" />
    <Compile Include="System.ServiceModel.Channels\TextMessageEncoderFactory.cs" />
@@ -415,6 +418,7 @@
    <Compile Include="System.ServiceModel.Configuration\DiagnosticSection.cs" />
    <Compile Include="System.ServiceModel.Configuration\DnsElement.cs" />
    <Compile Include="System.ServiceModel.Configuration\EncodingConverter.cs" />
+   <Compile Include="System.ServiceModel.Configuration\EndToEndTracingElement.cs" />
    <Compile Include="System.ServiceModel.Configuration\EndpointAddressElementBase.cs" />
    <Compile Include="System.ServiceModel.Configuration\EndpointBehaviorElement.cs" />
    <Compile Include="System.ServiceModel.Configuration\EndpointBehaviorElementCollection.cs" />
@@ -669,6 +673,8 @@
    <Compile Include="System.ServiceModel.Description\XmlSerializerMessageContractImporter.cs" />
    <Compile Include="System.ServiceModel.Description\XmlSerializerOperationBehavior.cs" />
    <Compile Include="System.ServiceModel.Diagnostics\PerformanceCounterScope.cs" />
+   <Compile Include="System.ServiceModel.Diagnostics\MessageLoggingSettings.cs" />
+   <Compile Include="System.ServiceModel.Diagnostics\MessageLogTraceRecord.cs" />
    <Compile Include="System.ServiceModel.Dispatcher\ActionMessageFilter.cs" />
    <Compile Include="System.ServiceModel.Dispatcher\ActionMessageFilterTable.cs" />
    <Compile Include="System.ServiceModel.Dispatcher\BaseMessagesFormatter.cs" />
@@ -737,6 +743,7 @@
    <Compile Include="System.ServiceModel.Dispatcher\XPathMessageFilterTable.cs" />
    <Compile Include="System.ServiceModel.Dispatcher\XPathNavigatorException.cs" />
    <Compile Include="System.ServiceModel.Dispatcher\InstanceManager.cs" />
+   <Compile Include="System.ServiceModel.Dispatcher\XmlMessagesFormatter.cs" />
    <Compile Include="System.ServiceModel.MsmqIntegration\MsmqIntegrationBinding.cs" />
    <Compile Include="System.ServiceModel.MsmqIntegration\MsmqIntegrationBindingElement.cs" />
    <Compile Include="System.ServiceModel.MsmqIntegration\MsmqIntegrationMessageProperty.cs" />
@@ -868,6 +875,7 @@
    <Compile Include="System.ServiceModel\ChannelFactory_1.cs" />
    <Compile Include="System.ServiceModel\ClientBase.cs" />
    <Compile Include="System.ServiceModel\ClientCredentialsSecurityTokenManager.cs" />
+   <Compile Include="System.ServiceModel\ClientRealProxy.cs" />
    <Compile Include="System.ServiceModel\ClientProxyGenerator.cs" />
    <Compile Include="System.ServiceModel\ClientRuntimeChannel.cs" />
    <Compile Include="System.ServiceModel\CommunicationException.cs" />
@@ -911,6 +919,7 @@
    <Compile Include="System.ServiceModel\IServiceChannel.cs" />
    <Compile Include="System.ServiceModel\InstanceContext.cs" />
    <Compile Include="System.ServiceModel\InvalidMessageContractException.cs" />
+   <Compile Include="System.ServiceModel\Logger.cs" />
    <Compile Include="System.ServiceModel\MessageBodyAttribute.cs" />
    <Compile Include="System.ServiceModel\MessageContractAttribute.cs" />
    <Compile Include="System.ServiceModel\MessageContractMemberAttribute.cs" />
@@ -1002,66 +1011,66 @@
   <ItemGroup>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.dll</HintPath>
+      <HintPath>System.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+      <HintPath>System.Xml.dll</HintPath>
     </Reference>
     <Reference Include="System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Core.dll</HintPath>
+      <HintPath>System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Runtime.Serialization.dll</HintPath>
+      <HintPath>System.Runtime.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+      <HintPath>System.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Data.dll</HintPath>
+      <HintPath>System.Data.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Security.dll</HintPath>
+      <HintPath>System.Security.dll</HintPath>
     </Reference>
     <Reference Include="System.IdentityModel.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.IdentityModel.dll</HintPath>
+      <HintPath>System.IdentityModel.dll</HintPath>
     </Reference>
     <Reference Include="System.IdentityModel.Selectors.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.IdentityModel.Selectors.dll</HintPath>
+      <HintPath>System.IdentityModel.Selectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Transactions.dll</HintPath>
+      <HintPath>System.Transactions.dll</HintPath>
     </Reference>
     <Reference Include="System.Messaging.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Messaging.dll</HintPath>
+      <HintPath>System.Messaging.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Web.dll</HintPath>
+      <HintPath>System.Web.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Services.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Web.Services.dll</HintPath>
+      <HintPath>System.Web.Services.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Security.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\Mono.Security.dll</HintPath>
+      <HintPath>Mono.Security.dll</HintPath>
     </Reference>
-  </ItemGroup>
 
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

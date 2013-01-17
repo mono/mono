@@ -92,7 +92,7 @@ namespace System.Runtime.CompilerServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool SufficientExecutionStack ();
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EnsureSufficientExecutionStack ()
 		{
 			if (SufficientExecutionStack ())

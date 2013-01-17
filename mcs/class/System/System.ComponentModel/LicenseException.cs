@@ -34,9 +34,7 @@ using System.Security.Permissions;
 
 namespace System.ComponentModel {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	public class LicenseException : SystemException
 	{
 
@@ -67,7 +65,7 @@ namespace System.ComponentModel {
 			// LAMESPEC what should we do with instance?
 			this.type = type;
 		}
-#if NET_2_0
+
 		protected LicenseException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -83,7 +81,7 @@ namespace System.ComponentModel {
 			info.AddValue ("LicensedType", type);
 			base.GetObjectData (info, context);
 		}
-#endif
+
 		public Type LicensedType {
 			get { return type; }
 		}		

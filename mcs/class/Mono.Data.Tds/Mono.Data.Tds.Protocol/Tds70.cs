@@ -54,18 +54,36 @@ namespace Mono.Data.Tds.Protocol
 
 		#region Constructors
 
+		[Obsolete ("Use the constructor that receives a lifetime parameter")]
 		public Tds70 (string server, int port)
-			: this (server, port, 512, 15)
+			: this (server, port, 512, 15, 0)
 		{
 		}
 
+		[Obsolete ("Use the constructor that receives a lifetime parameter")]
 		public Tds70 (string server, int port, int packetSize, int timeout)
-			: base (server, port, packetSize, timeout, TdsVersion.tds70)
+			: this (server, port, packetSize, timeout, 0, TdsVersion.tds70)
 		{
 		}
 
+		[Obsolete ("Use the constructor that receives a lifetime parameter")]
 		public Tds70 (string server, int port, int packetSize, int timeout, TdsVersion version)
-			: base (server, port, packetSize, timeout, version)
+			: this (server, port, packetSize, timeout, 0, version)
+		{
+		}
+
+		public Tds70 (string server, int port, int lifetime)
+			: this (server, port, 512, 15, lifetime)
+		{
+		}
+
+		public Tds70 (string server, int port, int packetSize, int timeout, int lifeTime)
+			: base (server, port, packetSize, timeout, lifeTime, TdsVersion.tds70)
+		{
+		}
+
+		public Tds70 (string server, int port, int packetSize, int timeout, int lifeTime, TdsVersion version)
+			: base (server, port, packetSize, timeout, lifeTime, version)
 		{
 		}
 		
@@ -522,6 +540,13 @@ namespace Mono.Data.Tds.Protocol
 				size = param.GetActualSize ();
 			}
 
+			/*
+			 * If the value is null, not setting the size to 0 will cause varchar
+			 * fields to get inserted as an empty string rather than an null.
+			 */
+			if (param.Value == null || param.Value == DBNull.Value)
+				size = 0;
+
 			// Change colType according to the following table
 			/* 
 			 * Original Type	Maxlen		New Type 
@@ -772,7 +797,10 @@ namespace Mono.Data.Tds.Protocol
 			Parameters = parameters;
 
 			TdsMetaParameterCollection parms = new TdsMetaParameterCollection ();
-			TdsMetaParameter parm = new TdsMetaParameter ("@Handle", "int", null);
+			// Tested with MS SQL 2008 RC2 Express and MS SQL 2012 Express:
+			// You may pass either -1 or 0, but not null as initial value of @Handle,
+			// which is an output parameter.
+			TdsMetaParameter parm = new TdsMetaParameter ("@Handle", "int", -1);
 			parm.Direction = TdsParameterDirection.Output;
 			parms.Add (parm);
 

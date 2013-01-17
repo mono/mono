@@ -34,21 +34,45 @@ namespace System.Net
 {
 	class WebConnectionData
 	{
-		public HttpWebRequest request;
+		HttpWebRequest _request;
 		public int StatusCode;
 		public string StatusDescription;
 		public WebHeaderCollection Headers;
 		public Version Version;
 		public Stream stream;
-		public string Challenge;
+		public string[] Challenge;
+		ReadState _readState;
 
-		public void Init ()
+		public WebConnectionData ()
 		{
-			request = null;
-			StatusCode = 0;
-			StatusDescription = null;
-			Headers = null;
-			stream = null;
+			_readState = ReadState.None;
+		}
+
+		public WebConnectionData (HttpWebRequest request)
+		{
+			this._request = request;
+		}
+
+		public HttpWebRequest request {
+			get {
+				return _request;
+			}
+			set {
+				_request = value;
+			}
+		}
+
+		public ReadState ReadState {
+			get {
+				return _readState;
+			}
+			set {
+				lock (this) {
+					if ((_readState == ReadState.Aborted) && (value != ReadState.Aborted))
+						throw new WebException ("Aborted", WebExceptionStatus.RequestCanceled);
+					_readState = value;
+				}
+			}
 		}
 	}
 }

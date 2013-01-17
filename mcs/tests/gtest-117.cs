@@ -68,7 +68,7 @@ class X
 		return e is T;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		if (Foo<int>.Test (3))
 			return 1;

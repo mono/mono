@@ -266,26 +266,18 @@ namespace System.Xml.Schema
 		///             4. targetNamespace should be any uri
 		///             5. version should be a normalizedString
 		/// </remarks>
-#if NET_2_0
 		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
-#endif
-		public void Compile (ValidationEventHandler handler)
+		public void Compile (ValidationEventHandler validationEventHandler)
 		{
-			Compile (handler, new XmlUrlResolver ());
+			Compile (validationEventHandler, new XmlUrlResolver ());
 		}
 
-#if NET_2_0
 		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
-#endif
-#if NET_1_1
-		public void Compile (ValidationEventHandler handler, XmlResolver resolver)
-#else
-		internal void Compile (ValidationEventHandler handler, XmlResolver resolver)
-#endif
+		public void Compile (ValidationEventHandler validationEventHandler, XmlResolver resolver)
 		{
 			XmlSchemaSet xss = new XmlSchemaSet ();
-			if (handler != null)
-				xss.ValidationEventHandler += handler;
+			if (validationEventHandler != null)
+				xss.ValidationEventHandler += validationEventHandler;
 			xss.XmlResolver = resolver;
 			xss.Add (this);
 			xss.Compile ();
@@ -494,7 +486,7 @@ namespace System.Xml.Schema
 		void ProcessExternal (ValidationEventHandler handler, List<CompiledSchemaMemo> handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)
 		{
 			if (ext == null) {
-				error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", ext.GetType().Name));
+				error (handler, "Object is not valid in Includes Property of XmlSchema");
 				return;
 			}
 
@@ -702,39 +694,39 @@ namespace System.Xml.Schema
 			return Read (new XmlTextReader (stream),validationEventHandler);
 		}
 
-		public static XmlSchema Read (XmlReader rdr, ValidationEventHandler validationEventHandler)
+		public static XmlSchema Read (XmlReader reader, ValidationEventHandler validationEventHandler)
 		{
-			XmlSchemaReader reader = new XmlSchemaReader (rdr, validationEventHandler);
+			XmlSchemaReader sreader = new XmlSchemaReader (reader, validationEventHandler);
 
-			if (reader.ReadState == ReadState.Initial)
-				reader.ReadNextElement ();
+			if (sreader.ReadState == ReadState.Initial)
+				sreader.ReadNextElement ();
 
-			int startDepth = reader.Depth;
+			int startDepth = sreader.Depth;
 
 			do
 			{
-				switch(reader.NodeType)
+				switch(sreader.NodeType)
 				{
 				case XmlNodeType.Element:
-					if(reader.LocalName == "schema")
+					if(sreader.LocalName == "schema")
 					{
 						XmlSchema schema = new XmlSchema ();
-						schema.nameTable = rdr.NameTable;
+						schema.nameTable = reader.NameTable;
 
-						schema.LineNumber = reader.LineNumber;
-						schema.LinePosition = reader.LinePosition;
-						schema.SourceUri = reader.BaseURI;
+						schema.LineNumber = sreader.LineNumber;
+						schema.LinePosition = sreader.LinePosition;
+						schema.SourceUri = sreader.BaseURI;
 
-						ReadAttributes(schema, reader, validationEventHandler);
+						ReadAttributes(schema, sreader, validationEventHandler);
 						//IsEmptyElement does not behave properly if reader is
 						//positioned at an attribute.
-						reader.MoveToElement();
-						if(!reader.IsEmptyElement)
+						sreader.MoveToElement();
+						if(!sreader.IsEmptyElement)
 						{
-							ReadContent(schema, reader, validationEventHandler);
+							ReadContent(schema, sreader, validationEventHandler);
 						}
 						else
-							rdr.Skip ();
+							reader.Skip ();
 
 						return schema;
 					}
@@ -746,7 +738,7 @@ namespace System.Xml.Schema
 					error(validationEventHandler, "This should never happen. XmlSchema.Read 1 ",null);
 					break;
 				}
-			} while(reader.Depth > startDepth && reader.ReadNextElement());
+			} while(sreader.Depth > startDepth && sreader.ReadNextElement());
 
 			// This is thrown regardless of ValidationEventHandler existence.
 			throw new XmlSchemaException ("The top level schema must have namespace " + XmlSchema.Namespace, null);

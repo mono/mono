@@ -2,7 +2,7 @@ using System;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		dynamic d = new Program ();
 		var p = d as int?;

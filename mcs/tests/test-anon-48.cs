@@ -26,7 +26,7 @@ public class World
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		World world = new World ();
 		world.Test (5);

@@ -4,7 +4,7 @@
 [assembly: System.Reflection.AssemblyCulture("this-culture-does-not-exist")]
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

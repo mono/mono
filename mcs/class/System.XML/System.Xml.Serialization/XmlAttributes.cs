@@ -98,6 +98,22 @@ namespace System.Xml.Serialization
 				else if(obj is XmlTypeAttribute)
 					xmlType = (XmlTypeAttribute) obj;
 			}
+			
+			if (xmlIgnore) {
+				xmlAnyAttribute = null;
+				xmlAnyElements.Clear ();
+				xmlArray = null;
+				xmlArrayItems.Clear ();
+				xmlAttribute = null;
+				xmlChoiceIdentifier = null;
+				xmlDefaultValue = null;
+				xmlElements.Clear ();
+				xmlEnum = null;
+				xmlns = false;
+				xmlRoot = null;
+				xmlText = null;
+				xmlType = null;
+			}
 		}
 
 		#region public properties
@@ -288,17 +304,21 @@ namespace System.Xml.Serialization
 			sb.Append ("|");
 		}
 
-		public int Order {
+		internal int? Order {
 			get {
-				int order = -1;
-				if (XmlElements != null)
+				int? order = null;
+				if (XmlElements.Count > 0)
 					order = XmlElements.Order;
-				if (order < 0 && XmlArray != null)
+				else if (XmlArray != null)
 					order = XmlArray.Order;
-				if (order < 0 && XmlAnyElements != null)
+				else if (XmlAnyElements.Count > 0)
 					order = XmlAnyElements.Order;
 				return order;
 			}
+		}
+		
+		internal int SortableOrder {
+			get { return Order != null ? (int) Order : int.MinValue; }
 		}
 	}
 }

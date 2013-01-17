@@ -5,6 +5,7 @@
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
 // Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,6 +26,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if !MOONLIGHT
+
 using System;
 using System.Net.Security;
 using System.ServiceModel.Security;
@@ -37,14 +41,16 @@ namespace System.ServiceModel
 		internal BasicHttpMessageSecurity ()
 		{
 		}
-
+		
+#if !MOBILE
 		SecurityAlgorithmSuite alg = SecurityAlgorithmSuite.Default;
-		BasicHttpMessageCredentialType ctype;
 
 		public SecurityAlgorithmSuite AlgorithmSuite {
 			get { return alg; }
 			set { alg = value; }
 		}
+#endif
+		BasicHttpMessageCredentialType ctype;
 
 		public BasicHttpMessageCredentialType ClientCredentialType {
 			get { return ctype; }
@@ -52,3 +58,5 @@ namespace System.ServiceModel
 		}
 	}
 }
+
+#endif

@@ -5,6 +5,10 @@ class X {
 		// we use 'var' all around in the compiler sources
 		var x = new X ();
 	}
+	
+	void DefaultParametersAvailable (int i = 3)
+	{
+	}
 
 	static int Main ()
 	{

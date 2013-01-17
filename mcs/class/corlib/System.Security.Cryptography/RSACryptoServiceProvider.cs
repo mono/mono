@@ -41,6 +41,8 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public sealed class RSACryptoServiceProvider : RSA, ICspAsymmetricAlgorithm {
 		private const int PROV_RSA_FULL = 1;	// from WinCrypt.h
+		private const int AT_KEYEXCHANGE = 1;
+		private const int AT_SIGNATURE = 2;
 
 		private KeyPairPersistence store;
 		private bool persistKey;
@@ -96,10 +98,8 @@ namespace System.Security.Cryptography {
 			persistKey = (p != null);
 			if (p == null) {
 				p = new CspParameters (PROV_RSA_FULL);
-#if NET_1_1
 				if (useMachineKeyStore)
 					p.Flags |= CspProviderFlags.UseMachineKeyStore;
-#endif
 				store = new KeyPairPersistence (p);
 				// no need to load - it cannot exists
 			}
@@ -118,14 +118,12 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-#if NET_1_1
-		private static bool useMachineKeyStore = false;
+		private static bool useMachineKeyStore;
 
 		public static bool UseMachineKeyStore {
 			get { return useMachineKeyStore; }
 			set { useMachineKeyStore = value; }
 		}
-#endif
 	
 		~RSACryptoServiceProvider () 
 		{
@@ -166,10 +164,8 @@ namespace System.Security.Cryptography {
 	
 		public byte[] Decrypt (byte[] rgb, bool fOAEP) 
 		{
-#if NET_1_1
 			if (m_disposed)
 				throw new ObjectDisposedException ("rsa");
-#endif
 			// choose between OAEP or PKCS#1 v.1.5 padding
 			AsymmetricKeyExchangeDeformatter def = null;
 			if (fOAEP)
@@ -250,10 +246,8 @@ namespace System.Security.Cryptography {
 		// HashAlgorithm descendant
 		public byte[] SignData (byte[] buffer, object halg) 
 		{
-#if NET_1_1
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
-#endif
 			return SignData (buffer, 0, buffer.Length, halg);
 		}
 	
@@ -377,7 +371,7 @@ namespace System.Security.Cryptography {
 			// ALGID (bytes 4-7) - default is KEYX
 			// 00 24 00 00 (for CALG_RSA_SIGN)
 			// 00 A4 00 00 (for CALG_RSA_KEYX)
-			blob [5] = 0xA4;
+			blob [5] = (byte) (((store != null) && (store.Parameters.KeyNumber == AT_SIGNATURE)) ? 0x24 : 0xA4);
 			return blob;
 		}
 
@@ -405,6 +399,12 @@ namespace System.Security.Cryptography {
 					ImportParameters (rsap);
 				}
 			}
+
+			var p = new CspParameters (PROV_RSA_FULL);
+			p.KeyNumber = keyBlob [5] == 0x24 ? AT_SIGNATURE : AT_KEYEXCHANGE;
+			if (useMachineKeyStore)
+				p.Flags |= CspProviderFlags.UseMachineKeyStore;
+			store = new KeyPairPersistence (p);
 		}
 	}
 }

@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -110,9 +108,14 @@ namespace Microsoft.Build.BuildEngine {
 
 				int wildcard_offset = full_path.IndexOf ("**");
 				foreach (FileInfo fi in fileInfo) {
-					if (!excludedItems.ContainsKey (fi.FullName)) {
+					string itemName = fi.FullName;
+					if (!Path.IsPathRooted (name) && itemName.Length > baseDirectory.FullName.Length && itemName.StartsWith (baseDirectory.FullName))
+						itemName = itemName.Substring (baseDirectory.FullName.Length + 1);
+
+					if (!excludedItems.ContainsKey (itemName) &&  !excludedItems.ContainsKey (Path.GetFullPath (itemName))) {
 						TaskItem item = new TaskItem (include_item);
-						item.ItemSpec = fi.FullName;
+						item.ItemSpec = itemName;
+
 						if (wildcard_offset >= 0) {
 							string rec_dir = Path.GetDirectoryName (fi.FullName.Substring (wildcard_offset));
 							if (rec_dir.Length > 0)
@@ -151,6 +154,7 @@ namespace Microsoft.Build.BuildEngine {
 						// skip the "drive:"
 						offset = 1;
 				}
+
 				fileInfo = ParseIncludeExclude (separatedPath, offset, baseDirectory);
 				foreach (FileInfo fi in fileInfo)
 					if (!excludedItems.ContainsKey (fi.FullName))
@@ -160,55 +164,61 @@ namespace Microsoft.Build.BuildEngine {
 		
 		private FileInfo[] ParseIncludeExclude (string[] input, int ptr, DirectoryInfo directory)
 		{
+			return ParseIncludeExclude (input, ptr, directory, false);
+		}
+
+		private FileInfo[] ParseIncludeExclude (string[] input, int ptr, DirectoryInfo directory, bool recursive)
+		{
+			DirectoryInfo[] di;
+			List <FileInfo> fileInfos = new List<FileInfo> ();
+
 			if (input.Length > 1 && ptr == 0 && input [0] == String.Empty)
 				ptr++;
-			if (input.Length == ptr + 1) {
-				FileInfo[] fi;
-				fi = directory.GetFiles (input [ptr]);
-				return fi;
-			} else {
-				DirectoryInfo[] di;
-				FileInfo[] fi;
-				List <FileInfo> fileInfos = new List <FileInfo> ();
-				if (input [ptr] == ".") {
-					di = new DirectoryInfo [1];
-					di [0] = directory;
-				} else if (input [ptr] == "..") {
-					di = new DirectoryInfo [1];
-					di [0] = directory.Parent;
-				} else if (input[ptr] == "**")
-				{
-					// Read this directory and all subdirectories recursive
-					Stack<DirectoryInfo> currentDirectories = new Stack<DirectoryInfo>();					
-					currentDirectories.Push(directory);
-					List<DirectoryInfo> allDirectories = new List<DirectoryInfo>();
-					
-					while (currentDirectories.Count > 0)
-					{
-						DirectoryInfo current = currentDirectories.Pop();
-						allDirectories.Insert (0, current);
-						foreach (DirectoryInfo dir in current.GetDirectories())
-						{
-							currentDirectories.Push(dir);
-						}						
-					}
-					
-					// No further directories shall be read
-					di = allDirectories.ToArray();					
-				} else {
-					di = directory.GetDirectories (input [ptr]);
-				}
-				foreach (DirectoryInfo info in di) {
-					fi = ParseIncludeExclude (input, ptr + 1, info);
-					foreach (FileInfo file in fi)
-						fileInfos.Add (file);
-				}
-				fi = new FileInfo [fileInfos.Count];
-				int i = 0;
-				foreach (FileInfo file in fileInfos)
-					fi [i++] = file;
-				return fi;
+
+			string cur = input.Length > ptr ? input[ptr] : input[input.Length-1];
+			bool dot = cur == ".";
+			recursive = recursive || cur == "**";
+			bool parent = cur == "..";
+
+			if (input.Length <= ptr + 1) {
+				if (parent)
+					directory = directory.Parent;
+				if ((input.Length == ptr + 1 && !recursive) || input.Length <= ptr)
+					return directory.GetFiles (cur);
 			}
+
+			if (dot) {
+				di = new DirectoryInfo [1];
+				di [0] = directory;
+			} else if (parent) {
+				di = new DirectoryInfo [1];
+				di [0] = directory.Parent;
+			} else if (recursive)
+			{
+				// Read this directory and all subdirectories recursive
+				Stack<DirectoryInfo> currentDirectories = new Stack<DirectoryInfo>();
+				currentDirectories.Push(directory);
+				List<DirectoryInfo> allDirectories = new List<DirectoryInfo>();
+
+				while (currentDirectories.Count > 0)
+				{
+					DirectoryInfo current = currentDirectories.Pop();
+					allDirectories.Insert (0, current);
+					foreach (DirectoryInfo dir in current.GetDirectories())
+					{
+						currentDirectories.Push(dir);
+					}
+				}
+
+				// No further directories shall be read
+				di = allDirectories.ToArray();
+			} else
+				di = directory.GetDirectories (cur);
+
+			foreach (DirectoryInfo info in di)
+				fileInfos.AddRange (ParseIncludeExclude (input, ptr + 1, info, recursive));
+
+			return fileInfos.ToArray ();
 		}
 
 		public static bool HasWildcard (string expression)
@@ -240,5 +250,3 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	}
 }
-
-#endif

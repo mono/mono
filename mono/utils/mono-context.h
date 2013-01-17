@@ -216,28 +216,45 @@ typedef struct {
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
 #endif
 
-#elif defined(__arm__) /* defined(__x86_64__) */
+#elif (defined(__arm__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_ARM)) /* defined(__x86_64__) */
 
 typedef struct {
-	gulong eip;          // pc 
-	gulong esp;          // sp
-	gulong regs [16];
-	double fregs [8];
+	mgreg_t pc;
+	mgreg_t regs [16];
+	double fregs [16];
+	mgreg_t cpsr;
 } MonoContext;
 
 /* we have the stack pointer, not the base pointer in sigcontext */
-#define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->eip = (int)ip; } while (0); 
-#define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->regs [ARMREG_FP] = (int)bp; } while (0); 
-#define MONO_CONTEXT_SET_SP(ctx,bp) do { (ctx)->esp = (int)bp; } while (0); 
+#define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->pc = (mgreg_t)ip; } while (0); 
+#define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->regs [ARMREG_FP] = (mgreg_t)bp; } while (0); 
+#define MONO_CONTEXT_SET_SP(ctx,bp) do { (ctx)->regs [ARMREG_SP] = (mgreg_t)bp; } while (0); 
 
-#define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->eip))
+#define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->pc))
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->regs [ARMREG_FP]))
-#define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->esp))
+#define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->regs [ARMREG_SP]))
 
-// FIXME:
 #define MONO_CONTEXT_GET_CURRENT(ctx)	do { 	\
-	g_assert_not_reached (); \
+	__asm__ __volatile__(			\
+		"push {r0}\n"				\
+		"push {r1}\n"				\
+		"mov r1, r0\n"				\
+		"mov r0, %0\n"				\
+		"str r1, [r0]!\n"			\
+		"pop {r1}\n"				\
+		"str r1, [r0]!\n"			\
+		"stmia r0!, {r2-r12}\n"		\
+		"str sp, [r0]!\n"			\
+		"str lr, [r0]!\n"			\
+		"str pc, [r0]!\n"			\
+		"pop {r0}\n"				\
+		:							\
+		: "r" (&ctx.regs)			\
+		: "memory"					\
+	);								\
+	ctx.pc = ctx.regs [15];			\
 } while (0)
+
 
 #elif defined(__mono_ppc__) /* defined(__arm__) */
 
@@ -362,28 +379,59 @@ mono_ia64_context_get_fp (MonoContext *ctx)
 	return fp;
 }
 
-#elif defined(__mips__) && SIZEOF_REGISTER == 4 /* defined(__ia64__) */
+#elif ((defined(__mips__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_MIPS))) && SIZEOF_REGISTER == 4 /* defined(__ia64__) */
 
-/* we define our own structure and we'll copy the data
- * from sigcontext/ucontext/mach when we need it.
- * This also makes us save stack space and time when copying
- * We might also want to add an additional field to propagate
- * the original context from the signal handler.
- */
 typedef struct {
-	gpointer	sc_pc;
-	guint32		sc_regs [32];
+	mgreg_t	    sc_pc;
+	mgreg_t		sc_regs [32];
 	gfloat		sc_fpregs [32];
 } MonoContext;
 
-/* we have the stack pointer, not the base pointer in sigcontext */
-#define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->sc_pc = (int)(ip); } while (0);
-#define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->sc_regs[mips_fp] = (int)(bp); } while (0);
-#define MONO_CONTEXT_SET_SP(ctx,sp) do { (ctx)->sc_regs[mips_sp] = (int)(sp); } while (0);
+#define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->sc_pc = (mgreg_t)(ip); } while (0);
+#define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->sc_regs[mips_fp] = (mgreg_t)(bp); } while (0);
+#define MONO_CONTEXT_SET_SP(ctx,sp) do { (ctx)->sc_regs[mips_sp] = (mgreg_t)(sp); } while (0);
 
 #define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->sc_pc))
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->sc_regs[mips_fp]))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->sc_regs[mips_sp]))
+
+#define MONO_CONTEXT_GET_CURRENT(ctx)	\
+	__asm__ __volatile__(	\
+		"sw $0,0(%0)\n\t"	\
+		"sw $1,4(%0)\n\t"	\
+		"sw $2,8(%0)\n\t"	\
+		"sw $3,12(%0)\n\t"	\
+		"sw $4,16(%0)\n\t"	\
+		"sw $5,20(%0)\n\t"	\
+		"sw $6,24(%0)\n\t"	\
+		"sw $7,28(%0)\n\t"	\
+		"sw $8,32(%0)\n\t"	\
+		"sw $9,36(%0)\n\t"	\
+		"sw $10,40(%0)\n\t"	\
+		"sw $11,44(%0)\n\t"	\
+		"sw $12,48(%0)\n\t"	\
+		"sw $13,52(%0)\n\t"	\
+		"sw $14,56(%0)\n\t"	\
+		"sw $15,60(%0)\n\t"	\
+		"sw $16,64(%0)\n\t"	\
+		"sw $17,68(%0)\n\t"	\
+		"sw $18,72(%0)\n\t"	\
+		"sw $19,76(%0)\n\t"	\
+		"sw $20,80(%0)\n\t"	\
+		"sw $21,84(%0)\n\t"	\
+		"sw $22,88(%0)\n\t"	\
+		"sw $23,92(%0)\n\t"	\
+		"sw $24,96(%0)\n\t"	\
+		"sw $25,100(%0)\n\t"	\
+		"sw $26,104(%0)\n\t"	\
+		"sw $27,108(%0)\n\t"	\
+		"sw $28,112(%0)\n\t"	\
+		"sw $29,116(%0)\n\t"	\
+		"sw $30,120(%0)\n\t"	\
+		"sw $31,124(%0)\n\t"	\
+		: : "r" (&(ctx).sc_regs [0])	\
+		: "memory"			\
+	)
 
 #elif defined(__s390x__)
 
@@ -405,8 +453,8 @@ typedef struct ucontext MonoContext;
 	} while (0) 
 
 #define MONO_CONTEXT_GET_IP(ctx) (gpointer) (ctx)->uc_mcontext.psw.addr
-#define MONO_CONTEXT_GET_BP(ctx) MONO_CONTEXT_GET_SP((ctx))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->uc_mcontext.gregs[15]))
+#define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->uc_mcontext.gregs[11]))
 
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\
 	__asm__ __volatile__(	\

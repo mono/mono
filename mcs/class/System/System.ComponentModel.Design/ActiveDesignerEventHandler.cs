@@ -31,8 +31,5 @@ using System.Runtime.Serialization;
 
 namespace System.ComponentModel.Design
 {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public delegate void ActiveDesignerEventHandler (object sender, ActiveDesignerEventArgs e);
 }

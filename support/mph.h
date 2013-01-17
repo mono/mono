@@ -75,6 +75,16 @@
 #endif /* ndef L_XTND */
 
 /*
+ * OS X doesn't define MAP_ANONYMOUS, but it does define MAP_ANON.
+ * Alias them to fix: https://bugzilla.xamarin.com/show_bug.cgi?id=3419
+ */
+#ifdef PLATFORM_MACOSX
+#ifndef MAP_ANONYMOUS
+#define MAP_ANONYMOUS MAP_ANON
+#endif  /* ndef MAP_ANONYMOUS */
+#endif  /* ndef PLATFORM_MACOSX */
+
+/*
  * XATTR_AUTO is a synonym for 0 within XattrFlags, but most systems don't
  * define it.  map.c doesn't know that, though, so we ensure that it's defined
  * so that the value 0 round-trips through MonoPosixHelper.

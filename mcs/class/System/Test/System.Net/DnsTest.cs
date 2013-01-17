@@ -28,12 +28,12 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class DnsTest
 	{
-		private String site1Name = "www.go-mono.com",
-			site1Dot = "130.57.21.18",
+		private String site1Name = "mono-project.com",
+			site1Dot = "96.126.105.110",
 			site2Name = "info.diku.dk",
 			site2Dot = "130.225.96.4",
 			noneExistingSite = "www.unlikely.novell.com";
-		private uint site1IP = 2180692201, site2IP = 2195808260; // Big-Endian
+		private uint site1IP = 1852407392, site2IP = 2195808260; // Big-Endian
 
 		[Test]
 		public void AsyncGetHostByName ()
@@ -44,7 +44,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
 			IPHostEntry entry = Dns.EndGetHostByName (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.AreEqual ("www.go-mono.com", entry.HostName);
+			Assert.IsTrue (entry.HostName == "www.mono-project.com" || entry.HostName == "mono-project.com");
 		}
 
 		void GetHostByNameCallback (IAsyncResult ar)
@@ -191,10 +191,24 @@ namespace MonoTests.System.Net
 		[Test]
 		public void GetHostByName ()
 		{
-			SubTestGetHostByName (site1Name, site1Dot);
+			SubTestGetHostByName ("www.mono-project.com", site1Dot);
 			SubTestGetHostByName (site2Name, site2Dot);
 			try {
-				Dns.GetHostByName (noneExistingSite);
+				var entry = Dns.GetHostByName (noneExistingSite);
+				/*
+				 * Work around broken t-online.de DNS Server.
+				 * 
+				 * T-Online's DNS Server for DSL Customers resolves
+				 * non-exisitng domain names to
+				 * http://navigationshilfe1.t-online.de/dnserror?url=....
+				 * instead of reporting an error.
+				 */
+				var navigationshilfe1 = IPAddress.Parse ("80.156.86.78");
+				var navigationshilfe2 = IPAddress.Parse ("62.157.140.133");
+				foreach (var addr in entry.AddressList) {
+					if (addr.Equals (navigationshilfe1) || addr.Equals (navigationshilfe2))
+						return;
+				}
 				Assert.Fail ("Should raise a SocketException (assuming that '" + noneExistingSite + "' does not exist)");
 			} catch (SocketException) {
 			}
@@ -260,11 +274,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-/*** Current go-mono.com IP works fine here***
-#if ONLY_1_1
-		[ExpectedException (typeof (SocketException))]
-#endif
-********/
 		public void GetHostByAddressString5 ()
 		{
 			Dns.GetHostByAddress (site1Dot);
@@ -285,7 +294,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Ignore ("Fails on both Mono and MS")]
 		public void GetHostByAddressIPAddress2 ()
 		{
 			IPAddress addr = new IPAddress (IPAddress.NetworkToHostOrder ((int) site1IP));
@@ -348,7 +356,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_2_0
 		[Test] // BeginGetHostEntry (IPAddress, AsyncCallback, Object)
 		public void BeginGetHostEntry1_Address_Null ()
 		{
@@ -493,13 +500,18 @@ namespace MonoTests.System.Net
 				Assert.AreEqual ("hostNameOrAddress", ex.ParamName, "#B5");
 			}
 		}
-#endif
 
 		void SubTestValidIPHostEntry (IPHostEntry h)
 		{
 			Assert.IsNotNull (h.HostName, "HostName not null");
 			Assert.IsNotNull (h.AddressList, "AddressList not null");
 			Assert.IsTrue (h.AddressList.Length > 0, "AddressList.Length");
+		}
+
+		[Test]
+		public void GetHostEntry_StringEmpty ()
+		{
+			Dns.GetHostEntry (string.Empty);
 		}
 
 		/* This isn't used anymore, but could be useful for debugging

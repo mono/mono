@@ -14,7 +14,7 @@
 #include <signal.h>
 #endif
 
-#if defined(__i386__)
+#if defined(TARGET_X86)
 
 #if defined(__FreeBSD__) || defined(__APPLE__) || defined(__DragonFly__)
 #include <ucontext.h>
@@ -34,7 +34,7 @@
 	#define UCONTEXT_REG_EDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_edi)
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_eip)
 #elif defined(__APPLE__)
-#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#  if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__eax)
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__ebx)
 	#define UCONTEXT_REG_ECX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__ecx)
@@ -86,6 +86,61 @@
 	#define UCONTEXT_REG_EDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [EDI])
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [EIP])
 #else
+
+#if defined(TARGET_ANDROID)
+/* No ucontext.h as of NDK v6b */
+typedef int greg_t;
+#define NGREG 19
+typedef greg_t gregset_t [NGREG];
+enum
+{
+  REG_GS = 0,
+# define REG_GS         REG_GS
+  REG_FS,
+# define REG_FS         REG_FS
+  REG_ES,
+# define REG_ES         REG_ES
+  REG_DS,
+# define REG_DS         REG_DS
+  REG_EDI,
+# define REG_EDI        REG_EDI
+  REG_ESI,
+# define REG_ESI        REG_ESI
+  REG_EBP,
+# define REG_EBP        REG_EBP
+  REG_ESP,
+# define REG_ESP        REG_ESP
+  REG_EBX,
+# define REG_EBX        REG_EBX
+  REG_EDX,
+# define REG_EDX        REG_EDX
+  REG_ECX,
+# define REG_ECX        REG_ECX
+  REG_EAX,
+# define REG_EAX        REG_EAX
+  REG_TRAPNO,
+# define REG_TRAPNO     REG_TRAPNO
+  REG_ERR,
+# define REG_ERR        REG_ERR
+  REG_EIP,
+# define REG_EIP        REG_EIP
+};
+
+typedef struct {
+    gregset_t gregs;
+	/* Many missing fields */
+} mcontext_t;
+
+typedef struct ucontext {
+    unsigned long int uc_flags;
+    struct ucontext *uc_link;
+    stack_t uc_stack;
+    mcontext_t uc_mcontext;
+	/* Many missing fields */
+} ucontext_t;
+
+#endif
+
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_EAX])
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_EBX])
 	#define UCONTEXT_REG_ECX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_ECX])
@@ -97,7 +152,7 @@
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_EIP])
 #endif
 
-#elif defined(__x86_64__)
+#elif defined(TARGET_AMD64)
 
 #if defined(__FreeBSD__)
 #include <ucontext.h>
@@ -246,7 +301,7 @@
 	#define UCONTEXT_REG_LNK(ctx)     ((ctx)->uc_mcontext.mc_lr)
 #endif
 
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 #if defined(__APPLE__)
 	typedef ucontext_t arm_ucontext;
 
@@ -267,6 +322,7 @@
 	#define UCONTEXT_REG_R11(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r[11])
 	#define UCONTEXT_REG_R12(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r[12])
 	#define UCONTEXT_REG_CPSR(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__cpsr)
+	#define UCONTEXT_REG_VFPREGS(ctx) (double*)(((ucontext_t*)(ctx))->uc_mcontext->__fs.__r)
 #elif defined(__linux__)
 	typedef struct arm_ucontext {
 		unsigned long       uc_flags;
@@ -299,6 +355,55 @@
 	#define UCONTEXT_REG_R12(ctx) (((arm_ucontext*)(ctx))->sig_ctx.arm_ip)
 	#define UCONTEXT_REG_CPSR(ctx) (((arm_ucontext*)(ctx))->sig_ctx.arm_cpsr)
 #endif
+#elif defined(__mips__)
+
+# if HAVE_UCONTEXT_H
+#  include <ucontext.h>
+# endif
+
+/* No ucontext.h */
+#if defined(TARGET_ANDROID)
+
+#define NGREG   32
+#define NFPREG  32
+
+typedef unsigned long gregset_t[NGREG];
+
+typedef struct fpregset {
+	union {
+		double  fp_dregs[NFPREG];
+		struct {
+			float           _fp_fregs;
+			unsigned int    _fp_pad;
+		} fp_fregs[NFPREG];
+	} fp_r;
+} fpregset_t;
+
+typedef struct
+  {
+    unsigned int regmask;
+    unsigned int status;
+    unsigned long pc;
+    gregset_t gregs;
+    fpregset_t fpregs;
+	  /* missing fields follow */
+} mcontext_t;
+
+typedef struct ucontext
+  {
+    unsigned long int uc_flags;
+    struct ucontext *uc_link;
+    stack_t uc_stack;
+    mcontext_t uc_mcontext;
+	  /* missing fields follow */
+  } ucontext_t;
+
+#endif
+
+# define UCONTEXT_GREGS(ctx)	(((ucontext_t *)(ctx))->uc_mcontext.gregs)
+# define UCONTEXT_FPREGS(ctx)	(((ucontext_t *)(ctx))->uc_mcontext.fpregs.fp_r.fp_dregs)
+# define UCONTEXT_REG_PC(ctx)	(((ucontext_t *)(ctx))->uc_mcontext.pc)
+
 #elif defined(__s390x__)
 
 # if HAVE_UCONTEXT_H

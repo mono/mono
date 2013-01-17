@@ -1,4 +1,4 @@
-// CS0737: `MySubClass' does not implement interface member `I.Foo.set' and the best implementing candidate `MyTest.Foo.set' in not public
+// CS0737: `MySubClass' does not implement interface member `I.Foo.set' and the best implementing candidate `MyTest.Foo.set' is not public
 // Line: 6
 
 using System;

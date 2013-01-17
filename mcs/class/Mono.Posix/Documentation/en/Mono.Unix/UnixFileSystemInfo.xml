@@ -1,9 +1,11 @@
 <Type Name="UnixFileSystemInfo" FullName="Mono.Unix.UnixFileSystemInfo">
   <TypeSignature Language="C#" Value="public abstract class UnixFileSystemInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit UnixFileSystemInfo extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -112,7 +114,13 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected UnixFileSystemInfo (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string path) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
@@ -144,14 +152,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BlocksAllocated">
       <MemberSignature Language="C#" Value="public long BlocksAllocated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 BlocksAllocated" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -168,14 +178,16 @@
         <altmember cref="F:Mono.Unix.Native.Stat.st_blocks" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BlockSize">
       <MemberSignature Language="C#" Value="public long BlockSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 BlockSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -191,14 +203,21 @@
         <altmember cref="F:Mono.Unix.Native.Stat.st_blksize" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanAccess">
       <MemberSignature Language="C#" Value="public bool CanAccess (Mono.Unix.Native.AccessModes mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CanAccess(valuetype Mono.Unix.Native.AccessModes mode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -226,19 +245,16 @@
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="CreateLink">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixFileSystemInfo CreateLink (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.UnixFileSystemInfo CreateLink(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixFileSystemInfo</ReturnType>
       </ReturnValue>
@@ -376,14 +392,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.link" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSymbolicLink">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixSymbolicLinkInfo CreateSymbolicLink (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.UnixSymbolicLinkInfo CreateSymbolicLink(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixSymbolicLinkInfo</ReturnType>
       </ReturnValue>
@@ -515,14 +533,16 @@ symlink.usli -&gt; target.usli
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.symlink" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="public abstract void Delete ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Delete() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -586,14 +606,16 @@ symlink.usli -&gt; target.usli
           filesystem.</para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Device">
       <MemberSignature Language="C#" Value="public long Device { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Device" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -609,14 +631,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_dev" />
         <altmember cref="F:Mono.Unix.Native.System.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DeviceType">
       <MemberSignature Language="C#" Value="public long DeviceType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 DeviceType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -632,14 +656,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_rdev" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="C#" Value="public bool Exists { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Exists" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -666,14 +692,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="FileAccessPermissions">
+      <MemberSignature Language="C#" Value="public Mono.Unix.FileAccessPermissions FileAccessPermissions { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.FileAccessPermissions FileAccessPermissions" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FileAccessPermissions">
-      <MemberSignature Language="C#" Value="public Mono.Unix.FileAccessPermissions FileAccessPermissions { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPermissions</ReturnType>
       </ReturnValue>
@@ -723,14 +751,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="FileSpecialAttributes">
+      <MemberSignature Language="C#" Value="public Mono.Unix.FileSpecialAttributes FileSpecialAttributes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.FileSpecialAttributes FileSpecialAttributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FileSpecialAttributes">
-      <MemberSignature Language="C#" Value="public Mono.Unix.FileSpecialAttributes FileSpecialAttributes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileSpecialAttributes</ReturnType>
       </ReturnValue>
@@ -747,14 +777,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FileType">
       <MemberSignature Language="C#" Value="public Mono.Unix.FileTypes FileType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.FileTypes FileType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileTypes</ReturnType>
       </ReturnValue>
@@ -768,14 +800,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FullName">
       <MemberSignature Language="C#" Value="public virtual string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -787,14 +821,16 @@ symlink.usli -&gt; target.usli
         </remarks>
         <altmember cref="M:Mono.Unix.UnixPath.GetFullPath" />
       </Docs>
+    </Member>
+    <Member MemberName="FullPath">
+      <MemberSignature Language="C#" Value="protected string FullPath { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullPath" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FullPath">
-      <MemberSignature Language="C#" Value="protected string FullPath { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -832,14 +868,21 @@ symlink.usli -&gt; target.usli
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetConfigurationValue">
       <MemberSignature Language="C#" Value="public long GetConfigurationValue (Mono.Unix.Native.PathconfName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 GetConfigurationValue(valuetype Mono.Unix.Native.PathconfName name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -898,19 +941,16 @@ symlink.usli -&gt; target.usli
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.pathconf" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetFileStatus">
       <MemberSignature Language="C#" Value="protected virtual bool GetFileStatus (string path, out Mono.Unix.Native.Stat stat);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool GetFileStatus(string path, valuetype Mono.Unix.Native.Stat stat) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -934,14 +974,16 @@ symlink.usli -&gt; target.usli
         <remarks>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFileSystemEntry">
       <MemberSignature Language="C#" Value="public static Mono.Unix.UnixFileSystemInfo GetFileSystemEntry (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Unix.UnixFileSystemInfo GetFileSystemEntry(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixFileSystemInfo</ReturnType>
       </ReturnValue>
@@ -954,14 +996,16 @@ symlink.usli -&gt; target.usli
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Inode">
       <MemberSignature Language="C#" Value="public long Inode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Inode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -977,14 +1021,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_ino" />
         <altmember cref="F:Mono.Unix.Native.System.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsBlockDevice">
       <MemberSignature Language="C#" Value="public bool IsBlockDevice { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsBlockDevice" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1007,14 +1053,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsCharacterDevice">
       <MemberSignature Language="C#" Value="public bool IsCharacterDevice { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCharacterDevice" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1037,14 +1085,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsDirectory">
       <MemberSignature Language="C#" Value="public bool IsDirectory { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDirectory" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1067,14 +1117,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsFifo">
       <MemberSignature Language="C#" Value="public bool IsFifo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFifo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1097,14 +1149,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsRegularFile">
       <MemberSignature Language="C#" Value="public bool IsRegularFile { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsRegularFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1127,14 +1181,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSetGroup">
       <MemberSignature Language="C#" Value="public bool IsSetGroup { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSetGroup" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1157,14 +1213,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSetUser">
       <MemberSignature Language="C#" Value="public bool IsSetUser { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSetUser" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1187,14 +1245,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSocket">
       <MemberSignature Language="C#" Value="public bool IsSocket { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSocket" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1217,14 +1277,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSticky">
       <MemberSignature Language="C#" Value="public bool IsSticky { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSticky" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1247,14 +1309,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSymbolicLink">
       <MemberSignature Language="C#" Value="public bool IsSymbolicLink { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSymbolicLink" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1277,14 +1341,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastAccessTime">
       <MemberSignature Language="C#" Value="public DateTime LastAccessTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastAccessTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -1302,14 +1368,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_atime" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastAccessTimeUtc">
       <MemberSignature Language="C#" Value="public DateTime LastAccessTimeUtc { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastAccessTimeUtc" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -1327,14 +1395,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_atime" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastStatusChangeTime">
       <MemberSignature Language="C#" Value="public DateTime LastStatusChangeTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastStatusChangeTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -1352,14 +1422,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_ctime" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastStatusChangeTimeUtc">
       <MemberSignature Language="C#" Value="public DateTime LastStatusChangeTimeUtc { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastStatusChangeTimeUtc" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -1377,14 +1449,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_ctime" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastWriteTime">
       <MemberSignature Language="C#" Value="public DateTime LastWriteTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastWriteTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -1402,14 +1476,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_mtime" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastWriteTimeUtc">
       <MemberSignature Language="C#" Value="public DateTime LastWriteTimeUtc { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastWriteTimeUtc" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -1427,14 +1503,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_mtime" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Length">
       <MemberSignature Language="C#" Value="public long Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Length" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1450,14 +1528,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_size" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LinkCount">
       <MemberSignature Language="C#" Value="public long LinkCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 LinkCount" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1479,14 +1559,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public abstract string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1505,14 +1587,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="M:Mono.Unix.UnixPath.GetFileName" />
         <altmember cref="M:Mono.Unix.UnixPath.GetDirectoryName" />
       </Docs>
+    </Member>
+    <Member MemberName="OriginalPath">
+      <MemberSignature Language="C#" Value="protected string OriginalPath { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string OriginalPath" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OriginalPath">
-      <MemberSignature Language="C#" Value="protected string OriginalPath { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1545,14 +1629,16 @@ symlink.usli -&gt; target.usli
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OwnerGroup">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixGroupInfo OwnerGroup { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Unix.UnixGroupInfo OwnerGroup" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixGroupInfo</ReturnType>
       </ReturnValue>
@@ -1570,14 +1656,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_gid" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OwnerGroupId">
       <MemberSignature Language="C#" Value="public long OwnerGroupId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 OwnerGroupId" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1592,14 +1680,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_gid" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OwnerUser">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixUserInfo OwnerUser { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Unix.UnixUserInfo OwnerUser" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixUserInfo</ReturnType>
       </ReturnValue>
@@ -1617,14 +1707,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_uid" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OwnerUserId">
       <MemberSignature Language="C#" Value="public long OwnerUserId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 OwnerUserId" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1641,14 +1733,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_uid" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
+    </Member>
+    <Member MemberName="Protection">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.FilePermissions Protection { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.Native.FilePermissions Protection" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Protection">
-      <MemberSignature Language="C#" Value="public Mono.Unix.Native.FilePermissions Protection { set; get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -1669,14 +1763,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="F:Mono.Unix.Native.Stat.st_mode" />
         <altmember cref="F:Mono.Unix.Native.Syscall.stat" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Refresh">
       <MemberSignature Language="C#" Value="public void Refresh ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Refresh() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1712,14 +1808,16 @@ symlink.usli -&gt; target.usli
           </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetLength">
       <MemberSignature Language="C#" Value="public void SetLength (long length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetLength(int64 length) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1805,14 +1903,16 @@ symlink.usli -&gt; target.usli
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.truncate" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetOwner">
       <MemberSignature Language="C#" Value="public void SetOwner (Mono.Unix.UnixUserInfo owner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetOwner(class Mono.Unix.UnixUserInfo owner) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1905,14 +2005,16 @@ symlink.usli -&gt; target.usli
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetOwner">
       <MemberSignature Language="C#" Value="public void SetOwner (string owner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetOwner(string owner) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2002,14 +2104,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="T:Mono.Unix.UnixUserInfo" />
         <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetOwner">
       <MemberSignature Language="C#" Value="public void SetOwner (Mono.Unix.UnixUserInfo owner, Mono.Unix.UnixGroupInfo group);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetOwner(class Mono.Unix.UnixUserInfo owner, class Mono.Unix.UnixGroupInfo group) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2101,14 +2205,16 @@ symlink.usli -&gt; target.usli
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetOwner">
       <MemberSignature Language="C#" Value="public virtual void SetOwner (long owner, long group);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetOwner(int64 owner, int64 group) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2195,14 +2301,16 @@ symlink.usli -&gt; target.usli
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetOwner">
       <MemberSignature Language="C#" Value="public void SetOwner (string owner, string group);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetOwner(string owner, string group) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2289,14 +2397,16 @@ symlink.usli -&gt; target.usli
         <altmember cref="T:Mono.Unix.UnixGroupInfo" />
         <altmember cref="M:Mono.Unix.Native.Syscall.chown" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToStat">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.Stat ToStat ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype Mono.Unix.Native.Stat ToStat() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Stat</ReturnType>
       </ReturnValue>
@@ -2313,14 +2423,16 @@ symlink.usli -&gt; target.usli
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" /> doesn't exist.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2330,10 +2442,28 @@ symlink.usli -&gt; target.usli
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="TryGetFileSystemEntry">
+      <MemberSignature Language="C#" Value="public static bool TryGetFileSystemEntry (string path, out Mono.Unix.UnixFileSystemInfo entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryGetFileSystemEntry(string path, class Mono.Unix.UnixFileSystemInfo entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="entry" Type="Mono.Unix.UnixFileSystemInfo&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="path">To be added.</param>
+        <param name="entry">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
 </Type>

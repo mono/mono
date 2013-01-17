@@ -1529,5 +1529,24 @@ ncells ) {
 		return regress_679467_inner ();
 	}
 	*/
+
+	static int test_0_char_ctor () {
+		string s = new String (new char[] { 'A', 'B' }, 0, 1);
+		return 0;
+	}
+
+	static object mInstance = null;
+
+	[MethodImpl(MethodImplOptions.Synchronized)]
+	public static object getInstance() {
+		if (mInstance == null)
+			mInstance = new object();
+		return mInstance;
+	}
+
+	static int test_0_synchronized () {
+		getInstance ();
+		return 0;
+	}
 }
 

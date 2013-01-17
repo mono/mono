@@ -32,17 +32,8 @@ using System.IO;
 
 namespace System.ComponentModel
 {
-#if NET_2_0
-	static
-#endif
-	public class SyntaxCheck
+	static public class SyntaxCheck
 	{
-#if !NET_2_0
-		private SyntaxCheck ()
-		{
-		}
-#endif
-
 		public static bool CheckMachineName (string value)
 		{
 			if (value == null || value.Trim ().Length == 0)

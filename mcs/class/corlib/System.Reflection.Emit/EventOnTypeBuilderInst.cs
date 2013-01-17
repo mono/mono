@@ -27,16 +27,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
 	/*
 	 * This class represents an event of an instantiation of a generic type builder.
 	 */
+	[StructLayout (LayoutKind.Sequential)]
 	internal class EventOnTypeBuilderInst : EventInfo
 	{
 		MonoGenericClass instantiation;
@@ -113,29 +116,18 @@ namespace System.Reflection.Emit
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			if (event_info != null)
-				return event_info.IsDefined (attributeType, inherit);
 			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			if (event_info != null)
-				return event_info.GetCustomAttributes (inherit);
 			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			if (event_info != null)
-				return event_info.GetCustomAttributes (attributeType, inherit);
 			throw new NotSupportedException ();
 		}
 	}
 }
+#endif

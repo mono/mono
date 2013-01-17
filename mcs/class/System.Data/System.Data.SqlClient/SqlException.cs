@@ -45,12 +45,7 @@ using Mono.Data.Tds.Protocol;
 namespace System.Data.SqlClient
 {
 	[Serializable]
-	public sealed class SqlException
-#if NET_2_0
-		: DbException
-#else
-		: SystemException
-#endif //NET_1_1
+	public sealed class SqlException : DbException
 	{
 		#region Fields
 

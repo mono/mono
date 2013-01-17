@@ -57,10 +57,7 @@ namespace System.ComponentModel
 		{
 		}
 
-#if NET_2_0
-		public
-#endif
-		EventDescriptorCollection (EventDescriptor[] events, bool readOnly) 
+		public EventDescriptorCollection (EventDescriptor[] events, bool readOnly) 
 		{
 			this.isReadOnly = readOnly;
 			if (events == null)
@@ -96,7 +93,6 @@ namespace System.ComponentModel
 		public virtual EventDescriptor Find (string name, bool ignoreCase) 
 		{
 			foreach (EventDescriptor e in eventList) {
-#if NET_2_0
 				if (ignoreCase) {
 					if (0 == String.Compare (name, e.Name, StringComparison.OrdinalIgnoreCase))
 						return e;
@@ -104,10 +100,6 @@ namespace System.ComponentModel
 					if (0 == String.Compare (name, e.Name, StringComparison.Ordinal))
 						return e;
 				}
-#else
-				if (0 == String.Compare (name, e.Name, ignoreCase, CultureInfo.InvariantCulture))
-					return e;
-#endif
 			}
 			return null;
 		}
@@ -279,11 +271,7 @@ namespace System.ComponentModel
 
 		bool IList.IsFixedSize {
 			get {
-#if NET_2_0
 				return isReadOnly;
-#else
-				return !isReadOnly;
-#endif
 			}
 		}
 

@@ -8,8 +8,6 @@
 // Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -46,4 +44,3 @@ namespace System.IO
 	}
 }
 
-#endif

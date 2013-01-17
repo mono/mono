@@ -13,7 +13,7 @@ class Test {
 
 	public override int GetHashCode () { return 0; }
 
-	static void Main ()
+	public static void Main ()
 	{
 		Test y = new Test ();
 		if (y == null)

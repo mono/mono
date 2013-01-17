@@ -62,8 +62,9 @@ namespace System.ServiceModel.Web
 
 		internal void Apply (HttpRequestMessageProperty hp)
 		{
-			foreach (var key in Headers.AllKeys)
-				hp.Headers [key] = Headers [key];
+			if (Headers != null)
+				foreach (var key in Headers.AllKeys)
+					hp.Headers [key] = Headers [key];
 			if (Accept != null)
 				hp.Headers ["Accept"] = Accept;
 			if (ContentLength > 0)

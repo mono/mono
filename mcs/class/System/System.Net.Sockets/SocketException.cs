@@ -70,7 +70,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if NET_2_0
 		public SocketError SocketErrorCode {
 			get {
 				return (SocketError) NativeErrorCode;
@@ -82,7 +81,5 @@ namespace System.Net.Sockets
 				return base.Message;
 			}
 		}
-#endif
-
 	}
 }

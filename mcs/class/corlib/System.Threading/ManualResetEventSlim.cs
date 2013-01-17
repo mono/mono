@@ -1,6 +1,10 @@
-// ManuelResetEventSlim.cs
+// ManualResetEventSlim.cs
+//
+// Authors:
+//    Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,44 +28,40 @@
 
 #if NET_4_0 || MOBILE
 
-using System;
-
 namespace System.Threading
 {
 	[System.Diagnostics.DebuggerDisplayAttribute ("Set = {IsSet}")]
 	public class ManualResetEventSlim : IDisposable
 	{
-		const int isSet    = 1;
-		const int isNotSet = 0;
-		const int defaultSpinCount = 100;
-
-		int state;
 		readonly int spinCount;
 
 		ManualResetEvent handle;
+		internal AtomicBooleanValue disposed;
+		int used;
+		long state;
 
-		readonly static Watch sw = Watch.StartNew ();
-
-		public ManualResetEventSlim () : this (false, defaultSpinCount)
+		public ManualResetEventSlim ()
+			: this (false, 10)
 		{
 		}
 
-		public ManualResetEventSlim (bool initialState) : this (initialState, defaultSpinCount)
+		public ManualResetEventSlim (bool initialState)
+			: this (initialState, 10)
 		{
 		}
 
 		public ManualResetEventSlim (bool initialState, int spinCount)
 		{
-			if (spinCount < 0)
-				throw new ArgumentOutOfRangeException ("spinCount is less than 0", "spinCount");
+			if (spinCount < 0 || spinCount > 2047)
+				throw new ArgumentOutOfRangeException ("spinCount");
 
-			this.state = initialState ? isSet : isNotSet;
+			this.state = initialState ? 1 : 0;
 			this.spinCount = spinCount;
 		}
 
 		public bool IsSet {
 			get {
-				return state == isSet;
+				return (state & 1) == 1;
 			}
 		}
 
@@ -73,16 +73,64 @@ namespace System.Threading
 
 		public void Reset ()
 		{
-			state = isNotSet;
+			ThrowIfDisposed ();
+
+			var stamp = UpdateStateWithOp (false);
 			if (handle != null)
-				handle.Reset ();
+				CommitChangeToHandle (stamp);
 		}
 
 		public void Set ()
 		{
-			state = isSet;
+			var stamp = UpdateStateWithOp (true);
 			if (handle != null)
-				handle.Set ();
+				CommitChangeToHandle (stamp);
+		}
+
+		long UpdateStateWithOp (bool set)
+		{
+			long oldValue, newValue;
+			do {
+				oldValue = state;
+				newValue = (long)(((oldValue >> 1) + 1) << 1) | (set ? 1u : 0u);
+			} while (Interlocked.CompareExchange (ref state, newValue, oldValue) != oldValue);
+			return newValue;
+		}
+
+		void CommitChangeToHandle (long stamp)
+		{
+			Interlocked.Increment (ref used);
+			var tmpHandle = handle;
+			if (tmpHandle != null) {
+				// First in all case we carry the operation we were called for
+ 				if ((stamp & 1) == 1)
+					tmpHandle.Set ();
+				else
+					tmpHandle.Reset ();
+
+				/* Then what may happen is that the two suboperations (state change and handle change)
+				 * overlapped with others. In our case it doesn't matter if the two suboperations aren't
+				 * executed together at the same time, the only thing we have to make sure of is that both
+				 * state and handle are synchronized on the last visible state change.
+				 *
+				 * For instance if S is state change and H is handle change, for 3 concurrent operations
+				 * we may have the following serialized timeline: S1 S2 H2 S3 H3 H1
+				 * Which is perfectly fine (all S were converted to H at some stage) but in that case
+				 * we have a mismatch between S and H at the end because the last operations done were
+				 * S3/H1. We thus need to repeat H3 to get to the desired final state.
+				 */
+				long currentState;
+				do {
+					currentState = state;
+					if (currentState != stamp && (stamp & 1) != (currentState & 1)) {
+						if ((currentState & 1) == 1)
+							tmpHandle.Set ();
+						else
+							tmpHandle.Reset ();
+					}
+				} while (currentState != state);
+			}
+			Interlocked.Decrement (ref used);
 		}
 
 		public void Wait ()
@@ -97,38 +145,49 @@ namespace System.Threading
 
 		public bool Wait (TimeSpan timeout)
 		{
-			return Wait ((int)timeout.TotalMilliseconds, CancellationToken.None);
+			return Wait (CheckTimeout (timeout), CancellationToken.None);
 		}
 
 		public void Wait (CancellationToken cancellationToken)
 		{
-			Wait (-1, cancellationToken);
+			Wait (Timeout.Infinite, cancellationToken);
 		}
 
 		public bool Wait (int millisecondsTimeout, CancellationToken cancellationToken)
 		{
 			if (millisecondsTimeout < -1)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
-				                                       "millisecondsTimeout is a negative number other than -1");
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			long start = millisecondsTimeout == -1 ? 0 : sw.ElapsedMilliseconds;
-			SpinWait wait = new SpinWait ();
+			ThrowIfDisposed ();
 
-			while (state == isNotSet) {
-				cancellationToken.ThrowIfCancellationRequested ();
+			if (!IsSet) {
+				SpinWait wait = new SpinWait ();
 
-				if (millisecondsTimeout > -1 && (sw.ElapsedMilliseconds - start) > millisecondsTimeout)
-					return false;
+				while (!IsSet) {
+					cancellationToken.ThrowIfCancellationRequested ();
 
-				if (wait.Count < spinCount) {
-					wait.SpinOnce ();
+					if (wait.Count < spinCount) {
+						wait.SpinOnce ();
+						continue;
+					}
+
+					break;
+				}
+
+				if (IsSet)
+					return true;
+
+				WaitHandle handle = WaitHandle;
+
+				if (cancellationToken.CanBeCanceled) {
+					var result = WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, millisecondsTimeout, false);
+					if (result == 1)
+						throw new OperationCanceledException (cancellationToken);
+					if (result == WaitHandle.WaitTimeout)
+						return false;
 				} else {
-					int waitTime = millisecondsTimeout == -1 ? -1 : Math.Max (millisecondsTimeout - (int)(sw.ElapsedMilliseconds - start) , 1);
-					WaitHandle handle = WaitHandle;
-					if (state == isSet)
-						return true;
-					if (WaitHandle.WaitAny (new[] { handle, cancellationToken.WaitHandle }, waitTime, false) == 0)
-						return true;
+					if (!handle.WaitOne (millisecondsTimeout, false))
+						return false;
 				}
 			}
 
@@ -137,39 +196,76 @@ namespace System.Threading
 
 		public bool Wait (TimeSpan timeout, CancellationToken cancellationToken)
 		{
-			return Wait ((int)timeout.TotalMilliseconds, cancellationToken);
+			return Wait (CheckTimeout (timeout), cancellationToken);
 		}
 
 		public WaitHandle WaitHandle {
 			get {
-				if (handle != null) {
-					if (state == isSet)
-						handle.Set ();
+				ThrowIfDisposed ();
 
+				if (handle != null)
 					return handle;
+
+				var isSet = IsSet;
+				var mre = new ManualResetEvent (IsSet);
+				if (Interlocked.CompareExchange (ref handle, mre, null) == null) {
+					//
+					// Ensure the Set has not ran meantime
+					//
+					if (isSet != IsSet) {
+						if (IsSet) {
+							mre.Set ();
+						} else {
+							mre.Reset ();
+						}
+					}
+				} else {
+					//
+					// Release the event when other thread was faster
+					//
+					mre.Dispose ();
 				}
 
-				var result = LazyInitializer.EnsureInitialized (ref handle,
-				                                                () => new ManualResetEvent (state == isSet ? true : false));
-				if (state == isSet)
-					result.Set ();
-
-				return result;
+				return handle;
 			}
 		}
 
-		#region IDisposable implementation
 		public void Dispose ()
 		{
-			Dispose(true);
+			Dispose (true);
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
+			if (!disposed.TryRelaxedSet ())
+				return;
 
+			if (handle != null) {
+				var tmpHandle = Interlocked.Exchange (ref handle, null);
+				if (used > 0) {
+					// A tiny wait (just a few cycles normally) before releasing
+					SpinWait wait = new SpinWait ();
+					while (used > 0)
+						wait.SpinOnce ();
+				}
+				tmpHandle.Dispose ();
+			}
 		}
-		#endregion
 
+		void ThrowIfDisposed ()
+		{
+			if (disposed.Value)
+				throw new ObjectDisposedException ("ManualResetEventSlim");
+		}
+
+		static int CheckTimeout (TimeSpan timeout)
+		{
+			try {
+				return checked ((int)timeout.TotalMilliseconds);
+			} catch (System.OverflowException) {
+				throw new ArgumentOutOfRangeException ("timeout");
+			}
+		}
 	}
 }
 #endif

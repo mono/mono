@@ -5,6 +5,7 @@
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
 // Copyright (C) 2002 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2003 Ben Maurer
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 // 
 // Author:         Jim Richardson, develop@wtfo-guru.com
 //                 Dan Lewis (dihlewis@yahoo.co.uk)
@@ -294,7 +295,7 @@ namespace System.IO {
 			if ((path [1] != ':') || !Char.IsLetter (path [0]))
 				return path;
 
-			string current = Directory.GetCurrentDirectory ();
+			string current = Directory.InsecureGetCurrentDirectory ();
 			// first, only the drive is specified
 			if (path.Length == 2) {
 				// then if the current directory is on the same drive
@@ -348,19 +349,21 @@ namespace System.IO {
 				if (!IsPathRooted (path)) {
 					
 					// avoid calling expensive CanonicalizePath when possible
-					var start = 0;
-					while ((start = path.IndexOf ('.', start)) != -1) {
-						if (++start == path.Length || path [start] == DirectorySeparatorChar || path [start] == AltDirectorySeparatorChar)
-							break;
+					if (!Environment.IsRunningOnWindows) {
+						var start = 0;
+						while ((start = path.IndexOf ('.', start)) != -1) {
+							if (++start == path.Length || path [start] == DirectorySeparatorChar || path [start] == AltDirectorySeparatorChar)
+								break;
+						}
+						canonicalize = start > 0;
 					}
-					canonicalize = start > 0;
-					
-					path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
+
+					path = Directory.InsecureGetCurrentDirectory() + DirectorySeparatorStr + path;
 				} else if (DirectorySeparatorChar == '\\' &&
 					path.Length >= 2 &&
 					IsDsc (path [0]) &&
 					!IsDsc (path [1])) { // like `\abc\def'
-					string current = Directory.GetCurrentDirectory ();
+					string current = Directory.InsecureGetCurrentDirectory();
 					if (current [1] == VolumeSeparatorChar)
 						path = current.Substring (0, 2) + path;
 					else
@@ -832,6 +835,11 @@ namespace System.IO {
 				throw new ArgumentException (Locale.GetText ("Path is empty"));
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
+			if (Environment.IsRunningOnWindows) {
+				int idx = path.IndexOf (':');
+				if (idx >= 0 && idx != 1)
+					throw new ArgumentException (parameterName);
+			}
 #if MOONLIGHT
 			// On Moonlight (SL4+) there are some limitations in "Elevated Trust"
 			if (SecurityManager.HasElevatedPermissions) {

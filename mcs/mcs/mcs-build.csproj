@@ -8,8 +8,8 @@
     <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../class/lib/build</OutputPath>
-    <DefineConstants>STATIC;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <OutputPath></OutputPath>
+    <DefineConstants>STATIC;NO_SYMBOL_WRITER;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <NoStdLib>true</NoStdLib>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>STATIC;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>STATIC;NO_SYMBOL_WRITER;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../class/lib/build,./../class/lib/build</AdditionalLibPaths>
@@ -34,7 +34,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>STATIC;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>STATIC;NO_SYMBOL_WRITER;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../class/lib/build,./../class/lib/build</AdditionalLibPaths>
@@ -46,6 +46,7 @@
    <Compile Include="argument.cs" />
    <Compile Include="assign.cs" />
    <Compile Include="assembly.cs" />
+   <Compile Include="async.cs" />
    <Compile Include="attribute.cs" />
    <Compile Include="cs-tokenizer.cs" />
    <Compile Include="cfold.cs" />
@@ -85,14 +86,13 @@
    <Compile Include="property.cs" />
    <Compile Include="reflection.cs" />
    <Compile Include="report.cs" />
-   <Compile Include="rootcontext.cs" />
-   <Compile Include="roottypes.cs" />
+   <Compile Include="settings.cs" />
+   <Compile Include="module.cs" />
    <Compile Include="statement.cs" />
    <Compile Include="support.cs" />
    <Compile Include="typemanager.cs" />
    <Compile Include="typespec.cs" />
    <Compile Include="visit.cs" />
-   <Compile Include="symbolwriter.cs" />
    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />

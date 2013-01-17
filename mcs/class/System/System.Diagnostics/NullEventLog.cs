@@ -127,7 +127,6 @@ namespace System.Diagnostics
 		{
 		}
 
-#if NET_2_0
 		public override OverflowAction OverflowAction {
 			get { return OverflowAction.DoNotOverwrite; }
 		}
@@ -150,6 +149,5 @@ namespace System.Diagnostics
 		{
 			throw new NotSupportedException ("This EventLog implementation does not support registering display name");
 		}
-#endif
 	}
 }

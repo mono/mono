@@ -28,7 +28,12 @@
 
 MONO_BEGIN_DECLS
 
+enum {
+	SGEN_BRIDGE_VERSION = 3
+};
+	
 typedef struct {
+	mono_bool is_alive;	/* to be set by the cross reference callback */
 	int num_objs;
 	MonoObject *objs [MONO_ZERO_LEN_ARRAY];
 } MonoGCBridgeSCC;
@@ -39,11 +44,15 @@ typedef struct {
 } MonoGCBridgeXRef;
 
 typedef struct {
-	mono_bool (*is_bridge_object) (MonoObject *obj);
+	int bridge_version;
+	mono_bool (*is_bridge_class) (MonoClass *class);
+	mono_bool (*is_bridge_object) (MonoObject *object);
 	void (*cross_references) (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs, MonoGCBridgeXRef *xrefs);
 } MonoGCBridgeCallbacks;
 
 void mono_gc_register_bridge_callbacks (MonoGCBridgeCallbacks *callbacks);
+
+void mono_gc_wait_for_bridge_processing (void);
 
 MONO_END_DECLS
 

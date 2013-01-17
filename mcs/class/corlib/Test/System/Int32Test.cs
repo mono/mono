@@ -37,6 +37,7 @@ public class Int32Test
 					"2147483647", "2.14748e+009", "2147483647.00000",
 					"2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
+	private NumberFormatInfo NfiUser;
 	
 	private CultureInfo old_culture;
 
@@ -60,6 +61,22 @@ public class Int32Test
 		
 		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,647.00000";
 		Results2 [6] = perPattern.Replace ("n","214,748,364,700.00000");
+
+		NfiUser = new NumberFormatInfo ();
+		NfiUser.CurrencyDecimalDigits = 3;
+		NfiUser.CurrencyDecimalSeparator = ":";
+		NfiUser.CurrencyGroupSeparator = "/";
+		NfiUser.CurrencyGroupSizes = new int[] { 2, 1, 0 };
+		NfiUser.CurrencyNegativePattern = 10;  // n $-
+		NfiUser.CurrencyPositivePattern = 3;  // n $
+		NfiUser.CurrencySymbol = "XYZ";
+		NfiUser.PercentDecimalDigits = 1;
+		NfiUser.PercentDecimalSeparator = ";";
+		NfiUser.PercentGroupSeparator = "~";
+		NfiUser.PercentGroupSizes = new int[] { 1 };
+		NfiUser.PercentNegativePattern = 2;
+		NfiUser.PercentPositivePattern = 2;
+		NfiUser.PercentSymbol = "%%%";
 	}
 	
 	[SetUp]
@@ -244,9 +261,11 @@ public class Int32Test
 		Assert.AreEqual (734561, Int32.Parse ("734561\0\0\0    \0"), "C#44");
 		Assert.AreEqual (734561, Int32.Parse ("734561\0\0\0    "), "C#45");
 		Assert.AreEqual (734561, Int32.Parse ("734561\0\0\0"), "C#46");
+
+		Assert.AreEqual (0, Int32.Parse ("0+", NumberStyles.Any), "#50");
 	}
 
-    	[Test]
+    [Test]
 	public void TestParseExponent ()
 	{
 		Assert.AreEqual (2, Int32.Parse ("2E0", NumberStyles.AllowExponent), "A#1");
@@ -254,6 +273,7 @@ public class Int32Test
 		Assert.AreEqual (200, Int32.Parse ("2E2", NumberStyles.AllowExponent), "A#3");
 		Assert.AreEqual (2000000, Int32.Parse ("2E6", NumberStyles.AllowExponent), "A#4");
 		Assert.AreEqual (200, Int32.Parse ("2E+2", NumberStyles.AllowExponent), "A#5");
+		Assert.AreEqual (2, Int32.Parse ("2", NumberStyles.AllowExponent), "A#6");
 
 		try {
 			Int32.Parse ("2E");
@@ -297,9 +317,14 @@ public class Int32Test
 			Assert.Fail ("B#7");
 		} catch (OverflowException) {
 		}
+
+		try {
+			Int32.Parse ("2 math e1", NumberStyles.AllowExponent);
+			Assert.Fail ("B#8");
+		} catch (FormatException) {
+		}
 	}
 
-#if NET_2_0	
 	[Test]
 	public void TestTryParse()
 	{
@@ -357,7 +382,6 @@ public class Int32Test
 		Assert.AreEqual (-1, result);
 		Assert.AreEqual (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
 	}
-#endif
 
 	[Test]	
 	public void TestToString()
@@ -455,6 +479,25 @@ public class Int32Test
 		} finally {
 			Thread.CurrentThread.CurrentCulture = old;
 		}
+	}
+
+	[Test]
+	public void TestUserCurrency ()
+	{
+		const int val1 = -1234567;
+		const int val2 = 1234567;
+
+		string s = "";
+		int v;
+		s = val1.ToString ("c", NfiUser);
+		Assert.AreEqual ("1234/5/67:000 XYZ-", s, "Currency value type 1 is not what we want to try to parse");
+		v = Int32.Parse ("1234/5/67:000   XYZ-", NumberStyles.Currency, NfiUser);
+		Assert.AreEqual (val1, v);
+
+		s = val2.ToString ("c", NfiUser);
+		Assert.AreEqual ("1234/5/67:000 XYZ", s, "Currency value type 2 is not what we want to try to parse");
+		v = Int32.Parse (s, NumberStyles.Currency, NfiUser);
+		Assert.AreEqual (val2, v);
 	}
 }
 

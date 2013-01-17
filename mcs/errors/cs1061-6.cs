@@ -1,4 +1,4 @@
-// CS1061: Type `T' does not contain a definition for `Name' and no extension method `Name' of type `T' could be found (are you missing a using directive or an assembly reference?)
+// CS1061: Type `T' does not contain a definition for `Name' and no extension method `Name' of type `T' could be found. Are you missing an assembly reference?
 // Line: 11
 
 using System;

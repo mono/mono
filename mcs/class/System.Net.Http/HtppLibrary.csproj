@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1067A7EF-857F-4045-AB01-013CA131EA32}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HtppLibrary</RootNamespace>
+    <AssemblyName>HtppLibrary</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_1_1;NET_2_0;NET_4_0;NET_4_5;MOBILE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
+    <Compile Include="System.Net.Http.Headers\ContentDispositionHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\ContentRangeHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\EntityTagHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\HashCodeCalculator.cs" />
+    <Compile Include="System.Net.Http.Headers\HeaderInfo.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpContentHeaders.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpHeaderKind.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpHeaders.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpHeaderValueCollection.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpRequestHeaders.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpResponseHeaders.cs" />
+    <Compile Include="System.Net.Http.Headers\Lexer.cs" />
+    <Compile Include="System.Net.Http.Headers\MediaTypeHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\MediaTypeWithQualityHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\NameValueHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\NameValueWithParametersHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\Parser.cs" />
+    <Compile Include="System.Net.Http.Headers\ProductHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\ProductInfoHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\QualityValue.cs" />
+    <Compile Include="System.Net.Http.Headers\RangeConditionHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\RangeHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\RangeItemHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\RetryConditionHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\StringWithQualityHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\TransferCodingHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\TransferCodingWithQualityHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\ViaHeaderValue.cs" />
+    <Compile Include="System.Net.Http.Headers\WarningHeaderValue.cs" />
+    <Compile Include="System.Net.Http\ByteArrayContent.cs" />
+    <Compile Include="System.Net.Http\ClientCertificateOption.cs" />
+    <Compile Include="System.Net.Http\DelegatingHandler.cs" />
+    <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
+    <Compile Include="System.Net.Http\HttpClient.cs" />
+    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+    <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
+    <Compile Include="System.Net.Http\HttpContent.cs" />
+    <Compile Include="System.Net.Http\HttpMessageHandler.cs" />
+    <Compile Include="System.Net.Http\HttpMethod.cs" />
+    <Compile Include="System.Net.Http\HttpRequestException.cs" />
+    <Compile Include="System.Net.Http\HttpRequestMessage.cs" />
+    <Compile Include="System.Net.Http\HttpResponseMessage.cs" />
+    <Compile Include="System.Net.Http\MessageProcessingHandler.cs" />
+    <Compile Include="System.Net.Http\MultipartContent.cs" />
+    <Compile Include="System.Net.Http\StreamContent.cs" />
+    <Compile Include="System.Net.Http\StringContent.cs" />
+    <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

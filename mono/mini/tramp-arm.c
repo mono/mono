@@ -4,7 +4,9 @@
  * Authors:
  *   Paolo Molaro (lupus@ximian.com)
  *
- * (C) 2001 Ximian, Inc.
+ * (C) 2001-2003 Ximian, Inc.
+ * Copyright 2003-2011 Novell Inc
+ * Copyright 2011 Xamarin Inc
  */
 
 #include <config.h>
@@ -178,13 +180,18 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	if (aot && tramp_type != MONO_TRAMPOLINE_GENERIC_CLASS_INIT) {
 		/* 
+		 * For page trampolines the data is in r1, so just move it, otherwise use the got slot as below.
 		 * The trampoline contains a pc-relative offset to the got slot 
 		 * preceeding the got slot where the value is stored. The offset can be
 		 * found at [lr + 0].
 		 */
-		ARM_LDR_IMM (code, ARMREG_V2, ARMREG_LR, 0);
-		ARM_ADD_REG_IMM (code, ARMREG_V2, ARMREG_V2, 4, 0);
-		ARM_LDR_REG_REG (code, ARMREG_V2, ARMREG_V2, ARMREG_LR);
+		if (aot == 2) {
+			ARM_MOV_REG_REG (code, ARMREG_V2, ARMREG_R1);
+		} else {
+			ARM_LDR_IMM (code, ARMREG_V2, ARMREG_LR, 0);
+			ARM_ADD_REG_IMM (code, ARMREG_V2, ARMREG_V2, 4, 0);
+			ARM_LDR_REG_REG (code, ARMREG_V2, ARMREG_V2, ARMREG_LR);
+		}
 	} else {
 		if (tramp_type != MONO_TRAMPOLINE_GENERIC_CLASS_INIT)
 			ARM_LDR_IMM (code, ARMREG_V2, ARMREG_LR, 0);
@@ -242,17 +249,19 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		ARM_MOV_REG_IMM8 (code, ARMREG_R2, 0);
 		ARM_STR_IMM (code, ARMREG_R2, ARMREG_V1, G_STRUCT_OFFSET (MonoLMF, method));
 	}
-	/* Save sp into lmf->iregs, the eh code expects it to be at IP */
+	/* save caller SP */
 	ARM_ADD_REG_IMM8 (code, ARMREG_R2, ARMREG_SP, cfa_offset);
-	ARM_STR_IMM (code, ARMREG_R2, ARMREG_V1, G_STRUCT_OFFSET (MonoLMF, iregs) + (ARMREG_IP * sizeof (mgreg_t)));
-	ARM_STR_IMM (code, ARMREG_SP, ARMREG_V1, G_STRUCT_OFFSET (MonoLMF, esp));
+	ARM_STR_IMM (code, ARMREG_R2, ARMREG_V1, G_STRUCT_OFFSET (MonoLMF, sp));
+	/* save caller FP */
+	ARM_LDR_IMM (code, ARMREG_R2, ARMREG_V1, (G_STRUCT_OFFSET (MonoLMF, iregs) + ARMREG_FP*4));
+	ARM_STR_IMM (code, ARMREG_R2, ARMREG_V1, G_STRUCT_OFFSET (MonoLMF, fp));
 	/* save the IP (caller ip) */
 	if (tramp_type == MONO_TRAMPOLINE_JUMP) {
 		ARM_MOV_REG_IMM8 (code, ARMREG_R2, 0);
 	} else {
 		ARM_LDR_IMM (code, ARMREG_R2, ARMREG_V1, (G_STRUCT_OFFSET (MonoLMF, iregs) + 13*4));
 	}
-	ARM_STR_IMM (code, ARMREG_R2, ARMREG_V1, G_STRUCT_OFFSET (MonoLMF, eip));
+	ARM_STR_IMM (code, ARMREG_R2, ARMREG_V1, G_STRUCT_OFFSET (MonoLMF, ip));
 
 	/*
 	 * Now we're ready to call xxx_trampoline ().
@@ -736,8 +745,13 @@ mono_arch_get_call_target (guint8 *code)
 {
 	guint32 ins = ((guint32*)(gpointer)code) [-1];
 
+#if MONOTOUCH
+	/* Should be a 'bl' or a 'b' */
+	if (((ins >> 25) & 0x7) == 0x5) {
+#else
 	/* Should be a 'bl' */
 	if ((((ins >> 25) & 0x7) == 0x5) && (((ins >> 24) & 0x1) == 0x1)) {
+#endif
 		gint32 disp = ((gint32)ins) & 0xffffff;
 		guint8 *target = code - 4 + 8 + (disp * 4);
 

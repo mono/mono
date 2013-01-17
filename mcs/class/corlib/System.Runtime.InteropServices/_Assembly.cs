@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
 using System.IO;
 using System.Globalization;
 using System.Reflection;
@@ -40,7 +38,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsDual)]
 	[Guid ("17156360-2F1A-384A-BC52-FDE93C215C5B")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof(Assembly))]
+#endif
 	public interface _Assembly
 	{
 		string ToString ();
@@ -137,4 +137,3 @@ namespace System.Runtime.InteropServices
 	}
 }
 
-#endif

@@ -139,13 +139,7 @@ Here are some implementation notes (mostly common to previous module):
 	closing '>' is written).
 
 */
-
-
-#if NET_1_1
 namespace System.Xml
-#else
-namespace Mono.Xml
-#endif
 {
 	public class XmlTextWriter : XmlWriter
 	{
@@ -219,13 +213,14 @@ namespace Mono.Xml
 		XmlDeclState xmldecl_state = XmlDeclState.Allow;
 
 		bool check_character_validity;
-		NewLineHandling newline_handling = NewLineHandling.None;
+		NewLineHandling newline_handling = NewLineHandling.Replace;
 
 		bool is_document_entity;
 		WriteState state = WriteState.Start;
 		XmlNodeType node_state = XmlNodeType.None;
 		XmlNamespaceManager nsmanager;
 		int open_count;
+		bool top_level_space_ignored;
 		XmlNodeInfo [] elements = new XmlNodeInfo [10];
 		Stack new_local_namespaces = new Stack ();
 		ArrayList explicit_nsdecls = new ArrayList ();
@@ -249,8 +244,8 @@ namespace Mono.Xml
 		{
 		}
 
-		public XmlTextWriter (Stream stream, Encoding encoding)
-			: this (new StreamWriter (stream,
+		public XmlTextWriter (Stream w, Encoding encoding)
+			: this (new StreamWriter (w,
 				encoding == null ? unmarked_utf8encoding : encoding))
 		{
 			ignore_encoding = (encoding == null);
@@ -258,16 +253,15 @@ namespace Mono.Xml
 			allow_doc_fragment = true;
 		}
 
-		public XmlTextWriter (TextWriter writer)
+		public XmlTextWriter (TextWriter w)
 		{
-			if (writer == null)
+			if (w == null)
 				throw new ArgumentNullException ("writer");
-			ignore_encoding = (writer.Encoding == null);
-			Initialize (writer);
+			ignore_encoding = (w.Encoding == null);
+			Initialize (w);
 			allow_doc_fragment = true;
 		}
 
-#if NET_2_0
 		internal XmlTextWriter (
 			TextWriter writer, XmlWriterSettings settings, bool closeOutput)
 		{
@@ -276,6 +270,7 @@ namespace Mono.Xml
 			if (settings == null)
 				settings = new XmlWriterSettings ();
 
+			newline_handling = settings.NewLineHandling;
 			Initialize (writer);
 
 			close_output_stream = closeOutput;
@@ -308,10 +303,8 @@ namespace Mono.Xml
 			indent_attributes = settings.NewLineOnAttributes;
 
 			check_character_validity = settings.CheckCharacters;
-			newline_handling = settings.NewLineHandling;
 			namespace_handling = settings.NamespaceHandling;
 		}
-#endif
 
 		void Initialize (TextWriter writer)
 		{
@@ -330,10 +323,11 @@ namespace Mono.Xml
 				new char [] {'&', '<', '>', '\r', '\n'} :
 				new char [] {'&', '<', '>'};
 			escaped_attr_chars =
-				new char [] {'"', '&', '<', '>', '\r', '\n'};
+				newline_handling != NewLineHandling.None ?
+				v2 ? new char [] {'"', '&', '<', '>', '\r', '\n', '\t'} : new char [] {'"', '&', '<', '>', '\r', '\n' } :
+				new char [] {'"', '&', '<', '>' };
 		}
 
-#if NET_2_0
 		// 2.0 XmlWriterSettings support
 
 		// As for ConformanceLevel, MS.NET is inconsistent with
@@ -341,8 +335,6 @@ namespace Mono.Xml
 		// is set as .Auto, multiple WriteStartDocument() calls
 		// result in an error.
 		// ms-help://MS.NETFramework.v20.en/wd_xml/html/7db8802b-53d8-4735-a637-4d2d2158d643.htm
-
-#endif
 
 		// Literal Output Control
 
@@ -404,16 +396,16 @@ namespace Mono.Xml
 			get { return state; }
 		}
 
-		public override string LookupPrefix (string namespaceUri)
+		public override string LookupPrefix (string ns)
 		{
-			if (namespaceUri == null || namespaceUri == String.Empty)
+			if (ns == null || ns == String.Empty)
 				throw ArgumentError ("The Namespace cannot be empty.");
 
-			if (namespaceUri == nsmanager.DefaultNamespace)
+			if (ns == nsmanager.DefaultNamespace)
 				return String.Empty;
 
 			string prefix = nsmanager.LookupPrefixExclusive (
-				namespaceUri, false);
+				ns, false);
 
 			// XmlNamespaceManager has changed to return null
 			// when NSURI not found.
@@ -429,17 +421,12 @@ namespace Mono.Xml
 
 		public override void Close ()
 		{
-#if NET_2_0
 			if (state != WriteState.Error) {
-#endif
 				if (state == WriteState.Attribute)
 					WriteEndAttribute ();
 				while (open_count > 0)
 					WriteEndElement ();
-#if NET_2_0
 			}
-#endif
-
 			if (close_output_stream)
 				writer.Close ();
 			else
@@ -514,9 +501,7 @@ namespace Mono.Xml
 		public override void WriteEndDocument ()
 		{
 			switch (state) {
-#if NET_2_0
 			case WriteState.Error:
-#endif
 			case WriteState.Closed:
 			case WriteState.Start:
 				throw StateError ("EndDocument");
@@ -584,13 +569,9 @@ namespace Mono.Xml
 		// StartElement
 
 		public override void WriteStartElement (
-			string prefix, string localName, string namespaceUri)
+			string prefix, string localName, string ns)
 		{
-#if NET_2_0
 			if (state == WriteState.Error || state == WriteState.Closed)
-#else
-			if (state == WriteState.Closed)
-#endif
 				throw StateError ("StartTag");
 			node_state = XmlNodeType.Element;
 
@@ -609,7 +590,7 @@ namespace Mono.Xml
 			//    not considered.
 			// 4. prefix must not be equivalent to "XML" in
 			//    case-insensitive comparison.
-			if (!namespaces && namespaceUri != null && namespaceUri.Length > 0)
+			if (!namespaces && ns != null && ns.Length > 0)
 				throw ArgumentError ("Namespace is disabled in this XmlTextWriter.");
 			if (!namespaces && prefix.Length > 0)
 				throw ArgumentError ("Namespace prefix is disabled in this XmlTextWriter.");
@@ -617,9 +598,9 @@ namespace Mono.Xml
 			// If namespace URI is empty, then either prefix
 			// must be empty as well, or there is an
 			// existing namespace mapping for the prefix.
-			if (prefix.Length > 0 && namespaceUri == null) {
-				namespaceUri = nsmanager.LookupNamespace (prefix, false);
-				if (namespaceUri == null || namespaceUri.Length == 0)
+			if (prefix.Length > 0 && ns == null) {
+				ns = nsmanager.LookupNamespace (prefix, false);
+				if (ns == null || ns.Length == 0)
 					throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
 			}
 			// Considering the fact that WriteStartAttribute()
@@ -627,7 +608,7 @@ namespace Mono.Xml
 			// is kind of silly implementation. See bug #77094.
 			if (namespaces &&
 			    prefix != null && prefix.Length == 3 &&
-			    namespaceUri != XmlNamespace &&
+			    ns != XmlNamespace &&
 			    (prefix [0] == 'x' || prefix [0] == 'X') &&
 			    (prefix [1] == 'm' || prefix [1] == 'M') &&
 			    (prefix [2] == 'l' || prefix [2] == 'L'))
@@ -643,12 +624,12 @@ namespace Mono.Xml
 
 			nsmanager.PushScope ();
 
-			if (namespaces && namespaceUri != null) {
+			if (namespaces && ns != null) {
 				// If namespace URI is empty, then prefix must 
 				// be empty as well.
-				if (anonPrefix && namespaceUri.Length > 0)
-					prefix = LookupPrefix (namespaceUri);
-				if (prefix == null || namespaceUri.Length == 0)
+				if (anonPrefix && ns.Length > 0)
+					prefix = LookupPrefix (ns);
+				if (prefix == null || ns.Length == 0)
 					prefix = String.Empty;
 			}
 
@@ -673,17 +654,17 @@ namespace Mono.Xml
 			XmlNodeInfo info = elements [open_count];
 			info.Prefix = prefix;
 			info.LocalName = localName;
-			info.NS = namespaceUri;
+			info.NS = ns;
 			info.HasSimple = false;
 			info.HasElements = false;
 			info.XmlLang = XmlLang;
 			info.XmlSpace = XmlSpace;
 			open_count++;
 
-			if (namespaces && namespaceUri != null) {
+			if (namespaces && ns != null) {
 				string oldns = nsmanager.LookupNamespace (prefix, false);
-				if (oldns != namespaceUri) {
-					nsmanager.AddNamespace (prefix, namespaceUri);
+				if (oldns != ns) {
+					nsmanager.AddNamespace (prefix, ns);
 					new_local_namespaces.Push (prefix);
 				}
 			}
@@ -762,11 +743,7 @@ namespace Mono.Xml
 
 		void WriteEndElementCore (bool full)
 		{
-#if NET_2_0
 			if (state == WriteState.Error || state == WriteState.Closed)
-#else
-			if (state == WriteState.Closed)
-#endif
 				throw StateError ("EndElement");
 			if (open_count == 0)
 				throw InvalidOperation ("There is no more open element.");
@@ -807,7 +784,7 @@ namespace Mono.Xml
 		// Attribute
 
 		public override void WriteStartAttribute (
-			string prefix, string localName, string namespaceUri)
+			string prefix, string localName, string ns)
 		{
 			// LAMESPEC: this violates the expected behavior of
 			// this method, as it incorrectly allows unbalanced
@@ -825,7 +802,7 @@ namespace Mono.Xml
 
 			// For xmlns URI, prefix is forced to be "xmlns"
 			bool isNSDecl = false;
-			if (namespaceUri == XmlnsNamespace) {
+			if (ns == XmlnsNamespace) {
 				isNSDecl = true;
 				if (prefix.Length == 0 && localName != "xmlns")
 					prefix = "xmlns";
@@ -839,13 +816,13 @@ namespace Mono.Xml
 				// Regardless of namespace URI it is regarded
 				// as NS URI for "xml".
 				if (prefix == "xml")
-					namespaceUri = XmlNamespace;
+					ns = XmlNamespace;
 				// infer namespace URI.
-				else if ((object) namespaceUri == null || (v2 && namespaceUri.Length == 0)) {
+				else if ((object) ns == null || (v2 && ns.Length == 0)) {
 					if (isNSDecl)
-						namespaceUri = XmlnsNamespace;
+						ns = XmlnsNamespace;
 					else
-						namespaceUri = String.Empty;
+						ns = String.Empty;
 				}
 
 				// It is silly design - null namespace with
@@ -853,22 +830,22 @@ namespace Mono.Xml
 				// output; while there is Namespaces property)
 				// On the other hand, namespace "" is not 
 				// allowed.
-				if (isNSDecl && namespaceUri != XmlnsNamespace)
+				if (isNSDecl && ns != XmlnsNamespace)
 					throw ArgumentError (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
 				// If namespace URI is empty, then either prefix
 				// must be empty as well, or there is an
 				// existing namespace mapping for the prefix.
-				if (prefix.Length > 0 && namespaceUri.Length == 0) {
-					namespaceUri = nsmanager.LookupNamespace (prefix, false);
-					if (namespaceUri == null || namespaceUri.Length == 0)
+				if (prefix.Length > 0 && ns.Length == 0) {
+					ns = nsmanager.LookupNamespace (prefix, false);
+					if (ns == null || ns.Length == 0)
 						throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
 				}
 
 				// Dive into extremely complex procedure.
-				if (!isNSDecl && namespaceUri.Length > 0)
+				if (!isNSDecl && ns.Length > 0)
 					prefix = DetermineAttributePrefix (
-						prefix, localName, namespaceUri);
+						prefix, localName, ns);
 			}
 
 			if (indent_attributes)
@@ -1072,19 +1049,21 @@ namespace Mono.Xml
 
 		// Text Content
 
-		public override void WriteWhitespace (string text)
+		public override void WriteWhitespace (string ws)
 		{
-			if (text == null)
+			if (ws == null)
 				throw ArgumentError ("text");
 
 			// huh? Shouldn't it accept an empty string???
-			if (text.Length == 0 ||
-			    XmlChar.IndexOfNonWhitespace (text) >= 0)
+			if (ws.Length == 0 ||
+			    XmlChar.IndexOfNonWhitespace (ws) >= 0)
 				throw ArgumentError ("WriteWhitespace method accepts only whitespaces.");
 
+			bool pastTopLevelWSIgnored = top_level_space_ignored;
 			ShiftStateTopLevel ("Whitespace", true, false, true);
-
-			writer.Write (text);
+			if (!indent || WriteState != WriteState.Prolog || pastTopLevelWSIgnored)
+				writer.Write (ws);
+			top_level_space_ignored = true;
 		}
 
 		public override void WriteCData (string text)
@@ -1109,9 +1088,9 @@ namespace Mono.Xml
 			WriteEscapedString (text, state == WriteState.Attribute);
 		}
 
-		public override void WriteRaw (string raw)
+		public override void WriteRaw (string data)
 		{
-			if (raw == null)
+			if (data == null)
 				return; // do nothing, including state transition.
 
 			//WriteIndent ();
@@ -1120,7 +1099,7 @@ namespace Mono.Xml
 			// DocType which could consist of non well-formed XML.
 			ShiftStateTopLevel ("Raw string", true, true, true);
 
-			writer.Write (raw);
+			writer.Write (data);
 		}
 
 		public override void WriteCharEntity (char ch)
@@ -1128,9 +1107,9 @@ namespace Mono.Xml
 			WriteCharacterEntity (ch, '\0', false);
 		}
 
-		public override void WriteSurrogateCharEntity (char low, char high)
+		public override void WriteSurrogateCharEntity (char lowChar, char highChar)
 		{
-			WriteCharacterEntity (low, high, true);
+			WriteCharacterEntity (lowChar, highChar, true);
 		}
 
 		void WriteCharacterEntity (char ch, char high, bool surrogate)
@@ -1175,13 +1154,13 @@ namespace Mono.Xml
 			WriteString (name);
 		}
 
-		public override void WriteNmToken (string nmtoken)
+		public override void WriteNmToken (string name)
 		{
-			if (nmtoken == null)
+			if (name == null)
 				throw ArgumentError ("nmtoken");
-			if (!XmlChar.IsNmToken (nmtoken))
+			if (!XmlChar.IsNmToken (name))
 				throw ArgumentError ("Not a valid NMTOKEN string.");
-			WriteString (nmtoken);
+			WriteString (name);
 		}
 
 		public override void WriteQualifiedName (
@@ -1304,9 +1283,7 @@ namespace Mono.Xml
 		void ShiftStateTopLevel (string occured, bool allowAttribute, bool dontCheckXmlDecl, bool isCharacter)
 		{
 			switch (state) {
-#if NET_2_0
 			case WriteState.Error:
-#endif
 			case WriteState.Closed:
 				throw StateError (occured);
 			case WriteState.Start:
@@ -1330,7 +1307,7 @@ namespace Mono.Xml
 					CheckMixedContentState ();
 				break;
 			}
-
+			top_level_space_ignored = false;
 		}
 
 		void CheckMixedContentState ()
@@ -1345,9 +1322,7 @@ namespace Mono.Xml
 		void ShiftStateContent (string occured, bool allowAttribute)
 		{
 			switch (state) {
-#if NET_2_0
 			case WriteState.Error:
-#endif
 			case WriteState.Closed:
 					throw StateError (occured);
 			case WriteState.Prolog:
@@ -1451,30 +1426,43 @@ namespace Mono.Xml
 					if (isAttribute && text [i] == quote_char)
 						goto case '&';
 					continue;
+				case '\t':
+					if(isAttribute && v2
+					   && newline_handling != NewLineHandling.None) {
+						if (start < i)
+							WriteCheckedBuffer (text, start, i - start);
+						writer.Write ("&#x9;");
+					} else
+						continue;
+					break;
 				case '\r':
-					if (i + 1 < end && text [i] == '\n')
-						i++; // CRLF
-					goto case '\n';
 				case '\n':
+					// If no translation was requested, don't change
+					// anything.
+					if(newline_handling == NewLineHandling.None)
+						continue;
+					// \n is left alone in text if entitizing.
+					if(!isAttribute
+					   && newline_handling == NewLineHandling.Entitize
+					   && text [i] == '\n')
+						continue;
 					if (start < i)
 						WriteCheckedBuffer (text, start, i - start);
-					if (isAttribute) {
+					// Both newline characters in attributes are fully
+					// entitized for both Entitize and Replace.
+					if(isAttribute
+					   || newline_handling == NewLineHandling.Entitize) {
 						writer.Write (text [i] == '\r' ?
 							"&#xD;" : "&#xA;");
 						break;
 					}
-					switch (newline_handling) {
-					case NewLineHandling.Entitize:
-						writer.Write (text [i] == '\r' ?
-							"&#xD;" : "&#xA;");
-						break;
-					case NewLineHandling.Replace:
-						writer.Write (newline);
-						break;
-					default:
-						writer.Write (text [i]);
-						break;
-					}
+					// By this point the requested behavior must be
+					// Replace, and the text must not be an attribute
+					// value.  CR, LF and CRLF all get converted to
+					// the configured newline sequence.
+					if (text [i] == '\r' && i + 1 < end && text [i + 1] == '\n')
+						i++; // CRLF
+					writer.Write (newline);
 					break;
 				}
 				start = i + 1;
@@ -1487,25 +1475,19 @@ namespace Mono.Xml
 
 		Exception ArgumentOutOfRangeError (string name)
 		{
-#if NET_2_0
 			state = WriteState.Error;
-#endif
 			return new ArgumentOutOfRangeException (name);
 		}
 
 		Exception ArgumentError (string msg)
 		{
-#if NET_2_0
 			state = WriteState.Error;
-#endif
 			return new ArgumentException (msg);
 		}
 
 		Exception InvalidOperation (string msg)
 		{
-#if NET_2_0
 			state = WriteState.Error;
-#endif
 			return new InvalidOperationException (msg);
 		}
 

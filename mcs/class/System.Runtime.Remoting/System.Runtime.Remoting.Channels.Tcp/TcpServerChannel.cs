@@ -218,7 +218,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					try {
 						if (!threadPool.RunThread (new ThreadStart (reader.ProcessMessages)))
 							socket.Close ();
-					} catch (Exception e) 
+					} catch (Exception) 
 					{
 #if DEBUG
 						Console.WriteLine("Exception caught in TcpServerChannel.WaitForConnections during start process message: {0} {1}", e.GetType(), e.Message);
@@ -226,7 +226,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					}
 				}
 			}
-			catch (Exception e) 
+			catch (Exception)
 			{
 #if DEBUG
 				Console.WriteLine("Exception caught in TcpServerChannel.WaitForConnections, stop channel's thread : {0} {1}", e.GetType(), e.Message);
@@ -331,12 +331,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					}
 				}
 			}
+#if DEBUG
 			catch (Exception ex)
 			{
-#if DEBUG
 				Console.WriteLine ("The exception was caught during TcpServerChannel.ProcessMessages: {0}, {1}", ex.GetType(), ex.Message);
-#endif
 			}
+#endif
 			finally
 			{
 				try {

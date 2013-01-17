@@ -23,7 +23,7 @@ public class HashSet<T>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		HashSet<int> hb = new HashSet<int> (12345678);
 

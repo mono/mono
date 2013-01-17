@@ -318,6 +318,7 @@
 #   define mach_type_known
 # endif
 # ifdef DARWIN
+#    include "TargetConditionals.h"
 #   if defined(__ppc__)  || defined(__ppc64__)
 #    define POWERPC
 #    define mach_type_known
@@ -326,13 +327,17 @@
 #    define mach_type_known
 #    define DARWIN_DONT_PARSE_STACK
 #    define OS_TYPE "DARWIN"
-#    define DYNAMIC_LOADING
+#    if TARGET_IPHONE_SIMULATOR == 0
+#     define DYNAMIC_LOADING
+#    endif
      /* XXX: see get_end(3), get_etext() and get_end() should not be used.
         These aren't used when dyld support is enabled (it is by default) */
 #    define DATASTART ((ptr_t) get_etext())
 #    define DATAEND	((ptr_t) get_end())
-#    define STACKBOTTOM ((ptr_t) 0xc0000000)
+#    define STACKBOTTOM ((ptr_t) pthread_get_stackaddr_np(pthread_self()))
+#ifndef USE_MMAP
 #    define USE_MMAP
+#endif
 #    define USE_MMAP_ANON
 #    define USE_ASM_PUSH_REGS
      /* This is potentially buggy. It needs more testing. See the comments in
@@ -1449,6 +1454,7 @@
 #     define DYNAMIC_LOADING
       extern int _end[];
 #     define DATAEND (_end)
+#pragma weak __data_start
       extern int __data_start[];
 #     define DATASTART ((ptr_t)(__data_start))
 #     if defined(_MIPS_SZPTR) && (_MIPS_SZPTR == 64)

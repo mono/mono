@@ -19,7 +19,7 @@ struct S<T> where T : struct
 
 class C
 {
-	static int Main()
+	public static int Main()
 	{
 		return S<int>.Test ();
 	}

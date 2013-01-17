@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 #if (XML_DEP)
 using System.Xml;
@@ -40,7 +39,7 @@ namespace System.Configuration
 #endif
 	{
 #if XML_DEP
-		XmlNode node;
+		XmlNode node, original;
 #endif
 
 		[MonoTODO]
@@ -67,7 +66,8 @@ namespace System.Configuration
 		[MonoTODO]
 		protected override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
-			node = new XmlDocument ().ReadNode (reader);
+			original = new XmlDocument ().ReadNode (reader);
+			node = original.CloneNode (true);
 		}
 #endif
 #endif
@@ -85,7 +85,7 @@ namespace System.Configuration
 #if (CONFIGURATION_DEP)
 		protected override bool IsModified ()
 		{
-			throw new NotImplementedException ();
+			return original != node;
 		}
 
 		protected override void Reset (ConfigurationElement parentElement)
@@ -95,7 +95,7 @@ namespace System.Configuration
 
 		protected override void ResetModified ()
 		{
-			throw new NotImplementedException ();
+			node = original;
 		}
 #endif
 
@@ -119,4 +119,3 @@ namespace System.Configuration
 
 }
 
-#endif

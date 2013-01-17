@@ -62,9 +62,7 @@ namespace System.Xml.Serialization
 		SoapReflectionImporter auxSoapRefImporter;
 		bool anyTypeImported;
 
-#if NET_2_0
-		CodeGenerationOptions options;
-#endif
+//		CodeGenerationOptions options;
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);
@@ -99,13 +97,12 @@ namespace System.Xml.Serialization
 			this.typeIdentifiers = typeIdentifiers;
 		}
 		
-#if NET_2_0
 #if !TARGET_JVM && !MOBILE
 		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, CodeDomProvider codeProvider, ImportContext context)
 		{
 			this.schemas = schemas;
-			this.options = options;
+//			this.options = options;
 			if (context != null) {
 				typeIdentifiers = context.TypeIdentifiers;
 				InitSharedData (context);
@@ -115,12 +112,12 @@ namespace System.Xml.Serialization
 
 			InitializeExtensions ();
 		}
-#endif
 
+		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
 		{
 			this.schemas = schemas;
-			this.options = options;
+//			this.options = options;
 			if (context != null) {
 				typeIdentifiers = context.TypeIdentifiers;
 				InitSharedData (context);
@@ -131,12 +128,12 @@ namespace System.Xml.Serialization
 			InitializeExtensions ();
 		}
 		
-
+		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeIdentifiers typeIdentifiers, CodeGenerationOptions options)
 		{
 			this.typeIdentifiers = typeIdentifiers;
 			this.schemas = schemas;
-			this.options = options;
+//			this.options = options;
 
 			InitializeExtensions ();
 		}
@@ -1581,11 +1578,29 @@ namespace System.Xml.Serialization
 			einfo.ElementName = name;
 			einfo.Namespace = ns;
 			einfo.IsNullable = isNillable;
-			einfo.Form = form;
+			einfo.Form = GetForm (form, ns, true);
 			if (typeData.IsComplexType)
 				einfo.MappedType = emap;
 			einfo.ExplicitOrder = order;
 			return einfo;
+		}
+		
+		XmlSchemaForm GetForm (XmlSchemaForm form, string ns, bool forElement)
+		{
+			// Returns the schema form for an element or attribute, taking
+			// into account the schema defaults. If the form has not been explicitly
+			// set and there is no default, use Unqualified as default.
+			
+			if (form != XmlSchemaForm.None)
+				return form;
+			XmlSchema s = schemas [ns];
+			if (s == null)
+				return XmlSchemaForm.Unqualified;
+			XmlSchemaForm schemaForm = forElement ? s.ElementFormDefault : s.AttributeFormDefault;
+			if (schemaForm != XmlSchemaForm.None)
+				return schemaForm;
+			else
+				return XmlSchemaForm.Unqualified;
 		}
 
 		XmlTypeMapElementInfo CreateTextElementInfo (string ns, XmlTypeMapMember member, TypeData typeData)

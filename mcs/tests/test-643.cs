@@ -4,7 +4,7 @@ using System;
 
 class PointerArithmeticTest
 {
-	unsafe static int Main()
+	unsafe public static int Main()
 	{
 		try {
 			return CheckAdd((byte*)(-1), -1);

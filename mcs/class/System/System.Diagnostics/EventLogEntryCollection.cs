@@ -90,13 +90,8 @@ namespace System.Diagnostics {
 
 			public EventLogEntry Current {
 				get {
-#if NET_2_0
 					if (_currentEntry != null)
 						return _currentEntry;
-#else
-					if (_currentIndex >= 0 && _currentIndex < _impl.EntryCount)
-						return _impl [_currentIndex];
-#endif
 
 					throw new InvalidOperationException ("No current EventLog"
 						+ " entry available, cursor is located before the first"
@@ -107,16 +102,12 @@ namespace System.Diagnostics {
 			public bool MoveNext ()
 			{
 				_currentIndex++;
-#if NET_2_0
 				if (_currentIndex >= _impl.EntryCount) {
 					_currentEntry = null;
 					return false;
 				}
 				_currentEntry = _impl [_currentIndex];
 				return true;
-#else
-				return (_currentIndex < _impl.EntryCount);
-#endif
 			}
 
 			public void Reset ()
@@ -126,9 +117,7 @@ namespace System.Diagnostics {
 
 			readonly EventLogImpl _impl;
 			int _currentIndex = -1;
-#if NET_2_0
 			EventLogEntry _currentEntry;
-#endif
 		}
 }
 }

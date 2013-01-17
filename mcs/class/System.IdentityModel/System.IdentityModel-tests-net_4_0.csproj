@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>.\</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>System.IdentityModel_test_net_4_0</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+   <Compile Include="Test\System.IdentityModel.Claims\ClaimSetTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Claims\ClaimTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Claims\ClaimTypesTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Claims\X509CertificateClaimSetTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Common\MySecurityTokenSerializer.cs" />
+   <Compile Include="Test\System.IdentityModel.Policy\AuthorizationContextTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\CustomUserNameSecurityTokenAuthenticatorTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\RsaSecurityTokenAuthenticatorTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\SamlSecurityTokenAuthenticatorTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\SecurityTokenRequirementTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\SecurityTokenResolverTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\TestEvaluationContext.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\X509SecurityTokenAuthenticatorTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Selectors\X509SecurityTokenProviderTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\EncryptedKeyIdentifierClauseTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\InMemorySymmetricSecurityKeyTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\LocalIdKeyIdentifierClauseTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlActionTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlAssertionTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlAttributeStatementTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlAudienceRestrictionConditionTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlAuthenticationStatementTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlAuthorityBindingTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlAuthorizationDecisionStatementTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlConditionsTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlConstantsTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlEvidenceTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SamlSubjectTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SecurityAlgorithmsTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SecurityKeyIdentifierTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\SecurityTokenTypesTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\UserNameSecurityTokenTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\X509AsymmetricSecurityKeyTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\X509IssuerSerialKeyIdentifierClauseTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\X509SecurityTokenTest.cs" />
+   <Compile Include="Test\System.IdentityModel.Tokens\X509ThumbprintKeyIdentifierClauseTest.cs" />
+
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="./../../class/lib/net_4_0/System.IdentityModel.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../class/lib/net_4_0/System.IdentityModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Runtime.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.ApplicationServices.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>System.Web.ApplicationServices.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+</Project>
+

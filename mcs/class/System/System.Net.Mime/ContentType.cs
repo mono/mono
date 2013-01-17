@@ -30,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
@@ -81,7 +79,7 @@ namespace System.Net.Mime {
 			int l = val.Length;
 			if (l >= 2 && val [0] == '"' && val [l - 1] == '"')
 				val = val.Substring (1, l - 2);
-			parameters.Add (key, val);
+			parameters [key] = val;
 		}
 
 		#endregion // Constructors
@@ -235,4 +233,3 @@ namespace System.Net.Mime {
 	}
 }
 
-#endif // NET_2_0

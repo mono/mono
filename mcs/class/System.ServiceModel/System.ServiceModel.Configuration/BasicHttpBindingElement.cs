@@ -1,6 +1,11 @@
 //
 // BasicHttpBindingElement.cs
 //
+// See BasicHttpBindingElement_4_5.cs and HttpBindingBaseElement.cs
+// for the .NET 4.5 version of this class, where most of the code has
+// been moved into the new abstract HttpBindingBaseElement class.
+//
+//
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
@@ -26,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_4_5
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -250,3 +256,4 @@ namespace System.ServiceModel.Configuration
 	}
 
 }
+#endif

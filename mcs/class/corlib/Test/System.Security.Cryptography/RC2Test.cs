@@ -35,27 +35,27 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class RC2Test : Assertion {
+	public class RC2Test {
 
 		[Test]
 		public void DefaultProperties ()
 		{
 			RC2 algo = RC2.Create ();
-			AssertEquals ("Key Size", 128, algo.KeySize);
-			AssertEquals ("Key Length", 16, algo.Key.Length);
-			AssertEquals ("IV Length", 8, algo.IV.Length);
-			AssertEquals ("BlockSize", 64, algo.BlockSize);
-			AssertEquals ("FeedbackSize", 8, algo.FeedbackSize);
-			AssertEquals ("Mode", CipherMode.CBC, algo.Mode);
-			AssertEquals ("Padding", PaddingMode.PKCS7, algo.Padding);
-			AssertEquals ("LegalBlockSizes", 1, algo.LegalBlockSizes.Length);
-			AssertEquals ("LegalBlockSizes.MaxSize", 64, algo.LegalBlockSizes [0].MaxSize);
-			AssertEquals ("LegalBlockSizes.MinSize", 64, algo.LegalBlockSizes [0].MinSize);
-			AssertEquals ("LegalBlockSizes.SkipSize", 0, algo.LegalBlockSizes [0].SkipSize);
-			AssertEquals ("LegalKeySizes", 1, algo.LegalKeySizes.Length);
-			AssertEquals ("LegalKeySizes.MaxSize", 128, algo.LegalKeySizes [0].MaxSize);
-			AssertEquals ("LegalKeySizes.MinSize", 40, algo.LegalKeySizes [0].MinSize);
-			AssertEquals ("LegalKeySizes.SkipSize", 8, algo.LegalKeySizes [0].SkipSize);
+			Assert.AreEqual (128, algo.KeySize, "Key Size");
+			Assert.AreEqual (16, algo.Key.Length, "Key Length");
+			Assert.AreEqual (8, algo.IV.Length, "IV Length");
+			Assert.AreEqual (64, algo.BlockSize, "BlockSize");
+			Assert.AreEqual (8, algo.FeedbackSize, "FeedbackSize");
+			Assert.AreEqual (CipherMode.CBC, algo.Mode, "Mode");
+			Assert.AreEqual (PaddingMode.PKCS7, algo.Padding, "Padding");
+			Assert.AreEqual (1, algo.LegalBlockSizes.Length, "LegalBlockSizes");
+			Assert.AreEqual (64, algo.LegalBlockSizes[0].MaxSize, "LegalBlockSizes.MaxSize");
+			Assert.AreEqual (64, algo.LegalBlockSizes[0].MinSize, "LegalBlockSizes.MinSize");
+			Assert.AreEqual (0, algo.LegalBlockSizes[0].SkipSize, "LegalBlockSizes.SkipSize");
+			Assert.AreEqual (1, algo.LegalKeySizes.Length, "LegalKeySizes");
+			Assert.AreEqual (128, algo.LegalKeySizes[0].MaxSize, "LegalKeySizes.MaxSize");
+			Assert.AreEqual (40, algo.LegalKeySizes[0].MinSize, "LegalKeySizes.MinSize");
+			Assert.AreEqual (8, algo.LegalKeySizes[0].SkipSize, "LegalKeySizes.SkipSize");
 		}
 
 		private void CheckECB (int effective_bits, byte[] key, byte[] pt, byte[] expected)
@@ -64,7 +64,7 @@ namespace MonoTests.System.Security.Cryptography {
 			c.Mode = CipherMode.ECB;
 			c.Padding = PaddingMode.Zeros;
 			c.Key = key;
-			AssertEquals ("KeySize", key.Length * 8, c.KeySize);
+			Assert.AreEqual (key.Length * 8, c.KeySize, "KeySize");
 			c.EffectiveKeySize = effective_bits;
 
 			ICryptoTransform encryptor = c.CreateEncryptor ();
@@ -72,25 +72,21 @@ namespace MonoTests.System.Security.Cryptography {
 
 			byte[] ct = new byte [pt.Length];
 			int n = encryptor.TransformBlock (pt, 0, pt.Length, ct, 0);
-			AssertEquals ("EncryptLen", n, pt.Length);
+			Assert.AreEqual (n, pt.Length, "EncryptLen");
 			for (int i=0; i < n; i++) {
-				AssertEquals ("Encrypt" + i, ct [i], expected [i]);
+				Assert.AreEqual (ct[i], expected[i], "Encrypt" + i);
 			}
 
 			byte[] rt = new byte [ct.Length];
 			n = decryptor.TransformBlock (ct, 0, ct.Length, rt, 0);
-			AssertEquals ("DecryptLen", n, ct.Length);
+			Assert.AreEqual (n, ct.Length, "DecryptLen");
 			for (int i=0; i < n; i++) {
-				AssertEquals ("Decrypt" + i, rt [i], pt [i]);
+				Assert.AreEqual (rt[i], pt[i], "Decrypt" + i);
 			}
 		}
 
 		[Test]
-#if NET_1_1
 		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
-#else
-		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void RFC2268Vector_1 ()
 		{
 			byte[] key = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -134,11 +130,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_1_1
 		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
-#else
-		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void RFC2268Vector_5 ()
 		{
 			byte[] key = { 0x88, 0xbc, 0xa9, 0x0e, 0x90, 0x87, 0x5a };
@@ -150,11 +142,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_1_1
 		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
-#else
-		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void RFC2268Vector_6 ()
 		{
 		 	byte[] key = { 0x88, 0xbc, 0xa9, 0x0e,  0x90, 0x87, 0x5a, 0x7f, 

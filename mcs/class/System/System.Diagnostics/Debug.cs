@@ -76,7 +76,7 @@ namespace System.Diagnostics {
 			TraceImpl.Assert (condition, message, detailMessage);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Conditional ("DEBUG")]
 		public static void Assert (bool condition, string message,
 			string detailMessageFormat, params object [] args)
@@ -185,7 +185,7 @@ namespace System.Diagnostics {
 			TraceImpl.WriteLine (message);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 		[Conditional("DEBUG")]
 		public static void WriteLine (string format, params object [] args)
 		{
@@ -231,7 +231,6 @@ namespace System.Diagnostics {
 			TraceImpl.WriteLineIf (condition, message, category);
 		}
 
-#if NET_2_0
 		[Conditional("DEBUG")]
 		public static void Print (string message)
 		{
@@ -243,7 +242,6 @@ namespace System.Diagnostics {
 		{
 			TraceImpl.WriteLine (String.Format (format, args));
 		}
-#endif
 	}
 }
 

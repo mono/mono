@@ -109,12 +109,14 @@ namespace System.Diagnostics {
 			return listeners.Add (listener);
 		}
 
+#if !MOBILE
 		internal void Add (TraceListener listener, TraceImplSettings settings)
 		{
-			listener.IndentLevel = settings.IndentLevel;
+//			listener.IndentLevel = settings.IndentLevel;
 			listener.IndentSize  = settings.IndentSize;
 			listeners.Add (listener);
 		}
+#endif
 
 		private void InitializeListener (TraceListener listener)
 		{

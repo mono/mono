@@ -58,6 +58,11 @@ using System;
 using System.Text;
 using I18N.Common;
 
+#if DISABLE_UNSAFE
+using MonoEncoder = I18N.Common.MonoSafeEncoder;
+using MonoEncoding = I18N.Common.MonoSafeEncoding;
+#endif
+
 [Serializable]
 public class CP51932 : MonoEncoding
 {
@@ -69,12 +74,7 @@ public class CP51932 : MonoEncoding
 	{
 	}
 
-
-	public override int GetByteCount (char [] chars, int index, int length)
-	{
-		return new CP51932Encoder (this).GetByteCount (chars, index, length, true);
-	}
-
+#if !DISABLE_UNSAFE
 	public unsafe override int GetByteCountImpl (char* chars, int count)
 	{
 		return new CP51932Encoder (this).GetByteCountImpl (chars, count, true);
@@ -84,6 +84,17 @@ public class CP51932 : MonoEncoding
 	{
 		return new CP51932Encoder (this).GetBytesImpl (chars, charCount, bytes, byteCount, true);
 	}
+#else
+	public override int GetByteCount (char [] chars, int index, int length)
+	{
+		return new CP51932Encoder (this).GetByteCount (chars, index, length, true);
+	}
+
+	public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
+	{
+		return new CP51932Encoder (this).GetBytes (chars, charIndex, charCount, bytes, byteIndex, true);
+	}
+#endif
 
 	public override int GetCharCount (byte [] bytes, int index, int count)
 	{
@@ -196,6 +207,7 @@ public class CP51932Encoder : MonoEncoder
 	{
 	}
 
+#if !DISABLE_UNSAFE
 	// Get the number of bytes needed to encode a character buffer.
 	public unsafe override int GetByteCountImpl (
 		char* chars, int count, bool refresh)
@@ -255,6 +267,7 @@ public class CP51932Encoder : MonoEncoder
 	{
 		int charIndex = 0;
 		int byteIndex = 0;
+		int end = charCount;
 
 		// Convert the characters into their byte form.
 		int posn = byteIndex;
@@ -265,8 +278,8 @@ public class CP51932Encoder : MonoEncoder
 		byte[] greekToJis = JISConvert.Convert.greekToJis;
 		byte[] extraToJis = JISConvert.Convert.extraToJis;
 
-		for (; charCount > 0; charIndex++, --charCount) {
-			ch = chars [charIndex];
+		for (int i = charIndex; i < end; i++, charCount--) {
+			ch = chars [i];
 			if (posn >= byteLength) {
 				throw new ArgumentException (Strings.GetString ("Arg_InsufficientSpace"), "bytes");
 			}
@@ -301,8 +314,8 @@ public class CP51932Encoder : MonoEncoder
 			if (value == 0) {
 #if NET_2_0
 				HandleFallback (
-					chars, ref charIndex, ref charCount,
-					bytes, ref posn, ref byteCount);
+					chars, ref i, ref charCount,
+					bytes, ref posn, ref byteCount, null);
 #else
 				bytes [posn++] = (byte) '?';
 #endif
@@ -329,6 +342,168 @@ public class CP51932Encoder : MonoEncoder
 		// Return the final length to the caller.
 		return posn - byteIndex;
 	}
+#else
+	// Get the number of bytes needed to encode a character buffer.
+	public override int GetByteCount(char[] chars, int index, int count, bool flush)
+	{
+		// Determine the length of the final output.
+		int length = 0;
+		int ch, value;
+		byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+		byte[] extraToJis = JISConvert.Convert.extraToJis;
+
+		while (count > 0)
+		{
+			ch = chars[index++];
+			--count;
+			++length;
+			if (ch < 0x0080)
+			{
+				// Character maps to itself.
+				continue;
+			}
+			else if (ch < 0x0100)
+			{
+				// Check for special Latin 1 characters that
+				// can be mapped to double-byte code points.
+				if (ch == 0x00A2 || ch == 0x00A3 || ch == 0x00A7 ||
+				   ch == 0x00A8 || ch == 0x00AC || ch == 0x00B0 ||
+				   ch == 0x00B1 || ch == 0x00B4 || ch == 0x00B6 ||
+				   ch == 0x00D7 || ch == 0x00F7)
+				{
+					++length;
+				}
+			}
+			else if (ch >= 0x0391 && ch <= 0x0451)
+			{
+				// Greek subset characters.
+				++length;
+			}
+			else if (ch >= 0x2010 && ch <= 0x9FA5)
+			{
+				// This range contains the bulk of the CJK set.
+				value = (ch - 0x2010) * 2;
+				value = ((int)(cjkToJis[value])) | (((int)(cjkToJis[value + 1])) << 8);
+				if (value >= 0x0100)
+					++length;
+			}
+			else if (ch >= 0xFF01 && ch < 0xFF60)
+			{
+				// This range contains extra characters.
+				value = (ch - 0xFF01) * 2;
+				value = ((int)(extraToJis[value])) |
+						(((int)(extraToJis[value + 1])) << 8);
+				if (value >= 0x0100)
+					++length;
+			}
+			else if (ch >= 0xFF60 && ch <= 0xFFA0)
+			{
+				++length; // half-width kana
+			}
+		}
+
+		// Return the length to the caller.
+		return length;
+	}
+
+	// Get the bytes that result from encoding a character buffer.
+	public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex, bool flush)
+	{
+		// Convert the characters into their byte form.
+		int posn = byteIndex;
+		int byteLength = bytes.Length;
+		int byteCount = bytes.Length;
+		int end = charIndex + charCount;
+		int ch, value;
+
+		byte[] cjkToJis = JISConvert.Convert.cjkToJis;
+		byte[] greekToJis = JISConvert.Convert.greekToJis;
+		byte[] extraToJis = JISConvert.Convert.extraToJis;
+
+		for (int i = charIndex; i < end; i++, charCount--)
+		{
+			ch = chars[i];
+			if (posn >= byteLength)
+			{
+				throw new ArgumentException(Strings.GetString("Arg_InsufficientSpace"), "bytes");
+			}
+
+			if (ch < 0x0080)
+			{
+				// Character maps to itself.
+				bytes[posn++] = (byte)ch;
+				continue;
+			}
+			else if (ch >= 0x0391 && ch <= 0x0451)
+			{
+				// Greek subset characters.
+				value = (ch - 0x0391) * 2;
+				value = ((int)(greekToJis[value])) |
+						(((int)(greekToJis[value + 1])) << 8);
+			}
+			else if (ch >= 0x2010 && ch <= 0x9FA5)
+			{
+				// This range contains the bulk of the CJK set.
+				value = (ch - 0x2010) * 2;
+				value = ((int)(cjkToJis[value])) |
+						(((int)(cjkToJis[value + 1])) << 8);
+			}
+			else if (ch >= 0xFF01 && ch <= 0xFF60)
+			{
+				// This range contains extra characters,
+				// including half-width katakana.
+				value = (ch - 0xFF01) * 2;
+				value = ((int)(extraToJis[value])) |
+						(((int)(extraToJis[value + 1])) << 8);
+			}
+			else if (ch >= 0xFF60 && ch <= 0xFFA0)
+			{
+				value = ch - 0xFF60 + 0x8EA0;
+			}
+			else
+			{
+				// Invalid character.
+				value = 0;
+			}
+
+			if (value == 0)
+			{
+#if NET_2_0
+				HandleFallback (chars, ref i, ref charCount,
+					bytes, ref posn, ref byteCount, null);
+#else
+				bytes [posn++] = (byte) '?';
+#endif
+			}
+			else if (value < 0x0100)
+			{
+				bytes[posn++] = (byte)value;
+			}
+			else if ((posn + 1) >= byteLength)
+			{
+				throw new ArgumentException(Strings.GetString("Arg_InsufficientSpace"), "bytes");
+			}
+			else if (value < 0x8000)
+			{
+				// general 2byte glyph/kanji
+				value -= 0x0100;
+				bytes[posn++] = (byte)(value / 0x5E + 0xA1);
+				bytes[posn++] = (byte)(value % 0x5E + 0xA1);
+				//Console.WriteLine ("{0:X04}", ch);
+				continue;
+			}
+			else
+			{
+				// half-width kana
+				bytes[posn++] = 0x8E;
+				bytes[posn++] = (byte)(value - 0x8E00);
+			}
+		}
+
+		// Return the final length to the caller.
+		return posn - byteIndex;
+	}
+#endif
 } // CP51932Encoder
 
 internal class CP51932Decoder : DbcsEncoding.DbcsDecoder

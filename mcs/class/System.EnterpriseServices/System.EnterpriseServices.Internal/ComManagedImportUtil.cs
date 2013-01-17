@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("3b0398c9-7812-4007-85cb-18c771f2206f")]
 	public class ComManagedImportUtil : IComManagedImportUtil {
 
@@ -53,5 +52,4 @@ namespace System.EnterpriseServices.Internal
 			throw new NotImplementedException ();
 		}
 	}
-#endif
 }

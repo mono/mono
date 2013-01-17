@@ -11,7 +11,7 @@ class Foo {
       throw new Exception ();
   }
 
-  static void Main ()
+  public static void Main ()
   {
     Data d;
     f (d = new Data () { Value = 5 });

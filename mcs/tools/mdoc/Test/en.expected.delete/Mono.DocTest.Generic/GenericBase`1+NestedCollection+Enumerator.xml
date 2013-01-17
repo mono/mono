@@ -1,0 +1,19 @@
+<Type Name="GenericBase&lt;U&gt;+NestedCollection+Enumerator" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;+NestedCollection+Enumerator">
+  <TypeSignature Language="C#" Value="protected struct GenericBase&lt;U&gt;.NestedCollection.Enumerator" />
+  <TypeSignature Language="ILAsm" Value=".class nested protected sequential ansi sealed beforefieldinit GenericBase`1/NestedCollection/Enumerator&lt;U&gt; extends System.ValueType" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="U" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

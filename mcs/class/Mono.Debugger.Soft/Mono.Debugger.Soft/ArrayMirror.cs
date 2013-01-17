@@ -13,6 +13,9 @@ namespace Mono.Debugger.Soft
 		internal ArrayMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
 
+		internal ArrayMirror (VirtualMachine vm, long id, TypeMirror type, AppDomainMirror domain) : base (vm, id, type, domain) {
+		}
+
 		public int Length {
 			get {
 				GetLengths ();

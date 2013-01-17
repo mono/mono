@@ -8,6 +8,7 @@
 //
 // (C) Ximian, Inc.
 // Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,6 +55,11 @@ namespace System
 		// Fields
 		static TimeZone currentTimeZone;
 
+		[NonSerialized]
+		static object tz_lock = new object ();
+		[NonSerialized]
+		static long timezone_check;
+
 		// Constructor
 		protected TimeZone ()
 		{
@@ -62,9 +68,19 @@ namespace System
 		// Properties
 		public static TimeZone CurrentTimeZone {
 			get {
-				if (currentTimeZone == null)
-					currentTimeZone = new CurrentSystemTimeZone (DateTime.GetNow ());
-				return currentTimeZone;
+				long now = DateTime.GetNow ();
+				TimeZone tz;
+				
+				lock (tz_lock) {
+					if (currentTimeZone == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
+						currentTimeZone = new CurrentSystemTimeZone (now);
+						timezone_check = now;
+					}
+					
+					tz = currentTimeZone;
+				}
+				
+				return tz;
 			}
 		}
 
@@ -115,7 +131,7 @@ namespace System
 			if (time.Kind == DateTimeKind.Local)
 				return time;
 
-			TimeSpan utcOffset = GetUtcOffset (time);
+			TimeSpan utcOffset = GetUtcOffset (new DateTime (time.Ticks));
 			if (utcOffset.Ticks > 0) {
 				if (DateTime.MaxValue - utcOffset < time)
 					return DateTime.SpecifyKind (DateTime.MaxValue, DateTimeKind.Local);
@@ -124,7 +140,7 @@ namespace System
 					return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Local);
 			}
 
-			DateTime local = time.Add (utcOffset);
+			DateTime local = DateTime.SpecifyKind (time.Add (utcOffset), DateTimeKind.Local);
 			DaylightTime dlt = GetDaylightChanges (time.Year);
 			if (dlt.Delta.Ticks == 0)
 				return DateTime.SpecifyKind (local, DateTimeKind.Local);
@@ -338,6 +354,9 @@ namespace System
 
 		public override TimeSpan GetUtcOffset (DateTime time)
 		{
+			if (time.Kind == DateTimeKind.Utc)
+				return TimeSpan.Zero;
+
 			if (IsDaylightSavingTime (time))
 				return utcOffsetWithDLS;
 

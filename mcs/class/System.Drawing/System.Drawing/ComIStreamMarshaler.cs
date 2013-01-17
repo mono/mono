@@ -105,7 +105,7 @@ namespace System.Drawing
 
 			private static readonly Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
 			private static readonly Guid IID_IStream = new Guid("0000000C-0000-0000-C000-000000000046");
-			private static readonly MethodInfo exceptionGetHResult = typeof(Exception).GetProperty("HResult", BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.ExactBinding, null, typeof(int), new Type[] {}, null).GetGetMethod(true);
+			private static readonly MethodInfo exceptionGetHResult = typeof(Exception).GetProperty("HResult", BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.ExactBinding, null, typeof(int), new Type[] {}, null).GetGetMethod(true);
 			// Keeps delegates alive while they are marshaled
 			private static readonly IStreamVtbl managedVtable;
 			private static IntPtr comVtable;

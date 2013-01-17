@@ -5,6 +5,7 @@
  *	Dick Porter (dick@ximian.com)
  *
  * (C) 2002 Ximian, Inc.
+ * Copyright 2012 Xamarin Inc
  */
 
 #ifndef _WAPI_ATOMIC_H_
@@ -753,12 +754,18 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 
 #define WAPI_ATOMIC_ASM
 
+/*
+ * Atomic operations on ARM doesn't contain memory barriers, and the runtime code
+ * depends on this, so we add them explicitly.
+ */
+
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, tmp;
 	__asm__ __volatile__ (	"1:\n"
 				NACL_ALIGN()
+				"dmb\n"
 				"mov	%0, #0\n"
 				NACL_ALIGN()
 				MASK_REGISTER("%2", "al")
@@ -770,6 +777,7 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 ex
 				"strexeq %0, %4, [%2]\n"
 				"teq %0, #0\n"
 				"bne 1b\n"
+				"dmb\n"
 				: "=&r" (tmp), "=&r" (ret)
 				: "r" (dest), "r" (comp), "r" (exch)
 				: "memory", "cc");
@@ -804,9 +812,11 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 ex
 
 static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gpointer ret, tmp;
-	__asm__ __volatile__ (	"1:\n"
+	__asm__ __volatile__ (
+				"dmb\n"
+				"1:\n"
 				NACL_ALIGN()
 				"mov	%0, #0\n"
 				NACL_ALIGN()
@@ -819,6 +829,7 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 				"strexeq %0, %4, [%2]\n"
 				"teq %0, #0\n"
 				"bne 1b\n"
+				"dmb\n"
 				: "=&r" (tmp), "=&r" (ret)
 				: "r" (dest), "r" (comp), "r" (exch)
 				: "memory", "cc");
@@ -853,9 +864,11 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 
 static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, flag;
-	__asm__ __volatile__ (	"1:\n"
+	__asm__ __volatile__ (
+				"dmb\n"
+				"1:\n"
 				NACL_ALIGN()
 				MASK_REGISTER("%2", "al")
 				"ldrex %0, [%2]\n"
@@ -865,6 +878,7 @@ static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 				"strex %1, %0, [%2]\n"
 				"teq %1, #0\n"
 				"bne 1b\n"
+				"dmb\n"
 				: "=&r" (ret), "=&r" (flag)
 				: "r" (dest), "r" (1)
 				: "memory", "cc");
@@ -896,9 +910,11 @@ static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 
 static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, flag;
-	__asm__ __volatile__ (	"1:\n"
+	__asm__ __volatile__ (
+				"dmb\n"
+				"1:\n"
 				NACL_ALIGN()
 				MASK_REGISTER("%2", "al")
 				"ldrex %0, [%2]\n"
@@ -908,6 +924,7 @@ static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 				"strex %1, %0, [%2]\n"
 				"teq %1, #0\n"
 				"bne 1b\n"
+				"dmb\n"
 				: "=&r" (ret), "=&r" (flag)
 				: "r" (dest), "r" (1)
 				: "memory", "cc");
@@ -939,9 +956,10 @@ static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 
 static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, flag;
 	__asm__ __volatile__ (
+				  "dmb\n"
 			      "1:\n"
 			      NACL_ALIGN()
 			      MASK_REGISTER("%3", "al")
@@ -951,6 +969,7 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 			      "strex %1, %2, [%3]\n"
 			      "teq %1, #0\n"
 			      "bne 1b\n"
+				  "dmb\n"
 			      : "=&r" (ret), "=&r" (flag)
 			      : "r" (exch), "r" (dest)
 			      : "memory", "cc");
@@ -970,9 +989,10 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 
 static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpointer exch)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gpointer ret, flag;
 	__asm__ __volatile__ (
+				  "dmb\n"
 			      "1:\n"
 			      NACL_ALIGN()
 			      MASK_REGISTER("%3", "al")
@@ -982,6 +1002,7 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpoin
 			      "strex %1, %2, [%3]\n"
 			      "teq %1, #0\n"
 			      "bne 1b\n"
+				  "dmb\n"
 			      : "=&r" (ret), "=&r" (flag)
 			      : "r" (exch), "r" (dest)
 			      : "memory", "cc");
@@ -1001,9 +1022,11 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpoin
 
 static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7S__)
 	gint32 ret, tmp, flag;
-	__asm__ __volatile__ (	"1:\n"
+	__asm__ __volatile__ (
+				"dmb\n"
+				"1:\n"
 				NACL_ALIGN()
 				MASK_REGISTER("%3", "al")
 				"ldrex %0, [%3]\n"
@@ -1013,6 +1036,7 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 				"strex %2, %1, [%3]\n"
 				"teq %2, #0\n"
 				"bne 1b\n"
+				"dmb\n"
 				: "=&r" (ret), "=&r" (tmp), "=&r" (flag)
 				: "r" (dest), "r" (add)
 				: "memory", "cc");
@@ -1273,6 +1297,10 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
 #elif defined(__mips__)
 #define WAPI_ATOMIC_ASM
 
+#if SIZEOF_REGISTER == 8
+#error "Not implemented."
+#endif
+
 static inline gint32 InterlockedIncrement(volatile gint32 *val)
 {
 	gint32 tmp, result = 0;
@@ -1303,8 +1331,6 @@ static inline gint32 InterlockedDecrement(volatile gint32 *val)
 	return result - 1;
 }
 
-#define InterlockedCompareExchangePointer(dest,exch,comp) InterlockedCompareExchange((volatile gint32 *)(dest), (gint32)(exch), (gint32)(comp))
-
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest,
 						gint32 exch, gint32 comp) {
 	gint32 old, tmp;
@@ -1321,6 +1347,11 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest,
 	return(old);
 }
 
+static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
+{
+	return (gpointer)(InterlockedCompareExchange((volatile gint32 *)(dest), (gint32)(exch), (gint32)(comp)));
+}
+
 static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 {
 	gint32 result, tmp;
@@ -1335,7 +1366,11 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 			      : "m" (*dest), "r" (exch));
 	return(result);
 }
-#define InterlockedExchangePointer(dest,exch) InterlockedExchange((volatile gint32 *)(dest), (gint32)(exch))
+
+static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpointer exch)
+{
+	return (gpointer)InterlockedExchange((volatile gint32 *)(dest), (gint32)(exch));
+}
 
 static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 {

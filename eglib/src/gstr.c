@@ -251,8 +251,12 @@ g_strsplit (const gchar *string, const gchar *delimiter, gint max_tokens)
 	}
 
 	if (*string) {
-		/* Add the rest of the string as the last element */
-		add_to_vector (&vector, size, g_strdup (string));
+		if (strcmp (string, delimiter) == 0)
+			add_to_vector (&vector, size, g_strdup (""));
+		else {
+			/* Add the rest of the string as the last element */
+			add_to_vector (&vector, size, g_strdup (string));
+		}
 		size++;
 	}
 	
@@ -356,6 +360,9 @@ g_strreverse (gchar *str)
 
 	if (str == NULL)
 		return NULL;
+
+	if (*str == 0)
+		return str;
 
 	for (i = 0, j = strlen (str) - 1; i < j; i++, j--) {
 		c = str [i];

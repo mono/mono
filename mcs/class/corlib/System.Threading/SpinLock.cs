@@ -1,6 +1,7 @@
 // SpinLock.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +23,7 @@
 //
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 using System.Collections.Concurrent;
@@ -56,7 +57,7 @@ namespace System.Threading
 		int threadWhoTookLock;
 		readonly bool isThreadOwnerTrackingEnabled;
 
-		static Watch sw = Watch.StartNew ();
+		static readonly Watch sw = Watch.StartNew ();
 
 		ConcurrentOrderedList<int> stallTickets;
 
@@ -193,13 +194,6 @@ namespace System.Threading
 				} while (stallTickets != null && stallTickets.TryRemove (ticket.Value));
 			}
 		}
-	}
-
-	// Wraps a SpinLock in a reference when we need to pass
-	// around the lock
-	internal class SpinLockWrapper
-	{
-		public SpinLock Lock = new SpinLock (false);
 	}
 }
 #endif

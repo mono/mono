@@ -49,7 +49,7 @@ namespace System.Xml.Linq
 			get { return XmlNodeType.CDATA; }
 		}
 
-		public override void WriteTo (XmlWriter w)
+		public override void WriteTo (XmlWriter writer)
 		{
 			int start = 0;
 			StringBuilder sb = null;
@@ -65,7 +65,7 @@ namespace System.Xml.Linq
 			}
 			if (start != 0 && start != Value.Length)
 				sb.Append (Value, start, Value.Length - start);
-			w.WriteCData (sb == null ? Value : sb.ToString ());
+			writer.WriteCData (sb == null ? Value : sb.ToString ());
 		}
 	}
 }

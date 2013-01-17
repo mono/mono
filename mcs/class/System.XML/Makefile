@@ -26,7 +26,7 @@ endif
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK
 endif
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
 # Happens on net_2_0_bootstrap and net_2_0 profiles
@@ -66,7 +66,7 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/76102.xml		\
 	Test/XmlFiles/79683.dtd		\
 	Test/XmlFiles/496192.xml	\
-	Test/XmlFiles/496192.xsd	\
+	Test/XmlFiles/*.xsd	\
 	$(wildcard Test/XmlFiles/xsd/*.xml) \
 	$(wildcard Test/XmlFiles/xsd/*.xsd) \
 	$(wildcard Test/XmlFiles/xsl/*.xml) \

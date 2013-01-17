@@ -780,6 +780,15 @@ namespace MonoTests.System.Xml.XPath
 			using (XmlWriter w = y.CreateNavigator ().AppendChild ())
 				w.WriteAttributeString ("test", "test1");
 		}
+
+		[Test] // bug #1558
+		public void CreateNavigatorReturnsEdidable ()
+		{
+			var document = new XmlDocument();
+			document.LoadXml ("<div>hello world</div>");
+			XPathNavigator navigator = document.CreateNavigator ().CreateNavigator ();
+			navigator.SelectSingleNode ("//div").SetValue ("hello world 2");
+		}
 	}
 }
 

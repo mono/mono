@@ -257,6 +257,7 @@ System.ServiceModel.Channels/PeerInputChannel.cs
 System.ServiceModel.Channels/PeerOutputChannel.cs
 System.ServiceModel.Channels/PeerTransportBindingElement.cs
 System.ServiceModel.Channels/PnrpPeerResolverBindingElement.cs
+System.ServiceModel.Channels/PolicyImportHelper.cs
 System.ServiceModel.Channels/PrivacyNoticeBindingElement.cs
 System.ServiceModel.Channels/ReliableSessionBindingElement.cs
 System.ServiceModel.Channels/ReliableSessionBindingElementImporter.cs
@@ -558,6 +559,7 @@ System.ServiceModel.Description/ClientCredentials.cs
 System.ServiceModel.Description/ClientViaBehavior.cs
 System.ServiceModel.Description/ContractDescription.cs
 System.ServiceModel.Description/ContractDescriptionGenerator.cs
+System.ServiceModel.Description/CustomPolicyConversionContext.cs
 System.ServiceModel.Description/DataContractSerializerMessageContractImporter.cs
 System.ServiceModel.Description/DataContractSerializerOperationBehavior.cs
 System.ServiceModel.Description/FaultDescription.cs

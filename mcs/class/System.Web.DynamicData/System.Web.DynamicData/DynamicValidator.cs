@@ -94,7 +94,7 @@ namespace System.Web.DynamicData
 			if (String.IsNullOrEmpty (controlToValidate))
 				return true;
 
-			string value = GetControlValidationValue (controlToValidate);
+			GetControlValidationValue (controlToValidate);
 
 			return true;
 		}
@@ -124,7 +124,6 @@ namespace System.Web.DynamicData
 			// The above suggests that IDynamicValidatorException.InnerExceptions is
 			// indexed on column name
 			//
-			throw new NotImplementedException ();
 		}
 	}
 }

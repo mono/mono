@@ -19,7 +19,7 @@ public class TestCase
 {
 	public static GlobalMonitoredCharacterCollection MonitoredCharacters;
 	
-	static int Main ()
+	public static int Main ()
 	{
 		MonitoredCharacters = new GlobalMonitoredCharacterCollection();
 		foreach (var character in MonitoredCharacters)

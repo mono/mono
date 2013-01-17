@@ -140,6 +140,8 @@ gint16 ves_icall_System_Threading_Thread_VolatileRead2 (void *ptr) MONO_INTERNAL
 gint32 ves_icall_System_Threading_Thread_VolatileRead4 (void *ptr) MONO_INTERNAL;
 gint64 ves_icall_System_Threading_Thread_VolatileRead8 (void *ptr) MONO_INTERNAL;
 void * ves_icall_System_Threading_Thread_VolatileReadIntPtr (void *ptr) MONO_INTERNAL;
+double ves_icall_System_Threading_Thread_VolatileReadDouble (void *ptr) MONO_INTERNAL;
+float ves_icall_System_Threading_Thread_VolatileReadFloat (void *ptr) MONO_INTERNAL;
 
 void ves_icall_System_Threading_Thread_VolatileWrite1 (void *ptr, gint8) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_VolatileWrite2 (void *ptr, gint16) MONO_INTERNAL;
@@ -147,6 +149,8 @@ void ves_icall_System_Threading_Thread_VolatileWrite4 (void *ptr, gint32) MONO_I
 void ves_icall_System_Threading_Thread_VolatileWrite8 (void *ptr, gint64) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_VolatileWriteIntPtr (void *ptr, void *) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_VolatileWriteObject (void *ptr, void *) MONO_INTERNAL;
+void ves_icall_System_Threading_Thread_VolatileWriteFloat (void *ptr, float) MONO_INTERNAL;
+void ves_icall_System_Threading_Thread_VolatileWriteDouble (void *ptr, double) MONO_INTERNAL;
 
 void ves_icall_System_Threading_Thread_MemoryBarrier (void) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_Interrupt_internal (MonoInternalThread *this_obj) MONO_INTERNAL;
@@ -185,6 +189,8 @@ MonoException* mono_thread_get_undeniable_exception (void);
 
 MonoException* mono_thread_get_and_clear_pending_exception (void) MONO_INTERNAL;
 
+void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean managed) MONO_INTERNAL;
+
 void mono_threads_install_notify_pending_exc (MonoThreadNotifyPendingExcFunc func) MONO_INTERNAL;
 
 MonoObject* mono_thread_get_execution_context (void) MONO_INTERNAL;
@@ -211,7 +217,7 @@ void mono_thread_interruption_checkpoint (void) MONO_INTERNAL;
 void mono_thread_force_interruption_checkpoint (void) MONO_INTERNAL;
 gint32* mono_thread_interruption_request_flag (void) MONO_INTERNAL;
 
-uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, uint32_t align, uintptr_t *bitmap, int max_set) MONO_INTERNAL;
+uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, uint32_t align, uintptr_t *bitmap, int numbits) MONO_INTERNAL;
 void*    mono_get_special_static_data   (uint32_t offset) MONO_INTERNAL;
 gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 offset) MONO_INTERNAL;
 

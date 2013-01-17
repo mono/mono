@@ -3,7 +3,7 @@ using System.Reflection;
 
 class Dec {
 	public const decimal MinValue = -79228162514264337593543950335m;
-	static void Main ()
+	public static void Main ()
 	{
 		System.Console.WriteLine ("Compiler said value is {0}", MinValue);
 		FieldInfo fi = typeof (Dec).GetField ("MinValue");

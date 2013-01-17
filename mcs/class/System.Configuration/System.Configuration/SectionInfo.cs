@@ -221,7 +221,7 @@ namespace System.Configuration
 				xml = config.GetSectionXml (this);
 			}
 			
-			if (xml != null) {
+			if (!string.IsNullOrEmpty (xml)) {
 				writer.WriteRaw (xml);
 /*				XmlTextReader tr = new XmlTextReader (new StringReader (xml));
 				writer.WriteNode (tr, true);
@@ -231,6 +231,23 @@ namespace System.Configuration
 		
 		internal override void Merge (ConfigInfo data)
 		{}
+
+		internal override bool HasValues (Configuration config, ConfigurationSaveMode mode)
+		{
+			var section = config.GetSectionInstance (this, false);
+			if (section == null)
+				return false;
+
+			var parent = config.Parent != null ? config.Parent.GetSectionInstance (this, false) : null;
+			return section.HasValues (parent, mode);
+		}
+
+		internal override void ResetModified (Configuration config)
+		{
+			ConfigurationSection section = config.GetSectionInstance (this, false);
+			if (section != null)
+				section.ResetModified ();
+		}
 	}
 }
 

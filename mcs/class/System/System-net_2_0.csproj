@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,28 +9,29 @@
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>./../../class/lib/net_2_0/tmp</OutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mscorlib</RootNamespace>
+    <RootNamespace></RootNamespace>
     <AssemblyName>System</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
+    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
-    <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
@@ -247,6 +248,7 @@
    <Compile Include="System.ComponentModel\ContainerFilterService.cs" />
    <Compile Include="System.ComponentModel\CultureInfoConverter.cs" />
    <Compile Include="System.ComponentModel\CustomTypeDescriptor.cs" />
+   <Compile Include="System.ComponentModel\DataErrorsChangedEventArgs.cs" />
    <Compile Include="System.ComponentModel\DataObjectAttribute.cs" />
    <Compile Include="System.ComponentModel\DataObjectFieldAttribute.cs" />
    <Compile Include="System.ComponentModel\DataObjectMethodAttribute.cs" />
@@ -380,6 +382,7 @@
    <Compile Include="System.ComponentModel\InheritanceAttribute.cs" />
    <Compile Include="System.ComponentModel\InheritanceLevel.cs" />
    <Compile Include="System.ComponentModel\InitializationEventAttribute.cs" />
+   <Compile Include="System.ComponentModel\INotifyDataErrorInfo.cs" />
    <Compile Include="System.ComponentModel\INotifyPropertyChanged.cs" />
    <Compile Include="System.ComponentModel\INotifyPropertyChanging.cs" />
    <Compile Include="System.ComponentModel\InstallerTypeAttribute.cs" />
@@ -621,6 +624,7 @@
    <Compile Include="System\GenericUriParserOptions.cs" />
    <Compile Include="System\GopherStyleUriParser.cs" />
    <Compile Include="System\HttpStyleUriParser.cs" />
+   <Compile Include="System\Platform.cs" />
    <Compile Include="System.IO.Compression\CompressionMode.cs" />
    <Compile Include="System.IO.Compression\DeflateStream.cs" />
    <Compile Include="System.IO.Compression\GZipStream.cs" />
@@ -805,6 +809,7 @@
    <Compile Include="System.Net.Mime\DispositionTypeNames.cs" />
    <Compile Include="System.Net.Mime\MediaTypeNames.cs" />
    <Compile Include="System.Net.Mime\TransferEncoding.cs" />
+   <Compile Include="System.Net\MacProxy.cs" />
    <Compile Include="System.Net\MonoHttpDate.cs" />
    <Compile Include="System.Net\NetConfig.cs" />
    <Compile Include="System.Net\NetworkAccess.cs" />
@@ -904,7 +909,9 @@
    <Compile Include="System.Net.Sockets\TcpListener.cs" />
    <Compile Include="System.Net.Sockets\TransmitFileOptions.cs" />
    <Compile Include="System.Net.Sockets\UdpClient.cs" />
+   <Compile Include="System.Net.Sockets\UdpReceiveResult.cs" />
    <Compile Include="System\NetTcpStyleUriParser.cs" />
+   <Compile Include="System.Net\TransportContext.cs" />
    <Compile Include="System.Net\TransportType.cs" />
    <Compile Include="System.Net\WebAsyncResult.cs" />
    <Compile Include="System.Net\WebClient.cs" />
@@ -1041,6 +1048,8 @@
    <Compile Include="System\UriParser.cs" />
    <Compile Include="System\UriPartial.cs" />
    <Compile Include="System\UriTypeConverter.cs" />
+   <Compile Include="System\UriElements.cs" />
+   <Compile Include="System\UriParseComponents.cs" />
    <Compile Include="System.Web\AspNetHostingPermissionAttribute.cs" />
    <Compile Include="System.Web\AspNetHostingPermission.cs" />
    <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
@@ -1085,10 +1094,36 @@
    <Compile Include="System.Collections.Concurrent\BlockingCollection.cs" />
    <Compile Include="System.Collections.Concurrent\ConcurrentBag.cs" />
    <Compile Include="..\corlib\System.Threading.Tasks\CyclicDeque.cs" />
+   <Compile Include="..\corlib\System.Threading.Tasks\PopResult.cs" />
+   <Compile Include="..\corlib\System.Threading.Tasks\IConcurrentDeque.cs" />
    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
    <Compile Include="..\corlib\System.Collections\CollectionDebuggerView.cs" />
    <Compile Include="..\corlib\System.Collections.Generic\CollectionDebuggerView.cs" />
    <Compile Include="..\corlib\Mono\DataConverter.cs" />
+   <Compile Include="Mono.Net.Dns\DnsClass.cs" />
+   <Compile Include="Mono.Net.Dns\DnsHeader.cs" />
+   <Compile Include="Mono.Net.Dns\DnsOpCode.cs" />
+   <Compile Include="Mono.Net.Dns\DnsPacket.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQClass.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQType.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQuery.cs" />
+   <Compile Include="Mono.Net.Dns\DnsQuestion.cs" />
+   <Compile Include="Mono.Net.Dns\DnsRCode.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordA.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordAAAA.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordCName.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecord.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordIPAddress.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResourceRecordPTR.cs" />
+   <Compile Include="Mono.Net.Dns\DnsResponse.cs" />
+   <Compile Include="Mono.Net.Dns\DnsType.cs" />
+   <Compile Include="Mono.Net.Dns\DnsUtil.cs" />
+   <Compile Include="Mono.Net.Dns\ResolverAsyncOperation.cs" />
+   <Compile Include="Mono.Net.Dns\SimpleResolver.cs" />
+   <Compile Include="Mono.Net.Dns\ResolverError.cs" />
+   <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
+   <Compile Include="System.Net\DnsAsyncResult.cs" />
+   <Compile Include="System.Windows.Input\ICommand.cs" />
 
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -1104,27 +1139,27 @@
   <ItemGroup>
     <Reference Include="mscorlib.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\mscorlib.dll</HintPath>
+      <HintPath>mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Xml.dll</HintPath>
+      <HintPath>System.Xml.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Security.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\Mono.Security.dll</HintPath>
+      <HintPath>Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\System.Configuration.dll</HintPath>
+      <HintPath>System.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="../lib/net_2_0/System.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\\lib\build\PrebuiltSystem=../lib/net_2_0/System.dll</HintPath>
+      <HintPath>PrebuiltSystem=../lib/net_2_0/System.dll</HintPath>
       <Aliases>PrebuiltSystem</Aliases>
     </Reference>
-  </ItemGroup>
 
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

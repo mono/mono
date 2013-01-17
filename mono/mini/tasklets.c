@@ -19,7 +19,7 @@ internal_init (void)
 {
 	if (keepalive_stacks)
 		return;
-	MONO_GC_REGISTER_ROOT (keepalive_stacks);
+	MONO_GC_REGISTER_ROOT_PINNING (keepalive_stacks);
 	keepalive_stacks = mono_g_hash_table_new (NULL, NULL);
 }
 
@@ -104,8 +104,10 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 
 	if (cont->saved_stack && num_bytes <= cont->stack_alloc_size) {
 		/* clear to avoid GC retention */
-		if (num_bytes < cont->stack_used_size)
+		if (num_bytes < cont->stack_used_size) {
 			memset ((char*)cont->saved_stack + num_bytes, 0, cont->stack_used_size - num_bytes);
+			cont->stack_used_size = num_bytes;
+		}
 	} else {
 		tasklets_lock ();
 		internal_init ();

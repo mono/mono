@@ -92,14 +92,12 @@ namespace System.Diagnostics
 
 		public string LogDisplayName {
 			get {
-#if NET_2_0
 				// to-do perform valid character checks
 				if (_coreEventLog.Log != null && _coreEventLog.Log.Length == 0) {
 					throw new InvalidOperationException ("Event log names must"
 						+ " consist of printable characters and cannot contain"
 						+ " \\, *, ?, or spaces.");
 				}
-#endif
 				if (_coreEventLog.Log != null) {
 					if (_coreEventLog.Log.Length == 0)
 						return string.Empty;
@@ -230,7 +228,6 @@ namespace System.Diagnostics
 			}
 		}
 
-#if NET_2_0
 		public abstract OverflowAction OverflowAction { get; }
 
 		public abstract int MinimumRetentionDays { get; }
@@ -240,6 +237,5 @@ namespace System.Diagnostics
 		public abstract void ModifyOverflowPolicy (OverflowAction action, int retentionDays);
 
 		public abstract void RegisterDisplayName (string resourceFile, long resourceId);
-#endif
 	}
 }

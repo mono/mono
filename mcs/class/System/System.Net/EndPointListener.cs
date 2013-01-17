@@ -2,9 +2,10 @@
 // System.Net.EndPointListener
 //
 // Author:
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Gonzalo Paniagua Javier (gonzalo.mono@gmail.com)
 //
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2012 Xamarin, Inc. (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,11 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 using System.IO;
 using System.Net.Sockets;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -47,7 +49,7 @@ namespace System.Net {
 		X509Certificate2 cert;
 		AsymmetricAlgorithm key;
 		bool secure;
-		Hashtable unregistered;
+		Dictionary<HttpConnection, HttpConnection> unregistered;
 
 		public EndPointListener (IPAddress addr, int port, bool secure)
 		{
@@ -65,7 +67,7 @@ namespace System.Net {
 			args.Completed += OnAccept;
 			sock.AcceptAsync (args);
 			prefixes = new Hashtable ();
-			unregistered = Hashtable.Synchronized (new Hashtable ());
+			unregistered = new Dictionary<HttpConnection, HttpConnection> ();
 		}
 
 		void LoadCertificateAndKey (IPAddress addr, int port)
@@ -76,7 +78,11 @@ namespace System.Net {
 				string path = Path.Combine (dirname, ".mono");
 				path = Path.Combine (path, "httplistener");
 				string cert_file = Path.Combine (path, String.Format ("{0}.cer", port));
+				if (!File.Exists (cert_file))
+					return;
 				string pvk_file = Path.Combine (path, String.Format ("{0}.pvk", port));
+				if (!File.Exists (pvk_file))
+					return;
 				cert = new X509Certificate2 (cert_file);
 				key = PrivateKey.CreateFromFile (pvk_file).RSA;
 			} catch {
@@ -114,13 +120,17 @@ namespace System.Net {
 				return;
 			}
 			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert, epl.key);
-			epl.unregistered [conn] = conn;
+			lock (epl.unregistered) {
+				epl.unregistered [conn] = conn;
+			}
 			conn.BeginReadRequest ();
 		}
 
 		internal void RemoveConnection (HttpConnection conn)
 		{
-			unregistered.Remove (conn);
+			lock (unregistered) {
+				unregistered.Remove (conn);
+			}
 		}
 
 		public bool BindContext (HttpListenerContext context)
@@ -266,8 +276,13 @@ namespace System.Net {
 		public void Close ()
 		{
 			sock.Close ();
-			lock (unregistered.SyncRoot) {
-				foreach (HttpConnection c in unregistered.Keys)
+			lock (unregistered) {
+				//
+				// Clone the list because RemoveConnection can be called from Close
+				//
+				var connections = new List<HttpConnection> (unregistered.Keys);
+
+				foreach (HttpConnection c in connections)
 					c.Close (true);
 				unregistered.Clear ();
 			}

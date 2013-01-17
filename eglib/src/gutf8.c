@@ -5,6 +5,7 @@
  *   Atsushi Enomoto  <atsushi@ximian.com>
  *
  * (C) 2006 Novell, Inc.
+ * Copyright 2012 Xamarin Inc
  */
 
 #include <stdio.h>
@@ -290,7 +291,7 @@ g_utf8_find_prev_char (const gchar *str, const gchar *p)
 {
 	while (p > str) {
 		p--;
-		if ((*p && 0xc0) != 0xb0)
+		if ((*p & 0xc0) != 0xb0)
 			return (gchar *)p;
 	}
 	return NULL;

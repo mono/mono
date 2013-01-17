@@ -275,7 +275,7 @@ namespace Mono.AssemblyLinker
 				return true;
 
 			case "e":
-			case "evidence":
+			case "evidence": {
 				if (arg == null)
 					ReportMissingFileSpec (opt);
 				ResourceInfo res = new ResourceInfo ();
@@ -285,7 +285,7 @@ namespace Mono.AssemblyLinker
 				res.isPrivate = true;
 				resources.Add (res);
 				return true;
-
+			}
 			case "fileversion":
 				if (arg == null)
 					ReportMissingText (opt);

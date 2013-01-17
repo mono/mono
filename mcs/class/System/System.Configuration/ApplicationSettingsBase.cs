@@ -20,7 +20,6 @@
 // Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 #if CONFIGURATION_DEP && !TARGET_JVM
 extern alias PrebuiltSystem;
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
@@ -84,9 +83,8 @@ namespace System.Configuration {
 		{
 #if (CONFIGURATION_DEP)
 			foreach (SettingsProvider provider in Providers) {
-				IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
-				if (iasp != null)
-					iasp.Reset (Context);
+//				IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
+				CacheValuesByProvider(provider);
 			}
 #endif
 		}
@@ -94,14 +92,9 @@ namespace System.Configuration {
 		public void Reset()
 		{
 #if (CONFIGURATION_DEP)
-			// Code bellow is identical to code in Reload().
-			// foreach (SettingsProvider provider in Providers) {
-			//         IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
-			//         if (iasp != null)
-			//		iasp.Reset (Context);
-			// }
-                                                
 			Reload ();
+			foreach (SettingsPropertyValue pv in PropertyValues)
+				pv.PropertyValue = pv.Reset();
 #endif
 		}
 
@@ -191,7 +184,12 @@ namespace System.Configuration {
 
 			if (col.Count > 0) {
 				SettingsPropertyValueCollection vals = provider.GetPropertyValues (Context, col);
-				PropertyValues.Add (vals);
+				foreach (SettingsPropertyValue prop in vals) {
+					if (PropertyValues [prop.Name] != null)
+						PropertyValues [prop.Name].PropertyValue = prop.PropertyValue;
+					else
+						PropertyValues.Add (prop);
+				}
 			}
 
 			OnSettingsLoaded (this, new SettingsLoadedEventArgs (provider));
@@ -440,5 +438,4 @@ namespace System.Configuration {
         }
 
 }
-#endif
 

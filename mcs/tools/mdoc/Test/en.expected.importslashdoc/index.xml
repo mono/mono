@@ -16,6 +16,7 @@
     </Namespace>
     <Namespace Name="Mono.DocTest">
       <Type Name="Color" Kind="Enumeration" />
+      <Type Name="D" Kind="Delegate" />
       <Type Name="DocAttribute" Kind="Class" />
       <Type Name="DocValueType" Kind="Structure" />
       <Type Name="IProcess" Kind="Interface" />

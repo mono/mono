@@ -4,10 +4,11 @@
 // Authors:
 //   Marcin Szczepanski (marcins@zipworld.com.au)
 //   Miguel de Icaza (miguel@gnome.org)
-//
+//   Marek Safar (marek.safar@gmail.com)
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +32,9 @@
 
 using System;
 using System.Runtime.InteropServices;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace System.IO {
 
@@ -41,14 +45,25 @@ namespace System.IO {
 #else
 	public abstract class TextReader : MarshalByRefObject, IDisposable {
 #endif
-		static TextReader ()
+
+		sealed class NullTextReader : TextReader
 		{
-			Null = new NullTextReader ();
+			public override string ReadLine ()
+			{
+				return null;
+			}
+
+			public override string ReadToEnd ()
+			{
+				return String.Empty;
+			}
 		}
 
-		protected TextReader() { }
-		
-		public static readonly TextReader Null;
+		public static readonly TextReader Null = new NullTextReader ();
+
+		protected TextReader()
+		{
+		}
 		
 		public virtual void Close()
 		{ 
@@ -79,7 +94,6 @@ namespace System.IO {
 			return -1;
 		}
 		
-
 		public virtual int Read ([In, Out] char[] buffer, int index, int count)
 		{
 			int c, i;
@@ -96,7 +110,7 @@ namespace System.IO {
 		public virtual int ReadBlock ([In, Out] char [] buffer, int index, int count)
 		{
 			int total_read_count = 0;
-                        int current_read_count = 0;
+			int current_read_count = 0;
 
 			do {
 				current_read_count = Read (buffer, index, count);
@@ -147,28 +161,48 @@ namespace System.IO {
 				return reader;
 
 			return new SynchronizedReader (reader);
-		}	
-
-		private class NullTextReader : System.IO.TextReader {
-
-			public override string ReadLine ()
-			{
-				return null;
-			}
-
-			public override string ReadToEnd ()
-			{
-				return String.Empty;
-			}
 		}
+
+#if NET_4_5
+		//
+		// Use tuple to pack the arguments because it's faster than
+		// setting up anonymous method container with an instance delegate
+		//
+		public virtual Task<int> ReadAsync (char[] buffer, int index, int count)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextReader, char[], int, int>) l;
+				return t.Item1.Read (t.Item2, t.Item3, t.Item4);
+			}, Tuple.Create (this, buffer, index, count));
+		}
+
+		public virtual Task<int> ReadBlockAsync (char[] buffer, int index, int count)
+		{
+			return Task.Factory.StartNew (l => {
+				var t = (Tuple<TextReader, char[], int, int>) l;
+				return t.Item1.ReadBlock (t.Item2, t.Item3, t.Item4);
+			}, Tuple.Create (this, buffer, index, count));
+		}
+
+		public virtual Task<string> ReadLineAsync ()
+		{
+			return Task.Factory.StartNew (l => ((TextReader) l).ReadLine (), this);
+		}
+
+		public virtual Task<string> ReadToEndAsync ()
+		{
+			return Task.Factory.StartNew (l => ((TextReader) l).ReadToEnd (), this);
+		}
+#endif
 	}
 
 	//
 	// Synchronized Reader implementation, used internally.
 	//
 	[Serializable]
-	internal class SynchronizedReader : TextReader {
-		TextReader reader;
+	sealed class SynchronizedReader : TextReader
+	{
+		readonly TextReader reader;
 		
 		public SynchronizedReader (TextReader reader)
 		{
@@ -209,7 +243,7 @@ namespace System.IO {
 				return reader.ReadToEnd ();
 			}
 		}
-#region Read Methods
+
 		public override int Read ()
 		{
 			lock (this){
@@ -223,7 +257,35 @@ namespace System.IO {
 				return reader.Read (buffer, index, count);
 			}
 		}
-#endregion
-		
+
+#if NET_4_5
+		public override Task<int> ReadAsync (char[] buffer, int index, int count)
+		{
+			lock (this) {
+				return reader.ReadAsync (buffer, index, count);
+			}
+		}
+
+		public override Task<int> ReadBlockAsync (char[] buffer, int index, int count)
+		{
+			lock (this) {
+				return reader.ReadBlockAsync (buffer, index, count);
+			}
+		}
+
+		public override Task<string> ReadLineAsync ()
+		{
+			lock (this) {
+				return reader.ReadLineAsync ();
+			}
+		}
+
+		public override Task<string> ReadToEndAsync ()
+		{
+			lock (this) {
+				return reader.ReadToEndAsync ();
+			}
+		}
+#endif
 	}
 }

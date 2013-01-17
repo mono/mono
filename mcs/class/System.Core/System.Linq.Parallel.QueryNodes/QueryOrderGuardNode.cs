@@ -23,13 +23,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Collections.Generic;
 
 namespace System.Linq.Parallel.QueryNodes
 {
-	internal abstract class QueryOrderGuardNode<T> : QueryStreamNode<T, T>
+	internal interface QueryOrderGuardNode : IVisitableNode {
+		bool EnsureOrder { get; }
+	}
+
+	internal abstract class QueryOrderGuardNode<T> : QueryStreamNode<T, T>, QueryOrderGuardNode
 	{
 		bool ensureOrder;
 
@@ -52,7 +56,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		public override void Visit (INodeVisitor visitor)
 		{
-			visitor.Visit<T> (this);
+			visitor.Visit ((QueryOrderGuardNode)this);
 		}
 	}
 

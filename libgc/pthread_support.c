@@ -66,12 +66,15 @@
     --> Macro replaced by USE_COMPILER_TLS
 # endif
 
+#ifndef USE_COMPILER_TLS
 # if (defined(GC_DGUX386_THREADS) || defined(GC_OSF1_THREADS) || \
       defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)) || \
       defined(GC_NETBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC) || \
+      defined(GC_FREEBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC) || \
       defined(GC_OPENBSD_THREADS)
 #   define USE_PTHREAD_SPECIFIC
 # endif
+#endif
 
 # if defined(GC_DGUX386_THREADS) && !defined(_POSIX4A_DRAFT10_SOURCE)
 #   define _POSIX4A_DRAFT10_SOURCE 1
@@ -181,6 +184,10 @@ void GC_thr_init();
 static GC_bool parallel_initialized = FALSE;
 
 void GC_init_parallel();
+
+static pthread_t main_pthread_self;
+static void *main_stack, *main_altstack;
+static int main_stack_size, main_altstack_size;
 
 # if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
 
@@ -748,7 +755,7 @@ void nacl_shutdown_gc_thread()
 /* Caller holds allocation lock.					*/
 GC_thread GC_new_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     GC_thread result;
     static GC_bool first_thread_used = FALSE;
     
@@ -779,7 +786,7 @@ GC_thread GC_new_thread(pthread_t id)
 /* Caller holds allocation lock.				*/
 void GC_delete_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
     
@@ -815,7 +822,7 @@ void GC_delete_thread(pthread_t id)
 /* This is OK, but we need a way to delete a specific one.	*/
 void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     register GC_thread prev = 0;
 
@@ -844,7 +851,7 @@ void GC_delete_gc_thread(pthread_t id, GC_thread gc_id)
 /* return the most recent one.					*/
 GC_thread GC_lookup_thread(pthread_t id)
 {
-    int hv = ((word)id) % THREAD_TABLE_SZ;
+    int hv = ((unsigned long)id) % THREAD_TABLE_SZ;
     register GC_thread p = GC_threads[hv];
     
     while (p != 0 && !pthread_equal(p -> id, id)) p = p -> next;
@@ -860,6 +867,30 @@ int GC_thread_is_registered (void)
 	UNLOCK();
 
 	return ptr ? 1 : 0;
+}
+
+void GC_register_altstack (void *stack, int stack_size, void *altstack, int altstack_size)
+{
+	GC_thread thread;
+
+	LOCK();
+	thread = (void *)GC_lookup_thread(pthread_self());
+	if (thread) {
+		thread->stack = stack;
+		thread->stack_size = stack_size;
+		thread->altstack = altstack;
+		thread->altstack_size = altstack_size;
+	} else {
+		/*
+		 * This happens if we are called before GC_thr_init ().
+		 */
+		main_pthread_self = pthread_self ();
+		main_stack = stack;
+		main_stack_size = stack_size;
+		main_altstack = altstack;
+		main_altstack_size = altstack_size;
+	}
+	UNLOCK();
 }
 
 #ifdef HANDLE_FORK
@@ -1101,6 +1132,12 @@ void GC_thr_init()
          gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
 #     endif
 #endif
+		 if (pthread_self () == main_pthread_self) {
+			 t->stack = main_stack;
+			 t->stack_size = main_stack_size;
+			 t->altstack = main_altstack;
+			 t->altstack_size = main_altstack_size;
+		 }
 
     GC_stop_init();
 

@@ -6,6 +6,7 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2009-2010 Novell, Inc. 
+// Copyright 2011 Xamarin Inc
 //
 //
 
@@ -92,10 +93,15 @@ namespace Mono.CSharp
 		{
 			// It can be used more than once when importing same assembly
 			// into 2 or more global aliases
-			var definition = GetAssemblyDefinition (assembly);
+			// TODO: Should be just Add
+			GetAssemblyDefinition (assembly);
 
 			var all_types = assembly.GetTypes ();
-			ImportTypes (all_types, targetNamespace, definition.HasExtensionMethod);
+			ImportTypes (all_types, targetNamespace, true);
+
+			all_types = assembly.ManifestModule.__GetExportedTypes ();
+			if (all_types.Length != 0)
+				ImportForwardedTypes (all_types, targetNamespace);
 		}
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
@@ -107,6 +113,31 @@ namespace Mono.CSharp
 			ImportTypes (all_types, targetNamespace, false);
 
 			return module_definition;
+		}
+
+		void ImportForwardedTypes (MetaType[] types, Namespace targetNamespace)
+		{
+			Namespace ns = targetNamespace;
+			string prev_namespace = null;
+			foreach (var t in types) {
+				// IsMissing tells us the type has been forwarded and target assembly is missing 
+				if (!t.__IsMissing)
+					continue;
+
+				if (t.Name[0] == '<')
+					continue;
+
+				var it = CreateType (t, null, new DynamicTypeReader (t), true);
+				if (it == null)
+					continue;
+
+				if (prev_namespace != t.Namespace) {
+					ns = t.Namespace == null ? targetNamespace : targetNamespace.GetNamespace (t.Namespace, true);
+					prev_namespace = t.Namespace;
+				}
+
+				ns.AddType (module, it);
+			}
 		}
 
 		public void InitializeBuiltinTypes (BuiltinTypes builtin, Assembly corlib)
@@ -199,41 +230,45 @@ namespace Mono.CSharp
 			sdk_directory = new Dictionary<string, string[]> ();
 			sdk_directory.Add ("2", new string[] { "2.0", "net_2_0", "v2.0.50727" });
 			sdk_directory.Add ("4", new string[] { "4.0", "net_4_0", "v4.0.30319" });
+			sdk_directory.Add ("4.5", new string[] { "4.5", "net_4_5", "v4.0.30319" });
 		}
 
 		public StaticLoader (StaticImporter importer, CompilerContext compiler)
 			: base (compiler)
 		{
 			this.importer = importer;
-			domain = new Universe ();
+			domain = new Universe (UniverseOptions.MetadataOnly);
 			domain.EnableMissingMemberResolution ();
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 
-			var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
-			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
-			string sdk_path = null;
+			if (compiler.Settings.StdLib) {
+				var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
+				string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
 
-			string sdk_version = compiler.Settings.SdkVersion ?? "4";
-			string[] sdk_sub_dirs;
+				string sdk_path = null;
 
-			if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))
-				sdk_sub_dirs = new string[] { sdk_version };
+				string sdk_version = compiler.Settings.SdkVersion ?? "4.5";
+				string[] sdk_sub_dirs;
 
-			foreach (var dir in sdk_sub_dirs) {
-				sdk_path = Path.Combine (fx_path, dir);
-				if (File.Exists (Path.Combine (sdk_path, "mscorlib.dll")))
-					break;
+				if (!sdk_directory.TryGetValue (sdk_version, out sdk_sub_dirs))
+					sdk_sub_dirs = new string[] { sdk_version };
 
-				sdk_path = null;
+				foreach (var dir in sdk_sub_dirs) {
+					sdk_path = Path.Combine (fx_path, dir);
+					if (File.Exists (Path.Combine (sdk_path, "mscorlib.dll")))
+						break;
+
+					sdk_path = null;
+				}
+
+				if (sdk_path == null) {
+					compiler.Report.Warning (-1, 1, "SDK path could not be resolved");
+					sdk_path = corlib_path;
+				}
+
+				paths.Add (sdk_path);
 			}
-
-			if (sdk_path == null) {
-				compiler.Report.Warning (-1, 1, "SDK path could not be resolved");
-				sdk_path = corlib_path;
-			}
-
-			paths.Add (sdk_path);
 		}
 
 		#region Properties
@@ -241,9 +276,6 @@ namespace Mono.CSharp
 		public Assembly Corlib {
 			get {
 				return corlib;
-			}
-			set {
-				corlib = value;
 			}
 		}
 
@@ -356,9 +388,6 @@ namespace Mono.CSharp
 				default_references.Add ("Microsoft.CSharp.dll");
 			}
 
-			if (compiler.Settings.Version == LanguageVersion.Future)
-				default_references.Add ("Mono.Async.dll");
-
 			return default_references.ToArray ();
 		}
 
@@ -367,7 +396,7 @@ namespace Mono.CSharp
 			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
 		}
 
-		public override Assembly LoadAssemblyFile (string fileName)
+		public override Assembly LoadAssemblyFile (string fileName, bool isImplicitReference)
 		{
 			bool? has_extension = null;
 			foreach (var path in paths) {
@@ -388,60 +417,69 @@ namespace Mono.CSharp
 				}
 
 				try {
-					using (RawModule module = domain.OpenRawModule (file)) {
-						if (!module.IsManifestModule) {
-							Error_AssemblyIsModule (fileName);
-							return null;
-						}
+					using (var stream = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+						using (RawModule module = domain.OpenRawModule (stream, file)) {
+							if (!module.IsManifestModule) {
+								Error_AssemblyIsModule (fileName);
+								return null;
+							}
 
-						//
-						// check whether the assembly can be actually imported without
-						// collision
-						//
-						var an = module.GetAssemblyName ();
-						foreach (var entry in loaded_names) {
-							var loaded_name = entry.Item1;
-							if (an.Name != loaded_name.Name)
-								continue;
+							//
+							// check whether the assembly can be actually imported without
+							// collision
+							//
+							var an = module.GetAssemblyName ();
+							foreach (var entry in loaded_names) {
+								var loaded_name = entry.Item1;
+								if (an.Name != loaded_name.Name)
+									continue;
 
-							if (an.CodeBase == loaded_name.CodeBase)
-								return entry.Item3;
+								if (module.ModuleVersionId == entry.Item3.ManifestModule.ModuleVersionId)
+									return entry.Item3;
 							
-							if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
-								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-								compiler.Report.SymbolRelatedToPreviousError (fileName);
-								compiler.Report.Error (1704,
-									"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
-									an.Name);
-								return null;
+								if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
+									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+									compiler.Report.SymbolRelatedToPreviousError (fileName);
+									compiler.Report.Error (1704,
+										"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
+										an.Name);
+									return null;
+								}
+
+								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
+									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+									compiler.Report.SymbolRelatedToPreviousError (fileName);
+									compiler.Report.Error (1703,
+										"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
+										an.FullName);
+									return null;
+								}
 							}
 
-							if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
-								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-								compiler.Report.SymbolRelatedToPreviousError (fileName);
-								compiler.Report.Error (1703,
-									"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
-									an.FullName);
-								return null;
-							}
+							if (compiler.Settings.DebugFlags > 0)
+								Console.WriteLine ("Loading assembly `{0}'", fileName);
+
+							var assembly = domain.LoadAssembly (module);
+							if (assembly != null)
+								loaded_names.Add (Tuple.Create (an, fileName, assembly));
+
+							return assembly;
 						}
-
-						if (compiler.Settings.DebugFlags > 0)
-							Console.WriteLine ("Loading assembly `{0}'", fileName);
-
-						var assembly = domain.LoadAssembly (module);
-						if (assembly != null)
-							loaded_names.Add (Tuple.Create (an, fileName, assembly));
-
-						return assembly;
 					}
-				} catch {
-					Error_FileCorrupted (file);
+				} catch (Exception e) {
+					if (compiler.Settings.DebugFlags > 0)
+						Console.WriteLine ("Exception during loading: {0}'", e.ToString ());
+
+					if (!isImplicitReference)
+						Error_FileCorrupted (file);
+
 					return null;
 				}
 			}
 
-			Error_FileNotFound (fileName);
+			if (!isImplicitReference)
+				Error_FileNotFound (fileName);
+
 			return null;
 		}
 
@@ -468,39 +506,6 @@ namespace Mono.CSharp
 
 			Error_FileNotFound (moduleName);
 			return null;				
-		}
-
-		//
-		// Optimized default assembly loader version
-		//
-		public override Assembly LoadAssemblyDefault (string assembly)
-		{
-			foreach (var path in paths) {
-				var file = Path.Combine (path, assembly);
-
-				if (compiler.Settings.DebugFlags > 0)
-					Console.WriteLine ("Probing default assembly location `{0}'", file);
-
-				if (!File.Exists (file))
-					continue;
-
-				try {
-					if (compiler.Settings.DebugFlags > 0)
-						Console.WriteLine ("Loading default assembly `{0}'", file);
-
-					var a = domain.LoadFile (file);
-					if (a != null) {
-						loaded_names.Add (Tuple.Create (a.GetName (), file, a));
-					}
-
-					return a;
-				} catch {
-					// Default assemblies can fail to load without error
-					return null;
-				}
-			}
-
-			return null;
 		}
 
 		public override void LoadReferences (ModuleContainer module)
@@ -575,7 +580,7 @@ namespace Mono.CSharp
 
 		public override void SetFlags (uint flags, Location loc)
 		{
-			builder.__SetAssemblyFlags ((AssemblyNameFlags) flags);
+			builder.__AssemblyFlags = (AssemblyNameFlags) flags;
 		}
 
 		public override void SetVersion (Version version, Location loc)

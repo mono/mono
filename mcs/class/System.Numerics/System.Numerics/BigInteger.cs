@@ -251,8 +251,13 @@ namespace System.Numerics {
 				sign = 1;
 
 			if (sign == 1) {
-				while (value [len - 1] == 0)
-					--len;
+				while (value [len - 1] == 0) {
+					if (--len == 0) {
+						sign = 0;
+						data = ZERO;
+						return;
+					}
+				}
 
 				int full_words, size;
 				full_words = size = len / 4;

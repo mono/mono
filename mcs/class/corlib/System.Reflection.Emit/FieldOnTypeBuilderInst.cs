@@ -27,15 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
 	/*
 	 * This class represents a field of an instantiation of a generic type builder.
 	 */
+	[StructLayout (LayoutKind.Sequential)]
 	internal class FieldOnTypeBuilderInst : FieldInfo
 	{
 		#region Keep in sync with object-internals.h
@@ -72,30 +75,22 @@ namespace System.Reflection.Emit
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			return fb.IsDefined (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			return fb.GetCustomAttributes (inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			if (!instantiation.IsCompilerContext)
-				throw new NotSupportedException ();
-			return fb.GetCustomAttributes (attributeType, inherit);
+			throw new NotSupportedException ();
 		}
 
 		public override string ToString ()
 		{
-			if (!instantiation.IsCompilerContext)
-				return fb.FieldType.ToString () + " " + Name;
-			return FieldType.ToString () + " " + Name;
+			return fb.FieldType.ToString () + " " + Name;
 		}
 		//
 		// FieldInfo members
@@ -115,17 +110,13 @@ namespace System.Reflection.Emit
 
 		public override int MetadataToken {
 			get {
-				if (!instantiation.IsCompilerContext)
-					throw new InvalidOperationException ();
-				return fb.MetadataToken;
+				throw new InvalidOperationException ();
 			} 
 		}
 
 		public override Type FieldType {
 			get {
-				if (!instantiation.IsCompilerContext)
-					throw new NotSupportedException ();
-				return instantiation.InflateType (fb.FieldType);
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -138,3 +129,4 @@ namespace System.Reflection.Emit
 		}
 	}
 }
+#endif

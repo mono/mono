@@ -1,0 +1,68 @@
+<Type Name="UpdateEventType" FullName="Mono.Data.Sqlite.UpdateEventType">
+  <TypeSignature Language="C#" Value="public enum UpdateEventType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed UpdateEventType extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            Whenever an update event is triggered on a connection, this enum will indicate
+            exactly what type of operation is being performed.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="Delete" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.UpdateEventType Delete = int32(9)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.UpdateEventType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            A row is being deleted from the given database and table
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="C#" Value="Insert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.UpdateEventType Insert = int32(18)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.UpdateEventType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            A row is being inserted into the table.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="Update" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.UpdateEventType Update = int32(23)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.UpdateEventType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            A row is being updated in the table.
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

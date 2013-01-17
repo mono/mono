@@ -72,6 +72,12 @@ namespace System.Runtime.Serialization.Json
 			if (serialized_object_count ++ == serializer.MaxItemsInObjectGraph)
 				throw SerializationError (String.Format ("The object graph exceeded the maximum object count '{0}' specified in the serializer", serializer.MaxItemsInObjectGraph));
 
+			bool nullable = false;
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
+				nullable = true;
+				type = Nullable.GetUnderlyingType (type);
+			}
+
 			bool isNull = reader.GetAttribute ("type") == "null";
 
 			switch (Type.GetTypeCode (type)) {
@@ -119,9 +125,34 @@ namespace System.Runtime.Serialization.Json
 			case TypeCode.DateTime:
 				// it does not use ReadElementContentAsDateTime(). Different string format.
 				var s = reader.ReadElementContentAsString ();
-				if (s.Length < 2 || !s.StartsWith ("/Date(", StringComparison.Ordinal) || !s.EndsWith (")/", StringComparison.Ordinal))
+				if (s.Length < 2 || !s.StartsWith ("/Date(", StringComparison.Ordinal) || !s.EndsWith (")/", StringComparison.Ordinal)) {
+					if (nullable)
+						return null;
 					throw new XmlException ("Invalid JSON DateTime format. The value format should be '/Date(UnixTime)/'");
-				return new DateTime (1970, 1, 1).AddMilliseconds (long.Parse (s.Substring (6, s.Length - 8)));
+				}
+
+				// The date can contain [SIGN]LONG, [SIGN]LONG+HOURSMINUTES or [SIGN]LONG-HOURSMINUTES
+				// the format for HOURSMINUTES is DDDD
+				int tidx = s.IndexOf ('-', 8);
+				if (tidx == -1)
+					tidx = s.IndexOf ('+', 8);
+				int minutes = 0;
+				if (tidx == -1){
+					s = s.Substring (6, s.Length - 8);
+				} else {
+					int offset;
+					int.TryParse (s.Substring (tidx+1, s.Length-3-tidx), out offset);
+
+					minutes = (offset % 100) + (offset / 100) * 60;
+					if (s [tidx] == '-')
+						minutes = -minutes;
+
+					s = s.Substring (6, tidx-6);
+				}
+				var date = new DateTime (1970, 1, 1).AddMilliseconds (long.Parse (s));
+				if (minutes != 0)
+					date = date.AddMinutes (minutes);
+				return date;
 			default:
 				if (type == typeof (Guid)) {
 					return new Guid (reader.ReadElementContentAsString ());

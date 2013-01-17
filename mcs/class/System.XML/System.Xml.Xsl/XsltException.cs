@@ -70,7 +70,6 @@ namespace System.Xml.Xsl
 
 		#region Constructors
 
-#if NET_2_0
 		public XsltException ()
 			: this (string.Empty, (Exception) null)
 		{
@@ -80,7 +79,6 @@ namespace System.Xml.Xsl
 			: this (message, (Exception) null)
 		{
 		}
-#endif
 
 		public XsltException (string message, Exception innerException)
 			: this ("{0}", message, innerException, 0, 0, (string) null)
@@ -116,19 +114,11 @@ namespace System.Xml.Xsl
 
 		#region Properties
 
-#if NET_2_0
 		public virtual int LineNumber {
-#else
-		public int LineNumber {
-#endif
 			get { return lineNumber; }
 		}
 
-#if NET_2_0
 		public virtual int LinePosition {
-#else
-		public int LinePosition {
-#endif
 			get { return linePosition; }
 		}
 
@@ -138,11 +128,7 @@ namespace System.Xml.Xsl
 			}
 		}
 
-#if NET_2_0
 		public virtual string SourceUri {
-#else
-		public string SourceUri {
-#endif
 			get { return sourceUri; }
 		}
 

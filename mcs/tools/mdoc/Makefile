@@ -3,10 +3,10 @@ SUBDIRS =
 include ../../build/rules.make
 
 MDOC_COMMON_FLAGS = \
-	/resource:../monodoc/Resources/mdoc-html-format.xsl,mdoc-html-format.xsl    \
-	/resource:../monodoc/Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl      \
-	/resource:../monodoc/Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl  \
-	/resource:../monodoc/Resources/mono-ecma-css.xsl,mono-ecma-css.xsl          \
+	/resource:../../class/monodoc/Resources/mdoc-html-format.xsl,mdoc-html-format.xsl    \
+	/resource:../../class/monodoc/Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl      \
+	/resource:../../class/monodoc/Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl  \
+	/resource:../../class/monodoc/Resources/mono-ecma-css.xsl,mono-ecma-css.xsl          \
 	/resource:Resources/defaulttemplate.xsl,defaulttemplate.xsl                 \
 	/resource:Resources/monodoc-ecma.xsd,monodoc-ecma.xsd                       \
 	/resource:Resources/msitomsx.xsl,msitomsx.xsl                               \
@@ -18,9 +18,9 @@ MDOC_COMMON_FLAGS = \
 	/r:Mono.Cecil.dll
 
 LOCAL_MCS_FLAGS = $(MDOC_COMMON_FLAGS) \
-	/r:$(topdir)/class/lib/net_2_0/monodoc.dll
+	/r:monodoc.dll
 PROGRAM = mdoc.exe
-PROGRAM_DEPS = $(topdir)/class/lib/net_2_0/monodoc.dll
+PROGRAM_DEPS = $(topdir)/class/lib/$(PROFILE)/monodoc.dll
 
 ifdef NET
 all : copy-with-deps
@@ -28,16 +28,16 @@ all : copy-with-deps
 copy-with-deps:
 	-mkdir mdoc-net
 	cp $(PROGRAM) mdoc-net
-	cp $(topdir)/class/lib/net_4_0/Commons.Xml.Relaxng.dll mdoc-net
-	cp $(topdir)/class/lib/net_4_0/ICSharpCode.SharpZipLib.dll mdoc-net
-	cp $(topdir)/class/lib/net_4_0/Mono.Cecil.dll mdoc-net
-	cp $(topdir)/class/lib/net_2_0/monodoc.dll mdoc-net
+	cp $(topdir)/class/lib/$(PROFILE)/Commons.Xml.Relaxng.dll mdoc-net
+	cp $(topdir)/class/lib/$(PROFILE)/ICSharpCode.SharpZipLib.dll mdoc-net
+	cp $(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll mdoc-net
+	cp $(topdir)/class/lib/$(PROFILE)/monodoc.dll mdoc-net
 endif
 
 MONODOC_RESOURCES = \
-	../monodoc/Resources/mdoc-html-utils.xsl    \
-	../monodoc/Resources/mdoc-sections-css.xsl  \
-	../monodoc/Resources/mono-ecma-css.xsl
+	../../class/monodoc/Resources/mdoc-html-utils.xsl    \
+	../../class/monodoc/Resources/mdoc-sections-css.xsl  \
+	../../class/monodoc/Resources/mono-ecma-css.xsl
 
 MDOC_RESOURCES = \
 	Resources/defaulttemplate.xsl     \
@@ -63,10 +63,13 @@ $(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(PROGRAM_DEPS)
 
 include ../../build/executable.make
 
+$(PROGRAM) : $(build_lib)
+	cp $< $@
+
 $(PROGRAM) : Makefile
 
 MONO = \
-	MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
 	$(RUNTIME) $(RUNTIME_FLAGS)
 
 dist-local: dist-default dist-tests
@@ -109,9 +112,9 @@ check-monodocer-update: $(PROGRAM)
 check-monodocer: $(PROGRAM)
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MONO) $(PROGRAM) update --debug --exceptions=all -o Test/en.actual Test/DocTest.dll
 	diff --exclude=.svn -rup Test/en.expected Test/en.actual
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll 
+	$(MONO) $(PROGRAM) update --debug --exceptions=all -o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected Test/en.actual
 
 check-monodocer-since-update: $(PROGRAM)
@@ -125,29 +128,49 @@ check-monodocer-since-update: $(PROGRAM)
 check-monodocer-since: $(PROGRAM)
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest.dll 
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -o Test/en.actual Test/DocTest.dll 
 	$(MAKE) Test/DocTest.dll-v2
-	$(MONO) $(PROGRAM) update --exceptions=all --since="Version 2.0" \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all --since="Version 2.0" \
 		-o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected.since Test/en.actual
+
+check-monodocer-delete-update: $(PROGRAM)
+	find Test/en.expected.delete -type f -exec rm "{}" \;
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.expected.delete Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v2
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.expected.delete Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) update -fno-assembly-versions --delete --exceptions=all \
+		-o Test/en.expected.delete Test/DocTest.dll
+
+check-monodocer-delete: $(PROGRAM)
+	rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v2
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -o Test/en.actual Test/DocTest.dll
+	$(MAKE) Test/DocTest.dll-v1
+	$(MONO) $(PROGRAM) --debug update -fno-assembly-versions --delete --exceptions=all -o Test/en.actual Test/DocTest.dll
+	diff --exclude=.svn -rup Test/en.expected.delete Test/en.actual
 
 check-monodocer-importslashdoc-update: $(PROGRAM)
 	find Test/en.expected.importslashdoc -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1 TEST_CSCFLAGS=-doc:Test/DocTest.xml
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/DocTest.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/DocTest.xml \
 		-o Test/en.expected.importslashdoc Test/DocTest.dll 
 
 check-monodocer-importslashdoc: $(PROGRAM)
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1 TEST_CSCFLAGS=-doc:Test/DocTest.xml
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/DocTest.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/DocTest.xml \
 		-o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected.importslashdoc Test/en.actual
 
 check-monodocer-importecmadoc-update: $(PROGRAM)
 	find Test/en.expected.importecmadoc -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/TestEcmaDocs.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/TestEcmaDocs.xml \
 		'--type=System.Action`1' --type=System.AsyncCallback \
 		--type=System.Environment --type=System.Array \
 		-o Test/en.expected.importecmadoc Test/DocTest.dll 
@@ -155,7 +178,7 @@ check-monodocer-importecmadoc-update: $(PROGRAM)
 check-monodocer-importecmadoc: $(PROGRAM)
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) $(PROGRAM) update --exceptions=all -i Test/TestEcmaDocs.xml \
+	$(MONO) $(PROGRAM) --debug update --exceptions=all -i Test/TestEcmaDocs.xml \
 		'--type=System.Action`1' --type=System.AsyncCallback \
 		--type=System.Environment --type=System.Array \
 		-o Test/en.actual Test/DocTest.dll 
@@ -227,6 +250,7 @@ check-doc-tools: check-monodocer-since \
 	check-monodocer-importecmadoc \
 	check-monodocer-importslashdoc \
 	check-monodocer \
+	check-monodocer-delete \
 	check-mdoc-export-html \
 	check-mdoc-export-html-with-version \
 	check-mdoc-export-msxdoc \
@@ -236,6 +260,7 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \
 	check-monodocer-importslashdoc-update \
 	check-monodocer-update \
+	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
 	check-mdoc-validate-update

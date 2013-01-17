@@ -29,7 +29,7 @@ class Top {
 		public int get_two () { return 2; }
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		XA x = new XA ();
 

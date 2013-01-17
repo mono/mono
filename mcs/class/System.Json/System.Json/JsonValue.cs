@@ -162,7 +162,10 @@ namespace System.Json
 				foreach (JsonValue v in ((JsonArray) this)) {
 					if (following)
 						w.Write (", ");
-					v.SaveInternal (w);
+					if (v != null) 
+						v.SaveInternal (w);
+					else
+						w.Write ("null");
 					following = true;
 				}
 				w.Write (']');

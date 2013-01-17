@@ -31,10 +31,10 @@ namespace System.Collections.Specialized
 	public interface IOrderedDictionary : IDictionary
 	{
 		new IDictionaryEnumerator GetEnumerator ();
-		void Insert (int idx, object key, object value);
-		void RemoveAt (int idx);
+		void Insert (int index, object key, object value);
+		void RemoveAt (int index);
 		
-		object this[int idx] {
+		object this[int index] {
 			get; set;
 		}
 	}

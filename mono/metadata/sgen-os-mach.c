@@ -1,5 +1,5 @@
 /*
- * sgen-os-mach.c: Simple generational GC.
+ * sgen-os-mach.c: Mach-OS support.
  *
  * Author:
  *	Paolo Molaro (lupus@ximian.com)
@@ -7,25 +7,20 @@
  * 	Geoff Norton (gnorton@novell.com)
  *
  * Copyright 2010 Novell, Inc (http://www.novell.com)
+ * Copyright (C) 2012 Xamarin Inc
  *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include "config.h"
@@ -35,6 +30,7 @@
 #include <glib.h>
 #include "metadata/sgen-gc.h"
 #include "metadata/sgen-archdep.h"
+#include "metadata/sgen-protocol.h"
 #include "metadata/object-internals.h"
 #include "metadata/gc-internal.h"
 
@@ -44,13 +40,13 @@
 
 #if defined(__MACH__) && MONO_MACH_ARCH_SUPPORTED
 gboolean
-mono_sgen_resume_thread (SgenThreadInfo *info)
+sgen_resume_thread (SgenThreadInfo *info)
 {
-	return thread_resume (info->mach_port) == KERN_SUCCESS;
+	return thread_resume (info->info.native_handle) == KERN_SUCCESS;
 }
 
 gboolean
-mono_sgen_suspend_thread (SgenThreadInfo *info)
+sgen_suspend_thread (SgenThreadInfo *info)
 {
 	mach_msg_type_number_t num_state;
 	thread_state_t state;
@@ -63,11 +59,11 @@ mono_sgen_suspend_thread (SgenThreadInfo *info)
 	state = (thread_state_t) alloca (mono_mach_arch_get_thread_state_size ());
 	mctx = (mcontext_t) alloca (mono_mach_arch_get_mcontext_size ());
 
-	ret = thread_suspend (info->mach_port);
+	ret = thread_suspend (info->info.native_handle);
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 
-	ret = mono_mach_arch_get_thread_state (info->mach_port, state, &num_state);
+	ret = mono_mach_arch_get_thread_state (info->info.native_handle, state, &num_state);
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 
@@ -75,8 +71,9 @@ mono_sgen_suspend_thread (SgenThreadInfo *info)
 	ctx.uc_mcontext = mctx;
 
 	info->stopped_domain = mono_mach_arch_get_tls_value_from_thread (
-		mono_thread_info_get_tid (info), mono_domain_get_tls_offset ());
+		mono_thread_info_get_tid (info), mono_domain_get_tls_key ());
 	info->stopped_ip = (gpointer) mono_mach_arch_get_ip (state);
+	info->stack_start = NULL;
 	stack_start = (char*) mono_mach_arch_get_sp (state) - REDZONE_SIZE;
 	/* If stack_start is not within the limits, then don't set it in info and we will be restarted. */
 	if (stack_start >= info->stack_start_limit && info->stack_start <= info->stack_end) {
@@ -84,10 +81,8 @@ mono_sgen_suspend_thread (SgenThreadInfo *info)
 
 #ifdef USE_MONO_CTX
 		mono_sigctx_to_monoctx (&ctx, &info->ctx);
-		info->monoctx = &info->ctx;
 #else
 		ARCH_COPY_SIGCTX_REGS (&info->regs, &ctx);
-		info->stopped_regs = &info->regs;
 #endif
 	} else {
 		g_assert (!info->stack_start);
@@ -95,20 +90,24 @@ mono_sgen_suspend_thread (SgenThreadInfo *info)
 
 	/* Notify the JIT */
 	if (mono_gc_get_gc_callbacks ()->thread_suspend_func)
-		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, &ctx);
+		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, &ctx, NULL);
+
+	SGEN_LOG (2, "thread %p stopped at %p stack_start=%p", (void*)info->info.native_handle, info->stopped_ip, info->stack_start);
+
+	binary_protocol_thread_suspend ((gpointer)mono_thread_info_get_tid (info), info->stopped_ip);
 
 	return TRUE;
 }
 
 void
-mono_sgen_wait_for_suspend_ack (int count)
+sgen_wait_for_suspend_ack (int count)
 {
     /* mach thread_resume is synchronous so we dont need to wait for them */
 }
 
 /* LOCKING: assumes the GC lock is held */
 int
-mono_sgen_thread_handshake (BOOL suspend)
+sgen_thread_handshake (BOOL suspend)
 {
 	SgenThreadInfo *cur_thread = mono_thread_info_current ();
 	kern_return_t ret;
@@ -117,20 +116,26 @@ mono_sgen_thread_handshake (BOOL suspend)
 	int count = 0;
 
 	FOREACH_THREAD_SAFE (info) {
-		if (info == cur_thread || mono_sgen_is_worker_thread (mono_thread_info_get_tid (info)))
+		if (info->joined_stw == suspend)
+			continue;
+		info->joined_stw = suspend;
+
+		if (info == cur_thread || sgen_is_worker_thread (mono_thread_info_get_tid (info)))
+			continue;
+		if (info->gc_disabled)
 			continue;
 
 		if (suspend) {
 			g_assert (!info->doing_handshake);
 			info->doing_handshake = TRUE;
 
-			if (!mono_sgen_suspend_thread (info))
+			if (!sgen_suspend_thread (info))
 				continue;
 		} else {
 			g_assert (info->doing_handshake);
 			info->doing_handshake = FALSE;
 
-			ret = thread_resume (info->mach_port);
+			ret = thread_resume (info->info.native_handle);
 			if (ret != KERN_SUCCESS)
 				continue;
 		}
@@ -140,7 +145,7 @@ mono_sgen_thread_handshake (BOOL suspend)
 }
 
 void
-mono_sgen_os_init (void)
+sgen_os_init (void)
 {
 }
 

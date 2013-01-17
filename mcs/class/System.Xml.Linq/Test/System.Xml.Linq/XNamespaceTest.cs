@@ -136,5 +136,21 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsFalse (XNamespace.None.Equals (XNamespace.Get (" ")), "#3");
 			Assert.IsFalse (XNamespace.None == XNamespace.Get (" "), "#4");
 		}
+
+		[Test]
+		public void TestXmlNoNs ()
+		{
+			var ns = XNamespace.Get ("urn:foo");
+			var element = new XElement ("Demo", new XAttribute (ns + "nil", true));
+			Assert.AreEqual ("<Demo p1:nil=\"true\" xmlns:p1=\"urn:foo\" />", element.ToString ());
+		}
+
+		[Test]
+		public void TestXmlWithNs ()
+		{
+			var ns = XNamespace.Get ("urn:foo");
+			var element = new XElement ("Demo", new XAttribute (ns + "nil", true), new XAttribute (XNamespace.Xmlns + "xsi", ns));
+			Assert.AreEqual ("<Demo xsi:nil=\"true\" xmlns:xsi=\"urn:foo\" />", element.ToString ());
+		}
 	}
 }

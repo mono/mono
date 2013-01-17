@@ -50,7 +50,6 @@ $	Currency symbol. The actual character displayed will be the currency symbol ap
 
  * */
  
-#if NET_2_0
 using System.Globalization;
 using System.Collections;
 using System.Diagnostics;
@@ -75,8 +74,8 @@ namespace System.ComponentModel {
 		
 		private EditPosition [] edit_positions;
 		
-		private static char default_prompt_char = '_';
-		private static char default_password_char = char.MinValue;
+		const char default_prompt_char = '_';
+		const char default_password_char = char.MinValue;
 		
 #endregion
 
@@ -2016,4 +2015,3 @@ namespace System.ComponentModel {
 
 	}
 }
-#endif

@@ -31,7 +31,7 @@ LIB_MCS_FLAGS +=	\
 	-r:J2SE.Helpers.dll			\
 	$(OTHER_LIB_MCS_FLAGS)
 else 
-MOBILE := $(filter monotouch monodroid, $(PROFILE))
+MOBILE := $(filter monotouch monodroid mobile, $(PROFILE))
 ifdef MOBILE
 LIB_MCS_FLAGS += \
 	-r:Mono.Data.Tds.dll \
@@ -44,7 +44,7 @@ LIB_MCS_FLAGS += \
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Core.dll -r:Mono.Data.Sqlite.dll -nowarn:618,169,612,219,168
 
 TEST_MONO_PATH = .
 
@@ -57,19 +57,20 @@ EXTRA_DISTFILES = \
 	Test/System.Data/schemas/ChangeLog	\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
 	Mono.Data.SqlExpressions/Parser.jay	\
-	app_test_2.0.config			\
-	Test/System.Data/binserialize/*.bin
+	app_test_net_2_0.config			\
+	app_test_net_4_5.config			\
+	Test/System.Data/binserialize/*.bin	\
+	SqliteTest.db
 
 BUILT_SOURCES = Mono.Data.SqlExpressions/Parser.cs
 
 Mono.Data.SqlExpressions/Parser.cs: Mono.Data.SqlExpressions/Parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@
+	$(topdir)/jay/jay -vct < $(topdir)/jay/skeleton.cs $(CURDIR)/$< >$@
+	rm -f y.output
 
 include ../../build/library.make
 
-ifeq (net_2_0, $(PROFILE))
 $(test_lib): $(test_lib).config
 
-$(test_lib).config: app_test_2.0.config
+$(test_lib).config: app_test_$(PROFILE).config
 	cp $< $@
-endif

@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Net.Sockets
 {
 	public enum IOControlCode: long
@@ -69,4 +68,3 @@ namespace System.Net.Sockets
 		UnicastInterface			= 0x98000006,
 	}
 }
-#endif

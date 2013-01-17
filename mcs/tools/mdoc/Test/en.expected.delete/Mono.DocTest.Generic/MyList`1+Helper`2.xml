@@ -1,0 +1,54 @@
+<Type Name="MyList&lt;T&gt;+Helper&lt;U,V&gt;" FullName="Mono.DocTest.Generic.MyList&lt;T&gt;+Helper&lt;U,V&gt;">
+  <TypeSignature Language="C#" Value="public class MyList&lt;T&gt;.Helper&lt;U,V&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi beforefieldinit MyList`1/Helper`2&lt;T, U, V&gt; extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+    <TypeParameter Name="U" />
+    <TypeParameter Name="V" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="U">To be added.</typeparam>
+    <typeparam name="V">To be added.</typeparam>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Helper ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UseT">
+      <MemberSignature Language="C#" Value="public void UseT (T a, U b, V c);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UseT(!T a, !U b, !V c) cil managed" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="T" />
+        <Parameter Name="b" Type="U" />
+        <Parameter Name="c" Type="V" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <param name="c">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

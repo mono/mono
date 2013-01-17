@@ -4,7 +4,7 @@ namespace B
 {
 	class Program
 	{
-		static int Main()
+		public static int Main()
 		{
 			int? i = 0;
 			bool b = i == (int?)null;

@@ -17,7 +17,7 @@ public class Foo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<double> a = new Foo<double> ();
 		a.Map<string> ("Hello World");

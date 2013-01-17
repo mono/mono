@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 
@@ -42,5 +41,3 @@ namespace System.Net.Sockets
 		UseOnlyOverlappedIO	= 0x00000008
 	}
 }
-
-#endif

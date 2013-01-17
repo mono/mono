@@ -89,8 +89,6 @@ struct sigcontext {
 };
 #endif  // sun, Solaris x86
 
-#define MONO_ARCH_SUPPORT_SIMD_INTRINSICS 1
-
 #ifndef DISABLE_SIMD
 #define MONO_ARCH_SIMD_INTRINSICS 1
 #define MONO_ARCH_NEED_SIMD_BANK 1
@@ -195,6 +193,7 @@ typedef struct MonoCompileArch {
 #ifdef HOST_WIN32
 	gpointer	unwindinfo;
 #endif
+	gpointer seq_point_info_var;
 	gpointer ss_trigger_page_var;
 	gpointer lmf_var;
 } MonoCompileArch;
@@ -327,7 +326,9 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 
 #define MONO_ARCH_ENABLE_REGALLOC_IN_EH_BLOCKS 1
+#if !defined(__APPLE__)
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
+#endif
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_ATOMIC_ADD 1
@@ -344,7 +345,7 @@ typedef struct MonoCompileArch {
  * used by the trampoline as a scratch register and hence might be
  * clobbered across method call boundaries.
  */
-#define MONO_ARCH_RGCTX_REG AMD64_R10
+#define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
 #define MONO_ARCH_HAVE_CMOV_OPS 1
 #define MONO_ARCH_HAVE_NOTIFY_PENDING_EXC 1
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
@@ -356,7 +357,6 @@ typedef struct MonoCompileArch {
 #if !defined(HOST_WIN32)
 #define MONO_ARCH_MONITOR_OBJECT_REG MONO_AMD64_ARG_REG1
 #endif
-#define MONO_ARCH_HAVE_STATIC_RGCTX_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
@@ -386,6 +386,8 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
+#define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
+#define MONO_ARCH_HAVE_CREATE_LLVM_NATIVE_THUNK 1
 
 gboolean
 mono_amd64_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig) MONO_INTERNAL;

@@ -242,7 +242,9 @@ mon_finalize (MonoThreadsSync *mon)
 
 	mon->data = monitor_freelist;
 	monitor_freelist = mon;
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_sync_blocks--;
+#endif
 }
 
 /* LOCKING: this is called with monitor_mutex held */
@@ -268,7 +270,7 @@ mon_new (gsize id)
 							new->wait_list = g_slist_remove (new->wait_list, new->wait_list->data);
 						}
 					}
-					mono_gc_weak_link_remove (&new->data);
+					mono_gc_weak_link_remove (&new->data, FALSE);
 					new->data = monitor_freelist;
 					monitor_freelist = new;
 				}
@@ -309,8 +311,11 @@ mon_new (gsize id)
 
 	new->owner = id;
 	new->nest = 1;
+	new->data = NULL;
 	
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_sync_blocks++;
+#endif
 	return new;
 }
 
@@ -536,7 +541,9 @@ retry:
 	}
 
 	/* The object must be locked by someone else... */
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->thread_contentions++;
+#endif
 
 	/* If ms is 0 we don't block, but just fail straight away */
 	if (ms == 0) {
@@ -612,8 +619,10 @@ retry_contended:
 	
 	InterlockedIncrement (&mon->entry_count);
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->thread_queue_len++;
 	mono_perfcounters->thread_queue_max++;
+#endif
 	thread = mono_thread_internal_current ();
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
@@ -627,7 +636,9 @@ retry_contended:
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
 	InterlockedDecrement (&mon->entry_count);
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->thread_queue_len--;
+#endif
 
 	if (ms != INFINITE) {
 		now = mono_msec_ticks ();
@@ -871,11 +882,15 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	static MonoMethod *compare_exchange_method;
-	int obj_null_branch, true_locktaken_branch, syncp_null_branch, has_owner_branch, other_owner_branch, tid_branch, thin_hash_branch;
+	int obj_null_branch, true_locktaken_branch = 0, syncp_null_branch, has_owner_branch, other_owner_branch, tid_branch, thin_hash_branch;
 	int tid_loc, syncp_loc, owner_loc;
 	int thread_tls_offset;
 	gboolean is_v4 = mono_method_signature (monitor_enter_method)->param_count == 2;
 	int fast_path_idx = is_v4 ? FASTPATH_ENTERV4 : FASTPATH_ENTER;
+	WrapperInfo *info;
+
+	/* The !is_v4 version is not used/tested */
+	g_assert (is_v4);
 
 	thread_tls_offset = mono_thread_get_tls_offset ();
 	if (thread_tls_offset == -1)
@@ -907,7 +922,7 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 	syncp_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	owner_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
-	emit_obj_syncp_check (mb, syncp_loc, &obj_null_branch, &true_locktaken_branch, &syncp_null_branch, &thin_hash_branch, FALSE);
+	emit_obj_syncp_check (mb, syncp_loc, &obj_null_branch, is_v4 ? &true_locktaken_branch : NULL, &syncp_null_branch, &thin_hash_branch, FALSE);
 
 	/*
 	  mono. tls	thread_tls_offset					threadp
@@ -1015,6 +1030,8 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 	mono_mb_patch_short_branch (mb, syncp_null_branch);
 	mono_mb_patch_short_branch (mb, has_owner_branch);
 	mono_mb_patch_short_branch (mb, other_owner_branch);
+	if (true_locktaken_branch)
+		mono_mb_patch_short_branch (mb, true_locktaken_branch);
 	mono_mb_emit_byte (mb, CEE_LDARG_0);
 	if (is_v4)
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
@@ -1022,6 +1039,11 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 	mono_mb_emit_byte (mb, CEE_RET);
 
 	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_enter_method), 5), fast_path_idx);
+
+	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (WrapperInfo));
+	info->subtype = is_v4 ? WRAPPER_SUBTYPE_FAST_MONITOR_ENTER_V4 : WRAPPER_SUBTYPE_FAST_MONITOR_ENTER;
+	mono_marshal_set_wrapper_info (res, info);
+
 	mono_mb_free (mb);
 	return res;
 }
@@ -1034,6 +1056,7 @@ mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 	int obj_null_branch, has_waiting_branch, has_syncp_branch, owned_branch, nested_branch, thin_hash_branch;
 	int thread_tls_offset;
 	int syncp_loc;
+	WrapperInfo *info;
 
 	thread_tls_offset = mono_thread_get_tls_offset ();
 	if (thread_tls_offset == -1)
@@ -1177,6 +1200,10 @@ mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 
 	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_exit_method), 5), FASTPATH_EXIT);
 	mono_mb_free (mb);
+
+	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (WrapperInfo));
+	info->subtype = WRAPPER_SUBTYPE_FAST_MONITOR_EXIT;
+	mono_marshal_set_wrapper_info (res, info);
 
 	return res;
 }

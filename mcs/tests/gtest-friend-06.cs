@@ -3,7 +3,7 @@ using System;
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		FriendClass fc = new FriendClass ();
 		

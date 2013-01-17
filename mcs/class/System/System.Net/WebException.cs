@@ -49,9 +49,8 @@ namespace System.Net
 		{
 		}
 
-		protected WebException (SerializationInfo info,
-		   			StreamingContext context)
-			: base (info, context)
+		protected WebException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
 		{
 		}
 

@@ -50,11 +50,7 @@ namespace System.Diagnostics {
 			: base (action)
 		{
 			machineName = ResourcePermissionBase.Local;
-#if NET_2_0
 			permissionAccess = EventLogPermissionAccess.Write;
-#else
-			permissionAccess = EventLogPermissionAccess.Browse;
-#endif
 		}
 
 		public string MachineName {

@@ -262,16 +262,66 @@ namespace MonoTests.Microsoft.Build.Tasks {
 
 			// Setup
 
+			string projectdir = Path.Combine ("Test", "resources");
+			string basedir = "dir";
+			string aaa = PathCombine (basedir, "a", "aa", "aaa");
+			string bb = PathCombine (basedir, "b", "bb");
+			string c = PathCombine (basedir, "c");
+
+			string[] dirs = { aaa, bb, c };
+			string[] files = {
+								PathCombine (aaa, "foo.dll"),
+								PathCombine (bb, "bar.dll"),
+								PathCombine (bb, "sample.txt"),
+								Path.Combine (basedir, "xyz.dll")
+							  };
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
+					<Target Name='Main'>
+						<CreateItem Include='dir\**'>
+							<Output TaskParameter='Include' ItemName='CI1' />
+						</CreateItem>
+						<Message Text=""CI1: @(CI1)""/>
+					</Target>
+				</Project>";
+
+			try {
+				CreateDirectoriesAndFiles (projectdir, dirs, files);
+				File.WriteAllText (Path.Combine (projectdir, "wild1.proj"), documentString);
+				proj.Load (Path.Combine (projectdir, "wild1.proj"));
+				if (!proj.Build ("Main"))
+					Assert.Fail ("Build failed");
+
+				string full_base_dir = Path.GetFullPath (basedir);
+				logger.CheckLoggedAny ("CI1: " + String.Join (";", files), MessageImportance.Normal, "A1");
+			} catch (AssertionException) {
+				logger.DumpMessages ();
+				throw;
+			} finally {
+				Directory.Delete (Path.Combine (projectdir, basedir), true);
+			}
+		}
+
+		[Test]
+		public void TestItemsWithWildcards2 () {
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			TestMessageLogger logger = new TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			// Setup
+
 			string basedir = PathCombine ("Test", "resources", "dir");
 			string aaa = PathCombine ("a", "aa", "aaa");
 			string bb = Path.Combine ("b", "bb");
 
 			string[] dirs = { aaa, bb, "c" };
 			string[] files = {
-								PathCombine (basedir, aaa, "foo.dll"),
-								PathCombine (basedir, bb, "bar.dll"),
-								PathCombine (basedir, bb, "sample.txt"),
-								Path.Combine (basedir, "xyz.dll")
+								PathCombine (aaa, "foo.dll"),
+								PathCombine (bb, "bar.dll"),
+								PathCombine (bb, "sample.txt"),
+								PathCombine ("xyz.dll")
 							  };
 
 			string documentString = @"
@@ -326,7 +376,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				Directory.CreateDirectory (Path.Combine (basedir, dir));
 
 			foreach (string file in files)
-				File.WriteAllText (file, String.Empty);
+				File.WriteAllText (Path.Combine (basedir, file), String.Empty);
 		}
 
 		string PathCombine (string path1, params string[] parts) {

@@ -220,8 +220,8 @@ namespace System.Windows.Forms {
 				editingControl.DisplayMember = DisplayMember;
 			} else {
 				editingControl.Items.AddRange (this.Items);
-				if (FormattedValue != null && editingControl.Items.IndexOf (FormattedValue) != -1)
-					editingControl.SelectedItem = FormattedValue;
+				if (initialFormattedValue != null && editingControl.Items.IndexOf (initialFormattedValue) != -1)
+					editingControl.SelectedItem = initialFormattedValue;
 			}
 		}
 
@@ -331,6 +331,24 @@ namespace System.Windows.Forms {
 
 		protected override void OnLeave (int rowIndex, bool throughMouseClick) {
 			base.OnLeave (rowIndex, throughMouseClick);
+		}
+
+		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e) {
+			base.OnMouseDown (e);
+
+			if (!ReadOnly)
+			{
+				// Any mouse-click on the cell should be passed along to any
+				// combo-box control.
+				if (IsInEditMode)
+				{
+					DataGridViewComboBoxEditingControl cb
+						= (DataGridView.EditingControl
+							as DataGridViewComboBoxEditingControl);
+					if (cb != null)
+						cb.OnMouseDownInternal (e);
+				}
+			}
 		}
 
 		protected override void OnMouseClick (DataGridViewCellMouseEventArgs e) {

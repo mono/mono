@@ -1365,10 +1365,11 @@ namespace System.Web
 
 		internal void ReleaseResources ()
 		{
+			if (output_stream != null)
+				output_stream.ReleaseResources (true);
 			if (completed)
 				return;
 			
-			output_stream.ReleaseResources (true);
 			Close ();
 			completed = true;
 		}

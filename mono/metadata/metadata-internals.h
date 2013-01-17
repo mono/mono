@@ -138,6 +138,7 @@ struct _MonoImage {
 	guint32 raw_data_len;
 	guint8 raw_buffer_used    : 1;
 	guint8 raw_data_allocated : 1;
+	guint8 fileio_used : 1;
 
 #ifdef HOST_WIN32
 	/* Module was loaded using LoadLibrary. */
@@ -272,6 +273,7 @@ struct _MonoImage {
 	GHashTable *managed_wrapper_cache;
 	GHashTable *native_wrapper_cache;
 	GHashTable *native_wrapper_aot_cache;
+	GHashTable *native_func_wrapper_aot_cache;
 	GHashTable *remoting_invoke_cache;
 	GHashTable *synchronized_cache;
 	GHashTable *unbox_wrapper_cache;
@@ -320,6 +322,12 @@ struct _MonoImage {
 	MonoClass **mvar_cache_fast;
 	GHashTable *var_cache_slow;
 	GHashTable *mvar_cache_slow;
+
+	/* Maps malloc-ed char* pinvoke scope -> MonoDl* */
+	GHashTable *pinvoke_scopes;
+
+	/* Maps malloc-ed char* pinvoke scope -> malloced-ed char* filename */
+	GHashTable *pinvoke_scope_filenames;
 
 	/*
 	 * No other runtime locks must be taken while holding this lock.
@@ -416,6 +424,10 @@ struct _MonoDynamicImage {
 	GHashTable *vararg_aux_hash;
 	MonoGHashTable *generic_def_objects;
 	MonoGHashTable *methodspec;
+	/*
+	 * Maps final token values to the object they describe.
+	 */
+	MonoGHashTable *remapped_tokens;
 	gboolean run;
 	gboolean save;
 	gboolean initial_image;
@@ -653,6 +665,7 @@ void mono_assembly_addref       (MonoAssembly *assembly) MONO_INTERNAL;
 void mono_assembly_load_friends (MonoAssembly* ass) MONO_INTERNAL;
 gboolean mono_assembly_has_skip_verification (MonoAssembly* ass) MONO_INTERNAL;
 
+void mono_assembly_release_gc_roots (MonoAssembly *assembly) MONO_INTERNAL;
 gboolean mono_assembly_close_except_image_pools (MonoAssembly *assembly) MONO_INTERNAL;
 void mono_assembly_close_finish (MonoAssembly *assembly) MONO_INTERNAL;
 

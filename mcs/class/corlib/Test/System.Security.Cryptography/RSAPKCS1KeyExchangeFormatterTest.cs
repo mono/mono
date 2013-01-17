@@ -34,7 +34,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 [TestFixture]
-public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
+public class RSAPKCS1KeyExchangeFormatterTest {
 
 	protected static RSA key;
 
@@ -60,17 +60,14 @@ public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
 	{
 		RSAPKCS1KeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter ();
 		keyex.SetKey (key);
-		AssertEquals("RSAPKCS1KeyExchangeFormatter.Parameters", "<enc:KeyEncryptionMethod enc:Algorithm=\"http://www.microsoft.com/xml/security/algorithm/PKCS1-v1.5-KeyEx\" xmlns:enc=\"http://www.microsoft.com/xml/security/encryption/v1.0\" />", keyex.Parameters);
+		Assert.AreEqual("<enc:KeyEncryptionMethod enc:Algorithm=\"http://www.microsoft.com/xml/security/algorithm/PKCS1-v1.5-KeyEx\" xmlns:enc=\"http://www.microsoft.com/xml/security/encryption/v1.0\" />", keyex.Parameters);
 		// null (default)
-		AssertNull("RSAPKCS1KeyExchangeFormatter.Rng", keyex.Rng);
-		AssertEquals("RSAPKCS1KeyExchangeFormatter.ToString()", "System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter", keyex.ToString ());
+		Assert.IsNull (keyex.Rng, "RSAPKCS1KeyExchangeFormatter.Rng");
+		Assert.AreEqual("System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter", keyex.ToString ());
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
-#if ! NET_2_0
-	[Category ("NotDotNet")] // Sometime causes System.ExecutionEngineException on MS implementation
-#endif
 	public void KeyExchangeNull ()
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
@@ -143,17 +140,13 @@ public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
 	public void Rng () 
 	{
 		RSAPKCS1KeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (key);
-		AssertNull ("Rng", keyex.Rng);
+		Assert.IsNull (keyex.Rng, "Rng 1");
 		keyex.Rng = RandomNumberGenerator.Create ();
-		AssertNotNull ("Rng", keyex.Rng);
+		Assert.IsNotNull (keyex.Rng, "Rng 2");
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
-#else
-	[ExpectedException (typeof (NullReferenceException))]
-#endif
 	public void ExchangeNoKey () 
 	{
 		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter ();

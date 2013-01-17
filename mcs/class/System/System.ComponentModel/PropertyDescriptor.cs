@@ -97,11 +97,9 @@ namespace System.ComponentModel
 
 		public abstract Type PropertyType { get; }
 
-#if NET_2_0
 		public virtual bool SupportsChangeEvents {
 			get { return false; }
 		}
-#endif
 
 		public DesignerSerializationVisibility SerializationVisibility {
 			get {
@@ -165,7 +163,6 @@ namespace System.ComponentModel
 				notifiers [component] = component_notifiers;
 		}
 
-#if NET_2_0
 		protected override void FillAttributes (IList attributeList)
 		{
 			base.FillAttributes (attributeList);
@@ -193,7 +190,6 @@ namespace System.ComponentModel
 
 			return (EventHandler) notifiers [component];
 		}
-#endif
 
 		protected virtual void OnValueChanged (object component, EventArgs e)
 		{
@@ -228,17 +224,9 @@ namespace System.ComponentModel
 			ConstructorInfo ctor = type.GetConstructor (paramTypes);
 			if (ctor != null) {
 				object[] parameters = new object[] { PropertyType };
-#if NET_2_0
 				instance = TypeDescriptor.CreateInstance (null, type, paramTypes, parameters);
-#else
-				instance = ctor.Invoke (parameters);
-#endif
 			} else {
-#if NET_2_0
 				instance = TypeDescriptor.CreateInstance (null, type, null, null);
-#else
-				instance = Activator.CreateInstance (type);
-#endif
 			}
 			return instance;
 		}

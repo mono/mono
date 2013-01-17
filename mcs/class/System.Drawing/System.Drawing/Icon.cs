@@ -2,6 +2,7 @@
 // System.Drawing.Icon.cs
 //
 // Authors:
+//   Gary Barnett (gary.barnett.mono@gmail.com)
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Sanjay Gupta (gsanjay@novell.com)
@@ -45,12 +46,15 @@ namespace System.Drawing
 	[ComVisible (false)] 
 #endif 
 	[Serializable]	
+#if !MONOTOUCH
 	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#endif
 	[TypeConverter(typeof(IconConverter))]
+
 	public sealed class Icon : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		[StructLayout(LayoutKind.Sequential)]
-		internal struct IconDirEntry {
+		internal struct IconDirEntry {		
 			internal byte	width;		// Width of icon
 			internal byte	height;		// Height of icon
 			internal byte	colorCount;	// colors in icon 
@@ -59,6 +63,7 @@ namespace System.Drawing
 			internal ushort	bitCount;       // Bits per pixel
 			internal uint	bytesInRes;     // bytes in resource
 			internal uint	imageOffset;	// position in file 
+			internal bool	ignore;		// for unsupported images (vista 256 png)
 		}; 
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -84,19 +89,28 @@ namespace System.Drawing
 			internal uint	biClrImportant; 
 		};
 
+		[StructLayout(LayoutKind.Sequential)]	// added baseclass for non bmp image format support
+		internal abstract class ImageData {
+		};
+
 		[StructLayout(LayoutKind.Sequential)]
-		internal struct IconImage {
+		internal class IconImage : ImageData {
 			internal BitmapInfoHeader	iconHeader;	//image header
 			internal uint []		iconColors;	//colors table
 			internal byte []		iconXOR;	// bits for XOR mask
 			internal byte []		iconAND;	//bits for AND mask
-		};	
+		};
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal class IconDump : ImageData {
+			internal byte []		data;
+		};
 
 		private Size iconSize;
 		private IntPtr handle = IntPtr.Zero;
 		private IconDir	iconDir;
 		private ushort id;
-		private IconImage [] imageData;
+		private ImageData [] imageData;
 		private bool undisposable;
 		private bool disposed;
 		private Bitmap bitmap;
@@ -105,9 +119,12 @@ namespace System.Drawing
 		{
 		}
 
+#if !MONOTOUCH
 		private Icon (IntPtr handle)
 		{
 			this.handle = handle;
+			bitmap = Bitmap.FromHicon (handle);
+			iconSize = new Size (bitmap.Width, bitmap.Height);
 			if (GDIPlus.RunningOnUnix ()) {
 				bitmap = Bitmap.FromHicon (handle);
 				iconSize = new Size (bitmap.Width, bitmap.Height);
@@ -124,6 +141,7 @@ namespace System.Drawing
 			}
 			undisposable = true;
 		}
+#endif
 
 		public Icon (Icon original, int width, int height)
 			: this (original, new Size (width, height))
@@ -145,28 +163,43 @@ namespace System.Drawing
 
 				for (ushort i=0; i < count; i++) {
 					IconDirEntry ide = iconDir.idEntries [i];
-					if ((ide.height == size.Height) || (ide.width == size.Width)) {
+					if (((ide.height == size.Height) || (ide.width == size.Width)) && !ide.ignore) {
 						id = i;
 						break;
 					}
 				}
 
 				// if a perfect match isn't found we look for the biggest icon *smaller* than specified
-				if (id == UInt16.MaxValue) {
+				if (id == UInt16.MaxValue) { 
 					int requested = Math.Min (size.Height, size.Width);
-					IconDirEntry best = iconDir.idEntries [0];
-					for (ushort i=1; i < count; i++) {
+					// previously best set to 1st image, as this might not be smallest changed loop to check all
+					IconDirEntry? best = null; 
+					for (ushort i=0; i < count; i++) {
 						IconDirEntry ide = iconDir.idEntries [i];
-						if ((ide.height < requested) || (ide.width < requested)) {
-							if ((ide.height > best.height) || (ide.width > best.width))
+						if (((ide.height < requested) || (ide.width < requested)) && !ide.ignore) {
+							if (best == null) {
+								best = ide;
 								id = i;
+							} else if ((ide.height > best.Value.height) || (ide.width > best.Value.width)) {
+								best = ide;
+								id = i;
+							}
 						}
 					}
 				}
 
 				// last one, if nothing better can be found
+				if (id == UInt16.MaxValue) {
+					int i = count;
+					while (id == UInt16.MaxValue && i > 0) {
+						i--;
+						if (!iconDir.idEntries [i].ignore)
+							id = (ushort) i;
+					}
+				}
+
 				if (id == UInt16.MaxValue)
-					id = (ushort) (count - 1);
+					throw new ArgumentException ("Icon", "No valid icon image found");
 
 				iconSize.Height = iconDir.idEntries [id].height;
 				iconSize.Width = iconDir.idEntries [id].width;
@@ -287,12 +320,14 @@ namespace System.Drawing
 			// SystemIcons requires this
 			if (undisposable)
 				return;
-
+			
 			if (!disposed) {
+#if !MONOTOUCH
 				if (GDIPlus.RunningOnWindows () && (handle != IntPtr.Zero)) {
 					GDIPlus.DestroyIcon (handle);
 					handle = IntPtr.Zero;
 				}
+#endif
 				if (bitmap != null) {
 					bitmap.Dispose ();
 					bitmap = null;
@@ -306,7 +341,8 @@ namespace System.Drawing
 		{
 			return new Icon (this, Size);
 		}
-
+		
+#if !MONOTOUCH
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public static Icon FromHandle (IntPtr handle)
 		{
@@ -315,7 +351,7 @@ namespace System.Drawing
 
 			return new Icon (handle);
 		}
-
+#endif
 		private void SaveIconImage (BinaryWriter writer, IconImage ii)
 		{
 			BitmapInfoHeader bih = ii.iconHeader;
@@ -343,6 +379,11 @@ namespace System.Drawing
 			writer.Write (ii.iconAND);
 		}
 
+		private void SaveIconDump (BinaryWriter writer, IconDump id)
+		{
+			writer.Write (id.data);
+		}
+
 		private void SaveIconDirEntry (BinaryWriter writer, IconDirEntry ide, uint offset)
 		{
 			writer.Write (ide.width);
@@ -367,10 +408,20 @@ namespace System.Drawing
 			}
 
 			for (int i=0; i < (int)count; i++) {
-				SaveIconImage (writer, imageData [i]);
+
+				//FIXME: HACK: 1 (out of the 8) vista type icons had additional bytes (value:0)
+				//between images. This fixes the issue, but perhaps shouldnt include in production?
+				while (writer.BaseStream.Length < iconDir.idEntries[i].imageOffset)
+					writer.Write ((byte) 0);
+
+				if (imageData [i] is IconDump)
+					SaveIconDump (writer, (IconDump) imageData [i]);
+				else
+					SaveIconImage (writer, (IconImage) imageData [i]);
 			}
 		}
-
+		// TODO: check image not ignored (presently this method doesnt seem to be called unless width/height 
+		// refer to image)
 		private void SaveBestSingleIcon (BinaryWriter writer, int width, int height)
 		{
 			writer.Write (iconDir.idReserved);
@@ -391,7 +442,7 @@ namespace System.Drawing
 			}
 
 			SaveIconDirEntry (writer, iconDir.idEntries [best], 22);
-			SaveIconImage (writer, imageData [best]);
+			SaveIconImage (writer, (IconImage) imageData [best]);
 		}
 
 		private void SaveBitmapAsIcon (BinaryWriter writer)
@@ -472,7 +523,7 @@ namespace System.Drawing
 			// save every icons available
 			Save (outputStream, -1, -1);
 		}
-
+#if !MONOTOUCH
 		internal Bitmap BuildBitmapOnWin32 ()
 		{
 			Bitmap bmp;
@@ -480,7 +531,7 @@ namespace System.Drawing
 			if (imageData == null)
 				return new Bitmap (32, 32);
 
-			IconImage ii = imageData [id];
+			IconImage ii = (IconImage) imageData [id];
 			BitmapInfoHeader bih = ii.iconHeader;
 			int biHeight = bih.biHeight / 2;
 
@@ -564,7 +615,6 @@ namespace System.Drawing
 					bitmap = BuildBitmapOnWin32 ();
 				}
 			}
-
 			return bitmap;
 		}
 
@@ -580,13 +630,14 @@ namespace System.Drawing
 			//     Image16 for the differences
 			return new Bitmap (GetInternalBitmap ());
 		}
-
+#endif
 		public override string ToString ()
 		{
 			//is this correct, this is what returned by .Net
 			return "<Icon>";			
 		}
-
+		
+#if !MONOTOUCH
 		[Browsable (false)]
 		public IntPtr Handle {
 			get {
@@ -606,7 +657,7 @@ namespace System.Drawing
 				return handle;
 			}
 		}
-
+#endif
 		[Browsable (false)]
 		public int Height {
 			get {
@@ -650,7 +701,9 @@ namespace System.Drawing
 				throw new System.ArgumentException ("Invalid Argument", "stream");
 
 			ushort dirEntryCount = reader.ReadUInt16();
-			ArrayList entries = new ArrayList (dirEntryCount);
+			imageData = new ImageData [dirEntryCount]; 
+			iconDir.idCount = dirEntryCount; 
+			iconDir.idEntries = new IconDirEntry [dirEntryCount];
 			bool sizeObtained = false;
 			// now read in the IconDirEntry structures
 			for (int i = 0; i < dirEntryCount; i++) {
@@ -674,18 +727,21 @@ Console.WriteLine ("\tide.bitCount: {0}", ide.bitCount);
 Console.WriteLine ("\tide.bytesInRes: {0}", ide.bytesInRes);
 Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 #endif
-
+				// Vista 256x256 icons points directly to a PNG bitmap
 				// 256x256 icons are decoded as 0x0 (width and height are encoded as BYTE)
-				// and we ignore them just like MS does (at least up to fx 2.0)
+				// and we ignore them just like MS does (at least up to fx 2.0) 
+				// Added: storing data so it can be saved back
 				if ((ide.width == 0) && (ide.height == 0))
-					continue;
+					ide.ignore = true;
+				else
+					ide.ignore = false;
 
-				int index = entries.Add (ide);
+				iconDir.idEntries [i] = ide;
 
 				//is this is the best fit??
 				if (!sizeObtained) {
-					if ((ide.height == height) || (ide.width == width)) {
-						this.id = (ushort) index;
+					if (((ide.height == height) || (ide.width == width)) && !ide.ignore) {
+						this.id = (ushort) i;
 						sizeObtained = true;
 						this.iconSize.Height = ide.height;
 						this.iconSize.Width = ide.width;
@@ -693,22 +749,22 @@ Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 				}
 			}
 
-			// Vista 256x256 icons points directly to a PNG bitmap
-			dirEntryCount = (ushort) entries.Count;
-			if (dirEntryCount == 0)
+			// throw error if no valid entries found
+			int valid = 0;
+			for (int i = 0; i < dirEntryCount; i++) {
+				if (!(iconDir.idEntries [i].ignore))
+					valid++;
+			}
+
+			if (valid == 0) 
 				throw new Win32Exception (0, "No valid icon entry were found.");
 
-			iconDir.idCount = dirEntryCount;
-			imageData = new IconImage [dirEntryCount];
-			iconDir.idEntries = new IconDirEntry [dirEntryCount];
-			entries.CopyTo (iconDir.idEntries);
-
-			//if we havent found the best match, return the one with the
-			//largest size. Is this approach correct??
+			// if we havent found the best match, return the one with the
+			// largest size. Is this approach correct??
 			if (!sizeObtained){
 				uint largestSize = 0;
-				for (int j=0; j<dirEntryCount; j++){
-					if (iconDir.idEntries [j].bytesInRes >= largestSize)	{
+				for (int j=0; j<dirEntryCount; j++){ 
+					if (iconDir.idEntries [j].bytesInRes >= largestSize && !iconDir.idEntries [j].ignore)	{
 						largestSize = iconDir.idEntries [j].bytesInRes;
 						this.id = (ushort) j;
 						this.iconSize.Height = iconDir.idEntries [j].height;
@@ -718,8 +774,18 @@ Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 			}
 			
 			//now read in the icon data
-			for (int j = 0; j<dirEntryCount; j++)
+			for (int j = 0; j<dirEntryCount; j++) 
 			{
+				// process ignored into IconDump
+				if (iconDir.idEntries [j].ignore) {
+					IconDump id = new IconDump ();
+					stream.Seek (iconDir.idEntries [j].imageOffset, SeekOrigin.Begin);
+					id.data = new byte [iconDir.idEntries [j].bytesInRes];
+					stream.Read (id.data, 0, id.data.Length);
+					imageData [j] = id;
+					continue;
+				}
+				// standard image
 				IconImage iidata = new IconImage();
 				BitmapInfoHeader bih = new BitmapInfoHeader();
 				stream.Seek (iconDir.idEntries [j].imageOffset, SeekOrigin.Begin);

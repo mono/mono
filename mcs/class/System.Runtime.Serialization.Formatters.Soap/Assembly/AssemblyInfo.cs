@@ -38,17 +38,15 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Runtime.Serialization.Formatters.Soap assembly
 
-#if NET_2_0
-	[assembly: AssemblyTitle ("System.Runtime.Serialization.Formatters.Soap.dll")]
-	[assembly: AssemblyDescription ("System.Runtime.Serialization.Formatters.Soap.dll")]
-	[assembly: AssemblyDefaultAlias ("System.Runtime.Serialization.Formatters.Soap.dll")]
+[assembly: AssemblyTitle ("System.Runtime.Serialization.Formatters.Soap.dll")]
+[assembly: AssemblyDescription ("System.Runtime.Serialization.Formatters.Soap.dll")]
+[assembly: AssemblyDefaultAlias ("System.Runtime.Serialization.Formatters.Soap.dll")]
 
-	[assembly: AssemblyCompany (Consts.MonoCompany)]
-	[assembly: AssemblyProduct (Consts.MonoProduct)]
-	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 
-	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-#endif
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: NeutralResourcesLanguage ("en-US")]
@@ -61,14 +59,6 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyKeyFile ("../msfinal.pub")]
 #endif
 
-#if NET_2_0
-	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-	[assembly: ComVisible (true)]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-#elif NET_1_1
-	[assembly: TypeLibVersion (1, 10)]
-#elif NET_1_0
-	[assembly: TypeLibVersion (1, 10)]
-#endif
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: ComVisible (true)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]

@@ -1,10 +1,9 @@
-// Compiler options: -langversion:future
-
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Reflection;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 struct S
 {
@@ -341,6 +340,19 @@ class Tester : Base
 		return 0;
 	}
 	
+	async Task<int> BinaryTest_5 ()
+	{
+		var r1 = await Task.FromResult (1) == 9;
+		if (r1)
+			return 1;
+		
+		var r2 = 1 == await Task.FromResult (1);
+		if (!r2)
+			return 2;
+		
+		return 0;
+	}
+
 	async Task<int> CallTest_1 ()
 	{
 		return Call (
@@ -405,10 +417,7 @@ class Tester : Base
 	
 	async Task<int> ConditionalTest_1 ()
 	{
-		// TODO: problem with Resumable point setup when the expression never emitted
-		//bool b = true;
-		//return true ? await Task.Factory.StartNew (() => 0) : await Task.Factory.StartNew (() => 1);
-		return 0;
+		return true ? await Task.Factory.StartNew (() => 0) : await Task.Factory.StartNew (() => 1);
 	}
 	
 	async Task<int> ConditionalTest_2 ()
@@ -721,6 +730,12 @@ class Tester : Base
 		return r == 5;
 	}
 	
+	async Task<bool> VariableInitializer_1 ()
+	{
+		int a = 2, b = await Task.Factory.StartNew (() => 1), c = await Task.Factory.StartNew (() => 1);
+		return a == (b + c);
+	}
+
 	static bool RunTest (MethodInfo test)
 	{
 		Console.Write ("Running test {0, -25}", test.Name);
@@ -759,7 +774,7 @@ class Tester : Base
 	public static int Main ()
 	{
 		var tests = from test in typeof (Tester).GetMethods (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-					where test.GetParameters ().Length == 0
+					where test.GetParameters ().Length == 0 && !test.IsDefined (typeof (CompilerGeneratedAttribute), false)
 					orderby test.Name
 					select RunTest (test);
 

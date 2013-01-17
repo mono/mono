@@ -175,7 +175,11 @@ namespace System.Web.Security
 		public static TimeSpan Timeout {
 			get; private set;
 		}
-		
+
+		public static bool IsEnabled { 
+			get { return initialized; }
+		}
+
 		public static void EnableFormsAuthentication (NameValueCollection configurationData)
 		{
 			BuildManager.AssertPreStartMethodsRunning ();

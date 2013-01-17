@@ -5,7 +5,7 @@ static void f (string s)
 s. Split ('a');
 }
 
-	static int Main ()
+	public static int Main ()
 	{
 		string s = "";
 		

@@ -4,7 +4,7 @@ delegate int D ();
 
 class X {
 
-	static void Main ()
+	public static void Main ()
 	{
 		D x = T (1);
 

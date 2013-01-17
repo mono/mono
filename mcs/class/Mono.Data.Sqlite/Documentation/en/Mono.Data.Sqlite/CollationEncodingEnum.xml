@@ -1,0 +1,67 @@
+<Type Name="CollationEncodingEnum" FullName="Mono.Data.Sqlite.CollationEncodingEnum">
+  <TypeSignature Language="C#" Value="public enum CollationEncodingEnum" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CollationEncodingEnum extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            The encoding type the collation sequence uses
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="UTF16BE">
+      <MemberSignature Language="C#" Value="UTF16BE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.CollationEncodingEnum UTF16BE = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationEncodingEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The collation sequence is UTF16 big-endian
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UTF16LE">
+      <MemberSignature Language="C#" Value="UTF16LE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.CollationEncodingEnum UTF16LE = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationEncodingEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The collation sequence is UTF16 little-endian
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UTF8">
+      <MemberSignature Language="C#" Value="UTF8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Data.Sqlite.CollationEncodingEnum UTF8 = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Data.Sqlite.CollationEncodingEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The collation sequence is UTF8
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

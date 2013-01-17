@@ -4,7 +4,7 @@
 
 class CastByExample
 {
-	static void Main()
+	public static void Main()
 	{
 		object o = new { Foo = "Data" };
 		// Cast object to anonymous type

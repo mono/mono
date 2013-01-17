@@ -97,6 +97,7 @@ namespace System.Linq.Expressions {
 			this.is_lifted = is_lifted;
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitArrayAccess (EmitContext ec)
 		{
 			left.Emit (ec);
@@ -768,5 +769,6 @@ namespace System.Linq.Expressions {
 				throw new NotSupportedException (this.NodeType.ToString ());
 			}
 		}
+#endif
 	}
 }

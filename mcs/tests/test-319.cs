@@ -18,7 +18,7 @@ public class ConstFields
 	static decimal DecimalValue = -90;
 	const decimal SmallConstValue = .02M;
 
-	static int Main ()
+	public static int Main ()
 	{
 		Type t = typeof (ConstFields);
 		DecimalConstantAttribute a = (DecimalConstantAttribute) t.GetField ("ConstDecimal3").GetCustomAttributes (typeof (DecimalConstantAttribute), false)[0];

@@ -332,105 +332,37 @@ namespace System.Net
 			if (webHeaders == null)
 				return;
 
-			string [] values = webHeaders.GetValues ("Set-Cookie");
-			if (values != null) {
-				foreach (string va in values)
-					SetCookie (va);
+			string value = webHeaders.Get ("Set-Cookie");
+			if (value != null) {
+				SetCookie (value);
 			}
 
-			values = webHeaders.GetValues ("Set-Cookie2");
-			if (values != null) {
-				foreach (string va in values)
-					SetCookie2 (va);
+			value = webHeaders.Get ("Set-Cookie2");
+			if (value != null) {
+				SetCookie (value);
 			}
 		}
 
 		void SetCookie (string header)
 		{
-			string name, val;
-			Cookie cookie = null;
-			CookieParser parser = new CookieParser (header);
-
-			while (parser.GetNextNameValue (out name, out val)) {
-				if ((name == null || name == "") && cookie == null)
-					continue;
-
-				if (cookie == null) {
-					cookie = new Cookie (name, val);
-					continue;
-				}
-
-				name = name.ToUpper ();
-				switch (name) {
-				case "COMMENT":
-					if (cookie.Comment == null)
-						cookie.Comment = val;
-					break;
-				case "COMMENTURL":
-					if (cookie.CommentUri == null)
-						cookie.CommentUri = new Uri (val);
-					break;
-				case "DISCARD":
-					cookie.Discard = true;
-					break;
-				case "DOMAIN":
-					if (cookie.Domain == "")
-						cookie.Domain = val;
-					break;
-				case "HTTPONLY":
-					cookie.HttpOnly = true;
-					break;
-				case "MAX-AGE": // RFC Style Set-Cookie2
-					if (cookie.Expires == DateTime.MinValue) {
-						try {
-						cookie.Expires = cookie.TimeStamp.AddSeconds (UInt32.Parse (val));
-						} catch {}
-					}
-					break;
-				case "EXPIRES": // Netscape Style Set-Cookie
-					if (cookie.Expires != DateTime.MinValue)
-						break;
-
-					cookie.Expires = CookieParser.TryParseCookieExpires (val);
-					break;
-				case "PATH":
-					cookie.Path = val;
-					break;
-				case "PORT":
-					if (cookie.Port == null)
-						cookie.Port = val;
-					break;
-				case "SECURE":
-					cookie.Secure = true;
-					break;
-				case "VERSION":
-					try {
-						cookie.Version = (int) UInt32.Parse (val);
-					} catch {}
-					break;
-				}
-			}
-
-			if (cookie == null)
-				return;
-
 			if (cookieCollection == null)
 				cookieCollection = new CookieCollection ();
 
-			if (cookie.Domain == "")
-				cookie.Domain = uri.Host;
+			var parser = new CookieParser (header);
+			foreach (var cookie in parser.Parse ()) {
+				if (cookie.Domain == "") {
+					cookie.Domain = uri.Host;
+					cookie.HasDomain = false;
+				}
 
-			cookieCollection.Add (cookie);
-			if (cookie_container != null)
-				cookie_container.Add (uri, cookie);
-		}
+				if (cookie.HasDomain &&
+				    !CookieContainer.CheckSameOrigin (uri, cookie.Domain))
+					continue;
 
-		void SetCookie2 (string cookies_str)
-		{
-			string [] cookies = cookies_str.Split (',');
-	
-			foreach (string cookie_str in cookies)
-				SetCookie (cookie_str);
+				cookieCollection.Add (cookie);
+				if (cookie_container != null)
+					cookie_container.Add (uri, cookie);
+			}
 		}
 	}	
 }

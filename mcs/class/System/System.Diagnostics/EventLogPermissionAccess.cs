@@ -31,12 +31,8 @@
 namespace System.Diagnostics {
 
 	[Flags]
-#if !NET_2_0
-	[Serializable]
-#endif
 	public enum EventLogPermissionAccess {
 		None=0,
-#if NET_2_0
 		[Obsolete ()]
 		Browse=0x2,
 		[Obsolete ()]
@@ -45,11 +41,6 @@ namespace System.Diagnostics {
 		Audit=0xA,
 		Write = 16,
 		Administer = 48,
-#else
-		Browse=0x2,
-		Instrument=0x6,
-		Audit=0xA,
-#endif
 	}
 }
 

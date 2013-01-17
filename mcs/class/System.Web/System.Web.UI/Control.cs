@@ -199,7 +199,7 @@ namespace System.Web.UI
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never), Browsable (false)]
 #if NET_4_0
-		[Bindable (true)]
+		[Bindable (false)]
 #endif
 		public Control BindingContainer {
 			get {
@@ -546,7 +546,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[WebSysDescription ("The container that this control is part of. The control's name has to be unique within the container.")]
 #if NET_4_0
-		[Bindable (true)]
+		[Bindable (false)]
 #endif
 		public virtual Control NamingContainer {
 			get {
@@ -583,7 +583,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[WebSysDescription ("The parent control of this control.")]
 #if NET_4_0
-		[Bindable (true)]
+		[Bindable (false)]
 #endif
 		public virtual Control Parent { //DIT
 			get { return _parent; }
@@ -600,7 +600,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if NET_4_0
-		[Bindable (true)]
+		[Bindable (false)]
 #endif
 		public TemplateControl TemplateControl {
 			get { return TemplateControlInternal; }
@@ -842,16 +842,16 @@ namespace System.Web.UI
 				return ret;
 
 			System.ComponentModel.AttributeCollection attrs = TypeDescriptor.GetAttributes (myType);
-			if (attrs != null || attrs.Count > 0) {
-				ret = false;
+			ret = false;
+			
+			if (attrs != null) {
 				foreach (Attribute attr in attrs) {
 					if (attr is ViewStateModeByIdAttribute) {
 						ret = true;
 						break;
 					}
 				}
-			} else
-				ret = false;
+			}
 			
 			loadViewStateByIDCache.Add (myType, ret);
 			return ret;
@@ -2120,7 +2120,7 @@ namespace System.Web.UI
 		}
 #if NET_4_0
 		[ThemeableAttribute(false)]
-		[DefaultValue ("0")]
+		[DefaultValue (ViewStateMode.Inherit)]
 		public virtual ViewStateMode ViewStateMode {
 			get { return viewStateMode;  }
 			set {

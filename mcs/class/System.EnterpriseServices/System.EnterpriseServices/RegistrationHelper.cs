@@ -59,13 +59,11 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
-#if NET_1_1
 		[MonoTODO]
 		public void InstallAssemblyFromConfig ([MarshalAs(UnmanagedType.IUnknown)] ref RegistrationConfig regConfig)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public void UninstallAssembly (string assembly, string application)
 		{
@@ -78,13 +76,11 @@ namespace System.EnterpriseServices {
 			throw new NotImplementedException ();
 		}
 
-#if NET_1_1
 		[MonoTODO]
 		public void UninstallAssemblyFromConfig ([MarshalAs(UnmanagedType.IUnknown)] ref RegistrationConfig regConfig)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		#endregion // Methods
 	}

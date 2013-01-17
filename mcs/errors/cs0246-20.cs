@@ -1,8 +1,8 @@
-// CS0246: The type or namespace name `C' could not be found. Are you missing a using directive or an assembly reference?
-// Line: 4
+// CS0246: The type or namespace name `C' could not be found. Are you missing an assembly reference?
+// Line: 5
 
-using BigInteger = C.BigInteger;
 using C = Cks.Runtime.Data;
+using BigInteger = C.BigInteger;
 
 namespace Cks.Runtime.Data
 {

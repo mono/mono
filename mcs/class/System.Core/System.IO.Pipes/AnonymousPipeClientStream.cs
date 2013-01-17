@@ -77,6 +77,11 @@ namespace System.IO.Pipes
 			IsConnected = true;
 		}
 
+		~AnonymousPipeClientStream ()
+		{
+			// To be compatible with .net
+		}
+
 		public override PipeTransmissionMode ReadMode {
 			set {
 				if (value == PipeTransmissionMode.Message)

@@ -10,6 +10,7 @@ class AsyncTypeInference
 		Test (async l => await Task.Factory.StartNew (() => 1));
 		Test (async l => { return await Task.Factory.StartNew (() => 1); });
 		Test2 (async l => { await TT (); } );
+		Test2 (async l => { TT (); } );
 		return 0;
 	}
 	

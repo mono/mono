@@ -1,11 +1,13 @@
 /*
  * This header is only installed for use by the debugger:
  * the structures and the API declared here are not supported.
+ * Copyright 2012 Xamarin Inc (http://www.xamarin.com)
  */
 
 #ifndef __MONO_DEBUG_MONO_SYMFILE_H__
 #define __MONO_DEBUG_MONO_SYMFILE_H__
 
+#include <glib.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/mono-debug.h>
@@ -105,6 +107,15 @@ struct _MonoDebugLineNumberEntry {
 	uint32_t native_offset;
 };
 
+/*
+ * Information about a source file retrieved from a symbol file.
+ */
+typedef struct {
+	char *source_file;
+	/* 16 byte long */
+	guint8 *guid, *hash;
+} MonoDebugSourceInfo;
+
 #define MONO_SYMBOL_FILE_MAJOR_VERSION		50
 #define MONO_SYMBOL_FILE_MINOR_VERSION		0
 #define MONO_SYMBOL_FILE_MAGIC			0x45e82623fd7fa614ULL
@@ -146,6 +157,9 @@ mono_debug_symfile_free_locals (MonoDebugLocalsInfo *info);
 
 void
 mono_debug_symfile_get_line_numbers (MonoDebugMethodInfo *minfo, char **source_file, int *n_il_offsets, int **il_offsets, int **line_numbers);
+
+void
+mono_debug_symfile_get_line_numbers_full (MonoDebugMethodInfo *minfo, char **source_file, GPtrArray **source_file_list, int *n_il_offsets, int **il_offsets, int **line_numbers, int **column_numbers, int **source_files);
 
 MONO_END_DECLS
 

@@ -36,7 +36,7 @@ class T {
 		e30 = 1 << 30,
 		e31 = 1 << 31,
 	}
-	static void Main ()
+	public static void Main ()
 	{
 		E e = E.e1;
 		string s;

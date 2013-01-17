@@ -80,6 +80,20 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		[Test]
+		public void TestInvokeByRefReturnMethod ()
+		{
+			try {
+				MethodInfo m = typeof (int[]).GetMethod ("Address");
+				m.Invoke (new int[1], new object[] { 0 });
+				Assert.Fail ("#1");
+			} catch (NotSupportedException e) {
+				Assert.AreEqual (typeof (NotSupportedException), e.GetType (), "#2");
+				Assert.IsNull (e.InnerException, "#3");
+				Assert.IsNotNull (e.Message, "#4");
+			}
+		}
+
 #if NET_2_0
 		[Test]
 		public void PseudoCustomAttributes ()

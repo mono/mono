@@ -40,10 +40,9 @@ LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -define:MONO_DATACONVERTER_STATIC_METHODS
+TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll -define:MONO_DATACONVERTER_STATIC_METHODS
 
 EXTRA_DISTFILES = \
-	Test/ms_run_test.sh			\
 	Test/resources/MyResources.resources	\
 	Test/resources/MyResources.de.resources	\
 	Test/resources/Empty.resources		\
@@ -90,38 +89,40 @@ $(cmp_makefrag): $(cmp_response)
 $(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
 endif
 
-vts = VersionTolerantSerialization
-vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/$(vts)
+vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtslibs = \
-	$(vtsdir)/$(vts)TestLib/1.0/Address.dll \
-	$(vtsdir)/$(vts)TestLib/2.0/Address.dll \
-	$(vtsdir)/$(vts)TestLib/3.0/Address.dll \
-	$(vtsdir)/$(vts)TestLib/4.0/Address.dll \
-	$(vtsdir)/$(vts)TestLib/5.0/Address.dll \
-	$(vtsdir)/$(vts)TestLib/6.0/Address.dll
+	$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
+	$(vtsdir)/$(PROFILE)_TestLib/2.0/Address.dll \
+	$(vtsdir)/$(PROFILE)_TestLib/3.0/Address.dll \
+	$(vtsdir)/$(PROFILE)_TestLib/4.0/Address.dll \
+	$(vtsdir)/$(PROFILE)_TestLib/5.0/Address.dll \
+	$(vtsdir)/$(PROFILE)_TestLib/6.0/Address.dll
 
-test-vts: $(vtslibs) $(vtsdir)/BinarySerializationOverVersions.exe
+test-vts: $(vtslibs) $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
 
-$(vtsdir)/$(vts)TestLib/%/Address.dll: $(vtsdir)/$(vts)TestLib/%/Address.cs
-	$(Q_MCS) $(MCS) -target:library -warn:0  $^
+$(vtsdir)/$(PROFILE)_TestLib/%/Address.dll: $(vtsdir)/VersionTolerantSerializationTestLib/%/Address.cs
+	@mkdir -p $(dir $@)
+	$(CSCOMPILE) -target:library -r:$(corlib) -warn:0 -out:$@ $^
 
-$(vtsdir)/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(vts)TestLib/1.0/Address.dll
-	$(Q_MCS) $(MCS) $(test_nunit_ref) -warn:0  \
-		-r:$(vtsdir)/$(vts)TestLib/1.0/Address.dll \
-		$(vtsdir)/BinarySerializationOverVersions.cs
-	@cp $(vtsdir)/$(vts)TestLib/1.0/Address.dll $(vtsdir)
+$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll
+	$(CSCOMPILE) $(test_nunit_ref) -warn:0 -r:$(corlib) \
+		-r:$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
+		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@
+	@cp $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(vtsdir)/$(PROFILE)_TestLib
 
+# Need to define MONO_PATH to an absolute dir since the test is ran from a subdir
 run-test-vts: test-vts
 	@echo Running vts tests...
-	$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
-		$(vtsdir)/BinarySerializationOverVersions.exe 
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
+		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
 test: test-vts
 run-test: run-test-vts
 
 EXTRA_DISTFILES += \
-	$(vtsdir)/$(vts)TestLib/1.0/Address.cs \
-	$(vtsdir)/$(vts)TestLib/2.0/Address.cs \
-	$(vtsdir)/$(vts)TestLib/3.0/Address.cs \
-	$(vtsdir)/$(vts)TestLib/4.0/Address.cs \
-	$(vtsdir)/$(vts)TestLib/5.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/1.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/2.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/3.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/4.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
+	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
 	$(vtsdir)/BinarySerializationOverVersions.cs

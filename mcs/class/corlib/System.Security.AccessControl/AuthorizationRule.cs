@@ -48,16 +48,22 @@ namespace System.Security.AccessControl {
 						      InheritanceFlags inheritanceFlags,
 						      PropagationFlags propagationFlags)
 		{
-			if (!(identity is SecurityIdentifier)) {
+			if (null == identity)
+				throw new ArgumentNullException ("identity");
+				
+			if (!(identity is SecurityIdentifier) && !(identity is NTAccount))
 				throw new ArgumentException ("identity");
-			}
-			
-			if (accessMask == 0) {
-				/* FIXME: check inheritance and
-				 * propagation flags too
-				 */
+
+			// Unit testing showed that MS.NET 4.0 actually throws ArgumentException
+			// for accessMask == 0, not the ArgumentOutOfRangeException specified.			
+			if (accessMask == 0)
+				throw new ArgumentException ("accessMask");
+
+			if (0 != (inheritanceFlags & ~(InheritanceFlags.ContainerInherit|InheritanceFlags.ObjectInherit)))
 				throw new ArgumentOutOfRangeException ();
-			}
+
+			if (0 != (propagationFlags & ~(PropagationFlags.NoPropagateInherit|PropagationFlags.InheritOnly)))
+				throw new ArgumentOutOfRangeException ();
 			
 			this.identity = identity;
 			this.accessMask = accessMask;

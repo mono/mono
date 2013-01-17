@@ -24,7 +24,7 @@ class Lambda {
 		};
 	}
   
-	static int Main () { 
+	public static int Main () { 
 		Del[] d = Make2(10);
 		d[0](10);
 		if (v != 20)

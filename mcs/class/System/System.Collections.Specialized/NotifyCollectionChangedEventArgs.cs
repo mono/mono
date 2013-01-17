@@ -113,7 +113,7 @@ namespace System.Collections.Specialized
 		{
 		}
 
-		public NotifyCollectionChangedEventArgs (NotifyCollectionChangedAction action, IList newItems, IList oldItems, int index)
+		public NotifyCollectionChangedEventArgs (NotifyCollectionChangedAction action, IList newItems, IList oldItems, int startingIndex)
 		{
 			this.action = action;
 
@@ -129,8 +129,8 @@ namespace System.Collections.Specialized
 			this.oldItems = oldItems;
 			this.newItems = newItems;
 
-			oldIndex = index;
-			newIndex = index;
+			oldIndex = startingIndex;
+			newIndex = startingIndex;
 		}
 
 		public NotifyCollectionChangedEventArgs (NotifyCollectionChangedAction action, IList changedItems, int index, int oldIndex)

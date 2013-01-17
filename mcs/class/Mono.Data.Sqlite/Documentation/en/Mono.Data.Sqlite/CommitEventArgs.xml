@@ -1,0 +1,37 @@
+<Type Name="CommitEventArgs" FullName="Mono.Data.Sqlite.CommitEventArgs">
+  <TypeSignature Language="C#" Value="public class CommitEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CommitEventArgs extends System.EventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Data.Sqlite</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.EventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Event arguments raised when a transaction is being committed
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AbortTransaction">
+      <MemberSignature Language="C#" Value="public bool AbortTransaction;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool AbortTransaction" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Set to true to abort the transaction and trigger a rollback
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -14,8 +14,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.ComponentModel;
 
-#if NET_2_0
-
 namespace System.IO.Ports
 {
 	class WinSerialStream : Stream, ISerialStream, IDisposable
@@ -25,8 +23,8 @@ namespace System.IO.Ports
 		const uint GenericWrite = 0x40000000;
 		const uint OpenExisting = 3;
 		const uint FileFlagOverlapped = 0x40000000;
-		const uint PurgeRxClear = 0x0004;
-		const uint PurgeTxClear = 0x0008;
+		const uint PurgeRxClear = 0x0008;
+		const uint PurgeTxClear = 0x0004;
 		const uint WinInfiniteTimeout = 0xFFFFFFFF;
 		const uint FileIOPending = 997;
 
@@ -78,7 +76,9 @@ namespace System.IO.Ports
 				bool dtr_enable, bool rts_enable, Handshake hs, int read_timeout, int write_timeout,
 				int read_buffer_size, int write_buffer_size)
 		{
-			handle = CreateFile (port_name, GenericRead | GenericWrite, 0, 0, OpenExisting,
+			handle = CreateFile (port_name != null && !port_name.StartsWith(@"\\.\")
+					? @"\\.\" + port_name : port_name,
+					GenericRead | GenericWrite, 0, 0, OpenExisting,
 					FileFlagOverlapped, 0);
 
 			if (handle == -1)
@@ -109,21 +109,13 @@ namespace System.IO.Ports
 			// Init overlapped structures
 			NativeOverlapped wo = new NativeOverlapped ();
 			write_event = new ManualResetEvent (false);
-#if NET_2_0
 			wo.EventHandle = write_event.Handle;
-#else
-			wo.EventHandle = (int) write_event.Handle;
-#endif
 			write_overlapped = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
 			Marshal.StructureToPtr (wo, write_overlapped, true);
 
 			NativeOverlapped ro = new NativeOverlapped ();
 			read_event = new ManualResetEvent (false);
-#if NET_2_0
 			ro.EventHandle = read_event.Handle;
-#else
-			ro.EventHandle = (int) read_event.Handle;
-#endif
 			read_overlapped = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (NativeOverlapped)));
 			Marshal.StructureToPtr (ro, read_overlapped, true);
 		}
@@ -383,7 +375,7 @@ namespace System.IO.Ports
 
 		public void DiscardOutBuffer ()
 		{
-			if (!PurgeComm (handle, PurgeRxClear))
+			if (!PurgeComm (handle, PurgeTxClear))
 				ReportIOError (null);
 		}
 
@@ -582,5 +574,4 @@ namespace System.IO.Ports
 	}
 }
 
-#endif
 

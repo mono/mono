@@ -409,6 +409,7 @@ namespace System.Web.Services.Protocols
 			InvokeAsyncInfo info = (InvokeAsyncInfo) ar.AsyncState;
 			SoapWebClientAsyncResult sar = (SoapWebClientAsyncResult) ar;
 			InvokeCompletedEventArgs args = new InvokeCompletedEventArgs (sar.Exception, false, info.UserState, (object[]) sar.Result);
+			UnregisterMapping (ar.AsyncState);
 			if (info.Context != null)
 				info.Context.Send (info.Callback, args);
 			else

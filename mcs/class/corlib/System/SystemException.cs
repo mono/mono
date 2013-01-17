@@ -37,6 +37,7 @@ namespace System
 {
 	[Serializable]
 	[ComVisible (true)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class SystemException : Exception
 	{
 		const int Result = unchecked ((int)0x80131501);

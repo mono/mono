@@ -115,7 +115,45 @@ namespace System.IO.Packaging.Tests {
             package.Close ();
             package = Package.Open (path);
         }
-
+		
+		[Test]
+		public void Close_FileStreamNotClosed ()
+		{
+			using (var stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
+				var package = Package.Open (stream, FileMode.OpenOrCreate);
+				package.CreatePart (uris [0], contentType);
+				package.Close ();
+				stream.Read (new byte [1024], 0, 1024);
+			}
+		}
+		
+		[Test]
+		public void Close_MemoryStreamNotClosed ()
+		{
+			using (var stream = new MemoryStream ()) {
+				var package = Package.Open (stream, FileMode.OpenOrCreate);
+				package.CreatePart (uris [0], contentType);
+				package.Close ();
+				stream.Read (new byte [1024], 0, 1024);
+			}
+		}
+		
+		[Test]
+		public void Close_Twice ()
+		{
+			var package = Package.Open (new MemoryStream (), FileMode.OpenOrCreate);
+			package.Close ();
+			package.Close ();
+		}
+		
+		[Test]
+		public void Dispose_Twice ()
+		{
+			var package = Package.Open (new MemoryStream (), FileMode.OpenOrCreate);
+			((IDisposable) package).Dispose ();
+			((IDisposable) package).Dispose ();
+		}
+		
         [Test]
         public void CreatePath ()
         {
@@ -140,6 +178,32 @@ namespace System.IO.Packaging.Tests {
             Assert.AreEqual (FileAccess.ReadWrite, package.FileOpenAccess);
         }
 
+        [Test]
+        public void OpenPackageMultipleTimes ()
+        {
+            var filename = Path.GetTempFileName ();
+            try {
+                using (var file = File.Open (filename, FileMode.OpenOrCreate)) {
+                    var package = Package.Open (file, FileMode.OpenOrCreate);
+                    var part = package.CreatePart (new Uri ("/test", UriKind.Relative), "test/type");
+                    using (var stream = part.GetStream ())
+                        stream.Write (new byte [1024 * 1024], 0, 1024 * 1024);
+                    package.Close ();
+                }
+                
+                for (int i = 0; i < 10; i++) {
+                    using (var file = File.Open (filename, FileMode.OpenOrCreate))
+                    using (var package = Package.Open (file)) {
+                        package.GetParts ();
+                        package.GetRelationships ();
+                    }
+                }
+            } finally {
+                if (File.Exists (filename))
+                    File.Delete (filename);
+            }
+        }
+        
         [Test]
         public void OpenPathReadonly ()
         {
@@ -201,15 +265,6 @@ namespace System.IO.Packaging.Tests {
             } catch (IOException) {
 
             }
-        }
-
-        [Test]
-        [ExpectedException (typeof (FileFormatException))]
-        public void ReadableSeekableFullStream ()
-        {
-            stream = new FakeStream (true, false, true);
-            stream.Write (new byte [10], 0, 10);
-            package = Package.Open (stream);
         }
 
         [Test]

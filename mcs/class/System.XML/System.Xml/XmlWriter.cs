@@ -38,14 +38,16 @@ using System.Text;
 #if !MOONLIGHT
 using System.Xml.XPath;
 #endif
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Xml
 {
 	public abstract class XmlWriter : IDisposable
 	{
-#if NET_2_0
 		XmlWriterSettings settings;
-#endif
 
 		#region Constructors
 
@@ -55,16 +57,12 @@ namespace System.Xml
 
 		#region Properties
 
-#if NET_2_0
 		public virtual XmlWriterSettings Settings {
 			get { return settings; }
 		}
-#endif
 
 		public abstract WriteState WriteState { get; }
-		
 
-#if NET_2_0
 		public virtual string XmlLang {
 			get { return null; }
 		}
@@ -72,80 +70,85 @@ namespace System.Xml
 		public virtual XmlSpace XmlSpace {
 			get { return XmlSpace.None; }
 		}
-#else
-		public abstract string XmlLang { get; }
-
-		public abstract XmlSpace XmlSpace { get; }
-#endif
 
 		#endregion
 
 		#region Methods
 
+#if NET_4_5
+		public virtual void Close ()
+		{
+			if (asyncRunning)
+				throw new InvalidOperationException ("An asynchronous operation is already in progress.");
+		}
+#else
 		public abstract void Close ();
+#endif
 
-#if NET_2_0
-		public static XmlWriter Create (Stream stream)
+		public static XmlWriter Create (Stream output)
 		{
-			return Create (stream, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (string file)
+		public static XmlWriter Create (string outputFileName)
 		{
-			return Create (file, null);
+			return Create (outputFileName, null);
 		}
 
-		public static XmlWriter Create (TextWriter writer)
+		public static XmlWriter Create (TextWriter output)
 		{
-			return Create (writer, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (XmlWriter writer)
+		public static XmlWriter Create (XmlWriter output)
 		{
-			return Create (writer, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (StringBuilder builder)
+		public static XmlWriter Create (StringBuilder output)
 		{
-			return Create (builder, null);
+			return Create (output, null);
 		}
 
-		public static XmlWriter Create (Stream stream, XmlWriterSettings settings)
-		{
-			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
-			return Create (new StreamWriter (stream, enc), settings);
-		}
-
-		public static XmlWriter Create (string file, XmlWriterSettings settings)
+		public static XmlWriter Create (Stream output, XmlWriterSettings settings)
 		{
 			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
-			return CreateTextWriter (new StreamWriter (file, false, enc), settings, true);
+			return Create (new StreamWriter (output, enc), settings);
 		}
 
-		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
+		public static XmlWriter Create (string outputFileName, XmlWriterSettings settings)
 		{
-			return Create (new StringWriter (builder), settings);
+			Encoding enc = settings != null ? settings.Encoding : Encoding.UTF8;
+			return CreateTextWriter (new StreamWriter (outputFileName, false, enc), settings, true);
 		}
 
-		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
+		public static XmlWriter Create (StringBuilder output, XmlWriterSettings settings)
+		{
+			return Create (new StringWriter (output), settings);
+		}
+
+		public static XmlWriter Create (TextWriter output, XmlWriterSettings settings)
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
-			return CreateTextWriter (writer, settings, settings.CloseOutput);
+			return CreateTextWriter (output, settings, settings.CloseOutput);
 		}
 
-		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
+		public static XmlWriter Create (XmlWriter output, XmlWriterSettings settings)
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
 			else
 				settings = settings.Clone ();
 
-			var src = writer.Settings;
+			var src = output.Settings;
 			if (src == null) {
 				settings.ConformanceLevel = ConformanceLevel.Document; // Huh? Why??
-				writer = new DefaultXmlWriter (writer);
-				writer.settings = settings;
+				output = new DefaultXmlWriter (output);
+#if NET_4_5
+				settings.SetReadOnly ();
+#endif
+				output.settings = settings;
 			} else {
 				ConformanceLevel dst = src.ConformanceLevel;
 				switch (src.ConformanceLevel) {
@@ -161,14 +164,18 @@ namespace System.Xml
 
 				settings.MergeFrom (src);
 
+#if NET_4_5
+				settings.SetReadOnly ();
+#endif
+
 				// It returns a new XmlWriter instance if 1) Settings is null, or 2) Settings ConformanceLevel (or might be other members as well) give significant difference.
 				if (src.ConformanceLevel != dst) {
-					writer = new DefaultXmlWriter (writer, false);
-					writer.settings = settings;
+					output = new DefaultXmlWriter (output, false);
+					output.settings = settings;
 				}
 			}
 
-			return writer;
+			return output;
 		}
 
 		private static XmlWriter CreateTextWriter (TextWriter writer, XmlWriterSettings settings, bool closeOutput)
@@ -184,11 +191,14 @@ namespace System.Xml
 			Close ();
 		}
 
-		void IDisposable.Dispose ()
+#if NET_4_0 || MOBILE
+		public void Dispose ()
+#else
+		void IDisposable.Dispose() 
+#endif
 		{
 			Dispose (false);
 		}
-#endif
 
 		public abstract void Flush ();
 
@@ -269,16 +279,12 @@ namespace System.Xml
 
 		public abstract void WriteBase64 (byte[] buffer, int index, int count);
 
-#if NET_2_0
 		public virtual void WriteBinHex (byte [] buffer, int index, int count)
 		{
 			StringWriter sw = new StringWriter ();
 			XmlConvert.WriteBinHex (buffer, index, count, sw);
 			WriteString (sw.ToString ());
 		}
-#else
-		public abstract void WriteBinHex (byte[] buffer, int index, int count);
-#endif
 
 		public abstract void WriteCData (string text);
 
@@ -306,7 +312,6 @@ namespace System.Xml
 			WriteEndElement();
 		}
 
-#if NET_2_0
 		public void WriteElementString (string prefix, string localName, string ns, string value)
 		{
 			WriteStartElement(prefix, localName, ns);
@@ -314,7 +319,6 @@ namespace System.Xml
 				WriteString(value);
 			WriteEndElement();
 		}
-#endif
 
 		public abstract void WriteEndAttribute ();
 
@@ -326,7 +330,6 @@ namespace System.Xml
 
 		public abstract void WriteFullEndElement ();
 
-#if NET_2_0
 		public virtual void WriteName (string name)
 		{
 			WriteNameInternal (name);
@@ -341,42 +344,27 @@ namespace System.Xml
 		{
 			WriteQualifiedNameInternal (localName, ns);
 		}
-#else
-		public abstract void WriteName (string name);
-
-		public abstract void WriteNmToken (string name);
-
-		public abstract void WriteQualifiedName (string localName, string ns);
-#endif
 
 		internal void WriteNameInternal (string name)
 		{
-#if NET_2_0
 			switch (Settings.ConformanceLevel) {
 			case ConformanceLevel.Document:
 			case ConformanceLevel.Fragment:
 				XmlConvert.VerifyName (name);
 				break;
 			}
-#else
-			XmlConvert.VerifyName (name);
-#endif
 			WriteString (name);
 		}
 
 		internal virtual void WriteNmTokenInternal (string name)
 		{
 			bool valid = true;
-#if NET_2_0
 			switch (Settings.ConformanceLevel) {
 			case ConformanceLevel.Document:
 			case ConformanceLevel.Fragment:
 				valid = XmlChar.IsNmToken (name);
 					break;
 			}
-#else
-			valid = XmlChar.IsNmToken (name);
-#endif
 			if (!valid)
 				throw new ArgumentException ("Argument name is not a valid NMTOKEN.");
 			WriteString (name);
@@ -389,7 +377,6 @@ namespace System.Xml
 			if (ns == null)
 				ns = String.Empty;
 
-#if NET_2_0
 			if (Settings != null) {
 				switch (Settings.ConformanceLevel) {
 				case ConformanceLevel.Document:
@@ -400,9 +387,6 @@ namespace System.Xml
 			}
 			else
 				XmlConvert.VerifyNCName (localName);
-#else
-			XmlConvert.VerifyNCName (localName);
-#endif
 
 			string prefix = ns.Length > 0 ? LookupPrefix (ns) : String.Empty;
 			if (prefix == null)
@@ -582,12 +566,10 @@ namespace System.Xml
 
 		public abstract void WriteRaw (char[] buffer, int index, int count);
 
-#if NET_2_0
 		public void WriteStartAttribute (string localName)
 		{
 			WriteStartAttribute (null, localName, null);
 		}
-#endif
 
 		public void WriteStartAttribute (string localName, string ns)
 		{
@@ -618,7 +600,6 @@ namespace System.Xml
 
 		public abstract void WriteWhitespace (string ws);
 
-#if NET_2_0
 		public virtual void WriteValue (bool value)
 		{
 			WriteString (XQueryConvert.BooleanToString (value));
@@ -715,8 +696,408 @@ namespace System.Xml
 		{
 			WriteString (value);
 		}
+
+#if NET_4_5
+		public virtual void WriteValue (DateTimeOffset value)
+		{
+			WriteString (XmlConvert.ToString (value));
+		}
 #endif
 
 		#endregion
+
+#if NET_4_5
+		#region .NET 4.5 Async Methods
+
+		bool asyncRunning;
+
+		void StartAsync ()
+		{
+			if (!settings.Async)
+				throw new InvalidOperationException ("Set XmlWriterSettings.Async to true if you want to use Async Methods.");
+			lock (this) {
+				if (asyncRunning)
+					throw new InvalidOperationException ("An asynchronous operation is already in progress.");
+				asyncRunning = true;
+			}
+		}
+
+		public virtual Task FlushAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					Flush ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteAttributesAsync (XmlReader reader, bool defattr)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteAttributes (reader, defattr);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public Task WriteAttributeStringAsync (string prefix, string localName,
+		                                       string ns, string value)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteAttributeString (prefix, localName, ns, value);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteBase64Async (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteBase64 (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteBinHexAsync (byte[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteBinHex (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteCDataAsync (string text)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteCData (text);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteCharEntityAsync (char ch)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteCharEntity (ch);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteCharsAsync (char[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteChars (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteCommentAsync (string text)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteComment (text);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteDocTypeAsync (string name, string pubid, string sysid, string subset)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteDocType (name, pubid, sysid, subset);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public Task WriteElementStringAsync (string prefix, string localName, string ns, string value)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteElementString (prefix, localName, ns, value);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		protected internal virtual Task WriteEndAttributeAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteEndAttribute ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteEndDocumentAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteEndDocument ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteEndElementAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteEndElement ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteEntityRefAsync (string name)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteEntityRef (name);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteFullEndElementAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteFullEndElement ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteNameAsync (string name)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteName (name);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteNmTokenAsync (string name)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteNmToken (name);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteNodeAsync (XmlReader reader, bool defattr)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteNode (reader, defattr);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteNodeAsync (XPathNavigator navigator, bool defattr)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteNode (navigator, defattr);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteProcessingInstructionAsync (string name, string text)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteProcessingInstruction (name, text);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteQualifiedNameAsync (string localName, string ns)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteQualifiedName (localName, ns);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteRawAsync (string data)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteRaw (data);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+
+		}
+
+		public virtual Task WriteRawAsync (char[] buffer, int index, int count)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteRaw (buffer, index, count);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		protected internal virtual Task WriteStartAttributeAsync (
+			string prefix, string localName, string ns)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteStartAttribute (prefix, localName, ns);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteStartDocumentAsync ()
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteStartDocument ();
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteStartDocumentAsync (bool standalone)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteStartDocument (standalone);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteStartElementAsync (string prefix, string localName, string ns)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteStartElement (prefix, localName, ns);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteStringAsync (string text)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteString (text);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteSurrogateCharEntityAsync (char lowChar, char highChar)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteSurrogateCharEntity (lowChar, highChar);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		public virtual Task WriteWhitespaceAsync (string ws)
+		{
+			StartAsync ();
+			return Task.Run (() => {
+				try {
+					WriteWhitespace (ws);
+				} finally {
+					asyncRunning = false;
+				}
+			});
+		}
+
+		#endregion
+#endif
 	}
 }

@@ -56,10 +56,10 @@ namespace System.Net
 				
 				modules = new ArrayList ();
 #if NET_2_1
-				modules.Add (new BasicClient ());
-				modules.Add (new DigestClient ());
 				modules.Add (new NtlmClient ());
-#elif NET_2_0 && CONFIGURATION_DEP
+				modules.Add (new DigestClient ());
+				modules.Add (new BasicClient ());
+#elif CONFIGURATION_DEP
 				object cfg = ConfigurationManager.GetSection ("system.net/authenticationModules");
 				AuthenticationModulesSection s = cfg as AuthenticationModulesSection;
 				if (s != null) {

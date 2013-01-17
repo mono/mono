@@ -290,12 +290,12 @@ namespace MonoTests.System.Configuration {
 			// such cases.
 #if TARGET_JVM
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System.Test, Version=0.0.0.0";
-#else
-#if NET_4_0
+#elif NET_4_5
+			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_5, Version=0.0.0.0";
+#elif NET_4_0
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_0, Version=0.0.0.0";
 #else
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_2_0, Version=0.0.0.0";
-#endif
 #endif
 			Assert.AreEqual (expected, new SettingsProviderAttribute (typeof (ProviderPoker)).ProviderTypeName.Substring (0, expected.Length), "#1");
 			TestSettings2 settings = new TestSettings2 ();
@@ -379,14 +379,97 @@ namespace MonoTests.System.Configuration {
                 }
 
                 [Test] // bug #532180
-                public void DefaultSettingValueAsWithReload() {
+                public void DefaultSettingValueAsWithReload() 
+		{
                         Bug532180 settings = new Bug532180();
-                        Assert.AreEqual(10, settings.IntSetting, "A1");
+                        Assert.AreEqual (10, settings.IntSetting, "A1");
                         settings.IntSetting = 1;
-                        Assert.AreEqual(1, settings.IntSetting, "A2");
-                        settings.Reload();
-                        Assert.AreEqual(10, settings.IntSetting, "A3");
+                        Assert.AreEqual (1, settings.IntSetting, "A2");
+                        settings.Reload ();
+                        Assert.AreEqual (10, settings.IntSetting, "A3");
                 }                        
+		
+		class Bug8592ConfHolder : ApplicationSettingsBase {
+			[UserScopedSetting]
+			public string TestKey1OnHolder { 
+				get { return (string) this ["TestKey1OnHolder"] ?? ""; }
+				set { this ["TestKey1OnHolder"] = value; }
+			}
+		}
+
+		[Test]
+		public void TestBug8592BasicOperations ()
+		{
+			var holder = new Bug8592ConfHolder ();
+			holder.Reset ();
+			holder.Save ();
+			Assert.AreEqual ("", holder.TestKey1OnHolder);
+			holder.TestKey1OnHolder = "candy";
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Reload ();
+			Assert.AreEqual ("", holder.TestKey1OnHolder);
+			holder.TestKey1OnHolder = "candy";
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Save ();
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Reload ();
+			Assert.AreEqual ("candy", holder.TestKey1OnHolder);
+			holder.Reset ();
+			Assert.AreEqual ("", holder.TestKey1OnHolder);
+		}
+
+		class Bug8533ConfHolder1 : ApplicationSettingsBase {
+			[UserScopedSetting]
+			public string TestKey1OnHolder1 {
+				get { return (string) this ["TestKey1OnHolder1"] ?? ""; }
+				set { this ["TestKey1OnHolder1"] = value; }
+			}
+
+			[UserScopedSetting]
+			public string TestKey1OnHolder2 {
+				get { return (string) this ["TestKey1OnHolder2"] ?? ""; }
+				set { this ["TestKey1OnHolder2"] = value; }
+			}
+			
+			[UserScopedSetting]
+			public string TestKey {
+				get { return (string) this ["TestKey"] ?? ""; }
+				set { this ["TestKey"] = value; }
+			}
+		}
+
+		class Bug8533ConfHolder2 : ApplicationSettingsBase {
+			[UserScopedSetting]
+			public string TestKey1OnHolder2 {
+				get { return (string) this ["TestKey1OnHolder2"] ?? ""; }
+				set { this ["TestKey1OnHolder2"] = value; }
+			}
+
+			[UserScopedSetting]
+			public string TestKey {
+				get { return (string) this ["TestKey"] ?? ""; }
+				set { this ["TestKey"] = value; }
+			}
+		}
+
+		[Test]
+		public void TestBug8533ConfHandlerWronglyMixedUp ()
+		{
+			var holder1 = new Bug8533ConfHolder1 ();
+			var holder2 = new Bug8533ConfHolder2 ();
+			holder1.TestKey1OnHolder1 = "candy";
+			holder2.TestKey1OnHolder2 = "donut";
+			holder1.TestKey = "eclair";
+			holder1.Save ();
+			holder2.Save ();
+			holder1.Reload ();
+			holder2.Reload();
+			Assert.AreEqual ("", holder1.TestKey1OnHolder2);
+			Assert.AreEqual ("candy", holder1.TestKey1OnHolder1);
+			Assert.AreEqual ("donut", holder2.TestKey1OnHolder2);
+			Assert.AreEqual ("eclair", holder1.TestKey);
+			Assert.AreEqual ("", holder2.TestKey);
+		}
 	}
 }
 

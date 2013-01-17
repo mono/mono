@@ -118,11 +118,5 @@ namespace System.Threading
 			}
 		}
 
-#if ONLY_1_1
-		[MonoTODO]
-		~RegisteredWaitHandle() {
-			// FIXME
-		}
-#endif
 	}
 }

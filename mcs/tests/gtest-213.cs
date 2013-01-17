@@ -23,7 +23,7 @@ public class Test
 			throw new System.Exception ("didn't update 't'");
 	}
 
-	static void Main()
+	public static void Main()
 	{
 		Fun (new SomeStruct ());
 	}

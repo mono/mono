@@ -30,12 +30,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || TARGET_JVM
-
 using System.ComponentModel;
 using System.Data;
 #if NET_2_0 && !TARGET_JVM
 using System.Transactions;
+#endif
+
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
@@ -50,9 +53,7 @@ namespace System.Data.Common {
 		#endregion // Constructors
 
 		#region Properties
-#pragma warning disable 618		
 		[RecommendedAsConfigurable (true)]
-#pragma warning restore 618		
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue ("")]
 		public abstract string ConnectionString { get; set; }
@@ -717,12 +718,10 @@ namespace System.Data.Common {
 			return dataTable;
 		}
 
-		protected virtual DbProviderFactory DbProviderFactory {
-#if MOBILE
-			get {throw new NotImplementedException();}
-#else
-			get { return DbProviderFactories.GetFactory (this.GetType (). ToString ()); }
-#endif
+		protected internal virtual DbProviderFactory DbProviderFactory {
+			get {
+				return null;
+			}
 		}
 #endif
 
@@ -743,11 +742,24 @@ namespace System.Data.Common {
 		
 		public abstract void Open ();
 
-		protected virtual void OnStateChange (StateChangeEventArgs stateChanged)
+		protected virtual void OnStateChange (StateChangeEventArgs stateChange)
 		{
 			if (StateChange != null)
-				StateChange (this, stateChanged);
+				StateChange (this, stateChange);
 		}
+		
+#if NET_4_5
+		public Task OpenAsync ()
+		{
+			return OpenAsync (CancellationToken.None);
+		}
+		
+		[MonoTODO]
+		public virtual Task OpenAsync (CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Methods
 
@@ -755,5 +767,3 @@ namespace System.Data.Common {
 
 	}
 }
-
-#endif

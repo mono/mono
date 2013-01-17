@@ -237,8 +237,8 @@ namespace System.Windows.Forms
 				if (value != auto_size) {
 					auto_size = value;
 					if (auto_size) {
-						if (PreferredHeight != ClientSize.Height) {
-							ClientSize = new Size(ClientSize.Width, PreferredHeight);
+						if (PreferredHeight != Height) {
+							Height = PreferredHeight;
 						}
 					}
 				}
@@ -466,14 +466,16 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		// This returns the preferred outer height, not the client height.
 		public int PreferredHeight {
 			get {
+				int clientDelta = Height - ClientSize.Height;
 				if (BorderStyle != BorderStyle.None)
-					return Font.Height + 7;
+					return Font.Height + 7 + clientDelta;
 
 				// usually in borderless mode the top margin is 0, but
 				// try to access it, in case it was set manually, as ToolStrip* controls do
-				return Font.Height + TopMargin;
+				return Font.Height + TopMargin + clientDelta;
 			}
 		}
 
@@ -993,7 +995,7 @@ namespace System.Windows.Forms
 			base.OnFontChanged (e);
 
 			if (auto_size && !document.multiline) {
-				if (PreferredHeight != ClientSize.Height) {
+				if (PreferredHeight != Height) {
 					Height = PreferredHeight;
 				}
 			}
@@ -1663,9 +1665,13 @@ namespace System.Windows.Forms
 		}
 
 		// XXX should this not manipulate base.Paint?
+#pragma warning disable 0067
+		[MonoTODO]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
+#pragma warning restore 0067
+
 		#endregion	// Events
 
 		#region Private Methods
@@ -1762,8 +1768,8 @@ namespace System.Windows.Forms
 		{
 			if (!richtext) {
 				if (!document.multiline) {
-					if (PreferredHeight != ClientSize.Height) {
-						ClientSize = new Size (ClientSize.Width, PreferredHeight);
+					if (PreferredHeight != Height) {
+						Height = PreferredHeight;
 					}
 				}
 			}

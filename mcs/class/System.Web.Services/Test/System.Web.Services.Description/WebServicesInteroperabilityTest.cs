@@ -42,6 +42,16 @@ namespace MonoTests.System.Web.Services.Description
 				WsiProfiles.BasicProfile1_1,
 				ServiceDescription.Read ("Test/System.Web.Services.Description/443095.wsdl"), bc);
 		}
+
+		[Test]
+		public void CheckEmptyOutput () // bug #6041
+		{
+			BasicProfileViolationCollection bc = new BasicProfileViolationCollection ();
+			WebServicesInteroperability.CheckConformance (
+				WsiProfiles.BasicProfile1_1,
+				ServiceDescription.Read ("Test/System.Web.Services.Description/6041.wsdl"), bc);
+		}
+
 	}
 }
 

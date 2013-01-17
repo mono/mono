@@ -1,4 +1,4 @@
-/* ****************************************************************************
+﻿/* ****************************************************************************
  *
  * Copyright (c) Microsoft Corporation. 
  *
@@ -12,17 +12,14 @@
  *
  *
  * ***************************************************************************/
+#if FEATURE_REFEMIT && FEATURE_PDBEMIT
 
-#if CLR2
+#if !FEATURE_CORE_DLR
 using Microsoft.Scripting.Ast;
 using Microsoft.Scripting.Ast.Compiler;
 #else
 using System.Linq.Expressions;
 using System.Linq.Expressions.Compiler;
-#endif
-
-#if SILVERLIGHT
-using System.Core;
 #endif
 
 using System.Collections.Generic;
@@ -32,7 +29,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace System.Runtime.CompilerServices {
-#if CLR2 || SILVERLIGHT
+#if !FEATURE_CORE_DLR || SILVERLIGHT
     using ILGenerator = OffsetTrackingILGenerator;
 #endif
 
@@ -72,3 +69,4 @@ namespace System.Runtime.CompilerServices {
         }
     }
 }
+#endif

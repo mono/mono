@@ -2,9 +2,10 @@
 //
 // Authors:
 //	Marek Habersack (mhabersack@novell.com)
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Gonzalo Paniagua Javier (gonzalo@xamarin.com)
 //
 // Copyright (c) 2008,2010 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2011 Xamarin, Inc. (http://xamarin.com)
 //
 
 //
@@ -37,6 +38,8 @@ namespace System.Net.Sockets
 {
 	public class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
+		bool disposed;
+		int in_progress;
 		internal Socket.Worker Worker;
 		EndPoint remote_ep;
 #if MOONLIGHT || NET_4_0
@@ -147,7 +150,11 @@ namespace System.Net.Sockets
 
 		void Dispose (bool disposing)
 		{
+			disposed = true;
+
 			if (disposing) {
+				if (disposed || Interlocked.CompareExchange (ref in_progress, 0, 0) != 0)
+					return;
 				if (Worker != null) {
 					Worker.Dispose ();
 					Worker = null;
@@ -171,6 +178,10 @@ namespace System.Net.Sockets
 
 		internal void SetLastOperation (SocketAsyncOperation op)
 		{
+			if (disposed)
+				throw new ObjectDisposedException ("System.Net.Sockets.SocketAsyncEventArgs");
+			if (Interlocked.Exchange (ref in_progress, 1) != 0)
+				throw new InvalidOperationException ("Operation already in progress");
 			LastOperation = op;
 		}
 
@@ -219,6 +230,8 @@ namespace System.Net.Sockets
 		static void DispatcherCB (IAsyncResult ares)
 		{
 			SocketAsyncEventArgs args = (SocketAsyncEventArgs) ares.AsyncState;
+			if (Interlocked.Exchange (ref args.in_progress, 0) != 1)
+				throw new InvalidOperationException ("No operation in progress");
 			SocketAsyncOperation op = args.LastOperation;
 			// Notes;
 			// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs

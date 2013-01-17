@@ -18,7 +18,7 @@ using System.Text;
 namespace MonoTests.System.Security.Cryptography {
 
 [TestFixture]
-public class SymmetricAlgorithmTest : Assertion {
+public class SymmetricAlgorithmTest {
 public void AssertEquals (string msg, byte[] array1, byte[] array2)
 {
 	AllTests.AssertEquals (msg, array1, array2);
@@ -3743,7 +3743,7 @@ public void TestRijndael_k128b128_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k128b128_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k128b128_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -3829,7 +3829,7 @@ public void TestRijndael_k128b128_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k128b128_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k128b128_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -3934,7 +3934,7 @@ public void TestRijndael_k128b192_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k128b192_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k128b192_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4020,7 +4020,7 @@ public void TestRijndael_k128b192_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k128b192_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k128b192_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4125,7 +4125,7 @@ public void TestRijndael_k128b256_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k128b256_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k128b256_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4211,7 +4211,7 @@ public void TestRijndael_k128b256_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k128b256_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k128b256_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4316,7 +4316,7 @@ public void TestRijndael_k192b128_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k192b128_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k192b128_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4402,7 +4402,7 @@ public void TestRijndael_k192b128_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k192b128_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k192b128_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4507,7 +4507,7 @@ public void TestRijndael_k192b192_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k192b192_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k192b192_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4593,7 +4593,7 @@ public void TestRijndael_k192b192_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k192b192_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k192b192_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4698,7 +4698,7 @@ public void TestRijndael_k192b256_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k192b256_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k192b256_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4784,7 +4784,7 @@ public void TestRijndael_k192b256_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k192b256_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k192b256_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4889,7 +4889,7 @@ public void TestRijndael_k256b128_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k256b128_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k256b128_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -4975,7 +4975,7 @@ public void TestRijndael_k256b128_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k256b128_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k256b128_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -5080,7 +5080,7 @@ public void TestRijndael_k256b192_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k256b192_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k256b192_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -5166,7 +5166,7 @@ public void TestRijndael_k256b192_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k256b192_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k256b192_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -5271,7 +5271,7 @@ public void TestRijndael_k256b256_ECB_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k256b256_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k256b256_ECB_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 
@@ -5357,7 +5357,7 @@ public void TestRijndael_k256b256_CBC_Zeros ()
 	}
 	catch (Exception e) {
 		if (e.Message != "Input buffer contains insufficient data. ")
-			Fail ("Rijndael_k256b256_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
+			Assert.Fail ("Rijndael_k256b256_CBC_Zeros: This isn't the expected exception: " + e.ToString ());
 	}
 }
 

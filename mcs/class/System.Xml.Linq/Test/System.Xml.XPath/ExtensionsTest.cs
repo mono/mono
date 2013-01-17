@@ -30,15 +30,25 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Xml
 {
+	public static class Helpers
+	{
+		public static string NormalizeNewline(this string str)
+		{
+			return str.Replace("\r\n", "\n");
+		}
+	}
+
 	[TestFixture]
 	public class ExtensionsTest
 	{
@@ -417,7 +427,7 @@ namespace MonoTests.System.Xml
 			string ret = @"<one>
   <two>Some data.</two>
 </one>";
-			Assert.AreEqual (ret, nav.OuterXml.Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (ret.NormalizeNewline (), nav.OuterXml.NormalizeNewline (), "#1");
 		}
 
 		[Test]
@@ -451,6 +461,37 @@ namespace MonoTests.System.Xml
 			nav.MoveToNext ();
 			nav.MoveToNext ();
 			Assert.AreEqual ("", nav.GetNamespace (""), "#2." + nav.GetType ());
+		}
+
+		[Test] // bug #2383
+		public void EvaluateNodeSetAsEnumerable ()
+		{
+			String xml = "<root a='value'/>";
+			XDocument d = XDocument.Parse (xml);
+			IEnumerable att = (IEnumerable) d.XPathEvaluate ("/root/@a");
+			att.Cast<XAttribute> ().FirstOrDefault ();
+		}
+
+		[Test] // bug #5902
+		public void EvaluateNodeSetAsEnumerableOfObject ()
+		{
+			var root = XDocument.Parse("<config><item name=\"A\" /></config>");
+			Assert.IsTrue (root.XPathSelectElements ("config/*").First ().XPathEvaluate (".") is IEnumerable<object>);
+		}
+
+		[Test] // bug #2146
+		public void RemoveDoesSnapshotCopy ()
+		{
+			var xml = XElement.Parse ("<p><n>one</n><n>two</n><n>three</n></p>");
+			xml.Elements ().Last ().NodesBeforeSelf ().Remove ();
+		}
+
+		[Test] // bug #2146
+		public void RemoveDoesSnapshotCopy2 ()
+		{
+			var xml = XElement.Parse ("<p><n>one</n><n>two</n><n>three</n></p>");
+			xml.Elements ().First ().NodesAfterSelf ().Remove ();
+			Assert.IsTrue (!xml.ToString ().Contains ("three"), "#1");
 		}
 	}
 }

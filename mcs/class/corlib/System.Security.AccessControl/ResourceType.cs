@@ -27,8 +27,11 @@
 //
 
 
-namespace System.Security.AccessControl {
-	public enum ResourceType {
+namespace System.Security.AccessControl
+{
+	// These directly correspond to Win32 SE_OBJECT_TYPE.
+	public enum ResourceType
+	{
 		Unknown			= 0,
 		FileObject		= 1,
 		Service			= 2,

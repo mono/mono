@@ -42,16 +42,13 @@ namespace System.Net.Sockets
 		// changing socket-io.c in the runtime
 		private IPAddress group;
 		private IPAddress local;
-#if NET_2_0
 		int iface_index;
-#endif
 
 		public MulticastOption (IPAddress group)
 			: this (group, IPAddress.Any)
 		{
 		}
 
-#if NET_2_0
 		public MulticastOption (IPAddress group, int interfaceIndex)
 		{
 			if (group == null)
@@ -62,7 +59,6 @@ namespace System.Net.Sockets
 			this.group = group;
 			this.iface_index = interfaceIndex;
 		}
-#endif
 
 		public MulticastOption (IPAddress group, IPAddress mcint)
 		{
@@ -84,13 +80,10 @@ namespace System.Net.Sockets
 			get { return local; }
 			set {
 				local = value;
-#if NET_2_0
 				iface_index = 0;
-#endif
 			}
 		}
 
-#if NET_2_0
 		public int InterfaceIndex {
 			get { return iface_index; }
 			set {
@@ -100,7 +93,6 @@ namespace System.Net.Sockets
 				local = null;
 			}
 		}
-#endif
 	}
 }
 

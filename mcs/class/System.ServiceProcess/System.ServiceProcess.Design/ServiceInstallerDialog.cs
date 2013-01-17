@@ -37,7 +37,7 @@ namespace System.ServiceProcess.Design
 	public class ServiceInstallerDialog : Form
 	{
 		string username, password;
-		ServiceInstallerDialogResult result;
+		const ServiceInstallerDialogResult result = 0;
 
 		public ServiceInstallerDialog ()
 		{
@@ -60,6 +60,7 @@ namespace System.ServiceProcess.Design
 			set { password = value; }
 		}
 
+		[MonoTODO]
 		public ServiceInstallerDialogResult Result {
 			get { return result; }
 		}

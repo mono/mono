@@ -24,8 +24,6 @@
 //
 
 
-#if NET_2_0
-
 namespace System.ComponentModel {
 
 	public class ListSortDescription {
@@ -52,4 +50,3 @@ namespace System.ComponentModel {
 
 }
 
-#endif

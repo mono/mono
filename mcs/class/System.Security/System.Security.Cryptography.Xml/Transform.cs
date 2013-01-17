@@ -45,11 +45,7 @@ namespace System.Security.Cryptography.Xml {
 		private XmlResolver xmlResolver;
 		private Hashtable propagated_namespaces = new Hashtable ();
 
-#if NET_2_0
 		protected Transform ()
-#else
-		public Transform ()
-#endif
 		{
 			if (SecurityManager.SecurityEnabled) {
 				xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), (Evidence) new Evidence ());
@@ -73,43 +69,32 @@ namespace System.Security.Cryptography.Xml {
 			get;
 		}
 
-#if NET_1_1
 		[ComVisible(false)]
 		public XmlResolver Resolver {
 			set { xmlResolver = value; }
 		}
-#endif
 
-#if NET_2_0
 		[MonoTODO]
 		[ComVisible (false)]
 		public XmlElement Context {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 
 		[ComVisible (false)]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		Hashtable PropagatedNamespaces {
+		public Hashtable PropagatedNamespaces {
 			get { return propagated_namespaces; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
-#if NET_2_0
 		[ComVisible (false)]
 		public virtual byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
 			// no null check, MS throws a NullReferenceException here
 			return hash.ComputeHash ((Stream) GetOutput (typeof (Stream)));
 		}
-#endif
 
 		protected abstract XmlNodeList GetInnerXml ();
 

@@ -1,11 +1,12 @@
-#if NET_4_0
 // 
 // CancellationTokenTests.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar (marek.safar@gmail.com)
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +26,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0 || MOBILE
+
 using System;
 using System.Threading;
 
@@ -32,11 +35,11 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Threading
 {
-	[TestFixtureAttribute]
+	[TestFixture]
 	public class CancellationTokenTests
 	{
 		[Test]
-		public void TestInitedWithFalseToken ()
+		public void InitedWithFalseToken ()
 		{
 			CancellationToken tk = new CancellationToken (false);
 			Assert.IsFalse (tk.CanBeCanceled, "#1");
@@ -44,7 +47,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestInitedWithTrueToken ()
+		public void InitedWithTrueToken ()
 		{
 			CancellationToken tk = new CancellationToken (true);
 			Assert.IsTrue (tk.CanBeCanceled, "#1");
@@ -52,7 +55,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestWithCancellationSourceNotCanceled ()
+		public void CancellationSourceNotCanceled ()
 		{
 			var src = new CancellationTokenSource ();
 			var tk = src.Token;
@@ -62,22 +65,43 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestWithCancellationSourceCanceled ()
+		public void CancellationSourceCanceled ()
 		{
 			var src = new CancellationTokenSource ();
 			var tk = src.Token;
 			src.Cancel ();
 
-			Assert.IsTrue (tk.CanBeCanceled);
-			Assert.IsTrue (tk.IsCancellationRequested);
+			Assert.IsTrue (tk.CanBeCanceled, "#1");
+			Assert.IsTrue (tk.IsCancellationRequested, "#2");
 		}
 
 		[Test]
-		public void TestWithUninitializedToken ()
+		public void UninitializedToken ()
 		{
 			var tk = new CancellationToken ();
 			Assert.IsFalse (tk.CanBeCanceled);
 			Assert.IsFalse (tk.IsCancellationRequested);
+		}
+
+		[Test]
+		public void NoneProperty ()
+		{
+			var n = CancellationToken.None;
+			Assert.IsFalse (n.CanBeCanceled, "#1");
+			Assert.IsFalse (n.IsCancellationRequested, "#2");
+			Assert.AreEqual (n, CancellationToken.None, "#3");
+
+			n.ThrowIfCancellationRequested ();
+			n.GetHashCode ();
+		}
+
+		[Test]
+		public void DefaultCancellationTokenRegistration ()
+		{
+			var registration = new CancellationTokenRegistration ();
+
+			// shouldn't throw
+			registration.Dispose ();
 		}
 	}
 }

@@ -32,6 +32,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -43,6 +44,7 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ParameterBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	public class ParameterBuilder : _ParameterBuilder {
 
 #pragma warning disable 169, 414
@@ -94,8 +96,10 @@ namespace System.Reflection.Emit {
 		{
 			if (position > 0) {
 				Type t = methodb.GetParameterType (position - 1);
-				if (defaultValue != null && t != defaultValue.GetType ())
-					throw new ArgumentException ("Constant does not match the defined type.");
+				if (defaultValue != null && t != defaultValue.GetType ()) {
+					if(!t.IsEnum || t.UnderlyingSystemType != defaultValue.GetType ())
+						throw new ArgumentException ("Constant does not match the defined type.");
+				}
 				if (t.IsValueType && !t.IsPrimitive && !t.IsEnum && t != typeof (DateTime))
 					throw new ArgumentException ("" + t + " is not a supported constant type.");
 			}
@@ -172,3 +176,4 @@ namespace System.Reflection.Emit {
 	}
 }
 
+#endif

@@ -78,7 +78,6 @@ namespace System.Net
 			get { return uri; }
 		}
 
-#if NET_2_0
 		static Exception GetMustImplement ()
 		{
 			return new NotImplementedException ();
@@ -89,7 +88,6 @@ namespace System.Net
 			get { return endPointCallback; }
 			set { endPointCallback = value; }
 		}
-#endif
 		
 		public X509Certificate Certificate {
 			get { return certificate; }
@@ -99,7 +97,6 @@ namespace System.Net
 			get { return clientCertificate; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public int ConnectionLeaseTimeout
 		{
@@ -110,7 +107,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 		
 		public int ConnectionLimit {
 			get { return connectionLimit; }
@@ -155,7 +151,6 @@ namespace System.Net
 			get { return protocolVersion; }
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public int ReceiveBufferSize
 		{
@@ -166,13 +161,12 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 		
 		public bool SupportsPipelining {
 			get { return HttpVersion.Version11.Equals (protocolVersion); }
 		}
 
-#if NET_1_1
+
 		public bool Expect100Continue {
 			get { return SendContinue; }
 			set { SendContinue = value; }
@@ -182,7 +176,6 @@ namespace System.Net
 			get { return useNagle; }
 			set { useNagle = value; }
 		}
-#endif
 
 		internal bool SendContinue {
 			get { return sendContinue &&
@@ -232,13 +225,6 @@ namespace System.Net
 			}
 		}
 
-#if !NET_2_0
-		public override int GetHashCode() 
-		{
-			return base.GetHashCode ();
-		}
-#endif
-		
 		// Internal Methods
 
 		internal bool UsesProxy {
@@ -338,7 +324,6 @@ namespace System.Net
 			return cnc.SendRequest (request);
 		}
 #endif
-#if NET_2_0
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
 			lock (locker) {
@@ -351,7 +336,6 @@ namespace System.Net
 
 			return false;
 		}
-#endif
 
 		internal void IncrementConnection ()
 		{
@@ -376,7 +360,6 @@ namespace System.Net
 			clientCertificate = client;
 		}
 
-#if NET_2_0
 		internal bool CallEndPointDelegate (Socket sock, IPEndPoint remote)
 		{
 			if (endPointCallback == null)
@@ -412,7 +395,6 @@ namespace System.Net
 				return true;
 			}
 		}
-#endif
 	}
 }
 

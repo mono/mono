@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Globalization;
 using System.IO;
@@ -172,7 +171,7 @@ namespace System.Configuration
 		private object GetDeserializedDefaultValue ()
 		{
 			if (property.DefaultValue == null)
-				if (property.PropertyType.IsValueType)
+				if (property.PropertyType != null && property.PropertyType.IsValueType)
 					return Activator.CreateInstance (property.PropertyType);
 				else
 					return null;
@@ -244,4 +243,3 @@ namespace System.Configuration
 
 }
 
-#endif

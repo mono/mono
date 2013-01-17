@@ -147,34 +147,34 @@ namespace zipsharp
 				return unzReadCurrentFile (handle, b, (uint)count);
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzCloseCurrentFile (UnzipHandle handle);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr unztell (UnzipHandle handle);
 		
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzGoToFirstFile (UnzipHandle handle);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern UnzipHandle unzOpen2 (string path,
 		                                            ref ZlibFileFuncDef pzlib_filefunc_def);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzGoToNextFile (UnzipHandle handle);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzLocateFile (UnzipHandle handle,
 		                                         string szFileName,
 		                                         int iCaseSensitivity);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzOpenCurrentFile2 (UnzipHandle handle,
 		                                       out int method,
 		                                       out int level,
 		                                       int raw);
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzGetCurrentFileInfo (UnzipHandle handle,
 		                                                 out UnzipFileInfo pfile_info,
 		                                                 StringBuilder szFileName,
@@ -184,15 +184,15 @@ namespace zipsharp
 		                                                 StringBuilder szComment,
 		                                                 IntPtr commentBufferSize);   // uLong
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static unsafe extern int unzReadCurrentFile (UnzipHandle handle,
 		                                              byte* buf, // voidp
 		                                              uint len);
 
-		//[DllImport ("MonoPosixHelper")]
+		//[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		//static extern int unzSetOffset (UnzipHandle handle, IntPtr pos); // uLong
 		
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzClose (UnzipHandle handle);
 	}
 }

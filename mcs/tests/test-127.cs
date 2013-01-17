@@ -11,7 +11,7 @@ enum Test {
 
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		Test test = Test.A;
 

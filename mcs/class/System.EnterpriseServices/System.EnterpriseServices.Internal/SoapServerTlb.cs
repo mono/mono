@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("F6B6768F-F99E-4152-8ED2-0412F78517FB")]
 	public sealed class SoapServerTlb : ISoapServerTlb {
 
@@ -54,5 +53,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

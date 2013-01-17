@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 using System.IO;
@@ -43,10 +43,8 @@ namespace Microsoft.Win32.SafeHandles
 		}
 
 		protected override bool ReleaseHandle () {
-			if (this.handle != (IntPtr) (-1)){
-				if (MonoUtil.IsUnix)
-					return MemoryMappedFile.UnmapPosix (this.handle, ByteLength);
-			}
+			if (this.handle != (IntPtr) (-1))
+				return MemoryMapImpl.Unmap (this.handle, ByteLength);
 			throw new NotImplementedException ();
 		}
 	}

@@ -4,6 +4,8 @@
 // Author: Erik LeBel <eriklebel@yahoo.ca>
 //
 //  (C) Erik LeBel 2003
+// Copyright 2003-2011 Novell 
+// Copyright 2011 Xamarin Inc
 //  
 // FIXME add tests for callbacks
 // FIXME add tests for writes that generate namespaces
@@ -464,7 +466,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("Additional namespace prefixes are added")]
 		public void TestWritePotentiallyReferencingElement ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -494,7 +496,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<x xmlns:q2='{0}' d1p1:type='q2:string' xmlns:d1p1='{1}' xmlns='{2}'>something</x>",
 				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace),
-				xsw.Content, "#2");
+				xsw.Content, "#4");
 
 			xsw.Reset ();
 
@@ -1582,5 +1584,30 @@ namespace MonoTests.System.XmlSerialization
 			[DefaultValue ('a')]
 			public char character = '\'';
 		}
+
+		[Test]
+		public void TestNullableDatesAndTimes ()
+		{
+			DateTime dt = new DateTime (2012, 1, 3, 10, 0, 0, 0);
+			
+			var d = new NullableDatesAndTimes () {
+				MyTime = dt,
+				MyTimeNullable = dt,
+				MyDate = dt,
+				MyDateNullable = dt
+			};
+			
+			XmlSerializer ser = new XmlSerializer (d.GetType ());
+			StringWriter sw = new StringWriter ();
+			ser.Serialize (sw, d);
+			string str = sw.ToString ();
+
+			Assert.IsTrue (str.IndexOf ("<MyTime>10:00:00</MyTime>") != -1, "Time");
+			Assert.IsTrue (str.IndexOf ("<MyTimeNullable>10:00:00</MyTimeNullable>") != -1, "Nullable Time");
+			Assert.IsTrue (str.IndexOf ("<MyDate>2012-01-03</MyDate>") != -1, "Date");
+			Assert.IsTrue (str.IndexOf ("<MyDateNullable>2012-01-03</MyDateNullable>") != -1, "Nullable Datwe");
+		}
+		
+		
 	}
 }

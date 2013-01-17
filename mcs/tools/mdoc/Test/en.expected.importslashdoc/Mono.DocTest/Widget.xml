@@ -178,6 +178,52 @@
           <c>F:Mono.DocTest.Widget.classCtorError</c>.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="public void Default (int a = 1, int b = 2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Default(int32 a, int32 b) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Int32" />
+        <Parameter Name="b" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>M:Mono.DocTest.Widget.Default(System.Int32,System.Int32)</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="public void Default (string a = &quot;a&quot;, char b = 'b');" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Default(string a, char b) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.String" />
+        <Parameter Name="b" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>M:Mono.DocTest.Widget.Default(System.String,System.Char)</c>
+        </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="defaultColor">
       <MemberSignature Language="C#" Value="protected static Mono.DocTest.Color defaultColor;" />
       <MemberSignature Language="ILAsm" Value=".field family static valuetype Mono.DocTest.Color defaultColor" />
@@ -192,6 +238,165 @@
         <summary>To be added.</summary>
         <remarks>
           <c>F:Mono.DocTest.Widget.defaultColor</c>.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dynamic0">
+      <MemberSignature Language="C#" Value="public dynamic Dynamic0 (dynamic a, dynamic b);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object Dynamic0(object a, object b) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Object" />
+        <Parameter Name="b" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Dynamic1">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;dynamic,string&gt; Dynamic1 (System.Collections.Generic.Dictionary&lt;dynamic,string&gt; value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.Dictionary`2&lt;object, string&gt; Dynamic1(class System.Collections.Generic.Dictionary`2&lt;object, string&gt; value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;System.Object,System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Collections.Generic.Dictionary&lt;System.Object,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dynamic2">
+      <MemberSignature Language="C#" Value="public Func&lt;string,dynamic&gt; Dynamic2 (Func&lt;string,dynamic&gt; value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Func`2&lt;string, object&gt; Dynamic2(class System.Func`2&lt;string, object&gt; value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Func&lt;System.String,System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Func&lt;System.String,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dynamic3">
+      <MemberSignature Language="C#" Value="public Func&lt;Func&lt;string,dynamic&gt;,Func&lt;dynamic,string&gt;&gt; Dynamic3 (Func&lt;Func&lt;string,dynamic&gt;,Func&lt;dynamic,string&gt;&gt; value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Func`2&lt;class System.Func`2&lt;string, object&gt;, class System.Func`2&lt;object, string&gt;&gt; Dynamic3(class System.Func`2&lt;class System.Func`2&lt;string, object&gt;, class System.Func`2&lt;object, string&gt;&gt; value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Func&lt;System.Func&lt;System.String,System.Object&gt;,System.Func&lt;System.Object,System.String&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Func&lt;System.Func&lt;System.String,System.Object&gt;,System.Func&lt;System.Object,System.String&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DynamicE1">
+      <MemberSignature Language="C#" Value="public event Func&lt;dynamic&gt; DynamicE1;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Func`1&lt;object&gt; DynamicE1" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("why not")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Func&lt;System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>E:Mono.DocTest.Widget.DynamicE1</c>
+        </remarks>
+        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
+        <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DynamicE2">
+      <MemberSignature Language="C#" Value="public event Func&lt;dynamic&gt; DynamicE2;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Func`1&lt;object&gt; DynamicE2" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Func&lt;System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>E:Mono.DocTest.Widget.DynamicE2</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DynamicF">
+      <MemberSignature Language="C#" Value="public Func&lt;Func&lt;string,dynamic,string&gt;,Func&lt;dynamic,Func&lt;dynamic&gt;,string&gt;&gt; DynamicF;" />
+      <MemberSignature Language="ILAsm" Value=".field public class System.Func`2&lt;class System.Func`3&lt;string, object, string&gt;, class System.Func`3&lt;object, class System.Func`1&lt;object&gt;, string&gt;&gt; DynamicF" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Func&lt;System.Func&lt;System.String,System.Object,System.String&gt;,System.Func&lt;System.Object,System.Func&lt;System.Object&gt;,System.String&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>F:Mono.DocTest.Widget.DynamicF</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DynamicP">
+      <MemberSignature Language="C#" Value="public Func&lt;Func&lt;string,dynamic,string&gt;,Func&lt;dynamic,Func&lt;dynamic&gt;,string&gt;&gt; DynamicP { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Func`2&lt;class System.Func`3&lt;string, object, string&gt;, class System.Func`3&lt;object, class System.Func`1&lt;object&gt;, string&gt;&gt; DynamicP" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Func&lt;System.Func&lt;System.String,System.Object,System.String&gt;,System.Func&lt;System.Object,System.Func&lt;System.Object&gt;,System.String&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>
+          <c>P:Mono.DocTest.Widget.DynamicP</c>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Height">

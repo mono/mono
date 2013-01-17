@@ -7,6 +7,7 @@
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2011 Novell, Inc (http://www.novell.com)
+ * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  */
 
 struct _tp_epoll_data {
@@ -30,8 +31,18 @@ tp_epoll_init (SocketIOData *data)
 	result->epollfd = epoll_create (256); /* The number does not really matter */
 	fcntl (result->epollfd, F_SETFD, FD_CLOEXEC);
 #endif
-	if (result->epollfd == -1)
+	if (result->epollfd == -1) {
+		int err = errno;
+		if (g_getenv ("MONO_DEBUG")) {
+#ifdef EPOLL_CLOEXEC
+			g_message ("epoll_create1(EPOLL_CLOEXEC) failed: %d %s", err, g_strerror (err));
+#else
+			g_message ("epoll_create(256) failed: %d %s", err, g_strerror (err));
+#endif
+		}
+
 		return NULL;
+	}
 
 	data->shutdown = tp_epoll_shutdown;
 	data->modify = tp_epoll_modify;
@@ -46,6 +57,7 @@ tp_epoll_modify (gpointer event_data, int fd, int operation, int events, gboolea
 	struct epoll_event evt;
 	int epoll_op;
 
+	memset (&evt, 0, sizeof (evt));
 	evt.data.fd = fd;
 	if ((events & MONO_POLLIN) != 0)
 		evt.events |= EPOLLIN;
@@ -94,6 +106,8 @@ tp_epoll_wait (gpointer p)
 	events = g_new0 (struct epoll_event, EPOLL_NEVENTS);
 
 	while (1) {
+		mono_gc_set_skip_thread (TRUE);
+
 		do {
 			if (ready == -1) {
 				if (THREAD_WANTS_A_BREAK (thread))
@@ -101,6 +115,8 @@ tp_epoll_wait (gpointer p)
 			}
 			ready = epoll_wait (epollfd, events, EPOLL_NEVENTS, -1);
 		} while (ready == -1 && errno == EINTR);
+
+		mono_gc_set_skip_thread (FALSE);
 
 		if (ready == -1) {
 			int err = errno;

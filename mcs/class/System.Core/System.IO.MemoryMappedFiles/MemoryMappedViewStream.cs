@@ -26,11 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 
 using System;
 using System.IO;
-using Mono.Unix.Native;
 
 namespace System.IO.MemoryMappedFiles
 {
@@ -43,17 +42,14 @@ namespace System.IO.MemoryMappedFiles
 		internal MemoryMappedViewStream (int fd, long offset, long size, MemoryMappedFileAccess access) {
 			this.fd = fd;
 			monitor = new Object ();
-			if (MonoUtil.IsUnix)
-				CreateStreamPosix (fd, offset, size, access);
-			else
-				throw new NotImplementedException ("Not implemented on windows.");
+			CreateStream (fd, offset, size, access);
 		}
 
-		unsafe void CreateStreamPosix (int fd, long offset, long size, MemoryMappedFileAccess access)
+		unsafe void CreateStream (int fd, long offset, long size, MemoryMappedFileAccess access)
 		{
 			int offset_diff;
 			mmap_size = (ulong) size;
-			MemoryMappedFile.MapPosix (fd, offset, ref size, access, out mmap_addr, out offset_diff);
+			MemoryMapImpl.Map (fd, offset, ref size, access, out mmap_addr, out offset_diff);
 			FileAccess faccess;
 
 			switch (access) {
@@ -77,7 +73,7 @@ namespace System.IO.MemoryMappedFiles
 			base.Dispose (disposing);
 			lock (monitor) {
 				if (mmap_addr != (IntPtr)(-1)) {
-					MemoryMappedFile.UnmapPosix (mmap_addr, mmap_size);
+					MemoryMapImpl.Unmap (mmap_addr, mmap_size);
 					mmap_addr = (IntPtr)(-1);
 				}
 			}
@@ -85,10 +81,7 @@ namespace System.IO.MemoryMappedFiles
 
 		public override void Flush ()
 		{
-			if (MonoUtil.IsUnix)
-				Syscall.fsync (fd);
-			else
-				throw new NotImplementedException ("Not implemented on Windows");
+			MemoryMapImpl.Flush (fd);
 		}
 	}
 }

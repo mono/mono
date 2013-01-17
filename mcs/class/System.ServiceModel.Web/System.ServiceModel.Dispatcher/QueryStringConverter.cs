@@ -68,6 +68,9 @@ namespace System.ServiceModel.Dispatcher
 			if (!CanConvert (parameterType))
 				throw new NotSupportedException (String.Format ("Conversion from the argument parameterType '{0}' is not supported", parameterType));
 
+			if (parameterType.IsEnum)
+				return Enum.Parse(parameterType, parameter, true);
+
 			switch (Type.GetTypeCode (parameterType)) {
 			case TypeCode.String:
 				return parameter;

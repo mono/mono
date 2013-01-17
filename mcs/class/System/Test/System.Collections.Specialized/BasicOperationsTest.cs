@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Collections.Specialized {
 
 	[TestFixture]
-	public class BasicOperationsTest : Assertion {
+	public class BasicOperationsTest {
 
 		protected NameValueCollection nvc;
 		private static Random rnd;
@@ -53,44 +53,44 @@ namespace MonoTests.System.Collections.Specialized {
 		public void AddRemoveClearSetGet() 
 		{
 			nvc.Clear();
-			Assert(nvc.Count==0&& !nvc.HasKeys());
+			Assert.AreEqual (0, nvc.Count);
+			Assert.IsFalse(nvc.HasKeys());
 
 			SetDefaultData();
-			Assert(nvc.Count==4);
-			Assert("Get operation returns wrong result.\n"+FormatForPrinting(nvc),(nvc.Get(0).Equals("this"))&&(nvc.Get("k1").Equals("this")));
+			Assert.AreEqual(4, nvc.Count);
+			Assert.IsTrue((nvc.Get(0).Equals("this"))&&(nvc.Get("k1").Equals("this")), "Get operation returns wrong result.\n"+FormatForPrinting(nvc));
 
 
 			nvc.Add("k2","programmer");
-			Assert(nvc["k2"].Equals("test,programmer"));
+			Assert.AreEqual("test,programmer", nvc["k2"]);
 
 			nvc["k2"]="project";
 			nvc.Add("k2","project");
-			Assert(nvc.Count==4);
-			Assert("Wrong effect of add(samekey,samevalue)\n"+FormatForPrinting(nvc), nvc["k2"].Equals("project,project"));
+			Assert.AreEqual(4, nvc.Count);
+			Assert.AreEqual("project,project", nvc["k2"], "Wrong effect of add(samekey,samevalue)\n"+FormatForPrinting(nvc));
 			// TODO: add Remove test
 			nvc.Remove("k4");
-			Assert("wrong nvc.Count="+nvc.Count,nvc.Count==3);
-			Assert(nvc["k4"]==null);
+			Assert.AreEqual(3, nvc.Count);
+			Assert.IsNull(nvc["k4"]);
 			
 			NameValueCollection nvc1 = new NameValueCollection();
 			nvc1["k1"]="these";
 			nvc1["k5"]="!";
 			nvc.Add(nvc1);
-			Assert(FormatForPrinting(nvc)+"Count is wrong after Add(nvc1) Count="+nvc.Count,nvc.Count==4);
-			Assert("Values are wrong after Add(nvc1)",(nvc["k1"].Equals("this,these"))&&(nvc["k5"].Equals("!")));
+			Assert.AreEqual (4, nvc.Count, FormatForPrinting(nvc)+"Count is wrong after Add(nvc1)");
+			Assert.IsTrue((nvc["k1"].Equals("this,these"))&&(nvc["k5"].Equals("!")), "Values are wrong after Add(nvc1)");
 			
 			nvc.Set("k3","accomplished");
-			Assert("Wrong result of Set operation",nvc["k3"].Equals("accomplished"));
-			
+			Assert.AreEqual("accomplished", nvc["k3"], "Wrong result of Set operation");
 		}
 		
 		[Test]
 		public void GetKeyGetValues()
 		{
 			SetDefaultData();
-			Assert(nvc.GetKey(0).Equals("k1"));
+			Assert.AreEqual ("k1", nvc.GetKey(0));
 			string[] values = nvc.GetValues(0);
-			Assert(values[0].Equals("this"));
+			Assert.AreEqual ("this", values[0]);
 			
 		}
 		
@@ -125,14 +125,16 @@ namespace MonoTests.System.Collections.Specialized {
 				}
 			}
 
-			Assert(nvc.Count==n);
+			Assert.AreEqual (n, nvc.Count);
 
 			for (int i=0;i<n;i++) {
 				String key=cache[i];
 				String val=nvc[key] as String;
 				String err="nvc[\""+key+"\"]=\""+val+
 				      "\", expected \""+cache[i+max]+"\"";
-				Assert(err,val!=null && val.Equals(cache[i+max]));
+				
+				Assert.IsNotNull (val);
+				Assert.AreEqual (val, cache[i+max], err);
 			}
 
 			int r1=(n/3);
@@ -145,13 +147,14 @@ namespace MonoTests.System.Collections.Specialized {
 
 			for (int i=0;i<n;i++) {
 				if (i>=r1 && i<r2) {
-					Assert(nvc[cache[i]]==null);
+					Assert.IsNull (nvc[cache[i]]);
 				} else {
 					String key=cache[i];
 					String val=nvc[key] as String;
 					String err="ht[\""+key+"\"]=\""+val+
 					      "\", expected \""+cache[i+max]+"\"";
-					Assert(err,val!=null && val.Equals(cache[i+max]));
+					
+					Assert.AreEqual (val, cache[i+max], err);
 				}
 			}
 

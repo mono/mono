@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0 || NET_2_1
 
 using System;
 using System.Text;
@@ -35,6 +35,9 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Diagnostics.Contracts.Internal
 {
+#if NET_4_5
+	[Obsolete ("Type has been moved to System.Runtime.CompilerServices")]
+#endif
 	public static class ContractHelper
 	{
 #if MOONLIGHT
@@ -54,7 +57,7 @@ namespace System.Diagnostics.Contracts.Internal
 		}
 #endif
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		[DebuggerNonUserCode]
 		public static string RaiseContractFailedEvent (ContractFailureKind failureKind, string userMessage, string conditionText, Exception innerException)
 		{

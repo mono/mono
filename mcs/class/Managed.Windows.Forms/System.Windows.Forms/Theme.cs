@@ -187,8 +187,7 @@ namespace System.Windows.Forms
 	internal abstract class Theme
 	{
 		protected Array syscolors;
-		private readonly Font default_font;
-		protected Font window_border_font;
+		Font default_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;
 		internal SystemResPool ResPool = new SystemResPool ();
@@ -196,8 +195,6 @@ namespace System.Windows.Forms
 
 		protected Theme ()
 		{
-			default_font = SystemFonts.DefaultFont;
-			syscolors = null;
 		}
 
 		private void SetSystemColors (KnownColor kc, Color value)
@@ -358,7 +355,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual Font DefaultFont {
-			get { return default_font; }
+			get { return default_font ?? (default_font = SystemFonts.DefaultFont); }
 		}
 
 		public virtual Color DefaultWindowBackColor {
@@ -504,7 +501,7 @@ namespace System.Windows.Forms
 
 		public virtual Font MenuFont {
 			get {
-				return default_font;
+				return default_font ?? (default_font = SystemFonts.DefaultFont);
 			}
 		}
 
@@ -558,10 +555,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public virtual Font WindowBorderFont {
-			get {
-				return window_border_font;
-			}
+		public abstract Font WindowBorderFont {
+			get;
 		}
 
 		public int Clamp (int value, int lower, int upper)

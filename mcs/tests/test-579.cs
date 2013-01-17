@@ -2,7 +2,7 @@
 
 public class TestCase
 {
-	static int Main ()
+	public static int Main ()
 	{
 		int i = 0;
 		{

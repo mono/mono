@@ -46,11 +46,9 @@ namespace System.Net.Sockets {
 		/// </summary>
 		IP = 0,
 
-#if NET_1_1
 		/// <summary>
 		/// </summary>
 		IPv6 = 41,
-#endif
 
 		/// <summary>
 		/// </summary>

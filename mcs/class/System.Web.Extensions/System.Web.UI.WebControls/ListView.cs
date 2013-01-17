@@ -1020,7 +1020,6 @@ namespace System.Web.UI.WebControls
 			int itemPosInGroup = firstItemIndexInGroup;
 			int groupItemCounter = groupItemCount;
 			ListViewItem lvi;
-			ListViewItem container;
 			bool needSeparator = false;
 			bool haveSeparatorTemplate = _itemSeparatorTemplate != null;
 			
@@ -1032,7 +1031,6 @@ namespace System.Web.UI.WebControls
 			}
 
 			int displayIndex = 0;
-			ListViewDataItem lvdi;
 			int startIndex = dataSource.StartRowIndex;
 			int dataCount = dataSource.Count;
 			int numberOfGroups = (dataCount / groupItemCount) + (dataCount % groupItemCount) - 1;

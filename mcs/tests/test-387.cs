@@ -16,7 +16,7 @@ public struct ObjectID {
 		return new ObjectID (l);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		ObjectID x = new ObjectID (0);
 		decimal y = x;

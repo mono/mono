@@ -40,7 +40,7 @@ namespace MonoTests.System.Security.Cryptography {
 
 	// RIPEMD160 is a abstract class - so ALL of the test included here wont be tested
 	// on the abstract class but should be tested in ALL its descendants.
-	public class RIPEMD160Test {
+	public abstract class RIPEMD160Test {
 
 		protected RIPEMD160 hash;
 

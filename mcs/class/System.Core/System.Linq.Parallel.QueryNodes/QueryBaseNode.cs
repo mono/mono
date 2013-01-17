@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
+#if NET_4_0 || MOBILE
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,11 +32,15 @@ using System.Collections.Generic;
 
 namespace System.Linq.Parallel.QueryNodes
 {
-	internal abstract class QueryBaseNode<T> : IVisitableNode
+	internal interface QueryBaseNode : IVisitableNode
+	{
+	}
+
+	internal abstract class QueryBaseNode<T> : QueryBaseNode
 	{
 		public virtual void Visit (INodeVisitor visitor)
 		{
-			visitor.Visit<T> (this);
+			visitor.Visit (this);
 		}
 
 		internal abstract IList<IEnumerable<T>> GetEnumerables (QueryOptions options);

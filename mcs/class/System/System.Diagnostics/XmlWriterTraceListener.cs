@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && XML_DEP
+#if XML_DEP
 
 using System;
 using System.IO;
@@ -177,7 +177,7 @@ namespace System.Diagnostics
 			w.WriteString (level.ToString ());
 			w.WriteEndElement ();
 			w.WriteStartElement ("TimeCreated", sys_ns);
-			w.WriteAttributeString ("SystemTime", XmlConvert.ToString (eventCache != null ? eventCache.DateTime : DateTime.Now));
+			w.WriteAttributeString ("SystemTime", XmlConvert.ToString (eventCache != null ? eventCache.DateTime : DateTime.Now, XmlDateTimeSerializationMode.Unspecified));
 			w.WriteEndElement ();
 			w.WriteStartElement ("Source", sys_ns);
 			w.WriteAttributeString ("Name", source);

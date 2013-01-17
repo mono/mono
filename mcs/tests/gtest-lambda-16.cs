@@ -15,7 +15,7 @@ class Repro
 		}, 42);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

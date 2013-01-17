@@ -149,6 +149,27 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (1, dgv.Rows.Count, "A1");
 		}
+
+		[Test]  // bug xamarin #821
+		public void TestAddedRowType ()
+		{
+			DataGridView dgv = new DataGridView ();
+			DataGridViewCheckBoxColumn col1 = new DataGridViewCheckBoxColumn ();
+			DataGridViewTextBoxColumn col2 = new DataGridViewTextBoxColumn ();
+			DataGridViewTextBoxColumn col3 = new DataGridViewTextBoxColumn ();
+			dgv.Columns.AddRange (new DataGridViewColumn[] { col1, col2, col3 });
+
+			dgv.Rows.Add (new object[] { false, "one", 12 });
+			dgv.Rows.Insert (0, new object[] { false, "zero", 18 });
+
+			foreach (DataGridViewRow row in dgv.Rows)
+			{
+				int index = row.Index;
+				Assert.IsInstanceOfType (typeof (DataGridViewCheckBoxCell), row.Cells[0], "#" + index + "A");
+				Assert.IsInstanceOfType (typeof (DataGridViewTextBoxCell), row.Cells[1], "#" + index + "B");
+				Assert.IsInstanceOfType (typeof (DataGridViewTextBoxCell), row.Cells[2], "#" + index + "C");
+			}
+		}
 	}
 }
 #endif

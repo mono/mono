@@ -4,7 +4,7 @@ unsafe class X
 {
 	delegate void D ();
 	
-	static int Main ()
+	public static int Main ()
 	{
 		byte* a = null;
 		D d = delegate () {

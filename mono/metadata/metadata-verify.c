@@ -138,7 +138,7 @@ const static unsigned char coded_index_desc[] = {
 	5, /*tables*/
 	MONO_TABLE_TYPEDEF,
 	MONO_TABLE_TYPEREF,
-	MONO_TABLE_MODULE,
+	MONO_TABLE_MODULEREF,
 	MONO_TABLE_METHOD,
 	MONO_TABLE_TYPESPEC,
 
@@ -2589,7 +2589,7 @@ verify_field_table_full (VerifyContext *ctx)
 }
 
 /*bits 8,9,10,11,13,14,15*/
-#define INVALID_METHOD_IMPLFLAG_BITS ((1 << 8) | (1 << 9) | (1 << 10) | (1 << 11) | (1 << 13) | (1 << 14) | (1 << 15))
+#define INVALID_METHOD_IMPLFLAG_BITS ((1 << 9) | (1 << 10) | (1 << 11) | (1 << 13) | (1 << 14) | (1 << 15))
 static void
 verify_method_table (VerifyContext *ctx)
 {

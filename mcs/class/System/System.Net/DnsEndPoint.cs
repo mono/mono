@@ -34,7 +34,10 @@ using System.Net.Sockets;
 
 namespace System.Net { 
 
-	public sealed class DnsEndPoint : EndPoint {
+#if NET_2_1
+	sealed
+#endif
+	public class DnsEndPoint : EndPoint {
 		string host;
 		int port;
 		AddressFamily addressFamily = AddressFamily.Unspecified;

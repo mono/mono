@@ -26,7 +26,6 @@ System/LdapStyleUriParserTest.cs
 System/NetPipeStyleUriParserTest.cs
 System/NetTcpStyleUriParserTest.cs
 System/NewsStyleUriParserTest.cs
-System/Platform.cs
 System/UriBuilderTest.cs
 System/UriParserTest.cs
 System/UriTest.cs
@@ -88,6 +87,7 @@ System.CodeDom/CodeVariableDeclarationStatementTest.cs
 System.CodeDom/CodeVariableReferenceExpressionTest.cs
 System.CodeDom.Compiler/CodeGeneratorFromTypeTestBase.cs
 System.CodeDom.Compiler/CodeGeneratorOptionsTest.cs
+System.CodeDom.Compiler/CodeGeneratorGenerateFromCompileUnitTest.cs
 System.CodeDom.Compiler/CodeGeneratorTest.cs
 System.CodeDom.Compiler/CodeGeneratorTestBase.cs
 System.CodeDom.Compiler/ExecutorTest.cs
@@ -100,6 +100,9 @@ System.Collections.Generic/LinkedListTest.cs
 System.Collections.Generic/SortedDictionaryTest.cs
 System.Collections.Generic/SortedListTest.cs
 System.Collections.Generic/SortedSetTest.cs
+System.Collections.ObjectModel/ObservableCollectionTest.cs
+System.Collections.ObjectModel/ReadOnlyObservableCollectionTest.cs
+System.Collections.ObjectModel/CollectionChangedEventValidators.cs
 System.Collections.Specialized/BasicOperationsTest.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
@@ -173,10 +176,12 @@ System.Configuration/SettingsPropertyCollectionTest.cs
 System.Configuration/SettingsPropertyTest.cs
 System.Configuration/SettingsPropertyValueCollectionTest.cs
 System.Configuration/SettingsPropertyValueTest.cs
+System.Diagnostics/DebugTest.cs
 System.Diagnostics/DelimitedListTraceListenerTest.cs
 System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/SourceSwitchTest.cs
+System.Diagnostics/TextWriterTraceListenerTest.cs
 System.Diagnostics/TraceSourceTest.cs
 System.Diagnostics/TraceListenerTest.cs
 System.Diagnostics/TraceTest.cs
@@ -200,6 +205,7 @@ System.IO.Ports/SerialPortTest.cs
 System.Net/CookieCollectionTest.cs
 System.Net/CookieContainerTest.cs
 System.Net/CookieTest.cs
+System.Net/CookieParserTest.cs
 System.Net/CredentialCacheTest.cs
 System.Net/DnsPermissionAttributeTest.cs
 System.Net/DnsPermissionTest.cs
@@ -229,6 +235,7 @@ System.Net/WebPermissionTest.cs
 System.Net/WebProxyTest.cs
 System.Net/WebRequestTest.cs
 System.Net/WebClientTest.cs
+System.Net/WebClientTestAsync.cs
 System.Net/WebUtilityTest.cs
 System.Net.Configuration/ConnectionManagementSectionTest.cs
 System.Net.Configuration/HttpWebRequestElementTest.cs
@@ -241,6 +248,7 @@ System.Net.Sockets/TcpListenerTest.cs
 System.Net.Sockets/SocketTest.cs
 System.Net.Sockets/SocketAsyncEventArgsTest.cs
 System.Net.Sockets/UdpClientTest.cs
+System.Net.Sockets/SocketAsyncTest.cs
 System.Net.Mail/LinkedResourceTest.cs
 System.Net.Mail/AttachmentCollectionTest.cs
 System.Net.Mail/MailAddressCollectionTest.cs
@@ -258,7 +266,9 @@ System.Net.Mail/SmtpServer.cs
 System.Net.Mime/ContentDispositionTest.cs
 System.Net.Mime/ContentTypeTest.cs
 System.Net.NetworkInformation/PhysicalAddressTest.cs
+System.Net.Security/SslStreamTest.cs
 System.Runtime.Versioning/FrameworkNameTest.cs
+System.Security.AccessControl/SemaphoreSecurityTest.cs
 System.Security.Cryptography/AsnEncodedDataTest.cs
 System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs
@@ -283,6 +293,7 @@ System.Security.Cryptography.X509Certificates/Pkits_4_16_PrivateCertificateExten
 System.Security.Cryptography.X509Certificates/PublicKeyTest.cs
 System.Security.Cryptography.X509Certificates/X500DistinguishedNameTest.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
+System.Security.Cryptography.X509Certificates/X509Cert20Test.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Test.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollectionTest.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2CollectionTest.cs
@@ -486,3 +497,6 @@ System.Timers/TimerCas.cs
 System.Web/AspNetHostingPermissionCas.cs
 System.Web/AspNetHostingPermissionAttributeCas.cs
 System.Collections.Concurrent/BlockingCollectionTests.cs
+System.Collections.Concurrent/ConcurrentBagTests.cs
+System.Collections.Concurrent/CollectionStressTestHelper.cs
+System.Collections.Concurrent/ParallelTestHelper.cs

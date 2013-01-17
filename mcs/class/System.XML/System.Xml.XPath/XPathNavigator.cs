@@ -717,12 +717,12 @@ namespace System.Xml.XPath
 
 #if NET_2_0
 
-		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler)
+		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler validationEventHandler)
 		{
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.NameTable = NameTable;
 			settings.SetSchemas (schemas);
-			settings.ValidationEventHandler += handler;
+			settings.ValidationEventHandler += validationEventHandler;
 			settings.ValidationType = ValidationType.Schema;
 			try {
 				XmlReader r = XmlReader.Create (
@@ -740,9 +740,9 @@ namespace System.Xml.XPath
 			return Clone ();
 		}
 
-		public virtual object Evaluate (string xpath, IXmlNamespaceResolver nsResolver)
+		public virtual object Evaluate (string xpath, IXmlNamespaceResolver resolver)
 		{
-			return Evaluate (Compile (xpath), null, nsResolver);
+			return Evaluate (Compile (xpath), null, resolver);
 		}
 
 		public virtual IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
@@ -786,7 +786,7 @@ namespace System.Xml.XPath
 #else
 		internal
 #endif
-		virtual string LookupPrefix (string namespaceUri)
+		virtual string LookupPrefix (string namespaceURI)
 		{
 			XPathNavigator nav = Clone ();
 			if (nav.NodeType != XPathNodeType.Element)
@@ -794,7 +794,7 @@ namespace System.Xml.XPath
 			if (!nav.MoveToFirstNamespace ())
 				return null;
 			do {
-				if (nav.Value == namespaceUri)
+				if (nav.Value == namespaceURI)
 					return nav.Name;
 			} while (nav.MoveToNextNamespace ());
 			return null;
@@ -982,9 +982,9 @@ namespace System.Xml.XPath
 			}
 		}
 
-		public virtual XPathNodeIterator Select (string xpath, IXmlNamespaceResolver nsResolver)
+		public virtual XPathNodeIterator Select (string xpath, IXmlNamespaceResolver resolver)
 		{
-			return Select (Compile (xpath), nsResolver);
+			return Select (Compile (xpath), resolver);
 		}
 
 		public virtual XPathNavigator SelectSingleNode (string xpath)
@@ -992,10 +992,10 @@ namespace System.Xml.XPath
 			return SelectSingleNode (xpath, null);
 		}
 
-		public virtual XPathNavigator SelectSingleNode (string xpath, IXmlNamespaceResolver nsResolver)
+		public virtual XPathNavigator SelectSingleNode (string xpath, IXmlNamespaceResolver resolver)
 		{
 			XPathExpression expr = Compile (xpath);
-			expr.SetContext (nsResolver);
+			expr.SetContext (resolver);
 			return SelectSingleNode (expr);
 		}
 
@@ -1009,9 +1009,9 @@ namespace System.Xml.XPath
 		}
 
 		// it is not very effective code but should just work
-		public override object ValueAs (Type type, IXmlNamespaceResolver nsResolver)
+		public override object ValueAs (Type returnType, IXmlNamespaceResolver nsResolver)
 		{
-			return new XmlAtomicValue (Value, XmlSchemaSimpleType.XsString).ValueAs (type, nsResolver);
+			return new XmlAtomicValue (Value, XmlSchemaSimpleType.XsString).ValueAs (returnType, nsResolver);
 		}
 
 		public virtual void WriteSubtree (XmlWriter writer)
@@ -1229,30 +1229,30 @@ namespace System.Xml.XPath
 		}
 
 		public virtual void AppendChild (
-			string xmlFragments)
+			string newChild)
 		{
-			AppendChild (CreateFragmentReader (xmlFragments));
+			AppendChild (CreateFragmentReader (newChild));
 		}
 
 		public virtual void AppendChild (
-			XmlReader reader)
+			XmlReader newChild)
 		{
 			XmlWriter w = AppendChild ();
-			while (!reader.EOF)
-				w.WriteNode (reader, false);
+			while (!newChild.EOF)
+				w.WriteNode (newChild, false);
 			w.Close ();
 		}
 
 		public virtual void AppendChild (
-			XPathNavigator nav)
+			XPathNavigator newChild)
 		{
-			AppendChild (new XPathNavigatorReader (nav));
+			AppendChild (new XPathNavigatorReader (newChild));
 		}
 
-		public virtual void AppendChildElement (string prefix, string name, string ns, string value)
+		public virtual void AppendChildElement (string prefix, string localName, string namespaceURI, string value)
 		{
 			XmlWriter xw = AppendChild ();
-			xw.WriteStartElement (prefix, name, ns);
+			xw.WriteStartElement (prefix, localName, namespaceURI);
 			xw.WriteString (value);
 			xw.WriteEndElement ();
 			xw.Close ();
@@ -1278,12 +1278,12 @@ namespace System.Xml.XPath
 		}
 
 		// must override it.
-		public virtual void DeleteRange (XPathNavigator nav)
+		public virtual void DeleteRange (XPathNavigator lastSiblingToDelete)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public virtual XmlWriter ReplaceRange (XPathNavigator nav)
+		public virtual XmlWriter ReplaceRange (XPathNavigator lastSiblingToReplace)
 		{
 			throw new NotSupportedException ();
 		}
@@ -1305,21 +1305,21 @@ namespace System.Xml.XPath
 				throw new InvalidOperationException ("Could not move to parent to insert sibling node");
 		}
 
-		public virtual void InsertAfter (string xmlFragments)
+		public virtual void InsertAfter (string newSibling)
 		{
-			InsertAfter (CreateFragmentReader (xmlFragments));
+			InsertAfter (CreateFragmentReader (newSibling));
 		}
 
-		public virtual void InsertAfter (XmlReader reader)
+		public virtual void InsertAfter (XmlReader newSibling)
 		{
 			using (XmlWriter w = InsertAfter ()) {
-				w.WriteNode (reader, false);
+				w.WriteNode (newSibling, false);
 			}
 		}
 
-		public virtual void InsertAfter (XPathNavigator nav)
+		public virtual void InsertAfter (XPathNavigator newSibling)
 		{
-			InsertAfter (new XPathNavigatorReader (nav));
+			InsertAfter (new XPathNavigatorReader (newSibling));
 		}
 
 		public virtual XmlWriter InsertBefore ()
@@ -1327,21 +1327,21 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
-		public virtual void InsertBefore (string xmlFragments)
+		public virtual void InsertBefore (string newSibling)
 		{
-			InsertBefore (CreateFragmentReader (xmlFragments));
+			InsertBefore (CreateFragmentReader (newSibling));
 		}
 
-		public virtual void InsertBefore (XmlReader reader)
+		public virtual void InsertBefore (XmlReader newSibling)
 		{
 			using (XmlWriter w = InsertBefore ()) {
-				w.WriteNode (reader, false);
+				w.WriteNode (newSibling, false);
 			}
 		}
 
-		public virtual void InsertBefore (XPathNavigator nav)
+		public virtual void InsertBefore (XPathNavigator newSibling)
 		{
-			InsertBefore (new XPathNavigatorReader (nav));
+			InsertBefore (new XPathNavigatorReader (newSibling));
 		}
 
 		public virtual void InsertElementAfter (string prefix, 
@@ -1369,21 +1369,21 @@ namespace System.Xml.XPath
 				return AppendChild ();
 		}
 
-		public virtual void PrependChild (string xmlFragments)
+		public virtual void PrependChild (string newChild)
 		{
-			PrependChild (CreateFragmentReader (xmlFragments));
+			PrependChild (CreateFragmentReader (newChild));
 		}
 
-		public virtual void PrependChild (XmlReader reader)
+		public virtual void PrependChild (XmlReader newChild)
 		{
 			using (XmlWriter w = PrependChild ()) {
-				w.WriteNode (reader, false);
+				w.WriteNode (newChild, false);
 			}
 		}
 
-		public virtual void PrependChild (XPathNavigator nav)
+		public virtual void PrependChild (XPathNavigator newChild)
 		{
-			PrependChild (new XPathNavigatorReader (nav));
+			PrependChild (new XPathNavigatorReader (newChild));
 		}
 
 		public virtual void PrependChildElement (string prefix, 
@@ -1394,25 +1394,25 @@ namespace System.Xml.XPath
 			}
 		}
 
-		public virtual void ReplaceSelf (string xmlFragment)
+		public virtual void ReplaceSelf (string newNode)
 		{
-			ReplaceSelf (CreateFragmentReader (xmlFragment));
+			ReplaceSelf (CreateFragmentReader (newNode));
 		}
 
 		// must override it.
-		public virtual void ReplaceSelf (XmlReader reader)
+		public virtual void ReplaceSelf (XmlReader newNode)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public virtual void ReplaceSelf (XPathNavigator navigator)
+		public virtual void ReplaceSelf (XPathNavigator newNode)
 		{
-			ReplaceSelf (new XPathNavigatorReader (navigator));
+			ReplaceSelf (new XPathNavigatorReader (newNode));
 		}
 
 		// Dunno the exact purpose, but maybe internal editor use
 		[MonoTODO]
-		public virtual void SetTypedValue (object value)
+		public virtual void SetTypedValue (object typedValue)
 		{
 			throw new NotSupportedException ();
 		}

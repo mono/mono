@@ -7,17 +7,13 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2004-2009 Novell, Inc.
+// Copyright 2011 Xamarin Inc.
 //
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-#if STATIC
-using IKVM.Reflection.Emit;
-#else
-using System.Reflection.Emit;
-#endif
+using System.Security.Cryptography;
 
 namespace Mono.CSharp
 {
@@ -42,7 +38,7 @@ namespace Mono.CSharp
 		//
 		// A scope type parameters either VAR or MVAR
 		//
-		TypeParameter[] CurrentTypeParameters { get; }
+		TypeParameters CurrentTypeParameters { get; }
 
 		//
 		// A member definition of the context. For partial types definition use
@@ -99,6 +95,18 @@ namespace Mono.CSharp
 
 			if (rc.HasSet (ResolveContext.Options.CheckedScope))
 				flags |= ResolveContext.Options.CheckedScope;
+
+			if (rc.IsInProbingMode)
+				flags |= ResolveContext.Options.ProbingMode;
+
+			if (rc.HasSet (ResolveContext.Options.FieldInitializerScope))
+				flags |= ResolveContext.Options.FieldInitializerScope;
+
+			if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
+				flags |= ResolveContext.Options.ExpressionTreeConversion;
+
+			if (rc.HasSet (ResolveContext.Options.BaseInitializer))
+				flags |= ResolveContext.Options.BaseInitializer;
 		}
 
 		public override FlowBranching CurrentBranching {
@@ -107,6 +115,24 @@ namespace Mono.CSharp
 
 		public TypeSpec ReturnType {
 			get { return return_type; }
+		}
+
+		public bool IsUnreachable {
+			get {
+				return HasSet (Options.UnreachableScope);
+			}
+			set {
+				flags = value ? flags | Options.UnreachableScope : flags & ~Options.UnreachableScope;
+			}
+		}
+
+		public bool UnreachableReported {
+			get {
+				return HasSet (Options.UnreachableReported);
+			}
+			set {
+				flags = value ? flags | Options.UnreachableReported : flags & ~Options.UnreachableScope;
+			}
 		}
 
 		// <summary>
@@ -138,9 +164,9 @@ namespace Mono.CSharp
 			return branching;
 		}
 
-		public FlowBranchingException StartFlowBranching (ExceptionStatement stmt)
+		public FlowBranchingTryFinally StartFlowBranching (TryFinallyBlock stmt)
 		{
-			FlowBranchingException branching = new FlowBranchingException (CurrentBranching, stmt);
+			FlowBranchingTryFinally branching = new FlowBranchingTryFinally (CurrentBranching, stmt);
 			current_flow_branching = branching;
 			return branching;
 		}
@@ -152,9 +178,16 @@ namespace Mono.CSharp
 			return branching;
 		}
 
-		public FlowBranchingIterator StartFlowBranching (StateMachineInitializer iterator, FlowBranching parent)
+		public FlowBranchingIterator StartFlowBranching (Iterator iterator, FlowBranching parent)
 		{
 			FlowBranchingIterator branching = new FlowBranchingIterator (parent, iterator);
+			current_flow_branching = branching;
+			return branching;
+		}
+
+		public FlowBranchingAsync StartFlowBranching (AsyncInitializer asyncBody, FlowBranching parent)
+		{
+			var branching = new FlowBranchingAsync (parent, asyncBody);
 			current_flow_branching = branching;
 			return branching;
 		}
@@ -253,6 +286,10 @@ namespace Mono.CSharp
 			UsingInitializerScope = 1 << 12,
 
 			LockScope = 1 << 13,
+
+			UnreachableScope = 1 << 14,
+
+			UnreachableReported = 1 << 15,
 
 			/// <summary>
 			///   Whether control flow analysis is enabled
@@ -391,7 +428,7 @@ namespace Mono.CSharp
 			get { return MemberContext.CurrentType; }
 		}
 
-		public TypeParameter[] CurrentTypeParameters {
+		public TypeParameters CurrentTypeParameters {
 			get { return MemberContext.CurrentTypeParameters; }
 		}
 
@@ -467,10 +504,19 @@ namespace Mono.CSharp
 			if (CurrentAnonymousMethod == null)
 				return false;
 
-			// FIXME: IsIterator is too aggressive, we should capture only if child
-			// block contains yield
+			//
+			// Capture only if this or any of child blocks contain yield
+			// or it's a parameter
+			//
 			if (CurrentAnonymousMethod.IsIterator)
-				return true;
+				return local.IsParameter || local.Block.Explicit.HasYield;
+
+			//
+			// Capture only if this or any of child blocks contain await
+			// or it's a parameter
+			//
+			if (CurrentAnonymousMethod is AsyncInitializer)
+				return local.IsParameter || local.Block.Explicit.HasAwait || CurrentBlock.Explicit.HasAwait;
 
 			return local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 		}
@@ -575,10 +621,10 @@ namespace Mono.CSharp
 
 		Dictionary<string, SourceFile> all_source_files;
 
-		public CompilerContext (CompilerSettings settings, Report report)
+		public CompilerContext (CompilerSettings settings, ReportPrinter reportPrinter)
 		{
 			this.settings = settings;
-			this.report = report;
+			this.report = new Report (this, reportPrinter);
 			this.builtin_types = new BuiltinTypes ();
 			this.TimeReporter = DisabledTimeReporter;
 		}
@@ -609,7 +655,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public List<CompilationSourceFile> SourceFiles {
+		public List<SourceFile> SourceFiles {
 			get {
 				return settings.SourceFiles;
 			}
@@ -635,7 +681,7 @@ namespace Mono.CSharp
 
 			string path;
 			if (!Path.IsPathRooted (name)) {
-				string root = Path.GetDirectoryName (comp_unit.FullPathName);
+				string root = Path.GetDirectoryName (comp_unit.SourceFile.FullPathName);
 				path = Path.Combine (root, name);
 			} else
 				path = name;
@@ -644,7 +690,8 @@ namespace Mono.CSharp
 			if (all_source_files.TryGetValue (path, out retval))
 				return retval;
 
-			retval = Location.AddFile (name, path);
+			retval = new SourceFile (name, path, all_source_files.Count + 1);
+			Location.AddFile (retval);
 			all_source_files.Add (path, retval);
 			return retval;
 		}
@@ -669,6 +716,8 @@ namespace Mono.CSharp
 			///   the ConstantCheckState flag.
 			/// </summary>
 			CheckedScope = 1 << 0,
+
+			AccurateDebugInfo = 1 << 1,
 
 			OmitDebugInfo = 1 << 2,
 
@@ -714,6 +763,30 @@ namespace Mono.CSharp
 		public FlagsHandle With (Options options, bool enable)
 		{
 			return new FlagsHandle (this, options, enable ? options : 0);
+		}
+	}
+
+	//
+	// Parser session objects. We could recreate all these objects for each parser
+	// instance but the best parser performance the session object can be reused
+	//
+	public class ParserSession
+	{
+		MD5 md5;
+
+		public readonly char[] StreamReaderBuffer = new char[SeekableStreamReader.DefaultReadAheadSize * 2];
+		public readonly Dictionary<char[], string>[] Identifiers = new Dictionary<char[], string>[Tokenizer.MaxIdentifierLength + 1];
+		public readonly List<Parameter> ParametersStack = new List<Parameter> (4);
+		public readonly char[] IDBuilder = new char[Tokenizer.MaxIdentifierLength];
+		public readonly char[] NumberBuilder = new char[Tokenizer.MaxNumberLength];
+
+		public LocationsBag LocationsBag { get; set; }
+		public bool UseJayGlobalArrays { get; set; }
+		public Tokenizer.LocatedToken[] LocatedTokens { get; set; }
+
+		public MD5 GetChecksumAlgorithm ()
+		{
+			return md5 ?? (md5 = MD5.Create ());
 		}
 	}
 }

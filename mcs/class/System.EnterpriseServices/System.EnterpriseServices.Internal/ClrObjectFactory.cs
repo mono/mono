@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-#if NET_1_1
 	[Guid("ecabafd1-7f19-11d2-978e-0000f8757e2a")]
 	public class ClrObjectFactory : IClrObjectFactory {
 
@@ -68,5 +67,4 @@ namespace System.EnterpriseServices.Internal
 		}
 
 	}
-#endif
 }

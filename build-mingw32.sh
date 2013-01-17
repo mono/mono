@@ -4,7 +4,7 @@ MINGW=i386-mingw32msvc
 CROSS_DIR=/opt/cross/$MINGW
 EXTRA_CROSS_DIR=
 INSTALL_DESTDIR="$CURDIR/mono-win32"
-PROFILES="default net_2_0 net_3_5 net_4_0 moonlight"
+PROFILES="default net_2_0 net_3_5 net_4_0 net_4_5 moonlight"
 TEMPORARY_PKG_CONFIG_DIR=/tmp/$RANDOM-pkg-config-$RANDOM
 ORIGINAL_PATH="$PATH"
 
@@ -57,11 +57,11 @@ function setup ()
     CROSS_DLL_DIR="$CROSS_DIR/bin"
     PATH=$CROSS_BIN_DIR:$PATH
 
-    MONO_VERSION=`grep AM_INIT_AUTOMAKE configure.in | cut -d ',' -f 2|tr -d '\)'`
+    MONO_VERSION=`grep AC_INIT configure.in | cut -d ',' -f 2|tr -d '\[ \]'`
     
     if [ -d ./.git ]; then
 	MONO_GIT_COMMIT="`git log -1 --format=format:%t`"
-	MONO_GIT_BRANCH="`git branch|grep '\*'|cut -d ' ' -f 2`"
+	MONO_GIT_BRANCH="`git branch|grep '\*'|cut -d ' ' -f 2|tr -d '\)'|tr -d '\('`"
 	MONO_RELEASE="$MONO_VERSION-$MONO_GIT_BRANCH-$MONO_GIT_COMMIT"
     else
 	MONO_RELEASE="$MONO_VERSION"

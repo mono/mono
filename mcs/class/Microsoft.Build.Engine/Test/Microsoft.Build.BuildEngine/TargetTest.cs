@@ -1,10 +1,12 @@
 //
 // TargetTest.cs
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Andres G. Aragoneses (knocte@gmail.com)
 //
 // (C) 2006 Marek Sieradzki
+// (C) 2012 Andres G. Aragoneses
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -166,6 +168,51 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestOutOfRangeElementsOfTheEnumerator()
+		{
+			string documentString =
+				@"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='A'>
+						<Message Text='text' />
+					</Target>
+				</Project>";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsFalse (project.Targets == null, "A1");
+			Assert.AreEqual (1, project.Targets.Count, "A2");
+
+			Target target = project.Targets ["A"];
+			Assert.IsFalse (target == null, "A3");
+
+			IEnumerator e = target.GetEnumerator ();
+
+			bool thrown = false;
+			try {
+				var name = ((BuildTask)e.Current).Name;
+			} catch (InvalidOperationException) { // "Enumeration has not started. Call MoveNext"
+				thrown = true;
+			}
+			if (!thrown)
+				Assert.Fail ("A4: Should have thrown IOE");
+
+
+			Assert.AreEqual (true, e.MoveNext (), "A5");
+			Assert.AreEqual ("Message", ((BuildTask)e.Current).Name, "A6");
+			Assert.AreEqual (false, e.MoveNext (), "A7");
+			try {
+				var name = ((BuildTask) e.Current).Name;
+			} catch (InvalidOperationException) { //"Enumeration already finished."
+				return;
+			}
+			Assert.Fail ("A8: Should have thrown IOE, because there's only one buidTask");
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestOnError1 ()
 		{
@@ -300,6 +347,79 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				throw;
 			}
 		}
+
+#if NET_3_5
+		[Test]
+		public void BuildProjectWithItemGroupInsideTarget()
+		{
+			ItemGroupInsideATarget ();
+		}
+
+		private MonoTests.Microsoft.Build.Tasks.TestMessageLogger ItemGroupInsideATarget() {
+			var engine = new Engine(Consts.BinPath);
+			var project = engine.CreateNewProject();
+			var projectXml = GetProjectXmlWithItemGroupInsideATarget ();
+			project.LoadXml(projectXml);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			bool result = project.Build("Main");
+			if (!result)
+			{
+				logger.DumpMessages ();
+				Assert.Fail("Build failed");
+			}
+
+			return logger;
+		}
+
+		private string GetProjectXmlWithItemGroupInsideATarget ()
+		{
+			return
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<fruit Include=""apple""/>
+						<fruit Include=""apricot""/>
+					</ItemGroup>
+
+					<Target Name=""Main"">
+						<ItemGroup>
+							<fruit Include=""raspberry"" />
+						</ItemGroup>
+						<Message Text=""%(fruit.Identity)""/>
+					</Target>
+				</Project>";
+		}
+
+		[Test]
+		[Category ("NotWorking")] //https://bugzilla.xamarin.com/show_bug.cgi?id=1862
+		public void BuildProjectOutputWithItemGroupInsideTarget()
+		{
+			var logger = ItemGroupInsideATarget ();
+
+			try
+			{
+				Assert.AreEqual(3, logger.NormalMessageCount, "Expected number of messages");
+				logger.CheckLoggedMessageHead("apple", "A1");
+				logger.CheckLoggedMessageHead("apricot", "A2");
+				logger.CheckLoggedMessageHead("raspberry", "A3");
+				Assert.AreEqual(0, logger.NormalMessageCount, "Extra messages found");
+
+				Assert.AreEqual(1, logger.TargetStarted, "TargetStarted count");
+				Assert.AreEqual(1, logger.TargetFinished, "TargetFinished count");
+				Assert.AreEqual(3, logger.TaskStarted, "TaskStarted count");
+				Assert.AreEqual(3, logger.TaskFinished, "TaskFinished count");
+
+			}
+			catch (AssertionException)
+			{
+				logger.DumpMessages();
+				throw;
+			}
+		}
+#endif
 
 		[Test]
 		public void TestTargetOutputsIncludingMetadata ()

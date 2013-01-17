@@ -2,11 +2,19 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
-../Managed.Windows.Forms/System.Resources/ResXResourceReader.cs
-../Managed.Windows.Forms/System.Resources/ResXResourceWriter.cs
-../Managed.Windows.Forms/System.Resources/ResXFileRef.cs
-../Managed.Windows.Forms/System.Resources/ResXDataNode.cs
+../Managed.Windows.Forms/System.Resources/ByteArrayFromResXHandler.cs
 ../Managed.Windows.Forms/System.Resources/ResXNullRef.cs
+../Managed.Windows.Forms/System.Resources/ResXResourceReader.cs
+../Managed.Windows.Forms/System.Resources/FileRefHandler.cs
+../Managed.Windows.Forms/System.Resources/NullRefHandler.cs
+../Managed.Windows.Forms/System.Resources/ResXResourceSet.cs
+../Managed.Windows.Forms/System.Resources/InMemoryHandler.cs
+../Managed.Windows.Forms/System.Resources/ResXResourceWriter.cs
+../Managed.Windows.Forms/System.Resources/ResXDataNode.cs
+../Managed.Windows.Forms/System.Resources/SerializedFromResXHandler.cs
+../Managed.Windows.Forms/System.Resources/ResXDataNodeHandler.cs
+../Managed.Windows.Forms/System.Resources/TypeConverterFromResXHandler.cs
+../Managed.Windows.Forms/System.Resources/ResXFileRef.cs
 System.Web/ApplicationShutdownReason.cs
 System.Web/BeginEventHandler.cs
 System.Web.Caching/AggregateCacheDependency.cs
@@ -1181,6 +1189,7 @@ System.Web.Util/IWebPropertyAccessor.cs
 System.Web.Util/MachineKeySectionUtils.cs
 System.Web.Util/RuntimeHelpers.cs
 System.Web.Util/SearchPattern.cs
+System.Web.Util/SecureHashCodeProvider.cs
 System.Web.Util/SerializationHelper.cs
 System.Web.Util/StrUtils.cs
 System.Web.Util/TimeUtil.cs
@@ -1199,5 +1208,4 @@ System.Web/WebROCollection.cs
 System.Web/WebSysDescriptionAttribute.cs
 System.Web/XmlSiteMapProvider.cs
 ../corlib/System.Collections.Concurrent/SplitOrderedList.cs
-../corlib/System.Collections.Concurrent/ObjectPool.cs
 

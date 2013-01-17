@@ -158,8 +158,9 @@ namespace System.Data.SqlClient
 			if (!isOpen)
 				throw ExceptionHelper.TransactionNotUsable (GetType ());
 
-			connection.Tds.Execute (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION {0}",
-								transactionName));
+			if (connection.Tds.IsConnected)
+				connection.Tds.Execute (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION {0}",
+									transactionName));
 			isOpen = false;
 			connection.Transaction = null;
 			connection = null;

@@ -20,7 +20,7 @@ class Demo {
 	{
 		return f2 (f1(value));
 	}
-	static int Main ()
+	public static int Main ()
 	{
 		double d = F("1:15:30", s => TimeSpan.Parse(s), t => t.TotalSeconds);
 		if (d < 4529 || d > 4531)

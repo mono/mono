@@ -31,23 +31,16 @@ using System.Collections;
 using System.Runtime.Serialization;
 
 namespace System.Net {
-	public class CredentialCache : ICredentials, IEnumerable
-#if NET_2_0
-				     , ICredentialsByHost
-#endif
+	public class CredentialCache : ICredentials, IEnumerable, ICredentialsByHost
 	{
 		static NetworkCredential empty = new NetworkCredential (String.Empty, String.Empty, String.Empty);
 		Hashtable cache;
-#if NET_2_0
 		Hashtable cacheForHost;
-#endif
 
 		public CredentialCache () 
 		{
 			cache = new Hashtable ();
-#if NET_2_0
 			cacheForHost = new Hashtable ();
-#endif
 		}
 		
 		[MonoTODO ("Need EnvironmentPermission implementation first")]
@@ -58,13 +51,11 @@ namespace System.Net {
 			}
 		}
 
-#if NET_2_0
 		// MS does might return a special ICredentials which does not allow getting the
 		// username/password information out of it for non-internal classes.
 		public static NetworkCredential DefaultNetworkCredentials {
 			get { return empty; }
 		}
-#endif
 
 		public NetworkCredential GetCredential (Uri uriPrefix, string authType)
 		{
@@ -136,7 +127,6 @@ namespace System.Net {
 			cache.Remove (new CredentialCacheKey (uriPrefix, authType));
 		}
 		
-#if NET_2_0
 		public NetworkCredential GetCredential (string host, int port, string authenticationType)
 		{
 			NetworkCredential result = null;
@@ -187,7 +177,6 @@ namespace System.Net {
 
 			cacheForHost.Remove (new CredentialCacheForHostKey (host, port, authenticationType));
 		}
-#endif
 
 		class CredentialCacheKey {
 			Uri uriPrefix;
@@ -242,7 +231,6 @@ namespace System.Net {
 			}
 		}
 
-#if NET_2_0
 		class CredentialCacheForHostKey {
 			string host;
 			int port;
@@ -288,7 +276,6 @@ namespace System.Net {
 			return host + " : " + authType;
 		}
 	}
-#endif
 }
 }
 

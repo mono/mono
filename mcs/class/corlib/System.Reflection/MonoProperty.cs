@@ -72,6 +72,7 @@ namespace System.Reflection {
 	internal delegate R Getter<T,R> (T _this);
 
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoProperty : PropertyInfo, ISerializable {
 #pragma warning disable 649
 		internal IntPtr klass;
@@ -297,15 +298,24 @@ namespace System.Reflection {
 				/*FIXME we should check if the number of arguments matches the expected one, otherwise the error message will be pretty criptic.*/
 #if !MONOTOUCH
 				if (cached_getter == null) {
-					if (!DeclaringType.IsValueType) { //FIXME find a way to build an invoke delegate for value types.
-						MethodInfo method = GetGetMethod (true);
+					MethodInfo method = GetGetMethod (true);
+					if (!DeclaringType.IsValueType && !method.ContainsGenericParameters) { //FIXME find a way to build an invoke delegate for value types.
 						if (method == null)
 							throw new ArgumentException ("Get Method not found for '" + Name + "'");
 						cached_getter = CreateGetterDelegate (method);
-						return cached_getter (obj);
+						// The try-catch preserves the .Invoke () behaviour
+						try {
+							return cached_getter (obj);
+						} catch (Exception ex) {
+							throw new TargetInvocationException (ex);
+						}
 					}
 				} else {
-					return cached_getter (obj);
+					try {
+						return cached_getter (obj);
+					} catch (Exception ex) {
+						throw new TargetInvocationException (ex);
+					}
 				}
 #endif
 			}

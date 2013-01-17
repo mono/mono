@@ -5,7 +5,7 @@ class X {
         public void M4(int arg) { }
         public void M4(int arg, __arglist) { }
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

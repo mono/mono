@@ -17,7 +17,7 @@ class X {
                 }
         }
  
-        static int Main ()
+        public static int Main ()
         {
                 int total = 0;
                 foreach (int i in GetIt (new int [] { 1, 2, 3})){

@@ -38,12 +38,12 @@ namespace System.Xml.XPath
 		{
 		}
 
-		public virtual object ValueAs (Type type)
+		public virtual object ValueAs (Type returnType)
 		{
-			return ValueAs (type, null);
+			return ValueAs (returnType, null);
 		}
 
-		public abstract object ValueAs (Type type, IXmlNamespaceResolver nsResolver);
+		public abstract object ValueAs (Type returnType, IXmlNamespaceResolver nsResolver);
 
 		public abstract bool IsNode { get; }
 

@@ -5,9 +5,11 @@
 //	Duco Fijma (duco@lorentz.xs4all.nl)
 //	Sebastien Pouliot (sebastien@ximian.com)
 //	Jb Evain (jbevain@novell.com)
+//	Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2002 Duco Fijma
 // Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
+// Copyright 2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // References
 // 1.	UUIDs and GUIDs (DRAFT), Section 3.4
@@ -36,6 +38,9 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+#if FULL_AOT_RUNTIME
+using Crimson.CommonCrypto;
+#endif
 
 namespace System {
 
@@ -43,7 +48,7 @@ namespace System {
 	[StructLayout (LayoutKind.Sequential)]
 	[ComVisible (true)]
 	public struct Guid : IFormattable, IComparable, IComparable<Guid>, IEquatable<Guid> {
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 		static Guid () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <Guid> ();
@@ -93,7 +98,7 @@ namespace System {
 				get { return _cur >= _length; }
 			}
 
-			static bool HasHyphen (Format format)
+			public static bool HasHyphen (Format format)
 			{
 				switch (format) {
 				case Format.D:
@@ -372,12 +377,7 @@ namespace System {
 
 		private static int Compare (int x, int y)
 		{
-			if (x < y) {
-				return -1;
-			}
-			else {
-				return 1;
-			}
+			return ((uint)x < (uint)y) ? -1 : 1;
 		}
 
 		public int CompareTo (object value)
@@ -405,34 +405,34 @@ namespace System {
 			if (_a != value._a) {
 				return Compare (_a, value._a);
 			}
-			else if (_b != value._b) {
+			if (_b != value._b) {
 				return Compare (_b, value._b);
 			}
-			else if (_c != value._c) {
+			if (_c != value._c) {
 				return Compare (_c, value._c);
 			}
-			else if (_d != value._d) {
+			if (_d != value._d) {
 				return Compare (_d, value._d);
 			}
-			else if (_e != value._e) {
+			if (_e != value._e) {
 				return Compare (_e, value._e);
 			}
-			else if (_f != value._f) {
+			if (_f != value._f) {
 				return Compare (_f, value._f);
 			}
-			else if (_g != value._g) {
+			if (_g != value._g) {
 				return Compare (_g, value._g);
 			}
-			else if (_h != value._h) {
+			if (_h != value._h) {
 				return Compare (_h, value._h);
 			}
-			else if (_i != value._i) {
+			if (_i != value._i) {
 				return Compare (_i, value._i);
 			}
-			else if (_j != value._j) {
+			if (_j != value._j) {
 				return Compare (_j, value._j);
 			}
-			else if (_k != value._k) {
+			if (_k != value._k) {
 				return Compare (_k, value._k);
 			}
 			return 0;
@@ -466,21 +466,26 @@ namespace System {
 			return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
 		}
 
+#if !FULL_AOT_RUNTIME
 		private static object _rngAccess = new object ();
 		private static RandomNumberGenerator _rng;
 		private static RandomNumberGenerator _fastRng;
+#endif
 
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
 			byte[] b = new byte [16];
-
+#if !FULL_AOT_RUNTIME
 			// thread-safe access to the prng
 			lock (_rngAccess) {
 				if (_rng == null)
 					_rng = RandomNumberGenerator.Create ();
 				_rng.GetBytes (b);
 			}
+#else
+			Cryptor.GetRandom (b);
+#endif
 
 			Guid res = new Guid (b);
 			// Mask in Variant 1-0 in Bit[7..6]
@@ -491,6 +496,7 @@ namespace System {
 			return res;
 		}
 
+#if !FULL_AOT_RUNTIME
 		// used in ModuleBuilder so mcs doesn't need to invoke 
 		// CryptoConfig for simple assemblies.
 		internal static byte[] FastNewGuidArray ()
@@ -515,7 +521,7 @@ namespace System {
 
 			return guid;
 		}
-
+#endif
 		public byte[] ToByteArray ()
 		{
 			byte[] res = new byte[16];
@@ -573,48 +579,95 @@ namespace System {
 			builder.Append (ToHex (value & 0xf));
 		}
 
-		private string BaseToString (bool h, bool p, bool b)
+		string ToString (Format format)
 		{
-			StringBuilder res = new StringBuilder (40);
+			int length;
+			switch (format) {
+			case Format.B:
+			case Format.P:
+				length = 38;
+				break;
+			case Format.D:
+				length = 36;
+				break;
+			case Format.N:
+				length = 32;
+				break;
+			case Format.X:
+				length = 68;
+				break;		
+			default:
+				throw new NotImplementedException (format.ToString ());
+			}
 			
-			if (p) {
+			StringBuilder res = new StringBuilder (length);
+			bool has_hyphen = GuidParser.HasHyphen (format);
+			
+			if (format == Format.P) {
 				res.Append ('(');
-			} else if (b) {
+			} else if (format == Format.B) {
 				res.Append ('{');
+			} else if (format == Format.X) {
+				res.Append ('{').Append ('0').Append ('x');
 			}
 		
 			AppendInt (res, _a);
-			if (h) {
+			if (has_hyphen) {
 				res.Append ('-');
+			} else if (format == Format.X) {
+				res.Append (',').Append ('0').Append ('x');
 			}
+			
 			AppendShort (res, _b);
-			if (h) {
+			if (has_hyphen) {
 				res.Append ('-');
+			} else if (format == Format.X) {
+				res.Append (',').Append ('0').Append ('x');
 			}
+
 			AppendShort (res, _c);
-			if (h) {
+			if (has_hyphen) {
 				res.Append ('-');
 			}
 	
-			AppendByte (res, _d);
-			AppendByte (res, _e);
-
-			if (h) {
-				res.Append ('-');
-			}
-
-			AppendByte (res, _f);
-			AppendByte (res, _g);
-			AppendByte (res, _h);
-			AppendByte (res, _i);
-			AppendByte (res, _j);
-			AppendByte (res, _k);
-
+			if (format == Format.X) {
+				res.Append (',').Append ('{').Append ('0').Append ('x');
+				AppendByte (res, _d);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _e);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _f);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _g);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _h);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _i);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _j);
+				res.Append (',').Append ('0').Append ('x');
+				AppendByte (res, _k);
+				res.Append ('}').Append ('}');;
+			} else {
+				AppendByte (res, _d);
+				AppendByte (res, _e);
 	
-			if (p) {
-				res.Append (')');
-			} else if (b) {
-				res.Append ('}');
+				if (has_hyphen) {
+					res.Append ('-');
+				}
+	
+				AppendByte (res, _f);
+				AppendByte (res, _g);
+				AppendByte (res, _h);
+				AppendByte (res, _i);
+				AppendByte (res, _j);
+				AppendByte (res, _k);
+	
+				if (format == Format.P) {
+					res.Append (')');
+				} else if (format == Format.B) {
+					res.Append ('}');
+				}
 			}
 		
 			return res.ToString ();
@@ -622,36 +675,15 @@ namespace System {
 	
 		public override string ToString ()
 		{
-			return BaseToString (true, false, false);
+			return ToString (Format.D);
 		}
 	
 		public string ToString (string format)
 		{
-			bool h = true;
-			bool p = false;
-			bool b = false;
-	
-			if (format != null) {
-				string f = format.ToLowerInvariant();
-	
-				if (f == "b") {
-					b = true;
-				}
-				else if (f == "p") {
-					p = true;
-				}
-				else if (f == "n") {
-					h = false;
-				}
-				else if (f != "d" && f != String.Empty) {
-					throw new FormatException (Locale.GetText (
-						"Argument to Guid.ToString(string format) should be \"b\", \"B\", \"d\", \"D\", \"n\", \"N\", \"p\" or \"P\""));
-				}
-			}
-
-			return BaseToString (h, p, b);
+			return ToString (ParseFormat (format));
 		}
 
+		// provider value is never used
 		public string ToString (string format, IFormatProvider provider)
 		{
 			return ToString (format);
@@ -670,6 +702,9 @@ namespace System {
 #if NET_4_0 || MOONLIGHT || MOBILE
 		public static Guid Parse (string input)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
 			Guid guid;
 			if (!TryParse (input, out guid))
 				throw CreateFormatException (input);
@@ -679,6 +714,11 @@ namespace System {
 
 		public static Guid ParseExact (string input, string format)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
 			Guid guid;
 			if (!TryParseExact (input, format, out guid))
 				throw CreateFormatException (input);
@@ -688,8 +728,10 @@ namespace System {
 
 		public static bool TryParse (string input, out Guid result)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
+			if (input == null) {
+				result = Empty;
+				return false;
+			}
 
 			var parser = new GuidParser (input);
 			return parser.Parse (out result);
@@ -697,35 +739,48 @@ namespace System {
 
 		public static bool TryParseExact (string input, string format, out Guid result)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-			if (format == null)
-				throw new ArgumentNullException ("format");
+			if (input == null || format == null) {
+				result = Empty;
+				return false;
+			}
 
 			var parser = new GuidParser (input);
 			return parser.Parse (ParseFormat (format), out result);
 		}
+#endif
 
 		static Format ParseFormat (string format)
 		{
-			if (format.Length != 1)
-				throw new ArgumentException ("Wrong format");
-
+			if (string.IsNullOrEmpty (format))
+				return Format.D;
+			
 			switch (format [0]) {
 			case 'N':
+			case 'n':
 				return Format.N;
 			case 'D':
+			case 'd':
 				return Format.D;
 			case 'B':
+			case 'b':
 				return Format.B;
 			case 'P':
+			case 'p':
 				return Format.P;
+#if NET_4_0 || MOONLIGHT || MOBILE
 			case 'X':
+			case 'x':
 				return Format.X;
+#endif
 			}
 
-			throw new ArgumentException ("Wrong format");
-		}
+			throw new FormatException (
+#if NET_4_0 || MOONLIGHT || MOBILE
+				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\", \"b\", \"X\" or \"x\""
+#else
+				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\" or \"b\""
 #endif
+				);
+		}
 	}
 }

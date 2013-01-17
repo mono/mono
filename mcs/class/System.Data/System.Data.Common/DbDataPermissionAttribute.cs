@@ -45,10 +45,8 @@ namespace System.Data.Common {
 
 		bool allowBlankPassword;
 		string keyRestrictions;
-#if NET_1_1
 		KeyRestrictionBehavior keyRestrictionBehavior;
 		string connectionString;
-#endif
 
 		#endregion // Fields
 
@@ -77,7 +75,6 @@ namespace System.Data.Common {
 			set { keyRestrictions = value; }
 		}
 
-#if NET_1_1
 		public string ConnectionString {
 			get {
 				if (connectionString == null)
@@ -94,12 +91,10 @@ namespace System.Data.Common {
 				keyRestrictionBehavior = value;
 			}
 		}
-#endif
 
 		#endregion // Properties
 
 		#region // Methods
-#if NET_2_0
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public bool ShouldSerializeConnectionString ()
 		{
@@ -113,7 +108,6 @@ namespace System.Data.Common {
 			// FIXME: configurable ? why is this in the attribute class ?
 			return false;
 		}
-#endif
 		#endregion // Methods
 	}
 }

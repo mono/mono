@@ -916,8 +916,6 @@ namespace Mono.Data.SqlSharp {
 			connectionString = "";
 			provider = "";
 
-			string[] extp;
-
 			if (parms.Length == 2) {
 				string parm = parms [1].ToUpper ();
 				switch (parm) {
@@ -966,7 +964,7 @@ namespace Mono.Data.SqlSharp {
 				}
 				try {
 					factory = DbProviderFactories.GetFactory(factoryName);
-				} catch(ConfigurationException e) {
+				} catch(ConfigurationException) {
 					Console.Error.WriteLine("*** Error: Unable to load provider factory: " + 
 						factoryName + "\n" + 
 						"*** Check your machine.config to see if the provider is " +

@@ -265,7 +265,8 @@ namespace System.Windows.Forms
 				// We can exit because the NewRow is always last
 				if (row.IsNewRow)
 					break;
-					
+
+				row.SetDataGridView (null);
 				list.Remove (row);
 				ReIndex ();
 			}
@@ -441,7 +442,7 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException ("Values is null.");
 			if (dataGridView.VirtualMode || dataGridView.DataSource != null)
 				throw new InvalidOperationException ();
-			DataGridViewRow row = new DataGridViewRow ();
+			DataGridViewRow row = dataGridView.RowTemplateFull;
 			row.SetValues (values);
 			Insert (rowIndex, row);
 		}
@@ -485,6 +486,7 @@ namespace System.Windows.Forms
 				throw new InvalidOperationException ("Cannot delete the new row");
 				
 			DataGridView.OnRowsPreRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
+			dataGridViewRow.SetDataGridView (null);
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
@@ -494,6 +496,7 @@ namespace System.Windows.Forms
 		internal virtual void RemoveInternal (DataGridViewRow dataGridViewRow)
 		{
 			DataGridView.OnRowsPreRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
+			dataGridViewRow.SetDataGridView (null);
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));

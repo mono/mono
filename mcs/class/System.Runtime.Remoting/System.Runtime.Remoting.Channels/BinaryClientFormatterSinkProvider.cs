@@ -38,11 +38,7 @@ namespace System.Runtime.Remoting.Channels
 		IClientChannelSinkProvider next = null;
 		BinaryCore _binaryCore;
 
-#if NET_1_1
 		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
-#else
-		static string[] allowedProperties = new string [] { "includeVersions", "strictBinding" };
-#endif
 
 		public BinaryClientFormatterSinkProvider ()
 		{

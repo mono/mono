@@ -4,7 +4,7 @@ class A { }
 
 class X {
 	class A { }
-	static void Main ()
+	public static void Main ()
 	{
 		global::A a = new globalA ();
 		System.Console.WriteLine (a.GetType ());

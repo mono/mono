@@ -4,6 +4,8 @@
 // Authors:
 //	Dwivedi, Ajay kumar <Adwiv@Yahoo.com>
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//	Wojciech Kotlarski <wojciech.kotlarski@7digital.com>
+//	Andres G. Aragoneses <andres.aragoneses@7digital.com>
 //
 
 //
@@ -48,11 +50,15 @@ namespace System.Xml.Schema
 			get { return WhitespaceValue; }
 		}
 
-#if NET_2_0
 		public virtual XmlTypeCode TypeCode {
 			// Actually no way to verify default value, since
 			// in .NET 2.0 it cannot be derived externally anymore.
 			get { return XmlTypeCode.None; }
+		}
+
+		XmlValueConverter value_converter;
+		internal XmlValueConverter ValueConverter {
+			get { return (value_converter = value_converter ?? new XsdAnyTypeConverter (TypeCode)); }
 		}
 
 		public virtual XmlSchemaDatatypeVariety Variety {
@@ -60,23 +66,56 @@ namespace System.Xml.Schema
 				return XmlSchemaDatatypeVariety.Atomic;
 			}
 		}
-#endif
 
 		public abstract XmlTokenizedType TokenizedType {  get; }
 		public abstract Type ValueType {  get; }
 
-		// Methods
-#if NET_2_0
-		[MonoTODO]
 		public virtual object ChangeType (object value, Type targetType)
 		{
-			return ChangeType (value, targetType, null);
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (targetType == null)
+				throw new ArgumentNullException ("targetType");
+
+			if (targetType == typeof (string))
+				return ConvertType (value, targetType);
+			else
+				return ConvertType (value.ToString (), targetType);
 		}
 
-		[MonoTODO]
-		public virtual object ChangeType (object value, Type targetType, IXmlNamespaceResolver nsResolver)
+		private object ConvertType (object value, Type targetType)
 		{
-			throw new NotImplementedException ();
+			if (targetType.IsAssignableFrom (value.GetType ()))
+				return value;
+
+			object[] args = null;
+
+			args = (targetType == typeof (DateTime) || (value.GetType () == typeof (DateTime)))
+				? new object [] { value, XmlDateTimeSerializationMode.RoundtripKind }
+				: new object [] { value };
+
+			try
+			{
+				return typeof (XmlConvert).InvokeMember("To" + targetType.Name,
+					System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static,
+					null, null, args);
+			}
+			catch(MissingMethodException e)
+			{
+				throw new InvalidCastException (string.Format ("Cast from {0}.{1} to {2}.{3} is not supported.",
+					value.GetType ().Namespace, value.GetType ().Name,
+					targetType.Namespace, targetType.Name), e);
+			}
+		}
+
+		[MonoTODO ("namespaceResolver not used yet")]
+		public virtual object ChangeType (object value, Type targetType, IXmlNamespaceResolver namespaceResolver)
+		{
+			if (namespaceResolver == null)
+				throw new ArgumentNullException ("namespaceResolver");
+
+			return ChangeType (value, targetType);
 		}
 
 		public virtual bool IsDerivedFrom (XmlSchemaDatatype datatype)
@@ -86,9 +125,7 @@ namespace System.Xml.Schema
 			// the same type (and it does not check null argument).
 			return this == datatype;
 		}
-#endif
 
-#if NET_2_0
 		public abstract object ParseValue (string s, 
 			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr);
 
@@ -97,16 +134,7 @@ namespace System.Xml.Schema
 		{
 			return null;
 		}
-#else
-		public abstract object ParseValue (string s, 
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
 
-		internal virtual ValueType ParseValueType (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
-		{
-			return null;
-		}
-#endif
 
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
@@ -163,7 +191,6 @@ namespace System.Xml.Schema
 			switch (ns) {
 			case XmlSchema.Namespace:
 				break;
-#if NET_2_0
 			case XmlSchema.XdtNamespace:
 				switch (localName) {
 				case "anyAtomicType":
@@ -176,7 +203,6 @@ namespace System.Xml.Schema
 					return datatypeYearMonthDuration;
 				}
 				return null;
-#endif
 			default:
 				// Maybe invalid name was specified. In such cases, let processors handle them.
 				return null;
@@ -324,7 +350,6 @@ namespace System.Xml.Schema
 		static readonly XsdGYear datatypeGYear = new XsdGYear ();
 		static readonly XsdGMonth datatypeGMonth = new XsdGMonth ();
 		static readonly XsdGDay datatypeGDay = new XsdGDay ();
-#if NET_2_0
 		static readonly XdtAnyAtomicType datatypeAnyAtomicType
 			= new XdtAnyAtomicType ();
 		static readonly XdtUntypedAtomic datatypeUntypedAtomic
@@ -333,7 +358,6 @@ namespace System.Xml.Schema
 			= new XdtDayTimeDuration ();
 		static readonly XdtYearMonthDuration datatypeYearMonthDuration
 			= new XdtYearMonthDuration ();
-#endif
 
 	}
 }

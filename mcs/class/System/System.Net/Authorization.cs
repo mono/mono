@@ -42,15 +42,15 @@ namespace System.Net {
 		{
 		}
 
-		public Authorization (string token, bool complete) 
-			: this (token, complete, null)
+		public Authorization (string token, bool finished) 
+			: this (token, finished, null)
 		{
 		}
 		
-		public Authorization (string token, bool complete, string connectionGroupId)
+		public Authorization (string token, bool finished, string connectionGroupId)
 		{
 			this.token = token;
-			this.complete = complete;
+			this.complete = finished;
 			this.connectionGroupId = connectionGroupId;
 		}
 
@@ -76,7 +76,6 @@ namespace System.Net {
 			set { module = value; }
 		}
 
-#if NET_2_0
 		static Exception GetMustImplement ()
 		{
 			return new NotImplementedException ();
@@ -92,6 +91,5 @@ namespace System.Net {
 				throw GetMustImplement ();
 			}
 		}
-#endif		
 	}
 }

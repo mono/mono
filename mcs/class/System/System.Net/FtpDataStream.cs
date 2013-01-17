@@ -14,8 +14,6 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Net;
 
-#if NET_2_0
-
 namespace System.Net
 {
 	class FtpDataStream : Stream, IDisposable
@@ -251,5 +249,4 @@ namespace System.Net
 	}
 }
 
-#endif
 

@@ -12,14 +12,14 @@ namespace System.Runtime.Serialization.Json
 	{
 		TextReader r;
 		int line = 1, column = 0;
-		bool raise_on_number_error; // FIXME: use it
+//		bool raise_on_number_error; // FIXME: use it
 
 		public JavaScriptReader (TextReader reader, bool raiseOnNumberError)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
 			this.r = reader;
-			raise_on_number_error = raiseOnNumberError;
+//			raise_on_number_error = raiseOnNumberError;
 		}
 
 		public object Read ()
@@ -68,6 +68,8 @@ namespace System.Runtime.Serialization.Json
 				}
 				while (true) {
 					SkipSpaces ();
+					if (PeekChar () == '}')
+						break;
 					string name = ReadStringLiteral ();
 					SkipSpaces ();
 					Expect (':');
@@ -226,6 +228,7 @@ namespace System.Runtime.Serialization.Json
 			int exp = 0;
 			if (PeekChar () < 0)
 				throw new ArgumentException ("Invalid JSON numeric literal; incomplete exponent");
+			
 			bool negexp = false;
 			c = PeekChar ();
 			if (c == '-') {
@@ -245,6 +248,8 @@ namespace System.Runtime.Serialization.Json
 				ReadChar ();
 			}
 			// it is messy to handle exponent, so I just use Decimal.Parse() with assured JSON format.
+			if (negexp)
+				return new Decimal ((double) (val + frac) / Math.Pow (10, exp));
 			int [] bits = Decimal.GetBits (val + frac);
 			return new Decimal (bits [0], bits [1], bits [2], negative, (byte) exp);
 		}
@@ -324,9 +329,8 @@ namespace System.Runtime.Serialization.Json
 
 		void Expect (string expected)
 		{
-			int c;
 			for (int i = 0; i < expected.Length; i++)
-				if ((c = ReadChar ()) != expected [i])
+				if (ReadChar () != expected [i])
 					throw JsonError (String.Format ("Expected '{0}', differed at {1}", expected, i));
 		}
 

@@ -48,18 +48,14 @@ namespace System.Configuration
 		//
 		// Constructors
 		//
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public ConfigurationException () : this (null)
 		{
 			filename = null;
 			line = 0;
 		}
 
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public ConfigurationException (string message)
 			: base (message)
 		{
@@ -72,18 +68,14 @@ namespace System.Configuration
 			line = info.GetInt32 ("line");
 		}
 
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public ConfigurationException (string message, Exception inner)
 			: base (message, inner)
 		{
 		}
 
 #if (XML_DEP)
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public ConfigurationException (string message, XmlNode node)
 			: base (message)
 		{
@@ -91,9 +83,7 @@ namespace System.Configuration
 			line = GetXmlNodeLineNumber(node);
 		}
 
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public ConfigurationException (string message, Exception inner, XmlNode node)
 			: base (message, inner)
 		{
@@ -101,9 +91,7 @@ namespace System.Configuration
 			line = GetXmlNodeLineNumber (node);
 		}
 #endif
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public ConfigurationException (string message, string filename, int line)
 			: base (message)
 		{
@@ -111,9 +99,7 @@ namespace System.Configuration
 			this.line= line;
 		}
 
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public ConfigurationException (string message, Exception inner, string filename, int line)
 			: base (message, inner)
 		{
@@ -123,27 +109,15 @@ namespace System.Configuration
 		//
 		// Properties
 		//
-		public
-#if NET_2_0
-		virtual
-#endif
-		string BareMessage {
+		public virtual	string BareMessage {
 			get { return base.Message; }
 		}
 
-		public
-#if NET_2_0
-		virtual
-#endif
-		string Filename {
+		public virtual string Filename {
 			get { return filename; }
 		}
 
-		public	
-#if NET_2_0
-		virtual
-#endif
-		int Line {
+		public virtual int Line {
 			get { return line; }
 		}
 
@@ -169,9 +143,7 @@ namespace System.Configuration
 		// Methods
 		//
 #if (XML_DEP)
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public static string GetXmlNodeFilename (XmlNode node)
 		{
 			if (!(node is IConfigXmlNode))
@@ -180,9 +152,7 @@ namespace System.Configuration
 			return ((IConfigXmlNode) node).Filename;
 		}
 
-#if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
-#endif
 		public static int GetXmlNodeLineNumber (XmlNode node)
 		{
 			if (!(node is IConfigXmlNode))

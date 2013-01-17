@@ -14,6 +14,7 @@ namespace Mono.Debugger.Soft
 		PropertyAttributes attrs;
 		MethodMirror get_method, set_method;
 		CustomAttributeDataMirror[] cattrs;
+		C.PropertyDefinition meta;
 
 		public PropertyInfoMirror (TypeMirror parent, long id, string name, MethodMirror get_method, MethodMirror set_method, PropertyAttributes attrs) : base (parent.VirtualMachine, id) {
 			this.parent = parent;
@@ -90,6 +91,24 @@ namespace Mono.Debugger.Soft
 			return new ParameterInfoMirror [0];
 		}
 
+		public C.PropertyDefinition Metadata {		
+			get {
+				if (parent.Metadata == null)
+					return null;
+				// FIXME: Speed this up
+				foreach (var def in parent.Metadata.Properties) {
+					if (def.Name == Name) {
+						meta = def;
+						break;
+					}
+				}
+				if (meta == null)
+					/* Shouldn't happen */
+					throw new NotImplementedException ();
+				return meta;
+			}
+		}
+
 		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
 			return GetCAttrs (null, inherit);
 		}
@@ -101,6 +120,9 @@ namespace Mono.Debugger.Soft
 		}
 
 		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
+				cattrs = new CustomAttributeDataMirror [0];
+
 			// FIXME: Handle inherit
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetPropertyCustomAttributes (DeclaringType.Id, id, 0, false);

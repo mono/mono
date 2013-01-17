@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.IO;
 
@@ -56,7 +54,8 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "net_2_0"),
 					Path.Combine (lib_mono_dir, "net_2_0"),
 					Path.Combine (lib_mono_dir, "net_3_5"),
-					Path.Combine (lib_mono_dir, "net_4_0")
+					Path.Combine (lib_mono_dir, "net_4_0"),
+					Path.Combine (lib_mono_dir, "net_4_5")
 				};	
 			} else {
 				mono_dir = new string [] {
@@ -64,7 +63,8 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "2.0"),
 					Path.Combine (lib_mono_dir, "2.0"),
 					Path.Combine (lib_mono_dir, "3.5"),
-					Path.Combine (lib_mono_dir, "4.0")
+					Path.Combine (lib_mono_dir, "4.0"),
+					Path.Combine (lib_mono_dir, "4.5")
 				};
 			}
 
@@ -126,5 +126,3 @@ namespace Microsoft.Build.Utilities
 		}
 	}
 }
-
-#endif

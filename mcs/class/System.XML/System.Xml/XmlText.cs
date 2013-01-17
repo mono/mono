@@ -69,11 +69,10 @@ namespace System.Xml
 			set { Data = value; }
 		}
 
-#if NET_2_0
 		public override XmlNode ParentNode {
 			get { return base.ParentNode; }
 		}
-#endif
+
 		#endregion
 
 		#region Methods

@@ -16,38 +16,35 @@ namespace Mono.Tools.LocaleBuilder
 {
 	public class RegionInfoEntry : Entry
 	{
-		public int RegionId; // it is GeoId in 2.0.
-		// public byte MeasurementSystem;
-		public string ISO2Name = String.Empty; // supplementalData.xml
-		public string ISO3Name = String.Empty;
-		public string Win3Name = String.Empty;
-		public string EnglishName = String.Empty; // langs/en.xml
-		public string CurrencySymbol = String.Empty;
-		public string ISOCurrencySymbol = String.Empty; // supplementalData.xml
-		public string CurrencyEnglishName = String.Empty; // langs/en.xml
+		public int Index; // Used to link region from culture, it must be 0-based index from region_name_entries
 
-		// NativeName and CurrencyNativeName are language dependent.
+		public string GeoId;
+		public string TwoLetterISORegionName;
+		public string ThreeLetterISORegionName;
+		public string ThreeLetterWindowsRegionName;
+		public string EnglishName;
+		public string CurrencySymbol;
+		public string ISOCurrencySymbol;
+		public string CurrencyEnglishName;
+		public string Name;
+		public string DisplayName;
+		public string NativeName;
+		public string CurrencyNativeName;
+		public bool IsMetric = true;
 
 		public void AppendTableRow (StringBuilder builder)
 		{
-			builder.Append ("\t{ 0, "); // 0 is a slot for LCID (stored at managed code)
-			builder.Append (RegionId);
-			builder.Append (',');
-			// builder.Append (MeasurementSystem);
-			// builder.Append (',');
-			builder.Append (EncodeStringIdx (ISO2Name));
-			builder.Append (',');
-			builder.Append (EncodeStringIdx (ISO3Name));
-			builder.Append (',');
-			builder.Append (EncodeStringIdx (Win3Name));
-			builder.Append (',');
-			builder.Append (EncodeStringIdx (EnglishName));
-			builder.Append (',');
-			builder.Append (EncodeStringIdx (CurrencySymbol));
-			builder.Append (',');
-			builder.Append (EncodeStringIdx (ISOCurrencySymbol));
-			builder.Append (',');
-			builder.Append (EncodeStringIdx (CurrencyEnglishName));
+			builder.Append ("\t{ ");
+			builder.Append (GeoId).Append (',');
+			builder.Append (EncodeStringIdx (TwoLetterISORegionName)).Append (',');
+			builder.Append (EncodeStringIdx (ThreeLetterISORegionName)).Append (',');
+			builder.Append (EncodeStringIdx (ThreeLetterWindowsRegionName)).Append (',');
+			builder.Append (EncodeStringIdx (EnglishName)).Append (',');
+			builder.Append (EncodeStringIdx (NativeName)).Append (',');
+			builder.Append (EncodeStringIdx (CurrencySymbol)).Append (',');
+			builder.Append (EncodeStringIdx (ISOCurrencySymbol)).Append (',');
+			builder.Append (EncodeStringIdx (CurrencyEnglishName)).Append (',');
+			builder.Append (EncodeStringIdx (CurrencyNativeName));
 			builder.Append ('}');
 		}
 

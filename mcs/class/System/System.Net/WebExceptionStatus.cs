@@ -53,16 +53,13 @@ namespace System.Net
 		Timeout = 14,
 		ProxyNameResolutionFailure = 15,
 
-#if NET_1_1
+
 		UnknownError = 16,
 		MessageLengthLimitExceeded = 17,
-#endif
 
-#if NET_2_0
 		CacheEntryNotFound = 18,
 		RequestProhibitedByCachePolicy = 19,
 		RequestProhibitedByProxy = 20,
-#endif
 
 	}
 }

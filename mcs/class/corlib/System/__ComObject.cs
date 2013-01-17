@@ -32,10 +32,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using Mono.Interop;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace System
 {
@@ -50,12 +52,14 @@ namespace System
 	// many times that obj.GetType().FullName == "System.__ComObject" and
 	// Type.GetType("System.__ComObject") may be used.
 
+	[StructLayout (LayoutKind.Sequential)]
 	internal class __ComObject : MarshalByRefObject
 	{
 #pragma warning disable 169	
 		#region Sync with object-internals.h
 		IntPtr iunknown;
 		IntPtr hash_table;
+		SynchronizationContext synchronization_context;
 		#endregion
 #pragma warning restore 169
 
@@ -66,8 +70,11 @@ namespace System
 		private extern void ReleaseInterfaces ();
 
 		~__ComObject ()
-		{
-			ReleaseInterfaces ();
+		{	
+			if (synchronization_context != null)
+				synchronization_context.Post ((state) => ReleaseInterfaces (), this);
+			else
+				ReleaseInterfaces ();				
 		}
 
 		public __ComObject ()
@@ -81,6 +88,7 @@ namespace System
 
 		internal __ComObject (IntPtr pItf)
 		{
+			InitializeApartmentDetails ();
 			Guid iid = IID_IUnknown;
 			int hr = Marshal.QueryInterface (pItf, ref iid, out iunknown);
 			Marshal.ThrowExceptionForHR (hr);
@@ -88,9 +96,12 @@ namespace System
 
 		internal void Initialize (Type t)
 		{
+			InitializeApartmentDetails ();
 			// Guard multiple invocation.
 			if (iunknown != IntPtr.Zero)
 				return;
+
+			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (t.TypeHandle);
 			
 			ObjectCreationDelegate ocd = ExtensibleClassFactory.GetObjectCreationCallback (t);
 			if (ocd != null) {
@@ -102,6 +113,21 @@ namespace System
 				int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
 				Marshal.ThrowExceptionForHR (hr);
 			}
+		}
+
+		private void InitializeApartmentDetails ()
+		{
+			// Only synchronization_context if thread is STA.
+			if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+				return;
+			
+			synchronization_context = SynchronizationContext.Current;
+
+			// Check whether the current context is a plain SynchronizationContext object
+			// and handle this as if no context was set at all.
+			if (synchronization_context != null &&
+				synchronization_context.GetType () == typeof(SynchronizationContext))
+				synchronization_context = null;			
 		}
 
 		private static Guid GetCLSID (Type t)
@@ -204,3 +230,4 @@ namespace System
 			out IntPtr pUnk);
 	}
 }
+#endif

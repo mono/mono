@@ -118,7 +118,7 @@ namespace System.Windows.Forms.Layout
 
 			XmlDocument xmldoc = new XmlDocument();
 			xmldoc.LoadXml (value as string);
-			TableLayoutSettings settings = new TableLayoutSettings(null);
+			TableLayoutSettings settings = new TableLayoutSettings(new TableLayoutPanel());
 			int count = ParseControl (xmldoc, settings);
 			ParseColumnStyle (xmldoc, settings);
 			ParseRowStyle (xmldoc, settings);

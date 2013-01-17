@@ -12,7 +12,6 @@ using NUnit.Framework;
 using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Xml;
 using System.Collections;
 
 using Mono.Unix;
@@ -80,6 +79,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void NonReentrantSyscalls ()
 		{
 			ArrayList user_ids = new ArrayList (4);

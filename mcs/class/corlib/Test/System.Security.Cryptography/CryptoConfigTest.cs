@@ -6,6 +6,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2007,2011 Novell, Inc (http://www.novell.com)
+// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -136,6 +137,9 @@ public class CryptoConfigTest {
 	// additional names (URL) used for XMLDSIG (System.Security.Cryptography.Xml)
 	// URL taken from http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/
 	[Test]
+#if NET_2_1
+	[Ignore ("System.Security.dll is not part of Moonlight, MonoTouch and Mono for Android")]
+#endif
 	public void CreateFromURL () 
 	{
 		// URL used in SignatureMethod element

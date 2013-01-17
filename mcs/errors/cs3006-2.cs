@@ -1,4 +1,4 @@
-// CS3006: Overloaded method `CLSClass.Test(bool)' differing only in ref or out, or in array rank, is not CLS-compliant
+// CS3006: Overloaded method `CLSClass.Test(out bool)' differing only in ref or out, or in array rank, is not CLS-compliant
 // Line: 12
 // Compiler options: -warnaserror -warn:1
 

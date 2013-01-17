@@ -6,10 +6,9 @@ LIBRARY_SNK = ../mono.snk
 
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:Mono.Cecil.dll /r:System.Core.dll /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -keyfile:$(LIBRARY_SNK)
 
-TEST_MCS_FLAGS = /r:Mono.Cecil.dll
+TEST_MCS_FLAGS = /r:Mono.Cecil.dll /r:System.dll /r:System.Core.dll
 
-test: dtest-app.exe dtest-excfilter.exe
-check: dtest-app.exe dtest-excfilter.exe
+test-local: dtest-app.exe dtest-excfilter.exe
 
 dtest-app.exe: Test/dtest-app.cs
 	$(CSCOMPILE) -out:$@ -unsafe -debug Test/dtest-app.cs

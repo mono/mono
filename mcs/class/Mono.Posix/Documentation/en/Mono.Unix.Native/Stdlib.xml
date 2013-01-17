@@ -1,9 +1,11 @@
 <Type Name="Stdlib" FullName="Mono.Unix.Native.Stdlib">
   <TypeSignature Language="C#" Value="public class Stdlib" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Stdlib extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are
   probably safe for multithreaded operations within managed code.  (Methods
@@ -26,7 +28,18 @@
   <Members>
     <Member MemberName="_Exit">
       <MemberSignature Language="C#" Value="public static void _Exit (int status);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;_Exit&quot; cdecl)void _Exit(int32 status) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -48,19 +61,21 @@ This function never returns.
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="_IOFBF">
+      <MemberSignature Language="C#" Value="public static readonly int _IOFBF;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 _IOFBF" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="_IOFBF">
-      <MemberSignature Language="C#" Value="public static readonly int _IOFBF = 0;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -69,19 +84,21 @@ This function never returns.
         <summary>Fully Buffered.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="_IOLBF">
+      <MemberSignature Language="C#" Value="public static readonly int _IOLBF;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 _IOLBF" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="_IOLBF">
-      <MemberSignature Language="C#" Value="public static readonly int _IOLBF = 1;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -90,19 +107,21 @@ This function never returns.
         <summary>Line buffered.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="_IONBF">
+      <MemberSignature Language="C#" Value="public static readonly int _IONBF;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 _IONBF" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="_IONBF">
-      <MemberSignature Language="C#" Value="public static readonly int _IONBF = 2;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -111,19 +130,16 @@ This function never returns.
         <summary>Specify unbuffered <c>FILE</c> streams.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="abort">
       <MemberSignature Language="C#" Value="public static void abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;abort&quot; cdecl)void abort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -140,14 +156,21 @@ Any open streams are flushed and closed.
           <para>The <c>abort</c>() function never returns.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="BUFSIZ">
+      <MemberSignature Language="C#" Value="public static readonly int BUFSIZ;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 BUFSIZ" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BUFSIZ">
-      <MemberSignature Language="C#" Value="public static readonly int BUFSIZ = 8192;" />
-      <MemberType>Field</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -156,19 +179,21 @@ Any open streams are flushed and closed.
         <summary>Buffer size.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="calloc">
+      <MemberSignature Language="C#" Value="public static IntPtr calloc (ulong nmemb, ulong size);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_calloc&quot; cdecl lasterr)native int calloc(unsigned int64 nmemb, unsigned int64 size) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="calloc">
-      <MemberSignature Language="C#" Value="public static IntPtr calloc (ulong nmemb, ulong size);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -190,19 +215,16 @@ The return value of <c>calloc</c> must be passed to <see cref="M:Mono.Unix.Nativ
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="clearerr">
       <MemberSignature Language="C#" Value="public static int clearerr (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_clearerr&quot; cdecl lasterr)int32 clearerr(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -215,14 +237,21 @@ The return value of <c>calloc</c> must be passed to <see cref="M:Mono.Unix.Nativ
         <returns>The <c>clearerr</c>() function returns the value 0 if successful; otherwise the value -1 is returned and <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> indicates the error.</returns>
         <remarks>Clears the end-of-file and error indicators for the stream pointed to by <paramref name="stream" />.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EOF">
+      <MemberSignature Language="C#" Value="public static readonly int EOF;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 EOF" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EOF">
-      <MemberSignature Language="C#" Value="public static readonly int EOF = -1;" />
-      <MemberType>Field</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -231,19 +260,16 @@ The return value of <c>calloc</c> must be passed to <see cref="M:Mono.Unix.Nativ
         <summary>End Of File.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="exit">
       <MemberSignature Language="C#" Value="public static void exit (int status);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;exit&quot; cdecl)void exit(int32 status) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -317,14 +343,21 @@ class Test
           </example>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EXIT_FAILURE">
+      <MemberSignature Language="C#" Value="public static readonly int EXIT_FAILURE;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 EXIT_FAILURE" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EXIT_FAILURE">
-      <MemberSignature Language="C#" Value="public static readonly int EXIT_FAILURE = 1;" />
-      <MemberType>Field</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -333,19 +366,21 @@ class Test
         <summary>Failure program exit status.</summary>
         <remarks>This is the value to return from <c>Main</c> when an error occurs.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EXIT_SUCCESS">
+      <MemberSignature Language="C#" Value="public static readonly int EXIT_SUCCESS;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 EXIT_SUCCESS" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="EXIT_SUCCESS">
-      <MemberSignature Language="C#" Value="public static readonly int EXIT_SUCCESS = 0;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -354,19 +389,16 @@ class Test
         <summary>Success program exit status.</summary>
         <remarks>This is the value to return from <c>Main</c> when no errors occur.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fclose">
       <MemberSignature Language="C#" Value="public static int fclose (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;fclose&quot; cdecl lasterr)int32 fclose(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -386,14 +418,16 @@ class Test
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="feof">
       <MemberSignature Language="C#" Value="public static int feof (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;feof&quot; cdecl)int32 feof(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -406,14 +440,16 @@ class Test
         <returns>Returns non-zero if the end-of-stream indicator for <paramref name="stream" /> is set.  Otherwise, 0 is returned.</returns>
         <remarks>The function <c>feof</c>() tests the end-of-file indicator for the stream pointed to by stream, returning non-zero if it is set.  The end-of-file indicator can only be cleared by the function <see cref="M:Mono.Unix.Native.Stdlib.clearerr" />().</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ferror">
       <MemberSignature Language="C#" Value="public static int ferror (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;ferror&quot; cdecl)int32 ferror(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -426,14 +462,16 @@ class Test
         <returns>Returns non-zero if the error indicator is set on <paramref name="stream" />.  Otherwise, 0 is returned.</returns>
         <remarks>The function <c>ferror</c>() tests the error indicator for the stream pointed to by stream, returning non-zero if it is set.  The error indicator can only be reset by the <see cref="M:Mono.Unix.Native.Stdlib.clearerr" />() function.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fflush">
       <MemberSignature Language="C#" Value="public static int fflush (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;fflush&quot; cdecl lasterr)int32 fflush(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -451,14 +489,16 @@ class Test
           <para>If the stream argument is <see cref="F:System.IntPtr.Zero" />, <c>fflush</c>() flushes all open output streams.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fgetc">
       <MemberSignature Language="C#" Value="public static int fgetc (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;fgetc&quot; cdecl lasterr)int32 fgetc(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -472,14 +512,16 @@ class Test
         <returns> If successful, returns the next requested object from the stream.  Character values are returned as an unsigned char converted to an int.  If the stream is at end-of-file or a read error occurs, the routines return <see cref="M:Mono.Unix.Native.Stdlib.EOF" />.  The routines <see cref="M:Mono.Unix.Native.Stdlib.feof" />(3) and <see cref="M:Mono.Unix.Native.Stdlib.ferror" />(3) must be used to distinguish between end-of-file and error.  If an error occurs, use <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> indicates the error.  The end-of-file condition is remembered, even on a terminal, and all subsequent attempts to read will return <see cref="M:Mono.Unix.Native.Stdlib.EOF" /> until the condition is cleared with <see cref="M:Mono.Unix.Native.Stdlib.clearerr" />(3).</returns>
         <remarks>The <c>fgetc</c>() function obtains the next input character (if present) from the stream pointed at by stream, or the next character pushed back on the stream via <see cref="M:Mono.Unix.Native.Stdlib.ungetc" />(3).</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fgetpos">
       <MemberSignature Language="C#" Value="public static int fgetpos (IntPtr stream, Mono.Unix.Native.FilePosition pos);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 fgetpos(native int stream, class Mono.Unix.Native.FilePosition pos) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -537,14 +579,16 @@ class Test
 </block>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fgets">
       <MemberSignature Language="C#" Value="public static System.Text.StringBuilder fgets (System.Text.StringBuilder sb, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.StringBuilder fgets(class System.Text.StringBuilder sb, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -560,14 +604,16 @@ class Test
         <remarks>Identical to calling <c>fgets(<paramref name="sb" />, <paramref name="sb" />.Capacity, <paramref name="stream" />)</c>.
 See the <see cref="M:Mono.Unix.Native.Stdlib.fgets(System.Text.StringBuilder,int,System.IntPtr)" /> documentation.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fgets">
       <MemberSignature Language="C#" Value="public static System.Text.StringBuilder fgets (System.Text.StringBuilder sb, int size, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.StringBuilder fgets(class System.Text.StringBuilder sb, int32 size, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -604,14 +650,21 @@ See the <see cref="M:Mono.Unix.Native.Stdlib.fgets(System.Text.StringBuilder,int
         </returns>
         <remarks>The <c>fgets</c>() function reads at most one less than the number of characters specified by <paramref name="size" /> from the given <paramref name="stream" /> and stores them in the string <paramref name="sb" />.  Reading stops when a newline character is found, at end-of-file or error.  The newline, if any, is retained.  If any characters are read and there is no error, a '\0' character is appended to end the string.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="FILENAME_MAX">
+      <MemberSignature Language="C#" Value="public static readonly int FILENAME_MAX;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 FILENAME_MAX" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FILENAME_MAX">
-      <MemberSignature Language="C#" Value="public static readonly int FILENAME_MAX = 4096;" />
-      <MemberType>Field</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -620,19 +673,16 @@ See the <see cref="M:Mono.Unix.Native.Stdlib.fgets(System.Text.StringBuilder,int
         <summary>Maximum filename length.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fopen">
       <MemberSignature Language="C#" Value="public static IntPtr fopen (string path, string mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;fopen&quot; cdecl lasterr)native int fopen(string path, string mode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -721,14 +771,21 @@ See the <see cref="M:Mono.Unix.Native.Stdlib.fgets(System.Text.StringBuilder,int
           <para>ANSI C requires that a file positioning function intervene between output and input, unless an input operation encounters end-of-file.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="FOPEN_MAX">
+      <MemberSignature Language="C#" Value="public static readonly int FOPEN_MAX;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 FOPEN_MAX" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FOPEN_MAX">
-      <MemberSignature Language="C#" Value="public static readonly int FOPEN_MAX = 16;" />
-      <MemberType>Field</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -737,19 +794,16 @@ See the <see cref="M:Mono.Unix.Native.Stdlib.fgets(System.Text.StringBuilder,int
         <summary>Maximum number of <c>FILE</c> pointer that may be open at one time.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fprintf">
       <MemberSignature Language="C#" Value="public static int fprintf (IntPtr stream, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 fprintf(native int stream, string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -769,14 +823,22 @@ See the <see cref="M:Mono.Unix.Native.Stdlib.fgets(System.Text.StringBuilder,int
 </para></block></returns>
         <remarks />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fprintf">
       <MemberSignature Language="C#" Value="public static int fprintf (IntPtr stream, string format, object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 fprintf(native int stream, string format, object[] parameters) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
+Use fprintf (IntPtr, string) instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -934,20 +996,16 @@ The <c>char *</c> argument is expected to be a pointer to an array of character 
           <para>In no case does a non-existent or small field width cause truncation of a numeric field; if the result of a conversion is wider than the field width, the field is expanded to contain the conversion result.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
-Use fprintf (IntPtr, string) instead.")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="fputc">
       <MemberSignature Language="C#" Value="public static int fputc (int c, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;fputc&quot; cdecl lasterr)int32 fputc(int32 c, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -962,14 +1020,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         <returns>Returns the character written.  If an error occurrs, the value <see cref="F:Mono.Unix.Native.Stdlib.EOF" /> is returned.</returns>
         <remarks>The <c>fputc</c>() function writes the character <paramref name="c" /> (converted to an "unsigned char") to the output stream pointed to by <paramref name="stream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fputs">
       <MemberSignature Language="C#" Value="public static int fputs (string s, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;fputs&quot; cdecl lasterr)int32 fputs(string s, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1004,14 +1064,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         </returns>
         <remarks> The function <c>fputs</c>() writes the string pointed to by <paramref name="s" /> to the stream pointed to by <paramref name="stream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fread">
       <MemberSignature Language="C#" Value="public static ulong fread (byte[] ptr, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 fread(unsigned int8[] ptr, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1029,19 +1096,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         </returns>
         <remarks>The function <c>fread</c>() reads <c><paramref name="ptr" />.Length</c> bytes from the stream pointed to by <paramref name="stream" />, storing them at the location given by <paramref name="ptr" />.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="fread">
+      <MemberSignature Language="C#" Value="public static ulong fread (byte[] ptr, ulong size, ulong nmemb, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 fread(unsigned int8[] ptr, unsigned int64 size, unsigned int64 nmemb, native int stream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="fread">
-      <MemberSignature Language="C#" Value="public static ulong fread (byte[] ptr, ulong size, ulong nmemb, IntPtr stream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1063,19 +1132,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         </returns>
         <remarks>The function <c>fread</c>() reads <paramref name="nmemb" /> objects, each <paramref name="size" /> bytes long, from the stream pointed to by <paramref name="stream" />, storing them at the location given by <paramref name="ptr" />.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="fread">
+      <MemberSignature Language="C#" Value="public static ulong fread (IntPtr ptr, ulong size, ulong nmemb, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_fread&quot; cdecl lasterr)unsigned int64 fread(native int ptr, unsigned int64 size, unsigned int64 nmemb, native int stream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="fread">
-      <MemberSignature Language="C#" Value="public static ulong fread (IntPtr ptr, ulong size, ulong nmemb, IntPtr stream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1097,19 +1168,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         </returns>
         <remarks>The function <c>fread</c>() reads <paramref name="nmemb" /> objects, each <paramref name="size" /> bytes long, from the stream pointed to by <paramref name="stream" />, storing them at the location given by <paramref name="ptr" />.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="fread">
+      <MemberSignature Language="C#" Value="public static ulong fread (void* ptr, ulong size, ulong nmemb, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 fread(void* ptr, unsigned int64 size, unsigned int64 nmemb, native int stream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="fread">
-      <MemberSignature Language="C#" Value="public static ulong fread (void* ptr, ulong size, ulong nmemb, IntPtr stream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1131,19 +1204,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         </returns>
         <remarks>The function <c>fread</c>() reads <paramref name="nmemb" /> objects, each <paramref name="size" /> bytes long, from the stream pointed to by <paramref name="stream" />, storing them at the location given by <paramref name="ptr" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="free">
       <MemberSignature Language="C#" Value="public static void free (IntPtr ptr);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;free&quot; cdecl)void free(native int ptr) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1155,14 +1225,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         <summary>Free allocated memory.</summary>
         <remarks>The <c>free</c>() function causes the allocated memory referenced by <paramref name="ptr" /> to be made available for future allocations.  If <paramref name="ptr" /> is <see cref="F:System.IntPtr.Zero" />, no action occurs.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="freopen">
       <MemberSignature Language="C#" Value="public static IntPtr freopen (string path, string mode, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;freopen&quot; cdecl lasterr)native int freopen(string path, string mode, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -1271,14 +1343,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fseek">
       <MemberSignature Language="C#" Value="public static int fseek (IntPtr stream, long offset, Mono.Unix.Native.SeekFlags origin);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 fseek(native int stream, int64 offset, valuetype Mono.Unix.Native.SeekFlags origin) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1334,19 +1413,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         </returns>
         <remarks>The <c>fseek</c>() function sets the file position indicator for the stream pointed to by <paramref name="stream" />.  The new position, measured in bytes, is obtained by adding <paramref name="offset" /> bytes to the position specified by <paramref name="whence" />.  If whence is set to <see cref="F:Mono.Unix.Native.SeekFlags.SEEK_SET" />, <see cref="F:Mono.Unix.Native.SeekFlags.SEEK_CUR" />, or <see cref="F:Mono.Unix.Native.SeekFlags.SEEK_END" />, the offset is relative to the start of the file, the current position indicator, or end-of-file, respectively.  A successful call to the <c>fseek</c>() function clears the end-of-file indicator for the stream and undoes any effects of the <see cref="M:Mono.Unix.Native.Stdlib.ungetc" />(3) and <see cref="M:Mono.Unix.Native.Stdlib.ungetwc" />(3) functions on the same stream.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="fsetpos">
       <MemberSignature Language="C#" Value="public static int fsetpos (IntPtr stream, Mono.Unix.Native.FilePosition pos);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 fsetpos(native int stream, class Mono.Unix.Native.FilePosition pos) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1401,14 +1477,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         <remarks>The <c>fsetpos</c>() function is an alternate interfaces for setting the current position in the file, similar to <see cref="M:Mono.Unix.Native.Stdlib.fseek" />(), except that the current position is stored in an opaque object of type <see cref="T:Mono.Unix.Native.FilePosition" /> pointed to by pos.  This provides a portable way to seek to offsets larger than those that can be represented by a long int.  It may also store additional state information in the <see cref="T:Mono.Unix.Native.FilePosition" /> object to facilitate seeking within files containing multibyte characters with state-dependent encodings.
 </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ftell">
       <MemberSignature Language="C#" Value="public static long ftell (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_ftell&quot; cdecl lasterr)int64 ftell(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1460,14 +1538,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         </returns>
         <remarks>The <c>ftell</c>() function obtains the current value of the file position indicator for the stream pointed to by <paramref name="stream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="fwrite">
       <MemberSignature Language="C#" Value="public static ulong fwrite (byte[] ptr, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 fwrite(unsigned int8[] ptr, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1489,19 +1574,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="fwrite">
+      <MemberSignature Language="C#" Value="public static ulong fwrite (byte[] ptr, ulong size, ulong nmemb, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 fwrite(unsigned int8[] ptr, unsigned int64 size, unsigned int64 nmemb, native int stream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="fwrite">
-      <MemberSignature Language="C#" Value="public static ulong fwrite (byte[] ptr, ulong size, ulong nmemb, IntPtr stream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1527,19 +1614,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="fwrite">
+      <MemberSignature Language="C#" Value="public static ulong fwrite (IntPtr ptr, ulong size, ulong nmemb, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_fwrite&quot; cdecl lasterr)unsigned int64 fwrite(native int ptr, unsigned int64 size, unsigned int64 nmemb, native int stream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="fwrite">
-      <MemberSignature Language="C#" Value="public static ulong fwrite (IntPtr ptr, ulong size, ulong nmemb, IntPtr stream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1565,19 +1654,21 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="fwrite">
+      <MemberSignature Language="C#" Value="public static ulong fwrite (void* ptr, ulong size, ulong nmemb, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 fwrite(void* ptr, unsigned int64 size, unsigned int64 nmemb, native int stream) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="fwrite">
-      <MemberSignature Language="C#" Value="public static ulong fwrite (void* ptr, ulong size, ulong nmemb, IntPtr stream);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1603,19 +1694,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="getc">
       <MemberSignature Language="C#" Value="public static int getc (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;getc&quot; cdecl lasterr)int32 getc(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1629,14 +1717,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         <returns>If successful, returns the next requested object from the stream.  Character values are returned as an unsigned char converted to an int.  If the stream is at end-of-file or a read error occurs, the routines return <see cref="M:Mono.Unix.Native.Stdlib.EOF" />.  The routines <see cref="M:Mono.Unix.Native.Stdlib.feof" />(3) and <see cref="M:Mono.Unix.Native.Stdlib.ferror" />(3) must be used to distinguish between end-of-file and error.  If an error occurs, use <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> indicates the error.  The end-of-file condition is remembered, even on a terminal, and all subsequent attempts to read will return <see cref="M:Mono.Unix.Native.Stdlib.EOF" /> until the condition is cleared with <see cref="M:Mono.Unix.Native.Stdlib.clearerr" />(3).</returns>
         <remarks>The <c>getc</c>() function obtains the next input character (if present) from the stream pointed at by stream, or the next character pushed back on the stream via <see cref="M:Mono.Unix.Native.Stdlib.ungetc" />(3).</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="getchar">
       <MemberSignature Language="C#" Value="public static int getchar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;getchar&quot; cdecl lasterr)int32 getchar() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1647,14 +1737,16 @@ Use fprintf (IntPtr, string) instead.")</AttributeName>
         <remarks>The <c>getchar</c>() function is equivalent to <c><see cref="M:Mono.Unix.Native.Stdlib.getc" /> (<see cref="F:Mono.Unix.Native.Stdlib.stdin" />)</c>, 
 obtaining the next input character (if present) from <see cref="F:Mono.Unix.Native.Stdlib.stdin" />, or the next character pushed back on <c>stdin</c> via <see cref="M:Mono.Unix.Native.Stdlib.ungetc" />(3).</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="getenv">
       <MemberSignature Language="C#" Value="public static string getenv (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string getenv(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1667,14 +1759,16 @@ obtaining the next input character (if present) from <see cref="F:Mono.Unix.Nati
         <returns>The <c>getenv</c>() function returns the value of the environment variable as a string.  If the variable name is not in the current environment, <see langword="null" /> is returned.</returns>
         <remarks>The <c>getenv</c>() function obtains the current value of the environment variable, <paramref name="name" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLastError">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.Errno GetLastError ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype Mono.Unix.Native.Errno GetLastError() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Errno</ReturnType>
       </ReturnValue>
@@ -1684,14 +1778,21 @@ obtaining the next input character (if present) from <see cref="F:Mono.Unix.Nati
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="L_tmpnam">
+      <MemberSignature Language="C#" Value="public static readonly int L_tmpnam;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 L_tmpnam" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="L_tmpnam">
-      <MemberSignature Language="C#" Value="public static readonly int L_tmpnam = 20;" />
-      <MemberType>Field</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1700,19 +1801,21 @@ obtaining the next input character (if present) from <see cref="F:Mono.Unix.Nati
         <summary>The number of characters filled by <see cref="M:Mono.Unix.Native.Stdlib.tmpnam" />(3).</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="malloc">
+      <MemberSignature Language="C#" Value="public static IntPtr malloc (ulong size);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_malloc&quot; cdecl lasterr)native int malloc(unsigned int64 size) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="malloc">
-      <MemberSignature Language="C#" Value="public static IntPtr malloc (ulong size);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -1730,19 +1833,21 @@ obtaining the next input character (if present) from <see cref="F:Mono.Unix.Nati
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="MB_CUR_MAX">
+      <MemberSignature Language="C#" Value="public static readonly int MB_CUR_MAX;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 MB_CUR_MAX" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="MB_CUR_MAX">
-      <MemberSignature Language="C#" Value="public static readonly int MB_CUR_MAX = 6;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1751,19 +1856,16 @@ obtaining the next input character (if present) from <see cref="F:Mono.Unix.Nati
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="perror">
       <MemberSignature Language="C#" Value="public static int perror (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 perror(string s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1776,14 +1878,16 @@ obtaining the next input character (if present) from <see cref="F:Mono.Unix.Nati
         <returns>The <c>perror</c>() function returns the value 0 if successful; otherwise the value -1 is returned and <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> indicates the error.</returns>
         <remarks>The <c>perror</c>() function finds the error message corresponding to the current value of <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> and writes it, followed by a newline, to the standard error file descriptor.  If the argument string is not <see langword="null" /> and does not point to the null character, this string is prepended to the message string and separated from it by a colon and space ("<c>: </c>"); otherwise, only the error message string is printed.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="printf">
       <MemberSignature Language="C#" Value="public static int printf (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 printf(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1800,14 +1904,22 @@ obtaining the next input character (if present) from <see cref="F:Mono.Unix.Nati
 </para></block></returns>
         <remarks />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="printf">
       <MemberSignature Language="C#" Value="public static int printf (string format, object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 printf(string format, object[] parameters) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
+Use printf (string) instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1962,20 +2074,16 @@ The <c>char *</c> argument is expected to be a pointer to an array of character 
           <para>In no case does a non-existent or small field width cause truncation of a numeric field; if the result of a conversion is wider than the field width, the field is expanded to contain the conversion result.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
-Use printf (string) instead.")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="putc">
       <MemberSignature Language="C#" Value="public static int putc (int c, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;putc&quot; cdecl lasterr)int32 putc(int32 c, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1990,14 +2098,16 @@ Use printf (string) instead.")</AttributeName>
         <returns>Returns the character written.  If an error occurrs, the value <see cref="F:Mono.Unix.Native.Stdlib.EOF" /> is returned.</returns>
         <remarks>The <c>putc</c>() function writes the character <paramref name="c" /> (converted to an "unsigned char") to the output stream pointed to by <paramref name="stream" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="putchar">
       <MemberSignature Language="C#" Value="public static int putchar (int c);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;putchar&quot; cdecl lasterr)int32 putchar(int32 c) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2010,14 +2120,16 @@ Use printf (string) instead.")</AttributeName>
         <returns>Returns the character written.  If an error occurrs, the value <see cref="F:Mono.Unix.Native.Stdlib.EOF" /> is returned.</returns>
         <remarks>The <c>putchar</c>() function is identical to <see cref="M:Mono.Unix.Native.Stdlib.putc" />() with an output stream of <see cref="F:Mono.Unix.Native.Stdlib.stdout" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="puts">
       <MemberSignature Language="C#" Value="public static int puts (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;puts&quot; cdecl lasterr)int32 puts(string s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2050,16 +2162,14 @@ Use printf (string) instead.")</AttributeName>
         </returns>
         <remarks>The function <c>puts</c>() writes the string <paramref name="s" />, and a terminating newline character, to the stream <see cref="F:Mono.Unix.Native.Stdlib.stdout" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="raise">
       <MemberSignature Language="C#" Value="public static int raise (Mono.Unix.Native.RealTimeSignum rts);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 raise(valuetype Mono.Unix.Native.RealTimeSignum rts) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2077,7 +2187,18 @@ Use printf (string) instead.")</AttributeName>
     </Member>
     <Member MemberName="raise">
       <MemberSignature Language="C#" Value="public static int raise (Mono.Unix.Native.Signum sig);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 raise(valuetype Mono.Unix.Native.Signum sig) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2091,19 +2212,16 @@ Use printf (string) instead.")</AttributeName>
 </returns>
         <remarks>The <c>raise</c>() function sends the signal <paramref name="sig" /> to the current process.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="rand">
       <MemberSignature Language="C#" Value="public static int rand ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;rand&quot; cdecl)int32 rand() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2113,14 +2231,21 @@ Use printf (string) instead.")</AttributeName>
         <returns>To be added.</returns>
         <remarks>The <c>rand</c>() function computes a sequence of pseudo-random integers in the range of 0 to <see cref="F:Mono.Unix.Native.Stdlib.RAND_MAX" /></remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RAND_MAX">
+      <MemberSignature Language="C#" Value="public static readonly int RAND_MAX;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 RAND_MAX" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RAND_MAX">
-      <MemberSignature Language="C#" Value="public static readonly int RAND_MAX = 2147483647;" />
-      <MemberType>Field</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2129,19 +2254,21 @@ Use printf (string) instead.")</AttributeName>
         <summary>The maximum value returned by <see cref="M:Mono.Unix.Native.Stdlib.rand" />(3).</summary>
         <remarks>The maximum value returned by <see cref="M:Mono.Unix.Native.Stdlib.rand" />(3).</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="realloc">
+      <MemberSignature Language="C#" Value="public static IntPtr realloc (IntPtr ptr, ulong size);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_realloc&quot; cdecl lasterr)native int realloc(native int ptr, unsigned int64 size) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="realloc">
-      <MemberSignature Language="C#" Value="public static IntPtr realloc (IntPtr ptr, ulong size);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -2156,19 +2283,16 @@ Use printf (string) instead.")</AttributeName>
         <returns>The <c>realloc</c>() function returns a pointer, possibly identical to <paramref name="ptr" />, to the allocated memory if successful; otherwise a <see cref="F:System.IntPtr.Zero" /> pointer is returned and <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> returns <see cref="F:Mono.Unix.Native.Errno.ENOMEM" />. The <c>realloc</c>() function always leaves the original buffer intact when an error occurs.</returns>
         <remarks>The <c>realloc</c>() function changes the size of the previously allocated memory referenced by <paramref name="ptr" /> to <paramref name="size" /> bytes.  The contents of the memory are unchanged up to the lesser of the new and old sizes.  If the new size is larger, the value of the newly allocated portion of the memory is undefined.  If the requested memory cannot be allocated, <see cref="F:System.IntPtr.Zero" /> is returned and the memory referenced by <paramref name="ptr" /> is valid and unchanged.  If memory can be allocated, the memory referenced by <paramref name="ptr" /> is freed and a pointer to the newly allocated memory is returned.  Note that this may be different from the value passed as <paramref name="ptr" />.  If <paramref name="ptr" /> is <see cref="F:System.IntPtr.Zero" />, the <c>realloc</c>() function behaves identically to <see cref="M:Mono.Unix.Native.Stdlib.malloc" />() for the specified size.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="remove">
       <MemberSignature Language="C#" Value="public static int remove (string filename);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;remove&quot; cdecl lasterr)int32 remove(string filename) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2185,14 +2309,16 @@ Use printf (string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="rename">
       <MemberSignature Language="C#" Value="public static int rename (string oldpath, string newpath);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;rename&quot; cdecl lasterr)int32 rename(string oldpath, string newpath) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2211,14 +2337,16 @@ Use printf (string) instead.")</AttributeName>
           <para>If the final component of <paramref name="oldpath" /> is a symbolic link, the symbolic link is renamed, not the file or directory to which it points.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="rewind">
       <MemberSignature Language="C#" Value="public static int rewind (IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_rewind&quot; cdecl lasterr)int32 rewind(native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2239,14 +2367,21 @@ Use printf (string) instead.")</AttributeName>
           <para>Since <c>rewind</c>() does not return a value, an application wishing to detect errors should call <c><see cref="M:Mono.Unix.Native.Stdlib.SetLastError" />((<see cref="T:Mono.Unix.Native.Error" />)0)</c>, then call <c>rewind</c>(), and if <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> is non-zero, assume an error has occurred.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="setbuf">
       <MemberSignature Language="C#" Value="public static int setbuf (IntPtr stream, byte* buf);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 setbuf(native int stream, unsigned int8* buf) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2270,19 +2405,16 @@ Use printf (string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="setbuf">
       <MemberSignature Language="C#" Value="public static int setbuf (IntPtr stream, IntPtr buf);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_setbuf&quot; cdecl lasterr)int32 setbuf(native int stream, native int buf) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2306,14 +2438,16 @@ Use printf (string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetLastError">
       <MemberSignature Language="C#" Value="protected static void SetLastError (Mono.Unix.Native.Errno error);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig void SetLastError(valuetype Mono.Unix.Native.Errno error) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2325,16 +2459,14 @@ Use printf (string) instead.")</AttributeName>
         <summary>Writes <c>errno</c>.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetSignalAction">
       <MemberSignature Language="C#" Value="public static int SetSignalAction (Mono.Unix.Native.RealTimeSignum rts, Mono.Unix.Native.SignalAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 SetSignalAction(valuetype Mono.Unix.Native.RealTimeSignum rts, valuetype Mono.Unix.Native.SignalAction action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2418,10 +2550,12 @@ Use printf (string) instead.")</AttributeName>
     </Member>
     <Member MemberName="SetSignalAction">
       <MemberSignature Language="C#" Value="public static int SetSignalAction (Mono.Unix.Native.Signum signal, Mono.Unix.Native.SignalAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 SetSignalAction(valuetype Mono.Unix.Native.Signum signal, valuetype Mono.Unix.Native.SignalAction action) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2505,7 +2639,18 @@ Use printf (string) instead.")</AttributeName>
     </Member>
     <Member MemberName="setvbuf">
       <MemberSignature Language="C#" Value="public static int setvbuf (IntPtr stream, byte* buf, int mode, ulong size);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 setvbuf(native int stream, unsigned int8* buf, int32 mode, unsigned int64 size) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2558,19 +2703,21 @@ Use printf (string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="setvbuf">
+      <MemberSignature Language="C#" Value="public static int setvbuf (IntPtr stream, IntPtr buf, int mode, ulong size);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_setvbuf&quot; cdecl lasterr)int32 setvbuf(native int stream, native int buf, int32 mode, unsigned int64 size) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="setvbuf">
-      <MemberSignature Language="C#" Value="public static int setvbuf (IntPtr stream, IntPtr buf, int mode, ulong size);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2623,19 +2770,21 @@ Use printf (string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SIG_DFL">
+      <MemberSignature Language="C#" Value="public static readonly Mono.Unix.Native.SignalHandler SIG_DFL;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class Mono.Unix.Native.SignalHandler SIG_DFL" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SIG_DFL">
-      <MemberSignature Language="C#" Value="public static readonly Mono.Unix.Native.SignalHandler SIG_DFL;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SignalHandler</ReturnType>
       </ReturnValue>
@@ -2643,19 +2792,21 @@ Use printf (string) instead.")</AttributeName>
         <summary>Default signal behavior.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SIG_ERR">
+      <MemberSignature Language="C#" Value="public static readonly Mono.Unix.Native.SignalHandler SIG_ERR;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class Mono.Unix.Native.SignalHandler SIG_ERR" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SIG_ERR">
-      <MemberSignature Language="C#" Value="public static readonly Mono.Unix.Native.SignalHandler SIG_ERR;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SignalHandler</ReturnType>
       </ReturnValue>
@@ -2663,19 +2814,21 @@ Use printf (string) instead.")</AttributeName>
         <summary>Error signal.</summary>
         <remarks>This value is returned by <see cref="M:Mono.Unix.Native.Stdlib.signal" />(3) when an error occurs.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SIG_IGN">
+      <MemberSignature Language="C#" Value="public static readonly Mono.Unix.Native.SignalHandler SIG_IGN;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class Mono.Unix.Native.SignalHandler SIG_IGN" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SIG_IGN">
-      <MemberSignature Language="C#" Value="public static readonly Mono.Unix.Native.SignalHandler SIG_IGN;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SignalHandler</ReturnType>
       </ReturnValue>
@@ -2683,19 +2836,24 @@ Use printf (string) instead.")</AttributeName>
         <summary>Ignore the signal.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="signal">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SignalHandler signal (Mono.Unix.Native.Signum signum, Mono.Unix.Native.SignalHandler handler);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Unix.Native.SignalHandler signal(valuetype Mono.Unix.Native.Signum signum, class Mono.Unix.Native.SignalHandler handler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("This is not safe; use Mono.Unix.UnixSignal for signal delivery or SetSignalAction()")</AttributeName>
+        </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="signal">
-      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SignalHandler signal (Mono.Unix.Native.Signum signum, Mono.Unix.Native.SignalHandler handler);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.SignalHandler</ReturnType>
       </ReturnValue>
@@ -2761,22 +2919,16 @@ Use printf (string) instead.")</AttributeName>
         <altmember cref="M:Mono.Unix.Native.Stdlib.SetSignalAction" />
         <altmember cref="T:Mono.Unix.UnixSignal" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("This is not safe; use Mono.Unix.UnixSignal for signal delivery or SetSignalAction()")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="snprintf">
       <MemberSignature Language="C#" Value="public static int snprintf (System.Text.StringBuilder s, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 snprintf(class System.Text.StringBuilder s, string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2791,14 +2943,25 @@ Use printf (string) instead.")</AttributeName>
         <returns>Returns the number of characters printed or the number of characters that would have been printed if the <paramref name="size" /> were unlimited (again, not including the final '<c>\0</c>').</returns>
         <remarks>The <c>snprintf</c> function will fill at most <see cref="P:System.Text.StringBuilder.Capacity" /> characters of the input buffer with the string <paramref name="message" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="snprintf">
       <MemberSignature Language="C#" Value="public static int snprintf (System.Text.StringBuilder s, string format, object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 snprintf(class System.Text.StringBuilder s, string format, object[] parameters) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
+Use snprintf (StringBuilder, string) instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2951,23 +3114,21 @@ The <c>char *</c> argument is expected to be a pointer to an array of character 
           <para>In no case does a non-existent or small field width cause truncation of a numeric field; if the result of a conversion is wider than the field width, the field is expanded to contain the conversion result.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="snprintf">
+      <MemberSignature Language="C#" Value="public static int snprintf (System.Text.StringBuilder s, ulong n, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 snprintf(class System.Text.StringBuilder s, unsigned int64 n, string message) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
-Use snprintf (StringBuilder, string) instead.")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="snprintf">
-      <MemberSignature Language="C#" Value="public static int snprintf (System.Text.StringBuilder s, ulong n, string message);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2984,19 +3145,25 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         <returns>Returns the number of characters printed or the number of characters that would have been printed if the <paramref name="size" /> were unlimited (again, not including the final '<c>\0</c>').</returns>
         <remarks>The <c>snprintf</c> function will fill at most <paramref name="n" /> characters of the input buffer with the string <paramref name="message" />.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="snprintf">
+      <MemberSignature Language="C#" Value="public static int snprintf (System.Text.StringBuilder s, ulong n, string format, object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 snprintf(class System.Text.StringBuilder s, unsigned int64 n, string format, object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
+Use snprintf (StringBuilder, string) instead.")</AttributeName>
+        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="snprintf">
-      <MemberSignature Language="C#" Value="public static int snprintf (System.Text.StringBuilder s, ulong n, string format, object[] parameters);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3151,23 +3318,21 @@ The <c>char *</c> argument is expected to be a pointer to an array of character 
           <para>In no case does a non-existent or small field width cause truncation of a numeric field; if the result of a conversion is wider than the field width, the field is expanded to contain the conversion result.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="srand">
+      <MemberSignature Language="C#" Value="public static void srand (uint seed);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;srand&quot; cdecl)void srand(unsigned int32 seed) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Not necessarily portable due to cdecl restrictions.
-Use snprintf (StringBuilder, string) instead.")</AttributeName>
-        </Attribute>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="srand">
-      <MemberSignature Language="C#" Value="public static void srand (uint seed);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -3182,19 +3347,16 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
           <para>If no <paramref name="seed" /> value is provided, the functions are automatically seeded with a value of 1.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="stderr">
       <MemberSignature Language="C#" Value="public static readonly IntPtr stderr;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly native int stderr" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -3202,14 +3364,16 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         <summary>Standard error <c>FILE</c> stream.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="stdin">
       <MemberSignature Language="C#" Value="public static readonly IntPtr stdin;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly native int stdin" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -3217,14 +3381,16 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         <summary>Standard input <c>FILE</c> stream.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="stdout">
       <MemberSignature Language="C#" Value="public static readonly IntPtr stdout;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly native int stdout" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -3232,14 +3398,21 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         <summary>Standard output <c>FILE</c> stream.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="strerror">
       <MemberSignature Language="C#" Value="public static string strerror (Mono.Unix.Native.Errno errnum);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string strerror(valuetype Mono.Unix.Native.Errno errnum) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -3256,19 +3429,21 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="strlen">
+      <MemberSignature Language="C#" Value="public static ulong strlen (IntPtr s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;MonoPosixHelper&quot; as &quot;Mono_Posix_Stdlib_strlen&quot; cdecl lasterr)unsigned int64 strlen(native int s) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="strlen">
-      <MemberSignature Language="C#" Value="public static ulong strlen (IntPtr s);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -3281,19 +3456,21 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="system">
+      <MemberSignature Language="C#" Value="public static int system (string string);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;system&quot; cdecl lasterr)int32 system(string string) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="system">
-      <MemberSignature Language="C#" Value="public static int system (string string);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3310,19 +3487,21 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         </returns>
         <remarks>The <c>system</c>() function hands the argument <paramref name="string" /> to the command interpreter <c>sh</c>(1).  The calling process waits for the shell to finish executing the command, ignoring <see cref="F:Mono.Unix.Native.Signum.SIGINT" /> and <see cref="F:Mono.Unix.Native.Signum.SIGQUIT" />, and blocking <see cref="F:Mono.Unix.Native.Signum.SIGCHLD" />.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="TMP_MAX">
+      <MemberSignature Language="C#" Value="public static readonly int TMP_MAX;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 TMP_MAX" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="TMP_MAX">
-      <MemberSignature Language="C#" Value="public static readonly int TMP_MAX = 238328;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3331,19 +3510,16 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         <summary>Maximum number of times <see cref="M:Mono.Unix.Native.Stdlib.tmpnam" />(3) will return different strings.</summary>
         <remarks>If <see cref="M:Mono.Unix.Native.Stdlib.tmpnam" />(3) is called more than <c>TMP_MAX</c> times, the behavior is implementation defined.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="tmpfile">
       <MemberSignature Language="C#" Value="public static IntPtr tmpfile ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;tmpfile&quot; cdecl lasterr)native int tmpfile() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -3356,14 +3532,21 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
           <para />
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="tmpnam">
       <MemberSignature Language="C#" Value="public static string tmpnam ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string tmpnam() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Syscall.mkstemp() should be preferred.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -3373,19 +3556,21 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
         <returns>Returns a file name on success, and <see langword="null" /> on error.</returns>
         <remarks>The <c>tmpnam</c>() function returns a pointer to a file name, in the <c>/tmp</c> directory, which did not reference an existing file at some indeterminate point in the past.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="tmpnam">
+      <MemberSignature Language="C#" Value="public static string tmpnam (System.Text.StringBuilder s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string tmpnam(class System.Text.StringBuilder s) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("Syscall.mkstemp() should be preferred.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="tmpnam">
-      <MemberSignature Language="C#" Value="public static string tmpnam (System.Text.StringBuilder s);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -3401,19 +3586,16 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
           <para>The buffer referenced by <paramref name="s" /> is expected to be at least <see cref="F:Mono.Unix.Native.Stdlib.L_tmpnam" /> bytes in length.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Syscall.mkstemp() should be preferred.")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="ungetc">
       <MemberSignature Language="C#" Value="public static int ungetc (int c, IntPtr stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig pinvokeimpl (&quot;msvcrt&quot; as &quot;ungetc&quot; cdecl lasterr)int32 ungetc(int32 c, native int stream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3435,10 +3617,6 @@ Use snprintf (StringBuilder, string) instead.")</AttributeName>
 </para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 class C
 {
-	static void Main ()
+	public static void Main ()
 	{
 		new Test ().Invalid (4);
 	}

@@ -92,13 +92,17 @@ public class CP874 : ByteEncoding
 		int ch;
 		int charIndex = 0;
 		int byteIndex = 0;
+		int end = charCount;
 #if NET_2_0
 		EncoderFallbackBuffer buffer = null;
 #endif
-		while(charCount > 0)
+		for (int i = charIndex; i < end; i++, charCount--)
 		{
-			ch = (int)(chars[charIndex++]);
-			if(ch >= 26) switch(ch)
+			if (byteCount <= 0)
+				throw new ArgumentOutOfRangeException ("Insufficient byte buffer.");
+
+			ch = (int)(chars[i]);
+			if (ch >= 26) switch (ch)
 			{
 				case 0x001B:
 				case 0x001D:
@@ -300,19 +304,21 @@ public class CP874 : ByteEncoding
 					break;
 				default:
 				{
-					if(ch >= 0xFF01 && ch <= 0xFF5E)
+					if (ch >= 0xFF01 && ch <= 0xFF5E)
 						ch -= 0xFEE0;
 					else
+					{
 #if NET_2_0
-						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+						HandleFallback(ref buffer, chars, ref i, ref charCount, bytes, ref byteIndex, ref byteCount);
+						continue;
 #else
 						ch = 0x3F;
 #endif
+					}
 				}
 				break;
 			}
 			bytes[byteIndex++] = (byte)ch;
-			--charCount;
 			--byteCount;
 		}
 	}

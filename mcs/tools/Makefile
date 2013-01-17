@@ -38,21 +38,22 @@ net_4_0_dirs := \
 	macpack		\
 	dtd2rng		\
 	dtd2xsd		\
+	mdoc		\
 	mod		\
 	installvst	\
 	lc		\
 	mono-configuration-crypto \
 	ccrewrite	\
+	cccheck		\
 	security
 
 net_2_0_dirs := \
-	$(per_profile_dirs) \
-	monodoc		\
-	mdoc
+	$(per_profile_dirs)
 
 build_SUBDIRS = gacutil security culevel
 net_2_0_SUBDIRS := $(basic_SUBDIRS) $(net_2_0_dirs)
 net_4_0_SUBDIRS := $(net_4_0_dirs) $(basic_SUBDIRS)
+net_4_5_SUBDIRS := $(net_4_0_SUBDIRS)
 
 SUBDIRS = $(basic_SUBDIRS) $(net_2_0_SUBDIRS)
 DIST_SUBDIRS = $(SUBDIRS) $(net_4_0_dirs)

@@ -265,6 +265,7 @@ if (ins->inst_target_bb->native_offset) { 					\
 #include "cpu-s390x.h"
 #include "jit-icalls.h"
 #include "ir-emit.h"
+#include "trace.h"
 
 /*========================= End of Includes ========================*/
 
@@ -366,7 +367,6 @@ static inline void add_stackParm (guint *, size_data *, ArgInfo *, gint);
 static inline void add_float (guint *, size_data *, ArgInfo *);
 static CallInfo * get_call_info (MonoCompile *, MonoMemPool *, MonoMethodSignature *, gboolean);
 static guchar * emit_float_to_int (MonoCompile *, guchar *, int, int, int, gboolean);
-gpointer mono_arch_get_lmf_addr (void);
 static guint8 * emit_load_volatile_arguments (guint8 *, MonoCompile *);
 static void catch_SIGILL(int, siginfo_t *, void *);
 static __inline__ void emit_unwind_regs(MonoCompile *, guint8 *, int, int, long);
@@ -383,10 +383,9 @@ static int indent_level = 0;
 
 int has_ld = 0;
 
-static gboolean tls_offset_inited = FALSE;
-
-static int appdomain_tls_offset = -1,
-           thread_tls_offset = -1;
+static gint appdomain_tls_offset = -1,
+	    lmf_tls_offset = -1,
+	    lmf_addr_tls_offset = -1;
 
 pthread_key_t lmf_addr_key;
 
@@ -486,7 +485,7 @@ mono_arch_fregname (int reg) {
 /*------------------------------------------------------------------*/
 
 int
-mono_arch_get_argument_info (MonoMethodSignature *csig, 
+mono_arch_get_argument_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *csig, 
 			     int param_count, 
 			     MonoJitArgumentInfo *arg_info)
 {
@@ -639,6 +638,97 @@ indent (int diff) {
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
+/* Name		- cvtMonoType                                       */
+/*                                                                  */
+/* Function	- Convert a mono-type to a string.                  */
+/*		                               			    */
+/*------------------------------------------------------------------*/
+
+static const char *
+cvtMonoType(MonoTypeEnum t)
+{
+  switch(t)
+    {
+    case MONO_TYPE_END:
+      return "MONO_TYPE_END";
+    case MONO_TYPE_VOID:
+      return "MONO_TYPE_VOID";
+    case MONO_TYPE_BOOLEAN:
+      return "MONO_TYPE_BOOLEAN";
+    case MONO_TYPE_CHAR:
+      return "MONO_TYPE_CHAR";
+    case MONO_TYPE_I1:
+      return "MONO_TYPE_I1";
+    case MONO_TYPE_U1:
+      return "MONO_TYPE_U1";
+    case MONO_TYPE_I2:
+      return "MONO_TYPE_I2";
+    case MONO_TYPE_U2:
+      return "MONO_TYPE_U2";
+    case MONO_TYPE_I4:
+      return "MONO_TYPE_I4";
+    case MONO_TYPE_U4:
+      return "MONO_TYPE_U4";
+    case MONO_TYPE_I8:
+      return "MONO_TYPE_I8";
+    case MONO_TYPE_U8:
+      return "MONO_TYPE_U8";
+    case MONO_TYPE_R4:
+      return "MONO_TYPE_R4";
+    case MONO_TYPE_R8:
+      return "MONO_TYPE_R8";
+    case MONO_TYPE_STRING:
+      return "MONO_TYPE_STRING";
+    case MONO_TYPE_PTR:
+      return "MONO_TYPE_PTR";
+    case MONO_TYPE_BYREF:
+      return "MONO_TYPE_BYREF";
+    case MONO_TYPE_VALUETYPE:
+      return "MONO_TYPE_VALUETYPE";
+    case MONO_TYPE_CLASS:
+      return "MONO_TYPE_CLASS";
+    case MONO_TYPE_VAR:
+      return "MONO_TYPE_VAR";
+    case MONO_TYPE_ARRAY:
+      return "MONO_TYPE_ARRAY";
+    case MONO_TYPE_GENERICINST:
+      return "MONO_TYPE_GENERICINST";
+    case MONO_TYPE_TYPEDBYREF:
+      return "MONO_TYPE_TYPEDBYREF";
+    case MONO_TYPE_I:
+      return "MONO_TYPE_I";
+    case MONO_TYPE_U:
+      return "MONO_TYPE_U";
+    case MONO_TYPE_FNPTR:
+      return "MONO_TYPE_FNPTR";
+    case MONO_TYPE_OBJECT:
+      return "MONO_TYPE_OBJECT";
+    case MONO_TYPE_SZARRAY:
+      return "MONO_TYPE_SZARRAY";
+    case MONO_TYPE_MVAR:
+      return "MONO_TYPE_MVAR";
+    case MONO_TYPE_CMOD_REQD:
+      return "MONO_TYPE_CMOD_REQD";
+    case MONO_TYPE_CMOD_OPT:
+      return "MONO_TYPE_CMOD_OPT";
+    case MONO_TYPE_INTERNAL:
+      return "MONO_TYPE_INTERNAL";
+    case MONO_TYPE_MODIFIER:
+      return "MONO_TYPE_MODIFIER";
+    case MONO_TYPE_SENTINEL:
+      return "MONO_TYPE_SENTINEL";
+    case MONO_TYPE_PINNED:
+      return "MONO_TYPE_PINNED";
+    default:
+      ;
+    }
+  return "unknown";
+}
+
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
 /* Name		- decodeParm                                        */
 /*                                                                  */
 /* Function	- Decode a parameter for the trace.                 */
@@ -772,7 +862,7 @@ enum_parmtype:
 				printf("[VALUETYPE:");
 				for (i = 0; i < size; i++)
 					printf("%02x,", *((guint8 *)curParm+i));
-				printf("]");
+				printf("], ");
 				break;
 			}
 			case MONO_TYPE_TYPEDBYREF: {
@@ -784,7 +874,7 @@ enum_parmtype:
 				break;
 			}
 			default :
-				printf("[?? - %d], ",simpleType);
+				printf("[%s], ",cvtMonoType(simpleType));
 		}
 	}
 }
@@ -836,24 +926,32 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 	if (sig->hasthis) {
 		gpointer *this = (gpointer *) rParm->gr[iParm];
 		obj = (MonoObject *) this;
-		if (method->klass->valuetype) { 
+		switch(method->klass->this_arg.type) {
+		case MONO_TYPE_VALUETYPE:
 			if (obj) {
-				printf("this:[value:%p:%016lx], ", 
-				       this, *((guint64 *)(this+sizeof(MonoObject))));
+				guint64 *value = (guint64 *) ((uintptr_t)this + sizeof(MonoObject));
+				printf("this:[value:%p:%016lx], ", this, *value);
 			} else 
 				printf ("this:[NULL], ");
-		} else {
+			break;
+		case MONO_TYPE_STRING:
 			if (obj) {
-				class = obj->vtable->klass;
-				if (class == mono_defaults.string_class) {
-					printf ("this:[STRING:%p:%s], ", 
-						obj, mono_string_to_utf8 ((MonoString *)obj));
-				} else {
-					printf ("this:%p[%s.%s], ", 
-						obj, class->name_space, class->name);
-				}
+				if (obj->vtable) {
+					class = obj->vtable->klass;
+					if (class == mono_defaults.string_class) {
+						printf ("this:[STRING:%p:%s], ", 
+							obj, mono_string_to_utf8 ((MonoString *)obj));
+					} else {
+						printf ("this:%p[%s.%s], ", 
+							obj, class->name_space, class->name);
+					}
+				} else 
+					printf("vtable:[NULL], ");
 			} else 
-				printf ("this:NULL, ");
+				printf ("this:[NULL], ");
+			break;
+		default :
+			printf("this[%s]: %p, ",cvtMonoType(method->klass->this_arg.type),this);
 		}
 		oParm++;
 	}
@@ -1257,14 +1355,14 @@ mono_arch_cleanup (void)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_cpu_optimizazions                       */
+/* Name		- mono_arch_cpu_optimizations                       */
 /*                                                                  */
 /* Function	- Returns the optimizations supported on this CPU   */
 /*		                               			    */
 /*------------------------------------------------------------------*/
 
 guint32
-mono_arch_cpu_optimizazions (guint32 *exclude_mask)
+mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
 	guint32 opts = 0;
 
@@ -1276,6 +1374,21 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	return opts;
 }
 
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
+/* Name         - mono_arch_cpu_enumerate_simd_versions             */
+/*                                                                  */
+/* Function     - Returns the SIMD instruction sets on this CPU     */
+/*                                                                  */
+/*------------------------------------------------------------------*/
+guint32
+mono_arch_cpu_enumerate_simd_versions (void)
+{
+	/* SIMD is currently unimplemented */
+	return 0;
+}
 /*========================= End of Function ========================*/
 
 /*------------------------------------------------------------------*/
@@ -2082,6 +2195,8 @@ printf("%s %4d cookine %x\n",__FUNCTION__,__LINE__,cfg->sig_cookie);
 		curinst++;
 	}
 
+	cfg->locals_min_stack_offset = offset;
+
 	curinst = cfg->locals_start;
 	for (iVar = curinst; iVar < cfg->num_varinfo; ++iVar) {
 		inst = cfg->varinfo [iVar];
@@ -2108,6 +2223,8 @@ printf("%s %4d cookine %x\n",__FUNCTION__,__LINE__,cfg->sig_cookie);
 		DEBUG (g_print("allocating local %d to %ld, size: %d\n", 
 				iVar, inst->inst_offset, size));
 	}
+
+	cfg->locals_max_stack_offset = offset;
 
 	/*------------------------------------------------------*/
 	/* Allow space for the trace method stack area if needed*/
@@ -2380,6 +2497,12 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 							 frmReg, ainfo->offparm);
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG,
 							     ainfo->reg, ainfo->offset, treg);
+
+				if (cfg->compute_gc_maps) {
+					MonoInst *def;
+
+					EMIT_NEW_GC_PARAM_SLOT_LIVENESS_DEF (cfg, def, ainfo->offset, t);
+				}
 			}
 			break;
 		}
@@ -2491,6 +2614,12 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 
 		MONO_EMIT_NEW_MOVE (cfg, srcReg, ainfo->offparm,
 							 src->dreg, 0, size);
+
+		if (cfg->compute_gc_maps) {
+			MonoInst *def;
+
+			EMIT_NEW_GC_PARAM_SLOT_LIVENESS_DEF (cfg, def, ainfo->offset, &ins->klass->byval_arg);
+		}
 	}
 }
 
@@ -3997,6 +4126,21 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_ledbr (code, ins->dreg, ins->sreg1);
 		}
 			break;
+		case OP_TLS_GET: {
+			if (s390_is_imm16 (ins->inst_offset)) {
+				s390_lghi (code, s390_r13, ins->inst_offset);
+			} else {
+				s390_bras (code, s390_r13, 0);
+				s390_j	  (code, 4);
+				s390_llong(code, ins->inst_offset);
+				s390_lg   (code, s390_r13, 0, s390_r13, 4);
+			}
+			s390_ear (code, s390_r1, 0);
+			s390_sllg(code, s390_r1, s390_r1, 0, 32);
+			s390_ear (code, s390_r1, 1);
+			s390_lg  (code, ins->dreg, s390_r13, s390_r1, 0);
+		}
+			break;
 		case OP_JMP: {
 			if (cfg->method->save_lmf)
 				restoreLMF(code, cfg->frame_reg, cfg->stack_usage);
@@ -4389,7 +4533,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		/* floating point opcodes */
 		case OP_R8CONST: {
-			if (*((float *) ins->inst_p0) == 0) {
+			if (*((double *) ins->inst_p0) == 0) {
 				s390_lzdr (code, ins->dreg);
 			} else {
 				s390_basr  (code, s390_r13, 0);
@@ -4758,6 +4902,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MEMORY_BARRIER: {
 		}
 			break;
+		case OP_GC_LIVENESS_DEF:
+		case OP_GC_LIVENESS_USE:
+		case OP_GC_PARAM_SLOT_LIVENESS_DEF:
+			ins->backend.pc_offset = code - cfg->native_code;
+			break;
+		case OP_GC_SPILL_SLOT_LIVENESS_DEF:
+			ins->backend.pc_offset = code - cfg->native_code;
+			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
+			break;
 		default:
 			g_warning ("unknown opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			g_assert_not_reached ();
@@ -4790,7 +4943,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_register_lowlevel_calls (void)
 {
-	mono_register_jit_icall (mono_arch_get_lmf_addr, "mono_arch_get_lmf_addr", NULL, TRUE);
 }
 
 /*========================= End of Function ========================*/
@@ -5169,27 +5321,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		pos++;
 	}
 
-	if (method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
-		if (cfg->compile_aot)
-			/* AOT code is only used in the root domain */
-			s390_lghi (code, s390_r2, 0);
-		else {
-			s390_basr(code, s390_r14, 0);
-			s390_j   (code, 6);
-			s390_llong(code, cfg->domain);
-			s390_lg	 (code, s390_r2, 0, s390_r14, 4);
-		}
-
-		s390_basr(code, s390_r14, 0);
-		s390_j   (code, 6);
-		mono_add_patch_info (cfg, code - cfg->native_code, 
-				     MONO_PATCH_INFO_INTERNAL_METHOD, 
-				     (gpointer)"mono_jit_thread_attach");
-		s390_llong(code, 0);
-		s390_lg   (code, s390_r1, 0, s390_r14, 4);
-		s390_basr (code, s390_r14, s390_r1);
-	}
-
 	if (method->save_lmf) {
 		/*---------------------------------------------------------------*/
 		/* build the MonoLMF structure on the stack - see mini-s390x.h   */
@@ -5208,14 +5339,24 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/*---------------------------------------------------------------*/
 		/* On return from this call r2 have the address of the &lmf	 */
 		/*---------------------------------------------------------------*/
-		s390_basr(code, s390_r14, 0);
-		s390_j   (code, 6);
-		mono_add_patch_info (cfg, code - cfg->native_code, 
-				     MONO_PATCH_INFO_INTERNAL_METHOD, 
-				     (gpointer)"mono_get_lmf_addr");
-		s390_llong(code, 0);
-		s390_lg   (code, s390_r1, 0, s390_r14, 4);
-		s390_basr (code, s390_r14, s390_r1);
+		if (lmf_addr_tls_offset == -1) {
+			s390_basr(code, s390_r14, 0);
+			s390_j   (code, 6);
+			mono_add_patch_info (cfg, code - cfg->native_code, 
+					     MONO_PATCH_INFO_INTERNAL_METHOD, 
+					     (gpointer)"mono_get_lmf_addr");
+			s390_llong(code, 0);
+			s390_lg   (code, s390_r1, 0, s390_r14, 4);
+			s390_basr (code, s390_r14, s390_r1);
+		} else {
+			/*-------------------------------------------------------*/
+			/* Get LMF by getting value from thread level storage    */
+			/*-------------------------------------------------------*/
+			s390_ear (code, s390_r1, 0);
+			s390_sllg(code, s390_r1, s390_r1, 0, 32);
+			s390_ear (code, s390_r1, 1);
+			s390_lg  (code, s390_r2, 0, s390_r1, lmf_addr_tls_offset);
+		}
 
 		/*---------------------------------------------------------------*/	
 		/* Set lmf.lmf_addr = jit_tls->lmf				 */	
@@ -5459,44 +5600,18 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_setup_jit_tls_data                      */
+/* Name		- mono_arch_finish_init                                 */
 /*                                                                  */
 /* Function	- Setup the JIT's Thread Level Specific Data.       */
 /*		                               			    */
 /*------------------------------------------------------------------*/
 
 void
-mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
+mono_arch_finish_init (void)
 {
-	if (!tls_offset_inited) {
-		tls_offset_inited = TRUE;
-
-#if HAVE_KW_THREAD
-# if 0
-	__asm__ ("\tear\t%r1,0\n"
-		 "\tlr\t%0,%3\n"
-		 "\tsr\t%0,%r1\n"
-		 "\tlr\t%1,%4\n"
-		 "\tsr\t%1,%r1\n"
-		 "\tlr\t%2,%5\n"
-		 "\tsr\t%2,%r1\n"
-		 : "=r" (appdomain_tls_offset),
-		   "=r" (thread_tls_offset),
-		   "=r" (lmf_tls_offset)
-		 : "r" (&tls_appdomain),
-		   "r" (&tls_current_object),
-		   "r" (&mono_lmf_addr)
-		 : "1", "cc");
-# endif
-#endif
-	}		
-
-	if (!lmf_addr_key_inited) {
-		lmf_addr_key_inited = TRUE;
-		pthread_key_create (&lmf_addr_key, NULL);
-	}
-	pthread_setspecific (lmf_addr_key, &tls->lmf);
-
+	appdomain_tls_offset = mono_domain_get_tls_offset();
+	lmf_tls_offset = mono_get_lmf_tls_offset();
+	lmf_addr_tls_offset = mono_get_lmf_addr_tls_offset();
 }
 
 /*========================= End of Function ========================*/
@@ -5698,24 +5813,6 @@ mono_arch_get_domain_intrinsic (MonoCompile* cfg)
 void 
 mono_arch_flush_register_windows (void)
 {
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name		- mono_arch_get_lmf_addr                            */
-/*                                                                  */
-/* Function	- 						    */
-/*		                               			    */
-/* Returns	-     						    */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-gpointer
-mono_arch_get_lmf_addr (void)
-{
-        return pthread_getspecific (lmf_addr_key);
 }
 
 /*========================= End of Function ========================*/
@@ -6201,28 +6298,6 @@ mono_arch_is_breakpoint_event (void *info, void *sigctx)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_get_ip_for_breakpoint.                  */
-/*                                                                  */
-/* Function	- Convert the IP in the CTX to the address where a  */
-/*                breakpoint was placed.			    */
-/*		                               			    */
-/*------------------------------------------------------------------*/
-
-guint8*
-mono_arch_get_ip_for_breakpoint (MonoJitInfo *ji, MonoContext *ctx)
-{
-	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
-
-	/* ip points to the instruction causing the fault */
-	ip -= BREAKPOINT_SIZE;
-
-	return ip;
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
 /* Name		- mono_arch_skip_breakpoint.                        */
 /*                                                                  */
 /* Function	- Modify the CTX so the IP is placed after the 	    */
@@ -6232,7 +6307,7 @@ mono_arch_get_ip_for_breakpoint (MonoJitInfo *ji, MonoContext *ctx)
 /*------------------------------------------------------------------*/
 
 void
-mono_arch_skip_breakpoint (MonoContext *ctx)
+mono_arch_skip_breakpoint (MonoContext *ctx, MonoJitInfo *ji)
 {
 	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + BREAKPOINT_SIZE);
 }
@@ -6290,25 +6365,6 @@ mono_arch_is_single_step_event (void *info, void *sigctx)
 		return TRUE;
 	else
 		return FALSE;
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name		- mono_arch_get_ip_for_single_step.                 */
-/*                                                                  */
-/* Function	- Convert the IP in ctx to the address stored in    */
-/*		  seq_points.					    */
-/*		                               			    */
-/*------------------------------------------------------------------*/
-
-guint8*
-mono_arch_get_ip_for_single_step (MonoJitInfo *ji, MonoContext *ctx)
-{
-	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
-
-	return ip;
 }
 
 /*========================= End of Function ========================*/

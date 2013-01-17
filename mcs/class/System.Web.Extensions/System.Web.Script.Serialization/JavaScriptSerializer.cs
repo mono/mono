@@ -1,11 +1,12 @@
 ﻿//
 // JavaScriptSerializer.cs
 //
-// Author:
+// Authors:
 //   Konstantin Triger <kostat@mainsoft.com>
+//   Marek Safar <marek.safar@gmail.com>
 //
 // (C) 2007 Mainsoft, Inc.  http://www.mainsoft.com
-//
+// Copyright 2012 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -129,43 +130,49 @@ namespace System.Web.Script.Serialization
 			if (obj == null)
 				return default (T);
 
-			return (T) ConvertToType (typeof (T), obj);
+			return (T) ConvertToType (obj, typeof (T));
 		}
 
-		internal object ConvertToType (Type type, object obj) {
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		object ConvertToType (object obj, Type targetType)
+		{
 			if (obj == null)
 				return null;
 
 			if (obj is IDictionary<string, object>) {
-				if (type == null)
+				if (targetType == null)
 					obj = EvaluateDictionary ((IDictionary<string, object>) obj);
 				else {
-					JavaScriptConverter converter = GetConverter (type);
+					JavaScriptConverter converter = GetConverter (targetType);
 					if (converter != null)
 						return converter.Deserialize (
 							EvaluateDictionary ((IDictionary<string, object>) obj),
-							type, this);
+							targetType, this);
 				}
 
-				return ConvertToObject ((IDictionary<string, object>) obj, type);
+				return ConvertToObject ((IDictionary<string, object>) obj, targetType);
 			}
 			if (obj is ArrayList)
-				return ConvertToList ((ArrayList) obj, type);
+				return ConvertToList ((ArrayList) obj, targetType);
 
-			if (type == null)
+			if (targetType == null)
 				return obj;
 
 			Type sourceType = obj.GetType ();
-			if (type.IsAssignableFrom (sourceType))
+			if (targetType.IsAssignableFrom (sourceType))
 				return obj;
 
-			if (type.IsEnum)
+			if (targetType.IsEnum)
 				if (obj is string)
-					return Enum.Parse (type, (string) obj, true);
+					return Enum.Parse (targetType, (string) obj, true);
 				else
-					return Enum.ToObject (type, obj);
+					return Enum.ToObject (targetType, obj);
 
-			TypeConverter c = TypeDescriptor.GetConverter (type);
+			TypeConverter c = TypeDescriptor.GetConverter (targetType);
 			if (c.CanConvertFrom (sourceType)) {
 				if (obj is string)
 					return c.ConvertFromInvariantString ((string) obj);
@@ -178,14 +185,14 @@ namespace System.Web.Script.Serialization
 			 * an empty value 
 			 * (see: https://bugzilla.novell.com/show_bug.cgi?id=328836)
 			 */
-			if ( (type.IsGenericType) && (type.GetGenericTypeDefinition() == typeof(Nullable<>)) )
+			if ((targetType.IsGenericType) && (targetType.GetGenericTypeDefinition() == typeof(Nullable<>)))
 			{
 				string s = obj as String;
 				if (String.IsNullOrEmpty(s))
 						return null;
 			}
 
-			return Convert.ChangeType (obj, type);
+			return Convert.ChangeType (obj, targetType);
 		}
 
 		public T Deserialize<T> (string input) {
@@ -258,9 +265,12 @@ namespace System.Web.Script.Serialization
 				EvaluateList (col);
 				return list;
 			}
+			
+			if (elementType == null)
+				elementType = typeof (object);
 
 			foreach (object value in col)
-				list.Add (ConvertToType (elementType, value));
+				list.Add (ConvertToType (value, elementType));
 
 			if (type != null && type.IsArray)
 				list = ((ArrayList) list).ToArray (elementType);
@@ -300,7 +310,7 @@ namespace System.Web.Script.Serialization
 					if (value != null && valueType == typeof (System.Object))
 						valueType = value.GetType ();
 					
-					((IDictionary) target).Add (entry.Key, ConvertToType (valueType, value));
+					((IDictionary) target).Add (entry.Key, ConvertToType (value, valueType));
 					continue;
 				}
 				MemberInfo [] memberCollection = type.GetMember (entry.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
@@ -330,7 +340,7 @@ namespace System.Web.Script.Serialization
 						throw new InvalidOperationException ("Unable to deserialize a member, as its type is an unknown interface.");
 				}
 				
-				ReflectionUtils.SetMemberValue (member, target, ConvertToType(memberType, value));
+				ReflectionUtils.SetMemberValue (member, target, ConvertToType(value, memberType));
 			}
 
 			return target;
@@ -382,7 +392,7 @@ namespace System.Web.Script.Serialization
 					throw new ArgumentNullException ("resolver", "Must have a type resolver to deserialize an object that has an '__type' member");
 				}
 
-				obj = ConvertToType(null, obj);
+				obj = ConvertToType(obj, null);
 			}
 			return obj; 
 		}

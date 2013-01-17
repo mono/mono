@@ -383,10 +383,10 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
         (dest)->klass = mono_class_from_mono_type (ltype); \
 	} while (0)
 
-#define NEW_SEQ_POINT(cfg,dest,il_offset,ss_loc) do {	 \
+#define NEW_SEQ_POINT(cfg,dest,il_offset,intr_loc) do {	 \
 	MONO_INST_NEW ((cfg), (dest), OP_SEQ_POINT); \
 	(dest)->inst_imm = (il_offset); \
-	(dest)->flags = ss_loc ? MONO_INST_SINGLE_STEP_LOC : 0; \
+	(dest)->flags = intr_loc ? MONO_INST_SINGLE_STEP_LOC : 0; \
 	} while (0)
 
 #define NEW_GC_PARAM_SLOT_LIVENESS_DEF(cfg,dest,offset,type) do { \
@@ -559,7 +559,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define	MONO_EMIT_NEW_AOTCONST(cfg,dr,imm,type) do { \
         MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), OP_AOTCONST); \
+        MONO_INST_NEW ((cfg), (inst), cfg->compile_aot ? OP_AOTCONST : OP_PCONST); \
         inst->dreg = dr; \
         inst->inst_p0 = imm; \
         inst->inst_c1 = type; \
@@ -570,6 +570,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define	MONO_EMIT_NEW_CLASSCONST(cfg,dr,imm) MONO_EMIT_NEW_AOTCONST(cfg,dr,imm,MONO_PATCH_INFO_CLASS)
 #define MONO_EMIT_NEW_VTABLECONST(cfg,dest,vtable) MONO_EMIT_NEW_AOTCONST ((cfg), (dest), (cfg)->compile_aot ? (gpointer)((vtable)->klass) : (vtable), MONO_PATCH_INFO_VTABLE)
+#define MONO_EMIT_NEW_SIGNATURECONST(cfg,dr,sig) MONO_EMIT_NEW_AOTCONST ((cfg), (dr), (sig), MONO_PATCH_INFO_SIGNATURE)
 
 #define MONO_EMIT_NEW_VZERO(cfg,dr,kl) do {	\
         MonoInst *inst; \

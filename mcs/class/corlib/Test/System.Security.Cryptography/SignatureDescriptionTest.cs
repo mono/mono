@@ -16,7 +16,7 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 [TestFixture]
-public class SignatureDescriptionTest : Assertion {
+public class SignatureDescriptionTest {
 
 	protected SignatureDescription sig;
 	protected static DSA dsa;
@@ -33,17 +33,11 @@ public class SignatureDescriptionTest : Assertion {
 			rsa = RSA.Create ();
 	}
 
-	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
-	{
-		AllTests.AssertEquals (msg, array1, array2);
-	}
-
 	[Test]
 	public void Constructor_Default () 
 	{
 		// empty constructor
 		SignatureDescription sig = new SignatureDescription ();
-		AssertNotNull ("SignatureDescription()", sig);
 	}
 	
 	[Test]
@@ -61,7 +55,6 @@ public class SignatureDescriptionTest : Assertion {
 		// (empty) SecurityElement constructor
 		SecurityElement se = new SecurityElement ("xml");
 		SignatureDescription sig = new SignatureDescription (se);
-		AssertNotNull ("SignatureDescription(SecurityElement)", sig);
 	}
 
 	[Test]
@@ -74,11 +67,10 @@ public class SignatureDescriptionTest : Assertion {
 		se.AddChild (new SecurityElement ("Deformatter", "System.Security.Cryptography.DSASignatureDeformatter"));
 
 		SignatureDescription sig = new SignatureDescription (se);
-		AssertNotNull ("SignatureDescription(SecurityElement)", sig);
-		AssertEquals ("Key", "System.Security.Cryptography.DSACryptoServiceProvider", sig.KeyAlgorithm);
-		AssertEquals ("Digest", "System.Security.Cryptography.SHA1CryptoServiceProvider", sig.DigestAlgorithm);
-		AssertEquals ("Formatter", "System.Security.Cryptography.DSASignatureFormatter", sig.FormatterAlgorithm);
-		AssertEquals ("Deformatter", "System.Security.Cryptography.DSASignatureDeformatter", sig.DeformatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.DSACryptoServiceProvider", sig.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", sig.DigestAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.DSASignatureFormatter", sig.FormatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.DSASignatureDeformatter", sig.DeformatterAlgorithm);
 	}
 
 	[Test]
@@ -91,44 +83,43 @@ public class SignatureDescriptionTest : Assertion {
 		se.AddChild (new SecurityElement ("Deformatter", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter"));
 
 		SignatureDescription sig = new SignatureDescription (se);
-		AssertNotNull ("SignatureDescription(SecurityElement)", sig);
-		AssertEquals ("Key", "System.Security.Cryptography.RSACryptoServiceProvider", sig.KeyAlgorithm);
-		AssertEquals ("Digest", "System.Security.Cryptography.SHA1CryptoServiceProvider", sig.DigestAlgorithm);
-		AssertEquals ("Formatter", "System.Security.Cryptography.RSAPKCS1SignatureFormatter", sig.FormatterAlgorithm);
-		AssertEquals ("Deformatter", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sig.DeformatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSACryptoServiceProvider", sig.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", sig.DigestAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureFormatter", sig.FormatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sig.DeformatterAlgorithm);
 	}
 
 	[Test]
 	public void Properties () 
 	{
 		string invalid = "invalid";
-		AssertNull ("DeformatterAlgorithm 1", sig.DeformatterAlgorithm);
+		Assert.IsNull (sig.DeformatterAlgorithm, "DeformatterAlgorithm 1");
 		sig.DeformatterAlgorithm = invalid;
-		AssertNotNull ("DeformatterAlgorithm 2", sig.DeformatterAlgorithm);
-		AssertEquals ("DeformatterAlgorithm 3", invalid, sig.DeformatterAlgorithm);
+		Assert.IsNotNull (sig.DeformatterAlgorithm, "DeformatterAlgorithm 2");
+		Assert.AreEqual (invalid, sig.DeformatterAlgorithm, "DeformatterAlgorithm 3");
 		sig.DeformatterAlgorithm = null;
-		AssertNull ("DeformatterAlgorithm 4", sig.DeformatterAlgorithm);
+		Assert.IsNull (sig.DeformatterAlgorithm, "DeformatterAlgorithm 4");
 
-		AssertNull ("DigestAlgorithm 1", sig.DigestAlgorithm);
+		Assert.IsNull (sig.DigestAlgorithm, "DigestAlgorithm 1");
 		sig.DigestAlgorithm = invalid;
-		AssertNotNull ("DigestAlgorithm 2", sig.DigestAlgorithm);
-		AssertEquals ("DigestAlgorithm 3", invalid, sig.DigestAlgorithm);
+		Assert.IsNotNull (sig.DigestAlgorithm, "DigestAlgorithm 2");
+		Assert.AreEqual (invalid, sig.DigestAlgorithm, "DigestAlgorithm 3");
 		sig.DigestAlgorithm = null;
-		AssertNull ("DigestAlgorithm 4", sig.DigestAlgorithm);
+		Assert.IsNull (sig.DigestAlgorithm, "DigestAlgorithm 4");
 
-		AssertNull ("FormatterAlgorithm 1", sig.FormatterAlgorithm);
+		Assert.IsNull (sig.FormatterAlgorithm, "FormatterAlgorithm 1");
 		sig.FormatterAlgorithm = invalid;
-		AssertNotNull ("FormatterAlgorithm 2", sig.FormatterAlgorithm);
-		AssertEquals ("FormatterAlgorithm 3", invalid, sig.FormatterAlgorithm);
+		Assert.IsNotNull (sig.FormatterAlgorithm, "FormatterAlgorithm 2");
+		Assert.AreEqual (invalid, sig.FormatterAlgorithm, "FormatterAlgorithm 3");
 		sig.FormatterAlgorithm = null;
-		AssertNull ("FormatterAlgorithm 4", sig.FormatterAlgorithm);
+		Assert.IsNull (sig.FormatterAlgorithm, "FormatterAlgorithm 4");
 
-		AssertNull ("KeyAlgorithm 1", sig.KeyAlgorithm);
+		Assert.IsNull (sig.KeyAlgorithm, "KeyAlgorithm 1");
 		sig.KeyAlgorithm = invalid;
-		AssertNotNull ("KeyAlgorithm 2", sig.KeyAlgorithm);
-		AssertEquals ("KeyAlgorithm 3", invalid, sig.KeyAlgorithm);
+		Assert.IsNotNull (sig.KeyAlgorithm, "KeyAlgorithm 2");
+		Assert.AreEqual (invalid, sig.KeyAlgorithm, "KeyAlgorithm 3");
 		sig.KeyAlgorithm = null;
-		AssertNull ("KeyAlgorithm 4", sig.KeyAlgorithm);
+		Assert.IsNull (sig.KeyAlgorithm, "KeyAlgorithm 4");
 	}
 
 	[Test]
@@ -138,37 +129,37 @@ public class SignatureDescriptionTest : Assertion {
 		// Deformatter with all properties null
 		try {
 			def = sig.CreateDeformatter (dsa);
-			Fail ("Expected ArgumentNullException but got none");
+			Assert.Fail ("Expected ArgumentNullException but got none");
 		}
 		catch (ArgumentNullException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got: " + e.ToString ());
+			Assert.Fail ("Expected ArgumentNullException but got: " + e.ToString ());
 		}
 		// Deformatter with invalid DeformatterAlgorithm property
 		sig.DeformatterAlgorithm = "DSA";
 		try {
 			def = sig.CreateDeformatter (dsa);
-			Fail ("Expected InvalidCastException but got none");
+			Assert.Fail ("Expected InvalidCastException but got none");
 		}
 		catch (InvalidCastException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected InvalidCastException but got: " + e.ToString ());
+			Assert.Fail ("Expected InvalidCastException but got: " + e.ToString ());
 		}
 		// Deformatter with valid DeformatterAlgorithm property
 		sig.DeformatterAlgorithm = "DSASignatureDeformatter";
 		try {
 			def = sig.CreateDeformatter (dsa);
-			Fail ("Expected NullReferenceException but got none");
+			Assert.Fail ("Expected NullReferenceException but got none");
 		}
 		catch (NullReferenceException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected NullReferenceException but got: " + e.ToString ());
+			Assert.Fail ("Expected NullReferenceException but got: " + e.ToString ());
 		}
 		// Deformatter with valid DeformatterAlgorithm property
 		sig.KeyAlgorithm = "DSA";
@@ -176,13 +167,13 @@ public class SignatureDescriptionTest : Assertion {
 		sig.DeformatterAlgorithm = "DSASignatureDeformatter";
 		try {
 			def = sig.CreateDeformatter (dsa);
-			Fail ("Expected NullReferenceException but got none");
+			Assert.Fail ("Expected NullReferenceException but got none");
 		}
 		catch (NullReferenceException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected NullReferenceException but got: " + e.ToString ());
+			Assert.Fail ("Expected NullReferenceException but got: " + e.ToString ());
 		}
 	}
 
@@ -194,48 +185,48 @@ public class SignatureDescriptionTest : Assertion {
 		// null hash
 		try {
 			hash = sig.CreateDigest ();
-			Fail ("Expected ArgumentNullException but got none");
+			Assert.Fail ("Expected ArgumentNullException but got none");
 		}
 		catch (ArgumentNullException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got: " + e.ToString ());
+			Assert.Fail ("Expected ArgumentNullException but got: " + e.ToString ());
 		}
 
 		sig.DigestAlgorithm = "SHA1";
 		hash = sig.CreateDigest ();
-		AssertNotNull ("CreateDigest(SHA1)", hash);
+		Assert.IsNotNull (hash, "CreateDigest(SHA1)");
 		rightClass = (hash.ToString ().IndexOf (sig.DigestAlgorithm) > 0);
-		Assert ("CreateDigest(SHA1)", rightClass);
+		Assert.IsTrue (rightClass, "CreateDigest(SHA1)");
 
 		sig.DigestAlgorithm = "MD5";
 		hash = sig.CreateDigest ();
-		AssertNotNull ("CreateDigest(MD5)", hash);
+		Assert.IsNotNull (hash, "CreateDigest(MD5)");
 		rightClass = (hash.ToString ().IndexOf (sig.DigestAlgorithm) > 0);
-		Assert ("CreateDigest(MD5)", rightClass);
+		Assert.IsTrue (rightClass, "CreateDigest(MD5)");
 
 		sig.DigestAlgorithm = "SHA256";
 		hash = sig.CreateDigest ();
-		AssertNotNull ("CreateDigest(SHA256)", hash);
+		Assert.IsNotNull (hash, "CreateDigest(SHA256)");
 		rightClass = (hash.ToString ().IndexOf (sig.DigestAlgorithm) > 0);
-		Assert ("CreateDigest(SHA256)", rightClass);
+		Assert.IsTrue (rightClass, "CreateDigest(SHA256)");
 
 		sig.DigestAlgorithm = "SHA384";
 		hash = sig.CreateDigest ();
-		AssertNotNull ("CreateDigest(SHA384)", hash);
+		Assert.IsNotNull (hash, "CreateDigest(SHA384)");
 		rightClass = (hash.ToString ().IndexOf (sig.DigestAlgorithm) > 0);
-		Assert ("CreateDigest(SHA384)", rightClass);
+		Assert.IsTrue (rightClass, "CreateDigest(SHA384)");
 
 		sig.DigestAlgorithm = "SHA512";
 		hash = sig.CreateDigest ();
-		AssertNotNull ("CreateDigest(SHA512)", hash);
+		Assert.IsNotNull (hash, "CreateDigest(SHA512)");
 		rightClass = (hash.ToString ().IndexOf (sig.DigestAlgorithm) > 0);
-		Assert ("CreateDigest(SHA512)", rightClass);
+		Assert.IsTrue (rightClass, "CreateDigest(SHA512)");
 
 		sig.DigestAlgorithm = "bad";
 		hash = sig.CreateDigest ();
-		AssertNull ("CreateDigest(bad)", hash);
+		Assert.IsNull (hash, "CreateDigest(bad)");
 	}
 
 	[Test]
@@ -245,37 +236,37 @@ public class SignatureDescriptionTest : Assertion {
 		// Formatter with all properties null
 		try {
 			fmt = sig.CreateFormatter (dsa);
-			Fail ("Expected ArgumentNullException but got none");
+			Assert.Fail ("Expected ArgumentNullException but got none");
 		}
 		catch (ArgumentNullException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got: " + e.ToString ());
+			Assert.Fail ("Expected ArgumentNullException but got: " + e.ToString ());
 		}
 		// Formatter with invalid FormatterAlgorithm property
 		sig.FormatterAlgorithm = "DSA";
 		try {
 			fmt = sig.CreateFormatter (dsa);
-			Fail ("Expected InvalidCastException but got none");
+			Assert.Fail ("Expected InvalidCastException but got none");
 		}
 		catch (InvalidCastException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected InvalidCastException but got: " + e.ToString ());
+			Assert.Fail ("Expected InvalidCastException but got: " + e.ToString ());
 		}
 		// Formatter with valid FormatterAlgorithm property
 		sig.FormatterAlgorithm = "DSASignatureFormatter";
 		try {
 			fmt = sig.CreateFormatter (dsa);
-			Fail ("Expected NullReferenceException but got none");
+			Assert.Fail ("Expected NullReferenceException but got none");
 		}
 		catch (NullReferenceException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected NullReferenceException but got: " + e.ToString ());
+			Assert.Fail ("Expected NullReferenceException but got: " + e.ToString ());
 		}
 		// Deformatter with valid DeformatterAlgorithm property
 		sig.KeyAlgorithm = "DSA";
@@ -283,13 +274,13 @@ public class SignatureDescriptionTest : Assertion {
 		sig.FormatterAlgorithm = "DSASignatureFormatter";
 		try {
 			fmt = sig.CreateFormatter (dsa);
-			Fail ("Expected NullReferenceException but got none");
+			Assert.Fail ("Expected NullReferenceException but got none");
 		}
 		catch (NullReferenceException) {
 			// this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("Expected NullReferenceException but got: " + e.ToString ());
+			Assert.Fail ("Expected NullReferenceException but got: " + e.ToString ());
 		}
 	}
 
@@ -298,21 +289,21 @@ public class SignatureDescriptionTest : Assertion {
 	{
 		// internal class - we cannot create one without CryptoConfig
 		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1");
-		AssertEquals ("DSA.DigestAlgorithm", "System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
-		AssertEquals ("DSA.DeformatterAlgorithm", "System.Security.Cryptography.DSASignatureDeformatter", sd.DeformatterAlgorithm);
-		AssertEquals ("DSA.FormatterAlgorithm", "System.Security.Cryptography.DSASignatureFormatter", sd.FormatterAlgorithm);
-		AssertEquals ("DSA.KeyAlgorithm", "System.Security.Cryptography.DSACryptoServiceProvider", sd.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.DSASignatureDeformatter", sd.DeformatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.DSASignatureFormatter", sd.FormatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.DSACryptoServiceProvider", sd.KeyAlgorithm);
 
 		HashAlgorithm hash = sd.CreateDigest();
-		AssertEquals ("DSA.CreateDigest", "System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
 
-		AssertEquals ("DSA.Create", dsa.ToString (), sd.KeyAlgorithm);
+		Assert.AreEqual (dsa.ToString (), sd.KeyAlgorithm);
 
 		AsymmetricSignatureDeformatter asd = sd.CreateDeformatter (dsa);
-		AssertEquals ("DSA.CreateDeformatter", "System.Security.Cryptography.DSASignatureDeformatter", asd.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.DSASignatureDeformatter", asd.ToString ());
 
 		AsymmetricSignatureFormatter asf = sd.CreateFormatter (dsa);
-		AssertEquals ("DSA.CreateFormatter", "System.Security.Cryptography.DSASignatureFormatter", asf.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.DSASignatureFormatter", asf.ToString ());
 	}
 
 	[Test]
@@ -320,21 +311,21 @@ public class SignatureDescriptionTest : Assertion {
 	{
 		// internal class - we cannot create one without CryptoConfig
 		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
-		AssertEquals ("RSA.DigestAlgorithm", "System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
-		AssertEquals ("RSA.DeformatterAlgorithm", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sd.DeformatterAlgorithm);
-		AssertEquals ("RSA.FormatterAlgorithm", "System.Security.Cryptography.RSAPKCS1SignatureFormatter", sd.FormatterAlgorithm);
-		AssertEquals ("RSA.KeyAlgorithm", "System.Security.Cryptography.RSACryptoServiceProvider", sd.KeyAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", sd.DigestAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter", sd.DeformatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureFormatter", sd.FormatterAlgorithm);
+		Assert.AreEqual ("System.Security.Cryptography.RSACryptoServiceProvider", sd.KeyAlgorithm);
 
 		HashAlgorithm hash = sd.CreateDigest();
-		AssertEquals ("RSA.CreateDigest", "System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.SHA1CryptoServiceProvider", hash.ToString ());
 
-		AssertEquals ("RSA.Create", rsa.ToString (), sd.KeyAlgorithm);
+		Assert.AreEqual (rsa.ToString (), sd.KeyAlgorithm);
 
 		AsymmetricSignatureDeformatter asd = sd.CreateDeformatter (rsa);
-		AssertEquals ("RSA.CreateDeformatter", "System.Security.Cryptography.RSAPKCS1SignatureDeformatter", asd.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter", asd.ToString ());
 
 		AsymmetricSignatureFormatter asf = sd.CreateFormatter (rsa);
-		AssertEquals ("RSA.CreateFormatter", "System.Security.Cryptography.RSAPKCS1SignatureFormatter", asf.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.RSAPKCS1SignatureFormatter", asf.ToString ());
 	}
 }
 

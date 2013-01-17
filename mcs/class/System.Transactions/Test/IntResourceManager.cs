@@ -32,16 +32,21 @@ namespace MonoTests.System.Transactions
         public int NumCommit = 0;
         public int NumInDoubt = 0;
         public int NumSingle = 0;
+        
+        public int NumInitialize = 0;
+        public int NumPromote = 0;
+        public int NumEnlistFailed = 0;
 
+        public ResourceManagerType Type = ResourceManagerType.Volatile;        
         public bool FailPrepare = false;
         public bool FailWithException = false;
         public bool IgnorePrepare = false;
-
-        public bool Volatile = true;
         public bool IgnoreSPC = false;
         public bool FailSPC = false;
         public bool FailCommit = false;
+		public bool FailRollback = false;
         public bool UseSingle = false;
+		public Exception ThrowThisException = null;
 
         Guid guid;
 
@@ -64,16 +69,18 @@ namespace MonoTests.System.Transactions
 
                 if (transaction != Transaction.Current) {
                     transaction = Transaction.Current;
-                    
-                    if (UseSingle) {
+
+                    if ( Type == ResourceManagerType.Promotable ) {
+                        transaction.EnlistPromotableSinglePhase(new PromotableSinglePhaseNotification ( this ));
+                    } else if (UseSingle) {
                         SinglePhaseNotification enlistment = new SinglePhaseNotification ( this );
-                        if ( Volatile )
+                        if ( Type == ResourceManagerType.Volatile )
                             transaction.EnlistVolatile ( enlistment, EnlistmentOptions.None );
                         else
                             transaction.EnlistDurable ( guid, enlistment, EnlistmentOptions.None );
                     } else {
                         EnlistmentNotification enlistment = new EnlistmentNotification ( this );
-                        if ( Volatile )
+                        if ( Type == ResourceManagerType.Volatile )
                             transaction.EnlistVolatile ( enlistment, EnlistmentOptions.None );
                         else
                             transaction.EnlistDurable ( guid, enlistment, EnlistmentOptions.None );
@@ -96,27 +103,29 @@ namespace MonoTests.System.Transactions
 
         public  void CheckSPC ( string msg )
         {
-            Check ( 1, 0, 0, 0, 0, msg );
+            Check ( 1, 0, 0, 0, 0, 0, 0, msg );
         }
 
         public void Check2PC ( string msg)
         {
-            Check ( 0, 1, 1, 0, 0, msg );
+            Check ( 0, 1, 1, 0, 0, 0, 0, msg );
         }
 
-        public void Check ( int s, int p, int c, int r, int d, string msg )
+        public void Check ( int s, int p, int c, int r, int d, int i, int pr, string msg )
         {
             Assert.AreEqual ( s, NumSingle, msg + ": NumSingle" );
             Assert.AreEqual ( p, NumPrepare, msg + ": NumPrepare" );
             Assert.AreEqual ( c, NumCommit, msg + ": NumCommit" );
             Assert.AreEqual ( r, NumRollback, msg + ": NumRollback" );
             Assert.AreEqual ( d, NumInDoubt, msg + ": NumInDoubt" );
+            Assert.AreEqual ( i, NumInitialize, msg + ": NumInitialize" );
+            Assert.AreEqual ( pr, NumPromote, msg + ": NumPromote" );
         }
        
         /* Used for volatile RMs */
         public void Check ( int p, int c, int r, int d, string msg )
         {
-            Check ( 0, p, c, r, d, msg );
+            Check ( 0, p, c, r, d, 0, 0, msg );
         }
     }
 
@@ -136,7 +145,7 @@ namespace MonoTests.System.Transactions
 
             if ( resource.FailPrepare ) {
                 if (resource.FailWithException)
-                    preparingEnlistment.ForceRollback ( new NotSupportedException () );
+                    preparingEnlistment.ForceRollback ( resource.ThrowThisException ?? new NotSupportedException () );
                 else
                     preparingEnlistment.ForceRollback ();
             } else {
@@ -147,8 +156,13 @@ namespace MonoTests.System.Transactions
         public void Commit ( Enlistment enlistment )
         {
             resource.NumCommit++;
-            if ( resource.FailCommit )
-                return;
+			if (resource.FailCommit)
+			{
+				if (resource.FailWithException)
+					throw (resource.ThrowThisException ?? new NotSupportedException());
+				else
+					return;
+			}
 
             resource.Commit ();
             enlistment.Done ();
@@ -157,6 +171,14 @@ namespace MonoTests.System.Transactions
         public void Rollback ( Enlistment enlistment )
         {
             resource.NumRollback++;
+			if (resource.FailRollback)
+			{
+				if (resource.FailWithException)
+					throw (resource.ThrowThisException ?? new NotSupportedException());
+				else
+					return;
+			}
+
             resource.Rollback ();
         }
 
@@ -165,7 +187,6 @@ namespace MonoTests.System.Transactions
             resource.NumInDoubt++;
             throw new Exception ( "IntResourceManager.InDoubt is not implemented." );
         }
-
     }
 
     public class SinglePhaseNotification : EnlistmentNotification, ISinglePhaseNotification 
@@ -183,7 +204,7 @@ namespace MonoTests.System.Transactions
 
             if ( resource.FailSPC ) {
                 if ( resource.FailWithException )
-                    enlistment.Aborted ( new NotSupportedException () );
+                    enlistment.Aborted ( resource.ThrowThisException ?? new NotSupportedException () );
                 else
                     enlistment.Aborted ();
             }
@@ -191,9 +212,34 @@ namespace MonoTests.System.Transactions
                 resource.Commit ();
                 enlistment.Committed ();
             }
+        }
+    }
 
+    public class PromotableSinglePhaseNotification : SinglePhaseNotification, IPromotableSinglePhaseNotification
+    {
+        public PromotableSinglePhaseNotification ( IntResourceManager resource )
+            : base( resource )
+        {
         }
 
+        public void Initialize ()
+        {
+            resource.NumInitialize++;
+        }
+
+        public void Rollback ( SinglePhaseEnlistment enlistment )
+        {
+            resource.NumRollback++;
+            resource.Rollback ();
+        }
+
+        public byte [] Promote ()
+        {
+            resource.NumPromote++;
+            return new byte[0];
+        }
     }
+
+    public enum ResourceManagerType { Volatile, Durable, Promotable };
 }
 

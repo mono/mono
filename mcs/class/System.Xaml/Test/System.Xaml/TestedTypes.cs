@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -38,6 +39,9 @@ using System.Xml.Serialization;
 
 [assembly: XmlnsDefinition ("http://www.domain.com/path", "XamlTest")] // bug #680385
 [assembly: XmlnsDefinition ("http://www.domain.com/path", "SecondTest")] // bug #681045, same xmlns key for different clrns.
+
+[assembly: XmlnsDefinition ("http://schemas.example.com/test", "XamarinBug3003")] // bug #3003
+[assembly: XmlnsPrefix ("http://schemas.example.com/test", "test")] // bug #3003
 
 namespace MonoTests.System.Xaml
 {
@@ -1081,4 +1085,221 @@ namespace SecondTest
 	#endregion
 }
 
+#region "xamarin bug #2927"
+namespace XamarinBug2927
+{
+	public class RootClass
+	{
+		public RootClass ()
+		{
+			Child = new MyChildClass ();
+		}
+		
+		public bool Invoked;
+		
+		public ChildClass Child { get; set; }
+	}
 
+	public class MyRootClass : RootClass
+	{
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+
+	public class RootClass2
+	{
+		public RootClass2 ()
+		{
+			Child = new MyChildClass ();
+		}
+		
+		public bool Invoked;
+		
+		public ChildClass Child { get; set; }
+		
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+
+	public class MyRootClass2 : RootClass2
+	{
+	}
+
+	public class ChildClass
+	{
+		public bool Invoked;
+		
+		public DescendantClass Descendant { get; set; }
+	}
+
+	public class MyChildClass : ChildClass
+	{
+		public MyChildClass ()
+		{
+			Descendant = new DescendantClass () { Value = "x" };
+		}
+	
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+
+	public class DescendantClass
+	{
+		public bool Invoked;
+		public event EventHandler DoWork;
+		public string Value { get; set; }
+	
+		public void Work ()
+		{
+			DoWork (this, EventArgs.Empty);
+		}
+	
+		public void HandleMyEvent (object sender, EventArgs e)
+		{
+			Invoked = true;
+		}
+	}
+}
+#endregion
+
+#region "xamarin bug 3003"
+
+namespace XamarinBug3003
+{
+	public static class TestContext
+	{
+		public static StringWriter Writer = new StringWriter ();
+		
+		public const string XmlInput = @"<Parent xmlns='http://schemas.example.com/test' Title='Parent Title'>
+	<Child Parent.AssociatedProperty='child 1' Title='Child Title 1'></Child>	
+	<Child Parent.AssociatedProperty='child 2' Title='Child Title 2'></Child>	
+</Parent>";
+		
+		// In bug #3003 repro, there is output "Item 'Child' inserted at index 'x'" , but I couldn't get it in the output either on .NET or Mono.
+		// On the other hand, in the standalone repro case they are in the output either in mono or in .NET. So I just stopped caring about that as it works as expected.
+		public const string ExpectedResult = @"
+Parent Constructed
+ISupportInitialize.BeginInit: Parent
+XamlObjectWriterSettings.AfterBeginInit: Parent
+XamlObjectWriterSettings.BeforeProperties: Parent
+XamlObjectWriterSettings.XamlSetValue: Parent Title, Member: Title
+Parent.Title_set: Parent
+Child Constructed
+ISupportInitialize.BeginInit: Child
+XamlObjectWriterSettings.AfterBeginInit: Child
+XamlObjectWriterSettings.BeforeProperties: Child
+XamlObjectWriterSettings.XamlSetValue: child 1, Member: AssociatedProperty
+Parent.SetAssociatedProperty: child 1
+XamlObjectWriterSettings.XamlSetValue: Child Title 1, Member: Title
+Child.Title_set: Child
+XamlObjectWriterSettings.AfterProperties: Child
+ISupportInitialize.EndInit: Child
+XamlObjectWriterSettings.AfterEndInit: Child
+Child Constructed
+ISupportInitialize.BeginInit: Child
+XamlObjectWriterSettings.AfterBeginInit: Child
+XamlObjectWriterSettings.BeforeProperties: Child
+XamlObjectWriterSettings.XamlSetValue: child 2, Member: AssociatedProperty
+Parent.SetAssociatedProperty: child 2
+XamlObjectWriterSettings.XamlSetValue: Child Title 2, Member: Title
+Child.Title_set: Child
+XamlObjectWriterSettings.AfterProperties: Child
+ISupportInitialize.EndInit: Child
+XamlObjectWriterSettings.AfterEndInit: Child
+XamlObjectWriterSettings.AfterProperties: Parent
+ISupportInitialize.EndInit: Parent
+XamlObjectWriterSettings.AfterEndInit: Parent
+Loaded Parent
+";
+	}
+
+	public class BaseItemCollection : Collection<BaseItem>
+	{
+		protected override void InsertItem (int index, BaseItem item)
+		{
+			base.InsertItem (index, item);
+			Console.WriteLine ("Item '{0}' inserted at index '{1}'", item, index);
+		}
+	}
+
+	public class BaseItem : ISupportInitialize
+	{
+		Dictionary<string, object> properties = new Dictionary<string, object> ();
+		
+		public Dictionary<string, object> Properties
+		{
+			get { return properties; }
+		}
+
+		string title;
+
+		public string Title
+		{
+			get { return title; }
+			set
+			{
+				title = value;
+				TestContext.Writer.WriteLine ("{0}.Title_set: {0}", this.GetType ().Name, value);
+			}
+		}
+
+		public BaseItem ()
+		{
+			TestContext.Writer.WriteLine ("{0} Constructed", this.GetType ().Name);
+		}
+
+
+		public void BeginInit ()
+		{
+			TestContext.Writer.WriteLine ("ISupportInitialize.BeginInit: {0}", this);
+		}
+
+		public void EndInit ()
+		{
+			TestContext.Writer.WriteLine ("ISupportInitialize.EndInit: {0}", this);
+		}
+
+		public override string ToString ()
+		{
+			return this.GetType ().Name.ToString ();
+		}
+	}
+
+	public class Child : BaseItem
+	{
+	}
+
+	[ContentProperty ("Children")]
+	public class Parent : BaseItem
+	{
+		BaseItemCollection children = new BaseItemCollection ();
+		
+		public BaseItemCollection Children
+		{
+			get { return children; }
+		}
+		
+		
+		public static string GetAssociatedProperty (Child child)
+		{
+			object value;
+			if (child.Properties.TryGetValue ("myassociatedproperty", out value)) return value as string;
+			return null;
+		}
+		
+		public static void SetAssociatedProperty (Child child, string value)
+		{
+			TestContext.Writer.WriteLine ("Parent.SetAssociatedProperty: {0}", value);
+			child.Properties ["myassociatedproperty"] = value;
+		}
+		
+	}
+}
+
+#endregion

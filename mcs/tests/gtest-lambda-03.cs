@@ -10,7 +10,7 @@ class Demo
 	{
 		return f1 (value);
 	}
-	static int Main ()
+	public static int Main ()
 	{
 		object o = F (1, "1:15:30", s => TimeSpan.Parse (s));
 		Console.WriteLine (o);

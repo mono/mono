@@ -66,7 +66,3 @@ using System.Security;
 [assembly: ComVisible (false)]
 
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-
-//[assembly: WebResource ("System.Web.Resources.Design.Background.gif", "image/gif")]

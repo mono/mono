@@ -73,6 +73,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			 * attributeValue ANY }
 			 */
 
+			/*
+			*  From RFC 5246:
+			*	If the certificate_authorities list is empty, then the client MAY
+			*	send any certificate of the appropriate ClientCertificateType,
+			*	unless there is some external arrangement to the contrary.
+			*
+			*  Better let the client choose which certificate instead of sending down
+			*  a potentially large list of DNs.
+
 			if (context.ServerSettings.DistinguisedNames.Length > 0)
 			{
 				TlsStream list = new TlsStream ();
@@ -88,8 +97,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			}
 			else
 			{
+			*/
 				this.Write ((short)0);
-			}
+			//}
 		}
 
 		#endregion

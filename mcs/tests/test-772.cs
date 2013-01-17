@@ -2,7 +2,7 @@ using System;
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo fu = new Foo (null);
 	}

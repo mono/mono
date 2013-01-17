@@ -116,6 +116,58 @@
 	  - "A..".Split (new String[] { "." }, 2, StringSplitOptions.RemoveEmptyEntries) == new[]{"A"}
 	  - Remove duplicative array handling code by using List<String>.
 
+2010-06-04  Damien Diederen  <dd@crosstwine.com>
+
+	* Char.cs (GetUnicodeCategory): Handle astral planes
+	in (string,int) overload.
+
+	If the string element at index starts a surrogate pair, we decode
+	the full codepoint and "query" the higher planes of the database.
+
+	This commit fixes bug 480178.
+
+	CAUTION: This commit depends on the following runtime change:
+
+	  System.Char icall: New Unicode category tables compatible with
+	  MS .NET.
+
+	Without it, Mono will suffer a low-level (internal call) crash
+	when initializing System.Char.
+
+	COMPATIBILITY
+
+	The updated Mono runtime as been verified to produce the same
+	results as Microsoft's; here are the MD5 sums of their Unicode
+	category database dumps (generated via create-category-table
+	--dump, compiled and executed under the relevant runtime):
+
+	    eba45e00acdc82f9a08873465110aef4  v2.0.50727.dump
+	    eba45e00acdc82f9a08873465110aef4  v3.5.21022.dump
+	    56fd5c828fbb9083693835680667fd2c  v4.0.30319.dump
+
+	    eba45e00acdc82f9a08873465110aef4  gmcs.dump
+	    56fd5c828fbb9083693835680667fd2c  dmcs.dump
+
+	These results will naturally differ if support for .NET v4 or
+	astral planes is disabled when building the runtime.  Note, also,
+	that these are different from the results produced by Mono prior
+	to the introduction of these changes, even for the BMP.
+
+	Other versions of the internal database can be easily generated
+	using create-category-table(.cs), but this currently requires a
+	rebuild.
+
+	PERFORMANCE
+
+	Direct array indexing is mandatory for code points in the
+	U+0000..U+FFFF range; as pointed out by Andreas Nahr, performing
+	bi-level lookups in the Char.Is*(char) predicates cause the JIT to
+	stop inlining them and results in an important performance drop.
+
+	The simple data access pattern used for higher planes, suggested
+	by Paolo Molaro, is fairly efficient but currenly only used by
+	this non-optimized method.
+
 2010-06-04  Jb Evain  <jbevain@novell.com>
 
 	* Exception.cs: add stub for SerializeObjectState.

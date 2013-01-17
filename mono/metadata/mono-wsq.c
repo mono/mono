@@ -5,6 +5,7 @@
  *   Gonzalo Paniagua Javier (gonzalo@novell.com)
  *
  * Copyright (c) 2010 Novell, Inc (http://www.novell.com)
+ * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 
 #include <string.h>
@@ -32,7 +33,11 @@ static gboolean wsq_tlskey_inited = FALSE;
 void
 mono_wsq_init ()
 {
-	mono_native_tls_alloc (wsq_tlskey, NULL);
+	if (wsq_tlskey_inited)
+		return;
+
+	mono_native_tls_alloc (&wsq_tlskey, NULL);
+	wsq_tlskey_inited = TRUE;
 }
 
 void

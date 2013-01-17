@@ -1,10 +1,12 @@
 // 
 // TaskScheduler.cs
 //  
-// Author:
+// Authors:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
+//       Marek Safar <marek.safar@gmail.com>
 // 
 // Copyright (c) 2009 Jérémie "Garuma" Laval
+// Copyright 2012 Xamarin, Inc (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,19 +27,33 @@
 // THE SOFTWARE.
 
 #if NET_4_0 || MOBILE
-using System;
-using System.Threading;
+
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace System.Threading.Tasks
 {
-	[System.Diagnostics.DebuggerDisplay ("Id={Id}")]
-	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.Tasks.TaskScheduler+SystemThreadingTasks_TaskSchedulerDebugView")]
+	[DebuggerDisplay ("Id={Id}")]
+	[DebuggerTypeProxy (typeof (TaskSchedulerDebuggerView))]
 	public abstract class TaskScheduler
 	{
-		static TaskScheduler defaultScheduler =
-			Environment.GetEnvironmentVariable ("USE_OLD_TASK_SCHED") != null ? (TaskScheduler)new Scheduler () : (TaskScheduler)new TpScheduler ();
-		SchedulerProxy proxy;
+		sealed class TaskSchedulerDebuggerView
+		{
+			readonly TaskScheduler scheduler;
+
+			public TaskSchedulerDebuggerView (TaskScheduler scheduler)
+			{
+				this.scheduler = scheduler;
+			}
+
+			public IEnumerable<Task> ScheduledTasks {
+				get {
+					return scheduler.GetScheduledTasks ();
+				}
+			}
+		}
+
+		static readonly TaskScheduler defaultScheduler = new TpScheduler ();
 		
 		[ThreadStatic]
 		static TaskScheduler currentScheduler;
@@ -50,12 +66,14 @@ namespace System.Threading.Tasks
 		protected TaskScheduler ()
 		{
 			this.id = Interlocked.Increment (ref lastId);
-			this.proxy = new SchedulerProxy (this);
 		}
-
+		
 		public static TaskScheduler FromCurrentSynchronizationContext ()
 		{
 			var syncCtx = SynchronizationContext.Current;
+			if (syncCtx == null)
+				throw new InvalidOperationException ("The current SynchronizationContext is null and cannot be used as a TaskScheduler");
+
 			return new SynchronizationContextScheduler (syncCtx);
 		}
 		
@@ -85,30 +103,16 @@ namespace System.Threading.Tasks
 		
 		public virtual int MaximumConcurrencyLevel {
 			get {
-				return Environment.ProcessorCount;
+				return int.MaxValue;
 			}
-		}
-
-		internal virtual void ParticipateUntil (Task task)
-		{
-			proxy.ParticipateUntil (task);
-		}
-
-		internal virtual bool ParticipateUntil (Task task, ManualResetEventSlim predicateEvt, int millisecondsTimeout)
-		{
-			return proxy.ParticipateUntil (task, predicateEvt, millisecondsTimeout);
-		}
-
-		internal virtual void PulseAll ()
-		{
-			proxy.PulseAll ();
 		}
 
 		protected abstract IEnumerable<Task> GetScheduledTasks ();
 		protected internal abstract void QueueTask (Task task);
+
 		protected internal virtual bool TryDequeue (Task task)
 		{
-			throw new NotSupportedException ();
+			return false;
 		}
 
 		internal protected bool TryExecuteTask (Task task)
@@ -117,7 +121,10 @@ namespace System.Threading.Tasks
 				return false;
 
 			if (task.Status == TaskStatus.WaitingToRun) {
-				task.Execute (null);
+				task.Execute ();
+				if (task.WaitOnChildren ())
+					task.Wait ();
+
 				return true;
 			}
 
@@ -126,12 +133,18 @@ namespace System.Threading.Tasks
 
 		protected abstract bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued);
 
-		internal bool RunInline (Task task)
+		internal bool RunInline (Task task, bool taskWasPreviouslyQueued)
 		{
-			return TryExecuteTaskInline (task, false);
+			if (!TryExecuteTaskInline (task, taskWasPreviouslyQueued))
+				return false;
+
+			if (!task.IsCompleted)
+				throw new InvalidOperationException ("The TryExecuteTaskInline call to the underlying scheduler succeeded, but the task body was not invoked");
+
+			return true;
 		}
 
-		internal UnobservedTaskExceptionEventArgs FireUnobservedEvent (AggregateException e)
+		internal static UnobservedTaskExceptionEventArgs FireUnobservedEvent (Task task, AggregateException e)
 		{
 			UnobservedTaskExceptionEventArgs args = new UnobservedTaskExceptionEventArgs (e);
 			
@@ -139,7 +152,7 @@ namespace System.Threading.Tasks
 			if (temp == null)
 				return args;
 			
-			temp (this, args);
+			temp (task, args);
 			
 			return args;
 		}

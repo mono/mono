@@ -53,20 +53,20 @@ namespace System.Xml.Serialization.Advanced
 			return List.Add (extension);
 		}
 
-		public int Add (string key, Type type)
+		public int Add (string name, Type type)
 		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			if (type == null)
 				throw new ArgumentNullException ("type");
 			if (!type.IsSubclassOf (typeof (SchemaImporterExtension)))
 				throw new ArgumentException ("The type argument must be subclass of SchemaImporterExtension.");
 
 			SchemaImporterExtension e = (SchemaImporterExtension) Activator.CreateInstance (type);
-			if (named_items.ContainsKey (key))
-				throw new InvalidOperationException (String.Format ("A SchemaImporterExtension keyed by '{0}' already exists.", key));
+			if (named_items.ContainsKey (name))
+				throw new InvalidOperationException (String.Format ("A SchemaImporterExtension keyed by '{0}' already exists.", name));
 			int ret = Add (e);
-			named_items.Add (key, e);
+			named_items.Add (name, e);
 			return ret;
 		}
 	

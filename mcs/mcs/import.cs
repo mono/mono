@@ -5,7 +5,8 @@
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
-// Copyright 2009, 2010 Novell, Inc
+// Copyright 2009-2011 Novell, Inc
+// Copyright 2011-2012 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -31,7 +32,7 @@ namespace Mono.CSharp
 		// Dynamic types reader with additional logic to reconstruct a dynamic
 		// type using DynamicAttribute values
 		//
-		struct DynamicTypeReader
+		protected struct DynamicTypeReader
 		{
 			static readonly bool[] single_attribute = { true };
 
@@ -89,7 +90,7 @@ namespace Mono.CSharp
 				if (cad.Count > 0) {
 					foreach (var ca in cad) {
 						var dt = ca.Constructor.DeclaringType;
-						if (dt.Name != "DynamicAttribute" && dt.Namespace != CompilerServicesNamespace)
+						if (dt.Name != "DynamicAttribute" || dt.Namespace != CompilerServicesNamespace)
 							continue;
 
 						if (ca.ConstructorArguments.Count == 0) {
@@ -119,7 +120,7 @@ namespace Mono.CSharp
 		protected readonly Dictionary<MetaType, TypeSpec> import_cache;
 		protected readonly Dictionary<MetaType, TypeSpec> compiled_types;
 		protected readonly Dictionary<Assembly, IAssemblyDefinition> assembly_2_definition;
-		readonly ModuleContainer module;
+		protected readonly ModuleContainer module;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
 
@@ -168,7 +169,8 @@ namespace Mono.CSharp
 					break;
 				default:
 					// Ignore private fields (even for error reporting) to not require extra dependencies
-					if (IgnorePrivateMembers || HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
+					if ((IgnorePrivateMembers && !declaringType.IsStruct) ||
+						HasAttribute (CustomAttributeData.GetCustomAttributes (fi), "CompilerGeneratedAttribute", CompilerServicesNamespace))
 						return null;
 
 					mod = Modifiers.PRIVATE;
@@ -189,7 +191,9 @@ namespace Mono.CSharp
 			var definition = new ImportedMemberDefinition (fi, field_type, this);
 
 			if ((fa & FieldAttributes.Literal) != 0) {
-				var c = Constant.CreateConstantFromValue (field_type, fi.GetRawConstantValue (), Location.Null);
+				Constant c = field_type.Kind == MemberKind.MissingType ?
+					new NullConstant (InternalType.ErrorType, Location.Null) :
+					Constant.CreateConstantFromValue (field_type, fi.GetRawConstantValue (), Location.Null);
 				return new ConstSpec (declaringType, definition, field_type, fi, mod, c);
 			}
 
@@ -388,18 +392,21 @@ namespace Mono.CSharp
 				if ((mod & Modifiers.OVERRIDE) != 0) {
 					bool is_real_override = false;
 					if (kind == MemberKind.Method && declaringType.BaseType != null) {
-						var filter = MemberFilter.Method (name, tparams != null ? tparams.Length : 0, parameters, null);
-						var candidate = MemberCache.FindMember (declaringType.BaseType, filter, BindingRestriction.None);
+						var btype = declaringType.BaseType;
+						if (IsOverrideMethodBaseTypeAccessible (btype)) {
+							var filter = MemberFilter.Method (name, tparams != null ? tparams.Length : 0, parameters, null);
+							var candidate = MemberCache.FindMember (btype, filter, BindingRestriction.None);
 
-						//
-						// For imported class method do additional validation to be sure that metadata
-						// override flag was correct
-						// 
-						// Difference between protected internal and protected is ok
-						//
-						const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
-						if (candidate != null && (candidate.Modifiers & conflict_mask) == (mod & conflict_mask) && !candidate.IsStatic) {
-							is_real_override = true;
+							//
+							// For imported class method do additional validation to be sure that metadata
+							// override flag was correct
+							// 
+							// Difference between protected internal and protected is ok
+							//
+							const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
+							if (candidate != null && (candidate.Modifiers & conflict_mask) == (mod & conflict_mask) && !candidate.IsStatic) {
+								is_real_override = true;
+							}
 						}
 					}
 
@@ -432,6 +439,30 @@ namespace Mono.CSharp
 			return ms;
 		}
 
+		bool IsOverrideMethodBaseTypeAccessible (TypeSpec baseType)
+		{
+			switch (baseType.Modifiers & Modifiers.AccessibilityMask) {
+			case Modifiers.PUBLIC:
+				return true;
+			case Modifiers.INTERNAL:
+				//
+				// Check whether imported method in base type is accessible from compiled
+				// context
+				//
+				return baseType.MemberDefinition.IsInternalAsPublic (module.DeclaringAssembly);
+			case Modifiers.PRIVATE:
+				return false;
+			default:
+				// protected
+				// protected internal
+				// 
+				// Method accessibility checks will be done later based on context
+				// where the method is called (CS0122 error will be reported for inaccessible)
+				//
+				return true;
+			}
+		}
+
 		//
 		// Imports System.Reflection parameters
 		//
@@ -460,7 +491,7 @@ namespace Mono.CSharp
 					//
 					var el = p.ParameterType.GetElementType ();
 					types[i] = ImportType (el, new DynamicTypeReader (p));	// TODO: 1-based positio to be csc compatible
-				} else if (i == 0 && method.IsStatic && parent.IsStatic && parent.MemberDefinition.DeclaringAssembly.HasExtensionMethod &&
+				} else if (i == 0 && method.IsStatic && (parent.Modifiers & Modifiers.METHOD_EXTENSION) != 0 &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (method), "ExtensionAttribute", CompilerServicesNamespace)) {
 					mod = Parameter.Modifier.This;
 					types[i] = ImportType (p.ParameterType);
@@ -479,13 +510,28 @@ namespace Mono.CSharp
 						var ptype = types[i];
 						if ((p.Attributes & ParameterAttributes.HasDefault) != 0 && ptype.Kind != MemberKind.TypeParameter && (value != null || TypeSpec.IsReferenceType (ptype))) {
 							if (value == null) {
-								default_value = Constant.CreateConstant (ptype, null, Location.Null);
+								default_value = Constant.CreateConstantFromValue (ptype, null, Location.Null);
 							} else {
 								default_value = ImportParameterConstant (value);
 
 								if (ptype.IsEnum) {
 									default_value = new EnumConstant ((Constant) default_value, ptype);
 								}
+							}
+
+							var attrs = CustomAttributeData.GetCustomAttributes (p);
+							for (int ii = 0; ii < attrs.Count; ++ii) {
+								var attr = attrs[ii];
+								var dt = attr.Constructor.DeclaringType;
+								if (dt.Namespace != CompilerServicesNamespace)
+									continue;
+
+								if (dt.Name == "CallerLineNumberAttribute" && (ptype.BuiltinType == BuiltinTypeSpec.Type.Int || Convert.ImplicitNumericConversionExists (module.Compiler.BuiltinTypes.Int, ptype)))
+									mod |= Parameter.Modifier.CallerLineNumber;
+								else if (dt.Name == "CallerFilePathAttribute" && Convert.ImplicitReferenceConversionExists (module.Compiler.BuiltinTypes.String, ptype))
+									mod |= Parameter.Modifier.CallerFilePath;
+								else if (dt.Name == "CallerMemberNameAttribute" && Convert.ImplicitReferenceConversionExists (module.Compiler.BuiltinTypes.String, ptype))
+									mod |= Parameter.Modifier.CallerMemberName;
 							}
 						} else if (value == Missing.Value) {
 							default_value = EmptyExpression.MissingValue;
@@ -589,26 +635,41 @@ namespace Mono.CSharp
 
 			PropertySpec spec = null;
 			if (!param.IsEmpty) {
-				var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
-				if (index_name == null) {
-					is_valid_property = false;
-				} else {
-					if (get != null) {
-						if (get.IsStatic)
-							is_valid_property = false;
-						if (get.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
-							is_valid_property = false;
+				if (is_valid_property) {
+					var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
+					if (index_name == null) {
+						is_valid_property = false;
+					} else {
+						if (get != null) {
+							if (get.IsStatic)
+								is_valid_property = false;
+							if (get.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
+								is_valid_property = false;
+						}
+						if (set != null) {
+							if (set.IsStatic)
+								is_valid_property = false;
+							if (set.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
+								is_valid_property = false;
+						}
 					}
-					if (set != null) {
-						if (set.IsStatic)
-							is_valid_property = false;
-						if (set.Name.IndexOf (index_name, StringComparison.Ordinal) != 4)
-							is_valid_property = false;
+
+					if (is_valid_property) {
+						spec = new IndexerSpec (declaringType, new ImportedParameterMemberDefinition (pi, type, param, this), type, param, pi, mod);
+					} else if (declaringType.MemberDefinition.IsComImport && param.FixedParameters[0].HasDefaultValue) {
+						//
+						// Enables support for properties with parameters (must have default value) of COM-imported types
+						//
+						is_valid_property = true;
+
+						for (int i = 0; i < param.FixedParameters.Length; ++i) {
+							if (!param.FixedParameters[i].HasDefaultValue) {
+								is_valid_property = false;
+								break;
+							}
+						}
 					}
 				}
-
-				if (is_valid_property)
-					spec = new IndexerSpec (declaringType, new ImportedParameterMemberDefinition (pi, type, param, this), type, param, pi, mod);
 			}
 
 			if (spec == null)
@@ -648,7 +709,7 @@ namespace Mono.CSharp
 			return CreateType (type, declaring_type, dtype, canImportBaseType);
 		}
 
-		TypeSpec CreateType (MetaType type, TypeSpec declaringType, DynamicTypeReader dtype, bool canImportBaseType)
+		protected TypeSpec CreateType (MetaType type, TypeSpec declaringType, DynamicTypeReader dtype, bool canImportBaseType)
 		{
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
@@ -833,6 +894,13 @@ namespace Mono.CSharp
 
 			import_cache.Add (type, spec);
 
+			if (kind == MemberKind.TypeParameter) {
+				if (canImportBaseType)
+					ImportTypeParameterTypeConstraints ((TypeParameterSpec) spec, type);
+
+				return spec;
+			}
+
 			//
 			// Two stage setup as the base type can be inflated declaring type or
 			// another nested type inside same declaring type which has not been
@@ -910,7 +978,7 @@ namespace Mono.CSharp
 		// Test for a custom attribute type match. Custom attributes are not really predefined globaly 
 		// they can be assembly specific therefore we do check based on names only
 		//
-		public bool HasAttribute (IList<CustomAttributeData> attributesData, string attrName, string attrNamespace)
+		public static bool HasAttribute (IList<CustomAttributeData> attributesData, string attrName, string attrNamespace)
 		{
 			if (attributesData.Count == 0)
 				return false;
@@ -959,9 +1027,23 @@ namespace Mono.CSharp
 				}
 			}
 
+			//
+			// It's impossible to get declared interfaces only using System.Reflection
+			// hence we need to mimic the behavior with ikvm-reflection too to keep
+			// our type look-up logic same
+			//
 			if (spec.BaseType != null) {
 				var bifaces = spec.BaseType.Interfaces;
 				if (bifaces != null) {
+					//
+					// Before adding base class interfaces close defined interfaces
+					// on type parameter
+					//
+					var tp = spec as TypeParameterSpec;
+					if (tp != null && tp.InterfacesDefined == null) {
+						tp.InterfacesDefined = TypeSpec.EmptyTypes;
+					}
+
 					foreach (var iface in bifaces)
 						spec.AddInterface (iface);
 				}
@@ -981,10 +1063,9 @@ namespace Mono.CSharp
 					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
 				}
 			}
-
 		}
 
-		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)
+		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool importExtensionTypes)
 		{
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
@@ -1008,12 +1089,14 @@ namespace Mono.CSharp
 					prev_namespace = t.Namespace;
 				}
 
-				ns.AddType (module, it);
-
-				if (it.IsStatic && hasExtensionTypes &&
+				// Cannot rely on assembly level Extension attribute or static modifier because they
+				// are not followed by other compilers (e.g. F#).
+				if (it.IsClass && it.Arity == 0 && importExtensionTypes &&
 					HasAttribute (CustomAttributeData.GetCustomAttributes (t), "ExtensionAttribute", CompilerServicesNamespace)) {
 					it.SetExtensionMethodContainer ();
 				}
+
+				ns.AddType (module, it);
 			}
 		}
 
@@ -1030,12 +1113,13 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				if (!IsMissingType (ct) && ct.IsClass) {
-					spec.BaseType = CreateType (ct);
+				var constraint_type = CreateType (ct);
+				if (constraint_type.IsClass) {
+					spec.BaseType = constraint_type;
 					continue;
 				}
 
-				spec.AddInterface (CreateType (ct));
+				spec.AddInterface (constraint_type);
 			}
 
 			if (spec.BaseType == null)
@@ -1476,7 +1560,6 @@ namespace Mono.CSharp
 		readonly Assembly assembly;
 		readonly AssemblyName aname;
 		bool cls_compliant;
-		bool contains_extension_methods;
 
 		List<AssemblyName> internals_visible_to;
 		Dictionary<IAssemblyDefinition, AssemblyName> internals_visible_to_cache;
@@ -1498,12 +1581,6 @@ namespace Mono.CSharp
 		public string FullName {
 			get {
 				return aname.FullName;
-			}
-		}
-
-		public bool HasExtensionMethod {
-			get {
-				return contains_extension_methods;
 			}
 		}
 
@@ -1624,13 +1701,6 @@ namespace Mono.CSharp
 					internals_visible_to.Add (an);
 					continue;
 				}
-
-				if (name == "ExtensionAttribute") {
-					if (dt.Namespace == MetadataImporter.CompilerServicesNamespace)
-						contains_extension_methods = true;
-
-					continue;
-				}
 			}
 		}
 
@@ -1733,6 +1803,29 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool ITypeDefinition.IsComImport {
+			get {
+				return ((MetaType) provider).IsImport;
+			}
+		}
+
+
+		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsTypeForwarder {
+			get {
+#if STATIC
+				return ((MetaType) provider).__IsTypeForwarder;
+#else
+				return false;
+#endif
+			}
+		}
+
 		public override string Name {
 			get {
 				if (name == null) {
@@ -1779,7 +1872,15 @@ namespace Mono.CSharp
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
-			foreach (var t in types) {
+			for (int i = 0; i < types.Count; ++i) {
+				var t = types [i];
+
+				//
+				// Report missing types only once per type
+				//
+				if (i > 0 && types.IndexOf (t) < i)
+					continue;
+
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
@@ -1787,9 +1888,15 @@ namespace Mono.CSharp
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
 				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
-					ctx.Module.Compiler.Report.Error (12, loc,
-						"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-						name, t.MemberDefinition.DeclaringAssembly.FullName);
+					if (t.MemberDefinition.IsTypeForwarder) {
+						ctx.Module.Compiler.Report.Error (1070, loc,
+							"The type `{0}' has been forwarded to an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
+							name, t.MemberDefinition.DeclaringAssembly.FullName);
+					} else {
+						ctx.Module.Compiler.Report.Error (12, loc,
+							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
+							name, t.MemberDefinition.DeclaringAssembly.FullName);
+					}
 				} else {
 					ctx.Module.Compiler.Report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
@@ -1877,7 +1984,13 @@ namespace Mono.CSharp
 					if ((t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && importer.IgnorePrivateMembers)
 						continue;
 
-					imported = importer.CreateNestedType (t, declaringType);
+					try {
+						imported = importer.CreateNestedType (t, declaringType);
+					} catch (Exception e) {
+						throw new InternalErrorException (e, "Could not import nested type `{0}' from `{1}'",
+							t.FullName, declaringType.MemberDefinition.DeclaringAssembly.FullName);
+					}
+
 					cache.AddMemberImported (imported);
 				}
 
@@ -1894,6 +2007,15 @@ namespace Mono.CSharp
 				}
 			}
 
+			//
+			// Load base interfaces first to minic behaviour of compiled members
+			//
+			if (declaringType.IsInterface && declaringType.Interfaces != null) {
+				foreach (var iface in declaringType.Interfaces) {
+					cache.AddInterface (iface);
+				}
+			}
+
 			if (!onlyTypes) {
 				//
 				// The logic here requires methods to be returned first which seems to work for both Mono and .NET
@@ -1901,6 +2023,10 @@ namespace Mono.CSharp
 				foreach (var member in all) {
 					switch (member.MemberType) {
 					case MemberTypes.Constructor:
+						if (declaringType.IsInterface)
+							continue;
+
+						goto case MemberTypes.Method;
 					case MemberTypes.Method:
 						MethodBase mb = (MethodBase) member;
 						var attrs = mb.Attributes;
@@ -1914,7 +2040,7 @@ namespace Mono.CSharp
 								continue;
 
 							// Ignore compiler generated methods
-							if (importer.HasAttribute (CustomAttributeData.GetCustomAttributes (mb), "CompilerGeneratedAttribute", MetadataImporter.CompilerServicesNamespace))
+							if (MetadataImporter.HasAttribute (CustomAttributeData.GetCustomAttributes (mb), "CompilerGeneratedAttribute", MetadataImporter.CompilerServicesNamespace))
 								continue;
 						}
 
@@ -2021,13 +2147,10 @@ namespace Mono.CSharp
 						throw new NotImplementedException (member.ToString ());
 					}
 
-					cache.AddMemberImported (imported);
-				}
-			}
+					if (imported.IsStatic && declaringType.IsInterface)
+						continue;
 
-			if (declaringType.IsInterface && declaringType.Interfaces != null) {
-				foreach (var iface in declaringType.Interfaces) {
-					cache.AddInterface (iface);
+					cache.AddMemberImported (imported);
 				}
 			}
 		}
@@ -2045,6 +2168,24 @@ namespace Mono.CSharp
 		public IAssemblyDefinition DeclaringAssembly {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		bool ITypeDefinition.IsComImport {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
 			}
 		}
 

@@ -4,25 +4,20 @@ include ../../build/rules.make
 
 LIBRARY = System.Design.dll
 
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
-
 LIBRARY_USE_INTERMEDIATE_FILE = yes
-
 
 DRAWING_DESIGN_DEP := System.Drawing.Design.dll
 DRAWING_DESIGN_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(DRAWING_DESIGN_DEP))
 CYCLIC_DEPS := $(DRAWING_DESIGN_DEP)
 CYCLIC_DEP_FILES := $(DRAWING_DESIGN_DEP_FILE)
-endif
 
 
 LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Web.dll \
 	-r:System.Windows.Forms.dll -r:System.Drawing.dll \
-	-r:Accessibility.dll -r:System.Data.dll
-
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += -r:System.Configuration.dll
-endif
+	-r:Accessibility.dll -r:System.Data.dll \
+	-r:System.Configuration.dll
+	
+TEST_MCS_FLAGS = /r:System.dll -r:System.Drawing.dll -r:System.Windows.Forms
 
 ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
 NO_SIGN_ASSEMBLY = yes

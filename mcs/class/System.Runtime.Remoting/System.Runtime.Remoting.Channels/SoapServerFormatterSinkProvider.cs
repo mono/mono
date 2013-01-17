@@ -40,11 +40,7 @@ namespace System.Runtime.Remoting.Channels
 		private IServerChannelSinkProvider _next;
 		SoapCore _soapCore;
 
-#if NET_1_0
-		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding" };
-#else
 		internal static string[] AllowedProperties = new string [] { "includeVersions", "strictBinding", "typeFilterLevel" };
-#endif
 
 		public SoapServerFormatterSinkProvider ()
 		{
@@ -64,7 +60,6 @@ namespace System.Runtime.Remoting.Channels
 			set { _next = value; }
 		}
 
-#if NET_1_1
 		[ComVisible(false)]
 		public TypeFilterLevel TypeFilterLevel
 		{
@@ -76,7 +71,6 @@ namespace System.Runtime.Remoting.Channels
 				_soapCore = new SoapCore (this, props, AllowedProperties);
 			}
 		}
-#endif
 
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{

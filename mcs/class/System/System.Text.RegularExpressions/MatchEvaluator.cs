@@ -29,8 +29,6 @@
 
 namespace System.Text.RegularExpressions {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	public delegate string MatchEvaluator (Match match);
 }

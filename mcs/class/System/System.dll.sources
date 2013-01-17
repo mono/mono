@@ -149,6 +149,8 @@ System.Collections.Generic/SortedDictionary.cs
 System.Collections.Generic/SortedList.cs
 System.Collections.Generic/SortedSet.cs
 System.Collections.Generic/Stack.cs
+System.Collections.Concurrent/BlockingCollection.cs
+System.Collections.Concurrent/ConcurrentBag.cs
 System.Collections.ObjectModel/ObservableCollection.cs
 System.Collections.ObjectModel/ReadOnlyObservableCollection.cs
 System.Collections.Specialized/BitVector32.cs
@@ -204,6 +206,7 @@ System.ComponentModel/Container.cs
 System.ComponentModel/ContainerFilterService.cs
 System.ComponentModel/CultureInfoConverter.cs
 System.ComponentModel/CustomTypeDescriptor.cs
+System.ComponentModel/DataErrorsChangedEventArgs.cs
 System.ComponentModel/DataObjectAttribute.cs
 System.ComponentModel/DataObjectFieldAttribute.cs
 System.ComponentModel/DataObjectMethodAttribute.cs
@@ -337,6 +340,7 @@ System.ComponentModel/INestedSite.cs
 System.ComponentModel/InheritanceAttribute.cs
 System.ComponentModel/InheritanceLevel.cs
 System.ComponentModel/InitializationEventAttribute.cs
+System.ComponentModel/INotifyDataErrorInfo.cs
 System.ComponentModel/INotifyPropertyChanged.cs
 System.ComponentModel/INotifyPropertyChanging.cs
 System.ComponentModel/InstallerTypeAttribute.cs
@@ -763,6 +767,7 @@ System.Net.Mime/ContentType.cs
 System.Net.Mime/DispositionTypeNames.cs
 System.Net.Mime/MediaTypeNames.cs
 System.Net.Mime/TransferEncoding.cs
+System.Net/MacProxy.cs
 System.Net/MonoHttpDate.cs
 System.Net/NetConfig.cs
 System.Net/NetworkAccess.cs
@@ -862,7 +867,9 @@ System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
 System.Net.Sockets/TransmitFileOptions.cs
 System.Net.Sockets/UdpClient.cs
+System.Net.Sockets/UdpReceiveResult.cs
 System/NetTcpStyleUriParser.cs
+System.Net/TransportContext.cs
 System.Net/TransportType.cs
 System.Net/WebAsyncResult.cs
 System.Net/WebClient.cs
@@ -999,6 +1006,8 @@ System/UriKind.cs
 System/UriParser.cs
 System/UriPartial.cs
 System/UriTypeConverter.cs
+System/UriElements.cs
+System/UriParseComponents.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionLevel.cs
@@ -1040,12 +1049,36 @@ System.Runtime.InteropServices.ComTypes/STGMEDIUM.cs
 System.Runtime.InteropServices.ComTypes/TYMED.cs
 System/IUriData.cs
 System/UriData.cs
-System.Collections.Concurrent/BlockingCollection.cs
-System.Collections.Concurrent/ConcurrentBag.cs
 
 ../corlib/System.Threading.Tasks/CyclicDeque.cs
+../corlib/System.Threading.Tasks/PopResult.cs
+../corlib/System.Threading.Tasks/IConcurrentDeque.cs
 ../corlib/System.Threading/AtomicBoolean.cs
 
 ../corlib/System.Collections/CollectionDebuggerView.cs
 ../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 ../corlib/Mono/DataConverter.cs
+Mono.Net.Dns/DnsClass.cs
+Mono.Net.Dns/DnsHeader.cs
+Mono.Net.Dns/DnsOpCode.cs
+Mono.Net.Dns/DnsPacket.cs
+Mono.Net.Dns/DnsQClass.cs
+Mono.Net.Dns/DnsQType.cs
+Mono.Net.Dns/DnsQuery.cs
+Mono.Net.Dns/DnsQuestion.cs
+Mono.Net.Dns/DnsRCode.cs
+Mono.Net.Dns/DnsResourceRecordA.cs
+Mono.Net.Dns/DnsResourceRecordAAAA.cs
+Mono.Net.Dns/DnsResourceRecordCName.cs
+Mono.Net.Dns/DnsResourceRecord.cs
+Mono.Net.Dns/DnsResourceRecordIPAddress.cs
+Mono.Net.Dns/DnsResourceRecordPTR.cs
+Mono.Net.Dns/DnsResponse.cs
+Mono.Net.Dns/DnsType.cs
+Mono.Net.Dns/DnsUtil.cs
+Mono.Net.Dns/ResolverAsyncOperation.cs
+Mono.Net.Dns/SimpleResolver.cs
+Mono.Net.Dns/ResolverError.cs
+Mono.Net.Dns/SimpleResolverEventArgs.cs
+System.Net/DnsAsyncResult.cs
+System.Windows.Input/ICommand.cs

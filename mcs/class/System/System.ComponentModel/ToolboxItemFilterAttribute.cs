@@ -85,11 +85,9 @@ namespace System.ComponentModel
 			return ((ToolboxItemFilterAttribute) obj).FilterString == Filter;
 		}
 
-#if NET_2_0
 		public override string ToString ()
 		{
 			return String.Format ("{0},{1}", Filter, ItemFilterType);
 		}
-#endif
 	}
 }

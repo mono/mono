@@ -62,6 +62,14 @@ malloc_shared_area (int pid)
 	return sarea;
 }
 
+static char*
+aligned_address (char *mem, size_t size, size_t alignment)
+{
+	char *aligned = (char*)((gulong)(mem + (alignment - 1)) & ~(alignment - 1));
+	g_assert (aligned >= mem && aligned + size <= mem + size + alignment && !((gulong)aligned & (alignment - 1)));
+	return aligned;
+}
+
 #ifdef HOST_WIN32
 
 int
@@ -107,10 +115,36 @@ mono_valloc (void *addr, size_t length, int flags)
 	return ptr;
 }
 
+void*
+mono_valloc_aligned (size_t length, size_t alignment, int flags)
+{
+	int prot = prot_from_flags (flags);
+	char *mem = VirtualAlloc (NULL, length + alignment, MEM_RESERVE, prot);
+	char *aligned;
+
+	if (!mem)
+		return NULL;
+
+	aligned = aligned_address (mem, length, alignment);
+
+	aligned = VirtualAlloc (aligned, length, MEM_COMMIT, prot);
+	g_assert (aligned);
+
+	return aligned;
+}
+
+#define HAVE_VALLOC_ALIGNED
+
 int
 mono_vfree (void *addr, size_t length)
 {
-	int res = VirtualFree (addr, 0, MEM_RELEASE);
+	MEMORY_BASIC_INFORMATION mbi;
+	SIZE_T query_result = VirtualQuery (addr, &mbi, sizeof (mbi));
+	BOOL res;
+
+	g_assert (query_result);
+
+	res = VirtualFree (mbi.AllocationBase, 0, MEM_RELEASE);
 
 	g_assert (res);
 
@@ -471,6 +505,7 @@ mono_shared_area_instances_slow (void **array, int count, gboolean cleanup)
 	return j;
 }
 
+#if (defined (__MACH__) && defined (TARGET_ARM))
 static int
 mono_shared_area_instances_helper (void **array, int count, gboolean cleanup)
 {
@@ -503,6 +538,9 @@ mono_shared_area_instances_helper (void **array, int count, gboolean cleanup)
 	g_dir_close (dir);
 	return i;
 }
+#else
+#define mono_shared_area_instances_helper mono_shared_area_instances_slow
+#endif
 
 void*
 mono_shared_area (void)
@@ -644,10 +682,10 @@ mono_valloc_aligned (size_t size, size_t alignment, int flags)
 	char *mem = mono_valloc (NULL, size + alignment, flags);
 	char *aligned;
 
-	g_assert (mem);
+	if (!mem)
+		return NULL;
 
-	aligned = (char*)((gulong)(mem + (alignment - 1)) & ~(alignment - 1));
-	g_assert (aligned >= mem && aligned + size <= mem + size + alignment && !((gulong)aligned & (alignment - 1)));
+	aligned = aligned_address (mem, size, alignment);
 
 	if (aligned > mem)
 		mono_vfree (mem, aligned - mem);

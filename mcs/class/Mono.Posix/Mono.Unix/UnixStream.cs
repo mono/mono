@@ -417,8 +417,7 @@ namespace Mono.Unix {
 		
 		void IDisposable.Dispose ()
 		{
-			AssertNotDisposed ();
-			if (owner) {
+			if (fileDescriptor != InvalidFileDescriptor && owner) {
 				Close ();
 			}
 			GC.SuppressFinalize (this);

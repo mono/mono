@@ -49,9 +49,7 @@ namespace System.Diagnostics {
 	[Designer ("System.Diagnostics.Design.ProcessDesigner, " + Consts.AssemblySystem_Design)]
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-#if NET_2_0
 	[MonitoringDescription ("Represents a system process")]
-#endif
 	public class Process : Component 
 	{
 		[StructLayout(LayoutKind.Sequential)]
@@ -339,9 +337,7 @@ namespace System.Diagnostics {
 		private extern static long GetProcessData (int pid, int data_type, out int error);
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use NonpagedSystemMemorySize64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are not pageable.")]
 		public int NonpagedSystemMemorySize {
@@ -351,9 +347,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use PagedMemorySize64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are paged.")]
 		public int PagedMemorySize {
@@ -363,9 +357,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use PagedSystemMemorySize64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of paged system memory in bytes.")]
 		public int PagedSystemMemorySize {
@@ -375,9 +367,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use PeakPagedMemorySize64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of paged memory used by this process.")]
 		public int PeakPagedMemorySize {
@@ -386,9 +376,7 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[Obsolete ("Use PeakVirtualMemorySize64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of virtual memory used by this process.")]
 		public int PeakVirtualMemorySize {
@@ -398,9 +386,7 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[Obsolete ("Use PeakWorkingSet64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of system memory used by this process.")]
 		public int PeakWorkingSet {
@@ -410,7 +396,6 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are not pageable.")]
@@ -470,7 +455,6 @@ namespace System.Diagnostics {
 				return GetProcessData (pid, 5, out error);
 			}
 		}
-#endif
 
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -507,9 +491,16 @@ namespace System.Diagnostics {
 					throw new InvalidOperationException ("Process has not been started.");
 				
 				int error;
-				if (!SetPriorityClass (process_handle, (int) value, out error))
+				if (!SetPriorityClass (process_handle, (int) value, out error)) {
+					CheckExited ();
 					throw new Win32Exception (error);
+				}
 			}
+		}
+
+		void CheckExited () {
+			if (HasExited)
+				throw new InvalidOperationException (String.Format ("Cannot process request because the process ({0}) has exited.", Id));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -520,9 +511,7 @@ namespace System.Diagnostics {
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of memory exclusively used by this process.")]
-#if NET_2_0
 		[Obsolete ("Use PrivateMemorySize64")]
-#endif
 		public int PrivateMemorySize {
 			get {
 				int error;
@@ -530,14 +519,12 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[MonoNotSupported ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The session ID for this process.")]
 		public int SessionId {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		/* the meaning of type is as follows: 0: user, 1: system, 2: total */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -619,12 +606,10 @@ namespace System.Diagnostics {
 				if (error_stream == null)
 					throw new InvalidOperationException("Standard error has not been redirected");
 
-#if NET_2_0
 				if ((async_mode & AsyncModes.AsyncError) != 0)
 					throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
 
 				async_mode |= AsyncModes.SyncError;
-#endif
 
 				return(error_stream);
 			}
@@ -652,12 +637,10 @@ namespace System.Diagnostics {
 				if (output_stream == null)
 					throw new InvalidOperationException("Standard output has not been redirected");
 
-#if NET_2_0
 				if ((async_mode & AsyncModes.AsyncOutput) != 0)
 					throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
 
 				async_mode |= AsyncModes.SyncOutput;
-#endif
 
 				return(output_stream);
 			}
@@ -702,11 +685,13 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of threads of this process.")]
 		public ProcessThreadCollection Threads {
 			get {
-				return ProcessThreadCollection.GetEmpty ();
+				// This'll return a correctly-sized array of empty ProcessThreads for now.
+				int error;
+				return new ProcessThreadCollection(new ProcessThread[GetProcessData (pid, 0, out error)]);
 			}
 		}
 
@@ -726,9 +711,7 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[Obsolete ("Use VirtualMemorySize64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of virtual memory currently used for this process.")]
 		public int VirtualMemorySize {
@@ -738,9 +721,7 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[Obsolete ("Use WorkingSet64")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of physical memory currently used for this process.")]
 		public int WorkingSet {
@@ -750,7 +731,6 @@ namespace System.Diagnostics {
 			}
 		}
 
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of memory exclusively used by this process.")]
 		[ComVisible (false)]
@@ -780,7 +760,6 @@ namespace System.Diagnostics {
 				return GetProcessData (pid, 4, out error);
 			}
 		}
-#endif
 
 		public void Close()
 		{
@@ -1139,13 +1118,8 @@ namespace System.Diagnostics {
 				process.input_stream.AutoFlush = true;
 			}
 
-#if NET_2_0
 			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
 			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
-#else
-			Encoding stdoutEncoding = Console.Out.Encoding;
-			Encoding stderrEncoding = stdoutEncoding;
-#endif
 
 			if (startInfo.RedirectStandardOutput == true) {
 				MonoIO.Close (stdout_wr, out error);
@@ -1165,7 +1139,6 @@ namespace System.Diagnostics {
 		// Note that ProcInfo.Password must be freed.
 		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo proc_info)
 		{
-#if NET_2_0
 			if (startInfo.UserName != null) {
 				proc_info.UserName = startInfo.UserName;
 				proc_info.Domain = startInfo.Domain;
@@ -1175,7 +1148,6 @@ namespace System.Diagnostics {
 					proc_info.Password = IntPtr.Zero;
 				proc_info.LoadUserProfile = startInfo.LoadUserProfile;
 			}
-#endif
 		}
 
 		private static bool Start_common (ProcessStartInfo startInfo,
@@ -1184,18 +1156,14 @@ namespace System.Diagnostics {
 			if (startInfo.FileName == null || startInfo.FileName.Length == 0)
 				throw new InvalidOperationException("File name has not been set");
 			
-#if NET_2_0
 			if (startInfo.StandardErrorEncoding != null && !startInfo.RedirectStandardError)
 				throw new InvalidOperationException ("StandardErrorEncoding is only supported when standard error is redirected");
 			if (startInfo.StandardOutputEncoding != null && !startInfo.RedirectStandardOutput)
 				throw new InvalidOperationException ("StandardOutputEncoding is only supported when standard output is redirected");
-#endif
 			
 			if (startInfo.UseShellExecute) {
-#if NET_2_0
 				if (!String.IsNullOrEmpty (startInfo.UserName))
 					throw new InvalidOperationException ("UserShellExecute must be false if an explicit UserName is specified when starting a process");
-#endif
 				return (Start_shell (startInfo, process));
 			} else {
 				return (Start_noshell (startInfo, process));
@@ -1233,7 +1201,6 @@ namespace System.Diagnostics {
 			return Start (new ProcessStartInfo (fileName, arguments));
 		}
 
-#if NET_2_0
 		public static Process Start(string fileName, string username, SecureString password, string domain) {
 			return Start(fileName, null, username, password, domain);
 		}
@@ -1246,7 +1213,6 @@ namespace System.Diagnostics {
 			psi.UseShellExecute = false;
 			return Start(psi);
 		}
-#endif
 
 		public override string ToString()
 		{
@@ -1269,7 +1235,6 @@ namespace System.Diagnostics {
 			if (ms == int.MaxValue)
 				ms = -1;
 
-#if NET_2_0
 			DateTime start = DateTime.UtcNow;
 			if (async_output != null && !async_output.IsCompleted) {
 				if (false == async_output.WaitHandle.WaitOne (ms, false))
@@ -1294,7 +1259,6 @@ namespace System.Diagnostics {
 						return false;
 				}
 			}
-#endif
 			return WaitForExit_internal (process_handle, ms);
 		}
 
@@ -1324,7 +1288,6 @@ namespace System.Diagnostics {
 			return (string.Compare (machineName, Environment.MachineName, true) == 0);
 		}
 
-#if NET_2_0
 		[Browsable (true)]
 		[MonitoringDescription ("Raised when it receives output data")]
 		public event DataReceivedEventHandler OutputDataReceived;
@@ -1567,7 +1530,6 @@ namespace System.Diagnostics {
 
 			error_canceled = true;
 		}
-#endif
 
 		[Category ("Behavior")]
 		[MonitoringDescription ("Raised when this process exits.")]

@@ -1,11 +1,13 @@
 //
 // System.Int32.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -253,8 +255,7 @@ namespace System {
 				negative = true;
 				foundSign = true;
 				pos += nfi.NegativeSign.Length;
-			} 
-			else if ((pos + nfi.PositiveSign.Length) < s.Length &&
+			} else if ((pos + nfi.PositiveSign.Length) <= s.Length &&
 				s.IndexOf (nfi.PositiveSign, pos, nfi.PositiveSign.Length) == pos) {
 				negative = false;
 				pos += nfi.PositiveSign.Length;
@@ -277,15 +278,14 @@ namespace System {
 		internal static bool FindExponent (ref int pos, string s, ref int exponent, bool tryParse, ref Exception exc)
 		{
 				exponent = 0;
-				long exp = 0; // temp long value
 
-				int i = s.IndexOfAny(new char [] {'e', 'E'}, pos);
-				if (i < 0) {
+				if (pos >= s.Length || (s [pos] != 'e' && s[pos] != 'E')) {
 					exc = null;
 					return false;
 				}
 
-				if (++i == s.Length) {
+				var i = pos + 1;
+				if (i == s.Length) {
 					exc = tryParse ? null : GetFormatException ();
 					return true;
 				}
@@ -301,6 +301,7 @@ namespace System {
 					return true;
 				}
 
+				long exp = 0; // temp long value
 				for (; i < s.Length; i++) {
 					if (!Char.IsDigit (s [i]))  {
 						exc = tryParse ? null : GetFormatException ();
@@ -357,7 +358,7 @@ namespace System {
 
 			if (s == null) {
 				if (!tryParse)
-					exc = new ArgumentNullException ();
+					exc = new ArgumentNullException ("s");
 				return false;
 			}
 
@@ -406,7 +407,7 @@ namespace System {
 				negative = true; // MS always make the number negative when there parentheses
 						 // even when NumberFormatInfo.NumberNegativePattern != 0!!!
 				pos++;
-				if (AllowLeadingWhite && !!JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+				if (AllowLeadingWhite && !JumpOverWhite (ref pos, s, true, tryParse, ref exc))
 					return false;
 
 				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign) {
@@ -468,18 +469,20 @@ namespace System {
 
 				if (!ValidDigit (s [pos], AllowHexSpecifier)) {
 					if (AllowThousands &&
-					    FindOther (ref pos, s, nfi.NumberGroupSeparator))
+					    (FindOther (ref pos, s, nfi.NumberGroupSeparator)
+						|| FindOther (ref pos, s, nfi.CurrencyGroupSeparator)))
 					    continue;
 					else
 					if (!decimalPointFound && AllowDecimalPoint &&
-					    FindOther (ref pos, s, nfi.NumberDecimalSeparator)) {
+					    (FindOther (ref pos, s, nfi.NumberDecimalSeparator)
+						|| FindOther (ref pos, s, nfi.CurrencyDecimalSeparator))) {
 					    decimalPointFound = true;
 					    continue;
 					}
 
 					break;
 				}
-				else if (AllowHexSpecifier) {
+				if (AllowHexSpecifier) {
 					nDigits++;
 					hexDigit = s [pos++];
 					if (Char.IsDigit (hexDigit))
@@ -543,20 +546,20 @@ namespace System {
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
 				FindSign (ref pos, s, nfi, ref foundSign, ref negative);
-				if (foundSign) {
+				if (foundSign && pos < s.Length) {
 					if (AllowTrailingWhite && !JumpOverWhite (ref pos, s, true, tryParse, ref exc))
 						return false;
-					if (AllowCurrencySymbol)
-						FindCurrency (ref pos, s, nfi,
-							      ref foundCurrency);
 				}
 			}
 			
 			if (AllowCurrencySymbol && !foundCurrency) {
+				if (AllowTrailingWhite && pos < s.Length && !JumpOverWhite (ref pos, s, false, tryParse, ref exc))
+					return false;
+				
 				// Currency + sign
 				FindCurrency (ref pos, s, nfi, ref foundCurrency);
-				if (foundCurrency) {
-					if (AllowTrailingWhite && !JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+				if (foundCurrency  && pos < s.Length) {
+					if (AllowTrailingWhite  && !JumpOverWhite (ref pos, s, true, tryParse, ref exc))
 						return false;
 					if (!foundSign && AllowTrailingSign)
 						FindSign (ref pos, s, nfi, ref foundSign,
@@ -573,8 +576,7 @@ namespace System {
 						exc = GetFormatException ();
 					return false;
 				}
-				if (AllowTrailingWhite && pos < s.Length &&
-						!JumpOverWhite (ref pos, s, false, tryParse, ref exc))
+				if (AllowTrailingWhite && pos < s.Length && !JumpOverWhite (ref pos, s, false, tryParse, ref exc))
 					return false;
 			}
 
@@ -609,7 +611,6 @@ namespace System {
 			}
 			
 			result = number;
-
 			return true;
 		}
 
@@ -638,7 +639,6 @@ namespace System {
 		public static bool TryParse (string s, out int result) 
 		{
 			Exception exc;
-			
 			if (!Parse (s, true, out result, out exc)) {
 				result = 0;
 				return false;

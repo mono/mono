@@ -31,6 +31,8 @@ namespace System.IO.Packaging {
 	{
 		public static readonly string UriSchemePack = "pack";
 		static readonly Uri PackSchemeUri = new Uri("pack://", UriKind.Absolute);
+		static readonly char[] _escapedChars = new char[] { '%', ',', '?', '@' };
+
 		
 		static PackUriHelper ()
 		{
@@ -85,13 +87,21 @@ namespace System.IO.Packaging {
 			// FIXME: Validate that partUri is a valid one? Must be relative, must start with '/'
 
 			// First replace the slashes, then escape the special characters
-			string orig = packageUri.OriginalString.Replace ('/', ',');
-			
+			//string orig = packageUri.GetComponents(UriComponents.AbsoluteUri, UriFormat.UriEscaped);
+			string orig = packageUri.OriginalString;
+
+			foreach (var ch in _escapedChars)
+			{
+				orig = !orig.Contains(ch.ToString()) ? orig : orig.Replace(ch.ToString(), Uri.HexEscape(ch));
+			}
+
+			orig = orig.Replace('/', ',');
+
 			if (partUri != null)
 				orig += partUri.OriginalString;
 
-//			if (sb[sb.Length - 1] != '/')
-//				sb.Append ('/');
+			if ((fragment == null && partUri == null)&& orig[orig.Length - 1] != '/')
+				orig += '/';
 
 			if (fragment != null)
 				orig += fragment;
@@ -116,14 +126,22 @@ namespace System.IO.Packaging {
 
 		public static Uri GetPackageUri (Uri packUri)
 		{
-			//Check.PackUri (packUri);
-			string s = packUri.Host.Replace (',', '/');
-			return new Uri (s, UriKind.Relative);
+			Check.PackUri (packUri);
+			Check.PackUriIsValid (packUri);
+
+			string s = packUri.Host.Replace(',', '/');
+			return new Uri (Uri.UnescapeDataString(s), UriKind.RelativeOrAbsolute);
 		}
 
 		public static Uri GetPartUri (Uri packUri)
 		{
-			throw new NotImplementedException ();
+			Check.PackUri(packUri);
+			Check.PackUriIsValid(packUri);
+
+			if (string.IsNullOrEmpty(packUri.AbsolutePath) || packUri.AbsolutePath == "/")
+				return null;
+
+			return new Uri(packUri.AbsolutePath, UriKind.Relative);
 		}
 
 		public static Uri GetRelationshipPartUri (Uri partUri)
@@ -139,10 +157,14 @@ namespace System.IO.Packaging {
 
 		public static Uri GetRelativeUri (Uri sourcePartUri, Uri targetPartUri)
 		{
-			//Check.SourcePartUri (sourcePartUri);
-			//Check.TargetPartUri (targetPartUri);
+			Check.SourcePartUri (sourcePartUri);
+			Check.TargetPartUri (targetPartUri);
 
-			return sourcePartUri;
+			Uri uri = new Uri ("http://fake.com");
+			Uri a = new Uri (uri, sourcePartUri.OriginalString);
+			Uri b = new Uri (uri, targetPartUri.OriginalString);
+
+			return a.MakeRelativeUri(b);
 		}
 
 		public static Uri GetSourcePartUriFromRelationshipPartUri (Uri relationshipPartUri)

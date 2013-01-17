@@ -7,7 +7,7 @@
 using System;
 namespace TestCase {
 	public unsafe class Test {
-		static int Main(string[] args) {
+		public static int Main(string[] args) {
 			uint[] uArr = {0, 200};
 			uint[] uArr2 = {0, 200};
 

@@ -22,7 +22,7 @@ namespace MonoTests.System.Security.Cryptography {
 public class KeyedHashAlgorithmTest : HashAlgorithmTest {
 
 	[SetUp]
-	protected override void SetUp () 
+	public override void SetUp () 
 	{
 		hash = KeyedHashAlgorithm.Create ();
 		(hash as KeyedHashAlgorithm).Key = new byte [8];

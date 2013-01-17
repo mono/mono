@@ -30,7 +30,7 @@ endif
 
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
-USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS)
+USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
 BASCOMPILE = $(MBAS) $(USE_MBAS_FLAGS)
 CCOMPILE = $(CC) $(USE_CFLAGS)
@@ -103,11 +103,15 @@ endif
 # Rest of the configuration
 
 ifndef PROFILE
-PROFILE = net_4_0
+PROFILE = $(DEFAULT_PROFILE)
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
 -include $(topdir)/build/config.make
+
+ifdef BCL_OPTIMIZE
+PROFILE_MCS_FLAGS += -optimize
+endif
 
 ifdef OVERRIDE_TARGET_ALL
 all: all.override
@@ -200,6 +204,6 @@ dist-default:
 ## Documentation stuff
 
 Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE)] $(notdir $(@))";)
-MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/net_4_0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
-	$(RUNTIME) $(topdir)/tools/mdoc/mdoc.exe
+# net_2_0 is needed because monodoc is only compiled in that profile
+MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe
 

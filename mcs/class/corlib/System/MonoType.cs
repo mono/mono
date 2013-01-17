@@ -41,12 +41,14 @@ using System.Security;
 namespace System
 {
 	// Contains information about the type which is expensive to compute
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoTypeInfo {
 		public string full_name;
 		public ConstructorInfo default_ctor;
 	}
 		
 	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoType : Type, ISerializable
 	{
 		[NonSerialized]
@@ -734,5 +736,10 @@ namespace System
 		}
 #endif
 
+		internal override bool IsUserType {
+			get {
+				return false;
+			}
+		}
 	}
 }

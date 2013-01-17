@@ -7,7 +7,7 @@ class Program
     [DllImport("foo.dll")]
     public static extern void printf(string format, __arglist);
 
-    static int Main()
+    public static int Main()
     {
         if (typeof (Program).GetMethod ("printf").CallingConvention != CallingConventions.VarArgs)
             return 1;

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft
@@ -33,11 +34,17 @@ namespace Mono.Debugger.Soft
 		}
 	}
 
+	struct SourceInfo {
+		public string source_file;
+		public byte[] guid, hash;
+	}
+
 	class DebugInfo {
 		public int max_il_offset;
-		public string filename;
 		public int[] il_offsets;
 		public int[] line_numbers;
+		public int[] column_numbers;
+		public SourceInfo[] source_files;
 	}
 
 	struct FrameInfo {
@@ -52,15 +59,45 @@ namespace Mono.Debugger.Soft
 		public long assembly, module, base_type, element_type;
 		public int token, rank, attributes;
 		public bool is_byref, is_pointer, is_primitive, is_valuetype, is_enum;
+		public bool is_gtd, is_generic_type;
 		public long[] nested;
+		public long gtd;
+		public long[] type_args;
+	}
+
+	struct IfaceMapInfo {
+		public long iface_id;
+		public long[] iface_methods;
+		public long[] target_methods;
 	}
 
 	class MethodInfo {
 		public int attributes, iattributes, token;
+		public bool is_gmd, is_generic_method;
+		public long gmd;
+		public long[] type_args;
 	}
 
 	class MethodBodyInfo {
 		public byte[] il;
+		public ExceptionClauseInfo[] clauses;
+	}
+
+	struct ExceptionClauseInfo {
+		public ExceptionClauseFlags flags;
+		public int try_offset;
+		public int try_length;
+		public int handler_offset;
+		public int handler_length;
+		public int filter_offset;
+		public long catch_type_id;
+	}
+
+	enum ExceptionClauseFlags {
+		None = 0x0,
+		Filter = 0x1,
+		Finally = 0x2,
+		Fault = 0x4,
 	}
 
 	struct ParamInfo {
@@ -100,6 +137,11 @@ namespace Mono.Debugger.Soft
 
 	class ThreadInfo {
 		public bool is_thread_pool;
+	}
+
+	struct ObjectRefInfo {
+		public long type_id;
+		public long domain_id;
 	}
 
 	enum ValueTypeId {
@@ -179,7 +221,9 @@ namespace Mono.Debugger.Soft
 	}
 
 	enum StackFrameFlags {
-		DEBUGGER_INVOKE = 1
+		NONE = 0,
+		DEBUGGER_INVOKE = 1,
+		NATIVE_TRANSITION = 2
 	}
 
 	class ResolvedToken {
@@ -219,6 +263,10 @@ namespace Mono.Debugger.Soft
 		public int Size {
 			get; set;
 		}
+
+		public int Filter {
+			get; set;
+		}
 	}
 
 	class ThreadModifier : Modifier {
@@ -241,6 +289,18 @@ namespace Mono.Debugger.Soft
 
 	class AssemblyModifier : Modifier {
 		public long[] Assemblies {
+			get; set;
+		}
+	}
+
+	class SourceFileModifier : Modifier {
+		public string[] SourceFiles {
+			get; set;
+		}
+	}
+
+	class TypeNameModifier : Modifier {
+		public string[] TypeNames {
 			get; set;
 		}
 	}
@@ -312,15 +372,20 @@ namespace Mono.Debugger.Soft
 	/*
 	 * Represents the connection to the debuggee
 	 */
-	class Connection
+	public abstract class Connection
 	{
 		/*
 		 * The protocol and the packet format is based on JDWP, the differences 
 		 * are in the set of supported events, and the commands.
 		 */
-		public const string HANDSHAKE_STRING = "DWP-Handshake";
+		internal const string HANDSHAKE_STRING = "DWP-Handshake";
 
-		public const int HEADER_LENGTH = 11;
+		internal const int HEADER_LENGTH = 11;
+
+		static readonly bool EnableConnectionLogging = !String.IsNullOrEmpty (Environment.GetEnvironmentVariable ("MONO_SDB_LOG"));
+		static int ConnectionId;
+		readonly StreamWriter LoggingStream = EnableConnectionLogging ? 
+			new StreamWriter (string.Format ("/tmp/sdb_conn_log_{0}", ConnectionId++), false) : null;
 
 		/*
 		 * Th version of the wire-protocol implemented by the library. The library
@@ -329,8 +394,8 @@ namespace Mono.Debugger.Soft
 		 * features might not be available. This allows older clients to communicate
 		 * with newer runtimes, and vice versa.
 		 */
-		public const int MAJOR_VERSION = 2;
-		public const int MINOR_VERSION = 3;
+		internal const int MAJOR_VERSION = 2;
+		internal const int MINOR_VERSION = 22;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -380,7 +445,9 @@ namespace Mono.Debugger.Soft
 			LOCATION_ONLY = 7,
 			EXCEPTION_ONLY = 8,
 			STEP = 10,
-			ASSEMBLY_ONLY = 11
+			ASSEMBLY_ONLY = 11,
+			SOURCE_FILE_ONLY = 12,
+			TYPE_NAME_ONLY = 13
 		}
 
 		enum CmdVM {
@@ -393,7 +460,10 @@ namespace Mono.Debugger.Soft
 			INVOKE_METHOD = 7,
 			SET_PROTOCOL_VERSION = 8,
 			ABORT_INVOKE = 9,
-			SET_KEEPALIVE = 10
+			SET_KEEPALIVE = 10,
+			GET_TYPES_FOR_SOURCE_FILE = 11,
+			GET_TYPES = 12,
+			INVOKE_METHODS = 13
 		}
 
 		enum CmdEvent {
@@ -448,7 +518,8 @@ namespace Mono.Debugger.Soft
 			GET_LOCALS_INFO = 5,
 			GET_INFO = 6,
 			GET_BODY = 7,
-			RESOLVE_TOKEN = 8
+			RESOLVE_TOKEN = 8,
+			GET_CATTRS = 9
 		}
 
 		enum CmdType {
@@ -467,7 +538,14 @@ namespace Mono.Debugger.Soft
 			/* FIXME: Merge into GET_SOURCE_FILES when the major protocol version is increased */
 			GET_SOURCE_FILES_2 = 13,
 			/* FIXME: Merge into GET_VALUES when the major protocol version is increased */
-			GET_VALUES_2 = 14
+			GET_VALUES_2 = 14,
+			CMD_TYPE_GET_METHODS_BY_NAME_FLAGS = 15,
+			GET_INTERFACES = 16,
+			GET_INTERFACE_MAP = 17
+		}
+
+		enum BindingFlagsExtensions {
+			BINDING_FLAGS_IGNORE_CASE = 0x70000000,
 		}
 
 		enum CmdStackFrame {
@@ -483,7 +561,9 @@ namespace Mono.Debugger.Soft
 		}
 
 		enum CmdStringRef {
-			GET_VALUE = 1
+			GET_VALUE = 1,
+			GET_LENGTH = 2,
+			GET_CHARS = 3
 		}
 
 		enum CmdObjectRef {
@@ -492,7 +572,8 @@ namespace Mono.Debugger.Soft
 			IS_COLLECTED = 3,
 			GET_ADDRESS = 4,
 			GET_DOMAIN = 5,
-			SET_VALUES = 6
+			SET_VALUES = 6,
+			GET_INFO = 7,
 		}
 
 		class Header {
@@ -502,17 +583,17 @@ namespace Mono.Debugger.Soft
 			public int flags;
 		}			
 
-		public static int GetPacketLength (byte[] header) {
+		internal static int GetPacketLength (byte[] header) {
 			int offset = 0;
 			return decode_int (header, ref offset);
 		}
 
-		public static bool IsReplyPacket (byte[] packet) {
+		internal static bool IsReplyPacket (byte[] packet) {
 			int offset = 8;
 			return decode_byte (packet, ref offset) == 0x80;
 		}
 
-		public static int GetPacketId (byte[] packet) {
+		internal static int GetPacketId (byte[] packet) {
 			int offset = 4;
 			return decode_int (packet, ref offset);
 		}
@@ -544,7 +625,7 @@ namespace Mono.Debugger.Soft
 			return (long)(((ulong)high << 32) | (ulong)low);
 		}
 
-		public static SuspendPolicy decode_suspend_policy (int suspend_policy) {
+		internal static SuspendPolicy decode_suspend_policy (int suspend_policy) {
 			switch ((WPSuspendPolicy)suspend_policy) {
 			case WPSuspendPolicy.NONE:
 				return SuspendPolicy.None;
@@ -592,7 +673,7 @@ namespace Mono.Debugger.Soft
 			encode_int (buf, (int)(l & 0xffffffff), ref offset);
 		}
 
-		public static byte[] EncodePacket (int id, int commandSet, int command, byte[] data, int dataLen) {
+		internal static byte[] EncodePacket (int id, int commandSet, int command, byte[] data, int dataLen) {
 			byte[] buf = new byte [dataLen + 11];
 			int offset = 0;
 			
@@ -743,6 +824,13 @@ namespace Mono.Debugger.Soft
 					throw new NotImplementedException ("Unable to handle type " + etype);
 				}
 			}
+
+			public long[] ReadIds (int n) {
+				long[] res = new long [n];
+				for (int i = 0; i < n; ++i)
+					res [i] = ReadId ();
+				return res;
+			}
 		}
 
 		class PacketWriter {
@@ -822,8 +910,12 @@ namespace Mono.Debugger.Soft
 			}
 
 			public PacketWriter WriteString (string s) {
-				encode_int (data, s.Length, ref offset);
+				if (s == null)
+					return WriteInt (-1);
+
 				byte[] b = Encoding.UTF8.GetBytes (s);
+				MakeRoom (4);
+				encode_int (data, b.Length, ref offset);
 				MakeRoom (b.Length);
 				Buffer.BlockCopy (b, 0, data, offset, b.Length);
 				offset += b.Length;
@@ -927,29 +1019,35 @@ namespace Mono.Debugger.Soft
 
 		delegate void ReplyCallback (int packet_id, byte[] packet);
 
-		Socket socket;
 		bool closed;
 		Thread receiver_thread;
 		Dictionary<int, byte[]> reply_packets;
 		Dictionary<int, ReplyCallback> reply_cbs;
+		Dictionary<int, int> reply_cb_counts;
 		object reply_packets_monitor;
 
-		public event EventHandler<ErrorHandlerEventArgs> ErrorHandler;
+		internal event EventHandler<ErrorHandlerEventArgs> ErrorHandler;
 
-		public Connection (Socket socket) {
-			this.socket = socket;
-			//socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.NoDelay, 1);
+		protected Connection () {
 			closed = false;
 			reply_packets = new Dictionary<int, byte[]> ();
 			reply_cbs = new Dictionary<int, ReplyCallback> ();
+			reply_cb_counts = new Dictionary<int, int> ();
 			reply_packets_monitor = new Object ();
 		}
+		
+		protected abstract int TransportReceive (byte[] buf, int buf_offset, int len);
+		protected abstract int TransportSend (byte[] buf, int buf_offset, int len);
+		protected abstract void TransportSetTimeouts (int send_timeout, int receive_timeout);
+		protected abstract void TransportClose ();
 
+		internal VersionInfo Version;
+		
 		int Receive (byte[] buf, int buf_offset, int len) {
 			int offset = 0;
 
 			while (offset < len) {
-				int n = socket.Receive (buf, buf_offset + offset, len - offset, SocketFlags.None);
+				int n = TransportReceive (buf, buf_offset + offset, len - offset);
 
 				if (n == 0)
 					return offset;
@@ -958,11 +1056,9 @@ namespace Mono.Debugger.Soft
 
 			return offset;
 		}
-
-		public VersionInfo Version;
-
+		
 		// Do the wire protocol handshake
-		public void Connect () {
+		internal void Connect () {
 			byte[] buf = new byte [HANDSHAKE_STRING.Length];
 			char[] cbuf = new char [buf.Length];
 
@@ -975,8 +1071,8 @@ namespace Mono.Debugger.Soft
 
 			if (new String (cbuf) != HANDSHAKE_STRING)
 				throw new IOException ("DWP Handshake failed.");
-
-			socket.Send (buf);
+			
+			TransportSend (buf, 0, buf.Length);
 
 			receiver_thread = new Thread (new ThreadStart (receiver_thread_main));
 			receiver_thread.Start ();
@@ -1002,13 +1098,7 @@ namespace Mono.Debugger.Soft
 			ErrorHandler = OrigErrorHandler;
 		}
 
-		public EndPoint EndPoint {
-			get {
-				return socket.RemoteEndPoint;
-			}
-		}
-
-		public byte[] ReadPacket () {
+		internal byte[] ReadPacket () {
 			// FIXME: Throw ClosedConnectionException () if the connection is closed
 			// FIXME: Throw ClosedConnectionException () if another thread closes the connection
 			// FIXME: Locking
@@ -1039,18 +1129,18 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public void WritePacket (byte[] packet) {
+		internal void WritePacket (byte[] packet) {
 			// FIXME: Throw ClosedConnectionException () if the connection is closed
 			// FIXME: Throw ClosedConnectionException () if another thread closes the connection
 			// FIXME: Locking
-			socket.Send (packet);
+			TransportSend (packet, 0, packet.Length);
 		}
 
-		public void Close () {
+		internal void Close () {
 			closed = true;
 		}
 
-		public bool IsClosed {
+		internal bool IsClosed {
 			get {
 				return closed;
 			}
@@ -1065,7 +1155,9 @@ namespace Mono.Debugger.Soft
 					if (!res)
 						break;
 				} catch (Exception ex) {
-					Console.WriteLine (ex);
+					if (!closed) {
+						Console.WriteLine (ex);
+					}
 					break;
 				}
 			}
@@ -1073,7 +1165,7 @@ namespace Mono.Debugger.Soft
 			lock (reply_packets_monitor) {
 				disconnected = true;
 				Monitor.PulseAll (reply_packets_monitor);
-				socket.Close ();
+				TransportClose ();
 			}
 			EventHandler.VMDisconnect (0, 0, null);
 		}
@@ -1093,6 +1185,13 @@ namespace Mono.Debugger.Soft
 						if (cb == null) {
 							reply_packets [id] = packet;
 							Monitor.PulseAll (reply_packets_monitor);
+						} else {
+							int c = reply_cb_counts [id];
+							c --;
+							if (c == 0) {
+								reply_cbs.Remove (id);
+								reply_cb_counts.Remove (id);
+							}
 						}
 					}
 
@@ -1210,40 +1309,123 @@ namespace Mono.Debugger.Soft
 				return true;
 		}
 
-		public IEventHandler EventHandler {
+		internal IEventHandler EventHandler {
 			get; set;
 		}
 
+		static String CommandString (CommandSet command_set, int command)
+		{
+			string cmd;
+			switch (command_set) {
+			case CommandSet.VM:
+				cmd = ((CmdVM)command).ToString ();
+				break;
+			case CommandSet.OBJECT_REF:
+				cmd = ((CmdObjectRef)command).ToString ();
+				break;
+			case CommandSet.STRING_REF:
+				cmd = ((CmdStringRef)command).ToString ();
+				break;
+			case CommandSet.THREAD:
+				cmd = ((CmdThread)command).ToString ();
+				break;
+			case CommandSet.ARRAY_REF:
+				cmd = ((CmdArrayRef)command).ToString ();
+				break;
+			case CommandSet.EVENT_REQUEST:
+				cmd = ((CmdEventRequest)command).ToString ();
+				break;
+			case CommandSet.STACK_FRAME:
+				cmd = ((CmdStackFrame)command).ToString ();
+				break;
+			case CommandSet.APPDOMAIN:
+				cmd = ((CmdAppDomain)command).ToString ();
+				break;
+			case CommandSet.ASSEMBLY:
+				cmd = ((CmdAssembly)command).ToString ();
+				break;
+			case CommandSet.METHOD:
+				cmd = ((CmdMethod)command).ToString ();
+				break;
+			case CommandSet.TYPE:
+				cmd = ((CmdType)command).ToString ();
+				break;
+			case CommandSet.MODULE:
+				cmd = ((CmdModule)command).ToString ();
+				break;
+			case CommandSet.EVENT:
+				cmd = ((CmdEvent)command).ToString ();
+				break;
+			default:
+				cmd = command.ToString ();
+				break;
+			}
+			return string.Format ("[{0} {1}]", command_set, cmd);
+		}
+
+		long total_protocol_ticks;
+
+		void LogPacket (int packet_id, byte[] encoded_packet, byte[] reply_packet, CommandSet command_set, int command, Stopwatch watch) {
+			watch.Stop ();
+			total_protocol_ticks += watch.ElapsedTicks;
+			var ts = TimeSpan.FromTicks (total_protocol_ticks);
+			string msg = string.Format ("Packet: {0} sent: {1} received: {2} ms: {3} total ms: {4} {5}",
+			   packet_id, encoded_packet.Length, reply_packet.Length, watch.ElapsedMilliseconds,
+			   (ts.Seconds * 1000) + ts.Milliseconds,
+			   CommandString (command_set, command));
+
+			LoggingStream.WriteLine (msg);
+			LoggingStream.Flush ();
+		}
+
 		/* Send a request and call cb when a result is received */
-		int Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb) {
+		int Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb, int count) {
 			int id = IdGenerator;
+
+			Stopwatch watch = null;
+			if (EnableConnectionLogging)
+				watch = Stopwatch.StartNew ();
+
+			byte[] encoded_packet;
+			if (packet == null)
+				encoded_packet = EncodePacket (id, (int)command_set, command, null, 0);
+			else
+				encoded_packet = EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset);
 
 			lock (reply_packets_monitor) {
 				reply_cbs [id] = delegate (int packet_id, byte[] p) {
+					if (EnableConnectionLogging)
+						LogPacket (packet_id, encoded_packet, p, command_set, command, watch);
 					/* Run the callback on a tp thread to avoid blocking the receive thread */
 					PacketReader r = new PacketReader (p);
 					cb.BeginInvoke (r, null, null);
 				};
+				reply_cb_counts [id] = count;
 			}
-						
-			if (packet == null)
-				WritePacket (EncodePacket (id, (int)command_set, command, null, 0));
-			else
-				WritePacket (EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset));
+
+			WritePacket (encoded_packet);
 
 			return id;
 		}
 
 		PacketReader SendReceive (CommandSet command_set, int command, PacketWriter packet) {
 			int id = IdGenerator;
+			Stopwatch watch = null;
 
 			if (disconnected)
 				throw new VMDisconnectedException ();
 
+			if (EnableConnectionLogging)
+				watch = Stopwatch.StartNew ();
+
+			byte[] encoded_packet;
+
 			if (packet == null)
-				WritePacket (EncodePacket (id, (int)command_set, command, null, 0));
+				encoded_packet = EncodePacket (id, (int)command_set, command, null, 0);
 			else
-				WritePacket (EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset));
+				encoded_packet = EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset);
+
+			WritePacket (encoded_packet);
 
 			int packetId = id;
 
@@ -1254,6 +1436,9 @@ namespace Mono.Debugger.Soft
 						byte[] reply = reply_packets [packetId];
 						reply_packets.Remove (packetId);
 						PacketReader r = new PacketReader (reply);
+
+						if (EnableConnectionLogging)
+							LogPacket (packetId, encoded_packet, reply, command_set, command, watch);
 						if (r.ErrorCode != 0) {
 							if (ErrorHandler != null)
 								ErrorHandler (this, new ErrorHandlerEventArgs () { ErrorCode = (ErrorCode)r.ErrorCode });
@@ -1340,7 +1525,7 @@ namespace Mono.Debugger.Soft
 		 * Implementation of debugger commands
 		 */
 
-		public VersionInfo VM_GetVersion () {
+		internal VersionInfo VM_GetVersion () {
 			var res = SendReceive (CommandSet.VM, (int)CmdVM.VERSION, null);
 			VersionInfo info = new VersionInfo ();
 			info.VMVersion = res.ReadString ();
@@ -1349,11 +1534,11 @@ namespace Mono.Debugger.Soft
 			return info;
 		}
 
-		public void VM_SetProtocolVersion (int major, int minor) {
+		internal void VM_SetProtocolVersion (int major, int minor) {
 			SendReceive (CommandSet.VM, (int)CmdVM.SET_PROTOCOL_VERSION, new PacketWriter ().WriteInt (major).WriteInt (minor));
 		}
 
-		public long[] VM_GetThreads () {
+		internal long[] VM_GetThreads () {
 			var res = SendReceive (CommandSet.VM, (int)CmdVM.ALL_THREADS, null);
 			int len = res.ReadInt ();
 			long[] arr = new long [len];
@@ -1362,23 +1547,23 @@ namespace Mono.Debugger.Soft
 			return arr;
 		}
 
-		public void VM_Suspend () {
+		internal void VM_Suspend () {
 			SendReceive (CommandSet.VM, (int)CmdVM.SUSPEND);
 		}
 
-		public void VM_Resume () {
+		internal void VM_Resume () {
 			SendReceive (CommandSet.VM, (int)CmdVM.RESUME);
 		}
 
-		public void VM_Exit (int exitCode) {
+		internal void VM_Exit (int exitCode) {
 			SendReceive (CommandSet.VM, (int)CmdVM.EXIT, new PacketWriter ().WriteInt (exitCode));
 		}
 
-		public void VM_Dispose () {
+		internal void VM_Dispose () {
 			SendReceive (CommandSet.VM, (int)CmdVM.DISPOSE);
 		}
 
-		public ValueImpl VM_InvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, out ValueImpl exc) {
+		internal ValueImpl VM_InvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, out ValueImpl exc) {
 			exc = null;
 			PacketReader r = SendReceive (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments));
 			if (r.ReadByte () == 0) {
@@ -1389,9 +1574,9 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ErrorCode error, object state);
+		internal delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ErrorCode error, object state);
 
-		public int VM_BeginInvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
+		internal int VM_BeginInvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
 			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments), delegate (PacketReader r) {
 					ValueImpl v, exc;
 
@@ -1408,36 +1593,84 @@ namespace Mono.Debugger.Soft
 
 						callback (v, exc, 0, state);
 					}
-				});
+				}, 1);
 		}
 
-		public void VM_AbortInvoke (long thread, int id)
+		internal int VM_BeginInvokeMethods (long thread, long[] methods, ValueImpl this_arg, List<ValueImpl[]> arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
+			// FIXME: Merge this with INVOKE_METHOD
+			var w = new PacketWriter ();
+			w.WriteId (thread);
+			w.WriteInt ((int)flags);
+			w.WriteInt (methods.Length);
+			for (int i = 0; i < methods.Length; ++i) {
+				w.WriteId (methods [i]);
+				w.WriteValue (this_arg);
+				w.WriteInt (arguments [i].Length);
+				w.WriteValues (arguments [i]);
+			}
+			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHODS, w, delegate (PacketReader r) {
+					ValueImpl v, exc;
+
+					if (r.ErrorCode != 0) {
+						callback (null, null, (ErrorCode)r.ErrorCode, state);
+					} else {
+						if (r.ReadByte () == 0) {
+							exc = r.ReadValue ();
+							v = null;
+						} else {
+							v = r.ReadValue ();
+							exc = null;
+						}
+
+						callback (v, exc, 0, state);
+					}
+				}, methods.Length);
+		}
+
+		internal void VM_AbortInvoke (long thread, int id)
 		{
 			SendReceive (CommandSet.VM, (int)CmdVM.ABORT_INVOKE, new PacketWriter ().WriteId (thread).WriteInt (id));
 		}
 
-		public void SetSocketTimeouts (int send_timeout, int receive_timeout, int keepalive_interval)
+		internal void SetSocketTimeouts (int send_timeout, int receive_timeout, int keepalive_interval)
 		{
-			socket.SendTimeout = send_timeout;
-			socket.ReceiveTimeout = receive_timeout;
+			TransportSetTimeouts (send_timeout, receive_timeout);
 			SendReceive (CommandSet.VM, (int)CmdVM.SET_KEEPALIVE, new PacketWriter ().WriteId (keepalive_interval));
+		}
+
+		internal long[] VM_GetTypesForSourceFile (string fname, bool ignoreCase) {
+			var res = SendReceive (CommandSet.VM, (int)CmdVM.GET_TYPES_FOR_SOURCE_FILE, new PacketWriter ().WriteString (fname).WriteBool (ignoreCase));
+			int count = res.ReadInt ();
+			long[] types = new long [count];
+			for (int i = 0; i < count; ++i)
+				types [i] = res.ReadId ();
+			return types;
+		}
+
+		internal long[] VM_GetTypes (string name, bool ignoreCase) {
+			var res = SendReceive (CommandSet.VM, (int)CmdVM.GET_TYPES, new PacketWriter ().WriteString (name).WriteBool (ignoreCase));
+			int count = res.ReadInt ();
+			long[] types = new long [count];
+			for (int i = 0; i < count; ++i)
+				types [i] = res.ReadId ();
+			return types;
 		}
 
 		/*
 		 * DOMAIN
 		 */
 
-		public long RootDomain {
+		internal long RootDomain {
 			get {
 				return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.GET_ROOT_DOMAIN, null).ReadId ();
 			}
 		}
 
-		public string Domain_GetName (long id) {
+		internal string Domain_GetName (long id) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.GET_FRIENDLY_NAME, new PacketWriter ().WriteId (id)).ReadString ();
 		}
 
-		public long[] Domain_GetAssemblies (long id) {
+		internal long[] Domain_GetAssemblies (long id) {
 			var res = SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.GET_ASSEMBLIES, new PacketWriter ().WriteId (id));
 			int count = res.ReadInt ();
 			long[] assemblies = new long [count];
@@ -1446,19 +1679,19 @@ namespace Mono.Debugger.Soft
 			return assemblies;
 		}
 
-		public long Domain_GetEntryAssembly (long id) {
+		internal long Domain_GetEntryAssembly (long id) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.GET_ENTRY_ASSEMBLY, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public long Domain_GetCorlib (long id) {
+		internal long Domain_GetCorlib (long id) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.GET_CORLIB, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public long Domain_CreateString (long id, string s) {
+		internal long Domain_CreateString (long id, string s) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_STRING, new PacketWriter ().WriteId (id).WriteString (s)).ReadId ();
 		}
 
-		public long Domain_CreateBoxedValue (long id, long type_id, ValueImpl v) {
+		internal long Domain_CreateBoxedValue (long id, long type_id, ValueImpl v) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_BOXED_VALUE, new PacketWriter ().WriteId (id).WriteId (type_id).WriteValue (v)).ReadId ();
 		}
 
@@ -1466,33 +1699,61 @@ namespace Mono.Debugger.Soft
 		 * METHOD
 		 */
 
-		public string Method_GetName (long id) {
+		internal string Method_GetName (long id) {
 			return SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_NAME, new PacketWriter ().WriteId (id)).ReadString ();
 		}
 
-		public long Method_GetDeclaringType (long id) {
+		internal long Method_GetDeclaringType (long id) {
 			return SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_DECLARING_TYPE, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public DebugInfo Method_GetDebugInfo (long id) {
+		internal DebugInfo Method_GetDebugInfo (long id) {
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_DEBUG_INFO, new PacketWriter ().WriteId (id));
 
 			DebugInfo info = new DebugInfo ();
 			info.max_il_offset = res.ReadInt ();
-			info.filename = res.ReadString ();
+
+			SourceInfo[] sources = null;
+			if (Version.AtLeast (2, 13)) {
+				int n = res.ReadInt ();
+				sources = new SourceInfo [n];
+				for (int i = 0; i < n; ++i) {
+					sources [i].source_file = res.ReadString ();
+					if (Version.AtLeast (2, 14)) {
+						sources [i].hash = new byte [16];
+						for (int j = 0; j < 16; ++j)
+							sources [i].hash [j] = (byte)res.ReadByte ();
+					}
+				}
+			} else {
+				sources = new SourceInfo [1];
+				sources [0].source_file = res.ReadString ();
+			}
 
 			int n_il_offsets = res.ReadInt ();
 			info.il_offsets = new int [n_il_offsets];
 			info.line_numbers = new int [n_il_offsets];
+			info.source_files = new SourceInfo [n_il_offsets];
+			info.column_numbers = new int [n_il_offsets];
 			for (int i = 0; i < n_il_offsets; ++i) {
 				info.il_offsets [i] = res.ReadInt ();
 				info.line_numbers [i] = res.ReadInt ();
+				if (Version.AtLeast (2, 12)) {
+					int idx = res.ReadInt ();
+					info.source_files [i] = idx >= 0 ? sources [idx] : default (SourceInfo);
+				} else {
+					info.source_files [i] = sources [0];
+				}
+				if (Version.AtLeast (2, 19))
+					info.column_numbers [i] = res.ReadInt ();
+				else
+					info.column_numbers [i] = 0;
 			}
 
 			return info;
 		}
 
-		public ParamInfo Method_GetParamInfo (long id) {
+		internal ParamInfo Method_GetParamInfo (long id) {
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_PARAM_INFO, new PacketWriter ().WriteId (id));
 
 			ParamInfo info = new ParamInfo ();
@@ -1510,7 +1771,7 @@ namespace Mono.Debugger.Soft
 			return info;
 		}
 
-		public LocalsInfo Method_GetLocalsInfo (long id) {
+		internal LocalsInfo Method_GetLocalsInfo (long id) {
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_LOCALS_INFO, new PacketWriter ().WriteId (id));
 
 			LocalsInfo info = new LocalsInfo ();
@@ -1531,18 +1792,31 @@ namespace Mono.Debugger.Soft
 			return info;
 		}
 
-		public MethodInfo Method_GetInfo (long id) {
+		internal MethodInfo Method_GetInfo (long id) {
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_INFO, new PacketWriter ().WriteId (id));
 
 			MethodInfo info = new MethodInfo ();
 			info.attributes = res.ReadInt ();
 			info.iattributes = res.ReadInt ();
 			info.token = res.ReadInt ();
-
+			if (Version.AtLeast (2, 12)) {
+				int attrs = res.ReadByte ();
+				if ((attrs & (1 << 0)) != 0)
+					info.is_gmd = true;
+				if ((attrs & (1 << 1)) != 0)
+					info.is_generic_method = true;
+				info.gmd = res.ReadId ();
+				if (Version.AtLeast (2, 15)) {
+					if (info.is_generic_method) {
+						int n = res.ReadInt ();
+						info.type_args = res.ReadIds (n);
+					}
+				}
+			}
 			return info;
 		}
 
-		public MethodBodyInfo Method_GetBody (long id) {
+		internal MethodBodyInfo Method_GetBody (long id) {
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_BODY, new PacketWriter ().WriteId (id));
 
 			MethodBodyInfo info = new MethodBodyInfo ();
@@ -1550,10 +1824,32 @@ namespace Mono.Debugger.Soft
 			for (int i = 0; i < info.il.Length; ++i)
 				info.il [i] = (byte)res.ReadByte ();
 
+			if (Version.AtLeast (2, 18)) {
+				info.clauses = new ExceptionClauseInfo [res.ReadInt ()];
+
+				for (int i = 0; i < info.clauses.Length; ++i) {
+					var clause = new ExceptionClauseInfo {
+						flags = (ExceptionClauseFlags) res.ReadInt (),
+						try_offset = res.ReadInt (),
+						try_length = res.ReadInt (),
+						handler_offset = res.ReadInt (),
+						handler_length = res.ReadInt (),
+					};
+
+					if (clause.flags == ExceptionClauseFlags.None)
+						clause.catch_type_id = res.ReadId ();
+					else if (clause.flags == ExceptionClauseFlags.Filter)
+						clause.filter_offset = res.ReadInt ();
+
+					info.clauses [i] = clause;
+				}
+			} else
+				info.clauses = new ExceptionClauseInfo [0];
+
 			return info;
 		}
 
-		public ResolvedToken Method_ResolveToken (long id, int token) {
+		internal ResolvedToken Method_ResolveToken (long id, int token) {
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.RESOLVE_TOKEN, new PacketWriter ().WriteId (id).WriteInt (token));
 
 			TokenType type = (TokenType)res.ReadByte ();
@@ -1571,33 +1867,41 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		internal CattrInfo[] Method_GetCustomAttributes (long id, long attr_type_id, bool inherit) {
+			PacketReader r = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_CATTRS, new PacketWriter ().WriteId (id).WriteId (attr_type_id));
+			return ReadCattrs (r);
+		}
+
 		/*
 		 * THREAD
 		 */
 
-		public string Thread_GetName (long id) {
+		internal string Thread_GetName (long id) {
 			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_NAME, new PacketWriter ().WriteId (id)).ReadString ();
 		}
 
-		public FrameInfo[] Thread_GetFrameInfo (long id, int start_frame, int length) {
+		internal FrameInfo[] Thread_GetFrameInfo (long id, int start_frame, int length) {
 			var res = SendReceive (CommandSet.THREAD, (int)CmdThread.GET_FRAME_INFO, new PacketWriter ().WriteId (id).WriteInt (start_frame).WriteInt (length));
 			int count = res.ReadInt ();
 
 			var frames = new FrameInfo [count];
 			for (int i = 0; i < count; ++i) {
-				frames [i].id = res.ReadInt ();
-				frames [i].method = res.ReadId ();
-				frames [i].il_offset = res.ReadInt ();
-				frames [i].flags = (StackFrameFlags)res.ReadByte ();
+				var f = new FrameInfo ();
+				f.id = res.ReadInt ();
+				f.method = res.ReadId ();
+				f.il_offset = res.ReadInt ();
+				f.flags = (StackFrameFlags)res.ReadByte ();
+				frames [i] = f;
 			}
+
 			return frames;
 		}
 
-		public int Thread_GetState (long id) {
+		internal int Thread_GetState (long id) {
 			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_STATE, new PacketWriter ().WriteId (id)).ReadInt ();
 		}
 
-		public ThreadInfo Thread_GetInfo (long id) {
+		internal ThreadInfo Thread_GetInfo (long id) {
 			PacketReader r = SendReceive (CommandSet.THREAD, (int)CmdThread.GET_INFO, new PacketWriter ().WriteId (id));
 
 			ThreadInfo res = new ThreadInfo () { is_thread_pool = r.ReadByte () > 0 ? true : false };
@@ -1605,11 +1909,11 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public long Thread_GetId (long id) {
+		internal long Thread_GetId (long id) {
 			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ID, new PacketWriter ().WriteId (id)).ReadLong ();
 		}
 
-		public long Thread_GetTID (long id) {
+		internal long Thread_GetTID (long id) {
 			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_TID, new PacketWriter ().WriteId (id)).ReadLong ();
 		}
 
@@ -1617,7 +1921,7 @@ namespace Mono.Debugger.Soft
 		 * MODULE
 		 */
 
-		public ModuleInfo Module_GetInfo (long id) {
+		internal ModuleInfo Module_GetInfo (long id) {
 			PacketReader r = SendReceive (CommandSet.MODULE, (int)CmdModule.GET_INFO, new PacketWriter ().WriteId (id));
 			ModuleInfo info = new ModuleInfo { Name = r.ReadString (), ScopeName = r.ReadString (), FQName = r.ReadString (), Guid = r.ReadString (), Assembly = r.ReadId () };
 			return info;
@@ -1627,27 +1931,27 @@ namespace Mono.Debugger.Soft
 		 * ASSEMBLY
 		 */
 
-		public string Assembly_GetLocation (long id) {
+		internal string Assembly_GetLocation (long id) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_LOCATION, new PacketWriter ().WriteId (id)).ReadString ();
 		}
 
-		public long Assembly_GetEntryPoint (long id) {
+		internal long Assembly_GetEntryPoint (long id) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_ENTRY_POINT, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public long Assembly_GetManifestModule (long id) {
+		internal long Assembly_GetManifestModule (long id) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_MANIFEST_MODULE, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public long Assembly_GetObject (long id) {
+		internal long Assembly_GetObject (long id) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_OBJECT, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public long Assembly_GetType (long id, string name, bool ignoreCase) {
+		internal long Assembly_GetType (long id, string name, bool ignoreCase) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_TYPE, new PacketWriter ().WriteId (id).WriteString (name).WriteBool (ignoreCase)).ReadId ();
 		}
 
-		public string Assembly_GetName (long id) {
+		internal string Assembly_GetName (long id) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_NAME, new PacketWriter ().WriteId (id)).ReadString ();
 		}
 
@@ -1655,7 +1959,7 @@ namespace Mono.Debugger.Soft
 		 * TYPE
 		 */
 
-		public TypeInfo Type_GetInfo (long id) {
+		internal TypeInfo Type_GetInfo (long id) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_INFO, new PacketWriter ().WriteId (id));
 			TypeInfo res = new TypeInfo ();
 
@@ -1675,16 +1979,25 @@ namespace Mono.Debugger.Soft
 			res.is_primitive = (b & 4) != 0;
 			res.is_valuetype = (b & 8) != 0;
 			res.is_enum = (b & 16) != 0;
+			res.is_gtd = (b & 32) != 0;
+			res.is_generic_type = (b & 64) != 0;
 
 			int nested_len = r.ReadInt ();
 			res.nested = new long [nested_len];
 			for (int i = 0; i < nested_len; ++i)
 				res.nested [i] = r.ReadId ();
 
+			if (Version.AtLeast (2, 12))
+				res.gtd = r.ReadId ();
+			if (Version.AtLeast (2, 15) && res.is_generic_type) {
+				int n = r.ReadInt ();
+				res.type_args = r.ReadIds (n);
+			}
+
 			return res;
 		}
 
-		public long[] Type_GetMethods (long id) {
+		internal long[] Type_GetMethods (long id) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_METHODS, new PacketWriter ().WriteId (id));
 
 			int n = r.ReadInt ();
@@ -1694,7 +2007,7 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public long[] Type_GetFields (long id, out string[] names, out long[] types, out int[] attrs) {
+		internal long[] Type_GetFields (long id, out string[] names, out long[] types, out int[] attrs) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_FIELDS, new PacketWriter ().WriteId (id));
 
 			int n = r.ReadInt ();
@@ -1711,7 +2024,7 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public PropInfo[] Type_GetProperties (long id) {
+		internal PropInfo[] Type_GetProperties (long id) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_PROPERTIES, new PacketWriter ().WriteId (id));
 
 			int n = r.ReadInt ();
@@ -1728,11 +2041,11 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public long Type_GetObject (long id) {
+		internal long Type_GetObject (long id) {
 			return SendReceive (CommandSet.TYPE, (int)CmdType.GET_OBJECT, new PacketWriter ().WriteId (id)).ReadId ();
 		}
 
-		public ValueImpl[] Type_GetValues (long id, long[] fields, long thread_id) {
+		internal ValueImpl[] Type_GetValues (long id, long[] fields, long thread_id) {
 			int len = fields.Length;
 			PacketReader r;
 			if (thread_id != 0)
@@ -1746,11 +2059,11 @@ namespace Mono.Debugger.Soft
 			return res;
 		}			
 
-		public void Type_SetValues (long id, long[] fields, ValueImpl[] values) {
+		internal void Type_SetValues (long id, long[] fields, ValueImpl[] values) {
 			SendReceive (CommandSet.TYPE, (int)CmdType.SET_VALUES, new PacketWriter ().WriteId (id).WriteInt (fields.Length).WriteIds (fields).WriteValues (values));
 		}
 
-		public string[] Type_GetSourceFiles (long id, bool return_full_paths) {
+		internal string[] Type_GetSourceFiles (long id, bool return_full_paths) {
 			var r = SendReceive (CommandSet.TYPE, return_full_paths ? (int)CmdType.GET_SOURCE_FILES_2 : (int)CmdType.GET_SOURCE_FILES, new PacketWriter ().WriteId (id));
 			int len = r.ReadInt ();
 			string[] res = new string [len];
@@ -1759,30 +2072,60 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public bool Type_IsAssignableFrom (long id, long c_id) {
+		internal bool Type_IsAssignableFrom (long id, long c_id) {
 			return SendReceive (CommandSet.TYPE, (int)CmdType.IS_ASSIGNABLE_FROM, new PacketWriter ().WriteId (id).WriteId (c_id)).ReadByte () > 0;
 		}
 
-		public CattrInfo[] Type_GetCustomAttributes (long id, long attr_type_id, bool inherit) {
+		internal CattrInfo[] Type_GetCustomAttributes (long id, long attr_type_id, bool inherit) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_CATTRS, new PacketWriter ().WriteId (id).WriteId (attr_type_id));
 			return ReadCattrs (r);
 		}
 
-		public CattrInfo[] Type_GetFieldCustomAttributes (long id, long field_id, long attr_type_id, bool inherit) {
+		internal CattrInfo[] Type_GetFieldCustomAttributes (long id, long field_id, long attr_type_id, bool inherit) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_FIELD_CATTRS, new PacketWriter ().WriteId (id).WriteId (field_id).WriteId (attr_type_id));
 			return ReadCattrs (r);
 		}
 
-		public CattrInfo[] Type_GetPropertyCustomAttributes (long id, long field_id, long attr_type_id, bool inherit) {
+		internal CattrInfo[] Type_GetPropertyCustomAttributes (long id, long field_id, long attr_type_id, bool inherit) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_PROPERTY_CATTRS, new PacketWriter ().WriteId (id).WriteId (field_id).WriteId (attr_type_id));
 			return ReadCattrs (r);
 		}
-			
+
+		public long[] Type_GetMethodsByNameFlags (long id, string name, int flags, bool ignoreCase) {
+			flags |= ignoreCase ? (int)BindingFlagsExtensions.BINDING_FLAGS_IGNORE_CASE : 0;
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.CMD_TYPE_GET_METHODS_BY_NAME_FLAGS, new PacketWriter ().WriteId (id).WriteString (name).WriteInt (flags));
+			int len = r.ReadInt ();
+			long[] res = new long [len];
+			for (int i = 0; i < len; ++i)
+				res [i] = r.ReadId ();
+			return res;
+		}
+
+		internal long[] Type_GetInterfaces (long id) {
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_INTERFACES, new PacketWriter ().WriteId (id));
+			int len = r.ReadInt ();
+			return r.ReadIds (len);
+		}
+
+		internal IfaceMapInfo[] Type_GetInterfaceMap (long id, long[] ids) {
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_INTERFACE_MAP, new PacketWriter ().WriteId (id).WriteInt (ids.Length).WriteIds (ids));
+			var res = new IfaceMapInfo [ids.Length];
+			for (int i = 0; i < ids.Length; ++i) {
+				int n = r.ReadInt ();
+
+				res [i].iface_id = ids [i];
+				res [i].iface_methods = r.ReadIds (n);
+				res [i].target_methods = r.ReadIds (n);
+			}
+
+			return res;
+		}
+
 		/*
 		 * EVENTS
 		 */
 
-		public int EnableEvent (EventType etype, SuspendPolicy suspend_policy, List<Modifier> mods) {
+		internal int EnableEvent (EventType etype, SuspendPolicy suspend_policy, List<Modifier> mods) {
 			var w = new PacketWriter ().WriteByte ((byte)etype).WriteByte ((byte)suspend_policy);
 			if (mods != null) {
 				if (mods.Count > 255)
@@ -1801,6 +2144,8 @@ namespace Mono.Debugger.Soft
 						w.WriteId ((mod as StepModifier).Thread);
 						w.WriteInt ((mod as StepModifier).Size);
 						w.WriteInt ((mod as StepModifier).Depth);
+						if (Version.AtLeast (2, 16))
+							w.WriteInt ((mod as StepModifier).Filter);
 					} else if (mod is ThreadModifier) {
 						w.WriteByte ((byte)ModifierKind.THREAD_ONLY);
 						w.WriteId ((mod as ThreadModifier).Thread);
@@ -1821,6 +2166,18 @@ namespace Mono.Debugger.Soft
 						w.WriteInt (amod.Assemblies.Length);
 						foreach (var id in amod.Assemblies)
 							w.WriteId (id);
+					} else if (mod is SourceFileModifier) {
+						w.WriteByte ((byte)ModifierKind.SOURCE_FILE_ONLY);
+						var smod = (mod as SourceFileModifier);
+						w.WriteInt (smod.SourceFiles.Length);
+						foreach (var s in smod.SourceFiles)
+							w.WriteString (s);
+					} else if (mod is TypeNameModifier) {
+						w.WriteByte ((byte)ModifierKind.TYPE_NAME_ONLY);
+						var tmod = (mod as TypeNameModifier);
+						w.WriteInt (tmod.TypeNames.Length);
+						foreach (var s in tmod.TypeNames)
+							w.WriteString (s);
 					} else {
 						throw new NotImplementedException ();
 					}
@@ -1831,23 +2188,23 @@ namespace Mono.Debugger.Soft
 			return SendReceive (CommandSet.EVENT_REQUEST, (int)CmdEventRequest.SET, w).ReadInt ();
 		}
 
-		public void ClearEventRequest (EventType etype, int req_id) {
+		internal void ClearEventRequest (EventType etype, int req_id) {
 			SendReceive (CommandSet.EVENT_REQUEST, (int)CmdEventRequest.CLEAR, new PacketWriter ().WriteByte ((byte)etype).WriteInt (req_id));
 		}			
 
-		public void ClearAllBreakpoints () {
+		internal void ClearAllBreakpoints () {
 			SendReceive (CommandSet.EVENT_REQUEST, (int)CmdEventRequest.CLEAR_ALL_BREAKPOINTS, new PacketWriter ());
 		}
 			
 		/*
 		 * STACK FRAME
 		 */
-		public ValueImpl StackFrame_GetThis (long thread_id, long id) {
+		internal ValueImpl StackFrame_GetThis (long thread_id, long id) {
 			PacketReader r = SendReceive (CommandSet.STACK_FRAME, (int)CmdStackFrame.GET_THIS, new PacketWriter ().WriteId (thread_id).WriteId (id));
 			return r.ReadValue ();
 		}
 
-		public ValueImpl[] StackFrame_GetValues (long thread_id, long id, int[] pos) {
+		internal ValueImpl[] StackFrame_GetValues (long thread_id, long id, int[] pos) {
 			/* pos < 0 -> argument at pos (-pos) - 1 */
 			/* pos >= 0 -> local at pos */
 			int len = pos.Length;
@@ -1859,7 +2216,7 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public void StackFrame_SetValues (long thread_id, long id, int[] pos, ValueImpl[] values) {
+		internal void StackFrame_SetValues (long thread_id, long id, int[] pos, ValueImpl[] values) {
 			/* pos < 0 -> argument at pos (-pos) - 1 */
 			/* pos >= 0 -> local at pos */
 			int len = pos.Length;
@@ -1869,7 +2226,7 @@ namespace Mono.Debugger.Soft
 		/*
 		 * ARRAYS
 		 */
-		public int[] Array_GetLength (long id, out int rank, out int[] lower_bounds) {
+		internal int[] Array_GetLength (long id, out int rank, out int[] lower_bounds) {
 			var r = SendReceive (CommandSet.ARRAY_REF, (int)CmdArrayRef.GET_LENGTH, new PacketWriter ().WriteId (id));
 			rank = r.ReadInt ();
 			int[] res = new int [rank];
@@ -1881,7 +2238,7 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public ValueImpl[] Array_GetValues (long id, int index, int len) {
+		internal ValueImpl[] Array_GetValues (long id, int index, int len) {
 			var r = SendReceive (CommandSet.ARRAY_REF, (int)CmdArrayRef.GET_VALUES, new PacketWriter ().WriteId (id).WriteInt (index).WriteInt (len));
 			ValueImpl[] res = new ValueImpl [len];
 			for (int i = 0; i < len; ++i)
@@ -1889,29 +2246,41 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public void Array_SetValues (long id, int index, ValueImpl[] values) {
+		internal void Array_SetValues (long id, int index, ValueImpl[] values) {
 			SendReceive (CommandSet.ARRAY_REF, (int)CmdArrayRef.SET_VALUES, new PacketWriter ().WriteId (id).WriteInt (index).WriteInt (values.Length).WriteValues (values));
 		}
 
 		/*
 		 * STRINGS
 		 */
-		public string String_GetValue (long id) {
+		internal string String_GetValue (long id) {
 			return SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_VALUE, new PacketWriter ().WriteId (id)).ReadString ();
+		}			
+
+		internal int String_GetLength (long id) {
+			return (int)SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_LENGTH, new PacketWriter ().WriteId (id)).ReadLong ();
+		}			
+
+		internal char[] String_GetChars (long id, int index, int length) {
+			var r = SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_CHARS, new PacketWriter ().WriteId (id).WriteLong (index).WriteLong (length));
+			var res = new char [length];
+			for (int i = 0; i < length; ++i)
+				res [i] = (char)r.ReadShort ();
+			return res;
 		}			
 
 		/*
 		 * OBJECTS
 		 */
-		public long Object_GetType (long id) {
+		internal long Object_GetType (long id) {
 			return SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.GET_TYPE, new PacketWriter ().WriteId (id)).ReadId ();
 		}			
 
-		public long Object_GetDomain (long id) {
+		internal long Object_GetDomain (long id) {
 			return SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.GET_DOMAIN, new PacketWriter ().WriteId (id)).ReadId ();
 		}			
 
-		public ValueImpl[] Object_GetValues (long id, long[] fields) {
+		internal ValueImpl[] Object_GetValues (long id, long[] fields) {
 			int len = fields.Length;
 			PacketReader r = SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.GET_VALUES, new PacketWriter ().WriteId (id).WriteInt (len).WriteIds (fields));
 
@@ -1921,18 +2290,69 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		public void Object_SetValues (long id, long[] fields, ValueImpl[] values) {
+		internal void Object_SetValues (long id, long[] fields, ValueImpl[] values) {
 			SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.SET_VALUES, new PacketWriter ().WriteId (id).WriteInt (fields.Length).WriteIds (fields).WriteValues (values));
 		}
 
-		public bool Object_IsCollected (long id) {
+		internal bool Object_IsCollected (long id) {
 			return SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.IS_COLLECTED, new PacketWriter ().WriteId (id)).ReadInt () == 1;
 		}			
 
-		public long Object_GetAddress (long id) {
+		internal long Object_GetAddress (long id) {
 			return SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.GET_ADDRESS, new PacketWriter ().WriteId (id)).ReadLong ();
 		}			
 
+		internal ObjectRefInfo Object_GetInfo (long id) {
+			ObjectRefInfo res = new ObjectRefInfo ();
+			PacketReader r = SendReceive (CommandSet.OBJECT_REF, (int)CmdObjectRef.GET_INFO, new PacketWriter ().WriteId (id));
+
+			res.type_id = r.ReadId ();
+			res.domain_id = r.ReadId ();
+			return res;
+		}
+
+		public void ForceDisconnect ()
+		{
+			TransportClose ();
+		}
+	}
+	
+	class TcpConnection : Connection
+	{
+		Socket socket;
+		
+		internal TcpConnection (Socket socket)
+		{
+			this.socket = socket;
+			//socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.NoDelay, 1);
+		}
+		
+		internal EndPoint EndPoint {
+			get {
+				return socket.RemoteEndPoint;
+			}
+		}
+		
+		protected override int TransportSend (byte[] buf, int buf_offset, int len)
+		{
+			return socket.Send (buf, buf_offset, len, SocketFlags.None);
+		}
+		
+		protected override int TransportReceive (byte[] buf, int buf_offset, int len)
+		{
+			return socket.Receive (buf, buf_offset, len, SocketFlags.None);
+		}
+		
+		protected override void TransportSetTimeouts (int send_timeout, int receive_timeout)
+		{
+			socket.SendTimeout = send_timeout;
+			socket.ReceiveTimeout = receive_timeout;
+		}
+		
+		protected override void TransportClose ()
+		{
+			socket.Close ();
+		}
 	}
 
 	/* This is the interface exposed by the debugger towards the debugger agent */

@@ -73,9 +73,6 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Dispose ()
 		{
 			PaintEventArgs pea = new PaintEventArgs (default_graphics, default_rect);
@@ -85,9 +82,6 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void IDisposable_IDispose ()
 		{
 			Bitmap bmp = new Bitmap (1, 1);

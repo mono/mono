@@ -234,6 +234,9 @@ namespace Mono.Data.Sqlite
 
         // Not overly concerned with the return value from a rollback.
         UnsafeNativeMethods.sqlite3_exec(db, ToUTF8("ROLLBACK"), IntPtr.Zero, IntPtr.Zero, out stmt);
+        // but free the error message if any!
+        if (stmt != IntPtr.Zero)
+          UnsafeNativeMethods.sqlite3_free (stmt);
       }
     }
   }
@@ -250,7 +253,20 @@ namespace Mono.Data.Sqlite
     ReadOnly = 0x01,
     ReadWrite = 0x02,
     Create = 0x04,
-    SharedCache = 0x01000000,
+    //SharedCache = 0x01000000,
     Default = 0x06,
+
+    // iOS Specific
+    FileProtectionComplete = 0x00100000,
+    FileProtectionCompleteUnlessOpen = 0x00200000,
+    FileProtectionCompleteUntilFirstUserAuthentication = 0x00300000,
+    FileProtectionNone = 0x00400000
+  }
+
+  // subset of the options available in http://www.sqlite.org/c3ref/c_config_getmalloc.html
+  public enum SQLiteConfig {
+    SingleThread = 1,
+    MultiThread = 2,
+    Serialized = 3,
   }
 }

@@ -1,7 +1,6 @@
 /Makefile
 /Makefile.in
 /culture-info-tables.h
-/icu_locales.tar.gz
+/*.zip
 /locale-builder.exe
 /locale-builder.exe.mdb
-/icu_langs.tar.gz

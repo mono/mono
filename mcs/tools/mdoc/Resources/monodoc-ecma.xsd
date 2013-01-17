@@ -17,6 +17,7 @@ add masterdoc support?
   <xs:attribute name="Deprecated" type="xs:boolean" />
   <xs:attribute name="FullName" type="xs:string" />
   <xs:attribute name="FullNameSP" type="xs:string" />
+  <xs:attribute name="id" type="xs:string" />
   <xs:attribute name="inherited" type="xs:string" />
   <xs:attribute name="language" type="xs:string" />
   <xs:attribute name="Language" type="xs:string" />
@@ -38,6 +39,7 @@ add masterdoc support?
   <xs:attribute name="subset" type="xs:string" />
   <xs:attribute name="Value" type="xs:string" />
   <xs:attribute name="version" type="xs:string" />
+  <xs:attribute name="tool" type="xs:string" />
   <xs:attribute name="type" type="xs:string" />
   <xs:attribute name="Type" type="xs:string" />
   <xs:attribute name="TypeParamName" type="xs:string" />
@@ -264,7 +266,30 @@ add masterdoc support?
         <xs:element ref="threadsafe" />
         <xs:element ref="typeparam" />
         <xs:element ref="filterpriority" />
+        <xs:element ref="related" />
       </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="relatedType">
+    <xs:restriction base="xs:string">
+      <!-- External code/application samples -->
+      <xs:enumeration value="sample"/>
+      <!-- e.g. ECMA, OPC, OData, ... specs -->
+      <xs:enumeration value="specification"/>
+      <!-- e.g. Apple/Android documentation -->
+      <xs:enumeration value="externalDocumentation" />
+      <!-- e.g. a more in-depth article at docs.xamarin.com -->
+      <xs:enumeration value="article" />
+	  <!-- e.g. a small article describing succintly a feature -->
+	  <xs:enumeration value="recipe" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="related">
+    <xs:complexType mixed="true">
+      <xs:attribute name="type" type="relatedType" />
+      <xs:attribute name="href" type="xs:anyURI" />
     </xs:complexType>
   </xs:element>
 
@@ -305,6 +330,7 @@ add masterdoc support?
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="block" />
         <xs:element ref="format" />
+        <xs:element ref="list" />
         <xs:element ref="para" />
         <xs:element ref="paramref" />
         <xs:element ref="see" />
@@ -509,8 +535,18 @@ add masterdoc support?
         <xs:element ref="theta" />
         <xs:element ref="typeparamref" />
         <xs:element ref="whitespace" />
+        <xs:element ref="img" />
       </xs:choice>
+      <xs:attribute ref="id" />
+      <xs:attribute ref="tool" />
     </xs:complexType>
+  </xs:element>
+
+  <xs:element name="img">
+	<xs:complexType>
+	  <xs:attribute name="href" type="xs:string" use="required" />
+	  <xs:attribute name="class" type="xs:string" use="optional" />
+	</xs:complexType>
   </xs:element>
 
   <xs:element name="param">
@@ -604,6 +640,7 @@ add masterdoc support?
   <xs:element name="returns">
     <xs:complexType mixed="true">
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="c" />
         <xs:element ref="format" />
         <xs:element ref="geq" />
         <xs:element ref="leq" />
@@ -1079,7 +1116,7 @@ add masterdoc support?
         </xs:element>
         <xs:element name="members">
           <xs:complexType>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
               <xs:element name="member">
                 <xs:complexType>
                   <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -1096,7 +1133,7 @@ add masterdoc support?
                     <xs:element ref="typeparam" />
                     <xs:element ref="value" />
                   </xs:choice>
-                  <xs:attribute name="name" type="xs:type" />
+                  <xs:attribute name="name" type="xs:string" />
                 </xs:complexType>
               </xs:element>
             </xs:choice>
