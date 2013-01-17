@@ -1213,7 +1213,7 @@ mono_save_custom_attrs (MonoImage *image, void *obj, MonoArray *cattrs)
 
 	mono_loader_lock ();
 	tmp = mono_image_property_lookup (image, obj, MONO_PROP_DYNAMIC_CATTR);
-	if (tmp)
+	if (tmp && !tmp->cached)
 		mono_custom_attrs_free (tmp);
 	mono_image_property_insert (image, obj, MONO_PROP_DYNAMIC_CATTR, ainfo);
 	mono_loader_unlock ();
@@ -1224,7 +1224,7 @@ mono_save_custom_attrs (MonoImage *image, void *obj, MonoArray *cattrs)
 void
 mono_custom_attrs_free (MonoCustomAttrInfo *ainfo)
 {
-	if (!ainfo->cached)
+	if (ainfo && !ainfo->cached)
 		g_free (ainfo);
 }
 
@@ -8345,7 +8345,16 @@ mono_custom_attrs_from_method (MonoMethod *method)
 MonoCustomAttrInfo*
 mono_custom_attrs_from_class (MonoClass *klass)
 {
+	MonoDomain* domain = mono_domain_get();
+
+	// Hashing attributes as a lookup optimization.
+	MonoCustomAttrInfo* hashed_attribute_info = (MonoCustomAttrInfo*)g_hash_table_lookup(domain->class_custom_atrributes, klass);
 	guint32 idx;
+
+	if(hashed_attribute_info != NULL) 
+	{
+		return hashed_attribute_info;
+	}
 
 	if (klass->generic_class)
 		klass = klass->generic_class->container_class;
@@ -8362,7 +8371,14 @@ mono_custom_attrs_from_class (MonoClass *klass)
 		idx <<= MONO_CUSTOM_ATTR_BITS;
 		idx |= MONO_CUSTOM_ATTR_TYPEDEF;
 	}
-	return mono_custom_attrs_from_index (klass->image, idx);
+
+	hashed_attribute_info = mono_custom_attrs_from_index (klass->image, idx);
+
+	g_hash_table_insert(domain->class_custom_atrributes, klass, hashed_attribute_info);
+	/* Tell users not to free hashed_attribute_info */
+	if (hashed_attribute_info != NULL)
+		hashed_attribute_info->cached = 1;
+	return hashed_attribute_info;
 }
 
 MonoCustomAttrInfo*

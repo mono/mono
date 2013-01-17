@@ -86,7 +86,7 @@ typedef struct ucontext {
  */
 
 #if !defined(MONO_CROSS_COMPILE)
-#if __APPLE__
+#if __APPLE__ || __QNXNTO__
 #define my_ucontext ucontext_t
 #else
 typedef struct my_ucontext {

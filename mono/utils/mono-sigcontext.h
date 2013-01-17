@@ -5,7 +5,7 @@
 
 #if defined(__i386__)
 
-#if defined(__FreeBSD__) || defined(__APPLE__)
+#if defined(__FreeBSD__) || defined(__APPLE__) || defined(__QNXNTO__)
 #include <ucontext.h>
 #endif
 #if defined(__APPLE__)
@@ -64,6 +64,16 @@
 	#define UCONTEXT_REG_ESI(ctx) ((ctx)->sc_esi)
 	#define UCONTEXT_REG_EDI(ctx) ((ctx)->sc_edi)
 	#define UCONTEXT_REG_EIP(ctx) ((ctx)->sc_eip)
+#elif defined(__QNXNTO__)
+	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.eax)
+	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.ebx)
+	#define UCONTEXT_REG_ECX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.ecx)
+	#define UCONTEXT_REG_EDX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.edx)
+	#define UCONTEXT_REG_EBP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.ebp)
+	#define UCONTEXT_REG_ESP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.esp)
+	#define UCONTEXT_REG_ESI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.esi)
+	#define UCONTEXT_REG_EDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.edi)
+	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.cpu.eip)
 #else
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_EAX])
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_EBX])

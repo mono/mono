@@ -160,9 +160,11 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	/* setup baudrate */
 	switch (baud_rate)
 	{
+#ifndef __QNXNTO__
 	case 230400: 
 	    baud_rate = B230400;
 	    break;
+#endif
 	case 115200: 
 	    baud_rate = B115200;
 	    break;

@@ -218,7 +218,8 @@ handle_cattrs (MonoCustomAttrInfo* cattrs)
 	for (i = 0; i < cattrs->num_attrs; ++i) {
 		add_types_from_method (cattrs->attrs [i].ctor);
 	}
-	mono_custom_attrs_free (cattrs);
+	if (!cattrs->cached)
+		mono_custom_attrs_free (cattrs);
 }
 
 static void

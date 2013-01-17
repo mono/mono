@@ -21,6 +21,10 @@
 #include "include/libgc-mono-debugger.h"
 #endif
 
+#ifdef __QNXNTO__
+#define SA_RESTART 0 
+#endif
+
 #if DEBUG_THREADS
 
 #ifndef NSIG

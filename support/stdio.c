@@ -23,6 +23,10 @@ Mono_Posix_Syscall_L_ctermid (void)
 	return L_ctermid;
 }
 
+#ifdef __QNXNTO__
+#  define L_cuserid   14  
+#endif
+
 gint32
 Mono_Posix_Syscall_L_cuserid (void)
 {

@@ -164,6 +164,13 @@ case "$THREADS" in
 	INCLUDES="$INCLUDES -pthread"
 	THREADDLLIBS="-lpthread -lrt"
 	;;
+     *-*-qnx*)
+	AC_DEFINE(GC_QNX_THREADS)
+	if test "${enable_parallel_mark}" = yes; then
+	  AC_DEFINE(PARALLEL_MARK)
+	fi
+	AC_DEFINE(THREAD_LOCAL_ALLOC)
+	;;
       *)
 	AC_MSG_ERROR("Pthreads not supported by the GC on this platform.")
 	;;

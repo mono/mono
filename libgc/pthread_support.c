@@ -68,7 +68,8 @@
 
 # if (defined(GC_DGUX386_THREADS) || defined(GC_OSF1_THREADS) || \
       defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)) || \
-      defined(GC_NETBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC)
+      defined(GC_NETBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC) || \
+      defined(GC_QNX_THREADS) 
 #   define USE_PTHREAD_SPECIFIC
 # endif
 
@@ -1037,7 +1038,7 @@ void GC_thr_init()
 #       if defined(GC_HPUX_THREADS)
 	  GC_nprocs = pthread_num_processors_np();
 #       endif
-#	if defined(GC_OSF1_THREADS) || defined(GC_AIX_THREADS)
+#	if defined(GC_OSF1_THREADS) || defined(GC_AIX_THREADS) || defined(GC_QNX_THREADS)
 	  GC_nprocs = sysconf(_SC_NPROCESSORS_ONLN);
 	  if (GC_nprocs <= 0) GC_nprocs = 1;
 #	endif

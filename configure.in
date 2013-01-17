@@ -175,6 +175,19 @@ case "$host" in
 		with_sigaltstack=no
 		use_sigposix=yes
 		;;
+	*-*-qnx*)
+		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -D_QNX_SOURCE -D_REENTRANT -DUSE_MMAP"
+		libmono_cflags="-D_THREAD_SAFE -D_REENTRANT"
+		platform_win32=no
+		use_sigposix=yes
+		with_tls=pthread
+		libgc_threads=pthreads
+        with_sigaltstack=no 
+ 	    with_glib=embedded 
+ 	    disable_nls=yes 
+        parallel_mark=no
+		mono_cv_uscore=yes
+		;;
 	*-*-linux*)
 		platform_win32=no
 		CPPFLAGS="$CPPFLAGS -DGC_LINUX_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP"
@@ -2203,6 +2216,15 @@ case "$host" in
 		jit_wanted=true
 		CPPFLAGS="$CPPFLAGS -DARM_FPU_VFP=1 -D__ARM_EABI__"
 		;;
+	arm*-*-qnx*)
+		TARGET=ARM;
+		arch_target=arm;
+		ACCESS_UNALIGNED="no"
+		JIT_SUPPORTED=yes
+		jit_wanted=true
+		CPPFLAGS="$CPPFLAGS -O2 -marm -Wa,-march=armv7-a -march=armv7-a -Wa,-mfpu=neon -mfpu=neon -mfloat-abi=softfp -mtune=cortex-a9 -ffunction-sections -fdata-sections -fno-strict-aliasing -DARM_FPU_VFP=1 -D__ARM_EABI__ -DHAVE_ARMV6"
+		LDFLAGS="$LDFLAGS -Wl,--rpath,app/native/Data/Managed -L${QNX_TARGET}/armle-v7/lib/gcc/4.6.3"
+		;;
 	arm*-linux*)
 		TARGET=ARM;
 		arch_target=arm;
@@ -2351,6 +2373,11 @@ case "$host" in
     *-*-*openbsd*)
     	LIBC="libc.so"
 	INTL="libintl.so"
+	;;
+    *-*-*qnx*)
+    	LIBC="libc.so"
+	INTL="libintl.so"
+	soname_spec='${libname}${shared_ext}'
 	;;
     *-*-*linux*)
 	AC_PATH_X

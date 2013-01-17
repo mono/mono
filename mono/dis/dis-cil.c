@@ -25,6 +25,7 @@
 
 #ifdef HAVE_IEEEFP_H
 #include <ieeefp.h>
+#ifndef __QNXNTO__
 int isinf (double);
 int
 isinf (double num)
@@ -40,6 +41,7 @@ isinf (double num)
 
 	return 0;
 }
+#endif
 #else
 #error "Don't know how to implement isinf for this platform."
 #endif

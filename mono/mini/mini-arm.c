@@ -688,6 +688,11 @@ mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
 #define __GNUC_PREREQ(maj, min) (0)
 #endif
 
+#if defined(__QNXNTO__)
+# include <sys/mman.h>
+# define CLEAR_CACHE(__beg, __end) msync(__beg, (__end) - (__beg), MS_INVALIDATE_ICACHE)
+#endif
+
 void
 mono_arch_flush_icache (guint8 *code, gint size)
 {
@@ -711,6 +716,8 @@ mono_arch_flush_icache (guint8 *code, gint size)
 		:	"r" (code), "r" (code + size), "r" (syscall)
 		:	"r0", "r1", "r7", "r2"
 		);
+#elif __QNXNTO__
+       CLEAR_CACHE(code, code + size);
 #else
 	__asm __volatile ("mov r0, %0\n"
 			"mov r1, %1\n"
@@ -1884,7 +1891,7 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 	
 	offset = code - cfg->native_code;
 	/* we need about 16 instructions */
-	if (offset > (cfg->code_size - 16 * 4)) {
+	while (cfg->code_size < offset + 16 * 4) {
 		cfg->code_size *= 2;
 		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 		code = cfg->native_code + offset;
@@ -2942,10 +2949,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
 	MonoCallInst *call;
-	int offset;
+	guint offset;
 	guint8 *code = cfg->native_code + cfg->code_len;
 	MonoInst *last_ins = NULL;
-	int last_offset = 0;
+	guint last_offset = 0;
 	int max_len, cpos;
 	int imm8, rot_amount;
 
@@ -2977,8 +2984,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		offset = code - cfg->native_code;
 
 		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-
-		if (offset > (cfg->code_size - max_len - 16)) {
+		while (cfg->code_size < offset + max_len + 16) {
 			cfg->code_size *= 2;
 			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
 			code = cfg->native_code + offset;
@@ -3706,7 +3712,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_SWITCH, ins->inst_p0);
 			max_len += 4 * GPOINTER_TO_INT (ins->klass);
-			if (offset > (cfg->code_size - max_len - 16)) {
+			while (cfg->code_size < offset + max_len + 16) {
 				cfg->code_size += max_len;
 				cfg->code_size *= 2;
 				cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);

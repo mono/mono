@@ -88,8 +88,10 @@ copy_fstab (struct Mono_Posix_Syscall__Fstab *to, mph_fstab *from)
 	buf = _mph_copy_structure_strings (to, mph_fstab_offsets,
 			from, fstab_offsets, sizeof(fstab_offsets)/sizeof(fstab_offsets[0]));
 
+#ifndef __QNXNTO__
 	to->fs_freq   = from->fs_freq;
 	to->fs_passno = from->fs_passno;
+#endif
 
 	to->_fs_buf_ = buf;
 	if (buf == NULL) {

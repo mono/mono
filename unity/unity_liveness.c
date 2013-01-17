@@ -180,37 +180,6 @@ static gboolean mono_field_can_contain_references(MonoClassField* field)
 	return MONO_TYPE_IS_REFERENCE(field->type);
 }
 
-static void mono_traverse_array (MonoArray* array, LivenessState* state)
-{
-	int i = 0;
-	gboolean has_references;
-	MonoObject* object = (MonoObject*)array;
-	MonoClass* element_class;
-	g_assert (object);
-
-	element_class = GET_VTABLE(object)->klass->element_class;
-	has_references = !mono_class_is_valuetype(element_class);
-	g_assert(element_class->size_inited != 0);
-
-	for (i = 0; i < element_class->field.count; i++)
-	{
-		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
-	}
-
-	if (!has_references)
-		return;
-
-	for (i = 0; i < mono_array_length (array); i++)
-	{
-		MonoObject* val =  mono_array_get(array, MonoObject*, i);
-		mono_add_process_object(val, state);
-		// Add 64 objects at a time and then traverse
-		if( ((i+1) & 63) == 0)
-			mono_traverse_objects(state);
-	}
-
-}
-
 static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct, MonoClass* klass, LivenessState* state)
 {
 	int i;
@@ -297,6 +266,60 @@ static void mono_traverse_objects (LivenessState* state)
 		mono_traverse_generic_object(object, state);
 	}
 }
+
+static void mono_traverse_array (MonoArray* array, LivenessState* state)
+{
+	int i = 0;
+	gboolean has_references;
+	MonoObject* object = (MonoObject*)array;
+	MonoClass* element_class;
+	size_t elementClassSize;
+	size_t array_length;
+	
+	g_assert (object);
+	
+	
+	
+	element_class = GET_VTABLE(object)->klass->element_class;
+	has_references = !mono_class_is_valuetype(element_class);
+	g_assert(element_class->size_inited != 0);
+	
+	for (i = 0; i < element_class->field.count; i++)
+	{
+		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
+	}
+	
+	if (!has_references)
+		return;
+	
+	array_length = mono_array_length (array);
+	if (element_class->valuetype)
+	{
+		elementClassSize = mono_class_array_element_size (element_class);
+		for (i = 0; i < array_length; i++)
+		{
+			MonoObject* object = (MonoObject*)mono_array_addr_with_size (array, elementClassSize, i);
+			mono_traverse_object_internal (object, 1, element_class, state);
+			
+			// Add 64 objects at a time and then traverse
+			if( ((i+1) & 63) == 0)
+				mono_traverse_objects(state);
+		}
+	}
+	else
+	{
+		for (i = 0; i < array_length; i++)
+		{
+			MonoObject* val =  mono_array_get(array, MonoObject*, i);
+			mono_add_process_object(val, state);
+			
+			// Add 64 objects at a time and then traverse
+			if( ((i+1) & 63) == 0)
+				mono_traverse_objects(state);
+		}
+	}
+}
+
 
 void mono_filter_objects(LivenessState* state)
 {
