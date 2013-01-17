@@ -33,12 +33,6 @@ namespace System.Threading.Tasks
 {
 	public static class Parallel
 	{
-#if MOONLIGHT || MOBILE
-		static readonly bool sixtyfour = IntPtr.Size == 8;
-#else
-		static readonly bool sixtyfour = Environment.Is64BitProcess;
-#endif
-
 		internal static int GetBestWorkerNumber ()
 		{
 			return GetBestWorkerNumber (TaskScheduler.Current);
@@ -193,6 +187,8 @@ namespace System.Threading.Tasks
 						range.V64.Actual = ++i;
 					}
 
+					 bool sixtyfour = Environment.Is64BitProcess;
+					
 					// Try toExclusive steal fromInclusive our right neighbor (cyclic)
 					int len = num + localWorker;
 					for (int sIndex = localWorker + 1; sIndex < len; ++sIndex) {

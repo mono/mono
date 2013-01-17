@@ -849,15 +849,20 @@ namespace System {
 			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
 		}
 
-		public static bool Is64BitProcess {
-			get { return Is64BitOperatingSystem; }
-		}
-
 		public static int SystemPageSize {
 			get { return GetPageSize (); }
 		}
 #endif
 
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		static bool Is64BitProcess {
+			get { return IntPtr.Size == 8; }
+		}
+		
 		public static extern int ProcessorCount {
 			[EnvironmentPermission (SecurityAction.Demand, Read="NUMBER_OF_PROCESSORS")]
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
