@@ -1,4 +1,4 @@
-#if NET_4_0
+//
 // ParallelTests.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -23,9 +23,10 @@
 //
 //
 
+#if NET_4_0
+
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
@@ -34,14 +35,13 @@ using System.Collections.Concurrent;
 
 using NUnit;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace MonoTests.System.Threading.Tasks
 {
-	
-	[TestFixture()]
+	[TestFixture]
 	public class ParallelTests
 	{
-		
 		[Test]
 		public void ParallelForTestCase ()
 		{
@@ -52,9 +52,9 @@ namespace MonoTests.System.Threading.Tasks
 				SpinWait sw = new SpinWait ();
 				
 				Parallel.For (0, actual.Length, (i) => { actual[i] *= 2; sw.SpinOnce (); });
-				
-				CollectionAssert.AreEquivalent (expected, actual, "#1, same");
-				CollectionAssert.AreEqual (expected, actual, "#2, in order");
+
+				Assert.That (actual, new CollectionEquivalentConstraint (expected), "#1, same");
+				Assert.That (actual, new EqualConstraint (expected), "#2, in order");
 			});
 		}
 
@@ -110,10 +110,40 @@ namespace MonoTests.System.Threading.Tasks
 				Parallel.ForEach (e, (element) => { Interlocked.Increment (ref count); queue.Enqueue (element); sw.SpinOnce (); });
 				
 				Assert.AreEqual (500, count, "#1");
-				CollectionAssert.AreEquivalent (e, queue, "#2");
+
+				Assert.That (queue, new CollectionEquivalentConstraint (e), "#2");
 			});
 		}
-		
+
+		class ValueAndSquare
+		{ 
+			public float Value { get; set; }
+			public float Square { get; set; }
+		}
+
+		[Test]
+		public void ParallerForEach_UserType ()
+		{
+			var values = new[] {
+				new ValueAndSquare() { Value = 1f },
+				new ValueAndSquare() { Value = 2f },
+				new ValueAndSquare() { Value = 3f },
+				new ValueAndSquare() { Value = 4f },
+				new ValueAndSquare() { Value = 5f },
+				new ValueAndSquare() { Value = 6f },
+				new ValueAndSquare() { Value = 7f },
+				new ValueAndSquare() { Value = 8f },
+				new ValueAndSquare() { Value = 9f },
+				new ValueAndSquare() { Value = 10f }
+			};
+
+			Parallel.ForEach (Partitioner.Create (values), l => l.Square = l.Value * l.Value);
+
+			foreach (var item in values) {
+				Assert.AreEqual (item.Square, item.Value * item.Value);
+			}
+		}
+			
 		[Test, ExpectedException (typeof (AggregateException))]
 		public void ParallelForEachExceptionTestCase ()
 		{
