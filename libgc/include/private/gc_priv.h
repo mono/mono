@@ -289,7 +289,13 @@ void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
 /*                               */
 /*********************************/
 
-#ifdef BSD_TIME
+#ifdef DARWIN
+#include <mach/mach_time.h>
+# define CLOCK_TYPE uint64_t
+# define GET_TIME(x) x = mach_absolute_time();
+long GC_time_diff_ms(uint64_t a, uint64_t b);
+# define MS_TIME_DIFF(a,b) GC_time_diff_ms(a,b)
+#elif defined(BSD_TIME)
 #   undef CLOCK_TYPE
 #   undef GET_TIME
 #   undef MS_TIME_DIFF
