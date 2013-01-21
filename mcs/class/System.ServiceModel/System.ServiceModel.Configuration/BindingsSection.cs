@@ -58,6 +58,7 @@ namespace System.ServiceModel.Configuration
 		 : ConfigurationSection
 	{
 		ConfigurationPropertyCollection _properties;
+		List<BindingCollectionElement> _collections;
 
 		// Properties
 
@@ -75,9 +76,18 @@ namespace System.ServiceModel.Configuration
 		}
 #endif
 
-		[MonoTODO ("Not Implemented")]
 		public List<BindingCollectionElement> BindingCollections {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_collections != null)
+					return _collections;
+				_collections = new List<BindingCollectionElement> ();
+				foreach (PropertyInformation prop in ElementInformation.Properties) {
+					var element = prop.Value as BindingCollectionElement;
+					if (element != null)
+						_collections.Add (element);
+				}
+				return _collections;
+			}
 		}
 
 		[ConfigurationProperty ("customBinding",
