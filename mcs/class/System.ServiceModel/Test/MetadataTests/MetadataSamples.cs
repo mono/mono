@@ -321,10 +321,45 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			return exporter.GetGeneratedMetadata ();
 		}
 
+		[MetadataSample (CreateConfig = true)]
+		public static MetadataSet BasicHttp_Config ()
+		{
+			var exporter = new WsdlExporter ();
+			
+			var cd = ContractDescription.GetContract (typeof (IMyContract));
+			
+			var binding = new BasicHttpBinding ();
+			
+			exporter.ExportEndpoint (new ServiceEndpoint (
+				cd, binding, new EndpointAddress (HttpUri)));
+			
+			return exporter.GetGeneratedMetadata ();
+		}
+
+		[MetadataSample (CreateConfig = true)]
+		public static MetadataSet BasicHttp_Config2 ()
+		{
+			var exporter = new WsdlExporter ();
+			
+			var cd = ContractDescription.GetContract (typeof (IMyContract));
+			
+			exporter.ExportEndpoint (new ServiceEndpoint (
+				cd, new BasicHttpBinding (),
+				new EndpointAddress (HttpUri)));
+			exporter.ExportEndpoint (new ServiceEndpoint (
+				cd, new NetTcpBinding (SecurityMode.None, false),
+				new EndpointAddress (NetTcpUri)));
+			
+			return exporter.GetGeneratedMetadata ();
+		}
+
 		#region Helper API
 
-		public static void Export ()
+		public static void Export (string outputDir)
 		{
+			if (!Directory.Exists (outputDir))
+				Directory.CreateDirectory (outputDir);
+
 			var bf = BindingFlags.Public | BindingFlags.Static;
 			foreach (var method in typeof (MetadataSamples).GetMethods (bf)) {
 				MetadataSampleAttribute sampleAttr = null;
@@ -340,8 +375,16 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 					continue;
 
 				var name = sampleAttr.Name ?? method.Name;
-				var doc = (MetadataSet)method.Invoke (null, null);
-				TestContext.SaveMetadata (name, doc);
+				var metadata = (MetadataSet)method.Invoke (null, null);
+
+				var xmlFilename = Path.Combine (outputDir, name + ".xml");
+				TestContext.SaveMetadata (xmlFilename, metadata);
+
+				if (!sampleAttr.CreateConfig)
+					continue;
+
+				var configFilename = Path.Combine (outputDir, name + ".config");
+				TestContext.GenerateConfig (configFilename, metadata);
 			}
 		}
 
@@ -370,7 +413,8 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 				return (MetadataSet)method.Invoke (null, null);
 			}
 
-			throw new InvalidOperationException ();
+			throw new InvalidOperationException (string.Format (
+				"No such metadata sample: '{0}'", name));
 		}
 
 		public class MetadataSampleAttribute : Attribute {
@@ -385,6 +429,10 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			}
 			
 			public string Name {
+				get; set;
+			}
+
+			public bool CreateConfig {
 				get; set;
 			}
 			

@@ -57,6 +57,14 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			return Context.GetMetadata (name);
 		}
 
+		protected MetadataSet GetMetadataAndConfig (
+			string name, out XmlDocument config, out TestLabel label)
+		{
+			var metadata = GetMetadata (name, out label);
+			config = Context.GetConfiguration (name);
+			return metadata;
+		}
+
 		[Test]
 		public virtual void BasicHttp ()
 		{
@@ -289,6 +297,28 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var doc = GetMetadata ("NetTcp_Operation", out label);
 
 			BindingTestAssertions.TestOperation (doc, true, label);
+		}
+
+		[Test]
+		public virtual void BasicHttp_Config ()
+		{
+			TestLabel label;
+			XmlDocument config;
+			var metadata = GetMetadataAndConfig (
+				"BasicHttp_Config", out config, out label);
+
+			BindingTestAssertions.AssertConfig (metadata, config, label);
+		}
+
+		[Test]
+		public virtual void BasicHttp_Config2 ()
+		{
+			TestLabel label;
+			XmlDocument config;
+			var metadata = GetMetadataAndConfig (
+				"BasicHttp_Config2", out config, out label);
+			
+			BindingTestAssertions.AssertConfig (metadata, config, label);
 		}
 	}
 

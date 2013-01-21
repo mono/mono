@@ -37,6 +37,7 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -56,6 +57,8 @@
     <None Include="README.txt" />
     <None Include="Resources\BasicHttp_Operation.xml" />
     <None Include="Resources\NetTcp_Operation.xml" />
+    <None Include="Resources\BasicHttp_Config2.config" />
+    <None Include="Resources\BasicHttp_Config2.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -79,5 +82,7 @@
     <EmbeddedResource Include="Resources\NetTcp_TransportWithMessageCredential.xml" />
     <EmbeddedResource Include="Resources\http-error.xml" />
     <EmbeddedResource Include="Resources\BasicHttp_Mtom_EmbeddedPolicy.xml" />
+    <EmbeddedResource Include="Resources\BasicHttp_Config.config" />
+    <EmbeddedResource Include="Resources\BasicHttp_Config.xml" />
   </ItemGroup>
 </Project>

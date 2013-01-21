@@ -28,6 +28,7 @@ using System;
 using System.Net;
 using System.Net.Security;
 using System.Xml;
+using System.Xml.XPath;
 using System.Text;
 using System.Collections.Generic;
 using System.ServiceModel;
@@ -835,6 +836,26 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			Assert.That (soap.Namespace, Is.Empty, label.Get ());
 			Assert.That (soap.Parts, Is.Null, label.Get ());
 			Assert.That (soap.Use, Is.EqualTo (WS.SoapBindingUse.Literal), label.Get ());
+			label.LeaveScope ();
+		}
+
+		public static void AssertConfig (MetadataSet metadata, XmlDocument xml, TestLabel label)
+		{
+			label.EnterScope ("import");
+			var importer = new WsdlImporter (metadata);
+			var endpoints = importer.ImportAllEndpoints ();
+			CheckImportErrors (importer, label);
+			Assert.That (endpoints.Count, Is.AtLeast (1), label.Get ());
+			label.LeaveScope ();
+
+			var nav = xml.CreateNavigator ();
+
+			// FIXME: Check endpoints.
+
+			label.EnterScope ("endpoints");
+			var endpointIter = nav.Select ("/configuration/system.serviceModel/client/endpoint");
+			Assert.That (endpointIter.Count, Is.EqualTo (endpoints.Count), label.Get ());
+			
 			label.LeaveScope ();
 		}
 	}
