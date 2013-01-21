@@ -118,6 +118,8 @@ namespace System.Security.Principal {
 				if (m_roles == null) {
 					m_roles = WindowsIdentity._GetRoles (Token);
 				}
+				
+				role = role.ToUpperInvariant ();
 				foreach (string check in m_roles) {
 					if ((check != null) && (role == check.ToUpperInvariant ()))
 						return true;
