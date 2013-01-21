@@ -74,7 +74,7 @@ namespace System.ServiceModel.Channels
 		public Message ReadMessage (ArraySegment<byte> buffer,
 			BufferManager bufferManager)
 		{
-			return ReadMessage (buffer, bufferManager, null);
+			return ReadMessage (buffer, bufferManager, ContentType);
 		}
 
 		public abstract Message ReadMessage (ArraySegment<byte> buffer,
@@ -82,7 +82,7 @@ namespace System.ServiceModel.Channels
 
 		public Message ReadMessage (Stream stream, int maxSizeOfHeaders)
 		{
-			return ReadMessage (stream, maxSizeOfHeaders, null);
+			return ReadMessage (stream, maxSizeOfHeaders, ContentType);
 		}
 
 		public abstract Message ReadMessage (Stream stream,
