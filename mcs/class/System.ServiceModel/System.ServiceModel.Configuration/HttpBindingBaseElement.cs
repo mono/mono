@@ -142,7 +142,7 @@ namespace System.ServiceModel.Configuration
 					_properties.Add (new ConfigurationProperty ("maxReceivedMessageSize", typeof (long), "65536", null, new LongValidator (1, 9223372036854775807, false), ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("proxyAddress", typeof (Uri), null, new UriTypeConverter (), null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("readerQuotas", typeof (XmlDictionaryReaderQuotasElement), null, null, null, ConfigurationPropertyOptions.None));
-					_properties.Add (new ConfigurationProperty ("textEncoding", typeof (Encoding), "utf-8", EncodingConverter.Instance, null, ConfigurationPropertyOptions.None));
+					_properties.Add (new ConfigurationProperty ("textEncoding", typeof (Encoding), HttpBindingBase.DefaultTextEncoding, EncodingConverter.Instance, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("transferMode", typeof (TransferMode), "Buffered", null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("useDefaultWebProxy", typeof (bool), "true", new BooleanConverter (), null, ConfigurationPropertyOptions.None));
 				}

@@ -156,7 +156,7 @@ namespace System.ServiceModel.Configuration
 					_properties.Add (new ConfigurationProperty ("proxyAddress", typeof (Uri), null, new UriTypeConverter (), null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("readerQuotas", typeof (XmlDictionaryReaderQuotasElement), null, null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("security", typeof (BasicHttpSecurityElement), null, null, null, ConfigurationPropertyOptions.None));
-					_properties.Add (new ConfigurationProperty ("textEncoding", typeof (Encoding), "utf-8", EncodingConverter.Instance, null, ConfigurationPropertyOptions.None));
+					_properties.Add (new ConfigurationProperty ("textEncoding", typeof (Encoding), BasicHttpBinding.DefaultTextEncoding, EncodingConverter.Instance, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("transferMode", typeof (TransferMode), "Buffered", null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("useDefaultWebProxy", typeof (bool), "true", new BooleanConverter (), null, ConfigurationPropertyOptions.None));
 				}

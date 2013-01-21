@@ -50,5 +50,16 @@ namespace MonoTests.System.ServiceModel.Configuration
 			Poker poker = new Poker ();
 			Assert.AreEqual (typeof (BasicHttpBinding), poker.GetBindingElementType (), "BindingElementType");
 		}
+
+		[Test]
+		public void DefaultTextEncoding ()
+		{
+			var b1 = new BasicHttpBinding ();
+			var b2 = new BasicHttpBinding ();
+			Assert.AreEqual (b1.TextEncoding, b2.TextEncoding, "#1");
+			
+			var element = new BasicHttpBindingElement ();
+			Assert.AreEqual (element.TextEncoding, b1.TextEncoding, "#2");
+		}
 	}
 }

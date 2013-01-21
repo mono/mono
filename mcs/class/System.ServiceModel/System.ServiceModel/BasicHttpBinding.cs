@@ -57,7 +57,8 @@ namespace System.ServiceModel
 		XmlDictionaryReaderQuotas reader_quotas
 			= new XmlDictionaryReaderQuotas ();
 		EnvelopeVersion env_version = EnvelopeVersion.Soap11;
-		Encoding text_encoding = new UTF8Encoding ();
+		static readonly Encoding default_text_encoding = new UTF8Encoding ();
+		Encoding text_encoding = default_text_encoding;
 		TransferMode transfer_mode
 			 = TransferMode.Buffered;
 		bool use_default_web_proxy = true;
@@ -167,6 +168,10 @@ namespace System.ServiceModel
 			get { return env_version; }
 		}
 
+		internal static Encoding DefaultTextEncoding {
+			get { return default_text_encoding; }
+		}
+		
 		public Encoding TextEncoding {
 			get { return text_encoding; }
 			set { text_encoding = value; }
