@@ -35,6 +35,7 @@ namespace System.ServiceModel
 	{
 #if NET_4_0
 		public NetTcpSecurity ()
+			: this (SecurityMode.Transport)
 		{
 		}
 #endif
