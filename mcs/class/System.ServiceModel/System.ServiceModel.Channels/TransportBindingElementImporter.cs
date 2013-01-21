@@ -62,46 +62,9 @@ namespace System.ServiceModel.Channels {
 
 		bool DoImportEndpoint (WsdlEndpointConversionContext context)
 		{
-			if (ImportBasicHttpEndpoint (context))
-				return true;
-			if (ImportNetTcpEndpoint (context))
-				return true;
-			return false;
-		}
-
-		bool ImportBasicHttpEndpoint (WsdlEndpointConversionContext context)
-		{
-			var http = context.Endpoint.Binding as BasicHttpBinding;
-			if (http == null)
-				return false;
-			
 			WS.SoapAddressBinding address = null;
 			foreach (var extension in context.WsdlPort.Extensions) {
 				var check = extension as WS.SoapAddressBinding;
-				if (check != null) {
-					address = check;
-					break;
-				}
-			}
-			
-			if (address == null)
-				return false;
-			
-			context.Endpoint.Address = new EndpointAddress (address.Location);
-			context.Endpoint.ListenUri = new Uri (address.Location);
-			context.Endpoint.ListenUriMode = ListenUriMode.Explicit;
-			return true;
-		}
-
-		bool ImportNetTcpEndpoint (WsdlEndpointConversionContext context)
-		{
-			var tcp = context.Endpoint.Binding as NetTcpBinding;
-			if (tcp == null)
-				return false;
-
-			WS.Soap12AddressBinding address = null;
-			foreach (var extension in context.WsdlPort.Extensions) {
-				var check = extension as WS.Soap12AddressBinding;
 				if (check != null) {
 					address = check;
 					break;
