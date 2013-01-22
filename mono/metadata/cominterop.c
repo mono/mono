@@ -2303,11 +2303,13 @@ cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObject* object, gpoin
 		/* remember to addref on QI */
 		cominterop_ccw_addref (tunk);
 		ret = CoCreateFreeThreadedMarshaler (tunk, (LPUNKNOWN*)&ccw->free_marshaler);
+		if (ccw->free_marshaler)
+			ret = ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (ccw->free_marshaler, (IID*)&MONO_IID_IMarshal, ppv);
+		else
+			ret = MONO_E_NOINTERFACE;
 		cominterop_ccw_release(tunk);
+		return ret;
 	}
-		
-	if (!ccw->free_marshaler)
-		return MONO_E_NOINTERFACE;
 
 	return ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (ccw->free_marshaler, (IID*)&MONO_IID_IMarshal, ppv);
 #else
