@@ -39,6 +39,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+OPTIONAL_ANDROID_NUNITLITE
 PROJECT_REFERENCES_GO_HERE
     <!--
     <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">

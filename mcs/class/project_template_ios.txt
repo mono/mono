@@ -13,8 +13,9 @@
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>ASSEMBLY_NAME_GOES_HERE</AssemblyName>
     <ProductSignAssembly>true</ProductSignAssembly>
-    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NUNIT;SIGNED</DefineConstants>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REFLECTION_EMIT;NUNIT;SIGNED</DefineConstants>
     SIGNING_SPEC_GOES_HERE
+    <additionalargs>-delaySign</additionalargs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -23,7 +24,7 @@
     <OutputPath>bin\Debug</OutputPath>
     <ConsolePause>False</ConsolePause>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>DEBUG;$(DefineConstants)</DefineConstants>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REFLECTION_EMIT;NUNIT;SIGNED</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -31,10 +32,8 @@
     <OutputPath>bin\Release</OutputPath>
     <ConsolePause>False</ConsolePause>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>$(DefineConstants);NO_EVENTARGS_CONSTRAINT;HAS_PROGRESS;PREFER_ASYNC;HAS_APTCA;NO_REMOTING;NO_SERIALIZABLE;NO_THREAD;CRIPPLED_REFLECTION;PLIB</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);NO_EVENTARGS_CONSTRAINT;HAS_PROGRESS;PREFER_ASYNC;HAS_APTCA;NO_REMOTING;NO_SERIALIZABLE;NO_THREAD;CRIPPLED_REFLECTION;PLIB</DefineConstants>
     <!--
     <TargetFrameworkIdentifier>iOS</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v2.0.5</TargetFrameworkVersion>
@@ -51,6 +50,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="MonoTouch.NUnitLite" />
+    OPTIONAL_MONOTOUCH_NUNITLITE
   </ItemGroup>
   <ItemGroup>
     PROJECT_REFERENCES_GO_HERE

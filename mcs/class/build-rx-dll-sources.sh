@@ -98,8 +98,6 @@ foreach (var ass in asses) {
 	var signing_xml_template = "<SignAssembly>True</SignAssembly>\n    <DelaySign>True</DelaySign>\n    <AssemblyOriginatorKeyFile>../../../reactive.pub</AssemblyOriginatorKeyFile>\n";
 	var signingXml = ass.StartsWith ("System") ? signing_xml_template : "";
 	
-	if (monoass.Contains ("Test")) // Mono.Reactive.Testing and Tests.System.Reactive
-		projectRefsXml += "<ProjectReference Include=\"..\\..\\Andr.Unit\\Android.NUnitLite\\Android.NUnitLite.csproj\"><Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project><Name>Android.NUnitLite</Name></ProjectReference>";
 
 	var doc = XDocument.Load (csproj);
 	var rootNS = doc.XPathSelectElement ("//*[local-name()='RootNamespace']").Value;
@@ -148,13 +146,28 @@ foreach (var ass in asses) {
 		}
 	}
 	foreach (var f in new string [] { android_proj, ios_proj}) {
-		var prj_guid = (f == android_proj ? guids_android : guids_ios) [guid_idx];
-		var template = (f == android_proj ? template_android : template_ios);
-		var prj_prefix = (f == android_proj ? "android_" : "ios_");
+		string prj_guid;
+		string template, prj_prefix, nunitProjRef, nunitRef;
+		var androidNUnit = "<ProjectReference Include=\"..\\..\\Andr.Unit\\Android.NUnitLite\\Android.NUnitLite.csproj\"><Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project><Name>Android.NUnitLite</Name></ProjectReference>";
+		if (f == android_proj) {
+			prj_guid = guids_android [guid_idx];
+			template = template_android;
+			prj_prefix ="android_";
+			nunitProjRef = ass.Contains ("Test") ? androidNUnit : "";
+			nunitRef = "";
+		} else {
+			prj_guid = guids_ios [guid_idx];
+			template = template_ios;
+			prj_prefix ="ios_";
+			nunitProjRef = "";
+			nunitRef = ass.Contains ("Test") ? "<Reference Include='MonoTouch.NUnitLite' />" : "";
+		}
 		using (var tw = File.CreateText (f)) {
 			tw.Write (template
 				.Replace ("PROJECT_GUID_GOES_HERE", '{' + prj_guid + '}')
 				.Replace ("ASSEMBLY_NAME_GOES_HERE", monoass)
+				.Replace ("OPTIONAL_ANDROID_NUNITLITE", nunitProjRef)
+				.Replace ("OPTIONAL_MONOTOUCH_NUNITLITE", nunitRef)
 				.Replace ("PROJECT_REFERENCES_GO_HERE",
 					projectRefsXml
 						.Replace ("Microsoft.Reactive.Testing", "Mono.Reactive.Testing")
