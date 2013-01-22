@@ -13,8 +13,8 @@
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>ASSEMBLY_NAME_GOES_HERE</AssemblyName>
     <ProductSignAssembly>true</ProductSignAssembly>
-    <DefineConstants>NO_TASK_DELAY;NUNIT;SIGNED</DefineConstants>
-    <additionalargs>-delaysign -keyfile:../reactive.pub</additionalargs>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NUNIT;SIGNED</DefineConstants>
+    SIGNING_SPEC_GOES_HERE
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
