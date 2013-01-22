@@ -10,7 +10,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>System.Reactive</RootNamespace>
     <AssemblyName>ASSEMBLY_NAME_GOES_HERE</AssemblyName>
-    <DefineConstants>DEBUG;NO_TASK_DELAY;NUNIT</DefineConstants>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;SIGNED;NUNIT</DefineConstants>
+    <additionalargs>-delaysign -keyfile:../reactive.pub</additionalargs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>

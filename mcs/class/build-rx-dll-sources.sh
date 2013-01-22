@@ -1,6 +1,6 @@
 
 // useful grep
-// grep -h "#if" /svn/mono/external/rx/Rx.NET/System.Reactive.*/*.cs /svn/mono/external/rx/Rx.NET/System.Reactive.*/*/*.cs /svn/mono/external/rx/Rx.NET/System.Reactive.*/*/*/*.cs | sort | uniq
+// grep -h "#if" /svn/mono/external/rx/Rx/NET/Source/System.Reactive.*/*.cs /svn/mono/external/rx/Rx/NET/Source/System.Reactive.*/*/*.cs /svn/mono/external/rx/Rx/NET/Source/System.Reactive.*/*/*/*.cs | sort | uniq
 
 using System.Diagnostics;
 using System.IO;
@@ -30,7 +30,7 @@ var asses = new string [] {
 
 var blacklist = new string [] {
 	// FIXME: this is the only source that we cannot build.
-	//Test/../../../../external/rx/Rx.NET/Tests.System.Reactive/Tests/ObservableExTest.cs(1478,27): error CS0411: The type arguments for method `System.Reactive.Linq.ObservableEx.ManySelect<TSource,TResult>(this System.IObservable<TSource>, System.Func<System.IObservable<TSource>,TResult>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
+	//Test/../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/ObservableExTest.cs(1478,27): error CS0411: The type arguments for method `System.Reactive.Linq.ObservableEx.ManySelect<TSource,TResult>(this System.IObservable<TSource>, System.Func<System.IObservable<TSource>,TResult>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
 	"ObservableExTest.cs",
 
 	// WPF Dispatcher.Invoke() is not implemented.
@@ -39,15 +39,15 @@ var blacklist = new string [] {
 	"ObservableConcurrencyTest.cs",
 	};
 
-var dstAndroid = "../../external/rx/Rx.NET/Rx_Xamarin/android";
-var dstIOS = "../../external/rx/Rx.NET/Rx_Xamarin/iOS";
+var dstAndroid = "../../external/rx/Rx/NET/Source/Rx_Xamarin/android";
+var dstIOS = "../../external/rx/Rx/NET/Source/Rx_Xamarin/iOS";
 
 int guid_idx = 0;
 foreach (var ass in asses) {
 
 	var monoass = ass == "Microsoft.Reactive.Testing" ?
 		"Mono.Reactive.Testing" : ass;
-	var basePath = "../../external/rx/Rx.NET";
+	var basePath = "../../external/rx/Rx/NET/Source";
 	var csproj = Path.Combine (basePath, ass, ass + ".csproj");
 	var pathPrefix = ass == "Tests.System.Reactive" ? "../../" : "../";
 
@@ -103,7 +103,7 @@ foreach (var ass in asses) {
 			if (!blacklist.Any (b => path.Contains (b))) {
 				var p = Path.Combine (pathPrefix, basePath, ass, path);
 				tw.WriteLine (p);
-				sourcesXml += "    <Compile Include='..\\..\\..\\..\\" + p.Replace ('/', '\\') + "'>\n      <Link>" + path + "</Link>\n    </Compile>\n";
+				sourcesXml += "    <Compile Include='..\\..\\..\\..\\..\\..\\" + p.Replace ('/', '\\') + "'>\n      <Link>" + path + "</Link>\n    </Compile>\n";
 			}
 		}
 	}
@@ -127,7 +127,7 @@ foreach (var ass in asses) {
 			//Process.Start ("resgen", String.Format ("{0} {1}", resx, resPath));
 			tw.WriteLine ("-resource:{0},{1}.{2}", resFileName, rootNS, resFileName);
 			var p = Path.Combine (pathPrefix, basePath, ass, res);
-			resourcesXml += "    <EmbeddedResource Include='..\\..\\..\\..\\" + p + "'>\n      <Link>" + res + "</Link>\n    </EmbeddedResource>\n";
+			resourcesXml += "    <EmbeddedResource Include='..\\..\\..\\..\\..\\..\\" + p + "'>\n      <Link>" + res + "</Link>\n    </EmbeddedResource>\n";
 		}
 	}
 	foreach (var f in new string [] { android_proj, ios_proj}) {
