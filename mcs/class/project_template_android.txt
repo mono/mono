@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>System.Reactive</RootNamespace>
     <AssemblyName>ASSEMBLY_NAME_GOES_HERE</AssemblyName>
-    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;SIGNED;NUNIT</DefineConstants>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;SIGNED;NUNIT;MONODROID</DefineConstants>
     SIGNING_SPEC_GOES_HERE
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
