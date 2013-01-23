@@ -174,8 +174,8 @@ foreach (var ass in asses) {
 						.Replace ("System", prj_prefix + "System")
 						.Replace ("Mono", prj_prefix + "Mono")
 						.Replace ("Include=\"..\\" + prj_prefix, "Include=\"..\\"))
-				.Replace ("RESOURCES_GO_HERE", sourcesXml)
-				.Replace ("SOURCES_GO_HERE", resourcesXml)
+				.Replace ("RESOURCES_GO_HERE", sourcesXml.Replace ('\\', f == ios_proj ? '/' : '\\')) // whoa, BACKSLASH doesn't work only on android on MD/mac...!
+				.Replace ("SOURCES_GO_HERE", resourcesXml.Replace ('\\', f == ios_proj ? '/' : '\\')) // whoa, BACKSLASH doesn't work only on android on MD/mac...!
 				.Replace ("SIGNING_SPEC_GOES_HERE", signingXml));
 		}
 	}
