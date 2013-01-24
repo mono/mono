@@ -117,6 +117,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Runtime.Serialization", 3},
 	{"System.Runtime.Serialization.Formatters.Soap", 0},
 	{"System.Security", 0},
+	{"System.ServiceModel", 2},
 	{"System.ServiceProcess", 0},
 	{"System.Transactions", 0},
 	{"System.Web", 0},
@@ -126,6 +127,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Web.Services", 0},
 	{"System.Windows.Forms", 0},
 	{"System.Xml", 0},
+	{"System.Xml.Linq", 2},
 	{"mscorlib", 0}
 };
 #endif
