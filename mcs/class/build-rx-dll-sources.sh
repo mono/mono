@@ -1,6 +1,6 @@
 
 // useful grep
-// grep -h "#if" /svn/mono/external/rx/Rx/NET/Source/System.Reactive.*/*.cs /svn/mono/external/rx/Rx/NET/Source/System.Reactive.*/*/*.cs /svn/mono/external/rx/Rx/NET/Source/System.Reactive.*/*/*/*.cs | sort | uniq
+// grep -h "#if" /svn/mono/external/rx/Rx.NET/System.Reactive.*/*.cs /svn/mono/external/rx/Rx.NET/System.Reactive.*/*/*.cs /svn/mono/external/rx/Rx.NET/System.Reactive.*/*/*/*.cs | sort | uniq
 
 using System.Diagnostics;
 using System.IO;
@@ -40,7 +40,7 @@ var excluded_ios_asses = new string [] {
 
 var blacklist = new string [] {
 	// FIXME: this is the only source that we cannot build.
-	//Test/../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/ObservableExTest.cs(1478,27): error CS0411: The type arguments for method `System.Reactive.Linq.ObservableEx.ManySelect<TSource,TResult>(this System.IObservable<TSource>, System.Func<System.IObservable<TSource>,TResult>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
+	//Test/../../../../external/rx/Rx.NET/Tests.System.Reactive/Tests/ObservableExTest.cs(1478,27): error CS0411: The type arguments for method `System.Reactive.Linq.ObservableEx.ManySelect<TSource,TResult>(this System.IObservable<TSource>, System.Func<System.IObservable<TSource>,TResult>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
 	"ObservableExTest.cs",
 
 	// WPF Dispatcher.Invoke() is not implemented.
@@ -49,15 +49,15 @@ var blacklist = new string [] {
 	"ObservableConcurrencyTest.cs",
 	};
 
-var dstAndroid = "../../external/rx/Rx/NET/Source/Rx_Xamarin/android";
-var dstIOS = "../../external/rx/Rx/NET/Source/Rx_Xamarin/iOS";
+var dstAndroid = "../../external/rx/Rx.NET/Rx_Xamarin/android";
+var dstIOS = "../../external/rx/Rx.NET/Rx_Xamarin/iOS";
 
 int guid_idx = 0;
 foreach (var ass in asses) {
 
 	var monoass = ass == "Microsoft.Reactive.Testing" ?
 		"Mono.Reactive.Testing" : ass;
-	var basePath = "../../external/rx/Rx/NET/Source";
+	var basePath = "../../external/rx/Rx.NET";
 	var csproj = Path.Combine (basePath, ass, ass + ".csproj");
 	var pathPrefix = ass == "Tests.System.Reactive" ? "../" : "";
 
