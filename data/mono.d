@@ -73,6 +73,7 @@ provider mono {
 	probe gc__weak__update (uintptr_t ref_addr, uintptr_t old_addr, uintptr_t new_addr, uintptr_t size, char *ns_name, char *class_name, int track);
 
 	probe gc__global__remset__add (uintptr_t ref_addr, uintptr_t obj_addr, uintptr_t size, char *ns_name, char *class_name);
+	probe gc__obj__cemented (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
 };
 
 #pragma D attributes Evolving/Evolving/Common provider mono provider
