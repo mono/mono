@@ -154,7 +154,6 @@ namespace Monodoc.Providers
 	public class EcmaHelpSource : HelpSource
 	{
 		internal const string EcmaPrefix = "ecma:";
-		EcmaUrlParser parser = new EcmaUrlParser ();
 		LRUCache<string, Node> cache = new LRUCache<string, Node> (4);
 
 		public EcmaHelpSource (string base_file, bool create) : base (base_file, create)
