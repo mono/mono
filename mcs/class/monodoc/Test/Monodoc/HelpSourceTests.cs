@@ -95,5 +95,17 @@ namespace MonoTests.Monodoc
 				}
 			}
 		}
+
+		[Test]
+		public void ReachabilityWithShortGenericNotationTest ()
+		{
+			var rootTree = RootTree.LoadTree (Path.GetFullPath (BaseDir), false);
+			Node result;
+			var generator = new CheckGenerator ();
+
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Concurrent.IProducerConsumerCollection`1", generator, out result), "#1");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary`2", generator, out result), "#2");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`4", generator, out result), "#3");
+		}
 	}
 }

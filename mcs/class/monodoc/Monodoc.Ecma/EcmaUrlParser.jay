@@ -135,7 +135,7 @@ opt_inner_type_description
 
 opt_generic_type_suffix
         : /* empty */ { $$ = null; }
-        | OP_GENERICS_BACKTICK DIGIT { $$ = Enumerable.Repeat<string> (null, (int)$2).ToList (); }
+        | OP_GENERICS_BACKTICK DIGIT { $$ = Enumerable.Repeat<EcmaDesc> (null, (int)$2).ToList (); }
         | OP_GENERICS_LT generic_type_arg_list OP_GENERICS_GT { $$ = $2; }
 
 generic_type_arg_list
