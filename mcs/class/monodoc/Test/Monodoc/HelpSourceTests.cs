@@ -12,13 +12,13 @@ namespace MonoTests.Monodoc
 	[TestFixture]
 	public class HelpSourceTest
 	{
-		const string BaseDir = "../../tools/monodoc/Test/monodoc_test/";
+		const string BaseDir = "../../class/monodoc/Test/monodoc_test/";
 
 		class CheckGenerator : IDocGenerator<bool>
 		{
 			public string LastCheckMessage { get; set; }
 
-			public bool Generate (HelpSource hs, string id)
+			public bool Generate (HelpSource hs, string id, Dictionary<string, string> context)
 			{
 				LastCheckMessage = string.Format ("#1 : {0} {1}", hs, id);
 				if (hs == null || string.IsNullOrEmpty (id))
@@ -37,7 +37,7 @@ namespace MonoTests.Monodoc
 				if (hs.IsMultiPart (id, out parts)) {
 					LastCheckMessage = string.Format ("#4 : {0} {1} ({2})", hs, id, string.Join (", ", parts));
 					foreach (var partId in parts)
-						if (!Generate (hs, partId))
+						if (!Generate (hs, partId, context))
 							return false;
 				}
 

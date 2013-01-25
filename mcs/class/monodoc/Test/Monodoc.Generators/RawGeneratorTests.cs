@@ -14,7 +14,7 @@ namespace MonoTests.Monodoc.Generators
 	[TestFixture]
 	public class RawGeneratorTests
 	{
-		const string BaseDir = "../../tools/monodoc/Test/monodoc_test/";
+		const string BaseDir = "../../class/monodoc/Test/monodoc_test/";
 		RootTree rootTree;
 		RawGenerator generator = new RawGenerator ();
 
