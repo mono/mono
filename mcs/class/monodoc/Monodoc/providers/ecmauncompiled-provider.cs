@@ -58,5 +58,11 @@ namespace Monodoc.Providers
 				return "uncompiled:";
 			}
 		}
+
+		public override Stream GetImage (string url)
+		{
+			var path = Path.Combine (BasePath, "_images", url);
+			return File.Exists (path) ? File.OpenRead (path) : (Stream)null;
+		}
 	}
 }
