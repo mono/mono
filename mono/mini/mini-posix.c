@@ -107,8 +107,8 @@ mono_runtime_syscall_fork (void)
   return 0;
 }
 
-gboolean
-mono_gdb_render_native_backtraces (void)
+void
+mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
   return FALSE;
 }

@@ -20,7 +20,6 @@
 extern gint8 nacl_align_byte;
 #endif /* __native_client_codegen__ */
 
-
 #if defined( __native_client_codegen__ ) && defined( TARGET_X86 )
 #define x86_codegen_pre(inst_ptr_ptr, inst_len) do { mono_nacl_align_inst(inst_ptr_ptr, inst_len); } while (0)
 #define x86_call_sequence_pre_val(inst) guint8* _code_start = (inst);

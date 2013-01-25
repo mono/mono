@@ -620,9 +620,9 @@ if CROSS_COMPILING
 GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
 else !CROSS_COMPILING
 if NACL_CODEGEN
-GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
+GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
 else
-GENMDESC_PRG=./genmdesc $(GENMDESC_OPTS)
+GENMDESC_PRG=./genmdesc $(GENMDESC_OPTS)
 endif
 endif !CROSS_COMPILING
 
@@ -671,7 +671,7 @@ checktests: $(regtests)
 
 rcheck: mono $(regtests)
 if NACL_CODEGEN
-  for i in $(regtests); do echo "running test $$i"; $(RUNTIME) $$i --exclude 'NaClDisable' || exit 1; done
+	for i in $(regtests); do echo "running test $$i"; $(RUNTIME) $$i --exclude 'NaClDisable' || exit 1; done
 else
 	$(RUNTIME) --regression $(regtests)
 endif

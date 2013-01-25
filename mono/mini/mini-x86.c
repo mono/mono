@@ -3859,8 +3859,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_fprem (code);
 			x86_fnstsw (code);
 			x86_alu_reg_imm (code, X86_AND, X86_EAX, X86_FP_C2);
-			l2 = code + 2;
-			x86_branch8 (code, X86_CC_NE, l1 - l2, FALSE);
+			l2 = code;
+			x86_branch8 (code, X86_CC_NE, 0, FALSE);
+			x86_patch (l2, l1);
 
 			/* pop result */
 			x86_fstp (code, 1);
