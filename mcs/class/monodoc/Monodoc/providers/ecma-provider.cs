@@ -766,10 +766,8 @@ namespace Monodoc.Providers
 					var xdoc = XDocument.Load (GetHelpStream (id));
 					if (xdoc == null)
 						continue;
-					if (string.IsNullOrEmpty (doc_tag)) {
-						Console.WriteLine (type_node.Caption);
+					if (string.IsNullOrEmpty (doc_tag))
 						continue;
-					}	
 
 					// For classes, structures or interfaces add a doc for the overview and
 					// add a doc for every constructor, method, event, ...
@@ -816,7 +814,10 @@ namespace Monodoc.Providers
 							var prematchedMembers = xdoc.Root.Element ("Members").Elements ("Member").ToLookup (n => (string)n.Attribute ("MemberName"), n => n);
 
 							foreach (Node nc in ncnodes) {
-								var docsNode = GetDocsFromCaption (xdoc, c.Caption[0] == 'C' ? ".ctor" : nc.Caption, c.Caption[0] == 'O', prematchedMembers);
+								XElement docsNode = null;
+								try {
+									docsNode = GetDocsFromCaption (xdoc, c.Caption[0] == 'C' ? ".ctor" : nc.Caption, c.Caption[0] == 'O', prematchedMembers);
+								} catch {}
 								if (docsNode == null) {
 									Console.Error.WriteLine ("Problem: {0}", nc.PublicUrl);
 									continue;
