@@ -413,9 +413,7 @@ namespace Monodoc
 				int num = text.IndexOf (":");
 				string text2 = text.Substring (0, num);
 				int id = 0;
-				try {
-					id = int.Parse (text2);
-				} catch {
+				if (!int.TryParse (text2, out id)) {
 					Console.Error.WriteLine ("Failed to parse source-id url: {0} `{1}'", url, text2);
 					return null;
 				}
@@ -428,16 +426,9 @@ namespace Monodoc
 
 		public IndexReader GetIndex ()
 		{
-			try {
-				string text = Path.Combine (this.basedir, "monodoc.index");
-				if (File.Exists (text))
-					return IndexReader.Load (text);
-
-				text = Path.Combine (Settings.Get ("monodocIndexDirectory"), "monodoc.index");
-				return IndexReader.Load (text);
-			} catch {
-				return null;
-			}
+			var paths = GetIndexesPathPrefixes ().Select (bp => Path.Combine (bp, "monodoc.index"));
+			var p = paths.FirstOrDefault (File.Exists);
+			return p == null ? (IndexReader)null : IndexReader.Load (p);
 		}
 
 		public static void MakeIndex ()
@@ -446,40 +437,38 @@ namespace Monodoc
 			rootTree.GenerateIndex ();
 		}
 
-		public void GenerateIndex ()
+		public bool GenerateIndex ()
 		{
 			IndexMaker indexMaker = new IndexMaker ();
 			foreach (HelpSource current in this.helpSources)
 				current.PopulateIndex (indexMaker);
-			string text = Path.Combine (this.basedir, "monodoc.index");
-			try {
-				indexMaker.Save (text);
-			} catch (UnauthorizedAccessException) {
-				text = Path.Combine (Settings.Get ("docPath"), "monodoc.index");
+
+			var paths = GetIndexesPathPrefixes ().Select (bp => Path.Combine (bp, "monodoc.index"));
+			bool successful = false;
+
+			foreach (var path in paths) {
 				try {
-					indexMaker.Save (text);
+					indexMaker.Save (path);
+					successful = true;
+					if (RootTree.IsUnix)
+						RootTree.chmod (path, 420);
 				} catch (UnauthorizedAccessException) {
-					Console.WriteLine ("Unable to write index file in {0}", Path.Combine (Settings.Get ("docPath"), "monodoc.index"));
-					return;
 				}
 			}
-			if (RootTree.IsUnix)
-				RootTree.chmod (text, 420);
+			if (!successful) {
+				Console.WriteLine ("You don't have permissions to write on any of [" + string.Join (", ", paths) + "]");
+				return false;
+			}
 
-			Console.WriteLine ("Documentation index at {0} updated", text);
+			Console.WriteLine ("Documentation index updated");
+			return true;
 		}
 
 		public SearchableIndex GetSearchIndex ()
 		{
-			try {
-				string text = Path.Combine (this.basedir, "search_index");
-				if (System.IO.Directory.Exists (text))
-					return SearchableIndex.Load (text);
-				text = Path.Combine (Settings.Get ("docPath"), "search_index");
-				return SearchableIndex.Load (text);
-			} catch {
-				return null;
-			}
+			var paths = GetIndexesPathPrefixes ().Select (bp => Path.Combine (bp, "search_index"));
+			var p = paths.FirstOrDefault (Directory.Exists);
+			return p == null ? (SearchableIndex)null : SearchableIndex.Load (p);
 		}
 
 		public static void MakeSearchIndex ()
@@ -488,28 +477,26 @@ namespace Monodoc
 			rootTree.GenerateSearchIndex ();
 		}
 
-		public void GenerateSearchIndex ()
+		public bool GenerateSearchIndex ()
 		{
 			Console.WriteLine ("Loading the monodoc tree...");
-			string text = Path.Combine (this.basedir, "search_index");
-			IndexWriter indexWriter;
+			IndexWriter indexWriter = null;
 			var analyzer = new StandardAnalyzer (Lucene.Net.Util.Version.LUCENE_CURRENT);
-			var directory = Lucene.Net.Store.FSDirectory.Open (text);
+			var paths = GetIndexesPathPrefixes ().Select (bp => Path.Combine (bp, "search_index"));
+			bool successful = false;
 
-			try {
-				if (!Directory.Exists (text))
-					Directory.CreateDirectory (text);
-				indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			} catch (UnauthorizedAccessException) {
+			foreach (var path in paths) {
 				try {
-					text = Path.Combine (Settings.Get ("docPath"), "search_index");
-					if (!Directory.Exists (text))
-						Directory.CreateDirectory (text);
+					if (!Directory.Exists (path))
+						Directory.CreateDirectory (path);
+					var directory = Lucene.Net.Store.FSDirectory.Open (path);
 					indexWriter = new IndexWriter (directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-				} catch (UnauthorizedAccessException) {
-					Console.WriteLine ("You don't have permissions to write on " + text);
-					return;
-				}
+					successful = true;
+				} catch (UnauthorizedAccessException) {}
+			}
+			if (!successful) {
+				Console.WriteLine ("You don't have permissions to write on any of [" + string.Join (", ", paths) + "]");
+				return false;
 			}
 			Console.WriteLine ("Collecting and adding documents...");
 			foreach (HelpSource current in this.helpSources) {
@@ -518,9 +505,20 @@ namespace Monodoc
 			Console.WriteLine ("Closing...");
 			indexWriter.Optimize ();
 			indexWriter.Close ();
+			return true;
 		}
 
 		[DllImport ("libc")]
 		static extern int chmod (string filename, int mode);
+
+		IEnumerable<string> GetIndexesPathPrefixes ()
+		{
+			yield return basedir;
+			yield return Settings.Get ("docPath");
+			var indexDirectory = Settings.Get ("monodocIndexDirectory");
+			if (!string.IsNullOrEmpty (indexDirectory))
+				yield return indexDirectory;
+			yield return Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "monodoc");
+		}
 	}
 }
