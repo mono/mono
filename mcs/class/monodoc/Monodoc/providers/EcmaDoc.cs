@@ -113,7 +113,15 @@ namespace Monodoc.Providers
 				Console.Error.WriteLine ("Warning: couldn't process type file `{0}' as it doesn't exist", finalPath);
 				return null;
 			}
-			return XDocument.Load (finalPath);
+
+			XDocument doc = null;
+			try {
+				doc = XDocument.Load (finalPath);
+			} catch (Exception e) {
+				Console.WriteLine ("Document `{0}' is unparsable, {1}", finalPath, e.ToString ());
+			}
+
+			return doc;
 		}
 
 		public static string GetTypeCaptionFromIndex (XElement typeNodeFromIndex, bool full = false)
