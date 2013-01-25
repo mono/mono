@@ -62,6 +62,7 @@ namespace Monodoc
 		{
 			tree = new Tree (this, "Blah", "Blah");
 			source_id = id++;
+			this.cache = new Caches.NullCache ();
 		}
 	
 		public int SourceID {
