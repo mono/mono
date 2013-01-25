@@ -125,7 +125,7 @@ namespace System.Drawing
 			this.handle = handle;
 			bitmap = Bitmap.FromHicon (handle);
 			iconSize = new Size (bitmap.Width, bitmap.Height);
-			if (GDIPlus.RunningOnUnix ()) {
+			if (GDIPlus.RuntimeInfo.RunningOnUnix ()) {
 				bitmap = Bitmap.FromHicon (handle);
 				iconSize = new Size (bitmap.Width, bitmap.Height);
 				// FIXME: we need to convert the bitmap into an icon
@@ -323,7 +323,7 @@ namespace System.Drawing
 			
 			if (!disposed) {
 #if !MONOTOUCH
-				if (GDIPlus.RunningOnWindows () && (handle != IntPtr.Zero)) {
+				if (GDIPlus.RuntimeInfo.RunningOnWindows () && (handle != IntPtr.Zero)) {
 					GDIPlus.DestroyIcon (handle);
 					handle = IntPtr.Zero;
 				}
@@ -599,7 +599,7 @@ namespace System.Drawing
 		internal Bitmap GetInternalBitmap ()
 		{
 			if (bitmap == null) {
-				if (GDIPlus.RunningOnUnix ()) {
+				if (GDIPlus.RuntimeInfo.RunningOnUnix ()) {
 					// Mono's libgdiplus doesn't require to keep the stream alive when loading images
 					using (MemoryStream ms = new MemoryStream ()) {
 						// save the current icon
@@ -643,7 +643,7 @@ namespace System.Drawing
 			get {
 				// note: this handle doesn't survive the lifespan of the icon instance
 				if (!disposed && (handle == IntPtr.Zero)) {
-					if (GDIPlus.RunningOnUnix ()) {
+					if (GDIPlus.RuntimeInfo.RunningOnUnix ()) {
 						handle = GetInternalBitmap ().NativeObject;
 					} else {
 						// remember that this block executes only with MS GDI+

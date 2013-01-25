@@ -186,11 +186,11 @@ namespace System.Drawing
 			if (!Enum.IsDefined (typeof (CopyPixelOperation), copyPixelOperation))
 				throw new InvalidEnumArgumentException (Locale.GetText ("Enum argument value '{0}' is not valid for CopyPixelOperation", copyPixelOperation));
 
-			if (GDIPlus.UseX11Drawable) {
+			if (GDIPlus.RuntimeInfo.UseX11Drawable) {
 				CopyFromScreenX11 (sourceX, sourceY, destinationX, destinationY, blockRegionSize, copyPixelOperation);
-			} else if (GDIPlus.UseCarbonDrawable) {
+			} else if (GDIPlus.RuntimeInfo.UseCarbonDrawable) {
 				CopyFromScreenMac (sourceX, sourceY, destinationX, destinationY, blockRegionSize, copyPixelOperation);
-			} else if (GDIPlus.UseCocoaDrawable) {
+			} else if (GDIPlus.RuntimeInfo.UseCocoaDrawable) {
 				CopyFromScreenMac (sourceX, sourceY, destinationX, destinationY, blockRegionSize, copyPixelOperation);
 			} else {
 				CopyFromScreenWin32 (sourceX, sourceY, destinationX, destinationY, blockRegionSize, copyPixelOperation);
@@ -295,7 +295,7 @@ namespace System.Drawing
 		{
 			Status status;
 			if (! disposed) {
-				if (GDIPlus.UseCarbonDrawable || GDIPlus.UseCocoaDrawable) {
+				if (GDIPlus.RuntimeInfo.UseCarbonDrawable || GDIPlus.RuntimeInfo.UseCocoaDrawable) {
 					Flush ();
 					if (maccontext != null)
 						maccontext.Release ();
@@ -1721,7 +1721,7 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 
-			if (GDIPlus.UseCocoaDrawable) {
+			if (GDIPlus.RuntimeInfo.UseCocoaDrawable) {
 				CocoaContext context = MacSupport.GetCGContextForNSView (hwnd);
 				GDIPlus.GdipCreateFromContext_macosx (context.ctx, context.width, context.height, out graphics);
 
@@ -1731,7 +1731,7 @@ namespace System.Drawing
 				return g;
 			}
 
-			if (GDIPlus.UseCarbonDrawable) {
+			if (GDIPlus.RuntimeInfo.UseCarbonDrawable) {
 				CarbonContext context = MacSupport.GetCGContextForView (hwnd);
 				GDIPlus.GdipCreateFromContext_macosx (context.ctx, context.width, context.height, out graphics);
 				
@@ -1740,7 +1740,7 @@ namespace System.Drawing
 				
 				return g;
 			}
-			if (GDIPlus.UseX11Drawable) {
+			if (GDIPlus.RuntimeInfo.UseX11Drawable) {
 				if (GDIPlus.Display == IntPtr.Zero) {
 					GDIPlus.Display = GDIPlus.XOpenDisplay (IntPtr.Zero);
 					if (GDIPlus.Display == IntPtr.Zero)
@@ -1781,7 +1781,7 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 			Graphics result = new Graphics (graphics);
 				
-			if (GDIPlus.RunningOnUnix ()) {
+			if (GDIPlus.RuntimeInfo.RunningOnUnix ()) {
 				Rectangle rect  = new Rectangle (0,0, image.Width, image.Height);
 				GDIPlus.GdipSetVisibleClip_linux (result.NativeObject, ref rect);
 			}

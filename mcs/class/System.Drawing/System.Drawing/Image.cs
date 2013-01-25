@@ -75,7 +75,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 					MemoryStream ms = new MemoryStream (bytes);
 					nativeObject = InitFromStream (ms);
 					// under Win32 stream is owned by SD/GDI+ code
-					if (GDIPlus.RunningOnWindows ())
+					if (GDIPlus.RuntimeInfo.RunningOnWindows ())
 						stream = ms;
 				}
 			}
@@ -165,7 +165,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 		// Under Windows, we may need to keep a reference on the stream as long as the image is alive
 		// (GDI+ seems to use a lazy loader)
-		if (keepAlive && GDIPlus.RunningOnWindows ())
+		if (keepAlive && GDIPlus.RuntimeInfo.RunningOnWindows ())
 			img.stream = stream;
 
 		return img;
@@ -287,7 +287,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			stream = new MemoryStream(buffer, 0, index);
 		}
 
-		if (GDIPlus.RunningOnUnix ()) {
+		if (GDIPlus.RuntimeInfo.RunningOnUnix ()) {
 			// Unix, with libgdiplus
 			// We use a custom API for this, because there's no easy way
 			// to get the Stream down to libgdiplus.  So, we wrap the stream
@@ -483,7 +483,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			nativeEncoderParams = encoderParams.ToNativePtr ();
 
 		try {
-			if (GDIPlus.RunningOnUnix ()) {
+			if (GDIPlus.RuntimeInfo.RunningOnUnix ()) {
 				GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream, false);
 				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.GetBytesDelegate, sh.PutBytesDelegate,
 					sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, ref guid, nativeEncoderParams);
@@ -810,7 +810,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public object Clone ()
 	{
-		if (GDIPlus.RunningOnWindows () && stream != null)
+		if (GDIPlus.RuntimeInfo.RunningOnWindows () && stream != null)
 			return CloneFromStream ();
 
 		IntPtr newimage = IntPtr.Zero;

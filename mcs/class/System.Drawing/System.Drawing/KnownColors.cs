@@ -222,7 +222,7 @@ namespace System.Drawing {
 
 		static KnownColors ()
 		{
-			if (GDIPlus.RunningOnWindows ()) {
+			if (GDIPlus.RuntimeInfo.RunningOnWindows ()) {
 				// If we're on Windows we should behave like MS and pull the colors
 				RetrieveWindowsSystemColors ();
 			}
