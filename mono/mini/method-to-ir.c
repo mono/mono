@@ -5803,6 +5803,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	seq_points = cfg->gen_seq_points && cfg->method == method;
 
+	if (method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
+		/* We could hit a seq point before attaching to the JIT (#8338) */
+		seq_points = FALSE;
+	}
+
 	/* 
 	 * Methods without init_locals set could cause asserts in various passes
 	 * (#497220).
