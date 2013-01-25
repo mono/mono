@@ -50,4 +50,18 @@ namespace Monodoc
 			return revManager.RetrieveWithRevision (id, revManager.LatestRevisionForId (id));
 		}
 	}
+
+	public static class DocStorageExtensions
+	{
+		public static bool TryRetrieve (this IDocStorage storage, string id, out Stream stream)
+		{
+			stream = null;
+			try {
+				stream = storage.Retrieve (id);
+				return true;
+			} catch {
+				return false;
+			}
+		}
+	}
 }

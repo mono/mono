@@ -332,7 +332,9 @@ namespace Monodoc
 
 		public virtual Stream GetImage (string url)
 		{
-			return null;
+			Stream result = null;
+			storage.TryRetrieve (url, out result);
+			return result;
 		}
 
 		//
