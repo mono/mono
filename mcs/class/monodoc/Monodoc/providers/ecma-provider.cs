@@ -202,18 +202,8 @@ namespace Monodoc.Providers
 			return base.GetCachedHelpStream (idParts[0]);
 		}
 
-		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraParams)
+		public override DocumentType GetDocumentTypeForId (string id)
 		{
-			extraParams = null;
-			int interMark = id.LastIndexOf ('?');
-			if (interMark != -1)
-				extraParams = id.Substring (interMark)
-					.Split ('&')
-					.Select (nvp => {
-						var eqIdx = nvp.IndexOf ('=');
-						return new { Key = nvp.Substring (0, eqIdx < 0 ? nvp.Length : eqIdx), Value = nvp.Substring (eqIdx + 1) };
-					})
-					.ToDictionary (kvp => kvp.Key, kvp => kvp.Value );
 			return DocumentType.EcmaXml;
 		}
 
@@ -300,10 +290,11 @@ namespace Monodoc.Providers
 			return suffix;
 		}
 
-		public override string GetInternalIdForUrl (string url, out Node node)
+		public override string GetInternalIdForUrl (string url, out Node node, out Dictionary<string, string> context)
 		{
 			var id = string.Empty;
 			node = null;
+			context = null;
 
 			if (!url.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase)) {
 				node = MatchNode (url);
@@ -314,8 +305,9 @@ namespace Monodoc.Providers
 
 			string hash;
 			id = GetInternalIdForInternalUrl (id, out hash);
+			context = EcmaDoc.GetContextForEcmaNode (hash, SourceID.ToString (), node);
 
-			return id + GetArgs (hash, node);
+			return id;
 		}
 
 		public string GetInternalIdForInternalUrl (string internalUrl, out string hash)

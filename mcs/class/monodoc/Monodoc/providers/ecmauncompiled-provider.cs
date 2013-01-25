@@ -50,7 +50,7 @@ namespace Monodoc.Providers
 
 			this.Storage = new UncompiledDocStorage (BasePath);
 
-			EcmaDoc.PopulateTreeFromIndexFile (basedoc, Tree, null, null);
+			EcmaDoc.PopulateTreeFromIndexFile (basedoc, UriPrefix, Tree, null, null, indexGenerator);
 		}
 
 		protected override string UriPrefix {

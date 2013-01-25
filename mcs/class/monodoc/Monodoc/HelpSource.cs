@@ -236,8 +236,9 @@ namespace Monodoc
 			return url.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase);
 		}
 
-		public virtual string GetInternalIdForUrl (string url, out Node node)
+		public virtual string GetInternalIdForUrl (string url, out Node node, out Dictionary<string, string> context)
 		{
+			context = null;
 			node = MatchNode (url);
 			return node == null ? null : url.Substring (UriPrefix.Length);
 		}
@@ -325,9 +326,8 @@ namespace Monodoc
 			}
 		}
 
-		public virtual DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraParams)
+		public virtual DocumentType GetDocumentTypeForId (string id)
 		{
-			extraParams = null;
 			return DocumentType.PlainText;
 		}
 

@@ -13,14 +13,14 @@ namespace Monodoc.Generators
 	/// </summary>
 	public class RawGenerator : IDocGenerator<string>
 	{
-		public string Generate (HelpSource hs, string id)
+		public string Generate (HelpSource hs, string id, Dictionary<string, string> context)
 		{
 			if (hs == null || string.IsNullOrEmpty (id))
 				return null;
 
 			IEnumerable<string> parts;
 			if (hs.IsMultiPart (id, out parts))
-				return GenerateMultiPart (hs, parts, id);
+				return GenerateMultiPart (hs, parts, id, context);
 
 			if (hs.IsRawContent (id))
 				return hs.GetText (id) ?? string.Empty;
@@ -30,11 +30,11 @@ namespace Monodoc.Generators
 			return result;
 		}
 
-		string GenerateMultiPart (HelpSource hs, IEnumerable<string> ids, string originalId)
+		string GenerateMultiPart (HelpSource hs, IEnumerable<string> ids, string originalId, Dictionary<string, string> context)
 		{
 			var sb = new StringBuilder ();
 			foreach (var id in ids)
-				sb.AppendLine (Generate (hs, id));
+				sb.AppendLine (Generate (hs, id, context));
 			return sb.ToString ();
 		}
 	}

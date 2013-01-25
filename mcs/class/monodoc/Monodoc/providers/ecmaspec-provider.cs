@@ -73,9 +73,8 @@ namespace Monodoc.Providers
 		{
 		}
 
-		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraParams)
+		public override DocumentType GetDocumentTypeForId (string id)
 		{
-			extraParams = null;
 			return id.EndsWith (TocPart) ? DocumentType.TocXml : DocumentType.EcmaSpecXml;
 		}
 

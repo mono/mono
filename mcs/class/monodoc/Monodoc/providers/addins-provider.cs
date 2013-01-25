@@ -104,33 +104,27 @@ namespace Monodoc.Providers
 			}
 		}
 		
-		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraArgs)
+		public override DocumentType GetDocumentTypeForId (string id)
 		{
-			extraArgs = new Dictionary<string, string> ();
-			var idParts = id.Split ('#');
-			extraArgs["FileID"] = idParts[0];
-			extraArgs["AddinID"] = idParts[1];
-			extraArgs["NodeID"] = idParts[2];
-
 			return DocumentType.AddinXml;
+		}
+
+		public override string GetInternalIdForUrl (string url, out Node node, out Dictionary<string, string> context)
+		{
+			var id = base.GetInternalIdForUrl (url, out node, out context);
+			var idParts = id.Split ('#');
+			context = new Dictionary<string, string> ();
+			context["FileID"] = idParts[0];
+			context["AddinID"] = idParts[1];
+			context["NodeID"] = idParts[2];
+
+			return idParts[0];
 		}
 
 		public override Node MatchNode (string url)
 		{
 			var prefix = new[] { AddinPrefix, ExtensionPrefix, ExtensionNodePrefix }.First (p => url.StartsWith (p, StringComparison.OrdinalIgnoreCase));
 			return base.MatchNode (prefix != null ? url.Substring (prefix.Length) : url);
-		}
-
-		public override Stream GetHelpStream (string id)
-		{
-			var idParts = id.Split ('#');
-			return base.GetHelpStream (idParts[0]);
-		}
-
-		public override Stream GetCachedHelpStream (string id)
-		{
-			var idParts = id.Split ('#');
-			return base.GetHelpStream (idParts[0]);
 		}
 	}
 }

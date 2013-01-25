@@ -82,9 +82,8 @@ namespace Monodoc.Providers
 			return nodesMap.TryGetValue (url, out result) ? result : null;
 		}
 
-		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraParams)
+		public override DocumentType GetDocumentTypeForId (string id)
 		{
-			extraParams = null;
 			return id == "root:" ? DocumentType.TocXml : DocumentType.Man;
 		}
 

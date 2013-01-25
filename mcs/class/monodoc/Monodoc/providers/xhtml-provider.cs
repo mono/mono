@@ -100,9 +100,8 @@ namespace Monodoc.Providers
 			}
 		}
 		
-		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraArgs)
+		public override DocumentType GetDocumentTypeForId (string id)
 		{
-			extraArgs = null;
 			return id == "root:" ? DocumentType.TocXml : DocumentType.MonoBook;
 		}
 

@@ -356,34 +356,36 @@ namespace Monodoc
 		{
 			node = null;
 			string internalId = null;
-			HelpSource hs = GetHelpSourceAndIdForUrl (url, hintSource, out internalId, out node);
-			return generator.Generate (hs, internalId);
+			Dictionary<string, string> context = null;
+			HelpSource hs = GetHelpSourceAndIdForUrl (url, hintSource, out internalId, out context, out node);
+			return generator.Generate (hs, internalId, context);
 		}
 
-		public HelpSource GetHelpSourceAndIdForUrl (string url, out string internalId)
+		public HelpSource GetHelpSourceAndIdForUrl (string url, out string internalId, out Dictionary<string, string> context)
 		{
 			Node dummy;
-			return GetHelpSourceAndIdForUrl (url, out internalId, out dummy);
+			return GetHelpSourceAndIdForUrl (url, out internalId, out context, out dummy);
 		}
 
-		public HelpSource GetHelpSourceAndIdForUrl (string url, out string internalId, out Node node)
+		public HelpSource GetHelpSourceAndIdForUrl (string url, out string internalId, out Dictionary<string, string> context, out Node node)
 		{
-			return GetHelpSourceAndIdForUrl (url, null, out internalId, out node);
+			return GetHelpSourceAndIdForUrl (url, null, out internalId, out context, out node);
 		}
 
-		public HelpSource GetHelpSourceAndIdForUrl (string url, HelpSource hintSource, out string internalId, out Node node)
+		public HelpSource GetHelpSourceAndIdForUrl (string url, HelpSource hintSource, out string internalId, out Dictionary<string, string> context, out Node node)
 		{
 			node = null;
 			internalId = null;
+			context = null;
 
 			if (url.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase))
 				return this.GetHelpSourceAndIdFromName (url.Substring ("root:/".Length), out internalId, out node);
 
 			HelpSource helpSource = hintSource;
-			if (helpSource == null || string.IsNullOrEmpty (internalId = helpSource.GetInternalIdForUrl (url, out node))) {
+			if (helpSource == null || string.IsNullOrEmpty (internalId = helpSource.GetInternalIdForUrl (url, out node, out context))) {
 				helpSource = null;
 				foreach (var hs in helpSources.Where (h => h.CanHandleUrl (url))) {
-					if (!string.IsNullOrEmpty (internalId = hs.GetInternalIdForUrl (url, out node))) {
+					if (!string.IsNullOrEmpty (internalId = hs.GetInternalIdForUrl (url, out node, out context))) {
 						helpSource = hs;
 						break;
 					}

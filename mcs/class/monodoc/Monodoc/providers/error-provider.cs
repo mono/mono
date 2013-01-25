@@ -165,15 +165,14 @@ namespace Monodoc.Providers
 			return id == "root:";
 		}
 
-		public override DocumentType GetDocumentTypeForId (string id, out Dictionary<string, string> extraParams)
+		public override DocumentType GetDocumentTypeForId (string id)
 		{
-			extraParams = null;
 			return id == "root:" ? DocumentType.TocXml : DocumentType.ErrorXml;
 		}
 
-		public override string GetInternalIdForUrl (string url, out Node node)
+		public override string GetInternalIdForUrl (string url, out Node node, out Dictionary<string, string> context)
 		{
-			var result = base.GetInternalIdForUrl (url, out node);
+			var result = base.GetInternalIdForUrl (url, out node, out context);
 			return result.ToLower ();
 		}
 		

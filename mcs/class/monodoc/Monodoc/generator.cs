@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Monodoc
 {
@@ -20,8 +21,11 @@ namespace Monodoc
 	 */
 	public interface IDocGenerator<TOutput>
 	{
-		// This method is responsible for finding out the documentation type
-		// for the given ID and use the right engine internally
-		TOutput Generate (HelpSource hs, string internalId);
+		/* This method is responsible for finding out the documentation type
+		 * for the given ID and use the right engine internally
+		 * The id can be accompanied by a context dictionary giving away extra
+		 * informtion to the renderer
+		 */
+		TOutput Generate (HelpSource hs, string internalId, Dictionary<string, string> context);
 	}
 }
