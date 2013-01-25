@@ -155,6 +155,9 @@ namespace System.Drawing
 			{
 				return UseX11Drawable || UseCarbonDrawable || UseCocoaDrawable;
 			}
+
+			[DllImport("libc")]
+			static extern int uname(IntPtr buf);
 		}
 		
 		// Copies a Ptr to an array of Points and releases the memory
@@ -1989,9 +1992,6 @@ namespace System.Drawing
 			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
 			StreamCloseDelegate close, StreamSizeDelegate size, IntPtr hdc, EmfType type, ref Rectangle frameRect, 
 			MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
-
-		[DllImport ("libc")]
-		static extern int uname (IntPtr buf);
 #endregion
 	}
 }
