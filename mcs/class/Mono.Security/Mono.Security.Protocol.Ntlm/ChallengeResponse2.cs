@@ -154,12 +154,12 @@ namespace Mono.Security.Protocol.Ntlm {
 			Array.Clear (hash, 0, hash.Length);
 		}
 
-		static byte[] Compute_NTLMv2 (Type2Message type2, string username, string password)
+		static byte[] Compute_NTLMv2 (Type2Message type2, string username, string password, string domain)
 		{
 			var ntlm_hash = Compute_NTLM_Password (password);
 
 			var ubytes = Encoding.Unicode.GetBytes (username.ToUpperInvariant ());
-			var tbytes = Encoding.Unicode.GetBytes (type2.TargetName.ToUpperInvariant ());
+			var tbytes = Encoding.Unicode.GetBytes (domain);
 
 			var bytes = new byte [ubytes.Length + tbytes.Length];
 			ubytes.CopyTo (bytes, 0);
@@ -212,7 +212,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		}
 
 		public static void Compute (Type2Message type2, NtlmAuthLevel level,
-		                            string username, string password,
+		                            string username, string password, string domain,
 		                            out byte[] lm, out byte[] ntlm)
 		{
 			lm = null;
@@ -237,7 +237,7 @@ namespace Mono.Security.Protocol.Ntlm {
 				break;
 
 			case NtlmAuthLevel.NTLMv2_only:
-				ntlm = Compute_NTLMv2 (type2, username, password);
+				ntlm = Compute_NTLMv2 (type2, username, password, domain);
 				break;
 
 			default:

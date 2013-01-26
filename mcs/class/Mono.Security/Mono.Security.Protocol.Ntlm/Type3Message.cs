@@ -152,9 +152,6 @@ namespace Mono.Security.Protocol.Ntlm {
 		public string Domain {
 			get { return _domain; }
 			set {
-				if (_type2 != null)
-					throw new InvalidOperationException (
-						"Domain is set automatically from Type2Message.TargetName");
 				if (value == null)
 					value = "";
 				if (value == "")
@@ -204,11 +201,6 @@ namespace Mono.Security.Protocol.Ntlm {
 		protected override void Decode (byte[] message)
 		{
 			base.Decode (message);
-
-			if (BitConverterLE.ToUInt16 (message, 56) != message.Length) {
-				string msg = Locale.GetText ("Invalid Type3 message length.");
-				throw new ArgumentException (msg, "message");
-			}
 
 			_password = null;
 
@@ -280,7 +272,7 @@ namespace Mono.Security.Protocol.Ntlm {
 					ntlm = legacy.NT;
 				}
 			} else {
-				ChallengeResponse2.Compute (_type2, _level, _username, _password, out lm, out ntlm);
+				ChallengeResponse2.Compute (_type2, _level, _username, _password, _domain, out lm, out ntlm);
 			}
 
 			var lmresp_len = lm != null ? lm.Length : 0;
