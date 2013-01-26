@@ -49,7 +49,7 @@ namespace Mono.Security.Protocol.Ntlm {
 			// default values
 			_domain = Environment.UserDomainName;
 			_host = Environment.MachineName;
-			Flags = (NtlmFlags) 0xb203;
+			Flags = (NtlmFlags) 0xb207;
 		}
 
 		public Type1Message (byte[] message) : base (1)
