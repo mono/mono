@@ -75,7 +75,7 @@ provider mono {
 	probe gc__global__remset__add (uintptr_t ref_addr, uintptr_t obj_addr, uintptr_t size, char *ns_name, char *class_name);
 	probe gc__obj__cemented (uintptr_t addr, uintptr_t size, char *ns_name, char *class_name);
 
-	probe gc__internal__alloc (uintptr_t addr, int type, uintptr_t size);
+	probe gc__internal__alloc (uintptr_t addr, uintptr_t size, int type);
 	probe gc__internal__dealloc (uintptr_t add, uintptr_t size, int type);
 };
 
