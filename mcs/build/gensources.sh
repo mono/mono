@@ -32,7 +32,7 @@ rm -f $outfile.makefrag
 
 process_includes $incfile $outfile.inc
 
-if test x$extfile != x -a -f $extfile; then
+if test x$extfile != x -a -f "$extfile"; then
 	cat $extfile >> $outfile.inc
 fi
 
