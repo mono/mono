@@ -143,7 +143,7 @@ public static class EcmaDoc {
 
 	internal static string GetImageFile (string dir, string img)
 	{
-		string path = Path.Combine (dir, "_images", img);
+		string path = Path.Combine (dir, Path.Combine ("_images", img));
 		return File.Exists (path) ? path : null;
 	}
 
@@ -413,7 +413,7 @@ public class EcmaProvider : Provider {
 			if (!Directory.Exists (path))
 				return;
 
-			foreach (var img in Directory.EnumerateFiles (path)) {
+			foreach (var img in Directory.GetFiles (path)) {
 				Console.WriteLine ("adding {0}", img);
 				hs.PackFile (img, Path.GetFileName (img));
 			}
