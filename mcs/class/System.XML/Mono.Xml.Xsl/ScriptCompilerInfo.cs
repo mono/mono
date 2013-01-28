@@ -167,7 +167,9 @@ namespace Mono.Xml.Xsl
 #if MS_NET
 			this.CompilerCommand = "csc.exe";
 #endif
-			this.DefaultCompilerOptions = "/t:library /r:System.dll /r:System.Xml.dll";
+			var systemAssemblyPath = typeof(Uri).Assembly.Location;
+			var systemXmlAssemblyPath = typeof(XmlDocument).Assembly.Location;
+			this.DefaultCompilerOptions = string.Format("/t:library \"/r:{0}\" \"/r:{1}\"", systemAssemblyPath, systemXmlAssemblyPath);
 		}
 
 		public override CodeDomProvider CodeDomProvider {
