@@ -127,16 +127,16 @@
 	</xsl:template>
 
 	<xsl:template name="CreateTypeSignature">
-			<xsl:attribute name="id">
-				<xsl:text>T:</xsl:text>
-				<xsl:call-template name="GetEscapedTypeName">
-					<xsl:with-param name="typename" select="@FullName" />
-				</xsl:call-template>
-				<xsl:text>:Signature</xsl:text>
-			</xsl:attribute>
-			<!-- signature -->
 			<xsl:call-template name="CreateSignature">
+			    <xsl:with-param name="id">
+				  <xsl:text>T:</xsl:text>
+				  <xsl:call-template name="GetEscapedTypeName">
+					<xsl:with-param name="typename" select="@FullName" />
+				  </xsl:call-template>
+				  <xsl:text>:Signature</xsl:text>
+				</xsl:with-param>
 				<xsl:with-param name="content">
+			<!-- signature -->
 					<xsl:choose>
 					<xsl:when test="$language='C#'">
 
@@ -387,7 +387,7 @@
 		<h3 class="{$type}"><xsl:value-of select="$section" /></h3>
 		<ul class="{$type}">
 		  <xsl:for-each select="Docs/related[@type=$type]">
-			<li><a href="{@href}"><xsl:value-of select="." /></a></li>
+			<li><a href="{@href}" target="_blank"><xsl:value-of select="." /></a></li>
 		  </xsl:for-each>
 		</ul>
 	  </xsl:if>
@@ -842,7 +842,11 @@
 				  <xsl:with-param name="type" select="'article'" />
 				</xsl:call-template>
 				<xsl:call-template name="CreateRelatedSection">
-				  <xsl:with-param name="section" select="'Available Samples'" />
+				  <xsl:with-param name="section" select="'Recipes'" />
+				  <xsl:with-param name="type" select="'recipe'" />
+				</xsl:call-template>
+				<xsl:call-template name="CreateRelatedSection">
+				  <xsl:with-param name="section" select="'Samples'" />
 				  <xsl:with-param name="type" select="'sample'" />
 				</xsl:call-template>
 				<xsl:call-template name="CreateRelatedSection">
@@ -1512,7 +1516,21 @@
 	</xsl:template>
 	<xsl:template match="img">
 	  <p>
-		<img src="source-id:{$source-id}:{@href}">
+		<img>
+		  <xsl:attribute name="src">
+			<!-- we recognize two types of images:
+				   - those with src attribute that reference directly an external image
+				   - those with a href attributes which are internally available as part of the doc bundle
+			-->
+			<xsl:choose>
+			  <xsl:when test="count(@src)&gt;0">
+				<xsl:value-of select="@src" />
+			  </xsl:when>
+			  <xsl:when test="count(@href)&gt;0">
+				<xsl:value-of select="concat('source-id:', $source-id, ':', @href)" />
+			  </xsl:when>
+			</xsl:choose>
+		  </xsl:attribute>
 		  <xsl:attribute name="class">
 			<xsl:choose>
 			  <xsl:when test="count(@class)&gt;0">
@@ -2533,7 +2551,7 @@ SkipGenericArgument: invalid type substring '<xsl:value-of select="$s" />'
 			<xsl:with-param name="type" select="$type" />
 			<xsl:with-param name="member" select="$member" />
 		</xsl:call-template>
-		<xsl:if test="count($member/Parameters/Parameter) &gt; 0">
+		<xsl:if test="count($member/Parameters/Parameter) &gt; 0 or $member/MemberType='Method' or $member/MemberType='Constructor'">
 			<xsl:text>(</xsl:text>
 			<xsl:for-each select="Parameters/Parameter">
 				<xsl:if test="not(position()=1)">,</xsl:if>
