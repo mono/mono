@@ -101,6 +101,11 @@ namespace Monodoc
 
 			if (Directory.Exists ("/Library/Frameworks/Mono.framework/External/monodoc"))
 				enumerable = enumerable.Concat (Directory.EnumerateFiles ("/Library/Frameworks/Mono.framework/External/monodoc", "*.source"));
+
+			var windowsPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "monodoc");
+			if (Directory.Exists (windowsPath))
+				enumerable = enumerable.Concat (Directory.EnumerateFiles (windowsPath, "*.source"));
+
 			return enumerable;
 		}
 
