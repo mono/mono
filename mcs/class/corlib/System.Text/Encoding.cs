@@ -865,6 +865,9 @@ public abstract class Encoding : ICloneable
 			if (defaultEncoding == null) {
 				lock (lockobj) {
 					if (defaultEncoding == null) {
+#if MOBILE
+						defaultEncoding = UTF8;
+#else 
 						// See if the underlying system knows what
 						// code page handler we should be using.
 						int code_page = 1;
@@ -906,6 +909,7 @@ public abstract class Encoding : ICloneable
 						}
 						defaultEncoding.is_readonly = true;
 					}
+#endif
 				}
 			}
 
