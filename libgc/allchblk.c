@@ -579,8 +579,8 @@ int n;
     register hdr * hhdr;		/* Header corr. to hbp */
     register struct hblk *thishbp;
     register hdr * thishdr;		/* Header corr. to hbp */
-    signed_word size_needed;    /* number of bytes in requested objects */
-    signed_word size_avail;	/* bytes available in this block	*/
+    size_t size_needed;    /* number of bytes in requested objects */
+    size_t size_avail;	/* bytes available in this block	*/
 
     size_needed = HBLKSIZE * OBJ_SZ_TO_BLOCKS(sz);
 
@@ -619,12 +619,12 @@ int n;
 	    /* This prevents us from disassembling a single large block */
 	    /* to get tiny blocks.					*/
 	    {
-	      signed_word next_size;
+	      size_t next_size;
 	      
 	      thishbp = hhdr -> hb_next;
 	      if (thishbp != 0) {
 		GET_HDR(thishbp, thishdr);
-	        next_size = (signed_word)(thishdr -> hb_sz);
+	        next_size = (size_t)(thishdr -> hb_sz);
 	        if (next_size < size_avail
 	          && next_size >= size_needed
 	          && !GC_is_black_listed(thishbp, (word)size_needed)) {
@@ -668,9 +668,9 @@ int n;
 		      /* We must now allocate thishbp, since it may	*/
 		      /* be on the wrong free list.			*/
 		}
-	      } else if (size_needed > (signed_word)BL_LIMIT
+	      } else if (size_needed > (size_t)BL_LIMIT
 	                 && orig_avail - size_needed
-			    > (signed_word)BL_LIMIT) {
+			    > (size_t)BL_LIMIT) {
 	        /* Punt, since anything else risks unreasonable heap growth. */
 		if (++GC_large_alloc_warn_suppressed
 		    >= GC_large_alloc_warn_interval) {

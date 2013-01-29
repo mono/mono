@@ -18,6 +18,8 @@ mono_assembly_fill_assembly_name
 mono_stringify_assembly_name
 mono_assembly_name_parse
 mono_assembly_loaded
+mono_loader_get_last_error
+mono_loader_error_prepare_exception
 
 ;Unity Exports that add new functions created by Unity
 unity_mono_install_memory_callbacks

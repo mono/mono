@@ -63,7 +63,7 @@ unsigned flags;
     if (h == 0) {
 	result = 0;
     } else {
-	int total_bytes = n_blocks * HBLKSIZE;
+	size_t total_bytes = n_blocks * HBLKSIZE;
 	if (n_blocks > 1) {
 	    GC_large_allocd_bytes += total_bytes;
 	    if (GC_large_allocd_bytes > GC_max_large_allocd_bytes)

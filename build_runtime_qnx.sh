@@ -7,6 +7,10 @@ PREFIX=`pwd`/../builds/qnx
 
 OUTDIR=../builds/embedruntimes/qnx
 
+perl PrepareBB10NDK.pl -ndk=r09 -env=envsetup.sh && source envsetup.sh
+
+source $BB10_NDK_ROOT/bbndk-env.sh
+
 make clean && make distclean
 
 rm -r *.cache config.status nto-arm-le-v7 libgc/config.status autom4te.cache Makefile
