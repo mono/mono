@@ -908,8 +908,8 @@ public abstract class Encoding : ICloneable
 #endif
 						}
 						defaultEncoding.is_readonly = true;
-					}
 #endif
+					}
 				}
 			}
 
