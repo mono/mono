@@ -354,8 +354,26 @@ namespace Mono.Debugger.Soft
 					switch (Name) {
 					case "Byte":
 						return "byte";
+					case "Sbyte":
+						return "sbyte";
+					case "Char":
+						return "char";
+					case "UInt16":
+						return "ushort";
+					case "Int16":
+						return "short";
+					case "UInt32":
+						return "uint";
 					case "Int32":
 						return "int";
+					case "UInt64":
+						return "ulong";
+					case "Int64":
+						return "long";
+					case "Single":
+						return "float";
+					case "Double":
+						return "double";
 					case "Boolean":
 						return "bool";
 					default:
@@ -366,6 +384,10 @@ namespace Mono.Debugger.Soft
 				if (Namespace == "System") {
 					string s = Name;
 					switch (s) {
+					case "Decimal":
+						return "decimal";
+					case "Object":
+						return "object";
 					case "String":
 						return "string";
 					default:
