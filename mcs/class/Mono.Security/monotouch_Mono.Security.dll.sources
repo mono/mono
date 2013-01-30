@@ -17,7 +17,6 @@
 ./Mono.Security.Authenticode/AuthenticodeFormatter.cs
 ./Mono.Security.Authenticode/SoftwarePublisherCertificate.cs
 ./Mono.Security.Authenticode/PrivateKey.cs
-./Mono.Security.Cryptography/ARC4Managed.cs
 ./Mono.Security.Cryptography/CryptoConvert.cs
 ./Mono.Security.Cryptography/CryptoTools.cs
 ./Mono.Security.Cryptography/DHKeyGeneration.cs
@@ -26,15 +25,12 @@
 ./Mono.Security.Cryptography/DiffieHellmanManaged.cs
 ./Mono.Security.Cryptography/KeyPairPersistence.cs
 ./Mono.Security.Cryptography/MD2.cs
-./Mono.Security.Cryptography/MD2Managed.cs
 ./Mono.Security.Cryptography/MD4.cs
-./Mono.Security.Cryptography/MD4Managed.cs
 ./Mono.Security.Cryptography/PKCS1.cs
 ./Mono.Security.Cryptography/PKCS8.cs
 ./Mono.Security.Cryptography/RC4.cs
 ./Mono.Security.Cryptography/RSAManaged.cs
 ./Mono.Security.Cryptography/SHA224.cs
-./Mono.Security.Cryptography/SHA224Managed.cs
 ./Mono.Security.Cryptography/SymmetricTransform.cs
 ./Mono.Security.X509/PKCS12.cs
 ./Mono.Security.X509/X501Name.cs
