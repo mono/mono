@@ -8045,7 +8045,7 @@ namespace Mono.CSharp
 						return null;
 					}
 
-					if (member_lookup is MethodGroupExpr) {
+					if (member_lookup is MethodGroupExpr || member_lookup is PropertyExpr) {
 						// Leave it to overload resolution to report correct error
 					} else if (!(member_lookup is TypeExpr)) {
 						// TODO: rc.SymbolRelatedToPreviousError
