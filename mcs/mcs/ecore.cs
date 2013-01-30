@@ -735,6 +735,23 @@ namespace Mono.CSharp {
 					if (non_method == null || member is MethodSpec || non_method.IsNotCSharpCompatible) {
 						non_method = member;
 					} else if (!errorMode && !member.IsNotCSharpCompatible) {
+						//
+						// Interface members that are hidden by class members are removed from the set when T is a type parameter and
+						// T has both an effective base class other than object and a non-empty effective interface set.
+						//
+						// The spec has more complex rules but we simply remove all members declared in an interface declaration.
+						//
+						var tps = queried_type as TypeParameterSpec;
+						if (tps != null && tps.HasTypeConstraint) {
+							if (non_method.DeclaringType.IsClass && member.DeclaringType.IsInterface)
+								continue;
+
+							if (non_method.DeclaringType.IsInterface && member.DeclaringType.IsInterface) {
+								non_method = member;
+								continue;
+							}
+						}
+
 						ambig_non_method = member;
 					}
 				}

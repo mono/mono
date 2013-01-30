@@ -17827,6 +17827,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-577.cs">
+    <type name="Program">
+      <method name="Void Generic[T](T)" attrs="145">
+        <size>32</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Program+BaseClass">
+      <method name="Int32 get_Id()" attrs="2182">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Derived">
+      <method name="System.String get_Id()" attrs="2534">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -46418,6 +46444,30 @@
       </method>
       <method name="Void is_numer_parser_test()" attrs="129">
         <size>18</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-862.cs">
+    <type name="op_Addition">
+      <method name="Void Main()" attrs="150">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="op_Addition+Builder">
+      <method name="Int32 get_Foo()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Int32 op_Addition(op_Addition+Builder, op_Addition+Builder)" attrs="2198">
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
