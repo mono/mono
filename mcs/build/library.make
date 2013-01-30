@@ -19,6 +19,8 @@ library_CLEAN_FILES += $(sourcefile)
 
 ifdef EXTENSION_MODULE
 EXTENSION_include=$(topdir)/../../mono-extensions/mcs/$(thisdir)/$(PROFILE)_$(LIBRARY).sources
+else
+EXTENSION_include=$(PROFILE)_opt_$(LIBRARY).sources
 endif
 
 # Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
