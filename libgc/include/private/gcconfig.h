@@ -76,7 +76,9 @@
 # endif
 # if defined(__arm__) || defined(__thumb__)
 #    define ARM32
-#    if !defined(LINUX) && !defined(NETBSD) && !defined(DARWIN)
+#    if defined(NACL)
+#      define mach_type_known
+#    elif !defined(LINUX) && !defined(NETBSD) && !defined(DARWIN)
 #      define NOSYS
 #      define mach_type_known
 #    endif
@@ -1926,8 +1928,12 @@
 # endif
 
 # ifdef ARM32
-#   define CPP_WORDSZ 32
+# if defined( NACL )
+#   define MACH_TYPE "NACL"
+# else
 #   define MACH_TYPE "ARM32"
+# endif
+#   define CPP_WORDSZ 32
 #   define ALIGNMENT 4
 #   ifdef NETBSD
 #       define OS_TYPE "NETBSD"
