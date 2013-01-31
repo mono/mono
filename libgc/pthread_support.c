@@ -687,10 +687,10 @@ void GC_mark_thread_local_free_lists(void)
 static struct GC_Thread_Rep first_thread;
 
 #ifdef NACL
-extern int nacl_thread_parked[MAX_NACL_GC_THREADS];
-extern int nacl_thread_used[MAX_NACL_GC_THREADS];
-extern int nacl_thread_parking_inited;
-extern int nacl_num_gc_threads;
+extern volatile int nacl_thread_parked[MAX_NACL_GC_THREADS];
+extern volatile int nacl_thread_used[MAX_NACL_GC_THREADS];
+extern volatile int nacl_thread_parking_inited;
+extern volatile int nacl_num_gc_threads;
 extern pthread_mutex_t nacl_thread_alloc_lock;
 extern __thread int nacl_thread_idx;
 extern __thread GC_thread nacl_gc_thread_self;
