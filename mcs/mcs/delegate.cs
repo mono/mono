@@ -441,7 +441,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public static Arguments CreateDelegateMethodArguments (AParametersCollection pd, TypeSpec[] types, Location loc)
+		public static Arguments CreateDelegateMethodArguments (ResolveContext rc, AParametersCollection pd, TypeSpec[] types, Location loc)
 		{
 			Arguments delegate_arguments = new Arguments (pd.Count);
 			for (int i = 0; i < pd.Count; ++i) {
@@ -458,7 +458,11 @@ namespace Mono.CSharp {
 					break;
 				}
 
-				delegate_arguments.Add (new Argument (new TypeExpression (types [i], loc), atype_modifier));
+				var ptype = types[i];
+				if (ptype.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+					ptype = rc.BuiltinTypes.Object;
+
+				delegate_arguments.Add (new Argument (new TypeExpression (ptype, loc), atype_modifier));
 			}
 
 			return delegate_arguments;
@@ -494,7 +498,7 @@ namespace Mono.CSharp {
 
 			var invoke_method = Delegate.GetInvokeMethod (type);
 
-			Arguments arguments = CreateDelegateMethodArguments (invoke_method.Parameters, invoke_method.Parameters.Types, loc);
+			Arguments arguments = CreateDelegateMethodArguments (ec, invoke_method.Parameters, invoke_method.Parameters.Types, loc);
 			method_group = method_group.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.CovariantDelegate);
 			if (method_group == null)
 				return null;
@@ -602,7 +606,7 @@ namespace Mono.CSharp {
 
 			var invoke = Delegate.GetInvokeMethod (target_type);
 
-			Arguments arguments = CreateDelegateMethodArguments (invoke.Parameters, invoke.Parameters.Types, mg.Location);
+			Arguments arguments = CreateDelegateMethodArguments (ec, invoke.Parameters, invoke.Parameters.Types, mg.Location);
 			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.CovariantDelegate | OverloadResolver.Restrictions.ProbingOnly) != null;
 		}
 
