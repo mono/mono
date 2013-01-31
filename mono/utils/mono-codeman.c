@@ -24,6 +24,7 @@
 #if defined(__native_client_codegen__) && defined(__native_client__)
 #include <malloc.h>
 #include <nacl/nacl_dyncode.h>
+#include <mono/metadata/gc-internal.h>
 #endif
 
 static uintptr_t code_memory_used = 0;
