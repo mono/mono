@@ -2885,6 +2885,19 @@
       </method>
     </type>
   </test>
+  <test name="dtest-058.cs">
+    <type name="Test">
+      <method name="Test Foo(System.Object)" attrs="145">
+        <size>113</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>63</size>
+      </method>
+      <method name="Void .ctor(Int32)" attrs="6273">
+        <size>16</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">

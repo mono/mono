@@ -10089,6 +10089,7 @@ namespace Mono.CSharp
 
 		CollectionOrObjectInitializers initializers;
 		IMemoryLocation instance;
+		DynamicExpressionStatement dynamic;
 
 		public NewInitialize (FullNamedExpression requested_type, Arguments arguments, CollectionOrObjectInitializers initializers, Location l)
 			: base (requested_type, arguments, l)
@@ -10142,12 +10143,23 @@ namespace Mono.CSharp
 			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);
 			initializers.Resolve (ec);
 			ec.CurrentInitializerVariable = previous;
+
+			dynamic = e as DynamicExpressionStatement;
+			if (dynamic != null)
+				return this;
+
 			return e;
 		}
 
 		public override bool Emit (EmitContext ec, IMemoryLocation target)
 		{
-			bool left_on_stack = base.Emit (ec, target);
+			bool left_on_stack;
+			if (dynamic != null) {
+				dynamic.Emit (ec);
+				left_on_stack = true;
+			} else {
+				left_on_stack = base.Emit (ec, target);
+			}
 
 			if (initializers.IsEmpty)
 				return left_on_stack;
