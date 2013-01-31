@@ -9875,9 +9875,11 @@ namespace Mono.CSharp
 	{
 		IList<Expression> initializers;
 		bool is_collection_initialization;
-		
-		public static readonly CollectionOrObjectInitializers Empty = 
-			new CollectionOrObjectInitializers (Array.AsReadOnly (new Expression [0]), Location.Null);
+
+		public CollectionOrObjectInitializers (Location loc)
+			: this (new Expression[0], loc)
+		{
+		}
 
 		public CollectionOrObjectInitializers (IList<Expression> initializers, Location loc)
 		{
@@ -10130,6 +10132,11 @@ namespace Mono.CSharp
 			Expression e = base.DoResolve (ec);
 			if (type == null)
 				return null;
+
+			if (type.IsDelegate) {
+				ec.Report.Error (1958, Initializers.Location,
+					"Object and collection initializers cannot be used to instantiate a delegate");
+			}
 
 			Expression previous = ec.CurrentInitializerVariable;
 			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);

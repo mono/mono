@@ -3173,12 +3173,11 @@ object_or_collection_initializer
 	: OPEN_BRACE opt_member_initializer_list close_brace_or_complete_completion
 	  {
 	  	if ($2 == null) {
-	  		$$ = CollectionOrObjectInitializers.Empty;
-	  		// TODO: lbag
+	  		$$ = new CollectionOrObjectInitializers (GetLocation ($1));
 	  	} else {
 	  		$$ = new CollectionOrObjectInitializers ((List<Expression>) $2, GetLocation ($1));
-	  		lbag.AddLocation ($$, GetLocation ($3));
 	  	}
+ 		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	| OPEN_BRACE member_initializer_list COMMA CLOSE_BRACE
 	  {
