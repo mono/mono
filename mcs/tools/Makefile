@@ -45,7 +45,8 @@ net_4_0_dirs := \
 	mono-configuration-crypto \
 	ccrewrite	\
 	cccheck		\
-	security
+	security	\
+	mdbrebase
 
 net_2_0_dirs := \
 	$(per_profile_dirs)
