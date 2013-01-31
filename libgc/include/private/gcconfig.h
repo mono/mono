@@ -67,8 +67,12 @@
 /* Determine the machine type: */
 # if defined(__native_client__)
 #    define NACL
-#    define I386
-#    define mach_type_known
+#    if !defined(__portable_native_client__)
+#        define I386
+#        define mach_type_known
+#    else
+         /* Here we will rely upon arch-specific defines. */
+#    endif
 # endif
 # if defined(__arm__) || defined(__thumb__)
 #    define ARM32
@@ -928,6 +932,30 @@
 #   endif
 # endif
 
+
+# ifdef NACL
+#   define OS_TYPE "NACL"
+#   if defined(__GLIBC__)
+#      define DYNAMIC_LOADING
+#   endif
+#   define DATASTART ((ptr_t)0x10020000)
+    extern int _end[];
+#   define DATAEND (_end)
+#   ifdef STACK_GRAN
+#      undef STACK_GRAN
+#   endif /* STACK_GRAN */
+#   define STACK_GRAN 0x10000
+#   define HEURISTIC1
+#   define USE_MMAP
+#   define USE_MUNMAP
+#   define USE_MMAP_ANON
+#   ifdef USE_MMAP_FIXED
+#	undef USE_MMAP_FIXED
+#   endif
+#   define GETPAGESIZE() 65536
+#   define MAX_NACL_GC_THREADS 1024
+# endif
+
 # ifdef VAX
 #   define MACH_TYPE "VAX"
 #   define ALIGNMENT 4	/* Pointers are longword aligned by 4.2 C compiler */
@@ -1204,33 +1232,6 @@
 #	  define HEAP_START DATAEND
 #	endif /* USE_MMAP */
 #   endif /* DGUX */
-#   ifdef NACL
-#	define OS_TYPE "NACL"
-	extern int etext[];
-//#	define DATASTART ((ptr_t)((((word) (etext)) + 0xfff) & ~0xfff))
-#       define DATASTART ((ptr_t)0x10000000)
-	extern int _end[];
-#	define DATAEND (_end)
-#	ifdef STACK_GRAN
-#	  undef STACK_GRAN
-#	endif /* STACK_GRAN */
-#	define STACK_GRAN 0x10000
-#	define HEURISTIC1
-#	ifdef USE_MMAP
-#	  undef USE_MMAP
-#	endif
-#	ifdef USE_MUNMAP
-#	  undef USE_MUNMAP
-#	endif
-#	ifdef USE_MMAP_ANON
-#	  undef USE_MMAP_ANON
-#	endif
-#	ifdef USE_MMAP_FIXED
-#	  undef USE_MMAP_FIXED
-#	endif
-#	define GETPAGESIZE() 65536
-#	define MAX_NACL_GC_THREADS 1024
-#   endif
 #   ifdef LINUX
 #	ifndef __GNUC__
 	  /* The Intel compiler doesn't like inline assembly */
