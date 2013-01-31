@@ -5275,8 +5275,9 @@ statement_expression
 	  {
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
-			Expression.Error_InvalidExpressionStatement (report, GetLocation ($1));
-			$$ = new StatementErrorExpression ($1 as Expression);
+			var expr = $1 as Expression;
+			expr.Error_InvalidExpressionStatement (report);
+			$$ = new StatementErrorExpression (expr);
 		} else {
 			$$ = new StatementExpression (s);
 		}
@@ -6750,7 +6751,7 @@ void Error_ExpectingTypeName (Expression expr)
 	if (expr is Invocation){
 		report.Error (1002, expr.Location, "Expecting `;'");
 	} else {
-		Expression.Error_InvalidExpressionStatement (report, expr.Location);
+		expr.Error_InvalidExpressionStatement (report);
 	}
 }
 

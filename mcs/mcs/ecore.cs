@@ -225,14 +225,19 @@ namespace Mono.CSharp {
 				name, TypeManager.CSharpName (type));
 		}
 
-		public static void Error_InvalidExpressionStatement (Report Report, Location loc)
+		protected virtual void Error_InvalidExpressionStatement (Report report, Location loc)
 		{
-			Report.Error (201, loc, "Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement");
+			report.Error (201, loc, "Only assignment, call, increment, decrement, await, and new object expressions can be used as a statement");
 		}
 		
-		public void Error_InvalidExpressionStatement (BlockContext ec)
+		public void Error_InvalidExpressionStatement (BlockContext bc)
 		{
-			Error_InvalidExpressionStatement (ec.Report, loc);
+			Error_InvalidExpressionStatement (bc.Report, loc);
+		}
+
+		public void Error_InvalidExpressionStatement (Report report)
+		{
+			Error_InvalidExpressionStatement (report, loc);
 		}
 
 		public static void Error_VoidInvalidInTheContext (Location loc, Report Report)

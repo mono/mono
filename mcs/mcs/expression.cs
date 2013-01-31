@@ -8221,6 +8221,11 @@ namespace Mono.CSharp
 				Name, expr_type.GetSignatureForError ());
 		}
 
+		protected override void Error_InvalidExpressionStatement (Report report, Location loc)
+		{
+			base.Error_InvalidExpressionStatement (report, LeftExpression.Location);
+		}
+
 		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 		{
 			if (ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2 && !ec.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
