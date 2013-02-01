@@ -4402,6 +4402,8 @@ lambda_expression_body
 	  {
 	  	// Handles only cases like foo = x.FirstOrDefault (l => );
 	  	// where we must restore current_variable
+		Block b = end_block (Location.Null);
+		b.IsCompilerGenerated = true;
 
 		Error_SyntaxError (yyToken);
 		$$ = null;
