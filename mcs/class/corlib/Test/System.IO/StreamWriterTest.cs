@@ -1062,6 +1062,7 @@ namespace MonoTests.System.IO
 		Assert.AreEqual (0L, m.Length, "#1");
 		var t = w.WriteLineAsync ();
 		Assert.IsTrue (t.Wait (1000), "#2");
+		Assert.IsTrue (w.FlushAsync ().Wait (1000), "#3");
 	}
 
 	[Test]
