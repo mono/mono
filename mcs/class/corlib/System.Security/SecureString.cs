@@ -210,7 +210,7 @@ namespace System.Security {
 
 			try {
 				Decrypt ();
-				Buffer.BlockCopy (data, index + 1, data, index, data.Length - index - 1);
+				Buffer.BlockCopy (data, index * 2 + 2, data, index * 2, data.Length - index * 2 - 2);
 				Alloc (--length, true);
 			}
 			finally {
