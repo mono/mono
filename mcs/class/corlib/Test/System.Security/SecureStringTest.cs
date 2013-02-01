@@ -30,6 +30,7 @@
 
 using System;
 using System.Security;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -212,6 +213,32 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		public void RemoveAt ()
+		{
+			string test_string = "test string";
+			string expected, actual;
+			SecureString ss = new SecureString ();
+			foreach (char c in test_string) {
+				ss.AppendChar (c);
+			}
+
+			ss.RemoveAt (0);
+			expected = "est string";
+			actual = ReadSecureString (ss);
+			Assert.AreEqual (expected, actual, "RemoveAt begining");
+
+			ss.RemoveAt (4);
+			expected = "est tring";
+			actual = ReadSecureString (ss);
+			Assert.AreEqual (expected, actual, "RemoveAt middle");
+
+			ss.RemoveAt (8);
+			expected = "est trin";
+			actual = ReadSecureString (ss);
+			Assert.AreEqual (expected, actual, "RemoveAt end");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void RemoveAt_Negative ()
 		{
@@ -369,6 +396,15 @@ namespace MonoTests.System.Security {
 		{
 			SecureString ss = GetDisposed ();
 			ss.RemoveAt (0);
+		}
+
+		// helper function
+		private static string ReadSecureString(SecureString aSecureString)
+		{
+			var strPtr = Marshal.SecureStringToGlobalAllocUnicode (aSecureString);
+			var str = Marshal.PtrToStringUni(strPtr);
+			Marshal.ZeroFreeGlobalAllocUnicode (strPtr);
+			return str;
 		}
 	}
 }
