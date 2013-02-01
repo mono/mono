@@ -18,14 +18,14 @@ sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
 library_CLEAN_FILES += $(sourcefile)
 
 ifdef EXTENSION_MODULE
-EXTENSION_include=$(topdir)/../../mono-extensions/mcs/$(thisdir)/$(PROFILE)_$(LIBRARY).sources
+EXTENSION_include = $(wildcard $(topdir)/../../mono-extensions/mcs/$(thisdir)/$(PROFILE)_$(LIBRARY).sources)
 else
-EXTENSION_include=$(PROFILE)_opt_$(LIBRARY).sources
+EXTENSION_include = $(wildcard $(PROFILE)_opt_$(LIBRARY).sources)
 endif
 
 # Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
 # We don't include it in the dependencies since it isn't always created
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(EXTENSION_include)
 	@echo Creating the per profile list $@ ...
 	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)' '$(EXTENSION_include)'
 endif
