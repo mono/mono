@@ -825,6 +825,25 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void frames_in_native () {
 		Thread.Sleep (500);
+		object mon = new object ();
+		ThreadPool.QueueUserWorkItem (delegate {
+				frames_in_native_2 ();
+				lock (mon) {
+					Monitor.Pulse (mon);
+				}
+			});
+		lock (mon) {
+			Monitor.Wait (mon);
+		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void frames_in_native_2 () {
+		frames_in_native_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void frames_in_native_3 () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

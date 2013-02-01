@@ -91,7 +91,8 @@ public class DebuggerTests
 		// String
 		MethodMirror m = entry_point.DeclaringType.GetMethod (name);
 		Assert.IsNotNull (m);
-		vm.SetBreakpoint (m, 0);
+		Console.WriteLine ("X: " + name + " " + m.ILOffsets.Count + " " + m.Locations.Count);
+		vm.SetBreakpoint (m, m.ILOffsets [0]);
 
 		Event e = null;
 
@@ -2552,10 +2553,16 @@ public class DebuggerTests
 		// Check that invokes are disabled for such threads
 		TypeMirror t = frames [frame_index + 1].Method.DeclaringType;
 
-		// return void
 		var m = t.GetMethod ("invoke_static_return_void");
 		AssertThrows<InvalidOperationException> (delegate {
 				t.InvokeMethod (e.Thread, m, null);
+			});
+
+		// Check that the frame info is invalidated
+		run_until ("frames_in_native_2");
+
+		AssertThrows<InvalidStackFrameException> (delegate {
+				Console.WriteLine (frames [frame_index].GetThis ());
 			});
 	}
 
