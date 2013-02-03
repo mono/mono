@@ -2,8 +2,10 @@
 // AssemblyBuilderTest.cs - NUnit Test Cases for the AssemblyBuilder class
 //
 // Zoltan Varga (vargaz@freemail.hu)
+// Andres G. Aragoneses (andres@7digital.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 7digital Media, Ltd. http://www.7digital.com
 //
 //
 
@@ -1819,6 +1821,41 @@ public class AssemblyBuilderTest
 		foreach (var t in types)
 			Assert.IsFalse (t is TypeBuilder, "#6_" + t.Name);
 	}
+
+	[Test]
+	public void DynamicAssemblyGenerationInCurrentDomainShouldNotChangeTheOrderOfCurrentDomainGetAssemblies ()
+	{
+		var initialPosition = GetAssemblyPositionForType (GetType ());
+		DefineDynamicAssembly (AppDomain.CurrentDomain);
+
+		var currentPosition = GetAssemblyPositionForType (GetType ());
+		Assert.AreEqual (initialPosition, currentPosition);
+	}
+
+	static void DefineDynamicAssembly (AppDomain domain)
+	{
+		AssemblyName assemblyName = new AssemblyName ();
+		assemblyName.Name = "MyDynamicAssembly";
+
+		AssemblyBuilder assemblyBuilder = domain.DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.Run);
+		ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule ("MyDynamicModule");
+		TypeBuilder typeBuilder = moduleBuilder.DefineType ("MyDynamicType", TypeAttributes.Public);
+		ConstructorBuilder constructorBuilder = typeBuilder.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, null);
+		ILGenerator ilGenerator = constructorBuilder.GetILGenerator ();
+		ilGenerator.EmitWriteLine ("MyDynamicType instantiated!");
+		ilGenerator.Emit (OpCodes.Ret);
+		typeBuilder.CreateType ();
+	}
+
+	static int GetAssemblyPositionForType (Type type)
+	{
+		var assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+		for (int i = 0; i < assemblies.Length; i++)
+			if (type.Assembly == assemblies [i])
+				return i;
+		return -1;
+	}
+
 
 	private static void AssertAssemblyName (string tempDir, AssemblyName assemblyName, string abName, string fullName)
 	{
