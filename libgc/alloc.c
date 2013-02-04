@@ -319,12 +319,14 @@ void GC_maybe_gc()
     }
 }
 
-#ifdef defined(DARWIN) && defined(ARM32)
+#if defined(DARWIN) && defined(ARM32)
 
 #include <mach/mach_time.h>
 #include <mach/mach_init.h>
 #include <mach/thread_policy.h>
 #include <pthread.h>
+
+/* #define DEBUG_REALTIME 1 */
 
 void nanoseconds_to_absolutetime (uint64_t nanoseconds, uint64_t *abs_time)
 {
@@ -356,10 +358,14 @@ static int set_realtime_mach (int period, int computation, int constraint) {
     if ((ret=thread_policy_set(threadport,
         THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&ttcpolicy,
         THREAD_TIME_CONSTRAINT_POLICY_COUNT)) != KERN_SUCCESS) {
+#ifdef DEBUG_REALTIME
             GC_printf0("set_realtime() failed.\n");
+#endif
             return 0;
     }
+#ifdef DEBUG_REALTIME
     GC_printf0("set_realtime() 1  succeeded.\n");
+#endif
     return 1;
 }
 
@@ -408,7 +414,6 @@ GC_stop_func stop_func;
     }
     set_realtime (5000000);
     if (stop_func == GC_never_stop_func) GC_notify_full_gc();
-        GET_TIME(start_time);
 #   ifdef CONDPRINT
       if (GC_print_stats) {
         if (GC_print_stats) GET_TIME(start_time);
@@ -450,7 +455,6 @@ GC_stop_func stop_func;
       return(FALSE);
     }
     GC_finish_collection();
-        GET_TIME(current_time);
 #   if defined(CONDPRINT)
       if (GC_print_stats) {
         GET_TIME(current_time);
@@ -458,8 +462,6 @@ GC_stop_func stop_func;
                    MS_TIME_DIFF(current_time,start_time));
       }
 #   endif
-        GC_printf1("Complete collection took %lu msecs\n",
-                   MS_TIME_DIFF(current_time,start_time));
     if (GC_notify_event)
 	GC_notify_event (GC_EVENT_END);
       
