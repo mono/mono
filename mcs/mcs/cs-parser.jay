@@ -521,7 +521,7 @@ namespace_declaration
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
-	  opt_extern_alias_directives opt_using_directives opt_namespace_or_type_declarations CLOSE_BRACE opt_semicolon
+	  opt_extern_alias_directives opt_using_directives opt_namespace_or_type_declarations CLOSE_BRACE opt_semicolon_error
 	  {
 		if ($11 != null)
 			lbag.AddLocation (current_container, GetLocation ($2), GetLocation ($5), GetLocation ($10), GetLocation ($11));
@@ -538,6 +538,16 @@ namespace_declaration
 		var ns = new NamespaceContainer (name, current_namespace);
 		lbag.AddLocation (ns, GetLocation ($2));
 		current_namespace.AddTypeContainer (ns);
+	  }
+	;
+
+opt_semicolon_error
+	: /* empty */
+	| SEMICOLON
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+	  	$$ = null;
 	  }
 	;
 
