@@ -18,7 +18,7 @@ class Settings
 
 	public bool Validate ()
 	{
-		return InputPattern != null && OutputPattern != null && !OutputPattern.StartsWith (InputPattern);
+		return InputPattern != null && OutputPattern != null;
 	}
 
 	public string Replace (string input)
