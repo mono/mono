@@ -507,7 +507,7 @@ namespace System.IO {
 			do {
 				int tryReadLen = Math.Min (MaxBufferSize, len);
 				
-				int actualReadLen = m_stream.Read (charByteBuffer, 0, readLen);
+				int actualReadLen = m_stream.Read (charByteBuffer, 0, tryReadLen);
 				if (actualReadLen == 0)
 					throw new EndOfStreamException();
 				
