@@ -4,9 +4,7 @@ include ../../build/rules.make
 
 PROGRAM = mdbrebase.exe
 
-LOCAL_MCS_FLAGS = \
-        /r:Mono.Cecil.dll       \
-        /r:Mono.Cecil.Mdb.dll
+LOCAL_MCS_FLAGS = /r:Mono.CompilerServices.SymbolWriter.dll
 
 
 include ../../build/executable.make

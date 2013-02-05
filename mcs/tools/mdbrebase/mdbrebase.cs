@@ -1,10 +1,10 @@
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-using Mono.Cecil;
-using Mono.Cecil.Mdb;
+using Mono.CompilerServices.SymbolWriter;
 using Mono.Options;
 
 namespace Mono.MdbRebase
@@ -38,58 +38,43 @@ class MdbRebase
 		this.settings = settings;
 	}
 
-	public void RewriteMdbFile (string inputAssembly)
+	public void RewriteMdbFile (string inputFile)
 	{
-		var assemblyName = new FileInfo (inputAssembly).Name;
-	
-		var readParams = new ReaderParameters () {
-			SymbolReaderProvider = new MdbReaderProvider (),
-			ReadSymbols = true,
-		};
+		Console.WriteLine ("Processing {0}", inputFile);
+		var input = MonoSymbolFile.ReadSymbolFile (inputFile);
 
-		var assembly = AssemblyDefinition.ReadAssembly (inputAssembly, readParams);
+		var output = new MonoSymbolFile ();
 
-		foreach (var m in assembly.Modules) {
-			foreach (var t in m.Types) {
-				ProcessType (t);
-				foreach (var inner in t.NestedTypes)
-					ProcessType (inner);
-			}
+		foreach (var s in input.Sources) {
+			s.FileName = settings.Replace (s.FileName);
+			output.AddSource (s);
 		}
 
-		var writeParms = new WriterParameters () {
-			SymbolWriterProvider = new MdbWriterProvider (),
-			WriteSymbols = true,
-		};
+		foreach (var cu in input.CompileUnits) {
+			cu.ReadAll ();
+			output.AddCompileUnit (cu);
+		}
 	
-		var tmpdir = Path.GetTempPath ();
-		var tmpAsm = tmpdir + assemblyName;
-		string finalMdb = inputAssembly + ".mdb";
+		foreach (var m in input.Methods) {
+			m.ReadAll ();
+			output.AddMethod (m);
+		}
+
+
+		var mdbName = new FileInfo (inputFile).Name;
+		var tmpMdb = Path.Combine (Path.GetTempPath (), mdbName);
+		var finalMdb = inputFile;
 		if (settings.OutputDirectory != null)
-			finalMdb = Path.Combine (settings.OutputDirectory, assemblyName) + ".mdb";
+			finalMdb = Path.Combine (settings.OutputDirectory, mdbName);
 
-		assembly.Write (tmpAsm, writeParms);	
-		Console.WriteLine (tmpAsm);
-		File.Delete (tmpAsm);
-		File.Delete (finalMdb);
-		Console.WriteLine ("Moving {0} to {1}", tmpAsm + ".mdb", finalMdb);
-		new FileInfo (tmpAsm + ".mdb").MoveTo (finalMdb);
-	}
-
-	void ProcessMethod (MethodDefinition m)
-	{
-		foreach (var i in m.Body.Instructions) {
-			if (i.SequencePoint != null)
-				i.SequencePoint.Document.Url = settings.Replace (i.SequencePoint.Document.Url);
+		using (var stream = new FileStream (tmpMdb, FileMode.Create)) {
+			output.CreateSymbolFile (input.Guid, stream);
 		}
-	}
+		input.Dispose ();
 
-	void ProcessType (TypeDefinition t)
-	{
-		foreach (var m in t.Methods)
-			ProcessMethod (m);
+		File.Delete (finalMdb);
+		new FileInfo (tmpMdb).MoveTo (finalMdb);
 	}
-
 }
 
 class Driver {
