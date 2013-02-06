@@ -80,18 +80,15 @@ has_dtrace=no
 parallel_mark=yes
 ikvm_native=yes
 
-case "$host" in
-	powerpc*-*-linux*)
-		# https://bugzilla.novell.com/show_bug.cgi?id=504411
-		disable_munmap=yes
-	;;
-esac
-
 host_win32=no
 target_win32=no
 platform_android=no
 platform_darwin=no
 case "$host" in
+	powerpc*-*-linux*)
+		# https://bugzilla.novell.com/show_bug.cgi?id=504411
+		disable_munmap=yes
+	;;
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(HOST_WIN32,1,[Host Platform is Win32])
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
@@ -449,6 +446,10 @@ AC_CHECK_HEADERS([sys/user.h], [ ], [ ], [
 AC_LANG([C])
 #AC_LANG([C++])
 
+# TODO : The AC_CHECK_HEADERS, the 'if' following it, and the
+# AM_CONDITIONAL and AC_DEFINE following that could probably all
+# be simplified into a single call to AC_CHECK_HEADERS (by nesting
+# the other macros within the if-true/if-false actions).
 AC_CHECK_HEADERS([zlib.h], [have_zlib=yes], [have_zlib=no])
 if test x$have_zlib = xyes; then
 	AC_COMPILE_IFELSE([
@@ -464,7 +465,7 @@ if test x$have_zlib = xyes; then
    	],[
 		AC_MSG_RESULT(Using system zlib)
 		zlib_msg="system zlib"
-		AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
+		AC_DEFINE(HAVE_SYS_ZLIB, 1, [Have system zlib])
    	],[
 		AC_MSG_RESULT(Using embedded zlib)
 		have_zlib=no
@@ -474,6 +475,7 @@ fi
 
 AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
 AC_DEFINE(HAVE_ZLIB, 1, [Have system zlib])
+
 
 # for mono/metadata/debug-symfile.c
 AC_CHECK_HEADERS([elf.h])
@@ -488,6 +490,7 @@ AC_CHECK_HEADERS([syslog.h])
 # for mono/dis
 AC_CHECK_HEADERS([wchar.h])
 AC_CHECK_HEADERS([ieeefp.h])
+# TODO : Simplify this to use AC_CHECK_DECLS
 AC_MSG_CHECKING(for isinf)
 AC_LANG_ASSERT(C)
 AC_LINK_IFELSE([
@@ -508,27 +511,15 @@ AC_LINK_IFELSE([
 AC_CHECK_HEADERS([linux/magic.h])
 
 # not 64 bit clean in cross-compile
-AC_CHECK_SIZEOF(void *, 4)
+AC_CHECK_SIZEOF([void *], 4)
 
 # Default compiler warning flags; these apply to both gcc and clang.
-DEFAULT_WARN='-Wall \
-              -Wunused \
-              -Wmissing-prototypes \
-              -Wmissing-declarations \
-              -Wstrict-prototypes \
-              -Wmissing-prototypes \
-              -Wnested-externs \
-              -Wpointer-arith \
-              -Wno-cast-qual \
-              -Wwrite-strings \
-              -Wno-switch \
-              -Wno-switch-enum \
-              -Wno-unused-value'
+DEFAULT_WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value'
               
 # Set compiler-specific warning flags.
 if test x"$CC" = x"gcc"; then
     # Use the default warnings, at least.
-    WARN=DEFAULT_WARN
+    WARN=$DEFAULT_WARN
 		
 	# The runtime code does not respect ANSI C strict aliasing rules
 	CFLAGS="$CFLAGS -fno-strict-aliasing"
@@ -538,9 +529,9 @@ if test x"$CC" = x"gcc"; then
     AC_MSG_CHECKING(for -Wdeclaration-after-statement option to gcc)
 	AC_COMPILE_IFELSE([
 		AC_LANG_PROGRAM([[ ]], [[ ]])
-		], [
+	], [
        	AC_MSG_RESULT(yes)
-		], [
+	], [
 		AC_MSG_RESULT(no)
        	CFLAGS=$ORIG_CFLAGS
     ])
@@ -551,17 +542,16 @@ if test x"$CC" = x"gcc"; then
     AC_MSG_CHECKING(for -Wno-unused-but-set-variable option to gcc)
     AC_COMPILE_IFELSE([
 		AC_LANG_PROGRAM([[ ]], [[ ]])
-		], [
+	], [
        	AC_MSG_RESULT(yes)
        	CFLAGS="$ORIG_CFLAGS -Wno-unused-but-set-variable"
-		], [
+	], [
 		AC_MSG_RESULT(no)
        	CFLAGS=$ORIG_CFLAGS
     ])
-
 elif test x"$CC" = x"clang"; then
     # Use the default warnings, at least.
-    WARN=DEFAULT_WARN
+    WARN=$DEFAULT_WARN
 		
 	# The runtime code does not respect ANSI C strict aliasing rules
 	CFLAGS="$CFLAGS -fno-strict-aliasing"
@@ -571,13 +561,12 @@ elif test x"$CC" = x"clang"; then
     AC_MSG_CHECKING(for -Wdeclaration-after-statement option to clang)
 	AC_COMPILE_IFELSE([
 		AC_LANG_PROGRAM([[ ]], [[ ]])
-		], [
+	], [
        	AC_MSG_RESULT(yes)
-		], [
+	], [
 		AC_MSG_RESULT(no)
        	CFLAGS=$ORIG_CFLAGS
     ])
-
 else
 	# The Sun Forte compiler complains about inline functions that access static variables
 	# so disable all inlining.
@@ -592,19 +581,19 @@ CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -g"
 
 AC_CACHE_CHECK(
 	[for clang],
-	mono_cv_clang, [
-		AC_COMPILE_IFELSE([
-			AC_LANG_PROGRAM([[
+	mono_cv_clang,
+	[AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
 				#ifdef __clang__
 				#else
 				#error "FAILED"
 				#endif
-			]],
-			[[ ]])
-		],
-		[mono_cv_clang=yes],
-		[mono_cv_clang=no])
-	])
+		]],
+		[[ ]])
+	],
+	[mono_cv_clang=yes],
+	[mono_cv_clang=no])
+])
 
 # Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
@@ -776,11 +765,11 @@ if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
 	AC_MSG_CHECKING(for -mno-tls-direct-seg-refs option to gcc)
 	AC_COMPILE_IFELSE([
 		AC_LANG_PROGRAM([[ ]], [[ ]])
-		], [
+	], [
 	   	AC_MSG_RESULT(yes)
 	   	# Pass it to libgc as well
 	   	CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -mno-tls-direct-seg-refs"
-		], [
+	], [
 	   	AC_MSG_RESULT(no)
 	   	CFLAGS=$ORIG_CFLAGS
 	])
@@ -807,7 +796,7 @@ AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsy
 	done
 	DISABLED_FEATURES=$enable_minimal
 	disabled="Disabled:      $enable_minimal"
-],[ ])
+],[])
 
 AC_DEFINE_UNQUOTED(DISABLED_FEATURES, "$DISABLED_FEATURES", [String of disabled features])
 
@@ -977,27 +966,27 @@ AC_COMPILE_IFELSE([
 		void __attribute__ ((visibility ("hidden"))) doit (void) {}
 		]],
 		[[ doit (); ]])
-	], [
+], [
    	have_visibility_hidden=yes
    	AC_MSG_RESULT(yes)
-	], [
+], [
    	have_visibility_hidden=no
    	AC_MSG_RESULT(no)
-	])
+])
 
 AC_MSG_CHECKING(for deprecated __attribute__)
 AC_COMPILE_IFELSE([
 	AC_LANG_PROGRAM([[
 	int doit (void) __attribute__ ((deprecated));
 	int doit (void) { return 0; }]],
-	[[ ]])
-	], [
+	[[]])
+], [
    	have_deprecated=yes
    	AC_MSG_RESULT(yes)
-	], [
+], [
    	have_deprecated=no
    	AC_MSG_RESULT(no)
-	])
+])
 
 AC_ARG_ENABLE(parallel-mark, [  --enable-parallel-mark     Enables GC Parallel Marking], enable_parallel_mark=$enableval, enable_parallel_mark=$parallel_mark)
 if test x$enable_parallel_mark = xyes; then
@@ -1114,7 +1103,8 @@ AC_COMPILE_IFELSE([
 			int  length;
 			char data [0];
 		};
-		]], [[ ]])
+	]],
+	[[ ]])
 ], [
 	AC_MSG_RESULT(yes)
 	AC_DEFINE_UNQUOTED(MONO_ZERO_LEN_ARRAY, 0, [Length of zero length arrays])
@@ -1124,7 +1114,6 @@ AC_COMPILE_IFELSE([
 ])
 
 if test x$target_win32 = xno; then
-
 	dnl hires monotonic clock support
 	AC_SEARCH_LIBS(clock_gettime, rt)
 
@@ -1138,7 +1127,8 @@ if test x$target_win32 = xno; then
 		LIBS="$LIBS $DL_LIB"
 		AC_DEFINE(HAVE_DL_LOADER,1,[dlopen-based dynamic loader available])
 		dnl from glib's configure.in
-		AC_CACHE_CHECK([for preceeding underscore in symbols],
+		AC_CACHE_CHECK(
+			[for preceeding underscore in symbols],
 			mono_cv_uscore,[
 			AC_RUN_IFELSE([
 				AC_LANG_SOURCE([[
@@ -1233,49 +1223,10 @@ if test x$target_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
-
 	dnl ******************************************************************
 	dnl *** Check for large file support                               ***
-	dnl *** (If we were using autoconf 2.50 we'd use AC_SYS_LARGEFILE) ***
 	dnl ******************************************************************
-	
-	# Check that off_t can represent 2**63 - 1 correctly, working around
-	# potential compiler bugs.  Defines LARGE_FILE_SUPPORT, adds $1 to
-	# CPPFLAGS and sets $large_offt to yes if the test succeeds
-	large_offt=no
-	AC_DEFUN([LARGE_FILES], [
-		large_CPPFLAGS=$CPPFLAGS
-		CPPFLAGS="$CPPFLAGS $1"
-		AC_COMPILE_IFELSE([
-			AC_LANG_PROGRAM([[
-				#include <sys/types.h>
-				#include <limits.h>
-			]], [[
-				/* Lifted this compile time assert method from: http://www.jaggersoft.com/pubs/CVu11_3.html */
-				#define COMPILE_TIME_ASSERT(pred) \
-					switch(0){case 0:case pred:;}
-				COMPILE_TIME_ASSERT(sizeof(off_t) * CHAR_BIT == 64);
-			]])
-			], [
-			AC_MSG_RESULT(ok)
-			AC_DEFINE(HAVE_LARGE_FILE_SUPPORT, 1, [Have large file support])
-			large_CPPFLAGS="$large_CPPFLAGS $1"
-			large_offt=yes
-		], [
-			AC_MSG_RESULT(no)
-		])
-		CPPFLAGS=$large_CPPFLAGS
-	])
-
-	AC_MSG_CHECKING(if off_t is 64 bits wide)
-	LARGE_FILES("")
-	if test $large_offt = no; then
-		AC_MSG_CHECKING(if _FILE_OFFSET_BITS=64 gives 64 bit off_t)
-		LARGE_FILES("-D_FILE_OFFSET_BITS=64")
-	fi
-	if test $large_offt = no; then
-		AC_MSG_WARN([No 64 bit file size support available])
-	fi
+	AC_SYS_LARGEFILE
 	
 	dnl *****************************
 	dnl *** Checks for libsocket  ***
@@ -1293,108 +1244,87 @@ if test x$target_win32 = xno; then
 	dnl *******************************
 	dnl *** Checks for MSG_NOSIGNAL ***
 	dnl *******************************
-	AC_MSG_CHECKING(for MSG_NOSIGNAL)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[
-			#include <sys/socket.h>
-		]], [[
-			int f = MSG_NOSIGNAL;
-		]])
-	], [
+	AC_CHECK_DECLS(
+		[MSG_NOSIGNAL],
 		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_MSG_NOSIGNAL, 1, [Have MSG_NOSIGNAL])
-	], [
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE(HAVE_MSG_NOSIGNAL, 1, [Have MSG_NOSIGNAL])],
 		# We'll have to use signals
-		AC_MSG_RESULT(no)
-	])
+		[AC_MSG_RESULT(no)],
+		[[#include <sys/socket.h>]])
 
 	dnl *****************************
 	dnl *** Checks for SOL_IP     ***
 	dnl *****************************
-	AC_MSG_CHECKING(for SOL_IP)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = SOL_IP;	]])
-	], [
+	AC_CHECK_DECLS(
+		[SOL_IP],
 		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SOL_IP, 1, [Have SOL_IP])
-	], [
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE(HAVE_SOL_IP, 1, [Have SOL_IP])],
 		# We'll have to use getprotobyname
-		AC_MSG_RESULT(no)
-	])
+		[AC_MSG_RESULT(no)],
+		[[#include <netdb.h>]])
 
 	dnl *****************************
-	dnl *** Checks for SOL_IPV6     ***
+	dnl *** Checks for SOL_IPV6   ***
 	dnl *****************************
-	AC_MSG_CHECKING(for SOL_IPV6)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = SOL_IPV6; ]])
-	], [
+	AC_CHECK_DECLS(
+		[SOL_IPV6],
 		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SOL_IPV6, 1, [Have SOL_IPV6])
-	], [
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE(HAVE_SOL_IPV6, 1, [Have SOL_IPV6])],
 		# We'll have to use getprotobyname
-		AC_MSG_RESULT(no)
-	])
+		[AC_MSG_RESULT(no)],
+		[[#include <netdb.h>]])
 
 	dnl *****************************
 	dnl *** Checks for SOL_TCP    ***
 	dnl *****************************
 	AC_MSG_CHECKING(for SOL_TCP)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = SOL_TCP; ]])
-	], [
+	AC_CHECK_DECLS(
+		[SOL_TCP],
 		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SOL_TCP, 1, [Have SOL_TCP])
-	], [
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE(HAVE_SOL_TCP, 1, [Have SOL_TCP])],
 		# We'll have to use getprotobyname
-		AC_MSG_RESULT(no)
-	])
+		[AC_MSG_RESULT(no)],
+		[[#include <netdb.h>]])
 
 	dnl *****************************
 	dnl *** Checks for IP_PKTINFO ***
 	dnl *****************************
 	AC_MSG_CHECKING(for IP_PKTINFO)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IP_PKTINFO; ]])
-	], [
+	AC_CHECK_DECLS(
+		[IP_PKTINFO],
 		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_IP_PKTINFO, 1, [Have IP_PKTINFO])
-	], [
-		AC_MSG_RESULT(no)
-	])
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE(HAVE_IP_PKTINFO, 1, [Have IP_PKTINFO])],
+		[AC_MSG_RESULT(no)],
+		[[#include <netdb.h>]])
 
 	dnl *****************************
 	dnl *** Checks for IPV6_PKTINFO ***
 	dnl *****************************
 	AC_MSG_CHECKING(for IPV6_PKTINFO)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IPV6_PKTINFO; ]])
-	], [
+	AC_CHECK_DECLS(
+		[IPV6_PKTINFO],
 		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_IPV6_PKTINFO, 1, [Have IPV6_PKTINFO])
-	], [
-		AC_MSG_RESULT(no)
-	])
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE(HAVE_IPV6_PKTINFO, 1, [Have IPV6_PKTINFO])],
+		[AC_MSG_RESULT(no)],
+		[[#include <netdb.h>]])
 
 	dnl **********************************
 	dnl *** Checks for IP_DONTFRAGMENT ***
 	dnl **********************************
 	AC_MSG_CHECKING(for IP_DONTFRAGMENT)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IP_DONTFRAGMENT; ]])		
-	], [
+	AC_CHECK_DECLS(
+		[IP_DONTFRAGMENT],
 		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_IP_DONTFRAGMENT, 1, [Have IP_DONTFRAGMENT])
-	], [
-		AC_MSG_RESULT(no)
-	])
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE(HAVE_IP_DONTFRAGMENT, 1, [Have IP_DONTFRAGMENT])],
+		[AC_MSG_RESULT(no)],
+		[[#include <netdb.h>]])
 
 	dnl **********************************
 	dnl *** Checks for IP_MTU_DISCOVER ***
