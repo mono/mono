@@ -191,7 +191,7 @@ if (!$iphone_simulator)
 {
 	# Create universal binaries
 	mkpath ("$root/builds/embedruntimes/osx");
-	for $file ('MonoBundleBinary','libmono.0.dylib','libmono.a') {
+	for $file ('libmono.0.dylib','libmono.a') {
 		system ('lipo', "$root/builds/embedruntimes/osx-i386/$file", "$root/builds/embedruntimes/osx-x86_64/$file", '-create', '-output', "$root/builds/embedruntimes/osx/$file");
 	}
 
