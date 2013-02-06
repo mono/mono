@@ -194,6 +194,7 @@ if (!$iphone_simulator)
 	for $file ('libmono.0.dylib','libmono.a') {
 		system ('lipo', "$root/builds/embedruntimes/osx-i386/$file", "$root/builds/embedruntimes/osx-x86_64/$file", '-create', '-output', "$root/builds/embedruntimes/osx/$file");
 	}
+	system('cp', "$root/builds/embedruntimes/osx-i386/MonoBundleBinary", "$root/builds/embedruntimes/osx/MonoBundleBinary");
 
 	mkpath ("$root/builds/monodistribution/bin");
 	for $file ('mono','pedump') {
