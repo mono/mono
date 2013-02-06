@@ -42,7 +42,7 @@ for my $arch (@arches)
 
 	my $macversion = '10.4';
 	my $sdkversion = '10.4u';
-	if ($arch == 'x86_64') {
+	if ($arch eq 'x86_64') {
 		$macversion = '10.6';
 		$sdkversion = '10.6';
 	}
