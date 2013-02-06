@@ -239,7 +239,7 @@ namespace System.IO {
 		{
 			await DecodeAsync ().ConfigureAwait (false);
 			if (byte_pos > 0) {
-				FlushBytesAsync ().ConfigureAwait (false);
+				await FlushBytesAsync ().ConfigureAwait (false);
 				await internalStream.FlushAsync ().ConfigureAwait (false);
 			}
 		}
@@ -254,7 +254,7 @@ namespace System.IO {
 				preamble_done = true;
 			}
 
-			internalStream.WriteAsync (byte_buf, 0, byte_pos).ConfigureAwait (false);
+			await internalStream.WriteAsync (byte_buf, 0, byte_pos).ConfigureAwait (false);
 			byte_pos = 0;
 		}
 
