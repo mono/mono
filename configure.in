@@ -1,12 +1,13 @@
 # Process this file with autoconf to produce a configure script.
-#AC_PREREQ([2.62])
+AC_PREREQ([2.64])
 
 AC_INIT(mono, [3.0.4],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_SYSTEM		#TODO: 	This is obsolete, and is partially replaced by AC_CANONICAL_HOST (below)
+						#		Remove it, or replace with AC_CANONICAL_BUILD and/or AC_CANONICAL_TARGET
 AC_CANONICAL_HOST
 
 # Gross hack to enable 'make dist' on automake 1.9+tar 1.14.
@@ -110,7 +111,7 @@ case "$host" in
 			# dll, which means we would have to distribute that file too.
 			#
 			if test "x$CC" != "x"; then
-				AC_ERROR(Don't set CC. mono can only be compiled with gcc-3 from the 'gcc-core' package)
+				AC_MSG_ERROR(Don't set CC. mono can only be compiled with gcc-3 from the 'gcc-core' package)
 			fi
 			CC="gcc-3.exe -mno-cygwin -g"
 			CXX="g++-3.exe -mno-cygwin -g"
@@ -357,10 +358,13 @@ AM_CONDITIONAL(PLATFORM_DARWIN, test x$platform_darwin = xyes)
 AM_CONDITIONAL(PLATFORM_SIGPOSIX, test x$use_sigposix = xyes)
 AM_CONDITIONAL(PLATFORM_ANDROID, test x$platform_android = xyes)
 
-AC_CHECK_TOOL(CC, gcc, gcc)
-AC_PROG_CC
-AC_CHECK_TOOL(CXX, g++, g++)
-AC_PROG_CXX
+# If the user hasn't explicitly specified which C and C++ compilers to use,
+# search the system for suitable compilers to use.
+# If the system contains more than one of the listed compilers, the one which
+# appears first (left-to-right) in the list will be used.
+AC_PROG_CC([gcc])		# [gcc clang]
+AC_PROG_CXX([g++])		# [g++ clang++]
+
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
@@ -373,6 +377,8 @@ AC_SUBST(CCASFLAGS)
 
 # AC_PROG_CXX helpfully sets CXX to g++ even if no c++ compiler is found so check
 # GXX instead. See http://lists.gnu.org/archive/html/bug-autoconf/2002-04/msg00056.html
+# TODO: This may no longer be needed, now that we're providing an explicit list
+# of compilers to AC_PROG_CXX; if so, remove this.
 if test "x$CXX" = "xg++"; then
 	if test "x$GXX" != "xyes"; then
 		# automake/libtool is so broken, it requires g++ even if the c++ sources
@@ -423,103 +429,155 @@ AM_ICONV()
 
 AM_CONDITIONAL(NO_VERSION_SCRIPT, test x$no_version_script = xyes)
 
-AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h libproc.h)
-AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h)
-AC_CHECK_HEADERS([linux/netlink.h linux/rtnetlink.h],
-                  [], [], [#include <stddef.h>
-		  #include <sys/socket.h>
-		  #include <linux/socket.h>])
+AC_CHECK_HEADERS([sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h libproc.h])
+AC_CHECK_HEADERS([sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h])
+AC_CHECK_HEADERS(
+	[linux/netlink.h linux/rtnetlink.h],
+	[ ], [ ], [
+		#include <stddef.h>
+		#include <sys/socket.h>
+		#include <linux/socket.h>
+	])
 
-AC_CHECK_HEADERS(sys/user.h, [], [],
-[
-#ifdef HAVE_SYS_PARAM_H
-# include <sys/param.h>
-#endif
-])
+AC_CHECK_HEADERS([sys/user.h], [ ], [ ], [
+	#ifdef HAVE_SYS_PARAM_H
+	# include <sys/param.h>
+	#endif
+	])
 
-AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
+# Set the language to use for the compiler tests below.
+AC_LANG([C])
+#AC_LANG([C++])
+
+AC_CHECK_HEADERS([zlib.h], [have_zlib=yes], [have_zlib=no])
 if test x$have_zlib = xyes; then
-   AC_TRY_COMPILE([#include <zlib.h>], [
-   #if defined(ZLIB_VERNUM) && (ZLIB_VERNUM >= 0x1230)
-   return 0;
-   #else
-   #error No good zlib found
-   #endif
-   ],[
-	AC_MSG_RESULT(Using system zlib)
-	zlib_msg="system zlib"
-	AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
-   ],[
-	AC_MSG_RESULT(Using embedded zlib)
-	have_zlib=no
-	zlib_msg="bundled zlib"
-   ])
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
+			#include <zlib.h>
+		]], [[
+			#if defined(ZLIB_VERNUM) && (ZLIB_VERNUM >= 0x1230)
+			return 0;
+			#else
+			#error No good zlib found
+			#endif
+		]])
+   	],[
+		AC_MSG_RESULT(Using system zlib)
+		zlib_msg="system zlib"
+		AC_DEFINE(HAVE_SYS_ZLIB,1,[Have system zlib])
+   	],[
+		AC_MSG_RESULT(Using embedded zlib)
+		have_zlib=no
+		zlib_msg="bundled zlib"
+   	])
 fi
 
 AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
-AC_DEFINE(HAVE_ZLIB,1,[Have system zlib])
+AC_DEFINE(HAVE_ZLIB, 1, [Have system zlib])
 
 # for mono/metadata/debug-symfile.c
-AC_CHECK_HEADERS(elf.h)
+AC_CHECK_HEADERS([elf.h])
 
 # for support
-AC_CHECK_HEADERS(poll.h)
-AC_CHECK_HEADERS(sys/poll.h)
-AC_CHECK_HEADERS(sys/wait.h)
-AC_CHECK_HEADERS(grp.h)
-AC_CHECK_HEADERS(syslog.h)
+AC_CHECK_HEADERS([poll.h])
+AC_CHECK_HEADERS([sys/poll.h])
+AC_CHECK_HEADERS([sys/wait.h])
+AC_CHECK_HEADERS([grp.h])
+AC_CHECK_HEADERS([syslog.h])
 
 # for mono/dis
-AC_CHECK_HEADERS(wchar.h)
-AC_CHECK_HEADERS(ieeefp.h)
+AC_CHECK_HEADERS([wchar.h])
+AC_CHECK_HEADERS([ieeefp.h])
 AC_MSG_CHECKING(for isinf)
-AC_TRY_LINK([#include <math.h>], [
-	int f = isinf (1);
-], [
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_ISINF, 1, [isinf available])
-], [
-	# We'll have to use signals
-	AC_MSG_RESULT(no)
-])
+AC_LANG_ASSERT(C)
+AC_LINK_IFELSE([
+	AC_LANG_PROGRAM([[
+		#include <math.h>
+	]], [[
+		int f = isinf (1);
+	]])
+	], [
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_ISINF, 1, [isinf available])
+	], [
+		# We'll have to use signals
+		AC_MSG_RESULT(no)
+	])
 
 # for Linux statfs support
-AC_CHECK_HEADERS(linux/magic.h)
+AC_CHECK_HEADERS([linux/magic.h])
 
 # not 64 bit clean in cross-compile
 AC_CHECK_SIZEOF(void *, 4)
 
-WARN=''
-if test x"$GCC" = xyes; then
-        WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes  -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value'
-		# The runtime code does not respect ANSI C strict aliasing rules
-		CFLAGS="$CFLAGS -fno-strict-aliasing"
+# Default compiler warning flags; these apply to both gcc and clang.
+DEFAULT_WARN='-Wall \
+              -Wunused \
+              -Wmissing-prototypes \
+              -Wmissing-declarations \
+              -Wstrict-prototypes \
+              -Wmissing-prototypes \
+              -Wnested-externs \
+              -Wpointer-arith \
+              -Wno-cast-qual \
+              -Wwrite-strings \
+              -Wno-switch \
+              -Wno-switch-enum \
+              -Wno-unused-value'
+              
+# Set compiler-specific warning flags.
+if test x"$CC" = x"gcc"; then
+    # Use the default warnings, at least.
+    WARN=DEFAULT_WARN
+		
+	# The runtime code does not respect ANSI C strict aliasing rules
+	CFLAGS="$CFLAGS -fno-strict-aliasing"
 
-		ORIG_CFLAGS=$CFLAGS
-		CFLAGS="$CFLAGS -Wdeclaration-after-statement"
-		AC_MSG_CHECKING(for -Wdeclaration-after-statement option to gcc)
-		AC_TRY_COMPILE([],[
-				return 0;
+    ORIG_CFLAGS=$CFLAGS
+    CFLAGS="$CFLAGS -Wdeclaration-after-statement"
+    AC_MSG_CHECKING(for -Wdeclaration-after-statement option to gcc)
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ ]], [[ ]])
 		], [
-		   AC_MSG_RESULT(yes)
+       	AC_MSG_RESULT(yes)
 		], [
-		   AC_MSG_RESULT(no)
-		   CFLAGS=$ORIG_CFLAGS
-		])
+		AC_MSG_RESULT(no)
+       	CFLAGS=$ORIG_CFLAGS
+    ])
 
-		ORIG_CFLAGS=$CFLAGS
-		# Check for the normal version, since gcc ignores unknown -Wno options
-		CFLAGS="$CFLAGS -Wunused-but-set-variable"
-		AC_MSG_CHECKING(for -Wno-unused-but-set-variable option to gcc)
-		AC_TRY_COMPILE([],[
-				return 0;
+    ORIG_CFLAGS=$CFLAGS
+    # Check for the normal version, since gcc ignores unknown -Wno options
+    CFLAGS="$CFLAGS -Wunused-but-set-variable"
+    AC_MSG_CHECKING(for -Wno-unused-but-set-variable option to gcc)
+    AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ ]], [[ ]])
 		], [
-		   AC_MSG_RESULT(yes)
-		   CFLAGS="$ORIG_CFLAGS -Wno-unused-but-set-variable"
+       	AC_MSG_RESULT(yes)
+       	CFLAGS="$ORIG_CFLAGS -Wno-unused-but-set-variable"
 		], [
-		   AC_MSG_RESULT(no)
-		   CFLAGS=$ORIG_CFLAGS
-		])
+		AC_MSG_RESULT(no)
+       	CFLAGS=$ORIG_CFLAGS
+    ])
+
+elif test x"$CC" = x"clang"; then
+    # Use the default warnings, at least.
+    WARN=DEFAULT_WARN
+		
+	# The runtime code does not respect ANSI C strict aliasing rules
+	CFLAGS="$CFLAGS -fno-strict-aliasing"
+		
+	ORIG_CFLAGS=$CFLAGS
+    CFLAGS="$CFLAGS -Wdeclaration-after-statement"
+    AC_MSG_CHECKING(for -Wdeclaration-after-statement option to clang)
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ ]], [[ ]])
+		], [
+       	AC_MSG_RESULT(yes)
+		], [
+		AC_MSG_RESULT(no)
+       	CFLAGS=$ORIG_CFLAGS
+    ])
+
 else
 	# The Sun Forte compiler complains about inline functions that access static variables
 	# so disable all inlining.
@@ -532,19 +590,21 @@ fi
 CFLAGS="$CFLAGS -g $WARN"
 CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -g"
 
-AC_CACHE_CHECK([for clang],
-	mono_cv_clang,[
-	AC_TRY_COMPILE([], [
-		#ifdef __clang__
-		#else
-		#error "FAILED"
-		#endif
-		return 0;
-	],
-	[mono_cv_clang=yes],
-	[mono_cv_clang=no],
-	[])
-])
+AC_CACHE_CHECK(
+	[for clang],
+	mono_cv_clang, [
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[
+				#ifdef __clang__
+				#else
+				#error "FAILED"
+				#endif
+			]],
+			[[ ]])
+		],
+		[mono_cv_clang=yes],
+		[mono_cv_clang=no])
+	])
 
 # Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
@@ -624,7 +684,7 @@ fi
 
 AC_ARG_WITH([libgdiplus], 
 	[  --with-libgdiplus=installed|sibling|<path>	Override the libgdiplus used for System.Drawing tests (defaults to installed)], 
-	[], [with_libgdiplus=installed])
+	[ ], [with_libgdiplus=installed])
 
 case $with_libgdiplus in
 no|installed) libgdiplus_loc= ;;
@@ -670,14 +730,14 @@ AC_ARG_WITH(gc,   [  --with-gc=boehm,included,none  Controls the Boehm GC config
 
 # Enable support for fast thread-local storage
 # Some systems have broken support, so we allow to disable it.
-AC_ARG_WITH(tls, [  --with-tls=__thread,pthread    select Thread Local Storage implementation (defaults to __thread)],[],[with_tls=__thread])
+AC_ARG_WITH(tls, [  --with-tls=__thread,pthread    select Thread Local Storage implementation (defaults to __thread)],[ ],[with_tls=__thread])
 
 # Enable support for using sigaltstack for SIGSEGV and stack overflow handling
 # This does not work on some platforms (bug #55253)
-AC_ARG_WITH(sigaltstack, [  --with-sigaltstack=yes,no      enable/disable support for sigaltstack (defaults to yes)],[],[with_sigaltstack=yes])
+AC_ARG_WITH(sigaltstack, [  --with-sigaltstack=yes,no      enable/disable support for sigaltstack (defaults to yes)],[ ],[with_sigaltstack=yes])
 
-AC_ARG_WITH(static_mono, [  --with-static_mono=yes,no      link mono statically to libmono (faster) (defaults to yes)],[],[with_static_mono=yes])
-AC_ARG_WITH(shared_mono, [  --with-shared_mono=yes,no      build a shared libmono library (defaults to yes)],[],[with_shared_mono=yes])
+AC_ARG_WITH(static_mono, [  --with-static_mono=yes,no      link mono statically to libmono (faster) (defaults to yes)],[ ],[with_static_mono=yes])
+AC_ARG_WITH(shared_mono, [  --with-shared_mono=yes,no      build a shared libmono library (defaults to yes)],[ ],[with_shared_mono=yes])
 # Same as --with-shared_mono=no
 AC_ARG_ENABLE(libraries, [  --disable-libraries disable the build of libmono], enable_libraries=$enableval, enable_libraries=yes)
 
@@ -708,21 +768,21 @@ AM_CONDITIONAL(STATIC_MONO, test x$with_static_mono != xno)
 AM_CONDITIONAL(SHARED_MONO, test x$with_shared_mono != xno)
 AC_ARG_ENABLE(mcs-build, [  --disable-mcs-build disable the build of the mcs directory], try_mcs_build=$enableval, enable_mcs_build=yes)
 
-AC_ARG_WITH(xen_opt,   [  --with-xen_opt=yes,no          Enable Xen-specific behaviour (defaults to yes)],[],[with_xen_opt=yes])
+AC_ARG_WITH(xen_opt,   [  --with-xen_opt=yes,no          Enable Xen-specific behaviour (defaults to yes)],[ ],[with_xen_opt=yes])
 if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
 	AC_DEFINE(MONO_XEN_OPT, 1, [Xen-specific behaviour])
 	ORIG_CFLAGS=$CFLAGS
 	CFLAGS="$CFLAGS -mno-tls-direct-seg-refs"
 	AC_MSG_CHECKING(for -mno-tls-direct-seg-refs option to gcc)
-	AC_TRY_COMPILE([], [
-		return 0;
-	], [
-	   AC_MSG_RESULT(yes)
-	   # Pass it to libgc as well
-	   CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -mno-tls-direct-seg-refs"
-	], [
-	   AC_MSG_RESULT(no)
-	   CFLAGS=$ORIG_CFLAGS
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ ]], [[ ]])
+		], [
+	   	AC_MSG_RESULT(yes)
+	   	# Pass it to libgc as well
+	   	CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -mno-tls-direct-seg-refs"
+		], [
+	   	AC_MSG_RESULT(no)
+	   	CFLAGS=$ORIG_CFLAGS
 	])
 fi
 
@@ -747,7 +807,7 @@ AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsy
 	done
 	DISABLED_FEATURES=$enable_minimal
 	disabled="Disabled:      $enable_minimal"
-],[])
+],[ ])
 
 AC_DEFINE_UNQUOTED(DISABLED_FEATURES, "$DISABLED_FEATURES", [String of disabled features])
 
@@ -913,31 +973,31 @@ fi
 
 AC_MSG_CHECKING(for visibility __attribute__)
 AC_COMPILE_IFELSE([
-	AC_LANG_SOURCE([[
+	AC_LANG_PROGRAM([[
 		void __attribute__ ((visibility ("hidden"))) doit (void) {}
-   		int main () { doit (); return 0; }
-   	]])
-], [
-   have_visibility_hidden=yes
-   AC_MSG_RESULT(yes)
-], [
-   have_visibility_hidden=no
-   AC_MSG_RESULT(no)
-])
+		]],
+		[[ doit (); ]])
+	], [
+   	have_visibility_hidden=yes
+   	AC_MSG_RESULT(yes)
+	], [
+   	have_visibility_hidden=no
+   	AC_MSG_RESULT(no)
+	])
 
 AC_MSG_CHECKING(for deprecated __attribute__)
-AC_TRY_COMPILE([
-     int doit (void) __attribute__ ((deprecated));
-     int doit (void) { return 0; }
-], [
-	return 0;
-], [
-   have_deprecated=yes
-   AC_MSG_RESULT(yes)
-], [
-   have_deprecated=no
-   AC_MSG_RESULT(no)
-])
+AC_COMPILE_IFELSE([
+	AC_LANG_PROGRAM([[
+	int doit (void) __attribute__ ((deprecated));
+	int doit (void) { return 0; }]],
+	[[ ]])
+	], [
+   	have_deprecated=yes
+   	AC_MSG_RESULT(yes)
+	], [
+   	have_deprecated=no
+   	AC_MSG_RESULT(no)
+	])
 
 AC_ARG_ENABLE(parallel-mark, [  --enable-parallel-mark     Enables GC Parallel Marking], enable_parallel_mark=$enableval, enable_parallel_mark=$parallel_mark)
 if test x$enable_parallel_mark = xyes; then
@@ -956,7 +1016,7 @@ LIBGC_STATIC_LIBS=
 libgc_dir=
 case "x$gc" in
 	xboehm|xbohem|xyes)
-		AC_CHECK_HEADERS(gc.h gc/gc.h, gc_headers=yes)
+		AC_CHECK_HEADERS([gc.h gc/gc.h], [gc_headers=yes])
 		AC_CHECK_LIB(gc, GC_malloc, found_boehm="yes",,$libdl)
 
 		if test "x$found_boehm" != "xyes"; then
@@ -1048,12 +1108,14 @@ dnl *************************************
 dnl *** Checks for zero length arrays ***
 dnl *************************************
 AC_MSG_CHECKING(whether $CC supports zero length arrays)
-AC_TRY_COMPILE([
-	struct s {
-		int  length;
-		char data [0];
-	};
-], [], [
+AC_COMPILE_IFELSE([
+	AC_LANG_PROGRAM([[
+		struct s {
+			int  length;
+			char data [0];
+		};
+		]], [[ ]])
+], [
 	AC_MSG_RESULT(yes)
 	AC_DEFINE_UNQUOTED(MONO_ZERO_LEN_ARRAY, 0, [Length of zero length arrays])
 ], [
@@ -1078,19 +1140,26 @@ if test x$target_win32 = xno; then
 		dnl from glib's configure.in
 		AC_CACHE_CHECK([for preceeding underscore in symbols],
 			mono_cv_uscore,[
-			AC_TRY_RUN([#include <dlfcn.h>
-			int mono_underscore_test (void) { return 42; }
-			int main() {
-			  void *f1 = (void*)0, *f2 = (void*)0, *handle;
-			  handle = dlopen ((void*)0, 0);
-			  if (handle) {
-			    f1 = dlsym (handle, "mono_underscore_test");
-			    f2 = dlsym (handle, "_mono_underscore_test");
-			  } return (!f2 || f1);
-			}],
-				[mono_cv_uscore=yes],
-				[mono_cv_uscore=no],
-			[])
+			AC_RUN_IFELSE([
+				AC_LANG_SOURCE([[
+					#include <dlfcn.h>
+					int mono_underscore_test (void) { return 42; }
+					int main()
+					{
+						void *f1 = (void*)0, *f2 = (void*)0, *handle;
+						handle = dlopen ((void*)0, 0);
+						if (handle) {
+							f1 = dlsym (handle, "mono_underscore_test");
+							f2 = dlsym (handle, "_mono_underscore_test");
+						}
+						return (!f2 || f1);
+					}
+				]])
+			], [
+				mono_cv_uscore=yes
+			], [
+				mono_cv_uscore=no
+			], [ ])
 		])
 		if test "x$mono_cv_uscore" = "xyes"; then
 			MONO_DL_NEED_USCORE=1
@@ -1114,7 +1183,7 @@ if test x$target_win32 = xno; then
 
 	AC_SUBST(ikvm_native_dir)
 
-	AC_CHECK_HEADERS(execinfo.h)
+	AC_CHECK_HEADERS([execinfo.h])
 
 	AC_CHECK_FUNCS(getgrgid_r)
 	AC_CHECK_FUNCS(getgrnam_r)
@@ -1147,10 +1216,14 @@ if test x$target_win32 = xno; then
 	dnl *** won't always indicate the interface sched_affinity has.  ***
 	dnl ****************************************************************
 	AC_MSG_CHECKING(for sched_setaffinity from glibc < 2.3.4)
-	AC_TRY_COMPILE([#include <sched.h>], [
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
+			#include <sched.h>
+		]], [[
             int mask = 1; 
             sched_setaffinity(0, &mask);
 			return 0;
+		]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1173,15 +1246,17 @@ if test x$target_win32 = xno; then
 	AC_DEFUN([LARGE_FILES], [
 		large_CPPFLAGS=$CPPFLAGS
 		CPPFLAGS="$CPPFLAGS $1"
-		AC_TRY_COMPILE([
-			#include <sys/types.h>
-			#include <limits.h>
-		], [
-			/* Lifted this compile time assert method from: http://www.jaggersoft.com/pubs/CVu11_3.html */
-			#define COMPILE_TIME_ASSERT(pred) \
-				switch(0){case 0:case pred:;}
-			COMPILE_TIME_ASSERT(sizeof(off_t) * CHAR_BIT == 64);
-		], [
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[
+				#include <sys/types.h>
+				#include <limits.h>
+			]], [[
+				/* Lifted this compile time assert method from: http://www.jaggersoft.com/pubs/CVu11_3.html */
+				#define COMPILE_TIME_ASSERT(pred) \
+					switch(0){case 0:case pred:;}
+				COMPILE_TIME_ASSERT(sizeof(off_t) * CHAR_BIT == 64);
+			]])
+			], [
 			AC_MSG_RESULT(ok)
 			AC_DEFINE(HAVE_LARGE_FILE_SUPPORT, 1, [Have large file support])
 			large_CPPFLAGS="$large_CPPFLAGS $1"
@@ -1219,8 +1294,12 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for MSG_NOSIGNAL ***
 	dnl *******************************
 	AC_MSG_CHECKING(for MSG_NOSIGNAL)
-	AC_TRY_COMPILE([#include <sys/socket.h>], [
-		int f = MSG_NOSIGNAL;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
+			#include <sys/socket.h>
+		]], [[
+			int f = MSG_NOSIGNAL;
+		]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1234,8 +1313,8 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for SOL_IP     ***
 	dnl *****************************
 	AC_MSG_CHECKING(for SOL_IP)
-	AC_TRY_COMPILE([#include <netdb.h>], [
-		int level = SOL_IP;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = SOL_IP;	]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1249,8 +1328,8 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for SOL_IPV6     ***
 	dnl *****************************
 	AC_MSG_CHECKING(for SOL_IPV6)
-	AC_TRY_COMPILE([#include <netdb.h>], [
-		int level = SOL_IPV6;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = SOL_IPV6; ]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1264,8 +1343,8 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for SOL_TCP    ***
 	dnl *****************************
 	AC_MSG_CHECKING(for SOL_TCP)
-	AC_TRY_COMPILE([#include <netdb.h>], [
-		int level = SOL_TCP;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = SOL_TCP; ]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1279,8 +1358,8 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for IP_PKTINFO ***
 	dnl *****************************
 	AC_MSG_CHECKING(for IP_PKTINFO)
-	AC_TRY_COMPILE([#include <netdb.h>], [
-		int level = IP_PKTINFO;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IP_PKTINFO; ]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1293,8 +1372,8 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for IPV6_PKTINFO ***
 	dnl *****************************
 	AC_MSG_CHECKING(for IPV6_PKTINFO)
-	AC_TRY_COMPILE([#include <netdb.h>], [
-		int level = IPV6_PKTINFO;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IPV6_PKTINFO; ]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1307,8 +1386,8 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for IP_DONTFRAGMENT ***
 	dnl **********************************
 	AC_MSG_CHECKING(for IP_DONTFRAGMENT)
-	AC_TRY_COMPILE([#include <netdb.h>], [
-		int level = IP_DONTFRAGMENT;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IP_DONTFRAGMENT; ]])		
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1321,8 +1400,8 @@ if test x$target_win32 = xno; then
 	dnl *** Checks for IP_MTU_DISCOVER ***
 	dnl **********************************
 	AC_MSG_CHECKING(for IP_MTU_DISCOVER)
-	AC_TRY_COMPILE([#include <netdb.h>], [
-		int level = IP_MTU_DISCOVER;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IP_MTU_DISCOVER; ]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1335,9 +1414,11 @@ if test x$target_win32 = xno; then
 	dnl *** Check for struct ip_mreqn ***
 	dnl *********************************
 	AC_MSG_CHECKING(for struct ip_mreqn)
-	AC_TRY_COMPILE([#include <netinet/in.h>], [
-		struct ip_mreqn mreq;
-		mreq.imr_address.s_addr = 0;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netinet/in.h> ]], [[
+			struct ip_mreqn mreq;
+			mreq.imr_address.s_addr = 0;
+		]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1346,9 +1427,11 @@ if test x$target_win32 = xno; then
 		# We'll just have to try and use struct ip_mreq
 		AC_MSG_RESULT(no)
 		AC_MSG_CHECKING(for struct ip_mreq)
-		AC_TRY_COMPILE([#include <netinet/in.h>], [
-			struct ip_mreq mreq;
-			mreq.imr_interface.s_addr = 0;
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[ #include <netinet/in.h> ]], [[
+				struct ip_mreq mreq;
+				mreq.imr_interface.s_addr = 0;
+			]])
 		], [
 			# Yes, we have it...
 			AC_MSG_RESULT(yes)
@@ -1363,8 +1446,8 @@ if test x$target_win32 = xno; then
 	dnl *** Check for gethostbyname2_r ***
 	dnl **********************************
 	AC_MSG_CHECKING(for gethostbyname2_r)
-		AC_TRY_LINK([#include <netdb.h>], [
-		gethostbyname2_r(NULL,0,NULL,NULL,0,NULL,NULL);
+	AC_LINK_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ gethostbyname2_r(NULL,0,NULL,NULL,0,NULL,NULL); ]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1385,22 +1468,28 @@ if test x$target_win32 = xno; then
 	dnl ***********************************************
 	# AC_CHECK_SIZEOF can't cope with struct members :-(
 	AC_MSG_CHECKING(size of sockaddr_un.sun_path)
-	AC_CACHE_VAL(mono_cv_sizeof_sunpath,
-		[AC_TRY_RUN([
-			#include <sys/types.h>
-			#include <stdio.h>
-			#include <sys/un.h>
+	AC_CACHE_VAL(mono_cv_sizeof_sunpath, [
+		AC_RUN_IFELSE([
+			AC_LANG_SOURCE([[
+				#include <sys/types.h>
+				#include <stdio.h>
+				#include <sys/un.h>
 
-			int main(void) {
-				struct sockaddr_un sock_un;
-				FILE *f=fopen("conftestval", "w");
-				if(!f) exit(1);
-				fprintf(f, "%d\n", sizeof(sock_un.sun_path));
-				exit(0);
-			}
-		], mono_cv_sizeof_sunpath=`cat conftestval`,
-		   mono_cv_sizeof_sunpath=0,
-		   mono_cv_sizeof_sunpath=0)])dnl
+				int main(void) {
+					struct sockaddr_un sock_un;
+					FILE *f=fopen("conftestval", "w");
+					if(!f) exit(1);
+					fprintf(f, "%d\n", sizeof(sock_un.sun_path));
+					exit(0);
+				}
+			]])
+		], [
+			mono_cv_sizeof_sunpath=`cat conftestval`
+		], [
+		   	mono_cv_sizeof_sunpath=0
+		], [
+		   	mono_cv_sizeof_sunpath=0
+		])])dnl
 	AC_MSG_RESULT($mono_cv_sizeof_sunpath)
 	AC_DEFINE_UNQUOTED(MONO_SIZEOF_SUNPATH, $mono_cv_sizeof_sunpath, [Sizeof sock_un.sun_path])
 
@@ -1420,7 +1509,7 @@ if test x$target_win32 = xno; then
   	    			AC_MSG_RESULT(no)
 			fi
 
-			if test "$GCC" = "yes"; then
+			if test "$CC" = "gcc"; then
 		    		CFLAGS="$CFLAGS -Wno-char-subscripts"
 			fi
     		;;
@@ -1443,14 +1532,16 @@ if test x$target_win32 = xno; then
 			AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
 		;;
 	esac
-	AC_CHECK_HEADERS(pthread.h)
+	AC_CHECK_HEADERS([pthread.h])
 	AC_CHECK_FUNCS(pthread_mutex_timedlock)
 	AC_CHECK_FUNCS(pthread_getattr_np pthread_attr_get_np)
 	AC_CHECK_FUNCS(pthread_kill)
 	AC_MSG_CHECKING(for PTHREAD_MUTEX_RECURSIVE)
-	AC_TRY_COMPILE([ #include <pthread.h>], [
-		pthread_mutexattr_t attr;
-		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <pthread.h> ]], [[
+			pthread_mutexattr_t attr;
+			pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+		]])
 	], [
 		AC_MSG_RESULT(ok)
 	], [
@@ -1465,7 +1556,7 @@ if test x$target_win32 = xno; then
 	dnl ***********************************
 	dnl *** Checks for signals
 	dnl ***********************************
-	AC_CHECK_HEADERS(signal.h)
+	AC_CHECK_HEADERS([signal.h])
 	AC_CHECK_FUNCS(sigaction)
 
 	dnl ***********************************
@@ -1475,7 +1566,8 @@ if test x$target_win32 = xno; then
 	if test "x$with_tls" != "x__thread"; then
 		AC_MSG_RESULT(disabled)
 	else
-		AC_TRY_RUN([
+		AC_RUN_IFELSE([
+			AC_LANG_SOURCE([[
 			#include <pthread.h>
 			__thread int i;
 			static int res1, res2;
@@ -1503,6 +1595,7 @@ if test x$target_win32 = xno; then
 
 				return !(res1 + res2 == 2);
 			}
+			]])
 		], [
 				AC_MSG_RESULT(yes)
 		], [
@@ -1518,100 +1611,101 @@ if test x$target_win32 = xno; then
 	if test "x$with_sigaltstack" != "xyes"; then
 		AC_MSG_RESULT(disabled)
 	else
-		AC_TRY_RUN([
-			#include <stdio.h>
-			#include <stdlib.h>
-			#include <unistd.h>
-			#include <signal.h>
-			#include <pthread.h>
-			#include <sys/wait.h>
-			#if defined(__FreeBSD__) || defined(__NetBSD__)
-			#define SA_STACK SA_ONSTACK
-			#endif
-			static void
-			sigsegv_signal_handler (int _dummy, siginfo_t *info, void *context)
-			{
-				exit (0);
-			}
-
-			volatile char*__ptr = NULL;
-			static void *
-			loop (void *ignored)
-			{
-				*__ptr = 0;
-				return NULL;
-			}
-
-			static void
-			child ()
-			{
-				struct sigaction sa;
-			#ifdef __APPLE__
-				stack_t sas;
-			#else
-				struct sigaltstack sas;
-			#endif
-				pthread_t id;
-				pthread_attr_t attr;
-
-				sa.sa_sigaction = sigsegv_signal_handler;
-				sigemptyset (&sa.sa_mask);
-				sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
-				if (sigaction (SIGSEGV, &sa, NULL) == -1) {
-					perror ("sigaction");
-					return;
+		AC_RUN_IFELSE([
+			AC_LANG_SOURCE([[
+				#include <stdio.h>
+				#include <stdlib.h>
+				#include <unistd.h>
+				#include <signal.h>
+				#include <pthread.h>
+				#include <sys/wait.h>
+				#if defined(__FreeBSD__) || defined(__NetBSD__)
+				#define SA_STACK SA_ONSTACK
+				#endif
+				static void
+				sigsegv_signal_handler (int _dummy, siginfo_t *info, void *context)
+				{
+					exit (0);
 				}
 
-				/* x86 darwin deliver segfaults using SIGBUS */
-				if (sigaction (SIGBUS, &sa, NULL) == -1) {
-					perror ("sigaction");
-					return;
-				}
-				sas.ss_sp = malloc (SIGSTKSZ);
-				sas.ss_size = SIGSTKSZ;
-				sas.ss_flags = 0;
-				if (sigaltstack (&sas, NULL) == -1) {
-					perror ("sigaltstack");
-					return;
+				volatile char*__ptr = NULL;
+				static void *
+				loop (void *ignored)
+				{
+					*__ptr = 0;
+					return NULL;
 				}
 
-				pthread_attr_init (&attr);
-				if (pthread_create(&id, &attr, loop, &attr) != 0) {
-					printf ("pthread_create\n");
-					return;
+				static void
+				child ()
+				{
+					struct sigaction sa;
+				#ifdef __APPLE__
+					stack_t sas;
+				#else
+					struct sigaltstack sas;
+				#endif
+					pthread_t id;
+					pthread_attr_t attr;
+
+					sa.sa_sigaction = sigsegv_signal_handler;
+					sigemptyset (&sa.sa_mask);
+					sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
+					if (sigaction (SIGSEGV, &sa, NULL) == -1) {
+						perror ("sigaction");
+						return;
+					}
+
+					/* x86 darwin deliver segfaults using SIGBUS */
+					if (sigaction (SIGBUS, &sa, NULL) == -1) {
+						perror ("sigaction");
+						return;
+					}
+					sas.ss_sp = malloc (SIGSTKSZ);
+					sas.ss_size = SIGSTKSZ;
+					sas.ss_flags = 0;
+					if (sigaltstack (&sas, NULL) == -1) {
+						perror ("sigaltstack");
+						return;
+					}
+
+					pthread_attr_init (&attr);
+					if (pthread_create(&id, &attr, loop, &attr) != 0) {
+						printf ("pthread_create\n");
+						return;
+					}
+
+					sleep (100);
 				}
 
-				sleep (100);
-			}
+				int
+				main ()
+				{
+					pid_t son;
+					int status;
+					int i;
 
-			int
-			main ()
-			{
-				pid_t son;
-				int status;
-				int i;
+					son = fork ();
+					if (son == -1) {
+						return 1;
+					}
 
-				son = fork ();
-				if (son == -1) {
+					if (son == 0) {
+						child ();
+						return 0;
+					}
+
+					for (i = 0; i < 300; ++i) {
+						waitpid (son, &status, WNOHANG);
+						if (WIFEXITED (status) && WEXITSTATUS (status) == 0)
+							return 0;
+						usleep (10000);
+					}
+
+					kill (son, SIGKILL);
 					return 1;
 				}
-
-				if (son == 0) {
-					child ();
-					return 0;
-				}
-
-				for (i = 0; i < 300; ++i) {
-					waitpid (son, &status, WNOHANG);
-					if (WIFEXITED (status) && WEXITSTATUS (status) == 0)
-						return 0;
-					usleep (10000);
-				}
-
-				kill (son, SIGKILL);
-				return 1;
-			}
-
+			]])
 		], [
 				AC_MSG_RESULT(yes)
 				AC_DEFINE(HAVE_WORKING_SIGALTSTACK, 1, [Have a working sigaltstack])
@@ -1635,26 +1729,42 @@ if test x$target_win32 = xno; then
 	dnl ********************************
 	dnl *** Checks for timezone stuff **
 	dnl ********************************
-	AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
-		AC_TRY_COMPILE([
-			#include <time.h>
+	AC_CACHE_CHECK(
+		[for tm_gmtoff in struct tm],
+		ac_cv_struct_tm_gmtoff,
+		[AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[
+				#include <time.h>
+			]], [[
+				struct tm tm;
+				tm.tm_gmtoff = 1;
+			]])
 			], [
-			struct tm tm;
-			tm.tm_gmtoff = 1;
-			], ac_cv_struct_tm_gmtoff=yes, ac_cv_struct_tm_gmtoff=no))
+				ac_cv_struct_tm_gmtoff=yes
+			], [
+				ac_cv_struct_tm_gmtoff=no
+			])])
 	if test $ac_cv_struct_tm_gmtoff = yes; then
 		AC_DEFINE(HAVE_TM_GMTOFF, 1, [Have tm_gmtoff])
 	else
-		AC_CACHE_CHECK(for timezone variable, ac_cv_var_timezone,
-			AC_TRY_COMPILE([
-				#include <time.h>
+		AC_CACHE_CHECK(
+			[for timezone variable],
+			ac_cv_var_timezone,
+			[AC_COMPILE_IFELSE([
+				AC_LANG_PROGRAM([[
+					#include <time.h>
+				]], [[
+					timezone = 1;
+				]])
 			], [
-				timezone = 1;
-			], ac_cv_var_timezone=yes, ac_cv_var_timezone=no))
+				ac_cv_var_timezone=yes
+			], [
+				ac_cv_var_timezone=no
+			])])
 		if test $ac_cv_var_timezone = yes; then
 			AC_DEFINE(HAVE_TIMEZONE, 1, [Have timezone variable])
 		else
-			AC_ERROR(unable to find a way to determine timezone)
+			AC_MSG_ERROR(unable to find a way to determine timezone)
 		fi
 	fi
 
@@ -1697,7 +1807,7 @@ if test x$target_win32 = xno; then
 	dnl **********************************
 	dnl *** epoll			   ***
 	dnl **********************************
-	AC_CHECK_HEADERS(sys/epoll.h)
+	AC_CHECK_HEADERS([sys/epoll.h])
 	haveepoll=no
 	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], )
 	if test "x$haveepoll" = "xyes" -a "x$ac_cv_header_sys_epoll_h" = "xyes" ; then
@@ -1705,9 +1815,13 @@ if test x$target_win32 = xno; then
 	fi
 
 	havekqueue=no
-        AC_CHECK_FUNCS(kqueue, , AC_MSG_CHECKING(for kqueue in sys/event.h)
-                AC_TRY_LINK([#include <sys/event.h>], 
-                [ kqueue(); ],[havekqueue=yes],[]))
+    AC_CHECK_FUNCS(kqueue, ,
+		AC_MSG_CHECKING(for kqueue in sys/event.h)
+        AC_TRY_LINK(
+			[#include <sys/event.h>],
+			[ kqueue(); ],
+			[havekqueue=yes],
+			[ ]))
 
 	dnl **************************************
 	dnl * Darwin has a race that prevents us from using reliably:
@@ -1725,8 +1839,8 @@ if test x$target_win32 = xno; then
 	dnl ******************************
 	dnl *** Checks for SIOCGIFCONF ***
 	dnl ******************************
-	AC_CHECK_HEADERS(sys/ioctl.h)
-	AC_CHECK_HEADERS(net/if.h, [], [],
+	AC_CHECK_HEADERS([sys/ioctl.h])
+	AC_CHECK_HEADERS([net/if.h], [ ], [ ],
 	   [
 	   #ifdef HAVE_SYS_TYPES_H
 	   # include <sys/types.h>
@@ -1736,32 +1850,34 @@ if test x$target_win32 = xno; then
 	   #endif
 	   ])
 	AC_MSG_CHECKING(for ifreq)
-	AC_TRY_COMPILE([
-		#include <stdio.h>
-		#include <sys/ioctl.h>
-		#include <net/if.h>
-		], [
-		struct ifconf ifc;
-		struct ifreq *ifr;
-		void *x;
-		ifc.ifc_len = 0;
-		ifc.ifc_buf = NULL;
-		x = (void *) &ifr->ifr_addr;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
+			#include <stdio.h>
+			#include <sys/ioctl.h>
+			#include <net/if.h>
+		]], [[
+			struct ifconf ifc;
+			struct ifreq *ifr;
+			void *x;
+			ifc.ifc_len = 0;
+			ifc.ifc_buf = NULL;
+			x = (void *) &ifr->ifr_addr;
+		]])		
 		],[
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_SIOCGIFCONF, 1, [Can get interface list])
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SIOCGIFCONF, 1, [Can get interface list])
 		], [
-			AC_MSG_RESULT(no)
+		AC_MSG_RESULT(no)
 		])
 	dnl **********************************
 	dnl ***     Checks for sin_len     ***
 	dnl **********************************
 	AC_MSG_CHECKING(for sockaddr_in.sin_len)
-	AC_TRY_COMPILE([
-		#include <netinet/in.h>
-		], [
-		struct sockaddr_in saddr;
-		saddr.sin_len = sizeof (saddr);
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netinet/in.h> ]], [[
+			struct sockaddr_in saddr;
+			saddr.sin_len = sizeof (saddr);
+			]])
 		],[
 			AC_MSG_RESULT(yes)
 			AC_DEFINE(HAVE_SOCKADDR_IN_SIN_LEN, 1, [sockaddr_in has sin_len])
@@ -1772,11 +1888,11 @@ if test x$target_win32 = xno; then
 	dnl ***    Checks for sin6_len     ***
 	dnl **********************************
 	AC_MSG_CHECKING(for sockaddr_in6.sin6_len)
-	AC_TRY_COMPILE([
-		#include <netinet/in.h>
-		], [
-		struct sockaddr_in6 saddr6;
-		saddr6.sin6_len = sizeof (saddr6);
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <netinet/in.h> ]], [[
+			struct sockaddr_in6 saddr6;
+			saddr6.sin6_len = sizeof (saddr6);
+			]])
 		],[
 			AC_MSG_RESULT(yes)
 			AC_DEFINE(HAVE_SOCKADDR_IN6_SIN_LEN, 1, [sockaddr_in6 has sin6_len])
@@ -1787,13 +1903,15 @@ if test x$target_win32 = xno; then
 	dnl *** Check for getifaddrs       ***
 	dnl **********************************
 	AC_MSG_CHECKING(for getifaddrs)
-		AC_TRY_LINK([
-		#include <stdio.h>
-		#include <sys/types.h>
-		#include <sys/socket.h>
-		#include <ifaddrs.h>
-	], [
-		getifaddrs(NULL);
+	AC_LINK_IFELSE([
+		AC_LANG_PROGRAM([[
+			#include <stdio.h>
+			#include <sys/types.h>
+			#include <sys/socket.h>
+			#include <ifaddrs.h>
+			]], [[
+			getifaddrs(NULL);
+			]])		
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1805,13 +1923,15 @@ if test x$target_win32 = xno; then
 	dnl *** Check for if_nametoindex   ***
 	dnl **********************************
 	AC_MSG_CHECKING(for if_nametoindex)
-		AC_TRY_LINK([
-		#include <stdio.h>
-		#include <sys/types.h>
-		#include <sys/socket.h>
-		#include <net/if.h>
-	], [
-		if_nametoindex(NULL);
+	AC_LINK_IFELSE([
+		AC_LANG_PROGRAM([[
+			#include <stdio.h>
+			#include <sys/types.h>
+			#include <sys/socket.h>
+			#include <net/if.h>
+		]], [[
+			if_nametoindex(NULL);
+		]])
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1823,25 +1943,25 @@ if test x$target_win32 = xno; then
 	dnl **********************************
 	dnl *** Checks for MonoPosixHelper ***
 	dnl **********************************
-	AC_CHECK_HEADERS(checklist.h)
-	AC_CHECK_HEADERS(pathconf.h)
-	AC_CHECK_HEADERS(fstab.h)
-	AC_CHECK_HEADERS(attr/xattr.h)
-	AC_CHECK_HEADERS(sys/extattr.h)
-	AC_CHECK_HEADERS(sys/sendfile.h)
-	AC_CHECK_HEADERS(sys/statvfs.h)
-	AC_CHECK_HEADERS(sys/statfs.h)
-	AC_CHECK_HEADERS(sys/vfstab.h)
-	AC_CHECK_HEADERS(sys/xattr.h)
-	AC_CHECK_HEADERS(sys/mman.h)
-	AC_CHECK_HEADERS(sys/param.h)
-	AC_CHECK_HEADERS(sys/mount.h, [], [],
+	AC_CHECK_HEADERS([checklist.h])
+	AC_CHECK_HEADERS([pathconf.h])
+	AC_CHECK_HEADERS([fstab.h])
+	AC_CHECK_HEADERS([attr/xattr.h])
+	AC_CHECK_HEADERS([sys/extattr.h])
+	AC_CHECK_HEADERS([sys/sendfile.h])
+	AC_CHECK_HEADERS([sys/statvfs.h])
+	AC_CHECK_HEADERS([sys/statfs.h])
+	AC_CHECK_HEADERS([sys/vfstab.h])
+	AC_CHECK_HEADERS([sys/xattr.h])
+	AC_CHECK_HEADERS([sys/mman.h])
+	AC_CHECK_HEADERS([sys/param.h])
+	AC_CHECK_HEADERS([sys/mount.h], [ ], [ ],
 		[
 		#ifdef HAVE_SYS_PARAM_H
 		# include <sys/param.h>
 		#endif
 		])
-	AC_CHECK_HEADERS(sys/mount.h)
+	AC_CHECK_HEADERS([sys/mount.h])
 	AC_CHECK_FUNCS(confstr)
 	AC_CHECK_FUNCS(seekdir telldir)
 	AC_CHECK_FUNCS(getdomainname)
@@ -1934,15 +2054,15 @@ if test x$target_win32 = xno; then
 	dnl *********************************
 	dnl *** Checks for Windows compilation ***
 	dnl *********************************
-	AC_CHECK_HEADERS(sys/time.h)
-	AC_CHECK_HEADERS(sys/param.h)
-	AC_CHECK_HEADERS(dirent.h)
+	AC_CHECK_HEADERS([sys/time.h])
+	AC_CHECK_HEADERS([sys/param.h])
+	AC_CHECK_HEADERS([dirent.h])
 
 	dnl *********************************
 	dnl *** Check for Console 2.0 I/O ***
 	dnl *********************************
 	AC_CHECK_HEADERS([curses.h])
-	AC_CHECK_HEADERS([term.h], [], [],
+	AC_CHECK_HEADERS([term.h], [ ], [ ],
 	[#if HAVE_CURSES_H
 	 #include <curses.h>
 	 #endif
@@ -1956,24 +2076,26 @@ else
 	dnl *********************************
 	dnl *** Checks for Windows compilation ***
 	dnl *********************************
-	AC_CHECK_HEADERS(winternl.h)
+	AC_CHECK_HEADERS([winternl.h])
 
 	jdk_headers_found=no
-	AC_CHECK_LIB(ws2_32, main, LIBS="$LIBS -lws2_32", AC_ERROR(bad mingw install?))
-	AC_CHECK_LIB(psapi, main, LIBS="$LIBS -lpsapi", AC_ERROR(bad mingw install?))
-	AC_CHECK_LIB(ole32, main, LIBS="$LIBS -lole32", AC_ERROR(bad mingw install?))
-	AC_CHECK_LIB(winmm, main, LIBS="$LIBS -lwinmm", AC_ERROR(bad mingw install?))
-	AC_CHECK_LIB(oleaut32, main, LIBS="$LIBS -loleaut32", AC_ERROR(bad mingw install?))
-	AC_CHECK_LIB(advapi32, main, LIBS="$LIBS -ladvapi32", AC_ERROR(bad mingw install?))
-	AC_CHECK_LIB(version, main, LIBS="$LIBS -lversion", AC_ERROR(bad mingw install?))
+	AC_CHECK_LIB(ws2_32, main, LIBS="$LIBS -lws2_32", AC_MSG_ERROR(bad mingw install?))
+	AC_CHECK_LIB(psapi, main, LIBS="$LIBS -lpsapi", AC_MSG_ERROR(bad mingw install?))
+	AC_CHECK_LIB(ole32, main, LIBS="$LIBS -lole32", AC_MSG_ERROR(bad mingw install?))
+	AC_CHECK_LIB(winmm, main, LIBS="$LIBS -lwinmm", AC_MSG_ERROR(bad mingw install?))
+	AC_CHECK_LIB(oleaut32, main, LIBS="$LIBS -loleaut32", AC_MSG_ERROR(bad mingw install?))
+	AC_CHECK_LIB(advapi32, main, LIBS="$LIBS -ladvapi32", AC_MSG_ERROR(bad mingw install?))
+	AC_CHECK_LIB(version, main, LIBS="$LIBS -lversion", AC_MSG_ERROR(bad mingw install?))
 
 	dnl *********************************
 	dnl *** Check for struct ip_mreqn ***
 	dnl *********************************
 	AC_MSG_CHECKING(for struct ip_mreqn)
-	AC_TRY_COMPILE([#include <ws2tcpip.h>], [
-		struct ip_mreqn mreq;
-		mreq.imr_address.s_addr = 0;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include <ws2tcpip.h> ]], [[
+			struct ip_mreqn mreq;
+			mreq.imr_address.s_addr = 0;
+		]])	
 	], [
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
@@ -1982,9 +2104,12 @@ else
 		# We'll just have to try and use struct ip_mreq
 		AC_MSG_RESULT(no)
 		AC_MSG_CHECKING(for struct ip_mreq)
-		AC_TRY_COMPILE([#include <ws2tcpip.h>], [
-			struct ip_mreq mreq;
-			mreq.imr_interface.s_addr = 0;
+
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[ #include <ws2tcpip.h> ]], [[
+				struct ip_mreq mreq;
+				mreq.imr_interface.s_addr = 0;
+			]])		
 		], [
 			# Yes, we have it...
 			AC_MSG_RESULT(yes)
@@ -1999,13 +2124,15 @@ fi
 
 dnl socklen_t check
 AC_MSG_CHECKING(for socklen_t)
-AC_TRY_COMPILE([
-#include <sys/types.h>
-#include <sys/socket.h>
+AC_COMPILE_IFELSE([
+	AC_LANG_PROGRAM([[
+		#include <sys/types.h>
+		#include <sys/socket.h>
+	]], [[
+		socklen_t foo;
+	]])
 ],[
-  socklen_t foo;
-],[
-ac_cv_c_socklen_t=yes
+	ac_cv_c_socklen_t=yes
 	AC_DEFINE(HAVE_SOCKLEN_T, 1, [Have socklen_t])
 	AC_MSG_RESULT(yes)
 ],[
@@ -2013,8 +2140,12 @@ ac_cv_c_socklen_t=yes
 ])
 
 AC_MSG_CHECKING(for array element initializer support)
-AC_TRY_COMPILE([#include <sys/socket.h>], [
-	const int array[] = {[1] = 2,};
+AC_COMPILE_IFELSE([
+	AC_LANG_PROGRAM([[
+		#include <sys/socket.h>
+	]], [[
+		const int array[ ] = {[1] = 2,};
+	]])
 ], [
 	# Yes, we have it...
 	AC_MSG_RESULT(yes)
@@ -2026,14 +2157,15 @@ AC_TRY_COMPILE([#include <sys/socket.h>], [
 
 AC_CHECK_FUNCS(trunc, , AC_MSG_CHECKING(for trunc in math.h)
 	# Simply calling trunc (0.0) is no good since gcc will optimize the call away
-	AC_TRY_LINK([#include <math.h>], 
-	[ static void *p = &trunc; ],
-	[
+	AC_LINK_IFELSE([
+		AC_LANG_PROGRAM([[ #include <math.h> ]], [[ static void *p = &trunc; ]])
+	], [
 		AC_DEFINE(HAVE_TRUNC) 
 		AC_MSG_RESULT(yes)
 		ac_cv_trunc=yes
-	],
-	AC_MSG_RESULT(no)))
+	], [
+		AC_MSG_RESULT(no)
+	]))
 
 if test "x$ac_cv_truncl" != "xyes"; then
    AC_CHECK_LIB(sunmath, aintl, [ AC_DEFINE(HAVE_AINTL, 1, [Has the 'aintl' function]) LIBS="$LIBS -lsunmath"])
@@ -2308,7 +2440,7 @@ case "$host" in
 		JIT_SUPPORTED=yes
 
 		AC_MSG_CHECKING(for mips n32)
-		AC_TRY_COMPILE([],[
+		AC_TRY_COMPILE([ ],[
 		#if _MIPS_SIM != _ABIN32
 		#error Not mips n32
 		#endif
@@ -2343,7 +2475,9 @@ case "$host" in
 			# yields:
 			# foo.c:6: warning: visibility attribute not supported in this configuration; ignored
 			# ld: fatal: relocation error: R_386_GOTOFF: file /var/tmp//ccxYR96k.o: symbol astruct: relocation must bind locally
-			have_visibility_hidden=no
+			if test "x$CC" = "xgcc"; then
+          have_visibility_hidden=no
+      fi
 			sgen_supported=true
 			;;
 		  cygwin*)
@@ -2393,7 +2527,7 @@ case "$host" in
 		JIT_SUPPORTED=yes
 		LIBC="libc.so.6.1"
 		INTL="libc.so.6.1"
-		AC_CHECK_LIB(unwind, _U_dyn_register, [], [AC_MSG_ERROR(library libunwind not found)])
+		AC_CHECK_LIB(unwind, _U_dyn_register, [ ], [AC_MSG_ERROR(library libunwind not found)])
 		libmono_ldflags="-lunwind"
 		;;
 	sparc*-*-*)
@@ -2411,7 +2545,7 @@ case "$host" in
 			LIBC="libc.so"
 			INTL="libintl.so"
 		esac
-		if test x"$GCC" = xyes; then
+		if test x"$CC" = x"gcc"; then
 			# We don't support v8 cpus
 			CFLAGS="$CFLAGS -Wno-cast-align -mcpu=v9"
 		fi
@@ -2612,11 +2746,13 @@ MIPS)
 esac
 
 if test "x$target_mach" = "xyes"; then
-	AC_TRY_COMPILE([#include "TargetConditionals.h"],[
-	#if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
-	#error fail this for ios
-	#endif
-	return 0;
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[ #include "TargetConditionals.h" ]], [[
+			#if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
+			#error fail this for ios
+			#endif
+			return 0;
+		]])	
 	], [
 		AC_DEFINE(TARGET_OSX,1,[The JIT/AOT targets OSX])
 		CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_OSX"
@@ -2685,14 +2821,14 @@ if test x$JIT_SUPPORTED = xyes; then
       if $interp_wanted; then
          jit_status="Building the JIT, defaulting to the interpreter"
       else
-         AC_ERROR(No JIT or interpreter support available or selected.)
+         AC_MSG_ERROR(No JIT or interpreter support available or selected.)
       fi
    fi
 else
    if test x$interp_wanted = xtrue; then
       jit_status="interpreter"
    else
-      AC_ERROR(No JIT or interpreter support available or selected.)
+      AC_MSG_ERROR(No JIT or interpreter support available or selected.)
    fi
 fi
 
@@ -2754,6 +2890,7 @@ if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
 		# against a shared library containing TLS fails with:
 		# undefined reference to `__tls_get_addr'
 		#
+		
 		rm -f conftest.c conftest.so conftest
 		echo "static __thread int foo; int main () { foo = 5; return 0; }" > conftest.c
 		$CC -fPIC --shared -o conftest.so conftest.c > /dev/null 2>&1
@@ -2824,7 +2961,11 @@ if test "x$with_tls" = "x__thread"; then
 	# Pass the information to libgc
 	CPPFLAGS="$CPPFLAGS -DUSE_COMPILER_TLS"
 	AC_MSG_CHECKING(if the tls_model attribute is supported)
-	AC_TRY_COMPILE([static __thread int foo __attribute__((tls_model("initial-exec")));], [
+
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
+			static __thread int foo __attribute__((tls_model("initial-exec")));
+		]], [[ ]])
 		], [
 			AC_MSG_RESULT(yes)
 			# CLANG doesn't support this yet, and it prints warnings about it
@@ -2844,22 +2985,34 @@ if test ${TARGET} = ARM && test x$cross_compiling = xno && test x$enable_mcs_bui
 
 	fpu=NONE
 	if gcc -v 2>&1 | grep -q -- '--with-float=hard'; then
-	   fpu=VFP_HARD
+	   	fpu=VFP_HARD
 	fi
 
 	if test x$fpu = xNONE; then
-	   ORIG_CFLAGS=$CFLAGS
-	   CFLAGS="$CFLAGS -mfpu=vfp -mfloat-abi=softfp"
-	   AC_TRY_RUN([
-				int main () { __asm__ ("faddd	d7, d6, d7"); return 0; }
-				], fpu=VFP, fpu=NONE)
-	   CFLAGS=$ORIG_CFLAGS
+	   	ORIG_CFLAGS=$CFLAGS
+	   	CFLAGS="$CFLAGS -mfpu=vfp -mfloat-abi=softfp"
+		AC_RUN_IFELSE([
+			AC_LANG_PROGRAM([[ ]], [[
+				__asm__ ("faddd	d7, d6, d7");
+			]])
+		], [
+			fpu=VFP
+		], [
+			fpu=NONE
+		])
+	   	CFLAGS=$ORIG_CFLAGS
 	fi
 
 	if test x$fpu = xNONE; then
-		AC_TRY_COMPILE([], [
-			__asm__ ("ldfd f0, [r0]");
-			], fpu=FPA, fpu=NONE)
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[ ]], [[
+				__asm__ ("ldfd f0, [r0]");
+			]])
+		], [
+			fpu=FPA
+		], [
+			fpu=NONE
+		])
 	fi
 
 	AC_MSG_RESULT($fpu)
@@ -2867,9 +3020,15 @@ if test ${TARGET} = ARM && test x$cross_compiling = xno && test x$enable_mcs_bui
 	unset fpu
 
 	AC_MSG_CHECKING(for ARMV6)
-	AC_TRY_RUN([
-		int main () { __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory"); return 0; }
-			], armv6=yes, armv6=no)
+	AC_RUN_IFELSE([
+		AC_LANG_PROGRAM([[ ]], [[
+			__asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory");
+		]])
+	], [
+		armv6=yes
+	], [
+		armv6=no
+	])
 
 	AC_MSG_RESULT($armv6)
 	if test ${armv6} = yes; then
@@ -2910,12 +3069,12 @@ case "x$gc" in
 		;;
 esac
 
-AC_ARG_WITH(profile2,  [  --with-profile2=yes,no          If you want to install the 2.0/3.5 FX (defaults to yes)],            [], [with_profile2=yes])
-AC_ARG_WITH(profile4,  [  --with-profile4=yes,no          If you want to install the 4.0 FX (defaults to yes)],                [], [with_profile4=yes])
-AC_ARG_WITH(profile4_5,[  --with-profile4_5=yes,no        If you want to install the 4.5 FX (defaults to yes)],                [], [with_profile4_5=yes])
-AC_ARG_WITH(monodroid, [  --with-monodroid=yes,no         If you want to build the MonoDroid assemblies (defaults to no)],     [], [with_monodroid=no])
-AC_ARG_WITH(monotouch, [  --with-monotouch=yes,no,only    If you want to build the MonoTouch assemblies (defaults to no)],     [], [with_monotouch=no])
-AC_ARG_WITH(mobile,    [  --with-mobile=yes,no            If you want to build the Mobile assemblies (defaults to no)],        [], [with_mobile=no])
+AC_ARG_WITH(profile2,  [  --with-profile2=yes,no          If you want to install the 2.0/3.5 FX (defaults to yes)],            [ ], [with_profile2=yes])
+AC_ARG_WITH(profile4,  [  --with-profile4=yes,no          If you want to install the 4.0 FX (defaults to yes)],                [ ], [with_profile4=yes])
+AC_ARG_WITH(profile4_5,[  --with-profile4_5=yes,no        If you want to install the 4.5 FX (defaults to yes)],                [ ], [with_profile4_5=yes])
+AC_ARG_WITH(monodroid, [  --with-monodroid=yes,no         If you want to build the MonoDroid assemblies (defaults to no)],     [ ], [with_monodroid=no])
+AC_ARG_WITH(monotouch, [  --with-monotouch=yes,no,only    If you want to build the MonoTouch assemblies (defaults to no)],     [ ], [with_monotouch=no])
+AC_ARG_WITH(mobile,    [  --with-mobile=yes,no            If you want to build the Mobile assemblies (defaults to no)],        [ ], [with_mobile=no])
 
 OPROFILE=no
 AC_ARG_WITH(oprofile,[  --with-oprofile=no,<oprofile install dir>   Enable oprofile support (defaults to no)],[
@@ -2970,11 +3129,11 @@ AC_ARG_WITH(lazy_gc_thread_creation, [  --with-lazy-gc-thread-creation=yes|no   
 	fi
 ], [with_lazy_gc_thread_creation=no])
 
-AC_CHECK_HEADER([malloc.h], 
+AC_CHECK_HEADERS([malloc.h], 
 		[AC_DEFINE([HAVE_USR_INCLUDE_MALLOC_H], [1], 
 			[Define to 1 if you have /usr/include/malloc.h.])],,)
 
-if test x"$GCC" = xyes; then
+if test x"$CC" = x"gcc"; then
    	# Implicit function declarations are not 64 bit safe
 	# Do this late, since this causes lots of configure tests to fail
 	CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
@@ -3458,3 +3617,4 @@ echo "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then
    AC_MSG_WARN(Turning off static Mono is a risk, you might run into unexpected bugs)
 fi
+
