@@ -15,6 +15,10 @@ using System.Threading;
 
 using NUnit.Framework;
 
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
+
 namespace MonoTests.System
 {
 	[TestFixture]
@@ -126,7 +130,7 @@ namespace MonoTests.System
 			Assert.AreEqual (float.Epsilon, result, "Epsilon#1b");
 			Assert.IsTrue (float.TryParse (nan, NumberStyles.Float, CultureInfo.CurrentCulture, out result), "NaN#1a");
 			Assert.AreEqual (float.NaN, result, "NaN#1b");
-			Assert.IsNaN (result, "NaN#1c");
+			Assert.That (result, Is.NaN, "NaN#1c");
 			Assert.IsTrue (float.TryParse (negInf, NumberStyles.Float, CultureInfo.CurrentCulture, out result), "-Inf#1a");
 			Assert.AreEqual (float.NegativeInfinity, result, "-Inf#1b");
 			Assert.IsTrue (float.TryParse (posInf, NumberStyles.Float, CultureInfo.CurrentCulture, out result), "+Inf#1a");
@@ -136,7 +140,7 @@ namespace MonoTests.System
 			Assert.AreEqual (float.MinValue, float.Parse (minVal), "MinValue#2");
 			Assert.AreEqual (float.Epsilon, float.Parse (epsilon), "Epsilon#2");
 			Assert.AreEqual (float.NaN, float.Parse (nan), "NaN#2a");
-			Assert.IsNaN (float.Parse (nan), "NaN#2b");
+			Assert.That (float.Parse (nan), Is.NaN, "NaN#2b");
 			Assert.AreEqual (float.NegativeInfinity, float.Parse (negInf), "-Inf#2");
 			Assert.AreEqual (float.PositiveInfinity, float.Parse (posInf), "+Inf#2");
 
@@ -144,7 +148,7 @@ namespace MonoTests.System
 			Assert.AreEqual (float.MinValue, float.Parse (minVal, CultureInfo.CurrentCulture), "MinValue#3");
 			Assert.AreEqual (float.Epsilon, float.Parse (epsilon, CultureInfo.CurrentCulture), "Epsilon#3");
 			Assert.AreEqual (float.NaN, float.Parse (nan, CultureInfo.CurrentCulture), "NaN#3a");
-			Assert.IsNaN (float.Parse (nan, CultureInfo.CurrentCulture), "NaN#3b");
+			Assert.That (float.Parse (nan, CultureInfo.CurrentCulture), Is.NaN, "NaN#3b");
 			Assert.AreEqual (float.NegativeInfinity, float.Parse (negInf, CultureInfo.CurrentCulture), "-Inf#3");
 			Assert.AreEqual (float.PositiveInfinity, float.Parse (posInf, CultureInfo.CurrentCulture), "+Inf#3");
 
@@ -152,7 +156,7 @@ namespace MonoTests.System
 			Assert.AreEqual (float.MinValue, float.Parse (minVal, NumberStyles.Float), "MinValue#4");
 			Assert.AreEqual (float.Epsilon, float.Parse (epsilon, NumberStyles.Float), "Epsilon#4");
 			Assert.AreEqual (float.NaN, float.Parse (nan, NumberStyles.Float), "NaN#4a");
-			Assert.IsNaN (float.Parse (nan, NumberStyles.Float), "NaN#4b");
+			Assert.That (float.Parse (nan, NumberStyles.Float), Is.NaN, "NaN#4b");
 			Assert.AreEqual (float.NegativeInfinity, float.Parse (negInf, NumberStyles.Float), "-Inf#4");
 			Assert.AreEqual (float.PositiveInfinity, float.Parse (posInf, NumberStyles.Float), "+Inf#4");
 
@@ -160,7 +164,7 @@ namespace MonoTests.System
 			Assert.AreEqual (float.MinValue, float.Parse (minVal, NumberStyles.Float, CultureInfo.CurrentCulture), "MinValue#5");
 			Assert.AreEqual (float.Epsilon, float.Parse (epsilon, NumberStyles.Float, CultureInfo.CurrentCulture), "Epsilon#5");
 			Assert.AreEqual (float.NaN, float.Parse (nan, NumberStyles.Float, CultureInfo.CurrentCulture), "NaN#5a");
-			Assert.IsNaN (float.Parse (nan, NumberStyles.Float, CultureInfo.CurrentCulture), "NaN#5b");
+			Assert.That (float.Parse (nan, NumberStyles.Float, CultureInfo.CurrentCulture), Is.NaN, "NaN#5b");
 			Assert.AreEqual (float.NegativeInfinity, float.Parse (negInf, NumberStyles.Float, CultureInfo.CurrentCulture), "-Inf#5");
 			Assert.AreEqual (float.PositiveInfinity, float.Parse (posInf, NumberStyles.Float, CultureInfo.CurrentCulture), "+Inf#5");
 		}

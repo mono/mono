@@ -1014,7 +1014,7 @@ namespace MonoTests.System.IO
 			string parent = Path.GetFullPath ("..");
 			Assert.IsTrue (!current.EndsWith (".."), "TestCanonicalizeDotst #02");
 		}
-
+#if !MOBILE
 		[Test]
 		public void WindowsSystem32_76191 ()
 		{
@@ -1065,7 +1065,7 @@ namespace MonoTests.System.IO
 				Directory.SetCurrentDirectory (curdir);
 			}
 		}
-
+#endif
 		[Test]
 #if TARGET_JVM
 		[Ignore("Java full (canonical) path always returns windows dir in caps")]

@@ -70,6 +70,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void CaptureCallContext ()
 		{
 			var value = new CallContextValue (true);

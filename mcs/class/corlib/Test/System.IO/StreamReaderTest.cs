@@ -773,7 +773,8 @@ public class StreamReaderTest
 		return decodedString == TestString;
 	}
     
-    	[Test] // Bug445326
+    [Test] // Bug445326
+	[Category ("MobileNotWorking")]
 	public void EndOfBufferIsCR ()
 	{
 		using (StreamReader reader = new StreamReader ("Test/resources/Fergie.GED")) {
@@ -854,7 +855,9 @@ public class StreamReaderTest
 			}
 		};
 
-		Assert.AreEqual ("ab" + Environment.NewLine, res ().Result);
+		var result = res ();
+		Assert.IsTrue (result.Wait (3000), "#1");
+		Assert.AreEqual ("ab" + Environment.NewLine, result.Result);
 	}
 #endif
 }

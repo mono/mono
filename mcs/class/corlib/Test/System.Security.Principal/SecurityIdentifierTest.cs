@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Principal
 {
 	[TestFixture]
-	public class SecurityIdentifierTest : Assert
+	public class SecurityIdentifierTest
 	{
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorNull ()

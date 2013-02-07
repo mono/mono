@@ -38,6 +38,9 @@ using System.Security.Policy;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
+#if MOBILE
+	[Ignore]
+#endif
 	public class StrongNameMembershipConditionTest {
 
 		static Evidence allEmpty;

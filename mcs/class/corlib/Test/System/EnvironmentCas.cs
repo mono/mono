@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MOBILE
 using NUnit.Framework;
 
 using System;
@@ -384,7 +385,6 @@ namespace MonoCasTests.System {
 			// now that the stack is set, call the methods
 			int i = Environment.ProcessorCount;
 		}
-
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Write = "MONO")]
 		[ExpectedException (typeof (SecurityException))]
@@ -512,3 +512,5 @@ namespace MonoCasTests.System {
 		}
 	}
 }
+
+#endif

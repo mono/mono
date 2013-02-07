@@ -39,6 +39,9 @@ using System.Text;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
+#if MOBILE
+	[Ignore]
+#endif
 	public class FileIOPermissionAttributeTest {
 
 		[Test]

@@ -330,6 +330,7 @@ public class ConsoleTest
 		Console.WriteLine ("text {0}", (object[]) null);
 	}
 
+#if !MOBILE
 	// Bug 678357
 	[Test]
 	public void EncodingTest ()
@@ -339,5 +340,6 @@ public class ConsoleTest
 		Console.OutputEncoding = Encoding.UTF8;
 		Assert.AreEqual (Console.OutputEncoding, Console.Out.Encoding);
 	}
+#endif
 }
 }

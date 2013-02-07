@@ -35,7 +35,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -151,7 +151,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if !TARGET_JVM // Reflection.Emit is not supported.
+#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit is not supported.
 		[Test]
 		public void GetModules_MissingFile ()
 		{
@@ -205,8 +205,13 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
+#if MOBILE
+			Assert.IsNotNull (corlib_test.EntryPoint, "EntryPoint");
+			Assert.IsNull (corlib_test.Evidence, "Evidence");
+#else
 			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNotNull (corlib_test.Evidence, "Evidence");
+#endif
 			Assert.IsFalse (corlib_test.GlobalAssemblyCache, "GlobalAssemblyCache");
 
 			Assert.IsTrue (corlib_test.GetReferencedAssemblies ().Length > 0, "GetReferencedAssemblies");
@@ -415,7 +420,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void LoadWithPartialName ()
 		{
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_plattest" };
+			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_plattest", "mscorlibtests" };
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
@@ -462,7 +467,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if !TARGET_JVM // Reflection.Emit is not supported.
+#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit is not supported.
 		[Test]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
@@ -1096,7 +1101,9 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (Module), module.GetType (), "#2");
 #endif
 
+#if !MONOTOUCH
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
+#endif
 			Assert.IsFalse (module.IsResource (), "#4");
 			Assert.IsTrue (assembly.GetModules ().Length > 0, "#5");
 			Assert.AreSame (module, assembly.GetModules () [0], "#6");

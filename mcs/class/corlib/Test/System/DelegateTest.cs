@@ -5,7 +5,9 @@
 
 using System;
 using System.Reflection;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.Threading;
 
 using NUnit.Framework;
@@ -1096,7 +1098,7 @@ namespace MonoTests.System
 				typeof (Action),
 				this.GetType ().GetMethod ("Banga"));
 		}
-
+#if !MONOTOUCH
 		[Test] // #664205
 		public void DynamicInvokeNullTarget ()
 		{
@@ -1109,7 +1111,7 @@ namespace MonoTests.System
 
 			Assert.AreEqual (42, (int) @delegate.DynamicInvoke ());
 		}
-
+#endif
 #endif
 		public static void CreateDelegateOfStaticMethodBoundToNull_Helper (object[] args) {}
 
@@ -1209,7 +1211,7 @@ namespace MonoTests.System
 		{
 			string retarg (string s);
 		}
-
+#if !MONOTOUCH
 		[Test]
 		public void CreateDelegateWithLdFtnAndAbstractMethod ()
 		{
@@ -1245,7 +1247,7 @@ namespace MonoTests.System
 			int a = (int) t.GetMethod ("test").Invoke (obj, null);
 			Assert.AreEqual (3, a, "#1");
 		}
-
+#endif
 		public static int MethodWithIntParam (int x) {
 			return 10;
 		}

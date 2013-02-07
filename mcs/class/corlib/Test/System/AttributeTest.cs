@@ -12,7 +12,9 @@
 
 using System;
 using System.Reflection;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -811,7 +813,7 @@ namespace MonoTests.System
 			Assert.IsTrue (type.lastInherit, "#7");
 			Assert.AreEqual (typeof (TestFixtureAttribute), type.lastAttrType, "#8");
 		}
-
+#if !MONOTOUCH
 		[Test]
 		public void GetCustomAttributeOnNewSreTypes ()
 		{
@@ -859,7 +861,7 @@ namespace MonoTests.System
 				Assert.Fail ("#1");
 			} catch (NotSupportedException) {}
 		}
-
+#endif
 		[Test] //Regression test for #499569
 		public void GetCattrOnPropertyAndInheritance ()
 		{
