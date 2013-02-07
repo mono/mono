@@ -1154,6 +1154,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Bug415628 ()
 		{
 			using (var f = File.Open ("Test/resources/415628.bin", FileMode.Open)) {

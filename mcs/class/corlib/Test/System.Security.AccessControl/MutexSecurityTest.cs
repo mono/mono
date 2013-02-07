@@ -5,6 +5,8 @@
 //
 // Copyright (C) 2012 James Bellinger
 
+#if !MOBILE
+
 using System;
 using System.Collections.Generic;
 using System.Security.AccessControl;
@@ -138,4 +140,6 @@ namespace MonoTests.System.Security.AccessControl
 		}
 	}
 }
+
+#endif
 

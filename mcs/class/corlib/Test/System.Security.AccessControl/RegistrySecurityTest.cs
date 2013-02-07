@@ -3,6 +3,8 @@
 // Authors:
 //	James Bellinger (jfb@zer7.com)
 
+#if !MOBILE
+
 using System;
 using System.IO;
 using System.Security.AccessControl;
@@ -98,4 +100,6 @@ namespace MonoTests.System.Security.AccessControl
 		}
 	}
 }
+
+#endif
 

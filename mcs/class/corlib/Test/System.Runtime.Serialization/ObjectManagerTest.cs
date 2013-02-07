@@ -129,20 +129,4 @@ namespace MonoTests.System.Runtime.Serialization
 			return sb.ToString ();
 		}
 	}
-
-	class X
-	{
-		static void Main ()
-		{
-			using (MemoryStream ms = new MemoryStream ()) {
-				Bar bar = new Bar (8, 3, 5, 21);
-				bar.Save (ms);
-
-				ms.Position = 0;
-
-				bar = Bar.Load (ms);
-				Console.WriteLine (bar);
-			}
-		}
-	}
 }

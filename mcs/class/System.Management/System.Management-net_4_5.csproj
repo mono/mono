@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{CC6CF554-79EB-497B-9705-079E9EEF03EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Management-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Management</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,93 +27,94 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.Management\AuthenticationLevel.cs" />
-   <Compile Include="System.Management\CimType.cs" />
-   <Compile Include="System.Management\CodeLanguage.cs" />
-   <Compile Include="System.Management\ComparisonSettings.cs" />
-   <Compile Include="System.Management\CompletedEventArgs.cs" />
-   <Compile Include="System.Management\CompletedEventHandler.cs" />
-   <Compile Include="System.Management\ConnectionOptions.cs" />
-   <Compile Include="System.Management\DeleteOptions.cs" />
-   <Compile Include="System.Management\EnumerationOptions.cs" />
-   <Compile Include="System.Management\EventArrivedEventArgs.cs" />
-   <Compile Include="System.Management\EventArrivedEventHandler.cs" />
-   <Compile Include="System.Management\EventQuery.cs" />
-   <Compile Include="System.Management\EventWatcherOptions.cs" />
-   <Compile Include="System.Management\ImpersonationLevel.cs" />
-   <Compile Include="System.Management\InvokeMethodOptions.cs" />
-   <Compile Include="System.Management\ManagementBaseObject.cs" />
-   <Compile Include="System.Management\ManagementClass.cs" />
-   <Compile Include="System.Management\ManagementDateTimeConverter.cs" />
-   <Compile Include="System.Management\ManagementEventArgs.cs" />
-   <Compile Include="System.Management\ManagementEventWatcher.cs" />
-   <Compile Include="System.Management\ManagementException.cs" />
-   <Compile Include="System.Management\ManagementNamedValueCollection.cs" />
-   <Compile Include="System.Management\ManagementObject.cs" />
-   <Compile Include="System.Management\ManagementObjectCollection.cs" />
-   <Compile Include="System.Management\ManagementObjectSearcher.cs" />
-   <Compile Include="System.Management\ManagementOperationObserver.cs" />
-   <Compile Include="System.Management\ManagementOptions.cs" />
-   <Compile Include="System.Management\ManagementPath.cs" />
-   <Compile Include="System.Management\ManagementQuery.cs" />
-   <Compile Include="System.Management\ManagementScope.cs" />
-   <Compile Include="System.Management\ManagementStatus.cs" />
-   <Compile Include="System.Management\MethodData.cs" />
-   <Compile Include="System.Management\MethodDataCollection.cs" />
-   <Compile Include="System.Management\ObjectGetOptions.cs" />
-   <Compile Include="System.Management\ObjectPutEventArgs.cs" />
-   <Compile Include="System.Management\ObjectPutEventHandler.cs" />
-   <Compile Include="System.Management\ObjectQuery.cs" />
-   <Compile Include="System.Management\ObjectReadyEventArgs.cs" />
-   <Compile Include="System.Management\ObjectReadyEventHandler.cs" />
-   <Compile Include="System.Management\ProgressEventArgs.cs" />
-   <Compile Include="System.Management\ProgressEventHandler.cs" />
-   <Compile Include="System.Management\PropertyData.cs" />
-   <Compile Include="System.Management\PropertyDataCollection.cs" />
-   <Compile Include="System.Management\PutOptions.cs" />
-   <Compile Include="System.Management\PutType.cs" />
-   <Compile Include="System.Management\QualifierData.cs" />
-   <Compile Include="System.Management\QualifierDataCollection.cs" />
-   <Compile Include="System.Management\RelatedObjectQuery.cs" />
-   <Compile Include="System.Management\RelationshipQuery.cs" />
-   <Compile Include="System.Management\SelectQuery.cs" />
-   <Compile Include="System.Management\StoppedEventArgs.cs" />
-   <Compile Include="System.Management\StoppedEventHandler.cs" />
-   <Compile Include="System.Management\TextFormat.cs" />
-   <Compile Include="System.Management\WqlEventQuery.cs" />
-   <Compile Include="System.Management\WqlObjectQuery.cs" />
-   <Compile Include="System.Management.Instrumentation\BaseEvent.cs" />
-   <Compile Include="System.Management.Instrumentation\DefaultManagementProjectInstaller.cs" />
-   <Compile Include="System.Management.Instrumentation\IEvent.cs" />
-   <Compile Include="System.Management.Instrumentation\IInstance.cs" />
-   <Compile Include="System.Management.Instrumentation\IgnoreMemberAttribute.cs" />
-   <Compile Include="System.Management.Instrumentation\Instance.cs" />
-   <Compile Include="System.Management.Instrumentation\Instrumentation.cs" />
-   <Compile Include="System.Management.Instrumentation\InstrumentationClassAttribute.cs" />
-   <Compile Include="System.Management.Instrumentation\InstrumentationType.cs" />
-   <Compile Include="System.Management.Instrumentation\InstrumentedAttribute.cs" />
-   <Compile Include="System.Management.Instrumentation\ManagedNameAttribute.cs" />
-   <Compile Include="System.Management.Instrumentation\ManagementInstaller.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Management.Instrumentation\BaseEvent.cs" />
+    <Compile Include="System.Management.Instrumentation\DefaultManagementProjectInstaller.cs" />
+    <Compile Include="System.Management.Instrumentation\IEvent.cs" />
+    <Compile Include="System.Management.Instrumentation\IgnoreMemberAttribute.cs" />
+    <Compile Include="System.Management.Instrumentation\IInstance.cs" />
+    <Compile Include="System.Management.Instrumentation\Instance.cs" />
+    <Compile Include="System.Management.Instrumentation\Instrumentation.cs" />
+    <Compile Include="System.Management.Instrumentation\InstrumentationClassAttribute.cs" />
+    <Compile Include="System.Management.Instrumentation\InstrumentationType.cs" />
+    <Compile Include="System.Management.Instrumentation\InstrumentedAttribute.cs" />
+    <Compile Include="System.Management.Instrumentation\ManagedNameAttribute.cs" />
+    <Compile Include="System.Management.Instrumentation\ManagementInstaller.cs" />
+    <Compile Include="System.Management\AuthenticationLevel.cs" />
+    <Compile Include="System.Management\CimType.cs" />
+    <Compile Include="System.Management\CodeLanguage.cs" />
+    <Compile Include="System.Management\ComparisonSettings.cs" />
+    <Compile Include="System.Management\CompletedEventArgs.cs" />
+    <Compile Include="System.Management\CompletedEventHandler.cs" />
+    <Compile Include="System.Management\ConnectionOptions.cs" />
+    <Compile Include="System.Management\DeleteOptions.cs" />
+    <Compile Include="System.Management\EnumerationOptions.cs" />
+    <Compile Include="System.Management\EventArrivedEventArgs.cs" />
+    <Compile Include="System.Management\EventArrivedEventHandler.cs" />
+    <Compile Include="System.Management\EventQuery.cs" />
+    <Compile Include="System.Management\EventWatcherOptions.cs" />
+    <Compile Include="System.Management\ImpersonationLevel.cs" />
+    <Compile Include="System.Management\InvokeMethodOptions.cs" />
+    <Compile Include="System.Management\ManagementBaseObject.cs" />
+    <Compile Include="System.Management\ManagementClass.cs" />
+    <Compile Include="System.Management\ManagementDateTimeConverter.cs" />
+    <Compile Include="System.Management\ManagementEventArgs.cs" />
+    <Compile Include="System.Management\ManagementEventWatcher.cs" />
+    <Compile Include="System.Management\ManagementException.cs" />
+    <Compile Include="System.Management\ManagementNamedValueCollection.cs" />
+    <Compile Include="System.Management\ManagementObject.cs" />
+    <Compile Include="System.Management\ManagementObjectCollection.cs" />
+    <Compile Include="System.Management\ManagementObjectSearcher.cs" />
+    <Compile Include="System.Management\ManagementOperationObserver.cs" />
+    <Compile Include="System.Management\ManagementOptions.cs" />
+    <Compile Include="System.Management\ManagementPath.cs" />
+    <Compile Include="System.Management\ManagementQuery.cs" />
+    <Compile Include="System.Management\ManagementScope.cs" />
+    <Compile Include="System.Management\ManagementStatus.cs" />
+    <Compile Include="System.Management\MethodData.cs" />
+    <Compile Include="System.Management\MethodDataCollection.cs" />
+    <Compile Include="System.Management\ObjectGetOptions.cs" />
+    <Compile Include="System.Management\ObjectPutEventArgs.cs" />
+    <Compile Include="System.Management\ObjectPutEventHandler.cs" />
+    <Compile Include="System.Management\ObjectQuery.cs" />
+    <Compile Include="System.Management\ObjectReadyEventArgs.cs" />
+    <Compile Include="System.Management\ObjectReadyEventHandler.cs" />
+    <Compile Include="System.Management\ProgressEventArgs.cs" />
+    <Compile Include="System.Management\ProgressEventHandler.cs" />
+    <Compile Include="System.Management\PropertyData.cs" />
+    <Compile Include="System.Management\PropertyDataCollection.cs" />
+    <Compile Include="System.Management\PutOptions.cs" />
+    <Compile Include="System.Management\PutType.cs" />
+    <Compile Include="System.Management\QualifierData.cs" />
+    <Compile Include="System.Management\QualifierDataCollection.cs" />
+    <Compile Include="System.Management\RelatedObjectQuery.cs" />
+    <Compile Include="System.Management\RelationshipQuery.cs" />
+    <Compile Include="System.Management\SelectQuery.cs" />
+    <Compile Include="System.Management\StoppedEventArgs.cs" />
+    <Compile Include="System.Management\StoppedEventHandler.cs" />
+    <Compile Include="System.Management\TextFormat.cs" />
+    <Compile Include="System.Management\WqlEventQuery.cs" />
+    <Compile Include="System.Management\WqlObjectQuery.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -123,30 +123,28 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.Install.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.Install.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration.Install\System.Configuration.Install-net_4_5.csproj">
+      <Project>{742F5EEA-689C-46B3-A452-4FB29665BA6C}</Project>
+      <Name>System.Configuration.Install\System.Configuration.Install-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

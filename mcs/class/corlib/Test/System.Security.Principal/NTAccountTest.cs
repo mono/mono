@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Principal
 {
     [TestFixture]
-    public class NTAccountTest : Assert
+    public class NTAccountTest
     {
         [Test]
         public void ConstructorOneString()

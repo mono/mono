@@ -36,6 +36,9 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
+#if MOBILE
+	[Ignore]
+#endif
 	public class HostProtectionAttributeTest {
 
 		private void DefaultTests (HostProtectionAttribute hpa)
@@ -58,6 +61,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if MOBILE
+		[Ignore]
+#endif
 		public void HostProtectionAttribute_Empty ()
 		{
 			// note: normally security attributes don't have an empty constructor
@@ -87,6 +93,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if MOBILE
+		[Ignore]
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void HostProtectionAttribute_InheritanceDemand ()
 		{

@@ -13,7 +13,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !TARGET_JVM // Reflection.Emit not supported for TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit not supported for TARGET_JVM
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -118,7 +118,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (7, objCOMTest.Id, "#A05");
 		}
 
-#if !TARGET_JVM // Reflection.Emit not supported for TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
 		public void CreateInstance_TypeBuilder ()
@@ -223,6 +223,7 @@ namespace MonoTests.System {
 			Activator.GetObject (null, "tcp://localhost:1234/COMTestUri");
 		}
 
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		[Category ("TargetJvmNotWorking")]
@@ -230,6 +231,7 @@ namespace MonoTests.System {
 		{
 			Activator.GetObject (typeof (COMTest), null);
 		}
+#endif
 
 /* This test is now executed in System.Runtime.Remoting unit tests 
 		[Test]
@@ -261,6 +263,8 @@ namespace MonoTests.System {
 			objHandle.Unwrap ();
 			// TODO: Implement the test methods for all the overriden function using activationAttribute
 		}
+
+#if !MOBILE
 
 		// note: this only ensure that the ECMA key support unification (more test required, outside corlib, for other keys, like MS final).
 		private const string CorlibPermissionPattern = "System.Security.Permissions.FileDialogPermission, mscorlib, Version={0}, Culture=neutral, PublicKeyToken=b77a5c561934e089";
@@ -317,7 +321,7 @@ namespace MonoTests.System {
 		{
 			Assert.IsNull (Type.GetType (String.Format (SystemPermissionPattern, "9.99.999.9999")));
 		}
-
+#endif
 		class foo2<T, U> {}
 		class foo1<T> : foo2<T, int> {}
 
@@ -345,12 +349,18 @@ namespace MonoTests.System {
 			Activator.CreateInstance (AppDomain.CurrentDomain, "mscorlib.dll", "System.Object", false,
 						  BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture,
 						  null, null);
+		}
+
+#if !MONOTOUCH
+		[Test]
+		public void CreateInstanceCustomDomain ()
+		{
 			// FIXME: below works as a standalone case, but does not as a unit test (causes JIT error).
                 	Activator.CreateInstance (AppDomain.CreateDomain ("foo"), "mscorlib.dll", "System.Object", false,
 						  BindingFlags.Public | BindingFlags.Instance, null, null, null,
 						  null, null);
 		}
-
+#endif
 		[Test]
 		public void CreateInstanceCrossDomainNonSerializableArgs ()
 		{

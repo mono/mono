@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{E53163F1-DE8B-4755-A18B-BFAA180BDCB6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\EntityFramework.SqlServer-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>EntityFramework.SqlServer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,70 +27,71 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\..\external\entityframework\src\SharedAssemblyInfo.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\DbGeographyAdapter.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\DbGeometryAdapter.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Expressions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\GlobalSuppressions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\IDbSpatialValue.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\IDbSpatialValueExtensionMethods.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Properties\AssemblyVersion.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Properties\InternalsVisibleTo.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Properties\Resources.SqlServer.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlDdlBuilder.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\BoolWrapper.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\DmlSqlGenerator.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlTypesAssemblyLoader.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlVersionUtils.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\DbExpressionExtensions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\EdmFunctionExtensions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\MetdataItemExtensions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\FuncExtensions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\IDictionaryExtensions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\ISqlFragment.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\JoinSymbol.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\OptionalColumn.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\Sql8ConformanceChecker.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\Sql8ExpressionRewriter.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlBuilder.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlFunctionCallHandler.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlGenerator.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlSelectClauseBuilder.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlSelectStatement.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlWriter.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\Symbol.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SymbolPair.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SymbolTable.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SymbolUsageManager.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\TopClause.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlProviderManifest.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlProviderServices.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlProviderUtilities.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlSpatialDataReader.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlSpatialServices.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlTypesAssembly.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlVersion.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\PrimitiveTypeExtensions.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\RuntimeFailureMethods.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\SqlDataReaderWrapper.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\Throw.cs" />
-   <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\TypeUsageExtensions.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\DbGeographyAdapter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\DbGeometryAdapter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Expressions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\GlobalSuppressions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\IDbSpatialValue.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\IDbSpatialValueExtensionMethods.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Properties\AssemblyVersion.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Properties\InternalsVisibleTo.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Properties\Resources.SqlServer.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlDdlBuilder.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\BoolWrapper.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\DmlSqlGenerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\ISqlFragment.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\JoinSymbol.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\OptionalColumn.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\Sql8ConformanceChecker.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\Sql8ExpressionRewriter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlBuilder.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlFunctionCallHandler.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlGenerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlSelectClauseBuilder.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlSelectStatement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SqlWriter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\Symbol.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SymbolPair.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SymbolTable.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\SymbolUsageManager.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlGen\TopClause.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlProviderManifest.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlProviderServices.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlProviderUtilities.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlSpatialDataReader.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlSpatialServices.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlTypesAssembly.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlTypesAssemblyLoader.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlVersion.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\SqlVersionUtils.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\DbExpressionExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\EdmFunctionExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\FuncExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\IDictionaryExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\MetdataItemExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\PrimitiveTypeExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\RuntimeFailureMethods.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\SqlDataReaderWrapper.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\Throw.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework.SqlServer\Utilities\TypeUsageExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\SharedAssemblyInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -100,67 +100,69 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EntityFramework\EntityFramework-net_4_5.csproj">
+      <Project>{E3BDED32-9812-4373-8D51-B30943D9DD37}</Project>
+      <Name>EntityFramework\EntityFramework-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{AE8FAE27-D070-4533-A135-49EEF160779D}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="System.Data.Entity.SqlServer.Properties.Resources.SqlServer.resources">
-       <LogicalName>System.Data.Entity.SqlServer.Properties.Resources.SqlServer.resources</LogicalName>
+      <LogicalName>System.Data.Entity.SqlServer.Properties.Resources.SqlServer.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework/Resources/System/Data/System.Data.Resources.DbProviderServices.ConceptualSchemaDefinition.csdl">
-       <LogicalName>System.Data.Resources.DbProviderServices.ConceptualSchemaDefinition.csdl</LogicalName>
+      <LogicalName>System.Data.Resources.DbProviderServices.ConceptualSchemaDefinition.csdl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.ProviderManifest.xml">
-       <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.ProviderManifest.xml</LogicalName>
+      <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.ProviderManifest.xml</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition.ssdl">
-       <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition.ssdl</LogicalName>
+      <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition.ssdl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition_Sql8.ssdl">
-       <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition_Sql8.ssdl</LogicalName>
+      <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition_Sql8.ssdl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinitionVersion3.ssdl">
-       <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinitionVersion3.ssdl</LogicalName>
+      <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinitionVersion3.ssdl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinitionVersion3_Sql8.ssdl">
-       <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinitionVersion3_Sql8.ssdl</LogicalName>
+      <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinitionVersion3_Sql8.ssdl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaMapping.msl">
-       <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaMapping.msl</LogicalName>
+      <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaMapping.msl</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaMappingVersion3.msl">
-       <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaMappingVersion3.msl</LogicalName>
+      <LogicalName>System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaMappingVersion3.msl</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

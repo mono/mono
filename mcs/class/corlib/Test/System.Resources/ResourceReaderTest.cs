@@ -99,6 +99,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ConstructorString ()
 		{
 			if (!File.Exists (m_ResourceFile)) {
@@ -125,6 +126,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ConstructorStream_Closed ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -143,6 +145,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Stream ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -152,6 +155,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Close ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -164,6 +168,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Enumerator ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);

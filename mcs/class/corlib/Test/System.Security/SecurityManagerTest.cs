@@ -62,26 +62,38 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void LoadPolicyLevelFromFile_Null ()
 		{
 			SecurityManager.LoadPolicyLevelFromFile (null, PolicyLevelType.AppDomain);
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void LoadPolicyLevelFromString_Null ()
 		{
 			SecurityManager.LoadPolicyLevelFromString (null, PolicyLevelType.AppDomain);
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void PolicyHierarchy () 
 		{
 			IEnumerator e = SecurityManager.PolicyHierarchy ();
 			Assert.IsNotNull (e, "PolicyHierarchy");
 		}
 
+#if !MOBILE
 		private void ResolveEvidenceHost (SecurityZone zone, bool unrestricted, bool empty)
 		{
 			string prefix = zone.ToString () + "-";
@@ -90,26 +102,16 @@ namespace MonoTests.System.Security {
 			PermissionSet ps = SecurityManager.ResolvePolicy (e);
 			// as 2.0 use Unrestricted for Identity permissions they have no need to be 
 			// kept in resolved permission set
-#if NET_2_0
 			Assert.IsTrue ((unrestricted || (ps.Count > 0)), prefix + "Count");
-#else
-			Assert.IsTrue ((ps.Count > 0), prefix + "Count");
-#endif
 			Assert.AreEqual (empty, ps.IsEmpty (), prefix + "IsEmpty");
 			Assert.AreEqual (unrestricted, ps.IsUnrestricted (), prefix + "IsUnrestricted");
-#if NET_2_0
 			if (unrestricted)
 				Assert.IsNull (ps.GetPermission (typeof (ZoneIdentityPermission)), prefix + "GetPermission(ZoneIdentityPermission)");
 			else
 				Assert.IsNotNull (ps.GetPermission (typeof (ZoneIdentityPermission)), prefix + "GetPermission(ZoneIdentityPermission)");
-#else
-			Assert.IsNotNull (ps.GetPermission (typeof (ZoneIdentityPermission)), prefix + "GetPermission(ZoneIdentityPermission)");
-#endif
 		}
 
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void ResolvePolicy_Evidence_Host_Zone () 
 		{
@@ -161,7 +163,6 @@ namespace MonoTests.System.Security {
 			Assert.IsTrue (granted.IsUnrestricted (), "IsUnrestricted");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ResolvePolicy_Evidences_Null ()
 		{
@@ -171,7 +172,6 @@ namespace MonoTests.System.Security {
 			Assert.IsNotNull (ps);
 			Assert.IsFalse (ps.IsUnrestricted (), "IsUnrestricted");
 		}
-#endif
 
 		[Test]
 		public void ResolvePolicy_Evidence_AllNull_NoExecution ()
@@ -194,20 +194,13 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (PolicyException))]
 		[Category ("NotWorking")]
-#endif
 		public void ResolvePolicy_Evidence_DenyUnrestricted_CurrentAssembly ()
 		{
 			PermissionSet deny = new PermissionSet (PermissionState.Unrestricted);
 			PermissionSet denied = null;
 			PermissionSet granted = SecurityManager.ResolvePolicy (CurrentEvidence, null, null, deny, out denied);
-			// doing this we denied the Execution right
-#if !NET_2_0
-			Assert.AreEqual (0, denied.Count, "Denied");
-			Assert.IsTrue (granted.IsUnrestricted (), "Granted.IsUnrestricted");
-#endif
 		}
 
 		[Test]
@@ -241,7 +234,7 @@ namespace MonoTests.System.Security {
 			PolicyLevel adl = PolicyLevel.CreateAppDomainLevel ();
 			SecurityManager.SavePolicyLevel (adl);
 		}
-#if NET_2_0
+
 		[Test]
 		public void GetZoneAndOrigin ()
 		{

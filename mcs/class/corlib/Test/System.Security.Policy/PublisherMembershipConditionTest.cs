@@ -73,11 +73,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void InvalidConstructor () 
 		{
 			byte[] n = null;
@@ -221,6 +217,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[Ignore]
+#endif
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void FromXml_SecurityElementNull ()
 		{
@@ -229,6 +228,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void FromXml_PolicyLevel ()
 		{
 			PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
@@ -271,6 +273,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void ToXmlPolicyLevel () 
 		{
 			PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);

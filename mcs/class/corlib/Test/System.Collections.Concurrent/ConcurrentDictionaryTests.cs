@@ -32,6 +32,9 @@ using System.Collections.Concurrent;
 
 using NUnit;
 using NUnit.Framework;
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Collections.Concurrent
 {
@@ -177,7 +180,7 @@ namespace MonoTests.System.Collections.Concurrent
 				int index = Array.IndexOf (keys, kvp.Key);
 				Assert.AreNotEqual (-1, index, "#a");
 				Assert.AreEqual (index + 1, kvp.Value, "#b");
-				Assert.Less (++occurence[index], 2, "#c");
+				Assert.That (++occurence[index], Is.LessThan (2), "#c");
 			}
 		}
 

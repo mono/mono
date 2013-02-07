@@ -106,7 +106,6 @@ csproj-library:
  	for counter in 1 2 3 4 5 ; do if test -f $(topdir)/../msvc/scripts/inputs/$$config_file ; then config_file=`basename $(LIBRARY) .dll`-$(PROFILE)-$$counter.input; fi ; done ;\
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
-	echo $(MCS);	\
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
@@ -198,12 +197,12 @@ csproj-test:
 	config_file=`basename $(LIBRARY) .dll`-tests-$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo false; \
-	echo $(MCS);	\
 	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
 	echo $(test_lib); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(test_lib); \
 	echo $(FRAMEWORK_VERSION); \
+	echo $(PROFILE); \
 	echo $(test_response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 endif

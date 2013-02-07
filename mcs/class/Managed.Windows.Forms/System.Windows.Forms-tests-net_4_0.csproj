@@ -5,51 +5,76 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{5552B561-ACBE-4E24-A9E6-EA77C0744F70}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Windows.Forms-tests-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
+    
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Windows.Forms_test_net_4_0</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
+    <NoWarn>1699,618,612</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
-    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
+    <NoWarn>1699,618,612</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
-    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="Test\System.Resources\CompatTest.cs" />
+    <Compile Include="Test\System.Resources\CultureTest.cs" />
+    <Compile Include="Test\System.Resources\HelperClasses_ITRS.cs" />
+    <Compile Include="Test\System.Resources\HelperClasses_Resources.cs" />
+    <Compile Include="Test\System.Resources\ResourcesTestHelper.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeAliasTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeByteArrayTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeFileRefGetValueTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeFileRefGetValueTypeNameTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeSerialisedGetValueTypeNameTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeSerializedGetValueTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeTest.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeTypeConverterGetValueTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeTypeConverterGetValueTypeNameTests.cs" />
+    <Compile Include="Test\System.Resources\ResXDataNodeWriteBehavior.cs" />
+    <Compile Include="Test\System.Resources\ResXFileRefTest.cs" />
+    <Compile Include="Test\System.Resources\ResXResourceReaderTest.cs" />
+    <Compile Include="Test\System.Resources\WriterTest.cs" />
+    <Compile Include="Test\System.Windows.Forms.Layout\ArrangedElementCollectionTest.cs" />
+    <Compile Include="Test\System.Windows.Forms.Layout\TableLayoutSettingsTypeConverterTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\ApplicationContextTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ApplicationTest.cs" />
     <Compile Include="Test\System.Windows.Forms\AutoCompleteStringCollectionTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\ApplicationContextTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\BindingTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\BindingsCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\BindingContextTest.cs" />
     <Compile Include="Test\System.Windows.Forms\BindingManagerBaseTest.cs" />
     <Compile Include="Test\System.Windows.Forms\BindingMemberInfoTest.cs" />
     <Compile Include="Test\System.Windows.Forms\BindingNavigatorTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\BindingsCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\BindingSourceTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\BindingTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ButtonBaseTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ButtonTest.cs" />
     <Compile Include="Test\System.Windows.Forms\CheckBoxEventTest.cs" />
@@ -72,12 +97,12 @@
     <Compile Include="Test\System.Windows.Forms\ControlHandleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ControlLogger.cs" />
     <Compile Include="Test\System.Windows.Forms\ControlLogger2.cs" />
-    <Compile Include="Test\System.Windows.Forms\ControlTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ControlPaintTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ControlPropertyEventsTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ControlStyleTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\CursorTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\ControlTest.cs" />
     <Compile Include="Test\System.Windows.Forms\CurrencyManagerTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\CursorTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataBindingTests.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridColumnStyleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridTableStyleTest.cs" />
@@ -100,8 +125,8 @@
     <Compile Include="Test\System.Windows.Forms\DataGridViewCommon.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewDataBindingTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewElementTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\DataGridViewLinkCellTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewImageCellTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\DataGridViewLinkCellTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewRowCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewRowHeaderTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DataGridViewRowTest.cs" />
@@ -113,14 +138,14 @@
     <Compile Include="Test\System.Windows.Forms\DefaultLayoutTest.cs" />
     <Compile Include="Test\System.Windows.Forms\DragEventArgsTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ErrorProviderTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\EventArgsTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\EventLogger.cs" />
     <Compile Include="Test\System.Windows.Forms\FlowPanelTests.cs" />
     <Compile Include="Test\System.Windows.Forms\FocusTest.cs" />
     <Compile Include="Test\System.Windows.Forms\FolderBrowserDialogTest.cs" />
     <Compile Include="Test\System.Windows.Forms\FormEventTest.cs" />
     <Compile Include="Test\System.Windows.Forms\FormHandleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\FormTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\EventArgsTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\EventLogger.cs" />
     <Compile Include="Test\System.Windows.Forms\GridColumnStylesCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\GridTableStylesCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\GroupBoxTest.cs" />
@@ -136,28 +161,28 @@
     <Compile Include="Test\System.Windows.Forms\LinkAreaTest.cs" />
     <Compile Include="Test\System.Windows.Forms\LinkConverterTest.cs" />
     <Compile Include="Test\System.Windows.Forms\LinkLabelTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\ListControlTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ListBindingHelperTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ListBoxEventTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ListBoxTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\ListControlTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ListViewCollectionsTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ListViewEventTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\ListViewTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\ListViewGroupTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ListViewGroupCollectionTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\ListViewGroupTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ListViewItemTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\ListViewTest.cs" />
     <Compile Include="Test\System.Windows.Forms\MaskedTextBoxTest.cs" />
     <Compile Include="Test\System.Windows.Forms\MdiFormHandleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\MdiFormTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\MessageTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\MenuItemTest.cs" />
     <Compile Include="Test\System.Windows.Forms\MenuStripTest.cs" />
     <Compile Include="Test\System.Windows.Forms\MenuTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\MenuItemTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\MessageTest.cs" />
     <Compile Include="Test\System.Windows.Forms\MonthCalendarTest.cs" />
     <Compile Include="Test\System.Windows.Forms\NotifyIconTest.cs" />
     <Compile Include="Test\System.Windows.Forms\NumericUpDownTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\PaddingTest.cs" />
     <Compile Include="Test\System.Windows.Forms\PaddingConverterTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\PaddingTest.cs" />
     <Compile Include="Test\System.Windows.Forms\PaintEventArgsTest.cs" />
     <Compile Include="Test\System.Windows.Forms\PanelTest.cs" />
     <Compile Include="Test\System.Windows.Forms\PictureBoxTest.cs" />
@@ -166,15 +191,15 @@
     <Compile Include="Test\System.Windows.Forms\PropertyGridTest.cs" />
     <Compile Include="Test\System.Windows.Forms\PropertyManagerTest.cs" />
     <Compile Include="Test\System.Windows.Forms\RadioButtonTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\RowStyleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\RichTextBoxTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\RowStyleTest.cs" />
     <Compile Include="Test\System.Windows.Forms\SaveFileDialogTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ScrollableControlTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ScrollBarTest.cs" />
     <Compile Include="Test\System.Windows.Forms\SelectionRangeTest.cs" />
     <Compile Include="Test\System.Windows.Forms\SendKeysTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\SplitterTest.cs" />
     <Compile Include="Test\System.Windows.Forms\SplitContainerTests.cs" />
+    <Compile Include="Test\System.Windows.Forms\SplitterTest.cs" />
     <Compile Include="Test\System.Windows.Forms\StatusBarPanelTest.cs" />
     <Compile Include="Test\System.Windows.Forms\StatusBarTest.cs" />
     <Compile Include="Test\System.Windows.Forms\StatusStripTest.cs" />
@@ -185,8 +210,8 @@
     <Compile Include="Test\System.Windows.Forms\TestImageIndexConverter.cs" />
     <Compile Include="Test\System.Windows.Forms\TextBoxTest.cs" />
     <Compile Include="Test\System.Windows.Forms\TimerTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\ToolBarTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ToolBarButtonTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\ToolBarTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ToolStripButtonTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ToolStripComboBoxTest.cs" />
     <Compile Include="Test\System.Windows.Forms\ToolStripContainerTest.cs" />
@@ -211,35 +236,14 @@
     <Compile Include="Test\System.Windows.Forms\TrackBarTest.cs" />
     <Compile Include="Test\System.Windows.Forms\TreeNodeCollectionTest.cs" />
     <Compile Include="Test\System.Windows.Forms\TreeNodeTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\TreeViewHitTestInfoTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\TreeViewImageKeyConverterTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\TreeViewImageIndexConverterTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\TreeViewTest.cs" />
     <Compile Include="Test\System.Windows.Forms\TreeViewEventsTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\TreeViewHitTestInfoTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\TreeViewImageIndexConverterTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\TreeViewImageKeyConverterTest.cs" />
+    <Compile Include="Test\System.Windows.Forms\TreeViewTest.cs" />
     <Compile Include="Test\System.Windows.Forms\UpDownTest.cs" />
     <Compile Include="Test\System.Windows.Forms\UserControlTest.cs" />
-    <Compile Include="Test\System.Windows.Forms\VScrollPropertiesTest.cs" />
-    <Compile Include="Test\System.Windows.Forms.Layout\TableLayoutSettingsTypeConverterTest.cs" />
-    <Compile Include="Test\System.Windows.Forms.Layout\ArrangedElementCollectionTest.cs" />
-    <Compile Include="Test\System.Resources\CompatTest.cs" />
-    <Compile Include="Test\System.Resources\CultureTest.cs" />
-    <Compile Include="Test\System.Resources\HelperClasses_ITRS.cs" />
-    <Compile Include="Test\System.Resources\HelperClasses_Resources.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeAliasTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeByteArrayTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeFileRefGetValueTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeFileRefGetValueTypeNameTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeSerialisedGetValueTypeNameTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeSerializedGetValueTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeTest.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeTypeConverterGetValueTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeTypeConverterGetValueTypeNameTests.cs" />
-    <Compile Include="Test\System.Resources\ResXDataNodeWriteBehavior.cs" />
-    <Compile Include="Test\System.Resources\ResXFileRefTest.cs" />
-    <Compile Include="Test\System.Resources\ResXResourceReaderTest.cs" />
-    <Compile Include="Test\System.Resources\ResourcesTestHelper.cs" />
-    <Compile Include="Test\System.Resources\WriterTest.cs" />
-  </ItemGroup>
+    <Compile Include="Test\System.Windows.Forms\VScrollPropertiesTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -249,41 +253,55 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
+
     </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing.dll">
-      <HintPath>System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="Accessibility.dll">
-      <HintPath>Accessibility.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-    <Reference Include="System.Windows.Forms">
-      <HintPath>..\lib\net_4_0\System.Windows.Forms.dll</HintPath>
-    </Reference>
+    <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_0.csproj">
+      <Project>{4FBDACCF-361F-4C28-BDB5-E58730594AE4}</Project>
+      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
+      <Project>{E49EEDDE-15CB-4200-9E7E-281199089670}</Project>
+      <Name>System.Data\System.Data-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_0.csproj">
+      <Project>{4E3F72B8-96DD-404A-8070-9885A5DF5282}</Project>
+      <Name>System.Drawing\System.Drawing-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Accessibility\Accessibility-net_4_0.csproj">
+      <Project>{CA07487C-0576-4995-8F64-9277EEEAD035}</Project>
+      <Name>Accessibility\Accessibility-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
+      <Project>{A1A09F77-428E-4B5F-9C0C-3B07F55909A6}</Project>
+      <Name>System.XML\System.Xml-net_4_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_0.csproj">
+      <Project>{D5785AD7-E788-4A30-B077-8AD507226FB0}</Project>
+      <Name>System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Test\System.Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Test\resources\a.cur">
+    <EmbeddedResource Include="Test/resources/a.cur">
       <LogicalName>a.cur</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Test\resources\32x32.ico">
+    <EmbeddedResource Include="Test/resources/32x32.ico">
       <LogicalName>32x32.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

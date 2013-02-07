@@ -337,6 +337,7 @@ namespace MonoTests.System.Runtime.Remoting
 		
 		[Test]
 		[Category("NotDotNet")]
+		[Category ("MobileNotWorking")]
 		public void TestMonitorWait ()
 		{
 			Thread tr = new Thread (new ThreadStart (DoMonitorPulse));
