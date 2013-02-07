@@ -51,7 +51,7 @@ int main (int argc, char* argv[])
 	char **newargs;
 	int i, k = 0;
 
-	newargs = (char **) malloc (sizeof (char *) * (argc + 2) + count_mono_options_args ());
+	newargs = (char **) malloc (sizeof (char *) * (argc + 2 + count_mono_options_args ()));
 
 	newargs [k++] = argv [0];
 
