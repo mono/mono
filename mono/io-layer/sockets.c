@@ -17,6 +17,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/poll.h>
 #ifdef HAVE_SYS_UIO_H
 #  include <sys/uio.h>
 #endif
