@@ -187,6 +187,8 @@ namespace System.Net
 					throw new ArgumentOutOfRangeException ("value");
 
 				defaultConnectionLimit = value; 
+                if (manager != null)
+					manager.Add ("*", defaultConnectionLimit);
 			}
 		}
 
