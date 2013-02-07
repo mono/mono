@@ -1163,9 +1163,9 @@ if test x$target_win32 = xno; then
 	AC_SEARCH_LIBS(clock_gettime, rt)
 
 	dnl dynamic loader support
-	AC_CHECK_FUNC(dlopen, DL_LIB="",
-		AC_CHECK_LIB(dl, dlopen, DL_LIB="-ldl", dl_support=no)
-	)
+	AC_CHECK_FUNC(dlopen, [DL_LIB=""], [
+		AC_CHECK_LIB(dl, dlopen, [DL_LIB="-ldl"], [dl_support=no])
+	])
 	if test x$dl_support = xno; then
 		AC_MSG_WARN([No dynamic loading support available])
 	else
@@ -1174,7 +1174,7 @@ if test x$target_win32 = xno; then
 		dnl from glib's configure.in
 		AC_CACHE_CHECK(
 			[for preceeding underscore in symbols],
-			mono_cv_uscore,[
+			mono_cv_uscore, [
 			AC_RUN_IFELSE([
 				AC_LANG_SOURCE([[
 					#include <dlfcn.h>
@@ -1223,26 +1223,7 @@ if test x$target_win32 = xno; then
 
 	AC_CHECK_HEADERS([execinfo.h])
 
-	AC_CHECK_FUNCS(getgrgid_r)
-	AC_CHECK_FUNCS(getgrnam_r)
-	AC_CHECK_FUNCS(getpwnam_r)
-	AC_CHECK_FUNCS(getpwuid_r)
-	AC_CHECK_FUNCS(getresuid)
-	AC_CHECK_FUNCS(setresuid)
-	AC_CHECK_FUNCS(kqueue)
-	AC_CHECK_FUNCS(backtrace_symbols)
-	AC_CHECK_FUNCS(mkstemp)
-	AC_CHECK_FUNCS(mmap)
-	AC_CHECK_FUNCS(madvise)
-	AC_CHECK_FUNCS(getrusage)
-	AC_CHECK_FUNCS(getpriority)
-	AC_CHECK_FUNCS(setpriority)
-	AC_CHECK_FUNCS(dl_iterate_phdr)
-	AC_CHECK_FUNCS(dladdr)
-	AC_CHECK_FUNCS(sysconf)
-
-	AC_CHECK_FUNCS(sched_setaffinity)
-	AC_CHECK_FUNCS(sched_getcpu)
+	AC_CHECK_FUNCS([getgrgid_r getgrnam_r getpwnam_r getpwuid_r getresuid setresuid kqueue backtrace_symbols mkstemp mmap madvise getrusage getpriority setpriority dl_iterate_phdr dladdr sysconf sched_setaffinity sched_getcpu])
 
 	dnl ****************************************************************
 	dnl *** Check for sched_setaffinity from glibc versions before   ***
@@ -1434,9 +1415,11 @@ dnl
 	dnl *****************************
 	dnl *** Checks for libnsl     ***
 	dnl *****************************
-	AC_CHECK_FUNC(gethostbyaddr, , AC_CHECK_LIB(nsl, gethostbyaddr, LIBS="$LIBS -lnsl"))
+	AC_CHECK_FUNC(gethostbyaddr, [], [
+		AC_CHECK_LIB(nsl, gethostbyaddr, [LIBS="$LIBS -lnsl"])
+	])
 
-	AC_CHECK_FUNCS(inet_pton inet_aton)
+	AC_CHECK_FUNCS([inet_pton inet_aton])
 
 	dnl ***********************************************
 	dnl *** Checks for size of sockaddr_un.sun_path ***
@@ -1508,7 +1491,7 @@ dnl
 	dnl *** Checks for signals
 	dnl ***********************************
 	AC_CHECK_HEADERS([signal.h])
-	AC_CHECK_FUNCS(sigaction)
+	AC_CHECK_FUNC(sigaction)
 
 	dnl ***********************************
 	dnl *** Checks for working __thread ***
@@ -1675,7 +1658,7 @@ dnl
 	AC_SEARCH_LIBS(sem_init, pthread rt posix4) 
 
 	AC_SEARCH_LIBS(shm_open, pthread rt posix4) 
-	AC_CHECK_FUNCS(shm_open)
+	AC_CHECK_FUNC(shm_open)
 
 	dnl ********************************
 	dnl *** Checks for timezone stuff **
@@ -1684,17 +1667,15 @@ dnl
 		[for tm_gmtoff in struct tm],
 		ac_cv_struct_tm_gmtoff,
 		[AC_COMPILE_IFELSE([
-			AC_LANG_PROGRAM([[
-				#include <time.h>
-			]], [[
-				struct tm tm;
-				tm.tm_gmtoff = 1;
-			]])
-			], [
-				ac_cv_struct_tm_gmtoff=yes
-			], [
-				ac_cv_struct_tm_gmtoff=no
-			])])
+			AC_LANG_PROGRAM(
+				[[#include <time.h>]],
+				[[
+					struct tm tm;
+					tm.tm_gmtoff = 1;
+				]])],
+			[ac_cv_struct_tm_gmtoff=yes],
+			[ac_cv_struct_tm_gmtoff=no]
+			)])
 	if test $ac_cv_struct_tm_gmtoff = yes; then
 		AC_DEFINE(HAVE_TM_GMTOFF, 1, [Have tm_gmtoff])
 	else
@@ -1702,16 +1683,14 @@ dnl
 			[for timezone variable],
 			ac_cv_var_timezone,
 			[AC_COMPILE_IFELSE([
-				AC_LANG_PROGRAM([[
-					#include <time.h>
-				]], [[
-					timezone = 1;
-				]])
-			], [
-				ac_cv_var_timezone=yes
-			], [
-				ac_cv_var_timezone=no
-			])])
+				AC_LANG_PROGRAM(
+					[[#include <time.h>]],
+					[[
+						timezone = 1;
+					]])],
+				[ac_cv_var_timezone=yes],
+				[ac_cv_var_timezone=no]
+			)])
 		if test $ac_cv_var_timezone = yes; then
 			AC_DEFINE(HAVE_TIMEZONE, 1, [Have timezone variable])
 		else
@@ -1723,31 +1702,51 @@ dnl
 	dnl *** Checks for math functions ***
 	dnl *********************************
 	AC_SEARCH_LIBS(sqrtf, m)
+
 	if test "x$has_broken_apple_cpp" != "xyes"; then
-	        AC_CHECK_FUNCS(finite, , AC_MSG_CHECKING(for finite in math.h)
-	                AC_TRY_LINK([#include <math.h>], 
-	                [ finite(0.0); ], 
-	                AC_DEFINE(HAVE_FINITE, 1, [Have finite in -lm]) AC_MSG_RESULT(yes),
-	                AC_MSG_RESULT(no)))
+        AC_CHECK_FUNC(finite, [], [
+			AC_MSG_CHECKING(for finite in math.h)
+			AC_LINK_IFELSE([
+				AC_LANG_PROGRAM(
+					[[#include <math.h>]],
+					[[finite(0.0);]])
+			], [
+				AC_DEFINE(HAVE_FINITE, 1, [Have finite in -lm])
+				AC_MSG_RESULT(yes)
+			], [
+				AC_MSG_RESULT(no)
+			])
+		])
 	fi
-        AC_CHECK_FUNCS(isfinite, , AC_MSG_CHECKING(for isfinite in math.h)
-                AC_TRY_LINK([#include <math.h>], 
-                [ isfinite(0.0); ], 
-                AC_DEFINE(HAVE_ISFINITE, 1, [Have isfinite]) AC_MSG_RESULT(yes),
-                AC_MSG_RESULT(no)))
+
+    AC_CHECK_FUNC(isfinite, [], [
+		AC_MSG_CHECKING(for isfinite in math.h)
+		AC_LINK_IFELSE([
+			AC_LANG_PROGRAM(
+				[[#include <math.h>]],
+				[[isfinite(0.0);]])
+		], [
+			AC_DEFINE(HAVE_ISFINITE, 1, [Have isfinite])
+			AC_MSG_RESULT(yes)
+		], [
+			AC_MSG_RESULT(no)
+		])
+	])
 
 	dnl ****************************************************************
 	dnl *** Checks for working poll() (macosx defines it but doesn't ***
 	dnl *** have it in the library (duh))                            ***
 	dnl ****************************************************************
-	AC_CHECK_FUNCS(poll)
+	AC_CHECK_FUNC(poll)
 
 	dnl *************************
 	dnl *** Check for signbit ***
 	dnl *************************
 	AC_MSG_CHECKING(for signbit)
-	AC_TRY_LINK([#include <math.h>], [
-		int s = signbit(1.0);
+	AC_LINK_IFELSE([
+		AC_LANG_PROGRAM(
+			[[#include <math.h>]],
+			[[int s = signbit(1.0);]])
 	], [
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_SIGNBIT, 1, [Have signbit])
@@ -1760,19 +1759,24 @@ dnl
 	dnl **********************************
 	AC_CHECK_HEADERS([sys/epoll.h])
 	haveepoll=no
-	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], )
+	AC_CHECK_FUNC(epoll_ctl, [haveepoll=yes], [])
 	if test "x$haveepoll" = "xyes" -a "x$ac_cv_header_sys_epoll_h" = "xyes" ; then
 		AC_DEFINE(HAVE_EPOLL, 1, [epoll supported])
 	fi
 
 	havekqueue=no
-    AC_CHECK_FUNCS(kqueue, ,
+    AC_CHECK_FUNC(kqueue, [], [
 		AC_MSG_CHECKING(for kqueue in sys/event.h)
-        AC_TRY_LINK(
-			[#include <sys/event.h>],
-			[ kqueue(); ],
-			[havekqueue=yes],
-			[ ]))
+		AC_LINK_IFELSE([
+			AC_LANG_PROGRAM(
+				[[#include <sys/event.h>]],
+				[[kqueue();]])],
+		[
+			AC_MSG_RESULT(yes)
+			havekqueue=yes
+		],
+		[AC_MSG_RESULT(no)])
+	])
 
 	dnl **************************************
 	dnl * Darwin has a race that prevents us from using reliably:
@@ -1949,9 +1953,9 @@ dnl
 		 #include <sys/vfs.h>])
 
 	dnl Favour xattr through glibc, but use libattr if we have to
-	AC_CHECK_FUNC(lsetxattr, ,
+	AC_CHECK_FUNC(lsetxattr, [], [
 		AC_CHECK_LIB(attr, lsetxattr, XATTR_LIB="-lattr",)
-	)
+	])
 	AC_SUBST(XATTR_LIB)
 
 	dnl kinfo_proc.kp_proc works on darwin but fails on other simil-bsds
@@ -2030,7 +2034,7 @@ else
 			AC_MSG_RESULT(no)
 		])
 	])
-	AC_CHECK_FUNCS(GetProcessId)
+	AC_CHECK_FUNC(GetProcessId)
 fi
 
 dnl socklen_t check
@@ -2065,25 +2069,28 @@ AC_COMPILE_IFELSE([
 	AC_MSG_RESULT(no)
 ])
 
-AC_CHECK_FUNCS(trunc, , AC_MSG_CHECKING(for trunc in math.h)
+AC_CHECK_FUNC(trunc, [], [
+	AC_MSG_CHECKING(for trunc in math.h)
+
 	dnl Simply calling trunc (0.0) is no good since gcc will optimize the call away
 	AC_LINK_IFELSE([
-		AC_LANG_PROGRAM([[ #include <math.h> ]], [[ static void *p = &trunc; ]])
+		AC_LANG_PROGRAM(
+			[[ #include <math.h> ]],
+			[[ static void *p = &trunc; ]])
 	], [
-		AC_DEFINE(HAVE_TRUNC) 
+		AC_DEFINE(HAVE_TRUNC, 1, [Have the 'trunc' function]) 
 		AC_MSG_RESULT(yes)
 		ac_cv_trunc=yes
 	], [
 		AC_MSG_RESULT(no)
-	]))
+	])
+])
 
 if test "x$ac_cv_truncl" != "xyes"; then
    AC_CHECK_LIB(sunmath, aintl, [ AC_DEFINE(HAVE_AINTL, 1, [Has the 'aintl' function]) LIBS="$LIBS -lsunmath"])
 fi
 
-AC_CHECK_FUNCS(round)
-AC_CHECK_FUNCS(rint)
-AC_CHECK_FUNCS(execvp)
+AC_CHECK_FUNCS([round rint execvp])
 
 dnl ****************************
 dnl *** Look for /dev/random ***
@@ -2373,11 +2380,14 @@ dnl		;;
 		JIT_SUPPORTED=yes
 
 		AC_MSG_CHECKING(for mips n32)
-		AC_TRY_COMPILE([ ],[
-		#if _MIPS_SIM != _ABIN32
-		#error Not mips n32
-		#endif
-		return 0;
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM(
+				[[ ]],
+				[[
+					#if _MIPS_SIM != _ABIN32
+					#error Not mips n32
+					#endif
+				]])
 		],[
 		AC_MSG_RESULT(yes)
 		sizeof_register=8
