@@ -4,7 +4,7 @@ AC_PREREQ([2.64])
 AC_INIT(mono, [3.0.4],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
-AC_CONFIG_SRCDIR([README])
+AC_CONFIG_SRCDIR([README.rst])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_SYSTEM		dnl	TODO :	This is obsolete, and is partially replaced by AC_CANONICAL_HOST (below)
 						dnl			Remove it, or replace with AC_CANONICAL_BUILD and/or AC_CANONICAL_TARGET
