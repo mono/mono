@@ -215,6 +215,7 @@ might want to use:
   ``mono`` binary and a ``mono-sgen`` binary. ``mono`` uses Boehm, while
   ``mono-sgen`` uses the Simple Generational GC.
 
+
 ``--with-gc=[boehm, included, sgen, none]``
 
   Selects the default Boehm garbage collector engine to use. The default is ``included``.
@@ -233,6 +234,7 @@ might want to use:
   ``none``
     Disables the inclusion of a garbage collector.
 
+
 ``--with-tls=[__thread, pthread]``
 
   Controls how Mono should access thread local storage, ``pthread`` forces
@@ -244,6 +246,7 @@ might want to use:
 
   This value is typically pre-configured and there is no need to set it,
   unless you are trying to debug a problem.
+
 
 ``--with-sigaltstack=[yes, no]``
 
@@ -259,6 +262,7 @@ might want to use:
   Some older Linux systems do not support this feature, or you might want to
   override the auto-detection.
 
+
 ``--with-static_mono=[yes, no]``
 
   This controls whether ``mono`` should link against a static library
@@ -270,17 +274,20 @@ might want to use:
   will always be produced for developers that want to embed the runtime in
   their application.
 
+
 ``--with-xen-opt=[yes, no]``
 
   The default value for this is ``yes``, and it makes Mono generate code which
   might be slightly slower on average systems, but the resulting executable will
   run faster under the Xen virtualization system.
 
+
 ``--with-large-heap=[yes, no]``
 
   Enable support for GC heaps larger than 3GB.
 
   This value is set to ``no`` by default.
+
 
 ``--enable-small-config=[yes, no]``
 
@@ -292,6 +299,7 @@ might want to use:
 
   This value is set to ``no`` by default.
 
+
 ``--with-ikvm-native=[yes, no]``
 
   Controls whether the IKVM JNI interface library is built or not.
@@ -299,11 +307,13 @@ might want to use:
 
   This defaults to ``yes``.
 
+
 ``--with-profile4=[yes, no]``
 
   Whether you want to build the 4.x profile libraries and runtime.
 
   It defaults to ``yes``.
+
 
 ``--with-moonlight=[yes, no]``
 
@@ -313,6 +323,7 @@ might want to use:
   This will produce the ``smcs`` compiler which will reference the Silverlight
   modified assemblies (``mscorlib.dll``, ``System.dll``, ``System.Code.dll``
   and ``System.Xml.Core.dll``) and turn on the LINQ extensions for the compiler.
+
 
 ``--with-moon-gc=[boehm, sgen]``
 
@@ -328,6 +339,7 @@ might want to use:
 
   This defaults to ``boehm``.
 
+
 ``--with-libgdiplus=[installed, sibling, <path>]``
 
   This is used to configure where should Mono look for
@@ -341,6 +353,7 @@ might want to use:
 
   Or you can specify a path to a libgdiplus.
 
+
 ``--disable-shared-memory``
 
   Use this option to disable the use of shared memory in Mono.
@@ -349,6 +362,7 @@ might want to use:
 
   Disabling shared memory support will disable certain features like
   cross-process named mutexes.
+
 
 ``--enable-minimal=LIST``
 
@@ -424,6 +438,7 @@ might want to use:
     Disables compilation for the SSA optimization framework, and the various
     SSA-based optimizations.
 
+
 ``--enable-llvm``
 
 ``--enable-loadedllvm``
@@ -441,6 +456,7 @@ might want to use:
   runtime-loadable module instead of linking it directly into the main
   ``mono`` binary.
 
+
 ``--enable-big-arrays``
 
   This enables the use arrays whose indexes are larger than Int32.MaxValue.   
@@ -454,6 +470,7 @@ might want to use:
   This is not the default as it breaks the C embedding ABI that we have exposed
   through the Mono development cycle.
 
+
 ``--enable-parallel-mark``
 
   Use this option to enable the garbage collector to use multiple CPUs to
@@ -463,10 +480,12 @@ might want to use:
   This option is not currently the default as we have not done much
   testing with Mono.
 
+
 ``--enable-dtrace``
 
   On Solaris and MacOS X builds a version of the Mono runtime that contains
   *DTrace* probes and can participate in the system profiling using *DTrace*.
+
 
 ``--disable-dev-random``
 
@@ -475,6 +494,7 @@ might want to use:
   want to disable it.
 
   There are a number of runtime options to control this also, see the man page.
+
 
 ``--enable-nacl``
 
