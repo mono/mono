@@ -68,6 +68,7 @@ config.log
 config.status
 config.sub
 configure
+configure.scan
 depcomp
 install-sh
 libtool
@@ -99,6 +100,12 @@ doltcompile
 
 # Emacs
 semantic.cache
+
+# gtags
+GPATH
+GRTAGS
+GSYMS
+GTAGS
 
 
 ##############################################################################
