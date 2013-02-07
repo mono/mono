@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{037A7280-DE36-43AB-87EA-3D569427DC1C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Web.WebPages-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Web.WebPages</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,167 +27,168 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;ASPNETWEBPAGES</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;ASPNETWEBPAGES</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\CommonResources.Designer.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\ExceptionHelper.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\GlobalSuppressions.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\HashCodeCombiner.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\MimeMapping.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\IVirtualPathUtility.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\VirtualPathUtilityWrapper.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationPart.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ApplicationPartRegistry.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\DictionaryBasedVirtualPathFactory.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\IResourceAssembly.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\LazyAction.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ResourceAssembly.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ResourceHandler.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ResourceRouteHandler.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationStartPage.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\AttributeValue.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserHelpers.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserOverride.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserOverrideStore.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserOverrideStores.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BuildManagerWrapper.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Common\DisposableAction.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\CookieBrowserOverrideStore.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DefaultDisplayMode.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DisplayInfo.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DisplayModeProvider.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DynamicHttpApplicationState.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DynamicPageDataDictionary.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\FileExistenceCache.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\GlobalSuppressions.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HelperPage.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HelperResult.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiForgeryConfig.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiForgery.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryConfigWrapper.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryToken.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryTokenSerializer.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryTokenStore.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryWorker.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\BinaryBlob.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ClaimUidExtractor.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\IAntiForgeryConfig.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\IAntiForgeryTokenSerializer.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\IClaimUidExtractor.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ICryptoSystem.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ITokenStore.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ITokenValidator.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\MachineKeyCryptoSystem.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\TokenValidator.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Claims\Claim.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Claims\ClaimsIdentityConverter.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Claims\ClaimsIdentity.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\CryptoUtil.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\IAntiForgeryAdditionalDataProvider.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\UnvalidatedRequestValues.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Validation.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Checkbox.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Input.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Internal.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Label.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Radio.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Select.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.TextArea.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Validation.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelState.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelStateDictionary.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\SelectListItem.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HttpContextExtensions.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IDisplayMode.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.Availability.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.generated.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\InstrumentationService.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageExecutionContextAdapter.generated.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageExecutionListenerAdapter.generated.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageInstrumentationServiceAdapter.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PositionTagged.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ITemplateFile.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IVirtualPathFactory.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IWebPageRequestExecutor.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\HttpAntiForgeryException.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationEqualToRule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRangeRule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRegexRule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRemoteRule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRequiredRule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationStringLengthRule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\TagBuilder.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\TagRenderMode.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\UnobtrusiveValidationAttributesGenerator.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\PageDataDictionary.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\PageVirtualPathAttribute.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\PreApplicationStartCode.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Properties\AssemblyInfo.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ReflectionDynamicObject.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\RequestBrowserOverrideStore.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\RequestExtensions.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\RequestResourceTracker.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Resources\WebPageResources.Designer.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ResponseExtensions.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ApplicationScopeStorageDictionary.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\AspNetRequestScopeStorageProvider.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\IScopeStorageProvider.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ScopeStorageComparer.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ScopeStorage.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ScopeStorageDictionary.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\StaticScopeStorageProvider.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\WebConfigScopeStorageDictionary.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\SectionWriter.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\SecurityUtil.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\StartPage.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\StringExtensions.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\TemplateFileInfo.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\TemplateStack.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\UrlDataList.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\BuildManagerExceptionUtil.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\CultureUtil.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\PathUtil.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\SessionStateUtil.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\TypeHelper.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\UrlUtil.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\CompareValidator.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\DataTypeValidator.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\IValidator.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\RequestFieldValidatorBase.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\ValidationAttributeAdapter.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\ValidationHelper.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\Validator.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\VirtualPathFactoryExtensions.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\VirtualPathFactoryManager.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageBase.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageContext.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPage.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageExecutingBase.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageHttpHandler.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageHttpModule.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageMatch.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageRenderingBase.cs" />
-   <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageRoute.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonResources.Designer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\ExceptionHelper.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\GlobalSuppressions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\HashCodeCombiner.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\IVirtualPathUtility.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\MimeMapping.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationPart.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ApplicationPartRegistry.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\DictionaryBasedVirtualPathFactory.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\IResourceAssembly.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\LazyAction.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ResourceAssembly.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ResourceHandler.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationParts\ResourceRouteHandler.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ApplicationStartPage.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\AttributeValue.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserHelpers.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserOverride.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserOverrideStore.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BrowserOverrideStores.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\BuildManagerWrapper.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Common\DisposableAction.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\CookieBrowserOverrideStore.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DefaultDisplayMode.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DisplayInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DisplayModeProvider.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DynamicHttpApplicationState.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\DynamicPageDataDictionary.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\FileExistenceCache.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\GlobalSuppressions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HelperPage.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HelperResult.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiForgery.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiForgeryConfig.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryConfigWrapper.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryToken.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryTokenSerializer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryTokenStore.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\AntiForgeryWorker.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\BinaryBlob.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ClaimUidExtractor.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\IAntiForgeryConfig.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\IAntiForgeryTokenSerializer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\IClaimUidExtractor.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ICryptoSystem.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ITokenStore.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\ITokenValidator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\MachineKeyCryptoSystem.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\AntiXsrf\TokenValidator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Claims\Claim.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Claims\ClaimsIdentity.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Claims\ClaimsIdentityConverter.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\CryptoUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\IAntiForgeryAdditionalDataProvider.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\UnvalidatedRequestValues.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Validation.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Checkbox.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Input.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Internal.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Label.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Radio.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Select.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.TextArea.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Validation.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelState.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelStateDictionary.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\SelectListItem.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HttpContextExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IDisplayMode.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.Availability.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.generated.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\InstrumentationService.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageExecutionContextAdapter.generated.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageExecutionListenerAdapter.generated.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageInstrumentationServiceAdapter.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PositionTagged.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ITemplateFile.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IVirtualPathFactory.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IWebPageRequestExecutor.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\HttpAntiForgeryException.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationEqualToRule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRangeRule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRegexRule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRemoteRule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRequiredRule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationStringLengthRule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\TagBuilder.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\TagRenderMode.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\UnobtrusiveValidationAttributesGenerator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\PageDataDictionary.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\PageVirtualPathAttribute.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\PreApplicationStartCode.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ReflectionDynamicObject.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\RequestBrowserOverrideStore.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\RequestExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\RequestResourceTracker.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Resources\WebPageResources.Designer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ResponseExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ApplicationScopeStorageDictionary.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\AspNetRequestScopeStorageProvider.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\IScopeStorageProvider.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ScopeStorage.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ScopeStorageComparer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\ScopeStorageDictionary.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\StaticScopeStorageProvider.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Scope\WebConfigScopeStorageDictionary.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\SectionWriter.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\SecurityUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\StartPage.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\StringExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\TemplateFileInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\TemplateStack.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\UrlDataList.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\BuildManagerExceptionUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\CultureUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\PathUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\SessionStateUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\TypeHelper.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Utils\UrlUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\CompareValidator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\DataTypeValidator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\IValidator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\RequestFieldValidatorBase.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\ValidationAttributeAdapter.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\ValidationHelper.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Validation\Validator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\VirtualPathFactoryExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\VirtualPathFactoryManager.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPage.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageBase.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageContext.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageExecutingBase.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageHttpHandler.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageHttpModule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageMatch.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageRenderingBase.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\WebPageRoute.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\VirtualPathUtilityWrapper.cs" />
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -197,74 +197,76 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Web.Infrastructure.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.Web.Infrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.ComponentModel.DataAnnotations.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.Linq.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Deployment.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.WebPages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Razor.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.Linq.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.CSharp\Microsoft.CSharp-net_4_5.csproj">
+      <Project>{B6C7FFF7-649A-4CFC-A611-8C9701846513}</Project>
+      <Name>Microsoft.CSharp\Microsoft.CSharp-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Web.Infrastructure\Microsoft.Web.Infrastructure-net_4_5.csproj">
+      <Project>{526ECD04-4D02-4788-9560-7C2FDEE1522E}</Project>
+      <Name>Microsoft.Web.Infrastructure\Microsoft.Web.Infrastructure-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_4_5.csproj">
+      <Project>{D97F14D0-177C-4252-B535-7B2B070DCF1A}</Project>
+      <Name>System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+      <Project>{9EF77858-EB0A-4432-948B-18F18E44350B}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data.Linq\System.Data.Linq-net_4_5.csproj">
+      <Project>{98E382DF-82C8-449C-AD40-FC5B9F9DA8ED}</Project>
+      <Name>System.Data.Linq\System.Data.Linq-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web\System.Web-net_4_5-2.csproj">
+      <Project>{9E66BC64-3C5E-44EA-BA12-31496B030290}</Project>
+      <Name>System.Web\System.Web-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.WebPages.Deployment\System.Web.WebPages.Deployment-net_4_5.csproj">
+      <Project>{D636607D-1CCE-42E3-A114-19BB5606AA1C}</Project>
+      <Name>System.Web.WebPages.Deployment\System.Web.WebPages.Deployment-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.Razor\System.Web.Razor-net_4_5.csproj">
+      <Project>{F2C014C4-F1E1-4253-8D58-0A5F64951ADC}</Project>
+      <Name>System.Web.Razor\System.Web.Razor-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Xml.Linq\System.Xml.Linq-net_4_5.csproj">
+      <Project>{FC0139F8-EC5A-4D43-9439-F5B3C6BEE17A}</Project>
+      <Name>System.Xml.Linq\System.Xml.Linq-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="System.Web.WebPages.Resources.WebPageResources.resources">
-       <LogicalName>System.Web.WebPages.Resources.WebPageResources.resources</LogicalName>
+      <LogicalName>System.Web.WebPages.Resources.WebPageResources.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.WebPages.Common.CommonResources.resources">
-       <LogicalName>System.Web.WebPages.Common.CommonResources.resources</LogicalName>
+      <LogicalName>System.Web.WebPages.Common.CommonResources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

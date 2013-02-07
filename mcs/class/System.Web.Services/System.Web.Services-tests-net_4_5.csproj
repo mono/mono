@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{3B3A35EF-2304-4D28-B09E-DA990CF09EAE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,649,169,618</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Web.Services-tests-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Web.Services_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,649,169,618</NoWarn>
@@ -28,58 +27,59 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,649,169,618</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.Web.Services\WebMethodAttributeTest.cs" />
-   <Compile Include="Test\System.Web.Services\WebServiceAttributeTest.cs" />
-   <Compile Include="Test\System.Web.Services\WebServiceTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\DiagnosticsElementTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\ProtocolElementTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\SoapEnvelopeProcessingElementTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\SoapExtensionTypeElementTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\TypeElementTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\WsdlHelpGeneratorElementTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\WsiProfilesElementTest.cs" />
-   <Compile Include="Test\System.Web.Services.Configuration\XmlFormatExtensionAttributeTest.cs" />
-   <Compile Include="Test\System.Web.Services.Discovery\ContractReferenceTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\BindingCollectionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\DocumentableItemTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\TypesTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\OperationCollectionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\OperationMessageTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\OperationMessageCollectionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\PortTypeCollectionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\PortTypeTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\ServiceCollectionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionFormatExtensionCollectionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionImporterTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionCollectionTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionReflectorTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\SoapBodyBindingTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\SoapOperationBindingTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\WebReferenceTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\WebReferenceOptionsTest.cs" />
-   <Compile Include="Test\System.Web.Services.Description\WebServicesInteroperabilityTest.cs" />
-   <Compile Include="Test\System.Web.Services.Protocols\LogicalMethodInfoTest.cs" />
-   <Compile Include="Test\System.Web.Services.Protocols\SoapHttpClientProtocolTest.cs" />
-   <Compile Include="Test\System.Web.Services.Protocols\SocketResponder.cs" />
-   <Compile Include="Test\System.Web.Services.Protocols\WebClientProtocolTest.cs" />
-   <Compile Include="Test\System.Web.Services.Protocols\SoapServerTypeTest.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\System.Web.Services.Configuration\DiagnosticsElementTest.cs" />
+    <Compile Include="Test\System.Web.Services.Configuration\ProtocolElementTest.cs" />
+    <Compile Include="Test\System.Web.Services.Configuration\SoapEnvelopeProcessingElementTest.cs" />
+    <Compile Include="Test\System.Web.Services.Configuration\SoapExtensionTypeElementTest.cs" />
+    <Compile Include="Test\System.Web.Services.Configuration\TypeElementTest.cs" />
+    <Compile Include="Test\System.Web.Services.Configuration\WsdlHelpGeneratorElementTest.cs" />
+    <Compile Include="Test\System.Web.Services.Configuration\WsiProfilesElementTest.cs" />
+    <Compile Include="Test\System.Web.Services.Configuration\XmlFormatExtensionAttributeTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\BindingCollectionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\DocumentableItemTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\OperationCollectionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\OperationMessageCollectionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\OperationMessageTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\PortTypeCollectionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\PortTypeTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\ServiceCollectionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionCollectionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionFormatExtensionCollectionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionImporterTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionReflectorTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\ServiceDescriptionTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\SoapBodyBindingTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\SoapOperationBindingTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\TypesTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\WebReferenceOptionsTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\WebReferenceTest.cs" />
+    <Compile Include="Test\System.Web.Services.Description\WebServicesInteroperabilityTest.cs" />
+    <Compile Include="Test\System.Web.Services.Discovery\ContractReferenceTest.cs" />
+    <Compile Include="Test\System.Web.Services.Protocols\LogicalMethodInfoTest.cs" />
+    <Compile Include="Test\System.Web.Services.Protocols\SoapHttpClientProtocolTest.cs" />
+    <Compile Include="Test\System.Web.Services.Protocols\SoapServerTypeTest.cs" />
+    <Compile Include="Test\System.Web.Services.Protocols\SocketResponder.cs" />
+    <Compile Include="Test\System.Web.Services.Protocols\WebClientProtocolTest.cs" />
+    <Compile Include="Test\System.Web.Services\WebMethodAttributeTest.cs" />
+    <Compile Include="Test\System.Web.Services\WebServiceAttributeTest.cs" />
+    <Compile Include="Test\System.Web.Services\WebServiceTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -88,58 +88,56 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_5/System.Web.Services.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_5/System.Web.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.EnterpriseServices.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.EnterpriseServices.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.Services\System.Web.Services-net_4_5.csproj">
+      <Project>{CA898B3A-C4B4-4AFC-9DD1-50540845A349}</Project>
+      <Name>System.Web.Services\System.Web.Services-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_4_5.csproj">
+      <Project>{6C212135-6A62-4886-A106-ADD7097F172B}</Project>
+      <Name>System.EnterpriseServices\System.EnterpriseServices-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web\System.Web-net_4_5.csproj">
+      <Project>{7EA395D1-4987-40C8-A938-3560DDDBD565}</Project>
+      <Name>System.Web\System.Web-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+      <Project>{9EF77858-EB0A-4432-948B-18F18E44350B}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1.xsd">
-       <LogicalName>wsdl-1.1.xsd</LogicalName>
+      <LogicalName>wsdl-1.1.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/wsdl-1.1-soap.xsd">
-       <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
+      <LogicalName>wsdl-1.1-soap.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="System.Web.Services.Description/web-reference.xsd">
-       <LogicalName>web-reference.xsd</LogicalName>
+      <LogicalName>web-reference.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

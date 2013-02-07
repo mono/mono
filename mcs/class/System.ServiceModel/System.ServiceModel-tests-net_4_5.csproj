@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{C25CAAA2-A029-47D7-B018-C39126E7C769}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.ServiceModel-tests-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.ServiceModel_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
@@ -28,224 +27,235 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;TRACE;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;TRACE;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\NUnitMoonHelper.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\AsyncCallTesterProxy.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\AsyncPatternServer.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\DataContractTesterProxy.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\ExitProcessHelperServer.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\FaultsTesterProxy.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\KnownTypeTesterProxy.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\MessageContractTesterProxy.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\OperationContractServer.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\PrimitiveTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Client\UntypedMessageTesterProxy.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\AsyncCallTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\AsyncPatternContract.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\DataContractTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\DualContract.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\ExitpProcessHelper.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\FaultsTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\KnownTypeTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\MessageContractTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\OperationContract.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\PrimitiveTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Contracts\UntypedMessageTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\AsyncCallTest.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\AsyncPatternTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\DataContractSerializerTest.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\DualContractTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\ExitProcessHelper.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\FaultsTest.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\KnownTypeTest.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\MessageContractTest.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\OperationContractTester.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\PrimitiveTesterTest.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\UntypedMessageTest.cs" />
-   <Compile Include="Test\FeatureBased\Features.Serialization\XmlComparer.cs" />
-   <Compile Include="Test\FeatureBased\TestFixtureBase.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\AddressHeaderTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\AddressingVersionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\AsymmetricSecurityBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\BinaryMessageEncodingBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\BindingContextTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\BindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\BindingTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\CalcSampleProxy.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\CommunicationObjectTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\CommunicationObjectSyncTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\ConnectionOrientedTransportBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\CustomBindingTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\CustomPolicyConversionContext.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\DebugBindingElement.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\EmptyFaultExceptionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\EnvelopeVersionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\FaultConverterTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\FaultExceptionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\HandlerBodyWriter.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\HandlerTransportBindingElement.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\HttpRequestMessagePropertyTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\HttpTransportBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\HttpsTransportBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\InterceptorBindingElement.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\InvalidBindingElement.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\LocalClientSecuritySettingsTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageBufferTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageEncoderTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageEncodingBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageFaultTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageHeaderTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageHeadersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessagePropertiesTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MessageVersionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MsmqBindingElementBaseTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\MsmqTransportBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\NamedPipeTransportBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\OneWayBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\OutputChannelBase.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\PeerTransportBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\ReplyChannelBase.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\RequestChannelBase.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\SecurityAssert.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\SecurityBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\SslStreamSecurityBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\SymmetricSecurityBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\TcpTransportBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\TextMessageEncodingBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Channels\TransactionFlowBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\AddressHeaderCollectionElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\BasicHttpBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\BehaviorsSectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\BindingsSectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\ChannelEndpointElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\CustomBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\EndpointBehaviorElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\ExtensionsSectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\MetadataElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\MexBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\NetNamedPipeBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\NetPeerTcpBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\NetTcpBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\ServiceBehaviorElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\ServiceElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\ServiceModelConfigurationElementCollectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\ServiceModelSectionGroupTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\StandardBindingCollectionElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\StandardBindingElementCollectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\StandardBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\StandardEndpointsSectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Configuration\UserBinding.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\BugX41.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ClientCredentialsTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ContractDescriptionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\FaultDescriptionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\MetadataExchangeBindingsTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\MetadataResolverTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\MetadataSetTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\OperationDescriptionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceAuthorizationBehaviorTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceContractGeneratorTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceCredentialsTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceDebugBehaviorTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceEndpointTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceMetadataBehaviorTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceMetadataEndpointTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\ServiceThrottlingBehaviorTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\TypedMessageConverterTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\WsdlExporterTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Description\WsdlImporterTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\ActionFilterTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\Bug652331Test.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\Bug652331_2Test.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\ChannelDispatcherTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\DispatchOperationTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\DispatchRuntimeTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\EndpointAddressMessageFilterTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\EndpointDispatcherTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\ExceptionHandlerTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\FilterTableTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\InvalidBodyAccessExceptionTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\PrefixEndpointAddressMessageFilterTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Dispatcher\XPathMessageContextTest.cs" />
-   <Compile Include="Test\System.ServiceModel.PeerResolvers\CustomPeerResolverServiceTest.cs" />
-   <Compile Include="Test\System.ServiceModel.PeerResolvers\PeerResolverSerializationTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\IssuedSecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\IssuedSecurityTokenProviderTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\RsaSecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\SecureConversationSecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\SecurityContextSecurityTokenTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\SecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\ServiceModelSecurityTokenTypesTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\SslSecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\SspiSecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\UserNameSecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\WrappedKeySecurityTokenTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\X509ListedCertificateValidator.cs" />
-   <Compile Include="Test\System.ServiceModel.Security.Tokens\X509SecurityTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\ChannelProtectionRequirementsTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\MessagePartSpecificationTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\ScopedMessagePartSpecificationTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\SecurityAlgorithmSuiteTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\SecurityMessagePropertyTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\SecurityTokenSpeficicationTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\ServiceCredentialsSecurityTokenManagerTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\ServiceSecurityContextTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\SupportingTokenParametersTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\TransportSecurityBindingElementTest.cs" />
-   <Compile Include="Test\System.ServiceModel.Security\WSSecurityTokenSerializerTest.cs" />
-   <Compile Include="Test\System.ServiceModel\BasicHttpBindingTest.cs" />
-   <Compile Include="Test\System.ServiceModel\CallbackBehaviorAttributeTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ChannelFactoryTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ChannelFactory_1Test.cs" />
-   <Compile Include="Test\System.ServiceModel\ClientBaseTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ClientBase_InteractiveChannelInitializerTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ClientCredentialsSecurityTokenManagerTest.cs" />
-   <Compile Include="Test\System.ServiceModel\CommonUseCases.cs" />
-   <Compile Include="Test\System.ServiceModel\Constants.cs" />
-   <Compile Include="Test\System.ServiceModel\EndpointAddress10Test.cs" />
-   <Compile Include="Test\System.ServiceModel\EndpointAddressBuilderTest.cs" />
-   <Compile Include="Test\System.ServiceModel\EndpointAddressTest.cs" />
-   <Compile Include="Test\System.ServiceModel\EndpointBehaviorCollectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel\EndpointIdentityTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ExtensionCollectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel\FaultCodeTest.cs" />
-   <Compile Include="Test\System.ServiceModel\FaultContractAttributeTest.cs" />
-   <Compile Include="Test\System.ServiceModel\FaultReasonTest.cs" />
-   <Compile Include="Test\System.ServiceModel\IntegratedConnectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel\MessageSecurityVersionTest.cs" />
-   <Compile Include="Test\System.ServiceModel\MsmqTransportSecurityTest.cs" />
-   <Compile Include="Test\System.ServiceModel\NetMsmqBindingTest.cs" />
-   <Compile Include="Test\System.ServiceModel\NetPeerTcpBindingTest.cs" />
-   <Compile Include="Test\System.ServiceModel\NetTcpBindingTest.cs" />
-   <Compile Include="Test\System.ServiceModel\OperationContextTest.cs" />
-   <Compile Include="Test\System.ServiceModel\PeerNodeAddressTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ServiceAssert.cs" />
-   <Compile Include="Test\System.ServiceModel\ServiceEndpointCollectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ServiceEndpointTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ServiceHostBaseTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ServiceHostTest.cs" />
-   <Compile Include="Test\System.ServiceModel\ServiceKnownTypeAttributeTest.cs" />
-   <Compile Include="Test\System.ServiceModel\SynchronizedReadOnlyCollectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel\TransactionProtocolTest.cs" />
-   <Compile Include="Test\System.ServiceModel\UriSchemeKeyedCollectionTest.cs" />
-   <Compile Include="Test\System.ServiceModel\WSFederationHttpBindingTest.cs" />
-   <Compile Include="Test\System.ServiceModel\WSHttpBindingTest.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\FeatureBased\Features.Client\AsyncCallTesterProxy.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\AsyncPatternServer.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\DataContractTesterProxy.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\ExitProcessHelperServer.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\FaultsTesterProxy.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\KnownTypeTesterProxy.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\MessageContractTesterProxy.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\OperationContractServer.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\PrimitiveTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Client\UntypedMessageTesterProxy.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\AsyncCallTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\AsyncPatternContract.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\DataContractTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\DualContract.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\ExitpProcessHelper.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\FaultsTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\KnownTypeTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\MessageContractTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\OperationContract.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\PrimitiveTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Contracts\UntypedMessageTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\AsyncCallTest.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\AsyncPatternTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\DataContractSerializerTest.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\DualContractTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\ExitProcessHelper.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\FaultsTest.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\KnownTypeTest.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\MessageContractTest.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\OperationContractTester.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\PrimitiveTesterTest.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\UntypedMessageTest.cs" />
+    <Compile Include="Test\FeatureBased\Features.Serialization\XmlComparer.cs" />
+    <Compile Include="Test\FeatureBased\TestFixtureBase.cs" />
+    <Compile Include="Test\MetadataTests\BindingTestAssertions.cs" />
+    <Compile Include="Test\MetadataTests\ExportTests.cs" />
+    <Compile Include="Test\MetadataTests\ImportTests.cs" />
+    <Compile Include="Test\MetadataTests\ImportTests_CreateMetadata.cs" />
+    <Compile Include="Test\MetadataTests\ImportTests_LoadMetadata.cs" />
+    <Compile Include="Test\MetadataTests\ImportTests_RoundTrip.cs" />
+    <Compile Include="Test\MetadataTests\MetadataSamples.cs" />
+    <Compile Include="Test\MetadataTests\MiscImportTests.cs" />
+    <Compile Include="Test\MetadataTests\TestContext.cs" />
+    <Compile Include="Test\MetadataTests\TestLabel.cs" />
+    <Compile Include="Test\NUnitMoonHelper.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\AddressHeaderTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\AddressingVersionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\AsymmetricSecurityBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\BinaryMessageEncodingBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\BindingContextTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\BindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\BindingTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\CalcSampleProxy.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\CommunicationObjectSyncTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\CommunicationObjectTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\ConnectionOrientedTransportBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\CustomBindingTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\CustomPolicyConversionContext.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\DebugBindingElement.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\EmptyFaultExceptionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\EnvelopeVersionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\FaultConverterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\FaultExceptionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\HandlerBodyWriter.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\HandlerTransportBindingElement.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\HttpRequestMessagePropertyTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\HttpsTransportBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\HttpTransportBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\InterceptorBindingElement.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\InvalidBindingElement.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\LocalClientSecuritySettingsTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageBufferTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageEncoderTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageEncodingBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageFaultTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageHeadersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageHeaderTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessagePropertiesTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MessageVersionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MsmqBindingElementBaseTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\MsmqTransportBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\NamedPipeTransportBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\OneWayBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\OutputChannelBase.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\PeerTransportBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\ReplyChannelBase.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\RequestChannelBase.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\SecurityAssert.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\SecurityBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\SslStreamSecurityBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\SymmetricSecurityBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\TcpTransportBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\TextMessageEncodingBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\TransactionFlowBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\AddressHeaderCollectionElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\BasicHttpBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\BehaviorsSectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\BindingsSectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\ChannelEndpointElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\CustomBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\EndpointBehaviorElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\ExtensionsSectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\MetadataElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\MexBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\NetNamedPipeBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\NetPeerTcpBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\NetTcpBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\ServiceBehaviorElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\ServiceElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\ServiceModelConfigurationElementCollectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\ServiceModelSectionGroupTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\StandardBindingCollectionElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\StandardBindingElementCollectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\StandardBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\StandardEndpointsSectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Configuration\UserBinding.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\BugX41.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ClientCredentialsTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ContractDescriptionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\FaultDescriptionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\MetadataExchangeBindingsTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\MetadataResolverTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\MetadataSetTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\OperationDescriptionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceAuthorizationBehaviorTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceContractGeneratorTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceCredentialsTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceDebugBehaviorTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceEndpointTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceMetadataBehaviorTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceMetadataEndpointTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\ServiceThrottlingBehaviorTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\TypedMessageConverterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\WsdlExporterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\WsdlImporterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\ActionFilterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\Bug652331_2Test.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\Bug652331Test.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\ChannelDispatcherTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\DispatchOperationTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\DispatchRuntimeTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\EndpointAddressMessageFilterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\EndpointDispatcherTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\ExceptionHandlerTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\FilterTableTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\InvalidBodyAccessExceptionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\PrefixEndpointAddressMessageFilterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\XPathMessageContextTest.cs" />
+    <Compile Include="Test\System.ServiceModel.PeerResolvers\CustomPeerResolverServiceTest.cs" />
+    <Compile Include="Test\System.ServiceModel.PeerResolvers\PeerResolverSerializationTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\IssuedSecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\IssuedSecurityTokenProviderTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\RsaSecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\SecureConversationSecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\SecurityContextSecurityTokenTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\SecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\ServiceModelSecurityTokenTypesTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\SslSecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\SspiSecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\UserNameSecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\WrappedKeySecurityTokenTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\X509ListedCertificateValidator.cs" />
+    <Compile Include="Test\System.ServiceModel.Security.Tokens\X509SecurityTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\ChannelProtectionRequirementsTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\MessagePartSpecificationTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\ScopedMessagePartSpecificationTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\SecurityAlgorithmSuiteTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\SecurityMessagePropertyTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\SecurityTokenSpeficicationTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\ServiceCredentialsSecurityTokenManagerTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\ServiceSecurityContextTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\SupportingTokenParametersTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\TransportSecurityBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Security\WSSecurityTokenSerializerTest.cs" />
+    <Compile Include="Test\System.ServiceModel\BasicHttpBindingTest.cs" />
+    <Compile Include="Test\System.ServiceModel\CallbackBehaviorAttributeTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ChannelFactory_1Test.cs" />
+    <Compile Include="Test\System.ServiceModel\ChannelFactoryTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ClientBase_InteractiveChannelInitializerTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ClientBaseTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ClientCredentialsSecurityTokenManagerTest.cs" />
+    <Compile Include="Test\System.ServiceModel\CommonUseCases.cs" />
+    <Compile Include="Test\System.ServiceModel\Constants.cs" />
+    <Compile Include="Test\System.ServiceModel\EndpointAddress10Test.cs" />
+    <Compile Include="Test\System.ServiceModel\EndpointAddressBuilderTest.cs" />
+    <Compile Include="Test\System.ServiceModel\EndpointAddressTest.cs" />
+    <Compile Include="Test\System.ServiceModel\EndpointBehaviorCollectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel\EndpointIdentityTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ExtensionCollectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel\FaultCodeTest.cs" />
+    <Compile Include="Test\System.ServiceModel\FaultContractAttributeTest.cs" />
+    <Compile Include="Test\System.ServiceModel\FaultReasonTest.cs" />
+    <Compile Include="Test\System.ServiceModel\IntegratedConnectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel\MessageSecurityVersionTest.cs" />
+    <Compile Include="Test\System.ServiceModel\MsmqTransportSecurityTest.cs" />
+    <Compile Include="Test\System.ServiceModel\NetMsmqBindingTest.cs" />
+    <Compile Include="Test\System.ServiceModel\NetPeerTcpBindingTest.cs" />
+    <Compile Include="Test\System.ServiceModel\NetTcpBindingTest.cs" />
+    <Compile Include="Test\System.ServiceModel\OperationContextTest.cs" />
+    <Compile Include="Test\System.ServiceModel\PeerNodeAddressTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ServiceAssert.cs" />
+    <Compile Include="Test\System.ServiceModel\ServiceEndpointCollectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ServiceEndpointTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ServiceHostBaseTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ServiceHostTest.cs" />
+    <Compile Include="Test\System.ServiceModel\ServiceKnownTypeAttributeTest.cs" />
+    <Compile Include="Test\System.ServiceModel\SynchronizedReadOnlyCollectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel\TransactionProtocolTest.cs" />
+    <Compile Include="Test\System.ServiceModel\UriSchemeKeyedCollectionTest.cs" />
+    <Compile Include="Test\System.ServiceModel\WSFederationHttpBindingTest.cs" />
+    <Compile Include="Test\System.ServiceModel\WSHttpBindingTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -254,91 +264,93 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_5/System.ServiceModel.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_5/System.ServiceModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Runtime.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IdentityModel.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.IdentityModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IdentityModel.Selectors.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.IdentityModel.Selectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Transactions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Messaging.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Messaging.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Services.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Security.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Mono.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.ApplicationServices.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.ApplicationServices.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_5.csproj">
+      <Project>{C411AE1C-D949-4A87-ABE5-5F5AD9B3C66E}</Project>
+      <Name>System.ServiceModel\System.ServiceModel-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_5.csproj">
+      <Project>{A2E8AC47-7A47-4831-9CED-DBC9CCBB653D}</Project>
+      <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+      <Project>{9EF77858-EB0A-4432-948B-18F18E44350B}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{AE8FAE27-D070-4533-A135-49EEF160779D}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Security\System.Security-net_4_5.csproj">
+      <Project>{1826423D-F382-4F9D-8F0B-A10FB9A47DC1}</Project>
+      <Name>System.Security\System.Security-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_4_5.csproj">
+      <Project>{74B0D4B6-4F72-4C33-BE47-C8F3080680AB}</Project>
+      <Name>System.IdentityModel\System.IdentityModel-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.IdentityModel.Selectors\System.IdentityModel.Selectors-net_4_5.csproj">
+      <Project>{4245E506-E2EC-4ABF-BBD8-18F734FAFF31}</Project>
+      <Name>System.IdentityModel.Selectors\System.IdentityModel.Selectors-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_5.csproj">
+      <Project>{399C73A2-61A1-4141-A66F-5D52014BAA92}</Project>
+      <Name>System.Transactions\System.Transactions-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Messaging\System.Messaging-net_4_5.csproj">
+      <Project>{BE8C54B1-04C2-46E8-AB74-115458D9A6D8}</Project>
+      <Name>System.Messaging\System.Messaging-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web\System.Web-net_4_5-2.csproj">
+      <Project>{9E66BC64-3C5E-44EA-BA12-31496B030290}</Project>
+      <Name>System.Web\System.Web-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.Services\System.Web.Services-net_4_5.csproj">
+      <Project>{CA898B3A-C4B4-4AFC-9DD1-50540845A349}</Project>
+      <Name>System.Web.Services\System.Web.Services-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_5.csproj">
+      <Project>{87898516-17A7-43D4-8385-B45BAEB59B22}</Project>
+      <Name>Mono.Security\Mono.Security-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_5.csproj">
+      <Project>{A4EAD058-EDC8-4C1A-8D55-9934B8DD2C2E}</Project>
+      <Name>System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="resources/WS-Addressing.schema">
-       <LogicalName>WS-Addressing.schema</LogicalName>
+      <LogicalName>WS-Addressing.schema</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/ws-addr.xsd">
-       <LogicalName>ws-addr.xsd</LogicalName>
+      <LogicalName>ws-addr.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

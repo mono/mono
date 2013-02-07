@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{9F700905-6603-44C1-A897-38B43A416E5A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/compat/net_2_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Web.Extensions.Design_1.0-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Web.Extensions.Design</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,38 +27,39 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\AsyncPostBackTriggerControlIDConverter.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\AsyncPostBackTriggerEventNameConverter.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\CollectionEditorBase.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\ExtenderControlDesigner.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\PostBackTriggerControlIDConverter.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\ScriptManagerDesigner.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\ScriptManagerProxyDesigner.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\TimerDesigner.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdatePanelDesigner.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdatePanelTriggerCollectionEditor.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdateProgressAssociatedUpdatePanelIDConverter.cs" />
-   <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdateProgressDesigner.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\Assembly\AssemblyInfo.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\AsyncPostBackTriggerControlIDConverter.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\AsyncPostBackTriggerEventNameConverter.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\CollectionEditorBase.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\ExtenderControlDesigner.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\PostBackTriggerControlIDConverter.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\ScriptManagerDesigner.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\ScriptManagerProxyDesigner.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\TimerDesigner.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdatePanelDesigner.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdatePanelTriggerCollectionEditor.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdateProgressAssociatedUpdatePanelIDConverter.cs" />
+    <Compile Include="..\System.Web.Extensions.Design\System.Web.Extensions.Design\UpdateProgressDesigner.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -68,34 +68,36 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Design.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Windows.Forms.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Design\System.Design-net_2_0-1.csproj">
+      <Project>{50DCFCFC-F50D-4780-9576-9B9B8FEA1564}</Project>
+      <Name>System.Design\System.Design-net_2_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
+      <Project>{FD019613-E2AA-4A74-8A70-E9DC38F5026F}</Project>
+      <Name>System.Drawing\System.Drawing-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
+      <Project>{D8E824B3-9F68-4D48-9396-BCDC68592669}</Project>
+      <Name>Managed.Windows.Forms\System.Windows.Forms-net_2_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

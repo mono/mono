@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{6C6A091F-C12F-4C45-B616-00914670838B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Data.DataSetExtensions-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Data.DataSetExtensions</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,37 +27,38 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.Data\DataRowComparer.cs" />
-   <Compile Include="System.Data\DataRowComparer_1.cs" />
-   <Compile Include="System.Data\DataRowExtensions.cs" />
-   <Compile Include="System.Data\DataTableExtensions.cs" />
-   <Compile Include="System.Data\EnumerableRowCollection.cs" />
-   <Compile Include="System.Data\EnumerableRowCollectionExtensions.cs" />
-   <Compile Include="System.Data\EnumerableRowCollection_1.cs" />
-   <Compile Include="System.Data\OrderedEnumerableRowCollection.cs" />
-   <Compile Include="System.Data\RowEnumerableDataReader.cs" />
-   <Compile Include="System.Data\TypedTableBase.cs" />
-   <Compile Include="System.Data\TypedTableBaseExtensions.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Data\DataRowComparer.cs" />
+    <Compile Include="System.Data\DataRowComparer_1.cs" />
+    <Compile Include="System.Data\DataRowExtensions.cs" />
+    <Compile Include="System.Data\DataTableExtensions.cs" />
+    <Compile Include="System.Data\EnumerableRowCollection.cs" />
+    <Compile Include="System.Data\EnumerableRowCollection_1.cs" />
+    <Compile Include="System.Data\EnumerableRowCollectionExtensions.cs" />
+    <Compile Include="System.Data\OrderedEnumerableRowCollection.cs" />
+    <Compile Include="System.Data\RowEnumerableDataReader.cs" />
+    <Compile Include="System.Data\TypedTableBase.cs" />
+    <Compile Include="System.Data\TypedTableBaseExtensions.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -67,42 +67,40 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
+      <Project>{CC96F21E-C45E-4593-BC7F-8331B913E758}</Project>
+      <Name>System.Core\System.Core-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
+      <Project>{E49EEDDE-15CB-4200-9E7E-281199089670}</Project>
+      <Name>System.Data\System.Data-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
+      <Project>{A1A09F77-428E-4B5F-9C0C-3B07F55909A6}</Project>
+      <Name>System.XML\System.Xml-net_4_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web\System.Web-net_4_0-1.csproj">
+      <Project>{B7FD6CBD-908F-4492-93B2-6D57FBFD7F6A}</Project>
+      <Name>System.Web\System.Web-net_4_0-1</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

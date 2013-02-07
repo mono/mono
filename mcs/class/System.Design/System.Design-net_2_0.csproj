@@ -5,49 +5,49 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{0B1400F7-8304-4A7E-9F1B-B51F37EB74F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_2_0/tmp</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Design-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
+    
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Design</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;DRAWING_DESIGN_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
-    <OutputPath>..\lib\net_2_0\tmp</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>True</Optimize>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;DRAWING_DESIGN_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
-    <OutputPath>..\lib\net_2_0\tmp</OutputPath>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System.ComponentModel.Design\ActiveDesignSurfaceChangedEventArgs.cs" />
-    <Compile Include="System.ComponentModel.Design\ActiveDesignSurfaceChangedEventHandler.cs" />
-    <Compile Include="System.ComponentModel.Design\ArrayEditor.cs" />
-    <Compile Include="System.ComponentModel.Design\BinaryEditor.cs" />
-    <Compile Include="System.ComponentModel.Design\ByteViewer.cs" />
-    <Compile Include="System.ComponentModel.Design\CollectionEditor.cs" />
-    <Compile Include="System.ComponentModel.Design\ComponentActionsType.cs" />
-    <Compile Include="System.ComponentModel.Design\ComponentDesigner.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.ComponentModel.Design.Data\DataSourceDescriptor.cs" />
     <Compile Include="System.ComponentModel.Design.Data\DataSourceDescriptorCollection.cs" />
     <Compile Include="System.ComponentModel.Design.Data\DataSourceGroup.cs" />
@@ -65,6 +65,39 @@
     <Compile Include="System.ComponentModel.Design.Data\IDataEnvironment.cs" />
     <Compile Include="System.ComponentModel.Design.Data\IDesignerDataSchema.cs" />
     <Compile Include="System.ComponentModel.Design.Data\QueryBuilderMode.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\BasicDesignerLoader.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomComponentSerializationService.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomDesignerLoader.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomLocalizationModel.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomLocalizationProvider.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializationProvider.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializerBase.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializerException.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\CollectionCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\ComponentCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\DesignerSerializationManager.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\EnumCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\EventCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\ExpressionContext.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\ICodeDomDesignerReload.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\MemberCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\ObjectStatementCollection.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\PrimitiveCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\PropertyCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\RootCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\RootContext.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\SerializeAbsoluteContext.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\StatementContext.cs" />
+    <Compile Include="System.ComponentModel.Design.Serialization\TypeCodeDomSerializer.cs" />
+    <Compile Include="System.ComponentModel.Design\ActiveDesignSurfaceChangedEventArgs.cs" />
+    <Compile Include="System.ComponentModel.Design\ActiveDesignSurfaceChangedEventHandler.cs" />
+    <Compile Include="System.ComponentModel.Design\ArrayEditor.cs" />
+    <Compile Include="System.ComponentModel.Design\BinaryEditor.cs" />
+    <Compile Include="System.ComponentModel.Design\ByteViewer.cs" />
+    <Compile Include="System.ComponentModel.Design\CollectionEditor.cs" />
+    <Compile Include="System.ComponentModel.Design\ComponentActionsType.cs" />
+    <Compile Include="System.ComponentModel.Design\ComponentDesigner.cs" />
     <Compile Include="System.ComponentModel.Design\DateTimeEditor.cs" />
     <Compile Include="System.ComponentModel.Design\DesignerActionHeaderItem.cs" />
     <Compile Include="System.ComponentModel.Design\DesignerActionItem.cs" />
@@ -94,8 +127,8 @@
     <Compile Include="System.ComponentModel.Design\DesignSurfaceManager.cs" />
     <Compile Include="System.ComponentModel.Design\DesignSurfaceServiceContainer.cs" />
     <Compile Include="System.ComponentModel.Design\DisplayMode.cs" />
-    <Compile Include="System.ComponentModel.Design\ExceptionCollection.cs" />
     <Compile Include="System.ComponentModel.Design\EventBindingService.cs" />
+    <Compile Include="System.ComponentModel.Design\ExceptionCollection.cs" />
     <Compile Include="System.ComponentModel.Design\ExtenderService.cs" />
     <Compile Include="System.ComponentModel.Design\IComponentDesignerDebugService.cs" />
     <Compile Include="System.ComponentModel.Design\IComponentDesignerStateService.cs" />
@@ -103,41 +136,16 @@
     <Compile Include="System.ComponentModel.Design\LoadedEventArgs.cs" />
     <Compile Include="System.ComponentModel.Design\LoadedEventHandler.cs" />
     <Compile Include="System.ComponentModel.Design\LocalizationExtenderProvider.cs" />
-    <Compile Include="System.ComponentModel.Design\MenuCommandService.cs" />
     <Compile Include="System.ComponentModel.Design\MenuCommandsChangedEventArgs.cs" />
     <Compile Include="System.ComponentModel.Design\MenuCommandsChangedEventHandler.cs" />
     <Compile Include="System.ComponentModel.Design\MenuCommandsChangedType.cs" />
+    <Compile Include="System.ComponentModel.Design\MenuCommandService.cs" />
     <Compile Include="System.ComponentModel.Design\MultilineStringEditor.cs" />
     <Compile Include="System.ComponentModel.Design\ObjectSelectorEditor.cs" />
     <Compile Include="System.ComponentModel.Design\ReferenceService.cs" />
     <Compile Include="System.ComponentModel.Design\SelectionService.cs" />
     <Compile Include="System.ComponentModel.Design\TypeDescriptorFilterService.cs" />
     <Compile Include="System.ComponentModel.Design\UndoEngine.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\BasicDesignerLoader.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomComponentSerializationService.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomDesignerLoader.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomLocalizationModel.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomLocalizationProvider.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializationProvider.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializerBase.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CodeDomSerializerException.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\CollectionCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\ComponentCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\DesignerSerializationManager.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\EnumCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\EventCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\ExpressionContext.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\ICodeDomDesignerReload.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\MemberCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\ObjectStatementCollection.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\PrimitiveCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\PropertyCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\RootCodeDomSerializer.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\RootContext.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\SerializeAbsoluteContext.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\StatementContext.cs" />
-    <Compile Include="System.ComponentModel.Design.Serialization\TypeCodeDomSerializer.cs" />
     <Compile Include="System.Data.Design\MethodSignatureGenerator.cs" />
     <Compile Include="System.Data.Design\ParameterGenerationOption.cs" />
     <Compile Include="System.Data.Design\TypedDataSetGenerator.cs" />
@@ -152,16 +160,45 @@
     <Compile Include="System.Messaging.Design\MessageDesigner.cs" />
     <Compile Include="System.Resources.Tools\StronglyTypedResourceBuilder.cs" />
     <Compile Include="System.ServiceProcess.Design\ServiceControllerDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.Util\DummyClass.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\AdRotatorDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\BaseDataBoundControlDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\BaseDataListComponentEditor.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\BaseDataListDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\BaseValidatorDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\ButtonDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\CalendarAutoFormatDialog.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\CalendarDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\CheckBoxDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\CompositeControlDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\DataBoundControlDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\DataListComponentEditor.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\DataProviderNameConverter.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\DataSourceIDConverter.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\HierarchicalDataBoundControlDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\HyperLinkDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\LabelDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\LinkButtonDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\ListControlDataBindingHandler.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\ListControlDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\PanelDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\RegexEditorDialog.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\RegexTypeEditor.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\RepeaterDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\TableCellsCollectionEditor.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\TableDesigner.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\TableRowsCollectionEditor.cs" />
+    <Compile Include="System.Web.UI.Design.WebControls\XmlDesigner.cs" />
     <Compile Include="System.Web.UI.Design\AppSettingsExpressionEditor.cs" />
     <Compile Include="System.Web.UI.Design\CalendarDataBindingHandler.cs" />
     <Compile Include="System.Web.UI.Design\ClientScriptItem.cs" />
     <Compile Include="System.Web.UI.Design\ClientScriptItemCollection.cs" />
+    <Compile Include="System.Web.UI.Design\ColorBuilder.cs" />
     <Compile Include="System.Web.UI.Design\ConnectionStringEditor.cs" />
+    <Compile Include="System.Web.UI.Design\ConnectionStringsExpressionEditor.cs" />
     <Compile Include="System.Web.UI.Design\ContainerControlDesigner.cs" />
     <Compile Include="System.Web.UI.Design\ContentDefinition.cs" />
     <Compile Include="System.Web.UI.Design\ContentDesignerState.cs" />
-    <Compile Include="System.Web.UI.Design\ColorBuilder.cs" />
-    <Compile Include="System.Web.UI.Design\ConnectionStringsExpressionEditor.cs" />
     <Compile Include="System.Web.UI.Design\ControlDesigner.cs" />
     <Compile Include="System.Web.UI.Design\ControlDesignerState.cs" />
     <Compile Include="System.Web.UI.Design\ControlLocation.cs" />
@@ -178,11 +215,9 @@
     <Compile Include="System.Web.UI.Design\DataSetSchema.cs" />
     <Compile Include="System.Web.UI.Design\DataSetViewSchema.cs" />
     <Compile Include="System.Web.UI.Design\DataSourceBooleanViewSchemaConverter.cs" />
+    <Compile Include="System.Web.UI.Design\DataSourceConverter.cs" />
     <Compile Include="System.Web.UI.Design\DataSourceDesigner.cs" />
     <Compile Include="System.Web.UI.Design\DataSourceViewSchemaConverter.cs" />
-    <Compile Include="System.Web.UI.Design\DataSourceConverter.cs" />
-    <Compile Include="System.Web.UI.Design\DesignTimeData.cs" />
-    <Compile Include="System.Web.UI.Design\DesignTimeResourceProviderFactory.cs" />
     <Compile Include="System.Web.UI.Design\DesignerAutoFormat.cs" />
     <Compile Include="System.Web.UI.Design\DesignerAutoFormatCollection.cs" />
     <Compile Include="System.Web.UI.Design\DesignerAutoFormatStyle.cs" />
@@ -192,6 +227,8 @@
     <Compile Include="System.Web.UI.Design\DesignerRegion.cs" />
     <Compile Include="System.Web.UI.Design\DesignerRegionCollection.cs" />
     <Compile Include="System.Web.UI.Design\DesignerRegionMouseEventArgs.cs" />
+    <Compile Include="System.Web.UI.Design\DesignTimeData.cs" />
+    <Compile Include="System.Web.UI.Design\DesignTimeResourceProviderFactory.cs" />
     <Compile Include="System.Web.UI.Design\EditableDesignerRegion.cs" />
     <Compile Include="System.Web.UI.Design\ExpressionEditor.cs" />
     <Compile Include="System.Web.UI.Design\ExpressionEditorSheet.cs" />
@@ -208,9 +245,9 @@
     <Compile Include="System.Web.UI.Design\IControlDesignerView.cs" />
     <Compile Include="System.Web.UI.Design\IDataBindingSchemaProvider.cs" />
     <Compile Include="System.Web.UI.Design\IDataSourceDesigner.cs" />
-    <Compile Include="System.Web.UI.Design\IDataSourceSchema.cs" />
     <Compile Include="System.Web.UI.Design\IDataSourceFieldSchema.cs" />
     <Compile Include="System.Web.UI.Design\IDataSourceProvider.cs" />
+    <Compile Include="System.Web.UI.Design\IDataSourceSchema.cs" />
     <Compile Include="System.Web.UI.Design\IDataSourceViewSchema.cs" />
     <Compile Include="System.Web.UI.Design\IDesignTimeResourceProviderFactoryService.cs" />
     <Compile Include="System.Web.UI.Design\IDesignTimeResourceWriter.cs" />
@@ -218,11 +255,11 @@
     <Compile Include="System.Web.UI.Design\IFolderProjectItem.cs" />
     <Compile Include="System.Web.UI.Design\IHierarchicalDataSourceDesigner.cs" />
     <Compile Include="System.Web.UI.Design\IHtmlControlDesignerBehavior.cs" />
-    <Compile Include="System.Web.UI.Design\IWebAdministrationService.cs" />
     <Compile Include="System.Web.UI.Design\ImageUrlEditor.cs" />
     <Compile Include="System.Web.UI.Design\IProjectItem.cs" />
     <Compile Include="System.Web.UI.Design\ITemplateEditingFrame.cs" />
     <Compile Include="System.Web.UI.Design\ITemplateEditingService.cs" />
+    <Compile Include="System.Web.UI.Design\IWebAdministrationService.cs" />
     <Compile Include="System.Web.UI.Design\IWebApplication.cs" />
     <Compile Include="System.Web.UI.Design\IWebFormReferenceManager.cs" />
     <Compile Include="System.Web.UI.Design\IWebFormsBuilderUIService.cs" />
@@ -235,13 +272,13 @@
     <Compile Include="System.Web.UI.Design\SkinIDTypeConverter.cs" />
     <Compile Include="System.Web.UI.Design\SupportsPreviewControlAttribute.cs" />
     <Compile Include="System.Web.UI.Design\TemplatedControlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design\TemplateDefinition.cs" />
     <Compile Include="System.Web.UI.Design\TemplatedEditableDesignerRegion.cs" />
+    <Compile Include="System.Web.UI.Design\TemplateDefinition.cs" />
     <Compile Include="System.Web.UI.Design\TemplateEditingService.cs" />
     <Compile Include="System.Web.UI.Design\TemplateEditingVerb.cs" />
-    <Compile Include="System.Web.UI.Design\TemplateModeChangedEventArgs.cs" />
     <Compile Include="System.Web.UI.Design\TemplateGroup.cs" />
     <Compile Include="System.Web.UI.Design\TemplateGroupCollection.cs" />
+    <Compile Include="System.Web.UI.Design\TemplateModeChangedEventArgs.cs" />
     <Compile Include="System.Web.UI.Design\TextControlDesigner.cs" />
     <Compile Include="System.Web.UI.Design\TextDataBindingHandler.cs" />
     <Compile Include="System.Web.UI.Design\TransactedChangeCallback.cs" />
@@ -267,35 +304,21 @@
     <Compile Include="System.Web.UI.Design\XsdSchemaFileEditor.cs" />
     <Compile Include="System.Web.UI.Design\XslTransformFileEditor.cs" />
     <Compile Include="System.Web.UI.Design\XslUrlEditor.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\PanelDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\TableDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\HyperLinkDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\CalendarDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\CheckBoxDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\CompositeControlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\DataSourceIDConverter.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\DataProviderNameConverter.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\LinkButtonDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\ListControlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\AdRotatorDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\TableRowsCollectionEditor.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\RepeaterDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\RegexTypeEditor.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\BaseValidatorDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\BaseDataListDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\CalendarAutoFormatDialog.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\RegexEditorDialog.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\XmlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\TableCellsCollectionEditor.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\ButtonDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\BaseDataListComponentEditor.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\ListControlDataBindingHandler.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\LabelDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\BaseDataBoundControlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\DataBoundControlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\DataListComponentEditor.cs" />
-    <Compile Include="System.Web.UI.Design.WebControls\HierarchicalDataBoundControlDesigner.cs" />
-    <Compile Include="System.Web.UI.Design.Util\DummyClass.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\Adorner.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\Behavior.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorDragDropEventArgs.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorDragDropEventHandler.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorService.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorServiceAdornerCollection.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorServiceAdornerCollectionEnumerator.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\ComponentGlyph.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\ControlBodyGlyph.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\Glyph.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\GlyphCollection.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\GlyphSelectionType.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\SnapLine.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\SnapLinePriority.cs" />
+    <Compile Include="System.Windows.Forms.Design.Behavior\SnapLineType.cs" />
     <Compile Include="System.Windows.Forms.Design\AnchorEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\AxImporter.cs" />
     <Compile Include="System.Windows.Forms.Design\AxParameterData.cs" />
@@ -319,8 +342,8 @@
     <Compile Include="System.Windows.Forms.Design\EventHandlerService.cs" />
     <Compile Include="System.Windows.Forms.Design\FileNameEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\FolderNameEditor.cs" />
-    <Compile Include="System.Windows.Forms.Design\FormDocumentDesigner.cs" />
     <Compile Include="System.Windows.Forms.Design\FormatStringEditor.cs" />
+    <Compile Include="System.Windows.Forms.Design\FormDocumentDesigner.cs" />
     <Compile Include="System.Windows.Forms.Design\ImageCollectionEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\ImageIndexEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\ImageListCodeDomSerializer.cs" />
@@ -346,23 +369,7 @@
     <Compile Include="System.Windows.Forms.Design\TabPageCollectionEditor.cs" />
     <Compile Include="System.Windows.Forms.Design\UISelectionService.cs" />
     <Compile Include="System.Windows.Forms.Design\WindowsFormsDesignerOptionService.cs" />
-    <Compile Include="System.Windows.Forms.Design\WndProcRouter.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\Adorner.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\Behavior.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorDragDropEventArgs.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorDragDropEventHandler.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorService.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorServiceAdornerCollection.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\BehaviorServiceAdornerCollectionEnumerator.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\ComponentGlyph.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\ControlBodyGlyph.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\Glyph.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\GlyphCollection.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\GlyphSelectionType.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\SnapLine.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\SnapLinePriority.cs" />
-    <Compile Include="System.Windows.Forms.Design.Behavior\SnapLineType.cs" />
-  </ItemGroup>
+    <Compile Include="System.Windows.Forms.Design\WndProcRouter.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -372,38 +379,53 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
+
     </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib">
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System">
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml">
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web">
-      <HintPath>System.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <HintPath>System.Windows.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <HintPath>System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="Accessibility">
-      <HintPath>Accessibility.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data">
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration">
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing.Design">
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
+      <Project>{A892207C-64E0-4FCA-8541-A3C71099AA13}</Project>
+      <Name>System.XML\System.Xml-net_2_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web\System.Web-net_2_0-1.csproj">
+      <Project>{71F684E5-42A8-437A-9C88-A90B2B6D4C26}</Project>
+      <Name>System.Web\System.Web-net_2_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
+      <Project>{D8E824B3-9F68-4D48-9396-BCDC68592669}</Project>
+      <Name>Managed.Windows.Forms\System.Windows.Forms-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
+      <Project>{FD019613-E2AA-4A74-8A70-E9DC38F5026F}</Project>
+      <Name>System.Drawing\System.Drawing-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Accessibility\Accessibility-net_2_0.csproj">
+      <Project>{D6B1256C-EA9D-46ED-A889-6DC17B21A833}</Project>
+      <Name>Accessibility\Accessibility-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
+      <Project>{0997C3B6-4B4C-4195-BBB6-DC61091676A3}</Project>
+      <Name>System.Data\System.Data-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
+      <Project>{1F04D799-296B-4D22-B3A5-790CDF990E48}</Project>
+      <Name>System.Configuration\System.Configuration-net_2_0</Name>
+    </ProjectReference>
+    <Reference Include="System.Drawing.Design.dll">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>System.Drawing.Design.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

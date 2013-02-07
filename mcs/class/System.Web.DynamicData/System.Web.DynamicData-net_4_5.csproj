@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{5B9041CA-797E-481C-9403-BEE1EF79107B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Web.DynamicData-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Web.DynamicData</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,62 +27,63 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\AssociationDirection.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\AssociationProvider.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\ColumnProvider.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\DLinqAssociationProvider.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\DLinqColumnProvider.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\DLinqDataModelProvider.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\DLinqTableProvider.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\DataModelProvider.cs" />
-   <Compile Include="System.Web.DynamicData.ModelProviders\TableProvider.cs" />
-   <Compile Include="System.Web.DynamicData\ContextConfiguration.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicControl.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicControlParameter.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicDataExtensions.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicDataManager.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicDataRoute.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicDataRouteHandler.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicField.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicQueryStringParameter.cs" />
-   <Compile Include="System.Web.DynamicData\DynamicValidator.cs" />
-   <Compile Include="System.Web.DynamicData\FieldTemplateFactory.cs" />
-   <Compile Include="System.Web.DynamicData\FieldTemplateUserControl.cs" />
-   <Compile Include="System.Web.DynamicData\FilterRepeater.cs" />
-   <Compile Include="System.Web.DynamicData\FilterUserControlBase.cs" />
-   <Compile Include="System.Web.DynamicData\IControlParameterTarget.cs" />
-   <Compile Include="System.Web.DynamicData\IFieldFormattingOptions.cs" />
-   <Compile Include="System.Web.DynamicData\IFieldTemplate.cs" />
-   <Compile Include="System.Web.DynamicData\IFieldTemplateFactory.cs" />
-   <Compile Include="System.Web.DynamicData\IFieldTemplateHost.cs" />
-   <Compile Include="System.Web.DynamicData\IWhereParametersProvider.cs" />
-   <Compile Include="System.Web.DynamicData\MetaChildrenColumn.cs" />
-   <Compile Include="System.Web.DynamicData\MetaColumn.cs" />
-   <Compile Include="System.Web.DynamicData\MetaForeignKeyColumn.cs" />
-   <Compile Include="System.Web.DynamicData\MetaModel.cs" />
-   <Compile Include="System.Web.DynamicData\MetaTable.cs" />
-   <Compile Include="System.Web.DynamicData\PageAction.cs" />
-   <Compile Include="System.Web.DynamicData\TableNameAttribute.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\AssociationDirection.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\AssociationProvider.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\ColumnProvider.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\DataModelProvider.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\DLinqAssociationProvider.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\DLinqColumnProvider.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\DLinqDataModelProvider.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\DLinqTableProvider.cs" />
+    <Compile Include="System.Web.DynamicData.ModelProviders\TableProvider.cs" />
+    <Compile Include="System.Web.DynamicData\ContextConfiguration.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicControl.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicControlParameter.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicDataExtensions.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicDataManager.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicDataRoute.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicDataRouteHandler.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicField.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicQueryStringParameter.cs" />
+    <Compile Include="System.Web.DynamicData\DynamicValidator.cs" />
+    <Compile Include="System.Web.DynamicData\FieldTemplateFactory.cs" />
+    <Compile Include="System.Web.DynamicData\FieldTemplateUserControl.cs" />
+    <Compile Include="System.Web.DynamicData\FilterRepeater.cs" />
+    <Compile Include="System.Web.DynamicData\FilterUserControlBase.cs" />
+    <Compile Include="System.Web.DynamicData\IControlParameterTarget.cs" />
+    <Compile Include="System.Web.DynamicData\IFieldFormattingOptions.cs" />
+    <Compile Include="System.Web.DynamicData\IFieldTemplate.cs" />
+    <Compile Include="System.Web.DynamicData\IFieldTemplateFactory.cs" />
+    <Compile Include="System.Web.DynamicData\IFieldTemplateHost.cs" />
+    <Compile Include="System.Web.DynamicData\IWhereParametersProvider.cs" />
+    <Compile Include="System.Web.DynamicData\MetaChildrenColumn.cs" />
+    <Compile Include="System.Web.DynamicData\MetaColumn.cs" />
+    <Compile Include="System.Web.DynamicData\MetaForeignKeyColumn.cs" />
+    <Compile Include="System.Web.DynamicData\MetaModel.cs" />
+    <Compile Include="System.Web.DynamicData\MetaTable.cs" />
+    <Compile Include="System.Web.DynamicData\PageAction.cs" />
+    <Compile Include="System.Web.DynamicData\TableNameAttribute.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -92,62 +92,64 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.ComponentModel.DataAnnotations.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.Linq.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Extensions.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Abstractions.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Routing.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.Routing.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.ApplicationServices.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Web.ApplicationServices.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_4_5.csproj">
+      <Project>{D97F14D0-177C-4252-B535-7B2B070DCF1A}</Project>
+      <Name>System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{AE8FAE27-D070-4533-A135-49EEF160779D}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data.Linq\System.Data.Linq-net_4_5.csproj">
+      <Project>{98E382DF-82C8-449C-AD40-FC5B9F9DA8ED}</Project>
+      <Name>System.Data.Linq\System.Data.Linq-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_5.csproj">
+      <Project>{98FA1A26-B1CA-47DC-9FD0-B609DA5FCD25}</Project>
+      <Name>System.Drawing\System.Drawing-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web\System.Web-net_4_5-2.csproj">
+      <Project>{9E66BC64-3C5E-44EA-BA12-31496B030290}</Project>
+      <Name>System.Web\System.Web-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.Extensions\System.Web.Extensions-net_4_5.csproj">
+      <Project>{FA4CE78C-F388-4BE6-B400-78199EB30E20}</Project>
+      <Name>System.Web.Extensions\System.Web.Extensions-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.Abstractions\System.Web.Abstractions-net_4_5.csproj">
+      <Project>{EEFFFCE0-860D-4295-AFEA-024A54FD10CA}</Project>
+      <Name>System.Web.Abstractions\System.Web.Abstractions-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.Routing\System.Web.Routing-net_4_5.csproj">
+      <Project>{4883AAF0-4351-429D-BC23-02EA27BBF38B}</Project>
+      <Name>System.Web.Routing\System.Web.Routing-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_5.csproj">
+      <Project>{A4EAD058-EDC8-4C1A-8D55-9934B8DD2C2E}</Project>
+      <Name>System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

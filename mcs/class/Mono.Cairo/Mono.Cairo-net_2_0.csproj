@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{1A137AC4-A3F3-47D0-BD75-DD1D8E2A4777}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_2_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.Cairo-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.Cairo</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,72 +27,73 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include=".\Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include=".\Mono.Cairo\Antialias.cs" />
-   <Compile Include=".\Mono.Cairo\Cairo.cs" />
-   <Compile Include=".\Mono.Cairo\Content.cs" />
-   <Compile Include=".\Mono.Cairo\Context.cs" />
-   <Compile Include=".\Mono.Cairo\DirectFBSurface.cs" />
-   <Compile Include=".\Mono.Cairo\Extend.cs" />
-   <Compile Include=".\Mono.Cairo\FillRule.cs" />
-   <Compile Include=".\Mono.Cairo\Filter.cs" />
-   <Compile Include=".\Mono.Cairo\FontExtents.cs" />
-   <Compile Include=".\Mono.Cairo\FontFace.cs" />
-   <Compile Include=".\Mono.Cairo\FontOptions.cs" />
-   <Compile Include=".\Mono.Cairo\FontSlant.cs" />
-   <Compile Include=".\Mono.Cairo\FontType.cs" />
-   <Compile Include=".\Mono.Cairo\FontWeight.cs" />
-   <Compile Include=".\Mono.Cairo\Format.cs" />
-   <Compile Include=".\Mono.Cairo\Glyph.cs" />
-   <Compile Include=".\Mono.Cairo\GlitzSurface.cs" />
-   <Compile Include=".\Mono.Cairo\Gradient.cs" />
-   <Compile Include=".\Mono.Cairo\HintMetrics.cs" />
-   <Compile Include=".\Mono.Cairo\HintStyle.cs" />
-   <Compile Include=".\Mono.Cairo\ImageSurface.cs" />
-   <Compile Include=".\Mono.Cairo\LinearGradient.cs" />
-   <Compile Include=".\Mono.Cairo\LineCap.cs" />
-   <Compile Include=".\Mono.Cairo\LineJoin.cs" />
-   <Compile Include=".\Mono.Cairo\Matrix.cs" />
-   <Compile Include=".\Mono.Cairo\NativeMethods.cs" />
-   <Compile Include=".\Mono.Cairo\Operator.cs" />
-   <Compile Include=".\Mono.Cairo\Path.cs" />
-   <Compile Include=".\Mono.Cairo\Pattern.cs" />
-   <Compile Include=".\Mono.Cairo\PatternType.cs" />
-   <Compile Include=".\Mono.Cairo\PdfSurface.cs" />
-   <Compile Include=".\Mono.Cairo\PSSurface.cs" />
-   <Compile Include=".\Mono.Cairo\RadialGradient.cs" />
-   <Compile Include=".\Mono.Cairo\Rectangle.cs" />
-   <Compile Include=".\Mono.Cairo\ScaledFont.cs" />
-   <Compile Include=".\Mono.Cairo\SolidPattern.cs" />
-   <Compile Include=".\Mono.Cairo\Status.cs" />
-   <Compile Include=".\Mono.Cairo\SubpixelOrder.cs" />
-   <Compile Include=".\Mono.Cairo\Surface.cs" />
-   <Compile Include=".\Mono.Cairo\SurfacePattern.cs" />
-   <Compile Include=".\Mono.Cairo\SurfaceType.cs" />
-   <Compile Include=".\Mono.Cairo\SvgSurface.cs" />
-   <Compile Include=".\Mono.Cairo\SvgVersion.cs" />
-   <Compile Include=".\Mono.Cairo\TextExtents.cs" />
-   <Compile Include=".\Mono.Cairo\Win32Surface.cs" />
-   <Compile Include=".\Mono.Cairo\XcbSurface.cs" />
-   <Compile Include=".\Mono.Cairo\XlibSurface.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include=".\Mono.Cairo\Antialias.cs" />
+    <Compile Include=".\Mono.Cairo\Cairo.cs" />
+    <Compile Include=".\Mono.Cairo\Content.cs" />
+    <Compile Include=".\Mono.Cairo\Context.cs" />
+    <Compile Include=".\Mono.Cairo\DirectFBSurface.cs" />
+    <Compile Include=".\Mono.Cairo\Extend.cs" />
+    <Compile Include=".\Mono.Cairo\FillRule.cs" />
+    <Compile Include=".\Mono.Cairo\Filter.cs" />
+    <Compile Include=".\Mono.Cairo\FontExtents.cs" />
+    <Compile Include=".\Mono.Cairo\FontFace.cs" />
+    <Compile Include=".\Mono.Cairo\FontOptions.cs" />
+    <Compile Include=".\Mono.Cairo\FontSlant.cs" />
+    <Compile Include=".\Mono.Cairo\FontType.cs" />
+    <Compile Include=".\Mono.Cairo\FontWeight.cs" />
+    <Compile Include=".\Mono.Cairo\Format.cs" />
+    <Compile Include=".\Mono.Cairo\GlitzSurface.cs" />
+    <Compile Include=".\Mono.Cairo\Glyph.cs" />
+    <Compile Include=".\Mono.Cairo\Gradient.cs" />
+    <Compile Include=".\Mono.Cairo\HintMetrics.cs" />
+    <Compile Include=".\Mono.Cairo\HintStyle.cs" />
+    <Compile Include=".\Mono.Cairo\ImageSurface.cs" />
+    <Compile Include=".\Mono.Cairo\LinearGradient.cs" />
+    <Compile Include=".\Mono.Cairo\LineCap.cs" />
+    <Compile Include=".\Mono.Cairo\LineJoin.cs" />
+    <Compile Include=".\Mono.Cairo\Matrix.cs" />
+    <Compile Include=".\Mono.Cairo\NativeMethods.cs" />
+    <Compile Include=".\Mono.Cairo\Operator.cs" />
+    <Compile Include=".\Mono.Cairo\Path.cs" />
+    <Compile Include=".\Mono.Cairo\Pattern.cs" />
+    <Compile Include=".\Mono.Cairo\PatternType.cs" />
+    <Compile Include=".\Mono.Cairo\PdfSurface.cs" />
+    <Compile Include=".\Mono.Cairo\PSSurface.cs" />
+    <Compile Include=".\Mono.Cairo\RadialGradient.cs" />
+    <Compile Include=".\Mono.Cairo\Rectangle.cs" />
+    <Compile Include=".\Mono.Cairo\ScaledFont.cs" />
+    <Compile Include=".\Mono.Cairo\SolidPattern.cs" />
+    <Compile Include=".\Mono.Cairo\Status.cs" />
+    <Compile Include=".\Mono.Cairo\SubpixelOrder.cs" />
+    <Compile Include=".\Mono.Cairo\Surface.cs" />
+    <Compile Include=".\Mono.Cairo\SurfacePattern.cs" />
+    <Compile Include=".\Mono.Cairo\SurfaceType.cs" />
+    <Compile Include=".\Mono.Cairo\SvgSurface.cs" />
+    <Compile Include=".\Mono.Cairo\SvgVersion.cs" />
+    <Compile Include=".\Mono.Cairo\TextExtents.cs" />
+    <Compile Include=".\Mono.Cairo\Win32Surface.cs" />
+    <Compile Include=".\Mono.Cairo\XcbSurface.cs" />
+    <Compile Include=".\Mono.Cairo\XlibSurface.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -102,18 +102,20 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-
