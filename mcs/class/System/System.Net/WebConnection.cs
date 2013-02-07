@@ -58,6 +58,7 @@ namespace System.Net
 		object socketLock = new object ();
 		WebExceptionStatus status;
 		WaitCallback initConn;
+		Action<object> initConnDelegate;
 		bool keepAlive;
 		byte [] buffer;
 		static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
@@ -109,11 +110,12 @@ namespace System.Net
 			this.sPoint = sPoint;
 			buffer = new byte [4096];
 			Data = new WebConnectionData ();
-			initConn = new WaitCallback (state => {
+			initConnDelegate = state => {
 				try {
 					InitConnection (state);
 				} catch {}
-				});
+			};
+			initConn = new WaitCallback (state => initConnDelegate (state));
 			queue = group.Queue;
 			abortHelper = new AbortHelper ();
 			abortHelper.Connection = this;
@@ -787,7 +789,11 @@ namespace System.Net
 				if (!busy) {
 					busy = true;
 					status = WebExceptionStatus.Success;
-					ThreadPool.QueueUserWorkItem (initConn, request);
+
+					if (request.asynchronous)
+						ThreadPool.QueueUserWorkItem (initConn, request);
+					else
+						initConnDelegate (request);
 				} else {
 					lock (queue) {
 #if MONOTOUCH

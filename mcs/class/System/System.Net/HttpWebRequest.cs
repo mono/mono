@@ -929,9 +929,12 @@ namespace System.Net
 
 		public override WebResponse GetResponse()
 		{
+			asynchronous = false;
 			WebAsyncResult result = (WebAsyncResult) BeginGetResponse (null, null);
 			return EndGetResponse (result);
 		}
+
+		internal bool asynchronous = true;
 		
 		internal bool FinishedReading {
 			get { return finished_reading; }
