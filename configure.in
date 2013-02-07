@@ -6,12 +6,12 @@ AC_INIT(mono, [3.0.4],
 
 AC_CONFIG_SRCDIR([README])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_SYSTEM		#TODO: 	This is obsolete, and is partially replaced by AC_CANONICAL_HOST (below)
-						#		Remove it, or replace with AC_CANONICAL_BUILD and/or AC_CANONICAL_TARGET
+AC_CANONICAL_SYSTEM		dnl	TODO :	This is obsolete, and is partially replaced by AC_CANONICAL_HOST (below)
+						dnl			Remove it, or replace with AC_CANONICAL_BUILD and/or AC_CANONICAL_TARGET
 AC_CANONICAL_HOST
 
-# Gross hack to enable 'make dist' on automake 1.9+tar 1.14.
-# The extra brackets are to foil regex-based scans.
+dnl Gross hack to enable 'make dist' on automake 1.9+tar 1.14.
+dnl The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign])
@@ -25,8 +25,8 @@ AC_PROG_LN_S
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-# In case of cygwin, override LN_S, irrespective of what it determines.
-# The build uses cygwin, but the actual runtime doesn't.
+dnl In case of cygwin, override LN_S, irrespective of what it determines.
+dnl The build uses cygwin, but the actual runtime doesn't.
 case $host_os in
 *cygwin* ) LN_S='cp -p';;
 esac
@@ -47,33 +47,33 @@ else
   gc_default=boehm
 fi
 
-# These variables are the CPPFLAGS/CFLAGS passed to libgc's configure
-# libgc should inherit the original CFLAGS/CPPFLAGS passed to configure, i.e. -O0
+dnl These variables are the CPPFLAGS/CFLAGS passed to libgc's configure
+dnl libgc should inherit the original CFLAGS/CPPFLAGS passed to configure, i.e. -O0
 CPPFLAGS_FOR_LIBGC=$CPPFLAGS
 CFLAGS_FOR_LIBGC=$CFLAGS
 CPPFLAGS_FOR_EGLIB=$CPPFLAGS
 CFLAGS_FOR_EGLIB=$CFLAGS
 
-#
-# These are the flags that need to be stored in the mono.pc file for 
-# compiling code that will embed Mono
-#
+dnl
+dnl These are the flags that need to be stored in the mono.pc file for 
+dnl compiling code that will embed Mono
+dnl
 libmono_cflags=""
 libmono_ldflags=""
 AC_SUBST(libmono_cflags)
 AC_SUBST(libmono_ldflags)
 
-# Variable to have relocatable .pc files (lib, or lib64)
+dnl Variable to have relocatable .pc files (lib, or lib64)
 reloc_libdir=`basename ${libdir}`
 AC_SUBST(reloc_libdir)
 
 dnl if linker handles the version script
 no_version_script=no
 
-# Set to yes if Unix sockets cannot be created in an anonymous namespace
+dnl Set to yes if Unix sockets cannot be created in an anonymous namespace
 need_link_unlink=no
 
-# Thread configuration inspired by sleepycat's db
+dnl Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
 libgc_threads=no
 has_dtrace=no
@@ -86,7 +86,7 @@ platform_android=no
 platform_darwin=no
 case "$host" in
 	powerpc*-*-linux*)
-		# https://bugzilla.novell.com/show_bug.cgi?id=504411
+		dnl https://bugzilla.novell.com/show_bug.cgi?id=504411
 		disable_munmap=yes
 	;;
 	*-mingw*|*-*-cygwin*)
@@ -100,19 +100,19 @@ case "$host" in
 			if test "x$host" == "x$build" -a "x$host" == "x$target"; then
 				AC_DEFINE(TARGET_WIN32,1,[Target OS is Win32])
 			fi
-			#
-			# gcc-3/g++-3 are from the gcc-core/gcc-g++ cygwin packages.
-			# Other gcc packages will not work:
-			# - the gcc-4 packages no longer support -mno-cygwin
-			# - the mingw-gcc packages produce executables which depends on a libgcc<...>
-			# dll, which means we would have to distribute that file too.
-			#
+			dnl
+			dnl gcc-3/g++-3 are from the gcc-core/gcc-g++ cygwin packages.
+			dnl Other gcc packages will not work:
+			dnl - the gcc-4 packages no longer support -mno-cygwin
+			dnl - the mingw-gcc packages produce executables which depends on a libgcc<...>
+			dnl dll, which means we would have to distribute that file too.
+			dnl
 			if test "x$CC" != "x"; then
 				AC_MSG_ERROR(Don't set CC. mono can only be compiled with gcc-3 from the 'gcc-core' package)
 			fi
 			CC="gcc-3.exe -mno-cygwin -g"
 			CXX="g++-3.exe -mno-cygwin -g"
-			# So libgc configure gets -mno-cygwin
+			dnl So libgc configure gets -mno-cygwin
 			export CC
 			export CXX
 			CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB -mno-cygwin"
@@ -122,7 +122,7 @@ case "$host" in
 			AC_DEFINE(MINGW_CROSS_COMPILE,1,[Cross-compiling using MinGW])
 		fi
 		HOST_CC="gcc"
-		# Windows 2000 is required that includes Internet Explorer 5.01
+		dnl Windows 2000 is required that includes Internet Explorer 5.01
 		CPPFLAGS="$CPPFLAGS -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
 		LDFLAGS="$LDFLAGS -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32"
 		libmono_cflags="-mno-cygwin -mms-bitfields -mwindows"
@@ -132,7 +132,7 @@ case "$host" in
 		gc_default=included
 		with_sigaltstack=no
 		LN_S=cp
-		# This forces libgc to use the DllMain based thread registration code on win32
+		dnl This forces libgc to use the DllMain based thread registration code on win32
 		libgc_configure_args="$libgc_configure_args --enable-win32-dllmain=yes"
 		;;
 	*-*-*netbsd*)
@@ -169,11 +169,11 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID, 1, [pthread is a pointer])
 		libdl=
 		libgc_threads=pthreads
-		# This doesn't seem to work as of 7.0 on amd64
+		dnl This doesn't seem to work as of 7.0 on amd64
 		with_sigaltstack=no
-# TLS is only partially implemented on -CURRENT (compiler support
-# but NOT library support)
-#
+dnl TLS is only partially implemented on -CURRENT (compiler support
+dnl but NOT library support)
+dnl
 		with_tls=pthread
 		use_sigposix=yes
 		;;
@@ -212,20 +212,20 @@ case "$host" in
 		with_sigaltstack=no
 		with_static_mono=no
 
-		# Android doesn't support boehm, as it's missing <link.h>
+		dnl Android doesn't support boehm, as it's missing <link.h>
 		support_boehm=no
 		with_gc=sgen
 
-		# isinf(3) requires -lm; see isinf check below
+		dnl isinf(3) requires -lm; see isinf check below
 		LDFLAGS="$LDFLAGS -lm"
 
-		# Bionic's <pthread.h> sets PTHREAD_STACK_MIN=2*PAGE_SIZE; doesn't define
-		# PAGE_SIZE; breaks mono/io-layer/collection.c
-		# Bionic doesn't provide S_IWRITE; breaks io-layer/io.c
+		dnl Bionic's <pthread.h> sets PTHREAD_STACK_MIN=2*PAGE_SIZE; doesn't define
+		dnl PAGE_SIZE; breaks mono/io-layer/collection.c
+		dnl Bionic doesn't provide S_IWRITE; breaks io-layer/io.c
 		CFLAGS="$CFLAGS -DPAGE_SIZE=4096 -DS_IWRITE=S_IWUSR"
 		CXXFLAGS="$CXXFLAGS -DPAGE_SIZE=4096 -DS_IWRITE=S_IWUSR"
 
-		# to bypass the underscore linker check, can't work when cross-compiling
+		dnl to bypass the underscore linker check, can't work when cross-compiling
 		mono_cv_uscore=yes
 		mono_cv_clang=no
 		;;
@@ -258,12 +258,12 @@ case "$host" in
 	*-*-hpux*)
 	        host_win32=no
 		CPPFLAGS="$CPPFLAGS -DGC_HPUX_THREADS -D_HPUX_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_REENTRANT"
-		# +ESdbgasm only valid on bundled cc on RISC
-		# silently ignored for ia64
+		dnl +ESdbgasm only valid on bundled cc on RISC
+		dnl silently ignored for ia64
 		if test $GCC != "yes"; then
 			CFLAGS="$CFLAGS +ESdbgasm"
-			# Arrange for run-time dereferencing of null
-			# pointers to produce a SIGSEGV signal.
+			dnl Arrange for run-time dereferencing of null
+			dnl pointers to produce a SIGSEGV signal.
 			LDFLAGS="$LDFLAGS -z"
 		fi
 		CFLAGS="$CFLAGS +ESdbgasm"
@@ -280,7 +280,7 @@ case "$host" in
 		need_link_unlink=yes
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
-		# This doesn't seem to work on solaris/x86, but the configure test runs
+		dnl This doesn't seem to work on solaris/x86, but the configure test runs
 		with_tls=pthread
 		has_dtrace=yes
 		use_sigposix=yes
@@ -355,31 +355,31 @@ AM_CONDITIONAL(PLATFORM_DARWIN, test x$platform_darwin = xyes)
 AM_CONDITIONAL(PLATFORM_SIGPOSIX, test x$use_sigposix = xyes)
 AM_CONDITIONAL(PLATFORM_ANDROID, test x$platform_android = xyes)
 
-# If the user hasn't explicitly specified which C and C++ compilers to use,
-# search the system for suitable compilers to use.
-# If the system contains more than one of the listed compilers, the one which
-# appears first (left-to-right) in the list will be used.
-AC_PROG_CC([gcc])		# [gcc clang]
-AC_PROG_CXX([g++])		# [g++ clang++]
+dnl If the user hasn't explicitly specified which C and C++ compilers to use,
+dnl search the system for suitable compilers to use.
+dnl If the system contains more than one of the listed compilers, the one which
+dnl appears first (left-to-right) in the list will be used.
+AC_PROG_CC([gcc])		dnl [gcc clang]
+AC_PROG_CXX([g++])		dnl [g++ clang++]
 
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
 dnl We should use AM_PROG_AS, but it's not available on automake/aclocal 1.4
 : ${CCAS='$(CC)'}
-# Set ASFLAGS if not already set.
+dnl Set ASFLAGS if not already set.
 : ${CCASFLAGS='$(CFLAGS)'}
 AC_SUBST(CCAS)
 AC_SUBST(CCASFLAGS)
 
-# AC_PROG_CXX helpfully sets CXX to g++ even if no c++ compiler is found so check
-# GXX instead. See http://lists.gnu.org/archive/html/bug-autoconf/2002-04/msg00056.html
-# TODO: This may no longer be needed, now that we're providing an explicit list
-# of compilers to AC_PROG_CXX; if so, remove this.
+dnl AC_PROG_CXX helpfully sets CXX to g++ even if no c++ compiler is found so check
+dnl GXX instead. See http://lists.gnu.org/archive/html/bug-autoconf/2002-04/msg00056.html
+dnl TODO: This may no longer be needed, now that we're providing an explicit list
+dnl of compilers to AC_PROG_CXX; if so, remove this.
 if test "x$CXX" = "xg++"; then
 	if test "x$GXX" != "xyes"; then
-		# automake/libtool is so broken, it requires g++ even if the c++ sources
-		# are inside automake conditionals
+		dnl automake/libtool is so broken, it requires g++ even if the c++ sources
+		dnl are inside automake conditionals
 		AC_MSG_ERROR([You need to install g++])
 	fi
 fi
@@ -403,19 +403,19 @@ AC_SUBST(BUILD_EXEEXT)
 AM_CONDITIONAL(CROSS_COMPILING, [test x$cross_compiling = xyes])
 AM_CONDITIONAL(USE_BATCH_FILES, [test x$host_win32 = xyes -a x$cross_compiling = xyes])
 
-# Set STDC_HEADERS
+dnl Set STDC_HEADERS
 AC_HEADER_STDC
 AC_LIBTOOL_WIN32_DLL
-# This causes monodis to not link correctly
-#AC_DISABLE_FAST_INSTALL
+dnl This causes monodis to not link correctly
+dnl AC_DISABLE_FAST_INSTALL
 AM_PROG_LIBTOOL
-# Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
+dnl Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
 DOLT
 
 export_ldflags=`(./libtool --config; echo eval echo \\$export_dynamic_flag_spec) | sh`
 AC_SUBST(export_ldflags)
 
-# Test whenever ld supports -version-script
+dnl Test whenever ld supports -version-script
 AC_PROG_LD
 AC_PROG_LD_GNU
 if test "x$lt_cv_prog_gnu_ld" = "xno"; then
@@ -442,14 +442,13 @@ AC_CHECK_HEADERS([sys/user.h], [ ], [ ], [
 	#endif
 	])
 
-# Set the language to use for the compiler tests below.
+dnl Set the language to use for the compiler tests below.
 AC_LANG([C])
-#AC_LANG([C++])
 
-# TODO : The AC_CHECK_HEADERS, the 'if' following it, and the
-# AM_CONDITIONAL and AC_DEFINE following that could probably all
-# be simplified into a single call to AC_CHECK_HEADERS (by nesting
-# the other macros within the if-true/if-false actions).
+dnl TODO : The AC_CHECK_HEADERS, the 'if' following it, and the
+dnl AM_CONDITIONAL and AC_DEFINE following that could probably all
+dnl be simplified into a single call to AC_CHECK_HEADERS (by nesting
+dnl the other macros within the if-true/if-false actions).
 AC_CHECK_HEADERS([zlib.h], [have_zlib=yes], [have_zlib=no])
 if test x$have_zlib = xyes; then
 	AC_COMPILE_IFELSE([
@@ -477,20 +476,20 @@ AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
 AC_DEFINE(HAVE_ZLIB, 1, [Have system zlib])
 
 
-# for mono/metadata/debug-symfile.c
+dnl for mono/metadata/debug-symfile.c
 AC_CHECK_HEADERS([elf.h])
 
-# for support
+dnl for support
 AC_CHECK_HEADERS([poll.h])
 AC_CHECK_HEADERS([sys/poll.h])
 AC_CHECK_HEADERS([sys/wait.h])
 AC_CHECK_HEADERS([grp.h])
 AC_CHECK_HEADERS([syslog.h])
 
-# for mono/dis
+dnl for mono/dis
 AC_CHECK_HEADERS([wchar.h])
 AC_CHECK_HEADERS([ieeefp.h])
-# TODO : Simplify this to use AC_CHECK_DECLS
+dnl TODO : Simplify this to use AC_CHECK_DECLS
 AC_MSG_CHECKING(for isinf)
 AC_LANG_ASSERT(C)
 AC_LINK_IFELSE([
@@ -503,25 +502,26 @@ AC_LINK_IFELSE([
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_ISINF, 1, [isinf available])
 	], [
-		# We'll have to use signals
+		dnl We'll have to use signals
 		AC_MSG_RESULT(no)
 	])
 
-# for Linux statfs support
+dnl for Linux statfs support
 AC_CHECK_HEADERS([linux/magic.h])
 
-# not 64 bit clean in cross-compile
-AC_CHECK_SIZEOF([void *], 4)
+dnl This works correctly for cross-compilation as long as
+dnl a recent version of autoconf is used.
+AC_CHECK_SIZEOF([void *])
 
-# Default compiler warning flags; these apply to both gcc and clang.
+dnl Default compiler warning flags; these apply to both gcc and clang.
 DEFAULT_WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value'
               
-# Set compiler-specific warning flags.
+dnl Set compiler-specific warning flags.
 if test x"$CC" = x"gcc"; then
-    # Use the default warnings, at least.
+    dnl Use the default warnings, at least.
     WARN=$DEFAULT_WARN
 		
-	# The runtime code does not respect ANSI C strict aliasing rules
+	dnl The runtime code does not respect ANSI C strict aliasing rules
 	CFLAGS="$CFLAGS -fno-strict-aliasing"
 
     ORIG_CFLAGS=$CFLAGS
@@ -537,7 +537,7 @@ if test x"$CC" = x"gcc"; then
     ])
 
     ORIG_CFLAGS=$CFLAGS
-    # Check for the normal version, since gcc ignores unknown -Wno options
+    dnl Check for the normal version, since gcc ignores unknown -Wno options
     CFLAGS="$CFLAGS -Wunused-but-set-variable"
     AC_MSG_CHECKING(for -Wno-unused-but-set-variable option to gcc)
     AC_COMPILE_IFELSE([
@@ -550,10 +550,10 @@ if test x"$CC" = x"gcc"; then
        	CFLAGS=$ORIG_CFLAGS
     ])
 elif test x"$CC" = x"clang"; then
-    # Use the default warnings, at least.
+    dnl Use the default warnings, at least.
     WARN=$DEFAULT_WARN
 		
-	# The runtime code does not respect ANSI C strict aliasing rules
+	dnl The runtime code does not respect ANSI C strict aliasing rules
 	CFLAGS="$CFLAGS -fno-strict-aliasing"
 		
 	ORIG_CFLAGS=$CFLAGS
@@ -568,8 +568,8 @@ elif test x"$CC" = x"clang"; then
        	CFLAGS=$ORIG_CFLAGS
     ])
 else
-	# The Sun Forte compiler complains about inline functions that access static variables
-	# so disable all inlining.
+	dnl The Sun Forte compiler complains about inline functions that access static variables
+	dnl so disable all inlining.
 	case "$host" in
 	*-*-solaris*)
 		CFLAGS="$CFLAGS -Dinline="
@@ -595,7 +595,7 @@ AC_CACHE_CHECK(
 	[mono_cv_clang=no])
 ])
 
-# Where's the 'mcs' source tree?
+dnl Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
   mcsdir=mcs
 else
@@ -608,13 +608,14 @@ AC_ARG_WITH(mcs-path, [  --with-mcs-path=/path/to/mcs      Specify an alternate 
 	fi
 )
 
-#
-# A sanity check to catch cases where the package was unpacked
-# with an ancient tar program (Solaris)
-#
+dnl
+dnl A sanity check to catch cases where the package was unpacked
+dnl with an ancient tar program (Solaris)
+dnl
 AC_ARG_ENABLE(solaris-tar-check,
-[  --disable-solaris-tar-check    disable solaris tar check],
-   do_solaris_tar_check=no, do_solaris_tar_check=yes)
+	[  --disable-solaris-tar-check    disable solaris tar check],
+   	[do_solaris_tar_check=no],
+	[do_solaris_tar_check=yes])
 
 if test x"$do_solaris_tar_check" = xyes -a x"$enable_solaris_tar_check" = xyes; then
    	AC_MSG_CHECKING(integrity of package)
@@ -635,7 +636,7 @@ mcs_topdir=$(cd "$srcdir/$mcsdir" && pwd)
 mcs_topdir_from_srcdir='$(top_builddir)'/$mcsdir
 fi
 
-# Convert mcs_topdir* paths to Windows syntax.
+dnl Convert mcs_topdir* paths to Windows syntax.
 if test x$cross_compiling$host_win32 = xnoyes; then
   mcs_topdir=$(cygpath -m $mcs_topdir)
   case $mcs_topdir_from_srcdir in
@@ -648,7 +649,7 @@ fi
 AC_SUBST([mcs_topdir])
 AC_SUBST([mcs_topdir_from_srcdir])
 
-# Where's the 'olive' source tree?
+dnl Where's the 'olive' source tree?
 if test -d $srcdir/olive; then
   olivedir=olive
 else
@@ -659,8 +660,8 @@ if test -d $srcdir/$olivedir; then
 olive_topdir='$(top_srcdir)/'$olivedir
 fi
 
-# gettext: prepare the translation directories. 
-# we do not configure the full gettext, as we consume it dynamically from C#
+dnl gettext: prepare the translation directories. 
+dnl we do not configure the full gettext, as we consume it dynamically from C#
 AM_PO_SUBDIRS
 
 if test "x$USE_NLS" = "xyes"; then
@@ -673,7 +674,8 @@ fi
 
 AC_ARG_WITH([libgdiplus], 
 	[  --with-libgdiplus=installed|sibling|<path>	Override the libgdiplus used for System.Drawing tests (defaults to installed)], 
-	[ ], [with_libgdiplus=installed])
+	[ ],
+	[with_libgdiplus=installed])
 
 case $with_libgdiplus in
 no|installed) libgdiplus_loc= ;;
@@ -715,20 +717,40 @@ AC_SUBST(GMODULE_LIBS)
 AC_SUBST(BUILD_GLIB_CFLAGS)
 AC_SUBST(BUILD_GLIB_LIBS)
 
-AC_ARG_WITH(gc,   [  --with-gc=boehm,included,none  Controls the Boehm GC config, default=included],[gc=$with_gc],[gc=$gc_default])
+AC_ARG_WITH(gc,
+	[  --with-gc=boehm,included,none  Controls the Boehm GC config, default=included],
+	[gc=$with_gc],
+	[gc=$gc_default])
 
-# Enable support for fast thread-local storage
-# Some systems have broken support, so we allow to disable it.
-AC_ARG_WITH(tls, [  --with-tls=__thread,pthread    select Thread Local Storage implementation (defaults to __thread)],[ ],[with_tls=__thread])
+dnl Enable support for fast thread-local storage
+dnl Some systems have broken support, so we allow to disable it.
+AC_ARG_WITH(tls,
+	[  --with-tls=__thread,pthread    select Thread Local Storage implementation (defaults to __thread)],
+	[],
+	[with_tls=__thread])
 
-# Enable support for using sigaltstack for SIGSEGV and stack overflow handling
-# This does not work on some platforms (bug #55253)
-AC_ARG_WITH(sigaltstack, [  --with-sigaltstack=yes,no      enable/disable support for sigaltstack (defaults to yes)],[ ],[with_sigaltstack=yes])
+dnl Enable support for using sigaltstack for SIGSEGV and stack overflow handling
+dnl This does not work on some platforms (bug #55253)
+AC_ARG_WITH(sigaltstack,
+	[  --with-sigaltstack=yes,no      enable/disable support for sigaltstack (defaults to yes)],
+	[],
+	[with_sigaltstack=yes])
 
-AC_ARG_WITH(static_mono, [  --with-static_mono=yes,no      link mono statically to libmono (faster) (defaults to yes)],[ ],[with_static_mono=yes])
-AC_ARG_WITH(shared_mono, [  --with-shared_mono=yes,no      build a shared libmono library (defaults to yes)],[ ],[with_shared_mono=yes])
-# Same as --with-shared_mono=no
-AC_ARG_ENABLE(libraries, [  --disable-libraries disable the build of libmono], enable_libraries=$enableval, enable_libraries=yes)
+AC_ARG_WITH(static_mono,
+	[  --with-static_mono=yes,no      link mono statically to libmono (faster) (defaults to yes)],
+	[],
+	[with_static_mono=yes])
+
+AC_ARG_WITH(shared_mono,
+	[  --with-shared_mono=yes,no      build a shared libmono library (defaults to yes)],
+	[],
+	[with_shared_mono=yes])
+
+dnl Same as --with-shared_mono=no
+AC_ARG_ENABLE(libraries,
+	[  --disable-libraries disable the build of libmono],
+	[enable_libraries=$enableval],
+	[enable_libraries=yes])
 
 if test "x$enable_static" = "xno"; then
    with_static_mono=no
@@ -749,15 +771,21 @@ case $host in
 esac
 
 if test "x$host_win32" = "xyes"; then
-   # Boehm GC requires the runtime to be in its own dll
+   dnl Boehm GC requires the runtime to be in its own dll
    with_static_mono=no
 fi
 
 AM_CONDITIONAL(STATIC_MONO, test x$with_static_mono != xno)
 AM_CONDITIONAL(SHARED_MONO, test x$with_shared_mono != xno)
-AC_ARG_ENABLE(mcs-build, [  --disable-mcs-build disable the build of the mcs directory], try_mcs_build=$enableval, enable_mcs_build=yes)
+AC_ARG_ENABLE(mcs-build,
+	[  --disable-mcs-build disable the build of the mcs directory],
+	[try_mcs_build=$enableval],
+	[enable_mcs_build=yes])
 
-AC_ARG_WITH(xen_opt,   [  --with-xen_opt=yes,no          Enable Xen-specific behaviour (defaults to yes)],[ ],[with_xen_opt=yes])
+AC_ARG_WITH(xen_opt,
+	[  --with-xen_opt=yes,no          Enable Xen-specific behaviour (defaults to yes)],
+	[],
+	[with_xen_opt=yes])
 if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
 	AC_DEFINE(MONO_XEN_OPT, 1, [Xen-specific behaviour])
 	ORIG_CFLAGS=$CFLAGS
@@ -767,7 +795,7 @@ if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
 		AC_LANG_PROGRAM([[ ]], [[ ]])
 	], [
 	   	AC_MSG_RESULT(yes)
-	   	# Pass it to libgc as well
+	   	dnl Pass it to libgc as well
 	   	CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -mno-tls-direct-seg-refs"
 	], [
 	   	AC_MSG_RESULT(no)
@@ -775,30 +803,38 @@ if test "x$with_xen_opt" = "xyes" -a "x$mono_cv_clang" = "xno"; then
 	])
 fi
 
-AC_ARG_ENABLE(small-config, [  --enable-small-config Enable tweaks to reduce requirements (and capabilities)], enable_small_config=$enableval, enable_small_config=no)
+AC_ARG_ENABLE(small-config,
+	[  --enable-small-config Enable tweaks to reduce requirements (and capabilities)],
+	[enable_small_config=$enableval],
+	[enable_small_config=no])
 
 if test x$enable_small_config = xyes; then
 	AC_DEFINE(MONO_SMALL_CONFIG,1,[Reduce runtime requirements (and capabilities)])
 	CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DSMALL_CONFIG"
 fi
 
-AC_ARG_ENABLE(system-aot, [  --enable-system-aot  Enable the Ahead-Of-Time compilation of system assemblies during the build (on by default on some platforms)], enable_system_aot=$enableval, enable_system_aot=default)
+AC_ARG_ENABLE(system-aot,
+	[  --enable-system-aot  Enable the Ahead-Of-Time compilation of system assemblies during the build (on by default on some platforms)],
+	[enable_system_aot=$enableval],
+	[enable_system_aot=default])
 
 DISABLED_FEATURES=none
 
-AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
-     LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug,
-     reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, simd, soft_debug, perfcounters, normalization, assembly_remapping, shared_perfcounters,
-	 sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
-[
-	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
-		eval "mono_feature_disable_$feature='yes'"
-	done
-	DISABLED_FEATURES=$enable_minimal
-	disabled="Disabled:      $enable_minimal"
-],[])
+AC_ARG_ENABLE(minimal,
+	[  --enable-minimal=LIST      drop support for LIST subsystems.
+     LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, simd, soft_debug, perfcounters, normalization, assembly_remapping, shared_perfcounters, sgen_remset, sgen_marksweep_par, sgen_marksweep_fixed, sgen_marksweep_fixed_par, sgen_copying.],
+	[
+		for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
+			eval "mono_feature_disable_$feature='yes'"
+		done
+		DISABLED_FEATURES=$enable_minimal
+		disabled="Disabled:      $enable_minimal"
+	],[])
 
-AC_DEFINE_UNQUOTED(DISABLED_FEATURES, "$DISABLED_FEATURES", [String of disabled features])
+AC_DEFINE_UNQUOTED(
+	DISABLED_FEATURES,
+	"$DISABLED_FEATURES",
+	[String of disabled features])
 
 if test "x$mono_feature_disable_aot" = "xyes"; then
 	AC_DEFINE(DISABLE_AOT_COMPILER, 1, [Disable AOT Compiler])
@@ -948,10 +984,16 @@ if test "x$mono_feature_disable_sgen_copying" = "xyes"; then
 	AC_MSG_NOTICE([Disabled major=copying support in SGEN.])
 fi
 
-AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
+AC_ARG_ENABLE(executables,
+	[  --disable-executables disable the build of the runtime executables],
+	[enable_executables=$enableval],
+	[enable_executables=yes])
 AM_CONDITIONAL(DISABLE_EXECUTABLES, test x$enable_executables = xno)
 
-AC_ARG_ENABLE(extension-module, [  --enable-extension-module enables usage of the extension module], has_extension_module=$enableval, has_extension_module=no)
+AC_ARG_ENABLE(extension-module,
+	[  --enable-extension-module enables usage of the extension module],
+	[has_extension_module=$enableval],
+	[has_extension_module=no])
 AM_CONDITIONAL([HAS_EXTENSION_MODULE], [test x$has_extension_module != xno])
 
 if test x$has_extension_module != xno ; then
@@ -988,12 +1030,18 @@ AC_COMPILE_IFELSE([
    	AC_MSG_RESULT(no)
 ])
 
-AC_ARG_ENABLE(parallel-mark, [  --enable-parallel-mark     Enables GC Parallel Marking], enable_parallel_mark=$enableval, enable_parallel_mark=$parallel_mark)
+AC_ARG_ENABLE(parallel-mark,
+	[  --enable-parallel-mark     Enables GC Parallel Marking],
+	[enable_parallel_mark=$enableval],
+	[enable_parallel_mark=$parallel_mark])
 if test x$enable_parallel_mark = xyes; then
 	libgc_configure_args="$libgc_configure_args --enable-parallel-mark"
 fi
 
-AC_ARG_ENABLE(boehm, [  --disable-boehm            Disable the Boehm GC.], support_boehm=$enableval,support_boehm=${support_boehm:-yes})
+AC_ARG_ENABLE(boehm,
+	[  --disable-boehm            Disable the Boehm GC.],
+	[support_boehm=$enableval],
+	[support_boehm=${support_boehm:-yes}])
 AM_CONDITIONAL(SUPPORT_BOEHM, test x$support_boehm = xyes)
 
 dnl
@@ -1020,7 +1068,7 @@ case "x$gc" in
 		libmono_ldflags="$libmono_ldflags -lgc"
 		BOEHM_DEFINES="-DHAVE_BOEHM_GC"
 
-		# AC_CHECK_FUNCS does not work for some reason...
+		dnl AC_CHECK_FUNCS does not work for some reason...
 		AC_CHECK_LIB(gc, GC_gcj_malloc, found_gcj_malloc="yes",,$libdl)
 		if test "x$found_gcj_malloc" = "xyes"; then
 			BOEHM_DEFINES="-DHAVE_GC_GCJ_MALLOC $BOEHM_DEFINES"
@@ -1035,13 +1083,11 @@ case "x$gc" in
 			BOEHM_DEFINES="-DHAVE_GC_ENABLE $BOEHM_DEFINES"
 		fi
 
-		# check whether we need to explicitly allow
-               	# thread registering
-               	AC_CHECK_LIB(gc, GC_allow_register_threads, found_allow_register_threads="yes",,$libdl)
-               	if test "x$found_allow_register_threads" = "xyes"; then
-                        AC_DEFINE(HAVE_GC_ALLOW_REGISTER_THREADS, 1, [GC requires thread registration])
-               	fi
-
+		dnl check whether we need to explicitly allow thread registering
+       	AC_CHECK_LIB(gc, GC_allow_register_threads, found_allow_register_threads="yes",,$libdl)
+       	if test "x$found_allow_register_threads" = "xyes"; then
+            AC_DEFINE(HAVE_GC_ALLOW_REGISTER_THREADS, 1, [GC requires thread registration])
+       	fi
 		;;
 
 	xincluded)
@@ -1077,7 +1123,10 @@ case "x$gc" in
 		;;
 esac
 
-AC_ARG_WITH(large-heap, [  --with-large-heap=yes,no       Enable support for GC heaps larger than 3GB (defaults to no)], [large_heap=$withval], [large_heap=no])
+AC_ARG_WITH(large-heap,
+	[  --with-large-heap=yes,no       Enable support for GC heaps larger than 3GB (defaults to no)],
+	[large_heap=$withval],
+	[large_heap=no])
 if test "x$large_heap" = "xyes"; then
    CPPFLAGS="$CPPFLAGS -DLARGE_CONFIG"
 fi
@@ -1163,7 +1212,10 @@ if test x$target_win32 = xno; then
 	dnl ******************************************************************
 	dnl *** Checks for the IKVM JNI interface library                  ***
 	dnl ******************************************************************
-	AC_ARG_WITH(ikvm-native, [  --with-ikvm-native=yes,no      build the IKVM JNI interface library (defaults to yes)],[with_ikvm_native=$withval],[with_ikvm_native=$ikvm_native])
+	AC_ARG_WITH(ikvm-native,
+		[  --with-ikvm-native=yes,no      build the IKVM JNI interface library (defaults to yes)],
+		[with_ikvm_native=$withval],
+		[with_ikvm_native=$ikvm_native])
 
 	ikvm_native_dir=
 	if test x$with_ikvm_native = xyes; then
@@ -1215,11 +1267,11 @@ if test x$target_win32 = xno; then
 			return 0;
 		]])
 	], [
-		# Yes, we have it...
+		dnl Yes, we have it...
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(GLIBC_BEFORE_2_3_4_SCHED_SETAFFINITY, 1, [Have GLIBC_BEFORE_2_3_4_SCHED_SETAFFINITY])
 	], [
-		# We have the new, three-parameter version
+		dnl We have the new, three-parameter version
 		AC_MSG_RESULT(no)
 	])
 
@@ -1241,16 +1293,25 @@ if test x$target_win32 = xno; then
 			AC_CHECK_LIB(inotify, inotify_init, LIBS="$LIBS -linotify")
 	esac
 
+
+dnl
+dnl TODO :	The declarations below have been simplified to use AC_CHECK_DECLS instead
+dnl 		of AC_COMPILE_IFELSE; however, they could be simplified a bit further --
+dnl			within the 'if-true' action of each check, we use AC_DEFINE to define a symbol
+dnl			indicating the symbol was found. This is redundant now -- AC_CHECK_DECLS also
+dnl			defines a symbol if the declaration was found, so we should modify our sources
+dnl			to just use that symbol instead.
+dnl
+
 	dnl *******************************
 	dnl *** Checks for MSG_NOSIGNAL ***
 	dnl *******************************
 	AC_CHECK_DECLS(
 		[MSG_NOSIGNAL],
-		# Yes, we have it...
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE(HAVE_MSG_NOSIGNAL, 1, [Have MSG_NOSIGNAL])],
-		# We'll have to use signals
-		[AC_MSG_RESULT(no)],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_MSG_NOSIGNAL, 1, [Have MSG_NOSIGNAL])],
+		dnl We'll have to use signals
+		[],
 		[[#include <sys/socket.h>]])
 
 	dnl *****************************
@@ -1258,11 +1319,10 @@ if test x$target_win32 = xno; then
 	dnl *****************************
 	AC_CHECK_DECLS(
 		[SOL_IP],
-		# Yes, we have it...
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE(HAVE_SOL_IP, 1, [Have SOL_IP])],
-		# We'll have to use getprotobyname
-		[AC_MSG_RESULT(no)],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_SOL_IP, 1, [Have SOL_IP])],
+		dnl We'll have to use getprotobyname
+		[],
 		[[#include <netdb.h>]])
 
 	dnl *****************************
@@ -1270,75 +1330,62 @@ if test x$target_win32 = xno; then
 	dnl *****************************
 	AC_CHECK_DECLS(
 		[SOL_IPV6],
-		# Yes, we have it...
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE(HAVE_SOL_IPV6, 1, [Have SOL_IPV6])],
-		# We'll have to use getprotobyname
-		[AC_MSG_RESULT(no)],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_SOL_IPV6, 1, [Have SOL_IPV6])],
+		dnl We'll have to use getprotobyname
+		[],
 		[[#include <netdb.h>]])
 
 	dnl *****************************
 	dnl *** Checks for SOL_TCP    ***
 	dnl *****************************
-	AC_MSG_CHECKING(for SOL_TCP)
 	AC_CHECK_DECLS(
 		[SOL_TCP],
-		# Yes, we have it...
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE(HAVE_SOL_TCP, 1, [Have SOL_TCP])],
-		# We'll have to use getprotobyname
-		[AC_MSG_RESULT(no)],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_SOL_TCP, 1, [Have SOL_TCP])],
+		dnl We'll have to use getprotobyname
+		[],
 		[[#include <netdb.h>]])
 
 	dnl *****************************
 	dnl *** Checks for IP_PKTINFO ***
 	dnl *****************************
-	AC_MSG_CHECKING(for IP_PKTINFO)
 	AC_CHECK_DECLS(
 		[IP_PKTINFO],
-		# Yes, we have it...
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE(HAVE_IP_PKTINFO, 1, [Have IP_PKTINFO])],
-		[AC_MSG_RESULT(no)],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_IP_PKTINFO, 1, [Have IP_PKTINFO])],
+		[],
 		[[#include <netdb.h>]])
 
 	dnl *****************************
 	dnl *** Checks for IPV6_PKTINFO ***
 	dnl *****************************
-	AC_MSG_CHECKING(for IPV6_PKTINFO)
 	AC_CHECK_DECLS(
 		[IPV6_PKTINFO],
-		# Yes, we have it...
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE(HAVE_IPV6_PKTINFO, 1, [Have IPV6_PKTINFO])],
-		[AC_MSG_RESULT(no)],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_IPV6_PKTINFO, 1, [Have IPV6_PKTINFO])],
+		[],
 		[[#include <netdb.h>]])
 
 	dnl **********************************
 	dnl *** Checks for IP_DONTFRAGMENT ***
 	dnl **********************************
-	AC_MSG_CHECKING(for IP_DONTFRAGMENT)
 	AC_CHECK_DECLS(
 		[IP_DONTFRAGMENT],
-		# Yes, we have it...
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE(HAVE_IP_DONTFRAGMENT, 1, [Have IP_DONTFRAGMENT])],
-		[AC_MSG_RESULT(no)],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_IP_DONTFRAGMENT, 1, [Have IP_DONTFRAGMENT])],
+		[],
 		[[#include <netdb.h>]])
 
 	dnl **********************************
 	dnl *** Checks for IP_MTU_DISCOVER ***
 	dnl **********************************
-	AC_MSG_CHECKING(for IP_MTU_DISCOVER)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ int level = IP_MTU_DISCOVER; ]])
-	], [
-		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_IP_MTU_DISCOVER, 1, [Have IP_MTU_DISCOVER])
-	], [
-		AC_MSG_RESULT(no)
-	])
+	AC_CHECK_DECLS(
+		[IP_MTU_DISCOVER],
+		dnl Yes, we have it...
+		[AC_DEFINE(HAVE_IP_MTU_DISCOVER, 1, [Have IP_MTU_DISCOVER])],
+		[],
+		[[#include <netdb.h>]])
 
  	dnl *********************************
 	dnl *** Check for struct ip_mreqn ***
@@ -1350,11 +1397,11 @@ if test x$target_win32 = xno; then
 			mreq.imr_address.s_addr = 0;
 		]])
 	], [
-		# Yes, we have it...
+		dnl Yes, we have it...
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_STRUCT_IP_MREQN, 1, [Have struct ip_mreqn])
 	], [
-		# We'll just have to try and use struct ip_mreq
+		dnl We'll just have to try and use struct ip_mreq
 		AC_MSG_RESULT(no)
 		AC_MSG_CHECKING(for struct ip_mreq)
 		AC_COMPILE_IFELSE([
@@ -1363,11 +1410,11 @@ if test x$target_win32 = xno; then
 				mreq.imr_interface.s_addr = 0;
 			]])
 		], [
-			# Yes, we have it...
+			dnl Yes, we have it...
 			AC_MSG_RESULT(yes)
 			AC_DEFINE(HAVE_STRUCT_IP_MREQ, 1, [Have struct ip_mreq])
 		], [
-			# No multicast support
+			dnl No multicast support
 			AC_MSG_RESULT(no)
 		])
 	])
@@ -1377,9 +1424,11 @@ if test x$target_win32 = xno; then
 	dnl **********************************
 	AC_MSG_CHECKING(for gethostbyname2_r)
 	AC_LINK_IFELSE([
-		AC_LANG_PROGRAM([[ #include <netdb.h> ]], [[ gethostbyname2_r(NULL,0,NULL,NULL,0,NULL,NULL); ]])
+		AC_LANG_PROGRAM(
+			[[ #include <netdb.h> ]],
+			[[ gethostbyname2_r(NULL,0,NULL,NULL,0,NULL,NULL); ]])
 	], [
-		# Yes, we have it...
+		dnl Yes, we have it...
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_GETHOSTBYNAME2_R, 1, [Have gethostbyname2_r])
 	], [
@@ -1396,31 +1445,16 @@ if test x$target_win32 = xno; then
 	dnl ***********************************************
 	dnl *** Checks for size of sockaddr_un.sun_path ***
 	dnl ***********************************************
-	# AC_CHECK_SIZEOF can't cope with struct members :-(
-	AC_MSG_CHECKING(size of sockaddr_un.sun_path)
 	AC_CACHE_VAL(mono_cv_sizeof_sunpath, [
-		AC_RUN_IFELSE([
-			AC_LANG_SOURCE([[
+		AC_CHECK_SIZEOF(
+			[[sock_un.sun_path]], [],
+			[[
 				#include <sys/types.h>
 				#include <stdio.h>
 				#include <sys/un.h>
-
-				int main(void) {
-					struct sockaddr_un sock_un;
-					FILE *f=fopen("conftestval", "w");
-					if(!f) exit(1);
-					fprintf(f, "%d\n", sizeof(sock_un.sun_path));
-					exit(0);
-				}
+				struct sockaddr_un sock_un;
 			]])
-		], [
-			mono_cv_sizeof_sunpath=`cat conftestval`
-		], [
-		   	mono_cv_sizeof_sunpath=0
-		], [
-		   	mono_cv_sizeof_sunpath=0
-		])])dnl
-	AC_MSG_RESULT($mono_cv_sizeof_sunpath)
+		])
 	AC_DEFINE_UNQUOTED(MONO_SIZEOF_SUNPATH, $mono_cv_sizeof_sunpath, [Sizeof sock_un.sun_path])
 
 	dnl *****************************
@@ -1448,9 +1482,9 @@ if test x$target_win32 = xno; then
 	dnl *****************************
 	dnl *** Checks for libpthread ***
 	dnl *****************************
-# on FreeBSD -STABLE, the pthreads functions all reside in libc_r
-# and libpthread does not exist
-#
+dnl on FreeBSD -STABLE, the pthreads functions all reside in libc_r
+dnl and libpthread does not exist
+dnl
 	case "${host}" in
 		*-*-*freebsd*)
 			AC_CHECK_LIB(pthread, main, LIBS="$LIBS -pthread")
@@ -1463,25 +1497,15 @@ if test x$target_win32 = xno; then
 		;;
 	esac
 	AC_CHECK_HEADERS([pthread.h])
-	AC_CHECK_FUNCS(pthread_mutex_timedlock)
-	AC_CHECK_FUNCS(pthread_getattr_np pthread_attr_get_np)
-	AC_CHECK_FUNCS(pthread_kill)
-	AC_MSG_CHECKING(for PTHREAD_MUTEX_RECURSIVE)
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[ #include <pthread.h> ]], [[
-			pthread_mutexattr_t attr;
-			pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-		]])
-	], [
-		AC_MSG_RESULT(ok)
-	], [
-		AC_MSG_RESULT(no)
-		AC_MSG_WARN(Using mono_mutex_t for recursive mutexes)
-		AC_DEFINE(USE_MONO_MUTEX, 1, [Use mono_mutex_t])
-	])
-	AC_CHECK_FUNCS(pthread_attr_setstacksize)
-	AC_CHECK_FUNCS(pthread_attr_getstack pthread_attr_getstacksize)
-	AC_CHECK_FUNCS(pthread_get_stacksize_np pthread_get_stackaddr_np)
+	AC_CHECK_FUNCS([pthread_mutex_timedlock pthread_getattr_np pthread_attr_get_np pthread_kill pthread_attr_setstacksize pthread_attr_getstack pthread_attr_getstacksize pthread_get_stacksize_np pthread_get_stackaddr_np])
+
+	AC_CHECK_DECLS(
+		[PTHREAD_MUTEX_RECURSIVE],
+		[],
+		[AC_MSG_WARN(Using mono_mutex_t for recursive mutexes)
+		 AC_DEFINE(USE_MONO_MUTEX, 1, [Use mono_mutex_t])
+		],
+		[[#include <pthread.h>]])
 
 	dnl ***********************************
 	dnl *** Checks for signals
@@ -1527,10 +1551,10 @@ if test x$target_win32 = xno; then
 			}
 			]])
 		], [
-				AC_MSG_RESULT(yes)
+			AC_MSG_RESULT(yes)
 		], [
-				AC_MSG_RESULT(no)
-				with_tls=pthread
+			AC_MSG_RESULT(no)
+			with_tls=pthread
 		])
 	fi
 
@@ -1637,20 +1661,20 @@ if test x$target_win32 = xno; then
 				}
 			]])
 		], [
-				AC_MSG_RESULT(yes)
-				AC_DEFINE(HAVE_WORKING_SIGALTSTACK, 1, [Have a working sigaltstack])
+			AC_MSG_RESULT(yes)
+			AC_DEFINE(HAVE_WORKING_SIGALTSTACK, 1, [Have a working sigaltstack])
 		], [
-				with_sigaltstack=no
-				AC_MSG_RESULT(no)
+			with_sigaltstack=no
+			AC_MSG_RESULT(no)
 		])
 	fi
 
 	dnl ********************************
 	dnl *** Checks for semaphore lib ***
 	dnl ********************************
-	# 'Real Time' functions on Solaris
-	# posix4 on Solaris 2.6
-	# pthread (first!) on Linux
+	dnl 'Real Time' functions on Solaris
+	dnl posix4 on Solaris 2.6
+	dnl pthread (first!) on Linux
 	AC_SEARCH_LIBS(sem_init, pthread rt posix4) 
 
 	AC_SEARCH_LIBS(shm_open, pthread rt posix4) 
@@ -1863,7 +1887,7 @@ if test x$target_win32 = xno; then
 			if_nametoindex(NULL);
 		]])
 	], [
-		# Yes, we have it...
+		dnl Yes, we have it...
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_IF_NAMETOINDEX, 1, [Have if_nametoindex])
 	], [
@@ -1873,55 +1897,16 @@ if test x$target_win32 = xno; then
 	dnl **********************************
 	dnl *** Checks for MonoPosixHelper ***
 	dnl **********************************
-	AC_CHECK_HEADERS([checklist.h])
-	AC_CHECK_HEADERS([pathconf.h])
-	AC_CHECK_HEADERS([fstab.h])
-	AC_CHECK_HEADERS([attr/xattr.h])
-	AC_CHECK_HEADERS([sys/extattr.h])
-	AC_CHECK_HEADERS([sys/sendfile.h])
-	AC_CHECK_HEADERS([sys/statvfs.h])
-	AC_CHECK_HEADERS([sys/statfs.h])
-	AC_CHECK_HEADERS([sys/vfstab.h])
-	AC_CHECK_HEADERS([sys/xattr.h])
-	AC_CHECK_HEADERS([sys/mman.h])
-	AC_CHECK_HEADERS([sys/param.h])
-	AC_CHECK_HEADERS([sys/mount.h], [ ], [ ],
+	AC_CHECK_HEADERS([checklist.h pathconf.h fstab.h attr/xattr.h sys/extattr.h sys/sendfile.h sys/statvfs.h sys/statfs.h sys/vfstab.h sys/xattr.h sys/mman.h sys/param.h])
+	AC_CHECK_HEADERS([sys/mount.h], [], [],
 		[
 		#ifdef HAVE_SYS_PARAM_H
 		# include <sys/param.h>
 		#endif
 		])
-	AC_CHECK_HEADERS([sys/mount.h])
-	AC_CHECK_FUNCS(confstr)
-	AC_CHECK_FUNCS(seekdir telldir)
-	AC_CHECK_FUNCS(getdomainname)
-	AC_CHECK_FUNCS(setdomainname)
-	AC_CHECK_FUNCS(endgrent getgrent fgetgrent setgrent)
-	AC_CHECK_FUNCS(setgroups)
-	AC_CHECK_FUNCS(endpwent getpwent fgetpwent setpwent)
-	AC_CHECK_FUNCS(getfsstat)
-	AC_CHECK_FUNCS(lutimes futimes)
-	AC_CHECK_FUNCS(mremap)
-	AC_CHECK_FUNCS(remap_file_pages)
-	AC_CHECK_FUNCS(posix_fadvise)
-	AC_CHECK_FUNCS(posix_fallocate)
-	AC_CHECK_FUNCS(posix_madvise)
-	AC_CHECK_FUNCS(vsnprintf)
-	AC_CHECK_FUNCS(sendfile)
-	AC_CHECK_FUNCS(gethostid sethostid)
-	AC_CHECK_FUNCS(sethostname)
-	AC_CHECK_FUNCS(statfs)
-	AC_CHECK_FUNCS(fstatfs)
-	AC_CHECK_FUNCS(statvfs)
-	AC_CHECK_FUNCS(fstatvfs)
-	AC_CHECK_FUNCS(stime)
-	AC_CHECK_FUNCS(strerror_r)
-	AC_CHECK_FUNCS(ttyname_r)
-	AC_CHECK_FUNCS(psignal)
-	AC_CHECK_FUNCS(getlogin_r)
-	AC_CHECK_FUNCS(lockf)
-	AC_CHECK_FUNCS(swab)
-	AC_CHECK_FUNCS(setusershell endusershell)
+	AC_CHECK_HEADERS([sys/mount.h])	dnl Is this redundant? Or does it add something the previous check doesn't?
+
+	AC_CHECK_FUNCS([confstr seekdir telldir getdomainname setdomainname endgrent getgrent fgetgrent setgrent setgroups endpwent getpwent fgetpwent setpwent getfsstat lutimes futimes mremap remap_file_pages posix_fadvise posix_fallocate posix_madvise vsnprintf sendfile gethostid sethostid sethostname statfs fstatfs statvfs fstatvfs stime strerror_r ttyname_r psignal getlogin_r lockf swab setusershell endusershell])
 	AC_CHECK_SIZEOF(size_t)
 	AC_CHECK_TYPES([blksize_t], [AC_DEFINE(HAVE_BLKSIZE_T)], , 
 		[#include <sys/types.h>
@@ -1992,15 +1977,14 @@ if test x$target_win32 = xno; then
 	dnl *** Check for Console 2.0 I/O ***
 	dnl *********************************
 	AC_CHECK_HEADERS([curses.h])
-	AC_CHECK_HEADERS([term.h], [ ], [ ],
-	[#if HAVE_CURSES_H
-	 #include <curses.h>
-	 #endif
-	])
+	AC_CHECK_HEADERS([term.h], [], [],
+		[#if HAVE_CURSES_H
+		 #include <curses.h>
+		 #endif
+		])
 	AC_CHECK_HEADERS([termios.h])
 
-	dnl * This is provided in io-layer, but on windows it's only available
-	dnl * on xp+
+	dnl * This is provided in io-layer, but on windows it's only available on xp+
 	AC_DEFINE(HAVE_GETPROCESSID, 1, [Define if GetProcessId is available])
 else
 	dnl *********************************
@@ -2027,11 +2011,11 @@ else
 			mreq.imr_address.s_addr = 0;
 		]])	
 	], [
-		# Yes, we have it...
+		dnl Yes, we have it...
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_STRUCT_IP_MREQN)
 	], [
-		# We'll just have to try and use struct ip_mreq
+		dnl We'll just have to try and use struct ip_mreq
 		AC_MSG_RESULT(no)
 		AC_MSG_CHECKING(for struct ip_mreq)
 
@@ -2041,11 +2025,11 @@ else
 				mreq.imr_interface.s_addr = 0;
 			]])		
 		], [
-			# Yes, we have it...
+			dnl Yes, we have it...
 			AC_MSG_RESULT(yes)
 			AC_DEFINE(HAVE_STRUCT_IP_MREQ)
 		], [
-			# No multicast support
+			dnl No multicast support
 			AC_MSG_RESULT(no)
 		])
 	])
@@ -2077,16 +2061,15 @@ AC_COMPILE_IFELSE([
 		const int array[ ] = {[1] = 2,};
 	]])
 ], [
-	# Yes, we have it...
+	dnl Yes, we have it...
 	AC_MSG_RESULT(yes)
 	AC_DEFINE(HAVE_ARRAY_ELEM_INIT,1,[Supports C99 array initialization])
 ], [
-	# We'll have to use signals
 	AC_MSG_RESULT(no)
 ])
 
 AC_CHECK_FUNCS(trunc, , AC_MSG_CHECKING(for trunc in math.h)
-	# Simply calling trunc (0.0) is no good since gcc will optimize the call away
+	dnl Simply calling trunc (0.0) is no good since gcc will optimize the call away
 	AC_LINK_IFELSE([
 		AC_LANG_PROGRAM([[ #include <math.h> ]], [[ static void *p = &trunc; ]])
 	], [
@@ -2111,9 +2094,9 @@ dnl ****************************
 
 AC_MSG_CHECKING([if usage of random device is requested])
 AC_ARG_ENABLE(dev-random,
-[  --disable-dev-random    disable the use of the random device (enabled by default)],
-try_dev_random=$enableval, try_dev_random=yes)
-
+	[  --disable-dev-random    disable the use of the random device (enabled by default)],
+	[try_dev_random=$enableval],
+	[try_dev_random=yes])
 AC_MSG_RESULT($try_dev_random)
 
 case "{$build}" in
@@ -2137,7 +2120,6 @@ esac
 AC_DEFINE_UNQUOTED(NAME_DEV_RANDOM, "$NAME_DEV_RANDOM", [Name of /dev/random])
 
 dnl Now check if the device actually exists
-
 if test "x$try_dev_random" = "xyes"; then
     AC_CACHE_CHECK(for random device, ac_cv_have_dev_random,
     [if test -r "$NAME_DEV_RANDOM" ; then
@@ -2173,20 +2155,29 @@ if test "x$ac_cv_have_dev_random" = "xno" \
 fi
  
 AC_MSG_CHECKING([if inter-process shared handles are requested])
-AC_ARG_ENABLE(shared-handles, [  --disable-shared-handles disable inter-process shared handles], try_shared_handles=$enableval, try_shared_handles=yes)
+AC_ARG_ENABLE(shared-handles,
+	[  --disable-shared-handles disable inter-process shared handles],
+	[try_shared_handles=$enableval],
+	[try_shared_handles=yes])
 AC_MSG_RESULT($try_shared_handles)
 if test "x$try_shared_handles" != "xyes"; then
 	AC_DEFINE(DISABLE_SHARED_HANDLES, 1, [Disable inter-process shared handles])
 	AC_SUBST(DISABLE_SHARED_HANDLES)
 fi
 
-AC_ARG_ENABLE(bcl-opt, [  --disable-bcl-opt	BCL is compiled with no optimizations (allows accurate BCL debugging)], test_bcl_opt=$enableval, test_bcl_opt=yes)
+AC_ARG_ENABLE(bcl-opt,
+	[  --disable-bcl-opt	BCL is compiled with no optimizations (allows accurate BCL debugging)],
+	[test_bcl_opt=$enableval],
+	[test_bcl_opt=yes])
 
 AC_ARG_ENABLE(nunit-tests, [  --enable-nunit-tests	Run the nunit tests of the class library on 'make check'])
 AM_CONDITIONAL(ENABLE_NUNIT_TESTS, [test x$enable_nunit_tests = xyes])
 
 AC_MSG_CHECKING([if big-arrays are to be enabled])
-AC_ARG_ENABLE(big-arrays,  [  --enable-big-arrays	Enable the allocation and indexing of arrays greater than Int32.MaxValue], enable_big_arrays=$enableval, enable_big_arrays=no)
+AC_ARG_ENABLE(big-arrays,
+	[  --enable-big-arrays	Enable the allocation and indexing of arrays greater than Int32.MaxValue],
+	[enable_big_arrays=$enableval],
+	[enable_big_arrays=no])
 if test "x$enable_big_arrays" = "xyes" ; then
     if  test "x$ac_cv_sizeof_void_p" = "x8"; then
 	AC_DEFINE(MONO_BIG_ARRAYS,1,[Enable the allocation and indexing of arrays greater than Int32.MaxValue])
@@ -2200,7 +2191,10 @@ dnl **************
 dnl *** DTRACE ***
 dnl **************
 
-AC_ARG_ENABLE(dtrace,[  --enable-dtrace	Enable DTrace probes], enable_dtrace=$enableval, enable_dtrace=$has_dtrace)
+AC_ARG_ENABLE(dtrace,
+	[  --enable-dtrace	Enable DTrace probes],
+	[enable_dtrace=$enableval],
+	[enable_dtrace=$has_dtrace])
 
 if test "x$enable_dtrace" = "xyes"; then
    if test "x$has_dtrace" = "xno"; then
@@ -2260,8 +2254,14 @@ dnl **************
 dnl ***  NaCl  ***
 dnl **************
 
-AC_ARG_ENABLE(nacl_codegen, [  --enable-nacl-codegen      Enable Native Client code generation], enable_nacl_codegen=$enableval, enable_nacl_codegen=no)
-AC_ARG_ENABLE(nacl_gc, [  --enable-nacl-gc           Enable Native Client garbage collection], enable_nacl_gc=$enableval, enable_nacl_gc=no)
+AC_ARG_ENABLE(nacl_codegen,
+	[  --enable-nacl-codegen      Enable Native Client code generation],
+	[enable_nacl_codegen=$enableval],
+	[enable_nacl_codegen=no])
+AC_ARG_ENABLE(nacl_gc,
+	[  --enable-nacl-gc           Enable Native Client garbage collection],
+	[enable_nacl_gc=$enableval],
+	[enable_nacl_gc=no])
 
 AM_CONDITIONAL(NACL_CODEGEN, test x$enable_nacl_codegen != xno)
 if test "x$enable_nacl_codegen" = "xyes"; then
@@ -2281,8 +2281,14 @@ dnl **************
 dnl ***  LLVM  ***
 dnl **************
 
-AC_ARG_ENABLE(llvm,[  --enable-llvm	Enable the LLVM back-end], enable_llvm=$enableval, enable_llvm=no)
-AC_ARG_ENABLE(loadedllvm,[  --enable-loadedllvm	Load the LLVM back-end dynamically], enable_llvm=$enableval && enable_loadedllvm=$enableval, enable_loadedllvm=no)
+AC_ARG_ENABLE(llvm,
+	[  --enable-llvm	Enable the LLVM back-end],
+	[enable_llvm=$enableval],
+	[enable_llvm=no])
+AC_ARG_ENABLE(loadedllvm,
+	[  --enable-loadedllvm	Load the LLVM back-end dynamically],
+	[enable_llvm=$enableval && enable_loadedllvm=$enableval],
+	[enable_loadedllvm=no])
 
 if test "x$enable_llvm" = "xyes"; then
    AC_PATH_PROG(LLVM_CONFIG, llvm-config, no)
@@ -2298,16 +2304,16 @@ if test "x$enable_llvm" = "xyes"; then
    esac
 
 
-   # The output of --cflags seems to include optimizations flags too
+   dnl The output of --cflags seems to include optimizations flags too
    LLVM_CFLAGS=`$LLVM_CONFIG --cflags | sed -e 's/-O2//g' | sed -e 's/-O0//g' | sed -e 's/-fomit-frame-pointer//g' | sed -e 's/-fPIC//g'`
-   # LLVM is compiled with -fno-rtti, so we need this too, since our classes inherit
-   # from LLVM classes.
+   dnl LLVM is compiled with -fno-rtti, so we need this too, since our classes inherit
+   dnl from LLVM classes.
    LLVM_CXXFLAGS="`$LLVM_CONFIG --cxxflags` -fno-rtti"
    LLVM_LDFLAGS=`$LLVM_CONFIG --ldflags`
    LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter jit mcjit $llvm_codegen`
    LLVM_LIBS="$LLVM_LDFLAGS $LLVM_LIBS -lstdc++"
 
-   # Should be something like '2.6' or '2.7svn'
+   dnl Should be something like '2.6' or '2.7svn'
    llvm_version=`$LLVM_CONFIG --version`
    major_version=`echo $llvm_version | cut -c 1`
    minor_version=`echo $llvm_version | cut -c 3`
@@ -2324,8 +2330,8 @@ if test "x$enable_llvm" = "xyes"; then
    AC_DEFINE_UNQUOTED(LLVM_MINOR_VERSION, $minor_version, [Minor version of LLVM libraries])
    AC_DEFINE_UNQUOTED(LLVM_VERSION, "$llvm_version", [Full version of LLVM libraties])
 
-   # Have to pass these on the command line since mini-llvm-cpp.h already includes
-   # llvm's config.h
+   dnl Have to pass these on the command line since mini-llvm-cpp.h already includes
+   dnl llvm's config.h
    LLVM_CXXFLAGS="$LLVM_CXXFLAGS -DLLVM_MAJOR_VERSION=$major_version -DLLVM_MINOR_VERSION=$minor_version"
 
    AC_SUBST(LLVM_CFLAGS)
@@ -2358,10 +2364,10 @@ jit_wanted=true
 interp_wanted=false
 sgen_supported=false
 case "$host" in
-#	mips-sgi-irix5.* | mips-sgi-irix6.*)
-#		TARGET=MIPS;
-#		ACCESS_UNALIGNED="no"
-#		;;
+dnl	mips-sgi-irix5.* | mips-sgi-irix6.*)
+dnl		TARGET=MIPS;
+dnl		ACCESS_UNALIGNED="no"
+dnl		;;
 	mips*)
 		TARGET=MIPS;
 		arch_target=mips;
@@ -2395,16 +2401,16 @@ case "$host" in
 				arch_target=amd64
 			fi
 
-			# On solaris 10 x86, gcc prints a warning saying 'visibility attribute not supported on this configuration; ignored', but linking fails. A test case:
-			# int astruct __attribute__ ((visibility ("hidden")));
-			# void foo ()
-			# {
-			#	void *p = &astruct;
-			# }
-			# gcc -fPIC --shared -o libfoo.so foo.c
-			# yields:
-			# foo.c:6: warning: visibility attribute not supported in this configuration; ignored
-			# ld: fatal: relocation error: R_386_GOTOFF: file /var/tmp//ccxYR96k.o: symbol astruct: relocation must bind locally
+			dnl On solaris 10 x86, gcc prints a warning saying 'visibility attribute not supported on this configuration; ignored', but linking fails. A test case:
+			dnl int astruct __attribute__ ((visibility ("hidden")));
+			dnl void foo ()
+			dnl {
+			dnl	void *p = &astruct;
+			dnl }
+			dnl gcc -fPIC --shared -o libfoo.so foo.c
+			dnl yields:
+			dnl foo.c:6: warning: visibility attribute not supported in this configuration; ignored
+			dnl ld: fatal: relocation error: R_386_GOTOFF: file /var/tmp//ccxYR96k.o: symbol astruct: relocation must bind locally
 			if test "x$CC" = "xgcc"; then
           have_visibility_hidden=no
       fi
@@ -2476,7 +2482,7 @@ case "$host" in
 			INTL="libintl.so"
 		esac
 		if test x"$CC" = x"gcc"; then
-			# We don't support v8 cpus
+			dnl We don't support v8 cpus
 			CFLAGS="$CFLAGS -Wno-cast-align -mcpu=v9"
 		fi
 		if test x"$AR" = xfalse; then
@@ -2497,7 +2503,7 @@ case "$host" in
 		esac
 	       ;;
 	*-mingw*|*-*-cygwin*)
-		# When this is enabled, it leads to very strange crashes at runtime (gcc-3.4.4)
+		dnl When this is enabled, it leads to very strange crashes at runtime (gcc-3.4.4)
 		have_visibility_hidden=no
 		INTL="intl"
 		;;
@@ -2539,7 +2545,7 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
 		CPPFLAGS="$CPPFLAGS -DARM_FPU_VFP=1 -D__ARM_EABI__ -DHAVE_ARMV6=1"
-		# libgc's gc_locks.h depends on this
+		dnl libgc's gc_locks.h depends on this
 	    NESTED_LIBGC_FLAGS="$NESTED_LIBGC_FLAGS -DHAVE_ARMV6"
 		sgen_supported=true
 		;;
@@ -2557,7 +2563,7 @@ case "$host" in
 		ACCESS_UNALIGNED="yes"
 		JIT_SUPPORTED=yes
 		sgen_supported=true
-		# Required CFLAGS for s390[x].  USE_STRING_INLINES is automatic with gcc 4.1
+		dnl Required CFLAGS for s390[x].  USE_STRING_INLINES is automatic with gcc 4.1
 		CFLAGS="$CFLAGS -mbackchain -D__USE_STRING_INLINES"
 		;;
 	s390x-*-linux*)
@@ -2583,16 +2589,16 @@ if test "x$host" != "x$target"; then
 		JIT_SUPPORTED=yes
 		CPPFLAGS="$CPPFLAGS -DARM_FPU_VFP=1 -D__ARM_EABI__ -DHAVE_ARMV6=1"
 		jit_wanted=true
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
+		dnl Can't use tls, since it depends on the runtime detection of tls offsets
+		dnl in mono-compiler.h
 		with_tls=pthread
 		;;
    powerpc64-ps3-linux-gnu)
 		TARGET=POWERPC64
 		arch_target=powerpc64
 		AC_DEFINE(TARGET_PS3, 1, [...])
-		# It would be better to just use TARGET_POWERPC64, but lots of code already
-		# uses this define
+		dnl It would be better to just use TARGET_POWERPC64, but lots of code already
+		dnl uses this define
 		AC_DEFINE(__mono_ppc64__, 1, [...])
 		AC_DEFINE(__mono_ilp32__, 1, [64 bit mode with 4 byte longs and pointers])
 		sizeof_register=8
@@ -2603,8 +2609,8 @@ if test "x$host" != "x$target"; then
 		TARGET=POWERPC64
 		arch_target=powerpc64
 		AC_DEFINE(TARGET_XBOX360, 1, [...])
-		# It would be better to just use TARGET_POWERPC64, but lots of code already
-		# uses this define
+		dnl It would be better to just use TARGET_POWERPC64, but lots of code already
+		dnl uses this define
 		sizeof_register=8
 		target_byte_order=G_BIG_ENDIAN
 		;;
@@ -2629,13 +2635,13 @@ if test "x$host" != "x$target"; then
 		JIT_SUPPORTED=yes
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		jit_wanted=true
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
+		dnl Can't use tls, since it depends on the runtime detection of tls offsets
+		dnl in mono-compiler.h
 		with_tls=pthread
 		target_mach=no
 		case "$target" in
 		armv7l-unknown-linux-gnueabi*)
-			# TEGRA
+			dnl TEGRA
 			CPPFLAGS="$CPPFLAGS -DARM_FPU_VFP=1"
 			;;
    		armv5-*-linux-androideabi*)
@@ -2649,7 +2655,7 @@ if test "x$host" != "x$target"; then
 	esac
 fi
 
-# FIXME: Define the others as well
+dnl FIXME: Define the others as well
 case "$TARGET" in
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
@@ -2729,7 +2735,10 @@ else
    build_sgen_default=no
 fi
 SGEN_DEFINES=
-AC_ARG_WITH(sgen, [  --with-sgen=yes,no             Extra Generational GC, default=yes],[buildsgen=$with_sgen],[buildsgen=$build_sgen_default])
+AC_ARG_WITH(sgen,
+	[  --with-sgen=yes,no             Extra Generational GC, default=yes],
+	[buildsgen=$with_sgen],
+	[buildsgen=$build_sgen_default])
 if test x$buildsgen = xyes; then
    if $sgen_supported; then
        SGEN_DEFINES="-DHAVE_SGEN_GC -DHAVE_MOVING_COLLECTOR"
@@ -2815,11 +2824,11 @@ AC_SUBST(libsuffix)
 
 if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
 	if test "x$with_tls" = "x__thread"; then
-		#
-		# On some linux distributions, TLS works in executables, but linking 
-		# against a shared library containing TLS fails with:
-		# undefined reference to `__tls_get_addr'
-		#
+		dnl
+		dnl On some linux distributions, TLS works in executables, but linking 
+		dnl against a shared library containing TLS fails with:
+		dnl undefined reference to `__tls_get_addr'
+		dnl
 		
 		rm -f conftest.c conftest.so conftest
 		echo "static __thread int foo; int main () { foo = 5; return 0; }" > conftest.c
@@ -2834,7 +2843,10 @@ if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86"; then
 fi
 
 mono_debugger_supported=no
-AC_ARG_ENABLE(mono-debugger, [  --disable-mono-debugger disable support for the mdb debugger], try_mono_debugger=$enableval, try_mono_debugger=yes)
+AC_ARG_ENABLE(mono-debugger,
+	[  --disable-mono-debugger disable support for the mdb debugger],
+	[try_mono_debugger=$enableval],
+	[try_mono_debugger=yes])
 if test "x$try_mono_debugger" = "xyes"; then
 	if test "x$TARGET" = "xAMD64" -o "x$TARGET" = "xX86" -o "x$TARGET" = "xALPHA" -o "x$TARGET" = "xS390x"; then
 		if test x$use_included_gc = xyes; then
@@ -2850,12 +2862,12 @@ if test "x$try_mono_debugger" = "xyes"; then
 	fi
 fi
 
-# disable the debugger entirely when building with moonlight
+dnl disable the debugger entirely when building with moonlight
 if test "x$with_moonlight" != "xno"; then
 	mono_debugger_supported=no
 fi
 
-# mdb support for sgen is broken, disable it until further notice.
+dnl mdb support for sgen is broken, disable it until further notice.
 mono_debugger_supported=no
 
 AC_MSG_CHECKING(if the Mono Debugger is supported on this platform)
@@ -2866,29 +2878,38 @@ fi
 AM_CONDITIONAL(MONO_DEBUGGER_SUPPORTED, test x$mono_debugger_supported = xyes)
 AC_MSG_RESULT($mono_debugger_supported)
 
-AC_ARG_ENABLE(icall-symbol-map,[  --enable-icall-symbol-map Generate tables which map icall functions to their C symbols], icall_symbol_map=$enableval, icall_symbol_map=no)
+AC_ARG_ENABLE(icall-symbol-map,
+	[  --enable-icall-symbol-map Generate tables which map icall functions to their C symbols],
+	[icall_symbol_map=$enableval],
+	[icall_symbol_map=no])
 if test "x$icall_symbol_map" = "xyes"; then
    AC_DEFINE(ENABLE_ICALL_SYMBOL_MAP, 1, [Icall symbol map enabled])
 fi
 
-AC_ARG_ENABLE(icall-export,[  --enable-icall-export Export icall functions], icall_export=$enableval, icall_export=no)
+AC_ARG_ENABLE(icall-export,
+	[  --enable-icall-export Export icall functions],
+	[icall_export=$enableval],
+	[icall_export=no])
 if test "x$icall_export" = "xyes"; then
    AC_DEFINE(ENABLE_ICALL_EXPORT, 1, [Icall export enabled])
 fi
 
-AC_ARG_ENABLE(icall-tables,[  --disable-icall-tables Disable the runtime lookup of icalls], icall_tables=$enableval, icall_tables=yes)
+AC_ARG_ENABLE(icall-tables,
+	[  --disable-icall-tables Disable the runtime lookup of icalls],
+	[icall_tables=$enableval],
+	[icall_tables=yes])
 if test "x$icall_tables" = "xno"; then
    AC_DEFINE(DISABLE_ICALL_TABLES, 1, [Icall tables disabled])
 fi
 
 if test "x$mono_cv_clang" = "xyes"; then
-   # FIXME: This causes many compilation errors
+   dnl FIXME: This causes many compilation errors
    with_tls=pthread
 fi
 
 if test "x$with_tls" = "x__thread"; then
 	AC_DEFINE(HAVE_KW_THREAD, 1, [Have __thread keyword])
-	# Pass the information to libgc
+	dnl Pass the information to libgc
 	CPPFLAGS="$CPPFLAGS -DUSE_COMPILER_TLS"
 	AC_MSG_CHECKING(if the tls_model attribute is supported)
 
@@ -2898,7 +2919,7 @@ if test "x$with_tls" = "x__thread"; then
 		]], [[ ]])
 		], [
 			AC_MSG_RESULT(yes)
-			# CLANG doesn't support this yet, and it prints warnings about it
+			dnl CLANG doesn't support this yet, and it prints warnings about it
 			if test "x$mono_cv_clang" = "xno"; then
 				AC_DEFINE(HAVE_TLS_MODEL_ATTR, 1, [tld_model available])
 			fi
@@ -2963,7 +2984,7 @@ if test ${TARGET} = ARM && test x$cross_compiling = xno && test x$enable_mcs_bui
 	AC_MSG_RESULT($armv6)
 	if test ${armv6} = yes; then
 	   AC_DEFINE(HAVE_ARMV6, 1, "Host supports ARMV6 instructions")
-	   # libgc's gc_locks.h depends on this
+	   dnl libgc's gc_locks.h depends on this
 	   NESTED_LIBGC_FLAGS="$NESTED_LIBGC_FLAGS -DHAVE_ARMV6"
 	fi
 fi
@@ -2979,20 +3000,20 @@ fi
 
 case "x$gc" in
 	xincluded)
-		# Pass CPPFLAGS to libgc configure
-		# We should use a separate variable for this to avoid passing useless and
-		# potentially problematic defines to libgc (like -D_FILE_OFFSET_BITS=64)
-		# This should be executed late so we pick up the final version of CPPFLAGS
-		# The problem with this approach, is that during a reconfigure, the main
-		# configure scripts gets invoked with these arguments, so we use separate
-		# variables understood by libgc's configure to pass CPPFLAGS and CFLAGS.
+		dnl Pass CPPFLAGS to libgc configure
+		dnl We should use a separate variable for this to avoid passing useless and
+		dnl potentially problematic defines to libgc (like -D_FILE_OFFSET_BITS=64)
+		dnl This should be executed late so we pick up the final version of CPPFLAGS
+		dnl The problem with this approach, is that during a reconfigure, the main
+		dnl configure scripts gets invoked with these arguments, so we use separate
+		dnl variables understood by libgc's configure to pass CPPFLAGS and CFLAGS.
 		TMP_CPPFLAGS="$CPPFLAGS $NESTED_LIBGC_FLAGS"
 		if test x$TARGET = xSPARC -o x$TARGET = xSPARC64; then
 			TMP_CPPFLAGS=`echo $TMP_CPPFLAGS | sed -e 's/-D_FILE_OFFSET_BITS=64//g'`
 		fi
-		# Don't pass -finstrument-for-thread-suspension in, 
-		# if these are instrumented it will be very bad news 
-		# (infinite recursion, undefined parking behavior, etc)
+		dnl Don't pass -finstrument-for-thread-suspension in, 
+		dnl if these are instrumented it will be very bad news 
+		dnl (infinite recursion, undefined parking behavior, etc)
 		TMP_CPPFLAGS=`echo $TMP_CPPFLAGS | sed -e 's/-finstrument-for-thread-suspension//g'`
 		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$TMP_CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$CFLAGS_FOR_LIBGC\""
 		AC_CONFIG_SUBDIRS(libgc)
@@ -3007,7 +3028,8 @@ AC_ARG_WITH(monotouch, [  --with-monotouch=yes,no,only    If you want to build t
 AC_ARG_WITH(mobile,    [  --with-mobile=yes,no            If you want to build the Mobile assemblies (defaults to no)],        [ ], [with_mobile=no])
 
 OPROFILE=no
-AC_ARG_WITH(oprofile,[  --with-oprofile=no,<oprofile install dir>   Enable oprofile support (defaults to no)],[
+AC_ARG_WITH(oprofile,
+	[  --with-oprofile=no,<oprofile install dir>   Enable oprofile support (defaults to no)],[
 	if test x$with_oprofile != xno; then
 	    oprofile_include=$with_oprofile/include
 	    if test ! -f $oprofile_include/opagent.h; then
@@ -3021,7 +3043,8 @@ AC_ARG_WITH(oprofile,[  --with-oprofile=no,<oprofile install dir>   Enable oprof
 ])
 
 MALLOC_MEMPOOLS=no
-AC_ARG_WITH(malloc_mempools,[  --with-malloc-mempools=yes,no  Use malloc for each single mempool allocation (only for runtime debugging, defaults to no)],[
+AC_ARG_WITH(malloc_mempools,
+	[  --with-malloc-mempools=yes,no  Use malloc for each single mempool allocation (only for runtime debugging, defaults to no)],[
 	if test x$with_malloc_mempools = xyes; then
 		MALLOC_MEMPOOLS=yes
 		AC_DEFINE(USE_MALLOC_FOR_MEMPOOLS,1,[Use malloc for each single mempool allocation])
@@ -3030,7 +3053,8 @@ AC_ARG_WITH(malloc_mempools,[  --with-malloc-mempools=yes,no  Use malloc for eac
 
 
 DISABLE_MCS_DOCS=no
-AC_ARG_WITH(mcs_docs,[  --with-mcs-docs=yes,no         If you want to build the documentation under mcs (defaults to yes)],[
+AC_ARG_WITH(mcs_docs,
+	[  --with-mcs-docs=yes,no         If you want to build the documentation under mcs (defaults to yes)],[
 	if test x$with_mcs_docs != xyes; then
 		DISABLE_MCS_DOCS=yes
 	fi
@@ -3040,39 +3064,42 @@ if test x$with_profile4 != xyes; then
 fi
 
 MOONLIGHT_DEFINES=
-AC_ARG_WITH(moonlight, [  --with-moonlight=yes|no|only         If you want to build Mono for Moonlight (defaults to no)],[
+AC_ARG_WITH(moonlight,
+	[  --with-moonlight=yes|no|only         If you want to build Mono for Moonlight (defaults to no)],[
 	if test x$with_moonlight != xno; then
         MOONLIGHT_DEFINES="-DMOONLIGHT -DDISABLE_ASSEMBLY_REMAPPING "
 	fi
 ], [with_moonlight=no])
 AC_SUBST(MOONLIGHT_DEFINES)
 
-AC_ARG_WITH(moon_gc, [  --with-moon-gc=boehm,sgen		Select the gc to use with Moonlight (defaults to boehm)],[
+AC_ARG_WITH(moon_gc,
+	[  --with-moon-gc=boehm,sgen		Select the gc to use with Moonlight (defaults to boehm)],[
 	if test "x$with_moon_gc" != "xsgen"; then
 		with_moon_gc=boehm
 	fi
 ], [with_moon_gc=boehm])
 
-AC_ARG_WITH(lazy_gc_thread_creation, [  --with-lazy-gc-thread-creation=yes|no      Enable lazy runtime thread creation, embedding host must do it explicitly (defaults to no)],[
+AC_ARG_WITH(lazy_gc_thread_creation,
+	[  --with-lazy-gc-thread-creation=yes|no      Enable lazy runtime thread creation, embedding host must do it explicitly (defaults to no)],[
 	if test x$with_lazy_gc_thread_creation != xno ; then
 		AC_DEFINE(LAZY_GC_THREAD_CREATION,1,[Enable lazy gc thread creation by the embedding host.])
 	fi
 ], [with_lazy_gc_thread_creation=no])
 
 AC_CHECK_HEADERS([malloc.h], 
-		[AC_DEFINE([HAVE_USR_INCLUDE_MALLOC_H], [1], 
-			[Define to 1 if you have /usr/include/malloc.h.])],,)
+	[AC_DEFINE([HAVE_USR_INCLUDE_MALLOC_H], [1], 
+		[Define to 1 if you have /usr/include/malloc.h.])],,)
 
 if test x"$CC" = x"gcc"; then
-   	# Implicit function declarations are not 64 bit safe
-	# Do this late, since this causes lots of configure tests to fail
+   	dnl Implicit function declarations are not 64 bit safe
+	dnl Do this late, since this causes lots of configure tests to fail
 	CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
-	# jay has a lot of implicit declarations
+	dnl jay has a lot of implicit declarations
 	JAY_CFLAGS="-Wno-implicit-function-declaration"
 fi
 
-# When --disable-shared is used, libtool transforms libmono-2.0.la into libmono-2.0.so
-# instead of libmono-static.a
+dnl When --disable-shared is used, libtool transforms libmono-2.0.la into libmono-2.0.so
+dnl instead of libmono-static.a
 if test "x$enable_shared" = "xno" -a "x$enable_executables" = "xyes"; then
    LIBMONO_LA=libmini-static.la
 else
@@ -3099,7 +3126,7 @@ else
 fi
 AC_SUBST(docs_dir)
 
-## Maybe should also disable if mcsdir is invalid.  Let's punt the issue for now.
+dnl Maybe should also disable if mcsdir is invalid.  Let's punt the issue for now.
 AM_CONDITIONAL(BUILD_MCS, [test x$cross_compiling = xno && test x$enable_mcs_build != xno])
 
 AM_CONDITIONAL(HAVE_OPROFILE, test x$OPROFILE = xyes)
@@ -3393,15 +3420,15 @@ msvc/Makefile
 po/Makefile
 ])
 
-# Update all submodules recursively to ensure everything is checked out
+dnl Update all submodules recursively to ensure everything is checked out
 $srcdir/scripts/update_submodules
 
 if test x$host_win32 = xyes; then
-   # Get rid of 'cyg' prefixes in library names
+   dnl Get rid of 'cyg' prefixes in library names
    sed -e "s/\/cyg\//\/\//" libtool > libtool.new; mv libtool.new libtool; chmod 755 libtool
-   # libtool seems to inherit -mno-cygwin from our CFLAGS, and uses it to compile its executable
-   # wrapper scripts which use exec(). gcc has no problem compiling+linking this, but the resulting
-   # executable doesn't work...
+   dnl libtool seems to inherit -mno-cygwin from our CFLAGS, and uses it to compile its executable
+   dnl wrapper scripts which use exec(). gcc has no problem compiling+linking this, but the resulting
+   dnl executable doesn't work...
    sed -e "s,-mno-cygwin,,g" libtool > libtool.new; mv libtool.new libtool; chmod 755 libtool
 fi
 
@@ -3413,11 +3440,11 @@ fi
   NONE) exec_prefix='${prefix}' ;;
   esac
 
-  #
-  # If we are cross compiling, we don't build in the mcs/ tree.  Let us not clobber
-  # any existing config.make.  This allows people to share the same source tree
-  # with different build directories, one native and one cross
-  #
+  dnl
+  dnl If we are cross compiling, we don't build in the mcs/ tree.  Let us not clobber
+  dnl any existing config.make.  This allows people to share the same source tree
+  dnl with different build directories, one native and one cross
+  dnl
   if test x$cross_compiling = xno && test x$enable_mcs_build != xno; then
 
     test -w $mcs_topdir/build || chmod +w $mcs_topdir/build
@@ -3500,7 +3527,7 @@ fi
 
   fi
 
-  # if we have an olive folder, override the default settings
+  dnl if we have an olive folder, override the default settings
   if test -d $olivedir; then
 
     if test x$cross_compiling = xno && test x$enable_olive_build != xno; then
