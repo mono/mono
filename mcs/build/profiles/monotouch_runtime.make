@@ -5,6 +5,9 @@ BOOTSTRAP_PROFILE = build
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
 MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
 
+# Use system resgen as we don't want local System.Windows.Forms dependency
+RESGEN = resgen2
+
 # nuttzing!
 
 profile-check:

@@ -785,7 +785,7 @@ class MDocUpdater : MDocCommand
 					XmlDocument doc = new XmlDocument ();
 					doc.Load (typefile.FullName);
 					XmlElement e = doc.SelectSingleNode("/Type") as XmlElement;
-					if (!no_assembly_versions && UpdateAssemblyVersions(e, GetAssemblyVersions(), false)) {
+					if (e != null && !no_assembly_versions && UpdateAssemblyVersions(e, GetAssemblyVersions(), false)) {
 						using (TextWriter writer = OpenWrite (typefile.FullName, FileMode.Truncate))
 							WriteXml(doc.DocumentElement, writer);
 						goodfiles.Add (relTypeFile);
