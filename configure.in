@@ -359,8 +359,8 @@ dnl If the user hasn't explicitly specified which C and C++ compilers to use,
 dnl search the system for suitable compilers to use.
 dnl If the system contains more than one of the listed compilers, the one which
 dnl appears first (left-to-right) in the list will be used.
-AC_PROG_CC([gcc])		dnl [gcc clang]
-AC_PROG_CXX([g++])		dnl [g++ clang++]
+AC_PROG_CC([gcc clang])
+AC_PROG_CXX([g++ clang++])
 
 AM_PROG_AS
 AC_PROG_INSTALL
@@ -430,15 +430,17 @@ AC_CHECK_HEADERS([sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore
 AC_CHECK_HEADERS([sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h])
 AC_CHECK_HEADERS(
 	[linux/netlink.h linux/rtnetlink.h],
-	[ ], [ ], [
+	[], [], [
 		#include <stddef.h>
 		#include <sys/socket.h>
 		#include <linux/socket.h>
 	])
 
-AC_CHECK_HEADERS([sys/user.h], [ ], [ ], [
-	#ifdef HAVE_SYS_PARAM_H
-	# include <sys/param.h>
+AC_CHECK_HEADERS(
+	[sys/user.h],
+	[], [], [
+		#ifdef HAVE_SYS_PARAM_H
+		# include <sys/param.h>
 	#endif
 	])
 
@@ -480,18 +482,12 @@ dnl for mono/metadata/debug-symfile.c
 AC_CHECK_HEADERS([elf.h])
 
 dnl for support
-AC_CHECK_HEADERS([poll.h])
-AC_CHECK_HEADERS([sys/poll.h])
-AC_CHECK_HEADERS([sys/wait.h])
-AC_CHECK_HEADERS([grp.h])
-AC_CHECK_HEADERS([syslog.h])
+AC_CHECK_HEADERS([poll.h sys/poll.h sys/wait.h grp.h syslog.h])
 
 dnl for mono/dis
-AC_CHECK_HEADERS([wchar.h])
-AC_CHECK_HEADERS([ieeefp.h])
+AC_CHECK_HEADERS([wchar.h ieeefp.h])
 dnl TODO : Simplify this to use AC_CHECK_DECLS
 AC_MSG_CHECKING(for isinf)
-AC_LANG_ASSERT(C)
 AC_LINK_IFELSE([
 	AC_LANG_PROGRAM([[
 		#include <math.h>
@@ -1454,8 +1450,9 @@ dnl
 				#include <sys/un.h>
 				struct sockaddr_un sock_un;
 			]])
+		mono_cv_sizeof_sunpath=$ac_cv_sizeof_sock_un_sun_path
 		])
-	AC_DEFINE_UNQUOTED(MONO_SIZEOF_SUNPATH, $mono_cv_sizeof_sunpath, [Sizeof sock_un.sun_path])
+	AC_DEFINE_UNQUOTED(MONO_SIZEOF_SUNPATH, [$ac_cv_sizeof_sock_un_sun_path], [Sizeof sock_un.sun_path])
 
 	dnl *****************************
 	dnl *** Checks for libxnet    ***
