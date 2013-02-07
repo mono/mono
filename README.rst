@@ -208,283 +208,283 @@ might want to use:
   
 ``--with-sgen=[yes, no]``
 
-Generational GC support. Enables or disables compilation of a Mono runtime
-with the SGen garbage collector.
+  Generational GC support. Enables or disables compilation of a Mono runtime
+  with the SGen garbage collector.
 
-On platforms that support it, after building Mono, you will have both a
-``mono`` binary and a ``mono-sgen`` binary. ``mono`` uses Boehm, while
-``mono-sgen`` uses the Simple Generational GC.
+  On platforms that support it, after building Mono, you will have both a
+  ``mono`` binary and a ``mono-sgen`` binary. ``mono`` uses Boehm, while
+  ``mono-sgen`` uses the Simple Generational GC.
 
 ``--with-gc=[boehm, included, sgen, none]``
 
-Selects the default Boehm garbage collector engine to use. The default is ``included``.
+  Selects the default Boehm garbage collector engine to use. The default is ``included``.
 
-``included``
-  This is the default value, and its the most feature complete, it will
-  allow Mono to use typed allocations and support the debugger.
+  ``included``
+    This is the default value, and its the most feature complete, it will
+    allow Mono to use typed allocations and support the debugger.
 
-  It is essentially a slightly modified Boehm GC.
+    It is essentially a slightly modified Boehm GC.
 
-``boehm``
-  This is used to use a system-install Boehm GC, it is useful to test new
-  features available in Boehm GC, but we do not recommend that people use
-  this, as it disables a few features.
+  ``boehm``
+    This is used to use a system-install Boehm GC, it is useful to test new
+    features available in Boehm GC, but we do not recommend that people use
+    this, as it disables a few features.
 
-``none``
-  Disables the inclusion of a garbage collector.
+  ``none``
+    Disables the inclusion of a garbage collector.
 
 ``--with-tls=[__thread, pthread]``
 
-Controls how Mono should access thread local storage, ``pthread`` forces
-Mono to use the pthread APIs, while ``__thread`` uses compiler-optimized
-access to it.
+  Controls how Mono should access thread local storage, ``pthread`` forces
+  Mono to use the pthread APIs, while ``__thread`` uses compiler-optimized
+  access to it.
 
-Although ``__thread`` is faster, it requires support from the compiler,
-kernel and *libc*. Old Linux systems do not support with ``__thread``.
+  Although ``__thread`` is faster, it requires support from the compiler,
+  kernel and *libc*. Old Linux systems do not support with ``__thread``.
 
-This value is typically pre-configured and there is no need to set it,
-unless you are trying to debug a problem.
+  This value is typically pre-configured and there is no need to set it,
+  unless you are trying to debug a problem.
 
 ``--with-sigaltstack=[yes, no]``
 
-**Experimental**: Use at your own risk, it is known to cause problems with
-garbage collection and is hard to reproduce those bugs.
+  **Experimental**: Use at your own risk, it is known to cause problems with
+  garbage collection and is hard to reproduce those bugs.
 
-This controls whether Mono will install a special signal handler to handle
-stack overflows. If set to ``yes``, it will turn stack overflows into the
-``StackOverflowException``. Otherwise when a stack overflow happens,
-your program will receive a segmentation fault.
+  This controls whether Mono will install a special signal handler to handle
+  stack overflows. If set to ``yes``, it will turn stack overflows into the
+  ``StackOverflowException``. Otherwise when a stack overflow happens,
+  your program will receive a segmentation fault.
 
-The configure script will try to detect if your operating system supports this.
-Some older Linux systems do not support this feature, or you might want to
-override the auto-detection.
+  The configure script will try to detect if your operating system supports this.
+  Some older Linux systems do not support this feature, or you might want to
+  override the auto-detection.
 
 ``--with-static_mono=[yes, no]``
 
-This controls whether ``mono`` should link against a static library
-(``libmono.a``) or a shared library (``libmono.so``).
+  This controls whether ``mono`` should link against a static library
+  (``libmono.a``) or a shared library (``libmono.so``).
 
-This defaults to ``yes``, and improves the performance of the ``mono`` program.
+  This defaults to ``yes``, and improves the performance of the ``mono`` program.
 
-This only affects the ``mono`` binary, the shared library ``libmono.so``
-will always be produced for developers that want to embed the runtime in
-their application.
+  This only affects the ``mono`` binary, the shared library ``libmono.so``
+  will always be produced for developers that want to embed the runtime in
+  their application.
 
 ``--with-xen-opt=[yes, no]``
 
-The default value for this is ``yes``, and it makes Mono generate code which
-might be slightly slower on average systems, but the resulting executable will
-run faster under the Xen virtualization system.
+  The default value for this is ``yes``, and it makes Mono generate code which
+  might be slightly slower on average systems, but the resulting executable will
+  run faster under the Xen virtualization system.
 
 ``--with-large-heap=[yes, no]``
 
-Enable support for GC heaps larger than 3GB.
+  Enable support for GC heaps larger than 3GB.
 
-This value is set to ``no`` by default.
+  This value is set to ``no`` by default.
 
 ``--enable-small-config=[yes, no]``
 
-Enable some tweaks to reduce memory usage and disk footprint at the expense of
-some capabilities. Typically this means that the number of threads that can be
-created is limited (256), that the maxmimum heap size is also reduced (256 MB)
-and other such limitations that still make Mono useful, but more suitable to
-embedded devices (e.g., mobile phones).
+  Enable some tweaks to reduce memory usage and disk footprint at the expense of
+  some capabilities. Typically this means that the number of threads that can be
+  created is limited (256), that the maxmimum heap size is also reduced (256 MB)
+  and other such limitations that still make Mono useful, but more suitable to
+  embedded devices (e.g., mobile phones).
 
-This value is set to ``no`` by default.
+  This value is set to ``no`` by default.
 
 ``--with-ikvm-native=[yes, no]``
 
-Controls whether the IKVM JNI interface library is built or not.
-This is used if you are planning on using the IKVM Java Virtual machine with Mono.
+  Controls whether the IKVM JNI interface library is built or not.
+  This is used if you are planning on using the IKVM Java Virtual machine with Mono.
 
-This defaults to ``yes``.
+  This defaults to ``yes``.
 
 ``--with-profile4=[yes, no]``
 
-Whether you want to build the 4.x profile libraries and runtime.
+  Whether you want to build the 4.x profile libraries and runtime.
 
-It defaults to ``yes``.
+  It defaults to ``yes``.
 
 ``--with-moonlight=[yes, no]``
 
-Whether you want to generate the Silverlight/Moonlight libraries and toolchain
-in addition to the default (1.1 and 2.0 APIs).
+  Whether you want to generate the Silverlight/Moonlight libraries and toolchain
+  in addition to the default (1.1 and 2.0 APIs).
 
-This will produce the ``smcs`` compiler which will reference the Silverlight
-modified assemblies (``mscorlib.dll``, ``System.dll``, ``System.Code.dll``
-and ``System.Xml.Core.dll``) and turn on the LINQ extensions for the compiler.
+  This will produce the ``smcs`` compiler which will reference the Silverlight
+  modified assemblies (``mscorlib.dll``, ``System.dll``, ``System.Code.dll``
+  and ``System.Xml.Core.dll``) and turn on the LINQ extensions for the compiler.
 
 ``--with-moon-gc=[boehm, sgen]``
 
-Select the GC to use for Moonlight.
+  Select the GC to use for Moonlight.
 
-``boehm``
-  Selects the Boehm Garbage Collector, with the same flags as the regular
-  ``mono`` build. This is the default.
+  ``boehm``
+    Selects the Boehm Garbage Collector, with the same flags as the regular
+    ``mono`` build. This is the default.
 
-``sgen``
-  Selects the new SGen Garbage Collector, which provides Generational GC
-  support, using the same flags as the ``mono-sgen`` build.
+  ``sgen``
+    Selects the new SGen Garbage Collector, which provides Generational GC
+    support, using the same flags as the ``mono-sgen`` build.
 
-This defaults to ``boehm``.
+  This defaults to ``boehm``.
 
 ``--with-libgdiplus=[installed, sibling, <path>]``
 
-This is used to configure where should Mono look for
-libgdiplus when running the System.Drawing tests.
+  This is used to configure where should Mono look for
+  libgdiplus when running the System.Drawing tests.
 
-It defaults to ``installed``, which means that the library is available
-to Mono through the regular system setup.
+  It defaults to ``installed``, which means that the library is available
+  to Mono through the regular system setup.
 
-``sibling`` can be used to specify that a libgdiplus that resides as a
-sibling of this directory (``mono``) should be used.
+  ``sibling`` can be used to specify that a libgdiplus that resides as a
+  sibling of this directory (``mono``) should be used.
 
-Or you can specify a path to a libgdiplus.
+  Or you can specify a path to a libgdiplus.
 
 ``--disable-shared-memory``
 
-Use this option to disable the use of shared memory in Mono.
-This is equivalent to setting the ``MONO_DISABLE_SHM`` environment variable,
-although this option removes the feature completely.
+  Use this option to disable the use of shared memory in Mono.
+  This is equivalent to setting the ``MONO_DISABLE_SHM`` environment variable,
+  although this option removes the feature completely.
 
-Disabling shared memory support will disable certain features like
-cross-process named mutexes.
+  Disabling shared memory support will disable certain features like
+  cross-process named mutexes.
 
 ``--enable-minimal=LIST``
 
-Use this feature to specify optional runtime components that you might not
-want to include. This is only useful for developers embedding Mono that
-require a subset of Mono functionality.
+  Use this feature to specify optional runtime components that you might not
+  want to include. This is only useful for developers embedding Mono that
+  require a subset of Mono functionality.
 
-The list is a comma-separated list of components to be removed;
-the available options are:
+  The list is a comma-separated list of components to be removed;
+  the available options are:
 
-``aot``
-  Disables support for the Ahead of Time compilation.
+  ``aot``
+    Disables support for the Ahead of Time compilation.
 
-``attach``
-  Support for the Mono.Management assembly and the VMAttach API
-  (which allows code to be injected into a target VM).
+  ``attach``
+    Support for the Mono.Management assembly and the VMAttach API
+    (which allows code to be injected into a target VM).
 
-``com``
-  Disables COM support.
+  ``com``
+    Disables COM support.
 
-``debug``
-  Drop debugging support.
+  ``debug``
+    Drop debugging support.
 
-``decimal``
-  Disables support for ``System.Decimal``.
+  ``decimal``
+    Disables support for ``System.Decimal``.
 
-``full_messages``
-  By default Mono comes with a full table of messages for error codes.
-  This feature turns off uncommon error messages and reduces the runtime size.
+  ``full_messages``
+    By default Mono comes with a full table of messages for error codes.
+    This feature turns off uncommon error messages and reduces the runtime size.
 
-``generics``
-  Generics support. Disabling this will not allow Mono to run any 2.0 libraries
-  or code that contains generics.
+  ``generics``
+    Generics support. Disabling this will not allow Mono to run any 2.0 libraries
+    or code that contains generics.
 
-``jit``
-  Removes the JIT engine from the build, this reduces the executable size,
-  and requires that all code executed by the virtual machine be compiled
-  with Full AOT before execution.
+  ``jit``
+    Removes the JIT engine from the build, this reduces the executable size,
+    and requires that all code executed by the virtual machine be compiled
+    with Full AOT before execution.
 
-``large_code``
-  Disables support for large assemblies.
+  ``large_code``
+    Disables support for large assemblies.
 
-``logging``
-  Disables support for debug logging.
+  ``logging``
+    Disables support for debug logging.
 
-``pinvoke``
-  Support for Platform Invocation services, disabling this will drop support
-  for any libraries using DllImport.
+  ``pinvoke``
+    Support for Platform Invocation services, disabling this will drop support
+    for any libraries using DllImport.
 
-``portability``
-  Removes support for MONO_IOMAP, the environment variables for simplifying
-  porting applications that  are case-insensitive and that mix the Unix and
-  Windows path separators.
+  ``portability``
+    Removes support for MONO_IOMAP, the environment variables for simplifying
+    porting applications that  are case-insensitive and that mix the Unix and
+    Windows path separators.
 
-``profiler``
-  Disables support for the default profiler.
+  ``profiler``
+    Disables support for the default profiler.
 
-``reflection_emit``
-  Drop System.Reflection.Emit support
+  ``reflection_emit``
+    Drop System.Reflection.Emit support
 
-``reflection_emit_save``
-  Drop support for saving dynamically created assemblies
-  (AssemblyBuilderAccess.Save) in ``System.Reflection.Emit``.
+  ``reflection_emit_save``
+    Drop support for saving dynamically created assemblies
+    (AssemblyBuilderAccess.Save) in ``System.Reflection.Emit``.
 
-``shadow_copy``
-  Disables support for AppDomain's shadow copies.
-  You can disable this if you do not plan on using AppDomains.
+  ``shadow_copy``
+    Disables support for AppDomain's shadow copies.
+    You can disable this if you do not plan on using AppDomains.
 
-``simd``
-  Disables support for the ``Mono.SIMD`` intrinsics library.
+  ``simd``
+    Disables support for the ``Mono.SIMD`` intrinsics library.
 
-``ssa``
-  Disables compilation for the SSA optimization framework, and the various
-  SSA-based optimizations.
+  ``ssa``
+    Disables compilation for the SSA optimization framework, and the various
+    SSA-based optimizations.
 
 ``--enable-llvm``
 
 ``--enable-loadedllvm``
 
-This enables the use of LLVM as a code generation engine for Mono.
-The LLVM code generator and optimizer will be used instead of Mono's
-built-in code generator for both Just-in-Time and Ahead-of-Time compilations.
+  This enables the use of LLVM as a code generation engine for Mono.
+  The LLVM code generator and optimizer will be used instead of Mono's
+  built-in code generator for both Just-in-Time and Ahead-of-Time compilations.
 
-See `MONO_LLVM <http://www.mono-project.com/Mono_LLVM>`_ for the full details
-and up-to-date information on this feature.
+  See `MONO_LLVM <http://www.mono-project.com/Mono_LLVM>`_ for the full details
+  and up-to-date information on this feature.
 
-You will need to have an LLVM built that Mono can link against.
+  You will need to have an LLVM built that Mono can link against.
 
-The ``--enable-loadedllvm`` variant will make the llvm backend into a
-runtime-loadable module instead of linking it directly into the main
-``mono`` binary.
+  The ``--enable-loadedllvm`` variant will make the llvm backend into a
+  runtime-loadable module instead of linking it directly into the main
+  ``mono`` binary.
 
 ``--enable-big-arrays``
 
-This enables the use arrays whose indexes are larger than Int32.MaxValue.   
+  This enables the use arrays whose indexes are larger than Int32.MaxValue.   
 
-By default Mono has the same limitation as .NET on Win32 and Win64 and limits
-array indexes to 32-bit values (even on 64-bit systems).
+  By default Mono has the same limitation as .NET on Win32 and Win64 and limits
+  array indexes to 32-bit values (even on 64-bit systems).
 
-In certain scenarios where large arrays are required, you can pass this flag
-and Mono will be built to support 64-bit arrays.
+  In certain scenarios where large arrays are required, you can pass this flag
+  and Mono will be built to support 64-bit arrays.
 
-This is not the default as it breaks the C embedding ABI that we have exposed
-through the Mono development cycle.
+  This is not the default as it breaks the C embedding ABI that we have exposed
+  through the Mono development cycle.
 
 ``--enable-parallel-mark``
 
-Use this option to enable the garbage collector to use multiple CPUs to
-do its work.  This helps performance on multi-CPU machines as the work
-is divided across CPUS.
+  Use this option to enable the garbage collector to use multiple CPUs to
+  do its work.  This helps performance on multi-CPU machines as the work
+  is divided across CPUS.
 
-This option is not currently the default as we have not done much
-testing with Mono.
+  This option is not currently the default as we have not done much
+  testing with Mono.
 
 ``--enable-dtrace``
 
-On Solaris and MacOS X builds a version of the Mono runtime that contains
-*DTrace* probes and can participate in the system profiling using *DTrace*.
+  On Solaris and MacOS X builds a version of the Mono runtime that contains
+  *DTrace* probes and can participate in the system profiling using *DTrace*.
 
 ``--disable-dev-random``
 
-Mono uses */dev/random* to obtain good random data for any source that
-requires random numbers. If your system does not support this, you might
-want to disable it.
+  Mono uses */dev/random* to obtain good random data for any source that
+  requires random numbers. If your system does not support this, you might
+  want to disable it.
 
-There are a number of runtime options to control this also, see the man page.
+  There are a number of runtime options to control this also, see the man page.
 
 ``--enable-nacl``
 
-This configures the Mono compiler to generate code suitable to be used
-by Google's Native Client:
+  This configures the Mono compiler to generate code suitable to be used
+  by Google's Native Client:
 
-http://code.google.com/p/nativeclient/
+  http://code.google.com/p/nativeclient/
 
-Currently this is used with Mono's AOT engine as Native Client does not
-support JIT engines yet.
+  Currently this is used with Mono's AOT engine as Native Client does not
+  support JIT engines yet.
 
 
 Using Mono
