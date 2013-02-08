@@ -90,11 +90,6 @@ namespace System.Resources {
 				if (type == typeof(System.Byte[]))
 					return buffer;
 
-				if (type == typeof (Bitmap) && Path.GetExtension (parts [0]) == ".ico") {
-					MemoryStream ms = new MemoryStream (buffer);
-					return new Icon (ms).ToBitmap ();
-				}
-
 				if (type == typeof (MemoryStream))
 					return new MemoryStream (buffer);
 
