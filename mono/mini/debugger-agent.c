@@ -3898,7 +3898,7 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	if (ss_events)
 		process_event (EVENT_KIND_STEP, ji->method, 0, ctx, ss_events, suspend_policy);
 	if (bp_events)
-		process_event (kind, ji->method, 0, ctx, bp_events, suspend_policy);
+		process_event (kind, ji->method, sp ? sp->il_offset : 0, ctx, bp_events, suspend_policy);
 	if (enter_leave_events)
 		process_event (kind, ji->method, 0, ctx, enter_leave_events, suspend_policy);
 }
