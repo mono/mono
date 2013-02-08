@@ -1067,7 +1067,10 @@ namespace Mono.CSharp {
 			if (es == null)
 				Error_InvalidExpressionStatement (ec);
 
-			if (!(e is Assign) && (e.Type.IsGenericTask || e.Type == ec.Module.PredefinedTypes.Task.TypeSpec)) {
+			//
+			// This is quite expensive warning, try to limit the damage
+			//
+			if (MemberAccess.IsValidDotExpression (e.Type) && !(e is Assign || e is Await)) {
 				WarningAsyncWithoutWait (ec, e);
 			}
 
@@ -1077,6 +1080,30 @@ namespace Mono.CSharp {
 		static void WarningAsyncWithoutWait (BlockContext bc, Expression e)
 		{
 			if (bc.CurrentAnonymousMethod is AsyncInitializer) {
+				var awaiter = new AwaitStatement.AwaitableMemberAccess (e) {
+					ProbingMode = true
+				};
+
+				//
+				// Need to do full resolve because GetAwaiter can be extension method
+				// available only in this context
+				//
+				var mg = awaiter.Resolve (bc) as MethodGroupExpr;
+				if (mg == null)
+					return;
+
+				var arguments = new Arguments (0);
+				mg = mg.OverloadResolve (bc, ref arguments, null, OverloadResolver.Restrictions.ProbingOnly);
+				if (mg == null)
+					return;
+
+				//
+				// Use same check rules as for real await
+				//
+				var awaiter_definition = bc.Module.GetAwaiter (mg.BestCandidateReturnType);
+				if (!awaiter_definition.IsValidPattern || !awaiter_definition.INotifyCompletion)
+					return;
+
 				bc.Report.Warning (4014, 1, e.Location,
 					"The statement is not awaited and execution of current method continues before the call is completed. Consider using `await' operator");
 				return;
