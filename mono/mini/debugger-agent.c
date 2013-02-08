@@ -2203,7 +2203,7 @@ suspend_vm (void)
 
 	suspend_count ++;
 
-	DEBUG(1, fprintf (log_file, "[%p] Suspending vm...\n", (gpointer)GetCurrentThreadId ()));
+	DEBUG(1, fprintf (log_file, "[%p] (%d) Suspending vm...\n", (gpointer)GetCurrentThreadId (), suspend_count));
 
 	if (suspend_count == 1) {
 		// FIXME: Is it safe to call this inside the lock ?
@@ -2236,7 +2236,7 @@ resume_vm (void)
 	g_assert (suspend_count > 0);
 	suspend_count --;
 
-	DEBUG(1, fprintf (log_file, "[%p] Resuming vm...\n", (gpointer)GetCurrentThreadId ()));
+	DEBUG(1, fprintf (log_file, "[%p] (%d) Resuming vm...\n", (gpointer)GetCurrentThreadId (), suspend_count));
 
 	if (suspend_count == 0) {
 		// FIXME: Is it safe to call this inside the lock ?
@@ -7022,7 +7022,226 @@ command_set_to_string (CommandSet command_set)
 	case CMD_SET_MODULE:
 		return "MODULE"; 
 	case CMD_SET_EVENT:
-		return "EVENT"; 
+		return "EVENT";
+	default:
+		return "";
+	}
+}
+
+static const char*
+command_to_string (CommandSet command_set, int command)
+{
+	switch (command_set) {
+	case CMD_SET_VM: {
+		switch ((CmdVM)command) {
+			case CMD_VM_VERSION:
+				return "CMD_VM_VERSION";
+			case CMD_VM_ALL_THREADS:
+				return "CMD_VM_ALL_THREADS";
+			case CMD_VM_SUSPEND:
+				return "CMD_VM_SUSPEND";
+			case CMD_VM_RESUME:
+				return "CMD_VM_RESUME";
+			case CMD_VM_EXIT:
+				return "CMD_VM_EXIT";
+			case CMD_VM_DISPOSE:
+				return "CMD_VM_DISPOSE";
+			case CMD_VM_INVOKE_METHOD:
+				return "CMD_VM_INVOKE_METHOD";
+			case CMD_VM_SET_PROTOCOL_VERSION:
+				return "CMD_VM_SET_PROTOCOL_VERSION";
+			case CMD_VM_ABORT_INVOKE:
+				return "CMD_VM_ABORT_INVOKE";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_OBJECT_REF: {
+		switch ((CmdObject)command) {
+			case CMD_OBJECT_REF_GET_TYPE:
+				return "CMD_OBJECT_REF_GET_TYPE";
+			case CMD_OBJECT_REF_GET_VALUES:
+				return "CMD_OBJECT_REF_GET_VALUES";
+			case CMD_OBJECT_REF_IS_COLLECTED:
+				return "CMD_OBJECT_REF_IS_COLLECTED";
+			case CMD_OBJECT_REF_GET_ADDRESS:
+				return "CMD_OBJECT_REF_GET_ADDRESS";
+			case CMD_OBJECT_REF_GET_DOMAIN:
+				return "CMD_OBJECT_REF_GET_DOMAIN";
+			case CMD_OBJECT_REF_SET_VALUES:
+				return "CMD_OBJECT_REF_SET_VALUES";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_STRING_REF: {
+		switch ((CmdString)command) {
+			case CMD_STRING_REF_GET_VALUE:
+				return "CMD_STRING_REF_GET_VALUE";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_THREAD: {
+		switch ((CmdThread)command) {
+			case CMD_THREAD_GET_NAME:
+				return "CMD_THREAD_GET_NAME";
+			case CMD_THREAD_GET_FRAME_INFO:
+				return "CMD_THREAD_GET_FRAME_INFO";
+			case CMD_THREAD_GET_STATE:
+				return "CMD_THREAD_GET_STATE";
+			case CMD_THREAD_GET_INFO:
+				return "CMD_THREAD_GET_INFO";
+			case CMD_THREAD_GET_ID:
+				return "CMD_THREAD_GET_ID";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_ARRAY_REF: {
+		switch ((CmdArray)command) {
+			case CMD_ARRAY_REF_GET_LENGTH:
+				return "CMD_ARRAY_REF_GET_LENGTH";
+			case CMD_ARRAY_REF_GET_VALUES:
+				return "CMD_ARRAY_REF_GET_VALUES";
+			case CMD_ARRAY_REF_SET_VALUES:
+				return "CMD_ARRAY_REF_SET_VALUES";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_EVENT_REQUEST: {
+		switch ((CmdEvent)command) {
+			case CMD_EVENT_REQUEST_SET:
+				return "CMD_EVENT_REQUEST_SET";
+			case CMD_EVENT_REQUEST_CLEAR:
+				return "CMD_EVENT_REQUEST_CLEAR";
+			case CMD_EVENT_REQUEST_CLEAR_ALL_BREAKPOINTS:
+				return "CMD_EVENT_REQUEST_CLEAR_ALL_BREAKPOINTS";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_STACK_FRAME: {
+		switch ((CmdStackFrame)command) {
+			case CMD_STACK_FRAME_GET_VALUES:
+				return "CMD_STACK_FRAME_GET_VALUES";
+			case CMD_STACK_FRAME_GET_THIS:
+				return "CMD_STACK_FRAME_GET_THIS";
+			case CMD_STACK_FRAME_SET_VALUES:
+				return "CMD_STACK_FRAME_SET_VALUES";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_APPDOMAIN: {
+		switch ((CmdAppDomain)command) {
+			case CMD_APPDOMAIN_GET_ROOT_DOMAIN:
+				return "CMD_APPDOMAIN_GET_ROOT_DOMAIN";
+			case CMD_APPDOMAIN_GET_FRIENDLY_NAME:
+				return "CMD_APPDOMAIN_GET_FRIENDLY_NAME";
+			case CMD_APPDOMAIN_GET_ASSEMBLIES:
+				return "CMD_APPDOMAIN_GET_ASSEMBLIES";
+			case CMD_APPDOMAIN_GET_ENTRY_ASSEMBLY:
+				return "CMD_APPDOMAIN_GET_ENTRY_ASSEMBLY";
+			case CMD_APPDOMAIN_CREATE_STRING:
+				return "CMD_APPDOMAIN_CREATE_STRING";
+			case CMD_APPDOMAIN_GET_CORLIB:
+				return "CMD_APPDOMAIN_GET_CORLIB";
+			case CMD_APPDOMAIN_CREATE_BOXED_VALUE:
+				return "CMD_APPDOMAIN_CREATE_BOXED_VALUE";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_ASSEMBLY: {
+		switch ((CmdAssembly)command) {
+			case CMD_ASSEMBLY_GET_LOCATION:
+				return "CMD_ASSEMBLY_GET_LOCATION";
+			case CMD_ASSEMBLY_GET_ENTRY_POINT:
+				return "CMD_ASSEMBLY_GET_ENTRY_POINT";
+			case CMD_ASSEMBLY_GET_MANIFEST_MODULE:
+				return "CMD_ASSEMBLY_GET_MANIFEST_MODULE";
+			case CMD_ASSEMBLY_GET_OBJECT:
+				return "CMD_ASSEMBLY_GET_OBJECT";
+			case CMD_ASSEMBLY_GET_TYPE:
+				return "CMD_ASSEMBLY_GET_TYPE";
+			case CMD_ASSEMBLY_GET_NAME:
+				return "CMD_ASSEMBLY_GET_NAME";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_METHOD: {
+		switch ((CmdMethod)command) {
+			case CMD_METHOD_GET_NAME:
+				return "CMD_METHOD_GET_NAME";
+			case CMD_METHOD_GET_DECLARING_TYPE:
+				return "CMD_METHOD_GET_DECLARING_TYPE";
+			case CMD_METHOD_GET_DEBUG_INFO:
+				return "CMD_METHOD_GET_DEBUG_INFO";
+			case CMD_METHOD_GET_PARAM_INFO:
+				return "CMD_METHOD_GET_PARAM_INFO";
+			case CMD_METHOD_GET_LOCALS_INFO:
+				return "CMD_METHOD_GET_LOCALS_INFO";
+			case CMD_METHOD_GET_INFO:
+				return "CMD_METHOD_GET_INFO";
+			case CMD_METHOD_GET_BODY:
+				return "CMD_METHOD_GET_BODY";
+			case CMD_METHOD_RESOLVE_TOKEN:
+				return "CMD_METHOD_RESOLVE_TOKEN";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_TYPE: {
+		switch ((CmdType)command) {
+			case CMD_TYPE_GET_INFO:
+				return "CMD_TYPE_GET_INFO";
+			case CMD_TYPE_GET_METHODS:
+				return "CMD_TYPE_GET_METHODS";
+			case CMD_TYPE_GET_FIELDS:
+				return "CMD_TYPE_GET_FIELDS";
+			case CMD_TYPE_GET_VALUES:
+				return "CMD_TYPE_GET_VALUES";
+			case CMD_TYPE_GET_OBJECT:
+				return "CMD_TYPE_GET_OBJECT";
+			case CMD_TYPE_GET_SOURCE_FILES:
+				return "CMD_TYPE_GET_SOURCE_FILES";
+			case CMD_TYPE_SET_VALUES:
+				return "CMD_TYPE_SET_VALUES";
+			case CMD_TYPE_IS_ASSIGNABLE_FROM:
+				return "CMD_TYPE_IS_ASSIGNABLE_FROM";
+			case CMD_TYPE_GET_PROPERTIES:
+				return "CMD_TYPE_GET_PROPERTIES";
+			case CMD_TYPE_GET_CATTRS:
+				return "CMD_TYPE_GET_CATTRS";
+			case CMD_TYPE_GET_FIELD_CATTRS:
+				return "CMD_TYPE_GET_FIELD_CATTRS";
+			case CMD_TYPE_GET_PROPERTY_CATTRS:
+				return "CMD_TYPE_GET_PROPERTY_CATTRS";
+			case CMD_TYPE_GET_SOURCE_FILES_2:
+				return "CMD_TYPE_GET_SOURCE_FILES_2";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_MODULE: {
+		switch ((CmdModule)command) {
+			case CMD_MODULE_GET_INFO:
+				return "CMD_MODULE_GET_INFO";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_EVENT: {
+		switch ((CmdComposite)command) {
+			case CMD_COMPOSITE:
+				return "CMD_COMPOSITE";
+			default:
+				return "";
+		}
+	}
 	default:
 		return "";
 	}
@@ -7109,7 +7328,7 @@ debugger_thread (void *arg)
 
 		g_assert (flags == 0);
 
-		DEBUG (1, fprintf (log_file, "[dbg] Received command %s(%d), id=%d.\n", command_set_to_string (command_set), command, id));
+		DEBUG (1, fprintf (log_file, "[dbg] Received command %s %s(%d), id=%d.\n", command_set_to_string (command_set), command_to_string (command_set, command), command, id));
 
 		data = g_malloc (len - HEADER_LENGTH);
 		if (len - HEADER_LENGTH > 0)
