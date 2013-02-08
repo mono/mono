@@ -1364,6 +1364,13 @@ namespace System.Web
 			return result;
 		}
 
+#if NET_4_0
+		public Stream GetBufferlessInputStream ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public string MapPath (string virtualPath)
 		{
 			if (worker_request == null)
