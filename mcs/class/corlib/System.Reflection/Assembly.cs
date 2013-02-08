@@ -473,6 +473,12 @@ namespace System.Reflection {
 
 			return LoadFrom (fullName);
 		}
+
+		Type _Assembly.GetType ()
+		{
+			// Required or object::GetType becomes virtual final
+			return base.GetType ();
+		}		
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static Assembly LoadFrom (String assemblyFile, bool refonly);

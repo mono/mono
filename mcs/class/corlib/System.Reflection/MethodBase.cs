@@ -284,6 +284,12 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		Type _MethodBase.GetType ()
+		{
+			// Required or object::GetType becomes virtual final
+			return base.GetType ();
+		}		
+
 		void _MethodBase.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
 		{
 			throw new NotImplementedException ();

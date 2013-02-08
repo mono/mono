@@ -296,6 +296,12 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		Type _FieldInfo.GetType ()
+		{
+			// Required or object::GetType becomes virtual final
+			return base.GetType ();
+		}
+
 		void _FieldInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
 		{
 			throw new NotImplementedException ();
