@@ -787,7 +787,11 @@ namespace System.Net
 				if (!busy) {
 					busy = true;
 					status = WebExceptionStatus.Success;
-					ThreadPool.QueueUserWorkItem (initConn, request);
+
+					if (request.asynchronous)
+						ThreadPool.QueueUserWorkItem (initConn, request);
+					else
+						initConn.Invoke (request);
 				} else {
 					lock (queue) {
 #if MONOTOUCH
