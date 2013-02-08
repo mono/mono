@@ -41,6 +41,7 @@
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Linq/ObservableCreationTest.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Linq/ObservableEventsTest.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Linq/ObservableExtensionsTest.cs
+../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Linq/ObservableExTest.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Linq/ObservableImperativeTest.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Linq/ObservableJoinsTest.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Linq/ObservableMultipleTest.cs

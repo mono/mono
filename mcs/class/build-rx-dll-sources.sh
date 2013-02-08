@@ -39,10 +39,6 @@ var excluded_ios_asses = new string [] {
 	}
 
 var blacklist = new string [] {
-	// FIXME: this is the only source that we cannot build.
-	//Test/../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/ObservableExTest.cs(1478,27): error CS0411: The type arguments for method `System.Reactive.Linq.ObservableEx.ManySelect<TSource,TResult>(this System.IObservable<TSource>, System.Func<System.IObservable<TSource>,TResult>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
-	"ObservableExTest.cs",
-
 	// WPF Dispatcher.Invoke() is not implemented.
 	"DispatcherSchedulerTest.cs",
 	// This is not limited to Dispatcher, but many of them are relevant to it, or Winforms (we filter it out by not defining HAS_WINFORMS)
