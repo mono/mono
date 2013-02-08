@@ -3223,7 +3223,7 @@ namespace Mono.CSharp {
 			AParametersCollection d_parameters = invoke.Parameters;
 			return AllTypesAreFixed (d_parameters.Types);
 		}
-		
+
 		bool IsFixed (TypeSpec type)
 		{
 			return IsUnfixed (type) == -1;
@@ -3430,7 +3430,7 @@ namespace Mono.CSharp {
 				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
 
-				if (!rtype.IsGenericParameter && !TypeManager.IsGenericType (rtype))
+				if (!IsReturnTypeNonDependent (ec, invoke, rtype))
 					return 0;
 
 				// LAMESPEC: Standard does not specify that all methodgroup arguments
@@ -3441,9 +3441,6 @@ namespace Mono.CSharp {
 				for (int i = 0; i < param_types.Length; ++i) {
 					var inflated = InflateGenericArgument (ec, invoke.Parameters.Types[i]);
 					if (inflated == null)
-						return 0;
-
-					if (IsUnfixed (inflated) >= 0)
 						return 0;
 
 					param_types[i] = inflated;

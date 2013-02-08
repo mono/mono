@@ -17866,6 +17866,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-578.cs">
+    <type name="X">
+      <method name="I`1 Test[T,TR](I`1, System.Func`2[I`1[T],TR])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="U First[U](I`1)" attrs="150">
+        <size>18</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
