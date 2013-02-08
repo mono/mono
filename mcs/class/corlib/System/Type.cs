@@ -1442,11 +1442,13 @@ namespace System {
 				systemTypes [i] = t;
 			}
 
-#if !FULL_AOT_RUNTIME
 			if (hasUserType) {
+#if FULL_AOT_RUNTIME
+				throw new NotSupportedException ("User types are not supported under full aot");
+#else
 				return new MonoGenericClass (this, typeArguments);
-			}
 #endif
+			}
 
 			Type res = MakeGenericType (this, systemTypes);
 			if (res == null)
