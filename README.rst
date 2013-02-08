@@ -29,17 +29,18 @@ Supported Platforms and Architectures
 
 Officially Supported
 ----------------
-- Windows (x86, x64)
-- Mac OS X (PowerPC, x86, x64)
-- Linux (x86, x64, IA-64, ARM)
+- Windows
+- Mac OS X
+- Linux
 - `iOS <http://xamarin.com/monotouch>`_
 - `Android <http://xamarin.com/monoforandroid>`_
 
 Unofficially Supported
 ------------------
-- FreeBSD
-- OpenBSD
-- NetBSD
+- BSD (FreeBSD, OpenBSD, NetBSD)
+- Solaris / illumos
+- HP-UX
+- Haiku
 
 
 Compilation and Installation
