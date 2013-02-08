@@ -2805,10 +2805,11 @@ emit_type_load (gpointer key, gpointer value, gpointer user_data)
  * LOCKING: Assumes the loader lock is held.
  */
 static GSList*
-create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo *ei, int *suspend_policy)
+create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo *ei, int *suspend_policy, gpointer arg)
 {
 	int i, j;
 	GSList *events = NULL;
+	MonoClass *klass = NULL;
 
 	*suspend_policy = SUSPEND_POLICY_NONE;
 
@@ -2817,6 +2818,8 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 
 	if (!reqs)
 		return NULL;
+
+	klass = ji ? ji->method->klass : (event == EVENT_KIND_TYPE_LOAD ? (MonoClass *)arg : NULL);
 
 	for (i = 0; i < reqs->len; ++i) {
 		EventRequest *req = g_ptr_array_index (reqs, i);
@@ -2846,14 +2849,14 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 						filtered = TRUE;
 					if (!ei->caught && !mod->uncaught)
 						filtered = TRUE;
-				} else if (mod->kind == MOD_KIND_ASSEMBLY_ONLY && ji) {
+				} else if (mod->kind == MOD_KIND_ASSEMBLY_ONLY && klass) {
 					int k;
 					gboolean found = FALSE;
 					MonoAssembly **assemblies = mod->data.assemblies;
 
 					if (assemblies) {
 						for (k = 0; assemblies [k]; ++k)
-							if (assemblies [k] == ji->method->klass->image->assembly)
+							if (assemblies [k] == klass->image->assembly)
 								found = TRUE;
 					}
 					if (!found)
@@ -3076,7 +3079,7 @@ process_profiler_event (EventKind event, gpointer arg)
 	GSList *events;
 
 	mono_loader_lock ();
-	events = create_event_list (event, NULL, NULL, NULL, &suspend_policy);
+	events = create_event_list (event, NULL, NULL, NULL, &suspend_policy, arg);
 	mono_loader_unlock ();
 
 	process_event (event, arg, 0, NULL, events, suspend_policy);
@@ -3880,11 +3883,11 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	}
 	
 	if (ss_reqs->len > 0)
-		ss_events = create_event_list (EVENT_KIND_STEP, ss_reqs, ji, NULL, &suspend_policy);
+		ss_events = create_event_list (EVENT_KIND_STEP, ss_reqs, ji, NULL, &suspend_policy, NULL);
 	if (bp_reqs->len > 0)
-		bp_events = create_event_list (EVENT_KIND_BREAKPOINT, bp_reqs, ji, NULL, &suspend_policy);
+		bp_events = create_event_list (EVENT_KIND_BREAKPOINT, bp_reqs, ji, NULL, &suspend_policy, NULL);
 	if (kind != EVENT_KIND_BREAKPOINT)
-		enter_leave_events = create_event_list (kind, NULL, ji, NULL, &suspend_policy);
+		enter_leave_events = create_event_list (kind, NULL, ji, NULL, &suspend_policy, NULL);
 
 	mono_loader_unlock ();
 
@@ -4098,13 +4101,13 @@ process_single_step_inner (DebuggerTlsData *tls, MonoContext *ctx)
 
 	g_ptr_array_add (reqs, ss_req->req);
 
-	events = create_event_list (EVENT_KIND_STEP, reqs, ji, NULL, &suspend_policy);
+	events = create_event_list (EVENT_KIND_STEP, reqs, ji, NULL, &suspend_policy, NULL);
 
 	g_ptr_array_free (reqs, TRUE);
 
 	mono_loader_unlock ();
 
-	process_event (EVENT_KIND_STEP, ji->method, il_offset, ctx, events, suspend_policy);
+	process_event (EVENT_KIND_STEP, ji->method, il_offset, ctx, events, suspend_policy, NULL);
 }
 
 static void
@@ -4488,7 +4491,7 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 	}
 
 	mono_loader_lock ();
-	events = create_event_list (EVENT_KIND_EXCEPTION, NULL, ji, &ei, &suspend_policy);
+	events = create_event_list (EVENT_KIND_EXCEPTION, NULL, ji, &ei, &suspend_policy, NULL);
 	mono_loader_unlock ();
 
 	process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, suspend_policy);
@@ -5636,6 +5639,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else if (req->event_kind == EVENT_KIND_METHOD_EXIT) {
 			req->info = set_breakpoint (NULL, METHOD_EXIT_IL_OFFSET, req);
 		} else if (req->event_kind == EVENT_KIND_EXCEPTION) {
+		} else if (req->event_kind == EVENT_KIND_TYPE_LOAD) {
 		} else {
 			if (req->nmodifiers) {
 				g_free (req);
