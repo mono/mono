@@ -20,6 +20,7 @@ using System.Reflection.Emit;
 using System.IO;
 using System.Text;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Mono.CSharp
 {
@@ -226,7 +227,8 @@ namespace Mono.CSharp
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
-				if (parser == null && Terse && partial_input){
+
+				if (parser == null && Terse && partial_input && !(Regex.IsMatch(input,@"^\s*for\s*\(") || Regex.IsMatch(input,@"^\s*while\s*\(") || Regex.IsMatch(input,@"^\s*foreach\s*\("))){
 					bool ignore;
 					parser = ParseString (ParseMode.Silent, input + ";", out ignore);
 				}
