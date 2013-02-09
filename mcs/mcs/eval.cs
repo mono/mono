@@ -226,9 +226,16 @@ namespace Mono.CSharp
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
+
+				// Terse mode, try to provide the trailing semicolon automatically.
 				if (parser == null && Terse && partial_input){
 					bool ignore;
-					parser = ParseString (ParseMode.Silent, input + ";", out ignore);
+
+					// check if the source would compile with a block, if so, we should not
+					// add the semicolon.
+					var needs_block = ParseString (ParseMode.Silent, input + "{}", out ignore) != null;
+					if (!needs_block)
+						parser = ParseString (ParseMode.Silent, input + ";", out ignore);
 				}
 				if (parser == null){
 					compiled = null;
