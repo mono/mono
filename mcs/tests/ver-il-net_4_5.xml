@@ -46513,6 +46513,54 @@
       </method>
     </type>
   </test>
+  <test name="test-864.cs">
+    <type name="MainClass">
+      <method name="Int32 Foo(Double)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Foo(Int32)" attrs="145">
+        <size>11</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>82</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Int32 op_Implicit(A)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 op_Implicit(B)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A2">
+      <method name="Double op_Implicit(A2)" attrs="2198">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B2">
+      <method name="Int32 op_Implicit(B2)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">

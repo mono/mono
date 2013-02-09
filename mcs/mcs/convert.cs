@@ -704,7 +704,7 @@ namespace Mono.CSharp {
 			if (expr.Type == InternalType.Arglist)
 				return target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec;
 
-			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
+			return UserDefinedConversion (ec, expr, target_type, true, true, Location.Null) != null;
 		}
 
 		//
@@ -917,16 +917,19 @@ namespace Mono.CSharp {
 		//
 		static TypeSpec FindMostSpecificSource (List<MethodSpec> list, TypeSpec sourceType, Expression source, bool apply_explicit_conv_rules)
 		{
-			var src_types_set = new TypeSpec [list.Count];
+			TypeSpec[] src_types_set = null;
 
 			//
 			// Try exact match first, if any operator converts from S then Sx = S
 			//
-			for (int i = 0; i < src_types_set.Length; ++i) {
+			for (int i = 0; i < list.Count; ++i) {
 				TypeSpec param_type = list [i].Parameters.Types [0];
 
 				if (param_type == sourceType)
 					return param_type;
+
+				if (src_types_set == null)
+					src_types_set = new TypeSpec [list.Count];
 
 				src_types_set [i] = param_type;
 			}
@@ -961,7 +964,7 @@ namespace Mono.CSharp {
 		static public TypeSpec FindMostSpecificTarget (IList<MethodSpec> list,
 							   TypeSpec target, bool apply_explicit_conv_rules)
 		{
-			var tgt_types_set = new List<TypeSpec> ();
+			List<TypeSpec> tgt_types_set = null;
 
 			//
 			// If any operator converts to T then Tx = T
@@ -970,6 +973,12 @@ namespace Mono.CSharp {
 				TypeSpec ret_type = mi.ReturnType;
 				if (ret_type == target)
 					return ret_type;
+
+				if (tgt_types_set == null) {
+					tgt_types_set = new List<TypeSpec> (list.Count);
+				} else if (tgt_types_set.Contains (ret_type)) {
+					continue;
+				}
 
 				tgt_types_set.Add (ret_type);
 			}
@@ -1005,7 +1014,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public Expression ImplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, true, loc);
+			return UserDefinedConversion (ec, source, target, true, false, loc);
 		}
 
 		/// <summary>
@@ -1013,7 +1022,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Expression ExplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, false, loc);
+			return UserDefinedConversion (ec, source, target, false, false, loc);
 		}
 
 		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
@@ -1077,7 +1086,7 @@ namespace Mono.CSharp {
 		//
 		// User-defined conversions
 		//
-		static Expression UserDefinedConversion (ResolveContext ec, Expression source, TypeSpec target, bool implicitOnly, Location loc)
+		static Expression UserDefinedConversion (ResolveContext ec, Expression source, TypeSpec target, bool implicitOnly, bool probingOnly, Location loc)
 		{
 			List<MethodSpec> candidates = null;
 
@@ -1173,18 +1182,23 @@ namespace Mono.CSharp {
 				}
 
 				if (most_specific_operator == null) {
-					MethodSpec ambig_arg = null;
-					foreach (var candidate in candidates) {
-						if (candidate.ReturnType == t_x)
-							most_specific_operator = candidate;
-						else if (candidate.Parameters.Types[0] == s_x)
-							ambig_arg = candidate;
-					}
+					//
+					// Unless running in probing more
+					//
+					if (!probingOnly) {
+						MethodSpec ambig_arg = null;
+						foreach (var candidate in candidates) {
+							if (candidate.ReturnType == t_x)
+								most_specific_operator = candidate;
+							else if (candidate.Parameters.Types[0] == s_x)
+								ambig_arg = candidate;
+						}
 
-					ec.Report.Error (457, loc,
-						"Ambiguous user defined operators `{0}' and `{1}' when converting from `{2}' to `{3}'",
-						ambig_arg.GetSignatureForError (), most_specific_operator.GetSignatureForError (),
-						source.Type.GetSignatureForError (), target.GetSignatureForError ());
+						ec.Report.Error (457, loc,
+							"Ambiguous user defined operators `{0}' and `{1}' when converting from `{2}' to `{3}'",
+							ambig_arg.GetSignatureForError (), most_specific_operator.GetSignatureForError (),
+							source.Type.GetSignatureForError (), target.GetSignatureForError ());
+					}
 
 					return ErrorExpression.Instance;
 				}
