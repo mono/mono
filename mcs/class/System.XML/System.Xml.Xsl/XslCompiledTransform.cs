@@ -32,6 +32,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Policy;
@@ -234,6 +235,13 @@ namespace System.Xml.Xsl
 		}
 
 		#endregion
+
+		[MonoTODO]
+		public static CompilerErrorCollection CompileToType (XmlReader stylesheet, XsltSettings settings, XmlResolver stylesheetResolver, bool debug, TypeBuilder typeBuilder, string scriptAssemblyPath)
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 
 		class NoOperationDebugger
