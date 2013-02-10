@@ -22,7 +22,8 @@ namespace Monodoc
 #endif
 	class Tree
 	{
-		const long CurrentVersionNumber = 1;
+		public const long CurrentVersionNumber = 1;
+		const int VersionNumberKey = -(int)'v';
 		public readonly HelpSource HelpSource;
 	
 		FileStream InputStream;
@@ -51,11 +52,19 @@ namespace Monodoc
 				throw new Exception ("Invalid file format");
 		
 			InputStream.Position = 4;
-			// Try to read version information
-			if (InputReader.ReadInt32 () == -(int)'v')
+			// Try to read old version information
+			if (InputReader.ReadInt32 () == VersionNumberKey)
 				VersionNumber = InputReader.ReadInt64 ();
-			else
-				InputStream.Position -= 4;
+			else {
+				// We try to see if there is a version number at the end of the file
+				InputStream.Seek (-(4 + 8), SeekOrigin.End); // VersionNumberKey + long
+				try {
+					if (InputReader.ReadInt32 () == VersionNumberKey)
+						VersionNumber = InputReader.ReadInt64 ();
+				} catch {}
+				// We set the stream back at the beginning of the node definition list
+				InputStream.Position = 4;
+			}
 
 			var position = InputReader.ReadInt32 ();
 			rootNode = new Node (this, position);
@@ -83,16 +92,17 @@ namespace Monodoc
 			Encoding utf8 = new UTF8Encoding (false, true);
 			using (FileStream output = File.OpenWrite (file)){
 				// Skip over the pointer to the first node.
-				output.Position = 4 + 4 + 8 + 4;
+				output.Position = 4 + 4;
 			
 				using (BinaryWriter writer = new BinaryWriter (output, utf8)) {
 					// Recursively dump
 					rootNode.Serialize (output, writer);
+					// We want to generate 2.10 compatible files so we write the version number at the end
+					writer.Write (VersionNumberKey);
+					writer.Write (CurrentVersionNumber);
 
 					output.Position = 0;
 					writer.Write (new byte [] { (byte) 'M', (byte) 'o', (byte) 'H', (byte) 'P' });
-					writer.Write (-(int)'v');
-					writer.Write (CurrentVersionNumber);
 					writer.Write (rootNode.Address);
 				}
 			}

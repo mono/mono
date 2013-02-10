@@ -80,7 +80,10 @@ EXTRA_DISTFILES = \
 	monodoc.dll.config.in   \
 	$(RESOURCE_FILES)   \
 	Monodoc.Ecma/EcmaUrlParser.jay \
-	Test/monodoc_test/monodoc.xml
+	Test/monodoc_test/monodoc.xml \
+	Test/monodoc_test/trees/tree-from-2-10.tree \
+	Test/monodoc_test/trees/tree-from-3-0-old.tree \
+	Test/monodoc_test/trees/tree-from-3-0.tree
 
 LIB_MCS_FLAGS = \
 	/unsafe                                                           \
