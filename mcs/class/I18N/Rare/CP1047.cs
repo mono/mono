@@ -24,6 +24,9 @@
 
 // Generated from "ibm-1047.ucm".
 
+// WARNING: Modifying this file directly might be a bad idea.
+// You should edit the code generator tools/ucm2cp.c instead for your changes
+// to appear in all relevant classes.
 namespace I18N.Rare
 {
 
@@ -86,18 +89,64 @@ public class CP1047 : ByteEncoding
 		'\u00DC', '\u00D9', '\u00DA', '\u009F', 
 	};
 
+	// Get the number of bytes needed to encode a character buffer.
+	public unsafe override int GetByteCountImpl (char* chars, int count)
+	{
+		if (this.EncoderFallback != null)		{
+			//Calculate byte count by actually doing encoding and discarding the data.
+			return GetBytesImpl(chars, count, null, 0);
+		}
+		else
+		
+		{
+			return count;
+		}
+	}
+	
+	// Get the number of bytes needed to encode a character buffer.
+	public override int GetByteCount (String s)
+	{
+		if (this.EncoderFallback != null)
+		{
+			//Calculate byte count by actually doing encoding and discarding the data.
+			unsafe
+			{
+				fixed (char *s_ptr = s)
+				{
+					return GetBytesImpl(s_ptr, s.Length, null, 0);
+				}
+			}
+		}
+		else
+		{
+			//byte count equals character count because no EncoderFallback set
+			return s.Length;
+		}
+	}
+	
+	//ToBytes is just an alias for GetBytesImpl, but doesn't return byte count
 	protected unsafe override void ToBytes(char* chars, int charCount,
 	                                byte* bytes, int byteCount)
 	{
+		//Calling ToBytes with null destination buffer doesn't make any sense
+		if (bytes == null)
+			throw new ArgumentNullException("bytes");
+		GetBytesImpl(chars, charCount, bytes, byteCount);
+	}
+	
+	public unsafe override int GetBytesImpl (char* chars, int charCount,
+	                                         byte* bytes, int byteCount)
+	{
 		int ch;
-		int charIndex = 0;
+		int charIndex;
 		int byteIndex = 0;
 #if NET_2_0
 		EncoderFallbackBuffer buffer = null;
 #endif
-		while(charCount > 0)
+		for (charIndex=0; charCount > 0; charIndex++, charCount--)
 		{
-			ch = (int)(chars[charIndex++]);
+			ch = (int)(chars[charIndex]);
+			bool fallback = false;
 			if(ch >= 4) switch(ch)
 			{
 				case 0x000B:
@@ -487,15 +536,26 @@ public class CP1047 : ByteEncoding
 				default:
 #if NET_2_0
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+					fallback = true;
 #else
 						ch = 0x3F;
 #endif
 					break;
 			}
-			bytes[byteIndex++] = (byte)ch;
-			--charCount;
-			--byteCount;
+			//Write encoded byte to buffer, if buffer is defined and fallback was not used
+			if (bytes != null && !fallback)
+			{
+				bytes[byteIndex] = (byte)ch;
+			}
+			
+			//Bump counters if fallback was not used
+			if (!fallback)
+			{
+				byteIndex++;
+				byteCount--;
+			}
 		}
+		return byteIndex;
 	}
 
 	/*
