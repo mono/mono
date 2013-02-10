@@ -475,6 +475,9 @@
         inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
             GC_word old, GC_word new_val) 
         {
+#         if HAS___SYNC_BOOL_COMPARE_AND_SWAP
+            return __sync_bool_compare_and_swap(addr, old, new_val);
+#         else
             unsigned long result, dummy;
             __asm__ __volatile__(
                 "1:\tldarx %0,0,%5\n"
@@ -491,12 +494,16 @@
                 :  "r" (new_val), "r" (old), "2"(addr)
                 : "cr0","memory");
             return (GC_bool) result;
+#         endif
         }
 #       else
         /* Returns TRUE if the comparison succeeded. */
         inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
             GC_word old, GC_word new_val) 
         {
+#         if HAS___SYNC_BOOL_COMPARE_AND_SWAP
+            return __sync_bool_compare_and_swap(addr, old, new_val);
+#         else
             int result, dummy;
             __asm__ __volatile__(
                 "1:\tlwarx %0,0,%5\n"
@@ -513,6 +520,7 @@
                 :  "r" (new_val), "r" (old), "2"(addr)
                 : "cr0","memory");
             return (GC_bool) result;
+#         endif
         }
 #       endif
 #      endif /* !GENERIC_COMPARE_AND_SWAP */
