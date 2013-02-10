@@ -988,6 +988,166 @@ namespace System.Web
 				throw new PlatformNotSupportedException ("This property is not supported.");
 			}
 		}
+
+		//
+		// TODO:
+		//   * I no longer remember what worker_request = null meant.
+		//   * Hook up the Filter?
+		// 
+		Stream MakeBufferlessInputStream ()
+		{
+			int content_length = ContentLength;
+			int content_length_kb = content_length / 1024;
+			HttpRuntimeSection config = HttpRuntime.Section;
+			if (content_length_kb > config.MaxRequestLength)
+				throw HttpException.NewWithCode (400, "Upload size exceeds httpRuntime limit.", WebEventCodes.RuntimeErrorPostTooLarge);
+
+			int total = 0;
+			byte [] buffer;
+			buffer = worker_request.GetPreloadedEntityBody ();
+			// we check the instance field 'content_length' here, not the local var.
+			if (this.content_length <= 0 || worker_request.IsEntireEntityBodyIsPreloaded ()) {
+				if (buffer == null || content_length == 0) {
+					input_stream = new MemoryStream (new byte [0], 0, 0, false, true);
+				} else {
+					input_stream = new MemoryStream (buffer, 0, buffer.Length, false, true);
+				}
+				DoFilter (new byte [1024]);
+				return input_stream;
+			}
+
+			if (buffer != null)
+				total = buffer.Length;
+
+			return new BufferlessInputStream (this, buffer);
+		}
+
+
+		public Stream GetBufferlessInputStream ()
+		{
+			if (input_stream != null)
+				throw new HttpException ("Input stream has already been created");
+			input_stream = MakeBufferlessInputStream ();
+			if (input_filter != null){
+				input_filter.BaseStream = input_stream;
+				return input_filter;
+			}
+			return input_stream;
+		}
+
+		//
+		// Stream that returns the data as it is read, without buffering
+		//
+		class BufferlessInputStream : Stream {
+			HttpRequest request;
+			
+
+			// cached, the request content-length
+			int content_length;
+
+			// the buffer that we read from
+			byte [] preloadedBuffer;
+
+			// number of valid bytes in buffer.
+			int bytes_in_buffer;
+
+			// how many bytes we have returned so far
+			int total;
+
+			// our stream position
+			long position;
+			int buffer_start;
+
+			//
+			// @request: the containing request that created us, used to find out content length
+			// @buffer: the byte buffer that we start serving (may be null).
+			// @total: number of valid bytes in buffer.
+			public BufferlessInputStream (HttpRequest request, byte [] preloadedBuffer)
+			{
+				this.request = request;
+				this.preloadedBuffer = preloadedBuffer;
+				bytes_in_buffer = preloadedBuffer == null ? 0 : preloadedBuffer.Length;
+				content_length = request.ContentLength;
+			}
+
+			public override bool CanRead {
+				get { return true; }
+			}
+
+			public override bool CanSeek {
+				get { return false; }
+			}
+
+			public override bool CanWrite {
+				get { return false; }
+			}
+
+			public override long Length {
+				get {
+					return content_length;
+				}
+			}
+
+			public override long Position {
+				get {
+					return position;
+				}
+				set {
+					throw new NotSupportedException ("This is a readonly stream");
+				}
+			}
+
+			public override void Flush ()
+			{
+			}
+
+			public override int Read (byte [] buffer, int offset, int count)
+			{
+				if (buffer == null)
+					throw new ArgumentNullException ("buffer");
+				
+				if (offset < 0 || count < 0)
+					throw new ArgumentOutOfRangeException ("offset or count less than zero.");
+				
+				if (buffer.Length - offset < count )
+					throw new ArgumentException ("offset+count",
+								     "The size of the buffer is less than offset + count.");
+
+				// Serve the bytes we might have preloaded already.
+				if (preloadedBuffer != null){
+					int bytes_left = bytes_in_buffer-buffer_start;
+					if (bytes_left != 0){
+						int n = Math.Min (count, bytes_left);
+						Array.Copy (preloadedBuffer, buffer_start, buffer, offset, n);
+						buffer_start += n;
+						if (buffer_start == bytes_in_buffer)
+							preloadedBuffer = null;
+						return n;
+					}
+				}
+
+				return request.worker_request.ReadEntityBody (buffer, offset, count);
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				throw new NotSupportedException ("Can not seek on the HttpRequest.BufferlessInputStream");
+			}
+
+			public override void SetLength (long value)
+			{
+				throw new NotSupportedException ("Can not set length on the HttpRequest.BufferlessInputStream");
+			}
+
+			public override void Write (byte [] buffer, int offset, int count)
+			{
+				throw new NotSupportedException ("Can not write on the HttpRequest.BufferlessInputStream");
+			}
+
+			//
+			// TODO: explicitly support the async methods if there is a convenient way of doing it
+			//
+		}
 #endif
 		public Stream InputStream {
 			get {
@@ -1786,7 +1946,7 @@ namespace System.Web
 #endregion
 
 #region Helper classes
-	
+
 	//
 	// Stream-based multipart handling.
 	//
