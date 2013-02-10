@@ -118,15 +118,5 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 			Type3Message msg = new Type3Message ();
 			msg.Challenge = new byte [9];
 		}
-		
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void BadType3Message () 
-		{
-			byte[] bad = (byte[]) data1.Clone ();
-			bad [56] = 0x00;
-			bad [57] = 0x00;
-			Type3Message msg = new Type3Message (bad);
-		}
 	}
 }
