@@ -353,7 +353,7 @@ namespace System.ServiceModel
 			public object [] Results { get; private set; }
 		}
 
-#if NET_2_1 || NET_4_0
+#if NET_4_0
 		protected internal
 #else
 		internal

@@ -642,7 +642,7 @@ namespace System.ServiceModel.Dispatcher
 				var ms = Stream as MemoryStream;
 				if (ms == null) {
 					ms = new MemoryStream ();
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 					Stream.CopyTo (ms);
 #else
 					byte [] tmp = new byte [0x1000];

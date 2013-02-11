@@ -454,7 +454,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				try {
 					isf.CreateDirectory (path);
 				}
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 				catch (IsolatedStorageException ex) {
 					Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "Message");
 					Assert.IsNull (ex.InnerException, "InnerException");
@@ -495,7 +495,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 		[ExpectedException (typeof (ArgumentException))]
 #else
 		[ExpectedException (typeof (SecurityException))]

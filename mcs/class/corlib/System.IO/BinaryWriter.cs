@@ -100,7 +100,7 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 

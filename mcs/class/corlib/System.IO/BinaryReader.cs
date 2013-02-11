@@ -117,7 +117,7 @@ namespace System.IO {
 			charBuffer = null;
 		}
 
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 

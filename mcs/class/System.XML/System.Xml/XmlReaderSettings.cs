@@ -54,7 +54,7 @@ namespace System.Xml
 		private XsValidationFlags validationFlags;
 		private ValidationType validationType;
 		private XmlResolver xmlResolver;
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 		private DtdProcessing dtdProcessing;
 #endif
 		private long maxCharactersFromEntities;
@@ -118,7 +118,7 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {

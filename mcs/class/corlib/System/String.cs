@@ -539,7 +539,7 @@ namespace System
 
 		unsafe int FindNotWhiteSpace (int pos, int target, int change)
 		{
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 			fixed (char* src = this) {
 				while (pos != target) {
 					if (!char.IsWhiteSpace (src[pos]))

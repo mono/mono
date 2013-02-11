@@ -340,7 +340,7 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (- (l.Count + 1), l.BinarySearch (int.MaxValue));
 		}
 
-#if !NET_4_0 && !NET_2_1 // FIXME: the blob contains the 2.0 mscorlib version
+#if !NET_4_0 // FIXME: the blob contains the 2.0 mscorlib version
 
 		[Test]
 		[Category ("TargetJvmNotWorking")]
