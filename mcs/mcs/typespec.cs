@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
@@ -389,11 +390,16 @@ namespace Mono.CSharp
 			// When resolving base class of X`1 we inflate context type A`1
 			// All this happens before we even hit IFoo resolve. Without
 			// additional expansion any inside usage of A<T> would miss IFoo
-			// interface because it comes from early inflated TypeSpec
+			// interface because it comes from early inflated A`1 definition.
 			//
 			if (inflated_instances != null) {
-				foreach (var inflated in inflated_instances) {
-					inflated.Value.AddInterface (iface);
+				//
+				// Inflate only existing instances not any new instances added
+				// during AddInterface
+				//
+				var inflated_existing = inflated_instances.Values.ToArray ();
+				foreach (var inflated in inflated_existing) {
+					inflated.AddInterface (iface);
 				}
 			}
 
