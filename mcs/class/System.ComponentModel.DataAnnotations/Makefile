@@ -1,5 +1,5 @@
 thisdir = class/System.ComponentModel.DataAnnotations
-SUBDIRS = Test
+SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.ComponentModel.DataAnnotations.dll
