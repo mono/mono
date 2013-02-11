@@ -138,15 +138,16 @@ public class CP864 : ByteEncoding
 	                                         byte* bytes, int byteCount)
 	{
 		int ch;
-		int charIndex;
+		int charIndex = 0;
 		int byteIndex = 0;
 #if NET_2_0
 		EncoderFallbackBuffer buffer = null;
 #endif
-		for (charIndex=0; charCount > 0; charIndex++, charCount--)
+		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);
-			bool fallback = false;
+			charIndex++;
+			charCount--;
 			if(ch >= 26) switch(ch)
 			{
 				case 0x001B:
@@ -517,29 +518,17 @@ public class CP864 : ByteEncoding
 					}
 					else
 					{
-#if NET_2_0
-						//Execute fallback routine and set fallback flag on
 						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
-						fallback = true;
-#else
-						ch = 0x3F;
-#endif
+						continue;
 					}
 				}
 				break;
 			}
 			//Write encoded byte to buffer, if buffer is defined and fallback was not used
-			if (bytes != null && !fallback)
-			{
+			if (bytes != null)
 				bytes[byteIndex] = (byte)ch;
-			}
-			
-			//Bump counters if fallback was not used
-			if (!fallback)
-			{
-				byteIndex++;
-				byteCount--;
-			}
+			byteIndex++;
+			byteCount--;
 		}
 		return byteIndex;
 	}

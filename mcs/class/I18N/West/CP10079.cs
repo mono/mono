@@ -138,15 +138,16 @@ public class CP10079 : ByteEncoding
 	                                         byte* bytes, int byteCount)
 	{
 		int ch;
-		int charIndex;
+		int charIndex = 0;
 		int byteIndex = 0;
 #if NET_2_0
 		EncoderFallbackBuffer buffer = null;
 #endif
-		for (charIndex=0; charCount > 0; charIndex++, charCount--)
+		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);
-			bool fallback = false;
+			charIndex++;
+			charCount--;
 			if(ch >= 128) switch(ch)
 			{
 				case 0x00A2:
@@ -279,26 +280,14 @@ public class CP10079 : ByteEncoding
 				case 0x25CA: ch = 0xD7; break;
 				case 0xF8FF: ch = 0xF0; break;
 				default:
-#if NET_2_0
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
-					fallback = true;
-#else
-						ch = 0x3F;
-#endif
-					break;
+					continue;
 			}
 			//Write encoded byte to buffer, if buffer is defined and fallback was not used
-			if (bytes != null && !fallback)
-			{
+			if (bytes != null)
 				bytes[byteIndex] = (byte)ch;
-			}
-			
-			//Bump counters if fallback was not used
-			if (!fallback)
-			{
-				byteIndex++;
-				byteCount--;
-			}
+			byteIndex++;
+			byteCount--;
 		}
 		return byteIndex;
 	}
