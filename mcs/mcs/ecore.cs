@@ -3545,7 +3545,7 @@ namespace Mono.CSharp {
 				best_candidate_return = best_candidate.ReturnType;
 			}
 
-			if (best_candidate.IsGeneric && TypeParameterSpec.HasAnyTypeParameterConstrained (best_candidate.GenericDefinition)) {
+			if (best_candidate.IsGeneric && (restr & OverloadResolver.Restrictions.ProbingOnly) == 0 && TypeParameterSpec.HasAnyTypeParameterConstrained (best_candidate.GenericDefinition)) {
 				ConstraintChecker cc = new ConstraintChecker (ec);
 				cc.CheckAll (best_candidate.GetGenericMethodDefinition (), best_candidate.TypeArguments, best_candidate.Constraints, loc);
 			}
@@ -4937,7 +4937,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (invocable_member != null) {
+			if (invocable_member != null && !IsProbingOnly) {
 				rc.Report.SymbolRelatedToPreviousError (best_candidate);
 				rc.Report.SymbolRelatedToPreviousError (invocable_member);
 				rc.Report.Warning (467, 2, loc, "Ambiguity between method `{0}' and invocable non-method `{1}'. Using method group",
@@ -4959,7 +4959,7 @@ namespace Mono.CSharp {
 			//
 			// Don't run possibly expensive checks in probing mode
 			//
-			if (!rc.IsInProbingMode) {
+			if (!IsProbingOnly && !rc.IsInProbingMode) {
 				//
 				// Check ObsoleteAttribute on the best method
 				//

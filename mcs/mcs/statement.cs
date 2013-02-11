@@ -6117,7 +6117,7 @@ namespace Mono.CSharp {
 				if (mg != null) {
 					mg.InstanceExpression = expr;
 					Arguments args = new Arguments (0);
-					mg = mg.OverloadResolve (rc, ref args, this, OverloadResolver.Restrictions.None);
+					mg = mg.OverloadResolve (rc, ref args, this, OverloadResolver.Restrictions.ProbingOnly);
 
 					// For ambiguous GetEnumerator name warning CS0278 was reported, but Option 2 could still apply
 					if (ambiguous_getenumerator_name)
