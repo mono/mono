@@ -121,14 +121,7 @@ namespace System.Xaml
 		
 		public static TypeConverter GetTypeConverter (this Type type)
 		{
-#if MOONLIGHT
-			if (typeof (IConvertible).IsAssignableFrom (type))
-				return (TypeConverter) Activator.CreateInstance (typeof (ConvertibleTypeConverter<>).MakeGenericType (new Type [] {type}));
-			var name = type.GetCustomAttribute<TypeConverterAttribute> (true).ConverterTypeName;
-			return (TypeConverter) Activator.CreateInstance (type.Assembly.GetType (name) ?? Type.GetType (name));
-#else
 			return TypeDescriptor.GetConverter (type);
-#endif
 		}
 		
 		// FIXME: I want this to cover all the existing types and make it valid in both NET_2_1 and !NET_2_1.
