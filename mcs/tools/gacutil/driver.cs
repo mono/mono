@@ -431,12 +431,8 @@ namespace Mono.Tools {
 
 				if (File.Exists (Path.Combine (dir, assembly_name + ".dll"))) {
 					extension = ".dll";
-				} else if (File.Exists (Path.Combine (dir, assembly_name + ".DLL"))) {
-					extension = ".DLL";
 				} else if (File.Exists (Path.Combine (dir, assembly_name + ".exe"))) {
 					extension = ".exe";
-				} else if (File.Exists (Path.Combine (dir, assembly_name + ".EXE"))) {
-					extension = ".EXE";
 				} else {
 					failures++;
 					WriteLine("Cannot find the assembly: " + assembly_name);
@@ -749,7 +745,7 @@ namespace Mono.Tools {
 
 		private static bool IsSwitch (string arg)
 		{
-			return (arg [0] == '-' || (arg [0] == '/' && !arg.EndsWith (".dll") && arg.IndexOf ('/', 1) < 0 ) );
+			return (arg [0] == '-' || (arg [0] == '/' && !arg.EndsWith (".dll") && !arg.EndsWith (".exe") && arg.IndexOf ('/', 1) < 0 ) );
 		}
 
 		private static Command GetCommand (string arg)
