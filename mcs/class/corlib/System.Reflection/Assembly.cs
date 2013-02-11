@@ -75,7 +75,7 @@ namespace System.Reflection {
 		private bool fromByteArray;
 		private string assemblyName;
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		protected
 #else
 		internal
@@ -613,7 +613,7 @@ namespace System.Reflection {
 
 		[MonoTODO ("Not implemented")]
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		virtual
 #endif
 		Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
@@ -668,7 +668,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		virtual
 #endif
 		Object CreateInstance (String typeName, Boolean ignoreCase,
@@ -758,7 +758,7 @@ namespace System.Reflection {
 		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		virtual
 #endif
 		long HostContext {
@@ -890,7 +890,7 @@ namespace System.Reflection {
 
 #endif
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		static Exception CreateNIE ()
 		{
 			return new NotImplementedException ("Derived classes must implement it");

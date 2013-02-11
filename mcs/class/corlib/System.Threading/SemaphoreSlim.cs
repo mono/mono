@@ -25,7 +25,7 @@
 using System;
 using System.Diagnostics;
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 namespace System.Threading
 {
 	[System.Diagnostics.DebuggerDisplayAttribute ("Current Count = {currCount}")]

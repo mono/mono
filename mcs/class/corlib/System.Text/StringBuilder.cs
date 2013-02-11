@@ -505,7 +505,7 @@ namespace System.Text {
 			return this;
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public StringBuilder Clear ()
 		{
 			Length = 0;

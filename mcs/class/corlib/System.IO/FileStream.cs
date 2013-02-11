@@ -830,7 +830,7 @@ namespace System.IO
 			FlushBuffer ();
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public virtual void Flush (bool flushToDisk)
 		{
 			FlushBuffer ();

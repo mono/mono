@@ -462,7 +462,7 @@ namespace System.Xml.Linq
 			}
 		}
 
-#if MOBILE || NET_4_0
+#if NET_4_0
 		public static XElement Load (Stream stream)
 		{
 			return Load (stream, LoadOptions.None);
@@ -544,7 +544,7 @@ namespace System.Xml.Linq
 
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0 || MOBILE
+#if NET_4_0
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
@@ -564,7 +564,7 @@ namespace System.Xml.Linq
 			
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0 || MOBILE
+#if NET_4_0
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
@@ -578,7 +578,7 @@ namespace System.Xml.Linq
 			WriteTo (writer);
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public void Save (Stream stream)
 		{
 			Save (stream, SaveOptions.None);

@@ -822,7 +822,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}

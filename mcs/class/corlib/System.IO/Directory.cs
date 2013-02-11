@@ -500,7 +500,7 @@ namespace System.IO
 			return result;
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			// Take the simple way home:

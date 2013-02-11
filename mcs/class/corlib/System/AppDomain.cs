@@ -1538,7 +1538,7 @@ namespace System {
 		}
 #endif
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		List<string> compatibility_switch;
 
 		public bool? IsCompatibilitySwitchSet (string value)

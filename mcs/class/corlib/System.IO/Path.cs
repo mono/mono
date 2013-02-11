@@ -741,7 +741,7 @@ namespace System.IO {
 			return String.Compare (subset, slast, path, slast, subset.Length - slast) == 0;
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public
 #else
                 internal
@@ -781,7 +781,7 @@ namespace System.IO {
 			return ret.ToString ();
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public
 #else
                 internal
@@ -800,7 +800,7 @@ namespace System.IO {
 			return Combine (new string [] { path1, path2, path3 });
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public
 #else
                 internal

@@ -26,7 +26,7 @@
 //	Marek Safar (marek.safar@gmail.com)
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;

@@ -3072,7 +3072,7 @@ namespace System.Linq
 
 		#endregion
 		
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		#region Zip
 		
 		public static IEnumerable<TResult> Zip<TFirst, TSecond, TResult> (this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)

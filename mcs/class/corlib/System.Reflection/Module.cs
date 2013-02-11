@@ -48,7 +48,7 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_4_0 || MOBILE
+#if NET_4_0
 	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else
 	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
@@ -69,7 +69,7 @@ namespace System.Reflection {
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		protected
 #else
 		internal
@@ -315,7 +315,7 @@ namespace System.Reflection {
 
 #endif
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 		public virtual Assembly Assembly {
 			get { throw CreateNIE (); }

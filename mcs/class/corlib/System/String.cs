@@ -2333,7 +2333,7 @@ namespace System
 			return InternalIsInterned (str);
 		}
 	
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public static string Join (string separator, params string [] value)
 #else
 		public static string Join (string separator, string [] value)
@@ -2641,7 +2641,7 @@ namespace System
 			}
 		}
 
-#if MOBILE || NET_4_0
+#if NET_4_0
 		[ComVisible(false)]
 		public static string Concat (IEnumerable<string> values)
 		{

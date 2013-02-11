@@ -354,7 +354,7 @@ namespace System.IO {
 			Directory.SetAccessControl (FullPath, directorySecurity);
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 		public IEnumerable<DirectoryInfo> EnumerateDirectories ()
 		{

@@ -1038,7 +1038,7 @@ namespace System.Reflection.Emit {
 			return ig.code_len;
 		}	
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public
 #else
 		internal

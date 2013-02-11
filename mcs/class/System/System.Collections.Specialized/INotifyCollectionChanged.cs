@@ -23,7 +23,7 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System.Runtime.CompilerServices;
 
 namespace System.Collections.Specialized {

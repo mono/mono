@@ -292,7 +292,7 @@ namespace System.Net
 				throw new ArgumentNullException ("requestUri");
 			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
-#if NET_4_5 || MOBILE	
+#if NET_4_5	
 		[MonoTODO ("for portable library support")]
 		public static HttpWebRequest CreateHttp (string requestUriString)
 		{

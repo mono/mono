@@ -37,7 +37,7 @@ using System.Collections.Generic;
 
 namespace System.Reflection {
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
@@ -47,7 +47,7 @@ namespace System.Reflection {
 	public partial class Assembly {
 #endif
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		Type GetType (string name, bool throwOnError, bool ignoreCase)
@@ -59,7 +59,7 @@ namespace System.Reflection {
 			throw new ArgumentException ("name", "Name cannot be empty");
 
 			res = InternalGetType (null, name, throwOnError, ignoreCase);
-#if !(NET_4_0  || MOBILE) && !FULL_AOT_RUNTIME
+#if !NET_4_0 && !FULL_AOT_RUNTIME
 			if (res is TypeBuilder) {
 				if (throwOnError)
 					throw new TypeLoadException (string.Format ("Could not load type '{0}' from assembly '{1}'", name, this));
@@ -70,7 +70,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		Module GetModule (String name)
@@ -90,7 +90,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		AssemblyName[] GetReferencedAssemblies () {
@@ -98,7 +98,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		Module[] GetModules (bool getResourceModules) {
@@ -117,7 +117,7 @@ namespace System.Reflection {
 
 		[MonoTODO ("Always returns the same as GetModules")]
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		Module[] GetLoadedModules (bool getResourceModules)
@@ -126,7 +126,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		Assembly GetSatelliteAssembly (CultureInfo culture)
@@ -135,7 +135,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
@@ -146,7 +146,7 @@ namespace System.Reflection {
 		//FIXME remove GetManifestModule under v4, it's a v2 artifact
 		[ComVisible (false)]
 		public
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		override
 #endif
 		Module ManifestModule {

@@ -29,7 +29,7 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 #if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
 #elif NET_4_0

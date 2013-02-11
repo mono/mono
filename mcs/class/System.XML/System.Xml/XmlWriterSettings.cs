@@ -162,7 +162,7 @@ namespace System.Xml
 			//set { outputMethod = value; }
 		}
 
-#if MOBILE || NET_4_0
+#if NET_4_0
 		public
 #else
 		internal

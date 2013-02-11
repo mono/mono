@@ -1010,7 +1010,7 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0 || MOBILE
+#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2019,7 +2019,7 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0 || MOBILE
+#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2213,7 +2213,7 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0 || MOBILE
+#if NET_4_0
 			if (relativeUri == null)
 				return false;
 #endif

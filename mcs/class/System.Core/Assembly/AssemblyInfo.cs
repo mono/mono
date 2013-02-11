@@ -67,7 +67,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 [assembly: TypeForwardedTo (typeof (System.Security.Cryptography.Aes))]
 #endif
 

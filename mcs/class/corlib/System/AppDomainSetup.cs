@@ -376,7 +376,7 @@ namespace System
 			serialized_non_primitives = ms.ToArray ();
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		[MonoTODO ("not implemented, does not throw because it's used in testing moonlight")]
 		public void SetCompatibilitySwitches (IEnumerable<string> switches)
 		{

@@ -699,7 +699,7 @@ namespace System {
 			return !( a.Equals (b) );
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public static Guid Parse (string input)
 		{
 			if (input == null)
@@ -767,7 +767,7 @@ namespace System {
 			case 'P':
 			case 'p':
 				return Format.P;
-#if NET_4_0 || MOBILE
+#if NET_4_0
 			case 'X':
 			case 'x':
 				return Format.X;
@@ -775,7 +775,7 @@ namespace System {
 			}
 
 			throw new FormatException (
-#if NET_4_0 || MOBILE
+#if NET_4_0
 				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\", \"b\", \"X\" or \"x\""
 #else
 				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\" or \"b\""
