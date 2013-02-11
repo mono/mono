@@ -429,13 +429,13 @@ namespace Mono.Tools {
 				string dir = directories [i];
 				string extension = null;
 
-				if (File.Exists(Path.Combine (dir, assembly_name + ".dll"))) {
+				if (File.Exists (Path.Combine (dir, assembly_name + ".dll"))) {
 					extension = ".dll";
-				} else if (File.Exists(Path.Combine (dir, assembly_name + ".DLL"))) {
+				} else if (File.Exists (Path.Combine (dir, assembly_name + ".DLL"))) {
 					extension = ".DLL";
-				} else if (File.Exists(Path.Combine (dir, assembly_name + ".exe"))) {
+				} else if (File.Exists (Path.Combine (dir, assembly_name + ".exe"))) {
 					extension = ".exe";
-				} else if (File.Exists(Path.Combine (dir, assembly_name + ".EXE"))) {
+				} else if (File.Exists (Path.Combine (dir, assembly_name + ".EXE"))) {
 					extension = ".EXE";
 				} else {
 					failures++;
@@ -443,16 +443,16 @@ namespace Mono.Tools {
 					continue;
 				}
 
-				string AssemblyFilename = assembly_name + extension;
+				string assembly_filename = assembly_name + extension;
 
 				AssemblyName an = AssemblyName.GetAssemblyName (
-					Path.Combine(dir, AssemblyFilename));
+					Path.Combine (dir, assembly_filename));
 				WriteLine ("Assembly: " + an.FullName);
 
 				Directory.Delete (dir, true);
 				if (package != null) {
 					string link_dir = Path.Combine (libdir, package);
-					string link = Path.Combine(link_dir, AssemblyFilename);
+					string link = Path.Combine (link_dir, assembly_filename);
 
 					try { 
 						File.Delete (link);
@@ -749,7 +749,7 @@ namespace Mono.Tools {
 
 		private static bool IsSwitch (string arg)
 		{
-			return (arg [0] == '-' || (arg [0] == '/' && !arg.EndsWith(".dll") && arg.IndexOf('/', 1) < 0 ) );
+			return (arg [0] == '-' || (arg [0] == '/' && !arg.EndsWith (".dll") && arg.IndexOf ('/', 1) < 0 ) );
 		}
 
 		private static Command GetCommand (string arg)
