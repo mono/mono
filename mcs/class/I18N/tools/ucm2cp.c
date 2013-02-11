@@ -603,13 +603,8 @@ static void printConvertSwitch(int forString)
 			printf("\t\t\t\tdefault: ch = 0x3F; break;\n");
 		else {
 			printf("\t\t\t\tdefault:\n");
-			printf("#if NET_2_0\n");
 			printf("\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
-			printf("\t\t\t\t\tfallback = true;\n");
-			printf("#else\n");
-			printf("\t\t\t\t\t\tch = 0x3F;\n");
-			printf("#endif\n");
-			printf("\t\t\t\t\tbreak;\n");
+			printf("\t\t\t\t\tcontinue;\n");
 		}
 	}
 	else
@@ -625,13 +620,8 @@ static void printConvertSwitch(int forString)
 		if(forString) /* this is basically meaningless, just to make diff for unused code minimum */
 			printf("\t\t\t\t\t\tch = 0x3F;\n");
 		else {
-			printf("#if NET_2_0\n");
-			printf("\t\t\t\t\t\t//Execute fallback routine and set fallback flag on\n");
 			printf("\t\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
-			printf("\t\t\t\t\t\tfallback = true;\n");
-			printf("#else\n");
-			printf("\t\t\t\t\t\tch = 0x3F;\n");
-			printf("#endif\n");
+			printf("\t\t\t\t\t\tcontinue;\n");
 		}
 		printf("\t\t\t\t\t}\n");
 		printf("\t\t\t\t}\n");
@@ -699,31 +689,22 @@ static void printCharToByte(void)
 	printf("\t                                         byte* bytes, int byteCount)\n");
 	printf("\t{\n");
 	printf("\t\tint ch;\n");
-	printf("\t\tint charIndex;\n");
+	printf("\t\tint charIndex = 0;\n");
 	printf("\t\tint byteIndex = 0;\n");
 	printf("#if NET_2_0\n");
 	printf("\t\tEncoderFallbackBuffer buffer = null;\n");
 	printf("#endif\n");
-	printf("\t\tfor (charIndex=0; charCount > 0; charIndex++, charCount--)\n");
+	printf("\t\twhile (charCount > 0)\n");
 	printf("\t\t{\n");
 	printf("\t\t\tch = (int)(chars[charIndex]);\n");
-	printf("\t\t\tbool fallback = false;\n");
+	printf("\t\t\tcharIndex++;\n");
+	printf("\t\t\tcharCount--;\n");
 	printConvertSwitch(0);
 	printf("\t\t\t//Write encoded byte to buffer, if buffer is defined and fallback was not used\n");
-	printf("\t\t\tif (bytes != null && !fallback)\n");
-	printf("\t\t\t{\n");
+	printf("\t\t\tif (bytes != null)\n");
 	printf("\t\t\t\tbytes[byteIndex] = (byte)ch;\n");
-	printf("\t\t\t}\n");
-	printf("\t\t\t\n");
-	printf("\t\t\t//Bump counters if fallback was not used\n");
-	printf("\t\t\tif (!fallback)\n");
-	printf("\t\t\t{\n");
-	printf("\t\t\t\tbyteIndex++;\n");
-	printf("\t\t\t\tbyteCount--;\n");
-	printf("\t\t\t}\n");
-	//printf("\t\t\tbytes[byteIndex++] = (byte)ch;\n");
-	//printf("\t\t\t--charCount;\n");
-	//printf("\t\t\t--byteCount;\n");
+	printf("\t\t\tbyteIndex++;\n");
+	printf("\t\t\tbyteCount--;\n");
 	printf("\t\t}\n");
 	printf("\t\treturn byteIndex;\n");
 	printf("\t}\n\n");
