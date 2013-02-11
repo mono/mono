@@ -117,11 +117,7 @@ namespace Mono.Xml2
 		internal XmlTextReader (bool dummy, XmlResolver resolver, string url, XmlNodeType fragType, XmlParserContext context)
 		{
 			if (resolver == null) {
-#if MOONLIGHT
-				resolver = new XmlXapResolver ();
-#else
 				resolver = new XmlUrlResolver ();
-#endif
 			}
 			this.XmlResolver = resolver;
 			string uriString;
@@ -915,11 +911,7 @@ namespace Mono.Xml2
 		// These values are never re-initialized.
 		private bool namespaces = true;
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
-#if MOONLIGHT
-		private XmlResolver resolver = new XmlXapResolver ();
-#else
 		private XmlResolver resolver = new XmlUrlResolver ();
-#endif
 		private bool normalization = false;
 
 		private bool checkCharacters;

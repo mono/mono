@@ -250,7 +250,6 @@ namespace System.Xml.Serialization
 
 #region Events
 		private UnreferencedObjectEventHandler onUnreferencedObject;
-#if !MOONLIGHT
 		private XmlAttributeEventHandler onUnknownAttribute;
 		private XmlElementEventHandler onUnknownElement;
 		private XmlNodeEventHandler onUnknownNode;
@@ -285,8 +284,6 @@ namespace System.Xml.Serialization
 		{
 			if (onUnknownNode != null) onUnknownNode(this, e);
 		}
-
-#endif
 
 		internal virtual void OnUnreferencedObject (UnreferencedObjectEventArgs e) 
 		{
@@ -422,11 +419,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-#if MOONLIGHT
-		static Encoding DefaultEncoding = Encoding.UTF8;
-#else
 		static Encoding DefaultEncoding = Encoding.Default;
-#endif
 
 		public void Serialize (Stream stream, object o)
 		{

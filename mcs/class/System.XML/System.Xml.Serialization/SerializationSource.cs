@@ -34,7 +34,6 @@ using System.Text;
 
 namespace System.Xml.Serialization 
 {
-#if !MOONLIGHT
 	internal abstract class SerializationSource 
 	{
 		Type[] includedTypes;
@@ -187,7 +186,5 @@ namespace System.Xml.Serialization
 			return membersHash.GetHashCode ();
 		}
 	}
-#endif
-	
 }
 
