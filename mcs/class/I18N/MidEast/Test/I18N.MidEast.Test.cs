@@ -21,6 +21,9 @@ namespace MonoTests.I18N.MidEast
 	{
 		private global::I18N.Common.Manager Manager = global::I18N.Common.Manager.PrimaryManager;
 
+		//MidEast codepages
+		int[] cps = { 1254, 28599, 1254, 1255, 28598, 28596, 38598, 1256 };
+
 		void AssertEncode (string utf8file, string decfile, int codepage)
 		{
 			AssertEncode(utf8file, decfile, codepage, null);
@@ -103,9 +106,14 @@ namespace MonoTests.I18N.MidEast
 		[Test]
 		public void HandleFallback_Encode_All()
 		{
-			int[] cps = { 1254, 1251, 1252 };
 			foreach (int cp in cps)
 				HandleFallback_Encode_Generic(cp);
+		}
+		[Test]
+		public void HandleFallback_Ascii_Test_All()
+		{
+			foreach (int cp in cps)
+				AssertEncode("Test/texts/ascii-test.txt", "Test/texts/ascii-test.txt", cp);
 		}
 
 		[Test]
