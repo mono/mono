@@ -110,7 +110,7 @@ namespace MonoTests.I18N.MidEast
 				HandleFallback_Encode_Generic(cp);
 		}
 		[Test]
-		public void HandleFallback_Ascii_Test_All()
+		public void Ascii_Test_All()
 		{
 			foreach (int cp in cps)
 				AssertEncode("Test/texts/ascii-test.txt", "Test/texts/ascii-test.txt", cp);
