@@ -370,9 +370,9 @@ namespace MonoTests.System.Threading.Tasks
 			Task<int> task = factory.FromAsync<int, int> (func.BeginInvoke, func.EndInvoke, 1, null);
 			var cont = task.ContinueWith (_ => continuationTest = true, TaskContinuationOptions.ExecuteSynchronously);
 			try {
-				task.Wait ();
+				task.Wait (2000);
 			} catch { }
-			cont.Wait ();
+			Assert.IsTrue (cont.Wait (2000), "#1");
 
 			Assert.IsTrue (result);
 			Assert.IsTrue (continuationTest);

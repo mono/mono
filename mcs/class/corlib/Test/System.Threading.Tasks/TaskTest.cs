@@ -802,6 +802,18 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void RunSynchronouslyOnContinuation ()
+		{
+			Task t = new Task<int> (() => 1);
+			t = t.ContinueWith (l => { });
+			try {
+				t.RunSynchronously ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
 		public void UnobservedExceptionOnFinalizerThreadTest ()
 		{
 			bool wasCalled = false;

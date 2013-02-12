@@ -206,6 +206,14 @@ namespace System.Threading.Tasks
 			if (Status > TaskStatus.WaitingForActivation)
 				throw new InvalidOperationException ("The task is not in a valid state to be started");
 
+			if (IsContinuation)
+				throw new InvalidOperationException ("RunSynchronously may not be called on a continuation task");
+
+			RunSynchronouslyCore (scheduler);
+		}
+
+		internal void RunSynchronouslyCore (TaskScheduler scheduler)
+		{
 			SetupScheduler (scheduler);
 			var saveStatus = status;
 			Status = TaskStatus.WaitingToRun;
