@@ -59,6 +59,7 @@ for my $arch (@arches)
 
 	system("rm $bintarget/mono");
 	system("rm $libtarget/libmono.0.dylib");
+	system("rm $libtarget/libMonoPosixHelper.dylib");
 	system("rm -rf $libtarget/libmono.0.dylib.dSYM");
 
 	if (not $skipbuild)
@@ -166,6 +167,9 @@ for my $arch (@arches)
 		print "Symlinking libmono.a\n";
 		system("ln", "-f", "$root/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
 
+		print "Symlinking libMonoPosixHelper.dylib\n";
+		system("ln", "-f", "$root/support/.libs/libMonoPosixHelper.dylib","$libtarget/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking libMonoPosixHelper.dylib");
+
 		if (not $ENV{"UNITY_THISISABUILDMACHINE"})
 		{
 			rmtree ("$libtarget/libmono.0.dylib.dSYM");
@@ -180,6 +184,7 @@ for my $arch (@arches)
 		}
 
 		InstallNameTool("$libtarget/libmono.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib");
+		InstallNameTool("$libtarget/libMonoPosixHelper.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libMonoPosixHelper.dylib");
 
 		system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
 		system("ln","-f","$root/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
@@ -191,7 +196,7 @@ if (!$iphone_simulator)
 {
 	# Create universal binaries
 	mkpath ("$root/builds/embedruntimes/osx");
-	for $file ('libmono.0.dylib','libmono.a') {
+	for $file ('libmono.0.dylib','libmono.a','libMonoPosixHelper.dylib') {
 		system ('lipo', "$root/builds/embedruntimes/osx-i386/$file", "$root/builds/embedruntimes/osx-x86_64/$file", '-create', '-output', "$root/builds/embedruntimes/osx/$file");
 	}
 	system('cp', "$root/builds/embedruntimes/osx-i386/MonoBundleBinary", "$root/builds/embedruntimes/osx/MonoBundleBinary");

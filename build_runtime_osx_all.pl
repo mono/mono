@@ -445,6 +445,7 @@ sub build_osx
 
 		system("rm $bintarget/mono");
 		system("rm $libtarget/libmono.0.dylib");
+		system("rm $libtarget/libMonoPosixHelper.dylib");
 		system("rm -rf $libtarget/libmono.0.dylib.dSYM");
 
 		if (not $skipbuild)
@@ -458,6 +459,13 @@ sub build_osx
 		mkpath($bintarget);
 		mkpath($libtarget);
 
+		if ($ENV{"UNITY_THISISABUILDMACHINE"})
+		{
+		#	system("strip $libtarget/libmono.0.dylib") eq 0 or die("failed to strip libmono");
+		#	system("strip $libtarget/MonoBundleBinary") eq 0 or die ("failed to strip MonoBundleBinary");
+			system("echo \"mono-runtime-osx = $ENV{'BUILD_VCS_NUMBER'}\" > $buildsroot/versions.txt");
+		}
+
 		my $cmdline = "gcc -arch $arch -bundle -reexport_library $buildtarget/mono/mini/.libs/libmono.a -isysroot /Developer/SDKs/MacOSX$sdkversion.sdk -mmacosx-version-min=$macversion -all_load -liconv -o $libtarget/MonoBundleBinary";
 		print "About to call this cmdline to make a bundle:\n$cmdline\n";
 		system($cmdline) eq 0 or die("failed to link libmono.a into mono bundle");
@@ -467,15 +475,12 @@ sub build_osx
 
 		print "Symlinking libmono.a\n";
 		system("ln", "-f", "$buildtarget/mono/mini/.libs/libmono.a","$libtarget/libmono.a") eq 0 or die ("failed symlinking libmono.a");
-	 
-		if ($ENV{"UNITY_THISISABUILDMACHINE"})
-		{
-		#	system("strip $libtarget/libmono.0.dylib") eq 0 or die("failed to strip libmono");
-		#	system("strip $libtarget/MonoBundleBinary") eq 0 or die ("failed to strip MonoBundleBinary");
-			system("echo \"mono-runtime-osx = $ENV{'BUILD_VCS_NUMBER'}\" > $buildsroot/versions.txt");
-		}
+
+		print "Symlinking libMonoPosixHelper.dylib\n";
+		system("ln","-f", "$buildtarget/support/.libs/libMonoPosixHelper.dylib","$libtarget/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking libMonoPosixHelper.dylib");
 
 		InstallNameTool("$libtarget/libmono.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/$os/libmono.0.dylib");
+		InstallNameTool("$libtarget/libMonoPosixHelper.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/$os/libMonoPosixHelper.dylib");
 
 		system("ln","-f","$buildtarget/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");
 		system("ln","-f","$buildtarget/mono/metadata/pedump","$bintarget/pedump") eq 0 or die("failed symlinking pedump executable");
@@ -487,14 +492,16 @@ sub build_osx
 
 
 	# Create universal binaries
-	for my $file ('libmono.0.dylib','libmono.a') {
+	for my $file ('libmono.0.dylib','libmono.a','libMonoPosixHelper.dylib') {
 		system ('lipo', "$embeddir/$os-i386/$file", "$embeddir/$os-x86_64/$file", '-create', '-output', "$embeddir/$os/$file");
 	}
 
 	if (not $ENV{"UNITY_THISISABUILDMACHINE"})
 	{
-		rmtree ("$embeddir/$os/libmono.0.dylib.dSYM");
-		system ('dsymutil', "$embeddir/$os/libmono.0.dylib") eq 0 or warn ("Failed creating $embeddir/$os/libmono.0.dylib.dSYM");
+		for my $file ('libmono.0.dylib','libMonoPosixHelper.dylib') {
+			rmtree ("$embeddir/$os/$file.dSYM");
+			system ('dsymutil', "$embeddir/$os/$file") eq 0 or warn ("Failed creating $embeddir/$os/$file.dSYM");
+		}
 	}
 
 	system('cp', "$embeddir/$os-i386/MonoBundleBinary", "$embeddir/$os/MonoBundleBinary");
