@@ -44,7 +44,14 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 }
 
 
-my $prefix = "$buildsroot/tmp";
+# From Massi: I was getting failures in install_name_tool about space
+# for the commands being too small, and adding here things like
+# $ENV{LDFLAGS} = '-headerpad_max_install_names' and
+# $ENV{LDFLAGS} = '-headerpad=0x40000' did not help at all (and also
+# adding them to our final gcc invocation to make the bundle).
+# Lucas noticed that I was lacking a Mono prefix, and having a long
+# one would give us space, so here is this silly looong prefix.
+my $prefix = "$buildsroot/tmp/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting";
 
 
 my $savedpath = $ENV{PATH};

@@ -129,7 +129,7 @@ for my $arch (@arches)
 		# adding them to our final gcc invocation to make the bundle).
 		# Lucas noticed that I was lacking a Mono prefix, and having a long
 		# one would give us space, so here is this silly looong prefix.
-		unshift(@autogenparams, "--prefix=/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890/1234567890");
+		unshift(@autogenparams, "--prefix=/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting/scripting");
 
 		if ($minimal)
 		{
