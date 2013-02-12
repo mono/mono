@@ -85,11 +85,15 @@ namespace Monodoc
 		public Tree (HelpSource hs, string caption, string url)
 #if !LEGACY_MODE
 			: this (hs, null, caption, url)
-#else
-			: base (caption, url)
-#endif
 		{
 		}
+#else
+			: base (caption, url)
+		{
+			HelpSource = hs;
+		}
+#endif
+
 
 		public Tree (HelpSource hs, Node parent, string caption, string element)
 #if LEGACY_MODE
