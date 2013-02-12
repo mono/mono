@@ -160,6 +160,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 			var mre = new ManualResetEvent (false);
 
 			var context = new MyContext ();
+			var old = SynchronizationContext.Current;			
 			try {
 				SynchronizationContext.SetSynchronizationContext (context);
 				a.OnCompleted (() => {
@@ -170,7 +171,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 				Assert.IsTrue (mre.WaitOne (1000), "#1");
 
 			} finally {
-				SynchronizationContext.SetSynchronizationContext (null);
+				SynchronizationContext.SetSynchronizationContext (old);
 			}
 
 			Assert.IsNull (context_ran, "#2");

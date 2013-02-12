@@ -427,6 +427,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetObject ()
 		{
 			ResourceManager rm = ResourceManager.
@@ -487,6 +488,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetObject_ResourceSet_Disposed ()
 		{
 			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de");
@@ -558,6 +560,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetString ()
 		{
 			ResourceManager rm = ResourceManager.
@@ -641,6 +644,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetStream ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -665,6 +669,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetStream_Culture ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -718,6 +723,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetStream_Resource_DoesNotExist ()
 		{
 			ResourceManager rm = ResourceManager.
@@ -727,6 +733,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetStream_Resource_NonStream ()
 		{
 			ResourceManager rm = ResourceManager.
@@ -765,6 +772,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetStream_ResourceSet_Disposed ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -788,6 +796,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void IgnoreCase ()
 		{
 			ResourceManager rm = ResourceManager.
@@ -854,6 +863,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestResourceManagerResourceSets ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -879,6 +889,7 @@ namespace MonoTests.System.Resources
 		}
 		
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestResourceManagerResourceSetClosedException ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;

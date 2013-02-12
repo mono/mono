@@ -41,6 +41,7 @@ namespace MonoTests.System.Runtime.InteropServices {
 	public class RuntimeEnvironmentTest {
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void SystemConfigurationFile ()
 		{
 			string fname = RuntimeEnvironment.SystemConfigurationFile;

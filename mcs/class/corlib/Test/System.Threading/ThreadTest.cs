@@ -86,6 +86,7 @@ namespace MonoTests.System.Threading
 	}
 
 	[TestFixture]
+	[Category("MobileNotWorking")] // Abort #10240
 	public class ThreadTest
 	{
 		TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
