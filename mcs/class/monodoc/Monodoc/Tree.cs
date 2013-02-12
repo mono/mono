@@ -16,11 +16,10 @@ namespace Monodoc
 	/* Ideally this class should also be abstracted to let user have something
 	 * else than a file as a backing store, a database for instance
 	 */
-	public
+	public class Tree
 #if LEGACY_MODE
-	partial
+		: Node
 #endif
-	class Tree
 	{
 		public const long CurrentVersionNumber = 1;
 		const int VersionNumberKey = -(int)'v';
@@ -29,13 +28,18 @@ namespace Monodoc
 		FileStream InputStream;
 		BinaryReader InputReader;
 
+#if !LEGACY_MODE
 		// This is the node which contains all the other node of the tree
 		Node rootNode;
+#endif
 
 		/// <summary>
 		///   Load from file constructor
 		/// </summary>
 		public Tree (HelpSource hs, string filename)
+#if LEGACY_MODE
+			: base (null, null)
+#endif
 		{
 			HelpSource = hs;
 			Encoding utf8 = new UTF8Encoding (false, true);
@@ -67,21 +71,35 @@ namespace Monodoc
 			}
 
 			var position = InputReader.ReadInt32 ();
+#if !LEGACY_MODE
 			rootNode = new Node (this, position);
-			InflateNode (rootNode);
+#else
+			Address = position;
+#endif
+			InflateNode (RootNode);
 		}
 
 		/// <summary>
 		///    Tree creation and merged tree constructor
 		/// </summary>
-		public Tree (HelpSource hs, string caption, string url) : this (hs, null, caption, url)
+		public Tree (HelpSource hs, string caption, string url)
+#if !LEGACY_MODE
+			: this (hs, null, caption, url)
+#else
+			: base (caption, url)
+#endif
 		{
 		}
 
 		public Tree (HelpSource hs, Node parent, string caption, string element)
+#if LEGACY_MODE
+			: base (parent, caption, element)
+#endif
 		{
 			HelpSource = hs;
+#if !LEGACY_MODE
 			rootNode = parent == null ? new Node (this, caption, element) : new Node (parent, caption, element);
+#endif
 		}
 
 		/// <summary>
@@ -96,21 +114,25 @@ namespace Monodoc
 			
 				using (BinaryWriter writer = new BinaryWriter (output, utf8)) {
 					// Recursively dump
-					rootNode.Serialize (output, writer);
+					RootNode.Serialize (output, writer);
 					// We want to generate 2.10 compatible files so we write the version number at the end
 					writer.Write (VersionNumberKey);
 					writer.Write (CurrentVersionNumber);
 
 					output.Position = 0;
 					writer.Write (new byte [] { (byte) 'M', (byte) 'o', (byte) 'H', (byte) 'P' });
-					writer.Write (rootNode.Address);
+					writer.Write (RootNode.Address);
 				}
 			}
 		}
 
 		public Node RootNode {
 			get {
+#if LEGACY_MODE
+				return this;
+#else
 				return rootNode;
+#endif
 			}
 		}
 

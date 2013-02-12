@@ -15,7 +15,6 @@ Monodoc/providers/EcmaDoc.cs
 Monodoc/HelpSource.cs
 Monodoc/HelpSource_Legacy.cs
 Monodoc/Tree.cs
-Monodoc/Tree_Legacy.cs
 Monodoc/Node.cs
 Monodoc/Node_Legacy.cs
 Monodoc/generator.cs

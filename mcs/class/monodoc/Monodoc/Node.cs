@@ -28,6 +28,17 @@ namespace Monodoc
 		 */
 		int address;
 
+#if LEGACY_MODE
+		[Obsolete ("Tree inheriting Node is being phased out. Use the `Tree.RootNode' property instead")]
+		public Node (string caption, string element)
+		{
+			this.parentTree = (Tree) this;
+			this.caption = caption;
+			this.element = element;
+			parent = null;
+		}
+#endif
+
 		public Node (Node parent, string caption, string element) : this (parent.Tree, caption, element)
 		{
 			this.parent = parent;
@@ -138,6 +149,11 @@ namespace Monodoc
 			get {
 				return address;
 			}
+#if LEGACY_MODE
+			set {
+				address = value;
+			}
+#endif
 		}
 	
 		/// <summary>
