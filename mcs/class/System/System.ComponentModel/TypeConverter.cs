@@ -263,7 +263,21 @@ namespace System.ComponentModel
 
 		public virtual bool IsValid (ITypeDescriptorContext context, object value)
 		{
-			return true;
+			if (value == null)
+        return true;
+      
+      if (!this.CanConvertFrom(context, value.GetType()))
+        return false;
+        
+      try
+      {
+        this.ConvertFrom(context, CultureInfo.InvariantCulture, value);
+        return true;
+      }
+      catch
+      {
+        return false;
+      }
 		}
 
 		protected PropertyDescriptorCollection SortProperties (PropertyDescriptorCollection props, string[] names)
