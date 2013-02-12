@@ -68,7 +68,7 @@ namespace Monodoc
 		{
 			string result = ".";
 			try {
-				result = Settings.Get ("docPath") ?? ".";
+				result = Config.Get ("docPath") ?? ".";
 			} catch {}
 
 			return result;
@@ -94,7 +94,7 @@ namespace Monodoc
 		{
 			IEnumerable<string> enumerable = Enumerable.Empty<string> ();
 			try {
-				string path = Settings.Get ("docExternalPath");
+				string path = Config.Get ("docExternalPath");
 				enumerable = enumerable.Concat (System.IO.Directory.EnumerateFiles (path, "*.source"));
 			}
 			catch {}
@@ -521,8 +521,8 @@ namespace Monodoc
 		IEnumerable<string> GetIndexesPathPrefixes ()
 		{
 			yield return basedir;
-			yield return Settings.Get ("docPath");
-			var indexDirectory = Settings.Get ("monodocIndexDirectory");
+			yield return Config.Get ("docPath");
+			var indexDirectory = Config.Get ("monodocIndexDirectory");
 			if (!string.IsNullOrEmpty (indexDirectory))
 				yield return indexDirectory;
 			yield return Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "monodoc");

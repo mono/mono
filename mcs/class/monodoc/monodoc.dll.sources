@@ -26,6 +26,7 @@ Monodoc/Provider.cs
 Monodoc/cache.cs
 Monodoc/index.cs
 Monodoc/settings.cs
+Monodoc/settings_Legacy.cs
 Monodoc/RootTree.cs
 Monodoc/RootTree_Legacy.cs
 Monodoc/TypeUtils.cs

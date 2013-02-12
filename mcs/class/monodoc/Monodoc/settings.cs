@@ -4,12 +4,12 @@ using System.Collections.Specialized;
 
 namespace Monodoc
 {
-	public static class Settings
+	public static class Config
 	{
 		static KeyValueConfigurationCollection libConfig;
 		static KeyValueConfigurationCollection exeConfig;
 
-		static Settings ()
+		static Config ()
 		{
 			try {
 				var config = ConfigurationManager.OpenExeConfiguration (System.Reflection.Assembly.GetExecutingAssembly ().Location);
@@ -21,7 +21,8 @@ namespace Monodoc
 			} catch {}
 		}
 
-		public static string Get (string key) {
+		public static string Get (string key)
+		{
 			KeyValueConfigurationElement element = null;
 			// We check the configuration in order: app first and then library itself
 			if (exeConfig != null)
