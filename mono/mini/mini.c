@@ -462,6 +462,14 @@ void *mono_global_codeman_reserve (int size)
 }
 
 #if defined(__native_client_codegen__) && defined(__native_client__)
+void
+mono_nacl_gc()
+{
+#ifdef __native_client_gc__
+	__nacl_suspend_thread_if_needed();
+#endif
+}
+
 /* Given the temporary buffer (allocated by mono_global_codeman_reserve) into
  * which we are generating code, return a pointer to the destination in the
  * dynamic code segment into which the code will be copied when
@@ -5726,8 +5734,15 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 			patch_info.data.method = method;
 			g_hash_table_remove (domain_jit_info (target_domain)->jump_target_hash, method);
 
+#if defined(__native_client_codegen__) && defined(__native_client__)
+			/* These patches are applied after a method has been installed, no target munging is needed. */
+			nacl_allow_target_modification (FALSE);
+#endif
 			for (tmp = jlist->list; tmp; tmp = tmp->next)
 				mono_arch_patch_code (NULL, target_domain, tmp->data, &patch_info, NULL, TRUE);
+#if defined(__native_client_codegen__) && defined(__native_client__)
+			nacl_allow_target_modification (TRUE);
+#endif
 		}
 	}
 
