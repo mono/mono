@@ -150,10 +150,10 @@ namespace System.Threading.Tasks
 
 			// Process creationOptions
 #if NET_4_5
-			if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent)
-			    && parent != null && !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
+			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent)
+			    && !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach))
 #else
-			if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent))
 #endif
 				parent.AddChild ();
 
@@ -502,7 +502,11 @@ namespace System.Threading.Tasks
 				ProcessChildExceptions ();
 				Status = exSlot == null ? TaskStatus.RanToCompletion : TaskStatus.Faulted;
 				ProcessCompleteDelegates ();
-				if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) && parent != null)
+				if (parent != null &&
+#if NET_4_5
+				    !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach) &&
+#endif
+					HasFlag (creationOptions, TaskCreationOptions.AttachedToParent))
 					parent.ChildCompleted (this.Exception);
 			}
 		}
@@ -532,6 +536,15 @@ namespace System.Threading.Tasks
 					Status = TaskStatus.WaitingForChildrenToComplete;
 			}
 
+			// Tell parent that we are finished
+			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) &&
+#if NET_4_5
+			    !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach) &&
+#endif
+				status != TaskStatus.WaitingForChildrenToComplete) {
+				parent.ChildCompleted (this.Exception);
+			}
+
 			// Completions are already processed when task is canceled or faulted
 			if (status == TaskStatus.RanToCompletion)
 				ProcessCompleteDelegates ();
@@ -544,11 +557,6 @@ namespace System.Threading.Tasks
 
 			if (cancellationRegistration.HasValue)
 				cancellationRegistration.Value.Dispose ();
-			
-			// Tell parent that we are finished
-			if (HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) && parent != null && status != TaskStatus.WaitingForChildrenToComplete) {
-				parent.ChildCompleted (this.Exception);
-			}
 		}
 
 		void ProcessCompleteDelegates ()
@@ -660,9 +668,6 @@ namespace System.Threading.Tasks
 			var exception = Exception;
 			if (exception != null)
 				throw exception;
-
-			if (childTasks != null)
-				childTasks.Wait ();
 
 			return result;
 		}

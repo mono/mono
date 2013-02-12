@@ -669,6 +669,27 @@ namespace MonoTests.System.Threading.Tasks
 			}, 10);
 		}
 
+		Task parent_wfc;
+
+		[Test]
+		public void WaitingForChildrenToComplete ()
+		{
+			Task nested = null;
+
+			parent_wfc = Task.Factory.StartNew (() => {
+				nested = Task.Factory.StartNew (() => {
+					Assert.IsFalse (parent_wfc.Wait (10), "#1a");
+					Assert.AreEqual (TaskStatus.WaitingForChildrenToComplete, parent_wfc.Status, "#1b");
+				}, TaskCreationOptions.AttachedToParent).ContinueWith (l => {
+					Assert.IsTrue (parent_wfc.Wait (2000), "#2a");
+					Assert.AreEqual (TaskStatus.RanToCompletion, parent_wfc.Status, "#2b");					
+				}, TaskContinuationOptions.ExecuteSynchronously);
+			});
+
+			Assert.IsTrue (parent_wfc.Wait (2000), "#3");
+			Assert.IsTrue (nested.Wait (2000), "#4");
+		}
+
 		[Test]
 		public void WaitChildWithContinuationAttachedTest ()
 		{
@@ -1694,11 +1715,13 @@ namespace MonoTests.System.Threading.Tasks
 		public void DenyChildAttachTest ()
 		{
 			var mre = new ManualResetEventSlim ();
+			Task nested = null;
 			Task parent = Task.Factory.StartNew (() => {
-				Task.Factory.StartNew (() => mre.Wait (2000), TaskCreationOptions.AttachedToParent);
+				nested = Task.Factory.StartNew (() => mre.Wait (2000), TaskCreationOptions.AttachedToParent);
 			}, TaskCreationOptions.DenyChildAttach);
-			Assert.IsTrue (parent.Wait (500), "#1");
+			Assert.IsTrue (parent.Wait (1000), "#1");
 			mre.Set ();
+			Assert.IsTrue (nested.Wait (2000), "#2");
 		}
 
 		class SynchronousScheduler : TaskScheduler
