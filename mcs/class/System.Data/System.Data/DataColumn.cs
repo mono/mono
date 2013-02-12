@@ -291,6 +291,7 @@ namespace System.Data {
 					AutoIncrementValue ();
 				}
 			} else if (value64 <= _nextAutoIncrementValue) {
+				_nextAutoIncrementValue = value64;
 				AutoIncrementValue ();
 			}
 		}
