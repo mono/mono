@@ -178,8 +178,10 @@ mono_mprotect (void *addr, size_t length, int flags)
 void*
 mono_shared_area (void)
 {
+	if (!malloced_shared_area)
+		malloced_shared_area = malloc_shared_area (0);
 	/* get the pid here */
-	return malloc_shared_area (0);
+	return malloced_shared_area;
 }
 
 void
@@ -187,6 +189,7 @@ mono_shared_area_remove (void)
 {
 	if (malloced_shared_area)
 		g_free (malloced_shared_area);
+	malloced_shared_area = NULL;
 }
 
 void*
@@ -581,7 +584,10 @@ mono_shared_area_instances (void **array, int count)
 void*
 mono_shared_area (void)
 {
-	return malloc_shared_area (getpid ());
+	if (!malloced_shared_area)
+		malloced_shared_area = malloc_shared_area (getpid ());
+	/* get the pid here */
+	return malloced_shared_area;
 }
 
 void
