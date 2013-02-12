@@ -61,6 +61,7 @@
   /* Win64 isn't really supported yet, but this is the first step. And	*/
   /* it might cause error messages to show up in more plausible places.	*/
   /* This needs basetsd.h, which is included by windows.h.	 	*/
+  #include <stdint.h>
   typedef unsigned __int64 GC_word;
   typedef __int64 GC_signed_word;
 #endif
