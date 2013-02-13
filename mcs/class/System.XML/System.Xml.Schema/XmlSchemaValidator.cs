@@ -274,7 +274,7 @@ namespace System.Xml.Schema
 				if (attr.ValidatedDefaultValue != null || attr.ValidatedFixedValue != null)
 					defaultAttributes.Add (attr);
 
-			defaultAttributes.AddRange (defaultAttributes);
+			defaultAttributes.AddRange (this.defaultAttributes);
 		}
 
 		// State Controller
