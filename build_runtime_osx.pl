@@ -9,12 +9,14 @@ my $skipbuild=0;
 my $debug = 0;
 my $minimal = 0;
 my $iphone_simulator = 0;
+my $jobs = 4;
 
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
    "debug=i"=>\$debug,
    "minimal=i"=>\$minimal,
-   "iphone_simulator=i"=>\$iphone_simulator
+   "iphone_simulator=i"=>\$iphone_simulator,
+   "j=i"=>\$jobs
 ) or die ("illegal cmdline options");
 
 my $teamcity=0;
@@ -23,12 +25,14 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	print "rmtree-ing $root/builds because we're on a buildserver, and want to make sure we don't include old artifacts\n";
 	rmtree("$root/builds");
 	$teamcity=1;
+	$jobs = "";
 } else {
 	print "not rmtree-ing $root/builds, as we're not on a buildmachine";
 	if (($debug==0) && ($skipbuild==0))
 	{
 		print "\n\nARE YOU SURE YOU DONT WANT TO MAKE A DEBUG BUILD?!?!?!!!!!\n\n\n";
 	}
+	$jobs = "-j$jobs";
 }
 
 my @arches = ('x86_64','i386');
@@ -147,7 +151,7 @@ for my $arch (@arches)
 		{
 			system("perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h");
 		}
-		system("make") eq 0 or die ("failing runnig make for mono");
+		system("make $jobs") eq 0 or die ("failing runnig make for mono");
 	}
 
 	chdir($root);
@@ -173,7 +177,7 @@ for my $arch (@arches)
 		if (not $ENV{"UNITY_THISISABUILDMACHINE"})
 		{
 			rmtree ("$libtarget/libmono.0.dylib.dSYM");
-			system ('cp', '-R', "$root/mono/mini/.libs/libmono.0.dylib.dSYM","$libtarget/libmono.0.dylib.dSYM") eq 0 or die ("Failed copying libmono.0.dylib.dSYM");
+			system ('cp', '-R', "$root/mono/mini/.libs/libmono.0.dylib.dSYM","$libtarget/libmono.0.dylib.dSYM") eq 0 or warn ("Failed copying libmono.0.dylib.dSYM");
 		}
 	 
 		if ($ENV{"UNITY_THISISABUILDMACHINE"})

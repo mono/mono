@@ -17,6 +17,7 @@ my $minimal = 0;
 my $cleanpath = 0;
 my $cleanbuild = 1;
 my $dobuild = 'osx';
+my $jobs = 4;
 
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
@@ -24,7 +25,8 @@ GetOptions(
    "minimal=i"=>\$minimal,
    "cleanpath=i"=>\$cleanpath,
    "cleanbuild=i"=>\$cleanbuild,
-   "build=s"=>\$dobuild
+   "build=s"=>\$dobuild,
+   "j=i"=>\$jobs
 ) or die ("illegal cmdline options");
 
 my $teamcity=0;
@@ -33,6 +35,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	print "rmtree-ing $buildsroot because we're on a buildserver, and want to make sure we don't include old artifacts\n";
 	rmtree("$buildsroot");
 	$teamcity=1;
+	$jobs = "";
 } else {
 	print "not rmtree-ing $buildsroot, as we're not on a buildmachine\n";
 	if (($debug==0) && ($skipbuild==0))
@@ -41,6 +44,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	}
 
 	$ENV{"PATH"} = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/X11/bin" if $cleanpath;
+	$jobs = "-j$jobs";
 }
 
 
@@ -414,7 +418,7 @@ sub build_mono
 		system("perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h") if ($os eq 'iphone' || $os eq 'crosscompiler');
 	}
 
-	system("make -j4") eq 0 or die ("failing running make for mono");
+	system("make $jobs") eq 0 or die ("failing running make for mono");
 
 	$skipbuild = $saved_skipbuild;
 	$cleanbuild = $saved_cleanbuild;
