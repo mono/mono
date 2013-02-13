@@ -4107,7 +4107,7 @@ process_single_step_inner (DebuggerTlsData *tls, MonoContext *ctx)
 
 	mono_loader_unlock ();
 
-	process_event (EVENT_KIND_STEP, ji->method, il_offset, ctx, events, suspend_policy, NULL);
+	process_event (EVENT_KIND_STEP, ji->method, il_offset, ctx, events, suspend_policy);
 }
 
 static void
