@@ -22,7 +22,7 @@ RESOURCES = ../../../external/entityframework/src/EntityFramework/Resources/Syst
 	../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.CSDLSchema_1_1.xsd \
 	../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.CSDLSchema_2.xsd \
 	../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.CSDLSchema_3.xsd \
-	../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/system.data.resources.entitystoreschemagenerator.xsd \
+	System.Data.Resources.EntityStoreSchemaGenerator.xsd \
 	../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.SSDLSchema.xsd \
 	../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.SSDLSchema_2.xsd \
 	../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.SSDLSchema_3.xsd \
@@ -37,8 +37,14 @@ LIB_MCS_FLAGS = -r:System.Data.dll -r:System.Transactions.dll -r:System.Xml.Linq
 		-resource:System.Data.Entity.Properties.Resources.PowerShell.resources \
 		$(RESOURCES:%=-resource:%)
 
+CLEAN_FILES = System.Data.Resources.EntityStoreSchemaGenerator.xsd
+
+System.Data.Resources.EntityStoreSchemaGenerator.xsd:
+	cp ../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/system.data.resources.entitystoreschemagenerator.xsd System.Data.Resources.EntityStoreSchemaGenerator.xsd
+
 include ../../build/library.make
 
-$(the_lib): System.Data.Entity.Properties.Resources.resources \
+$(the_lib): System.Data.Resources.EntityStoreSchemaGenerator.xsd \
+    System.Data.Entity.Properties.Resources.resources \
 	System.Data.Entity.Properties.Resources.Migrate.resources \
 	System.Data.Entity.Properties.Resources.PowerShell.resources
