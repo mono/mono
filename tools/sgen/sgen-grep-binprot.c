@@ -40,6 +40,7 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_CARD_SCAN: size = sizeof (SGenProtocolCardScan); break;
 	case SGEN_PROTOCOL_CEMENT: size = sizeof (SGenProtocolCement); break;
 	case SGEN_PROTOCOL_CEMENT_RESET: size = 0; break;
+	case SGEN_PROTOCOL_DISLINK_UPDATE: size = sizeof (SGenProtocolDislinkUpdate); break;
 	default: assert (0);
 	}
 
@@ -163,6 +164,14 @@ print_entry (int type, void *data)
 	case SGEN_PROTOCOL_CEMENT_RESET: {
 		printf ("cement_reset\n");
 		break;
+	case SGEN_PROTOCOL_DISLINK_UPDATE: {
+		SGenProtocolDislinkUpdate *entry = data;
+		printf ("dislink_update link %p obj %p", entry->link, entry->obj);
+		if (entry->obj)
+			printf (" track %d\n", entry->track);
+		else
+			printf ("\n");
+		break;
 	}
 	default:
 		assert (0);
@@ -238,6 +247,10 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_CEMENT: {
 		SGenProtocolCement *entry = data;
 		return matches_interval (ptr, entry->obj, entry->size);
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE: {
+		SGenProtocolDislinkUpdate *entry = data;
+		return ptr == entry->obj || ptr == entry->link;
 	}
 	default:
 		assert (0);
