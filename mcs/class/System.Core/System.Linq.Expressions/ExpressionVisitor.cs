@@ -31,7 +31,7 @@ using System.Collections.ObjectModel;
 
 namespace System.Linq.Expressions {
 
-	abstract class ExpressionVisitor {
+	public abstract class ExpressionVisitor {
 
 		protected virtual void Visit (Expression expression)
 		{
