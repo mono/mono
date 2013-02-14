@@ -122,7 +122,7 @@ namespace MonoTests.System.Collections.Concurrent
 					Assert.That (actual, new CollectionEquivalentConstraint (expected), "#3");
 				else 
 					Assert.AreEqual (expected, actual, "#3");
-			}, 1000);
+			}, 10);
 		}
 	}
 }

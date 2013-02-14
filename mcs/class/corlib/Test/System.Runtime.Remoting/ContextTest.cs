@@ -33,7 +33,8 @@ namespace MonoTests.System.Runtime.Remoting
 	}
 	
 	[TestFixture]
-	public class ContextText
+	[Category ("MobileNotWorking")] // Bug #10267
+	public class ContextTest
 	{
 		TestCbo cbo = new TestCbo ();
 		Context otherCtx;

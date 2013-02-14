@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using NUnit.Framework;
 using System;
 using System.Reflection;
@@ -49,6 +47,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // #10263
 		public void Arrays () {
 			IList<CustomAttributeData> cdata = CustomAttributeData.GetCustomAttributes (typeof (CustomAttributeDataTest).GetMethod ("MethodWithAttr"));
 			Assert.AreEqual (1, cdata.Count);
@@ -63,5 +62,3 @@ namespace MonoTests.System.Reflection
 		}
 	}
 }
-
-#endif

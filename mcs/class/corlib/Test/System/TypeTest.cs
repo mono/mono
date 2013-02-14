@@ -2930,8 +2930,10 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
 
-		[Test] //bug #331199
-		[Category ("MobileNotWorking")]
+		[Test]
+#if MONOTOUCH
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -2972,7 +2974,9 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 		
 		[Test]
-		[Category ("MobileNotWorking")]
+#if MONOTOUCH
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void MakeGenericType_BadUserType ()
 		{
 			Type ut = new UserType (null);

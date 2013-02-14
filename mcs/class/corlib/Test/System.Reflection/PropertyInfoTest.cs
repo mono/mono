@@ -418,6 +418,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // bug #10266 
 		public void NullableTests ()
 		{
 			PropertyInfoTest t = new PropertyInfoTest ();

@@ -621,6 +621,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetString_ResourceSet_Disposed ()
 		{
 			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de");

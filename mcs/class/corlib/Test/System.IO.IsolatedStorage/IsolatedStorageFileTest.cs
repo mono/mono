@@ -188,7 +188,9 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+#if !MOBILE
 		[ExpectedException (typeof (IsolatedStorageException))]
+#endif
 		public void GetUserStoreForApplication_WithoutApplicationIdentity ()
 		{
 			// note: a manifest is required
@@ -196,7 +198,9 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+#if !MOBILE
 		[ExpectedException (typeof (IsolatedStorageException))]
+#endif
 		public void GetUserStoreForApplication ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
@@ -255,7 +259,9 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+#if !MOBILE
 		[ExpectedException (typeof (IsolatedStorageException))]
+#endif
 		public void GetStore_Domain_NonPresentEvidences ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
@@ -329,7 +335,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().IndexOf ("Internet") > 0), "Zone - Domain");
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
-#if NET_2_0
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetStore_Application_NullObject ()
@@ -339,14 +345,15 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+#if !MOBILE
 		[ExpectedException (typeof (IsolatedStorageException))]
+#endif
 		public void GetStore_Application_NullType ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Application;
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, (Type)null);
 			// again it's the lack of a manifest
 		}
-#endif
 
 		[Test]
 		public void GetStore_DomainScope_Evidences ()

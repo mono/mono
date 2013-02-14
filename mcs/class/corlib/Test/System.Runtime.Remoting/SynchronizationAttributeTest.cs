@@ -136,6 +136,7 @@ namespace MonoTests.System.Runtime.Remoting
 	}
 
 	[TestFixture]
+	[Category ("MobileNotWorking")] // Bug #10267
 	public class SynchronizationAttributeTest
 	{
 		SincroRequiresNew sincob = new SincroRequiresNew ();

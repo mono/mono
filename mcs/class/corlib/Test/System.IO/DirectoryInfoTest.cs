@@ -138,6 +138,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Name ()
 		{
 			string path = TempFolder + DSC + "DIT.Name.Test";

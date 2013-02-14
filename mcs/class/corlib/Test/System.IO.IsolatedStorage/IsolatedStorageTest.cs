@@ -39,17 +39,9 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 	// note: IsolatedStorage is abstract so we create a
 	// non-abstract class to test it
 
-// naming a class with the same name as a namespace is a BAD idea
-#if NET_2_0
-	#if __MonoCS__
-	public class NonAbstractIsolatedStorage : IsolatedStorage {
-	#else
-	// VS.NET 2005 requires the class to be fully named - including global::
-	public class NonAbstractIsolatedStorage : global::System.IO.IsolatedStorage.IsolatedStorage {
-	#endif
-#else
-	public class NonAbstractIsolatedStorage : IsolatedStorage {
-#endif
+	// naming a class with the same name as a namespace is a BAD idea
+	public class NonAbstractIsolatedStorage : global::System.IO.IsolatedStorage.IsolatedStorage
+	{
 		public NonAbstractIsolatedStorage ()
 		{
 			// no InitStore here
@@ -59,12 +51,12 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			InitStore (scope, domain, assembly);
 		}
-#if NET_2_0
+
 		public NonAbstractIsolatedStorage(IsolatedStorageScope scope, Type application)
 		{
 			InitStore (scope, application);
 		}
-#endif
+
 		protected override IsolatedStoragePermission GetPermission (PermissionSet ps)
 		{
 			throw new NotImplementedException();
@@ -138,7 +130,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage (IsolatedStorageScope.Roaming, null, null);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void IsolatedStorage_Machine ()
@@ -147,12 +138,13 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+#if !MOBILE
 		[ExpectedException (typeof (IsolatedStorageException))]
+#endif
 		public void IsolatedStorage_Application ()
 		{
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage (IsolatedStorageScope.Application, null);
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (NotImplementedException))]

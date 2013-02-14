@@ -123,12 +123,13 @@ public class CryptoConfigTest {
 		CreateFromName ("RIPEMD-160", "System.Security.Cryptography.RIPEMD160Managed");
 		CreateFromName ("System.Security.Cryptography.RIPEMD160", "System.Security.Cryptography.RIPEMD160Managed");
 		// x.509 stuff
-#if !TARGET_JVM && !MOBILE //TargetJvmNotWorking - this algorithm should be added to System
+#if !MOBILE
 		CreateFromName ("X509Chain", "System.Security.Cryptography.X509Certificates.X509Chain");
-#endif
+
 		// note: CryptoConfig can create any object !
 		CreateFromName ("System.Security.Cryptography.CryptoConfig", "System.Security.Cryptography.CryptoConfig");
 		CreateFromName ("System.IO.MemoryStream", "System.IO.MemoryStream");
+#endif
 		// non existing algo should return null (without exception)
 		Assert.IsNull (CryptoConfig.CreateFromName ("NonExistingAlgorithm"), "NonExistingAlgorithm");
 	}
