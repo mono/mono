@@ -7405,9 +7405,33 @@ mono_gc_weak_link_remove (void **link_addr)
 MonoObject*
 mono_gc_weak_link_get (void **link_addr)
 {
-	if (!*link_addr)
-		return NULL;
-	return (MonoObject*) REVEAL_POINTER (*link_addr);
+	void * volatile *link_addr_volatile;
+	void *ptr;
+	MonoObject *obj;
+ retry:
+	link_addr_volatile = link_addr;
+	ptr = (void*)*link_addr_volatile;
+	/*
+	 * At this point we have a hidden pointer.  If the GC runs
+	 * here, it will not recognize the hidden pointer as a
+	 * reference, and if the object behind it is not referenced
+	 * elsewhere, it will be freed.  Once the world is restarted
+	 * we reveal the pointer, giving us a pointer to a freed
+	 * object.  To make sure we don't return it, we load the
+	 * hidden pointer again.  If it's still the same, we can be
+	 * sure the object reference is valid.
+	 */
+	if (ptr)
+		obj = (MonoObject*) REVEAL_POINTER (ptr);
+	else
+		obj = NULL;
+
+	mono_memory_barrier ();
+
+	if ((void*)*link_addr_volatile != ptr)
+		goto retry;
+
+	return obj;
 }
 
 gboolean
