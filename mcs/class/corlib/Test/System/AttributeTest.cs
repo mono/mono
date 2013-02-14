@@ -813,6 +813,14 @@ namespace MonoTests.System
 			Assert.IsTrue (type.lastInherit, "#7");
 			Assert.AreEqual (typeof (TestFixtureAttribute), type.lastAttrType, "#8");
 		}
+
+		[Test]
+		public void IsDefinedForPseudoAttribute ()
+		{			
+			Assert.IsTrue (Attribute.IsDefined (typeof (object), typeof(SerializableAttribute), true), "#1");
+			Assert.IsFalse (Attribute.IsDefined (typeof (AttributeTest), typeof(SerializableAttribute), true), "#2");
+		}
+
 #if !MONOTOUCH
 		[Test]
 		public void GetCustomAttributeOnNewSreTypes ()
