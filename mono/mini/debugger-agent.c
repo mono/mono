@@ -7298,17 +7298,18 @@ debugger_thread (void *arg)
 
 	mono_thread_internal_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
-	mono_set_is_debugger_attached (TRUE);
-	
 	if (agent_config.defer) {
 		if (!wait_for_attach ()) {
 			DEBUG (1, fprintf (log_file, "[dbg] Can't attach, aborting debugger thread.\n"));
 			attach_failed = TRUE; // Don't abort process when we can't listen
+		} else {
+			mono_set_is_debugger_attached (TRUE);
+
+			/* Send start event to client */
+			process_profiler_event (EVENT_KIND_VM_START, mono_thread_get_main ());
 		}
-		
-		/* Send start event to client */
-		process_profiler_event (EVENT_KIND_VM_START, mono_thread_get_main ());
-	}
+	} else
+		mono_set_is_debugger_attached (TRUE);
 	
 	while (!attach_failed) {
 		res = recv_length (conn_fd, header, HEADER_LENGTH, 0);
