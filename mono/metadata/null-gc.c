@@ -59,16 +59,6 @@ mono_gc_get_heap_size (void)
 	return 2*1024*1024;
 }
 
-void
-mono_gc_disable (void)
-{
-}
-
-void
-mono_gc_enable (void)
-{
-}
-
 gboolean
 mono_gc_is_gc_thread (void)
 {

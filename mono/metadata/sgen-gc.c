@@ -487,7 +487,6 @@ mono_sgen_safe_name (void* obj)
  * ######################################################################
  */
 static LOCK_DECLARE (gc_mutex);
-static int gc_disabled = 0;
 static int num_minor_gcs = 0;
 static int num_major_gcs = 0;
 
@@ -7347,22 +7346,6 @@ int64_t
 mono_gc_get_heap_size (void)
 {
 	return total_alloc;
-}
-
-void
-mono_gc_disable (void)
-{
-	LOCK_GC;
-	gc_disabled++;
-	UNLOCK_GC;
-}
-
-void
-mono_gc_enable (void)
-{
-	LOCK_GC;
-	gc_disabled--;
-	UNLOCK_GC;
 }
 
 int
