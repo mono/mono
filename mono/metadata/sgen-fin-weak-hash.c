@@ -515,12 +515,14 @@ null_link_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int 
 						g_assert (copy);
 						*link = HIDE_POINTER (copy, track);
 						add_or_remove_disappearing_link ((MonoObject*)copy, link, GENERATION_OLD);
+						binary_protocol_dislink_update (link, copy, track);
 
 						DEBUG (5, fprintf (gc_debug_file, "Upgraded dislink at %p to major because object %p moved to %p\n", link, object, copy));
 
 						continue;
 					} else {
 						*entry->link = HIDE_POINTER (copy, track);
+						binary_protocol_dislink_update (entry->link, copy, track);
 						DEBUG (5, fprintf (gc_debug_file, "Updated dislink at %p to %p\n", entry->link, DISLINK_OBJECT (entry)));
 					}
 				}
@@ -603,6 +605,8 @@ mono_gc_register_disappearing_link (MonoObject *obj, void **link, gboolean track
 		*link = HIDE_POINTER (obj, track);
 	else
 		*link = NULL;
+
+	binary_protocol_dislink_update (link, obj, track);
 
 #if 1
 	if (in_gc) {

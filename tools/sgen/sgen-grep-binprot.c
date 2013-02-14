@@ -35,6 +35,7 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_THREAD_REGISTER: size = sizeof (SGenProtocolThreadRegister); break;
 	case SGEN_PROTOCOL_THREAD_UNREGISTER: size = sizeof (SGenProtocolThreadUnregister); break;
 	case SGEN_PROTOCOL_MISSING_REMSET: size = sizeof (SGenProtocolMissingRemset); break;
+	case SGEN_PROTOCOL_DISLINK_UPDATE: size = sizeof (SGenProtocolDislinkUpdate); break;
 	default: assert (0);
 	}
 
@@ -131,6 +132,15 @@ print_entry (int type, void *data)
 				entry->obj, entry->obj_vtable, entry->offset, entry->value, entry->value_vtable, entry->value_pinned);
 		break;
 	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE: {
+		SGenProtocolDislinkUpdate *entry = data;
+		printf ("dislink_update link %p obj %p", entry->link, entry->obj);
+		if (entry->obj)
+			printf (" track %d\n", entry->track);
+		else
+			printf ("\n");
+		break;
+	}
 	default:
 		assert (0);
 	}
@@ -194,6 +204,10 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_MISSING_REMSET: {
 		SGenProtocolMissingRemset *entry = data;
 		return ptr == entry->obj || ptr == entry->value || ptr == (char*)entry->obj + entry->offset;
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE: {
+		SGenProtocolDislinkUpdate *entry = data;
+		return ptr == entry->obj || ptr == entry->link;
 	}
 	default:
 		assert (0);

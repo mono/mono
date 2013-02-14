@@ -4658,6 +4658,7 @@ null_link_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int 
 					void **p = entry->link;
 					DisappearingLink *old;
 					*p = NULL;
+					binary_protocol_dislink_update (p, NULL, 0);
 					/* remove from list */
 					if (prev)
 						prev->next = entry->next;
@@ -4702,6 +4703,7 @@ null_link_in_range (CopyOrMarkObjectFunc copy_func, char *start, char *end, int 
 						continue;
 					} else {
 						*entry->link = HIDE_POINTER (copy, track);
+						binary_protocol_dislink_update (entry->link, copy, track);
 						DEBUG (5, fprintf (gc_debug_file, "Updated dislink at %p to %p\n", entry->link, DISLINK_OBJECT (entry)));
 					}
 				}
@@ -4971,6 +4973,7 @@ add_or_remove_disappearing_link (MonoObject *obj, void **link, gboolean track, i
 			} else {
 				*link = HIDE_POINTER (obj, track); /* we allow the change of object */
 			}
+			binary_protocol_dislink_update (link, obj, track);
 			return;
 		}
 		prev = entry;
@@ -4983,6 +4986,7 @@ add_or_remove_disappearing_link (MonoObject *obj, void **link, gboolean track, i
 	entry->next = disappearing_link_hash [hash];
 	disappearing_link_hash [hash] = entry;
 	hash_table->num_links++;
+	binary_protocol_dislink_update (link, obj, track);
 	DEBUG (5, fprintf (gc_debug_file, "Added dislink %p for object: %p (%s) at %p to %s table\n", entry, obj, obj->vtable->klass->name, link, generation_name (generation)));
 }
 

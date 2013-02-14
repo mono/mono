@@ -264,4 +264,11 @@ binary_protocol_missing_remset (gpointer obj, gpointer obj_vtable, int offset, g
 
 }
 
+void
+binary_protocol_dislink_update (gpointer link, gpointer obj, int track)
+{
+	SGenProtocolDislinkUpdate entry = { link, obj, track };
+	protocol_entry (SGEN_PROTOCOL_DISLINK_UPDATE, &entry, sizeof (SGenProtocolDislinkUpdate));
+}
+
 #endif
