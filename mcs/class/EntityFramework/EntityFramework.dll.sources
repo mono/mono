@@ -719,7 +719,7 @@
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/BuiltInTypeKind.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/CollectionType.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/ComplexType.cs
-../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/Documentation.cs
+../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/documentation.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/EdmConstants.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/EdmFunction.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/EdmMember.cs
