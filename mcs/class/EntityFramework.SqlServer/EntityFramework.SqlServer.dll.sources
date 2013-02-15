@@ -1,6 +1,8 @@
 ../../../external/entityframework/src/SharedAssemblyInfo.cs
+../../../external/entityframework/src/SharedAssemblyVersionInfo.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/DbGeographyAdapter.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/DbGeometryAdapter.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/DefaultSqlExecutionStrategy.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Expressions.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/GlobalSuppressions.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/IDbSpatialValue.cs
@@ -8,12 +10,20 @@
 ../../../external/entityframework/src/EntityFramework.SqlServer/Properties/AssemblyVersion.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Properties/InternalsVisibleTo.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Properties/Resources.SqlServer.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/SqlAzureDbConfiguration.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/SqlAzureExecutionStrategy.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/SqlAzureRetriableExceptionDetector.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/SqlDdlBuilder.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/SqlExecutionStrategyResolver.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/SqlGen/BoolWrapper.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/SqlGen/DmlSqlGenerator.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/SqlSpatialServicesForConversions.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/SqlTypesAssemblyLoader.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/SqlVersionUtils.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/Check.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/SqlDataReaderWrapper.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/DbExpressionExtensions.cs
+../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/DebugCheck.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/EdmFunctionExtensions.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/MetdataItemExtensions.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/FuncExtensions.cs
@@ -42,7 +52,4 @@
 ../../../external/entityframework/src/EntityFramework.SqlServer/SqlTypesAssembly.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/SqlVersion.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/PrimitiveTypeExtensions.cs
-../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/RuntimeFailureMethods.cs
-../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/SqlDataReaderWrapper.cs
-../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/Throw.cs
 ../../../external/entityframework/src/EntityFramework.SqlServer/Utilities/TypeUsageExtensions.cs
