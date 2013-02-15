@@ -952,8 +952,12 @@ namespace Mono.CSharp
 					//
 					// Expression inside parens is single type, (int[])
 					//
-					if (is_type)
+					if (is_type) {
+						if (current_token == Token.SEMICOLON)
+							return Token.OPEN_PARENS;
+
 						return Token.OPEN_PARENS_CAST;
+					}
 
 					//
 					// Expression is possible cast, look at next token, (T)null
@@ -1252,6 +1256,7 @@ namespace Mono.CSharp
 			case Token.OP_GENERICS_GT:
 			case Token.INTERR:
 			case Token.OP_COALESCING:
+			case Token.COLON:
 				next_token = Token.INTERR_NULLABLE;
 				break;
 				

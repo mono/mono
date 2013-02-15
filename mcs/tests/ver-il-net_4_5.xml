@@ -14084,6 +14084,15 @@
       <method name="Void Test_13(System.Object)" attrs="129">
         <size>53</size>
       </method>
+      <method name="Nullable`1 Test_14()" attrs="129">
+        <size>68</size>
+      </method>
+      <method name="System.Action`1[System.Int32] Test_15(System.Action`1[System.Int32])" attrs="129">
+        <size>29</size>
+      </method>
+      <method name="Void Helper[T](T)" attrs="145">
+        <size>2</size>
+      </method>
     </type>
   </test>
   <test name="gtest-410.cs">
