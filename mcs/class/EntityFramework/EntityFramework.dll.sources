@@ -331,13 +331,13 @@
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/CollectionTranslatorResult.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/columnmapkeybuilder.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/compensatingcollection.cs
-../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/Coordinator.cs
-../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/CoordinatorFactory.cs
+../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/coordinator.cs
+../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/coordinatorFactory.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/coordinatorscratchpad.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/recordstate.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/recordstatefactory.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/recordstatescratchpad.cs
-../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/Shaper.cs
+../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/shaper.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/shaperfactory.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/ShaperFactory`.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/Shaper`.cs
