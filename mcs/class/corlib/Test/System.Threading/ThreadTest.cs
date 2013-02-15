@@ -946,7 +946,7 @@ namespace MonoTests.System.Threading
 			public string ad_b2;
 			public string message;
 		}
-
+#if !MOBILE
 		[Test]
 		public void ManagedThreadId_AppDomains ()
 		{
@@ -987,7 +987,7 @@ namespace MonoTests.System.Threading
 			Assert.AreNotEqual (mbro.ad_b1, AppDomain.CurrentDomain.FriendlyName, "Name #5");
 			Assert.AreNotEqual (mbro.ad_b2, AppDomain.CurrentDomain.FriendlyName, "Name #6");
 		}
-
+#endif
 		void A1 ()
 		{
 			mbro.id_a1 = Thread.CurrentThread.ManagedThreadId;

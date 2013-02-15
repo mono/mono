@@ -286,6 +286,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
 
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetStore_Domain_DomainNullObject ()
@@ -335,6 +336,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.IsTrue ((isf.DomainIdentity.ToString ().IndexOf ("Internet") > 0), "Zone - Domain");
 			Assert.IsTrue ((isf.CurrentSize >= 0), "CurrentSize");
 		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -355,6 +357,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			// again it's the lack of a manifest
 		}
 
+#if !MOBILE
 		[Test]
 		public void GetStore_DomainScope_Evidences ()
 		{
@@ -419,6 +422,7 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			ae.AddHost (new Zone (SecurityZone.Internet));
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, null, null, ae, typeof (Zone));
 		}
+#endif
 
 		[Test]
 		public void RegressionBNC354539 ()

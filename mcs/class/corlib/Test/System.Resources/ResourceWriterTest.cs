@@ -619,8 +619,7 @@ namespace MonoTests.System.Resources
 		[Test] // bug #339074
 		public void Close_NoResources ()
 		{
-			string tempFile = Path.Combine (AppDomain.CurrentDomain.BaseDirectory,
-				"test.resources");
+			string tempFile = Path.Combine (Path.GetTempPath (), "test.resources");
 
 			ResourceWriter writer = new ResourceWriter (tempFile);
 			writer.Close ();
@@ -632,6 +631,8 @@ namespace MonoTests.System.Resources
 					Assert.IsFalse (reader.GetEnumerator ().MoveNext (), "#2");
 				}
 			}
+
+			File.Delete (tempFile);
 		}
 
 		[Test]
