@@ -332,7 +332,7 @@
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/columnmapkeybuilder.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/compensatingcollection.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/coordinator.cs
-../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/coordinatorFactory.cs
+../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/coordinatorfactory.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/coordinatorscratchpad.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/recordstate.cs
 ../../../external/entityframework/src/EntityFramework/Core/Common/internal/materialization/recordstatefactory.cs
