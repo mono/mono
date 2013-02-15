@@ -768,12 +768,12 @@
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/RelationshipSet.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/RelationshipType.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/RowType.cs
-../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/SafeLink.cs
-../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/SafeLinkCollection.cs
+../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/safelink.cs
+../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/safelinkcollection.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/SimpleType.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/StructuralType.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/TypeUsage.cs
-../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/Util.cs
+../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/util.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/Helper.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/MappingMetadataHelper.cs
 ../../../external/entityframework/src/EntityFramework/Core/Metadata/Edm/MetadataArtifactAssemblyResolver.cs
