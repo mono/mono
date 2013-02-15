@@ -340,8 +340,8 @@ namespace Monodoc.Providers
 
 		public override void PopulateIndex (IndexMaker index_maker)
 		{
-			foreach (Node ns_node in Tree.RootNode.Nodes){
-				foreach (Node type_node in ns_node.Nodes){
+			foreach (Node ns_node in Tree.RootNode.ChildNodes){
+				foreach (Node type_node in ns_node.ChildNodes){
 					string typename = type_node.Caption.Substring (0, type_node.Caption.IndexOf (' '));
 					string full = ns_node.Caption + "." + typename;
 
@@ -370,7 +370,7 @@ namespace Monodoc.Providers
 						index_maker.Add (type_node.Caption, typename, url);
 						index_maker.Add (full + " " + doc_tag, full, url);
 
-						foreach (Node c in type_node.Nodes){
+						foreach (Node c in type_node.ChildNodes){
 							switch (c.Caption){
 							case "Constructors":
 								index_maker.Add ("  constructors", typename+"0", url + "/C");
@@ -399,10 +399,10 @@ namespace Monodoc.Providers
 						//
 						string keybase = typename + "6.";
 
-						foreach (Node c in type_node.Nodes){
+						foreach (Node c in type_node.ChildNodes){
 							var type = c.Caption[0];
 
-							foreach (Node nc in c.Nodes) {
+							foreach (Node nc in c.ChildNodes) {
 								string res = nc.Caption;
 								string nurl = nc.PublicUrl;
 
@@ -492,8 +492,8 @@ namespace Monodoc.Providers
 			StringBuilder text = new StringBuilder ();
 			SearchableDocument searchDoc = new SearchableDocument ();
 
-			foreach (Node ns_node in Tree.RootNode.Nodes) {
-				foreach (Node type_node in ns_node.Nodes) {
+			foreach (Node ns_node in Tree.RootNode.ChildNodes) {
+				foreach (Node type_node in ns_node.ChildNodes) {
 					string typename = type_node.Caption.Substring (0, type_node.Caption.IndexOf (' '));
 					string full = ns_node.Caption + "." + typename;
 					string url = type_node.PublicUrl;
@@ -530,22 +530,22 @@ namespace Monodoc.Providers
 						var exportParsable = doc_tag[0] == 'C' && (ns_node.Caption.StartsWith ("MonoTouch") || ns_node.Caption.StartsWith ("MonoMac"));
 
 						//Add docs for contructors, methods, etc.
-						foreach (Node c in type_node.Nodes) { // c = Constructors || Fields || Events || Properties || Methods || Operators
+						foreach (Node c in type_node.ChildNodes) { // c = Constructors || Fields || Events || Properties || Methods || Operators
 							if (c.Element == "*")
 								continue;
 							const float innerTypeBoost = 0.2f;
 
-							IEnumerable<Node> ncnodes = c.Nodes;
+							IEnumerable<Node> ncnodes = c.ChildNodes;
 							// The rationale is that we need to properly handle method overloads
 							// so for those method node which have children, flatten them
 							if (c.Caption == "Methods") {
 								ncnodes = ncnodes
-									.Where (n => n.Nodes == null || n.Nodes.Count == 0)
-									.Concat (ncnodes.Where (n => n.Nodes.Count > 0).SelectMany (n => n.Nodes));
+									.Where (n => n.ChildNodes == null || n.ChildNodes.Count == 0)
+									.Concat (ncnodes.Where (n => n.ChildNodes.Count > 0).SelectMany (n => n.ChildNodes));
 							} else if (c.Caption == "Operators") {
 								ncnodes = ncnodes
 									.Where (n => !n.Caption.EndsWith ("Conversion"))
-									.Concat (ncnodes.Where (n => n.Caption.EndsWith ("Conversion")).SelectMany (n => n.Nodes));
+									.Concat (ncnodes.Where (n => n.Caption.EndsWith ("Conversion")).SelectMany (n => n.ChildNodes));
 							}
 
 							var prematchedMembers = xdoc.Root.Element ("Members").Elements ("Member").ToLookup (n => (string)n.Attribute ("MemberName"), n => n);

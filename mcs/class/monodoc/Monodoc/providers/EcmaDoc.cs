@@ -202,9 +202,9 @@ namespace Monodoc.Providers
 			// Namespace search
 			Node currentNode = tree.RootNode;
 			Node searchNode = new Node () { Caption = desc.Namespace };
-			int index = currentNode.Nodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
+			int index = currentNode.ChildNodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
 			if (index >= 0)
-				result = currentNode.Nodes[index];
+				result = currentNode.ChildNodes[index];
 			if (desc.DescKind == EcmaDesc.Kind.Namespace || index < 0)
 				return result;
 
@@ -212,9 +212,9 @@ namespace Monodoc.Providers
 			currentNode = result;
 			result = null;
 			searchNode.Caption = desc.ToCompleteTypeName ();
-			index = currentNode.Nodes.BinarySearch (searchNode, EcmaTypeNodeComparer.Instance);
+			index = currentNode.ChildNodes.BinarySearch (searchNode, EcmaTypeNodeComparer.Instance);
 			if (index >= 0)
-				result = currentNode.Nodes[index];
+				result = currentNode.ChildNodes[index];
 			if ((desc.DescKind == EcmaDesc.Kind.Type && !desc.IsEtc) || index < 0)
 				return result;
 
@@ -222,7 +222,7 @@ namespace Monodoc.Providers
 			currentNode = result;
 			result = null;
 			var caption = desc.IsEtc ? EtcKindToCaption (desc.Etc) : MemberKindToCaption (desc.DescKind);
-			currentNode = FindNodeForCaption (currentNode.Nodes, caption);
+			currentNode = FindNodeForCaption (currentNode.ChildNodes, caption);
 			if (currentNode == null
 			    || (desc.IsEtc && desc.DescKind == EcmaDesc.Kind.Type && string.IsNullOrEmpty (desc.EtcFilter)))
 				return currentNode;
@@ -231,20 +231,20 @@ namespace Monodoc.Providers
 			result = null;
 			var format = desc.DescKind == EcmaDesc.Kind.Constructor ? EcmaDesc.Format.WithArgs : EcmaDesc.Format.WithoutArgs;
 			searchNode.Caption = desc.ToCompleteMemberName (format);
-			index = currentNode.Nodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
+			index = currentNode.ChildNodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
 			if (index < 0)
 				return null;
-			result = currentNode.Nodes[index];
-			if (result.Nodes.Count == 0 || desc.IsEtc)
+			result = currentNode.ChildNodes[index];
+			if (result.ChildNodes.Count == 0 || desc.IsEtc)
 				return result;
 
 			// Overloads search
 			currentNode = result;
 			searchNode.Caption = desc.ToCompleteMemberName (EcmaDesc.Format.WithArgs);
-			index = currentNode.Nodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
+			index = currentNode.ChildNodes.BinarySearch (searchNode, EcmaGenericNodeComparer.Instance);
 			if (index < 0)
 				return result;
-			result = result.Nodes[index];
+			result = result.ChildNodes[index];
 
 			return result;
 		}

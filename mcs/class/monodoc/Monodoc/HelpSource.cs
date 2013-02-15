@@ -256,21 +256,21 @@ namespace Monodoc
 			var searchNode = new Node () { Element = strippedUrl };
 
 			do {
-				int index = current.Nodes.BinarySearch (searchNode, NodeElementComparer.Instance);
+				int index = current.ChildNodes.BinarySearch (searchNode, NodeElementComparer.Instance);
 				if (index >= 0) {
-					Node n = current.Nodes[index];
+					Node n = current.ChildNodes[index];
 					matchCache.Put (url, n);
 					return n;
 				}
 				index = ~index;
-				if (index == current.Nodes.Count) {
+				if (index == current.ChildNodes.Count) {
 					return SlowMatchNode (Tree.RootNode, matchCache, strippedUrl);
 				}
 
 				if (index == 0)
 					return null;
 
-				current = current.Nodes [index - 1];
+				current = current.ChildNodes [index - 1];
 			} while (true);
 
 			return null;
@@ -286,7 +286,7 @@ namespace Monodoc
 			//Console.WriteLine ("Entering slow path for {0} starting from {1}", url, current.Element);
 			while (current != null) {
 				bool stop = true;
-				foreach (Node n in current.Nodes) {
+				foreach (Node n in current.ChildNodes) {
 					var element = n.Element.StartsWith (UriPrefix, StringComparison.OrdinalIgnoreCase) ? n.Element.Substring (UriPrefix.Length) : n.Element;
 					if (url.Equals (element, StringComparison.Ordinal)) {
 						matchCache.Put (url, n);

@@ -178,13 +178,13 @@ namespace Monodoc.Providers
 		
 		public override void PopulateIndex (IndexMaker index_maker)
 		{
-			foreach (Node n in Tree.RootNode.Nodes)
+			foreach (Node n in Tree.RootNode.ChildNodes)
 				index_maker.Add (n.Caption, n.Caption, n.Element);
 		}
 
 		public override void PopulateSearchableIndex (IndexWriter writer) 
 		{
-			foreach (Node n in Tree.RootNode.Nodes) {
+			foreach (Node n in Tree.RootNode.ChildNodes) {
 				XmlSerializer reader = new XmlSerializer (typeof (ErrorDocumentation));
 				ErrorDocumentation d = (ErrorDocumentation)reader.Deserialize (GetHelpStream (n.Element.Substring (6)));
 				SearchableDocument doc = new SearchableDocument ();

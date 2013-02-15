@@ -114,7 +114,7 @@ namespace Monodoc.Providers
 	
 		public override void PopulateSearchableIndex (IndexWriter writer) 
 		{
-			foreach (Node n in Tree.RootNode.Nodes)
+			foreach (Node n in Tree.RootNode.ChildNodes)
 				AddDocuments (writer, n);
 		}
 
@@ -159,7 +159,7 @@ namespace Monodoc.Providers
 			if (node.IsLeaf)
 				return;
 
-			foreach (Node n in node.Nodes)
+			foreach (Node n in node.ChildNodes)
 				AddDocuments (writer, n);
 		}
 

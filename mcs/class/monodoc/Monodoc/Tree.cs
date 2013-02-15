@@ -188,11 +188,11 @@ namespace Monodoc
 		{
 			Indent ();
 			Console.WriteLine ("{0},{1}\t[PublicUrl: {2}]", node.Element, node.Caption, node.PublicUrl);
-			if (node.Nodes.Count == 0)
+			if (node.ChildNodes.Count == 0)
 				return;
 
 			indent++;
-			foreach (Node n in node.Nodes)
+			foreach (Node n in node.ChildNodes)
 				PrintTree (n);
 			indent--;
 		}
@@ -208,7 +208,7 @@ namespace Monodoc
 			writer.WriteAttributeString ("title", title ?? string.Empty);
 			writer.WriteElementString ("description", desc ?? string.Empty);
 			writer.WriteStartElement ("list");
-			foreach (Node n in root.Nodes) {
+			foreach (Node n in root.ChildNodes) {
 				writer.WriteStartElement ("item");
 				writer.WriteAttributeString ("url", n.Element);
 				writer.WriteValue (n.Caption);

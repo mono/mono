@@ -71,7 +71,7 @@ namespace Monodoc.Providers
 
 		public ManHelpSource (string base_file, bool create) : base (base_file, create)
 		{
-			nodesMap = Tree.RootNode.Nodes.ToDictionary (n => n.Element);
+			nodesMap = Tree.RootNode.ChildNodes.ToDictionary (n => n.Element);
 		}
 
 		// Since man always has a flat tree and rather small amount of item

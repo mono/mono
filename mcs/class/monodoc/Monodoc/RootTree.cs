@@ -142,7 +142,7 @@ namespace Monodoc
 				Node hsn = rootTree.RootNode.CreateNode (hs.Name, "root:/" + epath);
 				rootTree.nameToHelpSource [epath] = hs;
 				hsn.EnsureNodes ();
-				foreach (Node n in hs.Tree.RootNode.Nodes)
+				foreach (Node n in hs.Tree.RootNode.ChildNodes)
 					hsn.AddNode (n);
 			}
 
@@ -214,7 +214,7 @@ namespace Monodoc
 						Console.Error.WriteLine ("node `{0}' is not defined on the documentation map", path);
 						node2 = node;
 					}
-					foreach (Node current in helpSource.Tree.RootNode.Nodes) {
+					foreach (Node current in helpSource.Tree.RootNode.ChildNodes) {
 						node2.AddNode (current);
 					}
 					node2.Sort ();
@@ -229,7 +229,7 @@ namespace Monodoc
 			if (!node.Documented)
 			{
 				List<Node> list = new List<Node> ();
-				foreach (Node current in node.Nodes)
+				foreach (Node current in node.ChildNodes)
 				{
 					bool flag = RootTree.PurgeNode (current);
 					if (flag)
@@ -237,7 +237,7 @@ namespace Monodoc
 						list.Add (current);
 					}
 				}
-				result =  (node.Nodes.Count == list.Count);
+				result =  (node.ChildNodes.Count == list.Count);
 				foreach (Node current2 in list)
 				{
 					node.DeleteNode (current2);
@@ -405,7 +405,7 @@ namespace Monodoc
 			internalId = "root:";
 			node = this.LookupEntryPoint (name);
 
-			return node == null ? null : node.Nodes.Select (n => n.Tree.HelpSource).Where (hs => hs != null).Distinct ().FirstOrDefault ();
+			return node == null ? null : node.ChildNodes.Select (n => n.Tree.HelpSource).Where (hs => hs != null).Distinct ().FirstOrDefault ();
 		}
 
 		public HelpSource GetHelpSourceFromId (int id)

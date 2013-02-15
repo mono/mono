@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Xml;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Monodoc
@@ -106,7 +107,14 @@ namespace Monodoc
 				childrenLookup[child.element] = child;
 		}
 
-		public List<Node> Nodes {
+		[Obsolete ("Use ChildNodes")]
+		public ArrayList Nodes {
+			get {
+				return new ArrayList (ChildNodes);
+			}
+		}
+
+		public List<Node> ChildNodes {
 			get {
 				EnsureLoaded ();
 				return nodes != null ? nodes : new List<Node> ();

@@ -87,7 +87,7 @@ namespace MonoTests.Monodoc
 			if (node.IsLeaf)
 				yield return node;
 			else {
-				foreach (var child in node.Nodes) {
+				foreach (var child in node.ChildNodes) {
 					if (!string.IsNullOrEmpty (child.Element) && !child.Element.StartsWith ("root:/"))
 						yield return child;
 					foreach (var childLeaf in GetLeaves (child))

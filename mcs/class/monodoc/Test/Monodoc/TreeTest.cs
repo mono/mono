@@ -38,7 +38,7 @@ namespace MonoTests.Monodoc
 			var tree = new Tree (null, filePath);
 			Assert.AreEqual (expectedVersion, tree.VersionNumber);
 			Assert.IsNotNull (tree.RootNode);
-			Assert.AreEqual (expectedNodeCount, tree.RootNode.Nodes.Count);
+			Assert.AreEqual (expectedNodeCount, tree.RootNode.ChildNodes.Count);
 		}
 	}
 }
