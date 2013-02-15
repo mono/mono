@@ -50129,6 +50129,22 @@
         <size>7</size>
       </method>
     </type>
+    <type name="A">
+      <method name="T Foo4[T]()" attrs="454">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="T Test4[T]()" attrs="134">
+        <size>28</size>
+      </method>
+      <method name="T &lt;Foo4&gt;__BaseCallProxy2[T]()" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="T &lt;Test4`1&gt;m__4[T]()" attrs="129">
+        <size>14</size>
+      </method>
+    </type>
   </test>
   <test name="test-anon-164.cs">
     <type name="C`1[T]">

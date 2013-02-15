@@ -1343,22 +1343,12 @@ namespace Mono.CSharp
 
 			if (proxy_method == null) {
 				string name = CompilerGeneratedContainer.MakeName (method.Name, null, "BaseCallProxy", hoisted_base_call_proxies.Count);
-				var base_parameters = new Parameter[method.Parameters.Count];
-				for (int i = 0; i < base_parameters.Length; ++i) {
-					var base_param = method.Parameters.FixedParameters[i];
-					base_parameters[i] = new Parameter (new TypeExpression (method.Parameters.Types[i], Location),
-						base_param.Name, base_param.ModFlags, null, Location);
-					base_parameters[i].Resolve (this, i);
-				}
-
-				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
-				if (method.Parameters.HasArglist) {
-					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
-					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();
-				}
 
 				MemberName member_name;
 				TypeArguments targs = null;
+				TypeSpec return_type = method.ReturnType;
+				var local_param_types = method.Parameters.Types;
+
 				if (method.IsGeneric) {
 					//
 					// Copy all base generic method type parameters info
@@ -1370,19 +1360,42 @@ namespace Mono.CSharp
 					targs.Arguments = new TypeSpec[hoisted_tparams.Length];
 					for (int i = 0; i < hoisted_tparams.Length; ++i) {
 						var tp = hoisted_tparams[i];
-						tparams.Add (new TypeParameter (tp, null, new MemberName (tp.Name, Location), null));
+						var local_tp = new TypeParameter (tp, null, new MemberName (tp.Name, Location), null);
+						tparams.Add (local_tp);
 
 						targs.Add (new SimpleName (tp.Name, Location));
-						targs.Arguments[i] = tp;
+						targs.Arguments[i] = local_tp.Type;
 					}
 
 					member_name = new MemberName (name, tparams, Location);
+
+					//
+					// Mutate any method type parameters from original
+					// to newly created hoisted version
+					//
+					var mutator = new TypeParameterMutator (hoisted_tparams, tparams);
+					return_type = mutator.Mutate (return_type);
+					local_param_types = mutator.Mutate (local_param_types);
 				} else {
 					member_name = new MemberName (name);
 				}
 
+				var base_parameters = new Parameter[method.Parameters.Count];
+				for (int i = 0; i < base_parameters.Length; ++i) {
+					var base_param = method.Parameters.FixedParameters[i];
+					base_parameters[i] = new Parameter (new TypeExpression (local_param_types [i], Location),
+						base_param.Name, base_param.ModFlags, null, Location);
+					base_parameters[i].Resolve (this, i);
+				}
+
+				var cloned_params = ParametersCompiled.CreateFullyResolved (base_parameters, method.Parameters.Types);
+				if (method.Parameters.HasArglist) {
+					cloned_params.FixedParameters[0] = new Parameter (null, "__arglist", Parameter.Modifier.NONE, null, Location);
+					cloned_params.Types[0] = Module.PredefinedTypes.RuntimeArgumentHandle.Resolve ();
+				}
+
 				// Compiler generated proxy
-				proxy_method = new Method (this, new TypeExpression (method.ReturnType, Location),
+				proxy_method = new Method (this, new TypeExpression (return_type, Location),
 					Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED | Modifiers.DEBUGGER_HIDDEN,
 					member_name, cloned_params, null);
 
