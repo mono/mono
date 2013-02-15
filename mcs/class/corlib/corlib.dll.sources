@@ -1562,6 +1562,7 @@ System.Collections.Generic/List.cs
 System.Collections.ObjectModel/Collection.cs
 System.Collections.ObjectModel/KeyedCollection.cs
 System.Collections.ObjectModel/ReadOnlyCollection.cs
+System.Collections.ObjectModel/ReadOnlyDictionary.cs
 System/Action.cs
 System/ArraySegment.cs
 System/Comparison.cs
