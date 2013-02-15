@@ -20,3 +20,7 @@ System.Int32 Mono.Security.BitConverterLE::ToInt32(System.Byte[],System.Int32)
 
 #SSC in moonlgiht
 System.UInt32 Mono.Security.BitConverterLE::ToUInt32(System.Byte[],System.Int32)
+
+#SSC in moonlight
+#System.Void Mono.Security.BitConverterLE::UShortFromBytes(System.Byte*,System.Byte[],System.Int32)
+
