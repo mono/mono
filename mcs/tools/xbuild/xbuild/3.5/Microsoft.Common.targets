@@ -139,7 +139,9 @@
 		</AllowedReferenceAssemblyFileExtensions>
 
 		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
-			.mdb
+			.exe.mdb;
+			.dll.mdb;
+			.xml
 		</AllowedReferenceRelatedFileExtensions>
 
 		<AssemblySearchPaths Condition="'$(AssemblySearchPaths)' == ''">
