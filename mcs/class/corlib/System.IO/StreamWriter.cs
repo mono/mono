@@ -60,7 +60,7 @@ namespace System.IO {
 
 #if NET_4_5
 		readonly bool leave_open;
-		Task async_task;
+		IDecoupledTask async_task;
 #endif
 
 		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 1);
@@ -382,13 +382,18 @@ namespace System.IO {
 		public override Task FlushAsync ()
 		{
 			CheckState ();
-			return async_task = FlushCoreAsync ();
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (FlushCoreAsync ());
+			return res.Task;
 		}
 
 		public override Task WriteAsync (char value)
 		{
 			CheckState ();
-			return async_task = WriteAsyncCore (value);
+
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (WriteAsyncCore (value));
+			return res.Task;
 		}
 
 		async Task WriteAsyncCore (char value)
@@ -409,7 +414,9 @@ namespace System.IO {
 			if (buffer == null)
 				return TaskConstants.Finished;
 
-			return async_task = WriteAsyncCore (buffer, index, count);
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (WriteAsyncCore (buffer, index, count));
+			return res.Task;
 		}
 
 		async Task WriteAsyncCore (char[] buffer, int index, int count)
@@ -425,31 +432,41 @@ namespace System.IO {
 		public override Task WriteAsync (string value)
 		{
 			CheckState ();
-			return async_task = base.WriteAsync (value);
+			DecoupledTask res;			
+			async_task = res = new DecoupledTask(base.WriteAsync (value));
+			return res.Task;
 		}
 
 		public override Task WriteLineAsync ()
 		{
 			CheckState ();
-			return async_task = base.WriteLineAsync ();
+			DecoupledTask res;			
+			async_task = res = new DecoupledTask (base.WriteLineAsync ());
+			return res.Task;
 		}
 
 		public override Task WriteLineAsync (char value)
 		{
 			CheckState ();
-			return async_task = base.WriteLineAsync (value);
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (base.WriteLineAsync (value));
+			return res.Task;
 		}
 
 		public override Task WriteLineAsync (char[] buffer, int index, int count)
 		{
 			CheckState ();
-			return async_task = base.WriteLineAsync (buffer, index, count);
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (base.WriteLineAsync (buffer, index, count));
+			return res.Task;
 		}
 
 		public override Task WriteLineAsync (string value)
 		{
 			CheckState ();
-			return async_task = base.WriteLineAsync (value);
+			DecoupledTask res;			
+			async_task = res = new DecoupledTask (base.WriteLineAsync (value));
+			return res.Task;
 		}
 #endif
 	}

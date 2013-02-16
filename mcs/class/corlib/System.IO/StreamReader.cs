@@ -122,7 +122,7 @@ namespace System.IO {
 		bool mayBlock;
 
 #if NET_4_5
-		Task async_task;
+		IDecoupledTask async_task;
 		readonly bool leave_open;
 #endif
 
@@ -625,9 +625,9 @@ namespace System.IO {
 
 			CheckState ();
 
-			Task<int> res;
-			async_task = res = ReadAsyncCore (buffer, index, count);
-			return res;
+			DecoupledTask<int> res;
+			async_task = res = new DecoupledTask<int> (ReadAsyncCore (buffer, index, count));
+			return res.Task;
 		}
 
 		async Task<int> ReadAsyncCore (char[] buffer, int index, int count)
@@ -665,18 +665,18 @@ namespace System.IO {
 
 			CheckState ();
 
-			Task<int> res;
-			async_task = res = ReadAsyncCore (buffer, index, count);
-			return res;
+			DecoupledTask<int> res;
+			async_task = res = new DecoupledTask<int> (ReadAsyncCore (buffer, index, count));
+			return res.Task;
 		}
 
 		public override Task<string> ReadLineAsync ()
 		{
 			CheckState ();
 
-			Task<string> res;
-			async_task = res = ReadLineAsyncCore ();
-			return res;
+			DecoupledTask<string> res;
+			async_task = res = new DecoupledTask<string> (ReadLineAsyncCore ());
+			return res.Task;
 		}
 
 		async Task<string> ReadLineAsyncCore ()
@@ -731,9 +731,9 @@ namespace System.IO {
 		{
 			CheckState ();
 
-			Task<string> res;
-			async_task = res = ReadToEndAsyncCore ();
-			return res;
+			DecoupledTask<string> res;
+			async_task = res = new DecoupledTask<string> (ReadToEndAsyncCore ());
+			return res.Task;
 		}
 
 		async Task<string> ReadToEndAsyncCore ()
