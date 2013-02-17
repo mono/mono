@@ -5555,8 +5555,6 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 		parent = mono_class_get_full (image, parent_token, context);
 
 		if (parent == NULL){
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Could not load parent type"));
-			mono_loader_clear_error ();
 			goto parent_failure;
 		}
 
@@ -7007,22 +7005,10 @@ mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *c
 		break;
 	case MONO_TOKEN_TYPE_SPEC:
 		class = mono_class_create_from_typespec (image, type_token, context, &error);
-		if (!mono_error_ok (&error)) {
-			/*FIXME don't swallow the error message*/
-			mono_error_cleanup (&error);
-		}
 		break;
 	default:
 		g_warning ("unknown token type %x", type_token & 0xff000000);
 		g_assert_not_reached ();
-	}
-
-	if (!class){
-		char *name = mono_class_name_from_token (image, type_token);
-		char *assembly = mono_assembly_name_from_token (image, type_token);
-		mono_loader_set_error_type_load (name, assembly);
-		g_free (name);
-		g_free (assembly);
 	}
 
 	return class;
