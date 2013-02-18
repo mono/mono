@@ -17,6 +17,7 @@ namespace Mono.Debugger.Soft
 	/*
 	 * Filter which kinds of methods to skip during single stepping
 	 */
+	[Flags]
 	public enum StepFilter {
 		None = 0,
 		StaticCtor = 1,
