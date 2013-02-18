@@ -679,9 +679,11 @@ namespace MonoTests.System.Threading.Tasks
 		public void WaitingForChildrenToComplete ()
 		{
 			Task nested = null;
+			var mre = new ManualResetEvent (false);
 
 			parent_wfc = Task.Factory.StartNew (() => {
 				nested = Task.Factory.StartNew (() => {
+					Assert.IsTrue (mre.WaitOne (4000), "parent_wfc needs to be set first");
 					Assert.IsFalse (parent_wfc.Wait (10), "#1a");
 					Assert.AreEqual (TaskStatus.WaitingForChildrenToComplete, parent_wfc.Status, "#1b");
 				}, TaskCreationOptions.AttachedToParent).ContinueWith (l => {
@@ -690,6 +692,7 @@ namespace MonoTests.System.Threading.Tasks
 				}, TaskContinuationOptions.ExecuteSynchronously);
 			});
 
+			mre.Set ();
 			Assert.IsTrue (parent_wfc.Wait (2000), "#3");
 			Assert.IsTrue (nested.Wait (2000), "#4");
 		}
