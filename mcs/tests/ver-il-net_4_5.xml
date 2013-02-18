@@ -46585,6 +46585,34 @@
       </method>
     </type>
   </test>
+  <test name="test-865.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>9</size>
+      </method>
+      <method name="IA Create(Boolean)" attrs="145">
+        <size>34</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B2">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">
