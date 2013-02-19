@@ -97,7 +97,7 @@ public class DebuggerTests
 		// String
 		MethodMirror m = entry_point.DeclaringType.GetMethod (name);
 		Assert.IsNotNull (m);
-		Console.WriteLine ("X: " + name + " " + m.ILOffsets.Count + " " + m.Locations.Count);
+		//Console.WriteLine ("X: " + name + " " + m.ILOffsets.Count + " " + m.Locations.Count);
 		vm.SetBreakpoint (m, m.ILOffsets [0]);
 
 		Event e = null;
@@ -1459,6 +1459,7 @@ public class DebuggerTests
 		// Execute i = 42
 		var req = vm.CreateStepRequest (be.Thread);
 		req.Enable ();
+		step_req = req;
 
 		vm.Resume ();
 		var e = GetNextEvent ();
