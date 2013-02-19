@@ -20554,6 +20554,26 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-29.cs">
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>217</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B2">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)" attrs="150">

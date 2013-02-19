@@ -4659,6 +4659,8 @@ namespace Mono.CSharp
 					}
 
 					true_expr = conv;
+					if (true_expr.Type != type)
+						true_expr = EmptyCast.Create (true_expr, type);
 				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;
 				} else {
@@ -4696,9 +4698,12 @@ namespace Mono.CSharp
 			expr.EmitBranchable (ec, false_target, false);
 			true_expr.Emit (ec);
 
-			// Verifier doesn't support interface merging. Use temporary
-			// local variable to workaround it.
-			if (type.IsInterface && !(true_expr is Constant || false_expr is Constant)) {
+			//
+			// Verifier doesn't support interface merging. When there are two types on
+			// the stack without common type hint and the common type is an interface.
+			// Use temporary local to give verifier hint on what type to unify the stack
+			//
+			if (type.IsInterface && true_expr is EmptyCast && false_expr is EmptyCast) {
 				var temp = ec.GetTemporaryLocal (type);
 				ec.Emit (OpCodes.Stloc, temp);
 				ec.Emit (OpCodes.Ldloc, temp);
