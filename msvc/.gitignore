@@ -2,3 +2,7 @@
 /Makefile.in
 /*.user
 /*.filters
+/*.sdf
+/*.opensdf
+/*.ncb
+/*.suo
