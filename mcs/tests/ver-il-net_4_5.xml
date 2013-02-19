@@ -57566,6 +57566,111 @@
       </method>
     </type>
   </test>
+  <test name="test-async-43.cs">
+    <type name="A">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] GetValue(Int32)" attrs="134">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>26</size>
+      </method>
+      <method name="A get_Instance()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="T Test[T](Int32, System.Func`1[T])" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>242</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async0+&lt;Foo&gt;c__AnonStorey4">
+      <method name="System.Threading.Tasks.Task &lt;&gt;m__0()" attrs="131">
+        <size>54</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async0+&lt;Foo&gt;c__AnonStorey4+&lt;Foo&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>185</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-44.cs">
+    <type name="A">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] GetValue(Int32)" attrs="134">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>26</size>
+      </method>
+      <method name="A get_Instance()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Int32 Bar()" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="T Test[T](Int32, System.Func`1[T])" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>240</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async0+&lt;Foo&gt;c__AnonStorey4">
+      <method name="System.Threading.Tasks.Task &lt;&gt;m__0()" attrs="131">
+        <size>54</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async0+&lt;Foo&gt;c__AnonStorey4+&lt;Foo&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>214</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">

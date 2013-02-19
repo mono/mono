@@ -1629,21 +1629,25 @@ namespace Mono.CSharp {
 				parent = storey = FindBestMethodStorey ();
 
 				if (storey == null) {
-					var sm = src_block.ParametersBlock.TopBlock.StateMachine;
+					var top_block = src_block.ParametersBlock.TopBlock;
+					var sm = top_block.StateMachine;
 
-					//
-					// Remove hoisted this demand when simple instance method is enough (no hoisted variables only this)
-					//
-					if (src_block.HasCapturedThis && src_block.ParametersBlock.StateMachine == null) {
-						src_block.ParametersBlock.TopBlock.RemoveThisReferenceFromChildrenBlock (src_block);
+					if (src_block.HasCapturedThis) {
+						//
+						// Remove hoisted 'this' request when simple instance method is
+						// enough (no hoisted variables only 'this')
+						//
+						if (src_block.ParametersBlock.StateMachine == null)
+							top_block.RemoveThisReferenceFromChildrenBlock (src_block);
 
 						//
 						// Special case where parent class is used to emit instance method
-						// because currect storey is of value type (async host) and we don't
-						// want to create another childer storey to host this reference only
+						// because currect storey is of value type (async host). We cannot
+						// use ldftn on non-boxed instances either to share mutated state
 						//
-						if (sm != null && sm.Kind == MemberKind.Struct)
+						if (sm != null && sm.Kind == MemberKind.Struct) {
 							parent = sm.Parent.PartialContainer;
+						}
 					}
 
 					//

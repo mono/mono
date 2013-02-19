@@ -2560,12 +2560,14 @@ namespace Mono.CSharp {
 
 					if (b.Explicit == b.Explicit.ParametersBlock && b.Explicit.ParametersBlock.StateMachine != null) {
 						storey.HoistedThis = b.Explicit.ParametersBlock.StateMachine.HoistedThis;
-						break;
+
+						if (storey.HoistedThis != null)
+							break;
 					}
 				}
-
+				
 				//
-				// We are the first storey on path and this has to be hoisted
+				// We are the first storey on path and 'this' has to be hoisted
 				//
 				if (storey.HoistedThis == null) {
 					foreach (ExplicitBlock ref_block in Original.ParametersBlock.TopBlock.ThisReferencesFromChildrenBlock) {
@@ -2581,8 +2583,9 @@ namespace Mono.CSharp {
 						if (block_on_path == null)
 							continue;
 
-						if (storey.HoistedThis == null)
+						if (storey.HoistedThis == null) {
 							storey.AddCapturedThisField (ec);
+						}
 
 						for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
 							if (b.AnonymousMethodStorey != null) {
@@ -2605,7 +2608,7 @@ namespace Mono.CSharp {
 
 								pb.StateMachine.AddParentStoreyReference (ec, storey);
 							}
-
+							
 							b.HasCapturedVariable = true;
 						}
 					}
