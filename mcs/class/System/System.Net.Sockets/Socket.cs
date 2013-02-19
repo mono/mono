@@ -1804,6 +1804,11 @@ namespace System.Net.Sockets
 
 			if (local_end == null)
 				throw new ArgumentNullException("local_end");
+		
+#if NET_2_0
+			if (System.Environment.SocketSecurityEnabled && current_bind_count >= max_bind_count)
+				throw new System.Security.SecurityException("Too many sockets are bound, maximum count in the webplayer is " + max_bind_count);
+#endif
 			
 			int error;
 
@@ -1813,6 +1818,8 @@ namespace System.Net.Sockets
 #if NET_2_0
 			if (error == 0)
 				isbound = true;
+			if (System.Environment.SocketSecurityEnabled)
+				current_bind_count++;
 #endif
 			
 			seed_endpoint = local_end;
