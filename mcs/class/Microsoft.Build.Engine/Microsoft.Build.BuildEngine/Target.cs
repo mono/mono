@@ -79,12 +79,37 @@ namespace Microsoft.Build.BuildEngine {
 					else if (xe.Name == "ItemGroup") {
 						//don't blow up for ItemGroups inside Targets in >= 3.5
 						// TODO: evaluate them (see https://bugzilla.xamarin.com/show_bug.cgi?id=1862 and test in TargetTest.cs )
+						Convert(xe, buildTasks, this);
 						continue;
 					}
 #endif
 					else
 						buildTasks.Add (new BuildTask (xe, this));
 				}
+			}
+		}
+		
+		private void Convert(XmlElement xe, List<BuildTask> tasks, Target target)
+		{
+			var doc = new XmlDocument();
+			foreach (XmlNode child in xe.ChildNodes) {
+				var task = doc.CreateElement("CreateItem");
+				var include = child.Attributes["Include"];
+				if (include != null) {
+					task.SetAttribute("Include", string.Format ("@({0});{1}", child.Name, include.Value));
+				}
+				
+				var exclude = child.Attributes["Exclude"];
+				if (exclude != null)
+				{
+					task.SetAttribute("Exclude", exclude.Value);
+				}
+				
+				var output = doc.CreateElement("Output");
+				output.SetAttribute("TaskParameter", "Include");
+				output.SetAttribute("ItemName", child.Name);
+				task.AppendChild(output);
+				tasks.Add (new BuildTask(task, target));
 			}
 		}
 
