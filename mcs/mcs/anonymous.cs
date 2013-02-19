@@ -1362,7 +1362,7 @@ namespace Mono.CSharp {
 				b = b.ConvertToAsyncTask (ec, ec.CurrentMemberDefinition.Parent.PartialContainer, p, return_type, loc);
 			}
 
-			return CompatibleMethodFactory (return_type ?? InternalType.Arglist, delegate_type, p, b);
+			return CompatibleMethodFactory (return_type ?? InternalType.ErrorType, delegate_type, p, b);
 		}
 
 		protected virtual AnonymousMethodBody CompatibleMethodFactory (TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ParametersBlock b)

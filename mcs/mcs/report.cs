@@ -649,7 +649,7 @@ namespace Mono.CSharp {
 			//
 			// This line is useful when debugging recorded messages
 			//
-			// Console.WriteLine ("RECORDING: {0}", msg.ToString ());
+			// Console.WriteLine ("RECORDING: {0}", msg.Text);
 
 			if (session_messages == null)
 				session_messages = new List<AbstractMessage> ();

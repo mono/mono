@@ -853,7 +853,7 @@ namespace Mono.CSharp {
 
 				if (ec.CurrentIterator != null) {
 					Error_ReturnFromIterator (ec);
-				} else {
+				} else if (ec.ReturnType != InternalType.ErrorType) {
 					ec.Report.Error (126, loc,
 						"An object of a type convertible to `{0}' is required for the return statement",
 						ec.ReturnType.GetSignatureForError ());
@@ -2303,10 +2303,9 @@ namespace Mono.CSharp {
 
 				if (!s.Resolve (ec)) {
 					ok = false;
-					if (ec.IsInProbingMode)
-						break;
+					if (!ec.IsInProbingMode)
+						statements [ix] = new EmptyStatement (s.loc);
 
-					statements [ix] = new EmptyStatement (s.loc);
 					continue;
 				}
 
