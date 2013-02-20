@@ -92,3 +92,60 @@ namespace AsyncNS
 		namespace async { }
 	}
 }
+
+namespace AwaitNS
+{
+	class Formals
+	{
+		delegate void D (int x);
+		static void M1 ()
+		{
+			D d1 = await => { };
+			D d2 = (int await) => { };
+			D d3 = delegate (int await) { };
+		}
+	}
+
+	class Methods
+	{
+		void await () { }
+		void M (Methods m)
+		{
+			m.await ();
+			this.await ();
+			// FIXME: await ();
+		}
+	}
+
+	class Classes
+	{
+		class await { }
+		void M ()
+		{
+			// FIXME: @await local = new @await ();
+		}
+	}
+
+	class AnonTypes
+	{
+		static void M ()
+		{
+			var x = new { await = 1 };
+			var y = x.await;
+			int await = 2;
+			var x2 = new { await };
+		}
+	}
+
+	class Initializer
+	{
+		int await;
+
+		static void M ()
+		{
+			var a = new Initializer () {
+				await = 2
+			};
+		}
+	}
+}
