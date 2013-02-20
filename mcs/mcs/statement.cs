@@ -4192,11 +4192,17 @@ namespace Mono.CSharp {
 					constant_section = default_section;
 			} else {
 				//
-				// Store switch expression for comparission purposes
+				// Store switch expression for comparison purposes
 				//
 				value = new_expr as VariableReference;
-				if (value == null)
+				if (value == null) {
+					// Create temporary variable inside switch scope
+					var block = ec.CurrentBlock;
+					ec.CurrentBlock = Block;
 					value = TemporaryVariableReference.Create (SwitchType, ec.CurrentBlock, loc);
+					value.Resolve (ec);
+					ec.CurrentBlock = block;
+				}
 			}
 
 			bool first = true;
