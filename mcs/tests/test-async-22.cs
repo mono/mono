@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-// contextual async during parsing
+// contextual async, parser tests
 
 class A
 {
@@ -71,4 +71,24 @@ class await
 class asyncAttribute: Attribute
 {
 	delegate async async (async async);
+}
+
+namespace AsyncNS
+{
+	class Classes
+	{
+		class async
+		{
+		}
+		
+		void M ()
+		{
+			async local;
+		}
+	}
+
+	namespace Namespaces
+	{
+		namespace async { }
+	}
 }

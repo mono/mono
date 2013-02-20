@@ -1,5 +1,3 @@
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +11,7 @@ namespace from
 
 	class C
 	{
-		// This is pure grammar test
+		// This is pure grammar/parser test
 		public static void Main ()
 		{
 			int[] i2 = new int [] { 0, 1 };
@@ -107,3 +105,24 @@ namespace from
 		}
 	}
 }
+
+namespace FromProblems2
+{
+	class from
+	{
+	}
+	
+	class C
+	{
+		void M1 ()
+		{
+			from local = new from ();
+		}
+		
+		from M2 ()
+		{
+			return null;
+		}
+	}
+}
+

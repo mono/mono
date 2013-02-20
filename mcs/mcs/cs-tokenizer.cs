@@ -198,7 +198,7 @@ namespace Mono.CSharp
 		readonly int tab_size;
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
-		bool handle_where = false;
+		bool handle_where;
 		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
 		List<Location> escaped_identifiers;
@@ -697,7 +697,7 @@ namespace Mono.CSharp
 				}
 				break;
 			case Token.WHERE:
-				if (!handle_where && !query_parsing)
+				if (!(handle_where && current_token != Token.COLON) && !query_parsing)
 					res = -1;
 				break;
 			case Token.FROM:
@@ -706,7 +706,7 @@ namespace Mono.CSharp
 				// followed by any token except ; , =
 				// 
 				if (!query_parsing) {
-					if (lambda_arguments_parsing) {
+					if (lambda_arguments_parsing || parsing_block == 0) {
 						res = -1;
 						break;
 					}
@@ -729,7 +729,7 @@ namespace Mono.CSharp
 					case Token.UINT:
 					case Token.ULONG:
 						next_token = xtoken ();
-						if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS)
+						if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS || next_token == Token.ASSIGN)
 							goto default;
 						
 						res = Token.FROM_FIRST;
@@ -769,6 +769,7 @@ namespace Mono.CSharp
 			case Token.NAMESPACE:
 				// TODO: some explanation needed
 				check_incorrect_doc_comment ();
+				parsing_modifiers = false;
 				break;
 				
 			case Token.PARTIAL:
@@ -802,8 +803,17 @@ namespace Mono.CSharp
 					Report.Error (267, Location,
 						"The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword");
 					return token ();
-				}					
+				}
 
+				// HACK: A token is not a keyword so we need to restore identifiers buffer
+				// which has been overwritten before we grabbed the identifier
+				id_builder[0] = 'p';
+				id_builder[1] = 'a';
+				id_builder[2] = 'r';
+				id_builder[3] = 't';
+				id_builder[4] = 'i';
+				id_builder[5] = 'a';
+				id_builder[6] = 'l';
 				res = -1;
 				break;
 
@@ -826,8 +836,10 @@ namespace Mono.CSharp
 					case Token.IDENTIFIER:
 						PushPosition ();
 						xtoken ();
-						if (xtoken () != Token.ARROW)
+						if (xtoken () != Token.ARROW) {
+							PopPosition ();
 							goto default;
+						}
 
 						PopPosition ();
 						break;

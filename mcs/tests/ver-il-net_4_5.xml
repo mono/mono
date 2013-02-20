@@ -17906,6 +17906,31 @@
       </method>
     </type>
   </test>
+  <test name="gtest-580.cs">
+    <type name="WhereProblems.MyClass`1[where]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="WhereProblems.Classes">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="WhereProblems.Classes+where">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="WhereProblems.Classes+DER17">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -24912,6 +24937,22 @@
         <size>55</size>
       </method>
       <method name="Int32 &lt;&gt;m__3F(Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="FromProblems2.from">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="FromProblems2.C">
+      <method name="Void M1()" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="FromProblems2.from M2()" attrs="129">
         <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
@@ -56846,6 +56887,19 @@
         <size>7</size>
       </method>
     </type>
+    <type name="AsyncNS.Classes">
+      <method name="Void M()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AsyncNS.Classes+async">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="test-async-23.cs">
     <type name="MyContext">
@@ -61302,6 +61356,27 @@
     <type name="D">
       <method name="Void Method(Int32)" attrs="145">
         <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-30.cs">
+    <type name="PartialProblems.Classes">
+      <method name="Void M1(PartialProblems.Classes+partial)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="PartialProblems.Classes+partial M3()" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="PartialProblems.Classes+partial">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

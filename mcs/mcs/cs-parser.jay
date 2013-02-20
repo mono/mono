@@ -905,10 +905,10 @@ struct_declaration
 	  opt_partial
 	  STRUCT
 	  {
-		lexer.ConstraintsParsing = true;
 	  }
 	  type_declaration_name
 	  { 
+		lexer.ConstraintsParsing = true;
 		push_current_container (new Struct (current_container, (MemberName) $6, (Modifiers) $2, (Attributes) $1), $3);
 	  }
 	  opt_class_base
@@ -1875,10 +1875,10 @@ interface_declaration
 	  opt_partial
 	  INTERFACE
 	  {
-		lexer.ConstraintsParsing = true;
 	  }
 	  type_declaration_name
 	  {
+		lexer.ConstraintsParsing = true;
 		push_current_container (new Interface (current_container, (MemberName) $6, (Modifiers) $2, (Attributes) $1), $3);
 		lbag.AddMember (current_container, mod_locations, GetLocation ($4));		
 	  }
@@ -4535,10 +4535,11 @@ class_declaration
 	  opt_partial
 	  CLASS
 	  {
-		lexer.ConstraintsParsing = true;
 	  }
 	  type_declaration_name
 	  {
+		lexer.ConstraintsParsing = true;
+
 		Class c = new Class (current_container, (MemberName) $6, (Modifiers) $2, (Attributes) $1);
 		if (((c.ModFlags & Modifiers.STATIC) != 0) && lang_version == LanguageVersion.ISO_1) {
 			FeatureIsNotAvailable (c.Location, "static classes");
