@@ -1435,5 +1435,50 @@ namespace MonoTests.System.IO
 		if (File.Exists (path))
 			File.Delete (path);
 	}
+
+	class MockBinaryReader : BinaryReader
+	{
+		public int ReadCharsCounter;
+		public int ReadCounter;
+		
+		public MockBinaryReader (Stream input)
+			: base (input)
+		{
+		}
+		
+		public override char[] ReadChars (int count)
+		{
+			++ReadCharsCounter;
+			return base.ReadChars (count);
+		}
+		
+		public override int Read (char[] buffer, int index, int count)
+		{
+			++ReadCounter;
+			return base.Read (buffer, index, count);
+		}
+	}
+
+	[Test]
+	public void ReadOverrides ()
+	{
+		var stream = new MemoryStream ();
+		
+		using (var writer = new BinaryWriter (stream)) {
+			writer.Write ("TEST");
+			stream.Seek (0, SeekOrigin.Begin);
+		
+			using (var reader = new MockBinaryReader (stream)) {
+				var readChars = reader.ReadChars (4);
+		
+				Assert.AreEqual (1, reader.ReadCharsCounter);
+				Assert.AreEqual (0, reader.ReadCounter);
+		
+				reader.Read (readChars, 0, 4);
+				Assert.AreEqual (1, reader.ReadCharsCounter);
+				Assert.AreEqual (1, reader.ReadCounter);
+			}
+		}
+	}
 }
 }
