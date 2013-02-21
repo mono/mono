@@ -420,7 +420,7 @@ namespace System.Globalization {
 					("The current instance is read-only and a set operation was attempted");
 				
 				if (value.Length == 0) {
-					currencyGroupSizes = new int [0];
+					currencyGroupSizes = EmptyArray<int>.Value;
 					return;
 				}
 				
@@ -683,7 +683,7 @@ namespace System.Globalization {
 					("The current instance is read-only and a set operation was attempted");
 				
 				if (value.Length == 0) {
-					numberGroupSizes = new int [0];
+					numberGroupSizes = EmptyArray<int>.Value;
 					return;
 				}
 				// All elements except last need to be in range 1 - 9, last can be 0.
@@ -806,7 +806,7 @@ namespace System.Globalization {
 					throw new Exception ("HERE the value was modified");
 				
 				if (value.Length == 0) {
-					percentGroupSizes = new int [0];
+					percentGroupSizes = EmptyArray<int>.Value;
 					return;
 				}
 

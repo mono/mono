@@ -418,7 +418,7 @@ namespace System
 				MethodInfo[] methods = GetMethodsByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
 				if (args == null)
-					args = new object [0];
+					args = EmptyArray<object>.Value;
 				MethodBase m = binder.BindToMethod (invokeAttr, methods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null) {
 					if (methods.Length > 0)

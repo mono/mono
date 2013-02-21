@@ -127,7 +127,7 @@ namespace System.Reflection {
 
 		public virtual MethodInfo[] GetOtherMethods (bool nonPublic) {
 			// implemented by the derived class
-			return new MethodInfo [0];
+			return EmptyArray<MethodInfo>.Value;
 		}
 
 		public MethodInfo[] GetOtherMethods () {

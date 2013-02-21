@@ -1097,7 +1097,7 @@ namespace System {
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			info.ApplicationTrust = new ApplicationTrust (grantSet, fullTrustAssemblies ?? new StrongName [0]);
+			info.ApplicationTrust = new ApplicationTrust (grantSet, fullTrustAssemblies ?? EmptyArray<StrongName>.Value);
 			return CreateDomain (friendlyName, securityInfo, info);		
 		}
 #endif

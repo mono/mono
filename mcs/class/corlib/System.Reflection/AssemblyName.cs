@@ -232,18 +232,17 @@ namespace System.Reflection {
 		{
 			if (keyToken != null)
 				return keyToken;
-			else if (publicKey == null)
+			if (publicKey == null)
 				return null;
-			else {
+
 				if (publicKey.Length == 0)
-					return new byte [0];
+					return EmptyArray<byte>.Value;
 
 				if (!IsPublicKeyValid)
 					throw new  SecurityException ("The public key is not valid.");
 
 				keyToken = ComputePublicKeyToken ();
 				return keyToken;
-			}
 		}
 
 		private bool IsPublicKeyValid {
@@ -297,7 +296,7 @@ namespace System.Reflection {
 				return null;
 
 			if (publicKey.Length == 0)
-				return new byte [0];
+				return EmptyArray<byte>.Value;
 
 			if (!IsPublicKeyValid)
 				throw new  SecurityException ("The public key is not valid.");

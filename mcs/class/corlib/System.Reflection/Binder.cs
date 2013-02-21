@@ -223,7 +223,7 @@ namespace System.Reflection
 
 				if (selected != null) {
 					if (args == null)
-						args = new object [0];
+						args = EmptyArray<object>.Value;
 	
 					AdjustArguments (selected, ref args);
 				}

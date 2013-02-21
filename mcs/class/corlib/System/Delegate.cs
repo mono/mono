@@ -338,7 +338,7 @@ namespace System
 
 			for (Type targetType = target; targetType != null; targetType = targetType.BaseType) {
 				MethodInfo mi = targetType.GetMethod (method, flags,
-					null, delargtypes, new ParameterModifier [0]);
+					null, delargtypes, EmptyArray<ParameterModifier>.Value);
 				if (mi != null && return_type_match (invoke.ReturnType, mi.ReturnType)) {
 					info = mi;
 					break;

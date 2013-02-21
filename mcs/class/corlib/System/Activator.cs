@@ -222,7 +222,7 @@ namespace System
 
 		public static object CreateInstance (Type type, params object [] args)
 		{
-			return CreateInstance (type, args, new object [0]);
+			return CreateInstance (type, args, EmptyArray<object>.Value);
 		}
 
 		public static object CreateInstance (Type type, object [] args, object [] activationAttributes)
@@ -233,7 +233,7 @@ namespace System
 		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,
 		                                     CultureInfo culture)
 		{
-			return CreateInstance (type, bindingAttr, binder, args, culture, new object [0]);
+			return CreateInstance (type, bindingAttr, binder, args, culture, EmptyArray<object>.Value);
 		}
 
 		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,

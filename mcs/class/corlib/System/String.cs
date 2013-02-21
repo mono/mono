@@ -224,11 +224,11 @@ namespace System
 				throw new ArgumentException ("Illegal enum value: " + options + ".");
 
 			if (Length == 0 && (options & StringSplitOptions.RemoveEmptyEntries) != 0)
-				return new String[0];
+				return EmptyArray<string>.Value;
 
 			if (count <= 1) {
 				return count == 0 ?
-					new String[0] :
+					EmptyArray<string>.Value :
 					new String[1] { this };
 			}
 
@@ -251,7 +251,7 @@ namespace System
 
 			if (count <= 1) {
 				return count == 0 ?
-					new String[0] :
+					EmptyArray<string>.Value :
 					new String[1] { this };
 			}
 
@@ -261,7 +261,7 @@ namespace System
 				return SplitByCharacters (null, count, removeEmpty);
 
 			if (Length == 0 && removeEmpty)
-				return new String [0];
+				return EmptyArray<string>.Value;
 
 			List<String> arr = new List<String> ();
 
@@ -303,7 +303,7 @@ namespace System
 
 			// string contained only separators
 			if (removeEmpty && matchCount != 0 && pos == this.Length && arr.Count == 0)
-				return new String [0];
+				return EmptyArray<string>.Value;
 
 			if (!(removeEmpty && pos == this.Length))
 				arr.Add (this.Substring (pos));
