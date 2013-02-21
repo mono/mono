@@ -46,11 +46,11 @@ namespace System.Reflection {
 		
 #if NET_4_5
 		public virtual MethodInfo GetMethod {
-			get{return GetGetMethod(true);}
+			get { return GetGetMethod(true); }
 		}
 
 		public virtual MethodInfo SetMethod {
-			get{return GetSetMethod(true);}
+			get { return GetSetMethod(true); }
 		}
 #endif
 
