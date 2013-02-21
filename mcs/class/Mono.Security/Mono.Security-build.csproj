@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F5472B83-DC9C-4242-925B-09EBC9B00B3E}</ProjectGuid>
+    <ProjectGuid>{4D1ABD9E-B23B-4C1F-9DF1-7E3407EC3914}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1030</NoWarn>
     <OutputPath>bin\Debug\Mono.Security-build</OutputPath>
@@ -196,11 +196,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-build.csproj">
-      <Project>{BA443BB3-37C1-4194-AF97-B6F2580172A0}</Project>
+      <Project>{B8B2866D-592F-4888-A1CB-697AD0F3CADE}</Project>
       <Name>corlib\corlib-build</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-build-1.csproj">
-      <Project>{309B6B7D-C91C-49D0-84F7-BAE35FB207A5}</Project>
+      <Project>{C3638457-A40E-4E70-81B4-54ACB31DD76D}</Project>
       <Name>System\System-build-1</Name>
     </ProjectReference>
   </ItemGroup>

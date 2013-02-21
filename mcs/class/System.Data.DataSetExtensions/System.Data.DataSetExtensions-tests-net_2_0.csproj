@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E7F5482A-C5A0-47EA-94D7-C8D73210CBCD}</ProjectGuid>
+    <ProjectGuid>{989AD83B-C73F-4C62-B240-9A94B0CC8502}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1720,219,169</NoWarn>
     <OutputPath>bin\Debug\System.Data.DataSetExtensions-tests-net_2_0</OutputPath>
@@ -66,31 +66,31 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data.DataSetExtensions\System.Data.DataSetExtensions-net_2_0.csproj">
-      <Project>{4A5659C6-6021-41CE-B32F-AAFAA419A2C5}</Project>
+      <Project>{295579FC-90FD-4416-94E2-E032336DFEA6}</Project>
       <Name>System.Data.DataSetExtensions\System.Data.DataSetExtensions-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{45BA4F7D-9E8C-42F8-975F-F2EAA0300B6C}</Project>
+      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{0997C3B6-4B4C-4195-BBB6-DC61091676A3}</Project>
+      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{A892207C-64E0-4FCA-8541-A3C71099AA13}</Project>
+      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_2_0-1.csproj">
-      <Project>{71F684E5-42A8-437A-9C88-A90B2B6D4C26}</Project>
+      <Project>{AAF21FBC-A48A-430A-8B9E-0EEF65869221}</Project>
       <Name>System.Web\System.Web-net_2_0-1</Name>
     </ProjectReference>
   </ItemGroup>

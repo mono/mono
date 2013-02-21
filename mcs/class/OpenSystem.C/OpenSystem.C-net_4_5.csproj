@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7EB77418-371F-4455-8859-D1683A32749D}</ProjectGuid>
+    <ProjectGuid>{10F0CA9C-5F98-4091-BF3B-DDD0F6FF44DC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\OpenSystem.C-net_4_5</OutputPath>
@@ -65,7 +65,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

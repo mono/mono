@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B3D771AD-DDBD-4CE4-BC95-620F38F38C05}</ProjectGuid>
+    <ProjectGuid>{535AF10C-9FC7-4480-974E-E456F2698FC0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.CSharp-tests-net_2_0</OutputPath>
@@ -69,15 +69,15 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.CSharp\Mono.CSharp-net_2_0.csproj">
-      <Project>{D30755BF-16E2-467D-8923-62A4FFD69CEF}</Project>
+      <Project>{5072B1FD-517D-43F5-AF79-7786ECBFE7F6}</Project>
       <Name>Mono.CSharp\Mono.CSharp-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{45BA4F7D-9E8C-42F8-975F-F2EAA0300B6C}</Project>
+      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

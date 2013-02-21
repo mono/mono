@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0CACD519-CC02-47B1-9EE9-63F884B7A58C}</ProjectGuid>
+    <ProjectGuid>{D044BF49-7C7C-4E7D-8A1B-4A7DA133E4B8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.Security.Win32-net_4_5</OutputPath>
@@ -75,7 +75,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

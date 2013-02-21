@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F2AE1903-4B93-4443-BF41-E850ECC8BFE1}</ProjectGuid>
+    <ProjectGuid>{89390ACC-32C7-45EE-A169-BA1A4EEE6C47}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.ServiceModel.Web-net_4_5</OutputPath>
@@ -107,35 +107,35 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_5.csproj">
-      <Project>{A2E8AC47-7A47-4831-9CED-DBC9CCBB653D}</Project>
+      <Project>{088AB4AB-1904-4365-A74B-F7557A034945}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_5.csproj">
-      <Project>{C411AE1C-D949-4A87-ABE5-5F5AD9B3C66E}</Project>
+      <Project>{CF2A0D90-EB73-49B1-900B-BCE40990B404}</Project>
       <Name>System.ServiceModel\System.ServiceModel-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{9EF77858-EB0A-4432-948B-18F18E44350B}</Project>
+      <Project>{847BF7E9-DEFB-43C9-8410-CA775ADC0E8A}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web.Extensions\System.Web.Extensions-net_4_5.csproj">
-      <Project>{FA4CE78C-F388-4BE6-B400-78199EB30E20}</Project>
+      <Project>{88F3463D-A057-4531-AEE8-802F5B6342E9}</Project>
       <Name>System.Web.Extensions\System.Web.Extensions-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

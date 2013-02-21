@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8DB1807A-41A5-4195-9414-77EAF0CC6387}</ProjectGuid>
+    <ProjectGuid>{BA4C18A4-EF3B-42DD-957A-5C1BF4EE6359}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,219,169</NoWarn>
     <OutputPath>bin\Debug\Commons.Xml.Relaxng-tests-net_4_5</OutputPath>
@@ -70,19 +70,19 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Commons.Xml.Relaxng\Commons.Xml.Relaxng-net_4_5.csproj">
-      <Project>{B29E829F-C2C9-44C5-9303-BDF4FFEC4F81}</Project>
+      <Project>{4B2DAC6F-0527-4042-97C0-0B576ECA1A1C}</Project>
       <Name>Commons.Xml.Relaxng\Commons.Xml.Relaxng-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
   </ItemGroup>

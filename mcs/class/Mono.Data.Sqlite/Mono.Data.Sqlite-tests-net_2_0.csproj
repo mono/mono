@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B00AA484-1E60-40E8-8F1F-E9FEE74116C5}</ProjectGuid>
+    <ProjectGuid>{DFBE10D3-6BDB-4DE6-91B2-0A57889BD9A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\Mono.Data.Sqlite-tests-net_2_0</OutputPath>
@@ -68,27 +68,27 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Data.Sqlite\Mono.Data.Sqlite-net_2_0.csproj">
-      <Project>{DB78E822-7746-4FAB-8ADB-8A5285EDF6F6}</Project>
+      <Project>{60E307F3-5E95-42FF-9B41-3FB8AD664AB6}</Project>
       <Name>Mono.Data.Sqlite\Mono.Data.Sqlite-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{0997C3B6-4B4C-4195-BBB6-DC61091676A3}</Project>
+      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_2_0.csproj">
-      <Project>{74F9004B-7AC4-460C-8661-E67E546405CA}</Project>
+      <Project>{A9F46CB3-7262-47D8-A9EB-9B789278F9EF}</Project>
       <Name>System.Transactions\System.Transactions-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{A892207C-64E0-4FCA-8541-A3C71099AA13}</Project>
+      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
   </ItemGroup>

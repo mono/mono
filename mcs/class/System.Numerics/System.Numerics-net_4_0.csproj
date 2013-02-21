@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C32E5932-315F-4D73-987F-C553345F9963}</ProjectGuid>
+    <ProjectGuid>{D1AE499F-8B3D-44A2-9EB4-A9D336A2866C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Numerics-net_4_0</OutputPath>
@@ -65,11 +65,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
   </ItemGroup>

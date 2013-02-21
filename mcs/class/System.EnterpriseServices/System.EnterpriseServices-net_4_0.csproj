@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{078C5803-0120-478A-90E7-5CFDC97CCA91}</ProjectGuid>
+    <ProjectGuid>{801DF65A-F6B4-4D66-B415-9E8832E66F48}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,168,162</NoWarn>
     <OutputPath>bin\Debug\System.EnterpriseServices-net_4_0</OutputPath>
@@ -174,11 +174,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_0.csproj">
-      <Project>{925BE01F-45EE-4744-9164-34EEBD065800}</Project>
+      <Project>{46371E88-F274-4BE7-8587-444F4E6F7247}</Project>
       <Name>System.Transactions\System.Transactions-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

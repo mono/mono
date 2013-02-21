@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EEFC3BBE-E9ED-4727-872E-7BC8C0E40392}</ProjectGuid>
+    <ProjectGuid>{D7FD3F6B-2827-4281-88B0-435C7DEA540D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\System.Runtime.Remoting-tests-net_2_0</OutputPath>
@@ -82,31 +82,31 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Remoting\System.Runtime.Remoting-net_2_0.csproj">
-      <Project>{47273479-4C0C-485F-8D70-EAF2396CC8A4}</Project>
+      <Project>{926909ED-BEFF-44E4-86E7-627D7F1A7182}</Project>
       <Name>System.Runtime.Remoting\System.Runtime.Remoting-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_2_0-1.csproj">
-      <Project>{71F684E5-42A8-437A-9C88-A90B2B6D4C26}</Project>
+      <Project>{AAF21FBC-A48A-430A-8B9E-0EEF65869221}</Project>
       <Name>System.Web\System.Web-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{A892207C-64E0-4FCA-8541-A3C71099AA13}</Project>
+      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_2_0.csproj">
-      <Project>{18E7D453-2AA4-43E7-9A27-83CC6F9F1F7B}</Project>
+      <Project>{6E23CCE9-9FA5-48CE-A648-6D7A9BB2E23C}</Project>
       <Name>System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Remoting\System.Runtime.Remoting-net_2_0.csproj">
-      <Project>{47273479-4C0C-485F-8D70-EAF2396CC8A4}</Project>
+      <Project>{926909ED-BEFF-44E4-86E7-627D7F1A7182}</Project>
       <Name>System.Runtime.Remoting\System.Runtime.Remoting-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

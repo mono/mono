@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BC6A730C-668F-454C-B94D-51F557F2266F}</ProjectGuid>
+    <ProjectGuid>{4950EAE7-E5D9-4142-80DA-4B4A9834EA52}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.CompilerServices.SymbolWriter-net_4_0</OutputPath>
@@ -69,11 +69,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0.csproj">
-      <Project>{9FEA0F09-AAE7-4923-A64B-7C4F61BF00E5}</Project>
+      <Project>{A8B97A8D-D9F3-4BE5-926D-CE7E7C57FE6D}</Project>
       <Name>System\System-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

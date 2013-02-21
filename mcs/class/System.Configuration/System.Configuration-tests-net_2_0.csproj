@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{592F4E60-2DC1-451F-A286-7CC2BD9EA1F0}</ProjectGuid>
+    <ProjectGuid>{5CFB60F3-DD25-4621-A530-DE5ACD9FEEDB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\System.Configuration-tests-net_2_0</OutputPath>
@@ -99,23 +99,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{1F04D799-296B-4D22-B3A5-790CDF990E48}</Project>
+      <Project>{725170B0-51F0-46E2-A74D-F764B68553D6}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-1.csproj">
-      <Project>{D31DD335-4CC7-4168-ADD3-B75803A479EF}</Project>
+      <Project>{980C299E-664F-4905-B01C-19599BBE78FF}</Project>
       <Name>System\System-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0.csproj">
-      <Project>{EC5087B6-9208-4780-BF2C-1E989D49AD91}</Project>
+      <Project>{67A04408-CBEF-4B63-B975-29D827B0DBED}</Project>
       <Name>System.XML\System.Xml-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Security\System.Security-net_2_0.csproj">
-      <Project>{46AF3DB6-8BDD-402F-BCA7-5CE226AC135E}</Project>
+      <Project>{C596FD9E-2AC3-48E2-9661-F6F40C84F044}</Project>
       <Name>System.Security\System.Security-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

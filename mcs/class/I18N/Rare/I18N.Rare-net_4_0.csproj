@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{85ECC48E-B393-4842-8576-F84D4B52B5E9}</ProjectGuid>
+    <ProjectGuid>{8C98193F-281B-45FB-B24F-4A603AE929AA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\I18N.Rare-net_4_0</OutputPath>
@@ -100,11 +100,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_4_0.csproj">
-      <Project>{7491A7FD-7207-41D7-BA46-9C6E8AD34910}</Project>
+      <Project>{748C52F1-090B-42F0-BB42-37BE181E4545}</Project>
       <Name>Common\I18N-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

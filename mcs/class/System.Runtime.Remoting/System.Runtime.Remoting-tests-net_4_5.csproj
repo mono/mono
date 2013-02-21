@@ -5,13 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9E9BA86B-2673-4C6E-8FF4-DF7C163A55A0}</ProjectGuid>
+    <ProjectGuid>{7F9CCA1F-1778-4BB6-A8B6-D761429B4B8C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\System.Runtime.Remoting-tests-net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>False</NoConfig>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
@@ -63,7 +62,8 @@
     <Compile Include="Test\ServerObject.cs" />
     <Compile Include="Test\SyncCalls.cs" />
     <Compile Include="Test\System.Runtime.Remoting.Channels.Tcp\TcpChannelTest.cs" />
-    <Compile Include="Test\TcpCalls.cs" />  </ItemGroup>
+    <Compile Include="Test\TcpCalls.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -73,7 +73,6 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
-
     </PreBuildEvent>
     <PostBuildEvent>
       xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
@@ -82,32 +81,28 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Remoting\System.Runtime.Remoting-net_4_5.csproj">
-      <Project>{37A9A500-1E3F-4C1C-AA79-CA133D8A039B}</Project>
+      <Project>{4DB64CBC-A1A0-4EF6-9AC8-EABD847E9553}</Project>
       <Name>System.Runtime.Remoting\System.Runtime.Remoting-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_4_5-1.csproj">
-      <Project>{79C40DBB-A861-43E1-81BB-5C383B56A222}</Project>
+      <Project>{A945645C-6DF3-414E-B5F1-25DC35C95136}</Project>
       <Name>System.Web\System.Web-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_5.csproj">
-      <Project>{D76960AB-9066-49CC-AED9-F6BEA6EA7A55}</Project>
+      <Project>{E9E47642-19D3-48A0-81C4-D51810976A70}</Project>
       <Name>System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.Runtime.Remoting\System.Runtime.Remoting-net_4_5.csproj">
-      <Project>{37A9A500-1E3F-4C1C-AA79-CA133D8A039B}</Project>
-      <Name>System.Runtime.Remoting\System.Runtime.Remoting-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

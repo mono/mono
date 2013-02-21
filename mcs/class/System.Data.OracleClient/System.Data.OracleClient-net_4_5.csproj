@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FE960444-575E-4E41-B5F5-1B83D94A4D76}</ProjectGuid>
+    <ProjectGuid>{7443D41A-D078-49E1-9A88-87902B6EDFFC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Data.OracleClient-net_4_5</OutputPath>
@@ -131,27 +131,27 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
-      <Project>{AE8FAE27-D070-4533-A135-49EEF160779D}</Project>
+      <Project>{5CAB0F19-4A6F-4B4B-96DA-5677F88E2EF6}</Project>
       <Name>System.Data\System.Data-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_4_5.csproj">
-      <Project>{6C212135-6A62-4886-A106-ADD7097F172B}</Project>
+      <Project>{2B2808F7-930A-4416-A060-57D9F8DC879C}</Project>
       <Name>System.EnterpriseServices\System.EnterpriseServices-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_5.csproj">
-      <Project>{98FA1A26-B1CA-47DC-9FD0-B609DA5FCD25}</Project>
+      <Project>{4F2AADB3-6D4D-41C3-AC38-6AC970F97703}</Project>
       <Name>System.Drawing\System.Drawing-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

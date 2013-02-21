@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{055D6792-9DBB-4E47-BDA5-94AEE07F68E1}</ProjectGuid>
+    <ProjectGuid>{592D71D4-B8BF-44C0-80B1-F191EC2D86F2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\System.ServiceProcess-tests-net_4_0</OutputPath>
@@ -65,23 +65,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ServiceProcess\System.ServiceProcess-net_4_0.csproj">
-      <Project>{15DFE78E-0F37-4DCF-BC1E-4CF3ECC5E473}</Project>
+      <Project>{5BA1F558-FD7C-4F85-9BB2-8568EDBC0353}</Project>
       <Name>System.ServiceProcess\System.ServiceProcess-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration.Install\System.Configuration.Install-net_4_0.csproj">
-      <Project>{1A183DCD-8263-41C7-8C8A-91A7EC780330}</Project>
+      <Project>{878F802D-3249-41E8-8322-A32C406383C6}</Project>
       <Name>System.Configuration.Install\System.Configuration.Install-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_0.csproj">
-      <Project>{4FBDACCF-361F-4C28-BDB5-E58730594AE4}</Project>
+      <Project>{9C3BBC65-D0E9-4E9D-96B9-9ECB51E1C329}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

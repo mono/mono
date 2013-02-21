@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9C7DCF6C-9062-47D7-8AD6-969A6B995A9B}</ProjectGuid>
+    <ProjectGuid>{4C8FFAF4-4FE9-4377-821B-AFD255791495}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\System-build</OutputPath>
@@ -1143,11 +1143,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-build.csproj">
-      <Project>{BA443BB3-37C1-4194-AF97-B6F2580172A0}</Project>
+      <Project>{B8B2866D-592F-4888-A1CB-697AD0F3CADE}</Project>
       <Name>corlib\corlib-build</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-basic.csproj">
-      <Project>{49F242CA-FB3F-4E07-9603-013944F606BF}</Project>
+      <Project>{E9DD3F8E-CFA0-4B07-885F-B37A3932A81D}</Project>
       <Name>System.XML\System.Xml-basic</Name>
     </ProjectReference>
   </ItemGroup>

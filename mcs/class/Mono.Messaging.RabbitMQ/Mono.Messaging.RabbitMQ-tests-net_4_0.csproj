@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{00AC6F9D-2304-43C5-B1C2-C5865B307790}</ProjectGuid>
+    <ProjectGuid>{ADEB4A8C-8461-4948-8E98-629AD100E5AD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,618,219,169</NoWarn>
     <OutputPath>bin\Debug\Mono.Messaging.RabbitMQ-tests-net_4_0</OutputPath>
@@ -71,27 +71,27 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging.RabbitMQ\Mono.Messaging.RabbitMQ-net_4_0.csproj">
-      <Project>{3E860397-C4C5-44DC-9C54-E1BD9415A968}</Project>
+      <Project>{901F0EC1-DE1E-4456-8CF1-82C0D811BCD4}</Project>
       <Name>Mono.Messaging.RabbitMQ\Mono.Messaging.RabbitMQ-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_4_0.csproj">
-      <Project>{CFF6D60B-F585-4D9E-9EA1-C9C880B19A76}</Project>
+      <Project>{2651037E-FD2B-4BBC-B655-CC3F0B0E4BD0}</Project>
       <Name>System.Messaging\System.Messaging-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging\Mono.Messaging-net_4_0.csproj">
-      <Project>{90D51354-ED8D-41B3-B4AD-9E18370E5049}</Project>
+      <Project>{7D27EF3B-540A-4BBD-873C-878ABC927401}</Project>
       <Name>Mono.Messaging\Mono.Messaging-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\RabbitMQ.Client\src\client\RabbitMQ.Client-net_4_0.csproj">
-      <Project>{D030140A-A962-4FA3-9536-A5B90DC70783}</Project>
+      <Project>{3FB3AB58-B04E-452B-A0D9-EC8FBBEF2031}</Project>
       <Name>client\RabbitMQ.Client-net_4_0</Name>
     </ProjectReference>
     <Reference Include="nunit.mocks.dll">

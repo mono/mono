@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{36059539-15D0-4436-9C05-FB07C72EE430}</ProjectGuid>
+    <ProjectGuid>{90B3DE06-F8A2-44B7-8002-6065EBCEBB97}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.ComponentModel.DataAnnotations-tests-net_2_0</OutputPath>
@@ -50,10 +50,12 @@
     <Compile Include="Test\System.ComponentModel.DataAnnotations\CustomValidationAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\DisplayAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\EnumDataTypeAttributeTest.cs" />
+    <Compile Include="Test\System.ComponentModel.DataAnnotations\FilterUIHintAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\RangeAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\RegularExpressionAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\RequiredAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\StringLengthAttributeTest.cs" />
+    <Compile Include="Test\System.ComponentModel.DataAnnotations\UIHintAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\ValidationContextTest.cs" />
     <Compile Include="Test\System.ComponentModel.DataAnnotations\ValidationResultTest.cs" />
@@ -76,27 +78,27 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_2_0.csproj">
-      <Project>{E55EE9EB-E93D-44C5-BBD0-FB0F48B62C08}</Project>
+      <Project>{B38D3949-9075-4450-8101-0D26C6B2CC4D}</Project>
       <Name>System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{45BA4F7D-9E8C-42F8-975F-F2EAA0300B6C}</Project>
+      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{0997C3B6-4B4C-4195-BBB6-DC61091676A3}</Project>
+      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{A892207C-64E0-4FCA-8541-A3C71099AA13}</Project>
+      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
   </ItemGroup>

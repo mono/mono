@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{388CD5EF-577B-42F1-9F78-BED5348028A3}</ProjectGuid>
+    <ProjectGuid>{E763AC5D-E03A-4D54-8B0A-5F904B56FA69}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,649,618,169,612,219,168</NoWarn>
     <OutputPath>bin\Debug\System.Data-tests-net_4_5</OutputPath>
@@ -188,43 +188,43 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
-      <Project>{AE8FAE27-D070-4533-A135-49EEF160779D}</Project>
+      <Project>{5CAB0F19-4A6F-4B4B-96DA-5677F88E2EF6}</Project>
       <Name>System.Data\System.Data-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_4_5.csproj">
-      <Project>{6C212135-6A62-4886-A106-ADD7097F172B}</Project>
+      <Project>{2B2808F7-930A-4416-A060-57D9F8DC879C}</Project>
       <Name>System.EnterpriseServices\System.EnterpriseServices-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Data.Tds\Mono.Data.Tds-net_4_5.csproj">
-      <Project>{3E173380-96CC-4841-AE2A-280EB2C579CE}</Project>
+      <Project>{2BB65926-A803-484F-A2D2-05CED0254A28}</Project>
       <Name>Mono.Data.Tds\Mono.Data.Tds-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{9EF77858-EB0A-4432-948B-18F18E44350B}</Project>
+      <Project>{847BF7E9-DEFB-43C9-8410-CA775ADC0E8A}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_5.csproj">
-      <Project>{399C73A2-61A1-4141-A66F-5D52014BAA92}</Project>
+      <Project>{BED431C4-56B5-4990-A8E6-DCD02A331BC9}</Project>
       <Name>System.Transactions\System.Transactions-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Data.Sqlite\Mono.Data.Sqlite-net_4_0.csproj">
-      <Project>{14B0F3BC-C878-4EF5-8233-8CDC2927C7FE}</Project>
+      <Project>{BB9B46F0-18EB-4FCF-9C63-461E5FAF205B}</Project>
       <Name>Mono.Data.Sqlite\Mono.Data.Sqlite-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

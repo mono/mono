@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D636607D-1CCE-42E3-A114-19BB5606AA1C}</ProjectGuid>
+    <ProjectGuid>{20363524-CE98-4FCB-8477-AF79DDC1A909}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Web.WebPages.Deployment-net_4_5</OutputPath>
@@ -79,27 +79,27 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{9EF77858-EB0A-4432-948B-18F18E44350B}</Project>
+      <Project>{847BF7E9-DEFB-43C9-8410-CA775ADC0E8A}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_4_5-2.csproj">
-      <Project>{9E66BC64-3C5E-44EA-BA12-31496B030290}</Project>
+      <Project>{B467A47F-0589-44F2-987D-8E1D6D4A8ED8}</Project>
       <Name>System.Web\System.Web-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Web.Infrastructure\Microsoft.Web.Infrastructure-net_4_5.csproj">
-      <Project>{526ECD04-4D02-4788-9560-7C2FDEE1522E}</Project>
+      <Project>{ADFD4824-AEDB-445C-9B52-D0E0A9318B87}</Project>
       <Name>Microsoft.Web.Infrastructure\Microsoft.Web.Infrastructure-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C543A4AE-ED27-4FA4-8EFA-D54901B39524}</ProjectGuid>
+    <ProjectGuid>{39A2AE3E-240E-4D9E-9FAA-74EC871B8B90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1030,169,219,618,672</NoWarn>
     <OutputPath>bin\Debug\Mono.Security-tests-net_4_0</OutputPath>
@@ -105,15 +105,15 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
-      <Project>{5360F8A5-5E08-4CF9-9DDA-FDCAD3F73E5C}</Project>
+      <Project>{A2DAEB75-C366-4B5F-8BDD-9B3234A1ABFA}</Project>
       <Name>Mono.Security\Mono.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0.csproj">
-      <Project>{9FEA0F09-AAE7-4923-A64B-7C4F61BF00E5}</Project>
+      <Project>{A8B97A8D-D9F3-4BE5-926D-CE7E7C57FE6D}</Project>
       <Name>System\System-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
