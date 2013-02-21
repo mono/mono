@@ -369,6 +369,15 @@ namespace System.IO {
 		}
 
 		public virtual char[] ReadChars(int count) {
+			if (m_stream == null)
+			{
+
+				if (m_disposed)
+					throw new ObjectDisposedException("BinaryReader", "Cannot read from a closed BinaryReader.");
+
+				throw new IOException("Stream is invalid");
+			}
+
 			if (count < 0) {
 				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
@@ -376,8 +385,9 @@ namespace System.IO {
 			if (count == 0)
 				return new char [0];
 					
-			char[] full = new char[count];
-			int chars = Read(full, 0, count);
+			char[] full = new char[count];			
+			int bytes_read;
+			int chars = ReadCharBytes(full, 0, count, out bytes_read);
 			
 			if (chars == 0) {
 				throw new EndOfStreamException();
