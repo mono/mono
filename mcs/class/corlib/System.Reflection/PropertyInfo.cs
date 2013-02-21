@@ -43,6 +43,16 @@ namespace System.Reflection {
 		public abstract PropertyAttributes Attributes { get; }
 		public abstract bool CanRead { get; }
 		public abstract bool CanWrite { get; }
+		
+#if NET_4_5
+		public virtual MethodInfo GetMethod {
+			get { return GetGetMethod(true); }
+		}
+
+		public virtual MethodInfo SetMethod {
+			get { return GetSetMethod(true); }
+		}
+#endif
 
 		public bool IsSpecialName {
 			get {return (Attributes & PropertyAttributes.SpecialName) != 0;}
