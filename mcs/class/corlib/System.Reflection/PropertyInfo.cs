@@ -45,14 +45,12 @@ namespace System.Reflection {
 		public abstract bool CanWrite { get; }
 		
 #if NET_4_5
-		public virtual MethodInfo GetMethod
-		{
-			get{ return GetGetMethod(true); }
+		public virtual MethodInfo GetMethod {
+			get{return GetGetMethod(true);}
 		}
 
-		public virtual MethodInfo SetMethod
-		{
-			get{ return GetSetMethod(true); }
+		public virtual MethodInfo SetMethod {
+			get{return GetSetMethod(true);}
 		}
 #endif
 
