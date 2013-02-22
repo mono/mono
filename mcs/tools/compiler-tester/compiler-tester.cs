@@ -1420,7 +1420,7 @@ namespace TestRunner {
 							}
 
 							string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
-							if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
+							if (msg != expected_message && !TryToMatchErrorMessage (msg, expected_message)) {
 								error_message = msg;
 								return CompilerError.WrongMessage;
 							}
@@ -1438,6 +1438,24 @@ namespace TestRunner {
 			}
 			
 			return result;
+		}
+
+		static bool TryToMatchErrorMessage (string actual, string expected)
+		{
+			var path_mask_start = expected.IndexOf ("*PATH*");
+			if (path_mask_start > 0 && actual.Length > path_mask_start) {
+				var path_mask_continue = expected.Substring (path_mask_start + 6);
+				var expected_continue = actual.IndexOf (path_mask_continue, path_mask_start);
+				if (expected_continue > 0) {
+					var path = actual.Substring (path_mask_start, expected_continue - path_mask_start);
+					if (actual == expected.Replace ("*PATH*", path))
+						return true;
+
+					throw new ApplicationException (expected.Replace ("*PATH*", path));
+				}
+			}
+
+			return false;
 		}
 
 		bool HandleFailure (string file, CompilerError status)
