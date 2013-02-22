@@ -7,6 +7,8 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 
 using System;
@@ -502,3 +504,5 @@ namespace MonoCasTests.System.Net {
 #endif
 	}
 }
+
+#endif

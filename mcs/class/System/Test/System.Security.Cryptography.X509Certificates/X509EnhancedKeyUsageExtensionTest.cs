@@ -225,6 +225,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual ("1.2.3.4", copy.EnhancedKeyUsages[0].Value, "EnhancedKeyUsages Oid");
 		}
 
+#if !MOBILE
 		[Test]
 		public void CreateViaCryptoConfig ()
 		{
@@ -237,6 +238,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (1, eku.EnhancedKeyUsages.Count, "EnhancedKeyUsages");
 			Assert.AreEqual ("1.2.3.4", eku.EnhancedKeyUsages[0].Value, "EnhancedKeyUsages Oid");
 		}
+#endif
 	}
 }
 

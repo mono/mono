@@ -34,9 +34,9 @@ using System.Security.Permissions;
 using System.Text.RegularExpressions;
 
 namespace MonoTests.System.Net {
-
-#if NET_2_0
+	
 	[TestFixture]
+	[Category ("CAS")]
 	public class WebPermissionTest {
 
 		[Test]
@@ -79,5 +79,4 @@ namespace MonoTests.System.Net {
 		}
 
 	}
-#endif
 }

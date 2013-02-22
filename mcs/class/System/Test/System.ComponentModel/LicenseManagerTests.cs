@@ -10,6 +10,8 @@
 // (c) 2003 Martin Willemoes Hansen
 // (c) 2004 Ivan Hamilton
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.ComponentModel;
@@ -293,3 +295,5 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 }
+
+#endif

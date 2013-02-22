@@ -244,6 +244,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (X509KeyUsageFlags.CrlSign, copy.KeyUsages, "KeyUsages");
 		}
 
+#if !MOBILE
 		[Test]
 		public void CreateViaCryptoConfig ()
 		{
@@ -255,6 +256,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (oid, ku.Oid.Value, "Oid.Value");
 			Assert.AreEqual (0, (int) ku.KeyUsages, "KeyUsages");
 		}
+#endif
 	}
 }
 

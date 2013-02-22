@@ -14,16 +14,18 @@ namespace MonoTests.System.Diagnostics
 		[TestFixture]
 		public class DebugTest2
 		{
+			DefaultTraceListener listener = new DefaultTraceListener ();
+
 			[SetUp]
 			protected void SetUp()
 			{
-				Debug.Listeners.Add(new TextWriterTraceListener(Console.Error));	
+				Debug.Listeners.Add(listener);	
 			}
 			
 			[TearDown]
 			protected void TearDown()
 			{
-				
+				Debug.Listeners.Remove (listener);	
 			}
 
 			[Test]

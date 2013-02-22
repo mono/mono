@@ -7,6 +7,8 @@
 // (c) 2007 Gert Driesen
 //
 
+#if !MOBILE
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -157,3 +159,5 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 }
+
+#endif

@@ -11,6 +11,8 @@
 // (C) 2003 Martin Willemoes Hansen
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -186,3 +188,4 @@ namespace MonoTests.System.Diagnostics {
 	}
 }
 
+#endif

@@ -194,6 +194,13 @@ namespace MonoTests.System.ComponentModel
 			MockTypeConverter converter = new MockTypeConverter ();
 			converter.GetConvertToException ("B", (Type) null);
 		}
+
+		[Test]
+		public void IsValid ()
+		{
+			var tc = new TypeConverter ();
+			Assert.IsFalse (tc.IsValid (null));
+		}
 	}
 
 	[TypeConverter (typeof (AConverter))]
