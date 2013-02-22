@@ -113,6 +113,7 @@ namespace System.Web
 		bool lazyQueryStringValidation;
 		bool inputValidationEnabled;
 		RequestContext requestContext;
+		BufferlessInputStream bufferlessInputStream;
 		
 		static bool validateRequestNewMode;
 		internal static bool ValidateRequestNewMode {
@@ -989,50 +990,17 @@ namespace System.Web
 			}
 		}
 
-		//
-		// TODO:
-		//   * I no longer remember what worker_request = null meant.
-		//   * Hook up the Filter?
-		// 
-		Stream MakeBufferlessInputStream ()
-		{
-			int content_length = ContentLength;
-			int content_length_kb = content_length / 1024;
-			HttpRuntimeSection config = HttpRuntime.Section;
-			if (content_length_kb > config.MaxRequestLength)
-				throw HttpException.NewWithCode (400, "Upload size exceeds httpRuntime limit.", WebEventCodes.RuntimeErrorPostTooLarge);
-
-			int total = 0;
-			byte [] buffer;
-			buffer = worker_request.GetPreloadedEntityBody ();
-			// we check the instance field 'content_length' here, not the local var.
-			if (this.content_length <= 0 || worker_request.IsEntireEntityBodyIsPreloaded ()) {
-				if (buffer == null || content_length == 0) {
-					input_stream = new MemoryStream (new byte [0], 0, 0, false, true);
-				} else {
-					input_stream = new MemoryStream (buffer, 0, buffer.Length, false, true);
-				}
-				DoFilter (new byte [1024]);
-				return input_stream;
-			}
-
-			if (buffer != null)
-				total = buffer.Length;
-
-			return new BufferlessInputStream (this, buffer);
-		}
-
-
 		public Stream GetBufferlessInputStream ()
 		{
-			if (input_stream != null)
-				throw new HttpException ("Input stream has already been created");
-			input_stream = MakeBufferlessInputStream ();
-			if (input_filter != null){
-				input_filter.BaseStream = input_stream;
-				return input_filter;
+			if (bufferlessInputStream == null) {
+				if (input_stream != null)
+					throw new HttpException ("Input stream has already been created");
+
+				// we don't need to hook up the filter here, because the raw stream should be returned
+				bufferlessInputStream = new BufferlessInputStream (this);
 			}
-			return input_stream;
+
+			return bufferlessInputStream;
 		}
 
 		//
@@ -1040,33 +1008,27 @@ namespace System.Web
 		//
 		class BufferlessInputStream : Stream {
 			HttpRequest request;
-			
 
 			// cached, the request content-length
 			int content_length;
 
-			// the buffer that we read from
+			// buffer that holds preloaded data
 			byte [] preloadedBuffer;
 
-			// number of valid bytes in buffer.
-			int bytes_in_buffer;
+			// indicates if we already served the whole preloaded buffer
+			bool preloaded_served;
 
-			// how many bytes we have returned so far
-			int total;
+			// indicates if we already checked the request content-length against httpRuntime limit
+			bool checked_maxRequestLength;
 
 			// our stream position
 			long position;
-			int buffer_start;
 
 			//
 			// @request: the containing request that created us, used to find out content length
-			// @buffer: the byte buffer that we start serving (may be null).
-			// @total: number of valid bytes in buffer.
-			public BufferlessInputStream (HttpRequest request, byte [] preloadedBuffer)
+			public BufferlessInputStream (HttpRequest request)
 			{
 				this.request = request;
-				this.preloadedBuffer = preloadedBuffer;
-				bytes_in_buffer = preloadedBuffer == null ? 0 : preloadedBuffer.Length;
 				content_length = request.ContentLength;
 			}
 
@@ -1105,28 +1067,60 @@ namespace System.Web
 			{
 				if (buffer == null)
 					throw new ArgumentNullException ("buffer");
-				
+
 				if (offset < 0 || count < 0)
 					throw new ArgumentOutOfRangeException ("offset or count less than zero.");
-				
+
 				if (buffer.Length - offset < count )
 					throw new ArgumentException ("offset+count",
 								     "The size of the buffer is less than offset + count.");
 
-				// Serve the bytes we might have preloaded already.
-				if (preloadedBuffer != null){
-					int bytes_left = bytes_in_buffer-buffer_start;
-					if (bytes_left != 0){
-						int n = Math.Min (count, bytes_left);
-						Array.Copy (preloadedBuffer, buffer_start, buffer, offset, n);
-						buffer_start += n;
-						if (buffer_start == bytes_in_buffer)
-							preloadedBuffer = null;
-						return n;
-					}
+				if (count == 0 || request.worker_request == null)
+					return 0;
+
+				if (!checked_maxRequestLength) {
+					int content_length_kb = content_length / 1024;
+					HttpRuntimeSection config = HttpRuntime.Section;
+					if (content_length_kb > config.MaxRequestLength)
+						throw HttpException.NewWithCode (400, "Upload size exceeds httpRuntime limit.", WebEventCodes.RuntimeErrorPostTooLarge);
+					else
+						checked_maxRequestLength = true;
 				}
 
-				return request.worker_request.ReadEntityBody (buffer, offset, count);
+				// Serve the bytes we might have preloaded already.
+				if (!preloaded_served) {
+					if (preloadedBuffer == null)
+						preloadedBuffer = request.worker_request.GetPreloadedEntityBody ();
+
+					if (preloadedBuffer != null) {
+						long bytes_left = preloadedBuffer.Length-position;
+						int n = (int) Math.Min (count, bytes_left);
+						Array.Copy (preloadedBuffer, position, buffer, offset, n);
+						position += n;
+
+						if (n == bytes_left)
+							preloaded_served = true;
+
+						return n;
+					}
+					else
+						preloaded_served = true;
+				}
+
+				// serve bytes from worker request if available
+				if (position < content_length) {
+					long bytes_left = content_length-position;
+					int n = count;
+
+					if (bytes_left < count)
+						n = (int) bytes_left;
+
+					int bytes_read = request.worker_request.ReadEntityBody (buffer, offset, n);
+					position += bytes_read;
+					return bytes_read;
+				}
+
+				return 0;
 			}
 
 			public override long Seek (long offset, SeekOrigin origin)
