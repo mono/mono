@@ -247,9 +247,6 @@ namespace System.Reflection {
 
 		private bool IsPublicKeyValid {
 			get {
-//#if FULL_AOT_RUNTIME
-				//return true;
-//#else
 				// check for ECMA key
 				if (publicKey.Length == 16) {
 					int i = 0;
@@ -263,27 +260,34 @@ namespace System.Reflection {
 				switch (publicKey [0]) {
 				case 0x00: // public key inside a header
 					if (publicKey.Length > 12 && publicKey [12] == 0x06) {
+#if MOBILE
+						return true;
+#else
 						try {
 							CryptoConvert.FromCapiPublicKeyBlob (
 								publicKey, 12);
 							return true;
 						} catch (CryptographicException) {
 						}
+#endif
 					}
 					break;
 				case 0x06: // public key
+#if MOBILE
+					return true;
+#else
 					try {
 						CryptoConvert.FromCapiPublicKeyBlob (publicKey);
 						return true;
 					} catch (CryptographicException) {
 					}
+#endif
 					break;
 				case 0x07: // private key
 					break;
 				}
 
 				return false;
-//#endif
 			}
 		}
 
