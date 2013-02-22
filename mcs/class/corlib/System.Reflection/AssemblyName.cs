@@ -308,14 +308,15 @@ namespace System.Reflection {
 			return ComputePublicKeyToken ();
 		}
 
-		private byte [] ComputePublicKeyToken ()
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern unsafe static void get_public_token (byte* token, byte* pubkey, int len);
+
+		private unsafe byte [] ComputePublicKeyToken ()
 		{
-			HashAlgorithm ha = SHA1.Create ();
-			byte [] hash = ha.ComputeHash (publicKey);
-			// we need the last 8 bytes in reverse order
 			byte [] token = new byte [8];
-			Array.Copy (hash, (hash.Length - 8), token, 0, 8);
-			Array.Reverse (token, 0, 8);
+			fixed (byte* pkt = token)
+			fixed (byte *pk = publicKey)
+				get_public_token (pkt, pk, publicKey.Length);
 			return token;
 		}
 
