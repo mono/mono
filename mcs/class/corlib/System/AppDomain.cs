@@ -1411,18 +1411,23 @@ namespace System {
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 
         #pragma warning disable 649
+#if MOBILE
+		private object _activation;
+		private object _applicationIdentity;
+#else
 		private ActivationContext _activation;
 		private ApplicationIdentity _applicationIdentity;
+#endif
         #pragma warning restore 649
 
 		// properties
 
 		public ActivationContext ActivationContext {
-			get { return _activation; }
+			get { return (ActivationContext)_activation; }
 		}
 
 		public ApplicationIdentity ApplicationIdentity {
-			get { return _applicationIdentity; }
+			get { return (ApplicationIdentity)_applicationIdentity; }
 		}
 
 		public int Id {
