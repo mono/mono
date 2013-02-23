@@ -2770,8 +2770,6 @@ namespace System
 					length++;
 			} catch (NullReferenceException) {
 				throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
-			} catch (AccessViolationException) {
-				throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
 		}
 
 			return CreateString (value, 0, length, null);
@@ -2810,11 +2808,6 @@ namespace System
 						memcpy (bytePtr, (byte*) (value + startIndex), length);
 					} catch (NullReferenceException) {
 						throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
-					} catch (AccessViolationException) {
-						if (!isDefaultEncoding)
-							throw;
-
-						throw new ArgumentOutOfRangeException ("value", "Value, startIndex and length do not refer to a valid string.");
 					}
 
 			// GetString () is called even when length == 0
