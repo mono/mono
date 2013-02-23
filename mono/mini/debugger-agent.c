@@ -243,6 +243,7 @@ typedef struct {
 	 * of an EXCEPTION event.
 	 */
 	MonoContext catch_ctx;
+	MonoDomain *catch_domain;
 
 	gboolean has_catch_ctx;
 } DebuggerTlsData;
@@ -4339,7 +4340,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		 */
 
 		/* Find the the jit info for the catch context */
-		res = mono_find_jit_info_ext (mono_domain_get (), thread->jit_data, NULL, &tls->catch_ctx, &new_ctx, NULL, &lmf, NULL, &frame);
+		res = mono_find_jit_info_ext (tls->catch_domain, thread->jit_data, NULL, &tls->catch_ctx, &new_ctx, NULL, &lmf, NULL, &frame);
 		g_assert (res);
 		g_assert (frame.type == FRAME_TYPE_MANAGED);
 
@@ -4492,6 +4493,7 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 
 	if (tls && catch_ctx) {
 		tls->catch_ctx = *catch_ctx;
+		tls->catch_domain = mono_domain_get ();
 		tls->has_catch_ctx = TRUE;
 	}
 
