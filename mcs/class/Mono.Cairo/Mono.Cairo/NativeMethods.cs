@@ -453,10 +453,10 @@ namespace Cairo
 		//[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		//internal static extern IntPtr cairo_ps_surface_create_for_stream (string filename, double width, double height);
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern void cairo_ps_surface_begin_page_setup (IntPtr surface);
+		internal static extern void cairo_ps_surface_dsc_begin_page_setup (IntPtr surface);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern void cairo_ps_surface_begin_setup (IntPtr surface);
+		internal static extern void cairo_ps_surface_dsc_begin_setup (IntPtr surface);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_ps_surface_dsc_comment (IntPtr surface, string comment);
