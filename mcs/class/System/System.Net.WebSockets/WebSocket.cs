@@ -29,6 +29,9 @@
 #if NET_4_5
 
 using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
 namespace System.Net.WebSockets

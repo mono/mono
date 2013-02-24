@@ -29,6 +29,8 @@
 #if NET_4_5
 
 using System;
+using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Security.Principal;
 using System.Runtime.CompilerServices;
 

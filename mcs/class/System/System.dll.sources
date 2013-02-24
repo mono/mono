@@ -887,6 +887,17 @@ System.Net/WebRequest.cs
 System.Net/WebRequestMethods.cs
 System.Net/WebResponse.cs
 System.Net/WebUtility.cs
+System.Net.WebSockets/ClientWebSocket.cs
+System.Net.WebSockets/ClientWebSocketOptions.cs
+System.Net.WebSockets/HttpListenerWebSocketContext.cs
+System.Net.WebSockets/WebSocket.cs
+System.Net.WebSockets/WebSocketCloseStatus.cs
+System.Net.WebSockets/WebSocketContext.cs
+System.Net.WebSockets/WebSocketError.cs
+System.Net.WebSockets/WebSocketException.cs
+System.Net.WebSockets/WebSocketMessageType.cs
+System.Net.WebSockets/WebSocketReceiveResult.cs
+System.Net.WebSockets/WebSocketState.cs
 System/NewsStyleUriParser.cs
 System.Runtime.Versioning/FrameworkName.cs
 System.Security.AccessControl/SemaphoreAccessRule.cs

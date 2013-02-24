@@ -30,6 +30,8 @@
 
 using System;
 using System.Net;
+using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Security.Principal;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.CompilerServices;
@@ -38,7 +40,89 @@ namespace System.Net.WebSockets
 {
 	public class HttpListenerWebSocketContext : WebSocketContext
 	{
-		
+		[MonoTODO]
+		public override CookieCollection CookieCollection {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override NameValueCollection Headers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override bool IsAuthenticated {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override bool IsLocal {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override bool IsSecureConnection {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override string Origin {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override Uri RequestUri {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override string SecWebSocketKey {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override IEnumerable<string> SecWebSocketProtocols {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override string SecWebSocketVersion {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override IPrincipal User {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public override WebSocket WebSocket {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 	}
 }
 

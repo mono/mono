@@ -29,7 +29,7 @@
 #if NET_4_5
 
 using System;
-using System.Security.Principal;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace System.Net.WebSockets
@@ -71,7 +71,7 @@ namespace System.Net.WebSockets
 			
 		}
 
-		public WebSocketException (WebSocketError error, Exception innerException) : base (innerException)
+		public WebSocketException (WebSocketError error, Exception innerException)
 		{
 			WebSocketErrorCode = error;
 		}
