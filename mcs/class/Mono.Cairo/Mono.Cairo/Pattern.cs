@@ -36,7 +36,7 @@ namespace Cairo {
         {
                 protected IntPtr pattern = IntPtr.Zero;
 
-		internal static Pattern Lookup (IntPtr pattern)
+		public static Pattern Lookup (IntPtr pattern)
 		{
 			if (pattern == IntPtr.Zero)
 				return null;
