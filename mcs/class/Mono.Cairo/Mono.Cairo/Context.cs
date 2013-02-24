@@ -185,9 +185,11 @@ namespace Cairo {
 			state = NativeMethods.cairo_create (surface.Handle);
                 }
 		
-		public Context (IntPtr state)
+		public Context (IntPtr state) : this (state, true) {}
+
+		public Context (IntPtr state, bool owned)
 		{
-			this.state = state;
+			this.state = owned ? state : NativeMethods.cairo_reference (state);
 		}
 		
 		~Context ()

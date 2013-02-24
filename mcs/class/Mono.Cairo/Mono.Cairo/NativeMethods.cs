@@ -483,7 +483,7 @@ namespace Cairo
 		internal static extern void cairo_rectangle (IntPtr cr, double x, double y, double width, double height);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern void cairo_reference (IntPtr cr);
+		internal static extern IntPtr cairo_reference (IntPtr cr);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_rel_curve_to (IntPtr cr, double dx1, double dy1, double dx2, double dy2, double dx3, double dy3);
