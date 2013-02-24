@@ -36,8 +36,8 @@ using System.Runtime.InteropServices;
 
 namespace Cairo
 {
-	// sort these so it is easier to find what is missing
-	// http://www.cairographics.org/manual/ix01.html
+	// sort the functions like in the following page so it is easier to find what is missing
+	// http://cairographics.org/manual/index-all.html
 
 	internal static class NativeMethods
 	{
@@ -86,9 +86,6 @@ namespace Cairo
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cairo_create (IntPtr target);
 
-		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern uint cairo_get_reference_count (IntPtr surface);
-		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_curve_to (IntPtr cr, double x1, double y1, double x2, double y2, double x3, double y3);
 		
@@ -241,6 +238,9 @@ namespace Cairo
 		internal static extern Operator cairo_get_operator (IntPtr cr);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern uint cairo_get_reference_count (IntPtr surface);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cairo_get_source (IntPtr cr);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
@@ -292,9 +292,6 @@ namespace Cairo
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int cairo_image_surface_get_width  (IntPtr surface);
 
-		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern uint cairo_surface_get_reference_count (IntPtr surface);
-		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		[return: MarshalAs (UnmanagedType.U1)]
 		internal static extern bool cairo_in_fill (IntPtr cr, double x, double y);
@@ -666,6 +663,9 @@ namespace Cairo
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_surface_get_font_options (IntPtr surface, IntPtr FontOptions);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern uint cairo_surface_get_reference_count (IntPtr surface);
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern SurfaceType cairo_surface_get_type (IntPtr surface);
