@@ -40,6 +40,7 @@
 ./Mono.Cairo/PSSurface.cs
 ./Mono.Cairo/RadialGradient.cs
 ./Mono.Cairo/Rectangle.cs
+./Mono.Cairo/Region.cs
 ./Mono.Cairo/ScaledFont.cs
 ./Mono.Cairo/SolidPattern.cs
 ./Mono.Cairo/Status.cs
