@@ -1,4 +1,4 @@
-// Compiler options: -doc:xml-025.xml
+// Compiler options: -doc:xml-025.xml dlls/test-xml-025-relative.cs
 
 namespace Testing
 {
