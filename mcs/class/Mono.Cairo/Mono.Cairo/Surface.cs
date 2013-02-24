@@ -68,7 +68,7 @@ namespace Cairo {
 			}
 		}		
 
-		static internal Surface LookupSurface (IntPtr surface)
+		public static Surface LookupSurface (IntPtr surface)
 		{
 			SurfaceType st = NativeMethods.cairo_surface_get_type (surface);
 			switch (st) {
