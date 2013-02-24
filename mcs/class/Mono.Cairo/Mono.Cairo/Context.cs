@@ -324,7 +324,7 @@ namespace Cairo {
 
                 public Pattern Pattern {
                         set {
-                                NativeMethods.cairo_set_source (state, value.Pointer);
+                                NativeMethods.cairo_set_source (state, value.Handle);
                         }
 			
 			get {
@@ -334,7 +334,7 @@ namespace Cairo {
 		
                 public Pattern Source {
                         set {
-                                NativeMethods.cairo_set_source (state, value.Pointer);
+                                NativeMethods.cairo_set_source (state, value.Handle);
                         }
 			
 			get {
@@ -546,7 +546,7 @@ namespace Cairo {
 		
 		public void Mask (Pattern pattern)
 		{
-			NativeMethods.cairo_mask (state, pattern.Pointer);
+			NativeMethods.cairo_mask (state, pattern.Handle);
 		}
 		
 		public void MaskSurface (Surface surface, double surface_x, double surface_y)

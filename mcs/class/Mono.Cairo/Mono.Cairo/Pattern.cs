@@ -135,9 +135,14 @@ namespace Cairo {
                         }
                 }
 
+                public IntPtr Handle {
+                        get { return pattern; }
+                }
+
+                [Obsolete ("Replaced by Handle property")]
                 public IntPtr Pointer {
                         get { return pattern; }
-                }		
+                }
 
 		public PatternType PatternType {
 			get { return NativeMethods.cairo_pattern_get_type (pattern); }
