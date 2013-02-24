@@ -43,12 +43,12 @@ namespace Cairo {
 
 		public void BeginPageSetup ()
 		{
-			NativeMethods.cairo_ps_surface_begin_page_setup (Handle);
+			NativeMethods.cairo_ps_surface_dsc_begin_page_setup (Handle);
 		}
 
 		public void BeginSetup ()
 		{
-			NativeMethods.cairo_ps_surface_begin_setup (Handle);
+			NativeMethods.cairo_ps_surface_dsc_begin_setup (Handle);
 		}
 
 		public void DscComment (string comment)
