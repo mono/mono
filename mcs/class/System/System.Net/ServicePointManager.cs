@@ -392,12 +392,13 @@ namespace System.Net
 		internal class ChainValidationHelper {
 			object sender;
 			string host;
+
+#if !MONOTOUCH
 			static bool is_macosx = System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
 			static X509RevocationMode revocation_mode;
 
 			static ChainValidationHelper ()
 			{
-#if !MONOTOUCH
 				revocation_mode = X509RevocationMode.NoCheck;
 				try {
 					string str = Environment.GetEnvironmentVariable ("MONO_X509_REVOCATION_MODE");
@@ -406,8 +407,8 @@ namespace System.Net
 					revocation_mode = (X509RevocationMode) Enum.Parse (typeof (X509RevocationMode), str, true);
 				} catch {
 				}
-#endif
 			}
+#endif
 
 			public ChainValidationHelper (object sender)
 			{
@@ -451,7 +452,9 @@ namespace System.Net
 #endif
 				chain = new X509Chain ();
 				chain.ChainPolicy = new X509ChainPolicy ();
+#if !MONOTOUCH
 				chain.ChainPolicy.RevocationMode = revocation_mode;
+#endif
 				for (int i = 1; i < certs.Count; i++) {
 					X509Certificate2 c2 = new X509Certificate2 (certs [i].RawData);
 					chain.ChainPolicy.ExtraStore.Add (c2);

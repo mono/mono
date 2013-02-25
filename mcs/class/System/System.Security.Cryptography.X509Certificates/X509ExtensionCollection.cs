@@ -57,7 +57,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (cert.Extensions.Count == 0)
 				return;
 
-			object[] parameters = new object [2];
 			foreach (MonoSecurity::Mono.Security.X509.X509Extension ext in cert.Extensions) {
 				bool critical = ext.Critical;
 				string oid = ext.Oid;
@@ -85,6 +84,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					break;
 				}
 #else
+				object[] parameters = new object [2];
 				parameters [0] = new AsnEncodedData (oid, raw_data ?? Empty);
 				parameters [1] = critical;
 				newt = (X509Extension) CryptoConfig.CreateFromName (oid, parameters);
