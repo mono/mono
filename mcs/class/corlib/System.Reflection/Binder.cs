@@ -468,7 +468,7 @@ namespace System.Reflection
 					false, null);
 			}
 
-			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch, object[] parameters)
+			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch, object[] arguments)
 			{
 				MethodBase m;
 				int i, j;
@@ -500,29 +500,31 @@ namespace System.Reflection
 					return exact_match;
 
 				/* Try methods with ParamArray attribute */
-				bool isdefParamArray = false;
-				Type elementType = null;
-				for (i = 0; i < match.Length; ++i) {
-					m = match [i];
-					ParameterInfo[] args = m.GetParameters ();
-					if (args.Length > types.Length + 1)
-						continue;
-					else if (args.Length == 0)
-						continue;
-					isdefParamArray = Attribute.IsDefined (args [args.Length - 1], typeof (ParamArrayAttribute));
-					if (!isdefParamArray)
-						continue;
-					elementType = args [args.Length - 1].ParameterType.GetElementType ();
-					for (j = 0; j < types.Length; ++j) {
-						if (j < (args.Length - 1) && types [j] != args [j].ParameterType)
-							break;
-						else if (j >= (args.Length - 1) && types [j] != elementType) 
-							break;
+				if (arguments != null) {
+					bool isdefParamArray = false;
+					Type elementType = null;
+					for (i = 0; i < match.Length; ++i) {
+						m = match [i];
+						ParameterInfo[] args = m.GetParameters ();
+						if (args.Length > types.Length + 1)
+							continue;
+						else if (args.Length == 0)
+							continue;
+						isdefParamArray = Attribute.IsDefined (args [args.Length - 1], typeof (ParamArrayAttribute));
+						if (!isdefParamArray)
+							continue;
+						elementType = args [args.Length - 1].ParameterType.GetElementType ();
+						for (j = 0; j < types.Length; ++j) {
+							if (j < (args.Length - 1) && types [j] != args [j].ParameterType)
+								break;
+							else if (j >= (args.Length - 1) && types [j] != elementType) 
+								break;
+						}
+						if (j == types.Length)
+							return m;
 					}
-					if (j == types.Length)
-						return m;
 				}
-
+				
 				if ((int)(bindingAttr & BindingFlags.ExactBinding) != 0)
 					return null;
 
@@ -541,7 +543,7 @@ namespace System.Reflection
 						result = m;
 				}
 
-				if (result != null || parameters == null || types.Length != parameters.Length)
+				if (result != null || arguments == null || types.Length != arguments.Length)
 					return result;
 
 				// Xamarin-5278: try with parameters that are COM objects
@@ -557,7 +559,7 @@ namespace System.Reflection
 							continue;
 #if !MOBILE
 						if (types [j] == typeof (__ComObject) && requiredType.IsInterface) {
-							var iface = Marshal.GetComInterfaceForObject (parameters [j], requiredType);
+							var iface = Marshal.GetComInterfaceForObject (arguments [j], requiredType);
 							if (iface != IntPtr.Zero) {
 								// the COM object implements the desired interface
 								Marshal.Release (iface);
