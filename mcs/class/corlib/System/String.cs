@@ -2789,9 +2789,7 @@ namespace System
 			if (value + startIndex < value)
 				throw new ArgumentOutOfRangeException ("startIndex", "Value, startIndex and length do not refer to a valid string.");
 
-			bool isDefaultEncoding;
-
-			if (isDefaultEncoding = (enc == null)) {
+			if (enc == null) {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				if (length == 0)
