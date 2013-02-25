@@ -149,6 +149,8 @@ namespace System.Net.Mail {
 
 			if (port != 0)
 				this.port = port;
+			else if (this.port == 0)
+				this.port = 25;
 		}
 
 		#endregion // Constructors
