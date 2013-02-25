@@ -426,7 +426,7 @@ namespace System
 					else
 						throwMissingMethodDescription = "Cannot find method " + name + ".";
 				} else {
-					ParameterInfo[] parameters = m.GetParameters();
+					ParameterInfo[] parameters = m.GetParametersInternal();
 					for (int i = 0; i < parameters.Length; ++i) {
 						if (System.Reflection.Missing.Value == args [i] && (parameters [i].Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.HasDefault)
 							throw new ArgumentException ("Used Missing.Value for argument without default value", "parameters");

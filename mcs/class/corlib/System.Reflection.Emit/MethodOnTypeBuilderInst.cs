@@ -164,6 +164,11 @@ namespace System.Reflection.Emit
 
 		public override ParameterInfo [] GetParameters ()
 		{
+			return GetParametersInternal ();
+		}
+
+		internal override ParameterInfo [] GetParametersInternal ()
+		{
 			throw new NotSupportedException ();
 		}
 
@@ -173,9 +178,9 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		internal override int GetParameterCount ()
+		internal override int GetParametersCount ()
 		{
-			return base_method.GetParameterCount ();
+			return base_method.GetParametersCount ();
 		}
 
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)

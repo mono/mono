@@ -200,7 +200,7 @@ namespace System.Diagnostics {
 					sb.AppendFormat ("{0}.{1}", method.DeclaringType.FullName, method.Name);
 					/* Append parameter information */
 					sb.Append ("(");
-					ParameterInfo[] p = method.GetParameters ();
+					ParameterInfo[] p = method.GetParametersInternal ();
 					for (int j = 0; j < p.Length; ++j) {
 						if (j > 0)
 							sb.Append (", ");

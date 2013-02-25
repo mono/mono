@@ -170,16 +170,24 @@ namespace System.Reflection {
 
 		public override ParameterInfo[] GetParameters ()
 		{
-			ParameterInfo[] src = MonoMethodInfo.GetParametersInfo (mhandle, this);
-			ParameterInfo[] res = new ParameterInfo [src.Length];
-			src.CopyTo (res, 0);
-			return res;
+			var src = MonoMethodInfo.GetParametersInfo (mhandle, this);
+			if (src.Length == 0)
+				return src;
+
+			// Have to clone because GetParametersInfo icall returns cached value
+			var dest = new ParameterInfo [src.Length];
+			Array.FastCopy (src, 0, dest, 0, src.Length);
+			return dest;
+		}
+
+		internal override ParameterInfo[] GetParametersInternal ()
+		{
+			return MonoMethodInfo.GetParametersInfo (mhandle, this);
 		}
 		
-		internal override int GetParameterCount ()
+		internal override int GetParametersCount ()
 		{
-			var pi = MonoMethodInfo.GetParametersInfo (mhandle, this);
-			return pi == null ? 0 : pi.Length;
+			return MonoMethodInfo.GetParametersInfo (mhandle, this).Length;
 		}
 
 		/*
@@ -197,7 +205,7 @@ namespace System.Reflection {
 				binder = Binder.DefaultBinder;
 
 			/*Avoid allocating an array every time*/
-			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
+			ParameterInfo[] pinfo = GetParametersInternal ();
 			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
 				throw new ArgumentException ("failed to convert parameters");
 
@@ -340,7 +348,7 @@ namespace System.Reflection {
 				sb.Append ("]");
 			}
 			sb.Append ("(");
-			ParameterInfo[] p = GetParameters ();
+			ParameterInfo[] p = GetParametersInternal ();
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					sb.Append (", ");
@@ -476,7 +484,12 @@ namespace System.Reflection {
 			return MonoMethodInfo.GetParametersInfo (mhandle, this);
 		}
 
-		internal override int GetParameterCount ()
+		internal override ParameterInfo[] GetParametersInternal ()
+		{
+			return MonoMethodInfo.GetParametersInfo (mhandle, this);
+		}		
+
+		internal override int GetParametersCount ()
 		{
 			var pi = MonoMethodInfo.GetParametersInfo (mhandle, this);
 			return pi == null ? 0 : pi.Length;

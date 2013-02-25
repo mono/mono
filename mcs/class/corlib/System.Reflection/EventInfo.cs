@@ -50,15 +50,16 @@ namespace System.Reflection {
 			get {
 				ParameterInfo[] p;
 				MethodInfo add = GetAddMethod (true);
-				p = add.GetParameters ();
+				p = add.GetParametersInternal ();
 				if (p.Length > 0) {
 					Type t = p [0].ParameterType;
 					/* is it alwasys the first arg?
 					if (!t.IsSubclassOf (typeof (System.Delegate)))
 						throw new Exception ("no delegate in event");*/
 					return t;
-				} else
-					return null;
+				}
+
+				return null;
 			}
 		}
 
@@ -245,11 +246,11 @@ namespace System.Reflection {
 			string frameName;
 
 			if (method.IsStatic) {
-				typeVector = new Type[] { method.GetParameters () [0].ParameterType };
+				typeVector = new Type[] { method.GetParametersInternal () [0].ParameterType };
 				addHandlerDelegateType = typeof (StaticAddEvent<>);
 				frameName = "StaticAddEventAdapterFrame";
 			} else {
-				typeVector = new Type[] { method.DeclaringType, method.GetParameters () [0].ParameterType };
+				typeVector = new Type[] { method.DeclaringType, method.GetParametersInternal () [0].ParameterType };
 				addHandlerDelegateType = typeof (AddEvent<,>);
 				frameName = "AddEventFrame";
 			}

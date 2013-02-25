@@ -122,8 +122,8 @@ namespace System.Reflection
 				// If the argument types differ we
 				// have an ambigous match, as well
 				if (matchId >= 0) {
-					ParameterInfo[] p1 = m.GetParameters ();
-					ParameterInfo[] p2 = match [matchId].GetParameters ();
+					ParameterInfo[] p1 = m.GetParametersInternal ();
+					ParameterInfo[] p2 = match [matchId].GetParametersInternal ();
 					bool equal = true;
 
 					if (p1.Length != p2.Length)
@@ -181,7 +181,7 @@ namespace System.Reflection
 				MethodBase selected = null;
 				if (names != null) {
 					foreach (var m in match) {
-						var parameters = m.GetParameters ();
+						var parameters = m.GetParametersInternal ();
 						int i;
 
 						/*
@@ -234,7 +234,7 @@ namespace System.Reflection
 			// probably belongs in ReorderArgumentArray
 			static void AdjustArguments (MethodBase selected, ref object [] args)
 			{
-				var parameters = selected.GetParameters ();
+				var parameters = selected.GetParametersInternal ();
 				var parameters_length = parameters.Length;
 				if (parameters_length == 0)
 					return;
@@ -268,7 +268,7 @@ namespace System.Reflection
 			{
 				object [] newArgs = new object [args.Length];
 				Array.Copy (args, newArgs, args.Length);
-				ParameterInfo [] plist = selected.GetParameters ();
+				ParameterInfo [] plist = selected.GetParametersInternal ();
 				for (int n = 0; n < names.Length; n++)
 					for (int p = 0; p < plist.Length; p++) {
 						if (names [n] == plist [p].Name) {
@@ -480,9 +480,10 @@ namespace System.Reflection
 				MethodBase exact_match = null;
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
-					ParameterInfo[] args = m.GetParameters ();
-					if (args.Length != types.Length)
+					if (m.GetParametersCount () != types.Length)
 						continue;
+
+					ParameterInfo[] args = m.GetParametersInternal ();
 					for (j = 0; j < types.Length; ++j) {
 						if (types [j] != args [j].ParameterType)
 							break;
@@ -504,10 +505,11 @@ namespace System.Reflection
 					for (i = 0; i < match.Length; ++i) {
 						m = match [i];
 
-						var pi = m.GetParameters ();
-						if (pi.Length == 0 || pi.Length > types.Length + 1)
+						var count = m.GetParametersCount ();
+						if (count == 0 || count > types.Length + 1)
 							continue;
 
+						var pi = m.GetParametersInternal ();
 						if (!Attribute.IsDefined (pi [pi.Length - 1], typeof (ParamArrayAttribute)))
 							continue;
 
@@ -531,7 +533,7 @@ namespace System.Reflection
 				MethodBase result = null;
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
-					ParameterInfo[] args = m.GetParameters ();
+					ParameterInfo[] args = m.GetParametersInternal ();
 					if (args.Length != types.Length)
 						continue;
 					if (!check_arguments (types, args, allowByRefMatch))
@@ -550,7 +552,7 @@ namespace System.Reflection
 				// REVIEW: do we also need to implement best method match?
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
-					ParameterInfo[] methodArgs = m.GetParameters ();
+					ParameterInfo[] methodArgs = m.GetParametersInternal ();
 					if (methodArgs.Length != types.Length)
 						continue;
 					for (j = 0; j < types.Length; ++j) {
@@ -578,8 +580,8 @@ namespace System.Reflection
 
 			MethodBase GetBetterMethod (MethodBase m1, MethodBase m2, Type [] types)
 			{
-				ParameterInfo [] pl1 = m1.GetParameters ();
-				ParameterInfo [] pl2 = m2.GetParameters ();
+				ParameterInfo [] pl1 = m1.GetParametersInternal ();
+				ParameterInfo [] pl2 = m2.GetParametersInternal ();
 				int prev = 0;
 				for (int i = 0; i < pl1.Length; i++) {
 					int cmp = CompareCloserType (pl1 [i].ParameterType, pl2 [i].ParameterType);

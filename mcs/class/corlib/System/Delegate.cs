@@ -191,8 +191,8 @@ namespace System
 				else
 					return null;
 
-			ParameterInfo[] delargs = invoke.GetParameters ();
-			ParameterInfo[] args = method.GetParameters ();
+			ParameterInfo[] delargs = invoke.GetParametersInternal ();
+			ParameterInfo[] args = method.GetParametersInternal ();
 
 			bool argLengthMatch;
 
@@ -311,7 +311,7 @@ namespace System
 				throw new ArgumentException ("type is not subclass of MulticastDelegate.");
 
 			MethodInfo invoke = type.GetMethod ("Invoke");
-			ParameterInfo [] delargs = invoke.GetParameters ();
+			ParameterInfo [] delargs = invoke.GetParametersInternal ();
 			Type[] delargtypes = new Type [delargs.Length];
 
 			for (int i=0; i<delargs.Length; i++)
@@ -408,7 +408,7 @@ namespace System
 				method_info = m_target.GetType ().GetMethod (data.method_name, mtypes);
 			}
 
-			if (Method.IsStatic && (args != null ? args.Length : 0) == Method.GetParameters ().Length - 1) {
+			if (Method.IsStatic && (args != null ? args.Length : 0) == Method.GetParametersCount () - 1) {
 				// The delegate is bound to m_target
 				if (args != null) {
 					object[] newArgs = new object [args.Length + 1];

@@ -346,7 +346,7 @@ namespace System
 
 		internal void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
 		{
-			ParameterInfo[] p = mi.GetParameters ();
+			ParameterInfo[] p = mi.GetParametersInternal ();
 			sb.Append (mi.DeclaringType.ToString ());
 			sb.Append (".");
 			sb.Append (mi.Name);

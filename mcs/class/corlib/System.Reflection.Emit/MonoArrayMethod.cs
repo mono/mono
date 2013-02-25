@@ -79,12 +79,18 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO("Not implemented.  Always returns an empty array")]
-		public override ParameterInfo[] GetParameters() {
-			return new ParameterInfo [0];
+		public override ParameterInfo[] GetParameters()
+		{
+			return GetParametersInternal ();			
 		}
+
+		internal override ParameterInfo[] GetParametersInternal ()
+		{
+			return EmptyArray<ParameterInfo>.Value;
+		}	
 		
 		[MonoTODO("Not implemented.  Always returns 0")]
-		internal override int GetParameterCount ()
+		internal override int GetParametersCount ()
 		{
 			return 0;
 		}		
