@@ -58,12 +58,12 @@ namespace System.Security.Cryptography.X509Certificates {
 				return;
 
 			object[] parameters = new object [2];
-			foreach (MX.X509Extension ext in cert.Extensions) {
+			foreach (MonoSecurity::Mono.Security.X509.X509Extension ext in cert.Extensions) {
 				bool critical = ext.Critical;
 				string oid = ext.Oid;
 				byte[] raw_data = null;
 				// extension data is embedded in an octet stream (4)
-				ASN1 value = ext.Value;
+				var value = ext.Value;
 				if ((value.Tag == 0x04) && (value.Count > 0))
 					raw_data = value [0].GetBytes ();
 
