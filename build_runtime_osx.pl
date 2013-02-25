@@ -44,8 +44,8 @@ for my $arch (@arches)
 {
 	print "Building for architecture: $arch\n";
 
-	my $macversion = '10.4';
-	my $sdkversion = '10.4u';
+	my $macversion = '10.5';
+	my $sdkversion = '10.5';
 	if ($arch eq 'x86_64') {
 		$macversion = '10.6';
 		$sdkversion = '10.6';
@@ -68,21 +68,6 @@ for my $arch (@arches)
 
 	if (not $skipbuild)
 	{
-		#rmtree($bintarget);
-		#rmtree($libtarget);
-
-		#we need to manually set the compiler to gcc4, because the 10.4 sdk only shipped with the gcc4 headers
-		#their setup is a bit broken as they dont autodetect this, but basically the gist is if you want to copmile
-		#against the 10.4 sdk, you better use gcc4, otherwise things go boink.
-		unless ($ENV{CC})
-		{
-			$ENV{CC} = "gcc-4.0";
-		}
-		unless ($ENV{CXX})
-		{
-			$ENV{CXX} = "gcc-4.0";
-		}
-
 		if ($debug)
 		{
 			$ENV{CFLAGS} = "-arch $arch -g -O0 -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1";

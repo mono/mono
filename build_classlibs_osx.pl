@@ -61,11 +61,9 @@ if (-d $libmono)
 
 if (not $skipbuild)
 {
-	#we need to manually set the compiler to gcc4, because the 10.4 sdk only shipped with the gcc4 headers
-        #their setup is a bit broken as they dont autodetect this, but basically the gist is if you want to copmile
-        #against the 10.4 sdk, you better use gcc4, otherwise things go boink.
-        $ENV{CC} = "gcc-4.0";
-        $ENV{CXX} = "gcc-4.0";
+	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386";
+	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} -arch i386";
+	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
 
 	if ($cleanbuild)
 	{
@@ -86,7 +84,7 @@ if (not $skipbuild)
 		print(">>>Calling autoreconf in mono\n");
 		system("autoreconf -i") eq 0 or die("failed to autoreconf mono");
 		print(">>>Calling configure in mono\n");
-		system("./configure","--prefix=$monoprefix","--with-monotouch=$withMonotouch","-with-unity=$withUnity", "--with-glib=embedded","--with-mcs-docs=no","--with-macversion=10.4", "--disable-nls") eq 0 or die ("failing autogenning mono");
+		system("./configure","--prefix=$monoprefix","--with-monotouch=$withMonotouch","-with-unity=$withUnity", "--with-glib=embedded","--with-mcs-docs=no","--with-macversion=10.5", "--disable-nls") eq 0 or die ("failing autogenning mono");
 		print("calling make clean in mono\n");
 		system("make","clean") eq 0 or die ("failed to make clean");
 	}
