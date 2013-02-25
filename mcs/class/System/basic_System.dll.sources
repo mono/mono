@@ -10,3 +10,6 @@
 ../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 ../corlib/Mono/DataConverter.cs
 ../corlib/System.IO/MonoIOError.cs
+../corlib/System.IO/MonoIO.cs
+../corlib/System.IO/MonoFileType.cs
+../corlib/System.IO/MonoIOStat.cs
