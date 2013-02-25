@@ -501,31 +501,31 @@ namespace System.Reflection
 
 				/* Try methods with ParamArray attribute */
 				if (arguments != null) {
-					bool isdefParamArray = false;
-					Type elementType = null;
 					for (i = 0; i < match.Length; ++i) {
 						m = match [i];
-						ParameterInfo[] args = m.GetParameters ();
-						if (args.Length > types.Length + 1)
+
+						var pi = m.GetParameters ();
+						if (pi.Length == 0 || pi.Length > types.Length + 1)
 							continue;
-						else if (args.Length == 0)
+
+						if (!Attribute.IsDefined (pi [pi.Length - 1], typeof (ParamArrayAttribute)))
 							continue;
-						isdefParamArray = Attribute.IsDefined (args [args.Length - 1], typeof (ParamArrayAttribute));
-						if (!isdefParamArray)
-							continue;
-						elementType = args [args.Length - 1].ParameterType.GetElementType ();
+
+						var elementType = pi [pi.Length - 1].ParameterType.GetElementType ();
 						for (j = 0; j < types.Length; ++j) {
-							if (j < (args.Length - 1) && types [j] != args [j].ParameterType)
+							if (j < (pi.Length - 1) && types [j] != pi [j].ParameterType)
 								break;
-							else if (j >= (args.Length - 1) && types [j] != elementType) 
+							
+							if (j >= (pi.Length - 1) && types [j] != elementType) 
 								break;
 						}
+
 						if (j == types.Length)
 							return m;
 					}
 				}
-				
-				if ((int)(bindingAttr & BindingFlags.ExactBinding) != 0)
+
+				if ((bindingAttr & BindingFlags.ExactBinding) != 0)
 					return null;
 
 				MethodBase result = null;
