@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 
 namespace Mono {
 
-	internal class Runtime
+	static class Runtime
 	{
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
