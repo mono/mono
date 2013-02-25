@@ -333,11 +333,12 @@ namespace System.Net
 				if (maxServicePoints > 0 && servicePoints.Count >= maxServicePoints)
 					throw new InvalidOperationException ("maximum number of service points reached");
 
-				string addr = address.ToString ();
+				int limit;
 #if NET_2_1
-				int limit = defaultConnectionLimit;
+				limit = defaultConnectionLimit;
 #else
-				int limit = (int) manager.GetMaxConnections (addr);
+				string addr = address.ToString ();
+				limit = (int) manager.GetMaxConnections (addr);
 #endif
 				sp = new ServicePoint (address, limit, maxServicePointIdleTime);
 				sp.Expect100Continue = expectContinue;

@@ -75,7 +75,9 @@ namespace System.Diagnostics {
 		IntPtr process_handle;
 		int pid;
 		bool enableRaisingEvents;
+#if !NET_2_1		
 		bool already_waiting;
+#endif
 		ISynchronizeInvoke synchronizingObject;
 		EventHandler exited_event;
 		IntPtr stdout_rd;
@@ -1606,7 +1608,9 @@ namespace System.Diagnostics {
 		static void CBOnExit (object state, bool unused)
 		{
 			Process p = (Process) state;
+#if !NET_2_1			
 			p.already_waiting = false;
+#endif
 			p.OnExited ();
 		}
 
