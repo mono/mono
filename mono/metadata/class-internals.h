@@ -1060,10 +1060,10 @@ void
 mono_loader_set_error_bad_image (char *msg) MONO_INTERNAL;
 
 MonoException *
-mono_loader_error_prepare_exception (MonoLoaderError *error) MONO_INTERNAL;
+mono_loader_error_prepare_exception (MonoLoaderError *error);
 
 MonoLoaderError *
-mono_loader_get_last_error (void) MONO_INTERNAL;
+mono_loader_get_last_error (void);
 
 void
 mono_loader_clear_error    (void) MONO_INTERNAL;
