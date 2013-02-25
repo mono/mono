@@ -31,9 +31,11 @@
 
 #if SECURITY_DEP
 
-using Mono.Security;
-using Mono.Security.Cryptography;
-using MSX = Mono.Security.X509;
+extern alias MonoSecurity;
+
+using MonoSecurity::Mono.Security;
+using MonoSecurity::Mono.Security.Cryptography;
+using MSX = MonoSecurity::Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 

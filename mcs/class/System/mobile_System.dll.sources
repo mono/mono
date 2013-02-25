@@ -1,14 +1,3 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
-../corlib/System.Collections.Generic/CollectionDebuggerView.cs
-../corlib/System.Collections/CollectionDebuggerView.cs
-../corlib/Mono/DataConverter.cs
-../corlib/System.Threading.Tasks/CyclicDeque.cs
-../corlib/System.Threading.Tasks/IConcurrentDeque.cs
-../corlib/System.Threading.Tasks/PopResult.cs
-../corlib/System.Threading/AtomicBoolean.cs
-
 Assembly/AssemblyInfo.cs
 Mono.Http/NtlmClient.cs
 System.CodeDom.Compiler/GeneratedCodeAttribute.cs
@@ -231,7 +220,6 @@ System.IO.Compression/CompressionMode.cs
 System.IO.Compression/DeflateStream.cs
 System.IO.Compression/GZipStream.cs
 System.IO/MonoIO.cs
-System.IO/MonoIOError.cs
 System.IO/MonoSyncFileStream.cs
 System.Net.Cache/HttpCacheAgeControl.cs
 System.Net.Cache/HttpRequestCacheLevel.cs

@@ -106,7 +106,7 @@ FILE_SECURITY_DEP := $(wildcard ../lib/$(PROFILE)/Mono.Security.dll)
 endif
 ifdef FILE_SECURITY_DEP
 CYCLIC_DEP_FILES += $(FILE_SECURITY_DEP)
-LIB_MCS_FLAGS += -d:SECURITY_DEP -r:Mono.Security.dll
+LIB_MCS_FLAGS += -d:SECURITY_DEP -r:MonoSecurity=Mono.Security.dll
 endif
 
 ifndef PROFILE_ANY_MOBILE

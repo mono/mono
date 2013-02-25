@@ -27,13 +27,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if SECURITY_DEP
+
+extern alias MonoSecurity;
+
+using MonoSecurity::Mono.Security;
+using MonoSecurity::Mono.Security.Cryptography;
+using MX = MonoSecurity::Mono.Security.X509;
+#endif
+
 using System.IO;
 using System.Text;
-#if SECURITY_DEP
-using Mono.Security;
-using Mono.Security.Cryptography;
-using MX = Mono.Security.X509;
-#endif
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -437,7 +441,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			base.Import (rawData, password, keyStorageFlags);
 			if (password == null) {
 				try {
-					_cert = new Mono.Security.X509.X509Certificate (rawData);
+					_cert = new MX.X509Certificate (rawData);
 				}
 				catch (Exception e) {
 					try {
@@ -457,7 +461,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				catch {
 					// it's possible to supply a (unrequired/unusued) password
 					// fix bug #79028
-					_cert = new Mono.Security.X509.X509Certificate (rawData);
+					_cert = new MX.X509Certificate (rawData);
 				}
 			}
 		}

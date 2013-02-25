@@ -31,6 +31,8 @@
 
 #if SECURITY_DEP
 
+extern alias MonoSecurity;
+
 using System.Collections;
 using Mono.Security;
 using MX = Mono.Security.X509;
@@ -49,7 +51,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			_list = new ArrayList ();
 		}
 
-		internal X509ExtensionCollection (MX.X509Certificate cert)
+		internal X509ExtensionCollection (MonoSecurity::Mono.Security.X509.X509Certificate cert)
 		{
 			_list = new ArrayList (cert.Extensions.Count);
 			if (cert.Extensions.Count == 0)

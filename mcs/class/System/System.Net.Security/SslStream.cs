@@ -35,6 +35,8 @@
 #if SECURITY_DEP
 
 extern alias PrebuiltSystem;
+extern alias MonoSecurity;
+
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 
 using System;
@@ -44,16 +46,16 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
-using Mono.Security.Protocol.Tls;
+using MonoSecurity::Mono.Security.Protocol.Tls;
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
 using HashAlgorithmType = System.Security.Authentication.HashAlgorithmType;
 using ExchangeAlgorithmType = System.Security.Authentication.ExchangeAlgorithmType;
 
-using MonoCipherAlgorithmType = Mono.Security.Protocol.Tls.CipherAlgorithmType;
-using MonoHashAlgorithmType = Mono.Security.Protocol.Tls.HashAlgorithmType;
-using MonoExchangeAlgorithmType = Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
-using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType;
+using MonoCipherAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.CipherAlgorithmType;
+using MonoHashAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.HashAlgorithmType;
+using MonoExchangeAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
+using MonoSecurityProtocolType = MonoSecurity::Mono.Security.Protocol.Tls.SecurityProtocolType;
 
 #if NET_4_5
 using System.Threading.Tasks;

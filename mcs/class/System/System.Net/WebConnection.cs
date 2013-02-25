@@ -28,6 +28,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if SECURITY_DEP
+
+extern alias MonoSecurity;
+
+using MonoSecurity::Mono.Security.Protocol.Tls;
+#endif
+
 using System.IO;
 using System.Collections;
 using System.Net.Sockets;
@@ -35,9 +42,6 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-#if SECURITY_DEP
-using Mono.Security.Protocol.Tls;
-#endif
 
 namespace System.Net
 {
@@ -236,7 +240,7 @@ namespace System.Net
 					return;
 
 #if NET_2_1 && SECURITY_DEP
-				sslStream = typeof (Mono.Security.Protocol.Tls.HttpsClientStream);
+				sslStream = typeof (HttpsClientStream);
 #else
 				// HttpsClientStream is an internal glue class in Mono.Security.dll
 				sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " +

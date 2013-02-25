@@ -1,7 +1,4 @@
 Assembly/AssemblyInfo.cs
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
 Microsoft.CSharp/CSharpCodeCompiler.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
@@ -602,7 +599,6 @@ System.IO/InvalidDataException.cs
 System.IO/IODescriptionAttribute.cs
 System.IO/KeventWatcher.cs
 System.IO/MonoIO.cs
-System.IO/MonoIOError.cs
 System.IO/MonoSyncFileStream.cs
 System.IO/NotifyFilters.cs
 System.IO.Ports/Handshake.cs
@@ -1060,15 +1056,6 @@ System.Runtime.InteropServices.ComTypes/STGMEDIUM.cs
 System.Runtime.InteropServices.ComTypes/TYMED.cs
 System/IUriData.cs
 System/UriData.cs
-
-../corlib/System.Threading.Tasks/CyclicDeque.cs
-../corlib/System.Threading.Tasks/PopResult.cs
-../corlib/System.Threading.Tasks/IConcurrentDeque.cs
-../corlib/System.Threading/AtomicBoolean.cs
-
-../corlib/System.Collections/CollectionDebuggerView.cs
-../corlib/System.Collections.Generic/CollectionDebuggerView.cs
-../corlib/Mono/DataConverter.cs
 Mono.Net.Dns/DnsClass.cs
 Mono.Net.Dns/DnsHeader.cs
 Mono.Net.Dns/DnsOpCode.cs

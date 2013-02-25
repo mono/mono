@@ -30,10 +30,12 @@
 
 #if SECURITY_DEP
 
+extern alias MonoSecurity;
+
 using System.Collections;
 using System.Text;
 
-using MX = Mono.Security.X509;
+using MX = MonoSecurity::Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 

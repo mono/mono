@@ -29,6 +29,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if SECURITY_DEP
+
+extern alias MonoSecurity;
+
+using System.Text.RegularExpressions;
+using MonoSecurity::Mono.Security.X509.Extensions;
+using MonoSecurity::Mono.Security.Protocol.Tls;
+using MSX = MonoSecurity::Mono.Security.X509;
+#endif
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -38,14 +48,6 @@ using System.Security.Cryptography.X509Certificates;
 
 using System.Globalization;
 using System.Net.Security;
-#if SECURITY_DEP
-using System.Text.RegularExpressions;
-using Mono.Security;
-using Mono.Security.Cryptography;
-using Mono.Security.X509.Extensions;
-using Mono.Security.Protocol.Tls;
-using MSX = Mono.Security.X509;
-#endif
 
 //
 // notes:
@@ -389,7 +391,7 @@ namespace System.Net
 		internal class ChainValidationHelper {
 			object sender;
 			string host;
-			static bool is_macosx = System.IO.File.Exists (MSX.OSX509Certificates.SecurityLibrary);
+			static bool is_macosx = System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
 			static X509RevocationMode revocation_mode;
 
 			static ChainValidationHelper ()
@@ -423,7 +425,7 @@ namespace System.Net
 
 			// Used when the obsolete ICertificatePolicy is set to DefaultCertificatePolicy
 			// and the new ServerCertificateValidationCallback is not null
-			internal ValidationResult ValidateChain (Mono.Security.X509.X509CertificateCollection certs)
+			internal ValidationResult ValidateChain (MSX.X509CertificateCollection certs)
 			{
 				// user_denied is true if the user callback is called and returns false
 				bool user_denied = false;
@@ -480,13 +482,13 @@ namespace System.Net
 #endif
 					// Attempt to use OSX certificates
 					// Ideally we should return the SecTrustResult
-					MSX.OSX509Certificates.SecTrustResult trustResult = MSX.OSX509Certificates.SecTrustResult.Deny;
+					OSX509Certificates.SecTrustResult trustResult = OSX509Certificates.SecTrustResult.Deny;
 					try {
-						trustResult = MSX.OSX509Certificates.TrustEvaluateSsl (certs, Host);
+						trustResult = OSX509Certificates.TrustEvaluateSsl (certs, Host);
 						// We could use the other values of trustResult to pass this extra information
 						// to the .NET 2 callback for values like SecTrustResult.Confirm
-						result = (trustResult == MSX.OSX509Certificates.SecTrustResult.Proceed ||
-								  trustResult == MSX.OSX509Certificates.SecTrustResult.Unspecified);
+						result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||
+								  trustResult == OSX509Certificates.SecTrustResult.Unspecified);
 					} catch {
 						// Ignore
 					}
@@ -664,10 +666,10 @@ namespace System.Net
 			// 2.1.		exact match is required
 			// 3.	Use of the most specific Common Name (CN=) in the Subject
 			// 3.1		Existing practice but DEPRECATED
-			static bool CheckServerIdentity (Mono.Security.X509.X509Certificate cert, string targetHost) 
+			static bool CheckServerIdentity (MSX.X509Certificate cert, string targetHost) 
 			{
 				try {
-					Mono.Security.X509.X509Extension ext = cert.Extensions ["2.5.29.17"];
+					MSX.X509Extension ext = cert.Extensions ["2.5.29.17"];
 					// 1. subjectAltName
 					if (ext != null) {
 						SubjectAltNameExtension subjectAltName = new SubjectAltNameExtension (ext);

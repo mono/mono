@@ -29,6 +29,8 @@
 
 #if SECURITY_DEP
 
+using Mono.Security.X509;
+
 namespace System.Security.Cryptography.X509Certificates {
 
 	public class X509ChainElement {
