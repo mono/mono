@@ -54,7 +54,7 @@ EXTRA_DISTFILES = \
 	Test/resources/415628.bin		\
 	Test/resources/Fergie.GED		\
 	$(RESOURCE_FILES) \
-	$(TEST_RESX_RESOURCES:.resources=.resx)
+	$(TEST_RESOURCES:.resources=.resx)
 
 TEST_RESX_RESOURCES = \
 	Test/resources/Resources.resources
