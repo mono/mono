@@ -1056,7 +1056,7 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 			return (void*) desc;
 		}
 		/* we know the 2-word header is ptr-free */
-		if (last_set < SMALL_BITMAP_SIZE + OBJECT_HEADER_WORDS) {
+		if (last_set < SMALL_BITMAP_SIZE + OBJECT_HEADER_WORDS && stored_size < (1 << SMALL_BITMAP_SHIFT)) {
 			desc = DESC_TYPE_SMALL_BITMAP | (stored_size << 1) | ((*bitmap >> OBJECT_HEADER_WORDS) << SMALL_BITMAP_SHIFT);
 			DEBUG (6, fprintf (gc_debug_file, "Smallbitmap descriptor %p, size: %zd, last set: %d\n", (void*)desc, stored_size, last_set));
 			return (void*) desc;
