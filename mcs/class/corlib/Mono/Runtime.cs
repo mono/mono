@@ -52,7 +52,10 @@ namespace Mono {
 		public static extern string GetDisplayName ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern string GetNativeStackTrace (Exception exception);
+#if MOBILE
+		public
+#endif
+		static extern string GetNativeStackTrace (Exception exception);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern bool SetGCAllowSynchronousMajor (bool flag);
