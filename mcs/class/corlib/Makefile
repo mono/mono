@@ -100,7 +100,7 @@ $(cmp_makefrag): $(cmp_response)
 $(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
 endif
 
-$(TEST_RESX_RESOURCES): %.resources: %.resx
+$(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
 
 TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
