@@ -8,10 +8,10 @@ function compile_vcproj ()
 	proj=$1; shift
 	opt=$@
 
-	devenv=`echo "$VS90COMNTOOLS/../IDE/devenv.com" | sed 's.\\\\./.g'`
+	devenv=`echo "$VS100COMNTOOLS/../IDE/devenv.com" | sed 's.\\\\./.g'`
 	devenv=`cygpath "$devenv"`
 
-	if [[ ! -e $devenv ]] ; then echo "Can't find VS 9.0 install (through VS90COMNTOOLS)"; exit 1; fi 
+	if [[ ! -e $devenv ]] ; then echo "Can't find VS 10.0 install (through VS100COMNTOOLS)"; exit 1; fi 
 	if [[ $incremental==1 ]] ; then buildCmd="/build"; else buildCmd="/rebuild"; fi
 	if [[ -n $proj ]] ; then let params=/project $proj; fi
 
