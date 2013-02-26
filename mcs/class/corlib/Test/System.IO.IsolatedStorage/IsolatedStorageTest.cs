@@ -216,6 +216,43 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
 			ulong ul = nais.MaximumSize;
 		}
+		
+		[Test]
+		public void MultiLevel ()
+		{
+			// see bug #4101
+			IsolatedStorageFile isf;
+#if MOBILE
+			isf = IsolatedStorageFile.GetUserStoreForApplication ();
+#else
+			isf = IsolatedStorageFile.GetStore (IsolatedStorageScope.User |  IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain,
+	   					typeof (global::System.Security.Policy.Url), typeof (global::System.Security.Policy.Url));
+#endif
+
+			try {
+				isf.CreateDirectory ("dir1");
+				string [] dirs = isf.GetDirectoryNames ("*");
+				Assert.AreEqual (1, dirs.Length, "1a");
+				Assert.AreEqual ("dir1", dirs [0], "1b");
+	
+				isf.CreateDirectory ("dir1/test");
+				dirs = isf.GetDirectoryNames ("dir1/*");
+				Assert.AreEqual (1, dirs.Length, "2a");
+				Assert.AreEqual ("test", dirs [0], "2b");
+	
+				isf.CreateDirectory ("dir1/test/test2a");
+				isf.CreateDirectory ("dir1/test/test2b");
+				dirs = isf.GetDirectoryNames ("dir1/test/*");
+				Assert.AreEqual (2, dirs.Length, "3a");
+				Assert.AreEqual ("test2a", dirs [0], "3b");
+				Assert.AreEqual ("test2b", dirs [1], "3c");
+			} finally {
+				isf.DeleteDirectory ("dir1/test/test2a");
+				isf.DeleteDirectory ("dir1/test/test2b");
+				isf.DeleteDirectory ("dir1/test");
+				isf.DeleteDirectory ("dir1");
+			}
+		}
 
 #if NET_4_0
 		[Test]

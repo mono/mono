@@ -565,5 +565,25 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual (31748, new CultureInfo ("zh-Hant").LCID);
 			Assert.AreEqual (31748, CultureInfo.GetCultureInfo ("zh-Hant").LCID);
 		}
+		
+		[Test]
+		public void CurrentCulture ()
+		{
+			Assert.IsNotNull (CultureInfo.CurrentCulture, "CurrentCulture");
+		}
+		
+		[Test]
+#if NET_2_0		
+		[ExpectedException (typeof (ArgumentException))]
+#else		
+		[ExpectedException (typeof (CultureNotFoundException))]
+#endif
+		public void EnHK ()
+		{
+			// that's how the 'locale' gets defined for a device with an English UI
+			// and it's international settings set for Hong Kong
+			// https://bugzilla.xamarin.com/show_bug.cgi?id=3471
+			new CultureInfo ("en-HK");
+		}
 	}
 }

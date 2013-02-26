@@ -918,6 +918,16 @@ namespace MonoTests.System.Resources
 			}
 		}
 
+		[Test]
+		public void TestSatellites ()
+		{
+			ResourceManager manager = new ResourceManager("Resources", GetType ().Assembly);
+			
+			Assert.AreEqual ("Hei", manager.GetString ("Hello", new CultureInfo ("nn-NO")), "nn-NO");
+			Assert.AreEqual ("Hola", manager.GetString ("Hello", new CultureInfo ("es-ES")), "es-ES");
+			Assert.AreEqual ("Hello", manager.GetString ("Hello", new CultureInfo ("en-US")), "en-US");
+		}		
+
 		class MockResourceManager : ResourceManager
 		{
 			public MockResourceManager ()

@@ -1604,6 +1604,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (false, File.Exists (path), "DOC#2");
 			
 		}
+
 #if !MOBILE
 		[Test]
 		public void WriteWithExposedHandle ()

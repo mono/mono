@@ -61,6 +61,12 @@ namespace MonoTests.System.Globalization
 		}
 		
 		[Test]
+		public void CurrentRegion ()
+		{
+			Assert.IsNotNull (RegionInfo.CurrentRegion, "CurrentRegion");
+		}
+		
+		[Test]
 		public void HongKong ()
 		{
 			// https://bugzilla.xamarin.com/show_bug.cgi?id=3476

@@ -680,6 +680,18 @@ namespace MonoTests.System.Runtime.InteropServices
 			mem = Marshal.ReAllocHGlobal (mem, (IntPtr) 1000000);
 			Marshal.FreeHGlobal (mem);
 		}
+		
+		[Test]
+		public void FreeHGlobal ()
+		{
+			// clear user doubts on assistly #6749
+			for (int i = 0; i < 1024; i++) {
+				IntPtr p = Marshal.AllocHGlobal (1024 * 1024);
+				Assert.AreNotEqual (IntPtr.Zero, p, i.ToString ());
+				Marshal.FreeHGlobal (p);
+			}
+		}
+		
 #if NET_2_0
 		[Test]
 		public void TestGetExceptionForHR ()

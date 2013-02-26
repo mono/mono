@@ -1134,6 +1134,43 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void Culture ()
+		{
+			Assert.IsNotNull (Thread.CurrentThread.CurrentCulture, "CurrentCulture");
+			Assert.IsNotNull (Thread.CurrentThread.CurrentUICulture, "CurrentUICulture");
+		}
+
+		[Test]
+		public void ThreadStartSimple ()
+		{
+			int i = 0;
+			Thread t = new Thread (delegate () {
+				// ensure the NSAutoreleasePool works
+				i++;
+			});
+			t.Start ();
+			t.Join ();
+			Assert.AreEqual (1, i, "ThreadStart");
+		}
+
+		[Test]
+		public void ParametrizedThreadStart ()
+		{
+			int i = 0;
+			object arg = null;
+			Thread t = new Thread (delegate (object obj) {
+				// ensure the NSAutoreleasePool works
+				i++;
+				arg = obj;
+			});
+			t.Start (this);
+			t.Join ();
+
+			Assert.AreEqual (1, i, "ParametrizedThreadStart");
+			Assert.AreEqual (t, arg, "obj");	
+		}		
+
+		[Test]
 		public void SetNameTpThread () {
 			ThreadPool.QueueUserWorkItem(new WaitCallback(ThreadProc));
 		}
