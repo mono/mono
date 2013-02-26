@@ -154,6 +154,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool IsSatelliteAssembly { get; private set; }
+
 		public string Name {
 			get {
 				return name;
@@ -214,6 +216,7 @@ namespace Mono.CSharp
 					builder_extra.SetCulture (value, a.Location);
 				}
 
+				IsSatelliteAssembly = true;
 				return;
 			}
 
@@ -457,26 +460,28 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (!wrap_non_exception_throws_custom) {
-				PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
-				if (pa.IsDefined && pa.ResolveBuilder ()) {
-					var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
-					if (prop != null) {
-						AttributeEncoder encoder = new AttributeEncoder ();
-						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
-						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
+			if (!IsSatelliteAssembly) {
+				if (!wrap_non_exception_throws_custom) {
+					PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
+					if (pa.IsDefined && pa.ResolveBuilder ()) {
+						var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
+						if (prop != null) {
+							AttributeEncoder encoder = new AttributeEncoder ();
+							encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
+							SetCustomAttribute (pa.Constructor, encoder.ToArray ());
+						}
 					}
 				}
-			}
 
-			if (declarative_security != null) {
+				if (declarative_security != null) {
 #if STATIC
-				foreach (var entry in declarative_security) {
-					Builder.__AddDeclarativeSecurity (entry);
-				}
+					foreach (var entry in declarative_security) {
+						Builder.__AddDeclarativeSecurity (entry);
+					}
 #else
-				throw new NotSupportedException ("Assembly-level security");
+					throw new NotSupportedException ("Assembly-level security");
 #endif
+				}
 			}
 
 			CheckReferencesPublicToken ();

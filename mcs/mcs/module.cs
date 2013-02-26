@@ -426,7 +426,7 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (Compiler.Settings.Unsafe) {
+			if (Compiler.Settings.Unsafe && !assembly.IsSatelliteAssembly) {
 				var pa = PredefinedAttributes.UnverifiableCode;
 				if (pa.IsDefined)
 					pa.EmitAttribute (builder);
