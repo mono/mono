@@ -1167,7 +1167,7 @@ namespace MonoTests.System.Threading
 			t.Join ();
 
 			Assert.AreEqual (1, i, "ParametrizedThreadStart");
-			Assert.AreEqual (t, arg, "obj");	
+			Assert.AreEqual (this, arg, "obj");	
 		}		
 
 		[Test]

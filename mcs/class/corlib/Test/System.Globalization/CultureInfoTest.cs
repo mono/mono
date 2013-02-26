@@ -573,12 +573,12 @@ namespace MonoTests.System.Globalization
 		}
 		
 		[Test]
-#if NET_2_0		
-		[ExpectedException (typeof (ArgumentException))]
-#else		
+#if NET_4_0
 		[ExpectedException (typeof (CultureNotFoundException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
 #endif
-		public void EnHK ()
+		public void CultureNotFound ()
 		{
 			// that's how the 'locale' gets defined for a device with an English UI
 			// and it's international settings set for Hong Kong
