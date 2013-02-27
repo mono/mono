@@ -1068,15 +1068,6 @@ Once the heap size gets larger than this size, ignore what the default
 major collection trigger metric says and only allow four nursery size's
 of major heap growth between major collections.
 .TP
-\fBwbarrier=\fIwbarrier\fR
-Specifies which write barrier to use.  Options are `cardtable' and
-`remset'.  The card table barrier is faster but less precise, and only
-supported for the Mark&Sweep major collector on 32 bit platforms.  The
-default is `cardtable' if it is supported, otherwise `remset'. The cardtable
-write barrier is faster and has a more stable and usually smaller
-memory footprint. If the program causes too much pinning during
-thread scan, it might be faster to enable remset.
-.TP
 \fBevacuation-threshold=\fIthreshold\fR
 Sets the evacuation threshold in percent.  This option is only available
 on the Mark&Sweep major collectors.  The value must be an
