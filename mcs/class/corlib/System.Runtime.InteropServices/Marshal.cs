@@ -50,7 +50,7 @@ namespace System.Runtime.InteropServices
 	{
 		/* fields */
 		public static readonly int SystemMaxDBCSCharSize = 2; // don't know what this is
-		public static readonly int SystemDefaultCharSize = Environment.OSVersion.Platform == PlatformID.Win32NT ? 2 : 1;
+		public static readonly int SystemDefaultCharSize = Environment.IsRunningOnWindows ? 2 : 1;
 
 #if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
