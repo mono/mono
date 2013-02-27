@@ -219,18 +219,18 @@ namespace System.Reflection {
 
 		private static bool filter_by_type_name (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
-			if (s.EndsWith ("*"))
-				return m.Name.StartsWith (s.Substring (0, s.Length - 1));
-			else
-				return m.Name == s;
+			if (s.Length > 0 && s [s.Length - 1] == '*')
+				return m.Name.StartsWith (s.Substring (0, s.Length - 1), StringComparison.Ordinal);
+			
+			return m.Name == s;
 		}
 
 		private static bool filter_by_type_name_ignore_case (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
-			if (s.EndsWith ("*"))
-				return m.Name.ToLower ().StartsWith (s.Substring (0, s.Length - 1).ToLower ());
-			else
-				return String.Compare (m.Name, s, true) == 0;
+			if (s.Length > 0 && s [s.Length - 1] == '*')
+				return m.Name.StartsWith (s.Substring (0, s.Length - 1), StringComparison.OrdinalIgnoreCase);
+			
+			return String.Equals (m.Name, s, StringComparison.OrdinalIgnoreCase);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

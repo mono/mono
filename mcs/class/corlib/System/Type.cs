@@ -69,11 +69,11 @@ namespace System {
 			string name = (string) filterCriteria;
 			if (name == null || name.Length == 0 )
 				return false; // because m.Name cannot be null or empty
-				
-			if (name [name.Length-1] == '*')
-				return string.CompareOrdinal (name, 0, m.Name, 0, name.Length-1) == 0;
-
-           	return name.Equals (m.Name);            	
+			
+			if (name [name.Length - 1] == '*')
+				return m.Name.StartsWith (name.Substring (0, name.Length - 1), StringComparison.Ordinal);
+			
+			return m.Name == name;
 		}
 
 		static bool FilterNameIgnoreCase_impl (MemberInfo m, object filterCriteria)
@@ -82,10 +82,10 @@ namespace System {
 			if (name == null || name.Length == 0 )
 				return false; // because m.Name cannot be null or empty
 				
-			if (name [name.Length-1] == '*')
-				return string.Compare (name, 0, m.Name, 0, name.Length-1, StringComparison.OrdinalIgnoreCase) == 0;
-
-			return string.Equals (name, m.Name, StringComparison.OrdinalIgnoreCase);
+			if (name [name.Length - 1] == '*')
+				return m.Name.StartsWith (name.Substring (0, name.Length - 1), StringComparison.OrdinalIgnoreCase);
+			
+			return string.Equals (m.Name, name, StringComparison.OrdinalIgnoreCase);
 		}
 
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)
