@@ -27,6 +27,8 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_COPY: size = sizeof (SGenProtocolCopy); break;
 	case SGEN_PROTOCOL_PIN: size = sizeof (SGenProtocolPin); break;
 	case SGEN_PROTOCOL_MARK: size = sizeof (SGenProtocolMark); break;
+	case SGEN_PROTOCOL_SCAN_BEGIN: size = sizeof (SGenProtocolScanBegin); break;
+	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: size = sizeof (SGenProtocolScanVTypeBegin); break;
 	case SGEN_PROTOCOL_WBARRIER: size = sizeof (SGenProtocolWBarrier); break;
 	case SGEN_PROTOCOL_GLOBAL_REMSET: size = sizeof (SGenProtocolGlobalRemset); break;
 	case SGEN_PROTOCOL_PTR_UPDATE: size = sizeof (SGenProtocolPtrUpdate); break;
@@ -97,6 +99,16 @@ print_entry (int type, void *data)
 	case SGEN_PROTOCOL_MARK: {
 		SGenProtocolMark *entry = data;
 		printf ("mark obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_SCAN_BEGIN: {
+		SGenProtocolScanBegin *entry = data;
+		printf ("scan_begin obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
+		SGenProtocolScanVTypeBegin *entry = data;
+		printf ("scan_vtype_begin obj %p size %d\n", entry->obj, entry->size);
 		break;
 	}
 	case SGEN_PROTOCOL_WBARRIER: {
@@ -212,6 +224,14 @@ is_match (gpointer ptr, int type, void *data)
 	}
 	case SGEN_PROTOCOL_MARK: {
 		SGenProtocolMark *entry = data;
+		return matches_interval (ptr, entry->obj, entry->size);
+	}
+	case SGEN_PROTOCOL_SCAN_BEGIN: {
+		SGenProtocolScanBegin *entry = data;
+		return matches_interval (ptr, entry->obj, entry->size);
+	}
+	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
+		SGenProtocolScanVTypeBegin *entry = data;
 		return matches_interval (ptr, entry->obj, entry->size);
 	}
 	case SGEN_PROTOCOL_WBARRIER: {
