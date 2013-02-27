@@ -94,43 +94,6 @@ namespace System.Collections {
 		private float loadFactor;
 		private int threshold;
 
-		private static readonly int [] primeTbl = {
-			11,
-			19,
-			37,
-			73,
-			109,
-			163,
-			251,
-			367,
-			557,
-			823,
-			1237,
-			1861,
-			2777,
-			4177,
-			6247,
-			9371,
-			14057,
-			21089,
-			31627,
-			47431,
-			71143,
-			106721,
-			160073,
-			240101,
-			360163,
-			540217,
-			810343,
-			1215497,
-			1823231,
-			2734867,
-			4102283,
-			6153409,
-			9230113,
-			13845163
-		};
-
 		//
 		// Constructors
 		//
@@ -153,7 +116,7 @@ namespace System.Collections {
                                 throw new ArgumentException ("Size is too big");
 
                         int size = (int) tableSize;
-			size = ToPrime (size);
+			size = HashPrimeNumbers.ToPrime (size);
 			this.SetTable (new Slot [size], new int [size]);
 
 			this.hcp = hcp;
@@ -569,7 +532,7 @@ namespace System.Collections {
 			if (keys.Length != values.Length) 
 			  throw new SerializationException("Keys and values of uneven size");
 			 
-			size = ToPrime (size);
+			size = HashPrimeNumbers.ToPrime (size);
 			this.SetTable (new Slot [size], new int [size]);
 			
 			for(int i=0;i<keys.Length;i++)
@@ -692,7 +655,7 @@ namespace System.Collections {
 			//   Hashtable is automatically increased
 			//   to the smallest prime number that is larger
 			//   than twice the current number of Hashtable buckets
-			uint newSize = (uint)ToPrime ((oldSize<<1)|1);
+			uint newSize = (uint)HashPrimeNumbers.ToPrime ((oldSize<<1)|1);
 
 
 			Slot [] newTable = new Slot [newSize];
@@ -805,45 +768,6 @@ namespace System.Collections {
 				arr.SetValue (it.Current, i++);
 			}
 		}
-
-
-
-		//
-		// Private static methods
-		//
-		internal static bool TestPrime (int x)
-		{
-			if ((x & 1) != 0) {
-				int top = (int)Math.Sqrt (x);
-				
-				for (int n = 3; n < top; n += 2) {
-					if ((x % n) == 0)
-						return false;
-				}
-				return true;
-			}
-			// There is only one even prime - 2.
-			return (x == 2);
-		}
-
-		internal static int CalcPrime (int x)
-		{
-			for (int i = (x & (~1))-1; i< Int32.MaxValue; i += 2) {
-				if (TestPrime (i)) return i;
-			}
-			return x;
-		}
-
-		internal static int ToPrime (int x)
-		{
-			for (int i = 0; i < primeTbl.Length; i++) {
-				if (x <= primeTbl [i])
-					return primeTbl [i];
-			}
-			return CalcPrime (x);
-		}
-
-
 
 
 		//

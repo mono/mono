@@ -201,7 +201,7 @@ namespace System.Collections.Generic {
 
 		void Resize ()
 		{
-			int newSize = PrimeHelper.ToPrime ((table.Length << 1) | 1);
+			int newSize = HashPrimeNumbers.ToPrime ((table.Length << 1) | 1);
 
 			// allocate new hash table and link slots array
 			var newTable = new int [newSize];
@@ -706,82 +706,6 @@ namespace System.Collections.Generic {
 					throw new ObjectDisposedException (null);
 				if (hashset.generation != stamp)
 					throw new InvalidOperationException ("HashSet have been modified while it was iterated over");
-			}
-		}
-
-		// borrowed from System.Collections.HashTable
-		static class PrimeHelper {
-
-			static readonly int [] primes_table = {
-				11,
-				19,
-				37,
-				73,
-				109,
-				163,
-				251,
-				367,
-				557,
-				823,
-				1237,
-				1861,
-				2777,
-				4177,
-				6247,
-				9371,
-				14057,
-				21089,
-				31627,
-				47431,
-				71143,
-				106721,
-				160073,
-				240101,
-				360163,
-				540217,
-				810343,
-				1215497,
-				1823231,
-				2734867,
-				4102283,
-				6153409,
-				9230113,
-				13845163
-			};
-
-			static bool TestPrime (int x)
-			{
-				if ((x & 1) != 0) {
-					int top = (int) Math.Sqrt (x);
-
-					for (int n = 3; n < top; n += 2) {
-						if ((x % n) == 0)
-							return false;
-					}
-
-					return true;
-				}
-
-				// There is only one even prime - 2.
-				return x == 2;
-			}
-
-			static int CalcPrime (int x)
-			{
-				for (int i = (x & (~1)) - 1; i < Int32.MaxValue; i += 2)
-					if (TestPrime (i))
-						return i;
-
-				return x;
-			}
-
-			public static int ToPrime (int x)
-			{
-				for (int i = 0; i < primes_table.Length; i++)
-					if (x <= primes_table [i])
-						return primes_table [i];
-
-				return CalcPrime (x);
 			}
 		}
 	}

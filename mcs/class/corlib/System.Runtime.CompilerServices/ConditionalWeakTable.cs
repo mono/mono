@@ -68,7 +68,7 @@ namespace System.Runtime.CompilerServices
 
 		/*LOCKING: _lock must be held*/
 		void Rehash () {
-			uint newSize = (uint)Hashtable.ToPrime ((data.Length << 1) | 1);
+			uint newSize = (uint)HashPrimeNumbers.ToPrime ((data.Length << 1) | 1);
 			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newSize);
 
 			Ephemeron[] tmp = new Ephemeron [newSize];

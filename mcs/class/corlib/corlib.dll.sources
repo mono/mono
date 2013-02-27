@@ -297,6 +297,7 @@ System.Collections/CollectionDebuggerView.cs
 System.Collections/DictionaryBase.cs
 System.Collections/DictionaryEntry.cs
 System.Collections/Hashtable.cs
+System.Collections/HashPrimeNumbers.cs
 System.Collections/ICollection.cs
 System.Collections/IComparer.cs
 System.Collections/IDictionary.cs
