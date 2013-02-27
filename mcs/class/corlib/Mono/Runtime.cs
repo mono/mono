@@ -49,12 +49,12 @@ namespace Mono {
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern string GetDisplayName ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 #if MOBILE
 		public
 #endif
+		static extern string GetDisplayName ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string GetNativeStackTrace (Exception exception);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
