@@ -25,13 +25,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if SECURITY_DEP
+extern alias MonoSecurity;
+#endif
 
 #if MONODROID
 using System;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-
-using MSX = Mono.Security.X509;
+#if SECURITY_DEP
+using MSX = MonoSecurity::Mono.Security.X509;
+#endif
 
 namespace System {
 

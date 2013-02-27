@@ -510,7 +510,7 @@ namespace System.Net
 				}
 #endif
 
-#if MONODROID
+#if MONODROID && SECURITY_DEP
 				result = AndroidPlatform.TrustEvaluateSsl (certs, sender, leaf, chain, errors);
 				if (result) {
 					// chain.Build() + GetErrorsFromChain() (above) will ALWAYS fail on
