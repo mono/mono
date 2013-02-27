@@ -176,6 +176,7 @@ print_entry (int type, void *data)
 	case SGEN_PROTOCOL_CEMENT_RESET: {
 		printf ("cement_reset\n");
 		break;
+	}
 	case SGEN_PROTOCOL_DISLINK_UPDATE: {
 		SGenProtocolDislinkUpdate *entry = data;
 		printf ("dislink_update link %p obj %p", entry->link, entry->obj);
