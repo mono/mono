@@ -186,10 +186,9 @@ namespace System
 				}
 			}
 
-			int initialSize = res.Length < 16 ? res.Length : 16;
-
-			Hashtable attributeInfos = new Hashtable (initialSize);
-			ArrayList a = new ArrayList (initialSize);
+			var initialSize = Math.Max (res.Length, 16);
+			var attributeInfos = new Dictionary<Type, AttributeInfo> (initialSize);
+			var a = new List<object> (initialSize);
 			ICustomAttributeProvider btype = obj;
 
 			int inheritanceLevel = 0;
@@ -211,8 +210,8 @@ namespace System
 						}
 					}
 
-					AttributeInfo firstAttribute = (AttributeInfo) attributeInfos[attrType];
-					if (firstAttribute != null)
+					AttributeInfo firstAttribute;
+					if (attributeInfos.TryGetValue (attrType, out firstAttribute))
 					{
 						usage = firstAttribute.Usage;
 					}

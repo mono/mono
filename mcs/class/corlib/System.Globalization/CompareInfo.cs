@@ -32,7 +32,7 @@
 //
 
 using System.Reflection;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -124,7 +124,7 @@ namespace System.Globalization
 		SimpleCollator collator;
 
 		// Maps culture IDs to SimpleCollator objects
-		private static Hashtable collators;
+		private static Dictionary<int, SimpleCollator> collators;
 
 		[NonSerialized]
 		// Protects access to 'collators'
@@ -137,9 +137,9 @@ namespace System.Globalization
 			if (UseManagedCollation) {
 				lock (monitor) {
 					if (collators == null)
-						collators = new Hashtable ();
-					collator = (SimpleCollator)collators [ci.LCID];
-					if (collator == null) {
+						collators = new Dictionary<int, SimpleCollator> ();
+
+					if (!collators.TryGetValue (ci.LCID, out collator)) {
 						collator = new SimpleCollator (ci);
 						collators [ci.LCID] = collator;
 					}

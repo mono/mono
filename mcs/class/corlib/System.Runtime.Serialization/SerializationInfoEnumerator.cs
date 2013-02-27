@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections;
-using System.Runtime.Serialization;
 
 namespace System.Runtime.Serialization
 {
@@ -41,7 +40,7 @@ namespace System.Runtime.Serialization
 		IEnumerator enumerator;
 
 		// Constructor
-		internal SerializationInfoEnumerator (ArrayList list)
+		internal SerializationInfoEnumerator (IEnumerable list)
 		{
 			this.enumerator = list.GetEnumerator ();
 		}

@@ -33,7 +33,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -78,13 +77,13 @@ namespace System {
 		static string _process_guid;
 
 		[ThreadStatic]
-		static Hashtable type_resolve_in_progress;
+		static Dictionary<string, object> type_resolve_in_progress;
 
 		[ThreadStatic]
-		static Hashtable assembly_resolve_in_progress;
+		static Dictionary<string, object> assembly_resolve_in_progress;
 
 		[ThreadStatic]
-		static Hashtable assembly_resolve_in_progress_refonly;
+		static Dictionary<string, object> assembly_resolve_in_progress_refonly;
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
@@ -1236,25 +1235,25 @@ namespace System {
 				return null;
 			
 			/* Prevent infinite recursion */
-			Hashtable ht;
+			Dictionary<string, object> ht;
 			if (refonly) {
 				ht = assembly_resolve_in_progress_refonly;
 				if (ht == null) {
-					ht = new Hashtable ();
+					ht = new Dictionary<string, object> ();
 					assembly_resolve_in_progress_refonly = ht;
 				}
 			} else {
 				ht = assembly_resolve_in_progress;
 				if (ht == null) {
-					ht = new Hashtable ();
+					ht = new Dictionary<string, object> ();
 					assembly_resolve_in_progress = ht;
 				}
 			}
 
-			string s = (string) ht [name];
-			if (s != null)
+			if (ht.ContainsKey (name))
 				return null;
-			ht [name] = name;
+
+			ht [name] = null;
 			try {
 				Delegate[] invocation_list = del.GetInvocationList ();
 
@@ -1286,16 +1285,15 @@ namespace System {
 				name = (string) name_or_tb;
 
 			/* Prevent infinite recursion */
-			Hashtable ht = type_resolve_in_progress;
+			var ht = type_resolve_in_progress;
 			if (ht == null) {
-				ht = new Hashtable ();
-				type_resolve_in_progress = ht;
+				type_resolve_in_progress = ht = new Dictionary<string, object> ();
 			}
 
-			if (ht.Contains (name))
+			if (ht.ContainsKey (name))
 				return null;
-			else
-				ht [name] = name;
+
+			ht [name] = null;
 
 			try {
 				foreach (Delegate d in TypeResolve.GetInvocationList ()) {

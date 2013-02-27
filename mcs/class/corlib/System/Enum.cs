@@ -34,6 +34,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -45,10 +46,10 @@ namespace System
 		internal Type utype;
 		internal Array values;
 		internal string[] names;
-		internal Hashtable name_hash;
+		internal Dictionary<string, int> name_hash;
 		[ThreadStatic]
-		static Hashtable cache;
-		static Hashtable global_cache = new Hashtable ();
+		static Dictionary<Type, MonoEnumInfo> cache;
+		static readonly Dictionary<Type, MonoEnumInfo> global_cache = new Dictionary<Type, MonoEnumInfo> ();
 		static object global_cache_monitor = new object ();
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -146,14 +147,6 @@ namespace System
 			}
 		}
 
-		static Hashtable Cache {
-			get {
-				if (cache == null) {
-					cache = new Hashtable ();
-				}
-				return cache;
-			}
-		}
 		private MonoEnumInfo (MonoEnumInfo other)
 		{
 			utype = other.utype;
@@ -165,16 +158,17 @@ namespace System
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
 			/* First check the thread-local cache without locking */
-			if (Cache.ContainsKey (enumType)) {
-				info = (MonoEnumInfo) cache [enumType];
+			if (cache != null && cache.TryGetValue (enumType, out info)) {
 				return;
 			}
+
 			/* Threads could die, so keep a global cache too */
 			lock (global_cache_monitor) {
-				if (global_cache.ContainsKey (enumType)) {
-					object boxedInfo = global_cache [enumType];
-					cache [enumType] = boxedInfo;
-					info = (MonoEnumInfo)boxedInfo;
+				if (global_cache.TryGetValue (enumType, out info)) {
+					if (cache == null)
+						cache = new Dictionary<Type, MonoEnumInfo> ();
+
+					cache [enumType] = info;
 					return;
 				}
 			}
@@ -185,7 +179,7 @@ namespace System
 			SortEnums (et, info.values, info.names);
 			
 			if (info.names.Length > 50) {
-				info.name_hash = new Hashtable (info.names.Length);
+				info.name_hash = new Dictionary<string, int> (info.names.Length);
 				for (int i = 0; i <  info.names.Length; ++i)
 					info.name_hash [info.names [i]] = i;
 			}
@@ -459,14 +453,14 @@ namespace System
 			return Parse (enumType, value, false);
 		}
 
-		private static int FindName (Hashtable name_hash, string [] names, string name,  bool ignoreCase)
+		private static int FindName (IDictionary<string, int> name_hash, string [] names, string name,  bool ignoreCase)
 		{
 			if (!ignoreCase) {
 				/* For enums with many values, use a hash table */
 				if (name_hash != null) {
-					object val = name_hash [name];
-					if (val != null)
-						return (int)val;
+					int val;
+					if (name_hash.TryGetValue (name, out val))
+						return val;
 				} else {
 					for (int i = 0; i < names.Length; ++i) {
 						if (name == names [i])

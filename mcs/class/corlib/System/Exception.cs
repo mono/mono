@@ -29,6 +29,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -269,7 +270,7 @@ namespace System
 			get {
 				if (_data == null) {
 					// default to empty dictionary
-					_data = (IDictionary) new Hashtable ();
+					_data = new Dictionary<object, object> ();
 				}
 				return _data;
 			}

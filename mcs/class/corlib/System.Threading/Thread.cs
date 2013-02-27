@@ -36,7 +36,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
 using System.Runtime.ConstrainedExecution;
@@ -323,13 +323,13 @@ namespace System.Threading {
 		}
 
 		// Stores a hash keyed by strings of LocalDataStoreSlot objects
-		static Hashtable datastorehash;
+		static Dictionary<string, LocalDataStoreSlot> datastorehash;
 		private static object datastore_lock = new object ();
 		
 		private static void InitDataStoreHash () {
 			lock (datastore_lock) {
 				if (datastorehash == null) {
-					datastorehash = Hashtable.Synchronized(new Hashtable());
+					datastorehash = new Dictionary<string, LocalDataStoreSlot> ();
 				}
 			}
 		}
@@ -338,14 +338,14 @@ namespace System.Threading {
 			lock (datastore_lock) {
 				if (datastorehash == null)
 					InitDataStoreHash ();
-				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash [name];
-				if (slot != null) {
+
+				if (datastorehash.ContainsKey (name)) {
 					// This exception isnt documented (of
 					// course) but .net throws it
 					throw new ArgumentException("Named data slot already added");
 				}
 			
-				slot = AllocateDataSlot ();
+				var slot = AllocateDataSlot ();
 
 				datastorehash.Add (name, slot);
 
@@ -357,10 +357,9 @@ namespace System.Threading {
 			lock (datastore_lock) {
 				if (datastorehash == null)
 					InitDataStoreHash ();
-				LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash [name];
 
-				if (slot != null) {
-					datastorehash.Remove (slot);
+				if (datastorehash.ContainsKey (name)) {
+					datastorehash.Remove (name);
 				}
 			}
 		}
@@ -401,13 +400,13 @@ namespace System.Threading {
 			lock (datastore_lock) {
 				if (datastorehash == null)
 					InitDataStoreHash ();
-				LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
 
-				if(slot==null) {
+				LocalDataStoreSlot slot;
+				if (!datastorehash.TryGetValue (name, out slot)) {
 					slot=AllocateNamedDataSlot(name);
 				}
 			
-				return(slot);
+				return slot;
 			}
 		}
 		
