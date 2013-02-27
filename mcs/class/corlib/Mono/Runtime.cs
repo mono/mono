@@ -51,6 +51,8 @@ namespace Mono {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 #if MOBILE
 		public
+#else
+		internal
 #endif
 		static extern string GetDisplayName ();
 
