@@ -53,7 +53,7 @@ EXTRA_DISTFILES = \
 	Test/resources/bug81759.resources	\
 	Test/resources/415628.bin		\
 	Test/resources/Fergie.GED		\
-	Test/resources/culture-*.cs		\ 
+	Test/resources/culture-*.cs		\
 	$(RESOURCE_FILES) \
 	$(TEST_RESOURCES:.resources=.resx)
 
