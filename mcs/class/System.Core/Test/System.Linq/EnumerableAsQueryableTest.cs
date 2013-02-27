@@ -422,7 +422,7 @@ namespace MonoTests.System.Linq {
 			IEnumerable bar = new Bar<int, string> ();
 			IQueryable queryable = bar.AsQueryable ();
 
-			Assert.IsInstanceOfType (typeof (IQueryable<string>), queryable);
+			Assert.IsTrue (queryable is IQueryable<string>);
 		}
 	}
 
