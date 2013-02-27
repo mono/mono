@@ -24,6 +24,7 @@
 #if defined(__native_client_codegen__) && defined(__native_client__)
 #include <malloc.h>
 #include <nacl/nacl_dyncode.h>
+#include <mono/metadata/gc-internal.h>
 #endif
 
 static uintptr_t code_memory_used = 0;
@@ -228,10 +229,14 @@ mono_code_manager_new (void)
 	if (next_dynamic_code_addr == NULL) {
 		const guint kPageMask = 0xFFFF; /* 64K pages */
 		next_dynamic_code_addr = (uintptr_t)(etext + kPageMask) & ~kPageMask;
+#if defined (__GLIBC__)
+		/* TODO: For now, just jump 64MB ahead to avoid dynamic libraries. */
+		next_dynamic_code_addr += (uintptr_t)0x4000000;
+#else
 		/* Workaround bug in service runtime, unable to allocate */
 		/* from the first page in the dynamic code section.    */
-		/* TODO: remove */
 		next_dynamic_code_addr += (uintptr_t)0x10000;
+#endif
 	}
 	cman->hash =  mono_g_hash_table_new (NULL, NULL);
 	/* Keep the hash table from being collected */
@@ -608,6 +613,12 @@ mono_code_manager_commit (MonoCodeManager *cman, void *data, int size, int newsi
 	}
 	status = nacl_dyncode_create (code, data, newsize);
 	if (status != 0) {
+		unsigned char *codep;
+		fprintf(stderr, "Error creating Native Client dynamic code section attempted to be\n"
+		                "emitted at %p (hex dissasembly of code follows):\n", code);
+		for (codep = data; codep < data + newsize; codep++)
+			fprintf(stderr, "%02x ", *codep);
+		fprintf(stderr, "\n");
 		g_assert_not_reached ();
 	}
 	mono_g_hash_table_remove (cman->hash, data);

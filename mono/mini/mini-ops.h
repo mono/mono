@@ -573,6 +573,11 @@ MINI_OP(OP_SUB_OVF_CARRY,   "sub_ovf_carry", IREG, IREG, IREG)
 MINI_OP(OP_ADD_OVF_UN_CARRY,   "add_ovf_un_carry", IREG, IREG, IREG)
 MINI_OP(OP_SUB_OVF_UN_CARRY,   "sub_ovf_un_carry", IREG, IREG, IREG)
 
+/* instructions with explicit long arguments to deal with 64-bit ilp32 machines */
+MINI_OP(OP_LADDCC,   "laddcc", LREG, LREG, LREG)
+MINI_OP(OP_LSUBCC,   "lsubcc", LREG, LREG, LREG)
+
+
 /* FP functions usually done by the CPU */
 MINI_OP(OP_SIN,     "sin", FREG, FREG, NONE)
 MINI_OP(OP_COS,     "cos", FREG, FREG, NONE)
@@ -920,7 +925,7 @@ MINI_OP(OP_GC_PARAM_SLOT_LIVENESS_DEF, "gc_param_slot_liveness_def", NONE, NONE,
 /* #if defined(__native_client_codegen__) || defined(__native_client__) */
 /* We have to define these in terms of the TARGET defines, not NaCl defines */
 /* because genmdesc.pl doesn't have multiple defines per platform.          */
-#if defined(TARGET_AMD64) || defined(TARGET_X86)
+#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_ARM)
 MINI_OP(OP_NACL_GC_SAFE_POINT,     "nacl_gc_safe_point", IREG, NONE, NONE)
 #endif
 
