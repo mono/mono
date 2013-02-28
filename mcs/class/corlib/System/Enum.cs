@@ -379,7 +379,7 @@ namespace System
 
 			default:
 				// This should never happen
-				return Array.BinarySearch (values, value);
+				throw new NotSupportedException ("Unknown underlying enum type");
 			}
 		}
 	
