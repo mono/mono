@@ -7415,6 +7415,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					EMIT_NEW_TEMPSTORE (cfg, store, return_var->inst_c0, *sp);
 					cfg->ret_var_set = TRUE;
 				} 
+			} else if (cfg->ret && !cfg->cbb->in_count && sp == stack_start && ip == end-1) {
+			    /* wine-mono hack: MS's Managed C++ compiler tends to generate
+			     * invalid functions that return a value and end with a 'ret'
+			     * instruction that is unreachable. According to ECMA-335,
+			     * instructions that don't yet have any branches to them should
+			     * be assumed to have an empty stack, so Mono is right to reject
+			     * these functions, and .NET is wrong to accept them. But we
+			     * need bug-for-bug compatibility with .NET so we skip popping
+			     * the return value in these cases. */
 			} else {
 				if (cfg->ret) {
 					MonoType *ret_type = mono_method_signature (method)->ret;
