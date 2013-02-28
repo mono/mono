@@ -88,10 +88,6 @@ class MakeBundle {
 				keeptemp = true;
 				break;
 			case "--static":
-				if (style == "windows") {
-					Console.Error.WriteLine ("The option `{0}' is not supported on this platform.", args [i]);
-					return 1;
-				}
 				static_link = true;
 				Console.WriteLine ("Note that statically linking the LGPL Mono runtime has more licensing restrictions than dynamically linking.");
 				Console.WriteLine ("See http://www.mono-project.com/Licensing for details on licensing.");
@@ -128,9 +124,31 @@ class MakeBundle {
 			case "--nomain":
 				nomain = true;
 				break;
+			case "--style":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+				style = args [++i];
+				switch (style) {
+				case "windows":
+				case "mac":
+				case "linux":
+					break;
+				default:
+					Console.Error.WriteLine ("Invalid style '{0}' - only 'windows', 'mac' and 'linux' are supported for --style argument", style);
+					return 1;
+				}
+					
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
+			}
+			
+			if (static_link && style == "windows") {
+				Console.Error.WriteLine ("The option `{0}' is not supported on this platform.", args [i]);
+				return 1;
 			}
 		}
 
