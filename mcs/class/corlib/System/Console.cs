@@ -94,7 +94,7 @@ namespace System
 		private static TextWriter stderr;
 		private static TextReader stdin;
 
-#if NET_4_5
+#if NET_4_5 && !MOBILE
 		static TextWriter console_stdout;
 		static TextWriter console_stderr;
 		static TextReader console_stdin;
@@ -181,7 +181,7 @@ namespace System
 			}
 #endif
 
-#if NET_4_5
+#if NET_4_5 && !MOBILE
 			console_stderr = stderr;
 			console_stdout = stdout;
 			console_stdin = stdin;

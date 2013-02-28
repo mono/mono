@@ -66,12 +66,14 @@ namespace System.Reflection {
 #pragma warning restore 649
 
 		private ResolveEventHolder resolve_event_holder;
+#if !MOBILE
 		private Evidence _evidence;
 		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
 		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
 		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
 		private PermissionSet _denied;		// for the resolved assembly denied permissions
+#endif
 		private bool fromByteArray;
 		private string assemblyName;
 

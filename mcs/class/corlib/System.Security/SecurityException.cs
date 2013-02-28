@@ -51,8 +51,9 @@ namespace System.Security {
 		private IPermission _firstperm;
 //		private IPermission _permfailed;
 		private MethodInfo _method;
+#if !MOBILE
 		private Evidence _evidence;
-
+#endif
 		private SecurityAction _action;
 		private object _denyset;
 		private object _permitset;
@@ -212,7 +213,7 @@ namespace System.Security {
 			_demanded = demanded;
 			_firstperm = permThatFailed;
 		}
-
+#if !MOBILE
 		public SecurityException (string message, AssemblyName assemblyName, PermissionSet grant, 
 			PermissionSet refused, MethodInfo method, SecurityAction action, object demanded, 
 			IPermission permThatFailed, Evidence evidence)
@@ -230,7 +231,7 @@ namespace System.Security {
 				permissionType = _firstperm.GetType ();
 			_evidence = evidence;
 		}
-
+#endif
 		// Methods
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{

@@ -107,10 +107,11 @@ namespace System.Globalization {
 		bool validForParseAsCurrency; // Unused, but MS.NET serializes this.
 #pragma warning restore 169
 		
+#if !MOBILE
 		string[] nativeDigits = invariantNativeDigits;
 		int digitSubstitution = 1; // DigitShapes.None.
-
 		static readonly string [] invariantNativeDigits = new string [] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+#endif
 
 		internal NumberFormatInfo (int lcid, bool read_only)
 		{

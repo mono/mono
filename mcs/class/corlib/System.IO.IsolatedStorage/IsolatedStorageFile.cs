@@ -53,9 +53,10 @@ namespace System.IO.IsolatedStorage {
 #if !MOBILE
 		private bool _resolved;
 		private ulong _maxSize;
-#endif
 		private Evidence _fullEvidences;
 		private static readonly Mutex mutex = new Mutex ();
+#endif
+		
 #if NET_4_0
 		private bool closed;
 		private bool disposed;

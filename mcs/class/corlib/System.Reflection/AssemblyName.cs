@@ -281,8 +281,8 @@ namespace System.Reflection {
 						return true;
 					} catch (CryptographicException) {
 					}
+					break;					
 #endif
-					break;
 				case 0x07: // private key
 					break;
 				}

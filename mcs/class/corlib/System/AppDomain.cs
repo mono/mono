@@ -1406,7 +1406,9 @@ namespace System {
 			get { return _domain_manager; }
 		}
 
+#if !MOBILE
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
+#endif
 
         #pragma warning disable 649
 #if MOBILE

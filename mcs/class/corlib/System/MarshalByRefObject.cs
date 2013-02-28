@@ -41,10 +41,10 @@ namespace System
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class MarshalByRefObject
 	{
-#if MOBILE
-		private object _dummy; //Keep layout equal to avoid runtime issues
-#else
 		[NonSerialized]
+#if MOBILE
+		private object _identity; //Keep layout equal to avoid runtime issues
+#else
 		private ServerIdentity _identity; // Holds marshalling iformation of the object
 #endif
 
