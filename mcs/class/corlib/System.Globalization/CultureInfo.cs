@@ -976,20 +976,29 @@ namespace System.Globalization
 
 		static Calendar CreateCalendar (int calendarType)
 		{
+			string name = null;
 			switch (calendarType >> CalendarTypeBits) {
 			case 1:
 				GregorianCalendarTypes greg_type;
 				greg_type = (GregorianCalendarTypes) (calendarType & 0xFF);
 				return new GregorianCalendar (greg_type);
 			case 2:
-				return new ThaiBuddhistCalendar ();
+				name = "System.Globalization.ThaiBuddhistCalendar";
+				break;
 			case 3:
-				return new UmAlQuraCalendar ();
+				name = "System.Globalization.UmAlQuraCalendar";
+				break;
 			case 4:
-				return new HijriCalendar ();
+				name = "System.Globalization.HijriCalendar";
+				break;
 			default:
 				throw new NotImplementedException ("Unknown calendar type: " + calendarType);
 			}
+
+			Type type = Type.GetType (name, false);
+			if (type == null)
+				throw new NotSupportedException ("Calendar not found, if the linker is enabled make sure to preserve this type: " + name);
+			return (Calendar) Activator.CreateInstance (type);
 		}
 	}
 }
