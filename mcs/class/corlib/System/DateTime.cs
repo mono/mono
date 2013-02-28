@@ -1046,7 +1046,7 @@ namespace System
 			if (maxlength <= 0)
 				maxlength = value.Length;
 
-			if (sPos + maxlength <= s.Length && String.Compare (s, sPos, value, 0, maxlength, true, CultureInfo.InvariantCulture) == 0) {
+			if (sPos + maxlength <= s.Length && String.CompareOrdinalCaseInsensitive (s, sPos, value, 0, maxlength) == 0) {
 				num_parsed = maxlength;
 				return true;
 			}

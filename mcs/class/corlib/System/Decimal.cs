@@ -1073,8 +1073,7 @@ namespace System
 			len = s.Length;
 			if (len >= max + 1) {
 				// number lower than MaxValue (base-less) can have better precision
-				if (String.Compare (s, 0, "79228162514264337593543950335", 0, max + 1,
-					false, CultureInfo.InvariantCulture) <= 0) {
+				if (String.CompareOrdinal (s, 0, "79228162514264337593543950335", 0, max + 1) <= 0) {
 					max++;
 				}
 			}

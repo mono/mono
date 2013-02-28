@@ -710,12 +710,12 @@ namespace System
 
 		public static bool Equals (string a, string b, StringComparison comparisonType)
 		{
-			return String.Compare (a, b, comparisonType) == 0;
+			return Compare (a, b, comparisonType) == 0;
 		}
 
 		public bool Equals (string value, StringComparison comparisonType)
 		{
-			return String.Compare (value, this, comparisonType) == 0;
+			return Compare (value, this, comparisonType) == 0;
 		}
 
 		public static int Compare (string strA, string strB, CultureInfo culture, CompareOptions options)
@@ -823,6 +823,14 @@ namespace System
 				}
 				return lengthA - lengthB;
 			}
+		}
+
+		//
+		// Fastest method for internal case insensitive comparison
+		//
+		internal static int CompareOrdinalCaseInsensitive (string strA, string strB)
+		{
+			return CompareOrdinalCaseInsensitiveUnchecked (strA, 0, int.MaxValue, strB, 0, int.MaxValue);
 		}
 
 		internal static unsafe int CompareOrdinalCaseInsensitiveUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)

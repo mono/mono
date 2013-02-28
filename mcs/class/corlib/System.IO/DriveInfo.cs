@@ -51,7 +51,7 @@ namespace System.IO {
 					throw new ArgumentException ("Invalid drive name", "driveName");
 
 				// Convert the path to a standard format so we can find it later.
-				driveName = String.Concat (Char.ToUpper (driveName [0]).ToString (), ":\\");
+				driveName = String.Concat (Char.ToUpperInvariant (driveName [0]).ToString (), ":\\");
 			}
 
 			DriveInfo [] drives = GetDrives ();
