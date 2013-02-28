@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 	
 	[TestFixture]
-	public class Rc2CbcTests : LimitedCfbTests {
+	public class Rc2CfbTests : LimitedCfbTests {
 		
 		protected override SymmetricAlgorithm GetInstance ()
 		{
