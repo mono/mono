@@ -534,42 +534,9 @@ namespace System.Collections.Generic {
 			return CheckIsSupersetOf (other_set);
 		}
 
-		class HashSetEqualityComparer : IEqualityComparer<HashSet<T>>
-		{
-			public bool Equals (HashSet<T> lhs, HashSet<T> rhs)
-			{
-				if (lhs == rhs)
-					return true;
-
-				if (lhs == null || rhs == null || lhs.Count != rhs.Count)
-					return false;
-
-				foreach (var item in lhs)
-					if (!rhs.Contains (item))
-						return false;
-
-				return true;
-			}
-
-			public int GetHashCode (HashSet<T> hashset)
-			{
-				if (hashset == null)
-					return 0;
-
-				IEqualityComparer<T> comparer = EqualityComparer<T>.Default;
-				int hash = 0;
-				foreach (var item in hashset)
-					hash ^= comparer.GetHashCode (item);
-
-				return hash;
-			}
-		}
-
-		static readonly HashSetEqualityComparer setComparer = new HashSetEqualityComparer ();
-
 		public static IEqualityComparer<HashSet<T>> CreateSetComparer ()
 		{
-			return setComparer;
+			return HashSetEqualityComparer<T>.Instance;
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
@@ -707,6 +674,39 @@ namespace System.Collections.Generic {
 				if (hashset.generation != stamp)
 					throw new InvalidOperationException ("HashSet have been modified while it was iterated over");
 			}
+		}
+	}
+	
+	sealed class HashSetEqualityComparer<T> : IEqualityComparer<HashSet<T>>
+	{
+		public static readonly HashSetEqualityComparer<T> Instance = new HashSetEqualityComparer<T> ();
+			
+		public bool Equals (HashSet<T> lhs, HashSet<T> rhs)
+		{
+			if (lhs == rhs)
+				return true;
+
+			if (lhs == null || rhs == null || lhs.Count != rhs.Count)
+				return false;
+
+			foreach (var item in lhs)
+				if (!rhs.Contains (item))
+					return false;
+
+			return true;
+		}
+
+		public int GetHashCode (HashSet<T> hashset)
+		{
+			if (hashset == null)
+				return 0;
+
+			IEqualityComparer<T> comparer = EqualityComparer<T>.Default;
+			int hash = 0;
+			foreach (var item in hashset)
+				hash ^= comparer.GetHashCode (item);
+
+			return hash;
 		}
 	}
 }
