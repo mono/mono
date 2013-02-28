@@ -278,6 +278,7 @@ namespace System
 			}
 
 			CheckAbstractType (type);
+#if !MOBILE
 			if (activationAttributes != null && activationAttributes.Length > 0) {
 				if (!type.IsMarshalByRef) {
 					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
@@ -290,6 +291,7 @@ namespace System
 					return newOb;
 				}
 			}
+#endif
 			return ctor.Invoke (bindingAttr, binder, args, culture);
 		}
 
