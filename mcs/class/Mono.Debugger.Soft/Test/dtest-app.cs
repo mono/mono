@@ -44,6 +44,11 @@ public sealed class Tests3 {
 
 }
 
+public static class Tests4 {
+	static Tests4 () {
+	}
+}
+
 [DebuggerDisplay ("Tests", Name="FOO", Target=typeof (int))]
 [DebuggerTypeProxy (typeof (Tests))]
 public class Tests2 {

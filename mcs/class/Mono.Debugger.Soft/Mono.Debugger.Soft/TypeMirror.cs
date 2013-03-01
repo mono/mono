@@ -26,6 +26,7 @@ namespace Mono.Debugger.Soft
 		TypeMirror[] ifaces;
 		Dictionary<TypeMirror, InterfaceMappingMirror> iface_map;
 		TypeMirror[] type_args;
+		bool inited;
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -843,5 +844,14 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
+		// Return whenever the type initializer of this type has ran
+		// Since protocol version 2.13
+		public bool IsInitialized {
+			get {
+				if (!inited)
+					inited = vm.conn.Type_IsInitialized (id);
+				return inited;
+			}
+		}
     }
 }

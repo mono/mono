@@ -1110,6 +1110,10 @@ public class DebuggerTests
 				Assert.Fail (attr.Constructor.DeclaringType.Name);
 			}
 		}
+
+		var assembly = entry_point.DeclaringType.Assembly;
+		var type = assembly.GetType ("Tests4");
+		Assert.IsFalse (type.IsInitialized);
 	}
 
 	[Test]

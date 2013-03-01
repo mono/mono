@@ -395,7 +395,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 22;
+		internal const int MINOR_VERSION = 23;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -541,7 +541,8 @@ namespace Mono.Debugger.Soft
 			GET_VALUES_2 = 14,
 			CMD_TYPE_GET_METHODS_BY_NAME_FLAGS = 15,
 			GET_INTERFACES = 16,
-			GET_INTERFACE_MAP = 17
+			GET_INTERFACE_MAP = 17,
+			IS_INITIALIZED = 18
 		}
 
 		enum BindingFlagsExtensions {
@@ -2119,6 +2120,11 @@ namespace Mono.Debugger.Soft
 			}
 
 			return res;
+		}
+
+		internal bool Type_IsInitialized (long id) {
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.IS_INITIALIZED, new PacketWriter ().WriteId (id));
+			return r.ReadInt () == 1;
 		}
 
 		/*
