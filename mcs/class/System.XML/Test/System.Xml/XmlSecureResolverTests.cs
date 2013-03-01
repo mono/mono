@@ -8,8 +8,6 @@
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
-#if !MOBILE
-
 using System;
 using System.Collections;
 using System.IO;
@@ -134,4 +132,3 @@ namespace MonoTestsXml
 	}
 }
 
-#endif

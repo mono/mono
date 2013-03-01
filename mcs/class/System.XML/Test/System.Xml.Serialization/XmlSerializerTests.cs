@@ -2187,7 +2187,8 @@ namespace MonoTests.System.XmlSerialization
 			ser.Deserialize (new XmlTextReader (xml, XmlNodeType.Document, null));
 		}
 
-#if !TARGET_JVM && !MOBILE
+#if NET_2_0
+#if !TARGET_JVM
 		[Test]
 		public void GenerateSerializerGenerics ()
 		{
@@ -2265,6 +2266,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (TestEnumWithNulls.bb, w.nenum.Value);
 			Assert.AreEqual (t, w.ndate.Value);
 		}
+#endif
 
 		[Test]
 		public void SerializeBase64Binary()

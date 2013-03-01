@@ -127,8 +127,8 @@ namespace MonoTests.Mono.Security {
 			AssertEquals ("key.PublicKeyToken", sn1.PublicKeyToken, sn2.PublicKeyToken);
 		}
 
-		string Signed;
-		string Delay;
+		private const string Signed = "hellosigned.exe";
+		private const string Delay = "hellodelay.exe";
 		private StrongName sn;
 		private static byte[] signedData = {
 			0x4D, 0x5A, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 
@@ -787,16 +787,11 @@ namespace MonoTests.Mono.Security {
 		[SetUp]
 		public void SetUp () 
 		{
-			Signed = Path.Combine (Path.GetTempPath (), "hellosigned.exe");
-			Delay = Path.Combine (Path.GetTempPath (), "hellodelay.exe");
-
 			sn = new StrongName (key);
 			// write hellosigned.exe to disk
 			FileStream fs = File.OpenWrite (Signed);
 			fs.Write (signedData, 0, signedData.Length);
 			fs.Close ();
-
-
 			// write hellodelay.exe to disk
 			fs = File.OpenWrite (Delay);
 			fs.Write (delayData, 0, delayData.Length);

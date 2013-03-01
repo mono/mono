@@ -663,7 +663,7 @@ fail_no_space:
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 		}
 
-		if (charIndex == chars.Length && byteCount == 0)
+		if (charIndex == chars.Length)
 			return 0;
 
 		fixed (char* cptr = chars) {
@@ -688,14 +688,10 @@ fail_no_space:
 		if (leftOverCount == 0) {
 			int end = byteIndex + byteCount;
 			for (; byteIndex < end; posn++, byteIndex++, byteCount--) {
-				if (bytes [byteIndex] < 0x80) {
-					if (posn >= length) {
-						throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
-					}
+				if (bytes [byteIndex] < 0x80)
 					chars [posn] = (char) bytes [byteIndex];
-				} else {
+				else
 					break;
-				}
 			}
 		}
 

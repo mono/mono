@@ -525,7 +525,7 @@ namespace MonoTests.System.Net.Http
 					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait (WaitTimeout);
 					Assert.Fail ("#2");
 				} catch (AggregateException e) {
-					Assert.IsTrue (e.InnerException is HttpRequestException, "#3");
+					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#3");
 				}
 
 			} finally {
@@ -699,7 +699,7 @@ namespace MonoTests.System.Net.Http
 					client.GetByteArrayAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
-					Assert.IsTrue (e.InnerException is HttpRequestException , "#2");
+					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
 				}
 			} finally {
 				listener.Close ();
@@ -726,7 +726,7 @@ namespace MonoTests.System.Net.Http
 					client.GetStringAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
-					Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
+					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
 				}
 			} finally {
 				listener.Abort ();

@@ -149,10 +149,7 @@ public abstract class Decoder
 		out int bytesUsed, out int charsUsed, out bool completed)
 	{
 		CheckArguments (bytes, byteIndex, byteCount);
-		if (chars == null)
-			throw new ArgumentNullException ("chars");
-		if (charIndex < 0)
-			throw new ArgumentOutOfRangeException ("charIndex");
+		CheckArguments (chars, charIndex);
 		if (charCount < 0 || chars.Length < charIndex + charCount)
 			throw new ArgumentOutOfRangeException ("charCount");
 
@@ -172,7 +169,7 @@ public abstract class Decoder
 	{
 		if (chars == null)
 			throw new ArgumentNullException ("chars");
-		if (charIndex < 0 || chars.Length < charIndex)
+		if (charIndex < 0 || chars.Length <= charIndex)
 			throw new ArgumentOutOfRangeException ("charIndex");
 	}
 
@@ -180,7 +177,7 @@ public abstract class Decoder
 	{
 		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
-		if (byteIndex < 0)
+		if (byteIndex < 0 || bytes.Length <= byteIndex)
 			throw new ArgumentOutOfRangeException ("byteIndex");
 		if (byteCount < 0 || bytes.Length < byteIndex + byteCount)
 			throw new ArgumentOutOfRangeException ("byteCount");

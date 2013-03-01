@@ -104,17 +104,19 @@ namespace MonoTests.System.Xml
 
 #if NET_4_5
 		[Test]
+		[Category("Async")]
 		public void TestAsync ()
 		{
 			var loc = Assembly.GetExecutingAssembly ().Location;
 			Uri resolved = resolver.ResolveUri (null, loc);
 			Assert.AreEqual ("file", resolved.Scheme);
 			var task = resolver.GetEntityAsync (resolved, null, typeof (Stream));
-			Assert.IsTrue (task.Wait (3000));
-			Assert.IsTrue (task.Result is Stream);
+			Assert.That (task.Wait (3000));
+			Assert.IsInstanceOfType (typeof (Stream), task.Result);
 		}
 
 		[Test]
+		[Category("Async")]
 		public void TestAsyncError ()
 		{
 			var loc = Assembly.GetExecutingAssembly ().Location;
@@ -127,7 +129,7 @@ namespace MonoTests.System.Xml
 			} catch (Exception ex) {
 				if (ex is AggregateException)
 					ex = ((AggregateException) ex).InnerException;
-				Assert.IsTrue (ex is XmlException);
+				Assert.IsInstanceOfType (typeof (XmlException), ex);
 			}
 		}
 #endif
