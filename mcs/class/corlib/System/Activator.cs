@@ -278,8 +278,11 @@ namespace System
 			}
 
 			CheckAbstractType (type);
-#if !MOBILE
+
 			if (activationAttributes != null && activationAttributes.Length > 0) {
+#if MOBILE
+				throw new NotSupportedException ("Activation attributes are not supported");
+#else
 				if (!type.IsMarshalByRef) {
 					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
 					throw new NotSupportedException (msg);
@@ -290,8 +293,9 @@ namespace System
 					ctor.Invoke (newOb, bindingAttr, binder, args, culture);
 					return newOb;
 				}
-			}
 #endif
+			}
+
 			return ctor.Invoke (bindingAttr, binder, args, culture);
 		}
 
