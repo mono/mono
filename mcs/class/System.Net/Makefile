@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Net.dll
-LIB_MCS_FLAGS =  -unsafe -r:System.dll -r:System.Core.dll -r:System.Xml.dll -d:NET_2_1 -d:NET_2_0 -d:NET_1_1
+LIB_MCS_FLAGS =  -unsafe -r:System.dll -r:System.Core.dll -r:System.Xml.dll
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
