@@ -50,7 +50,7 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public partial class Assembly : ICustomAttributeProvider, _Assembly {
+	public partial class Assembly : ICustomAttributeProvider {
 #elif NET_4_0
 	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #else
@@ -458,12 +458,14 @@ namespace System.Reflection {
 			return LoadFrom (fullName);
 		}
 
+#if !MOBILE
 		Type _Assembly.GetType ()
 		{
 			// Required or object::GetType becomes virtual final
 			return base.GetType ();
 		}		
-		
+#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static Assembly LoadFrom (String assemblyFile, bool refonly);
 

@@ -49,8 +49,12 @@ namespace System {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Type))]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public abstract class Type : MemberInfo, IReflect {
+#else
 	public abstract class Type : MemberInfo, IReflect, _Type {
-		
+#endif
+
 		internal RuntimeTypeHandle _impl;
 
 		public static readonly char Delimiter = '.';
@@ -1673,6 +1677,7 @@ namespace System {
 			}
 		}
 
+#if !MOBILE
 		void _Type.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1692,5 +1697,6 @@ namespace System {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

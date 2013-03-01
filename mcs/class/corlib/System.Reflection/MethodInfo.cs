@@ -37,8 +37,11 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_MethodInfo))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class MethodInfo: MethodBase {
+#else
 	public abstract class MethodInfo: MethodBase, _MethodInfo {
-
+#endif
 		public abstract MethodInfo GetBaseDefinition();
 
 		internal virtual MethodInfo GetBaseMethod ()
@@ -58,6 +61,7 @@ namespace System.Reflection {
 
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
 
+#if !MOBILE
 		void _MethodInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -83,6 +87,7 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[ComVisible (true)]
 		public virtual MethodInfo GetGenericMethodDefinition ()

@@ -122,7 +122,11 @@ namespace System.Threading {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Thread))]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public sealed class Thread : CriticalFinalizerObject {
+#else
 	public sealed class Thread : CriticalFinalizerObject, _Thread {
+#endif
 #pragma warning disable 414		
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
@@ -1008,6 +1012,7 @@ namespace System.Threading {
 			ExecutionContext.SecurityContext.CompressedStack = stack;
 		}
 
+#if !MOBILE
 		void _Thread.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1028,5 +1033,6 @@ namespace System.Threading {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

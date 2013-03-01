@@ -59,13 +59,13 @@ using System.Text;
 namespace System {
 
 	[ComVisible (true)]
-#if !NET_2_1
+#if !MOBILE
 	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_2_1
-	public sealed class AppDomain : MarshalByRefObject, _AppDomain {
+#if MOBILE
+	public sealed class AppDomain : MarshalByRefObject {
 #else
 	public sealed class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
 #endif
@@ -1520,7 +1520,7 @@ namespace System {
 			return GetAssemblies (true);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		void _AppDomain.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();

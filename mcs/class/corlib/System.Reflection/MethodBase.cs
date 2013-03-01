@@ -42,8 +42,11 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_MethodBase))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class MethodBase: MemberInfo {
+#else
 	public abstract class MethodBase: MemberInfo, _MethodBase {
-
+#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static MethodBase GetCurrentMethod ();
 
@@ -277,6 +280,7 @@ namespace System.Reflection {
 		}
 #endif
 
+#if !MOBILE
 		void _MethodBase.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -302,5 +306,6 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

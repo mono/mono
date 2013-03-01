@@ -38,8 +38,11 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_FieldInfo))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class FieldInfo : MemberInfo {
+#else
 	public abstract class FieldInfo : MemberInfo, _FieldInfo {
-
+#endif
 		public abstract FieldAttributes Attributes {get;}
 		public abstract RuntimeFieldHandle FieldHandle {get;}
 
@@ -291,6 +294,8 @@ namespace System.Reflection {
 			}
 		}
 #endif
+
+#if !MOBILE
 		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -316,5 +321,6 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

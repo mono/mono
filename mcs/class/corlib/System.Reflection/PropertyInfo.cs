@@ -38,8 +38,11 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_PropertyInfo))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class PropertyInfo : MemberInfo {
+#else
 	public abstract class PropertyInfo : MemberInfo, _PropertyInfo {
-
+#endif
 		public abstract PropertyAttributes Attributes { get; }
 		public abstract bool CanRead { get; }
 		public abstract bool CanWrite { get; }
@@ -174,6 +177,7 @@ namespace System.Reflection {
 		}
 #endif
 
+#if !MOBILE
 		void _PropertyInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -199,5 +203,6 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

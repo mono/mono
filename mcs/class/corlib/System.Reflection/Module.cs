@@ -48,7 +48,9 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_4_0
+#if MOBILE
+	public abstract class Module : ISerializable, ICustomAttributeProvider {
+#elif NET_4_0
 	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else
 	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
@@ -263,6 +265,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 
+#if !MOBILE
 		void _Module.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -283,6 +286,7 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 #if NET_4_0
 		public override bool Equals (object o)
