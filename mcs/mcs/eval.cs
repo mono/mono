@@ -455,6 +455,9 @@ namespace Mono.CSharp
 		{
 			Tokenizer tokenizer = new Tokenizer (seekable, source_file, new ParserSession ());
 			
+			// Prefer contextual block keywords over identifiers
+			tokenizer.parsing_block++;
+
 			int t = tokenizer.token ();
 			switch (t){
 			case Token.EOF:
@@ -586,6 +589,7 @@ namespace Mono.CSharp
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
+				parser.Lexer.parsing_block++;
 				ctx.Settings.StatementMode = true;
 			} else {
 				parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
