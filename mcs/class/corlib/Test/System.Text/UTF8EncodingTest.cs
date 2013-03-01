@@ -1164,5 +1164,15 @@ namespace MonoTests.System.Text
 			}
 		}
 #endif
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Bug10788()
+		{
+			byte[] bytes = new byte[4096];
+			char[] chars = new char[10];
+
+			Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 4096, chars, 9, false);
+		}
 	}
 }
