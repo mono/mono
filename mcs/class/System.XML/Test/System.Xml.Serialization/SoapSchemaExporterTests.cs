@@ -7,6 +7,8 @@
 // (C) 2005 Novell
 // 
 
+#if !MOBILE
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -1159,3 +1161,5 @@ namespace MonoTests.System.XmlSerialization
 		}
 	}
 }
+
+#endif

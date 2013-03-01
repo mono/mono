@@ -907,7 +907,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull ((double?) new XElement (m), "m:double?:null");
 			Assert.AreEqual (double.NegativeInfinity, ((double?) new XElement (m)).Value, "m:double?:value");
 			Assert.IsNotNull ((double?) new XElement (n), "n:double?:null");
-			Assert.IsNaN (((double?) new XElement (n)).Value, "n:double?:value");
+			Assert.AreEqual (double.NaN, ((double?) new XElement (n)).Value, "n:double?:value");
 			Assert.IsNotNull ((float?) new XElement (a), "a:float?:null");
 			Assert.AreEqual (7f, ((float?) new XElement (a)).Value, "a:float?:value");
 			Assert.IsNotNull ((float?) new XElement (b), "b:float?:null");
@@ -929,7 +929,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull ((float?) new XElement (m), "m:float?:null");
 			Assert.AreEqual (float.NegativeInfinity, ((float?) new XElement (m)).Value, "m:float?:value");
 			Assert.IsNotNull ((float?) new XElement (n), "n:float?:null");
-			Assert.IsNaN (((float?) new XElement (n)).Value, "n:float?:value");
+			Assert.AreEqual (float.NaN, ((float?) new XElement (n)).Value, "n:float?:value");
 			AssertThrows<FormatException> (() => { Guid? z = (Guid?) new XElement (a); }, "a:Guid?");
 			AssertThrows<FormatException> (() => { Guid? z = (Guid?) new XElement (b); }, "b:Guid?");
 			AssertThrows<FormatException> (() => { Guid? z = (Guid?) new XElement (c); }, "c:Guid?");
@@ -1085,7 +1085,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (double.PositiveInfinity, (double) new XElement (i), "i:double");
 			Assert.AreEqual (double.NegativeInfinity, (double) new XElement (M), "M:double");
 			Assert.AreEqual (double.NegativeInfinity, (double) new XElement (m), "m:double");
-			Assert.IsNaN (((double) new XElement (n)), "n:double");
+			Assert.AreEqual (double.NaN, ((double) new XElement (n)), "n:double");
 			Assert.AreEqual (7f, (float) new XElement (a), "a:float");
 			Assert.AreEqual (42f, (float) new XElement (b), "b:float");
 			Assert.AreEqual (13f, (float) new XElement (c), "c:float");
@@ -1096,7 +1096,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (float.PositiveInfinity, (float) new XElement (i), "i:float");
 			Assert.AreEqual (float.NegativeInfinity, (float) new XElement (M), "M:float");
 			Assert.AreEqual (float.NegativeInfinity, (float) new XElement (m), "m:float");
-			Assert.IsNaN (((float) new XElement (n)), "n:float");
+			Assert.AreEqual (float.NaN, ((float) new XElement (n)), "n:float");
 			AssertThrows<FormatException> (() => { Guid z = (Guid) new XElement (a); }, "a:Guid");
 			AssertThrows<FormatException> (() => { Guid z = (Guid) new XElement (b); }, "b:Guid");
 			AssertThrows<FormatException> (() => { Guid z = (Guid) new XElement (c); }, "c:Guid");

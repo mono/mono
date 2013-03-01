@@ -173,6 +173,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestSimpleMutualImport ()
 		{
 			XmlReader r = new XmlTextReader ("Test/XmlFiles/xsd/inter-inc-1.xsd");

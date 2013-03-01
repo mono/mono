@@ -8,6 +8,8 @@
 // (C) 2006 Novell
 // 
 
+#if !MOBILE
+
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -1304,3 +1306,5 @@ namespace MonoTests.System.XmlSerialization
 		}
 	}
 }
+
+#endif
