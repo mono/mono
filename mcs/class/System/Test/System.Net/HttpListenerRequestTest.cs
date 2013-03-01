@@ -187,5 +187,18 @@ namespace MonoTests.System.Net
 			Assert.AreEqual ("/RequestUriDecodeTest/?a=b&c=d%26e", request.Url.PathAndQuery);
 			listener.Close ();
 		}
+		
+		[Test]
+		public void HttpRequestIgnoreBadCookies ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener (
+				"http://127.0.0.1:9000/HttpRequestIgnoreBadCookiesTest/");
+			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "GET /HttpRequestIgnoreBadCookiesTest/?a=b HTTP/1.1\r\nHost: 127.0.0.1\r\nCookie: ELOQUA=GUID=5ca2346347357f4-f877-4eff-96aa-70fe0b677650; ELQSTATUS=OK; WRUID=609099666.123259461695; CommunityServer-UserCookie2101=lv=Thu, 26 Jul 2012 15:25:11 GMT&mra=Mon, 01 Oct 2012 17:40:05 GMT; PHPSESSID=1234dg3opfjb4qafp0oo645; __utma=9761706.1153317537.1357240270.1357240270.1357317902.2; __utmb=9761706.6.10.1357317902; __utmc=9761706; __utmz=9761706.1357240270.1.1.utmcsr=test.testdomain.com|utmccn=(referral)|utmcmd=referral|utmcct=/test/1234\r\n\r\n");
+			HttpListenerContext ctx = listener.GetContext ();
+			HttpListenerRequest request = ctx.Request;
+			Assert.AreEqual ("/HttpRequestIgnoreBadCookiesTest/?a=b", request.Url.PathAndQuery);
+			listener.Close ();
+		}
 	}
 }
