@@ -663,7 +663,7 @@ fail_no_space:
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 		}
 
-		if (charIndex == chars.Length)
+		if (charIndex == chars.Length && byteCount == 0)
 			return 0;
 
 		fixed (char* cptr = chars) {
