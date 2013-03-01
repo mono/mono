@@ -65,14 +65,24 @@ namespace System
 		string shadow_copy_files;
 		bool publisher_policy;
 		private bool path_changed;
+#if MOBILE
+		private int loader_optimization;
+#else
 		private LoaderOptimization loader_optimization;
+#endif
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
+#if MOBILE
+		object _activationArguments;
+		object domain_initializer;
+		object application_trust;
+#else
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
 		ApplicationTrust application_trust;
+#endif
 		string [] domain_initializer_args;
 
 		bool disallow_appbase_probe;
@@ -220,10 +230,14 @@ namespace System
 		[MonoLimitation ("In Mono this is controlled by the --share-code flag")]
 		public LoaderOptimization LoaderOptimization {
 			get {
-				return loader_optimization;
+				return (LoaderOptimization)loader_optimization;
 			}
 			set {
+#if MOBILE
+				loader_optimization = (int)value;
+#else
 				loader_optimization = value;
+#endif
 			}
 		}
 
@@ -286,9 +300,9 @@ namespace System
 		public ActivationArguments ActivationArguments {
 			get {
 				if (_activationArguments != null)
-					return _activationArguments;
+					return (ActivationArguments)_activationArguments;
 				DeserializeNonPrimitives ();
-				return _activationArguments;
+				return (ActivationArguments)_activationArguments;
 			}
 			set { _activationArguments = value; }
 		}
@@ -297,9 +311,9 @@ namespace System
 		public AppDomainInitializer AppDomainInitializer {
 			get {
 				if (domain_initializer != null)
-					return domain_initializer;
+					return (AppDomainInitializer)domain_initializer;
 				DeserializeNonPrimitives ();
-				return domain_initializer;
+				return (AppDomainInitializer)domain_initializer;
 			}
 			set { domain_initializer = value; }
 		}
@@ -314,11 +328,11 @@ namespace System
 		public ApplicationTrust ApplicationTrust {
 			get {
 				if (application_trust != null)
-					return application_trust;
+					return (ApplicationTrust)application_trust;
 				DeserializeNonPrimitives ();
 				if (application_trust == null)
 					application_trust = new ApplicationTrust ();
-				return application_trust;
+				return (ApplicationTrust)application_trust;
 			}
 			set { application_trust = value; }
 		}
