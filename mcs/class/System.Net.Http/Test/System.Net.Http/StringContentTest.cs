@@ -61,9 +61,10 @@ namespace MonoTests.System.Net.Http
 
 			var s = new StringContent ("aaa", null, "multipart/*");
 			Assert.AreEqual ("Content-Type: multipart/*; charset=utf-8\r\n", s.Headers.ToString ());
-
+#if !MOBILE
 			s = new StringContent ("aaa", Encoding.GetEncoding (852), "multipart/*");
 			Assert.AreEqual ("Content-Type: multipart/*; charset=ibm852\r\n", s.Headers.ToString ());
+#endif
 		}
 
 		[Test]

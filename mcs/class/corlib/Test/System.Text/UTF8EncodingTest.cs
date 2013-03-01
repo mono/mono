@@ -1164,5 +1164,37 @@ namespace MonoTests.System.Text
 			}
 		}
 #endif
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Bug10788()
+		{
+			byte[] bytes = new byte[4096];
+			char[] chars = new char[10];
+
+			Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 4096, chars, 9, false);
+		}
+
+		[Test]
+		public void Bug10789()
+		{
+			byte[] bytes = new byte[4096];
+			char[] chars = new char[10];
+
+			try {
+				Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 1, chars, 10, false);
+				Assert.Fail ("ArgumentException is expected #1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 1, chars, 11, false);
+				Assert.Fail ("ArgumentOutOfRangeException is expected #2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			int charactersWritten = Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 0, chars, 10, false);
+			Assert.AreEqual (0, charactersWritten, "#3");
+		}
 	}
 }
