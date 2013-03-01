@@ -502,7 +502,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category ("NotOnMac")] // DontFragment doesn't work on Mac
+		[Category ("NotWorking")] // DontFragment doesn't work
 		public void DontFragmentChangeTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -529,7 +529,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category ("NotOnMac")] // DontFragment doesn't work on Mac
+		[Category ("NotWorking")] // DontFragment doesn't work
 		public void DontFragmentChangeUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
