@@ -171,6 +171,11 @@ namespace System.Globalization
 						int offset2, int length2,
 						CompareOptions options)
 		{
+			if (options == CompareOptions.Ordinal)
+				return string.CompareOrdinalUnchecked (str1, offset1, length1, str2, offset2, length2);
+			if (options == CompareOptions.OrdinalIgnoreCase)
+				return string.CompareOrdinalCaseInsensitiveUnchecked (str1, offset1, length1, str2, offset2, length2);
+
 			return UseManagedCollation ?
 				internal_compare_managed (str1, offset1, length1,
 				str2, offset2, length2, options) :
