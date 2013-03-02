@@ -251,12 +251,12 @@ namespace System {
 				      ref bool foundSign, ref bool negative)
 		{
 			if ((pos + nfi.NegativeSign.Length) <= s.Length &&
-				s.IndexOf (nfi.NegativeSign, pos, nfi.NegativeSign.Length) == pos) {
+				s.IndexOfOrdinalUnchecked (nfi.NegativeSign, pos, nfi.NegativeSign.Length) == pos) {
 				negative = true;
 				foundSign = true;
 				pos += nfi.NegativeSign.Length;
 			} else if ((pos + nfi.PositiveSign.Length) <= s.Length &&
-				s.IndexOf (nfi.PositiveSign, pos, nfi.PositiveSign.Length) == pos) {
+				s.IndexOfOrdinalUnchecked (nfi.PositiveSign, pos, nfi.PositiveSign.Length) == pos) {
 				negative = false;
 				pos += nfi.PositiveSign.Length;
 				foundSign = true;

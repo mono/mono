@@ -75,7 +75,7 @@ namespace System {
 				return false; // because m.Name cannot be null or empty
 			
 			if (name [name.Length - 1] == '*')
-				return m.Name.StartsWith (name.Substring (0, name.Length - 1), StringComparison.Ordinal);
+				return m.Name.StartsWithOrdinalUnchecked (name.Substring (0, name.Length - 1));
 			
 			return m.Name == name;
 		}
@@ -87,9 +87,9 @@ namespace System {
 				return false; // because m.Name cannot be null or empty
 				
 			if (name [name.Length - 1] == '*')
-				return m.Name.StartsWith (name.Substring (0, name.Length - 1), StringComparison.OrdinalIgnoreCase);
+				return m.Name.StartsWithOrdinalCaseInsensitiveUnchecked (name.Substring (0, name.Length - 1));
 			
-			return string.Equals (m.Name, name, StringComparison.OrdinalIgnoreCase);
+			return string.CompareOrdinalCaseInsensitiveUnchecked (m.Name, name) == 0;
 		}
 
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)

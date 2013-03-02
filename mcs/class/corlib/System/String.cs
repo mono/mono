@@ -828,7 +828,7 @@ namespace System
 		//
 		// Fastest method for internal case insensitive comparison
 		//
-		internal static int CompareOrdinalCaseInsensitive (string strA, string strB)
+		internal static int CompareOrdinalCaseInsensitiveUnchecked (string strA, string strB)
 		{
 			return CompareOrdinalCaseInsensitiveUnchecked (strA, 0, int.MaxValue, strB, 0, int.MaxValue);
 		}
@@ -1012,6 +1012,11 @@ namespace System
 			if (options == CompareOptions.Ordinal)
 				return IndexOfOrdinalUnchecked (value, startIndex, count);
 			return IndexOfOrdinalIgnoreCaseUnchecked (value, startIndex, count);
+		}
+
+		internal unsafe int IndexOfOrdinalUnchecked (string value)
+		{
+			return IndexOfOrdinalUnchecked (value, 0, length);
 		}
 
 		internal unsafe int IndexOfOrdinalUnchecked (string value, int startIndex, int count)
@@ -1651,13 +1656,23 @@ namespace System
 			case StringComparison.InvariantCultureIgnoreCase:
 				return CultureInfo.InvariantCulture.CompareInfo.IsPrefix (this, value, CompareOptions.IgnoreCase);
 			case StringComparison.Ordinal:
-				return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value, CompareOptions.Ordinal);
+				return StartsWithOrdinalUnchecked (value);
 			case StringComparison.OrdinalIgnoreCase:
-				return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value, CompareOptions.OrdinalIgnoreCase);
+				return StartsWithOrdinalCaseInsensitiveUnchecked (value);
 			default:
 				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
 				throw new ArgumentException (msg, "comparisonType");
 			}
+		}
+
+		internal bool StartsWithOrdinalUnchecked (string value)
+		{
+			return length >= value.length && CompareOrdinalUnchecked (this, 0, value.length, value, 0, value.length) == 0;
+		}
+
+		internal bool StartsWithOrdinalCaseInsensitiveUnchecked (string value)
+		{
+			return length >= value.Length && CompareOrdinalCaseInsensitiveUnchecked (this, 0, value.length, value, 0, value.length) == 0;
 		}
 
 		[ComVisible (false)]
