@@ -4276,6 +4276,7 @@ namespace MonoTests.System.Net.Sockets
 				if (File.Exists (temp))
 					File.Delete (temp);
 					
+				clientSocket.Close ();
 				serverSocket.Close ();
 			}
 		}
