@@ -506,6 +506,11 @@ namespace System.Reflection {
 		[DebuggerStepThrough]
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
+			return DoInvoke (obj, invokeAttr, binder, parameters, culture);
+		}
+
+		object DoInvoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) 
+		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 
@@ -552,7 +557,7 @@ namespace System.Reflection {
 		[DebuggerStepThrough]
 		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 		{
-			return Invoke (null, invokeAttr, binder, parameters, culture);
+			return DoInvoke (null, invokeAttr, binder, parameters, culture);
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
