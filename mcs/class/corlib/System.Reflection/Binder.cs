@@ -188,8 +188,15 @@ namespace System.Reflection
 						 * Find the corresponding parameter for each parameter name,
 						 * reorder types/modifiers array during the search.
 						 */
-						Type[] newTypes = (Type[])types.Clone ();
-						ParameterModifier[] newModifiers = modifiers != null ? (ParameterModifier[])modifiers.Clone () : null;
+						Type[] newTypes = new Type [types.Length];
+						Array.FastCopy (types, 0, newTypes, 0, types.Length);
+
+						ParameterModifier[] newModifiers = null;
+						if (modifiers != null) {
+							newModifiers = new ParameterModifier [modifiers.Length];
+							Array.FastCopy (modifiers, 0, newModifiers, 0, modifiers.Length);
+						}
+
 						for (i = 0; i < names.Length; ++i) {
 							/* Find the corresponding parameter */
 							int nindex = -1;
