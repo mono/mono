@@ -705,9 +705,6 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal virtual extern Module[] GetModulesInternal ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern string[] GetNamespaces ();
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern virtual String[] GetManifestResourceNames ();
