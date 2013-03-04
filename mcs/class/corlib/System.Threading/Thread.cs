@@ -990,14 +990,17 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		[Obsolete ("see CompressedStack class")]
-		public
-		CompressedStack GetCompressedStack ()
+		public CompressedStack GetCompressedStack ()
 		{
+#if MOBILE
+			throw new NotSupportedException ();
+#else			
 			// Note: returns null if no CompressedStack has been set.
 			// However CompressedStack.GetCompressedStack returns an 
 			// (empty?) CompressedStack instance.
 			CompressedStack cs = ExecutionContext.SecurityContext.CompressedStack;
 			return ((cs == null) || cs.IsEmpty ()) ? null : cs.CreateCopy ();
+#endif
 		}
 
 		// NOTE: This method doesn't show in the class library status page because
@@ -1006,10 +1009,13 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		[Obsolete ("see CompressedStack class")]
-		public
-		void SetCompressedStack (CompressedStack stack)
+		public void SetCompressedStack (CompressedStack stack)
 		{
+#if MOBILE
+			throw new NotSupportedException ();
+#else
 			ExecutionContext.SecurityContext.CompressedStack = stack;
+#endif
 		}
 
 #if !MOBILE

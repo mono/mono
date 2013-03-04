@@ -375,10 +375,12 @@ namespace System.Reflection {
 		[MonoTODO ("copiedName == true is not supported")]
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
+#if !MOBILE
 			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
 			if (SecurityManager.SecurityEnabled) {
 				GetCodeBase (true); // this will ensure the Demand is made
 			}
+#endif
 			return UnprotectedGetName ();
 		}
 
@@ -703,7 +705,6 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal virtual extern Module[] GetModulesInternal ();
-
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern string[] GetNamespaces ();
