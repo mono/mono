@@ -496,7 +496,7 @@ namespace System.Reflection {
 		}
 
 		/*
-		 * InternalInvoke() receives the parameters corretcly converted by the binder
+		 * InternalInvoke() receives the parameters correctly converted by the binder
 		 * to match the types of the method signature.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -504,8 +504,15 @@ namespace System.Reflection {
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
-		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
+		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) 
 		{
+			if (obj == null) {
+				if (!IsStatic)
+					throw new TargetException ("Instance constructor requires a target");
+			} else if (!DeclaringType.IsInstanceOfType (obj)) {
+				throw new TargetException ("Constructor does not match target type");				
+			}
+
 			return DoInvoke (obj, invokeAttr, binder, parameters, culture);
 		}
 

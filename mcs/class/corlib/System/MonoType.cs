@@ -389,22 +389,10 @@ namespace System
 				invokeAttr |= BindingFlags.Static|BindingFlags.Instance;
 
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = DefaultBinder;
+
 			if ((invokeAttr & BindingFlags.CreateInstance) != 0) {
-				/* the name is ignored */
-				invokeAttr |= BindingFlags.DeclaredOnly;
-				ConstructorInfo[] ctors = GetConstructors (invokeAttr);
-				object state = null;
-				MethodBase ctor = binder.BindToMethod (invokeAttr, ctors, ref args, modifiers, culture, namedParameters, out state);
-				if (ctor == null) {
-					if (this.IsValueType && args == null)
-						return Activator.CreateInstanceInternal (this);
-					
-					throw new MissingMethodException ("Constructor on type '" + FullName + "' not found.");
-				}
-				object result = ctor.Invoke (target, invokeAttr, binder, args, culture);
-				binder.ReorderArgumentArray (ref args, state);
-				return result;
+				return Activator.CreateInstance (this, invokeAttr, binder, args, culture);
 			}
 			if (name == String.Empty && Attribute.IsDefined (this, typeof (DefaultMemberAttribute))) {
 				DefaultMemberAttribute attr = (DefaultMemberAttribute) Attribute.GetCustomAttribute (this, typeof (DefaultMemberAttribute));
