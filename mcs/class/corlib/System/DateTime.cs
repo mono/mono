@@ -376,7 +376,7 @@ namespace System
 		DateTime (SerializationInfo info, StreamingContext context)
 		{
 			if (info.HasKey ("dateData")){
-				encoded = info.GetInt64 ("dateData");
+				encoded = (Int64)info.GetUInt64 ("dateData");
 			} else if (info.HasKey ("ticks")){
 				encoded = info.GetInt64 ("ticks") & TicksMask;
 			} else {
@@ -2186,7 +2186,7 @@ namespace System
 			info.AddValue ("ticks", t);
 
 			// This is the new .NET format, encodes the kind on the top bits
-			info.AddValue ("dateData", encoded);
+			info.AddValue ("dateData", (UInt64)encoded);
 		}
 		
 #if MONOTOUCH
