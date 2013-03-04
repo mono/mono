@@ -85,7 +85,7 @@ namespace System.Net
 		public virtual Uri ResponseUri {		
 			get { throw new NotSupportedException (); }
 		}		
-#if NET_4_5
+#if NET_4_0
 		[MonoTODO ("for portable library support")]
 		public virtual bool SupportsHeaders {
 			get { throw new NotImplementedException (); }

@@ -559,9 +559,9 @@ namespace System.Net
 		internal ServicePoint ServicePointNoLock {
 			get { return servicePoint; }
 		}
-#if NET_4_5
+#if NET_4_0
 		[MonoTODO ("for portable library support")]
-		public bool SupportsCookieContainer { 
+		public virtual bool SupportsCookieContainer { 
 			get {
 				throw new NotImplementedException ();
 			}
