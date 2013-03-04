@@ -1054,7 +1054,10 @@ namespace System.Net.Sockets
 				throw new FileNotFoundException ();
 
 			SendFileHandler d = new SendFileHandler (SendFile);
-			return new SendFileAsyncResult (d, d.BeginInvoke (fileName, preBuffer, postBuffer, flags, callback, state));
+			return new SendFileAsyncResult (d, d.BeginInvoke (fileName, preBuffer, postBuffer, flags, ar => {
+				SendFileAsyncResult sfar = new SendFileAsyncResult (d, ar);
+				callback (sfar);
+			}, state));
 		}
 
 		public IAsyncResult BeginSendTo(byte[] buffer, int offset,
