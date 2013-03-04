@@ -39,8 +39,7 @@ namespace System.Web.Util {
 		
 		internal static string ToUtcTimeString (DateTime dt)
 		{
-			return dt.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ",
-				Helpers.InvariantCulture) + "GMT";
+			return dt.ToUniversalTime ().ToString ("R", DateTimeFormatInfo.InvariantInfo);
 		}
 	}
 }
