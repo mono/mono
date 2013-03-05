@@ -5,6 +5,7 @@ System.Runtime.Serialization/DataContractAttribute.cs
 System.Runtime.Serialization/DataContractResolver.cs
 System.Runtime.Serialization/DataContractSerializer.cs
 System.Runtime.Serialization/DataMemberAttribute.cs
+System.Runtime.Serialization/DateTimeFormat.cs
 System.Runtime.Serialization/EnumMemberAttribute.cs
 System.Runtime.Serialization/ExportOptions.cs
 System.Runtime.Serialization/ExtensionDataObject.cs
