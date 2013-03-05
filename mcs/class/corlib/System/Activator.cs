@@ -306,20 +306,15 @@ namespace System
 			if (type.ContainsGenericParameters)
 				throw new ArgumentException (type + " is an open generic type", "type");
 
-			CheckAbstractType (type);
+			MonoType monoType = type.UnderlyingSystemType as MonoType;
+			if (monoType == null)
+				throw new ArgumentException ("Type must be a type provided by the runtime");
 
-			ConstructorInfo ctor;
-			MonoType monoType = type as MonoType;
+			CheckAbstractType (monoType);
 
-			if (monoType != null) {
-				ctor = monoType.GetDefaultConstructor ();
-				if (!nonPublic && ctor != null && !ctor.IsPublic)
-					ctor = null;
-			} else {
-				BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-				if (nonPublic)
-					flags |= BindingFlags.NonPublic;
-				ctor = type.GetConstructor (flags, null, CallingConventions.Any, Type.EmptyTypes, null);
+			var ctor = monoType.GetDefaultConstructor ();
+			if (!nonPublic && ctor != null && !ctor.IsPublic) {
+				ctor = null;
 			}
 
 			if (ctor == null) {
