@@ -1761,6 +1761,13 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidFilterCriteriaException))]
+		public void FilterAttribute_Invalid ()
+		{
+			Type.FilterAttribute (MethodBase.GetCurrentMethod (), (byte) 1);
+		}
+
+		[Test]
 		public void GenericParameterMemberType ()
 		{
 			var t = typeof (Foo<>).GetGenericArguments () [0];

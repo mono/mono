@@ -94,7 +94,10 @@ namespace System {
 
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)
 		{
-			int flags = ((IConvertible)filterCriteria).ToInt32 (null);
+			if (!(filterCriteria is int))
+				throw new InvalidFilterCriteriaException ("Int32 value is expected for filter criteria");
+
+			int flags = (int) filterCriteria;
 			if (m is MethodInfo)
 				return ((int)((MethodInfo)m).Attributes & flags) != 0;
 			if (m is FieldInfo)
