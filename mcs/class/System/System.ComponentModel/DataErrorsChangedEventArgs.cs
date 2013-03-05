@@ -29,13 +29,13 @@
 #if NET_4_5
 
 namespace System.ComponentModel {
-        public sealed class DataErrorsChangedEventArgs : EventArgs {
+        public class DataErrorsChangedEventArgs : EventArgs {
                 public DataErrorsChangedEventArgs (string propertyName)
                 {
                         this.PropertyName = propertyName;
                 }
 
-                public string PropertyName { get; private set; }
+                public virtual string PropertyName { get; private set; }
         }
 }
 
