@@ -61,13 +61,11 @@ namespace Cairo
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (handle == IntPtr.Zero)
-				return;
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<FontFace> (handle, disposing);
 
-			if (!disposing) {
-				Console.Error.WriteLine ("Cairo.FontFace: called from finalization thread, programmer is missing a call to Dispose");
+			if (!disposing|| handle == IntPtr.Zero)
 				return;
-			}
 
 			NativeMethods.cairo_font_face_destroy (handle);
 			handle = IntPtr.Zero;
@@ -77,6 +75,8 @@ namespace Cairo
 		public FontFace (IntPtr handle)
 		{
 			this.handle = handle;
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (handle);
 		}
 
 		public IntPtr Handle {

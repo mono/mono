@@ -35,11 +35,13 @@ namespace Cairo {
 		internal ScaledFont (IntPtr handle)
 		{
 			this.handle = handle;
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (handle);
 		}
 
 		public ScaledFont (FontFace fontFace, Matrix matrix, Matrix ctm, FontOptions options)
+			: this (NativeMethods.cairo_scaled_font_create (fontFace.Handle, matrix, ctm, options.Handle))
 		{
-			handle = NativeMethods.cairo_scaled_font_create (fontFace.Handle, matrix, ctm, options.Handle);
 		}
 
 		~ScaledFont ()
@@ -99,13 +101,11 @@ namespace Cairo {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (handle == IntPtr.Zero)
-				return;
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<ScaledFont> (handle, disposing);
 
-			if (!disposing) {
-				Console.Error.WriteLine ("Cairo.ScaledFont: called from finalization thread, programmer is missing a call to Dispose");
+			if (!disposing|| handle == IntPtr.Zero)
 				return;
-			}
 
 			NativeMethods.cairo_scaled_font_destroy (handle);
 			handle = IntPtr.Zero;

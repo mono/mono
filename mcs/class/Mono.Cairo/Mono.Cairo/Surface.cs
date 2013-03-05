@@ -43,6 +43,7 @@ namespace Cairo {
 		protected static Hashtable surfaces = new Hashtable ();
                 internal IntPtr surface = IntPtr.Zero;
 
+		[Obsolete]
 		protected Surface()
 		{
 		}
@@ -55,6 +56,8 @@ namespace Cairo {
 			}
 			if (!owns)
 				NativeMethods.cairo_surface_reference (ptr);
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (ptr);
                 }
 
 		static internal Surface LookupExternalSurface (IntPtr p)
@@ -147,13 +150,12 @@ namespace Cairo {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (surface == IntPtr.Zero)
-				return;
-			if (!disposing) {
-				Console.Error.WriteLine ("Cairo.Surface: called from finalization thread, programmer is missing a call to Dispose");
-				return;
-			}
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<Surface> (surface, disposing);
 			
+			if (!disposing|| surface == IntPtr.Zero)
+				return;
+
 			lock (surfaces.SyncRoot)
 				surfaces.Remove (surface);
 

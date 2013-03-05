@@ -41,6 +41,49 @@ using Cairo;
 
 namespace Cairo {
 
+	static class CairoDebug
+	{
+		static System.Collections.Generic.Dictionary<IntPtr,string> traces;
+
+		public static readonly bool Enabled;
+
+		static CairoDebug ()
+		{
+			var dbg = Environment.GetEnvironmentVariable ("MONO_CAIRO_DEBUG_DISPOSE");
+			if (dbg == null)
+				return;
+			Enabled = true;
+			traces = new System.Collections.Generic.Dictionary<IntPtr,string> ();
+		}
+
+		public static void OnAllocated (IntPtr obj)
+		{
+			if (!Enabled)
+				throw new InvalidOperationException ();
+
+			traces.Add (obj, Environment.StackTrace);
+		}
+
+		public static void OnDisposed<T> (IntPtr obj, bool disposing)
+		{
+			if (disposing && !Enabled)
+				throw new InvalidOperationException ();
+
+			if (!disposing) {
+				Console.Error.WriteLine ("{0} is leaking, programmer is missing a call to Dispose", typeof(T).FullName);
+				if (Enabled) {
+					Console.Error.WriteLine ("Allocated from:");
+					Console.Error.WriteLine (traces[obj]);
+				} else {
+					Console.Error.WriteLine ("Set MONO_CAIRO_DEBUG_DISPOSE to track allocation traces");
+				}
+			}
+
+			if (Enabled)
+				traces.Remove (obj);
+		}
+	}
+
         public struct Point
         {		
 		public Point (int x, int y)
@@ -188,6 +231,8 @@ namespace Cairo {
 		public Context (IntPtr state)
 		{
 			this.state = state;
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (state);
 		}
 		
 		~Context ()
@@ -203,12 +248,10 @@ namespace Cairo {
 		
                 protected virtual void Dispose (bool disposing)
                 {
-			if (!disposing){
-				Console.Error.WriteLine ("Cairo.Context: called from finalization thread, programmer is missing a call to Dispose");
-				return;
-			}
-			
-			if (state == IntPtr.Zero)
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<Context> (state, disposing);
+
+			if (!disposing|| state == IntPtr.Zero)
 				return;
 
 			//Console.WriteLine ("Destroying");

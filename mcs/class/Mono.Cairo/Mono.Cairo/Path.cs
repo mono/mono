@@ -41,6 +41,8 @@ namespace Cairo {
 		internal Path (IntPtr handle)
 		{
 			this.handle = handle;
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (handle);
 		}
 
 		~Path ()
@@ -57,12 +59,10 @@ namespace Cairo {
 		
                 protected virtual void Dispose (bool disposing)
                 {
-			if (!disposing) {
-				Console.Error.WriteLine ("Cairo.Path: called from finalization thread, programmer is missing a call to Dispose");
-				return;
-			}
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<Path> (handle, disposing);
 			
-			if (handle == IntPtr.Zero)
+			if (!disposing|| handle == IntPtr.Zero)
 				return;
 
                         NativeMethods.cairo_path_destroy (handle);

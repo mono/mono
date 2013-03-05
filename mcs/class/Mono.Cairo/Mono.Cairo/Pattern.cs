@@ -66,12 +66,15 @@ namespace Cairo {
 
 		static Hashtable patterns = new Hashtable ();
 		
-		internal Pattern (IntPtr ptr)
+		internal Pattern (IntPtr handle)
 		{
 			lock (patterns){
 				patterns [ptr] = this;
 			}
-			pattern = ptr;
+
+			Handle = handle;
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (handle);
 		}
 
 		~Pattern ()
@@ -98,16 +101,14 @@ namespace Cairo {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (!disposing) {
-				Console.Error.WriteLine ("Cairo.Pattern: called from finalization thread, programmer is missing a call to Dispose");
-				return;
-			}
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<Pattern> (Handle, disposing);
 
-			if (pattern == IntPtr.Zero)
+			if (!disposing|| Handle == IntPtr.Zero)
 				return;
 
-			NativeMethods.cairo_pattern_destroy (pattern);
-			pattern = IntPtr.Zero;
+			NativeMethods.cairo_pattern_destroy (Handle);
+			Handle = IntPtr.Zero;
 			lock (patterns){
 				patterns.Remove (this);
 			}
@@ -116,7 +117,7 @@ namespace Cairo {
 		[Obsolete ("Use Dispose()")]
                 public void Destroy ()
                 {
-			Dispose ();
+			NativeMethods.cairo_pattern_destroy (pattern);
                 }
 		
 		public Status Status
@@ -142,6 +143,10 @@ namespace Cairo {
                         }
                 }
 
+		public IntPtr Handle {
+			get { return pattern; }
+			private set { pattern = value; }
+		}
                 public IntPtr Pointer {
                         get { return pattern; }
                 }		
