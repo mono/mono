@@ -34,7 +34,7 @@ namespace Cairo {
    
         public class Pattern : IDisposable
         {
-                protected IntPtr pattern = IntPtr.Zero;
+		protected IntPtr pattern = IntPtr.Zero;
 
 		internal static Pattern Lookup (IntPtr pattern)
 		{
@@ -76,6 +76,7 @@ namespace Cairo {
 
 		~Pattern ()
 		{
+			Dispose (false);
 		}
 		
                 [Obsolete ("Use the SurfacePattern constructor")]
@@ -92,24 +93,30 @@ namespace Cairo {
 		public void Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
-				Destroy ();
-			GC.SuppressFinalize (this);
-		}
-		
-                public void Destroy ()
-                {
-			if (pattern != IntPtr.Zero){
-				NativeMethods.cairo_pattern_destroy (pattern);
-				pattern = IntPtr.Zero;
+			if (!disposing) {
+				Console.Error.WriteLine ("Cairo.Pattern: called from finalization thread, programmer is missing a call to Dispose");
+				return;
 			}
+
+			if (pattern == IntPtr.Zero)
+				return;
+
+			NativeMethods.cairo_pattern_destroy (pattern);
+			pattern = IntPtr.Zero;
 			lock (patterns){
 				patterns.Remove (this);
 			}
+		}
+
+		[Obsolete ("Use Dispose()")]
+                public void Destroy ()
+                {
+			Dispose ();
                 }
 		
 		public Status Status

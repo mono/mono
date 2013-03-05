@@ -36,7 +36,7 @@ namespace Cairo {
 
         public class Path : IDisposable 
         {
-                internal IntPtr handle = IntPtr.Zero;
+		internal IntPtr handle = IntPtr.Zero;
 		
 		internal Path (IntPtr handle)
 		{
@@ -57,8 +57,8 @@ namespace Cairo {
 		
                 protected virtual void Dispose (bool disposing)
                 {
-			if (!disposing){
-				Console.Error.WriteLine ("Cairo.Context: called from finalization thread, programmer is missing a call to Dispose");
+			if (!disposing) {
+				Console.Error.WriteLine ("Cairo.Path: called from finalization thread, programmer is missing a call to Dispose");
 				return;
 			}
 			

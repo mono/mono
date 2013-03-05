@@ -149,6 +149,10 @@ namespace Cairo {
 		{
 			if (surface == IntPtr.Zero)
 				return;
+			if (!disposing) {
+				Console.Error.WriteLine ("Cairo.Surface: called from finalization thread, programmer is missing a call to Dispose");
+				return;
+			}
 			
 			lock (surfaces.SyncRoot)
 				surfaces.Remove (surface);

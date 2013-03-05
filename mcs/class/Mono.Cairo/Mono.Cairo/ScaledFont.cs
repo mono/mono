@@ -99,10 +99,16 @@ namespace Cairo {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing) {
-				NativeMethods.cairo_scaled_font_destroy (handle);
-				handle = IntPtr.Zero;
+			if (handle == IntPtr.Zero)
+				return;
+
+			if (!disposing) {
+				Console.Error.WriteLine ("Cairo.ScaledFont: called from finalization thread, programmer is missing a call to Dispose");
+				return;
 			}
+
+			NativeMethods.cairo_scaled_font_destroy (handle);
+			handle = IntPtr.Zero;
 		}
 		
                 protected void Reference ()

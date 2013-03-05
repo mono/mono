@@ -50,24 +50,27 @@ namespace Cairo
 
 		~FontFace ()
 		{
-			// Since Cairo is not thread safe, we can not unref the
-			// font_face here, the programmer must do this with Dispose
-
-			Console.Error.WriteLine ("Programmer forgot to call Dispose on the FontFace");
 			Dispose (false);
 		}
 
 		public void Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
-				NativeMethods.cairo_font_face_destroy (handle);
+			if (handle == IntPtr.Zero)
+				return;
+
+			if (!disposing) {
+				Console.Error.WriteLine ("Cairo.FontFace: called from finalization thread, programmer is missing a call to Dispose");
+				return;
+			}
+
+			NativeMethods.cairo_font_face_destroy (handle);
 			handle = IntPtr.Zero;
-			GC.SuppressFinalize (this);
 		}
 		
 		// TODO: make non-public when all entry points are complete in binding

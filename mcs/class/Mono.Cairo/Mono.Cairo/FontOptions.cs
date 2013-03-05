@@ -33,7 +33,6 @@ namespace Cairo
 	public class FontOptions : IDisposable
 	{
 		IntPtr handle;
-		bool disposed;
 
 		public FontOptions ()
 		{
@@ -55,9 +54,10 @@ namespace Cairo
 			return new FontOptions (NativeMethods.cairo_font_options_copy (handle));
 		}
 
+		[Obsolete ("Use Dispose()")]
 		public void Destroy ()
 		{
-			NativeMethods.cairo_font_options_destroy (handle);
+			Dispose ();
 		}
 
 		public void Dispose ()
@@ -66,13 +66,18 @@ namespace Cairo
 			GC.SuppressFinalize (this);
 		}
 
-		private void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
-			if (!disposed) {
-				Destroy ();
-				handle = IntPtr.Zero;
+			if (handle == IntPtr.Zero)
+				return;
+
+			if (!disposing) {
+				Console.Error.WriteLine ("Cairo.FontOptions: called from finalization thread, programmer is missing a call to Dispose");
+				return;
 			}
-			disposed = true;
+
+			NativeMethods.cairo_font_options_destroy (handle);
+			handle = IntPtr.Zero;
 		}
 
 		public static bool operator == (FontOptions options, FontOptions other)
