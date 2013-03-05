@@ -131,6 +131,13 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ChangeTypeOnDefaultBinder ()
+		{
+			binder.ChangeType (null, null, null);
+		}
+
+		[Test]
 		[ExpectedException (typeof (AmbiguousMatchException))]
 		public void AmbiguousProperty1 () // Bug 58381
 		{

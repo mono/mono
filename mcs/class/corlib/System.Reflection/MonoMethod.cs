@@ -206,8 +206,7 @@ namespace System.Reflection {
 
 			/*Avoid allocating an array every time*/
 			ParameterInfo[] pinfo = GetParametersInternal ();
-			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
-				throw new ArgumentException ("failed to convert parameters");
+			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
@@ -523,8 +522,7 @@ namespace System.Reflection {
 
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
-			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
-				throw new ArgumentException ("failed to convert parameters");
+			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
