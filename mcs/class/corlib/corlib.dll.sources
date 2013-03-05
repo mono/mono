@@ -1570,6 +1570,7 @@ System/ArraySegment.cs
 System/Comparison.cs
 System/Converter.cs
 System/Predicate.cs
+System/Progress.cs
 System.Collections.Generic/Comparer.cs
 
 System.Threading.Tasks/ConcurrentExclusiveSchedulerPair.cs
