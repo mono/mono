@@ -428,7 +428,7 @@ namespace Monodoc.Providers
 			}
 		}
 
-		public static Node FindNodeForCaption (List<Node> nodes, string caption)
+		public static Node FindNodeForCaption (IList<Node> nodes, string caption)
 		{
 			foreach (var node in nodes)
 				if (node.Caption.Equals (caption, StringComparison.OrdinalIgnoreCase))
