@@ -20,6 +20,9 @@ namespace Monodoc
 		bool loaded;
 		Node parent;
 		List<Node> nodes;
+#if LEGACY_MODE
+		ArrayList legacyNodes;
+#endif
 		Dictionary<string, Node> childrenLookup;
 		bool elementSort;
 		/* Address has three types of value, 
@@ -110,7 +113,9 @@ namespace Monodoc
 		[Obsolete ("Use ChildNodes")]
 		public ArrayList Nodes {
 			get {
-				return new ArrayList (ChildNodes);
+				if (legacyNodes == null)
+					legacyNodes = new ArrayList (ChildNodes as ICollection);
+				return legacyNodes;
 			}
 		}
 
