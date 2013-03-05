@@ -1,3 +1,4 @@
+Assembly/AssemblyInfo.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.PlatformServices/GlobalSuppressions.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.PlatformServices/Properties/AssemblyInfo.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.PlatformServices/Reactive/Concurrency/ConcurrencyAbstractionLayerImpl.Windows.cs
