@@ -529,6 +529,7 @@ System.Text.RegularExpressions/MatchCollection.cs
 System.Text.RegularExpressions/MatchEvaluator.cs
 System.Text.RegularExpressions/Regex.cs
 System.Text.RegularExpressions/RegexCompilationInfo.cs
+System.Text.RegularExpressions/RegexMatchTimeoutException.cs
 System.Text.RegularExpressions/RegexOptions.cs
 System.Text.RegularExpressions/RxInterpreter.cs
 System.Text.RegularExpressions/RxOp.cs

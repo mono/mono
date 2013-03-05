@@ -984,6 +984,7 @@ System.Text.RegularExpressions/parser.cs
 System.Text.RegularExpressions/quicksearch.cs
 System.Text.RegularExpressions/RegexCompilationInfo.cs
 System.Text.RegularExpressions/Regex.cs
+System.Text.RegularExpressions/RegexMatchTimeoutException.cs
 System.Text.RegularExpressions/RegexOptions.cs
 System.Text.RegularExpressions/RegexRunner.cs
 System.Text.RegularExpressions/RegexRunnerFactory.cs
