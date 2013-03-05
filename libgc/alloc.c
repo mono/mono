@@ -319,6 +319,69 @@ void GC_maybe_gc()
     }
 }
 
+#if defined(DARWIN) && defined(ARM32)
+
+#include <mach/mach_time.h>
+#include <mach/mach_init.h>
+#include <mach/thread_policy.h>
+#include <pthread.h>
+
+/* #define DEBUG_REALTIME 1 */
+
+void nanoseconds_to_absolutetime (uint64_t nanoseconds, uint64_t *abs_time)
+{
+    uint64_t absolutetime = 0;
+    static mach_timebase_info_data_t sTimeBaseInfo;
+
+    if (sTimeBaseInfo.denom == 0) {
+        mach_timebase_info(&sTimeBaseInfo);
+    }
+
+    *abs_time = nanoseconds * sTimeBaseInfo.denom / sTimeBaseInfo.numer;
+}
+
+static int set_realtime_mach (int period, int computation, int constraint) {
+    struct thread_time_constraint_policy ttcpolicy;
+    int ret;
+    uint64_t n_period, n_computation, n_constraint;
+    thread_port_t threadport = pthread_mach_thread_np(pthread_self());
+
+    nanoseconds_to_absolutetime(period, &n_period);
+    nanoseconds_to_absolutetime(computation, &n_computation);
+    nanoseconds_to_absolutetime(constraint, &n_constraint);
+
+    ttcpolicy.period = n_period; // HZ/160
+    ttcpolicy.computation = n_computation; // HZ/3300;
+    ttcpolicy.constraint = n_constraint; // HZ/2200;
+    ttcpolicy.preemptible = 0;
+
+    if ((ret=thread_policy_set(threadport,
+        THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&ttcpolicy,
+        THREAD_TIME_CONSTRAINT_POLICY_COUNT)) != KERN_SUCCESS) {
+#ifdef DEBUG_REALTIME
+            GC_printf0("set_realtime() failed.\n");
+#endif
+            return 0;
+    }
+#ifdef DEBUG_REALTIME
+    GC_printf0("set_realtime() 1  succeeded.\n");
+#endif
+    return 1;
+}
+
+static int set_realtime (int nanoseconds)
+{
+    return set_realtime_mach ((int)nanoseconds*1.2, nanoseconds, (int)nanoseconds*1.1);
+}
+
+#else
+
+static int set_realtime (int nanoseconds)
+{
+    return 0;
+}
+
+#endif
 
 /*
  * Stop the world garbage collection.  Assumes lock held, signals disabled.
@@ -349,6 +412,7 @@ GC_stop_func stop_func;
     	    GC_collect_a_little_inner(1);
     	}
     }
+    set_realtime (5000000);
     if (stop_func == GC_never_stop_func) GC_notify_full_gc();
 #   ifdef CONDPRINT
       if (GC_print_stats) {

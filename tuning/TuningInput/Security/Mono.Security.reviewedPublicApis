@@ -3,3 +3,6 @@ Mono.Security.X509.X509Stores Mono.Security.X509.X509StoreManager::get_CurrentUs
 Mono.Security.X509.X509Stores Mono.Security.X509.X509StoreManager::get_LocalMachine\(\)
 Mono.Security.X509.X509Store Mono.Security.X509.X509Stores::Open\(System.String,System.Boolean\)
 Mono.Security.Authenticode.PrivateKey Mono.Security.Authenticode.PrivateKey::CreateFromFile\(
+System.Boolean Mono.Security.StrongName::Sign\(System.String\)
+System.Byte\[\] Mono.Security.StrongName::Hash\(System.String\)
+System.Boolean Mono.Security.StrongName::Verify\(System.String\)

@@ -36,3 +36,4 @@ Microsoft.Win32
 +System\.Runtime\.InteropServices\.\w*Attribute
 +System\.Security\.Permissions\.ReflectionPermissionAttribute
 +System\.Security\.Permissions\.SecurityPermissionAttribute
++Mono\.Security\.StrongName

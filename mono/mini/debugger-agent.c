@@ -2203,7 +2203,7 @@ suspend_vm (void)
 
 	suspend_count ++;
 
-	DEBUG(1, fprintf (log_file, "[%p] Suspending vm...\n", (gpointer)GetCurrentThreadId ()));
+	DEBUG(1, fprintf (log_file, "[%p] (%d) Suspending vm...\n", (gpointer)GetCurrentThreadId (), suspend_count));
 
 	if (suspend_count == 1) {
 		// FIXME: Is it safe to call this inside the lock ?
@@ -2236,7 +2236,7 @@ resume_vm (void)
 	g_assert (suspend_count > 0);
 	suspend_count --;
 
-	DEBUG(1, fprintf (log_file, "[%p] Resuming vm...\n", (gpointer)GetCurrentThreadId ()));
+	DEBUG(1, fprintf (log_file, "[%p] (%d) Resuming vm...\n", (gpointer)GetCurrentThreadId (), suspend_count));
 
 	if (suspend_count == 0) {
 		// FIXME: Is it safe to call this inside the lock ?
@@ -2805,10 +2805,11 @@ emit_type_load (gpointer key, gpointer value, gpointer user_data)
  * LOCKING: Assumes the loader lock is held.
  */
 static GSList*
-create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo *ei, int *suspend_policy)
+create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo *ei, int *suspend_policy, gpointer arg)
 {
 	int i, j;
 	GSList *events = NULL;
+	MonoClass *klass = NULL;
 
 	*suspend_policy = SUSPEND_POLICY_NONE;
 
@@ -2817,6 +2818,8 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 
 	if (!reqs)
 		return NULL;
+
+	klass = ji ? ji->method->klass : (event == EVENT_KIND_TYPE_LOAD ? (MonoClass *)arg : NULL);
 
 	for (i = 0; i < reqs->len; ++i) {
 		EventRequest *req = g_ptr_array_index (reqs, i);
@@ -2846,14 +2849,14 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 						filtered = TRUE;
 					if (!ei->caught && !mod->uncaught)
 						filtered = TRUE;
-				} else if (mod->kind == MOD_KIND_ASSEMBLY_ONLY && ji) {
+				} else if (mod->kind == MOD_KIND_ASSEMBLY_ONLY && klass) {
 					int k;
 					gboolean found = FALSE;
 					MonoAssembly **assemblies = mod->data.assemblies;
 
 					if (assemblies) {
 						for (k = 0; assemblies [k]; ++k)
-							if (assemblies [k] == ji->method->klass->image->assembly)
+							if (assemblies [k] == klass->image->assembly)
 								found = TRUE;
 					}
 					if (!found)
@@ -3076,7 +3079,7 @@ process_profiler_event (EventKind event, gpointer arg)
 	GSList *events;
 
 	mono_loader_lock ();
-	events = create_event_list (event, NULL, NULL, NULL, &suspend_policy);
+	events = create_event_list (event, NULL, NULL, NULL, &suspend_policy, arg);
 	mono_loader_unlock ();
 
 	process_event (event, arg, 0, NULL, events, suspend_policy);
@@ -3880,11 +3883,11 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	}
 	
 	if (ss_reqs->len > 0)
-		ss_events = create_event_list (EVENT_KIND_STEP, ss_reqs, ji, NULL, &suspend_policy);
+		ss_events = create_event_list (EVENT_KIND_STEP, ss_reqs, ji, NULL, &suspend_policy, NULL);
 	if (bp_reqs->len > 0)
-		bp_events = create_event_list (EVENT_KIND_BREAKPOINT, bp_reqs, ji, NULL, &suspend_policy);
+		bp_events = create_event_list (EVENT_KIND_BREAKPOINT, bp_reqs, ji, NULL, &suspend_policy, NULL);
 	if (kind != EVENT_KIND_BREAKPOINT)
-		enter_leave_events = create_event_list (kind, NULL, ji, NULL, &suspend_policy);
+		enter_leave_events = create_event_list (kind, NULL, ji, NULL, &suspend_policy, NULL);
 
 	mono_loader_unlock ();
 
@@ -3898,7 +3901,7 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	if (ss_events)
 		process_event (EVENT_KIND_STEP, ji->method, 0, ctx, ss_events, suspend_policy);
 	if (bp_events)
-		process_event (kind, ji->method, 0, ctx, bp_events, suspend_policy);
+		process_event (kind, ji->method, sp ? sp->il_offset : 0, ctx, bp_events, suspend_policy);
 	if (enter_leave_events)
 		process_event (kind, ji->method, 0, ctx, enter_leave_events, suspend_policy);
 }
@@ -4098,7 +4101,7 @@ process_single_step_inner (DebuggerTlsData *tls, MonoContext *ctx)
 
 	g_ptr_array_add (reqs, ss_req->req);
 
-	events = create_event_list (EVENT_KIND_STEP, reqs, ji, NULL, &suspend_policy);
+	events = create_event_list (EVENT_KIND_STEP, reqs, ji, NULL, &suspend_policy, NULL);
 
 	g_ptr_array_free (reqs, TRUE);
 
@@ -4488,7 +4491,7 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 	}
 
 	mono_loader_lock ();
-	events = create_event_list (EVENT_KIND_EXCEPTION, NULL, ji, &ei, &suspend_policy);
+	events = create_event_list (EVENT_KIND_EXCEPTION, NULL, ji, &ei, &suspend_policy, NULL);
 	mono_loader_unlock ();
 
 	process_event (EVENT_KIND_EXCEPTION, &ei, 0, throw_ctx, events, suspend_policy);
@@ -5636,6 +5639,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else if (req->event_kind == EVENT_KIND_METHOD_EXIT) {
 			req->info = set_breakpoint (NULL, METHOD_EXIT_IL_OFFSET, req);
 		} else if (req->event_kind == EVENT_KIND_EXCEPTION) {
+		} else if (req->event_kind == EVENT_KIND_TYPE_LOAD) {
 		} else {
 			if (req->nmodifiers) {
 				g_free (req);
@@ -5650,7 +5654,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		buffer_add_int (buf, req->id);
 
 		/* This needs to be after the request was added to event_requests */
-		if (agent_config.defer && EVENT_KIND_TYPE_LOAD == req->event_kind)
+		if (agent_config.defer && !mono_is_debugger_attached () && EVENT_KIND_TYPE_LOAD == req->event_kind)
 			send_pending_type_load_events = TRUE;
 
 		break;
@@ -7018,7 +7022,226 @@ command_set_to_string (CommandSet command_set)
 	case CMD_SET_MODULE:
 		return "MODULE"; 
 	case CMD_SET_EVENT:
-		return "EVENT"; 
+		return "EVENT";
+	default:
+		return "";
+	}
+}
+
+static const char*
+command_to_string (CommandSet command_set, int command)
+{
+	switch (command_set) {
+	case CMD_SET_VM: {
+		switch ((CmdVM)command) {
+			case CMD_VM_VERSION:
+				return "CMD_VM_VERSION";
+			case CMD_VM_ALL_THREADS:
+				return "CMD_VM_ALL_THREADS";
+			case CMD_VM_SUSPEND:
+				return "CMD_VM_SUSPEND";
+			case CMD_VM_RESUME:
+				return "CMD_VM_RESUME";
+			case CMD_VM_EXIT:
+				return "CMD_VM_EXIT";
+			case CMD_VM_DISPOSE:
+				return "CMD_VM_DISPOSE";
+			case CMD_VM_INVOKE_METHOD:
+				return "CMD_VM_INVOKE_METHOD";
+			case CMD_VM_SET_PROTOCOL_VERSION:
+				return "CMD_VM_SET_PROTOCOL_VERSION";
+			case CMD_VM_ABORT_INVOKE:
+				return "CMD_VM_ABORT_INVOKE";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_OBJECT_REF: {
+		switch ((CmdObject)command) {
+			case CMD_OBJECT_REF_GET_TYPE:
+				return "CMD_OBJECT_REF_GET_TYPE";
+			case CMD_OBJECT_REF_GET_VALUES:
+				return "CMD_OBJECT_REF_GET_VALUES";
+			case CMD_OBJECT_REF_IS_COLLECTED:
+				return "CMD_OBJECT_REF_IS_COLLECTED";
+			case CMD_OBJECT_REF_GET_ADDRESS:
+				return "CMD_OBJECT_REF_GET_ADDRESS";
+			case CMD_OBJECT_REF_GET_DOMAIN:
+				return "CMD_OBJECT_REF_GET_DOMAIN";
+			case CMD_OBJECT_REF_SET_VALUES:
+				return "CMD_OBJECT_REF_SET_VALUES";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_STRING_REF: {
+		switch ((CmdString)command) {
+			case CMD_STRING_REF_GET_VALUE:
+				return "CMD_STRING_REF_GET_VALUE";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_THREAD: {
+		switch ((CmdThread)command) {
+			case CMD_THREAD_GET_NAME:
+				return "CMD_THREAD_GET_NAME";
+			case CMD_THREAD_GET_FRAME_INFO:
+				return "CMD_THREAD_GET_FRAME_INFO";
+			case CMD_THREAD_GET_STATE:
+				return "CMD_THREAD_GET_STATE";
+			case CMD_THREAD_GET_INFO:
+				return "CMD_THREAD_GET_INFO";
+			case CMD_THREAD_GET_ID:
+				return "CMD_THREAD_GET_ID";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_ARRAY_REF: {
+		switch ((CmdArray)command) {
+			case CMD_ARRAY_REF_GET_LENGTH:
+				return "CMD_ARRAY_REF_GET_LENGTH";
+			case CMD_ARRAY_REF_GET_VALUES:
+				return "CMD_ARRAY_REF_GET_VALUES";
+			case CMD_ARRAY_REF_SET_VALUES:
+				return "CMD_ARRAY_REF_SET_VALUES";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_EVENT_REQUEST: {
+		switch ((CmdEvent)command) {
+			case CMD_EVENT_REQUEST_SET:
+				return "CMD_EVENT_REQUEST_SET";
+			case CMD_EVENT_REQUEST_CLEAR:
+				return "CMD_EVENT_REQUEST_CLEAR";
+			case CMD_EVENT_REQUEST_CLEAR_ALL_BREAKPOINTS:
+				return "CMD_EVENT_REQUEST_CLEAR_ALL_BREAKPOINTS";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_STACK_FRAME: {
+		switch ((CmdStackFrame)command) {
+			case CMD_STACK_FRAME_GET_VALUES:
+				return "CMD_STACK_FRAME_GET_VALUES";
+			case CMD_STACK_FRAME_GET_THIS:
+				return "CMD_STACK_FRAME_GET_THIS";
+			case CMD_STACK_FRAME_SET_VALUES:
+				return "CMD_STACK_FRAME_SET_VALUES";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_APPDOMAIN: {
+		switch ((CmdAppDomain)command) {
+			case CMD_APPDOMAIN_GET_ROOT_DOMAIN:
+				return "CMD_APPDOMAIN_GET_ROOT_DOMAIN";
+			case CMD_APPDOMAIN_GET_FRIENDLY_NAME:
+				return "CMD_APPDOMAIN_GET_FRIENDLY_NAME";
+			case CMD_APPDOMAIN_GET_ASSEMBLIES:
+				return "CMD_APPDOMAIN_GET_ASSEMBLIES";
+			case CMD_APPDOMAIN_GET_ENTRY_ASSEMBLY:
+				return "CMD_APPDOMAIN_GET_ENTRY_ASSEMBLY";
+			case CMD_APPDOMAIN_CREATE_STRING:
+				return "CMD_APPDOMAIN_CREATE_STRING";
+			case CMD_APPDOMAIN_GET_CORLIB:
+				return "CMD_APPDOMAIN_GET_CORLIB";
+			case CMD_APPDOMAIN_CREATE_BOXED_VALUE:
+				return "CMD_APPDOMAIN_CREATE_BOXED_VALUE";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_ASSEMBLY: {
+		switch ((CmdAssembly)command) {
+			case CMD_ASSEMBLY_GET_LOCATION:
+				return "CMD_ASSEMBLY_GET_LOCATION";
+			case CMD_ASSEMBLY_GET_ENTRY_POINT:
+				return "CMD_ASSEMBLY_GET_ENTRY_POINT";
+			case CMD_ASSEMBLY_GET_MANIFEST_MODULE:
+				return "CMD_ASSEMBLY_GET_MANIFEST_MODULE";
+			case CMD_ASSEMBLY_GET_OBJECT:
+				return "CMD_ASSEMBLY_GET_OBJECT";
+			case CMD_ASSEMBLY_GET_TYPE:
+				return "CMD_ASSEMBLY_GET_TYPE";
+			case CMD_ASSEMBLY_GET_NAME:
+				return "CMD_ASSEMBLY_GET_NAME";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_METHOD: {
+		switch ((CmdMethod)command) {
+			case CMD_METHOD_GET_NAME:
+				return "CMD_METHOD_GET_NAME";
+			case CMD_METHOD_GET_DECLARING_TYPE:
+				return "CMD_METHOD_GET_DECLARING_TYPE";
+			case CMD_METHOD_GET_DEBUG_INFO:
+				return "CMD_METHOD_GET_DEBUG_INFO";
+			case CMD_METHOD_GET_PARAM_INFO:
+				return "CMD_METHOD_GET_PARAM_INFO";
+			case CMD_METHOD_GET_LOCALS_INFO:
+				return "CMD_METHOD_GET_LOCALS_INFO";
+			case CMD_METHOD_GET_INFO:
+				return "CMD_METHOD_GET_INFO";
+			case CMD_METHOD_GET_BODY:
+				return "CMD_METHOD_GET_BODY";
+			case CMD_METHOD_RESOLVE_TOKEN:
+				return "CMD_METHOD_RESOLVE_TOKEN";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_TYPE: {
+		switch ((CmdType)command) {
+			case CMD_TYPE_GET_INFO:
+				return "CMD_TYPE_GET_INFO";
+			case CMD_TYPE_GET_METHODS:
+				return "CMD_TYPE_GET_METHODS";
+			case CMD_TYPE_GET_FIELDS:
+				return "CMD_TYPE_GET_FIELDS";
+			case CMD_TYPE_GET_VALUES:
+				return "CMD_TYPE_GET_VALUES";
+			case CMD_TYPE_GET_OBJECT:
+				return "CMD_TYPE_GET_OBJECT";
+			case CMD_TYPE_GET_SOURCE_FILES:
+				return "CMD_TYPE_GET_SOURCE_FILES";
+			case CMD_TYPE_SET_VALUES:
+				return "CMD_TYPE_SET_VALUES";
+			case CMD_TYPE_IS_ASSIGNABLE_FROM:
+				return "CMD_TYPE_IS_ASSIGNABLE_FROM";
+			case CMD_TYPE_GET_PROPERTIES:
+				return "CMD_TYPE_GET_PROPERTIES";
+			case CMD_TYPE_GET_CATTRS:
+				return "CMD_TYPE_GET_CATTRS";
+			case CMD_TYPE_GET_FIELD_CATTRS:
+				return "CMD_TYPE_GET_FIELD_CATTRS";
+			case CMD_TYPE_GET_PROPERTY_CATTRS:
+				return "CMD_TYPE_GET_PROPERTY_CATTRS";
+			case CMD_TYPE_GET_SOURCE_FILES_2:
+				return "CMD_TYPE_GET_SOURCE_FILES_2";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_MODULE: {
+		switch ((CmdModule)command) {
+			case CMD_MODULE_GET_INFO:
+				return "CMD_MODULE_GET_INFO";
+			default:
+				return "";
+		}
+	}
+	case CMD_SET_EVENT: {
+		switch ((CmdComposite)command) {
+			case CMD_COMPOSITE:
+				return "CMD_COMPOSITE";
+			default:
+				return "";
+		}
+	}
 	default:
 		return "";
 	}
@@ -7075,17 +7298,18 @@ debugger_thread (void *arg)
 
 	mono_thread_internal_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
 
-	mono_set_is_debugger_attached (TRUE);
-	
 	if (agent_config.defer) {
 		if (!wait_for_attach ()) {
 			DEBUG (1, fprintf (log_file, "[dbg] Can't attach, aborting debugger thread.\n"));
 			attach_failed = TRUE; // Don't abort process when we can't listen
+		} else {
+			mono_set_is_debugger_attached (TRUE);
+
+			/* Send start event to client */
+			process_profiler_event (EVENT_KIND_VM_START, mono_thread_get_main ());
 		}
-		
-		/* Send start event to client */
-		process_profiler_event (EVENT_KIND_VM_START, mono_thread_get_main ());
-	}
+	} else
+		mono_set_is_debugger_attached (TRUE);
 	
 	while (!attach_failed) {
 		res = recv_length (conn_fd, header, HEADER_LENGTH, 0);
@@ -7105,7 +7329,7 @@ debugger_thread (void *arg)
 
 		g_assert (flags == 0);
 
-		DEBUG (1, fprintf (log_file, "[dbg] Received command %s(%d), id=%d.\n", command_set_to_string (command_set), command, id));
+		DEBUG (1, fprintf (log_file, "[dbg] Received command %s %s(%d), id=%d.\n", command_set_to_string (command_set), command_to_string (command_set, command), command, id));
 
 		data = g_malloc (len - HEADER_LENGTH);
 		if (len - HEADER_LENGTH > 0)

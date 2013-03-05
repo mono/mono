@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Embedded Samples", "Embedded Samples", "{5FE09AA5-C3C9-45EA-A323-36A11B653CEC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{EE2CC761-9652-44AC-9204-7EB31194CAA6}"
@@ -9,85 +9,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{ECA11C76-E192-4F67-A8FA-28B637D9716F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "genmdesc", "genmdesc.vcproj", "{B7098DFA-31E6-4006-8A15-1C9A4E925149}"
-	ProjectSection(ProjectDependencies) = postProject
-		{158073ED-99AE-4196-9EDC-DDB2344F8466} = {158073ED-99AE-4196-9EDC-DDB2344F8466}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmono", "libmono.vcproj", "{CB0D9E92-293C-439C-9AC7-C5F59B6E0771}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B7098DFA-31E6-4006-8A15-1C9A4E925149} = {B7098DFA-31E6-4006-8A15-1C9A4E925149}
-		{EB56000B-C80B-4E8B-908D-D84D31B517D3} = {EB56000B-C80B-4E8B-908D-D84D31B517D3}
-		{158073ED-99AE-4196-9EDC-DDB2344F8466} = {158073ED-99AE-4196-9EDC-DDB2344F8466}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-invoke", "test-invoke.vcproj", "{C5639B3F-288A-4A4B-A4A5-C0D85834221D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "teste", "teste.vcproj", "{6FDE4E5E-57D0-432F-A987-6C226A7827E4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mono", "mono.vcproj", "{A0EDDCD9-940F-432C-A28F-7EF322437D79}"
-	ProjectSection(ProjectDependencies) = postProject
-		{158073ED-99AE-4196-9EDC-DDB2344F8466} = {158073ED-99AE-4196-9EDC-DDB2344F8466}
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgc", "libgc.vcproj", "{EB56000B-C80B-4E8B-908D-D84D31B517D3}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monodis", "monodis.vcproj", "{37F50E5A-4818-46CF-81FE-4BB06DE5D42E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pedump", "pedump.vcproj", "{84C7DB50-D6F8-4C47-B22C-6BB203AEB4D3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monodiet", "monodiet.vcproj", "{8F90007F-8019-4191-8808-891E4762D958}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monograph", "monograph.vcproj", "{CA2A69D6-3B9D-45A5-8BF7-4E242E683122}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-metadata", "test-metadata.vcproj", "{C2EB666E-9146-4B7A-85F6-25F9EA313770}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CB0D9E92-293C-439C-9AC7-C5F59B6E0771} = {CB0D9E92-293C-439C-9AC7-C5F59B6E0771}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eglib", "eglib.vcproj", "{158073ED-99AE-4196-9EDC-DDB2344F8466}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_eglib", "test_eglib.vcproj", "{80A0620A-3478-4E1A-AA7C-0D2387B892AB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{158073ED-99AE-4196-9EDC-DDB2344F8466} = {158073ED-99AE-4196-9EDC-DDB2344F8466}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtest", "libtest.vcproj", "{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{158073ED-99AE-4196-9EDC-DDB2344F8466} = {158073ED-99AE-4196-9EDC-DDB2344F8466}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monoposixhelper", "monoposixhelper.vcproj", "{33014734-0F46-4099-9A21-0C989E428681}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B7098DFA-31E6-4006-8A15-1C9A4E925149} = {B7098DFA-31E6-4006-8A15-1C9A4E925149}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay2008", "..\mcs\jay\jay2008.vcproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SmallReproCases", "SmallReproCases", "{AB7CAD06-49E0-4AA6-B7B7-D581B2C32CE0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown", "..\unity\smalltestcases\asyncsocketshutdown\asyncsocketshutdown.vcproj", "{D02963B5-3792-472A-B05D-53EFEAA818EE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "genmdesc", "genmdesc.vcxproj", "{B7098DFA-31E6-4006-8A15-1C9A4E925149}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown2", "..\unity\smalltestcases\asyncsocketshutdown2\asyncsocketshutdown2.vcproj", "{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmono", "libmono.vcxproj", "{CB0D9E92-293C-439C-9AC7-C5F59B6E0771}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-invoke", "test-invoke.vcxproj", "{C5639B3F-288A-4A4B-A4A5-C0D85834221D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "teste", "teste.vcxproj", "{6FDE4E5E-57D0-432F-A987-6C226A7827E4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mono", "mono.vcxproj", "{A0EDDCD9-940F-432C-A28F-7EF322437D79}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgc", "libgc.vcxproj", "{EB56000B-C80B-4E8B-908D-D84D31B517D3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monodis", "monodis.vcxproj", "{37F50E5A-4818-46CF-81FE-4BB06DE5D42E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pedump", "pedump.vcxproj", "{84C7DB50-D6F8-4C47-B22C-6BB203AEB4D3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monodiet", "monodiet.vcxproj", "{8F90007F-8019-4191-8808-891E4762D958}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monograph", "monograph.vcxproj", "{CA2A69D6-3B9D-45A5-8BF7-4E242E683122}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-metadata", "test-metadata.vcxproj", "{C2EB666E-9146-4B7A-85F6-25F9EA313770}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eglib", "eglib.vcxproj", "{158073ED-99AE-4196-9EDC-DDB2344F8466}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_eglib", "test_eglib.vcxproj", "{80A0620A-3478-4E1A-AA7C-0D2387B892AB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtest", "libtest.vcxproj", "{5A435710-E6D2-4DD4-9B3F-A7239A32C6F4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monoposixhelper", "monoposixhelper.vcxproj", "{33014734-0F46-4099-9A21-0C989E428681}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay2008", "..\mcs\jay\jay2008.vcxproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown", "..\unity\smalltestcases\asyncsocketshutdown\asyncsocketshutdown.vcxproj", "{D02963B5-3792-472A-B05D-53EFEAA818EE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asyncsocketshutdown2", "..\unity\smalltestcases\asyncsocketshutdown2\asyncsocketshutdown2.vcxproj", "{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -308,53 +266,40 @@ Global
 		{33014734-0F46-4099-9A21-0C989E428681}.Release|Win32.Build.0 = Release|Win32
 		{33014734-0F46-4099-9A21-0C989E428681}.Release|x64.ActiveCfg = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug_eglib|Win32.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug_eglib|Win32.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug_eglib|x64.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug_eglib|x64.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|Win32.ActiveCfg = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|Win32.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|x64.ActiveCfg = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release_eglib_xarm|Win32.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release_eglib_xarm|Win32.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release_eglib_xarm|x64.ActiveCfg = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release_eglib|Win32.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release_eglib|Win32.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release_eglib|x64.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release_eglib|x64.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|Win32.ActiveCfg = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|Win32.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|x64.ActiveCfg = Release|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Debug_eglib|Win32.ActiveCfg = Debug_eglib|Win32
-		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Debug_eglib|Win32.Build.0 = Debug_eglib|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Debug_eglib|x64.ActiveCfg = Debug_eglib|x64
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Debug|Win32.Build.0 = Debug|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Debug|x64.ActiveCfg = Debug|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib_xarm|Win32.ActiveCfg = Release_eglib_xarm|Win32
-		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib_xarm|Win32.Build.0 = Release_eglib_xarm|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib_xarm|x64.ActiveCfg = Release_eglib_xarm|x64
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib_xarm|x64.Build.0 = Release_eglib_xarm|x64
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib|Win32.ActiveCfg = Release_eglib|Win32
-		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib|Win32.Build.0 = Release_eglib|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib|x64.ActiveCfg = Release_eglib|x64
-		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release_eglib|x64.Build.0 = Release_eglib|x64
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release|Win32.ActiveCfg = Release|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release|Win32.Build.0 = Release|Win32
 		{D02963B5-3792-472A-B05D-53EFEAA818EE}.Release|x64.ActiveCfg = Release|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Debug_eglib|Win32.ActiveCfg = Debug_eglib|Win32
-		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Debug_eglib|Win32.Build.0 = Debug_eglib|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Debug_eglib|x64.ActiveCfg = Debug_eglib|x64
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Debug|Win32.Build.0 = Debug|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Debug|x64.ActiveCfg = Debug|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib_xarm|Win32.ActiveCfg = Release_eglib_xarm|Win32
-		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib_xarm|Win32.Build.0 = Release_eglib_xarm|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib_xarm|x64.ActiveCfg = Release_eglib_xarm|x64
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib_xarm|x64.Build.0 = Release_eglib_xarm|x64
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib|Win32.ActiveCfg = Release_eglib|Win32
-		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib|Win32.Build.0 = Release_eglib|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib|x64.ActiveCfg = Release_eglib|x64
-		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release_eglib|x64.Build.0 = Release_eglib|x64
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release|Win32.ActiveCfg = Release|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release|Win32.Build.0 = Release|Win32
 		{9E3F4EF7-ECFF-46F0-A805-BB87D9609C1D}.Release|x64.ActiveCfg = Release|Win32

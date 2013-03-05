@@ -19,20 +19,24 @@
 
 #ifdef PLATFORM_WIN32
 #define SOPREFIX ""
-static const char suffixes [][5] = {
-	".dll"
+static const char affixes [][2][5] = {
+	{"",".dll"}
 };
 #elif defined(__APPLE__)
 #define SOPREFIX "lib"
-static const char suffixes [][8] = {
-	".dylib",
-	".so",
-	".bundle"
+static const char affixes [][2][8] = {
+	{SOPREFIX,".dylib"},
+	{SOPREFIX,".so"},
+	{SOPREFIX,".bundle"},
+	{"",".dylib"},
+	{"",".so"},
+	{"",".bundle"}
 };
 #else
 #define SOPREFIX "lib"
-static const char suffixes [][4] = {
-	".so"
+static const char affixes [][2][4] = {
+	{SOPREFIX,".so"},
+	{"",".so"}
 };
 #endif
 
@@ -496,28 +500,77 @@ mono_dl_build_path (const char *directory, const char *name, void **iter)
 	int idx;
 	const char *prefix;
 	const char *suffix;
+	gboolean first_call;
 	int prlen;
+	int suffixlen;
 	char *res;
+	int nelems;
+	gboolean skip;
+
 	if (!iter)
 		return NULL;
-	idx = GPOINTER_TO_UINT (*iter);
-	if (idx >= G_N_ELEMENTS (suffixes))
-		return NULL;
 
-	prlen = strlen (SOPREFIX);
-	if (prlen && strncmp (name, SOPREFIX, prlen) != 0)
-		prefix = SOPREFIX;
-	else
-		prefix = "";
-	/* if the platform prefix is already provided, we suppose the caller knows the full name already */
-	if (prlen && strncmp (name, SOPREFIX, prlen) == 0)
+	/*
+	  The first time we are called, idx = 0 (as *iter is initialized to NULL). This is our
+	  "bootstrap" phase in which we check the passed name verbatim and only if we fail to find
+	  the dll thus named, we start appending prefixes and suffixes, each time increasing idx twice
+	  (since now the 0 value became special and we need to offset idx to a 0-based array index).
+	  This is done to handle situations when mapped dll name is specified as libsomething.so.1 or
+	  libsomething.so.1.1 or libsomething.so - testing it algorithmically would be an overkill
+	  here.
+	 */
+	idx = GPOINTER_TO_UINT (*iter);
+	if (idx == 0) {
+		first_call = TRUE;
 		suffix = "";
-	else
-		suffix = suffixes [idx];
+		suffixlen = 0;
+		prefix = "";
+		prlen = 0;
+	} else {
+		nelems = G_N_ELEMENTS (affixes);
+		if (idx >= nelems)
+			return NULL;
+		first_call = FALSE;
+		--idx; // switch to 0-based indexing for the lookups
+
+		// this will try to find a suffix/prefix that hasn't been tested yet,
+		// skipping already-tested combinations
+		do {
+			prefix = affixes [idx][0];
+			prlen = strlen (prefix);
+
+			// if the name includes the SOPREFIX, we've already done those, quit
+			if (!prlen && strlen (SOPREFIX) && strncmp (name, SOPREFIX, strlen (SOPREFIX)) == 0)
+				return NULL;
+
+			skip = FALSE;
+			suffix = affixes [idx][1];
+			suffixlen = strlen (suffix);
+
+			// potentially skip this one, the name already includes the suffix being tested
+			if (suffixlen && strstr (name, suffix) == (name + strlen (name) - suffixlen)) {
+				suffix = "";
+				skip = TRUE;
+			}
+
+			// if prefix and suffix are a part of the name, skip this, it's already been tested
+			if (prlen && strncmp (name, prefix, prlen) == 0) {
+				prefix = "";
+				skip &= TRUE;
+			}
+
+		} while (skip && ++idx < nelems);
+
+		if (idx >= nelems)
+			return NULL;
+
+		++idx; // switch back to tracking if it's a first call or not
+	}
+
 	if (directory && *directory)
-		res = g_strconcat (directory, G_DIR_SEPARATOR_S, prefix, name, suffixes [idx], NULL);
+		res = g_strconcat (directory, G_DIR_SEPARATOR_S, prefix, name, suffix, NULL);
 	else
-		res = g_strconcat (prefix, name, suffixes [idx], NULL);
+		res = g_strconcat (prefix, name, suffix, NULL);
 	++idx;
 	*iter = GUINT_TO_POINTER (idx);
 	return res;

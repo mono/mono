@@ -164,6 +164,8 @@ namespace System.Net.Sockets {
 		Thread blocking_thread;
 #if NET_2_0
 		private bool isbound;
+		static int current_bind_count = 0;
+		private readonly int max_bind_count = 50;
 #endif
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
@@ -420,6 +422,10 @@ namespace System.Net.Sockets {
 			bool was_connected = connected;
 			connected = false;
 			if ((int) socket != -1) {
+#if NET_2_0
+				if (System.Environment.SocketSecurityEnabled && current_bind_count > 0)
+					current_bind_count--;
+#endif
 				int error;
 				closed = true;
 				IntPtr x = socket;

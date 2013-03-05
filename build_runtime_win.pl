@@ -40,8 +40,8 @@ sub CompileVCProj
 	my @optional = @_;
 	
 	
-	my @devenvlocations = ($ENV{"PROGRAMFILES(X86)"}."/Microsoft Visual Studio 9.0/Common7/IDE/devenv.com",
-		       "$ENV{PROGRAMFILES}/Microsoft Visual Studio 9.0/Common7/IDE/devenv.com",
+	my @devenvlocations = ($ENV{"PROGRAMFILES(X86)"}."/Microsoft Visual Studio 10.0/Common7/IDE/devenv.com",
+		       "$ENV{PROGRAMFILES}/Microsoft Visual Studio 10.0/Common7/IDE/devenv.com",
 		       "$ENV{REALVSPATH}/Common7/IDE/devenv.com");
 	
 	my $devenv;
