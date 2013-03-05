@@ -963,51 +963,34 @@ namespace System
 					" type was {1}.", vType.FullName, underlyingType.FullName));
 			}
 
-			if (format.Length != 1)
-				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
-					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
+			if (format.Length == 1) {
+				switch (format [0]) {
+				case 'f':
+				case 'F':
+					return FormatFlags (enumType, value);
+				case 'g':
+				case 'G':
+					if (!enumType.IsDefined (typeof(FlagsAttribute), false))
+						return GetName (enumType, value) ?? value.ToString ();
+					
+					goto case 'f';
+				case 'X':
+					return FormatSpecifier_X (enumType, value, true);
+				case 'x':
+					return FormatSpecifier_X (enumType, value, false);
+				case 'D':
+				case 'd':
+					if (vType.IsEnum)
+						value = ((Enum) value).Value;
 
-			char formatChar = format [0];
-			string retVal;
-			if ((formatChar == 'G' || formatChar == 'g')) {
-				if (!enumType.IsDefined (typeof(FlagsAttribute), false)) {
-					retVal = GetName (enumType, value);
-					if (retVal == null)
-						retVal = value.ToString();
-
-					return retVal;
+					return value.ToString ();
 				}
+			}		
 
-				formatChar = 'f';
-			}
-			
-			if ((formatChar == 'f' || formatChar == 'F'))
-				return FormatFlags (enumType, value);
-
-			retVal = String.Empty;
-			switch (formatChar) {
-			case 'X':
-				retVal = FormatSpecifier_X (enumType, value, true);
-				break;
-			case 'x':
-				retVal = FormatSpecifier_X (enumType, value, false);
-				break;
-			case 'D':
-			case 'd':
-				if (underlyingType == typeof (ulong)) {
-					ulong ulongValue = Convert.ToUInt64 (value);
-					retVal = ulongValue.ToString ();
-				} else {
-					long longValue = Convert.ToInt64 (value);
-					retVal = longValue.ToString ();
-				}
-				break;
-			default:
-				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
+			throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
 					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
-			}
-			return retVal;
 		}
+
 #if NET_4_0
 		public bool HasFlag (Enum flag)
 		{
