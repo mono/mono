@@ -102,7 +102,7 @@ namespace System.IO {
 			get {
 				if (base.message == null) {
 					if (fileName != null) {
-						string message = string.Format (CultureInfo.CurrentCulture,
+						string message = string.Format (
 							"Could not load file or assembly '{0}' or one of"
 							+ " its dependencies. The system cannot find the"
 							+ " file specified.", fileName);

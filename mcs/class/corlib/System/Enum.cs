@@ -952,12 +952,12 @@ namespace System
 			Type underlyingType = Enum.GetUnderlyingType (enumType);
 			if (vType.IsEnum) {
 				if (vType != enumType)
-					throw new ArgumentException (string.Format(CultureInfo.InvariantCulture,
+					throw new ArgumentException (string.Format(
 						"Object must be the same type as the enum. The type" +
 						" passed in was {0}; the enum type was {1}.",
 						vType.FullName, enumType.FullName));
 			} else if (vType != underlyingType) {
-				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+				throw new ArgumentException (string.Format (
 					"Enum underlying type and the object must be the same type" +
 					" or object. Type passed in was {0}; the enum underlying" +
 					" type was {1}.", vType.FullName, underlyingType.FullName));
