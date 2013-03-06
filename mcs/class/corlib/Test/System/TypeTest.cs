@@ -1703,6 +1703,41 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 		
 		[Test]
+		public void TypeFromCLSID ()
+		{
+			Guid CLSID_ShellDesktop = new Guid("00021400-0000-0000-c000-000000000046");
+			Guid CLSID_Bogus = new Guid("1ea9d7a9-f7ab-443b-b486-30d285b21f1b");
+
+			Type t1 = Type.GetTypeFromCLSID (CLSID_ShellDesktop);
+
+			Type t2 = Type.GetTypeFromCLSID (CLSID_Bogus);
+
+			Assert.AreEqual (t1.FullName, "System.__ComObject");
+
+			if (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+				Environment.OSVersion.Platform == PlatformID.Win32NT)
+				Activator.CreateInstance(t1);
+
+			Assert.AreEqual (t2.FullName, "System.__ComObject");
+
+			Assert.AreNotEqual (t1, t2);
+		}
+
+		[Test]
+		[Category("NotWorking")] // Mono throws TargetInvokationException
+		[ExpectedException("System.Runtime.InteropServices.COMException")]
+		public void TypeFromCLSIDBogus ()
+		{
+			Guid CLSID_Bogus = new Guid("1ea9d7a9-f7ab-443b-b486-30d285b21f1b");
+			Type t = Type.GetTypeFromCLSID (CLSID_Bogus);
+			if (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+				Environment.OSVersion.Platform == PlatformID.Win32NT)
+				Activator.CreateInstance(t);
+			else
+				throw new COMException ();
+		}
+		
+		[Test]
 		public void ExerciseFilterName ()
 		{
 			MemberInfo[] mi = typeof(Base).FindMembers(
