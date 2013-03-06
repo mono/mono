@@ -230,26 +230,36 @@ namespace Cairo {
 			NativeMethods.cairo_set_dash (handle, dashes, dashes.Length, offset);
 		}
 
-		[Obsolete("Use Source")]
+		[Obsolete("Use GetSource/GetSource")]
 		public Pattern Pattern {
 			set {
-				Source = value;
+				SetSource (value);
 			}
-
 			get {
-				return Source;
+				return GetSource ();
 			}
 		}
 
+		//This is obsolete because it wasn't obvious it needed to be disposed
+		[Obsolete("Use GetSource/GetSource")]
 		public Pattern Source {
 			set {
-				NativeMethods.cairo_set_source (handle, value.Handle);
+				SetSource (value);
 			}
-
 			get {
-				var ptr = NativeMethods.cairo_get_source (handle);
-				return Cairo.Pattern.Lookup (ptr, false);
+				return GetSource ();
 			}
+		}
+
+		public void SetSource (Pattern source)
+		{
+			NativeMethods.cairo_set_source (handle, source.Handle);
+		}
+
+		public Pattern GetSource ()
+		{
+			var ptr = NativeMethods.cairo_get_source (handle);
+			return Cairo.Pattern.Lookup (ptr, false);
 		}
 
 		public double MiterLimit {
@@ -270,6 +280,7 @@ namespace Cairo {
 			}
 		}
 
+		[Obsolete ("Use GetTarget/SetTarget")]
 		public Cairo.Surface Target {
 			set {
 				if (handle != IntPtr.Zero)
@@ -279,18 +290,41 @@ namespace Cairo {
 			}
 
 			get {
-				return Surface.Lookup (NativeMethods.cairo_get_target (handle), false);
+				return GetTarget ();
 			}
 		}
 
+		public Surface GetTarget ()
+		{
+			return Surface.Lookup (NativeMethods.cairo_get_target (handle), false);
+		}
+
+		public void SetTarget (Surface target)
+		{
+			if (handle != IntPtr.Zero)
+				NativeMethods.cairo_destroy (handle);
+			handle = NativeMethods.cairo_create (target.Handle);
+		}
+
+		[Obsolete("Use GetScaledFont/SetScaledFont")]
 		public ScaledFont ScaledFont {
 			set {
-				NativeMethods.cairo_set_scaled_font (handle, value.Handle);
+				SetScaledFont (value);
 			}
 
 			get {
-				return new ScaledFont (NativeMethods.cairo_get_scaled_font (handle), false);
+				return GetScaledFont ();
 			}
+		}
+
+		public ScaledFont GetScaledFont ()
+		{
+			return new ScaledFont (NativeMethods.cairo_get_scaled_font (handle), false);
+		}
+
+		public void SetScaledFont (ScaledFont font)
+		{
+			NativeMethods.cairo_set_scaled_font (handle, font.Handle);
 		}
 
 		public uint ReferenceCount {
@@ -544,11 +578,17 @@ namespace Cairo {
 			NativeMethods.cairo_push_group_with_content (handle, content);
 		}
 
+		[Obsolete ("Use GetGroupTarget()")]
 		public Surface GroupTarget {
 			get {
-				IntPtr surface = NativeMethods.cairo_get_group_target (handle);
-				return Surface.Lookup (surface, false);
+				return GetGroupTarget ();
 			}
+		}
+
+		public Surface GetGroupTarget ()
+		{
+			IntPtr surface = NativeMethods.cairo_get_group_target (handle);
+			return Surface.Lookup (surface, false);
 		}
 
 		public void Rotate (double angle)
@@ -756,14 +796,24 @@ namespace Cairo {
 			SelectFontFace (family, slant, weight);
 		}
 
+		[Obsolete("Use GetFontFace/SetFontFace")]
 		public FontFace ContextFontFace {
 			get {
-				return Cairo.FontFace.Lookup (NativeMethods.cairo_get_font_face (handle), false);
+				return GetContextFontFace ();
 			}
-
 			set {
-				NativeMethods.cairo_set_font_face (handle, value == null ? IntPtr.Zero : value.Handle);
+				SetContextFontFace (value);
 			}
+		}
+
+		public FontFace GetContextFontFace ()
+		{
+			return Cairo.FontFace.Lookup (NativeMethods.cairo_get_font_face (handle), false);
+		}
+
+		public void SetContextFontFace (FontFace value)
+		{
+			NativeMethods.cairo_set_font_face (handle, value == null ? IntPtr.Zero : value.Handle);
 		}
 
 		public void SelectFontFace (string family, FontSlant slant, FontWeight weight)
