@@ -36,11 +36,8 @@ namespace Cairo {
 		}
 
 		public DirectFBSurface (IntPtr dfb, IntPtr dfb_surface)
+			: base (NativeMethods.cairo_directfb_surface_create (dfb, dfb_surface), true)
 		{
-			surface = NativeMethods.cairo_directfb_surface_create (dfb, dfb_surface);
-			lock (surfaces.SyncRoot) {
-				surfaces [surface] = this;
-			}
 		}
 	}
 }

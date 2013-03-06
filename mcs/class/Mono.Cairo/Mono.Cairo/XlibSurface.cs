@@ -39,11 +39,8 @@ namespace Cairo {
 	public class XlibSurface : Surface
 	{
 		public XlibSurface (IntPtr display, IntPtr drawable, IntPtr visual, int width, int height)
+			: base (NativeMethods.cairo_xlib_surface_create (display, drawable, visual, width, height), true)
 		{
-			surface = NativeMethods.cairo_xlib_surface_create (display, drawable, visual, width, height);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
 		}
 
 		public XlibSurface (IntPtr ptr, bool own) : base (ptr, own)
@@ -52,48 +49,46 @@ namespace Cairo {
 
 		public static XlibSurface FromBitmap (IntPtr display, IntPtr bitmap, IntPtr screen, int width, int height)
 		{
-			IntPtr	ptr;
-
-			ptr = NativeMethods.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
+			IntPtr ptr = NativeMethods.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
 			return new XlibSurface(ptr, true);
 		}
 
 		public void SetDrawable (IntPtr drawable, int width, int height)
 		{
-			NativeMethods.cairo_xlib_surface_set_drawable (surface, drawable, width, height);
+			NativeMethods.cairo_xlib_surface_set_drawable (Handle, drawable, width, height);
 		}
 
 		public void SetSize (int width, int height)
 		{
-			NativeMethods.cairo_xlib_surface_set_size (surface, width, height);
+			NativeMethods.cairo_xlib_surface_set_size (Handle, width, height);
 		}
 
 		public int Depth {
-			get { return NativeMethods.cairo_xlib_surface_get_depth (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_depth (Handle); }
 		}
 		
 		public IntPtr Display {
-			get { return NativeMethods.cairo_xlib_surface_get_display (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_display (Handle); }
 		}
 
 		public IntPtr Drawable {
-			get { return NativeMethods.cairo_xlib_surface_get_drawable (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_drawable (Handle); }
 		}
 
 		public int Height {
-			get { return NativeMethods.cairo_xlib_surface_get_height (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_height (Handle); }
 		}
 
 		public IntPtr Screen {
-			get { return NativeMethods.cairo_xlib_surface_get_screen (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_screen (Handle); }
 		}
 
 		public IntPtr Visual {
-			get { return NativeMethods.cairo_xlib_surface_get_visual (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_visual (Handle); }
 		}
 
 		public int Width {
-			get { return NativeMethods.cairo_xlib_surface_get_width (surface); }
+			get { return NativeMethods.cairo_xlib_surface_get_width (Handle); }
 		}
 
 	}

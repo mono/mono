@@ -38,14 +38,11 @@ namespace Cairo
 	{
 		IntPtr handle;
 
-		internal static FontFace Lookup (IntPtr handle)
+		internal static FontFace Lookup (IntPtr handle, bool owner)
 		{
 			if (handle == IntPtr.Zero)
 				return null;
-
-			NativeMethods.cairo_font_face_reference (handle);
-
-			return new FontFace (handle);
+			return new FontFace (handle, owner);
 		}
 
 		~FontFace ()
@@ -70,11 +67,17 @@ namespace Cairo
 			NativeMethods.cairo_font_face_destroy (handle);
 			handle = IntPtr.Zero;
 		}
-		
-		// TODO: make non-public when all entry points are complete in binding
-		public FontFace (IntPtr handle)
+
+		[Obsolete]
+		public FontFace (IntPtr handle) : this (handle, true)
+		{
+		}
+
+		public FontFace (IntPtr handle, bool owned)
 		{
 			this.handle = handle;
+			if (!owned)
+				NativeMethods.cairo_font_face_reference (handle);
 			if (CairoDebug.Enabled)
 				CairoDebug.OnAllocated (handle);
 		}

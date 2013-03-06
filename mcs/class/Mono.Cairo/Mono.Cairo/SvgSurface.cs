@@ -37,16 +37,13 @@ namespace Cairo {
 		}
 
 		public SvgSurface (string filename, double width, double height)
+			: base (NativeMethods.cairo_svg_surface_create (filename, width, height), true)
 		{
-			surface = NativeMethods.cairo_svg_surface_create (filename, width, height);
-			lock (surfaces.SyncRoot){
-				surfaces [surface] = this;
-			}
 		}
 
 		public void RestrictToVersion (SvgVersion version)
 		{
-			NativeMethods.cairo_svg_surface_restrict_to_version (surface, version);
+			NativeMethods.cairo_svg_surface_restrict_to_version (Handle, version);
 		}
 	}
 }

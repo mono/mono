@@ -36,24 +36,19 @@ namespace Cairo {
 		}
 
 		public XcbSurface (IntPtr connection, uint drawable, IntPtr visual, int width, int height)
+			: base (NativeMethods.cairo_xcb_surface_create (connection, drawable, visual, width, height), true)
 		{
-			surface = NativeMethods.cairo_xcb_surface_create (connection, drawable, visual, width, height);
-			lock (surfaces.SyncRoot) {
-				surfaces [surface] = this;
-			}
 		}
 
 		public static XcbSurface FromBitmap (IntPtr connection, uint bitmap, IntPtr screen, int width, int height)
 		{
-			IntPtr ptr;
-
-			ptr = NativeMethods.cairo_xcb_surface_create_for_bitmap (connection, bitmap, screen, width, height);
+			IntPtr ptr = NativeMethods.cairo_xcb_surface_create_for_bitmap (connection, bitmap, screen, width, height);
 			return new XcbSurface (ptr, true);
 		}
 
 		public void SetSize (int width, int height)
 		{
-			NativeMethods.cairo_xcb_surface_set_size (surface, width, height);
+			NativeMethods.cairo_xcb_surface_set_size (Handle, width, height);
 		}
 	}
 }

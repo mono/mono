@@ -34,9 +34,8 @@ namespace Cairo
 	{
 		IntPtr handle;
 
-		public FontOptions ()
+		public FontOptions () : this (NativeMethods.cairo_font_options_create ())
 		{
-			handle = NativeMethods.cairo_font_options_create ();
 		}
 
 		~FontOptions ()
@@ -59,7 +58,7 @@ namespace Cairo
 		[Obsolete ("Use Dispose()")]
 		public void Destroy ()
 		{
-			Dispose ();
+			NativeMethods.cairo_font_options_destroy (handle);
 		}
 
 		public void Dispose ()
