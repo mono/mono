@@ -94,12 +94,14 @@ namespace System.Reflection {
 		//
 		internal virtual ParameterInfo[] GetParametersInternal ()
 		{
-			throw new NotImplementedException ();
+			// Override me
+			return GetParameters ();
 		}
 
 		internal virtual int GetParametersCount ()
 		{
-			throw new NotImplementedException ();
+			// Override me
+			return GetParametersInternal ().Length;
 		}
 
 		internal virtual Type GetParameterType (int pos) {
