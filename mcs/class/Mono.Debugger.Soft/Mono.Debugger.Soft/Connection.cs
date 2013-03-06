@@ -1076,6 +1076,8 @@ namespace Mono.Debugger.Soft
 			TransportSend (buf, 0, buf.Length);
 
 			receiver_thread = new Thread (new ThreadStart (receiver_thread_main));
+			receiver_thread.Name = "SDB Receiver";
+			receiver_thread.IsBackground = true;
 			receiver_thread.Start ();
 
 			Version = VM_GetVersion ();
