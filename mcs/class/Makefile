@@ -157,7 +157,8 @@ mobile_dirs := \
 	System.Net.Http \
 	System.IO.Compression \
 	System.IO.Compression.FileSystem \
-	System.ComponentModel.DataAnnotations
+	System.ComponentModel.DataAnnotations \
+	System.ComponentModel.Composition.4.5
 
 monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
