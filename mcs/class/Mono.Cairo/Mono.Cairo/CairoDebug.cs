@@ -50,7 +50,7 @@ namespace Cairo {
 			if (!Enabled)
 				throw new InvalidOperationException ();
 
-			traces.Add (obj, Environment.StackTrace);
+			traces[obj] = Environment.StackTrace;
 		}
 
 		public static void OnDisposed<T> (IntPtr obj, bool disposing)
@@ -61,8 +61,11 @@ namespace Cairo {
 			if (!disposing) {
 				Console.Error.WriteLine ("{0} is leaking, programmer is missing a call to Dispose", typeof(T).FullName);
 				if (Enabled) {
-					Console.Error.WriteLine ("Allocated from:");
-					Console.Error.WriteLine (traces[obj]);
+					string val;
+					if (traces.TryGetValue (obj, out val)) {
+						Console.Error.WriteLine ("Allocated from:");
+						Console.Error.WriteLine (val);
+					}
 				} else {
 					Console.Error.WriteLine ("Set MONO_CAIRO_DEBUG_DISPOSE to track allocation traces");
 				}
