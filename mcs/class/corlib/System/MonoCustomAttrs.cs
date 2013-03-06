@@ -326,7 +326,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern bool IsDefinedInternal (ICustomAttributeProvider obj, Type AttributeType);
 
-		static PropertyInfo GetBasePropertyDefinition (PropertyInfo property)
+		static PropertyInfo GetBasePropertyDefinition (MonoProperty property)
 		{
 			MethodInfo method = property.GetGetMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -351,7 +351,7 @@ namespace System
 
 		}
 
-		static EventInfo GetBaseEventDefinition (EventInfo evt)
+		static EventInfo GetBaseEventDefinition (MonoEvent evt)
 		{
 			MethodInfo method = evt.GetAddMethod (true);
 			if (method == null || !method.IsVirtual)
