@@ -5467,7 +5467,7 @@ namespace System.Windows.Forms {
 			DataGridViewCell cell = CurrentCell;
 			
 			if (cell != null) {
-				if (cell.KeyEntersEditMode (new KeyEventArgs ((Keys)m.WParam.ToInt32 ())))
+				if (cell.KeyEntersEditMode (new KeyEventArgs (((Keys)m.WParam.ToInt32 ()) | XplatUI.State.ModifierKeys)))
 					BeginEdit (true);
 				if (EditingControl != null && ((Msg)m.Msg == Msg.WM_KEYDOWN || (Msg)m.Msg == Msg.WM_CHAR))
 					XplatUI.SendMessage (EditingControl.Handle, (Msg)m.Msg, m.WParam, m.LParam);
@@ -5479,7 +5479,7 @@ namespace System.Windows.Forms {
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
 			if ((Msg)m.Msg == Msg.WM_KEYDOWN && (IsCurrentCellInEditMode || m.HWnd == horizontalScrollBar.Handle || m.HWnd == verticalScrollBar.Handle)) {
-				KeyEventArgs e = new KeyEventArgs ((Keys)m.WParam.ToInt32 ());
+				KeyEventArgs e = new KeyEventArgs (((Keys)m.WParam.ToInt32 ()) | XplatUI.State.ModifierKeys);
 			
 				IDataGridViewEditingControl ctrl = (IDataGridViewEditingControl)EditingControlInternal;
 				
