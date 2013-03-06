@@ -540,7 +540,12 @@ namespace System.Reflection {
 				throw new MemberAccessException (String.Format ("Cannot create an instance of {0} because it is an abstract class", DeclaringType));
 			}
 
-			Exception exc = null;
+			return InternalInvoke (obj, parameters);
+		}
+
+		public object InternalInvoke (object obj, object[] parameters)
+		{
+			Exception exc;
 			object o = null;
 
 			try {
@@ -555,7 +560,8 @@ namespace System.Reflection {
 
 			if (exc != null)
 				throw exc;
-			return (obj == null) ? o : null;
+
+			return obj == null ? o : null;
 		}
 
 		[DebuggerHidden]

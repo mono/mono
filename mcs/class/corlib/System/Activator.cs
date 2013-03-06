@@ -4,10 +4,12 @@
 // Authors:
 //   Nick Drochak II (ndrochak@gol.com)
 //   Gonzalo Paniagua (gonzalo@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Nick Drochak II
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -325,7 +327,7 @@ namespace System
 							type.FullName + "."));
 			}
 
-			return ctor.Invoke (null);
+			return ctor.InternalInvoke (null, null);
 		}
 
 		private static void CheckType (Type type)
