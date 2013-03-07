@@ -73,6 +73,8 @@ namespace System.Reflection {
 		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
 		private PermissionSet _denied;		// for the resolved assembly denied permissions
+#else
+		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
 #endif
 		private bool fromByteArray;
 		private string assemblyName;
