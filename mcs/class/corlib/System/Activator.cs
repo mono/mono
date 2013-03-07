@@ -282,7 +282,7 @@ namespace System
 			CheckAbstractType (type);
 
 			if (activationAttributes != null && activationAttributes.Length > 0) {
-#if MOBILE
+#if DISABLE_REMOTING
 				throw new NotSupportedException ("Activation attributes are not supported");
 #else
 				if (!type.IsMarshalByRef) {

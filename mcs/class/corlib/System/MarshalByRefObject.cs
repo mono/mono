@@ -42,7 +42,7 @@ namespace System
 	public abstract class MarshalByRefObject
 	{
 		[NonSerialized]
-#if MOBILE
+#if DISABLE_REMOTING
 		private object _identity; //Keep layout equal to avoid runtime issues
 #else
 		private ServerIdentity _identity; // Holds marshalling iformation of the object
@@ -52,7 +52,7 @@ namespace System
 		{
 		}
 
-#if MOBILE
+#if DISABLE_REMOTING
 		internal ServerIdentity ObjectIdentity {
 			get { throw new NotSupportedException (); }
 			set { throw new NotSupportedException (); }
@@ -84,7 +84,7 @@ namespace System
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public virtual ObjRef CreateObjRef (Type requestedType)
 		{
-#if MOBILE
+#if DISABLE_REMOTING
 			throw new NotSupportedException ();
 #else
 			// This method can only be called when this object has been marshalled
@@ -99,10 +99,9 @@ namespace System
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public object GetLifetimeService ()
 		{
-#if MOBILE
+#if DISABLE_REMOTING
 			throw new NotSupportedException ();
 #else
-
 			if (_identity == null)
 				return null;
 			else return _identity.Lease;
@@ -112,7 +111,7 @@ namespace System
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public virtual object InitializeLifetimeService ()
 		{
-#if MOBILE
+#if DISABLE_REMOTING
 			throw new NotSupportedException ();
 #else
 			if (_identity != null && _identity.Lease != null)
@@ -124,7 +123,7 @@ namespace System
 
 		protected MarshalByRefObject MemberwiseClone (bool cloneIdentity)
 		{
-#if MOBILE
+#if DISABLE_REMOTING
 			throw new NotSupportedException ();
 #else
 			MarshalByRefObject mbr = (MarshalByRefObject) MemberwiseClone ();
