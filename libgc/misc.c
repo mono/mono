@@ -1205,3 +1205,17 @@ long GC_time_diff_ms(uint64_t a, uint64_t b)
 
 #endif /* DARWIN */
 
+void GC_stop_world_external()
+{
+    DISABLE_SIGNALS();
+    LOCK();
+    GC_stop_world();
+}
+
+void GC_start_world_external()
+{
+    GC_start_world();
+    UNLOCK();
+    ENABLE_SIGNALS();
+}
+
