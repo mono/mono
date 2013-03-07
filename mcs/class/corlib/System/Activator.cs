@@ -323,8 +323,7 @@ namespace System
 				if (type.IsValueType)
 					return CreateInstanceInternal (type);
 
-				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + 
-							type.FullName + "."));
+				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + type.FullName));
 			}
 
 			return ctor.InternalInvoke (null, null);
