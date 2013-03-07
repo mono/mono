@@ -40,7 +40,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests_System.Data
 {
-	[TestFixture] public class DataSetTest2
+	[TestFixture]
+	public class DataSetTest2
 	{
 		private DataSet m_ds = null;
 		private bool EventRaised = false;
@@ -3519,17 +3520,17 @@ namespace MonoTests_System.Data
 			//ds1.Load (reader, LoadOption.PreserveChanges, dt3, dt4);
 			ds1.Load (reader, LoadOption.OverwriteChanges, dt3, dt4);
 
-			Assertion.AssertEquals ("DataSet Tables count mistmatch", ds2.Tables.Count, ds1.Tables.Count);
+			Assert.AreEqual (ds2.Tables.Count, ds1.Tables.Count, "DataSet Tables count mistmatch");
 			int i = 0;
 			foreach (DataTable dt in ds1.Tables) {
 				DataTable dt5 = ds2.Tables[i];
-				Assertion.AssertEquals ("Table " + dt.TableName + " row count mistmatch", dt5.Rows.Count, dt.Rows.Count);
+				Assert.AreEqual (dt5.Rows.Count, dt.Rows.Count, "Table " + dt.TableName + " row count mistmatch");
 				int j = 0;
 				DataRow row1;
 				foreach (DataRow row in dt.Rows) {
 					row1 = dt5.Rows[j];
 					for (int k = 0; k < dt.Columns.Count; k++) {
-						Assertion.AssertEquals ("DataRow " + k + " mismatch", row1[k], row[k]);
+						Assert.AreEqual (row1[k], row[k], "DataRow " + k + " mismatch");
 					}
 					j++;
 				}
@@ -3567,17 +3568,17 @@ namespace MonoTests_System.Data
 			//ds1.Load (reader, LoadOption.PreserveChanges, dt3, dt4);
 			ds1.Load (reader, LoadOption.OverwriteChanges, dt3, dt4);
 
-			Assertion.AssertEquals ("DataSet Tables count mistmatch", ds2.Tables.Count, ds1.Tables.Count);
+			Assert.AreEqual (ds2.Tables.Count, ds1.Tables.Count, "DataSet Tables count mistmatch");
 			int i = 0;
 			foreach (DataTable dt in ds1.Tables) {
 				DataTable dt5 = ds2.Tables[i];
-				Assertion.AssertEquals ("Table " + dt.TableName + " row count mistmatch", dt5.Rows.Count, dt.Rows.Count);
+				Assert.AreEqual (dt5.Rows.Count, dt.Rows.Count, "Table " + dt.TableName + " row count mistmatch");
 				int j = 0;
 				DataRow row1;
 				foreach (DataRow row in dt.Rows) {
 					row1 = dt5.Rows[j];
 					for (int k = 0; k < dt.Columns.Count; k++) {
-						Assertion.AssertEquals ("DataRow " + k + " mismatch", row1[k], row[k]);
+						Assert.AreEqual (row1[k], row[k], "DataRow " + k + " mismatch");
 					}
 					j++;
 				}

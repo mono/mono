@@ -12,7 +12,6 @@
 using NUnit.Framework;
 using System;
 using System.Web.Services;
-using System.EnterpriseServices;
 
 namespace MonoTests.System.Web.Services {
 

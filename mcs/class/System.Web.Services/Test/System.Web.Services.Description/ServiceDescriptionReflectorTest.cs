@@ -9,6 +9,8 @@
 // Copyright (C) 2006 Novell, Inc.
 //
 
+
+#if !MOBILE
 using NUnit.Framework;
 
 using System;
@@ -478,3 +480,5 @@ namespace MonoTests.System.Web.Services.Description
 #endif
 	}
 }
+
+#endif

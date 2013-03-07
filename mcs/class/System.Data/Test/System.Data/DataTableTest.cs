@@ -4153,7 +4153,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (5, n, "n");
 		}
 
-#if !TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH
 		[Test]
 		public void NFIFromBug55978 ()
 		{
