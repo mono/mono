@@ -740,7 +740,9 @@ namespace System {
 
 #if !FULL_AOT_RUNTIME
 		private static Dictionary<Guid, Type> clsid_types;
+#if !FULL_AOT_RUNTIME
 		private static AssemblyBuilder clsid_assemblybuilder;
+#endif
 
 		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid)
@@ -763,6 +765,7 @@ namespace System {
 		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError)
 		{
+#if !FULL_AOT_RUNTIME
 			Type result;
 
 			if (clsid_types == null)
@@ -809,6 +812,9 @@ namespace System {
 
 				return result;
 			}
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 #endif
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
