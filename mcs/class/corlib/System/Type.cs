@@ -40,6 +40,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Globalization;
 
 namespace System {
@@ -737,28 +738,76 @@ namespace System {
 			return type.GetTypeCodeImpl ();
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+		private static Dictionary<Guid, Type> clsid_types;
+		private static AssemblyBuilder clsid_assemblybuilder;
+
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid)
 		{
-			throw new NotImplementedException ();
+			return GetTypeFromCLSID (clsid, null, true);
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			return GetTypeFromCLSID (clsid, null, throwOnError);
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server)
 		{
-			throw new NotImplementedException ();
+			return GetTypeFromCLSID (clsid, server, true);
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			Type result;
+
+			if (clsid_types == null)
+			{
+				Dictionary<Guid, Type> new_clsid_types = new Dictionary<Guid, Type> ();
+				Interlocked.CompareExchange<Dictionary<Guid, Type>>(
+					ref clsid_types, new_clsid_types, null);
+			}
+
+			lock (clsid_types) {
+				if (clsid_types.TryGetValue(clsid, out result))
+					return result;
+
+				if (clsid_assemblybuilder == null)
+				{
+					AssemblyName assemblyname = new AssemblyName ();
+					assemblyname.Name = "GetTypeFromCLSIDDummyAssembly";
+					clsid_assemblybuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (
+						assemblyname, AssemblyBuilderAccess.Run);
+				}
+				ModuleBuilder modulebuilder = clsid_assemblybuilder.DefineDynamicModule (
+					clsid.ToString ());
+
+				TypeBuilder typebuilder = modulebuilder.DefineType ("System.__ComObject",
+					TypeAttributes.Public | TypeAttributes.Class, typeof(System.__ComObject));
+
+				Type[] guidattrtypes = new Type[] { typeof(string) };
+
+				CustomAttributeBuilder customattr = new CustomAttributeBuilder (
+					typeof(GuidAttribute).GetConstructor (guidattrtypes),
+					new object[] { clsid.ToString () });
+
+				typebuilder.SetCustomAttribute (customattr);
+
+				customattr = new CustomAttributeBuilder (
+					typeof(ComImportAttribute).GetConstructor (EmptyTypes),
+					new object[0] {});
+
+				typebuilder.SetCustomAttribute (customattr);
+
+				result = typebuilder.CreateType ();
+
+				clsid_types.Add(clsid, result);
+
+				return result;
+			}
 		}
 
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
