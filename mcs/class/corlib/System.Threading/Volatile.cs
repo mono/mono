@@ -91,10 +91,6 @@ namespace System.Threading
 		public extern static float Read (ref float location);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		public extern static object Read (ref object location);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static T Read<T> (ref T location) where T : class;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
