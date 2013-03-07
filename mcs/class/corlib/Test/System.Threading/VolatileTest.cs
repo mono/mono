@@ -78,6 +78,9 @@ namespace MonoTests.System.Threading
 
 			ushort v13 = ushort.MaxValue;
 			Assert.AreEqual (ushort.MaxValue, Volatile.Read (ref v13), "#v13");
+
+			string s = "ABC";
+			Assert.AreEqual (s, Volatile.Read (ref s));
 		}
 
 		[Test]
@@ -134,6 +137,10 @@ namespace MonoTests.System.Threading
 			ushort v13 = 1;
 			Volatile.Write (ref v13, ushort.MaxValue);
 			Assert.AreEqual (ushort.MaxValue, v13, "#v13");
+
+			string s = "ABC";
+			Volatile.Write (ref s, "DEF");
+			Assert.AreEqual ("DEF", s);
 		}
 
 	}
