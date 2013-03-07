@@ -1460,14 +1460,23 @@ public class AssemblyBuilderTest
 			Assert.IsNotNull (refs [0].CultureInfo, "#D2:CultureInfo");
 			Assert.IsNull (refs [0].EscapedCodeBase, "#D2:EscapedCodeBase");
 			Assert.AreEqual (AssemblyNameFlags.None, refs [0].Flags, "#D2:Flags");
-			Assert.AreEqual (Consts.AssemblyCorlib, refs [0].FullName, "#D2:FullName");
+			Assert.AreEqual (typeof (object).FullName, refs [0].FullName, "#D2:FullName");
 			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [0].HashAlgorithm, "#D2:HashAlgorithm");
 			Assert.IsNull (refs [0].KeyPair, "#D2:KeyPair");
 			Assert.AreEqual ("mscorlib", refs [0].Name, "#D2:Name");
 #if NET_2_0
 			Assert.AreEqual (ProcessorArchitecture.None, refs [0].ProcessorArchitecture, "#D2:PA");
 #endif
-			Assert.AreEqual (new Version (Consts.FxVersion), refs [0].Version, "#D2:Version");
+
+			string FxVersion;
+#if MOBILE
+			FxVersion = "2.0.5.0;";
+#elif NET_4_0
+			FxVersion = "4.0.0.0;";
+#else
+			FxVersion = "2.0.0.0;";
+#endif
+			Assert.AreEqual (new Version (FxVersion), refs [0].Version, "#D2:Version");
 			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
 				refs [0].VersionCompatibility, "#D2:VersionCompatibility");
 			Assert.IsNull (refs [0].GetPublicKey (), "#D2:GetPublicKey");

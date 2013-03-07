@@ -429,7 +429,16 @@ public class AssemblyNameTest {
 	{
 		an = typeof(int).Assembly.GetName ();
 		Assert.IsNotNull (an.FullName, "#1");
-		Assert.AreEqual (Consts.AssemblyCorlib, an.FullName, "#2");
+
+		string AssemblyCorlib;
+#if MOBILE
+		AssemblyCorlib = "mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+#elif NET_4_0
+		AssemblyCorlib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#else
+		AssemblyCorlib = "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#endif
+		Assert.AreEqual (AssemblyCorlib, an.FullName, "#2");
 	}
 
 	[Test]
