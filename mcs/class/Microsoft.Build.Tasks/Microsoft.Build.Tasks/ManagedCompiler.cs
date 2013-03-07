@@ -285,7 +285,7 @@ namespace Microsoft.Build.Tasks {
 			get {
 				if (Bag.Contains ("TargetType")) {
 					string s = (string) Bag ["TargetType"];
-					return s.ToLower ();
+					return s.ToLowerInvariant ();
 				} else
 					return null;
 			}

@@ -75,7 +75,7 @@ namespace Mono.XBuild.Utilities {
 			if (String.IsNullOrEmpty (itemSpec))
 				return String.Empty;
 		
-			switch (metadataName.ToLower ()) {
+			switch (metadataName.ToLowerInvariant ()) {
 			case "fullpath":
 				return Path.GetFullPath (itemSpec);
 			case "rootdir":
