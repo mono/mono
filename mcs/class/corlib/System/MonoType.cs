@@ -83,7 +83,7 @@ namespace System
 				var ctors = GetConstructors (BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
 				for (int i = 0; i < ctors.Length; ++i) {
-					if (ctors [0].GetParametersCount () == 0) {
+					if (ctors [i].GetParametersCount () == 0) {
 						type_info.default_ctor = ctor = (MonoCMethod) ctors [i];
 						break;
 					}
