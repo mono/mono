@@ -29,6 +29,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Collections;
 
 namespace System.Threading
@@ -322,7 +323,7 @@ namespace System.Threading
 			void SchedulerThread ()
 			{
 				Thread.CurrentThread.Name = "Timer-Scheduler";
-				ArrayList new_time = new ArrayList (512);
+				var new_time = new List<Timer> (512);
 				while (true) {
 					int ms_wait = -1;
 					long ticks = DateTime.GetTimeMonotonic ();
@@ -354,7 +355,7 @@ namespace System.Threading
 						// Reschedule timers with a new due time
 						count = new_time.Count;
 						for (i = 0; i < count; i++) {
-							Timer timer = (Timer) new_time [i];
+							Timer timer = new_time [i];
 							Add (timer);
 						}
 						new_time.Clear ();
@@ -388,7 +389,7 @@ namespace System.Threading
 				}
 			}
 
-			void ShrinkIfNeeded (ArrayList list, int initial)
+			void ShrinkIfNeeded (List<Timer> list, int initial)
 			{
 				int capacity = list.Capacity;
 				int count = list.Count;
