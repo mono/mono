@@ -1565,6 +1565,7 @@ typedef struct {
 static gboolean
 dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 {
+	int total_slots = 0;
 	int i;
 
 	if (sig->hasthis + sig->param_count > PARAM_REGS + DYN_CALL_STACK_ARGS)
@@ -1586,9 +1587,8 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 #endif
 	default:
 		return FALSE;
-	};
+	}
 
-	int total_slots = 0;
 	for (i = 0; i < cinfo->nargs; ++i) {
 		switch (cinfo->args [i].regtype) {
 		case RegTypeGeneral:
