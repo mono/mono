@@ -5611,6 +5611,11 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
+			if (spec is FixedFieldSpec) {
+				// It could be much better error message but we want to be error compatible
+				Error_ValueAssignment (ec, right_side);
+			}
+
 			Expression e = DoResolve (ec, right_side);
 
 			if (e == null)

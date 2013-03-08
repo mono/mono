@@ -220,7 +220,7 @@ namespace Mono.CSharp
 
 					// TODO: Sanity check on field_type (only few types are allowed)
 					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
-					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
+					return new FixedFieldSpec (module, declaringType, definition, fi, element_field, mod);
 				}
 			}
 
