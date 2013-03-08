@@ -165,14 +165,9 @@ namespace System.Collections.ObjectModel
 		
 #region Helper methods for non-generic interfaces
 		
-		internal static bool IsValidItem (object item)
-		{
-			return (item is T || (item == null && ! typeof (T).IsValueType));
-		}
-		
 		internal static T ConvertItem (object item)
 		{
-			if (IsValidItem (item))
+			if (CollectionHelpers.IsValidItem<T> (item))
 				return (T)item;
 			throw new ArgumentException ("item");
 		}
@@ -216,14 +211,14 @@ namespace System.Collections.ObjectModel
 		
 		bool IList.Contains (object value)
 		{
-			if (IsValidItem (value))
+			if (CollectionHelpers.IsValidItem<T> (value))
 				return list.Contains ((T) value);
 			return false;
 		}
 		
 		int IList.IndexOf (object value)
 		{
-			if (IsValidItem (value))
+			if (CollectionHelpers.IsValidItem<T> (value))
 				return list.IndexOf ((T) value);
 			return -1;
 		}
@@ -262,5 +257,13 @@ namespace System.Collections.ObjectModel
 			set { SetItem (index, ConvertItem (value)); }
 		}
 #endregion
+	}
+
+	static class CollectionHelpers
+	{
+		public static bool IsValidItem<T> (object item)
+		{
+			return item is T || (item == null && ! typeof (T).IsValueType);
+		}
 	}
 }
