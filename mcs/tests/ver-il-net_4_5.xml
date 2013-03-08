@@ -46674,6 +46674,35 @@
       </method>
     </type>
   </test>
+  <test name="test-866.cs">
+    <type name="C">
+      <method name="Boolean op_Addition(C, Int16)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Boolean op_Addition(C, Int64)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Boolean op_Addition(B, System.String)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">
