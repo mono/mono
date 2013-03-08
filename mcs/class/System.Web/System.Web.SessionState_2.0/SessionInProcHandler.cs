@@ -446,8 +446,15 @@ namespace System.Web.SessionState
 					item.Dispose ();
 				} else
 					expireCallback (key, null);
-			} else if (value is InProcSessionItem)
-				((InProcSessionItem)value).Dispose ();
+			} else if (value is InProcSessionItem) {
+				InProcSessionItem item = (InProcSessionItem)value;
+				if (item.resettingTimeout) {
+					item.resettingTimeout = false;
+					return;
+				}
+				
+				item.Dispose ();
+			}
                 }
 	}
 }
