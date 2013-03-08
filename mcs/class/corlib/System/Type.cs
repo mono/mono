@@ -740,7 +740,6 @@ namespace System {
 
 #if !FULL_AOT_RUNTIME
 		private static Dictionary<Guid, Type> clsid_types;
-#if !FULL_AOT_RUNTIME
 		private static AssemblyBuilder clsid_assemblybuilder;
 #endif
 
@@ -816,7 +815,7 @@ namespace System {
 			throw new NotImplementedException ();
 #endif
 		}
-#endif
+
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
 		{
 			if (handle.Value == IntPtr.Zero)
