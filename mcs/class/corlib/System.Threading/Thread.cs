@@ -154,6 +154,8 @@ namespace System.Threading {
 		[ThreadStatic]
 		static ExecutionContext _ec;
 
+		static NamedDataSlot namedDataSlot;		
+
 		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
 		//private string thread_name=null;
@@ -325,50 +327,28 @@ namespace System.Threading {
 				return (int)(CurrentThread.internal_thread.thread_id);
 			}
 		}
-
-		// Stores a hash keyed by strings of LocalDataStoreSlot objects
-		static Dictionary<string, LocalDataStoreSlot> datastorehash;
-		private static object datastore_lock = new object ();
 		
-		private static void InitDataStoreHash () {
-			lock (datastore_lock) {
-				if (datastorehash == null) {
-					datastorehash = new Dictionary<string, LocalDataStoreSlot> ();
-				}
+		static NamedDataSlot NamedDataSlot {
+			get {
+				if (namedDataSlot == null)
+					Interlocked.CompareExchange (ref namedDataSlot, new NamedDataSlot (), null);
+
+				return namedDataSlot;
 			}
 		}
 		
-		public static LocalDataStoreSlot AllocateNamedDataSlot (string name) {
-			lock (datastore_lock) {
-				if (datastorehash == null)
-					InitDataStoreHash ();
-
-				if (datastorehash.ContainsKey (name)) {
-					// This exception isnt documented (of
-					// course) but .net throws it
-					throw new ArgumentException("Named data slot already added");
-				}
-			
-				var slot = AllocateDataSlot ();
-
-				datastorehash.Add (name, slot);
-
-				return slot;
-			}
+		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
+		{
+			return NamedDataSlot.Allocate (name);
 		}
 
-		public static void FreeNamedDataSlot (string name) {
-			lock (datastore_lock) {
-				if (datastorehash == null)
-					InitDataStoreHash ();
-
-				if (datastorehash.ContainsKey (name)) {
-					datastorehash.Remove (name);
-				}
-			}
+		public static void FreeNamedDataSlot (string name)
+		{
+			NamedDataSlot.Free (name);
 		}
 
-		public static LocalDataStoreSlot AllocateDataSlot () {
+		public static LocalDataStoreSlot AllocateDataSlot ()
+		{
 			return new LocalDataStoreSlot (true);
 		}
 
@@ -400,18 +380,9 @@ namespace System.Threading {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void FreeLocalSlotValues (int slot, bool thread_local);
 
-		public static LocalDataStoreSlot GetNamedDataSlot(string name) {
-			lock (datastore_lock) {
-				if (datastorehash == null)
-					InitDataStoreHash ();
-
-				LocalDataStoreSlot slot;
-				if (!datastorehash.TryGetValue (name, out slot)) {
-					slot=AllocateNamedDataSlot(name);
-				}
-			
-				return slot;
-			}
+		public static LocalDataStoreSlot GetNamedDataSlot(string name)
+	 	{
+	 		return NamedDataSlot.Get (name);
 		}
 		
 		public static AppDomain GetDomain() {

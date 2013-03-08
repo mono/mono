@@ -1516,6 +1516,7 @@ System.Threading/LockRecursionException.cs
 System.Threading/ManualResetEvent.cs
 System.Threading/Monitor.cs
 System.Threading/Mutex.cs
+System.Threading/NamedDataSlot.cs
 System.Threading/NativeEventCalls.cs
 System.Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
