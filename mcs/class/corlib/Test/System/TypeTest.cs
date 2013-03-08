@@ -1701,7 +1701,11 @@ PublicKeyToken=b77a5c561934e089"));
 			Type t = Type.GetType ("System.String[*]");
 			Assert.AreEqual ("System.String[*]", t.ToString ());
 		}
-		
+
+#if MONOTOUCH
+		// feature not available when compiled under FULL_AOT_RUNTIME
+		[ExpectedException (typeof (NotImplementedException))]
+#endif
 		[Test]
 		public void TypeFromCLSID ()
 		{
