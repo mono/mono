@@ -1586,7 +1586,7 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 #endif
 	default:
 		return FALSE;
-	}
+	};
 
 	int total_slots = 0;
 	for (i = 0; i < cinfo->nargs; ++i) {
