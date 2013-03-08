@@ -138,11 +138,13 @@ namespace System {
 				return false;
 			}
 
-			if (String.Compare (s, i, nfi.PositiveSign, 0, nfi.PositiveSign.Length) == 0)
-				i += nfi.PositiveSign.Length;
-			else if (String.Compare (s, i, nfi.NegativeSign, 0, nfi.NegativeSign.Length) == 0) {
+			var ps_length = nfi.PositiveSign.Length;
+			var ns_length = nfi.NegativeSign.Length;
+			if (len > ps_length && string.CompareOrdinalUnchecked (s, i, ns_length, nfi.PositiveSign, 0, ps_length) == 0)
+				i += ps_length;
+			else if (len > ns_length && string.CompareOrdinalUnchecked (s, i, ns_length, nfi.NegativeSign, 0, ns_length) == 0) {
 				sign = -1;
-				i += nfi.NegativeSign.Length;
+				i += ns_length;
 			}
 			
 			for (; i < len; i++){
