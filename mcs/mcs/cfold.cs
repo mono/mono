@@ -299,23 +299,49 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Addition:
-				if (lt == InternalType.NullLiteral)
-					return right;
-
-				if (rt == InternalType.NullLiteral)
-					return left;
-
 				//
-				// If both sides are strings, then concatenate, if
-				// one is a string, and the other is not, then defer
-				// to runtime concatenation
+				// If both sides are strings, then concatenate
+				//
+				// string operator + (string x, string y)
 				//
 				if (lt.BuiltinType == BuiltinTypeSpec.Type.String || rt.BuiltinType == BuiltinTypeSpec.Type.String){
 					if (lt == rt)
 						return new StringConstant (ec.BuiltinTypes, (string)left.GetValue () + (string)right.GetValue (),
 							left.Location);
-					
+
+					if (lt == InternalType.NullLiteral)
+						return new StringConstant (ec.BuiltinTypes, "" + right.GetValue (), left.Location);
+
+					if (rt == InternalType.NullLiteral)
+						return new StringConstant (ec.BuiltinTypes, left.GetValue () + "", left.Location);
+
 					return null;
+				}
+
+				//
+				// string operator + (string x, object y)
+				//
+				if (lt == InternalType.NullLiteral) {
+					if (rt.BuiltinType == BuiltinTypeSpec.Type.Object)
+						return new StringConstant (ec.BuiltinTypes, "" + right.GetValue (), left.Location);
+
+					if (lt == rt) {
+						ec.Report.Error (34, loc, "Operator `{0}' is ambiguous on operands of type `{1}' and `{2}'",
+							"+", lt.GetSignatureForError (), rt.GetSignatureForError ());
+						return null;
+					}
+
+					return right;
+				}
+
+				//
+				// string operator + (object x, string y)
+				//
+				if (rt == InternalType.NullLiteral) {
+					if (lt.BuiltinType == BuiltinTypeSpec.Type.Object)
+						return new StringConstant (ec.BuiltinTypes, right.GetValue () + "", left.Location);
+	
+					return left;
 				}
 
 				//

@@ -4205,6 +4205,12 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
+			// Optimize by removing any extra null arguments, they are no-op
+			for (int i = 0; i < arguments.Count; ++i) {
+				if (arguments[i].Expr is NullConstant)
+					arguments.RemoveAt (i--);
+			}
+
 			var members = GetConcatMethodCandidates ();
 			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
 			var method = res.ResolveMember<MethodSpec> (new ResolveContext (ec.MemberContext), ref arguments);

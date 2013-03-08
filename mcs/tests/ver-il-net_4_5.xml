@@ -44534,7 +44534,7 @@
   <test name="test-77.cs">
     <type name="XX">
       <method name="Int32 Main()" attrs="150">
-        <size>258</size>
+        <size>393</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
