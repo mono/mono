@@ -409,8 +409,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 				Assert.AreEqual(1, logger.TargetStarted, "TargetStarted count");
 				Assert.AreEqual(1, logger.TargetFinished, "TargetFinished count");
-				Assert.AreEqual(3, logger.TaskStarted, "TaskStarted count");
-				Assert.AreEqual(3, logger.TaskFinished, "TaskFinished count");
+				Assert.AreEqual(4, logger.TaskStarted, "TaskStarted count");
+				Assert.AreEqual(4, logger.TaskFinished, "TaskFinished count");
 
 			}
 			catch (AssertionException)

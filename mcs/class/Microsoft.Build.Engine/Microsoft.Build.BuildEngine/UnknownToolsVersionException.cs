@@ -31,7 +31,7 @@ using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
 	[Serializable]
-	internal class UnknownToolsVersionException : Exception {
+	public class UnknownToolsVersionException : Exception {
 		string message;
 
 		public UnknownToolsVersionException (string toolsVersion)

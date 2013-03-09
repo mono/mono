@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xbuild.tests.win", "xbuild.tests.win.csproj", "{929D9BCD-2280-4B6D-AD69-0FD089E344C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{929D9BCD-2280-4B6D-AD69-0FD089E344C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{929D9BCD-2280-4B6D-AD69-0FD089E344C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{929D9BCD-2280-4B6D-AD69-0FD089E344C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{929D9BCD-2280-4B6D-AD69-0FD089E344C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = xbuild.tests.win.csproj
+	EndGlobalSection
+EndGlobal
