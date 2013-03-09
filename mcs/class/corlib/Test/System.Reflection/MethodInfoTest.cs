@@ -710,6 +710,9 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if MOBILE
+		[Category ("NotWorking")] // #10552
+#endif
 		public void MakeGenericMethodRespectConstraints ()
 		{
 			var m = typeof (MethodInfoTest).GetMethod ("TestMethod");

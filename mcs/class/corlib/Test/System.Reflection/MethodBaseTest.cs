@@ -401,6 +401,9 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+#if MOBILE
+		[Category ("NotWorking")] // #10552
+#endif
 		public void MutableString ()
 		{
 			var m = typeof (MethodBaseTest).GetMethod ("UnsafeConversion", BindingFlags.NonPublic | BindingFlags.Static);
