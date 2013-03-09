@@ -50,6 +50,7 @@ extern gboolean mono_gc_is_gc_thread (void) MONO_INTERNAL;
  * can't cope with this concept - we return FALSE.
  */
 extern gboolean mono_gc_register_thread (void *baseptr) MONO_INTERNAL;
+extern gboolean mono_gc_unregister_thread (MonoThread *thread) MONO_INTERNAL;
 
 /* only valid after the RECLAIM_START GC event and before RECLAIM_END
  * Not exported in public headers, but can be linked to (unsupported).

@@ -985,6 +985,8 @@ mono_thread_detach (MonoThread *thread)
 {
 	g_return_if_fail (thread != NULL);
 
+	mono_gc_unregister_thread (thread);
+
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
 
 	mono_profiler_thread_end (thread->tid);

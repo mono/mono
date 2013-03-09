@@ -106,6 +106,8 @@ ptr_t GC_stackbottom = 0;
 
 GC_bool GC_dont_gc = 0;
 
+GC_bool GC_use_dll_main = 0;
+
 GC_bool GC_dont_precollect = 0;
 
 GC_bool GC_quiet = 0;
@@ -621,6 +623,9 @@ void GC_init_inner()
     }
     if (0 != GETENV("GC_DONT_GC")) {
       GC_dont_gc = 1;
+    }
+    if (0 != GETENV("GC_USE_DLL_MAIN")) {
+      GC_use_dll_main = 1;
     }
     if (0 != GETENV("GC_PRINT_BACK_HEIGHT")) {
       GC_print_back_height = 1;
