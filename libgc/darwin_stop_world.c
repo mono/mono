@@ -2,6 +2,8 @@
 
 # if defined(GC_DARWIN_THREADS)
 
+#define UNITY_NO_THREADS_DISCOVERY 1
+
 #include <AvailabilityMacros.h>
 #include "mono/utils/mono-compiler.h"
 
@@ -603,6 +605,7 @@ void GC_stop_world()
       changes = 1;
       prev_list = NULL;
       prevcount = 0;
+#ifndef UNITY_NO_THREADS_DISCOVERY
       do {
 	int result;		  
 	kern_result = task_threads(my_task, &act_list, &listcount);
@@ -628,7 +631,24 @@ void GC_stop_world()
 		  mach_port_deallocate(my_task, act_list[i]);
 	  
 	  vm_deallocate(my_task, (vm_address_t)act_list, sizeof(thread_t) * listcount);
-	  
+#else
+  for (i = 0; i < THREAD_TABLE_SZ; i++) {
+      GC_thread p;
+
+      for (p = GC_threads[i]; p != NULL; p = p->next) {
+        if ((p->flags & FINISHED) == 0 && !p->thread_blocked &&
+             p->stop_info.mach_thread != my_thread) {
+
+#if DEBUG_THREADS
+        GC_printf1("Suspending 0x%lx\n", p->stop_info.mach_thread);
+#endif
+          kern_result = thread_suspend(p->stop_info.mach_thread);
+          if (kern_result != KERN_SUCCESS)
+            ABORT("thread_suspend failed");
+        }
+      }
+    }
+#endif
  
 #   ifdef MPROTECT_VDB
       if(GC_incremental) {
@@ -672,6 +692,7 @@ void GC_start_world()
       }
 #   endif
 
+#ifndef UNITY_NO_THREADS_DISCOVERY
     kern_result = task_threads(my_task, &act_list, &listcount);
     for(i = 0; i < listcount; i++) {
       thread_act_t thread = act_list[i];
@@ -704,6 +725,20 @@ void GC_start_world()
 	  mach_port_deallocate(my_task, thread);
     }
     vm_deallocate(my_task, (vm_address_t)act_list, sizeof(thread_t) * listcount);
+ #else
+    for (i = 0; i < THREAD_TABLE_SZ; i++) {
+      GC_thread p;
+      for (p = GC_threads[i]; p != NULL; p = p->next) {
+        if ((p->flags & FINISHED) == 0 && !p->thread_blocked &&
+             p->stop_info.mach_thread != my_thread) {
+#if DEBUG_THREADS
+	      GC_printf1("Resuming 0x%lx\n", p->stop_info.mach_thread);
+#endif
+             thread_resume(p->stop_info.mach_thread);
+           }
+      }
+    }
+ #endif
 	
 	mach_port_deallocate(my_task, my_thread);
 #   if DEBUG_THREADS
