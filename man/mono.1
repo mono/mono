@@ -144,6 +144,12 @@ Defaults to 128.
 .I nodebug
 Instructs the AOT compiler to not output any debugging information.
 .TP
+.I dwarfdebug
+Instructs the AOT compiler to emit DWARF debugging information. When
+used together with the nodebug option, only DWARF debugging
+information is emitted, but not the information that can be used at
+runtime.
+.TP
 .I nrgctx-trampolines=[number]
 When compiling in full aot mode, the generic sharing trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
