@@ -433,7 +433,10 @@ void GC_push_all_stacks()
       if (thread -> id == thread_id) {
 	sp = (ptr_t) &dummy;
 	found_me = TRUE;
-      } else {
+      } else if (!thread->suspended) {
+		  continue;
+	  }
+	   else {
         CONTEXT context;
         context.ContextFlags = CONTEXT_INTEGER|CONTEXT_CONTROL;
         if (!GetThreadContext(thread_table[i].handle, &context))
