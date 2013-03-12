@@ -107,6 +107,14 @@ namespace System.Runtime.Serialization.Json
 		{
 		}
 
+#if NET_4_5
+		public DataContractJsonSerializer (Type type, DataContractJsonSerializerSettings settings)
+			: this (type, settings.RootName, settings.KnownTypes, settings.MaxItemsInObjectGraph, settings.IgnoreExtensionDataObject,
+			        settings.DataContractSurrogate, false)
+		{
+		}
+#endif
+
         #endregion
 
         Type type;
@@ -250,5 +258,28 @@ namespace System.Runtime.Serialization.Json
 				throw new ArgumentNullException ("writer");
 			writer.WriteEndElement ();
 		}
+
+#if NET_4_5
+		[MonoTODO]
+		public DateTimeFormat DateTimeFormat {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public EmitTypeInformation EmitTypeInformation {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool SerializeReadOnlyTypes {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool UseSimpleDictionaryFormat {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 	}
 }
