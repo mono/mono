@@ -1565,6 +1565,7 @@ typedef struct {
 static gboolean
 dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 {
+	int total_slots = 0;
 	int i;
 
 	if (sig->hasthis + sig->param_count > PARAM_REGS + DYN_CALL_STACK_ARGS)
@@ -1591,14 +1592,16 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 	for (i = 0; i < cinfo->nargs; ++i) {
 		switch (cinfo->args [i].regtype) {
 		case RegTypeGeneral:
-			break;
 		case RegTypeIRegPair:
+			total_slots++;
 			break;
 		case RegTypeBase:
+			total_slots++;
 			if (cinfo->args [i].offset >= (DYN_CALL_STACK_ARGS * sizeof (gpointer)))
 				return FALSE;
 			break;
 		case RegTypeStructByVal:
+			total_slots += cinfo->args [i].vtsize + cinfo->args [i].size;
 			if (cinfo->args [i].reg + cinfo->args [i].vtsize >= PARAM_REGS + DYN_CALL_STACK_ARGS)
 				return FALSE;
 			break;
@@ -1606,6 +1609,9 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 			return FALSE;
 		}
 	}
+	
+	if (total_slots > PARAM_REGS + DYN_CALL_STACK_ARGS)
+		return FALSE;
 
 	// FIXME: Can't use cinfo only as it doesn't contain info about I8/float */
 	for (i = 0; i < sig->param_count; ++i) {

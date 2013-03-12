@@ -716,7 +716,7 @@ namespace System.Net
 				asyncWrite = (WebAsyncResult) asyncResult;
 			}
 
-			if (!asyncResult.AsyncWaitHandle.WaitOne (timeout, false)) {
+			if (!asyncResult.IsCompleted && !asyncResult.AsyncWaitHandle.WaitOne (timeout, false)) {
 				Abort ();
 				throw new WebException ("The request timed out", WebExceptionStatus.Timeout);
 			}

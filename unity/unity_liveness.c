@@ -10,6 +10,9 @@ typedef struct _LivenessState LivenessState;
 typedef struct _GPtrArray custom_growable_array;
 #define array_at_index(array,index) (array)->pdata[(index)]
 
+extern void GC_stop_world_external();
+extern void GC_start_world_external();
+
 custom_growable_array* array_create_and_initialize (guint capacity)
 {
 	custom_growable_array* array = g_ptr_array_sized_new(capacity);
@@ -109,9 +112,9 @@ void array_safe_grow(LivenessState* state, custom_growable_array* array)
 		MonoObject* object = array_at_index(state->all_objects,i);
 		CLEAR_OBJ(object);
 	}
-	GC_start_world ();
+	GC_start_world_external ();
 	array_grow(array);
-	GC_stop_world ();
+	GC_stop_world_external ();
 	for (i = 0; i < state->all_objects->len; i++)
 	{
 		MonoObject* object = array_at_index(state->all_objects,i);
@@ -541,7 +544,7 @@ LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint m
 	state->callback_userdata = callback_userdata;
 	state->filter_callback = callback;
 
-	GC_stop_world ();
+	GC_stop_world_external ();
 	// no allocations can happen beyond this point
 
 	return state;
@@ -555,7 +558,7 @@ void mono_unity_liveness_calculation_end (LivenessState* state)
 		MonoObject* object = g_ptr_array_index(state->all_objects,i);
 		CLEAR_OBJ(object);
 	}
-	GC_start_world ();
+	GC_start_world_external ();
 
 	//cleanup the liveness_state
 	array_destroy(state->all_objects);
