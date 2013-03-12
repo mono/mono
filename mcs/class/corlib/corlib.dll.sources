@@ -284,6 +284,7 @@ System/Variant.cs
 System/Version.cs
 System/Void.cs
 System/WeakReference.cs
+System/WeakReference_T.cs
 System/WindowsConsoleDriver.cs
 System/_AppDomain.cs
 System/__ComObject.cs
