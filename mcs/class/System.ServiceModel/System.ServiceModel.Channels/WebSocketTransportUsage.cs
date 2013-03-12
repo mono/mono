@@ -1,10 +1,8 @@
+// Authors:
+//      Martin Baulig (martin.baulig@xamarin.com)
 //
-// BindingParameterCollection.cs
+// Copyright 2012 Xamarin Inc. (http://www.xamarin.com)
 //
-// Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
-//
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,29 +23,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Collections.Generic;
-
-namespace System.ServiceModel.Channels
-{
-	public class BindingParameterCollection
-		: KeyedByTypeCollection<object>
-	{
 #if NET_4_5
-		protected override Type GetKeyForItem (object item)
-		{
-			return base.GetKeyForItem (item);
-		}
-
-		protected override void InsertItem (int index, object item)
-		{
-			base.InsertItem (index, item);
-		}
-
-		protected override void SetItem (int index, object item)
-		{
-			base.SetItem (index, item);
-		}
-#endif
+namespace System.ServiceModel.Channels {
+	public enum WebSocketTransportUsage {
+		WhenDuplex,
+		Always,
+		Never
 	}
 }
+#endif

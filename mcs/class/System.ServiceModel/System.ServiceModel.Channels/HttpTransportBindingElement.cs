@@ -251,16 +251,21 @@ namespace System.ServiceModel.Channels
 		public override T GetProperty<T> (BindingContext context)
 		{
 			// http://blogs.msdn.com/drnick/archive/2007/04/10/interfaces-for-getproperty-part-1.aspx
-#if !NET_2_1
 			if (typeof (T) == typeof (ISecurityCapabilities))
 				return (T) (object) new HttpBindingProperties (this);
 			if (typeof (T) == typeof (IBindingDeliveryCapabilities))
 				return (T) (object) new HttpBindingProperties (this);
-#endif
 			if (typeof (T) == typeof (TransferMode))
 				return (T) (object) TransferMode;
 			return base.GetProperty<T> (context);
 		}
+		
+#if NET_4_5
+		public WebSocketTransportSettings WebSocketSettings {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 
 #if !NET_2_1
 		void IPolicyExportExtension.ExportPolicy (
@@ -347,7 +352,6 @@ namespace System.ServiceModel.Channels
 #endif
 	}
 
-#if !NET_2_1
 	class HttpBindingProperties : ISecurityCapabilities, IBindingDeliveryCapabilities
 	{
 		HttpTransportBindingElement source;
@@ -402,5 +406,4 @@ namespace System.ServiceModel.Channels
 			}
 		}
 	}
-#endif
 }
