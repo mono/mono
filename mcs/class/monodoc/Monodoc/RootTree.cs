@@ -382,8 +382,10 @@ namespace Monodoc
 			internalId = null;
 			context = null;
 
-			if (url.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase))
-				return this.GetHelpSourceAndIdFromName (url.Substring ("root:/".Length), out internalId, out node);
+			if (url.StartsWith (RootNamespace, StringComparison.OrdinalIgnoreCase)) {
+				context = new Dictionary<string, string> { {"specialpage", "root"} };
+				return this.GetHelpSourceAndIdFromName (url.Substring (RootNamespace.Length), out internalId, out node);
+			}
 
 			HelpSource helpSource = hintSource;
 			if (helpSource == null || string.IsNullOrEmpty (internalId = helpSource.GetInternalIdForUrl (url, out node, out context))) {
