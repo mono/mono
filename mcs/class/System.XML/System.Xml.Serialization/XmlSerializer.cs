@@ -491,8 +491,6 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-#if !NET_2_1
-		
 		[MonoTODO]
 		public object Deserialize (XmlReader xmlReader, string encodingStyle, XmlDeserializationEvents events)
 		{
@@ -567,7 +565,6 @@ namespace System.Xml.Serialization
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		XmlSerializationWriter CreateWriter (XmlMapping typeMapping)
 		{
