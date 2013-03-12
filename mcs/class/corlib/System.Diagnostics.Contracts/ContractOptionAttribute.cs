@@ -1,11 +1,8 @@
+// Authors:
+//      Martin Baulig (martin.baulig@xamarin.com)
 //
-// System.Windows.Input.ICommand
+// Copyright 2012 Xamarin Inc. (http://www.xamarin.com)
 //
-// Contact:
-//   Moonlight List (moonlight-list@lists.ximian.com)
-//
-// Copyright 2008 Novell, Inc.
-// Copyright 2012 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,16 +23,47 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_5
+namespace System.Diagnostics.Contracts {
 
-#if NET_4_0
+	[AttributeUsageAttribute(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
+	[ConditionalAttribute("CONTRACTS_FULL")]
+	public class ContractOptionAttribute : Attribute {
+		public ContractOptionAttribute (string category, string setting, bool enabled)
+		{
+			Category = category;
+			Setting = setting;
+			Enabled = enabled;
+		}
+		
+		public ContractOptionAttribute (string category, string setting, string value)
+		{
+			Category = category;
+			Setting = setting;
+			Value = value;
+			Enabled = true;
+		}
+				
+		public string Category {
+			get;
+			private set;
+		}
 
-namespace System.Windows.Input {
-	
-	public interface ICommand {
-		bool CanExecute (object parameter);
-		void Execute (object parameter);
-		event EventHandler CanExecuteChanged;
+		public bool Enabled {
+			get;
+			private set;
+		}
+
+		public string Setting {
+			get;
+			private set;
+		}
+
+		public string Value {
+			get;
+			private set;
+		}
 	}
-}
 
+}
 #endif

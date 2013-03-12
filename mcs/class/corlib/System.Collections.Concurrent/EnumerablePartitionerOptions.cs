@@ -1,11 +1,11 @@
+// 
+// EnumerablePartitionOptions.cs
+//  
+// Authors:
+//      Martin Baulig (martin.baulig@xamarin.com)
 //
-// System.Windows.Input.ICommand
+// Copyright 2012 Xamarin Inc. (http://www.xamarin.com)
 //
-// Contact:
-//   Moonlight List (moonlight-list@lists.ximian.com)
-//
-// Copyright 2008 Novell, Inc.
-// Copyright 2012 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,16 +26,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_5
+using System;
 
-#if NET_4_0
-
-namespace System.Windows.Input {
-	
-	public interface ICommand {
-		bool CanExecute (object parameter);
-		void Execute (object parameter);
-		event EventHandler CanExecuteChanged;
+namespace System.Collections.Concurrent {
+	[Flags]
+	[Serializable]
+	public enum EnumerablePartitionerOptions {
+		None,
+		NoBuffering
 	}
 }
-
 #endif
