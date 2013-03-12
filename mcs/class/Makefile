@@ -154,7 +154,9 @@ mobile_dirs := \
 	System.Reactive.PlatformServices \
 	System.Reactive.Experimental \
 	System.Reactive.Debugger	\
-	System.Net.Http
+	System.Net.Http \
+	System.IO.Compression \
+	System.IO.Compression.FileSystem
 
 monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
@@ -244,8 +246,10 @@ net_4_5_dirs := \
 	System.Web.Http.SelfHost \
 	EntityFramework	\
 	EntityFramework.SqlServer	\
-	Mono.CodeContracts
-
+	Mono.CodeContracts \
+	System.IO.Compression \
+	System.IO.Compression.FileSystem
+	
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
