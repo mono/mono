@@ -344,6 +344,7 @@ System.Diagnostics.Contracts/ContractException.cs
 System.Diagnostics.Contracts/ContractFailedEventArgs.cs
 System.Diagnostics.Contracts/ContractFailureKind.cs
 System.Diagnostics.Contracts/ContractInvariantMethodAttribute.cs
+System.Diagnostics.Contracts/ContractOptionAttribute.cs
 System.Diagnostics.Contracts/ContractPublicPropertyNameAttribute.cs
 System.Diagnostics.Contracts/ContractReferenceAssemblyAttribute.cs
 System.Diagnostics.Contracts/ContractRuntimeIgnoredAttribute.cs
@@ -1598,6 +1599,7 @@ System.Collections.Concurrent/OrderablePartitioner.cs
 System.Collections.Concurrent/ConcurrentDictionary.cs
 System.Collections.Concurrent/Partitioner.cs
 System.Collections.Concurrent/ConcurrentQueue.cs
+System.Collections.Concurrent/EnumerablePartitionerOptions.cs
 System.Collections.Concurrent.Partitioners/ListPartitioner.cs
 System.Collections.Concurrent.Partitioners/EnumerablePartitioner.cs
 System.Collections.Concurrent.Partitioners/UserRangePartitioner.cs

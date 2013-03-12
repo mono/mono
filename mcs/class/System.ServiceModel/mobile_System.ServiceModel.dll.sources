@@ -169,9 +169,11 @@ System.ServiceModel.Dispatcher/IClientOperationSelector.cs
 System.ServiceModel.Dispatcher/IDispatchMessageFormatter.cs
 System.ServiceModel.Dispatcher/IInteractiveChannelInitializer.cs
 System.ServiceModel.Dispatcher/IParameterInspector.cs
+System.ServiceModel.Security/HttpDigestClientCredential.cs
 System.ServiceModel.Security/MessageSecurityException.cs
 System.ServiceModel.Security/SecurityAccessDeniedException.cs
 System.ServiceModel.Security/UserNamePasswordClientCredential.cs
+System.ServiceModel.Security/WindowsClientCredential.cs
 System.ServiceModel/ActionNotSupportedException.cs
 System.ServiceModel/AllEnums.cs
 System.ServiceModel/HttpBindingBase.cs

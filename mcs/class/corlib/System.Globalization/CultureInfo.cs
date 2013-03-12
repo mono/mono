@@ -1000,5 +1000,27 @@ namespace System.Globalization
 				throw new NotSupportedException ("Calendar not found, if the linker is enabled make sure to preserve this type: " + name);
 			return (Calendar) Activator.CreateInstance (type);
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public static CultureInfo DefaultThreadCurrentCulture {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[MonoTODO]
+		public static CultureInfo DefaultThreadCurrentUICulture {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 	}
 }
