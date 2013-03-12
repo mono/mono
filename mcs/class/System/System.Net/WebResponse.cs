@@ -110,8 +110,20 @@ namespace System.Net
 		void IDisposable.Dispose()
 #endif
 		{
+#if NET_4_0
+			Dispose (true);
+#else
 			Close ();
+#endif
 		}
+		
+#if NET_4_0
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				Close ();
+		}
+#endif
 
 		void ISerializable.GetObjectData
 			(SerializationInfo serializationInfo,
