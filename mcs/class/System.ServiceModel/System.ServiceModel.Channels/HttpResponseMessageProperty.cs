@@ -31,6 +31,9 @@ using System.ServiceModel;
 namespace System.ServiceModel.Channels
 {
 	public sealed class HttpResponseMessageProperty
+#if NET_4_5
+		: IMessageProperty
+#endif
 	{
 		public static string Name {
 			get { return "httpResponse"; }
@@ -63,5 +66,18 @@ namespace System.ServiceModel.Channels
 			get { return suppress_entity; }
 			set { suppress_entity = value; }
 		}
+		
+#if NET_4_5
+		IMessageProperty IMessageProperty.CreateCopy ()
+		{
+			var copy = new HttpResponseMessageProperty ();
+			// FIXME: Clone headers?
+			copy.headers = headers;
+			copy.status_desc = status_desc;
+			copy.status_code = status_code;
+			copy.suppress_entity = suppress_entity;
+			return copy;
+		}
+#endif
 	}
 }
