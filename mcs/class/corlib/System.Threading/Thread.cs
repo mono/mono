@@ -672,31 +672,6 @@ namespace System.Threading {
 			}
 		}
 
-#if MONOTOUCH
-		static ConstructorInfo nsautoreleasepool_ctor;
-		
-		IDisposable GetNSAutoreleasePool ()
-		{
-			if (nsautoreleasepool_ctor == null) {
-				Type t = Type.GetType ("MonoTouch.Foundation.NSAutoreleasePool, monotouch, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-				nsautoreleasepool_ctor = t.GetConstructor (Type.EmptyTypes);
-			}
-			return (IDisposable) nsautoreleasepool_ctor.Invoke (null);
-		}
-		
-		private void StartInternal ()
-		{
-			using (var pool = GetNSAutoreleasePool ()) {
-				current_thread = this;
-			
-				if (threadstart is ThreadStart) {
-					((ThreadStart) threadstart) ();
-				} else {
-					((ParameterizedThreadStart) threadstart) (start_obj);
-				}
-			}
-		}
-#else
 		private void StartInternal ()
 		{
 			current_thread = this;
@@ -707,7 +682,7 @@ namespace System.Threading {
 				((ParameterizedThreadStart) threadstart) (start_obj);
 			}
 		}
-#endif
+
 		public void Start() {
 			// propagate informations from the original thread to the new thread
 			if (!ExecutionContext.IsFlowSuppressed ())
