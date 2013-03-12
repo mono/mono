@@ -427,5 +427,26 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public string CultureName {
+			get {
+				if (cultureinfo == null)
+					return string.Empty;
+				else if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
+					return "neutral";
+				else
+					return cultureinfo.Name;
+			}
+		}
+
+		[ComVisibleAttribute(false)]
+		public AssemblyContentType ContentType {
+			get { return AssemblyContentType.Default; }
+			set {
+				if (value != AssemblyContentType.Default)
+					throw new InvalidOperationException ();
+			}
+		}
+#endif
 	}
 }

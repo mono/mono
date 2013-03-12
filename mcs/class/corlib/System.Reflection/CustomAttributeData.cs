@@ -139,6 +139,12 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
+#if NET_4_5
+		public Type AttributeType {
+			get { return ctorInfo.DeclaringType; }
+		}
+#endif
+
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();

@@ -163,5 +163,16 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public virtual Delegate CreateDelegate (Type delegateType)
+		{
+			return Delegate.CreateDelegate (delegateType, this);
+		}
+
+		public virtual Delegate CreateDelegate (Type delegateType, object target)
+		{
+			return Delegate.CreateDelegate (delegateType, target, this);
+		}
+#endif
 	}
 }

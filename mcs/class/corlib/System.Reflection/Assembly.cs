@@ -976,5 +976,26 @@ namespace System.Reflection {
 			return !left.Equals (right);
 		}
 #endif
+
+#if NET_4_5
+		public virtual IEnumerable<TypeInfo> DefinedTypes {
+			get {
+				foreach (var type in GetTypes ())
+					yield return new TypeDelegator (type);
+			}
+		}
+
+		public virtual IEnumerable<Type> ExportedTypes {
+			get { return GetExportedTypes (); }
+		}
+
+		public virtual IEnumerable<Module> Modules {
+			get { return GetModules (); }
+		}
+
+		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
+			get { return GetCustomAttributesData (); }
+		}
+#endif
 	}
 }

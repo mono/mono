@@ -277,5 +277,17 @@ namespace System.Reflection {
 			return (AddEventAdapter)Delegate.CreateDelegate (typeof (AddEventAdapter), addHandlerDelegate, adapterFrame, true);
 		}
 #endif
+
+#if NET_4_5
+		public virtual MethodInfo AddMethod {
+			get { return GetAddMethod (true); }
+		}
+		public virtual MethodInfo RaiseMethod {
+			get { return GetRaiseMethod (true); }
+		}
+		public virtual MethodInfo RemoveMethod {
+			get { return GetRemoveMethod (true); }
+		}
+#endif
 	}
 }

@@ -456,5 +456,10 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
+			get { return GetCustomAttributesData (); }
+		}
+#endif
 	}
 }

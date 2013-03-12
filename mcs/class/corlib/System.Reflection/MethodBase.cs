@@ -290,6 +290,12 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public virtual MethodImplAttributes MethodImplementationFlags {
+			get { return GetMethodImplementationFlags (); }
+		}
+#endif
+
 #if !MOBILE
 		void _MethodBase.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{

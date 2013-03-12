@@ -467,6 +467,7 @@ System.Reflection/Assembly.cs
 System.Reflection/AssemblyAlgorithmIdAttribute.cs
 System.Reflection/AssemblyCompanyAttribute.cs
 System.Reflection/AssemblyConfigurationAttribute.cs
+System.Reflection/AssemblyContentType.cs
 System.Reflection/AssemblyCopyrightAttribute.cs
 System.Reflection/AssemblyCultureAttribute.cs
 System.Reflection/AssemblyDefaultAliasAttribute.cs
@@ -546,6 +547,7 @@ System.Reflection/ReflectionContext.cs
 System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/ResourceAttributes.cs
 System.Reflection/ResourceLocation.cs
+System.Reflection/RuntimeReflectionExtensions.cs
 System.Reflection/StrongNameKeyPair.cs
 System.Reflection/TargetException.cs
 System.Reflection/TargetInvocationException.cs
