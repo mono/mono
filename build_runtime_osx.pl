@@ -34,6 +34,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	}
 	$jobs = "-j$jobs";
 }
+$ENV{'LIBTOOLIZE'} = 'glibtoolize';
 
 my @arches = ('x86_64','i386');
 if ($iphone_simulator || $minimal) {
