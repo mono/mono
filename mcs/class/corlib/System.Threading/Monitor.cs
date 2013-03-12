@@ -225,5 +225,13 @@ namespace System.Threading
 		}		
 
 #endif
+
+#if NET_4_5
+		[MonoTODO]
+		public static bool IsEntered (object obj)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
