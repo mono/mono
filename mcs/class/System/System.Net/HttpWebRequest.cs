@@ -190,6 +190,13 @@ namespace System.Net
 			get { return allowBuffering; }
 			set { allowBuffering = value; }
 		}
+		
+#if NET_4_5
+		public virtual bool AllowReadStreamBuffering {
+			get { return allowBuffering; }
+			set { allowBuffering = value; }
+		}
+#endif
 
 		static Exception GetMustImplement ()
 		{
@@ -287,6 +294,9 @@ namespace System.Net
 			set { continueDelegate = value; }
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public CookieContainer CookieContainer {
 			get { return cookieContainer; }
 			set { cookieContainer = value; }
@@ -357,6 +367,9 @@ namespace System.Net
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public bool HaveResponse {
 			get { return haveResponse; }
 		}
@@ -475,6 +488,14 @@ namespace System.Net
 				readWriteTimeout = value;
 			}
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public int ContinueTimeout {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 		
 		public string MediaType {
 			get { return mediaType; }
