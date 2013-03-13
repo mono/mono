@@ -3099,12 +3099,12 @@ close_parens
 parenthesized_expression
 	: OPEN_PARENS expression CLOSE_PARENS
 	  {
-		$$ = new ParenthesizedExpression ((Expression) $2);
+		$$ = new ParenthesizedExpression ((Expression) $2, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
 	  }
 	| OPEN_PARENS expression COMPLETE_COMPLETION
 	  {
-		$$ = new ParenthesizedExpression ((Expression) $2);
+		$$ = new ParenthesizedExpression ((Expression) $2, GetLocation ($1));
 	  }
 	;
 	

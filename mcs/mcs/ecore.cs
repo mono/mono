@@ -153,6 +153,16 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// Used to workaround parser limitation where we cannot get
+		// start of statement expression location
+		//
+		public virtual Location StartLocation {
+			get {
+				return loc;
+			}
+		}
+
+		//
 		// Returns true when the expression during Emit phase breaks stack
 		// by using await expression
 		//
@@ -1055,8 +1065,8 @@ namespace Mono.CSharp {
 	///   being that they would support an extra Emition interface that
 	///   does not leave a result on the stack.
 	/// </summary>
-	public abstract class ExpressionStatement : Expression {
-
+	public abstract class ExpressionStatement : Expression
+	{
 		public ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);

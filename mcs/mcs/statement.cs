@@ -661,7 +661,7 @@ namespace Mono.CSharp {
 		public StatementExpression (ExpressionStatement expr)
 		{
 			this.expr = expr;
-			loc = expr.Location;
+			loc = expr.StartLocation;
 		}
 
 		public StatementExpression (ExpressionStatement expr, Location loc)

@@ -95,10 +95,10 @@ namespace Mono.CSharp
 
 	public class ParenthesizedExpression : ShimExpression
 	{
-		public ParenthesizedExpression (Expression expr)
+		public ParenthesizedExpression (Expression expr, Location loc)
 			: base (expr)
 		{
-			loc = expr.Location;
+			this.loc = loc;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -824,6 +824,12 @@ namespace Mono.CSharp
 			get { return true; }
 		}
 
+		public override Location StartLocation {
+			get {
+				return expr.StartLocation;
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Indirection target = (Indirection) t;
@@ -1040,6 +1046,12 @@ namespace Mono.CSharp
 		public Expression Expr {
 			get {
 				return expr;
+			}
+		}
+
+		public override Location StartLocation {
+			get {
+				return expr.Location;
 			}
 		}
 
@@ -5292,8 +5304,7 @@ namespace Mono.CSharp
 			this.expr = expr;		
 			this.arguments = arguments;
 			if (expr != null) {
-				var ma = expr as MemberAccess;
-				loc = ma != null ? ma.GetLeftExpressionLocation () : expr.Location;
+				loc = expr.Location;
 			}
 		}
 
@@ -5315,6 +5326,13 @@ namespace Mono.CSharp
 				return mg;
 			}
 		}
+
+		public override Location StartLocation {
+			get {
+				return expr.StartLocation;
+			}
+		}
+
 		#endregion
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -7891,6 +7909,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override Location StartLocation {
+			get {
+				return expr == null ? loc : expr.StartLocation;
+			}
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			var e = DoResolveName (rc, null);
@@ -7946,18 +7970,6 @@ namespace Mono.CSharp
 				rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
 			else
 				expr.Error_OperatorCannotBeApplied (rc, loc, ".", type);
-		}
-
-		public Location GetLeftExpressionLocation ()
-		{
-			Expression expr = LeftExpression;
-			MemberAccess ma = expr as MemberAccess;
-			while (ma != null && ma.LeftExpression != null) {
-				expr = ma.LeftExpression;
-				ma = expr as MemberAccess;
-			}
-
-			return expr == null ? Location : expr.Location;
 		}
 
 		public static bool IsValidDotExpression (TypeSpec type)
@@ -8471,6 +8483,12 @@ namespace Mono.CSharp
 			Expr = e;
 			this.loc = loc;
 			this.Arguments = args;
+		}
+
+		public override Location StartLocation {
+			get {
+				return Expr.StartLocation;
+			}
 		}
 
 		public override bool ContainsEmitWithAwait ()
