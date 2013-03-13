@@ -44,7 +44,6 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool ReleaseMutex_internal(IntPtr handle);
 		
-#if !MOBILE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern IntPtr  CreateMutex_internal(
 		                                         bool initiallyOwned,
@@ -53,8 +52,7 @@ namespace System.Threading
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern IntPtr OpenMutex_internal (string name, MutexRights rights, out MonoIOError error);
-#endif
-		
+
 		private Mutex (IntPtr handle)
 		{
 			Handle = handle;
