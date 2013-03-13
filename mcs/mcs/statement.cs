@@ -1171,7 +1171,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!ec.Switch.GotDefault) {
+			if (ec.Switch.DefaultLabel == null) {
 				FlowBranchingBlock.Error_UnknownLabel (loc, "default", ec.Report);
 				return false;
 			}
@@ -1181,7 +1181,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.Emit (OpCodes.Br, ec.Switch.DefaultLabel);
+			ec.Emit (OpCodes.Br, ec.Switch.DefaultLabel.GetILLabel (ec));
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -2146,14 +2146,6 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public Block CreateSwitchBlock (Location start)
-		{
-			// FIXME: Only explicit block should be created
-			var new_block = new Block (this, start, start);
-			new_block.IsCompilerGenerated = true;
-			return new_block;
-		}
-
 		public void SetEndLocation (Location loc)
 		{
 			EndLocation = loc;
@@ -2287,7 +2279,7 @@ namespace Mono.CSharp {
 					if (s is EmptyStatement)
 						continue;
 
-					if (!ec.UnreachableReported && !(s is LabeledStatement)) {
+					if (!ec.UnreachableReported && !(s is LabeledStatement) && !(s is SwitchLabel)) {
 						ec.Report.Warning (162, 2, s.loc, "Unreachable code detected");
 						ec.UnreachableReported = true;
 					}
@@ -2309,7 +2301,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (unreachable && !(s is LabeledStatement) && !(s is Block))
+				if (unreachable && !(s is LabeledStatement) && !(s is SwitchLabel) && !(s is Block))
 					statements [ix] = new EmptyStatement (s.loc);
 
 				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
@@ -3258,18 +3250,19 @@ namespace Mono.CSharp {
 			//
 			// A collision checking between local names
 			//
+			var variable_block = li.Block.Explicit;
 			for (int i = 0; i < existing_list.Count; ++i) {
 				existing = existing_list[i];
 				Block b = existing.Block.Explicit;
 
 				// Collision at same level
-				if (li.Block.Explicit == b) {
+				if (variable_block == b) {
 					li.Block.Error_AlreadyDeclared (name, li);
 					break;
 				}
 
 				// Collision with parent
-				Block parent = li.Block.Explicit;
+				Block parent = variable_block;
 				while ((parent = parent.Parent) != null) {
 					if (parent == b) {
 						li.Block.Error_AlreadyDeclared (name, li, "parent or current");
@@ -3278,10 +3271,10 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!ignoreChildrenBlocks) {
+				if (!ignoreChildrenBlocks && variable_block.Parent != b.Parent) {
 					// Collision with children
 					while ((b = b.Parent) != null) {
-						if (li.Block.Explicit == b) {
+						if (variable_block == b) {
 							li.Block.Error_AlreadyDeclared (name, li, "child");
 							i = existing_list.Count;
 							break;
@@ -3458,19 +3451,11 @@ namespace Mono.CSharp {
 			if (label != null) {
 				if (label.Block == b.Original)
 					return label;
-
-				// TODO: Temporary workaround for the switch block implicit label block
-				if (label.Block.IsCompilerGenerated && (label.Block.Parent == b.Original || label.Block == b.Original.Parent))
-					return label;
 			} else {
 				List<LabeledStatement> list = (List<LabeledStatement>) value;
 				for (int i = 0; i < list.Count; ++i) {
 					label = list[i];
 					if (label.Block == b.Original)
-						return label;
-
-					// TODO: Temporary workaround for the switch block implicit label block
-					if (label.Block.IsCompilerGenerated && (label.Block.Parent == b.Original || label.Block == b.Original.Parent))
 						return label;
 				}
 			}
@@ -3553,10 +3538,10 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class SwitchLabel {
+	public class SwitchLabel : Statement
+	{
 		Expression label;
 		Constant converted;
-		readonly Location loc;
 
 		Label? il_label;
 
@@ -3596,6 +3581,8 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool SectionStart { get; set; }
+
 		public Label GetILLabel (EmitContext ec)
 		{
 			if (il_label == null){
@@ -3603,6 +3590,18 @@ namespace Mono.CSharp {
 			}
 
 			return il_label.Value;
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			ec.MarkLabel (GetILLabel (ec));
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			bc.CurrentBranching.CurrentUsageVector.ResetBarrier ();
+
+			return base.Resolve (bc);
 		}
 
 		//
@@ -3643,36 +3642,19 @@ namespace Mono.CSharp {
 			ec.Report.Error (152, loc, "The label `case {0}:' already occurs in this switch statement", label);
 		}
 
-		public SwitchLabel Clone (CloneContext clonectx)
+		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			if (label == null)
-				return this;
+			var t = (SwitchLabel) target;
+			if (label != null)
+				t.label = label.Clone (clonectx);
+		}
 
-			return new SwitchLabel (label.Clone (clonectx), loc);
+		public override object Accept (StructuralVisitor visitor)
+		{
+			return visitor.Visit (this);
 		}
 	}
 
-	public class SwitchSection {
-		public readonly List<SwitchLabel> Labels;
-		public readonly Block Block;
-		
-		public SwitchSection (List<SwitchLabel> labels, Block block)
-		{
-			Labels = labels;
-			Block = block;
-		}
-
-		public SwitchSection Clone (CloneContext clonectx)
-		{
-			var cloned_labels = new List<SwitchLabel> ();
-
-			foreach (SwitchLabel sl in Labels)
-				cloned_labels.Add (sl.Clone (clonectx));
-			
-			return new SwitchSection (cloned_labels, clonectx.LookupBlock (Block));
-		}
-	}
-	
 	public class Switch : Statement
 	{
 		// structure used to hold blocks of keys while calculating table switch
@@ -3725,33 +3707,26 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class LabelMarker : Statement
+		sealed class DispatchStatement : Statement
 		{
-			readonly Switch s;
-			readonly List<SwitchLabel> labels;
+			readonly Switch body;
 
-			public LabelMarker (Switch s, List<SwitchLabel> labels)
+			public DispatchStatement (Switch body)
 			{
-				this.s = s;
-				this.labels = labels;
+				this.body = body;
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
 			{
+				throw new NotImplementedException ();
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				foreach (var l in labels) {
-					if (l.IsDefault)
-						ec.MarkLabel (s.DefaultLabel);
-					else
-						ec.MarkLabel (l.GetILLabel (ec));
-				}
+				body.EmitDispatch (ec);
 			}
 		}
 
-		public List<SwitchSection> Sections;
 		public Expression Expr;
 
 		//
@@ -3759,25 +3734,19 @@ namespace Mono.CSharp {
 		//
 		Dictionary<long, SwitchLabel> labels;
 		Dictionary<string, SwitchLabel> string_labels;
+		List<SwitchLabel> case_labels;
 
 		/// <summary>
 		///   The governing switch type
 		/// </summary>
 		public TypeSpec SwitchType;
 
-		//
-		// Computed
-		//
-		Label default_target;
-		Label null_target;
 		Expression new_expr;
-		bool is_constant;
 
-		SwitchSection constant_section;
-		SwitchSection default_section;
-		SwitchLabel null_section;
+		SwitchLabel case_null;
+		SwitchLabel case_default;
 
-		Statement simple_stmt;
+		Label defaultLabel, nullLabel;
 		VariableReference value;
 		ExpressionStatement string_dictionary;
 		FieldExpr switch_cache_field;
@@ -3788,11 +3757,10 @@ namespace Mono.CSharp {
 		//
 		Nullable.Unwrap unwrap;
 
-		public Switch (Expression e, ExplicitBlock block, List<SwitchSection> sects, Location l)
+		public Switch (Expression e, ExplicitBlock block, Location l)
 		{
 			Expr = e;
 			this.block = block;
-			Sections = sects;
 			loc = l;
 		}
 
@@ -3802,15 +3770,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Label DefaultLabel {
+		public SwitchLabel DefaultLabel {
 			get {
-				return default_target;
-			}
-		}
-
-		public bool GotDefault {
-			get {
-				return default_section != null;
+				return case_default;
 			}
 		}
 
@@ -3900,54 +3862,80 @@ namespace Mono.CSharp {
 		// It also returns a hashtable with the keys that we will later
 		// use to compute the switch tables
 		//
-		bool CheckSwitch (ResolveContext ec)
+		bool ResolveLabels (ResolveContext ec, Constant value)
 		{
 			bool error = false;
-			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String)
-				string_labels = new Dictionary<string, SwitchLabel> (Sections.Count + 1);
-			else
-				labels = new Dictionary<long, SwitchLabel> (Sections.Count + 1);
-				
-			foreach (SwitchSection ss in Sections){
-				foreach (SwitchLabel sl in ss.Labels){
-					if (sl.IsDefault){
-						if (default_section != null){
-							sl.Error_AlreadyOccurs (ec, SwitchType, default_section.Labels [0]);
-							error = true;
-						}
-						default_section = ss;
-						continue;
+			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String) {
+				string_labels = new Dictionary<string, SwitchLabel> ();
+			} else {
+				labels = new Dictionary<long, SwitchLabel> ();
+			}
+
+			case_labels = new List<SwitchLabel> ();
+			int default_label_index = -1;
+			bool constant_label_found = false;
+
+			for (int i = 0; i < block.Statements.Count; ++i) {
+				var s = block.Statements[i];
+
+				var sl = s as SwitchLabel;
+				if (sl == null) {
+					continue;
+				}
+
+				case_labels.Add (sl);
+
+				if (sl.IsDefault) {
+					if (case_default != null) {
+						sl.Error_AlreadyOccurs (ec, SwitchType, case_default);
+						error = true;
 					}
 
-					if (!sl.ResolveAndReduce (ec, SwitchType, IsNullable)) {
-						error = true;
-						continue;
-					}
-					
-					try {
-						if (string_labels != null) {
-							string s = sl.Converted.GetValue () as string;
-							if (s == null)
-								null_section = sl;
-							else
-								string_labels.Add (s, sl);
-						} else {
-							if (sl.Converted is NullLiteral) {
-								null_section = sl;
-							} else {
-								labels.Add (sl.Converted.GetValueAsLong (), sl);
-							}
-						}
-					} catch (ArgumentException) {
-						if (string_labels != null)
-							sl.Error_AlreadyOccurs (ec, SwitchType, string_labels[(string) sl.Converted.GetValue ()]);
+					default_label_index = i;
+					case_default = sl;
+					continue;
+				}
+
+				if (!sl.ResolveAndReduce (ec, SwitchType, IsNullable)) {
+					error = true;
+					continue;
+				}
+
+				try {
+					if (string_labels != null) {
+						string string_value = sl.Converted.GetValue () as string;
+						if (string_value == null)
+							case_null = sl;
 						else
-							sl.Error_AlreadyOccurs (ec, SwitchType, labels[sl.Converted.GetValueAsLong ()]);
-
-						error = true;
+							string_labels.Add (string_value, sl);
+					} else {
+						if (sl.Converted is NullLiteral) {
+							case_null = sl;
+						} else {
+							labels.Add (sl.Converted.GetValueAsLong (), sl);
+						}
 					}
+				} catch (ArgumentException) {
+					if (string_labels != null)
+						sl.Error_AlreadyOccurs (ec, SwitchType, string_labels[(string) sl.Converted.GetValue ()]);
+					else
+						sl.Error_AlreadyOccurs (ec, SwitchType, labels[sl.Converted.GetValueAsLong ()]);
+
+					error = true;
+				}
+
+				if (value != null) {
+					var constant_label = constant_label_found ? null : FindLabel (value);
+					if (constant_label == null || constant_label != sl)
+						block.Statements[i] = new EmptyStatement (s.loc);
+					else
+						constant_label_found = true;
 				}
 			}
+
+			if (value != null && constant_label_found && default_label_index >= 0)
+				block.Statements[default_label_index] = new EmptyStatement (case_default.loc);
+
 			return !error;
 		}
 		
@@ -3960,8 +3948,6 @@ namespace Mono.CSharp {
 		//
 		void EmitTableSwitch (EmitContext ec, Expression val)
 		{
-			Label lbl_default = default_target;
-
 			if (labels != null && labels.Count > 0) {
 				List<LabelsRange> ranges;
 				if (string_labels != null) {
@@ -3994,17 +3980,21 @@ namespace Mono.CSharp {
 					ranges.Sort ();
 				}
 
+				Label lbl_default = defaultLabel;
 				TypeSpec compare_type = SwitchType.IsEnum ? EnumSpec.GetUnderlyingType (SwitchType) : SwitchType;
 
 				for (int range_index = ranges.Count - 1; range_index >= 0; --range_index) {
 					LabelsRange kb = ranges[range_index];
-					lbl_default = (range_index == 0) ? default_target : ec.DefineLabel ();
+					lbl_default = (range_index == 0) ? defaultLabel : ec.DefineLabel ();
 
 					// Optimize small ranges using simple equality check
 					if (kb.Range <= 2) {
 						foreach (var key in kb.label_values) {
 							SwitchLabel sl = labels[key];
-							if (sl.Converted.IsDefaultValue) {
+							if (sl == case_default || sl == case_null)
+								continue;
+
+							if (sl.Converted.IsZeroInteger) {
 								val.EmitBranchable (ec, sl.GetILLabel (ec), false);
 							} else {
 								val.Emit (ec);
@@ -4075,35 +4065,8 @@ namespace Mono.CSharp {
 				if (ranges.Count > 0)
 					ec.Emit (OpCodes.Br, lbl_default);
 			}
-
-			// now emit the code for the sections
-			bool found_default = false;
-
-			foreach (SwitchSection ss in Sections) {
-				foreach (SwitchLabel sl in ss.Labels) {
-					if (sl.IsDefault) {
-						ec.MarkLabel (lbl_default);
-						found_default = true;
-						if (null_section == null)
-							ec.MarkLabel (null_target);
-					} else if (sl.Converted.IsNull) {
-						ec.MarkLabel (null_target);
-					}
-
-					ec.MarkLabel (sl.GetILLabel (ec));
-				}
-
-				ss.Block.Emit (ec);
-			}
-			
-			if (!found_default) {
-				ec.MarkLabel (lbl_default);
-				if (null_section == null) {
-					ec.MarkLabel (null_target);
-				}
-			}
 		}
-
+		
 		SwitchLabel FindLabel (Constant value)
 		{
 			SwitchLabel sl = null;
@@ -4111,34 +4074,22 @@ namespace Mono.CSharp {
 			if (string_labels != null) {
 				string s = value.GetValue () as string;
 				if (s == null) {
-					if (null_section != null)
-						sl = null_section;
-					else if (default_section != null)
-						sl = default_section.Labels[0];
+					if (case_null != null)
+						sl = case_null;
+					else if (case_default != null)
+						sl = case_default;
 				} else {
 					string_labels.TryGetValue (s, out sl);
 				}
 			} else {
 				if (value is NullLiteral) {
-					sl = null_section;
+					sl = case_null;
 				} else {
 					labels.TryGetValue (value.GetValueAsLong (), out sl);
 				}
 			}
 
 			return sl;
-		}
-
-		SwitchSection FindSection (SwitchLabel label)
-		{
-			foreach (SwitchSection ss in Sections){
-				foreach (SwitchLabel sl in ss.Labels){
-					if (label == sl)
-						return ss;
-				}
-			}
-
-			return null;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -4172,8 +4123,32 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!CheckSwitch (ec))
+			if (block.Statements.Count == 0)
+				return true;
+
+			var constant = new_expr as Constant;
+
+			if (!ResolveLabels (ec, constant))
 				return false;
+
+			//
+			// Don't need extra variable for constant switch or switch with
+			// only default case
+			//
+			if (constant == null && (case_labels.Count - (case_default != null ? 1 : 0)) != 0) {
+				//
+				// Store switch expression for comparison purposes
+				//
+				value = new_expr as VariableReference;
+				if (value == null) {
+					// Create temporary variable inside switch scope
+					var current_block = ec.CurrentBlock;
+					ec.CurrentBlock = Block;
+					value = TemporaryVariableReference.Create (SwitchType, ec.CurrentBlock, loc);
+					value.Resolve (ec);
+					ec.CurrentBlock = current_block;
+				}
+			}
 
 			Switch old_switch = ec.Switch;
 			ec.Switch = this;
@@ -4181,55 +4156,12 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Switch, loc);
 
-			var constant = new_expr as Constant;
-			if (constant != null) {
-				is_constant = true;
-				SwitchLabel label = FindLabel (constant);
-				if (label != null)
-					constant_section = FindSection (label);
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
-				if (constant_section == null)
-					constant_section = default_section;
-			} else {
-				//
-				// Store switch expression for comparison purposes
-				//
-				value = new_expr as VariableReference;
-				if (value == null) {
-					// Create temporary variable inside switch scope
-					var block = ec.CurrentBlock;
-					ec.CurrentBlock = Block;
-					value = TemporaryVariableReference.Create (SwitchType, ec.CurrentBlock, loc);
-					value.Resolve (ec);
-					ec.CurrentBlock = block;
-				}
-			}
+			var ok = block.Resolve (ec);
 
-			bool first = true;
-			bool ok = true;
-			foreach (SwitchSection ss in Sections){
-				if (!first)
-					ec.CurrentBranching.CreateSibling (
-						null, FlowBranching.SiblingType.SwitchSection);
-				else
-					first = false;
-
-				if (is_constant && (ss != constant_section)) {
-					// If we're a constant switch, we're only emitting
-					// one single section - mark all the others as
-					// unreachable.
-					ec.CurrentBranching.CurrentUsageVector.Goto ();
-					if (!ss.Block.ResolveUnreachable (ec, true)) {
-						ok = false;
-					}
-				} else {
-					if (!ss.Block.Resolve (ec))
-						ok = false;
-				}
-			}
-
-			if (default_section == null)
-				ec.CurrentBranching.CreateSibling (null, FlowBranching.SiblingType.SwitchSection);
+ 			if (case_default == null)
+				ec.CurrentBranching.CurrentUsageVector.ResetBarrier ();
 
 			ec.EndFlowBranching ();
 			ec.Switch = old_switch;
@@ -4237,16 +4169,15 @@ namespace Mono.CSharp {
 			if (!ok)
 				return false;
 
-			if (!is_constant) {
-				if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String) {
-					if (string_labels.Count < 7)
-						ResolveSimpleSwitch (ec);
-					else
-						ResolveStringSwitchMap (ec);
-				} else if (labels.Count < 3 && !IsNullable) {
-					ResolveSimpleSwitch (ec);
-				}
+			if (constant == null && SwitchType.BuiltinType == BuiltinTypeSpec.Type.String && string_labels.Count > 6) {
+				ResolveStringSwitchMap (ec);
 			}
+
+			//
+			// Needed to emit anonymous storey initialization before
+			// any generated switch dispatch
+			//
+			block.AddScopeStatement (new DispatchStatement (this));
 
 			return true;
 		}
@@ -4260,45 +4191,6 @@ namespace Mono.CSharp {
 			}
 
 			return sl;
-		}
-
-		//
-		// Prepares switch using simple if/else comparison for small label count (4 + optional default)
-		//
-		void ResolveSimpleSwitch (BlockContext bc)
-		{
-			simple_stmt = default_section != null ? default_section.Block : null;
-
-			for (int i = Sections.Count - 1; i >= 0; --i) {
-				var s = Sections[i];
-
-				if (s == default_section) {
-					s.Block.AddScopeStatement (new LabelMarker (this, s.Labels));
-					continue;
-				}
-
-				s.Block.AddScopeStatement (new LabelMarker (this, s.Labels));
-
-				Expression cond = null;
-				for (int ci = 0; ci < s.Labels.Count; ++ci) {
-					var e = new Binary (Binary.Operator.Equality, value, s.Labels[ci].Converted);
-
-					if (ci > 0) {
-						cond = new Binary (Binary.Operator.LogicalOr, cond, e);
-					} else {
-						cond = e;
-					}
-				}
-
-				//
-				// Compiler generated, hide from symbol file
-				//
-				simple_stmt = new If (cond, s.Block, simple_stmt, Location.Null);
-			}
-
-			// It's null for empty switch
-			if (simple_stmt != null)
-				simple_stmt.Resolve (bc);
 		}
 
 		//
@@ -4328,37 +4220,28 @@ namespace Mono.CSharp {
 			ctype.AddField (field);
 
 			var init = new List<Expression> ();
-			int counter = 0;
+			int counter = -1;
 			labels = new Dictionary<long, SwitchLabel> (string_labels.Count);
 			string value = null;
-			foreach (SwitchSection section in Sections) {
-				bool contains_label = false;
-				foreach (SwitchLabel sl in section.Labels) {
-					if (sl.IsDefault || sl.Converted.IsNull)
-						continue;
 
-					if (!contains_label) {
-						labels.Add (counter, sl);
-						contains_label = true;
-					}
+			foreach (SwitchLabel sl in case_labels) {
 
-					value = (string) sl.Converted.GetValue ();
-					var init_args = new List<Expression> (2);
-					init_args.Add (new StringLiteral (ec.BuiltinTypes, value, sl.Location));
+				if (sl.SectionStart)
+					labels.Add (++counter, sl);
 
-					sl.Converted = new IntConstant (ec.BuiltinTypes, counter, loc);
-					init_args.Add (sl.Converted);
+				if (sl == case_default || sl == case_null)
+					continue;
 
-					init.Add (new CollectionElementInitializer (init_args, loc));
-				}
+				value = (string) sl.Converted.GetValue ();
+				var init_args = new List<Expression> (2);
+				init_args.Add (new StringLiteral (ec.BuiltinTypes, value, sl.Location));
 
-				//
-				// Don't add empty sections
-				//
-				if (contains_label)
-					++counter;
+				sl.Converted = new IntConstant (ec.BuiltinTypes, counter, loc);
+				init_args.Add (sl.Converted);
+
+				init.Add (new CollectionElementInitializer (init_args, loc));
 			}
-
+	
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (new IntConstant (ec.BuiltinTypes, init.Count, loc)));
 			Expression initializer = new NewInitialize (string_dictionary_type, args,
@@ -4375,7 +4258,7 @@ namespace Mono.CSharp {
 			//
 			// Skip initialization when value is null
 			//
-			value.EmitBranchable (ec, null_target, false);
+			value.EmitBranchable (ec, nullLabel, false);
 
 			//
 			// Check if string dictionary is initialized and initialize
@@ -4401,7 +4284,7 @@ namespace Mono.CSharp {
 				//
 				// A value was not found, go to default case
 				//
-				get_item.EmitBranchable (ec, default_target, false);
+				get_item.EmitBranchable (ec, defaultLabel, false);
 			} else {
 				Arguments get_value_args = new Arguments (1);
 				get_value_args.Add (new Argument (value));
@@ -4412,7 +4295,7 @@ namespace Mono.CSharp {
 
 				LocalTemporary get_item_object = new LocalTemporary (ec.BuiltinTypes.Object);
 				get_item_object.EmitAssign (ec, get_item, true, false);
-				ec.Emit (OpCodes.Brfalse, default_target);
+				ec.Emit (OpCodes.Brfalse, defaultLabel);
 
 				ExpressionStatement get_item_int = (ExpressionStatement) new SimpleAssign (string_switch_variable,
 					new Cast (new TypeExpression (ec.BuiltinTypes.Int, loc), get_item_object, loc)).Resolve (rc);
@@ -4425,48 +4308,103 @@ namespace Mono.CSharp {
 			string_switch_variable.Release (ec);
 		}
 
+		//
+		// Emits switch using simple if/else comparison for small label count (4 + optional default)
+		//
+		void EmitShortSwitch (EmitContext ec)
+		{
+			MethodSpec equal_method = null;
+			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.String) {
+				equal_method = ec.Module.PredefinedMembers.StringEqual.Resolve (loc);
+			}
+
+			if (equal_method != null) {
+				value.EmitBranchable (ec, nullLabel, false);
+			}
+
+			for (int i = 0; i < case_labels.Count; ++i) {
+				var label = case_labels [i];
+				if (label == case_default || label == case_null)
+					continue;
+
+				var constant = label.Converted;
+
+				if (equal_method != null) {
+					value.Emit (ec);
+					constant.Emit (ec);
+
+					var call = new CallEmitter ();
+					call.EmitPredefined (ec, equal_method, new Arguments (0));
+					ec.Emit (OpCodes.Brtrue, label.GetILLabel (ec));
+					continue;
+				}
+
+				if (constant.IsZeroInteger && constant.Type.BuiltinType != BuiltinTypeSpec.Type.Long && constant.Type.BuiltinType != BuiltinTypeSpec.Type.ULong) {
+					value.EmitBranchable (ec, label.GetILLabel (ec), false);
+					continue;
+				}
+
+				value.Emit (ec);
+				constant.Emit (ec);
+				ec.Emit (OpCodes.Beq, label.GetILLabel (ec));
+			}
+
+			ec.Emit (OpCodes.Br, defaultLabel);
+		}
+
+		void EmitDispatch (EmitContext ec)
+		{
+			if (value == null) {
+				//
+				// Constant switch, we already done the work
+				//
+				return;
+			}
+
+			//
+			// Mark sequence point explicitly to switch
+			//
+			ec.Mark (block.StartLocation);
+			block.IsCompilerGenerated = true;
+
+			if (string_dictionary != null) {
+				DoEmitStringSwitch (ec);
+			} else if (case_labels.Count < 4 || string_labels != null) {
+				EmitShortSwitch (ec);
+			} else {
+				EmitTableSwitch (ec, value);
+			}
+		}
+
 		protected override void DoEmit (EmitContext ec)
 		{
 			// Workaround broken flow-analysis
 			block.HasUnreachableClosingBrace = true;
 
 			//
-			// Needed to emit anonymous storey initialization
-			// Otherwise it does not contain any statements for now
-			//
-			block.Emit (ec);
-
-			default_target = ec.DefineLabel ();
-			null_target = ec.DefineLabel ();
-
-			if (IsNullable) {
-				unwrap.EmitCheck (ec);
-				ec.Emit (OpCodes.Brfalse, null_target);
-				value.EmitAssign (ec, new_expr, false, false);
-			} else if (new_expr != value && !is_constant) {
-				value.EmitAssign (ec, new_expr, false, false);
-			}
-
-			//
 			// Setup the codegen context
 			//
 			Label old_end = ec.LoopEnd;
 			Switch old_switch = ec.Switch;
-			
+
 			ec.LoopEnd = ec.DefineLabel ();
 			ec.Switch = this;
 
-			// Emit Code.
-			if (is_constant) {
-				if (constant_section != null)
-					constant_section.Block.Emit (ec);
-			} else if (string_dictionary != null) {
-				DoEmitStringSwitch (ec);
-			} else if (simple_stmt != null) {
-				simple_stmt.Emit (ec);
-			} else {
-				EmitTableSwitch (ec, value);
+			defaultLabel = case_default == null ? ec.LoopEnd : case_default.GetILLabel (ec);
+			nullLabel = case_null == null ? defaultLabel : case_null.GetILLabel (ec);
+
+			if (value != null) {
+				ec.Mark (loc);
+				if (IsNullable) {
+					unwrap.EmitCheck (ec);
+					ec.Emit (OpCodes.Brfalse, nullLabel);
+					value.EmitAssign (ec, new_expr, false, false);
+				} else if (new_expr != value) {
+					value.EmitAssign (ec, new_expr, false, false);
+				}
 			}
+
+			block.Emit (ec);
 
 			// Restore context state. 
 			ec.MarkLabel (ec.LoopEnd);
@@ -4483,10 +4421,7 @@ namespace Mono.CSharp {
 			Switch target = (Switch) t;
 
 			target.Expr = Expr.Clone (clonectx);
-			target.Sections = new List<SwitchSection> ();
-			foreach (SwitchSection ss in Sections){
-				target.Sections.Add (ss.Clone (clonectx));
-			}
+			target.block = (ExplicitBlock) block.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)

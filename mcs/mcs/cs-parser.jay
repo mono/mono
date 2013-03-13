@@ -5374,7 +5374,7 @@ switch_statement
 	  }
 	  opt_switch_sections CLOSE_BRACE
 	  {
-		$$ = new Switch ((Expression) $3, (ExplicitBlock) current_block.Explicit, (List<SwitchSection>) $7, GetLocation ($1));	
+		$$ = new Switch ((Expression) $3, (ExplicitBlock) current_block.Explicit, GetLocation ($1));	
 		end_block (GetLocation ($8));
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
 	  }
@@ -5382,7 +5382,7 @@ switch_statement
 	  {
 		Error_SyntaxError (yyToken);
 	  
-		$$ = new Switch ((Expression) $3, null, null, GetLocation ($1));	
+		$$ = new Switch ((Expression) $3, null, GetLocation ($1));	
 		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	;
@@ -5391,58 +5391,33 @@ opt_switch_sections
 	: /* empty */ 		
       {
 		report.Warning (1522, 1, current_block.StartLocation, "Empty switch block"); 
-		$$ = new List<SwitchSection> ();
 	  }
 	| switch_sections
 	;
 
 switch_sections
 	: switch_section 
-	  {
-		var sections = new List<SwitchSection> (4);
-
-		sections.Add ((SwitchSection) $1);
-		$$ = sections;
-	  }
 	| switch_sections switch_section
-	  {
-		var sections = (List<SwitchSection>) $1;
-
-		sections.Add ((SwitchSection) $2);
-		$$ = sections;
-	  }
 	| error
 	  {
 		Error_SyntaxError (yyToken);
-		$$ = new List<SwitchSection> ();
 	  } 
 	;
 
 switch_section
-	: switch_labels
-	  {
-		current_block = current_block.CreateSwitchBlock (lexer.Location);
-	  }
- 	  statement_list 
-	  {
-		$$ = new SwitchSection ((List<SwitchLabel>) $1, current_block);
-	  }
+	: switch_labels statement_list 
 	;
 
 switch_labels
 	: switch_label 
 	  {
-		var labels = new List<SwitchLabel> (2);
-
-		labels.Add ((SwitchLabel) $1);
-		$$ = labels;
+	  	var label = (SwitchLabel) $1;
+	  	label.SectionStart = true;
+		current_block.AddStatement (label);
 	  }
 	| switch_labels switch_label 
 	  {
-		var labels = (List<SwitchLabel>) ($1);
-		labels.Add ((SwitchLabel) $2);
-
-		$$ = labels;
+		current_block.AddStatement ((Statement) $2);
 	  }
 	;
 
