@@ -1463,8 +1463,7 @@ namespace Mono.Data.Tds.Protocol
 			// 0x0200	Negotiate NTLM
 			// 0x8000	Negotiate Always Sign
 
-			Type3Message t3 = new Type3Message ();
-			t3.Challenge = t2.Nonce;
+			Type3Message t3 = new Type3Message (t2);
 			
 			t3.Domain = this.connectionParms.DefaultDomain;
 			t3.Host = this.connectionParms.Hostname;
