@@ -382,6 +382,13 @@ namespace Monodoc
 			internalId = null;
 			context = null;
 
+			if (url == "root:") {
+				context = new Dictionary<string, string> { {"specialpage", "master-root"} };
+				internalId = url;
+				node = null;
+				// We return the first help source available since the generator will simply fetch this RootTree instance through it
+				return helpSources.FirstOrDefault ();
+			}
 			if (url.StartsWith (RootNamespace, StringComparison.OrdinalIgnoreCase)) {
 				context = new Dictionary<string, string> { {"specialpage", "root"} };
 				return this.GetHelpSourceAndIdFromName (url.Substring (RootNamespace.Length), out internalId, out node);
