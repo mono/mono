@@ -162,6 +162,21 @@ namespace System.Threading
 			return true;
 		}
 #else
+		public Mutex (bool initiallyOwned, string name)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public Mutex (bool initiallyOwned, string name, out bool createdNew)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public Mutex (bool initiallyOwned, string name, out bool createdNew, MutexSecurity mutexSecurity)
+		{
+			throw new NotSupportedException ();
+		}
+
 		public static Mutex OpenExisting (string name)
 		{
 			throw new NotSupportedException ();

@@ -148,6 +148,25 @@ namespace System.Threading
 			return true;
 		}
 #else
+		public EventWaitHandle (bool initialState, EventResetMode mode, string name)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public EventWaitHandle (bool initialState, EventResetMode mode,
+		                        string name, out bool createdNew)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		
+		public EventWaitHandle (bool initialState, EventResetMode mode,
+		                        string name, out bool createdNew,
+		                        EventWaitHandleSecurity eventSecurity)
+		{
+			throw new NotSupportedException ();
+		}
+
 		public static EventWaitHandle OpenExisting (string name)
 		{
 			throw new NotSupportedException (); 
