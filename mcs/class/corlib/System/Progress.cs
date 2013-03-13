@@ -40,6 +40,7 @@ namespace System {
 		public Progress (Action<T> handler)
 		{
 			this.handler = handler;
+			ctx = SynchronizationContext.Current;
 		}
 		
 		void Invoke (Action action)
