@@ -740,5 +740,13 @@ namespace System
 				return false;
 			}
 		}
+
+#if NET_4_5
+		public override bool IsConstructedGenericType {
+			get {
+				return IsGenericType && !ContainsGenericParameters;
+			}
+		}
+#endif
 	}
 }
