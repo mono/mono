@@ -158,7 +158,8 @@ mobile_dirs := \
 	System.IO.Compression \
 	System.IO.Compression.FileSystem \
 	System.ComponentModel.DataAnnotations \
-	System.ComponentModel.Composition.4.5
+	System.ComponentModel.Composition.4.5 \
+	TypeForwarders
 
 monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
@@ -250,7 +251,8 @@ net_4_5_dirs := \
 	EntityFramework.SqlServer	\
 	Mono.CodeContracts \
 	System.IO.Compression \
-	System.IO.Compression.FileSystem
+	System.IO.Compression.FileSystem \
+	TypeForwarders
 	
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
