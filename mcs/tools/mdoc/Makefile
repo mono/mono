@@ -61,6 +61,8 @@ EXTRA_DISTFILES = \
 
 $(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(PROGRAM_DEPS)
 
+PROGRAM_COMPILE = $(CSCOMPILE) -platform:x86
+
 include ../../build/executable.make
 
 $(PROGRAM) : $(build_lib)
