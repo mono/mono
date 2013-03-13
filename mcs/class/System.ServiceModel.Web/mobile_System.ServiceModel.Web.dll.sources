@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+Assembly/TypeForwarders.cs
 System.ServiceModel.Channels/WebBodyFormatMessageProperty.cs
 System.ServiceModel.Channels/WebContentFormat.cs
 System.ServiceModel.Channels/WebContentTypeMapper.cs

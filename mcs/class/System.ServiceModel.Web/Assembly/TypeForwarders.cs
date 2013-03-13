@@ -24,8 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.CompressionMode))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.DeflateStream))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.GZipStream))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Compression.CompressionLevel))]
+#if NET_4_5
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.Serialization.Json.DataContractJsonSerializer))]
+#endif
 
