@@ -163,8 +163,6 @@ namespace System.Reflection {
 		}
 #endif
 
-// FIXME: This breaks dynamic methods which also have a non-virtual CreateMethod () method.
-#if FALSE
 #if NET_4_5
 		public virtual Delegate CreateDelegate (Type delegateType)
 		{
@@ -175,7 +173,6 @@ namespace System.Reflection {
 		{
 			return Delegate.CreateDelegate (delegateType, target, this);
 		}
-#endif
 #endif
 	}
 }
