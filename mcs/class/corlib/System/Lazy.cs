@@ -62,7 +62,7 @@ namespace System
 		}
 
 		public Lazy (bool isThreadSafe)
-			: this (() => Activator.CreateInstance<T> (), isThreadSafe ? LazyThreadSafetyMode.ExecutionAndPublication : LazyThreadSafetyMode.None)
+			: this (Activator.CreateInstance<T>, isThreadSafe ? LazyThreadSafetyMode.ExecutionAndPublication : LazyThreadSafetyMode.None)
 		{
 		}
 		
@@ -72,7 +72,7 @@ namespace System
 		}
 
 		public Lazy (LazyThreadSafetyMode mode)
-			: this (() => Activator.CreateInstance<T> (), mode)
+			: this (Activator.CreateInstance<T>, mode)
 		{
 		}
 
