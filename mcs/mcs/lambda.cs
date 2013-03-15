@@ -182,7 +182,7 @@ namespace Mono.CSharp {
 		ExpressionStatement statement;
 
 		public ContextualReturn (Expression expr)
-			: base (expr, expr.Location)
+			: base (expr, expr.StartLocation)
 		{
 		}
 

@@ -1051,7 +1051,7 @@ namespace Mono.CSharp
 
 		public override Location StartLocation {
 			get {
-				return expr.Location;
+				return (mode & Mode.IsPost) != 0 ? expr.Location : loc;
 			}
 		}
 
