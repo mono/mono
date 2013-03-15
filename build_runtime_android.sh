@@ -74,6 +74,7 @@ CONFIG_OPTS="\
 --host=arm-eabi-linux \
 --disable-mcs-build \
 --disable-parallel-mark \
+--disable-shared-handles \
 --with-sigaltstack=no \
 --with-tls=pthread \
 --with-glib=embedded \
