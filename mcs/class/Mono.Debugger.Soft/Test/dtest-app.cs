@@ -420,8 +420,15 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void locals11 (double a, ref double b) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals1 (string[] args) {
 		long foo = 42;
+
+		double ri = 1;
+		locals11 (b: ref ri, a: ri);
 
 		for (int j = 0; j < 10; ++j) {
 			foo ++;
