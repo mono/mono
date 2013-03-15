@@ -3292,6 +3292,16 @@ public class ArrayTest
 		}
 	}
 
+	[Test] //bxc #11184
+	public void UnalignedArrayClear ()
+	{
+		byte[] input = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+		byte[] expected = new byte[] { 1, 2, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		Array.Clear (input, 5, 11);
+		
+		Assert.AreEqual (input, expected);
+	}
+
 #if NET_4_0
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]
