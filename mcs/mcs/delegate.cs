@@ -645,11 +645,92 @@ namespace Mono.CSharp {
 	//
 	public class ImplicitDelegateCreation : DelegateCreation
 	{
+		Field mg_cache;
+
 		public ImplicitDelegateCreation (TypeSpec delegateType, MethodGroupExpr mg, Location loc)
 		{
 			type = delegateType;
 			this.method_group = mg;
 			this.loc = loc;
+		}
+
+		//
+		// Returns true when type is MVAR or has MVAR reference
+		//
+		static bool ContainsMethodTypeParameter (TypeSpec type)
+		{
+			var tps = type as TypeParameterSpec;
+			if (tps != null)
+				return tps.IsMethodOwned;
+
+			var ec = type as ElementTypeSpec;
+			if (ec != null)
+				return ContainsMethodTypeParameter (ec.Element);
+
+			foreach (var t in type.TypeArguments) {
+				if (ContainsMethodTypeParameter (t)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		protected override Expression DoResolve (ResolveContext ec)
+		{
+			var expr = base.DoResolve (ec);
+			if (expr == null)
+				return null;
+
+			if (ec.IsInProbingMode)
+				return expr;
+
+			//
+			// Cache any static delegate creation
+			//
+			if (method_group.InstanceExpression != null)
+				return expr;
+
+			//
+			// Cannot easily cache types with MVAR
+			//
+			if (ContainsMethodTypeParameter (type))
+				return expr;
+
+			if (ContainsMethodTypeParameter (method_group.BestCandidate.DeclaringType))
+				return expr;
+
+			//
+			// Create type level cache for a delegate instance
+			//
+			var parent = ec.CurrentMemberDefinition.Parent.PartialContainer;
+			int id = parent.MethodGroupsCounter++;
+
+			mg_cache = new Field (parent, new TypeExpression (type, loc),
+				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
+				new MemberName (CompilerGeneratedContainer.MakeName (null, "f", "mg$cache", id), loc), null);
+			mg_cache.Define ();
+			parent.AddField (mg_cache);
+
+			return expr;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Label l_initialized = ec.DefineLabel ();
+
+			if (mg_cache != null) {
+				ec.Emit (OpCodes.Ldsfld, mg_cache.Spec);
+				ec.Emit (OpCodes.Brtrue_S, l_initialized);
+			}
+
+			base.Emit (ec);
+
+			if (mg_cache != null) {
+				ec.Emit (OpCodes.Stsfld, mg_cache.Spec);
+				ec.MarkLabel (l_initialized);
+				ec.Emit (OpCodes.Ldsfld, mg_cache.Spec);
+			}
 		}
 	}
 	

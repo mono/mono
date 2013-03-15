@@ -544,6 +544,7 @@ namespace Mono.CSharp
 
 		public int DynamicSitesCounter;
 		public int AnonymousMethodsCounter;
+		public int MethodGroupsCounter;
 
 		static readonly string[] attribute_targets = new string[] { "type" };
 
