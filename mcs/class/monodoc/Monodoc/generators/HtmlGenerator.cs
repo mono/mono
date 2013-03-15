@@ -48,13 +48,17 @@ namespace Monodoc.Generators
 
 		public string Generate (HelpSource hs, string id, Dictionary<string, string> context)
 		{
-			string specialPage;
+			string specialPage = null;
 			if (context != null && context.TryGetValue ("specialpage", out specialPage) && specialPage == "master-root")
 				return GenerateMasterRootPage (hs != null ? hs.RootTree : null);
+
+			if (id == "root:" && hs == null)
+				return MakeEmptySummary ();
 
 			if (hs == null || string.IsNullOrEmpty (id))
 				return MakeHtmlError (string.Format ("Your request has found no candidate provider [hs=\"{0}\", id=\"{1}\"]",
 				                                     hs == null ? "(null)" : hs.Name, id ?? "(null)"));
+
 			var cache = defaultCache ?? hs.Cache;
 			if (cache != null && cache.IsCached (MakeCacheKey (hs, id, null)))
 				return cache.GetCachedString (MakeCacheKey (hs, id, null));
@@ -131,7 +135,12 @@ namespace Monodoc.Generators
 
 		string MakeHtmlError (string error)
 		{
-			return string.Format ("<html><head></head><body><p>{0}</p></body></html>", error);
+			return string.Format ("<html><head></head><body><p><em>Error:</em> {0}</p></body></html>", error);
+		}
+
+		string MakeEmptySummary ()
+		{
+			return @"<html><head></head><body><p><em>This node doesn't have a summary available</p></body></html>";
 		}
 
 		string MakeCacheKey (HelpSource hs, string page, IDictionary<string,string> extraParams)
