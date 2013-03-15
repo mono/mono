@@ -436,6 +436,8 @@ namespace Mono.CSharp {
 		protected MethodSpec constructor_method;
 		protected MethodGroupExpr method_group;
 
+		public bool AllowSpecialMethodsInvocation { get; set; }
+
 		public override bool ContainsEmitWithAwait ()
 		{
 			return false;
@@ -511,7 +513,8 @@ namespace Mono.CSharp {
 				return null;
 			}		
 			
-			Invocation.IsSpecialMethodInvocation (ec, delegate_method, loc);
+			if (!AllowSpecialMethodsInvocation)
+				Invocation.IsSpecialMethodInvocation (ec, delegate_method, loc);
 
 			ExtensionMethodGroupExpr emg = method_group as ExtensionMethodGroupExpr;
 			if (emg != null) {
@@ -642,18 +645,11 @@ namespace Mono.CSharp {
 	//
 	public class ImplicitDelegateCreation : DelegateCreation
 	{
-		ImplicitDelegateCreation (TypeSpec t, MethodGroupExpr mg, Location l)
+		public ImplicitDelegateCreation (TypeSpec delegateType, MethodGroupExpr mg, Location loc)
 		{
-			type = t;
+			type = delegateType;
 			this.method_group = mg;
-			loc = l;
-		}
-
-		static public Expression Create (ResolveContext ec, MethodGroupExpr mge,
-						 TypeSpec target_type, Location loc)
-		{
-			ImplicitDelegateCreation d = new ImplicitDelegateCreation (target_type, mge, loc);
-			return d.DoResolve (ec);
+			this.loc = loc;
 		}
 	}
 	

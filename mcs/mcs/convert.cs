@@ -1310,8 +1310,7 @@ namespace Mono.CSharp {
 				if (ec.Module.Compiler.Settings.Version != LanguageVersion.ISO_1){
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
-						return ImplicitDelegateCreation.Create (
-							ec, mg, target_type, loc);
+						return new ImplicitDelegateCreation (target_type, mg, loc).Resolve (ec);
 				}
 			}
 

@@ -5335,6 +5335,40 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public override MethodGroupExpr CanReduceLambda (AnonymousMethodBody body)
+		{
+			if (MethodGroup == null)
+				return null;
+
+			var candidate = MethodGroup.BestCandidate;
+			if (candidate == null || !(candidate.IsStatic || Exp is This))
+				return null;
+
+			var args_count = arguments == null ? 0 : arguments.Count;
+			if (args_count != body.Parameters.Count)
+				return null;
+
+			var lambda_parameters = body.Block.Parameters.FixedParameters;
+			for (int i = 0; i < args_count; ++i) {
+				var pr = arguments[i].Expr as ParameterReference;
+				if (pr == null)
+					return null;
+
+				if (lambda_parameters[i] != pr.Parameter)
+					return null;
+
+				if ((lambda_parameters[i].ModFlags & Parameter.Modifier.RefOutMask) != (pr.Parameter.ModFlags & Parameter.Modifier.RefOutMask))
+					return null;
+			}
+
+			var emg = MethodGroup as ExtensionMethodGroupExpr;
+			if (emg != null) {
+				return MethodGroupExpr.CreatePredefined (candidate, candidate.DeclaringType, MethodGroup.Location);
+			}
+
+			return MethodGroup;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Invocation target = (Invocation) t;

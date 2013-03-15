@@ -931,9 +931,19 @@ namespace Mono.CSharp {
 					}
 
 					var l = am as AnonymousMethodBody;
-					if (l != null && l.ReturnTypeInference != null && expr != null) {
-						l.ReturnTypeInference.AddCommonTypeBound (expr.Type);
-						return true;
+					if (l != null && expr != null) {
+						if (l.ReturnTypeInference != null) {
+							l.ReturnTypeInference.AddCommonTypeBound (expr.Type);
+							return true;
+						}
+
+						//
+						// Try to optimize simple lambda. Only when optimizations are enabled not to cause
+						// unexpected debugging experience
+						//
+						if (this is ContextualReturn && !ec.IsInProbingMode && ec.Module.Compiler.Settings.Optimize) {
+							l.DirectMethodGroupConversion = expr.CanReduceLambda (l);
+						}
 					}
 				}
 			}
@@ -3490,9 +3500,7 @@ namespace Mono.CSharp {
 			if (Report.Errors > 0)
 				return;
 
-#if PRODUCTION
 			try {
-#endif
 			if (IsCompilerGenerated) {
 				using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
 					base.Emit (ec);
@@ -3526,15 +3534,9 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Ret);
 			}
 
-#if PRODUCTION
-			} catch (Exception e){
-				Console.WriteLine ("Exception caught by the compiler while emitting:");
-				Console.WriteLine ("   Block that caused the problem begin at: " + block.loc);
-					
-				Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
-				throw;
+			} catch (Exception e) {
+				throw new InternalErrorException (e, StartLocation);
 			}
-#endif
 		}
 	}
 	
