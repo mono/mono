@@ -543,6 +543,8 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	thumb_supported = TRUE;
 	v5_supported = TRUE;
 	iphone_abi = TRUE;
+#elif __QNXNTO__
+	thumb_supported = TRUE;
 #else
 	char buf [512];
 	char *line;
