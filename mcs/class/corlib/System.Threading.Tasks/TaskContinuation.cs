@@ -256,12 +256,13 @@ namespace System.Threading.Tasks
 	{
 		readonly Task<T> owner;
 		readonly IList<T> tasks;
-		AtomicBooleanValue executed = new AtomicBooleanValue ();
+		AtomicBooleanValue executed;
 
 		public WhenAnyContinuation (Task<T> owner, IList<T> tasks)
 		{
 			this.owner = owner;
 			this.tasks = tasks;
+			executed = new AtomicBooleanValue ();
 		}
 
 		public void Execute ()
@@ -269,13 +270,19 @@ namespace System.Threading.Tasks
 			if (!executed.TryRelaxedSet ())
 				return;
 
+			bool owner_notified = false;
 			for (int i = 0; i < tasks.Count; ++i) {
 				var task = tasks[i];
-				if (!task.IsCompleted)
+				if (!task.IsCompleted) {
+					task.RemoveContinuation (this);
+					continue;
+				}
+
+				if (owner_notified)
 					continue;
 
 				owner.TrySetResult (task);
-				return;
+				owner_notified = true;
 			}
 		}
 	}
