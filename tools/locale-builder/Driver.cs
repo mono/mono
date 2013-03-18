@@ -1070,7 +1070,10 @@ namespace Mono.Tools.LocaleBuilder
 				// We cannot use the value from CLDR because many broken
 				// .NET serializers (e.g. JSON) use text value of NegativeInfinity
 				// and different value would break interoperability with .NET
-				if (el != null && el.InnerText != "∞") {
+				var inf = GetInfinitySymbol (ci);
+				if (inf != null)
+					ni.InfinitySymbol = inf;
+				else if (el != null && el.InnerText != "∞") {
 					ni.InfinitySymbol = el.InnerText;
 				}
 
@@ -1093,6 +1096,50 @@ namespace Mono.Tools.LocaleBuilder
 					ni.CurrencyGroupSeparator = el.InnerText;
 				}
 			}
+		}
+
+		string GetInfinitySymbol (CultureInfoEntry ci)
+		{
+			// TODO: Add more
+			switch (ci.TwoLetterISOLanguageName) {
+				case "ca":
+					return "Infinit";
+				case "cs":
+				case "sk":
+					return "+nekonečno";
+				case "de":
+					return "+unendlich";
+				case "el":
+					return "Άπειρο";
+				case "es":
+				case "gl":
+					return "Infinito";
+				case "it":
+				case "pt":
+					return "+Infinito";
+				case "nl":
+					return "oneindig";
+				case "fr":
+				case "tzm":
+					return "+Infini";
+				case "pl":
+					return "+nieskończoność";
+				case "ru":
+			 	case "tg":
+					return "бесконечность";
+				case "sl":
+					return "neskončnost";
+				case "rm":
+					return "+infinit";
+				case "lv":
+					return "bezgalība";
+				case "lt":
+					return "begalybė";
+				case "eu":
+					return "Infinitu";
+			}
+
+			return null;
 		}
 
 		static string ConvertDatePatternFormat (string format)
