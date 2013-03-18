@@ -11,7 +11,7 @@
 using System;
 using System.Diagnostics;
 using System.Xml;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -19,10 +19,14 @@ using System.Text;
 using Mono.Unix;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
+
 class MakeBundle {
 	static string output = "a.out";
 	static string object_out = null;
-	static ArrayList link_paths = new ArrayList ();
+	static List<string> link_paths = new List<string> ();
 	static bool autodeps = false;
 	static bool keeptemp = false;
 	static bool compile_only = false;
@@ -36,7 +40,7 @@ class MakeBundle {
 	
 	static int Main (string [] args)
 	{
-		ArrayList sources = new ArrayList ();
+		List<string> sources = new List<string> ();
 		int top = args.Length;
 		link_paths.Add (".");
 
@@ -158,8 +162,8 @@ class MakeBundle {
 			Environment.Exit (1);
 		}
 
-		ArrayList assemblies = LoadAssemblies (sources);
-		ArrayList files = new ArrayList ();
+		List<Assembly> assemblies = LoadAssemblies (sources);
+		List<string> files = new List<string> ();
 		foreach (Assembly a in assemblies)
 			QueueAssembly (files, a.CodeBase);
 			
@@ -239,7 +243,7 @@ class MakeBundle {
 		ts.WriteLine ();
 	}
 	
-	static void GenerateBundles (ArrayList files)
+	static void GenerateBundles (List<string> files)
 	{
 		string temp_s = "temp.s"; // Path.GetTempFileName ();
 		string temp_c = "temp.c";
@@ -251,8 +255,8 @@ class MakeBundle {
 			temp_o = object_out;
 		
 		try {
-			ArrayList c_bundle_names = new ArrayList ();
-			ArrayList config_names = new ArrayList ();
+			List<string> c_bundle_names = new List<string> ();
+			List<string[]> config_names = new List<string[]> ();
 			byte [] buffer = new byte [8192];
 
 			using (StreamWriter ts = new StreamWriter (File.Create (temp_s))) {
@@ -270,19 +274,19 @@ class MakeBundle {
 				tc.WriteLine ("} CompressedAssembly;\n");
 			}
 
-			foreach (string url in files){
+			object monitor = new object ();
+
+			// Do the file reading and compression in parallel
+			Action<string> body = delegate (string url) {
 				string fname = new Uri (url).LocalPath;
 				string aname = Path.GetFileName (fname);
 				string encoded = aname.Replace ("-", "_").Replace (".", "_");
 
 				if (prog == null)
 					prog = aname;
-				
-				Console.WriteLine ("   embedding: " + fname);
-				
+								
 				Stream stream = File.OpenRead (fname);
 
-				// Compression can be parallelized
 				long real_size = stream.Length;
 				int n;
 				if (compress) {
@@ -297,39 +301,51 @@ class MakeBundle {
 					stream = new MemoryStream (bytes, 0, (int) ms.Length, false, false);
 				}
 
-				WriteSymbol (ts, "assembly_data_" + encoded, stream.Length);
+				// The non-parallel part
+				lock (monitor) {
+					Console.WriteLine ("   embedding: " + fname);
+
+					WriteSymbol (ts, "assembly_data_" + encoded, stream.Length);
 			
-				WriteBuffer (ts, stream, buffer);
+					WriteBuffer (ts, stream, buffer);
 
-				if (compress) {
-					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
-					tc.WriteLine ("static CompressedAssembly assembly_bundle_{0} = {{{{\"{1}\"," +
-							" assembly_data_{0}, {2}}}, {3}}};",
-						      encoded, aname, real_size, stream.Length);
-					double ratio = ((double) stream.Length * 100) / real_size;
-					Console.WriteLine ("   compression ratio: {0:.00}%", ratio);
-				} else {
-					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
-					tc.WriteLine ("static const MonoBundledAssembly assembly_bundle_{0} = {{\"{1}\", assembly_data_{0}, {2}}};",
-						      encoded, aname, real_size);
+					if (compress) {
+						tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
+						tc.WriteLine ("static CompressedAssembly assembly_bundle_{0} = {{{{\"{1}\"," +
+									  " assembly_data_{0}, {2}}}, {3}}};",
+									  encoded, aname, real_size, stream.Length);
+						double ratio = ((double) stream.Length * 100) / real_size;
+						Console.WriteLine ("   compression ratio: {0:.00}%", ratio);
+					} else {
+						tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
+						tc.WriteLine ("static const MonoBundledAssembly assembly_bundle_{0} = {{\"{1}\", assembly_data_{0}, {2}}};",
+									  encoded, aname, real_size);
+					}
+					stream.Close ();
+
+					c_bundle_names.Add ("assembly_bundle_" + encoded);
+
+					try {
+						FileStream cf = File.OpenRead (fname + ".config");
+						Console.WriteLine (" config from: " + fname + ".config");
+						tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
+						WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
+						WriteBuffer (ts, cf, buffer);
+						ts.WriteLine ();
+						config_names.Add (new string[] {aname, encoded});
+					} catch (FileNotFoundException) {
+						/* we ignore if the config file doesn't exist */
+					}
 				}
-				stream.Close ();
+			};
 
-				c_bundle_names.Add ("assembly_bundle_" + encoded);
+#if NET_4_5
+			Parallel.ForEach (files, body);
+#else
+			foreach (var url in files)
+				body (url);
+#endif
 
-				try {
-					FileStream cf = File.OpenRead (fname + ".config");
-					Console.WriteLine (" config from: " + fname + ".config");
-					tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
-					WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
-					WriteBuffer (ts, cf, buffer);
-					ts.WriteLine ();
-					config_names.Add (new string[] {aname, encoded});
-				} catch (FileNotFoundException) {
-					/* we ignore if the config file doesn't exist */
-				}
-
-			}
 			if (config_file != null){
 				FileStream conf;
 				try {
@@ -466,9 +482,9 @@ class MakeBundle {
 		}
 	}
 	
-	static ArrayList LoadAssemblies (ArrayList sources)
+	static List<Assembly> LoadAssemblies (List<string> sources)
 	{
-		ArrayList assemblies = new ArrayList ();
+		List<Assembly> assemblies = new List<Assembly> ();
 		bool error = false;
 		
 		foreach (string name in sources){
@@ -488,7 +504,7 @@ class MakeBundle {
 		return assemblies;
 	}
 	
-	static void QueueAssembly (ArrayList files, string codebase)
+	static void QueueAssembly (List<string> files, string codebase)
 	{
 		if (files.Contains (codebase))
 			return;
