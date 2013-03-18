@@ -156,6 +156,9 @@ namespace System.ServiceModel
 #endif
 				}
 			}
+#if !NET_2_1
+			else source.TraceEvent(eventType, Interlocked.Increment(ref event_id), message, args);
+#endif
 		}
 		
 		#endregion
@@ -166,18 +169,24 @@ namespace System.ServiceModel
 		
 		public static void LogMessage (MessageLogSourceKind sourceKind, ref Message msg, long maxMessageSize)
 		{
+#if NET_2_1
 			if (log_writer != null) {
+#endif
 				if (maxMessageSize > int.MaxValue)
 					throw new ArgumentOutOfRangeException ("maxMessageSize");
 				var mb = msg.CreateBufferedCopy ((int) maxMessageSize);
 				msg = mb.CreateMessage ();
 				LogMessage (new MessageLogTraceRecord (sourceKind, msg.GetType (), mb));
+#if NET_2_1
 			}
+#endif
 		}
 		
 		public static void LogMessage (MessageLogTraceRecord log)
 		{
+#if NET_2_1
 			if (log_writer != null) {
+#endif
 				var sw = new StringWriter ();
 #if NET_2_1
 				var xw = XmlWriter.Create (sw, xws);
@@ -197,8 +206,11 @@ namespace System.ServiceModel
 				xw.WriteEndElement ();
 				xw.Close ();
 
-				event_id++;
+#if !NET_2_1
+			if (log_writer != null) {
+#endif
 				lock (log_writer){
+					event_id++;
 #if NET_2_1
 					log_writer.Write ("[{0}] ", event_id);
 
@@ -210,7 +222,11 @@ namespace System.ServiceModel
 #endif
 					log_writer.Flush ();
 				}
+#if NET_2_1
 			}
+#else
+			} else message_source.TraceData (TraceEventType.Information, Interlocked.Increment(ref event_id), doc.CreateNavigator ());
+#endif
 		}
 
 		#endregion
