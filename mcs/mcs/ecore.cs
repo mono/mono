@@ -3244,7 +3244,7 @@ namespace Mono.CSharp {
 	class ExtensionMethodGroupExpr : MethodGroupExpr, OverloadResolver.IErrorHandler
 	{
 		ExtensionMethodCandidates candidates;
-		public readonly Expression ExtensionExpression;
+		public Expression ExtensionExpression;
 
 		public ExtensionMethodGroupExpr (ExtensionMethodCandidates candidates, Expression extensionExpr, Location loc)
 			: base (candidates.Methods.Cast<MemberSpec>().ToList (), extensionExpr.Type, loc)
@@ -3287,6 +3287,10 @@ namespace Mono.CSharp {
 		{
 			if (arguments == null)
 				arguments = new Arguments (1);
+
+			ExtensionExpression = ExtensionExpression.Resolve (ec);
+			if (ExtensionExpression == null)
+				return null;
 
 			arguments.Insert (0, new Argument (ExtensionExpression, Argument.AType.ExtensionType));
 			var res = base.OverloadResolve (ec, ref arguments, ehandler ?? this, restr);
