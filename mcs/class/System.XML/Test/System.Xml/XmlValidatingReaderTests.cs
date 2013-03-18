@@ -820,18 +820,20 @@ namespace MonoTests.System.Xml
 		// imported testcase from sys.security which had regression.
 		public void ResolveEntityAndBaseURI ()
 		{
+			string world = Path.Combine (Path.GetTempPath (), "world.txt");
+			string dtd = Path.Combine (Path.GetTempPath (), "doc.dtd");
 			try {
-				using (TextWriter w = File.CreateText ("world.txt")) {
+				using (TextWriter w = File.CreateText (world)) {
 					w.WriteLine ("world");
 				}
-				using (TextWriter w = File.CreateText ("doc.dtd")) {
+				using (TextWriter w = File.CreateText (dtd)) {
 					w.WriteLine ("<!-- dummy -->");
 				}
 
-				string xml =  "<!DOCTYPE doc SYSTEM \"doc.dtd\" [\n" +
+				string xml = String.Format ("<!DOCTYPE doc SYSTEM \"{1}\" [\n" +
 					"<!ATTLIST doc attrExtEnt ENTITY #IMPLIED>\n" +
 					"<!ENTITY ent1 \"Hello\">\n" +
-					"<!ENTITY ent2 SYSTEM \"world.txt\">\n" +
+					"<!ENTITY ent2 SYSTEM \"{0}\">\n" +
 					"<!ENTITY entExt SYSTEM \"earth.gif\" NDATA gif>\n" +
 					"<!NOTATION gif SYSTEM \"viewgif.exe\">\n" +
 					"]>\n" +
@@ -839,7 +841,8 @@ namespace MonoTests.System.Xml
 					"   &ent1;, &ent2;!\n" +
 					"</doc>\n" +
 					"\n" +
-					"<!-- Let world.txt contain \"world\" (excluding the quotes) -->\n";
+					"<!-- Let world.txt contain \"world\" (excluding the quotes) -->\n",
+					world, dtd);
 
 				XmlValidatingReader xvr =
 					new XmlValidatingReader (
@@ -851,10 +854,10 @@ namespace MonoTests.System.Xml
 				doc.Load (xvr);
 
 			} finally {
-				if (File.Exists ("world.txt"))
-					File.Delete ("world.txt");
-				if (File.Exists ("doc.dtd"))
-					File.Delete ("doc.dtd");
+				if (File.Exists (world))
+					File.Delete (world);
+				if (File.Exists (dtd))
+					File.Delete (dtd);
 			}
 		}
 
