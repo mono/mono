@@ -158,7 +158,12 @@ namespace Monodoc.Providers
 
 		public static string GetMemberType (XElement m)
 		{
-			return m.Attribute ("MemberName").Value.StartsWith ("op_") ? "Operator" : m.Element ("MemberType").Value;
+			XElement ilasmElem = m.Elements ("MemberSignature").FirstOrDefault (e => e.Attribute("Language").Value == "ILAsm");
+
+			return m.Attribute ("MemberName").Value.StartsWith ("op_") 
+				&& m.Element ("MemberType").Value == "Method" 
+				&& ilasmElem != null && ilasmElem.Attribute ("Value").Value.Contains(" specialname")
+					? "Operator": m.Element ("MemberType").Value;
 		}
 
 		public static string MakeMemberCaption (XElement member, bool withArguments)
@@ -172,7 +177,7 @@ namespace Monodoc.Providers
 				if (plusIndex != -1)
 					caption = caption.Substring (plusIndex + 1);
 			}
-			if (caption.StartsWith ("op_")) {
+			if (GetMemberType(member)=="Operator") {
 				string sig;
 				caption = MakeOperatorSignature (member, out sig);
 				caption = withArguments ? sig : caption;

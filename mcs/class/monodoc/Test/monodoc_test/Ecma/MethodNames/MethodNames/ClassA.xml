@@ -1,0 +1,74 @@
+<Type Name="ClassA" FullName="MethodNames.ClassA">
+  <TypeSignature Language="C#" Value="public class ClassA" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ClassA extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MethodNames</AssemblyName>
+    <AssemblyVersion>1.0.4824.42405</AssemblyVersion>
+    <AssemblyVersion>1.0.4824.42422</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ClassA ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.4824.42405</AssemblyVersion>
+        <AssemblyVersion>1.0.4824.42422</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="C#" Value="public static int op_Addition ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 op_Addition() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.4824.42405</AssemblyVersion>
+        <AssemblyVersion>1.0.4824.42422</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="C#" Value="public static int op_Addition (MethodNames.ClassA x, int y);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname int32 op_Addition(class MethodNames.ClassA x, int32 y) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.4824.42405</AssemblyVersion>
+        <AssemblyVersion>1.0.4824.42422</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="MethodNames.ClassA" />
+        <Parameter Name="y" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="x">To be added.</param>
+        <param name="y">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
