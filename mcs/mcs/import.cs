@@ -1006,58 +1006,6 @@ namespace Mono.CSharp
 				spec.BaseType = base_type;
 			}
 
-			MetaType[] ifaces;
-#if STATIC
-			ifaces = type.__GetDeclaredInterfaces ();
-			if (ifaces.Length != 0) {
-				foreach (var iface in ifaces) {
-					var it = CreateType (iface);
-					if (it == null)
-						continue;
-
-					spec.AddInterface (it);
-
-					// Unfortunately not all languages expand inherited interfaces
-					var bifaces = it.Interfaces;
-					if (bifaces != null) {
-						foreach (var biface in bifaces) {
-							spec.AddInterface (biface);
-						}
-					}
-				}
-			}
-
-			//
-			// It's impossible to get declared interfaces only using System.Reflection
-			// hence we need to mimic the behavior with ikvm-reflection too to keep
-			// our type look-up logic same
-			//
-			if (spec.BaseType != null) {
-				var bifaces = spec.BaseType.Interfaces;
-				if (bifaces != null) {
-					//
-					// Before adding base class interfaces close defined interfaces
-					// on type parameter
-					//
-					var tp = spec as TypeParameterSpec;
-					if (tp != null && tp.InterfacesDefined == null) {
-						tp.InterfacesDefined = TypeSpec.EmptyTypes;
-					}
-
-					foreach (var iface in bifaces)
-						spec.AddInterface (iface);
-				}
-			}
-#else
-			ifaces = type.GetInterfaces ();
-
-			if (ifaces.Length > 0) {
-				foreach (var iface in ifaces) {
-					spec.AddInterface (CreateType (iface));
-				}
-			}
-#endif
-
 			if (spec.MemberDefinition.TypeParametersCount > 0) {
 				foreach (var tp in spec.MemberDefinition.TypeParameters) {
 					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
@@ -1863,6 +1811,63 @@ namespace Mono.CSharp
 		}
 
 		#endregion
+
+		public void DefineInterfaces (TypeSpec spec)
+		{
+			var type = (MetaType) provider;
+			MetaType[] ifaces;
+#if STATIC
+			ifaces = type.__GetDeclaredInterfaces ();
+			if (ifaces.Length != 0) {
+				foreach (var iface in ifaces) {
+					var it = importer.CreateType (iface);
+					if (it == null)
+						continue;
+
+					spec.AddInterfaceDefined (it);
+
+					// Unfortunately not all languages expand inherited interfaces
+					var bifaces = it.Interfaces;
+					if (bifaces != null) {
+						foreach (var biface in bifaces) {
+							spec.AddInterfaceDefined (biface);
+						}
+					}
+				}
+			}
+			
+			//
+			// It's impossible to get declared interfaces only using System.Reflection
+			// hence we need to mimic the behavior with ikvm-reflection too to keep
+			// our type look-up logic same
+			//
+			if (spec.BaseType != null) {
+				var bifaces = spec.BaseType.Interfaces;
+				if (bifaces != null) {
+					//
+					// Before adding base class interfaces close defined interfaces
+					// on type parameter
+					//
+					var tp = spec as TypeParameterSpec;
+					if (tp != null && tp.InterfacesDefined == null) {
+						tp.InterfacesDefined = TypeSpec.EmptyTypes;
+					}
+
+					foreach (var iface in bifaces)
+						spec.AddInterfaceDefined (iface);
+				}
+			}
+#else
+			ifaces = type.GetInterfaces ();
+
+			if (ifaces.Length > 0) {
+				foreach (var iface in ifaces) {
+					spec.AddInterface (importer.CreateType (iface));
+				}
+			}
+#endif
+
+		}
 
 		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
 		{

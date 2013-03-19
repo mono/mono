@@ -98,6 +98,20 @@ namespace Mono.CSharp
 		//
 		public virtual IList<TypeSpec> Interfaces {
 			get {
+				if ((state & StateFlags.InterfacesImported) == 0) {
+					state |= StateFlags.InterfacesImported;
+
+					//
+					// Delay interfaces expansion to save memory and once all
+					// base types has been imported to avoid problems where
+					// interface references type before its base was imported
+					//
+					var imported = MemberDefinition as ImportedTypeDefinition;
+					if (imported != null && Kind != MemberKind.MissingType)
+						imported.DefineInterfaces (this);
+
+				}
+
 				return ifaces;
 			}
 			set {
