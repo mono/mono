@@ -193,10 +193,10 @@ namespace MonoTests.System.Net
 		[Test] // DownloadFile (string, string)
 		public void DownloadFile1_Address_SchemeNotSupported ()
 		{
+			string file = Path.Combine (Path.GetTempPath (), "tmp.out");
 			WebClient wc = new WebClient ();
 			try {
-				wc.DownloadFile ("tp://scheme.notsupported",
-					"tmp.out");
+				wc.DownloadFile ("tp://scheme.notsupported", file);
 				Assert.Fail ("#1");
 			} catch (WebException ex) {
 				// An error occurred performing a WebClient request
@@ -211,6 +211,10 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
+			}
+			finally {
+				if (File.Exists (file))
+					File.Delete (file);
 			}
 		}
 
@@ -270,10 +274,10 @@ namespace MonoTests.System.Net
 		[Test] // DownloadFile (Uri, string)
 		public void DownloadFile2_Address_SchemeNotSupported ()
 		{
+			string file = Path.Combine (Path.GetTempPath (), "tmp.out");
 			WebClient wc = new WebClient ();
 			try {
-				wc.DownloadFile (new Uri ("tp://scheme.notsupported"),
-					"tmp.out");
+				wc.DownloadFile (new Uri ("tp://scheme.notsupported"), file);
 				Assert.Fail ("#1");
 			} catch (WebException ex) {
 				// An error occurred performing a WebClient request
@@ -288,6 +292,10 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
+			}
+			finally {
+				if (File.Exists (file))
+					File.Delete (file);
 			}
 		}
 
