@@ -214,6 +214,10 @@ public class UInt32Test
 		Assert.AreEqual (2000000, uint.Parse ("2E6", NumberStyles.AllowExponent), "A#4");
 		Assert.AreEqual (200, uint.Parse ("2E+2", NumberStyles.AllowExponent), "A#5");
 		Assert.AreEqual (2, uint.Parse ("2", NumberStyles.AllowExponent), "A#6");
+		Assert.AreEqual (21, uint.Parse ("2.1E1", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#7");
+		Assert.AreEqual (520, uint.Parse (".52E3", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#8");
+		Assert.AreEqual (32500000, uint.Parse ("32.5E6", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#9");
+		Assert.AreEqual (890, uint.Parse ("8.9000E2", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#10");		
 
 		try {
 			uint.Parse ("2E");
@@ -262,6 +266,12 @@ public class UInt32Test
 			uint.Parse ("2 math e1", NumberStyles.AllowExponent);
 			Assert.Fail ("B#8");
 		} catch (FormatException) {
+		}
+
+		try {
+			uint.Parse ("2.09E1",  NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent);
+			Assert.Fail ("B#9");
+		} catch (OverflowException) {
 		}
 	}
 
