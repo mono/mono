@@ -2022,7 +2022,7 @@ namespace MonoTests_System.Data
 
 		[Test] public void ReadXmlSchema_ByFileName()
 		{
-			string sTempFileName = "tmpDataSet_ReadWriteXml_43899.xml"  ;
+			string sTempFileName = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899.xml");
 
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());

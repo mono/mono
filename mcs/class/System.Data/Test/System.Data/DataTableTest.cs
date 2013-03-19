@@ -3091,8 +3091,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ReadWriteXmlSchema_ByFileName ()
 		{
-			string sTempFileName1 = "tmpDataSet_ReadWriteXml_43899-1.xml";
-			string sTempFileName2 = "tmpDataSet_ReadWriteXml_43899-2.xml";
+			string sTempFileName1 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-1.xml");
+			string sTempFileName2 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-2.xml");
 
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (DataProvider.CreateParentDataTable ());
