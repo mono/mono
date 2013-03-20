@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D384920F-F2A1-4775-BD46-57B93F10AD97}</ProjectGuid>
+    <ProjectGuid>{56A7FA9E-7F2B-4BCB-8523-FD4EEE876BE0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.CSharp-net_4_0</OutputPath>
@@ -87,15 +87,15 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{CC96F21E-C45E-4593-BC7F-8331B913E758}</Project>
+      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.CSharp\Mono.CSharp-net_4_0.csproj">
-      <Project>{6DFE1005-17EE-4297-85C7-6FC93D3E1930}</Project>
+      <Project>{4FADEA1C-3DCC-4658-A411-EDEF0CF30884}</Project>
       <Name>Mono.CSharp\Mono.CSharp-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

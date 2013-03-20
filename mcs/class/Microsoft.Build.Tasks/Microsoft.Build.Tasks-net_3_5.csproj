@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C750286D-28EE-4AD9-9556-43B4CB6466FF}</ProjectGuid>
+    <ProjectGuid>{2A41CE90-16E6-46FD-94D3-FF944A9EB0BF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Tasks-net_3_5</OutputPath>
@@ -179,35 +179,35 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{45BA4F7D-9E8C-42F8-975F-F2EAA0300B6C}</Project>
+      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{A892207C-64E0-4FCA-8541-A3C71099AA13}</Project>
+      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
-      <Project>{D8E824B3-9F68-4D48-9396-BCDC68592669}</Project>
+      <Project>{4F08F704-E8AE-4C02-9A8F-6E9225D8ACE2}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5.csproj">
-      <Project>{6C839B97-FDEE-48E9-85D1-12DAD128201D}</Project>
+      <Project>{81767FAD-2EEC-42CE-A053-45FFDEC0D67D}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5.csproj">
-      <Project>{68286A26-2A32-40A6-9D0D-907CA13C0455}</Project>
+      <Project>{E861AE49-8E73-4B00-883A-7517D1C530FE}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5.csproj">
-      <Project>{FDD46689-2109-4990-87C8-488E04A46008}</Project>
+      <Project>{6F2D39F3-AA37-4E4C-B43B-A8456E6A3805}</Project>
       <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5</Name>
     </ProjectReference>
   </ItemGroup>

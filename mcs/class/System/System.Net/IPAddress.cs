@@ -211,11 +211,7 @@ namespace System.Net {
 					string lastNet = nets [nets.Length - 1];
 					if (lastNet.Length == 0)
 						return null;
-#if NET_2_1 //workaround for smcs, as it generate code that can't access string.GetEnumerator ()
-					foreach (char c in lastNet.ToCharArray ())
-#else
 					foreach (char c in lastNet)
-#endif
 						if (!Uri.IsHexDigit (c))
 							return null;
 				}

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{679AAFFB-7F06-4808-B642-94A3844DD91E}</ProjectGuid>
+    <ProjectGuid>{05944BB8-A3C6-43A6-AD2B-155E8DB855FA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Moonlight.Build.Tasks-net_2_0</OutputPath>
@@ -67,35 +67,35 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{A892207C-64E0-4FCA-8541-A3C71099AA13}</Project>
+      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_2_0.csproj">
-      <Project>{F9FF05AC-F1E0-4BA5-BD84-54C71B46C8B6}</Project>
+      <Project>{13F89BAD-94E5-46B5-B8E1-0F1EDB272352}</Project>
       <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0.csproj">
-      <Project>{75B122DA-F2B9-4F68-A4E9-5EEF97ECBAB2}</Project>
+      <Project>{BFA79A16-152D-42DA-98E3-D494F9C4CC3E}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0.csproj">
-      <Project>{C58C325B-D757-4335-97FB-75A117978082}</Project>
+      <Project>{A77A0E38-0000-4E4D-BEA6-704BC3677151}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_2_0.csproj">
-      <Project>{D1AFA7C3-1C6D-4676-BC07-8679F27C8143}</Project>
+      <Project>{CF0D30D5-B824-4D4E-B1B2-173524B53942}</Project>
       <Name>Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib-net_2_0.csproj">
-      <Project>{3C30AE8F-2AC0-4895-A857-20B14A4279FB}</Project>
+      <Project>{A1B1ACC9-95F7-4752-A2A6-CF0214F886BB}</Project>
       <Name>ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

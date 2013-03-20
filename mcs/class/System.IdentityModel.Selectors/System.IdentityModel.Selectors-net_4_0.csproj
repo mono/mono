@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{193EC254-7340-4DE3-A0B3-2941F9F64DBF}</ProjectGuid>
+    <ProjectGuid>{DF2AB58D-92EE-4B36-BCBC-5B78135CDC95}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.IdentityModel.Selectors-net_4_0</OutputPath>
@@ -76,27 +76,27 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{A1A09F77-428E-4B5F-9C0C-3B07F55909A6}</Project>
+      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Security\System.Security-net_4_0.csproj">
-      <Project>{CCB628C7-1AD7-4ED4-B84F-7B35C66466AB}</Project>
+      <Project>{BC281223-A7A5-415D-B4AA-59417DBFFBBB}</Project>
       <Name>System.Security\System.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_0.csproj">
-      <Project>{6AF038FE-CE6D-4D71-9CAB-21C211CE6A42}</Project>
+      <Project>{B3C699B6-74B4-4B41-901E-32E57D0909AC}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_4_0.csproj">
-      <Project>{A32E701F-AF4D-4475-AD97-B7F2D1A8298B}</Project>
+      <Project>{4326E85E-00B2-47F8-9A54-A8E15021CBA3}</Project>
       <Name>System.IdentityModel\System.IdentityModel-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

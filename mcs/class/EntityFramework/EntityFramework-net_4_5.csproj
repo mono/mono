@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E3BDED32-9812-4373-8D51-B30943D9DD37}</ProjectGuid>
+    <ProjectGuid>{AABFEC11-0171-447F-9093-6E118257D22C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\EntityFramework-net_4_5</OutputPath>
@@ -47,20 +47,28 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\AppConfigDependencyResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\CachingDependencyResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\CompositeResolver`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DatabaseInitializerResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbConfigurationEventArgs.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbConfigurationFinder.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbConfigurationLoader.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbConfigurationManager.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbConfigurationProxy.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbNullConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DbConfigurationTypeAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DefaultInvariantNameResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DefaultProviderFactoryResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\DefaultProviderServicesResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\ExecutionStrategyResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\IDbDependencyResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\IDbDependencyResolverExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\MigrationsConfigurationResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\InternalConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\InvariantNameResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\ProviderServicesFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\ResolverChain.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\RootDependencyResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\SingletonDependencyResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\ThreadLocalDependencyResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\TransientDependencyResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Config\WrappingDependencyResolver`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\BasicCommandTreeVisitor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\BasicExpressionVisitor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbAggregate.cs" />
@@ -93,6 +101,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbGroupAggregate.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbGroupByExpression.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbGroupExpressionBinding.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbInExpression.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbInsertCommandTree.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbIntersectExpression.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\CommandTrees\DbIsEmptyExpression.cs" />
@@ -281,6 +290,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\QueryCache\QueryCacheKey.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\QueryCache\QueryCacheManager.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\QueryCache\shaperfactoryquerycachekey.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\TypeHelpers.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\Utils\AliasGenerator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\Utils\Boolean\AndExpr.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Common\Utils\Boolean\BasicVisitor.cs" />
@@ -355,79 +365,6 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityKey.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityKeyMember.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Action.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\AddErrorKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\BooleanFacetDescriptionElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ByteFacetDescriptionElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\CollectionKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\CollectionTypeElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ConcurrencyMode.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\DocumentationElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityContainer.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityContainerAssociationSet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityContainerAssociationSetEnd.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityContainerEntitySet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityContainerEntitySetDefiningQuery.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityContainerRelationshipSet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityContainerRelationshipSetEnd.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\EntityKeyElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ErrorCode.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\FacetDescriptionElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\FacetEnabledSchemaElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\FilteredSchemaElementLookUpTable.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Function.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\FunctionCommandText.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\FunctionImportElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\IntegerFacetDescriptionElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\IRelationship.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\IRelationshipEnd.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ISchemaElementLookUpTable.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ItemType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ModelFunction.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ModelFunctionTypeElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Multiplicity.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\NavigationProperty.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\OnOperation.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Operation.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Parameter.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\PrimitiveSchema.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Property.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\PropertyRefElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ReferenceSchema.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ReferenceTypeElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ReferentialConstraint.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ReferentialConstraintRoleElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Relationship.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\RelationshipEnd.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\RelationshipEndCollection.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ReturnType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ReturnValue.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\RowTypeElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\RowTypePropertyElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ScalarType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Schema.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaComplexType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaDataModelOption.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaElementLookUpTable.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaElementLookUpTableEnumerator.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaEnumMember.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaEnumType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaLookupTable.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaManager.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SchemaType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\SridFacetDescriptionElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\StoreGeneratedPattern.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\StructuredProperty.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\StructuredType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\TextElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\TypeElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\TypeModifier.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\TypeRefElement.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\TypeUsageBuilder.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\Utils.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\ValidationHelper.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityModel\SchemaObjectModel\XmlSchemaResource.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityResCategoryAttribute.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntityResDescriptionAttribute.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\EntitySqlException.cs" />
@@ -437,6 +374,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\InternalMappingException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\InvalidCommandTreeException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\basemetadatamappingvisitor.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ColumnMappingBuilder.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\CompressingHashBuilder.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\DefaultObjectMappingItemCollection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\EntityViewContainer.cs" />
@@ -457,6 +395,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\FunctionImportReturnTypeStructuralTypeColumnRenameMapping.ReturnTypeRenameMapping.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\FunctionImportStructuralTypeMapping.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\FunctionImportStructuralTypeMappingKB.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\IStructuralTypeMapping.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\LineInfo.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\Mapping.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\MappingItemCollection.cs" />
@@ -547,6 +486,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\QueryRewriting\DefaultTileProcessor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\QueryRewriting\FragmentQuery.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\QueryRewriting\FragmentQueryKB.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\QueryRewriting\FragmentQueryKBChaseSupport.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\QueryRewriting\FragmentQueryProcessor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\QueryRewriting\ITileQuery.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\QueryRewriting\QueryRewriter.cs" />
@@ -621,28 +561,40 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewGeneration\ViewGenTraceLevel.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Mapping\ViewValidator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\MappingException.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\AspProxy.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\CacheForPrimitiveTypes.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ClrPerspective.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Converter.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\CustomAssemblyResolver.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\DataSpace.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\DefaultAssemblyResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\AspProxy.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\AssociationEndMember.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\AssociationSet.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\AssociationSetEnd.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\AssociationType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\BuiltInKind.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\BuiltInTypeKind.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\CacheForPrimitiveTypes.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ClrEntityType.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ClrEnumType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ClrPerspective.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\CollectionKind.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\CollectionType.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ComplexType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ConcurrencyMode.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\Converter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\CustomAssemblyResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\DataModelAnnotation.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\DataSpace.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\DbDatabaseMapping.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\DefaultAssemblyResolver.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\documentation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmConstants.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmError.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmFunction.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmItemCollection.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmItemCollection.OcAssemblyCache.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmItemError.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmMember.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmModel.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmProperty.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmSchemaError.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmSchemaErrorSeverity.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EdmValidator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EntityContainer.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EntitySet.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\EntitySetBase.cs" />
@@ -656,11 +608,25 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\FacetValueContainer.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\FacetValues.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\FilteredReadOnlyMetadataCollection.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ForeignKeyBuilder.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\FunctionParameter.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\GlobalItem.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\Helper.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\IMetadataItem.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\INamedDataModelItem.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\IQualifiedNameMetadataItem.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ItemCollection.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\LightweightCodeGenerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MappingMetadataHelper.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MemberCollection.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactAssemblyResolver.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactLoader.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactLoaderComposite.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactLoaderCompositeFile.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactLoaderCompositeResource.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactLoaderFile.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactLoaderResource.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataArtifactLoaderXmlReaderWrapper.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataCache.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataCollection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataItem.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataItem_Static.cs" />
@@ -668,10 +634,16 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataPropertyAttribute.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataPropertyCollection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataPropertyvalue.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\MetadataWorkspace.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ModelPerspective.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\NavigationProperty.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\NavigationPropertyAccessor.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ObjectHelper.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ObjectItemCollection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\OperationAction.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ParameterMode.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ParameterTypeSemantics.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\Perspective.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\PrimitiveType.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\PrimitiveTypeKind.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\PropertyKind.cs" />
@@ -690,31 +662,17 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\safelink.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\safelinkcollection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\SimpleType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\StoreGeneratedPattern.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\StoreItemCollection.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\StoreItemCollection.Loader.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\StructuralType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\TargetPerspective.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\TypeSemantics.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\TypeUsage.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\util.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\EdmError.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\EdmItemCollection.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\EdmItemCollection.OcAssemblyCache.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\EdmItemError.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\EdmSchemaError.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\EdmSchemaErrorSeverity.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\EdmValidator.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Helper.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MappingMetadataHelper.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactAssemblyResolver.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactLoader.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactLoaderComposite.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactLoaderCompositeFile.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactLoaderCompositeResource.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactLoaderFile.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactLoaderResource.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataArtifactLoaderXmlReaderWrapper.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataCache.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\MetadataWorkspace.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ModelPerspective.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectHelper.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectItemCollection.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ValidationErrorEventArgs.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\ValidationSeverity.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Edm\XmlConstants.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectLayer\AssemblyCache.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectLayer\AssemblyCacheEntry.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectLayer\ImmutableAssemblyCacheEntry.cs" />
@@ -730,16 +688,6 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectLayer\ObjectItemConventionAssemblyLoader.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectLayer\ObjectItemLoadingSessionData.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ObjectLayer\ObjectItemNoOpAssemblyLoader.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ParameterTypeSemantics.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\Perspective.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\StoreItemCollection.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\StoreItemCollection.Loader.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\TargetPerspective.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\TypeHelpers.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\TypeSemantics.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ValidationErrorEventArgs.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\ValidationSeverity.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Metadata\XmlConstants.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\MetadataException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\ObjectNotFoundException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\CompiledQuery.cs" />
@@ -774,6 +722,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\DataClasses\StructuralObject.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\DataRecordObjectView.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\DbUpdatableDataRecord.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\DelegateFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\ELinq\Binding.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\ELinq\BindingContext.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\ELinq\CompiledELinqQueryState.cs" />
@@ -798,10 +747,13 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\ELinq\TypeSystem.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\EntityEntry.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\EntitySetQualifiedType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\ExecutionOptions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\FieldDescriptor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\IntBox.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\Internal\BaseEntityWrapper.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\Internal\BaseProxyImplementor.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\Internal\BufferedDataReader.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\Internal\BufferedDataRecord.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\Internal\complextypematerializer.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\Internal\DataContractImplementor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Objects\Internal\EntityProxyFactory.cs" />
@@ -1096,8 +1048,87 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Query\ResultAssembly\BridgeDataReader.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Query\ResultAssembly\BridgeDataReaderFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\Query\ResultAssembly\BridgeDataRecord.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Action.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\AddErrorKind.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\BooleanFacetDescriptionElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ByteFacetDescriptionElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\CollectionTypeElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\DocumentationElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityContainer.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityContainerAssociationSet.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityContainerAssociationSetEnd.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityContainerEntitySet.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityContainerEntitySetDefiningQuery.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityContainerRelationshipSet.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityContainerRelationshipSetEnd.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\EntityKeyElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ErrorCode.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\FacetDescriptionElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\FacetEnabledSchemaElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\FilteredSchemaElementLookUpTable.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Function.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\FunctionCommandText.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\FunctionImportElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\IntegerFacetDescriptionElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\IRelationship.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\IRelationshipEnd.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ISchemaElementLookUpTable.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ItemType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ModelFunction.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ModelFunctionTypeElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\NavigationProperty.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\OnOperation.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Operation.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Parameter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\PrimitiveSchema.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Property.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\PropertyRefElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ReferenceSchema.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ReferenceTypeElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ReferentialConstraint.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ReferentialConstraintRoleElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Relationship.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\RelationshipEnd.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\RelationshipEndCollection.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ReturnType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ReturnValue.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\RowTypeElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\RowTypePropertyElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ScalarType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Schema.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaComplexType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaDataModelOption.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaElementLookUpTable.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaElementLookUpTableEnumerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaEnumMember.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaEnumType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaLookupTable.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaManager.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SchemaType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\SridFacetDescriptionElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\StructuredProperty.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\StructuredType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\TextElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\TypeElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\TypeModifier.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\TypeRefElement.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\TypeUsageBuilder.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\Utils.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\ValidationHelper.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\SchemaObjectModel\XmlSchemaResource.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Core\UpdateException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\CreateDatabaseIfNotExists`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\MaxLengthAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\MinLengthAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\ColumnAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\ComplexTypeAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\DatabaseGeneratedAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\DatabaseGeneratedOption.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\ForeignKeyAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\InversePropertyAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\NotMappedAttribute.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DataAnnotations\Schema\TableAttribute.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Database.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DbContext.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DbFunctionAttribute.cs" />
@@ -1110,116 +1141,25 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DbSetExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DropCreateDatabaseAlways`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\DropCreateDatabaseIfModelChanges`.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\DataModelAnnotation.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\DataModelErrorEventArgs.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\DataModelEventArgs.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\DataModelItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\DataModelVersions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\IAnnotatedDataModelItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\INamedDataModelItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Common\INamedDataModelItemExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbAliasedMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbColumnMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbConstraintMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbDatabaseMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbDataModelItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbForeignKeyConstraintMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbItemKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbNamedMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbOperationAction.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbParameterMode.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbParameterTypeSemantics.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbPrimitiveTypeFacets.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbSchemaMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbSchemaMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbStoreGeneratedPattern.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbTableColumnMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbTableMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\DbTypeMetadata.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbAssociationEndMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbAssociationSetMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbColumnCondition.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbDatabaseMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbEdmPropertyMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbEntityContainerMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbEntitySetMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbEntityTypeMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbEntityTypeMappingFragment.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbMappingItemKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbMappingMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Db\Mapping\DbMappingModelItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmAssociationConstraint.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmAssociationEnd.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmAssociationEndKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmAssociationSet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmAssociationType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmCollectionKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmComplexType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmConcurrencyMode.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmDataModelItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmDataModelType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmEntityContainer.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmEntityContainerItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmEntitySet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmEntityType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmEnumType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmEnumTypeMember.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmItemKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmModel.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmNamedMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmNamespace.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmNamespaceItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmNavigationProperty.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmOperationAction.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmParameterMode.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmPrimitiveType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmPrimitiveTypeFacets.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmPrimitiveTypeKind.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmProperty.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmQualifiedNameMetadataItem.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmScalarType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmStructuralMember.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmStructuralMembersCollection.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmStructuralType.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmTypeReference.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\BackingList.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\DataModelItemVisitor.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\DbDatabaseVisitor.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\EdmConstants.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\EdmExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\EdmModelParentMap.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\EdmModelVisitor.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Internal\EdmUtil.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Parsing\Xml\Internal\Csdl\CsdlConstants.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Parsing\Xml\Internal\Msl\MslConstants.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Parsing\Xml\Internal\Ssdl\SsdlConstants.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Parsing\Xml\Internal\XmlErrorCode.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\EdmModelVisitor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\CsdlSerializer.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\EdmSerializationVisitor.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\EdmXmlSchemaWriter.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\MslSerializer.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\MslXmlSchemaWriter.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\SsdlSerializer.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\Csdl\EdmModelCsdlSchemaWriter.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\Csdl\EdmModelCsdlSerializationVisitor.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\Msl\DbDatabaseMappingMslSchemaWriter.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\Ssdl\DbModelEntityContainerSsdlSchemaWriter.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\Ssdl\DbModelSsdlHelper.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\Ssdl\DbModelSsdlSchemaWriter.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\Ssdl\DbModelSsdlSerializationVisitor.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\Xml\Internal\XmlSchemaWriter.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\DataModelValidationContext.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\DataModelValidationHelper.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\DataModelValidationRule.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\DataModelValidationRule`.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\DataModelValidationRuleSet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\DataModelValidator.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\EdmModel\EdmModelRuleSet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\EdmModel\EdmModelSemanticValidationRules.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\EdmModel\EdmModelSyntacticValidationRules.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\EdmModel\EdmModelValidationContext.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\EdmModel\EdmModelValidationRule.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\EdmModel\EdmModelValidationVisitor.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\Internal\EdmModel\EdmModelValidator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Serialization\XmlSchemaWriter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\DataModelErrorEventArgs.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\DataModelValidationRule.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\DataModelValidationRule`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\DataModelValidationRuleSet.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\DataModelValidator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\EdmModelRuleSet.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\EdmModelSemanticValidationRules.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\EdmModelSyntacticValidationRules.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\EdmModelValidationContext.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\EdmModelValidationRule.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Edm\Validation\EdmModelValidationVisitor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\EntityState.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\IDatabaseInitializer`.cs" />
@@ -1245,16 +1185,21 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbProviderInfo.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbQuery.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbQuery`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbRawSqlQuery.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbRawSqlQuery`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbReferenceEntry.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbReferenceEntry`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbSqlQuery.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbSqlQuery`.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbSqlSetQuery.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbSqlSetQuery`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbUpdateConcurrencyException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DbUpdateException.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DefaultDbProviderFactoryService.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\DefaultManifestTokenService.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\EdmMetadata.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\EdmxWriter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\ExecutionStrategy.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\ExecutionStrategyKey.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\ExponentialRetryDelayStrategy.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbAsyncEnumerable.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbAsyncEnumerable`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbAsyncEnumerableExtensions.cs" />
@@ -1267,12 +1212,27 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbContextFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbModelCacheKey.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbModelCacheKeyFactory.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbModelCacheKeyProvider.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IDbProviderFactoryService.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IExecutionStrategy.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IManifestTokenService.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IncludeMetadataConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IObjectContextAdapter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IProviderInvariantName.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IRetriableExceptionDetector.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\IRetryDelayStrategy.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\LocalDbConnectionFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\ModelContainerConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\ModelNamespaceConvention.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\NonRetryingExecutionStrategy.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\Pluralization\BidirectionalDictionary.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\Pluralization\CustomPluralizationEntry.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\Pluralization\EnglishPluralizationService.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\Pluralization\IPluralizationService.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\Pluralization\PluralizationServiceUtil.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\ProviderInvariantName.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\ReplacementDbQueryWrapper`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\RetryLimitExceededException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\SqlCeConnectionFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\SqlConnectionFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Infrastructure\SuppressDbSetInitializationAttribute.cs" />
@@ -1280,6 +1240,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\AppConfig.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\ClonedObjectContext.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\CodeFirstCachedMetadataWorkspace.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\CommandTracer.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\ConfigFile\ContextCollection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\ConfigFile\ContextElement.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\ConfigFile\DatabaseInitializerElement.cs" />
@@ -1297,6 +1258,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\DbHelpers.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\DbLocalView`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\DbSetDiscoveryService.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\DefaultCommandInterceptor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\DefaultModelCacheKey.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\DefaultModelCacheKeyFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\EagerInternalConnection.cs" />
@@ -1327,9 +1289,12 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\EntityEntries\StateEntryAdapter.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\EntitySetTypePair.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\ICachedMetadataWorkspace.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\IDbCommandInterceptor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\IDbEnumerator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\IInternalConnection.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\InitializerConfig.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\InitializerLockPair.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\InterceptedCommand.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\InternalConnection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\InternalContext.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\InternalSqlNonSetQuery.cs" />
@@ -1339,7 +1304,6 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\LazyEnumerator`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\LazyInternalConnection.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\LazyInternalContext.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\LegacyDatabaseInitializerConfig.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\Linq\DbQueryProvider.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\Linq\DbQueryVisitor.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Internal\Linq\IInternalQuery.cs" />
@@ -1392,11 +1356,11 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Design\VisualBasicMigrationCodeGenerator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Edm\EdmXNames.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Edm\ModelCompressor.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\History\DefaultHistoryContextFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\History\HistoryContext.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\History\HistoryContextBase`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\History\HistoryRepository.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\History\HistoryRow.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\History\IHistoryContextFactory.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\History\LegacyHistoryContext.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\IDbSetExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\AutomaticDataLossException.cs" />
@@ -1406,6 +1370,7 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\MigrationAssembly.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\MigrationsException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\MigrationsLogger.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\MigrationsPendingException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\MigratorBase.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\MigratorLoggingDecorator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Infrastructure\MigratorScriptingDecorator.cs" />
@@ -1416,7 +1381,6 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\ColumnModel.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\CreateIndexOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\CreateTableOperation.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\DeleteHistoryOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\DropColumnOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\DropForeignKeyOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\DropIndexOperation.cs" />
@@ -1425,7 +1389,6 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\ForeignKeyOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\HistoryOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\IndexOperation.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\InsertHistoryOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\MigrationOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\MoveTableOperation.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Migrations\Model\PrimaryKeyOperation.cs" />
@@ -1444,10 +1407,26 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\ComplexTypeConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\ConfigurationBase.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\ConfigurationRegistrar.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\DatabaseConventionDispatcher.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\ConfigurationTypeActivator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\ConfigurationTypeFilter.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\ConfigurationTypesFinder.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\EdmConventionDispatcher.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\EntityConventionConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\EntityConventionOfTypeConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\EntityConventionOfTypeWithHavingConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\EntityConventionWithHavingConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\PropertyConfigurationConventionDispatcher.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\PropertyConventionConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Conventions\PropertyConventionWithHavingConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\ConventionsConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\DeleteModificationFunctionConfiguration`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\FunctionParameterConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\InsertModificationFunctionConfiguration`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\ModificationFunctionConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\ModificationFunctionConfiguration`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\ModificationFunctionsConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\ModificationFunctionsConfiguration`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Functions\UpdateModificationFunctionConfiguration`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Mapping\EdmPropertyPath.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Mapping\EntityMappingConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Mapping\EntityMappingConfiguration`.cs" />
@@ -1487,17 +1466,30 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\DateTimePropertyConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\DecimalPropertyConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\LengthPropertyConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\LightweightPropertyConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\MissingPropertyConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\OverridableConfigurationParts.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\PrimitivePropertyConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\Primitive\StringPropertyConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Properties\PropertyConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Types\ComplexTypeConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Types\EntityTypeConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Types\LightweightEntityConfiguration.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Types\LightweightEntityConfiguration`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Types\StructuralTypeConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Configuration\Types\StructuralTypeConfiguration`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\AttributeConfigurationConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\IConfigurationConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\IConfigurationConvention`.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\EntityConvention.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\EntityConventionBase.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\EntityConventionOfType.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\EntityConventionOfTypeWithHaving.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\EntityConventionWithHaving.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\EntityConventionWithHavingBase.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\PropertyConvention.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\PropertyConventionBase.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Lightweight\PropertyConventionWithHaving.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Property\ColumnAttributeConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Property\ConcurrencyCheckAttributeConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Configuration\Property\DatabaseGeneratedAttributeConvention.cs" />
@@ -1517,7 +1509,6 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Edm\ComplexTypeDiscoveryConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Edm\Db\ColumnOrderingConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Edm\Db\ColumnOrderingConventionStrict.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Edm\Db\ColumnTypeCasingConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Edm\Db\IDbConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Edm\Db\IDbConvention`.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Edm\Db\Mapping\IDbMappingConvention.cs" />
@@ -1545,42 +1536,34 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\IConvention.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Sets\V1ConventionSet.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Conventions\Sets\V2ConventionSet.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Design\BidirectionalDictionary.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Design\EnglishPluralizationService.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Design\ICustomPluralizationMapping.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Design\PluralizationService.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Design\PluralizationServiceUtil.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Common\DataModelAnnotationExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Common\DataModelErrorEventArgsExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Common\INamedDataModelItemExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\DbAliasedMetadataItemExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\DbDatabaseMetadataExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\DbForeignKeyConstraintMetadataExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\DbPrimitiveTypeFacetsExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\DbTableColumnMetadataExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\DbTableMetadataExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\Mapping\DbAssociationSetMappingExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\Mapping\DbDatabaseMappingExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\Mapping\DbEdmPropertyMappingExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\Mapping\DbEntityTypeMappingExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Db\Mapping\DbEntityTypeMappingFragmentExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmAssociationEndExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmAssociationEndKindExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmAssociationTypeExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmComplexTypeExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmEntitySetExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmEntityTypeExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmEnumTypeExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\AssociationTypeExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\ColumnMappingBuilderExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\ComplexTypeExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\DataModelAnnotationExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\DataModelErrorEventArgsExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\DbDatabaseMappingExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmMemberExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmModelExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmNavigationPropertyExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmPropertyExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EdmStructuralMemberExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EntitySetExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EntityTypeExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\EnumTypeExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\ForeignKeyBuilderExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\INamedDataModelItemExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\NavigationPropertyExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\RelationshipEndMemberExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\RelationshipMultiplicityExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Serialization\EdmxSerializer.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\AssociationTypeMappingGenerator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\DatabaseMappingGenerator.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\EntityTypeMappingGenerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\FunctionParameterMappingGenerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\ModificationFunctionMappingGenerator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\PropertyMappingGenerator.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\StructuralTypeMappingGenerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\Services\TableMappingGenerator.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\StorageAssociationSetMappingExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\StorageEntityTypeMappingExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Edm\StorageMappingFragmentExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\EntityTypeConfiguration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Mappers\AttributeMapper.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Mappers\MappingContext.cs" />
@@ -1590,9 +1573,8 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Mappers\TypeMapper.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\ModelValidationException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Utilities\AttributeProvider.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Utilities\DatabaseName.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Utilities\IEnumerableExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ModelConfiguration\Utilities\PropertyPath.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\NullDatabaseInitializer.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\ObservableCollectionExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Properties\AssemblyVersion.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Properties\InternalsVisibleTo.cs" />
@@ -1604,12 +1586,13 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Spatial\DbSpatialDataReader.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Spatial\DbSpatialServices.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Spatial\DefaultSpatialServices.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Spatial\ExtensionMethods.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Spatial\SpatialHelpers.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Spatial\SpatialServicesLoader.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\AssemblyExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\BoolExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\ByteExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\Check.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DatabaseName.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DbConnectionExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DbContextExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DbModelBuilderVersionExtensions.cs" />
@@ -1618,14 +1601,16 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DbProviderInfoExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DbProviderManifestExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DbProviderServicesExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DebugCheck.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DynamicEqualityComparer.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\DynamicEqualityComparerLinqIntegration.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\ExceptionExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\ExpressionExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\HashSetExtensions.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\IEnumerableExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\MemberInfoExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\PropertyInfoExtensions.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\RuntimeFailureMethods.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\ProviderRowFinder.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\StringExtensions.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\TaskHelper.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Utilities\TypeExtensions.cs" />
@@ -1636,7 +1621,8 @@
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Validation\DbEntityValidationResult.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Validation\DbUnexpectedValidationException.cs" />
     <Compile Include="..\..\..\external\entityframework\src\EntityFramework\Validation\DbValidationError.cs" />
-    <Compile Include="..\..\..\external\entityframework\src\SharedAssemblyInfo.cs" />  </ItemGroup>
+    <Compile Include="..\..\..\external\entityframework\src\SharedAssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\entityframework\src\SharedAssemblyVersionInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -1654,47 +1640,47 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
-      <Project>{AE8FAE27-D070-4533-A135-49EEF160779D}</Project>
+      <Project>{5CAB0F19-4A6F-4B4B-96DA-5677F88E2EF6}</Project>
       <Name>System.Data\System.Data-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_5.csproj">
-      <Project>{399C73A2-61A1-4141-A66F-5D52014BAA92}</Project>
+      <Project>{BED431C4-56B5-4990-A8E6-DCD02A331BC9}</Project>
       <Name>System.Transactions\System.Transactions-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml.Linq\System.Xml.Linq-net_4_5.csproj">
-      <Project>{FC0139F8-EC5A-4D43-9439-F5B3C6BEE17A}</Project>
+      <Project>{50961B0B-5BEC-4058-9246-5CEEE888CEC8}</Project>
       <Name>System.Xml.Linq\System.Xml.Linq-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{9EF77858-EB0A-4432-948B-18F18E44350B}</Project>
+      <Project>{847BF7E9-DEFB-43C9-8410-CA775ADC0E8A}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_4_5.csproj">
-      <Project>{D97F14D0-177C-4252-B535-7B2B070DCF1A}</Project>
+      <Project>{AB2C11F0-259B-4B85-A1BB-9243CD007A9E}</Project>
       <Name>System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_5.csproj">
-      <Project>{A2E8AC47-7A47-4831-9CED-DBC9CCBB653D}</Project>
+      <Project>{088AB4AB-1904-4365-A74B-F7557A034945}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{AB0D8551-2D53-46F2-A340-789E7B62BF57}</Project>
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{BC9226DD-0D9F-4836-BA8B-87A3E6F06176}</Project>
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.CSharp\Microsoft.CSharp-net_4_5.csproj">
-      <Project>{B6C7FFF7-649A-4CFC-A611-8C9701846513}</Project>
+      <Project>{94E8FEFF-9695-4F77-A8AB-85370336FE0D}</Project>
       <Name>Microsoft.CSharp\Microsoft.CSharp-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -1738,8 +1724,8 @@
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.CSDLSchema_3.xsd">
       <LogicalName>System.Data.Resources.CSDLSchema_3.xsd</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/system.data.resources.entitystoreschemagenerator.xsd">
-      <LogicalName>system.data.resources.entitystoreschemagenerator.xsd</LogicalName>
+    <EmbeddedResource Include="System.Data.Resources.EntityStoreSchemaGenerator.xsd">
+      <LogicalName>System.Data.Resources.EntityStoreSchemaGenerator.xsd</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="../../../external/entityframework/src/EntityFramework/Resources/System/Data/EntityModel/System.Data.Resources.SSDLSchema.xsd">
       <LogicalName>System.Data.Resources.SSDLSchema.xsd</LogicalName>

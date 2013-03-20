@@ -29,6 +29,8 @@
 
 #if SECURITY_DEP
 
+extern alias MonoSecurity;
+
 using System.IO;
 using System.Net.Sockets;
 using System.Reflection;
@@ -36,7 +38,7 @@ using System.Text;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Protocol.Tls;
+using MonoSecurity::Mono.Security.Protocol.Tls;
 
 namespace System.Net {
 	sealed class HttpConnection

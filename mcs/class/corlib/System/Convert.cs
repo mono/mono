@@ -132,7 +132,7 @@ namespace System {
 				throw new ArgumentNullException ("s");
 
 			if (s.Length == 0) {
-				return new byte[0];
+				return EmptyArray<byte>.Value;
 			}
 
 			return InternalFromBase64String (s, true);

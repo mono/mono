@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1E69B9E0-2459-4944-8E34-A66E4FEE55B3}</ProjectGuid>
+    <ProjectGuid>{08DC1959-A393-422D-B10D-322F5A702219}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Management-net_4_0</OutputPath>
@@ -132,15 +132,15 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration.Install\System.Configuration.Install-net_4_0.csproj">
-      <Project>{1A183DCD-8263-41C7-8C8A-91A7EC780330}</Project>
+      <Project>{878F802D-3249-41E8-8322-A32C406383C6}</Project>
       <Name>System.Configuration.Install\System.Configuration.Install-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

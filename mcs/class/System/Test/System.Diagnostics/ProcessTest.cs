@@ -675,6 +675,7 @@ namespace MonoTests.System.Diagnostics
 
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")]
+		[NUnit.Framework.Category ("NotMobile")]
 		public void TestRedirectedOutputIsAsync ()
 		{
 			// Test requires cygwin, so we just bail out for now.

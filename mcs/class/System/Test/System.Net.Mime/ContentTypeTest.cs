@@ -71,7 +71,7 @@ namespace MonoTests.System.Net.Mime
 		}
 
 		[Test]
-		public void GetHashCode ()
+		public void GetHashCodeTest ()
 		{
 			Assert.IsTrue (ct.GetHashCode () == new ContentType ().GetHashCode ());
 		}

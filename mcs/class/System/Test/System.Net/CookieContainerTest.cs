@@ -146,8 +146,6 @@ namespace MonoTests.System.Net {
 		[Test] // .ctor (Int32, Int32, Int32)
 		public void Constructor3_MaxCookieSize_Invalid ()
 		{
-			CookieContainer c;
-
 			// MaxCookieSize <= 0
 			try {
 				new CookieContainer (100, 50, 0);
@@ -178,8 +176,6 @@ namespace MonoTests.System.Net {
 		[Test] // .ctor (Int32, Int32, Int32)
 		public void Constructor3_PerDomainCapacity_Invalid ()
 		{
-			CookieContainer c;
-
 			// PerDomainCapacity <= 0
 			try {
 				new CookieContainer (432, 0, 1000);

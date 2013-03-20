@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CF2DF35A-893D-4A8F-9EE8-16BAB7273845}</ProjectGuid>
+    <ProjectGuid>{7A80929F-2EFC-4A39-8969-6F74DA352144}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Data.Services-net_2_0</OutputPath>
@@ -88,27 +88,27 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{45BA4F7D-9E8C-42F8-975F-F2EAA0300B6C}</Project>
+      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_2_0.csproj">
-      <Project>{4793CA1D-A1CA-415F-A9EA-D29714DBF392}</Project>
+      <Project>{77DBD5F4-13EC-45EC-A6BD-3C5543D42B90}</Project>
       <Name>System.ServiceModel\System.ServiceModel-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ServiceModel.Web\System.ServiceModel.Web-net_2_0.csproj">
-      <Project>{EE1C6DA1-E7A9-4CA0-9B67-58AE168917F2}</Project>
+      <Project>{54969D84-6764-49E4-A6AF-51ADD6A7CDFA}</Project>
       <Name>System.ServiceModel.Web\System.ServiceModel.Web-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data.Services.Client\System.Data.Services.Client-net_2_0.csproj">
-      <Project>{02B01211-8A74-4C78-825B-05AEB24C2B22}</Project>
+      <Project>{F74BFD27-8B84-4F0F-B1CB-3FEFB93FA244}</Project>
       <Name>System.Data.Services.Client\System.Data.Services.Client-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -224,11 +224,11 @@ namespace System
 				throw new ArgumentException ("Illegal enum value: " + options + ".");
 
 			if (Length == 0 && (options & StringSplitOptions.RemoveEmptyEntries) != 0)
-				return new String[0];
+				return EmptyArray<string>.Value;
 
 			if (count <= 1) {
 				return count == 0 ?
-					new String[0] :
+					EmptyArray<string>.Value :
 					new String[1] { this };
 			}
 
@@ -251,7 +251,7 @@ namespace System
 
 			if (count <= 1) {
 				return count == 0 ?
-					new String[0] :
+					EmptyArray<string>.Value :
 					new String[1] { this };
 			}
 
@@ -261,7 +261,7 @@ namespace System
 				return SplitByCharacters (null, count, removeEmpty);
 
 			if (Length == 0 && removeEmpty)
-				return new String [0];
+				return EmptyArray<string>.Value;
 
 			List<String> arr = new List<String> ();
 
@@ -303,7 +303,7 @@ namespace System
 
 			// string contained only separators
 			if (removeEmpty && matchCount != 0 && pos == this.Length && arr.Count == 0)
-				return new String [0];
+				return EmptyArray<string>.Value;
 
 			if (!(removeEmpty && pos == this.Length))
 				arr.Add (this.Substring (pos));
@@ -2770,8 +2770,6 @@ namespace System
 					length++;
 			} catch (NullReferenceException) {
 				throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
-			} catch (AccessViolationException) {
-				throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
 		}
 
 			return CreateString (value, 0, length, null);
@@ -2791,9 +2789,7 @@ namespace System
 			if (value + startIndex < value)
 				throw new ArgumentOutOfRangeException ("startIndex", "Value, startIndex and length do not refer to a valid string.");
 
-			bool isDefaultEncoding;
-
-			if (isDefaultEncoding = (enc == null)) {
+			if (enc == null) {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				if (length == 0)
@@ -2810,11 +2806,6 @@ namespace System
 						memcpy (bytePtr, (byte*) (value + startIndex), length);
 					} catch (NullReferenceException) {
 						throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
-					} catch (AccessViolationException) {
-						if (!isDefaultEncoding)
-							throw;
-
-						throw new ArgumentOutOfRangeException ("value", "Value, startIndex and length do not refer to a valid string.");
 					}
 
 			// GetString () is called even when length == 0

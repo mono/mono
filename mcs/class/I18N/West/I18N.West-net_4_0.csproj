@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B1A8ED3B-F306-41E5-8CE6-97882F8FFAE0}</ProjectGuid>
+    <ProjectGuid>{074EB0E2-A311-48D3-B9F9-2A5AC82E4C5F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\I18N.West-net_4_0</OutputPath>
@@ -78,11 +78,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_4_0.csproj">
-      <Project>{7491A7FD-7207-41D7-BA46-9C6E8AD34910}</Project>
+      <Project>{748C52F1-090B-42F0-BB42-37BE181E4545}</Project>
       <Name>Common\I18N-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

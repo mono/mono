@@ -1231,10 +1231,10 @@ namespace System {
 		{
 			object [] att = GetCustomAttributes (typeof (DefaultMemberAttribute), true);
 			if (att.Length == 0)
-				return new MemberInfo [0];
+				return EmptyArray<MemberInfo>.Value;
 
 			MemberInfo [] member = GetMember (((DefaultMemberAttribute) att [0]).MemberName);
-			return (member != null) ? member : new MemberInfo [0];
+			return (member != null) ? member : EmptyArray<MemberInfo>.Value;
 		}
 
 		public virtual MemberInfo[] FindMembers (MemberTypes memberType, BindingFlags bindingAttr,

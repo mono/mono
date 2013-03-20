@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{331B3517-595E-4372-8E8F-B572A4F4FA6A}</ProjectGuid>
+    <ProjectGuid>{97C8B52D-2E89-4EB1-856C-C9BD3A75A56B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.DirectoryServices-net_4_5</OutputPath>
@@ -87,15 +87,15 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{B8D763CB-5541-4DA8-832F-3B6B486B2746}</Project>
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{17388044-BE4B-4CBE-92D8-5C130414AD84}</Project>
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Novell.Directory.Ldap\Novell.Directory.Ldap-net_4_5.csproj">
-      <Project>{A650DC2B-D2A0-41C7-93BE-CE6C6091764A}</Project>
+      <Project>{74565932-18F5-4BEC-AAB6-98230A4B662C}</Project>
       <Name>Novell.Directory.Ldap\Novell.Directory.Ldap-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

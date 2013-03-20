@@ -312,6 +312,8 @@ namespace System.Net
 			}
 		}
 #endif
+
+#if !NET_2_1
 		[MonoTODO]
 		public static new RequestCachePolicy DefaultCachePolicy
 		{
@@ -322,6 +324,7 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
+#endif
 		
 		[MonoTODO]
 		public static int DefaultMaximumErrorResponseLength

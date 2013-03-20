@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{61B1404A-EBE2-4AC8-8328-B8987982CD62}</ProjectGuid>
+    <ProjectGuid>{4F29000A-D37F-4375-AF1D-9A81DB9D25AE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Windows.Forms.DataVisualization-tests-net_4_0</OutputPath>
@@ -68,27 +68,27 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Windows.Forms.DataVisualization\System.Windows.Forms.DataVisualization-net_4_0.csproj">
-      <Project>{27257228-4D88-4A25-85ED-04445351A0F6}</Project>
+      <Project>{B0EAE2CB-9823-4687-8119-43BA5386A28A}</Project>
       <Name>System.Windows.Forms.DataVisualization\System.Windows.Forms.DataVisualization-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_0.csproj">
-      <Project>{4E3F72B8-96DD-404A-8070-9885A5DF5282}</Project>
+      <Project>{0005126E-C0D0-4DA3-A2E2-E49592D3E164}</Project>
       <Name>System.Drawing\System.Drawing-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_0.csproj">
-      <Project>{4FBDACCF-361F-4C28-BDB5-E58730594AE4}</Project>
+      <Project>{9C3BBC65-D0E9-4E9D-96B9-9ECB51E1C329}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{CC96F21E-C45E-4593-BC7F-8331B913E758}</Project>
+      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

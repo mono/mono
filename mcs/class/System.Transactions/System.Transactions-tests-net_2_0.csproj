@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9D94FF53-3A5F-4A89-BC16-F177106F9092}</ProjectGuid>
+    <ProjectGuid>{5AB33E94-8744-4B43-B981-C346A8157E26}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1595</NoWarn>
     <OutputPath>bin\Debug\System.Transactions-tests-net_2_0</OutputPath>
@@ -66,19 +66,19 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{537E3E02-B5DA-4E11-A9F9-5A54C99759B9}</Project>
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_2_0.csproj">
-      <Project>{74F9004B-7AC4-460C-8661-E67E546405CA}</Project>
+      <Project>{A9F46CB3-7262-47D8-A9EB-9B789278F9EF}</Project>
       <Name>System.Transactions\System.Transactions-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{08A2FAB2-A213-451E-AD93-19B409BF1B5A}</Project>
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{1F04D799-296B-4D22-B3A5-790CDF990E48}</Project>
+      <Project>{725170B0-51F0-46E2-A74D-F764B68553D6}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

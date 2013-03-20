@@ -859,7 +859,7 @@ namespace System.Reflection.Emit
 			 */
 			if ((entry_point != null) && entry_point.DeclaringType.Module != mainModule) {
 				Type[] paramTypes;
-				if (entry_point.GetParameters ().Length == 1)
+				if (entry_point.GetParametersCount () == 1)
 					paramTypes = new Type [] { typeof (string) };
 				else
 					paramTypes = Type.EmptyTypes;

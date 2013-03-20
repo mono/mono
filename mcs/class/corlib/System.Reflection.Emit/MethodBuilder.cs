@@ -219,6 +219,12 @@ namespace System.Reflection.Emit
 		{
 			if (!type.is_created)
 				throw NotSupported ();
+
+			return GetParametersInternal ();
+		}
+
+		internal override ParameterInfo[] GetParametersInternal ()
+		{
 			if (parameters == null)
 				return null;
 
@@ -229,7 +235,7 @@ namespace System.Reflection.Emit
 			return retval;
 		}
 		
-		internal override int GetParameterCount ()
+		internal override int GetParametersCount ()
 		{
 			if (parameters == null)
 				return 0;

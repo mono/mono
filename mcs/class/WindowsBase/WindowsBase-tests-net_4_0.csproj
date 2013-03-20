@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5FC62867-4AD5-4B92-A92A-81299C73EFD7}</ProjectGuid>
+    <ProjectGuid>{4272351D-956F-4B59-9C7F-46A857D37A71}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\WindowsBase-tests-net_4_0</OutputPath>
@@ -106,31 +106,31 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\WindowsBase\WindowsBase-net_4_0.csproj">
-      <Project>{ACDB41C3-DC83-4550-B9A8-996948F88F5A}</Project>
+      <Project>{7063C843-FB21-477B-ACC4-DA51C8C374E9}</Project>
       <Name>WindowsBase\WindowsBase-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\WindowsBase\WindowsBase-net_4_0.csproj">
-      <Project>{ACDB41C3-DC83-4550-B9A8-996948F88F5A}</Project>
+      <Project>{7063C843-FB21-477B-ACC4-DA51C8C374E9}</Project>
       <Name>WindowsBase\WindowsBase-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{A1A09F77-428E-4B5F-9C0C-3B07F55909A6}</Project>
+      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{CC96F21E-C45E-4593-BC7F-8331B913E758}</Project>
+      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xaml\System.Xaml-net_4_0.csproj">
-      <Project>{5557655A-D777-4DD4-9A91-BDB3980237B5}</Project>
+      <Project>{BBF0A00E-6A3D-4ECF-9272-C93076D628E7}</Project>
       <Name>System.Xaml\System.Xaml-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CCB628C7-1AD7-4ED4-B84F-7B35C66466AB}</ProjectGuid>
+    <ProjectGuid>{BC281223-A7A5-415D-B4AA-59417DBFFBBB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,414</NoWarn>
     <OutputPath>bin\Debug\System.Security-net_4_0</OutputPath>
@@ -157,19 +157,19 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-1.csproj">
-      <Project>{B27D92AB-194B-4993-AE51-FAE78A51CA4A}</Project>
+      <Project>{C57BB644-EEFC-475A-AF6F-43EF29C75933}</Project>
       <Name>System\System-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0.csproj">
-      <Project>{EC5E277C-E520-4761-88C6-98F20C76CC35}</Project>
+      <Project>{18CD7C68-EF7C-4C7A-B8D6-FE9834145437}</Project>
       <Name>System.XML\System.Xml-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
-      <Project>{5360F8A5-5E08-4CF9-9DDA-FDCAD3F73E5C}</Project>
+      <Project>{A2DAEB75-C366-4B5F-8BDD-9B3234A1ABFA}</Project>
       <Name>Mono.Security\Mono.Security-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

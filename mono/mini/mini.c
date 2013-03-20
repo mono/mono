@@ -970,6 +970,8 @@ mini_type_to_ldind (MonoCompile* cfg, MonoType *type)
 	return mono_type_to_ldind (type);
 }
 
+#ifndef DISABLE_JIT
+
 guint
 mini_type_to_stind (MonoCompile* cfg, MonoType *type)
 {
@@ -983,8 +985,6 @@ mini_type_to_stind (MonoCompile* cfg, MonoType *type)
 	}
 	return mono_type_to_stind (type);
 }
-
-#ifndef DISABLE_JIT
 
 int
 mono_op_imm_to_op (int opcode)
@@ -2323,8 +2323,25 @@ mono_register_opcode_emulation (int opcode, const char *name, const char *sigstr
 	emul_opcode_hit_cache [opcode >> (EMUL_HIT_SHIFT + 3)] |= (1 << (opcode & EMUL_HIT_MASK));
 }
 
+/*
+ * For JIT icalls implemented in C.
+ * NAME should be the same as the name of the C function whose address is FUNC.
+ */
 static void
 register_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
+{
+	MonoMethodSignature *sig;
+
+	if (sigstr)
+		sig = mono_create_icall_signature (sigstr);
+	else
+		sig = NULL;
+
+	mono_register_jit_icall_full (func, name, sig, save, name);
+}
+
+static void
+register_dyn_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
 {
 	MonoMethodSignature *sig;
 
@@ -6917,10 +6934,9 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_jit_set_domain, "mono_jit_set_domain", "void ptr", TRUE);
 	register_icall (mono_domain_get, "mono_domain_get", "ptr", TRUE);
 
-	register_icall (mono_get_throw_exception (), "mono_arch_throw_exception", "void object", TRUE);
-	register_icall (mono_get_rethrow_exception (), "mono_arch_rethrow_exception", "void object", TRUE);
-	register_icall (mono_get_throw_corlib_exception (), "mono_arch_throw_corlib_exception", 
-				 "void ptr", TRUE);
+	register_dyn_icall (mono_get_throw_exception (), "mono_arch_throw_exception", "void object", TRUE);
+	register_dyn_icall (mono_get_rethrow_exception (), "mono_arch_rethrow_exception", "void object", TRUE);
+	register_dyn_icall (mono_get_throw_corlib_exception (), "mono_arch_throw_corlib_exception", "void ptr", TRUE);
 	register_icall (mono_thread_get_undeniable_exception, "mono_thread_get_undeniable_exception", "object", FALSE);
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "void", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint, "mono_thread_force_interruption_checkpoint", "void", FALSE);
@@ -7056,7 +7072,7 @@ mini_init (const char *filename, const char *runtime_version)
 		"ptr ptr ptr ptr", FALSE);
 	register_icall (mono_get_special_static_data, "mono_get_special_static_data", "ptr int", FALSE);
 	register_icall (mono_ldstr, "mono_ldstr", "object ptr ptr int32", FALSE);
-	register_icall (mono_helper_stelem_ref_check, "helper_stelem_ref_check", "void object object", FALSE);
+	register_icall (mono_helper_stelem_ref_check, "mono_helper_stelem_ref_check", "void object object", FALSE);
 	register_icall (mono_object_new, "mono_object_new", "object ptr ptr", FALSE);
 	register_icall (mono_object_new_specific, "mono_object_new_specific", "object ptr", FALSE);
 	register_icall (mono_array_new, "mono_array_new", "object ptr ptr int32", FALSE);
@@ -7065,10 +7081,10 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_ldftn, "mono_ldftn", "ptr ptr", FALSE);
 	register_icall (mono_ldvirtfn, "mono_ldvirtfn", "ptr object ptr", FALSE);
 	register_icall (mono_ldvirtfn_gshared, "mono_ldvirtfn_gshared", "ptr object ptr", FALSE);
-	register_icall (mono_helper_compile_generic_method, "compile_generic_method", "ptr object ptr ptr", FALSE);
-	register_icall (mono_helper_ldstr, "helper_ldstr", "object ptr int", FALSE);
-	register_icall (mono_helper_ldstr_mscorlib, "helper_ldstr_mscorlib", "object int", FALSE);
-	register_icall (mono_helper_newobj_mscorlib, "helper_newobj_mscorlib", "object int", FALSE);
+	register_icall (mono_helper_compile_generic_method, "mono_helper_compile_generic_method", "ptr object ptr ptr", FALSE);
+	register_icall (mono_helper_ldstr, "mono_helper_ldstr", "object ptr int", FALSE);
+	register_icall (mono_helper_ldstr_mscorlib, "mono_helper_ldstr_mscorlib", "object int", FALSE);
+	register_icall (mono_helper_newobj_mscorlib, "mono_helper_newobj_mscorlib", "object int", FALSE);
 	register_icall (mono_value_copy, "mono_value_copy", "void ptr ptr ptr", FALSE);
 	register_icall (mono_object_castclass, "mono_object_castclass", "object object ptr", FALSE);
 	register_icall (mono_break, "mono_break", NULL, TRUE);
@@ -7264,6 +7280,10 @@ mini_cleanup (MonoDomain *domain)
 	DeleteCriticalSection (&jit_mutex);
 
 	DeleteCriticalSection (&mono_delegate_section);
+
+#ifdef USE_JUMP_TABLES
+	mono_jumptable_cleanup ();
+#endif
 }
 
 void
@@ -7425,24 +7445,6 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 #endif
 
-#ifdef DISABLE_JIT
-
-gpointer
-mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
-{
-       g_assert_not_reached ();
-       return NULL;
-}
-
-gpointer
-mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-       g_assert_not_reached ();
-       return NULL;
-}
-
-#endif
-
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED) && !defined(MONOTOUCH) && !defined(MONO_EXTENSIONS)
 
 gboolean
@@ -7458,4 +7460,99 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 	return NULL;
 }
 
+#endif
+
+#ifdef USE_JUMP_TABLES
+#define DEFAULT_JUMPTABLE_CHUNK_ELEMENTS 128
+
+typedef struct MonoJumpTableChunk {
+	guint32 total;
+	guint32 active;
+	struct MonoJumpTableChunk *previous;
+	/* gpointer entries[total]; */
+} MonoJumpTableChunk;
+
+static MonoJumpTableChunk* g_jumptable = NULL;
+#define mono_jumptable_lock() EnterCriticalSection (&jumptable_mutex)
+#define mono_jumptable_unlock() LeaveCriticalSection (&jumptable_mutex)
+static CRITICAL_SECTION jumptable_mutex;
+
+static  MonoJumpTableChunk*
+mono_create_jumptable_chunk (guint32 max_entries)
+{
+	guint32 size = sizeof (MonoJumpTableChunk) + max_entries * sizeof(gpointer);
+	MonoJumpTableChunk *chunk = (MonoJumpTableChunk*) g_new0 (guchar, size);
+	chunk->total = max_entries;
+	return chunk;
+}
+
+void
+mono_jumptable_init (void)
+{
+	if (g_jumptable == NULL) {
+		InitializeCriticalSection (&jumptable_mutex);
+		g_jumptable = mono_create_jumptable_chunk (DEFAULT_JUMPTABLE_CHUNK_ELEMENTS);
+	}
+}
+
+gpointer*
+mono_jumptable_add_entry (void)
+{
+	return mono_jumptable_add_entries (1);
+}
+
+gpointer*
+mono_jumptable_add_entries (guint32 entries)
+{
+	guint32 index;
+	gpointer *result;
+
+	mono_jumptable_init ();
+	mono_jumptable_lock ();
+	index = g_jumptable->active;
+	if (index + entries >= g_jumptable->total) {
+		/*
+		 * Grow jumptable, by adding one more chunk.
+		 * We cannot realloc jumptable, as there could be pointers
+		 * to existing jump table entries in the code, so instead
+		 * we just add one more chunk.
+		 */
+		guint32 max_entries = entries;
+		MonoJumpTableChunk *new_chunk;
+
+		if (max_entries < DEFAULT_JUMPTABLE_CHUNK_ELEMENTS)
+			max_entries = DEFAULT_JUMPTABLE_CHUNK_ELEMENTS;
+		new_chunk = mono_create_jumptable_chunk (max_entries);
+		/* Link old jumptable, so that we could free it up later. */
+		new_chunk->previous = g_jumptable;
+		g_jumptable = new_chunk;
+		index = 0;
+	}
+	g_jumptable->active = index + entries;
+	result = (gpointer*)((guchar*)g_jumptable + sizeof(MonoJumpTableChunk)) + index;
+	mono_jumptable_unlock();
+
+	return result;
+}
+
+void
+mono_jumptable_cleanup (void)
+{
+	if (g_jumptable) {
+		MonoJumpTableChunk *current = g_jumptable, *prev;
+		while (current != NULL) {
+			prev = current->previous;
+			g_free (current);
+			current = prev;
+		}
+		g_jumptable = NULL;
+		DeleteCriticalSection (&jumptable_mutex);
+	}
+}
+
+gpointer*
+mono_jumptable_get_entry (guint8 *code_ptr)
+{
+	return mono_arch_jumptable_entry_from_code (code_ptr);
+}
 #endif

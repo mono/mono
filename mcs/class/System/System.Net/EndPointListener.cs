@@ -29,6 +29,8 @@
 
 #if SECURITY_DEP
 
+extern alias MonoSecurity;
+
 using System.IO;
 using System.Net.Sockets;
 using System.Collections;
@@ -36,7 +38,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Mono.Security.Authenticode;
+using MonoSecurity::Mono.Security.Authenticode;
 
 namespace System.Net {
 	sealed class EndPointListener

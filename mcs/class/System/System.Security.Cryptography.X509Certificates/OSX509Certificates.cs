@@ -21,14 +21,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if SECURITY_DEP
+
+extern alias MonoSecurity;
+
 using System;
 using System.Runtime.InteropServices;
-using Mono.Security.X509;
-using Mono.Security.X509.Extensions;
+using MSX = MonoSecurity::Mono.Security.X509;
 
-namespace Mono.Security.X509 {
+namespace System.Security.Cryptography.X509Certificates {
 
-	internal class OSX509Certificates {
+	static class OSX509Certificates {
 		public const string SecurityLibrary = "/System/Library/Frameworks/Security.framework/Security";
 		public const string CoreFoundationLibrary = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
 	
@@ -86,7 +88,7 @@ namespace Mono.Security.X509 {
 			}
 		}
 		
-		public static SecTrustResult TrustEvaluateSsl (X509CertificateCollection certificates, string host)
+		public static SecTrustResult TrustEvaluateSsl (MSX.X509CertificateCollection certificates, string host)
 		{
 			if (certificates == null)
 				return SecTrustResult.Deny;
@@ -98,7 +100,7 @@ namespace Mono.Security.X509 {
 			}
 		}
 		
-		static SecTrustResult _TrustEvaluateSsl (X509CertificateCollection certificates, string hostName)
+		static SecTrustResult _TrustEvaluateSsl (MSX.X509CertificateCollection certificates, string hostName)
 		{
 			int certCount = certificates.Count;
 			IntPtr [] cfDataPtrs = new IntPtr [certCount];

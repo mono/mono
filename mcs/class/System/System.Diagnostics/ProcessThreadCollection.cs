@@ -68,7 +68,8 @@ namespace System.Diagnostics
 		{
 			InnerList.AddRange (processThreads);
 		}
-		
+
+#if !NET_2_1		
 		public ProcessThread this[int index] {
 			get {
 				return (ProcessThread)InnerList[index];
@@ -104,5 +105,6 @@ namespace System.Diagnostics
 		{
 			InnerList.Remove (thread);
 		}
+#endif
 	}
 }

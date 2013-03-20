@@ -31,7 +31,10 @@ using System.Runtime.CompilerServices;
 
 namespace Mono {
 
-	internal class Runtime
+#if MOBILE
+	public
+#endif
+	static class Runtime
 	{
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -46,11 +49,13 @@ namespace Mono {
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern string GetDisplayName ();
+		public static extern string GetDisplayName ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern string GetNativeStackTrace (Exception exception);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern bool SetGCAllowSynchronousMajor (bool flag);
 	}
 	
 }

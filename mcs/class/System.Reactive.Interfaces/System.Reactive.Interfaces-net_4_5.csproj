@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1CA793F9-A71D-4534-B684-D77AF04AB96F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>bin\Debug\System.Reactive.Interfaces-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>System.Reactive.Interfaces</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;HAS_EDI;PREFERASYNC;PREFER_ASYNC;SIGNED</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;HAS_EDI;PREFERASYNC;PREFER_ASYNC;SIGNED</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\AssemblyFileVersionAttribute.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\DateTimeOffset.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\GlobalSuppressions.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\IObservable.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\IObserver.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\NamespaceDocs.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Concurrency\IScheduledItem.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Concurrency\IScheduler.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Concurrency\ISchedulerLongRunning.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Concurrency\ISchedulerPeriodic.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Concurrency\IStopwatch.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Concurrency\IStopwatchProvider.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Disposables\ICancelable.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\IEventPattern.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\IEventPatternSource.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\IEventSource.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\IObserver.Result.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Linq\IGroupedObservable.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Linq\IQbservable.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Linq\IQbservableProvider.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Subjects\IConnectableObservable.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Subjects\ISubject.cs" />
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Interfaces\Reactive\Subjects\ISubject.Multi.cs" />  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-// CS1592: Badly formed XML in included comments file -- `there-is-no-such-file'
+// CS1589: Unable to include XML fragment `/foo/bar' of file `there-is-no-such-file'. Could not find file "*PATH*/there-is-no-such-file"
 // Line: 12
 // Compiler options: -doc:dummy.xml -warn:1 -warnaserror
 

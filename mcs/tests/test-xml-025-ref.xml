@@ -5,20 +5,28 @@
     </assembly>
     <members>
         <member name="T:Testing.Test">
-            <!-- No matching elements were found for the following include tag --><include file="test-xml-025.inc" path="/foo"/>
+            <!-- No matching elements were found for the include tag embedded here. -->
+            <include file="test-xml-025.inc" path="/foo" />
         </member>
         <member name="F:Testing.Test.S1">
             <root attr="is attribute allowed?">
   includes XML markup.
-  <child>test</child>
-  <child>test2</child>
-</root>
+  <child>test</child><child>test2</child></root>
         </member>
         <member name="F:Testing.Test.S2">
-            <child>test</child><child>test2</child>
+            <child>test</child>
+            <child>test2</child>
         </member>
         <member name="F:Testing.Test.S3">
             <!-- Failed to insert some or all of included XML -->
+        </member>
+        <member name="M:RelativeTestPath.Foo">
+            <summary>
+            Implements more features
+            </summary>
+            <remarks name="Foo">
+    implements the method in the most beautiful way possible.
+</remarks>
         </member>
     </members>
 </doc>

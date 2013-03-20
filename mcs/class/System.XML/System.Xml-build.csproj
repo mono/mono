@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A83E6656-BF90-473A-AB92-E635D8CAD86F}</ProjectGuid>
+    <ProjectGuid>{A2433930-2BB3-4818-97D2-45A907CB7B3B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612,642</NoWarn>
     <OutputPath>bin\Debug\System.Xml-build</OutputPath>
@@ -458,11 +458,11 @@ type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\P
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-build.csproj">
-      <Project>{BA443BB3-37C1-4194-AF97-B6F2580172A0}</Project>
+      <Project>{B8B2866D-592F-4888-A1CB-697AD0F3CADE}</Project>
       <Name>corlib\corlib-build</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-build.csproj">
-      <Project>{9C7DCF6C-9062-47D7-8AD6-969A6B995A9B}</Project>
+      <Project>{4C8FFAF4-4FE9-4377-821B-AFD255791495}</Project>
       <Name>System\System-build</Name>
     </ProjectReference>
   </ItemGroup>

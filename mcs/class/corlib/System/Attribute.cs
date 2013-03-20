@@ -346,7 +346,7 @@ namespace System
 			var method = ((MethodInfo) member).GetBaseMethod ();
 
 			while (true) {
-				var param = method.GetParameters () [parameter.Position];
+				var param = method.GetParametersInternal () [parameter.Position];
 				if (param.IsDefined (attributeType, false))
 					return true;
 
@@ -377,7 +377,7 @@ namespace System
 			var custom_attributes = new List<Attribute> ();
 
 			while (true) {
-				var param = method.GetParameters () [parameter.Position];
+				var param = method.GetParametersInternal () [parameter.Position];
 				var param_attributes = (Attribute []) param.GetCustomAttributes (attributeType, false);
 				foreach (var param_attribute in param_attributes) {
 					var param_type = param_attribute.GetType ();

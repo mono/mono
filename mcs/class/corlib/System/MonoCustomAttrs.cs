@@ -86,10 +86,10 @@ namespace System
 							return pseudoAttrs;
 						else
 							return new object [] { pseudoAttrs [i] };
-				return new object [0];
+				return EmptyArray<object>.Value;
 			}
-			else
-				return pseudoAttrs;
+
+			return pseudoAttrs;
 		}
 
 		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)

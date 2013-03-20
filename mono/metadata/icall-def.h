@@ -48,6 +48,7 @@ ICALL(COMPROX_2, "FindProxy", ves_icall_Mono_Interop_ComInteropProxy_FindProxy)
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
 ICALL(RUNTIME_1, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName)
 ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace)
+ICALL(RUNTIME_13, "SetGCAllowSynchronousMajor", ves_icall_Mono_Runtime_SetGCAllowSynchronousMajor)
 
 #ifndef PLATFORM_RO_FS
 ICALL_TYPE(KPAIR, "Mono.Security.Cryptography.KeyPairPersistence", KPAIR_1)
@@ -518,6 +519,7 @@ ICALL(ASSEM_26, "load_with_partial_name", ves_icall_System_Reflection_Assembly_l
 
 ICALL_TYPE(ASSEMN, "System.Reflection.AssemblyName", ASSEMN_1)
 ICALL(ASSEMN_1, "ParseName", ves_icall_System_Reflection_AssemblyName_ParseName)
+ICALL(ASSEMN_2, "get_public_token", mono_digest_get_public_token)
 
 ICALL_TYPE(CATTR_DATA, "System.Reflection.CustomAttributeData", CATTR_DATA_1)
 ICALL(CATTR_DATA_1, "ResolveArgumentsInternal", mono_reflection_resolve_custom_attribute_data)

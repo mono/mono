@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{05BDD718-DDD2-4300-A960-3283290059A0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>bin\Debug\System.Json.Microsoft-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>System.Json.Microsoft</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;ASPNETMVC;FEATURE_DYNAMIC</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;ASPNETMVC;FEATURE_DYNAMIC</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\RS.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Json\Extensions\JsonValueExtensions.cs" />
+    <Compile Include="System.Json\GlobalSuppressions.cs" />
+    <Compile Include="System.Json\JsonArray.cs" />
+    <Compile Include="System.Json\JsonObject.cs" />
+    <Compile Include="System.Json\JsonPrimitive.cs" />
+    <Compile Include="System.Json\JsonType.cs" />
+    <Compile Include="System.Json\JsonValue.cs" />
+    <Compile Include="System.Json\JsonValueChange.cs" />
+    <Compile Include="System.Json\JsonValueChangeEventArgs.cs" />
+    <Compile Include="System.Json\JsonValueDynamicMetaObject.cs" />
+    <Compile Include="System.Json\JsonValueLinqExtensions.cs" />
+    <Compile Include="System.Json\JXmlToJsonValueConverter.cs" />
+    <Compile Include="System.Json\NGenWrapper.cs" />
+    <Compile Include="System.Json\Properties\AssemblyInfo.cs" />
+    <Compile Include="System.Json\Properties\Resources.Designer.cs" />  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
+      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Name>System.XML\System.Xml-net_4_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
+      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Name>System.Core\System.Core-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_0.csproj">
+      <Project>{B3C699B6-74B4-4B41-901E-32E57D0909AC}</Project>
+      <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.CSharp\Microsoft.CSharp-net_4_0.csproj">
+      <Project>{56A7FA9E-7F2B-4BCB-8523-FD4EEE876BE0}</Project>
+      <Name>Microsoft.CSharp\Microsoft.CSharp-net_4_0</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="System.Json.Properties.Resources.resources">
+      <LogicalName>System.Json.Properties.Resources.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

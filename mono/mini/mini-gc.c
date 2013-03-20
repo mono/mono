@@ -2518,6 +2518,11 @@ mini_gc_init (void)
 #else
 
 void
+mini_gc_enable_gc_maps_for_aot (void)
+{
+}
+
+void
 mini_gc_init (void)
 {
 }

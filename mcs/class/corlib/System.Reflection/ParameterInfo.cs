@@ -199,8 +199,8 @@ namespace System.Reflection
 					MethodInfo mi = prop.GetGetMethod (true);
 					if (mi == null)
 						mi = prop.GetSetMethod (true);
-					/*TODO expose and use a GetParametersNoCopy()*/
-					return mi.GetParameters () [PositionImpl].MetadataToken;
+
+					return mi.GetParametersInternal () [PositionImpl].MetadataToken;
 				} else if (MemberImpl is MethodBase) {
 					return GetMetadataToken ();
 				}

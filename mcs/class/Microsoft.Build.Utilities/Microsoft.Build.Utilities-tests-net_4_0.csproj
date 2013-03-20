@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{28E1B2A2-EDBD-4C70-8056-AF5088FA7A46}</ProjectGuid>
+    <ProjectGuid>{E1503E6B-4A56-4B2F-80AB-A57178923D4A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Utilities-tests-net_4_0</OutputPath>
@@ -66,19 +66,19 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_0.csproj">
-      <Project>{9B20519A-37B9-477A-88A1-C79F0B78B978}</Project>
+      <Project>{38B0128C-C232-4274-BDD0-F90ED189A80F}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_0.csproj">
-      <Project>{D23CE200-FDD6-4D7A-8C0E-82A0D0706184}</Project>
+      <Project>{5EECBD6F-6D04-4194-A127-CE1A0683F978}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
   </ItemGroup>

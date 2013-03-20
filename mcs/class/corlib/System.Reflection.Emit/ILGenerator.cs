@@ -525,7 +525,7 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 			
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= con.GetParameterCount ();
+				cur_stack -= con.GetParametersCount ();
 		}
 		
 		public virtual void Emit (OpCode opcode, double arg)
@@ -744,7 +744,7 @@ namespace System.Reflection.Emit {
 				cur_stack ++;
 
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= meth.GetParameterCount ();
+				cur_stack -= meth.GetParametersCount ();
 		}
 
 		private void Emit (OpCode opcode, MethodInfo method, int token)
@@ -762,7 +762,7 @@ namespace System.Reflection.Emit {
 				cur_stack ++;
 
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= method.GetParameterCount ();
+				cur_stack -= method.GetParametersCount ();
 		}
 
 		[CLSCompliant(false)]

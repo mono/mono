@@ -378,8 +378,10 @@ namespace Mono.CSharp {
 					if (mode != LookupMode.Normal)
 						continue;
 
-					if (ts.MemberDefinition.IsImported)
+					if (ts.MemberDefinition.IsImported) {
+						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
 						ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
+					}
 
 					ctx.Module.Compiler.Report.Warning (436, 2, loc,
 						"The type `{0}' conflicts with the imported type of same name'. Ignoring the imported type definition",

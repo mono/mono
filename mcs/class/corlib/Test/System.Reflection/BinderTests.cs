@@ -980,19 +980,16 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		public void TestParamsAttribute2_Mono ()
+		public void TestParamsAttribute_1 ()
 		{
-			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static|BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
-			Assert.IsNotNull (mi, "#1");
-			Assert.AreEqual (typeof (object []), mi.GetParameters () [1].ParameterType, "#2");
+			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static | BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
+			Assert.IsNull (mi, "#1");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void TestParamsAttribute2_MS ()
+		public void TestParamsAttribute_2 ()
 		{
-			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static | BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
+			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method2", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null);
 			Assert.IsNull (mi, "#1");
 		}
 
@@ -1007,6 +1004,10 @@ namespace MonoTests.System.Reflection
 		public static void params_method1 (object o, object o2)
 		{
 		}
+
+		public static void params_method2 (params string[] args)
+		{
+		}	
 
 		public static double DoubleMethod (double d) {
 			return d;

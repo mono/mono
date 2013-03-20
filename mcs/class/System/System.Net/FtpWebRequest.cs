@@ -173,6 +173,7 @@ namespace System.Net
 			}
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		public static new RequestCachePolicy DefaultCachePolicy
 		{
@@ -183,6 +184,7 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
+#endif
 
 		public bool EnableSsl {
 			get {

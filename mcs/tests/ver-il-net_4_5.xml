@@ -17906,6 +17906,31 @@
       </method>
     </type>
   </test>
+  <test name="gtest-580.cs">
+    <type name="WhereProblems.MyClass`1[where]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="WhereProblems.Classes">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="WhereProblems.Classes+where">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="WhereProblems.Classes+DER17">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -24912,6 +24937,22 @@
         <size>55</size>
       </method>
       <method name="Int32 &lt;&gt;m__3F(Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="FromProblems2.from">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="FromProblems2.C">
+      <method name="Void M1()" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="FromProblems2.from M2()" attrs="129">
         <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
@@ -56846,6 +56887,107 @@
         <size>7</size>
       </method>
     </type>
+    <type name="AsyncNS.Classes">
+      <method name="Void M()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AsyncNS.Classes+async">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AwaitNS.Formals">
+      <method name="Void M1()" attrs="145">
+        <size>92</size>
+      </method>
+      <method name="Void &lt;M1&gt;m__0(Int32)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;M1&gt;m__1(Int32)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void &lt;M1&gt;m__2(Int32)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AwaitNS.Formals+D">
+      <method name="Void Invoke(Int32)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="AwaitNS.Methods">
+      <method name="Void await()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void M(AwaitNS.Methods)" attrs="129">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AwaitNS.Classes">
+      <method name="Void M()" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AwaitNS.Classes+await">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AwaitNS.AnonTypes">
+      <method name="Void M()" attrs="145">
+        <size>25</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AwaitNS.Initializer">
+      <method name="Void M()" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;await&gt;__T]">
+      <method name="&lt;await&gt;__T get_await()" attrs="2182">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)" attrs="198">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()" attrs="198">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()" attrs="198">
+        <size>67</size>
+      </method>
+      <method name="Void .ctor(&lt;await&gt;__T)" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
   </test>
   <test name="test-async-23.cs">
     <type name="MyContext">
@@ -61302,6 +61444,27 @@
     <type name="D">
       <method name="Void Method(Int32)" attrs="145">
         <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-30.cs">
+    <type name="PartialProblems.Classes">
+      <method name="Void M1(PartialProblems.Classes+partial)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="PartialProblems.Classes+partial M3()" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="PartialProblems.Classes+partial">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

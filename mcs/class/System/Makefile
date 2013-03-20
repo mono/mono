@@ -20,7 +20,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
-TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:System.Xml.dll -r:System.Core.dll -nowarn:0618 -nowarn:219 -nowarn:67 -nowarn:169 -nowarn:612 \
+TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:System.Xml.dll -r:System.Core.dll -nowarn:618,672,219,67,169,612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
@@ -106,7 +106,7 @@ FILE_SECURITY_DEP := $(wildcard ../lib/$(PROFILE)/Mono.Security.dll)
 endif
 ifdef FILE_SECURITY_DEP
 CYCLIC_DEP_FILES += $(FILE_SECURITY_DEP)
-LIB_MCS_FLAGS += -d:SECURITY_DEP -r:Mono.Security.dll
+LIB_MCS_FLAGS += -d:SECURITY_DEP -r:MonoSecurity=Mono.Security.dll
 endif
 
 ifndef PROFILE_ANY_MOBILE

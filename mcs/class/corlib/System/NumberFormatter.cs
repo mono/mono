@@ -321,7 +321,7 @@ namespace System
 		//   _isCustomFormat, _specifierIsUpper, _specifier & _precision.
 		public NumberFormatter (Thread current)
 		{
-			_cbuf = new char [0];
+			_cbuf = EmptyArray<char>.Value;
 			if (current == null)
 				return;
 			CurrentCulture = current.CurrentCulture;

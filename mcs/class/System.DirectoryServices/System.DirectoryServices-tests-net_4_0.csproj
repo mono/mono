@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E1D5949E-4488-4EBE-B47C-DBDCBE7D3B8F}</ProjectGuid>
+    <ProjectGuid>{C6B3877C-19AB-46BA-A731-CF65DA1B546E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,219,169</NoWarn>
     <OutputPath>bin\Debug\System.DirectoryServices-tests-net_4_0</OutputPath>
@@ -68,19 +68,19 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{280E1B59-BAAA-4E02-99CA-8070BCB2C72E}</Project>
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.DirectoryServices\System.DirectoryServices-net_4_0.csproj">
-      <Project>{2179B4F2-C1E5-4DE1-8F90-F534D0785E00}</Project>
+      <Project>{AD2159B2-7AA6-414A-86B7-89E4BFDCD4E4}</Project>
       <Name>System.DirectoryServices\System.DirectoryServices-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{C0648621-9C6E-4584-9CF6-70EBB2D60489}</Project>
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Novell.Directory.Ldap\Novell.Directory.Ldap-net_4_0.csproj">
-      <Project>{A93D99A3-9102-4ABA-8E16-511CB45932EA}</Project>
+      <Project>{07D6E719-7A7E-4CA2-9F0B-CADF9A190FE4}</Project>
       <Name>Novell.Directory.Ldap\Novell.Directory.Ldap-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
