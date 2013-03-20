@@ -53,18 +53,19 @@ nop: len:4
 relaxed_nop: len:4
 break: len:4
 jmp: len:92
-br: len:16
-switch: src1:i len:12
+br: len:16 nacl:28
+switch: src1:i len:12 nacl:32
 # See the comment in resume_from_signal_handler, we can't copy the fp regs from sigctx to MonoContext on linux,
 # since the corresponding sigctx structures are not well defined.
 seq_point: len:38 clob:c
 
-throw: src1:i len:24
-rethrow: src1:i len:20
+throw: src1:i len:24 nacl:32
+rethrow: src1:i len:20 nacl:32
 start_handler: len:20
-endfinally: len:20
+endfinally: len:20 nacl:24
 call_handler: len:16 clob:c
 endfilter: src1:i len:16
+nacl_gc_safe_point: clob:c len:0 nacl:48
 
 ckfinite: dest:f src1:f len:64
 ceq: dest:i len:12
@@ -79,18 +80,18 @@ fcompare: src1:f src2:f len:12
 oparglist: src1:i len:12
 setlret: src1:i src2:i len:12
 checkthis: src1:b len:4
-call: dest:a clob:c len:20
-call_reg: dest:a src1:i len:8 clob:c
-call_membase: dest:a src1:b len:24 clob:c
-voidcall: len:20 clob:c
-voidcall_reg: src1:i len:8 clob:c
-voidcall_membase: src1:b len:16 clob:c
-fcall: dest:g len:28 clob:c
+call: dest:a clob:c len:20 nacl:36
+call_reg: dest:a src1:i len:8 clob:c nacl:16
+call_membase: dest:a src1:b len:24 clob:c nacl:40
+voidcall: len:20 clob:c nacl:36
+voidcall_reg: src1:i len:8 clob:c nacl:20
+voidcall_membase: src1:b len:16 clob:c nacl:40
+fcall: dest:g len:28 clob:c nacl:40
 fcall_reg: dest:g src1:i len:16 clob:c
-fcall_membase: dest:g src1:b len:24 clob:c
-lcall: dest:l len:20 clob:c
+fcall_membase: dest:g src1:b len:24 clob:c nacl:28
+lcall: dest:l len:20 clob:c nacl:36
 lcall_reg: dest:l src1:i len:8 clob:c
-lcall_membase: dest:l src1:b len:16 clob:c
+lcall_membase: dest:l src1:b len:16 clob:c nacl:24
 vcall: len:20 clob:c
 vcall_reg: src1:i len:8 clob:c
 vcall_membase: src1:b len:16 clob:c
@@ -115,14 +116,14 @@ storei1_memindex: dest:b src1:i src2:i len:4
 storei2_memindex: dest:b src1:i src2:i len:4
 storei4_memindex: dest:b src1:i src2:i len:4
 load_membase: dest:i src1:b len:20
-loadi1_membase: dest:i src1:b len:4
-loadu1_membase: dest:i src1:b len:4
-loadi2_membase: dest:i src1:b len:4
-loadu2_membase: dest:i src1:b len:4
-loadi4_membase: dest:i src1:b len:4
-loadu4_membase: dest:i src1:b len:4
-loadi8_membase: dest:i src1:b
-loadr4_membase: dest:f src1:b len:8
+loadi1_membase: dest:i src1:b len:4 nacl:12
+loadu1_membase: dest:i src1:b len:4 nacl:12
+loadi2_membase: dest:i src1:b len:4 nacl:12
+loadu2_membase: dest:i src1:b len:4 nacl:12
+loadi4_membase: dest:i src1:b len:4 nacl:12
+loadu4_membase: dest:i src1:b len:4 nacl:12
+loadi8_membase: dest:i src1:b nacl:12
+loadr4_membase: dest:f src1:b len:12 nacl:16
 loadr8_membase: dest:f src1:b len:24
 load_memindex: dest:i src1:b src2:i len:4
 loadi1_memindex: dest:i src1:b src2:i len:4
@@ -143,20 +144,20 @@ xor_imm: dest:i src1:i len:12
 shl_imm: dest:i src1:i len:8
 shr_imm: dest:i src1:i len:8
 shr_un_imm: dest:i src1:i len:8
-cond_exc_eq: len:8
-cond_exc_ne_un: len:8
-cond_exc_lt: len:8
-cond_exc_lt_un: len:8
-cond_exc_gt: len:8
-cond_exc_gt_un: len:8
-cond_exc_ge: len:8
-cond_exc_ge_un: len:8
-cond_exc_le: len:8
-cond_exc_le_un: len:8
-cond_exc_ov: len:12
-cond_exc_no: len:8
-cond_exc_c: len:12
-cond_exc_nc: len:8
+cond_exc_eq: len:8 nacl:16
+cond_exc_ne_un: len:8 nacl:16
+cond_exc_lt: len:8 nacl:16
+cond_exc_lt_un: len:8 nacl:16
+cond_exc_gt: len:8 nacl:16
+cond_exc_gt_un: len:8 nacl:16
+cond_exc_ge: len:8 nacl:16
+cond_exc_ge_un: len:8 nacl:16
+cond_exc_le: len:8 nacl:16
+cond_exc_le_un: len:8 nacl:16
+cond_exc_ov: len:12 nacl:16
+cond_exc_no: len:8 nacl:16
+cond_exc_c: len:12 nacl:16
+cond_exc_nc: len:8 nacl:16
 #float_beq: src1:f src2:f len:20
 #float_bne_un: src1:f src2:f len:20
 #float_blt: src1:f src2:f len:20
@@ -310,9 +311,9 @@ icompare_imm: src1:i len:12
 
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
 
-vcall2: len:20 clob:c
+vcall2: len:20 clob:c nacl:36
 vcall2_reg: src1:i len:8 clob:c
-vcall2_membase: src1:b len:12 clob:c
+vcall2_membase: src1:b len:12 clob:c nacl:24
 dyn_call: src1:i src2:i len:120 clob:c
 
 # This is different from the original JIT opcodes

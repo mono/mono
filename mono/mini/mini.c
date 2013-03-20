@@ -243,12 +243,14 @@ guint8 *mono_nacl_align(guint8 *code) {
 
 void mono_nacl_fix_patches(const guint8 *code, MonoJumpInfo *ji)
 {
+#ifndef USE_JUMP_TABLES
   MonoJumpInfo *patch_info;
   for (patch_info = ji; patch_info; patch_info = patch_info->next) {
     unsigned char *ip = patch_info->ip.i + code;
     ip = mono_arch_nacl_skip_nops(ip);
     patch_info->ip.i = ip - code;
   }
+#endif
 }
 #endif  /* __native_client_codegen__ */
 
@@ -3129,11 +3131,11 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_METHOD_JUMP:
 		target = mono_create_jump_trampoline (domain, patch_info->data.method, FALSE);
 #if defined(__native_client__) && defined(__native_client_codegen__)
-#if defined(TARGET_AMD64)
+# if defined(TARGET_AMD64)
 		/* This target is an absolute address, not relative to the */
 		/* current code being emitted on AMD64. */
 		target = nacl_inverse_modify_patch_target(target);
-#endif
+# endif
 #endif
 		break;
 	case MONO_PATCH_INFO_METHOD:
@@ -3147,7 +3149,6 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *jump_table;
 		int i;
-
 #if defined(__native_client__) && defined(__native_client_codegen__)
 		/* This memory will leak, but we don't care if we're */
 		/* not deleting JIT'd methods anyway                 */

@@ -12,7 +12,27 @@
 #ifdef __native_client_codegen__
 #define kNaClAlignmentARM 16
 #define kNaClAlignmentMaskARM (kNaClAlignmentARM - 1)
-#define kNaClLengthOfCallImm 4
+#define kNaClLengthOfCallImm 12
+
+#define ARM_NACL_MASK_REG(code, reg) ARM_BIC_REG_IMM_COND (code, reg, reg, 0xc0, 8, ARMCOND_AL)
+#define ARM_NACL_MASK_CODE(code, reg) ARM_BIC_REG_IMM_COND (code, reg, reg, 0xfc, 4, ARMCOND_AL)
+
+#define ARM_NACL_MASK_REG_ALIGN(code, reg) do {   \
+      code = mono_arm_nacl_ensure_bundle(code, 4); \
+      ARM_NACL_MASK_REG (code, reg); \
+   } while (0);
+
+#define ARM_NACL_MASK_CODE_ALIGN(code, reg) do {   \
+      code = mono_arm_nacl_ensure_bundle(code, 4); \
+      ARM_NACL_MASK_CODE (code, reg); \
+   } while (0);
+
+#define NACL_BUNDLE_ALIGN_UP(p) ((((p)+kNaClAlignmentMaskARM)) & ~kNaClAlignmentMaskARM)
+
+guint8* mono_arm_nacl_ensure_bundle (guint8 *code, int space);
+guint8* mono_arm_nacl_ensure_at_position (guint8 *code, int position);
+#else
+#define NACL_BUNDLE_ALIGN_UP(p) (p)
 #endif
 
 #if defined(ARM_FPU_NONE) || (defined(__ARM_EABI__) && !defined(ARM_FPU_VFP) && !defined(ARM_FPU_VFP_HARD))
@@ -60,13 +80,34 @@
 #define MONO_MAX_IREGS 16
 #define MONO_MAX_FREGS 16
 
+#ifdef __native_client__
+/* NaCl cannot access R9. */
+#define MONO_SAVED_GREGS 9 /* r4-r8, r10, r11, ip, lr */
+#else
 #define MONO_SAVED_GREGS 10 /* r4-r11, ip, lr */
+#endif
 #define MONO_SAVED_FREGS 8
 
-/* r4-r11, ip, lr: registers saved in the LMF  */
-#define MONO_ARM_REGSAVE_MASK 0x5ff0
-#define MONO_ARM_FIRST_SAVED_REG ARMREG_R4
 #define MONO_ARM_NUM_SAVED_REGS 10
+
+#ifdef __native_client_codegen__
+/* NaCl cannot access R9, so use two masks. */
+/* r4 - r8 */
+#define MONO_ARM_REGSAVE_MASK1 (0x1f0)
+/* r8, r10, r11, r12, lr=r14 */
+#define MONO_ARM_REGSAVE_MASK2 ((1 << ARMREG_R8) | 0x5c00)
+/* r0 - r8 */
+#define MONO_ARM_LMF_REGSAVE_MASK1 (MONO_ARM_REGSAVE_MASK1 | 0xf)
+#define MONO_ARM_LMF_REGSAVE_MASK2  MONO_ARM_REGSAVE_MASK2
+#else
+/* r4 - r12, lr */
+#define MONO_ARM_REGSAVE_MASK 0x5ff0
+#define MONO_ARM_LMF_REGSAVE_MASK (MONO_ARM_REGSAVE_MASK | 0xf)
+#endif
+
+#define MONO_ARM_FIRST_SAVED_REG ARMREG_R4
+#define MONO_ARM_LMF_REGSAVE_SIZE 14
+#define MONO_ARM_LMF_REGSAVE_LR_INDEX (MONO_ARM_LMF_REGSAVE_SIZE-1)
 
 /* Parameters used by the register allocator */
 
@@ -136,7 +177,49 @@ typedef struct {
 } GSharedVtCallInfo;
 
 void arm_patch (guchar *code, const guchar *target);
-guint8* mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val);
+guint8* mono_arm_emit_bx_cond (guint8 *code, ARMReg dreg, int need_return, int cond);
+guint8* mono_arm_emit_bx (guint8 *code, ARMReg dreg, int need_return);
+guint8* mono_arm_emit_call_reg (guint8 *code, ARMReg dreg);
+guint8* mono_arm_emit_load_imm (guint8 *code, ARMReg dreg, guint32 val);
+gint8   mono_arm_ret_pc_offset (guint8 *code);
+
+guint8* mono_arm_emit_ldr_imm12 (guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_ldrh_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_ldrsh_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_ldrb_imm8(guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_ldrsb_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_flds_imm8 (guint8* code, int dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_fldd_imm8 (guint8* code, int dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_ldr_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_ldrh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_ldrb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_flds_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_fldd_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+
+guint8* mono_arm_emit_ldr_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+guint8* mono_arm_emit_ldrh_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+guint8* mono_arm_emit_ldrsh_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+guint8* mono_arm_emit_ldrb_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+guint8* mono_arm_emit_ldrsb_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+
+guint8* mono_arm_emit_str_imm12 (guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_strh_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_strb_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_fsts_imm8 (guint8* code, int dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_fstd_imm8 (guint8* code, int dreg, ARMReg basereg, int offset);
+guint8* mono_arm_emit_str_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_strh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_strb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_fsts_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_fstd_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_str_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+guint8* mono_arm_emit_strh_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+guint8* mono_arm_emit_strb_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg);
+
+guint8* mono_arm_adjust_stack_imm (guint8* code, int offset);
+guint8* mono_arm_adjust_stack_reg (guint8* code, ARMReg reg, int add);
+guint8* mono_arm_adjust_stack_reg_imm (guint8* code, ARMReg reg, int offset);
+
 int mono_arm_is_rotated_imm8 (guint32 val, gint *rot_amount);
 
 void
@@ -169,7 +252,7 @@ struct MonoLMF {
 	 * 0-4 should be considered undefined (execpt in the magic tramp)
 	 * sp is saved at IP.
 	 */
-	mgreg_t    iregs [14];
+	mgreg_t    iregs [MONO_ARM_LMF_REGSAVE_SIZE];
 };
 
 typedef struct MonoCompileArch {

@@ -875,7 +875,7 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 #  endif
 
 #  if !defined(sun)
-#    if !defined(__OpenBSD__)
+#    if !defined(__OpenBSD__) && !defined(__native_client__)
 	pthread_attr_getstack (&attr, (void**)staddr, stsize);
 #    endif
 	if (*staddr)
