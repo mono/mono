@@ -2940,6 +2940,7 @@ namespace Mono.CSharp
 
 					advance_line ();
 				} else if (c == '\\' && !quoted) {
+					++col;
 					int surrogate;
 					c = escape (c, out surrogate);
 					if (c == -1)
