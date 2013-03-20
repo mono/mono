@@ -374,6 +374,12 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 }
 
 int
+CreateNLSocket (void)
+{
+	return -1;
+}
+
+int
 CloseNLSocket (gpointer sock)
 {
 	return -1;
