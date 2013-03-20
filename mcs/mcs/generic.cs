@@ -776,6 +776,8 @@ namespace Mono.CSharp {
 								}
 							}
 						}
+					} else if (ifaces_defined == null) {
+						ifaces_defined = ifaces == null ? TypeSpec.EmptyTypes : ifaces.ToArray ();
 					}
 
 					//
@@ -792,9 +794,6 @@ namespace Mono.CSharp {
 							}
 						}
 					}
-
-					if (ifaces_defined == null)
-						ifaces_defined = ifaces == null ? TypeSpec.EmptyTypes : ifaces.ToArray ();
 
 					state |= StateFlags.InterfacesExpanded;
 				}
