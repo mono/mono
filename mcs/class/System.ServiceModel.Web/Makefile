@@ -15,7 +15,8 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) \
 	Test/config/webHttpBinding \
-	Test/config/webHttpBinding.config
+	Test/config/webHttpBinding.config \
+	System.Runtime.Serialization.Json/DataContractJsonSerializerSettings.cs
 
 VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
