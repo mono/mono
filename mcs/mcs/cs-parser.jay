@@ -699,13 +699,29 @@ attribute_section_cont
 			$$ = new List<Attribute> (0);
 		else
 			$$ = $4;
-	  
+
 		current_attr_target = null;
 		lexer.parsing_attribute_section = false;
  	  }
 	| attribute_list opt_comma CLOSE_BRACKET
 	  {
 		$$ = $1;
+	  }
+	| IDENTIFIER error
+	  {
+		Error_SyntaxError (yyToken);
+
+		var lt = (Tokenizer.LocatedToken) $1;
+		var tne = new SimpleName (lt.Value, null, lt.Location);
+
+		$$ = new List<Attribute> () {
+			new Attribute (null, tne, null, GetLocation ($1), false)
+		};
+	  }
+	| error
+	  {
+ 		$$ = CheckAttributeTarget (GetTokenName (yyToken), GetLocation ($1)); 
+ 		$$ = null;
 	  }
 	;	
 
@@ -717,16 +733,6 @@ attribute_target
 	  }
 	| EVENT  { $$ = "event"; }
 	| RETURN { $$ = "return"; }
-	| error
-	  {
-		if (yyToken == Token.IDENTIFIER) {
-			Error_SyntaxError (yyToken);
-			$$ = null;
-		} else {
-			string name = GetTokenName (yyToken);
-			$$ = CheckAttributeTarget (name, GetLocation ($1));
-		}
-	  }
 	;
 
 attribute_list
@@ -819,6 +825,11 @@ positional_or_named_argument
 	  	$$ = new Argument ((Expression) $1);
 	  }
 	| named_argument
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = null;
+	  }
 	;
 
 named_attribute_argument
