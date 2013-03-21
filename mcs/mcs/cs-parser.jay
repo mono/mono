@@ -6237,13 +6237,27 @@ select_or_group_clause
 	  
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  BY expression_or_error
+	  by_expression
 	  {
-		$$ = new Linq.GroupBy ((Linq.QueryBlock)current_block, (Expression)$3, linq_clause_blocks.Pop (), (Expression)$6, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($5));
+		var obj = (object[]) $5;
+
+		$$ = new Linq.GroupBy ((Linq.QueryBlock)current_block, (Expression)$3, linq_clause_blocks.Pop (), (Expression)obj[0], GetLocation ($1));
+		lbag.AddLocation ($$, (Location) obj[1]);
 		
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
+	  }
+	;
+
+by_expression
+	: BY expression_or_error
+	  {
+	  	$$ = new object[] { $2, GetLocation ($1) };
+	  }
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new object[2] { null, Location.Null };
 	  }
 	;
 	
