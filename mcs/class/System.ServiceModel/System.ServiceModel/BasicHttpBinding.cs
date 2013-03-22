@@ -98,7 +98,15 @@ namespace System.ServiceModel
 		}
 
 #if NET_2_1
-		public bool EnableHttpCookieContainer { get; set; }
+		public bool EnableHttpCookieContainer {
+			get; set;
+		}
+#elif NET_4_5
+		[Obsolete ("Use AllowCookies.")]
+		public bool EnableHttpCookieContainer {
+			get { return AllowCookies; }
+			set { AllowCookies = value; }
+		}
 #endif
 
 		public HostNameComparisonMode HostNameComparisonMode {
