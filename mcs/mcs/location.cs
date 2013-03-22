@@ -412,11 +412,28 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 		public class MemberLocations
 		{
 			public readonly IList<Tuple<Modifiers, Location>> Modifiers;
-			Location[] locations;
+			List<Location> locations;
 
-			public MemberLocations (IList<Tuple<Modifiers, Location>> mods, Location[] locs)
+			public MemberLocations (IList<Tuple<Modifiers, Location>> mods)
 			{
 				Modifiers = mods;
+			}
+
+			public MemberLocations (IList<Tuple<Modifiers, Location>> mods, Location loc)
+				: this (mods)
+			{
+				AddLocations (loc);
+			}
+
+			public MemberLocations (IList<Tuple<Modifiers, Location>> mods, Location[] locs)
+				: this (mods)
+			{
+				AddLocations (locs);
+			}
+
+			public MemberLocations (IList<Tuple<Modifiers, Location>> mods, List<Location> locs)
+				: this (mods)
+			{
 				locations = locs;
 			}
 
@@ -430,31 +447,50 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 			
 			public int Count {
 				get {
-					return locations.Length;
+					return locations.Count;
 				}
 			}
 
 			#endregion
 
+			public void AddLocations (Location loc)
+			{
+				if (locations == null) {
+					locations = new List<Location> ();
+				}
+
+				locations.Add (loc);
+			}
+
 			public void AddLocations (params Location[] additional)
 			{
 				if (locations == null) {
-					locations = additional;
+					locations = new List<Location> (additional);
 				} else {
-					int pos = locations.Length;
-					Array.Resize (ref locations, pos + additional.Length);
-					additional.CopyTo (locations, pos);
+					locations.AddRange (additional);
 				}
 			}
 		}
 
-		Dictionary<object, Location[]> simple_locs = new Dictionary<object, Location[]> (ReferenceEquality<object>.Default);
+		Dictionary<object, List<Location>> simple_locs = new Dictionary<object, List<Location>> (ReferenceEquality<object>.Default);
 		Dictionary<MemberCore, MemberLocations> member_locs = new Dictionary<MemberCore, MemberLocations> (ReferenceEquality<MemberCore>.Default);
 
 		[Conditional ("FULL_AST")]
 		public void AddLocation (object element, params Location[] locations)
 		{
-			simple_locs.Add (element, locations);
+			simple_locs.Add (element, new List<Location> (locations));
+		}
+
+		[Conditional ("FULL_AST")]
+		public void InsertLocation (object element, int index, Location location)
+		{
+			List<Location> found;
+			if (!simple_locs.TryGetValue (element, out found)) {
+				found = new List<Location> ();
+				simple_locs.Add (element, found);
+			}
+
+			found.Insert (index, location);
 		}
 
 		[Conditional ("FULL_AST")]
@@ -463,7 +499,19 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 			if (locations.Length == 0)
 				throw new ArgumentException ("Statement is missing semicolon location");
 
-			simple_locs.Add (element, locations);
+			AddLocation (element, locations);
+		}
+
+		[Conditional ("FULL_AST")]
+		public void AddMember (MemberCore member, IList<Tuple<Modifiers, Location>> modLocations)
+		{
+			member_locs.Add (member, new MemberLocations (modLocations));
+		}
+
+		[Conditional ("FULL_AST")]
+		public void AddMember (MemberCore member, IList<Tuple<Modifiers, Location>> modLocations, Location location)
+		{
+			member_locs.Add (member, new MemberLocations (modLocations, location));
 		}
 
 		[Conditional ("FULL_AST")]
@@ -473,13 +521,21 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 		}
 
 		[Conditional ("FULL_AST")]
-		public void AppendTo (object existing, params Location[] locations)
+		public void AddMember (MemberCore member, IList<Tuple<Modifiers, Location>> modLocations, List<Location> locations)
 		{
-			Location[] locs;
-			if (simple_locs.TryGetValue (existing, out locs)) {
-				simple_locs [existing] = locs.Concat (locations).ToArray ();
-				return;
+			member_locs.Add (member, new MemberLocations (modLocations, locations));
+		}
+
+		[Conditional ("FULL_AST")]
+		public void AppendTo (object element, Location location)
+		{
+			List<Location> found;
+			if (!simple_locs.TryGetValue (element, out found)) {
+				found = new List<Location> ();
+				simple_locs.Add (element, found);
 			}
+
+			found.Add (location);
 		}
 
 		[Conditional ("FULL_AST")]
@@ -492,9 +548,9 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 			}
 		}
 
-		public Location[] GetLocations (object element)
+		public List<Location> GetLocations (object element)
 		{
-			Location[] found;
+			List<Location> found;
 			simple_locs.TryGetValue (element, out found);
 			return found;
 		}

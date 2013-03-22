@@ -702,10 +702,11 @@ attribute_section_cont
 		else
 			$$ = $4;
 
+		lbag.InsertLocation ($$, 0, PopLocation ());
 		if ($5 != null) {
-			lbag.AddLocation ($$, PopLocation (), GetLocation ($2), GetLocation ($5), GetLocation ($6));
+			lbag.AddLocation ($$, GetLocation ($2), GetLocation ($5), GetLocation ($6));
 		} else {
-			lbag.AddLocation ($$, PopLocation (), GetLocation ($2), GetLocation ($6));
+			lbag.AddLocation ($$, GetLocation ($2), GetLocation ($6));
 		}
 
 		current_attr_target = null;
@@ -715,10 +716,11 @@ attribute_section_cont
 	  {
 		$$ = $1;
 
+		lbag.InsertLocation ($$, 0, PopLocation ());
 		if ($2 != null) {
-			lbag.AddLocation ($$, PopLocation (), GetLocation($2), GetLocation ($3));
+			lbag.AddLocation ($$, GetLocation($2), GetLocation ($3));
 		} else {
-			lbag.AddLocation ($$, PopLocation (), GetLocation($3));
+			lbag.AddLocation ($$, GetLocation($3));
 		}
 	  }
 	| IDENTIFIER error
@@ -757,7 +759,10 @@ attribute_list
 	| attribute_list COMMA attribute
 	  {
 		var attrs = (List<Attribute>) $1;
-		attrs.Add ((Attribute) $3);
+		if (attrs != null) {
+			attrs.Add ((Attribute) $3);
+	  		lbag.AppendTo (attrs, GetLocation ($2));
+	  	}
 
 		$$ = attrs;
 	  }
@@ -5626,6 +5631,9 @@ for_initializer
 	  opt_local_variable_initializer opt_variable_declarators
 	  {
 		$$ = current_variable;
+		if ($4 != null)
+			lbag.AddLocation (current_variable, PopLocation ());
+			
 		current_variable = null;
 	  }
 	| statement_expression_list
