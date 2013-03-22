@@ -111,6 +111,7 @@ namespace MonoTests.Monodoc.Ecma
 			AssertValidUrl ("C:Gendarme.Rules.Concurrency.DecorateThreadsRule.DecorateThreadsRule(System.String)");
 			AssertValidUrl ("C:Gendarme.Framework.Helpers.MethodSignature.MethodSignature(string,string,string[],System.Func<Mono.Cecil.MethodReference,System.Boolean>)");
 			AssertValidUrl ("C:System.Collections.Generic.Dictionary<TKey,TValue>+KeyCollection.KeyCollection(System.Collections.Generic.Dictionary<TKey,TValue>)");
+			AssertValidUrl ("C:Microsoft.Build.Utilities.TaskItem(System.String,System.Collections.IDictionary)");
 		}
 
 		[Test]
@@ -176,6 +177,12 @@ namespace MonoTests.Monodoc.Ecma
 		}
 
 		[Test]
+		public void AspNetSafeUrlValidTest ()
+		{
+			AssertValidUrl ("M:MonoTouch.UIKit.UICollectionViewLayoutAttributes.CreateForCell{T}");
+		}
+
+		[Test]
 		public void MetaEtcNodeTest ()
 		{
 			var ast = new EcmaDesc () { DescKind = EcmaDesc.Kind.Type,
@@ -222,6 +229,25 @@ namespace MonoTests.Monodoc.Ecma
 			};
 
 			AssertUrlDesc (ast, "T:System.String<T>");
+		}
+
+		[Test]
+		public void TypeWithOneGenericUrlParseTestUsingAspNetStyleUrl ()
+		{
+			var generics = new[] {
+				new EcmaDesc {
+					DescKind = EcmaDesc.Kind.Type,
+					Namespace = string.Empty,
+					TypeName = "T"
+				}
+			};
+			var ast = new EcmaDesc () { DescKind = EcmaDesc.Kind.Type,
+			                            TypeName = "String",
+			                            Namespace = "System",
+			                            GenericTypeArguments = generics,
+			};
+
+			AssertUrlDesc (ast, "T:System.String{T}");
 		}
 
 		[Test]
