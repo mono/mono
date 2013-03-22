@@ -47,9 +47,6 @@ namespace Mono.CSharp
 
 		public Argument (Expression expr)
 		{
-			if (expr == null)
-				throw new ArgumentNullException ();
-
 			this.Expr = expr;
 		}
 

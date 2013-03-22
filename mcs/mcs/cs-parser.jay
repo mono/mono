@@ -3301,7 +3301,7 @@ member_initializer
 	  {
 	  	report.Error (1920, GetLocation ($1), "An element initializer cannot be empty");
 		$$ = null;
-	  }	  
+	  }
 	;
 
 initializer_value
@@ -3417,21 +3417,17 @@ element_access
 	;
 
 expression_list
-	: expression
+	: expression_or_error
 	  {
 		var list = new List<Expression> (4);
 		list.Add ((Expression) $1);
 		$$ = list;
 	  }
-	| expression_list COMMA expression
+	| expression_list COMMA expression_or_error
 	  {
 		var list = (List<Expression>) $1;
 		list.Add ((Expression) $3);
 		$$ = list;
-	  }
-	| expression_list error {
-	  	Error_SyntaxError (yyToken);
-		$$ = $1;
 	  }
 	;
 	
