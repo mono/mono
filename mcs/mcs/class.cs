@@ -3523,7 +3523,9 @@ namespace Mono.CSharp
 		{
 			this.Parent = parent;
 			this.type_expr = type;
-			ModFlags = ModifiersExtensions.Check (allowed_mod, mod, def_mod, Location, Report);
+
+			if (name != MemberName.Null)
+				ModFlags = ModifiersExtensions.Check (allowed_mod, mod, def_mod, Location, Report);
 		}
 
 		#region Properties
