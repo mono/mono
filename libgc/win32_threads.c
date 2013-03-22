@@ -50,7 +50,7 @@ struct GC_thread_Rep {
 			/* 0 ==> entry not valid.	*/
 			/* !in_use ==> stack_base == 0	*/
   GC_bool suspended;
-  LONG should_scan;
+  GC_bool should_scan;
 
 # ifdef CYGWIN32
     void *status; /* hold exit value until join in case it's a pointer */
