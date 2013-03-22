@@ -59,7 +59,7 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void Namespaces ()
 		{
-			FileStream fs = new FileStream ("Test/System.Web.Services.Description/test.wsdl", FileMode.Open);
+			FileStream fs = new FileStream ("Test/System.Web.Services.Description/test.wsdl", FileMode.Open, FileAccess.Read);
 			XmlTextReader xtr = new XmlTextReader (fs);
 
 			ServiceDescription sd = ServiceDescription.Read (xtr);
@@ -84,7 +84,7 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void ExtensibleAttributes ()
 		{
-		    FileStream fs = new FileStream("Test/System.Web.Services.Description/test.wsdl", FileMode.Open);
+		    FileStream fs = new FileStream ("Test/System.Web.Services.Description/test.wsdl", FileMode.Open, FileAccess.Read);
 		    XmlTextReader xtr = new XmlTextReader(fs);
 
 		    ServiceDescription sd = ServiceDescription.Read(xtr);
@@ -105,7 +105,7 @@ namespace MonoTests.System.Web.Services.Description
 		[Test]
 		public void Extensions ()
 		{
-		    FileStream fs = new FileStream("Test/System.Web.Services.Description/test.wsdl", FileMode.Open);
+			FileStream fs = new FileStream("Test/System.Web.Services.Description/test.wsdl", FileMode.Open, FileAccess.Read);
 		    XmlTextReader xtr = new XmlTextReader(fs);
 
 		    ServiceDescription sd = ServiceDescription.Read(xtr);
