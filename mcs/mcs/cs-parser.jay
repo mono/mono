@@ -139,6 +139,7 @@ namespace Mono.CSharp
 		//
 		LocationsBag lbag;
 		List<Tuple<Modifiers, Location>> mod_locations;
+		Stack<Location> location_stack;
 %}
 
 %token EOF
@@ -675,6 +676,7 @@ attribute_sections
 attribute_section
 	: OPEN_BRACKET
 	  {
+	  	PushLocation (GetLocation ($1));
 		lexer.parsing_attribute_section = true;
 	  }
 	  attribute_section_cont
@@ -700,12 +702,24 @@ attribute_section_cont
 		else
 			$$ = $4;
 
+		if ($5 != null) {
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($2), GetLocation ($5), GetLocation ($6));
+		} else {
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($2), GetLocation ($6));
+		}
+
 		current_attr_target = null;
 		lexer.parsing_attribute_section = false;
  	  }
 	| attribute_list opt_comma CLOSE_BRACKET
 	  {
 		$$ = $1;
+
+		if ($2 != null) {
+			lbag.AddLocation ($$, PopLocation (), GetLocation($2), GetLocation ($3));
+		} else {
+			lbag.AddLocation ($$, PopLocation (), GetLocation($3));
+		}
 	  }
 	| IDENTIFIER error
 	  {
@@ -5183,7 +5197,10 @@ block_variable_declaration
 	  {
 		$$ = current_variable;
 		current_variable = null;
-		lbag.AddLocation ($$, GetLocation ($6));
+		if ($4 != null)
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($6));
+		else
+			lbag.AddLocation ($$, GetLocation ($6));
 	  }
 	| CONST variable_type identifier_inside_body
 	  {
@@ -5205,7 +5222,8 @@ opt_local_variable_initializer
 	| ASSIGN block_variable_initializer
 	  {
 		current_variable.Initializer = (Expression) $2;
-		// TODO: lbag
+		PushLocation (GetLocation ($1));
+		$$ = current_variable;
 	  }
 	| error
 	  {
@@ -6892,6 +6910,23 @@ void StoreModifierLocation (object token, Location loc)
   		mod_locations = new List<Tuple<Modifiers, Location>> ();
 
 	mod_locations.Add (Tuple.Create ((Modifiers) token, loc));
+}
+
+[System.Diagnostics.Conditional ("FULL_AST")]
+void PushLocation (Location loc)
+{
+	if (location_stack == null)
+		location_stack = new Stack<Location> ();
+
+	location_stack.Push (loc);
+}
+
+Location PopLocation ()
+{
+	if (location_stack == null)
+		return Location.Null;
+
+	return location_stack.Pop ();
 }
 
 string CheckAttributeTarget (string a, Location l)
