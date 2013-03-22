@@ -25,10 +25,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
@@ -61,7 +61,9 @@ namespace System.Runtime.Serialization
 
 		public virtual object ReadObject (Stream stream)
 		{
-			return ReadObject (XmlReader.Create (stream));
+			var settings = new XmlReaderSettings ();
+			settings.CheckCharacters = false;
+			return ReadObject (XmlReader.Create (stream, settings));
 		}
 
 		public virtual object ReadObject (XmlReader reader)
@@ -86,7 +88,12 @@ namespace System.Runtime.Serialization
 
 		public virtual void WriteObject (Stream stream, object graph)
 		{
-			using (XmlWriter xw = XmlDictionaryWriter.CreateTextWriter (stream)) {
+			var settings = new XmlWriterSettings ();
+			settings.Encoding = Encoding.UTF8;
+			settings.CloseOutput = false;
+			settings.OmitXmlDeclaration = true;
+			settings.CheckCharacters = false;
+			using (XmlWriter xw = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (stream, settings))) {
 				WriteObject (xw, graph);
 			}
 		}
@@ -130,4 +137,3 @@ namespace System.Runtime.Serialization
 			XmlDictionaryWriter writer);
 	}
 }
-#endif
