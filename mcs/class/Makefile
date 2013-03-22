@@ -246,6 +246,7 @@ net_4_5_dirs := \
 	System.Net.Http.Formatting \
 	System.Web.Http \
 	System.Web.Http.SelfHost \
+	System.Web.Http.WebHost \
 	EntityFramework	\
 	EntityFramework.SqlServer	\
 	Mono.CodeContracts \
