@@ -993,7 +993,7 @@ namespace Mono.CSharp {
 			if (FixedParameters [pos].HasExtensionMethodModifier)
 				return "this " + type;
 
-			Parameter.Modifier mod = FixedParameters [pos].ModFlags;
+			var mod = FixedParameters[pos].ModFlags & Parameter.Modifier.ModifierMask;
 			if (mod == 0)
 				return type;
 
