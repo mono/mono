@@ -901,13 +901,14 @@ class_member_declaration
 	| destructor_declaration
 	| type_declaration
 	| attributes_without_members
+	| incomplete_member
 	| error
 	  {
 		report.Error (1519, lexer.Location, "Unexpected symbol `{0}' in class, struct, or interface member declaration",
 			GetSymbolName (yyToken));
 		$$ = null;
 		lexer.parsing_generic_declaration = false;
-	  }
+	  }	
 	;
 
 struct_declaration
@@ -2524,6 +2525,23 @@ attributes_without_members
 		current_type.UnattachedAttributes = (Attributes) $1;
 		report.Error (1519, GetLocation ($1), "An attribute is missing member declaration");
 		lexer.putback ('}');
+	  }
+	;
+
+// For full ast try to recover incomplete ambiguous member
+// declaration in form on class X { public int }
+incomplete_member
+	: opt_attributes opt_modifiers member_type CLOSE_BRACE
+	  {
+		report.Error (1519, lexer.Location, "Unexpected symbol `}' in class, struct, or interface member declaration");
+ 
+		lexer.putback ('}');
+
+	  	lexer.parsing_generic_declaration = false;
+		FullNamedExpression type = (FullNamedExpression) $3;
+		current_field = new Field (current_type, type, (Modifiers) $2, MemberName.Null, (Attributes) $1);
+		current_type.AddField (current_field);
+		$$ = current_field;
 	  }
 	;
 	  
