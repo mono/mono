@@ -86,9 +86,24 @@ namespace Monodoc.Ecma
 			set;
 		}
 
+		/* This property tells if the above collections only correct value
+		 * is the number of item in it to represent generic arguments
+		 */
+		public bool GenericTypeArgumentsIsNumeric {
+			get {
+				return GenericTypeArguments != null && GenericTypeArguments.FirstOrDefault () == null;
+			}
+		}
+
 		public IList<EcmaDesc> GenericMemberArguments {
 			get;
 			set;
+		}
+
+		public bool GenericMemberArgumentsIsNumeric {
+			get {
+				return GenericMemberArguments != null && GenericMemberArguments.FirstOrDefault () == null;
+			}
 		}
 
 		public IList<EcmaDesc> MemberArguments {
