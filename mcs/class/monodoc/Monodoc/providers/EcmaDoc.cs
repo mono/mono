@@ -160,9 +160,9 @@ namespace Monodoc.Providers
 		{
 			XElement ilasmElem = m.Elements ("MemberSignature").FirstOrDefault (e => e.Attribute("Language").Value == "ILAsm");
 
-			return m.Attribute ("MemberName").Value.StartsWith ("op_") 
+			return m.Attribute ("MemberName").Value.StartsWith ("op_",StringComparison.Ordinal)
 				&& m.Element ("MemberType").Value == "Method" 
-				&& ilasmElem != null && ilasmElem.Attribute ("Value").Value.Contains(" specialname")
+				&& ilasmElem != null && ilasmElem.Attribute ("Value").Value.Contains(" specialname ")
 					? "Operator": m.Element ("MemberType").Value;
 		}
 
@@ -177,7 +177,7 @@ namespace Monodoc.Providers
 				if (plusIndex != -1)
 					caption = caption.Substring (plusIndex + 1);
 			}
-			if (GetMemberType(member)=="Operator") {
+			if (GetMemberType (member) == "Operator") {
 				string sig;
 				caption = MakeOperatorSignature (member, out sig);
 				caption = withArguments ? sig : caption;
