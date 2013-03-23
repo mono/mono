@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using Monodoc;
+using Monodoc.Generators;
+
+using HtmlAgilityPack;
 
 namespace MonoTests.Monodoc
 {
@@ -110,6 +113,21 @@ namespace MonoTests.Monodoc
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Concurrent.IProducerConsumerCollection`1", generator, out result), "#1");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary`2", generator, out result), "#2");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`4", generator, out result), "#3");
+		}
+
+		[Test]
+		public void AspNetStyleUrlReachabilityTest ()
+		{
+			var rootTree = RootTree.LoadTree (Path.GetFullPath (BaseDir), false);
+			Node result;
+			var generator = new CheckGenerator ();
+
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary{TKey,TValue}", generator, out result), "#1");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action{T1,T2}", generator, out result), "#2");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.EventHandler{TEventArgs}", generator, out result), "#3");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func{T1,T2,T3,TResult}", generator, out result), "#4");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary{TKey,TValue}+ValueCollection", generator, out result), "#5");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.IComparable{T}", generator, out result), "#6");
 		}
 	}
 }
