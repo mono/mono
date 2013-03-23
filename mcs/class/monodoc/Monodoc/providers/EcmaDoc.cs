@@ -212,7 +212,10 @@ namespace Monodoc.Providers
 			currentNode = result;
 			result = null;
 			searchNode.Caption = desc.ToCompleteTypeName ();
-			index = currentNode.ChildNodes.BinarySearch (searchNode, EcmaTypeNodeComparer.Instance);
+			if (!desc.GenericTypeArgumentsIsNumeric)
+				index = currentNode.ChildNodes.BinarySearch (searchNode, EcmaTypeNodeComparer.Instance);
+			else
+				index = GenericTypeBacktickSearch (currentNode.ChildNodes, desc);
 			if (index >= 0)
 				result = currentNode.ChildNodes[index];
 			if ((desc.DescKind == EcmaDesc.Kind.Type && !desc.IsEtc) || index < 0)
@@ -247,6 +250,48 @@ namespace Monodoc.Providers
 			result = result.ChildNodes[index];
 
 			return result;
+		}
+
+		static int GenericTypeBacktickSearch (IList<Node> childNodes, EcmaDesc desc)
+		{
+			/* Our strategy is to search for the non-generic variant of the type
+			 * (which in most case should fail) and then use the closest index
+			 * to linearily search for the generic variant with the right generic arg number
+			 */
+			var searchNode = new Node () { Caption = desc.TypeName };
+			int index = childNodes.BinarySearch (searchNode, EcmaTypeNodeComparer.Instance);
+			// Place the index in the right start position
+			if (index < 0)
+				index = ~index;
+
+			for (int i = index; i < childNodes.Count; i++) {
+				var currentNode = childNodes[i];
+				// Find the index of the generic argument list
+				int genericIndex = currentNode.Caption.IndexOf ('<');
+				// If we are not on the same base type name anymore, there is no point
+				int captionSlice = genericIndex != -1 ? genericIndex : currentNode.Caption.LastIndexOf (' ');
+				if (string.Compare (searchNode.Caption, 0,
+				                    currentNode.Caption, 0,
+				                    Math.Max (captionSlice, searchNode.Caption.Length),
+				                    StringComparison.Ordinal) != 0)
+					break;
+
+				var numGenerics = CountTypeGenericArguments (currentNode.Caption, genericIndex);
+				if (numGenerics == desc.GenericTypeArguments.Count) {
+					// Simple comparison if we are not looking for an inner type
+					if (desc.NestedType == null)
+						return i;
+					// If more complicated, we fallback to using EcmaUrlParser
+					var caption = currentNode.Caption;
+					caption = "T:" + caption.Substring (0, caption.LastIndexOf (' ')).Replace ('.', '+');
+					EcmaDesc otherDesc;
+					var parser = new EcmaUrlParser ();
+					if (parser.TryParse (caption, out otherDesc) && desc.NestedType.Equals (otherDesc.NestedType))
+						return i;
+				}
+			}
+
+			return -1;
 		}
 
 		// This comparer returns the answer straight from caption comparison

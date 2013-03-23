@@ -319,27 +319,11 @@ namespace Monodoc.Ecma
 		{
 			if (args == null || !args.Any ())
 				return string.Empty;
+			// If we only have the number of generic arguments, use ` notation
+			if (args.First () == null)
+				return "`" + args.Count ();
 
-			IEnumerable<string> argsList = null;
-
-			// HACK: If we don't have fully specified EcmaDesc for generic arguments
-			// we use the most common names for the argument length configuration
-			if (args.Any (a => a == null)) {
-				var argCount = args.Count ();
-				switch (argCount) {
-				case 1:
-					argsList = new string[] { "T" };
-					break;
-				case 2:
-					argsList = new string[] { "TKey", "TValue" };
-					break;
-				default:
-					argsList = Enumerable.Range (1, argCount).Select (i => "T" + i);
-					break;
-				}
-			} else {
-				argsList = args.Select (t => FormatNamespace (t) + t.ToCompleteTypeName ());
-			}
+			IEnumerable<string> argsList = args.Select (t => FormatNamespace (t) + t.ToCompleteTypeName ());
 
 			return "<" + string.Join (",", argsList) + ">";
 		}

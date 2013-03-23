@@ -113,6 +113,28 @@ namespace MonoTests.Monodoc
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Concurrent.IProducerConsumerCollection`1", generator, out result), "#1");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary`2", generator, out result), "#2");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`4", generator, out result), "#3");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.EventHandler`1", generator, out result), "#4");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`5", generator, out result), "#5a");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`4", generator, out result), "#5b");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`6", generator, out result), "#5c");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`7", generator, out result), "#5d");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`3", generator, out result), "#5e");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`2", generator, out result), "#5f");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`1", generator, out result), "#5g");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`8", generator, out result), "#5h");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`9", generator, out result), "#5i");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`3", generator, out result), "#6a");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`2", generator, out result), "#6b");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`4", generator, out result), "#6c");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.IComparable`1", generator, out result), "#7");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Lazy`1", generator, out result), "#8");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`1", generator, out result), "#9a");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`2", generator, out result), "#9b");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`3", generator, out result), "#9c");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`4", generator, out result), "#9d");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary`2+ValueCollection", generator, out result), "#10");
+			Assert.IsFalse (rootTree.RenderUrl ("T:System.EventHandler`2", generator, out result), "#11");
+			Assert.IsFalse (rootTree.RenderUrl ("T:System.Lazy`2", generator, out result), "#12");
 		}
 
 		[Test]
