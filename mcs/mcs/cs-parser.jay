@@ -4337,6 +4337,14 @@ conditional_expression
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
+	| null_coalescing_expression INTERR expression COLON CLOSE_BRACE
+	  {
+		Error_SyntaxError (Token.CLOSE_BRACE);
+
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
+		lexer.putback ('}');
+	  }
 	;
 
 assignment_expression
@@ -5633,7 +5641,7 @@ for_initializer
 		$$ = current_variable;
 		if ($4 != null)
 			lbag.AddLocation (current_variable, PopLocation ());
-			
+
 		current_variable = null;
 	  }
 	| statement_expression_list
