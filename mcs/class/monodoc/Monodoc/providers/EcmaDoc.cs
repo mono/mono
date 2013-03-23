@@ -436,6 +436,33 @@ namespace Monodoc.Providers
 			return null;
 		}
 
+		public static int CountTypeGenericArguments (string typeDefinition, int startIndex = 0)
+		{
+			int nestedLevel = 0;
+			int count = 0;
+			bool started = false;
+
+			foreach (char c in typeDefinition.Skip (startIndex)) {
+				switch (c) {
+				case '<':
+					if (!started)
+						count = 1;
+					started = true;
+					nestedLevel++;
+					break;
+				case ',':
+					if (started && nestedLevel == 1)
+						count++;
+					break;
+				case '>':
+					nestedLevel--;
+					break;
+				}
+			}
+
+			return count;
+		}
+
 		internal static string MakeOperatorSignature (XElement member, out string memberSignature)
 		{
 			string name = (string)member.Attribute ("MemberName");
