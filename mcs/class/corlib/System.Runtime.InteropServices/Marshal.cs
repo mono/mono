@@ -705,11 +705,16 @@ namespace System.Runtime.InteropServices
 
 		public static byte ReadByte (IntPtr ptr)
 		{
-			return ReadByte (ptr, 0);
+			unsafe {
+				return *(byte*)ptr;
+			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static byte ReadByte (IntPtr ptr, int ofs);
+		public static byte ReadByte (IntPtr ptr, int ofs) {
+			unsafe {
+				return *(byte*)(ptr + ofs);
+			}
+		}
 
 		[MonoTODO]
 		[SuppressUnmanagedCodeSecurity]
@@ -720,11 +725,34 @@ namespace System.Runtime.InteropServices
 
 		public static short ReadInt16 (IntPtr ptr)
 		{
-			return ReadInt16 (ptr, 0);
+			// The mono JIT can't inline this due to the hight number of calls
+			// return ReadInt16 (ptr, 0);
+			if (ptr.ToInt32 () % 2 == 0) {
+				unsafe {
+					return *(short*)ptr;
+				}
+			} else {
+				unsafe {
+					short s;
+					String.memcpy ((byte*)&s, (byte*)ptr, 2);
+					return s;
+				}
+			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static short ReadInt16 (IntPtr ptr, int ofs);
+		public static short ReadInt16 (IntPtr ptr, int ofs) {
+			if ((ptr + ofs).ToInt32 () % 2 == 0) {
+				unsafe {
+					return *(short*)(ptr + ofs);
+				}
+			} else {
+				unsafe {
+					short s;
+					String.memcpy ((byte*)&s, (byte*)(ptr + ofs), 2);
+					return s;
+				}
+			}
+		}
 
 		[MonoTODO]
 		[SuppressUnmanagedCodeSecurity]
@@ -733,15 +761,35 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int ReadInt32 (IntPtr ptr)
 		{
-			return ReadInt32 (ptr, 0);
+			if (ptr.ToInt32 () % 4 == 0) {
+				unsafe {
+					return *(int*)ptr;
+				}
+			} else {
+				unsafe {
+					int s;
+					String.memcpy ((byte*)&s, (byte*)ptr, 4);
+					return s;
+				}
+			}
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static int ReadInt32 (IntPtr ptr, int ofs);
+		public static int ReadInt32 (IntPtr ptr, int ofs) {
+			if ((ptr + ofs).ToInt32 () % 4 == 0) {
+				unsafe {
+					return *(int*)(ptr + ofs);
+				}
+			} else {
+				unsafe {
+					int s;
+					String.memcpy ((byte*)&s, (byte*)(ptr + ofs), 4);
+					return s;
+				}
+			}
+		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
@@ -754,11 +802,34 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public static long ReadInt64 (IntPtr ptr)
 		{
-			return ReadInt64 (ptr, 0);
+			// The real alignment might be 4 on some platforms, but this is just an optimization,
+			// so it doesn't matter.
+			if (ptr.ToInt32 () % 8 == 0) {
+				unsafe {
+					return *(long*)ptr;
+				}
+			} else {
+				unsafe {
+					long s;
+					String.memcpy ((byte*)&s, (byte*)ptr, 8);
+					return s;
+				}
+			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static long ReadInt64 (IntPtr ptr, int ofs);
+		public static long ReadInt64 (IntPtr ptr, int ofs) {
+			if ((ptr + ofs).ToInt32 () % 8 == 0) {
+				unsafe {
+					return *(long*)(ptr + ofs);
+				}
+			} else {
+				unsafe {
+					long s;
+					String.memcpy ((byte*)&s, (byte*)(ptr + ofs), 8);
+					return s;
+				}
+			}
+		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
@@ -775,8 +846,12 @@ namespace System.Runtime.InteropServices
 		}
 		
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr ReadIntPtr (IntPtr ptr, int ofs);
+		public static IntPtr ReadIntPtr (IntPtr ptr, int ofs) {
+			if (IntPtr.Size == 4)
+				return (IntPtr)ReadInt32 (ptr, ofs);
+			else
+				return (IntPtr)ReadInt64 (ptr, ofs);
+		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MonoTODO]
@@ -1009,11 +1084,16 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteByte (IntPtr ptr, byte val)
 		{
-			WriteByte (ptr, 0, val);
+			unsafe {
+				*(byte*)ptr = val;
+			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void WriteByte (IntPtr ptr, int ofs, byte val);
+		public static void WriteByte (IntPtr ptr, int ofs, byte val) {
+			unsafe {
+				*(byte*)(ptr + ofs) = val;
+			}
+		}
 
 		[MonoTODO]
 		[SuppressUnmanagedCodeSecurity]
@@ -1024,11 +1104,28 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteInt16 (IntPtr ptr, short val)
 		{
-			WriteInt16 (ptr, 0, val);
+			if (ptr.ToInt32 () % 2 == 0) {
+				unsafe {
+					*(short*)ptr = val;
+				}
+			} else {
+				unsafe {
+					String.memcpy ((byte*)ptr, (byte*)&val, 2);
+				}
+			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void WriteInt16 (IntPtr ptr, int ofs, short val);
+		public static void WriteInt16 (IntPtr ptr, int ofs, short val) {
+			if ((ptr + ofs).ToInt32 () % 2 == 0) {
+				unsafe {
+					*(short*)(ptr + ofs) = val;
+				}
+			} else {
+				unsafe {
+					String.memcpy ((byte*)(ptr + ofs), (byte*)&val, 2);
+				}
+			}
+		}
 
 		[MonoTODO]
 		[SuppressUnmanagedCodeSecurity]
@@ -1039,12 +1136,12 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteInt16 (IntPtr ptr, char val)
 		{
-			WriteInt16 (ptr, 0, val);
+			WriteInt16 (ptr, 0, (short)val);
 		}
 
-		[MonoTODO]
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void WriteInt16 (IntPtr ptr, int ofs, char val);
+		public static void WriteInt16 (IntPtr ptr, int ofs, char val) {
+			WriteInt16 (ptr, ofs, (short)val);
+		}
 
 		[MonoTODO]
 		public static void WriteInt16([In, Out] object ptr, int ofs, char val)
@@ -1054,11 +1151,28 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteInt32 (IntPtr ptr, int val)
 		{
-			WriteInt32 (ptr, 0, val);
+			if (ptr.ToInt32 () % 4 == 0) {
+				unsafe {
+					*(int*)ptr = val;
+				}
+			} else {
+				unsafe {
+					String.memcpy ((byte*)ptr, (byte*)&val, 4);
+				}
+			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void WriteInt32 (IntPtr ptr, int ofs, int val);
+		public static void WriteInt32 (IntPtr ptr, int ofs, int val) {
+			if ((ptr + ofs).ToInt32 () % 4 == 0) {
+				unsafe {
+					*(int*)(ptr + ofs) = val;
+				}
+			} else {
+				unsafe {
+					String.memcpy ((byte*)(ptr + ofs), (byte*)&val, 4);
+				}
+			}
+		}
 
 		[MonoTODO]
 		[SuppressUnmanagedCodeSecurity]
@@ -1069,11 +1183,29 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteInt64 (IntPtr ptr, long val)
 		{
-			WriteInt64 (ptr, 0, val);
+			// See ReadInt64 ()
+			if (ptr.ToInt32 () % 8 == 0) {
+				unsafe {
+					*(long*)ptr = val;
+				}
+			} else {
+				unsafe {
+					String.memcpy ((byte*)ptr, (byte*)&val, 8);
+				}
+			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void WriteInt64 (IntPtr ptr, int ofs, long val);
+		public static void WriteInt64 (IntPtr ptr, int ofs, long val) {
+			if ((ptr + ofs).ToInt32 () % 8 == 0) {
+				unsafe {
+					*(long*)(ptr + ofs) = val;
+				}
+			} else {
+				unsafe {
+					String.memcpy ((byte*)(ptr + ofs), (byte*)&val, 8);
+				}
+			}
+		}
 
 		[MonoTODO]
 		[SuppressUnmanagedCodeSecurity]
@@ -1087,8 +1219,12 @@ namespace System.Runtime.InteropServices
 			WriteIntPtr (ptr, 0, val);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void WriteIntPtr (IntPtr ptr, int ofs, IntPtr val);
+		public static void WriteIntPtr (IntPtr ptr, int ofs, IntPtr val) {
+			if (IntPtr.Size == 4)
+				WriteInt32 (ptr, ofs, (int)val);
+			else
+				WriteInt64 (ptr, ofs, (long)val);
+		}
 
 		[MonoTODO]
 		public static void WriteIntPtr([In, Out, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs, IntPtr val)
