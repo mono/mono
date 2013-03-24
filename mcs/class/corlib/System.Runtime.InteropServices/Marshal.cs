@@ -761,6 +761,7 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int ReadInt32 (IntPtr ptr)
 		{
 			if (ptr.ToInt32 () % 4 == 0) {
