@@ -2885,7 +2885,7 @@ namespace System.Linq
 				collection.CopyTo (array, 0);
 				return array;
 			}
-			
+
 			int pos = 0;
 			array = EmptyOf<TSource>.Instance;
 			foreach (var element in source) {
@@ -3105,6 +3105,11 @@ namespace System.Linq
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			// It cannot be IList<TSource> because it may break on user implementation
+			var array = source as TSource[];
+			if (array != null)
+				return CreateWhereIterator (array, predicate);
+
 			return CreateWhereIterator (source, predicate);
 		}
 
@@ -3114,6 +3119,15 @@ namespace System.Linq
 				if (predicate (element))
 					yield return element;
 		}
+
+		static IEnumerable<TSource> CreateWhereIterator<TSource> (TSource[] source, Func<TSource, bool> predicate)
+		{
+			for (int i = 0; i < source.Length; ++i) {
+				var element = source [i];
+				if (predicate (element))
+					yield return element;
+			}
+		}	
 
 		public static IEnumerable<TSource> Where<TSource> (this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
 		{
