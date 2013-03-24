@@ -727,7 +727,7 @@ namespace System.Runtime.InteropServices
 		{
 			// The mono JIT can't inline this due to the hight number of calls
 			// return ReadInt16 (ptr, 0);
-			if (ptr.ToInt32 () % 2 == 0) {
+			if ((uint)ptr % 2 == 0) {
 				unsafe {
 					return *(short*)ptr;
 				}
@@ -764,7 +764,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int ReadInt32 (IntPtr ptr)
 		{
-			if (ptr.ToInt32 () % 4 == 0) {
+			if ((uint)ptr % 4 == 0) {
 				unsafe {
 					return *(int*)ptr;
 				}
@@ -805,7 +805,7 @@ namespace System.Runtime.InteropServices
 		{
 			// The real alignment might be 4 on some platforms, but this is just an optimization,
 			// so it doesn't matter.
-			if (ptr.ToInt32 () % 8 == 0) {
+			if ((uint)ptr % 8 == 0) {
 				unsafe {
 					return *(long*)ptr;
 				}
@@ -1105,7 +1105,7 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteInt16 (IntPtr ptr, short val)
 		{
-			if (ptr.ToInt32 () % 2 == 0) {
+			if ((uint)ptr % 2 == 0) {
 				unsafe {
 					*(short*)ptr = val;
 				}
@@ -1152,7 +1152,7 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteInt32 (IntPtr ptr, int val)
 		{
-			if (ptr.ToInt32 () % 4 == 0) {
+			if ((uint)ptr % 4 == 0) {
 				unsafe {
 					*(int*)ptr = val;
 				}
@@ -1185,7 +1185,7 @@ namespace System.Runtime.InteropServices
 		public static void WriteInt64 (IntPtr ptr, long val)
 		{
 			// See ReadInt64 ()
-			if (ptr.ToInt32 () % 8 == 0) {
+			if ((uint)ptr % 8 == 0) {
 				unsafe {
 					*(long*)ptr = val;
 				}
