@@ -712,7 +712,7 @@ namespace System.Runtime.InteropServices
 
 		public static byte ReadByte (IntPtr ptr, int ofs) {
 			unsafe {
-				return *(byte*)(ptr + ofs);
+				return *((byte*)ptr + ofs);
 			}
 		}
 
@@ -741,14 +741,14 @@ namespace System.Runtime.InteropServices
 		}
 
 		public static short ReadInt16 (IntPtr ptr, int ofs) {
-			if ((ptr + ofs).ToInt32 () % 2 == 0) {
+			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 2 == 0) {
 				unsafe {
-					return *(short*)(ptr + ofs);
+					return *(short*)(IntPtr.Add (ptr, ofs));
 				}
 			} else {
 				unsafe {
 					short s;
-					String.memcpy ((byte*)&s, (byte*)(ptr + ofs), 2);
+					String.memcpy ((byte*)&s, (byte*)(IntPtr.Add (ptr, ofs)), 2);
 					return s;
 				}
 			}
@@ -779,14 +779,14 @@ namespace System.Runtime.InteropServices
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int ReadInt32 (IntPtr ptr, int ofs) {
-			if ((ptr + ofs).ToInt32 () % 4 == 0) {
+			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 4 == 0) {
 				unsafe {
-					return *(int*)(ptr + ofs);
+					return *(int*)(IntPtr.Add (ptr, ofs));
 				}
 			} else {
 				unsafe {
 					int s;
-					String.memcpy ((byte*)&s, (byte*)(ptr + ofs), 4);
+					String.memcpy ((byte*)&s, (byte*)(IntPtr.Add (ptr, ofs)), 4);
 					return s;
 				}
 			}
@@ -819,14 +819,14 @@ namespace System.Runtime.InteropServices
 		}
 
 		public static long ReadInt64 (IntPtr ptr, int ofs) {
-			if ((ptr + ofs).ToInt32 () % 8 == 0) {
+			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 8 == 0) {
 				unsafe {
-					return *(long*)(ptr + ofs);
+					return *(long*)(IntPtr.Add (ptr, ofs));
 				}
 			} else {
 				unsafe {
 					long s;
-					String.memcpy ((byte*)&s, (byte*)(ptr + ofs), 8);
+					String.memcpy ((byte*)&s, (byte*)(IntPtr.Add (ptr, ofs)), 8);
 					return s;
 				}
 			}
@@ -1092,7 +1092,7 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteByte (IntPtr ptr, int ofs, byte val) {
 			unsafe {
-				*(byte*)(ptr + ofs) = val;
+				*(byte*)(IntPtr.Add (ptr, ofs)) = val;
 			}
 		}
 
@@ -1117,13 +1117,13 @@ namespace System.Runtime.InteropServices
 		}
 
 		public static void WriteInt16 (IntPtr ptr, int ofs, short val) {
-			if ((ptr + ofs).ToInt32 () % 2 == 0) {
+			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 2 == 0) {
 				unsafe {
-					*(short*)(ptr + ofs) = val;
+					*(short*)(IntPtr.Add (ptr, ofs)) = val;
 				}
 			} else {
 				unsafe {
-					String.memcpy ((byte*)(ptr + ofs), (byte*)&val, 2);
+					String.memcpy ((byte*)(IntPtr.Add (ptr, ofs)), (byte*)&val, 2);
 				}
 			}
 		}
@@ -1164,13 +1164,13 @@ namespace System.Runtime.InteropServices
 		}
 
 		public static void WriteInt32 (IntPtr ptr, int ofs, int val) {
-			if ((ptr + ofs).ToInt32 () % 4 == 0) {
+			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 4 == 0) {
 				unsafe {
-					*(int*)(ptr + ofs) = val;
+					*(int*)(IntPtr.Add (ptr, ofs)) = val;
 				}
 			} else {
 				unsafe {
-					String.memcpy ((byte*)(ptr + ofs), (byte*)&val, 4);
+					String.memcpy ((byte*)(IntPtr.Add (ptr, ofs)), (byte*)&val, 4);
 				}
 			}
 		}
@@ -1197,13 +1197,13 @@ namespace System.Runtime.InteropServices
 		}
 
 		public static void WriteInt64 (IntPtr ptr, int ofs, long val) {
-			if ((ptr + ofs).ToInt32 () % 8 == 0) {
+			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 8 == 0) {
 				unsafe {
-					*(long*)(ptr + ofs) = val;
+					*(long*)(IntPtr.Add (ptr, ofs)) = val;
 				}
 			} else {
 				unsafe {
-					String.memcpy ((byte*)(ptr + ofs), (byte*)&val, 8);
+					String.memcpy ((byte*)(IntPtr.Add (ptr, ofs)), (byte*)&val, 8);
 				}
 			}
 		}

@@ -284,7 +284,9 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (0x1234, Marshal.ReadInt16 (ptr));
 				Assert.AreEqual (0x1234, Marshal.ReadInt16 (ptr, 0));
 				Assert.AreEqual (0x4567, Marshal.ReadInt16 (ptr, 2));
+#if NET_4_5
 				Assert.AreEqual (0x4567, Marshal.ReadInt16 ((ptr + 5)));
+#endif
 				Assert.AreEqual (0x4567, Marshal.ReadInt16 (ptr, 5));
 			} finally {
 				Marshal.FreeHGlobal (ptr);
@@ -302,7 +304,9 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (0x12345678, Marshal.ReadInt32 (ptr));
 				Assert.AreEqual (0x12345678, Marshal.ReadInt32 (ptr, 0));
 				Assert.AreEqual (0x77654321, Marshal.ReadInt32 (ptr, 4));
+#if NET_4_5
 				Assert.AreEqual (0x77654321, Marshal.ReadInt32 ((ptr + 10)));
+#endif
 				Assert.AreEqual (0x77654321, Marshal.ReadInt32 (ptr, 10));
 			} finally {
 				Marshal.FreeHGlobal (ptr);
