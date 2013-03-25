@@ -3133,16 +3133,29 @@ namespace System.Linq
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			var array = source as TSource[];
+			if (array != null)
+				return CreateWhereIterator (array, predicate);
+
 			return CreateWhereIterator (source, predicate);
 		}
 
-		static IEnumerable<TSource> CreateWhereIterator<TSource> (this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
+		static IEnumerable<TSource> CreateWhereIterator<TSource> (IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
 		{
 			int counter = 0;
 			foreach (TSource element in source) {
 				if (predicate (element, counter))
 					yield return element;
 				counter++;
+			}
+		}
+
+		static IEnumerable<TSource> CreateWhereIterator<TSource> (TSource[] source, Func<TSource, int, bool> predicate)
+		{
+			for (int i = 0; i < source.Length; ++i) {
+				var element = source [i];
+				if (predicate (element, i))
+					yield return element;
 			}
 		}
 
