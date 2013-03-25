@@ -245,7 +245,7 @@ namespace Mono.CSharp
 
 						for (int i = 0; i < host.hoisted_params.Count; ++i) {
 							HoistedParameter hp = host.hoisted_params [i];
-							HoistedParameter hp_cp = host.hoisted_params_copy [i];
+							HoistedParameter hp_cp = host.hoisted_params_copy [i] ?? hp;
 
 							FieldExpr from = new FieldExpr (hp_cp.Field, loc);
 							from.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
@@ -482,11 +482,20 @@ namespace Mono.CSharp
 				// create same enumerator therefore we have to keep original values
 				// around for re-initialization
 				//
-				// TODO: Do it for assigned/modified parameters only
-				//
 				hoisted_params_copy = new List<HoistedParameter> (hoisted_params.Count);
 				foreach (HoistedParameter hp in hoisted_params) {
-					hoisted_params_copy.Add (new HoistedParameter (hp, "<$>" + hp.Field.Name));
+
+					//
+					// Don't create field copy for unmodified captured parameters
+ 					//
+					HoistedParameter hp_copy;
+					if (hp.IsAssigned) {
+						hp_copy = new HoistedParameter (hp, "<$>" + hp.Field.Name);
+					} else {
+						hp_copy = null;
+					}
+
+					hoisted_params_copy.Add (hp_copy);
 				}
 			}
 

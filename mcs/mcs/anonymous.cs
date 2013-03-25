@@ -569,6 +569,9 @@ namespace Mono.CSharp {
 		protected virtual void EmitHoistedParameters (EmitContext ec, List<HoistedParameter> hoisted)
 		{
 			foreach (HoistedParameter hp in hoisted) {
+				if (hp == null)
+					continue;
+
 				//
 				// Parameters could be proxied via local fields for value type storey
 				//
@@ -850,6 +853,8 @@ namespace Mono.CSharp {
 				return field;
 			}
 		}
+
+		public bool IsAssigned { get; set; }
 
 		public ParameterReference Parameter {
 			get {

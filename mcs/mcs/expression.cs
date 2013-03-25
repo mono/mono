@@ -5184,6 +5184,9 @@ namespace Mono.CSharp
 
 		void SetAssigned (ResolveContext ec)
 		{
+			if (Parameter.HoistedVariant != null)
+				Parameter.HoistedVariant.IsAssigned = true;
+
 			if (HasOutModifier && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetAssigned (VariableInfo);
 		}

@@ -4888,7 +4888,7 @@
   <test name="gtest-062.cs">
     <type name="X">
       <method name="IEnumerable`1 Test(Int32, Int64)" attrs="134">
-        <size>51</size>
+        <size>44</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>95</size>
@@ -7980,7 +7980,7 @@
         <size>2</size>
       </method>
       <method name="IEnumerable get_Item(Int32)" attrs="2177">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void set_Item(Int32, IEnumerable)" attrs="2177">
         <size>2</size>
@@ -8063,7 +8063,7 @@
   <test name="gtest-183.cs">
     <type name="test.Test`1[T]">
       <method name="IEnumerable`1 Lookup(T)" attrs="134">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -8299,7 +8299,7 @@
     </type>
     <type name="Test5.Test">
       <method name="IEnumerable`1 Replace[T](T)" attrs="150">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -8307,7 +8307,7 @@
     </type>
     <type name="Test6.Test">
       <method name="IEnumerable`1 Replace[T](T)" attrs="150">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -8315,7 +8315,7 @@
     </type>
     <type name="Test7.Test">
       <method name="IEnumerable`1 Replace[T](T[])" attrs="150">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -9229,10 +9229,10 @@
         <size>99</size>
       </method>
       <method name="IEnumerable`1 Map[Aa,Af,Rf,Rr](Fun`2[Af,Rf], IEnumerable`1)" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="IEnumerable`1 FromTo(Int32, Int32)" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="System.String &lt;Main&gt;m__0(Int32)" attrs="145">
         <size>22</size>
@@ -18440,7 +18440,7 @@
   <test name="gtest-anontype-13.cs">
     <type name="Test">
       <method name="IEnumerable`1 Select[T](System.Array, System.Func`2[System.Object,T])" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>182</size>
@@ -20252,7 +20252,7 @@
         <size>66</size>
       </method>
       <method name="IEnumerable`1 Test[T](Int32)" attrs="145">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -20307,7 +20307,7 @@
         <size>67</size>
       </method>
       <method name="IEnumerable`1 GetPersons[T](IEnumerable`1, Int32)" attrs="145">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="Boolean Test[T](T, System.Linq.Expressions.Expression`1[System.Func`2[T,System.Boolean]])" attrs="145">
         <size>21</size>
@@ -22159,7 +22159,7 @@
         <size>30</size>
       </method>
       <method name="IEnumerable`1 Annotations(System.Type)" attrs="134">
-        <size>44</size>
+        <size>37</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>15</size>
@@ -22277,7 +22277,7 @@
         <size>32</size>
       </method>
       <method name="IEnumerable`1 TestRoutine[T](IEnumerable`1, Foo`1[T])" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22329,7 +22329,7 @@
         <size>16</size>
       </method>
       <method name="IEnumerable`1 CreateUnfoldrIterator[TSource,TResult](TSource, System.Func`2[TSource,System.Nullable`1[System.Collections.Generic.KeyValuePair`2[TResult,TSource]]])" attrs="145">
-        <size>51</size>
+        <size>44</size>
       </method>
     </type>
     <type name="Mono.Rocks.Test">
@@ -22465,7 +22465,7 @@
   <test name="gtest-iter-09.cs">
     <type name="Test">
       <method name="IEnumerable`1 Create[T](T[,])" attrs="145">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>89</size>
@@ -22504,7 +22504,7 @@
   <test name="gtest-iter-10.cs">
     <type name="Test">
       <method name="IEnumerable`1 FromTo(Int32, Int32)" attrs="145">
-        <size>51</size>
+        <size>44</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>185</size>
@@ -22611,7 +22611,7 @@
         <size>2</size>
       </method>
       <method name="IEnumerable`1 Merge[T](IEnumerator`1)" attrs="150">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22650,7 +22650,7 @@
         <size>20</size>
       </method>
       <method name="IEnumerable`1 Filter(System.Func`2[T,System.Boolean])" attrs="134">
-        <size>44</size>
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22795,7 +22795,7 @@
   <test name="gtest-iter-15.cs">
     <type name="C`1[TFirst]">
       <method name="IEnumerable`1 GetEnumerable[V](IEnumerable`1)" attrs="131">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -22852,7 +22852,7 @@
     </type>
     <type name="Test.Derived">
       <method name="IEnumerable`1 GetStuff(Int32)" attrs="198">
-        <size>44</size>
+        <size>37</size>
       </method>
       <method name="IEnumerable`1 &lt;GetStuff&gt;__BaseCallProxy0(Int32)" attrs="129">
         <size>15</size>
@@ -22863,7 +22863,7 @@
     </type>
     <type name="Test.SpecialDerived">
       <method name="IEnumerable`1 GetStuff(Int32)" attrs="198">
-        <size>44</size>
+        <size>37</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>65</size>
@@ -23035,7 +23035,7 @@
   <test name="gtest-iter-19.cs">
     <type name="IEnumerableTransform">
       <method name="IEnumerable`1 Transform[TOut](IEnumerable`1, IEnumerableTransform+EmitterFunc`1[TOut])" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="IEnumerableTransform+EmitterFunc`1[TOut] Emit[TOut](TOut)" attrs="150">
         <size>34</size>
@@ -23494,7 +23494,7 @@
   <test name="gtest-iter-28.cs">
     <type name="A">
       <method name="IEnumerable`1 Test(B)" attrs="134">
-        <size>44</size>
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>18</size>
@@ -25777,7 +25777,7 @@
     </type>
     <type name="NameCollisionTest.Ex">
       <method name="IEnumerable`1 Foo[T,TR](IEnumerable`1, System.Func`2[T,TR])" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
     </type>
     <type name="NameCollisionTest.C">
@@ -47592,7 +47592,7 @@
     </type>
     <type name="Foo">
       <method name="IEnumerable`1 Test(Foo)" attrs="134">
-        <size>49</size>
+        <size>42</size>
       </method>
       <method name="Void Hello(Int32)" attrs="134">
         <size>20</size>
@@ -47694,7 +47694,7 @@
     </type>
     <type name="X">
       <method name="IEnumerable`1 Test(Int32)" attrs="150">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>62</size>
@@ -47793,7 +47793,7 @@
         <size>38</size>
       </method>
       <method name="IEnumerable`1 op_Addition(Test, Test)" attrs="2198">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="IEnumerable`1 get_Foo()" attrs="2182">
         <size>23</size>
@@ -47931,7 +47931,7 @@
   <test name="test-anon-110.cs">
     <type name="X">
       <method name="IEnumerable`1 Test[T](T, T)" attrs="134">
-        <size>51</size>
+        <size>44</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>110</size>
@@ -52021,7 +52021,7 @@
   <test name="test-anon-50.cs">
     <type name="Test">
       <method name="IEnumerable Foo(Int32)" attrs="134">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -57268,7 +57268,7 @@
   <test name="test-async-30.cs">
     <type name="C">
       <method name="IEnumerable`1 Test(System.String)" attrs="129">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="IEnumerable`1 Test2()" attrs="129">
         <size>23</size>
@@ -59477,10 +59477,10 @@
   <test name="test-iter-03.cs">
     <type name="X">
       <method name="IEnumerable GetIt(System.Int32[])" attrs="145">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="IEnumerable GetMulti(System.Int32[,])" attrs="145">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>275</size>
@@ -59545,7 +59545,7 @@
   <test name="test-iter-04.cs">
     <type name="X">
       <method name="IEnumerable GetRange(Int32, Int32)" attrs="145">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>104</size>
@@ -59651,18 +59651,18 @@
   <test name="test-iter-06.cs">
     <type name="S">
       <method name="IEnumerable Get(Int32)" attrs="134">
-        <size>49</size>
+        <size>42</size>
       </method>
       <method name="IEnumerable GetS(Int32)" attrs="150">
-        <size>37</size>
+        <size>30</size>
       </method>
     </type>
     <type name="X">
       <method name="IEnumerable Get(Int32)" attrs="129">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="IEnumerable GetS(Int32)" attrs="145">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>449</size>
@@ -59779,7 +59779,7 @@
   <test name="test-iter-07.cs">
     <type name="Test">
       <method name="IEnumerable Foo(Int32)" attrs="134">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -59840,7 +59840,7 @@
     </type>
     <type name="X">
       <method name="IEnumerable Test(Int32, Int32)" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>210</size>
@@ -59926,7 +59926,7 @@
         <size>2</size>
       </method>
       <method name="IEnumerable get_Item(Int32)" attrs="2177">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void set_Item(Int32, IEnumerable)" attrs="2177">
         <size>2</size>
@@ -60278,7 +60278,7 @@
   <test name="test-iter-18.cs">
     <type name="test">
       <method name="IEnumerable testen(Int32)" attrs="134">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -60393,7 +60393,7 @@
   <test name="test-iter-21.cs">
     <type name="X">
       <method name="IEnumerable GetIt(System.Int32[])" attrs="145">
-        <size>37</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>138</size>
@@ -60598,7 +60598,7 @@
   <test name="test-iter-26.cs">
     <type name="C">
       <method name="IEnumerable Test(Boolean, Int32)" attrs="150">
-        <size>51</size>
+        <size>37</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>10</size>
