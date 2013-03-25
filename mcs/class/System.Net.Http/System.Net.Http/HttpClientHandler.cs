@@ -308,7 +308,7 @@ namespace System.Net.Http
 					}
 				}
 
-				var stream = await wrequest.GetRequestStreamAsync ();
+				var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
 				await request.Content.CopyToAsync (stream).ConfigureAwait (false);
 			}
 
