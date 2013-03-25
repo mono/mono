@@ -7515,7 +7515,7 @@
   <test name="gtest-163.cs">
     <type name="Foo`1[T]">
       <method name="IEnumerator`1 getEnumerator(Int32)" attrs="134">
-        <size>29</size>
+        <size>22</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -8525,7 +8525,7 @@
   <test name="gtest-193.cs">
     <type name="OrderedMultiDictionary`2[T,U]">
       <method name="IEnumerator`1 EnumerateKeys(RedBlackTree`1+RangeTester[System.Collections.Generic.KeyValuePair`2[T,U]])" attrs="129">
-        <size>36</size>
+        <size>29</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -8633,7 +8633,7 @@
     </type>
     <type name="OrderedMultiDictionary`2[T,U]">
       <method name="IEnumerator`1 EnumerateKeys(RedBlackTree`1+RangeTester[System.Collections.Generic.KeyValuePair`2[T,U]])" attrs="129">
-        <size>36</size>
+        <size>29</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -10410,7 +10410,7 @@
     </type>
     <type name="ConvertHelper">
       <method name="IEnumerator`1 Test[S,T](S)" attrs="150">
-        <size>29</size>
+        <size>22</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
@@ -52095,7 +52095,7 @@
   <test name="test-anon-52.cs">
     <type name="X">
       <method name="IEnumerator GetIt(System.Int32[])" attrs="145">
-        <size>29</size>
+        <size>22</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>40</size>
@@ -52590,7 +52590,7 @@
   <test name="test-anon-63.cs">
     <type name="X">
       <method name="IEnumerator GetIt(System.Int32[])" attrs="145">
-        <size>29</size>
+        <size>22</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>40</size>
@@ -59815,9 +59815,6 @@
       <method name="Void Reset()" attrs="486">
         <size>6</size>
       </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
       <method name="Void &lt;&gt;__Finally0()" attrs="129">
         <size>13</size>
       </method>
@@ -59826,6 +59823,9 @@
       </method>
       <method name="Void &lt;&gt;__Finally2()" attrs="129">
         <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

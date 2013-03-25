@@ -431,6 +431,13 @@ namespace Mono.CSharp
 			get { return hoisted_params; }
 		}
 
+		protected override Constructor DefineDefaultConstructor (bool is_static)
+		{
+			var ctor = base.DefineDefaultConstructor (is_static);
+			ctor.ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			return ctor;
+		}
+
 		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			var mtype = Iterator.OriginalIteratorType;
@@ -469,7 +476,7 @@ namespace Mono.CSharp
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 			disposing_field = AddCompilerGeneratedField ("$disposing", new TypeExpression (Compiler.BuiltinTypes.Bool, Location));
 
-			if (hoisted_params != null) {
+			if (Iterator.IsEnumerable && hoisted_params != null) {
 				//
 				// Iterators are independent, each GetEnumerator call has to
 				// create same enumerator therefore we have to keep original values
@@ -565,7 +572,8 @@ namespace Mono.CSharp
 		protected override void EmitHoistedParameters (EmitContext ec, List<HoistedParameter> hoisted)
 		{
 			base.EmitHoistedParameters (ec, hoisted);
-			base.EmitHoistedParameters (ec, hoisted_params_copy);
+			if (hoisted_params_copy != null)
+				base.EmitHoistedParameters (ec, hoisted_params_copy);
 		}
 	}
 

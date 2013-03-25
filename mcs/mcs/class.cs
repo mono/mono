@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
-using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using Mono.CompilerServices.SymbolWriter;
@@ -2503,7 +2502,7 @@ namespace Mono.CSharp
 		/// <summary>
 		/// Defines the default constructors 
 		/// </summary>
-		protected Constructor DefineDefaultConstructor (bool is_static)
+		protected virtual Constructor DefineDefaultConstructor (bool is_static)
 		{
 			// The default instance constructor is public
 			// If the class is abstract, the default constructor is protected
