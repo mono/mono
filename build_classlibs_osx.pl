@@ -207,7 +207,7 @@ sub UnityBooc
 {
 	my $commandLine = shift;
 	
-	system("$monoprefixUnity/booc -debug- -keyfile:$booCheckout/src/boo.snk $commandLine") eq 0 or die("booc failed to execute: $commandLine");
+	system("$monoprefixUnity/booc -debug- $commandLine") eq 0 or die("booc failed to execute: $commandLine");
 }
 
 sub BuildUnityScriptForUnity
