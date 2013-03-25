@@ -2808,8 +2808,14 @@ namespace System
 				return;
 			
 			T [] a = new T [newSize];
-			if (length != 0)
-				FastCopy (arr, 0, a, 0, Math.Min (newSize, length));
+			int tocopy = Math.Min (newSize, length);
+
+			if (tocopy < 9) {
+				for (int i = 0; i < tocopy; ++i)
+					UnsafeStore (a, i, UnsafeLoad (arr, i));
+			} else {
+				FastCopy (arr, 0, a, 0, tocopy);
+			}
 			array = a;
 		}
 		
