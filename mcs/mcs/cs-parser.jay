@@ -5857,7 +5857,7 @@ yield_statement
 			FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
-		current_block.Explicit.RegisterIteratorYield ();
+		current_block.ParametersBlock.TopBlock.IsIterator = true;
 		$$ = new YieldBreak (lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($3));
 	  }

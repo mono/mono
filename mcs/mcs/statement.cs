@@ -2059,7 +2059,8 @@ namespace Mono.CSharp {
 			HasAsyncModifier = 1 << 10,
 			Resolved = 1 << 11,
 			YieldBlock = 1 << 12,
-			AwaitBlock = 1 << 13
+			AwaitBlock = 1 << 13,
+			Iterator = 1 << 14
 		}
 
 		public Block Parent;
@@ -2664,6 +2665,8 @@ namespace Mono.CSharp {
 
 		public void RegisterIteratorYield ()
 		{
+			ParametersBlock.TopBlock.IsIterator = true;
+
 			var block = this;
 			while ((block.flags & Flags.YieldBlock) == 0) {
 				block.flags |= Flags.YieldBlock;
@@ -3207,7 +3210,10 @@ namespace Mono.CSharp {
 
 		public bool IsIterator {
 			get {
-				return HasYield;
+				return (flags & Flags.Iterator) != 0;
+			}
+			set {
+				flags = value ? flags | Flags.Iterator : flags & ~Flags.Iterator;
 			}
 		}
 
