@@ -886,14 +886,6 @@ namespace Mono.Tools.LocaleBuilder
 						}
 					}
 				}
-
-				if (data.DateTimeFormatEntry.MonthGenitiveNames[0] == null)
-					data.DateTimeFormatEntry.MonthGenitiveNames = data.DateTimeFormatEntry.MonthNames;
-
-				if (data.DateTimeFormatEntry.AbbreviatedMonthGenitiveNames[0] == null)
-					data.DateTimeFormatEntry.AbbreviatedMonthGenitiveNames = data.DateTimeFormatEntry.AbbreviatedMonthNames;
-
-
 			}
 
 			// It looks like it never changes
@@ -981,8 +973,12 @@ namespace Mono.Tools.LocaleBuilder
 				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
 
 				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='wide']/month");
-				if (nodes != null)
+				if (nodes != null) {
 					ProcessAllNodes (nodes, df.MonthGenitiveNames, AddOrReplaceValue);
+				}
+
+				// All values seem to match
+				Array.Copy (df.AbbreviatedMonthNames, df.AbbreviatedMonthGenitiveNames, df.AbbreviatedMonthNames.Length);
 
 				nodes = node.SelectNodes ("days/dayContext[@type='format']/dayWidth[@type='wide']/day");
 				ProcessAllNodes (nodes, df.DayNames, AddOrReplaceDayValue);
