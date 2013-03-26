@@ -279,8 +279,15 @@ namespace System.Globalization
 				if (parent_culture == null) {
 					if (!constructed)
 						Construct ();
-					if (parent_lcid == cultureID)
+					if (parent_lcid == cultureID) {
+						//
+						// Parent lcid is same but culture info is not for legacy zh culture
+						//
+						if (parent_lcid == 0x7C04 && EnglishName.EndsWith (" Legacy", StringComparison.Ordinal))
+							return parent_culture = new CultureInfo ("zh-Hant");
+
 						return null;
+					}
 					
 					if (parent_lcid == InvariantCultureId)
 						parent_culture = InvariantCulture;
