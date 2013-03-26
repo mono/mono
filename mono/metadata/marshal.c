@@ -10937,6 +10937,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gpointer s
 
 	MONO_ARCH_SAVE_REGS;
 
+	if (src == NULL)
+		return NULL;
 	MONO_CHECK_ARG_NULL (src);
 	MONO_CHECK_ARG_NULL (type);
 
