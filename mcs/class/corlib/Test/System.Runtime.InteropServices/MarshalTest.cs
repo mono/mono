@@ -761,6 +761,18 @@ namespace MonoTests.System.Runtime.InteropServices
 				Marshal.FreeHGlobal (p);
 			}
 		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		public struct SimpleStruct2 {
+			public int a;
+			public int b;
+		}
+
+		[Test]
+		public void PtrToStructureNull ()
+		{
+			Assert.IsNull (Marshal.PtrToStructure (IntPtr.Zero, typeof (SimpleStruct2)));
+		}
 		
 #if NET_2_0
 		[Test]
