@@ -123,6 +123,13 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual ("ledna", dfi.MonthGenitiveNames[0], "#1");
 		}
 
+		[Test]
+		public void QuoteInValue ()
+		{
+			var culture = new CultureInfo("mt-MT");
+			Assert.AreEqual ("dddd, d' ta\\' 'MMMM yyyy", culture.DateTimeFormat.LongDatePattern);
+		}
+
 #if !TARGET_JVM
 		[Test]
 		public void Bug78569 ()
