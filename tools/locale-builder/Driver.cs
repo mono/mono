@@ -71,6 +71,7 @@ namespace Mono.Tools.LocaleBuilder
 		List<CultureInfoEntry> cultures;
 		Dictionary<string, string> region_currency;
 		Dictionary<string, string> currency_fractions;
+		Dictionary<string, string> extra_parent_locales; 
 
 		// The lang is the language that display names will be displayed in
 		public string Lang
@@ -259,6 +260,19 @@ namespace Mono.Tools.LocaleBuilder
 			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/currencyData/region")) {
 				var child = entry.SelectSingleNode ("currency");
 				region_currency.Add (entry.Attributes["iso3166"].Value, child.Attributes["iso4217"].Value);
+			}
+
+			// Parent locales
+			extra_parent_locales = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/parentLocales/parentLocale")) {
+				var parent = entry.Attributes["parent"].Value;
+
+				if (parent == "root")
+					continue;
+
+				var locales = entry.Attributes["locales"].Value;
+				foreach (var locale in locales.Split (' '))
+					extra_parent_locales.Add (locale, parent);
 			}
 
 			var lcdids = GetXmlDocument ("lcids.xml");
@@ -837,7 +851,17 @@ namespace Mono.Tools.LocaleBuilder
 
 					fname += part;
 
-					var xml = GetXmlDocument (Path.Combine (data_root, "main", fname + ".xml"));
+					XmlDocument xml;
+					string extra;
+					if (extra_parent_locales.TryGetValue (fname, out extra)) {
+						xml = GetXmlDocument (Path.Combine (data_root, "main", extra + ".xml"));
+						if (doc == null)
+							doc = xml;
+
+						Import (xml, data);
+					}
+
+					xml = GetXmlDocument (Path.Combine (data_root, "main", fname + ".xml"));
 					if (doc == null)
 						doc = xml;
 

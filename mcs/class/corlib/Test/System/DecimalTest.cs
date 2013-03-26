@@ -1129,6 +1129,13 @@ namespace MonoTests.System
 			}
 		}
 */
+
+		[Test]
+		public void ParseCultureSeparator ()
+		{
+			Assert.AreEqual (2.2m, decimal.Parse ("2.2", new CultureInfo("es-MX")));
+		}
+
 		[Test]
 		[Category ("TargetJvmNotWorking")]
 		public void TryParse ()
