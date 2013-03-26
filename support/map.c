@@ -292,6 +292,72 @@ int Mono_Posix_ToAccessModes (int x, int *r)
 	return 0;
 }
 
+int Mono_Posix_FromAtFlags (int x, int *r)
+{
+	*r = 0;
+	if ((x & Mono_Posix_AtFlags_AT_EMPTY_PATH) == Mono_Posix_AtFlags_AT_EMPTY_PATH)
+#ifdef AT_EMPTY_PATH
+		*r |= AT_EMPTY_PATH;
+#else /* def AT_EMPTY_PATH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef AT_EMPTY_PATH */
+	if ((x & Mono_Posix_AtFlags_AT_NO_AUTOMOUNT) == Mono_Posix_AtFlags_AT_NO_AUTOMOUNT)
+#ifdef AT_NO_AUTOMOUNT
+		*r |= AT_NO_AUTOMOUNT;
+#else /* def AT_NO_AUTOMOUNT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef AT_NO_AUTOMOUNT */
+	if ((x & Mono_Posix_AtFlags_AT_REMOVEDIR) == Mono_Posix_AtFlags_AT_REMOVEDIR)
+#ifdef AT_REMOVEDIR
+		*r |= AT_REMOVEDIR;
+#else /* def AT_REMOVEDIR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef AT_REMOVEDIR */
+	if ((x & Mono_Posix_AtFlags_AT_SYMLINK_FOLLOW) == Mono_Posix_AtFlags_AT_SYMLINK_FOLLOW)
+#ifdef AT_SYMLINK_FOLLOW
+		*r |= AT_SYMLINK_FOLLOW;
+#else /* def AT_SYMLINK_FOLLOW */
+		{errno = EINVAL; return -1;}
+#endif /* ndef AT_SYMLINK_FOLLOW */
+	if ((x & Mono_Posix_AtFlags_AT_SYMLINK_NOFOLLOW) == Mono_Posix_AtFlags_AT_SYMLINK_NOFOLLOW)
+#ifdef AT_SYMLINK_NOFOLLOW
+		*r |= AT_SYMLINK_NOFOLLOW;
+#else /* def AT_SYMLINK_NOFOLLOW */
+		{errno = EINVAL; return -1;}
+#endif /* ndef AT_SYMLINK_NOFOLLOW */
+	if (x == 0)
+		return 0;
+	return 0;
+}
+
+int Mono_Posix_ToAtFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef AT_EMPTY_PATH
+	if ((x & AT_EMPTY_PATH) == AT_EMPTY_PATH)
+		*r |= Mono_Posix_AtFlags_AT_EMPTY_PATH;
+#endif /* ndef AT_EMPTY_PATH */
+#ifdef AT_NO_AUTOMOUNT
+	if ((x & AT_NO_AUTOMOUNT) == AT_NO_AUTOMOUNT)
+		*r |= Mono_Posix_AtFlags_AT_NO_AUTOMOUNT;
+#endif /* ndef AT_NO_AUTOMOUNT */
+#ifdef AT_REMOVEDIR
+	if ((x & AT_REMOVEDIR) == AT_REMOVEDIR)
+		*r |= Mono_Posix_AtFlags_AT_REMOVEDIR;
+#endif /* ndef AT_REMOVEDIR */
+#ifdef AT_SYMLINK_FOLLOW
+	if ((x & AT_SYMLINK_FOLLOW) == AT_SYMLINK_FOLLOW)
+		*r |= Mono_Posix_AtFlags_AT_SYMLINK_FOLLOW;
+#endif /* ndef AT_SYMLINK_FOLLOW */
+#ifdef AT_SYMLINK_NOFOLLOW
+	if ((x & AT_SYMLINK_NOFOLLOW) == AT_SYMLINK_NOFOLLOW)
+		*r |= Mono_Posix_AtFlags_AT_SYMLINK_NOFOLLOW;
+#endif /* ndef AT_SYMLINK_NOFOLLOW */
+	return 0;
+}
+
 int Mono_Posix_FromConfstrName (int x, int *r)
 {
 	*r = 0;
@@ -2764,6 +2830,38 @@ Mono_Posix_ToFlock (struct flock *from, struct Mono_Posix_Flock *to)
 #endif /* ndef HAVE_STRUCT_FLOCK */
 
 
+#ifdef HAVE_STRUCT_IOVEC
+int
+Mono_Posix_FromIovec (struct Mono_Posix_Iovec *from, struct iovec *to)
+{
+	_cnm_return_val_if_overflow (guint64, from->iov_len, -1);
+
+	memset (to, 0, sizeof(*to));
+
+	to->iov_base = from->iov_base;
+	to->iov_len  = from->iov_len;
+
+	return 0;
+}
+#endif /* ndef HAVE_STRUCT_IOVEC */
+
+
+#ifdef HAVE_STRUCT_IOVEC
+int
+Mono_Posix_ToIovec (struct iovec *from, struct Mono_Posix_Iovec *to)
+{
+	_cnm_return_val_if_overflow (guint64, from->iov_len, -1);
+
+	memset (to, 0, sizeof(*to));
+
+	to->iov_base = from->iov_base;
+	to->iov_len  = from->iov_len;
+
+	return 0;
+}
+#endif /* ndef HAVE_STRUCT_IOVEC */
+
+
 int Mono_Posix_FromLockType (short x, short *r)
 {
 	*r = 0;
@@ -3367,6 +3465,12 @@ int Mono_Posix_FromOpenFlags (int x, int *r)
 #else /* def O_ASYNC */
 		{errno = EINVAL; return -1;}
 #endif /* ndef O_ASYNC */
+	if ((x & Mono_Posix_OpenFlags_O_CLOEXEC) == Mono_Posix_OpenFlags_O_CLOEXEC)
+#ifdef O_CLOEXEC
+		*r |= O_CLOEXEC;
+#else /* def O_CLOEXEC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef O_CLOEXEC */
 	if ((x & Mono_Posix_OpenFlags_O_CREAT) == Mono_Posix_OpenFlags_O_CREAT)
 #ifdef O_CREAT
 		*r |= O_CREAT;
@@ -3415,6 +3519,12 @@ int Mono_Posix_FromOpenFlags (int x, int *r)
 #else /* def O_NONBLOCK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef O_NONBLOCK */
+	if ((x & Mono_Posix_OpenFlags_O_PATH) == Mono_Posix_OpenFlags_O_PATH)
+#ifdef O_PATH
+		*r |= O_PATH;
+#else /* def O_PATH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef O_PATH */
 	if ((x & Mono_Posix_OpenFlags_O_RDONLY) == Mono_Posix_OpenFlags_O_RDONLY)
 #ifdef O_RDONLY
 		*r |= O_RDONLY;
@@ -3463,6 +3573,10 @@ int Mono_Posix_ToOpenFlags (int x, int *r)
 	if ((x & O_ASYNC) == O_ASYNC)
 		*r |= Mono_Posix_OpenFlags_O_ASYNC;
 #endif /* ndef O_ASYNC */
+#ifdef O_CLOEXEC
+	if ((x & O_CLOEXEC) == O_CLOEXEC)
+		*r |= Mono_Posix_OpenFlags_O_CLOEXEC;
+#endif /* ndef O_CLOEXEC */
 #ifdef O_CREAT
 	if ((x & O_CREAT) == O_CREAT)
 		*r |= Mono_Posix_OpenFlags_O_CREAT;
@@ -3495,6 +3609,10 @@ int Mono_Posix_ToOpenFlags (int x, int *r)
 	if ((x & O_NONBLOCK) == O_NONBLOCK)
 		*r |= Mono_Posix_OpenFlags_O_NONBLOCK;
 #endif /* ndef O_NONBLOCK */
+#ifdef O_PATH
+	if ((x & O_PATH) == O_PATH)
+		*r |= Mono_Posix_OpenFlags_O_PATH;
+#endif /* ndef O_PATH */
 #ifdef O_RDONLY
 	if ((x & O_RDONLY) == O_RDONLY)
 		*r |= Mono_Posix_OpenFlags_O_RDONLY;
