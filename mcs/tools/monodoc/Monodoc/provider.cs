@@ -946,7 +946,11 @@ public class RootTree : Tree {
 		// Load the sources
 		//
 		foreach (var sourceFile in sourceFiles){
-			root.AddSourceFile (sourceFile);
+			try {
+				root.AddSourceFile (sourceFile);
+			} catch (Exception ex) {
+				Console.Error.WriteLine ("Error: failed to load help source {0}:\n{1}", sourceFile, ex);
+			}
 		}
 		
 		foreach (string path in UncompiledHelpSources) {
