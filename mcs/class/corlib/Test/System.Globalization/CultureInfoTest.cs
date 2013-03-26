@@ -564,6 +564,8 @@ namespace MonoTests.System.Globalization
 		{
 			Assert.AreEqual (31748, new CultureInfo ("zh-Hant").LCID);
 			Assert.AreEqual (31748, CultureInfo.GetCultureInfo ("zh-Hant").LCID);
+			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").LCID);
+			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").Parent.LCID);
 		}
 	}
 }
