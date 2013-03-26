@@ -101,6 +101,16 @@ Mono_Posix_Syscall_open_mode (const char *pathname, gint32 flags, guint32 mode)
 }
 
 gint32
+Mono_Posix_Syscall_get_at_fdcwd ()
+{
+#ifdef AT_FDCWD
+	return AT_FDCWD;
+#else
+	return -1;
+#endif
+}
+
+gint32
 Mono_Posix_Syscall_creat (const char *pathname, guint32 mode)
 {
 	if (Mono_Posix_FromFilePermissions (mode, &mode) == -1)
