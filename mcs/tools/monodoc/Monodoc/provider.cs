@@ -881,7 +881,6 @@ public class RootTree : Tree {
 			}
 			// Temporary workaround for developers distributing a monodoc.dll themselves on Mac
 			if (Directory.Exists (MacMonoDocDir)){
-				Console.WriteLine ("MacDir exists");
 				if (!File.Exists (Path.Combine (basedir, "monodoc.xml"))){
 					basedir = MacMonoDocDir;
 				}
