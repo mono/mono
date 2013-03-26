@@ -57,7 +57,7 @@ public class Tree : Node {
 		Encoding utf8 = new UTF8Encoding (false, true);
 
 		if (!File.Exists (filename)){
-			throw new FileNotFoundException ();
+			throw new FileNotFoundException (null, filename);
 		}
 		
 		InputStream = File.OpenRead (filename);
@@ -1123,8 +1123,8 @@ public class RootTree : Tree {
 			}
 			return null;
 		}
-		catch (FileNotFoundException) {
-			Console.Error.WriteLine ("Error: did not find one of the files in sources/"+basefilepath);
+		catch (FileNotFoundException ex) {
+			Console.Error.WriteLine ("Error: did not find help source {0}", ex.FileName);
 			return null;
 		}
 	}
