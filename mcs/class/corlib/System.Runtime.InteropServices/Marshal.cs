@@ -723,35 +723,31 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static short ReadInt16 (IntPtr ptr)
+		public unsafe static short ReadInt16 (IntPtr ptr)
 		{
+			byte *addr = (byte *) ptr;
+			
 			// The mono JIT can't inline this due to the hight number of calls
 			// return ReadInt16 (ptr, 0);
-			if ((uint)ptr % 2 == 0) {
-				unsafe {
-					return *(short*)ptr;
-				}
-			} else {
-				unsafe {
-					short s;
-					String.memcpy ((byte*)&s, (byte*)ptr, 2);
-					return s;
-				}
-			}
+			
+			if (((uint)addr & 1) == 0) 
+				return *(short*)addr;
+
+			short s;
+			String.memcpy ((byte*)&s, (byte*)ptr, 2);
+			return s;
 		}
 
-		public static short ReadInt16 (IntPtr ptr, int ofs) {
-			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 2 == 0) {
-				unsafe {
-					return *(short*)(IntPtr.Add (ptr, ofs));
-				}
-			} else {
-				unsafe {
-					short s;
-					String.memcpy ((byte*)&s, (byte*)(IntPtr.Add (ptr, ofs)), 2);
-					return s;
-				}
-			}
+		public unsafe static short ReadInt16 (IntPtr ptr, int ofs)
+		{
+			byte *addr = ((byte *) ptr) + ofs;
+
+			if (((uint) addr & 1) == 0)
+				return *(short*)addr;
+
+			short s;
+			String.memcpy ((byte*)&s, addr, 2);
+			return s;
 		}
 
 		[MonoTODO]
@@ -762,33 +758,29 @@ namespace System.Runtime.InteropServices
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		public static int ReadInt32 (IntPtr ptr)
+		public unsafe static int ReadInt32 (IntPtr ptr)
 		{
-			if ((uint)ptr % 4 == 0) {
-				unsafe {
-					return *(int*)ptr;
-				}
-			} else {
-				unsafe {
-					int s;
-					String.memcpy ((byte*)&s, (byte*)ptr, 4);
-					return s;
-				}
-			}
+			byte *addr = (byte *) ptr;
+			
+			if (((uint)addr & 3) == 0) 
+				return *(int*)addr;
+
+			int s;
+			String.memcpy ((byte*)&s, addr, 4);
+			return s;
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		public static int ReadInt32 (IntPtr ptr, int ofs) {
-			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 4 == 0) {
-				unsafe {
-					return *(int*)(IntPtr.Add (ptr, ofs));
-				}
-			} else {
-				unsafe {
-					int s;
-					String.memcpy ((byte*)&s, (byte*)(IntPtr.Add (ptr, ofs)), 4);
-					return s;
-				}
+		public unsafe static int ReadInt32 (IntPtr ptr, int ofs)
+		{
+			byte *addr = ((byte *) ptr) + ofs;
+			
+			if ((((int) addr) & 3) == 0)
+				return *(int*)addr;
+			else {
+				int s;
+				String.memcpy ((byte*)&s, addr, 4);
+				return s;
 			}
 		}
 
@@ -801,35 +793,30 @@ namespace System.Runtime.InteropServices
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		public static long ReadInt64 (IntPtr ptr)
+		public unsafe static long ReadInt64 (IntPtr ptr)
 		{
+			byte *addr = (byte *) ptr;
+				
 			// The real alignment might be 4 on some platforms, but this is just an optimization,
 			// so it doesn't matter.
-			if ((uint)ptr % 8 == 0) {
-				unsafe {
-					return *(long*)ptr;
-				}
-			} else {
-				unsafe {
-					long s;
-					String.memcpy ((byte*)&s, (byte*)ptr, 8);
-					return s;
-				}
-			}
+			if (((uint) addr & 7) == 0)
+				return *(long*)ptr;
+
+			long s;
+			String.memcpy ((byte*)&s, addr, 8);
+			return s;
 		}
 
-		public static long ReadInt64 (IntPtr ptr, int ofs) {
-			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 8 == 0) {
-				unsafe {
-					return *(long*)(IntPtr.Add (ptr, ofs));
-				}
-			} else {
-				unsafe {
-					long s;
-					String.memcpy ((byte*)&s, (byte*)(IntPtr.Add (ptr, ofs)), 8);
-					return s;
-				}
-			}
+		public unsafe static long ReadInt64 (IntPtr ptr, int ofs)
+		{
+			byte *addr = ((byte *) ptr) + ofs;
+
+			if (((uint) addr & 7) == 0)
+				return *(long*)addr;
+			
+			long s;
+			String.memcpy ((byte*)&s, addr, 8);
+			return s;
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
@@ -843,11 +830,15 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public static IntPtr ReadIntPtr (IntPtr ptr)
 		{
-			return ReadIntPtr (ptr, 0);
+			if (IntPtr.Size == 4)
+				return (IntPtr)ReadInt32 (ptr);
+			else
+				return (IntPtr)ReadInt64 (ptr);
 		}
 		
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		public static IntPtr ReadIntPtr (IntPtr ptr, int ofs) {
+		public static IntPtr ReadIntPtr (IntPtr ptr, int ofs)
+		{
 			if (IntPtr.Size == 4)
 				return (IntPtr)ReadInt32 (ptr, ofs);
 			else
@@ -1103,28 +1094,24 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteInt16 (IntPtr ptr, short val)
+		public static unsafe void WriteInt16 (IntPtr ptr, short val)
 		{
-			if ((uint)ptr % 2 == 0) {
-				unsafe {
-					*(short*)ptr = val;
-				}
-			} else {
-				unsafe {
-					String.memcpy ((byte*)ptr, (byte*)&val, 2);
-				}
-			}
+			byte *addr = (byte *) ptr;
+			
+			if (((uint)addr & 1) == 0)
+				*(short*)addr = val;
+			else
+				String.memcpy (addr, (byte*)&val, 2);
 		}
 
-		public static void WriteInt16 (IntPtr ptr, int ofs, short val) {
-			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 2 == 0) {
-				unsafe {
-					*(short*)(IntPtr.Add (ptr, ofs)) = val;
-				}
-			} else {
-				unsafe {
-					String.memcpy ((byte*)(IntPtr.Add (ptr, ofs)), (byte*)&val, 2);
-				}
+		public static unsafe void WriteInt16 (IntPtr ptr, int ofs, short val)
+		{
+			byte *addr = ((byte *) ptr) + ofs;
+
+			if (((uint)addr & 1) == 0)
+				*(short*)addr = val;
+			else {
+				String.memcpy (addr, (byte*)&val, 2);
 			}
 		}
 
@@ -1140,7 +1127,8 @@ namespace System.Runtime.InteropServices
 			WriteInt16 (ptr, 0, (short)val);
 		}
 
-		public static void WriteInt16 (IntPtr ptr, int ofs, char val) {
+		public static void WriteInt16 (IntPtr ptr, int ofs, char val)
+		{
 			WriteInt16 (ptr, ofs, (short)val);
 		}
 
@@ -1150,28 +1138,25 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteInt32 (IntPtr ptr, int val)
+		public static unsafe void WriteInt32 (IntPtr ptr, int val)
 		{
-			if ((uint)ptr % 4 == 0) {
-				unsafe {
-					*(int*)ptr = val;
-				}
-			} else {
-				unsafe {
-					String.memcpy ((byte*)ptr, (byte*)&val, 4);
-				}
+			byte *addr = (byte *) ptr;
+			
+			if (((uint)addr & 3) == 0) 
+				*(int*)addr = val;
+			else {
+				String.memcpy (addr, (byte*)&val, 4);
 			}
 		}
 
-		public static void WriteInt32 (IntPtr ptr, int ofs, int val) {
-			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 4 == 0) {
-				unsafe {
-					*(int*)(IntPtr.Add (ptr, ofs)) = val;
-				}
-			} else {
-				unsafe {
-					String.memcpy ((byte*)(IntPtr.Add (ptr, ofs)), (byte*)&val, 4);
-				}
+		public unsafe static void WriteInt32 (IntPtr ptr, int ofs, int val)
+		{
+			byte *addr = ((byte *) ptr) + ofs;
+
+			if (((uint)addr & 3) == 0) 
+				*(int*)addr = val;
+			else {
+				String.memcpy (addr, (byte*)&val, 4);
 			}
 		}
 
@@ -1182,30 +1167,28 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static void WriteInt64 (IntPtr ptr, long val)
+		public static unsafe void WriteInt64 (IntPtr ptr, long val)
 		{
-			// See ReadInt64 ()
-			if ((uint)ptr % 8 == 0) {
-				unsafe {
-					*(long*)ptr = val;
-				}
-			} else {
-				unsafe {
-					String.memcpy ((byte*)ptr, (byte*)&val, 8);
-				}
-			}
+			byte *addr = (byte *) ptr;
+			
+			// The real alignment might be 4 on some platforms, but this is just an optimization,
+			// so it doesn't matter.
+			if (((uint)addr & 7) == 0) 
+				*(long*)addr = val;
+			else 
+				String.memcpy (addr, (byte*)&val, 8);
 		}
 
-		public static void WriteInt64 (IntPtr ptr, int ofs, long val) {
-			if ((IntPtr.Add (ptr, ofs)).ToInt32 () % 8 == 0) {
-				unsafe {
-					*(long*)(IntPtr.Add (ptr, ofs)) = val;
-				}
-			} else {
-				unsafe {
-					String.memcpy ((byte*)(IntPtr.Add (ptr, ofs)), (byte*)&val, 8);
-				}
-			}
+		public static unsafe void WriteInt64 (IntPtr ptr, int ofs, long val)
+		{
+			byte *addr = ((byte *) ptr) + ofs;
+
+			// The real alignment might be 4 on some platforms, but this is just an optimization,
+			// so it doesn't matter.
+			if (((uint)addr & 7) == 0) 
+				*(long*)addr = val;
+			else 
+				String.memcpy (addr, (byte*)&val, 8);
 		}
 
 		[MonoTODO]
@@ -1217,10 +1200,14 @@ namespace System.Runtime.InteropServices
 
 		public static void WriteIntPtr (IntPtr ptr, IntPtr val)
 		{
-			WriteIntPtr (ptr, 0, val);
+			if (IntPtr.Size == 4)
+				WriteInt32 (ptr, (int)val);
+			else
+				WriteInt64 (ptr, (long)val);
 		}
 
-		public static void WriteIntPtr (IntPtr ptr, int ofs, IntPtr val) {
+		public static void WriteIntPtr (IntPtr ptr, int ofs, IntPtr val)
+		{
 			if (IntPtr.Size == 4)
 				WriteInt32 (ptr, ofs, (int)val);
 			else
