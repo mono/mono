@@ -820,7 +820,7 @@ namespace Mono.Unix.Native {
 		}
 	}
 
-	[Map ("struct stat")]
+	// Use manually written To/From methods to handle fields st_atime_nsec etc.
 	public struct Stat
 #if NET_2_0
 		: IEquatable <Stat>
@@ -850,6 +850,39 @@ namespace Mono.Unix.Native {
 		[time_t]    public  long    st_atime;   // time of last access
 		[time_t]    public  long    st_mtime;   // time of last modification
 		[time_t]    public  long    st_ctime;   // time of last status change
+		public  long             st_atime_nsec; // Timespec.tv_nsec partner to st_atime
+		public  long             st_mtime_nsec; // Timespec.tv_nsec partner to st_mtime
+		public  long             st_ctime_nsec; // Timespec.tv_nsec partner to st_ctime
+
+		public Timespec st_atim {
+			get {
+				return new Timespec { tv_sec = st_atime, tv_nsec = st_atime_nsec };
+			}
+			set {
+				st_atime = value.tv_sec;
+				st_atime_nsec = value.tv_nsec;
+			}
+		}
+
+		public Timespec st_mtim {
+			get {
+				return new Timespec { tv_sec = st_mtime, tv_nsec = st_mtime_nsec };
+			}
+			set {
+				st_mtime = value.tv_sec;
+				st_mtime_nsec = value.tv_nsec;
+			}
+		}
+
+		public Timespec st_ctim {
+			get {
+				return new Timespec { tv_sec = st_ctime, tv_nsec = st_ctime_nsec };
+			}
+			set {
+				st_ctime = value.tv_sec;
+				st_ctime_nsec = value.tv_nsec;
+			}
+		}
 
 		public override int GetHashCode ()
 		{
@@ -865,7 +898,10 @@ namespace Mono.Unix.Native {
 				st_blocks.GetHashCode () ^
 				st_atime.GetHashCode () ^
 				st_mtime.GetHashCode () ^
-				st_ctime.GetHashCode ();
+				st_ctime.GetHashCode () ^
+				st_atime_nsec.GetHashCode () ^
+				st_mtime_nsec.GetHashCode () ^
+				st_ctime_nsec.GetHashCode ();
 		}
 
 		public override bool Equals (object obj)
@@ -885,7 +921,10 @@ namespace Mono.Unix.Native {
 				value.st_blocks == st_blocks &&
 				value.st_atime == st_atime &&
 				value.st_mtime == st_mtime &&
-				value.st_ctime == st_ctime;
+				value.st_ctime == st_ctime &&
+				value.st_atime_nsec == st_atime_nsec &&
+				value.st_mtime_nsec == st_mtime_nsec &&
+				value.st_ctime_nsec == st_ctime_nsec;
 		}
 
 		public bool Equals (Stat value)
@@ -902,7 +941,10 @@ namespace Mono.Unix.Native {
 				value.st_blocks == st_blocks &&
 				value.st_atime == st_atime &&
 				value.st_mtime == st_mtime &&
-				value.st_ctime == st_ctime;
+				value.st_ctime == st_ctime &&
+				value.st_atime_nsec == st_atime_nsec &&
+				value.st_mtime_nsec == st_mtime_nsec &&
+				value.st_ctime_nsec == st_ctime_nsec;
 		}
 
 		public static bool operator== (Stat lhs, Stat rhs)

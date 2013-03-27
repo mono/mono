@@ -838,22 +838,6 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[DllImport (LIB, EntryPoint="Mono_Posix_FromStat")]
-		private static extern int FromStat (ref Stat source, IntPtr destination);
-
-		public static bool TryCopy (ref Stat source, IntPtr destination)
-		{
-			return FromStat (ref source, destination) == 0;
-		}
-
-		[DllImport (LIB, EntryPoint="Mono_Posix_ToStat")]
-		private static extern int ToStat (IntPtr source, out Stat destination);
-
-		public static bool TryCopy (IntPtr source, out Stat destination)
-		{
-			return ToStat (source, out destination) == 0;
-		}
-
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromSysconfName")]
 		private static extern int FromSysconfName (SysconfName value, out Int32 rval);
 

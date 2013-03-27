@@ -1452,7 +1452,6 @@ struct Mono_Unix_UnixSignal_SignalInfo;
 struct flock;
 struct iovec;
 struct pollfd;
-struct stat;
 struct timespec;
 struct timeval;
 struct timezone;
@@ -1506,27 +1505,24 @@ Mono_Posix_ToPollfd (struct pollfd *from, struct Mono_Posix_Pollfd* to);
 
 
 struct Mono_Posix_Stat {
-	guint64      st_dev;      /* dev_t     */
-	guint64      st_ino;      /* ino_t     */
+	guint64      st_dev;         /* dev_t     */
+	guint64      st_ino;         /* ino_t     */
 	unsigned int st_mode;
 	unsigned int _padding_;
-	guint64      st_nlink;    /* nlink_t   */
-	unsigned int st_uid;      /* uid_t     */
-	unsigned int st_gid;      /* gid_t     */
-	guint64      st_rdev;     /* dev_t     */
-	gint64       st_size;     /* off_t     */
-	gint64       st_blksize;  /* blksize_t */
-	gint64       st_blocks;   /* blkcnt_t  */
-	gint64       st_atime_;   /* time_t    */
-	gint64       st_mtime_;   /* time_t    */
-	gint64       st_ctime_;   /* time_t    */
+	guint64      st_nlink;       /* nlink_t   */
+	unsigned int st_uid;         /* uid_t     */
+	unsigned int st_gid;         /* gid_t     */
+	guint64      st_rdev;        /* dev_t     */
+	gint64       st_size;        /* off_t     */
+	gint64       st_blksize;     /* blksize_t */
+	gint64       st_blocks;      /* blkcnt_t  */
+	gint64       st_atime_;      /* time_t    */
+	gint64       st_mtime_;      /* time_t    */
+	gint64       st_ctime_;      /* time_t    */
+	gint64       st_atime_nsec;
+	gint64       st_mtime_nsec;
+	gint64       st_ctime_nsec;
 };
-
-int
-Mono_Posix_FromStat (struct Mono_Posix_Stat* from, struct stat *to);
-int
-Mono_Posix_ToStat (struct stat *from, struct Mono_Posix_Stat* to);
-
 
 struct Mono_Posix_Statvfs {
 	guint64 f_bsize;
@@ -1658,6 +1654,7 @@ int map_Mono_Posix_FileMode (int mode);
 int map_Mono_Posix_OpenFlags (int flags);
 int map_Mono_Posix_WaitOptions (int wait_options);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
+int Mono_Posix_FromStat (struct Mono_Posix_Stat* source, void* destination);
 int Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs* source, void* destination);
 int Mono_Posix_SIGRTMAX (void);
 int Mono_Posix_SIGRTMIN (void);
@@ -1825,6 +1822,7 @@ gint64 Mono_Posix_Syscall_write (int fd, void* buf, guint64 count);
 gint64 Mono_Posix_Syscall_writev (int fd, struct Mono_Posix_Iovec* iov, int iovcnt);
 int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
+int Mono_Posix_ToStat (void* source, struct Mono_Posix_Stat* destination);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);
 void* Mono_Unix_UnixSignal_install (int signum);
 int Mono_Unix_UnixSignal_uninstall (void* info);
