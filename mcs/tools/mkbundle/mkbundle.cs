@@ -14,10 +14,10 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text;
-using Mono.Unix;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+
 
 #if NET_4_5
 using System.Threading.Tasks;
@@ -291,12 +291,12 @@ class MakeBundle {
 				int n;
 				if (compress) {
 					MemoryStream ms = new MemoryStream ();
-					DeflaterOutputStream deflate = new DeflaterOutputStream (ms);
+					GZipStream deflate = new GZipStream (ms, CompressionMode.Compress, leaveOpen:true);
 					while ((n = stream.Read (buffer, 0, buffer.Length)) != 0){
 						deflate.Write (buffer, 0, n);
 					}
 					stream.Close ();
-					deflate.Finish ();
+					deflate.Close ();
 					byte [] bytes = ms.GetBuffer ();
 					stream = new MemoryStream (bytes, 0, (int) ms.Length, false, false);
 				}
@@ -604,10 +604,10 @@ class MakeBundle {
 			return;
 		}
 
-		IntPtr buf = UnixMarshal.AllocHeap(8192);
+		IntPtr buf = Marshal.AllocHGlobal (8192);
 		if (uname (buf) != 0){
 			Console.WriteLine ("Warning: Unable to detect OS");
-			UnixMarshal.FreeHeap(buf);
+			Marshal.FreeHGlobal (buf);
 			return;
 		}
 		string os = Marshal.PtrToStringAnsi (buf);
@@ -615,7 +615,7 @@ class MakeBundle {
 		if (os == "Darwin")
 			style = "osx";
 		
-		UnixMarshal.FreeHeap(buf);
+		Marshal.FreeHGlobal (buf);
 	}
 
 	static bool IsUnix {
