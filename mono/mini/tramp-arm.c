@@ -233,7 +233,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/* Now we'll create in 'buf' the ARM trampoline code. This
 	 is the trampoline code common to all methods  */
 
-	buf_len = NACL_SIZE (320, 212);
+	buf_len = NACL_SIZE (212, 320);
 	code = buf = mono_global_codeman_reserve (buf_len);
 
 	/*
@@ -538,7 +538,7 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 	return buf;
 }
 
-#define SPEC_TRAMP_SIZE NACL_SIZE (32, 24)
+#define SPEC_TRAMP_SIZE NACL_SIZE (24, 32)
 
 gpointer
 mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len)
@@ -656,7 +656,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	MonoDomain *domain = mono_domain_get ();
 #ifdef USE_JUMP_TABLES
 	gpointer *jte;
-	int size = NACL_SIZE (32, 20);
+	int size = NACL_SIZE (20, 32);
 #else
         guint32 size = 16;
 #endif
@@ -695,7 +695,7 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 {
 	guint8 *code, *start;
 #ifdef USE_JUMP_TABLES
-	int buf_len = NACL_SIZE (32, 20);
+	int buf_len = NACL_SIZE (20, 32);
 	gpointer *jte;
 #else
 	int buf_len = 16;
@@ -756,7 +756,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 			break;
 		index -= size - 1;
 	}
-	tramp_size = NACL_SIZE (80 + 32 * depth, 64 + 16 * depth);
+	tramp_size = NACL_SIZE (64 + 16 * depth, 80 + 32 * depth);
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
@@ -1118,7 +1118,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	int buf_len;
 	gpointer *constants;
 
-        buf_len = NACL_SIZE (32, 24);
+        buf_len = NACL_SIZE (24, 32);
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
 

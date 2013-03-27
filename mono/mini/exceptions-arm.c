@@ -71,8 +71,6 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 #endif
 
 	/* move pc to PC */
-	ARM_LDR_IMM (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, pc));
-	ARM_STR_IMM (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_PC * sizeof (mgreg_t)));
 	code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, pc));
 	code = mono_arm_emit_str_imm12  (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_PC * sizeof (mgreg_t)));
 
@@ -104,7 +102,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	/* Ensure we complete the bundle. */
 	code = mono_arm_nacl_ensure_at_position (code, 0);
 #endif
-	g_assert ((code - start) < buf_size);
+        g_assert ((code - start) <= buf_size);
 	/* Commit code to the executable section for Native Client. */
 	nacl_global_codeman_validate (&start, code - start, &code);
 

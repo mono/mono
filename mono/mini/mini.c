@@ -3105,12 +3105,21 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 #endif
 		break;
 	case MONO_PATCH_INFO_METHOD:
+#if defined(__native_client_codegen__) && defined(USE_JUMP_TABLES)
+		/*
+		 * If we use jumptables, for recursive calls we cannot
+		 * avoid trampoline, as we not yet know where we will
+		 * be installed.
+		 */
+		target = mono_create_jit_trampoline_in_domain (domain, patch_info->data.method);
+#else
 		if (patch_info->data.method == method) {
 			target = code;
 		} else {
 			/* get the trampoline to the method from the domain */
 			target = mono_create_jit_trampoline_in_domain (domain, patch_info->data.method);
 		}
+#endif
 		break;
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *jump_table;
