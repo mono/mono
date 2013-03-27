@@ -60,9 +60,9 @@ switch: src1:i len:12 nacl:32
 seq_point: len:38 clob:c
 
 throw: src1:i len:24 nacl:32
-rethrow: src1:i len:20 nacl:32
-start_handler: len:20
-endfinally: len:20 nacl:24
+rethrow: src1:i len:20 nacl:36
+start_handler: len:20 nacl:24
+endfinally: len:20 nacl:32
 call_handler: len:16 clob:c
 endfilter: src1:i len:16
 nacl_gc_safe_point: clob:c len:0 nacl:48
@@ -77,21 +77,21 @@ localloc: dest:i src1:i len:60
 compare: src1:i src2:i len:4
 compare_imm: src1:i len:12
 fcompare: src1:f src2:f len:12
-oparglist: src1:i len:12
+oparglist: src1:i len:12 nacl:16
 setlret: src1:i src2:i len:12
 checkthis: src1:b len:4
 call: dest:a clob:c len:20 nacl:36
-call_reg: dest:a src1:i len:8 clob:c nacl:16
+call_reg: dest:a src1:i len:8 clob:c nacl:20
 call_membase: dest:a src1:b len:24 clob:c nacl:40
 voidcall: len:20 clob:c nacl:36
 voidcall_reg: src1:i len:8 clob:c nacl:20
 voidcall_membase: src1:b len:16 clob:c nacl:40
-fcall: dest:g len:28 clob:c nacl:40
+fcall: dest:g len:28 clob:c nacl:44
 fcall_reg: dest:g src1:i len:16 clob:c
-fcall_membase: dest:g src1:b len:24 clob:c nacl:28
+fcall_membase: dest:g src1:b len:24 clob:c nacl:36
 lcall: dest:l len:20 clob:c nacl:36
 lcall_reg: dest:l src1:i len:8 clob:c
-lcall_membase: dest:l src1:b len:16 clob:c nacl:24
+lcall_membase: dest:l src1:b len:16 clob:c nacl:32
 vcall: len:20 clob:c
 vcall_reg: src1:i len:8 clob:c
 vcall_membase: src1:b len:16 clob:c
@@ -102,36 +102,36 @@ label: len:0
 store_membase_imm: dest:b len:20
 store_membase_reg: dest:b src1:i len:20
 storei1_membase_imm: dest:b len:20
-storei1_membase_reg: dest:b src1:i len:12
+storei1_membase_reg: dest:b src1:i len:12 nacl:20
 storei2_membase_imm: dest:b len:20
-storei2_membase_reg: dest:b src1:i len:12
+storei2_membase_reg: dest:b src1:i len:12 nacl:20
 storei4_membase_imm: dest:b len:20
 storei4_membase_reg: dest:b src1:i len:20
 storei8_membase_imm: dest:b 
 storei8_membase_reg: dest:b src1:i 
-storer4_membase_reg: dest:b src1:f len:12
+storer4_membase_reg: dest:b src1:f len:12 nacl:16
 storer8_membase_reg: dest:b src1:f len:24
-store_memindex: dest:b src1:i src2:i len:4
+store_memindex: dest:b src1:i src2:i len:4  nacl:16
 storei1_memindex: dest:b src1:i src2:i len:4
 storei2_memindex: dest:b src1:i src2:i len:4
 storei4_memindex: dest:b src1:i src2:i len:4
 load_membase: dest:i src1:b len:20
-loadi1_membase: dest:i src1:b len:4 nacl:12
-loadu1_membase: dest:i src1:b len:4 nacl:12
-loadi2_membase: dest:i src1:b len:4 nacl:12
-loadu2_membase: dest:i src1:b len:4 nacl:12
-loadi4_membase: dest:i src1:b len:4 nacl:12
-loadu4_membase: dest:i src1:b len:4 nacl:12
-loadi8_membase: dest:i src1:b nacl:12
+loadi1_membase: dest:i src1:b len:4 nacl:12 nacl:12
+loadu1_membase: dest:i src1:b len:4 nacl:12 nacl:12
+loadi2_membase: dest:i src1:b len:4 nacl:12 nacl:12
+loadu2_membase: dest:i src1:b len:4 nacl:12 nacl:12
+loadi4_membase: dest:i src1:b len:4 nacl:12 nacl:12
+loadu4_membase: dest:i src1:b len:4 nacl:12 nacl:12
+loadi8_membase: dest:i src1:b nacl:12 nacl:12
 loadr4_membase: dest:f src1:b len:12 nacl:16
 loadr8_membase: dest:f src1:b len:24
-load_memindex: dest:i src1:b src2:i len:4
-loadi1_memindex: dest:i src1:b src2:i len:4
-loadu1_memindex: dest:i src1:b src2:i len:4
-loadi2_memindex: dest:i src1:b src2:i len:4
-loadu2_memindex: dest:i src1:b src2:i len:4
-loadi4_memindex: dest:i src1:b src2:i len:4
-loadu4_memindex: dest:i src1:b src2:i len:4
+load_memindex: dest:i src1:b src2:i len:4 nacl:16
+loadi1_memindex: dest:i src1:b src2:i len:4 nacl:16
+loadu1_memindex: dest:i src1:b src2:i len:4 nacl:16
+loadi2_memindex: dest:i src1:b src2:i len:4 nacl:16
+loadu2_memindex: dest:i src1:b src2:i len:4 nacl:16
+loadi4_memindex: dest:i src1:b src2:i len:4 nacl:16
+loadu4_memindex: dest:i src1:b src2:i len:4 nacl:16
 loadu4_mem: dest:i len:8
 move: dest:i src1:i len:4
 fmove: dest:f src1:f len:4
@@ -309,11 +309,11 @@ cond_exc_inc: len:16
 icompare: src1:i src2:i len:4
 icompare_imm: src1:i len:12
 
-long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
+long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36 nacl:44
 
-vcall2: len:20 clob:c nacl:36
-vcall2_reg: src1:i len:8 clob:c
-vcall2_membase: src1:b len:12 clob:c nacl:24
+vcall2: len:20 clob:c nacl:36 nacl:36
+vcall2_reg: src1:i len:8 clob:c nacl:20
+vcall2_membase: src1:b len:12 clob:c nacl:32
 dyn_call: src1:i src2:i len:120 clob:c
 
 # This is different from the original JIT opcodes

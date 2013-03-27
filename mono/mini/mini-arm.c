@@ -1182,7 +1182,7 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 	int size;
 
 	if (has_target) {
-		size = NACL_SIZE (32, 12);
+		size = NACL_SIZE (12, 32);
 		start = code = mono_global_codeman_reserve (size);
 
 		/* Replace the this argument with the target */
@@ -1197,7 +1197,7 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 	} else {
 		int i;
 
-		size = NACL_SIZE (16, 8);
+		size = NACL_SIZE (8, 16);
 		size += param_count * 4;
 #ifdef __native_client_codegen__
 		size = NACL_BUNDLE_ALIGN_UP(size);
@@ -4347,10 +4347,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		switch (ins->opcode) {
 		case OP_MEMORY_BARRIER:
+#ifdef __native_client_codegen__
+			/* emit full system DSB */
+			ARM_EMIT(code, 0xf57ff04f);
+#else
 			if (v6_supported) {
 				ARM_MOV_REG_IMM8 (code, ARMREG_R0, 0);
 				ARM_MCR (code, 15, 0, ARMREG_R0, 7, 10, 5);
 			}
+#endif
 			break;
 		case OP_TLS_GET:
 #ifdef HAVE_AEABI_READ_TP
@@ -4377,33 +4382,33 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_STOREI2_MEMBASE_IMM:
 			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_imm & 0xFFFF);
-                        code = mono_arm_emit_strh_imm8 (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_strh_imm8 (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_STORE_MEMBASE_IMM:
 		case OP_STOREI4_MEMBASE_IMM:
 			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_imm);
-                        code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_STOREI1_MEMBASE_REG:
-                        code = mono_arm_emit_strb_imm8 (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_strb_imm (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset, ARMREG_IP);
 			break;
 		case OP_STOREI2_MEMBASE_REG:
-                        code = mono_arm_emit_strh_imm8 (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_strh_imm8 (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_STORE_MEMBASE_REG:
 		case OP_STOREI4_MEMBASE_REG:
 			/* this case is special, since it happens for spill code after lowering has been called */
-                        code = mono_arm_emit_str_imm (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset, ARMREG_LR);
+			code = mono_arm_emit_str_imm (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_STOREI1_MEMINDEX:
-                        code = mono_arm_emit_strb_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
+			code = mono_arm_emit_strb_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
 			break;
 		case OP_STOREI2_MEMINDEX:
 			code = mono_arm_emit_strh_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
 			break;
 		case OP_STORE_MEMINDEX:
 		case OP_STOREI4_MEMINDEX:
-                        code = mono_arm_emit_str_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
+			code = mono_arm_emit_str_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
 			break;
 		case OP_LOADU4_MEM:
 			g_assert_not_reached ();
@@ -4411,37 +4416,37 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LOAD_MEMINDEX:
 		case OP_LOADI4_MEMINDEX:
 		case OP_LOADU4_MEMINDEX:
-                        code = mono_arm_emit_ldr_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldr_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADI1_MEMINDEX:
-                        code = mono_arm_emit_ldrsb_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrsb_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADU1_MEMINDEX:
-                        code = mono_arm_emit_ldrb_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrb_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADI2_MEMINDEX:
-                        code = mono_arm_emit_ldrsh_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrsh_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADU2_MEMINDEX:
-                        code = mono_arm_emit_ldrh_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrh_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI4_MEMBASE:
 		case OP_LOADU4_MEMBASE:
 			/* this case is special, since it happens for spill code after lowering has been called */
-                        code =  mono_arm_emit_ldr_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
+			code =  mono_arm_emit_ldr_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADI1_MEMBASE:
 			code = mono_arm_emit_ldrsb_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
 		case OP_LOADU1_MEMBASE:
-                        code = mono_arm_emit_ldrb_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrb_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
 		case OP_LOADU2_MEMBASE:
-                        code = mono_arm_emit_ldrh_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrh_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
 		case OP_LOADI2_MEMBASE:
-                        code = mono_arm_emit_ldrsh_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrsh_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
 		case OP_ICONV_TO_I1:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 24);
@@ -4985,7 +4990,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				branch_to_cond = code;
 				ARM_B (code, 0);
 				start_loop = code;
+#ifdef __native_client_codegen__
+				/* pretty inefficeint way to zero out region */
+				ARM_ADD_REG_REG (code, ARMREG_IP, ARMREG_SP, ins->dreg);
+				ARM_NACL_MASK_REG_ALIGN (code, ARMREG_IP)
+				ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, 0);
+#else
 				ARM_STR_REG_REG (code, ARMREG_LR, ARMREG_SP, ins->dreg);
+#endif
 				arm_patch (branch_to_cond, code);
 				/* decrement by 4 and set flags */
 				ARM_SUBS_REG_IMM8 (code, ins->dreg, ins->dreg, sizeof (mgreg_t));
@@ -6899,9 +6911,14 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 #ifndef USE_JUMP_TABLES
 	g_free (constant_pool_starts);
 #endif
+
+#ifdef __native_client_codegen__
+        /* Ensure we complete the bundle. */
+        code = mono_arm_nacl_ensure_at_position (code, 0);
+#endif
 	g_assert (DISTANCE (start, code) <= size);
-	nacl_domain_code_validate (domain, &start, size, (guint8 **)&code);
-	mono_arch_flush_icache ((guint8*)start, size);
+	nacl_domain_code_validate (domain, &start, (guint8*)code - (guint8*)start, (guint8 **)&code);
+	mono_arch_flush_icache ((guint8*)start, (guint8*)code - (guint8*)start);
 	mono_stats.imt_thunks_size += code - start;
 
 	return start;
