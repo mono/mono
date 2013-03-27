@@ -22,6 +22,74 @@
 
 G_BEGIN_DECLS
 
+int
+Mono_Posix_FromStat (struct Mono_Posix_Stat *from, void *_to)
+{
+	struct stat *to = _to;
+	memset (to, 0, sizeof(*to));
+
+	to->st_dev         = from->st_dev;
+	to->st_ino         = from->st_ino;
+	if (Mono_Posix_FromFilePermissions (from->st_mode, &to->st_mode) != 0) {
+		return -1;
+	}
+	to->st_nlink       = from->st_nlink;
+	to->st_uid         = from->st_uid;
+	to->st_gid         = from->st_gid;
+	to->st_rdev        = from->st_rdev;
+	to->st_size        = from->st_size;
+	to->st_blksize     = from->st_blksize;
+	to->st_blocks      = from->st_blocks;
+	to->st_atime       = from->st_atime_;
+	to->st_mtime       = from->st_mtime_;
+	to->st_ctime       = from->st_ctime_;
+#ifdef HAVE_STRUCT_STAT_ST_ATIM
+	to->st_atim.tv_nsec = from->st_atime_nsec;
+#endif
+#ifdef HAVE_STRUCT_STAT_ST_MTIM
+	to->st_mtim.tv_nsec = from->st_mtime_nsec;
+#endif
+#ifdef HAVE_STRUCT_STAT_ST_CTIM
+	to->st_ctim.tv_nsec = from->st_ctime_nsec;
+#endif
+
+	return 0;
+}
+
+int
+Mono_Posix_ToStat (void *_from, struct Mono_Posix_Stat *to)
+{
+	struct stat *from = _from;
+	memset (to, 0, sizeof(*to));
+
+	to->st_dev        = from->st_dev;
+	to->st_ino        = from->st_ino;
+	if (Mono_Posix_ToFilePermissions (from->st_mode, &to->st_mode) != 0) {
+		return -1;
+	}
+	to->st_nlink      = from->st_nlink;
+	to->st_uid        = from->st_uid;
+	to->st_gid        = from->st_gid;
+	to->st_rdev       = from->st_rdev;
+	to->st_size       = from->st_size;
+	to->st_blksize    = from->st_blksize;
+	to->st_blocks     = from->st_blocks;
+	to->st_atime_     = from->st_atime;
+	to->st_mtime_     = from->st_mtime;
+	to->st_ctime_     = from->st_ctime;
+#ifdef HAVE_STRUCT_STAT_ST_ATIM
+	to->st_atime_nsec = from->st_atim.tv_nsec;
+#endif
+#ifdef HAVE_STRUCT_STAT_ST_MTIM
+	to->st_mtime_nsec = from->st_mtim.tv_nsec;
+#endif
+#ifdef HAVE_STRUCT_STAT_ST_CTIM
+	to->st_ctime_nsec = from->st_ctim.tv_nsec;
+#endif
+
+	return 0;
+}
+
 gint32
 Mono_Posix_Syscall_stat (const char *file_name, struct Mono_Posix_Stat *buf)
 {
