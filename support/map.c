@@ -45,6 +45,9 @@
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif /* ndef HAVE_SYS_MMAN_H */
+#ifdef HAVE_SYS_UIO_H
+#include <sys/uio.h>
+#endif /* ndef HAVE_SYS_UIO_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif /* ndef HAVE_UNISTD_H */
