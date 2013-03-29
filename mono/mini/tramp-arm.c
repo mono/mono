@@ -721,7 +721,14 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 	code += 4;
 #endif
 
-	g_assert ((code - start) <= buf_len);
+#ifdef __native_client_codegen__
+	/* Ensure we complete the bundle. */
+	code = mono_arm_nacl_ensure_at_position (code, 0);
+#endif
+        g_assert ((code - start) <= buf_len);
+
+	/* Commit code to the executable section for Native Client. */
+	nacl_domain_code_validate (domain, &start, code - start, &code);
 
 	mono_arch_flush_icache (start, code - start);
 
@@ -1144,12 +1151,12 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 #endif
 
 #ifdef __native_client_codegen__
-        /* Ensure we complete the bundle. */
-        code = mono_arm_nacl_ensure_at_position (code, 0);
+	/* Ensure we complete the bundle. */
+	code = mono_arm_nacl_ensure_at_position (code, 0);
 #endif
 	g_assert ((code - start) <= buf_len);
 
-	nacl_domain_code_validate (domain, &start, buf_len, &code);
+	nacl_domain_code_validate (domain, &start, code - start, &code);
 	mono_arch_flush_icache (start, code - start);
 
 	return start;
