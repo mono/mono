@@ -192,7 +192,9 @@ guint8* mono_arm_emit_flds_imm8 (guint8* code, int dreg, ARMReg basereg, int off
 guint8* mono_arm_emit_fldd_imm8 (guint8* code, int dreg, ARMReg basereg, int offset);
 guint8* mono_arm_emit_ldr_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
 guint8* mono_arm_emit_ldrh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_ldsh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
 guint8* mono_arm_emit_ldrb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
+guint8* mono_arm_emit_ldrsb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
 guint8* mono_arm_emit_flds_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
 guint8* mono_arm_emit_fldd_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg);
 

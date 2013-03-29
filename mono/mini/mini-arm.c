@@ -427,6 +427,25 @@ mono_arm_emit_ldrh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, A
 }
 
 guint8*
+mono_arm_emit_ldrsh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm8 (offset))
+		return mono_arm_emit_ldrsh_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_LDRSH_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_LDRSH_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
 mono_arm_emit_ldrb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
 {
 	if (arm_is_imm8 (offset))
@@ -440,6 +459,25 @@ mono_arm_emit_ldrb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, A
 		ARM_LDRB_IMM (code, dreg, scratch_reg, 0);
 # else
 		ARM_LDRB_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrsb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm8 (offset))
+		return mono_arm_emit_ldrsb_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_LDRSB_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_LDRSB_REG_REG (code, dreg, basereg, scratch_reg);
 # endif
 	}
 	return code;
@@ -4437,16 +4475,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code =  mono_arm_emit_ldr_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADI1_MEMBASE:
-			code = mono_arm_emit_ldrsb_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrsb_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADU1_MEMBASE:
-			code = mono_arm_emit_ldrb_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrb_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADU2_MEMBASE:
-			code = mono_arm_emit_ldrh_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrh_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADI2_MEMBASE:
-			code = mono_arm_emit_ldrsh_imm8 (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrsh_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_ICONV_TO_I1:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 24);
@@ -4993,8 +5031,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #ifdef __native_client_codegen__
 				/* pretty inefficeint way to zero out region */
 				ARM_ADD_REG_REG (code, ARMREG_IP, ARMREG_SP, ins->dreg);
-				ARM_NACL_MASK_REG_ALIGN (code, ARMREG_IP)
-				ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, 0);
+				code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ARMREG_IP, 0);
 #else
 				ARM_STR_REG_REG (code, ARMREG_LR, ARMREG_SP, ins->dreg);
 #endif
@@ -6249,7 +6286,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		ARM_POP (code, regmask); 
 #endif
 	} else {
-		code = mono_arm_adjust_stack_imm (code, cfg->stack_usage);
+		code = mono_arm_adjust_stack_reg_imm (code, cfg->frame_reg, cfg->stack_usage);
 		if (iphone_abi) {
 			/* Restore saved gregs */
 			if (cfg->used_int_regs)

@@ -138,7 +138,9 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	/* save all the regs on the stack */
 	ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_SP);
 #ifdef __native_client_codegen__
-	ARM_PUSH (code, 0x5df0); /* r4-r8, r10, r11, ip, lr */
+	/* r4-r8, r10, r11, ip, lr */
+	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK2);
+	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK1);
 #else
 	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK);
 #endif
@@ -162,7 +164,8 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_R2);
 #ifdef __native_client_codegen__
 	code = mono_arm_emit_call_reg (code, ARMREG_R1);
-	ARM_POP (code, 0x5df0);  /* r4-r8, r10, r11, ip, lr */
+	ARM_POP (code, MONO_ARM_REGSAVE_MASK1);
+	ARM_POP (code, MONO_ARM_REGSAVE_MASK2);
 	/* IP has SP, LR has PC. */
 	code = mono_arm_adjust_stack_reg_imm (code, ARMREG_IP, 0);
 	code = mono_arm_emit_bx (code, ARMREG_LR, 0);

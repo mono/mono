@@ -73,7 +73,7 @@ cgt: dest:i len:12
 cgt.un: dest:i len:12
 clt: dest:i len:12
 clt.un: dest:i len:12
-localloc: dest:i src1:i len:60
+localloc: dest:i src1:i len:68
 compare: src1:i src2:i len:4
 compare_imm: src1:i len:12
 fcompare: src1:f src2:f len:12
@@ -87,10 +87,10 @@ voidcall: len:20 clob:c nacl:36
 voidcall_reg: src1:i len:8 clob:c nacl:20
 voidcall_membase: src1:b len:16 clob:c nacl:40
 fcall: dest:g len:28 clob:c nacl:44
-fcall_reg: dest:g src1:i len:16 clob:c
+fcall_reg: dest:g src1:i len:16 clob:c nacl:24
 fcall_membase: dest:g src1:b len:24 clob:c nacl:36
 lcall: dest:l len:20 clob:c nacl:36
-lcall_reg: dest:l src1:i len:8 clob:c
+lcall_reg: dest:l src1:i len:8 clob:c nacl:16
 lcall_membase: dest:l src1:b len:16 clob:c nacl:32
 vcall: len:20 clob:c
 vcall_reg: src1:i len:8 clob:c
@@ -116,14 +116,14 @@ storei1_memindex: dest:b src1:i src2:i len:4
 storei2_memindex: dest:b src1:i src2:i len:4
 storei4_memindex: dest:b src1:i src2:i len:4
 load_membase: dest:i src1:b len:20
-loadi1_membase: dest:i src1:b len:4 nacl:12 nacl:12
-loadu1_membase: dest:i src1:b len:4 nacl:12 nacl:12
-loadi2_membase: dest:i src1:b len:4 nacl:12 nacl:12
-loadu2_membase: dest:i src1:b len:4 nacl:12 nacl:12
-loadi4_membase: dest:i src1:b len:4 nacl:12 nacl:12
-loadu4_membase: dest:i src1:b len:4 nacl:12 nacl:12
-loadi8_membase: dest:i src1:b nacl:12 nacl:12
-loadr4_membase: dest:f src1:b len:12 nacl:16
+loadi1_membase: dest:i src1:b len:4 nacl:20
+loadu1_membase: dest:i src1:b len:4 nacl:20
+loadi2_membase: dest:i src1:b len:4 nacl:20
+loadu2_membase: dest:i src1:b len:4 nacl:20
+loadi4_membase: dest:i src1:b len:4 nacl:20
+loadu4_membase: dest:i src1:b len:4 nacl:20
+loadi8_membase: dest:i src1:b nacl:20
+loadr4_membase: dest:f src1:b len:12 nacl:20
 loadr8_membase: dest:f src1:b len:24
 load_memindex: dest:i src1:b src2:i len:4 nacl:16
 loadi1_memindex: dest:i src1:b src2:i len:4 nacl:16
