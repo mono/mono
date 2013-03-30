@@ -1342,6 +1342,8 @@ method_header
 
 		current_type.AddMember (method);
 
+		async_block = (method.ModFlags & Modifiers.ASYNC) != 0;
+
 		if ($11 != null)
 			method.SetConstraints ((List<Constraints>) $11);
 
