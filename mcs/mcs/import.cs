@@ -1877,33 +1877,36 @@ namespace Mono.CSharp
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
+
+			var report = ctx.Module.Compiler.Report;
+
 			for (int i = 0; i < types.Count; ++i) {
 				var t = types [i];
 
 				//
-				// Report missing types only once per type
+				// Report missing types only once
 				//
-				if (i > 0 && types.IndexOf (t) < i)
+				if (report.Printer.MissingTypeReported (t.MemberDefinition))
 					continue;
 
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
-					ctx.Module.Compiler.Report.Error (1683, loc,
+					report.Error (1683, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
 				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
 					if (t.MemberDefinition.IsTypeForwarder) {
-						ctx.Module.Compiler.Report.Error (1070, loc,
+						report.Error (1070, loc,
 							"The type `{0}' has been forwarded to an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
 							name, t.MemberDefinition.DeclaringAssembly.FullName);
 					} else {
-						ctx.Module.Compiler.Report.Error (12, loc,
+						report.Error (12, loc,
 							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
 							name, t.MemberDefinition.DeclaringAssembly.FullName);
 					}
 				} else {
-					ctx.Module.Compiler.Report.Error (1684, loc,
+					report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				}
