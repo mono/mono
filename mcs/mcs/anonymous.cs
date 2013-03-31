@@ -1001,12 +1001,12 @@ namespace Mono.CSharp {
 					return delegate_type;
 
 				ec.Report.Error (835, loc, "Cannot convert `{0}' to an expression tree of non-delegate type `{1}'",
-					GetSignatureForError (), TypeManager.CSharpName (delegate_type));
+					GetSignatureForError (), delegate_type.GetSignatureForError ());
 				return null;
 			}
 
 			ec.Report.Error (1660, loc, "Cannot convert `{0}' to non-delegate type `{1}'",
-				      GetSignatureForError (), TypeManager.CSharpName (delegate_type));
+				      GetSignatureForError (), delegate_type.GetSignatureForError ());
 			return null;
 		}
 
@@ -1018,7 +1018,7 @@ namespace Mono.CSharp {
 			if (!ec.IsInProbingMode)
 				ec.Report.Error (1661, loc,
 					"Cannot convert `{0}' to delegate type `{1}' since there is a parameter mismatch",
-					GetSignatureForError (), TypeManager.CSharpName (delegate_type));
+					GetSignatureForError (), delegate_type.GetSignatureForError ());
 
 			return false;
 		}
@@ -1030,7 +1030,7 @@ namespace Mono.CSharp {
 					return false;
 				
 				ec.Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
-					      TypeManager.CSharpName (delegate_type), Parameters.Count.ToString ());
+					      delegate_type.GetSignatureForError (), Parameters.Count.ToString ());
 				return false;
 			}
 
@@ -1070,8 +1070,8 @@ namespace Mono.CSharp {
 					
 					ec.Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
 						      (i+1).ToString (),
-						      TypeManager.CSharpName (Parameters.Types [i]),
-						      TypeManager.CSharpName (invoke_pd.Types [i]));
+						      Parameters.Types [i].GetSignatureForError (),
+						      invoke_pd.Types [i].GetSignatureForError ());
 					error = true;
 				}
 			}
@@ -1375,7 +1375,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				b = b.ConvertToAsyncTask (ec, ec.CurrentMemberDefinition.Parent.PartialContainer, p, return_type, loc);
+				b = b.ConvertToAsyncTask (ec, ec.CurrentMemberDefinition.Parent.PartialContainer, p, return_type, delegate_type, loc);
 			}
 
 			return CompatibleMethodFactory (return_type ?? InternalType.ErrorType, delegate_type, p, b);
@@ -1864,7 +1864,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.CSharpName (type);
+			return type.GetSignatureForError ();
 		}
 	}
 

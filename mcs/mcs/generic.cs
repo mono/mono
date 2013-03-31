@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 				if (type.IsSealed || !type.IsClass) {
 					context.Module.Compiler.Report.Error (701, loc,
 						"`{0}' is not a valid constraint. A constraint must be an interface, a non-sealed class or a type parameter",
-						TypeManager.CSharpName (type));
+						type.GetSignatureForError ());
 					continue;
 				}
 
@@ -2260,7 +2260,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.CSharpName (type);
+			return type.GetSignatureForError ();
 		}
 
 		public override TypeSpec ResolveAsType (IMemberContext mc)
@@ -2408,7 +2408,7 @@ namespace Mono.CSharp {
 				if (mc != null) {
 					mc.Module.Compiler.Report.Error (452, loc,
 						"The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
-						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
 
 				return false;
@@ -2418,7 +2418,7 @@ namespace Mono.CSharp {
 				if (mc != null) {
 					mc.Module.Compiler.Report.Error (453, loc,
 						"The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'",
-						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
 
 				return false;
@@ -2479,7 +2479,7 @@ namespace Mono.CSharp {
 					mc.Module.Compiler.Report.SymbolRelatedToPreviousError (atype);
 					mc.Module.Compiler.Report.Error (310, loc,
 						"The type `{0}' must have a public parameterless constructor in order to use it as parameter `{1}' in the generic type or method `{2}'",
-						TypeManager.CSharpName (atype), tparam.GetSignatureForError (), context.GetSignatureForError ());
+						atype.GetSignatureForError (), tparam.GetSignatureForError (), context.GetSignatureForError ());
 				}
 				return false;
 			}

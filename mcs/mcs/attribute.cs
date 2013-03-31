@@ -265,7 +265,7 @@ namespace Mono.CSharp {
 		public void Error_AttributeEmitError (string inner)
 		{
 			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'",
-				      TypeManager.CSharpName (Type), inner);
+				      Type.GetSignatureForError (), inner);
 		}
 
 		public void Error_InvalidSecurityParent ()
@@ -368,7 +368,7 @@ namespace Mono.CSharp {
 		public string GetSignatureForError ()
 		{
 			if (Type != null)
-				return TypeManager.CSharpName (Type);
+				return Type.GetSignatureForError ();
 
 			return expression.GetSignatureForError ();
 		}
@@ -449,7 +449,7 @@ namespace Mono.CSharp {
 
 			ObsoleteAttribute obsolete_attr = Type.GetAttributeObsolete ();
 			if (obsolete_attr != null) {
-				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location, Report);
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, Type.GetSignatureForError (), Location, Report);
 			}
 
 			ResolveContext rc = null;

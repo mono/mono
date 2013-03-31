@@ -5366,7 +5366,6 @@ statement_expression
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
 			var expr = $1 as Expression;
-			expr.Error_InvalidExpressionStatement (report);
 			$$ = new StatementErrorExpression (expr);
 		} else {
 			$$ = new StatementExpression (s);

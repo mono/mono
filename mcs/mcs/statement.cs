@@ -706,12 +706,19 @@ namespace Mono.CSharp {
 		public StatementErrorExpression (Expression expr)
 		{
 			this.expr = expr;
+			this.loc = expr.StartLocation;
 		}
 
 		public Expression Expr {
 			get {
 				return expr;
 			}
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			expr.Error_InvalidExpressionStatement (bc);
+			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -903,9 +910,18 @@ namespace Mono.CSharp {
 							if (this is ContextualReturn)
 								return true;
 
-							ec.Report.Error (1997, loc,
-								"`{0}': A return keyword must not be followed by an expression when async method returns `Task'. Consider using `Task<T>' return type",
-								ec.GetSignatureForError ());
+							// Same error code as .NET but better error message
+							if (async_block.DelegateType != null) {
+								ec.Report.Error (1997, loc,
+									"`{0}': A return keyword must not be followed by an expression when async delegate returns `Task'. Consider using `Task<T>' return type",
+									async_block.DelegateType.GetSignatureForError ());
+							} else {
+								ec.Report.Error (1997, loc,
+									"`{0}': A return keyword must not be followed by an expression when async method returns `Task'. Consider using `Task<T>' return type",
+									ec.GetSignatureForError ());
+
+							}
+
 							return false;
 						}
 
@@ -1252,7 +1268,7 @@ namespace Mono.CSharp {
 				if (!Convert.ImplicitStandardConversionExists (c, type))
 					ec.Report.Warning (469, 2, loc,
 						"The `goto case' value is not implicitly convertible to type `{0}'",
-						TypeManager.CSharpName (type));
+						type.GetSignatureForError ());
 
 			}
 
@@ -1607,7 +1623,7 @@ namespace Mono.CSharp {
 			bool eval_global = bc.Module.Compiler.Settings.StatementMode && bc.CurrentBlock is ToplevelBlock;
 			if (eval_global) {
 				CreateEvaluatorVariable (bc, li);
-			} else {
+			} else if (type != InternalType.ErrorType) {
 				li.PrepareForFlowAnalysis (bc);
 			}
 
@@ -1621,7 +1637,7 @@ namespace Mono.CSharp {
 					d.Variable.Type = li.Type;
 					if (eval_global) {
 						CreateEvaluatorVariable (bc, d.Variable);
-					} else {
+					} else if (type != InternalType.ErrorType) {
 						d.Variable.PrepareForFlowAnalysis (bc);
 					}
 
@@ -3115,7 +3131,7 @@ namespace Mono.CSharp {
 			return tlb;
 		}
 
-		public ParametersBlock ConvertToAsyncTask (IMemberContext context, TypeDefinition host, ParametersCompiled parameters, TypeSpec returnType, Location loc)
+		public ParametersBlock ConvertToAsyncTask (IMemberContext context, TypeDefinition host, ParametersCompiled parameters, TypeSpec returnType, TypeSpec delegateType, Location loc)
 		{
 			for (int i = 0; i < parameters.Count; i++) {
 				Parameter p = parameters[i];
@@ -3147,6 +3163,7 @@ namespace Mono.CSharp {
 			var block_type = host.Module.Compiler.BuiltinTypes.Void;
 			var initializer = new AsyncInitializer (this, host, block_type);
 			initializer.Type = block_type;
+			initializer.DelegateType = delegateType;
 
 			var stateMachine = new AsyncTaskStorey (this, context, initializer, returnType);
 
@@ -4116,10 +4133,13 @@ namespace Mono.CSharp {
 				new_expr = SwitchGoverningType (ec, unwrap);
 			}
 
-			if (new_expr == null){
-				ec.Report.Error (151, loc,
-					"A switch expression of type `{0}' cannot be converted to an integral type, bool, char, string, enum or nullable type",
-					TypeManager.CSharpName (Expr.Type));
+			if (new_expr == null) {
+				if (Expr.Type != InternalType.ErrorType) {
+					ec.Report.Error (151, loc,
+						"A switch expression of type `{0}' cannot be converted to an integral type, bool, char, string, enum or nullable type",
+						Expr.Type.GetSignatureForError ());
+				}
+
 				return false;
 			}
 

@@ -1208,7 +1208,7 @@ namespace Mono.CSharp {
 						Report.Error (1983, Location, "The return type of an async method must be void, Task, or Task<T>");
 					}
 
-					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, Location);
+					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, null, Location);
 					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 				}
 
@@ -1329,7 +1329,7 @@ namespace Mono.CSharp {
 
 		public static void Error1599 (Location loc, TypeSpec t, Report Report)
 		{
-			Report.Error (1599, loc, "Method or delegate cannot return type `{0}'", TypeManager.CSharpName (t));
+			Report.Error (1599, loc, "Method or delegate cannot return type `{0}'", t.GetSignatureForError ());
 		}
 
 		protected override bool ResolveMemberType ()
@@ -1896,13 +1896,13 @@ namespace Mono.CSharp {
 						if (member is PropertyBase) {
 							container.Compiler.Report.Error (550, method.Location,
 								"`{0}' is an accessor not found in interface member `{1}{2}'",
-									  method.GetSignatureForError (), TypeManager.CSharpName (member.InterfaceType),
+									  method.GetSignatureForError (), member.InterfaceType.GetSignatureForError (),
 									  member.GetSignatureForError ().Substring (member.GetSignatureForError ().LastIndexOf ('.')));
 
 						} else {
 							container.Compiler.Report.Error (539, method.Location,
 									  "`{0}.{1}' in explicit interface declaration is not a member of interface",
-									  TypeManager.CSharpName (member.InterfaceType), member.ShortName);
+									  member.InterfaceType.GetSignatureForError (), member.ShortName);
 						}
 						return false;
 					}
@@ -1910,7 +1910,7 @@ namespace Mono.CSharp {
 						container.Compiler.Report.SymbolRelatedToPreviousError (implementing);
 						container.Compiler.Report.Error (683, method.Location,
 							"`{0}' explicit method implementation cannot implement `{1}' because it is an accessor",
-							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
+							member.GetSignatureForError (), implementing.GetSignatureForError ());
 						return false;
 					}
 				} else {
@@ -2302,7 +2302,7 @@ namespace Mono.CSharp {
 			if (a.Type == pa.CLSCompliant || a.Type == pa.Obsolete || a.Type == pa.Conditional) {
 				Report.Error (1667, a.Location,
 					"Attribute `{0}' is not valid on property or event accessors. It is valid on `{1}' declarations only",
-					TypeManager.CSharpName (a.Type), a.GetValidTargets ());
+					a.Type.GetSignatureForError (), a.GetValidTargets ());
 				return;
 			}
 

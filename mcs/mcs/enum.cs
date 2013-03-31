@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 			case BuiltinTypeSpec.Type.ULong:
 			case BuiltinTypeSpec.Type.UShort:
 				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant",
-					GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+					GetSignatureForError (), UnderlyingType.GetSignatureForError ());
 				break;
 			}
 

@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (partype);
 					Report.Error (59, Location,
 						"Inconsistent accessibility: parameter type `{0}' is less accessible than delegate `{1}'",
-						TypeManager.CSharpName (partype), GetSignatureForError ());
+						partype.GetSignatureForError (), GetSignatureForError ());
 				}
 			}
 
@@ -169,7 +169,7 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (ret_type);
 				Report.Error (58, Location,
 						  "Inconsistent accessibility: return type `" +
-						  TypeManager.CSharpName (ret_type) + "' is less " +
+						  ret_type.GetSignatureForError () + "' is less " +
 						  "accessible than delegate `" + GetSignatureForError () + "'");
 				return false;
 			}
@@ -522,7 +522,7 @@ namespace Mono.CSharp {
 				TypeSpec e_type = emg.ExtensionExpression.Type;
 				if (TypeSpec.IsValueType (e_type)) {
 					ec.Report.Error (1113, loc, "Extension method `{0}' of value type `{1}' cannot be used to create delegates",
-						delegate_method.GetSignatureForError (), TypeManager.CSharpName (e_type));
+						delegate_method.GetSignatureForError (), e_type.GetSignatureForError ());
 				}
 			}
 
@@ -586,8 +586,8 @@ namespace Mono.CSharp {
 			ec.Report.SymbolRelatedToPreviousError (method);
 			if (ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
 				ec.Report.Error (410, loc, "A method or delegate `{0} {1}' parameters and return type must be same as delegate `{2} {3}' parameters and return type",
-					TypeManager.CSharpName (method.ReturnType), member_name,
-					TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
+					method.ReturnType.GetSignatureForError (), member_name,
+					invoke_method.ReturnType.GetSignatureForError (), Delegate.FullDelegateDesc (invoke_method));
 				return;
 			}
 
@@ -599,7 +599,7 @@ namespace Mono.CSharp {
 
 			ec.Report.Error (407, loc, "A method or delegate `{0} {1}' return type does not match delegate `{2} {3}' return type",
 				return_type.GetSignatureForError (), member_name,
-				TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
+				invoke_method.ReturnType.GetSignatureForError (), Delegate.FullDelegateDesc (invoke_method));
 		}
 
 		public static bool ImplicitStandardConversionExists (ResolveContext ec, MethodGroupExpr mg, TypeSpec target_type)

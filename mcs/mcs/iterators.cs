@@ -1118,7 +1118,7 @@ namespace Mono.CSharp
 					      "The body of `{0}' cannot be an iterator block " +
 					      "because `{1}' is not an iterator interface type",
 					      method.GetSignatureForError (),
-					      TypeManager.CSharpName (ret));
+					      ret.GetSignatureForError ());
 				return;
 			}
 
