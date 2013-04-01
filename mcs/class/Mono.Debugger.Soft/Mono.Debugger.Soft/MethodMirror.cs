@@ -240,13 +240,13 @@ namespace Mono.Debugger.Soft
 
 		public LocalVariable[] GetLocals () {
 			if (locals == null) {
-
 				LocalsInfo li = new LocalsInfo ();
 				try {
 					li = vm.conn.Method_GetLocalsInfo (id);
 				} catch (CommandException) {
-					throw new ArgumentException ("Method doesn't have a body.");
+					throw new AbsentInformationException ("Method doesn't have a body.");
 				}
+
 				// Add the arguments as well
 				var pi = vm.conn.Method_GetParamInfo (id);
 
