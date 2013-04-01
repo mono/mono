@@ -244,7 +244,7 @@ namespace Mono.Debugger.Soft
 				try {
 					li = vm.conn.Method_GetLocalsInfo (id);
 				} catch (CommandException) {
-					throw new AbsentInformationException ("Method doesn't have a body.");
+					throw new AbsentInformationException ();
 				}
 
 				// Add the arguments as well
