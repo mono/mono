@@ -2938,7 +2938,7 @@ namespace Mono.CSharp
 				// FIXME: resolve right expression as unreachable
 				// right.Resolve (ec);
 
-				ec.Report.Warning (429, 4, loc, "Unreachable expression code detected");
+				ec.Report.Warning (429, 4, right.StartLocation, "Unreachable expression code detected");
 				return left;
 			}
 
