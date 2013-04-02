@@ -285,17 +285,26 @@ is_match (gpointer ptr, int type, void *data)
 	}
 }
 
+static gboolean dump_all = FALSE;
+
 int
 main (int argc, char *argv[])
 {
 	int type;
 	void *data;
-	int num_nums = argc - 1;
+	int num_args = argc - 1;
+	int num_nums = 0;
 	int i;
-	long nums [num_nums];
+	long nums [num_args];
 
-	for (i = 0; i < num_nums; ++i)
-		nums [i] = strtoul (argv [i + 1], NULL, 16);
+	for (i = 0; i < num_args; ++i) {
+		char *arg = argv [i + 1];
+		if (!strcmp (arg, "--all")) {
+			dump_all = TRUE;
+		} else {
+			nums [num_nums++] = strtoul (arg, NULL, 16);
+		}
+	}
 
 	while ((type = read_entry (stdin, &data)) != SGEN_PROTOCOL_EOF) {
 		gboolean match = FALSE;
@@ -305,7 +314,9 @@ main (int argc, char *argv[])
 				break;
 			}
 		}
-		if (match)
+		if (dump_all)
+			printf (match ? "* " : "  ");
+		if (match || dump_all)
 			print_entry (type, data);
 		free (data);
 	}
