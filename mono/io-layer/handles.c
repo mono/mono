@@ -269,7 +269,9 @@ static void shared_init (void)
 	 * calls exit (eg if an X client loses the connection to its
 	 * server.)
 	 */
+#if !defined (DISABLE_SHARED_HANDLES)
 	g_atexit (handle_cleanup);
+#endif
 }
 
 static void _wapi_handle_init_shared (struct _WapiHandleShared *handle,

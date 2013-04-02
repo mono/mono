@@ -17,6 +17,9 @@ our @EXPORT_OK=qw(GetBB10NDK);
 
 our $NDK_ROOT_ENV = "BB10_NDK_ROOT";
 
+our $BASE_URL_NDK = "https://rhodecode.unity3d.com/unity-extra/BB10-SDK";
+our $BASE_URL_NDK_MIRROR = "http://mercurial-mirror.hq.unity3d.com/unity-extra/BB10-SDK";
+
 our $ndks =
 {
 	"r09"	=>
@@ -140,6 +143,7 @@ sub DownloadAndUnpackArchive
 	# create temporary locations
 	rmtree($temporary_download_path);
 	rmtree($temporary_unpack_path);
+	mkpath($temporary_download_path);
 	mkpath($temporary_unpack_path);
 	print "\t\t Cloning Mercurial Repository.\n";
 	system ("hg clone -b $branch $url $temporary_download_path");
@@ -211,7 +215,21 @@ sub PrepareNDK
 		}
 	}
 
-	print "\tFAILED:  BB10_NDK_ROOT defined and no BB10 NDK could be found.\n";
+	rmtree($ndk_root);
+
+	my $archive = $ndks->{$ndk}->{$HOST_ENV};
+
+	die ("Unknown NDK release '$ndk' (for $HOST_ENV)") if (!$archive);
+
+	print "\tDownloading '$ndk' to '$ndk_root'\n";
+	if ($ENV{UNITY_THISISABUILDMACHINE}) 	
+	{
+		DownloadAndUnpackArchive($BASE_URL_NDK_MIRROR, $ndk_root, $archive, $ndk);
+	}
+	else
+	{
+		DownloadAndUnpackArchive($BASE_URL_NDK, $ndk_root, $archive, $ndk);
+	}	
 }
 
 sub PrepareNDKEnv

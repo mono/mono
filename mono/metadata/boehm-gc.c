@@ -213,6 +213,7 @@ mono_gc_is_gc_thread (void)
 }
 
 extern int GC_thread_register_foreign (void *base_addr);
+extern int GC_thread_unregister_foreign ();
 
 gboolean
 mono_gc_register_thread (void *baseptr)
@@ -238,11 +239,21 @@ mono_gc_register_thread (void *baseptr)
 #else
 	if (mono_gc_is_gc_thread())
 		return TRUE;
-#if defined(USE_INCLUDED_LIBGC) && !defined(PLATFORM_WIN32)
+#if defined(USE_INCLUDED_LIBGC)
 	return GC_thread_register_foreign (baseptr);
 #else
 	return FALSE;
 #endif
+#endif
+}
+
+gboolean
+mono_gc_unregister_thread (MonoThread *thread)
+{
+#if defined(PLATFORM_WIN32)
+	return GC_thread_unregister_foreign ();
+#else
+	return TRUE;
 #endif
 }
 

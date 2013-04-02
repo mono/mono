@@ -542,6 +542,7 @@ compare_method (const void *key, const void *object)
 MonoDebugMethodInfo *
 mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
 {
+	uint32_t method_token;
 	MonoSymbolFileMethodEntry *first_ie, *ie;
 	MonoDebugMethodInfo *minfo;
 	MonoSymbolFile *symfile = handle->symfile;
@@ -563,7 +564,13 @@ mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
 	first_ie = (MonoSymbolFileMethodEntry *)
 		(symfile->raw_contents + read32(&(symfile->offset_table->_method_table_offset)));
 
-	ie = bsearch (GUINT_TO_POINTER (mono_method_get_token (method)), first_ie,
+	method_token = mono_method_get_token (method);
+	if (!method_token) {
+		mono_debugger_unlock ();
+		return NULL;
+	}
+
+	ie = bsearch (GUINT_TO_POINTER (method_token), first_ie,
 				   read32(&(symfile->offset_table->_method_count)),
 				   sizeof (MonoSymbolFileMethodEntry), compare_method);
 
