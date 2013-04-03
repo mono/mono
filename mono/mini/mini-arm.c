@@ -5667,7 +5667,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert_not_reached ();
 			else {
 				code = mono_arm_emit_load_imm (code, ARMREG_IP, (guint32) &__nacl_thread_suspension_needed);
-                                code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_IP, 0);
+				code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_IP, 0);
 				ARM_CMP_REG_IMM8 (code, ARMREG_IP, 0);
 				code = mono_arm_emit_load_imm (code, ARMREG_IP, (guint32) &mono_nacl_gc);
                                 code = emit_call_reg_cond (code, ARMREG_IP, ARMCOND_NE);
