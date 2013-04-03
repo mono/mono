@@ -88,7 +88,7 @@ voidcall_reg: src1:i len:8 clob:c nacl:20
 voidcall_membase: src1:b len:16 clob:c nacl:40
 fcall: dest:g len:28 clob:c nacl:44
 fcall_reg: dest:g src1:i len:16 clob:c nacl:24
-fcall_membase: dest:g src1:b len:24 clob:c nacl:36
+fcall_membase: dest:g src1:b len:24 clob:c nacl:40
 lcall: dest:l len:20 clob:c nacl:36
 lcall_reg: dest:l src1:i len:8 clob:c nacl:16
 lcall_membase: dest:l src1:b len:16 clob:c nacl:32
