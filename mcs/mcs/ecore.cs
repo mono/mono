@@ -5048,10 +5048,10 @@ namespace Mono.CSharp {
 			string index = (idx + 1).ToString ();
 			if (((mod & Parameter.Modifier.RefOutMask) ^ (a.Modifier & Parameter.Modifier.RefOutMask)) != 0) {
 				if ((mod & Parameter.Modifier.RefOutMask) == 0)
-					ec.Report.Error (1615, loc, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
+					ec.Report.Error (1615, a.Expr.Location, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
 						index, Parameter.GetModifierSignature (a.Modifier));
 				else
-					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
+					ec.Report.Error (1620, a.Expr.Location, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
 			} else {
 				string p1 = a.GetSignatureForError ();
