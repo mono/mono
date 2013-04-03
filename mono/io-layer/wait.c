@@ -478,7 +478,12 @@ static gboolean test_and_own (guint32 numobjects, gpointer *handles,
 	DEBUG ("%s: unlocking handles", __func__);
 
 	/* calls the unlock function */
+#if defined(__native_client__)
+	handle_cleanup(&cleanup_data);
+	pthread_cleanup_pop (0);
+#else
 	pthread_cleanup_pop (1);
+#endif
 
 	return(done);
 }
