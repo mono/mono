@@ -143,29 +143,26 @@ public abstract class Decoder
 	}
 
 	[ComVisible (false)]
-	public virtual void Convert (
+	public unsafe virtual void Convert (
 		byte [] bytes, int byteIndex, int byteCount,
 		char [] chars, int charIndex, int charCount, bool flush,
 		out int bytesUsed, out int charsUsed, out bool completed)
 	{
 		CheckArguments (bytes, byteIndex, byteCount);
-		if (chars == null)
-			throw new ArgumentNullException ("chars");
-		if (charIndex < 0)
-			throw new ArgumentOutOfRangeException ("charIndex");
+		CheckArguments (chars, charIndex);
 		if (charCount < 0 || chars.Length < charIndex + charCount)
 			throw new ArgumentOutOfRangeException ("charCount");
 
-		bytesUsed = byteCount;
-		while (true) {
-			charsUsed = GetCharCount (bytes, byteIndex, bytesUsed, flush);
-			if (charsUsed <= charCount)
-				break;
-			flush = false;
-			bytesUsed >>= 1;
+		// refactorize passing control to byte* version
+		fixed (char* cptr = chars) {
+			fixed (byte* bptr = bytes) {
+				Convert(bptr + byteIndex, byteCount,
+					cptr + charIndex, charCount,
+					flush,
+					out bytesUsed, out charsUsed,
+					out completed);
+			}
 		}
-		completed = bytesUsed == byteCount;
-		charsUsed = GetChars (bytes, byteIndex, bytesUsed, chars, charIndex, flush);
 	}
 
 	void CheckArguments (char [] chars, int charIndex)
