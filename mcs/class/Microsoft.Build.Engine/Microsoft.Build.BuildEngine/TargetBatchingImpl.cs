@@ -118,7 +118,7 @@ namespace Microsoft.Build.BuildEngine {
 
 				for (int i = 0; i < target.BuildTasks.Count; i ++) {
 					//FIXME: parsing attributes repeatedly
-					BuildTask bt = target.BuildTasks [i];
+					IBuildTask bt = target.BuildTasks [i];
 
 					TaskBatchingImpl batchingImpl = new TaskBatchingImpl (project);
 					bool task_result = batchingImpl.Build (bt, out executeOnErrors);
