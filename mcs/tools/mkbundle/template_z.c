@@ -13,7 +13,8 @@ my_inflate (const Byte *compr, uLong compr_len, Byte *uncompr, uLong uncompr_len
 	memset (&stream, 0, sizeof (z_stream));
 	stream.next_in = (Byte *) compr;
 	stream.avail_in = (uInt) compr_len;
-	err = inflateInit (&stream);
+	/* To decompress gzip format: http://stackoverflow.com/a/1838702/83444 */
+	err = inflateInit2 (&stream, 16+MAX_WBITS);
 	if (err != Z_OK)
 		return 1;
 

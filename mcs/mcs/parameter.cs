@@ -338,7 +338,7 @@ namespace Mono.CSharp {
 				if (HasOptionalExpression) {
 					a.Report.Error (1745, a.Location,
 						"Cannot specify `{0}' attribute on optional parameter `{1}'",
-						TypeManager.CSharpName (a.Type).Replace ("Attribute", ""), Name);
+						a.Type.GetSignatureForError ().Replace ("Attribute", ""), Name);
 				}
 
 				if (a.Type == pa.DefaultParameterValue)
@@ -406,7 +406,7 @@ namespace Mono.CSharp {
 
 			if ((modFlags & Modifier.This) != 0 && (parameter_type.IsPointer || parameter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)) {
 				rc.Module.Compiler.Report.Error (1103, Location, "The extension method cannot be of type `{0}'",
-					TypeManager.CSharpName (parameter_type));
+					parameter_type.GetSignatureForError ());
 			}
 
 			return parameter_type;
@@ -582,7 +582,7 @@ namespace Mono.CSharp {
 		{
 			string type_name;
 			if (parameter_type != null)
-				type_name = TypeManager.CSharpName (parameter_type);
+				type_name = parameter_type.GetSignatureForError ();
 			else
 				type_name = texpr.GetSignatureForError ();
 
@@ -989,11 +989,11 @@ namespace Mono.CSharp {
 			if (types == null || types [pos] == null)
 				return ((Parameter)FixedParameters [pos]).GetSignatureForError ();
 
-			string type = TypeManager.CSharpName (types [pos]);
+			string type = types [pos].GetSignatureForError ();
 			if (FixedParameters [pos].HasExtensionMethodModifier)
 				return "this " + type;
 
-			Parameter.Modifier mod = FixedParameters [pos].ModFlags;
+			var mod = FixedParameters[pos].ModFlags & Parameter.Modifier.ModifierMask;
 			if (mod == 0)
 				return type;
 

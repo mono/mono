@@ -80,8 +80,10 @@ namespace Monodoc.Ecma
 				return Token.COMMA;
 			case '.':
 				return Token.DOT;
+			case '{':
 			case '<':
 				return Token.OP_GENERICS_LT;
+			case '}':
 			case '>':
 				return Token.OP_GENERICS_GT;
 			case '`':

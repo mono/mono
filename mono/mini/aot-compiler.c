@@ -2841,8 +2841,6 @@ get_plt_entry (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 
 		new_ji = mono_patch_info_dup_mp (acfg->mempool, patch_info);
 
-		// g_assert (mono_patch_info_equal (patch_info, new_ji));
-
 		res = mono_mempool_alloc0 (acfg->mempool, sizeof (MonoPltEntry));
 		res->plt_offset = acfg->plt_offset;
 		res->ji = new_ji;
@@ -2857,6 +2855,10 @@ get_plt_entry (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 		g_hash_table_insert (acfg->patch_to_plt_entry, new_ji, res);
 
 		g_hash_table_insert (acfg->plt_offset_to_entry, GUINT_TO_POINTER (res->plt_offset), res);
+
+		//g_assert (mono_patch_info_equal (patch_info, new_ji));
+		//mono_print_ji (patch_info); printf ("\n");
+		//g_hash_table_print_stats (acfg->patch_to_plt_entry);
 
 		acfg->plt_offset ++;
 	}
@@ -3580,7 +3582,8 @@ add_wrappers (MonoAotCompile *acfg)
 			continue;
 		}
 
-		if (klass->valuetype && !klass->generic_container && can_marshal_struct (klass)) {
+		if (klass->valuetype && !klass->generic_container && can_marshal_struct (klass) &&
+			!(klass->nested_in && strstr (klass->nested_in->name, "<PrivateImplementationDetails>") == klass->nested_in->name)) {
 			add_method (acfg, mono_marshal_get_struct_to_ptr (klass));
 			add_method (acfg, mono_marshal_get_ptr_to_struct (klass));
 		}
@@ -6162,7 +6165,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 			case MONO_PATCH_INFO_VTABLE: {
 				MonoClass *klass = patch_info->data.klass;
 
-				if (klass->generic_class && !mono_generic_context_is_sharable (&klass->generic_class->context, FALSE))
+				if (klass->generic_class && !mini_class_is_generic_sharable (klass))
 					add_generic_class_with_depth (acfg, klass, depth + 5, "vtable");
 				break;
 			}

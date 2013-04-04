@@ -188,6 +188,10 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 		[Test]
 		public void Property_Arguments_Mismatch ()
 		{
+#if MOBILE
+			// ensure the property is not linked out of the application since it make the test fails
+			Assert.NotNull (Thread.CurrentPrincipal, "pre-test");
+#endif
 			PropertyInfo pi = typeof (Thread).GetProperty ("CurrentPrincipal");
 
 			InstanceDescriptor id = new InstanceDescriptor (pi, new object [] { url });
@@ -207,6 +211,10 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 		[Test]
 		public void Property_Arguments_Null ()
 		{
+#if MOBILE
+			// ensure the property is not linked out of the application since it make the test fails
+			Assert.NotNull (Thread.CurrentPrincipal, "pre-test");
+#endif
 			PropertyInfo pi = typeof (Thread).GetProperty ("CurrentPrincipal");
 
 			InstanceDescriptor id = new InstanceDescriptor (pi, null);

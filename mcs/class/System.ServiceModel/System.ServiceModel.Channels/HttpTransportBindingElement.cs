@@ -62,6 +62,9 @@ namespace System.ServiceModel.Channels
 		AuthenticationSchemes proxy_auth_scheme =
 			AuthenticationSchemes.Anonymous;
 		// If you add fields, do not forget them in copy constructor.
+#if NET_4_0
+		HttpCookieContainerManager cookie_manager;
+#endif
 
 		public HttpTransportBindingElement ()
 		{
@@ -90,6 +93,7 @@ namespace System.ServiceModel.Channels
 			DecompressionEnabled = other.DecompressionEnabled;
 			LegacyExtendedProtectionPolicy = other.LegacyExtendedProtectionPolicy;
 			ExtendedProtectionPolicy = other.ExtendedProtectionPolicy;
+			cookie_manager = other.cookie_manager;
 #endif
 		}
 
@@ -257,6 +261,15 @@ namespace System.ServiceModel.Channels
 				return (T) (object) new HttpBindingProperties (this);
 			if (typeof (T) == typeof (TransferMode))
 				return (T) (object) TransferMode;
+#if NET_4_0
+			if (typeof(T) == typeof(IHttpCookieContainerManager)) {
+				if (!AllowCookies)
+					return null;
+				if (cookie_manager == null)
+					cookie_manager = new HttpCookieContainerManager ();
+				return (T) (object) cookie_manager;
+			}
+#endif
 			return base.GetProperty<T> (context);
 		}
 		

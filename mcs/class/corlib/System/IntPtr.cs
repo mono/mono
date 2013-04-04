@@ -224,6 +224,12 @@ namespace System
 		{
 			return (IntPtr) (unchecked (((byte *) pointer) - offset));
 		}
+#else
+		/* Needed by Marshal.cs */
+		internal static IntPtr Add (IntPtr pointer, int offset)
+		{
+			return (IntPtr) (unchecked (((byte *) pointer) + offset));
+		}
 #endif
 	}
 }

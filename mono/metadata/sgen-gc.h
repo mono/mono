@@ -39,6 +39,7 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-logger-internal.h>
+#include <mono/utils/atomic.h>
 #include <mono/io-layer/mono-mutex.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object-internals.h>
@@ -404,6 +405,7 @@ enum {
 	INTERNAL_MEM_GRAY_QUEUE,
 	INTERNAL_MEM_MS_TABLES,
 	INTERNAL_MEM_MS_BLOCK_INFO,
+	INTERNAL_MEM_MS_BLOCK_INFO_SORT,
 	INTERNAL_MEM_EPHEMERON_LINK,
 	INTERNAL_MEM_WORKER_DATA,
 	INTERNAL_MEM_WORKER_JOB_DATA,
@@ -659,6 +661,7 @@ struct _SgenMajorCollector {
 	void (*reset_worker_data) (void *data);
 	gboolean (*is_valid_object) (char *object);
 	gboolean (*describe_pointer) (char *pointer);
+	guint8* (*get_cardtable_mod_union_for_object) (char *object);
 	long long (*get_and_reset_num_major_objects_marked) (void);
 };
 
@@ -687,6 +690,7 @@ typedef struct {
 
 	void (*finish_minor_collection) (void);
 	gboolean (*find_address) (char *addr);
+	gboolean (*find_address_with_cards) (char *cards_start, guint8 *cards, char *addr);
 } SgenRemeberedSet;
 
 SgenRemeberedSet *sgen_get_remset (void) MONO_INTERNAL;
@@ -995,6 +999,7 @@ gboolean sgen_has_managed_allocator (void);
 /* Debug support */
 
 void sgen_check_consistency (void);
+void sgen_check_mod_union_consistency (void);
 void sgen_check_major_refs (void);
 void sgen_check_whole_heap (gboolean allow_missing_pinning);
 void sgen_check_whole_heap_stw (void) MONO_INTERNAL;

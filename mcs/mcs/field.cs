@@ -482,7 +482,7 @@ namespace Mono.CSharp
 
 			if (buffer_size > int.MaxValue / type_size) {
 				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
-					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
+					GetSignatureForError (), buffer_size.ToString (), MemberType.GetSignatureForError ());
 				return;
 			}
 
@@ -664,7 +664,7 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {
 				if (!CanBeVolatile ()) {
 					Report.Error (677, Location, "`{0}': A volatile field cannot be of the type `{1}'",
-						GetSignatureForError (), TypeManager.CSharpName (MemberType));
+						GetSignatureForError (), MemberType.GetSignatureForError ());
 				}
 
 				if ((ModFlags & Modifiers.READONLY) != 0) {

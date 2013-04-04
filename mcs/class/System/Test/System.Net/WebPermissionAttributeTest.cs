@@ -36,6 +36,9 @@ using System.Text.RegularExpressions;
 namespace MonoTests.System.Net {
 
 	[TestFixture]
+#if MOBILE
+	[Ignore ("CAS is not supported and parts will be linked away")]
+#endif
 	public class WebPermissionAttributeTest {
 
 		[Test]

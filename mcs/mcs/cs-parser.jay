@@ -139,6 +139,7 @@ namespace Mono.CSharp
 		//
 		LocationsBag lbag;
 		List<Tuple<Modifiers, Location>> mod_locations;
+		Stack<Location> location_stack;
 %}
 
 %token EOF
@@ -675,6 +676,7 @@ attribute_sections
 attribute_section
 	: OPEN_BRACKET
 	  {
+	  	PushLocation (GetLocation ($1));
 		lexer.parsing_attribute_section = true;
 	  }
 	  attribute_section_cont
@@ -699,13 +701,43 @@ attribute_section_cont
 			$$ = new List<Attribute> (0);
 		else
 			$$ = $4;
-	  
+
+		lbag.InsertLocation ($$, 0, PopLocation ());
+		if ($5 != null) {
+			lbag.AddLocation ($$, GetLocation ($2), GetLocation ($5), GetLocation ($6));
+		} else {
+			lbag.AddLocation ($$, GetLocation ($2), GetLocation ($6));
+		}
+
 		current_attr_target = null;
 		lexer.parsing_attribute_section = false;
  	  }
 	| attribute_list opt_comma CLOSE_BRACKET
 	  {
 		$$ = $1;
+
+		lbag.InsertLocation ($$, 0, PopLocation ());
+		if ($2 != null) {
+			lbag.AddLocation ($$, GetLocation($2), GetLocation ($3));
+		} else {
+			lbag.AddLocation ($$, GetLocation($3));
+		}
+	  }
+	| IDENTIFIER error
+	  {
+		Error_SyntaxError (yyToken);
+
+		var lt = (Tokenizer.LocatedToken) $1;
+		var tne = new SimpleName (lt.Value, null, lt.Location);
+
+		$$ = new List<Attribute> () {
+			new Attribute (null, tne, null, GetLocation ($1), false)
+		};
+	  }
+	| error
+	  {
+ 		$$ = CheckAttributeTarget (GetTokenName (yyToken), GetLocation ($1)); 
+ 		$$ = null;
 	  }
 	;	
 
@@ -717,16 +749,6 @@ attribute_target
 	  }
 	| EVENT  { $$ = "event"; }
 	| RETURN { $$ = "return"; }
-	| error
-	  {
-		if (yyToken == Token.IDENTIFIER) {
-			Error_SyntaxError (yyToken);
-			$$ = null;
-		} else {
-			string name = GetTokenName (yyToken);
-			$$ = CheckAttributeTarget (name, GetLocation ($1));
-		}
-	  }
 	;
 
 attribute_list
@@ -737,7 +759,10 @@ attribute_list
 	| attribute_list COMMA attribute
 	  {
 		var attrs = (List<Attribute>) $1;
-		attrs.Add ((Attribute) $3);
+		if (attrs != null) {
+			attrs.Add ((Attribute) $3);
+	  		lbag.AppendTo (attrs, GetLocation ($2));
+	  	}
 
 		$$ = attrs;
 	  }
@@ -819,6 +844,11 @@ positional_or_named_argument
 	  	$$ = new Argument ((Expression) $1);
 	  }
 	| named_argument
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = null;
+	  }
 	;
 
 named_attribute_argument
@@ -890,13 +920,14 @@ class_member_declaration
 	| destructor_declaration
 	| type_declaration
 	| attributes_without_members
+	| incomplete_member
 	| error
 	  {
 		report.Error (1519, lexer.Location, "Unexpected symbol `{0}' in class, struct, or interface member declaration",
 			GetSymbolName (yyToken));
 		$$ = null;
 		lexer.parsing_generic_declaration = false;
-	  }
+	  }	
 	;
 
 struct_declaration
@@ -1310,6 +1341,8 @@ method_header
 				     modifiers, name, current_local_parameters, (Attributes) $1);
 
 		current_type.AddMember (method);
+
+		async_block = (method.ModFlags & Modifiers.ASYNC) != 0;
 
 		if ($11 != null)
 			method.SetConstraints ((List<Constraints>) $11);
@@ -2515,6 +2548,23 @@ attributes_without_members
 		lexer.putback ('}');
 	  }
 	;
+
+// For full ast try to recover incomplete ambiguous member
+// declaration in form on class X { public int }
+incomplete_member
+	: opt_attributes opt_modifiers member_type CLOSE_BRACE
+	  {
+		report.Error (1519, lexer.Location, "Unexpected symbol `}' in class, struct, or interface member declaration");
+ 
+		lexer.putback ('}');
+
+	  	lexer.parsing_generic_declaration = false;
+		FullNamedExpression type = (FullNamedExpression) $3;
+		current_field = new Field (current_type, type, (Modifiers) $2, MemberName.Null, (Attributes) $1);
+		current_type.AddField (current_field);
+		$$ = current_field;
+	  }
+	;
 	  
 enum_declaration
 	: opt_attributes
@@ -3258,7 +3308,7 @@ member_initializer
 	  {
 	  	report.Error (1920, GetLocation ($1), "An element initializer cannot be empty");
 		$$ = null;
-	  }	  
+	  }
 	;
 
 initializer_value
@@ -3374,21 +3424,17 @@ element_access
 	;
 
 expression_list
-	: expression
+	: expression_or_error
 	  {
 		var list = new List<Expression> (4);
 		list.Add ((Expression) $1);
 		$$ = list;
 	  }
-	| expression_list COMMA expression
+	| expression_list COMMA expression_or_error
 	  {
 		var list = (List<Expression>) $1;
 		list.Add ((Expression) $3);
 		$$ = list;
-	  }
-	| expression_list error {
-	  	Error_SyntaxError (yyToken);
-		$$ = $1;
 	  }
 	;
 	
@@ -4293,6 +4339,14 @@ conditional_expression
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
+	| null_coalescing_expression INTERR expression COLON CLOSE_BRACE
+	  {
+		Error_SyntaxError (Token.CLOSE_BRACE);
+
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
+		lexer.putback ('}');
+	  }
 	;
 
 assignment_expression
@@ -5154,7 +5208,10 @@ block_variable_declaration
 	  {
 		$$ = current_variable;
 		current_variable = null;
-		lbag.AddLocation ($$, GetLocation ($6));
+		if ($4 != null)
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($6));
+		else
+			lbag.AddLocation ($$, GetLocation ($6));
 	  }
 	| CONST variable_type identifier_inside_body
 	  {
@@ -5176,7 +5233,8 @@ opt_local_variable_initializer
 	| ASSIGN block_variable_initializer
 	  {
 		current_variable.Initializer = (Expression) $2;
-		// TODO: lbag
+		PushLocation (GetLocation ($1));
+		$$ = current_variable;
 	  }
 	| error
 	  {
@@ -5308,7 +5366,6 @@ statement_expression
 		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
 			var expr = $1 as Expression;
-			expr.Error_InvalidExpressionStatement (report);
 			$$ = new StatementErrorExpression (expr);
 		} else {
 			$$ = new StatementExpression (s);
@@ -5583,6 +5640,9 @@ for_initializer
 	  opt_local_variable_initializer opt_variable_declarators
 	  {
 		$$ = current_variable;
+		if ($4 != null)
+			lbag.AddLocation (current_variable, PopLocation ());
+
 		current_variable = null;
 	  }
 	| statement_expression_list
@@ -5798,7 +5858,7 @@ yield_statement
 			FeatureIsNotAvailable (lt.Location, "iterators");
 		}
 		
-		current_block.Explicit.RegisterIteratorYield ();
+		current_block.ParametersBlock.TopBlock.IsIterator = true;
 		$$ = new YieldBreak (lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($3));
 	  }
@@ -6237,13 +6297,27 @@ select_or_group_clause
 	  
 		current_block = new Linq.QueryBlock (current_block, lexer.Location);
 	  }
-	  BY expression_or_error
+	  by_expression
 	  {
-		$$ = new Linq.GroupBy ((Linq.QueryBlock)current_block, (Expression)$3, linq_clause_blocks.Pop (), (Expression)$6, GetLocation ($1));
-		lbag.AddLocation ($$, GetLocation ($5));
+		var obj = (object[]) $5;
+
+		$$ = new Linq.GroupBy ((Linq.QueryBlock)current_block, (Expression)$3, linq_clause_blocks.Pop (), (Expression)obj[0], GetLocation ($1));
+		lbag.AddLocation ($$, (Location) obj[1]);
 		
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
+	  }
+	;
+
+by_expression
+	: BY expression_or_error
+	  {
+	  	$$ = new object[] { $2, GetLocation ($1) };
+	  }
+	| error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new object[2] { null, Location.Null };
 	  }
 	;
 	
@@ -6849,6 +6923,23 @@ void StoreModifierLocation (object token, Location loc)
   		mod_locations = new List<Tuple<Modifiers, Location>> ();
 
 	mod_locations.Add (Tuple.Create ((Modifiers) token, loc));
+}
+
+[System.Diagnostics.Conditional ("FULL_AST")]
+void PushLocation (Location loc)
+{
+	if (location_stack == null)
+		location_stack = new Stack<Location> ();
+
+	location_stack.Push (loc);
+}
+
+Location PopLocation ()
+{
+	if (location_stack == null)
+		return Location.Null;
+
+	return location_stack.Pop ();
 }
 
 string CheckAttributeTarget (string a, Location l)

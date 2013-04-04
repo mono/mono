@@ -53,14 +53,30 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 	case OP_LADD_OVF:
 		if (COMPILE_LLVM (cfg))
 			break;
-		EMIT_NEW_BIALU (cfg, repl, OP_ADDCC, ins->dreg, ins->sreg1, ins->sreg2);
+		{
+			int opcode;
+#if defined(__mono_ilp32__) && SIZEOF_REGISTER == 8
+			opcode = OP_LADDCC;
+#else
+			opcode = OP_ADDCC;
+#endif
+			EMIT_NEW_BIALU (cfg, repl, opcode, ins->dreg, ins->sreg1, ins->sreg2);
+		}
 		MONO_EMIT_NEW_COND_EXC (cfg, OV, "OverflowException");
 		NULLIFY_INS (ins);
 		break;
 	case OP_LADD_OVF_UN:
 		if (COMPILE_LLVM (cfg))
 			break;
-		EMIT_NEW_BIALU (cfg, repl, OP_ADDCC, ins->dreg, ins->sreg1, ins->sreg2);
+		{
+			int opcode;
+#if defined(__mono_ilp32__) && SIZEOF_REGISTER == 8
+			opcode = OP_LADDCC;
+#else
+			opcode = OP_ADDCC;
+#endif
+			EMIT_NEW_BIALU (cfg, repl, opcode, ins->dreg, ins->sreg1, ins->sreg2);
+		}
 		MONO_EMIT_NEW_COND_EXC (cfg, C, "OverflowException");
 		NULLIFY_INS (ins);
 		break;
@@ -68,14 +84,30 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 	case OP_LSUB_OVF:
 		if (COMPILE_LLVM (cfg))
 			break;
-		EMIT_NEW_BIALU (cfg, repl, OP_SUBCC, ins->dreg, ins->sreg1, ins->sreg2);
+		{
+			int opcode;
+#if defined(__mono_ilp32__) && SIZEOF_REGISTER == 8
+			opcode = OP_LSUBCC;
+#else
+			opcode = OP_SUBCC;
+#endif
+			EMIT_NEW_BIALU (cfg, repl, opcode, ins->dreg, ins->sreg1, ins->sreg2);
+		}
 		MONO_EMIT_NEW_COND_EXC (cfg, OV, "OverflowException");
 		NULLIFY_INS (ins);
 		break;
 	case OP_LSUB_OVF_UN:
 		if (COMPILE_LLVM (cfg))
 			break;
-		EMIT_NEW_BIALU (cfg, repl, OP_SUBCC, ins->dreg, ins->sreg1, ins->sreg2);
+		{
+			int opcode;
+#if defined(__mono_ilp32__) && SIZEOF_REGISTER == 8
+			opcode = OP_LSUBCC;
+#else
+			opcode = OP_SUBCC;
+#endif
+			EMIT_NEW_BIALU (cfg, repl, opcode, ins->dreg, ins->sreg1, ins->sreg2);
+		}
 		MONO_EMIT_NEW_COND_EXC (cfg, C, "OverflowException");
 		NULLIFY_INS (ins);
 		break;
@@ -326,7 +358,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ICONV_TO_OVF_U4:
 	case OP_ICONV_TO_OVF_I4_UN:
-#if SIZEOF_REGISTER == 4
+#if SIZEOF_VOID_P == 4
 	case OP_ICONV_TO_OVF_U:
 	case OP_ICONV_TO_OVF_I_UN:
 #endif
@@ -339,21 +371,21 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	case OP_ICONV_TO_U4:
 	case OP_ICONV_TO_OVF_I4:
 	case OP_ICONV_TO_OVF_U4_UN:
-#if SIZEOF_REGISTER == 4
+#if SIZEOF_VOID_P == 4
 	case OP_ICONV_TO_OVF_I:
 	case OP_ICONV_TO_OVF_U_UN:
 #endif
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_ICONV_TO_I:
-#if SIZEOF_REGISTER == 8
+#if SIZEOF_VOID_P == 8
 		ins->opcode = OP_SEXT_I4;
 #else
 		ins->opcode = OP_MOVE;
 #endif
 		break;
 	case OP_ICONV_TO_U:
-#if SIZEOF_REGISTER == 8
+#if SIZEOF_VOID_P == 8
 		ins->opcode = OP_ZEXT_I4;
 #else
 		ins->opcode = OP_MOVE;
@@ -1218,9 +1250,13 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 						case 2:
 							MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI2_MEMBASE_REG, dest->dreg, 0, call2->inst.dreg);
 							break;
+						case 3:
 						case 4:
 							MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI4_MEMBASE_REG, dest->dreg, 0, call2->inst.dreg);
 							break;
+						case 5:
+						case 6:
+						case 7:
 						case 8:
 #if SIZEOF_REGISTER == 4
 							/*
@@ -1361,8 +1397,9 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						dest = mono_emit_jit_icall (cfg, mono_array_new, iargs);
 						dest->dreg = ins->dreg;
 					} else {
-						MonoVTable *vtable = mono_class_vtable (cfg->domain, mono_array_class_get (ins->inst_newa_class, 1));
-						MonoMethod *managed_alloc = mono_gc_get_managed_array_allocator (vtable, 1);
+						MonoClass *array_class = mono_array_class_get (ins->inst_newa_class, 1);
+						MonoVTable *vtable = mono_class_vtable (cfg->domain, array_class);
+						MonoMethod *managed_alloc = mono_gc_get_managed_array_allocator (array_class);
 
 						g_assert (vtable); /*This shall not fail since we check for this condition on OP_NEWARR creation*/
 						NEW_VTABLECONST (cfg, iargs [0], vtable);

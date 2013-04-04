@@ -391,7 +391,7 @@ namespace Monodoc
 			}
 			if (url.StartsWith (RootNamespace, StringComparison.OrdinalIgnoreCase)) {
 				context = new Dictionary<string, string> { {"specialpage", "root"} };
-				return this.GetHelpSourceAndIdFromName (url.Substring (RootNamespace.Length), out internalId, out node);
+				return GetHelpSourceAndIdFromName (url.Substring (RootNamespace.Length), out internalId, out node);
 			}
 
 			HelpSource helpSource = hintSource;
@@ -413,7 +413,7 @@ namespace Monodoc
 			internalId = "root:";
 			node = LookupEntryPoint (name);
 
-			return node == null ? null : node.ChildNodes.Select (n => n.Tree.HelpSource).Where (hs => hs != null).Distinct ().FirstOrDefault ();
+			return node == null ? null : node.ChildNodes.Select (n => n.Tree.HelpSource).FirstOrDefault (hs => hs != null);
 		}
 
 		public HelpSource GetHelpSourceFromId (int id)

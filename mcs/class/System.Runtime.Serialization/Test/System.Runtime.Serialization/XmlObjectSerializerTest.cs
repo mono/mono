@@ -81,7 +81,7 @@ namespace MonoTests.System.Runtime.Serialization
 		public void ConstructorKnownTypesNull ()
 		{
 			// null knownTypes is allowed. Though the property is filled.
-			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), null).KnownTypes, "#1");
+			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), (IEnumerable<Type>)null).KnownTypes, "#1");
 			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), "Foo", String.Empty, null).KnownTypes, "#2");
 			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), new XmlDictionary ().Add ("Foo"), XmlDictionaryString.Empty, null).KnownTypes, "#3");
 		}

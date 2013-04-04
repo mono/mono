@@ -38,6 +38,7 @@
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
+#include "mono/utils/atomic.h"
 #include <string.h>
 #include <errno.h>
 
@@ -584,11 +585,13 @@ mono_array_to_savearray (MonoArray *array)
 gpointer
 mono_array_to_lparray (MonoArray *array)
 {
+#ifndef DISABLE_COM
 	gpointer *nativeArray = NULL;
 	int nativeArraySize = 0;
 
 	int i = 0;
 	MonoClass *klass;
+#endif
 
 	if (!array)
 		return NULL;
@@ -600,14 +603,12 @@ mono_array_to_lparray (MonoArray *array)
 	case MONO_TYPE_VOID:
 		g_assert_not_reached ();
 		break;
-#ifndef DISABLE_COM
 	case MONO_TYPE_CLASS:
 		nativeArraySize = array->max_length;
 		nativeArray = malloc(sizeof(gpointer) * nativeArraySize);
 		for(i = 0; i < nativeArraySize; ++i) 	
 			nativeArray[i] = ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal(((gpointer*)array->vector)[i]);
 		return nativeArray;
-#endif
 	case MONO_TYPE_U1:
 	case MONO_TYPE_BOOLEAN:
 	case MONO_TYPE_I1:
@@ -9767,7 +9768,10 @@ mono_marshal_get_isinst (MonoClass *klass)
 	static MonoMethodSignature *isint_sig = NULL;
 	GHashTable *cache;
 	MonoMethod *res;
-	int pos_was_ok, pos_failed, pos_end, pos_end2;
+	int pos_was_ok, pos_end;
+#ifndef DISABLE_REMOTING
+	int pos_end2, pos_failed;
+#endif
 	char *name;
 	MonoMethodBuilder *mb;
 
@@ -9870,7 +9874,9 @@ mono_marshal_get_castclass (MonoClass *klass)
 	static MonoMethodSignature *castclass_sig = NULL;
 	GHashTable *cache;
 	MonoMethod *res;
+#ifndef DISABLE_REMOTING
 	int pos_was_ok, pos_was_ok2;
+#endif
 	char *name;
 	MonoMethodBuilder *mb;
 	WrapperInfo *info;
@@ -11443,122 +11449,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer s
 	memcpy (dest_addr, src, length * element_size);
 }
 
-#if NO_UNALIGNED_ACCESS
-#define RETURN_UNALIGNED(type, addr) \
-	{ \
-		type val; \
-		memcpy(&val, p + offset, sizeof(val)); \
-		return val; \
-	}
-#define WRITE_UNALIGNED(type, addr, val) \
-	memcpy(addr, &val, sizeof(type))
-#else
-#define RETURN_UNALIGNED(type, addr) \
-	return *(type*)(p + offset);
-#define WRITE_UNALIGNED(type, addr, val) \
-	(*(type *)(addr) = (val))
-#endif
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_ReadIntPtr (gpointer ptr, gint32 offset)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	RETURN_UNALIGNED(gpointer, p + offset);
-}
-
-unsigned char
-ves_icall_System_Runtime_InteropServices_Marshal_ReadByte (gpointer ptr, gint32 offset)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	return *(unsigned char*)(p + offset);
-}
-
-gint16
-ves_icall_System_Runtime_InteropServices_Marshal_ReadInt16 (gpointer ptr, gint32 offset)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	RETURN_UNALIGNED(gint16, p + offset);
-}
-
-gint32
-ves_icall_System_Runtime_InteropServices_Marshal_ReadInt32 (gpointer ptr, gint32 offset)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	RETURN_UNALIGNED(gint32, p + offset);
-}
-
-gint64
-ves_icall_System_Runtime_InteropServices_Marshal_ReadInt64 (gpointer ptr, gint32 offset)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	RETURN_UNALIGNED(gint64, p + offset);
-}
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteByte (gpointer ptr, gint32 offset, unsigned char val)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	*(unsigned char*)(p + offset) = val;
-}
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteIntPtr (gpointer ptr, gint32 offset, gpointer val)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	WRITE_UNALIGNED(gpointer, p + offset, val);
-}
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteInt16 (gpointer ptr, gint32 offset, gint16 val)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	WRITE_UNALIGNED(gint16, p + offset, val);
-}
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteInt32 (gpointer ptr, gint32 offset, gint32 val)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	WRITE_UNALIGNED(gint32, p + offset, val);
-}
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteInt64 (gpointer ptr, gint32 offset, gint64 val)
-{
-	char *p = ptr;
-
-	MONO_ARCH_SAVE_REGS;
-
-	WRITE_UNALIGNED(gint64, p + offset, val);
-}
-
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr)
 {
@@ -11728,7 +11618,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gpointer s
 
 	MONO_ARCH_SAVE_REGS;
 
-	MONO_CHECK_ARG_NULL (src);
+	if (src == NULL)
+		return NULL;
 	MONO_CHECK_ARG_NULL (type);
 
 	klass = mono_class_from_mono_type (type->type);

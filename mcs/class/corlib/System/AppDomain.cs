@@ -195,6 +195,9 @@ namespace System {
 
 		public Evidence Evidence {
 			get {
+#if MONOTOUCH
+				return null;
+#else
 				// if the host (runtime) hasn't provided it's own evidence...
 				if (_evidence == null) {
 					// ... we will provide our own
@@ -215,6 +218,7 @@ namespace System {
 					}
 				}
 				return new Evidence ((Evidence)_evidence);	// return a copy
+#endif
 			}
 		}
 

@@ -36,10 +36,11 @@ namespace MonoTests.System.Xml.Xsl
 		[Test]
 		public void TestBasicTransform ()
 		{
+			string output = Path.Combine (Path.GetTempPath (), "result.xml");
 			doc.LoadXml ("<root/>");
 			xslt.Load ("Test/XmlFiles/xsl/empty.xsl");
-			xslt.Transform ("Test/XmlFiles/xsl/empty.xsl", "Test/XmlFiles/xsl/result.xml");
-			result.Load ("Test/XmlFiles/xsl/result.xml");
+			xslt.Transform ("Test/XmlFiles/xsl/empty.xsl", output);
+			result.Load (output);
 			Assert.AreEqual (2, result.ChildNodes.Count, "count");
 		}
 

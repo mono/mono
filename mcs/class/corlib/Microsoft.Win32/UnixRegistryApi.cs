@@ -134,8 +134,8 @@ namespace Microsoft.Win32 {
 			if (!Directory.Exists (actual_basedir)) {
 				try {
 					Directory.CreateDirectory (actual_basedir);
-				} catch (UnauthorizedAccessException){
-					throw new SecurityException ("No access to the given key");
+				} catch (UnauthorizedAccessException ex){
+					throw new SecurityException ("No access to the given key", ex);
 				}
 			}
 			Dir = basedir; // This is our identifier.

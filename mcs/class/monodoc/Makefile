@@ -116,7 +116,7 @@ LIB_MCS_FLAGS = \
 	/r:System.Xml.Linq.dll                                            \
 	/r:System.Configuration.dll
 
-TEST_MCS_FLAGS = /r:System.Core.dll /r:System.Xml.dll
+TEST_MCS_FLAGS = /r:System.dll /r:System.Core.dll /r:System.Xml.dll /r:AgilityPack.dll
 
 DOC_SOURCE_DIRS = \
 	../../docs \
@@ -130,7 +130,9 @@ $(the_lib): Makefile $(RESOURCE_FILES)
 
 all-local: $(the_lib).config Monodoc.Ecma/EcmaUrlParser.cs
 
-test-local: setup-doc-sources
+run-test-local: AgilityPack.dll
+
+test-local: setup-doc-sources AgilityPack.dll
 
 dist-local: Monodoc.Ecma/EcmaUrlParser.cs
 
@@ -146,3 +148,6 @@ parser.exe: Monodoc.Ecma/EcmaUrlParser.cs Monodoc.Ecma/EcmaUrlTokenizer.cs Monod
 setup-doc-sources: $(DOC_SOURCES)
 	mkdir -p ./Test/monodoc_test/sources/
 	cp $(DOC_SOURCES) ./Test/monodoc_test/sources/
+
+AgilityPack.dll:
+	cp $(topdir)/../docs/$(@) .

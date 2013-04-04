@@ -2265,6 +2265,10 @@ namespace MonoTests.System
 			Assert.AreEqual ("2000-01-01T00:00:00.0000000Z", DateTime.SpecifyKind (new DateTime (2000, 1, 1), DateTimeKind.Utc).ToString ("o"), "#2");
 			Assert.AreEqual ("2000-01-01T00:00:00.0000000+09:00".Length, DateTime.SpecifyKind (
 				new DateTime (2000, 1, 1), DateTimeKind.Local).ToString ("o").Length, "#3");
+
+			var culture = new CultureInfo ("ps-AF");
+			Assert.AreEqual ("1976-06-19T00:00:00.0000000", new DateTime(1976, 6, 19).ToString ("O", culture), "#4");
+			Assert.AreEqual ("1976-06-19T00:00:00.0000000", new DateTime(1976, 6, 19).ToString ("o", culture), "#5");
 		}
 
 		[Test]

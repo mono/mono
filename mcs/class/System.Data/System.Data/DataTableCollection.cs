@@ -274,9 +274,9 @@ namespace System.Data
 			int count = 0, match = -1;
 			for (int i = start; i < List.Count; i++) {
 				String name2 = ((DataTable) List[i]).TableName;
-				if (String.Compare (name, name2, false) == 0)
+				if (String.Compare (name, name2, false, dataSet.Locale) == 0)
 					return i;
-				if (String.Compare (name, name2, true) == 0) {
+				if (String.Compare (name, name2, true, dataSet.Locale) == 0) {
 					match = i;
 					count++;
 				}

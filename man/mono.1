@@ -1176,6 +1176,11 @@ are allocated (clear-at-gc).   The consistency check ensures that
 there are no major to minor references that are not on the remembered
 sets. 
 .TP
+\fBmod-union-consistency-check\fR
+Checks that the mod-union cardtable is consistent before each
+finishing major collection pause.  This check is only applicable to
+concurrent major collectors.
+.TP
 \fBcheck-mark-bits\fR
 Checks that mark bits in the major heap are consistent at the end of
 each major collection.  Consistent mark bits mean that if an object is

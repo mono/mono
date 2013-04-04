@@ -245,7 +245,7 @@ namespace Mono.CSharp
 
 						for (int i = 0; i < host.hoisted_params.Count; ++i) {
 							HoistedParameter hp = host.hoisted_params [i];
-							HoistedParameter hp_cp = host.hoisted_params_copy [i];
+							HoistedParameter hp_cp = host.hoisted_params_copy [i] ?? hp;
 
 							FieldExpr from = new FieldExpr (hp_cp.Field, loc);
 							from.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
@@ -431,6 +431,13 @@ namespace Mono.CSharp
 			get { return hoisted_params; }
 		}
 
+		protected override Constructor DefineDefaultConstructor (bool is_static)
+		{
+			var ctor = base.DefineDefaultConstructor (is_static);
+			ctor.ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			return ctor;
+		}
+
 		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)
 		{
 			var mtype = Iterator.OriginalIteratorType;
@@ -469,17 +476,26 @@ namespace Mono.CSharp
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 			disposing_field = AddCompilerGeneratedField ("$disposing", new TypeExpression (Compiler.BuiltinTypes.Bool, Location));
 
-			if (hoisted_params != null) {
+			if (Iterator.IsEnumerable && hoisted_params != null) {
 				//
 				// Iterators are independent, each GetEnumerator call has to
 				// create same enumerator therefore we have to keep original values
 				// around for re-initialization
 				//
-				// TODO: Do it for assigned/modified parameters only
-				//
 				hoisted_params_copy = new List<HoistedParameter> (hoisted_params.Count);
 				foreach (HoistedParameter hp in hoisted_params) {
-					hoisted_params_copy.Add (new HoistedParameter (hp, "<$>" + hp.Field.Name));
+
+					//
+					// Don't create field copy for unmodified captured parameters
+ 					//
+					HoistedParameter hp_copy;
+					if (hp.IsAssigned) {
+						hp_copy = new HoistedParameter (hp, "<$>" + hp.Field.Name);
+					} else {
+						hp_copy = null;
+					}
+
+					hoisted_params_copy.Add (hp_copy);
 				}
 			}
 
@@ -565,7 +581,8 @@ namespace Mono.CSharp
 		protected override void EmitHoistedParameters (EmitContext ec, List<HoistedParameter> hoisted)
 		{
 			base.EmitHoistedParameters (ec, hoisted);
-			base.EmitHoistedParameters (ec, hoisted_params_copy);
+			if (hoisted_params_copy != null)
+				base.EmitHoistedParameters (ec, hoisted_params_copy);
 		}
 	}
 
@@ -1101,7 +1118,7 @@ namespace Mono.CSharp
 					      "The body of `{0}' cannot be an iterator block " +
 					      "because `{1}' is not an iterator interface type",
 					      method.GetSignatureForError (),
-					      TypeManager.CSharpName (ret));
+					      ret.GetSignatureForError ());
 				return;
 			}
 

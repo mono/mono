@@ -681,9 +681,9 @@ namespace Mono.Debugger.Soft
         }
     }
 
-	internal class CommandException : Exception {
+	public class CommandException : Exception {
 
-		public CommandException (ErrorCode error_code) : base ("Debuggee returned error code " + error_code + ".") {
+		internal CommandException (ErrorCode error_code) : base ("Debuggee returned error code " + error_code + ".") {
 			ErrorCode = error_code;
 		}
 

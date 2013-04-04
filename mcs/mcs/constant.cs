@@ -64,7 +64,7 @@ namespace Mono.CSharp {
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (target) &&
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (type)) {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValueAsLiteral (), TypeManager.CSharpName (target));
+					GetValueAsLiteral (), target.GetSignatureForError ());
 			} else {
 				base.Error_ValueCannotBeConverted (ec, target, expl);
 			}
@@ -100,7 +100,7 @@ namespace Mono.CSharp {
 				// reached, by calling Convert.ImplicitStandardConversionExists
 				//
 				throw new InternalErrorException ("Missing constant conversion between `{0}' and `{1}'",
-				  TypeManager.CSharpName (Type), TypeManager.CSharpName (type));
+				 Type.GetSignatureForError (), type.GetSignatureForError ());
 			}
 
 			return CreateConstantFromValue (type, constant_value, loc);
@@ -396,7 +396,7 @@ namespace Mono.CSharp {
 			catch
 			{
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValue ().ToString (), TypeManager.CSharpName (target));
+					GetValue ().ToString (), target.GetSignatureForError ());
 			}
 		}
 

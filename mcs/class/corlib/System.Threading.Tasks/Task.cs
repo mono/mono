@@ -347,7 +347,7 @@ namespace System.Threading.Tasks
 				continuation.Execute ();
 		}
 
-		void RemoveContinuation (IContinuation continuation)
+		internal void RemoveContinuation (IContinuation continuation)
 		{
 			continuations.Remove (continuation);
 		}

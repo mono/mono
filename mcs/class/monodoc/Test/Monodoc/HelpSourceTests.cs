@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using Monodoc;
+using Monodoc.Generators;
+
+using HtmlAgilityPack;
 
 namespace MonoTests.Monodoc
 {
@@ -110,6 +113,95 @@ namespace MonoTests.Monodoc
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Concurrent.IProducerConsumerCollection`1", generator, out result), "#1");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary`2", generator, out result), "#2");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`4", generator, out result), "#3");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.EventHandler`1", generator, out result), "#4");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`5", generator, out result), "#5a");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`4", generator, out result), "#5b");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`6", generator, out result), "#5c");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`7", generator, out result), "#5d");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`3", generator, out result), "#5e");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`2", generator, out result), "#5f");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`1", generator, out result), "#5g");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`8", generator, out result), "#5h");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func`9", generator, out result), "#5i");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`3", generator, out result), "#6a");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`2", generator, out result), "#6b");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action`4", generator, out result), "#6c");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.IComparable`1", generator, out result), "#7");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Lazy`1", generator, out result), "#8");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`1", generator, out result), "#9a");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`2", generator, out result), "#9b");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`3", generator, out result), "#9c");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Tuple`4", generator, out result), "#9d");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary`2+ValueCollection", generator, out result), "#10");
+			Assert.IsFalse (rootTree.RenderUrl ("T:System.EventHandler`2", generator, out result), "#11");
+			Assert.IsFalse (rootTree.RenderUrl ("T:System.Lazy`2", generator, out result), "#12");
+		}
+
+		[Test]
+		public void AspNetStyleUrlReachabilityTest ()
+		{
+			var rootTree = RootTree.LoadTree (Path.GetFullPath (BaseDir), false);
+			Node result;
+			var generator = new CheckGenerator ();
+
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary{TKey,TValue}", generator, out result), "#1");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Action{T1,T2}", generator, out result), "#2");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.EventHandler{TEventArgs}", generator, out result), "#3");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func{T1,T2,T3,TResult}", generator, out result), "#4");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary{TKey,TValue}+ValueCollection", generator, out result), "#5");
+			Assert.IsTrue (rootTree.RenderUrl ("T:System.IComparable{T}", generator, out result), "#6");
+		}
+
+		[Test, Ignore ("Mono documentation is full of syntax errors so we can't use it reliably for this test")]
+		public void ReachabilityWithCrefsTest ()
+		{
+			var rootTree = RootTree.LoadTree (Path.GetFullPath (BaseDir), false);
+			Node result;
+			var htmlGenerator = new HtmlGenerator (null);
+			var crefs = new HashSet<string> ();
+			var generator = new CheckGenerator ();
+			int errorCount = 0;
+
+			foreach (var leaf in GetLeaves (rootTree.RootNode)) {
+				Dictionary<string, string> context;
+				string internalId = leaf.Tree.HelpSource.GetInternalIdForUrl (leaf.PublicUrl, out result, out context);
+				if (leaf.Tree.HelpSource.GetDocumentTypeForId (internalId) != DocumentType.EcmaXml)
+					continue;
+
+				string content = null;
+				if (string.IsNullOrEmpty (content = rootTree.RenderUrl (leaf.PublicUrl, htmlGenerator, out result)) || leaf != result) {
+					Console.WriteLine ("Error: {0} with HelpSource {1} ", leaf.PublicUrl, leaf.Tree.HelpSource.Name);
+					continue;
+				}
+
+				HtmlDocument doc = new HtmlDocument();
+				try {
+					doc.LoadHtml (content);
+				} catch {
+					Console.WriteLine ("Couldn't load a HTML document for URL {0}", leaf.PublicUrl);
+					continue;
+				}
+
+				foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]")) {
+					var newUrl = link.Attributes["href"].Value;
+					var hashIndex = newUrl.IndexOf ('#');
+					if (hashIndex != -1)
+						newUrl = newUrl.Substring (0, hashIndex);
+					if (newUrl.Length > 1 && newUrl[1] == ':' && char.IsLetter (newUrl, 0) && char.ToLowerInvariant (newUrl[0]) != 'c')
+						crefs.Add (newUrl);
+				}
+
+				foreach (var cref in crefs) {
+					if (!rootTree.RenderUrl (cref, generator, out result) || result == null) {
+						Console.WriteLine ("Error with cref: `{0}'", cref);
+						errorCount++;
+					}
+				}
+
+				crefs.Clear ();
+			}
+
+			Assert.AreEqual (0, errorCount, errorCount + " / " + crefs.Count);
 		}
 	}
 }

@@ -801,13 +801,14 @@ namespace MonoTests.System.Data
 			dataSet1.Tables.Add(table);
 			table.LoadDataRow(new object[]{1, "One"}, false);
 			table.LoadDataRow(new object[]{2, "Two"}, false);
+			string file = Path.Combine (Path.GetTempPath (), "schemas-test.xml");
 			try {
-				dataSet1.WriteXml("Test/System.Data/schemas/test.xml", XmlWriteMode.WriteSchema);
+				dataSet1.WriteXml (file, XmlWriteMode.WriteSchema);
 			}
 			catch (Exception ex) {
 				Assert.Fail ("DSExtPropTest failed: WriteXml failed with : "+ex.Message);
 			} finally {
-				File.Delete ("Test/System.Data/schemas/test.xml");
+				File.Delete (file);
 			}
 			
 			DataSet dataSet2 = new DataSet();

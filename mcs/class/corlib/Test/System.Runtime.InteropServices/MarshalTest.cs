@@ -259,6 +259,61 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public void ReadIntByte ()
+		{
+			IntPtr ptr = Marshal.AllocHGlobal (4);
+			try {
+				Marshal.WriteByte (ptr, 0, 0x1);
+				Marshal.WriteByte (ptr, 1, 0x2);
+				Assert.AreEqual (0x1, Marshal.ReadByte (ptr));
+				Assert.AreEqual (0x1, Marshal.ReadByte (ptr, 0));
+				Assert.AreEqual (0x2, Marshal.ReadByte (ptr, 1));
+			} finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
+		public void ReadInt16 ()
+		{
+			IntPtr ptr = Marshal.AllocHGlobal (64);
+			try {
+				Marshal.WriteInt16 (ptr, 0, 0x1234);
+				Marshal.WriteInt16 (ptr, 2, 0x4567);
+				Marshal.WriteInt16 (ptr, 5, 0x4567);
+				Assert.AreEqual (0x1234, Marshal.ReadInt16 (ptr));
+				Assert.AreEqual (0x1234, Marshal.ReadInt16 (ptr, 0));
+				Assert.AreEqual (0x4567, Marshal.ReadInt16 (ptr, 2));
+#if NET_4_5
+				Assert.AreEqual (0x4567, Marshal.ReadInt16 ((ptr + 5)));
+#endif
+				Assert.AreEqual (0x4567, Marshal.ReadInt16 (ptr, 5));
+			} finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
+		public void ReadInt32 ()
+		{
+			IntPtr ptr = Marshal.AllocHGlobal (64);
+			try {
+				Marshal.WriteInt32 (ptr, 0, 0x12345678);
+				Marshal.WriteInt32 (ptr, 4, 0x77654321);
+				Marshal.WriteInt32 (ptr, 10, 0x77654321);
+				Assert.AreEqual (0x12345678, Marshal.ReadInt32 (ptr));
+				Assert.AreEqual (0x12345678, Marshal.ReadInt32 (ptr, 0));
+				Assert.AreEqual (0x77654321, Marshal.ReadInt32 (ptr, 4));
+#if NET_4_5
+				Assert.AreEqual (0x77654321, Marshal.ReadInt32 ((ptr + 10)));
+#endif
+				Assert.AreEqual (0x77654321, Marshal.ReadInt32 (ptr, 10));
+			} finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
 		public void ReadInt32_Endian ()
 		{
 			IntPtr ptr = Marshal.AllocHGlobal (4);
@@ -273,6 +328,21 @@ namespace MonoTests.System.Runtime.InteropServices
 				} else {
 					Assert.AreEqual (0x01020304, Marshal.ReadInt32 (ptr), "ReadInt32");
 				}
+			} finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
+		public void ReadInt64 ()
+		{
+			IntPtr ptr = Marshal.AllocHGlobal (16);
+			try {
+				Marshal.WriteInt64 (ptr, 0, 0x12345678ABCDEFL);
+				Marshal.WriteInt64 (ptr, 8, 0x87654321ABCDEFL);
+				Assert.AreEqual (0x12345678ABCDEFL, Marshal.ReadInt64 (ptr));
+				Assert.AreEqual (0x12345678ABCDEFL, Marshal.ReadInt64 (ptr, 0));
+				Assert.AreEqual (0x87654321ABCDEFL, Marshal.ReadInt64 (ptr, 8));
 			} finally {
 				Marshal.FreeHGlobal (ptr);
 			}
@@ -690,6 +760,18 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreNotEqual (IntPtr.Zero, p, i.ToString ());
 				Marshal.FreeHGlobal (p);
 			}
+		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		public struct SimpleStruct2 {
+			public int a;
+			public int b;
+		}
+
+		[Test]
+		public void PtrToStructureNull ()
+		{
+			Assert.IsNull (Marshal.PtrToStructure (IntPtr.Zero, typeof (SimpleStruct2)));
 		}
 		
 #if NET_2_0

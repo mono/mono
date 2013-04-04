@@ -36,6 +36,7 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/atomic.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -1136,6 +1137,7 @@ mono_gc_init (void)
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_NORMAL].entries);
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_PINNED].entries);
 
+	mono_counters_register ("Created object count", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &mono_stats.new_object_count);
 	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.minor_gc_count);
 	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
 	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &gc_stats.minor_gc_time_usecs);
@@ -1604,16 +1606,16 @@ mono_gc_bzero (void *dest, size_t size)
 	word_bytes = (size_t)align_down (size);
 	switch (word_bytes) {
 	case sizeof (void*) * 1:
-		BZERO_WORDS (dest, 1);
+		BZERO_WORDS (d, 1);
 		break;
 	case sizeof (void*) * 2:
-		BZERO_WORDS (dest, 2);
+		BZERO_WORDS (d, 2);
 		break;
 	case sizeof (void*) * 3:
-		BZERO_WORDS (dest, 3);
+		BZERO_WORDS (d, 3);
 		break;
 	case sizeof (void*) * 4:
-		BZERO_WORDS (dest, 4);
+		BZERO_WORDS (d, 4);
 		break;
 	default:
 		memset (d, 0, word_bytes);

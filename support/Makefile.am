@@ -43,6 +43,7 @@ MPH_UNIX_SOURCE =				\
 	sys-stat.c				\
 	sys-statvfs.c				\
 	sys-time.c				\
+	sys-uio.c				\
 	sys-utsname.c   \
 	sys-wait.c				\
 	sys-xattr.c				\
@@ -141,6 +142,7 @@ refresh:
 	--autoconf-header="<sys/statvfs.h>"                   \
 	--autoconf-header="<sys/xattr.h>"                     \
 	--autoconf-header="<sys/mman.h>"                      \
+	--autoconf-header="<sys/uio.h>"                       \
 	--autoconf-header="<unistd.h>"                        \
 	--impl-header="<fcntl.h>"                             \
 	--impl-header="<signal.h>"                            \
