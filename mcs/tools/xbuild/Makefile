@@ -63,8 +63,6 @@ install-extras:
 	sed -e 's/@SILVERLIGHT_VERSION@/3.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0/Microsoft.Silverlight.Common.targets
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_DIR)/v4.0
 	$(INSTALL_DATA) xbuild/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_DIR)/v4.0
-	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_DIR)/v4.5
-	$(INSTALL_DATA) xbuild/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_DIR)/v4.5
 
 EXTRA_DISTFILES = \
 	xbuild/xbuild.rsp \
