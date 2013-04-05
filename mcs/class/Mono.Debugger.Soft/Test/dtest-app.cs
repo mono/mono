@@ -29,8 +29,37 @@ public enum AnEnum {
 	B= 1
 }
 
+public sealed class Tests3 {
+	public static void M1 () {
+	}
+
+	static void M2 () {
+	}
+
+	public void M3 () {
+	}
+
+	void M4 () {
+	}
+
+}
+
+public static class Tests4 {
+	static Tests4 () {
+	}
+}
+
+public class AAttribute : Attribute {
+	public int afield;
+}
+
+public class BAttribute : AAttribute {
+	public int bfield;
+}
+
 [DebuggerDisplay ("Tests", Name="FOO", Target=typeof (int))]
 [DebuggerTypeProxy (typeof (Tests))]
+[BAttribute (afield = 1, bfield = 2)]
 public class Tests2 {
 	[DebuggerBrowsableAttribute (DebuggerBrowsableState.Collapsed)]
 	public int field_j;
