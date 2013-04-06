@@ -1,35 +1,26 @@
 <!-- Note: This is a dummy CSharp.targets file that tries to map Portable Library Project targets to something available in Mono on Mac -->
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<PropertyGroup>
+		<TargetFrameworkIdentifier>.NETPortable</TargetFrameworkIdentifier>
+		<AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+		<NoStdLib>true</NoStdLib>
+	</PropertyGroup>
+	
+	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
 	
 	<PropertyGroup>
-		<TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
-		<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-		<TargetFrameworkProfile></TargetFrameworkProfile>
+		<ResolveReferencesDependsOn>
+			$(ResolveReferencesDependsOn);
+			ResolvePortableReferences;
+		</ResolveReferencesDependsOn>
 	</PropertyGroup>
-	
-	<PropertyGroup Condition = "Exists ('/Developer/MonoTouch/License.rtf')">
-		<TargetFrameworkIdentifier>MonoTouch</TargetFrameworkIdentifier>
-		<TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
-		<TargetFrameworkProfile></TargetFrameworkProfile>
-	</PropertyGroup>
-	
-	<PropertyGroup Condition = "Exists ('/Developer/MonoAndroid/License.rtf') And !Exists ('/Developer/MonoTouch/License.rtf')">
-		<TargetFrameworkIdentifier>MonoAndroid</TargetFrameworkIdentifier>
-	</PropertyGroup>
-	
-	<Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" Condition = "Exists ('/Developer/MonoAndroid/License.rtf') And !Exists ('/Developer/MonoTouch/License.rtf')"/>
-	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" Condition = "Exists ('/Developer/MonoTouch/License.rtf') Or !Exists ('/Developer/MonoAndroid/License.rtf')"/>
-	
-	<PropertyGroup>
-		<BuildDependsOn>
-			PortableCompatWarning;
-			$(BuildDependsOn);
-		</BuildDependsOn>
-	</PropertyGroup>
-	
-	<Target Name="PortableCompatWarning">
-		<Warning Text="This Portable Library Project has been built against the $(TargetFrameworkIdentifier) framework."/>
+		
+	<Target Name="ResolvePortableReferences">
+		<CreateItem Include="@(ReferencePath); $(_TargetFrameworkDirectories)\*.dll">
+			<Output TaskParameter="Include" ItemName="ReferencePath"/>
+		</CreateItem>
 	</Target>
 	
 </Project>
