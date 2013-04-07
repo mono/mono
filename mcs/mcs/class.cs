@@ -1259,8 +1259,10 @@ namespace Mono.CSharp
 
 				all_tp_builders = TypeBuilder.DefineGenericParameters (tparam_names);
 
-				if (CurrentTypeParameters != null)
-					CurrentTypeParameters.Define (all_tp_builders, spec, CurrentTypeParametersStartIndex, this);
+				if (CurrentTypeParameters != null) {
+					CurrentTypeParameters.Create (spec, CurrentTypeParametersStartIndex, this);
+					CurrentTypeParameters.Define (all_tp_builders);
+				}
 			}
 
 			return true;
@@ -1421,6 +1423,7 @@ namespace Mono.CSharp
 
 				members.Add (proxy_method);
 				proxy_method.Define ();
+				proxy_method.PrepareEmit ();
 
 				hoisted_base_call_proxies.Add (method, proxy_method);
 			}
@@ -1603,6 +1606,10 @@ namespace Mono.CSharp
 			foreach (var member in members) {
 				var pm = member as IParametersMember;
 				if (pm != null) {
+					var mc = member as MethodOrOperator;
+					if (mc != null) {
+						mc.PrepareEmit ();
+					}
 
 					var p = pm.Parameters;
 					if (p.IsEmpty)
@@ -1674,19 +1681,6 @@ namespace Mono.CSharp
 			current_type = null;
 		}
 
-		void UpdateTypeParameterConstraints (TypeDefinition part)
-		{
-			for (int i = 0; i < CurrentTypeParameters.Count; i++) {
-				if (CurrentTypeParameters[i].AddPartialConstraints (part, part.MemberName.TypeParameters[i]))
-					continue;
-
-				Report.SymbolRelatedToPreviousError (Location, "");
-				Report.Error (265, part.Location,
-					"Partial declarations of `{0}' have inconsistent constraints for type parameter `{1}'",
-					GetSignatureForError (), CurrentTypeParameters[i].GetSignatureForError ());
-			}
-		}
-
 		public override void RemoveContainer (TypeContainer cont)
 		{
 			base.RemoveContainer (cont);
@@ -1711,7 +1705,7 @@ namespace Mono.CSharp
 			}
 
 			if (IsPartialPart) {
-				PartialContainer.UpdateTypeParameterConstraints (this);
+				PartialContainer.CurrentTypeParameters.UpdateConstraints (this);
 			}
 
 			return true;

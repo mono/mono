@@ -489,7 +489,7 @@ namespace Mono.CSharp {
 		//
 		// If partial type parameters constraints are not null and we don't
 		// already have constraints they become our constraints. If we already
-		// have constraints, we must check that they're the same.
+		// have constraints, we must check that they're same.
 		//
 		public bool AddPartialConstraints (TypeDefinition part, TypeParameter tp)
 		{
@@ -545,15 +545,19 @@ namespace Mono.CSharp {
 		// with SRE (by calling `DefineGenericParameters()' on the TypeBuilder /
 		// MethodBuilder).
 		//
-		public void Define (GenericTypeParameterBuilder type, TypeSpec declaringType, TypeContainer parent)
+		public void Create (TypeSpec declaringType, TypeContainer parent)
 		{
 			if (builder != null)
 				throw new InternalErrorException ();
 
 			// Needed to get compiler reference
 			this.Parent = parent;
-			this.builder = type;
 			spec.DeclaringType = declaringType;
+		}
+
+		public void Define (GenericTypeParameterBuilder type)
+		{
+			this.builder = type;
 			spec.SetMetaInfo (type);
 		}
 
@@ -2175,19 +2179,27 @@ namespace Mono.CSharp {
 			names.AddRange (tparams.names);
 		}
 
-		public void Define (GenericTypeParameterBuilder[] buiders, TypeSpec declaringType, int parentOffset, TypeContainer parent)
+		public void Create (TypeSpec declaringType, int parentOffset, TypeContainer parent)
 		{
 			types = new TypeParameterSpec[Count];
 			for (int i = 0; i < types.Length; ++i) {
 				var tp = names[i];
 
-				tp.Define (buiders[i + parentOffset], declaringType, parent);
+				tp.Create (declaringType, parent);
 				types[i] = tp.Type;
 				types[i].DeclaredPosition = i + parentOffset;
 
 				if (tp.Variance != Variance.None && !(declaringType != null && (declaringType.Kind == MemberKind.Interface || declaringType.Kind == MemberKind.Delegate))) {
 					parent.Compiler.Report.Error (1960, tp.Location, "Variant type parameters can only be used with interfaces and delegates");
 				}
+			}
+		}
+
+		public void Define (GenericTypeParameterBuilder[] builders)
+		{
+			for (int i = 0; i < types.Length; ++i) {
+				var tp = names[i];
+				tp.Define (builders [types [i].DeclaredPosition]);
 			}
 		}
 
@@ -2228,6 +2240,44 @@ namespace Mono.CSharp {
 			}
 
 			return sb.ToString ();
+		}
+
+
+		public void CheckPartialConstraints (Method part)
+		{
+			var partTypeParameters = part.CurrentTypeParameters;
+
+			for (int i = 0; i < Count; i++) {
+				var tp_a = names[i];
+				var tp_b = partTypeParameters [i];
+				if (tp_a.Constraints == null) {
+					if (tp_b.Constraints == null)
+						continue;
+				} else if (tp_b.Constraints != null && tp_a.Type.HasSameConstraintsDefinition (tp_b.Type)) {
+					continue;
+				}
+
+				part.Compiler.Report.SymbolRelatedToPreviousError (this[i].CurrentMemberDefinition.Location, "");
+				part.Compiler.Report.Error (761, part.Location,
+					"Partial method declarations of `{0}' have inconsistent constraints for type parameter `{1}'",
+					part.GetSignatureForError (), partTypeParameters[i].GetSignatureForError ());
+			}
+		}
+
+		public void UpdateConstraints (TypeDefinition part)
+		{
+			var partTypeParameters = part.MemberName.TypeParameters;
+
+			for (int i = 0; i < Count; i++) {
+				var tp = names [i];
+				if (tp.AddPartialConstraints (part, partTypeParameters [i]))
+					continue;
+
+				part.Compiler.Report.SymbolRelatedToPreviousError (this[i].CurrentMemberDefinition);
+				part.Compiler.Report.Error (265, part.Location,
+					"Partial declarations of `{0}' have inconsistent constraints for type parameter `{1}'",
+					part.GetSignatureForError (), tp.GetSignatureForError ());
+			}
 		}
 
 		public void VerifyClsCompliance ()

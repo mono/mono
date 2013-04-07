@@ -420,7 +420,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			IMemberDefinition definition;
+			IMethodDefinition definition;
 			if (tparams != null) {
 				var gmd = new ImportedGenericMethodDefinition ((MethodInfo) mb, returnType, parameters, tparams, this);
 				foreach (var tp in gmd.TypeParameters) {
@@ -429,10 +429,10 @@ namespace Mono.CSharp
 
 				definition = gmd;
 			} else {
-				definition = new ImportedParameterMemberDefinition (mb, returnType, parameters, this);
+				definition = new ImportedMethodDefinition (mb, returnType, parameters, this);
 			}
 
-			MethodSpec ms = new MethodSpec (kind, declaringType, definition, returnType, mb, parameters, mod);
+			MethodSpec ms = new MethodSpec (kind, declaringType, definition, returnType, parameters, mod);
 			if (tparams != null)
 				ms.IsGeneric = true;
 
@@ -1683,7 +1683,7 @@ namespace Mono.CSharp
 	{
 		readonly AParametersCollection parameters;
 
-		public ImportedParameterMemberDefinition (MethodBase provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
+		protected ImportedParameterMemberDefinition (MethodBase provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
 			: base (provider, type, importer)
 		{
 			this.parameters = parameters;
@@ -1706,7 +1706,21 @@ namespace Mono.CSharp
 		#endregion
 	}
 
-	class ImportedGenericMethodDefinition : ImportedParameterMemberDefinition, IGenericMethodDefinition
+	class ImportedMethodDefinition : ImportedParameterMemberDefinition, IMethodDefinition
+	{
+		public ImportedMethodDefinition (MethodBase provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
+			: base (provider, type, parameters, importer)
+		{
+		}
+
+		MethodBase IMethodDefinition.Metadata {
+			get {
+				return (MethodBase) provider;
+			}
+		}
+	}
+
+	class ImportedGenericMethodDefinition : ImportedMethodDefinition, IGenericMethodDefinition
 	{
 		readonly TypeParameterSpec[] tparams;
 

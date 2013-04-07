@@ -1344,8 +1344,8 @@ method_header
 
 		async_block = (method.ModFlags & Modifiers.ASYNC) != 0;
 
-		if ($11 != null)
-			method.SetConstraints ((List<Constraints>) $11);
+		if ($12 != null)
+			method.SetConstraints ((List<Constraints>) $12);
 
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();
