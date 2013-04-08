@@ -54,6 +54,8 @@ namespace System.Net.Sockets
 		private bool useoverlappedIO;
 		private const int SOCKET_CLOSED = 10004;
 
+		private static readonly string timeout_exc_msg = "A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond";
+
 		static void AddSockets (List<Socket> sockets, IList list, string name)
 		{
 			if (list != null) {
@@ -1510,7 +1512,7 @@ namespace System.Net.Sockets
 			
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) error, "Operation timed out.");
+					throw new SocketException ((int) error, timeout_exc_msg);
 				throw new SocketException ((int) error);
 			}
 
@@ -1533,7 +1535,7 @@ namespace System.Net.Sockets
 			
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) error, "Operation timed out.");
+					throw new SocketException ((int) error, timeout_exc_msg);
 				throw new SocketException ((int) error);
 			}
 
@@ -1556,7 +1558,7 @@ namespace System.Net.Sockets
 			
 			if (error != SocketError.Success) {
 				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) error, "Operation timed out.");
+					throw new SocketException ((int) error, timeout_exc_msg);
 				throw new SocketException ((int) error);
 			}
 
@@ -1695,7 +1697,7 @@ namespace System.Net.Sockets
 					connected = false;
 				else if (err == SocketError.WouldBlock && blocking) { // This might happen when ReceiveTimeout is set
 					if (throwOnError)	
-						throw new SocketException ((int) SocketError.TimedOut, "Operation timed out");
+						throw new SocketException ((int) SocketError.TimedOut, timeout_exc_msg);
 					error = (int) SocketError.TimedOut;
 					return 0;
 				}
