@@ -1493,23 +1493,7 @@ namespace System.Net.Sockets
 
 		public int Receive (byte [] buffer)
 		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			SocketError error;
-
-			int ret = Receive_nochecks (buffer, 0, buffer.Length, SocketFlags.None, out error);
-			
-			if (error != SocketError.Success) {
-				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) error, "Operation timed out.");
-				throw new SocketException ((int) error);
-			}
-
-			return ret;
+			return Receive (buffer, SocketFlags.None);
 		}
 
 		public int Receive (byte [] buffer, SocketFlags flags)
