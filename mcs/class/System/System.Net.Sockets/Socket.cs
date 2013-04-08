@@ -11,7 +11,6 @@
 //    http://www.myelin.co.nz
 // (c) 2004-2011 Novell, Inc. (http://www.novell.com)
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1504,8 +1503,11 @@ namespace System.Net.Sockets
 
 			int ret = Receive_nochecks (buffer, 0, buffer.Length, SocketFlags.None, out error);
 			
-			if (error != SocketError.Success)
+			if (error != SocketError.Success) {
+				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException ((int) error, "Operation timed out.");
 				throw new SocketException ((int) error);
+			}
 
 			return ret;
 		}
