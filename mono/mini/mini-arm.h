@@ -27,8 +27,6 @@
       ARM_NACL_MASK_CODE (code, reg); \
    } while (0);
 
-#define NACL_BUNDLE_ALIGN_UP(p) ((((p)+kNaClAlignmentMaskARM)) & ~kNaClAlignmentMaskARM)
-
 guint8* mono_arm_nacl_ensure_bundle (guint8 *code, int space);
 guint8* mono_arm_nacl_ensure_at_position (guint8 *code, int position);
 #else

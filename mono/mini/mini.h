@@ -1946,8 +1946,18 @@ void mono_nacl_fix_patches(const guint8 *code, MonoJumpInfo *ji);
 guint8 *mono_arch_nacl_pad(guint8 *code, int pad);
 guint8 *mono_arch_nacl_skip_nops(guint8 *code);
 
-extern const guint kNaClAlignment;
-extern const guint kNaClAlignmentMask;
+#if defined(TARGET_X86)
+#define kNaClAlignment kNaClAlignmentX86
+#define kNaClAlignmentMask kNaClAlignmentMaskX86
+#elif defined(TARGET_AMD64)
+#define kNaClAlignment kNaClAlignmentAMD64
+#define kNaClAlignmentMask kNaClAlignmentMaskAMD64
+#elif defined(TARGET_ARM)
+#define kNaClAlignment kNaClAlignmentARM
+#define kNaClAlignmentMask kNaClAlignmentMaskARM
+#endif
+
+#define NACL_BUNDLE_ALIGN_UP(p) ((((p)+kNaClAlignmentMask)) & ~kNaClAlignmentMask)
 #endif
 
 #if defined(__native_client__) || defined(__native_client_codegen__)

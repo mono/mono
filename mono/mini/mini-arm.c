@@ -53,8 +53,6 @@
 #endif
 
 #ifdef __native_client_codegen__
-const guint kNaClAlignment = kNaClAlignmentARM;
-const guint kNaClAlignmentMask = kNaClAlignmentMaskARM;
 gint8 nacl_align_byte = -1; /* 0xff */
 
 guint8 *

@@ -14,9 +14,11 @@
 struct group *getgrnam(const char *name);
 struct group *getgrgid(gid_t gid);
 int fsync(int fd) ;
-dev_t makedev(int maj, int min);
 
 #ifdef USE_NEWLIB
+#include <semaphore.h>
+
+dev_t makedev(int maj, int min);
 int utime(const char *filename, const void *times);
 int kill(pid_t pid, int sig);
 int getrusage(int who, void *usage);
@@ -26,6 +28,9 @@ int getdtablesize(void);
 # ifndef PATH_MAX
 #  define PATH_MAX _POSIX_PATH_MAX
 # endif
+
+int sem_trywait(sem_t *sem);
+int sem_timedwait(sem_t *sem, const struct timespec *abstime);
 #endif
 
 #endif
