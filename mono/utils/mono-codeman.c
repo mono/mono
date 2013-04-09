@@ -629,16 +629,11 @@ mono_code_manager_commit (MonoCodeManager *cman, void *data, int size, int newsi
 #else
 	unsigned char *code;
 	int status;
-	g_assert (newsize <= size);
-<<<<<<< HEAD
-	code = g_hash_table_lookup (cman->hash, data);
-=======
 	g_assert (NACL_BUNDLE_ALIGN_UP(newsize) <= size);
-	newsize = NACL_BUNDLE_ALIGN_UP(newsize);
-	code = mono_g_hash_table_lookup (cman->hash, data);
->>>>>>> NaCl ARM support.
+	code = g_hash_table_lookup (cman->hash, data);
 	g_assert (code != NULL);
-	mono_nacl_fill_code_buffer (data + newsize, size - newsize);
+	mono_nacl_fill_code_buffer ((uint8_t*)data + newsize, size - newsize);
+	newsize = NACL_BUNDLE_ALIGN_UP(newsize);
 	g_assert ((GPOINTER_TO_UINT (data) & kNaClBundleMask) == 0);
 	g_assert ((newsize & kNaClBundleMask) == 0);
 	status = nacl_dyncode_create (code, data, newsize);
@@ -651,12 +646,8 @@ mono_code_manager_commit (MonoCodeManager *cman, void *data, int size, int newsi
 		fprintf(stderr, "\n");
 		g_assert_not_reached ();
 	}
-<<<<<<< HEAD
 	g_hash_table_remove (cman->hash, data);
-=======
-	mono_g_hash_table_remove (cman->hash, data);
 # ifndef USE_JUMP_TABLES
->>>>>>> NaCl ARM support.
 	g_assert (data == patch_source_base[patch_current_depth]);
 	g_assert (code == patch_dest_base[patch_current_depth]);
 	patch_current_depth--;
@@ -721,7 +712,7 @@ mono_nacl_fill_code_buffer (guint8 *data, int size)
 void
 mono_nacl_fill_code_buffer(guint8 *data, int size)
 {
-        memset (data, 0xf4, new_size);
+        memset (data, 0xf4, size);
 }
 # else
 #  error "Not ported"

@@ -1,4 +1,3 @@
-
 #if defined(__native_client__)
 
 #include "nacl-stub.h"
@@ -19,12 +18,13 @@ int fsync(int fd)
 	errno = EINVAL;
 	return -1;
 }
+
+#ifdef USE_NEWLIB
 dev_t makedev(int maj, int min)
 {
 	return (maj)*256+(min);
 }
 
-#ifdef USE_NEWLIB
 int utime(const char *filename, const void *times)
 {
 	errno = EACCES;
@@ -65,8 +65,6 @@ size_t getpagesize(void)
 	return 4096;
 #endif
 }
-
-#include <semaphore.h>
 
 int sem_trywait(sem_t *sem) {
 	g_assert_not_reached ();

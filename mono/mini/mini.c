@@ -156,6 +156,7 @@ mono_realloc_native_code (MonoCompile *cfg)
 
 	/* Save the old alignment offset so we can re-align after the realloc. */
 	old_padding = (guint)(cfg->native_code - cfg->native_code_alloc);
+	cfg->code_size = NACL_BUNDLE_ALIGN_UP (cfg->code_size);
 
 	cfg->native_code_alloc = g_realloc ( cfg->native_code_alloc,
 										 cfg->code_size + kNaClAlignment );
@@ -3846,6 +3847,9 @@ mono_codegen (MonoCompile *cfg)
 
 	/* we always allocate code in cfg->domain->code_mp to increase locality */
 	cfg->code_size = cfg->code_len + max_epilog_size;
+#ifdef __native_client_codegen__
+	cfg->code_size = NACL_BUNDLE_ALIGN_UP (cfg->code_size);
+#endif
 	/* fixme: align to MONO_ARCH_CODE_ALIGNMENT */
 
 	if (cfg->method->dynamic) {
