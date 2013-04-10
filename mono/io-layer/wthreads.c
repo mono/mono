@@ -136,7 +136,7 @@ void _wapi_thread_set_termination_details (gpointer handle,
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
 	int thr_ret;
-	
+
 	if (_wapi_handle_issignalled (handle) ||
 	    _wapi_handle_type (handle) == WAPI_HANDLE_UNUSED) {
 		/* We must have already deliberately finished with
@@ -198,8 +198,14 @@ void _wapi_thread_signal_self (guint32 exitstatus)
  * by ExitThread()
 */
 static void thread_exit (guint32 exitstatus, gpointer handle) G_GNUC_NORETURN;
+#if defined(__native_client__)
+void nacl_shutdown_gc_thread(void);
+#endif
 static void thread_exit (guint32 exitstatus, gpointer handle)
 {
+#if defined(__native_client__)
+	nacl_shutdown_gc_thread();
+#endif
 	_wapi_thread_set_termination_details (handle, exitstatus);
 	
 	/* Call pthread_exit() to call destructors and really exit the
@@ -483,7 +489,7 @@ static gboolean find_thread_by_id (gpointer handle, gpointer user_data)
 	pthread_t tid = (pthread_t)user_data;
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
-	
+
 	/* Ignore threads that have already exited (ie they are signalled) */
 	if (_wapi_handle_issignalled (handle) == FALSE) {
 		ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
@@ -980,7 +986,7 @@ void wapi_interrupt_thread (gpointer thread_handle)
 		/* Try again */
 	}
 
-	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread_handle->id););
+	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread->id););
 
 	if (!wait_handle)
 		/* Not waiting */
@@ -1034,7 +1040,7 @@ gpointer wapi_prepare_interrupt_thread (gpointer thread_handle)
 		/* Try again */
 	}
 
-	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread_handle->id););
+	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread->id););
 
 	return wait_handle;
 }
