@@ -715,7 +715,8 @@ namespace Mono.CSharp {
 			if (MethodData != null)
 				MethodData.Emit (Parent);
 
-			Block = null;
+			if ((ModFlags & Modifiers.PARTIAL) == 0)
+				Block = null;
 		}
 
 		protected void Error_ConditionalAttributeIsNotValid ()
@@ -829,7 +830,7 @@ namespace Mono.CSharp {
 
 		public override void WriteDebugSymbol (MonoSymbolFile file)
 		{
-			if (MethodData != null)
+			if (MethodData != null && !IsPartialDefinition)
 				MethodData.WriteDebugSymbol (file);
 		}
 	}
