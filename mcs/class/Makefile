@@ -154,7 +154,6 @@ mobile_dirs := \
 	System.Reactive.PlatformServices \
 	System.Reactive.Experimental \
 	System.Reactive.Debugger	\
-	System.Net.Http \
 	System.IO.Compression \
 	System.IO.Compression.FileSystem \
 	System.ComponentModel.DataAnnotations \
@@ -165,6 +164,7 @@ monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.CSharp	\
 	Microsoft.CSharp \
+	System.Net.Http \
 	System.Reactive.Providers
 
 monotouch_runtime_dirs := \
@@ -194,8 +194,7 @@ monotouch_runtime_dirs := \
 	System.Web \
 	Mono.Web \
 	System.Web.Services \
-	System.Web	\
-	System.Net.Http
+	System.Web
 
 net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\
