@@ -1338,9 +1338,6 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (IsExplicitImpl)
-					MethodData.DefineOverride (Parent);
-
 				if (block != null && block.StateMachine is AsyncTaskStorey) {
 					var psm = Module.PredefinedAttributes.AsyncStateMachine;
 					
@@ -2084,7 +2081,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void DefineOverride (TypeDefinition container)
+		void DefineOverride (TypeDefinition container)
 		{
 			if (implementing == null)
 				return;
