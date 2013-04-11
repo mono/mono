@@ -50,8 +50,9 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	int ctx_reg;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
+	int buf_size = 128;
 
-	start = code = mono_global_codeman_reserve (128);
+	start = code = mono_global_codeman_reserve (buf_size);
 
 	/* 
 	 * Move things to their proper place so we can restore all the registers with
@@ -62,21 +63,48 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 #if defined(ARM_FPU_VFP)
 	ARM_ADD_REG_IMM8 (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, fregs));
+# ifdef __native_client_codegen__
+	ARM_NACL_MASK_REG_ALIGN (code, ARMREG_IP);
+# endif
 	ARM_FLDMD (code, ARM_VFP_D0, 16, ARMREG_IP);
+
 #endif
 
 	/* move pc to PC */
-	ARM_LDR_IMM (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, pc));
-	ARM_STR_IMM (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_PC * sizeof (mgreg_t)));
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, pc));
+	code = mono_arm_emit_str_imm12  (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_PC * sizeof (mgreg_t)));
+
 
 	/* restore everything */
 	ARM_ADD_REG_IMM8 (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET(MonoContext, regs));
+#ifdef __native_client_codegen__
+	/* Cannot fully restore context in NaCl - do the best. */
+	ARM_NACL_MASK_REG_ALIGN (code, ARMREG_IP);
+	ARM_LDM (code, ARMREG_IP, 0x1ff); /* r0-r8 */
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_R10, ARMREG_IP, 10 * sizeof (mgreg_t));
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_R11, ARMREG_IP, 11 * sizeof (mgreg_t));
+	/* SP */
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_LR, ARMREG_IP, 13 * sizeof (mgreg_t));
+	code = mono_arm_adjust_stack_reg_imm (code, ARMREG_LR, 0);
+	/* LR */
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_LR, ARMREG_IP, 14 * sizeof (mgreg_t));
+	/* PC */
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_IP, 15 * sizeof (mgreg_t));
+	code = mono_arm_emit_bx (code, ARMREG_IP, 0);
+#else
 	ARM_LDM (code, ARMREG_IP, 0xffff);
+#endif
 
 	/* never reached */
 	ARM_DBRK (code);
 
-	g_assert ((code - start) < 128);
+#ifdef __native_client_codegen__
+	/* Ensure we complete the bundle. */
+	code = mono_arm_nacl_ensure_at_position (code, 0);
+#endif
+        g_assert ((code - start) <= buf_size);
+	/* Commit code to the executable section for Native Client. */
+	nacl_global_codeman_validate (&start, code - start, &code);
 
 	mono_arch_flush_icache (start, code - start);
 
@@ -101,29 +129,58 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	int ctx_reg;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
+	int buf_size = 320;
+
 
 	/* call_filter (MonoContext *ctx, unsigned long eip, gpointer exc) */
-	start = code = mono_global_codeman_reserve (320);
+	start = code = mono_global_codeman_reserve (buf_size);
 
 	/* save all the regs on the stack */
 	ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_SP);
+#ifdef __native_client_codegen__
+	/* r4-r8, r10, r11, ip, lr */
+	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK2);
+	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK1);
+#else
 	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK);
+#endif
 
 	/* restore all the regs from ctx (in r0), but not sp, the stack pointer */
 	ctx_reg = ARMREG_R0;
-	ARM_LDR_IMM (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, pc));
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ctx_reg, G_STRUCT_OFFSET (MonoContext, pc));
 	ARM_ADD_REG_IMM8 (code, ARMREG_LR, ctx_reg, G_STRUCT_OFFSET(MonoContext, regs) + (MONO_ARM_FIRST_SAVED_REG * sizeof (mgreg_t)));
+#ifdef __native_client_codegen__
+	ARM_NACL_MASK_REG_ALIGN (code, ARMREG_LR);
+	ARM_LDM (code, ARMREG_LR, 0x1f0); /* r4-r8 */
+	ARM_ADD_REG_IMM8 (code, ARMREG_LR, ARMREG_LR, 6 * sizeof (mgreg_t));
+	ARM_NACL_MASK_REG_ALIGN (code, ARMREG_LR);
+	ARM_LDM (code, ARMREG_LR, 0x1c00); /* r10-r12 */
+	ARM_NACL_MASK_REG_ALIGN (code, ARMREG_LR);
+	ARM_LDR_IMM (code, ARMREG_LR, ARMREG_LR, 4 * sizeof (mgreg_t)); /* r14 */
+#else
 	ARM_LDM (code, ARMREG_LR, MONO_ARM_REGSAVE_MASK);
+#endif
 	/* call handler at eip (r1) and set the first arg with the exception (r2) */
 	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_R2);
+#ifdef __native_client_codegen__
+	code = mono_arm_emit_call_reg (code, ARMREG_R1);
+	ARM_POP (code, MONO_ARM_REGSAVE_MASK1);
+	ARM_POP (code, MONO_ARM_REGSAVE_MASK2);
+	/* IP has SP, LR has PC. */
+	code = mono_arm_adjust_stack_reg_imm (code, ARMREG_IP, 0);
+	code = mono_arm_emit_bx (code, ARMREG_LR, 0);
+	code = mono_arm_nacl_ensure_at_position (code, 0);
+#else
 	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 	ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_R1);
 
 	/* epilog */
 	ARM_POP_NWB (code, 0xff0 | ((1 << ARMREG_SP) | (1 << ARMREG_PC)));
+#endif
 
-	g_assert ((code - start) < 320);
+	g_assert ((code - start) < buf_size);
 
+	nacl_global_codeman_validate (&start, code - start, &code);
 	mono_arch_flush_icache (start, code - start);
 
 	if (info)
@@ -150,7 +207,7 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 	MONO_CONTEXT_SET_BP (&ctx, int_regs [ARMREG_FP - 4]);
 	MONO_CONTEXT_SET_SP (&ctx, sp);
 	MONO_CONTEXT_SET_IP (&ctx, pc);
-	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (mgreg_t)), int_regs, 8 * sizeof (mgreg_t));
+	memcpy (((guint8*)&ctx.regs) + (MONO_ARM_FIRST_SAVED_REG * sizeof (mgreg_t)), int_regs, 8 * sizeof (mgreg_t));
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * 16);
 
 	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
@@ -159,6 +216,9 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 			mono_ex->stack_trace = NULL;
 	}
 	mono_handle_exception (&ctx, exc);
+#ifdef __native_client_codegen__
+	g_assert ((ctx.pc & kNaClAlignmentMaskARM) == 0);
+#endif
 	restore_context (&ctx);
 	g_assert_not_reached ();
 }
@@ -213,14 +273,19 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 
 	/* save all the regs on the stack */
 	ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_SP);
+#ifdef __native_client_codegen__
+	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK2);
+	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK1);
+#else
 	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK);
+#endif
 
 	cfa_offset = MONO_ARM_NUM_SAVED_REGS * sizeof (mgreg_t);
 	mono_add_unwind_op_def_cfa (unwind_ops, code, start, ARMREG_SP, cfa_offset);
 	mono_add_unwind_op_offset (unwind_ops, code, start, ARMREG_LR, - sizeof (mgreg_t));
 
 	/* Save fp regs */
-	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, sizeof (double) * 16);
+	code = mono_arm_adjust_stack_imm (code, -sizeof (double) * 16);
 	cfa_offset += sizeof (double) * 16;
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, cfa_offset);
 #if defined(ARM_FPU_VFP)
@@ -228,7 +293,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 #endif
 
 	/* Param area */
-	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
+	code = mono_arm_adjust_stack_imm (code, -8);
 	cfa_offset += 8;
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, cfa_offset);
 
@@ -250,7 +315,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 	ARM_ORR_REG_IMM8 (code, ARMREG_R1, ARMREG_R1, rethrow);
 	/* fp regs */
 	ARM_ADD_REG_IMM8 (code, ARMREG_LR, ARMREG_SP, 8);
-	ARM_STR_IMM (code, ARMREG_LR, ARMREG_SP, 0);
+        code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ARMREG_SP, 0);
 
 	if (aot) {
 		const char *icall_name;
@@ -271,11 +336,21 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 	} else {
 		code = mono_arm_emit_load_imm (code, ARMREG_IP, GPOINTER_TO_UINT (resume_unwind ? (gpointer)mono_arm_resume_unwind : (corlib ? (gpointer)mono_arm_throw_exception_by_token : (gpointer)mono_arm_throw_exception)));
 	}
+#ifdef __native_client_codegen__
+	code = mono_arm_emit_call_reg (code, ARMREG_IP);
+#else
 	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 	ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
+#endif
 	/* we should never reach this breakpoint */
 	ARM_DBRK (code);
+
+#ifdef __native_client_codegen__
+	/* Ensure we complete the bundle. */
+	code = mono_arm_nacl_ensure_at_position (code, 0);
+#endif
 	g_assert ((code - start) < size);
+	nacl_global_codeman_validate (&start, code - start, &code);
 	mono_arch_flush_icache (start, code - start);
 
 	if (info)
