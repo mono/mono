@@ -361,6 +361,8 @@ namespace Mono.CSharp {
 		{
 			if (rhs == EmptyExpression.LValueMemberAccess || rhs == EmptyExpression.LValueMemberOutAccess) {
 				// Already reported as CS1612
+			} else if (rhs == EmptyExpression.OutAccess) {
+				rc.Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
 			} else {
 				rc.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
 			}
@@ -495,10 +497,7 @@ namespace Mono.CSharp {
 
 			if (e == null) {
 				if (errors == ec.Report.Errors) {
-					if (out_access)
-						ec.Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
-					else
-						Error_ValueAssignment (ec, right_side);
+					Error_ValueAssignment (ec, right_side);
 				}
 				return null;
 			}
