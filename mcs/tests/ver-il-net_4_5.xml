@@ -46771,6 +46771,48 @@
       </method>
     </type>
   </test>
+  <test name="test-867.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="User">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseController">
+      <method name="IUser get_User()" attrs="2502">
+        <size>14</size>
+      </method>
+      <method name="Void set_User(IUser)" attrs="2502">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseJobController">
+      <method name="User get_User()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_User(User)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="JobController">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">
