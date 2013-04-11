@@ -10,6 +10,7 @@
  * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 #include "mini.h"
+#include <stdlib.h>
 #include <string.h>
 
 #include <mono/metadata/appdomain.h>
@@ -52,26 +53,32 @@
 #endif
 
 #ifdef __native_client_codegen__
-const guint kNaClAlignment = kNaClAlignmentARM;
-const guint kNaClAlignmentMask = kNaClAlignmentMaskARM;
 gint8 nacl_align_byte = -1; /* 0xff */
 
 guint8 *
 mono_arch_nacl_pad (guint8 *code, int pad)
 {
-  /* Not yet properly implemented. */
-  g_assert_not_reached ();
-  return code;
+	g_assert (pad % 4 == 0);
+	while (pad > 0)
+	{
+		ARM_NOP (code);
+		pad -= 4;
+	}
+	return code;
 }
 
 guint8 *
 mono_arch_nacl_skip_nops (guint8 *code)
 {
-  /* Not yet properly implemented. */
-  g_assert_not_reached ();
-  return code;
+	guint32* code32 = (guint32*)code;
+	/*
+	 * mov r0, r0 which is standard ARM NOP, keep in sync with
+	 * ARM_NOP() macro in mono/arch/arm/arm-codegen.h
+	 */
+	while (*code32 == 0xe1a00000)
+		code32++;
+	return (guint8*) code32;
 }
-
 #endif /* __native_client_codegen__ */
 
 #define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
@@ -169,23 +176,11 @@ int mono_exc_esp_offset = 0;
  
 /* A variant of ARM_LDR_IMM which can handle large offsets */
 #define ARM_LDR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do { \
-	if (arm_is_imm12 ((offset))) { \
-		ARM_LDR_IMM (code, (dreg), (basereg), (offset));	\
-	} else {												\
-		g_assert ((scratch_reg) != (basereg));					   \
-		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
-		ARM_LDR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
-	}																	\
+	code = mono_arm_emit_ldr_imm (code, dreg, basereg, offset, scratch_reg); \
 	} while (0)
 
 #define ARM_STR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do {	\
-	if (arm_is_imm12 ((offset))) { \
-		ARM_STR_IMM (code, (dreg), (basereg), (offset));	\
-	} else {												\
-		g_assert ((scratch_reg) != (basereg));					   \
-		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
-		ARM_STR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
-	}																	\
+	code = mono_arm_emit_str_imm (code, dreg, basereg, offset, scratch_reg); \
 	} while (0)
 
 static void mono_arch_compute_omit_fp (MonoCompile *cfg);
@@ -223,6 +218,635 @@ mono_arch_fregname (int reg)
 
 
 #ifndef DISABLE_JIT
+# ifdef __native_client_codegen__
+guint8*
+mono_arm_nacl_ensure_bundle (guint8 *code, int space) {
+	g_assert (space == 4 || space == 8 || space == 12);
+
+	if ((GPOINTER_TO_UINT (code) & kNaClAlignmentMaskARM) >= (kNaClAlignmentARM - space)) {
+		while ((GPOINTER_TO_UINT (code) & kNaClAlignmentMaskARM) != 0) {
+			ARM_NOP(code);
+		}
+	}
+	return code;
+}
+
+guint8*
+mono_arm_nacl_ensure_at_position (guint8 *code, int position) {
+	g_assert (position == 0 || position == 4 || position == 8 || position == 12);
+	while ((GPOINTER_TO_UINT (code) & kNaClAlignmentMaskARM) != position) {
+		ARM_NOP(code);
+	}
+	return code;
+}
+
+gint8
+mono_arm_ret_pc_offset (guint8 *code)
+{
+	int bundle_offset = GPOINTER_TO_UINT(code) & kNaClAlignmentMaskARM;
+	switch (bundle_offset)
+	{
+		case 0:
+			return 8;
+		case 4:
+			return 4;
+		case 8:
+			return 16;
+		case 12:
+			return 12;
+		default:
+			g_assert_not_reached ();
+			return 0;
+	}
+}
+# endif /* __native_client_codegen__ */
+
+static void
+arm_code_realloc (MonoCompile *cfg, guint32 new_size)
+{
+	cfg->code_size = new_size;
+	cfg->native_code = mono_realloc_native_code (cfg);
+}
+
+guint8*
+mono_arm_emit_bx_cond (guint8* code, ARMReg reg, int need_return, int cond)
+{
+# ifdef __native_client_codegen__
+	ARM_NACL_MASK_CODE_ALIGN (code, reg);
+	ARM_BX_COND (code, cond, reg);
+	if (need_return)
+		code = mono_arm_nacl_ensure_at_position (code, 0);
+# else
+	if (mono_arm_thumb_supported ())
+		ARM_BX_COND (code, cond, reg);
+	else
+		ARM_MOV_REG_REG_COND (code, ARMREG_PC, reg, cond);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_emit_bx (guint8* code, ARMReg reg, int need_return)
+{
+# ifdef __native_client_codegen__
+	ARM_NACL_MASK_CODE_ALIGN (code, reg);
+	ARM_BX (code, reg);
+	if (need_return)
+		code = mono_arm_nacl_ensure_at_position (code, 0);
+# else
+	if (mono_arm_thumb_supported ())
+		ARM_BX (code, reg);
+	else
+		ARM_MOV_REG_REG (code, ARMREG_PC, reg);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldr_imm12 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_imm12 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+        ARM_LDR_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrh_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_imm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+        ARM_LDRH_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrsh_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_imm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+        ARM_LDRSH_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrb_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_imm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+        ARM_LDRB_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrsb_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_imm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+        ARM_LDRSB_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_flds_imm8 (guint8* code, int dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_fpimm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+        ARM_FLDS (code, dreg, basereg, offset);
+        return code;
+}
+
+guint8*
+mono_arm_emit_fldd_imm8 (guint8* code, int dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_fpimm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+        ARM_FLDD (code, dreg, basereg, offset);
+        return code;
+}
+
+guint8*
+mono_arm_emit_ldr_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm12 (offset))
+		return mono_arm_emit_ldr_imm12 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+#ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_LDR_IMM (code, dreg, scratch_reg, 0);
+#else
+		ARM_LDR_REG_REG (code, dreg, basereg, scratch_reg);
+#endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm8 (offset))
+		return mono_arm_emit_ldrh_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_LDRH_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_LDRH_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrsh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm8 (offset))
+		return mono_arm_emit_ldrsh_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_LDRSH_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_LDRSH_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm8 (offset))
+		return mono_arm_emit_ldrb_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_LDRB_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_LDRB_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrsb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm8 (offset))
+		return mono_arm_emit_ldrsb_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_LDRSB_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_LDRSB_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_flds_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_fpimm8 (offset))
+		code = mono_arm_emit_flds_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (basereg != scratch_reg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		code = mono_arm_emit_flds_imm8 (code, dreg, scratch_reg, 0);
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_fldd_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_fpimm8 (offset))
+		code = mono_arm_emit_fldd_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (basereg != scratch_reg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		code = mono_arm_emit_fldd_imm8 (code, dreg, scratch_reg, 0);
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldr_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARM_ADD_REG_REG (code, dreg, basereg, offreg);
+	code = mono_arm_emit_ldr_imm12 (code, dreg, dreg, 0);
+# else
+	ARM_LDR_REG_REG (code, dreg, basereg, offreg);
+# endif
+	return code;
+}
+guint8*
+mono_arm_emit_ldrh_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARM_ADD_REG_REG (code, dreg, basereg, offreg);
+	code = mono_arm_emit_ldrh_imm8 (code, dreg, dreg, 0);
+# else
+	ARM_LDRH_REG_REG (code, dreg, basereg, offreg);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_emit_ldrsh_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARM_ADD_REG_REG (code, dreg, basereg, offreg);
+	code = mono_arm_emit_ldrsh_imm8 (code, dreg, dreg, 0);
+# else
+	ARM_LDRSH_REG_REG (code, dreg, basereg, offreg);
+# endif
+	return code;
+}
+
+guint8* mono_arm_emit_ldrb_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARM_ADD_REG_REG (code, dreg, basereg, offreg);
+	code = mono_arm_emit_ldrb_imm8 (code, dreg, dreg, 0);
+# else
+	ARM_LDRB_REG_REG (code, dreg, basereg, offreg);
+# endif
+	return code;
+}
+
+guint8* mono_arm_emit_ldrsb_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARM_ADD_REG_REG (code, dreg, basereg, offreg);
+	code = mono_arm_emit_ldrsb_imm8 (code, dreg, dreg, 0);
+# else
+	ARM_LDRSB_REG_REG (code, dreg, basereg, offreg);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_emit_str_imm12 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+        g_assert (arm_is_imm12 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+	ARM_STR_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_strh_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+	g_assert (arm_is_imm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+#endif
+	ARM_STRH_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_strb_imm8 (guint8* code, ARMReg dreg, ARMReg basereg, int offset)
+{
+	g_assert (arm_is_imm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+	ARM_STRB_IMM (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_fsts_imm8 (guint8* code, int dreg, ARMReg basereg, int offset)
+{
+	g_assert (arm_is_fpimm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+	ARM_FSTS (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8* mono_arm_emit_fstd_imm8 (guint8* code, int dreg, ARMReg basereg, int offset)
+{
+	g_assert (arm_is_fpimm8 (offset));
+# ifdef __native_client_codegen__
+	if (basereg != ARMREG_SP)
+		ARM_NACL_MASK_REG_ALIGN (code, basereg);
+# endif
+	ARM_FSTD (code, dreg, basereg, offset);
+	return code;
+}
+
+guint8*
+mono_arm_emit_str_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm12 (offset))
+		return mono_arm_emit_str_imm12 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg && scratch_reg != dreg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_STR_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_STR_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_strh_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+        if (arm_is_imm8 (offset))
+                return mono_arm_emit_strh_imm8 (code, dreg, basereg, offset);
+        else {
+                g_assert (scratch_reg != basereg && scratch_reg != dreg);
+                code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+# ifdef __native_client_codegen__
+                ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+                ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+                ARM_STRH_IMM (code, dreg, scratch_reg, 0);
+# else
+                ARM_STRH_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+        }
+	return code;
+}
+
+guint8*
+mono_arm_emit_strb_imm (guint8* code, ARMReg dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_imm8 (offset))
+		return mono_arm_emit_strb_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (scratch_reg != basereg && scratch_reg != dreg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, (offset));
+# ifdef __native_client_codegen__
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		ARM_NACL_MASK_REG_ALIGN (code, scratch_reg);
+		ARM_STRB_IMM (code, dreg, scratch_reg, 0);
+# else
+		ARM_STRB_REG_REG (code, dreg, basereg, scratch_reg);
+# endif
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_fsts_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_fpimm8 (offset))
+		code = mono_arm_emit_fsts_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (basereg != scratch_reg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		code = mono_arm_emit_fsts_imm8 (code, dreg, scratch_reg, 0);
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_fstd_imm (guint8* code, int dreg, ARMReg basereg, int offset, ARMReg scratch_reg)
+{
+	if (arm_is_fpimm8 (offset))
+		code = mono_arm_emit_fstd_imm8 (code, dreg, basereg, offset);
+	else {
+		g_assert (basereg != scratch_reg);
+		code = mono_arm_emit_load_imm (code, scratch_reg, offset);
+		ARM_ADD_REG_REG (code, scratch_reg, scratch_reg, basereg);
+		code = mono_arm_emit_fstd_imm8 (code, dreg, scratch_reg, 0);
+	}
+	return code;
+}
+
+guint8*
+mono_arm_emit_str_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARMReg scratch = ARMREG_IP;
+	g_assert (dreg != scratch);
+	g_assert (basereg != scratch);
+	g_assert (offreg != scratch);
+	ARM_ADD_REG_REG (code, scratch, basereg, offreg);
+	code = mono_arm_emit_str_imm12 (code, dreg, scratch, 0);
+# else
+	ARM_STR_REG_REG (code, dreg, basereg, offreg);
+# endif
+        return code;
+}
+guint8*
+mono_arm_emit_strh_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARMReg scratch = ARMREG_IP;
+	g_assert (dreg != scratch);
+	g_assert (basereg != scratch);
+	g_assert (offreg != scratch);
+	ARM_ADD_REG_REG (code, scratch, basereg, offreg);
+	code = mono_arm_emit_strh_imm8 (code, dreg, scratch, 0);
+# else
+	ARM_STRH_REG_REG (code, dreg, basereg, offreg);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_emit_strb_reg (guint8* code, ARMReg dreg, ARMReg basereg, ARMReg offreg)
+{
+# ifdef __native_client_codegen__
+	ARMReg scratch = ARMREG_IP;
+	g_assert (dreg != scratch);
+	g_assert (basereg != scratch);
+	g_assert (offreg != scratch);
+	ARM_ADD_REG_REG (code, scratch, basereg, offreg);
+	code = mono_arm_emit_strb_imm8 (code, dreg, scratch, 0);
+# else
+	ARM_STRB_REG_REG (code, dreg, basereg, offreg);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_adjust_stack_reg (guint8* code, ARMReg reg, int add)
+{
+# ifdef __native_client_codegen__
+	code = mono_arm_nacl_ensure_bundle(code, 4);
+# endif
+	if (add)
+		ARM_ADD_REG_REG (code, ARMREG_SP, ARMREG_SP, reg);
+	else
+		ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, reg);
+# ifdef __native_client_codegen__
+	g_assert ((GPOINTER_TO_UINT (code) & kNaClAlignmentMaskARM) != 0);
+	ARM_NACL_MASK_REG (code, ARMREG_SP);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_adjust_stack_imm (guint8* code, int offset)
+{
+	int i, rot_amount;
+
+	if (offset == 0)
+		return code;
+
+	if (offset < 0) {
+		offset = -offset;
+		if ((i = mono_arm_is_rotated_imm8 (offset, &rot_amount)) >= 0) {
+# ifdef __native_client_codegen__
+			code = mono_arm_nacl_ensure_bundle(code, 4);
+# endif
+			ARM_SUB_REG_IMM (code, ARMREG_SP, ARMREG_SP, i, rot_amount);
+		} else {
+			code = mono_arm_emit_load_imm (code, ARMREG_IP, offset);
+# ifdef __native_client_codegen__
+			code = mono_arm_nacl_ensure_bundle(code, 4);
+# endif
+			ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
+                }
+        } else {
+		if ((i = mono_arm_is_rotated_imm8 (offset, &rot_amount)) >= 0) {
+# ifdef __native_client_codegen__
+			code = mono_arm_nacl_ensure_bundle(code, 4);
+# endif
+			ARM_ADD_REG_IMM (code, ARMREG_SP, ARMREG_SP, i, rot_amount);
+		} else {
+			code = mono_arm_emit_load_imm (code, ARMREG_IP, offset);
+# ifdef __native_client_codegen__
+			code = mono_arm_nacl_ensure_bundle(code, 4);
+# endif
+			ARM_ADD_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
+		}
+	}
+# ifdef __native_client_codegen__
+	g_assert ((GPOINTER_TO_UINT (code) & kNaClAlignmentMaskARM) != 0);
+	ARM_NACL_MASK_REG (code, ARMREG_SP);
+# endif
+	return code;
+}
+
+guint8*
+mono_arm_adjust_stack_reg_imm (guint8* code, ARMReg reg, int offset)
+{
+	int i, rot_amount;
+
+	g_assert (offset >= 0);
+	if ((i = mono_arm_is_rotated_imm8 (offset, &rot_amount)) >= 0) {
+# ifdef __native_client_codegen__
+		code = mono_arm_nacl_ensure_bundle(code, 4);
+# endif
+		ARM_ADD_REG_IMM (code, ARMREG_SP, reg, i, rot_amount);
+        } else {
+		g_assert (reg != ARMREG_IP);
+		code = mono_arm_emit_load_imm (code, ARMREG_IP, offset);
+# ifdef __native_client_codegen__
+		code = mono_arm_nacl_ensure_bundle(code, 4);
+# endif
+		ARM_ADD_REG_REG (code, ARMREG_SP, reg, ARMREG_IP);
+	}
+# ifdef __native_client_codegen__
+	g_assert ((GPOINTER_TO_UINT (code) & kNaClAlignmentMaskARM) != 0);
+	ARM_NACL_MASK_REG (code, ARMREG_SP);
+# endif
+	return code;
+}
+
+
+static void
+arm_code_realloc (MonoCompile *cfg, guint32 new_size);
+
 static guint8*
 emit_big_add (guint8 *code, int dreg, int sreg, int imm)
 {
@@ -246,8 +870,8 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 		code = emit_big_add (code, ARMREG_R0, sreg, soffset);
 		code = emit_big_add (code, ARMREG_R1, dreg, doffset);
 		start_loop = code = mono_arm_emit_load_imm (code, ARMREG_R2, size);
-		ARM_LDR_IMM (code, ARMREG_R3, ARMREG_R0, 0);
-		ARM_STR_IMM (code, ARMREG_R3, ARMREG_R1, 0);
+		code = mono_arm_emit_ldr_imm12 (code, ARMREG_R3, ARMREG_R0, 0);
+		code = mono_arm_emit_str_imm12 (code, ARMREG_R3, ARMREG_R1, 0);
 		ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, 4);
 		ARM_ADD_REG_IMM8 (code, ARMREG_R1, ARMREG_R1, 4);
 		ARM_SUBS_REG_IMM8 (code, ARMREG_R2, ARMREG_R2, 4);
@@ -258,8 +882,8 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 	if (arm_is_imm12 (doffset) && arm_is_imm12 (doffset + size) &&
 			arm_is_imm12 (soffset) && arm_is_imm12 (soffset + size)) {
 		while (size >= 4) {
-			ARM_LDR_IMM (code, ARMREG_LR, sreg, soffset);
-			ARM_STR_IMM (code, ARMREG_LR, dreg, doffset);
+			code = mono_arm_emit_ldr_imm12 (code, ARMREG_LR, sreg, soffset);
+			code = mono_arm_emit_str_imm12 (code, ARMREG_LR, dreg, doffset);
 			doffset += 4;
 			soffset += 4;
 			size -= 4;
@@ -269,8 +893,8 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 		code = emit_big_add (code, ARMREG_R1, dreg, doffset);
 		doffset = soffset = 0;
 		while (size >= 4) {
-			ARM_LDR_IMM (code, ARMREG_LR, ARMREG_R0, soffset);
-			ARM_STR_IMM (code, ARMREG_LR, ARMREG_R1, doffset);
+			code = mono_arm_emit_ldr_imm12 (code, ARMREG_LR, ARMREG_R0, soffset);
+			code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ARMREG_R1, doffset);
 			doffset += 4;
 			soffset += 4;
 			size -= 4;
@@ -281,22 +905,41 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 }
 
 static guint8*
-emit_call_reg (guint8 *code, int reg)
+emit_call_reg_cond (guint8 *code, ARMReg reg, int cond)
+
 {
+# ifdef __native_client_codegen__
+	/*
+	 * BLX has to be at the very end of the bundle, so that return
+	 * sequence BIC lr, lr, #mask ; BX LR will return to the next bundle,
+	 * not restart this one. ARM NaCl verifier enforces that rule.
+	 */
+	code = mono_arm_nacl_ensure_at_position (code, 8);
+	ARM_NACL_MASK_CODE_ALIGN (code, reg);
+	ARM_BLX_REG_COND (code, cond, reg);
+# else
 	if (v5_supported) {
-		ARM_BLX_REG (code, reg);
+		ARM_BLX_REG_COND (code, cond, reg);
 	} else {
 #ifdef USE_JUMP_TABLES
 		g_assert_not_reached ();
 #endif
 		ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 		if (thumb_supported)
-			ARM_BX (code, reg);
+			ARM_BX_COND (code, cond, reg);
 		else
-			ARM_MOV_REG_REG (code, ARMREG_PC, reg);
+			ARM_MOV_REG_REG_COND (code, ARMREG_PC, reg, cond);
 	}
+#endif
 	return code;
 }
+
+guint8*
+mono_arm_emit_call_reg (guint8 *code, ARMReg dreg)
+{
+	return emit_call_reg_cond (code, dreg, ARMCOND_AL);
+}
+
 
 static guint8*
 emit_call_seq (MonoCompile *cfg, guint8 *code)
@@ -309,7 +952,7 @@ emit_call_seq (MonoCompile *cfg, guint8 *code)
 		ARM_B (code, 0);
 		*(gpointer*)code = NULL;
 		code += 4;
-		code = emit_call_reg (code, ARMREG_IP);
+		code = mono_arm_emit_call_reg (code, ARMREG_IP);
 	} else {
 		ARM_BL (code, 0);
 	}
@@ -325,7 +968,7 @@ mono_arm_patchable_b (guint8 *code, int cond)
 
 	jte = mono_jumptable_add_entry ();
 	code = mono_arm_load_jumptable_entry (code, jte, ARMREG_IP);
-	ARM_BX_COND (code, cond, ARMREG_IP);
+	code = mono_arm_emit_bx_cond (code, ARMREG_IP, 0, cond);
 #else
 	ARM_B_COND (code, cond, 0);
 #endif
@@ -340,7 +983,7 @@ mono_arm_patchable_bl (guint8 *code, int cond)
 
 	jte = mono_jumptable_add_entry ();
 	code = mono_arm_load_jumptable_entry (code, jte,  ARMREG_IP);
-	ARM_BLX_REG_COND (code, cond, ARMREG_IP);
+	code = emit_call_reg_cond (code, ARMREG_IP, cond);
 #else
 	ARM_BL_COND (code, cond, 0);
 #endif
@@ -360,8 +1003,7 @@ guint8*
 mono_arm_load_jumptable_entry (guint8 *code, gpointer* jte, ARMReg reg)
 {
 	code = mono_arm_load_jumptable_entry_addr (code, jte, reg);
-	ARM_LDR_IMM (code, reg, reg, 0);
-	return code;
+	return mono_arm_emit_ldr_imm12 (code, reg, reg, 0);
 }
 #endif
 
@@ -412,7 +1054,7 @@ emit_save_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset)
 							 (gpointer)"__aeabi_read_tp");
 		code = emit_call_seq (cfg, code);
 
-		ARM_LDR_IMM (code, ARMREG_R0, ARMREG_R0, lmf_addr_tls_offset);
+                code =  mono_arm_emit_ldr_imm12 (code, ARMREG_R0, ARMREG_R0, lmf_addr_tls_offset);
 		get_lmf_fast = TRUE;
 	}
 #endif
@@ -460,18 +1102,18 @@ emit_save_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset)
 	 */
 	code = emit_big_add (code, ARMREG_R1, ARMREG_SP, lmf_offset);
 	/* r0 is the result from mono_get_lmf_addr () */
-	ARM_STR_IMM (code, ARMREG_R0, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, lmf_addr));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_R0, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, lmf_addr));
 	/* new_lmf->previous_lmf = *lmf_addr */
-	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_R0, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
-	ARM_STR_IMM (code, ARMREG_IP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
+	code = mono_arm_emit_ldr_imm12  (code, ARMREG_IP, ARMREG_R0, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_IP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
 	/* *(lmf_addr) = r1 */
-	ARM_STR_IMM (code, ARMREG_R1, ARMREG_R0, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_R1, ARMREG_R0, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
 	/* Skip method (only needed for trampoline LMF frames) */
-	ARM_STR_IMM (code, ARMREG_SP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, sp));
-	ARM_STR_IMM (code, ARMREG_FP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, fp));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_SP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, sp));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_FP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, fp));
 	/* save the current IP */
 	ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_PC);
-	ARM_STR_IMM (code, ARMREG_IP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, ip));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_IP, ARMREG_R1, G_STRUCT_OFFSET (MonoLMF, ip));
 
 	for (i = 0; i < sizeof (MonoLMF); i += sizeof (mgreg_t))
 		mini_gc_set_slot_type_from_fp (cfg, lmf_offset + i, SLOT_NOREF);
@@ -499,11 +1141,11 @@ emit_restore_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset)
 	}
 
 	/* ip = previous_lmf */
-	ARM_LDR_IMM (code, ARMREG_IP, basereg, offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf));
+        code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, basereg, offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf));
 	/* lr = lmf_addr */
-	ARM_LDR_IMM (code, ARMREG_LR, basereg, offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr));
+        code = mono_arm_emit_ldr_imm12 (code, ARMREG_LR, basereg, offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr));
 	/* *(lmf_addr) = previous_lmf */
-	ARM_STR_IMM (code, ARMREG_IP, ARMREG_LR, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
+        code = mono_arm_emit_str_imm12 (code, ARMREG_IP, ARMREG_LR, G_STRUCT_OFFSET (MonoLMF, previous_lmf));
 
 	return code;
 }
@@ -573,35 +1215,48 @@ static gpointer
 get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *code_size)
 {
 	guint8 *code, *start;
+	int size;
 
 	if (has_target) {
-		start = code = mono_global_codeman_reserve (12);
-
-		/* Replace the this argument with the target */
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_R0, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
-		ARM_LDR_IMM (code, ARMREG_R0, ARMREG_R0, G_STRUCT_OFFSET (MonoDelegate, target));
-		ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
-
-		g_assert ((code - start) <= 12);
-
-		mono_arch_flush_icache (start, 12);
-	} else {
-		int size, i;
-
-		size = 8 + param_count * 4;
+		size = NACL_SIZE (12, 32);
 		start = code = mono_global_codeman_reserve (size);
 
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_R0, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		/* Replace the this argument with the target */
+		code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_R0, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		code = mono_arm_emit_ldr_imm12 (code, ARMREG_R0, ARMREG_R0, G_STRUCT_OFFSET (MonoDelegate, target));
+#ifdef __native_client_codegen__
+		code = mono_arm_emit_bx (code, ARMREG_IP, 0);
+#else
+		ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
+#endif
+	} else {
+		int i;
+
+		size = NACL_SIZE (8, 16);
+		size += param_count * 4;
+
+		start = code = mono_global_codeman_reserve (size);
+
+		code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_R0, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		/* slide down the arguments */
 		for (i = 0; i < param_count; ++i) {
 			ARM_MOV_REG_REG (code, (ARMREG_R0 + i), (ARMREG_R0 + i + 1));
 		}
+#ifdef __native_client_codegen__
+		code = mono_arm_emit_bx (code, ARMREG_IP, 0);
+#else
 		ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
-
-		g_assert ((code - start) <= size);
-
-		mono_arch_flush_icache (start, size);
+#endif
 	}
+
+#ifdef __native_client_codegen__
+	/* Ensure we complete the bundle. */
+	code = mono_arm_nacl_ensure_at_position(code, 0);
+#endif
+	g_assert ((code - start) <= size);
+	nacl_global_codeman_validate (&start, (code - start), &code);
+
+	mono_arch_flush_icache (start, size);
 
 	if (code_size)
 		*code_size = code - start;
@@ -716,19 +1371,20 @@ static gpointer
 create_function_wrapper (gpointer function)
 {
 	guint8 *start, *code;
+        int size = 96;
 
-	start = code = mono_global_codeman_reserve (96);
+	start = code = mono_global_codeman_reserve (size);
 
 	/*
 	 * Construct the MonoContext structure on the stack.
 	 */
 
-	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, sizeof (MonoContext));
+	code = mono_arm_adjust_stack_imm (code, -sizeof (MonoContext));
 
 	/* save ip, lr and pc into their correspodings ctx.regs slots. */
-	ARM_STR_IMM (code, ARMREG_IP, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, regs) + sizeof (mgreg_t) * ARMREG_IP);
-	ARM_STR_IMM (code, ARMREG_LR, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_LR);
-	ARM_STR_IMM (code, ARMREG_LR, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_PC);
+	code = mono_arm_emit_str_imm12 (code,  ARMREG_IP, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, regs) + sizeof (mgreg_t) * ARMREG_IP);
+	code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_LR);
+	code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_PC);
 
 	/* save r0..r10 and fp */
 	ARM_ADD_REG_IMM8 (code, ARMREG_IP, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, regs));
@@ -739,12 +1395,12 @@ create_function_wrapper (gpointer function)
 
 	/* make ctx.esp hold the actual value of sp at the beginning of this method. */
 	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_FP, sizeof (MonoContext));
-	ARM_STR_IMM (code, ARMREG_R0, ARMREG_IP, 4 * ARMREG_SP);
-	ARM_STR_IMM (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_SP);
+	code = mono_arm_emit_str_imm12 (code, ARMREG_R0, ARMREG_IP, 4 * ARMREG_SP);
+	code = mono_arm_emit_str_imm12 (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_SP);
 
 	/* make ctx.eip hold the address of the call. */
 	ARM_SUB_REG_IMM8 (code, ARMREG_LR, ARMREG_LR, 4);
-	ARM_STR_IMM (code, ARMREG_LR, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, pc));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ARMREG_SP, G_STRUCT_OFFSET (MonoContext, pc));
 
 	/* r0 now points to the MonoContext */
 	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_FP);
@@ -762,16 +1418,18 @@ create_function_wrapper (gpointer function)
 	*(gpointer*)code = function;
 	code += 4;
 #endif
-	ARM_BLX_REG (code, ARMREG_IP);
+	code = mono_arm_emit_call_reg (code, ARMREG_IP);
 
 	/* we're back; save ctx.eip and ctx.esp into the corresponding regs slots. */
-	ARM_LDR_IMM (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, pc));
-	ARM_STR_IMM (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_LR);
-	ARM_STR_IMM (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_PC);
-
+	code = mono_arm_emit_ldr_imm12 (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, pc));
+	code = mono_arm_emit_str_imm12 (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_LR);
+	code = mono_arm_emit_str_imm12 (code, ARMREG_R0, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, regs) + 4 * ARMREG_PC);
 	/* make ip point to the regs array, then restore everything, including pc. */
 	ARM_ADD_REG_IMM8 (code, ARMREG_IP, ARMREG_FP, G_STRUCT_OFFSET (MonoContext, regs));
 	ARM_LDM (code, ARMREG_IP, 0xffff);
+
+	g_assert ((code - start) <= size);
+	nacl_global_codeman_validate(&start, (code - start), &code);
 
 	mono_arch_flush_icache (start, code - start);
 
@@ -2516,7 +3174,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->method);
 	ARM_MOV_REG_IMM8 (code, ARMREG_R1, 0); /* NULL ebp for now */
 	code = mono_arm_emit_load_imm (code, ARMREG_R2, (guint32)func);
-	code = emit_call_reg (code, ARMREG_R2);
+	code = mono_arm_emit_call_reg (code, ARMREG_R2);
 	return code;
 }
 
@@ -2537,14 +3195,19 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 	MonoMethod *method = cfg->method;
 	int rtype = mini_type_get_underlying_type (cfg->generic_sharing_context, mono_method_signature (method)->ret)->type;
 	int save_offset = cfg->param_area;
+	/* we need about 16 instructions */
+	int insn_bias = 16;
+#ifdef __native_client_codegen__
+	insn_bias *= 3;
+#endif
+
 	save_offset += 7;
 	save_offset &= ~7;
 	
 	offset = code - cfg->native_code;
-	/* we need about 16 instructions */
+
 	if (offset > (cfg->code_size - 16 * 4)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+                arm_code_realloc (cfg, cfg->code_size * 2);
 		code = cfg->native_code + offset;
 	}
 	switch (rtype) {
@@ -2573,15 +3236,16 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 
 	switch (save_mode) {
 	case SAVE_TWO:
-		ARM_STR_IMM (code, ARMREG_R0, cfg->frame_reg, save_offset);
-		ARM_STR_IMM (code, ARMREG_R1, cfg->frame_reg, save_offset + 4);
+		/* TODO: use stm? */
+		code = mono_arm_emit_str_imm12 (code, ARMREG_R0, cfg->frame_reg, save_offset);
+		code = mono_arm_emit_str_imm12 (code, ARMREG_R1, cfg->frame_reg, save_offset + 4);
 		if (enable_arguments) {
 			ARM_MOV_REG_REG (code, ARMREG_R2, ARMREG_R1);
 			ARM_MOV_REG_REG (code, ARMREG_R1, ARMREG_R0);
 		}
 		break;
 	case SAVE_ONE:
-		ARM_STR_IMM (code, ARMREG_R0, cfg->frame_reg, save_offset);
+		code = mono_arm_emit_str_imm12 (code, ARMREG_R0, cfg->frame_reg, save_offset);
 		if (enable_arguments) {
 			ARM_MOV_REG_REG (code, ARMREG_R1, ARMREG_R0);
 		}
@@ -2605,15 +3269,16 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 
 	code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->method);
 	code = mono_arm_emit_load_imm (code, ARMREG_IP, (guint32)func);
-	code = emit_call_reg (code, ARMREG_IP);
+	code = mono_arm_emit_call_reg (code, ARMREG_IP);
 
 	switch (save_mode) {
 	case SAVE_TWO:
-		ARM_LDR_IMM (code, ARMREG_R0, cfg->frame_reg, save_offset);
-		ARM_LDR_IMM (code, ARMREG_R1, cfg->frame_reg, save_offset + 4);
+                /* TODO: use ldm */
+		code = mono_arm_emit_ldr_imm12 (code, ARMREG_R0, cfg->frame_reg, save_offset);
+		code = mono_arm_emit_ldr_imm12 (code, ARMREG_R1, cfg->frame_reg, save_offset + 4);
 		break;
 	case SAVE_ONE:
-		ARM_LDR_IMM (code, ARMREG_R0, cfg->frame_reg, save_offset);
+		code = mono_arm_emit_ldr_imm12 (code, ARMREG_R0, cfg->frame_reg, save_offset);
 		break;
 	case SAVE_FP:
 		/* FIXME */
@@ -2639,13 +3304,23 @@ if (0 && ins->inst_true_bb->native_offset) { \
 
 #define EMIT_COND_BRANCH(ins,cond) EMIT_COND_BRANCH_FLAGS(ins, branch_cc_table [(cond)])
 
+#ifdef __native_client_codegen__
+/*
+ * This macro ensures we can perform branch and link instructions (BL, BLX)
+ * which shall be at the bundle end (enforced by NaCl verifier.
+ */
+#define ENSURE_CAN_BL(code) code = mono_arm_nacl_ensure_at_position (code, 12)
+#else
+#define ENSURE_CAN_BL(code)
+#endif
 /* emit an exception if condition is fail
  *
  * We assign the extra code used to throw the implicit exceptions
  * to cfg->bb_exit as far as the big branch handling is concerned
  */
 #define EMIT_COND_SYSTEM_EXCEPTION_FLAGS(condcode,exc_name)            \
-        do {                                                        \
+        do {                                                           \
+		ENSURE_CAN_BL(code);                                   \
 		mono_add_patch_info (cfg, code - cfg->native_code,   \
 				    MONO_PATCH_INFO_EXC, exc_name); \
 		ARM_BL_COND (code, (condcode), 0); \
@@ -3475,7 +4150,7 @@ mono_arm_is_rotated_imm8 (guint32 val, gint *rot_amount)
  * into the dreg register. Uses at most 4 instructions.
  */
 guint8*
-mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val)
+mono_arm_emit_load_imm (guint8 *code, ARMReg dreg, guint32 val)
 {
 	int imm8, rot_amount;
 #if 0
@@ -3563,8 +4238,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	if (cinfo->vtype_retaddr) {
 		ArgInfo *ainfo = &cinfo->ret;
 		inst = cfg->vret_addr;
-		g_assert (arm_is_imm12 (inst->inst_offset));
-		ARM_LDR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+		code = mono_arm_emit_ldr_imm12 (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
 	}
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
@@ -3599,18 +4273,11 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 					NOT_IMPLEMENTED;
 					break;
 				case 8:
-					g_assert (arm_is_imm12 (inst->inst_offset));
-					ARM_LDR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					g_assert (arm_is_imm12 (inst->inst_offset + 4));
-					ARM_LDR_IMM (code, ainfo->reg + 1, inst->inst_basereg, inst->inst_offset + 4);
+					code = mono_arm_emit_ldr_imm12 (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+					code = mono_arm_emit_ldr_imm12 (code, ainfo->reg + 1, inst->inst_basereg, inst->inst_offset + 4);
 					break;
 				default:
-					if (arm_is_imm12 (inst->inst_offset)) {
-						ARM_LDR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_LDR_REG_REG (code, ainfo->reg, inst->inst_basereg, ARMREG_IP);
-					}
+					code = mono_arm_emit_ldr_imm (code, ainfo->reg, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
 					break;
 				}
 			} else if (ainfo->storage == RegTypeBaseGen) {
@@ -3628,12 +4295,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 				if (mono_class_from_mono_type (inst->inst_vtype))
 					size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), NULL);
 				for (cur_reg = 0; cur_reg < ainfo->size; ++cur_reg) {
-					if (arm_is_imm12 (doffset)) {
-						ARM_LDR_IMM (code, ainfo->reg + cur_reg, inst->inst_basereg, doffset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, doffset);
-						ARM_LDR_REG_REG (code, ainfo->reg + cur_reg, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_ldr_imm (code, ainfo->reg + cur_reg, inst->inst_basereg, doffset, ARMREG_IP);
 					soffset += sizeof (gpointer);
 					doffset += sizeof (gpointer);
 				}
@@ -3667,6 +4329,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	int imm8, rot_amount;
 
 	/* we don't align basic blocks of loops on arm */
+#ifdef __native_client_codegen__
+        /* but has to align potential jump targets for Native Client */
+        if ((bb->flags & BB_INDIRECT_JUMP_TARGET) || (bb->flags & BB_EXCEPTION_HANDLER)) {
+		guint8 *aligned = mono_arm_nacl_ensure_at_position (code, 0);
+		if (code != aligned) {
+			int pad = aligned - code;
+			cfg->code_len += pad;
+			bb->native_offset = cfg->code_len;
+			code = aligned;
+		}
+	}
+#endif
 
 	if (cfg->verbose_level > 2)
 		g_print ("Basic block %d starting at offset 0x%x\n", bb->block_num, bb->native_offset);
@@ -3690,14 +4364,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		code = emit_call_seq (cfg, code);
 	}
 
+
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
 		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
 
 		if (offset > (cfg->code_size - max_len - 16)) {
-			cfg->code_size *= 2;
-			cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+			arm_code_realloc (cfg, cfg->code_size * 2);
 			code = cfg->native_code + offset;
 		}
 	//	if (ins->cil_code)
@@ -3706,10 +4380,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		switch (ins->opcode) {
 		case OP_MEMORY_BARRIER:
+#ifdef __native_client_codegen__
+			/* emit full system DSB */
+			ARM_EMIT(code, 0xf57ff04f);
+#else
 			if (v6_supported) {
 				ARM_MOV_REG_IMM8 (code, ARMREG_R0, 0);
 				ARM_MCR (code, 15, 0, ARMREG_R0, 7, 10, 5);
 			}
+#endif
 			break;
 		case OP_TLS_GET:
 #ifdef HAVE_AEABI_READ_TP
@@ -3717,7 +4396,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 								 (gpointer)"__aeabi_read_tp");
 			code = emit_call_seq (cfg, code);
 
-			ARM_LDR_IMM (code, ins->dreg, ARMREG_R0, ins->inst_offset);
+                        code = mono_arm_emit_ldr_imm12 (code, ins->dreg, ARMREG_R0, ins->inst_offset);
 #else
 			g_assert_not_reached ();
 #endif
@@ -3732,47 +4411,37 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;*/
 		case OP_STOREI1_MEMBASE_IMM:
 			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_imm & 0xFF);
-			g_assert (arm_is_imm12 (ins->inst_offset));
-			ARM_STRB_IMM (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
+                        code = mono_arm_emit_strb_imm8 (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_STOREI2_MEMBASE_IMM:
 			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_imm & 0xFFFF);
-			g_assert (arm_is_imm8 (ins->inst_offset));
-			ARM_STRH_IMM (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_strh_imm8 (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_STORE_MEMBASE_IMM:
 		case OP_STOREI4_MEMBASE_IMM:
 			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_imm);
-			g_assert (arm_is_imm12 (ins->inst_offset));
-			ARM_STR_IMM (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_STOREI1_MEMBASE_REG:
-			g_assert (arm_is_imm12 (ins->inst_offset));
-			ARM_STRB_IMM (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_strb_imm (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset, ARMREG_IP);
 			break;
 		case OP_STOREI2_MEMBASE_REG:
-			g_assert (arm_is_imm8 (ins->inst_offset));
-			ARM_STRH_IMM (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			code = mono_arm_emit_strh_imm8 (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_STORE_MEMBASE_REG:
 		case OP_STOREI4_MEMBASE_REG:
 			/* this case is special, since it happens for spill code after lowering has been called */
-			if (arm_is_imm12 (ins->inst_offset)) {
-				ARM_STR_IMM (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
-			} else {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-				ARM_STR_REG_REG (code, ins->sreg1, ins->inst_destbasereg, ARMREG_LR);
-			}
+			code = mono_arm_emit_str_imm (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_STOREI1_MEMINDEX:
-			ARM_STRB_REG_REG (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
+			code = mono_arm_emit_strb_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
 			break;
 		case OP_STOREI2_MEMINDEX:
-			ARM_STRH_REG_REG (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
+			code = mono_arm_emit_strh_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
 			break;
 		case OP_STORE_MEMINDEX:
 		case OP_STOREI4_MEMINDEX:
-			ARM_STR_REG_REG (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
+			code = mono_arm_emit_str_reg (code, ins->sreg1, ins->inst_destbasereg, ins->sreg2);
 			break;
 		case OP_LOADU4_MEM:
 			g_assert_not_reached ();
@@ -3780,46 +4449,37 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LOAD_MEMINDEX:
 		case OP_LOADI4_MEMINDEX:
 		case OP_LOADU4_MEMINDEX:
-			ARM_LDR_REG_REG (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldr_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADI1_MEMINDEX:
-			ARM_LDRSB_REG_REG (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrsb_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADU1_MEMINDEX:
-			ARM_LDRB_REG_REG (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrb_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADI2_MEMINDEX:
-			ARM_LDRSH_REG_REG (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrsh_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOADU2_MEMINDEX:
-			ARM_LDRH_REG_REG (code, ins->dreg, ins->inst_basereg, ins->sreg2);
+			code = mono_arm_emit_ldrh_reg (code, ins->dreg, ins->inst_basereg, ins->sreg2);
 			break;
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI4_MEMBASE:
 		case OP_LOADU4_MEMBASE:
 			/* this case is special, since it happens for spill code after lowering has been called */
-			if (arm_is_imm12 (ins->inst_offset)) {
-				ARM_LDR_IMM (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
-			} else {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-				ARM_LDR_REG_REG (code, ins->dreg, ins->inst_basereg, ARMREG_LR);
-			}
+			code =  mono_arm_emit_ldr_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADI1_MEMBASE:
-			g_assert (arm_is_imm8 (ins->inst_offset));
-			ARM_LDRSB_IMM (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrsb_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADU1_MEMBASE:
-			g_assert (arm_is_imm12 (ins->inst_offset));
-			ARM_LDRB_IMM (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrb_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADU2_MEMBASE:
-			g_assert (arm_is_imm8 (ins->inst_offset));
-			ARM_LDRH_IMM (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrh_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADI2_MEMBASE:
-			g_assert (arm_is_imm8 (ins->inst_offset));
-			ARM_LDRSH_IMM (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			code = mono_arm_emit_ldrsh_imm (code, ins->dreg, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_ICONV_TO_I1:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 24);
@@ -3909,11 +4569,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					var = ss_read_var;
 					g_assert (var);
 					g_assert (var->opcode == OP_REGOFFSET);
-					g_assert (arm_is_imm12 (var->inst_offset));
-					ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
+                                        code = mono_arm_emit_ldr_imm12 (code, dreg, var->inst_basereg, var->inst_offset);
 
 					/* Read the value and check whether it is non-zero. */
-					ARM_LDR_IMM (code, dreg, dreg, 0);
+                                        code = mono_arm_emit_ldr_imm12 (code, dreg, dreg, 0);
 					ARM_CMP_REG_IMM (code, dreg, 0, 0);
 
 					/* Load the address of the sequence point method. */
@@ -3921,18 +4580,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					g_assert (var);
 					g_assert (var->opcode == OP_REGOFFSET);
 					g_assert (arm_is_imm12 (var->inst_offset));
-					ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
-
+                                        code = mono_arm_emit_ldr_imm12 (code, dreg, var->inst_basereg, var->inst_offset);
 					/* Call it conditionally. */
-					ARM_BLX_REG_COND (code, ARMCOND_NE, dreg);
+                                        code = emit_call_reg_cond (code, dreg, ARMCOND_NE);
 				} else {
 					if (cfg->compile_aot) {
 						/* Load the trigger page addr from the variable initialized in the prolog */
 						var = ss_trigger_page_var;
 						g_assert (var);
 						g_assert (var->opcode == OP_REGOFFSET);
-						g_assert (arm_is_imm12 (var->inst_offset));
-						ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
+                                                code = mono_arm_emit_ldr_imm12 (code, dreg, var->inst_basereg, var->inst_offset);
 					} else {
 #ifdef USE_JUMP_TABLES
 						gpointer *jte = mono_jumptable_add_entry ();
@@ -3945,7 +4602,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 						code += 4;
 #endif
 					}
-					ARM_LDR_IMM (code, dreg, dreg, 0);
+                                        code = mono_arm_emit_ldr_imm12 (code, dreg, dreg, 0);
 				}
 			}
 
@@ -3956,8 +4613,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				var = bp_method_var;
 				g_assert (var);
 				g_assert (var->opcode == OP_REGOFFSET);
-				g_assert (arm_is_imm12 (var->inst_offset));
-				ARM_LDR_IMM (code, dreg, var->inst_basereg, var->inst_offset);
+                                code = mono_arm_emit_ldr_imm12 (code, dreg, var->inst_basereg, var->inst_offset);
 
 				/*
 				 * A placeholder for a possible breakpoint inserted by
@@ -3968,7 +4624,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				guint32 offset = code - cfg->native_code;
 				guint32 val;
 
-				ARM_LDR_IMM (code, dreg, info_var->inst_basereg, info_var->inst_offset);
+				code = mono_arm_emit_ldr_imm12 (code, dreg, info_var->inst_basereg, info_var->inst_offset);
 				/* Add the offset */
 				val = ((offset / 4) * sizeof (guint8*)) + G_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
 				ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF), 0);
@@ -3978,7 +4634,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF0000) >> 16, 16);
 				g_assert (!(val & 0xFF000000));
 				/* Load the info->bp_addrs [offset], which is either 0 or the address of a trigger page */
-				ARM_LDR_IMM (code, dreg, dreg, 0);
+                                code = mono_arm_emit_ldr_imm12 (code, dreg, dreg, 0);
 
 				/* What is faster, a branch or a load ? */
 				ARM_CMP_REG_IMM (code, dreg, 0, 0);
@@ -4235,7 +4891,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			code = emit_load_volatile_arguments (cfg, code);
 
-			code = emit_big_add (code, ARMREG_SP, cfg->frame_reg, cfg->stack_usage);
+			code = mono_arm_adjust_stack_reg_imm (code, cfg->frame_reg, cfg->stack_usage);
 			if (iphone_abi) {
 				if (cfg->used_int_regs)
 					ARM_POP (code, cfg->used_int_regs);
@@ -4260,8 +4916,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_ARGLIST: {
 			g_assert (cfg->sig_cookie < 128);
-			ARM_LDR_IMM (code, ARMREG_IP, cfg->frame_reg, cfg->sig_cookie);
-			ARM_STR_IMM (code, ARMREG_IP, ins->sreg1, 0);
+                        code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, cfg->frame_reg, cfg->sig_cookie);
+                        code = mono_arm_emit_str_imm12 (code, ARMREG_IP, ins->sreg1, 0);
 			break;
 		}
 		case OP_FCALL:
@@ -4286,7 +4942,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL2_REG:
 		case OP_VOIDCALL_REG:
 		case OP_CALL_REG:
-			code = emit_call_reg (code, ins->sreg1);
+			code = mono_arm_emit_call_reg (code, ins->sreg1);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			code = emit_move_return_value (cfg, ins, code);
@@ -4297,9 +4953,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
 		case OP_CALL_MEMBASE: {
-			gboolean imt_arg = FALSE;
-
 			g_assert (ins->sreg1 != ARMREG_LR);
+#ifdef __native_client_codegen__
+			code = mono_arm_emit_ldr_imm (code, ARMREG_IP, ins->sreg1, ins->inst_offset, ARMREG_LR);
+			ARM_ADD_REG_IMM8 (code, ARMREG_LR, ARMREG_PC, mono_arm_ret_pc_offset (code));
+			code = mono_arm_emit_bx (code, ARMREG_IP, 1);
+#else
+			gboolean imt_arg = FALSE;
 			call = (MonoCallInst*)ins;
 			if (call->dynamic_imt_arg || call->method->klass->flags & TYPE_ATTRIBUTE_INTERFACE)
 				imt_arg = TRUE;
@@ -4338,6 +4998,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				code += 4;
 #endif
 			}
+#endif
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			code = emit_move_return_value (cfg, ins, code);
@@ -4353,7 +5014,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_BIC_REG_IMM8 (code, ins->dreg, ins->dreg, 7);
 			if (alloca_waste)
 				ARM_ADD_REG_IMM8 (code, ins->dreg, ins->dreg, alloca_waste);
-			ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ins->dreg);
+			code = mono_arm_adjust_stack_reg (code, ins->dreg, 0);
+
 			/* memzero the area: dreg holds the size, sp is the pointer */
 			if (ins->flags & MONO_INST_INIT) {
 				guint8 *start_loop, *branch_to_cond;
@@ -4361,7 +5023,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				branch_to_cond = code;
 				ARM_B (code, 0);
 				start_loop = code;
+#ifdef __native_client_codegen__
+				/* pretty inefficeint way to zero out region */
+				ARM_ADD_REG_REG (code, ARMREG_IP, ARMREG_SP, ins->dreg);
+				code = mono_arm_emit_str_imm12 (code, ARMREG_LR, ARMREG_IP, 0);
+#else
 				ARM_STR_REG_REG (code, ARMREG_LR, ARMREG_SP, ins->dreg);
+#endif
 				arm_patch (branch_to_cond, code);
 				/* decrement by 4 and set flags */
 				ARM_SUBS_REG_IMM8 (code, ins->dreg, ins->dreg, sizeof (mgreg_t));
@@ -4384,27 +5052,31 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_MOV_REG_REG( code, ARMREG_IP, ins->sreg2);
 
 			/* Save args buffer */
-			ARM_STR_IMM (code, ARMREG_LR, var->inst_basereg, var->inst_offset);
+			code = mono_arm_emit_str_imm12 (code, ARMREG_LR, var->inst_basereg, var->inst_offset);
 
 			/* Set stack slots using R0 as scratch reg */
 			/* MONO_ARCH_DYN_CALL_PARAM_AREA gives the size of stack space available */
 			for (i = 0; i < DYN_CALL_STACK_ARGS; ++i) {
-				ARM_LDR_IMM (code, ARMREG_R0, ARMREG_LR, (PARAM_REGS + i) * sizeof (mgreg_t));
-				ARM_STR_IMM (code, ARMREG_R0, ARMREG_SP, i * sizeof (mgreg_t));
+				code = mono_arm_emit_ldr_imm12 (code, ARMREG_R0, ARMREG_LR, (PARAM_REGS + i) * sizeof (mgreg_t));
+				code = mono_arm_emit_str_imm12 (code, ARMREG_R0, ARMREG_SP, i * sizeof (mgreg_t));
 			}
 
 			/* Set argument registers */
 			for (i = 0; i < PARAM_REGS; ++i)
-				ARM_LDR_IMM (code, i, ARMREG_LR, i * sizeof (mgreg_t));
+                                code = mono_arm_emit_ldr_imm12 (code, i, ARMREG_LR, i * sizeof (mgreg_t));
 
 			/* Make the call */
+#ifdef __native_client_codegen__
+			code = mono_arm_emit_call_reg (code, ARMREG_IP);
+#else
 			ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 			ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
+#endif
 
 			/* Save result */
-			ARM_LDR_IMM (code, ARMREG_IP, var->inst_basereg, var->inst_offset);
-			ARM_STR_IMM (code, ARMREG_R0, ARMREG_IP, G_STRUCT_OFFSET (DynCallArgs, res)); 
-			ARM_STR_IMM (code, ARMREG_R1, ARMREG_IP, G_STRUCT_OFFSET (DynCallArgs, res2)); 
+			code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, var->inst_basereg, var->inst_offset);
+			code = mono_arm_emit_str_imm12 (code, ARMREG_R0, ARMREG_IP, G_STRUCT_OFFSET (DynCallArgs, res));
+			code = mono_arm_emit_str_imm12 (code, ARMREG_R1, ARMREG_IP, G_STRUCT_OFFSET (DynCallArgs, res2));
 			break;
 		}
 		case OP_THROW: {
@@ -4425,79 +5097,45 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_START_HANDLER: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
-			int i, rot_amount;
-
 			/* Reserve a param area, see filter-stack.exe */
-			if (cfg->param_area) {
-				if ((i = mono_arm_is_rotated_imm8 (cfg->param_area, &rot_amount)) >= 0) {
-					ARM_SUB_REG_IMM (code, ARMREG_SP, ARMREG_SP, i, rot_amount);
-				} else {
-					code = mono_arm_emit_load_imm (code, ARMREG_IP, cfg->param_area);
-					ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
-				}
-			}
-
-			if (arm_is_imm12 (spvar->inst_offset)) {
-				ARM_STR_IMM (code, ARMREG_LR, spvar->inst_basereg, spvar->inst_offset);
-			} else {
-				code = mono_arm_emit_load_imm (code, ARMREG_IP, spvar->inst_offset);
-				ARM_STR_REG_REG (code, ARMREG_LR, spvar->inst_basereg, ARMREG_IP);
-			}
+			if (cfg->param_area)
+				code = mono_arm_adjust_stack_imm (code, -cfg->param_area);
+			code = mono_arm_emit_str_imm (code, ARMREG_LR, spvar->inst_basereg, spvar->inst_offset, ARMREG_IP);
 			break;
 		}
 		case OP_ENDFILTER: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
-			int i, rot_amount;
 
 			/* Free the param area */
-			if (cfg->param_area) {
-				if ((i = mono_arm_is_rotated_imm8 (cfg->param_area, &rot_amount)) >= 0) {
-					ARM_ADD_REG_IMM (code, ARMREG_SP, ARMREG_SP, i, rot_amount);
-				} else {
-					code = mono_arm_emit_load_imm (code, ARMREG_IP, cfg->param_area);
-					ARM_ADD_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
-				}
-			}
-
+			if (cfg->param_area)
+				code = mono_arm_adjust_stack_imm (code, cfg->param_area);
 			if (ins->sreg1 != ARMREG_R0)
 				ARM_MOV_REG_REG (code, ARMREG_R0, ins->sreg1);
-			if (arm_is_imm12 (spvar->inst_offset)) {
-				ARM_LDR_IMM (code, ARMREG_IP, spvar->inst_basereg, spvar->inst_offset);
-			} else {
-				g_assert (ARMREG_IP != spvar->inst_basereg);
-				code = mono_arm_emit_load_imm (code, ARMREG_IP, spvar->inst_offset);
-				ARM_LDR_REG_REG (code, ARMREG_IP, spvar->inst_basereg, ARMREG_IP);
-			}
+			code = mono_arm_emit_ldr_imm (code, ARMREG_IP, spvar->inst_basereg, spvar->inst_offset, ARMREG_IP);
+#ifdef __native_client_codegen__
+			code = mono_arm_emit_bx (code, ARMREG_IP, 0);
+#else
 			ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
+#endif
 			break;
 		}
 		case OP_ENDFINALLY: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
-			int i, rot_amount;
-
 			/* Free the param area */
-			if (cfg->param_area) {
-				if ((i = mono_arm_is_rotated_imm8 (cfg->param_area, &rot_amount)) >= 0) {
-					ARM_ADD_REG_IMM (code, ARMREG_SP, ARMREG_SP, i, rot_amount);
-				} else {
-					code = mono_arm_emit_load_imm (code, ARMREG_IP, cfg->param_area);
-					ARM_ADD_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
-				}
-			}
-
-			if (arm_is_imm12 (spvar->inst_offset)) {
-				ARM_LDR_IMM (code, ARMREG_IP, spvar->inst_basereg, spvar->inst_offset);
-			} else {
-				g_assert (ARMREG_IP != spvar->inst_basereg);
-				code = mono_arm_emit_load_imm (code, ARMREG_IP, spvar->inst_offset);
-				ARM_LDR_REG_REG (code, ARMREG_IP, spvar->inst_basereg, ARMREG_IP);
-			}
+			if (cfg->param_area)
+				code = mono_arm_adjust_stack_imm (code, cfg->param_area);
+			code = mono_arm_emit_ldr_imm (code, ARMREG_IP, spvar->inst_basereg, spvar->inst_offset, ARMREG_IP);
+#ifdef __native_client_codegen__
+			code = mono_arm_emit_bx (code, ARMREG_IP, 0);
+#else
 			ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
+#endif
 			break;
 		}
-		case OP_CALL_HANDLER: 
+		case OP_CALL_HANDLER:
+			ENSURE_CAN_BL(code);
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_target_bb);
-			code = mono_arm_patchable_bl (code, ARMCOND_AL);
+			ARM_BL (code, 0);
 			mono_cfg_add_try_hole (cfg, ins->inst_eh_block, code, bb);
 			break;
 		case OP_LABEL:
@@ -4509,11 +5147,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				//x86_jump_code (code, cfg->native_code + ins->inst_target_bb->native_offset); 
 			} else*/ {
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_target_bb);
-				code = mono_arm_patchable_b (code, ARMCOND_AL);
+				ARM_B (code, 0);
 			} 
 			break;
 		case OP_BR_REG:
+#ifdef __native_client_codegen__
+			code = mono_arm_emit_bx (code, ins->sreg1, 0);
+#else
 			ARM_MOV_REG_REG (code, ARMREG_PC, ins->sreg1);
+#endif
 			break;
 		case OP_SWITCH:
 			/* 
@@ -4531,15 +5173,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			{
 				gpointer *jte = mono_jumptable_add_entries (GPOINTER_TO_INT (ins->klass));
 				code = mono_arm_load_jumptable_entry_addr (code, jte, ARMREG_IP);
+#ifdef __native_client_codegen__
+                                ARM_ADD_REG_IMMSHIFT (code, ARMREG_IP, ARMREG_IP, ins->sreg1, ARMSHIFT_LSL, 2);
+                                code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_IP,  0);
+                                code = mono_arm_emit_bx (code, ARMREG_IP, 0);
+#else
 				ARM_LDR_REG_REG_SHIFT (code, ARMREG_PC, ARMREG_IP, ins->sreg1, ARMSHIFT_LSL, 2);
+#endif
 			}
 #else
 
 			max_len += 4 * GPOINTER_TO_INT (ins->klass);
 			if (offset + max_len > (cfg->code_size - 16)) {
 				cfg->code_size += max_len;
-				cfg->code_size *= 2;
-				cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+				arm_code_realloc (cfg, cfg->code_size * 2);
 				code = cfg->native_code + offset;
 			}
 			ARM_LDR_REG_REG_SHIFT (code, ARMREG_PC, ARMREG_PC, ins->sreg1, ARMSHIFT_LSL, 2);
@@ -4686,16 +5333,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			int tmpreg;
 #ifdef USE_JUMP_TABLES
 			gpointer *jte = mono_jumptable_add_entries (2);
-#define SKIP_INSTRUCTIONS 5
-#else
-#define SKIP_INSTRUCTIONS 8
 #endif
+                        guint8 *branch;
 			tmpreg = ins->dreg == 0? 1: 0;
 			ARM_CMP_REG_IMM8 (code, ins->sreg1, 0);
 			ARM_FPA_FLTD (code, ins->dreg, ins->sreg1);
-			ARM_B_COND (code, ARMCOND_GE, SKIP_INSTRUCTIONS);
+                        branch = code;
+			ARM_B_COND (code, ARMCOND_GE, 0);
 			/* save the temp register */
-			ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
+			code = mono_arm_adjust_stack_imm (code, -8);
 			ARM_FPA_STFD (code, tmpreg, ARMREG_SP, 0);
 #ifdef USE_JUMP_TABLES
 			code = mono_arm_load_jumptable_entry_addr (code, jte, ARMREG_IP);
@@ -4705,7 +5351,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 #endif
 			ARM_FPA_ADFD (code, ins->dreg, ins->dreg, tmpreg);
 			ARM_FPA_LDFD (code, tmpreg, ARMREG_SP, 0);
-			ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
+			code = mono_arm_adjust_stack_imm (code, 8);
 #ifdef USE_JUMP_TABLES
 			jte [0] = GUINT_TO_POINTER (0x41f00000);
 			jte [1] = GUINT_TO_POINTER (0);
@@ -4722,7 +5368,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * adfltd  fdest, fdest, ftemp
 			 */
 #endif
-#undef SKIP_INSTRUCTIONS
+                        arm_patch (branch, code);
 			break;
 		}
 		case OP_ICONV_TO_R4:
@@ -4747,7 +5393,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				 * the displacement in LDFD (aligning to 512).
 				 */
 				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-				ARM_FLDD (code, ins->dreg, ARMREG_LR, 0);
+                                code = mono_arm_emit_fldd_imm8 (code, ins->dreg, ARMREG_LR, 0);
 			}
 			break;
 		case OP_R4CONST:
@@ -4759,38 +5405,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_CVTS (code, ins->dreg, ins->dreg);
 			} else {
 				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-				ARM_FLDS (code, ins->dreg, ARMREG_LR, 0);
+                                code = mono_arm_emit_flds_imm8 (code, ins->dreg, ARMREG_LR, 0);
 				ARM_CVTS (code, ins->dreg, ins->dreg);
 			}
 			break;
 		case OP_STORER8_MEMBASE_REG:
 			/* This is generated by the local regalloc pass which runs after the lowering pass */
-			if (!arm_is_fpimm8 (ins->inst_offset)) {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-				ARM_ADD_REG_REG (code, ARMREG_LR, ARMREG_LR, ins->inst_destbasereg);
-				ARM_FSTD (code, ins->sreg1, ARMREG_LR, 0);
-			} else {
-				ARM_FSTD (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
-			}
+                        code = mono_arm_emit_fstd_imm (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset, ARMREG_LR);
 			break;
 		case OP_LOADR8_MEMBASE:
 			/* This is generated by the local regalloc pass which runs after the lowering pass */
-			if (!arm_is_fpimm8 (ins->inst_offset)) {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-				ARM_ADD_REG_REG (code, ARMREG_LR, ARMREG_LR, ins->inst_basereg);
-				ARM_FLDD (code, ins->dreg, ARMREG_LR, 0);
-			} else {
-				ARM_FLDD (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
-			}
+                        code = mono_arm_emit_fldd_imm (code, ins->dreg,  ins->inst_basereg, ins->inst_offset,  ARMREG_LR);
 			break;
 		case OP_STORER4_MEMBASE_REG:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
 			ARM_CVTD (code, ARM_VFP_F0, ins->sreg1);
-			ARM_FSTS (code, ARM_VFP_F0, ins->inst_destbasereg, ins->inst_offset);
+                        code = mono_arm_emit_fsts_imm8 (code, ARM_VFP_F0, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_LOADR4_MEMBASE:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_FLDS (code, ARM_VFP_F0, ins->inst_basereg, ins->inst_offset);
+                        code = mono_arm_emit_flds_imm8 (code, ARM_VFP_F0, ins->inst_basereg, ins->inst_offset);
 			ARM_CVTS (code, ins->dreg, ARM_VFP_F0);
 			break;
 		case OP_ICONV_TO_R_UN: {
@@ -5049,7 +5681,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-
+		case OP_NACL_GC_SAFE_POINT:
+#if defined(__native_client_codegen__) && defined(__native_client_gc__)
+			if (cfg->compile_aot)
+				g_assert_not_reached ();
+			else {
+				code = mono_arm_emit_load_imm (code, ARMREG_IP, (guint32) &__nacl_thread_suspension_needed);
+				code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_IP, 0);
+				ARM_CMP_REG_IMM8 (code, ARMREG_IP, 0);
+				code = mono_arm_emit_load_imm (code, ARMREG_IP, (guint32) &mono_nacl_gc);
+                                code = emit_call_reg_cond (code, ARMREG_IP, ARMCOND_NE);
+			}
+#endif
+			break;
 		case OP_GC_LIVENESS_DEF:
 		case OP_GC_LIVENESS_USE:
 		case OP_GC_PARAM_SLOT_LIVENESS_DEF:
@@ -5128,7 +5772,11 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 			 * otherwise the displacements.
 			 */
 			for (i = 0; i < patch_info->data.table->table_size; i++)
+#ifdef __native_client_codegen__
+				jt [i] = (guint8*)nacl_domain_get_code_dest (domain, code) + (int)patch_info->data.table->table [i];
+#else
 				jt [i] = code + (int)patch_info->data.table->table [i];
+#endif
 			continue;
 		}
 		target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors);
@@ -5212,7 +5860,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	MonoMethodSignature *sig;
 	MonoInst *inst;
-	int alloc_size, orig_alloc_size, pos, max_offset, i, rot_amount;
+	int alloc_size, orig_alloc_size, pos, max_offset, i;
 	guint8 *code;
 	CallInfo *cinfo;
 	int tracing = 0;
@@ -5224,7 +5872,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	sig = mono_method_signature (method);
 	cfg->code_size = 256 + sig->param_count * 64;
-	code = cfg->native_code = g_malloc (cfg->code_size);
+	arm_code_realloc (cfg, cfg->code_size);
+	code = cfg->native_code;
 
 	mono_emit_unwind_op_def_cfa (cfg, code, ARMREG_SP, 0);
 
@@ -5280,8 +5929,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	} else {
 		ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_SP);
-		ARM_PUSH (code, 0x5ff0);
-		prev_sp_offset += 4 * 10; /* all but r0-r3, sp and pc */
+#ifdef __native_client_codegen__
+                ARM_PUSH (code, MONO_ARM_REGSAVE_MASK2);
+                ARM_PUSH (code, MONO_ARM_REGSAVE_MASK1);
+#else
+		ARM_PUSH (code, MONO_ARM_REGSAVE_MASK);
+#endif
+		prev_sp_offset += 4 * MONO_ARM_NUM_SAVED_REGS; /* all but r0-r3, sp and pc */
 		mono_emit_unwind_op_def_cfa_offset (cfg, code, prev_sp_offset);
 		reg_offset = 0;
 		for (i = 0; i < 16; ++i) {
@@ -5306,12 +5960,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		alloc_size += 4;
 	cfg->stack_usage = alloc_size;
 	if (alloc_size) {
-		if ((i = mono_arm_is_rotated_imm8 (alloc_size, &rot_amount)) >= 0) {
-			ARM_SUB_REG_IMM (code, ARMREG_SP, ARMREG_SP, i, rot_amount);
-		} else {
-			code = mono_arm_emit_load_imm (code, ARMREG_IP, alloc_size);
-			ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
-		}
+		code = mono_arm_adjust_stack_imm (code, -alloc_size);
 		mono_emit_unwind_op_def_cfa_offset (cfg, code, prev_sp_offset + alloc_size);
 	}
 	if (cfg->frame_reg != ARMREG_SP) {
@@ -5346,12 +5995,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 		g_assert (ins->opcode == OP_REGOFFSET);
 
-		if (arm_is_imm12 (ins->inst_offset)) {
-			ARM_STR_IMM (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ins->inst_offset);
-		} else {
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-			ARM_STR_REG_REG (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ARMREG_LR);
-		}
+                code = mono_arm_emit_str_imm (code, MONO_ARCH_RGCTX_REG, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 	}
 
 	/* load arguments allocated to register from the stack */
@@ -5362,8 +6006,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (cinfo->vtype_retaddr) {
 		ArgInfo *ainfo = &cinfo->ret;
 		inst = cfg->vret_addr;
-		g_assert (arm_is_imm12 (inst->inst_offset));
-		ARM_STR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+                code = mono_arm_emit_str_imm12 (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
 	}
 
 	if (sig->call_convention == MONO_CALL_VARARG) {
@@ -5375,7 +6018,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		g_assert (arm_is_imm12 (prev_sp_offset + cookie->offset));
 		g_assert (arm_is_imm12 (cfg->sig_cookie));
 		ARM_ADD_REG_IMM8 (code, ARMREG_IP, cfg->frame_reg, prev_sp_offset + cookie->offset);
-		ARM_STR_IMM (code, ARMREG_IP, cfg->frame_reg, cfg->sig_cookie);
+                code = mono_arm_emit_str_imm12 (code, ARMREG_IP, cfg->frame_reg, cfg->sig_cookie);
 	}
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
@@ -5390,12 +6033,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			else if (ainfo->storage == RegTypeFP) {
 				g_assert_not_reached ();
 			} else if (ainfo->storage == RegTypeBase) {
-				if (arm_is_imm12 (prev_sp_offset + ainfo->offset)) {
-					ARM_LDR_IMM (code, inst->dreg, ARMREG_SP, (prev_sp_offset + ainfo->offset));
-				} else {
-					code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-					ARM_LDR_REG_REG (code, inst->dreg, ARMREG_SP, ARMREG_IP);
-				}
+                                code = mono_arm_emit_ldr_imm (code, inst->dreg, ARMREG_SP, (prev_sp_offset + ainfo->offset), ARMREG_IP);
 			} else
 				g_assert_not_reached ();
 
@@ -5406,102 +6044,42 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			if (ainfo->storage == RegTypeGeneral || ainfo->storage == RegTypeIRegPair) {
 				switch (ainfo->size) {
 				case 1:
-					if (arm_is_imm12 (inst->inst_offset))
-						ARM_STRB_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STRB_REG_REG (code, ainfo->reg, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_strb_imm  (code, ainfo->reg, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
 					break;
 				case 2:
-					if (arm_is_imm8 (inst->inst_offset)) {
-						ARM_STRH_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STRH_REG_REG (code, ainfo->reg, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_strh_imm  (code, ainfo->reg, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
 					break;
 				case 8:
-					if (arm_is_imm12 (inst->inst_offset)) {
-						ARM_STR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STR_REG_REG (code, ainfo->reg, inst->inst_basereg, ARMREG_IP);
-					}
-					if (arm_is_imm12 (inst->inst_offset + 4)) {
-						ARM_STR_IMM (code, ainfo->reg + 1, inst->inst_basereg, inst->inst_offset + 4);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset + 4);
-						ARM_STR_REG_REG (code, ainfo->reg + 1, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_str_imm (code, ainfo->reg, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
+                                        code = mono_arm_emit_str_imm (code, ainfo->reg + 1, inst->inst_basereg, inst->inst_offset + 4, ARMREG_IP);
 					break;
 				default:
-					if (arm_is_imm12 (inst->inst_offset)) {
-						ARM_STR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STR_REG_REG (code, ainfo->reg, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_str_imm (code, ainfo->reg, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
 					break;
 				}
 			} else if (ainfo->storage == RegTypeBaseGen) {
 				g_assert (arm_is_imm12 (prev_sp_offset + ainfo->offset));
 				g_assert (arm_is_imm12 (inst->inst_offset));
-				ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, (prev_sp_offset + ainfo->offset));
-				ARM_STR_IMM (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset + 4);
-				ARM_STR_IMM (code, ARMREG_R3, inst->inst_basereg, inst->inst_offset);
+                                code = mono_arm_emit_ldr_imm12 (code, ARMREG_LR, ARMREG_SP, prev_sp_offset + ainfo->offset);
+                                code = mono_arm_emit_str_imm12 (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset + 4);
+                                code = mono_arm_emit_str_imm12 (code, ARMREG_R3, inst->inst_basereg, inst->inst_offset);
 			} else if (ainfo->storage == RegTypeBase) {
-				if (arm_is_imm12 (prev_sp_offset + ainfo->offset)) {
-					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, (prev_sp_offset + ainfo->offset));
-				} else {
-					code = mono_arm_emit_load_imm (code, ARMREG_IP, prev_sp_offset + ainfo->offset);
-					ARM_LDR_REG_REG (code, ARMREG_LR, ARMREG_SP, ARMREG_IP);
-				}
+                                code = mono_arm_emit_ldr_imm (code, ARMREG_LR, ARMREG_SP, prev_sp_offset + ainfo->offset, ARMREG_IP);
 
 				switch (ainfo->size) {
 				case 1:
-					if (arm_is_imm8 (inst->inst_offset)) {
-						ARM_STRB_IMM (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STRB_REG_REG (code, ARMREG_LR, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_strb_imm (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
 					break;
 				case 2:
-					if (arm_is_imm8 (inst->inst_offset)) {
-						ARM_STRH_IMM (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STRH_REG_REG (code, ARMREG_LR, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_strh_imm (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
 					break;
 				case 8:
-					if (arm_is_imm12 (inst->inst_offset)) {
-						ARM_STR_IMM (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STR_REG_REG (code, ARMREG_LR, inst->inst_basereg, ARMREG_IP);
-					}
-					if (arm_is_imm12 (prev_sp_offset + ainfo->offset + 4)) {
-						ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, (prev_sp_offset + ainfo->offset + 4));
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, prev_sp_offset + ainfo->offset + 4);
-						ARM_LDR_REG_REG (code, ARMREG_LR, ARMREG_SP, ARMREG_IP);
-					}
-					if (arm_is_imm12 (inst->inst_offset + 4)) {
-						ARM_STR_IMM (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset + 4);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset + 4);
-						ARM_STR_REG_REG (code, ARMREG_LR, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_str_imm (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
+                                        code = mono_arm_emit_ldr_imm (code, ARMREG_LR, ARMREG_SP, prev_sp_offset + ainfo->offset + 4, ARMREG_IP);
+                                        code = mono_arm_emit_str_imm (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset + 4, ARMREG_IP);
 					break;
 				default:
-					if (arm_is_imm12 (inst->inst_offset)) {
-						ARM_STR_IMM (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, inst->inst_offset);
-						ARM_STR_REG_REG (code, ARMREG_LR, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_str_imm (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset, ARMREG_IP);
 					break;
 				}
 			} else if (ainfo->storage == RegTypeFP) {
@@ -5513,12 +6091,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				int size = 0;
 				size = mini_type_stack_size_full (cfg->generic_sharing_context, inst->inst_vtype, NULL, sig->pinvoke);
 				for (cur_reg = 0; cur_reg < ainfo->size; ++cur_reg) {
-					if (arm_is_imm12 (doffset)) {
-						ARM_STR_IMM (code, ainfo->reg + cur_reg, inst->inst_basereg, doffset);
-					} else {
-						code = mono_arm_emit_load_imm (code, ARMREG_IP, doffset);
-						ARM_STR_REG_REG (code, ainfo->reg + cur_reg, inst->inst_basereg, ARMREG_IP);
-					}
+                                        code = mono_arm_emit_str_imm (code, ainfo->reg + cur_reg, inst->inst_basereg, doffset, ARMREG_IP);
 					soffset += sizeof (gpointer);
 					doffset += sizeof (gpointer);
 				}
@@ -5549,12 +6122,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* Initialize the variable from a GOT slot */
 		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_SEQ_POINT_INFO, cfg->method);
 #ifdef USE_JUMP_TABLES
-		{
-			gpointer *jte = mono_jumptable_add_entry ();
-			code = mono_arm_load_jumptable_entry (code, jte, ARMREG_IP);
-			ARM_LDR_IMM (code, ARMREG_R0, ARMREG_IP, 0);
-		}
-		/** XXX: is it correct? */
+                code = mono_arm_load_jumptable_entry (code, mono_jumptable_add_entry (), ARMREG_IP);
+                code = mono_arm_emit_ldr_imm12 (code, ARMREG_R0, ARMREG_IP, 0);
 #else
 		ARM_LDR_IMM (code, ARMREG_R0, ARMREG_PC, 0);
 		ARM_B (code, 0);
@@ -5562,15 +6131,9 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		code += 4;
 #endif
 		ARM_LDR_REG_REG (code, ARMREG_R0, ARMREG_PC, ARMREG_R0);
-
 		g_assert (ins->opcode == OP_REGOFFSET);
 
-		if (arm_is_imm12 (ins->inst_offset)) {
-			ARM_STR_IMM (code, ARMREG_R0, ins->inst_basereg, ins->inst_offset);
-		} else {
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-			ARM_STR_REG_REG (code, ARMREG_R0, ins->inst_basereg, ARMREG_LR);
-		}
+                code =  mono_arm_emit_str_imm (code, ARMREG_R0, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 	}
 
 	/* Initialize ss_trigger_page_var */
@@ -5583,10 +6146,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			g_assert (info_var->opcode == OP_REGOFFSET);
 			g_assert (arm_is_imm12 (info_var->inst_offset));
 
-			ARM_LDR_IMM (code, dreg, info_var->inst_basereg, info_var->inst_offset);
+			code = mono_arm_emit_ldr_imm12 (code, dreg, info_var->inst_basereg, info_var->inst_offset);
 			/* Load the trigger page addr */
-			ARM_LDR_IMM (code, dreg, dreg, G_STRUCT_OFFSET (SeqPointInfo, ss_trigger_page));
-			ARM_STR_IMM (code, dreg, ss_trigger_page_var->inst_basereg, ss_trigger_page_var->inst_offset);
+			code = mono_arm_emit_ldr_imm12 (code, dreg, dreg, G_STRUCT_OFFSET (SeqPointInfo, ss_trigger_page));
+			code = mono_arm_emit_str_imm12 (code, dreg, ss_trigger_page_var->inst_basereg, ss_trigger_page_var->inst_offset);
 		}
 	}
 
@@ -5621,12 +6184,12 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		code += 4;
 #endif
 
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_LR, 0);
-		ARM_STR_IMM (code, ARMREG_IP, read_ins->inst_basereg, read_ins->inst_offset);
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_LR, 4);
-		ARM_STR_IMM (code, ARMREG_IP, ss_method_ins->inst_basereg, ss_method_ins->inst_offset);
-		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_LR, 8);
-		ARM_STR_IMM (code, ARMREG_IP, bp_method_ins->inst_basereg, bp_method_ins->inst_offset);
+                code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_LR, 0);
+                code = mono_arm_emit_str_imm12 (code, ARMREG_IP, read_ins->inst_basereg, read_ins->inst_offset);
+                code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_LR, 4);
+                code = mono_arm_emit_str_imm12 (code, ARMREG_IP, ss_method_ins->inst_basereg, ss_method_ins->inst_offset);
+                code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_LR, 8);
+                code = mono_arm_emit_str_imm12 (code, ARMREG_IP, bp_method_ins->inst_basereg, bp_method_ins->inst_offset);
 	}
 
 	cfg->code_len = code - cfg->native_code;
@@ -5640,7 +6203,7 @@ void
 mono_arch_emit_epilog (MonoCompile *cfg)
 {
 	MonoMethod *method = cfg->method;
-	int pos, i, rot_amount;
+	int pos;
 	int max_epilog_size = 16 + 20*4;
 	guint8 *code;
 	CallInfo *cinfo;
@@ -5655,8 +6218,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		max_epilog_size += 50;
 
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+		arm_code_realloc (cfg, cfg->code_size * 2);
 		cfg->stat_code_reallocs++;
 	}
 
@@ -5675,12 +6237,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	if (cinfo->ret.storage == RegTypeStructByVal) {
 		MonoInst *ins = cfg->ret;
 
-		if (arm_is_imm12 (ins->inst_offset)) {
-			ARM_LDR_IMM (code, ARMREG_R0, ins->inst_basereg, ins->inst_offset);
-		} else {
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-			ARM_LDR_REG_REG (code, ARMREG_R0, ins->inst_basereg, ARMREG_LR);
-		}
+                code = mono_arm_emit_ldr_imm (code, ARMREG_R0, ins->inst_basereg, ins->inst_offset, ARMREG_LR);
 	}
 
 	if (method->save_lmf) {
@@ -5693,6 +6250,12 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 
 		/* This points to r4 inside MonoLMF->iregs */
 		sp_adj = (sizeof (MonoLMF) - MONO_ARM_NUM_SAVED_REGS * sizeof (mgreg_t));
+#ifdef __native_client_codegen__
+                /*
+		 * Cannot restore lr to pc, so restore to lr and branch later.
+		 * Also note that we stored old SP as IP.
+		 */
+#else
 		reg = ARMREG_R4;
 		regmask = 0x9ff0; /* restore lr to pc */
 		/* Skip caller saved registers not used by the method */
@@ -5701,28 +6264,48 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			sp_adj += 4;
 			reg ++;
 		}
-		/* point sp at the registers to restore: 10 is 14 -4, because we skip r0-r3 */
-		code = emit_big_add (code, ARMREG_SP, cfg->frame_reg, cfg->stack_usage - lmf_offset + sp_adj);
+#endif
+		/* point sp at the registers to restore: we skip r0-r3 */
+		code = mono_arm_adjust_stack_reg_imm (code, cfg->frame_reg, cfg->stack_usage - lmf_offset + sp_adj);
 		/* restore iregs */
+#ifdef __native_client_codegen__
+		ARM_POP (code, MONO_ARM_REGSAVE_MASK1);
+		ARM_POP (code, MONO_ARM_REGSAVE_MASK2);
+		/* Now IP has SP, so restore it */
+		code = mono_arm_adjust_stack_reg_imm (code, ARMREG_IP, 0);
+#else
 		ARM_POP (code, regmask); 
+#endif
 	} else {
-		if ((i = mono_arm_is_rotated_imm8 (cfg->stack_usage, &rot_amount)) >= 0) {
-			ARM_ADD_REG_IMM (code, ARMREG_SP, cfg->frame_reg, i, rot_amount);
-		} else {
-			code = mono_arm_emit_load_imm (code, ARMREG_IP, cfg->stack_usage);
-			ARM_ADD_REG_REG (code, ARMREG_SP, cfg->frame_reg, ARMREG_IP);
-		}
-
+		code = mono_arm_adjust_stack_reg_imm (code, cfg->frame_reg, cfg->stack_usage);
 		if (iphone_abi) {
 			/* Restore saved gregs */
 			if (cfg->used_int_regs)
 				ARM_POP (code, cfg->used_int_regs);
 			/* Restore saved r7, restore LR to PC */
-			ARM_POP (code, (1 << ARMREG_R7) | (1 << ARMREG_PC));
+			ARM_POP (code, (1 << ARMREG_R7) |
+#ifdef __native_client_codegen__
+                                 (1 << ARMREG_LR)
+#else
+                                 (1 << ARMREG_PC)
+#endif
+				 );
 		} else {
-			ARM_POP (code, cfg->used_int_regs | (1 << ARMREG_PC));
+			ARM_POP (code, cfg->used_int_regs |
+#ifdef __native_client_codegen__
+                                 (1 << ARMREG_LR)
+#else
+                                 (1 << ARMREG_PC)
+#endif
+				 );
 		}
 	}
+#ifdef __native_client_codegen__
+	/* Jump to LR. */
+	code = mono_arm_emit_bx (code, ARMREG_LR, 0);
+	/* Ensure we complete the bundle. */
+	code = mono_arm_nacl_ensure_at_position (code, 0);
+#endif
 
 	cfg->code_len = code - cfg->native_code;
 
@@ -5785,8 +6368,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 	}
 
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
-		cfg->code_size *= 2;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+		arm_code_realloc (cfg, cfg->code_size * 2);
 		cfg->stat_code_reallocs++;
 	}
 
@@ -5820,9 +6402,9 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				patch_info->data.name = "mono_arch_throw_corlib_exception";
 				patch_info->ip.i = code - cfg->native_code;
 				code = mono_arm_load_jumptable_entry_addr (code, jte, ARMREG_R0);
-				ARM_LDR_IMM (code, ARMREG_IP, ARMREG_R0, 0);
-				ARM_LDR_IMM (code, ARMREG_R0, ARMREG_R0, 4);
-				ARM_BLX_REG (code, ARMREG_IP);
+                                code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_R0, 0);
+                                code = mono_arm_emit_ldr_imm12 (code, ARMREG_R0, ARMREG_R0, 4);
+                                code = mono_arm_emit_bx (code, ARMREG_IP, 0);
 				jte [1] = GUINT_TO_POINTER (exc_class->type_token);
 			}
 #else
@@ -5841,6 +6423,11 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			break;
 		}
 	}
+
+#ifdef __native_client_codegen__
+	/* Ensure we complete the bundle. */
+	code = mono_arm_nacl_ensure_at_position(code, 0);
+#endif
 
 	cfg->code_len = code - cfg->native_code;
 
@@ -6001,6 +6588,16 @@ set_jumptable_element (gpointer *base, guint32 index, gpointer value)
 static arminstr_t *
 load_element_with_regbase_cond (arminstr_t *code, ARMReg dreg, ARMReg base, guint32 jti, int cond)
 {
+#ifdef __native_client_codegen__
+        /* TODO: need better "NOT" logic. */
+        guint8 *skip;
+        /* Skip over unconditional branch, if cond satisfied. */
+        ARM_B_COND (code, cond, 0);
+        skip = (guint8 *)code;
+        ARM_B (code, 0);
+        code = mono_arm_emit_ldr_imm (code, dreg, base, jti * 4, dreg);
+        arm_patch (skip, code);
+#else
 	if (arm_is_imm12 (jti * 4)) {
 		ARM_LDR_IMM_COND (code, dreg, base, jti * 4, cond);
 	} else {
@@ -6009,6 +6606,7 @@ load_element_with_regbase_cond (arminstr_t *code, ARMReg dreg, ARMReg base, guin
 			ARM_MOVT_REG_IMM_COND (code, dreg, ((jti * 4) >> 16) & 0xffff, cond);
 		ARM_LDR_REG_REG_SHIFT_COND (code, dreg, base, dreg, ARMSHIFT_LSL, 0, cond);
 	}
+#endif
 	return code;
 }
 #else
@@ -6107,15 +6705,13 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 #define VTABLE_JTI 0
 #define IMT_METHOD_OFFSET 0
 #define TARGET_CODE_OFFSET 1
-#define JUMP_CODE_OFFSET 2
-#define RECORDS_PER_ENTRY 3
+#define RECORDS_PER_ENTRY 2
 #define IMT_METHOD_JTI(idx) (1 + idx * RECORDS_PER_ENTRY + IMT_METHOD_OFFSET)
 #define TARGET_CODE_JTI(idx) (1 + idx * RECORDS_PER_ENTRY + TARGET_CODE_OFFSET)
-#define JUMP_CODE_JTI(idx) (1 + idx * RECORDS_PER_ENTRY + JUMP_CODE_OFFSET)
 
 	jte = mono_jumptable_add_entries (RECORDS_PER_ENTRY * count + 1 /* vtable */);
 	code = (arminstr_t *) mono_arm_load_jumptable_entry_addr ((guint8 *) code, jte, ARMREG_R2);
-	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_R2, VTABLE_JTI);
+        code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_R2, VTABLE_JTI);
 	set_jumptable_element (jte, VTABLE_JTI, vtable);
 #else
 	if (large_offsets)
@@ -6161,14 +6757,8 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 #endif
 					ARM_CMP_REG_REG (code, ARMREG_R0, ARMREG_R1);
 				}
-#ifdef USE_JUMP_TABLES
-				code = load_element_with_regbase_cond (code, ARMREG_R1, ARMREG_R2, JUMP_CODE_JTI (i), ARMCOND_NE);
-				ARM_BX_COND (code, ARMCOND_NE, ARMREG_R1);
-				item->jmp_code = GUINT_TO_POINTER (JUMP_CODE_JTI (i));
-#else
 				item->jmp_code = (guint8*)code;
 				ARM_B_COND (code, ARMCOND_NE, 0);
-#endif
 			} else {
 				/*Enable the commented code to assert on wrong method*/
 #if ENABLE_WRONG_METHOD_CHECK
@@ -6194,8 +6784,9 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 				/* Restore registers */
 				ARM_POP3 (code, ARMREG_R0, ARMREG_R1, ARMREG_R2);
 				/*  And branch */
-				ARM_BX (code, ARMREG_R1);
+                                code = mono_arm_emit_bx (code, ARMREG_R1, 0);
 				set_jumptable_element (jte, target_code_jti, item->value.target_code);
+                                fprintf(stderr, "target=%p\n", item->value.target_code);
 #else
 				target_code_ins = code;
 				ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 0);
@@ -6221,10 +6812,15 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 					if (vtable_offset >> 16)
 						ARM_MOVT_REG_IMM (code, ARMREG_R1, (vtable_offset >> 16) & 0xffff);
 					/* IP had vtable base. */
+#ifdef __native_client_codegen__
+                                        ARM_ADD_REG_REG(code, ARMREG_IP, ARMREG_IP, ARMREG_R1);
+                                        code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_IP, 0);
+#else
 					ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_IP, ARMREG_R1);
+#endif
 					/* Restore registers and branch */
 					ARM_POP3 (code, ARMREG_R0, ARMREG_R1, ARMREG_R2);
-					ARM_BX (code, ARMREG_IP);
+                                        code = mono_arm_emit_bx (code, ARMREG_IP, 0);
 #else
 					vtable_offset_ins = code;
 					ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 0);
@@ -6238,9 +6834,9 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 #endif
 				} else {
 #ifdef USE_JUMP_TABLES
-					ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, vtable_offset);
+                                        code = mono_arm_emit_ldr_imm12 (code, ARMREG_IP, ARMREG_IP, vtable_offset);
 					ARM_POP3 (code, ARMREG_R0, ARMREG_R1, ARMREG_R2);
-					ARM_BX (code, ARMREG_IP);
+                                        code = mono_arm_emit_bx (code, ARMREG_IP, 0);
 #else
 					ARM_POP2 (code, ARMREG_R0, ARMREG_R1);
 					if (large_offsets)
@@ -6251,18 +6847,18 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 			}
 
 			if (fail_case) {
+                                arm_patch (item->jmp_code, (guchar*)code);
 #ifdef USE_JUMP_TABLES
-				set_jumptable_element (jte, GPOINTER_TO_UINT (item->jmp_code), code);
 				target_code_jti = TARGET_CODE_JTI (i);
 				/* Load target address */
 				code = load_element_with_regbase_cond (code, ARMREG_R1, ARMREG_R2, target_code_jti, ARMCOND_AL);
 				/* Restore registers */
 				ARM_POP3 (code, ARMREG_R0, ARMREG_R1, ARMREG_R2);
 				/* And branch */
-				ARM_BX (code, ARMREG_R1);
+                                code = mono_arm_emit_bx (code, ARMREG_R1, 0);
 				set_jumptable_element (jte, target_code_jti, fail_tramp);
+                                fprintf(stderr, "target fail=%p\n", fail_tramp);
 #else
-				arm_patch (item->jmp_code, (guchar*)code);
 
 				target_code_ins = code;
 				/* Load target address */
@@ -6302,17 +6898,13 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 #ifdef USE_JUMP_TABLES
 			code = load_element_with_regbase_cond (code, ARMREG_R1, ARMREG_R2, IMT_METHOD_JTI (i), ARMCOND_AL);
 			ARM_CMP_REG_REG (code, ARMREG_R0, ARMREG_R1);
-			code = load_element_with_regbase_cond (code, ARMREG_R1, ARMREG_R2, JUMP_CODE_JTI (i), ARMCOND_GE);
-			ARM_BX_COND (code, ARMCOND_GE, ARMREG_R1);
-			item->jmp_code = GUINT_TO_POINTER (JUMP_CODE_JTI (i));
 #else
 			ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 0);
 			ARM_CMP_REG_REG (code, ARMREG_R0, ARMREG_R1);
-
-			item->jmp_code = (guint8*)code;
-			ARM_B_COND (code, ARMCOND_GE, 0);
 			++extra_space;
 #endif
+                        item->jmp_code = (guint8*)code;
+			ARM_B_COND (code, ARMCOND_GE, 0);
 		}
 	}
 
@@ -6320,11 +6912,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 		MonoIMTCheckItem *item = imt_entries [i];
 		if (item->jmp_code) {
 			if (item->check_target_idx)
-#ifdef USE_JUMP_TABLES
-				set_jumptable_element (jte, GPOINTER_TO_UINT (item->jmp_code), imt_entries [item->check_target_idx]->code_target);
-#else
 				arm_patch (item->jmp_code, imt_entries [item->check_target_idx]->code_target);
-#endif
 		}
 		if (i > 0 && item->is_equals) {
 			int j;
@@ -6352,10 +6940,15 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	g_free (constant_pool_starts);
 #endif
 
-	mono_arch_flush_icache ((guint8*)start, size);
+#ifdef __native_client_codegen__
+        /* Ensure we complete the bundle. */
+        code = mono_arm_nacl_ensure_at_position (code, 0);
+#endif
+	g_assert (DISTANCE (start, code) <= size);
+	nacl_domain_code_validate (domain, &start, (guint8*)code - (guint8*)start, (guint8 **)&code);
+	mono_arch_flush_icache ((guint8*)start, (guint8*)code - (guint8*)start);
 	mono_stats.imt_thunks_size += code - start;
 
-	g_assert (DISTANCE (start, code) <= size);
 	return start;
 }
 
@@ -6425,7 +7018,7 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 		*(int*)code = (int)bp_trigger_page;
 		code += 4;
 #endif
-		ARM_LDR_IMM (code, dreg, dreg, 0);
+		code = mono_arm_emit_ldr_imm12 (code, dreg, dreg, 0);
 
 		mono_arch_flush_icache (code - 16, 16);
 
@@ -6643,3 +7236,4 @@ mono_arch_set_target (char *mtriple)
 #include "../../../mono-extensions/mono/mini/mini-arm-gsharedvt.c"
 
 #endif /* !MONOTOUCH */
+

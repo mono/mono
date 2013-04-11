@@ -25,6 +25,7 @@
 #include <utime.h>
 #include <sys/stat.h>
 
+#include <mono/io-layer/macros.h>
 #include <mono/io-layer/mono-mutex.h>
 #include <mono/io-layer/error.h>
 #include <mono/io-layer/wapi_glob.h>

@@ -223,22 +223,22 @@
 #       define GC_CLEAR_DEFINED
 #    endif /* ALPHA */
 #    ifdef ARM32
-#ifdef __native_client__
-#define NACL_ALIGN() ".align 4\n"
-#define MASK_REGISTER(reg) "bic " reg ", " reg ", #0xc0000000\n"
-#else
-#define NACL_ALIGN()
-#define MASK_REGISTER(reg)
-#endif
+#       ifdef __native_client__
+#          define MASK_REGISTER(reg, cond) "bic" cond " " reg ", " reg ", #0xc0000000\n"
+#          define NACL_ALIGN() ".align 4\n"
+#       else
+#          define MASK_REGISTER(reg, cond)
+#          define NACL_ALIGN()
+#       endif
         inline static int GC_test_and_set(volatile unsigned int *addr) {
 #if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
           int ret, tmp;
           __asm__ __volatile__ (
                                  "1:\n"
                                  NACL_ALIGN()
-                                 MASK_REGISTER("%3")
+                                 MASK_REGISTER("%3", "al")
                                  "ldrex %0, [%3]\n"
-                                 MASK_REGISTER("%3")
+                                 MASK_REGISTER("%3", "al")
                                  "strex %1, %2, [%3]\n" 
                                  "teq %1, #0\n"
                                  "bne 1b\n"
@@ -252,7 +252,7 @@
            * bus because there are no SMP ARM machines.  If/when there are,
            * this code will likely need to be updated. */
           /* See linuxthreads/sysdeps/arm/pt-machine.h in glibc-2.1 */
-          __asm__ __volatile__(MASK_REGISTER("%2")
+          __asm__ __volatile__(MASK_REGISTER("%2", "al")
                                "swp %0, %1, [%2]"
       		  	     : "=&r"(oldval)
       			     : "r"(1), "r"(addr)
@@ -264,11 +264,18 @@
       inline static void GC_clear(volatile unsigned int *addr) {
 #ifdef HAVE_ARMV6
 		  /* Memory barrier */
+#ifdef __native_client__
+		  /* NaCl requires ARMv7 CPUs. */
+		  __asm__ __volatile__("dsb" : : : "memory");
+#else
 		  __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory");
+#endif
 #endif
 		  *(addr) = 0;
       }
 #     define GC_CLEAR_DEFINED
+#     undef NACL_ALIGN
+#     undef MASK_REGISTER
 #    endif /* ARM32 */
 #    ifdef CRIS
         inline static int GC_test_and_set(volatile unsigned int *addr) {
