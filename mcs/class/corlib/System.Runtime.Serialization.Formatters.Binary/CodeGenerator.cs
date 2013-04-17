@@ -115,8 +115,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					// EMIT ow.WriteAssembly (writer, memberType.Assembly);
 					gen.Emit (OpCodes.Ldarg_1);
 					gen.Emit (OpCodes.Ldarg_2);
+#if NET_4_0
+					EmitLoadType (gen, memberType);
+					gen.EmitCall (OpCodes.Callvirt, typeof(ObjectWriter).GetMethod("WriteTypeAssembly"), null);
+#else
 					EmitLoadTypeAssembly (gen, memberType, field.Name);
 					gen.EmitCall (OpCodes.Callvirt, typeof(ObjectWriter).GetMethod("WriteAssembly"), null);
+#endif
 					gen.Emit (OpCodes.Pop);
 				}
 			}
@@ -292,8 +297,14 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					// EMIT writer.Write ((int)ow.GetAssemblyId (type.Assembly));
 					gen.Emit (OpCodes.Ldarg_2);
 					gen.Emit (OpCodes.Ldarg_1);
+#if NET_4_0
+					EmitLoadType (gen, type);
+					gen.EmitCall (OpCodes.Callvirt, typeof(GetForwardedAttribute).GetMethod("GetAssemblyName"), null);
+					gen.EmitCall (OpCodes.Callvirt, typeof(ObjectWriter).GetMethod("GetAssemblyNameId"), null);
+#else
 					EmitLoadTypeAssembly (gen, type, member);
 					gen.EmitCall (OpCodes.Callvirt, typeof(ObjectWriter).GetMethod("GetAssemblyId"), null);
+#endif
 					gen.Emit (OpCodes.Conv_I4);
 					EmitWrite (gen, typeof(int));
 					break;
@@ -316,6 +327,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			gen.Emit (OpCodes.Ldtoken, type);
 			gen.EmitCall (OpCodes.Call, typeof(Type).GetMethod("GetTypeFromHandle"), null);
 			gen.EmitCall (OpCodes.Callvirt, typeof(Type).GetProperty("Assembly").GetGetMethod(), null);
+		}
+		
+		static void EmitLoadType (ILGenerator gen, Type type)
+		{
+			gen.Emit (OpCodes.Ldtoken, type);
+			gen.EmitCall (OpCodes.Call, typeof(Type).GetMethod("GetTypeFromHandle"), null);
 		}
 		
 		static void EmitWrite (ILGenerator gen, Type type)
