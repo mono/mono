@@ -284,6 +284,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestCondition10 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);

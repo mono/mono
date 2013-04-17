@@ -534,10 +534,14 @@ namespace Mono.CSharp {
 			// about mismatch at return type when the check bellow rejects them
 			//
 			var parameters = mi.Parameters;
+			MethodSpec close_match = null;
+
 			while (true) {
 				var candidates = MemberCache.FindMembers (base_type, mi.Name, false);
-				if (candidates == null)
+				if (candidates == null) {
+					base_method = close_match;
 					return false;
+				}
 
 				MethodSpec similar_candidate = null;
 				foreach (var candidate in candidates) {
@@ -590,19 +594,29 @@ namespace Mono.CSharp {
 					// From this point the candidate is used for detailed error reporting
 					// because it's very close match to what we are looking for
 					//
-					base_method = (MethodSpec) candidate;
+					var m = (MethodSpec) candidate;
 
-					if (!candidate.IsPublic)
-						return false;
+					if (!m.IsPublic) {
+						if (close_match == null)
+							close_match = m;
 
-					if (!TypeSpecComparer.Override.IsEqual (mi.ReturnType, base_method.ReturnType))
-						return false;
+						continue;
+					}
 
-					if (mi.IsGeneric && !Method.CheckImplementingMethodConstraints (container, base_method, mi)) {
+					if (!TypeSpecComparer.Override.IsEqual (mi.ReturnType, m.ReturnType)) {
+						if (close_match == null)
+							close_match = m;
+
+						continue;
+					}
+						
+					base_method = m;
+
+					if (mi.IsGeneric && !Method.CheckImplementingMethodConstraints (container, m, mi)) {
 						return true;
 					}
 				}
-
+				
 				if (base_method != null) {
 					if (similar_candidate != null) {
 						Report.SymbolRelatedToPreviousError (similar_candidate);
@@ -617,8 +631,10 @@ namespace Mono.CSharp {
 				}
 
 				base_type = candidates[0].DeclaringType.BaseType;
-				if (base_type == null)
+				if (base_type == null) {
+					base_method = close_match;
 					return false;
+				}
 			}
 
 			if (!base_method.IsVirtual) {

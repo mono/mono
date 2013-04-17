@@ -27341,6 +27341,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-partial-06.cs">
+    <type name="Test">
+      <method name="Void Baz[U]()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Bar[U](U)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -46755,6 +46771,48 @@
       </method>
     </type>
   </test>
+  <test name="test-867.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="User">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseController">
+      <method name="IUser get_User()" attrs="2502">
+        <size>14</size>
+      </method>
+      <method name="Void set_User(IUser)" attrs="2502">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseJobController">
+      <method name="User get_User()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_User(User)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="JobController">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">
@@ -57915,6 +57973,27 @@
       </method>
     </type>
   </test>
+  <test name="test-async-46.cs">
+    <type name="X">
+      <method name="Void Foo()" attrs="129">
+        <size>27</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>158</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
@@ -59253,6 +59332,19 @@
   </test>
   <test name="test-debug-25.cs">
     <type name="TestClass">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-26.cs">
+    <type name="P">
+      <method name="Void Foo()" attrs="129">
+        <size>2</size>
+      </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
       </method>

@@ -37,6 +37,7 @@ using MonoTests.System.Data.Utils;
 using System.Xml;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Globalization;
 
 namespace MonoTests_System.Data
 {
@@ -984,6 +985,17 @@ namespace MonoTests_System.Data
 			ds.Locale = culInfo ;
 			Assert.AreEqual(culInfo , ds.Locale , "DS157");
 		}
+
+		[Test]
+		[SetCulture ("cs-CZ")]
+		public void DataSetSpecificCulture ()
+		{			
+			var ds = new DataSet() ;
+			ds.Locale = CultureInfo.GetCultureInfo (1033);
+			var dt = ds.Tables.Add ("machine");
+			dt.Locale = ds.Locale;
+			Assert.AreSame (dt, ds.Tables["MACHINE"]);
+		}		
 
 		[Test] public void MergeFailed()
 		{

@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 		public void Error_ConstantCanBeInitializedWithNullOnly (ResolveContext rc, TypeSpec type, Location loc, string name)
 		{
 			rc.Report.Error (134, loc, "A constant `{0}' of reference type `{1}' can only be initialized with null",
-				name, TypeManager.CSharpName (type));
+				name, type.GetSignatureForError ());
 		}
 
 		protected virtual void Error_InvalidExpressionStatement (Report report, Location loc)
@@ -282,7 +282,10 @@ namespace Mono.CSharp {
 		protected void Error_ValueCannotBeConvertedCore (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			// The error was already reported as CS1660
-			if (type == InternalType.AnonymousMethod || type == InternalType.ErrorType)
+			if (type == InternalType.AnonymousMethod)
+				return;
+
+			if (type == InternalType.ErrorType || target == InternalType.ErrorType)
 				return;
 
 			string from_type = type.GetSignatureForError ();
@@ -351,13 +354,15 @@ namespace Mono.CSharp {
 		{
 			ec.Report.SymbolRelatedToPreviousError (type);
 			ec.Report.Error (117, loc, "`{0}' does not contain a definition for `{1}'",
-				TypeManager.CSharpName (type), name);
+				type.GetSignatureForError (), name);
 		}
 
 		public virtual void Error_ValueAssignment (ResolveContext rc, Expression rhs)
 		{
 			if (rhs == EmptyExpression.LValueMemberAccess || rhs == EmptyExpression.LValueMemberOutAccess) {
 				// Already reported as CS1612
+			} else if (rhs == EmptyExpression.OutAccess) {
+				rc.Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
 			} else {
 				rc.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
 			}
@@ -492,10 +497,7 @@ namespace Mono.CSharp {
 
 			if (e == null) {
 				if (errors == ec.Report.Errors) {
-					if (out_access)
-						ec.Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
-					else
-						Error_ValueAssignment (ec, right_side);
+					Error_ValueAssignment (ec, right_side);
 				}
 				return null;
 			}
@@ -1475,7 +1477,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError()
 		{
-			return TypeManager.CSharpName (Type);
+			return Type.GetSignatureForError ();
 		}
 
 		public override object GetValue ()
@@ -3503,7 +3505,7 @@ namespace Mono.CSharp {
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
 			ec.Report.Error (428, loc, "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using parentheses to invoke the method",
-				Name, TypeManager.CSharpName (target));
+				Name, target.GetSignatureForError ());
 		}
 
 		public static bool IsExtensionMethodArgument (Expression expr)
@@ -5045,14 +5047,14 @@ namespace Mono.CSharp {
 			string index = (idx + 1).ToString ();
 			if (((mod & Parameter.Modifier.RefOutMask) ^ (a.Modifier & Parameter.Modifier.RefOutMask)) != 0) {
 				if ((mod & Parameter.Modifier.RefOutMask) == 0)
-					ec.Report.Error (1615, loc, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
+					ec.Report.Error (1615, a.Expr.Location, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
 						index, Parameter.GetModifierSignature (a.Modifier));
 				else
-					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
+					ec.Report.Error (1620, a.Expr.Location, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
 			} else {
 				string p1 = a.GetSignatureForError ();
-				string p2 = TypeManager.CSharpName (paramType);
+				string p2 = paramType.GetSignatureForError ();
 
 				if (p1 == p2) {
 					p1 = a.Type.GetSignatureForErrorIncludingAssemblyName ();

@@ -320,7 +320,7 @@ namespace Mono.CSharp.Nullable
 		public static Constant CreateFromExpression (ResolveContext ec, Expression e)
 		{
 			ec.Report.Warning (458, 2, e.Location, "The result of the expression is always `null' of type `{0}'",
-				TypeManager.CSharpName (e.Type));
+				e.Type.GetSignatureForError ());
 
 			return ReducedExpression.Create (Create (e.Type, e.Location), e);
 		}
@@ -592,10 +592,10 @@ namespace Mono.CSharp.Nullable
 
 			if ((Oper & Operator.EqualityMask) != 0) {
 				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is always `{1}'",
-					TypeManager.CSharpName (expr.Type), c.GetValueAsLiteral ());
+					expr.Type.GetSignatureForError (), c.GetValueAsLiteral ());
 			} else {
 				ec.Report.Warning (464, 2, loc, "The result of comparing type `{0}' with null is always `{1}'",
-					TypeManager.CSharpName (expr.Type), c.GetValueAsLiteral ());
+					expr.Type.GetSignatureForError (), c.GetValueAsLiteral ());
 			}
 
 			return ReducedExpression.Create (c, this);

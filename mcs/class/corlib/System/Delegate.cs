@@ -565,7 +565,7 @@ namespace System
 
 		internal bool IsTransparentProxy ()
 		{
-#if MONOTOUCH
+#if DISABLE_REMOTING
 			return false;
 #else
 			return RemotingServices.IsTransparentProxy (m_target);

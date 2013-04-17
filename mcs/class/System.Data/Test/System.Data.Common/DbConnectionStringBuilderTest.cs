@@ -1791,6 +1791,7 @@ namespace MonoTests.System.Data.Common
 		}
 
                 [Test]
+				[NUnit.Framework.Category ("MobileNotWorking")] // DefaultMemberAttribute is removed by the tuner, causing #3 to fail
                 public void ICTD_GetClassNameTest ()
                 {
                         ICustomTypeDescriptor ictd = (ICustomTypeDescriptor) builder;

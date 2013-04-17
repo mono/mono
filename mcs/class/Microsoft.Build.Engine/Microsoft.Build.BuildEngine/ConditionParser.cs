@@ -89,6 +89,11 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			return ParseBooleanAnd ();
 		}
+
+		public static string And (string a, string b)
+		{
+			return a + " and " + b;
+		}
 		
 		ConditionExpression ParseBooleanAnd ()
 		{

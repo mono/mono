@@ -1445,9 +1445,12 @@ namespace Mono.CSharp {
 									"A partial method declaration and partial method implementation must be both `static' or neither");
 							}
 
-							Report.SymbolRelatedToPreviousError (ce);
-							Report.Error (764, member.Location,
-								"A partial method declaration and partial method implementation must be both `unsafe' or neither");
+							if ((method_a.ModFlags & Modifiers.UNSAFE) != (method_b.ModFlags & Modifiers.UNSAFE)) {
+								Report.SymbolRelatedToPreviousError (ce);
+								Report.Error (764, member.Location,
+									"A partial method declaration and partial method implementation must be both `unsafe' or neither");
+							}
+
 							return false;
 						}
 

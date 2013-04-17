@@ -6,6 +6,11 @@
   </files>
   <methods>
     <method token="0x6000001">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000002">
       <sequencepoints>
         <entry il="0x0" row="4" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="5" col="3" file_ref="1" hidden="false" />
@@ -18,7 +23,7 @@
       </locals>
       <scopes />
     </method>
-    <method token="0x6000002">
+    <method token="0x6000003">
       <sequencepoints>
         <entry il="0x0" row="12" col="2" file_ref="1" hidden="false" />
         <entry il="0x9" row="55" col="3" file_ref="1" hidden="false" />
@@ -31,7 +36,7 @@
       </locals>
       <scopes />
     </method>
-    <method token="0x6000003">
+    <method token="0x6000004">
       <sequencepoints>
         <entry il="0x0" row="59" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="60" col="3" file_ref="1" hidden="false" />
@@ -42,11 +47,6 @@
         <entry name="s1" il_index="0" scope_ref="0" />
         <entry name="s2" il_index="1" scope_ref="0" />
       </locals>
-      <scopes />
-    </method>
-    <method token="0x6000004">
-      <sequencepoints />
-      <locals />
       <scopes />
     </method>
   </methods>

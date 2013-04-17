@@ -35,7 +35,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	public class BuildTask {
+	public class BuildTask : IBuildTask {
 	
 		ITaskHost		hostObject;
 		Target			parentTarget;
@@ -127,7 +127,7 @@ namespace Microsoft.Build.BuildEngine {
 					continue;
 				tempNames.Add (xmlAttribute.Name);
 			}
-			
+
 			return tempNames.ToArray ();
 		}
 		
@@ -156,7 +156,7 @@ namespace Microsoft.Build.BuildEngine {
 			else
 				taskElement.SetAttribute (parameterName, parameterValue);
 		}
-		
+
 		void LogTaskStarted ()
 		{
 			TaskStartedEventArgs tsea = new TaskStartedEventArgs ("Task started.", null,
@@ -266,11 +266,29 @@ namespace Microsoft.Build.BuildEngine {
 			get { return taskElement; }
 			set { taskElement = value; }
 		}
-		
+
 		[MonoTODO]
 		public Type Type {
 			get { return parentTarget.Project.TaskDatabase.GetTypeFromClassName (Name); }
 		}
+
+		public IEnumerable<string> GetAttributes ()
+		{
+			foreach (XmlAttribute attrib in TaskElement.Attributes)
+				yield return attrib.Value;
 		
+			foreach (XmlNode xn in TaskElement.ChildNodes) {
+				XmlElement xe = xn as XmlElement;
+				if (xe == null)
+					continue;
+			
+				//FIXME: error on any other child
+				if (String.Compare (xe.LocalName, "Output", StringComparison.Ordinal) == 0) {
+					foreach (XmlAttribute attrib in xe.Attributes)
+						yield return attrib.Value;
+				}
+			}
+		}
+
 	}
 }
