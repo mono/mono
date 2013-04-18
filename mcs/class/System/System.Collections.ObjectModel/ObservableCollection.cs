@@ -40,33 +40,30 @@ namespace System.Collections.ObjectModel
 #endif
 	public class ObservableCollection<T> : Collection<T>, INotifyCollectionChanged, INotifyPropertyChanged {
 		[Serializable]
-#if !MOBILE
-	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
-#endif
-		sealed class SimpleMonitor : IDisposable {
-			private int _busyCount = 0;
+		sealed class Reentrant : IDisposable {
+			private int count = 0;
 
-			public SimpleMonitor()
+			public Reentrant()
 			{
 			}
 
 			public void Enter()
 			{
-				_busyCount++;
+				count++;
 			}
 
 			public void Dispose()
 			{
-				_busyCount--;
+				count--;
 			}
 
 			public bool Busy
 			{
-				get { return _busyCount > 0; }
+				get { return count > 0; }
 			}
 		}
 
-		private SimpleMonitor _monitor = new SimpleMonitor ();
+		private Reentrant reentrant = new Reentrant ();
 
 		public ObservableCollection ()
 		{
@@ -86,9 +83,7 @@ namespace System.Collections.ObjectModel
 		{
 		}
 
-		[field:NonSerializedAttribute()]
 		public virtual event NotifyCollectionChangedEventHandler CollectionChanged;
-		[field:NonSerializedAttribute()]
 		protected virtual event PropertyChangedEventHandler PropertyChanged;
 
 		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
@@ -98,8 +93,8 @@ namespace System.Collections.ObjectModel
 
 		protected IDisposable BlockReentrancy ()
 		{
-			_monitor.Enter ();
-			return _monitor;
+			reentrant.Enter ();
+			return reentrant;
 		}
 
 		protected void CheckReentrancy ()
@@ -107,7 +102,7 @@ namespace System.Collections.ObjectModel
 			NotifyCollectionChangedEventHandler eh = CollectionChanged;
 
 			// Only have a problem if we have more than one event listener.
-			if (_monitor.Busy && eh != null && eh.GetInvocationList ().Length > 1)
+			if (reentrant.Busy && eh != null && eh.GetInvocationList ().Length > 1)
 				throw new InvalidOperationException ("Cannot modify the collection while reentrancy is blocked.");
 		}
 
