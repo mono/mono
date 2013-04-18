@@ -232,12 +232,20 @@ class MakeBundle {
 		// Preallocate the strings we need.
 		if (chars [0] == null) {
 			for (int i = 0; i < chars.Length; i++)
-				chars [i] = string.Format ("\t.byte {0}\n", i.ToString ());
+				chars [i] = string.Format ("{0}", i.ToString ());
 		}
 
 		while ((n = stream.Read (buffer, 0, buffer.Length)) != 0) {
-			for (int i = 0; i < n; i++)
+			int count = 0;
+			for (int i = 0; i < n; i++) {
+				if (count % 32 == 0) {
+					ts.Write ("\n\t.byte ");
+				} else {
+					ts.Write (",");
+				}
 				ts.Write (chars [buffer [i]]);
+				count ++;
+			}
 		}
 
 		ts.WriteLine ();
@@ -282,7 +290,6 @@ class MakeBundle {
 			// Do the file reading and compression in parallel
 			Action<string> body = delegate (string url) {
 				string fname = new Uri (url).LocalPath;
-
 				Stream stream = File.OpenRead (fname);
 
 				long real_size = stream.Length;
