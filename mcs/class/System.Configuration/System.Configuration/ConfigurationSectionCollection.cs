@@ -38,6 +38,9 @@ namespace System.Configuration
 	[Serializable]
 	public sealed class ConfigurationSectionCollection : NameObjectCollectionBase
 	{
+		[NonSerialized]
+		static object configuration_section_lock = new object ();
+
 		SectionGroupInfo group;
 		Configuration config;
 		
@@ -61,13 +64,16 @@ namespace System.Configuration
 		public ConfigurationSection this [string name]
 		{
 			get {
-				ConfigurationSection sec = BaseGet (name) as ConfigurationSection;
-				if (sec == null) {
-					SectionInfo secData = group.Sections [name] as SectionInfo;
-					if (secData == null) return null;
-					sec = config.GetSectionInstance (secData, true);
-					if (sec == null) return null;
-					BaseSet (name, sec);
+				ConfigurationSection sec;
+				lock (configuration_section_lock) {
+					 sec = BaseGet (name) as ConfigurationSection;
+					 if (sec == null) {
+						 SectionInfo secData = group.Sections [name] as SectionInfo;
+						 if (secData == null) return null;
+						 sec = config.GetSectionInstance (secData, true);
+						 if (sec == null) return null;
+						 BaseSet (name, sec);
+					 }
 				}
 				return sec;
 			}
