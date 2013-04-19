@@ -143,9 +143,8 @@ namespace System.IO.Ports
 				ThrowIOException ();
 
 			if (!poll_result) {
-				// see bug 79735   http://bugzilla.ximian.com/show_bug.cgi?id=79735
-				// should the next line read: return -1; 
-				throw new TimeoutException();
+				// Fix timed out bug to return correct value
+				return -1;
 			}
 
 			int result = read_serial (fd, buffer, offset, count);
